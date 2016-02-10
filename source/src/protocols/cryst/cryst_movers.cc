@@ -38,7 +38,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/LK_BallEnergy.hh>
+#include <core/scoring/lkball/LK_BallEnergy.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -282,7 +282,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	f_ros.dfunc( vars, dEros_dvars );
 
 	// lkball setup
-	core::scoring::methods::LK_BallEnergy lkb( reference_scorefxn->energy_method_options() );
+	core::scoring::lkball::LK_BallEnergy lkb( reference_scorefxn->energy_method_options() );
 	lkb.setup_for_scoring(pose, *reference_scorefxn);
 
 	utility::vector1< Multivec > dEros_i_dvars;

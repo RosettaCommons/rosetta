@@ -31,7 +31,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/LK_BallEnergy.hh>
+#include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <core/scoring/sasa.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -126,10 +126,10 @@ class FaSolReporter : public protocols::moves::Mover {
 	methods::EnergyMethodOptions e_opts = sf->energy_method_options();
 	Etable etable = *( ScoringManager::get_instance()->etable( e_opts ).lock() ); // copy
 
-	core::scoring::methods::LK_BallEnergy lkb(e_opts);
+	core::scoring::lkball::LK_BallEnergy lkb(e_opts);
 	lkb.setup_for_scoring(pose, *sf);
-	LKB_PoseInfo const & lkbposeinfo
-		( static_cast< LKB_PoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) ) );
+	lkball::LKB_PoseInfo const & lkbposeinfo
+		( static_cast< lkball::LKB_PoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) ) );
 
 	// atomtype used for burial calcs
 	int bur_type=1;
@@ -142,7 +142,7 @@ class FaSolReporter : public protocols::moves::Mover {
 		if ( !rsd1.is_protein() ) continue;
 		if ( rsd_sasa[ires] != 0 ) continue;
 
-		LKB_ResidueInfo const &lkbinfo1 = lkbposeinfo[ires];
+		lkball::LKB_ResidueInfo const &lkbinfo1 = lkbposeinfo[ires];
 		utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd1_waters( lkbinfo1.waters() );
 		utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( lkbinfo1.atom_weights() );
 

@@ -23,6 +23,9 @@
 //XRW_E_T1
 //#include <core/scoring/etable/EtableEnergy.hh>
 
+#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+
 #include <utility/exit.hh>
 
 namespace core {
@@ -331,6 +334,99 @@ TrieCountPairBase::resolve_trie_vs_path(
 {
 	utility_exit();
 }
+
+// lkball
+void
+TrieCountPairBase::resolve_trie_vs_trie(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
+{
+	utility_exit();
+}
+
+void
+TrieCountPairBase::resolve_trie_vs_trie(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
+{
+	utility_exit();
+}
+
+void
+TrieCountPairBase::resolve_trie_vs_trie(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
+{
+	utility_exit();
+}
+
+void
+TrieCountPairBase::resolve_trie_vs_trie(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
+{
+	utility_exit();
+}
+
+
+void
+TrieCountPairBase::resolve_trie_vs_path(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit();
+}
+
+
+void
+TrieCountPairBase::resolve_trie_vs_path(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit();
+}
+
+
+void
+TrieCountPairBase::resolve_trie_vs_path(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit();
+}
+
+void
+TrieCountPairBase::resolve_trie_vs_path(
+	RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrieBase const & /*trie2*/,
+	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit();
+}
+
 
 // MMLJEnergyInter
 

@@ -26,6 +26,7 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
+#include <numeric/xyzMatrix.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -34,7 +35,7 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace lkball {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,7 +239,7 @@ typedef utility::pointer::shared_ptr< LKB_RotamerSetInfo > LKB_RotamerSetInfoOP;
 }
 }
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_scoring_methods_LK_BallInfo )
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_lkball_LK_BallInfo )
 #endif // SERIALIZATION
 
 

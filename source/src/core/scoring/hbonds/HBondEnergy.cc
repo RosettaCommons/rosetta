@@ -31,7 +31,7 @@
 #include <core/scoring/hbonds/hbtrie/HBondTrie.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBCountPairFunction.hh>
 
-#include <core/scoring/methods/LK_BallEnergy.hh>
+#include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/trie/TrieCollection.hh>

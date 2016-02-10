@@ -26,6 +26,7 @@ enum EnergyMethods
 	dunbrack_method,
 	hbond_method,
 	elec_method,
+	lkball_method,
 	mm_lj_energy_inter_method,
 	pair_e_method, // give this a new name!
 	reference_e_method,

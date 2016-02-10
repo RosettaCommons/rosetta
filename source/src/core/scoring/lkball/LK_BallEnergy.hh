@@ -16,8 +16,12 @@
 #define INCLUDED_core_scoring_methods_LK_BALLENERGY_HH
 
 // Unit Headers
-#include <core/scoring/methods/LK_BallEnergy.fwd.hh>
-#include <core/scoring/methods/LK_BallInfo.hh>
+#include <core/scoring/lkball/LK_BallEnergy.fwd.hh>
+#include <core/scoring/lkball/LK_BallInfo.hh>
+#include <core/scoring/lkball/lkbtrie/LKBAtom.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrie.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/trie/TrieCountPairBase.hh>
 
 #include <core/scoring/methods/GenBornEnergy.hh>
 #include <core/scoring/GenBornPotential.hh>
@@ -35,7 +39,6 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-//#include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility headers
 #include <ObjexxFCL/FArray3D.hh>
@@ -43,12 +46,12 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace lkball {
 
 
-class LK_BallEnergy : public ContextIndependentTwoBodyEnergy {
+class LK_BallEnergy : public methods::ContextIndependentTwoBodyEnergy {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 	/// convenience typedefs
 	typedef chemical::ResidueType ResidueType;
@@ -58,21 +61,22 @@ public:
 
 public:
 
-	LK_BallEnergy( EnergyMethodOptions const & options );
+	LK_BallEnergy( methods::EnergyMethodOptions const & options );
 
 
 	/// clone
 	virtual
-	EnergyMethodOP
+	methods::EnergyMethodOP
 	clone() const;
 
 	LK_BallEnergy( LK_BallEnergy const & src );
 
-
 	virtual
 	void
-	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
-
+	setup_for_packing(
+		pose::Pose & pose,
+		utility::vector1< bool > const &,
+		utility::vector1< bool > const & ) const;
 
 	virtual
 	void
@@ -153,23 +157,6 @@ public:
 		Real & atom2_lk_desolvation_by_atom1_deriv
 	);
 
-	//  /// called during gradient-based minimization inside dfunc
-	//  /**
-	//    F1 and F2 are not zeroed -- contributions from this atom are
-	//    just summed in
-	//  **/
-	//  virtual
-	//  void
-	//  eval_atom_derivative(
-	//   id::AtomID const & id,
-	//   pose::Pose const & pose,
-	//   kinematics::DomainMap const & domain_map,
-	//   ScoreFunction const & sfxn,
-	//   EnergyMap const & weights,
-	//   Vector & F1,
-	//   Vector & F2
-	//  ) const;
-
 	virtual
 	void
 	eval_residue_pair_derivatives(
@@ -229,19 +216,6 @@ public:
 		Real const lk_desolvation_of_atom1_by_atom2,
 		EnergyMap & emap
 	) const;
-
-	/* Undefined, commenting out to fix PyRosetta build  void
-	get_scorefxn_weights_for_derivatives(
-	Size const atom1,
-	conformation::Residue const & rsd1,
-	bool const atom1_has_waters,
-	Size const atom2,
-	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
-	Real & unoriented_weight,
-	Real & oriented_weight
-	) const;
-	*/
 
 	void
 	setup_for_minimizing_for_residue(
@@ -345,11 +319,6 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
 
-	/////////////////////////////////////////////////////////////////////////////
-	// private methods
-	//private:
-	/////////////////////////////////////////////////////////////////////////////
-
 	Real
 	eval_lk_fraction( Real const d2_delta ) const;
 
@@ -384,17 +353,6 @@ public:
 		Vector & f2
 	) const;
 
-
-	/* Undefined, commenting out to fix PyRosetta build  void
-	residue_pair_energy(
-	conformation::Residue const & rsd1,
-	utility::vector1< Vectors > const & rsd1_waters,
-	conformation::Residue const & rsd2,
-	utility::vector1< Vectors > const & rsd2_waters,
-	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
-	) const; */
 
 	virtual
 	void
@@ -450,30 +408,46 @@ public:
 		utility::vector1< DerivVectorPair > & r2_at_derivs
 	) const;
 
-
 	void
 	setup_d2_bounds();
 
-	//  void
-	//  add_my_score_types();
 
-	//  /// HACK
-	//  void
-	//  setup_hack();
+private:
 
-	//  bool
-	//  include_residue( conformation::Residue const & rsd ) const;
+	lkbtrie::LKBRotamerTrieOP
+	create_rotamer_trie(
+		conformation::RotamerSetBase const & rotset,
+		pose::Pose const & pose
+	) const;
 
-	// private:
-	//  etable::Etable const &
-	//  etable() const
-	//  { return *( etable_.lock() ); } // segfault danger here
+	lkbtrie::LKBRotamerTrieOP
+	create_rotamer_trie(
+		conformation::Residue const & res,
+		pose::Pose const & pose
+	) const;
+
+	trie::TrieCountPairBaseOP
+	get_count_pair_function_trie(
+		conformation::RotamerSetBase const & set1,
+		conformation::RotamerSetBase const & set2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn
+	) const;
+
+
+	trie::TrieCountPairBaseOP
+	get_count_pair_function_trie(
+		conformation::Residue const & res1,
+		conformation::Residue const & res2,
+		trie::RotamerTrieBaseCOP trie1,
+		trie::RotamerTrieBaseCOP trie2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn
+	) const;
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
-private:
-	/////////////////////////////////////////////////////////////////////////////
 
 	etable::EtableCOP etable_;
 

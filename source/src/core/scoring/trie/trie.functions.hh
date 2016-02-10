@@ -63,7 +63,6 @@ create_trie(
 			CPDAT cpdata;
 			initialize_cpdata_for_atom( cpdata, jj, *ii_rotamer, cpdata_map );
 
-
 			RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
 			rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom );
 

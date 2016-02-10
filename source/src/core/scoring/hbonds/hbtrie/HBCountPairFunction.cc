@@ -24,6 +24,9 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh>
 #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
+#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+
 
 // Project Headers
 //#include <core/scoring/etable/EtableEnergy.hh>
@@ -1228,6 +1231,391 @@ HBCountPairFunction::resolve_trie_vs_path(
 {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
+
+///////////////////////////////// lkball ////////////////////////////////////
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
+	lkball::lkbtrie::LKBTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & ,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & ,
+	lkball::lkbtrie::LKBTrieEvaluator const & ,
+	utility::vector1< core::PackerEnergy > & ,
+	utility::vector1< core::PackerEnergy > & )
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & ,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
+	lkball::lkbtrie::LKBTrieEvaluator const & ,
+	utility::vector1< core::PackerEnergy > & ,
+	utility::vector1< core::PackerEnergy > & )
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & ,
+	lkball::lkbtrie::LKBTrieEvaluator const & ,
+	utility::vector1< core::PackerEnergy > & ,
+	utility::vector1< core::PackerEnergy > & )
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & ,
+	lkball::lkbtrie::LKBTrieEvaluator const & ,
+	utility::vector1< core::PackerEnergy > & ,
+	utility::vector1< core::PackerEnergy > & )
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & ,
+	lkball::lkbtrie::LKBTrieEvaluator const & ,
+	utility::vector1< core::PackerEnergy > & ,
+	utility::vector1< core::PackerEnergy > & )
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
+	lkball::lkbtrie::LKBTrieEvaluator const & ,
+	utility::vector1< core::PackerEnergy > & ,
+	utility::vector1< core::PackerEnergy > & )
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
 
 ///////////////////////////// MMLJEnergyInter ///////////////////////////////
 

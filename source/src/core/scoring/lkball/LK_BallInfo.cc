@@ -12,7 +12,7 @@
 /// @author Phil Bradley
 
 // Unit headers
-#include <core/scoring/methods/LK_BallInfo.hh>
+#include <core/scoring/lkball/LK_BallInfo.hh>
 
 // // Package headers
 //#include <core/pack/rotamer_set/WaterPackingInfo.hh>
@@ -74,7 +74,7 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace lkball {
 
 //bool const sidechain_only_hack( false ); // make this configurable
 
@@ -774,7 +774,7 @@ LKB_ResidueInfo::residue_type() const { return *rsd_type_; }
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::methods::LKB_ResidueInfo::save( Archive & arc ) const {
+core::scoring::lkball::LKB_ResidueInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	core::chemical::serialize_residue_type( arc, rsd_type_ );
 	arc( CEREAL_NVP( waters_ ) ); // utility::vector1<Vectors>
@@ -788,7 +788,7 @@ core::scoring::methods::LKB_ResidueInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::methods::LKB_ResidueInfo::load( Archive & arc ) {
+core::scoring::lkball::LKB_ResidueInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	core::chemical::deserialize_residue_type( arc, rsd_type_ ); // const chemical::ResidueTypeCOP;
 	arc( waters_ ); // utility::vector1<Vectors>
@@ -798,14 +798,14 @@ core::scoring::methods::LKB_ResidueInfo::load( Archive & arc ) {
 	arc( atom_weights_ ); // utility::vector1<utility::vector1<Real> >
 	arc( has_waters_ ); // _Bool
 }
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::LKB_ResidueInfo );
-CEREAL_REGISTER_TYPE( core::scoring::methods::LKB_ResidueInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::lkball::LKB_ResidueInfo );
+CEREAL_REGISTER_TYPE( core::scoring::lkball::LKB_ResidueInfo )
 
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::methods::LKB_ResiduesInfo::save( Archive & arc ) const {
+core::scoring::lkball::LKB_ResiduesInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( residues_info_ ) ); // utility::vector1<LKB_ResidueInfoOP>
 }
@@ -813,13 +813,13 @@ core::scoring::methods::LKB_ResiduesInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::methods::LKB_ResiduesInfo::load( Archive & arc ) {
+core::scoring::lkball::LKB_ResiduesInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( residues_info_ ); // utility::vector1<LKB_ResidueInfoOP>
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::LKB_ResiduesInfo );
-CEREAL_REGISTER_TYPE( core::scoring::methods::LKB_ResiduesInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::lkball::LKB_ResiduesInfo );
+CEREAL_REGISTER_TYPE( core::scoring::lkball::LKB_ResiduesInfo )
 
-CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_LK_BallInfo )
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_lkball_LK_BallInfo )
 #endif // SERIALIZATION

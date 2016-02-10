@@ -21,9 +21,9 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace lkball {
 
-class LK_BallEnergyCreator : public EnergyMethodCreator
+class LK_BallEnergyCreator : public methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new LK_BallEnergy

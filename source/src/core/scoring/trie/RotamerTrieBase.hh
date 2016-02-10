@@ -31,6 +31,9 @@
 #include <core/scoring/elec/ElecAtom.fwd.hh>
 #include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 
+#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+
 #include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh>
@@ -591,6 +594,139 @@ public:
 		RotamerTrieBase const & other,
 		TrieCountPairBase & cp,
 		elec::FA_ElecEnergy const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	//////////// LKBALL
+	///////////////////////////////////////////////////////////////////////////////////////
+	virtual
+	void
+	trie_vs_trie(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+
+	/// This function is called when the etable energy function get mixed up with non-etable tries.
+	/// It produces a utility_exit call.
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	/// Four trie-vs-path type resolution functions
+	virtual
+	void
+	trie_vs_path(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+	/// This function is called when non-elec tries get mixed up with the FA_ElecEnergy function
+	/// It produces a utility_exit call.
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;

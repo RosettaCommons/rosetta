@@ -390,7 +390,6 @@ FA_ElecEnergy::update_residue_for_packing(
 	TrieCollection & trie_collection
 		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )));
 	trie_collection.trie( resid, one_rotamer_trie );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////

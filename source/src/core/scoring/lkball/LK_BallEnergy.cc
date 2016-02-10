@@ -12,13 +12,12 @@
 /// @author Phil Bradley
 
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
-// #include <core/scoring/GenBornPotential.fwd.hh>
 
 
 // Unit headers
-#include <core/scoring/methods/LK_BallEnergy.hh>
-#include <core/scoring/methods/LK_BallEnergyCreator.hh>
-#include <core/scoring/methods/LK_BallInfo.hh>
+#include <core/scoring/lkball/LK_BallEnergy.hh>
+#include <core/scoring/lkball/LK_BallEnergyCreator.hh>
+#include <core/scoring/lkball/LK_BallInfo.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -37,8 +36,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-//#include <core/pack/rotamer_set/RotamerSet.hh>
-//#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/conformation/residue_datacache.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
@@ -49,8 +46,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-//   // HACK
-// #include <fstream> // HACK
 
 #include <core/scoring/constraints/AngleConstraint.hh>
 
@@ -65,21 +60,40 @@
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <utility/vector1.functions.hh> // HACK
+#include <utility/vector1.functions.hh>
+
+//trie
+#include <core/scoring/EnergiesCacheableDataType.hh>
+#include <core/scoring/trie/CPDataCorrespondence.hh>
+#include <core/scoring/trie/RotamerDescriptor.hh>
+#include <core/scoring/trie/RotamerTrie.hh>
+#include <core/scoring/trie/TrieCollection.hh>
+#include <core/scoring/trie/trie.functions.hh>
+
+#include <core/scoring/etable/etrie/CountPairData_1_1.hh>
+#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
+#include <core/scoring/etable/etrie/CountPairData_1_3.hh>
+#include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
+
+#include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
+#include <core/scoring/etable/etrie/TrieCountPairAll.hh>
+#include <core/scoring/etable/etrie/TrieCountPairNone.hh>
+#include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
+
 
 #ifdef WIN32
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #endif
 
-/// LAZY using
-//using core::pack::rotamer_set::RotamerSet;
-
 namespace core {
 namespace scoring {
-namespace methods {
+namespace lkball {
 
 
-/// @details This must return a fresh instance of the LK_hack class,
+static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
+
+
+/// @details This must return a fresh instance of the LK_ball class,
 /// never an instance already in use
 methods::EnergyMethodOP
 LK_BallEnergyCreator::create_energy_method(
@@ -96,9 +110,6 @@ LK_BallEnergyCreator::score_types_for_method() const {
 	sts.push_back( lk_ball_wtd );
 	return sts;
 }
-
-
-static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
 
 /// inline retrieval functions here:
 inline
@@ -127,8 +138,7 @@ retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
 }
 
 
-class LKB_ResPairMinData : public basic::datacache::CacheableData
-{
+class LKB_ResPairMinData : public basic::datacache::CacheableData {
 public:
 	LKB_ResPairMinData();
 	virtual ~LKB_ResPairMinData() {}
@@ -140,8 +150,6 @@ public:
 		LKB_ResidueInfoCOP res1_data,
 		LKB_ResidueInfoCOP res2_data
 	);
-	//  void set_res1_data( LKB_ResidueInfoCOP );
-	//  void set_res2_data( LKB_ResidueInfoCOP );
 
 	LKB_ResidueInfo const & res1_data() const { return *res1_data_; }
 	LKB_ResidueInfo const & res2_data() const { return *res2_data_; }
@@ -244,48 +252,9 @@ retrieve_lkb_resdata_ptr(
 }
 
 
-/// HACKING //////////////////////////
-// void
-// LK_BallEnergy::setup_hack()
-// {
-//  using namespace options;
-//  using namespace OptionKeys::dna::specificity::lk_ball_hack;
-//  if ( option[ lk_ball_positions ].user() ) {
-//   positions_ = option[ lk_ball_positions ]();
-//  }
-//  include_all_dna_ = false; // wait on this until we can do some dna relaxes and estimate reference energies
-// }
 
-// bool
-// LK_BallEnergy::include_residue( conformation::Residue const & rsd ) const {
-//  return ( ( include_all_dna_ && rsd.is_DNA() ) ||
-//       ( utility::has_element( positions_, rsd.seqpos() ) ) );
-// }
-
-// void
-// LK_BallEnergy::add_my_score_types()
-// {
-//  add_score_type( lk_ball_iso );
-//  add_score_type( lk_ball );
-//  add_score_type( lk_polar );
-//  add_score_type( lk_polar_nw );
-//  add_score_type( lk_nonpolar );
-//  add_score_type( lk_charged );
-
-//  add_score_type( lk_ball_xd );
-//  add_score_type( lk_polar_xd );
-//  add_score_type( lk_polar_nw_xd );
-//  add_score_type( lk_nonpolar_xd );
-
-
-//  add_score_type( lk_ball_dd );
-//  add_score_type( lk_polar_dd );
-//  add_score_type( lk_polar_nw_dd );
-//  add_score_type( lk_nonpolar_dd );
-// }
-
-LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
-	parent             ( EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
+LK_BallEnergy::LK_BallEnergy( methods::EnergyMethodOptions const & options ):
+	parent             ( methods::EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
 	etable_            ( ScoringManager::get_instance()->etable( options ).lock() ),
 	solv1_             ( ScoringManager::get_instance()->etable( options ).lock()->solv1()),
 	solv2_             ( ScoringManager::get_instance()->etable( options ).lock()->solv2()),
@@ -301,24 +270,6 @@ LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
 	if ( !slim_etable_ ) { runtime_assert( solv1_.size()>0 ); }
 }
 
-// LK_BallEnergy::LK_BallEnergy( etable::Etable const & etable_in):
-//  etable_(etable_in),
-//  solv1_(etable_in.solv1()),
-//  solv2_(etable_in.solv2()),
-//  dsolv1_( etable_in.dsolv1() ),
-//  safe_max_dis2_( etable_in.get_safe_max_dis2() ),
-//  etable_bins_per_A2_( etable_in.get_bins_per_A2())
-// //  d2_low_ ( 2.0 * 2.0 ),
-// //  d2_high_( 3.1 * 3.1 )
-// {
-//  //setup_hack();
-//  add_my_score_types();
-
-//  setup_d2_bounds();
-// //  add_score_type( lk_ball_iso );
-// //  add_score_type( lk_ball_iso_nw );
-// }
-
 
 Distance
 LK_BallEnergy::atomic_interaction_cutoff() const
@@ -328,10 +279,10 @@ LK_BallEnergy::atomic_interaction_cutoff() const
 
 
 /// clone
-EnergyMethodOP
+methods::EnergyMethodOP
 LK_BallEnergy::clone() const
 {
-	return EnergyMethodOP( new LK_BallEnergy( *this ) );
+	return methods::EnergyMethodOP( new LK_BallEnergy( *this ) );
 }
 
 
@@ -466,11 +417,24 @@ LK_BallEnergy::setup_for_derivatives_for_residue(
 void
 LK_BallEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const
 {
-	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 	pose.update_residue_neighbors();
 	compute_and_store_pose_waters( pose ); // could check task and do only some
-	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
+
+	//fpd trie
+	using namespace trie;
+	using namespace lkbtrie;
+	TrieCollectionOP tries( new TrieCollection );
+	tries->total_residue( pose.total_residue() );
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		// Do not compute energy for virtual residues.
+		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
+
+		LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
+		tries->trie( ii, one_rotamer_trie );
+	}
+	pose.energies().data().set( EnergiesCacheableDataType::LKB_TRIE_COLLECTION, tries );
 }
+
 
 void
 LK_BallEnergy::update_residue_for_packing(
@@ -489,6 +453,16 @@ LK_BallEnergy::update_residue_for_packing(
 		info.initialize( rsd.type() );
 	}
 	info.build_waters( rsd );
+
+	//fpd trie
+	using namespace trie;
+	using namespace lkbtrie;
+	LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ), pose );
+
+	// grab non-const & of the cached tries and replace resid's trie with a new one.
+	TrieCollection & trie_collection
+		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::LKB_TRIE_COLLECTION )));
+	trie_collection.trie( resid, one_rotamer_trie );
 }
 
 
@@ -498,18 +472,13 @@ LK_BallEnergy::setup_for_scoring(
 	ScoreFunction const & //scfxn
 ) const
 {
-	// silly hack:
-	// if ( std::abs( scfxn.get_weight( lk_ball_wtd ) ) > 1e-3 ) {
-	//  runtime_assert( basic::options::option[ basic::options::OptionKeys::dna::specificity::no_SP3_acceptor_waters ] );
-	// }
-
 	pose.update_residue_neighbors();
 	compute_and_store_pose_waters( pose );
 }
 
 void
 LK_BallEnergy::prepare_rotamers_for_packing(
-	pose::Pose const &, //pose,
+	pose::Pose const & pose,
 	conformation::RotamerSetBase & rotamer_set
 ) const
 {
@@ -527,6 +496,13 @@ LK_BallEnergy::prepare_rotamers_for_packing(
 
 	rotamer_set.data().set( conformation::RotamerSetCacheableDataType::LK_BALL_ROTAMER_SET_INFO, info );
 
+	//fpd trie
+	using namespace trie;
+	using namespace lkbtrie;
+	LKBRotamerTrieOP rottrie = create_rotamer_trie( rotamer_set, pose );
+	//std::cout << "--------------------------------------------------" << std::endl << " HBROTAMER TRIE: " << set.resid() << std::endl;
+	//rottrie->print();
+	rotamer_set.store_trie( methods::lkball_method, rottrie );
 }
 
 
@@ -687,19 +663,26 @@ LK_BallEnergy::residue_pair_energy(
 {
 	/// there might be data stashed in these residues if we came through certain packing routes
 	using conformation::residue_datacache::LK_BALL_INFO;
-	if ( rsd1.data_ptr() != 0 && rsd1.data_ptr()->has( LK_BALL_INFO ) ) {
-		debug_assert( dynamic_cast< LKB_ResidueInfo const * > ( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO )));
-		debug_assert( rsd2.data_ptr() != 0 &&
-			rsd2.data_ptr()->get_const_ptr( LK_BALL_INFO ) != 0 &&
-			dynamic_cast< LKB_ResidueInfo const * > ( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO )));
+	bool rsd1_cached = rsd1.data_ptr() != 0 && rsd1.data_ptr()->has( LK_BALL_INFO );
+	bool rsd2_cached = rsd2.data_ptr() != 0 && rsd2.data_ptr()->has( LK_BALL_INFO );
 
+	if (rsd1_cached && rsd2_cached) {
 		residue_pair_energy( rsd1,
 			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
 			rsd2,
 			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
 			emap );
+	} else if (rsd1_cached) {
+		LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
+		residue_pair_energy( rsd1,
+			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+			rsd2, info2, emap );
+	} else if (rsd2_cached) {
+		LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
+		residue_pair_energy( rsd1, info1, rsd2,
+			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+			emap );
 	} else {
-		debug_assert( rsd2.data_ptr() == 0 || !rsd2.data_ptr()->has( LK_BALL_INFO ) );
 		LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
 		LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
 		residue_pair_energy( rsd1, info1, rsd2, info2, emap );
@@ -716,6 +699,7 @@ LK_BallEnergy::sidechain_sidechain_energy(
 ) const
 {
 	using conformation::residue_datacache::LK_BALL_INFO;
+
 	/// if we got here we should have come through packing...
 	debug_assert( rsd1.data_ptr() != 0 &&
 		rsd1.data_ptr()->get_const_ptr( LK_BALL_INFO ) != 0 &&
@@ -1075,7 +1059,7 @@ LK_BallEnergy::residue_pair_energy(
 	utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
 	utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
 
-
+	/*
 	static Size counter(0);
 	++counter;
 #ifndef NDEBUG // every time
@@ -1102,7 +1086,7 @@ LK_BallEnergy::residue_pair_energy(
 			}
 		}
 	}
-
+	*/
 
 	// the old way:
 	//
@@ -1161,7 +1145,6 @@ LK_BallEnergy::residue_pair_energy(
 				accumulate_single_atom_contributions( atom2, atom2_type_index, atom2_waters, atom2_weights,
 					rsd2, atom1_type_index, atom1_xyz,
 					lk_desolvation_of_atom2_by_atom1, emap );
-
 			} // count pair
 		} // atom2
 	} // atom1
@@ -1481,43 +1464,63 @@ void
 LK_BallEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
-	pose::Pose const &, // pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	pose::Pose const & pose,
+	ScoreFunction const &sfxn,
+	EnergyMap const & /*weights*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	using namespace conformation;
-	using namespace numeric;
+	debug_assert( set1.resid() != set2.resid() );
 
-	//TR.Trace << "rotamer_pair" << std::endl;
+	using namespace methods;
+	using namespace trie;
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table );
 
-	//PROF_START( basic::LK_BALL_ROTAMER_PAIR_ENERGIES );
+	temp_table1 = 0; temp_table2 = 0;
 
-	LKB_RotamerSetInfo const & info1( retrieve_lkb_rotamer_set_info( set1 ) );
-	LKB_RotamerSetInfo const & info2( retrieve_lkb_rotamer_set_info( set2 ) );
+	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie(  methods::lkball_method ) ));
+	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie(  methods::lkball_method ) ));
 
+	// figure out which trie countPairFunction needs to be used for this set
+	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
 
-	for ( Size ii = 1; ii <= set1.get_n_residue_types(); ++ii ) {
-		Size const ii_offset = set1.get_residue_type_begin( ii );
-		for ( Size jj = 1; jj <= set2.get_n_residue_types(); ++jj ) {
-			Size const jj_offset = set2.get_residue_type_begin( jj );
-			if ( !info1[ ii_offset ].has_waters() && !info2[ jj_offset ].has_waters() ) continue;
+	/// now execute the trie vs trie algorithm.
+	/// this steps through three rounds of type resolution before finally arriving at the
+	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
+	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
+	/// each variation on the count pair data used and the count pair funtions invoked.
+	lkbtrie::LKBTrieEvaluator lkbeval(
+		sfxn.get_weight(lk_ball), sfxn.get_weight(lk_ball_iso), sfxn.get_weight(lk_ball_wtd),
+		*this, etable_
+	);
+	trie1->trie_vs_trie( *trie2, *cp, lkbeval, temp_table1, temp_table2 );
 
-			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
-					Size const ll_rot_id = jj_offset + ll - 1;
-					EnergyMap emap;
-					residue_pair_energy( *set1.rotamer( kk_rot_id ), info1[ kk_rot_id ],
-						*set2.rotamer( ll_rot_id ), info2[ ll_rot_id ], emap );
+	/// add in the energies calculated by the tvt alg.
+	energy_table += temp_table1;
+	//std::cout << "FINISHED evaluate_rotamer_pair_energies" << std::endl;
 
-					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights.dot( emap ) );
-				}
-			}
+	// There should be a way to turn this on without recompiling...
+	// debug
+	/*
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table );
+	temp_table3 = 0;
+	EnergyMap emap;
+	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
+	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
+		emap.zero();
+		residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
+		temp_table3( jj, ii ) += weights.dot( emap );
+		if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
+			std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
+			std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
+			std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
 		}
 	}
-	//PROF_STOP( basic::LK_BALL_ROTAMER_PAIR_ENERGIES );
+	}
+	std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
+	*/
+
 }
 
 void
@@ -1525,48 +1528,60 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	ScoreFunction const & sfxn,
+	EnergyMap const & /*weights*/,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
+	using namespace methods;
+	using namespace trie;
+	using namespace lkbtrie;
 
-	//PROF_START( basic::LK_BALL_ROTAMER_BACKGROUND_ENERGIES );
-	//TR.Trace << "rotamer_background!" << std::endl;
+	// allocate space for the trie-vs-trie algorithm
+	utility::vector1< core::PackerEnergy > temp_vector1( set.num_rotamers(), 0.0 );
+	utility::vector1< core::PackerEnergy > temp_vector2( set.num_rotamers(), 0.0 );
 
-	using conformation::Residue;
-	LKB_ResidueInfo const & rsd_info( retrieve_lkb_residue_info( pose, rsd.seqpos() ) );
-	LKB_RotamerSetInfo const & set_info( retrieve_lkb_rotamer_set_info( set ) );
+	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set.get_trie( methods::lkball_method ) ));
+	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
+		( pose.energies().data().get( EnergiesCacheableDataType::LKB_TRIE_COLLECTION )) ).trie( rsd.seqpos() );
 
-	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
-		Size const ii_offset = set.get_residue_type_begin( ii );
+	if ( trie2 == NULL ) return;
 
-		if ( !set_info[ ii_offset ].has_waters() && !rsd_info.has_waters() ) continue;
+	// figure out which trie countPairFunction needs to be used for this set
+	TrieCountPairBaseOP cp = get_count_pair_function_trie( pose.residue( set.resid() ), rsd, trie1, trie2, pose, sfxn );
 
-		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-			Size const kk_rot_id = ii_offset + kk - 1;
+	/// now execute the trie vs trie algorithm.
+	/// this steps through three rounds of type resolution before finally arriving at the
+	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
+	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
+	/// each variation on the count pair data used and the count pair funtions invoked.
+	lkbtrie::LKBTrieEvaluator lkbeval(
+		sfxn.get_weight(lk_ball), sfxn.get_weight(lk_ball_iso), sfxn.get_weight(lk_ball_wtd),
+		*this, etable_
+	);
+	trie1->trie_vs_path( *trie2, *cp, lkbeval, temp_vector1, temp_vector2 );
 
-			EnergyMap emap;
-			residue_pair_energy( *set.rotamer( kk_rot_id ), set_info[ kk_rot_id ], rsd, rsd_info, emap );
+	/// add in the energies calculated by the tvt alg.
+	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
+		energy_vector[ ii ] += temp_vector1[ ii ];
+	}
 
-			/**{ // check that this agrees with the old way!
-			// explicitly build the residue_info's now
-			LKB_ResidueInfo const info1_redo( *set.rotamer( kk_rot_id ) );
-			LKB_ResidueInfo const info2_redo( rsd );
-			Real lk_ball_energy_redo( 0.0 ), lk_ball_iso_energy_redo( 0.0 );
-			residue_pair_energy( *set.rotamer( kk_rot_id ), info1_redo.waters(),
-			rsd, info2_redo.waters(),
-			lk_ball_energy_redo, lk_ball_iso_energy_redo );
-			debug_assert( std::abs( lk_ball_energy - lk_ball_energy_redo ) +
-			std::abs( lk_ball_iso_energy - lk_ball_iso_energy_redo ) < 1e-3 );
-
-			}**/
-
-			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy >( weights.dot( emap ) );
-		} // kk - rotamers for residue types
-	} // ii - residue types for rotamer set
-
-	//PROF_STOP( basic::LK_BALL_ROTAMER_BACKGROUND_ENERGIES );
+	/*
+	//debug
+	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
+	EnergyMap emap;
+	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
+		emap.zero();
+		residue_pair_energy( *set.rotamer( ii ), rsd, pose, sfxn, emap );
+		temp_vector3[ ii ] += weights.dot( emap );
+		if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
+			std::cout << "lkballE: Residues " << set.resid() << " & " << rsd.seqpos() << " rotamers: " << ii << " & bg";
+			std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
+			std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
+		}
+	}
+	std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << rsd.seqpos() << std::endl;
+	*/
 }
 
 
@@ -1817,6 +1832,217 @@ LK_BallEnergy::eval_atom_derivative(
 	}
 }
 
+// create a lkb trie rotamer descriptor from a single rotamer
+template <class CPDAT>
+void
+create_rotamer_descriptor(
+	conformation::Residue const & res,
+	LKB_ResidueInfo const &lkb_resinfo,
+	trie::CPDataCorrespondence const & cpdata_map,
+	trie::RotamerDescriptor< lkbtrie::LKBAtom, CPDAT > & rotamer_descriptor
+)
+{
+	using namespace trie;
+	using namespace lkbtrie;
+
+	rotamer_descriptor.natoms( res.natoms() );
+
+	Size count_added_atoms = 0;
+	for ( Size jj = 1; jj <= res.nheavyatoms(); ++jj ) {
+		LKBAtom newatom;
+		CPDAT cpdata;
+		initialize_cpdata_for_atom( cpdata, jj, res, cpdata_map );
+
+		newatom.atom( res.atom(jj) );
+		newatom.is_hydrogen( false );
+		newatom.waters( lkb_resinfo.waters()[jj] );
+		newatom.atom_weights( lkb_resinfo.atom_weights()[jj] );
+
+		RotamerDescriptorAtom< LKBAtom, CPDAT > rdatom( newatom, cpdata );
+		rotamer_descriptor.atom( ++count_added_atoms, rdatom );
+
+		for ( Size kk = res.attached_H_begin( jj ),
+				kk_end = res.attached_H_end( jj );
+				kk <= kk_end; ++kk ) {
+			LKBAtom newhatom;
+			newhatom.atom( res.atom(kk) );
+			newhatom.is_hydrogen( true );
+			//newhatom.waters( lkb_resinfo.waters() );
+			//newhatom.atom_weights( lkb_resinfo.atom_weights() );
+
+			CPDAT hcpdata;
+			initialize_cpdata_for_atom( hcpdata, kk, res, cpdata_map ); //??
+
+			RotamerDescriptorAtom< LKBAtom, CPDAT> hrdatom( newhatom, hcpdata );
+			rotamer_descriptor.atom( ++count_added_atoms, hrdatom );
+		}
+	}
+}
+
+
+lkbtrie::LKBRotamerTrieOP
+LK_BallEnergy::create_rotamer_trie(
+	conformation::RotamerSetBase const & rotset,
+	pose::Pose const & /*pose*/
+) const
+{
+	using namespace trie;
+	using namespace lkbtrie;
+	using namespace etable::etrie;
+
+	LKB_RotamerSetInfo const & info( retrieve_lkb_rotamer_set_info( rotset ) );
+
+	CPDataCorrespondence cpdata_map( create_cpdata_correspondence_for_rotamerset( rotset ) );
+
+	lkbtrie::LKBRotamerTrieOP retval;
+
+	if ( cpdata_map.has_pseudobonds() ||
+			cpdata_map.max_connpoints_for_residue() > 1 ||
+			cpdata_map.n_entries() > 3 ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairDataGeneric > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), info[ii], cpdata_map, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_1 > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), info[ii], cpdata_map, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else if ( cpdata_map.n_entries() == 2 ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_2 > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), info[ii], cpdata_map, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else if ( cpdata_map.n_entries() == 3 ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_3 > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), info[ii], cpdata_map, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else {
+		utility_exit_with_message( "Unknown residue connection in LK_BallEnergy::create_rotamer_trie");
+	}
+
+	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+		retval->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+	}
+
+	return retval;
+}
+
+lkbtrie::LKBRotamerTrieOP
+LK_BallEnergy::create_rotamer_trie(
+	conformation::Residue const & res,
+	pose::Pose const & pose
+) const
+{
+	using namespace trie;
+	using namespace lkbtrie;
+	using namespace etable::etrie;
+
+	LKB_ResidueInfo const & info( retrieve_lkb_residue_info( pose, res.seqpos() ) );
+
+	CPDataCorrespondence cpdata_map( create_cpdata_correspondence_for_rotamer( res ) );
+
+	lkbtrie::LKBRotamerTrieOP retval;
+
+	if ( cpdata_map.has_pseudobonds() ||
+			cpdata_map.max_connpoints_for_residue() > 1 ||
+			cpdata_map.n_entries() > 3 ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairDataGeneric > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_1 > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else if ( cpdata_map.n_entries() == 2 ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_2 > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		return lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else if ( cpdata_map.n_entries() == 3 ) {
+		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_3 > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	} else {
+		utility_exit_with_message( "Unknown residue connection in LK_BallEnergy::create_rotamer_trie");
+	}
+
+	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+		retval->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+	}
+
+	return retval;
+}
+
+/// @brief figure out the trie count pair function to use
+/// Need to refactor this so that the decision "what kind of count pair behavior should I use" can be decoupled
+/// from class instantiation, and therefore shared between the creation of the trie count pair classes and the regular
+/// count pair classes
+trie::TrieCountPairBaseOP
+LK_BallEnergy::get_count_pair_function_trie(
+	conformation::RotamerSetBase const & set1,
+	conformation::RotamerSetBase const & set2,
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn
+) const
+{
+	conformation::Residue const & res1( pose.residue( set1.resid() ) );
+	conformation::Residue const & res2( pose.residue( set2.resid() ) );
+
+	trie::RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( methods::lkball_method ) ));
+	trie::RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( methods::lkball_method ) ));
+
+	return get_count_pair_function_trie( res1, res2, trie1, trie2, pose, sfxn );
+}
+
+
+trie::TrieCountPairBaseOP
+LK_BallEnergy::get_count_pair_function_trie(
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	trie::RotamerTrieBaseCOP trie1,
+	trie::RotamerTrieBaseCOP trie2,
+	pose::Pose const &,
+	ScoreFunction const &
+) const
+{
+	using namespace etable::count_pair;
+	using namespace trie;
+	using namespace etable::etrie;
+
+	TrieCountPairBaseOP tcpfxn;
+	//if ( ! defines_score_for_residue_pair(res1, res2, true) ) return trie::TrieCountPairBaseOP( new TrieCountPairNone() );
+
+	CPResidueConnectionType connection = CountPairFactory::determine_residue_connection( res1, res2 );
+	Size conn1 = trie1->get_count_pair_data_for_residue( res2.seqpos() );
+	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
+
+	if ( connection == CP_ONE_BOND ) {
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
+	} else if ( connection == CP_NO_BONDS ) {
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
+	} else {
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
+	}
+	return tcpfxn;
+
+}
 
 core::Size
 LK_BallEnergy::version() const

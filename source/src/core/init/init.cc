@@ -129,7 +129,7 @@
 #include <core/scoring/methods/HybridVDW_EnergyCreator.hh>
 #include <core/scoring/methods/LK_PolarNonPolarEnergyCreator.hh>
 #include <core/scoring/methods/LK_hackCreator.hh>
-#include <core/scoring/methods/LK_BallEnergyCreator.hh>
+#include <core/scoring/lkball/LK_BallEnergyCreator.hh>
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
 #include <core/scoring/methods/MMBondAngleEnergyCreator.hh>
 #include <core/scoring/methods/MMBondLengthEnergyCreator.hh>
@@ -452,7 +452,7 @@ static EnergyMethodRegistrator< scoring::methods::FACTSEnergyCreator > FACTSEner
 static EnergyMethodRegistrator< scoring::methods::HybridVDW_EnergyCreator > HybridVDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::LK_PolarNonPolarEnergyCreator > LK_PolarNonPolarEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::LK_hackCreator > LK_hackCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::LK_BallEnergyCreator > LK_BallEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::lkball::LK_BallEnergyCreator > LK_BallEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::LinearChainbreakEnergyCreator > LinearChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MMBondAngleEnergyCreator > MMBondAngleEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CartesianBondedEnergyCreator > CartesianBondedEnergyCreator_registrator;

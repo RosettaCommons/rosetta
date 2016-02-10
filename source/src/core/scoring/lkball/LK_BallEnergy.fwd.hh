@@ -33,7 +33,7 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace lkball {
 
 class LK_BallEnergy;
 

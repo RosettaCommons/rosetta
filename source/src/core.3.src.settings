@@ -378,6 +378,7 @@ sources = {
 		"TrieCountPairAll",
 		"TrieCountPairAll.analytic_etable",
 		"TrieCountPairAll.fa_elec",
+		"TrieCountPairAll.lkball",
 		"TrieCountPairAll.hbonds",
 		"TrieCountPairAll.mm_inter",
 		"TrieCountPairAll.table_etable",
@@ -484,6 +485,14 @@ sources = {
 		"DDPlookup",
 		"DDPscore",
 	],
+	"core/scoring/lkball": [
+		"LK_BallEnergy",
+		"LK_BallInfo",
+	],
+	"core/scoring/lkball/lkbtrie": [
+		"LKBAtom",
+		"LKBTrieEvaluator",
+	],
 	"core/scoring/loop_graph": [
 		"Loop",
 		"LoopCycle",
@@ -551,8 +560,6 @@ sources = {
 		"LinearChainbreakEnergyCreator",
 		"LK_PolarNonPolarEnergy",
 		"LK_hack",
-		"LK_BallEnergy",
-		"LK_BallInfo",
 		"LongRangeTwoBodyEnergy",
 		"MembraneCbetaEnergy",
 		"MembraneCenPairEnergy",

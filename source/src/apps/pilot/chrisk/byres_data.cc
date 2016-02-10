@@ -1107,7 +1107,7 @@ calc_lk_burial_for_single_atom(
 
 	static methods::EnergyMethodOptions energy_method_options;
 
-	static methods::LK_BallEnergy lk_ball_energy( energy_method_options );
+	static lkball::LK_BallEnergy lk_ball_energy( energy_method_options );
 
 
 	if ( & ( rsd1.residue_type_set() ) != fa_standard_rsd_set ) {

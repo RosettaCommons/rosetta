@@ -23,6 +23,9 @@
 #include <core/scoring/trie/TrieCountPairBase.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
+
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -1019,6 +1022,296 @@ public:
 		elec::FA_ElecEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	////////////////////////////// lkball ////////////////////////////////////
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector);
+
 
 	/////////////////////////// MMLJEnergyInter //////////////////////////////
 	virtual
