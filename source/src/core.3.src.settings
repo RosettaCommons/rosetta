@@ -43,6 +43,7 @@ sources = {
 		"build_pose_as_is",
 		"pdb_reader",
 		"pdb_writer",
+		"Record",
 		"RecordCollection",
 		"record_def_io",
 	],

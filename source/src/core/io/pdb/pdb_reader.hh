@@ -18,11 +18,11 @@
 #define INCLUDED_core_io_pdb_pdb_reader_HH
 
 // Unit headers
-#include <core/io/pdb/Field.fwd.hh>
-#include <core/io/StructFileReaderOptions.fwd.hh>  // TODO: Rename after refactoring is complete.
+#include <core/io/pdb/Record.hh>
 
-// Package header
+// Package headers
 #include <core/io/StructFileRep.fwd.hh>
+#include <core/io/StructFileReaderOptions.fwd.hh>  // TODO: Rename after refactoring is complete.
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -36,15 +36,15 @@ namespace core {
 namespace io {
 namespace pdb {
 
-Record get_record_from_string( std::string const & input_string );
+/// @brief  Convert a .pdb file line into a Record data structure.
+Record create_record_from_pdb_line( std::string const & line );
 
-utility::vector1< Record > create_records_from_pdb_file_contents( std::string const & pdb_contents );
 
 /// @brief  Create a list of .pdb format records from the lines from a .pdb file.
 utility::vector1< Record > create_records_from_pdb_lines( utility::vector1< std::string > const & lines );
-// Create a list of .pdb format records from the lines from a .pdb file.
-utility::vector1< Record >
-create_records_from_pdb_lines( std::string const & lines );
+
+/// @brief  Create a list of .pdb format records from the entire contents of a .pdb file.
+utility::vector1< Record > create_records_from_pdb_file_contents( std::string const & pdb_contents );
 
 
 /// @brief  Create a representation of structural file data from a list of .pdb format records with options.

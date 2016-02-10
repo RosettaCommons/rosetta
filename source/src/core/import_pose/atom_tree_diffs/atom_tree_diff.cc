@@ -553,7 +553,7 @@ bool pose_from_atom_tree_diff(
 						// I can't figure out if getline() might leave behind a \n or \r\n,
 						// but all real PDB records are longer than 2 characters anyway.
 					} else if ( line.size() > 2 ) {
-						pdb_data.push_back( io::pdb::get_record_from_string( line ) );
+						pdb_data.push_back( io::pdb::create_record_from_pdb_line( line ) );
 					}
 				}
 				core::io::StructFileRep sfr( core::io::pdb::create_sfr_from_pdb_records(pdb_data) );

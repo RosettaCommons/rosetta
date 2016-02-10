@@ -7,29 +7,36 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/io/pdb/Field.fwd.hh
-/// @brief  Forward declaration for a .pdb record field data structure.
+/// @file   core/io/pdb/Record.hh
+/// @brief  Typedef for a .pdb file record data structure.
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 /// @author Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_io_pdb_Field_FWD_HH
-#define INCLUDED_core_io_pdb_Field_FWD_HH
+#ifndef INCLUDED_core_io_pdb_Record_HH
+#define INCLUDED_core_io_pdb_Record_HH
+
+// Unit header
+#include <core/io/pdb/Field.fwd.hh>
 
 // C++ headers
 #include <map>
 #include <string>
+#include <iostream>
 
 
 namespace core {
 namespace io {
 namespace pdb {
 
-/// @brief  A structure for storing a .pdb file record field.
-struct Field;
+/// @brief  A type for storing a .pdb file record as a map of field names to Fields.
+typedef std::map< std::string, Field > Record;
 
-}  // pdb
-}  // io
-}  // core
+// Insertion operator (overloaded so that Record can be "printed").
+std::ostream & operator<<( std::ostream & os, Record const & record );
 
-#endif  // INCLUDED_core_io_pdb_Field_FWD_HH
+}  // namespace pdb
+}  // namespace io
+}  // namespace core
+
+#endif  // INCLUDED_core_io_pdb_Record_HH

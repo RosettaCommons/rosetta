@@ -16,8 +16,9 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
-// Unit header
+// Unit headers
 #include <core/io/pdb/record_def_io.hh>
+#include <core/io/pdb/RecordType.hh>
 #include <core/io/pdb/Field.hh>
 
 // Basic header
@@ -25,6 +26,7 @@
 
 // C++ header
 #include <utility>
+#include <map>
 
 
 class RecordDefIOTests : public CxxTest::TestSuite {
@@ -48,17 +50,22 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_TRACE( "Testing read_record_definitions_from_file() method." );
 
-		RecordRef records( read_record_definitions_from_file( "core/io/pdb/fake_pdb_record_defs" ) );
+		std::map< std::string, RecordType > record_type_map;
+		record_type_map[ "HEADER" ] = HEADER;
+		record_type_map[ "OBSLTE" ] = OBSLTE;
+		record_type_map[ "SPLIT" ] = SPLIT;
+		record_type_map[ "TITLE" ] = TITLE;
+		RecordDef records( read_record_definitions_from_file( "core/io/pdb/fake_pdb_record_defs", record_type_map ) );
 
+		// The 5th record definition in the file should be skipped; it's not in the above map, nor is it a valid key.
 		TS_ASSERT_EQUALS( records.size(), 4 );
-		TS_ASSERT_EQUALS( records[ "HEADER" ].size(), 4 );
-		TS_ASSERT_EQUALS( records[ "OBSLTE" ].size(), 4 );
-		TS_ASSERT_EQUALS( records[ "TITLE" ].size(), 3 );
-		TS_ASSERT_EQUALS( records[ "SPLIT" ].size(), 3 );
+		TS_ASSERT_EQUALS( records[ HEADER ].size(), 4 );
+		TS_ASSERT_EQUALS( records[ OBSLTE ].size(), 4 );
+		TS_ASSERT_EQUALS( records[ TITLE ].size(), 3 );
+		TS_ASSERT_EQUALS( records[ SPLIT ].size(), 3 );
 
-		TS_ASSERT_EQUALS( records[ "HEADER" ][ "type" ].value, "" );  // It should be empty when created.
-		TS_ASSERT_EQUALS( records[ "HEADER" ][ "classification" ].start, 11 );
-		TS_ASSERT_EQUALS( records[ "HEADER" ][ "depDate" ].end, 59 );
-		TS_ASSERT_EQUALS( records[ "HEADER" ][ "idCode" ].data_type, core::io::pdb::IDcode );
+		TS_ASSERT_EQUALS( records[ HEADER ][ "type" ].value, "" );  // It should be empty when created.
+		TS_ASSERT_EQUALS( records[ HEADER ][ "classification" ].start, 11 );
+		TS_ASSERT_EQUALS( records[ HEADER ][ "depDate" ].end, 59 );
 	}
 };  // class RecordDefIOTests

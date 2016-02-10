@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/io/pdb/Field.hh>
-#include <core/io/pdb/PDBDataType.hh>
 #include <core/io/HeaderInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 
@@ -51,40 +50,37 @@ public:
 		core_init();
 	}
 
-	// ------------------------------------------ //
-	/// @brief
 	void test_field_basic() {
 		using core::io::pdb::Field;
-		using core::io::pdb::String_type;
 		using core::Size;
 		using std::string;
 		using std::stringstream;
 
-		Size start_first(1), end_first(5);
-		Size start_second(6), end_second(11);
-		Size start_third(12), end_third(16);
-		string record_string("FIRSTSECONDTHIRD");
+		Size start_first( 1 ), end_first( 5 );
+		Size start_second( 6 ), end_second( 11 );
+		Size start_third( 12 ), end_third( 16 );
+		string record_string( "FIRSTSECONDTHIRD" );
 
-		Field first( start_first, end_first, String_type );
-		Field second( start_second, end_second, String_type );
-		Field third( start_third, end_third, String_type );
+		Field first( start_first, end_first );
+		Field second( start_second, end_second );
+		Field third( start_third, end_third );
 
-		first.set_value_from_string(record_string);
-		second.set_value_from_string(record_string);
-		third.set_value_from_string(record_string);
+		first.set_value_from_pdb_line( record_string );
+		second.set_value_from_pdb_line( record_string );
+		third.set_value_from_pdb_line( record_string );
 
-		TS_ASSERT_EQUALS(first.value, "FIRST");
-		TS_ASSERT_EQUALS(second.value, "SECOND");
-		TS_ASSERT_EQUALS(third.value, "THIRD");
+		TS_ASSERT_EQUALS( first.value, "FIRST" );
+		TS_ASSERT_EQUALS( second.value, "SECOND" );
+		TS_ASSERT_EQUALS( third.value, "THIRD" );
 
 		stringstream first_out, second_out, third_out;
 		first_out << first;
 		second_out << second;
 		third_out << third;
 
-		TS_ASSERT_EQUALS(first_out.str(), "[1, 5]=FIRST");
-		TS_ASSERT_EQUALS(second_out.str(), "[6, 11]=SECOND");
-		TS_ASSERT_EQUALS(third_out.str(), "[12, 16]=THIRD");
+		TS_ASSERT_EQUALS( first_out.str(), "[1, 5]=FIRST" );
+		TS_ASSERT_EQUALS( second_out.str(), "[6, 11]=SECOND" );
+		TS_ASSERT_EQUALS( third_out.str(), "[12, 16]=THIRD" );
 	}
 };
 

@@ -12,7 +12,7 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-// Unit header
+// Unit headers
 #include <core/io/pdb/RecordCollection.hh>
 #include <core/io/pdb/record_def_io.hh>
 #include <core/io/pdb/Field.hh>
@@ -20,7 +20,7 @@
 // Project header
 #include <core/types.hh>
 
-// Utility header
+// Utility headers
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
@@ -70,37 +70,91 @@ namespace pdb {
 bool
 RecordCollection::is_valid_record_type( std::string const & type )
 {
-	return get_instance()->get_record_definitions_map().count( utility::trim( type ) );
+	return get_instance()->string_to_record_type_map_.count( utility::trim( type ) );
+}
+
+Record
+RecordCollection::record_from_record_type( RecordType const & type )
+{
+	return get_instance()->record_definitions_[ type ];
 }
 
 Record
 RecordCollection::record_from_record_type( std::string const & type )
 {
-	std::string const & trimmed_type( utility::trim( type ) );
-	if ( ! is_valid_record_type( trimmed_type ) ) {
-		return get_instance()->get_record_definitions_map()[ "UNKNOW" ];
+	RecordCollection * instance( get_instance() );
+	if ( ! is_valid_record_type( type ) ) {
+		return instance->record_definitions_[ UNKNOW ];
 	}
-	return get_instance()->get_record_definitions_map()[ trimmed_type ];
+	return instance->record_definitions_[ instance->string_to_record_type_map_[ utility::trim( type ) ] ];
 }
 
 // Private methods ////////////////////////////////////////////////////////////
 // Empty constructor
-RecordCollection::RecordCollection() :
-	record_definitions_( read_record_definitions_from_file(
-	basic::database::full_name( "input_output/pdb_record_defs" ) ) )
-{}
+RecordCollection::RecordCollection()
+{
+	string_to_record_type_map_[ "ANISOU" ] = ANISOU;
+	string_to_record_type_map_[ "ATOM" ] = ATOM;
+	string_to_record_type_map_[ "AUTHOR" ] = AUTHOR;
+	string_to_record_type_map_[ "CAVEAT" ] = CAVEAT;
+	string_to_record_type_map_[ "CISPEP" ] = CISPEP;
+	string_to_record_type_map_[ "COMPND" ] = COMPND;
+	string_to_record_type_map_[ "CONECT" ] = CONECT;
+	string_to_record_type_map_[ "CRYST1" ] = CRYST1;
+	string_to_record_type_map_[ "DBREF" ] = DBREF;
+	string_to_record_type_map_[ "DBREF1" ] = DBREF1;
+	string_to_record_type_map_[ "DBREF2" ] = DBREF2;
+	string_to_record_type_map_[ "END" ] = END;
+	string_to_record_type_map_[ "ENDMDL" ] = ENDMDL;
+	string_to_record_type_map_[ "EXPDTA" ] = EXPDTA;
+	string_to_record_type_map_[ "FORMUL" ] = FORMUL;
+	string_to_record_type_map_[ "HEADER" ] = HEADER;
+	string_to_record_type_map_[ "HELIX" ] = HELIX;
+	string_to_record_type_map_[ "HET" ] = HET;
+	string_to_record_type_map_[ "HETATM" ] = HETATM;
+	string_to_record_type_map_[ "HETNAM" ] = HETNAM;
+	string_to_record_type_map_[ "HETSYN" ] = HETSYN;
+	string_to_record_type_map_[ "JRNL" ] = JRNL;
+	string_to_record_type_map_[ "KEYWDS" ] = KEYWDS;
+	string_to_record_type_map_[ "LINK" ] = LINK;
+	string_to_record_type_map_[ "MASTER" ] = MASTER;
+	string_to_record_type_map_[ "MDLTYP" ] = MDLTYP;
+	string_to_record_type_map_[ "MODEL" ] = MODEL;
+	string_to_record_type_map_[ "MODRES" ] = MODRES;
+	string_to_record_type_map_[ "MTRIX1" ] = MTRIX1;
+	string_to_record_type_map_[ "MTRIX2" ] = MTRIX2;
+	string_to_record_type_map_[ "MTRIX3" ] = MTRIX3;
+	string_to_record_type_map_[ "NUMMD" ] = NUMMD;
+	string_to_record_type_map_[ "OBSLTE" ] = OBSLTE;
+	string_to_record_type_map_[ "ORIGX1" ] = ORIGX1;
+	string_to_record_type_map_[ "ORIGX2" ] = ORIGX2;
+	string_to_record_type_map_[ "ORIGX3" ] = ORIGX3;
+	string_to_record_type_map_[ "REMARK" ] = REMARK;
+	string_to_record_type_map_[ "REVDAT" ] = REVDAT;
+	string_to_record_type_map_[ "SCALE1" ] = SCALE1;
+	string_to_record_type_map_[ "SCALE2" ] = SCALE2;
+	string_to_record_type_map_[ "SCALE3" ] = SCALE3;
+	string_to_record_type_map_[ "SEQADV" ] = SEQADV;
+	string_to_record_type_map_[ "SEQRES" ] = SEQRES;
+	string_to_record_type_map_[ "SHEET" ] = SHEET;
+	string_to_record_type_map_[ "SITE" ] = SITE;
+	string_to_record_type_map_[ "SOURCE" ] = SOURCE;
+	string_to_record_type_map_[ "SPLIT" ] = SPLIT;
+	string_to_record_type_map_[ "SPRSDE" ] = SPRSDE;
+	string_to_record_type_map_[ "SSBOND" ] = SSBOND;
+	string_to_record_type_map_[ "TER" ] = TER;
+	string_to_record_type_map_[ "TITLE" ] = TITLE;
+	string_to_record_type_map_[ "UNKNOW" ] = UNKNOW;
+
+	record_definitions_ = read_record_definitions_from_file(
+			basic::database::full_name( "input_output/pdb_record_defs" ), string_to_record_type_map_ );
+}
 
 // Singleton-creation function for use with utility::thread::threadsafe_singleton
 RecordCollection *
 RecordCollection::create_singleton_instance()
 {
 	return new RecordCollection;
-}
-
-RecordRef
-RecordCollection::get_record_definitions_map() const
-{
-	return record_definitions_;
 }
 
 }  // namespace pdb

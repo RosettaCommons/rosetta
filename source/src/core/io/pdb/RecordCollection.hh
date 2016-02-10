@@ -15,15 +15,16 @@
 #ifndef INCLUDED_core_io_pdb_RecordCollection_HH
 #define INCLUDED_core_io_pdb_RecordCollection_HH
 
-// Unit header
-#include <core/io/pdb/Field.fwd.hh>
+// Unit headers
 #include <core/io/pdb/RecordCollection.fwd.hh>
+#include <core/io/pdb/RecordType.hh>
 
 // Utility header
 #include <utility/SingletonBase.hh>
 
 // C++ header
 #include <string>
+#include <map>
 
 
 namespace core {
@@ -31,7 +32,7 @@ namespace io {
 namespace pdb {
 
 /// @details  This class is a singleton and manages the definitions of PDB Records, which should only be read from the
-/// database one time
+/// database one time.
 class RecordCollection : public utility::SingletonBase< RecordCollection > {
 	friend class utility::SingletonBase< RecordCollection >;
 
@@ -40,7 +41,10 @@ public:  // Static constant data access ///////////////////////////////////////
 	/// @brief  Is the given string a valid 6-letter PDB record type?
 	static bool is_valid_record_type( std::string const & type );
 
-	/// @brief  get the corresponding PDB record from the corresponding record type string.
+	/// @brief  Get the corresponding PDB record from the corresponding record type.
+	static Record record_from_record_type( RecordType const & type );
+
+	/// @brief  Get the corresponding PDB record from the corresponding record type string.
 	static Record record_from_record_type( std::string const & type );
 
 
@@ -51,11 +55,10 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Singleton-creation function for use with utility::thread::threadsafe_singleton
 	static RecordCollection * create_singleton_instance();
 
-	RecordRef get_record_definitions_map() const;
-
 
 private:  // Private data /////////////////////////////////////////////////////
-	RecordRef record_definitions_;
+	std::map< std::string, RecordType > string_to_record_type_map_;
+	RecordDef record_definitions_;
 };
 
 }  // namespace pdb

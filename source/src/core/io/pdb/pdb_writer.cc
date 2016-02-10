@@ -14,11 +14,20 @@
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
 
 
-
 // Unit headers
 #include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/Field.hh>
+#include <core/io/pdb/RecordCollection.hh>
 
 // Package headers
+#include <core/io/util.hh>
+#include <core/io/Remarks.hh>
+#include <core/io/HeaderInformation.hh>
+#include <core/io/CrystInfo.hh>
+#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
+#include <core/io/StructFileRepOptions.hh>
+
+// Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -26,16 +35,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-
-#include <core/io/Remarks.hh>
-#include <core/io/HeaderInformation.hh>
-#include <core/io/CrystInfo.hh>
-#include <core/io/pdb/Field.hh>
-#include <core/io/pdb/RecordCollection.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
-#include <core/io/StructFileRepOptions.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/io/util.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -49,13 +49,6 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
-// Basic headers
-#include <basic/Tracer.hh>
-
-// External headers
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
-
 // Basic headers (JAB - remove as many of these as possible)
 #include <basic/options/option.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
@@ -67,15 +60,18 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+// External headers
+#include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <cstdlib>
 #include <cstdio>
 #include <algorithm>
 
-#include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.pdb_writer" );
+
 
 namespace core {
 namespace io {
@@ -194,8 +190,6 @@ dump_pdb(
 }
 
 
-
-
 /// @details Convert given Pose object into PDB format and send it to the given stream.
 /// only the residues corresponding to indices in 'residue_indices' will be output
 void
@@ -213,7 +207,6 @@ dump_pdb(
 	data = create_pdb_contents_from_sfr(*pu.sfr());
 	out.write( data.c_str(), data.size() );
 }
-
 
 
 /// @brief create a full pdb as a string given a StructFileRep object
@@ -262,11 +255,13 @@ create_pdb_line_from_record( Record const & record )
 std::vector<Record>
 create_records_from_sfr( StructFileRep const & sfr )
 {
-	std::vector<Record> VR;
+	std::vector< Record > VR;
 
-	sfr.header()->fill_records(VR);
+	sfr.header()->fill_records( VR );
+	Record R;
 
-	Record R = RecordCollection::record_from_record_type( "REMARK" );
+	// Title Section //////////////////////////////////////////////////////////
+	R = RecordCollection::record_from_record_type( REMARK );
 	for ( Size i=0; i<sfr.remarks()->size(); ++i ) {
 		RemarkInfo const & ri( sfr.remarks()->at(i) );
 		R["type"].value = "REMARK";
@@ -275,7 +270,8 @@ create_records_from_sfr( StructFileRep const & sfr )
 		VR.push_back(R);
 	}
 
-	R = RecordCollection::record_from_record_type( "HETNAM" );
+	// Heterogen Section //////////////////////////////////////////////////////
+	R = RecordCollection::record_from_record_type( HETNAM );
 	Size n_het_names = sfr.heterogen_names().size();
 	for ( uint i = 1; i <= n_het_names; ++i ) {
 		R["type"].value = "HETNAM";
@@ -285,31 +281,8 @@ create_records_from_sfr( StructFileRep const & sfr )
 		VR.push_back(R);
 	}
 
-	R = RecordCollection::record_from_record_type( "LINK  " );
-	std::map<std::string, utility::vector1<LinkInformation> >::const_iterator last_branch_point = sfr.link_map().end();
-	for ( std::map<std::string, utility::vector1<LinkInformation> >::const_iterator branch_point = sfr.link_map().begin();
-			branch_point != last_branch_point; ++branch_point ) {
-		utility::vector1<LinkInformation> links = branch_point->second;
-		Size n_links = links.size();
-		for ( uint i = 1; i <= n_links; ++i ) {
-			LinkInformation link = links[i];
-			R["type"].value = "LINK  ";
-			R["name1"].value = link.name1;
-			R["resName1"].value = link.resName1;
-			R["chainID1"].value = std::string( 1, link.chainID1 );
-			R["resSeq1"].value = pad_left( link.resSeq1, 4 ); //("%4d", link.resSeq1);
-			R["iCode1"].value = std::string( 1, link.iCode1 );
-			R["name2"].value = link.name2;
-			R["resName2"].value = link.resName2;
-			R["chainID2"].value = std::string( 1, link.chainID2 );
-			R["resSeq2"].value = pad_left( link.resSeq2, 4 ); //("%4d", link.resSeq2);
-			R["iCode2"].value = std::string( 1, link.iCode2 );
-			R["length"].value = fmt_real( link.length, 2 , 2 ); //("%5.2f", link.length);
-			VR.push_back(R);
-		}
-	}
-
-	R = RecordCollection::record_from_record_type( "SSBOND  " );
+	// Connectivity Annotation Section ////////////////////////////////////////
+	R = RecordCollection::record_from_record_type( SSBOND );
 	std::map<std::string, utility::vector1<SSBondInformation> >::const_iterator last_first_disulf = sfr.ssbond_map().end();
 	for ( std::map<std::string, utility::vector1<SSBondInformation> >::const_iterator branch_point = sfr.ssbond_map().begin();
 			branch_point != last_first_disulf; ++branch_point ) {
@@ -333,7 +306,32 @@ create_records_from_sfr( StructFileRep const & sfr )
 		}
 	}
 
-	R = RecordCollection::record_from_record_type( "CRYST1" );
+	R = RecordCollection::record_from_record_type( LINK );
+	std::map<std::string, utility::vector1<LinkInformation> >::const_iterator last_branch_point = sfr.link_map().end();
+	for ( std::map<std::string, utility::vector1<LinkInformation> >::const_iterator branch_point = sfr.link_map().begin();
+			branch_point != last_branch_point; ++branch_point ) {
+		utility::vector1<LinkInformation> links = branch_point->second;
+		Size n_links = links.size();
+		for ( uint i = 1; i <= n_links; ++i ) {
+			LinkInformation link = links[i];
+			R["type"].value = "LINK  ";
+			R["name1"].value = link.name1;
+			R["resName1"].value = link.resName1;
+			R["chainID1"].value = std::string( 1, link.chainID1 );
+			R["resSeq1"].value = pad_left( link.resSeq1, 4 ); //("%4d", link.resSeq1);
+			R["iCode1"].value = std::string( 1, link.iCode1 );
+			R["name2"].value = link.name2;
+			R["resName2"].value = link.resName2;
+			R["chainID2"].value = std::string( 1, link.chainID2 );
+			R["resSeq2"].value = pad_left( link.resSeq2, 4 ); //("%4d", link.resSeq2);
+			R["iCode2"].value = std::string( 1, link.iCode2 );
+			R["length"].value = fmt_real( link.length, 2 , 2 ); //("%5.2f", link.length);
+			VR.push_back(R);
+		}
+	}
+
+	// Crystallographic & Coordinate Transformation Section ///////////////////
+	R = RecordCollection::record_from_record_type( CRYST1 );
 	CrystInfo ci = sfr.crystinfo();
 	if ( ci.A() > 0 && ci.B() > 0 && ci.C() > 0 ) {
 		R["type"].value = "CRYST1";
@@ -347,8 +345,8 @@ create_records_from_sfr( StructFileRep const & sfr )
 		VR.push_back( R );
 	}
 
-
-	R = RecordCollection::record_from_record_type( "ATOM  " );
+	// Coordinate Section /////////////////////////////////////////////////////
+	R = RecordCollection::record_from_record_type( ATOM );
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {
 		for ( Size j=0; j<sfr.chains()[i].size(); ++j ) {
 			AtomInformation const & ai( sfr.chains()[i][j] );
@@ -374,27 +372,20 @@ create_records_from_sfr( StructFileRep const & sfr )
 
 	// Adding 'TER' line at the end of PDB.
 	// TER lines are not supposed to go at the end of the PDB; they go at the end of a chain. ~Labonte
-	Record T = RecordCollection::record_from_record_type( "TER   " );
+	Record T = RecordCollection::record_from_record_type( TER );
 	T["type"].value = "TER   ";
 	VR.push_back(T);
 
-	///////////////////////////////// Additional Information frm SFR /////////////////////////////////////////////
-	//
-	//
-
-	// Connect Records
+	// Connectivity Section ///////////////////////////////////////////////////
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {
 		for ( Size j=0; j<sfr.chains()[i].size(); ++j ) {
-
-
-
 			AtomInformation const & ai( sfr.chains()[i][j] );
-			if ( ai.connected_indices.size() == 0 ) continue;
+			if ( ai.connected_indices.size() == 0 ) { continue; }
 
 			core::Size current_L = 0;
 			core::Size max_L = 4; //Number of conect records per line
 
-			R = RecordCollection::record_from_record_type( "CONECT" );
+			R = RecordCollection::record_from_record_type( CONECT );
 			R["type"].value = "CONECT";
 			R["serial0"].value = pad_left( ai.serial, 5);
 
@@ -404,19 +395,19 @@ create_records_from_sfr( StructFileRep const & sfr )
 				R["serial"+utility::to_string( current_L )].value = pad_left( ai.connected_indices[ c_index ], 5);
 
 				if ( current_L == max_L ) {
-
 					current_L = 0;
 					VR.push_back(R);
 					continue;
 				}
 			}
-
 			VR.push_back(R);
 		}
 	}
 
-	R = RecordCollection::record_from_record_type( "UNKNOW" );
-	R["type"].value = "UNKNOW"; // note: "start" and "end" of this field ("type") are left at their default values of 0; this is not a proper field.
+	// Rosetta-specific Information from the SFR //////////////////////////////
+	R = RecordCollection::record_from_record_type( UNKNOW );
+	// note: "start" and "end" of this field ("type") are left at their default values of 0; this is not a proper field.
+	R["type"].value = "UNKNOW";
 
 	// FoldTree
 	if ( ! sfr.foldtree_string().empty() ) {
@@ -451,21 +442,7 @@ create_records_from_sfr( StructFileRep const & sfr )
 	return VR;
 }
 
-/*
-void
-old_dump_pdb(
-pose::Pose const & pose,
-std::ostream & out,
-id::AtomID_Mask const & mask,
-Size & atomno,
-std::string const & tag,
-char chain,
-utility::vector1<Size> resnums
-) {
 
-}
-
-*/
 void
 old_dump_pdb(
 	pose::Pose const & pose,
@@ -478,8 +455,6 @@ old_dump_pdb(
 	std::string data = create_pdb_contents_from_sfr(*converter.sfr());
 	out.write( data.c_str(), data.size() );
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -557,7 +532,6 @@ dump_pdb_residue(
 	out.write( data.c_str(), data.size() );
 }
 
-
-} //pdb
-} //io
-} //core
+}  // namespace pdb
+}  // namespace io
+}  // namespace core

@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <core/io/HeaderInformation.fwd.hh>
-#include <core/io/pdb/Field.fwd.hh>
+#include <core/io/pdb/Record.hh>
 
 // Platform headers
 #include <core/types.hh>
@@ -49,7 +49,7 @@ public:
 	~HeaderInformation();
 
 	void
-	store_record(pdb::Record & R);
+	store_record( pdb::Record & R );
 
 	void
 	finalize_parse();
@@ -58,8 +58,7 @@ public:
 	parse_in_progress() const;
 
 	void
-	fill_records(
-		std::vector<pdb::Record> & VR) const;
+	fill_records( std::vector< pdb::Record > & VR ) const;
 
 public: // Fields for HEADER Records
 	void

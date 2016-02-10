@@ -13,12 +13,19 @@
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com), XRW 2016 Team
 
+
 #ifndef INCLUDED_core_io_pdb_pdb_writer_hh
 #define INCLUDED_core_io_pdb_pdb_writer_hh
 
-#include <core/io/StructFileRep.hh>
+// Unit header
 #include <core/io/pdb/Field.fwd.hh>
+
+// Package header
+#include <core/io/StructFileRep.hh>
+
+// Utility header
 #include <utility/io/ozstream.fwd.hh>
+
 
 namespace core {
 namespace io {

@@ -209,13 +209,13 @@ pose::PoseOP pose_from_file(chemical::ResidueTypeSet const & residue_set, std::s
 }
 
 FileType
-determine_file_type( std::string const &contents_of_file){
+determine_file_type( std::string const &contents_of_file) {
 
 	//See if this is a pdb file
 	//code to determine the type of file
-	utility::vector1< io::pdb::Record> records( io::pdb::create_records_from_pdb_lines( contents_of_file));
+	utility::vector1< io::pdb::Record> records( io::pdb::create_records_from_pdb_file_contents( contents_of_file ) );
 	for ( core::Size ii=1; ii<= records.size(); ++ii ) {
-		if ( records[ ii][ "type"].value != "UNKNOW" ) {
+		if ( records[ ii ][ "type" ].value != "UNKNOW" ) {
 			return PDB_file;
 		}
 	}

@@ -17,21 +17,19 @@
 // Unit headers
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactoring is complete.
 #include <core/io/pdb/Field.hh>
 #include <core/io/pdb/RecordCollection.hh>
 
-// Package header
+// Package headers
 #include <core/io/StructFileRep.hh>
+#include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactoring is complete.
+#include <core/io/NomenclatureManager.hh>
 
 // Project header
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>  // TEMP
-#include <core/io/NomenclatureManager.hh>
 
 // Utility header
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -52,31 +50,26 @@ namespace core {
 namespace io {
 namespace pdb {
 
+// Convert a .pdb file line into a Record data structure.
 Record
-get_record_from_string( std::string const & input_string )
+create_record_from_pdb_line( std::string const & line )
 {
-	std::string resized_string( input_string ) ;
-	if ( resized_string.size() < 80 ) {  // allow for longer Rosetta-specific lines
-		resized_string.resize( 80, ' ' );  // standard .pdb line width
+	std::string resized_line( line ) ;
+	if ( resized_line.size() < 80 ) {  // allow for longer Rosetta-specific lines
+		resized_line.resize( 80, ' ' );  // standard .pdb line width
 	}
 
 	// All PDB record names are the first 6 characters of a line.
-	std::string const & record_type( resized_string.substr( 0, 6 ) );
+	std::string const & record_type( resized_line.substr( 0, 6 ) );
 
 	Record record( RecordCollection::record_from_record_type( record_type ) );
-	for ( Record::iterator it = record.begin(), end = record.end(); it != end; ++it ) {
-		( *it ).second.set_value_from_string( resized_string );
+	for ( Record::iterator field = record.begin(), end = record.end(); field != end; ++field ) {
+		field->second.set_value_from_pdb_line( resized_line );
 	}
 
 	return record;
 }
 
-utility::vector1< Record >
-create_records_from_pdb_file_contents( std::string const & pdb_contents )
-{
-	utility::vector1< std::string > lines( utility::split_by_newlines( pdb_contents ) );
-	return create_records_from_pdb_lines( lines );
-}
 
 // Create a list of .pdb format records from the lines from a .pdb file.
 utility::vector1< Record >
@@ -85,22 +78,20 @@ create_records_from_pdb_lines( utility::vector1< std::string > const & lines )
 	runtime_assert( ! lines.empty() );  // We're wasting time if there's no data here....
 
 	utility::vector1< Record > records( lines.size() );
-	std::transform( lines.begin(), lines.end(), records.begin(), get_record_from_string );
+	std::transform( lines.begin(), lines.end(), records.begin(), create_record_from_pdb_line );
 	return records;
 }
 
-// Create a list of .pdb format records from the lines from a .pdb file.
+// Create a list of .pdb format records from the entire contents of a .pdb file.
 utility::vector1< Record >
-create_records_from_pdb_lines( std::string const & lines )
+create_records_from_pdb_file_contents( std::string const & pdb_contents )
 {
-	runtime_assert( ! lines.empty() );  //we're wasting time if there's no data here....
-
-	utility::vector1< std::string> line_vector( utility::split_by_newlines( lines));
-	utility::vector1< Record > records( line_vector.size() );
-	std::transform( line_vector.begin(), line_vector.end(), records.begin(), get_record_from_string );
-	return records;
+	utility::vector1< std::string > lines( utility::split_by_newlines( pdb_contents ) );
+	return create_records_from_pdb_lines( lines );
 }
 
+
+/// @remarks  The bulk of SFR generation occurs within this function.
 // Create a representation of structural file data from a list of .pdb format records with options.
 StructFileRep
 create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileReaderOptions const & options )
@@ -110,7 +101,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 
 	map< char, ChainAtoms > chain_atoms_map;  // A map of chain ID to every atom in the chain.
 	Size ter_record_count = 0;
-	utility::vector1< char > chain_list;  // WHY DOES THIS KEEP SWITCHING?!?
+	utility::vector1< char > chain_list;
 	std::map< char, Size > chain_to_idx;
 
 	// Prepare for multi-model .pdbs.
@@ -130,9 +121,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 	bool stop_reading_coordinate_section( false );  // might be set to true when ENDMDL is reached
 	for ( core::uint i = 1; i <= n_records; ++i ) {
 		std::string const record_type( records[ i ][ "type" ].value );
-		//std::cout << "Record type: \"" << record_type << "\"" << std::endl;
-
-		// TODO: Refactor to use enums.
+		TR.Trace << "Record type: " << record_type << endl;
 
 		// Title Section //////////////////////////////////////////////////////
 		// Record contains "header information", i.e., is from the Title Section of the PDB file.

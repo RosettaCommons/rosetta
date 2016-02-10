@@ -16,7 +16,8 @@
 #define INCLUDED_core_io_pdb_record_def_io_HH
 
 // Unit headers
-#include <core/io/pdb/Field.fwd.hh>
+#include <core/io/pdb/RecordType.hh>
+#include <core/io/pdb/RecordCollection.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -27,7 +28,9 @@ namespace io {
 namespace pdb {
 
 /// @brief  Return a mapping of PDB record types to record definitions.
-RecordRef read_record_definitions_from_file( std::string const & filename );
+RecordDef read_record_definitions_from_file(
+		std::string const & filename,
+		std::map< std::string, RecordType > const & record_type_map );
 
 }  // namespace pdb
 }  // namespace io

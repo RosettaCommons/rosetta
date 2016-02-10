@@ -6,9 +6,11 @@
 
 # The 1st 6 characters/columns of each record are the record type.
 
-# Record   Field  Column  Data          Field           Column  Data
-# Type     Name    Range  Type          Name             Range  Type           Etc....
-  HEADER   type    1   6  Record_name   classification  11  50  String_type    depDate       51  59  Date                 idCode   63  66  IDcode
-  OBSLTE   type    1   6  Record_name   continuation     9  10  Continuation   repDate       12  20  Date                 idCode   22  25  IDcode  # Note: The OBSLTE record should also contain additional rIdCode fields.
-  TITLE    type    1   6  Record_name   continuation     9  10  Continuation   title         11  70  String_type
-  SPLIT    type    1   6  Record_name   continuation     9  10  Continuation   idCode        12  15  IDcode  # Note: The SPLIT record should also contain additional idCode fields.
+# Record   Field  Column   Field           Column
+# Type     Name    Range   Name             Range   Etc....
+  HEADER   type    1   6   classification  11  50   depDate       51  59  idCode     63  66
+  OBSLTE   type    1   6   continuation     9  10   repDate       12  20  idCode     22  25  # Note: The OBSLTE record should also contain additional rIdCode fields.
+  TITLE    type    1   6   continuation     9  10   title         11  70
+  SPLIT    type    1   6   continuation     9  10   idCode        12  15  IDcode  # Note: The SPLIT record should also contain additional idCode fields.
+  CHAR     type    1   6   race            11  19   class         21  29  alignment  30  31
+  

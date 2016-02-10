@@ -286,7 +286,7 @@ HeaderInformation::fill_header_record(
 ) const {
 	if ( !classification_.empty() &&
 			dep_year_ && dep_month_ && dep_day_ && !idCode_.empty() ) {
-		Record R = RecordCollection::record_from_record_type("HEADER");
+		Record R = RecordCollection::record_from_record_type( pdb::HEADER );
 		R["type"].value = "HEADER";
 		R["classification"].value = classification();
 		R["depDate"].value = deposition_date();
@@ -839,7 +839,6 @@ HeaderInformation::set_line_continuation(
 
 } // namespace io
 } // namespace core
-
 
 
 #ifdef    SERIALIZATION
