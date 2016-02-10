@@ -543,7 +543,7 @@ Options = Option_Group( '',
 				oldName="output_silent_gz" ),
 		Option( 'membrane_pdb', 'Boolean', desc="Write out the membrane in the PDB - on/off."),
 		Option( 'membrane_pdb_thickness', 'Real', desc="Thickness of the written membrane in the PDB file. Using this flag, turns on -out:membrane_pdb automatically. If flag is not given, it uses the default (30) or the one from the -mp:thickness flag."),
-
+		
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
 				desc="Write out structures to database.  Specify database via -inout:dbms:database_name and wanted "
@@ -664,6 +664,7 @@ Options = Option_Group( '',
 					desc="Suppress output of atoms with zero (or negative) occupancy"),
 			Option( 'output_virtual', 'Boolean', default='false', desc="Output virtual atoms in output of PDB"),
 			Option( 'output_virtual_zero_occ', 'Boolean', default='false', desc="Set occupancy to 0.0 for virtual atoms in output of PDB"),
+			Option( 'no_chainend_ter', 'Boolean', desc="If true, TER records are not written at the ends of chains in PDB files -- only at the end of all of the ATOM records (the legacy Rosetta behaviour).  False by default (which results in TER records at the ends of every chain).", default='false' ),
 			Option( 'no_output_cen', 'Boolean', default='false', desc="Omit outputting centroids"),
 			Option( 'output_orbitals', 'Boolean', default='false', desc="Output all orbitals into PDB."),
 			Option( 'no_scores_in_pdb', 'Boolean', default='false', desc="Do not output the scoretable at the end of the output PDB."),

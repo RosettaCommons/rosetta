@@ -472,8 +472,9 @@ count_bulges( components::StructureData const & perm, std::string const & segmen
 	utility::vector1< std::string > const & abego = perm.segment( segment ).abego();
 	core::Size bulges = 0;
 	for ( core::Size resid=perm.segment( segment ).start(); resid<=perm.segment( segment ).stop(); ++resid ) {
-		if ( ( ss[ resid - 1 ] == 'E' ) && ( abego[ resid ] == "A" ) )
+		if ( ( ss[ resid - 1 ] == 'E' ) && ( abego[ resid ] == "A" ) ) {
 			++bulges;
+		}
 	}
 	return bulges;
 }

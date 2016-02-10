@@ -23,15 +23,15 @@ namespace pdb {
 
 // Various constructors, for convenience.
 Field::Field() :
-		value( "" ),
-		start( 0 ),
-		end( 0 )
+	value( "" ),
+	start( 0 ),
+	end( 0 )
 {}
 
 Field::Field( core::uint start_in, core::uint end_in  ) :
-		value( "" ),
-		start( start_in ),
-		end( end_in )
+	value( "" ),
+	start( start_in ),
+	end( end_in )
 {}
 
 

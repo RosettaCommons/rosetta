@@ -121,7 +121,7 @@ using namespace utility;
 
 using utility::vector1;
 
-using core::io::pdb::old_dump_pdb;
+using core::io::pdb::dump_pdb;
 
 
 float cost(	vector1< vector1< float >  > &quality_vs_ir,

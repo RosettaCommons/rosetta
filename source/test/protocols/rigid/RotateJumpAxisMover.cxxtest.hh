@@ -41,7 +41,7 @@ public:
 
 	// --------------- Fixtures --------------- //
 	RotateJumpAxisMoverTests(){
-		core_init();
+		core_init_with_additional_options("-out:file:no_chainend_ter");
 		pose = create_pdb_string_2res_1ten_2res_trp_cage_pose();
 		rb_jump = 1;
 

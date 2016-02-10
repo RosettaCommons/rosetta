@@ -90,7 +90,7 @@ main( int argc, char * argv [] )
   core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
   Size pose_res = pdbinfo->pdb2pose(chain[0], pdb_res);
 	core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
-  core::io::pdb::old_dump_pdb(pose, output_fname);
+  core::io::pdb::dump_pdb(pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

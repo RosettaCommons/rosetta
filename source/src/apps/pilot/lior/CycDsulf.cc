@@ -478,6 +478,6 @@ int main (int argc, char** argv) {
 ////		loop_relax_mover.apply(mypose);
 ////
 ////	}
-//	io::pdb::old_dump_pdb(mypose,"test.pdb");
+//	io::pdb::dump_pdb(mypose,"test.pdb");
 //
 //}

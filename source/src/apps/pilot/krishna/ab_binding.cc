@@ -456,7 +456,6 @@ public:
 			setup_task_and_repack (separated_pose);
 			Real const separated_repack_energy = (*docking_scorefxn)( separated_pose );
 			binding_energy += (complex_energy - separated_repack_energy);
-			//core::io::pdb::old_dump_pdb( separated_pose, "separated_pose.pdb" );
 		}
 
 		energies_and_sasa.push_back(interaction_energy);

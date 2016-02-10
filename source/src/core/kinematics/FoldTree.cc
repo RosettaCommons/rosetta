@@ -1353,13 +1353,13 @@ FoldTree::tree_from_jumps_and_cuts(
 	if ( num_jump_in == 0 ) {
 		// make a simple tree. this could also have been done by simple_tree()
 		edge_list_.clear();
-		if ( root_in != 1){
+		if ( root_in != 1 ) {
 			//this is for re-rooting the tree
 			add_edge( 1, root_in, Edge::PEPTIDE );
 			add_edge( root_in, nres_in, Edge::PEPTIDE );
 			reorder(root_in);
 		} else {
-		  add_edge( 1, nres_in, Edge::PEPTIDE );
+			add_edge( 1, nres_in, Edge::PEPTIDE );
 		}
 		return true; // success
 	}

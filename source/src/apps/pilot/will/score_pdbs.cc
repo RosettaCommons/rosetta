@@ -73,7 +73,7 @@ using namespace core;
 
 using utility::vector1;
 
-using io::pdb::old_dump_pdb;
+
 
 typedef std::map< std::string, std::map< std::string, numeric::xyzVector< Real > > > Coords;
 

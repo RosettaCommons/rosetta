@@ -118,7 +118,7 @@ using utility::vector1;
 using utility::tools::make_vector1;
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
-using io::pdb::old_dump_pdb;
+
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 

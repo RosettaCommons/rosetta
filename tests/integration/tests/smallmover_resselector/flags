@@ -1,5 +1,6 @@
 -parser:protocol inputs/test.xml
 -in:file:fasta inputs/dummy.fasta
+-out:file:no_chainend_ter true
 -nstruct 10
 -mute all
 -unmute protocols.helical_bundle

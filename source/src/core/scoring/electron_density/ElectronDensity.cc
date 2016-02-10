@@ -1579,7 +1579,7 @@ ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, 
 					fade = fade*fade;
 				}
 
-				if (H!=0 || K!=0 || L!=0) {
+				if ( H!=0 || K!=0 || L!=0 ) {
 					Fdensity(x,y,z) *= fade;
 				}
 			}

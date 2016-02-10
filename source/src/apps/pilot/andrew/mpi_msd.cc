@@ -310,7 +310,7 @@ int main( int argc, char ** argv )
 				output_name += "_" + daf->state_name( iter->first ) + ".pdb";
 				TR << "Writing structure " << output_name << " with score: " << (*sfxn)( *(iter->second) ) << std::endl;
 				utility::io::ozstream outfile( output_name );
-				core::io::pdb::old_dump_pdb( *(iter->second), outfile );
+				core::io::pdb::dump_pdb( *(iter->second), outfile );
 				core::io::pdb::extract_scores( *(iter->second), outfile );
 			}
 		}

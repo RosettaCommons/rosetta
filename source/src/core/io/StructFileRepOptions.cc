@@ -38,6 +38,14 @@ StructFileRepOptions::StructFileRepOptions() { init_from_options(); }
 
 StructFileRepOptions::~StructFileRepOptions() {}
 
+/// @brief Copy this object and return an owning pointer to the copy.
+///
+StructFileRepOptionsOP
+StructFileRepOptions::clone() const {
+	return StructFileRepOptionsOP( new StructFileRepOptions(*this) );
+}
+
+
 void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	//set_check_if_residues_are_termini( tag->getOption< std::string >( "termini", "ALL" ));
@@ -55,6 +63,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_preserve_header( tag->getOption< bool >( "preserve_header", 0 ));
 	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", 0 ));
 	set_missing_dens_as_jump( tag->getOption< bool >( "missing_dens_as_jump", 0 ));
+	set_no_chainend_ter( tag->getOption< bool >( "no_chainend_ter", 0 ));
 	set_no_output_cen( tag->getOption< bool >( "no_output_cen", 0 ));
 	set_normalize_to_thk( tag->getOption< bool >( "normalize_to_thk", 0 ));
 	set_output_torsions( tag->getOption< bool >( "output_torsions", 0 ));
@@ -101,6 +110,7 @@ bool StructFileRepOptions::keep_input_protonation_state() const { return keep_in
 bool StructFileRepOptions::preserve_header() const { return preserve_header_; }
 bool StructFileRepOptions::preserve_crystinfo() const { return preserve_crystinfo_; }
 bool StructFileRepOptions::missing_dens_as_jump() const { return missing_dens_as_jump_; }
+bool StructFileRepOptions::no_chainend_ter() const { return no_chainend_ter_; }
 bool StructFileRepOptions::no_output_cen() const { return no_output_cen_; }
 bool StructFileRepOptions::normalize_to_thk() const { return normalize_to_thk_; }
 bool StructFileRepOptions::output_torsions() const { return output_torsions_; }
@@ -172,6 +182,9 @@ void StructFileRepOptions::set_preserve_crystinfo( bool const preserve_crystinfo
 
 void StructFileRepOptions::set_missing_dens_as_jump( bool const missing_dens_as_jump )
 { missing_dens_as_jump_ = missing_dens_as_jump; }
+
+void StructFileRepOptions::set_no_chainend_ter( bool const no_chainend_ter )
+{ no_chainend_ter_ = no_chainend_ter; }
 
 void StructFileRepOptions::set_no_output_cen( bool const no_output_cen )
 { no_output_cen_ = no_output_cen; }
@@ -255,6 +268,7 @@ void StructFileRepOptions::init_from_options()
 	set_preserve_header( option[ run::preserve_header ].value());
 	set_preserve_crystinfo( option[ in::preserve_crystinfo ]() );
 	set_missing_dens_as_jump( option[ in::missing_density_to_jump ]() );
+	set_no_chainend_ter( option[ OptionKeys::out::file::no_chainend_ter ]() );
 	set_no_output_cen( option[ OptionKeys::out::file::no_output_cen ]() );
 	set_normalize_to_thk( option[ OptionKeys::mp::output::normalize_to_thk ]() );
 	set_output_torsions( option[ OptionKeys::out::file::output_torsions ]() );

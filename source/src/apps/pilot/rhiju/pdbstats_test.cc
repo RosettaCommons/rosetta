@@ -78,7 +78,7 @@ using namespace core;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;
-using io::pdb::old_dump_pdb;
+
 
 OPT_KEY( Boolean, ch_o_bonds )
 OPT_KEY( Boolean, fa_cenpack )

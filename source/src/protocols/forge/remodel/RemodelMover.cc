@@ -1286,7 +1286,7 @@ void RemodelMover::apply( Pose & pose ) {
 			//with fast disulfide, structures are being passed along in rosetta scripts, so no need to output a second PDB.
 			if ( !rosetta_scripts_fast_disulfide_ ) {
 				if ( pass_RGF_filter ) {
-				  (*(*it)).pdb_info()->obsolete(true);
+					(*(*it)).pdb_info()->obsolete(true);
 					(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
 				}
 			}

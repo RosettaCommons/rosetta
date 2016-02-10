@@ -137,7 +137,7 @@ main( int argc, char* argv [] ) {
 		output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
 		output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
 		output << std::endl;
-		core::io::pdb::old_dump_pdb( full_length_pose, output );
+		core::io::pdb::dump_pdb( full_length_pose, output );
 		output.close();
 		//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
 	} // has_another_pose()

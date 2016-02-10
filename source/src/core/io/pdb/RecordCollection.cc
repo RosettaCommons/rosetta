@@ -147,7 +147,7 @@ RecordCollection::RecordCollection()
 	string_to_record_type_map_[ "UNKNOW" ] = UNKNOW;
 
 	record_definitions_ = read_record_definitions_from_file(
-			basic::database::full_name( "input_output/pdb_record_defs" ), string_to_record_type_map_ );
+		basic::database::full_name( "input_output/pdb_record_defs" ), string_to_record_type_map_ );
 }
 
 // Singleton-creation function for use with utility::thread::threadsafe_singleton

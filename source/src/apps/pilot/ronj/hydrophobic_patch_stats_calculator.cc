@@ -239,7 +239,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 		countSEHydrophobic.push_back( std::pair<std::string,int>( pose.pdb_info()->name(), countSEHydrophobicPerStructure ) );
 
 		// output pdb file
-		//core::io::pdb::old_dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
+		//core::io::pdb::dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
 
 	} // end for loop over multiple input pdb files
 
@@ -395,7 +395,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 			countSEHydrophobic.push_back( std::pair<std::string,int>( pose.pdb_info()->name(), countSEHydrophobicPerStructure ) );
 
 			// output pdb file
-			//core::io::pdb::old_dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
+			//core::io::pdb::dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
 
 		} // end thresholdRadius
 

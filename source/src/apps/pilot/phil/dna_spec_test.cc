@@ -166,7 +166,7 @@ using namespace basic::options;
 namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
-using io::pdb::old_dump_pdb; // but deprecated
+ // but deprecated
 ////////////////////////////////////////////////
 
 
@@ -1144,7 +1144,7 @@ intra_dna_stats()
 
 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-		io::pdb::old_dump_pdb( pose, tag );
+		io::pdb::dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
@@ -1274,7 +1274,7 @@ kono_sarai_stats()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::old_dump_pdb( pose, tag );
+// 		io::pdb::dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 
@@ -1364,7 +1364,7 @@ kono_sarai_zscore()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::old_dump_pdb( pose, tag );
+// 		io::pdb::dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
@@ -1955,7 +1955,7 @@ zif268_test()
 	Pose pose;
 	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
-	io::pdb::old_dump_pdb( pose, "test_zif.pdb" );
+	io::pdb::dump_pdb( pose, "test_zif.pdb" );
 
 	// Output protein interface positions
 	Size const nres( pose.total_residue() );
@@ -2081,7 +2081,7 @@ endo_test()
 
 	assert( pose.total_residue() == 133 );
 
-	io::pdb::old_dump_pdb( pose, "test.pdb" );
+	io::pdb::dump_pdb( pose, "test.pdb" );
 
 	scoring::dna::set_base_partner( pose ); // finds base pairs
 
@@ -2876,7 +2876,7 @@ luxr_setup()
 		}
 	}
 
-	io::pdb::old_dump_pdb( start_pose, option[ out::file::o ] );
+	io::pdb::dump_pdb( start_pose, option[ out::file::o ] );
 	exit(0);
 
 }

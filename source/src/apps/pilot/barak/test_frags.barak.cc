@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
     for ( Size i=1; i<= 20; ++i ) {
       pose.set_omega(i,180.0);
     }
-    io::pdb::old_dump_pdb( pose, "test_ideal.pdb" );
+    io::pdb::dump_pdb( pose, "test_ideal.pdb" );
   }
 
 

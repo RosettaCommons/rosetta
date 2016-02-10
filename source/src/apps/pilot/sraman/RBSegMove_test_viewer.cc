@@ -146,7 +146,7 @@ RBSegmentRelax_test()
 	rb_mover.apply( pose );
 
 	std::string outfile = option[ out::file::o ]();
-	core::io::pdb::old_dump_pdb( pose , outfile );
+	core::io::pdb::dump_pdb( pose , outfile );
 
 }
 

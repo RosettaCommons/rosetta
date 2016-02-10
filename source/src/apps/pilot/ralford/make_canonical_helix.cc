@@ -12,7 +12,7 @@
 /// @author Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
-#include <devel/init.hh> 
+#include <devel/init.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -39,28 +39,28 @@ static basic::Tracer TR( "apps.pilot.ralford.make_canonical_helix" );
 
 class MakeCanonicalHelix : public protocols::moves::Mover {
 
-public: 
+public:
 
-	MakeCanonicalHelix() : 
-		protocols::moves::Mover(), 
-		phi_( -57.0 ), 
-		psi_( -47.0 ), 
+	MakeCanonicalHelix() :
+		protocols::moves::Mover(),
+		phi_( -57.0 ),
+		psi_( -47.0 ),
 		omega_( 175.0 )
 	{
-		//register_options(); 
-		//init_options(); 
+		//register_options();
+		//init_options();
 	}
 
-	MakeCanonicalHelix( MakeCanonicalHelix const & src ) : 
-		protocols::moves::Mover( src ), 
-		phi_( src.phi_ ), 
+	MakeCanonicalHelix( MakeCanonicalHelix const & src ) :
+		protocols::moves::Mover( src ),
+		phi_( src.phi_ ),
 		psi_( src.psi_ ),
 		omega_( src.omega_ )
 	{}
 
 	virtual ~MakeCanonicalHelix() {}
 
-	virtual	std::string get_name() const { return "MakeCanonicalHelix"; }
+	virtual std::string get_name() const { return "MakeCanonicalHelix"; }
 
 	virtual
 	void
@@ -75,18 +75,18 @@ public:
 		}
 	}
 
-private: 
+private:
 
-	core::Real phi_; 
-	core::Real psi_; 
-	core::Real omega_; 
+	core::Real phi_;
+	core::Real psi_;
+	core::Real omega_;
 
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
 
 typedef utility::pointer::shared_ptr< MakeCanonicalHelix > MakeCanonicalHelixOP;
-typedef utility::pointer::shared_ptr< MakeCanonicalHelix const	 > MakeCanonicalHelixCOP;
+typedef utility::pointer::shared_ptr< MakeCanonicalHelix const  > MakeCanonicalHelixCOP;
 
 ////////////////////////////////////////////////////////////////////////////////////
 int
