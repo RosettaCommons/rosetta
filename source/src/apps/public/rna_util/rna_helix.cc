@@ -68,7 +68,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-
+using io::pdb::old_dump_pdb;
 
 //Definition of new OptionKeys
 // these will be available in the top-level OptionKey namespace:

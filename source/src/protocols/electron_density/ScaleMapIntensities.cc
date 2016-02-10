@@ -162,7 +162,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		}
 	}
 
-	if ( b_sharpen_ == 0 ) {
+	if (b_sharpen_ == 0) {
 		TR << "SCALING MAP:" << std::endl;
 		TR << "resbin   model   map   rescale" << std::endl;
 		for ( Size i=1; i<=nresbins_; ++i ) {

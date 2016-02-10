@@ -338,7 +338,7 @@ RamaCheck1B::compute_rama_score(
 	if ( pose.aa(seqpos) == core::chemical::aa_unk ) {
 		currAA = pose.residue(seqpos).backbone_aa();
 	} else {
-		currAA = pose.aa(seqpos);
+			currAA = pose.aa(seqpos);
 	}
 
 	return rama_->eval_rama_score_residue( currAA, phi, psi );

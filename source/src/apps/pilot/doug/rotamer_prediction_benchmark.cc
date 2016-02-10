@@ -170,7 +170,7 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 	clock_t starttime = clock(); pack::pack_rotamers( pose_pack, *scorefxn, repacktask); clock_t stoptime = clock();
 	Energy pack_score = (*scorefxn)( pose_pack );
 	std::cout << "pack score: " << pack_score << " orig score: " << orig_score << " " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << "seconds" << std::endl;
-	io::pdb::dump_pdb( pose_pack, pdb_filename + id + "_packed.pdb" );
+	io::pdb::old_dump_pdb( pose_pack, pdb_filename + id + "_packed.pdb" );
 
 	// loop over all residues and calculate the chi angle differences between pose_orig and pose_pack and output the results
 

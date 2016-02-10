@@ -87,7 +87,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::vector1;
-
+using io::pdb::old_dump_pdb;
 
 
 OPT_1GRP_KEY(String, cartrefine, residues)

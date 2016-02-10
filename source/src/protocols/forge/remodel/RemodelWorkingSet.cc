@@ -366,10 +366,10 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	Size insert2EndIndex = 0;
 	TR << "data.dssp_updated_ss: " << data.dssp_updated_ss << std::endl;
 	if ( option[OptionKeys::remodel::domainFusion::insert_segment2_from_pdb].user() ) {
-	TR << "Processing insertion SS info..." << std::endl;
-	insert2StartIndex = data.dssp_updated_ss.find_first_of("J");
-	insert2EndIndex = data.dssp_updated_ss.find_last_of("J");
-	TR << "Found second insertion with insert2StartIndex: " << insert2StartIndex << " and insert2EndIndex: " << insert2EndIndex << std::endl;
+		TR << "Processing insertion SS info..." << std::endl;
+		insert2StartIndex = data.dssp_updated_ss.find_first_of("J");
+		insert2EndIndex = data.dssp_updated_ss.find_last_of("J");
+		TR << "Found second insertion with insert2StartIndex: " << insert2StartIndex << " and insert2EndIndex: " << insert2EndIndex << std::endl;
 	}
 	*/
 
@@ -397,13 +397,13 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			for ( int i = 0; i < (int)data.dssp_updated_ss.size(); i++ ) {
 				// handle ncaa
 				if ( data.blueprint[i].has_ncaa ) {
-					core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue(1).residue_type_set() );
-					std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
-					char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
-					aa += one_let_name;
-					aa += "[" + data.blueprint[i].ncaaList[0] + "]";
+						core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue(1).residue_type_set() );
+						std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
+						char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
+						aa += one_let_name;
+						aa += "[" + data.blueprint[i].ncaaList[0] + "]";
 				} else {
-					aa.append(build_aa_type);
+						aa.append(build_aa_type);
 				}
 			}
 		}
@@ -528,32 +528,32 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		// hack for jack process regions containing insertion
 		/*
 		if ( insert2StartIndex != 0 && insert2EndIndex != 0 ) {
-		if ( headNew <= static_cast<int>(insert2StartIndex) && tailNew >= static_cast<int>(insert2EndIndex) &&
-		( (insert2EndIndex - insert2StartIndex) != 0 ) ) {
-		TR << "segment contains insertion, skip normal SegmentRebuild instructions, use SegmentInsert instructions instead" << std::endl;
+			if ( headNew <= static_cast<int>(insert2StartIndex) && tailNew >= static_cast<int>(insert2EndIndex) &&
+					( (insert2EndIndex - insert2StartIndex) != 0 ) ) {
+				TR << "segment contains insertion, skip normal SegmentRebuild instructions, use SegmentInsert instructions instead" << std::endl;
 
-		String beforeInsert = data.dssp_updated_ss.substr( headNew-1, insert2StartIndex-head + 1 ); // if we subtract 'head' and the first position was an extension, you get a really long string here
-		//std::string beforeInsert = data.dssp_updated_ss.substr( headNew-1, insertStartIndex-headNew + 1 );
-		String afterInsert = data.dssp_updated_ss.substr( insert2EndIndex+1, tailNew-insert2EndIndex - 1 );
-		TR << "beforeInsert: " << beforeInsert << std::endl;
-		TR << "afterInsert: " << afterInsert << std::endl;
-		String blank;
+				String beforeInsert = data.dssp_updated_ss.substr( headNew-1, insert2StartIndex-head + 1 ); // if we subtract 'head' and the first position was an extension, you get a really long string here
+				//std::string beforeInsert = data.dssp_updated_ss.substr( headNew-1, insertStartIndex-headNew + 1 );
+				String afterInsert = data.dssp_updated_ss.substr( insert2EndIndex+1, tailNew-insert2EndIndex - 1 );
+				TR << "beforeInsert: " << beforeInsert << std::endl;
+				TR << "afterInsert: " << afterInsert << std::endl;
+				String blank;
 
-		// for (Size i=1; i<= data.insertionSS.size(); i++){
-		// blank.append("^");
-		// } // can't append extra ^ characters because insert_SS_string gets stored in SegmentInsert and used by the manager
+			//	for (Size i=1; i<= data.insertionSS.size(); i++){
+			//	blank.append("^");
+			//	} // can't append extra ^ characters because insert_SS_string gets stored in SegmentInsert and used by the manager
 
-		blank.append("^");
-		std::string insert_SS_string = beforeInsert + blank + afterInsert;
-		TR << "insert_SS_string: " << insert_SS_string << std::endl;
+				blank.append("^");
+				std::string insert_SS_string = beforeInsert + blank + afterInsert;
+				TR << "insert_SS_string: " << insert_SS_string << std::endl;
 
-		using protocols::forge::build::SegmentInsertConnectionScheme::N; // default N2C insertion
+				using protocols::forge::build::SegmentInsertConnectionScheme::N; // default N2C insertion
 
-		protocols::forge::build::SegmentInsertConnectionScheme::Enum connection_scheme = N; // default N2C insertion
-		segIns = SegmentInsertOP( new SegmentInsert( Interval(head,tail), insert_SS_string , data.insertPose2, false , connection_scheme ) );
-		manager.add( segIns );
-		continue;
-		}
+				protocols::forge::build::SegmentInsertConnectionScheme::Enum connection_scheme = N; // default N2C insertion
+				segIns = SegmentInsertOP( new SegmentInsert( Interval(head,tail), insert_SS_string , data.insertPose2, false , connection_scheme ) );
+				manager.add( segIns );
+				continue;
+			}
 		}*/
 
 		if ( head == 0 && segmentStorageVector[i].residues.front() == 1 ) { // N-term extension
@@ -573,15 +573,15 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
 		} else {
 			TR << "normal rebuild" << std::endl;
-			// if the sequence contains ncaa, handle it properly
+      // if the sequence contains ncaa, handle it properly
 			// one has to construct the string with ncaa expressed between brackets
 			// each NCAA will be defined as, for example, Z[BPY]  <= counting as one residue.
 			// the string will be further processed in SegmentRebuild to get the proper one letter code and length.
-			std::string mod_region_aa;
-			if ( (int)aa.substr( headNew-1, gap ).find('[') != -1 ) {
+      std::string mod_region_aa;
+			if ((int)aa.substr( headNew-1, gap ).find('[') != -1) {
 				int count = 0;
-				for ( int i = 1; i <= gap; i++ ) {
-					if ( aa[headNew+count-1] != '[' ) {
+				for (int i = 1; i <= gap; i++){
+					if ( aa[headNew+count-1] != '['){
 						mod_region_aa += aa[headNew+count-1];
 						count++;
 					} else {
@@ -599,7 +599,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 					}
 				}
 			} else {
-				mod_region_aa = aa.substr( headNew-1, gap );
+					mod_region_aa = aa.substr( headNew-1, gap );
 			}
 			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head, tail), DSSP.substr( headNew-1, gap ), mod_region_aa) ) );
 		}

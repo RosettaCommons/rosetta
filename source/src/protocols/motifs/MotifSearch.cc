@@ -629,8 +629,8 @@ MotifSearch::incorporate_motifs(
 						pose2_name_full << "AfterReplace_" << bh2->first << ".pdb";
 						pose_name_full << "BeforeReplace_" << bh2->first << ".pdb";
 						pose3_name_full << "AfterMinBeforeReplace_" << bh2->first << ".pdb";
-						core::io::pdb::dump_pdb( pose_dump2, pose2_name_full.str() );
-						core::io::pdb::dump_pdb( pose_dump, pose_name_full.str() );*/
+						core::io::pdb::old_dump_pdb( pose_dump2, pose2_name_full.str() );
+						core::io::pdb::old_dump_pdb( pose_dump, pose_name_full.str() );*/
 
 						constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
 						add_motif_sc_constraints( sc_cst_set, pose_dump, (*ir)->seqpos(), *build_rotamer, motifhitop->motifcop(), false );
@@ -652,7 +652,7 @@ MotifSearch::incorporate_motifs(
 						movemap->set_chi( (*ir)->seqpos(), true );
 						protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true ) );
 						minmover->apply( pose_dump );
-						//core::io::pdb::dump_pdb( pose_dump, pose3_name_full.str() );
+						//core::io::pdb::old_dump_pdb( pose_dump, pose3_name_full.str() );
 						core::Real sc_constraint_check( pose_dump.energies().total_energies()[ coordinate_constraint ] );
 						ms_tr << "After sidechain refinement constraints score is " << sc_constraint_check << std::endl;
 						/*if( data_ ) {

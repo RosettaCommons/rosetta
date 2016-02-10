@@ -158,7 +158,7 @@ output_single_motif(
 		std::string motif_file_name_3 = motif_file_name_2 + pdb_name + extension;
 
 		std::cout << "Writing " << motif_file_name_3 << std::endl;
-		io::pdb::dump_pdb( pose, motif_file_name_3 );
+		io::pdb::old_dump_pdb( pose, motif_file_name_3 );
 	}
 }
 
@@ -207,14 +207,14 @@ place_waters_and_minimize( Pose & pose )
 
 	Energy end_score = scorefxn( pose );
 	std::cout << "Score after pack " << end_score << std::endl;
-	//io::pdb::dump_pdb( pose, "post_pack.pdb" );
+	//io::pdb::old_dump_pdb( pose, "post_pack.pdb" );
 
 	// Minimization depends on the weight set used, so therefore I am nervous to use it at all, in case it disturbs native interactions
 	//MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
 
 	//AtomTreeMinimizer minimizer;
 	//minimizer.run( pose, mm, scorefxn, options );
-  //io::pdb::dump_pdb( pose, "post_minimization.pdb" );
+  //io::pdb::old_dump_pdb( pose, "post_minimization.pdb" );
 
 	//Energy min_score = scorefxn( pose );
 	//std::cout << "Score after minimization " << min_score << std::endl;

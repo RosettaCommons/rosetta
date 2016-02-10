@@ -39,10 +39,6 @@ public:
 
 	virtual ~StructFileRepOptions();
 
-	/// @brief Copy this object and return an owning pointer to the copy.
-	///
-	virtual StructFileRepOptionsOP clone() const;
-
 	virtual
 	void parse_my_tag( utility::tag::TagCOP tag );
 
@@ -65,7 +61,6 @@ public:
 	bool preserve_header() const;
 	bool preserve_crystinfo() const;
 	bool missing_dens_as_jump() const;
-	bool no_chainend_ter() const;
 	bool no_output_cen() const;
 	bool normalize_to_thk() const;
 	bool output_torsions() const;
@@ -102,7 +97,6 @@ public:
 	void set_preserve_header( bool const preserve_header );
 	void set_preserve_crystinfo( bool const preserve_crystinfo );
 	void set_missing_dens_as_jump( bool const missing_dens_as_jump );
-	void set_no_chainend_ter( bool const no_chainend_ter );
 	void set_no_output_cen( bool const no_output_cen );
 	void set_normalize_to_thk( bool const normalize_to_thk );
 	void set_output_torsions( bool const output_torsions );
@@ -142,7 +136,6 @@ private:
 	bool preserve_header_;
 	bool preserve_crystinfo_;
 	bool missing_dens_as_jump_;
-	bool no_chainend_ter_;
 	bool no_output_cen_;
 	bool normalize_to_thk_;
 	bool output_torsions_;

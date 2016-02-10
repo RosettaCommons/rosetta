@@ -354,7 +354,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 
 			if(output_pdbs){
-				core::io::pdb::dump_pdb(last_accepted, basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted_high_temp."+curr.str()+".pdb");
+				core::io::pdb::old_dump_pdb(last_accepted, basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted_high_temp."+curr.str()+".pdb");
 			}
 
 			mc->reset_counters();
@@ -377,8 +377,8 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			std::cout << "end show monte-carlo stats" << std::endl;
 
 			if(true){
-				core::io::pdb::dump_pdb(mc->last_accepted_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted."+curr.str()+".pdb");
-				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
+				core::io::pdb::old_dump_pdb(mc->last_accepted_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted."+curr.str()+".pdb");
+				core::io::pdb::old_dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
 			}
 			pose::Pose lowest_score_pose = mc->lowest_score_pose();
 			std::cout << "CA rmsd from start being stored: " << core::scoring::CA_rmsd(lowest_score_pose,init_pose) << std::endl;

@@ -699,7 +699,7 @@ void run(  ) {
 				for(core::Size i = 2; i <= p.n_residue()/5; ++i) symm.append_residue_by_bond(p.residue(i));
 
 				core::pose::symmetry::make_symmetric_pose(symm);
-				core::io::pdb::dump_pdb(symm,fname);
+				core::io::pdb::old_dump_pdb(symm,fname);
 
 			}
 		}

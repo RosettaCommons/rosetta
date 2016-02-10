@@ -241,11 +241,11 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		} else {  //auto build always reduce task
 			//if ( option[OptionKeys::remodel::use_LD_operation] ) {}
 			//else {
-			if ( !option[OptionKeys::remodel::design::skip_partial].user() ) {
-				reduce_task(pose, working_model_.task, true, true, false);
-			} else {
-				reduce_task(pose, working_model_.task, true, true, true);
-			}
+				if ( !option[OptionKeys::remodel::design::skip_partial].user() ) {
+					reduce_task(pose, working_model_.task, true, true, false);
+				} else {
+					reduce_task(pose, working_model_.task, true, true, true);
+				}
 			//}
 		}
 	} else if ( !strcmp(state_.c_str(), "finish") ) {
@@ -854,17 +854,17 @@ void RemodelDesignMover::mode1_packertask(Pose & pose){ // auto loop only
 	core::pack::task::TaskFactoryOP TF = protocols::forge::methods::remodel_generic_taskfactory();
 
 	//if need more operations added, put them here.
-	/*
+/*
 	if ( option[OptionKeys::remodel::use_LD_operation] ) {
-	if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::core_cutoff].value(20);
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
 	}
-	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::boundary_cutoff].value(40);
-	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
-	}
-	*/
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
@@ -886,17 +886,17 @@ void RemodelDesignMover::mode1_1_packertask(Pose & pose){ // auto loop only
 	//if need more operations added, put them here.
 
 	// TF->push_back(new protocols::flxbb::LayerDesignOperation( true, true, true ));
-	/*
+/*
 	if ( option[OptionKeys::remodel::use_LD_operation] ) {
-	if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::core_cutoff].value(20);
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
 	}
-	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::boundary_cutoff].value(40);
-	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
-	}
-	*/
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), true);
@@ -918,17 +918,17 @@ void RemodelDesignMover::mode2_packertask(Pose & pose){ // auto loop with design
 	//if need more operations added, put them here.
 
 	//TF->push_back(new protocols::flxbb::LayerDesignOperation( true, true, true ));
-	/*
+/*
 	if ( option[OptionKeys::remodel::use_LD_operation] ) {
-	if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::core_cutoff].value(20);
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
 	}
-	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::boundary_cutoff].value(40);
-	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
-	}
-	*/
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
@@ -951,15 +951,15 @@ void RemodelDesignMover::mode3_packertask(Pose & pose){ // auto loop with repack
 	//TF->push_back(new protocols::flxbb::LayerDesignOperation( true, true, true ));
 	/*
 	if ( option[OptionKeys::remodel::use_LD_operation] ) {
-	if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::core_cutoff].value(20);
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
 	}
-	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
-	option[OptionKeys::remodel::boundary_cutoff].value(40);
-	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
-	}
-	*/
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), false);

@@ -107,7 +107,7 @@ using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
-
+using io::pdb::old_dump_pdb;
 using utility::vector1;
 using utility::tools::make_vector1;
 

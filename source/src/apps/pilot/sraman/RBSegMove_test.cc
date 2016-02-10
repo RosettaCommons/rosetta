@@ -153,7 +153,7 @@ main( int argc, char * argv [] )
 	rb_mover.apply( pose );
 
 	std::string outfile = option[ out::file::o ]();
-	core::io::pdb::dump_pdb( pose , outfile );
+	core::io::pdb::old_dump_pdb( pose , outfile );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

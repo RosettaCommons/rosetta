@@ -321,7 +321,7 @@ my_main( void* )
 	std::string out_tag = option[ OptionKeys::out::output_tag ];
 	std::string outname=option[ OptionKeys::out::path::path ]().name()+out_tag+"_min.pdb";
 	std::ofstream out(outname.c_str(), std::ios::out | std::ios::binary);
-	core::io::pdb::dump_pdb( pose, out );
+	core::io::pdb::old_dump_pdb( pose, out );
 	out << "total_energy_before_minimize: " << starting_total_energy << std::endl;
 	out << "total_energy_after_minimize: " << last_total_energy << std::endl;
 

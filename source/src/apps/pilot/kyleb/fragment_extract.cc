@@ -82,7 +82,7 @@ using namespace protocols;
 using namespace core::options::OptionKeys;
 using utility::vector1;
 using ObjexxFCL::format::F;
-
+using io::pdb::old_dump_pdb;
 
 
 OPT_KEY( IntegerVector, frag_res )

@@ -98,6 +98,7 @@ main( int argc, char * argv [] )
 //	protocols::rigid::RigidBodyTransMoverOP translate_away ( new protocols::rigid::RigidBodyTransMover( pose, 1 ) );
 //	translate_away->step_size( 100 );
 //	translate_away->apply( pose );
+//	core::io::pdb::old_dump_pdb( pose, "separated_pose.pdb" );
 //	exit(-1);
 }
 

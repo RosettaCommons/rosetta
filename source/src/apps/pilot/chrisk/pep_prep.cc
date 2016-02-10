@@ -156,7 +156,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using std::string;
-
+using io::pdb::old_dump_pdb;
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chrisk/pep_prep" );
 

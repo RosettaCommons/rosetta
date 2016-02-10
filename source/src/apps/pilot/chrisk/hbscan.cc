@@ -147,7 +147,7 @@ using utility::vector1;
 using utility::to_string;
 using std::string;
 using import_pose::pose_from_file;
-// deprecated though
+using io::pdb::old_dump_pdb; // deprecated though
 using namespace ObjexxFCL;
 using basic::T;
 using basic::Warning;

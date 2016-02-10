@@ -97,7 +97,7 @@ using ObjexxFCL::format::A;
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 
-
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

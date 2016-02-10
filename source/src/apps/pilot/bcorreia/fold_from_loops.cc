@@ -1195,7 +1195,7 @@ main( int argc, char* argv [] )
 
 		if ( option[out::pdb].user()){
 			utility::io::ozstream outfile( outfilename ); // outputing gzip pdbs
-			core::io::pdb::dump_pdb( fold_pose, outfile );
+			core::io::pdb::old_dump_pdb( fold_pose, outfile );
 			outfile.close();
 		}
 

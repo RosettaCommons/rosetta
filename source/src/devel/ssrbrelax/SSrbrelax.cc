@@ -87,7 +87,7 @@ using basic::Error;
 using basic::Warning;
 
 using namespace core;
-
+using io::pdb::old_dump_pdb;
 
 namespace devel {
 namespace ssrbrelax {
@@ -95,7 +95,7 @@ namespace ssrbrelax {
 	using namespace core;
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
-	
+	using io::pdb::old_dump_pdb;
 
 	typedef numeric::xyzVector < Real > Vector;
 // sets up the default mc object

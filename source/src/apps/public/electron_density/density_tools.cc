@@ -269,7 +269,7 @@ densityTools()
 
 	// Mask map only
 	if ( option[ denstools::maskonly ] ) {
-		if ( !userpose ) {
+		if (!userpose) {
 			utility_exit_with_message(" -maskonly given but no PDB file provided!");
 		}
 
@@ -285,7 +285,7 @@ densityTools()
 
 	// Cut map only
 	if ( option[ denstools::cutonly ] ) {
-		if ( !userpose ) {
+		if (!userpose) {
 			utility_exit_with_message(" -maskonly given but no PDB file provided!");
 		}
 

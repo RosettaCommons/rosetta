@@ -198,7 +198,7 @@ using namespace core::scoring::packstat;
 // Spheres pose_to_spheres( core::pose::Pose & pose ) {
 // 	using namespace std;
 // 	ostringstream oss;
-// 	core::io::pdb::dump_pdb(pose,oss);
+// 	core::io::pdb::old_dump_pdb(pose,oss);
 // 	istringstream iss( oss.str() );
 // 	AtomRadiusMap arm;
 //   SimplePDB pdb;

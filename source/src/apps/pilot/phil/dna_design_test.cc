@@ -84,7 +84,7 @@ using utility::vector1;
 using std::string;
 using std::cout;
 using std::endl;
-
+using io::pdb::old_dump_pdb;
 using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );

@@ -180,9 +180,9 @@ main( int argc, char * argv [] )
 				file << "REMARK model_1: native, model_2: decoy, rms= " << rms_calc << std::endl;
 				core::id::AtomID_Mask mask( true );
 				core::pose::initialize_atomid_map( mask, native_pose );
-				core::io::pdb::dump_pdb( native_pose, file, mask, "1" );
+				core::io::pdb::old_dump_pdb( native_pose, file, mask, "1" );
 				core::pose::initialize_atomid_map( mask, pose );
-				core::io::pdb::dump_pdb( pose, file, mask, "2" );
+				core::io::pdb::old_dump_pdb( pose, file, mask, "2" );
 				file.close();
 				// print data in out2
 				out2 << rms_calc << ' ' << score << ' ' << tag << ' ' << out.str() << std::endl;

@@ -106,7 +106,7 @@ using ObjexxFCL::format::F;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 
-
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

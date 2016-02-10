@@ -29,8 +29,8 @@ namespace pdb {
 
 /// @brief  Return a mapping of PDB record types to record definitions.
 RecordDef read_record_definitions_from_file(
-	std::string const & filename,
-	std::map< std::string, RecordType > const & record_type_map );
+		std::string const & filename,
+		std::map< std::string, RecordType > const & record_type_map );
 
 }  // namespace pdb
 }  // namespace io

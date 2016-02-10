@@ -126,7 +126,7 @@ void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn )
 	std::cout << "Score before: " << orig_score << "\tScore after: " << relax_score << std::endl;
 
 	// output pdb file
-	io::pdb::dump_pdb( pose, pdb_filename + "_relax.pdb" );
+	io::pdb::old_dump_pdb( pose, pdb_filename + "_relax.pdb" );
 
 	// ADD HBOND ANALYSIS CODE HERE
 	// ADD HBOND ANALYSIS CODE HERE

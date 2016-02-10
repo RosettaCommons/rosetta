@@ -80,7 +80,7 @@ using namespace core::pose::rna;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-
+using io::pdb::old_dump_pdb;
 using protocols::farna::libraries::MAX_BULGE_LENGTH;
 
 typedef  numeric::xyzMatrix< Real > Matrix;

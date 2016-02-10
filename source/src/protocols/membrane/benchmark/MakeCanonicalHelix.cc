@@ -35,19 +35,19 @@ namespace membrane {
 namespace benchmark {
 
 MakeCanonicalHelix::MakeCanonicalHelix():
-	protocols::moves::Mover( "MakeCanonicalHelix" ),
-	phi_( -57.0 ),
-	psi_( -47.0 ),
-	omega_( 175.0 ),
+	protocols::moves::Mover( "MakeCanonicalHelix" ), 
+	phi_( -57.0 ), 
+	psi_( -47.0 ), 
+	omega_( 175.0 ), 
 	helix_start_( 1 /* Start at the first residue */ ),
 	helix_end_( 0 /* Set by mover or user */ )
 {}
 
-MakeCanonicalHelix::MakeCanonicalHelix( core::Size helix_start, core::Size helix_end ):
-	protocols::moves::Mover( "MakeCanonicalHelix" ),
-	phi_( -57.0 ),
-	psi_( -47.0 ),
-	omega_( 175.0 ),
+MakeCanonicalHelix::MakeCanonicalHelix( core::Size helix_start, core::Size helix_end ): 
+	protocols::moves::Mover( "MakeCanonicalHelix" ), 
+	phi_( -57.0 ), 
+	psi_( -47.0 ), 
+	omega_( 175.0 ), 
 	helix_start_( helix_start ),
 	helix_end_( helix_end )
 {}
@@ -55,11 +55,11 @@ MakeCanonicalHelix::MakeCanonicalHelix( core::Size helix_start, core::Size helix
 MakeCanonicalHelix::~MakeCanonicalHelix(){}
 
 MakeCanonicalHelix::MakeCanonicalHelix( MakeCanonicalHelix const & src ):
-	protocols::moves::Mover( src ),
-	phi_( src.phi_ ),
+	protocols::moves::Mover( src ), 
+	phi_( src.phi_ ), 
 	psi_( src.psi_ ),
-	omega_( src.omega_ ),
-	helix_start_( src.helix_start_ ),
+	omega_( src.omega_ ), 
+	helix_start_( src.helix_start_ ), 
 	helix_end_( src.helix_end_ )
 {}
 
@@ -108,8 +108,8 @@ void
 MakeCanonicalHelix::apply( core::pose::Pose& pose )
 {
 	// Check start & end positions
-	if ( helix_end_ == 0 ) helix_end_ = pose.total_residue();
-	is_valid( pose );
+	if ( helix_end_ == 0 ) helix_end_ = pose.total_residue(); 
+	is_valid( pose ); 
 
 	// Override the dihedral angles according to the rules setup by this mover
 	for ( core::Size i = helix_start_; i <= helix_end_; ++i ) {
@@ -125,14 +125,14 @@ MakeCanonicalHelix::is_valid( core::pose::Pose& pose ) {
 
 	// Check the starting position
 	if ( helix_start_ < 1 || helix_start_ > pose.total_residue() ) {
-		TR << "Helix start set at " << helix_start_ << " is out of bounds for this pose" << std::endl;
-		utility_exit();
+		TR << "Helix start set at " << helix_start_ << " is out of bounds for this pose" << std::endl; 
+		utility_exit(); 
 	}
 
 	// Check the end position
 	if ( helix_end_ > pose.total_residue() || helix_end_ < helix_start_ || helix_end_ < 0 ) {
-		TR << "helix end set at " << helix_end_ << " is out of bounds for this pose" << std::endl;
-		utility_exit();
+		TR << "helix end set at " << helix_end_ << " is out of bounds for this pose" << std::endl; 
+		utility_exit(); 
 	}
 }
 

@@ -314,7 +314,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 		// for debug
 		std::cout << "line->";
 		for ( Size i=1; i <= tokens.size(); i++ ) {
-		std::cout << tokens[ i ] << ", ";
+			std::cout << tokens[ i ] << ", ";
 		}
 		std::cout << std::endl;
 		*/

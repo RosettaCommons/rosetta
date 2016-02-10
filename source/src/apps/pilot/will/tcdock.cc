@@ -1412,7 +1412,7 @@ struct TCDock {
 
 		{
 			utility::io::ozstream out(option[out::file::o]()+"/"+fname);
-			core::io::pdb::dump_pdb(symm,out);
+			core::io::pdb::old_dump_pdb(symm,out);
 			out.close();
 		}
 
@@ -1437,7 +1437,7 @@ struct TCDock {
 					protocols::sic_dock::xform_pose(symm, x * ~xlast);
 					xlast = x;
 					out<<"MODEL S"+ObjexxFCL::string_of(++xcount)<<endl;
-					core::io::pdb::dump_pdb(symm,out);
+					core::io::pdb::old_dump_pdb(symm,out);
 					out<<"ENDMDL"<<endl;
 					// cout << xcount << " " << *ix << endl;
 				}

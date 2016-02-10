@@ -150,7 +150,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using std::string;
-
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

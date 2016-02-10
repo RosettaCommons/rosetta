@@ -44,7 +44,7 @@ public:
 	// --------------- Fixtures --------------- //
 
 	void setUp() {
-		core_init_with_additional_options("-out:file:no_chainend_ter");
+		core_init();
 		core::import_pose::pose_from_file( pose, "protocols/rigid/RigidBodyMover.pdb" , core::import_pose::PDB_file);
 		rb_jump = 1;
 

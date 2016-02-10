@@ -94,7 +94,7 @@ using namespace numeric;
 using namespace core;
 using core::pose::Pose;
 using core::import_pose::pose_from_file;
-using core::io::pdb::dump_pdb;
+using core::io::pdb::old_dump_pdb;
 using core::io::pdb::dump_bfactor_pdb;
 using ObjexxFCL::string_of;
 using core::id::AtomID;

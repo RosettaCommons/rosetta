@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
 
   // output overlayed pose
   TR << "Output to [" << output_fname << "]" << endl;
-  core::io::pdb::dump_pdb(trg_pose, output_fname);
+  core::io::pdb::old_dump_pdb(trg_pose, output_fname);
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
