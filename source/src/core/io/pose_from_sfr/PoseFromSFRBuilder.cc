@@ -153,7 +153,7 @@ PoseFromSFRBuilder::missing_atoms() const
 }
 
 bool
-missing_O2prime( utility::vector1< core::io::AtomInformation > const & atoms ){
+missing_O2prime( utility::vector1< core::io::AtomInformation > const & atoms ) {
 
 	for ( Size n = 1; n <= atoms.size(); n++ ) {
 		std::string const & name =  atoms[ n ].name;
@@ -229,7 +229,8 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 	// in the -in:auto_setup_metals code.
 	
 	// Likewise, prune LINK records that refer to saccharides unless the -include sugars flag is on.
-
+	// And LINK records to or from unrecognized residues?
+	using namespace core::chemical;
 	typedef utility::vector1< LinkInformation > LinkInformationVect;
 	typedef std::map< std::string, utility::vector1< LinkInformation > > LinkMap;
 
@@ -241,15 +242,26 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 		for ( LinkInformationVect::const_iterator link_iter = links.begin(), link_iter_end = links.end();
 				link_iter != link_iter_end; ++link_iter ) {
 			LinkInformation const & link = *link_iter;
-			if ( core::io::NomenclatureManager::is_metal( link.resName1 ) ||
-					core::io::NomenclatureManager::is_metal( link.resName2 ) ) {
+			if ( NomenclatureManager::is_metal( link.resName1 ) ||
+					NomenclatureManager::is_metal( link.resName2 ) ) {
 				TR.Debug << "Omitting LINK record that uses a metal. These will be processed ";
 				TR.Debug << "by -in:auto_setup_metals." << std::endl;
 			} else if ( options_.ignore_sugars() && 
-					( core::io::NomenclatureManager::is_sugar( link.resName1 ) ||
-					core::io::NomenclatureManager::is_sugar( link.resName2 ) ) ) {
+					( NomenclatureManager::is_sugar( link.resName1 ) ||
+					NomenclatureManager::is_sugar( link.resName2 ) ) ) {
 				TR.Debug << "Omitting LINK record that uses a saccharide residue. ";
 				TR.Debug << "Did you mean to use the -include_sugars flag?" << std::endl;
+			} else if ( ! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName1 ).get_representative_type()
+					|| ! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName2 ).get_representative_type() ) {
+				// One or more residues in this LINK is not recognized. Move on!
+				TR.Debug << "Omitting LINK record that uses an unrecognized residue." << std::endl;
+			} else if ( ( link.resSeq1 == link.resSeq2 - 1 && link.name1 == "C" && link.name2 == "N" )
+					||  ( link.resSeq1 == link.resSeq2 + 1 && link.name1 == "N" && link.name2 == "C" ) ) {
+				// We have a normal polymeric connection written as a LINK.
+				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCAA." << std::endl;
+			} else if ( link.resName1 == "CYS" && link.resName2 == "CYS" && link.name1 == "SG" && link.name2 == "SG" ) {
+				// We have an SSBOND redundantly specified as a LINK.
+				TR.Debug << "Omitting LINK record that gives a SECOND specification of a disulfide bond." << std::endl;
 			} else {
 				if ( pruned_links.count( resID1 ) ) {
 					pruned_links[ resID1 ].push_back( link );
@@ -1520,42 +1532,17 @@ convert_atom_name( std::string const & res_name, std::string const & atom_name )
 std::string
 convert_res_name( std::string const & name )
 {
-	std::string name2 = name; //Copy of the input string for output.
-
-	//Remove whitespace to make it easier to import metalloproteins:
-	for ( signed int i=0; i<(signed int)name2.length(); ++i ) { //Needs to be signed!  Can't use core::Size!
-		if ( name2[i]==' ' || name2[i]=='\n' ) {
-			name2.erase(i,1);
-			--i;
-		}
-	}
-
-	if ( name2 == "MSE" ) {
+	if ( name == "MSE" ) {
 		TR << "Reading MSE as MET!" << std::endl;
 		return "MET";
 	}
 
-	// if ( name2 == "WAT" ) {
-	//  TR << "Reading WAT as HOH!" << std::endl;
-	//  return "HOH";
-	// }
-
 	//If this is one of these metal ions and there is a 1 or 2 appended to the name (e.g. "CU2"), return just the first two characters as the name.
-	//if(name2!="ZNx" && name2!="ZNX") { //Special zinc variants used in unit tests.  Grr.
-	std::string const firsttwo = name2.substr(0,2);
-	if ( name2.length()>2 && (firsttwo == "CU" || firsttwo == "ZN" || firsttwo == "CA" || firsttwo == "CO" || firsttwo == "MG" || firsttwo == "MN" || firsttwo == "NA") ) {
-		if ( name2[2]=='1' || name2[2]=='2' ) {
-			TR << "Reading " << name2 << " as " << firsttwo << "!" << std::endl;
-			name2 = firsttwo;
-		}
-	}
-	//}
+	// AMW: this is eventually a job for the nomenclature manager but for now I will settle for "not broken"
+	if ( name == "CU1" ) return "CU ";
+	if ( name == "ZN2" ) return "ZN ";
 
-	while ( name2.size()<3 ) {
-		name2 = std::string(" ") + name2; //Irritating -- name is expected to be exactly 3 characters.
-	}
-
-	return name2;
+	return name;
 }
 
 

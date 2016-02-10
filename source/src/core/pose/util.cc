@@ -2584,14 +2584,29 @@ initialize_disulfide_bonds(
 			// Prepare a list of pose-numbered disulfides!
 			for ( std::map< std::string, utility::vector1< io::SSBondInformation > >::const_iterator
 					ssbond = sfr.ssbond_map().begin(), end = sfr.ssbond_map().end(); ssbond != end; ++ssbond ) {
+
 				// For now we really hope the vector1 is just a single element!
 				if ( ssbond->second.size() != 1 ) {
-					TR.Error << "Error: SSBond records list multiple disulfides for this residue!" << std::endl;
-					utility_exit();
+					// We can salvage if it's double-entry: just take the first.
+					// The length isn't actually used anyway, and so it doesn't
+					// affect what conformation is preferred.
+
+					// Are they all the same?
+					std::string id1 = ssbond->second[1].resID2;
+					bool identical = true;
+					for ( Size i = 2; i <= ssbond->second.size(); ++i ) {
+						if ( ssbond->second[ i ].resID2 != id1 ) {
+							identical = false; break;
+						}
+					}
+					if ( !identical ) {
+						TR.Error << "Error: SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
+						utility_exit();
+					}
 				}
 
-				Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 );
-				Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 );
+				Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1, ssbond->second[1].iCode1 );
+				Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2, ssbond->second[1].iCode2 );
 
 				if ( seqpos_one != 0 && seqpos_two != 0 ) {
 					disulf_one.push_back( seqpos_one );
