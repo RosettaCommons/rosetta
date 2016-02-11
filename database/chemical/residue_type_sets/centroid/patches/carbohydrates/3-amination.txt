@@ -43,6 +43,8 @@ ADD_BOND  N3  2HN3
 ADD_BOND  N3  3HN3
 
 REDEFINE_CHI 3  C2   C3   N3  1HN3
+CLEAR_CHI_ROTAMERS  3
+ADD_CHI_ROTAMER 3 180 0  # only need to sample the staggered conformation
 
 # Using H3 to define 0 degree torsion angle, to place N3 at same position as (now virtual) O3 allows us to have a single patch file for either (S) or (R) stereochemistry.
 

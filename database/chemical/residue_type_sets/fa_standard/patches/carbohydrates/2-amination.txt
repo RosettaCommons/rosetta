@@ -38,6 +38,8 @@ ADD_BOND  N2  2HN2
 ADD_BOND  N2  3HN2
 
 REDEFINE_CHI 2  C1   C2   N2  1HN2
+CLEAR_CHI_ROTAMERS  2
+ADD_CHI_ROTAMER 2 180 0  # only need to sample the staggered conformation
 
 # Using H2 to define 0 degree torsion angle, to place N2 at same position as (now virtual) O2 allows us to have a single patch file for either (S) or (R) stereochemistry.
 SET_ICOOR  N2     0.00    69.235  1.334  C2    H2    O2

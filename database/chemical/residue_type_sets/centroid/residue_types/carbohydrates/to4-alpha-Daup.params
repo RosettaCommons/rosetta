@@ -86,20 +86,12 @@ VIRTUAL_SHADOW VC1   C1
 
 CHI 1  VO5  C1   O1   HO1  # cannot use O5 to define torsion, since atom tree doesn't treat it as connected
 CHI 2  C1   C2   O2   HO2  # meaningless chi; this is just a placeholder
-CHI 3  C2   C3   N3  1HN3
-CHI_ROTAMERS 2   0 0
-CHI_ROTAMERS 2  60 0
-CHI_ROTAMERS 2 120 0
+CHI 3  C2   C3   N3  1HN3  # trigonal symmetry; only need to sample the staggered conformer
 CHI_ROTAMERS 2 180 0
-CHI_ROTAMERS 2 240 0
-CHI_ROTAMERS 2 300 0
 CHI 4  C3   C4   O4   HO4  # duplicates BB 4
 CHI 5  C4   C5   C6  3H6
-CHI_ROTAMERS 2   0 0
 CHI_ROTAMERS 2  60 0
-CHI_ROTAMERS 2 120 0
 CHI_ROTAMERS 2 180 0
-CHI_ROTAMERS 2 240 0
 CHI_ROTAMERS 2 300 0
 CHI 6  C5   C6   O6   HO6  # meaningless chi; this is just a placeholder
 

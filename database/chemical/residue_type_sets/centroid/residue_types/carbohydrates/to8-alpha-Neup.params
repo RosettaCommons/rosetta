@@ -114,37 +114,24 @@ CHI 1  C2   C1  1O1  H1O1  # meaningless chi; this is just a placeholder
 CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
 CHI 3  C2   C3   O3   HO3  # meaningless chi; this is just a placeholder
 CHI 4  C3   C4   O4   HO4
-CHI_ROTAMERS 4   0 0
 CHI_ROTAMERS 4  60 0
-CHI_ROTAMERS 4 120 0
 CHI_ROTAMERS 4 180 0
-CHI_ROTAMERS 4 240 0
 CHI_ROTAMERS 4 300 0
-CHI 5  C4   C5   N5  1HN5  # trigonal symmetry -- only need to sample 2 rotamers
-CHI_ROTAMERS 5   0 0
+CHI 5  C4   C5   N5  1HN5  # trigonal symmetry -- only need to sample the staggered conformer
 CHI_ROTAMERS 5 180 0
 CHI 6  C5   C6   C7   C8   # duplicates BB 5
 CHI 7  C6   C7   O7   HO7  # chi(C6-C7-O7-H) -- chi(7) is ambiguous
-CHI_ROTAMERS 7   0 0
 CHI_ROTAMERS 7  60 0
-CHI_ROTAMERS 7 120 0
 CHI_ROTAMERS 7 180 0
-CHI_ROTAMERS 7 240 0
 CHI_ROTAMERS 7 300 0
 CHI 8  C7   C8   O8   HO8  # chi(C7-C8-O8-H) -- chi(8) is ambiguous; duplicates BB 7
 CHI 9  C8   C9   O9   HO9
-CHI_ROTAMERS 9   0 0
 CHI_ROTAMERS 9  60 0
-CHI_ROTAMERS 9 120 0
 CHI_ROTAMERS 9 180 0
-CHI_ROTAMERS 9 240 0
 CHI_ROTAMERS 9 300 0
 CHI 10  VO6   C2   C1  1O1 # chi(O6-C2-C1-O) -- chi(2) is ambiguous
-CHI_ROTAMERS 10   0 0
 CHI_ROTAMERS 10  60 0
-CHI_ROTAMERS 10 120 0
 CHI_ROTAMERS 10 180 0
-CHI_ROTAMERS 10 240 0
 CHI_ROTAMERS 10 300 0
 CHI 11  C6   C7   C8   C9  # chi(C6-C7-C8-C9) -- chi(7) is ambiguous; duplicates BB 6
 CHI 12  C7   C8   C9   O9  # chi(C7-C8-C9-O9) -- chi(8) is ambiguous

@@ -78,14 +78,14 @@ ADD_CHI_ROTAMER N    0 0
 ADD_CHI_ROTAMER N  180 0
 
 ADD_CHI N+1  N3   CN3 CAN3 CBN3
-ADD_CHI_ROTAMER N    0 0
-ADD_CHI_ROTAMER N  120 0
-ADD_CHI_ROTAMER N  240 0
+ADD_CHI_ROTAMER N   60 0
+ADD_CHI_ROTAMER N  180 0
+ADD_CHI_ROTAMER N  300 0
 
 ADD_CHI N+1  CN3 CAN3 CBN3 CGN3
-ADD_CHI_ROTAMER N    0 0
-ADD_CHI_ROTAMER N  120 0
-ADD_CHI_ROTAMER N  240 0
+ADD_CHI_ROTAMER N   60 0
+ADD_CHI_ROTAMER N  180 0
+ADD_CHI_ROTAMER N  300 0
 
 # Using H3 to define 0 degree torsion angle, to place N3 at same position as
 # (now virtual) O3 allows us to have a single patch file for either (S) or (R)

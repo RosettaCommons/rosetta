@@ -41,7 +41,6 @@ REDEFINE_CHI 2  C1   C2   O2   S2
 # the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
 # samples for this new chi, which now has the index of N.
 ADD_CHI N+1  C2   O2   S2  1OS2
-ADD_CHI_ROTAMER N    0 0
 ADD_CHI_ROTAMER N  180 0  # Because of the three-fold symmetry, that's it.
 
 SET_ICOOR   S2   149.253010   54.592943    1.531299   O2    C2    C1

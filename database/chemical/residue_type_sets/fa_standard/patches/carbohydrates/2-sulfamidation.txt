@@ -51,7 +51,6 @@ REDEFINE_CHI 2  C1   C2   N2   S2
 # the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
 # samples for this new chi, which now has the index of N.
 ADD_CHI N+1  C2   O2   S2  1OS2
-ADD_CHI_ROTAMER N    0 0
 ADD_CHI_ROTAMER N  180 0  # Because of the three-fold symmetry, that's it.
 
 # Using H2 to define 0 degree torsion angle, to place N2 at same position as
