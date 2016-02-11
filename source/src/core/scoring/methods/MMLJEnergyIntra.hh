@@ -82,18 +82,7 @@ public:
 
 	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & /*pose*/ ) const { return false; }
-
-	void
-	setup_for_minimizing(
-		pose::Pose & pose,
-		ScoreFunction const & sfxn,
-		kinematics::MinimizerMapBase const & min_map
-	) const;
-
-	virtual
-	bool
-	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & /*pose*/ ) const { return true; }
+	minimize_in_whole_structure_context( pose::Pose const &  ) const { return false; }
 
 	virtual
 	void
@@ -115,17 +104,6 @@ public:
 		EnergyMap & emap
 	) const;
 
-	virtual
-	void
-	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const & /* domain_map*/,
-		ScoreFunction const & /*sfxn*/,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;
 
 	virtual
 	void
@@ -139,12 +117,28 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & ) const;
+	defines_intrares_energy( EnergyMap const & ) const { return true; }
+
 
 	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
+
+
+	virtual
+	bool
+	use_extended_intrares_energy_interface() const { return true; }
+
+	virtual
+	void
+	eval_intrares_energy_ext(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & res_data_cache,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap

@@ -46,13 +46,15 @@ namespace scoring {
 class SmallAtNb
 {
 public:
-	SmallAtNb( Size at1, Size at2, Real weight ) : atomno1_( at1 ), atomno2_( at2 ), weight_( weight ) {}
+	SmallAtNb( Size at1, Size at2, Size path_dist, Real weight ) : atomno1_( at1 ), atomno2_( at2 ), path_dist_( path_dist ), weight_( weight ) {}
 	Size atomno1() const { return atomno1_; }
 	Size atomno2() const { return atomno2_; }
+	Size path_dist() const { return path_dist_; }
 	Real weight() const { return weight_; }
 private:
 	Size atomno1_;
 	Size atomno2_;
+	Size path_dist_;
 	Real weight_;
 
 #ifdef    SERIALIZATION

@@ -99,9 +99,14 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.ScoringManager" );
 
 // Singleton instance and mutex static data members
 namespace utility {
@@ -778,7 +783,7 @@ ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 
 	if ( unf_state_ == 0 ) {
 		if ( type == UNFOLDED_SPLIT_USER_DEFINED || option[ unfolded_state::unfolded_energies_file ].user() ) {
-			std::cout << "Creating unfolded state potential using file: " <<  option[ unfolded_state::unfolded_energies_file ].value() << std::endl;
+			TR << "Creating unfolded state potential using file: " <<  option[ unfolded_state::unfolded_energies_file ].value() << std::endl;
 			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( option[ unfolded_state::unfolded_energies_file ].value() ) );
 		} else if ( type == UNFOLDED_SCORE12 ) {
 			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) ) );
@@ -810,7 +815,7 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 
 		if ( label_type == SPLIT_UNFOLDED_USER_DEFINED || value_type == SPLIT_UNFOLDED_USER_DEFINED || option[ unfolded_state::split_unfolded_energies_file ].user() ) {
 			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( option[ unfolded_state::split_unfolded_energies_file ].value(), option[ unfolded_state::split_unfolded_energies_atom_type ].value() ) );
-			std::cout << "Creating split unfolded state potential using file: " <<  option[ unfolded_state::split_unfolded_energies_file ].value()
+			TR << "Creating split unfolded state potential using file: " <<  option[ unfolded_state::split_unfolded_energies_file ].value()
 				<< " with an atom type of " << option[ unfolded_state::split_unfolded_energies_atom_type ].value() << std::endl;
 			return *sutbp_;
 		}
@@ -857,10 +862,10 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 		}
 
 		if ( atom_label_type != "" ) {
-			std::cout << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
+			TR << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
 			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ), atom_label_type ) );
 		} else {
-			std::cout << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
+			TR << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
 			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ) ) );
 		}
 	}

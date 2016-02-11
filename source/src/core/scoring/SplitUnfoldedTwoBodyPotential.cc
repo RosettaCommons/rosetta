@@ -37,6 +37,7 @@
 #include <string>
 #include <map>
 
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.SplitUnfoldedTwoBodyPotential" );
 
 namespace core {
 namespace scoring {
@@ -110,7 +111,7 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 		//hacky workaround to avoid using the [] operator, which const functions disallow for some reason.
 		std::map<std::string,core::scoring::EnergyMap>::const_iterator curratomiter=atom_two_body_energies_.find(curratomname);
 		if ( curratomiter==atom_two_body_energies_.end() ) {
-			std::cout<<"ENERGY FOR ATOM TYPE "<<curratomname<<" NOT FOUND!"<<std::endl;
+			TR << "ENERGY FOR ATOM TYPE " << curratomname << " IN " << restype.name() << " NOT FOUND!" << std::endl;
 		}
 		EnergyMap curratommap=curratomiter->second;
 		/*for(EnergyMap::iterator iter=curratommap.begin();iter!=curratommap.end();iter++)
@@ -140,7 +141,7 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 //this function heavily adapted from UnfoldedStatePotential.cc
 void SplitUnfoldedTwoBodyPotential::read_database_file(std::string filename)
 {
-	std::cout<<filename<<std::endl;
+	TR <<filename<<std::endl;
 	//check for file existence
 	if ( !utility::file::file_exists(filename) ) {
 		utility_exit_with_message("Cannot find file '"+filename+"'");

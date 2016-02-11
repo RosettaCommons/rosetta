@@ -23,6 +23,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
+#include <basic/Tracer.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.hh>
 
@@ -32,6 +34,8 @@
 namespace core {
 namespace scoring {
 namespace methods {
+
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.TwoBodyEnergy" );
 
 TwoBodyEnergy::TwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
@@ -64,6 +68,7 @@ TwoBodyEnergy::residue_pair_energy_ext(
 ) const
 {
 	// APL Noop for now; replace with utility_exit_with_message( "unimplemented extended residue-pair-energy interface method" )
+	TR << "WARNING: Unimplemented TwoBodyEnergy::residue_pair_energy_ext()" << std::endl;
 }
 
 void
@@ -98,6 +103,7 @@ TwoBodyEnergy::setup_for_scoring_for_residue(
 {
 	// NOOP stub.
 	// This should generate an error
+	TR << "WARNING: Unimplemented TwoBodyEnergy::setup_for_scoring_for_residue()" << std::endl;
 }
 
 
@@ -116,6 +122,7 @@ TwoBodyEnergy::setup_for_derivatives_for_residue(
 ) const
 {
 	// NOOP.
+	TR << "WARNING: Unimplemented TwoBodyEnergy::setup_for_derivatives_for_residue()" << std::endl;
 }
 
 /// @details Default return-false implementation.
@@ -138,6 +145,7 @@ TwoBodyEnergy::setup_for_scoring_for_residue_pair(
 {
 	// NOOP stub.
 	// This should generate an error
+	TR << "WARNING: Unimplemented TwoBodyEnergy::setup_for_scoring_for_residue_pair()" << std::endl;
 }
 
 
@@ -159,6 +167,7 @@ TwoBodyEnergy::setup_for_derivatives_for_residue_pair(
 ) const
 {
 	// NOOP stub.
+	TR << "WARNING: Unimplemented TwoBodyEnergy::setup_for_derivatives_for_residue_pair()" << std::endl;
 }
 
 void
@@ -234,6 +243,7 @@ TwoBodyEnergy::eval_intrares_energy_ext(
 {
 	/// APL default noop implementation for this extended interface;
 	/// to be replaced with a utility_exit_with_message soon.
+	TR << "WARNING: Unimplemented TwoBodyEnergy::eval_intrares_energy_ext()" << std::endl;
 }
 
 void

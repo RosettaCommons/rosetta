@@ -795,7 +795,7 @@ void ResidueNblistData::initialize(
 			if ( cpfxn->count( ii, jj, weight, path_dist ) ) {
 				Real d2 = res.xyz( ii ).distance_squared( res.xyz( jj ) );
 				if ( d2 < cutoffs[ ii_isH + jj_isH ] ) {
-					atom_neighbors_.push_back( SmallAtNb( ii, jj, weight ) );
+					atom_neighbors_.push_back( SmallAtNb( ii, jj, path_dist, weight ) );
 				}
 			}
 		}
@@ -838,7 +838,7 @@ ResiduePairNeighborList::initialize_from_residues(
 				/// << " d2: " << d2 << " d " << std::sqrt( d2 ) <<  " cutoff2:" <<  cutoffs[ ii_isH + jj_isH ]
 				/// << " cutoff " << std::sqrt( cutoffs[ ii_isH + jj_isH ] ) << std::endl;
 				if ( d2 < cutoffs[ ii_isH + jj_isH ] ) {
-					atom_neighbors_.push_back( SmallAtNb( ii, jj, weight ) );
+					atom_neighbors_.push_back( SmallAtNb( ii, jj, path_dist, weight ) );
 				}
 			}
 		}
@@ -882,7 +882,7 @@ ResiduePairNeighborList::initialize_from_residues(
 				/// << " d2: " << d2 << " d " << std::sqrt( d2 ) <<  " cutoff2:" <<  cutoffs[ ii_isH + jj_isH ]
 				/// << " cutoff " << std::sqrt( cutoffs[ ii_isH + jj_isH ] ) << std::endl;
 				if ( d2 < cutoffs[ ii_isH + jj_isH ] ) {
-					atom_neighbors_.push_back( SmallAtNb( ii, jj, weight ) );
+					atom_neighbors_.push_back( SmallAtNb( ii, jj, path_dist, weight ) );
 				}
 			}
 		}
@@ -905,6 +905,7 @@ void
 core::scoring::SmallAtNb::save( Archive & arc ) const {
 	arc( CEREAL_NVP( atomno1_ ) ); // Size
 	arc( CEREAL_NVP( atomno2_ ) ); // Size
+	arc( CEREAL_NVP( path_dist_ ) ); // Size
 	arc( CEREAL_NVP( weight_ ) ); // Real
 }
 
@@ -914,6 +915,7 @@ void
 core::scoring::SmallAtNb::load( Archive & arc ) {
 	arc( atomno1_ ); // Size
 	arc( atomno2_ ); // Size
+	arc( path_dist_ ); // Size
 	arc( weight_ ); // Real
 }
 
@@ -960,4 +962,3 @@ CEREAL_REGISTER_TYPE( core::scoring::ResiduePairNeighborList )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ResidueNeighborList )
 #endif // SERIALIZATION
-
