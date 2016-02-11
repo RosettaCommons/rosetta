@@ -66,7 +66,7 @@ using namespace core;
 using namespace protocols;
 
 using utility::vector1;
-using io::pdb::old_dump_pdb;
+
 
 struct PoseAndData {
 public:

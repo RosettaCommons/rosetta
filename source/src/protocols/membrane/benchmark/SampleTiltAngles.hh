@@ -20,14 +20,14 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.fwd.hh> 
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // C++ headers
-#include <cstdlib> 
+#include <cstdlib>
 
 namespace protocols {
 namespace membrane {
@@ -47,10 +47,10 @@ public:
 	/// and a user specified output prefix for files
 	SampleTiltAngles(
 		std::string prefix,
-		core::scoring::ScoreFunctionOP ref_sfxn1, 
-		core::scoring::ScoreFunctionOP ref_sfxn2, 
+		core::scoring::ScoreFunctionOP ref_sfxn1,
+		core::scoring::ScoreFunctionOP ref_sfxn2,
 		core::scoring::ScoreFunctionOP ref_sfxn3
-		);
+	);
 
 	// copy constructor
 	SampleTiltAngles( SampleTiltAngles const & src );
@@ -86,25 +86,25 @@ public:
 	protocols::moves::MoverOP
 	clone() const;
 
-private: 
+private:
 
 	void
 	write_score_to_outfiles(
-		utility::vector1< core::Real > angles, 
-		utility::vector1< core::Real > ref_sfxn1, 
-		utility::vector1< core::Real > ref_sfxn2, 
-		utility::vector1< core::Real > ref_sfxn3 
+		utility::vector1< core::Real > angles,
+		utility::vector1< core::Real > ref_sfxn1,
+		utility::vector1< core::Real > ref_sfxn2,
+		utility::vector1< core::Real > ref_sfxn3
 	);
 
 private:
 
 	// Prefix for output files
-	std::string prefix_; 
+	std::string prefix_;
 
 	// Energy Functions (might add more later, depending on project needs)
-	core::scoring::ScoreFunctionOP ref_sfxn1_; 
-	core::scoring::ScoreFunctionOP ref_sfxn2_; 
-	core::scoring::ScoreFunctionOP ref_sfxn3_; 
+	core::scoring::ScoreFunctionOP ref_sfxn1_;
+	core::scoring::ScoreFunctionOP ref_sfxn2_;
+	core::scoring::ScoreFunctionOP ref_sfxn3_;
 
 };
 

@@ -36,8 +36,6 @@
 #include <core/pose/xyzStripeHashPose.hh>
 #include <core/io/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
-
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -622,8 +620,8 @@ Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size c
 	utility::vector1<Size> resnums(pose.n_residue(),tag);
 	BOOST_FOREACH ( Xform const & x,xforms ) {
 		xform_pose(pose,x);
-		//core::io::pdb::old_dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/); JAB XRW
-		core::io::pdb::old_dump_pdb(pose, out, mask, string_of(tag));
+		//core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/); JAB XRW
+		core::io::pdb::dump_pdb(pose, out, mask, string_of(tag));
 		xform_pose(pose,~x);
 	}
 	return motif_align_rms;
@@ -693,8 +691,8 @@ void ResPairMotif::dump_pdb( ostream & out, Xform const & x, string tag ) const 
 	if ( tag=="" ) tag = this->tag();
 	out << "MODEL " << tag << endl;
 	//Size atomno=0;
-	//core::io::pdb::old_dump_pdb(pose,out,mask,atomno,string_of(tag),'~');
-	core::io::pdb::old_dump_pdb(pose, out, mask, string_of(tag));
+	//core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~');
+	core::io::pdb::dump_pdb(pose, out, mask, string_of(tag));
 
 	out << "ENDMDL" << endl;
 }

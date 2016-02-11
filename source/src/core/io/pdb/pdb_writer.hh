@@ -17,7 +17,8 @@
 #ifndef INCLUDED_core_io_pdb_pdb_writer_hh
 #define INCLUDED_core_io_pdb_pdb_writer_hh
 
-// Unit header
+#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRepOptions.hh>
 #include <core/io/pdb/Field.fwd.hh>
 
 // Package header
@@ -50,7 +51,20 @@ dump_pdb(
 	bool const add_score_data,
 	bool const add_extra_score_data,
 	utility::io::ozstream & out,
-	std::string const &filename="" );
+	std::string const &filename="",
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
+
+/// @brief This version takes an AtomID mask.
+/// @details Used by Will's motif hash stuff, I think.
+void
+dump_pdb(
+	pose::Pose const & pose,
+	std::ostream & out,
+	id::AtomID_Mask const & mask,
+	std::string const &tag,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
 
 /// @brief Writes a pose to a given string in PDB file format, optionally
 /// appending a given string and optionally extracting scores from the pose.
@@ -71,7 +85,9 @@ dump_pdb(
 	bool const add_score_data,
 	bool const add_extra_score_data,
 	std::string & out,
-	std::string const &filename="" );
+	std::string const &filename="",
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
 
 /// @brief Writes  <pose>  to a given stream in PDB file format
 void
@@ -79,16 +95,28 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	std::string const & tag="",
-	bool write_fold_tree = false );
+	bool write_fold_tree = false,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
 
+/// @brief Writes <pose> to a PDB file, returning false if an error occurs.
+bool
+dump_pdb(
+	core::pose::Pose const &pose,
+	std::string const &file_name,
+	std::string const &tag="",
+	bool write_fold_tree=false
+);
 
 /// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
 bool
 dump_pdb(
 	core::pose::Pose const & pose,
 	std::string const & file_name,
-	std::string const & tag="",
-	bool write_fold_tree = false );
+	std::string const & tag,
+	bool write_fold_tree,
+	core::io::StructFileRepOptionsCOP options
+);
 
 
 void
@@ -96,66 +124,8 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	std::string const & tag="" );
-
-/*
-/// @brief Writes  <pose>  data
-void
-old_dump_pdb(
-pose::Pose const & pose,
-std::ostream & out,
-id::AtomID_Mask const & mask,
-Size & atomno,
-std::string const & tag="1",
-char chain='!',
-utility::vector1<Size> resnums=utility::vector1<Size>()
-);
-/// @brief Writes  <pose>  data
-inline
-void
-old_dump_pdb(
-pose::Pose const & pose,
-std::ostream & out,
-id::AtomID_Mask const & mask,
-std::string const & tag="1",
-char chain='!',
-utility::vector1<Size> resnums=utility::vector1<Size>()
-){
-Size tmp=0;
-old_dump_pdb(pose,out,mask,tmp,tag,chain,resnums);
-}
-*/
-
-
-/// @brief Writes  <pose>  data
-void
-old_dump_pdb(
-	pose::Pose const & pose,
-	std::ostream & out,
-	id::AtomID_Mask const & mask,
-	std::string const & tag="1"
-);
-
-/// @brief Writes  <pose>  data
-void
-old_dump_pdb(
-	pose::Pose const & pose,
-	std::ostream & out,
-	std::string const & tag="1"
-);
-
-/// @brief Writes the  <pose>  data to  <filename>
-///
-/// example(s):
-///     dump_pdb(pose,'my_pose.pdb')
-/// See also:
-///     Pose
-///     Pose.dump_pdb
-void
-old_dump_pdb(
-	pose::Pose const & pose,
-	std::string const & filename,
-	std::string const & tag="1"
+	std::string const & tag="",
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
 
@@ -164,7 +134,8 @@ void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	Size & atom_number,
-	std::ostream & out
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
 /// @brief Writes pdb data for the given residue, beginning from the given atom number
@@ -172,17 +143,25 @@ void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	std::ostream & out,
-	Size start_atom_number = 1);
+	Size start_atom_number = 1,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
 
 
 /// @brief Create a full .pdb as a string given a StructFileRep object.
-std::string create_pdb_contents_from_sfr( StructFileRep const & sfr );
+std::string create_pdb_contents_from_sfr(
+	StructFileRep const & sfr,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
 
 /// @brief Create a formatted line for .pdb output.
 std::string create_pdb_line_from_record( Record const & record );
 
 /// @brief Create vector of records from given StructFileRep object.
-std::vector< Record > create_records_from_sfr( StructFileRep const & sfr );
+std::vector< Record > create_records_from_sfr(
+	StructFileRep const & sfr,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
 
 } //pdb
 } //io

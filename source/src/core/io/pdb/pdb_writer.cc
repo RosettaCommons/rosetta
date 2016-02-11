@@ -50,14 +50,14 @@
 #include <numeric/xyzVector.hh>
 
 // Basic headers (JAB - remove as many of these as possible)
-#include <basic/options/option.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+//#include <basic/options/option.hh>
+//#include <basic/options/keys/chemical.OptionKeys.gen.hh>
+//#include <basic/options/keys/run.OptionKeys.gen.hh>
+//#include <basic/options/keys/in.OptionKeys.gen.hh>
+//#include <basic/options/keys/mp.OptionKeys.gen.hh>
+//#include <basic/options/keys/inout.OptionKeys.gen.hh>
+//#include <basic/options/keys/out.OptionKeys.gen.hh>
+//#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // External headers
@@ -109,14 +109,31 @@ dump_pdb(
 	bool const add_score_data,
 	bool const add_extra_score_data,
 	utility::io::ozstream & out,
-	std::string const &filename
+	std::string const &filename,
+	core::io::StructFileRepOptionsCOP options
 ) {
-	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
 	pose_to_sfr.init_from_pose( pose );
 	if ( !extra_data.empty() ) pose_to_sfr.sfr()->append_to_additional_string_output( extra_data );
 	if ( add_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_scores(pose, filename) );
 	if ( add_extra_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_extra_scores(pose) );
-	out << create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ) );
+	out << create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ), options );
+}
+
+/// @brief This version takes an AtomID mask.
+/// @details Used by Will's motif hash stuff, I think.
+void
+dump_pdb(
+	pose::Pose const & pose,
+	std::ostream & out,
+	id::AtomID_Mask const & mask,
+	std::string const & /* tag */,
+	core::io::StructFileRepOptionsCOP options
+) {
+	PoseToStructFileRepConverter converter( *options );
+	converter.init_from_pose( pose, mask );
+	std::string const data( create_pdb_contents_from_sfr(*converter.sfr(), options) );
+	out.write( data.c_str(), data.size() );
 }
 
 /// @brief Writes a pose to a given string in PDB file format, optionally
@@ -138,14 +155,15 @@ dump_pdb(
 	bool const add_score_data,
 	bool const add_extra_score_data,
 	std::string & out,
-	std::string const &filename
+	std::string const &filename,
+	core::io::StructFileRepOptionsCOP options
 ) {
-	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
 	pose_to_sfr.init_from_pose( pose ); //Yeah, there's a wee bit of code duplication here.
 	if ( !extra_data.empty() ) pose_to_sfr.sfr()->append_to_additional_string_output( extra_data ); //And here.
 	if ( add_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_scores(pose, filename) ); //And here.
 	if ( add_extra_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_extra_scores(pose) ); //And here.  Four lines.  It's an XRW.
-	out = create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ) );
+	out = create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ), options );
 }
 
 /// @details Convert given Pose object in to PDB format and send it to the given stream.
@@ -154,18 +172,31 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	String const & /* tag */,
-	bool write_fold_tree
-)
-{
+	bool write_fold_tree,
+	core::io::StructFileRepOptionsCOP options
+) {
 	String data;
-	StructFileRepOptions options = StructFileRepOptions();
-	options.set_fold_tree_io( write_fold_tree );
+	core::io::StructFileRepOptionsOP options2(options->clone());
 
-	io::pose_to_sfr::PoseToStructFileRepConverter pu = io::pose_to_sfr::PoseToStructFileRepConverter();
-	pu.init_from_pose(pose, options);
+	options2->set_fold_tree_io( write_fold_tree );
 
-	data = create_pdb_contents_from_sfr(*pu.sfr());
+	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options2 );
+	pu.init_from_pose( pose );
+
+	data = create_pdb_contents_from_sfr(*pu.sfr(), options2);
 	out.write( data.c_str(), data.size() );
+}
+
+/// @details Convert given Pose object into PDB format and save it to 'file_name' file.
+/// @return true if operation was completed without error, false otherwise.
+bool
+dump_pdb(
+	core::pose::Pose const &pose,
+	std::string const &file_name,
+	std::string const &tag,
+	bool write_fold_tree
+) {
+	return dump_pdb( pose, file_name, tag, write_fold_tree, core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions ) );
 }
 
 
@@ -176,14 +207,15 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	String const & file_name,
 	String const & tag,
-	bool write_fold_tree )
-{
+	bool write_fold_tree,
+	core::io::StructFileRepOptionsCOP options
+) {
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
 	if ( !file ) {
 		Error() << "StructFileRep::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
-	dump_pdb(pose, file, tag, write_fold_tree);
+	dump_pdb(pose, file, tag, write_fold_tree, options);
 	file.close();
 
 	return true;
@@ -197,27 +229,29 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	String const & /* tag */
-)
-{
-	io::pose_to_sfr::PoseToStructFileRepConverter pu;
+	String const & /* tag */,
+	core::io::StructFileRepOptionsCOP options
+) {
+	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options );
 	String data;
 	pu.init_from_pose( pose, residue_indices );
 
-	data = create_pdb_contents_from_sfr(*pu.sfr());
+	data = create_pdb_contents_from_sfr(*pu.sfr(), options);
 	out.write( data.c_str(), data.size() );
 }
 
 
 /// @brief create a full pdb as a string given a StructFileRep object
 std::string
-create_pdb_contents_from_sfr( StructFileRep const & sfr )
-{
-	utility::vector1< Record > records( create_records_from_sfr( sfr ) );
+create_pdb_contents_from_sfr(
+	StructFileRep const & sfr,
+	core::io::StructFileRepOptionsCOP options
+) {
+	utility::vector1< Record > records( create_records_from_sfr( sfr , options ) );
 	std::string pdb_contents;
 	pdb_contents.reserve( 81 * records.size() );
-	for ( Size i = 1; i <= records.size(); ++i ) {
-		pdb_contents += create_pdb_line_from_record( records[ i ] ) + '\n';
+	for ( Size i = 1, imax=records.size(); i <= imax; ++i ) {
+		pdb_contents += create_pdb_line_from_record( records[ i ] ) + "\n";
 	}
 	return pdb_contents;
 }
@@ -253,9 +287,11 @@ create_pdb_line_from_record( Record const & record )
 
 /// @details Create vector of Record from given StructFileRep object.  Used in PDB writing support.
 std::vector<Record>
-create_records_from_sfr( StructFileRep const & sfr )
-{
-	std::vector< Record > VR;
+create_records_from_sfr(
+	StructFileRep const & sfr,
+	core::io::StructFileRepOptionsCOP options
+) {
+	std::vector<Record> VR;
 
 	sfr.header()->fill_records( VR );
 	Record R;
@@ -345,13 +381,15 @@ create_records_from_sfr( StructFileRep const & sfr )
 		VR.push_back( R );
 	}
 
-	// Coordinate Section /////////////////////////////////////////////////////
-	R = RecordCollection::record_from_record_type( ATOM );
+	bool const no_chainend_ter( options->no_chainend_ter() ); //Should we skip TER records at chain ends?
+	R = RecordCollection::record_from_record_type( "ATOM  " );
+	Record T = RecordCollection::record_from_record_type( "TER   " );
+	T["type"].value = "TER   ";
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {
 		for ( Size j=0; j<sfr.chains()[i].size(); ++j ) {
 			AtomInformation const & ai( sfr.chains()[i][j] );
 			R["type"].value = ( ai.isHet ? "HETATM" : "ATOM  " );
-			R["serial"].value = pad_left( ai.serial, 5 ); //)("%5d", ai.serial);
+			R["serial"].value = pad_left( ai.serial + (no_chainend_ter ? 0 : ai.terCount), 5 ); //)("%5d", ai.serial);
 			R["name"].value = ai.name;
 			R["resName"].value = ai.resName;
 			std::string cid(" ");
@@ -368,13 +406,9 @@ create_records_from_sfr( StructFileRep const & sfr )
 			R["segmentID"].value = ai.segmentID;
 			VR.push_back(R);
 		}
+		if ( !no_chainend_ter && i>0 ) VR.push_back(T);
 	}
-
-	// Adding 'TER' line at the end of PDB.
-	// TER lines are not supposed to go at the end of the PDB; they go at the end of a chain. ~Labonte
-	Record T = RecordCollection::record_from_record_type( TER );
-	T["type"].value = "TER   ";
-	VR.push_back(T);
+	if ( no_chainend_ter ) VR.push_back(T); //Put a TER record at the end of the ATOM lines if we're using the no_chainend_ter option.
 
 	// Connectivity Section ///////////////////////////////////////////////////
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {
@@ -442,59 +476,23 @@ create_records_from_sfr( StructFileRep const & sfr )
 	return VR;
 }
 
-
-void
-old_dump_pdb(
-	pose::Pose const & pose,
-	std::ostream & out,
-	id::AtomID_Mask const & mask,
-	std::string const & /* tag */
-) {
-	PoseToStructFileRepConverter converter = PoseToStructFileRepConverter();
-	converter.init_from_pose( pose , mask );
-	std::string data = create_pdb_contents_from_sfr(*converter.sfr());
-	out.write( data.c_str(), data.size() );
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-void
-old_dump_pdb(
-	pose::Pose const & pose,
-	std::ostream & out,
-	std::string const & tag
-) {
-	dump_pdb(pose, out, tag);
-}
-
-
-void
-old_dump_pdb(
-	pose::Pose const & pose,
-	std::string const & filename,
-	std::string const & tag
-) {
-	dump_pdb(pose, filename, tag);
-}
-
-
-
 /// @note Python compatible wrapper avoiding reference parameter
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	std::ostream & out,
-	Size start_atom_number)
-{
-	dump_pdb_residue(rsd, start_atom_number, out);
+	Size start_atom_number,
+	core::io::StructFileRepOptionsCOP options
+) {
+	dump_pdb_residue(rsd, start_atom_number, out, options);
 }
 
 /// @details Create a faux PDBInfo object from a Residue
 pose::PDBInfoOP
 create_pdb_info_for_single_residue_pose(
-	pose::Pose const & pose // the pose containing the single residue
-)
-{
+	pose::Pose const & pose, // the pose containing the single residue
+	core::io::StructFileRepOptionsCOP //options
+) {
 	conformation::Residue const & rsd( pose.residue(1) );
 
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( 1 ) );
@@ -517,18 +515,19 @@ void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	Size & atom_number,
-	std::ostream & out
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options
 ) {
 
 	pose::Pose pose;
 	pose.append_residue_by_jump( rsd, 1 );
 
 	// create a PDBInfo object for this single-residue pose
-	pose.pdb_info( create_pdb_info_for_single_residue_pose( pose ));
+	pose.pdb_info( create_pdb_info_for_single_residue_pose( pose, options ));
 
-	pose_to_sfr::PoseToStructFileRepConverter converter;
-	converter.append_residue_to_sfr(pose, 1, atom_number);
-	std::string data = create_pdb_contents_from_sfr(*converter.sfr());
+	pose_to_sfr::PoseToStructFileRepConverter converter(*options);
+	converter.append_residue_to_sfr(pose, 1, atom_number, 0);
+	std::string data = create_pdb_contents_from_sfr(*converter.sfr(), options);
 	out.write( data.c_str(), data.size() );
 }
 

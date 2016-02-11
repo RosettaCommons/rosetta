@@ -911,7 +911,7 @@ struct MatchSet {
     utility::io::ozstream out(fname);
     TR << "writing " << fname << " BASE" << std::endl;
     out << "MODEL BASE" << endl;
-    core::io::pdb::old_dump_pdb(base.pose,out);
+    core::io::pdb::dump_pdb(base.pose,out);
     out << "ENDMDL" << endl;
     for(Size i = 1; i <= ligs.size(); ++i) {
       TR << "writing " << fname << " " << ligs[i].tag << std::endl;
@@ -921,7 +921,7 @@ struct MatchSet {
       if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,1);
       if(!tmp.residue(1).is_lower_terminus()) core::pose::add_lower_terminus_type_to_pose_residue(tmp,2);
       if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,2);
-      core::io::pdb::old_dump_pdb(tmp,out);
+      core::io::pdb::dump_pdb(tmp,out);
       out << "ENDMDL" << endl;
     }
     out.close();

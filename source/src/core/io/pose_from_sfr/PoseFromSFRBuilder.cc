@@ -227,7 +227,7 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 	// Prune out LINK records that refer to metal residues here.
 	// These are not appropriately represented by the variant types we handle
 	// in the -in:auto_setup_metals code.
-	
+
 	// Likewise, prune LINK records that refer to saccharides unless the -include sugars flag is on.
 	// And LINK records to or from unrecognized residues?
 	using namespace core::chemical;
@@ -246,9 +246,9 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 					NomenclatureManager::is_metal( link.resName2 ) ) {
 				TR.Debug << "Omitting LINK record that uses a metal. These will be processed ";
 				TR.Debug << "by -in:auto_setup_metals." << std::endl;
-			} else if ( options_.ignore_sugars() && 
-					( NomenclatureManager::is_sugar( link.resName1 ) ||
-					NomenclatureManager::is_sugar( link.resName2 ) ) ) {
+			} else if ( options_.ignore_sugars() &&
+					( core::io::NomenclatureManager::is_sugar( link.resName1 ) ||
+					core::io::NomenclatureManager::is_sugar( link.resName2 ) ) ) {
 				TR.Debug << "Omitting LINK record that uses a saccharide residue. ";
 				TR.Debug << "Did you mean to use the -include_sugars flag?" << std::endl;
 			} else if ( ! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName1 ).get_representative_type()

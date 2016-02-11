@@ -42,8 +42,8 @@ namespace pdb {
 /// exist or is in the process of being instantiated when this function is called.
 RecordDef
 read_record_definitions_from_file(
-		std::string const & filename,
-		std::map< std::string, RecordType > const & record_type_map )
+	std::string const & filename,
+	std::map< std::string, RecordType > const & record_type_map )
 {
 	using namespace std;
 	using namespace utility;

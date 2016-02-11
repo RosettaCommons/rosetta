@@ -1050,7 +1050,7 @@ void DaemonSet::process_pose_request_for_entity()
 	for ( std::list< std::pair< Size, PoseOP > >::const_iterator
 			iter = poses.begin(), iter_end = poses.end(); iter != iter_end; ++iter ) {
 		std::ostringstream oss;
-		core::io::pdb::old_dump_pdb( *( iter->second ), oss );
+		core::io::pdb::dump_pdb( *( iter->second ), oss );
 		utility::send_integer_to_node( 0, iter->first );
 		utility::send_string_to_node(  0, oss.str() );
 	}

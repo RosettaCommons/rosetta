@@ -62,7 +62,7 @@ namespace protocols {
 
       for (int i = 1; i <= context_.nStruct_; i++) {
         apply(*(context_.startingPose_));
-        io::pdb::old_dump_pdb(*(context_.startingPose_), "resulting_pose.pdb");
+        io::pdb::dump_pdb(*(context_.startingPose_), "resulting_pose.pdb");
 
         io::silent::SilentFileData outsfd;
         outsfd.strict_column_mode(true);

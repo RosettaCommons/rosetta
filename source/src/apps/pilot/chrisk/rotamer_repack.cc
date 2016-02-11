@@ -102,7 +102,7 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 using import_pose::pose_from_pdb;
-using io::pdb::old_dump_pdb; // deprecated though
+ // deprecated though
 using namespace ObjexxFCL;
 using basic::T;
 using basic::Warning;

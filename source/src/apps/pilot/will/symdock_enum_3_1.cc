@@ -874,7 +874,7 @@ struct TCDock {
 			core::pose::symmetry::make_symmetric_pose(symm);
 			// symm.dump_pdb("test_sym.pdb");
 		}
-		core::io::pdb::old_dump_pdb(symm,option[out::file::o]()+"/"+fname);
+		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
 
 
 		if(lnscore_){
@@ -921,7 +921,7 @@ struct TCDock {
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif
-						core::io::pdb::old_dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb"+(option[tcdock::dump_gz]()?".gz":""));
+						core::io::pdb::dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb"+(option[tcdock::dump_gz]()?".gz":""));
 						trans_pose(asym,cmp1axs_*dr1,1, p1.n_residue());
 						trans_pose(asym,cmp2axs_*dr2,p1.n_residue()+1,asym.n_residue());
 					}

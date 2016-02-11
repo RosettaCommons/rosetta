@@ -150,7 +150,7 @@ using utility::vector1;
 using std::string;
 using std::cout;
 using std::endl;
-using io::pdb::old_dump_pdb;
+
 
 
 static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
@@ -182,7 +182,7 @@ kono_sarai_stats()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::old_dump_pdb( pose, tag );
+// 		io::pdb::dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 
@@ -272,7 +272,7 @@ kono_sarai_zscore()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::old_dump_pdb( pose, tag );
+// 		io::pdb::dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {

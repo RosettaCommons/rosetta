@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/pose_to_sfr/PoseToStructFileRep.fwd.hh
+/// @file core/io/pose_to_sfr/PoseToStructFileRepConverter.fwd.hh
 /// @brief Forward declarations for class to convert a pose to a StructFileRep.
 /// @details This conversion is a first step in PDB or mmCIF output.  It could be useful for other
 /// input/output, too.

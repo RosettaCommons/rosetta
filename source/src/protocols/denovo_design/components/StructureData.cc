@@ -1303,10 +1303,10 @@ StructureData::slide_jump(
 
 core::kinematics::FoldTree
 StructureData::slide_jump(
-		core::kinematics::FoldTree const & ft_orig,
-		core::Size const jump_idx,
-		core::Size const new_start,
-		core::Size const new_stop ) const
+	core::kinematics::FoldTree const & ft_orig,
+	core::Size const jump_idx,
+	core::Size const new_start,
+	core::Size const new_stop ) const
 {
 	core::kinematics::FoldTree ft;
 	TR << "Sliding jump " << jump_idx << " to " << new_start << " --> " << new_stop << " in " << ft_orig << std::endl;

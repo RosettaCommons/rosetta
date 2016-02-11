@@ -54,7 +54,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::old_dump_pdb;
+
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

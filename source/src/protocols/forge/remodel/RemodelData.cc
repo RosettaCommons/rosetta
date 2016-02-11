@@ -240,14 +240,14 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 					continue;
 				}
 				if ( split_info[i].substr(0,5) == "EMPTY" ) {
-          line.has_ncaa = true;
-          // get the list of ncaa
-          for ( int j = i+1; j < (int)split_info.size() - 1; j = j+2){
-            if ( split_info[j] == "NC" ){
-              line.ncaaList.push_back(split_info[j+1]);
-            }
-          }
-        }
+					line.has_ncaa = true;
+					// get the list of ncaa
+					for ( int j = i+1; j < (int)split_info.size() - 1; j = j+2 ) {
+						if ( split_info[j] == "NC" ) {
+							line.ncaaList.push_back(split_info[j+1]);
+						}
+					}
+				}
 				if ( pickaa ) { // the column following PIKAA
 					for ( int j=0; j < (int)split_info[i].size(); ++j ) { // only find string element size
 
@@ -493,7 +493,7 @@ void RemodelData::collectInsertionPose(){
 	dssp2.dssp_reduced( dssp2SS );
 	TR_REMODEL << "dsspSS.size(): " << dssp2SS.size() << std::endl;
 	for ( int i = 1; i <= (int)dssp2SS.size(); i++ ) {
-		insertion2SS.push_back( dssp2SS(i) );
+	insertion2SS.push_back( dssp2SS(i) );
 	}
 	TR_REMODEL << "insertion2 SS: " << insertion2SS << " " << std::endl;
 	*/

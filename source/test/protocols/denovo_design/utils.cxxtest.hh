@@ -64,10 +64,10 @@ structuredata_from_motifs( protocols::denovo_design::connection::Connection::Mot
 		}
 
 		Segment newsegment( m->len, m->len / 2  + 1, 0,
-				segment_num, false,
-				true, true,
-				lower, upper,
-				m->ss, abego_vector( m->abego ) );
+			segment_num, false,
+			true, true,
+			lower, upper,
+			m->ss, abego_vector( m->abego ) );
 		perm->add_segment( segment_name, newsegment );
 		prev = m;
 	}

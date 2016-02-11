@@ -9,7 +9,7 @@
 
 /// @file   src/protocols/init/init.ResidueSelectorCreators.ihh
 /// @brief  Creator #includes for ResidueSelectors for init
-/// @author Tom Linsky tlinsky at uw dot edu 
+/// @author Tom Linsky tlinsky at uw dot edu
 
 //ResidueSelectorCreator #includes
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/pose_to_sfr/PoseToStructFileRep.fwd.hh
+/// @file core/io/pose_to_sfr/PoseToStructFileRepConverter.hh
 /// @brief Headers for class to convert a pose to a StructFileRep.
 /// @details This conversion is a first step in PDB or mmCIF output.  It could be useful for other
 /// input/output, too.
@@ -55,8 +55,13 @@ public:
 
 	/// @brief Constructor.
 	/// @details Creates the StructFileRep object, which is subsequently accessible by owning pointer
-	/// (using the sfr() object).
+	/// (using the sfr() object).  The options_ object is created and initialized from the options system.
 	PoseToStructFileRepConverter();
+
+	/// @brief Constructor with options input.
+	/// @details Creates the StructFileRep object, which is subsequently accessible by owning pointer
+	/// (using the sfr() object).  The options_ object is duplicated from the input options object.
+	PoseToStructFileRepConverter( StructFileRepOptions const &options_in );
 
 	/// @brief Destructor.
 	~PoseToStructFileRepConverter() {};
@@ -91,19 +96,18 @@ public:
 	void grab_additional_pose_data( core::pose::Pose const &pose );
 
 
-
-
 	/// @brief Append pdb information to StructFileRep for a single residue.
 	void append_residue_to_sfr(
 		pose::Pose const & pose,
-		Size resnum );
+		Size const resnum );
 
 
 	///  @brief Start atom numbering from given n.  Increments N
 	void append_residue_to_sfr(
 		pose::Pose const & pose,
-		Size resnum,
-		Size & new_atom_num );
+		Size const resnum,
+		Size & new_atom_num,
+		Size const new_tercount );
 
 	/// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 	/// SSBondInformation data as appropriate.
@@ -162,7 +166,8 @@ private:
 		core::conformation::Residue const & rsd,
 		core::Size const atom_index,
 		bool const use_pdb_info,
-		core::Size const new_atom_num);
+		core::Size const new_atom_num,
+		core::Size const new_tercount);
 
 	core::Size get_new_atom_serial_num() const;
 
@@ -171,8 +176,6 @@ private: //PRIVATE FUNCTIONS:
 	/// @brief Set whether to write the fold tree, in the
 	/// StructFileRepOptions object (options_).
 	void set_fold_tree_io( bool const setting);
-
-
 
 	/// @brief Get the membrane information from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -228,6 +231,28 @@ private: //PRIVATE FUNCTIONS:
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
 	void grab_pdbinfo_labels( core::pose::Pose const &pose );
 
+	/// @brief Get the total number of atoms in the SFR.
+	///
+	core::Size
+	total_sfr_atoms( StructFileRep const & sfr) const;
+
+	/// @brief Get the total number of atoms in a chain in the SFR.
+	///
+	core::Size
+	total_sfr_atoms( StructFileRep const & sfr, core::Size const chain_num ) const;
+
+	/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
+	/// @details Output is res_info.
+	void
+	get_residue_information(
+		core::pose::Pose const & pose,
+		core::uint const seqpos,
+		bool const use_PDB/*=true*/,
+		bool const renumber_chains/*=false*/,
+		core::Size const new_tercount,
+		ResidueInformation & res_info
+	) const;
+
 private: // PRIVATE DATA:
 
 	/// @brief Owning pointer to the StructFileRep object, copied in during
@@ -239,17 +264,6 @@ private: // PRIVATE DATA:
 	StructFileRepOptions options_;
 
 }; // class PoseToStructFileRep
-
-core::Size
-total_sfr_atoms( StructFileRep const & sfr);
-
-core::Size
-total_sfr_atoms( StructFileRep const & sfr, core::Size index );
-
-/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
-ResidueInformation
-get_residue_information(core::pose::Pose const & pose, core::uint const seqpos,
-	bool use_PDB=true, bool renumber_chains=false ) ;
 
 } // namespace pose_to_sfr
 } // namespace io

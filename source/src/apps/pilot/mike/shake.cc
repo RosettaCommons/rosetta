@@ -45,7 +45,7 @@ using namespace utility;
 
 using utility::vector1;
 
-using core::io::pdb::old_dump_pdb;
+using core::io::pdb::dump_pdb;
 
 
 namespace protocols {

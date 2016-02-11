@@ -159,7 +159,7 @@ using utility::vector1;
 using std::string;
 using std::cout;
 using std::endl;
-using io::pdb::old_dump_pdb;
+
 
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.loop_model" );

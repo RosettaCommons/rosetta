@@ -35,7 +35,7 @@ public:
 
 	MakeCanonicalHelix();
 
-	MakeCanonicalHelix( core::Size helix_start, core::Size helix_end ); 
+	MakeCanonicalHelix( core::Size helix_start, core::Size helix_end );
 
 	// copy constructor
 	MakeCanonicalHelix( MakeCanonicalHelix const & src );
@@ -70,21 +70,21 @@ public:
 	protocols::moves::MoverOP
 	clone() const;
 
-private: 
+private:
 
 	/// @brief Check that the start & end positons are valid given the pose
-	void is_valid( core::pose::Pose & pose ); 
+	void is_valid( core::pose::Pose & pose );
 
 private:
 
 	// Ideal Helix Dihedral Angles
-	core::Real phi_; 
-	core::Real psi_; 
-	core::Real omega_; 
+	core::Real phi_;
+	core::Real psi_;
+	core::Real omega_;
 
 	// Position where Helix Begins and Ends
-	core::Real helix_start_; 
-	core::Real helix_end_; 
+	core::Real helix_start_;
+	core::Real helix_end_;
 };
 
 } // benchmark

@@ -104,11 +104,11 @@ public:
 	core::pose::Pose insertPose;
 	int insertionSize;
 	std::string insertionSS;
-/*
+	/*
 	core::pose::Pose insertPose2;
 	int insertion2Size;
 	std::string insertion2SS;
-*/
+	*/
 	float total_chain_break_score;
 
 };
