@@ -605,7 +605,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.39669999085661 );
+		adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 	/// @brief Make sure that the domain map logic inside the ScoreFunction
@@ -653,7 +653,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.39669999085661 );
+		adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 
@@ -698,7 +698,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.39669999085661 );
+		adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 	void test_setup_for_minimizing_with_autoupdate_w_partial_bb_flexibility_table_version()
@@ -785,7 +785,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.39669999085661 );
+		adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_full_bb_flex_table_version()
@@ -1005,7 +1005,7 @@ public:
 		//std::cout.precision( 16 );
 		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -22.39669999085661, start_score, 1e-12 );
+		TS_ASSERT_DELTA( -22.39669996258689, start_score, 1e-12 );
 
 
 		kinematics::MoveMap movemap;
@@ -1024,7 +1024,7 @@ public:
 
 		Real start_func = sfxn(pose);
 		//std::cout << "start_func: " << start_func << std::endl;
-		TS_ASSERT_DELTA( -22.39669999085659, start_func, 1e-12 );
+		TS_ASSERT_DELTA( -22.39669996258687, start_func, 1e-12 );
 	}
 
 	void dont_test_atom_tree_minimize_with_autoupdate2()

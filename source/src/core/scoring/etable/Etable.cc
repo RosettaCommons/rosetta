@@ -925,7 +925,7 @@ Etable::smooth_etables_one_pair(
 
 	// APL - 2012/6/14 - Take the bin maximum of the LJ-radii sum and (w/famxd=6) 4.5 A.  This change
 	// effects the interaction of Br/Br and Br/I.
-	int start = std::max( bin_of_dis( (int)( (max_dis_-1.5) * 10.0) ), minima_bin_index );
+	int start = std::max( bin_of_dis( (int)( (max_dis_-1.5) * 10.0) ), minima_bin_index+1 );
 	Real lbx  = dis(start);
 	Real ubx  = dis(etable_disbins_);
 	Real lby  =  ljatr(start);
@@ -1705,7 +1705,7 @@ Etable::zero_hydrogen_and_water_ljatr_one_pair(
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.ljatr_final_weight = 0.0;
 		p.fasol_final_weight = 0.0;
-		p.maxd2 = ( first_zero_ljrep - 1 ) * 1.0 / bins_per_A2_;
+		p.maxd2 = lj_sigma_(atype1,atype2) * lj_sigma_(atype1,atype2); // ( first_zero_ljrep - 1 ) * 1.0 / bins_per_A2;
 		p.hydrogen_interaction = true;
 		// Disable fasol for hydrogens? Technically, fasol doesn't get disabled for hydrogens! fasol_final_weight(at1,at2) = 0.0;
 		// This is surely a bug.
