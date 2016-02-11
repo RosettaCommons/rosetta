@@ -37,9 +37,7 @@ namespace lkball {
 namespace lkbtrie {
 
 
-LKBAtom::LKBAtom() :
-	is_hyd_(false)
-{}
+LKBAtom::LKBAtom() {}
 
 LKBAtom::~LKBAtom() {}
 

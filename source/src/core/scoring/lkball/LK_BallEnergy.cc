@@ -591,8 +591,7 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	Real const d2_low( d2_low_[ atom2_type ] );
 
 	// softmax of closest water
-	d_weighted_d2_d_di.clear();
-	d_weighted_d2_d_di.resize( atom1_waters.size(), 0.0 );
+	d_weighted_d2_d_di.resize( atom1_waters.size() );
 
 	weighted_d2_water_delta = 0.0;
 	Real d2_delta;
@@ -637,7 +636,10 @@ LK_BallEnergy::get_lk_fractional_contribution_for_single_water(
 	else return eval_lk_fraction( d2_delta );
 }
 
-
+//fpd  this function largely duplicates the code above
+//fpd  this version is called during scoring, while the above is called during minimizaiton
+//fpd  the overhead of creating/deleting the per-water derivative vector is significant
+//fpd     during packing, so we avoid that here
 Real
 LK_BallEnergy::get_lk_fractional_contribution(
 	Vector const & atom2_xyz,
@@ -645,9 +647,24 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	Vectors const & atom1_waters
 ) const
 {
-	utility::vector1< Real > dweighted_water_ddi;
-	Real weighted_water_d2_delta(0.0);
-	return get_lk_fractional_contribution( atom2_xyz, atom2_type, atom1_waters, dweighted_water_ddi, weighted_water_d2_delta );
+	Real const d2_low( d2_low_[ atom2_type ] );
+
+	// softmax of closest water
+	Real weighted_d2_water_delta = 0.0;
+	Real d2_delta;
+	for ( Size idx = 1; idx <= atom1_waters.size(); ++idx ) {
+		d2_delta = atom2_xyz.distance_squared( atom1_waters[idx] ) - d2_low;
+		weighted_d2_water_delta += exp( -d2_delta/multi_water_fade_ );
+	}
+
+	weighted_d2_water_delta = -multi_water_fade_ * log( weighted_d2_water_delta );
+
+	Real frac( 0.0 );
+	if ( weighted_d2_water_delta < ramp_width_A2_ ) {
+		frac = ( weighted_d2_water_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( weighted_d2_water_delta ) );
+	}
+
+	return frac;
 }
 
 
@@ -1845,7 +1862,7 @@ create_rotamer_descriptor(
 	using namespace trie;
 	using namespace lkbtrie;
 
-	rotamer_descriptor.natoms( res.natoms() );
+	rotamer_descriptor.natoms( res.nheavyatoms() );
 
 	Size count_added_atoms = 0;
 	for ( Size jj = 1; jj <= res.nheavyatoms(); ++jj ) {
@@ -1854,28 +1871,27 @@ create_rotamer_descriptor(
 		initialize_cpdata_for_atom( cpdata, jj, res, cpdata_map );
 
 		newatom.atom( res.atom(jj) );
-		newatom.is_hydrogen( false );
 		newatom.waters( lkb_resinfo.waters()[jj] );
 		newatom.atom_weights( lkb_resinfo.atom_weights()[jj] );
 
 		RotamerDescriptorAtom< LKBAtom, CPDAT > rdatom( newatom, cpdata );
 		rotamer_descriptor.atom( ++count_added_atoms, rdatom );
 
-		for ( Size kk = res.attached_H_begin( jj ),
-				kk_end = res.attached_H_end( jj );
-				kk <= kk_end; ++kk ) {
-			LKBAtom newhatom;
-			newhatom.atom( res.atom(kk) );
-			newhatom.is_hydrogen( true );
-			//newhatom.waters( lkb_resinfo.waters() );
-			//newhatom.atom_weights( lkb_resinfo.atom_weights() );
-
-			CPDAT hcpdata;
-			initialize_cpdata_for_atom( hcpdata, kk, res, cpdata_map ); //??
-
-			RotamerDescriptorAtom< LKBAtom, CPDAT> hrdatom( newhatom, hcpdata );
-			rotamer_descriptor.atom( ++count_added_atoms, hrdatom );
-		}
+		//for ( Size kk = res.attached_H_begin( jj ),
+		//		kk_end = res.attached_H_end( jj );
+		//		kk <= kk_end; ++kk ) {
+		//	LKBAtom newhatom;
+		//	newhatom.atom( res.atom(kk) );
+		//	newhatom.is_hydrogen( true );
+		//	//newhatom.waters( lkb_resinfo.waters() );
+		//	//newhatom.atom_weights( lkb_resinfo.atom_weights() );
+		//
+		//	CPDAT hcpdata;
+		//	initialize_cpdata_for_atom( hcpdata, kk, res, cpdata_map ); //??
+		//
+		//	RotamerDescriptorAtom< LKBAtom, CPDAT> hrdatom( newhatom, hcpdata );
+		//	rotamer_descriptor.atom( ++count_added_atoms, hrdatom );
+		//}
 	}
 }
 

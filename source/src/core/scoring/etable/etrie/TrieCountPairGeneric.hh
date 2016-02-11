@@ -27,7 +27,7 @@
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
 
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
 #include <core/scoring/etable/Etable.fwd.hh>
 //XRW_B_T1

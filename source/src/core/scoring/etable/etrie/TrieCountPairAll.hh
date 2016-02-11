@@ -30,7 +30,7 @@
 #include <core/scoring/methods/MMLJEnergyInter.fwd.hh>
 
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh>

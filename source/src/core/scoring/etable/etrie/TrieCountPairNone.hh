@@ -29,7 +29,7 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh>
 
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
 #include <core/scoring/trie/TrieCountPairBase.hh>
 #include <core/scoring/trie/RotamerTrie.fwd.hh>

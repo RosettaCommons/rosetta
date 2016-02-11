@@ -54,11 +54,7 @@ public:
 
 	/// @brief property required by RotamerTrie class
 	inline
-	bool is_hydrogen() const { return is_hyd_; }
-
-	/// @brief setter method for data required by RotamerTrie class
-	inline
-	void is_hydrogen( bool setting ) { is_hyd_ = setting; }
+	bool is_hydrogen() const { return false; }
 
 	/// @brief send a description of the atom to standard out
 	void print() const;
@@ -70,27 +66,33 @@ public:
 	inline
 	bool operator < ( LKBAtom const & other ) const
 	{
-		if ( waters_ < other.waters_ ) {
+		if (waters_.size() != other.waters_.size())
+			return (waters_.size() < other.waters_.size());
+
+		// because xyzVector does not properly define <
+		for (core::Size i=1; i<=waters_.size(); ++i) {
+			for (core::Size j=0; j<3; ++j) {
+				if (float(waters_[i][j]) != float(other.waters_[i][j])) {
+					return (float(waters_[i][j]) < float(other.waters_[i][j]));
+				}
+			}
+		}
+
+		// waters_ are the same
+		if ( atom_weights_ < other.atom_weights_ ) {
 			return true;
-		} else if ( waters_ == other.waters_ ) {
-			if ( atom_weights_ < other.atom_weights_ ) {
+		} else if ( atom_weights_ == other.atom_weights_ ) {
+			if ( base_.type() < other.base_.type() ) {
 				return true;
-			} else if ( atom_weights_ == other.atom_weights_ ) {
-				if ( is_hyd_ < other.is_hyd_ ) {
-					return true;
-				} else if (is_hyd_ == other.is_hyd_) {
-					if ( base_.type() < other.base_.type() ) {
-						return true;
-					} else if ( base_.type() == other.base_.type() ) {
-						for ( int ii = 0; ii< 3; ++ii ) {
-							if ( float(base_.xyz()[ ii ]) != float(other.base_.xyz()[ ii ]) ) {
-								return base_.xyz()[ ii ] < other.base_.xyz()[ ii ];
-							}
-						}
+			} else if ( base_.type() == other.base_.type() ) {
+				for ( int ii = 0; ii< 3; ++ii ) {
+					if ( float(base_.xyz()[ ii ]) != float(other.base_.xyz()[ ii ]) ) {
+						return base_.xyz()[ ii ] < other.base_.xyz()[ ii ];
 					}
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -103,15 +105,13 @@ public:
 				base_.xyz() == other.base_.xyz() &&
 				base_.type() == other.base_.type() &&
 				waters_ == other.waters_ &&
-				atom_weights_ == other.atom_weights_ &&
-				is_hyd_ == other.is_hyd_);
+				atom_weights_ == other.atom_weights_);
 	}
 
 private:
 	conformation::Atom base_;
 	utility::vector1< Vector > waters_;
 	utility::vector1< Real > atom_weights_;
-	bool is_hyd_;
 };
 
 std::ostream & operator << ( std::ostream & os, LKBAtom const & atom );
