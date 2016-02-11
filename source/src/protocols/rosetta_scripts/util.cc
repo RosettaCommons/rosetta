@@ -348,7 +348,17 @@ foreach_movemap_tag(
 	}//BOOST_FOREACH tag
 }
 
-/// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
+void
+parse_movemap_tag(
+		utility::tag::TagCOP const in_tag,
+		core::kinematics::MoveMapOP mm )
+{
+	if ( in_tag->hasOption( "bb" ) ) mm->set_bb( in_tag->getOption< bool >( "bb" ) );
+	if ( in_tag->hasOption( "chi" ) ) mm->set_chi( in_tag->getOption< bool >( "chi" ) );
+	if ( in_tag->hasOption( "jump" ) ) mm->set_jump( in_tag->getOption< bool >( "jump" ) );
+}
+
+// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
 void
 parse_movemap(
 	utility::tag::TagCOP const in_tag,
@@ -385,6 +395,7 @@ parse_movemap(
 			TR<<"Adding movemap "<<name<<" to datamap"<<std::endl;
 		}
 	}
+	parse_movemap_tag( *tag_it, mm );
 	foreach_movemap_tag( *tag_it, pose, mm );
 }
 
@@ -414,12 +425,12 @@ parse_movemap(
 		mm->set_jump( true );
 	}
 	if ( tag_it == branch_tags.end() ) return;
-	if ( (*tag_it)->hasOption("name" ) ) {
+	if ( (*tag_it)->hasOption( "name" ) ) {
 		TR<<"ERROR in "<<*tag_it<<'\n';
 		throw utility::excn::EXCN_RosettaScriptsOption("Tag called with option name but this option is not available to this mover. Note that FastRelax cannot work with a prespecified movemap b/c its movemap is parsed at apply time. Sorry." );
 	}
 
-
+	parse_movemap_tag( *tag_it, mm );
 	foreach_movemap_tag( *tag_it, pose, mm );
 }
 
