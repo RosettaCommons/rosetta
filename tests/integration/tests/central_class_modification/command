@@ -1,0 +1,29 @@
+# This test is not an integration test in the traditional sense: it is
+# not testing a run of the code.  Instead, this test just examines the
+# code itself for a few important central classes.  These are
+# important base classes used by everyone, and modifications to those
+# classes should be approved by the community (or, let's be serious,
+# Andrew).  Failing this integration test does NOT mean something is
+# wrong - just that you've changed a file it watches and should be
+# prepared to justify your change.
+
+
+cd %(workdir)s
+
+#check Pose.hh
+[ -a %(minidir)s/src/core/pose/Pose.hh ] || exit 1
+cat %(minidir)s/src/core/pose/Pose.hh > Pose.hh
+
+#check Mover.hh
+[ -a %(minidir)s/src/protocols/moves/Mover.hh ] || exit 1
+cat %(minidir)s/src/protocols/moves/Mover.hh > Mover.hh
+
+#check JD2 core machinery
+[ -a %(minidir)s/src/protocols/jd2/JobDistributor.hh ] || exit 1
+cat %(minidir)s/src/protocols/jd2/JobDistributor.hh > JobDistributor.hh
+
+#A little unusual to check a .cc file but go_main was kind of abused
+[ -a %(minidir)s/src/protocols/jd2/JobDistributor.cc ] || exit 1
+cat %(minidir)s/src/protocols/jd2/JobDistributor.cc > JobDistributor.cc
+
+#check JD3 machinery??

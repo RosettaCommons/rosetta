@@ -609,7 +609,7 @@ def mWait(tag=None, all_=False, timeout=0):
 
 
 def generateIntegrationTestGlobalSubstitutionParameters(host=None):
-    # Variables that may be referrenced in the cmd string:
+    # Variables that may be referenced in the cmd string:
     python = sys.executable
     minidir = Options.mini_home
     database = Options.database
