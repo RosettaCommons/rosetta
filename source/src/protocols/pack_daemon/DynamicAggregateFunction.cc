@@ -258,6 +258,40 @@ IterativeVectorExpression::active_variables_vector() const
 	return active_varibles_vector;
 }
 
+/////// class Mean : public VectorFunction
+
+Mean::Mean( VectorExpressionCOP ex ) : parent( ex ) {}
+Mean::~Mean() {}
+
+core::Real
+Mean::operator() () const
+{
+	VectorExpression::values vals = vec_ex()->vector_values();
+	core::Real sum = 0;
+	for ( core::Size ii = 1; ii <= vals.size(); ++ii ) {
+		sum += vals[ ii ];
+	}
+	return sum / vals.size();
+}
+
+ExpressionCOP
+Mean::differentiate( std::string const & ) const
+{
+	utility_exit_with_message( "Mean cannot be differentiated" );
+	return 0;
+}
+
+std::list< std::string >
+Mean::active_variables() const
+{
+	utility::vector1< std::list< std::string > > act_vars_vect = vec_ex()->active_variables_vector();
+	std::list< std::string > all_vars_union;
+	for ( core::Size ii = 1; ii <= act_vars_vect.size(); ++ii ) {
+		all_vars_union.splice( all_vars_union.end(), act_vars_vect[ ii ] );
+	}
+	return all_vars_union;
+}
+
 
 /////// class VMax : public VectorFunction
 
@@ -726,7 +760,10 @@ DynamicAggregateFunction::function_expression(
 {
 
 	std::string const fname = function->name();
-	if ( fname == "vmax" ) {
+	if ( fname == "mean" ) {
+		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
+		return ExpressionCOP( ExpressionOP( new Mean( vector_expressions[1] ) ) );
+	} else if ( fname == "vmax" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
 		return ExpressionCOP( ExpressionOP( new VMax( vector_expressions[1] ) ) );
 	} else if ( fname == "vmin" ) {
@@ -828,6 +865,7 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 	initialize_scanner();
 
 	function_names_.clear();
+	function_names_.insert( "mean" );
 	function_names_.insert( "vmax" );
 	function_names_.insert( "vmin" );
 	function_names_.insert( "vmax_by" );
@@ -957,6 +995,7 @@ DynamicAggregateFunction::initialize_scanner()
 {
 	scanner_ = numeric::expression_parser::ArithmeticScannerOP( new ArithmeticScanner( false ) ); /// constructor without adding the "standard" functions
 	scanner_->add_function( "sqrt", 1 ); // neiter min nor max are allowed functions.
+	scanner_->add_function( "mean", 1 );
 	scanner_->add_function( "vmax", 1 );
 	scanner_->add_function( "vmin", 1 );
 	scanner_->add_function( "vmax_by", 2 );

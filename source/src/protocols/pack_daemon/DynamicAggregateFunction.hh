@@ -204,6 +204,30 @@ private:
 	VectorExpressionCOP vec_ex2_;
 };
 
+class Mean : public VectorFunction
+{
+public:
+	typedef VectorFunction parent;
+
+public:
+
+	Mean( VectorExpressionCOP ex );
+	virtual ~Mean();
+
+	virtual
+	core::Real
+	operator() () const;
+
+	virtual
+	numeric::expression_parser::ExpressionCOP
+	differentiate( std::string const & varname ) const;
+
+	virtual
+	std::list< std::string >
+	active_variables() const;
+
+};
+
 
 class VMax : public VectorFunction
 {
