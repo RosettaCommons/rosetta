@@ -1,4 +1,5 @@
--s peptoid_link.pdb
+#-s peptoid_link.pdb
+-s peptoid.pdb
 
 -cyclization::chains_to_cyclize 1
 -cyclization::num_min_rebuild 10
