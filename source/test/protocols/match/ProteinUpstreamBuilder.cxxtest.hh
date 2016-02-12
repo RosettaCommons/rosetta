@@ -77,7 +77,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit" ); // kinemages below made with dun02 library
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit -extra_res_fa protocols/match/PBF.params" ); // kinemages below made with dun02 library
 	}
 
 	// Shared finalization goes here.
@@ -453,6 +453,68 @@ public:
 		if ( sout.str() != correct_kinemage ) {
 			std::cout << sout.str() << std::endl;
 		}
+
+	}
+
+	void test_ProteinUpstreamBuilder_build_w_pre_chitip_transform()
+	{
+		// use a residue type (a non canonical amino acid) that has a rigid segment
+		// between two of the chis, so that the pre_chitip_transform is needed to
+		// correctly create the HT before the chi-tip atom can be placed.
+		using namespace core;
+		using namespace core::chemical;
+
+		core::pose::Pose trpcage = create_trpcage_ideal_pose();
+
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
+
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOP restype( res2_set->name_mapOP( "PBF" ));
+
+		BuildSet build_set;
+		build_set.set_residue_type( restype );
+
+		//// Find the matching phe residue type for residue 2.
+		//for ( ResidueTypeCOPs::const_iterator
+		//		aas_iter = aas.begin(),
+		//		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		//	if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		//		build_set.set_residue_type( *aas_iter );
+		//		break;
+		//	}
+		//}
+		SampleStrategyData strat;
+		//strat.set_strategy( rotameric_chi_mimic_EX_flags );
+		//strat.set_sample_level( core::pack::task::EX_ONE_STDDEV );
+
+		build_set.set_sample_strategy_for_chi( 1, strat );
+		build_set.set_sample_strategy_for_chi( 2, strat );
+		build_set.set_sample_strategy_for_chi( 3, strat );
+		build_set.set_sample_strategy_for_chi( 4, strat );
+
+		std::ostringstream sout;
+
+		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( sout ) );
+
+		build_set.set_downstream_algorithm( dsalgorithm );
+
+		ProteinUpstreamBuilder scbuilder;
+		scbuilder.add_build_set( build_set );
+		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+
+		BumpGridOP bbgrid( new BumpGrid );
+		scbuilder.set_bb_grid( bbgrid );
+
+		scbuilder.build( *res2bp );
+
+		std::ifstream ifs( "protocols/match/pbf_on_trpcage_res2_gold.kin" );
+		std::string gold_kin;
+		utility::slurp( ifs, gold_kin );
+
+		TS_ASSERT_EQUALS( gold_kin, sout.str() );
+
+
+		//std::cout << "PBF: " <<  sout.str() << std::endl;
 
 	}
 

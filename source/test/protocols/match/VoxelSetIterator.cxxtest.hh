@@ -689,4 +689,30 @@ public:
 		TS_ASSERT( bin[ 6 ] == 17 );
 	}
 
+
+	// ah -- the problem here is that the euler width of 8 degrees does not evenly divide 180
+	void dont_test_failing_case() {
+		VoxelSetIterator::BoundingBox bb( VoxelSetIterator::Vector( -22.535, -18.553999999999998, -20.571999999999999 ),
+			VoxelSetIterator::Vector( 18.719999999999999, 20.497, 20.989000000000001 ));
+		protocols::match::Size3 n_xyz_bins; n_xyz_bins[ 1 ] = 52; n_xyz_bins[ 2 ] = 49; n_xyz_bins[3] = 52;
+		protocols::match::Size3 n_euler_bins; n_euler_bins[ 1 ] = 45; n_euler_bins[ 2 ] = 45; n_euler_bins[ 3 ] = 22;
+		VoxelSetIterator::Real3 xyz_bin_widths( 0.80000000000000004);
+		VoxelSetIterator::Real3 euler_bin_widths( 8 );
+		VoxelSetIterator::Real3 xyz_bin_halfwidths( 0.40000000000000002 );
+		VoxelSetIterator::Real3 euler_bin_halfwidths( 4 );
+		protocols::match::Real6 point; point[1] = -8.7189236911337602; point[2] = -5.25149847006037; point[3] = 8.5589800414937365;
+		point[4] = 310.74620470130691; point[5] = 84.719514050255185; point[6] = 173.52497714541184;
+
+		VoxelSetIterator iter( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths, euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, point );
+
+		int count(1);
+		while ( ! iter.at_end() ) {
+			std::cout << "Count: " << count << std::endl;
+			++iter;
+			++count;
+			//iter.calc_bin_and_pos();
+		}
+
+		TS_ASSERT( true );
+	}
 };

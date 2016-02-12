@@ -175,8 +175,8 @@ void Matcher::add_upstream_restype_for_constraint(
 	core::chemical::ResidueTypeCOP restype
 )
 {
-	/// ASSUMPTION: matching from protein sidechain
-	assert( restype->aa() <= core::chemical::num_canonical_aas );
+	// ASSUMPTION: matching from protein sidechain
+	// assert( restype->aa() <= core::chemical::num_canonical_aas );
 	assert( build_set_id_for_restype_[ cst_id ].find( restype->name() ) == build_set_id_for_restype_[ cst_id ].end() );
 
 	if ( ! upstream_builders_[ cst_id ] ) {
@@ -496,6 +496,10 @@ void Matcher::set_hash_euclidean_bin_width( Real width )
 void Matcher::set_hash_euler_bin_width( Real width )
 {
 	//std::fill( euler_bin_widths_.begin(), euler_bin_widths_.end(), width );
+	core::Size ndiv = static_cast< Size > ( 180 / width );
+	if ( std::abs( ndiv * width - 180.0 ) > 1e-6 ) {
+		throw utility::excn::EXCN_Msg_Exception( "Please use a eulerian bin width that evenly divides 180, e.g. 10, 9, or 4.5" );
+	}
 	euler_bin_widths_ = width;
 }
 
@@ -504,8 +508,23 @@ void Matcher::set_hash_euclidean_bin_widths( Vector widths )
 	euclidean_bin_widths_ = widths;
 }
 
-void Matcher::set_hash_euler_bin_widths( Vector widths)
+void Matcher::set_hash_euler_bin_widths( Vector widths )
 {
+	std::ostringstream err_message;
+	bool any_error = false;
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
+		core::Real width = widths( ii );
+		core::Real span = ii == 3 ? 180 : 360;
+		core::Size ndiv = static_cast< Size > ( span / width );
+		if ( std::abs( ndiv * width - span ) > 1e-6 ) {
+			err_message << "Please use a eulerian bin width that evenly divides " << span << "; ";
+			err_message << " width for euler angle " << ii << " set to " << width << "\n";
+			any_error = true;
+		}
+	}
+	if ( any_error ) {
+		throw utility::excn::EXCN_Msg_Exception( err_message.str() );
+	}
 	euler_bin_widths_ = widths;
 }
 

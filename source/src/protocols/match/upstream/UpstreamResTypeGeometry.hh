@@ -102,6 +102,11 @@ public:
 		return chitip_atoms_[ chi ];
 	}
 
+	HTReal const &
+	pre_chitip_transform( Size chi ) const {
+		return pre_chitip_transforms_[ chi ];
+	}
+
 	utility::vector1< HTReal > const &
 	ht_for_chitip_atoms() const { return ht_for_chitip_atoms_; }
 
@@ -175,6 +180,7 @@ private:
 	utility::vector1< Size >   which_point_for_atom_;
 
 	utility::vector1< Size >   chitip_atoms_;
+	utility::vector1< HTReal > pre_chitip_transforms_;
 	utility::vector1< HTReal > ht_for_chitip_atoms_;
 
 

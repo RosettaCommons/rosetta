@@ -618,6 +618,8 @@ testinputfiles = [
 	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
 	"match/MBH_LG.params",
 	"match/mbh_lg_0001.pdb",
+	"match/PBF.params",
+	"match/pbf_on_trpcage_res2_gold.kin",
 	"match_enzdes_util/mocktim.cst",
 	"match_enzdes_util/1n1.params",
 	"match_enzdes_util/1ney_invtree_unittest.pdb",

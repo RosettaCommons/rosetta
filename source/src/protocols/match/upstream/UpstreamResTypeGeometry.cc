@@ -85,6 +85,9 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 	chitip_atoms_.resize( n_chi );
 	std::fill( chitip_atoms_.begin(), chitip_atoms_.end(), 0 );
 
+	pre_chitip_transforms_.resize( n_chi );
+	for ( Size ii = 1; ii <= n_chi; ++ii ) pre_chitip_transforms_[ ii ].set_identity();
+
 	ht_for_chitip_atoms_.resize( n_chi );
 	for ( Size ii = 1; ii <= n_chi; ++ii ) ht_for_chitip_atoms_[ ii ].set_identity();
 
@@ -131,9 +134,31 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 		assert( res.chi_atoms( ii ).size() == 4 );
 
 		Size const
+			chiat1( res.chi_atoms( ii )[ 1 ] ),
 			chiat2( res.chi_atoms( ii )[ 2 ] ),
 			chiat3( res.chi_atoms( ii )[ 3 ] ),
 			chiat4( res.chi_atoms( ii )[ 4 ] );
+
+		if ( ii > 1 && chiat3 != chitip_atoms_[ ii-1 ] ) {
+			// This is a chi dihedral defined by atoms that are rigidly controlled by
+			// an intervening stretch of other atoms.  What is needed is the coordinate
+			// frame that transforms from a frame defined at the chitip(ii-1) atoms from
+			// atoms 2, 3, and 4 of chi(ii-1) to the frame at the third atom of chi(ii).
+
+			Size const prevchi_at2( res.chi_atoms(ii-1)[2] ),
+				prevchi_at3( res.chi_atoms(ii-1)[3] ),
+				prevchi_at4( res.chi_atoms(ii-1)[4] );
+			HTReal launch_frame( res.atom(prevchi_at2).ideal_xyz(),
+				res.atom(prevchi_at3).ideal_xyz(),
+				res.atom(prevchi_at4).ideal_xyz() );
+			HTReal landing_frame( res.atom(chiat1).ideal_xyz(),
+				res.atom(chiat2).ideal_xyz(),
+				res.atom(chiat3).ideal_xyz());
+
+			pre_chitip_transforms_[ ii ] = launch_frame.inverse() * landing_frame;
+
+		}
+
 
 		chitip_atoms_[ ii ] = chiat4;
 

@@ -883,8 +883,9 @@ ProteinUpstreamBuilder::build(
 					/// previous iteration.
 					for ( Size kk = ii_nchi - n_chi_needing_update + 1; kk <= ii_nchi; ++kk ) {
 						chitip_frames[ kk ] = chitip_frames[ kk - 1 ] *
+							geom.pre_chitip_transform( kk ) *
 							additional_chi_samples.frame( kk, lex[ kk ] ) *
-							geom.ht_for_chitip_atom( kk ); // matrix * matrix * matrix
+							geom.ht_for_chitip_atom( kk ); // matrix * matrix * matrix * matrix
 						rescoords.set_xyz( geom.chitip_atom( kk ), chitip_frames[ kk ].point());
 						rescoords.chi()[ kk ] = additional_chi_samples.chi_sample( kk, lex[ kk ] );
 						if ( atom_coordinate_unacceptable( ii, rescoords, geom.chitip_atom( kk ) ) ) {
