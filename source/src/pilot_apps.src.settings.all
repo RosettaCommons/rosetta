@@ -526,6 +526,9 @@ sources = {
 		"ld_converter",
 		"scaffold_matcher",
 	],
+	"pilot/kalngyk" : [
+		"calibur",
+	],
 	"pilot/kenjung" : [
 		"loophash_createfiltereddb",
 		"FastGap",
@@ -1078,4 +1081,8 @@ subprojects  = [
 	"numeric",
 	"utility",
 	"ObjexxFCL",
+	"z",
+	"cppdb",
+	"sqlite3",
+	#"calibur" not actually a library, just some headers.
 ]
