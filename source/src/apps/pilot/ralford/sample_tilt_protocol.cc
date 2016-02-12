@@ -100,7 +100,7 @@ public:
 		TR << "Setting up an initial membrane orientation by aligning the peptide to the current membrane normal" << std::endl;
 		// Calculate the current helix axes based on the COM of the transmembrane
 		// span start and end posiitons
-		numeric::xyzVector< Real > helix_axis = calc_helix_axis( pose, 1 /* only for single span poses */ );
+		numeric::xyzVector< core::Real > helix_axis = calc_helix_axis( pose, 1 /* only for single span poses */ );
 
 		// Calculate the angle between the current helix axis and the membrane normal
 		Vector spin_axis(1, 0, 0);
@@ -122,9 +122,9 @@ public:
 		// Intermediate checks!
 		TR << calc_helix_tilt_angle( pose, 1 /* only working with 1 helix poses for now */ ) << std::endl;
 
-		Real talaris_score( talaris->score( pose ) );
-		Real membrane07_score( membrane07->score( pose ) );
-		Real membrane12_score( membrane12->score( pose ) );
+		core::Real talaris_score( talaris->score( pose ) );
+		core::Real membrane07_score( membrane07->score( pose ) );
+		core::Real membrane12_score( membrane12->score( pose ) );
 
 		// Setup score & angle arrays
 		utility::vector1< core::Real > angles;
@@ -140,7 +140,7 @@ public:
 
 		// Reset the deterministic step size to 1
 		// Rotate the helix to align with the membrane normal (representing a tilt angle of 0 degrees)
-		Real step_size( 1.0 );
+		core::Real step_size( 1.0 );
 		RigidBodyDeterministicSpinMoverOP deterministic_z( new RigidBodyDeterministicSpinMover( membrane_jump, spin_axis, center, step_size ) );
 
 		// For each tilt angle (sample every degree for a smooth surface), score the protein and add to arrays
