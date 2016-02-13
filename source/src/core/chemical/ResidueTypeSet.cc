@@ -530,7 +530,10 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 	}
 
 	// now apply patches.
-	ResidueType const & rsd_base = name_map( rsd_name_base );
+	ResidueTypeCOP rsd_base_ptr = name_mapOP( rsd_name_base );
+	if ( ! rsd_base_ptr ) { return false; }
+
+	ResidueType const & rsd_base( *rsd_base_ptr );
 	runtime_assert( rsd_base.finalized() );
 
 	// I may have to create this patch, if it is metapatch-derived!
