@@ -33,6 +33,8 @@ LIGAND
 
 ## Residue Family
 PROTEIN  # TODO: Change this to AMINO_ACID, since that's what it really means. ~Labonte
+CANONICAL_AA
+CANONICAL_NUCLEIC
 DNA
 RNA
 PNA
@@ -44,6 +46,7 @@ TRIAZOLE_LINKER # Another new class of artificial heteropolymers. ~Vmulligan
 METAL  # This residue type is a metal ion.
 SURFACE
 WATER
+SOLVENT
 VIRTUAL_RESIDUE
 TERMINUS
 UPPERTERM_CAP

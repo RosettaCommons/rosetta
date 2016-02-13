@@ -1,6 +1,6 @@
 -parser:protocol inputs/test.xml
 -in:file:fasta inputs/dummy.fasta
--dump_connect_info
+-write_all_connect_info
 -connect_info_cutoff 0
 -nstruct 125
 -jd2:failed_job_exception false

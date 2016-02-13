@@ -3,7 +3,7 @@
 -nstruct 1
 -mute all
 -unmute protocols.helical_bundle
--inout:dump_connect_info
+-inout:write_all_connect_info
 -inout:connect_info_cutoff 0.0
 ##### these are general flags
 -score:weights talaris2014

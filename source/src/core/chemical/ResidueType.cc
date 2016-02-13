@@ -2128,6 +2128,42 @@ ResidueType::is_NA() const
 	return is_DNA() || is_RNA();
 }
 
+/// @brief Is this a solvent molecule (SOLVENT property)?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_solvent() const
+{
+	return properties_->has_property( SOLVENT );
+}
+
+/// @brief Is this a canonical nucleic acid (CANONICAL_NUCLEIC property)?
+/// @details Only the standard nucliec acid types (dA, dC, dG, dT, A, C, G, U) are canonical.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_canonical_nucleic() const
+{
+	return properties_->has_property( CANONICAL_NUCLEIC );
+}
+
+/// @brief Is this a canonical amino acid (CANONICAL_AA property)?
+/// @details Only the standard amino acid types (ACDEFGHIKLMNPQRSTVWY) are canonical.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_canonical_aa() const
+{
+	return properties_->has_property( CANONICAL_AA );
+}
+
+/// @brief Is this a canonical residue type (nucleic acid or amino acid)?
+/// @details Calls is_canonical_aa() and is_canonical_nucleic().
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_canonical() const
+{
+	return is_canonical_aa() || is_canonical_nucleic();
+}
+
+
 bool
 ResidueType::is_peptoid() const
 {

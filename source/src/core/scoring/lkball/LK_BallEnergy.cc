@@ -683,18 +683,18 @@ LK_BallEnergy::residue_pair_energy(
 	bool rsd1_cached = rsd1.data_ptr() != 0 && rsd1.data_ptr()->has( LK_BALL_INFO );
 	bool rsd2_cached = rsd2.data_ptr() != 0 && rsd2.data_ptr()->has( LK_BALL_INFO );
 
-	if (rsd1_cached && rsd2_cached) {
+	if ( rsd1_cached && rsd2_cached ) {
 		residue_pair_energy( rsd1,
 			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
 			rsd2,
 			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
 			emap );
-	} else if (rsd1_cached) {
+	} else if ( rsd1_cached ) {
 		LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
 		residue_pair_energy( rsd1,
 			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
 			rsd2, info2, emap );
-	} else if (rsd2_cached) {
+	} else if ( rsd2_cached ) {
 		LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
 		residue_pair_energy( rsd1, info1, rsd2,
 			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
@@ -1083,25 +1083,25 @@ LK_BallEnergy::residue_pair_energy(
 	counter=0;
 #endif
 	if ( counter%10000 == 0 ) { // total hack
-		LKB_ResidueInfo info1b( rsd1 );
-		utility::vector1< Vectors > const & rsd1_waters_new( info1b.waters() );
+	LKB_ResidueInfo info1b( rsd1 );
+	utility::vector1< Vectors > const & rsd1_waters_new( info1b.waters() );
 
-		runtime_assert( rsd1_waters.size() == rsd1_waters_new.size() );
+	runtime_assert( rsd1_waters.size() == rsd1_waters_new.size() );
 
-		for ( Size i=1; i<= rsd1.nheavyatoms(); ++i ) {
-			if ( !rsd1_waters[i].empty() ) {
-				runtime_assert( rsd1_waters[i].size() == rsd1_waters_new[i].size() );
-				for ( Size j=1; j<= rsd1_waters[i].size(); ++j ) {
-					Real const dis2( rsd1_waters[i][j].distance_squared( rsd1_waters_new[i][j] ) );
-					if ( dis2>1e-3 ) {
-						std::cout << "LKB-bigdis2: " << rsd1.name() << ' ' << rsd2.name() << ' ' << std::sqrt( dis2 ) << std::endl;
-						std::cerr << "LKB-bigdis2: " << rsd1.name() << ' ' << rsd2.name() << ' ' << std::sqrt( dis2 ) << std::endl;
-						debug_assert(dis2<1e-3);
-						utility_exit();
-					}
-				}
-			}
-		}
+	for ( Size i=1; i<= rsd1.nheavyatoms(); ++i ) {
+	if ( !rsd1_waters[i].empty() ) {
+	runtime_assert( rsd1_waters[i].size() == rsd1_waters_new[i].size() );
+	for ( Size j=1; j<= rsd1_waters[i].size(); ++j ) {
+	Real const dis2( rsd1_waters[i][j].distance_squared( rsd1_waters_new[i][j] ) );
+	if ( dis2>1e-3 ) {
+	std::cout << "LKB-bigdis2: " << rsd1.name() << ' ' << rsd2.name() << ' ' << std::sqrt( dis2 ) << std::endl;
+	std::cerr << "LKB-bigdis2: " << rsd1.name() << ' ' << rsd2.name() << ' ' << std::sqrt( dis2 ) << std::endl;
+	debug_assert(dis2<1e-3);
+	utility_exit();
+	}
+	}
+	}
+	}
 	}
 	*/
 
@@ -1525,14 +1525,14 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
 	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
-		emap.zero();
-		residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
-		temp_table3( jj, ii ) += weights.dot( emap );
-		if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
-			std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
-			std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
-			std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
-		}
+	emap.zero();
+	residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
+	temp_table3( jj, ii ) += weights.dot( emap );
+	if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
+	std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
+	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
+	std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
+	}
 	}
 	}
 	std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
@@ -1588,14 +1588,14 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-		emap.zero();
-		residue_pair_energy( *set.rotamer( ii ), rsd, pose, sfxn, emap );
-		temp_vector3[ ii ] += weights.dot( emap );
-		if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
-			std::cout << "lkballE: Residues " << set.resid() << " & " << rsd.seqpos() << " rotamers: " << ii << " & bg";
-			std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
-			std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
-		}
+	emap.zero();
+	residue_pair_energy( *set.rotamer( ii ), rsd, pose, sfxn, emap );
+	temp_vector3[ ii ] += weights.dot( emap );
+	if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
+	std::cout << "lkballE: Residues " << set.resid() << " & " << rsd.seqpos() << " rotamers: " << ii << " & bg";
+	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
+	std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
+	}
 	}
 	std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << rsd.seqpos() << std::endl;
 	*/
@@ -1878,19 +1878,19 @@ create_rotamer_descriptor(
 		rotamer_descriptor.atom( ++count_added_atoms, rdatom );
 
 		//for ( Size kk = res.attached_H_begin( jj ),
-		//		kk_end = res.attached_H_end( jj );
-		//		kk <= kk_end; ++kk ) {
-		//	LKBAtom newhatom;
-		//	newhatom.atom( res.atom(kk) );
-		//	newhatom.is_hydrogen( true );
-		//	//newhatom.waters( lkb_resinfo.waters() );
-		//	//newhatom.atom_weights( lkb_resinfo.atom_weights() );
+		//  kk_end = res.attached_H_end( jj );
+		//  kk <= kk_end; ++kk ) {
+		// LKBAtom newhatom;
+		// newhatom.atom( res.atom(kk) );
+		// newhatom.is_hydrogen( true );
+		// //newhatom.waters( lkb_resinfo.waters() );
+		// //newhatom.atom_weights( lkb_resinfo.atom_weights() );
 		//
-		//	CPDAT hcpdata;
-		//	initialize_cpdata_for_atom( hcpdata, kk, res, cpdata_map ); //??
+		// CPDAT hcpdata;
+		// initialize_cpdata_for_atom( hcpdata, kk, res, cpdata_map ); //??
 		//
-		//	RotamerDescriptorAtom< LKBAtom, CPDAT> hrdatom( newhatom, hcpdata );
-		//	rotamer_descriptor.atom( ++count_added_atoms, hrdatom );
+		// RotamerDescriptorAtom< LKBAtom, CPDAT> hrdatom( newhatom, hcpdata );
+		// rotamer_descriptor.atom( ++count_added_atoms, hrdatom );
 		//}
 	}
 }

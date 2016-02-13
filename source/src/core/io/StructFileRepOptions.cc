@@ -51,8 +51,8 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	//set_check_if_residues_are_termini( tag->getOption< std::string >( "termini", "ALL" ));
 	set_check_if_residues_are_Ntermini( tag->getOption< std::string >( "Ntermini", "ALL" ));
 	set_check_if_residues_are_Ctermini( tag->getOption< std::string >( "Ctermini", "ALL" ));
-	set_dump_connect_info( tag->getOption< bool >( "dump_connect_info", 0 ));
-	set_connect_info_cutoff( tag->getOption< Real >( "connect_info_cutoff", 3.0 ));
+	set_skip_connect_info( tag->getOption< bool >( "skip_connect_info", 0 ));
+	set_connect_info_cutoff( tag->getOption< Real >( "connect_info_cutoff", 0.0 ));
 	set_exit_if_missing_heavy_atoms( tag->getOption< bool >( "exit_if_missing_heavy_atoms", 0 ));
 	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ));
 	set_ignore_unrecognized_res( tag->getOption< bool >( "ignore_unrecognized_res", 0 ));
@@ -79,6 +79,9 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_suppress_zero_occ_pdb_output( tag->getOption< bool >( "suppress_zero_occ_pdb_output", 0 ) );
 	set_write_pdb_link_records(tag->getOption<bool>("write_pdb_link_records", 0));
 	set_write_pdb_parametric_info( tag->getOption<bool>("write_pdb_parametric_info", 1) );
+	set_write_all_connect_info( tag->getOption<bool>("write_all_connect_info", 0) );
+
+
 
 	set_chains_whose_residues_are_separate_chemical_entities(
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ));
@@ -98,7 +101,7 @@ std::string StructFileRepOptions::type() const { return "file_data_options"; }
 //std::string StructFileRepOptions::check_if_residues_are_termini() const { return check_if_residues_are_termini_; }
 std::string const & StructFileRepOptions::check_if_residues_are_Ntermini() const { return check_if_residues_are_Ntermini_; }
 std::string const & StructFileRepOptions::check_if_residues_are_Ctermini() const { return check_if_residues_are_Ctermini_; }
-bool StructFileRepOptions::dump_connect_info() const { return dump_connect_info_; }
+bool StructFileRepOptions::skip_connect_info() const { return skip_connect_info_; }
 core::Real StructFileRepOptions::connect_info_cutoff() const { return connect_info_cutoff_; }
 bool StructFileRepOptions::exit_if_missing_heavy_atoms() const { return exit_if_missing_heavy_atoms_; }
 bool StructFileRepOptions::fold_tree_io() const { return fold_tree_io_; }
@@ -125,6 +128,7 @@ bool StructFileRepOptions::renumber_pdb() const { return renumber_pdb_; }
 bool StructFileRepOptions::suppress_zero_occ_pdb_output() const { return suppress_zero_occ_pdb_output_; }
 bool StructFileRepOptions::write_pdb_link_records() const {return write_pdb_link_records_;}
 bool StructFileRepOptions::write_pdb_parametric_info() const {return write_pdb_parametric_info_;}
+bool StructFileRepOptions::write_all_connect_info() const {return write_all_connect_info_;}
 std::string const & StructFileRepOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 utility::vector1<std::string> const & StructFileRepOptions::residues_for_atom_name_remapping() const { return residues_for_atom_name_remapping_; }
 bool StructFileRepOptions::pdb_comments() const { return pdb_comments_; }
@@ -139,8 +143,8 @@ void StructFileRepOptions::set_check_if_residues_are_Ntermini( std::string const
 void StructFileRepOptions::set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini )
 { check_if_residues_are_Ctermini_ = check_if_residues_are_Ctermini; }
 
-void StructFileRepOptions::set_dump_connect_info( bool const dump_connect_info )
-{ dump_connect_info_ = dump_connect_info; }
+void StructFileRepOptions::set_skip_connect_info( bool const skip_connect_info )
+{ skip_connect_info_ = skip_connect_info; }
 
 void StructFileRepOptions::set_connect_info_cutoff( core::Real const & connect_info_cutoff )
 { connect_info_cutoff_ = connect_info_cutoff; }
@@ -231,6 +235,9 @@ void StructFileRepOptions::set_write_pdb_link_records(bool const setting)
 void StructFileRepOptions::set_write_pdb_parametric_info(bool const setting)
 { write_pdb_parametric_info_ = setting; }
 
+void StructFileRepOptions::set_write_all_connect_info(bool const setting)
+{ write_all_connect_info_ = setting; }
+
 void StructFileRepOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
 { chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
 
@@ -249,7 +256,7 @@ void StructFileRepOptions::init_from_options()
 
 	set_check_if_residues_are_Ntermini( option[ in::Ntermini ].value());
 	set_check_if_residues_are_Ctermini( option[ in::Ctermini ].value());
-	set_dump_connect_info( option[ inout::dump_connect_info ].value());
+	set_skip_connect_info( option[ inout::skip_connect_info ].value());
 	set_connect_info_cutoff( option[ inout::connect_info_cutoff ].value());
 	set_exit_if_missing_heavy_atoms( option[ run::exit_if_missing_heavy_atoms ].value());
 	set_fold_tree_io( option[ inout::fold_tree_io ]() );
@@ -288,6 +295,7 @@ void StructFileRepOptions::init_from_options()
 		set_residues_for_atom_name_remapping( option[ in::file::remap_pdb_atom_names_for ] );
 	}
 	set_write_pdb_parametric_info( option[out::file::write_pdb_parametric_info]() );
+	set_write_all_connect_info( option[inout::write_all_connect_info]() );
 	set_show_all_fixes( option[ in::show_all_fixes ]() );
 	set_constraints_from_link_records( option[ in::constraints_from_link_records ]() );
 

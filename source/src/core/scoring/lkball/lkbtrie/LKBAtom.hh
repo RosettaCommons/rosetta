@@ -66,13 +66,14 @@ public:
 	inline
 	bool operator < ( LKBAtom const & other ) const
 	{
-		if (waters_.size() != other.waters_.size())
+		if ( waters_.size() != other.waters_.size() ) {
 			return (waters_.size() < other.waters_.size());
+		}
 
 		// because xyzVector does not properly define <
-		for (core::Size i=1; i<=waters_.size(); ++i) {
-			for (core::Size j=0; j<3; ++j) {
-				if (float(waters_[i][j]) != float(other.waters_[i][j])) {
+		for ( core::Size i=1; i<=waters_.size(); ++i ) {
+			for ( core::Size j=0; j<3; ++j ) {
+				if ( float(waters_[i][j]) != float(other.waters_[i][j]) ) {
 					return (float(waters_[i][j]) < float(other.waters_[i][j]));
 				}
 			}
@@ -102,10 +103,10 @@ public:
 	bool operator == ( LKBAtom const & other ) const
 	{
 		return (
-				base_.xyz() == other.base_.xyz() &&
-				base_.type() == other.base_.type() &&
-				waters_ == other.waters_ &&
-				atom_weights_ == other.atom_weights_);
+			base_.xyz() == other.base_.xyz() &&
+			base_.type() == other.base_.type() &&
+			waters_ == other.waters_ &&
+			atom_weights_ == other.atom_weights_);
 	}
 
 private:

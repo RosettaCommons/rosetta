@@ -58,7 +58,7 @@ public:
 
 	void setUp() {
 		//core_init();
-		core_init_with_additional_options( "-symmetric_gly_tables true -dump_connect_info -connect_info_cutoff 0.0" );
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
 	}
 
 	void tearDown() {

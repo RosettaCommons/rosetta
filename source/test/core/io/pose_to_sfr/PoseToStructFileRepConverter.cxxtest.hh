@@ -46,7 +46,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	// Initialization
 	void setUp()
 	{
-		core_init_with_additional_options( "-dump_connect_info -connect_info_cutoff 0.0" );
+		core_init_with_additional_options( "-write_all_connect_info -connect_info_cutoff 0.0" );
 	}
 
 	// Destruction

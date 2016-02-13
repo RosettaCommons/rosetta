@@ -350,8 +350,8 @@ foreach_movemap_tag(
 
 void
 parse_movemap_tag(
-		utility::tag::TagCOP const in_tag,
-		core::kinematics::MoveMapOP mm )
+	utility::tag::TagCOP const in_tag,
+	core::kinematics::MoveMapOP mm )
 {
 	if ( in_tag->hasOption( "bb" ) ) mm->set_bb( in_tag->getOption< bool >( "bb" ) );
 	if ( in_tag->hasOption( "chi" ) ) mm->set_chi( in_tag->getOption< bool >( "chi" ) );

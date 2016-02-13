@@ -823,8 +823,7 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	core::io::AtomInformation &ai
 ) const {
 
-	if ( !options_.dump_connect_info() ) return;
-
+	if ( options_.skip_connect_info() ) return;
 	if ( pose.n_residue() == 0 ) return; //Probably unnecesary, but why not?
 
 	debug_assert( res_index <= pose.n_residue() );
@@ -835,6 +834,8 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	//Return if this is virtual and we're not writing virtuals:
 	if ( ( pose.residue(res_index).is_virtual_residue() || pose.residue(res_index).atom_type(atom_index_in_rsd).is_virtual() ) && !write_virtuals ) return;
 
+	bool const writeall( options_.write_all_connect_info() );
+	bool const this_res_is_canonical_or_solvent( pose.residue(res_index).type().is_canonical() || pose.residue(res_index).type().is_solvent() );
 	core::Real const dist_cutoff_sq( options_.connect_info_cutoff()*options_.connect_info_cutoff() );
 	core::Size count(0);
 	core::id::AtomID const this_atom_id( atom_index_in_rsd, res_index ); //The AtomID of this atom.
@@ -848,6 +849,14 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 
 			if ( !write_virtuals && pose.residue(i).atom_type(j).is_virtual() ) continue; //Skip writing virtuals if we should do so.
 			++count;
+			if ( !writeall ) {
+				if ( i == res_index ) { //If this is an intra-residue bond:
+					if ( pose.residue(i).type().is_canonical() || pose.residue(i).type().is_solvent() ) continue; //Skip canonical and solvent intra-res bonds.
+				} else { //If this is an inter-residue bond:
+					if ( this_res_is_canonical_or_solvent && ( pose.residue(i).type().is_canonical() || pose.residue(i).type().is_solvent() ) ) continue; //Skip canonical or solvent inter-res bonds.
+				}
+			}
+
 			core::id::AtomID const other_atom_id( j, i ); //Candidate other atom to which this one might be bonded.
 			for ( core::Size n=1, nmax=bonded_ids.size(); n<=nmax; ++n ) {
 				if ( bonded_ids[n] == other_atom_id ) { //If the candidate atom is in the list of bonded atoms for this atom, add CONECT data.

@@ -88,5 +88,8 @@ ADD_CHI_ROTAMER 3  176.91  20.00   # 4.5%
 ##   or the lower tail of the -132.92 bin. Since 176.91 degrees is close to the anti conformation, however,
 ##   the data point is kept as a separate bin.
 
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
 END_CASE
 

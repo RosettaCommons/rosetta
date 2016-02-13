@@ -1576,6 +1576,25 @@ public:
 	/// @brief is Nucleic Acid?
 	bool is_NA() const;
 
+	/// @brief Is this a solvent molecule (SOLVENT property)?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_solvent() const;
+
+	/// @brief Is this a canonical nucleic acid (CANONICAL_NUCLEIC property)?
+	/// @details Only the standard nucliec acid types (dA, dC, dG, dT, A, C, G, U) are canonical.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_canonical_nucleic() const;
+
+	/// @brief Is this a canonical amino acid (CANONICAL_AA property)?
+	/// @details Only the standard amino acid types (ACDEFGHIKLMNPQRSTVWY) are canonical.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_canonical_aa() const;
+
+	/// @brief Is this a canonical residue type (nucleic acid or amino acid)?
+	/// @details Calls is_canonical_aa() and is_canonical_nucleic().
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_canonical() const;
+
 	/// @brief is peptoid?
 	bool is_peptoid() const;
 

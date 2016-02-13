@@ -46,10 +46,10 @@ LKBTrieEvaluator::~LKBTrieEvaluator() {}
 
 Energy
 LKBTrieEvaluator::heavyatom_heavyatom_energy(
-		LKBAtom const & at1,
-		LKBAtom const & at2,
-		DistanceSquared & d2,
-		Size & /*path_dist*/
+	LKBAtom const & at1,
+	LKBAtom const & at2,
+	DistanceSquared & d2,
+	Size & /*path_dist*/
 ) const
 {
 	d2 = at1.atom( ).xyz().distance_squared( at2.atom( ).xyz() );
@@ -68,13 +68,13 @@ LKBTrieEvaluator::heavyatom_heavyatom_energy(
 
 	core::Real score =
 		wt_lk_ball_iso_ * lk_ij +
-		wt_lk_ball_	 * lkbr_ij +
+		wt_lk_ball_  * lkbr_ij +
 		wt_lk_ball_wtd_ * (
-			at1.atom_weights()[1] * lk_desolvation_of_atom1_by_atom2 +
-			at1.atom_weights()[2] * lk_desolvation_of_atom1_by_atom2_lkb +
-			at2.atom_weights()[1] * lk_desolvation_of_atom2_by_atom1 +
-			at2.atom_weights()[2] * lk_desolvation_of_atom2_by_atom1_lkb
-		);
+		at1.atom_weights()[1] * lk_desolvation_of_atom1_by_atom2 +
+		at1.atom_weights()[2] * lk_desolvation_of_atom1_by_atom2_lkb +
+		at2.atom_weights()[1] * lk_desolvation_of_atom2_by_atom1 +
+		at2.atom_weights()[2] * lk_desolvation_of_atom2_by_atom1_lkb
+	);
 
 	return score;
 }

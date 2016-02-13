@@ -476,14 +476,17 @@ Options = Option_Group( '',
 	Option_Group( 'inout',
 		Option( 'inout', 'Boolean', desc="Ouput option group", legal='true', default='true' ),
 		Option( 'fold_tree_io', 'Boolean', desc="Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" ),
-		Option( 'dump_connect_info', 'Boolean',
-				desc="Output CONECT info between bonded atoms that are beyond a threshhold specified with the "
-						"-inout:connect_info_cutoff flag (3.0 A by default); useful for coarse-grained representations.",
-				default="false" ),
+		Option( 'skip_connect_info', 'Boolean',
+				desc="If true, skips writing CONECT information in PDB files.  False by default (writes CONECT records).",
+				default='false' ),
+		Option( 'write_all_connect_info', 'Boolean',
+				desc="By default, CONECT information is written for all noncanonicals and HETATMs, except waters.  If this flag is set to true, it will"
+						" be written for ALL residues, subject to the distance cutoff (-inout:connect_info_cufoff) and overridden by -inout:skip_connect_info.",
+				default='false' ),
 		Option( 'connect_info_cutoff', 'Real',
 				desc="The atom separation cutoff above which bonded atoms have explicit CONECT records written so "
-						"that programs like PyMOL know the atomic connectivity.  Default 3.0 Angstroms.",
-				default="3.0" ),
+						"that programs like PyMOL know the atomic connectivity.  Default 0.0 Angstroms (write all records).",
+				default='0.0' ),
 
 		# Relational database options -----------------------------------------
 		Option_Group('dbms',

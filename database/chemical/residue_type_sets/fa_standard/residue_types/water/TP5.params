@@ -21,7 +21,7 @@ BOND O EP2
 
 ## amber puts a bond between H1 and H2
 
-PROPERTIES
+PROPERTIES SOLVENT WATER
 
 NBR_ATOM O
 

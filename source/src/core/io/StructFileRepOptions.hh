@@ -53,7 +53,7 @@ public:
 	//std::string check_if_residues_are_termini() const;
 	std::string const & check_if_residues_are_Ntermini() const;
 	std::string const & check_if_residues_are_Ctermini() const;
-	bool dump_connect_info() const;
+	bool skip_connect_info() const;
 	core::Real connect_info_cutoff() const;
 	bool exit_if_missing_heavy_atoms() const;
 	bool fold_tree_io() const;
@@ -80,6 +80,7 @@ public:
 	bool suppress_zero_occ_pdb_output() const;
 	bool write_pdb_link_records() const;
 	bool write_pdb_parametric_info() const;
+	bool write_all_connect_info() const;
 	std::string const & chains_whose_residues_are_separate_chemical_entities() const;
 	utility::vector1<std::string> const & residues_for_atom_name_remapping() const;
 	bool pdb_comments() const;
@@ -90,7 +91,7 @@ public:
 	//void set_check_if_residues_are_termini( std::string check_if_residues_are_termini );
 	void set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini );
 	void set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini );
-	void set_dump_connect_info( bool const dump_connect_info );
+	void set_skip_connect_info( bool const skip_connect_info );
 	void set_connect_info_cutoff( core::Real const & connect_info_cutoff );
 	void set_exit_if_missing_heavy_atoms( bool const exit_if_missing_heavy_atoms );
 	void set_fold_tree_io( bool const fold_tree_io );
@@ -117,6 +118,7 @@ public:
 	void set_suppress_zero_occ_pdb_output(bool const setting);
 	void set_write_pdb_link_records(bool const setting);
 	void set_write_pdb_parametric_info(bool const setting);
+	void set_write_all_connect_info(bool const setting);
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
 	void set_residues_for_atom_name_remapping(utility::vector1<std::string> const & setting);
 	void set_pdb_comments( bool const pdb_comments );
@@ -130,7 +132,7 @@ private:
 private:
 	std::string check_if_residues_are_Ntermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
 	std::string check_if_residues_are_Ctermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
-	bool dump_connect_info_;
+	bool skip_connect_info_;
 	core::Real connect_info_cutoff_;
 	bool exit_if_missing_heavy_atoms_;
 	bool fold_tree_io_;
@@ -157,6 +159,7 @@ private:
 	bool suppress_zero_occ_pdb_output_;
 	bool write_pdb_link_records_;
 	bool write_pdb_parametric_info_;
+	bool write_all_connect_info_;
 
 	std::string chains_whose_residues_are_separate_chemical_entities_; //treat_residues_in_these_chains_as_separate_chemical_entities
 	/// @brief Three letter codes of residues for which to allow atom renaming.

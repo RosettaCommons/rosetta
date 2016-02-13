@@ -68,7 +68,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		using namespace core;
-		core_init_with_additional_options( "-dump_connect_info -connect_info_cutoff 0 -output_virtual true" );
+		core_init_with_additional_options( "-write_all_connect_info -connect_info_cutoff 0 -output_virtual true" );
 	}
 
 	// Shared finalization goes here.

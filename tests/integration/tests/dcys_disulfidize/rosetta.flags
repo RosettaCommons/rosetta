@@ -1,6 +1,6 @@
 -in:file:s inputs/rsmn.pdb
 -parser:protocol inputs/input.xml
--dump_connect_info
+-write_all_connect_info
 -connect_info_cutoff 0
 -nstruct 8
 -jd2:failed_job_exception false
