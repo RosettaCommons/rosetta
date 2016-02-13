@@ -28,8 +28,8 @@ namespace pcs2 {
 
 class PcsEnergy;
 
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
+typedef utility::pointer::shared_ptr< PcsEnergy > PcsEnergyOP;
+typedef utility::pointer::shared_ptr< PcsEnergy const > PcsEnergyCOP;
 
 }//namespace pcs2
 }//namespace methods
