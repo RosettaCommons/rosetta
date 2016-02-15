@@ -617,7 +617,7 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     bin = path.join(minidir, "bin")
     pyapps = path.join(minidir, "scripts", "python")
     template_dir = path.join(minidir, "code_templates")
-    
+
     if sys.platform.startswith("linux"):
         platform = "linux" # can be linux1, linux2, etc
     elif sys.platform == "darwin":
@@ -671,7 +671,7 @@ def generateTestCommandline(test, outdir, options=None, host=None):
             preamble = preamble + " --leak-check=full"
         # The fragment tests need special consideration
         if( test.startswith("fragment") ):
-            preamble = preamble + " --main-stacksize=8990000"
+            preamble = preamble + " --main-stacksize=12000000"
         params["bin"] = preamble + " " + params["bin"]
 
     cmd=''

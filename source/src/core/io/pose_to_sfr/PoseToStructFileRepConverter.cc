@@ -165,7 +165,10 @@ PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const
 	using core::pose::PDBInfo;
 
 	new_sfr();
-	options_ = options;
+	if( &options_ != &options ) { // Yes, address-of comparison
+		// In an if block to avoid self (re)assignment, say from the init_from_pose(pose) call.
+		options_ = options;
+	}
 
 	// Get Title Section information.
 	if ( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {

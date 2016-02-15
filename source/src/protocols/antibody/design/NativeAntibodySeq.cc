@@ -44,8 +44,6 @@ NativeAntibodySeq::NativeAntibodySeq(const core::pose::Pose &pose,
 {
 	ab_info_ = ab_info->clone();
 	set_sequence(pose);
-
-
 }
 
 NativeAntibodySeq::NativeAntibodySeq(NativeAntibodySeq const &src):
@@ -53,15 +51,12 @@ NativeAntibodySeq::NativeAntibodySeq(NativeAntibodySeq const &src):
 	ab_info_(src.ab_info_),
 	seq_(src.seq_),
 	cdr_seq_(src.cdr_seq_)
+{}
 
-{
-
-
-}
+NativeAntibodySeq::~NativeAntibodySeq() {}
 
 basic::datacache::CacheableDataOP
 NativeAntibodySeq::clone() const {
-
 	return CacheableDataOP( new NativeAntibodySeq(*this) );
 }
 
@@ -93,7 +88,9 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose) {
 
 void
 NativeAntibodySeq::set_to_pose(core::pose::Pose &pose) {
-	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( this ));
+	// Do NOT attempt to put 'this' into an owning pointer. We don't know where it's allocaed (e.g. on the stack).
+	// Make a copy of this object and use that, instead.
+	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, clone());
 }
 
 void

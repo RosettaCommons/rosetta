@@ -805,10 +805,12 @@ set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::P
 		//NativeAntibodySeq & seq = static_cast< NativeAntibodySeq & >(pose.data().get(CacheableDataType::NATIVE_ANTIBODY_SEQ));
 
 		NativeAntibodySeqOP data
-			=  utility::pointer::static_pointer_cast< NativeAntibodySeq >
+			=  utility::pointer::dynamic_pointer_cast< NativeAntibodySeq >
 			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
 
-		runtime_assert( data.get() != NULL );
+		if( ! data ) {
+			utility_exit_with_message("Pose said it had a NativeAntibodySeq, but it's bad!");
+		}
 
 		TR << "Setting CDR sequence in NativeAntibodySeq" << std::endl;
 		data->set_from_cdr(pose, cdr );
@@ -821,16 +823,21 @@ set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::P
 std::string
 get_native_sequence( core::pose::Pose const & pose){
 
-	//Does not work:
-	//NativeAntibodySeqCOP data
-	// =  utility::pointer::static_pointer_cast< NativeAntibodySeq >
-	//  ( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
+	if ( ! pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ) ) {
+		utility_exit_with_message("Pose does not have a valid NativeAntibodySeq set!");
+	}
 
+	NativeAntibodySeqCOP data
+		=  utility::pointer::dynamic_pointer_cast< NativeAntibodySeq const >
+		( pose.data().get_const_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
 
-	NativeAntibodySeq const & data = static_cast< NativeAntibodySeq const & >(pose.data().get(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ));
-	std::string seq = data.get_sequence(pose);
+	if( ! data ) {
+		utility_exit_with_message("Pose does not have a valid NativeAntibodySeq!");
+	}
+
+	std::string seq = data->get_sequence(pose);
 	//TR << "Getting sequence: " << seq << std::endl;
-	return data.get_sequence(pose);
+	return seq;
 }
 
 bool
@@ -838,8 +845,6 @@ has_native_sequence( core::pose::Pose const & pose){
 	return pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ);
 
 }
-
-
 
 
 } //design

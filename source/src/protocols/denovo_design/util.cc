@@ -469,8 +469,17 @@ core::Size
 count_bulges( components::StructureData const & perm, std::string const & segment )
 {
 	std::string const & ss = perm.segment( segment ).ss();
+	if( ss.size() < perm.segment( segment ).stop() ) {
+		TR.Error << "ERROR: ss size of " << ss.size() << " is shorter than the endpoint of the segment: " << perm.segment( segment ).stop() << std::endl;
+		utility_exit_with_message("In count_bulges, ss doesn't cover the entire segment.");
+	}
 	utility::vector1< std::string > const & abego = perm.segment( segment ).abego();
+	if( abego.size() < perm.segment( segment ).stop() ) {
+		TR.Error << "ERROR: abego size of " << abego.size() << " is shorter than the endpoint of the segment: " << perm.segment( segment ).stop() << std::endl;
+		utility_exit_with_message("In count_bulges, abego doesn't cover the entire segment.");
+	}
 	core::Size bulges = 0;
+	runtime_assert( perm.segment( segment ).start() > 0 );
 	for ( core::Size resid=perm.segment( segment ).start(); resid<=perm.segment( segment ).stop(); ++resid ) {
 		if ( ( ss[ resid - 1 ] == 'E' ) && ( abego[ resid ] == "A" ) ) {
 			++bulges;

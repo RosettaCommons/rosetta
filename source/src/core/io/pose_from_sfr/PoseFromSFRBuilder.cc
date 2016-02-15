@@ -197,9 +197,10 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 		for ( Size jj = 1 ; jj <= rinfo.atoms().size(); jj++ ) {
 			AtomInformation const & atom_info = rinfo.atoms()[jj];
 			std::string const original_atom_name = atom_info.name;
-			//  stars (*)  are changed to primes (').
-			if ( atom_info.name[3] == '*' ) {
-				std::string new_atom_name = atom_info.name.substr(0,3) + "\'";
+			//  final stars (*)  are changed to primes (').
+			// Don't assume atom names are a fixed length (mmCIF)
+			if ( atom_info.name.size() >= 1 && atom_info.name[atom_info.name.size()-1] == '*' ) {
+				std::string new_atom_name = atom_info.name.substr(0,atom_info.name.size()-1) + "\'";
 				rinfo.rename_atom( original_atom_name, new_atom_name );
 				if ( ++nfix <= max_fix || show_all_fixup ) TR << "Converting atom name    " << original_atom_name << " to " << new_atom_name << std::endl;
 			}

@@ -786,7 +786,7 @@ read_topology_file(
 			}
 			rsd->set_low_energy_ring_conformers( ring_num, conformers );
 		} else if ( tag == "PROTON_CHI" ) {
-			Size chino, nsamples, nextra_samples;
+			Size chino, nsamples(0), nextra_samples(0);
 			std::string dummy;
 			l >> chino;
 			l >> dummy; // should be "SAMPLES"
@@ -800,6 +800,10 @@ read_topology_file(
 			utility::vector1< Real > extra_samples( nextra_samples );
 			for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
 				l >> extra_samples[ ii ];
+			}
+			if( ! l ) {
+				tr << "BAD PROTON_CHI line: " << line << std::endl;
+				utility_exit_with_message("Malformed PROTON_CHI line in params file " + filename);
 			}
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling ]
 					&& (rsd->aa() == aa_ser || rsd->aa() == aa_thr )

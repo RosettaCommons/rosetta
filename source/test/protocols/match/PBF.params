@@ -79,10 +79,10 @@ CHI 4  CZ   CN1  CT   CI1
 # For the sake of the matcher unit test, give this residue type a few "proton chis"
 # that direct it to sample these chis to generate a modestly set of conformations.
 # 3 * 2 * 2 * 2 = 24
-PROTON_CHI 1 SAMPLES 3 60 180 300
-PROTON_CHI 2 SAMPLES 2 90 270
-PROTON_CHI 3 SAMPLES 2 85 110
-PROTON_CHI 4 SAMPLES 2 85 120
+PROTON_CHI 1 SAMPLES 3 60 180 300 EXTRA 0
+PROTON_CHI 2 SAMPLES 2 90 270 EXTRA 0
+PROTON_CHI 3 SAMPLES 2 85 110 EXTRA 0
+PROTON_CHI 4 SAMPLES 2 85 120 EXTRA 0
 NBR_ATOM  CB 
 NBR_RADIUS 11.246804
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  

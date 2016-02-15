@@ -17,17 +17,13 @@
 
 #include <protocols/antibody/design/NativeAntibodySeq.fwd.hh>
 
-#include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
@@ -50,6 +46,8 @@ public:
 
 	NativeAntibodySeq( NativeAntibodySeq const & src);
 
+	virtual ~NativeAntibodySeq();
+
 	/// @brief Sets the sequence from the PDB into this class and into the pose.
 	void
 	set_sequence(core::pose::Pose const & pose);
@@ -71,14 +69,11 @@ public:
 
 private:
 
+	NativeAntibodySeq(); // Default constructor is private: Need ab_info to initialize
+
 	AntibodyInfoCOP ab_info_;
 	std::map< std::string , core::chemical::AA> seq_;
 	std::map< CDRNameEnum, utility::vector1< core::chemical::AA > > cdr_seq_;
-
-
-
-
-
 
 };
 
