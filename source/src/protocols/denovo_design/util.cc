@@ -468,20 +468,21 @@ parse_strand_pair( std::string const & strand_pair_str )
 core::Size
 count_bulges( components::StructureData const & perm, std::string const & segment )
 {
-	std::string const & ss = perm.segment( segment ).ss();
-	if( ss.size() < perm.segment( segment ).stop() ) {
-		TR.Error << "ERROR: ss size of " << ss.size() << " is shorter than the endpoint of the segment: " << perm.segment( segment ).stop() << std::endl;
-		utility_exit_with_message("In count_bulges, ss doesn't cover the entire segment.");
-	}
+	std::string const & secstruct = perm.segment( segment ).ss();
 	utility::vector1< std::string > const & abego = perm.segment( segment ).abego();
-	if( abego.size() < perm.segment( segment ).stop() ) {
-		TR.Error << "ERROR: abego size of " << abego.size() << " is shorter than the endpoint of the segment: " << perm.segment( segment ).stop() << std::endl;
-		utility_exit_with_message("In count_bulges, abego doesn't cover the entire segment.");
+	if ( secstruct.size() != abego.size() ) {
+		std::stringstream msg;
+		msg << "ERROR: secstruct " << secstruct << ", size of " << secstruct.size()
+			<< " not the same as the size of the abego (" << abego << ") of the segment: "
+			<< abego.size() << std::endl;
+		utility_exit_with_message( msg.str() );
 	}
+
 	core::Size bulges = 0;
-	runtime_assert( perm.segment( segment ).start() > 0 );
-	for ( core::Size resid=perm.segment( segment ).start(); resid<=perm.segment( segment ).stop(); ++resid ) {
-		if ( ( ss[ resid - 1 ] == 'E' ) && ( abego[ resid ] == "A" ) ) {
+	// iterate through vector and string simultaneously
+	utility::vector1< std::string >::const_iterator ab = abego.begin();
+	for ( std::string::const_iterator ss=secstruct.begin(); ss!=secstruct.end() && ab!=abego.end(); ++ss, ++ab ) {
+		if ( ( *ss == 'E' ) && ( *ab == "A" ) ) {
 			++bulges;
 		}
 	}
