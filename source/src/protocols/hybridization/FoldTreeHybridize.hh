@@ -224,6 +224,7 @@ private:
 	core::Size top_n_big_frag_;
 	core::Size top_n_small_frag_;
 
+	core::Real temp_stage1_;
 	// strand pairings
 	std::string pairings_file_;
 	utility::vector1< core::Size > sheets_;
