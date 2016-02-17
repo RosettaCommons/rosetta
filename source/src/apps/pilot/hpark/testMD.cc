@@ -13,6 +13,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -40,12 +41,12 @@ int main( int argc, char *argv [] ){
 	core::scoring::ScoreFunctionCOP sfxnOP 
 		= core::scoring::ScoreFunctionFactory::create_score_function( option[score::weights] );
 
-  core::chemical::ResidueTypeSetCAP rsd_set
+  core::chemical::ResidueTypeSetCOP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-  core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file); 
+  core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ](1),  core::import_pose::PDB_file ); 
 
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true ); movemap->set_chi( true ); 	movemap->set_jump( true );
 	movemap->set( core::id::THETA, true ); movemap->set( core::id::D, true );
 
@@ -61,10 +62,17 @@ int main( int argc, char *argv [] ){
 
 	MD.set_scorefxn_obj( obj_sfxnOP );
 	MD.set_report_scorecomp( true );
+	MD.set_store_trj( true );
+	MD.report_as_silent( option[ out::file::silent ](), false );
+
+	if( option[ constraints::cst_fa_weight ].user() ){
+		core::Real stdev = std::sqrt( 1.0/option[ constraints::cst_fa_weight ]() );
+		MD.set_constraint( stdev );
+	}
 
 	if( !option[ in::file::md_schfile ].user() ){
-		MD.set_nstep( 500 );
-		MD.set_temperature( 300.0 );
+		MD.set_nstep( 5000 );
+		MD.set_temperature( 150.0 );
 	}
 
 	Size nstruct( option[ out::nstruct ]() );
@@ -75,7 +83,8 @@ int main( int argc, char *argv [] ){
 
 		std::stringstream pdbname;
 		pdbname << option[ out::prefix ]() << "." << i << ".final.pdb";
-		pose_work.dump_pdb( pdbname.str() );
+    utility::vector1< pose::Pose > poses_out = MD.dump_poses( pose );
+		//pose_work.dump_pdb( pdbname.str() );
 	}
 
 	return 0;

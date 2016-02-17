@@ -73,7 +73,6 @@
 #include <fstream>
 
 //Temporary
-
 #include <core/scoring/rms_util.hh>
 #ifdef WIN32
 #include <time.h>
@@ -90,7 +89,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.md.Cartesian" );
 
 using namespace devel::md;
 using namespace core::optimization;
-
 
 // creator
 std::string
@@ -117,15 +115,15 @@ CartesianMD::CartesianMD()
 	init();
 }
 
-CartesianMD::CartesianMD( core::pose::Pose const & pose,
-	core::scoring::ScoreFunctionCOP sfxn,
-	core::kinematics::MoveMapCOP movemap )
+CartesianMD::CartesianMD( core::pose::Pose const & pose, 
+													core::scoring::ScoreFunctionCOP sfxn,
+													core::kinematics::MoveMapCOP movemap )
 {
 	if ( movemap == 0 ) {
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		movemap_->set_jump( true ); movemap_->set_bb( true ); movemap_->set_chi( true );
 		movemap_->set( core::id::THETA, true ); movemap_->set( core::id::D, true);
-	} else {
+ 	} else {
 		set_movemap( pose, movemap );
 	}
 
@@ -137,8 +135,8 @@ CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	}
 }
 
-CartesianMD::CartesianMD( core::pose::Pose const & pose,
-	core::scoring::ScoreFunction const &sfxn )
+CartesianMD::CartesianMD( core::pose::Pose const & pose, 
+													core::scoring::ScoreFunction const &sfxn )
 {
 	core::kinematics::MoveMap movemap;
 	movemap.set_jump( true ); movemap.set_bb( true ); movemap_->set_chi( true );
@@ -152,9 +150,9 @@ CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	}
 }
 
-CartesianMD::CartesianMD( core::pose::Pose const & pose,
-	core::scoring::ScoreFunction const &sfxn,
-	core::kinematics::MoveMap const &movemap )
+CartesianMD::CartesianMD( core::pose::Pose const & pose, 
+													core::scoring::ScoreFunction const &sfxn,
+													core::kinematics::MoveMap const &movemap )
 {
 	set_movemap( pose, movemap.clone() );
 
@@ -198,10 +196,10 @@ CartesianMD::init()
 
 	// Default
 	ncyc_premin_ = 50;
-	ncyc_postmin_ = 200;
+  ncyc_postmin_ = 200;
 	report_scorecomp_ = false;
 	native_given_ = false;
-	constrained_ = false;
+	uniform_coord_constrained_ = false;
 
 	// Trajectory
 	store_trj_ = false;
@@ -219,7 +217,7 @@ CartesianMD::init()
 	Gamma_ = 0.0;
 }
 
-CartesianMD::~CartesianMD(){}
+CartesianMD::~CartesianMD() {}
 
 protocols::moves::MoverOP
 CartesianMD::clone() const {
@@ -227,8 +225,8 @@ CartesianMD::clone() const {
 }
 
 void CartesianMD::set_movemap(
-	core::pose::Pose const &,
-	core::kinematics::MoveMapCOP movemap )
+								 core::pose::Pose const &,
+								 core::kinematics::MoveMapCOP movemap )
 {
 	movemap_ = movemap->clone();
 }
@@ -242,16 +240,16 @@ void CartesianMD::get_native_info( pose::Pose const &pose )
 {
 
 	native_given_ = true;
-
+	
 	std::string nativepdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
 	core::chemical::ResidueTypeSetCOP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	core::import_pose::pose_from_file( native_, *rsd_set, nativepdb , core::import_pose::PDB_file);
-
+	core::import_pose::pose_from_file( native_, *rsd_set, nativepdb, core::import_pose::PDB_file );
+	
 	// Set resmap
 	std::map< Size, Size > resmap;
 	for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
-		if ( !pose.residue( ires ).is_protein() ) continue;
+    if ( !pose.residue( ires ).is_protein() ) continue;
 		Size ii_pdb( pose.pdb_info()->number( ires ) );
 
 		for ( Size jres = 1; jres <= native_.total_residue(); ++jres ) {
@@ -268,7 +266,6 @@ void CartesianMD::get_native_info( pose::Pose const &pose )
 
 void CartesianMD::do_initialize( core::pose::Pose &pose )
 {
-	TR << "Initialize MD simulations" << std::endl;
 
 	// Steal utilities in CartesianMinimizer.cc
 	CartesianMinimizerMap min_map;
@@ -295,9 +292,9 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 	prv_eqxyz_ = ref_xyz_;
 
 	// Mass setup
-	core::chemical::ElementSetCAP element_set
+	core::chemical::ElementSetCOP element_set
 		( core::chemical::ChemicalManager::get_instance()->element_set("default") );
-	core::chemical::ResidueTypeSetCAP rsdtype_set
+	core::chemical::ResidueTypeSetCOP rsdtype_set
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 	for ( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ) {
@@ -305,10 +302,11 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 		Size resno = AtomID.rsd();
 		Size atmno = AtomID.atomno();
 
+		mass_[iatm] = pose.residue_type(resno).atom(atmno).element_type()->weight();
+
 		//std::string const element_name = pose.residue(resno).atom_type(atmno).element();
 		//int const element_index = element_set->element_index(element_name);
-		//mass_[iatm] = (*element_set)[element_index]->weight();
-		mass_[iatm] = pose.residue_type(resno).atom(atmno).element_type()->weight();
+		//mass_[iatm] = (*element_set)[element_index].mass();
 
 	}
 
@@ -326,12 +324,12 @@ void CartesianMD::use_rattle( bool const value )
 	}
 }
 
-void
+void 
 CartesianMD::update_restraint( pose::Pose & pose,
-	CartesianMinimizerMap const &min_map )
+															 CartesianMinimizerMap const &min_map )
 {
 
-	if ( Gamma_ == 0.0 || !constrained_ ) return;
+	if ( Gamma_ == 0.0 || !uniform_coord_constrained_ ) return;
 
 	TR.Debug << "Update restraints with Kappa/Gamma = " << Kappa_ << "/" << Gamma_ << std::endl;
 	Multivec curr_eqxyz = get_current_eqxyz();
@@ -341,7 +339,7 @@ CartesianMD::update_restraint( pose::Pose & pose,
 	trj_scratch_.resize( 0 );
 }
 
-Multivec
+Multivec 
 CartesianMD::get_current_eqxyz() const
 {
 	Multivec curr_eqxyz;
@@ -350,7 +348,7 @@ CartesianMD::get_current_eqxyz() const
 
 	for ( core::Size i_dof = 1; i_dof <= n_dof(); ++i_dof ) {
 		curr_eqxyz[i_dof] = 0.0;
-		for ( core::Size i_trj = 1; i_trj <= ntrj; ++i_trj ) {
+ 		for ( core::Size i_trj = 1; i_trj <= ntrj; ++i_trj ) {
 			curr_eqxyz[i_dof] += trj_scratch_[i_trj][i_dof];
 		}
 
@@ -365,7 +363,7 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 	using namespace core::scoring::constraints;
 
 	// Remove all the constraints first
-	//pose.remove_constraints();  // fpd ... move this below!
+	//pose.remove_constraints(); // fpd ... move this below!
 
 	// First, add cst_file info into pose
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
@@ -375,10 +373,10 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 	}
 
 	// Next, set coordinate constraint if specified
-	if ( constrained_ ) {
+	if ( uniform_coord_constrained_ ) {
 		TR << "Set constraints uniformly with stdev: " << cst_sdev_ << std::endl;
 		pose.remove_constraints();
-		Size nrsr( 0 );
+
 		for ( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ) {
 			std::string resname = pose.residue(i_res).name();
 
@@ -396,23 +394,26 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 			pose.add_constraint(  ConstraintCOP( ConstraintOP(
 				new CoordinateConstraint( atomID, atomID, xyz, fx )
 				)));
-			nrsr++;
+			//pose.add_constraint(new scoring::constraints::CoordinateConstraint
+			//					( atomID, atomID, xyz,
+			//					  new scoring::func::HarmonicFunc( 0.0, cst_sdev_ ) )
+			//					);
 		}
-		TR << "Added " << nrsr << " coordinate constraints." << std::endl;
 	}
 }
 
 void
 CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
-	Multivec const &ref_xyz,
-	Multivec const &curr_eqxyz,
-	Multivec &prv_eqxyz,
-	CartesianMinimizerMap const &min_map ) const
+																	Multivec const &ref_xyz,
+																	Multivec const &curr_eqxyz,
+																	Multivec &prv_eqxyz,
+																	CartesianMinimizerMap const &min_map ) const
 {
 	using namespace core::scoring::constraints;
 
 	// not supporting cst_fa_file yet
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) return;
+
 
 	// Remove all the constraints first
 	pose.remove_constraints();
@@ -430,16 +431,16 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 	//TR << cummulative_time() << " " << ((core::Size)(cummulative_time()*100))%100 << " " << write_dynamic_rsr << std::endl;
 	TR.Debug << "ref/curr/prv_eqxyz0? " << ref_xyz.size() << " " << curr_eqxyz.size() << " " << prv_eqxyz0.size() << std::endl;
 
-	if ( constrained_ ) {
+	if ( uniform_coord_constrained_ ) {
 		if ( write_dynamic_rsr ) {
-			rsrfile << "dynamic rsr: " << cummulative_time() << std::endl;
+			rsrfile << "dynamic rsr: " << cummulative_time() << std::endl; 
 			rsrfile << "Res | X Y Z | prv_eq X Y Z | delta X Y Z" << std::endl;
 		}
 		core::Real rmsd( 0.0 );
 		core::Real rmsd_rsr2ref( 0.0 );
 		core::Real rmsd_rsr2crd( 0.0 );
 		core::Size nrsr_dof( 0 );
-		//for( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ){
+		//for ( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ) {
 		for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
 			id::AtomID atomID = min_map.get_atom( i_atm );
 			Size resno = atomID.rsd();
@@ -448,7 +449,7 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 			std::string resname = pose.residue(resno).name();
 			std::string atmname = pose.residue(resno).atom_name(atmno);
 
-			bool is_protein_ca = ( atmname.compare(" CA ") == 0 );
+			bool is_protein_ca = ( atmname.compare(" CA ") == 0 ); 
 			bool is_water = ( resname.compare("TP3") == 0 && atmname.compare(" O  ") == 0 );
 			if ( !(is_protein_ca || is_water ) ) continue;
 
@@ -463,8 +464,8 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 			for ( core::Size i = 1; i <= 3; ++i ) {
 				core::Size i_dof = (i_atm-1)*3 + i;
 				xyzmix[i-1] = (1.0 - Kappa_)*prv_eqxyz[ i_dof ];
-				xyzmix[i-1] += Kappa_*(Gamma_*curr_eqxyz[ i_dof ] +
-					(1.0-Gamma_)*ref_xyz[ i_dof ] );
+				xyzmix[i-1] += Kappa_*(Gamma_*curr_eqxyz[ i_dof ] + 
+															 (1.0-Gamma_)*ref_xyz[ i_dof ] );
 
 				// update prv_eq crd
 				prv_eqxyz[ i_dof ] = xyzmix[i-1];
@@ -479,12 +480,12 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 			//dist_togo = std::sqrt(dist_togo);
 
 			core::Real sdev( cst_sdev_ );
-			//if( dist_res ) sdev *=
+			//if ( dist_res ) sdev *= 
 
 			scoring::func::FuncOP fx( new scoring::func::HarmonicFunc( 0.0,  sdev ) );
 			pose.add_constraint( ConstraintCOP( ConstraintOP(
-				new CoordinateConstraint( atomID, atomID, xyzmix, fx )
-				)));
+							new CoordinateConstraint( atomID, atomID, xyzmix, fx )
+							)));
 
 			if ( write_dynamic_rsr ) {
 				rsrfile << I(4,resno);
@@ -500,9 +501,9 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 			}
 
 		} //iatm
-
+		
 		if ( write_dynamic_rsr ) {
-			rmsd         /= (core::Real)(nrsr_dof);        rmsd = std::sqrt(rmsd);
+			rmsd         /= (core::Real)(nrsr_dof);  		    rmsd = std::sqrt(rmsd);
 			rmsd_rsr2ref /= (core::Real)(nrsr_dof); rmsd_rsr2ref = std::sqrt(rmsd_rsr2ref);
 			rmsd_rsr2crd /= (core::Real)(nrsr_dof); rmsd_rsr2crd = std::sqrt(rmsd_rsr2crd);
 
@@ -516,11 +517,11 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 
 }
 
-void CartesianMD::apply( core::pose::Pose & pose ){
+void CartesianMD::apply( core::pose::Pose & pose ) {
 	using namespace core::optimization;
 
 	//fpd we have to do this here since this the first time "seeing" the symm pose
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ){
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
 	}
 
@@ -535,9 +536,10 @@ void CartesianMD::apply( core::pose::Pose & pose ){
 	const core::pose::Pose pose0( pose );
 
 
-	// Set constraint
+	// Set constraint 
 	TR << "Set constraint on initial." << std::endl;
-	cst_on_pose_simple( pose );
+	cst_on_pose_simple( pose ); 
+
 
 	TR << "Reporting initial..." << std::endl;
 	CartesianMinimizerMap min_map;
@@ -552,34 +554,30 @@ void CartesianMD::apply( core::pose::Pose & pose ){
 	if ( report_scorecomp_ ) scorefxn_->show( TR, pose );
 
 	// Set initial minobj_ after minimization
-	// These are used to pick the best pose along trajectory (if selectmode == minobj )
+  // These are used to pick the best pose along trajectory (if selectmode == minobj )
 	pose_minobj_ = pose;
 	Emin_obj_ = 1.0e6;
 	time_minobj_ = 0.0;
 
-	// Main
+	// Main 
 	if ( !scheduled_ ) { // typical run
 		do_MD( pose, nstep(), temp0(), true );
 
 	} else { // scheduled run
 		for ( Size i_step = 1; i_step <= mdsch_.size(); ++i_step ) {
 			std::string const runtype( mdsch_[i_step].type );
-			if ( i_step == 1 ) do_initialize( pose );
-
-			TR << "sch " << i_step << ", runtype: " << runtype << std::endl;
 			if ( runtype.compare("sch") == 0 ) {
 				TR << "Changing schedule, Nstep/Temp:";
 				TR << mdsch_[i_step].nstep << " " << mdsch_[i_step].temp0 << std::endl;
-				do_MD( pose, mdsch_[i_step].nstep, mdsch_[i_step].temp0, false );
+				if ( i_step == 1 ) {
+					do_MD( pose, mdsch_[i_step].nstep, mdsch_[i_step].temp0, true );
+				} else {
+					do_MD( pose, mdsch_[i_step].nstep, mdsch_[i_step].temp0, false );
+				}
 			} else if ( runtype.compare("repack") == 0 ) {
 				//
-			} else if ( runtype.compare("min") == 0 ) {
-				do_minimize( pose, options_init, true );
-
-			} else if ( runtype.compare("set_weight") == 0 ) {
-				scorefxn_->set_weight( mdsch_[i_step].scoretype, mdsch_[i_step].weight );
-				TR << "Changing scoreweight: " << mdsch_[i_step].scorename << " " << mdsch_[i_step].weight << std::endl;
 			}
+
 		}
 	}
 
@@ -601,18 +599,17 @@ void CartesianMD::apply( core::pose::Pose & pose ){
 
 
 void CartesianMD::do_minimize( core::pose::Pose &pose,
-	core::optimization::MinimizerOptions const &options,
-	bool const &show_energy )
+															 core::optimization::MinimizerOptions const &options,
+															 bool const &show_energy )
 {
 	CartesianMinimizer minimizer;
 
-	if ( show_energy ) {
-		Real score_before = scorefxn_->score( pose );
+	if ( show_energy ) { 
+		Real score_before = scorefxn_->score( pose ); 
 
 		minimizer.run( pose, *movemap(), *scorefxn_, options );
 
-		Real score_after = scorefxn_->score( pose );
-		scorefxn_->show(TR, pose);
+		Real score_after = scorefxn_->score( pose ); 
 		TR << "Energy before/after Min: " << score_before << " " << score_after << std::endl;
 
 	} else {
@@ -621,16 +618,17 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 }
 
 void CartesianMD::do_MD( core::pose::Pose & pose,
-	Size const &nstep,
-	Real const &temp0,
-	bool const &initialize )
+												 Size const &nstep,
+												 Real const &temp0, 
+												 bool const &initialize )
 {
 	if ( initialize ) {
+		TR << "Running MD simulations for " << nstep*dt() << " ps at " << temp0 << " K... " << std::endl;
 		do_initialize( pose );
 	}
 
 	// Reporting about adaptive rsr
-	if ( constrained_ ) {
+	if ( uniform_coord_constrained_ ) {
 		TR << "Run uniform restrained simulation ";
 		if ( Gamma_ == 0.0 ) {
 			TR << " with static restraints on starting pose." << std::endl;
@@ -647,18 +645,18 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 
 	// Setup RATTLE using min_map
 	md::Rattle rattle( pose, min_map );
-	if ( use_rattle_ ) n_dof_temp_ = n_dof_ - 6 - rattle.ncst();
+  if (use_rattle_) n_dof_temp_ = n_dof_ - 6 - rattle.ncst();
 
 	// This should come after Rattle setup to get n_dof_temp_
 	if ( initialize ) initialize_velocity( temp0 );
 
 	// Set thermostat
-	Thermostat thermostat( temp0, n_dof_temp_ );
-
-	// Start MD integrator
+  Thermostat thermostat( temp0, n_dof_temp_ );
+ 
+  // Start MD integrator
 	scorefxn_->setup_for_minimizing( pose, min_map );
 
-	for ( Size istep = 1; istep <= nstep; istep++ ) {
+  for ( Size istep = 1; istep <= nstep; istep++ ) {
 		cummulative_time_ += dt();
 
 		// Report
@@ -668,7 +666,7 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 			report_MD( pose, min_map, false ); // only report energy
 		}
 
-		bool update_score( false );
+		bool update_score( false ); 
 		if ( istep%context_update_step_ == 0 ) update_score = true;
 
 		// For adaptive restraint
@@ -680,27 +678,42 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 		}
 
 		// Integrate
-		VelocityVerlet_Integrator( pose, min_map, rattle, update_score );
+    VelocityVerlet_Integrator( pose, min_map, rattle, update_score );
+
+		/*
+		// let's get avrg velocities
+		core::Real v2sum( 0.0 ), temperature( 0.0 );
+		for (Size i_dof = 1; i_dof<=vel_.size(); ++i_dof) {
+			int i_atm = (i_dof+2)/3;
+			// pass Virtual atoms
+			if ( mass_[i_atm] < 1e-3 ) continue;
+			TR << "vel: " << i_atm << " " << vel_[i_dof] << std::endl;
+			temperature += mass_[i_atm]*vel_[i_dof]*vel_[i_dof];
+			v2sum += vel_[i_dof]*vel_[i_dof];
+		}
+		temperature /= n_dof_temp_*Boltzmann;
+		*/
 
 		// Calculate/re-eval temperature
 		temperature_ = thermostat.get_temperature( vel_, mass_ );
 
-		if ( istep%thermostat.nstep_per_update() == 0 ) {
-			thermostat.rescale( vel_, dt(), mass_ );
+    if ( istep%thermostat.nstep_per_update() == 0 ) {
+      thermostat.rescale( vel_, dt(), mass_ );
 			temperature_ = thermostat.get_temperature( vel_, mass_ );
-		}
+    }
+		//TR << "v2avrg/Temp/Temp2: " << std::sqrt(v2sum/vel_.size()) << " " << temperature << " " << temperature_ << std::endl;
 		kinetic_energy_ = 0.5*temperature_*n_dof()*GasConst;
 
-	}
+  }
 
 	min_map.copy_dofs_to_pose( pose, xyz_ );
 
 }
 
 void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
-	CartesianMinimizerMap &min_map,
-	md::Rattle &rattle,
-	bool const update_score )
+																						 CartesianMinimizerMap &min_map,
+																						 md::Rattle &rattle,
+																						 bool const update_score )
 {
 	Real dt2_2 = dt()*dt()*0.5;
 
@@ -709,11 +722,9 @@ void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
 	for ( Size i_dof = 1; i_dof <= n_dof(); ++i_dof ) {
 		xyz_[i_dof] += vel_[i_dof]*dt() + acc_[i_dof]*dt2_2;
 		vel_[i_dof] += 0.5*acc_[i_dof]*dt();
-		if ( vel_[i_dof] > MaxVel ) vel_[i_dof] = MaxVel;
-		if ( vel_[i_dof] < -MaxVel ) vel_[i_dof] = -MaxVel;
 	}
 
-	if ( use_rattle_ ) {
+	if (use_rattle_) {
 		rattle.run_rattle1( dt(), xyz_, vel_, mass_ );
 	}
 
@@ -724,7 +735,7 @@ void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
 	// Do we need for non-FACTS?
 	if ( update_score ) scorefxn_->score( pose );
 
-	Multivec force;
+  Multivec force;
 	CartesianMultifunc f_ros( pose, min_map, *scorefxn_, false, false );
 	f_ros.dfunc( xyz_, force );
 
@@ -736,24 +747,18 @@ void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
 		if ( mass_[i_atm] < 1e-3 ) continue;
 
 		acc_[i_dof] = -MDForceFactor*force[i_dof]/mass_[i_atm];
-		// safe boundary
-		if ( acc_[i_dof] > MaxAccel ) acc_[i_dof] = MaxAccel;
-		if ( acc_[i_dof] < -MaxAccel ) acc_[i_dof] = -MaxAccel;
-
 		vel_[i_dof] += 0.5*acc_[i_dof]*dt();
-		if ( vel_[i_dof] > MaxVel ) vel_[i_dof] = MaxVel;
-		if ( vel_[i_dof] < -MaxVel ) vel_[i_dof] = -MaxVel;
 	}
 
-	if ( use_rattle_ ) {
+	if (use_rattle_) {
 		rattle.run_rattle2( dt(), xyz_, vel_, mass_ );
 	}
 
-	//Stop rotation and translation
-	//if((step%nrottrans)==0){
-	//  stop_rot_trans(xyz, vel, size);
-	//  thermostat_.get_temperature();
-	//}
+  //Stop rotation and translation
+  //if ((step%nrottrans)==0) {
+  //  stop_rot_trans(xyz, vel, size);
+  //  thermostat_.get_temperature();
+  //}
 }
 
 void CartesianMD::initialize_velocity( core::Real const &temperature )
@@ -761,19 +766,19 @@ void CartesianMD::initialize_velocity( core::Real const &temperature )
 
 	// Supposed to make Maxwell-Boltzmann distribution... is this really working?
 	// To make sure we should use error-function, but too lazy to do that...
-	for ( core::Size i_dof=1; i_dof<=n_dof(); i_dof++ ) {
+  for ( core::Size i_dof=1; i_dof<=n_dof(); i_dof++ ) {
 		core::Size i_atm = (i_dof+2)/3;
 		// pass Virtual atoms
 		if ( mass_[i_atm] < 1e-3 ) continue;
 
-		Real scalar = sqrt(2.0*temperature*Boltzmann/mass_[i_atm])*numeric::random::rg().gaussian();
+		Real scalar = sqrt(2.0*temperature*Boltzmann/mass_[i_atm])*numeric::random::rg().gaussian(); 
 		if ( numeric::random::rg().uniform() > 0.5 ) scalar *= -1.0;
-		vel_[i_dof] = scalar;
+    vel_[i_dof] = scalar;
 		acc_[i_dof] = 0.0;
-	}
+  }
 
 	// Uniformly scale down to make sure init temperature assigned correctly
-	Thermostat thermostat( temperature, n_dof_temp_ );
+  Thermostat thermostat( temperature, n_dof_temp_ );
 	Real init_temp = thermostat.get_temperature( vel_, mass_ );
 	Real const scale( temperature/init_temp );
 	for ( core::Size i_dof=1; i_dof<=n_dof(); i_dof++ ) vel_[i_dof] *= scale;
@@ -783,8 +788,8 @@ void CartesianMD::initialize_velocity( core::Real const &temperature )
 }
 
 void CartesianMD::report_MD( core::pose::Pose &pose,
-	CartesianMinimizerMap const &min_map,
-	bool const report_trj )
+														 CartesianMinimizerMap const &min_map,
+														 bool const report_trj )
 {
 	core::Real const rmsd( core::scoring::CA_rmsd( pose0_, pose ));
 
@@ -823,8 +828,8 @@ void CartesianMD::report_MD( core::pose::Pose &pose,
 	TR << " " << Eobj << " " << Emin_obj_ ;
 	TR << std::endl;
 
-	if ( cummulative_time() > 0.1 && // Truncate initial 1ps to remove minimization memory
-			selectmode_.compare("minobj") == 0 && Eobj < Emin_obj_ ) {
+	if ( cummulative_time() > 0.1 && // Truncate initial 1ps to remove minimization memory 
+		 selectmode_.compare("minobj") == 0 && Eobj < Emin_obj_ ) {
 		pose_minobj_ = pose;
 		Emin_obj_ = scorefxn_obj_->score( pose );
 		time_minobj_ = cummulative_time();
@@ -858,28 +863,28 @@ void CartesianMD::report_MD( core::pose::Pose &pose,
 
 	/*
 	//Check
-	for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ){
-	Real vv = std::sqrt(vel_[3*i_atm-2]*vel_[3*i_atm-2] + vel_[3*i_atm-1]*vel_[3*i_atm-1] + vel_[3*i_atm]*vel_[3*i_atm]);
-	Real av = std::sqrt(acc_[3*i_atm-2]*vel_[3*i_atm-2] + acc_[3*i_atm-1]*acc_[3*i_atm-1] + acc_[3*i_atm]*acc_[3*i_atm]);
-	id::AtomID AtomID = min_map.get_atom( i_atm );
-	Size resno = AtomID.rsd();
-	Size atmno = AtomID.atomno();
+	for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
+		Real vv = std::sqrt(vel_[3*i_atm-2]*vel_[3*i_atm-2] + vel_[3*i_atm-1]*vel_[3*i_atm-1] + vel_[3*i_atm]*vel_[3*i_atm]);
+		Real av = std::sqrt(acc_[3*i_atm-2]*vel_[3*i_atm-2] + acc_[3*i_atm-1]*acc_[3*i_atm-1] + acc_[3*i_atm]*acc_[3*i_atm]);
+		id::AtomID AtomID = min_map.get_atom( i_atm );
+		Size resno = AtomID.rsd();
+		Size atmno = AtomID.atomno();
 
-	std::cout << "I/x/y/z/v/a: " << std::setw(6) << i_atm;
-	std::cout << " " << std::setw(5) << pose.residue(resno).name();
-	std::cout << " " << std::setw(4) << pose.residue(resno).atom_name(atmno);
-	std::cout << " " << std::setw(10) << xyz_[3*i_atm-2];
-	std::cout << " " << std::setw(10) << xyz_[3*i_atm-1];
-	std::cout << " " << std::setw(10) << xyz_[3*i_atm];
-	std::cout << " " << std::setw(10) << vv;
-	std::cout << " " << std::setw(10) << av;
-	std::cout << std::endl;
+		std::cout << "I/x/y/z/v/a: " << std::setw(6) << i_atm;
+		std::cout << " " << std::setw(5) << pose.residue(resno).name();
+		std::cout << " " << std::setw(4) << pose.residue(resno).atom_name(atmno);
+		std::cout << " " << std::setw(10) << xyz_[3*i_atm-2];
+		std::cout << " " << std::setw(10) << xyz_[3*i_atm-1];
+		std::cout << " " << std::setw(10) << xyz_[3*i_atm];
+		std::cout << " " << std::setw(10) << vv;
+		std::cout << " " << std::setw(10) << av;
+		std::cout << std::endl;
 	}
 	*/
 }
 
 // pose_ref should have exactly same molecule as stored in trj
-utility::vector1< pose::Pose >
+utility::vector1< pose::Pose > 
 CartesianMD::dump_poses( pose::Pose const &pose_ref ) const {
 
 	utility::vector1< pose::Pose > poses;
@@ -925,14 +930,14 @@ void CartesianMD::parse_opts(
 	using namespace scoring;
 
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn" ) );
-	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name ); //->clone();
+	scorefxn_ = data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ); //->clone();
 
 	std::string const scoreobj_name( tag->getOption< std::string >( "scorefxn_obj","" ) );
 
 	if ( scoreobj_name.compare("") == 0 ) {
 		scorefxn_obj_ = scorefxn_; //->clone();
 	} else {
-		scorefxn_obj_ = data.get_ptr<ScoreFunction>( "scorefxns", scoreobj_name ); //->clone();
+		scorefxn_obj_ = data.get_ptr< ScoreFunction >( "scorefxns", scoreobj_name ); //->clone();
 	}
 
 	use_rattle_ = tag->getOption< bool >( "rattle", true );
@@ -945,9 +950,9 @@ void CartesianMD::parse_opts(
 	ncyc_premin_ = tag->getOption< core::Size >( "premin", 50 );
 	ncyc_postmin_ = tag->getOption< core::Size >( "postmin", 200 );
 
-	md_report_stepsize_ = tag->getOption< core::Size >( "report", 100 );
-	report_scorecomp_ = tag->getOption< bool >( "report_scorecomp", false );
-	selectmode_ = tag->getOption< std::string >( "selectmode", "final" );
+ 	md_report_stepsize_ = tag->getOption< core::Size >( "report", 100 );
+ 	report_scorecomp_ = tag->getOption< bool >( "report_scorecomp", false );
+ 	selectmode_ = tag->getOption< std::string >( "selectmode", "final" );
 
 	// Use parsed schedule file - this will overload nstep, temperature, etc. defined above
 	std::string const schfile( tag->getOption< std::string >( "schfile","" ) );
