@@ -461,11 +461,14 @@ CA_gdtmm(
 
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by map< AtomID, AtomID >
+/// @details The rms_calc_offset_val is a small constant value used by the numerical machinery to ensure a nonzero determinant.  This defaults to 1.0e-7.  Realign determines whether this is subtracted off again (default false).
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< id::AtomID, id::AtomID > const & atom_map // from mod_pose to ref_pose
+	std::map< id::AtomID, id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val = 1.0e-7,
+	bool const realign=false
 );
 
 /// @brief Calculate gdttm score based on the C-alpha positions in pose1 and pose2.
@@ -503,20 +506,26 @@ xyz_gdttm(
 
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by atom_map
+/// @details The rms_calc_offset_val is a small constant value used by the numerical machinery to ensure a nonzero determinant.  This defaults to 1.0e-7. Realign determines whether this is subtracted off again (default false).
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
-	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
+	id::AtomID_Map< id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val = 1.0e-7,
+	bool const realign=false
 );
 
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by atom_map
+/// @details The rms_calc_offset_val is a small constant value used by the numerical machinery to ensure a nonzero determinant.  This defaults to 1.0e-7.  Realign determines whether this is subtracted off again (default false).
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::MiniPose const & ref_pose,
-	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
+	id::AtomID_Map< id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val = 1.0e-7,
+	bool const realign=false
 );
 
 /// @brief Superimpose two poses by their calpha coordinates.  Ignores residues

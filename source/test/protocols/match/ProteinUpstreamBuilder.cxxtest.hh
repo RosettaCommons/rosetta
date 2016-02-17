@@ -476,12 +476,12 @@ public:
 
 		//// Find the matching phe residue type for residue 2.
 		//for ( ResidueTypeCOPs::const_iterator
-		//		aas_iter = aas.begin(),
-		//		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-		//	if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-		//		build_set.set_residue_type( *aas_iter );
-		//		break;
-		//	}
+		//  aas_iter = aas.begin(),
+		//  aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		// if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		//  build_set.set_residue_type( *aas_iter );
+		//  break;
+		// }
 		//}
 		SampleStrategyData strat;
 		//strat.set_strategy( rotameric_chi_mimic_EX_flags );

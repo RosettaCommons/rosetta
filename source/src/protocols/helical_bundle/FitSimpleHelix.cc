@@ -156,7 +156,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 
 		if ( TR.visible() ) TR << "Fitting reference atom " << reference_atom_ << " in reference residue (residue " << reference_res_index << ")." << std::endl;
 
-		FitSimpleHelixMultiFunc multfunc(pose, reference_atom_, reference_res_index, residues_per_repeat(), start_index_, end_index_, 0); //Make the multifunc that will be used to fit the reference atom.
+		FitSimpleHelixMultiFunc multfunc(pose, reference_atom_, reference_res_index, residues_per_repeat(), start_index_, end_index_, 0, rms_offset_); //Make the multifunc that will be used to fit the reference atom.
 
 		Multivec vars(5); //Change the number of DOFs appropriately and initialize.
 		vars[1] = r1_initial_;
@@ -204,7 +204,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 
 		//Superimpose the original helix on the ideal helix:
 		//pose.dump_pdb("TEMP1.pdb"); pose_copy.dump_pdb("TEMP2.pdb"); //DELETE ME
-		core::scoring::superimpose_pose( pose, pose_copy, amap );
+		core::scoring::superimpose_pose( pose, pose_copy, amap, rms_offset_, true );
 		//pose.dump_pdb("TEMP3.pdb"); pose_copy.dump_pdb("TEMP4.pdb"); //DELETE ME
 		//exit(1); //DELETE ME
 
@@ -228,7 +228,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		std::string const cur_atom_name = pose.residue(cur_res).atom_name( cur_atom );
 		if ( TR.visible() ) TR << "Fitting " << cur_atom_name << " atom." << std::endl;
 
-		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, cur_res, residues_per_repeat(), start_index_, end_index_, 1); //Make the multifunc that will be used to fit the current atom.
+		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, cur_res, residues_per_repeat(), start_index_, end_index_, 1, rms_offset_); //Make the multifunc that will be used to fit the current atom.
 
 		Multivec vars(5); //Change the number of DOFs appropriately and initialize.
 		vars[1] = (r1_guesses_.size()==0 ? r1_vals_output_[absolute_reference_atom_index] : r1_guesses_[ia]);

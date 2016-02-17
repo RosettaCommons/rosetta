@@ -1107,30 +1107,36 @@ Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
-	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
+	id::AtomID_Map< id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val,
+	bool const realign
 )
 {
 	pose::MiniPose mini_ref_pose( ref_pose );  //minipose is a lightweight pose with just xyz positions (& fold tree)
-	return superimpose_pose(mod_pose, mini_ref_pose, atom_map );
+	return superimpose_pose(mod_pose, mini_ref_pose, atom_map, rms_calc_offset_val, realign );
 }
 
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< id::AtomID, id::AtomID > const & atom_map // from mod_pose to ref_pose
+	std::map< id::AtomID, id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val,
+	bool const realign
 )
 {
 	id::AtomID_Map< id::AtomID > const atom_id_map = convert_from_std_map( atom_map, mod_pose );
 	pose::MiniPose mini_ref_pose( ref_pose );  //minipose is a lightweight pose with just xyz positions (& fold tree)
-	return superimpose_pose(mod_pose, mini_ref_pose, atom_id_map );
+	return superimpose_pose(mod_pose, mini_ref_pose, atom_id_map, rms_calc_offset_val, realign );
 }
 
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::MiniPose const & ref_pose,
-	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
+	id::AtomID_Map< id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val,
+	bool const realign
 )
 {
 	using namespace numeric::model_quality;
@@ -1173,7 +1179,7 @@ superimpose_pose(
 
 	// superimpose:: shifts xx1, shifts and transforms xx2;
 	double rms;
-	rmsfitca2(natoms,xx1,xx2,wt,nsup,rms);
+	rmsfitca2(natoms,xx1,xx2,wt,nsup,rms, static_cast<double>( rms_calc_offset_val ), realign);
 
 	if ( true ) { // debug:
 		double tmp1,tmp2,tmp3;

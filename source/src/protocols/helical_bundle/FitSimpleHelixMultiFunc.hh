@@ -51,7 +51,8 @@ public: // Creation
 		core::Size const res_per_repeat,
 		core::Size const start_index,
 		core::Size const end_index,
-		core::Size const minimization_mode
+		core::Size const minimization_mode,
+		core::Real const &rms_offset
 	);
 
 public: // Methods
@@ -110,6 +111,10 @@ private:
 	/// and delta-z, with no alignment (i.e. the input pose must already be aligned to an ideal
 	/// helix).
 	core::Size minimization_mode_;
+
+	/// @brief The small offset used by the RMS code to avoid zero determinants.
+	/// @details This may need to be increased slightly to avoid bad geometry.
+	core::Real rms_offset_;
 
 
 	/*************************************************************

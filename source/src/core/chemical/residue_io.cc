@@ -801,7 +801,7 @@ read_topology_file(
 			for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
 				l >> extra_samples[ ii ];
 			}
-			if( ! l ) {
+			if ( ! l ) {
 				tr << "BAD PROTON_CHI line: " << line << std::endl;
 				utility_exit_with_message("Malformed PROTON_CHI line in params file " + filename);
 			}

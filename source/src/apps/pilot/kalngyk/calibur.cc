@@ -37,32 +37,32 @@ int main(int argc, char** argv)
 {
 	try {
 		NEW_OPT( input::pdb_list, "A file specifying the decoys. Each line of the file"
-		" specifies a path (relative to the working directory) to a decoy's PDB file",
-		"" );
+			" specifies a path (relative to the working directory) to a decoy's PDB file",
+			"" );
 		NEW_OPT( res::start, "(Optional) starts from this C-alpha atom (instead of starting"
-		" from the first C-alpha atom)", 1);
+			" from the first C-alpha atom)", 1);
 		NEW_OPT( res::end, "(Optional) ends at this C-alpha atom (instead of ending at"
-		" the last C-alpha atom)", 0);
+			" the last C-alpha atom)", 0);
 		NEW_OPT( res::types, "(Optional) specifies the chains to be used."
-		" By default, XYZ=\"AC \", i.e. 'A', 'C', or unspecified", "");
+			" By default, XYZ=\"AC \", i.e. 'A', 'C', or unspecified", "");
 		NEW_OPT( strategy::thres_finder, "(Optional) specifies the threshold finding strategy."
-		" This should be one of 0, 1, 2, 3, 4. (default strategy: 0) "
-		" 0: threshold results in only x% of \"edges\" between decoys;"
-		" default x=100/sqrt(sqrt(#decoys)) ||"
-		" 1: threshold = min dist + x * (most frequent dist - min dist);"
-		" default x=0.666667 (=2/3) ||"
-		" 2: threshold = min dist + x * min(the avarage dist of decoys from a"
-		" decoy; default x=0.666667 (=2/3) ||"
-		" 3: find threshold using ROSETTA's method (auto-detect parameters) ||"
-		" 4: same as 3, but with a sampled decoy set rather than the full set.",
-		0);
+			" This should be one of 0, 1, 2, 3, 4. (default strategy: 0) "
+			" 0: threshold results in only x% of \"edges\" between decoys;"
+			" default x=100/sqrt(sqrt(#decoys)) ||"
+			" 1: threshold = min dist + x * (most frequent dist - min dist);"
+			" default x=0.666667 (=2/3) ||"
+			" 2: threshold = min dist + x * min(the avarage dist of decoys from a"
+			" decoy; default x=0.666667 (=2/3) ||"
+			" 3: find threshold using ROSETTA's method (auto-detect parameters) ||"
+			" 4: same as 3, but with a sampled decoy set rather than the full set.",
+			0);
 		NEW_OPT( strategy::nofilter, "(Optional) disables the filtering of outlier"
-		" decoys.", false);
+			" decoys.", false);
 		NEW_OPT( strategy::thres, "(Optional) specifies a doubleing point number x."
-		" which is used differently according to the threshold strategy specified."
-		" x is ignored if the strategy does not use it."
-		" x is used as the threshold if no threshold strategy is specified.",
-		-1.0);
+			" which is used differently according to the threshold strategy specified."
+			" x is ignored if the strategy does not use it."
+			" x is used as the threshold if no threshold strategy is specified.",
+			-1.0);
 
 		devel::init(argc, argv);
 
@@ -73,31 +73,37 @@ int main(int argc, char** argv)
 
 		// Handle res::types
 		SimPDB::chains = strdup("AC ");
-		if ( option[res::types].user() && strcmp(option[res::types]().c_str(), "") )
+		if ( option[res::types].user() && strcmp(option[res::types]().c_str(), "") ) {
 			SimPDB::chains = strdup( option[res::types]().c_str() );
+		}
 
 		// Handle res::{start,end}
 		SimPDB::s_residue = 1;
 		if ( option[res::start].user() ) {
 			SimPDB::s_residue = option[res::start]();
-			if (SimPDB::s_residue < 1)
+			if ( SimPDB::s_residue < 1 ) {
 				SimPDB::s_residue = 1;
-			if (SimPDB::s_residue > LONGEST_CHAIN)
+			}
+			if ( SimPDB::s_residue > LONGEST_CHAIN ) {
 				SimPDB::s_residue = LONGEST_CHAIN;
+			}
 		}
 		SimPDB::e_residue = LONGEST_CHAIN;
 		if ( option[res::end].user() ) {
 			SimPDB::e_residue = option[res::end]();
-			if (SimPDB::e_residue < SimPDB::s_residue)
+			if ( SimPDB::e_residue < SimPDB::s_residue ) {
 				SimPDB::e_residue = SimPDB::s_residue;
-			if (SimPDB::e_residue > LONGEST_CHAIN)
+			}
+			if ( SimPDB::e_residue > LONGEST_CHAIN ) {
 				SimPDB::e_residue = LONGEST_CHAIN;
+			}
 		}
 		cout << "Using C-alphas #" << SimPDB::s_residue << "-";
-		if (SimPDB::e_residue == LONGEST_CHAIN)
+		if ( SimPDB::e_residue == LONGEST_CHAIN ) {
 			cout << "end" << endl;
-		else
+		} else {
 			cout << "#" << SimPDB::e_residue << endl;
+		}
 
 		// Handles strategy::nofilter
 		Clustering::FILTER_MODE = (!option[strategy::nofilter]());
@@ -108,28 +114,28 @@ int main(int argc, char** argv)
 		if ( option[strategy::thres_finder].user() ) {
 			strategy_specified = true;
 			switch (option[strategy::thres_finder]())
-			{
-			case 0:
-				Clustering::EST_THRESHOLD = PERCENT_EDGES;
-				break;
-			case 1:
-				Clustering::EST_THRESHOLD = MOST_FREQ_BASED;
-				break;
-			case 2:
-				Clustering::EST_THRESHOLD = MIN_AVG_DIST_BASED;
-				break;
-			case 3:
-				Clustering::EST_THRESHOLD = ROSETTA;
-				break;
-			case 4:
-				Clustering::EST_THRESHOLD = SAMPLED_ROSETTA;
-				break;
-			default: break;
-			}
+					{
+					case 0 :
+						Clustering::EST_THRESHOLD = PERCENT_EDGES;
+						break;
+					case 1 :
+						Clustering::EST_THRESHOLD = MOST_FREQ_BASED;
+						break;
+					case 2 :
+						Clustering::EST_THRESHOLD = MIN_AVG_DIST_BASED;
+						break;
+					case 3 :
+						Clustering::EST_THRESHOLD = ROSETTA;
+						break;
+					case 4 :
+						Clustering::EST_THRESHOLD = SAMPLED_ROSETTA;
+						break;
+					default : break;
+					}
 		}
 
 		// Handles input::pdb_list
-		if (! option[input::pdb_list].user() ) {
+		if ( ! option[input::pdb_list].user() ) {
 			cout << "Missing pdb_list (please run with -help for usage)" << endl;
 			exit(-1);
 		}
@@ -139,21 +145,22 @@ int main(int argc, char** argv)
 		double threshold = -1;
 		if ( option[strategy::thres].user() ) {
 			double c = option[strategy::thres]();
-			if ( !strategy_specified )
+			if ( !strategy_specified ) {
 				threshold = c; // use supplied value as threshold
-			else // use supplied value to guide the threshold finding strategy
+			} else { // use supplied value to guide the threshold finding strategy
 				switch (Clustering::EST_THRESHOLD)
-				{
-				case MOST_FREQ_BASED:
-				case MIN_AVG_DIST_BASED:
-					Clustering::xFactor = c;
-					break;
-				case PERCENT_EDGES:
-					Clustering::autoAdjustPercentile = false;
-					Clustering::xPercentile = c;
-					break;
-				default:
-					break; // ignore
+						{
+						case MOST_FREQ_BASED:
+						case MIN_AVG_DIST_BASED :
+							Clustering::xFactor = c;
+							break;
+						case PERCENT_EDGES :
+							Clustering::autoAdjustPercentile = false;
+							Clustering::xPercentile = c;
+							break;
+						default :
+							break; // ignore
+						}
 			}
 		}
 
@@ -172,12 +179,12 @@ int main(int argc, char** argv)
 		ic->cluster();
 
 		double acceptMargin = 0.15;
-		if (ic->bestClusMargin < acceptMargin) {
+		if ( ic->bestClusMargin < acceptMargin ) {
 			cout << "Best cluster larger than 2nd best cluster by only "
-			     << (ic->bestClusMargin*100) << "% (<"
-			     << (acceptMargin*100) << "%)" << endl
-			     << "Two possible clusters could be present." << endl
-			     << "Starting refined clustering..." << endl;
+				<< (ic->bestClusMargin*100) << "% (<"
+				<< (acceptMargin*100) << "%)" << endl
+				<< "Two possible clusters could be present." << endl
+				<< "Starting refined clustering..." << endl;
 
 			// create new PDBs and Names out of the elements in the best two
 			// clusters
@@ -209,8 +216,9 @@ int main(int argc, char** argv)
 			ic->reinitialize(Names, PDBs, xPercentileDist);
 			ic->cluster();
 
-			if (ic->bestClusMargin < acceptMargin)
+			if ( ic->bestClusMargin < acceptMargin ) {
 				cout << "MORE THAN ONE BEST DECOYS DETECTED!" << endl;
+			}
 		}
 
 		ic->showClusters(3);

@@ -54,7 +54,8 @@ FitSimpleHelixMultiFunc::FitSimpleHelixMultiFunc(
 	core::Size const res_per_repeat,
 	core::Size const start_index,
 	core::Size const end_index,
-	core::Size const minimization_mode
+	core::Size const minimization_mode,
+	core::Real const &rms_offset
 ) :
 	pose_( pose ),
 	atom_name_( atom_name ),
@@ -62,7 +63,8 @@ FitSimpleHelixMultiFunc::FitSimpleHelixMultiFunc(
 	residues_per_repeat_( res_per_repeat ),
 	start_index_(start_index),
 	end_index_(end_index),
-	minimization_mode_(minimization_mode)
+	minimization_mode_(minimization_mode),
+	rms_offset_(rms_offset)
 {
 	runtime_assert_string_msg( start_index_ > 0, "In FitSimpleHelixMultiFunc constructor function: the starting index is out of range." );
 	runtime_assert_string_msg( first_res_index_ >= start_index_ && first_res_index_ <= end_index_, "In FitSimpleHelixMultiFunc constructor function: the first residue index is not in the residue range specified." );
@@ -164,7 +166,7 @@ FitSimpleHelixMultiFunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) con
 	}
 
 	//Superimpose the ideal helix on the original helix:
-	if ( minimization_mode_==0 ) core::scoring::superimpose_pose( pose_copy, pose_, amap );
+	if ( minimization_mode_==0 ) core::scoring::superimpose_pose( pose_copy, pose_, amap, rms_offset_, true );
 
 	//Accumulators for the derivatives:
 	core::Real dE_dr1 = 0.0;

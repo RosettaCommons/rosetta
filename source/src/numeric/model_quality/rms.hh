@@ -172,6 +172,8 @@ det3( ObjexxFCL::FArray2A< double > m );
 /// @param  ww - [in/out]? -
 /// @param  natsel - [in/out]? -
 /// @param  esq - [in/out]? -
+/// @param[in] offset_val - A small offset temporarily added or subtracted from z-coordinates to ensure that determinants are nonzero.  Defaults to 1e-7.
+/// @param[in] relalign - If true, the small offset is subtracted off again before final output.  False by default (legacy behaviour).
 ///
 /// @global_read
 ///
@@ -193,7 +195,9 @@ rmsfitca2(
 	ObjexxFCL::FArray2A< double > yy,
 	ObjexxFCL::FArray1A< double > ww,
 	int natsel,
-	double & esq
+	double & esq,
+	double const & offset_val=1.0e-7,
+	bool const realign = false
 );
 
 //////////////////////////////////////////////////////////////////

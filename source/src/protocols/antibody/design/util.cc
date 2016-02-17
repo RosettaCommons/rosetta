@@ -808,7 +808,7 @@ set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::P
 			=  utility::pointer::dynamic_pointer_cast< NativeAntibodySeq >
 			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
 
-		if( ! data ) {
+		if ( ! data ) {
 			utility_exit_with_message("Pose said it had a NativeAntibodySeq, but it's bad!");
 		}
 
@@ -831,7 +831,7 @@ get_native_sequence( core::pose::Pose const & pose){
 		=  utility::pointer::dynamic_pointer_cast< NativeAntibodySeq const >
 		( pose.data().get_const_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
 
-	if( ! data ) {
+	if ( ! data ) {
 		utility_exit_with_message("Pose does not have a valid NativeAntibodySeq!");
 	}
 

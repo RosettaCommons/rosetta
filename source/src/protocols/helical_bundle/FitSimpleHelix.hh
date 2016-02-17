@@ -161,6 +161,13 @@ public:
 		return;
 	}
 
+	/// @brief Set the small float used to offset certain values in the RMS calculation to avoid zero determinants.
+	/// @details If fits produce bad geometry, this may need to be increased slightly.
+	void set_rms_offset( core::Real const &rms_offset_in ) {
+		rms_offset_ = rms_offset_in;
+		return;
+	}
+
 private:
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE DATA                                                      //
@@ -238,6 +245,10 @@ private:
 
 	/// @brief Vector of guesses for offset along z-axis.
 	utility::vector1 < core::Real > delta_z1_guesses_;
+
+	/// @brief A small float used to offset certain values in the RMS calculation to avoid zero determinants.
+	/// @details If fits produce bad geometry, this may need to be increased slightly.
+	core::Real rms_offset_;
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //

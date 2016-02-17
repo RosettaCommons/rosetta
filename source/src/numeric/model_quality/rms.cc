@@ -630,7 +630,9 @@ rmsfitca2(
 	ObjexxFCL::FArray2A< double > yy,
 	ObjexxFCL::FArray1A< double > ww,
 	int natsel,
-	double & esq
+	double & esq,
+	double const & offset_val,
+	bool const realign
 )
 {
 	xx.dimension( 3, npoints );
@@ -662,8 +664,8 @@ rmsfitca2(
 		temp3 += ww(i);
 		// this is outrageous, but there are cases (e.g. in a single-residue pose) where
 		// all the z's are at 0, and this makes the det zero.
-		xx(3,i) -= 1.0e-7;
-		yy(3,i) += 1.0e-7;
+		xx(3,i) -= offset_val;
+		yy(3,i) += offset_val;
 	}
 
 	//       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
@@ -744,6 +746,10 @@ rmsfitca2(
 	//$$$             }
 
 	for ( i = 1; i <= npoints; ++i ) {
+		if(realign) { //Undo the offset:
+			xx(3,i) += offset_val;
+			yy(3,i) -= offset_val;
+		}
 		for ( j = 1; j <= 3; ++j ) { // compute rotation
 			t(j) = R(j,1)*yy(1,i) + R(j,2)*yy(2,i) + R(j,3)*yy(3,i);
 		}

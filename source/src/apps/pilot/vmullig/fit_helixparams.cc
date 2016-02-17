@@ -50,6 +50,7 @@ OPT_KEY (Integer, repeats)
 OPT_KEY (RealVector, mainchain_torsions)
 OPT_KEY (String, min_type)
 OPT_KEY (Real, min_tolerance)
+OPT_KEY (Real, rms_offset)
 OPT_KEY (Real, r1_guess)
 OPT_KEY (Real, omega1_guess)
 OPT_KEY (Real, dz1_guess)
@@ -90,6 +91,7 @@ void register_options()
 	NEW_OPT( mainchain_torsions, "A list of mainchian dihedral values that will repeat for every residue in the polymer.  Default (-64.8, -41.0, 180.0), corresponding to phi, psi, and omega of an ideal left-handed alpha helix.  If specified, a value must be specified for every mainchain dihedral angle in the residue type from which the polymer will be built.", helix_phipsiomega);
 	NEW_OPT( min_type, "The minimization type that will be used (default \"dfpmin\").", "dfpmin");
 	NEW_OPT( min_tolerance, "The minimization tolerance that will be used (the default value, 1E-7, is a good place to start).", 0.0000001);
+	NEW_OPT( rms_offset, "A small value used to offset certain numbers in the RMS calculation to avoid zero determinants.  Default 1.0e-5.  Raise this if you get bad geometry from a fit.", 1.0e-5);
 	NEW_OPT( r1_guess, "Initial guess for the value of r1 of the reference atom (the helix radius, in Angstroms).  Default 1.5.", 1.5);
 	NEW_OPT( omega1_guess, "Initial guess for the value of omega1 (the turn per residue, in radians).  Default 1.7.", 1.7);
 	NEW_OPT( dz1_guess, "Initial guess for the value of dz1 (the rise per residue, in Angstroms).  Default 1.5.", 1.5);
@@ -445,6 +447,7 @@ main( int argc, char * argv [] )
 		fitter.set_range(2,  pose.n_residue() - 1);
 		fitter.set_min_type( option[min_type]() );
 		fitter.set_min_tolerance( option[min_tolerance]());
+		fitter.set_rms_offset( option[rms_offset]() );
 		fitter.set_initial_guesses( option[r1_guess](), option[omega1_guess](), option[dz1_guess]() );
 		fitter.set_reference_atom( option[reference_atom]() );
 		fitter.set_residues_per_repeat( residues_per_repeat );
