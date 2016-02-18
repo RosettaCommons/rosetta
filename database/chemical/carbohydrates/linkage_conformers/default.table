@@ -1,0 +1,72 @@
+# Glycosidic linkage conformer data from the original GlycanRelax code from
+# Schief Lab.
+
+# Sources:
+# Petrescu, AJ; Petrescu, SM; Dwek, RA; & Wormald, MR. (1999) Glycobiology
+#     9(4), 343. [saccharide-saccharide linkages]
+# Petrescu, AJ; Milac, A-L; Petrescu, SM; Dwek, RA; & Wormald, MR. (2004)
+#     Glycobiology 14(2), 103. [peptide-saccharide linkages]
+
+# The phi, psi, and omega values listed here are for the non-reducing-end
+# residue (the leftmost residue in the table below), in all cases.
+
+# Note that for glycosidic linkages, phi, psi, and omega go upstream (toward
+# the LOWER_TERMINUS, or reducing end) and not the other way around.  That is,
+# the non-reducing-end residue is numbered after the reducing-end residue in
+# the sequence.
+
+# The main-chain designation of the non-reducing-end residue has no effect on
+# the torsion values.  Likewise, the anomeric designation of the reducing-end
+# residue has no effect on the values.
+
+# For peptide-glycan N-linkages, psi is equivalent to ASN's chi3 (the peptide
+# bond, omega1 is equivalent to its chi2, and omega2 to chi1.
+
+# IF ADDING NEW ROWS, please sort them such that higher population conformers
+# come first.
+
+# reducing-end_res is the lower-numbered residue, while non-reducing-end_res is
+# the higher-numbered residued, which is attached to the lower-numbered
+# residue.  This ordering from right to left matches IUPAC ordering of chains.
+
+# non-reducing-end_res	reducing-end_res	population	phi_stdev	psi_mean	psi_stdev	omega_mean	omega_stdev	omega2_mean	omega2_stdev
+
+alpha-L-Fucp	->3)-D-GlcpNAc	0.90	-71.9	8.0	-98.7	7.1
+alpha-L-Fucp	->6)-D-GlcpNAc	0.81	-75.7	13.7	204.9	24.0	63.4	12.3
+beta-D-Galp	->4)-D-GlcpNAc	0.72	-71.4	10.9	132.2	7.4
+beta-D-GlcpNAc	->4)-D-GlcpNAc	0.90	-75.9	11.6	119.0	15.4
+beta-D-GlcpNAc	->2)-D-Manp	0.77	-80.1	12.6	-97.6	22.3
+
+# '99 value
+beta-D-GlcpNAc	->2)-D-Manp	0.17	58.3	9.4	-87.2	15.2
+
+beta-D-Manp	->4)-D-GlcpNAc	0.86	-86.5	11.6	110.7	19.4
+alpha-D-Manp	->2)-D-Manp	0.27	63.3	5.5	-179.6	4.2
+alpha-D-Manp	->2)-D-Manp	0.71	70.9	12.3	-106.2	15.1
+alpha-D-Manp	->3)-D-Manp	0.92	71.5	8.8	-120.6	16.8
+alpha-D-Manp	->6)-D-Manp	0.33	64.7	10.4	181.6	10.0	59.7	14.0
+alpha-D-Manp	->6)-D-Manp	0.26	67.0	10.5	178.5	13.7	186.0	12.8
+alpha-D-Manp	->6)-D-Manp	0.17	59.4	7.5	94.0	17.5	188.5	12.3
+
+
+# '99 value
+alpha-L-Fucp	->2)-D-Galp	0.50	-66.5	2.2	137.5	1.1
+
+alpha-L-Fucp	->2)-D-Galp	0.50	-97.8	23.7	103.9	27.7
+
+# '99 values
+beta-D-Galp	->3)-D-GlcpNAc	1.00	-74.3	10.0	-131.5	18.3
+beta-D-GlcpNAc	->4)-D-Manp	1.00	-170.0	10.7	94.7	6.1
+alpha-Neup5Ac	->3)-D-Galp	1.00	68.7	13.6	-125.1	15.5
+alpha-Neup5Ac	->6)-D-Galp	0.43	144.3	2.5	188.6	1.9	51.3	4.8
+alpha-Neup5Ac	->6)-D-Galp	0.29	36.5	2.4	153.0	12.4	179.3	6.4
+alpha-Neup5Ac	->6)-D-Galp	0.14	148.7	0.0	130.4	0.0	158.5	0.0
+alpha-Neup5Ac	->6)-D-Galp	0.14	294.5	0.0	122.2	0.0	30.1	0.0
+beta-D-Xylp	->2)-D-Manp	1.00	-91.5	6.6	-105.8	3.9
+
+
+# '04 values (g+, t, ga-, gb-, respectively)
+beta-D-GlcpNAc	ASN	0.18	253.7	21.5	358.5	13.9	371.1	31.6	63.6	8.9
+beta-D-GlcpNAc	ASN	0.50	261.0	21.3	357.3	12.3	357.6	43.0	191.6	14.4
+beta-D-GlcpNAc	ASN	0.24	268.0	20.3	353.1	12.2	332.9	23.9	290.6	12.7
+beta-D-GlcpNAc	ASN	0.09	267.5	23.9	358.1	11.5	435.0	28.8	302.3	11.5

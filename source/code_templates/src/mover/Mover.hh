@@ -81,7 +81,7 @@ private:
 
 };
 
-std::ostream &operator<< (std::ostream &os, MoverStub const &mover);
+std::ostream &operator<< (std::ostream &os, --class-- const &mover);
 
 
 --end_namespace--

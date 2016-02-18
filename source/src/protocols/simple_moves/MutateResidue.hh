@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/AA.hh>
 #include <core/types.hh>
 
 //parsing
@@ -47,6 +48,9 @@ public:
 	/// @details new_res is three letter code in capital letters, example PHE
 	MutateResidue( core::Size const target, std::string const &new_res );
 	MutateResidue( core::Size const target, int new_res/*one letter code*/);  // Changing char --> int so PyRosetta could use overloaded function
+	
+	MutateResidue( core::Size const target, core::chemical::AA const aa);
+	
 	virtual ~MutateResidue() {};
 
 	virtual void apply( core::pose::Pose & pose );
@@ -66,8 +70,8 @@ public:
 
 	/// @brief Set this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void set_target( std::string const &target_in ) { target_ = target_in; return; }
-
+	void set_target( std::string const &target_in ) { target_ = target_in; }
+	
 	/// @brief Set this mover's target residue index, based on the Rosetta indexing.
 	///
 	void set_target(core::Size const target_in);
@@ -79,8 +83,11 @@ public:
 	/// @brief Set the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void set_res_name( std::string const &name_in ) { res_name_ = name_in; return; }
+	void set_res_name( std::string const &name_in ) { res_name_ = name_in; }
 
+	void set_res_name( core::chemical::AA const & aa);
+	
+	
 	/// @brief Get the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -88,7 +95,7 @@ public:
 
 	/// @brief Set whether the mover should try to preserve atoms' xyz coordinates or not.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void set_preserve_atom_coords( bool const val ) { preserve_atom_coords_ = val; return; }
+	void set_preserve_atom_coords( bool const val ) { preserve_atom_coords_ = val; }
 
 	/// @brief Get whether the mover should try to preserve atoms' xyz coordinates or not.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

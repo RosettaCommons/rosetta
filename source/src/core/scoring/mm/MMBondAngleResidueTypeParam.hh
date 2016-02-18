@@ -108,7 +108,7 @@ public:
 
 	/// @brief number of ResidueConnections, counting polymeric residue connections
 	Size
-	n_residue_connections() const
+	n_possible_residue_connections() const
 	{
 		return connection_atom_sets_.size();
 	}

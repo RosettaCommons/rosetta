@@ -51,57 +51,6 @@ namespace carbohydrates {
 using namespace std;
 using namespace core;
 
-// Input //////////////////////////////////////////////////////////////////////
-
-// Try various combinations to locate the specific glycan sequence file being requested by the user.
-/// @details  The default directory to search is: database/chemical/carbohydrates/common_glycans/\n
-/// The default file extension is: .iupac
-std::string
-find_glycan_sequence_file( std::string filename )
-{
-	using namespace utility::io;
-
-	std::string const & path( basic::database::full_name( "chemical/carbohydrates/common_glycans/" ) );
-	std::string const ext( ".iupac" );
-
-	izstream potential_file( filename );
-
-	if ( potential_file.good() ) {
-		return filename;
-	} else {
-		izstream potential_file( filename + ext );  // Perhaps the user didn't use the .iupac extension.
-		if ( potential_file.good() ) {
-			return filename + ext;
-		} else {
-			izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
-			if ( potential_file.good() ) {
-				return path + filename;
-			} else {
-				izstream potential_file( path + filename + ext );  // last try
-				if ( potential_file.good() ) {
-					return path + filename + ext;
-				} else {
-					utility_exit_with_message( "Unable to open glycan sequence file. Neither ./" + filename +
-						" nor " + "./" + filename + ext +
-						" nor " + path + filename +
-						" nor " + path + filename + ext + " exists." );
-				}
-			}
-		}
-	}
-	return "I do not think that word means what you think it means....";  // Code can never reach here.
-}
-
-// Read a single-line glycan sequence file.
-std::string
-read_glycan_sequence_file( std::string filename )
-{
-	utility::vector1< string > const lines( utility::io::get_lines_from_file_data( filename ) );
-	if ( lines.size() != 1 ) {
-		utility_exit_with_message( "A glycan sequence file must contain a single line of text." );
-	}
-	return lines.front();
-}
 
 // Parse sugar code suffixes to extract a list of sugar modifications with their corresponding positions.
 utility::vector1< std::pair< core::uint, std::string > >
@@ -198,7 +147,7 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 				gws_string << parent_info->mainchain_glycosidic_bond_acceptor();
 			} else /* residue is branch lower terminus */ {
 				Size const n_branches( parent_info->n_branches() );
-				Size const n_non_branch_residue_connections( parent.n_residue_connections() - n_branches );
+				Size const n_non_branch_residue_connections( parent.n_possible_residue_connections() - n_branches );
 				for ( core::uint i( 1 ); i <= n_branches; ++i ) {
 					// The below assumes that non-polymeric residue connections are in the same numerical order as
 					// carbohydrate numbering schemes.  If this ever fails, something more complicated will need to be
@@ -258,7 +207,7 @@ residue_range_gws_string( core::pose::Pose const & pose, core::uint const begin,
 		conformation::Residue const & res_i( pose.residue( i ) );
 		debug_assert( res_i.is_carbohydrate() );
 		Size const n_branches( res_i.carbohydrate_info()->n_branches() );
-		Size const n_non_branch_residue_connections( res_i.n_residue_connections() - n_branches );
+		Size const n_non_branch_residue_connections( res_i.n_possible_residue_connections() - n_branches );
 
 		// If so, begin nesting parentheses for the number of branches.
 		for ( core::uint j( 1 ); j <= n_branches; ++j ) {

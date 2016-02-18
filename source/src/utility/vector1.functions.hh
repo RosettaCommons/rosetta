@@ -189,6 +189,20 @@ arg_least_several(
 	}
 }
 
+//template< class T >
+//void
+//erase(vector1< T > & input, core::Size index)
+//{
+//
+//	input::iterator iter_this = std::find( input.begin(), input.end(), input[ index ] );
+//	assert( iter_this != input.end() );
+//	input.erase( iter_this );
+//
+//}
+
+
+
+
 
 } // namespace utility
 

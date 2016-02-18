@@ -338,7 +338,7 @@ CovalentPeptidomimeticDockDesign::update_hydrogens(
 		AtomID aidNG(  pose.residue( ii ).atom_index( "NG"  ), ii );
 
 		// Assume conjugation is final connection for now
-		Size conn_no = pose.residue( ii ).type().n_residue_connections();
+		Size conn_no = pose.residue( ii ).type().n_possible_residue_connections();
 		Size jj = pose.residue( ii ).residue_connection_partner( conn_no );
 
 		//Vector const& VSG_xyz( pose.residue( ii ).xyz( "VSG" ) );

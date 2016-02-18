@@ -1,0 +1,33 @@
+#Files in this directory, used for indexing.
+# If you add a iupac file to this directory, please add it here.
+# This is here due to the many common names of these glcyans in the community.
+#  Remove this or update if we decide on a SINGLE common name.
+#common_name File
+
+N-glycan_core N-glycan_core.iupac
+glycan_core N-glycan_core.iupac
+core N-glycan_core.iupac
+
+man3 N-glycan_core.iupac
+man5 man5.iupac
+man9 man9.iupac
+
+bisected_N-glycan_core bisected_N-glycan_core.iupac
+bisected_fucosylated_N-glycan_core bisected_fucosylated_N-glycan_core.iupac
+
+core_1_O-glycan core_1_O-glycan.iupac
+core_2_O-glycan core_2_O-glycan.iupac
+core_3_O-glycan core_3_O-glycan.iupac
+core_4_O-glycan core_4_O-glycan.iupac
+core_5_O-glycan core_5_O-glycan.iupac
+core_6_O-glycan core_6_O-glycan.iupac
+core_7_O-glycan core_7_O-glycan.iupac
+core_8_O-glycan core_8_O-glycan.iupac
+
+fucosylated_N-glycan_core fucosylated_N-glycan_core.iupac
+high-mannose_N-glycan_core high-mannose_N-glycan_core.iupac
+hybrid_N-glycan_core hybrid_N-glycan_core.iupac
+hybrid_bisected_N-glycan_core hybrid_bisected_N-glycan_core.iupac
+hybrid_bisected_fucosylated_N-glycan_core hybrid_bisected_fucosylated_N-glycan_core.iupac
+hybrid_fucosylated_N-glycan_core hybrid_fucosylated_N-glycan_core.iupac
+

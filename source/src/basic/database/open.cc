@@ -110,6 +110,77 @@ full_name(
 	return option[ in::path::database ](1).name() + db_file;
 }
 
+/// @brief Find a path to a file.
+///
+/// Try various combinations to locate the specific file being requested by the user.
+/// (inspired by core::scoring::ScoreFunction::find_weights_file())
+///
+/// @athor Labonte <JWLabonte@jhu.edu>
+std::string
+find_database_path( std::string dir, std::string filename)
+{
+	using namespace utility::io;
+
+	std::string const & path( basic::database::full_name( dir ) );
+
+	izstream potential_file( filename );
+	if ( potential_file.good() ) {
+		return filename;
+	} else {
+		izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
+		if ( potential_file.good() ) {
+			return path + filename;
+		} else {
+			utility_exit_with_message( "Unable to open file. Neither ./" + filename +
+				" nor " + "./" + filename +
+				" nor " + path + filename + " exists." );
+		}
+	}
+	return "WHAT THE @#$%!";  // Code can never reach here.
+}
+
+
+/// @brief Find a path to a file.
+///
+/// Try various combinations to locate the specific file being requested by the user.
+/// (inspired by core::scoring::ScoreFunction::find_weights_file())
+///
+/// @athor Labonte <JWLabonte@jhu.edu>
+std::string
+find_database_path( std::string dir, std::string filename, std::string ext)
+{
+	using namespace utility::io;
+
+	std::string const & path( basic::database::full_name( dir ) );
+
+	izstream potential_file( filename );
+	if ( potential_file.good() ) {
+		return filename;
+	} else {
+		izstream potential_file( filename + ext );  // Perhaps the user didn't use the .table extension.
+		if ( potential_file.good() ) {
+			return filename + ext;
+		} else {
+			izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
+			if ( potential_file.good() ) {
+				return path + filename;
+			} else {
+				izstream potential_file( path + filename + ext );  // last try
+				if ( potential_file.good() ) {
+					return path + filename + ext;
+				} else {
+					utility_exit_with_message( "Unable to open file. Neither ./" + filename +
+						" nor " + "./" + filename + ext +
+						" nor " + path + filename +
+						" nor " + path + filename + ext + " exists." );
+				}
+			}
+		}
+	}
+	return "WHAT THE @#$%!";  // Code can never reach here.
+}
+
+
 /// @brief Does cache file (absolute path) exist?
 /// if dir_only is true, will return true if the cache file could be created.
 bool

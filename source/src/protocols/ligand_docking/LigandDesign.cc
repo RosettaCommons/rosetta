@@ -173,7 +173,7 @@ random_connection(core::conformation::ResidueCOP residue){
 utility::vector1<core::Size>
 get_incomplete_connections(core::conformation::ResidueCOP residue){
 	utility::vector1<core::Size> incomplete_connections;
-	for ( core::Size i=1; i<= residue->n_residue_connections(); ++i ) {
+	for ( core::Size i=1; i<= residue->n_possible_residue_connections(); ++i ) {
 		if ( residue->connection_incomplete(i) ) {
 			incomplete_connections.push_back(i);
 		}
@@ -205,7 +205,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 	core::Size ligand_residue_id= pose.n_residue();
 	ASSERT_ONLY(core::conformation::Residue const & ligand= pose.residue(ligand_residue_id);)
 		assert(ligand.is_ligand());
-	assert( ligand.n_residue_connections() > 0);
+	assert( ligand.n_possible_residue_connections() > 0);
 	core::Size const & chain_id= pose.chain(ligand_residue_id);
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size end = pose.conformation().chain_end(chain_id);
@@ -226,7 +226,7 @@ void LigandDesign::fragments_to_string() const{
 	BOOST_FOREACH ( core::conformation::ResidueCOP fragment, fragments_ ) {
 		core::conformation::Residue const & res= *fragment;
 		std::string name= res.name();
-		core::Size total= res.n_residue_connections();
+		core::Size total= res.n_possible_residue_connections();
 		core::Size incomplete= get_incomplete_connections(res.get_self_ptr()).size();
 		ligand_design_tracer<< "name, total, incomplete"<< name<< " "<< total<<" "<< incomplete<< std::endl;
 	}

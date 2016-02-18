@@ -24,6 +24,7 @@
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 
 // Project headers
@@ -44,7 +45,6 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-//#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/io/StructFileRep.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -78,6 +78,7 @@
 // Utility headers
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
+#include <utility/string_constants.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -85,7 +86,6 @@
 // C/C++ headers
 #include <cmath>
 #include <iostream>
-//#include <stdio.h>
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
@@ -353,7 +353,7 @@ change_jump_to_this_residue_into_chemical_edge(
 	}
 	// Loop through the ResidueConnections of the end Residue of the old Jump to find and attach the other end of the
 	// new chemical Edge.
-	Size const n_connections( end_residue.type().n_residue_connections() );
+	Size const n_connections( end_residue.type().n_possible_residue_connections() );
 	for ( uint conn_index( 1 ); conn_index <= n_connections; ++conn_index ) {
 		if ( end_residue.connection_incomplete( conn_index ) ) {
 			continue;  // Allow incomplete connections for design.
@@ -431,7 +431,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 				if ( jump_was_changed ) {
 					continue;  // The Edge has already been added to newft by the function above.
 				} else /* We couldn't find a chemical connection. */ {
-					if ( pose.residue_type( ii ).n_residue_connections() > 0 ) {
+					if ( pose.residue_type( ii ).n_possible_residue_connections() > 0 ) {
 						TR.Warning << "Can't find a chemical connection for residue " << ii << " " <<
 							pose.residue_type( ii ).name() << endl;
 					}
@@ -461,7 +461,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 							prevent_forward_edge = true;
 							continue;  // Skip the add_edge() method below; we are done here.
 						} else /* We couldn't find a chemical connection. */ {
-							if ( pose.residue_type( jj ).n_residue_connections() > 0 ) {
+							if ( pose.residue_type( jj ).n_possible_residue_connections() > 0 ) {
 								TR.Warning << "Can't find a chemical connection for residue " << jj << " " <<
 									pose.residue_type( jj ).name() << endl;
 							}
@@ -1439,7 +1439,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			// feature after calling this function without correcting!
 			// First either remove or rotate any existing chains to the end of
 			// the list.
-			std::string letters( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+			std::string letters( utility::UPPERCASE_LETTERS );
 			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
 				if ( i->second == PDBInfo::empty_record() )  continue;
 
@@ -1925,7 +1925,7 @@ add_variant_type_to_pose_residue(
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 
 	// update connections
-	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con ) {
+	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
 		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
 			Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
 			Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
@@ -1954,7 +1954,7 @@ remove_variant_type_from_pose_residue(
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 
 	// update connections
-	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con ) {
+	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
 		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
 			Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
 			Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
@@ -3284,6 +3284,54 @@ is_atom_axial_or_equatorial( Pose const & pose, id::AtomID const & query_atom )
 {
 return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd() ), query_atom.atomno() );
 }*/
+
+void
+set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core::Angle new_angle){
+	
+	if (pose.residue( sequence_position).is_carbohydrate()){
+		carbohydrates::set_glycosidic_torsion( torsion_id, pose, sequence_position, new_angle);
+		return;
+	}
+	
+	id::MainchainTorsionType torsion_type = static_cast< id::MainchainTorsionType >(torsion_id);
+	
+	switch (torsion_type) {
+	
+	case id::phi_dihedral:
+		pose.set_phi( sequence_position, new_angle );
+    	break;
+		
+	case id::psi_dihedral:
+		pose.set_psi( sequence_position, new_angle );
+		break;
+		
+	case id::omega_dihedral:
+		pose.set_omega( sequence_position, new_angle );
+		break;
+	}
+
+ 
+}
+
+core::Angle
+get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position )
+{
+	if ( pose.residue( sequence_position ).is_carbohydrate() ) {
+		return carbohydrates::get_glycosidic_torsion( torsion_id, pose, sequence_position );
+	}
+	
+	id::MainchainTorsionType torsion_type = static_cast< id::MainchainTorsionType >( torsion_id );
+	
+	switch ( torsion_type ) {
+		case id::phi_dihedral:
+			return pose.phi( sequence_position );
+		case id::psi_dihedral:
+			return pose.psi( sequence_position );
+		case id::omega_dihedral:
+			return pose.omega( sequence_position );
+	}
+	return 0.0;  // Code cannot reach here.
+}
 
 /// @brief Set bfactors in a pose PDBInfo
 void

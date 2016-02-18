@@ -77,7 +77,27 @@ public:
 
 	virtual ~MinMover();
 
-	// constructor with arguments
+	/// @brief constructor with arguments
+	///
+	/// @details
+	/// min_type_in indicates the type of minimizer to use.  This is different for cartesion.
+	///  Current recommendation (Jan 2016) is "dfpmin_armijo_nonmonotone"
+	///
+	/// tolerance_in indicates the tolerance on the minimizer.  Smaller tolerance will result
+	///  in lower energies, but increased runtime.  Generally one would use .01
+	///
+	/// use_nb_list_in The neighbor list is based on the move map.  It includes any
+	///  atoms that can be moved by the minimizer plus their neighbors.  This list
+	///  is not updated during minimization.  All scores for atoms and atom pairs
+	///  outside the neighbor list are held fixed.  All scores for atoms and atom
+	///  pairs within the list are not cached (usually they would be), since it
+	///  assumed that they will be changing rapidly.  These optimizations are
+	///  effective when a large number of small moves are being made.  You may
+	///  prefer to enable this option when minimizing in fullatom mode, and to
+	///  disable it in centroid mode.
+	///
+	/// @see core::scoring::AtomNeighbor
+	///
 	MinMover(
 		core::kinematics::MoveMapOP movemap_in,
 		ScoreFunctionCOP scorefxn_in,

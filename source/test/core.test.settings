@@ -31,6 +31,7 @@ sources = {
 	],
 	"chemical/carbohydrates" : [
 		"CarbohydrateInfo",
+		"CarbohydrateInfoManager",
 		"database_io",
 	],
 	"chemical/gasteiger" :[
@@ -456,6 +457,7 @@ testinputfiles = [
 	"chemical/1pqc_test.patch",
 	"chemical/atom_properties.txt",
 	"chemical/carbohydrates/amylopectin_fragment.pdb",
+	"chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb",
 	"chemical/carbohydrates/beta-psicose.pdb",
 	"chemical/carbohydrates/codes_to_roots.map",
 	"chemical/carbohydrates/GlcN.pdb",
@@ -463,6 +465,7 @@ testinputfiles = [
 	"chemical/carbohydrates/isomaltose.pdb",
 	"chemical/carbohydrates/lactose.pdb",
 	"chemical/carbohydrates/Lex.pdb",
+	"chemical/carbohydrates/linkage_data_table.tsv",
 	"chemical/carbohydrates/maltotriose.pdb",
 	"chemical/carbohydrates/Neu.pdb",
 	"chemical/carbohydrates/nomenclature.table",

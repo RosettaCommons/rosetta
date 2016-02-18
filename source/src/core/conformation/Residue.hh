@@ -1143,13 +1143,21 @@ public:
 	bool connections_match( Residue const & other ) const;
 
 	/// @brief Returns the number of ResidueConnections on this residue
-	/// including polymeric residue connections
+	/// including polymeric residue connections.
+	///  This is the total number of possible connections from the ResidueType
 	Size
-	n_residue_connections() const
+	n_possible_residue_connections() const
 	{
-		return rsd_type_.n_residue_connections();
+		return rsd_type_.n_possible_residue_connections();
 	}
-
+	
+	/// @brief Returns the number of ResidueConnections on this residue
+	/// including polymeric residue connections.
+	///  This is the total number of actual connections to other residues.
+	///  The index here does not nessessarily match with the connection index as n_possible_residue_connections does!!!!
+	Size
+	n_current_residue_connections() const;
+	
 	/// @brief Returns the number of polymeric ResidueConnections on this residue
 	Size
 	n_polymeric_residue_connections() const {
@@ -1218,7 +1226,10 @@ public:
 
 	bool
 	connection_incomplete( Size resconnid ) const;
-
+	
+	/// @brief Get the residue connection.
+	///  How is this different than residue_connection?
+	///
 	chemical::ResConnID
 	actual_residue_connection( Size resconnid ) const {
 		return connect_map_[ resconnid ];

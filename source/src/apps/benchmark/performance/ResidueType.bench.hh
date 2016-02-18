@@ -42,7 +42,7 @@ bool is_deletable(chemical::ResidueType const& rsd, Size atom_id){
 		}
 	}
 	//Can't be part of a ResidueConnection's set of stub atoms...
-	for( Size i=1; i<= rsd.n_residue_connections(); ++i){
+	for( Size i=1; i<= rsd.n_possible_residue_connections(); ++i){
 		chemical::AtomICoor const& icoor = rsd.residue_connection(i).icoor();
 		for ( Size j = 1; j <= 3; ++j ) {
 			if( icoor.stub_atom(j).atomno() == atom_id) return false;

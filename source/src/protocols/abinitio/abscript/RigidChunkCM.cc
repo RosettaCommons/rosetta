@@ -279,7 +279,7 @@ core::Size find_disulfide_partner( core::pose::Pose const& pose,
 	}
 
 	Size const cys_bound_atom( pose.residue( resid ).atom_index( "SG" ) );
-	for ( Size jj = pose.residue( resid ).type().n_residue_connections(); jj >= 1; --jj ) {
+	for ( Size jj = pose.residue( resid ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
 		if ( (Size) pose.residue( resid ).type().residue_connection( jj ).atomno() == cys_bound_atom ) {
 			return pose.residue( resid ).connect_map( jj ).resid();
 		}

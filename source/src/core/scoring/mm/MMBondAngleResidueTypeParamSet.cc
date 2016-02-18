@@ -125,7 +125,7 @@ connection_indices(
 	core::Size & other_connection
 )
 {
-	for ( core::Size i = 1; i <= residue.n_residue_connections(); ++i ) {
+	for ( core::Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
 		if ( residue.residue_connection(i).atomno() == (signed)my_atomno ) {
 			if ( residue.connect_map(i).resid() == other_residue.seqpos() ) {
 				my_connection = i;

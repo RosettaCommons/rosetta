@@ -615,7 +615,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 				pose.residue( ii ).atom_index( "SD" ) :
 				pose.residue( ii ).atom_index( "SG" ) );
 			Size other_res( 0 );
-			for ( Size jj = pose.residue( ii ).type().n_residue_connections(); jj >= 1; --jj ) {
+			for ( Size jj = pose.residue( ii ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
 				if ( (Size) pose.residue( ii ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
 					other_res = pose.residue( ii ).connect_map( jj ).resid();
 					break;

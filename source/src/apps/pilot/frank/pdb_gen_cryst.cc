@@ -49,6 +49,7 @@
 
 #include <devel/init.hh>
 
+#include <utility/string_constants.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
@@ -181,8 +182,7 @@ apply_transform( numeric::xyzMatrix<Real> R, numeric::xyzVector<Real> T, utility
 	}
 }
 
-static std::string chains =
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!@#$%^&*() ";
+static std::string chains = utility::ALPHANUMERICS + "!@#$%^&*() ";
 
 int
 main( int argc, char * argv [] ) {

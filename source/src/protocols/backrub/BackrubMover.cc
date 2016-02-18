@@ -471,7 +471,7 @@ connected_mainchain_atomids(
 		if ( !mainchain_atoms.size() ) break;
 
 		// loop over all residue connections in the current residue
-		for ( Size i = 1; i <= residue.n_residue_connections(); ++i ) {
+		for ( Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
 
 			// check to see if the connection is to the first mainchain atom
 			if ( residue.residue_connect_atom_index(i) == mainchain_atoms.front() && !residue.connection_incomplete(i) ) {
@@ -508,7 +508,7 @@ connected_mainchain_atomids(
 		}
 
 		// loop over all residue connections in the current residue
-		for ( Size i = 1; i <= residue.n_residue_connections(); ++i ) {
+		for ( Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
 
 			// check to see if the connection is to the last mainchain atom
 			if ( residue.residue_connect_atom_index(i) == mainchain_atoms.back() && !residue.connection_incomplete(i) ) {

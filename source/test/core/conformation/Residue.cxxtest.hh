@@ -155,7 +155,7 @@ public:
 
 		// Make sure that the inter-residue connection information has been perfectly transfered
 		// Connect map
-		for ( core::Size ii = 1; ii <= trp6->n_residue_connections(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trp6->n_possible_residue_connections(); ++ii ) {
 			TS_ASSERT_EQUALS( trp6->actual_residue_connection( ii ).resid(), trp6_copy->actual_residue_connection( ii ).resid() );
 			TS_ASSERT_EQUALS( trp6->actual_residue_connection( ii ).connid(), trp6_copy->actual_residue_connection( ii ).connid() );
 		}

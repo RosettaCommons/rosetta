@@ -76,6 +76,7 @@
 
 #include <devel/init.hh>
 
+#include <utility/string_constants.hh>
 #include <utility/vector1.hh>
 //basic & utility
 #include <basic/options/option.hh>
@@ -539,7 +540,7 @@ core::pose::Pose superimpose_A_to_all(Dock & dock,core::pose::Pose native_pose){
         core::id::AtomID const id2(native_pose.residue(native_pos).atom_index("CA"),native_pos);
         atom_map[id1]=id2;
     }
-    std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //A is excluded because of the matching
+    std::string const & alphabet( utility::LETTERS ); //A is excluded because of the matching
     core::pose::Pose finalPose;
     BOOST_FOREACH( char c, alphabet) {
     Size chain_id = -1;

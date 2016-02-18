@@ -362,11 +362,18 @@ public:
 
 	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP clone() const;
-
+	
+	///@brief Set the pymol model name
+	void
+	set_PyMol_model_name( std::string name);
+	
+	std::string
+	get_PyMol_model_name(Pose const & pose) const;
+	
 private:
 	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);
 
-	std::string get_PyMol_model_name(Pose const & pose) const;
+	
 
 	bool is_it_time();
 

@@ -74,6 +74,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_constants.hh>
 
 #include <math.h>
 
@@ -369,7 +370,7 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose
 	if ( cdr_length > max_length ) {
 		TR << "adding insertion codes for long cdr loops." << std::endl;
 
-		std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		std::string const & alphabet( utility::ALPHANUMERICS );
 
 		core::Size start_residues  = ceil(max_length/2.0);
 		core::Size end_residues = floor(max_length/2.0);

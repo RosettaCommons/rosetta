@@ -162,7 +162,7 @@ char * argv []
 						<< " rt_theta0: " << numeric::conversions::degrees(residue_type_theta0) << std::endl;
 				}
 
-				for ( core::Size i = 1; i <= residue_type.n_residue_connections(); ++i ) {
+				for ( core::Size i = 1; i <= residue_type.n_possible_residue_connections(); ++i ) {
 					core::chemical::ResidueConnection const & residue_connection(residue_type.residue_connection(i));
 					core::Size const connection_atomno(residue_connection.atomno());
 					core::Vector external_xyz(residue_connection.icoor().build(residue_type));

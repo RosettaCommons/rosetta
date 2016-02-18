@@ -89,8 +89,8 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, O_linked,
-			psicose, neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
+		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
+				O_linked, psicose, neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -161,17 +161,17 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating N-glycosylated 14-mer from sequence: " <<
+		cout << "Creating free 14-mer from sequence: " <<
 			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
 			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" << endl;
 
-		make_pose_from_saccharide_sequence( N_linked_14_mer,
+		make_pose_from_saccharide_sequence( free_14_mer,
 			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
 			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-", *residue_set );
 
-		test_sugar( N_linked_14_mer );
+		test_sugar( free_14_mer );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

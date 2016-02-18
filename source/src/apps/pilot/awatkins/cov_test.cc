@@ -144,12 +144,12 @@ int main ( int argc, char* argv[] )
 		std::cout << pose;
 		//pose.pdb_info()->show(std::cout);
 
-		std::cout << "Cys residue type has " << cys.n_residue_connections() << " and vdp has " << vdp.n_residue_connections() << std::endl;
-		runtime_assert( cys.n_residue_connections() == 3 &&
+		std::cout << "Cys residue type has " << cys.n_possible_residue_connections() << " and vdp has " << vdp.n_possible_residue_connections() << std::endl;
+		runtime_assert( cys.n_possible_residue_connections() == 3 &&
 			cys.lower_connect_id() != 3 &&
 			cys.upper_connect_id() != 3 );
 
-		runtime_assert( vdp.n_residue_connections() == 3 &&
+		runtime_assert( vdp.n_possible_residue_connections() == 3 &&
 			vdp.lower_connect_id() != 3 );
 
 		// hardcoded connection numbers

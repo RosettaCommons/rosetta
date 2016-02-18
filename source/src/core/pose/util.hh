@@ -10,7 +10,7 @@
 /// @file   core/pose/util.hh
 /// @brief  Pose utilities
 /// @author Phil Bradley
-/// @author Modified by Sergey Lyskov, Vikram K. Mulligan
+/// @author Modified by Sergey Lyskov, Vikram K. Mulligan, Jared Adolf-Bryfogle
 
 #ifndef INCLUDED_core_pose_util_hh
 #define INCLUDED_core_pose_util_hh
@@ -784,6 +784,19 @@ utility::vector1< id::AtomID > const & ring_atoms );*/
 void
 set_bfactors_from_atom_id_map(Pose & pose, id::AtomID_Map< Real > const & bfactors);
 
+
+
+///Set the BB torsion, phi, psi, omega (see core::types).
+/// Works with carbohydrates.
+/// Think about moving this to pose itself.
+void
+set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core::Angle new_angle);
+
+///@brief Get a particular backbone torsion, phi, psi, omega (see core::types)
+/// Works with carbohydrates.
+/// Think about moving this to pose itself.
+core::Angle
+get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position );
 
 
 } // pose

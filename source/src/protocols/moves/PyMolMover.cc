@@ -265,6 +265,10 @@ std::string PyMolMover::get_name() const
 	return "PyMOL_Mover";
 }
 
+void PyMolMover::set_PyMol_model_name( std::string name ){
+	pymol_name_ = name;
+}
+
 std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 {
 	if ( pymol_name_.size() ) {

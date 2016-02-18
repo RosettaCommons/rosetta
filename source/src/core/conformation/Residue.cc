@@ -102,7 +102,7 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 	actcoord_( 0.0 ),
 	data_cache_( 0 ),
 	nonstandard_polymer_( false ),
-	connect_map_( rsd_type_.n_residue_connections() )
+	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
@@ -130,7 +130,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	actcoord_( 0.0 ),
 	data_cache_( 0 ),
 	nonstandard_polymer_( false ),
-	connect_map_( rsd_type_.n_residue_connections() )
+	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
@@ -187,7 +187,7 @@ Residue::Residue(
 	//
 	// THIS REALLY NEEDS TO BE FIXED AT SOME POINT
 
-	if ( rsd_type_in.n_residue_connections() != current_rsd.type().n_residue_connections() ) {
+	if ( rsd_type_in.n_possible_residue_connections() != current_rsd.type().n_possible_residue_connections() ) {
 		if ( ! current_rsd.pseudobonds_.empty() ) {
 			TR.Error << "Unable to handle change in the number of residue connections in the presence of pseudobonds!";
 			TR.Error << std::endl;
@@ -382,6 +382,22 @@ Residue::ring_conformer( core::uint const ring_num ) const
 	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus_ );
 }
 
+core::Size
+Residue::n_current_residue_connections() const
+{
+	//for connection in range( 1, rsd.n_residue_connections() + 1 ):
+    //    if rsd.connected_residue_at_resconn( connection ) != 0:
+    //        i+=1
+    //return i
+	core::Size connections = 0;
+	for ( core::Size connect_id = 1; connect_id <= n_possible_residue_connections(); ++connect_id ){
+		if ( connected_residue_at_resconn( connect_id ) != 0){
+			connections+=1;
+		}
+	}
+	return connections;
+
+}
 
 bool Residue::connections_match( Residue const & other ) const
 {
@@ -432,7 +448,7 @@ Residue::is_similar_rotamer( Residue const & other ) const
 void
 Residue::update_connections_to_other_residue( Residue const &other_rsd)
 {
-	for ( core::Size ic=1, ic_max=other_rsd.type().n_residue_connections(); ic<=ic_max; ++ic ) {
+	for ( core::Size ic=1, ic_max=other_rsd.type().n_possible_residue_connections(); ic<=ic_max; ++ic ) {
 		if ( other_rsd.connected_residue_at_resconn(ic)==seqpos() ) { //If the other's connection lists this residue's sequence position
 			core::Size const this_conn_id = other_rsd.connect_map(ic).connid();
 			//TR << "this_res=" << seqpos() << "other_res=" << other_rsd.seqpos() << " this_conn_id=" << this_conn_id << std::endl; //DELETE ME
@@ -463,7 +479,7 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 	// AMW: coming back here, planning to add logic like second case to the first case.
 	// let's assume at least pseudobonds have to be the same.
 
-	if ( type().n_residue_connections() == src_rsd.type().n_residue_connections() ) {
+	if ( type().n_possible_residue_connections() == src_rsd.type().n_possible_residue_connections() ) {
 
 		connect_map_ = src_rsd.connect_map_;
 		connections_to_residues_ = src_rsd.connections_to_residues_;
@@ -481,10 +497,10 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 		connections_to_residues_.clear();
 		pseudobonds_.clear();
 
-		connect_map_.resize( type().n_residue_connections() );
+		connect_map_.resize( type().n_possible_residue_connections() );
 
 		// Find correspondence between src_rsd's connection atoms and atoms on *this.
-		for ( Size ii = 1; ii <= src_rsd.type().n_residue_connections(); ++ii ) {
+		for ( Size ii = 1; ii <= src_rsd.type().n_possible_residue_connections(); ++ii ) {
 			Size const ii_connatom = src_rsd.type().residue_connection( ii ).atomno();
 			if ( has( src_rsd.atom_name( ii_connatom ) ) ) {
 
@@ -1030,7 +1046,7 @@ Residue::has_incomplete_connection(
 	Size const atomno
 ) const
 {
-	Size const num_connections(n_residue_connections());
+	Size const num_connections(n_possible_residue_connections());
 
 	for ( Size i = 1; i <= num_connections; ++i ) {
 		if ( residue_connect_atom_index(i) == atomno && connection_incomplete(i) ) return true;
@@ -1089,7 +1105,7 @@ void
 Residue::update_connections_to_residues()
 {
 	connections_to_residues_.clear();
-	for ( Size i=1, i_end = n_residue_connections(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = n_possible_residue_connections(); i<= i_end; ++i ) {
 		Size const other_resid( connect_map_[ i ].resid() );
 		connections_to_residues_[ other_resid ].push_back( i );
 	}
@@ -1287,7 +1303,7 @@ Residue::n_bonded_neighbor_all_res(
 		if ( virt || ! is_virtual(intrares_atomnos[i]) ) ++num_neighbors;
 	}
 
-	Size const num_connections(n_residue_connections());
+	Size const num_connections(n_possible_residue_connections());
 
 	for ( Size i = 1; i <= num_connections; ++i ) {
 		// this doesn't check the other residue to see if it is connected to a virtual atom

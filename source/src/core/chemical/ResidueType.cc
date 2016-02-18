@@ -679,7 +679,7 @@ utility::vector1< uint >
 ResidueType::branch_connect_atoms() const
 {
 	utility::vector1< uint > atoms;
-	Size const n_connections( n_residue_connections() );
+	Size const n_connections( n_possible_residue_connections() );
 	for ( uint i( 1 ); i <= n_connections; ++i ) {
 		if ( i == lower_connect_id_ || i == upper_connect_id_ ) { continue; }
 		atoms.push_back( residue_connect_atom_index( i ) );
@@ -713,7 +713,7 @@ ResidueType::branch_connect_atom_names() const
 // General
 // Number of ResidueConnections, counting polymeric residue connections
 Size
-ResidueType::n_residue_connections() const
+ResidueType::n_possible_residue_connections() const
 {
 	return residue_connections_.size();
 }
@@ -3676,7 +3676,7 @@ void ResidueType::assign_internal_coordinates()
 void ResidueType::assign_internal_coordinates(core::chemical::VD new_root)
 {
 	//%TODO: right now we're ignoring M FRAG lines and M SPLT lines in molfiles
-	if ( n_residue_connections() != 0 ) {
+	if ( n_possible_residue_connections() != 0 ) {
 		tr.Error << "Residue " << name() << " has connections - can't assign internal coordinates.";
 		utility_exit_with_message("Cannot currently assign internal coordinates for polymeric residue.");
 	}

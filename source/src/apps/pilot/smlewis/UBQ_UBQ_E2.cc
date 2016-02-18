@@ -210,11 +210,11 @@ public:
 		core::Size const cyx_connid( 3 );
 		core::Size const ubq_connid( 2 );
 
-		runtime_assert( cyx_rsd_type.n_residue_connections() == cyx_connid &&
+		runtime_assert( cyx_rsd_type.n_possible_residue_connections() == cyx_connid &&
 			cyx_rsd_type.lower_connect_id() != cyx_connid &&
 			cyx_rsd_type.upper_connect_id() != cyx_connid );
 
-		runtime_assert( ubq_rsd_type.n_residue_connections() == ubq_connid &&
+		runtime_assert( ubq_rsd_type.n_possible_residue_connections() == ubq_connid &&
 			ubq_rsd_type.lower_connect_id() != ubq_connid);
 
 		//E2.conformation().show_residue_connections();

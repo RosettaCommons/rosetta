@@ -103,6 +103,7 @@ private:
 	/// @brief The name of the ReferencePose object that will be created and stored in the pose.
 	///
 	std::string reference_pose_name_;
+	bool overwrite_current_refpose_;
 
 };
 

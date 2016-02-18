@@ -875,12 +875,19 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 
 ///////////////////////////////////////////////////////////////////////////////
 carbohydrates::CHIEnergyFunction const &
-ScoringManager::get_CHIEnergyFunction() const
+ScoringManager::get_CHIEnergyFunction(bool setup_for_sampling /* false */, Real step_size /* 0.1 */) const
 {
 	if ( CHI_energy_function_ == 0 ) {
+		std::cout << "Creating chi energy function." <<std::endl;
 		CHI_energy_function_ =  carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
-	}
 
+	}
+	
+	if ( setup_for_sampling && ( ! CHI_energy_function_->sampling_data_setup() ) ){
+		std::cout << "should be setting up for sampling..." << std::endl;
+		CHI_energy_function_->setup_for_sampling( step_size );
+	}
+	
 	return *CHI_energy_function_;
 }
 

@@ -1,0 +1,22 @@
+# these torsion are specified in *protein* directionality, which
+# is backwards from glycan directionality!
+# chi1  ASN  ASN   N    CA   CB   CG
+# chi2  ASN  ASN   CA   CB   CG   ND2
+# psi   ASN  ASN   CB   CG   ND2  C1
+# phi   ASN  NAG   CG   ND2  C1   O5
+# first column below id dummy and not used
+#  chi1_mean  chi1_sd  chi2_mean  chi2_sd  psi_mean  psi_sd  phi_mean  phi_sd
+# g+      63.6      8.9      191.1     31.6     178.5    13.9     253.7    21.5
+# t      191.6     14.4      177.6     43.0     177.3    12.3     261.0    21.3
+# g-a    290.6     12.7      152.9     23.9     173.1    12.2     268.0    20.3
+# g-b    302.3     11.5      255.0     28.8     178.1    11.5     267.5    23.9
+# the parameters listed below are of the following convention:
+# chi1  ASN  ASN   N    CA   CB   CG
+# chi2  ASN  ASN   CA   CB   CG   OD1
+# psi   ASN  ASN   OD1  CG   ND2  C1
+# phi   ASN  NAG   CG   ND2  C1   C5
+#  chi1_mean  chi1_sd  chi2_mean  chi2_sd  psi_mean  psi_sd  phi_mean  phi_sd
+g+      63.6      8.9      371.1     31.6     358.5    13.9     253.7    21.5
+t      191.6     14.4      357.6     43.0     357.3    12.3     261.0    21.3
+g-a    290.6     12.7      332.9     23.9     353.1    12.2     268.0    20.3
+g-b    302.3     11.5      435.0     28.8     358.1    11.5     267.5    23.9

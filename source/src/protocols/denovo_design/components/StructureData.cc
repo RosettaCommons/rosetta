@@ -276,13 +276,13 @@ StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const
 	// locate non-polymeric covalent bonds
 	for ( core::Size res=1; res<=pose.total_residue(); ++res ) {
 		if ( pose.residue( res ).n_non_polymeric_residue_connections() ) {
-			for ( core::Size conn=1; conn<=pose.residue( res ).n_residue_connections(); ++conn ) {
+			for ( core::Size conn=1; conn<=pose.residue( res ).n_possible_residue_connections(); ++conn ) {
 				core::Size const other_res = pose.residue( res ).connected_residue_at_resconn( conn );
 				if ( ( other_res == res + 1 ) || ( other_res + 1 == res ) ) continue;
 				std::string const atom1 = pose.residue( res ).type().atom_name( pose.residue( res ).residue_connect_atom_index( conn ) );
 				std::string atom2 = "";
 				// find other connections
-				for ( core::Size oconn=1; oconn<=pose.residue( other_res ).n_residue_connections(); ++oconn ) {
+				for ( core::Size oconn=1; oconn<=pose.residue( other_res ).n_possible_residue_connections(); ++oconn ) {
 					if ( pose.residue( other_res ).connected_residue_at_resconn( oconn ) == res ) {
 						atom2 = pose.residue( other_res ).type().atom_name( pose.residue( other_res ).residue_connect_atom_index( oconn ) );
 						break;
@@ -2465,10 +2465,10 @@ StructureData::declare_covalent_bond_in_pose(
 	if ( pose_->residue( res1 ).has( atom1 ) && pose_->residue( res2 ).has( atom2 ) ) {
 		pose_->conformation().declare_chemical_bond( res1, atom1, res2, atom2 );
 		//Rebuild the connection atoms:
-		for ( core::Size i = 1; i <= pose_->conformation().residue(res1).n_residue_connections(); ++i ) {
+		for ( core::Size i = 1; i <= pose_->conformation().residue(res1).n_possible_residue_connections(); ++i ) {
 			pose_->conformation().rebuild_residue_connection_dependent_atoms( res1, i );
 		}
-		for ( core::Size i = 1; i <= pose_->conformation().residue(res2).n_residue_connections(); ++i ) {
+		for ( core::Size i = 1; i <= pose_->conformation().residue(res2).n_possible_residue_connections(); ++i ) {
 			pose_->conformation().rebuild_residue_connection_dependent_atoms( res2, i );
 		}
 	} else {

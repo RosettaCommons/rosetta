@@ -17,6 +17,7 @@
 
 // Package header
 #include <core/chemical/carbohydrates/SugarModificationsNomenclatureTable.hh>
+#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
 
 // Project header
 #include <core/types.hh>
@@ -33,17 +34,37 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+/// @brief  Try various combinations to locate the specific glycan sequence file being requested by the user.
+std::string find_glycan_sequence_file( std::string filename );
+
+/// @brief  Read a single-line glycan sequence file.
+std::string read_glycan_sequence_file( std::string filename );
+
+
 /// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
 /// from a database file.
-std::map< std::string, std::string > read_codes_and_roots_from_database_file( std::string const & filename );
+std::map< std::string, std::string >
+read_codes_and_roots_from_database_file( std::string const & filename );
 
 /// @brief  Return a map of Sizes to pairs of char and string, which are ring sizes mapped to 1-letter affixes and
 /// morphemes, respectively, read from a database file.
-std::map< core::Size, std::pair< char, std::string > > read_ring_sizes_and_morphemes_from_database_file(
-	std::string const & filename );
+std::map< core::Size, std::pair< char, std::string > >
+read_ring_sizes_and_morphemes_from_database_file( std::string const & filename );
 
 /// @brief  Return a table of nomenclature data for sugar modifications, read from a database file.
-SugarModificationsNomenclatureTable read_nomenclature_table_from_database_file( std::string const & filename );
+SugarModificationsNomenclatureTable
+read_nomenclature_table_from_database_file( std::string const & filename );
+
+/// @brief  Return a map of linkage conformer data, read from a database file.
+LinkageConformers
+read_linkage_conformers_from_database_file( std::string const & filename );
+
+///@breif  Return a map of short names to IUPAC formatted strings.
+///  Reads from db_dir/common_names.txt, and loads the IUPAC files as strings.
+std::map< std::string, std::string >
+read_short_names_to_iupac_format_string( std::string const & dir, std::string common_mapping_path);
+
+
 
 }  // namespace carbohydrates
 }  // namespace chemical

@@ -21,7 +21,6 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 
-
 namespace utility {
 namespace io {
 

@@ -185,11 +185,11 @@ public:
 		core::Size const cyd_connid( 3 );
 		core::Size const ubq_connid( 2 );
 
-		runtime_assert( cyd_rsd_type.n_residue_connections() == cyd_connid &&
+		runtime_assert( cyd_rsd_type.n_possible_residue_connections() == cyd_connid &&
 			cyd_rsd_type.lower_connect_id() != cyd_connid &&
 			cyd_rsd_type.upper_connect_id() != cyd_connid );
 
-		runtime_assert( ubq_rsd_type.n_residue_connections() == ubq_connid &&
+		runtime_assert( ubq_rsd_type.n_possible_residue_connections() == ubq_connid &&
 			ubq_rsd_type.lower_connect_id() != ubq_connid);
 
 		//GTPase.conformation().show_residue_connections();

@@ -29,7 +29,15 @@ enum MoverStatus {
 	MS_SUCCESS = 0,
 	FAIL_RETRY,
 	FAIL_DO_NOT_RETRY,
-	FAIL_BAD_INPUT
+	FAIL_BAD_INPUT,
+	FAIL,
+	
+	
+	//Alternative names of enums.
+	MS_FAIL_RETRY = FAIL_RETRY,
+	MS_FAIL_DO_NOT_RETRY = FAIL_DO_NOT_RETRY,
+	MS_FAIL_BAD_INPUT = FAIL_BAD_INPUT,
+	MS_FAIL = FAIL
 };
 
 MoverStatus mstype_from_name( std::string const & name );

@@ -228,7 +228,7 @@ ConformationKinWriter::write_coords(
 		rsd_writer.write_rsd_coords( ostr, ii_rsd, is_instance );
 		/// insert code here to write inter-residue bonds.
 
-		for ( Size jj = 1; jj <= ii_rsd.n_residue_connections(); ++jj ) {
+		for ( Size jj = 1; jj <= ii_rsd.n_possible_residue_connections(); ++jj ) {
 			Size const jj_conn_residue = ii_rsd.connected_residue_at_resconn( jj );
 			if ( jj_conn_residue < ii ) continue; // we've already output this connection
 			Residue const & jj_rsd( conf.residue( jj_conn_residue ) );

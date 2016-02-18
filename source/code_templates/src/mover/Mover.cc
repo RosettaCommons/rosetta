@@ -79,7 +79,7 @@ void
 	protocols::moves::Mover::show(output);
 }
 
-std::ostream &operator<< (std::ostream &os, MoverStub const &mover)
+std::ostream &operator<< (std::ostream &os, --class-- const &mover)
 {
 	mover.show(os);
 	return os;

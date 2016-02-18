@@ -60,6 +60,7 @@
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/string_constants.hh>
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -155,7 +156,7 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
   ANAME[1] = " N  ";
   ANAME[2] = " CA ";
   ANAME[3] = " C  ";
-  string CHAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  string const & CHAIN( utility::UPPERCASE_LETTERS );
   ozstream out( fname );
   Size acount=0,rcount=0,ccount=0;
   for(Size i3a = 0; i3a < 3; i3a++) {

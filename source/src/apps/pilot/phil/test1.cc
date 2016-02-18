@@ -2591,15 +2591,15 @@ bk_test2()
 	Size const lyx_connid( 3 );
 	Size const ubq_connid( 2 );
 
-	assert( cyx_rsd_type.n_residue_connections() == cyx_connid &&
+	assert( cyx_rsd_type.n_possible_residue_connections() == cyx_connid &&
 		cyx_rsd_type.lower_connect_id() != cyx_connid &&
 		cyx_rsd_type.upper_connect_id() != cyx_connid );
 
-	assert( lyx_rsd_type.n_residue_connections() == lyx_connid &&
+	assert( lyx_rsd_type.n_possible_residue_connections() == lyx_connid &&
 		lyx_rsd_type.lower_connect_id() != lyx_connid &&
 		lyx_rsd_type.upper_connect_id() != lyx_connid );
 
-	assert( ubq_rsd_type.n_residue_connections() == ubq_connid &&
+	assert( ubq_rsd_type.n_possible_residue_connections() == ubq_connid &&
 		ubq_rsd_type.lower_connect_id() != ubq_connid &&
 		ubq_rsd_type.is_upper_terminus() );
 

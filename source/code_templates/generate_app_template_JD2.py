@@ -51,7 +51,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
 
 
 
-        required.add_argument("--class_name", "-c",
+        required.add_argument("--mover_name", "-c",
                             help = "The name of the Mover you are calling for JD2",
                             required = True)
 
@@ -59,6 +59,10 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
                             help = "A brief description of the app.  Enclose in quotes.",
                             required = True)
 
+        required.add_argument("--mover_namespace",
+                            help = "Mover namespace for JD2 to add. Will add this hh file for include",
+                            nargs='*',
+                            default = [])
 
 
 
@@ -81,7 +85,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
                             help = "Register needed app options. "
                                    "in:file:s and in:file:l are used by default",
                             nargs="*",
-                            default=["in:file:s", "in:file:l"])
+                            default=["in::file::s", "in::file::l"])
 
 
         new_opts = parser.add_argument_group("Optional list of app options. (not options_rosetta.py opts)  Ex: antibody::graft_L1  "
@@ -100,11 +104,27 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
 
         GenerateRosettaTemplates.__init__(self, "application", parser)
 
+        self.options.class_name = self.options.mover_name #Same thing, different name.
+
         ##Extend Matching
         self.replacement["--app_name--"] = lambda: self.get_option("app_name", fail_on_none=True)
         self.replacement["--app_options--"] = lambda: self.get_app_options()
         self.replacement["--new_app_options_out--"] = lambda: self.get_new_app_options_out()
         self.replacement["--new_app_options_in--"] = lambda: self.get_new_app_options_in()
+        self.replacement["--mover_namespace--"] = lambda: self.get_mover_namespace()
+        self.replacement["--mover_path--"] = lambda: self.get_mover_path()
+
+    def get_mover_namespace(self):
+        if self.options.mover_namespace:
+            return "::".join(self.options.mover_namespace)
+        else:
+            return ""
+
+    def get_mover_path(self):
+        if not self.options.mover_namespace:
+            return "\n"
+        else:
+            return "#include <"+"/".join(self.options.mover_namespace)+">\n"
 
     def get_base_outdir(self):
         if self.options.test:
@@ -121,7 +141,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         Get a string for registering required app options.
         :rtype: str
         """
-        default_opts = ["in:file:s", "in:file:l"]
+        default_opts = ["in::file::s", "in::file::l"]
         for opt in default_opts:
             if not opt in self.options.app_options:
                 self.options.app_options.append(opt)

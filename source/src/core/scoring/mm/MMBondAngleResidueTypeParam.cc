@@ -152,12 +152,12 @@ MMBondAngleResidueTypeParam::init(
 	connection_theta0_.clear();
 	connection_use_theta0_.clear();
 	connection_index_.clear();
-	connection_atom_sets_.resize(residue_type.n_residue_connections());
-	connection_theta0_.resize(residue_type.n_residue_connections());
-	connection_use_theta0_.resize(residue_type.n_residue_connections());
-	connection_index_.resize(residue_type.n_residue_connections());
+	connection_atom_sets_.resize(residue_type.n_possible_residue_connections());
+	connection_theta0_.resize(residue_type.n_possible_residue_connections());
+	connection_use_theta0_.resize(residue_type.n_possible_residue_connections());
+	connection_index_.resize(residue_type.n_possible_residue_connections());
 
-	for ( core::Size i = 1; i <= residue_type.n_residue_connections(); ++i ) {
+	for ( core::Size i = 1; i <= residue_type.n_possible_residue_connections(); ++i ) {
 
 		core::chemical::ResidueConnection const & residue_connection(residue_type.residue_connection(i));
 		core::Size const connection_atomno(residue_connection.atomno());

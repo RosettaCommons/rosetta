@@ -393,7 +393,7 @@ Conformation::show_residue_connections(std::ostream &os) const
 {
 	for ( Size i = 1; i <= size(); ++i ) {
 		Residue const &res(*(residues_[i]));
-		Size const nconn(res.n_residue_connections());
+		Size const nconn(res.n_possible_residue_connections());
 		os << "RESCON: " << i << ' ' << res.name() << " n-conn= " << nconn <<
 			" n-poly= " << res.n_polymeric_residue_connections() <<
 			" n-nonpoly= " << res.n_non_polymeric_residue_connections();
@@ -1237,7 +1237,7 @@ Conformation::detect_bonds()
 		Residue const & ii_res = residue( incomp_2_resid[ ii ] );
 		pg->get_vertex(ii).data().xyz() = ii_res.atoms()[ ii_res.nbr_atom() ].xyz();
 		if ( ii_res.nbr_radius() > maxrad ) maxrad = ii_res.nbr_radius();
-		for ( Size jj = 1; jj <= ii_res.type().n_residue_connections(); ++jj ) {
+		for ( Size jj = 1; jj <= ii_res.type().n_possible_residue_connections(); ++jj ) {
 			if ( ii_res.connection_incomplete( jj ) ) {
 				if ( maxd < ii_res.type().residue_connection(jj).icoor().d() ) {
 					maxd = ii_res.type().residue_connection(jj).icoor().d();
@@ -1254,7 +1254,7 @@ Conformation::detect_bonds()
 	// Iterate across neighbors of incomplete residues; compare incomplete connection points against each other.
 	for ( Size ii = 1; ii <= num_incomp; ++ii ) {
 		Size const ii_resid = incomp_2_resid[ ii ];
-		Size const ii_n_conn = residue( ii_resid ).type().n_residue_connections();
+		Size const ii_n_conn = residue( ii_resid ).type().n_possible_residue_connections();
 		Residue const & ii_res( residue( ii_resid ) );
 		for ( Size jj = 1; jj <= ii_n_conn; ++jj ) {
 			if ( ! ii_res.connection_incomplete( jj ) ) continue;
@@ -1274,7 +1274,7 @@ Conformation::detect_bonds()
 				Size const neighb_id = ii_iter->upper_vertex();
 				Size const neighb_resid = incomp_2_resid[ neighb_id ];
 				Residue const & neighb( residue( neighb_resid ) );
-				Size const neighb_n_conn = neighb.type().n_residue_connections();
+				Size const neighb_n_conn = neighb.type().n_possible_residue_connections();
 
 				// Get the atom index of the kkth ResidueConnection of the iith incomplete residue's neighbor.
 				for ( Size kk = 1; kk <= neighb_n_conn; ++kk ) {
@@ -1335,7 +1335,7 @@ Conformation::detect_pseudobonds()
 	for ( Size ii = 1; ii <= size(); ++ii ) {
 		Residue const & ii_res( residue_( ii ) );
 		if ( ii_res.is_coarse() ) continue;
-		Size const ii_nresconn = ii_res.type().n_residue_connections();
+		Size const ii_nresconn = ii_res.type().n_possible_residue_connections();
 		for ( Size jj = 1; jj <= ii_nresconn; ++jj ) {
 			Size const jj_atid = ii_res.residue_connection( jj ).atomno();
 			for ( Size kk = jj + 1; kk <= ii_nresconn; ++kk ) {
@@ -1377,7 +1377,7 @@ Conformation::detect_pseudobonds()
 						Size const ll_connid = two_neighbors[ ll ].connid();
 						Residue const & ll_res = residue( ll_resid );
 						Size const ll_atid = ll_res.residue_connection( ll_connid ).atomno();
-						Size const ll_nconn = ll_res.type().n_residue_connections();
+						Size const ll_nconn = ll_res.type().n_possible_residue_connections();
 						for ( Size mm = 1; mm <= ll_nconn; ++mm ) {
 							if ( mm == ll_connid ) continue;
 							Size const mm_atid = ll_res.type().residue_connection( mm ).atomno();
@@ -1435,13 +1435,13 @@ Conformation::declare_chemical_bond(
 	Size const atom1( rsd1.atom_index( atom_name1 ) );
 	Size const atom2( rsd2.atom_index( atom_name2 ) );
 	Size connid1(0);
-	for ( Size connid=1; connid<= rsd1.n_residue_connections(); ++connid ) {
+	for ( Size connid=1; connid<= rsd1.n_possible_residue_connections(); ++connid ) {
 		if ( Size(rsd1.residue_connection( connid ).atomno()) == atom1 ) {
 			connid1 = connid;
 		}
 	}
 	Size connid2(0);
-	for ( Size connid=1; connid<= rsd2.n_residue_connections(); ++connid ) {
+	for ( Size connid=1; connid<= rsd2.n_possible_residue_connections(); ++connid ) {
 		if ( Size(rsd2.residue_connection( connid ).atomno()) == atom2 ) {
 			connid2 = connid;
 		}
@@ -1521,7 +1521,7 @@ Conformation::bonded_neighbor_all_res(
 	}
 
 	// add all the atoms in other residues
-	Size const num_connections(primary_residue.n_residue_connections());
+	Size const num_connections(primary_residue.n_possible_residue_connections());
 	for ( Size i = 1; i <= num_connections; ++i ) {
 		if ( primary_residue.residue_connect_atom_index(i) == atomid.atomno() &&
 				!primary_residue.connection_incomplete(i) ) {
@@ -2007,7 +2007,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 	// Now do everything that remains!
 	for ( Size ii = 1; ii <= num_cys; ++ii ) {
 		Size const ii_resid = cysid_2_resid[ ii ];
-		//Size const ii_n_conn = residue( ii_resid ).type().n_residue_connections();
+		//Size const ii_n_conn = residue( ii_resid ).type().n_possible_residue_connections();
 		Residue const & ii_res( residue( ii_resid ) );
 
 		//if ii already processed, continue
@@ -3113,7 +3113,7 @@ Conformation::residues_replace(
 	if ( residues_[ seqpos ]->data_ptr() != 0 ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 	//Loop through all the connections of the new residue and ensure that the residues connected to it have their
 	//connect_map_ updated appropriately:
-	for ( core::Size i=1, imax=residues_[seqpos]->type().n_residue_connections(); i<=imax; ++i ) {
+	for ( core::Size i=1, imax=residues_[seqpos]->type().n_possible_residue_connections(); i<=imax; ++i ) {
 		if ( !residues_[seqpos]->connection_incomplete(i) ) { //If we're connected to something,
 			core::Size const res_to_update = residues_[seqpos]->connected_residue_at_resconn(i); //Get the index of the residue to update
 			residues_[res_to_update]->update_connections_to_other_residue(*(residues_[seqpos])); //Update the connections

@@ -133,7 +133,7 @@ void find_disulfides( pose::Pose const & pose, vector1< pair<Size,Size> > /*out*
 				! is_disulfide[ ii ] ) {
 			Size const ii_connect_atom( A.atom_index( "SG" ) );
 			Size other_res_ii( 0 );
-			for ( Size jj = 1; jj <= A.type().n_residue_connections(); ++jj ) {
+			for ( Size jj = 1; jj <= A.type().n_possible_residue_connections(); ++jj ) {
 				if ( (Size) A.type().residue_connection( jj ).atomno() == ii_connect_atom ) {
 					other_res_ii = A.connect_map( jj ).resid();
 					break;

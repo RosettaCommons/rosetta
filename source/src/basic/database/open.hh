@@ -51,6 +51,25 @@ full_name(
 	bool warn = true
 );
 
+/// @brief Find a path to a file.
+///
+/// Try various combinations to locate the specific file being requested by the user.
+/// (inspired by core::scoring::ScoreFunction::find_weights_file())
+///
+/// dir like chemical/carbohydrates/linkage_conformers/
+std::string
+find_database_path( std::string dir, std::string filename);
+
+/// @brief Find a path to a file.
+///
+/// Try various combinations to locate the specific file being requested by the user.
+/// (inspired by core::scoring::ScoreFunction::find_weights_file())
+///
+/// dir like chemical/carbohydrates/linkage_conformers/
+std::string
+find_database_path( std::string dir, std::string filename, std::string ext);
+
+
 /// @brief Does cache file (absolute path) exist?
 /// if dir_only is true, will return true if the cache file could be created.
 bool

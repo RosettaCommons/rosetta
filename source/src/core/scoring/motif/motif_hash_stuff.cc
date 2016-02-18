@@ -24,7 +24,6 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-//#include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -57,6 +56,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/fixedsizearray1.hh>
+#include <utility/string_constants.hh>
 #include <numeric/xyzTransform.hh>
 
 #include <numeric/geometry/hashing/SixDHasher.hh>
@@ -73,11 +73,6 @@
 #endif
 #endif
 
-// #include <core/pack/task/PackerTask.hh>
-// #include <core/pack/packer_neighbors.hh>
-// #include <core/pack/rotamer_set/RotamerSet.hh>
-// #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-// #include <core/pack/task/TaskFactory.hh>
 
 #define MAX_UINT16 65535
 #define MAX_UINT8    255
@@ -138,34 +133,6 @@ using core::pose::xyzStripeHashPoseCOP;
 static inline double sqr(double const & x) { return x*x; }
 static inline float  sqr(float  const & x) { return x*x; }
 
-// static inline float
-// fastpow2 (float p)
-// {
-//   float offset = (p < 0) ? 1.0f : 0.0f;
-//   float clipp = (p < -126) ? -126.0f : p;
-//   int w = (int)clipp;
-//   float z = clipp - w + offset;
-//   union { uint32_t i; float f; } v = { (float)(1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z) };
-
-//   return v.f;
-//  }
-// static inline float
-// fastexp (float p)
-// {
-//   return fastpow2 (1.442695040f * p);
-//  }
-// static inline float
-// fastsinh (float p)
-// {
-//   return 0.5f * (fastexp (p) - fastexp (-p));
-//  }
-// static inline float fasterlog (float x){
-//  union { float f; uint32_t i; }
-//  vx = { x };
-//  float y = vx.i;
-//  y *= 8.2629582881927490e-8f;
-//  return y - 87.989971088f;
-// }
 
 static inline Real uint16_to_real(uint16_t const & val, Real const & lb, Real const & ub){
 	return min(ub,max(lb,((Real)val)/((Real)MAX_UINT16) * (ub-lb) + lb));
@@ -1261,7 +1228,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 	}
 	typedef std::pair<char,float> PCF;
 	for ( Size ir = 1; ir <= nres1; ++ir ) {
-		char const chain1 = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")[(pose1.chain(ir)-1)%36];
+		char const chain1 = utility::UPPERCASE_ALPHANUMERICS[(pose1.chain(ir)-1)%36];
 		string aas;
 		BOOST_FOREACH ( PCF const & p,resdat1[ir] ) {
 			if ( p.second >= option[mh::dump::resfile_min_tot_score]() ) {
@@ -1276,7 +1243,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 	}
 	if ( !sameseq ) {
 		for ( Size jr = 1; jr <= nres2; ++jr ) {
-			char const chain2 = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")[(pose1.conformation().num_chains()+pose2.chain(jr)-1)%36];
+			char const chain2 = utility::UPPERCASE_ALPHANUMERICS[(pose1.conformation().num_chains()+pose2.chain(jr)-1)%36];
 			string aas;
 			BOOST_FOREACH ( PCF const & p,resdat2[jr] ) {
 				if ( p.second >= option[mh::dump::resfile_min_tot_score]() ) {

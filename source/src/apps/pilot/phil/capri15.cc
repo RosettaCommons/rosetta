@@ -366,8 +366,8 @@ setup_bonded_protein_rna_pose(
 	Residue const & anchor_rsd( pose.residue( sam_pos ) );
 	assert(   root_rsd.n_non_polymeric_residue_connections() == 1 );
 	assert( anchor_rsd.n_non_polymeric_residue_connections() == 1 );
-	pose.append_residue_by_bond( root_rsd, false, root_rsd.n_residue_connections(), sam_pos,
-															 anchor_rsd.n_residue_connections() );
+	pose.append_residue_by_bond( root_rsd, false, root_rsd.n_possible_residue_connections(), sam_pos,
+															 anchor_rsd.n_possible_residue_connections() );
 
 
 	// now add the other rna residues
@@ -1890,8 +1890,8 @@ capri_t033_trim_dock_test()
 		Residue const & anchor_rsd( pose.residue( sam_pos ) );
 		assert(   root_rsd.n_non_polymeric_residue_connections() == 1 );
 		assert( anchor_rsd.n_non_polymeric_residue_connections() == 1 );
-		pose.append_residue_by_bond( root_rsd, false, root_rsd.n_residue_connections(), sam_pos,
-																 anchor_rsd.n_residue_connections() );
+		pose.append_residue_by_bond( root_rsd, false, root_rsd.n_possible_residue_connections(), sam_pos,
+																 anchor_rsd.n_possible_residue_connections() );
 
 
 		// now add the other rna residues

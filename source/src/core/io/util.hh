@@ -38,6 +38,7 @@
 namespace core {
 namespace io {
 
+
 ///@brief specific precision for score output.  Don't use this, use string_util, fmt_real or Real2string
 core::Real restrict_prec( core::Real inval );
 

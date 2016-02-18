@@ -389,7 +389,8 @@ public:
 
 	/// @brief Create a new reference pose from the current state of the pose.
 	/// @details If a ReferencePoseSet object does not exist, this function will create it.
-	void reference_pose_from_current( std::string const &ref_pose_name );
+	///  If override_current is set to true, will override any currently set reference pose with the ref_pose_name.
+	void reference_pose_from_current( std::string const &ref_pose_name, bool override_current = false );
 
 	/// @brief Access the ReferencePoseSet object (non-const).
 	/// @details If a ReferencePoseSet object does not exist, this function will create it.
@@ -587,13 +588,24 @@ public:
 		Size const jump_anchor_residue,
 		std::string const& jump_anchor_atom = "",
 		std::string const& jump_root_atom = "");
-
+	
+	///@brief Delete a residue in the pose.
+	///  Update Observers.
+	///  Update any Reference Poses
 	void
 	delete_polymer_residue( Size const seqpos );
-
+	
+	/// @brief Slow method that relies on FoldTree::delete_seqpos, rebuilds atomtree, can handle jumps/root residue.
+	///  Update Observers.
+	///  Update any Reference Poses
+	void
+	delete_residue_slow( Size const seqpos );
+	
+	
 	/// @brief Delete a range of residues in the pose.
-	/// @details Calls confromation::delete_residue_range_slow().  Also, updates
-	/// reference poses, if present.
+	/// @details Calls confromation::delete_residue_range_slow().
+	///  Update Observers.
+	///  Update any Reference Poses
 	void delete_residue_range_slow( Size const start, Size const end);
 
 	/// @brief Copy a stretch of coordinates/torsions from  <src>

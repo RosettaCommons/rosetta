@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/carbohydrates/util.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -287,7 +288,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 	using namespace std;
 	using namespace utility;
 	using namespace chemical;
-	using namespace carbohydrates;
+	using namespace chemical::carbohydrates;
 
 	ResidueTypeCOPs residue_types;
 
@@ -508,6 +509,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 }  // residue_types_from_saccharide_sequence()
 
 
+// TODO: Move to core::pose::carbohydrates?
 // Append an empty or current Pose with saccharide residues, building branches as necessary.
 /// @details  This function was written primarily as a subroutine for code shared by
 /// make_pose_from_saccharide_sequence() and pose::carbohydrates:glycosylate_pose().  You probably do not want to call
@@ -525,6 +527,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 {
 	using namespace std;
 	using namespace utility;
+	using namespace chemical::carbohydrates;
 
 	// Keep track of the branching as we go.
 	list< pair< uint, string > > branch_points;
@@ -535,8 +538,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 		Residue const & last_residue( pose.residue( pose.total_residue() ) );
 		if ( ! last_residue.is_carbohydrate() ) {
 			tr.Warning << "append_pose_with_glycan_residues( " <<
-				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
-				"The last residue of <pose> must be a carbohydrate to append." << endl;
+					"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
+					"The last residue of <pose> must be a carbohydrate to append." << endl;
 			return;
 		}
 		tr.Debug << "Appending Pose with provided ResidueTypes..." << endl;
@@ -547,7 +550,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
 				branch_points.push_back(
-					make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
+						//make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
+						make_pair( pose.total_residue(), branch_atom_names[ i ] ) );
 			}
 		}
 	}
@@ -564,7 +568,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			string const anchor_atom( branch_points.front().second );
 			string const upper_atom( new_rsd->carbohydrate_info()->anomeric_carbon_name() );
 			tr.Debug << " as branch from " << anchor_atom << " on residue " << anchor_residue <<
-				" to " << upper_atom << "..." << endl;
+					" to " << upper_atom << "..." << endl;
 			pose.append_residue_by_atoms( *new_rsd, true, upper_atom, anchor_residue, anchor_atom, true );
 			branch_points.pop_front();
 		} else {
@@ -576,7 +580,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint j( 1 ); j <= n_branches; ++j ) {
 				branch_points.push_back(
-					make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ j ] ) );
+					//make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ j ] ) );
+					make_pair( pose.total_residue(), branch_atom_names[ j ] ) );
 			}
 		}
 	}
@@ -753,9 +758,10 @@ void make_pose_from_sequence(
 /// At present time, param files only exist for a limited number of sugars! ~ Labonte
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-	std::string const & sequence,
-	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini )
+		std::string const & sequence,
+		chemical::ResidueTypeSet const & residue_set,
+		bool const auto_termini, /*true*/
+		bool const idealize_linkages /*true*/ )
 {
 	using namespace std;
 	using namespace utility;
@@ -774,11 +780,11 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 		*residue_types.front(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	if ( auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_added(
-			*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
+				*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	}
 	if ( ! auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_removed(
-			*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
+				*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
 	}
 
 	// Now we can build the Pose.
@@ -788,6 +794,12 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 	// Let the Conformation know that it contains sugars.
 	pose.conformation().contains_carbohydrate_residues( true );
 
+	if ( idealize_linkages ) {
+		tr.Debug << "Idealizing glycosidic torsions." << endl;
+		Size const n_glycans_added( residue_types.size() );
+		pose::carbohydrates::idealize_last_n_glycans_in_pose( pose, n_glycans_added );
+	}
+			
 	// Finally, set the PDB information.
 	PDBInfoOP info( new PDBInfo( pose ) );
 	info->name( pose.chain_sequence( 1 ) );  // Use the main-chain sequence as the default name.
@@ -802,14 +814,15 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 /// set instead of a ResidueTypeSet object.  A convenience method for PyRosetta.
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-	std::string const & sequence,
-	std::string const & type_set_name /*"fa_standard"*/,
-	bool const auto_termini /*true*/ )
+		std::string const & sequence,
+		std::string const & type_set_name, /*"fa_standard"*/
+		bool const auto_termini, /*true*/
+		bool const idealize_linkages /*true*/ )
 {
 	using namespace chemical;
 
 	ResidueTypeSetCOP type_set( ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
-	make_pose_from_saccharide_sequence( pose, sequence, *type_set, auto_termini );
+	make_pose_from_saccharide_sequence( pose, sequence, *type_set, auto_termini, idealize_linkages );
 }
 
 // Return a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with residue type set name
@@ -817,13 +830,14 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 /// @details A convenience method for PyRosetta.
 pose::PoseOP
 pose_from_saccharide_sequence( std::string const & sequence,
-	std::string const & type_set_name /*"fa_standard"*/,
-	bool const auto_termini /*true*/ )
+		std::string const & type_set_name /*"fa_standard"*/,
+		bool const auto_termini, /*true*/
+		bool const idealize_linkages /*true*/ )
 {
 	using namespace pose;
 
 	PoseOP pose( new Pose() );
-	make_pose_from_saccharide_sequence( *pose, sequence, type_set_name, auto_termini );
+	make_pose_from_saccharide_sequence( *pose, sequence, type_set_name, auto_termini, idealize_linkages );
 	return pose;
 }
 

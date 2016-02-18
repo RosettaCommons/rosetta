@@ -63,6 +63,12 @@ sources = {
 		"VariantType_mappings",
 	],
 
+	"core/chemical/carbohydrates": [
+		"CarbohydrateInfo",
+		"CarbohydrateInfoManager",
+		"database_io",
+	],
+
 	"core/chemical/gasteiger": [
 		"GasteigerAtomTypeData",
 		"GasteigerAtomTypeSet",
@@ -98,11 +104,6 @@ sources = {
 		"StoredRotamerLibrarySpecification",
 	],
 
-	"core/chemical/carbohydrates": [
-		"CarbohydrateInfo",
-		"CarbohydrateInfoManager",
-		"database_io",
-	],
 
 	"core/chemical/orbitals": [
 		"AssignOrbitals",

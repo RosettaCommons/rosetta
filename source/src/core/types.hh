@@ -56,6 +56,7 @@ typedef Real Mass;
 typedef Real Charge;
 typedef Real Energy;
 typedef Real EnergyDerivative;
+typedef Real Probability;
 
 // Double precision slows the packer considerably
 typedef float PackerEnergy;

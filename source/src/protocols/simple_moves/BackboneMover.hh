@@ -93,10 +93,7 @@ public:
 	void nmoves( core::Size const nmoves_in );
 	core::Size nmoves() const;
 	core::kinematics::MoveMapCOP movemap() const;
-	// Because this function is in a .hh and not a .cc, we must #include <MoveMap.hh> and
-	// are not able to #include <MoveMap.fwd.hh> alone.  As a general rule, do not put
-	// function definitions in .hh files.  Break that rule only if you're able to demonstrate a
-	// genuine inlining performance boost.
+	
 	void movemap(core::kinematics::MoveMapOP new_movemap);
 
 	/// @brief returns the residue selector which can be used to dynamically select residues to perturb
@@ -109,7 +106,7 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP sfxn );
 
 	/// @brief Sets the maximum angle of perturbation, independent of
-	/// secondary structure.
+	/// secondary structure. new_angle = old_angle +/- ( angle_max/2 )
 	///
 	/// Example:
 	///     bbmover.angle_max(25)
@@ -119,7 +116,7 @@ public:
 	void angle_max( core::Real const angle );
 
 	/// @brief Sets the max angle of perturbation for residues with <type>
-	/// secondary structure.  (<type> must be 'H', 'E', or 'L'.)
+	/// secondary structure.  (<type> must be 'H', 'E', or 'L'.) new_angle = old_angle +/- ( angle_max/2 )
 	///
 	/// Example:
 	///     bbmover.angle_max('H', 25)
@@ -132,6 +129,8 @@ public:
 	// Note: Pass in by value for one-direction assignment.
 	/// @brief Sets the max angle of perturbation, for secondary structures
 	/// 'H', 'E', and 'L'.
+	/// new_angle = old_angle +/- ( angle_max/2 )
+	///
 	void angle_max( std::map< char, core::Real > angle_max_in );
 
 	/// @brief Gets the max angle of perturbation for residues with <type>

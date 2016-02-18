@@ -477,7 +477,7 @@ CarbohydrateInfo::determine_polymer_connections()
 	}
 
 	// Branch points
-	Size const n_connections( residue_type->n_residue_connections() );
+	Size const n_connections( residue_type->n_possible_residue_connections() );
 	for ( uint i = 1; i <= n_connections; ++i ) {
 		if ( i == residue_type->lower_connect_id() || i == residue_type->upper_connect_id() ) { continue; }
 		uint const branch_atom_index( residue_type->residue_connect_atom_index( i ) );
@@ -488,9 +488,7 @@ CarbohydrateInfo::determine_polymer_connections()
 	}
 
 	// Exocyclic linkage?
-	Size const carbons_in_ring( ring_size_ - 1 /*oxygen*/ );
-	uint const last_carbon_in_ring( carbons_in_ring + anomeric_carbon_ - 1 );
-	if ( mainchain_glycosidic_bond_acceptor_ > last_carbon_in_ring ) {
+	if ( mainchain_glycosidic_bond_acceptor_ > last_carbon_in_ring() ) {
 		has_exocyclic_linkage_ = true;
 	} else {
 		has_exocyclic_linkage_ = false;
@@ -617,6 +615,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 	full_name_ = long_prefixes.str() + root + long_suffix.str();
 	short_name_ = short_prefixes.str() + code + short_suffix.str();
 }
+
 
 
 // Helper methods //////////////////////////////////////////////////////////////

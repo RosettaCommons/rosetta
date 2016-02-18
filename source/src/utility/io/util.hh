@@ -49,7 +49,9 @@ write_vector( std::string filename, vector1< T > const & vec )
 }
 
 /// @brief  General method that opens a file and returns its data as a list of lines after checking for errors.
-utility::vector1< std::string > get_lines_from_file_data( std::string const & filename );
+utility::vector1< std::string >
+get_lines_from_file_data( std::string const & filename );
+
 
 }
 }

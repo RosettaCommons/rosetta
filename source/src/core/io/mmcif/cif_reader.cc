@@ -59,6 +59,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
+#include <utility/string_constants.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_map.hh>
 
@@ -103,7 +104,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	std::map<char, Size> chain_to_idx;
 
 	std::map<std::pair<Size, Size>, char> modelchain_to_chain;
-	std::string const chain_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	std::string const & chain_letters( utility::UPPERCASE_ALPHANUMERICS );
 	for ( Size i = 0; i < chain_letters.size(); ++i ) {
 		modelchain_to_chain[std::pair<Size, Size>(0, i)] = chain_letters[i];
 		modelchain_to_chain[std::pair<Size, Size>(1, i)] = chain_letters[i];

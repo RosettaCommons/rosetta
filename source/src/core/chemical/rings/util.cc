@@ -58,22 +58,23 @@ is_atom_axial_or_equatorial_to_ring(
 {
 	using namespace numeric;
 	using namespace numeric::constants::r;
-
+	
+	//JAB - Making the warnings in debug mode as we use this funciton a lot for linkage optimization.
 	if ( ring_atoms.size() < 3 ) {
-		TR.Warning << "A ring cannot contain fewer than 3 atoms; ";
-		TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
+		TR.Debug << "A ring cannot contain fewer than 3 atoms; ";
+		TR.Debug << "an axial/equatorial designation is meaningless." << std::endl;
 		return NEITHER;
 	}
 
 	if ( ! ring_atoms.contains( attachment_atom ) ) {
-		TR.Warning << "The attachment point for the query atom is not found in the ring; ";
-		TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
+		TR.Debug << "The attachment point for the query atom is not found in the ring; ";
+		TR.Debug << "an axial/equatorial designation is meaningless." << std::endl;
 		return NEITHER;
 	}
 
 	if ( ring_atoms.contains( query_atom ) ) {
-		TR.Warning << "The query atom cannot be a member of the ring; ";
-		TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
+		TR.Debug << "The query atom cannot be a member of the ring; ";
+		TR.Debug << "an axial/equatorial designation is meaningless." << std::endl;
 		return NEITHER;
 	}
 

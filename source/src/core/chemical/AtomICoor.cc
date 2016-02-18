@@ -81,8 +81,8 @@ ICoorAtomID::ICoorAtomID(
 		debug_assert( is_int( name.substr(4) ) );
 		atomno_ = int_of( name.substr(4) );
 		vd_ = ResidueType::null_vertex;
-		debug_assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
-		if ( atomno_ > rsd_type.n_residue_connections() ) { // using > is not a great check but it is better than !=
+		debug_assert( atomno_ > 0 && atomno_ <= rsd_type.n_possible_residue_connections() );
+		if ( atomno_ > rsd_type.n_possible_residue_connections() ) { // using > is not a great check but it is better than !=
 			tw.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
 				" either has an incorrect index or is listed out of order in the file." << std::endl;
 		}

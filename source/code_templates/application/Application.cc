@@ -16,12 +16,17 @@
 
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
+--mover_path--
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <utility/options/OptionCollection.hh>
 
 static THREAD_LOCAL basic::Tracer TR("--app_name--");
 
@@ -29,6 +34,8 @@ static THREAD_LOCAL basic::Tracer TR("--app_name--");
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace utility::options::OptionCollection;
+	
 	--app_options--
 
 }
@@ -41,16 +48,19 @@ main( int argc, char * argv [] )
 	try {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		
+
 		devel::init( argc, argv );
-		--new_app_options_in--
 		register_options();
-		
+
+		--new_app_options_in--
+
 		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
 			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
 		}
 
-		--class--OP mover_protocol( new --class--() );
+
+		--class--OP mover_protocol( new --mover_namespace--::--class--() );
+
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
 
 

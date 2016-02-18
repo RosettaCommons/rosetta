@@ -98,16 +98,20 @@ ReferencePoseSet::clone() const
 /// accessible by the key string.
 void ReferencePoseSet::add_and_initialize_reference_pose(
 	std::string const &key_string,
-	core::pose::Pose const &pose
+	core::pose::Pose const &pose,
+	bool override_current /* false */
 ) {
 	runtime_assert_string_msg(
 		key_string != "",
 		"Error in core::pose::reference_pose::ReferencePoseSet::add_and_initialize_reference_pose():  The name provided for this reference pose must not be an empty string."
 	);
-	runtime_assert_string_msg(
-		reference_pose_map_.count(key_string)==0,
+	if (! override_current){
+		runtime_assert_string_msg(
+			reference_pose_map_.count(key_string)==0,
 		"Error in core::pose::reference_pose::ReferencePoseSet::add_and_initialize_reference_pose(): The name provided for this reference pose has already been assigned to another reference pose."
-	);
+		);
+	}
+	
 	reference_pose_map_[key_string] = ReferencePoseOP( new ReferencePose() );
 	reference_pose_map_[key_string]->initialize_residue_map_from_pose( pose );
 	return;

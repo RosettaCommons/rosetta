@@ -47,6 +47,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/string_constants.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/io/izstream.hh>
 
@@ -188,10 +189,10 @@ LoopHashLoopClosureMover::make_loops(const std::string & in_str) const {
 	for ( Size i=0; i<tuples.size(); i++ ) {
 		std::vector<std::string> rclrc = tokenize(tuples[i], ": " );
 		runtime_assert(rclrc.size() >=3);
-		std::vector<std::string> r1_vec = tokenize(rclrc[0], "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		std::vector<std::string> c1_vec = tokenize(rclrc[0], "0123456789");
-		std::vector<std::string> r2_vec = tokenize(rclrc[2], "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		std::vector<std::string> c2_vec = tokenize(rclrc[2], "0123456789");
+		std::vector<std::string> r1_vec = tokenize( rclrc[0], utility::UPPERCASE_LETTERS );
+		std::vector<std::string> c1_vec = tokenize( rclrc[0], utility::NUMERALS );
+		std::vector<std::string> r2_vec = tokenize( rclrc[2], utility::UPPERCASE_LETTERS );
+		std::vector<std::string> c2_vec = tokenize( rclrc[2], utility::NUMERALS );
 
 		MyLoop loop(atoi(r1_vec[0].c_str()),    //r1
 			(c1_vec[0].c_str()[0]), //c1
@@ -209,7 +210,7 @@ void
 LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	const std::string& loop_insert_instruction,
 	const std::string& bpname ) const {
-	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
+	static std::string const chains( " " + utility::UPPERCASE_ALPHANUMERICS );
 
 	std::ofstream bp( bpname.c_str() );
 	runtime_assert( bp.good() );
@@ -251,7 +252,7 @@ void
 LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	const std::vector<MyLoop> & loops,
 	const std::string& bpname) const {
-	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
+	static std::string const chains( " " + utility::UPPERCASE_ALPHANUMERICS );
 
 	// Make a fast lookup table by staring res number.
 	// Validate the start and end res numbers relationship at the same time.

@@ -1277,8 +1277,8 @@ void GeneralizedKIC::infer_anchor_connIDs(core::pose::Pose const &pose)
 
 	core::Size const lower_res = loopresidues_[1];
 	core::Size const upper_res = loopresidues_[loopsize];
-	core::Size const lower_connID_count = pose.residue(lower_res).n_residue_connections();
-	core::Size const upper_connID_count = pose.residue(upper_res).n_residue_connections();
+	core::Size const lower_connID_count = pose.residue(lower_res).n_possible_residue_connections();
+	core::Size const upper_connID_count = pose.residue(upper_res).n_possible_residue_connections();
 
 	for ( core::Size i=1; i<=lower_connID_count; ++i ) { //Loop through all of the connections made by the first residue in the loop
 		if ( pose.residue(lower_res).connection_incomplete(i) ) continue; //If this connection isn't bonded to anything, go on to the next.
@@ -1360,7 +1360,7 @@ void GeneralizedKIC::addloopgeometry(
 		//Set con:
 		if ( ir==1 ) con=lower_anchor_connID_;
 		else { // Find the first connection ID that links to the previous residue
-			for ( core::Size i=1, imax=pose.residue(loopresidues_[ir]).n_residue_connections(); i<=imax; ++i ) {
+			for ( core::Size i=1, imax=pose.residue(loopresidues_[ir]).n_possible_residue_connections(); i<=imax; ++i ) {
 				if ( pose.residue(loopresidues_[ir]).residue_connection_partner(i)==anchorres_pose ) {
 					con=i;
 					break;
@@ -1369,7 +1369,7 @@ void GeneralizedKIC::addloopgeometry(
 		}
 
 		//Set anchorcon:
-		for ( core::Size i=1, imax=pose.residue(anchorres_pose).n_residue_connections(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=pose.residue(anchorres_pose).n_possible_residue_connections(); i<=imax; ++i ) {
 			if ( pose.residue(anchorres_pose).residue_connection_partner(i)==loopresidues_[ir] ) {
 				anchorcon=i;
 				break;
@@ -1430,7 +1430,7 @@ void GeneralizedKIC::addtailgeometry(
 						core::Size con=0, anchorres_pose=get_original_pose_rsd(jr, ( (jr<loopsize)?residue_map:tail_residue_map ) ), anchorcon=0; //The connection ID for this residue, the other residue's index in the original pose, and that residue's connection ID to this residue.
 
 						//Set con:
-						for ( core::Size i=1, imax=pose.residue(tailresidues_[ir]).n_residue_connections(); i<=imax; ++i ) { //Loop through this residue's connections
+						for ( core::Size i=1, imax=pose.residue(tailresidues_[ir]).n_possible_residue_connections(); i<=imax; ++i ) { //Loop through this residue's connections
 							if ( pose.residue(tailresidues_[ir]).residue_connection_partner(i)==anchorres_pose ) {
 								con=i;
 								break;
@@ -1439,7 +1439,7 @@ void GeneralizedKIC::addtailgeometry(
 						runtime_assert_string_msg(con!=0, "Internal error (con==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.");
 
 						//Set anchorcon:
-						for ( core::Size i=1, imax=pose.residue(anchorres_pose).n_residue_connections(); i<=imax; ++i ) {
+						for ( core::Size i=1, imax=pose.residue(anchorres_pose).n_possible_residue_connections(); i<=imax; ++i ) {
 							if ( pose.residue(anchorres_pose).residue_connection_partner(i)==tailresidues_[ir] ) {
 								anchorcon=i;
 								break;
@@ -1486,7 +1486,7 @@ void GeneralizedKIC::addupperanchor(
 
 		//Find the connection point on this residue:
 		core::Size con = 0;
-		for ( core::Size i=1, imax=pose.residue(following_residue).n_residue_connections(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=pose.residue(following_residue).n_possible_residue_connections(); i<=imax; ++i ) {
 			if ( pose.residue(following_residue).residue_connection_partner(i)==loopresidues_[loopresidues_.size()] ) {
 				con = i;
 				break;

@@ -98,6 +98,7 @@
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/scoring/methods/vall_lookback/VallLookbackPotential.fwd.hh>
 
+
 // C++ headers
 #include <map>
 
@@ -241,8 +242,8 @@ public:
 	disulfides::DisulfideMatchingPotential &
 	get_DisulfideMatchingPotential() const;
 
-	carbohydrates::CHIEnergyFunction const & get_CHIEnergyFunction() const;
-
+	carbohydrates::CHIEnergyFunction const &
+	get_CHIEnergyFunction( bool setup_sampling_data = false, Real sampling_step_size = 0.1 ) const;
 
 	bool
 	has_energy_method( ScoreType t ) const;

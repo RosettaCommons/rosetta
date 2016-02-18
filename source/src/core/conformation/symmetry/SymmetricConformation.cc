@@ -1102,7 +1102,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 		for ( Size ii = 1; ii <= num_cys; ++ii ) {
 			Size const ii_resid = cysid_2_resid[ ii ];
 			if ( ii_resid > symm_info_->num_independent_residues() ) continue;
-			//Size const ii_n_conn = residue( ii_resid ).type().n_residue_connections();
+			//Size const ii_n_conn = residue( ii_resid ).type().n_possible_residue_connections();
 			Residue const & ii_res( residue( ii_resid ) );
 			//if ii already processed, continue
 			if ( processed_cys.find( ii_resid) != processed_cys.end() ) {

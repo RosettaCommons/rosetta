@@ -157,7 +157,7 @@ BinarySilentStruct::fill_struct(
 
 	noncanonical_residue_connections_.clear();
 	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
-		for ( int icon=1; icon<=(int)pose.residue_type(ires).n_residue_connections(); ++icon ) {
+		for ( int icon=1; icon<=(int)pose.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 			Size atom_num = pose.residue(ires).residue_connection( icon ).atomno();
 			core::id::NamedAtomID atom1(pose.residue_type(ires).atom_name(atom_num), ires);
 			if ( pose.residue(ires).connected_residue_at_resconn(icon) != 0 ) {

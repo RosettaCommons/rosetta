@@ -376,7 +376,7 @@ CartesianFragment::add_frag_atom(
 
 	// first the inter-residue nbrs: //////////////////////////
 	{
-		Size const ncon( rsd.n_residue_connections() );
+		Size const ncon( rsd.n_possible_residue_connections() );
 		for ( Size connid=1; connid <= ncon; ++connid ) {
 			if ( rsd.residue_connect_atom_index( connid ) != atomno ) continue;
 			// we don't cross non-polymeric connections, since the sequence numbers on the other

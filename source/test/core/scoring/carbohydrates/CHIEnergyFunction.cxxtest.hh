@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
-#include <core/scoring/carbohydrates/LinkageType.hh>
+#include <core/chemical/carbohydrates/LinkageType.hh>
 
 // Package header
 #include <core/scoring/ScoringManager.hh>
@@ -44,6 +44,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 	void test_CHI_energy_function()
 	{
 		using namespace core::scoring::carbohydrates;
+		using namespace core::chemical::carbohydrates;
 
 		TS_TRACE( "Testing if the CHI energy functions return the correct energies." );
 
@@ -91,6 +92,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 	void test_CHI_energy_derivatives()
 	{
 		using namespace core::scoring::carbohydrates;
+		using namespace core::chemical::carbohydrates;
 
 		TS_TRACE( "Testing if the CHI energy function derivatives return the correct values." );
 
@@ -132,6 +134,35 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_DELTA( E.evaluate_derivative( BETA_LINKS, x ), -0.217421, 0.002 );
 		TS_ASSERT_DELTA( E.evaluate_derivative( _2AX_3EQ_4AX_LINKS, x ), 0.0109582, 0.002 );
 		TS_ASSERT_DELTA( E.evaluate_derivative( _2EQ_3AX_4EQ_LINKS, x ), -0.0115829, 0.002 );
+	}
+	void test_CHI_sampling_data()
+	{
+		using core::scoring::ScoringManager;
+		using namespace core::chemical::carbohydrates;
+		using namespace core::scoring::carbohydrates;
+
+		CHIEnergyFunction const & sugar_bb =
+			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, .1 );
+
+		
+		TS_ASSERT( sugar_bb.sampling_data_setup() );
+		for (core::Size i = 1; i <= 4; ++i ){
+			std::cout << "Linkage type: " << i << std::endl;
+
+
+			LinkageType link_type = static_cast< LinkageType >( i );
+
+			TS_ASSERT( sugar_bb.sampling_data_setup( link_type ));
+			TS_ASSERT_THROWS_NOTHING( sugar_bb.get_chi_sampling_data( link_type )  );
+			CHIDihedralSamplingData const & sampling_data = sugar_bb.get_chi_sampling_data( link_type );
+			
+			std::cout << "PROB Size" << sampling_data.probabilities.size() << std::endl;
+	
+
+			
+		}
+		
+		
 	}
 };
 

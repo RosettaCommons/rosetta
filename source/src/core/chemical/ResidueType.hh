@@ -947,7 +947,7 @@ public:
 
 	// General
 	/// @brief number of ResidueConnections, counting polymeric residue connections
-	Size n_residue_connections() const;
+	Size n_possible_residue_connections() const;
 
 	Size
 	n_polymeric_residue_connections() const {

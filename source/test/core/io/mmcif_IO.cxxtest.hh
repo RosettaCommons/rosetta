@@ -144,6 +144,9 @@ public:
 		// Check PDB Info here
 		TS_ASSERT_EQUALS( pdb_pose->pdb_info()->chain(5), cif_pose->pdb_info()->chain(5) );
 		TS_ASSERT_EQUALS( pdb_pose->pdb_info()->number(10), cif_pose->pdb_info()->number(10) );
+
+
+
 	}
 
 	void test_multimodel_cif() {

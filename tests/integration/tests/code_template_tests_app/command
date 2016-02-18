@@ -44,21 +44,21 @@ cd %(workdir)s
 #
 
 ##Test Pilot App
- %(python)s %(template_dir)s/generate_app_template_JD2.py --test --pilot --user_name Jtest --app_name test_templates --class_name TemplateTest --brief "test templates" 2>&1 >> pilot_app_log
+ %(python)s %(template_dir)s/generate_app_template_JD2.py --test --pilot --user_name Jtest --app_name test_templates --mover_name TemplateTest --mover_namespace protocols test --brief "test templates" 2>&1 >> pilot_app_log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
 
 ##Test Pilot App with options
- %(python)s %(template_dir)s/generate_app_template_JD2.py --test --pilot --user_name Jtest --app_name test_templates_with_options --class_name TemplateTestWithOptions --brief "test templates" --app_options group1::bool1 group2::bool2 group1::group2::int1 --boolean_opt group1::bool1 group2::bool2 --integer_opt group1::group2::int1 2>&1 >> pilot_app_with_options_log
+ %(python)s %(template_dir)s/generate_app_template_JD2.py --test --pilot --user_name Jtest --app_name test_templates_with_options --mover_name TemplateTestWithOptions --mover_namespace protocols test --brief "test templates" --app_options group1::bool1 group2::bool2 group1::group2::int1 --boolean_opt group1::bool1 group2::bool2 --integer_opt group1::group2::int1 2>&1 >> pilot_app_with_options_log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
 
 ##Test Public App
-%(python)s %(template_dir)s/generate_app_template_JD2.py --test --app_name test_templates_public --app_dir test1 test2 --class_name TemplateTestPublic --brief "test templates" 2>&1 >> public_app_log
+%(python)s %(template_dir)s/generate_app_template_JD2.py --test --app_name test_templates_public --app_dir test1 test2 --mover_name TemplateTestPublic --mover_namespace protocols test --brief "test templates" 2>&1 >> public_app_log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

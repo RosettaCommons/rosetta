@@ -132,7 +132,7 @@ create_cpdata_correspondence_for_rotamer(
 
 
 	Size seqpos = example_rotamer.seqpos();
-	for ( Size ii = 1; ii <= example_rotamer.n_residue_connections(); ++ii ) {
+	for ( Size ii = 1; ii <= example_rotamer.n_possible_residue_connections(); ++ii ) {
 		if ( example_rotamer.connection_incomplete( ii ) ) continue;
 
 		Size other_resid = example_rotamer.connected_residue_at_resconn( ii );
@@ -143,7 +143,7 @@ create_cpdata_correspondence_for_rotamer(
 			std::map< Size, Size > ii_connmap;
 
 			/// CONVENTION sort residue connections by their order in the lower residue.
-			for ( Size jj = ii; jj <= example_rotamer.n_residue_connections(); ++jj ) {
+			for ( Size jj = ii; jj <= example_rotamer.n_possible_residue_connections(); ++jj ) {
 				if ( other_resid != example_rotamer.connected_residue_at_resconn( jj ) ) continue;
 				Size lower_res_connid = seqpos < other_resid ? jj : example_rotamer.connect_map( jj ).connid();
 				ii_connmap[ lower_res_connid ] = jj;

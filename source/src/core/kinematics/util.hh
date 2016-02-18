@@ -22,6 +22,7 @@
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/id/types.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -116,6 +117,10 @@ remodel_fold_tree_to_account_for_insertion(
 	core::Size insert_after, //add insert_size to points after this in primary sequence in the tree
 	core::Size insert_size
 );
+
+/// @brief Get a vector of residues matching the id from a movemap.
+utility::vector1< core::Size >
+get_residues_from_movemap_with_id( id::TorsionType query_torsion, MoveMap const & movemap);
 
 } // namespace kinematics
 } // namespace core

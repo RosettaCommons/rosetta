@@ -551,7 +551,7 @@ fold_tree_from_pose(
 
 			} else { // chemical connection
 
-				for ( Size c = 1, ce = res.n_residue_connections(); c <= ce; ++c ) {
+				for ( Size c = 1, ce = res.n_possible_residue_connections(); c <= ce; ++c ) {
 					Size const cr = res.connected_residue_at_resconn( c );
 					Residue const & cres = pose.residue( cr );
 

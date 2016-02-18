@@ -156,14 +156,25 @@ class GenerateRosettaTemplates(object):
         Printed at the end of template generation to help devs know where things are supposed to go, etc.
         """
 
+
+
         if hasattr(self.options, "type"):
+
+            if self.options.type == "util":
+                print "\ngit add "+self.start_pwd+"/"+self.get_outfile_rel_path()+"/util"+"*"
+            else:
+                print "\ngit add "+self.start_pwd+"/"+self.get_outfile_rel_path()+"/"+\
+                      self.get_option("class_name", fail_on_none=False)+"*"
+
+
             if self.options.type == "residue_selector" and self.options.namespace == residue_selector_namespace:
                 print "\nA Creator class should be declared in core::select::residue_selector::ResidueSelectorCreators.hh"
 
             if self.options.type == "mover":
                 print "\nMover Creator should be registered in (protocols.7) \n" \
                       "   protocols/init/init.MoverRegistrators.ihh and \n" \
-                      "   protocols::init::init.MoverCreators.ihh\n"
+                      "   protocols/init/init.MoverCreators.ihh\n"
+
 
 
     ######## Replacement Functions#############

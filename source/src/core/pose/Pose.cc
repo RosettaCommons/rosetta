@@ -551,14 +551,14 @@ Pose::append_residue_by_atoms(
 	anchor_connect_atom_index = anchor_rsd.atom_index( anchor_connect_atom );
 
 	// Determine both connections...
-	Size n_connections( anchor_rsd.n_residue_connections() );
+	Size n_connections( anchor_rsd.n_possible_residue_connections() );
 	for ( Size ii = 1; ii <= n_connections; ++ii ) {
 		if ( anchor_rsd.residue_connect_atom_index( ii ) == anchor_connect_atom_index ) {
 			anchor_connection = ii;
 			break;
 		}
 	}
-	n_connections = new_rsd.n_residue_connections();
+	n_connections = new_rsd.n_possible_residue_connections();
 	for ( Size ii = 1; ii <= n_connections; ++ii ) {
 		if ( new_rsd.residue_connect_atom_index( ii ) == connect_atom_index ) {
 			connection = ii;
@@ -688,12 +688,30 @@ Pose::append_pose_by_jump(
 	//No change to residue mappings in ReferencePose objects.
 }
 
+/// @details delete a polymer residues
+///  Fires a LengthEvent::RESIDUE_DELETE signal.
 void
 Pose::delete_polymer_residue( Size const seqpos )
 {
 	PyAssert( (seqpos<=total_residue()), "Pose::delete_polymer_residue( Size const seqpos ): variable seqpos is out of range!" );
 	energies_->clear(); // TEMPORARY
 	conformation_->delete_polymer_residue( seqpos );
+	zero_reference_pose_mapping_at_seqpos( seqpos ); //All mappings in the new pose pointing to seqpose must now point to 0 in all ReferencePose objects.
+	decrement_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be decremented by 1 in all ReferencePose objects.
+}
+
+/// @details  Delete a residue from the Conformation the slow way -- triggers a rebuild of the atomtree
+///  Fires a LengthEvent::RESIDUE_DELETE signal.
+/// @note  Could be upstream and/or downstream of a jump or chemical edge, or the root of the tree
+/// @note  Not well-tested. Expect funny behavior in new or different situations (email pbradley@fhcrc.org)
+///
+/// LOGIC: uses fold_tree.delete_seqpos to handle shifting the topology around if necessary, then calls setup_atom_tree
+void
+Pose::delete_residue_slow( Size const seqpos )
+{
+	PyAssert( (seqpos<=total_residue()), "Pose::delete_residue_slow( Size const seqpos ): variable seqpos is out of range!" );
+	energies_->clear(); // TEMPORARY
+	conformation_->delete_residue_slow( seqpos );
 	zero_reference_pose_mapping_at_seqpos( seqpos ); //All mappings in the new pose pointing to seqpose must now point to 0 in all ReferencePose objects.
 	decrement_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be decremented by 1 in all ReferencePose objects.
 }
@@ -1745,9 +1763,10 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 
 /// @brief Create a new reference pose from the current state of the pose.
 /// @details If a ReferencePoseSet object does not exist, this function will create it.
-void Pose::reference_pose_from_current( std::string const &ref_pose_name ) {
+void Pose::reference_pose_from_current( std::string const &ref_pose_name, bool override_current ) {
 	if ( !reference_pose_set_ ) reference_pose_set_= core::pose::reference_pose::ReferencePoseSetOP(new core::pose::reference_pose::ReferencePoseSet); //Create a ReferencePoseSet if it doesn't already exist.
-	reference_pose_set_->add_and_initialize_reference_pose( ref_pose_name, *this );
+	
+	reference_pose_set_->add_and_initialize_reference_pose( ref_pose_name, *this, override_current );
 	return;
 }
 

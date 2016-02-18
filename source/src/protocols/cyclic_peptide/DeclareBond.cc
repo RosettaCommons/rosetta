@@ -128,7 +128,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 				core::Size anchor_rsd(0);
 				core::Size anchor_conid(0);
 				core::Size icon=1;
-				for ( ; icon<=pose_copy.residue_type(ires).n_residue_connections(); ++icon ) {
+				for ( ; icon<=pose_copy.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 					if ( pose_copy.residue(ires).connected_residue_at_resconn(icon) != 0 ) {
 						if ( pose_copy.residue(ires).connected_residue_at_resconn(icon) < ires ) {
 							anchor_rsd = pose_copy.residue(ires).connected_residue_at_resconn(icon);
@@ -151,7 +151,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 
 		// add back all the connections
 		for ( Size ires=1; ires<=pose_copy.total_residue(); ++ires ) {
-			for ( core::Size icon=1; icon<=pose_copy.residue_type(ires).n_residue_connections(); ++icon ) {
+			for ( core::Size icon=1; icon<=pose_copy.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 				if ( pose_copy.residue(ires).connected_residue_at_resconn(icon) != 0 ) {
 					Size anchor_rsd = pose_copy.residue(ires).connected_residue_at_resconn(icon);
 					Size anchor_conid = pose_copy.residue(ires).connect_map(icon).connid();

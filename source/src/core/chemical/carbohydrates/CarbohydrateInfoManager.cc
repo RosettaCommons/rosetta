@@ -16,10 +16,14 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 #include <core/chemical/carbohydrates/database_io.hh>
 
-// Utility header
+// Utility headers
+#include <utility/io/izstream.hh>
+#include <utility/io/util.hh>
 #include <utility/exit.hh>
 
-// Basic header
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
 // C++ header
@@ -55,6 +59,7 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+using namespace std;
 using namespace core;
 
 
@@ -117,30 +122,71 @@ CarbohydrateInfoManager::default_position_from_affix( std::string const & affix 
 }
 
 
+bool
+CarbohydrateInfoManager::pair_has_linkage_statistics( std::string const & res1, std::string const & res2 )
+{
+	pair< string, string > const key( convert_residue_names_into_linkage_map_key( res1, res2 ) );
+	return get_instance()->linkage_conformers_map().count( key );
+}
+
+utility::vector1< LinkageConformerData >
+CarbohydrateInfoManager::linkages_from_pair( std::string const & res1, std::string const & res2 )
+{
+	pair< string, string > const key( convert_residue_names_into_linkage_map_key( res1, res2 ) );
+	return get_instance()->linkage_conformers_map().find( key )->second;
+}
+
+
 VariantType
-CarbohydrateInfoManager::branch_variant_type_from_position( core::uint position )
+CarbohydrateInfoManager::branch_variant_type_from_atom_name( std::string const & atom_name )
+{
+	if ( atom_name == "O1" ) {
+		return C1_BRANCH_POINT;
+	} else if ( atom_name == "O2" ) {
+		return C2_BRANCH_POINT;
+	} else if ( atom_name == "O3" ) {
+		return C3_BRANCH_POINT;
+	} else if ( atom_name == "O4" ) {
+		return C4_BRANCH_POINT;
+	} else if ( atom_name == "O5" ) {
+		return C5_BRANCH_POINT;
+	} else if ( atom_name == "O6" ) {
+		return C6_BRANCH_POINT;
+	} else if ( atom_name == "O7" ) {
+		return C7_BRANCH_POINT;
+	} else if ( atom_name == "O8" ) {
+		return C8_BRANCH_POINT;
+	} else if ( atom_name == "O9" ) {
+		return C9_BRANCH_POINT;
+	} else {
+		return NO_VARIANT;
+	}
+}
+
+VariantType
+CarbohydrateInfoManager::branch_variant_type_from_position( core::uint const position )
 {
 	switch ( position ) {
-	case 1 :
-		return C1_BRANCH_POINT;
-	case 2 :
-		return C2_BRANCH_POINT;
-	case 3 :
-		return C3_BRANCH_POINT;
-	case 4 :
-		return C4_BRANCH_POINT;
-	case 5 :
-		return C5_BRANCH_POINT;
-	case 6 :
-		return C6_BRANCH_POINT;
-	case 7 :
-		return C7_BRANCH_POINT;
-	case 8 :
-		return C8_BRANCH_POINT;
-	case 9 :
-		return C9_BRANCH_POINT;
-	default :
-		return NO_VARIANT;
+		case 1 :
+			return C1_BRANCH_POINT;
+		case 2 :
+			return C2_BRANCH_POINT;
+		case 3 :
+			return C3_BRANCH_POINT;
+		case 4 :
+			return C4_BRANCH_POINT;
+		case 5 :
+			return C5_BRANCH_POINT;
+		case 6 :
+			return C6_BRANCH_POINT;
+		case 7 :
+			return C7_BRANCH_POINT;
+		case 8 :
+			return C8_BRANCH_POINT;
+		case 9 :
+			return C9_BRANCH_POINT;
+		default :
+			return NO_VARIANT;
 	}
 }
 
@@ -190,7 +236,6 @@ CarbohydrateInfoManager::ring_size_to_morphemes_map()
 utility::vector1< char > const &
 CarbohydrateInfoManager::ring_affixes()
 {
-	using namespace std;
 	typedef map< Size, pair< char, string > > Map;
 
 	// Only create list one time, as needed.
@@ -223,8 +268,6 @@ CarbohydrateInfoManager::nomenclature_table()
 std::map< std::string, std::string > const &
 CarbohydrateInfoManager::affix_to_patch_map()
 {
-	using namespace std;
-
 	// Only create map one time, as needed.
 	if ( affix_to_patch_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
@@ -240,8 +283,6 @@ CarbohydrateInfoManager::affix_to_patch_map()
 std::map< std::string, core::uint > const &
 CarbohydrateInfoManager::affix_to_position_map()
 {
-	using namespace std;
-
 	// Only create map one time, as needed.
 	if ( affix_to_position_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
@@ -252,6 +293,125 @@ CarbohydrateInfoManager::affix_to_position_map()
 	}
 	return affix_to_position_map_;
 }
+
+
+// Get a map of linkage conformer statistical data, creating it if necessary.
+LinkageConformers const &
+CarbohydrateInfoManager::linkage_conformers_map()
+{
+	using namespace basic::options;
+
+	// Only create map one time, as needed.
+	if ( linkage_conformers_map_.empty() ) {
+		string const filename( find_linkage_conformer_data_file( 
+				option[ OptionKeys::carbohydrates::linkage_conformer_data_file ]() ) );  // default is "default.table"
+		linkage_conformers_map_ = read_linkage_conformers_from_database_file( filename );
+	}
+	return linkage_conformers_map_;
+}
+
+std::map< std::string, std::string > const &
+CarbohydrateInfoManager::get_short_name_to_iupac_strings_map(){
+	
+	return get_instance()->short_name_to_iupac_strings_map();
+
+
+}
+
+std::map< std::string, std::string > const &
+CarbohydrateInfoManager::short_name_to_iupac_strings_map(){
+	if ( short_name_to_iupac_strings_map_.empty() ){
+		std::string dir = "chemical/carbohydrates/common_glycans/";
+		std::string filename = "common_names";
+		std::string ext = ".txt";
+		std::string path = basic::database::find_database_path(dir, filename, ext);
+		short_name_to_iupac_strings_map_ = read_short_names_to_iupac_format_string( dir, path );
+		
+	}
+
+	return short_name_to_iupac_strings_map_;
+}
+
+
+// Try various combinations to locate the specific file being requested by the user.
+// (inspired by core::scoring::ScoreFunction::find_weights_file())
+std::string
+CarbohydrateInfoManager::find_linkage_conformer_data_file( std::string filename )
+{
+	using namespace utility::io;
+	
+	std::string dir = "chemical/carbohydrates/linkage_conformers/";
+	std::string ext = ".table";
+	
+	return basic::database::find_database_path( dir, filename, ext); //JAB - moved logic to general place since its really cool.
+	
+	
+	/*
+	std::string const & path( basic::database::full_name( "chemical/carbohydrates/linkage_conformers/" ) );
+	std::string const ext( ".table" );
+
+	izstream potential_file( filename );
+	if ( potential_file.good() ) {
+		return filename;
+	} else {
+		izstream potential_file( filename + ext );  // Perhaps the user didn't use the .table extension.
+		if ( potential_file.good() ) {
+			return filename + ext;
+		} else {
+			izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
+			if ( potential_file.good() ) {
+				return path + filename;
+			} else {
+				izstream potential_file( path + filename + ext );  // last try
+				if ( potential_file.good() ) {
+					return path + filename + ext;
+				} else {
+					utility_exit_with_message( "Unable to open linkage conformer data file. Neither ./" + filename +
+						" nor " + "./" + filename + ext +
+						" nor " + path + filename +
+						" nor " + path + filename + ext + " exists." );
+				}
+			}
+		}
+	}
+	return "WHAT THE @#$%!";  // Code can never reach here.
+	*/
+}
+
+
+
+// Helper function ////////////////////////////////////////////////////////////
+std::pair< std::string, std::string >
+convert_residue_names_into_linkage_map_key( std::string const & name1, std::string const & name2 )
+{
+	string fixed_name1( name1 );
+	string fixed_name2( name2 );
+	
+	// First, we remove any trailing hyphens.
+	fixed_name1 = fixed_name1.erase( fixed_name1.find_last_not_of( "-" ) + 1 );
+	fixed_name2 = fixed_name2.erase( fixed_name2.find_last_not_of( "-" ) + 1 );
+	
+	// Next, we do not need/want the anomeric designation on the reducing-end residue.
+	if ( fixed_name1.size() > 9 ) {  // Names shorter than this are non-saccharides.
+		if ( fixed_name1.substr( 5, 5 ) == "alpha" ) {
+			fixed_name1.erase( 5, 6 );  // We have to erase the hyphen after "alpha" too.
+		}
+		if ( fixed_name1.substr( 5, 4 ) == "beta" ) {
+			fixed_name1.erase( 5, 5 );  // We have to erase the hyphen after "beta" too.
+		}
+	}
+	
+	// Next, we do not need want the main-chain connectivity of the non-reducing-end residue.
+	if ( fixed_name2.substr( 0, 2 ) == "->" ) {  // We assume that this is the start of a "->n)-".
+		fixed_name2.erase( 0, 5 );
+	}
+	
+	// Finally, make a pair and return.
+	return make_pair( fixed_name2, fixed_name1 );
+}
+
+
+
 
 }  // namespace carbohydrates
 }  // namespace chemical

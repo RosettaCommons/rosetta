@@ -236,7 +236,21 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	{
 		return n_carbons_;
 	}
-
+	
+	/// @brief	  Get the number of carbons in the ring.
+	core::Size
+	n_ring_carbons() const
+	{
+		return n_carbons_ - 1 /*oxygen*/;
+	}
+	
+	/// @brief    Get the last carbon of the ring.  Varies with ketose or aldose.
+	core::Size
+	last_carbon_in_ring() const
+	{
+		return n_carbons_ - 1 /*oxygen*/ + anomeric_carbon_ - 1;
+	}
+	
 	/// @brief  Return true if the monosaccharide is a triose.
 	bool
 	is_triose() const
@@ -431,14 +445,15 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	core::uint branch_point( core::uint const i ) const;
 
 
-	/// @brief  Return true if the attachment point of the downstream saccharide is on an exocyclic carbon.
+	/// @brief  Return true if the attachment point of the downstream saccharide (N+1) OF THE MAINCHAIN is on an exocyclic carbon.
+	///  This residue may still have an exocylic linkage through a branch point.
+	///  See core::pose::has_exocylic_carbon_linkage to get more specific exocyclic carbon linkage info.
 	bool
 	has_exocyclic_linkage() const
 	{
 		return has_exocyclic_linkage_;
 	}
-
-
+	
 	// Side-chain modifications
 	/// @brief  Return true if any hydroxyl group has been modified to an acetylated amino group.
 	bool is_N_acetylated() const;

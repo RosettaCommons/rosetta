@@ -2,7 +2,7 @@ The protocols/moves directory no longer contains Movers that do stuff to the pos
 
 A) The Mover base class and related classes (MoverCreator, etc)
 
-B) control-flor Movers (MoverContainer)
+B) control-flow Movers (MoverContainer)
 
 C) Monte Carlo.
 

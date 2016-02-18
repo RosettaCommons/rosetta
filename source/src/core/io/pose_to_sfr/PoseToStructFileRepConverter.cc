@@ -594,7 +594,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 
 		if ( pose.residue( ii ).n_non_polymeric_residue_connections() == 0 ) continue;
 
-		for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_residue_connections(); ++conn ) {
+		for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_possible_residue_connections(); ++conn ) {
 
 			Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
 			Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );

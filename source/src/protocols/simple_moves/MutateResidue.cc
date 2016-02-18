@@ -98,9 +98,7 @@ MutateResidue::MutateResidue( core::Size const target, string const &new_res ) :
 	res_name_(new_res),
 	preserve_atom_coords_(false)
 {
-	std::stringstream target_in;
-	target_in << target;
-	target_ = target_in.str();
+	set_target( target );
 }
 
 MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
@@ -109,50 +107,17 @@ MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
 	preserve_atom_coords_(false)
 {
-	std::stringstream target_in;
-	target_in << target;
-	target_ = target_in.str();
+	set_target( target );
 }
 
-
-void MutateResidue::apply( Pose & pose ) {
-
-	// Converting the target string to target residue index must be done at apply time,
-	// since the string might refer to a residue in a reference pose.
-	core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
-
-	if ( rosetta_target < 1 ) {
-		// Do nothing for 0
-		return;
-	}
-	if ( rosetta_target > pose.total_residue() ) {
-		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
-		utility_exit();
-	}
-
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Mutating residue " << rosetta_target << " from "
-			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
-	}
-
-	chemical::ResidueTypeSetCOP restype_set( pose.residue( rosetta_target ).residue_type_set() );
-
-	// Create the new residue and replace it
-	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-		restype_set->name_map(res_name_), pose.residue( rosetta_target ),
-		pose.conformation());
-	// Make sure we retain as much info from the previous res as possible
-	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
-		*new_res, pose.conformation(), !preserve_atom_coords() );
-	pose.replace_residue( rosetta_target, *new_res, false );
-
+MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const aa) :
+	parent(),
+	target_(""),
+	res_name_( name_from_aa( aa )),
+	preserve_atom_coords_(false)
+{
+	set_target( target );
 }
-
-std::string
-MutateResidue::get_name() const {
-	return MutateResidueCreator::mover_name();
-}
-
 
 /**
 * @brief Reinitialize this protocols::moves::Mover with parameters from the specified tags.
@@ -195,8 +160,54 @@ void MutateResidue::set_target(core::Size const target_in)
 	std::stringstream target_in_string;
 	target_in_string << target_in;
 	target_ = target_in_string.str();
-	return;
 }
+
+void MutateResidue::set_res_name( core::chemical::AA const & aa){
+	res_name_ = name_from_aa( aa );
+}
+
+void MutateResidue::apply( Pose & pose ) {
+
+	// Converting the target string to target residue index must be done at apply time,
+	// since the string might refer to a residue in a reference pose.
+	core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
+
+	if ( rosetta_target < 1 ) {
+		// Do nothing for 0
+		return;
+	}
+	if ( rosetta_target > pose.total_residue() ) {
+		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
+		utility_exit();
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Mutating residue " << rosetta_target << " from "
+			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
+	}
+
+	chemical::ResidueTypeSetCOP restype_set( pose.residue( rosetta_target ).residue_type_set() );
+
+	// Create the new residue and replace it
+	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
+		restype_set->name_map(res_name_), pose.residue( rosetta_target ),
+		pose.conformation());
+	// Make sure we retain as much info from the previous res as possible
+	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
+		*new_res, pose.conformation(), !preserve_atom_coords() );
+	pose.replace_residue( rosetta_target, *new_res, false );
+
+}
+
+std::string
+MutateResidue::get_name() const {
+	return MutateResidueCreator::mover_name();
+}
+
+
+
+
+
 
 } // moves
 } // protocols

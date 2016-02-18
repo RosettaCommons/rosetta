@@ -480,7 +480,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 			//If this residue is connected to the residue containing the current loop atom, skip it.
 			core::Size const ia_original_res = get_original_pose_rsd(ia_res, residue_map);
 			bool is_connected_to_loop_rsd = false;
-			for ( core::Size i=1, imax=original_pose.residue(jr).n_residue_connections(); i<=imax; ++i ) {
+			for ( core::Size i=1, imax=original_pose.residue(jr).n_possible_residue_connections(); i<=imax; ++i ) {
 				if ( original_pose.residue(jr).connected_residue_at_resconn(i)==ia_original_res ) {
 					is_connected_to_loop_rsd=true;
 					break;

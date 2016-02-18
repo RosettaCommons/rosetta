@@ -16,7 +16,7 @@
 #include <core/scoring/methods/carbohydrates/SugarBackboneEnergy.hh>
 #include <core/scoring/methods/carbohydrates/SugarBackboneEnergyCreator.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
-#include <core/scoring/carbohydrates/LinkageType.hh>
+#include <core/chemical/carbohydrates/LinkageType.hh>
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>
@@ -29,6 +29,7 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 
@@ -48,7 +49,8 @@ namespace core {
 namespace scoring {
 namespace methods {
 namespace carbohydrates {
-
+	using core::chemical::carbohydrates::LinkageType;
+	
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
@@ -78,7 +80,8 @@ SugarBackboneEnergy::residue_energy(
 	using namespace chemical::rings;
 	using namespace chemical::carbohydrates;
 	using namespace scoring::carbohydrates;
-
+	using namespace pose::carbohydrates;
+	
 	// This is a carbohydrate-only scoring method.
 	if ( ! rsd.is_carbohydrate() ) { return; }
 
@@ -86,7 +89,7 @@ SugarBackboneEnergy::residue_energy(
 	if ( rsd.is_lower_terminus() ) { return; }
 
 	// Ignore REPLONLY variants.
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) { return; }
+	if ( rsd.has_variant_type( chemical::REPLONLY ) ) { return; }
 
 	uint const seqpos( rsd.seqpos() );
 	Angle phi( pose.phi( seqpos ) );
@@ -101,79 +104,23 @@ SugarBackboneEnergy::residue_energy(
 		// L-Sugars use the mirror image of the score functions.
 		phi = -phi;
 	}
-	// TODO: Wood's lab assumed that the rings would always be 4C1 chairs. If an alpha sugar is flipped, it should
-	// probably be treated as a beta.  I should probably abandon getting the anomeric form and explicitly determine
-	// axial/equatorial here too.
-	if ( info->is_alpha_sugar() ) {
-		score += E_( ALPHA_LINKS, phi );
-	} else if ( info->is_beta_sugar() ) {
-		score += E_( BETA_LINKS, phi );
-	}  // ...else it's a linear sugar, and this scoring method does not apply.
-
-
+	
+	score += E_( get_linkage_type_for_residue_for_CHI(id::phi_dihedral, rsd, pose), phi ); //Returns 0 if linkage type is LINKAGE_NA
+	
+	
 	// Calculate psi component.
-	// For psi, we need to get information from the previous residue.
-	conformation::Residue const & prev_rsd( pose.residue(
-		pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
-	// If this is not a saccharide residue, do nothing.
-	if ( prev_rsd.is_carbohydrate() ) {
-		CarbohydrateInfoCOP prev_info( prev_rsd.carbohydrate_info() );
-		// If this is not a pyranose, do nothing, because we do not have statistics for this residue.
-		if ( prev_info->is_pyranose() ) {
-			// What is our connecting atom?
-			uint const connect_atom( prev_rsd.connect_atom( rsd ) );
-
-			// Next, convert the psi to between 0 and 360 (because that's what the function expects).
-			psi = numeric::nonnegative_principal_angle_degrees( psi );
-
-			if ( prev_info->is_L_sugar() ) {
-				// L-Sugars use the mirror image of the score functions.
-				psi = 360 - psi;
-			}
-
-			// Now, get the ring atoms.
-			// We can assume that the ring we care about is the 1st ring, since this is a sugar.
-			vector1< uint > const ring_atoms( prev_rsd.type().ring_atoms( 1 ) );
-
-			// Next, we must figure out which position on the ring has the glycosidic bond.
-			uint position( 0 );
-			vector1< uint > const bonded_heavy_atoms( prev_rsd.get_adjacent_heavy_atoms( connect_atom ) );
-			Size const n_bonded_heavy_atoms( bonded_heavy_atoms.size() );
-			Size const n_ring_atoms( ring_atoms.size() );
-			for ( uint i( 1 ); i <= n_bonded_heavy_atoms; ++i ) {
-				for ( uint j( 1 ); j <= n_ring_atoms; ++ j ) {
-					if ( ring_atoms[ j ] == bonded_heavy_atoms[ i ] ) {
-						// We found the attachment position.
-						position = j;
-						break;
-					}
-				}
-				if ( position != 0 ) {
-					break;  // We already found this heavy atom.
-				}
-			}
-
-			// Finally, check if it's axial or equatorial and call the appropriate function.
-			switch ( is_atom_axial_or_equatorial_to_ring( prev_rsd, connect_atom, ring_atoms ) ) {
-			case AXIAL :
-				if ( position % 2 == 0 ) {  // even
-					score += E_( _2AX_3EQ_4AX_LINKS, psi );
-				} else /* odd */ {
-					score += E_( _2EQ_3AX_4EQ_LINKS, psi );
-				}
-				break;
-			case EQUATORIAL :
-				if ( position % 2 == 0 ) {  // even
-					score += E_( _2EQ_3AX_4EQ_LINKS, psi );
-				} else /* odd */ {
-					score += E_( _2AX_3EQ_4AX_LINKS, psi );
-				}
-				break;
-			case NEITHER :
-				break;
-			}
+	// Convert the psi to between 0 and 360 (because that's what the function expects).
+	conformation::Residue const & prev_rsd( pose.residue( find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+	if (prev_rsd.is_carbohydrate()){
+		psi = numeric::nonnegative_principal_angle_degrees( psi );
+		if ( prev_rsd.carbohydrate_info()->is_L_sugar() ) {
+			// L-Sugars use the mirror image of the score functions.
+			psi = 360 - psi;
 		}
+	
+		score += E_( get_linkage_type_for_residue_for_CHI(id::psi_dihedral, rsd, pose), psi );
 	}
+	
 	emap[ sugar_bb ] += score;
 }
 
@@ -266,7 +213,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		if ( ! info->is_pyranose() ) {
 			return deriv;
 		}
-
+		
 		// Third, what is our connecting atom?
 		core::uint connect_atom;
 		if ( torsion_id.type() == BB ) {
@@ -297,6 +244,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		utility::vector1< core::uint > const ring_atoms( rsd.type().ring_atoms( 1 ) );
 
 		// Finally, check if it's axial or equatorial and call the appropriate function.
+		//  This also checks for exocyclic linkage.
 		switch ( is_atom_axial_or_equatorial_to_ring( rsd, connect_atom, ring_atoms ) ) {
 		case AXIAL :
 			if ( torsion_id.torsion() % 2 == 0 ) {  // even

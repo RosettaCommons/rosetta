@@ -97,7 +97,9 @@ public:
 	/// @details After this operation, the map holds a new ReferencePoseOP pointing to a
 	/// very uninteresting ReferencePose object that maps a list of residues onto themselves,
 	/// accessible by the key string.
-	void add_and_initialize_reference_pose( std::string const &key_string, core::pose::Pose const &pose );
+	/// If override_current is set to true, will overrwrite any reference pose with the key_string.
+	
+	void add_and_initialize_reference_pose( std::string const &key_string, core::pose::Pose const &pose, bool override_current = false );
 
 	/// @brief Get an owning pointer to a reference pose stored in the reference pose map, given a key string.
 	/// @details An error is thrown if the key string doesn't associate with anything (i.e. if the reference pose

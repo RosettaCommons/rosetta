@@ -83,14 +83,16 @@ StorePoseSnapshot::~StorePoseSnapshot() {}
 ///
 StorePoseSnapshot::StorePoseSnapshot() :
 	parent(),
-	reference_pose_name_( "" )
+	reference_pose_name_( "" ),
+	overwrite_current_refpose_( false )
 {}
 
 /// @brief Copy constructor
 ///
 StorePoseSnapshot::StorePoseSnapshot( StorePoseSnapshot const &src ) :
 	parent(src),
-	reference_pose_name_( src.reference_pose_name_ )
+	reference_pose_name_( src.reference_pose_name_ ),
+	overwrite_current_refpose_(src.overwrite_current_refpose_)
 {}
 
 /// @brief Apply function -- actually apply this mover to the pose, modifying the pose.
@@ -100,7 +102,7 @@ void StorePoseSnapshot::apply( Pose & pose ) {
 		reference_pose_name()!="",
 		"Error in protocols::simple_moves::StorePoseSnapshot::apply(): The reference pose name is currently blank.  This must be set before the apply() function is called."
 	);
-	pose.reference_pose_from_current( reference_pose_name() ); //Yes, that's all this mover does.  It's that simple.
+	pose.reference_pose_from_current( reference_pose_name(), overwrite_current_refpose_); //Yes, that's all this mover does.  It's that simple.
 	if ( TR.visible() ) {
 		TR << "Stored pose snapshot " << reference_pose_name() << "." << std::endl;
 		TR.flush();
@@ -129,7 +131,9 @@ void StorePoseSnapshot::parse_my_tag( utility::tag::TagCOP tag,
 
 	set_reference_pose_name( tag->getOption< std::string >( "reference_pose_name", "" ) );
 	if ( TR.visible() ) TR << "Set reference pose name to " << reference_pose_name() << "." << std::endl;
-
+	
+	overwrite_current_refpose_ = tag->getOption("override_current", overwrite_current_refpose_);
+	
 	if ( TR.visible() ) TR.flush();
 	return;
 }

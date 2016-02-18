@@ -7,16 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/scoring/carbohydrates/LinkageType.hh
+/// @file    core/chemical/carbohydrates/LinkageType.hh
 /// @brief   Enumerator definition for LinkageType.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_scoring_carbohydrates_LinkageType_HH
-#define INCLUDED_core_scoring_carbohydrates_LinkageType_HH
+#ifndef INCLUDED_core_chemical_carbohydrates_LinkageType_HH
+#define INCLUDED_core_chemical_carbohydrates_LinkageType_HH
+
+#include <core/id/types.hh>
 
 namespace core {
-namespace scoring {
+namespace chemical {
 namespace carbohydrates {
 
 /// @brief    Labels for the linkage type of the carbohydrate phi or psi angle.
@@ -25,15 +27,22 @@ namespace carbohydrates {
 /// labels.
 enum LinkageType {
 	FIRST_LINK_TYPE = 1,
-	ALPHA_LINKS = 1,     // used to describe alpha linkages
-	BETA_LINKS,          // used to describe beta linkages
-	_2AX_3EQ_4AX_LINKS,  // used to describe ->2-axial, ->3-equatorial, or ->4-axial linkages
-	_2EQ_3AX_4EQ_LINKS,  // used to describe ->2-equatorial, ->3-axial, or ->4-equatorial linkages
-	N_LINK_TYPES = _2EQ_3AX_4EQ_LINKS
+	ALPHA_LINKS = 1,     // used to describe alpha linkages (phi)
+	BETA_LINKS,          // used to describe beta linkages (phi)
+	_2AX_3EQ_4AX_LINKS,  // used to describe ->2-axial, ->3-equatorial, or ->4-axial linkages (psi)
+	_2EQ_3AX_4EQ_LINKS,  // used to describe ->2-equatorial, ->3-axial, or ->4-equatorial linkages (psi)
+	N_LINK_TYPES = _2EQ_3AX_4EQ_LINKS,
+	
+	LINKAGE_NA // A Null for searching.
 };
 
+
+//Alpha/Beta go from 180 to 180 and are for phi.
+//Other two go from 0 to 360 and are for psi.
+
+
 }  // namespace carbohydrates
-}  // namespace scoring
+}  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_scoring_carbohydrates_LinkageType_HH
+#endif  // INCLUDED_core_chemical_carbohydrates_LinkageType_HH

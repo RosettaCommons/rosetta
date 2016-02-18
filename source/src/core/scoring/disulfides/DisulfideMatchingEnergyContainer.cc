@@ -594,7 +594,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 			Size ii_connect_atom = res.atom_index( res.type().get_disulfide_atom_name() );
 
 			Size other_res_ii( 0 );
-			for ( Size jj = 1; jj <= res.type().n_residue_connections(); ++jj ) {
+			for ( Size jj = 1; jj <= res.type().n_possible_residue_connections(); ++jj ) {
 				if ( (Size) res.type().residue_connection( jj ).atomno() == ii_connect_atom ) {
 					other_res_ii = res.connect_map( jj ).resid();
 					break;

@@ -105,43 +105,30 @@ class SequenceMover : public MoverContainer {
 public:
 
 	// constructor
-	/// @brief Constructs a SequenceMover
+	/// @brief Constructs a SequenceMover, optionally setting to use mover status.
 	/// seqmover = SequenceMover()
-	SequenceMover( bool ms=false ) :
-		MoverContainer(),
-		use_mover_status_( ms )
-	{}
-
-	/// @brief Copy constructor -- performs a deep copy of all contained movers.  Invoked by clone()
-	SequenceMover( SequenceMover const & );
+	
+	SequenceMover( bool ms=false );
 
 	/// @brief Convenience constructor: initial sequence of 2 movers
 	/// seqmover = SequenceMover( mover1 , mover2 )
 	///
 	/// Mover    mover1   /first mover to apply with SequenceMover.apply
 	/// Mover    mover2   /second mover to apply with SequenceMover.apply
-	SequenceMover(MoverOP mover1, MoverOP mover2) :
-		MoverContainer(),
-		use_mover_status_( false )
-	{
-		add_mover(mover1);
-		add_mover(mover2);
-	}
-
+	SequenceMover(MoverOP mover1, MoverOP mover2);
+	
 	/// @brief Convenience constructor: initial sequence of 3 movers
 	/// seqmover = SequenceMover( mover1 , mover2 , mover3 )
 	///
 	/// Mover    mover1   /first mover to apply with SequenceMover.apply
 	/// Mover    mover2   /second mover to apply with SequenceMover.apply
 	/// Mover    mover3   /third mover to apply with SequenceMover.apply
-	SequenceMover(MoverOP mover1, MoverOP mover2, MoverOP mover3) :
-		MoverContainer(),
-		use_mover_status_( false )
-	{
-		add_mover(mover1);
-		add_mover(mover2);
-		add_mover(mover3);
-	}
+	SequenceMover(MoverOP mover1, MoverOP mover2, MoverOP mover3);
+
+	/// @brief Copy constructor -- performs a deep copy of all contained movers.  Invoked by clone()
+	SequenceMover( SequenceMover const & );
+
+
 
 	/// @brief deep copy of all contained movers.
 	virtual MoverOP clone() const;

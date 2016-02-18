@@ -1792,7 +1792,7 @@ setup_corresponding_atoms(
 	}
 
 	/// Now include atoms involved in residue connections, since these might be anchor points for the atomtree
-	for ( Size connid=1; connid<= rsd1.n_residue_connections() && connid <= rsd2.n_residue_connections(); ++connid ) {
+	for ( Size connid=1; connid<= rsd1.n_possible_residue_connections() && connid <= rsd2.n_possible_residue_connections(); ++connid ) {
 		Size const atom1( rsd1.type().residue_connection( connid ).atomno() );
 		Size const atom2( rsd2.type().residue_connection( connid ).atomno() );
 		if ( rsd1.atom_name( atom1 ) == rsd2.atom_name( atom2 ) ) {
@@ -1953,7 +1953,7 @@ core::Size get_disulf_partner (
 	std::string lcatom = conformation.residue(res_index).type( ).get_disulfide_atom_name();
 	Size const connect_atom( conformation.residue( res_index ).atom_index( lcatom ) );
 	Size other_res( 0 );
-	for ( core::Size conn = conformation.residue( res_index ).type().n_residue_connections(); conn >= 1; --conn ) {
+	for ( core::Size conn = conformation.residue( res_index ).type().n_possible_residue_connections(); conn >= 1; --conn ) {
 		if ( static_cast<core::Size>( conformation.residue( res_index ).type().residue_connection(conn).atomno() ) == connect_atom ) {
 			other_res = conformation.residue( res_index ).connect_map( conn ).resid();
 			break;
@@ -2007,7 +2007,7 @@ form_disulfide(
 		Size const connect_atom( conformation.residue( lower_res ).atom_index( lcatom ) );
 		Size other_res( 0 );
 		Size conn(0);
-		for ( conn = conformation.residue( lower_res ).type().n_residue_connections(); conn >= 1; --conn ) {
+		for ( conn = conformation.residue( lower_res ).type().n_possible_residue_connections(); conn >= 1; --conn ) {
 			if ( Size( conformation.residue(lower_res).type().residue_connection(conn).atomno() ) == connect_atom ) {
 				other_res = conformation.residue( lower_res ).connect_map( conn ).resid();
 				break;
@@ -2038,7 +2038,7 @@ form_disulfide(
 			Size const connect_atom( conformation.residue( upper_res ).atom_index( ucatom ) );
 			Size other_res( 0 );
 			Size conn(0);
-			for ( conn = conformation.residue( upper_res ).type().n_residue_connections(); conn >= 1; --conn ) {
+			for ( conn = conformation.residue( upper_res ).type().n_possible_residue_connections(); conn >= 1; --conn ) {
 				if ( Size ( conformation.residue(upper_res).type().residue_connection(conn).atomno() ) == connect_atom ) {
 					other_res = conformation.residue( upper_res ).connect_map( conn ).resid();
 					break;
@@ -2182,7 +2182,7 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 	runtime_assert( A.type().has( A.type().get_disulfide_atom_name() ) ); //should be fa or centroid
 	Size a_connect_atom = A.atom_index( A.type().get_disulfide_atom_name() );
 
-	for ( Size connection = A.type().n_residue_connections(); connection >= 1; --connection ) {
+	for ( Size connection = A.type().n_possible_residue_connections(); connection >= 1; --connection ) {
 		//check if A bonded to B
 		if ( (Size) A.type().residue_connection( connection ).atomno() == a_connect_atom && //bond to sg, not the backbone
 				A.connect_map( connection ).resid() == residueB_pos ) { //bonded to B
@@ -2215,7 +2215,7 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 
 		Size other_res(0);
 		Size conn;
-		for ( conn = conformation.residue( i ).type().n_residue_connections(); conn >= 1; --conn ) {
+		for ( conn = conformation.residue( i ).type().n_possible_residue_connections(); conn >= 1; --conn ) {
 			if ( Size( conformation.residue( i ).type().residue_connection(conn).atomno() ) == connect_atom ) {
 				other_res = conformation.residue( i ).connect_map( conn ).resid();
 				break;
@@ -2270,8 +2270,8 @@ is_atom_axial_or_equatorial_to_ring(
 				query_atom_coords, attachment_atom_coords, ring_atom_coords );
 		}
 	}
-	TR.Warning << "The attachment point for the query atom is not found in the ring; ";
-	TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
+	TR.Debug << "The attachment point for the query atom is not found in the ring; ";
+	TR.Debug << "an axial/equatorial designation is meaningless." << std::endl;
 	return chemical::rings::NEITHER;
 }
 

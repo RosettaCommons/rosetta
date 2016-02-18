@@ -34,6 +34,12 @@ sources = {
 	"protocols/branch_angle": [
 		"BranchAngleOptimizer",
 	],
+	"protocols/carbohydrates":[
+		"GlycanRelaxMover",
+		"LinkageConformerMover",
+		"SimpleGlycosylateMover",
+		"util",
+	],
 	"protocols/canonical_sampling": [
 		"DbTrajectoryRecorder",
 		"AsyncMPITemperingBase",
@@ -546,6 +552,7 @@ sources = {
 		"ChangeAndResetFoldTreeMover",
 		"BBConRotMover",
 		"BBGaussianMover",
+		"BBDihedralSamplerMover",
 		"BoltzmannRotamerMover",
 		"ChainSplitMover",
 		"ClearConstraintsMover",
@@ -636,6 +643,11 @@ sources = {
 	"protocols/simple_moves/asym_fold_and_dock": [
 		"AsymFoldandDockMoveRbJumpMover",
 		"AsymFoldandDockRbTrialMover",
+	],
+	"protocols/simple_moves/bb_sampler": [
+		"BBDihedralSampler",
+		"SmallBBSampler",
+		"SugarBBSampler",
 	],
 	"protocols/simple_moves/bin_transitions": [
 		"InitializeByBins",

@@ -134,7 +134,7 @@ void dump_residue_kinemage(
 	if ( (core::Size)rsd.seqpos() < conf.size() && rsd.is_bonded( conf.residue(rsd.seqpos()+1) ) ) {
 		print_interres_bond(out, rsd, conf.residue(rsd.seqpos()+1), conf);
 	}
-	for ( core::Size i = 1; i <= res_type.n_residue_connections(); ++i ) {
+	for ( core::Size i = 1; i <= res_type.n_possible_residue_connections(); ++i ) {
 		print_interres_bond(out, rsd, conf.residue( rsd.residue_connection_partner(i) ), conf);
 	}
 }

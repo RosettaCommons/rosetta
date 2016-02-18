@@ -204,7 +204,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 			TR.Debug << "cut: Residue " << ires << std::endl;
 		}
 
-		for ( core::Size icon=1; icon<=pose.residue_type(ires).n_residue_connections(); ++icon ) {
+		for ( core::Size icon=1; icon<=pose.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 			TR.Debug << "connection: Residue " << ires << " Atom " << pose.residue_type(ires).residue_connection(icon).atomno() << " to residue " << pose.residue(ires).connected_residue_at_resconn(icon) << ", connect id:" << pose.residue(ires).connect_map(icon).connid() << std::endl;
 		}
 	}
@@ -330,7 +330,7 @@ void PeptideStubMover::rebuild_atoms(
 ) const {
 	assert(residue_index <= pose.n_residue() && residue_index > 0);
 
-	core::Size const nresconn = pose.residue(residue_index).n_residue_connections();
+	core::Size const nresconn = pose.residue(residue_index).n_possible_residue_connections();
 	if ( nresconn>0 ) {
 		for ( core::Size ic=1; ic<=nresconn; ++ic ) {
 			if ( !pose.residue(residue_index).connection_incomplete(ic) ) {

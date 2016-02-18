@@ -95,6 +95,7 @@
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/string_constants.hh>
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 // #include <devel/init.hh>
 
@@ -1241,7 +1242,7 @@ struct PoseWrap : public ReferenceCount {
 					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
 						Vec o = out_pose.xyz(core::id::AtomID(1,ft.upstream_jump_residue(i)));
 						Size subunit = (ft.downstream_jump_residue(i)-1) / nres;
-						char chain = string("ABCDEFGHIJKLMNOPQRSTUVWXYZ")[(subunit-1)%26];
+						char chain = utility::UPPERCASE_LETTERS[(subunit-1)%26];
 						string l = "HETATM 9999 "+add_atom_at_cen[j]+"    "+add_atom_at_cen[j]+" "+chain+" 999     "+F(7,3,o.x())+" "+F(7,3,o.y())+" "+F(7,3,o.z())+"  1.00  0.00";
 						out << l << std::endl;
 						// TR << "output metal at origin of " << ft.upstream_jump_residue(i) << " " << add_atom_at_cen[j] << " " << o << std::endl;

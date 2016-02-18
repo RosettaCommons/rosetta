@@ -101,7 +101,7 @@ for seq_pos in range(1, n_res + 1):
             # Check for disulfide special case.
             if res.name() == 'CYD':
                 disulfide_partner = res.residue_connection_partner(
-                                               res.n_residue_connections())
+                                               res.n_possible_residue_connections())
                 temp_pose = Pose()
                 temp_pose.assign(initial_pose)
                 # (Packing causes seg fault if current CYS residue is not

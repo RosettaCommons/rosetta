@@ -28,7 +28,8 @@
 // Project header
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>  // TEMP
 
-// Utility header
+// Utility headers
+#include <utility/string_constants.hh>
 #include <utility/string_util.hh>
 
 // Basic headers
@@ -106,7 +107,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 
 	// Prepare for multi-model .pdbs.
 	map< std::pair< Size, Size >, char > modelchain_to_chain;  // TODO: What is this?
-	string const chain_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";  // TODO: Is this constant also other places?
+	string const & chain_letters( utility::UPPERCASE_ALPHANUMERICS );
 	for ( Size i = 0; i < chain_letters.size(); ++i ) {
 		modelchain_to_chain[ std::pair< Size, Size >( 0, i ) ] = chain_letters[ i ];
 		modelchain_to_chain[ std::pair< Size, Size >( 1, i ) ] = chain_letters[ i ];

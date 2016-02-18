@@ -30,11 +30,6 @@ namespace carbohydrates {
 
 // TODO: Add file input methods below.
 
-/// @brief  Try various combinations to locate the specific glycan sequence file being requested by the user.
-std::string find_glycan_sequence_file( std::string filename );
-
-/// @brief  Read a single-line glycan sequence file.
-std::string read_glycan_sequence_file( std::string filename );
 
 /// @brief Parse sugar code suffixes to extract a list of sugar modifications with their corresponding positions.
 utility::vector1< std::pair< core::uint, std::string > > sugar_modifications_from_suffix( std::string const & suffix );

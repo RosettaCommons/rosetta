@@ -498,7 +498,7 @@ auto_setup_all_metal_constraints (
 
 	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues
 		if ( pose.residue(ir).is_metal() ) { //When we find a metal, check what it's bound to and set up distance constraints accordingly.
-			core::Size const n_resconn = pose.residue(ir).n_residue_connections(); //Number of residue connections
+			core::Size const n_resconn = pose.residue(ir).n_possible_residue_connections(); //Number of residue connections
 
 			//Make a vector of indices of virtual atoms in this residue:
 			utility::vector1 < core::Size > virtindices;

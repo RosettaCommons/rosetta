@@ -105,6 +105,7 @@ to_string( TorsionType const & type ) {
 	}
 }
 
+
 static Size const   phi_torsion( 1 );
 static Size const   psi_torsion( 2 );
 static Size const omega_torsion( 3 );
@@ -114,6 +115,15 @@ static Size const phi_torsion_beta_aa( 1 );
 static Size const theta_torsion_beta_aa( 2 );
 static Size const psi_torsion_beta_aa( 3 );
 static Size const omega_torsion_beta_aa( 4 );
+
+//@brief Mainchain Torsion Types.
+//  The names could be better, but these are taken and would need a large overhaul of Rosetta.
+enum MainchainTorsionType {
+	phi_dihedral = 1,
+	psi_dihedral,
+	omega_dihedral
+};
+
 
 
 } // namespace id

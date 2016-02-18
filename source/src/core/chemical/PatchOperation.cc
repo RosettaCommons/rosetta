@@ -668,7 +668,7 @@ expand_icoor_atom_name( std::string name, ResidueType const & rsd )
 	Size pos( name.find( nconn_tag ) );
 	if ( pos < name.size() ) {
 		//std::cout << "name before replace: " << name << std::endl;
-		name.replace( pos, nconn_tag.size(), ObjexxFCL::string_of( rsd.n_residue_connections() ) );
+		name.replace( pos, nconn_tag.size(), ObjexxFCL::string_of( rsd.n_possible_residue_connections() ) );
 		//std::cout << "name after replace: " << name << std::endl;
 	}
 	return name;

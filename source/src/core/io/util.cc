@@ -10,7 +10,7 @@
 
 /// @file core/io/util.cc
 /// @brief Util functions for Input and Output.  Very general IO should go to utility/io.
-///   These should be related to core in a deep way.
+///   These should be related to core in a deep way or not able to be called from utility.
 ///
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com), XRW 2016 Team
 
@@ -64,6 +64,10 @@ namespace core {
 namespace io {
 
 using namespace ObjexxFCL::format; // AUTO USING NS
+
+
+
+
 
 core::Real restrict_prec( core::Real inval )
 {
