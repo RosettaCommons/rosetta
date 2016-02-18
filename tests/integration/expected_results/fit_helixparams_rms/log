@@ -1,0 +1,82 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+apps.pilot.vmullig.fit_helixparams: Starting fit_helixparams.cc
+apps.pilot.vmullig.fit_helixparams: Pilot app created 23 October 2014 by Vikram K. Mulligan, Ph.D., Baker laboratory.
+apps.pilot.vmullig.fit_helixparams: App updated 29 May 2015 to support multiple residues per repeating unit.
+apps.pilot.vmullig.fit_helixparams: For questions, contact vmullig@uw.edu.
+apps.pilot.vmullig.fit_helixparams: 
+apps.pilot.vmullig.fit_helixparams: Building 75 repeat polymer (150 residues) from ALA, DALA building blocks.
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch LowerDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch UpperDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch ShoveBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch VirtualBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch N_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch C_methylamidated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch SpecialRotamer as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch Cterm_amidation as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case1 as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case2 as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch ser_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch thr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_sulfated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_monomethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_dimethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_trimethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch glu_carboxylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch cys_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_diiodinated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch MethylatedProteinCterm as requested
+protocols.helical_bundle.FitSimpleHelix: Fitting reference atom CA in reference residue (residue 2).
+protocols.helical_bundle.FitSimpleHelix: Reference atom r1 = 41.4493
+protocols.helical_bundle.FitSimpleHelix: Reference atom omega1 = 0.0685808
+protocols.helical_bundle.FitSimpleHelix: Reference atom dz1 = -3.29531e-06
+protocols.helical_bundle.FitSimpleHelix: Reference atom delta_omega1 = 0
+protocols.helical_bundle.FitSimpleHelix: Reference atom delta_z1 = 0
+protocols.helical_bundle.FitSimpleHelix: Aligning pose to ideal helix.
+protocols.helical_bundle.FitSimpleHelix: Fitting  N   atom.
+protocols.helical_bundle.FitSimpleHelix: Atom  N   r1 = 41.0653
+protocols.helical_bundle.FitSimpleHelix: omega1 = 0.0685808
+protocols.helical_bundle.FitSimpleHelix: dz1 = -3.29531e-06
+protocols.helical_bundle.FitSimpleHelix: Atom  N   delta_omega1 = -0.0271239
+protocols.helical_bundle.FitSimpleHelix: Atom  N   delta_z1 = 0.852134
+protocols.helical_bundle.FitSimpleHelix: Fitting  C   atom.
+protocols.helical_bundle.FitSimpleHelix: Atom  C   r1 = 41.9354
+protocols.helical_bundle.FitSimpleHelix: omega1 = 0.0685808
+protocols.helical_bundle.FitSimpleHelix: dz1 = -3.29531e-06
+protocols.helical_bundle.FitSimpleHelix: Atom  C   delta_omega1 = 0.0283318
+protocols.helical_bundle.FitSimpleHelix: Atom  C   delta_z1 = 0.829936
+protocols.helical_bundle.FitSimpleHelix: Fitting  N   atom.
+protocols.helical_bundle.FitSimpleHelix: Atom  N   r1 = 41.0653
+protocols.helical_bundle.FitSimpleHelix: omega1 = 0.0685808
+protocols.helical_bundle.FitSimpleHelix: dz1 = -3.29531e-06
+protocols.helical_bundle.FitSimpleHelix: Atom  N   delta_omega1 = -0.0271238
+protocols.helical_bundle.FitSimpleHelix: Atom  N   delta_z1 = 1.67345
+protocols.helical_bundle.FitSimpleHelix: Fitting  CA  atom.
+protocols.helical_bundle.FitSimpleHelix: Atom  CA  r1 = 41.4495
+protocols.helical_bundle.FitSimpleHelix: omega1 = 0.0685808
+protocols.helical_bundle.FitSimpleHelix: dz1 = -3.29531e-06
+protocols.helical_bundle.FitSimpleHelix: Atom  CA  delta_omega1 = -1.89263e-06
+protocols.helical_bundle.FitSimpleHelix: Atom  CA  delta_z1 = 2.52559
+protocols.helical_bundle.FitSimpleHelix: Fitting  C   atom.
+protocols.helical_bundle.FitSimpleHelix: Atom  C   r1 = 41.9355
+protocols.helical_bundle.FitSimpleHelix: omega1 = 0.0685808
+protocols.helical_bundle.FitSimpleHelix: dz1 = -3.29531e-06
+protocols.helical_bundle.FitSimpleHelix: Atom  C   delta_omega1 = -144.485
+protocols.helical_bundle.FitSimpleHelix: Atom  C   delta_z1 = 1.69565
+protocols.helical_bundle.FitSimpleHelix: Fit complete.
+apps.pilot.vmullig.fit_helixparams: Writing result.pdb.
+apps.pilot.vmullig.fit_helixparams: Writing result.crick_params
+apps.pilot.vmullig.fit_helixparams: 
+apps.pilot.vmullig.fit_helixparams: Results from the fitter:
+apps.pilot.vmullig.fit_helixparams: Res	ID	Atom	r1	omega1	z1	delta_omega1	delta_z1	
+apps.pilot.vmullig.fit_helixparams: 1	1	 N  	41.065259	0.068580826	-3.2953105e-06	-0.02712388	0.85213429
+apps.pilot.vmullig.fit_helixparams: 1	2	 CA *	41.44932	0.068580826	-3.2953105e-06	0	0
+apps.pilot.vmullig.fit_helixparams: 1	3	 C  	41.935447	0.068580826	-3.2953105e-06	0.028331757	0.82993612
+apps.pilot.vmullig.fit_helixparams: 2	1	 N  	41.065259	0.068580826	-3.2953105e-06	-0.027123838	1.6734528
+apps.pilot.vmullig.fit_helixparams: 2	2	 CA 	41.449473	0.068580826	-3.2953105e-06	-1.8926293e-06	2.5255862
+apps.pilot.vmullig.fit_helixparams: 2	3	 C  	41.935455	0.068580826	-3.2953105e-06	-144.48493	1.6956542
+apps.pilot.vmullig.fit_helixparams: (*Reference atom.)
+apps.pilot.vmullig.fit_helixparams: 
+apps.pilot.vmullig.fit_helixparams: Finished fit_helixparams.cc.  Exiting.

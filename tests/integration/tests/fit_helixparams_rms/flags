@@ -1,0 +1,16 @@
+#These settings fit a standard alpha-helix made of L-alanine
+-write_all_connect_info true
+-residue_type ALA DALA
+-dz1_guess 0
+-delta_z1_guesses 0.717 0 0.530 1.48 2.04 1.31
+-delta_omega1_guesses -0.09 0 0.11 -0.075 0.033 0.128
+-omega1_guess 0.1
+-r1_guess 25
+-repeats 75
+-min_type dfpmin
+-min_tolerance 1e-15
+-rms_offset 1.0e-3 #Remove this if necessary
+-mainchain_torsions -60 -60 180 60 60 180
+##### these are general flags
+-score:weights talaris2014
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
