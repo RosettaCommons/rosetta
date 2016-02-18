@@ -929,7 +929,6 @@ ChiralFlipNaming::apply( ResidueType & rsd ) const {
 		if ( rsd.aa() == aa_dal ) {
 			rsd.name3( "DAL" );
 			rsd.interchangeability_group( "DAL" );
-			//std::cout << "igroup is " << rsd.interchangeability_group() << std::endl;
 		} else if ( rsd.aa() == aa_dcs ) {
 			//( igroup == "DCYS" || igroup == "CYS" ) {
 			rsd.name3( "DCS" );
@@ -1029,7 +1028,6 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 
 	if ( rsd.natoms() < 4 ) return true;
 	for ( core::Size ii = 2; ii <= rsd.natoms(); ++ii ) {
-		//pretty_print_atomicoor(std::cout, rsd.icoor( ii ), rsd );
 
 		AtomICoor icoor1 = rsd.icoor( ii );
 
@@ -1049,20 +1047,8 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 			icoor1.d(),
 			n1, n2, n3,
 			true );
-
-		//pretty_print_atomicoor(std::cout, rsd.icoor( ii ), rsd );
 	}
-
-	//rsd.finalize();
 	rsd.fill_ideal_xyz_from_icoor();
-
-	rsd.finalize();
-	//rsd.debug_dump_icoor();
-	// AMW: The unpatched type does not typically set these because they are unneeded
-	// Since this is now a D-aa and it needs to hijack other rotamers, it needs them
-	// (Maybe it would use them without; who knows! Don't think so, though.)
-	//is backbone aa ness handled elsewhere?
-	//rsd.backbone_aa( rsd.name() );
 
 	return false;
 }
@@ -1072,7 +1058,6 @@ bool
 ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 
 	// What is the proton to be replaced?
-	//std::cout << "Atom is " << atom_ << std::endl;
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
@@ -1095,11 +1080,9 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 	}
 
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
 
-	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
 	rsd.add_atom( "C"+atom_, "CH3", "CT3", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
@@ -1163,7 +1146,6 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 bool
 ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 	// What is the proton to be replaced?
-	//std::cout << "Atom is " << atom_ << std::endl;
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
@@ -1186,11 +1168,8 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 	}
 
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
-
-	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
 
 	rsd.add_atom( "O"+atom_, "OH", "OE", -0.61 );
 	rsd.add_bond( "O"+atom_, atom_ );
@@ -1277,7 +1256,6 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 bool
 ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 	// What is the proton to be replaced?
-	//std::cout << "Atom is " << atom_ << std::endl;
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
@@ -1300,11 +1278,9 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 	}
 
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
 
-	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
 	rsd.add_atom( "C"+atom_, "CH2", "CT2", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
@@ -1703,6 +1679,133 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+bool
+AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
+
+	using numeric::conversions::radians;
+
+	if ( !rsd.has( atom_ ) ) return true; // failure!
+
+	// Provide unique variant name
+	std::string res_varname( atom_ + "-CONNECT" );
+	Size count=0;
+	while ( true ) {
+		if ( count > 20 ) {
+			utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + rsd.name() );
+		}
+		++count;
+		if ( count == 1 ) {
+			if ( ! rsd.has_variant_type( res_varname ) ) break;
+		} else {
+			res_varname = atom_ + "-CONNECT" + utility::to_string( count );
+			if ( ! rsd.has_variant_type( res_varname ) ) break;
+		}
+	}
+	rsd.enable_custom_variant_types();
+	rsd.add_variant_type( res_varname );
+
+	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+		Size const connid( rsd.add_residue_connection( atom_ ) );
+		AtomICoor icoor = rsd.icoor( rsd.atom_index( atom_ ) );
+
+		// These coordinates are generic.
+		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( connid ), 3.14159, 70.600000*3.14159/180.000000, 1.37, atom_, rsd.atom_name( icoor.stub_atom1().atomno() ), rsd.atom_name( icoor.stub_atom2().atomno() ) );
+	} else {
+		Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
+		AtomICoor icoor = rsd.icoor( proton_index );
+		//rsd.delete_atom( proton_index );
+		// just virtualize it
+		// Don't even do that: instead, make the connection go opposite of it!
+		// If you want to have no proton there, start from CYZ or another
+		// deprotonated type (add deprotonation metapatch for metals?).
+		//rsd.set_atom_type( proton_name, "VIRT" );
+		//rsd.set_mm_atom_type( proton_name, "VIRT" );
+
+		Size const connid( rsd.add_residue_connection( atom_ ) );
+		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( connid ),
+			icoor.phi()+radians(180.0),
+			icoor.theta(),
+			1.37,
+			rsd.atom_name( icoor.stub_atom1().atomno() ),
+			rsd.atom_name( icoor.stub_atom2().atomno() ),
+			rsd.atom_name( icoor.stub_atom3().atomno() ) );
+	}
+
+	return false;
+}
+
+bool
+DeleteChildProton::apply( ResidueType & rsd ) const {
+
+	using numeric::conversions::radians;
+
+	if ( !rsd.has( atom_ ) ) return true; // failure!
+
+
+	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+		return false; // this isn't a problem, just have to say "job's been done"
+	} else {
+		Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
+		rsd.delete_atom( proton_index );
+	}
+	return false;
+}
+
+bool
+AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
+	if ( !rsd.has( atom_ ) ) return true; // failure!
+
+	// Provide unique variant name
+	std::string res_varname( atom_ + "-METAL_CONNECT" );
+	Size count=0;
+	while ( true ) {
+		if ( count > 20 ) {
+			utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + rsd.name() );
+		}
+		++count;
+		if ( count == 1 ) {
+			if ( ! rsd.has_variant_type( res_varname ) ) break;
+		} else {
+			res_varname = atom_ + "-METAL_CONNECT" + utility::to_string( count );
+			if ( ! rsd.has_variant_type( res_varname ) ) break;
+		}
+	}
+	rsd.enable_custom_variant_types();
+	rsd.add_variant_type( res_varname );
+
+
+	Size const con_res = rsd.add_residue_connection( atom_ );
+	//tr << "Forming connection number " << con_res << " for " << rsd.name() << std::endl;
+	Size virtcount = rsd.n_virtual_atoms();
+	//tr << "rsd has " << virtcount << " virts to begin with " << std::endl;
+	//AtomICoor icoor;
+
+	//std::string virtname = "V" + ObjexxFCL::string_of( con_res - rsd.n_polymeric_residue_connections() );
+	//tr << "perhaps we'll start with " << virtname << std::endl;
+	if ( virtcount < con_res-rsd.n_polymeric_residue_connections() ) {
+		//tr << "must add a virt" << std::endl;
+
+		// Add a virt.  First, find a unique name for it:
+		std::string virtname = "V" + ObjexxFCL::string_of( ++virtcount );
+		while ( rsd.has( virtname )  ) {
+			virtname = "V" + ObjexxFCL::string_of( ++virtcount );
+		}
+
+		//tr << "adding " << virtname << std::endl;
+		//Create a new virt atom, using the unique name found above:
+		rsd.add_atom( virtname, "VIRT", "VIRT", 0.0 );
+		rsd.add_bond( virtname, atom_ );
+		rsd.set_atom_base( virtname, atom_ );
+		rsd.set_icoor( virtname, 1.0, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
+	}
+	//icoor = rsd.icoor( rsd.atom_index( virtname ) );
+
+	// Okay, give CONN the icoor of the selected virt.
+	rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 1.0, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
+
+	return false;
+}
+
 PatchOperationOP
 patch_operation_from_patch_file_line(
 	std::string const & line,
@@ -2038,6 +2141,18 @@ patch_operation_from_patch_file_line(
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new ReplaceProtonWithEthyl( atom1 ) );
+	} else if ( tag == "ADD_CONNECT_AND_DELETE_CHILD_PROTON" ) {
+		l >> atom1;
+		if ( l.fail() ) utility_exit_with_message( line );
+		return PatchOperationOP( new AddConnectDeleteChildProton( atom1 ) );
+	} else if ( tag == "DELETE_CHILD_PROTON" ) {
+		l >> atom1;
+		if ( l.fail() ) utility_exit_with_message( line );
+		return PatchOperationOP( new DeleteChildProton( atom1 ) );
+	} else if ( tag == "ADD_CONNECT_AND_TRACKING_VIRT" ) {
+		l >> atom1;
+		if ( l.fail() ) utility_exit_with_message( line );
+		return PatchOperationOP( new AddConnectAndTrackingVirt( atom1 ) );
 	} else if ( tag == "CHIRAL_FLIP_NAMING" ) {
 		return PatchOperationOP( new ChiralFlipNaming );//( atom1, atom2 ) );
 	} else if ( tag == "CHIRAL_FLIP_ATOMS" ) {

@@ -194,9 +194,9 @@ arg_least_several(
 //erase(vector1< T > & input, core::Size index)
 //{
 //
-//	input::iterator iter_this = std::find( input.begin(), input.end(), input[ index ] );
-//	assert( iter_this != input.end() );
-//	input.erase( iter_this );
+// input::iterator iter_this = std::find( input.begin(), input.end(), input[ index ] );
+// assert( iter_this != input.end() );
+// input.erase( iter_this );
 //
 //}
 

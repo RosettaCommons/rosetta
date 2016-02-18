@@ -42,7 +42,7 @@ static THREAD_LOCAL basic::Tracer TR("glycan_info");
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 
 	option.add_relevant( in::file::s );
 	option.add_relevant( in::file::l );
@@ -127,13 +127,13 @@ public:  // Standard Rosetta methods
 	{
 		core::Size protein_branches = 0;
 		core::Size carbohydrate_residues = 0;
-		for (core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ){
-			if (pose.residue( resnum ).is_carbohydrate() ){
+		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+			if ( pose.residue( resnum ).is_carbohydrate() ) {
 				bool bp = pose.residue( resnum ).is_branch_point();
 				std::cout << "Carbohydrate: "<< resnum  << " BP: "<<bp << " " << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
 				carbohydrate_residues += 1;
-				
-			}else if ( pose.residue( resnum ).is_branch_point() ){
+
+			} else if ( pose.residue( resnum ).is_branch_point() ) {
 				std::cout << "Branch Point: " << pose.residue( resnum ).name3()<<" "<< resnum << std::endl;
 				protein_branches += 1;
 
@@ -152,7 +152,7 @@ private:  // Private methods
 	//void
 	//set_commandline_options()
 	//{
-	//	using namespace basic::options;
+	// using namespace basic::options;
 
 	//}
 
@@ -200,7 +200,7 @@ main( int argc, char * argv [] )
 			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
 		}
 
-		
+
 
 		// Make sure the default JobOutputter is SilentJobOutputter to ensure that when this
 		// is called with default arguments is prints a proper scorefile and not the hacky thing that
@@ -215,7 +215,7 @@ main( int argc, char * argv [] )
 
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-		
+
 		GlycanInfoMoverOP mover_protocol( new GlycanInfoMover() );
 
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );

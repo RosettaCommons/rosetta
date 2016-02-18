@@ -35,14 +35,14 @@ namespace scoring {
 namespace carbohydrates {
 
 
-	///@brief Struct for CHI-based dihedral sampling.
-	struct CHIDihedralSamplingData{
-		chemical::carbohydrates::LinkageType linkage_type;
-		Real step_size;
-		
-		utility::vector1< Real > probabilities;
-		utility::vector1< Angle > angles;
-	};
+///@brief Struct for CHI-based dihedral sampling.
+struct CHIDihedralSamplingData{
+	chemical::carbohydrates::LinkageType linkage_type;
+	Real step_size;
+
+	utility::vector1< Real > probabilities;
+	utility::vector1< Angle > angles;
+};
 
 
 /// @details  This is an implementation of the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab.\n
@@ -68,20 +68,20 @@ public: // Dihedral Sampling Methods //////////////////////////////////////////
 
 	//CHIDihedralSamplingData const &
 	//get_chi_sampling_data(id::MainchainTorsionType torsion, LikageType type);
-	
+
 	CHIDihedralSamplingData const &
 	get_chi_sampling_data(chemical::carbohydrates::LinkageType type) const;
-	
+
 	///@brief Sets up CHI sampling data
 	void
 	setup_for_sampling(core::Real step_size = 0.1);
-	
+
 	bool
 	sampling_data_setup() const;
-	
+
 	bool
 	sampling_data_setup( chemical::carbohydrates::LinkageType type ) const;
-	
+
 private:  // Private methods //////////////////////////////////////////////////
 	// Return single CHI energy function term, ae^-((x-b)^2/c), for the given type and index.
 	Energy evaluate_term( chemical::carbohydrates::LinkageType type, uint i, Angle x ) const;
@@ -100,10 +100,10 @@ private:  // Private Data /////////////////////////////////////////////////////
 	utility::vector1< utility::vector1 < Real > > b_;  // midpoint of the Gaussian distribution
 	utility::vector1< utility::vector1 < Real > > c_;  // twice the square of the width of the Gaussian distribution
 	utility::vector1< Real > d_;  // the intercept (coefficient of the zeroth term)
-	
+
 private:
 	//Formatted Sampling Data
-	
+
 	std::map< chemical::carbohydrates::LinkageType, CHIDihedralSamplingData > dihedral_sampling_data_;
 };  // class CHIEnergyFunction
 

@@ -324,24 +324,9 @@ template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & t
 	}
 }
 
-// Evil, unnecessary macros that could just be functions
-// Replaced by code above.
-//
-///#define dump_matrix( nr, a ) {}
-//#define dump_matrix_no( nr, a )
-// { int i,k;
-// for ( i =0 ; i<nr; i++ ) {
-//  for ( k =0 ; k<nr; k++ )
-//   tr.Debug << a[i][k] << " ";
-//  tr.Debug << "\n";
-// }
-//}
-
 /// some low-level helper routines
 
 #define DIM 3
-
-
 void rotate_vec(int natoms,rvec *x,matrix R)
 {
 	int j,r,c,m;

@@ -43,34 +43,34 @@ public:
 	BBDihedralSamplerMover();
 	BBDihedralSamplerMover( bb_sampler::BBDihedralSamplerOP sampler);
 	BBDihedralSamplerMover( bb_sampler::BBDihedralSamplerOP sampler, core::kinematics::MoveMapCOP mm);
-	
-	
-	
+
+
+
 	// copy constructor
 	BBDihedralSamplerMover( BBDihedralSamplerMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~BBDihedralSamplerMover();
-	
+
 	virtual void
 	apply( core::pose::Pose & pose );
-	
+
 public:
-	
+
 	///@brief Sets residues to sample on FROM movemap.
 	void
 	set_movemap( core::kinematics::MoveMapCOP movemap);
-	
-	///@brief Set a single resnum instead of a movemap. 
+
+	///@brief Set a single resnum instead of a movemap.
 	void
 	set_single_resnum( core::Size resnum );
-	
+
 	void
 	set_sampler( bb_sampler::BBDihedralSamplerOP sampler) {
 		sampler_ = sampler;
 	}
-	
-	
+
+
 public:
 
 	virtual void
@@ -104,7 +104,7 @@ private:
 
 	bb_sampler::BBDihedralSamplerOP sampler_;
 	utility::vector1< core::Size > bb_residues_; //This is faster than holding a movemap, as we will need to randomly sample on these residues.
-	
+
 };
 
 std::ostream &operator<< (std::ostream &os, BBDihedralSamplerMover const &mover);

@@ -67,7 +67,9 @@ MatchGrafter::graft( Pose & match,
 	Pose & partner_ungrafted ) {
 
 	core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
-	core::chemical::ResidueType const & CYZ(typeset->name_map("CYZ"));
+	// Okay. AMONG the problems with this is that it has a special cysteine case and it doesn't permit terminal cysteine.
+	// This maintains functionality at least..
+	core::chemical::ResidueType const & CYZ(typeset->name_map("CYZ"));//CYS:MP-SG-connect"));
 
 	//graft match, excluding zinc, onto target
 	for ( core::Size i = 1; i <= match.pdb_info()->nres() - 1; ++i ) {

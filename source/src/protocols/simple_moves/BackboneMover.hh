@@ -93,7 +93,7 @@ public:
 	void nmoves( core::Size const nmoves_in );
 	core::Size nmoves() const;
 	core::kinematics::MoveMapCOP movemap() const;
-	
+
 	void movemap(core::kinematics::MoveMapOP new_movemap);
 
 	/// @brief returns the residue selector which can be used to dynamically select residues to perturb

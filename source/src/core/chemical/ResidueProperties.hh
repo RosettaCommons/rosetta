@@ -99,6 +99,13 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 	bool
 	is_variant_type( VariantType const variant_type ) const
 	{
+		// If this is ever called with NO_VARIANT, problems!
+		if ( variant_type == NO_VARIANT ) {
+			for ( Size ii = 1; ii <= variant_type_status_.size(); ++ii ) {
+				if ( variant_type_status_[ ii ] ) return false;
+			}
+			return true;
+		}
 		return variant_type_status_[ variant_type ];
 	}
 

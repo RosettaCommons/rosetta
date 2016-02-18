@@ -144,9 +144,9 @@ public: // Tests //////////////////////////////////////////////////////////////
 		CHIEnergyFunction const & sugar_bb =
 			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, .1 );
 
-		
+
 		TS_ASSERT( sugar_bb.sampling_data_setup() );
-		for (core::Size i = 1; i <= 4; ++i ){
+		for ( core::Size i = 1; i <= 4; ++i ) {
 			std::cout << "Linkage type: " << i << std::endl;
 
 
@@ -155,14 +155,14 @@ public: // Tests //////////////////////////////////////////////////////////////
 			TS_ASSERT( sugar_bb.sampling_data_setup( link_type ));
 			TS_ASSERT_THROWS_NOTHING( sugar_bb.get_chi_sampling_data( link_type )  );
 			CHIDihedralSamplingData const & sampling_data = sugar_bb.get_chi_sampling_data( link_type );
-			
-			std::cout << "PROB Size" << sampling_data.probabilities.size() << std::endl;
-	
 
-			
+			std::cout << "PROB Size" << sampling_data.probabilities.size() << std::endl;
+
+
+
 		}
-		
-		
+
+
 	}
 };
 

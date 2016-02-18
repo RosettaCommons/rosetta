@@ -894,7 +894,7 @@ private:
 class ReplaceProtonWithMethoxy: public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithMethoxy( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithMethoxy( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;
@@ -908,7 +908,7 @@ private:
 class ReplaceProtonWithEthyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithEthyl( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithEthyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;
@@ -922,7 +922,7 @@ private:
 class ReplaceProtonWithMethyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithMethyl( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithMethyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;
@@ -950,7 +950,7 @@ private:
 class ReplaceProtonWithFluorine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithFluorine( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithFluorine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;
@@ -964,7 +964,7 @@ private:
 class ReplaceProtonWithBromine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithBromine( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithBromine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;
@@ -978,7 +978,7 @@ private:
 class ReplaceProtonWithIodine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithIodine( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithIodine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;
@@ -992,7 +992,49 @@ private:
 class ReplaceProtonWithHydroxyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithHydroxyl( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithHydroxyl( std::string const & atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief add a connect and tracking virt to the atom
+class AddConnectAndTrackingVirt : public PatchOperation {
+public:
+	/// @brief constructor
+	AddConnectAndTrackingVirt( std::string const & atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief add a connect to the atom, delete child proton
+class AddConnectDeleteChildProton : public PatchOperation {
+public:
+	/// @brief constructor
+	AddConnectDeleteChildProton( std::string const & atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief delete child proton
+class DeleteChildProton : public PatchOperation {
+public:
+	/// @brief constructor
+	DeleteChildProton( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const;

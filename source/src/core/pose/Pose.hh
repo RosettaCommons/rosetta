@@ -588,20 +588,20 @@ public:
 		Size const jump_anchor_residue,
 		std::string const& jump_anchor_atom = "",
 		std::string const& jump_root_atom = "");
-	
+
 	///@brief Delete a residue in the pose.
 	///  Update Observers.
 	///  Update any Reference Poses
 	void
 	delete_polymer_residue( Size const seqpos );
-	
+
 	/// @brief Slow method that relies on FoldTree::delete_seqpos, rebuilds atomtree, can handle jumps/root residue.
 	///  Update Observers.
 	///  Update any Reference Poses
 	void
 	delete_residue_slow( Size const seqpos );
-	
-	
+
+
 	/// @brief Delete a range of residues in the pose.
 	/// @details Calls confromation::delete_residue_range_slow().
 	///  Update Observers.

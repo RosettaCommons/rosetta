@@ -90,23 +90,6 @@ add_relevant_restypes_to_subset(
 	for ( core::Size i = 1; i <= restypes.size(); ++i ) {
 		restype_subset.insert( restypes[i] );
 	}
-
-	// utility::vector1< core::chemical::ResidueTypeCOP > const & restypes = restype_set->name3_map_DO_NOT_USE( name3 );
-	//
-	// std::set< std::string > basename_set;
-	//
-	// for( core::Size i = 1; i <= restypes.size(); ++i ){
-	//
-	//  std::string basename = residue_type_base_name( *(restypes[i]) );
-	//
-	//  if( basename_set.find( basename ) == basename_set.end() ){
-	//
-	//   basename_set.insert( basename );
-	//
-	//   restype_subset.insert( &restype_set->name_map( basename ) );
-	//
-	//  }
-	// }
 }
 
 

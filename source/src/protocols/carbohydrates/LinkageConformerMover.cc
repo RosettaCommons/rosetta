@@ -56,10 +56,10 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.LinkageConformerM
 
 namespace protocols {
 namespace carbohydrates {
-	using namespace core::kinematics;
-	using namespace protocols::simple_moves;
-	using namespace protocols::simple_moves::bb_sampler;
-	
+using namespace core::kinematics;
+using namespace protocols::simple_moves;
+using namespace protocols::simple_moves::bb_sampler;
+
 LinkageConformerMover::LinkageConformerMover():
 	protocols::moves::Mover( "LinkageConformerMover" ),
 	phi_sampler_mover_(/* Null */),
@@ -90,7 +90,7 @@ LinkageConformerMover::set_defaults(){
 	sample_protein_linkage_ = true;
 	use_conformer_population_stats_ = true;
 	movemap_residues_.clear();
-	
+
 }
 
 LinkageConformerMover::~LinkageConformerMover(){}
@@ -131,20 +131,19 @@ LinkageConformerMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & pose)
 {
-	if (tag->hasOption("upper_resnum") ){
+	if ( tag->hasOption("upper_resnum") ) {
 		movemap_residues_.push_back( core::pose::parse_resnum( tag->getOption< std::string >("upper_resnum"), pose ) );
-	}
-	else {
+	} else {
 		utility_exit_with_message("Must pass upper_resnum option for LinkageConformerMover for now");
 	}
-	
+
 	sample_sd_ = tag->getOption< core::Real >("x_sds", sample_sd_);
 	use_sugar_bb_data_if_needed_ = tag->getOption< bool >( "use_sugar_bb_if_needed", use_sugar_bb_data_if_needed_);
 	idealize_torsions_ = tag->getOption< bool >("idealize_torsions", idealize_torsions_);
 	use_sd_as_prob_ = tag->getOption< bool >("prob_sd_sampling", use_sd_as_prob_);
 	sample_protein_linkage_ = tag->getOption< bool >("sample_protein_linkage", sample_protein_linkage_);
 	use_conformer_population_stats_ =
-			tag->getOption< bool >( "use_conformer_population_stats", use_conformer_population_stats_ );
+		tag->getOption< bool >( "use_conformer_population_stats", use_conformer_population_stats_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +155,7 @@ LinkageConformerMover::clone() const{
 
 /*
 LinkageConformerMover & LinkageConformerMoveroperator=( LinkageConformerMover const & src){
-	return LinkageConformerMover( src );
+return LinkageConformerMover( src );
 }
 */
 
@@ -222,18 +221,18 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	if ( ! movemap_ ) {
 		TR << "No Movemap Set.  Attempting to use all residues.  This is probably not what you want!" << std::endl;
 		movemap_ = core::kinematics::MoveMapOP( new MoveMap);
-		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			movemap_residues_.push_back( i );
 			movemap_->set_bb( i, true);
 		}
 	}
 
-	if (! phi_sampler_mover_ ) {
+	if ( ! phi_sampler_mover_ ) {
 		SugarBBSamplerOP phi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
 		phi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( phi_sampler, movemap_ ) );
 	}
 
-	if (! psi_sampler_mover_) {
+	if ( ! psi_sampler_mover_ ) {
 		SugarBBSamplerOP psi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
 		psi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( psi_sampler, movemap_ ) );
 	}
@@ -249,9 +248,9 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		set_last_move_status( protocols::moves::MS_FAIL );
 		return;
 	}
-	
+
 	core::Size lower_resnum = find_seqpos_of_saccharides_parent_residue( pose.residue( upper_resnum ) );
-	if ( lower_resnum == 0){
+	if ( lower_resnum == 0 ) {
 		TR << "Selected residue has no parent.  Skipping..." << std::endl;
 		set_last_move_status( protocols::moves::MS_FAIL );
 		return;
@@ -273,13 +272,13 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		set_last_move_status( protocols::moves::MS_FAIL );
 		return;
 	}
-	
+
 	set_last_move_status(protocols::moves::MS_FAIL); //Fail unless we say we are ok.
-	
+
 	TR << "Sampling " << res2_name << "(?" << res1_name << " linkage " << std::endl;
 	if ( CarbohydrateInfoManager::pair_has_linkage_statistics( res1_name, res2_name ) ) {
 		utility::vector1< LinkageConformerData > conformers =
-				CarbohydrateInfoManager::linkages_from_pair( res1_name, res2_name );
+			CarbohydrateInfoManager::linkages_from_pair( res1_name, res2_name );
 		core::Size const n_conformers = conformers.size() ;
 		core::Size conformer_num;
 		if ( n_conformers == 1 ) {
@@ -295,7 +294,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 			conformer_num = numeric::random::rg().random_range( 1, conformers.size() );
 		}
 		set_dihedrals_from_linkage_conformer_data(
-				pose, upper_resnum, conformers[ conformer_num ], idealize_torsions_, use_sd_as_prob_ );
+			pose, upper_resnum, conformers[ conformer_num ], idealize_torsions_, use_sd_as_prob_ );
 
 		conformer_found_ = true;
 		set_last_move_status(protocols::moves::MS_SUCCESS);
@@ -305,11 +304,11 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		TR << "no conformer found.  Using sugar BB on phi and [ psi ]" << std::endl;
 		phi_sampler_mover_->set_single_resnum( upper_resnum );
 		psi_sampler_mover_->set_single_resnum( upper_resnum );
-		
+
 		phi_sampler_mover_->apply(pose);
-		
+
 		//Remove this when needed!
-		if (! has_exocyclic_glycosidic_linkage( pose, upper_resnum  ) ) {
+		if ( ! has_exocyclic_glycosidic_linkage( pose, upper_resnum  ) ) {
 			psi_sampler_mover_->apply(pose);
 		} else {
 			TR << upper_resnum << " has glycosidic linkage.  Skipping psi sampling." << std::endl;

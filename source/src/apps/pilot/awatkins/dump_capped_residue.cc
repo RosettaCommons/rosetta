@@ -131,7 +131,7 @@ main( int argc, char* argv[] )
 		ResidueType const & base_type = residue_set_cap->name_map( name );
 		std::string full_name = name;
 		if ( base_type.is_protein() ) {
-			full_name += ":MethylatedCtermProteinFull:NtermProteinMethylated";
+			full_name += ":MethylatedCtermProteinFull:AcetylatedNtermProteinFull";
 		} else if ( base_type.is_peptoid() ) {
 			full_name += ":AcetylatedNtermDimethylatedCtermPeptoidFull";
 		} else if ( base_type.has_property( "RNA" ) ) {
@@ -139,9 +139,10 @@ main( int argc, char* argv[] )
 		}
 		ResidueType const & type = residue_set_cap->name_map( full_name );
 		Residue res( type, true );
-
+		for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
+			res.set_chi( ii, 180 );
+		}
 		pose->conformation().append_residue_by_jump( res, 1 );
-
 		pose->dump_pdb( name+".pdb" );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

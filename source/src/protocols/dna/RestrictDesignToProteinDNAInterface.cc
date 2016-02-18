@@ -21,6 +21,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -226,7 +227,8 @@ RestrictDesignToProteinDNAInterface::apply(
 				// specifying the appropriate ResidueType here is tricky, because there are multiple possible 'name3's for the nucleotides, AND because we must make sure to indicate a ResidueType that is already represented in the ResidueLevelTask
 				ResidueTypeSetCOP rts( pose.residue(1).residue_type_set() );
 				// a list of all existing residue types that match the input name3
-				ResidueTypeCOPs const & name3map( rts->name3_map_DO_NOT_USE( (*def)->name3 ) );
+				// AMW: can this be improved?
+				ResidueTypeCOPs const & name3map( ResidueTypeFinder( *rts ).name3( (*def)->name3 ).get_all_possible_residue_types() );
 				// use the first ResidueType represented in the ResidueLevelTask that corresponds to one in the name3 map
 				for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 						allowed_type( toptask.allowed_residue_types_begin() ),
@@ -245,7 +247,7 @@ RestrictDesignToProteinDNAInterface::apply(
 				}
 				if ( pos.paired() ) {
 					std::string const comp_name3( dna_comp_name_str( (*def)->name3 ) );
-					ResidueTypeCOPs const & name3map_comp( rts->name3_map_DO_NOT_USE( comp_name3 ) );
+					ResidueTypeCOPs const & name3map_comp( ResidueTypeFinder( *rts ).name3( comp_name3 ).get_all_possible_residue_types() );
 					ResidueLevelTask & bottask( ptask.nonconst_residue_task( pos.bottom() ) );
 					for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 							allowed_type( bottask.allowed_residue_types_begin() ),

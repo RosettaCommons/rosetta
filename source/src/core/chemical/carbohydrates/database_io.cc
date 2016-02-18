@@ -47,7 +47,7 @@ std::string
 find_glycan_sequence_file( std::string filename )
 {
 	using namespace utility::io;
-	
+
 	std::string dir = "chemical/carbohydrates/common_glycans/";
 	std::string ext =  ".iupac";
 	return basic::database::find_database_path( dir, filename, ext );
@@ -185,10 +185,10 @@ read_linkage_conformers_from_database_file( std::string const & filename ) {
 	using namespace std;
 	using namespace utility;
 	using namespace core::id;
-	
+
 	vector1< string > const lines( io::get_lines_from_file_data( filename ) );
 	LinkageConformers conformer_data_structure;
-	
+
 	Size const n_lines( lines.size() );
 	for ( uint i( 1 ); i <= n_lines; ++i ) {
 		istringstream line_word_by_word( lines[ i ] );
@@ -198,30 +198,30 @@ read_linkage_conformers_from_database_file( std::string const & filename ) {
 		string non_red_res, red_res;
 		Real pop;
 		Angle phi_mean, phi_sd, psi_mean, psi_sd, omega_mean, omega_sd;
-		
+
 		line_word_by_word >> non_red_res >> red_res >> pop >> phi_mean >> phi_sd >> psi_mean >> psi_sd;
-		
+
 		line_word_by_word >> omega_mean;
 		while ( ! line_word_by_word.fail() ) {
 			line_word_by_word >> omega_sd;
 			if ( line_word_by_word.fail() ) {
 				utility_exit_with_message( "read_linkage_conformers_from_database_file: "
-						"Omega angles mush be listed in mean/sd pairs!" );
+					"Omega angles mush be listed in mean/sd pairs!" );
 			}
 			conformer.omega_mean_sd.push_back( make_pair( omega_mean, omega_sd ) );
 			line_word_by_word >> omega_mean;
 		}
-		
+
 		conformer.mean_sd.push_back( make_pair( phi_mean, phi_sd ) );
 		conformer.mean_sd.push_back( make_pair( psi_mean, psi_sd ) );
-		
+
 		conformer.population = pop;
-		
+
 		pair< string, string > const linkage_pair( make_pair( non_red_res, red_res ) );
-		
+
 		conformer_data_structure[ linkage_pair ].push_back( conformer );
 	}
-	
+
 	return conformer_data_structure;
 }
 
@@ -230,33 +230,33 @@ read_short_names_to_iupac_format_string( std::string const & dir, std::string co
 {
 	using utility::vector1;
 	using std::string;
-	
+
 	std::map< string, string > short_names_to_iupac_string;
-	
+
 	vector1< string > const lines( utility::io::get_lines_from_file_data( common_mapping_path ) );
-	
-	for (Size i = 1; i <= lines.size(); ++i){
+
+	for ( Size i = 1; i <= lines.size(); ++i ) {
 		string line = lines[ i ];
-		
+
 		TR << line << std::endl; //Debugging for now.
-		
-		
+
+
 		std::istringstream line_word_by_word( line );
-		
+
 		std::string short_name;
 		std::string iupac_file_name;
 		line_word_by_word >> short_name >> iupac_file_name;
-		
+
 		std::string iupac_path = basic::database::find_database_path( dir, iupac_file_name);
 		std::string iupac_sequence = read_glycan_sequence_file( iupac_path );
-		
+
 		short_names_to_iupac_string[ short_name ] = iupac_sequence;
-		
+
 	}
-	
+
 	return short_names_to_iupac_string;
-	
-	
+
+
 }
 
 

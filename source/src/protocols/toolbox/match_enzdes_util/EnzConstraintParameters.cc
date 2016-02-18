@@ -25,6 +25,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ChemicalManager.hh> //need for changing residue type sets
 #include <core/chemical/ResidueTypeSet.hh> //have to include complete file
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Patch.hh> //needed for residue type base name function
 #include <core/scoring/Energies.hh>
@@ -103,7 +104,6 @@ CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo(
 ) : ReferenceCount(),
 	resA_basename_(resA_base_in), resB_basename_(resB_base_in),
 	resA_varname_(resA_var_in), resB_varname_(resB_var_in),
-	resA_modname_(resA_base_in + resA_var_in), resB_modname_(resB_base_in+resB_var_in),
 	resA_seqpos_(Apos_in), resB_seqpos_(Bpos_in),
 	restype_set_(restype_set_in)
 {}
@@ -113,7 +113,6 @@ CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo( CovalentConnection
 : ReferenceCount(),
 	resA_basename_(other.resA_basename_), resB_basename_(other.resB_basename_),
 	resA_varname_(other.resA_varname_), resB_varname_(other.resB_varname_),
-	resA_modname_(other.resA_modname_), resB_modname_(other.resB_modname_),
 	resA_seqpos_(other.resA_seqpos_), resB_seqpos_(other.resB_seqpos_),
 	restype_set_(other.restype_set_)
 {}
@@ -124,15 +123,6 @@ void
 CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
 	core::pose::Pose & pose
 ) const {
-
-	//first check whether the right residue types are still at their positions
-	if ( residue_type_base_name( pose.residue_type(resA_seqpos_) ) != resA_modname_ ) {
-		utility_exit_with_message("Error when trying to remove covalent connection: for resA, pose residue basename should be "+resA_modname_+", but is "+residue_type_base_name( pose.residue_type(resA_seqpos_))+"\n.");
-	}
-
-	if ( residue_type_base_name( pose.residue_type(resB_seqpos_) ) != resB_modname_ ) {
-		utility_exit_with_message("Error when trying to remove covalent connection: for resB, pose residue basename should be "+resB_modname_+", but is "+residue_type_base_name( pose.residue_type(resB_seqpos_))+"\n.");
-	}
 
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 	core::conformation::Residue newA_res( restype_set->name_map(resA_basename_), true);
@@ -562,105 +552,33 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 	EnzCstTemplateResOP template_res,
 	core::Size res_pos,
 	core::Size Atpos,
-	core::Real itorsion,
-	core::Real iangle,
-	core::Real idis,
+	core::Real /*itorsion*/,
+	core::Real /*iangle*/,
+	core::Real /*idis*/,
 	std::string & res_varname
 ) const
 {
 	//std::cout << "APL DEBUG EnzConstraintParameters.cc::make_constraint_covalent_helper begin" << std::endl;
-
 	using namespace core::chemical;
 	using namespace core::pack::dunbrack;
 
 	std::string res_atom = pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos(pose, res_pos) )->atom1_[Atpos].atomno() );
 
 	ObjexxFCL::strip_whitespace( res_atom );
-
 	std::string current_residue_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
 	std::string current_residue_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
 
 	// hacky: I am making an explicit exception for disulfide types
-	if ( pose.residue( res_pos ).type().is_disulfide_bonded() && ( res_atom == "SG" || res_atom == "SD" || res_atom == "SG1" ) ) {
+	if ( pose.residue_type( res_pos ).is_disulfide_bonded() && ( res_atom == pose.residue_type( res_pos ).get_disulfide_atom_name() ) ) {
 		return;
 	}
 
-	res_varname = "_connect" + res_atom;  // FIXME: variant names and patch names are not the same thing! ~Labonte
-	{// scope
-		// Find a name for the new residue type / variant name that will be added to the existing
-		// residue so that, if the existing residue already has this variant type, then the
-		// new residue type will get one with a new name.
-		core::chemical::ResidueType const & currres( pose.residue_type( res_pos ));
-		Size count=0;
-		while ( true ) {
-			if ( count > 1000 ) {
-				utility_exit_with_message( "Encountered infinite loop trying to find a new variant name for residue type " + currres.name() + " in EnzConstraintParameters.  Talk to Andrew.");
-			}
-			++count;
-			if ( count == 1 ) {
-				if ( ! currres.has_variant_type( res_varname ) ) break;
-			} else {
-				res_varname = "_"+utility::to_string(count)+"connect"+res_atom;
-				if ( ! currres.has_variant_type( res_varname ) ) break;
-			}
-		}
-	}
-	std::string res_type_mod_name( current_residue_type_basename + res_varname + current_residue_type_patches_name );
-	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
+	std::string res_patchname( "MP-" + res_atom + "-connect" );
+	res_varname = "MP-" + res_atom + "-CONNECT";
 
-	//check whether the modified residues have already been created earlier
-	if ( !restype_set->has_name(res_type_mod_name) ) {
+	std::string res_type_mod_name( current_residue_type_basename + ':' + res_patchname + current_residue_type_patches_name );
 
-		//holy jesus, we have to change the residue type set.
-		//we not only need to clone, modify and add  the residue type
-		//currently in the pose, but all similar ones (same basename )
-		//in the ResidueTypeSet.
-		//reminds me of open heart surgery...
-
-		// With the current scheme of SingleLigandRotamerLibrary loading,
-		// we don't need to (necessarily) change the associated rotamer library,
-		// as the copied rotamer library specification will use atom names to build rotamers.
-		// Of course, if did any atom name changes, then things may need to change.
-
-		ResidueTypeSetOP mod_restype_set( ChemicalManager::get_instance()->nonconst_residue_type_set( restype_set->name() ).get_self_ptr() );
-
-		//first get all residue types that correspond to the type in question
-		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map_DO_NOT_USE( pose.residue_type(res_pos).name3() );
-
-		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it ) {
-			std::string const base_name( residue_type_base_name( *(*res_it) ) );
-			//std::cerr << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl;
-
-			if ( current_residue_type_basename == base_name ) {
-
-				ResidueTypeOP mod_res;
-				core::Size con_res(0);
-				//std::cerr << " MODIFYING" << std::endl;
-				std::string patches_name( residue_type_all_patches_name( *(*res_it) ) );
-				std::string new_name( base_name + res_varname + patches_name );
-
-				mod_res = (*res_it)->clone();
-				con_res = mod_res->add_residue_connection( res_atom );
-				mod_res->name( new_name );
-				assert( ! mod_res->has_variant_type( res_varname ) );
-				mod_res->enable_custom_variant_types();
-				mod_res->add_variant_type( res_varname ); //necessary to restrict the packer to only use this residue variant in packing
-
-				mod_res->set_icoor( "CONN"+string_of( con_res ), itorsion, iangle, idis, res_atom, pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos( pose, res_pos) )->atom2_[Atpos].atomno() ), pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos(pose, res_pos) )->atom3_[Atpos].atomno() ), true );
-
-				//finalize again just to make sure
-				mod_res->nondefault(true);
-				mod_res->base_restype_name( base_name );
-				mod_res->finalize();
-
-				mod_restype_set->add_custom_residue_type( mod_res );
-			}
-		}
-
-	}
-
-	core::conformation::Residue new_res( restype_set->name_map(res_type_mod_name), true);
-
+	core::conformation::Residue new_res( pose.residue( res_pos ).residue_type_set()->name_map(res_type_mod_name), true);
 	replace_residue_keeping_all_atom_positions( pose, new_res, res_pos );
 
 	//std::cout << "APL DEBUG EnzConstraintParameters.cc::make_constraint_covalent_helper end" << std::endl;
@@ -1044,8 +962,6 @@ protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo::save( Arch
 	arc( CEREAL_NVP( resB_basename_ ) ); // std::string
 	arc( CEREAL_NVP( resA_varname_ ) ); // std::string
 	arc( CEREAL_NVP( resB_varname_ ) ); // std::string
-	arc( CEREAL_NVP( resA_modname_ ) ); // std::string
-	arc( CEREAL_NVP( resB_modname_ ) ); // std::string
 	arc( CEREAL_NVP( resA_seqpos_ ) ); // core::Size
 	arc( CEREAL_NVP( resB_seqpos_ ) ); // core::Size
 	//arc( CEREAL_NVP( restype_set_ ) ); // core::chemical::ResidueTypeSetCAP
@@ -1060,8 +976,6 @@ protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo::load( Arch
 	arc( resB_basename_ ); // std::string
 	arc( resA_varname_ ); // std::string
 	arc( resB_varname_ ); // std::string
-	arc( resA_modname_ ); // std::string
-	arc( resB_modname_ ); // std::string
 	arc( resA_seqpos_ ); // core::Size
 	arc( resB_seqpos_ ); // core::Size
 	//arc( restype_set_ ); // core::chemical::ResidueTypeSetCAP

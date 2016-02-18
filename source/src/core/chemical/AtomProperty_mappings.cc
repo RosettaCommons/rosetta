@@ -30,6 +30,7 @@ AtomPropertiesManager::property_to_string_map()
 	using namespace std;
 
 	if ( property_to_string_map_.empty() ) {
+		property_to_string_map_.insert( make_pair( NO_ATOM_PROPERTY, "NO_ATOM_PROPERTY" ) );
 		property_to_string_map_.insert( make_pair( H_DONOR, "H_DONOR" ) );
 		property_to_string_map_.insert( make_pair( H_ACCEPTOR, "H_ACCEPTOR" ) );
 		property_to_string_map_.insert( make_pair( POLAR_HYDROGEN, "POLAR_HYDROGEN" ) );
@@ -50,6 +51,7 @@ AtomPropertiesManager::string_to_property_map()
 	using namespace std;
 
 	if ( string_to_property_map_.empty() ) {
+		string_to_property_map_.insert( make_pair( "NO_ATOM_PROPERTY", NO_ATOM_PROPERTY ) );
 		string_to_property_map_.insert( make_pair( "H_DONOR", H_DONOR ) );
 		string_to_property_map_.insert( make_pair( "H_ACCEPTOR", H_ACCEPTOR ) );
 		string_to_property_map_.insert( make_pair( "POLAR_HYDROGEN", POLAR_HYDROGEN ) );

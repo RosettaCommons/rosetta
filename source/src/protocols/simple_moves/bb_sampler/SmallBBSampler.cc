@@ -30,20 +30,20 @@ namespace simple_moves {
 namespace bb_sampler {
 
 SmallBBSampler::SmallBBSampler():
- BBDihedralSampler()
+	BBDihedralSampler()
 {
 	set_angle_max( 360 );
 }
 
 SmallBBSampler::SmallBBSampler( core::id::MainchainTorsionType torsion_type):
- BBDihedralSampler()
+	BBDihedralSampler()
 {
 	torsion_type_ = torsion_type;
 	set_angle_max( 360 );
 }
 
 SmallBBSampler::SmallBBSampler( core::id::MainchainTorsionType torsion_type, core::Real angle_max):
- BBDihedralSampler()
+	BBDihedralSampler()
 
 {
 	torsion_type_ = torsion_type;
@@ -83,21 +83,21 @@ SmallBBSampler::SmallBBSampler( SmallBBSampler const & src ):
 
 core::Real
 SmallBBSampler::get_torsion(core::pose::Pose const & pose, core::Size resnum) const {
-	
+
 	using namespace core::pose;
-	
+
 	char const ss( pose.secstruct( resnum ) );
 	//core::Angle const mx( angle_max_.find( ss )->second );
 	core::Angle current_angle = get_bb_torsion( core::Size( torsion_type_ ), pose, resnum);
 	//TR << "current: " << current_angle;
-	
+
 	core::Angle max_dev = get_angle_max( ss )/2;
-	
+
 	core::Angle new_angle = basic::periodic_range( current_angle - max_dev + numeric::random::rg().uniform() * max_dev * 2, 360.0 );
 	//TR << "new angle: " << new_angle;
-	
+
 	return new_angle;
-	
+
 }
 
 void

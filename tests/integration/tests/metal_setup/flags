@@ -1,0 +1,4 @@
+-in:auto_setup_metals
+-s 1m8r_fragment.pdb
+-resfile design_binders.res
+-nstruct 3

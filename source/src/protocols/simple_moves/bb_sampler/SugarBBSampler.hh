@@ -33,11 +33,11 @@ class SugarBBSampler : public BBDihedralSampler {
 public:
 
 	SugarBBSampler();
-	
+
 	//Constructor with options.  Sampling step size is for initialization of the sampling data - here we have phi/psi probability and angles at every .1 degrees by default.
 	SugarBBSampler( core::id::MainchainTorsionType torsion_type,
-					BBSampleType sampling_type = probability,
-					core::Real sampling_step_size = .1);
+		BBSampleType sampling_type = probability,
+		core::Real sampling_step_size = .1);
 
 	SugarBBSampler(SugarBBSampler const & src);
 
@@ -51,20 +51,20 @@ public:
 	core::Real
 	get_torsion(core::pose::Pose const & pose, Size resnum) const;
 	///Set torsions to pose
-	
-	
+
+
 	void
 	set_torsion_to_pose(core::pose::Pose & pose, Size resnum) const;
-	
+
 	std::string
 	name() const {
 		return "SugarBBSampler";
 	};
-	
+
 private:
-	
+
 	core::Real sampling_step_size_;
-	
+
 };
 
 } //bb_sampler

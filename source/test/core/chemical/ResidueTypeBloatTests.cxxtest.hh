@@ -75,19 +75,5 @@ public:
 			<< I(width,rs->base_residue_types().size())
 			<< I(width,rs->patches().size())
 			<< endl;
-
-		// Is this broken?
-		//rss = COARSE_TWO_BEAD;
-		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		//TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
-
-		// Is this broken?
-		//rss = HYBRID_FA_STANDARD_CENTROID;
-		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		//TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
-
-
 	}
-
-
 };

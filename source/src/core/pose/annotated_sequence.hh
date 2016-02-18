@@ -122,25 +122,25 @@ void make_pose_from_sequence(
 /// @brief Create a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with ResidueTypeSet
 /// <residue_set> and store it in <pose>.
 void make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		chemical::ResidueTypeSet const & residue_set,
-		bool const auto_termini = true,
-		bool const idealize_linkages = true );
+	std::string const & sequence,
+	chemical::ResidueTypeSet const & residue_set,
+	bool const auto_termini = true,
+	bool const idealize_linkages = true );
 
 /// @brief Create a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with residue type set name
 /// <type_set_name> and store it in <pose>.
 void make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		std::string const & type_set_name = "fa_standard",
-		bool const auto_termini = true,
-		bool const idealize_linkages = true );
+	std::string const & sequence,
+	std::string const & type_set_name = "fa_standard",
+	bool const auto_termini = true,
+	bool const idealize_linkages = true );
 
 /// @brief Return a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with residue type set name
 /// <type_set_name>.
 pose::PoseOP pose_from_saccharide_sequence( std::string const & sequence,
-		std::string const & type_set_name = "fa_standard",
-		bool const auto_termini = true,
-		bool const idealize_linkages = true );
+	std::string const & type_set_name = "fa_standard",
+	bool const auto_termini = true,
+	bool const idealize_linkages = true );
 
 
 /// @brief Returns the oneletter_sequence that corresponds to the given
@@ -150,10 +150,6 @@ std::string annotated_to_oneletter_sequence( std::string const & annotated_seq )
 /// @brief use efficient residue type finder to find simplest residue type with this AA & requested termini.
 core::chemical::ResidueTypeCOP
 get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
-	core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus );
-
-core::chemical::ResidueTypeCOP
-get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 	core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus );
 
 } // namespace core

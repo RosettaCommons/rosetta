@@ -278,7 +278,6 @@ PeptoidDesignMover::apply(
 	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	// create a list of peptoid sidechains (this is inefficient)
-	// chemical::ResidueTypeCOPs const & rt_caps( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->residue_types_DO_NOT_USE() );
 	chemical::ResidueTypeCOPs rt_caps( chemical::ResidueTypeFinder( *ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ).base_property( PEPTOID ).get_possible_base_residue_types() );
 	std::set< std::string > peptoid_name_set;
 	for ( Size i(1); i <= rt_caps.size(); ++i ) {

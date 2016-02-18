@@ -61,6 +61,7 @@ replace_residue_keeping_all_atom_positions(
 	std::map< std::string, core::PointPosition > atom_name_to_xyz;
 
 	for ( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++ ) {
+		// If new_res lacks this atom, check if it has a spare virt.
 		atom_name_to_xyz.insert(  std::pair< std::string, core::PointPosition > (pose.residue(res_pos).atom_name(at_ct), pose.residue(res_pos).xyz( at_ct ) ) );
 	}
 

@@ -60,7 +60,7 @@ namespace carbohydrates {
 ///    2) Next, it will check the short names in the Rosetta database for your string.
 ///       If the string is in common_names.txt, will load the paired iupac sequence.
 ///       See database/chemical/carbohydrates/common_glycans/common_names.txt for accepted short names.
-///  	  Names include man3, man5, and man9.
+///     Names include man3, man5, and man9.
 ///
 ///    3)
 ///      If the name is not found, will attempt to build the glycan as an iupac sequence from the string.
@@ -85,7 +85,7 @@ public:
 	apply( core::pose::Pose & pose );
 
 public:
-	
+
 	/// @brief Set the glycosylation that will happen.
 	///  See database/chemical/carbohydrates/common_glycans for common names.
 	///  Names include man3, man5, and man9.
@@ -97,8 +97,8 @@ public:
 	///
 	void
 	set_glycosylation(std::string const & iupac_or_common_string);
-	
-	
+
+
 	/// @brief Set possible glycosylations - the mover will randomly pick these on apply
 	///  See database/chemical/carbohydrates/common_glycans for accepted names.
 	///  Names include man3, man5, and man9.
@@ -110,39 +110,39 @@ public:
 	///
 	void
 	set_glycosylations(utility::vector1<std::string> const & iupac_or_common_strings);
-	
-	
+
+
 	///@brief Set a single resnum position
 	void
 	set_position(core::Size position);
-	
+
 	///@brief Set multiple positions to glycosylate
 	void
 	set_positions(utility::vector1< bool > const & positions );
-	
+
 	///@brief Set mutliple positions to glycosylate
 	void
 	set_positions(utility::vector1< core::Size > const & positions);
-	
+
 	///@brief Set positions to glycosylate using a movemap.
 	void
 	set_positions_from_movemap( core::kinematics::MoveMapCOP mm);
-	
-	
+
+
 public:
-	
-	
+
+
 	///@brief Set weights for potential glycosylation if more than one is set.
 	void
 	set_glycosylation_weights( utility::vector1< core::Real > const & weights);
-	
+
 	///@brief This sets whether if we already have a glycan at a position, whether to extend it or delete the existing glycan.
 	/// Advanced functionality - use with caution.
 	///  Not yet work.
 	void
 	set_strip_existing_glycans( bool strip_existing );
-	
-	
+
+
 public:
 
 
@@ -173,26 +173,26 @@ public:
 	clone() const;
 
 private:
-	
+
 	void
 	remove_index(utility::vector1< core::Size > & current_vector, core::Size resnum) const;
 
 	utility::vector1< std::string >
 	setup_and_load_iupac_sequences() const;
-	
-	
+
+
 private:
 
 	utility::vector1< std::string > glycosylations_;
 	utility::vector1< core::Real > glycosylation_weights_;
-	
+
 	utility::vector1< std::string > parsed_positions_;
 	utility::vector1< core::Size > positions_;
-	
+
 	bool strip_existing_glycans_;
-	
+
 	std::string ref_pose_name_; //Used for RosettaScripts
-	
+
 	bool idealize_glycosylation_;
 
 };

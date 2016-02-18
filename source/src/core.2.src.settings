@@ -33,7 +33,6 @@ sources = {
 		"ElectronConfiguration",
 		"icoor_support",
 		"IdealBondLengthSet",
-	    "legacy_types",
 		"Metapatch",
 		"MergeBehaviorManager",
 		"MMAtomType",

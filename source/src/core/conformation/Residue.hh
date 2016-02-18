@@ -1150,14 +1150,14 @@ public:
 	{
 		return rsd_type_.n_possible_residue_connections();
 	}
-	
+
 	/// @brief Returns the number of ResidueConnections on this residue
 	/// including polymeric residue connections.
 	///  This is the total number of actual connections to other residues.
 	///  The index here does not nessessarily match with the connection index as n_possible_residue_connections does!!!!
 	Size
 	n_current_residue_connections() const;
-	
+
 	/// @brief Returns the number of polymeric ResidueConnections on this residue
 	Size
 	n_polymeric_residue_connections() const {
@@ -1226,7 +1226,7 @@ public:
 
 	bool
 	connection_incomplete( Size resconnid ) const;
-	
+
 	/// @brief Get the residue connection.
 	///  How is this different than residue_connection?
 	///

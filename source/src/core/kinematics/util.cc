@@ -689,12 +689,12 @@ remodel_fold_tree_to_account_for_insertion(
 utility::vector1< core::Size >
 get_residues_from_movemap_with_id( id::TorsionType query_torsion, MoveMap const & movemap){
 	utility::vector1< core::Size > residues;
-	
+
 	//JAB - Why are these within the MoveMap class, shouldn't they be outside of it?
 	typedef id::TorsionType TorsionType;
 	typedef std::pair< Size, TorsionType > MoveMapTorsionID;
 	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
-	
+
 	for ( MoveMapTorsionID_Map::const_iterator it = movemap.movemap_torsion_id_begin(), it_end = movemap.movemap_torsion_id_end();
 			it != it_end; ++it ) {
 		MoveMapTorsionID mmtorsionID = it->first;

@@ -133,18 +133,6 @@ private:
 		bool const is_l_aa
 	);
 
-	chemical::ResidueTypeCOP
-	get_rsd_type_legacy(
-		std::string const & name3,
-		Size seqpos,
-		utility::vector1< std::string > const &  branch_points_on_this_residue,
-		std::string const & resid,
-		bool const is_lower_terminus,
-		bool const is_upper_terminus,
-		bool const is_branch_point,
-		bool const is_branch_lower_terminus
-	);
-
 	void convert_nucleic_acid_residue_info_to_standard();
 
 	Size prev_residue_skipping_merges( Size resid ) const;

@@ -115,7 +115,6 @@ EnzdesRemodelProtocol::apply(
 	core::pose::Pose & pose
 ){
 
-
 	using namespace protocols::moves;
 	using namespace core::pack::task;
 

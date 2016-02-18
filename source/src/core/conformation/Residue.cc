@@ -386,12 +386,12 @@ core::Size
 Residue::n_current_residue_connections() const
 {
 	//for connection in range( 1, rsd.n_residue_connections() + 1 ):
-    //    if rsd.connected_residue_at_resconn( connection ) != 0:
-    //        i+=1
-    //return i
+	//    if rsd.connected_residue_at_resconn( connection ) != 0:
+	//        i+=1
+	//return i
 	core::Size connections = 0;
-	for ( core::Size connect_id = 1; connect_id <= n_possible_residue_connections(); ++connect_id ){
-		if ( connected_residue_at_resconn( connect_id ) != 0){
+	for ( core::Size connect_id = 1; connect_id <= n_possible_residue_connections(); ++connect_id ) {
+		if ( connected_residue_at_resconn( connect_id ) != 0 ) {
 			connections+=1;
 		}
 	}

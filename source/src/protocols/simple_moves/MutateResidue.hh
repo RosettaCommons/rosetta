@@ -48,9 +48,9 @@ public:
 	/// @details new_res is three letter code in capital letters, example PHE
 	MutateResidue( core::Size const target, std::string const &new_res );
 	MutateResidue( core::Size const target, int new_res/*one letter code*/);  // Changing char --> int so PyRosetta could use overloaded function
-	
+
 	MutateResidue( core::Size const target, core::chemical::AA const aa);
-	
+
 	virtual ~MutateResidue() {};
 
 	virtual void apply( core::pose::Pose & pose );
@@ -71,7 +71,7 @@ public:
 	/// @brief Set this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void set_target( std::string const &target_in ) { target_ = target_in; }
-	
+
 	/// @brief Set this mover's target residue index, based on the Rosetta indexing.
 	///
 	void set_target(core::Size const target_in);
@@ -86,8 +86,8 @@ public:
 	void set_res_name( std::string const &name_in ) { res_name_ = name_in; }
 
 	void set_res_name( core::chemical::AA const & aa);
-	
-	
+
+
 	/// @brief Get the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

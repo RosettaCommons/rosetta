@@ -158,25 +158,24 @@ has_exocyclic_glycosidic_linkage( Pose const & pose, uint seqpos){
 		return false;
 	}
 	TR << "lower resnum: " << lower_resnum << std::endl;
-	
+
 	conformation::Residue const & prev_rsd = pose.residue( lower_resnum );
-	
-	if (! prev_rsd.is_carbohydrate()){
+
+	if ( ! prev_rsd.is_carbohydrate() ) {
 		TR.Debug << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false." << endl;
 		return false;
 	}
-	
+
 	core::Size n_carbons = prev_rsd.carbohydrate_info()->n_carbons();
 	core::Size linkage_position = get_linkage_position_of_saccharide_residue(pose, rsd.seqpos());
 	core::Size last_carbon = prev_rsd.carbohydrate_info()->last_carbon_in_ring();
-	
-	if ( (n_carbons == linkage_position) && (last_carbon != linkage_position) ){
+
+	if ( (n_carbons == linkage_position) && (last_carbon != linkage_position) ) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
-	
+
 }
 
 
@@ -373,7 +372,7 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 	// Reference 3 is CX-2(n-1) for polysaccharides.
 	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
 	ids[ 3 ] = ref3;
-	
+
 	// Reference 4 is CX-3(n-1) for polysaccharides.
 	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
 	ids[ 4 ] = ref4;
@@ -395,20 +394,20 @@ get_reference_atoms( uint const torsion_id, Pose const & pose, uint const sequen
 
 	vector1< AtomID > ref_atoms;
 	switch ( torsion_id ) {
-		case phi_torsion :
-			ref_atoms = get_reference_atoms_for_phi( pose, sequence_position );
-			break;
-		case psi_torsion :
-			ref_atoms = get_reference_atoms_for_psi( pose, sequence_position );
-			break;
-		case omega_torsion :
-			ref_atoms = get_reference_atoms_for_1st_omega( pose, sequence_position );
-			break;
-		case 4 :
-			ref_atoms = get_reference_atoms_for_2nd_omega( pose, sequence_position );
-			break;
-		default :
-			utility_exit_with_message( "An invalid torsion angle was requested." );
+	case phi_torsion :
+		ref_atoms = get_reference_atoms_for_phi( pose, sequence_position );
+		break;
+	case psi_torsion :
+		ref_atoms = get_reference_atoms_for_psi( pose, sequence_position );
+		break;
+	case omega_torsion :
+		ref_atoms = get_reference_atoms_for_1st_omega( pose, sequence_position );
+		break;
+	case 4 :
+		ref_atoms = get_reference_atoms_for_2nd_omega( pose, sequence_position );
+		break;
+	default :
+		utility_exit_with_message( "An invalid torsion angle was requested." );
 	}
 	return ref_atoms;
 }
@@ -761,14 +760,14 @@ idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 		}
 		TR.Trace << non_red_end_short_name << "(?-" << red_end_short_name << " linkage: ";
 		if ( chemical::carbohydrates::CarbohydrateInfoManager::pair_has_linkage_statistics(
-					red_end_short_name, non_red_end_short_name ) ) {
+				red_end_short_name, non_red_end_short_name ) ) {
 			TR.Trace << "found" << endl;
 			// We will assume that the 1st conformer has the highest population and use that.
 			chemical::carbohydrates::LinkageConformerData const conformer(
-					chemical::carbohydrates::CarbohydrateInfoManager::linkages_from_pair(
-					red_end_short_name, non_red_end_short_name )[ 1 ] );
+				chemical::carbohydrates::CarbohydrateInfoManager::linkages_from_pair(
+				red_end_short_name, non_red_end_short_name )[ 1 ] );
 			carbohydrates::set_dihedrals_from_linkage_conformer_data(
-					pose, i, conformer );
+				pose, i, conformer );
 		} else {
 			TR.Trace << "not found" << endl;
 			// TODO: Idealize from the sugar_bb scoring term.
@@ -806,11 +805,11 @@ idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 /// Also, I've not written this to handle creation of glycolipids yet.
 void
 glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace utility;
 	using namespace chemical;
@@ -835,7 +834,7 @@ glycosylate_pose(
 	// TODO: Add code to attach to lipids.
 	if ( residue.is_carbohydrate() ) {
 		chemical::VariantType const variant(
-				chemical::carbohydrates::CarbohydrateInfoManager::branch_variant_type_from_atom_name( atom_name ) );
+			chemical::carbohydrates::CarbohydrateInfoManager::branch_variant_type_from_atom_name( atom_name ) );
 		add_variant_type_to_pose_residue( pose, variant, sequence_position );
 	} else {  // It's a typical branch point, in that it has a single type of branch point variant.
 		add_variant_type_to_pose_residue( pose, SC_BRANCH_POINT, sequence_position );
@@ -881,7 +880,7 @@ glycosylate_pose(
 		TR.Debug << "Idealizing glycosidic torsions." << endl;
 		idealize_last_n_glycans_in_pose( pose, n_types );
 	}
-	
+
 	// Finally, update the PDB information.
 	Size const n_residues( pose.total_residue() );
 	uint new_seqpos( 0 );
@@ -902,10 +901,10 @@ glycosylate_pose(
 /// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
 void
 glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
@@ -926,11 +925,11 @@ glycosylate_pose(
 // Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void
 glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & filename,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & filename,
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace std;
 	using namespace io::carbohydrates;
@@ -949,10 +948,10 @@ glycosylate_pose_by_file(
 /// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
 void
 glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & filename,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & filename,
+	bool const idealize_linkages /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
@@ -974,15 +973,15 @@ glycosylate_pose_by_file(
 // Set the dihedral angles involved in a glycosidic linkage based on statistical data.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 void set_dihedrals_from_linkage_conformer_data( Pose & pose,
-		uint const upper_residue,
-		core::chemical::carbohydrates::LinkageConformerData const & conformer,
-		bool idealize /* true */,
-		bool use_prob_for_sd /* false */ )
+	uint const upper_residue,
+	core::chemical::carbohydrates::LinkageConformerData const & conformer,
+	bool idealize /* true */,
+	bool use_prob_for_sd /* false */ )
 {
 	using namespace core::id;
-	
+
 	core::Size const n_torsions = conformer.n_torsions();
-	
+
 	if ( idealize ) {
 		for ( core::Size i = 1; i <= n_torsions; ++i ) {
 			TR.Debug << "torsion "<< i << std::endl;
@@ -994,27 +993,25 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 				torsion_mean = basic::periodic_range( conformer.get_torsion_mean( omega_dihedral, i - 2 ), 360);
 			}
 			TR.Debug << "Setting from " << get_glycosidic_torsion( i, pose, upper_residue ) <<
-					" to " << torsion_mean << endl;  // TEMP
+				" to " << torsion_mean << endl;  // TEMP
 			set_glycosidic_torsion( i, pose, upper_residue, torsion_mean );
 		}
-	}
-	else if ( use_prob_for_sd ) {
+	} else if ( use_prob_for_sd ) {
 		TR << "This is not yet implemented." << std::endl;
-		
-	}
-	else {
+
+	} else {
 		for ( core::Size i = 1; i <= n_torsions; ++i ) {
 			TR.Debug << "torsion: " << i << std::endl;
 			MainchainTorsionType torsion_type = static_cast<MainchainTorsionType>( i );
 			Real mean = conformer.get_torsion_mean( torsion_type );
 			Real sd = conformer.get_torsion_sd( torsion_type );
 			Real conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
-			
+
 			//Debugging for now.  Remove soon.
 			TR.Debug << "Current: " << get_glycosidic_torsion(i, pose, upper_residue) << std::endl;
 			TR.Debug << "Mean: " << mean << std::endl;
 			TR.Debug << "New conformer: " << conformer_angle << std::endl;
-			
+
 			set_glycosidic_torsion( i, pose, upper_residue, conformer_angle );
 		}
 	}
@@ -1023,7 +1020,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 core::chemical::carbohydrates::LinkageType
 get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conformation::Residue const & rsd,
 	pose::Pose const & pose)
-	
+
 {
 	using core::Size;
 	using core::Angle;
@@ -1031,48 +1028,47 @@ get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conforma
 	using utility::vector1;
 	using namespace chemical::rings;
 	using namespace core::chemical::carbohydrates;
-	
-	if (!rsd.is_carbohydrate()){
+
+	if ( !rsd.is_carbohydrate() ) {
 		return LINKAGE_NA;
 	}
-	
+
 	CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
-	if (torsion == id::phi_dihedral){
-	// TODO: Wood's lab assumed that the rings would always be 4C1 chairs. If an alpha sugar is flipped, it should
-	// probably be treated as a beta.  I should probably abandon getting the anomeric form and explicitly determine
-	// axial/equatorial here too.
+	if ( torsion == id::phi_dihedral ) {
+		// TODO: Wood's lab assumed that the rings would always be 4C1 chairs. If an alpha sugar is flipped, it should
+		// probably be treated as a beta.  I should probably abandon getting the anomeric form and explicitly determine
+		// axial/equatorial here too.
 		if ( info->is_alpha_sugar() ) {
 			return ALPHA_LINKS;
-		
+
 		} else if ( info->is_beta_sugar() ) {
 			return BETA_LINKS;
-		
-		}else {
+
+		} else {
 			return LINKAGE_NA;
 		}
-	}
-	else if(torsion == id::psi_dihedral){
-	
-		if (rsd.seqpos() == 1){
+	} else if ( torsion == id::psi_dihedral ) {
+
+		if ( rsd.seqpos() == 1 ) {
 			return LINKAGE_NA;
 		}
-		
+
 		// Calculate psi component.
 		// For psi, we need to get information from the previous residue.
 		conformation::Residue const & prev_rsd( pose.residue(
-		pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
 		// If this is not a saccharide residue, do nothing.
 		if ( ! prev_rsd.is_carbohydrate() ) {
 			return LINKAGE_NA;
 		}
-		
-		
+
+
 		CarbohydrateInfoCOP prev_info( prev_rsd.carbohydrate_info() );
 		// If this is not a pyranose, do nothing, because we do not have statistics for this residue.
 		if ( ! prev_info->is_pyranose() ) {
 			return LINKAGE_NA;
 		}
-		
+
 		// What is our connecting atom?
 		uint const connect_atom( prev_rsd.connect_atom( rsd ) );
 
@@ -1119,11 +1115,10 @@ get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conforma
 		case NEITHER :
 			return LINKAGE_NA;
 		}
-		
+
 		//If we somehow get to this point, return NA
 		return LINKAGE_NA;
-	}
-	else {
+	} else {
 		//Should probably throw instead of exit.
 		utility_exit_with_message( "no data for torsion");
 	}
@@ -1131,19 +1126,17 @@ get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conforma
 
 utility::vector1< core::chemical::carbohydrates::LinkageType >
 get_linkage_types_for_dihedral( id::MainchainTorsionType torsion ){
-	
+
 	using namespace core::chemical::carbohydrates;
-	
+
 	utility::vector1< LinkageType > linkages(2);
-	if (torsion == id::phi_dihedral){
+	if ( torsion == id::phi_dihedral ) {
 		linkages[ 1 ] = ALPHA_LINKS;
 		linkages[ 2 ] = BETA_LINKS;
-	}
-	else if( torsion == id::psi_dihedral ){
+	} else if ( torsion == id::psi_dihedral ) {
 		linkages[ 1 ] = _2AX_3EQ_4AX_LINKS;
 		linkages[ 2 ] = _2EQ_3AX_4EQ_LINKS;
-	}
-	else {
+	} else {
 		//Should probably throw instead of exit.
 		utility_exit_with_message( "no data for torsion");
 	}
@@ -1157,11 +1150,11 @@ remove_carbohydrate_branch_point_variants( Pose & pose, conformation::Residue co
 {
 	using namespace core::chemical;
 
-	if ( rsd.is_branch_point() ){
-		if ( rsd.is_carbohydrate() ){
+	if ( rsd.is_branch_point() ) {
+		if ( rsd.is_carbohydrate() ) {
 			utility::vector1< VariantType > branch_types;
-			
-			branch_types.push_back(	C1_BRANCH_POINT );
+
+			branch_types.push_back( C1_BRANCH_POINT );
 			branch_types.push_back( C2_BRANCH_POINT );
 			branch_types.push_back( C3_BRANCH_POINT );
 			branch_types.push_back( C4_BRANCH_POINT );
@@ -1170,21 +1163,20 @@ remove_carbohydrate_branch_point_variants( Pose & pose, conformation::Residue co
 			branch_types.push_back( C7_BRANCH_POINT );
 			branch_types.push_back( C8_BRANCH_POINT );
 			branch_types.push_back( C9_BRANCH_POINT );
-			
+
 
 			for ( core::Size i = 1; i <= branch_types.size(); ++i ) {
-				if ( rsd.has_variant_type( branch_types[ i ] ) ){
+				if ( rsd.has_variant_type( branch_types[ i ] ) ) {
 					remove_variant_type_from_pose_residue( pose, branch_types[ i ], rsd.seqpos());
 				}
 			}
-			
-		}
-		else {
+
+		} else {
 			remove_variant_type_from_pose_residue( pose, SC_BRANCH_POINT, rsd.seqpos());
 
 		}
-		
-		
+
+
 	}
 
 
@@ -1201,81 +1193,81 @@ remove_carbohydrate_branch_point_variants( Pose & pose, conformation::Residue co
 //   If no more carbohydrates exist in the pose, will change the pose status.
 void
 delete_carbohydrate_branch(
-		Pose & pose,
-		uint const delete_to)
+	Pose & pose,
+	uint const delete_to)
 {
 	using namespace utility;
 	using namespace chemical;
 	using namespace conformation;
-	
-	if (! pose.residue( delete_to ).is_carbohydrate() && ! pose.residue( delete_to ).is_branch_point()){
+
+	if ( ! pose.residue( delete_to ).is_carbohydrate() && ! pose.residue( delete_to ).is_branch_point() ) {
 		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
 		return;
 	}
 	std::pair< vector1< Size >, vector1< Size > > resnums_and_tips;
 	resnums_and_tips = get_carbohydrate_residues_upstream( pose, delete_to );
-	
+
 	vector1< Size > resnums_to_delete = resnums_and_tips.first;
 	vector1< Size > tips              = resnums_and_tips.second;
-	
+
 	Size i = 0;
 	std::string ref_pose_name = "temp_ref_pose" ;
-	
+
 	Size current_delete_to = delete_to;
-    while ( tips.size() > 0 ){
-	
-        //TR << "\n" << "TRIP: " <<  i << std::endl;
-		
-        pose.reference_pose_from_current( ref_pose_name, true );
+	while ( tips.size() > 0 ) {
 
-        vector1< vector1< Size > > leafs;
+		//TR << "\n" << "TRIP: " <<  i << std::endl;
 
-        //Get linear carbohydrate leafs
-        for( core::Size x = 1; x <= tips.size(); ++x){
+		pose.reference_pose_from_current( ref_pose_name, true );
+
+		vector1< vector1< Size > > leafs;
+
+		//Get linear carbohydrate leafs
+		for ( core::Size x = 1; x <= tips.size(); ++x ) {
 			Size tip = tips[ x ];
-            vector1< Size > leaf = get_resnums_in_leaf(pose, tip, delete_to);
-            //TR << "Tip: " << tip << " - " << to_string( leaf ) << std::endl;
-            leafs.push_back(leaf);
+			vector1< Size > leaf = get_resnums_in_leaf(pose, tip, delete_to);
+			//TR << "Tip: " << tip << " - " << to_string( leaf ) << std::endl;
+			leafs.push_back(leaf);
 		}
 
-        //Delete the leafs
-        for ( core::Size x = 1; x <= leafs.size(); ++x ){
+		//Delete the leafs
+		for ( core::Size x = 1; x <= leafs.size(); ++x ) {
 			vector1< Size > leaf = leafs[ x ];
-            TR << "Deleting Leaf: " << to_string( leaf ) << std::endl; //Remove this when ready.
-            delete_leaf( pose, leaf, ref_pose_name);
+			TR << "Deleting Leaf: " << to_string( leaf ) << std::endl; //Remove this when ready.
+			delete_leaf( pose, leaf, ref_pose_name);
 		}
 
-        //Get new tips to delete.
-        current_delete_to = pose.corresponding_residue_in_current( current_delete_to, ref_pose_name);
+		//Get new tips to delete.
+		current_delete_to = pose.corresponding_residue_in_current( current_delete_to, ref_pose_name);
 		resnums_and_tips = get_carbohydrate_residues_upstream( pose, current_delete_to );
-	
+
 		resnums_to_delete = resnums_and_tips.first;
 		tips              = resnums_and_tips.second;
-	
-        //TR << "Tips: " << to_string(tips) << std::endl;
 
-        //TR << pose << std::endl; //Debugging for now.
-	
-        i+=1;
-		
+		//TR << "Tips: " << to_string(tips) << std::endl;
+
+		//TR << pose << std::endl; //Debugging for now.
+
+		i+=1;
+
 	}
-	
+
 	// Update branching of starting_position residue.  After all this deletion, it will not have any branches and should be a tip.
 	//   -> Deal with branch of aa side chain or carbohydrate branch properly!
 	conformation::Residue const & trim_to_rsd = pose.residue( current_delete_to ); //This may pose a problem...
 	remove_carbohydrate_branch_point_variants( pose, trim_to_rsd );
-	
-	
+
+
 	// Update contents of Pose - does it have any carbohydrates left?
 	bool found_carbohydrate = false;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if (pose.residue( i ).is_carbohydrate() ){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).is_carbohydrate() ) {
 			found_carbohydrate = true;
 			break;
 		}
 	}
 	pose.conformation().contains_carbohydrate_residues( found_carbohydrate );
-	
+
 }
 
 
@@ -1286,39 +1278,39 @@ delete_carbohydrate_branch(
 
 std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > >
 get_carbohydrate_residues_upstream(
-		Pose const & pose,
-		uint const starting_position)
-	
+	Pose const & pose,
+	uint const starting_position)
+
 {
 	using namespace core::chemical::carbohydrates;
-	
-    utility::vector1< Size > tips;
-    utility::vector1< Size > list_of_residues;
-    utility::vector1< Size > children_residues;
-	
-	if (! pose.residue( starting_position ).is_carbohydrate() && ! pose.residue( starting_position ).is_branch_point()){
+
+	utility::vector1< Size > tips;
+	utility::vector1< Size > list_of_residues;
+	utility::vector1< Size > children_residues;
+
+	if ( ! pose.residue( starting_position ).is_carbohydrate() && ! pose.residue( starting_position ).is_branch_point() ) {
 		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
 		return std::make_pair( list_of_residues, tips);
 	}
-	
-	
+
+
 	Size parent_residue;
-	if (pose.residue( starting_position).is_carbohydrate() ){
-    	parent_residue = find_seqpos_of_saccharides_parent_residue( pose.residue( starting_position ) );
+	if ( pose.residue( starting_position).is_carbohydrate() ) {
+		parent_residue = find_seqpos_of_saccharides_parent_residue( pose.residue( starting_position ) );
 	} else {
 		parent_residue = starting_position - 1;
 	}
-	
-    fill_upstream_children_res_and_tips( pose, starting_position, parent_residue, children_residues, list_of_residues, tips );
 
-    //TR << "Children: " << utility::to_string( children_residues) << std::endl;
-    get_branching_residues( pose, starting_position, children_residues, list_of_residues, tips );
+	fill_upstream_children_res_and_tips( pose, starting_position, parent_residue, children_residues, list_of_residues, tips );
 
-    return std::make_pair( list_of_residues, tips );
+	//TR << "Children: " << utility::to_string( children_residues) << std::endl;
+	get_branching_residues( pose, starting_position, children_residues, list_of_residues, tips );
+
+	return std::make_pair( list_of_residues, tips );
 
 }
-	
-	
+
+
 /// @brief  Recursive function to get branches of a set of residues, etc.
 ///  list_of_residues and tips are arrays are non-const references and modified by this function.
 ///
@@ -1331,20 +1323,20 @@ get_carbohydrate_residues_upstream(
 ///
 void
 get_branching_residues( Pose const & pose,
-						Size parent_residue,
-						utility::vector1< Size > & children_residues,
-						utility::vector1< Size > & list_of_residues,
-						utility::vector1< Size > & tips )
+	Size parent_residue,
+	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & list_of_residues,
+	utility::vector1< Size > & tips )
 
 {
 
-    for ( core::Size i =1; i <= children_residues.size(); ++i ){
+	for ( core::Size i =1; i <= children_residues.size(); ++i ) {
 		Size res = children_residues[ i ];
-        utility::vector1< Size > children;
-        fill_upstream_children_res_and_tips( pose, res, parent_residue, children, list_of_residues, tips );
+		utility::vector1< Size > children;
+		fill_upstream_children_res_and_tips( pose, res, parent_residue, children, list_of_residues, tips );
 
-        if ( children.size() != 0 ){
-            get_branching_residues( pose, res, children, list_of_residues, tips);
+		if ( children.size() != 0 ) {
+			get_branching_residues( pose, res, children, list_of_residues, tips);
 		}
 	}
 
@@ -1361,29 +1353,29 @@ get_branching_residues( Pose const & pose,
 ///
 void
 fill_upstream_children_res_and_tips( Pose const & pose,
-							Size res,
-							Size parent_residue,
-							utility::vector1< Size > & children_residues,
-							utility::vector1< Size > & list_of_residues,
-							utility::vector1< Size > & tips )
-	
+	Size res,
+	Size parent_residue,
+	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & list_of_residues,
+	utility::vector1< Size > & tips )
+
 {
 
-    Size connections = pose.residue( res ).n_possible_residue_connections(); //Want the index to match here.
-    for (core::Size connection = 1; connection <= connections; ++connection ){
-	
-        Size connecting_res = pose.residue( res ).connected_residue_at_resconn( connection );
+	Size connections = pose.residue( res ).n_possible_residue_connections(); //Want the index to match here.
+	for ( core::Size connection = 1; connection <= connections; ++connection ) {
 
-        if ( connecting_res != 0 && connecting_res != parent_residue && pose.residue( connecting_res ).is_carbohydrate() ){
-            list_of_residues.push_back( connecting_res );
-            if ( pose.residue( connecting_res ).n_current_residue_connections() == 1 ){
-                tips.push_back( connecting_res );
-            } else {
-                children_residues.push_back( connecting_res );
+		Size connecting_res = pose.residue( res ).connected_residue_at_resconn( connection );
+
+		if ( connecting_res != 0 && connecting_res != parent_residue && pose.residue( connecting_res ).is_carbohydrate() ) {
+			list_of_residues.push_back( connecting_res );
+			if ( pose.residue( connecting_res ).n_current_residue_connections() == 1 ) {
+				tips.push_back( connecting_res );
+			} else {
+				children_residues.push_back( connecting_res );
 			}
 		}
 	}
-	
+
 
 }
 
@@ -1396,31 +1388,31 @@ utility::vector1< core::Size >
 get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue)
 {
 	// This logic can be simplified even further, but this works.
-	
-    utility::vector1< Size > resnums;
-	
+
+	utility::vector1< Size > resnums;
+
 	//If residue is not carbohydrate, we can't find the parent residue.
 	/// We really shouldn't be here in the first place!
-	if (! pose.residue( tip_residue ).is_carbohydrate() ){
+	if ( ! pose.residue( tip_residue ).is_carbohydrate() ) {
 		return resnums;
 	}
-	
-    resnums.push_back( tip_residue );
-    Size res = tip_residue;
-	
-    while( pose.residue( res ).n_current_residue_connections() < 3 ){
 
-        Size parent = find_seqpos_of_saccharides_parent_residue( pose.residue(res) );
-        //TR <<  "Res: " << res << " Parent: " << parent << std::endl;
+	resnums.push_back( tip_residue );
+	Size res = tip_residue;
 
-        if ( res != tip_residue ) resnums.push_back( res );
-        if ( parent == 0 || parent == stop_at_residue ) break;
-		
-        res = parent;
-        //TR << "connections: " << pose.residue( res ).n_current_residue_connections() << std::endl;
-		
+	while ( pose.residue( res ).n_current_residue_connections() < 3 ) {
+
+		Size parent = find_seqpos_of_saccharides_parent_residue( pose.residue(res) );
+		//TR <<  "Res: " << res << " Parent: " << parent << std::endl;
+
+		if ( res != tip_residue ) resnums.push_back( res );
+		if ( parent == 0 || parent == stop_at_residue ) break;
+
+		res = parent;
+		//TR << "connections: " << pose.residue( res ).n_current_residue_connections() << std::endl;
+
 	}
-    return resnums;
+	return resnums;
 }
 
 
@@ -1432,18 +1424,18 @@ get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue)
 void
 delete_leaf( Pose & pose, utility::vector1< Size > leaf, std::string ref_pose_name )
 {
-	for (core::Size i = 1; i <= leaf.size(); ++i){
+	for ( core::Size i = 1; i <= leaf.size(); ++i ) {
 		Size resnum = leaf[ i ];
 		Size new_resnum = pose.corresponding_residue_in_current( resnum, ref_pose_name);
-        //TR << "Deleting: " << resnum << " new, " << new_resnum << std::endl;
-		
+		//TR << "Deleting: " << resnum << " new, " << new_resnum << std::endl;
+
 		// Uses delete_residue_slow as the debug_assert in delete_polymer_residue causes a crash.
 		// This exit checks for foldtree jump, and it looks like it counts chemical edges as a foldtree jump.
 		// UNTIL WE CAN RESOLVE THIS, use delete_residue_slow here.
-		
-        //pose.delete_polymer_residue( new_resnum );
+
+		//pose.delete_polymer_residue( new_resnum );
 		pose.delete_residue_slow( new_resnum );
-		
+
 	}
 
 }

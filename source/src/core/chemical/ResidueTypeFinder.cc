@@ -16,6 +16,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/Metapatch.hh>
 #include <core/chemical/util.hh>
 
 #include <utility/tools/make_vector1.hh>
@@ -83,6 +84,7 @@ ResidueTypeFinder::get_representative_type() const
 	ResidueTypeCOPs rsd_types;
 	rsd_types = get_possible_base_residue_types( false /* include_custom */ );
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
+	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_custom_residue_types();
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
@@ -99,6 +101,9 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 
 	// Go down the binary tree of patches.
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/ );
+	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
+
+	//rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 
 	// add in any custom residues.
 	rsd_types.append( get_possible_custom_residue_types() );
@@ -299,6 +304,81 @@ ResidueTypeFinder::apply_patches_recursively(
 
 }
 
+vector1< ResidueTypeCOP >
+ResidueTypeFinder::apply_metapatches_recursively(
+	vector1< ResidueTypeCOP > const & rsd_types,
+	Size const metapatch_number,
+	bool const get_first_totally_ok_residue_type /*= false*/
+) const {
+	ResidueTypeCOPs rsd_types_new = rsd_types;
+	if ( metapatch_number > residue_type_set_.metapatches().size() ) return rsd_types_new;
+
+	MetapatchCOP metapatch = residue_type_set_.metapatches()[ metapatch_number ];
+
+	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
+		ResidueTypeCOP rsd_type = rsd_types[ n ];
+
+		utility::vector1< std::string > atoms = metapatch->atoms( *rsd_type );
+		for ( Size i = 1; i <= atoms.size(); ++i ) {
+			PatchCOP patch = metapatch->get_one_patch( /**rsd_type,*/ atoms[ i ] );
+
+			// absolute no-no's.
+			if ( !patch->applies_to( *rsd_type ) )             continue;
+			if ( has_disallowed_variant( patch ) )             continue;
+			if ( deletes_any_property(   patch, rsd_type ) )   continue;
+			if ( deletes_any_variant(    patch, rsd_type ) )   continue;
+			if ( changes_to_wrong_aa(    patch, rsd_type ) )   continue;
+			// could also add as a no-no: if patch *deletes* an atom in atom_names_.
+
+			// note -- make sure to apply patch if it has a chance of satisfying any of
+			// the constraints on variants, branchpoints, or properties.
+			bool apply_patch = (  adds_any_variant( patch ) ||
+				adds_any_property( patch, rsd_type ) ||
+				matches_any_patch_name( patch )      ||
+				matches_any_atom_name( patch, rsd_type ) ||
+				fixes_name3( patch, rsd_type ) ||
+				fixes_interchangeability_group( patch, rsd_type ) );
+
+			//bool adds_any_variant = adds_any_variant( patch );
+			//bool adds_any_property = adds_any_property( patch );
+			//bool matches_any_patch_name = matches_any_patch_name( patch );
+			//bool matches_any_atom_name = matches_any_atom_name( patch );
+			//bool fixes_name3 = fixes_name3( patch );
+			//bool fixes_interchangeability_group = fixes_interchangeability_group( patch );
+
+			//bool apply_patch = adds_any_variant || adds_any_property || matches_any_patch_name
+			// || matches_any_atom_name || fixes_name3 || fixes_interchangeability_group;
+
+			if ( apply_patch ) {
+				// following just gets the right name of the patched residue
+				ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
+				// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
+				ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
+				rsd_types_new.push_back( rsd_type_new );
+
+				{
+					vector1< std::string> const & patch_variant_types = patch->types();
+					for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
+						VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
+						variant_types_used.insert( patch_variant );
+					}
+				}
+			}
+		}
+
+	} // end loop
+
+	if ( get_first_totally_ok_residue_type ) { // maybe we're done?
+		// note that this repeats some work -- some rsd_types were checked in prior steps in the recursion
+		ResidueTypeCOPs rsd_types_filtered = apply_filters_after_patches( rsd_types_new, true /*allow_extra_variants*/ );
+		if ( rsd_types_filtered.size() > 0 ) return rsd_types_filtered;
+	}
+
+	// end of recursion through patches?
+	if ( metapatch_number == residue_type_set_.metapatches().size() ) return rsd_types_new;
+
+	return  apply_metapatches_recursively( rsd_types_new, metapatch_number + 1, get_first_totally_ok_residue_type );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
@@ -419,11 +499,16 @@ bool
 ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 {
 	vector1< std::string> const & patch_variant_types = patch->types();
+
 	for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
 		VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
 
 		for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
 			if ( variants_in_sets_[ k ].has_value( patch_variant ) ) return true;
+		}
+
+		for ( Size k = 1; k <= custom_variants_.size(); k++ ) {
+			if ( custom_variants_[ k ] == patch_variant_types[ n ] ) return true;
 		}
 
 		// following could also be managed by looking to see if patch *virtualizes* a missing atom.
@@ -434,8 +519,6 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 		if ( variant_exceptions_.has_value( patch_variant ) ) return true; // explore all of these 'exceptions' (used for adducts)
 
 	}
-
-
 	return false;
 }
 
@@ -653,7 +736,6 @@ ResidueTypeFinder::filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 		bool found_patch_name( true );
 		for ( Size m = 1; m <= patch_names_.size(); m++ )  {
-			//std::cout << "Filtering " << residue_type_all_patches_name( *rsd_type ) << " by " << patch_names_[ m ] << std::endl;
 			std::string const & patch_name = patch_names_[ m ];
 			if ( residue_type_all_patches_name( *rsd_type ).find( patch_name ) == std::string::npos ) {
 				found_patch_name = false;
@@ -794,16 +876,6 @@ ResidueTypeFinder::variant_exceptions( utility::vector1< std::string > const & s
 	return variant_exceptions( variant_exceptions_list );
 }
 
-/// @brief figure out which variant types are used -- defines a list of 'standards' in 2015 that need to be
-///   supported in aa_map_DO_NOT_USE and name3_map_DO_NOT_USE, but will not be expanded.
-void
-print_variant_types_used() {
-	std::cout << "Following was used to setup src/core/chemical/legacy_types.cc : " << std::endl;
-	for ( std::set< VariantType >::const_iterator it = variant_types_used.begin();
-			it != variant_types_used.end(); it++ ) {
-		std::cout << "variant_types_list_LEGACY.push_back( " <<  ResidueProperties::get_string_from_variant( *it ) <<  " );" << std::endl;
-	}
-}
 
 } //chemical
 } //core

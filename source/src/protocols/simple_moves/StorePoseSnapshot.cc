@@ -131,9 +131,9 @@ void StorePoseSnapshot::parse_my_tag( utility::tag::TagCOP tag,
 
 	set_reference_pose_name( tag->getOption< std::string >( "reference_pose_name", "" ) );
 	if ( TR.visible() ) TR << "Set reference pose name to " << reference_pose_name() << "." << std::endl;
-	
+
 	overwrite_current_refpose_ = tag->getOption("override_current", overwrite_current_refpose_);
-	
+
 	if ( TR.visible() ) TR.flush();
 	return;
 }

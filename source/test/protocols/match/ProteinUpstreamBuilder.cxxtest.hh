@@ -21,6 +21,7 @@
 #include <protocols/match/upstream/UpstreamResTypeGeometry.hh>
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.hh>
 
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
@@ -324,19 +325,20 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
 
 		TS_ASSERT( build_set.restype_geometry().N_atom_id()  == 1 );
 		TS_ASSERT( build_set.restype_geometry().CA_atom_id() == 2 );
@@ -358,19 +360,21 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
+
 		SampleStrategyData strat; strat.set_strategy( rotameric_chi_mimic_EX_flags );
 		strat.set_sample_level( core::pack::task::EX_ONE_STDDEV );
 
@@ -414,19 +418,20 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
 		SampleStrategyData strat; strat.set_strategy( rotameric_chi_mimic_EX_flags );
 		strat.set_sample_level( core::pack::task::EX_ONE_STDDEV );
 
@@ -528,19 +533,20 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
 		SampleStrategyData strat; strat.set_strategy( rotameric_chi_mimic_EX_flags );
 		strat.set_sample_level( core::pack::task::EX_ONE_STDDEV );
 
@@ -615,19 +621,20 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
 		SampleStrategyData strat; strat.set_strategy( rotameric_chi_mimic_EX_flags );
 		strat.set_sample_level( core::pack::task::EX_ONE_STDDEV );
 
@@ -699,19 +706,20 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
 
 		ProteinSCSamplerOP sampler_( new DunbrackSCSampler );
 		ProteinSCSampler::DunbrackRotamerSampleDataVector
@@ -751,19 +759,20 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		/*for ( ResidueTypeCOPs::const_iterator
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
 
 		ProteinSCSamplerOP sampler_( new DunbrackSCSampler );
 		ProteinSCSampler::DunbrackRotamerSampleDataVector
@@ -807,19 +816,21 @@ public:
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
+		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
-
+		build_set.set_residue_type( ResidueTypeFinder( *res2_set ).aa( aa_phe ).variants( trpcage.residue( 2 ).type().variant_types() ).get_representative_type() );
 		/// Find the matching phe residue type for residue 2.
+		/*
 		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
-				build_set.set_residue_type( *aas_iter );
-				break;
-			}
+		aas_iter = aas.begin(),
+		aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+		if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
+		build_set.set_residue_type( *aas_iter );
+		break;
 		}
+		}*/
+
 
 		//ProteinSCSamplerOP sampler_ = new DunbrackSCSampler;
 		//ProteinSCSampler::DunbrackRotamerSampleDataVector

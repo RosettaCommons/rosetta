@@ -58,7 +58,7 @@ add_covalent_linkage(
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1 < core::id::AtomID >
-find_metalbinding_atoms (
+find_metalbinding_atoms(
 	core::pose::Pose const &pose,
 	core::Size const metal_position,
 	core::Real const dist_cutoff_multiplier = DEFAULT_DIST_CUTOFF_MULTIPLIER
@@ -74,30 +74,13 @@ find_metalbinding_atoms (
 /// This function uses core::pose::add_covalent_linkage, which can strip off extraneous hydrogens.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-add_covalent_linkages_to_metal (
+add_covalent_linkages_to_metal(
 	core::pose::Pose &pose,
 	core::Size const metal_position,
 	utility::vector1 < core::id::AtomID > &liganding_atomids,
 	bool const remove_hydrogens = true
 );
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Function to auto-detect and add covalent connections to a particular metal ion.
-/// @details This function calls find_metalbinding_atoms and then passes the list of metal binding atoms to add_covalent_linkages_to_metal.
-/// Inputs:
-///  pose (The pose that we'll operate on, changed by operation)
-///  metal_postion (The residue number of the metal)
-///  dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
-///   remove_hydrogesn (Should hydrogens on the liganding atoms be auto-removed?  Default true.)
-/// @author Vikram K. Mulligan (vmulligan@uw.edu)
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-auto_setup_metal_bonds (
-	core::pose::Pose &pose,
-	core::Size const metal_position,
-	core::Real const dist_cutoff_multiplier = DEFAULT_DIST_CUTOFF_MULTIPLIER,
-	bool const remove_hydrogens = true
-);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function to auto-detect and add covalent connections to all metal ions in a pose.
@@ -127,7 +110,7 @@ auto_setup_all_metal_bonds (
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-auto_setup_all_metal_constraints (
+auto_setup_all_metal_constraints(
 	core::pose::Pose &pose,
 	core::Real const distance_constraint_multiplier,
 	core::Real const angle_constraint_multiplier
@@ -147,7 +130,7 @@ auto_setup_all_metal_constraints (
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-auto_setup_all_metal_constraints (
+auto_setup_all_metal_constraints(
 	core::pose::Pose &pose,
 	core::scoring::ScoreFunctionOP sfxn,
 	core::Real const distance_constraint_multiplier,

@@ -68,7 +68,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing read_ring_sizes_and_morphemes_from_database_file() method." );
 
 		map< core::Size, pair< char, string > > map( read_ring_sizes_and_morphemes_from_database_file(
-				"core/chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+			"core/chemical/carbohydrates/ring_size_to_morphemes.map" ) );
 
 		TS_ASSERT_EQUALS( map.size(), 2 );
 		TS_ASSERT_EQUALS( map[ 3 ].first, '\0' );  // Make sure 'X' was properly converted to a null char.
@@ -81,8 +81,8 @@ public: // Tests //////////////////////////////////////////////////////////////
 				"core/chemical/carbohydrates/ring_size_to_morphemes.bad_map" );
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
-					"rings cannot have less than 3 atoms!\n\n" );
+				"ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
+				"rings cannot have less than 3 atoms!\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 	}
@@ -97,11 +97,11 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing read_nomenclature_table_from_database_file() method." );
 
 		SugarModificationsNomenclatureTable table( read_nomenclature_table_from_database_file(
-				"core/chemical/carbohydrates/nomenclature.table" ) );
+			"core/chemical/carbohydrates/nomenclature.table" ) );
 
 		TS_ASSERT_EQUALS( table.size(), 8 );  // TEMP
 	}
-	
+
 	// Confirm that linkage data tables are loaded correctly from the database.
 	void test_read_linkage_conformers_from_database_file()
 	{
@@ -110,15 +110,15 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::chemical::carbohydrates;
 
 		TS_TRACE( "Testing read_linkage_conformers_from_database_file() method." );
-		
+
 		LinkageConformers linkages( read_linkage_conformers_from_database_file(
-				"core/chemical/carbohydrates/linkage_data_table.tsv" ) );
-		
+			"core/chemical/carbohydrates/linkage_data_table.tsv" ) );
+
 		pair< string, string> key;
 		utility::vector1< LinkageConformerData > conformers;
-		
+
 		TS_ASSERT_EQUALS( linkages.size(), 5 );  // 6 rows in the table, but 2 are for the same pair.
-		
+
 		key = make_pair( "alpha-evilsugar", "->3)-evilsugar" );
 		conformers = linkages[ key ];
 		TS_ASSERT_EQUALS( conformers.size(), 1 );
@@ -128,7 +128,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_sd( psi_dihedral ), 6.6 );
 		TS_ASSERT( ! conformers[ 1 ].has_omega() );
 		TS_ASSERT_EQUALS( conformers[ 1 ].n_omega(), 0 );
-		
+
 		key = make_pair( "beta-evilsugar", "->6)-evilsugar" );
 		conformers = linkages[ key ];
 		TS_ASSERT_EQUALS( conformers.size(), 1 );
@@ -136,7 +136,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( conformers[ 1 ].n_omega(), 1 );
 		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_mean( omega_dihedral ), 66.6 );
 		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_sd( omega_dihedral ), 6.6 );
-		
+
 		key = make_pair( "alpha-goodsugar", "->2)-goodsugar" );
 		conformers = linkages[ key ];
 		TS_ASSERT_EQUALS( conformers.size(), 2 );
@@ -147,7 +147,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT( ! conformers[ 1 ].has_omega() );
 		TS_ASSERT_EQUALS( conformers[ 2 ].n_omega(), 0 );
 		TS_ASSERT_EQUALS( conformers[ 1 ].population + conformers[ 2 ].population, 1.0 );
-		
+
 		key = make_pair( "alpha-saneshortsugar", "->9)-crazylongsugar" );
 		conformers = linkages[ key ];
 		TS_ASSERT_EQUALS( conformers.size(), 1 );

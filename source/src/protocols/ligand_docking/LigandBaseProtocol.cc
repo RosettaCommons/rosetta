@@ -20,6 +20,7 @@
 #include <core/chemical/automorphism.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
@@ -487,7 +488,7 @@ LigandBaseProtocol::make_packer_task(
 		if ( !this_rsd.is_polymer() && ligand_protonation ) {
 			using namespace core::chemical;
 			ResidueTypeSetCOP rsd_type_set = this_rsd.residue_type_set();
-			ResidueTypeCOPs allowed_types = rsd_type_set->name3_map_DO_NOT_USE( this_rsd.name3() ); // a vector1
+			ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_rsd.name3() ).get_all_possible_residue_types(); // a vector1
 			for ( core::Size j = 1; j <= allowed_types.size(); ++j ) {
 				if ( allowed_types[j]->name() == this_rsd.name() ) continue; // already in the task's list
 				pack_task->nonconst_residue_task( i ).allow_noncanonical_aa( allowed_types[j]->name() );

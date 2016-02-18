@@ -39,8 +39,8 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunct
 namespace core {
 namespace scoring {
 namespace carbohydrates {
-	using namespace core::chemical::carbohydrates;
-	
+using namespace core::chemical::carbohydrates;
+
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
@@ -73,10 +73,10 @@ CHIEnergyFunction::operator()( LinkageType type, core::Angle x ) const {
 Real
 CHIEnergyFunction::evaluate_derivative( LinkageType type, core::Angle x ) const
 {
-	if (type == LINKAGE_NA){
+	if ( type == LINKAGE_NA ) {
 		return 0.0;
 	}
-	
+
 	Real derivative( 0.0 );
 	Size const N( a_[ type ].size() );  // == b_[ type ].size() == c_[ type ].size()
 
@@ -117,8 +117,8 @@ CHIEnergyFunction::init()
 		case _2EQ_3AX_4EQ_LINKS :
 			filename = "CHI_energy_function_for_2eq_3ax_4eq_linkages.params";
 			break;
-		
-		// JAB: needed for compiler.
+
+			// JAB: needed for compiler.
 		case LINKAGE_NA :
 			continue;
 		}
@@ -137,10 +137,10 @@ CHIEnergyFunction::init()
 Energy
 CHIEnergyFunction::evaluate_term( LinkageType type, uint i, core::Angle x ) const
 {
-	if (type == LINKAGE_NA){
+	if ( type == LINKAGE_NA ) {
 		return 0.0;
 	}
-	
+
 	return a_[ type ][ i ] * exp( -( pow( x - b_[ type ][ i ], 2 ) / c_[ type ][ i ] ) );
 }
 
@@ -149,10 +149,10 @@ Energy
 CHIEnergyFunction::evaluate_function( LinkageType type, core::Angle x ) const
 {
 
-	if (type == LINKAGE_NA){
+	if ( type == LINKAGE_NA ) {
 		return 0.0;
 	}
-	
+
 	Energy E( 0.0 );
 	Size const N( a_[ type ].size() );  // == b_[ type ].size() == c_[ type ].size()
 
@@ -171,56 +171,55 @@ CHIEnergyFunction::evaluate_function( LinkageType type, core::Angle x ) const
 void
 CHIEnergyFunction::setup_for_sampling( core::Real step_size ){
 	using utility::to_string;
-	
+
 	//Note:
 	// Probability from energy: -ln(p)=E -> p = e^-E
 	// Used to get rotamer probabilities from energy in PyRosetta Toolkit - need to double check this.
 	//
-	
+
 	//Get phi/get psi linkages.
 	TR << "Setting up chi sampling" << std::endl;
-	
+
 	utility::vector1< LinkageType > phi_linkages(2);
 	phi_linkages[ 1 ] = ALPHA_LINKS;
 	phi_linkages[ 2 ] = BETA_LINKS;
-	
+
 	utility::vector1< LinkageType > psi_linkages(2);
 	psi_linkages[ 1 ] = _2AX_3EQ_4AX_LINKS;
 	psi_linkages[ 2 ] = _2EQ_3AX_4EQ_LINKS;
-	
+
 	///Write 2 for loops.  Difference will be -180, 180; 360.
-	for (core::Size i = 1; i <= core::Size(N_LINK_TYPES); ++i){
+	for ( core::Size i = 1; i <= core::Size(N_LINK_TYPES); ++i ) {
 		//TR << "linkage: " << i << std::endl;
 		//std::cout << "Angle,Energy,Probability"<<std::endl;
-		
+
 		LinkageType linkage_type = static_cast<LinkageType>(i);
-		
+
 		CHIDihedralSamplingData sampling_data;
-		
+
 		sampling_data.linkage_type = linkage_type;
 		sampling_data.step_size = step_size;
-		
-		for (Angle dih = -180.0; dih <= 180.0; dih+=step_size){
+
+		for ( Angle dih = -180.0; dih <= 180.0; dih+=step_size ) {
 			Energy e = evaluate_function(linkage_type, dih);
 			Probability prob = std::exp( -e );
-			
+
 			sampling_data.angles.push_back( dih );
 			sampling_data.probabilities.push_back( prob );
 			//std::cout <<dih << "," << e << "," << prob << std::endl;
-			
+
 		}
-		
+
 		dihedral_sampling_data_[ linkage_type ] = sampling_data;
 	}
-	
+
 }
 
 bool
 CHIEnergyFunction::sampling_data_setup() const {
-	if (dihedral_sampling_data_.empty()){
+	if ( dihedral_sampling_data_.empty() ) {
 		return false;
-	}
-	else {
+	} else {
 		return true;
 	}
 }
@@ -229,29 +228,27 @@ bool
 CHIEnergyFunction::sampling_data_setup( LinkageType linkage_type) const {
 	std::map< LinkageType, CHIDihedralSamplingData>::const_iterator const_iter;
 	const_iter = dihedral_sampling_data_.find( linkage_type );
-	
-	
-	if ( const_iter != dihedral_sampling_data_.end() ){
+
+
+	if ( const_iter != dihedral_sampling_data_.end() ) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
-	
+
 }
 
 CHIDihedralSamplingData const &
 CHIEnergyFunction::get_chi_sampling_data(LinkageType linkage_type) const {
 	//Need to go through iterator.  Fuck you C++
-	
+
 	std::map< LinkageType, CHIDihedralSamplingData>::const_iterator const_iter;
 	const_iter = dihedral_sampling_data_.find( linkage_type );
-	
-	
-	if ( const_iter != dihedral_sampling_data_.end() ){
+
+
+	if ( const_iter != dihedral_sampling_data_.end() ) {
 		return const_iter->second;
-	}
-	else {
+	} else {
 		std::string m = "CHISampling Data not found for linkage type "+utility::to_string( linkage_type );
 		utility_exit_with_message( m );
 	}

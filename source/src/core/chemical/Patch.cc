@@ -554,6 +554,16 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 				if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
 					for ( utility::vector1< std::string >::const_iterator iter2=types_.begin(),
 							iter2_end = types_.end(); iter2 != iter2_end; ++iter2 ) {
+						// Custom variant type--must account for.
+						// Issue: this means that variants in Patch files that are misspelled or
+						// something won't be caught--they'll just silently and ineffectually
+						// be added.
+						// AMW: No longer an issue. Check if this Patch is metapatch-derived
+						// if so, enable custom variant types. if not, let it burn!
+						if ( name_.substr( 0, 3 ) == "MP-" ) {
+							// Need custom variant types.
+							patched_rsd_type->enable_custom_variant_types();
+						}
 						patched_rsd_type->add_variant_type( *iter2 );
 					}
 					// AMW: Special case for the D patch. In ONLY THIS CASE,

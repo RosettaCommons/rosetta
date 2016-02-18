@@ -746,7 +746,7 @@ rmsfitca2(
 	//$$$             }
 
 	for ( i = 1; i <= npoints; ++i ) {
-		if(realign) { //Undo the offset:
+		if ( realign ) { //Undo the offset:
 			xx(3,i) += offset_val;
 			yy(3,i) -= offset_val;
 		}

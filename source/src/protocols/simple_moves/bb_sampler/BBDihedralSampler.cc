@@ -21,15 +21,15 @@ namespace protocols {
 namespace simple_moves {
 namespace bb_sampler {
 
-	using core::pose::Pose;
-	using core::Size;
-	using core::Real;
-	
+using core::pose::Pose;
+using core::Size;
+using core::Real;
+
 ////////////////////////////////////////
 BBDihedralSamplerBase::BBDihedralSamplerBase():
 	torsion_type_(core::id::phi_dihedral),
 	sampling_type_(probability)
-	
+
 {
 
 }
@@ -73,7 +73,7 @@ BBDihedralSampler::BBDihedralSampler( core::id::MainchainTorsionType torsion_typ
 {
 
 }
-	
+
 BBDihedralSampler::~BBDihedralSampler(){}
 
 BBDihedralSampler::BBDihedralSampler( BBDihedralSampler const & src ):
@@ -187,7 +187,7 @@ BBDihedralSamplerND::clone() const {
 	return BBDihedralSamplerNDOP(NULL);
 }
 
-	
+
 } //protocols
 } //pose
 } //core

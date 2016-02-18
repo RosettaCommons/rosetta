@@ -882,12 +882,12 @@ ScoringManager::get_CHIEnergyFunction(bool setup_for_sampling /* false */, Real 
 		CHI_energy_function_ =  carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
 
 	}
-	
-	if ( setup_for_sampling && ( ! CHI_energy_function_->sampling_data_setup() ) ){
+
+	if ( setup_for_sampling && ( ! CHI_energy_function_->sampling_data_setup() ) ) {
 		std::cout << "should be setting up for sampling..." << std::endl;
 		CHI_energy_function_->setup_for_sampling( step_size );
 	}
-	
+
 	return *CHI_energy_function_;
 }
 

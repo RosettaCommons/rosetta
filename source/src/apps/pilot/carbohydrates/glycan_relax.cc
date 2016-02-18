@@ -34,7 +34,7 @@ static THREAD_LOCAL basic::Tracer TR("glycan_relax");
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 
 	option.add_relevant( in::file::s );
 	option.add_relevant( in::file::l );
@@ -58,7 +58,7 @@ main( int argc, char * argv [] )
 			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
 		}
 
-		
+
 		protocols::carbohydrates::GlycanRelaxMoverOP mover_protocol( new protocols::carbohydrates::GlycanRelaxMover() );
 
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );

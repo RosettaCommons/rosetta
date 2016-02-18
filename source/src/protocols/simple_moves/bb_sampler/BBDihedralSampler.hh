@@ -47,47 +47,47 @@ enum BBSampleType {
 class BBDihedralSamplerBase : public utility::pointer::ReferenceCount {
 
 public:
-	
+
 	BBDihedralSamplerBase();
 	BBDihedralSamplerBase(core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability);
-	
+
 	BBDihedralSamplerBase(BBDihedralSamplerBase const & src);
 
 	virtual ~BBDihedralSamplerBase();
 
 	BBDihedralSamplerBaseOP
 	clone() const;
-	
-	
+
+
 public:
-	
+
 	///@brief Set the torsion type we will be querying.
 	void
 	set_torsion_type( core::id::MainchainTorsionType torsion_type ) {
 		torsion_type_ = torsion_type;
 	};
-	
+
 	core::id::MainchainTorsionType
 	get_torsion_type( ) const {
 		return torsion_type_;
 	};
-	
+
 	///@brief Set the sampling type.  Default is to sample probabilistically on the data.
 	void
 	set_sample_type(BBSampleType sampling_type) {
 		sampling_type_ = sampling_type;
 	};
-	
+
 	virtual std::string
 	name() const = 0;
-	
-	
+
+
 protected:
-	
+
 	core::id::MainchainTorsionType torsion_type_;
 	BBSampleType sampling_type_;
-	
-	
+
+
 };
 
 
@@ -102,7 +102,7 @@ public:
 
 	BBDihedralSampler();
 	BBDihedralSampler( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
-	
+
 	BBDihedralSampler( BBDihedralSampler const & src );
 
 	virtual ~BBDihedralSampler();
@@ -111,10 +111,10 @@ public:
 	clone() const;
 
 public:
-	
+
 	virtual core::Real
 	get_torsion(core::pose::Pose const & pose, core::Size resnum) const = 0;
-	
+
 	///@brief Set torsions to pose
 	virtual void
 	set_torsion_to_pose(core::pose::Pose & pose, core::Size resnum) const = 0;
@@ -130,34 +130,34 @@ class BBDihedralSampler2D : public BBDihedralSamplerBase {
 public:
 	BBDihedralSampler2D();
 	BBDihedralSampler2D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
-	
+
 	BBDihedralSampler2D(BBDihedralSampler2D const & src);
 
 	virtual ~BBDihedralSampler2D();
 
 	BBDihedralSampler2DOP
 	clone() const;
-	
+
 public:
-	
-	
+
+
 	///@brief Get a torsion angle dependant on another torsion and torsion angle.
 	virtual core::Real
 	get_2d_torsion(core::pose::Pose const & pose, core::Size resnum,
-				   std::pair<core::id::MainchainTorsionType, core::Real > ) const = 0;
-	
+		std::pair<core::id::MainchainTorsionType, core::Real > ) const = 0;
+
 	virtual void
 	set_2D_torsion_to_pose(core::pose::Pose & pose, core::Size resnum,
-						   std::pair<core::id::MainchainTorsionType, core::Real > ) const = 0;
+		std::pair<core::id::MainchainTorsionType, core::Real > ) const = 0;
 
 	std::string name() const {
 		return "BBDihedralSampler2D";
 	};
-	
+
 protected:
 
-	
-	
+
+
 };
 
 
@@ -166,28 +166,28 @@ class BBDihedralSampler3D : public BBDihedralSamplerBase {
 public:
 	BBDihedralSampler3D();
 	BBDihedralSampler3D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
-	
+
 	BBDihedralSampler3D(BBDihedralSampler3D const & src);
 
 	virtual ~BBDihedralSampler3D();
 
 	BBDihedralSampler3DOP
 	clone() const;
-	
+
 public:
-	
+
 	///@brief Get a torsion angle dependant on two other torsions and torsion angles.
 	/// dependendant types and angles are the std::pair.
 	virtual core::Real
 	get_3d_torsion(core::pose::Pose const & pose, core::Size resnum,
-				   std::pair< core::id::MainchainTorsionType, core::Real >,
-				   std::pair< core::id::MainchainTorsionType, core::Real > ) const = 0;
-	
+		std::pair< core::id::MainchainTorsionType, core::Real >,
+		std::pair< core::id::MainchainTorsionType, core::Real > ) const = 0;
+
 	virtual void
 	set_3D_torsion_to_pose(core::pose::Pose & pose, core::Size resnum,
-				   	       std::pair< core::id::MainchainTorsionType, core::Real >,
-						   std::pair< core::id::MainchainTorsionType, core::Real > ) const = 0;
-	
+		std::pair< core::id::MainchainTorsionType, core::Real >,
+		std::pair< core::id::MainchainTorsionType, core::Real > ) const = 0;
+
 	std::string name() const {
 		return "BBDihedralSampler3D";
 	};
@@ -201,20 +201,20 @@ public:
 	BBDihedralSamplerND();
 	BBDihedralSamplerND( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 	BBDihedralSamplerND(BBDihedralSamplerND const & src);
-	
+
 	virtual ~BBDihedralSamplerND();
 
 	BBDihedralSamplerNDOP
 	clone() const;
-	
+
 public:
-	
+
 	///@brief Get a torsion angle dependant on n number of other torsion types and angles.
 	virtual core::Real
 	get_ND_torsion(
 		core::pose::Pose const & pose, core::Size resnum,
 		utility::vector1< std::pair< core::id::MainchainTorsionType, core::Real > >) const = 0;
-	
+
 	virtual void
 	set_ND_torsion_to_pose(
 		core::pose::Pose & pose, core::Size resnum,
@@ -223,7 +223,7 @@ public:
 	std::string name() const {
 		return "BBDihedralSamplerND";
 	};
-	
+
 };
 
 

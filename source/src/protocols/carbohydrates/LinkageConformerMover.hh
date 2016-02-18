@@ -62,28 +62,28 @@ namespace carbohydrates {
 class LinkageConformerMover : public protocols::moves::Mover {
 
 public:
-	
+
 	///@brief Default constructor
 	LinkageConformerMover();
-	
+
 	///@brief Constructor with pair of residues in linkage we will build the conformer for.
 	LinkageConformerMover(core::kinematics::MoveMapCOP movemap);
-	
+
 	// copy constructor
 	LinkageConformerMover( LinkageConformerMover const & src );
 
 	virtual ~LinkageConformerMover();
-	
+
 	///@brief Set the Movemap.  Each apply will randomly sample on the movemap.
 	/// If the conformer is not found, will set move status to false.
 	/// Will optimize the linkage between the residue and the parent residue.
 	void
 	set_movemap( core::kinematics::MoveMapCOP movemap );
-	
+
 	///@brief Set a single resnum to sample on instead of a movemap.
 	void
 	set_single_resnum( core::Size resnum );
-	
+
 	virtual void
 	apply( core::pose::Pose & pose );
 
@@ -95,40 +95,40 @@ public:
 	/// Default FALSE
 	void
 	set_use_sugar_bb_data_if_needed( bool use_sugar_bb);
-	
+
 	///@brief Sample within X standard_deviations of the means when building [non-idealized] conformers
 	void
 	set_x_standard_deviations(core::Real standard_deviations);
-	
+
 	///@brief Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.
 	/// Default FALSE
 	void
 	set_prob_sd_sampling(bool uniform_sd_sample);
-	
+
 	///@brief Idealize the torsion angles instead of sampling from SD.
 	/// Default FALSE
 	void
 	set_idealize_torsions(bool idealize_torsions);
-	
+
 	/// @brief Use conformer population data to weight sampling.  Default TRUE.
 	void
 	set_use_conformer_population_stats( bool const setting )
 	{
 		use_conformer_population_stats_ = setting;
 	}
-	
+
 	///@breif Set everything to default values, including linkage pairs.
 	void
 	set_defaults();
-	
+
 public:
 
 	///@brief Boolean for if the restype-dependant conformer was found at apply. Resets at successive applies.
 	bool
 	conformer_found() const;
-	
 
-	
+
+
 public:
 	virtual void
 	show( std::ostream & output=std::cout ) const;
@@ -154,12 +154,12 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 private:
 	//std::pair< core::Size, core::Size > linkage_pair_; Can't check if this exists.
-	
+
 	utility::vector1< core::Size > movemap_residues_;
-	
+
 	core::Real sample_sd_;
 	bool use_sugar_bb_data_if_needed_;
 	bool idealize_torsions_;
@@ -167,10 +167,10 @@ private:
 	bool use_sd_as_prob_;
 	bool sample_protein_linkage_;
 	bool use_conformer_population_stats_;
-	
+
 	simple_moves::BBDihedralSamplerMoverOP phi_sampler_mover_;
 	simple_moves::BBDihedralSamplerMoverOP psi_sampler_mover_;
-	
+
 	core::kinematics::MoveMapOP movemap_;
 };
 

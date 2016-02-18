@@ -31,6 +31,10 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
+// amw debug
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+
 
 namespace protocols {
 namespace enzdes {

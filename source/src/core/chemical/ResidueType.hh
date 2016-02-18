@@ -447,6 +447,10 @@ public:
 		return;
 	}
 
+	utility::vector1< std::string >
+	get_metal_binding_atoms() const { return metal_binding_atoms_; }
+
+
 	/// @brief Gets disulfide atom name
 	/// @author Andrew M. Watkins (amw579@nyu.edu).
 	std::string

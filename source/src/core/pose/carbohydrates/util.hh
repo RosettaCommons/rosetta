@@ -46,7 +46,7 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 /// @brief  Return pointers to the two residues of the glycosidic bond.
 std::pair< conformation::ResidueCOP, conformation::ResidueCOP >
 get_glycosidic_bond_residues( Pose const & pose,
-		uint const sequence_position );
+	uint const sequence_position );
 
 
 /// @brief  Use a saccharide residue's connections to find its linkage number on the previous residue.
@@ -74,8 +74,8 @@ utility::vector1< id::AtomID > get_reference_atoms_for_2nd_omega( Pose const & p
 
 /// @brief  Return the AtomIDs of the four reference atoms for the requested torsion.
 utility::vector1< id::AtomID > get_reference_atoms( uint const torsion_id,
-		Pose const & pose,
-		uint const sequence_position );
+	Pose const & pose,
+	uint const sequence_position );
 
 
 // Virtual Atom Alignment
@@ -108,10 +108,10 @@ core::Angle get_glycosidic_torsion( uint const torsion_id, Pose const & pose, ui
 // Setters
 /// @brief  Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 void set_glycosidic_torsion(
-		uint const torsion_id,
-		Pose & pose,
-		uint const sequence_position,
-		core::Angle const setting );
+	uint const torsion_id,
+	Pose & pose,
+	uint const sequence_position,
+	core::Angle const setting );
 
 
 // Glycosylation
@@ -120,43 +120,43 @@ void idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added );
 
 /// @brief  Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
 void glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position using an IUPAC sequence.
 void glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & filename,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & filename,
+	bool const idealize_linkages = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position using a .GWS or IUPAC sequence file.
 void glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & filename,
-		bool const idealize_linkages = true );
-	
-	
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & filename,
+	bool const idealize_linkages = true );
+
+
 
 /// @brief  Set the dihedral angles involved in a glycosidic linkage based on statistical data.
 void
 set_dihedrals_from_linkage_conformer_data( Pose & pose,
-		uint const upper_residue,
-		core::chemical::carbohydrates::LinkageConformerData const & conformer,
-		bool idealize = true,
-		bool use_prob_for_sd = false );
+	uint const upper_residue,
+	core::chemical::carbohydrates::LinkageConformerData const & conformer,
+	bool idealize = true,
+	bool use_prob_for_sd = false );
 
 
 /// @brief Get the linkage type for a particular residue.
@@ -164,7 +164,7 @@ set_dihedrals_from_linkage_conformer_data( Pose & pose,
 chemical::carbohydrates::LinkageType
 get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conformation::Residue const & rsd,
 	pose::Pose const & pose);
-	
+
 utility::vector1< chemical::carbohydrates::LinkageType >
 get_linkage_types_for_dihedral( id::MainchainTorsionType torsion );
 
@@ -188,8 +188,8 @@ remove_carbohydrate_branch_point_variants( Pose & pose, conformation::Residue co
 //   If no more carbohydrates exist in the pose, will change the pose status.
 void
 delete_carbohydrate_branch(
-		Pose & pose,
-		uint const delete_to);
+	Pose & pose,
+	uint const delete_to);
 
 
 /// @brief Get residues further down the branch from this residue.  starting_position ->
@@ -199,10 +199,10 @@ delete_carbohydrate_branch(
 
 std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > >
 get_carbohydrate_residues_upstream(
-		Pose const & pose,
-		uint const starting_position);
-	
-	
+	Pose const & pose,
+	uint const starting_position);
+
+
 /// @brief  Recursive function to get branches of a set of residues, etc.
 ///  list_of_residues and tips are arrays are non-const references and modified by this function.
 ///
@@ -215,10 +215,10 @@ get_carbohydrate_residues_upstream(
 ///
 void
 get_branching_residues( Pose const & pose,
-						Size parent_residue,
-						utility::vector1< Size > & children_residues,
-						utility::vector1< Size > & list_of_residues,
-						utility::vector1< Size > & tips );
+	Size parent_residue,
+	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & list_of_residues,
+	utility::vector1< Size > & tips );
 
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
 ///
@@ -231,12 +231,12 @@ get_branching_residues( Pose const & pose,
 ///
 void
 fill_upstream_children_res_and_tips( Pose const & pose,
-							Size res,
-							Size parent_residue,
-							utility::vector1< Size > & children_residues,
-							utility::vector1< Size > & list_of_residues,
-							utility::vector1< Size > & tips );
-	
+	Size res,
+	Size parent_residue,
+	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & list_of_residues,
+	utility::vector1< Size > & tips );
+
 
 /// @brief Get all residue numbers in order from the tip to (and not including) stop_at_residue or a branch point.
 ///  All residue numbers are the tip or a linear polymer of glycans.
@@ -253,8 +253,8 @@ get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue);
 ///  This is being addressed in a branch and a FoldTree.
 void
 delete_leaf( Pose & pose, utility::vector1< Size > leaf, std::string ref_pose_name = "temp_ref_pose" );
-	
-	
+
+
 }  // namespace carbohydrates
 }  // namespace pose
 }  // namespace core

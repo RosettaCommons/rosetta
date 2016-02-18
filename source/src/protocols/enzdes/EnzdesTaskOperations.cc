@@ -446,7 +446,9 @@ DetectProteinLigandInterface::find_design_interface(
 			if ( design_res[i] ) continue; //in case this is already set to design, we don't have to loop over it again
 			if ( interface_target_res.find( i ) != interface_target_res.end() ) continue;
 			core::conformation::Residue const & prot_rsd = pose.residue(i);
+			//tr << "Rsd has " << targ_rsd.nheavyatoms() << " heavy atoms " << std::endl;
 			for ( core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k ) {
+				//tr << "Current heavy is " << targ_rsd.atom_name( k ) << std::endl;
 				core::Vector prot_cb, prot_ca;
 				if ( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
 				if ( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY

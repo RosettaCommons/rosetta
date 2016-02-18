@@ -292,17 +292,6 @@ public:
 	/// @brief the patches, index by name.
 	std::map< std::string, utility::vector1< PatchCOP > > const & patch_map() const { return patch_map_; }
 
-	/// @brief query ResidueTypes by their AA enum type
-	///
-	/// @details similar to name3_map, return all matched residue types
-	/// or an empty list.
-	ResidueTypeCOPs
-	aa_map_DO_NOT_USE( AA const & aa ) const;
-
-	/// @brief query ResidueTypes by their 3-letter name
-	ResidueTypeCOPs
-	name3_map_DO_NOT_USE( std::string const & name ) const;
-
 	MetapatchCOP
 	metapatch( std::string name ) const { return metapatch_map_.find( name )->second; }
 
@@ -327,7 +316,6 @@ private:
 	void
 	generate_all_residue_types();
 
-	// Nonconst only because it can potentially modify patches_ and patch_map_.
 	bool
 	generate_residue_type( std::string const & rsd_name ) const;
 

@@ -56,12 +56,12 @@ class GlycanRelaxMover : public protocols::moves::Mover {
 public:
 
 	GlycanRelaxMover();
-	
+
 	//@brief constructor with arguments
 	GlycanRelaxMover( core::kinematics::MoveMapCOP mm,
-					  core::scoring::ScoreFunctionCOP scorefxn,
-					  core::Size rounds = 50);
-	
+		core::scoring::ScoreFunctionCOP scorefxn,
+		core::Size rounds = 50);
+
 	// copy constructor
 	GlycanRelaxMover( GlycanRelaxMover const & src );
 
@@ -74,24 +74,24 @@ public:
 public:
 
 
-	
+
 	void
 	set_movemap(core::kinematics::MoveMapCOP movemap);
-	
+
 	void
 	set_scorefunction( core::scoring::ScoreFunctionCOP scorefxn);
-	
+
 	///@brief Each round applys a random mover to pose.
 	/// This setting is multiplied by the number of glycan residues in the movemap for the total number of rounds
 	void
 	set_rounds( core::Size rounds);
-	
+
 	void
 	set_kt( core::Real kt);
-	
+
 	void
 	set_defaults();
-	
+
 public:
 	virtual void
 	show( std::ostream & output=std::cout ) const;
@@ -120,13 +120,13 @@ public:
 	clone() const;
 
 private:
-	
+
 	void
 	init_objects( core::pose::Pose const & pose );
-	
+
 	void
 	set_cmd_line_defaults();
-	
+
 	void
 	apply_to_res(
 		core::pose::Pose & pose,
@@ -134,33 +134,33 @@ private:
 		core::kinematics::MoveMapOP mm,
 		core::scoring::ScoreFunctionOP score,
 		core::Size round);
-	
+
 private:
 
 	core::kinematics::MoveMapOP full_movemap_;
 	core::kinematics::MoveMapOP glycan_movemap_;
-	
+
 	moves::MonteCarloOP mc_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	
+
 	LinkageConformerMoverOP linkage_mover_;
 	moves::RandomMoverOP weighted_random_mover_;
 	simple_moves::MinMoverOP min_mover_;
 	core::Size rounds_;
 	core::Real kt_;
-	
+
 	utility::vector1<std::string> accept_log_;
-	
+
 	bool test_;
 	bool final_min_;
 	bool pack_glycans_; //Problem packing glycans for now.
-	
+
 	core::Size total_glycan_residues_;
 	bool pymol_movie_;
-	
+
 	std::string ref_pose_name_;
 	bool use_branches_;
-	
+
 	utility::vector1< std::string > parsed_positions_;
 	utility::vector1< core::Size > positions_;
 };

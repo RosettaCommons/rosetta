@@ -32,8 +32,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBDihedralSamplerM
 
 namespace protocols {
 namespace simple_moves {
-	using namespace protocols::simple_moves::bb_sampler;
-	
+using namespace protocols::simple_moves::bb_sampler;
+
 BBDihedralSamplerMover::BBDihedralSamplerMover():
 	protocols::moves::Mover( "BBDihedralSamplerMover" ),
 	sampler_(/* NULL */)
@@ -83,7 +83,7 @@ BBDihedralSamplerMover::clone() const{
 
 /*
 BBDihedralSamplerMover & BBDihedralSamplerMoveroperator=( BBDihedralSamplerMover const & src){
-	return BBDihedralSamplerMover( src );
+return BBDihedralSamplerMover( src );
 }
 */
 
@@ -115,7 +115,7 @@ void
 BBDihedralSamplerMover::set_movemap( core::kinematics::MoveMapCOP movemap){
 	using namespace core::kinematics;
 	bb_residues_ = get_residues_from_movemap_with_id( core::id::BB, *movemap); //This is done here so we dont have to do this at each apply and waste time.
-	
+
 }
 
 void
@@ -126,32 +126,32 @@ BBDihedralSamplerMover::set_single_resnum( core::Size resnum ){
 
 void
 BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
-	if (! sampler_ ){
+	if ( ! sampler_ ) {
 		utility_exit_with_message(" No Sampler set for BBDihedralSamplerMover!");
 	}
-	
-	if (bb_residues_.size() == 0){
+
+	if ( bb_residues_.size() == 0 ) {
 		TR << "No Movemap Set.  Using all residues." << std::endl;
-		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			bb_residues_.push_back( i );
 		}
 	}
-	
+
 	core::Size index = numeric::random::rg().random_range( 1, bb_residues_.size() );
 	core::Size resnum = bb_residues_[ index ];
-	
+
 	//TR << "Optimizing "<< resnum << " with " << sampler_->name() << " torsion " << core::Size(sampler_->get_torsion_type()) << std::endl;
-	
+
 	try {
 		sampler_->set_torsion_to_pose( pose, resnum );
 		set_last_move_status(protocols::moves::MS_SUCCESS);
-		
+
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		TR.Debug << "Could not set torsion for resnum "<< resnum << std::endl;
 		set_last_move_status(protocols::moves::MS_FAIL);
-		
+
 	}
-  
+
 }
 
 

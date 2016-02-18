@@ -15,7 +15,6 @@
 #include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/legacy_types.hh>
 
 #include <utility/tools/make_vector1.hh>
 
@@ -125,28 +124,6 @@ ResidueTypeSetCache::get_all_types_with_variants_aa( AA aa,
 	}
 	return cached_aa_variants_map_[ query ];
 }
-
-/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches.
-ResidueTypeCOPs
-ResidueTypeSetCache::aa_map_DO_NOT_USE( AA const & aa )
-{
-	if ( aa == aa_unk ) return ResidueTypeCOPs(); // empty
-	if ( aa_map_.find( aa ) == aa_map_.end() ) {
-		aa_map_[ aa ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
-	}
-	return aa_map_[ aa ];
-}
-
-/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches.
-ResidueTypeCOPs
-ResidueTypeSetCache::name3_map_DO_NOT_USE( std::string const & name3 )
-{
-	if ( name3_map_.find( name3 ) == name3_map_.end() ) {
-		name3_map_[ name3 ] = ResidueTypeFinder( rsd_type_set_ ).name3( name3 ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
-	}
-	return name3_map_[ name3 ];
-}
-
 
 
 } //chemical

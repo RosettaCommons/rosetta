@@ -11,6 +11,7 @@
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
@@ -65,10 +66,9 @@ try {
 	TR << "Loading residue type set " << typeset_name << std::endl;
 	core::chemical::ResidueTypeSetCAP rts( core::chemical::ChemicalManager::get_instance()->residue_type_set( typeset_name ) );
 
-  ResidueTypeSelector dna_selector;
-  dna_selector.set_property("DNA").exclude_variants();
-  ResidueTypeCOPs dna_types;
-  rts->select_residues_DO_NOT_USE( dna_selector, dna_types );
+  //ResidueTypeSelector dna_selector;
+  //dna_selector.set_property("DNA").exclude_variants();
+  ResidueTypeCOPs dna_types = core::chemical::ResidueTypeFinder( *rts ).base_property( core::chemical::DNA ).get_possible_base_residue_types();
 
 	TR << "Number of DNA types: " << dna_types.size();
 	for (core::Size j=1; j<=dna_types.size(); ++j ) {
@@ -93,7 +93,7 @@ try {
 //	TR << std::endl;
 
 
-	core::chemical::ResidueTypeCOPs const & all_rsd_types( rts->residue_types_DO_NOT_USE() );
+	core::chemical::ResidueTypeCOPs const & all_rsd_types( core::chemical::ResidueTypeFinder( *rts ).get_all_possible_residue_types() );
 
 	std::set< std::string > name3set;
 	std::set< core::chemical::AA > aaset;

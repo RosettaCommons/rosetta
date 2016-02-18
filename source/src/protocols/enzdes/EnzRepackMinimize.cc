@@ -29,6 +29,9 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+// AMW DEBUG
+#include <core/conformation/Residue.hh>
+
 #include <numeric/random/random.hh>
 
 #include <basic/datacache/DataMap.hh>

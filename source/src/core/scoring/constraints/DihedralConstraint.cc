@@ -125,9 +125,9 @@ DihedralConstraint::p1_cosine_deriv(
 
 	// debugging
 	// translation of p1 in the place spanned by v1 and v2
-	// does not affect the torsion angle
+	// does not affect the torsion Dihedral
 	// ==> rotation of p1 about an axis perpendicular to this plane
-	// also does not change the torsion angle, ie deriv should be 0
+	// also does not change the torsion Dihedral, ie deriv should be 0
 	debug_assert( std::abs( dot( F2, v1 ) ) < 1e-3 );
 	debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
 	debug_assert( std::abs( dot( F1, cross( v1, v2 ) ) ) < 1e-3 );
@@ -172,7 +172,7 @@ DihedralConstraint::p2_cosine_deriv(
 	// x = cos theta =  -----------------
 	//                      n12 * n23
 	//
-	// where theta is our dihedral angle
+	// where theta is our dihedral Dihedral
 
 
 	{ // derivatives of the numerator
@@ -214,7 +214,7 @@ DihedralConstraint::p2_cosine_deriv(
 	}
 
 	// debugging
-	// translation of p2 along v2 does not change the torsion angle
+	// translation of p2 along v2 does not change the torsion Dihedral
 	debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
 
 }
@@ -254,10 +254,10 @@ DihedralConstraint::fill_f1_f2(
 
 	// to avoid problems with dtheta/dx around 0 and 180 degrees
 	// truncate x a bit in the calculation of the derivative
-	static Real const small_angle( radians( Real(0.1) ) );
-	static Real const big_angle( radians( Real(179.9) ) );
-	static Real const max_x( std::cos( small_angle ));
-	static Real const min_x( std::cos( big_angle ));
+	static Real const small_Dihedral( radians( Real(0.1) ) );
+	static Real const big_Dihedral( radians( Real(179.9) ) );
+	static Real const max_x( std::cos( small_Dihedral ));
+	static Real const min_x( std::cos( big_Dihedral ));
 	// dtheta_dx has a value of ~ 572.96 for min_x and max_x
 	// this goes to infinity as x goes to -1 or 1
 
@@ -562,6 +562,14 @@ DihedralConstraint::DihedralConstraint( DihedralConstraint const & src ) :
 	atom4_( src.atom4_ ),
 	func_( src.func_ ? src.func_->clone() : src.func_ )
 {}
+
+/// @brief const access to func
+func::FuncCOP DihedralConstraint::func() const { return func_; }
+
+/// @brief set func
+void DihedralConstraint::set_func( func::FuncOP f ) { func_ = f; }
+
+
 
 } // constraints
 } // scoring

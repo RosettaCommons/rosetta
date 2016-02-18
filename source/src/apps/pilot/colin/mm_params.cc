@@ -21,6 +21,7 @@
 #include <devel/init.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/Atom.hh>
 
 #include <core/kinematics/AtomTree.hh>
@@ -43,7 +44,6 @@
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
@@ -104,9 +104,12 @@ char * argv []
 
 			core::chemical::AA aa = core::chemical::AA( ii );
 			//   TR << *aa_iter << std::endl;
+
+			if ( aa == core::chemical::aa_unk ) continue;
+
 			TR << aa << std::endl;
 
-			core::chemical::ResidueTypeCOPs const & aa_caps( protocols::toolbox::match_enzdes_util::sort_residue_type_pointers_by_name(residue_set->aa_map_DO_NOT_USE(aa)));
+			core::chemical::ResidueTypeCOPs const & aa_caps( protocols::toolbox::match_enzdes_util::sort_residue_type_pointers_by_name( core::chemical::ResidueTypeFinder( *residue_set ).aa( aa ).get_all_possible_residue_types() ) );
 
 			for ( core::chemical::ResidueTypeCOPs::const_iterator residue_iter(aa_caps.begin());
 					residue_iter != aa_caps.end(); ++residue_iter ) {

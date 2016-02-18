@@ -150,6 +150,11 @@ ResidueLevelTask_::ResidueLevelTask_(
 			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
 		}
 
+		// allow metapatched residues to at least repack???
+		//if ( allowed_residue_types_.empty() ) {
+		// allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
+		//}
+
 	} else if ( original_residue.is_DNA() ) {
 
 		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );

@@ -31,8 +31,8 @@ enum MoverStatus {
 	FAIL_DO_NOT_RETRY,
 	FAIL_BAD_INPUT,
 	FAIL,
-	
-	
+
+
 	//Alternative names of enums.
 	MS_FAIL_RETRY = FAIL_RETRY,
 	MS_FAIL_DO_NOT_RETRY = FAIL_DO_NOT_RETRY,

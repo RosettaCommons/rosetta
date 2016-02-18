@@ -101,7 +101,7 @@ DunbrackEnergy::residue_energy(
 	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
 
 	if ( ! rotlib || rsd.has_variant_type( core::chemical::SC_BRANCH_POINT ) ) return;
-	
+
 	dunbrack::RotamerLibraryScratchSpace scratch;
 	emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );
 	emap[ fa_dun_rot ] += scratch.fa_dun_rot();
@@ -136,7 +136,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
 		rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
 	if ( ! rsd.is_protein() || ! rotlib || rsd.has_variant_type( core::chemical::SC_BRANCH_POINT ) )  { return 0.0; }
-	
+
 	dunbrack::RotamerLibraryScratchSpace scratch;
 	rotlib->rotamer_energy_deriv( rsd, scratch );
 	if ( tor_id.type() == id::BB && tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
@@ -181,7 +181,7 @@ DunbrackEnergy::eval_dof_derivative(
 
 	/// ASSUMPTION: Derivatives for amino acids only!
 	if ( ! rotlib || ! pose.residue_type( tor_id.rsd() ).is_protein() || pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::SC_BRANCH_POINT) )  { return 0.0; }
-	
+
 	dunbrack::RotamerLibraryScratchSpace scratch;
 	rotlib->rotamer_energy_deriv( pose.residue( tor_id.rsd() ), scratch );
 

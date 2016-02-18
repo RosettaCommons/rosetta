@@ -19,6 +19,7 @@
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -99,7 +100,9 @@ void OrderedFragSetTest::generate_random_pose() {
 	//create extended pose from sequence
 	for ( Size pos = 1; pos <= sequence.size(); pos++ ) {
 		chemical::AA aa = aa_from_oneletter_code( sequence[ pos-1 ] );
-		ResidueTypeCOPs res_list = residue_set_->name3_map_DO_NOT_USE ( name_from_aa ( aa ) );
+		// Really, this could be changed to get_representative_type
+		// But let's keep the unit test as-is
+		ResidueTypeCOPs res_list = ResidueTypeFinder( *residue_set_ ).name3( name_from_aa ( aa ) ).get_all_possible_residue_types();
 		ResidueOP new_rsd( ResidueFactory::create_residue( * ( res_list[ 1 ] ) ) );
 		pose_random_.append_residue_by_bond( *new_rsd );
 	}

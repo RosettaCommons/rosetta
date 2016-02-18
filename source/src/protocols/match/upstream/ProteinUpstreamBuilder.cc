@@ -55,17 +55,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.match.upstream.ProteinUpstreamB
 /// dummy return value
 BuildSet b;
 
-
-/*enum ChiStrategy {
-rotameric_chi_follow_EX_flags,
-rotameric_chi_mimic_EX_flags,
-rotameric_chi_step_by_value,
-rotameric_chi_step_wi_sd_range,
-rotameric_chi_partition_sd_range,
-nonrotameric_chi_sample_wi_nrchi_bin,
-nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary
-};*/
-
 SampleStrategyData::SampleStrategyData() :
 	strategy_( follow_EX_flags ),
 	sample_level_( core::pack::task::NO_EXTRA_CHI_SAMPLES ),
@@ -189,86 +178,6 @@ SampleStrategyData::n_samples_per_side_of_nrchi_bin() const
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary );
 	return n_samples_per_side_of_nrchi_bin_;
 }
-
-/*UpstreamResTypeGeometry::UpstreamResTypeGeometry() :
-restype_name_( "UNINITIALIZED" )
-{}
-
-UpstreamResTypeGeometry::UpstreamResTypeGeometry( core::chemical::ResidueType const & res ) :
-restype_name_( res.name() )
-{
-initialize_from_residue_type( res );
-}
-
-void
-UpstreamResTypeGeometry::initialize_from_residue_type(
-core::chemical::ResidueType const & res
-)
-{
-if ( restype_name_ != res.name() ) {
-restype_name_ = res.name();
-}
-
-/// 1. Resize arrays that depend on the number of atoms
-Size const n_atoms = res.natoms();
-
-controlling_chi_for_atom_ =  res.last_controlling_chi();
-which_point_for_atom_.resize( n_atoms );
-std::fill( which_point_for_atom_.begin(), which_point_for_atom_.end(), 0 );
-
-/// 2. Resize arrays that depend on the number of chi
-Size const n_chi = res.nchi();
-
-chitip_atoms_.resize( n_chi );
-std::fill( chitip_atoms_.begin(), chitip_atoms_.end(), 0 );
-
-ht_for_chitip_atoms_.resize( n_chi );
-for ( Size ii = 1; ii <= n_chi; ++ii ) ht_for_chitip_atoms_[ ii ].set_identity();
-
-nonchitip_atoms_.resize( res.nchi() );
-for ( Size ii = 1; ii <= n_chi; ++ii ) nonchitip_atoms_[ ii ].clear();
-
-points_for_nonchitip_atoms_.resize( res.nchi() );
-for ( Size ii = 1; ii <= n_chi; ++ii ) points_for_nonchitip_atoms_[ ii ].clear();
-
-if ( nchi() == 0 ) return; // match from gly? can't see why you'd want to!
-
-
-for ( Size ii = 1; ii <= n_chi; ++ii ) {
-assert( res.chi_atoms( ii ).size() == 4 );
-
-Size const
-chiat2( res.chi_atoms( ii )[ 2 ] ),
-chiat3( res.chi_atoms( ii )[ 3 ] ),
-chiat4( res.chi_atoms( ii )[ 4 ] );
-
-chitip_atoms_[ ii ] = chiat4;
-
-
-ht_for_chitip_atoms_[ ii ].set_xaxis_rotation_rad( -1 * res.icoor( chiat4 ).theta() );
-ht_for_chitip_atoms_[ ii ].walk_along_z( res.icoor( chiat4 ).d() );
-
-HTReal chi_tip_frame(
-res.xyz( chiat2 ),
-res.xyz( chiat3 ),
-res.xyz( chiat4 ) );
-
-Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
-
-nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
-points_for_nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
-
-for ( Size jj = 1; jj <= res.atoms_last_controlled_by_chi( ii ).size(); ++jj ) {
-Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
-if ( jjatom == chiat4 ) continue;
-
-Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.xyz( jjatom ) );
-nonchitip_atoms_[ ii ].push_back( jjatom );
-points_for_nonchitip_atoms_[ ii ].push_back( jjloc_in_chitip_frame );
-which_point_for_atom_[ jjatom ] = points_for_nonchitip_atoms_[ ii ].size();
-}
-}
-}*/
 
 
 BuildSet::BuildSet() :
@@ -808,6 +717,7 @@ ProteinUpstreamBuilder::build(
 	Size upstream_state = 1;
 	Size n_possible_hits = 0;
 	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
+
 		using namespace core::pack::dunbrack;
 		using namespace core::pack::rotamers;
 		core::conformation::Residue rescoords( build_sets_[ ii ].restype(), false );

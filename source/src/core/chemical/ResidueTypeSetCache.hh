@@ -75,14 +75,6 @@ public:
 		utility::vector1< std::string > const & variants,
 		utility::vector1< VariantType > const & exceptions );
 
-	/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches. Legacy function.
-	ResidueTypeCOPs
-	aa_map_DO_NOT_USE( AA const & aa );
-
-	/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches. Legacy function.
-	ResidueTypeCOPs
-	name3_map_DO_NOT_USE( std::string const & name );
-
 	void clear_cached_maps();
 
 private:

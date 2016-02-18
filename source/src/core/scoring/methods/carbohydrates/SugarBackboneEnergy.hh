@@ -36,7 +36,7 @@ namespace scoring {
 namespace methods {
 namespace carbohydrates {
 
-		
+
 /// @details  This class makes use of the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab.\n
 /// Carbohydrate phi angles are scored based on whether they are at alpha or beta linkages.\n
 /// Psi angles are scored based on whether they are at ->2-axial, ->3-equatorial, or ->4-axial OR ->2-equatorial,
@@ -82,16 +82,16 @@ public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 		ScoreFunction const & sf,
 		EnergyMap const & weights ) const;
 
-	
+
 private:  // Private methods //////////////////////////////////////////////////
 	virtual core::Size version() const { return 1; }  // initial versioning
-	
+
 private:  // Private Data /////////////////////////////////////////////////////
 	// the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab
 	scoring::carbohydrates::CHIEnergyFunction const & E_;
-	
 
-	
+
+
 };
 
 }  // namespace carbohydrates

@@ -28,6 +28,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 
@@ -81,9 +82,12 @@ public:
 		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
 		orbitals::OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
 
-		ResidueTypeCOPs const & glycines( cm->residue_type_set(tag)->aa_map_DO_NOT_USE( aa_gly ) );
-		assert( glycines.size() > 1 );
-		gly_ = glycines[1];
+		// Really, this could be changed to get_representative_type
+		// But let's keep the unit test as-is
+		//ResidueTypeCOPs const & glycines( ResidueTypeFinder( *( cm->residue_type_set(tag) ) ).aa( aa_gly ).get_all_possible_residue_types() );
+		//assert( glycines.size() > 1 );
+		gly_ = ResidueTypeFinder( *( cm->residue_type_set(tag) ) ).aa( aa_gly ).get_representative_type(); //glycines[1];
+		assert( gly_ != NULL );
 
 		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
 

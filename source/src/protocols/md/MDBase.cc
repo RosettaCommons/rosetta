@@ -54,7 +54,7 @@ MDBase::~MDBase() {}
 
 void
 MDBase::report_as_silent( std::string const filename,
-													bool const scoreonly ) {
+	bool const scoreonly ) {
 
 	TR << "Set reporting at silent " << filename << "." << std::endl;
 	report_as_silent_ = true;
@@ -62,24 +62,24 @@ MDBase::report_as_silent( std::string const filename,
 	trj_score_only_ = scoreonly;
 }
 
-void 
+void
 MDBase::report_silent( pose::Pose &pose,
-											 core::Real rmsd, core::Real gdttm, core::Real gdtha )
+	core::Real rmsd, core::Real gdttm, core::Real gdtha )
 {
 
-  chemical::ResidueTypeSetCAP rsd_set;
-  rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	chemical::ResidueTypeSetCAP rsd_set;
+	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	Size timeid = (Size)( cummulative_time()*1000.0 );
 
 	// pose should contain up-to-date score info
-  io::silent::SilentFileData sfd;
-	io::silent::SilentStructOP ss = 
+	io::silent::SilentFileData sfd;
+	io::silent::SilentStructOP ss =
 		io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
 	std::stringstream tag;
 	tag << "trj_" << timeid;
-	
+
 	scorefxn_->score( pose );
 	ss->energies_from_pose( pose );
 	ss->fill_struct( pose, tag.str() );
@@ -93,14 +93,15 @@ MDBase::report_silent( pose::Pose &pose,
 }
 
 void
-MDBase::set_constraint(	Real const sdev )
+MDBase::set_constraint( Real const sdev )
 {
 	uniform_coord_constrained_ = true;
 	cst_sdev_ = sdev;
 
 	// starting coordinate constraint
-	if ( (*scorefxn_)[ core::scoring::coordinate_constraint ] == 0.0 )
+	if ( (*scorefxn_)[ core::scoring::coordinate_constraint ] == 0.0 ) {
 		scorefxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+	}
 }
 
 void
@@ -114,7 +115,7 @@ MDBase::parse_schfile( std::string const schfile ) {
 	if ( !infile.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening script file '" + schfile + "'" );
 	}
-	while( getline(infile,line) ) {
+	while ( getline(infile,line) ) {
 		filelines.push_back( line );
 	}
 	infile.close();

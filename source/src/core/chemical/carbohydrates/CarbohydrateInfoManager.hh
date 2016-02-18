@@ -77,18 +77,18 @@ public:  // Static constant data access ///////////////////////////////////////
 
 	/// @brief  Get the Cn_BRANCH_POINT VariantType for this atom name, e.g., On.
 	static VariantType branch_variant_type_from_atom_name( std::string const & atom_name );
-	
+
 	/// @brief  Get the Cn_BRANCH_POINT VariantType for this position (n).
 	static VariantType branch_variant_type_from_position( core::uint const position );
 
-	
+
 	/// @brief  Does the linkage between the given pair of monosaccharide residues have statistics in the database?
 	static bool pair_has_linkage_statistics( std::string const & res1, std::string const & res2 );
 
 	/// @brief  Get the "linkage conformer" statistical data from a given pair of monosaccharide residues.
 	static utility::vector1< LinkageConformerData > linkages_from_pair(
-			std::string const & res1, std::string const & res2 );
-	
+		std::string const & res1, std::string const & res2 );
+
 	/// @brief Get a map of short names to the full iupac glycan sequence for common glycosylations.
 	static std::map< std::string, std::string> const & get_short_name_to_iupac_strings_map();
 
@@ -127,7 +127,7 @@ private:  // Private methods //////////////////////////////////////////////////
 
 	// Get a map of linkage conformer statistical data, creating it if necessary.
 	LinkageConformers const & linkage_conformers_map();
-	
+
 
 	// Try various combinations to locate the specific file being requested by the user.
 	// (inspired by core::scoring::ScoreFunction::find_weights_file())
@@ -135,7 +135,7 @@ private:  // Private methods //////////////////////////////////////////////////
 
 	/// @brief Get a map of short names to the full iupac glycan sequence for common glycosylations.
 	std::map< std::string, std::string> const & short_name_to_iupac_strings_map();
-	
+
 private:  // Private data /////////////////////////////////////////////////////
 	std::map< std::string, std::string > code_to_root_map_;
 	std::map< core::Size, std::pair< char, std::string > > ring_size_to_morphemes_map_;
@@ -144,16 +144,16 @@ private:  // Private data /////////////////////////////////////////////////////
 	std::map< std::string, std::string > affix_to_patch_map_;
 	std::map< std::string, core::uint > affix_to_position_map_;
 	std::map< std::string, std::string > short_name_to_iupac_strings_map_;
-	
+
 	// Glycan Relax
 	std::map< std::pair< std::string, std::string >, utility::vector1< LinkageConformerData > >
-	linkage_conformers_map_;
+		linkage_conformers_map_;
 };
 
 
 // Helper function ////////////////////////////////////////////////////////////
 std::pair< std::string, std::string > convert_residue_names_into_linkage_map_key(
-		std::string const & name1, std::string const & name2 );
+	std::string const & name1, std::string const & name2 );
 
 }  // namespace carbohydrates
 }  // namespace chemical

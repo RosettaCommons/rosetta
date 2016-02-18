@@ -107,7 +107,7 @@ public:
 	// constructor
 	/// @brief Constructs a SequenceMover, optionally setting to use mover status.
 	/// seqmover = SequenceMover()
-	
+
 	SequenceMover( bool ms=false );
 
 	/// @brief Convenience constructor: initial sequence of 2 movers
@@ -116,7 +116,7 @@ public:
 	/// Mover    mover1   /first mover to apply with SequenceMover.apply
 	/// Mover    mover2   /second mover to apply with SequenceMover.apply
 	SequenceMover(MoverOP mover1, MoverOP mover2);
-	
+
 	/// @brief Convenience constructor: initial sequence of 3 movers
 	/// seqmover = SequenceMover( mover1 , mover2 , mover3 )
 	///

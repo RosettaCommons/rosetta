@@ -49,8 +49,8 @@ namespace core {
 namespace scoring {
 namespace methods {
 namespace carbohydrates {
-	using core::chemical::carbohydrates::LinkageType;
-	
+using core::chemical::carbohydrates::LinkageType;
+
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
@@ -81,7 +81,7 @@ SugarBackboneEnergy::residue_energy(
 	using namespace chemical::carbohydrates;
 	using namespace scoring::carbohydrates;
 	using namespace pose::carbohydrates;
-	
+
 	// This is a carbohydrate-only scoring method.
 	if ( ! rsd.is_carbohydrate() ) { return; }
 
@@ -104,23 +104,23 @@ SugarBackboneEnergy::residue_energy(
 		// L-Sugars use the mirror image of the score functions.
 		phi = -phi;
 	}
-	
+
 	score += E_( get_linkage_type_for_residue_for_CHI(id::phi_dihedral, rsd, pose), phi ); //Returns 0 if linkage type is LINKAGE_NA
-	
-	
+
+
 	// Calculate psi component.
 	// Convert the psi to between 0 and 360 (because that's what the function expects).
 	conformation::Residue const & prev_rsd( pose.residue( find_seqpos_of_saccharides_parent_residue( rsd ) ) );
-	if (prev_rsd.is_carbohydrate()){
+	if ( prev_rsd.is_carbohydrate() ) {
 		psi = numeric::nonnegative_principal_angle_degrees( psi );
 		if ( prev_rsd.carbohydrate_info()->is_L_sugar() ) {
 			// L-Sugars use the mirror image of the score functions.
 			psi = 360 - psi;
 		}
-	
+
 		score += E_( get_linkage_type_for_residue_for_CHI(id::psi_dihedral, rsd, pose), psi );
 	}
-	
+
 	emap[ sugar_bb ] += score;
 }
 
@@ -213,7 +213,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		if ( ! info->is_pyranose() ) {
 			return deriv;
 		}
-		
+
 		// Third, what is our connecting atom?
 		core::uint connect_atom;
 		if ( torsion_id.type() == BB ) {

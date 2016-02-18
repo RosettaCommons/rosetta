@@ -111,19 +111,19 @@ SequenceMover::SequenceMover( bool ms ) :
 	MoverContainer(),
 	use_mover_status_( ms )
 {}
-	
+
 /// @brief Convenience constructor: initial sequence of 2 movers
 /// seqmover = SequenceMover( mover1 , mover2 )
 ///
 /// Mover    mover1   /first mover to apply with SequenceMover.apply
 /// Mover    mover2   /second mover to apply with SequenceMover.apply
 SequenceMover::SequenceMover(MoverOP mover1, MoverOP mover2) :
-		MoverContainer(),
-		use_mover_status_( false )
-	{
-		add_mover(mover1);
-		add_mover(mover2);
-	}
+	MoverContainer(),
+	use_mover_status_( false )
+{
+	add_mover(mover1);
+	add_mover(mover2);
+}
 
 /// @brief Convenience constructor: initial sequence of 3 movers
 /// seqmover = SequenceMover( mover1 , mover2 , mover3 )
@@ -139,7 +139,7 @@ SequenceMover::SequenceMover(MoverOP mover1, MoverOP mover2, MoverOP mover3) :
 	add_mover(mover2);
 	add_mover(mover3);
 }
-	
+
 SequenceMover::SequenceMover( SequenceMover const & source ) :
 	MoverContainer( source ),
 	use_mover_status_( source.use_mover_status_ )
@@ -173,7 +173,7 @@ void SequenceMover::apply( core::pose::Pose & pose )
 			movers_[i]->apply( pose );
 			MoverStatus ms = movers_[i]->get_last_move_status();
 			set_last_move_status( ms );
-			
+
 			if ( ms == MS_SUCCESS ) {
 				type( type()+movers_[i]->type() );
 				i++;
@@ -241,13 +241,13 @@ void RandomMover::apply( core::pose::Pose & pose )
 		m--;
 		//  TR.Trace << "choose move " << m+1 << " of " << nr_moves() << std::endl;
 		// apply the chosen move
-		
+
 		//Difficult to debug without this:
 		//TR << "Applying " << movers_[m]->get_name() << std::endl;
-		
+
 		movers_[m]->apply( pose );
 		type( type() + movers_[m]->type());
-		
+
 		set_last_move_status( movers_[m]->get_last_move_status() );
 		last_proposal_density_ratio_ = movers_[m]->last_proposal_density_ratio();//ek
 	}
@@ -339,7 +339,7 @@ void CycleMover::apply( core::pose::Pose& pose )
 	next_move_ %= movers_.size();
 	movers_[ next_move_ ]->apply(pose);
 	set_last_move_status( movers_[ next_move_ ]->get_last_move_status() );
-	
+
 	++next_move_;
 }
 

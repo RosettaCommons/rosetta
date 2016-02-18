@@ -398,16 +398,6 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, ii, branch_points_on_this_residue,
 			resid, is_lower_terminus, is_upper_terminus, is_branch_point, is_branch_lower_terminus, is_d_aa, is_l_aa );
 
-		// deprecate this assert after 2015... -- rhiju
-		if ( basic::options::option[ basic::options::OptionKeys::chemical::check_rsd_type_finder ]() ) {
-			ResidueTypeCOP rsd_type_cop_legacy = get_rsd_type_legacy( name3, ii, branch_points_on_this_residue,
-				resid, is_lower_terminus, is_upper_terminus,
-				is_branch_point, is_branch_lower_terminus );
-			if ( rsd_type_cop != rsd_type_cop_legacy  ) {
-				utility_exit_with_message( "Mismatch in assigning rsd_type to PDB: found " + rsd_type_cop->name() + " vs legacy " + rsd_type_cop_legacy->name() );
-			}
-		}
-
 		if ( rsd_type_cop == 0 ) {
 			std::string variant;
 			if ( is_lower_terminus ) {
@@ -697,7 +687,6 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 		}
 	}
-
 }
 
 void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
@@ -1158,179 +1147,6 @@ PoseFromSFRBuilder::get_rsd_type(
 		.disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp )
 		.check_nucleic_acid_virtual_phosphates( true )
 		.get_best_match_residue_type_for_atom_names( xyz_atom_names );
-
-	return rsd_type;
-}
-
-///////////////////////////////////////////////////////////////////////
-/// DEPRECATE after 2015. Replaced with more efficient get_rsd_type(); see above.
-chemical::ResidueTypeCOP
-PoseFromSFRBuilder::get_rsd_type_legacy(
-	std::string const & name3,
-	Size seqpos,
-	utility::vector1< std::string > const &  branch_points_on_this_residue,
-	std::string const & resid,
-	bool const is_lower_terminus,
-	bool const is_upper_terminus,
-	bool const is_branch_point,
-	bool const is_branch_lower_terminus
-)
-{
-	std::map< std::string, Vector > const & xyz( rinfos_[ seqpos ].xyz() );
-
-	typedef std::map< std::string, Vector > ResidueCoords;
-	using namespace core::chemical;
-
-	// This is a problem...
-	ResidueTypeCOPs const & rsd_type_list( residue_type_set_->name3_map_DO_NOT_USE( name3 ) );
-
-	// look for best match:
-	// rsd_type should have all the atoms present in xyz
-	// try to minimize atoms missing from xyz
-	Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
-
-	for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
-		ResidueType const & rsd_type( *(rsd_type_list[j]) );
-		bool const is_polymer( rsd_type.is_polymer() ); // need an example residue type, though this will
-		// remain fixed for all residue_types with the same name3
-
-		// only take the desired variants`
-		bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS_VARIANT ) ||
-			rsd_type.has_variant_type( LOWERTERM_TRUNC_VARIANT );
-		bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS_VARIANT ) ||
-			rsd_type.has_variant_type( UPPERTERM_TRUNC_VARIANT );
-		if ( is_polymer && (
-				(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because of the terminus state" << std::endl;
-				TR.Trace << "PDB has lower " << is_lower_terminus << " and type has " << lower_term_type << std::endl;
-				TR.Trace << "PDB has upper " << is_upper_terminus << " and type has " << upper_term_type << std::endl;
-			}
-			continue;
-		}
-		if ( is_polymer && ( is_branch_point != rsd_type.is_branch_point() ) ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because of the branch state" << std::endl;
-				TR.Trace << "PDB has branch " << is_branch_point << " and type has " << rsd_type.is_branch_point() << std::endl;
-			}
-			continue;
-		}
-		if ( is_polymer && ( is_branch_lower_terminus != rsd_type.is_branch_lower_terminus() ) ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because of the branch lower terminus state" << std::endl;
-				TR.Trace << "PDB has branch " << is_branch_lower_terminus << " and type has " << rsd_type.is_branch_lower_terminus() << std::endl;
-			}
-			continue;
-		}
-		// Okay, this logic is NOT OBVIOUS, so I am going to add my explanation.
-		// We DEFINITELY want to assign a disulfide type from the start if the PDB just up and says CYD. That's great!
-		// But if we DO NOT see CYD, we do not want to assign a disulfide type. We want disulfide connections
-		// to be inferred later on, in conformation's detect_disulfides as called in the pose-building process.
-		// Commenting out this logic causes anything that lacks a HG (i.e. crystal structures) to be assigned as the
-		// disulfide type instead of the CYS type--which MIGHT be right, but might be wrong and leads to wasteful
-		// disulfide reversion.
-		if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && name3 != "CYD" ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because of the disulfide state" << std::endl;
-			}
-			continue;
-		}
-		if ( ( rsd_type.aa() == aa_glu || rsd_type.aa() == aa_asp ) && rsd_type.has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) && !is_branch_lower_terminus ) {
-			// Don't assign sidechain carboxyl conjugation upon read-in unless mentioned in a LINK record!
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because of the sidechain conjugation state" << std::endl;
-			}
-			continue;
-		}
-		if ( ! options_.keep_input_protonation_state() &&
-				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) ) ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because of the protonation state" << std::endl;
-			}
-			continue;
-		}
-
-		// special checks to ensure selecting the proper carbohydrate ResidueType
-		if ( rsd_type.is_carbohydrate() &&
-				chemical::residue_type_base_name( rsd_type ) != sfr_.residue_type_base_names()[ resid ] ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				TR.Trace << "because the residue is not a carbohydrate" << std::endl;
-			}
-			continue;
-		}
-		if ( rsd_type.is_carbohydrate() && rsd_type.is_branch_point() ) {
-			// The below assumes that ResidueTypes with fewer patches are selected 1st, that is, that an
-			// :->2-branch ResidueType will be checked as a possible match before an :->2-branch:->6-branch
-			// ResidueType.  If this were not the case, Rosetta could misassign an :->2-branch:->6-branch
-			// ResidueType to a residue that actually only has a single branch at the 2 or 6 position.
-			//char branch_point;
-			bool branch_point_is_missing( false );
-			Size const n_branch_points( branch_points_on_this_residue.size() );
-			for ( core::uint k( 1 ); k <= n_branch_points; ++k ) {
-				char branch_point = branch_points_on_this_residue[ k ][ 2 ];  // 3rd column (index 2) is the atom number.
-				if ( TR.Debug.visible() ) {
-					TR.Debug << "Checking '" << rsd_type.name() <<
-						"' for branch at position " << branch_point << std::endl;
-				}
-				if ( chemical::residue_type_all_patches_name( rsd_type ).find( std::string( 1, branch_point ) + ")-branch" ) ==
-						std::string::npos ) {
-					branch_point_is_missing = true;
-					break;
-				}
-			}
-			if ( branch_point_is_missing ) {
-				if ( TR.Trace.visible() ) {
-					TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-					TR.Trace << "because of a missing branch point" << std::endl;
-				}
-				continue;
-			}
-		}
-
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "Trying '" << rsd_type.name() << "' ResidueType" << std::endl;
-		}
-
-		Size rsd_missing( 0 ), xyz_missing( 0 );
-
-		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
-			if ( xyz.count( rsd_type.atom_name(k) ) == 0 ) { ++xyz_missing; }
-		}
-
-		for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-			if ( !rsd_type.has( stripped_whitespace(iter->first) ) &&
-					!( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing BB H if Nterm
-				++rsd_missing;
-			}
-		}
-
-		if ( TR.Debug.visible() ) {
-			//   TR.Debug << "Trying '" << rsd_type.name() << "' ResidueType   xyz_missing " << xyz_missing << " rsd_missing " << rsd_missing <<  std::endl;
-		}
-
-		if ( ( rsd_missing < best_rsd_missing ) ||
-				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
-			best_rsd_missing = rsd_missing;
-			best_xyz_missing = xyz_missing;
-			best_index = j;
-		}
-	} // j=1,rsd_type_list.size()
-
-	ResidueTypeCOP rsd_type = rsd_type_list[ best_index ];
-
-	if ( TR.Trace.visible() ) {
-		TR.Trace << "Naive match of " << rsd_type->name() << " with " << best_rsd_missing << " missing and "
-			<< best_xyz_missing << " discarded atoms." << std::endl;
-	}
-
-	if ( best_index == 0 ) return 0;
 
 	return rsd_type;
 }

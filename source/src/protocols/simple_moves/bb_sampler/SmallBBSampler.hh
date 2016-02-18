@@ -38,7 +38,7 @@ class SmallBBSampler : public bb_sampler::BBDihedralSampler {
 public:
 
 	SmallBBSampler();
-	
+
 	SmallBBSampler( core::id::MainchainTorsionType torsion_type);
 	SmallBBSampler( core::id::MainchainTorsionType torsion_type, core::Real all_ss_angle_max);
 
@@ -46,11 +46,11 @@ public:
 
 	core::Real
 	get_torsion( core::pose::Pose const & pose, core::Size resnum ) const;
-	
+
 	void
 	set_torsion_to_pose( core::pose::Pose & pose, core::Size resnum ) const;
-	
-	
+
+
 public:
 
 	/// @brief Sets the maximum angle of perturbation, independent of
@@ -95,20 +95,20 @@ public:
 	///     SmallMover
 	core::Real
 	get_angle_max(char const type) const ;
-	
-	
+
+
 	SmallBBSampler(SmallBBSampler const & src);
 
 	virtual ~SmallBBSampler();
 
 	SmallBBSamplerOP
 	clone() const;
-	
+
 private:
 
 	/// max allowed angle-change as a function of ss type
 	std::map< char, core::Angle > angle_max_;
-	
+
 };
 
 

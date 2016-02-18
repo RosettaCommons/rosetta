@@ -58,7 +58,7 @@ is_atom_axial_or_equatorial_to_ring(
 {
 	using namespace numeric;
 	using namespace numeric::constants::r;
-	
+
 	//JAB - Making the warnings in debug mode as we use this funciton a lot for linkage optimization.
 	if ( ring_atoms.size() < 3 ) {
 		TR.Debug << "A ring cannot contain fewer than 3 atoms; ";

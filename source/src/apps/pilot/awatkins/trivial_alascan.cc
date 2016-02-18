@@ -51,6 +51,7 @@
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueProperties.hh>
 
@@ -153,41 +154,18 @@ mutate_residue_to_ala( Pose & pose, Size i ) {
 	core::chemical::ResidueTypeSetCOP residue_type_set( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 
 	core::conformation::Residue res = pose.residue( i );
-	core::chemical::ResidueTypeCOPs possible_types = residue_type_set->name3_map_DO_NOT_USE( "ALA" );
 	utility::vector1< std::string > variant_types = res.type().properties().get_list_of_variants();
+	core::chemical::ResidueTypeCOP ala_type = chemical::ResidueTypeFinder( *residue_type_set ).name3( "ALA" ).variants( variant_types ).get_representative_type();
 
-	// Run through all possible new residue types.
-	for ( chemical::ResidueTypeCOPs::const_iterator
-			type_iter = possible_types.begin(), type_end = possible_types.end();
-			type_iter != type_end; ++type_iter ) {
-		bool perfect_match( true ); // indicates this type has all the same variant types as the old residue
-
-		//TR << "contemplating " << (*type_iter)->name() << std::endl;
-		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
-			//TR << "checking for variant type " << variant_types[ kk ]<< std::endl;
-			if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
-				perfect_match = false;
-				break;
-			}
-		}
-
-		if ( perfect_match ) { // Do replacement.
-			//TR << (*type_iter)->name() << " success!" << std::endl;
-			ResidueOP new_res = ResidueFactory::create_residue( **type_iter, res, pose.conformation() );
-			core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, pose.conformation() );
-			pose.conformation().replace_residue( i, *new_res, false );
-
-			return;
-		}
-	}
+	ResidueOP new_res = ResidueFactory::create_residue( *ala_type, res, pose.conformation() );
+	core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, pose.conformation() );
+	pose.conformation().replace_residue( i, *new_res, false );
 }
 
 void
 TrivialAlascanMover::apply(
 	core::pose::Pose & pose
-)
-{
-
+) {
 	scoring::ScoreFunctionOP score_fxn = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	score_fxn->set_weight( ref, 0 );

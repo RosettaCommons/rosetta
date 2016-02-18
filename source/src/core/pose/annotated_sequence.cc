@@ -237,11 +237,6 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 					" in sequence "+ sequence_in);
 			}
 
-			// REMOVE AFTER 2015.
-			if ( basic::options::option[ basic::options::OptionKeys::chemical::check_rsd_type_finder ]() ) {
-				debug_assert( rsd_type == get_rsd_type_from_aa_legacy( residue_set,  my_aa, is_lower_terminus, is_upper_terminus ) );
-			}
-
 			// add the ResidueTypeCOP
 			requested_types.push_back( rsd_type );
 		}
@@ -538,8 +533,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 		Residue const & last_residue( pose.residue( pose.total_residue() ) );
 		if ( ! last_residue.is_carbohydrate() ) {
 			tr.Warning << "append_pose_with_glycan_residues( " <<
-					"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
-					"The last residue of <pose> must be a carbohydrate to append." << endl;
+				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
+				"The last residue of <pose> must be a carbohydrate to append." << endl;
 			return;
 		}
 		tr.Debug << "Appending Pose with provided ResidueTypes..." << endl;
@@ -550,8 +545,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
 				branch_points.push_back(
-						//make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
-						make_pair( pose.total_residue(), branch_atom_names[ i ] ) );
+					//make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
+					make_pair( pose.total_residue(), branch_atom_names[ i ] ) );
 			}
 		}
 	}
@@ -568,7 +563,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			string const anchor_atom( branch_points.front().second );
 			string const upper_atom( new_rsd->carbohydrate_info()->anomeric_carbon_name() );
 			tr.Debug << " as branch from " << anchor_atom << " on residue " << anchor_residue <<
-					" to " << upper_atom << "..." << endl;
+				" to " << upper_atom << "..." << endl;
 			pose.append_residue_by_atoms( *new_rsd, true, upper_atom, anchor_residue, anchor_atom, true );
 			branch_points.pop_front();
 		} else {
@@ -758,10 +753,10 @@ void make_pose_from_sequence(
 /// At present time, param files only exist for a limited number of sugars! ~ Labonte
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		chemical::ResidueTypeSet const & residue_set,
-		bool const auto_termini, /*true*/
-		bool const idealize_linkages /*true*/ )
+	std::string const & sequence,
+	chemical::ResidueTypeSet const & residue_set,
+	bool const auto_termini, /*true*/
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace std;
 	using namespace utility;
@@ -780,11 +775,11 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 		*residue_types.front(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	if ( auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_added(
-				*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
+			*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	}
 	if ( ! auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_removed(
-				*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
+			*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
 	}
 
 	// Now we can build the Pose.
@@ -799,7 +794,7 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 		Size const n_glycans_added( residue_types.size() );
 		pose::carbohydrates::idealize_last_n_glycans_in_pose( pose, n_glycans_added );
 	}
-			
+
 	// Finally, set the PDB information.
 	PDBInfoOP info( new PDBInfo( pose ) );
 	info->name( pose.chain_sequence( 1 ) );  // Use the main-chain sequence as the default name.
@@ -814,10 +809,10 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 /// set instead of a ResidueTypeSet object.  A convenience method for PyRosetta.
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		std::string const & type_set_name, /*"fa_standard"*/
-		bool const auto_termini, /*true*/
-		bool const idealize_linkages /*true*/ )
+	std::string const & sequence,
+	std::string const & type_set_name, /*"fa_standard"*/
+	bool const auto_termini, /*true*/
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace chemical;
 
@@ -830,9 +825,9 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 /// @details A convenience method for PyRosetta.
 pose::PoseOP
 pose_from_saccharide_sequence( std::string const & sequence,
-		std::string const & type_set_name /*"fa_standard"*/,
-		bool const auto_termini, /*true*/
-		bool const idealize_linkages /*true*/ )
+	std::string const & type_set_name /*"fa_standard"*/,
+	bool const auto_termini, /*true*/
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace pose;
 
@@ -873,37 +868,6 @@ get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
 		if ( is_upper_terminus ) variants.push_back( UPPER_TERMINUS_VARIANT );
 	}
 	return ResidueTypeFinder( residue_set ).aa( my_aa ).variants( variants ).get_representative_type();
-}
-
-
-// REMOVE THIS FUNCTION AFTER 2015 IF NOT IN USE -- in here for comparisons -- rhiju
-// use aa_map to find list of possible ResidueTypes
-// for non-annotated sequence, assume single chain for now
-chemical::ResidueTypeCOP
-get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
-	chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
-{
-
-	bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
-	// use aa_map to find list of possible chemical::ResidueTypes
-	chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map_DO_NOT_USE( my_aa ) );
-
-	Size best_index = 0;
-	// iterate over rsd_types, pick one.
-	for ( Size j = 1; j <= rsd_type_list.size(); ++j ) {
-		chemical::ResidueType const & rsd_type( *(rsd_type_list[ j ]) );
-
-		bool const is_polymer( rsd_type.is_polymer() );
-		// pick a chemical::ResidueType
-		Size nvariants = rsd_type.properties().get_list_of_variants().size();
-		if ( is_polymer && ( is_terminus && ( nvariants == 0 ) ) ) continue;
-		if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ||
-				is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;
-
-		best_index = j;
-		break;
-	}
-	return rsd_type_list[ best_index ];
 }
 
 } // namespace core

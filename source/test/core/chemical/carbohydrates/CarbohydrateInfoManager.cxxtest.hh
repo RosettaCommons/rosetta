@@ -30,13 +30,13 @@ public:  // Standard methods //////////////////////////////////////////////////
 	void setUp()
 	{
 		core_init_with_additional_options(
-				"-linkage_conformer_data_file core/chemical/carbohydrates/linkage_data_table.tsv" );
+			"-linkage_conformer_data_file core/chemical/carbohydrates/linkage_data_table.tsv" );
 	}
-	
+
 	// Destruction
 	void tearDown()
 	{}
-	
+
 
 public:  // Tests /////////////////////////////////////////////////////////////
 	void test_linkage_conformer_data_access()
@@ -51,9 +51,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( CarbohydrateInfoManager::pair_has_linkage_statistics( "->3)-beta-evilsugar-", "->3)-alpha-evilsugar-" ) );
 		TS_ASSERT( ! CarbohydrateInfoManager::pair_has_linkage_statistics( "->3)-alpha-evilsugar-", "->3)-beta-evilsugar-" ) );
 		TS_ASSERT( ! CarbohydrateInfoManager::pair_has_linkage_statistics( "->X)-alpha-evilsugar-", "->3)-alpha-evilsugar-" ) );
-		
+
 		TS_ASSERT_EQUALS(
-				CarbohydrateInfoManager::linkages_from_pair( "->2)-goodsugar", "alpha-goodsugar" ).size(), 2 );
+			CarbohydrateInfoManager::linkages_from_pair( "->2)-goodsugar", "alpha-goodsugar" ).size(), 2 );
 	}
 
 };  // class CarbohydrateInfoManagerTests

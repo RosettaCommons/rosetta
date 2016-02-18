@@ -32,7 +32,7 @@ enum LinkageType {
 	_2AX_3EQ_4AX_LINKS,  // used to describe ->2-axial, ->3-equatorial, or ->4-axial linkages (psi)
 	_2EQ_3AX_4EQ_LINKS,  // used to describe ->2-equatorial, ->3-axial, or ->4-equatorial linkages (psi)
 	N_LINK_TYPES = _2EQ_3AX_4EQ_LINKS,
-	
+
 	LINKAGE_NA // A Null for searching.
 };
 

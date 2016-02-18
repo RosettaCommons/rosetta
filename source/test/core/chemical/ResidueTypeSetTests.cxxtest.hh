@@ -19,6 +19,7 @@
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
@@ -68,10 +69,6 @@ public:
 		TR << A(width,"ResidueTypeSet") << A(width,"NumCustomResTypes") << endl;
 		TR << A(width, rss) << I(width,rs->custom_residue_types().size()) << endl;
 
-		//rss = CENTROID;
-		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		//TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
-
 		ResidueType const & serine = rs->name_map( "SER" );
 		TS_ASSERT_DELTA(serine.mass(), 87.0900, delta_percent);
 
@@ -82,10 +79,9 @@ public:
 		//get some stuff from the residue type set
 		core::Size n_base_res_types   = rs->base_residue_types().size();
 		core::Size n_custom_res_types = rs->custom_residue_types().size();
-		core::Size n_ser_types = rs->name3_map_DO_NOT_USE( "SER" ).size();
-		core::Size n_gln_types = rs->name3_map_DO_NOT_USE( "GLN" ).size();
-		core::Size n_ser_aa = rs->aa_map_DO_NOT_USE( aa_ser ).size();
-		//ResidueTypeCOP pointer10 = rs->residue_types_DO_NOT_USE()[10];
+		core::Size n_ser_types = ResidueTypeFinder( *rs ).name3( "SER" ).get_all_possible_residue_types().size();
+		core::Size n_gln_types = ResidueTypeFinder( *rs ).name3( "GLN" ).get_all_possible_residue_types().size();
+		core::Size n_ser_aa = ResidueTypeFinder( *rs ).aa( aa_ser ).get_all_possible_residue_types().size();
 
 		//now change the residue type set
 		rs->add_custom_residue_type( modser );
@@ -93,14 +89,10 @@ public:
 		//now make sure everything is as should be
 		TS_ASSERT( n_base_res_types == rs->base_residue_types().size());
 		TS_ASSERT( n_custom_res_types + 1 == rs->custom_residue_types().size());
-		TS_ASSERT( n_ser_types + 1 == rs->name3_map_DO_NOT_USE( "SER" ).size()  );
-		TS_ASSERT( n_gln_types == rs->name3_map_DO_NOT_USE( "GLN" ).size() );
-		TS_ASSERT( n_ser_aa + 1 == rs->aa_map_DO_NOT_USE( aa_ser ).size() );
+		TS_ASSERT( n_ser_types + 1 == ResidueTypeFinder( *rs ).name3( "SER" ).get_all_possible_residue_types().size() );
+		TS_ASSERT( n_gln_types == ResidueTypeFinder( *rs ).name3( "GLN" ).get_all_possible_residue_types().size() );
+		TS_ASSERT( n_ser_aa + 1 == ResidueTypeFinder( *rs ).aa( aa_ser ).get_all_possible_residue_types().size() );
 		TS_ASSERT( rs->has_name("bigser") );
-
-		//ResidueTypeCOP * newpointer10 = &(rs->residue_types_DO_NOT_USE()[10]);
-		//TR << "old pointer addr is " << pointer10 << ", new pointer addr is " << newpointer10 << std::endl;
-		//TS_ASSERT( pointer10 == newpointer10 );
 	}
 
 
@@ -164,6 +156,7 @@ public:
 		TS_ASSERT(rtset->has_name("QC1"));
 		TS_ASSERT(rtset->has_name3("QC1"));
 
+		// Approved use: we're literally testing if this dangerous function works as expected.
 		rtset->remove_base_residue_type_DO_NOT_USE("QC1");
 
 		TS_ASSERT(!rtset->has_name("QC1"));

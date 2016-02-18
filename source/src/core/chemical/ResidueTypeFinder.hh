@@ -178,6 +178,11 @@ private:
 		Size const patch_number,
 		bool const get_first_totally_ok_residue_type = false ) const;
 
+	utility::vector1< ResidueTypeCOP >
+	apply_metapatches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
+		Size const metapatch_number,
+		bool const get_first_totally_ok_residue_type = false ) const;
+
 	ResidueTypeCOPs
 	filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const;
 
@@ -285,12 +290,6 @@ private:
 	bool check_nucleic_acid_virtual_phosphates_; // special case (could be generalized to match virtual atoms to missing atoms)
 
 };
-
-/// @brief figure out which variant types are used -- defines a list of 'standards' in 2015 that need to be
-///   supported in aa_map_DO_NOT_USE and name3_map_DO_NOT_USE, but will not be expanded.
-/// @details OK to remove this after 2015.
-void
-print_variant_types_used();
 
 } //chemical
 } //core

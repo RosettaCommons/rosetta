@@ -1765,7 +1765,7 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 /// @details If a ReferencePoseSet object does not exist, this function will create it.
 void Pose::reference_pose_from_current( std::string const &ref_pose_name, bool override_current ) {
 	if ( !reference_pose_set_ ) reference_pose_set_= core::pose::reference_pose::ReferencePoseSetOP(new core::pose::reference_pose::ReferencePoseSet); //Create a ReferencePoseSet if it doesn't already exist.
-	
+
 	reference_pose_set_->add_and_initialize_reference_pose( ref_pose_name, *this, override_current );
 	return;
 }

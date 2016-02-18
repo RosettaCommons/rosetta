@@ -88,7 +88,6 @@ private:
 
 	std::string resA_basename_, resB_basename_;
 	std::string resA_varname_, resB_varname_;
-	std::string resA_modname_, resB_modname_;
 
 	core::Size resA_seqpos_, resB_seqpos_;
 	core::chemical::ResidueTypeSetCOP restype_set_;

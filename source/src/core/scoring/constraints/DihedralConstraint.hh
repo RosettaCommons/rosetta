@@ -187,6 +187,11 @@ protected:
 	/// of the Func this class contains.
 	DihedralConstraint( DihedralConstraint const & src );
 
+	/// @brief const access to func
+	func::FuncCOP func() const;
+
+	/// @brief set func
+	void set_func( func::FuncOP f );
 
 private:
 	// data

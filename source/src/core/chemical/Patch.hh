@@ -183,6 +183,10 @@ public:
 		return types_;
 	}
 
+	inline void types( utility::vector1< std::string > const & types ) {
+		types_ = types;
+	}
+
 	inline
 	void
 	replaces_residue_type( bool replaces ) { replaces_residue_type_ = replaces; }

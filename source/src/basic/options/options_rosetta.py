@@ -191,6 +191,11 @@ Options = Option_Group( '',
 					"constraints and angle constraints to hold ions in place, on PDB import.  Also, sets the atom_pair_constraint and "
 					"angle_constraint weights in the default score function to 1.0.  False by default.",
 					legal=["true","false"], default="false"),
+                Option( "prevent_auto_setup_metal_bb_variants", "Boolean", desc="When automatically setting up metals, in cases where there is a bond detected "
+					"between a metal and a backbone heavyatom (e.g. a backbone carbonyl oxygen), by default Rosetta will set up bonded variant "
+					"types for the current residue and for all orther residue types with an equivalent backbone heavyatom, to permit mutations.  "
+					"Setting this flag to true prevents this.  False by default.",
+                                        legal=["true","false"], default="false"),
 		Option( "metals_detection_LJ_multiplier", "Real", desc="When -auto_setup_metals is used, overlap between metal atoms and "
 					"metal-binding atoms is used as the criterion by which covalent bonds are detected.  The Lennard-Jones radii of the "
 					"atoms can be multiplied by a constant factor in order to detect longer bonds to metal ions.  Default 1.0.",
@@ -1944,7 +1949,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'set_patch_atomic_charge', 'StringVector', desc="Modify patch atomic charge from the command line. Happens at time of patch file reading, so changes will propagate to patched versions of the residue type.  Uses a simplified version of the residue selector so will probably not work for patches with complex selector logic.   format should be::  -chemical:set_patch_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<patch-name>:<atom1-name>:<new-charge> ... For example: '-chemical:set_atomic_charge fa_standard:PRO:NtermProteinFull:1H:-1' " ),
 		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
 		Option( 'no_hbonds_to_ether_oxygens', 'Boolean', desc="no H-bonds to nucleic acid ether oxygens O3', O4', O5'", default='false'),
-		Option( 'check_rsd_type_finder','Boolean',desc='run legacy code based on name3_map or aa_map to compare to ResidueTypeFinder, which should be way more efficient',default='false'),
 	), #-chemical
 
 	# Coarse options

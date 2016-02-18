@@ -18,6 +18,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
 
@@ -72,8 +73,9 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		chemical::ResidueTypeCOPs::const_iterator const begin = residue_types_->residue_types_DO_NOT_USE().begin();
-		chemical::ResidueTypeCOPs::const_iterator const end = residue_types_->residue_types_DO_NOT_USE().end();
+		chemical::ResidueTypeCOPs types = chemical::ResidueTypeFinder( *residue_types_ ).get_all_possible_residue_types();
+		chemical::ResidueTypeCOPs::const_iterator const begin = types.begin();
+		chemical::ResidueTypeCOPs::const_iterator const end = types.end();
 		core::Size local_scale_factor = 2 * scaleFactor;
 		if( local_scale_factor == 0 ) { local_scale_factor = 1; } // Do at least one repetition, regardless of scaling factor
 		for(core::Size i=0; i < local_scale_factor; i++){

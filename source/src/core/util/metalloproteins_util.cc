@@ -10,6 +10,7 @@
 /// @file   core/pose/metalloproteins/util.cc
 /// @brief  Utilities for working with metalloproteins.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Andy Watkins (amw579@nyu.edu)
 
 
 // Unit header
@@ -23,6 +24,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+// AMW XRW TODO remove dependence on cache
+#include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/PatchOperation.hh>
 #include <core/conformation/Conformation.hh>
@@ -35,11 +38,15 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
+//#include <core/scoring/constraints/AtomPairConstraint.hh>
+//#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
+#include <core/scoring/constraints/NamedAngleConstraint.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -68,213 +75,59 @@ static THREAD_LOCAL basic::Tracer TR( "core.util.metalloproteins_util" );
 // removed from the header file so that it cannot be called directly, only from this file ~Labonte
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief: This is a helper function for the add_covalent_linkage function.
-/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
-/// stolen from Florian's EnzConstraintParameters.cc (colourful comments and all) in protocols/toolbox/match_enzdes_utils, and was
-/// modified to permit deletion of unnecessary protons and to remove EnzDes-specific stuff.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE
-/// LIST, AND IS CURRENTLY NOT THREADSAFE.
-/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
+/// @details:  This is useful for adding covalent linkages between metal-binding
+/// side-chains and metal atoms.  This code was shamelessly stolen from
+/// Florian's EnzConstraintParameters.cc but now does not modify the RTS
+/// and would be threadsafe.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Florian Richter (flosopher@gmail.com)
+/// @author Andy Watkins (andy.watkins2@gmail.com)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 add_covalent_linkage_helper(
 	core::pose::Pose & pose,
-	//EnzCstTemplateResOP template_res,
 	core::Size const res_pos,
 	core::Size const Atpos,
-	numeric::xyzVector < core::Real > const partner_xyz, //Coordinates of the atom to which this will be bonded
-	//core::Real itorsion,
-	//core::Real iangle,
-	//core::Real idis,
-	//std::string & res_varname,
+	numeric::xyzVector< core::Real > const & /*partner_xyz*/, //Coordinates of the atom to which this will be bonded
 	bool const remove_hydrogens
 )
 {
-	using namespace core::chemical;
+	using namespace core;
+	using namespace chemical;
 
-	std::string res_atom = pose.residue(res_pos).atom_name( Atpos /*(template_res->get_template_atoms_at_pos(pose, res_pos) )->atom1_[Atpos].atomno()*/ );
-	core::Size res_atom_parent_index = pose.residue(res_pos).atom_base(Atpos);
-	core::Size res_atom_parent_parent_index = pose.residue(res_pos).atom_base(res_atom_parent_index);
-	//Special cases: Atpos == 1 or Atpos == 2
-	if ( Atpos==1 ) {
-		res_atom_parent_index=2; res_atom_parent_parent_index=3;
-	} else if ( Atpos==2 ) {
-		res_atom_parent_index=1; res_atom_parent_parent_index=3;
-	}
-	std::string res_atom_parent1 = pose.residue(res_pos).atom_name( res_atom_parent_index );
-	std::string res_atom_parent2 = pose.residue(res_pos).atom_name( res_atom_parent_parent_index );
+	conformation::Residue const & res = pose.residue( res_pos );
 
-
-	//Calculate icoor information for the bond.  The connection point should be placed where the other atom goes.
-	numeric::xyzVector < core::Real > Atxyz = pose.residue(res_pos).xyz(Atpos);
-	numeric::xyzVector < core::Real > Atpxyz = pose.residue(res_pos).xyz(res_atom_parent_index);
-	numeric::xyzVector < core::Real > Atppxyz = pose.residue(res_pos).xyz(res_atom_parent_parent_index);
-
-	core::Real idis (Atxyz.distance(partner_xyz)); //The distance to the bonding partner.
-	// Are you sure you have the correct angle here?  ICOORs do not use bond angles; they use 180 - bond angle.  ~Labonte
-	core::Real iangle ( numeric::angle_radians ( partner_xyz, Atxyz, Atpxyz) ); //The bond angle between the bonding atom, this atom, and its parent atom.
-	core::Real itorsion ( numeric::dihedral_radians ( partner_xyz, Atxyz, Atpxyz, Atppxyz) ); //The torsion angle between the bonding atom, this atom, this atom's parent, and this atom's grandparent.
-
+	std::string res_atom = res.atom_name( Atpos );
 	ObjexxFCL::strip_whitespace( res_atom );
-	ObjexxFCL::strip_whitespace( res_atom_parent1 );
-	ObjexxFCL::strip_whitespace( res_atom_parent2 );
 
-	std::string current_residue_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
-	std::string current_residue_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
+	std::string current_residue_type_basename( residue_type_base_name( res.type() ) );
+	std::string current_residue_type_patches_name( residue_type_all_patches_name( res.type() ) );
 
-	std::string res_patchname( res_atom + "_connect" );
-	std::string res_varname( res_atom + "_CONNECT" );
-	{// scope
-		// Find names for the new ResidueType and VariantType that will be added to the existing
-		// residue so that, if the existing residue already has this VariantType, then the
-		// new ResidueType will get one with a new name.
-		core::chemical::ResidueType const & currres( pose.residue_type( res_pos ));
-		Size count=0;
-		while ( true ) {
-			// Isn't this number chemically limited to a single digit?
-			// No single atom can bond to anywhere close to that many other atoms!  ~Labonte
-			if ( count > 9 /*1000*/ ) {
-				utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + currres.name() );
-			}
-			++count;
-			if ( count == 1 ) {
-				if ( ! currres.has_variant_type( res_varname ) ) break;
-			} else {
-				res_patchname = res_atom + "_connect" + utility::to_string( count );
-				res_varname = res_atom + "_CONNECT" + utility::to_string( count );
-				if ( ! currres.has_variant_type( res_varname ) ) break;
-			}
-		}
-	}
-	std::string res_type_mod_name( current_residue_type_basename + res_patchname + current_residue_type_patches_name );
+	std::string res_patchname( "MP-" + res_atom + "-connect" );
+	if ( remove_hydrogens ) { res_patchname += ":MP-" + res_atom + "-pruneH"; }
+	if ( res.type().is_metal() ) { res_patchname = "MP-" + res_atom + "-metal_connect"; }
 
-	//check whether the modified residues have already been created earlier
-	if ( !pose.residue(res_pos).residue_type_set()->has_name(res_type_mod_name) ) {
+	std::string res_type_mod_name( current_residue_type_basename + ':' + res_patchname + current_residue_type_patches_name );
 
-		//holy jesus, we have to change the residue type set.
-		//we not only need to clone, modify and add  the residue type
-		//currently in the pose, but all similar ones (same basename )
-		//in the ResidueTypeSet.
-		//reminds me of open heart surgery...
+	conformation::Residue new_res( res.residue_type_set()->name_map( res_type_mod_name ), true);
 
-		// With the current scheme of SingleLigandRotamerLibrary loading,
-		// we don't need to (necessarily) change the associated rotamer library,
-		// as the copied rotamer library specification will use atom names to build rotamers.
-		// Of course, if any atom name changes, then things may need to change.
+	// Temporarily make a copy of the old residue:
+	conformation::Residue old_res = ( *res.clone() );
 
-		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set()->name() );
-
-		//first get all residue types that correspond to the type in question
-		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map_DO_NOT_USE( pose.residue_type(res_pos).name3() );
-
-		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it ) {
-			std::string const base_name( residue_type_base_name( *(*res_it) ) );
-			//TR << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl; TR.flush(); //DELETE ME
-
-			if ( current_residue_type_basename == base_name ) {
-
-				ResidueTypeOP mod_res;
-				core::Size con_res(0);
-				//TR << " MODIFYING" << std::endl; TR.flush(); //DELETE ME
-				std::string patches_name( residue_type_all_patches_name( *(*res_it) ) );
-				std::string new_name( base_name + res_patchname + patches_name );
-
-				mod_res = (*res_it)->clone();
-				con_res = mod_res->add_residue_connection( res_atom );
-
-				mod_res->name( new_name );
-				debug_assert( ! mod_res->has_variant_type( res_varname ) );
-				mod_res->enable_custom_variant_types();
-				mod_res->add_variant_type( res_varname ); //necessary to restrict the packer to only use this residue variant in packing
-
-				mod_res->set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), itorsion, iangle, idis, res_atom, res_atom_parent1, res_atom_parent2, true );
-
-				// If this is a metal and I have fewer virts attached to the metal than there are connections, add virts.
-				// Tethering the metal requires one virt per connection.
-				if ( mod_res->is_metal() ) {
-					core::Size virtcount = mod_res->n_virtual_atoms();
-					while ( true ) {
-						if ( virtcount >= con_res ) break;
-						virtcount++;
-
-						//Add a virt atom.  First, find a unique name for it:
-						std::string virtname = "";
-						core::Size virtnum = 1;
-						while ( true ) {
-							std::stringstream virtcandidate;
-							virtcandidate << "V" << virtnum;
-							if ( !mod_res->has(virtcandidate.str()) ) {
-								virtname = virtcandidate.str();
-								break;
-							}
-							++virtnum;
-						} //Finding unique name
-
-						//Create a new virt atom, using the unique name found above:
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-						core::chemical::AddAtomWIN32 addvirt(virtname, "VIRT", "VIRT", 0.0);
-#else
-						core::chemical::AddAtom addvirt(virtname, "VIRT", "VIRT", 0.0);
-#endif
-						addvirt.apply( (*mod_res) );
-						mod_res->add_bond(virtname, res_atom);
-						mod_res->set_atom_base(virtname, res_atom);
-						//TR << "Setting metal itorsion=" << itorsion << " iangle=" << iangle << " idis=" << idis << std::endl; TR.flush(); //DELETE ME
-						mod_res->set_icoor( virtname,  itorsion, iangle, idis, res_atom, res_atom_parent1, res_atom_parent2, true ); //Place the virt atop the bonding partner.
-						mod_res->finalize();
-					}
-				}
-
-				if ( remove_hydrogens ) { //If we're stripping off hydrogens, loop through all the hydrogens and remove ONLY the first bonded hydrogen that we encounter.  Adjust charges accordingly.
-					utility::vector1 < core::Size > bonded_indices = mod_res->bonded_neighbor( Atpos );
-					mod_res->finalize(); //Extra finalize needed prior to atom_is_hydrogen() call, below.
-					for ( core::Size ia=1, iamax=bonded_indices.size(); ia<=iamax; ++ia ) {
-						//printf("This atom is bonded to index %lu.\n", bonded_indices[ia]); fflush(stdout); //DELETE ME
-						if ( mod_res->atom_is_hydrogen(bonded_indices[ia]) ) {
-							std::string hname = mod_res->atom_name( bonded_indices[ia] );
-							core::chemical::SetAtomicCharge setatchg( res_atom, (mod_res->atom(res_atom)).charge() - 1.0 + (mod_res->atom(bonded_indices[ia])).charge() ); //Adjust the charge
-							setatchg.apply( (*mod_res) );
-							core::chemical::SetAtomicCharge setatchg2 ( hname, 0.0); //Nullify the charge on the proton
-							setatchg2.apply( (*mod_res) );
-							core::chemical::SetAtomType set_virt1 ( hname, "VIRT");  //Make the proton to delete into a VIRT (probably less likely to break things than outright deleting an atom).
-							core::chemical::SetMMAtomType set_virt2 ( hname, "VIRT");
-							set_virt1.apply( (*mod_res) );
-							set_virt2.apply( (*mod_res) );
-							//mod_res->delete_atom( hname ); //Delete the hydrogen
-							mod_res->finalize();
-							//printf("Deleted a proton.\n"); fflush(stdout); //DELETE ME
-							break; //Just delete one hydrogen!
-						}
-					}
-				}
-
-				//finalize again just to make sure
-				mod_res->nondefault(true);
-				mod_res->base_restype_name( base_name );
-				mod_res->finalize();
-
-				mod_restype_set->add_custom_residue_type( mod_res );
-			}
-		}
-
-	}
-
-	core::conformation::Residue new_res( pose.residue(res_pos).residue_type_set()->name_map(res_type_mod_name), true);
-
-	//Temporarily make a copy of the old residue:
-	core::conformation::Residue old_res = (*pose.residue(res_pos).clone());
-
-	//replacing the residue
-	if ( pose.residue(res_pos).is_metal() ) {
+	// replacing the residue, using first three atoms alone for metals.
+	if ( res.is_metal() ) {
 		utility::vector1< std::pair< std::string, std::string > > atom_pairs;
-		for ( core::Size ia=1; ia<=3; ia++ ) atom_pairs.push_back(std::pair<std::string, std::string>(pose.residue(res_pos).atom_name(ia),new_res.atom_name(ia)) );
-		pose.replace_residue( res_pos, new_res, atom_pairs); //If this is a metal, replace using only the first three atoms for alignment.
+		for ( core::Size ia=1; ia<=3; ia++ ) atom_pairs.push_back(std::pair<std::string, std::string>( res.atom_name(ia),new_res.atom_name(ia)) );
+		pose.replace_residue( res_pos, new_res, atom_pairs);
 	} else {
 		pose.replace_residue( res_pos, new_res, true);
 	}
 
-	//and resetting the xyz positions
-	for ( core::Size at_ct = 1, at_ctmax=pose.residue(res_pos).natoms(); at_ct <= at_ctmax; at_ct++ ) {
-		if ( old_res.has( pose.residue(res_pos).atom_name(at_ct) ) ) {
-			pose.set_xyz( id::AtomID(at_ct, res_pos), old_res.xyz( pose.residue(res_pos).atom_name(at_ct) ) );
+	// and resetting the xyz positions
+	for ( core::Size at_ct = 1, at_ctmax = res.natoms(); at_ct <= at_ctmax; at_ct++ ) {
+		// BOTH residues must have it.
+		if ( old_res.has( res.atom_name(at_ct) ) && new_res.has( res.atom_name( at_ct ) ) ) {
+			pose.set_xyz( id::AtomID(at_ct, res_pos), old_res.xyz( res.atom_name(at_ct) ) );
 		}
 	}
 
@@ -303,31 +156,16 @@ add_covalent_linkage(
 	TR << "Adding covalent linkage between residue " << resA_pos << "'s " << pose.residue(resA_pos).atom_name(resA_At).c_str() <<
 		" atom and residue " << resB_pos << "'s " << pose.residue(resB_pos).atom_name(resB_At).c_str() << " atom." << std::endl;
 
-	//std::string resA_var, resB_var;  // set but unused
+	add_covalent_linkage_helper( pose, resA_pos, resA_At, pose.residue(resB_pos).xyz(resB_At), remove_hydrogens);
+	add_covalent_linkage_helper( pose, resB_pos, resB_At, pose.residue(resA_pos).xyz(resA_At), remove_hydrogens);
 
-	//std::string resA_type_set = pose.residue(resA_pos).residue_type_set().name();
-	//std::string resB_type_set = pose.residue(resB_pos).residue_type_set().name();
-
-	add_covalent_linkage_helper( pose, /*resA_,*/ resA_pos, resA_At, pose.residue(resB_pos).xyz(resB_At),
-		/*core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( resA_type_set ), ntorsionA_, nangleA_, disAB_,*/
-		/*resA_var,*/ remove_hydrogens);
-	add_covalent_linkage_helper( pose, /*resB_,*/ resB_pos, resB_At, pose.residue(resA_pos).xyz(resA_At),
-		/*core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( resB_type_set ), ntorsionB_, nangleB_, disAB_,*/
-		/*resB_var,*/ remove_hydrogens);
-
-	std::string resA_atomname = pose.residue( resA_pos ).atom_name( resA_At /*(resA_->get_template_atoms_at_pos(pose, resA_pos))->atom1_[resA_At].atomno() */);
-	std::string resB_atomname = pose.residue( resB_pos ).atom_name( resB_At /*(resB_->get_template_atoms_at_pos(pose, resB_pos))->atom1_[resB_At].atomno() */);
-
-	//TR.Debug << "Adding chemical bond between " << pose.residue( resA_pos ).name() << " " << (resA_->get_template_atoms_at_pos(pose, resA_pos))->atom1_[resA_At].atomno() <<  " "<< resA_pos << " " << resA_atomname << " and "
-	//     << pose.residue( resB_pos ).name() << " " << resB_pos << " " << (resB_->get_template_atoms_at_pos(pose, resB_pos))->atom1_[resB_At].atomno() << " " << resB_atomname << std::endl;
+	std::string resA_atomname = pose.residue( resA_pos ).atom_name( resA_At );
+	std::string resB_atomname = pose.residue( resB_pos ).atom_name( resB_At );
 
 	pose.conformation().declare_chemical_bond(
 		resA_pos, resA_atomname,
 		resB_pos, resB_atomname
 	);
-
-	//EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
-	//param_cache->covalent_connections_.push_back( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_ ) ); //new
 
 } //add_covalent_linkage
 
@@ -342,49 +180,57 @@ add_covalent_linkage(
 ///  dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1 < core::id::AtomID >
+utility::vector1< core::id::AtomID >
 find_metalbinding_atoms (
 	core::pose::Pose const &pose,
 	core::Size const metal_position,
 	core::Real const dist_cutoff_multiplier
 ) {
-	if ( !pose.residue(metal_position).is_metal() ) {
+	using namespace core;
+
+	if ( !pose.residue( metal_position ).is_metal() ) {
 		std::string message = "Error!  Asked to find metal-binding atoms coordinating something that isn't a metal.";
 		utility_exit_with_message(message);
 	}
 
-	numeric::xyzVector < core::Real > const &metalatomxyz = pose.residue(metal_position).xyz(1); //Atom 1 should be the metal in any metal residue; this gets its xyz position.
+	// Metal residues have a single atom
+	numeric::xyzVector< core::Real > const & metal_xyz = pose.residue( metal_position ).xyz( 1 );
 
-	core::Size const nres = pose.n_residue(); //Number of residues in the pose
+	Size const nres = pose.n_residue();
 
-	if ( (metal_position < 1) || (metal_position > nres) ) {
-		std::string message = "Error!  Asked to find metal-binding atoms coordinating a residue that's not in the pose (metal_position < 1 or > n_residue.";
-		utility_exit_with_message(message);
+	if ( ( metal_position < 1 ) || ( metal_position > nres ) ) {
+		utility_exit_with_message( "Error!  Asked to find metal-binding atoms coordinating a residue that's not in the pose (metal_position < 1 or > n_residue." );
 	}
 
-	utility::vector1 < core::id::AtomID > outputlist; //The list of AtomIDs that we will output.
+	utility::vector1< id::AtomID > coordinating_atoms;
 
-	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues
-		if ( ir==metal_position ) continue; //The metal doesn't bind itself.
-		if ( pose.residue(ir).is_metalbinding() ) { //If this is a metal-binding residue
-			utility::vector1 < core::Size > bindingatomlist;
-			pose.residue(ir).get_metal_binding_atoms( bindingatomlist );
-			if ( bindingatomlist.size()>0 ) {
-				for ( core::Size ia=1, iamax=bindingatomlist.size(); ia<=iamax; ia++ ) { //Loop through all the metal-binding atoms in the residue.
-					numeric::xyzVector < core::Real > bindingatomxyz = pose.residue(ir).xyz(bindingatomlist[ia]);
-					core::Real distsq = metalatomxyz.distance_squared(bindingatomxyz);
-					core::Real distcutoffsq = pow(dist_cutoff_multiplier*(pose.residue(metal_position).atom_type(1).lj_radius()+pose.residue(ir).atom_type(bindingatomlist[ia]).lj_radius()), 2);
-					if ( distsq <= distcutoffsq ) {
-						TR.Debug << "Residue " << ir << " atom " << pose.residue(ir).atom_name( bindingatomlist[ia] ) << " binds the residue " << metal_position << " metal." << std::endl;
-						core::id::AtomID curatom( bindingatomlist[ia], ir);
-						outputlist.push_back(curatom);
-					} //if below distance cutoff
-				}//for loop through all metal-binding atoms
-			}//if bindingatomlist.size()>0
-		}//if is_metalbinding
-	}//for loop through all residues
+	// Loop through all metalbinding residues, skipping the metal itself
+	for ( Size ir = 1; ir <= nres; ++ir ) {
+		if ( ir == metal_position ) continue;
+		if ( ! pose.residue( ir ).is_metalbinding() ) continue;
 
-	return outputlist;
+		utility::vector1< Size > binding_atom_list;
+		pose.residue( ir ).get_metal_binding_atoms( binding_atom_list );
+		if ( binding_atom_list.size() == 0 ) continue;
+
+		for ( Size ia = 1, iamax = binding_atom_list.size(); ia <= iamax; ia++ ) {
+			numeric::xyzVector< Real > binding_atom_xyz = pose.residue( ir ).xyz( binding_atom_list[ ia ] );
+			Real distsq = metal_xyz.distance_squared( binding_atom_xyz );
+			Real metal_rad = pose.residue( metal_position ).atom_type( 1 ).lj_radius();
+			Real lig_rad = pose.residue( ir ).atom_type( binding_atom_list[ ia ] ).lj_radius();
+			Real distcutoffsq = dist_cutoff_multiplier * ( metal_rad + lig_rad )
+				* dist_cutoff_multiplier * ( metal_rad + lig_rad );
+
+			if ( distsq > distcutoffsq ) continue;
+
+			TR.Debug << "Residue " << ir << " atom " << pose.residue( ir ).atom_name( binding_atom_list[ ia ] ) << " binds the residue " << metal_position << " metal." << std::endl;
+			id::AtomID curatom( binding_atom_list[ia], ir);
+			coordinating_atoms.push_back( curatom );
+
+		}
+	}
+
+	return coordinating_atoms;
 
 } //find_metalbinding_atoms
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -403,7 +249,7 @@ void
 add_covalent_linkages_to_metal (
 	core::pose::Pose &pose,
 	core::Size const metal_position,
-	utility::vector1 < core::id::AtomID > &liganding_atomids,
+	utility::vector1< core::id::AtomID > & liganding_atomids,
 	bool const remove_hydrogens
 ) {
 	if ( !pose.residue(metal_position).is_metal() ) {
@@ -411,35 +257,13 @@ add_covalent_linkages_to_metal (
 		utility_exit_with_message(message);
 	}
 
-	for ( core::Size ir=1; ir<=liganding_atomids.size(); ++ir ) {
+	for ( core::Size ir = 1; ir <= liganding_atomids.size(); ++ir ) {
 		add_covalent_linkage( pose, liganding_atomids[ir].rsd(), metal_position, liganding_atomids[ir].atomno(), 1, remove_hydrogens);
 	}
 
 	return;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Function to auto-detect and add covalent connections to metal ions.
-/// @details This function calls find_metalbinding_atoms and then passes the list of metal binding atoms to add_covalent_linkages_to_metal.
-/// Inputs:
-///  pose (The pose that we'll operate on, unchanged by operation)
-///  metal_postion (The residue number of the metal)
-///  dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
-///   remove_hydrogesn (Should hydrogens on the liganding atoms be auto-removed?  Default true.)
-/// @author Vikram K. Mulligan (vmulligan@uw.edu)
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-auto_setup_metal_bonds (
-	core::pose::Pose &pose,
-	core::Size const metal_position,
-	core::Real const dist_cutoff_multiplier,
-	bool const remove_hydrogens
-) {
-	utility::vector1 < core::id::AtomID > metalbinding_atomids = find_metalbinding_atoms(pose, metal_position, dist_cutoff_multiplier);
-	add_covalent_linkages_to_metal (pose, metal_position, metalbinding_atomids, remove_hydrogens);
-
-	return;
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function to auto-detect and add covalent connections to ALL metal ions in a pose.
@@ -451,7 +275,7 @@ auto_setup_metal_bonds (
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-auto_setup_all_metal_bonds (
+auto_setup_all_metal_bonds(
 	core::pose::Pose &pose,
 	core::Real const dist_cutoff_multiplier,
 	bool const remove_hydrogens
@@ -462,7 +286,10 @@ auto_setup_all_metal_bonds (
 	core::Size nres = pose.n_residue(); //Residue count
 	if ( nres > 0 ) {
 		for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues.
-			if ( pose.residue(ir).is_metal() ) auto_setup_metal_bonds (pose, ir, dist_cutoff_multiplier, remove_hydrogens); //If this is a metal, detect bonding atoms and add covalent connections to them.
+			if ( pose.residue(ir).is_metal() ) {
+				utility::vector1< core::id::AtomID > metalbinding_atomids = find_metalbinding_atoms( pose, ir, dist_cutoff_multiplier );
+				add_covalent_linkages_to_metal( pose, ir, metalbinding_atomids, remove_hydrogens);
+			}
 		}
 	}
 
@@ -470,78 +297,96 @@ auto_setup_all_metal_bonds (
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Function to set up distance and angle constraints between metals and the residues that bind them.
-/// @details This function constrains the distances to be whatever they are in the input pose.  This version
-/// does not set the weights for the constraints terms in the scorefunction.
+/// @brief Function to set up distance and angle constraints between metals and
+/// the residues that bind them.
+/// @details This function constrains the distances to be whatever they are in
+/// the input pose.  This version does not set the weights for the constraints
+/// terms in the scorefunction.
 /// Inputs:
 ///  pose (The pose that we'll operate on, changed by operation)
-///   distance_constraint_multiplier (A float for the strength of the metal - binding atom distance constraint.  A value of 2.0 doubles
-///   it, for example.)
-///   angle_constraint_multiplier (A float for the strength of the metal - binding atom - binding atom parent angle constraint.)
+///  distance_constraint_multiplier (A float for the strength of the metal - binding atom distance constraint.  A value of 2.0 doubles it, for example.)
+///  angle_constraint_multiplier (A float for the strength of the metal - binding atom - binding atom parent angle constraint.)
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-auto_setup_all_metal_constraints (
+auto_setup_all_metal_constraints(
 	core::pose::Pose &pose,
 	core::Real const distance_constraint_multiplier,
 	core::Real const angle_constraint_multiplier
 	//core::scoring::ScoreFunctionOP sfxn
 ) {
-	using namespace core::scoring;
-	using namespace core::scoring::func;
-	using namespace core::scoring::constraints;
-	using namespace core::id;
+	using namespace core;
+	using namespace scoring;
+	using namespace scoring::func;
+	using namespace scoring::constraints;
+	using namespace id;
 
 	TR << "Automatically setting up constraints between metal ions and metal-binding residues." << std::endl ;
 
-	core::Size const nres = pose.n_residue();
+	Size const nres = pose.n_residue();
 
-	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues
-		if ( pose.residue(ir).is_metal() ) { //When we find a metal, check what it's bound to and set up distance constraints accordingly.
-			core::Size const n_resconn = pose.residue(ir).n_possible_residue_connections(); //Number of residue connections
+	for ( Size ir = 1; ir <= nres; ++ir ) {
+		conformation::Residue const & ir_res = pose.residue( ir );
+		if ( ! ir_res.is_metal() ) continue;
+		Size const ir_nconn = ir_res.n_possible_residue_connections();
 
-			//Make a vector of indices of virtual atoms in this residue:
-			utility::vector1 < core::Size > virtindices;
-			for ( core::Size ia=1, ia_max=pose.residue(ir).natoms(); ia<=ia_max; ++ia ) {
-				if ( pose.residue(ir).is_virtual(ia) ) virtindices.push_back(ia);
+		// Make a vector of indices of virtual atoms in this residue:
+		//utility::vector1< Size > ir_virts;
+		utility::vector1< std::string > ir_virts;
+		for ( Size ia = 1, ia_max = ir_res.natoms(); ia <= ia_max; ++ia ) {
+			if ( ir_res.is_virtual( ia ) ) ir_virts.push_back( ir_res.atom_name( ia ) );
+		}
+
+		// We must have at least as many virt atoms as connections
+		if ( ir_nconn > ir_virts.size() ) {
+			std::string message = "Error!  The number of connections to a metal is greater than the number of virtual atoms in that metal's residuetype.  Unable to continue.";
+			utility_exit_with_message(message);
+		}
+
+		// Constrain all the metal's residue connections
+		// Note: since allowing design we must use Named*Constraints
+		// because atom indices may change.
+		for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
+			chemical::ResConnID const & jr_conn = ir_res.connect_map( jr );
+			Size const conn_res = jr_conn.resid();
+			conformation::Residue const & jr_res = pose.residue( conn_res );
+			Size const conn_res_conid = jr_conn.connid(); //The other residue's connection id for the bond to the metal.
+			Size const conn_res_atomno = jr_res.residue_connection(conn_res_conid).atomno(); //The atom index of the atom to which this metal is bonded.
+			std::string const conn_res_atom = jr_res.atom_name( conn_res_atomno ); //The atom index of the atom to which this metal is bonded.
+			std::string const conn_res_atom_parent = jr_res.atom_name( jr_res.type().atom_base( conn_res_atomno ) ); //The atom index of the parent of the atom to which this metal is bonded in the other residue.
+
+			// Note: assumes that metal residue types have the first atom as the metal.
+			NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
+			NamedAtomID virtID(ir_virts[jr], ir);
+			NamedAtomID otherID(conn_res_atom, conn_res);
+			NamedAtomID otherparentID(conn_res_atom_parent, conn_res);
+
+			/*
+			AtomID metalID(1, ir);
+			AtomID virtID(ir_virts[jr], ir);
+			AtomID otherID(conn_res_atom, conn_res);
+			AtomID otherparentID(conn_res_atom_parent, conn_res);
+			*/
+
+			pose.set_xyz(virtID, pose.xyz(otherID)); //Move this residue's virt to the other residue's metal-binding atom position.
+
+			//Setting up distance constraints:
+			if ( distance_constraint_multiplier > 1.0e-10 ) {
+				HarmonicFuncOP hfunc( new HarmonicFunc( 0.0, 0.1 / sqrt(distance_constraint_multiplier)) ); //Harmonic function for constraining the position.
+				NamedAtomPairConstraintOP pairconst( new NamedAtomPairConstraint(virtID, otherID, hfunc) ); //Atom pair constraint holding the virt at the position of the metal-binding atom.
+				pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
 			}
 
-			for ( core::Size jr=1; jr<=n_resconn; ++jr ) { //Loop through all of the metal's residue connections
-				if ( jr > virtindices.size() ) { //We'll use virtual atoms for the constraints.  This means that if we have more connections than virtual residues, we can't do this.
-					std::string message = "Error!  The number of connections to a metal is greater than the number of virtual atoms in that metal's residuetype.  Unable to continue.";
-					utility_exit_with_message(message);
-				}
+			//Setting up angle constraints:
+			if ( angle_constraint_multiplier > 1.0e-10 ) {
+				core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
+				CircularHarmonicFuncOP circfunc1( new CircularHarmonicFunc( ang1, 0.05/sqrt(angle_constraint_multiplier) ) ); //Circular harmonic function for constraining angles (works in RADIANS).
+				NamedAngleConstraintOP angleconst1( new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1 ) ); //Angle constraint holding the metal
+				pose.add_constraint(angleconst1);
+			}
 
-				core::chemical::ResConnID const & curconnection = pose.residue(ir).connect_map(jr); //The current residue connection
-				core::Size const otherres = curconnection.resid(); //The other residue to which this one is connected
-				core::Size const otherres_conid = curconnection.connid(); //The other residue's connection id for the bond to the metal.
-				core::Size const otherres_atom = pose.residue(otherres).residue_connection(otherres_conid).atomno(); //The atom index of the atom to which this metal is bonded.
-				core::Size const otherres_atom_parent = pose.residue(otherres).type().atom_base(otherres_atom); //The atom index of the parent of the atom to which this metal is bonded in the other residue.
+		} //Loop through all of the metal's connections
 
-				AtomID metalID(1, ir);
-				AtomID virtID(virtindices[jr], ir);
-				AtomID otherID(otherres_atom, otherres);
-				AtomID otherparentID(otherres_atom_parent, otherres);
-
-				pose.set_xyz(virtID, pose.xyz(otherID)); //Move this residue's virt to the other residue's metal-binding atom position.
-
-				//Setting up distance constraints:
-				if ( distance_constraint_multiplier > 1.0e-10 ) {
-					HarmonicFuncOP hfunc( new HarmonicFunc( 0.0, 0.1 / sqrt(distance_constraint_multiplier)) ); //Harmonic function for constraining the position.
-					AtomPairConstraintOP pairconst( new AtomPairConstraint(virtID, otherID, hfunc) ); //Atom pair constraint holding the virt at the position of the metal-binding atom.
-					pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
-				}
-
-				//Setting up angle constraints:
-				if ( angle_constraint_multiplier > 1.0e-10 ) {
-					core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(otherres).xyz(otherres_atom),  pose.residue(otherres).xyz(otherres_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
-					CircularHarmonicFuncOP circfunc1( new CircularHarmonicFunc( ang1, 0.05/sqrt(angle_constraint_multiplier) ) ); //Circular harmonic function for constraining angles (works in RADIANS).
-					AngleConstraintOP angleconst1( new AngleConstraint( metalID, otherID, otherparentID, circfunc1 ) ); //Angle constraint holding the metal
-					pose.add_constraint(angleconst1);
-				}
-
-			} //Loop through all of the metal's connections
-		} //If this is a metal
 	} //Loop through all residues
 
 	return;
@@ -561,7 +406,7 @@ auto_setup_all_metal_constraints (
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-auto_setup_all_metal_constraints (
+auto_setup_all_metal_constraints(
 	core::pose::Pose &pose,
 	core::scoring::ScoreFunctionOP sfxn,
 	core::Real const distance_constraint_multiplier,
@@ -583,7 +428,7 @@ auto_setup_all_metal_constraints (
 		angmult = 1.0 / sfxn->get_weight(angle_constraint); //Note -- we will take the square root of this later on.
 	}
 
-	auto_setup_all_metal_constraints ( pose, distmult*distance_constraint_multiplier, angmult*angle_constraint_multiplier );
+	auto_setup_all_metal_constraints( pose, distmult*distance_constraint_multiplier, angmult*angle_constraint_multiplier );
 
 	return;
 }

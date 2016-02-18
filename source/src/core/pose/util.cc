@@ -3287,30 +3287,30 @@ return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd()
 
 void
 set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core::Angle new_angle){
-	
-	if (pose.residue( sequence_position).is_carbohydrate()){
+
+	if ( pose.residue( sequence_position).is_carbohydrate() ) {
 		carbohydrates::set_glycosidic_torsion( torsion_id, pose, sequence_position, new_angle);
 		return;
 	}
-	
+
 	id::MainchainTorsionType torsion_type = static_cast< id::MainchainTorsionType >(torsion_id);
-	
+
 	switch (torsion_type) {
-	
-	case id::phi_dihedral:
+
+	case id::phi_dihedral :
 		pose.set_phi( sequence_position, new_angle );
-    	break;
-		
-	case id::psi_dihedral:
+		break;
+
+	case id::psi_dihedral :
 		pose.set_psi( sequence_position, new_angle );
 		break;
-		
-	case id::omega_dihedral:
+
+	case id::omega_dihedral :
 		pose.set_omega( sequence_position, new_angle );
 		break;
 	}
 
- 
+
 }
 
 core::Angle
@@ -3319,16 +3319,16 @@ get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position
 	if ( pose.residue( sequence_position ).is_carbohydrate() ) {
 		return carbohydrates::get_glycosidic_torsion( torsion_id, pose, sequence_position );
 	}
-	
+
 	id::MainchainTorsionType torsion_type = static_cast< id::MainchainTorsionType >( torsion_id );
-	
+
 	switch ( torsion_type ) {
-		case id::phi_dihedral:
-			return pose.phi( sequence_position );
-		case id::psi_dihedral:
-			return pose.psi( sequence_position );
-		case id::omega_dihedral:
-			return pose.omega( sequence_position );
+	case id::phi_dihedral :
+		return pose.phi( sequence_position );
+	case id::psi_dihedral :
+		return pose.psi( sequence_position );
+	case id::omega_dihedral :
+		return pose.omega( sequence_position );
 	}
 	return 0.0;  // Code cannot reach here.
 }

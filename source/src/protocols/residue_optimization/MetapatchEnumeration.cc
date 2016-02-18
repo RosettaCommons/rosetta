@@ -120,10 +120,6 @@ namespace residue_optimization {
 /// OPPORTUNITIES FOR IMPROVEMENT
 // You should be able to pass this guy a mover or entire protocol with which to do your pre/post sampling
 // MPI?
-// I feel like there should be a way to set a separate threshold past which you do not try a modification again.
-// that is, if it fails as a single mutant SO BAD, a double mutant is unlikely to rescue it.
-// Let's call it a taboo list and it's a vector of strings of patch names and you check against it
-// so taboo list, taboo threshold
 
 bool
 MetapatchEnumeration::tabooed(

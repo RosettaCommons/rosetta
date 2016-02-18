@@ -15,7 +15,7 @@
 
 // Unit headers
 #include <core/chemical/Metapatch.fwd.hh>
-#include <core/chemical/Patch.fwd.hh>
+#include <core/chemical/Patch.hh>
 
 // Package headers
 #include <core/chemical/ResidueTypeSelector.hh>
@@ -32,6 +32,9 @@ namespace chemical {
 /// @brief A class patching basic ResidueType to create variant types, containing multiple PatchCase
 class Metapatch : public utility::pointer::ReferenceCount {
 public:
+
+	Metapatch();
+
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Metapatch();
 	/// @brief constructor from file
@@ -46,19 +49,14 @@ public:
 		return selector_[ rsd ];
 	}
 
-	/// @brief returns patched residue, 0 if patch failed
-	utility::vector1< PatchOP >
-	generate_patches( ResidueType const & rsd_type ) const;
-
-	PatchOP
-	get_one_patch( ResidueType const & rsd_type, std::string const & atom_name ) const;
+	PatchCOP
+	get_one_patch( /*ResidueType const & rsd_type, */std::string const & atom_name ) const;
 
 	inline
 	bool
 	meets_requirements( ResidueType const & r, Size i ) const {
-		// Eventually let every metapatch define its own requirements...
-		//return ( r.atom_type(i).is_aromatic() /*&& r.number_bonded_hydrogens( i ) >= 1*/ );
-		return ( r.atom(i).has_property( pertinent_property_ ) /*&& r.number_bonded_hydrogens( i ) >= 1*/ );
+		if ( pertinent_property_ == NO_ATOM_PROPERTY ) return true;
+		return ( r.atom(i).has_property( pertinent_property_ ) );
 	}
 
 	/// @brief unique name of this patch, eg Nter-simple, Cter-full, Phospho, ... ?
