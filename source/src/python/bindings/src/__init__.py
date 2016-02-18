@@ -291,7 +291,7 @@ _ROSETTA_DATABASE_PATH_ = None
 def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
 
 # rosetta.init()
-def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, notebook=False):
+def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, notebook=os.getenv('JPY_PARENT_PID')):
     import rosetta
 
     """Initialize Rosetta.  Includes core data and global options.
