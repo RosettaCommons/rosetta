@@ -24,15 +24,19 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/file/FileName.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <core/chemical/ChemicalManager.hh> // for ncaa handling
 
 #include <protocols/forge/remodel/RemodelData.hh>
-
+//#include <protocols/sparta/PDB.hh>
+#include <core/pose/PDBInfo.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 // C++ Headers
@@ -42,6 +46,7 @@
 
 static THREAD_LOCAL basic::Tracer TR_REMODEL( "protocols.forge.remodel.RemodelData" );
 
+using namespace basic::options::OptionKeys;
 using namespace basic::options;
 using namespace core;
 
@@ -217,13 +222,52 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 				design_info = true;
 			}
 
-			// for the output resfile, chain is defined by command-line option. no chain by default.
+
 			if ( design_info ) {
 				if ( option[OptionKeys::run::chain].user() ) {
 					std::string const chain(option[OptionKeys::run::chain] );
 					oss << line.index << " " << chain << " " ;
+					TR_REMODEL << "Do remodeling on chain " << chain << std::endl;
 				} else {
+					
+					/* JAB - can't rely on using a single PDB file. It might be CIF/etc, so for now, we can't use this logic!
+					
+					// For the output resfile, 'chain' is defined as the the first chain in the input pdb!
+					// If a list is used, we assume that all files in that list have the same amount and lengthes of chains.
+					// This is because otherwise the blueprint file wouldn't be universal for all those files.
+					// So, for now we take the chain ID of the first chain in the first structur ein the list
+					// If this turns out to be not flexible enough, one would need to get the current pose from the
+					// job distributer. [Sebastian Rämisch and Jared Adolf-Bryfogle, Jan 2016.]
+					
+					// Take the first chain in the input pdb file
+					core::pose::Pose inputPose;
+					std::string input_pdb;
+					if ( option[OptionKeys::in::file::s].user()  )
+						input_pdb = option[ in::file::s ]()[1];
+					if ( option[OptionKeys::in::file::l].user()  ) {
+						utility::vector1<utility::file::FileName> list(basic::options::option[ in::file::l ]() );
+						utility::vector1<std::string> files;
+						for ( unsigned int h=1; h<=list.size(); h++ ) {
+							utility::io::izstream pdbs(list[h]);
+							std::string fname;
+								while ( pdbs >> fname ) {
+									files.push_back(fname);
+								}
+						}
+						input_pdb = files[1];
+					}
+					import_pose::pose_from_pdb( inputPose, input_pdb );
+					char chain(inputPose.pdb_info()->chain(1));
+					oss << line.index << " " << chain << " " ;
+					TR_REMODEL << "-run::chain not found. No chain specified." << std::endl;
+					TR_REMODEL << "Use first chain in input pdb: " << std::endl;
+					TR_REMODEL << "... do remodeling on chain " << chain << std::endl;
+					*/
+					
+					
+					
 					oss << line.index << " A " ; //default to chain A, Jan 2016
+
 				}
 			}
 

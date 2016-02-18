@@ -380,7 +380,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	runtime_assert (build_aa_type.size() == 1);
 
-	if ( option[OptionKeys::remodel::use_blueprint_sequence].user() ) {
+	if ( option[OptionKeys::remodel::use_blueprint_sequence]() ) {
 		for ( int i = 0; i < (int)data.blueprint.size(); i++ ) {
 			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ) {
 				aa.append(build_aa_type);
@@ -391,20 +391,21 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		//  runtime_assert( aa.size() == data.dssp_updated_ss.size());
 
 	} else {
-		if ( build_aa_type.compare("A") != 0 ) {
-			//build the aa string to be the same length as dssp updated ss
-			//use that length because repeat structures are bigger than blueprint
-			for ( int i = 0; i < (int)data.dssp_updated_ss.size(); i++ ) {
-				// handle ncaa
-				if ( data.blueprint[i].has_ncaa ) {
-					core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue(1).residue_type_set() );
-					std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
-					char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
-					aa += one_let_name;
-					aa += "[" + data.blueprint[i].ncaaList[0] + "]";
-				} else {
-					aa.append(build_aa_type);
-				}
+		
+		//JAB - check for Alanine is removed as it breaks the use of Alanine as the building AA!
+		
+		//build the aa string to be the same length as dssp updated ss
+		//use that length because repeat structures are bigger than blueprint
+		for ( int i = 0; i < (int)data.dssp_updated_ss.size(); i++ ) {
+			// handle ncaa
+			if ( data.blueprint[i].has_ncaa ) {
+				core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue(1).residue_type_set() );
+				std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
+				char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
+				aa += one_let_name;
+				aa += "[" + data.blueprint[i].ncaaList[0] + "]";
+			} else {
+				aa.append(build_aa_type);
 			}
 		}
 	}

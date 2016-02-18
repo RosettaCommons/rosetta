@@ -359,7 +359,7 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 		TR.Warning << "remodel::RemodelLoopMover::use_loop_hash is given false, but this mover requires true. Override user setting." << std::endl;
 		TR.flush();
 	}
-	option[ remodel::RemodelLoopMover::use_loop_hash ]( true );
+	option[ remodel::RemodelLoopMover::use_loop_hash ]( true ); //JAB - this is not good at all.  gah.
 	TR << "remodel::RemodelLoopMover::use_loop_hash = true" << std::endl;
 
 	// loop extension limit

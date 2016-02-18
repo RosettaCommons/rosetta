@@ -379,7 +379,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	//special case for two chain build -- danger, primitive at the moment, only
 	//works with non-N,C term extension.  Try placing in SegRebuld
-	if (basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree].user()){
+	if (basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree]()){
 	Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
 	Size nres( pose.total_residue());
 
@@ -609,8 +609,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		//in order to synchronize all cutting, unfortunately this has to be in this
 		//file
-		if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
-			if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user() ) {
+		if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
+			if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N]() ) {
 				cut_index = 1;
 			} else if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_index].user() ) {
 				cut_index = basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_index];

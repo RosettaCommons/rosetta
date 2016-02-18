@@ -30,15 +30,25 @@ cd %(workdir)s
 
 [ -x %(bin)s/remodel.%(binext)s ] || exit 1
 
-%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.remodel -run:chain A -remodel:num_trajectory 2 -overwrite -remodel:quick_and_dirty -run:constant_seed -nodelay 2>&1 \
+%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.remodel -run:chain A -remodel:num_trajectory 2 -overwrite -remodel:quick_and_dirty -run:constant_seed -nodelay -out:prefix test1_ 2>&1 \
     | egrep -vf ../../ignore_list \
     > log1
 
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.domaininsertion -remodel:domainFusion:insert_segment_from_pdb 2ci2.insert.pdb -remodel:quick_and_dirty -run:chain A -remodel:num_trajectory 1 -overwrite -run:constant_seed -nodelay 2>&1 \
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.remodel -run:chain A -remodel:num_trajectory 2 -overwrite -remodel:quick_and_dirty -run:constant_seed -nodelay -remodel:generic_aa A -out:prefix test2_ 2>&1 \
     | egrep -vf ../../ignore_list \
     > log2
 
+
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.domaininsertion -remodel:domainFusion:insert_segment_from_pdb 2ci2.insert.pdb -remodel:quick_and_dirty -run:chain A -remodel:num_trajectory 1 -overwrite -run:constant_seed -nodelay -out:prefix test3_ 2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log3
+
+
+
+
+
 

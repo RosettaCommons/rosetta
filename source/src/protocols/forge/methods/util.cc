@@ -455,7 +455,7 @@ remodel_generic_taskfactory(){
 		TF->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
 	}
 	TF->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
-	if ( !basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi].user() ) {
+	if ( !basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi]() ) {
 		TF->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
 	}
 

@@ -183,15 +183,15 @@ void RemodelDesignMover::set_state( std::string state_tag ){
 ///
 void RemodelDesignMover::apply( Pose & pose ) {
 
-	if ( option[OptionKeys::remodel::design::no_design].user() ) {
+	if ( option[OptionKeys::remodel::design::no_design]() ) {
 		TR << "bypassing design due to invokation of -no_design" << std::endl;
 		return;
 	}
 
 	// make decision as to which mode to apply
 	bool manual = remodel_data_.has_design_info_;
-	bool neighbor =option[OptionKeys::remodel::design::find_neighbors].user();
-	bool design =option[OptionKeys::remodel::design::design_neighbors].user();
+	bool neighbor =option[OptionKeys::remodel::design::find_neighbors]();
+	bool design =option[OptionKeys::remodel::design::design_neighbors]();
 
 	if ( !check_state() ) {
 		basic::Error() << "check_state failed, has to set_state first " << std::endl;
@@ -217,7 +217,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 				mode3_packertask(pose);
 			}
 		} else {
-			if ( option[OptionKeys::remodel::design::design_all].user() ) {
+			if ( option[OptionKeys::remodel::design::design_all]() ) {
 				mode1_1_packertask(pose);
 			} else {
 				mode1_packertask(pose);
@@ -241,7 +241,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		} else {  //auto build always reduce task
 			//if ( option[OptionKeys::remodel::use_LD_operation] ) {}
 			//else {
-			if ( !option[OptionKeys::remodel::design::skip_partial].user() ) {
+			if ( !option[OptionKeys::remodel::design::skip_partial] ) {
 				reduce_task(pose, working_model_.task, true, true, false);
 			} else {
 				reduce_task(pose, working_model_.task, true, true, true);
@@ -253,7 +253,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 			//do nothing
 		} else {
 			// if finishing design, no need to reduce, but require resetting positios
-			//if (!option[OptionKeys::remodel::design::skip_partial].user()){
+			//if (!option[OptionKeys::remodel::design::skip_partial]){
 			//reduce_task(pose, working_model_.task, true, true, true);
 		}
 	}
@@ -314,7 +314,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	run_calculator(pose, "neighborhood_calc", "neighbors", boollist);
 	std::set<Size> positionList;
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( boollist[i] && !option[OptionKeys::remodel::design::design_all].user() ) {
+		if ( boollist[i] && !option[OptionKeys::remodel::design::design_all]() ) {
 			positionList.insert(i);
 		} else { // in case of design all flag, take all positions
 			positionList.insert(i);
@@ -344,7 +344,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	pose.metric("reducetask_calc", "num_neighbors_map", nbr_map);
 	std::map< core::Size, core::Size > sizemap;
 
-	if ( option[OptionKeys::remodel::resclass_by_sasa].user() ) {
+	if ( option[OptionKeys::remodel::resclass_by_sasa]() ) {
 		//simply repackage the values so either metric can feed into the code
 		int count = 1 ;
 		for ( utility::vector1< core::Real >::iterator it = sasa_list.begin(), ite = sasa_list.end(); it != ite ; ++it ) {
@@ -383,7 +383,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 				TR.Debug << "sizemap in repeat decision " << copies[jj] << " " << sizemap[ copies[jj] ] << std::endl;
 
-				if ( option[OptionKeys::remodel::resclass_by_sasa].user() ) {
+				if ( option[OptionKeys::remodel::resclass_by_sasa]() ) {
 					//take the counts for each set
 					if ( sizemap[ copies[jj] ] <= CORE_CUTOFF ) {
 						coreCount++;
@@ -440,7 +440,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 		for ( Size i = 1; i<= resclass.size(); i++ ) { //check everyposition in the packertask
 			if ( task->nonconst_residue_task(i).being_packed() && sizemap[i] ) {
 				TR << "touch position " << i << std::endl;
-				if ( option[OptionKeys::remodel::resclass_by_sasa].user() ) {
+				if ( option[OptionKeys::remodel::resclass_by_sasa]() ) {
 					if ( sizemap[i] <= CORE_CUTOFF ) {
 						corePos.push_back(i);
 					} else if ( sizemap[i] > CORE_CUTOFF && sizemap[i] <= BOUNDARY_CUTOFF ) {

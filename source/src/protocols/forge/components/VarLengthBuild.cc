@@ -535,7 +535,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	// finalize wrt to success/failure
 	if ( get_last_move_status() == MS_SUCCESS ) {
-		if ( !basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+		if ( !basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
 			// seal the tree
 			if ( core::pose::symmetry::is_symmetric(pose) ) {
 				pose.fold_tree ( core::pose::symmetry::sealed_symmetric_fold_tree( pose ) );
@@ -811,7 +811,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	// evaluate all chainbreaks using linear chainbreak
 	bool cbreaks_pass = true;
 
-	if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
 		return cbreaks_pass;
 	}
 

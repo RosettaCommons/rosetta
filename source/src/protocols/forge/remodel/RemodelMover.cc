@@ -766,7 +766,7 @@ void RemodelMover::apply( Pose & pose ) {
 		Size no_attempts_at_centroid_build = 0;
 		//Size no_attempts_to_make_at_centroid_build = 10;
 
-		//bool quick_mode =option[OptionKeys::remodel::quick_and_dirty].user();
+		//bool quick_mode =option[OptionKeys::remodel::quick_and_dirty]();
 
 		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 		//rerooting tree
@@ -881,13 +881,13 @@ void RemodelMover::apply( Pose & pose ) {
 				designMover.scorefunction(fullatom_sfx_);
 			}
 
-			if ( option[OptionKeys::remodel::build_disulf].user() || rosetta_scripts_build_disulfide_ || rosetta_scripts_fast_disulfide_ ) {
+			if ( option[OptionKeys::remodel::build_disulf]() || rosetta_scripts_build_disulfide_ || rosetta_scripts_fast_disulfide_ ) {
 
 				utility::vector1<std::pair <Size, Size> > disulf_partners;
 				bool disulfPass = false;
 
 				core::Energy match_rt_limit = rosetta_scripts_match_rt_limit_;
-				if ( option[OptionKeys::remodel::build_disulf].user() ) {
+				if ( option[OptionKeys::remodel::build_disulf]() ) {
 					match_rt_limit = option[OptionKeys::remodel::match_rt_limit];
 				}
 
@@ -1160,7 +1160,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 			TR << "clustered poses count: " << results.size() << std::endl;
 
-			bool bypass_refinement = option[OptionKeys::remodel::quick_and_dirty].user();
+			bool bypass_refinement = option[OptionKeys::remodel::quick_and_dirty];
 			if ( rosetta_scripts_quick_and_dirty_ || rosetta_scripts_fast_disulfide_ ) {
 				bypass_refinement = true;
 			}
@@ -1193,7 +1193,7 @@ void RemodelMover::apply( Pose & pose ) {
 					}
 				}
 			} else { // simple design
-				if ( option[OptionKeys::remodel::check_scored_centroid].user() ) {
+				if ( option[OptionKeys::remodel::check_scored_centroid]() ) {
 					std::stringstream SS;
 					std::string prefix = option[OptionKeys::out::prefix];
 					if ( !prefix.empty() ) {
@@ -1213,7 +1213,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 			}
 
-			if ( option[OptionKeys::remodel::run_confirmation].user() ) {
+			if ( option[OptionKeys::remodel::run_confirmation]() ) {
 				if ( !confirm_sequence(*(*it)) ) {
 					TR << "WARNING: STRUCTURE DID NOT PASS KIC CONFIRMATION!!" << std::endl;
 					continue;
@@ -1706,7 +1706,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 			setup_ncs.apply(pose);
 
 			//total hack (for now), see if the restypeset fails when initialized twice.
-			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user() ) {
+			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
 				protocols::relax::cyclize_pose(pose);
 			}
 
@@ -1818,7 +1818,7 @@ bool RemodelMover::design_refine_cart_relax(
 	core::kinematics::MoveMapOP cmmop( new core::kinematics::MoveMap );
 	//pose.dump_pdb("pretest.pdb");
 
-	if ( option[OptionKeys::remodel::free_relax].user() ) {
+	if ( option[OptionKeys::remodel::free_relax]() ) {
 		for ( Size i = 1; i<= asym_length; ++i ) {
 			cmmop->set_bb(i, true);
 			cmmop->set_chi(i, true);
@@ -1914,7 +1914,7 @@ bool RemodelMover::design_refine_cart_relax(
 
 			//total hack (for now), see if the restypeset fails when initialized
 			//twice.
-			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user() ) {
+			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
 				protocols::relax::cyclize_pose(pose);
 			}
 
@@ -2020,7 +2020,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 		// set loop topology
 		pose.fold_tree( loop_ft );
 
-		if ( !option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
+		if ( !option[OptionKeys::remodel::swap_refine_confirm_protocols]() ) {
 			// refine the new section
 			loops::loop_mover::refine::LoopMover_Refine_CCDOP refine( new loops::loop_mover::refine::LoopMover_Refine_CCD(loops, sfx) );
 			kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
@@ -2140,7 +2140,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 
 	//KIC.apply(pose);
 
-	if ( option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
+	if ( option[OptionKeys::remodel::swap_refine_confirm_protocols]() ) {
 		TR << "REFINE USING CCD" << std::endl;
 		// refine the new section
 		// setup the refine TaskFactory
@@ -2256,7 +2256,7 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
 	tf->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
 	tf->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
-	if ( !option[OptionKeys::remodel::design::allow_rare_aro_chi].user() ) {
+	if ( !option[OptionKeys::remodel::design::allow_rare_aro_chi]() ) {
 		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
 	}
 

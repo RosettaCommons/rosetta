@@ -288,7 +288,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 				std::cout << "linking " << count << " residue pairs" << std::endl;
 			}
 
-			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user() ) { //all processes/constraints has to be applied to checkpointed files
+			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) { //all processes/constraints has to be applied to checkpointed files
 				protocols::relax::cyclize_pose(dummyPose);
 			}
 
