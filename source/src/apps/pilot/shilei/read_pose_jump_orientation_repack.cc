@@ -212,7 +212,7 @@ void run() {
 
 	//add cst to the scoring
         if (basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()) {
-                protocols::simple_moves::ConstraintSetMoverOP docking_constraint_ = new protocols::simple_moves::ConstraintSetMover();
+                protocols::simple_moves::ConstraintSetMoverOP docking_constraint_( new protocols::simple_moves::ConstraintSetMover() );
                 Real cst_weight_=basic::options::option[basic::options::OptionKeys::constraints::cst_weight];
                 docking_constraint_->apply(pose);
                 cst_score_->set_weight( core::scoring::atom_pair_constraint, cst_weight_ );
@@ -230,7 +230,7 @@ void run() {
 //        core::pack::dunbrack::load_unboundrot(pose);
 
         //protocols::docking::DockingHighResLegacyOP docking_highres_mover_ = new protocols::docking::DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_high_);
-	protocols::docking::DockingProtocolOP docking_highres_mover_ = new protocols::docking::DockingProtocol( movable_jumps_, false, true, true, scorefxn_cen, docking_scorefxn_high_);
+	protocols::docking::DockingProtocolOP docking_highres_mover_( new protocols::docking::DockingProtocol( movable_jumps_, false, true, true, scorefxn_cen, docking_scorefxn_high_) );
 
         //docking_highres_mover_->set_trans_magnitude(0.00001);
         //docking_highres_mover_->set_rot_magnitude(0.00001);

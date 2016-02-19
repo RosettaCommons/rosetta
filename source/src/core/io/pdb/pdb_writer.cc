@@ -382,6 +382,7 @@ create_records_from_sfr(
 	}
 
 	bool const no_chainend_ter( options->no_chainend_ter() ); //Should we skip TER records at chain ends?
+	std::map < core::Size, core::Size > serial_to_serial_with_ter; //Reused later during CONECT record dumping.
 	R = RecordCollection::record_from_record_type( "ATOM  " );
 	Record T = RecordCollection::record_from_record_type( "TER   " );
 	T["type"].value = "TER   ";
@@ -389,7 +390,9 @@ create_records_from_sfr(
 		for ( Size j=0; j<sfr.chains()[i].size(); ++j ) {
 			AtomInformation const & ai( sfr.chains()[i][j] );
 			R["type"].value = ( ai.isHet ? "HETATM" : "ATOM  " );
-			R["serial"].value = pad_left( ai.serial + (no_chainend_ter ? 0 : ai.terCount), 5 ); //)("%5d", ai.serial);
+			runtime_assert( !serial_to_serial_with_ter.count(ai.serial) );
+			serial_to_serial_with_ter[ai.serial] = ai.serial + (no_chainend_ter ? 0 : ai.terCount); //Reused later during CONECT record dumping.
+			R["serial"].value = pad_left( serial_to_serial_with_ter.at(ai.serial), 5 ); //)("%5d", ai.serial);
 			R["name"].value = ai.name;
 			R["resName"].value = ai.resName;
 			std::string cid(" ");
@@ -421,12 +424,14 @@ create_records_from_sfr(
 
 			R = RecordCollection::record_from_record_type( CONECT );
 			R["type"].value = "CONECT";
-			R["serial0"].value = pad_left( ai.serial, 5);
+			R["serial0"].value = pad_left( ai.serial + (no_chainend_ter ? 0 : ai.terCount) , 5);
 
 			for ( core::Size c_index = 1; c_index <= ai.connected_indices.size(); ++c_index ) {
 				current_L += 1;
 
-				R["serial"+utility::to_string( current_L )].value = pad_left( ai.connected_indices[ c_index ], 5);
+				//TODO -- correct the ai.connected_indices[ c_index ] in the next line.  Need to figure out how many TER records precede connected_index[c_index] and add this to the index.
+				runtime_assert( serial_to_serial_with_ter.count(ai.connected_indices[ c_index ] ) );
+				R["serial"+utility::to_string( current_L )].value = pad_left( serial_to_serial_with_ter.at( ai.connected_indices[ c_index ] ), 5);
 
 				if ( current_L == max_L ) {
 					current_L = 0;
