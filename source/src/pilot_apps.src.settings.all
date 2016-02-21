@@ -351,6 +351,8 @@ sources = {
 		"david_find_pocket_exemplar",
 		"david_find_best_contact_pocket",
 		"david_rotation_experiment",
+		"david_extract_domain",
+		"david_extract_dinucleotide_musashi_reference",
 		#"david_darc_multirun",
 	],
 
