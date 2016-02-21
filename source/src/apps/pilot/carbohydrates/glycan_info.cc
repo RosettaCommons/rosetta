@@ -28,6 +28,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/carbohydrates/util.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -35,6 +36,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
+#include <utility/string_util.hh>
 
 static THREAD_LOCAL basic::Tracer TR("glycan_info");
 
@@ -120,17 +122,43 @@ public:  // Standard Rosetta methods
 		return protocols::moves::MoverOP( new GlycanInfoMover );
 	}
 
+	std::string
+	get_attachment_point_string( core::pose::Pose const & pose, core::Size resnum){
+		using utility::to_string;
+		using namespace core::chemical::carbohydrates;
+
+		CarbohydrateInfoCOP info = pose.residue(resnum).carbohydrate_info();
+		std::string outstring = "";
+		std::string attach = "_->";
+
+		if (info->mainchain_glycosidic_bond_acceptor() ){
+			outstring = attach + to_string(info->mainchain_glycosidic_bond_acceptor());
+		}
+
+		for ( uint i = 1; i <= info->n_branches(); ++i ) {
+			outstring = outstring + "," +attach + to_string( info->branch_point( i ));
+		}
+		return outstring;
+	}
 	/// @brief  Apply the corresponding protocol to <pose>.
 	virtual
 	void
 	apply( core::pose::Pose & pose )
-	{
+	{	
+		using namespace core::pose::carbohydrates;
+
 		core::Size protein_branches = 0;
 		core::Size carbohydrate_residues = 0;
 		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
 			if ( pose.residue( resnum ).is_carbohydrate() ) {
+				std::string attachment_points = get_attachment_point_string( pose, resnum);
+				core::Size parent_res = find_seqpos_of_saccharides_parent_residue( pose.residue( resnum ));
 				bool bp = pose.residue( resnum ).is_branch_point();
-				std::cout << "Carbohydrate: "<< resnum  << " BP: "<<bp << " " << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
+
+
+				std::cout << "Carbohydrate: "<< resnum  << " Parent: " << parent_res << " BP: "<<bp << " CON: " 
+				             << utility::pad_right( attachment_points, 10) << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
+				
 				carbohydrate_residues += 1;
 
 			} else if ( pose.residue( resnum ).is_branch_point() ) {

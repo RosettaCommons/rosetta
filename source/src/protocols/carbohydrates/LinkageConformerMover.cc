@@ -257,14 +257,18 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	}
 	core::chemical::ResidueType const & res1 = pose.residue_type(  lower_resnum );
 
-	TR.Debug << "Upper resnum: " << upper_resnum << "  Lower resnum: " << lower_resnum << std::endl;
+	
 
 	std::string res2_name = res2.carbohydrate_info()->short_name();
 	std::string res1_name;
 	if ( res1.is_carbohydrate() ) {
 		res1_name = res1.carbohydrate_info()->short_name();  // 3-letter code not enough
+		
+		//This is due to multiple connecting points possible. This gets the position of linking to the previous residue!
 		core::Size const link_pos = get_linkage_position_of_saccharide_residue( pose, upper_resnum );
+		
 		res1_name[ 2 ] = '0' + link_pos;  // Set the correct connectivity.
+		
 	} else if ( sample_protein_linkage_ ) {
 		res1_name = res1.name3();
 	} else {
@@ -274,7 +278,10 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	}
 
 	set_last_move_status(protocols::moves::MS_FAIL); //Fail unless we say we are ok.
-
+	
+	
+	
+	//TR << "Upper resnum: " << upper_resnum << "  Lower resnum: " << lower_resnum << std::endl;
 	TR << "Sampling " << res2_name << "(?" << res1_name << " linkage " << std::endl;
 	if ( CarbohydrateInfoManager::pair_has_linkage_statistics( res1_name, res2_name ) ) {
 		utility::vector1< LinkageConformerData > conformers =
