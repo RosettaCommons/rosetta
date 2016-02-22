@@ -29,16 +29,36 @@
 namespace numeric {
 namespace random {
 
+/// @brief Returns the probability that the Nth value in a sequence
+/// should be accepted using the reservoir sampling criterion.
+/// @details If we've seen N values and we want to keep K of them,
+/// the probability of the Nth value being accepted is min(K/N,1.0).
+inline numeric::Real
+reservoir_sample_accept_prob(
+	numeric::Size n_wanted,
+	numeric::Size n_seen
+) {
+	Real const accept_prob(
+		static_cast< Real > (n_wanted) / static_cast< Real > (n_seen)
+	);
+	return std::min( accept_prob, 1.0 );
+}
+
 /// @brief Simple container for keeping K random values.
 /// @details Values are stochastically preserved so that the probability of
 /// any value existing is always 1 / N, where N is the number of values seen.
 template< typename T >
 class ReservoirSampler {
 public:
-	ReservoirSampler( numeric::Size const wanted ) : n_wanted_( wanted ) {}
+	ReservoirSampler( numeric::Size const wanted ) :
+		n_seen_(0),
+		n_wanted_( wanted )
+	{}
+
 	~ReservoirSampler() {}
 
-	void add_value( T val ) {
+	void add_value( T const & val ) {
+		++n_seen_;
 		if ( n_vals() < n_wanted() ) {
 			values_.push_back( val );
 		} else {
@@ -65,37 +85,25 @@ public:
 		return n_seen_;
 	}
 
-	utility::vector1< T > values() const {
+	utility::vector1< T > const & values() const {
 		return values_;
 	}
 
 private:
+
+	ReservoirSampler(); // Must pass n_wanted to constructor
+
 	utility::vector1< T > values_;
 	numeric::Size n_seen_;
 	numeric::Size const n_wanted_;
 };
 
-/// @brief Returns the probability that the Nth value in a sequence
-/// should be accepted using the reservoir sampling criterion.
-/// @details If we've seen N values and we want to keep K of them,
-/// the probability of the Nth value being accepted is min(K/N,1.0).
-inline numeric::Real
-reservoir_sample_accept_prob(
-	numeric::Size n_wanted,
-	numeric::Size const n_seen
-) {
-	Real const accept_prob(
-		static_cast< Real > (n_wanted) / static_cast< Real > (n_seen)
-	);
-	return std::min( accept_prob, 1.0 );
-}
-
 template< typename T >
 utility::vector1< T >
 reservoir_sample(
 	utility::vector1< T > const & vec,
-	numeric::Size const n_wanted,
-	RandomGenerator & rg
+	numeric::Size n_wanted,
+	RandomGenerator & rg = numeric::random::rg()
 ) {
 	using numeric::Real;
 	typedef typename utility::vector1< T >::const_iterator iter;

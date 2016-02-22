@@ -308,40 +308,31 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 
 	// Expand base rotamers with extra proton chi sampling
 
-	bool expand_proton_chi = ( concrete_residue->n_proton_chi() != 0 );
-	Size const max_total_rotamers = 21654; // = 401 rotamers * 54 hydroxyl variations = 401 * (2 * 3^3)
-	RotamerVector new_rotamers;
-
+	bool do_expand_proton_chi = ( concrete_residue->n_proton_chi() != 0 );
 	if ( basic::options::option[ basic::options::OptionKeys::packing::ignore_ligand_chi]() == true ) {
-		expand_proton_chi = false;
+		do_expand_proton_chi = false;
 	}
 
-	// Logic for creating proton_chi rotamers copied from APL (RotamerSet_.cc)
+	// The maximum number of proton chis expansions per base rotamer
+	// = 401 rotamers * 54 hydroxyl variations = 401 * (2 * 3^3)
+	Size max_proton_factor = 21654 / base_rotamers.size();
+	if ( max_proton_factor == 0 ) {
+		max_proton_factor = 1;
+	}
+
+	RotamerVector new_rotamers;
+
+	// Logic for creating proton_chi rotamers copied from SingleBasicRotamerLibrary
 	utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
-	if ( expand_proton_chi ) {
-		proton_chi_chisets.push_back( dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
-		for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
-			pack::dunbrack::expand_proton_chi(
-				task.residue_task( existing_residue.seqpos() ).extrachi_sample_level(
-				buried,
-				concrete_residue->proton_chi_2_chi( ii ),
-				*concrete_residue ),
-				concrete_residue,
-				ii, proton_chi_chisets);
-			// In a pathological case, I've seen 30 rotamers * 20,000 proton chi variations = 600,000 rotamers = out of memory
-			// That's 9, count 'em 9, hydroxyls in the ligand for PDB 1u33.
-			// Wait, wait -- I can do better -- 19 hydroxyls in PDB 1xd1.
-			if ( base_rotamers.size()*proton_chi_chisets.size() > max_total_rotamers ) {
-				TR.Warning << "Aborting proton_chi expansion for " << concrete_residue->name() << " because we would exceed " << max_total_rotamers << " rotamers!" << std::endl;
-				proton_chi_chisets.resize( max_total_rotamers / base_rotamers.size() );
-				break;
-			}
-		}
+	if ( do_expand_proton_chi ) {
+		utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
+				compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), buried ) );
+		proton_chi_chisets = expand_proton_chis( proton_chi_samplings, *concrete_residue, max_proton_factor );
+
 		new_rotamers.reserve( base_rotamers.size()*proton_chi_chisets.size() );
 	} else {
 		new_rotamers.reserve( base_rotamers.size() );
 	}
-
 
 	// Fill new_rotamers with new Residues, including proton_chi expansions
 	for ( Size i = 1; i <= base_rotamers.size(); ++i ) {
@@ -349,7 +340,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 		if ( concrete_residue->in_residue_type_set() ) {
 			debug_assert( concrete_residue->residue_type_set()->name() == base_rotamers[i]->residue_type_set()->name() ); // fa_standard / centroid
 		}
-		if ( expand_proton_chi ) {
+		if ( do_expand_proton_chi ) {
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
 				conformation::ResidueOP newrsd = dup_residue( existing_residue, *base_rotamers[i] );
 				new_rotamers.push_back( newrsd );

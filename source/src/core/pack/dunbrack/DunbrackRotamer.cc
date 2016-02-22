@@ -16,7 +16,6 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Package headers
-#include <core/pack/dunbrack/ChiSet.hh>
 
 // Project headers
 #include <basic/interpolate.hh>
@@ -105,125 +104,6 @@ void interpolate_rotamers(
 	interpolate_polylinear_by_value( rot_prob, bb_err, binrange, false /*dont' treat_as_angles*/ , interpolated_prob, tmp );
 	interpolated_rotamer.rotamer_probability( interpolated_prob );
 }
-
-
-/* OL: I thought copying the whole chi_set_vector is unnecessary and made a new version of this function */
-void
-expand_proton_chi_oldversion(
-	pack::task::ExtraRotSample ex_samp_level,
-	chemical::ResidueTypeCOP concrete_residue,
-	Size proton_chi,
-	utility::vector1< ChiSetOP > & chi_set_vector
-)
-{
-	using namespace pack::task;
-	// count the number of extra hydroxyl samples -- n
-	// copy the chi_set_vector n times into a temporary
-	// set the hydroxyl_chi value for these n samples in the temporary
-	// assign the temporary to the input chi_set_vector
-
-	utility::vector1< Real > const & samples = concrete_residue->proton_chi_samples( proton_chi );
-	// i.e., -60, 60, 180
-
-	// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
-	utility::vector1< Real > const & extra_samples = concrete_residue->proton_chi_extra_samples( proton_chi );
-
-	Size chi_id = concrete_residue->proton_chi_2_chi( proton_chi );
-
-	bool const include_extra( ex_samp_level != NO_EXTRA_CHI_SAMPLES );
-
-	Size nsamples = samples.size() * ( 1 + ( include_extra ? extra_samples.size() * 2 : 0 ) );
-	utility::vector1< ChiSetOP > newchi_vect( nsamples * chi_set_vector.size() );
-
-	// copy old chi_set_vector nsample times
-	for ( Size ii = 1; ii <= nsamples; ++ii ) {
-		Size offset = (ii-1) * chi_set_vector.size();
-		for ( Size jj = 1; jj <= chi_set_vector.size(); ++jj ) {
-			newchi_vect[ jj + offset ] = ChiSetOP( new pack::dunbrack::ChiSet( *(chi_set_vector[ jj ]) ) );
-		}
-	}
-
-	// add extra chi samples
-	Size count( 1 );
-	for ( Size ii = 1; ii <= samples.size(); ++ii ) {
-		Real ii_sample = samples[ ii ]; //chi-angle
-		for ( Size jj = 1; jj <= chi_set_vector.size(); ++jj ) {
-			newchi_vect[ count ]->chi[ chi_id ] = ii_sample;
-			++count;
-			if ( ! include_extra ) continue;
-
-			for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
-				newchi_vect[ count ]->chi[ chi_id ] = ii_sample + extra_samples[ kk ];
-				++count;
-				newchi_vect[ count ]->chi[ chi_id ] = ii_sample - extra_samples[ kk ];
-				++count;
-			}
-		}
-	}
-
-	debug_assert( count - 1 == nsamples * chi_set_vector.size() );
-	chi_set_vector = newchi_vect;
-}
-
-/// olli -- I think this is slightly simpler to read than the original version
-/// apl -- needs to find a new residence
-void
-expand_proton_chi(
-	pack::task::ExtraRotSample ex_samp_level,
-	chemical::ResidueTypeCOP concrete_residue,
-	Size proton_chi,
-	utility::vector1< ChiSetOP > & chi_set_vector
-)
-{
-	using namespace pack::task;
-	// count the number of extra hydroxyl samples -- n
-	// copy the chi_set_vector n times into a temporary
-	// set the hydroxyl_chi value for these n samples in the temporary
-	// assign the temporary to the input chi_set_vector
-
-	utility::vector1< Real > const & samples = concrete_residue->proton_chi_samples( proton_chi );
-
-	// i.e., -60, 60, 180
-	debug_assert( samples.size() > 0 ); // or less harsh and just a return ?
-
-	// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
-	utility::vector1< Real > const & extra_samples = concrete_residue->proton_chi_extra_samples( proton_chi );
-
-	Size chi_id = concrete_residue->proton_chi_2_chi( proton_chi );
-
-	bool const include_extra( ex_samp_level != NO_EXTRA_CHI_SAMPLES );
-
-	Size nsamples = samples.size() * ( 1 + ( include_extra ? extra_samples.size() * 2 : 0 ) );
-	chi_set_vector.reserve( nsamples * chi_set_vector.size() ); //preallocate the necessary memory
-
-	// add extra chi samples
-	ChiSetOP new_chi_vec; ChiSetOP base_chi_vec;
-	Size nr_of_old_elem = chi_set_vector.size();
-	for ( Size jj = 1; jj <= nr_of_old_elem; ++jj ) {
-		for ( Size ii = 1; ii <= samples.size(); ++ii ) {
-			Real ii_sample = samples[ ii ]; //chi-angle
-			if ( ii == 1 ) {  //change first chi in place:
-				base_chi_vec = new_chi_vec = chi_set_vector[ jj ];
-			} else { // make copies for all others
-				new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec ) );
-				chi_set_vector.push_back( new_chi_vec );
-			}
-			new_chi_vec->chi[ chi_id ] = ii_sample;
-
-			if ( ! include_extra )  continue;
-
-			for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
-				chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
-				new_chi_vec->chi[ chi_id ] = ii_sample  + extra_samples[ kk ];
-				chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
-				new_chi_vec->chi[ chi_id ] = ii_sample  - extra_samples[ kk ];
-			} // for extra_samples
-		} // for sample.size()
-	} // for jj (chi_set_vector)
-
-	debug_assert( chi_set_vector.size()  == nsamples * nr_of_old_elem );
-}
-
 
 DunbrackRotamerSampleData::DunbrackRotamerSampleData() :
 	nrchi_sample_( false ),

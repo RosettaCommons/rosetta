@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleBasicRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryCreator.hh>
 
 // Program Headers
@@ -120,11 +121,15 @@ SingleResidueRotamerLibraryFactory::get_cachetag( core::chemical::ResidueType co
 /// (The cache is write-once.) This should work so long as cacheable SRRLs made from SRRLSpecifications with the
 /// same type tag and cache string are functionally identical.
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
-SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & restype ) const {
+SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & restype, bool forcebasic /* false */ ) const {
 	std::string type( type_for_residuetype( restype ) );
 	if ( type == "" ) {
 		// A null pointer means that there isn't a rotamer library
-		return core::pack::rotamers::SingleResidueRotamerLibraryCOP(0);
+		if( forcebasic ) {
+			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+		} else {
+			return SingleResidueRotamerLibraryCOP(0);
+		}
 	}
 	std::string cachetag( get_cachetag(restype) );
 	std::pair< std::string, std::string > cachepair(type,cachetag);
@@ -135,7 +140,11 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 #endif
 #endif
 		if ( cache_.count( cachepair ) ) {
-			return cache_[ cachepair ];
+			if ( ! cache_[ cachepair ] && forcebasic ) {
+				return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+			} else {
+				return cache_[ cachepair ];
+			}
 		}
 	}
 
@@ -144,7 +153,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
 
 	// Some creators (e.g. Dunbrack for Gly/Ala) will return empty residue library pointers
-	// We can cache a null pointer
+	// We can cache a null pointer (don't cache a SingleBasicRotamerLibrary, as not all calls will forcebasic)
 
 	if ( cachetag.size() ) {
 #ifdef MULTI_THREADED
@@ -155,9 +164,17 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 		if ( ! cache_.count( cachepair ) ) {
 			cache_[ cachepair ] = library;
 		}
-		return cache_[ cachepair ]; // Catch case where another thread already assigned cachepair
+		if ( ! cache_[ cachepair ] && forcebasic ) {
+			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+		} else {
+			return cache_[ cachepair ]; // Catch case where another thread already assigned cachepair
+		}
 	}
-	return library;
+	if ( ! library && forcebasic ) {
+		return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+	} else {
+		return library;
+	}
 }
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP

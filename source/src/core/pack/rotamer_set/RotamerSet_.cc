@@ -515,18 +515,14 @@ RotamerSet_::build_optimize_H_rotamers(
 			push_back_rotamer( existing_residue.clone() );
 			id_for_current_rotamer_ = rotamers_.size();
 		} else {
-			utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
-			proton_chi_chisets.push_back(
-				dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
-			for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
-				pack::dunbrack::expand_proton_chi(
-					task.residue_task( resid() ).extrachi_sample_level(
-					true, // ignore buriedness when adding extra proton chi rotamers
-					concrete_residue->proton_chi_2_chi( ii ),
-					*concrete_residue ),
-					concrete_residue,
-					ii, proton_chi_chisets);
-			}
+			rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue, /*forcebasic*/ true );
+
+			utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
+					rotlib->compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), true ) ); // ignore buriedness when adding extra proton chi rotamers
+
+			utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets(
+					rotlib->expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
+
 			suggested_rotamers.reserve( proton_chi_chisets.size() );
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
 				suggested_rotamers.push_back( existing_residue.clone() );

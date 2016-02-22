@@ -29,6 +29,8 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -105,6 +107,50 @@ public:
 		bool buried,
 		RotamerVector & rotamers
 	) const = 0;
+
+	/*
+	static
+	void
+	expand_proton_chi(
+		pack::task::ExtraRotSample ex_samp_level,
+		chemical::ResidueTypeCOP concrete_residue,
+		Size proton_chi,
+		utility::vector1< dunbrack::ChiSetOP > & chi_set_vector
+	);
+
+	static
+	utility::vector1< dunbrack::ChiSetOP >
+	expand_proton_chis_old(
+		chemical::ResidueTypeCOP concrete_residue,
+		pack::task::ResidueLevelTask const & rlt,
+		bool buried
+	);
+	*/
+
+	/// @brief Return a vector (indexed by proton_chi number) of vectors of dihedral values
+	/// to use in proton chi sampling
+	virtual
+	utility::vector1< utility::vector1< core::Real > >
+	compute_proton_chi_samplings(
+		chemical::ResidueType const & concrete_residue,
+		pack::task::ResidueLevelTask const & rlt,
+		bool buried
+	) const;
+
+	/// @brief Given a vector of vectors of dihedrals to sample on proton chis,
+	/// Will create the ChiSet vector combinitorially on those chi values
+	/// (Note: The ChiSets are only valid/defined over the proton chis.)
+	virtual
+	utility::vector1< dunbrack::ChiSetOP >
+	expand_proton_chis(
+		utility::vector1< utility::vector1< core::Real > > const & sampling,
+		chemical::ResidueType const & concrete_residue,
+		// Why, yes, 5000 is an arbitrary number (though it's somewhere around 6-8 hydroxyls)
+		// It was arrived at by practical considerations, being the maximum at which Rosetta packing
+		// will still not grind to a halt with memory and time issues.
+		// It's also the default number used by molfile_to_params
+		core::Size max_rotamers = 5000 // The maximum number of proton-chi-expanded rotamers to produce
+	) const;
 
 	/// @brief Filter a RotamerVector by "bump energy" of a rotamer:
 	/// All rotamers with bump energies over a certain threshold will be discarded

@@ -17,6 +17,7 @@
 #define INCLUDED_core_pack_dunbrack_ChiSet_hh
 
 // Package headers
+#include <core/pack/dunbrack/ChiSet.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // where ChiVector and RotVector live
 
 // Utility headers

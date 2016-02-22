@@ -74,6 +74,15 @@ public:
 		return curr_pos_[ dim ];
 	}
 
+	/// @brief Access to the current state of the iterator.
+	/// Basically a concatenation of the operator[] elements
+	/// So using 1-26 for A-M, "MACE" would be { 13, 1, 3, 5 }
+	inline
+	utility::vector1< Size > const &
+	operator* () const {
+		return curr_pos_;
+	}
+
 	/// @brief
 	inline
 	Size dimsize( Size dim ) const {

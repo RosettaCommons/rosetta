@@ -51,9 +51,12 @@ public:
 
 	std::string type_for_residuetype( core::chemical::ResidueType const & restype ) const;
 
+	/// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType
+	/// If forcebasic is true, a SingleBasicRotamerLibrary will be returned instead of a null pointer
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP
-	get( core::chemical::ResidueType const & ) const;
+	get( core::chemical::ResidueType const & , bool forcebasic = false) const;
 
+	/// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP
 	get( core::chemical::ResidueType const &, core::conformation::Residue const & ) const;
 

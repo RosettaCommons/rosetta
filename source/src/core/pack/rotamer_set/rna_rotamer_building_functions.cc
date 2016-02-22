@@ -22,7 +22,8 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
@@ -270,15 +271,16 @@ build_proton_chi_rotamers(
 	bool const & include_virtual_side_chain = residue_task.include_virtual_side_chain(); /* this means 2'-OH for RNA*/
 
 	if ( n_proton_chi > 0 ) {
-		// This seems a little silly -- suck out the chi's, then put them back into rotamers.
-		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
-		proton_chi_chisets.push_back( dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
+		// Which rotlib to use is a little fuzzy at this point - we're assuming the one for the concrete_residue is
+		// applicable to all rotamers ... which might not be the case if the rotamers come from different ResidueTypes
+		rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue, /*forcebasic*/ true );
 
-		for ( Size ii = 1; ii <= n_proton_chi; ++ii ) {
-			pack::dunbrack::expand_proton_chi( residue_task.extrachi_sample_level( true /*nneighb test*/,
-				concrete_residue->proton_chi_2_chi( ii ), *concrete_residue ),
-				concrete_residue, ii, proton_chi_chisets);
-		}
+		utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
+				rotlib->compute_proton_chi_samplings( *concrete_residue, residue_task, true ) );
+
+		// This seems a little silly -- suck out the chi's, then put them back into rotamers.
+		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets(
+				rotlib->expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
 
 		Size const number_of_starting_rotamers = rotamers.size();
 		for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {

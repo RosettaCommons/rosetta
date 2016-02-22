@@ -125,17 +125,12 @@ SingleBasicRotamerLibrary::fill_rotamer_vector(
 	// Add proton chi rotamers even if there's no rotamer library.
 	core::Size nrotadded(0);
 	if ( concrete_residue->n_proton_chi() != 0 ) {
-		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
-		proton_chi_chisets.push_back( pack::dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
-		for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
-			pack::dunbrack::expand_proton_chi(
-				task.residue_task( existing_residue.seqpos() ).extrachi_sample_level(
-				buried,
-				concrete_residue->proton_chi_2_chi( ii ),
-				*concrete_residue ),
-				concrete_residue,
-				ii, proton_chi_chisets);
-		}
+
+		utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
+				compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), buried ) );
+
+		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets(
+				expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
 
 		rotamers.reserve( rotamers.size() + proton_chi_chisets.size() );
 		for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {

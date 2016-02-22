@@ -19,13 +19,11 @@
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 
 // Package headers
-#include <core/pack/dunbrack/ChiSet.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/types.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
 
 // Numeric headers
 #include <numeric/random/random.fwd.hh>
@@ -425,16 +423,6 @@ class RotamerBuildingData : public utility::pointer::ReferenceCount
 public:
 	virtual ~RotamerBuildingData() = 0;
 };
-
-/// Should this be here?
-
-void
-expand_proton_chi(
-	pack::task::ExtraRotSample ex_samp_level,
-	chemical::ResidueTypeCOP concrete_residue,
-	Size proton_chi,
-	utility::vector1< ChiSetOP > & chi_set_vector
-);
 
 template < Size N >
 void
