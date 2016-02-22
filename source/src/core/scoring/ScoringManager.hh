@@ -53,6 +53,8 @@
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.fwd.hh>
 
 #include <core/scoring/dna/DNA_BasePotential.fwd.hh>
+#include <core/scoring/dna/DNA_DihedralPotential.fwd.hh>
+#include <core/scoring/dna/DNA_EnvPairPotential.fwd.hh>
 #include <core/scoring/dna/DNABFormPotential.fwd.hh>
 #include <core/scoring/dna/DNATorsionPotential.fwd.hh>
 #include <core/scoring/dna/DirectReadoutPotential.fwd.hh>
@@ -167,6 +169,9 @@ public:
 	CenHBPotential const & get_CenHBPotential() const;
 
 	EnvPairPotential const & get_EnvPairPotential() const;
+
+	dna::DNA_EnvPairPotential const & get_DNA_EnvPairPotential() const;
+	dna::DNA_DihedralPotential const & get_DNA_DihedralPotential() const;
 
 	SecondaryStructurePotential const & get_SecondaryStructurePotential() const;
 
@@ -314,6 +319,8 @@ private:
 	mutable mm::MMTorsionLibraryOP mm_torsion_library_;
 	mutable mm::MMBondAngleLibraryOP mm_bondangle_library_;
 	mutable mm::MMBondLengthLibraryOP mm_bondlength_library_;
+	mutable dna::DNA_EnvPairPotential * dna_env_pair_potential_;
+	mutable dna::DNA_DihedralPotential * dna_dihedral_potential_;
 	//P_AA                     Paa_ppPotential_;
 	mutable dna::DNABFormPotentialOP dnabform_;
 	mutable dna::DNATorsionPotentialOP dna_torsion_potential_;

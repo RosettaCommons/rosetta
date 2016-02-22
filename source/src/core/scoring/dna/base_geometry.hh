@@ -53,6 +53,18 @@ is_orthonormal(
 );
 
 
+void
+get_sugar_pucker(
+	conformation::Residue const & rsd,
+	std::pair< std::string, int > & pucker
+);
+
+void
+get_sugar_torsions(
+	conformation::Residue const & rsd,
+	utility::vector1< Real > & torsions
+);
+
 Vector
 get_y_axis(
 	conformation::Residue const & rsd,

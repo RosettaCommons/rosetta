@@ -551,7 +551,7 @@ Options = Option_Group( '',
 				oldName="output_silent_gz" ),
 		Option( 'membrane_pdb', 'Boolean', desc="Write out the membrane in the PDB - on/off."),
 		Option( 'membrane_pdb_thickness', 'Real', desc="Thickness of the written membrane in the PDB file. Using this flag, turns on -out:membrane_pdb automatically. If flag is not given, it uses the default (30) or the one from the -mp:thickness flag."),
-		
+
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
 				desc="Write out structures to database.  Specify database via -inout:dbms:database_name and wanted "
@@ -2790,16 +2790,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		### Options For Benchmarking
 		### @author Rebecca Alford (rfalford12@gmail.com)
-		Option_Group( 'benchmark', 
+		Option_Group( 'benchmark',
 
 			## Build Ideal/Canonical Alpha helices
-			Option_Group( 'ideal_helix', 
-				Option( 'helix_start', 'Real', desc="Start position for ideal helix dihedral angles" ), 
+			Option_Group( 'ideal_helix',
+				Option( 'helix_start', 'Real', desc="Start position for ideal helix dihedral angles" ),
 				Option( 'helix_end', 'Real', desc="End position for ideal helix dihedral angles" )
 			),
 
 			## Sampling of per-helix tilt angles
-			Option_Group( 'tilt_angle', 
+			Option_Group( 'tilt_angle',
 				Option( 'output', 'String', desc="Path to tilt angle vs. score output file" ),
 			),
 		),
@@ -4261,6 +4261,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'motif_size', 'Integer', default='0'),
 			Option( 'pdb_pos', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb, eg: -pdb_pos 125:A 127:A 4:C'),
 			Option( 'methylate', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb to be methylated, eg: -methylate 125:A 127:A 4:C'),
+			Option( 'dna_backbone_torsion_sdevs', 'RealVector' ),
+			Option( 'dna_sugar_torsion_sdev', 'Real', default='4.0'), ## too small
+			Option( 'dna_chi_torsion_sdev', 'Real', default='15.0'),
 			Option( 'lk_ball_wtd_tag', 'String'),
 			Option( 'lk_ball_for_bb', 'Boolean', default='false'),
 			Option( 'lk_ball_ramp_width_A2', 'Real', default='5.0'),

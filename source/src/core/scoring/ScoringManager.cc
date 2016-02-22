@@ -63,6 +63,8 @@
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
 #include <core/scoring/PoissonBoltzmannPotential.hh>
+#include <core/scoring/dna/DNA_EnvPairPotential.hh>
+#include <core/scoring/dna/DNA_DihedralPotential.hh>
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
 #include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
 
@@ -233,6 +235,26 @@ ScoringManager::get_DNA_BasePotential() const
 		DNA_base_potential_ = dna::DNA_BasePotentialOP( new dna::DNA_BasePotential() );
 	}
 	return *DNA_base_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+dna::DNA_DihedralPotential const &
+ScoringManager::get_DNA_DihedralPotential() const
+{
+	if ( dna_dihedral_potential_ == 0 ) {
+		dna_dihedral_potential_ = new dna::DNA_DihedralPotential();
+	}
+	return *dna_dihedral_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+dna::DNA_EnvPairPotential const &
+ScoringManager::get_DNA_EnvPairPotential() const
+{
+	if ( dna_env_pair_potential_ == 0 ) {
+		dna_env_pair_potential_ = new dna::DNA_EnvPairPotential();
+	}
+	return *dna_env_pair_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

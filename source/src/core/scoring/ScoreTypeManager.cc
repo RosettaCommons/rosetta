@@ -119,6 +119,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "dna_dr" ] = dna_dr;
 	name2score_type_[ "dna_bs" ] = dna_bs;
 	name2score_type_[ "dna_bp" ] = dna_bp;
+	name2score_type_[ "dna_ref" ] = dna_ref;
+	name2score_type_[ "dna_env" ] = dna_env;
+	name2score_type_[ "dna_pair" ] = dna_pair;
 	name2score_type_[ "pro_close" ] = pro_close;
 	name2score_type_[ "vdw" ] = vdw;
 	name2score_type_[ "cen_hb" ] = cen_hb;
@@ -265,6 +268,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "intermol"] = intermol;
 	// Variant type to flag rotamers for alternative scoring with varying weight
 	name2score_type_[ "special_rot"] = special_rot;
+	name2score_type_[ "dna_dihedral_bb"] = dna_dihedral_bb;
+	name2score_type_[ "dna_dihedral_chi"] = dna_dihedral_chi;
+	name2score_type_[ "dna_dihedral_sugar"] = dna_dihedral_sugar;
 
 	name2score_type_[ "other_pose"] = other_pose;
 

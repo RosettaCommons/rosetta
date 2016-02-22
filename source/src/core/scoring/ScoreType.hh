@@ -81,6 +81,7 @@ enum ScoreType {
 	dna_dr,
 	dna_bp,
 	dna_bs,
+	dna_ref,
 	peptide_bond,
 	pcs, //Pseudocontact Shift Energy
 	pcsTs1,
@@ -358,6 +359,9 @@ enum ScoreType {
 	envsmooth,
 	e_pH,
 	rna_bulge,
+	dna_dihedral_bb,
+	dna_dihedral_chi,
+	dna_dihedral_sugar,
 
 	// Context-Independent, One-Body Carbohydrate Scoring Terms
 	sugar_bb,
@@ -555,6 +559,10 @@ enum ScoreType {
 	ring_close, //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
 	aa_repeat, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
+
+	// dna env/pair potential
+	dna_env,
+	dna_pair,
 
 #ifdef PYROSETTA
 		PyRosettaEnergy_first,

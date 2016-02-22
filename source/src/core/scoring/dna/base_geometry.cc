@@ -35,6 +35,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <cmath>
 
 
@@ -113,6 +114,116 @@ get_base_pucker(
 	else pucker.first += " endo";
 }
 
+
+////////////////////////////////////////////////////////////////////////////
+/// @details  Get the sugar pucker.
+/// additional int parameter as follows:
+///
+/// 0 - C1' endo
+/// 1 - C2' exxo
+/// 2 - C3' endo
+/// 3 - C4' exxo
+/// 4 - O4' endo
+/// 5 - C1' exxo
+/// 6 - C2' endo
+/// 7 - C3' exxo
+/// 8 - C4' endo
+/// 9 - O4' exxo
+
+/// this could be made faster...
+void
+get_sugar_pucker(
+	conformation::Residue const & rsd,
+	std::pair< std::string, int > & pucker
+)
+{
+	using std::string;
+	using namespace utility;
+	using namespace utility::tools;
+
+	static vector1< string > const names_s
+		( make_vector1( string( "C1'" ),
+		string( "C2'" ),
+		string( "C3'" ),
+		string( "C4'" ),
+		string( "O4'" ) ) );
+
+	vector1< string > names( names_s );
+
+	utility::vector1< Vector > atoms;
+	for ( int i=1; i<= 5; ++i ) {
+		atoms.push_back( rsd.xyz( names[i] ) );
+	}
+
+	Real mindot = 1000.0;
+	bool exxo( false );
+	for ( int ii=1; ii<= 5; ++ii ) {
+
+		Vector n12 = (( atoms[2]-atoms[1] ).cross( atoms[3]-atoms[2] ) ).normalized_any();
+		Real dot = std::fabs( n12.dot( ( atoms[4]-atoms[3] ).normalized_any() ) );
+		if ( dot < mindot ) {
+			// get pucker
+			//Real pucker_dot = n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized_any() );
+
+			mindot = dot;
+			pucker.first = names[5];
+			exxo = ( n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized_any() ) > 0.0 );
+		}
+
+		atoms.push_back( atoms[1] );
+		atoms.erase( atoms.begin() );
+
+		names.push_back( names[1] );
+		names.erase( names.begin() );
+
+	}
+
+
+	// additional integer for scannability
+	{
+		int const atom_index( std::find( names.begin(), names.end(), pucker.first ) - names.begin() );
+		int const sign_index( exxo ? 0 : 1 );
+		if ( atom_index%2 == sign_index ) pucker.second = atom_index+1;
+		else                              pucker.second = atom_index-4;
+	}
+
+	if ( exxo ) pucker.first += " exxo";
+	else pucker.first += " endo";
+
+	/// hack to 0->9
+	pucker.second += 4;
+	assert( pucker.second >= 0 && pucker.second <= 9 );
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+void
+get_sugar_torsions(
+	conformation::Residue const & rsd,
+	utility::vector1< Real > & torsions
+)
+{
+	using std::string;
+	using utility::tools::make_vector1;
+	using utility::vector1;
+	using namespace id;
+
+	vector1< vector1< string > > chi_atoms
+		( make_vector1( make_vector1( string(  "X"), string(  "X"), string(  "X"), string(  "X") ),
+		make_vector1( string("C5'"), string("C4'"), string("O4'"), string("C1'") ),
+		make_vector1( string("C4'"), string("O4'"), string("C1'"), string("C2'") ),
+		make_vector1( string("O4'"), string("C1'"), string("C2'"), string("H2''") ) ) ); // need to CHECK H
+	// if ( rsd.has_variant_type("RNA") ) chi_atoms[4][4] = "O2'";
+
+	torsions.clear(); torsions.resize( 4, 0.0 );
+	torsions[1] = rsd.mainchain_torsion(4); // delta
+
+	for ( Size chino=2; chino<= 4; ++chino ) {
+		vector1< string > const & atoms( chi_atoms[chino ] );
+		torsions[ chino ] = numeric::dihedral_degrees( rsd.xyz( atoms[1] ),
+			rsd.xyz( atoms[2] ),
+			rsd.xyz( atoms[3] ),
+			rsd.xyz( atoms[4] ) );
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string

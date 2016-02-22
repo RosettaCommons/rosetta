@@ -1,0 +1,586 @@
+MAX_PAIR_DIS 12.000000
+N_PAIR_DISBINS 5
+BIN_BOUNDS disbin= 1 lower_bound=     0.000 upper_bound=     4.000
+PAIR disbin= 1 na= a aa= A enrich=     1.000 actual=      2 expected=     2.420
+PAIR disbin= 1 na= a aa= C enrich=     1.000 actual=      0 expected=     0.173
+PAIR disbin= 1 na= a aa= D enrich=     1.250 actual=      6 expected=     3.457
+PAIR disbin= 1 na= a aa= E enrich=     0.500 actual=      0 expected=     2.074
+PAIR disbin= 1 na= a aa= F enrich=     1.000 actual=      1 expected=     0.519
+PAIR disbin= 1 na= a aa= G enrich=     1.000 actual=      2 expected=     2.420
+PAIR disbin= 1 na= a aa= H enrich=     1.000 actual=      3 expected=     2.247
+PAIR disbin= 1 na= a aa= I enrich=     1.000 actual=      0 expected=     0.000
+PAIR disbin= 1 na= a aa= K enrich=     1.000 actual=      1 expected=     2.420
+PAIR disbin= 1 na= a aa= L enrich=     1.000 actual=      0 expected=     0.173
+PAIR disbin= 1 na= a aa= M enrich=     1.000 actual=      0 expected=     0.519
+PAIR disbin= 1 na= a aa= N enrich=     1.000 actual=      6 expected=     4.148
+PAIR disbin= 1 na= a aa= P enrich=     1.000 actual=      0 expected=     0.173
+PAIR disbin= 1 na= a aa= Q enrich=     1.000 actual=      4 expected=     2.765
+PAIR disbin= 1 na= a aa= R enrich=     1.000 actual=      6 expected=     7.605
+PAIR disbin= 1 na= a aa= S enrich=     1.000 actual=      4 expected=     4.148
+PAIR disbin= 1 na= a aa= T enrich=     1.000 actual=      6 expected=     4.667
+PAIR disbin= 1 na= a aa= V enrich=     1.000 actual=      0 expected=     0.173
+PAIR disbin= 1 na= a aa= W enrich=     1.000 actual=      1 expected=     1.383
+PAIR disbin= 1 na= a aa= Y enrich=     1.000 actual=      0 expected=     0.519
+PAIR disbin= 1 na= c aa= A enrich=     1.000 actual=      2 expected=     3.514
+PAIR disbin= 1 na= c aa= C enrich=     1.000 actual=      0 expected=     0.251
+PAIR disbin= 1 na= c aa= D enrich=     1.833 actual=     12 expected=     5.021
+PAIR disbin= 1 na= c aa= E enrich=     1.250 actual=      6 expected=     3.012
+PAIR disbin= 1 na= c aa= F enrich=     1.000 actual=      1 expected=     0.753
+PAIR disbin= 1 na= c aa= G enrich=     0.333 actual=      0 expected=     3.514
+PAIR disbin= 1 na= c aa= H enrich=     0.667 actual=      1 expected=     3.263
+PAIR disbin= 1 na= c aa= I enrich=     1.000 actual=      0 expected=     0.000
+PAIR disbin= 1 na= c aa= K enrich=     0.333 actual=      0 expected=     3.514
+PAIR disbin= 1 na= c aa= L enrich=     1.000 actual=      0 expected=     0.251
+PAIR disbin= 1 na= c aa= M enrich=     1.000 actual=      1 expected=     0.753
+PAIR disbin= 1 na= c aa= N enrich=     0.833 actual=      4 expected=     6.025
+PAIR disbin= 1 na= c aa= P enrich=     1.000 actual=      0 expected=     0.251
+PAIR disbin= 1 na= c aa= Q enrich=     0.500 actual=      1 expected=     4.016
+PAIR disbin= 1 na= c aa= R enrich=     1.000 actual=     12 expected=    11.045
+PAIR disbin= 1 na= c aa= S enrich=     1.000 actual=      7 expected=     6.025
+PAIR disbin= 1 na= c aa= T enrich=     1.000 actual=      8 expected=     6.778
+PAIR disbin= 1 na= c aa= V enrich=     1.000 actual=      0 expected=     0.251
+PAIR disbin= 1 na= c aa= W enrich=     1.333 actual=      5 expected=     2.008
+PAIR disbin= 1 na= c aa= Y enrich=     1.000 actual=      1 expected=     0.753
+PAIR disbin= 1 na= g aa= A enrich=     0.333 actual=      0 expected=     3.226
+PAIR disbin= 1 na= g aa= C enrich=     1.000 actual=      1 expected=     0.230
+PAIR disbin= 1 na= g aa= D enrich=     0.250 actual=      0 expected=     4.609
+PAIR disbin= 1 na= g aa= E enrich=     0.500 actual=      0 expected=     2.765
+PAIR disbin= 1 na= g aa= F enrich=     1.000 actual=      0 expected=     0.691
+PAIR disbin= 1 na= g aa= G enrich=     1.000 actual=      3 expected=     3.226
+PAIR disbin= 1 na= g aa= H enrich=     1.333 actual=      5 expected=     2.996
+PAIR disbin= 1 na= g aa= I enrich=     1.000 actual=      0 expected=     0.000
+PAIR disbin= 1 na= g aa= K enrich=     2.000 actual=      9 expected=     3.226
+PAIR disbin= 1 na= g aa= L enrich=     1.000 actual=      0 expected=     0.230
+PAIR disbin= 1 na= g aa= M enrich=     1.000 actual=      2 expected=     0.691
+PAIR disbin= 1 na= g aa= N enrich=     0.600 actual=      2 expected=     5.531
+PAIR disbin= 1 na= g aa= P enrich=     1.000 actual=      0 expected=     0.230
+PAIR disbin= 1 na= g aa= Q enrich=     1.250 actual=      6 expected=     3.687
+PAIR disbin= 1 na= g aa= R enrich=     1.636 actual=     19 expected=    10.140
+PAIR disbin= 1 na= g aa= S enrich=     1.000 actual=      7 expected=     5.531
+PAIR disbin= 1 na= g aa= T enrich=     0.500 actual=      2 expected=     6.222
+PAIR disbin= 1 na= g aa= V enrich=     1.000 actual=      0 expected=     0.230
+PAIR disbin= 1 na= g aa= W enrich=     1.000 actual=      0 expected=     1.844
+PAIR disbin= 1 na= g aa= Y enrich=     1.000 actual=      0 expected=     0.691
+PAIR disbin= 1 na= t aa= A enrich=     1.800 actual=     10 expected=     4.840
+PAIR disbin= 1 na= t aa= C enrich=     1.000 actual=      0 expected=     0.346
+PAIR disbin= 1 na= t aa= D enrich=     0.500 actual=      2 expected=     6.914
+PAIR disbin= 1 na= t aa= E enrich=     1.000 actual=      6 expected=     4.148
+PAIR disbin= 1 na= t aa= F enrich=     1.000 actual=      1 expected=     1.037
+PAIR disbin= 1 na= t aa= G enrich=     1.600 actual=      9 expected=     4.840
+PAIR disbin= 1 na= t aa= H enrich=     1.000 actual=      4 expected=     4.494
+PAIR disbin= 1 na= t aa= I enrich=     1.000 actual=      0 expected=     0.000
+PAIR disbin= 1 na= t aa= K enrich=     1.000 actual=      4 expected=     4.840
+PAIR disbin= 1 na= t aa= L enrich=     1.000 actual=      1 expected=     0.346
+PAIR disbin= 1 na= t aa= M enrich=     1.000 actual=      0 expected=     1.037
+PAIR disbin= 1 na= t aa= N enrich=     1.222 actual=     12 expected=     8.296
+PAIR disbin= 1 na= t aa= P enrich=     1.000 actual=      1 expected=     0.346
+PAIR disbin= 1 na= t aa= Q enrich=     1.000 actual=      5 expected=     5.531
+PAIR disbin= 1 na= t aa= R enrich=     0.533 actual=      7 expected=    15.210
+PAIR disbin= 1 na= t aa= S enrich=     0.875 actual=      6 expected=     8.296
+PAIR disbin= 1 na= t aa= T enrich=     1.000 actual=     11 expected=     9.333
+PAIR disbin= 1 na= t aa= V enrich=     1.000 actual=      1 expected=     0.346
+PAIR disbin= 1 na= t aa= W enrich=     1.000 actual=      2 expected=     2.765
+PAIR disbin= 1 na= t aa= Y enrich=     1.000 actual=      2 expected=     1.037
+BIN_BOUNDS disbin= 2 lower_bound=     4.000 upper_bound=     6.000
+PAIR disbin= 2 na= a aa= A enrich=     1.583 actual=     20 expected=    11.467
+PAIR disbin= 2 na= a aa= C enrich=     1.000 actual=      2 expected=     2.966
+PAIR disbin= 2 na= a aa= D enrich=     0.600 actual=      8 expected=    15.025
+PAIR disbin= 2 na= a aa= E enrich=     0.600 actual=      5 expected=    10.676
+PAIR disbin= 2 na= a aa= F enrich=     1.000 actual=      1 expected=     2.768
+PAIR disbin= 2 na= a aa= G enrich=     1.000 actual=     11 expected=     9.094
+PAIR disbin= 2 na= a aa= H enrich=     0.800 actual=      7 expected=    10.281
+PAIR disbin= 2 na= a aa= I enrich=     1.000 actual=      6 expected=     4.349
+PAIR disbin= 2 na= a aa= K enrich=     0.889 actual=     15 expected=    18.584
+PAIR disbin= 2 na= a aa= L enrich=     0.500 actual=      0 expected=     2.966
+PAIR disbin= 2 na= a aa= M enrich=     1.333 actual=      5 expected=     2.570
+PAIR disbin= 2 na= a aa= N enrich=     2.111 actual=     58 expected=    26.295
+PAIR disbin= 2 na= a aa= P enrich=     1.000 actual=      3 expected=     2.372
+PAIR disbin= 2 na= a aa= Q enrich=     1.211 actual=     24 expected=    18.584
+PAIR disbin= 2 na= a aa= R enrich=     0.615 actual=     31 expected=    52.589
+PAIR disbin= 2 na= a aa= S enrich=     0.909 actual=     19 expected=    22.538
+PAIR disbin= 2 na= a aa= T enrich=     1.000 actual=     15 expected=    16.805
+PAIR disbin= 2 na= a aa= V enrich=     1.167 actual=      8 expected=     5.338
+PAIR disbin= 2 na= a aa= W enrich=     1.000 actual=      1 expected=     0.989
+PAIR disbin= 2 na= a aa= Y enrich=     0.750 actual=      2 expected=     4.745
+PAIR disbin= 2 na= c aa= A enrich=     0.400 actual=      5 expected=    15.226
+PAIR disbin= 2 na= c aa= C enrich=     1.000 actual=      3 expected=     3.938
+PAIR disbin= 2 na= c aa= D enrich=     2.200 actual=     45 expected=    19.951
+PAIR disbin= 2 na= c aa= E enrich=     1.733 actual=     27 expected=    14.176
+PAIR disbin= 2 na= c aa= F enrich=     1.000 actual=      4 expected=     3.675
+PAIR disbin= 2 na= c aa= G enrich=     1.308 actual=     18 expected=    12.075
+PAIR disbin= 2 na= c aa= H enrich=     1.000 actual=     12 expected=    13.651
+PAIR disbin= 2 na= c aa= I enrich=     0.800 actual=      3 expected=     5.775
+PAIR disbin= 2 na= c aa= K enrich=     0.708 actual=     16 expected=    24.676
+PAIR disbin= 2 na= c aa= L enrich=     0.667 actual=      1 expected=     3.938
+PAIR disbin= 2 na= c aa= M enrich=     1.000 actual=      3 expected=     3.413
+PAIR disbin= 2 na= c aa= N enrich=     1.000 actual=     34 expected=    34.914
+PAIR disbin= 2 na= c aa= P enrich=     1.000 actual=      3 expected=     3.150
+PAIR disbin= 2 na= c aa= Q enrich=     0.958 actual=     22 expected=    24.676
+PAIR disbin= 2 na= c aa= R enrich=     1.000 actual=     71 expected=    69.828
+PAIR disbin= 2 na= c aa= S enrich=     0.759 actual=     21 expected=    29.926
+PAIR disbin= 2 na= c aa= T enrich=     1.000 actual=     22 expected=    22.313
+PAIR disbin= 2 na= c aa= V enrich=     0.571 actual=      3 expected=     7.088
+PAIR disbin= 2 na= c aa= W enrich=     1.000 actual=      2 expected=     1.313
+PAIR disbin= 2 na= c aa= Y enrich=     1.000 actual=      5 expected=     6.300
+PAIR disbin= 2 na= g aa= A enrich=     0.933 actual=     13 expected=    15.606
+PAIR disbin= 2 na= g aa= C enrich=     1.000 actual=      6 expected=     4.036
+PAIR disbin= 2 na= g aa= D enrich=     0.900 actual=     17 expected=    20.450
+PAIR disbin= 2 na= g aa= E enrich=     0.929 actual=     12 expected=    14.530
+PAIR disbin= 2 na= g aa= F enrich=     1.000 actual=      3 expected=     3.767
+PAIR disbin= 2 na= g aa= G enrich=     0.667 actual=      7 expected=    12.377
+PAIR disbin= 2 na= g aa= H enrich=     1.429 actual=     21 expected=    13.992
+PAIR disbin= 2 na= g aa= I enrich=     0.800 actual=      3 expected=     5.920
+PAIR disbin= 2 na= g aa= K enrich=     1.615 actual=     43 expected=    25.293
+PAIR disbin= 2 na= g aa= L enrich=     0.750 actual=      2 expected=     4.036
+PAIR disbin= 2 na= g aa= M enrich=     1.000 actual=      2 expected=     3.498
+PAIR disbin= 2 na= g aa= N enrich=     0.600 actual=     20 expected=    35.787
+PAIR disbin= 2 na= g aa= P enrich=     0.667 actual=      1 expected=     3.229
+PAIR disbin= 2 na= g aa= Q enrich=     0.680 actual=     16 expected=    25.293
+PAIR disbin= 2 na= g aa= R enrich=     1.611 actual=    117 expected=    71.573
+PAIR disbin= 2 na= g aa= S enrich=     0.767 actual=     22 expected=    30.674
+PAIR disbin= 2 na= g aa= T enrich=     0.727 actual=     15 expected=    22.871
+PAIR disbin= 2 na= g aa= V enrich=     0.571 actual=      3 expected=     7.265
+PAIR disbin= 2 na= g aa= W enrich=     1.000 actual=      1 expected=     1.345
+PAIR disbin= 2 na= g aa= Y enrich=     0.833 actual=      4 expected=     6.458
+PAIR disbin= 2 na= t aa= A enrich=     1.188 actual=     20 expected=    15.701
+PAIR disbin= 2 na= t aa= C enrich=     1.000 actual=      4 expected=     4.061
+PAIR disbin= 2 na= t aa= D enrich=     0.350 actual=      6 expected=    20.574
+PAIR disbin= 2 na= t aa= E enrich=     0.786 actual=     10 expected=    14.619
+PAIR disbin= 2 na= t aa= F enrich=     1.250 actual=      6 expected=     3.790
+PAIR disbin= 2 na= t aa= G enrich=     0.917 actual=     10 expected=    12.453
+PAIR disbin= 2 na= t aa= H enrich=     0.929 actual=     12 expected=    14.077
+PAIR disbin= 2 na= t aa= I enrich=     1.500 actual=     10 expected=     5.956
+PAIR disbin= 2 na= t aa= K enrich=     0.840 actual=     20 expected=    25.447
+PAIR disbin= 2 na= t aa= L enrich=     2.200 actual=     12 expected=     4.061
+PAIR disbin= 2 na= t aa= M enrich=     1.000 actual=      3 expected=     3.519
+PAIR disbin= 2 na= t aa= N enrich=     0.611 actual=     21 expected=    36.005
+PAIR disbin= 2 na= t aa= P enrich=     1.000 actual=      5 expected=     3.249
+PAIR disbin= 2 na= t aa= Q enrich=     1.192 actual=     32 expected=    25.447
+PAIR disbin= 2 na= t aa= R enrich=     0.667 actual=     47 expected=    72.010
+PAIR disbin= 2 na= t aa= S enrich=     1.645 actual=     52 expected=    30.861
+PAIR disbin= 2 na= t aa= T enrich=     1.333 actual=     33 expected=    23.011
+PAIR disbin= 2 na= t aa= V enrich=     1.500 actual=     13 expected=     7.309
+PAIR disbin= 2 na= t aa= W enrich=     1.000 actual=      1 expected=     1.354
+PAIR disbin= 2 na= t aa= Y enrich=     1.714 actual=     13 expected=     6.497
+BIN_BOUNDS disbin= 3 lower_bound=     6.000 upper_bound=     8.000
+PAIR disbin= 3 na= a aa= A enrich=     1.000 actual=     29 expected=    28.609
+PAIR disbin= 3 na= a aa= C enrich=     1.000 actual=      4 expected=     4.768
+PAIR disbin= 3 na= a aa= D enrich=     0.763 actual=     28 expected=    38.145
+PAIR disbin= 3 na= a aa= E enrich=     1.273 actual=     29 expected=    21.570
+PAIR disbin= 3 na= a aa= F enrich=     1.000 actual=      6 expected=     7.947
+PAIR disbin= 3 na= a aa= G enrich=     1.059 actual=     37 expected=    33.377
+PAIR disbin= 3 na= a aa= H enrich=     0.565 actual=     12 expected=    23.841
+PAIR disbin= 3 na= a aa= I enrich=     1.000 actual=     13 expected=    12.715
+PAIR disbin= 3 na= a aa= K enrich=     1.041 actual=     52 expected=    48.589
+PAIR disbin= 3 na= a aa= L enrich=     1.429 actual=     11 expected=     6.585
+PAIR disbin= 3 na= a aa= M enrich=     0.889 actual=      7 expected=     9.763
+PAIR disbin= 3 na= a aa= N enrich=     1.000 actual=     54 expected=    53.357
+PAIR disbin= 3 na= a aa= P enrich=     1.333 actual=     17 expected=    11.353
+PAIR disbin= 3 na= a aa= Q enrich=     1.000 actual=     31 expected=    31.560
+PAIR disbin= 3 na= a aa= R enrich=     1.000 actual=     97 expected=    97.179
+PAIR disbin= 3 na= a aa= S enrich=     1.018 actual=     57 expected=    54.039
+PAIR disbin= 3 na= a aa= T enrich=     1.000 actual=     52 expected=    53.812
+PAIR disbin= 3 na= a aa= V enrich=     0.917 actual=     10 expected=    12.715
+PAIR disbin= 3 na= a aa= W enrich=     1.000 actual=      1 expected=     1.589
+PAIR disbin= 3 na= a aa= Y enrich=     1.231 actual=     17 expected=    12.488
+PAIR disbin= 3 na= c aa= A enrich=     1.062 actual=     35 expected=    31.500
+PAIR disbin= 3 na= c aa= C enrich=     1.000 actual=      7 expected=     5.250
+PAIR disbin= 3 na= c aa= D enrich=     1.093 actual=     48 expected=    42.000
+PAIR disbin= 3 na= c aa= E enrich=     0.870 actual=     19 expected=    23.750
+PAIR disbin= 3 na= c aa= F enrich=     1.000 actual=      9 expected=     8.750
+PAIR disbin= 3 na= c aa= G enrich=     1.000 actual=     35 expected=    36.750
+PAIR disbin= 3 na= c aa= H enrich=     0.962 actual=     24 expected=    26.250
+PAIR disbin= 3 na= c aa= I enrich=     1.000 actual=     15 expected=    14.000
+PAIR disbin= 3 na= c aa= K enrich=     1.185 actual=     65 expected=    53.500
+PAIR disbin= 3 na= c aa= L enrich=     0.571 actual=      3 expected=     7.250
+PAIR disbin= 3 na= c aa= M enrich=     1.273 actual=     15 expected=    10.750
+PAIR disbin= 3 na= c aa= N enrich=     0.828 actual=     47 expected=    58.750
+PAIR disbin= 3 na= c aa= P enrich=     1.000 actual=     13 expected=    12.500
+PAIR disbin= 3 na= c aa= Q enrich=     1.000 actual=     34 expected=    34.750
+PAIR disbin= 3 na= c aa= R enrich=     1.065 actual=    115 expected=   107.000
+PAIR disbin= 3 na= c aa= S enrich=     1.000 actual=     61 expected=    59.500
+PAIR disbin= 3 na= c aa= T enrich=     0.898 actual=     52 expected=    59.250
+PAIR disbin= 3 na= c aa= V enrich=     0.643 actual=      8 expected=    14.000
+PAIR disbin= 3 na= c aa= W enrich=     1.000 actual=      2 expected=     1.750
+PAIR disbin= 3 na= c aa= Y enrich=     1.000 actual=     14 expected=    13.750
+PAIR disbin= 3 na= g aa= A enrich=     0.697 actual=     22 expected=    33.630
+PAIR disbin= 3 na= g aa= C enrich=     1.000 actual=      5 expected=     5.605
+PAIR disbin= 3 na= g aa= D enrich=     1.378 actual=     63 expected=    44.841
+PAIR disbin= 3 na= g aa= E enrich=     1.269 actual=     34 expected=    25.356
+PAIR disbin= 3 na= g aa= F enrich=     1.100 actual=     12 expected=     9.342
+PAIR disbin= 3 na= g aa= G enrich=     0.949 actual=     36 expected=    39.236
+PAIR disbin= 3 na= g aa= H enrich=     1.207 actual=     36 expected=    28.025
+PAIR disbin= 3 na= g aa= I enrich=     1.000 actual=     14 expected=    14.947
+PAIR disbin= 3 na= g aa= K enrich=     0.754 actual=     42 expected=    57.118
+PAIR disbin= 3 na= g aa= L enrich=     1.000 actual=      6 expected=     7.740
+PAIR disbin= 3 na= g aa= M enrich=     1.000 actual=     10 expected=    11.477
+PAIR disbin= 3 na= g aa= N enrich=     0.871 actual=     53 expected=    62.723
+PAIR disbin= 3 na= g aa= P enrich=     0.769 actual=      9 expected=    13.345
+PAIR disbin= 3 na= g aa= Q enrich=     0.838 actual=     30 expected=    37.100
+PAIR disbin= 3 na= g aa= R enrich=     1.113 actual=    129 expected=   114.237
+PAIR disbin= 3 na= g aa= S enrich=     0.952 actual=     59 expected=    63.524
+PAIR disbin= 3 na= g aa= T enrich=     1.125 actual=     73 expected=    63.257
+PAIR disbin= 3 na= g aa= V enrich=     1.133 actual=     18 expected=    14.947
+PAIR disbin= 3 na= g aa= W enrich=     1.000 actual=      3 expected=     1.868
+PAIR disbin= 3 na= g aa= Y enrich=     0.714 actual=      9 expected=    14.680
+PAIR disbin= 3 na= t aa= A enrich=     1.182 actual=     40 expected=    32.261
+PAIR disbin= 3 na= t aa= C enrich=     1.000 actual=      5 expected=     5.377
+PAIR disbin= 3 na= t aa= D enrich=     0.698 actual=     29 expected=    43.014
+PAIR disbin= 3 na= t aa= E enrich=     0.583 actual=     13 expected=    24.324
+PAIR disbin= 3 na= t aa= F enrich=     1.000 actual=      8 expected=     8.961
+PAIR disbin= 3 na= t aa= G enrich=     1.000 actual=     39 expected=    37.638
+PAIR disbin= 3 na= t aa= H enrich=     1.185 actual=     33 expected=    26.884
+PAIR disbin= 3 na= t aa= I enrich=     1.000 actual=     14 expected=    14.338
+PAIR disbin= 3 na= t aa= K enrich=     1.000 actual=     55 expected=    54.792
+PAIR disbin= 3 na= t aa= L enrich=     1.000 actual=      9 expected=     7.425
+PAIR disbin= 3 na= t aa= M enrich=     1.000 actual=     11 expected=    11.010
+PAIR disbin= 3 na= t aa= N enrich=     1.311 actual=     81 expected=    60.169
+PAIR disbin= 3 na= t aa= P enrich=     1.000 actual=     11 expected=    12.802
+PAIR disbin= 3 na= t aa= Q enrich=     1.194 actual=     44 expected=    35.589
+PAIR disbin= 3 na= t aa= R enrich=     0.807 actual=     87 expected=   109.585
+PAIR disbin= 3 na= t aa= S enrich=     1.000 actual=     61 expected=    60.937
+PAIR disbin= 3 na= t aa= T enrich=     1.000 actual=     60 expected=    60.681
+PAIR disbin= 3 na= t aa= V enrich=     1.267 actual=     20 expected=    14.338
+PAIR disbin= 3 na= t aa= W enrich=     1.000 actual=      1 expected=     1.792
+PAIR disbin= 3 na= t aa= Y enrich=     1.000 actual=     15 expected=    14.082
+BIN_BOUNDS disbin= 4 lower_bound=     8.000 upper_bound=    10.000
+PAIR disbin= 4 na= a aa= A enrich=     1.189 actual=     64 expected=    52.701
+#PAIR disbin= 4 na= a aa= C enrich=     0.750 actual=      2 expected=     4.485
+PAIR disbin= 4 na= a aa= C enrich=     1.000 actual=      2 expected=     4.485
+PAIR disbin= 4 na= a aa= D enrich=     0.660 actual=     30 expected=    47.991
+PAIR disbin= 4 na= a aa= E enrich=     0.970 actual=     31 expected=    33.415
+PAIR disbin= 4 na= a aa= F enrich=     1.080 actual=     28 expected=    24.220
+PAIR disbin= 4 na= a aa= G enrich=     0.908 actual=     58 expected=    65.708
+PAIR disbin= 4 na= a aa= H enrich=     0.978 actual=     44 expected=    46.646
+PAIR disbin= 4 na= a aa= I enrich=     1.000 actual=     33 expected=    31.396
+PAIR disbin= 4 na= a aa= K enrich=     1.009 actual=    110 expected=   107.420
+PAIR disbin= 4 na= a aa= L enrich=     1.000 actual=     23 expected=    21.529
+PAIR disbin= 4 na= a aa= M enrich=     1.000 actual=     14 expected=    15.474
+PAIR disbin= 4 na= a aa= N enrich=     1.000 actual=     71 expected=    71.987
+PAIR disbin= 4 na= a aa= P enrich=     1.000 actual=     25 expected=    24.668
+PAIR disbin= 4 na= a aa= Q enrich=     1.125 actual=     55 expected=    47.991
+PAIR disbin= 4 na= a aa= R enrich=     0.986 actual=    139 expected=   142.404
+PAIR disbin= 4 na= a aa= S enrich=     1.114 actual=    118 expected=   104.729
+PAIR disbin= 4 na= a aa= T enrich=     0.922 actual=     82 expected=    90.601
+PAIR disbin= 4 na= a aa= V enrich=     1.154 actual=     31 expected=    25.790
+PAIR disbin= 4 na= a aa= W enrich=     1.000 actual=      6 expected=     7.625
+PAIR disbin= 4 na= a aa= Y enrich=     1.040 actual=     27 expected=    24.220
+PAIR disbin= 4 na= c aa= A enrich=     0.844 actual=     53 expected=    64.347
+#PAIR disbin= 4 na= c aa= C enrich=     2.000 actual=     13 expected=     5.476
+PAIR disbin= 4 na= c aa= C enrich=     1.000 actual=     13 expected=     5.476
+PAIR disbin= 4 na= c aa= D enrich=     1.000 actual=     59 expected=    58.597
+PAIR disbin= 4 na= c aa= E enrich=     1.000 actual=     39 expected=    40.799
+PAIR disbin= 4 na= c aa= F enrich=     0.897 actual=     25 expected=    29.572
+PAIR disbin= 4 na= c aa= G enrich=     1.148 actual=     94 expected=    80.229
+PAIR disbin= 4 na= c aa= H enrich=     1.105 actual=     64 expected=    56.954
+PAIR disbin= 4 na= c aa= I enrich=     0.868 actual=     32 expected=    38.334
+PAIR disbin= 4 na= c aa= K enrich=     1.091 actual=    145 expected=   131.159
+PAIR disbin= 4 na= c aa= L enrich=     0.692 actual=     17 expected=    26.286
+PAIR disbin= 4 na= c aa= M enrich=     1.053 actual=     21 expected=    18.893
+PAIR disbin= 4 na= c aa= N enrich=     0.966 actual=     83 expected=    87.895
+PAIR disbin= 4 na= c aa= P enrich=     0.967 actual=     28 expected=    30.120
+PAIR disbin= 4 na= c aa= Q enrich=     0.845 actual=     48 expected=    58.597
+PAIR disbin= 4 na= c aa= R enrich=     1.161 actual=    203 expected=   173.874
+PAIR disbin= 4 na= c aa= S enrich=     0.858 actual=    108 expected=   127.873
+PAIR disbin= 4 na= c aa= T enrich=     1.081 actual=    121 expected=   110.622
+PAIR disbin= 4 na= c aa= V enrich=     0.935 actual=     28 expected=    31.489
+PAIR disbin= 4 na= c aa= W enrich=     1.000 actual=     11 expected=     9.310
+PAIR disbin= 4 na= c aa= Y enrich=     0.655 actual=     18 expected=    29.572
+PAIR disbin= 4 na= g aa= A enrich=     0.915 actual=     53 expected=    59.561
+PAIR disbin= 4 na= g aa= C enrich=     1.000 actual=      5 expected=     5.069
+PAIR disbin= 4 na= g aa= D enrich=     1.436 actual=     80 expected=    54.239
+PAIR disbin= 4 na= g aa= E enrich=     1.184 actual=     46 expected=    37.764
+PAIR disbin= 4 na= g aa= F enrich=     1.000 actual=     28 expected=    27.373
+PAIR disbin= 4 na= g aa= G enrich=     1.000 actual=     75 expected=    74.261
+PAIR disbin= 4 na= g aa= H enrich=     1.075 actual=     58 expected=    52.718
+PAIR disbin= 4 na= g aa= I enrich=     1.000 actual=     37 expected=    35.483
+PAIR disbin= 4 na= g aa= K enrich=     0.893 actual=    107 expected=   121.403
+PAIR disbin= 4 na= g aa= L enrich=     0.958 actual=     22 expected=    24.331
+PAIR disbin= 4 na= g aa= M enrich=     1.056 actual=     20 expected=    17.488
+PAIR disbin= 4 na= g aa= N enrich=     0.938 actual=     75 expected=    81.358
+PAIR disbin= 4 na= g aa= P enrich=     1.036 actual=     30 expected=    27.880
+PAIR disbin= 4 na= g aa= Q enrich=     0.981 actual=     52 expected=    54.239
+PAIR disbin= 4 na= g aa= R enrich=     0.887 actual=    141 expected=   160.941
+PAIR disbin= 4 na= g aa= S enrich=     1.008 actual=    121 expected=   118.362
+PAIR disbin= 4 na= g aa= T enrich=     1.000 actual=    102 expected=   102.394
+PAIR disbin= 4 na= g aa= V enrich=     0.966 actual=     27 expected=    29.147
+PAIR disbin= 4 na= g aa= W enrich=     1.000 actual=     10 expected=     8.617
+PAIR disbin= 4 na= g aa= Y enrich=     1.071 actual=     31 expected=    27.373
+PAIR disbin= 4 na= t aa= A enrich=     1.085 actual=     65 expected=    58.391
+#PAIR disbin= 4 na= t aa= C enrich=     0.250 actual=      0 expected=     4.969
+PAIR disbin= 4 na= t aa= C enrich=     1.000 actual=      0 expected=     4.969
+PAIR disbin= 4 na= t aa= D enrich=     0.868 actual=     45 expected=    53.173
+PAIR disbin= 4 na= t aa= E enrich=     0.919 actual=     33 expected=    37.022
+PAIR disbin= 4 na= t aa= F enrich=     1.000 actual=     27 expected=    26.835
+PAIR disbin= 4 na= t aa= G enrich=     0.931 actual=     66 expected=    72.802
+PAIR disbin= 4 na= t aa= H enrich=     0.843 actual=     42 expected=    51.682
+PAIR disbin= 4 na= t aa= I enrich=     1.057 actual=     38 expected=    34.786
+PAIR disbin= 4 na= t aa= K enrich=     0.992 actual=    117 expected=   119.018
+PAIR disbin= 4 na= t aa= L enrich=     1.375 actual=     34 expected=    23.853
+PAIR disbin= 4 na= t aa= M enrich=     0.882 actual=     14 expected=    17.145
+PAIR disbin= 4 na= t aa= N enrich=     1.137 actual=     92 expected=    79.760
+PAIR disbin= 4 na= t aa= P enrich=     1.000 actual=     27 expected=    27.332
+PAIR disbin= 4 na= t aa= Q enrich=     1.074 actual=     59 expected=    53.173
+PAIR disbin= 4 na= t aa= R enrich=     0.975 actual=    152 expected=   157.780
+PAIR disbin= 4 na= t aa= S enrich=     1.017 actual=    120 expected=   116.037
+PAIR disbin= 4 na= t aa= T enrich=     1.000 actual=     99 expected=   100.383
+PAIR disbin= 4 na= t aa= V enrich=     1.000 actual=     29 expected=    28.574
+PAIR disbin= 4 na= t aa= W enrich=     1.000 actual=      7 expected=     8.448
+PAIR disbin= 4 na= t aa= Y enrich=     1.148 actual=     32 expected=    26.835
+BIN_BOUNDS disbin= 5 lower_bound=    10.000 upper_bound=    12.001
+PAIR disbin= 5 na= a aa= A enrich=     0.982 actual=    108 expected=   111.640
+PAIR disbin= 5 na= a aa= C enrich=     1.000 actual=      9 expected=     9.026
+PAIR disbin= 5 na= a aa= D enrich=     1.014 actual=     74 expected=    71.972
+PAIR disbin= 5 na= a aa= E enrich=     0.898 actual=     52 expected=    59.146
+PAIR disbin= 5 na= a aa= F enrich=     0.881 actual=     51 expected=    59.146
+PAIR disbin= 5 na= a aa= G enrich=     0.757 actual=     86 expected=   115.916
+PAIR disbin= 5 na= a aa= H enrich=     1.197 actual=     74 expected=    60.333
+PAIR disbin= 5 na= a aa= I enrich=     1.027 actual=     77 expected=    73.873
+PAIR disbin= 5 na= a aa= K enrich=     0.969 actual=    184 expected=   191.213
+PAIR disbin= 5 na= a aa= L enrich=     0.823 actual=     64 expected=    79.098
+PAIR disbin= 5 na= a aa= M enrich=     0.846 actual=     21 expected=    26.604
+PAIR disbin= 5 na= a aa= N enrich=     1.168 actual=    126 expected=   106.652
+PAIR disbin= 5 na= a aa= P enrich=     0.854 actual=     34 expected=    41.093
+PAIR disbin= 5 na= a aa= Q enrich=     1.184 actual=     91 expected=    75.773
+PAIR disbin= 5 na= a aa= R enrich=     1.073 actual=    208 expected=   192.164
+PAIR disbin= 5 na= a aa= S enrich=     1.043 actual=    194 expected=   184.088
+PAIR disbin= 5 na= a aa= T enrich=     1.026 actual=    160 expected=   154.158
+PAIR disbin= 5 na= a aa= V enrich=     0.968 actual=     60 expected=    63.184
+PAIR disbin= 5 na= a aa= W enrich=     1.000 actual=     18 expected=    18.528
+PAIR disbin= 5 na= a aa= Y enrich=     1.018 actual=     57 expected=    54.395
+PAIR disbin= 5 na= c aa= A enrich=     0.950 actual=    114 expected=   121.540
+PAIR disbin= 5 na= c aa= C enrich=     1.000 actual=      8 expected=     9.827
+PAIR disbin= 5 na= c aa= D enrich=     1.025 actual=     82 expected=    78.354
+PAIR disbin= 5 na= c aa= E enrich=     1.185 actual=     78 expected=    64.390
+PAIR disbin= 5 na= c aa= F enrich=     1.046 actual=     69 expected=    64.390
+PAIR disbin= 5 na= c aa= G enrich=     0.992 actual=    124 expected=   126.194
+PAIR disbin= 5 na= c aa= H enrich=     1.015 actual=     68 expected=    65.683
+PAIR disbin= 5 na= c aa= I enrich=     1.000 actual=     79 expected=    80.423
+PAIR disbin= 5 na= c aa= K enrich=     1.048 actual=    220 expected=   208.169
+PAIR disbin= 5 na= c aa= L enrich=     1.115 actual=     98 expected=    86.112
+PAIR disbin= 5 na= c aa= M enrich=     1.103 actual=     33 expected=    28.963
+PAIR disbin= 5 na= c aa= N enrich=     0.888 actual=    102 expected=   116.109
+PAIR disbin= 5 na= c aa= P enrich=     1.000 actual=     46 expected=    44.737
+PAIR disbin= 5 na= c aa= Q enrich=     0.963 actual=     78 expected=    82.492
+PAIR disbin= 5 na= c aa= R enrich=     0.852 actual=    177 expected=   209.203
+PAIR disbin= 5 na= c aa= S enrich=     1.030 actual=    208 expected=   200.411
+PAIR disbin= 5 na= c aa= T enrich=     1.000 actual=    169 expected=   167.828
+PAIR disbin= 5 na= c aa= V enrich=     1.000 actual=     69 expected=    68.786
+PAIR disbin= 5 na= c aa= W enrich=     1.286 actual=     28 expected=    20.170
+PAIR disbin= 5 na= c aa= Y enrich=     0.915 actual=     53 expected=    59.218
+PAIR disbin= 5 na= g aa= A enrich=     1.000 actual=    124 expected=   122.051
+PAIR disbin= 5 na= g aa= C enrich=     1.000 actual=     11 expected=     9.868
+PAIR disbin= 5 na= g aa= D enrich=     1.000 actual=     80 expected=    78.684
+PAIR disbin= 5 na= g aa= E enrich=     0.984 actual=     62 expected=    64.661
+PAIR disbin= 5 na= g aa= F enrich=     0.984 actual=     62 expected=    64.661
+PAIR disbin= 5 na= g aa= G enrich=     1.276 actual=    163 expected=   126.725
+PAIR disbin= 5 na= g aa= H enrich=     1.030 actual=     69 expected=    65.959
+PAIR disbin= 5 na= g aa= I enrich=     0.988 actual=     78 expected=    80.761
+PAIR disbin= 5 na= g aa= K enrich=     0.938 actual=    195 expected=   209.044
+PAIR disbin= 5 na= g aa= L enrich=     0.860 actual=     73 expected=    86.474
+PAIR disbin= 5 na= g aa= M enrich=     1.000 actual=     29 expected=    29.084
+PAIR disbin= 5 na= g aa= N enrich=     0.931 actual=    107 expected=   116.597
+PAIR disbin= 5 na= g aa= P enrich=     1.000 actual=     44 expected=    44.925
+PAIR disbin= 5 na= g aa= Q enrich=     0.854 actual=     69 expected=    82.839
+PAIR disbin= 5 na= g aa= R enrich=     1.005 actual=    213 expected=   210.083
+PAIR disbin= 5 na= g aa= S enrich=     1.050 actual=    213 expected=   201.254
+PAIR disbin= 5 na= g aa= T enrich=     1.112 actual=    189 expected=   168.534
+PAIR disbin= 5 na= g aa= V enrich=     0.942 actual=     64 expected=    69.075
+PAIR disbin= 5 na= g aa= W enrich=     0.900 actual=     17 expected=    20.255
+PAIR disbin= 5 na= g aa= Y enrich=     0.847 actual=     49 expected=    59.467
+PAIR disbin= 5 na= t aa= A enrich=     1.070 actual=    124 expected=   114.770
+PAIR disbin= 5 na= t aa= C enrich=     1.000 actual=     10 expected=     9.279
+PAIR disbin= 5 na= t aa= D enrich=     0.932 actual=     67 expected=    73.990
+PAIR disbin= 5 na= t aa= E enrich=     0.967 actual=     57 expected=    60.804
+PAIR disbin= 5 na= t aa= F enrich=     1.082 actual=     67 expected=    60.804
+PAIR disbin= 5 na= t aa= G enrich=     0.975 actual=    115 expected=   119.165
+PAIR disbin= 5 na= t aa= H enrich=     0.710 actual=     43 expected=    62.024
+PAIR disbin= 5 na= t aa= I enrich=     1.000 actual=     77 expected=    75.943
+PAIR disbin= 5 na= t aa= K enrich=     1.041 actual=    206 expected=   196.574
+PAIR disbin= 5 na= t aa= L enrich=     1.183 actual=     98 expected=    81.316
+PAIR disbin= 5 na= t aa= M enrich=     1.000 actual=     29 expected=    27.349
+PAIR disbin= 5 na= t aa= N enrich=     1.027 actual=    114 expected=   109.642
+PAIR disbin= 5 na= t aa= P enrich=     1.116 actual=     49 expected=    42.245
+PAIR disbin= 5 na= t aa= Q enrich=     1.026 actual=     81 expected=    77.897
+PAIR disbin= 5 na= t aa= R enrich=     1.061 actual=    211 expected=   197.550
+PAIR disbin= 5 na= t aa= S enrich=     0.852 actual=    160 expected=   189.248
+PAIR disbin= 5 na= t aa= T enrich=     0.835 actual=    131 expected=   158.480
+PAIR disbin= 5 na= t aa= V enrich=     1.108 actual=     73 expected=    64.955
+PAIR disbin= 5 na= t aa= W enrich=     0.842 actual=     15 expected=    19.047
+PAIR disbin= 5 na= t aa= Y enrich=     1.232 actual=     70 expected=    55.920
+MAX_NBRS 14
+NBR_BIN nbrs=   0 nbr_bin=   1
+NBR_BIN nbrs=   1 nbr_bin=   2
+NBR_BIN nbrs=   2 nbr_bin=   2
+NBR_BIN nbrs=   3 nbr_bin=   3
+NBR_BIN nbrs=   4 nbr_bin=   3
+NBR_BIN nbrs=   5 nbr_bin=   4
+NBR_BIN nbrs=   6 nbr_bin=   4
+NBR_BIN nbrs=   7 nbr_bin=   5
+NBR_BIN nbrs=   8 nbr_bin=   5
+NBR_BIN nbrs=   9 nbr_bin=   6
+NBR_BIN nbrs=  10 nbr_bin=   6
+NBR_BIN nbrs=  11 nbr_bin=   7
+NBR_BIN nbrs=  12 nbr_bin=   7
+NBR_BIN nbrs=  13 nbr_bin=   8
+NBR_BIN nbrs=  14 nbr_bin=   8
+ENV nbr_bin= 4 aa= W enrich=     0.600 actual=      2 expected=     5.012
+ENV nbr_bin= 7 aa= C enrich=     1.000 actual=      3 expected=     3.747
+ENV nbr_bin= 1 aa= T enrich=     0.855 actual=    459 expected=   538.913
+ENV nbr_bin= 2 aa= F enrich=     1.462 actual=     58 expected=    38.763
+ENV nbr_bin= 7 aa= Y enrich=     0.636 actual=      6 expected=    11.082
+ENV nbr_bin= 1 aa= G enrich=     0.949 actual=    536 expected=   566.708
+ENV nbr_bin= 3 aa= R enrich=     1.444 actual=     66 expected=    44.636
+ENV nbr_bin= 8 aa= N enrich=     2.500 actual=     16 expected=     5.216
+ENV nbr_bin= 8 aa= I enrich=     0.167 actual=      0 expected=     6.566
+ENV nbr_bin= 3 aa= E enrich=     0.396 actual=     18 expected=    48.613
+ENV nbr_bin= 5 aa= P enrich=     0.636 actual=      6 expected=    11.374
+ENV nbr_bin= 2 aa= L enrich=     0.955 actual=     84 expected=    89.698
+ENV nbr_bin= 6 aa= V enrich=     0.812 actual=     12 expected=    16.684
+ENV nbr_bin= 6 aa= Q enrich=     1.000 actual=     13 expected=    12.399
+ENV nbr_bin= 1 aa= M enrich=     1.046 actual=    205 expected=   194.565
+ENV nbr_bin= 4 aa= T enrich=     1.556 actual=     29 expected=    17.759
+ENV nbr_bin= 5 aa= F enrich=     1.000 actual=     11 expected=    12.677
+ENV nbr_bin= 7 aa= A enrich=     0.941 actual=     15 expected=    17.917
+ENV nbr_bin= 4 aa= Y enrich=     0.583 actual=      6 expected=    12.416
+ENV nbr_bin= 6 aa= H enrich=     1.222 actual=     12 expected=     8.162
+ENV nbr_bin= 2 aa= R enrich=     1.306 actual=     82 expected=    61.803
+ENV nbr_bin= 3 aa= D enrich=     0.568 actual=     20 expected=    37.257
+ENV nbr_bin= 5 aa= I enrich=     0.571 actual=     11 expected=    21.563
+ENV nbr_bin= 1 aa= S enrich=     0.841 actual=    533 expected=   635.423
+ENV nbr_bin= 8 aa= E enrich=     0.667 actual=      3 expected=     6.703
+ENV nbr_bin= 8 aa= P enrich=     1.000 actual=      2 expected=     3.463
+ENV nbr_bin= 5 aa= L enrich=     0.345 actual=      9 expected=    29.335
+ENV nbr_bin= 3 aa= Q enrich=     1.037 actual=     29 expected=    26.949
+ENV nbr_bin= 2 aa= C enrich=     0.727 actual=      7 expected=    11.955
+ENV nbr_bin= 6 aa= M enrich=     1.000 actual=      5 expected=     6.067
+ENV nbr_bin= 7 aa= T enrich=     1.125 actual=     19 expected=    15.850
+ENV nbr_bin= 4 aa= A enrich=     1.286 actual=     28 expected=    20.074
+ENV nbr_bin= 1 aa= Y enrich=     1.050 actual=    397 expected=   376.776
+ENV nbr_bin= 4 aa= K enrich=     1.357 actual=     39 expected=    27.834
+ENV nbr_bin= 1 aa= H enrich=     0.897 actual=    233 expected=   261.736
+ENV nbr_bin= 6 aa= D enrich=     1.111 actual=     21 expected=    17.142
+ENV nbr_bin= 2 aa= I enrich=     0.831 actual=     53 expected=    65.933
+ENV nbr_bin= 6 aa= S enrich=     1.850 actual=     38 expected=    19.814
+ENV nbr_bin= 5 aa= E enrich=     0.773 actual=     16 expected=    22.013
+ENV nbr_bin= 3 aa= V enrich=     0.472 actual=     16 expected=    36.263
+ENV nbr_bin= 3 aa= P enrich=     0.600 actual=     14 expected=    25.117
+ENV nbr_bin= 8 aa= L enrich=     0.125 actual=      0 expected=     8.932
+ENV nbr_bin= 8 aa= W enrich=     1.000 actual=      1 expected=     1.421
+ENV nbr_bin= 3 aa= C enrich=     0.500 actual=      3 expected=     8.634
+ENV nbr_bin= 5 aa= G enrich=     1.222 actual=     23 expected=    17.393
+ENV nbr_bin= 1 aa= A enrich=     1.011 actual=    618 expected=   609.172
+ENV nbr_bin= 5 aa= K enrich=     1.269 actual=     34 expected=    25.923
+ENV nbr_bin= 7 aa= R enrich=     3.100 actual=     63 expected=    19.370
+ENV nbr_bin= 4 aa= N enrich=     1.000 actual=     20 expected=    18.395
+ENV nbr_bin= 4 aa= H enrich=     1.333 actual=     13 expected=     8.625
+ENV nbr_bin= 7 aa= S enrich=     1.421 actual=     28 expected=    18.689
+ENV nbr_bin= 2 aa= V enrich=     1.000 actual=     52 expected=    50.211
+ENV nbr_bin= 1 aa= W enrich=     1.026 actual=    158 expected=   152.100
+ENV nbr_bin= 8 aa= C enrich=     1.000 actual=      1 expected=     1.190
+ENV nbr_bin= 1 aa= F enrich=     1.017 actual=    422 expected=   413.064
+ENV nbr_bin= 8 aa= Y enrich=     0.667 actual=      1 expected=     3.521
+ENV nbr_bin= 2 aa= G enrich=     0.981 actual=     51 expected=    53.181
+ENV nbr_bin= 6 aa= R enrich=     2.381 actual=     51 expected=    20.536
+ENV nbr_bin= 7 aa= N enrich=     1.765 actual=     31 expected=    16.418
+ENV nbr_bin= 4 aa= E enrich=     0.435 actual=      9 expected=    23.636
+ENV nbr_bin= 1 aa= L enrich=     1.136 actual=   1087 expected=   955.837
+ENV nbr_bin= 5 aa= V enrich=     0.688 actual=     10 expected=    16.421
+ENV nbr_bin= 7 aa= Q enrich=     1.833 actual=     23 expected=    11.695
+ENV nbr_bin= 2 aa= M enrich=     1.000 actual=     18 expected=    18.258
+ENV nbr_bin= 3 aa= T enrich=     1.351 actual=     51 expected=    36.525
+ENV nbr_bin= 8 aa= F enrich=     0.333 actual=      0 expected=     3.860
+ENV nbr_bin= 8 aa= A enrich=     1.000 actual=      5 expected=     5.693
+ENV nbr_bin= 5 aa= Y enrich=     0.909 actual=      9 expected=    11.563
+ENV nbr_bin= 3 aa= G enrich=     1.667 actual=     66 expected=    38.409
+ENV nbr_bin= 5 aa= H enrich=     1.000 actual=     10 expected=     8.033
+ENV nbr_bin= 1 aa= R enrich=     0.790 actual=    519 expected=   658.586
+ENV nbr_bin= 2 aa= D enrich=     0.745 actual=     37 expected=    51.587
+ENV nbr_bin= 6 aa= N enrich=     1.111 actual=     21 expected=    17.406
+ENV nbr_bin= 6 aa= I enrich=     0.524 actual=     10 expected=    21.909
+ENV nbr_bin= 2 aa= S enrich=     1.117 actual=     68 expected=    59.630
+ENV nbr_bin= 1 aa= E enrich=     1.138 actual=    818 expected=   717.264
+ENV nbr_bin= 7 aa= P enrich=     0.500 actual=      4 expected=    10.900
+ENV nbr_bin= 4 aa= L enrich=     0.645 actual=     19 expected=    31.498
+ENV nbr_bin= 4 aa= Q enrich=     0.923 actual=     11 expected=    13.103
+ENV nbr_bin= 7 aa= M enrich=     1.000 actual=      5 expected=     5.722
+ENV nbr_bin= 6 aa= T enrich=     2.412 actual=     42 expected=    16.805
+ENV nbr_bin= 5 aa= A enrich=     1.105 actual=     22 expected=    18.696
+ENV nbr_bin= 2 aa= Y enrich=     1.000 actual=     37 expected=    35.357
+ENV nbr_bin= 1 aa= K enrich=     0.885 actual=    746 expected=   844.657
+ENV nbr_bin= 8 aa= H enrich=     1.333 actual=      5 expected=     2.446
+ENV nbr_bin= 5 aa= D enrich=     0.750 actual=     11 expected=    16.871
+ENV nbr_bin= 3 aa= I enrich=     0.766 actual=     35 expected=    47.618
+ENV nbr_bin= 3 aa= S enrich=     1.682 actual=     75 expected=    43.066
+ENV nbr_bin= 6 aa= E enrich=     0.591 actual=     12 expected=    22.366
+ENV nbr_bin= 2 aa= P enrich=     1.029 actual=     37 expected=    34.778
+ENV nbr_bin= 7 aa= L enrich=     0.143 actual=      3 expected=    28.113
+ENV nbr_bin= 5 aa= W enrich=     1.000 actual=      3 expected=     4.668
+ENV nbr_bin= 1 aa= Q enrich=     0.995 actual=    394 expected=   397.622
+ENV nbr_bin= 4 aa= C enrich=     0.750 actual=      2 expected=     4.198
+ENV nbr_bin= 6 aa= G enrich=     1.000 actual=     16 expected=    17.671
+ENV nbr_bin= 2 aa= A enrich=     0.754 actual=     42 expected=    57.166
+ENV nbr_bin= 6 aa= K enrich=     1.000 actual=     26 expected=    26.338
+ENV nbr_bin= 3 aa= N enrich=     0.811 actual=     29 expected=    37.833
+ENV nbr_bin= 3 aa= H enrich=     1.722 actual=     32 expected=    17.739
+ENV nbr_bin= 8 aa= D enrich=     1.167 actual=      8 expected=     5.137
+ENV nbr_bin= 8 aa= S enrich=     1.167 actual=      8 expected=     5.938
+ENV nbr_bin= 1 aa= V enrich=     1.086 actual=    583 expected=   535.053
+ENV nbr_bin= 2 aa= W enrich=     1.333 actual=     21 expected=    14.273
+ENV nbr_bin= 5 aa= C enrich=     1.000 actual=      2 expected=     3.910
+ENV nbr_bin= 4 aa= F enrich=     1.000 actual=     15 expected=    13.612
+ENV nbr_bin= 7 aa= G enrich=     1.000 actual=     17 expected=    16.668
+ENV nbr_bin= 7 aa= K enrich=     1.040 actual=     27 expected=    24.843
+ENV nbr_bin= 5 aa= R enrich=     1.381 actual=     30 expected=    20.212
+ENV nbr_bin= 2 aa= N enrich=     0.846 actual=     43 expected=    52.384
+ENV nbr_bin= 8 aa= V enrich=     0.600 actual=      2 expected=     5.000
+ENV nbr_bin= 8 aa= Q enrich=     1.500 actual=      7 expected=     3.716
+ENV nbr_bin= 3 aa= M enrich=     0.692 actual=      8 expected=    13.187
+ENV nbr_bin= 3 aa= W enrich=     1.000 actual=     10 expected=    10.309
+ENV nbr_bin= 2 aa= T enrich=     1.098 actual=     57 expected=    50.573
+ENV nbr_bin= 7 aa= F enrich=     0.500 actual=      5 expected=    12.149
+ENV nbr_bin= 6 aa= Y enrich=     1.000 actual=     11 expected=    11.749
+ENV nbr_bin= 4 aa= G enrich=     1.158 actual=     23 expected=    18.675
+ENV nbr_bin= 4 aa= R enrich=     1.000 actual=     23 expected=    21.702
+ENV nbr_bin= 1 aa= D enrich=     1.064 actual=    586 expected=   549.722
+ENV nbr_bin= 5 aa= N enrich=     0.941 actual=     15 expected=    17.132
+ENV nbr_bin= 7 aa= I enrich=     0.350 actual=      6 expected=    20.665
+ENV nbr_bin= 2 aa= E enrich=     0.672 actual=     44 expected=    67.310
+ENV nbr_bin= 6 aa= P enrich=     0.727 actual=      7 expected=    11.556
+ENV nbr_bin= 3 aa= L enrich=     0.500 actual=     31 expected=    64.782
+ENV nbr_bin= 5 aa= Q enrich=     1.077 actual=     15 expected=    12.203
+ENV nbr_bin= 8 aa= M enrich=     1.000 actual=      2 expected=     1.818
+ENV nbr_bin= 5 aa= T enrich=     1.941 actual=     34 expected=    16.540
+ENV nbr_bin= 6 aa= F enrich=     0.250 actual=      2 expected=    12.880
+ENV nbr_bin= 6 aa= A enrich=     0.778 actual=     13 expected=    18.995
+ENV nbr_bin= 3 aa= Y enrich=     0.880 actual=     21 expected=    25.536
+ENV nbr_bin= 2 aa= K enrich=     1.475 actual=    119 expected=    79.265
+ENV nbr_bin= 7 aa= H enrich=     1.500 actual=     13 expected=     7.698
+ENV nbr_bin= 4 aa= D enrich=     0.778 actual=     13 expected=    18.115
+ENV nbr_bin= 4 aa= I enrich=     0.783 actual=     17 expected=    23.153
+ENV nbr_bin= 4 aa= S enrich=     1.524 actual=     33 expected=    20.939
+ENV nbr_bin= 7 aa= E enrich=     0.476 actual=      9 expected=    21.096
+ENV nbr_bin= 1 aa= P enrich=     1.073 actual=    399 expected=   370.599
+ENV nbr_bin= 6 aa= L enrich=     0.207 actual=      5 expected=    29.805
+ENV nbr_bin= 6 aa= W enrich=     0.250 actual=      0 expected=     4.743
+ENV nbr_bin= 2 aa= Q enrich=     0.649 actual=     23 expected=    37.314
+ENV nbr_bin= 1 aa= C enrich=     1.141 actual=    147 expected=   127.393
+ENV nbr_bin= 5 aa= M enrich=     0.400 actual=      1 expected=     5.971
+ENV nbr_bin= 8 aa= T enrich=     1.000 actual=      7 expected=     5.036
+ENV nbr_bin= 3 aa= A enrich=     1.071 actual=     46 expected=    41.287
+ENV nbr_bin= 3 aa= K enrich=     1.655 actual=     97 expected=    57.247
+ENV nbr_bin= 2 aa= H enrich=     0.917 actual=     21 expected=    24.562
+ENV nbr_bin= 7 aa= D enrich=     1.000 actual=     16 expected=    16.168
+ENV nbr_bin= 1 aa= I enrich=     1.105 actual=    778 expected=   702.594
+ENV nbr_bin= 5 aa= S enrich=     1.950 actual=     40 expected=    19.501
+ENV nbr_bin= 4 aa= V enrich=     0.882 actual=     14 expected=    17.632
+ENV nbr_bin= 4 aa= P enrich=     1.000 actual=     11 expected=    12.212
+ENV nbr_bin= 7 aa= W enrich=     0.750 actual=      2 expected=     4.474
+ENV nbr_bin= 6 aa= C enrich=     0.333 actual=      0 expected=     3.972
+ENV nbr_bin= 3 aa= F enrich=     0.852 actual=     22 expected=    27.995
+ENV nbr_bin= 8 aa= G enrich=     0.600 actual=      2 expected=     5.296
+ENV nbr_bin= 8 aa= K enrich=     1.000 actual=      6 expected=     7.893
+ENV nbr_bin= 8 aa= R enrich=     2.571 actual=     19 expected=     6.154
+ENV nbr_bin= 1 aa= N enrich=     0.984 actual=    548 expected=   558.215
+ENV nbr_bin= 7 aa= V enrich=     0.333 actual=      4 expected=    15.737
+ENV nbr_bin= 4 aa= M enrich=     1.000 actual=      8 expected=     6.411
