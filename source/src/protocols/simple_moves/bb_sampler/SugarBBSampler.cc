@@ -83,7 +83,7 @@ SugarBBSampler::clone() const {
 core::Real
 SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 
-	TR << "Getting torsion" << std::endl;
+	TR.Debug << "Getting torsion for resnum " << resnum << std::endl;
 	using core::scoring::ScoringManager;
 
 	if ( ! pose.residue( resnum ).is_carbohydrate() ) {

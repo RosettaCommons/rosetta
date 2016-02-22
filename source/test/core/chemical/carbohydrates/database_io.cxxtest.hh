@@ -151,11 +151,44 @@ public: // Tests //////////////////////////////////////////////////////////////
 		key = make_pair( "alpha-saneshortsugar", "->9)-crazylongsugar" );
 		conformers = linkages[ key ];
 		TS_ASSERT_EQUALS( conformers.size(), 1 );
-		TS_ASSERT( conformers[ 1 ].has_omega() );
-		TS_ASSERT_EQUALS( conformers[ 1 ].n_omega(), 4 );
-		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_mean( omega_dihedral, 1 ), -12.3 );
-		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_sd( omega_dihedral, 2 ), 9.0 );
-		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_mean( omega_dihedral, 4 ), 67.8 );
-		TS_ASSERT_EQUALS( conformers[ 1 ].get_torsion_sd( omega_dihedral, 3 ), 4.5 );
+
+
+		LinkageConformerData data = conformers[ 1 ];
+
+		//Test Phi and Psi
+		//12.0	4.0	67.0	9.0	12.0	4.0	65.0	9.0	66.0	4.0	67.0	9.0
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( phi_dihedral)), 12);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( phi_dihedral)), 4);
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( psi_dihedral)), 67);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( psi_dihedral)), 9);
+
+		//Test Omegas
+		TS_ASSERT_EQUALS(
+			conformers.size(), 1 );
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 1)), 12);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 1)), 4);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 2)), 65);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 2)), 9);
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 3)), 66);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 3)), 5);
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 4)), 67);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 4)), 10);
+		
 	}
 };  // class CarbohydrateDatabaseIOTests

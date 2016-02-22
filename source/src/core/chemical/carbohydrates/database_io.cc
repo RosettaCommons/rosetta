@@ -21,6 +21,7 @@
 // Utility headers
 #include <utility/io/util.hh>
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
@@ -189,10 +190,12 @@ read_linkage_conformers_from_database_file( std::string const & filename ) {
 	vector1< string > const lines( io::get_lines_from_file_data( filename ) );
 	LinkageConformers conformer_data_structure;
 
+	
 	Size const n_lines( lines.size() );
 	for ( uint i( 1 ); i <= n_lines; ++i ) {
 		istringstream line_word_by_word( lines[ i ] );
-
+		TR.Debug << lines[ i ] << std::endl;
+		
 		// Every line is a new conformer.
 		LinkageConformerData conformer;
 		string non_red_res, red_res;
@@ -201,24 +204,33 @@ read_linkage_conformers_from_database_file( std::string const & filename ) {
 
 		line_word_by_word >> non_red_res >> red_res >> pop >> phi_mean >> phi_sd >> psi_mean >> psi_sd;
 
-		line_word_by_word >> omega_mean;
-		while ( ! line_word_by_word.fail() ) {
-			line_word_by_word >> omega_sd;
-			if ( line_word_by_word.fail() ) {
-				utility_exit_with_message( "read_linkage_conformers_from_database_file: "
-					"Omega angles mush be listed in mean/sd pairs!" );
-			}
-			conformer.omega_mean_sd.push_back( make_pair( omega_mean, omega_sd ) );
-			line_word_by_word >> omega_mean;
-		}
-
+		conformer.population = pop;
 		conformer.mean_sd.push_back( make_pair( phi_mean, phi_sd ) );
 		conformer.mean_sd.push_back( make_pair( psi_mean, psi_sd ) );
-
-		conformer.population = pop;
-
+		
+		utility::vector1< std::string > entries = utility::string_split_multi_delim(lines[i]);
+		core::Size total_entries = entries.size();
+		core::Size total_omegas = (total_entries - 7) / 2;
+		
+		TR.Debug << "split " <<utility::to_string( entries ) << std::endl;
+		TR.Debug << "total entries " << total_entries << std::endl;
+		TR.Debug << "total omegas" << total_omegas << std::endl;
+		
+		if (total_omegas > 0){
+			for (core::Size omega_n = 1; omega_n <= total_omegas; ++ omega_n){
+				
+				line_word_by_word >> omega_mean;
+				line_word_by_word >> omega_sd;
+				if ( line_word_by_word.fail() ) {
+					utility_exit_with_message( "read_linkage_conformers_from_database_file: "
+						"Omega angles mush be listed in mean/sd pairs!" );
+				}
+				conformer.omega_mean_sd.push_back( make_pair( omega_mean, omega_sd ) );
+				TR.Debug << "Omega "<< omega_n << omega_sd << std::endl;
+			}
+		}
+		
 		pair< string, string > const linkage_pair( make_pair( non_red_res, red_res ) );
-
 		conformer_data_structure[ linkage_pair ].push_back( conformer );
 	}
 

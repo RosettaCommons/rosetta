@@ -1063,14 +1063,26 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 		TR << "This is not yet implemented." << std::endl;
 
 	} else {
+		Real mean;
+		Real sd;
+		Real conformer_angle;
 		for ( core::Size i = 1; i <= n_torsions; ++i ) {
 			TR.Debug << "torsion: " << i << std::endl;
-			MainchainTorsionType torsion_type = static_cast<MainchainTorsionType>( i );
-			Real mean = conformer.get_torsion_mean( torsion_type );
-			Real sd = conformer.get_torsion_sd( torsion_type );
-			Real conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
-
-			//Debugging for now.  Remove soon.
+			
+			
+			if (i <= 3) { // phi, psi, or omega1
+				MainchainTorsionType torsion_type = static_cast<MainchainTorsionType>( i );
+				mean = conformer.get_torsion_mean( torsion_type );
+				sd = conformer.get_torsion_sd( torsion_type );
+				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
+			}
+			else {
+				mean = conformer.get_torsion_mean( omega_dihedral, i - 2 );
+				sd = conformer.get_torsion_sd( omega_dihedral, i - 2);
+				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
+			}
+			
+			//Debugging for now.
 			TR.Debug << "Current: " << get_glycosidic_torsion(i, pose, upper_residue) << std::endl;
 			TR.Debug << "Mean: " << mean << std::endl;
 			TR.Debug << "New conformer: " << conformer_angle << std::endl;

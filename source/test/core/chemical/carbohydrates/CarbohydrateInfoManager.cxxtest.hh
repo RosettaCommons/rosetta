@@ -19,6 +19,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
+#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -42,6 +43,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	void test_linkage_conformer_data_access()
 	{
 		using namespace core::chemical::carbohydrates;
+		using namespace core::id;
 
 		TS_TRACE( "Testing access to linkage conformer data..." );
 
@@ -51,9 +53,54 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( CarbohydrateInfoManager::pair_has_linkage_statistics( "->3)-beta-evilsugar-", "->3)-alpha-evilsugar-" ) );
 		TS_ASSERT( ! CarbohydrateInfoManager::pair_has_linkage_statistics( "->3)-alpha-evilsugar-", "->3)-beta-evilsugar-" ) );
 		TS_ASSERT( ! CarbohydrateInfoManager::pair_has_linkage_statistics( "->X)-alpha-evilsugar-", "->3)-alpha-evilsugar-" ) );
+		TS_ASSERT( ! CarbohydrateInfoManager::pair_has_linkage_statistics( "->X)-alpha-evilsugar-", "->3)-alpha-evilsugar-" ) );
 
+		TS_ASSERT( ! CarbohydrateInfoManager::pair_has_linkage_statistics(  "alpha-saneshortsugar", "->9)-crazylongsugar") );
 		TS_ASSERT_EQUALS(
 			CarbohydrateInfoManager::linkages_from_pair( "->2)-goodsugar", "alpha-goodsugar" ).size(), 2 );
+
+		
+		
+		utility::vector1< LinkageConformerData > const & conformers = CarbohydrateInfoManager::linkages_from_pair( "->9)-crazylongsugar", "alpha-saneshortsugar");
+
+		LinkageConformerData data = conformers[ 1 ];
+
+		//Test Phi and Psi
+		//12.0	4.0	67.0	9.0	12.0	4.0	65.0	9.0	66.0	4.0	67.0	9.0
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( phi_dihedral)), 12);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( phi_dihedral)), 4);
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( psi_dihedral)), 67);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( psi_dihedral)), 9);
+
+		//Test Omegas
+		TS_ASSERT_EQUALS(
+			conformers.size(), 1 );
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 1)), 12);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 1)), 4);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 2)), 65);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 2)), 9);
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 3)), 66);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 3)), 5);
+
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_mean( omega_dihedral, 4)), 67);
+		TS_ASSERT_EQUALS(
+			core::Size(data.get_torsion_sd( omega_dihedral, 4)), 10);
+		
+
 	}
 
 };  // class CarbohydrateInfoManagerTests

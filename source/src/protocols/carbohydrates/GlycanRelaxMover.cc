@@ -473,7 +473,7 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 		weighted_random_mover_->apply(pose);
 		if ( weighted_random_mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
 			core::Real energy = scorefxn_->score(pose);
-			TR << "energy post MC: "<< energy << std::endl;
+			TR.Debug << "energy post MC: "<< energy << std::endl;
 
 			if ( pymol_movie_ ) {
 				pmm_trials.apply( pose );
