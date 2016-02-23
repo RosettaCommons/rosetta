@@ -124,10 +124,10 @@ add_covalent_linkage_helper(
 	}
 
 	// and resetting the xyz positions
-	for ( core::Size at_ct = 1, at_ctmax = res.natoms(); at_ct <= at_ctmax; at_ct++ ) {
+	for ( core::Size at_ct = 1, at_ctmax = old_res.natoms(); at_ct <= at_ctmax; ++at_ct ) {
 		// BOTH residues must have it.
-		if ( old_res.has( res.atom_name(at_ct) ) && new_res.has( res.atom_name( at_ct ) ) ) {
-			pose.set_xyz( id::AtomID(at_ct, res_pos), old_res.xyz( res.atom_name(at_ct) ) );
+		if ( new_res.has( old_res.atom_name( at_ct ) ) ) {
+			pose.set_xyz( id::AtomID( at_ct, res_pos ), old_res.xyz( old_res.atom_name( at_ct ) ) );
 		}
 	}
 
