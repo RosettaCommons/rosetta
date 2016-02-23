@@ -6,32 +6,29 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+ //////////////////////////////////////////////
+ /// @file GridSearchIterator.fwd.hh
+ ///
+ /// @authorv Christophe Schmitz
+ ///
+ ////////////////////////////////////////////////
 
-
-//////////////////////////////////////////////
-///
-/// @file protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh
-///
-/// @authorv Christophe Schmitz
-///
-////////////////////////////////////////////////
-
-#ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
-#define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
+#ifndef INCLUDED_protocols_scoring_methods_pcs_GridSearchIterator_fwd_hh
+#define INCLUDED_protocols_scoring_methods_pcs_GridSearchIterator_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
-namespace protocols {
-namespace scoring {
-namespace methods {
-namespace pcs2 {
+namespace protocols{
+namespace scoring{
+namespace methods{
+namespace pcs{
 
-class PcsEnergy;
+class GridSearchIterator;
 
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
+typedef utility::pointer::shared_ptr< GridSearchIterator > GridSearchIteratorOP;
+typedef utility::pointer::shared_ptr< GridSearchIterator const > GridSearchIteratorCOP;
 
-}//namespace pcs2
+}//namespace pcs
 }//namespace methods
 }//namespace scoring
 }//namespace protocols

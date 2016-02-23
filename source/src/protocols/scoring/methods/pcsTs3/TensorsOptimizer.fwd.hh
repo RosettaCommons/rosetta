@@ -7,32 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+ //////////////////////////////////////////////
+ /// @file protocols/scoring/TensorsOptimizer.hh
+ ///
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
+ ///
+ ////////////////////////////////////////////////
 
-//////////////////////////////////////////////
-///
-/// @file protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh
-///
-/// @authorv Christophe Schmitz
-///
-////////////////////////////////////////////////
 
-#ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
-#define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
+#ifndef INCLUDED_protocols_scoring_methods_pcsTs3_TensorsOptimizer_fwd_hh
+#define INCLUDED_protocols_scoring_methods_pcsTs3_TensorsOptimizer_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+namespace protocols{
+namespace scoring{
+namespace methods{
+namespace pcsTs3{
 
-namespace protocols {
-namespace scoring {
-namespace methods {
-namespace pcs2 {
 
-class PcsEnergy;
-
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
-
-}//namespace pcs2
+}//namespace pcsTs3
 }//namespace methods
 }//namespace scoring
 }//namespace protocols
+
 #endif

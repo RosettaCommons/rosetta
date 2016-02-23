@@ -13,6 +13,7 @@ sources = {
 	"abinitio" : [
 		"FragmentMover",
 		"GunnCost",
+		"PseudocontactShiftEnergy",
 		"WobbleMover",
 	],
 	"abinitio/abscript" : [

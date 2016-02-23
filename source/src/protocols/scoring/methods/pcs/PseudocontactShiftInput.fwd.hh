@@ -7,32 +7,36 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-
 //////////////////////////////////////////////
 ///
-/// @file protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh
+/// @file protocols/scoring/PseudocontactShiftInput.fwd.hh
+///
+/// @brief Read input .npc input file
 ///
 /// @authorv Christophe Schmitz
 ///
 ////////////////////////////////////////////////
 
-#ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
-#define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftInput_fwd_hh
+#define INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftInput_fwd_hh
 
 namespace protocols {
 namespace scoring {
 namespace methods {
-namespace pcs2 {
+namespace pcs {
 
-class PcsEnergy;
+class PCS_line_data;
 
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
+class PCS_file_data;
 
-}//namespace pcs2
+class PCS_data_input;
+
+class PCS_data_input_manager;
+
+}//namespace pcs
 }//namespace methods
 }//namespace scoring
 }//namespace protocols
+
 #endif

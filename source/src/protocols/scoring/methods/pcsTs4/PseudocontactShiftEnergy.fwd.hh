@@ -10,29 +10,30 @@
 
 //////////////////////////////////////////////
 ///
-/// @file protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh
+/// @file protocols/scoring/PseudocontactShiftEnergy.fwd.hh
 ///
-/// @authorv Christophe Schmitz
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
 ///
 ////////////////////////////////////////////////
 
-#ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
-#define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#ifndef INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftEnergy_fwd_hh
+#define INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftEnergy_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace scoring {
 namespace methods {
-namespace pcs2 {
+namespace pcsTs4 {
 
-class PcsEnergy;
+class PCS_Energy_Ts4;
+class PCS_Energy_parameters_manager_Ts4;
 
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
-
-}//namespace pcs2
-}//namespace methods
-}//namespace scoring
-}//namespace protocols
-#endif
+typedef utility::pointer::shared_ptr< PCS_Energy_Ts4 > PCS_Energy_Ts4OP;
+typedef utility::pointer::shared_ptr< PCS_Energy_Ts4 const > PCS_Energy_Ts4COP;
+}
+}
+}
+}
+#endif // INCLUDED_protocols_scoring_methods_PseudocontactShiftEnergy_FWD_HH

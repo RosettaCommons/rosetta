@@ -15,6 +15,11 @@
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <protocols/scoring/methods/ResidualDipolarCouplingEnergyRigidSegmentsCreator.hh>
 #include <protocols/scoring/methods/SpecialRotamerEnergyCreator.hh>
+#include <protocols/scoring/methods/pcs/PseudocontactShiftEnergyCreator.hh>
+#include <protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergyCreator.hh>
+#include <protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergyCreator.hh>
+#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergyCreator.hh>
+#include <protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergyCreator.hh>
 #include <protocols/scoring/methods/pcs2/PcsEnergyCreator.hh>
 #include <protocols/scoring/methods/EnsembleEnergyCreator.hh>
 #include <protocols/scoring/methods/InterchainEnvEnergyCreator.hh>

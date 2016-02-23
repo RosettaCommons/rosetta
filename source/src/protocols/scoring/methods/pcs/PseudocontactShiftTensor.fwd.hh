@@ -6,32 +6,25 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-
 //////////////////////////////////////////////
-///
-/// @file protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh
+/// @file PseudocontactShiftTensor.fwd.hh
 ///
 /// @authorv Christophe Schmitz
 ///
 ////////////////////////////////////////////////
 
-#ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
-#define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftTensor_fwd_hh
+#define INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftTensor_fwd_hh
 
 namespace protocols {
 namespace scoring {
 namespace methods {
-namespace pcs2 {
+namespace pcs {
 
-class PcsEnergy;
+class PCS_tensor;
 
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
-
-}//namespace pcs2
+}//namespace pcs
 }//namespace methods
 }//namespace scoring
 }//namespace protocols

@@ -6,32 +6,30 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-
 //////////////////////////////////////////////
+/// @file PseudocontactShiftData.fwd.hh
 ///
-/// @file protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh
-///
-/// @authorv Christophe Schmitz
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
 ///
 ////////////////////////////////////////////////
 
-#ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
-#define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_fwd_hh
+#ifndef INCLUDED_protocols_scoring_methods_pcsTs3_PseudocontactShiftData_fwd_hh
+#define INCLUDED_protocols_scoring_methods_pcsTs3_PseudocontactShiftData_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace scoring {
 namespace methods {
-namespace pcs2 {
+namespace pcsTs3 {
 
-class PcsEnergy;
+class PCS_data_per_lanthanides_Ts3;
 
-typedef utility::pointer::owning_ptr< PcsEnergy > PcsEnergyOP;
-typedef utility::pointer::owning_ptr< PcsEnergy const > PcsEnergyCOP;
+class PCS_data_Ts3;
 
-}//namespace pcs2
+typedef utility::pointer::shared_ptr< PCS_data_Ts3 > PCS_data_Ts3OP;
+
+}//namespace pcsTs3
 }//namespace methods
 }//namespace scoring
 }//namespace protocols

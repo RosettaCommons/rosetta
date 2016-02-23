@@ -38,7 +38,6 @@
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManager.fwd.hh>
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.fwd.hh>
 #include <protocols/scoring/methods/pcs2/PcsTensor.fwd.hh>
-#include <protocols/scoring/methods/pcs2/PcsEnergy.fwd.hh>
 #include <protocols/scoring/methods/pcs2/GridSearchIteratorCA.fwd.hh>
 
 // Project headers
