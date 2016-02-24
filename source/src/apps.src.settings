@@ -61,6 +61,7 @@ sources = {
 		"struc_set_fragment_picker",
 	],
 	"public/analysis": [
+		"batch_distances",
 		"contactMap",
                 "ensemble_analysis",
                 "fast_clustering",

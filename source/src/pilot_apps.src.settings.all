@@ -399,7 +399,6 @@ sources = {
 		"assemble_domains_jd2",
 		"angle_recovery_stats",
 		#"fast_cm",
-		"batch_distances",
 		"jscore",
 		"jrelax",
 		#"jseq",
