@@ -1,16 +1,20 @@
--s input/aaFR02_54569.pdb
+-s input/aaFR02_54569_ppk.pdb
 -dock_pert 3 8
+-partners LH_J
 -spin
--run:debug
--no_filters
+-randomize2
+-use_ellipsoidal_randomization
+-h3_filter false
 -mute core.util.prof # dont show timing info
 -out:overwrite
 -out:file:scorefile aaFR02_54569.fasc
--out:file:fullatom # output in fullatom scorefile
 -mute core.io.database
+-ensemble1 input/ab_pdbs
+-ensemble2 input/ag_pdbs
 -run:test_cycles # reduce the number of high resolution snugdock cycles
--loops:max_inner_cycles 1 # make the ccd loop refinement go faster
--docking:docking_centroid_outer_cycles 1 # make the low resolution docking phase of the test fast
--docking:docking_centroid_inner_cycles 1 # make the low resolution docking phase of the test fast
-
+-loops:refine_outer_cycles 2
+-loops:max_inner_cycles 2
+-docking:docking_centroid_outer_cycles 2
+-docking:docking_centroid_inner_cycles 2
+-detect_disulf false
 -antibody:check_cdr_chainbreaks false

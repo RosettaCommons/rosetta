@@ -456,7 +456,7 @@ sources = {
 	"pilot/jianqing" : [
 		#"antibody_assemble_CDRs",
 		#"antibody_model_CDR_H3",
-		"snugdock",
+		#"snugdock",
 	],
 	"pilot/jim" : [
 		#"rotamerize",
