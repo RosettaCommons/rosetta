@@ -156,7 +156,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		LinkageConformerData data = conformers[ 1 ];
 
 		//Test Phi and Psi
-		//12.0	4.0	67.0	9.0	12.0	4.0	65.0	9.0	66.0	4.0	67.0	9.0
+		//12.0 4.0 67.0 9.0 12.0 4.0 65.0 9.0 66.0 4.0 67.0 9.0
 		TS_ASSERT_EQUALS(
 			core::Size(data.get_torsion_mean( phi_dihedral)), 12);
 		TS_ASSERT_EQUALS(
@@ -189,6 +189,6 @@ public: // Tests //////////////////////////////////////////////////////////////
 			core::Size(data.get_torsion_mean( omega_dihedral, 4)), 67);
 		TS_ASSERT_EQUALS(
 			core::Size(data.get_torsion_sd( omega_dihedral, 4)), 10);
-		
+
 	}
 };  // class CarbohydrateDatabaseIOTests

@@ -326,7 +326,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 	if ( do_expand_proton_chi ) {
 		utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
-				compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), buried ) );
+			compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), buried ) );
 		proton_chi_chisets = expand_proton_chis( proton_chi_samplings, *concrete_residue, max_proton_factor );
 
 		new_rotamers.reserve( base_rotamers.size()*proton_chi_chisets.size() );

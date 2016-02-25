@@ -1,6 +1,6 @@
-## Metapatch for aromatic ethylation
-NAME ethylated
-TYPES blank-ETHYLATED
+## Metapatch for aromatic chlorination
+NAME trifluoromethylated
+TYPES TRIFLUOROMETHYLATED
 
 PERTINENT_PROPERTY AROMATIC_CARBON_WITH_FREE_VALENCE
 
@@ -15,6 +15,6 @@ END_SELECTOR
 
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
-REPLACE_PROTON_WITH_ETHYL blank
+REPLACE_PROTON_WITH_TRIFLUOROMETHYL blank
 
 END_CASE

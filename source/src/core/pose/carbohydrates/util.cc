@@ -138,54 +138,54 @@ get_linkage_position_of_saccharide_residue( Pose const & pose, uint const resnum
 	}
 	if ( residues.first->seqpos() == residues.second->seqpos() + 1 ) {
 		// We have a main chain connection. ( JAB - can we trust this numbering )?
-		
+
 		return residues.second->carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
 	}
-	
+
 	// If we get this far, we have a branch and need more information.
-	
+
 	/*
 	vector1< uint > const connections_from_parent( residues.second->connections_to_residue( *residues.first ) );
 	TR << "Connections: " << utility::to_string(connections_from_parent) << std::endl;;
-	
+
 	debug_assert( connections_from_parent.size() == 1 );  // else we aren't dealing with glycans
 	uint const branch_connection_id( connections_from_parent[ 1 ] );
 	uint const branch_num( branch_connection_id - residues.second->n_polymeric_residue_connections() );
 	TR << "Branch connection ID: " << branch_connection_id << " branch_num: " << branch_num << " branch point: "<< residues.second->carbohydrate_info()->branch_point( branch_num ) << std::endl;
-	
+
 	return residues.second->carbohydrate_info()->branch_point( branch_num );
 	*/
-	
+
 	//JAB - this looks OK to me - Jason - please check this over!
 	// This will be replaced with a graph-search of the ResidueType once I know how to do that.
-    core::Size parent_resnum = residues.second->seqpos();
-    core::Size parent_connect= 0;
-    //core::Size res_connect = 0;
-    for (core::Size con = 1; con <= residues.first->n_possible_residue_connections(); ++con){
-        if (residues.first->connected_residue_at_resconn(con) == parent_resnum ){
-		
-            parent_connect = residues.first->residue_connection_conn_id(con);
-            //res_connect = con;
-            break;
+	core::Size parent_resnum = residues.second->seqpos();
+	core::Size parent_connect= 0;
+	//core::Size res_connect = 0;
+	for ( core::Size con = 1; con <= residues.first->n_possible_residue_connections(); ++con ) {
+		if ( residues.first->connected_residue_at_resconn(con) == parent_resnum ) {
+
+			parent_connect = residues.first->residue_connection_conn_id(con);
+			//res_connect = con;
+			break;
 		}
 	}
 	core::Size connect_atom = residues.second->residue_connect_atom_index(parent_connect);
-	
+
 	core::Size c_atom_index = 0;
-	
+
 	//Get all bonded neighbors of this atom from the ResidueType.
 	//This is important.  Our upper neighbor Carbon is not present, and the only other bonded atom is the H that would be a monosacharide.
 	// So, we are good to go here as long as other carbons wouldn't be coming off of the O in any monosacharide (which i don't think is possible and still have a glycan linkage?
 	utility::vector1< core::Size > bonded_atoms = residues.second->bonded_neighbor( connect_atom );
-    for (core::Size i  = 1; i <= bonded_atoms.size(); ++i){
+	for ( core::Size i  = 1; i <= bonded_atoms.size(); ++i ) {
 		c_atom_index = bonded_atoms[ i ];
-        std::string element = residues.second->atom_type( c_atom_index ).element();
-        if (element == "C") {
-            break;
+		std::string element = residues.second->atom_type( c_atom_index ).element();
+		if ( element == "C" ) {
+			break;
 		}
 	}
-		 
-    std::string connect_atom_name = residues.second->atom_name(c_atom_index);
+
+	std::string connect_atom_name = residues.second->atom_name(c_atom_index);
 	return utility::string2Size(utility::to_string(connect_atom_name[2]) );
 }
 
@@ -857,7 +857,7 @@ glycosylate_pose(
 	using namespace utility;
 	using namespace chemical;
 	using namespace conformation;
-	
+
 	conformation::Residue const & residue( pose.residue( sequence_position ) );
 	ResidueTypeSetCOP residue_set( residue.type().residue_type_set() );
 
@@ -887,31 +887,31 @@ glycosylate_pose(
 	// Now we can extend the Pose.
 	// Keep track of branch points as we go.
 	list< pair< uint, string > > branch_points;
-	
-	
+
+
 	//JAB - reverting this till we can fix it
 	/*
 	Size const initial_n_residues( pose.total_residue() );
 	PDBInfoOP info( new PDBInfo( *pose.pdb_info() ) );//Copy because as we add residues it will change PDB Info - and not the way we want.
 	if ( ! info ) {
-		info = PDBInfoOP( new PDBInfo( pose ) );
-		info->name( pose.sequence() );  // Use the sequence as the default name.
-		//pose.pdb_info( info ); //This copies PDBInfo into the pose, not the actuall OP.  Can't set it here.
+	info = PDBInfoOP( new PDBInfo( pose ) );
+	info->name( pose.sequence() );  // Use the sequence as the default name.
+	//pose.pdb_info( info ); //This copies PDBInfo into the pose, not the actuall OP.  Can't set it here.
 	}
-	
+
 	char const last_chain_id( info->chain( initial_n_residues ) );  // Get the chain ID of the last residue.
 	char new_chain_id;
 	uint last_chain_index( utility::ALPHANUMERICS.find( last_chain_id ) );
 	if ( ( last_chain_index == string::npos ) ||  // not a standard chain ID
-			( last_chain_index == utility::ALPHANUMERICS.size() - 1 ) ) {  // out of chain IDs
-		new_chain_id = 'A';  // Wrap around to the beginning.
+	( last_chain_index == utility::ALPHANUMERICS.size() - 1 ) ) {  // out of chain IDs
+	new_chain_id = 'A';  // Wrap around to the beginning.
 	} else {
-		new_chain_id = utility::ALPHANUMERICS[ last_chain_index + 1 ];
+	new_chain_id = utility::ALPHANUMERICS[ last_chain_index + 1 ];
 	}
 	*/
-	
-	
-	
+
+
+
 	// Begin with the first sugar.
 	ResidueType const & first_sugar_type( *residue_types.front() );
 	ResidueOP first_sugar( ResidueFactory::create_residue( first_sugar_type ) );
@@ -928,23 +928,23 @@ glycosylate_pose(
 		TR.Debug << "Idealizing glycosidic torsions." << endl;
 		idealize_last_n_glycans_in_pose( pose, n_types );
 	}
-	
+
 	/*
 	// Reverting PDBInfo changes as they don't quite work.
 	Size const n_residues( pose.total_residue() );
 	uint new_seqpos( 0 );
 	for ( uint i( initial_n_residues + 1 ); i <= n_residues; ++i ) {
-		++new_seqpos;
-		info->append_res( i - 1, pose.residue( i ).natoms() );
-		info->chain( i, new_chain_id );
-		info->number( i, new_seqpos );
+	++new_seqpos;
+	info->append_res( i - 1, pose.residue( i ).natoms() );
+	info->chain( i, new_chain_id );
+	info->number( i, new_seqpos );
 	}
 	info->name( info->name() + "_glycosylated" );
 	info->obsolete( false );
 	pose.pdb_info(info);
 	*/
-	
-	
+
+
 	//JAB - this leaves an intact PDBInfo, which we absolutely need for Link Records to be written out properly.
 	// However, the PDBInfo records we start with are completely wiped out.
 	// We tried a fix above, but this leaves the PDB unreadable by Rosetta...
@@ -953,8 +953,8 @@ glycosylate_pose(
 	PDBInfoOP info( new PDBInfo( pose ) );
 	info->name( pose.sequence() );  // Use the sequence as the default name.
 	pose.pdb_info( info );
-	
-	
+
+
 	//TR << "InitialNRES: " << initial_n_residues << " NRES: "<< pose.total_residue() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
 		pose.residue( sequence_position ).name3() << sequence_position << endl;
@@ -1068,20 +1068,19 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 		Real conformer_angle;
 		for ( core::Size i = 1; i <= n_torsions; ++i ) {
 			TR.Debug << "torsion: " << i << std::endl;
-			
-			
-			if (i <= 3) { // phi, psi, or omega1
+
+
+			if ( i <= 3 ) { // phi, psi, or omega1
 				MainchainTorsionType torsion_type = static_cast<MainchainTorsionType>( i );
 				mean = conformer.get_torsion_mean( torsion_type );
 				sd = conformer.get_torsion_sd( torsion_type );
 				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
-			}
-			else {
+			} else {
 				mean = conformer.get_torsion_mean( omega_dihedral, i - 2 );
 				sd = conformer.get_torsion_sd( omega_dihedral, i - 2);
 				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
 			}
-			
+
 			//Debugging for now.
 			TR.Debug << "Current: " << get_glycosidic_torsion(i, pose, upper_residue) << std::endl;
 			TR.Debug << "Mean: " << mean << std::endl;

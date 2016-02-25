@@ -59,14 +59,14 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(
 			CarbohydrateInfoManager::linkages_from_pair( "->2)-goodsugar", "alpha-goodsugar" ).size(), 2 );
 
-		
-		
+
+
 		utility::vector1< LinkageConformerData > const & conformers = CarbohydrateInfoManager::linkages_from_pair( "->9)-crazylongsugar", "alpha-saneshortsugar");
 
 		LinkageConformerData data = conformers[ 1 ];
 
 		//Test Phi and Psi
-		//12.0	4.0	67.0	9.0	12.0	4.0	65.0	9.0	66.0	4.0	67.0	9.0
+		//12.0 4.0 67.0 9.0 12.0 4.0 65.0 9.0 66.0 4.0 67.0 9.0
 		TS_ASSERT_EQUALS(
 			core::Size(data.get_torsion_mean( phi_dihedral)), 12);
 		TS_ASSERT_EQUALS(
@@ -99,7 +99,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 			core::Size(data.get_torsion_mean( omega_dihedral, 4)), 67);
 		TS_ASSERT_EQUALS(
 			core::Size(data.get_torsion_sd( omega_dihedral, 4)), 10);
-		
+
 
 	}
 

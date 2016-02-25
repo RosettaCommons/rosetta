@@ -125,7 +125,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	std::string type( type_for_residuetype( restype ) );
 	if ( type == "" ) {
 		// A null pointer means that there isn't a rotamer library
-		if( forcebasic ) {
+		if ( forcebasic ) {
 			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
 		} else {
 			return SingleResidueRotamerLibraryCOP(0);

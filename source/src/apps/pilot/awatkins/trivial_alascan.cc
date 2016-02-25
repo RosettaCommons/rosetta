@@ -50,6 +50,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/ResidueFactory.hh>

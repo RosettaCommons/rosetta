@@ -518,10 +518,10 @@ RotamerSet_::build_optimize_H_rotamers(
 			rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue, /*forcebasic*/ true );
 
 			utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
-					rotlib->compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), true ) ); // ignore buriedness when adding extra proton chi rotamers
+				rotlib->compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), true ) ); // ignore buriedness when adding extra proton chi rotamers
 
 			utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets(
-					rotlib->expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
+				rotlib->expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
 
 			suggested_rotamers.reserve( proton_chi_chisets.size() );
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {

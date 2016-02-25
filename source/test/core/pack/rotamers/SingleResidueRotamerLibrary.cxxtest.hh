@@ -181,7 +181,7 @@ public:
 		chisets = rotlib.expand_proton_chis( sampling, *hydroxyls_ );
 		TS_ASSERT_EQUALS( chisets.size(), 1 );
 
-		for( core::Size ii(1); ii <= sampling.size(); ii += 2 ) { // Should be 10
+		for ( core::Size ii(1); ii <= sampling.size(); ii += 2 ) { // Should be 10
 			sampling[ii].push_back( -60.0 );
 		}
 

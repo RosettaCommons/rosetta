@@ -112,18 +112,18 @@ public:
 	static
 	void
 	expand_proton_chi(
-		pack::task::ExtraRotSample ex_samp_level,
-		chemical::ResidueTypeCOP concrete_residue,
-		Size proton_chi,
-		utility::vector1< dunbrack::ChiSetOP > & chi_set_vector
+	pack::task::ExtraRotSample ex_samp_level,
+	chemical::ResidueTypeCOP concrete_residue,
+	Size proton_chi,
+	utility::vector1< dunbrack::ChiSetOP > & chi_set_vector
 	);
 
 	static
 	utility::vector1< dunbrack::ChiSetOP >
 	expand_proton_chis_old(
-		chemical::ResidueTypeCOP concrete_residue,
-		pack::task::ResidueLevelTask const & rlt,
-		bool buried
+	chemical::ResidueTypeCOP concrete_residue,
+	pack::task::ResidueLevelTask const & rlt,
+	bool buried
 	);
 	*/
 

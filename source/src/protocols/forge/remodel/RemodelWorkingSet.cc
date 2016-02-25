@@ -391,9 +391,9 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		//  runtime_assert( aa.size() == data.dssp_updated_ss.size());
 
 	} else {
-		
+
 		//JAB - check for Alanine is removed as it breaks the use of Alanine as the building AA!
-		
+
 		//build the aa string to be the same length as dssp updated ss
 		//use that length because repeat structures are bigger than blueprint
 		for ( int i = 0; i < (int)data.dssp_updated_ss.size(); i++ ) {

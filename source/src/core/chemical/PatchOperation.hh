@@ -932,6 +932,20 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with trifluoromethyl
+class ReplaceProtonWithTrifluoromethyl : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief replace proton with chlorine
 class ReplaceProtonWithChlorine : public PatchOperation {
 public:

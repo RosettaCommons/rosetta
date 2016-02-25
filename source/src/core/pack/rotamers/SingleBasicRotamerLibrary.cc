@@ -127,10 +127,10 @@ SingleBasicRotamerLibrary::fill_rotamer_vector(
 	if ( concrete_residue->n_proton_chi() != 0 ) {
 
 		utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
-				compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), buried ) );
+			compute_proton_chi_samplings( *concrete_residue, task.residue_task( existing_residue.seqpos() ), buried ) );
 
 		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets(
-				expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
+			expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
 
 		rotamers.reserve( rotamers.size() + proton_chi_chisets.size() );
 		for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {

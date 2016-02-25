@@ -1180,7 +1180,7 @@ public:
 	{
 		return rsd_type_.residue_connection( resconn_index );
 	}
-	
+
 	Size
 	residue_connect_atom_index( Size const resconn_id ) const {
 		return rsd_type_.residue_connect_atom_index( resconn_id );
@@ -1241,7 +1241,7 @@ public:
 	connected_residue_at_resconn( Size const resconn_index ) const {
 		return connect_map_[ resconn_index ].resid();
 	}
-	
+
 	/// @brief Returns the residue number of a residue connected to this residue
 	/// at this residue's connection resconn_index.
 	/// @details  For example, in a normally-connected pose made of alpha-amino

@@ -1053,6 +1053,88 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief replace proton with trifluoromethyl
+bool
+ReplaceProtonWithTrifluoromethyl::apply( ResidueType & rsd ) const {
+
+	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+		return true;
+	}
+
+	// Now the valence isn't free.
+	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+
+	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+		// Am I an aromatic carbon atom with a free valence?
+		// Can also be specified in params, but add if not already set!
+		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+		if ( rsd.atom( ii ).mm_name() == "CA" ) {
+			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+				}
+			}
+		}
+	}
+
+	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
+	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
+	AtomICoor icoor = rsd.icoor( proton_index );
+	rsd.delete_atom( proton_index );
+
+	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
+	rsd.add_atom( "C"+atom_, "CH3", "CT3", -0.27 );
+	rsd.add_bond( "C"+atom_, atom_ );
+	rsd.set_icoor( "C"+atom_,
+		icoor.phi(),
+		icoor.theta(),
+		1.511005,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
+
+	// these codes with
+	rsd.add_atom( "E"+atom_, "F", "F3", -0.20 );
+	rsd.add_atom( "F"+atom_, "F", "F3", -0.20 );
+	rsd.add_atom( "G"+atom_, "F", "F3", -0.20 );
+	rsd.add_bond( "C"+atom_, "E"+atom_ );
+	rsd.add_bond( "C"+atom_, "F"+atom_ );
+	rsd.add_bond( "C"+atom_, "G"+atom_ );
+
+	rsd.set_icoor( "E"+atom_,
+		88.407090/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.319661,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		true );
+
+	rsd.set_icoor( "F"+atom_,
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.319661,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		"E"+atom_,
+		true );
+
+	rsd.set_icoor( "G"+atom_,
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.319661,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		"F"+atom_,
+		true );
+
+	rosetta_recharge_fullatom( rsd );
+	find_bonds_in_rings( rsd );
+	return false;
+}
+
 /// @brief replace proton with methyl
 bool
 ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
@@ -2129,6 +2211,10 @@ patch_operation_from_patch_file_line(
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new ReplaceProtonWithMethyl( atom1 ) );
+	} else if ( tag == "REPLACE_PROTON_WITH_TRIFLUOROMETHYL" ) {
+		l >> atom1;
+		if ( l.fail() ) utility_exit_with_message( line );
+		return PatchOperationOP( new ReplaceProtonWithTrifluoromethyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_HYDROXYL" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( line );

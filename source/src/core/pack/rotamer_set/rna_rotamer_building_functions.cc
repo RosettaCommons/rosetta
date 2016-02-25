@@ -276,11 +276,11 @@ build_proton_chi_rotamers(
 		rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue, /*forcebasic*/ true );
 
 		utility::vector1< utility::vector1< core::Real > > proton_chi_samplings(
-				rotlib->compute_proton_chi_samplings( *concrete_residue, residue_task, true ) );
+			rotlib->compute_proton_chi_samplings( *concrete_residue, residue_task, true ) );
 
 		// This seems a little silly -- suck out the chi's, then put them back into rotamers.
 		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets(
-				rotlib->expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
+			rotlib->expand_proton_chis( proton_chi_samplings, *concrete_residue ) );
 
 		Size const number_of_starting_rotamers = rotamers.size();
 		for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {

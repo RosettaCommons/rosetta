@@ -8,7 +8,6 @@ PERTINENT_PROPERTY AROMATIC_CARBON_WITH_FREE_VALENCE
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN PEPTOID
-NAME3 101
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one

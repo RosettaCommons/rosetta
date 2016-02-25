@@ -17,6 +17,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <numeric/xyz.functions.hh>
@@ -34,8 +35,10 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>
 
 #include <core/kinematics/FoldTree.hh>
@@ -55,6 +58,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/RandomTorsionMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -118,6 +122,71 @@ StringOptionKey const macrocycle_sequence ( "macrocycles::macrocycle_sequence" )
 BooleanOptionKey const final_repack( "macrocycles::final_repack" );
 BooleanOptionKey const final_minimize( "macrocycles::final_minimize" );
 BooleanOptionKey const final_mc ( "macrocycles::final_mc" );
+}
+
+
+
+bool
+bump_check( Pose const & pose, Real const multiplier  ) {
+
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		//TR << "Checking residue " << ii << std::endl;
+		for ( Size ai = 1; ai <= pose.residue( ii ).natoms(); ++ai ) {
+			//TR << "Checking atom " << pose.residue(ii).atom_name(ai) << std::endl;
+
+			core::Real const ai_rad = pose.residue( ii ).type().atom_type( ai ).lj_radius();
+
+			// intra
+			for ( Size ai2 = 1; ai2 <= pose.residue( ii ).natoms(); ++ai2 ) {
+				//TR << "vs atom " << pose.residue(ii).atom_name(ai2) << std::endl;
+
+				if ( ai == ai2 ) continue;
+				if ( pose.residue(ai).type().atoms_are_bonded(ai, ai2) ) continue;
+				core::Real const ai2_rad = pose.residue( ii ).type().atom_type( ai2 ).lj_radius();
+
+				if ( pose.residue( ii ).xyz( ai ).distance_squared(
+						pose.residue( ii ).xyz( ai2 ) )  < pow((ai_rad+ai2_rad)*multiplier, 2) ) {
+					TR << "Residue " << ii << " atom " << pose.residue(ii).atom_name(ai) << "  " << ii << " atom " << pose.residue(ai2).atom_name(ai2) << pose.residue( ii ).xyz( ai ).distance_squared( pose.residue( ii ).xyz( ai2 ) ) <<std::endl;
+
+					return false;
+				}
+			}
+
+			// inter
+			for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+				//TR << "vs residue " << jj << std::endl;
+
+				if ( ii == jj ) continue;
+
+				for ( Size aj = 1; aj <= pose.residue( jj ).natoms(); ++aj ) {
+					//TR << "vs atom " << pose.residue(jj).atom_name(aj) << std::endl;
+
+					// are ai and aj bonded?
+					//bool are_bonded = false;
+					if ( pose.residue(ii).is_bonded( pose.residue( jj ) ) ) {
+						continue;
+						// Get the list of connection ids in residue 1 that connect to residue 2:
+						/*utility::vector1< core::Size > connlist = pose.residue(ii).connections_to_residue(jj);
+
+						for ( core::Size c = 1; c<=connlist.size(); ++c ) {
+						if ( pose.residue(ii).residue_connect_atom_index(connlist[c]) != ai ) continue;
+						if ( pose.residue(jj).residue_connect_atom_index( pose.residue(ii).residue_connection_conn_id( connlist[c]) ) == aj) are_bonded = true;
+						}*/
+					}
+					//if ( are_bonded ) continue;
+
+					core::Real const aj_rad = pose.residue( jj ).type().atom_type( aj ).lj_radius();
+
+					if ( pose.residue( ii ).xyz( ai ).distance_squared(
+							pose.residue(jj).xyz( aj ) )  < pow((ai_rad+aj_rad)*multiplier, 2) ) {
+						TR << "Residue " << ii << " atom " << pose.residue(ii).atom_name(ai) << "  " << jj << " atom " << pose.residue(jj).atom_name(aj) << pose.residue( jj ).xyz( aj ).distance_squared( pose.residue( jj ).xyz( aj ) ) << std::endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
 }
 
 class MacrocycleMover : public Mover {
@@ -187,122 +256,219 @@ MacrocycleMover::apply(
 
 	bool closed = false;
 
-	while ( !closed ) {
-		core::chemical::ResidueTypeSetCOP residue_set_cap = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP residue_set_cap = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-		Size nres;
+	Size nres;
 
-		if ( option[ macrocycles::macrocycle_sequence ].user() ) {
-			make_pose_from_sequence( pose, option[ macrocycles::macrocycle_sequence ].value(), *residue_set_cap, false );
-			nres = pose.total_residue();
+	if ( option[ macrocycles::macrocycle_sequence ].user() ) {
+		// make_pose_from_sequence( pose, option[ macrocycles::macrocycle_sequence ].value(), *residue_set_cap, false );
+		// nres = pose.total_residue();
+
+		// Avoid bad behavior from make_pose_from_sequence for now...
+
+		core::chemical::ResidueTypeCOPs requested_types = residue_types_from_sequence( option[ macrocycles::macrocycle_sequence ].value(), *residue_set_cap, false );
+		nres = requested_types.size();
+		Residue first( *requested_types[1], true );
+		pose.conformation().append_residue_by_jump( first, 1 );
+		for ( Size i = 2; i <= nres; ++i ) {
+			Residue ala( *requested_types[i], true );
+			pose.conformation().append_residue_by_bond( ala, true );
+		}
+	} else {
+		nres = option[ macrocycles::macrocycle_size ].value();
+		ResidueType const & ala_type = residue_set_cap->name_map( "ALA" );
+
+		Residue ala( ala_type, true );
+		pose.conformation().append_residue_by_jump( ala, 1 );
+		for ( Size i = 2; i <= nres; ++i ) {
+			pose.conformation().append_residue_by_bond( ala, true );
+		}
+	}
+	// Removed - no longer using CyclizationMover
+	//Size const chain = 1;
+	//Size const minimization_rounds = 15;
+
+	/*
+	// Add omega constraints
+	for ( Size i = 1; i <= nres; ++i ) {
+
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::func;
+	using namespace core::scoring::constraints;
+
+	AtomID aidO  ( pose.residue( i   ).atom_index("O"), i   );
+	AtomID aidCA1( pose.residue( i   ).atom_index("CA"), i   );
+	AtomID aidC  ( pose.residue( i   ).atom_index("C"),  i   );
+	AtomID aidN  ( pose.residue( i%nres+1 ).atom_index("N"),  i%nres+1 );
+	AtomID aidCA2( pose.residue( i%nres+1 ).atom_index("CA"), i%nres+1 );
+	AtomID aidH( pose.residue( i%nres+1 ).atom_index("H"),  i%nres+1 );
+
+	//pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( aidCA1, aidC, aidN, aidCA2, CircularHarmonicFuncOP( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( aidO, aidC, aidN, aidH, CircularHarmonicFuncOP( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+
+	}*/
+
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::func;
+	using namespace core::scoring::constraints;
+
+	std::string next_to_C = pose.residue( nres ).type().is_beta_aa() ? "CM" : "CA";
+	std::string next_to_N = pose.residue(  1   ).type().is_beta_aa() ? "CA" : "CA";
+
+	pose.add_constraint(
+		DihedralConstraintOP( new DihedralConstraint(
+		*new AtomID( pose.residue( nres ).atom_index(next_to_C), nres ),
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		*new AtomID( pose.residue( 1    ).atom_index(next_to_N), 1    ),
+		CircularHarmonicFuncOP( new CircularHarmonicFunc(
+		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+
+	pose.add_constraint(
+		DihedralConstraintOP( new DihedralConstraint(
+		*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		*new AtomID( pose.residue( 1    ).atom_index("H" ), 1    ),
+		CircularHarmonicFuncOP( new CircularHarmonicFunc(
+		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+
+	pose.add_constraint(
+		DihedralConstraintOP( new DihedralConstraint(
+		*new AtomID( pose.residue( nres ).atom_index(next_to_C), nres ),
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
+		CircularHarmonicFuncOP( new CircularHarmonicFunc(
+		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+
+	pose.add_constraint(
+		DihedralConstraintOP( new DihedralConstraint(
+		*new AtomID( pose.residue( 1    ).atom_index(next_to_N ), 1 ),
+		*new AtomID( pose.residue( 1    ).atom_index("H" ), 1 ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		CircularHarmonicFuncOP( new CircularHarmonicFunc(
+		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+
+	pose.add_constraint(
+		AngleConstraintOP( new AngleConstraint(
+		*new AtomID( pose.residue( 1    ).atom_index("H" ), 1 ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1 ),
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		CircularHarmonicFuncOP( new CircularHarmonicFunc(
+		numeric::NumericTraits<float>::pi()*2.0/3.0, 0.02 ) ) ) ) );
+
+	pose.add_constraint(
+		AngleConstraintOP( new AngleConstraint(
+		*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		CircularHarmonicFuncOP( new CircularHarmonicFunc(
+		numeric::NumericTraits<float>::pi()*2.0/3.0, 0.02 ) ) ) ) );
+
+	for ( Size ii = 1; ii <= nres; ++ii ) {
+		if ( pose.residue(ii).type().is_beta_aa() ) {
+			if ( ii > 1 ) {
+				pose.set_torsion( core::id::TorsionID( ii, id::BB, 1 ), numeric::random::rg().uniform() * 360.0 );
+			}
+			if ( ii < nres ) {
+				pose.set_torsion( core::id::TorsionID( ii, id::BB, 2 ), numeric::random::rg().uniform() * 360.0 );
+				pose.set_torsion( core::id::TorsionID( ii, id::BB, 3 ), numeric::random::rg().uniform() * 360.0 );
+				pose.set_torsion( core::id::TorsionID( ii, id::BB, 4 ), 180.0 );
+			}
 		} else {
-			nres = option[ macrocycles::macrocycle_size ].value();
-			ResidueType const & ala_type = residue_set_cap->name_map( "ALA" );
-
-			Residue ala( ala_type, true );
-			pose.conformation().append_residue_by_jump( ala, 1 );
-			for ( Size i = 2; i <= nres; ++i ) {
-				pose.conformation().append_residue_by_bond( ala, true );
+			if ( ii > 1 ) {
+				pose.set_phi( ii, numeric::random::rg().uniform() * 360.0 );
+			}
+			if ( ii < nres ) {
+				pose.set_psi( ii, numeric::random::rg().uniform() * 360.0 );
+				pose.set_omega( ii, 180.0 );
 			}
 		}
-		Size const chain = 1;
-		Size const minimization_rounds = 15;
+	}
 
-		/*
-		// Add omega constraints
-		for ( Size i = 1; i <= nres; ++i ) {
+	// create move map for minimization
+	kinematics::MoveMapOP mm( new kinematics::MoveMap() );
+	mm->set_bb( true );
+	//mm->set_bb( 1, false );
+	//mm->set_bb( nres, false );
+	mm->set_chi( true );
+	mm->set_jump( 1, true );
 
-		using namespace core::id;
-		using namespace core::scoring;
-		using namespace core::scoring::func;
-		using namespace core::scoring::constraints;
+	// create minimization mover
+	simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
-		AtomID aidO  ( pose.residue( i   ).atom_index("O"), i   );
-		AtomID aidCA1( pose.residue( i   ).atom_index("CA"), i   );
-		AtomID aidC  ( pose.residue( i   ).atom_index("C"),  i   );
-		AtomID aidN  ( pose.residue( i%nres+1 ).atom_index("N"),  i%nres+1 );
-		AtomID aidCA2( pose.residue( i%nres+1 ).atom_index("CA"), i%nres+1 );
-		AtomID aidH( pose.residue( i%nres+1 ).atom_index("H"),  i%nres+1 );
+	ScoreFunctionOP cart_sfxn = score_fxn->clone();
+	cart_sfxn->set_weight( cart_bonded, 1.0 );
+	cart_sfxn->set_weight( pro_close, 0.0 );
 
-		//pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( aidCA1, aidC, aidN, aidCA2, CircularHarmonicFuncOP( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
-		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( aidO, aidC, aidN, aidH, CircularHarmonicFuncOP( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+	simple_moves::MinMoverOP cart_min( new protocols::simple_moves::MinMover( mm, cart_sfxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+	cart_min->cartesian( true );
 
-		}*/
+	AtomPairConstraintOP topout( new AtomPairConstraint(
+		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		//TopOutFuncOP( new TopOutFunc( 100, 1.33, 5 ) ) ) );
+		HarmonicFuncOP( new HarmonicFunc( 1.33, 0.03 ) ) ) );
 
-		using namespace core::id;
-		using namespace core::scoring;
-		using namespace core::scoring::func;
-		using namespace core::scoring::constraints;
-		pose.add_constraint(
-			DihedralConstraintOP( new DihedralConstraint(
-			*new AtomID( pose.residue( nres ).atom_index("CA"), nres ),
-			*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-			*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-			*new AtomID( pose.residue( 1    ).atom_index("CA"), 1    ),
-			CircularHarmonicFuncOP( new CircularHarmonicFunc(
-			numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
+	pose.add_constraint( topout );
+	pose.conformation().declare_chemical_bond( nres, "C", 1, "N" );
 
-		pose.add_constraint(
-			DihedralConstraintOP( new DihedralConstraint(
-			*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
-			*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-			*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-			*new AtomID( pose.residue( 1    ).atom_index("H" ), 1    ),
-			CircularHarmonicFuncOP( new CircularHarmonicFunc(
-			numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
 
-		for ( Size ii = 1; ii <= nres; ++ii ) {
-			pose.set_phi( ii, numeric::random::rg().uniform() * 360.0 );
-			pose.set_psi( ii, numeric::random::rg().uniform() * 360.0 );
-			pose.set_omega( ii, 180.0 );
+	Pose oldpose = pose;
+
+	moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
+	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
+
+	kinematics::MoveMapOP pert_pep_smallshear_mm( new kinematics::MoveMap() );
+	kinematics::MoveMapOP pert_pep_beta_mm( new kinematics::MoveMap() );
+
+	bool is_all_beta = true;
+	bool is_all_alpha = true;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).type().is_alpha_aa() ) {
+			is_all_beta = false;
+			pert_pep_smallshear_mm->set_bb( i );
+		} else {
+			is_all_alpha = false;
+			pert_pep_beta_mm->set_bb( i );
 		}
+	}
 
-		// create move map for minimization
-		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
-		mm->set_bb( true );
-		mm->set_chi( true );
-		mm->set_jump( 1, true );
+	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_smallshear_mm, 0.2, 1 ) );
+	pert_pep_small->angle_max( 'H', 2.0 );
+	pert_pep_small->angle_max( 'L', 2.0 );
+	pert_pep_small->angle_max( 'E', 2.0 );
+	simple_moves::ShearMoverOP pert_pep_shear( new simple_moves::ShearMover( pert_pep_smallshear_mm, 0.2, 1 ) );
+	pert_pep_shear->angle_max( 'H', 2.0 );
+	pert_pep_shear->angle_max( 'L', 2.0 );
+	pert_pep_shear->angle_max( 'E', 2.0 );
+	simple_moves::RandomTorsionMoverOP pert_beta( new simple_moves::RandomTorsionMover( pert_pep_beta_mm, 0.2, 1 ) );
 
-		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	moves::RandomMoverOP pert_pep_random( new moves::RandomMover() );
+	if ( !is_all_beta ) {
+		pert_pep_random->add_mover( pert_pep_small, 1 );
+		pert_pep_random->add_mover( pert_pep_shear, 1 );
+	}
+	if ( !is_all_alpha ) {
+		pert_pep_random->add_mover( pert_beta, 2 );
+	}
+	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, 10 ) );
 
-		AtomPairConstraintOP topout( new AtomPairConstraint(
-			*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-			*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-			TopOutFuncOP( new TopOutFunc( 100, 1.33, 5 ) ) ) );
+	pert_sequence->add_mover( pert_pep_repeat );
+	moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
 
-		pose.add_constraint( topout );
+	while ( !closed ) {
 
+		pose = oldpose;
 		/********************************************************\
 		Initial MC
 		\********************************************************/
-		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
-		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
-
-		kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
-
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			pert_pep_mm->set_bb( i );
-		}
-
-		simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, 0.2, 1 ) );
-		pert_pep_small->angle_max( 'H', 2.0 );
-		pert_pep_small->angle_max( 'L', 2.0 );
-		pert_pep_small->angle_max( 'E', 2.0 );
-		simple_moves::ShearMoverOP pert_pep_shear( new simple_moves::ShearMover( pert_pep_mm, 0.2, 1 ) );
-		pert_pep_shear->angle_max( 'H', 2.0 );
-		pert_pep_shear->angle_max( 'L', 2.0 );
-		pert_pep_shear->angle_max( 'E', 2.0 );
-
-		moves::RandomMoverOP pert_pep_random( new moves::RandomMover() );
-		pert_pep_random->add_mover( pert_pep_small, 1 );
-		pert_pep_random->add_mover( pert_pep_shear, 1 );
-		moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, 10 ) );
-
-		pert_sequence->add_mover( pert_pep_repeat );
-		moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
-
-		for ( Size j = 1; j <= 1000; ++j ) {
+		pert_mc->reset( pose );
+		for ( Size j = 1; j <= 300; ++j ) {
 			pert_trial->apply( pose );
 
 			pert_mc->recover_low( pose );
@@ -318,18 +484,27 @@ MacrocycleMover::apply(
 			//TR << "After minimization, score is " << ( *score_fxn )( pose ) << std::endl;
 		}
 		pert_mc->recover_low( pose );
+
+		for ( Real new_apc_wt = 0.1; new_apc_wt <= 1.0; new_apc_wt += 0.1 ) {
+			minM->apply( pose );
+			score_fxn->set_weight( atom_pair_constraint, new_apc_wt );
+		}
+		TR << "After minimization, score is " << ( *score_fxn )( pose ) << std::endl;
+
+		cart_min->apply( pose );
+		TR << "After cartesian minimization, score is " << ( *score_fxn )( pose ) << std::endl;
 		minM->apply( pose );
 		TR << "After minimization, score is " << ( *score_fxn )( pose ) << std::endl;
 
-		pose.remove_constraint( topout );
+		//pose.remove_constraint( topout );
 
 
 		/********************************************************\
 		Cyclization
 		\********************************************************/
-		CyclizationMoverOP cm( new CyclizationMover( chain, true, true, minimization_rounds ) );
-		cm->apply( pose );
-		pose.update_residue_neighbors();
+		//CyclizationMoverOP cm( new CyclizationMover( chain, true, true, minimization_rounds ) );
+		//cm->apply( pose );
+		//pose.update_residue_neighbors();
 
 		if ( option[ macrocycles::final_mc ].value() ) {
 
@@ -377,7 +552,6 @@ MacrocycleMover::apply(
 			using namespace core::scoring;
 			using namespace core::scoring::constraints;
 
-			//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0
 			if ( score_fxn->has_zero_weight( dihedral_constraint ) ) {
 				score_fxn->set_weight( dihedral_constraint, 1.0 );
 			}
@@ -390,32 +564,57 @@ MacrocycleMover::apply(
 		}
 
 		Real omg = numeric::dihedral_degrees(
-			pose.residue( nres).xyz("CA"),
+			pose.residue( nres).xyz(next_to_C),
 			pose.residue( nres).xyz("C"),
 			pose.residue( 1 ).xyz("N"),
-			pose.residue( 1 ).xyz("CA")
+			pose.residue( 1 ).xyz(next_to_N)
 		);
 
 		Real imp1 = numeric::dihedral_degrees(
-			pose.residue( nres).xyz("CA"),
+			pose.residue( nres).xyz(next_to_C),
 			pose.residue( nres).xyz("C"),
 			pose.residue( 1 ).xyz("N"),
 			pose.residue( nres ).xyz("O")
 		);
 
 		Real imp2 = numeric::dihedral_degrees(
-			pose.residue( 1).xyz("CA"),
+			pose.residue( 1).xyz(next_to_N),
 			pose.residue( 1).xyz("H"),
 			pose.residue( 1 ).xyz("N"),
 			pose.residue( nres ).xyz("C")
 		);
+
+		Real ang1 = numeric::angle_degrees(
+			pose.residue( 1).xyz("H"),
+			pose.residue( 1 ).xyz("N"),
+			pose.residue( nres ).xyz("C")
+		);
+
+		Real ang2 = numeric::angle_degrees(
+			pose.residue( 1).xyz("O"),
+			pose.residue( 1 ).xyz("C"),
+			pose.residue( nres ).xyz("N")
+		);
+
+		bool bump_good = true;//bump_check( pose, 0.3 );
 
 		bool dihedral_good = ( omg > 170 && omg <= 180 ) || ( omg >= -180 && omg < 170 );
 		dihedral_good &= ( imp1 > 170 && imp1 <= 180 ) || ( imp1 >= -180 && imp1 < 170 );
 		dihedral_good &= ( imp2 > 170 && imp2 <= 180 ) || ( imp2 >= -180 && imp2 < 170 );
 		bool dist_good = ( pose.residue( nres ).xyz("C").distance( pose.residue( 1 ).xyz( "N" ) ) < 1.4 );
 
-		if ( dihedral_good && dist_good ) {
+		bool ang_good = ( ang1 > 110 && ang1 < 130 );
+		ang_good &= ( ang2 > 110 && ang2 < 130 );
+
+		TR << "Omega: " << omg  << std::endl;
+		TR << "Imp1: " << imp1 << std::endl;
+		TR << "Imp2: " << imp2 << std::endl;
+		TR << "Ang1: " << ang1 << std::endl;
+		TR << "Ang2: " << ang2 << std::endl;
+		TR << "Dist: " << pose.residue( nres ).xyz("C").distance( pose.residue( 1 ).xyz( "N" ) ) << std::endl;
+		TR << "Bump: " << bump_good << std::endl;
+
+		if ( dihedral_good && dist_good && bump_good && ang_good ) {
 			closed = true;
 		} else {
 			TR << "Closure failed; restarting" << std::endl;

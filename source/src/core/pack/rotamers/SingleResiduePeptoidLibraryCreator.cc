@@ -67,18 +67,35 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	// create izstream from path
-	std::string dir_name = basic::database::full_name( "/rotamer/peptoid_rotlibs/" );
 	std::string file_name = peptoid_libspec->peptoid_rotlib_path();
+	std::string full_path;
 	if ( ! file_name.size() ) {
 		utility_exit_with_message("Unspecified Peptoid rotlib path with residue type " + restype.name() );
 	}
-	std::string full_path = dir_name + file_name;
-	utility::io::izstream rotlib_in( full_path );
+
+	utility::options::PathVectorOption & priorityvec = option[ in::file::override_rot_lib_path ];
+	Size pveci(1);
+	utility::io::izstream rotlib_in;
+	while ( !rotlib_in && pveci <= priorityvec.size() ) {
+		full_path = priorityvec[ pveci ].name() + file_name;
+		rotlib_in.open( full_path );
+
+		if ( rotlib_in ) break;
+
+		// Try flat hierarchy too
+		full_path = priorityvec[ pveci ].name() + file_name.substr( file_name.find_last_of( "/\\" )+1 );
+		rotlib_in.open( full_path );
+		pveci++;
+	}
+
+	// create izstream from path
+	std::string dir_name = basic::database::full_name( "/rotamer/peptoid_rotlibs/" );
+	full_path = dir_name + file_name;
+	rotlib_in.open( full_path );
 
 	// if we cannot open in regular path, try alternate paths
 	utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
-	Size pveci(1);
+	pveci = 1;
 	while ( !rotlib_in && pveci <= pvec.size() ) {
 		full_path = pvec[ pveci ].name() + file_name;
 		rotlib_in.open( full_path );

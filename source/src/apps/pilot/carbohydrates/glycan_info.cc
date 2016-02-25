@@ -131,7 +131,7 @@ public:  // Standard Rosetta methods
 		std::string outstring = "";
 		std::string attach = "_->";
 
-		if (info->mainchain_glycosidic_bond_acceptor() ){
+		if ( info->mainchain_glycosidic_bond_acceptor() ) {
 			outstring = attach + to_string(info->mainchain_glycosidic_bond_acceptor());
 		}
 
@@ -144,7 +144,7 @@ public:  // Standard Rosetta methods
 	virtual
 	void
 	apply( core::pose::Pose & pose )
-	{	
+	{
 		using namespace core::pose::carbohydrates;
 
 		core::Size protein_branches = 0;
@@ -156,9 +156,9 @@ public:  // Standard Rosetta methods
 				bool bp = pose.residue( resnum ).is_branch_point();
 
 
-				std::cout << "Carbohydrate: "<< resnum  << " Parent: " << parent_res << " BP: "<<bp << " CON: " 
-				             << utility::pad_right( attachment_points, 10) << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
-				
+				std::cout << "Carbohydrate: "<< resnum  << " Parent: " << parent_res << " BP: "<<bp << " CON: "
+					<< utility::pad_right( attachment_points, 10) << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
+
 				carbohydrate_residues += 1;
 
 			} else if ( pose.residue( resnum ).is_branch_point() ) {
