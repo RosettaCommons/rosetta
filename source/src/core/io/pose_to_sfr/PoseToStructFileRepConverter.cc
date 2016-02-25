@@ -253,9 +253,9 @@ PoseToStructFileRepConverter::append_residue_to_sfr(
 void
 PoseToStructFileRepConverter::append_residue_to_sfr(
 	pose::Pose const & pose,
-	Size const resnum,
-	Size & new_atom_num,
-	Size const new_tercount )
+	core::Size const resnum,
+	core::Size & new_atom_num,
+	core::Size const new_tercount )
 {
 
 	using namespace core;

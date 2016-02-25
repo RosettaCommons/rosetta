@@ -1357,6 +1357,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 					core::io::pdb::dump_pdb_residue( **rot_it, atomcounter, file );
 					file << "ENDMDL   \n";
 					modelcounter++;
+					atomcounter = 1;
 				}
 				file.close();
 			}

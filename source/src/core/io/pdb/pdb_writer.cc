@@ -486,7 +486,7 @@ void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	std::ostream & out,
-	Size start_atom_number,
+	core::Size start_atom_number,
 	core::io::StructFileRepOptionsCOP options
 ) {
 	dump_pdb_residue(rsd, start_atom_number, out, options);
@@ -519,16 +519,16 @@ create_pdb_info_for_single_residue_pose(
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
-	Size & atom_number,
+	core::Size & atom_number,
 	std::ostream & out,
 	core::io::StructFileRepOptionsCOP options
 ) {
 
 	pose::Pose pose;
-	pose.append_residue_by_jump( rsd, 1 );
+	pose.append_residue_by_jump( *(rsd.clone()), 1 );
 
 	// create a PDBInfo object for this single-residue pose
-	pose.pdb_info( create_pdb_info_for_single_residue_pose( pose, options ));
+	//pose.pdb_info( create_pdb_info_for_single_residue_pose( pose, options ));
 
 	pose_to_sfr::PoseToStructFileRepConverter converter(*options);
 	converter.append_residue_to_sfr(pose, 1, atom_number, 0);

@@ -99,15 +99,15 @@ public:
 	/// @brief Append pdb information to StructFileRep for a single residue.
 	void append_residue_to_sfr(
 		pose::Pose const & pose,
-		Size const resnum );
+		core::Size const resnum );
 
 
 	///  @brief Start atom numbering from given n.  Increments N
 	void append_residue_to_sfr(
 		pose::Pose const & pose,
-		Size const resnum,
-		Size & new_atom_num,
-		Size const new_tercount );
+		core::Size const resnum,
+		core::Size & new_atom_num,
+		core::Size const new_tercount );
 
 	/// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 	/// SSBondInformation data as appropriate.

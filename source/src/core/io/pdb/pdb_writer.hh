@@ -133,7 +133,7 @@ dump_pdb(
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
-	Size & atom_number,
+	core::Size & atom_number,
 	std::ostream & out,
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
@@ -143,7 +143,7 @@ void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	std::ostream & out,
-	Size start_atom_number = 1,
+	core::Size start_atom_number = 1,
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
