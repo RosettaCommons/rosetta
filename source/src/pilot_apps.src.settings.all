@@ -692,8 +692,8 @@ sources = {
 		"r_tempered_sidechains",
 	],
 	"pilot/olungu" : [
-		"sasa_interface",
-		"multidomain_switch", # /* ????,Documentation Location,Demo Location */
+		#"sasa_interface",
+		#"multidomain_switch", # /* ????,Documentation Location,Demo Location */
 		#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
 	],
 	"pilot/opt_e" : [

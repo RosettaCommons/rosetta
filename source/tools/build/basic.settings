@@ -80,6 +80,7 @@ settings = {
             # main/external/boinc/api, etc.)
             "include_path" : [
                 "#external/boost_1_55_0",
+                "#external/",
                 "#external/dbio",
                 "/usr/include",
                 "/usr/local/include",

@@ -76,7 +76,11 @@ sources = {
 		"antibody_legacy",
 		"antibody_graft",
 		"antibody_H3",
+<<<<<<< HEAD
+		"antibody_CR_paratope",
+=======
 		"snugdock",
+>>>>>>> master
 	],
 	"public/boinc": [
 		"minirosetta",
