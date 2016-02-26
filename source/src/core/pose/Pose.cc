@@ -844,6 +844,18 @@ Pose::sequence() const
 }
 
 std::string
+Pose::sequence(core::Size resnum_start, core::Size resnum_end) const
+{
+	PyAssert((resnum_end <= total_residue()), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater less than or equal to total residues!")
+	
+	PyAssert((resnum_end >= resnum_start), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater than or equal to resnum_start!");
+	
+	return sequence().substr(resnum_start - 1, resnum_end - resnum_start + 1);
+	
+}
+
+
+std::string
 Pose::annotated_sequence( bool show_all_variants ) const
 {
 	return conformation_->annotated_sequence( show_all_variants );

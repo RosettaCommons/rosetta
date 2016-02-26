@@ -151,53 +151,102 @@ ccd_close_loops(
 	core::kinematics::MoveMap const& mm
 );
 
-/// @brief get neighbor residues within 10 A CB distance cutoff
+
+
+
+/// @brief mark loop residues and its neighbors as necessary in a sequence map.
+/// @details
+///  Uses 10A neighbor graph for neighbors which requires a scored pose.
+///  THEN takes distance from selection to neighbors to trim neighbors.
+///  Excludes disulfide residues.
+void select_loop_residues(
+	core::pose::Pose const & pose,
+	Loops const & loops,
+	bool const include_neighbors,
+	utility::vector1<bool> & map,
+	core::Real neighbor_dist = 10.0
+);
+
+/// @brief mark loop residues and its neighbors as necessary in a sequence map.
+/// @details
+///  Uses 10A neighbor graph for neighbors which requires a scored pose.
+///  THEN takes distance from selection to neighbors to trim neighbors.
+///  Excludes disulfide residues.
+utility::vector1<bool> select_loop_residues(
+	core::pose::Pose const & pose,
+	Loops const & loops,
+	bool const include_neighbors,
+	core::Real neighbor_dist = 10.0
+);
+
+/// @brief mark loop residues and its neighbors as necessary for one loop.
+/// @details
+///  Uses 10A neighbor graph for neighbors which requires a scored pose.
+///  THEN takes distance from selection to neighbors to trim neighbors.
+///  Excludes disulfide residues.
+void select_loop_residues(
+	core::pose::Pose const & pose,
+	Loop const & loop,
+	bool const include_neighbors,
+	utility::vector1<bool> & map,
+	core::Real neighbor_dist = 10.0
+);
+
+/// @brief mark loop residues and its neighbors as necessary for one loop.
+/// @details
+///  Uses 10A neighbor graph for neighbors which requires a scored pose.
+///  THEN takes distance from selection to neighbors to trim neighbors.
+///  Excludes disulfide residues.
+utility::vector1<bool> select_loop_residues(
+	core::pose::Pose const & pose,
+	Loop const & loop,
+	bool const include_neighbors,
+	core::Real neighbor_dist = 10.0
+);
+
+/// @brief get neighbor residues within 10 A CB distance cutoff.
+/// Excludes disulfide residues.
 void get_tenA_neighbor_residues(
 	core::pose::Pose const & pose,
 	utility::vector1<bool> & residue_positions
 );
 
-/// @brief mark loop residues and its neighbors as necessary in a sequence map.
-void select_loop_residues(
-	core::pose::Pose const & pose,
-	Loops const & loops,
-	bool const include_neighbors,
-	utility::vector1<bool> & map,
-	core::Real neighbor_dist = 10.0
-);
-
-/// @brief mark loop residues and its neighbors as necessary in a sequence map.
-utility::vector1<bool> select_loop_residues(
-	core::pose::Pose const & pose,
-	Loops const & loops,
-	bool const include_neighbors,
-	core::Real neighbor_dist = 10.0
-);
-
-// @brief mark loop residues and its neighbors as necessary for one loop.
-void select_loop_residues(
-	core::pose::Pose const & pose,
-	Loop const & loop,
-	bool const include_neighbors,
-	utility::vector1<bool> & map,
-	core::Real neighbor_dist = 10.0
-);
-
-// @brief mark loop residues and its neighbors as necessary for one loop.
-utility::vector1<bool> select_loop_residues(
-	core::pose::Pose const & pose,
-	Loop const & loop,
-	bool const include_neighbors,
-	core::Real neighbor_dist = 10.0
-);
 
 /// @brief filter set of loop neighbors to a certain CB distance
+///  Takes distance from selection to neighbors to trim neighbors.
 void filter_loop_neighbors_by_distance(
 	core::pose::Pose const & pose,
 	utility::vector1<bool> & map,
 	Loops const & loops,
 	core::Real & dist_cutoff
 );
+
+/// @brief filter neighbors to a certain CB distance.
+///  Takes distance from selection to neighbors to trim neighbors.
+///  Needs to go in a general place...
+void filter_neighbors_by_distance(
+	core::pose::Pose const & pose,
+	utility::vector1<bool> & selection,
+	utility::vector1<bool> & selection_and_neighbors,
+	core::Real & dist_cutoff
+);
+
+/// @brief
+///  Fill a boolean vector of residues with neighboring residues.
+/// @details
+///  Uses 10A neighbor graph for neighbors which requires a scored pose.
+///  THEN takes distance from selection to neighbors to trim neighbors.
+///  residue_positions includes positions and neighbors.
+///  Needs to be moves somewhere much more general...
+///  Excludes disulfide residues.
+void get_neighbor_residues(
+	core::pose::Pose const & pose,
+	utility::vector1<bool> & residue_positions,
+	core::Real neighbor_dis = 10.0
+);
+
+
+
 
 /// @brief helper function to set secondary structure of a Pose from an external
 /// file.

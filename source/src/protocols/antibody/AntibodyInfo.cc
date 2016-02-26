@@ -2237,16 +2237,9 @@ AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name,
 
 std::string
 AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform, Size left_stem , Size right_stem) const {
-
-	vector1<char> sequence;
-	loops::Loop the_loop = get_CDR_loop(cdr_name, pose, transform);
-
-	for ( Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; ++i ) {
-		std::map< Size, char >::const_iterator iter(sequence_map_.find(i)); //To keep const
-		sequence.push_back(iter->second);
-	}
-	std::string seq(sequence.begin(), sequence.end());
-	return seq ;
+	
+	return pose.sequence(get_CDR_start(cdr_name, pose, transform) - left_stem, get_CDR_end(cdr_name, pose, transform) + right_stem);
+	
 }
 
 std::string

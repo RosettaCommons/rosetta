@@ -71,7 +71,7 @@ public:
 	///
 	/// ScoreFunction  scorefxn   /function to minimize while changine rotamers
 	/// PackerTask     task       /object specifying what to design/pack
-	/// Size (int)     nloop      /number of loops in the Pose (???)
+	/// Size (int)     nloop      /number of rounds to run packing
 	PackRotamersMover(
 		ScoreFunctionCOP scorefxn,
 		PackerTaskCOP task = 0,

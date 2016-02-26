@@ -246,6 +246,7 @@ static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloRe
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::ResetBaselineMoverCreator > reg_ResetBaselineMoverCreator;
 static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
+static MoverRegistrator< simple_moves::SimpleThreadingMoverCreator > reg_SimpleThreadingMoverCreator;
 
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 

@@ -137,43 +137,43 @@ public:
 		BFE(AbInfos::value_type outer_info, infos){
 			CDRDefinitionEnum outer_definition = outer_info.first;
 
-		std::pair<core::pose::Pose, AntibodyInfoOP > outer_pair = outer_info.second;
-		AntibodyInfoOP outer_ab_info = outer_pair.second;
-		std::string outer_definition_str = outer_ab_info->get_current_CDRDefinition();
+			std::pair<core::pose::Pose, AntibodyInfoOP > outer_pair = outer_info.second;
+			AntibodyInfoOP outer_ab_info = outer_pair.second;
+			std::string outer_definition_str = outer_ab_info->get_current_CDRDefinition();
 
-		for ( core::Size i = 1; i<= 6; ++i ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			for ( core::Size i = 1; i<= 6; ++i ) {
+				CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 
-			//TR<< "Testing: "<< outer_scheme_str << std::endl;
-			TS_ASSERT_EQUALS(numbering[outer_definition][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr).start());
-			TS_ASSERT_EQUALS(numbering[outer_definition][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr).stop());
+				//TR<< "Testing: "<< outer_scheme_str << std::endl;
+				TS_ASSERT_EQUALS(numbering[outer_definition][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr).start());
+				TS_ASSERT_EQUALS(numbering[outer_definition][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr).stop());
 
-			//Test each numbering transform
-			BFE(AbInfos::value_type inner_info, infos){
-				CDRDefinitionEnum inner_definition = inner_info.first;
-			std::pair< core::pose::Pose, AntibodyInfoOP > inner_pair = inner_info.second;
-			AntibodyInfoOP inner_ab_info = inner_pair.second;
-			std::string inner_definition_str = inner_ab_info->get_current_CDRDefinition();
-			//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
-			TS_ASSERT_EQUALS(numbering[inner_definition][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr, outer_pair.first, inner_definition).start());
-			TS_ASSERT_EQUALS(numbering[inner_definition][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr, outer_pair.first, inner_definition).stop());
+				//Test each numbering transform
+				BFE(AbInfos::value_type inner_info, infos){
+					CDRDefinitionEnum inner_definition = inner_info.first;
+					std::pair< core::pose::Pose, AntibodyInfoOP > inner_pair = inner_info.second;
+					AntibodyInfoOP inner_ab_info = inner_pair.second;
+					std::string inner_definition_str = inner_ab_info->get_current_CDRDefinition();
+					//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
+					TS_ASSERT_EQUALS(numbering[inner_definition][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr, outer_pair.first, inner_definition).start());
+					TS_ASSERT_EQUALS(numbering[inner_definition][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr, outer_pair.first, inner_definition).stop());
 
-			//Test Full transform
-			//outer_ab_info->set_transform_cdr_definition(inner_scheme);
-			//TS_ASSERT_EQUALS(numbering[inner_scheme][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr).start());
-			//TS_ASSERT_EQUALS(numbering[inner_scheme][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr).stop());
-			//outer_ab_info->clear_transform_cdr_definition();
+					//Test Full transform
+					//outer_ab_info->set_transform_cdr_definition(inner_scheme);
+					//TS_ASSERT_EQUALS(numbering[inner_scheme][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr).start());
+					//TS_ASSERT_EQUALS(numbering[inner_scheme][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr).stop());
+					//outer_ab_info->clear_transform_cdr_definition();
+				}
+			}
 		}
+
+		//Here, we test Numbering scheme/Landmark access.
+
+		core::Size chothia_num = ab_pose_chothia.pdb_info()->pdb2pose('L', 43);
+		core::Size aho_num = ab_info_north_aho->get_landmark_resnum(ab_pose_aho, Chothia_Scheme, 'L', 43);
+		TS_ASSERT_EQUALS(chothia_num, aho_num);
+
 	}
-}
-
-	//Here, we test Numbering scheme/Landmark access.
-
-	core::Size chothia_num = ab_pose_chothia.pdb_info()->pdb2pose('L', 43);
-core::Size aho_num = ab_info_north_aho->get_landmark_resnum(ab_pose_aho, Chothia_Scheme, 'L', 43);
-TS_ASSERT_EQUALS(chothia_num, aho_num);
-
-}
 
 void test_info_functions(){
 	TS_ASSERT_EQUALS("L1", ab_info_north_aho->get_CDR_name(l1));

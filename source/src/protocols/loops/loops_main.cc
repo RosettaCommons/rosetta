@@ -765,6 +765,19 @@ ccd_close_loops(
 		ccd_loop_closure_mover.apply( pose );
 	}
 }
+
+
+void get_neighbor_residues(
+	core::pose::Pose const & pose,
+	utility::vector1< bool > & residue_positions,
+	core::Real neighbor_dis
+)
+{
+	utility::vector1< bool > selection = residue_positions;
+	get_tenA_neighbor_residues(pose, residue_positions);
+	filter_neighbors_by_distance(pose, selection, residue_positions, neighbor_dis);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details use TenANeighborGraph. As input, residue_positions[i] is true for residues to be counted.
 /// As output, residue_position[i] is true for all neighbor residues including orginal input residues.
@@ -870,6 +883,7 @@ utility::vector1<bool> select_loop_residues(
 	return map;
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// @details neighbors contains the set of potential neighbors to the loop residues
 ///given in loops. This set is reduced to only contain neighbors within dist_cutoff
@@ -882,35 +896,47 @@ void filter_loop_neighbors_by_distance(
 	Real & dist_cutoff
 )
 {
-	//Size orig_neighbs=0, new_neighbs=0;
-	for ( Size i=1; i<=map.size(); ++i ) {
-		if ( map[i] == false ) continue; // this residue already isn't a neighbor
-		//++orig_neighbs;
-		map[i] = false;
-		for ( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-			for ( Size j=it->start(); j<=it->stop(); ++j ) {
-				// Get the atom vectors for loop and scaffold CB, or CA if GLY
-				numeric::xyzVector< Real > scaffold_res_vec;
-				numeric::xyzVector< Real > loop_res_vec;
-				scaffold_res_vec = pose.residue( i ).xyz( pose.residue( i ).nbr_atom() );
-				loop_res_vec = pose.residue( j ).xyz( pose.residue( j ).nbr_atom() );
-				// only keep as neighbor if dist within cutoff
-				Real dist = scaffold_res_vec.distance( loop_res_vec );
-				if ( dist <= dist_cutoff ) {
-					map[i] = true;
-				}
+	
+	utility::vector1< bool > loop_selection(pose.total_residue(), false);
+	
+	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
+		for ( Size j=it->start(); j<=it->stop(); ++j ) {
+			loop_selection[ j ] = true;
+		}
+	}
+	filter_neighbors_by_distance(pose, loop_selection, map, dist_cutoff);
+
+}
+
+void filter_neighbors_by_distance(
+	core::pose::Pose const & pose,
+	utility::vector1<bool> & selection,
+	utility::vector1<bool> & selection_and_neighbors,
+	core::Real & dist_cutoff
+)
+{
+
+	for ( Size i = 1; i <= selection_and_neighbors.size(); ++i){
+		if (selection_and_neighbors[ i ] == false) continue;
+		
+		selection_and_neighbors[ i ] = false; //Get ready to change this.
+		for (Size x = 1; x <= selection.size(); ++x){
+			if (! selection[x]) continue;
+			
+			// Get the atom vectors for loop and scaffold CB, or CA if GLY
+			numeric::xyzVector< Real > neighbor_vec;
+			numeric::xyzVector< Real > select_vec;
+			neighbor_vec = pose.residue( i ).xyz( pose.residue( i ).nbr_atom() );
+			select_vec = pose.residue( x ).xyz( pose.residue( x ).nbr_atom() );
+			// only keep as neighbor if dist within cutoff
+			Real dist = neighbor_vec.distance( select_vec );
+			if ( dist <= dist_cutoff ) {
+				selection_and_neighbors[ i ] = true;
 			}
 		}
 	}
 
-	// some debug code to see the effect of this code, requires uncommenting orig_neighbs and new_neighbs above
-	//for( Size z=1; z<=map.size(); ++z ) {
-	// if( map[z]==1 ) ++new_neighbs;
-	//}
-	//tt << "Number of neighbors reduced from " << orig_neighbs << " to " << new_neighbs << std::endl;
-
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 // if the pose sequence extends beyond the sequence from the mapping, this will extend the mapping
 // semi-special-case-HACK, logic needs clarifying

@@ -159,7 +159,8 @@ public: // tests
 
 		TS_ASSERT_EQUALS(work_pose.n_residue(), pose.n_residue() + pose2.n_residue());
 		TS_ASSERT_EQUALS(work_pose.sequence(), pose.sequence() + pose2.sequence());
-
+		TS_ASSERT_EQUALS(work_pose.sequence(2, 3), "ES");
+		
 		for ( core::Size i = 1; i <= pose.n_residue(); i++ ) {
 			TS_ASSERT_DELTA(
 				work_pose.residue(i).xyz(1),
