@@ -27,6 +27,7 @@
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/exit.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -40,6 +41,7 @@ namespace residue_selector {
 /// @brief Default constructor
 ///
 LayerSelector::LayerSelector() :
+	cache_selection_( false ),
 	srbl_( new core::select::util::SelectResiduesByLayer )
 	//TODO -- initialize here
 {}
@@ -47,6 +49,7 @@ LayerSelector::LayerSelector() :
 /// @brief Copy constructor.
 ///
 LayerSelector::LayerSelector( LayerSelector const &src ) :
+	cache_selection_( src.cache_selection_ ),
 	srbl_( src.srbl_->clone() ) //CLONE this -- don't copy it.
 {}
 
@@ -64,6 +67,23 @@ ResidueSubset
 LayerSelector::apply( core::pose::Pose const & pose ) const
 {
 	core::Size const nres( pose.n_residue() );
+
+	// Return the cached value if requested by the user
+	if( cache_selection_ && srbl_->is_selection_initialized() ) {
+		ResidueSubset cached_subset( nres, false );
+		const utility::vector1< Size >* layer_selections[3] = { &srbl_->selected_core_residues(), &srbl_->selected_boundary_residues(), &srbl_->selected_surface_residues() };
+		for( int layer_idx= 0; layer_idx < 3; layer_idx++ ) {
+			for( Size i = 1; i <= layer_selections[layer_idx]->size(); i++ ) {
+				Size residue_index = (*layer_selections[layer_idx])[i];
+				runtime_assert(residue_index <= nres);
+				cached_subset[residue_index] = true;
+			}
+		}
+
+		TR << "Returning cached selection result " << std::endl;
+		return cached_subset;
+	}
+
 	utility::vector1<core::Size> selected_residues = srbl_->compute(pose, "", true);
 
 	ResidueSubset subset( nres, false );
@@ -115,6 +135,7 @@ LayerSelector::parse_my_tag(
 		tag->getOption( "core_cutoff", (use_sc_neighbors() ? 5.2 : 20.0 ) ),
 		tag->getOption( "surface_cutoff", (use_sc_neighbors() ? 2.0 : 40.0 ) )
 	);
+	cache_selection_ = tag->getOption<bool>("cache_selection", false);
 
 	return;
 }
@@ -139,6 +160,7 @@ LayerSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
 	attributes.push_back( XMLSchemaAttribute( "select_core",                    xs_boolean, "false" ));
 	attributes.push_back( XMLSchemaAttribute( "select_boundary",                xs_boolean, "false" ));
 	attributes.push_back( XMLSchemaAttribute( "select_surface",                 xs_boolean, "false" ));
+	attributes.push_back( XMLSchemaAttribute( "cache_selection",                xs_boolean, "false" ));
 	attributes.push_back( XMLSchemaAttribute( "use_sidechain_neighbors",        xs_boolean, "true" ));
 	attributes.push_back( XMLSchemaAttribute( "ball_radius",                    xs_decimal ));
 	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xs_decimal ));

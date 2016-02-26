@@ -97,6 +97,9 @@ public:
 	/// opposed to the rolling ball algorithm).
 	bool use_sc_neighbors() const;
 
+	/// @brief Set whether to cache versus recompute the layer selection whenever it is accessed.
+	void set_cache_selection( bool const val ) { cache_selection_ = val; }
+
 	/// @brief Set the midpoint of the distance falloff if the sidechain neighbors method is used
 	/// to define layers.
 	void set_sc_neighbor_dist_midpoint( core::Real const &val );
@@ -124,11 +127,13 @@ public:
 
 private: // data members
 
+	/// @brief Whether to cache the residue selection or recompute it when requested.
+	bool cache_selection_;
+
 	/// @brief Owning pointer to the calculator that determines what layer
 	/// a residue is in.
 	/// @details Object created and destroyed with LayerSelector objects.
 	core::select::util::SelectResiduesByLayerOP srbl_;
-
 
 };
 

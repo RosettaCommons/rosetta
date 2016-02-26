@@ -87,7 +87,6 @@ public:  // mutator
 		pick_surface_ = pick_surface;
 	}
 
-
 	/// @brief set pore radius for colculating asa
 	inline void pore_radius( Real const ps )
 	{
@@ -136,6 +135,9 @@ public:  // accessor
 	utility::vector1< Size > const & selected_surface_residues() const;
 
 	bool use_sidechain_neighbors() const;
+
+	/// @brief whether the selection has been computed once (it could be stale)
+	bool is_selection_initialized() { return is_selection_initialized_; }
 
 	/// @brief Midpoint of the distance falloff sigmoid.
 	/// @details Defaults to 9.0.  Only used by the sidchain_neighbors code.
@@ -202,7 +204,6 @@ private: // helper functions
 
 protected:
 
-
 	/// @brief design core ?
 	bool pick_core_;
 
@@ -211,6 +212,10 @@ protected:
 
 	/// @brief design surface ?
 	bool pick_surface_;
+
+	/// @brief recompute residue selection every time?
+	bool cache_selection_;
+
 
 	/// @brief pore radius for calculating asa( accessible surface area )
 	Real pore_radius_;
@@ -240,6 +245,9 @@ protected:
 	bool make_rasmol_format_file_;
 
 	bool use_sidechain_neighbors_;
+
+	/// @brief has the residue selection been computed?
+	bool is_selection_initialized_;
 
 	/// @brief output in rasmol format
 

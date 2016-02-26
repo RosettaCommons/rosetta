@@ -53,6 +53,7 @@ SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCoun
 	pore_radius_( 2.0 ),
 	make_rasmol_format_file_( false ),
 	use_sidechain_neighbors_( false ),
+  is_selection_initialized_( false ),	
 	dist_midpoint_(9.0),
 	rsd_neighbor_denominator_(1.0),
 	angle_shift_factor_(0.5),
@@ -78,6 +79,7 @@ SelectResiduesByLayer::SelectResiduesByLayer( SelectResiduesByLayer const &src )
 	selected_surface_residues_(src.selected_surface_residues_),
 	make_rasmol_format_file_(src.make_rasmol_format_file_),
 	use_sidechain_neighbors_(src.use_sidechain_neighbors_),
+  is_selection_initialized_(src.is_selection_initialized_),	
 	rsd_sasa_(src.rsd_sasa_),
 	rsd_layer_(src.rsd_layer_),
 	dist_midpoint_(src.dist_midpoint_),
@@ -99,6 +101,7 @@ SelectResiduesByLayer::SelectResiduesByLayer(
 	pore_radius_( 2.0 ),
 	make_rasmol_format_file_( false ),
 	use_sidechain_neighbors_( false ),
+  is_selection_initialized_( false ),	
 	dist_midpoint_(9.0),
 	rsd_neighbor_denominator_(1.0),
 	angle_shift_factor_(0.5),
@@ -115,6 +118,7 @@ SelectResiduesByLayer::SelectResiduesByLayer( String const &pick ) : utility::po
 	pore_radius_( 2.0 ),
 	make_rasmol_format_file_( false ),
 	use_sidechain_neighbors_( false ),
+  is_selection_initialized_( false ),	
 	dist_midpoint_(9.0),
 	rsd_neighbor_denominator_(1.0),
 	angle_shift_factor_(0.5),
@@ -449,10 +453,11 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 
 	}
 
+	is_selection_initialized_ = true;
+
 	return selected_residues;
 
 } // compute
-
 
 } // util
 } // select
