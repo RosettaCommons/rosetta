@@ -263,14 +263,20 @@ Tracer::~Tracer()
 		this, &Fatal, &Error, &Warning,
 		&Info, &Debug, &Trace);
 
-	//bool need_flush = false;
-	for ( size_t i=0; i<v.size(); i++ ) {
-		if ( !v[i]->is_flushed() ) {
-			//v[i]->flush();
-			(*v[i]) << std::endl;
-			(*v[i]) << "WARNING: Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicit call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
+	/// PyRosetta final stream could be redirected to some Python object which might be already got destroyed during Python exit
+	#ifndef PYROSETTA
+		//set_new_final_stream( &std::cerr );
+		//set_ios_hook(otstreamOP(), "");
+
+		//bool need_flush = false;
+		for ( size_t i=0; i<v.size(); i++ ) {
+			if ( !v[i]->is_flushed() ) {
+				//v[i]->flush();
+				(*v[i]) << std::endl;
+				(*v[i]) << "WARNING: Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicit call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
+			}
 		}
-	}
+	#endif
 
 #ifdef CXX11
 #ifdef MULTI_THREADED

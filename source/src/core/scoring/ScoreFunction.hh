@@ -725,7 +725,7 @@ public:
 	///     Energies
 	///     create_score_function
 	void
-	show(pose::Pose & pose ) const { show(std::cout, pose); };
+	show(pose::Pose & pose ) const;
 
 
 	void

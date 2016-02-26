@@ -415,7 +415,7 @@ public:
 
 	//wrapper function of energies.show() for Pyrosetta
 	void
-	show() const {show(std::cout);};
+	show() const;
 
 	/// @brief Shows the energy information of residue  <seqpos>
 	/// @note: wrapper function of energies.show(Size) for Pyrosetta
@@ -431,7 +431,7 @@ public:
 	///     ScoreFunction.show
 	///     create_score_function
 	void
-	show(Size res) const {show(std::cout, res);};
+	show(Size res) const;
 
 	void
 	show_totals( std::ostream & out ) const;

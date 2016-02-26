@@ -688,6 +688,20 @@ Energies::show( std::ostream & out, Size res ) const
 	out << std::endl;
 }
 
+//wrapper function of energies.show() for Pyrosetta
+void
+Energies::show() const
+{
+	show(tr);
+}
+
+void
+Energies::show(Size res) const
+{
+	show(tr, res);
+}
+
+
 std::ostream & operator<<(std::ostream & out, const Energies& e )
 {
 	if ( e.size() == 0 ) {

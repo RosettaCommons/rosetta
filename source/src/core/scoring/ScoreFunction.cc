@@ -563,6 +563,13 @@ ScoreFunction::show( std::ostream & out ) const
 
 ///////////////////////////////////////////////////////////////////////////////
 void
+ScoreFunction::show(pose::Pose & pose ) const
+{
+	show(tr, pose);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
 ScoreFunction::merge( const ScoreFunction & scorefxn_to_be_merged )
 {
 	for ( int i=1; i<= n_score_types; ++i ) {
