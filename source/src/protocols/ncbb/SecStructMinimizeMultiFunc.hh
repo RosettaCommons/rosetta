@@ -98,6 +98,8 @@ private:
 	void
 	setup_minimization_graph( pose::Pose & pose, scoring::ScoreFunction const & sfxn, MinimizerMap const & min_map ) const;
 
+	bool uniq_refers_to_beta( char const uniq ) const;
+
 	core::pose::Pose & pose_;
 
 	core::scoring::ScoreFunction & scorefxn_;

@@ -75,6 +75,7 @@ sources = {
 		"macrocycles",
 		"macrocycle_sampling",
 		"make_a3b_bundle",
+		"make_ideal_a3b_fragment",
 		"mike_linker_test",
 		"multistate_idea",
 		"oop_conformations",

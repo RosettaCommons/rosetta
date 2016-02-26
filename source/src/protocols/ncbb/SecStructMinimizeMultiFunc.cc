@@ -51,6 +51,19 @@ namespace ncbb {
 using namespace core;
 using namespace core::optimization;
 
+bool
+SecStructMinimizeMultiFunc::uniq_refers_to_beta (
+	char const uniq
+) const {
+	for ( Size i = 1; i <= dihedral_pattern_.length(); ++i ) {
+		if ( dihedral_pattern_[i] == uniq ) {
+			if ( alpha_beta_pattern_[i] == 'A' || alpha_beta_pattern_[i] == 'P' ) return false;
+			else return true;
+		}
+	}
+	return false;
+}
+
 SecStructMinimizeMultiFunc::~SecStructMinimizeMultiFunc() {}
 
 SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
@@ -81,40 +94,22 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 
 	starters[ 1 ] = 1;
 	for ( Size i = 2; i <= uniqs.size(); ++i ) {
-		bool is_beta = false;
-		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
-			if ( dihedral_pattern_[ j ] == uniqs[ i-1 ] ) {
-				if ( alpha_beta_pattern_[ j ] == 'B' ) {
-					is_beta = true;
-				}
-				j = dihedral_pattern_.size()+1;
-			}
-		}
-		starters[ i ] = starters[ i-1 ] + ( is_beta ? 3 : 2 );
+		starters[ i ] = starters[ i-1 ] + ( uniq_refers_to_beta( uniqs[ i-1 ] ) ? 3 : 2 );
 	}
 
 	nvar_ = 0;
 	for ( Size i = 1; i <= uniqs.size(); ++i ) {
-		//TR << "What is the nature of the uniq " << uniqs[ i ] << "? " << std::endl;
-		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
-			//TR << "Examinining dihedral pattern element j = " << j << " for comparison to uniqs[ " << i << " ] = " << uniqs[ i ] << std::endl;
-			if ( dihedral_pattern_[ j ] == uniqs[ i ] ) {
-				//TR << "Found an example thereof " << std::endl;
-				if ( alpha_beta_pattern_[ j ] == 'A' || alpha_beta_pattern_[ j ] == 'P' ) {
-					//TR << "It's an alpha!" << std::endl;
-					nvar_ += 2;
-				} else {
-					nvar_ += 3;
-				}
-				j = dihedral_pattern_.size() + 1;
-			}
+		if ( uniq_refers_to_beta( uniqs[i] ) ) {
+			nvar_ += 3;
+		} else {
+			nvar_ += 2;
 		}
 	}
 	TR << "nvar_ = " << nvar_ << std::endl;
 
 	for ( Size i = 1; i <= uniqs.size(); ++i ) {
 		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
-			if ( dihedral_pattern_[ j ] == uniqs[ i ] ) {
+			if ( dihedral_pattern_[ j-1 ] == uniqs[ i ] ) {//alignment
 				//TR << "Dihedral pattern at " << j << " equals uniqs[ " << i << " ] = " << uniqs[ i ] << std::endl;
 				// we're looking at one of many residues represented by this uniq
 				// therefore, identify this residue (resnum j!)
@@ -125,7 +120,7 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 				id::TorsionID bb2( j, id::BB, 2 );
 				vars_index_to_torsion_id_[ starters[ i ] + 1 ].push_back( bb2 );
 				//TR << "So variable " << (starters[ i ]+1) << " controls residue " << j << " torsion 2 " << std::endl;
-				if ( alpha_beta_pattern_[ j ] == 'B' ) {
+				if ( alpha_beta_pattern_[ j-1 ] == 'B' ) {
 					id::TorsionID bb3( j, id::BB, 3 );
 					vars_index_to_torsion_id_[ starters[ i ] + 2 ].push_back( bb3 );
 					//TR << "So variable " << (starters[ i ]+2) << " controls residue " << j << " torsion 3 " << std::endl;
