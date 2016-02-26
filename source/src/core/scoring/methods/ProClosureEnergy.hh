@@ -59,8 +59,8 @@ public:
 	virtual
 	bool
 	defines_score_for_residue_pair(
-		conformation::Residue const & res1,
-		conformation::Residue const & res2,
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
 		bool res_moving_wrt_eachother
 	) const;
 

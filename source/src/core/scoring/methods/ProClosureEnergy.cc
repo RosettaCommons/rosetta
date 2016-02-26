@@ -21,6 +21,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 // Utility headers
 #include <numeric/constants.hh>
@@ -102,16 +103,20 @@ ProClosureEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 bool
 ProClosureEnergy::defines_score_for_residue_pair(
-	conformation::Residue const & res1,
-	conformation::Residue const & res2,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
 	bool res_moving_wrt_eachother
 ) const
 {
-	conformation::Residue const & resl( res1.seqpos() < res2.seqpos() ? res1 : res2 );
-	conformation::Residue const & resu( res1.seqpos() < res2.seqpos() ? res2 : res1 );
+	using namespace conformation;
+	using namespace chemical;
 
-	return res_moving_wrt_eachother && ((resu.aa() == chemical::aa_pro) || (resu.aa() == chemical::aa_dpr)) //L-pro or D-pro
-		&& resl.seqpos() + 1 == resu.seqpos() && resl.is_bonded( resu );
+	if( !res_moving_wrt_eachother ) return false;
+	
+	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) &&	rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+
+	return (res1_is_upper || res2_is_upper);
 }
 
 void
@@ -128,14 +133,15 @@ ProClosureEnergy::residue_pair_energy(
 
 	if ( rsd1.is_virtual_residue() ) return;
 	if ( rsd2.is_virtual_residue() ) return;
+	
+	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) &&	rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
-	if ( ( ((rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
-			rsd1.seqpos() == rsd2.seqpos() - 1 ) ||
-			( ((rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
-			rsd1.seqpos() - 1 == rsd2.seqpos() ) ) {
-		Residue const & upper_res( rsd1.seqpos() > rsd2.seqpos() ? rsd1 : rsd2 );
-		Residue const & lower_res( rsd1.seqpos() > rsd2.seqpos() ? rsd2 : rsd1 );
-
+	if ( res1_is_upper || res2_is_upper ) {
+			
+		Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
+		Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
+		
 		Real chi4 = measure_chi4( lower_res, upper_res );
 		emap[ pro_close ] += chi4E( chi4 );
 	}
@@ -154,15 +160,20 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
-	bool const r1_upper( rsd1.seqpos() > rsd2.seqpos()  );
-	conformation::Residue const & upper_res( r1_upper ? rsd1 : rsd2 );
-	conformation::Residue const & lower_res( r1_upper ? rsd2 : rsd1 );
+	using namespace conformation;
+	using namespace chemical;
+	
+	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	//bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) &&	rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+
+	conformation::Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
+	conformation::Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
 
 	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
 	const core::Real d_multiplier = ((upper_res.aa()==chemical::aa_dpr) ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
-	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( r1_upper ? r1_atom_derivs : r2_atom_derivs );
-	utility::vector1< DerivVectorPair > & lower_res_atom_derivs( r1_upper ? r2_atom_derivs : r1_atom_derivs );
+	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( res1_is_upper ? r1_atom_derivs : r2_atom_derivs );
+	utility::vector1< DerivVectorPair > & lower_res_atom_derivs( res1_is_upper ? r2_atom_derivs : r1_atom_derivs );
 
 	/// Atoms on the upper res
 	/// 1. N, CD
@@ -226,6 +237,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 /// after pro_residue (i+1), unless pro_residue is an upper_term,
 /// in which case it applies the penalty for pro_residue's previous polymeric
 /// residue.
+/// @details Commented out.  Apparently the bump energy is not calculated for the pro_close term.
 void
 ProClosureEnergy::bump_energy_full(
 	conformation::Residue const & ,
@@ -262,6 +274,7 @@ ProClosureEnergy::bump_energy_full(
 /// after pro_residue (i+1), unless pro_residue is an upper_term,
 /// in which case it applies the penalty for pro_residue's previous polymeric
 /// residue.
+/// @details Commented out.  Apparently the bump energy is not calculated for the pro_close term.
 void
 ProClosureEnergy::bump_energy_backbone(
 	conformation::Residue const & ,
@@ -377,7 +390,7 @@ ProClosureEnergy::measure_chi4(
 
 	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
 	debug_assert( lower_res.is_bonded( upper_res ) );
-	debug_assert( lower_res.seqpos() == upper_res.seqpos() - 1 );
+	debug_assert( lower_res.has_upper_connect() && lower_res.residue_connection_partner( lower_res.upper_connect().index() ) == upper_res.seqpos() );
 
 	Real chi4 = dihedral_radians(
 		upper_res.xyz( scCD_ ),
