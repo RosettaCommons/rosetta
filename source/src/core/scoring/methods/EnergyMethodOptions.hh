@@ -383,6 +383,15 @@ public:
 	std::string & pb_unbound_tag();
 	void pb_unbound_tag( std::string const & tag );
 
+	/// @brief Should glyceine's Ramachandran and P_AA_PP tables be symmetrized (e.g. for scoring in a mixed D/L context)?
+	/// @details Default false.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool symmetric_gly_tables() const;
+
+	/// @brief Set whether glyceine's Ramachandran and P_AA_PP tables should be symmetrized (e.g. for scoring in a mixed D/L context).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void symmetric_gly_tables( bool const setting );
+
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -558,6 +567,7 @@ private:
 	std::string pb_bound_tag_;
 	std::string pb_unbound_tag_;
 	utility::vector1< core::Real > fastdens_perres_weights_;
+	bool symmetric_gly_tables_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

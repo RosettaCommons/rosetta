@@ -69,11 +69,11 @@ LayerSelector::apply( core::pose::Pose const & pose ) const
 	core::Size const nres( pose.n_residue() );
 
 	// Return the cached value if requested by the user
-	if( cache_selection_ && srbl_->is_selection_initialized() ) {
+	if ( cache_selection_ && srbl_->is_selection_initialized() ) {
 		ResidueSubset cached_subset( nres, false );
 		const utility::vector1< Size >* layer_selections[3] = { &srbl_->selected_core_residues(), &srbl_->selected_boundary_residues(), &srbl_->selected_surface_residues() };
-		for( int layer_idx= 0; layer_idx < 3; layer_idx++ ) {
-			for( Size i = 1; i <= layer_selections[layer_idx]->size(); i++ ) {
+		for ( int layer_idx= 0; layer_idx < 3; layer_idx++ ) {
+			for ( Size i = 1; i <= layer_selections[layer_idx]->size(); i++ ) {
 				Size residue_index = (*layer_selections[layer_idx])[i];
 				runtime_assert(residue_index <= nres);
 				cached_subset[residue_index] = true;

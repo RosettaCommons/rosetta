@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/RamaPreProEnergy.cc
-/// @brief
-/// @author
+/// @brief  A variation on the Ramachandran scorefunction that has separate probability tables for residues that precede prolines.
+/// @author Frank DiMaio
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- not the original author, but modified this to work with D-amino acids, BACKBONE_AA amino acids, and cyclic geometry.
 
 // Unit headers
 #include <core/scoring/methods/RamaPreProEnergy.hh>
@@ -40,7 +41,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/scoring/PeptideBondedEnergyContainer.hh>
+#include <core/scoring/PolymerBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -121,39 +122,48 @@ RamaPreProEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
+		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		if ( !dec || !dec->is_valid( pose ) ) {
+			create_new_lre_container = true;
+		}/* else {
 		Size nres = pose.total_residue();
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		}
 		if ( dec->size() != nres ) {
-			create_new_lre_container = true;
+		create_new_lre_container = true;
 		}
+		}*/
 	}
 
 	if ( create_new_lre_container ) {
-		Size nres = pose.total_residue();
+		/*Size nres = pose.total_residue();
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-		}
+		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		}*/
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rama_prepro );
-		LREnergyContainerOP new_dec( new PeptideBondedEnergyContainer( nres, s_types ) );
+		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
 
 bool
 RamaPreProEnergy::defines_residue_pair_energy(
-	pose::Pose const &,
-	Size res1,
-	Size res2
+	pose::Pose const &pose,
+	Size rsd1,
+	Size rsd2
 ) const {
-	return ( res1 == (res2+1) || res1 == (res2-1) );
+	bool const res1_is_lo( pose.residue(rsd1).has_upper_connect() && pose.residue(rsd1).residue_connection_partner( pose.residue(rsd1).upper_connect().index() ) == rsd2 );
+	bool const res2_is_lo( pose.residue(rsd2).has_upper_connect() && pose.residue(rsd2).residue_connection_partner( pose.residue(rsd2).upper_connect().index() ) == rsd1 );
+
+	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::RamaPreProEnergy::defines_residue_pair_energy(): The RamaPrePro term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
+
+	return (res1_is_lo || res2_is_lo);
 }
 
 methods::LongRangeEnergyType
-RamaPreProEnergy::long_range_type() const { return methods::rama2b_lr; }
+RamaPreProEnergy::long_range_type() const { return methods::ramaprepro_lr; }
 
 void
 RamaPreProEnergy::residue_pair_energy(
@@ -165,20 +175,27 @@ RamaPreProEnergy::residue_pair_energy(
 ) const {
 	using namespace numeric;
 
-	if ( !rsd1.is_protein() || !rsd2.is_protein() ) { return; }
-	if ( !rsd1.is_bonded(rsd2) ) { return; }
+	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
+	if ( !rsd1.is_bonded(rsd2) ) return;
 
-	conformation::Residue const &res_lo = (rsd1.seqpos()<rsd2.seqpos()) ? rsd1 : rsd2;
-	conformation::Residue const &res_hi = (rsd1.seqpos()<rsd2.seqpos()) ? rsd2 : rsd1;
+	bool const res1_is_lo( rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	bool const res2_is_lo( rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	if ( !(res1_is_lo || res2_is_lo) ) return;
+	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::RamaPreProEnergy::residue_pair_energy(): The RamaPrePro term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
 
-	if ( res_lo.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
-	if ( res_hi.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
-	if ( res_lo.is_terminus() ) { return; } // rama not defined
+	conformation::Residue const &res_lo = (res1_is_lo) ? rsd1 : rsd2;
+	conformation::Residue const &res_hi = (res2_is_lo) ? rsd1 : rsd2;
+
+	if ( !rsd1.type().is_alpha_aa() ) return; //Only applies to alpha-amino acids.
+
+	if ( res_lo.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
+	if ( res_hi.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
+	if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return; // Rama not defined.  Note that is_terminus() checks for UPPER_TERMINUS or LOWER_TERMINUS variant types; it knows nothing about sequence position.
 
 	Real const phi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(1)));
 	Real const psi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(2)));
 	Real rama_score, drpp_dphi, drpp_dpsi;
-	potential_.eval_rpp_rama_score( res_lo.aa(), res_hi.aa(), phi, psi, rama_score, drpp_dphi, drpp_dpsi );
+	potential_.eval_rpp_rama_score( res_lo.type().backbone_aa(), res_hi.aa(), phi, psi, rama_score, drpp_dphi, drpp_dpsi );
 
 	emap[ rama_prepro ] += rama_score;
 }
@@ -201,19 +218,17 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
-		core::Size i = tor_id.rsd();
-		if ( i==1 || i==pose.total_residue() ) return 0.0;
-
-		conformation::Residue const &res_hi( pose.residue( i+1 ) );
-
+		if ( tor_id.rsd() != res_lo.seqpos() ) return 0.0;
+		if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return 0.0;
 		if ( pose.fold_tree().is_cutpoint( res_lo.seqpos() ) ) { return 0.0; }
-		if ( res_lo.is_lower_terminus() ) { return 0.0; } // rama not defined
 
-		if ( res_lo.is_protein() && tor_id.torsion() <= 2 && ! res_lo.is_terminus() ) {
+		conformation::Residue const &res_hi( pose.residue( res_lo.residue_connection_partner( res_lo.upper_connect().index() ) ) );
+
+		if ( res_lo.is_protein() && res_lo.type().is_alpha_aa() && tor_id.torsion() <= 2 ) {
 			Real const phi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(1)));
 			Real const psi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(2)));
 			Real rama_score, drpp_dphi, drpp_dpsi;
-			potential_.eval_rpp_rama_score( res_lo.aa(), res_hi.aa(), phi, psi, rama_score, drpp_dphi, drpp_dpsi );
+			potential_.eval_rpp_rama_score( res_lo.type().backbone_aa(), res_hi.aa(), phi, psi, rama_score, drpp_dphi, drpp_dpsi );
 
 			deriv = ( tor_id.torsion() == 1 ? drpp_dphi : drpp_dpsi );
 		}

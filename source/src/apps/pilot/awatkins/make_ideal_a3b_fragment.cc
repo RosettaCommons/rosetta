@@ -148,12 +148,12 @@ int main ( int argc, char* argv[] )
 
 		// Constrain h bonds
 		for ( Size ii = 1; ii <= pose.total_residue()-4; ++ii ) {
-			pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( 
+			pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
 				*new AtomID( pose.residue(  ii  ).atom_index( "O" ), ii ),
 				*new AtomID( pose.residue( ii+4 ).atom_index( "H" ), ii ),
 				HarmonicFuncOP( new HarmonicFunc( 1.8, 0.2 ) ) ) ) );
 		}
-		
+
 		//make a minmover, let it min everything
 		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		movemap->set_bb( true );
@@ -165,10 +165,10 @@ int main ( int argc, char* argv[] )
 		pose.dump_pdb ( "B3A_initial.pdb");
 		Real score = ( *scorefxn ) ( pose );
 		std::cout << "Initial score is " << score << std::endl;
-		
+
 		minmover.apply ( pose );
 		Real curr_energy = ( *scorefxn ) ( pose );
-		std::cout << "Pose with torsions:" << std::endl; 
+		std::cout << "Pose with torsions:" << std::endl;
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			for ( Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
 				std::cout << pose.residue( ii ).mainchain_torsions()[ jj ] << ", ";

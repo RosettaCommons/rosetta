@@ -237,7 +237,7 @@ public:
 		RingClosureEnergy ringclose_energy;
 
 		{ //Scope1: initial conformation
-			trpcage.dump_pdb("vtemp1.pdb"); //DELETE ME
+			//trpcage.dump_pdb("vtemp1.pdb"); //DELETE ME
 
 			Distance const d1( trpcage.residue(21).xyz("VCM").distance( trpcage.residue(21).xyz("CM") ) );
 			Distance const d2( trpcage.residue(21).xyz("VCE").distance( trpcage.residue(21).xyz("CE") ) );
@@ -259,7 +259,7 @@ public:
 			if ( TR.visible() ) TR << "PERTURBING TRP CAGE POSE" << std::endl;
 			trpcage.set_chi(1,21,53.7);  //Arbitrarily chosen value
 			trpcage.set_chi(2,21,-143.2);  //Arbitrarily chosen value
-			trpcage.dump_pdb("vtemp2.pdb"); //DELETE ME
+			//trpcage.dump_pdb("vtemp2.pdb"); //DELETE ME
 
 			Distance const d1( trpcage.residue(21).xyz("VCM").distance( trpcage.residue(21).xyz("CM") ) );
 			Distance const d2( trpcage.residue(21).xyz("VCE").distance( trpcage.residue(21).xyz("CE") ) );

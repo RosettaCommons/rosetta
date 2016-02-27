@@ -9,7 +9,8 @@
 
 /// @file   core/scoring/RamaPrePro.hh
 /// @brief  RamaPrePro potential class delcaration
-/// @author
+/// @author Frank DiMaio
+/// @author Vikram K. Mulligan (vmullig@uw.edu) Feb 2016 -- made this compatible with canonical D-amino acids; returns 0 for noncanonicals.
 
 #ifndef INCLUDED_core_scoring_RamaPrePro_hh
 #define INCLUDED_core_scoring_RamaPrePro_hh
@@ -61,8 +62,20 @@ public:
 protected:
 
 	void read_rpp_tables();
-	void read_rama_map_file_shapovalov ( std::string filename, utility::vector1<  ObjexxFCL::FArray2D< Real > > &data );
-	void setup_interpolation( ObjexxFCL::FArray2D< Real > &, numeric::interpolation::spline::BicubicSpline  &);
+
+	/// @brief adapted from Max's code, ramachandran.cc
+	/// @details If symmetrize_gly is true, the plot for glycine is made symmetric.
+	void read_rama_map_file_shapovalov ( std::string const & filename, utility::vector1<  ObjexxFCL::FArray2D< Real > > &data, bool const symmetrize_gly );
+
+	void setup_interpolation( ObjexxFCL::FArray2D< Real > &, numeric::interpolation::spline::BicubicSpline  &, core::Real const &offset);
+
+	/// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
+	/// @details By default, the gly table is asymmetric because it is based on statistics from the PDB (which disproportionately put glycine
+	/// in the D-amino acid region of Ramachandran space).  However, the intrinsic propensities of glycine make it equally inclined to favour
+	/// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
+	/// to bicubic interpolation setup.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void symmetrize_gly_table( ObjexxFCL::FArray2D< core::Real > & data, core::Real &entropy ) const;
 
 	// spline interpolated p(phi,psi)
 	utility::vector1< numeric::interpolation::spline::BicubicSpline > rama_splines_, rama_pp_splines_;

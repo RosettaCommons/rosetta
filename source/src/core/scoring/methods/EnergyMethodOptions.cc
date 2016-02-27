@@ -112,6 +112,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	cartbonded_linear_(false),
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
+	symmetric_gly_tables_(false),
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options();
@@ -149,6 +150,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	geom_sol_intrares_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
 	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
 	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
+	symmetric_gly_tables_ = basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( basic::options::option[basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -230,6 +232,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
+		symmetric_gly_tables_ = src.symmetric_gly_tables_;
 	}
 	return *this;
 }
@@ -654,6 +657,22 @@ void
 EnergyMethodOptions::pb_unbound_tag( std::string const & tag ) {
 	pb_unbound_tag_ = tag;
 }
+
+/// @brief Should glyceine's Ramachandran and P_AA_PP tables be symmetrized (e.g. for scoring in a mixed D/L context)?
+/// @details Default false.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool
+EnergyMethodOptions::symmetric_gly_tables() const {
+	return symmetric_gly_tables_;
+}
+
+/// @brief Set whether glyceine's Ramachandran and P_AA_PP tables should be symmetrized (e.g. for scoring in a mixed D/L context).
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+EnergyMethodOptions::symmetric_gly_tables( bool const setting ) {
+	symmetric_gly_tables_ = setting;
+}
+
 
 utility::vector1< core::Real > const &
 EnergyMethodOptions::get_density_sc_scale_byres() const {
@@ -1166,6 +1185,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( pb_bound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( pb_unbound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( fastdens_perres_weights_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
 	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 }
@@ -1224,6 +1244,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( pb_bound_tag_ ); // std::string
 	arc( pb_unbound_tag_ ); // std::string
 	arc( fastdens_perres_weights_ ); // utility::vector1<core::Real>
+	arc( symmetric_gly_tables_ ); // _Bool
 	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 }

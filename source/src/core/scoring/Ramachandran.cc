@@ -998,7 +998,7 @@ Ramachandran::read_rama(
 	iunit.clear();
 
 	//If the option is set to do this, symmetrize the glycine Ramachandran map.
-	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() ) {
 		symmetrize_gly_table();
 	}
 

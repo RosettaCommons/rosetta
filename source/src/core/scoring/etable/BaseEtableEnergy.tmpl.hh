@@ -1153,9 +1153,9 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 
 	// Ask "are these two residues polymers and do they share a polymeric bond?"
 	if (
-		//res1.polymeric_sequence_distance(res2) == 1 //VKM, 20 Feb 2016: Doesn't handle cyclic geometry properly.  The following code does, however:
-		res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2)
-	) {
+			//res1.polymeric_sequence_distance(res2) == 1 //VKM, 20 Feb 2016: Doesn't handle cyclic geometry properly.  The following code does, however:
+			res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2)
+			) {
 		if ( ( !sfxn.has_zero_weight( mm_twist ) && sfxn.has_zero_weight( rama )) ||
 				( ( !res1.is_protein() || !res2.is_protein()) &&
 				( !res1.is_RNA() || !res2.is_RNA())

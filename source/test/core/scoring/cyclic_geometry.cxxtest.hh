@@ -6,14 +6,13 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-/// @file test/core/scoring/SymmDL.cxxtest.hh
-/// @brief Unit tests for symmetric pose scoring with the --symmetric_gly_tables option.
-/// @detials Mirror image poses (with D- and L-amino acids swapped) should score identically with this option.
+/// @file test/core/scoring/cyclic_geometry.cxxtest.hh
+/// @brief Unit tests for cyclic peptide pose scoring.
+/// @detials Cyclic permutations should score identically.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/util/pdb1rpb.hh>
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
@@ -27,22 +26,16 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/util.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
-
-//Minimizer
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
 
 using namespace std;
 
@@ -52,19 +45,11 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.SymmDLTests.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTests.cxxtest");
 
-class SymmDLTests : public CxxTest::TestSuite {
+class CyclicGeometryTests : public CxxTest::TestSuite {
 
 public:
-
-	void setUp() {
-		//core_init();
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
-	}
-
-	void tearDown() {
-	}
 
 	/// @brief Given a residue type, get its mirror-image type.
 	///
@@ -90,145 +75,181 @@ public:
 
 	/// @brief Given a pose, construct its mirror image.
 	///
-	void mirror_pose( core::pose::Pose const &master, core::pose::Pose &mirror) {
+	core::pose::PoseOP
+	mirror_pose( core::pose::PoseCOP master) {
+		core::pose::PoseOP output_pose( master->clone() );
+		flip_residues(*output_pose);
 
-		for ( core::Size ir=1, irmax=mirror.n_residue(); ir<=irmax; ++ir ) {
-			for ( core::Size ia=1, iamax=mirror.residue(ir).type().natoms(); ia<=iamax; ++ia ) {
+		for ( core::Size ir=1, irmax=output_pose->n_residue(); ir<=irmax; ++ir ) {
+			for ( core::Size ia=1, iamax=output_pose->residue(ir).type().natoms(); ia<=iamax; ++ia ) {
 				core::id::AtomID const curatom(ia, ir);
-				numeric::xyzVector<core::Real> xyztemp( master.xyz( curatom ) );
+				numeric::xyzVector<core::Real> xyztemp( master->xyz( curatom ) );
 				xyztemp.z( -1.0*xyztemp.z() );
-				mirror.set_xyz( curatom, xyztemp );
+				output_pose->set_xyz( curatom, xyztemp );
 			}
 		}
 
-		mirror.update_residue_neighbors();
-
-		return;
+		return output_pose;
 	}
 
-	/// @brief Construct a few L-amino acid poses, and confirm that mirror-image conformations
-	/// score identically with a given scorefunction.
-	void mirror_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
-		core::pose::Pose pose = pdb1rpb_pose();
-		core::pose::Pose pose2 = pose;
+	/// @brief Given an input cyclic pose, circularly permute by 1 residue.
+	core::pose::PoseOP permute(
+		core::pose::PoseOP input_pose
+	) {
+		core::pose::PoseOP new_pose( new core::pose::Pose );
 
-		flip_residues(pose2);
-		mirror_pose(pose, pose2);
-		pose2.update_residue_neighbors();
-
-		(*sfxn)(pose);
-		(*sfxn)(pose2);
-		TS_ASSERT_DELTA(pose.energies().total_energy(), pose2.energies().total_energy(), std::abs( std::max(pose.energies().total_energy(), pose2.energies().total_energy())/1000.0 ) );
-		//pose.dump_scored_pdb( "Ltemp.pdb", *sfxn );
-		//pose2.dump_scored_pdb( "Dtemp.pdb", *sfxn );
+		for ( core::Size i=2, imax=input_pose->n_residue(); i<=imax; ++i ) {
+			core::conformation::ResidueOP new_rsd( input_pose->residue(i).clone() );
+			if ( i == 2 ) {
+				new_pose->append_residue_by_jump(*new_rsd, 1);
+			} else {
+				new_pose->append_residue_by_bond(*new_rsd, false);
+			}
+		}
+		new_pose->append_residue_by_bond( *(input_pose->residue(1).clone()), false);
+		new_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
+		return new_pose;
 	}
 
+	void setUp() {
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
 
-	/// @brief Construct a few L-amino acid poses, and confirm that mirror-image conformations
-	/// score identically with a given scorefunction.
-	/// @details This version ensures that there's a glycine-proline pair.
-	void mirror_pose_test2( core::scoring::ScoreFunctionOP sfxn ) {
-		core::pose::Pose pose = pdb1rpb_pose();
+		// Pull in the cyclic peptide pose (9 residues):
+		core::pose::PoseOP initial_pose( new core::pose::Pose );
+		core::import_pose::pose_from_file( *initial_pose, "core/scoring/cyclic_peptide.pdb" , core::import_pose::PDB_file );
 
-		//Mutate residue 4 to proline.  Since residue 3 is a gly, this makes a nice gly-pro.
-		protocols::simple_moves::MutateResidue mutres;
-		mutres.set_res_name("PRO");
-		mutres.set_target(4);
-		mutres.apply(pose);
+		// Strip off termini and connect the ends:
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::UPPER_TERMINUS_VARIANT, 9 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 1 );
+		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
+		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
+		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
 
-		core::pose::Pose pose2 = pose;
-
-		flip_residues(pose2);
-		mirror_pose(pose, pose2);
-		pose2.update_residue_neighbors();
-
-		(*sfxn)(pose);
-		(*sfxn)(pose2);
-		TS_ASSERT_DELTA(pose.energies().total_energy(), pose2.energies().total_energy(), std::abs( std::max(pose.energies().total_energy(), pose2.energies().total_energy())/1000.0 ) );
-		//pose.dump_scored_pdb( "Ltemp.pdb", *sfxn );
-		//pose2.dump_scored_pdb( "Dtemp.pdb", *sfxn );
+		poses_.push_back(initial_pose);
+		mirror_poses_.push_back( mirror_pose( poses_[1] ) );
+		for ( core::Size i=1; i<=8; ++i ) {
+			poses_.push_back( permute( poses_[i] ) );
+			mirror_poses_.push_back( mirror_pose( poses_[i+1] ) );
+		}
 	}
 
-	/// @brief Tests symmetric scoring with the fa_atr scorefunction.
+	void tearDown() {
+	}
+
+	/// @brief Test that the same score is returned for all cyclic permutations.
+	///
+	void cyclic_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
+		//Score all of the poses and confirm that they're all equal to the first
+		for ( core::Size i=1; i<=9; ++i ) {
+			(*sfxn)(*poses_[i]);
+			if ( i>1 ) {
+				TR << "\tTesting scoring with circular permutation of " << i - 1 << " residues." << std::endl;
+				TS_ASSERT_DELTA(poses_[1]->energies().total_energy(), poses_[i]->energies().total_energy(), std::abs( std::max(poses_[1]->energies().total_energy(), poses_[i]->energies().total_energy())/10000.0 ) );
+			}
+			//Check mirrored geometry, too:
+			TR << "\tTesting scoring with circular permutation of " << i - 1 << " residues and mirroring." << std::endl;
+			(*sfxn)(*mirror_poses_[i]);
+			TS_ASSERT_DELTA(poses_[1]->energies().total_energy(), mirror_poses_[i]->energies().total_energy(), std::abs( std::max(poses_[1]->energies().total_energy(), mirror_poses_[i]->energies().total_energy())/10000.0 ) );
+			TR.flush();
+		}
+
+		//Delete the following:
+		//poses_[1]->dump_scored_pdb("vcyclic1.pdb", *sfxn);
+		//poses_[2]->dump_scored_pdb("vcyclic2.pdb", *sfxn);
+		//poses_[3]->dump_scored_pdb("vcyclic3.pdb", *sfxn);
+		//poses_[4]->dump_scored_pdb("vcyclic4.pdb", *sfxn);
+		//poses_[5]->dump_scored_pdb("vcyclic5.pdb", *sfxn);
+		//poses_[6]->dump_scored_pdb("vcyclic6.pdb", *sfxn);
+		//poses_[7]->dump_scored_pdb("vcyclic7.pdb", *sfxn);
+		//poses_[8]->dump_scored_pdb("vcyclic8.pdb", *sfxn);
+		//poses_[9]->dump_scored_pdb("vcyclic9.pdb", *sfxn);
+
+	}
+
+	/// @brief Tests cyclic permutation scoring with the fa_atr scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_fa_atr() {
+	void test_cyclic_permutation_fa_atr() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_atr, 1.0 );
 		TR << "Testing fa_atr score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the fa_rep scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_rep scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_fa_rep() {
+	void test_cyclic_permutation_fa_rep() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
 		TR << "Testing fa_rep score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the fa_intra_rep scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_intra_rep scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_fa_intra_rep() {
+	void test_cyclic_permutation_fa_intra_rep() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_intra_rep, 1.0 );
 		TR << "Testing fa_intra_rep score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the fa_sol scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_sol scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_fa_sol() {
+	void test_cyclic_permutation_fa_sol() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_sol score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the fa_elec scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_elec scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_fa_elec() {
+	void test_cyclic_permutation_fa_elec() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
 		TR << "Testing fa_elec score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the pro_close scorefunction.
+	/// @brief Tests cyclic permutation scoring with the pro_close scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_pro_close() {
+	void test_cyclic_permutation_pro_close() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::pro_close, 1.0 );
 		TR << "Testing pro_close score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the dslf_fa13 scorefunction.
+	/// @brief Tests cyclic permutation scoring with the dslf_fa13 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_dslf_fa13() {
+	void test_cyclic_permutation_dslf_fa13() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::dslf_fa13, 1.0 );
 		TR << "Testing dslf_fa13 score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the hbonds scorefunction.
+	/// @brief Tests cyclic permutation scoring with the hbonds scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_hbonds() {
+	void test_cyclic_permutation_hbonds() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::hbond_sr_bb, 1.0 );
@@ -236,107 +257,100 @@ public:
 		scorefxn->set_weight( core::scoring::hbond_sc, 1.0 );
 		scorefxn->set_weight( core::scoring::hbond_bb_sc, 1.0 );
 		TR << "Testing hbonds score terms." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the fa_dun scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_dun scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_fa_dun() {
+	void test_cyclic_permutation_fa_dun() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_dun, 1.0 );
 		TR << "Testing fa_dun score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the omega scorefunction.
+	/// @brief Tests cyclic permutation scoring with the omega scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_omega() {
+	void test_cyclic_permutation_omega() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::omega, 1.0 );
 		TR << "Testing omega score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the rama scorefunction.
+	/// @brief Tests cyclic permutation scoring with the rama scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_rama() {
+	void test_cyclic_permutation_rama() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama, 1.0 );
 		TR << "Testing rama score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the rama_prepro scorefunction.
+	/// @brief Tests cyclic permutation scoring with the rama_prepro scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_rama_prepro() {
+	void test_cyclic_permutation_rama_prepro() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
 		TR << "Testing rama_prepro score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the rama_prepro scorefunction and a gly-pro pair.
+	/// @brief Tests cyclic permutation scoring with the p_aa_pp scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_rama_prepro2() {
-		//Set up the scorefunction
-		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
-		TR << "Testing rama_prepro score term with a gly-pro pair." << std::endl;
-		mirror_pose_test2(scorefxn);
-		return;
-	}
-
-
-	/// @brief Tests symmetric scoring with the p_aa_pp scorefunction.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_p_aa_pp() {
+	void test_cyclic_permutation_p_aa_pp() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::p_aa_pp, 1.0 );
 		TR << "Testing p_aa_pp score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the yhh_planarity scorefunction.
+	/// @brief Tests cyclic permutation scoring with the yhh_planarity scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_yhh_planarity() {
+	void test_cyclic_permutation_yhh_planarity() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::yhh_planarity, 1.0 );
 		TR << "Testing yhh_planarity score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the full talaris2014 scorefunction.
+	/// @brief Tests cyclic permutation scoring with the full talaris2014 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_talaris2014() {
+	void test_cyclic_permutation_talaris2014() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("talaris2014.wts");
 		TR << "Testing full talaris2014 score function." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the full default scorefunction.
+	/// @brief Tests cyclic permutation scoring with the full scorefunction that's the current default (whatever that is).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_default_scorefxn() {
+	void test_cyclic_permutation_current_default_scorefxn() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 		TR << "Testing full default score function." << std::endl;
-		mirror_pose_test(scorefxn);
+		cyclic_pose_test(scorefxn);
 		return;
 	}
+
+private:
+	utility::vector1 < core::pose::PoseOP > poses_;
+	utility::vector1 < core::pose::PoseOP > mirror_poses_;
+
 
 };

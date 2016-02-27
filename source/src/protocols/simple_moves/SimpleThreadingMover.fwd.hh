@@ -24,7 +24,7 @@
 // Forward
 namespace protocols {
 namespace simple_moves {
-		
+
 class SimpleThreadingMover;
 
 typedef utility::pointer::shared_ptr< SimpleThreadingMover > SimpleThreadingMoverOP;
@@ -37,5 +37,5 @@ typedef utility::pointer::shared_ptr< SimpleThreadingMover const > SimpleThreadi
 
 
 
-#endif	//INCLUDED_protocols_simple_moves_SimpleThreadingMover_fwd_hh
+#endif //INCLUDED_protocols_simple_moves_SimpleThreadingMover_fwd_hh
 

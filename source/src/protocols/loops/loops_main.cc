@@ -896,9 +896,9 @@ void filter_loop_neighbors_by_distance(
 	Real & dist_cutoff
 )
 {
-	
+
 	utility::vector1< bool > loop_selection(pose.total_residue(), false);
-	
+
 	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
 		for ( Size j=it->start(); j<=it->stop(); ++j ) {
 			loop_selection[ j ] = true;
@@ -916,13 +916,13 @@ void filter_neighbors_by_distance(
 )
 {
 
-	for ( Size i = 1; i <= selection_and_neighbors.size(); ++i){
-		if (selection_and_neighbors[ i ] == false) continue;
-		
+	for ( Size i = 1; i <= selection_and_neighbors.size(); ++i ) {
+		if ( selection_and_neighbors[ i ] == false ) continue;
+
 		selection_and_neighbors[ i ] = false; //Get ready to change this.
-		for (Size x = 1; x <= selection.size(); ++x){
-			if (! selection[x]) continue;
-			
+		for ( Size x = 1; x <= selection.size(); ++x ) {
+			if ( ! selection[x] ) continue;
+
 			// Get the atom vectors for loop and scaffold CB, or CA if GLY
 			numeric::xyzVector< Real > neighbor_vec;
 			numeric::xyzVector< Real > select_vec;

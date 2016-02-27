@@ -9,7 +9,8 @@
 
 /// @file   core/scoring/RamaPrePro.cc
 /// @brief
-/// @author
+/// @author Frank DiMaio
+/// @author Vikram K. Mulligan (vmullig@uw.edu) Feb 2016 -- made this compatible with canonical D-amino acids; returns 0 for noncanonicals.
 
 // Unit Headers
 #include <core/scoring/RamaPrePro.hh>
@@ -37,9 +38,11 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/algorithm/string.hpp>
 
@@ -47,6 +50,7 @@
 namespace core {
 namespace scoring {
 
+static basic::Tracer TR("core.scoring.RamaPrePro");
 
 RamaPrePro::RamaPrePro() {
 	using namespace basic::options;
@@ -67,14 +71,35 @@ RamaPrePro::eval_rpp_rama_score(
 	Real & denergy_dpsi
 ) const
 {
-	if ( res_aa2 == core::chemical::aa_pro ) {
-		score_rama = rama_pp_splines_[res_aa1].F(phi,psi);
-		denergy_dphi = rama_pp_splines_[res_aa1].dFdx(phi,psi);
-		denergy_dpsi = rama_pp_splines_[res_aa1].dFdy(phi,psi);
-	} else {
-		score_rama = rama_splines_[res_aa1].F(phi,psi);
-		denergy_dphi = rama_splines_[res_aa1].dFdx(phi,psi);
-		denergy_dpsi = rama_splines_[res_aa1].dFdy(phi,psi);
+	bool const is_d( core::chemical::is_canonical_D_aa(res_aa1) );
+	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
+
+	//If this is neither a canonical D-amino acid, nor a canonical L-amino acid, nor glycine return 0:
+	if ( !core::chemical::is_canonical_L_aa( res_aa1 ) && !is_d && res_aa1 != core::chemical::aa_gly ) {
+		score_rama = 0.0;
+		denergy_dphi = 0.0;
+		denergy_dpsi = 0.0;
+	}
+
+	//Get the L-equivalent if this is a canonical D-residue:
+	core::chemical::AA const res_aa1_copy( is_d ? core::chemical::get_L_equivalent(res_aa1) : res_aa1 );
+	core::Real const phi_copy( is_d ? -1.0*phi : phi );
+	core::Real const psi_copy( is_d ? -1.0*psi : psi );
+
+	if ( res_aa1_copy > core::chemical::num_canonical_aas ) { //Noncanonical case: return 0.
+		score_rama = 0.0;
+		denergy_dphi = 0.0;
+		denergy_dpsi = 0.0;
+	} else { //Canonical case: return something
+		if ( res_aa2 == core::chemical::aa_pro || res_aa2 == core::chemical::aa_dpr ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
+			score_rama = rama_pp_splines_[res_aa1_copy].F(phi_copy,psi_copy);
+			denergy_dphi = d_multiplier * rama_pp_splines_[res_aa1_copy].dFdx(phi_copy,psi_copy);
+			denergy_dpsi = d_multiplier * rama_pp_splines_[res_aa1_copy].dFdy(phi_copy,psi_copy);
+		} else {
+			score_rama = rama_splines_[res_aa1_copy].F(phi_copy,psi_copy);
+			denergy_dphi = d_multiplier * rama_splines_[res_aa1_copy].dFdx(phi_copy,psi_copy);
+			denergy_dpsi = d_multiplier * rama_splines_[res_aa1_copy].dFdy(phi_copy,psi_copy);
+		}
 	}
 }
 
@@ -82,6 +107,8 @@ RamaPrePro::eval_rpp_rama_score(
 
 void
 RamaPrePro::read_rpp_tables( ) {
+	bool const symmetrize_gly( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() ); //Should the gly tables be symmetrized?
+
 	rama_splines_.resize(20);
 	rama_pp_splines_.resize(20);
 
@@ -92,23 +119,25 @@ RamaPrePro::read_rpp_tables( ) {
 	}
 
 	///fpd hardcode for now
-	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/all.ramaProb", data);
+	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/all.ramaProb", data, symmetrize_gly);
 	for ( int i=1; i<=20; ++i ) {
-		setup_interpolation( data[i], rama_splines_[i]);
+		setup_interpolation( data[i], rama_splines_[i], (i == static_cast<int>( core::chemical::aa_gly ) && symmetrize_gly) ? 5.0 : 0.0  ); //VKM: To symmetrize the gly tables, I need a five degree offset.  Question: should everything be offset by five degrees?
 	}
 
-	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/prepro.ramaProb", data);
+	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/prepro.ramaProb", data, symmetrize_gly);
 	for ( int i=1; i<=20; ++i ) {
-		setup_interpolation( data[i], rama_pp_splines_[i]);
+		setup_interpolation( data[i], rama_pp_splines_[i], (i == static_cast<int>( core::chemical::aa_gly ) && symmetrize_gly) ? 5.0 : 0.0  ); //VKM: To symmetrize the gly tables, I need a five degree offset.  Question: should everything be offset by five degrees?
 	}
 }
 
 
-// adapted from Max's code, ramachandran.cc
+/// @brief Adapted from Max's code, ramachandran.cc
+/// @details If symmetrize_gly is true, the plot for glycine is made symmetric.
 void
 RamaPrePro::read_rama_map_file_shapovalov (
-	std::string filename,
-	utility::vector1<  ObjexxFCL::FArray2D< Real > > &data
+	std::string const &filename,
+	utility::vector1<  ObjexxFCL::FArray2D< Real > > &data,
+	bool const symmetrize_gly
 ) {
 	//ala     -180.0  -180.0  5.436719e-004   7.517165e+000
 	utility::io::izstream  iunit;
@@ -152,15 +181,20 @@ RamaPrePro::read_rama_map_file_shapovalov (
 		if ( phi < 0 ) phi += 360;
 		if ( psi < 0 ) psi += 360;
 
-		j = (int) ceil(phi / 10.0 - 0.5) + 1;
-		k = (int) ceil(psi / 10.0 - 0.5) + 1;
+		j = static_cast<int>( ceil(phi / 10.0 - 0.5) + 1 );
+		k = static_cast<int>( ceil(psi / 10.0 - 0.5) + 1 );
 
 		data[i](j,k) = prob;
 		entropy[i] += prob * (-minusLogProb);
 	} while (true);
 
+	// Symmetrize the gly table, if we should:
+	if ( symmetrize_gly ) {
+		symmetrize_gly_table( data[static_cast<int>(core::chemical::aa_gly)], entropy[static_cast<int>(core::chemical::aa_gly)] );
+	}
+
 	// correct
-	for ( int i=1; i<=20; ++i ) {
+	for ( int i=1; i<=20; ++i ) { //loop through all amino acids
 		for ( int j=1; j<=36; ++j ) {
 			for ( int k=1; k<=36; ++k ) {
 				data[i](j,k) = -std::log( data[i](j,k) ) + entropy[i];
@@ -172,7 +206,8 @@ RamaPrePro::read_rama_map_file_shapovalov (
 void
 RamaPrePro::setup_interpolation(
 	ObjexxFCL::FArray2D< Real > & x,
-	numeric::interpolation::spline::BicubicSpline  &sx
+	numeric::interpolation::spline::BicubicSpline  &sx,
+	core::Real const &offset
 ) {
 	using namespace numeric;
 	using namespace numeric::interpolation::spline;
@@ -185,13 +220,66 @@ RamaPrePro::setup_interpolation(
 		}
 	}
 	BorderFlag periodic_boundary[2] = { e_Periodic, e_Periodic };
-	Real start_vals[2] = {0.0, 0.0}; // fpd: shapovalov has 0 degree shift
+	Real start_vals[2] = {offset, offset}; // fpd: shapovalov has 0 degree shift
 	Real deltas[2] = {10.0, 10.0};   // grid is 10 degrees wide
 	bool lincont[2] = {false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
 	std::pair< Real, Real > unused[2];
 	unused[0] = std::make_pair( 0.0, 0.0 );
 	unused[1] = std::make_pair( 0.0, 0.0 );
 	sx.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
+}
+
+/// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
+/// @details By default, the gly table is asymmetric because it is based on statistics from the PDB (which disproportionately put glycine
+/// in the D-amino acid region of Ramachandran space).  However, the intrinsic propensities of glycine make it equally inclined to favour
+/// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
+/// to bicubic interpolation setup.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+RamaPrePro::symmetrize_gly_table(
+	ObjexxFCL::FArray2D< core::Real > & data,
+	core::Real &entropy
+) const {
+	if ( TR.visible() ) {
+		TR << "Symmetrizing glycine RamaPrePro table." << std::endl;
+	}
+
+	//The following is for debugging only:
+	/*TR << "MATRIX_BEFORE:" << std::endl;
+	for(core::Size j=1; j<=36; ++j) {
+	for(core::Size k=1; k<=36; ++k) {
+	TR << data(j,k) << "\t";
+	}
+	TR << std::endl;
+	}
+	TR << std::endl;*/
+
+	entropy = 0;
+	for ( core::Size j=1; j<=35; ++j ) {
+		for ( core::Size k=j+1; k<=36; ++k ) { //Loop though one triangle of the data matrix
+			core::Real const avg( (data(j,k) + data(37-j,37-k) ) / 2 );
+			data(j,k) = avg;
+			data(37-j,37-k) = avg;
+			entropy += avg * (-2.0) * std::log(avg);
+		}
+	}
+
+	for ( core::Size j=1; j<=18; ++j ) { //Loop through half of the diagonal
+		core::Real const avg( ( data(j,j) + data(37-j,37-j) )/2 );
+		data(j,j)=avg;
+		data(37-j,37-j) = avg;
+		entropy += avg * (-2.0) * std::log(avg);
+	}
+
+	//The following is for debugging only:
+	/*TR << "MATRIX_AFTER:" << std::endl;
+	for(core::Size j=1; j<=36; ++j) {
+	for(core::Size k=1; k<=36; ++k) {
+	TR << data(j,k) << "\t";
+	}
+	TR << std::endl;
+	}*/
+
 }
 
 }

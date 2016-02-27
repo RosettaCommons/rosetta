@@ -109,7 +109,7 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 
 	for ( Size i = 1; i <= uniqs.size(); ++i ) {
 		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
-			if ( dihedral_pattern_[ j-1 ] == uniqs[ i ] ) {//alignment
+			if ( dihedral_pattern_[ j-1 ] == uniqs[ i ] ) { //alignment
 				//TR << "Dihedral pattern at " << j << " equals uniqs[ " << i << " ] = " << uniqs[ i ] << std::endl;
 				// we're looking at one of many residues represented by this uniq
 				// therefore, identify this residue (resnum j!)

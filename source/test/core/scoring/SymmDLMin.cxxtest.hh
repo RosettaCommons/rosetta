@@ -21,11 +21,13 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/util.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -133,6 +135,54 @@ public:
 	/// score identically with a given scorefunction.
 	void mirror_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
 		core::pose::Pose pose = pdb1rpb_pose();
+		core::pose::Pose pose2 = pose;
+
+		flip_residues(pose2);
+		mirror_pose(pose, pose2);
+		pose2.update_residue_neighbors();
+
+		(*sfxn)(pose);
+		(*sfxn)(pose2);
+		//for(core::Size j=1; j<=100; ++j) {
+		do_minimization(pose, sfxn);
+		do_minimization(pose2, sfxn);
+		//}
+
+		(*sfxn)(pose);
+		(*sfxn)(pose2);
+
+		TS_ASSERT_DELTA(pose.energies().total_energy(), pose2.energies().total_energy(), std::abs( std::max(pose.energies().total_energy(), pose2.energies().total_energy())/100.0 ) );
+		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+			TR << ir << "\tphiL=" << pose.phi(ir)   << "\tphiD=" << pose2.phi(ir)   << std::endl;
+			TR << ir << "\tpsiL=" << pose.psi(ir)   << "\tpsiD=" << pose2.psi(ir)   << std::endl;
+			TR << ir << "\tomgL=" << pose.omega(ir) << "\tomgD=" << pose2.omega(ir) << std::endl;
+			TS_ASSERT( within_thresh( pose.phi(ir), -1.0*pose2.phi(ir), 0.01 ) );
+			TS_ASSERT( within_thresh( pose.psi(ir), -1.0*pose2.psi(ir), 0.01 ) );
+			TS_ASSERT( within_thresh( pose.omega(ir), -1.0*pose2.omega(ir), 0.01 ) );
+			for ( core::Size ichi=1, ichimax=pose.residue(ir).nchi(); ichi<=ichimax; ++ichi ) {
+				TR << ir << "\tchi" << ichi << "L=" << pose.chi(ichi,ir) << "\tchi" << ichi << "D=" << pose2.chi(ichi,ir) << std::endl;
+				TS_ASSERT( within_thresh( pose.chi(ichi, ir), -1.0*pose2.chi(ichi, ir), 0.01 ) );
+			}
+		}
+		TR.flush();
+		//pose.dump_scored_pdb( "Ltemp.pdb", *sfxn );
+		//core::pose::Pose pose3(pose2);
+		//mirror_pose(pose2,pose3);
+		//pose3.dump_scored_pdb( "Dtemp.pdb", *sfxn );
+	}
+
+	/// @brief Construct a few L-amino acid poses, and confirm that mirror-image conformations
+	/// score identically with a given scorefunction.
+	/// @details This version ensures that there's a GLY-PRO sequence.
+	void mirror_pose_test2( core::scoring::ScoreFunctionOP sfxn ) {
+		core::pose::Pose pose = pdb1rpb_pose();
+
+		//Mutate residue 4 to proline.  Since residue 3 is a gly, this makes a nice gly-pro.
+		protocols::simple_moves::MutateResidue mutres;
+		mutres.set_res_name("PRO");
+		mutres.set_target(4);
+		mutres.apply(pose);
+
 		core::pose::Pose pose2 = pose;
 
 		flip_residues(pose2);
@@ -293,6 +343,28 @@ public:
 		return;
 	}
 
+	/// @brief Tests symmetric scoring with the rama_prepro scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_DL_min_rama_prepro() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
+		TR << "Testing rama_prepro score term." << std::endl;
+		mirror_pose_test(scorefxn);
+		return;
+	}
+
+	/// @brief Tests symmetric scoring with the rama_prepro scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_DL_min_rama_prepro2() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
+		TR << "Testing rama_prepro score term with a gly-pro sequence." << std::endl;
+		mirror_pose_test2(scorefxn);
+		return;
+	}
+
 	/// @brief Tests symmetric scoring with the p_aa_pp scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_symm_DL_min_p_aa_pp() {
@@ -322,6 +394,16 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("talaris2014.wts");
 		TR << "Testing full talaris2014 score function." << std::endl;
+		mirror_pose_test(scorefxn);
+		return;
+	}
+
+	/// @brief Tests symmetric scoring with the full scorefunction that's the current default (whatever that is).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_DL_min_current_default_scorefxn() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		TR << "Testing full default score function." << std::endl;
 		mirror_pose_test(scorefxn);
 		return;
 	}

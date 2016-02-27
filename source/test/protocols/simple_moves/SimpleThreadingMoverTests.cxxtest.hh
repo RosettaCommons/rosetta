@@ -49,7 +49,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_file(ab_pose_aho, "protocols/antibody/1bln_AB_aho.pdb");
 		ab_info_north_aho = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho, AHO_Scheme, North));
-		
+
 	}
 
 	void tearDown() {
@@ -69,10 +69,10 @@ public:
 		TS_ASSERT_EQUALS(ab_pose_aho.sequence(start, end), seq)
 
 
-		//With Options
+			//With Options
 
 
-		std::string seq2 = "ASASASASASASASAS";
+			std::string seq2 = "ASASASASASASASAS";
 		threader.set_pack_rounds(3);
 		threader.set_pack_neighbors(true);
 		threader.set_neighbor_distance(8);

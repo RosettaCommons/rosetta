@@ -9,28 +9,28 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/simple_moves/SimpleThreadingMover.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_SimpleThreadingMoverCreator_hh
-#define	INCLUDED_protocols_simple_moves_SimpleThreadingMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_SimpleThreadingMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace simple_moves {
-		
+
 
 class SimpleThreadingMoverCreator : public protocols::moves::MoverCreator {
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
-	
-	
-};	
+
+
+
+};
 
 }//simple_moves
 }//protocols

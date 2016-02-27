@@ -811,7 +811,7 @@ public:
 	///     Pose.total_residue
 	std::string
 	sequence(core::Size resnum_start, core::Size resnum_end) const;
-	
+
 	/// @brief Returns the variant-tagged string representing the
 	/// residue types that make up a conformation; e.g.
 	/// M[MET:N-Terminus-Variant]CDH[HIS_D]LLR[ARG:C-Terminus-Variant]

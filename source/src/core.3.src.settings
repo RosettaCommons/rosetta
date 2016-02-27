@@ -184,7 +184,7 @@ sources = {
 		"P_AA",
 		"P_AA_ss",
 		"PairEPotential",
-		"PeptideBondedEnergyContainer",
+		"PolymerBondedEnergyContainer",
 		"PoissonBoltzmannPotential",
 		"ProQPotential",
 		"Ramachandran",

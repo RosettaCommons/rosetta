@@ -149,8 +149,8 @@ main( int argc, char* argv [] ) {
 					it != end; ++it
 					) {
 				string const template_id( it->sequence(2)->id().substr(0,5) ); //Why in the world do we only use 5 residues.  Lets split the string and go from there.
-				
-				
+
+
 				tr << *it << std::endl;
 				tr << "id " << it->sequence(2)->id() << " => " << template_id
 					<< std::endl;
@@ -183,7 +183,7 @@ main( int argc, char* argv [] ) {
 
 					// print out query-anchored alignment
 					utility::io::ozstream output( id_out+".pdb" ); //This is stupid.  new branch to fix this.
-					
+
 					core::id::SequenceMapping map( it->sequence_mapping(1,2) );
 					output << "REMARK query_anchored_aln ";
 					for ( core::Size ii = 1; ii <= fasta_seq->sequence().size(); ++ii ) {

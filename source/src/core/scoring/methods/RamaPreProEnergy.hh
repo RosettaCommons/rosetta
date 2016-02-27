@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/RamaPreProEnergy.hh
-/// @brief
+/// @brief  A variation on the Ramachandran scorefunction that has separate probability tables for residues that precede prolines.
 /// @author Frank DiMaio
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- modified this to work with D-amino acids, BACKBONE_AA amino acids, and cyclic geometry.
 
 #ifndef INCLUDED_core_scoring_methods_RamaPreProEnergy_hh
 #define INCLUDED_core_scoring_methods_RamaPreProEnergy_hh
@@ -62,8 +63,8 @@ public:
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
-		Size res1,
-		Size res2
+		Size rsd1,
+		Size rsd2
 	) const;
 
 

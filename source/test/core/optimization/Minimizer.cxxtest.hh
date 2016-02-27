@@ -207,7 +207,7 @@ public:
 
 		{ // test out a couple different scoring functions
 
-			{ // just fa_rama
+			{ // just rama
 				scorefxn->set_weight( scoring::rama, 1.0 );
 
 				Pose pose;
@@ -215,6 +215,17 @@ public:
 				TR << "MINTEST: rama" << std::endl;
 				minimizer.run( pose, *mm, *scorefxn, *min_options );
 			}
+
+			{ // just rama_prepro
+				scorefxn->reset();
+				scorefxn->set_weight( scoring::rama_prepro, 1.0 );
+
+				Pose pose;
+				pose = start_pose;
+				TR << "MINTEST: rama_prepro" << std::endl;
+				minimizer.run( pose, *mm, *scorefxn, *min_options );
+			}
+
 
 			{ // just omega
 				scorefxn->reset();
@@ -226,15 +237,17 @@ public:
 				minimizer.run( pose, *mm, *scorefxn, *min_options );
 			}
 
-			/*{ // just fa_elec // apl -- temporarily disable fa_elec
-			scorefxn->reset();
-			scorefxn->set_weight( scoring::fa_elec, 0.5 );
+			{ // just fa_elec
+				// apl -- temporarily disable fa_elec
+				// VKM -- I'm turning this back on, dammit.
+				scorefxn->reset();
+				scorefxn->set_weight( scoring::fa_elec, 0.5 );
 
-			Pose pose;
-			pose = start_pose;
-			TR << "MINTEST: fa_elec" << std::endl;
-			minimizer.run( pose, *mm, *scorefxn, *min_options );
-			}*/
+				Pose pose;
+				pose = start_pose;
+				TR << "MINTEST: fa_elec" << std::endl;
+				minimizer.run( pose, *mm, *scorefxn, *min_options );
+			}
 
 			{ // just fa_dun
 				scorefxn->reset();

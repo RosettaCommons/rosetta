@@ -725,7 +725,7 @@ public:
 	///
 	/// example(s):
 	///     residue.has_lower_connect()
-	Size
+	bool
 	has_lower_connect() const
 	{
 		return rsd_type_.is_polymer() && (rsd_type_.lower_connect_id() != 0);
@@ -753,7 +753,7 @@ public:
 	///
 	/// example(s):
 	///     residue.has_upper_connect()
-	Size
+	bool
 	has_upper_connect() const
 	{
 		return rsd_type_.is_polymer() && (rsd_type_.upper_connect_id() != 0);

@@ -111,10 +111,10 @@ ProClosureEnergy::defines_score_for_residue_pair(
 	using namespace conformation;
 	using namespace chemical;
 
-	if( !res_moving_wrt_eachother ) return false;
-	
+	if ( !res_moving_wrt_eachother ) return false;
+
 	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) &&	rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
 	return (res1_is_upper || res2_is_upper);
 }
@@ -133,15 +133,15 @@ ProClosureEnergy::residue_pair_energy(
 
 	if ( rsd1.is_virtual_residue() ) return;
 	if ( rsd2.is_virtual_residue() ) return;
-	
+
 	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) &&	rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
 	if ( res1_is_upper || res2_is_upper ) {
-			
+
 		Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
 		Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
-		
+
 		Real chi4 = measure_chi4( lower_res, upper_res );
 		emap[ pro_close ] += chi4E( chi4 );
 	}
@@ -162,9 +162,9 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 {
 	using namespace conformation;
 	using namespace chemical;
-	
+
 	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	//bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) &&	rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	//bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
 	conformation::Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );

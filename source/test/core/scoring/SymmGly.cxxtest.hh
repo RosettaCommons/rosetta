@@ -20,6 +20,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 
 // Core headers
@@ -184,6 +185,17 @@ public:
 		return;
 	}
 
+	/// @brief Tests symmetric scoring of glycine with the rama_prepro scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_rama_prepro() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
+		TR << "Testing rama_prepro score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
 	/// @brief Tests symmetric scoring of glycine with the p_aa_pp scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_symm_gly_p_aa_pp() {
@@ -202,6 +214,16 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("talaris2014.wts");
 		TR << "Testing full talaris2014 score function." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
+	/// @brief Tests symmetric scoring of glycine with the full default scorefunction, whatever it currently is.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_default_scorefxn() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		TR << "Testing full default score function." << std::endl;
 		repeat_structure_test(scorefxn);
 		return;
 	}

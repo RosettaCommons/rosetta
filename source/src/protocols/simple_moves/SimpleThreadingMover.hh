@@ -31,7 +31,7 @@
 // Forward
 namespace protocols {
 namespace simple_moves {
-		
+
 ///@brief
 /// This mover functions to thread the sequence of a region onto the given pose.  Nothing fancy here.
 /// For more fancy things see protocols/comparative_modeling.
@@ -42,55 +42,55 @@ namespace simple_moves {
 /// Default is 5 rounds of packing.
 ///
 class SimpleThreadingMover : public protocols::moves::Mover {
-	
+
 public :
-	
+
 	SimpleThreadingMover();
 	SimpleThreadingMover(std::string thread_sequence, core::Size start_position);
-	
+
 	SimpleThreadingMover(SimpleThreadingMover const & src);
-	
+
 	virtual ~SimpleThreadingMover();
-	
-	
+
+
 	///@brief Set the sequence to thread onto the structure used in apply and where to start.
 	///@details Can have '-' charactors in sequence to denote a gap in the threaded sequence.
 	void
 	set_sequence(std::string thread_sequence, core::Size start_position);
-	
+
 	///@brief Pack the neighbor residues?
 	void
 	set_pack_neighbors(bool pack_neighbors);
-	
+
 	///@brief Set the packing distance for neighbor pack.
 	void
 	set_neighbor_distance(core::Real neighbor_dis);
-	
+
 	///////////////
-	
+
 	bool
 	get_pack_neighbors() const;
-	
+
 	core::Real
 	get_neighbor_distance() const;
-	
+
 	///@brief Set the scorefunction used for packing.
 	void
 	set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn);
-	
+
 	///@brief Set the number of pack rounds.
 	void
 	set_pack_rounds(core::Size pack_rounds);
-	
+
 	virtual void
 	apply(core::pose::Pose & pose);
 
-	
+
 public:
-	
+
 	std::string
 	get_name() const;
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -98,35 +98,35 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose);
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 	//SimpleThreadingMover & operator=( SimpleThreadingMover const & src);
-	
+
 	virtual moves::MoverOP fresh_instance() const;
-	
-	
+
+
 private:
-	
+
 	void
 	set_defaults();
 
 private:
-	
+
 	core::Size start_position_;
 	std::string thread_sequence_;
-	
+
 	bool pack_neighbors_;
 	core::Real neighbor_dis_;
-	
+
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	
+
 	std::string parsed_position_; //enables pose-length changes after construction of mover.
 	bool skip_unknown_mutant_;
-	
+
 	core::Size pack_rounds_;
-	
+
 };
 
 }//simple_moves
@@ -134,7 +134,7 @@ private:
 
 
 
-#endif	//INCLUDED_protocols_simple_moves_SimpleThreadingMover_hh
+#endif //INCLUDED_protocols_simple_moves_SimpleThreadingMover_hh
 
 
 

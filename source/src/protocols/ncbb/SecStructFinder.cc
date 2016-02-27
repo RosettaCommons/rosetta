@@ -463,7 +463,7 @@ SecStructFinder::apply( Pose & pose )
 	}
 	TR << std::endl;
 
-	
+
 	core::conformation::ResidueOP new_rsd( NULL );
 	new_rsd = conformation::ResidueFactory::create_residue( restypes[1] );
 	pose.append_residue_by_jump( *new_rsd, 1 );
@@ -590,7 +590,7 @@ SecStructFinder::apply( Pose & pose )
 
 					if ( minpose.residue_type( pose.n_residue() ).is_beta_aa() ) {
 						TR << " ( " << minpose.torsion( TorsionID(pose.n_residue(), BB, 1 ) ) << ", "<< minpose.torsion( TorsionID( pose.n_residue(), BB, 2 ) ) << ", "
-								<< minpose.torsion( TorsionID( pose.n_residue(), BB, 3 ) ) << " ), ";
+							<< minpose.torsion( TorsionID( pose.n_residue(), BB, 3 ) ) << " ), ";
 					} else {
 						TR << " ( " << minpose.phi( pose.n_residue() ) << ", " << minpose.torsion( TorsionID( pose.n_residue(), BB, 2 ) ) << " ), " << std::endl;
 					}

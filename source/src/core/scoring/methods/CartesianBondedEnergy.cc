@@ -44,7 +44,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/scoring/PeptideBondedEnergyContainer.hh>
+#include <core/scoring/PolymerBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -1569,19 +1569,14 @@ CartesianBondedEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
-		Size nres = pose.total_residue();
-		if ( core::pose::symmetry::is_symmetric(pose) ) {
-
-			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
-		}
-		if ( dec->size() != nres ) {
+		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		Size nres = pose.total_residue()/*, offset=0*/;
+		Size nres = pose.total_residue();
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 		}
@@ -1591,7 +1586,7 @@ CartesianBondedEnergy::setup_for_scoring(
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
-		LREnergyContainerOP new_dec( new PeptideBondedEnergyContainer( nres, s_types ) );
+		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types, true /*include iteration list for non-polymer-bonded residues*/ ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -1670,7 +1665,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 {
 	using namespace numeric;
 
-	debug_assert( rsd2.seqpos() > rsd1.seqpos() );
+	debug_assert( rsd2.seqpos() >= rsd1.seqpos() );
 	bool preproline = (rsd2.aa()==core::chemical::aa_pro || rsd2.aa()==core::chemical::aa_dpr); //Is rsd2 either D-proline or L-proline?
 
 
@@ -1696,6 +1691,9 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
 		eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
 	}
+
+	// If residue1 and 2 are the same (signal used by the PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
 
 	// cterm special case
 	Size nres = pose.total_residue();
@@ -1904,7 +1902,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	using namespace numeric;
 
-	debug_assert( rsd2.seqpos() > rsd1.seqpos() );
+	debug_assert( rsd2.seqpos() >= rsd1.seqpos() );
 
 	core::Size resid = rsd1.seqpos();
 	bool preproline = pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
@@ -1932,6 +1930,9 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
 		eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
 	}
+
+	// If residue1 and 2 are the same, stop here to avoid double-counting.
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return; //Used for residues that aren't polymer-bonded.
 
 	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the
 	// last residue

@@ -20,7 +20,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/PeptideBondedEnergyContainer.hh>
+#include <core/scoring/PolymerBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -105,25 +105,29 @@ RNA_SuiteEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
+		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		if ( !dec || !dec->is_valid( pose ) ) {
+			create_new_lre_container = true;
+		}/* else {
 		Size nres = pose.total_residue();
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		}
 		if ( dec->size() != nres ) {
-			create_new_lre_container = true;
+		create_new_lre_container = true;
 		}
+		}*/
 	}
 
 	if ( create_new_lre_container ) {
-		Size nres = pose.total_residue();
-		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-		}
+		//Size nres = pose.total_residue();
+		//if ( core::pose::symmetry::is_symmetric(pose) ) {
+		// nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		//}
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rna_suite );
 		s_types.push_back( suiteness_bonus );
-		LREnergyContainerOP new_dec( new PeptideBondedEnergyContainer( nres, s_types ) );
+		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
