@@ -18,6 +18,7 @@
 // Project Headers
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -62,6 +63,7 @@ public:
 	void verbose( bool const verb );
 	bool write2pdb() const;
 	void write2pdb( bool const write );
+	void scorefxn( core::scoring::ScoreFunctionCOP sfx );
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose( core::pose::PoseCOP reference_pose );
 	void reference_pose( core::pose::Pose const & pose );
@@ -74,6 +76,7 @@ public:
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pose::PoseCOP reference_pose_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real rate_threshold_;
 	core::Size mutation_threshold_;
 	bool mutations_;

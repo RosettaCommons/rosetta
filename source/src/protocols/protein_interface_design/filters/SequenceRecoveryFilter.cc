@@ -43,6 +43,7 @@ SequenceRecoveryFilter::SequenceRecoveryFilter() :
 	parent( "SequenceRecovery" ),
 	task_factory_( /* NULL */ ),
 	reference_pose_( /* NULL */ ),
+	scorefxn_( core::scoring::get_score_function() ),
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
 	mutations_( 0 ),
@@ -140,6 +141,12 @@ SequenceRecoveryFilter::write2pdb( bool const write )
 	write2pdb_ = write;
 }
 
+void
+SequenceRecoveryFilter::scorefxn( core::scoring::ScoreFunctionCOP sfx )
+{
+	scorefxn_ = sfx->clone();
+}
+
 bool
 SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 {
@@ -219,7 +226,7 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 		}
 	}
 	using namespace core::scoring;
-	protocols::protein_interface_design::ReportSequenceDifferences rsd( get_score_function() );
+	protocols::protein_interface_design::ReportSequenceDifferences rsd( scorefxn_ );
 	rsd.calculate( asym_ref_pose, asym_pose );
 	std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
 	std::map< core::Size, std::string > const res_names2( rsd.res_name2() );
@@ -279,6 +286,7 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 {
 	TR << "SequenceRecoveryFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	rate_threshold( tag->getOption< core::Real >( "rate_threshold", 0.0 ) );
 	mutation_threshold( tag->getOption< core::Size >( "mutation_threshold", 100 ) );
 	mutations( tag->getOption< bool >( "report_mutations", 0 ) );
