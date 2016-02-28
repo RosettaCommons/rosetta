@@ -30,6 +30,7 @@
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
@@ -109,7 +110,7 @@ public:
 		std::set< core::Size > num_disulf;
 		BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
 			core::Size cyd_count = 0;
-			for ( core::Size i=1, endi=p->total_residue(); i<=endi; ++i ) {
+			for ( core::Size i=1; i<=p->total_residue(); ++i ) {
 				TS_ASSERT( p );
 				if ( p->residue(i).type().is_disulfide_bonded() ) {
 					++cyd_count;
@@ -117,6 +118,22 @@ public:
 			}
 			TS_ASSERT( cyd_count );
 			num_disulf.insert( cyd_count );
+
+			// should be DISULFIDIZE pdb residue info in the pose
+			TS_ASSERT_DIFFERS( p->pdb_info(), core::pose::PDBInfoOP() );
+			utility::vector1< core::Size > tagged;
+			for ( core::Size resid=1; resid<=p->total_residue(); ++resid ) {
+				if ( p->pdb_info()->res_haslabel( resid, "DISULFIDIZE" ) ) {
+					tagged.push_back( resid );
+				}
+			}
+			TS_ASSERT_EQUALS( tagged.size(), cyd_count );
+			TR.Debug << "Found the following residues in disulfides: " << tagged << std::endl;
+
+			// records should be dumped with the pose
+			std::stringstream pdbstr;
+			p->dump_pdb( pdbstr, "1" );
+			TS_ASSERT_DIFFERS( pdbstr.str().find( "DISULFIDIZE" ), std::string::npos );
 		}
 		TS_ASSERT( num_disulf.find(1) == num_disulf.end() );
 		TS_ASSERT( num_disulf.find(3) == num_disulf.end() );

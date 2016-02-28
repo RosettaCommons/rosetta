@@ -201,7 +201,6 @@ PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const
 	grab_additional_pose_data( pose );
 
 	// Setup options.
-
 	bool renumber_chains(false);
 	if ( options.per_chain_renumbering() ) {
 		renumber_chains = true;
@@ -977,6 +976,9 @@ PoseToStructFileRepConverter::grab_pdbinfo_labels(
 		std::stringstream out;
 		for ( core::Size i=1; i<=pose.n_residue(); ++i ) {
 			utility::vector1 < std::string > const tmp_v_reslabels( pose.pdb_info()->get_reslabels(i) ); //Ugh.  Passing a vector of strings by return value.
+			if ( !tmp_v_reslabels.empty() ) {
+				TR << "Found labels: " << tmp_v_reslabels << std::endl;
+			}
 			core::Size const numLables( tmp_v_reslabels.size() );
 			//Only write if the residue has any label (keep the file as small as possible)
 			if ( numLables > 0 ) {
