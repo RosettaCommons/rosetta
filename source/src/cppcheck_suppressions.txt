@@ -11,5 +11,11 @@
 
 // Use the --xml option of cppcheck to get the error_id of a particular error.
 //
+// Alternatively, use `cppcheck --errorlist` and look for the corresponding error message.
+//
 // When supressing errors here, please leave a comment explaining why
 // what you're suppressing isn't really an error.
+
+
+// This is a check that's error prone, and has been removed from more recent versions of cppcheck.
+unnecessaryForwardDeclaration
