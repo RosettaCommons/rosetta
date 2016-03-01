@@ -419,6 +419,8 @@ HBondDatabase::initialize_HBEval()
 	string weight_type_name;
 	HBondWeightType weight_type;
 
+	initialize_HBEval_lookup();
+
 	while ( getline(s, line) ) {
 		++line_number;
 		tokens = string_split( line, ',');
@@ -450,7 +452,7 @@ HBondDatabase::initialize_HBEval()
 			seq_sep_type = HBSeqSep(HBondTypeManager::seq_sep_type_from_name(seq_sep_type_name));
 		}
 
-		HBEvalType hbe_type = HBEval_lookup(don_chem_type, acc_chem_type, seq_sep_type);
+		HBEvalType hbe_type = (*HBEval_lookup)(don_chem_type, acc_chem_type, seq_sep_type);
 		if ( initialized_hbe_types[hbe_type] ) {
 			tr << "Duplicate parameter specification in HBEval.csv:" << endl;
 			tr << "  hbe_type: " << hbe_type << " line :" << line_number << endl;
@@ -1418,7 +1420,7 @@ HBondDatabase::report_parameter_features(
 			for ( Size hbseq_sep=1; hbseq_sep <= seq_sep_MAX; ++hbseq_sep ) {
 				string const & separation(HBondTypeManager::name_from_seq_sep_type(HBSeqSep(hbseq_sep)));
 
-				HBEvalType const hbe(HBEval_lookup(hbdon, hbacc, hbseq_sep));
+				HBEvalType const hbe((*HBEval_lookup)(hbdon, hbacc, hbseq_sep));
 				if ( hbe == hbe_UNKNOWN ) {
 					continue;
 				}

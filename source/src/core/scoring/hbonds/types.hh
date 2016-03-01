@@ -19,6 +19,7 @@
 #include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 
 // Utility headers
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
 
 #include <core/types.hh>
@@ -369,12 +370,15 @@ enum HBSeqSep{
 	seq_sep_MAX = seq_sep_P4
 };
 
+/// @brief converts a string into an HBEvalType
+HBEvalType string_to_hb_eval_type(std::string const& hbe_str);
 
 void
 HBEval_lookup_initializer( ObjexxFCL::FArray3D<HBEvalType> & hbe );
 
-extern ObjexxFCL::FArray3D<HBEvalType> const HBEval_lookup;
+extern utility::pointer::shared_ptr< ObjexxFCL::FArray3D<HBEvalType> const > HBEval_lookup;
 
+void initialize_HBEval_lookup();
 
 ///////////////////////////////////////////////////////////
 //:::DEPRICATION NOTICE::::

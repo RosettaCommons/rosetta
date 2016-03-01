@@ -15,7 +15,10 @@
 #include <core/scoring/hbonds/types.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/exit.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <sstream>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -40,6 +43,22 @@ hb_eval_type(
 		(don_chem_type-1)*(hbacc_MAX-2)*(seq_sep_MAX-2) +
 		(acc_chem_type-1)*(seq_sep_MAX-2) +
 		(seq_sep_type-1) + 1;
+}
+
+
+/// @brief converts a string into an HBEvalType
+HBEvalType string_to_hb_eval_type(std::string const& hbe_str) {
+
+	if ( hbe_str == "hbe_dH2OaHXL" ) {
+		return hbe_dH2OaHXL;
+	}
+	if ( hbe_str == "hbe_GENERIC_SP3SCSC_LR" ) {
+		return hbe_GENERIC_SP3SCSC_LR;
+	}
+
+	std::stringstream msg;
+	msg << "Cannot convert " << hbe_str << " into an HBEvalType" << std::endl;
+	throw( utility::excn::EXCN_Msg_Exception( msg.str()  ));
 }
 
 
@@ -473,7 +492,8 @@ HBEval_lookup_initializer( ObjexxFCL::FArray3D<HBEvalType> & hbe )
 	hbe(hbdon_HXL, hbacc_GENERIC_SP3SC, seq_sep_PM1) = hbe_GENERIC_SP3SCSC_SR;
 	hbe(hbdon_HXL, hbacc_GENERIC_SP3SC, seq_sep_other) = hbe_GENERIC_SP3SCSC_LR;
 	hbe(hbdon_H2O, hbacc_GENERIC_SP3SC, seq_sep_PM1) = hbe_GENERIC_SP3SCSC_SR;
-	hbe(hbdon_H2O, hbacc_GENERIC_SP3SC, seq_sep_other) = hbe_GENERIC_SP3SCSC_LR;
+	hbe(hbdon_H2O, hbacc_GENERIC_SP3SC, seq_sep_other) = string_to_hb_eval_type(
+		basic::options::option[basic::options::OptionKeys::score::hbe_for_dH2O_aGEN_SP3SC_ssother]);
 	hbe(hbdon_GENERIC_SC, hbacc_IMD, seq_sep_PM1) = hbe_GENERIC_RINGSCSC_SR;
 	hbe(hbdon_GENERIC_SC, hbacc_IMD, seq_sep_other) = hbe_GENERIC_RINGSCSC_LR;
 	hbe(hbdon_GENERIC_SC, hbacc_IME, seq_sep_PM1) = hbe_GENERIC_RINGSCSC_SR;
@@ -503,7 +523,14 @@ HBEval_lookup_initializer( ObjexxFCL::FArray3D<HBEvalType> & hbe )
 	hbe(hbdon_H2O, hbacc_GENERIC_RINGSC, seq_sep_PM1) = hbe_GENERIC_RINGSCSC_SR;
 	hbe(hbdon_H2O, hbacc_GENERIC_RINGSC, seq_sep_other) = hbe_GENERIC_RINGSCSC_LR;
 }
-ObjexxFCL::FArray3D<HBEvalType> const HBEval_lookup(hbdon_MAX, hbacc_MAX, seq_sep_MAX, HBEval_lookup_initializer);
+utility::pointer::shared_ptr< ObjexxFCL::FArray3D<HBEvalType> const > HBEval_lookup;
+
+/// @brief makes it explicit that the HBEval lookup table is initialized somewhere
+void initialize_HBEval_lookup() {
+
+	HBEval_lookup = utility::pointer::shared_ptr< ObjexxFCL::FArray3D< HBEvalType > const > (
+		new ObjexxFCL::FArray3D<HBEvalType>(hbdon_MAX, hbacc_MAX, seq_sep_MAX, HBEval_lookup_initializer));
+}
 
 chemical::Hybridization
 get_hbe_acc_hybrid( HBEvalType const & hbe )

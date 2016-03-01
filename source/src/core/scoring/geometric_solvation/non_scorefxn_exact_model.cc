@@ -346,7 +346,7 @@ core::Real compute_exact_geosol(
 				anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const polar_atom( *anum );
 			//Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
-			hbonds::HBEvalType const curr_hbeval_type = hbonds::HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+			hbonds::HBEvalType const curr_hbeval_type = (*hbonds::HBEval_lookup)( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 			// Figure out max LK energy
 			//std::string const base_atom_name = polar_rsd.atom_name( base_atom );

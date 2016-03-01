@@ -56,7 +56,7 @@ HBEvalTuple::HBEvalTuple(
 	don_type_ = get_hb_don_chem_type(datm, don_rsd);
 	acc_type_ = get_hb_acc_chem_type(aatm, acc_rsd);
 	seq_sep_ = get_seq_sep(don_type_, acc_type_, don_rsd.polymeric_oriented_sequence_distance(acc_rsd));
-	eval_type_ = HBEval_lookup(don_type_, acc_type_, seq_sep_);
+	eval_type_ = (*HBEval_lookup)(don_type_, acc_type_, seq_sep_);
 }
 
 bool
@@ -90,7 +90,7 @@ void HBEvalTuple::sequence_sep( HBSeqSep seqsep )
 
 void HBEvalTuple::update_hbevaltype()
 {
-	eval_type_ = HBEval_lookup(don_type_, acc_type_, seq_sep_ );
+	eval_type_ = (*HBEval_lookup)(don_type_, acc_type_, seq_sep_ );
 }
 
 
