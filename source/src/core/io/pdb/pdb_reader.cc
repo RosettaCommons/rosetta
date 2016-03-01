@@ -673,14 +673,14 @@ store_unknown_records_in_sfr( utility::vector1< Record > unknown_records, Struct
 	TR << "Parsing " << n_unknown_records <<
 		" .pdb records with unknown format to search for Rosetta-specific comments." << endl;
 	for ( uint i( 1 ); i <= n_unknown_records; ++i ) {
-		cout << unknown_records[ i ] << endl;
+		TR.Debug << unknown_records[ i ] << endl;
 		line = create_pdb_line_from_record( unknown_records[ i ] );
-		cout << line << endl;
+		TR.Debug << line << endl;
 		if ( startswith( line, "##Begin comments##" ) ) {
-			/*TR.Debug*/cout << "Comments found; reading..." << endl;
+			TR.Debug << "Comments found; reading..." << endl;
 			reading_comments = true;
 		} else if ( startswith( line, "##End comments##" ) ) {
-			/*TR.Debug*/cout << "Finished reading comments" << endl;
+			TR.Debug << "Finished reading comments" << endl;
 			reading_comments = false;
 		} else if ( reading_comments ) {
 			uint const space_location( line.find_first_of( " " ) );
