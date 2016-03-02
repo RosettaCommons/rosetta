@@ -117,6 +117,8 @@ void ResidueArrayAnnealingEvaluator::initialize(
 		weighted_energy_methods_.push_back( std::make_pair( score_weight, annealable_energy_method ));
 	}
 
+	if( weighted_energy_methods_.empty() ) return; //All of the expensive setup that follows this point can be skipped if there are no energy methods that will use this evaluator.
+
 	// Store rotamer sets for annealing
 	for ( core::Size i = 1; i <= rotamer_sets.nmoltenres(); ++i ) {
 		per_node_rotamer_sets_.push_back(rotamer_sets.rotamer_set_for_moltenresidue( i ));
