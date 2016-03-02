@@ -15,6 +15,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -83,6 +84,12 @@ main( int argc, char* argv [] ) {
 		while ( input.has_another_pose() ) {
 			input.fill_pose( current_pose, *rsd_set );
 
+			if( ! current_pose.pdb_info() ) {
+				// Make a default PDB info if one doesn't already exist - this simplifies logic later.
+				core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(current_pose) );
+				current_pose.pdb_info( new_pdb_info );
+			}
+
 			// Load commandline pose modifications
 			core::scoring::constraints::add_constraints_from_cmdline_to_pose( current_pose );
 			// TODO: Others that should go here? Disulfides, rotamer bonuses, etc.?
@@ -106,8 +113,10 @@ main( int argc, char* argv [] ) {
 				ss->decoy_tag( tag + "_" + string_of(ii) + "_onebody" );
 				ss->add_string_value( "pose_id", tag );
 				ss->add_string_value( "resi1", string_of(ii) );
+				ss->add_string_value( "pdbid1", string_of( current_pose.pdb_info()->number(ii) ) + current_pose.pdb_info()->chain(ii) );
 				ss->add_string_value( "restype1", current_pose.residue_type(ii).name3() );
 				ss->add_string_value( "resi2", "--" );
+				ss->add_string_value( "pdbid2", "--" );
 				ss->add_string_value( "restype2", "onebody" );
 				for ( ScoreTypes::const_iterator iter( scoretypes.begin() ); iter != scoretypes.end(); ++iter ) {
 					ss->add_energy(  name_from_score_type( *iter ), residue1b[ *iter ] );
@@ -149,8 +158,10 @@ main( int argc, char* argv [] ) {
 					ss->decoy_tag( tag + "_" + string_of(ii) + "_" + string_of(jj) );
 					ss->add_string_value( "pose_id", tag );
 					ss->add_string_value( "resi1", string_of(ii) );
+					ss->add_string_value( "pdbid1", string_of( current_pose.pdb_info()->number(ii) ) + current_pose.pdb_info()->chain(ii) );
 					ss->add_string_value( "restype1", current_pose.residue_type(ii).name3() );
 					ss->add_string_value( "resi2", string_of(jj) );
+					ss->add_string_value( "pdbid2", string_of( current_pose.pdb_info()->number(jj) ) + current_pose.pdb_info()->chain(jj) );
 					ss->add_string_value( "restype2", current_pose.residue_type(jj).name3() );
 
 					bool nonzero(false);

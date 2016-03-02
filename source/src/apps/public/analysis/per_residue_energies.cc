@@ -15,6 +15,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -101,6 +102,13 @@ main( int argc, char* argv [] ) {
 		core::pose::Pose current_pose;
 		while ( input.has_another_pose() ) {
 			input.fill_pose( current_pose, *rsd_set );
+
+			if( ! current_pose.pdb_info() ) {
+				// Make a default PDB info if one doesn't already exist - this simplifies logic later.
+				core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(current_pose) );
+				current_pose.pdb_info( new_pdb_info );
+			}
+
 			(*scorefxn)(current_pose);
 			EnergyMap weights( current_pose.energies().weights() );
 
@@ -131,6 +139,7 @@ main( int argc, char* argv [] ) {
 					SilentStructOP ss( new ScoreFileSilentStruct );
 					ss->decoy_tag( "residue_" + string_of(jj) );
 					ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
+					ss->add_string_value( "pdb_id", string_of( current_pose.pdb_info()->number(jj) ) + current_pose.pdb_info()->chain(jj) );
 					Real total(0);
 					for ( int ii = 1; ii <= n_score_types; ++ii ) {
 						if ( weights[ ScoreType(ii) ] != 0.0 ) {
