@@ -1220,7 +1220,7 @@ get_linkage_types_for_dihedral( id::MainchainTorsionType torsion ){
 
 /// @brief Remove branch points from a carbohydrate or aa residue.
 void
-remove_carbohydrate_branch_point_variants( Pose & pose, core::Size seqpos)
+remove_carbohydrate_branch_point_variants( Pose & pose, core::Size const seqpos)
 {
 	using namespace core::chemical;
 
