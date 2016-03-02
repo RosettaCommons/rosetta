@@ -1,5 +1,5 @@
-set_abs_tolerance(0.01)score_orig = 70.7066
-score_rt = -120.219
+set_abs_tolerance(0.01)score_orig = 70.6434
+score_rt = -120.494
 residue = 1 sin (chi) = -0.937653470258288 cos(chi) = 0.347571531792507
 residue = 1 sin (chi) = -0.545586369695489 cos(chi) = 0.838054600370702
 residue = 3 sin (chi) = 0.949045014087037 cos(chi) = 0.315140542038843
@@ -122,8 +122,8 @@ residue = 53 sin (chi) = -0.999947913385037 cos(chi) = -0.0102063958825623
 residue = 53 sin (chi) = 0.960008742481356 cos(chi) = -0.279970024037156
 residue = 53 sin (chi) = -0.933975636319347 cos(chi) = 0.357336691037837
 residue = 53 sin (chi) = 0.536951961939804 cos(chi) = 0.843612820296725
-residue = 54 sin (chi) = -0.00248608518753303 cos(chi) = -0.999996909685445
-residue = 54 sin (chi) = -0.801152635733626 cos(chi) = -0.598460069058131
+residue = 54 sin (chi) = -0.00248608518710671 cos(chi) = -0.999996909685446
+residue = 54 sin (chi) = 0.980239659440233 cos(chi) = -0.197813574004658
 residue = 55 sin (chi) = -0.0646168081299174 cos(chi) = 0.997910150317703
 residue = 55 sin (chi) = 0.466289504018917 cos(chi) = -0.884632182571826
 residue = 55 sin (chi) = 0.866505036234841 cos(chi) = -0.49916833050551
@@ -136,7 +136,7 @@ residue = 57 sin (chi) = -0.255426737373066 cos(chi) = -0.966828413853746
 residue = 57 sin (chi) = 0.62757552671635 cos(chi) = -0.77855568732538
 residue = 57 sin (chi) = -0.487149835469994 cos(chi) = -0.873318405738456
 residue = 58 sin (chi) = 0.856910579955692 cos(chi) = -0.515465088982756
-residue = 58 sin (chi) = 0.912945250727297 cos(chi) = 0.408082061814131
+residue = 58 sin (chi) = -2.2596189525001e-13 cos(chi) = 1
 residue = 59 sin (chi) = 0.457397190270315 cos(chi) = 0.889262509236064
 residue = 59 sin (chi) = 0.127461443381316 cos(chi) = 0.991843526193094
 residue = 59 sin (chi) = -0.793839973227221 cos(chi) = -0.608126711226044
@@ -158,10 +158,10 @@ residue = 65 sin (chi) = 0.792587850265167 cos(chi) = 0.609757738460154
 residue = 66 sin (chi) = -0.708927250967991 cos(chi) = 0.705281612432202
 residue = 66 sin (chi) = 0.743888704300999 cos(chi) = -0.66830352057533
 residue = 66 sin (chi) = -0.922088303634031 cos(chi) = -0.386979534731897
-residue = 67 sin (chi) = -0.73665586599587 cos(chi) = 0.676267798356446
-residue = 67 sin (chi) = -0.745113160478918 cos(chi) = -0.666938061652744
-residue = 68 sin (chi) = 0.966342271941466 cos(chi) = -0.257259817031354
-residue = 68 sin (chi) = -0.274850813050202 cos(chi) = -0.961486885280108
+residue = 67 sin (chi) = -0.795557783295529 cos(chi) = -0.605877721523002
+residue = 67 sin (chi) = 0.797055618555684 cos(chi) = -0.603905904035402
+residue = 68 sin (chi) = 0.96634227194147 cos(chi) = -0.25725981703134
+residue = 68 sin (chi) = 0.661554345400723 cos(chi) = 0.749897225012482
 residue = 69 sin (chi) = 0.999953758776544 cos(chi) = -0.00961666827239143
 residue = 69 sin (chi) = -0.560736340664311 cos(chi) = -0.827994418011618
 residue = 69 sin (chi) = -0.692321093213591 cos(chi) = -0.721589567476927
@@ -192,8 +192,8 @@ residue = 80 sin (chi) = -0.999655431610875 cos(chi) = 0.0262491533363521
 residue = 81 sin (chi) = -0.348583250287854 cos(chi) = 0.937277823069956
 residue = 81 sin (chi) = -0.877742617778051 cos(chi) = 0.479132441957477
 residue = 81 sin (chi) = 0.960906776473398 cos(chi) = -0.276872112946578
-residue = 82 sin (chi) = -0.833267148333958 cos(chi) = 0.552870563068241
-residue = 82 sin (chi) = -0.980239659440351 cos(chi) = -0.197813574004073
+residue = 82 sin (chi) = -0.833267148334233 cos(chi) = 0.552870563067827
+residue = 82 sin (chi) = 0.980239659440413 cos(chi) = -0.197813574003767
 residue = 83 sin (chi) = -0.784748933768748 cos(chi) = 0.619813771183582
 residue = 83 sin (chi) = 0.999846963730195 cos(chi) = -0.017494259615949
 residue = 83 sin (chi) = 0.944574266080156 cos(chi) = 0.328297815800127

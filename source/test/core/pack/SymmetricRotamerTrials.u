@@ -1,4 +1,4 @@
-set_abs_tolerance(0.01)score_orig = -212.744
+set_abs_tolerance(0.01)score_orig = -212.853
 score_rt = -223.787
 residue = 1 sin (chi) = -0.0873871950912046 cos(chi) = 0.996174421541776
 residue = 2 sin (chi) = 0.935967607294315 cos(chi) = 0.352086123122958

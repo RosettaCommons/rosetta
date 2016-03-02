@@ -19,15 +19,15 @@ Testing docking high-res scoring function...
  fa_pair                      0.164     -40.686      -6.673
  hbond_sr_bb                  0.245     -19.829      -4.858
  hbond_lr_bb                  0.245     -52.505     -12.864
- hbond_bb_sc                  0.245     -15.661      -3.837
- hbond_sc                     0.245      -2.538      -0.622
+ hbond_bb_sc                  0.245     -15.988      -3.917
+ hbond_sc                     0.245      -2.628      -0.644
  dslf_ss_dst                  0.500      -0.412      -0.206
  dslf_cs_ang                  2.000       9.959      19.918
  dslf_ss_dih                  5.000       5.528      27.640
  dslf_ca_dih                  5.000       0.458       2.292
  fa_dun                       0.036    1831.651      65.939
 ---------------------------------------------------
- Total weighted score:                     -115.310
+ Total weighted score:                     -115.412
 Testing DockingProtocol.setup_foldtree()...
 FOLD_TREE  EDGE 1 197 -1  EDGE 197 245 -1  EDGE 197 282 1  EDGE 282 246 -1  EDGE 282 301 -1 
 Testing DockingProtocol.setup_foldtree()for multichain...
@@ -43,7 +43,7 @@ Testing interface-dependant scoring for multichain docking...
 ---------------------------------------------------
  Total weighted score:                      -64.672
 Testing DockingProtocol.calc_interaction_energy()...
--13.892
+-13.8953
 Testing DockingProtocol.recover_sidechains()...
 Testing DockingProtocol.calc_Lrmsd()...
 13.6911

@@ -177,6 +177,29 @@ public:
 
 	}
 
+	void test_hbond_sp3acc_deriv_no_fade_energy()
+	{
+		using namespace core::scoring::hbonds;
+		//To debug at full precision set:
+		//std::cout.precision(16);
+		HBondDatabaseCOP database(HBondDatabase::get_database("sp2_params"));
+
+
+		HBondOptions hboptions;
+		hboptions.use_sp2_chi_penalty(true);
+
+		HBEvalTuple hbt = HBEvalTuple( hbdon_HXL, hbacc_HXL, seq_sep_other );
+		Real xD(1.0-.02);
+		for ( Real AHdis = 1.7; AHdis <= 1.9; AHdis += .1 ) {
+			for ( Real xH = MAX_xH - 0.02; xH > MIN_xH + 0.02; xH -= .3 ) {
+				for ( Real chi = 0.0; chi < 2*numeric::constants::d::pi; chi += 0.3 ) {
+					do_hbond_deriv_test(database, hboptions, hbt, AHdis, xD, xH, chi);
+				}
+			}
+		}
+
+	}
+
 	void do_no_test_hbond_sp2_deriv_fade_energy()
 	{
 		using namespace core::scoring::hbonds;

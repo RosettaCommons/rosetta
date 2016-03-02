@@ -1481,7 +1481,8 @@ core::Size
 HBondEnergy::version() const
 {
 	//return 1; // Initial versioning
-	return 2;
+	// return 2;
+	return 3; // fixing sp3-acceptor discontinuitiy w/ commit e42010b198a
 }
 
 } // hbonds
