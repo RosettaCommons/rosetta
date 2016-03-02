@@ -122,6 +122,7 @@ StringOptionKey const macrocycle_sequence ( "macrocycles::macrocycle_sequence" )
 BooleanOptionKey const final_repack( "macrocycles::final_repack" );
 BooleanOptionKey const final_minimize( "macrocycles::final_minimize" );
 BooleanOptionKey const final_mc ( "macrocycles::final_mc" );
+IntegerOptionKey const max_closure_cycles( "macrocycles::max_closure_cycles" );
 }
 
 
@@ -219,6 +220,7 @@ main( int argc, char* argv[] )
 		option.add( macrocycles::final_repack, "Do a final repack. Default false" ).def(false);
 		option.add( macrocycles::final_minimize, "Do a final minimization. Default false" ).def(false);
 		option.add( macrocycles::final_mc, "Do a final monte carlo on macrocycle. Default false" ).def(false);
+		option.add( macrocycles::max_closure_cycles, "Maximum number of iterations through the closure loop.  Default 25." ).def(25);
 
 		// init command line options
 		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
@@ -461,7 +463,14 @@ MacrocycleMover::apply(
 	pert_sequence->add_mover( pert_pep_repeat );
 	moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
 
+	core::Size iteration_counter(0);
+	core::Size const max_iterations( static_cast<core::Size>( option[ macrocycles::max_closure_cycles ] ) );
 	while ( !closed ) {
+		++iteration_counter;
+		if( iteration_counter > max_iterations ) {
+			TR << "Max iterations (" << max_iterations << ") exceeded.  Exiting from closure cycle." << std::endl;
+			break;
+		}
 
 		pose = oldpose;
 		/********************************************************\

@@ -1,4 +1,5 @@
 -macrocycle_size 13
 -macrocycle_sequence AA[B3A]AA[B3A]AA[B3A]AA[B3A]AA[B3A]AA[B3A]A
 -final_minimize true
+-max_closure_cycles 25
 -mute core.kinematics.AtomTree core.conformation.Conformation
