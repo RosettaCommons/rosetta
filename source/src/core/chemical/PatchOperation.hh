@@ -704,6 +704,30 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Change the parent, grandparent, or great-grandparent of an atom
+enum Ancestor { anc_parent, anc_grandparent, anc_greatgrandparent };
+class ChangeAncestory : public PatchOperation {
+public:
+	/// constructor
+	ChangeAncestory(
+		std::string const & target_atom,
+		Ancestor which_ancestor,
+		std::string const & ancestor_name
+	);
+
+	/// @brief change the ancestory, but leave the icoors intact.
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	/// atom's name
+	std::string atom_;
+	Ancestor which_ancestor_;
+	std::string ancestor_name_;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief   A patch operation for resetting the length of a bond within a ResidueType.
 /// @note    This is useful for when an atom is rehybridized within a patch file.

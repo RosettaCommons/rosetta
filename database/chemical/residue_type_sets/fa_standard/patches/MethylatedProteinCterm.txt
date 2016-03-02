@@ -1,27 +1,23 @@
 ## Methylated C Terminus Patch by Doug Renfrew (renfrew@unc.edu)
 
 NAME MethylatedCtermProteinFull
-TYPES METHYLATED_CTERMINUS_VARIANT
+TYPES METHYLATED_CTERMINUS_VARIANT UPPER_TERMINUS_VARIANT
 
 ############################################################################################
 ## general requirements
 ##   protein
-##   anything that is already C terminally patched
+##   nothing that is already C terminally patched
 ############################################################################################
 BEGIN_SELECTOR
 PROPERTY PROTEIN
 NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
-NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
 NOT VARIANT_TYPE METHYLATED_CTERMINUS_VARIANT
 NOT VARIANT_TYPE SHOVE_BB
 NOT VARIANT_TYPE VIRTUAL_BB
 NOT VARIANT_TYPE SPECIAL_ROT
-NOT VARIANT_TYPE CUTPOINT_LOWER
 NOT VARIANT_TYPE CUTPOINT_UPPER
-NOT VARIANT_TYPE VIRTUAL_NTERM
 NOT VARIANT_TYPE REPLONLY
 NOT VARIANT_TYPE CTERM_CONNECT
-NOT VARIANT_TYPE N_ACETYLATION
 NOT VARIANT_TYPE C_METHYLAMIDATION
 NOT PROPERTY PHOSPHONATE
 END_SELECTOR

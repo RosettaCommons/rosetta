@@ -91,7 +91,7 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 
 	KbT_ = mrlod->get_temperature();
 
-	TR << "Working on Rotamer library for AA NAME: " << mrlod->get_name() << "OMG: " << omg;
+	TR << "Working on Rotamer library for AA NAME: " << mrlod->get_name() << " OMG: " << omg;
 	for ( core::Size i = 1; i <= bbs.size(); ++i ) TR << " bb" << i << ": " << bbs[ i ];
 	TR << " EPS: " << eps << std::endl;
 

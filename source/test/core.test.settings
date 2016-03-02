@@ -683,6 +683,8 @@ testinputfiles = [
 	"io/pdb/extra_res_pose.pdb",
 	"io/pdb/fake_pdb_record_defs",
 	"io/pdb/test.params",
+	"io/pose_from_sfr/ace_from_1VDN.pdb",
+	"io/pose_from_sfr/acetylated_and_methylated_alanine.pdb",
 	"kinematics/test.pdb",
 	"optimization/test_in.pdb",
 	"optimization/symmetry/fibril.symm",

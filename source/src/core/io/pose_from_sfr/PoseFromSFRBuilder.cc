@@ -318,7 +318,25 @@ PoseFromSFRBuilder::pass_1_merge_residues_as_necessary()
 			}
 
 			core::io::ResidueInformation & rmerged_into = rinfos_[ merge_behaviors_[ ii ] == mrb_merge_w_prev ? ii-1 : ii+ 1 ];
-			rmerged_into.append_atoms( rinfos_[ ii ] );
+
+			chemical::MergeBehaviorManager::AtomRenamingMap nowhitespace_rename_map;
+			for ( chemical::MergeBehaviorManager::AtomRenamingMap::const_iterator
+					iter = merge_atom_maps_[ ii ].begin(), iter_end = merge_atom_maps_[ ii ].end();
+					iter != iter_end; ++iter ) {
+				nowhitespace_rename_map[ utility::strip( iter->first ) ] = iter->second;
+			}
+
+			for ( Size jj = 1; jj <= rinfos_[ ii ].atoms().size(); ++jj ) {
+				AtomInformation jjatom = rinfos_[ ii ].atoms()[ jj ];
+				if ( merge_atom_maps_[ ii ].count( jjatom.name ) ) {
+					TR << "Renaming atom " << jjatom.name << " as " << merge_atom_maps_[ ii ][ jjatom.name ] << std::endl;
+					jjatom.name = merge_atom_maps_[ ii ][ jjatom.name ];
+				} else if ( nowhitespace_rename_map.count( jjatom.name ) ) {
+					TR << "Renaming atom " << jjatom.name << " as " << nowhitespace_rename_map[ jjatom.name ] << std::endl;
+					jjatom.name = nowhitespace_rename_map[ jjatom.name ];
+				}
+				rmerged_into.append_atom( jjatom );
+			}
 		}
 	}
 

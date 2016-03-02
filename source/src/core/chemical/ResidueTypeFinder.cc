@@ -265,7 +265,7 @@ ResidueTypeFinder::apply_patches_recursively(
 
 		// note -- make sure to apply patch if it has a chance of satisfying any of
 		// the constraints on variants, branchpoints, or properties.
-		bool apply_patch = (  adds_any_variant ( patch ) ||
+		bool apply_patch = (  adds_any_variant( patch ) ||
 			adds_any_property( patch, rsd_type ) ||
 			matches_any_patch_name( patch )      ||
 			matches_any_atom_name( patch, rsd_type ) ||
@@ -800,6 +800,7 @@ ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs const & rsd_types
 	}
 	return filtered_rsd_types;
 }
+
 ////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
 ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  const
@@ -875,6 +876,28 @@ ResidueTypeFinder::variant_exceptions( utility::vector1< std::string > const & s
 	}
 	return variant_exceptions( variant_exceptions_list );
 }
+
+
+///// Saving this sketch of a class for only creating RTs if they would join the
+///// pareto optimal set, i.e. they add atoms, or variants that are not covered by
+///// any of the RTs that have been identified so far.
+// class ResidueTypeQualifications
+// {
+// public:
+// 	ResidueTypeQualifications();
+// 	ResidueTypeQualifications( ResidueTypeQualifications const & );
+// 	~ResidueTypeQualifications();
+//
+// private:
+// 	ResidueTypeCOP restype_;
+// 	utility::vector1< bool > variant_sets_satisfied_;
+// 	utility::vector1< bool > disallowed_variants_avoided_;
+// 	utility::vector1< bool > named_atoms_covered_;
+// 	utility::vector1< bool > properties_satisfied_;
+// 	utility::vector1< bool > disallowed_properties_avoided_;
+// 	utility::vector1< bool > patch_names_satified_;
+//
+// }
 
 
 } //chemical

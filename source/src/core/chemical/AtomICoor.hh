@@ -77,13 +77,7 @@ public:
 		ResidueType const & rsd_type
 	);
 
-	/* ICoorAtomID(ICoorAtomID id) :
-	type_(id.type_),
-	atomno_(id.atomno_),
-	vd_(id.vd_)
-	{
-
-	}*/
+	ICoorAtomID( ICoorAtomID const & id );
 
 
 public:
@@ -223,6 +217,17 @@ public:
 		VD const & stub_atom1_vd,
 		VD const & stub_atom2_vd,
 		VD const & stub_atom3_vd,
+		ResidueType const & rsd_type
+	);
+
+	AtomICoor(
+		std::string const & built_atom_name,
+		Real const phi_in,
+		Real const theta_in,
+		Real const d_in,
+		ICoorAtomID const & stub_atom1,
+		ICoorAtomID const & stub_atom2,
+		ICoorAtomID const & stub_atom3,
 		ResidueType const & rsd_type
 	);
 

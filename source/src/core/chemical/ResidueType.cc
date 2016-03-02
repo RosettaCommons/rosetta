@@ -3472,60 +3472,8 @@ ResidueType::set_icoor(
 {
 	ICoorAtomID id( atm, *this );
 	AtomICoor const ic( atm, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
+	set_icoor_private( atm, id, ic, update_xyz );
 
-	Size atomno;
-	VD atom_vd( id.vertex() );
-	switch ( id.type() ) {
-	case ICoorAtomID::INTERNAL :
-		debug_assert( atom_vd == atom_vertex( atm ) );
-		if ( atm == stub_atom1 ) {
-			//Root atom case
-			if ( root_atom_ != ResidueType::null_vertex ) {
-				tr.Error << "Can't reset root. Was " << atom_name( root_atom_ ) << " Resetting to " << atm << std::endl;
-				utility_exit_with_message( "Attempted to inappropriately reset ICOOR root atom." );
-			}
-			root_atom_ = atom_vd;
-			// Now we can continue as normal.
-		}
-		icoor_[ atom_vd ] = ic;
-
-		// update atom_base if it isn't set yet (or is set to itself)
-		if ( ! atom_base_.count(atom_vd) || atom_base_[atom_vd] == atom_vd ) {
-			if ( atm == stub_atom1 ) {
-				//root of tree
-				if ( natoms() == 1 ) {
-					set_atom_base( atm, atm );
-				} else {
-					set_atom_base( atm, stub_atom2 );
-				}
-			} else {
-				set_atom_base( atm, stub_atom1 );
-			}
-		}
-		if ( update_xyz ) {
-			set_ideal_xyz( atm, ic.build( *this ) );
-			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
-			//  ic.build(*this)(1) << ' ' <<
-			//  ic.build(*this)(2) << ' ' <<
-			//  ic.build(*this)(3) << std::endl;
-		}
-		break;
-	case ICoorAtomID::CONNECT :
-		atomno = id.atomno(); // For CONNECT, the atomno is repurposed as the connection number
-		residue_connections_[ atomno ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_LOWER :
-		debug_assert( lower_connect_id_ != 0 );
-		residue_connections_[ lower_connect_id_ ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_UPPER :
-		debug_assert( upper_connect_id_ != 0 );
-		residue_connections_[ upper_connect_id_ ].icoor( ic );
-		break;
-	default :
-		utility_exit_with_message( "unrecognized stub atom id type!" );
-		break; //to silence warning
-	}
 }
 
 void
@@ -3546,33 +3494,28 @@ ResidueType::set_icoor(
 	AtomICoor const ic( atm, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
 
 	debug_assert( id.type() == ICoorAtomID::INTERNAL ); //It should be, as we're using vertex descriptors
-	if ( atm == stub_atom1 ) {
-		//Root atom case
-		if ( root_atom_ != ResidueType::null_vertex ) {
-			tr.Error << "Can't reset root. Was " << atom_name( root_atom_ ) << " Resetting to " << atom_name( atm ) << std::endl;
-			utility_exit_with_message( "Attempted to inappropriately reset ICOOR root atom." );
-		}
-		root_atom_ = atm;
-		// Now we can continue as normal.
-	}
-	icoor_[ atm ] = ic;
-	// update atom_base if it isn't set yet (or is set to itself)
-	if ( ! atom_base_.count(atm) || atom_base_[atm] == atm ) {
-		if ( atm == stub_atom1 ) {
-			//root of tree
-			if ( natoms() == 1 ) {
-				set_atom_base( atm, atm );
-			} else {
-				set_atom_base( atm, stub_atom2 );
-			}
-		} else {
-			set_atom_base( atm, stub_atom1 );
-		}
-	}
-	if ( update_xyz ) {
-		set_ideal_xyz( atm, ic.build( *this ) );
-	}
+
+	// previously, a huge chunk of code was just copy and pasted by lazy ass developers.
+	set_icoor_private( graph_[atm].name(), id, ic, update_xyz );
 }
+
+void
+ResidueType::set_icoor(
+	std::string const & atm,
+	Real const phi,
+	Real const theta,
+	Real const d,
+	ICoorAtomID const & stub_atom1,
+	ICoorAtomID const & stub_atom2,
+	ICoorAtomID const & stub_atom3,
+	bool const update_xyz // = false
+)
+{
+	ICoorAtomID id( atm, *this );
+	AtomICoor const ic( atm, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
+	set_icoor_private( atm, id, ic, update_xyz );
+}
+
 
 
 // Reset the bond distance to an atom whose internal coordinates have already been set.
@@ -3943,6 +3886,68 @@ ResidueType::note_chi_controls_atom( Size chi, Size atomno )
 		if ( atom_base(nbrs[ii]) == atomno ) {
 			note_chi_controls_atom( chi, nbrs[ ii ] );
 		}
+	}
+}
+
+void
+ResidueType::set_icoor_private(
+	std::string const & atm,
+	ICoorAtomID const & id,
+	AtomICoor const & ic,
+	bool update_xyz
+)
+{
+	VD atom_vd( id.vertex() );
+	switch ( id.type() ) {
+	case ICoorAtomID::INTERNAL :
+		//debug_assert( atom_vd == atom_vertex( atm ) );
+		if ( atom_vd == ic.stub_atom1().vertex() ) {
+			//Root atom case
+			if ( root_atom_ != ResidueType::null_vertex ) {
+				tr.Error << "Can't reset root. Was " << atom_name( root_atom_ ) << " Resetting to " << atm << std::endl;
+				utility_exit_with_message( "Attempted to inappropriately reset ICOOR root atom." );
+			}
+			root_atom_ = atom_vd;
+			// Now we can continue as normal.
+		}
+		icoor_[ atom_vd ] = ic;
+
+		// update atom_base if it isn't set yet (or is set to itself)
+		if ( ! atom_base_.count(atom_vd) || atom_base_[atom_vd] == atom_vd ) {
+			if ( atom_vd == ic.stub_atom1().vertex() ) {
+				//root of tree
+				if ( natoms() == 1 ) {
+					set_atom_base( atm, atm );
+				} else {
+					set_atom_base( atom_vd, ic.stub_atom2().vertex() );
+				}
+			} else {
+				set_atom_base( atom_vd, ic.stub_atom1().vertex() );
+			}
+		}
+		if ( update_xyz ) {
+			set_ideal_xyz( atm, ic.build( *this ) );
+			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+			//  ic.build(*this)(1) << ' ' <<
+			//  ic.build(*this)(2) << ' ' <<
+			//  ic.build(*this)(3) << std::endl;
+		}
+		break;
+	case ICoorAtomID::CONNECT :
+		// For CONNECT, the atomno is repurposed as the connection number
+		residue_connections_[ id.atomno() ].icoor( ic );
+		break;
+	case ICoorAtomID::POLYMER_LOWER :
+		debug_assert( lower_connect_id_ != 0 );
+		residue_connections_[ lower_connect_id_ ].icoor( ic );
+		break;
+	case ICoorAtomID::POLYMER_UPPER :
+		debug_assert( upper_connect_id_ != 0 );
+		residue_connections_[ upper_connect_id_ ].icoor( ic );
+		break;
+	default :
+		utility_exit_with_message( "unrecognized stub atom id type!" );
+		break; //to silence warning
 	}
 }
 

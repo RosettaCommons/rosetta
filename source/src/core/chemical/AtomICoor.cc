@@ -116,6 +116,14 @@ ICoorAtomID::ICoorAtomID(
 	vd_ = vd;
 }
 
+ICoorAtomID::ICoorAtomID( ICoorAtomID const & id ) :
+	type_(   id.type_   ),
+	atomno_( id.atomno_ ),
+	vd_(     id.vd_     )
+{
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 Vector const &
 ICoorAtomID::xyz(
@@ -316,6 +324,32 @@ AtomICoor::AtomICoor(
 	stub_atom2_( stub_atom2_vd, rsd_type ),
 	stub_atom3_( stub_atom3_vd, rsd_type )
 {}
+
+/// @brief AtomICoorID version
+AtomICoor::AtomICoor(
+	std::string const & built_atom_name,
+	Real const phi_in,
+	Real const theta_in,
+	Real const d_in,
+	ICoorAtomID const & stub_atom1,
+	ICoorAtomID const & stub_atom2,
+	ICoorAtomID const & stub_atom3,
+	ResidueType const & rsd_type
+) :
+	phi_( phi_in ),
+	theta_( theta_in ),
+	d_( d_in ),
+	stub_atom1_( stub_atom1 ),
+	stub_atom2_( stub_atom2 ),
+	stub_atom3_( stub_atom3 )
+{
+	if ( built_atom_name.size() <= 4 ) {
+		built_vd_ = rsd_type.atom_vertex(built_atom_name);
+	} else {
+		built_vd_ = ResidueType::null_vertex;
+	}
+}
+
 
 Vector
 AtomICoor::build(

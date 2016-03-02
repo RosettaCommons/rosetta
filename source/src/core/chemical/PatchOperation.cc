@@ -711,6 +711,47 @@ SetICoor::apply( ResidueType & rsd ) const
 	return false;
 }
 
+ChangeAncestory::ChangeAncestory(
+	std::string const & target_atom,
+	Ancestor which_ancestor,
+	std::string const & ancestor_name
+) :
+	atom_( target_atom ),
+	which_ancestor_( which_ancestor ),
+	ancestor_name_( ancestor_name )
+{}
+
+/// @brief change the ancestory, but leave the icoors intact.
+bool
+ChangeAncestory::apply( ResidueType & rsd ) const
+{
+	Size const atind( rsd.atom_index( atom_ ));
+	AtomICoor const aticoor( rsd.icoor( atind ));
+
+	ICoorAtomID pa, gp, gg;
+
+	try {
+		pa = which_ancestor_ == anc_parent           ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom1();
+		gp = which_ancestor_ == anc_grandparent      ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom2();
+		gg = which_ancestor_ == anc_greatgrandparent ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom3();
+	} catch ( utility::excn::EXCN_Base const & excn ) {
+		std::ostringstream oss;
+		oss << "Failed to apply the ChangeAncestory patch (" << atom_ << ", ";
+		switch ( which_ancestor_ ) {
+			case anc_parent : oss << "parent"; break;
+			case anc_grandparent : oss << "grandparent"; break;
+			case anc_greatgrandparent : oss << "greatgrandparent"; break;
+		}
+		oss << ", " << ancestor_name_ << ") to residue type " << rsd.name() << " when constructing ancetor's ICoorAtomID\n";
+		oss << "Message from ICoorAtomID constructor: " << excn.msg() << "\n";
+
+		utility_exit_with_message( oss.str() );
+	}
+
+	rsd.set_icoor( atom_, aticoor.phi(), aticoor.theta(), aticoor.d(), pa, gp, gg, true /*rebuild_xyz*/ );
+	return false;
+}
+
 
 // ResetBondLength ////////////////////////////////////////////////////////////
 
@@ -2135,7 +2176,22 @@ patch_operation_from_patch_file_line(
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 ) );
-
+	} else if ( tag == "SET_ANCESTOR" ) {
+		std::string atom_name, which_anc, anc_atom_name;
+		Ancestor anc( anc_parent );
+		l >> atom_name >> which_anc >> anc_atom_name;
+		if ( which_anc == "PARENT" ) {
+			anc = anc_parent;
+		} else if ( which_anc == "GRANDPARENT" ) {
+			anc = anc_grandparent;
+		} else if ( which_anc == "GREATGRANDPARENT" ) {
+			anc = anc_greatgrandparent;
+		} else {
+			std::ostringstream oss;
+			oss << "While reading the SET_ANCESTOR patch operation line, did not find PARENT, GRANDPARENT, or GREATGRANDPARENT as the third string on that line\n";
+			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		}
+		return PatchOperationOP( new ChangeAncestory( atom_name, anc, anc_atom_name ));
 	} else if ( tag == "RESET_BOND_LENGTH" ) {
 		core::Distance d;
 		l >> atom_name >> d;

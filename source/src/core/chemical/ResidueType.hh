@@ -1255,6 +1255,20 @@ public:
 		bool const update_xyz = false
 	);
 
+	/// @brief set AtomICoor for an atom
+	/// @details phi and theta are in radians
+	void
+	set_icoor(
+		std::string const & atm,
+		Real const phi,
+		Real const theta,
+		Real const d,
+		ICoorAtomID const & stub_atom1,
+		ICoorAtomID const & stub_atom2,
+		ICoorAtomID const & stub_atom3,
+		bool const update_xyz = false
+	);
+
 	/// @brief Reset the bond distance to an atom whose internal coordinates have already been set.
 	void reset_bond_distance_to_atom( std::string const & atm, core::Distance const d );
 
@@ -2101,6 +2115,9 @@ private:
 	/// @brief Recursive subroutine invoked by update_last_controlling_chi().
 	void
 	note_chi_controls_atom( Size chi, Size atomno );
+
+	void
+	set_icoor_private( std::string const & atm, ICoorAtomID const & id, AtomICoor const & ic, bool update_xyz );
 
 private:
 
