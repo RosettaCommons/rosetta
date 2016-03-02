@@ -181,6 +181,8 @@ GlycanRelaxMover::set_cmd_line_defaults(){
 	pack_glycans_ = option[ OptionKeys::carbohydrates::pack_glycans]();
 	final_min_ = option[ OptionKeys::carbohydrates::final_min_glycans]();
 	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_relax_movie]();
+	kt_ = option[ OptionKeys::carbohydrates::glycan_relax_kt]();
+	
 }
 
 protocols::moves::MoverOP
@@ -240,7 +242,7 @@ GlycanRelaxMover::set_rounds(core::Size rounds){
 
 
 void
-GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
+GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 
 	using namespace core::pose::carbohydrates;
@@ -250,20 +252,19 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 
 	TR << "initializing objects " << std::endl;
 	total_glycan_residues_ = 0;
-
+	positions_.clear();
+	
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
 	}
 
 	//Create a MonteCarlo object
+	scorefxn_->score(pose);
 	mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, kt_) );
-
 	TR << "mc" <<std::endl;
 
 	//Setup Movemaps
-
-
 	glycan_movemap_ = MoveMapOP( new MoveMap );
 
 	if ( ! full_movemap_ ) {
@@ -274,7 +275,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 		}
 		full_movemap_ = mm;
 	}
-
 
 	///////////  Setup Glycan Movemap ////////////////
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
@@ -294,7 +294,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 			glycan_movemap_->set_chi(resnum , false ); //Not using Movemap to pack here - must deal with that another time!
 		}
 	}
-
 
 	///////////  Expand Branches and Parsed Residues ////////////////
 	/// Used for RosettaScripts.
@@ -331,14 +330,12 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 					}
 				}
 			}
-
 		}
 	}
 
 	if ( total_glycan_residues_ == 0 ) {
 		utility_exit_with_message( " No glycan residues in pose.  Cannot continue. ");
 	}
-
 
 	//////////  Setup Phi/Psi/Omega movemaps. /////////////////////////
 	MoveMapOP phi_glycan_movemap = glycan_movemap_->clone();
@@ -363,7 +360,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 		} else {
 			omega_glycan_movemap->set_bb( i, false );
 		}
-
 	}
 
 	std::map< core::id::MainchainTorsionType, MoveMapOP > movemaps;
@@ -373,12 +369,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 
 	TR << "Modeling " << total_glycan_residues_ << " glycan residues" << std::endl;
 
-
-
-
 	////////////////// Mover Setup //////////////
-
-
 	//Create Movers that will be part of our sequence mover.
 	SugarBBSamplerOP phi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
 	SugarBBSamplerOP psi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
@@ -390,15 +381,9 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 
 	//Tolerance of .001 can significantly decrease energies, but it takes ~ 25% faster.  This tolerance should be optimized here.
 	min_mover_ = MinMoverOP( new MinMover( glycan_movemap_->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, false /* use_nblist*/ ) );
-
-
 	linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( glycan_movemap_ ));
 
-
-
-
 	////////// Sequence Mover Setup //////////////
-
 	//Settings for linkage conformer mover here!
 	weighted_random_mover_ = RandomMoverOP(new RandomMover);
 	weighted_random_mover_->add_mover(phi_sampler_mover, .20);
@@ -411,7 +396,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 
 	weighted_random_mover_->add_mover(linkage_mover_, .2);
 	weighted_random_mover_->add_mover(min_mover_, .10); // This .2 will be split to packing and minimization when we implement TaskFactory support and OH optimization.
-
 
 	//Setup SmallBBSamplers
 	core::Size total_torsion_types = 2;
@@ -437,7 +421,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose const & pose ){
 		weighted_random_mover_->add_mover(glycan_large_mover, 0.04285714285714286/total_torsion_types);
 
 	}
-
 }
 
 void
@@ -467,7 +450,9 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 
 	core::Size total_rounds = total_glycan_residues_ * rounds_;
 	TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
-
+	
+	bool accepted = false;
+	mc_->set_last_accepted_pose(pose);
 	for ( core::Size round = 1; round <= total_rounds; ++round ) {
 		TR << "Round: "<< round << std::endl;
 		weighted_random_mover_->apply(pose);
@@ -479,7 +464,7 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 				pmm_trials.apply( pose );
 			}
 
-			bool accepted = mc_->boltzmann( pose );
+			accepted = mc_->boltzmann( pose );
 
 			if ( pymol_movie_ && accepted ) {
 				pmm_accepts.apply( pose );

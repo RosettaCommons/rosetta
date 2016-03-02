@@ -1220,12 +1220,12 @@ get_linkage_types_for_dihedral( id::MainchainTorsionType torsion ){
 
 /// @brief Remove branch points from a carbohydrate or aa residue.
 void
-remove_carbohydrate_branch_point_variants( Pose & pose, conformation::Residue const & rsd)
+remove_carbohydrate_branch_point_variants( Pose & pose, core::Size seqpos)
 {
 	using namespace core::chemical;
 
-	if ( rsd.is_branch_point() ) {
-		if ( rsd.is_carbohydrate() ) {
+	if ( pose.residue(seqpos).is_branch_point() ) {
+		if ( pose.residue(seqpos).is_carbohydrate() ) {
 			utility::vector1< VariantType > branch_types;
 
 			branch_types.push_back( C1_BRANCH_POINT );
@@ -1240,13 +1240,16 @@ remove_carbohydrate_branch_point_variants( Pose & pose, conformation::Residue co
 
 
 			for ( core::Size i = 1; i <= branch_types.size(); ++i ) {
-				if ( rsd.has_variant_type( branch_types[ i ] ) ) {
-					remove_variant_type_from_pose_residue( pose, branch_types[ i ], rsd.seqpos());
+			
+				//Must check current residue since we are editing - something gets strange with valgrind
+				//   since we replace the residue on variant type removal
+				if ( pose.residue(seqpos).has_variant_type( branch_types[ i ] ) ) {
+					remove_variant_type_from_pose_residue( pose, branch_types[ i ], seqpos);
 				}
 			}
 
 		} else {
-			remove_variant_type_from_pose_residue( pose, SC_BRANCH_POINT, rsd.seqpos());
+			remove_variant_type_from_pose_residue( pose, SC_BRANCH_POINT, seqpos);
 
 		}
 
@@ -1328,8 +1331,8 @@ delete_carbohydrate_branch(
 
 	// Update branching of starting_position residue.  After all this deletion, it will not have any branches and should be a tip.
 	//   -> Deal with branch of aa side chain or carbohydrate branch properly!
-	conformation::Residue const & trim_to_rsd = pose.residue( current_delete_to ); //This may pose a problem...
-	remove_carbohydrate_branch_point_variants( pose, trim_to_rsd );
+
+	remove_carbohydrate_branch_point_variants( pose, current_delete_to );
 
 
 	// Update contents of Pose - does it have any carbohydrates left?

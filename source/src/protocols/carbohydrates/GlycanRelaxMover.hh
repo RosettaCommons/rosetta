@@ -122,7 +122,7 @@ public:
 private:
 
 	void
-	init_objects( core::pose::Pose const & pose );
+	init_objects( core::pose::Pose & pose );
 
 	void
 	set_cmd_line_defaults();

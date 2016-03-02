@@ -1910,6 +1910,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc = "Make a movie of accepts and trials (send to pymol)",
 			default = 'false',
 			),
+		Option('glycan_relax_kt', 'Real',
+			desc = "KT for GlycanRelaxMover",
+			default = '2.0',
+			),
 	), # -carbohydrates
 
 	##########################################################################
