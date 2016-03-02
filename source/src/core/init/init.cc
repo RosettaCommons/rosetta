@@ -65,6 +65,7 @@
 #include <core/scoring/methods/RG_Energy_FastCreator.hh>
 #include <core/scoring/methods/RG_LocalEnergyCreator.hh>
 #include <core/scoring/methods/SA_EnergyCreator.hh>
+#include <core/scoring/methods/SSElementMotifContactEnergyCreator.hh>
 #include <core/scoring/methods/D2H_SA_EnergyCreator.hh>
 #include <core/scoring/methods/ProQ_EnergyCreator.hh>
 #include <core/scoring/methods/RMS_EnergyCreator.hh>
@@ -76,7 +77,6 @@
 #include <core/scoring/methods/SecondaryStructureEnergyCreator.hh>
 #include <core/scoring/methods/carbohydrates/SugarBackboneEnergyCreator.hh>
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackEnergyCreator.hh>
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
 #include <core/scoring/methods/RingClosureEnergyCreator.hh>
@@ -160,6 +160,8 @@
 #include <core/scoring/methods/ResidualDipolarCouplingEnergy_RohlCreator.hh>
 #include <core/scoring/methods/SmoothCenPairEnergyCreator.hh>
 #include <core/scoring/methods/SmoothEnvEnergyCreator.hh>
+#include <core/scoring/methods/CenPairMotifEnergyCreator.hh>
+#include <core/scoring/methods/CenPairMotifDegreeEnergyCreator.hh>
 #include <core/scoring/methods/CenRotPairEnergyCreator.hh>
 #include <core/scoring/methods/CenRotEnvEnergyCreator.hh>
 #include <core/scoring/methods/CenHBEnergyCreator.hh>
@@ -364,6 +366,8 @@ static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator
 static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::CenPairMotifEnergyCreator > CenPairMotifEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::CenPairMotifDegreeEnergyCreator > CenPairMotifDegreeEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ContactOrderEnergyCreator > ContactOrderEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::IntermolEnergyCreator > IntermolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MissingEnergyCreator > MissingEnergyCreator_registrator;
@@ -385,6 +389,7 @@ static EnergyMethodRegistrator< scoring::methods::BurialEnergyCreator > BurialCr
 static EnergyMethodRegistrator< scoring::methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SA_EnergyCreator > SA_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::SSElementMotifContactEnergyCreator > SSElementMotifContactEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::D2H_SA_EnergyCreator > D2H_SA_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ProQ_EnergyCreator > ProQ_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RMS_EnergyCreator > RMS_EnergyCreator_registrator;
@@ -395,7 +400,6 @@ static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyCreator > Refer
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyNoncanonicalCreator > ReferenceEnergyNoncanonicalCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SecondaryStructureEnergyCreator > SecondaryStructureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::VallLookbackEnergyCreator > VallLookbackEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > RingClosureEnergyCreator_registrator;

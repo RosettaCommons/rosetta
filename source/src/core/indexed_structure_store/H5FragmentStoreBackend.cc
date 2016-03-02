@@ -84,6 +84,27 @@ H5::DataType H5FragmentStoreBackend::FragmentRealGroupEntryDatatype(std::string 
 
 	return entry_type;
 }
+H5::DataType H5FragmentStoreBackend::FragmentReal1PerResGroupEntryDatatype(std::string group_field,FragmentSpecification fragment_spec)
+{
+	using namespace H5;
+	CompType entry_type(sizeof(numeric::Size)*fragment_spec.fragment_length);
+	hsize_t array_length[1];
+	array_length[0] = fragment_spec.fragment_length ;
+	entry_type.insertMember(group_field, 0, ArrayType(RealPredType, 1, array_length));
+	return entry_type;
+}
+
+
+H5::DataType H5FragmentStoreBackend::FragmentString1PerResGroupEntryDatatype(std::string group_field,FragmentSpecification fragment_spec)
+{
+	using namespace H5;
+	CompType entry_type(sizeof(char)*fragment_spec.fragment_length);
+	hsize_t array_length[1];
+	array_length[0] = fragment_spec.fragment_length ;
+	H5::StrType string_type(H5::PredType::C_S1, 1);
+	entry_type.insertMember(group_field, 0, ArrayType(string_type, 1, array_length));
+	return entry_type;
+}
 
 
 H5FragmentStoreBackend::H5FragmentStoreBackend(std::string target_filename)
@@ -132,27 +153,24 @@ FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_nam
 	DataSpace store_dataspace(store_dataset.getSpace());
 	TR.Debug << "Loading: " << store_path << " size:" << store_dataspace.getSimpleExtentNpoints() << std::endl;
 
-  FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, store_dataspace.getSimpleExtentNpoints()));
+	FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, store_dataspace.getSimpleExtentNpoints()));
 
-	store_dataset.read(
-      &fragment_store->fragment_threshold_distances[0],
-      FragmentThresholdDistanceEntryDatatype());
+	store_dataset.read(&fragment_store->fragment_threshold_distances[0],FragmentThresholdDistanceEntryDatatype());
+
 	store_dataset.read(
       &fragment_store->fragment_coordinates[0],
       FragmentCoordinateEntryDatatype(fragment_spec));
 	return fragment_store;
 }
 
-FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_name, std::string group_field, std::string group_type){
+void H5FragmentStoreBackend::append_to_fragment_store(FragmentStoreOP fragment_store, std::string store_name, std::string group_field, std::string group_type){
 	using namespace H5;
-	FragmentStoreOP fragment_store(NULL);
-	fragment_store = get_fragment_store(store_name);
 	std::string store_path = "/fragments/" + store_name;
 	TR.Debug << "Re-Opening: " << store_path << std::endl;
 	DataSet store_dataset(target_file_.openDataSet(store_path));
 	DataSpace store_dataspace(store_dataset.getSpace());
-	TR.Debug <<"Loading group type: " << group_field << "of type " << group_type << std::endl;
-	if(group_type != "int64" && group_type != "real")
+	TR.Debug <<"Loading group type: " << group_field << " of type " << group_type << std::endl;
+	if(group_type != "int64" && group_type != "real" && group_type != "char_per_residue" && group_type != "real_per_residue")
 		utility_exit_with_message(group_type + " is not a valid entry in the fragment store. Currently only int64 and real are implemented");
 	if(group_type =="int64"){
 		std::vector<numeric::Size> int64_group;
@@ -171,7 +189,39 @@ FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_nam
 		FragmentRealGroupEntryDatatype(group_field));
 		fragment_store->real_groups.insert(std::pair<std::string,std::vector <numeric::Real> > (group_field,real_group));
 		}
-	return fragment_store;
+	if(group_type == "real_per_residue"){
+		std::vector<numeric::Real> real_group;
+		std::vector<std::vector <numeric::Real> > real_group_processed;
+		real_group.resize(store_dataspace.getSimpleExtentNpoints()*fragment_store->fragment_specification.coordinates_per_fragment());
+		store_dataset.read(
+		&real_group[0],
+		FragmentReal1PerResGroupEntryDatatype(group_field,fragment_store->fragment_specification));
+		std::vector<numeric::Real>::iterator begin_itr,end_itr;
+		begin_itr = real_group.begin();
+		for(numeric::Size ii=0; ii<=(numeric::Size)store_dataspace.getSimpleExtentNpoints(); ++ii){
+			end_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment();
+			std::vector<numeric::Real> numericSplit(begin_itr,end_itr);
+			real_group_processed.push_back(numericSplit);
+			begin_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment();
+		}
+		fragment_store->realVector_groups.insert(std::pair<std::string,std::vector<std::vector<numeric::Real> > > (group_field,real_group_processed));
+	}
+	if(group_type == "char_per_residue"){
+		//1 residue string with same length as the number of frags.
+		std::vector<char> char_per_residue_group;
+		std::vector<std::string> char_per_residue_group_processed;
+		char_per_residue_group.resize(store_dataspace.getSimpleExtentNpoints()*fragment_store->fragment_specification.coordinates_per_fragment());
+		store_dataset.read(&char_per_residue_group[0],FragmentString1PerResGroupEntryDatatype(group_field,fragment_store->fragment_specification));
+		std::vector<char>::iterator begin_itr,end_itr;
+		begin_itr = char_per_residue_group.begin();
+		for(numeric::Size ii=0; ii<(numeric::Size)store_dataspace.getSimpleExtentNpoints(); ++ii){
+			end_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment();
+			std::string aa(begin_itr,end_itr);
+			char_per_residue_group_processed.push_back(aa);
+			begin_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment();
+		}
+		fragment_store->string_groups.insert(std::pair<std::string,std::vector<std::string> > (group_field,char_per_residue_group_processed));
+		}
 	}
 
 }

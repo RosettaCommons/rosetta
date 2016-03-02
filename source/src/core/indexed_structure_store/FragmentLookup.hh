@@ -32,6 +32,7 @@
 #include <core/indexed_structure_store/FragmentLookup.fwd.hh>
 
 #include <numeric/coordinate_fitting/CoordinateArray_RMSD_FlatLookup.hh>
+#include <vector>
 
 namespace core
 {
@@ -94,6 +95,33 @@ public:
 		return lookup_closest_fragment(query_coordinates);
 	}
 
+		// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
+	template<class xyzVectorIterator>
+	FragmentLookupResult lookup_closest_fragment_subset(xyzVectorIterator input, std::vector<bool> subset)
+	{
+		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
+		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
+
+		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
+			query_coordinates[i] = *input;
+		}
+
+		return lookup_closest_fragment_subset(query_coordinates,subset);
+	}
+
+	// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
+	template<class xyzVectorIterator> std::vector<FragmentLookupResult> lookup_close_fragments(xyzVectorIterator input,Real rms_threshold)
+	{
+		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
+		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
+
+		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
+			query_coordinates[i] = *input;
+		}
+
+		return lookup_close_fragments(query_coordinates,rms_threshold);
+	}
+
 	template<class FragmentLookupOutputIterator, class ResidueNumberOutputIterator>
 	void lookup_pose_fragments(core::pose::Pose const & pose, FragmentLookupOutputIterator result_out, ResidueNumberOutputIterator fragment_start_out)
 	{
@@ -154,6 +182,7 @@ public:
 		}
 	}
 
+
 	FragmentStoreCOP store() { return store_; }
 	FragmentSpecification const & fragment_specification() { return store_->fragment_specification; }
 
@@ -172,6 +201,10 @@ protected:
 	FragmentLookupResult lookup_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
 
 	FragmentLookupResult lookup_closest_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
+
+	FragmentLookupResult lookup_closest_fragment_subset(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates, std::vector<bool> subset);
+
+	std::vector<FragmentLookupResult> lookup_close_fragments(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  Real rms_threshold, Size max_matches=99999999);
 
 private:
 	FragmentStoreOP store_;

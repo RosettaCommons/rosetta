@@ -19,10 +19,10 @@
 #include <protocols/denovo_design/filters/SSPredictionFilter.fwd.hh>
 
 // Package headers
-#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <core/io/external/PsiPredInterface.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterCreator.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
@@ -31,7 +31,7 @@
 namespace protocols {
 namespace denovo_design {
 namespace filters {
-
+using namespace core::io::external;
 // main SSPredictionFilter class
 class SSPredictionFilter : public protocols::filters::Filter {
 public:

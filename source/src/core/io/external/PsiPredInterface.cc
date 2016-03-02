@@ -12,7 +12,7 @@
 /// @author Tom Linsky
 
 // unit headers
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <core/io/external/PsiPredInterface.hh>
 
 // package headers
 
@@ -34,11 +34,11 @@
 // C headers
 #include <time.h>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.psipredinterface" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.external.psipredinterface" );
 
-namespace protocols {
-namespace denovo_design {
-namespace filters {
+namespace core {
+namespace io {
+namespace external {
 
 /// @brief default constructor
 PsiPredInterface::PsiPredInterface( std::string const & cmd )

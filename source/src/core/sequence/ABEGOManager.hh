@@ -228,6 +228,9 @@ public:
 	/// @brief transform abego symbol string to base5 index
 	Size symbolString2base5index( std::string symbolString);
 
+	/// @brief transform abego string to abego base5 index
+	std::string base5index2symbolString( Size base5index,Size length);
+
 	/// @brief transform abego index to symbol
 	char index2symbol( Size const & idx );
 

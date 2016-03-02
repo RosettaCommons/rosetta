@@ -18,7 +18,7 @@
 // package headers
 #include <devel/denovo_design/calculators/CavityCalculator.hh>
 #include <devel/denovo_design/calculators/ResidueCentralityCalculator.hh>
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <core/io/external/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
 
 // project headers

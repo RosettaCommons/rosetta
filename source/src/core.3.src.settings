@@ -11,6 +11,7 @@
 
 sources = {
 	"core/indexed_structure_store": [
+        "ABEGOHashedFragmentStore",
 		"FragmentStore",
 		"FragmentLookup",
 		"H5FragmentStoreBackend",
@@ -34,6 +35,9 @@ sources = {
 	"core/io/ddg": [
 		"PositionDdGInfo",
 	],
+	"core/io/external": [
+		"PsiPredInterface",
+    ],
 	"core/io/mmcif": [
 		"cif_reader",
 		"cif_writer",
@@ -530,6 +534,8 @@ sources = {
 		"CartesianBondedEnergy",
 		"CenHBEnergy",
 		"CenPairEnergy",
+        "CenPairMotifEnergy",
+        "CenPairMotifDegreeEnergy",
 		"CenRotEnvEnergy",
 		"chainbreak_util",
 		"ChainbreakEnergy",
@@ -611,7 +617,8 @@ sources = {
 		"SA_Energy",
 		"SecondaryStructureEnergy",
 		"SequenceDependentRefEnergy",
-		"ShortRangeTwoBodyEnergy",
+		"SSElementMotifContactEnergy",
+        "ShortRangeTwoBodyEnergy",
 		"SmoothCenPairEnergy",
 		"CenRotPairEnergy",
 		"SmoothEnvEnergy",
@@ -763,11 +770,6 @@ sources = {
 		"trie_vs_trie",
 		"TrieCollection",
 		"TrieCountPairBase",
-	],
-	"core/scoring/methods/vall_lookback":[
-		"VallLookbackData",
-		"VallLookbackEnergy",
-		"VallLookbackPotential",
 	],
 	"core/scoring/vdwaals": [
 		"VDW_Energy",

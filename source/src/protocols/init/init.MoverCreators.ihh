@@ -132,6 +132,10 @@
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 #include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>
 
+#include <protocols/frag_picker/frag_movers/FragSetFromH5MoverCreator.hh>
+#include <protocols/frag_picker/frag_movers/MergeFragSetMoverCreator.hh>
+#include <protocols/frag_picker/frag_movers/ReduceFragLengthMoverCreator.hh>
+
 #include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
 #include <protocols/helical_bundle/BackboneGridSamplerCreator.hh>
@@ -205,6 +209,7 @@
 #include <protocols/matdes/SymDofMoverCreator.hh>
 #include <protocols/matdes/SchemePlaceMotifsMoverCreator.hh>
 
+
 #include <protocols/md/CartesianMDCreator.hh>
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>
 #include <protocols/simple_moves/PeriodicBoxMoverCreator.hh>
@@ -235,6 +240,10 @@
 #include <protocols/normalmode/NormalModeMinimizerCreator.hh>
 
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
+
+#include <protocols/pose_length_moves/FixAllLoopsMoverCreator.hh>
+#include <protocols/pose_length_moves/InsertResMoverCreator.hh>
+#include <protocols/pose_length_moves/NearNativeLoopCloserCreator.hh>
 
 #include <protocols/protein_interface_design/movers/AddChainBreakCreator.hh>
 #include <protocols/protein_interface_design/movers/AddSidechainConstraintsToHotspotsCreator.hh>
@@ -340,6 +349,7 @@
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
 #include <protocols/simple_moves/MakePolyXMoverCreator.hh>
 #include <protocols/simple_moves/MembraneTopologyCreator.hh>
+#include <protocols/simple_moves/MergePDBMoverCreator.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMoverCreator.hh>
@@ -362,6 +372,7 @@
 #include <protocols/simple_moves/SetTorsionCreator.hh>
 #include <protocols/simple_moves/ShortBackrubMoverCreator.hh>
 #include <protocols/simple_moves/SimpleThreadingMoverCreator.hh>
+#include <protocols/simple_moves/StructProfileMoverCreator.hh>
 #include <protocols/simple_moves/StorePoseSnapshotCreator.hh>
 #include <protocols/simple_moves/SuperimposeMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>

@@ -24,7 +24,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 
-#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>
+#include <core/io/external/PsiPredInterface.fwd.hh>
 #include <protocols/ss_prediction/SS_predictor.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
@@ -60,7 +60,8 @@ private:
 	utility::io::ozstream* output_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	std::string psipred_cmd_;
-	protocols::denovo_design::filters::PsiPredInterfaceOP psipred_interface_;
+	core::io::external::PsiPredInterfaceOP psipred_interface_;
+	
 	protocols::ss_prediction::SS_predictorOP ss_predictor_;
 	protocols::jd2::parser::BluePrintOP blueprint_;
 	core::Real start_time_;

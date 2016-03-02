@@ -132,7 +132,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "goap" ] = goap;
 	name2score_type_[ "goap_dist" ] = goap_dist;
 	name2score_type_[ "goap_angle" ] = goap_angle;
-	name2score_type_["vall_lb"] = vall_lb;
 
 	// PyRosetta score types
 #ifdef PYROSETTA
@@ -335,7 +334,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cen_pair_smooth" ] = cen_pair_smooth;
 	name2score_type_[ "cbeta_smooth" ] = cbeta_smooth;
 	name2score_type_[ "cenpack_smooth" ] = cenpack_smooth;
-
 	name2score_type_[ "hs_pair" ] = hs_pair;
 	name2score_type_[ "ss_pair" ] = ss_pair;
 	name2score_type_[ "rsigma" ] = rsigma;
@@ -359,6 +357,11 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "d2h_sa" ] = d2h_sa;
 	name2score_type_[ "ProQM" ] = ProQM;
 	name2score_type_[ "ProQ" ] = ProQ;
+
+	//Centroid motif derived score functions
+	name2score_type_[ "cen_pair_motifs"] = cen_pair_motifs;
+	name2score_type_[ "cen_pair_motif_degree"] = cen_pair_motif_degree;
+	name2score_type_[ "ss_contact_worst"] = ss_contact_worst;
 
 	name2score_type_[ "interchain_env"] = interchain_env;
 	name2score_type_[ "interchain_contact"] = interchain_contact;

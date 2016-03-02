@@ -48,8 +48,6 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackData.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/PDBInfo.hh>
@@ -68,7 +66,6 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
-#include <protocols/simple_moves/VallLookbackFragMover.hh>
 
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
@@ -133,8 +130,7 @@ namespace remodel {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelLoopMover" );
-
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 // RNG
 
 /// @brief default constructor
@@ -592,20 +588,12 @@ void RemodelLoopMover::repeat_sync( //utility function
 			linkPositions.push_back(i);
 		}
 
-		bool vallLookbackActive = repeat_pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA);
-		VallLookbackDataOP vall_history_repeat_pose(0);
-		if ( vallLookbackActive ) {
-			vall_history_repeat_pose = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( repeat_pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
-		}
-
 		for ( Size i = 1; i<= linkPositions.size(); i++ ) {
 
 			Size res = linkPositions[i];
 			Real loop_phi = 0;
 			Real loop_psi = 0;
 			Real loop_omega = 0;
-			Real loop_rmsd_history = 0;
-			Real loop_res_changed_history = 0;
 			char loop_secstruct = 'H';
 			if ( res <= segment_length ) { // should already be, just to be sure
 
@@ -618,20 +606,12 @@ void RemodelLoopMover::repeat_sync( //utility function
 					repeat_pose.set_psi( 1, loop_psi);
 					repeat_pose.set_omega( 1, loop_omega);
 					repeat_pose.set_secstruct(1,loop_secstruct);
-					if ( vallLookbackActive ) {
-						loop_rmsd_history = vall_history_repeat_pose->get_rmsd(1);
-						loop_res_changed_history = vall_history_repeat_pose->get_res_changed(1);
-					}
 
 				} else {
 					loop_phi = repeat_pose.phi(res);
 					loop_psi = repeat_pose.psi(res);
 					loop_omega = repeat_pose.omega(res);
 					loop_secstruct = repeat_pose.secstruct(res);
-					if ( vallLookbackActive ) {
-						loop_rmsd_history = vall_history_repeat_pose->get_rmsd(res);
-						loop_res_changed_history = vall_history_repeat_pose->get_res_changed(res);
-					}
 
 				}
 
@@ -640,10 +620,6 @@ void RemodelLoopMover::repeat_sync( //utility function
 					repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 					repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
 					repeat_pose.set_secstruct( res+(segment_length*rep),loop_secstruct );
-					if ( vallLookbackActive ) {
-						vall_history_repeat_pose->set_rmsd(res+(segment_length*rep),loop_rmsd_history);
-						vall_history_repeat_pose->set_res_changed(res+(segment_length*rep),loop_res_changed_history);
-					}
 
 				}
 			} else if ( res > segment_length ) { //for spanning builds
@@ -856,13 +832,6 @@ void RemodelLoopMover::repeat_propagation( //utility function
 			residues_beyond_jxn--;
 		}
 	}
-	bool vallLookbackActive = pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA);
-	VallLookbackDataOP vall_history_repeat_pose_(0);
-	VallLookbackDataOP vall_history_pose_(0);
-	if ( vallLookbackActive ) {
-		vall_history_pose_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
-		vall_history_repeat_pose_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( repeat_pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
-	}
 	for ( Size rep = 0; rep < repeat_number; rep++ ) {
 		for ( Size res = 1; res <= segment_length; res++ ) {
 			//std::cout << "DEBUG: res+segmentlength*rep = " << res+(segment_length*rep) << std::endl;
@@ -883,12 +852,6 @@ void RemodelLoopMover::repeat_propagation( //utility function
 			repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 			repeat_pose.set_omega( res+(segment_length*rep), pose.omega(res) );
 			repeat_pose.set_secstruct( res+(segment_length*rep),pose.secstruct(res) );
-			if ( vallLookbackActive ) {
-				Real rmsd_tmp = vall_history_pose_->get_rmsd(res);
-				bool res_changed_tmp= vall_history_pose_->get_res_changed(res);
-				vall_history_repeat_pose_->set_rmsd(res+( segment_length*rep),rmsd_tmp);
-				vall_history_repeat_pose_->set_res_changed(res+( segment_length*rep),res_changed_tmp);
-			}
 		}
 	}
 
@@ -1102,14 +1065,30 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//setup score functions and movemap and where to sample--------------
 		MoveMap movemap;
 		MoveMap movemapAll;
-		std::string ss = remodel_data_.ss;;
-		Size singleRepeat = (pose.total_residue()/2);
+		std::string ss = remodel_data_.ss;
+		Size singleRepeat = pose.total_residue();
+		if ( option[OptionKeys::remodel::repeat_structure].user() )
+			singleRepeat = (pose.total_residue()/2);
+//------------------------------debug code-----------------------------------------
+		//initialize all of the movemaps to false
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			movemap.set_bb( i, true );
-			movemap.set_chi( i, true );
-			movemapAll.set_bb(i, true);
-			movemapAll.set_chi(i, true);
-			if ( option[OptionKeys::remodel::staged_sampling::sample_over_loops]() ) {
+			movemap.set_bb( i, false );
+			movemap.set_chi( i, false );
+			movemapAll.set_bb(i, false);
+			movemapAll.set_chi(i, false);
+		}
+		//set loop locations to true
+		for ( Size ii=1; ii<=loops_->num_loop(); ++ii ) {
+			for (Size jj=(*loops_)[ii].start(); jj<= (*loops_)[ii].stop(); ++jj ){
+				movemap.set_bb( jj, true );
+				movemap.set_chi( jj, true );
+				movemapAll.set_bb(jj, true);
+				movemapAll.set_chi(jj, true);
+			}
+		}
+		//initialize movemap for initial residues
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( option[OptionKeys::remodel::staged_sampling::sample_over_loops].user() ) {
 				Size ssIndex = i-1;
 				if ( ssIndex>=singleRepeat ) {
 					ssIndex = i-singleRepeat-1;
@@ -1129,12 +1108,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		}
 		sfxStage1_OP->show_pretty(TR);
-		if ( option[fragment_threshold_distance].user() ) {
-			//prime the score function because of const issues involved with the score function.
-			VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
-			potential_.lookback(pose);
-			potential_.lookback(repeat_pose_);
-		}
 		//setup fragments so they sample correctly-----------
 		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
 		if ( !option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint] ) {
@@ -2318,7 +2291,7 @@ void RemodelLoopMover::abinitio_stage(
 		mc.reset(pose);
 	}
 
-	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,smoothMoves,fragScoreThreshold);
+	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,smoothMoves,sfxOP,fragScoreThreshold);
 	assert( !frag_movers.empty() );
 
 	// set appropriate topology
@@ -2363,11 +2336,6 @@ void RemodelLoopMover::abinitio_stage(
 		} else {
 			pose = mc.lowest_score_pose();
 		}
-		if ( pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA) ) {
-			//Efficiency could be improved by copying rmsd and lookback. But I figure a fresh copy might be better for now
-			VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
-			potential_.lookback(pose);
-		}
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		}
@@ -2386,9 +2354,15 @@ void RemodelLoopMover::abinitio_stage(
 			}
 		}
 		mc.show_state();
-		TR<< "showing constraints on repeat pose" << std::endl;
-		repeat_pose_.constraint_set()->show_definition(TR, repeat_pose_);
-		mc.score_function().show( TR, repeat_pose_ );
+		TR<< "showing constraints on repeat pose / pose in non repeat mode" << std::endl;
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			repeat_pose_.constraint_set()->show_definition(TR, repeat_pose_);
+			mc.score_function().show( TR, repeat_pose_ );
+		}
+		else{
+			repeat_pose_.constraint_set()->show_definition(TR, pose);
+			mc.score_function().show( TR, pose );
+		}
 		// recover low
 		if ( recover_low ) {
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
@@ -2423,12 +2397,6 @@ void RemodelLoopMover::abinitio_stage(
 				}
 			}
 		}
-	}
-	if ( pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA) ) {
-		//Efficiency could be improved by copying rmsd and lookback. But I figure a fresh copy might be better for now
-		VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
-		potential_.lookback(pose);
-		potential_.lookback(repeat_pose_);
 	}
 }
 
@@ -3158,7 +3126,7 @@ void RemodelLoopMover::boost_closure_stage(
 	//Real const cbreak_tolerance = 1.0;
 	Real const cbreak_tolerance = option[OptionKeys::remodel::RemodelLoopMover::threshold_for_boost_closure];
 	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
-		if ( !l->is_terminal( pose ) || l->start() != 1 ) {
+		if ( !l->is_terminal( pose ) ) {
 			Real const cbreak = linear_chainbreak( pose, l->cut() );
 			if ( cbreak < cbreak_tolerance ) {
 				loops_to_model->add_loop( *l );
@@ -3494,9 +3462,11 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 	Size const frag_size,
 	std::set<Size> const & allowedPos,
 	bool const smoothMoves,
+	ScoreFunctionOP /*scorefxnOP*/,
 	Real fragScoreThreshold
 )
 {
+
 	using namespace protocols::simple_moves;
 	using namespace core::fragment;
 	using namespace basic::options;
@@ -3520,14 +3490,10 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 				}
 			}
 			ClassicFragmentMoverOP cfm;
-			if ( option[fragment_threshold_distance].user() ) {
-				cfm = ClassicFragmentMoverOP(new VallLookbackFragMover(*f,movemap.clone()));
-			} else {
-				if ( smoothMoves ) {
+		  if ( smoothMoves ) {
 					cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
-				} else {
+		  } else {
 					cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
-				}
 			}
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
@@ -3686,22 +3652,35 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
 	using core::Size;
-	//At this point the pose is 2x. So we need to copy the helical residues twice.
 	std::string ss = remodel_data_.ss;
-	Size repeatRes = (pose.total_residue()/2);
-	for ( Size ii=1; ii<=ss.size(); ++ii ) {
-		if ( ss[ii-1] == 'H' ) {
-			pose.set_phi(ii,-63.8);
-			pose.set_phi(ii+repeatRes,-63.8);
-			pose.set_psi(ii,-41.1);
-			pose.set_psi(ii+repeatRes,-41.1);
-			pose.set_omega(ii,180);
-			pose.set_omega(ii+repeatRes,180);
-			pose.set_secstruct(ii,'H');
-			pose.set_secstruct(ii+repeatRes,'H');
+	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+		//At this point the pose is 2x. So we need to copy the helical residues twice.
+		Size repeatRes = (pose.total_residue()/2);
+		for ( Size ii=1; ii<=ss.size(); ++ii ) {
+			if ( ss[ii-1] == 'H' ) {
+				pose.set_phi(ii,-57.8);
+				pose.set_phi(ii+repeatRes,-57.8);
+				pose.set_psi(ii,-47.0);
+				pose.set_psi(ii+repeatRes,-47.0);
+				pose.set_omega(ii,180);
+				pose.set_omega(ii+repeatRes,180);
+				pose.set_secstruct(ii,'H');
+				pose.set_secstruct(ii+repeatRes,'H');
+			}
+		}
+	}
+	else{
+		for ( Size ii=1; ii<=ss.size(); ++ii ) {
+			if ( ss[ii-1] == 'H' ) {
+				pose.set_phi(ii,-57.8);
+				pose.set_psi(ii,-47.0);
+				pose.set_omega(ii,180);
+				pose.set_secstruct(ii,'H');
+			}
 		}
 	}
 }
+
 
 void RemodelLoopMover::set_starting_sequence(Pose & pose){
 	using namespace basic::options;

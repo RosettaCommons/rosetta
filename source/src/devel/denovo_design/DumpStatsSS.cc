@@ -14,7 +14,7 @@
 // Unit headers
 #include <devel/denovo_design/DumpStatsSS.hh>
 #include <devel/denovo_design/DumpStatsSSCreator.hh>
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <core/io/external/PsiPredInterface.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -121,7 +121,7 @@ core::Real
 DumpStatsSS::compute_psipred_prob(core::pose::Pose & pose, std::string wanted_ss)
 {
 	runtime_assert( psipred_interface_ != 0 );
-	protocols::denovo_design::filters::PsiPredResult const & psipred_result =
+	core::io::external::PsiPredResult const & psipred_result =
 		psipred_interface_->run_psipred( pose, wanted_ss );
 	return compute_boltz_sum( generate_prob( psipred_result, wanted_ss ) );
 }
@@ -150,7 +150,7 @@ DumpStatsSS::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
 	psipred_cmd_ = tag->getOption<std:: string > ("cmd", "");
-	psipred_interface_ = protocols::denovo_design::filters::PsiPredInterfaceOP( new protocols::denovo_design::filters::PsiPredInterface( psipred_cmd_ ) );
+	psipred_interface_ = core::io::external::PsiPredInterfaceOP( new core::io::external::PsiPredInterface( psipred_cmd_ ) );
 	ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
 	if ( blueprint_file != "" ) {

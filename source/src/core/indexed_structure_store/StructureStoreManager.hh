@@ -27,12 +27,14 @@
 #include <numeric/types.hh>
 #include <string>
 #include <map>
+#include <utility/vector1.hh>
 
 namespace core
 {
 namespace indexed_structure_store
 {
 
+using utility::vector1;
 // @brief Core database handle.
 // Encapsulates reading Structure/Residue data from data store and manages retrieval on indices on store.
 class StructureStoreManager : public utility::SingletonBase< StructureStoreManager >
@@ -40,6 +42,8 @@ class StructureStoreManager : public utility::SingletonBase< StructureStoreManag
 public:
 	friend class utility::SingletonBase< StructureStoreManager >;
 
+	typedef std::map< std::string, std::map<Size, FragmentStoreOP> > GroupedFragmentMap;
+	typedef std::map< std::string, FragmentLookupOP > FragmentLookupMap; //for later
 public:
 	// @brief Load fragment lookup from the default structure store. Default store is defined
 	// via indexed_structure_store:fragment_store option.
@@ -53,14 +57,17 @@ public:
 	// lookup_name - Lookup name within store. Fragment lookups within store are
 	//     under <store_path>/fragments/<lookup_name>
 	FragmentLookupOP load_fragment_lookup(std::string lookup_name, std::string store_path);
-	FragmentLookupOP load_fragment_lookup(std::string lookup_name, std::string store_path, std::string group_field,std::string group_type);
-	std::map<numeric::Size,FragmentStoreOP> group_fragment_store_int(std::string group_field, FragmentStoreOP fullStore);
+	FragmentStoreOP load_fragment_store(std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types);
+	std::map<numeric::Size,FragmentStoreOP> load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types);
+
+
 
 	std::string resolve_store_path(std::string store_path);
 
 private:
 
 	StructureStoreManager();
+	GroupedFragmentMap grouped_fragment_map_;
 	static StructureStoreManager * create_singleton_instance();
 
 };

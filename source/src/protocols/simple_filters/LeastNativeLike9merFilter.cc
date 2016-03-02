@@ -19,9 +19,18 @@
 #include <numeric/xyzVector.hh>
 
 // Project Headers
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pose/symmetry/util.hh>
+
+
+#include <core/sequence/ABEGOManager.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
+#include <core/indexed_structure_store/FragmentStore.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -36,9 +45,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-// vall_lookback
-#include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackData.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr("protocols.filters.LeastNativeLike9merFilter");
@@ -48,24 +54,12 @@ namespace simple_filters {
 
 // @brief default constructor
 LeastNativeLike9merFilter::LeastNativeLike9merFilter():
-	Filter( "worst9mer" ),
-	filtered_value_( 99 )
-{}
-
-// @brief copy constructor
-LeastNativeLike9merFilter::LeastNativeLike9merFilter( LeastNativeLike9merFilter const & rval ):
-	Super( rval ),
-	filtered_value_( rval.filtered_value_ )
+	Filter( "worst9mer" )
 {}
 
 // @brief destructor
 LeastNativeLike9merFilter::~LeastNativeLike9merFilter() {}
 
-// @brief set filtered value
-void LeastNativeLike9merFilter::filtered_value( Real const & value )
-{
-	filtered_value_ = value;
-}
 
 /// @brief
 LeastNativeLike9merFilter::Real
@@ -78,19 +72,50 @@ LeastNativeLike9merFilter::report_sm( const Pose & pose ) const
 void
 LeastNativeLike9merFilter::report( std::ostream & out, Pose const & pose ) const
 {
-	out << "worst_9mer: " <<  compute( pose ) << std::endl;
+	out << "worst9mer: " <<  compute( pose ) << std::endl;
 }
+
+
 
 /// @brief
 LeastNativeLike9merFilter::Real
 LeastNativeLike9merFilter::compute( const Pose & pose ) const
 {
-	using namespace core::scoring::methods;
-	using namespace core::scoring;
-
-	VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
-	Real worst_9mer = potential_.lookback(pose);
-	return(worst_9mer);
+	using namespace core::indexed_structure_store;
+	core::sequence::ABEGOManager AM;
+	utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
+	Size fragment_length = ABEGOHashedFragmentStore_->get_fragment_length();
+	Real worstRmsd = 0;
+	Size startRes = 1;
+	Size endRes = pose.total_residue()-fragment_length+1;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
+		endRes = symminfo->num_independent_residues()-fragment_length+1;
+	}
+	if(ignore_terminal_res_){
+		startRes = startRes+1;
+		endRes = endRes-1;
+	}
+	for(Size resid=startRes; resid<=endRes; ++resid){
+		std::string fragAbegoStr = "";
+		for ( Size ii=0; ii<fragment_length; ++ii ) {
+			fragAbegoStr += abegoSeq[resid+ii];
+		}
+			if(only_helices_ && fragAbegoStr == "AAAAAAAAA"){
+				Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
+				if(tmpRmsd>worstRmsd)
+					worstRmsd = tmpRmsd;
+		}
+		if(!only_helices_){
+			if ( fragAbegoStr != "AAAAAAAAA" ) {
+				Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
+				if(tmpRmsd>worstRmsd)
+					worstRmsd = tmpRmsd;
+			}
+		}
+	}
+	return(worstRmsd);
 }
 
 
@@ -99,12 +124,12 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 bool LeastNativeLike9merFilter::apply(const Pose & pose ) const
 {
 	Real value = compute( pose );
-	std::cout << "value" << value << "filtered_value_" << filtered_value_ << std::endl;
-	if ( value < filtered_value_ ) {
-		tr << "Successfully filtered: " << value << std::endl;
+	tr << "value" << value << "filtered_value_" << filtered_value_ << std::endl;
+	if ( value <= filtered_value_ ) {
+		tr << "Successfully passed filt " << value << std::endl;
 		return true;
 	} else {
-		tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
+		tr << "Filter failed current threshold=" << value << "/" << filtered_value_ << std::endl;
 		return false;
 	}
 } // apply_filter
@@ -118,9 +143,19 @@ LeastNativeLike9merFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
+	using namespace core::indexed_structure_store;
 	// set threshold
 	filtered_value_ = tag->getOption<Real>( "threshold", 99.0 );
+	if(filtered_value_!=99.0)
+		rmsd_lookup_thresh_ = filtered_value_;
+	else
+		rmsd_lookup_thresh_ = tag->getOption<Real>("rmsd_lookup_threshold",0.40);
+	only_helices_ = tag->getOption<bool>( "only_helices", false ); //lower threshold to remove kinked helices
+	ABEGOHashedFragmentStore_ = ABEGOHashedFragmentStore::get_instance();
+	ABEGOHashedFragmentStore_->set_threshold_distance(rmsd_lookup_thresh_);
 	tr << "Structures which has the best fragment RMSD at the worst position greater than " << filtered_value_ << " will be filtered." << std::endl;
+	ignore_terminal_res_ = tag->getOption<bool>("ignore_terminal_residue",true);
+
 }
 
 filters::FilterOP

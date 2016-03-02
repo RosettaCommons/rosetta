@@ -19,6 +19,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
+#include <vector>
+
 namespace core
 {
 namespace indexed_structure_store
@@ -110,7 +112,6 @@ FragmentLookupResult FragmentLookup::lookup_fragment(std::vector< numeric::xyzVe
 FragmentLookupResult FragmentLookup::lookup_closest_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates)
 {
 	FragmentLookupResult result;
-
 	numeric::Real* coordinate_start = &(query_coordinates[0].x());
 	result.found_match = lookup_.closest_match(coordinate_start, result.match_index, result.match_rmsd);
 
@@ -118,8 +119,40 @@ FragmentLookupResult FragmentLookup::lookup_closest_fragment(std::vector< numeri
 		result.match_score = 1;
 		result.match_rmsd_threshold = store_->fragment_threshold_distances[result.match_index];
 	}
-
 	return result;
+}
+
+FragmentLookupResult FragmentLookup::lookup_closest_fragment_subset(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,std::vector<bool> subset)
+{
+	FragmentLookupResult result;
+	numeric::Real* coordinate_start = &(query_coordinates[0].x());
+	result.found_match = lookup_.closest_match_subset(coordinate_start, result.match_index, result.match_rmsd,subset);
+
+	if ( result.found_match ) {
+		result.match_score = 1;
+		result.match_rmsd_threshold = store_->fragment_threshold_distances[result.match_index];
+	}
+	return result;
+}
+
+
+std::vector<FragmentLookupResult> FragmentLookup::lookup_close_fragments(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  Real rms_threshold, Size max_matches)
+{
+	std::vector<FragmentLookupResult> results;
+	std::vector<Size>match_indexes;
+	std::vector<Real>distances;
+
+	numeric::Real* coordinate_start = &(query_coordinates[0].x());
+
+	lookup_.all_matches_below_threshold(coordinate_start, match_indexes, distances,rms_threshold);
+	for(Size ii=0; (ii<match_indexes.size() && results.size()<max_matches); ++ii){
+		FragmentLookupResult result;
+		result.match_index =match_indexes[ii];
+		result.match_rmsd=distances[ii];
+		result.found_match = true;
+		results.push_back(result);
+	}
+	return(results);
 }
 
 

@@ -15,10 +15,12 @@
 #define INCLUDED_core_indexed_structure_store_FragmentStore_hh
 
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/types.hh>
 
 #include <core/indexed_structure_store/FragmentStore.fwd.hh>
+#include <core/indexed_structure_store/FragmentLookup.fwd.hh>
 
 #include <vector>
 #include <string>
@@ -54,22 +56,38 @@ struct FragmentSpecification
 	friend std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s);
 };
 
-class FragmentStore : public utility::pointer::ReferenceCount
+class FragmentStore : public utility::pointer::ReferenceCount , public utility::pointer::enable_shared_from_this< FragmentStore >
+
 {
 public:
 	// @brief Basic structure store, holds a collection of structure and associated residue entries.
 	FragmentStore(FragmentSpecification fragment_specification, numeric::Size num_fragments = 0);
 
+		/// self pointer
+	inline FragmentStoreOP get_self_ptr() { return shared_from_this(); }
+
+
 	void resize(numeric::Size num_fragments);
 	void add_threshold_distance_allFrag(numeric::Real distance);
 
+	void generate_subset_fragment_store(std::vector<numeric::Size> residues, std::string name);
+
+	FragmentLookupOP get_fragmentLookup();
+
+	std::vector<numeric::xyzVector<numeric::Real> > get_fragment_coordinates(numeric::Size position);
+
 
 	FragmentSpecification fragment_specification;
+	numeric::Size num_fragments_;
 	std::vector<numeric::Real> fragment_threshold_distances;
-	std::vector< numeric::xyzVector<numeric::Real> > fragment_coordinates;
+	std::vector<numeric::xyzVector<numeric::Real> > fragment_coordinates;
 	std::map<std::string, std::vector<numeric::Size> > int64_groups;
 	std::map<std::string, std::vector<numeric::Real> > real_groups;
-
+	std::map<std::string, std::vector<std::vector<numeric::Real> > >realVector_groups;
+	std::map<std::string, std::vector<std::string> > string_groups;
+	std::map<std::string, FragmentStoreOP> fragmentStore_groups;
+private:
+	FragmentLookupOP fragLookupOP_; //stored here to cache the removal of center of mass
 };
 
 }

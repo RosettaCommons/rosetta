@@ -12,8 +12,8 @@
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_filters_psipredinterface_hh
-#define INCLUDED_protocols_denovo_design_filters_psipredinterface_hh
+#ifndef INCLUDED_core_io_external_psipredinterface_hh
+#define INCLUDED_core_io_external_psipredinterface_hh
 
 // Unit Headers
 
@@ -30,9 +30,9 @@
 #include <map>
 #include <string>
 
-namespace protocols {
-namespace denovo_design {
-namespace filters {
+namespace core {
+namespace io {
+namespace external {
 
 struct PsiPredResult {
 	PsiPredResult() :
@@ -98,7 +98,7 @@ private:
 	std::string cmd_;
 };
 
-} //filters
-} //denovo_design
-} //protocols
+} //core
+} //io
+} //external
 #endif

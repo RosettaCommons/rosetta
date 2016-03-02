@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
 /// @brief
+/// @file
 /// @author Alex Ford <fordas@uw.edu>
 
 #include <utility/exit.hh>
@@ -28,6 +28,8 @@
 // H5-based backend declarations are guarded by #ifdef USEHDF5
 #include <core/indexed_structure_store/H5FragmentStoreBackend.hh>
 #include <core/indexed_structure_store/BinaryFragmentStoreBackend.hh>
+
+#include <utility/vector1.hh>
 
 // Singleton instance and mutex static data members
 namespace utility {
@@ -71,6 +73,7 @@ FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_
 	}
 }
 
+//considered caching at this level but I would get double storage
 FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_name, std::string store_path)
 {
 	FragmentStoreOP target_store(NULL);
@@ -97,72 +100,138 @@ FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_
 	return lookup;
 }
 
-FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_name, std::string store_path, std::string group_field,std::string group_type)
-{
+//considered caching at this level but I would get double storage
+FragmentStoreOP StructureStoreManager::load_fragment_store(std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types){
 	FragmentStoreOP target_store(NULL);
-	TR.Debug << "loading fragment lookup "+lookup_name+" store path "+store_path+" group_field "+ group_field+ " group type " + group_type;
 	std::string resolved_path = resolve_store_path(store_path);
-
 	if ( resolved_path.empty() ) {
 		utility_exit_with_message("Unable to resolve specified store: " + store_path);
+		TR << fields_to_load.size() << "," << fields_to_load_types.size() << std::endl; //For the testing server. Line should never be accessed.
 	}
-
-	if ( utility::file::file_extension(resolved_path) == "h5" ) {
-#ifdef USEHDF5
-		H5FragmentStoreBackend backend(store_path);
-		target_store = backend.get_fragment_store(lookup_name,group_field,group_type);
-#else
-		utility_exit_with_message("StructureStoreManager::load_fragment_lookup without HDF5 support, unable to load lookup: " + lookup_name + " resolved from: " + store_path);
+#ifndef USEHDF5
+	utility_exit_with_message("StructureStoreManager::load_fragment_lookup without HDF5 support, unable to load lookup: " + lookup_name + " resolved from: " + store_path);
 #endif
-	} else {
-		BinaryFragmentStoreBackend backend(resolved_path);
+#ifdef USEHDF5
+	if ( utility::file::file_extension(resolved_path) == "h5" ) {
+		H5FragmentStoreBackend backend(resolved_path);
 		target_store = backend.get_fragment_store(lookup_name);
+		for(Size ii=1; ii<=fields_to_load.size(); ++ii)
+			backend.append_to_fragment_store(target_store,lookup_name,fields_to_load[ii],fields_to_load_types[ii]);
 	}
-
-	FragmentLookupOP lookup = FragmentLookupOP(new FragmentLookup(target_store));
-	return lookup;
+	else
+		utility_exit_with_message("StructureStoreManager::requires h5 file extension resolved from: " + store_path);
+	TR << "database loaded!" << std::endl;
+#endif
+	return(target_store);
 }
 
-std::map<Size, FragmentStoreOP> StructureStoreManager::group_fragment_store_int(std::string group_field,FragmentStoreOP fullStore){
-	//get counts
-	std::map <Size,Size> type_ct;
-	std::map <Size,Size>::iterator type_ct_iter;
-	std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
-	Size fragment_length = fullStore->fragment_specification.fragment_length;
-	for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
-		//second time id seen increment counter 1st time increment to 1
-		type_ct_iter = type_ct.find(fragsGroupIds[ii]);
-		if ( type_ct_iter != type_ct.end() ) {
-			type_ct_iter->second++;
-		} else {
-			type_ct.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
-		}
+
+std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types){
+	std::string if_cached_name;
+	if_cached_name = group_field + lookup_name;
+	for(Size ii=1; ii<=fields_to_load.size(); ++ii){
+		if_cached_name += fields_to_load[ii];
 	}
-	//create correctly sized fragmentStores
-	std::map<Size,FragmentStoreOP> typed_frags;
-	FragmentSpecification fragment_spec = fullStore->fragment_specification;
-	for ( type_ct_iter=type_ct.begin(); type_ct_iter != type_ct.end(); ++type_ct_iter ) {
-		FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, type_ct_iter->second ));
-		typed_frags.insert(std::pair<Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
-	}
-	//populate fragment stores
-	std::map <Size,Size> type_currentCt;
-	for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
-		Size newFragStartPosition = 0; //position in new fragment array the fragment should start
-		Size originalFragStartPosition = ii*fragment_length;
-		type_ct_iter = type_currentCt.find(fragsGroupIds[ii]);
-		if ( type_ct_iter != type_currentCt.end() ) {
-			newFragStartPosition = type_ct_iter->second*fragment_length;
-			type_ct_iter->second++;
-		} else {
-			newFragStartPosition = 0*fragment_length;  //always will be 0 just set so I remember what is actually going on.
-			type_currentCt.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+	GroupedFragmentMap::const_iterator iter(grouped_fragment_map_.find(if_cached_name));
+	if(iter != grouped_fragment_map_.end())
+		return(iter->second);
+	else{
+		FragmentStoreOP fullStore = load_fragment_store(lookup_name,store_path,fields_to_load,fields_to_load_types);
+		std::map <Size,Size> type_ct;
+		std::map <Size,Size>::iterator type_ct_iter;
+		std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
+		Size fragment_length = fullStore->fragment_specification.fragment_length;
+		for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+			//second time id seen increment counter 1st time increment to 1
+			type_ct_iter = type_ct.find(fragsGroupIds[ii]);
+			if ( type_ct_iter != type_ct.end() ) {
+				type_ct_iter->second++;
+			} else {
+				type_ct.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+			}
 		}
-		for ( Size jj=0; jj<fragment_length; ++jj ) {
-			typed_frags[fragsGroupIds[ii]]->fragment_coordinates[newFragStartPosition+jj] =fullStore->fragment_coordinates[originalFragStartPosition+jj];
+		//create correctly sized fragmentStores
+		std::map<Size,FragmentStoreOP> typed_frags;
+		FragmentSpecification fragment_spec = fullStore->fragment_specification;
+		for ( type_ct_iter=type_ct.begin(); type_ct_iter != type_ct.end(); ++type_ct_iter ) {
+			FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, type_ct_iter->second ));
+			typed_frags.insert(std::pair<Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
 		}
+		//populate fragment stores
+		std::map <Size,Size> type_currentCt;
+		for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
+			Size newFragStartPosition = 0; //position in new fragment array the fragment should start
+			Size originalFragStartPosition = ii*fragment_length;
+			type_ct_iter = type_currentCt.find(fragsGroupIds[ii]);
+			if ( type_ct_iter != type_currentCt.end() ) {
+				newFragStartPosition = type_ct_iter->second*fragment_length;
+				type_ct_iter->second++;
+			} else {
+				newFragStartPosition = 0*fragment_length;  //always will be 0 just set so I remember what is actually going on.
+				type_currentCt.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+			}
+			for ( Size jj=0; jj<fragment_length; ++jj ) {
+				typed_frags[fragsGroupIds[ii]]->fragment_coordinates[newFragStartPosition+jj] =fullStore->fragment_coordinates[originalFragStartPosition+jj];
+			}
+		}//ends the copying of the fragmentCoordinates
+		fullStore->fragment_coordinates.clear();
+		//-------------Copy the real_groups
+		for ( std::map<std::string, std::vector<numeric::Real> >::iterator itr = fullStore->real_groups.begin(); itr !=  fullStore->real_groups.end(); ++itr ) {
+			std::string tmp_group_name = itr->first;
+			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+				if ( typed_frags[fragsGroupIds[ii]]->real_groups[tmp_group_name].size() == 0 ) {
+					std::vector<numeric::Real> real_vector;
+					typed_frags[fragsGroupIds[ii]]->real_groups.insert(std::pair<std::string,std::vector<numeric::Real> > (tmp_group_name,real_vector));
+				}
+				typed_frags[fragsGroupIds[ii]]->real_groups[tmp_group_name].push_back(fullStore->real_groups[tmp_group_name][ii]);
+			}
+		}
+		fullStore->real_groups.clear();
+		//-------------Copy the realVector_groups
+		for ( std::map<std::string, std::vector<std::vector<numeric::Real> > > ::iterator itr = fullStore->realVector_groups.begin(); itr !=  fullStore->realVector_groups.end(); ++itr ) {
+			std::string tmp_group_name = itr->first;
+			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+				if ( typed_frags[fragsGroupIds[ii]]->realVector_groups[tmp_group_name].size() == 0 ) {
+					std::vector<std::vector<numeric::Real> >real_vector_vector;
+					typed_frags[fragsGroupIds[ii]]->realVector_groups.insert(std::pair<std::string,std::vector< std::vector< numeric::Real> > > (tmp_group_name,real_vector_vector));
+				}
+				std::vector<numeric::Real> real_vector;
+				for ( Size jj=0; jj<fullStore->realVector_groups[tmp_group_name][jj].size(); ++jj ) {
+					real_vector.push_back(fullStore->realVector_groups[tmp_group_name][ii][jj]);
+				}
+				typed_frags[fragsGroupIds[ii]]->realVector_groups[tmp_group_name].push_back(real_vector);
+			}
+		}
+		fullStore->realVector_groups.clear();
+		//-------------Copy the string_groups
+		for ( std::map<std::string, std::vector<std::string > > ::iterator itr = fullStore->string_groups.begin(); itr !=  fullStore->string_groups.end(); ++itr ) {
+			std::string tmp_group_name = itr->first;
+			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+				if ( typed_frags[fragsGroupIds[ii]]->string_groups[tmp_group_name].size() == 0 ) {
+					std::vector<std::string> string_vector;
+					typed_frags[fragsGroupIds[ii]]->string_groups.insert(std::pair<std::string,std::vector< std::string > > (tmp_group_name,string_vector));
+				}
+				typed_frags[fragsGroupIds[ii]]->string_groups[tmp_group_name].push_back(fullStore->string_groups[tmp_group_name][ii]);
+			}
+		}
+		fullStore->string_groups.clear();
+		//-------------Copy & Erase the int64_groups while ignoring group_field
+		for ( std::map<std::string, std::vector<numeric::Size> >::iterator itr = fullStore->int64_groups.begin(); itr !=  fullStore->int64_groups.end(); ++itr ) {
+			std::string tmp_group_name = itr->first;
+			if ( tmp_group_name != group_field ) {
+				for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
+					if ( typed_frags[fragsGroupIds[ii]]->int64_groups[tmp_group_name].size() == 0 ) {
+						std::vector<numeric::Size> int64_vector;
+						typed_frags[fragsGroupIds[ii]]->int64_groups.insert(std::pair<std::string,std::vector< numeric::Size > > (tmp_group_name,int64_vector));
+					}
+					typed_frags[fragsGroupIds[ii]]->int64_groups[tmp_group_name].push_back(fullStore->int64_groups[tmp_group_name][ii]);
+				}
+			}
+		}
+		fullStore->int64_groups.clear();
+		grouped_fragment_map_[if_cached_name]=typed_frags;
+		return(typed_frags);
 	}
-	return(typed_frags);
 }
 
 

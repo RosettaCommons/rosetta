@@ -198,6 +198,7 @@ enum ScoreType {
 	fa_stack_sol,      // penalty for displacing first layer of water stacked on nucleobase
 	fa_stack_lr,       // 'water-mediated' stacking
 
+	ss_contact_worst,  // SS with the fewest SS-SS contacts.
 	stack_elec,        // distance dependent dielectric between base atoms (attenuated parallel to plane)
 	stack_elec_base_base,
 	stack_elec_base_bb,
@@ -400,7 +401,6 @@ enum ScoreType {
 	Mlipo,
 	rg, // radius of gyration
 	rg_local, //radius of gyration for repeat proteins
-	vall_lb, //vall_lookback. Requires use of hdf5 database
 	co, // contact order
 	hs_pair,
 	ss_pair,
@@ -441,6 +441,10 @@ enum ScoreType {
 	rdc,//NMR residual dipolar coupling energy
 	rdc_segments, //fit alignment on multiple segments independently
 	rdc_rohl,
+
+	cen_pair_motifs, //will's motif score applied to the wholeStructure
+	cen_pair_motif_degree,
+
 	// end centroid whole structure energies
 	holes,
 	holes_decoy,

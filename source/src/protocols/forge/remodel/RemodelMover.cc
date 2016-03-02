@@ -1493,7 +1493,6 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	}
 
 	vlb_->scorefunction( centroid_sfx_ );
-	vlb_->vall_memory_usage( VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
 	vlb_->use_fullmer(option[OptionKeys::remodel::use_same_length_fragments] );
 	vlb_->max_linear_chainbreak( max_linear_chainbreak_ );
 	vlb_->loop_mover_str( centroid_loop_mover_str_ );

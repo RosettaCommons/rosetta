@@ -17,10 +17,11 @@
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
 
 // package headers
+
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
 
 // project headers
+#include <core/io/external/PsiPredInterface.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -40,7 +41,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.SSPredict
 namespace protocols {
 namespace denovo_design {
 namespace filters {
-
+		
+using namespace core::io::external;
 // general constructor
 SSPredictionFilter::SSPredictionFilter()
 : protocols::filters::Filter( "SSPrediction" ),

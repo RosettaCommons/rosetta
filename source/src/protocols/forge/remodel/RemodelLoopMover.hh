@@ -498,6 +498,7 @@ protected: // fragments
 		Size const frag_size,
 		std::set<Size> const & disallowedPos,
 		bool const smoothMoves,
+		ScoreFunctionOP const scorefxnOP,
 		Real const fragScoreThreshold = 999.0
 	);
 

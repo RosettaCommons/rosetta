@@ -254,6 +254,10 @@ static MoverRegistrator< normalmode::NormalModeMinimizerCreator > reg_NormalMode
 
 static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;
 
+static MoverRegistrator< pose_length_moves::FixAllLoopsMoverCreator > reg_FixAllLoopsMoverCreator;
+static MoverRegistrator< pose_length_moves::InsertResMoverCreator > reg_InsertResMoverCreator;
+static MoverRegistrator< pose_length_moves::NearNativeLoopCloserCreator > reg_NearNativeLoopCloserCreator;
+
 static MoverRegistrator< protein_interface_design::movers::AddChainBreakCreator > reg_AddChainBreakCreator;
 static MoverRegistrator< protein_interface_design::movers::AddSidechainConstraintsToHotspotsCreator > reg_AddSidechainConstraintsToHotspotsCreator;
 static MoverRegistrator< protein_interface_design::movers::BackrubDDMoverCreator > reg_BackrubDDMoverCreator;
@@ -359,6 +363,7 @@ static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCre
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;
 static MoverRegistrator< simple_moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
 static MoverRegistrator< simple_moves::MembraneTopologyCreator > reg_MembraneTopologyCreator;
+static MoverRegistrator< simple_moves::MergePDBMoverCreator > reg_MergePDBMoverCreator;
 static MoverRegistrator< simple_moves::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< simple_moves::ModifyVariantTypeMoverCreator > reg_ModifyVariantTypeMoverCreator;
@@ -383,6 +388,7 @@ static MoverRegistrator< simple_moves::ShearMoverCreator > reg_ShearMoverCreator
 static MoverRegistrator< simple_moves::ShortBackrubMoverCreator > reg_ShortBackrubMoverCreator;
 static MoverRegistrator< simple_moves::StorePoseSnapshotCreator > reg_StorePoseSnapshotCreator;
 static MoverRegistrator< simple_moves::SmallMoverCreator > reg_SmallMoverCreator;
+static MoverRegistrator< simple_moves::StructProfileMoverCreator > reg_StructProfileMoverCreator;
 static MoverRegistrator< simple_moves::SuperimposeMoverCreator > reg_SuperimposeMoverCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;

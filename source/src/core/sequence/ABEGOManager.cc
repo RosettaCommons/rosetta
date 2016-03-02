@@ -427,6 +427,18 @@ Size ABEGOManager::symbolString2base5index( std::string symbolString){
 	return(base5index);
 }
 
+/// @brief transform abego symbol string to base5 index. This is used to quickly pool the abego from Alex's hd5 database
+std::string ABEGOManager::base5index2symbolString( Size base5index,Size length){
+	Size tmp_base5index=base5index;
+	std::string symbolString ="";
+	for ( Size ii=0; ii<length; ++ii ) {
+		Size index = tmp_base5index % 5;
+		tmp_base5index = tmp_base5index/5;
+		symbolString+=index2symbol(index+1);
+	}
+	return(symbolString);
+}
+
 /// @brief get abego sequence from pose
 utility::vector1< std::string >
 ABEGOManager::get_symbols( Pose const & pose, Size const begin, Size const end, Size const level )

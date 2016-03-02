@@ -19,7 +19,7 @@
 #include <devel/denovo_design/task_operations/DesignBySecondaryStructure.fwd.hh>
 
 // protocol headers
-#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>
+#include <core/io/external/PsiPredInterface.fwd.hh>
 #include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
 
 
@@ -80,7 +80,7 @@ private:
 	/// @brief If set, all mutations at all positions will be scanned in one pass, and those that cause worse psipred secondary structure agreement will be disallowed (default=false)
 	bool prevent_bad_point_mutants_;
 	/// @brief the object which directly communicates with psipred and parses psipred output
-	protocols::denovo_design::filters::PsiPredInterfaceOP psipred_interface_;
+	core::io::external::PsiPredInterfaceOP psipred_interface_;
 	/// @brief the svm secondary structure predictor
 	protocols::ss_prediction::SS_predictorOP ss_predictor_;
 };

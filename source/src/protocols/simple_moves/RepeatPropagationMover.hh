@@ -48,12 +48,14 @@ private:
 	void initialize_repeat_pose( core::pose::Pose & pose, core::pose::Pose & repeat_pose);
 	void duplicate_residues_by_type(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
 	void copy_phi_psi_omega(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
+	void add_caps(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
+	void determine_overlap(Pose const pose, Pose & parent_pose,Size overlap_max_length,Size overlap_range, std::string overlap_location_pose,Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose);
+	void generate_overlap(Pose & pose, Pose & parent_pose, std::string overlap_location_pose,Size start_overlap_parent, Size end_overlap_parent, Size start_overlap_pose, Size end_overlap_pose);
 	Size first_res_;
 	Size last_res_;
 	Size numb_repeats_;
 	bool repeat_without_replacing_pose_;
-	bool maintain_cap_seq_and_structure_;
-	bool maintain_cap_sequence_alone_;
+	bool maintain_cap_;
 	Size nTerm_cap_size_;
 	Size cTerm_cap_size_;
 };

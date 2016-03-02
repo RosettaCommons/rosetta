@@ -22,8 +22,8 @@
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
+#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
 #include <core/pose/Pose.fwd.hh>
-
 // Utility headers
 
 // Parser headers
@@ -61,46 +61,23 @@ public:// constructor/destructor
 	// @brief default constructor
 	LeastNativeLike9merFilter();
 
-	// @brief copy constructor
-	LeastNativeLike9merFilter( LeastNativeLike9merFilter const & rval );
 
 	virtual ~LeastNativeLike9merFilter();
 
 
 public:// virtual constructor
 
-
 	// @brief make clone
 	filters::FilterOP clone() const { return filters::FilterOP(new LeastNativeLike9merFilter(*this));}
 	// @brief make fresh instance
 	filters::FilterOP fresh_instance() const { return filters::FilterOP(new LeastNativeLike9merFilter());}
 
-
-public:// mutator
-
-
-	// @brief
-	void filtered_value( Real const & value );
-
-
-public:// accessor
-
-
 	// @brief get name of this filter
 	virtual std::string name() const { return "LeastNativeLike9merFilter"; }
-
-
-public:// virtual main operation
-
-
 	Real report_sm(const Pose & pose ) const;
 	void report( std::ostream & out,const Pose & pose ) const;
 	Real compute( const Pose & pose ) const;
 	virtual bool apply(const Pose & pose ) const;
-
-
-public:// parser
-
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
@@ -111,6 +88,10 @@ public:// parser
 private:
 
 	Real filtered_value_;
+	Real rmsd_lookup_thresh_;
+	core::indexed_structure_store::ABEGOHashedFragmentStore * ABEGOHashedFragmentStore_;
+	bool ignore_terminal_res_;
+	bool only_helices_;
 
 };
 

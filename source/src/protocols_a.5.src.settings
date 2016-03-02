@@ -33,15 +33,14 @@ sources = {
 		"Connection",
 		"ExtendChain",
 	],
-	"protocols/denovo_design/movers" : [
-		"DisulfidizeMover",
-	],
-	"protocols/denovo_design/filters": [
+    "protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
 		"PreProlineFilter",
-		"PsiPredInterface",
 		"SSPredictionFilter",
 	],
+	"protocols/denovo_design/movers" : [
+		"DisulfidizeMover",
+    ],
 	"protocols/denovo_design/residue_selectors": [
 		"TaskSelector",
 	],
@@ -130,6 +129,12 @@ sources = {
 	"protocols/helical_bundle/parameters": [
 		"BundleParameters",
 		"BundleParametersSet",
+	],
+    "protocols/pose_length_moves": [
+		#"DeleteResMover",
+		"FixAllLoopsMover",
+		"InsertResMover",
+		"NearNativeLoopCloser",
 	],
 	"protocols/sewing/conformation": [
 		"Assembly",

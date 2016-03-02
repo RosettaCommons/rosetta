@@ -167,6 +167,7 @@ sources = {
 		#"outputAbego",
         #"outputSasa",
         #"repeat_dock",
+        #"calc_ssm_energies_with_structure_profile",
         #"outputRama",
         #"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",

@@ -15,6 +15,7 @@
 #define FLATLOOKUP_HH
 
 #include <numeric/types.hh>
+#include <vector>
 
 namespace numeric
 {
@@ -63,19 +64,55 @@ public:
 
 		for ( numeric::Size i = 0; i < entries.size(); i++ ) {
 			Real test_distance = entry_distance(query, entries[i]);
-
-			if ( (test_distance < distance) && (test_distance < entry_radius(entries[i])) ) {
+			if (test_distance < distance) { //previous only returned the distance if it was < the entry_radius. This didn't make sense because you want the closest match
 				distance = test_distance;
 				entry = entries[i];
 			}
 		}
-
 		if ( distance < std::numeric_limits<Real>::max() ) {
 			return true;
 		} else {
 			return false;
 		}
 	}
+
+
+	// @brief Find closest matching object.
+	bool closest_match_subset(QueryType & query, EntryType & entry, Real & distance, std::vector<bool> subset)
+	{
+		prepare_for_query(query);
+
+		distance = std::numeric_limits<Real>::max();
+
+		for ( numeric::Size i = 0; i < entries.size(); i++ ) {
+			if(subset[i]){
+				Real test_distance = entry_distance(query, entries[i]);
+				if (test_distance < distance) { //previous only returned the distance if it was < the entry_radius. This didn't make sense because you want the closest match
+					distance = test_distance;
+					entry = entries[i];
+				}
+			}
+		}
+		if ( distance < std::numeric_limits<Real>::max() ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	void all_matches_below_threshold(QueryType & query, std::vector<Size> & entry_loc_v, std::vector<Real> & distance , Real rms_threshold)
+	{
+		prepare_for_query(query);
+		for ( numeric::Size ii = 0; ii < entries.size(); ii++ ) {
+			Real test_distance = entry_distance(query, entries[ii]);
+			if ( test_distance < rms_threshold ) {
+				entry_loc_v.push_back(ii);
+				distance.push_back(test_distance);
+			}
+		}
+	}
+
 
 	// @brief Called before query evaluation.
 	virtual void prepare_for_query(QueryType &) { }

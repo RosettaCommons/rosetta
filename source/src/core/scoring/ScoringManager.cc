@@ -66,7 +66,6 @@
 #include <core/scoring/dna/DNA_EnvPairPotential.hh>
 #include <core/scoring/dna/DNA_DihedralPotential.hh>
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -182,7 +181,6 @@ ScoringManager::ScoringManager() :
 	CHI_energy_function_( /* 0 */ ),
 	NV_lookup_table_(/* 0 */),
 	orbitals_lookup_table_( /* 0 */ ),
-	vallLookbackPotential_(0),
 	DDP_lookup_table_(/* 0 */),
 	method_creator_map_( n_score_types, 0 )
 {}
@@ -747,16 +745,6 @@ ScoringManager::get_OrbitalsLookupTable() const
 	}
 	return *orbitals_lookup_table_;
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-methods::VallLookbackPotential const & ScoringManager::get_vallLookbackPotential() const{
-	if ( vallLookbackPotential_ == 0 ) {
-		vallLookbackPotential_ = methods::VallLookbackPotentialOP(new core::scoring::methods::VallLookbackPotential());
-	}
-	return *vallLookbackPotential_;
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -98,7 +98,6 @@
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackPotential.fwd.hh>
 
 
 // C++ headers
@@ -213,8 +212,6 @@ public:
 
 	nv::NVlookup const & get_NVLookupTable() const;
 	core::scoring::orbitals::OrbitalsLookup const & get_OrbitalsLookupTable() const;
-
-	methods::VallLookbackPotential const & get_vallLookbackPotential() const;
 
 	interface_::DDPlookup const & get_DDPLookupTable() const;
 
@@ -354,7 +351,6 @@ private:
 
 	mutable nv::NVlookupOP NV_lookup_table_;
 	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;
-	mutable methods::VallLookbackPotentialOP vallLookbackPotential_;
 	mutable interface_::DDPlookupOP DDP_lookup_table_;
 	// data
 

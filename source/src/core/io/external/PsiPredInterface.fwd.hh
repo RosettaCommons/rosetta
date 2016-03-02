@@ -12,8 +12,8 @@
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_filters_psipredinterface_fwd_hh
-#define INCLUDED_protocols_denovo_design_filters_psipredinterface_fwd_hh
+#ifndef INCLUDED_core_io_external_psipredinterface_fwd_hh
+#define INCLUDED_core_io_external_psipredinterface_fwd_hh
 
 // Unit Headers
 
@@ -22,9 +22,9 @@
 // Project headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace denovo_design {
-namespace filters {
+namespace core {
+namespace io {
+namespace external {
 
 // Forward
 class PsiPredInterface;

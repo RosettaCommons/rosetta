@@ -147,6 +147,7 @@ static FilterRegistrator< protocols::simple_filters::ResiduesInInterfaceFilterCr
 static FilterRegistrator< protocols::simple_filters::ResidueSetChainEnergyFilterCreator > reg_ResidueSetChainEnergyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RotamerBoltzmannWeightFilterCreator > reg_RotamerBoltzmannWeightFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SavePoseConstraintToFileFilterCreator > reg_SavePoseConstraintToFileFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SSElementMotifContactFilterCreator > reg_SSElementMotifContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SaveResfileToDiskFilterCreator > reg_SaveResfileToDiskFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ScoreCutoffFilterCreator > reg_ScoreCutoffFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
