@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # This function expects that the current working directory is the Rosetta root directory.
 # If that's ever not true, we need to modify this to take an optional dir name on the cmd line.
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -15,6 +16,24 @@
 
 import sys, time, os, re, os.path, subprocess, commands
 
+def update_file_if_changed(filename, contents):
+    changed = False
+    if os.path.exists( filename ):
+        f = open(filename);
+        try:
+            if f.read() != contents:
+                changed = True
+        finally:
+            f.close()
+    else:
+        changed = True
+
+    if changed:
+        f = open(filename, 'w')
+        try:
+            f.write(contents)
+        finally:
+            f.close()
 
 def retrieve_version_information():
     ver = ""
@@ -57,7 +76,6 @@ def retrieve_version_information():
 
     return dict( commit_id = commit_id, ver = ver, url = url, commit_date = commit_date)
 
-
 def generate_version_files():
     '''
     Generates a C++ header file with a summary of the current version(s) of the working copy, if any.
@@ -67,18 +85,19 @@ def generate_version_files():
     '''
 
     version_info = retrieve_version_information()
-    file( os.path.normpath("src/devel/svn_version.cc"), "w" )          .write( version_cc_template % version_info)
-    file( os.path.normpath("src/python/bindings/src/version.py"), "w" ).write( version_py_template % version_info)
-    file( os.path.normpath("src/python/packaged_bindings/src/version.py"), "w" ).write( version_py_template % version_info)
+    update_file_if_changed( os.path.normpath("src/devel/svn_version.cc"),  version_cc_template % version_info)
+    update_file_if_changed( os.path.normpath("src/python/bindings/src/version.py"), version_py_template % version_info)
+    update_file_if_changed( os.path.normpath("src/python/packaged_bindings/src/version.py"), version_py_template % version_info)
 
 def main():
     # Run with timing
     starttime = time.time()
-    sys.stdout.write("Running versioning script ... ")
-    sys.stdout.flush() # Make sure it gets dumped before running the function.
+    if '-q' not in sys.argv:
+        sys.stdout.write("Running versioning script ... ")
+        sys.stdout.flush() # Make sure it gets dumped before running the function.
     generate_version_files()
-    sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
-
+    if '-q' not in sys.argv:
+        sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
 
 version_py_template = '''\
 commit_id = '%(commit_id)s'
@@ -139,4 +158,5 @@ register_version_with_core() {
 '''
 
 if __name__ == "__main__" or __name__ == "__builtin__":
+    os.chdir( os.path.dirname( os.path.abspath(sys.argv[0]) ) ) # where this script is located
     main()

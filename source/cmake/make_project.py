@@ -26,6 +26,13 @@ def update_ResidueType_enum_files():
 def project_callback(project, project_path, project_files):
 	print 'making project files for project ' + project + ' ...',
 
+        platform = sys.platform
+
+        if platform == 'darwin':
+            platform = 'macos'
+        elif platform.startswith('linux'):
+            platform = 'linux'
+
 	if project == 'apps' or project == 'pilot_apps':
 		app_files = {}
 		#print 'making project files for ' + project + ' from ' + project_path
@@ -52,7 +59,16 @@ def project_callback(project, project_path, project_files):
 
 			symlink_var = key + '_symlink'
 			output += 'ADD_CUSTOM_TARGET( %s  ALL)\n' % ( symlink_var )
-			output += 'ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD COMMAND python2.7 ../smart_symlink.py ${COMPILER} ${MODE} %s )\n' % ( symlink_var, key )
+			output += "# cmake -E create_symlink won't choke if the symlink already exists\n"
+			output += "ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD\n" % ( symlink_var )
+			output += "\t\tCOMMAND ${CMAKE_COMMAND} -E make_directory ../../bin/ \n"
+			output += "\t\tCOMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/%s" % ( key ) # no endline
+			output += " ../../bin/%s\n" % ( key )
+			output += "\t\tCOMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/%s" % ( key ) # no endline
+			output += " ../../bin/%s.%s${COMPILER}${MODE}\n" % ( key, platform )
+			output += "\t\tCOMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/%s" % ( key ) # no endline
+			output += " ../../bin/%s.default.%s${COMPILER}${MODE}\n" % ( key, platform )
+			output += ")\n"
 			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s BUILD_ROSETTA_LIBS )\n' % ( key )
 			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( project, symlink_var )
