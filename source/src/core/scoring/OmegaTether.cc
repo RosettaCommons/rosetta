@@ -26,6 +26,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
 #include <numeric/MathMatrix.hh>
+#include <numeric/interpolation/spline/Cubic_spline.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -40,6 +41,7 @@
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 
@@ -203,26 +205,32 @@ OmegaTether::eval_omega_score_residue(
 		if ( aa == core::chemical::aa_gly ) {
 			table = 2;
 		}
-		if ( aa == core::chemical::aa_pro ) {
+		if ( aa == core::chemical::aa_pro || aa ==  core::chemical::aa_dpr) {
 			table = 3;
 		}
-		if ( aa == core::chemical::aa_ile || aa == core::chemical::aa_val ) {
+		if ( aa == core::chemical::aa_ile || aa == core::chemical::aa_val || aa == core::chemical::aa_dil || aa == core::chemical::aa_dva ) {
 			table = 4;
 		}
-
-		//fpd note: preproline is not yet implemented as this would have to be a 2b energy term
 
 		// phi-psi dependent
 		// interpolate phi/psi
 		core::Real mu, sigma, dmu_dphi, dmu_dpsi, dsigma_dphi, dsigma_dpsi;
 
-		mu = omega_mus_all_splines_[table].F(phi,psi);
-		dmu_dphi = omega_mus_all_splines_[table].dFdx(phi,psi);
-		dmu_dpsi = omega_mus_all_splines_[table].dFdy(phi,psi);
+		// D AAs
+		core::Real phi_eff=phi, psi_eff=psi, scale=1.0;
+		if( core::chemical::is_canonical_D_aa(aa) ) {
+			phi_eff=360.0-phi;
+			psi_eff=360.0-psi;
+			scale=-1.0;
+		}
 
-		sigma = omega_sigmas_all_splines_[table].F(phi,psi);
-		dsigma_dphi = omega_sigmas_all_splines_[table].dFdx(phi,psi);
-		dsigma_dpsi = omega_sigmas_all_splines_[table].dFdy(phi,psi);
+		mu = scale*omega_mus_all_splines_[table].F(phi_eff,psi_eff);
+		dmu_dphi = scale*omega_mus_all_splines_[table].dFdx(phi_eff,psi_eff);
+		dmu_dpsi = scale*omega_mus_all_splines_[table].dFdy(phi_eff,psi_eff);
+
+		sigma = omega_sigmas_all_splines_[table].F(phi_eff,psi_eff);
+		dsigma_dphi = omega_sigmas_all_splines_[table].dFdx(phi_eff,psi_eff);
+		dsigma_dpsi = omega_sigmas_all_splines_[table].dFdy(phi_eff,psi_eff);
 
 		// energy
 		core::Real normalization = log( 1/ (6* sqrt(2*numeric::constants::f::pi) ) );  // shift scores to match default
@@ -249,21 +257,37 @@ OmegaTether::eval_omega_score_residue(
 /// load bb-dep omega tables
 void
 OmegaTether::read_omega_tables( ) {
-	omega_mus_all_.resize(5);
-	omega_sigmas_all_.resize(5);
-	omega_mus_all_splines_.resize(5);
-	omega_sigmas_all_splines_.resize(5);
+	omega_mus_all_.resize(4);
+	omega_sigmas_all_.resize(4);
+	omega_mus_all_splines_.resize(4);
+	omega_sigmas_all_splines_.resize(4);
 
-	for ( int i=1;  i<=5; ++i ) {
+	for ( int i=1;  i<=4; ++i ) {
 		utility::io::izstream stream;
 		if ( i==1 )      basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.all.txt");
 		else if ( i==2 ) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.gly.txt");
 		else if ( i==3 ) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.pro.txt");
 		else if ( i==4 ) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.valile.txt");
 		//else if (i==5) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.prepro.txt");
-		else if ( i==5 ) continue;  // prepro not yet used
 
 		read_table_from_stream( stream, omega_mus_all_[i], omega_sigmas_all_[i] );
+	}
+
+	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables].user() ) {
+		//fpd this is tricky because the function needs to be symmetric around both phi/psi and omega
+		//fpd there are two ways to do this:
+		//fpd   1) set everything to 180
+		//fpd   2) symmetrize here and make the potential symmetric about omega=180
+		//fpd we do the former
+		for ( core::Size iphi = 1; iphi <= 36; ++iphi ) {
+			for ( core::Size ipsi = 1; ipsi <= 36; ++ipsi ) {
+				omega_mus_all_[2](iphi,ipsi) = 180.0;
+				omega_sigmas_all_[2](iphi,ipsi) = 6.0;
+			}
+		}
+	}
+
+	for ( int i=1;  i<=4; ++i ) {
 		setup_interpolation( omega_mus_all_[i], omega_mus_all_splines_[i] );
 		setup_interpolation( omega_sigmas_all_[i], omega_sigmas_all_splines_[i] );
 	}

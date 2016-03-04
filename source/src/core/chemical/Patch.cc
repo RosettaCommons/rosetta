@@ -264,6 +264,12 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		dummy.name(tokens[2]);
 		dummy.name3(tokens[2]);
 		dummy.name1(oneletter_code_from_aa(aatype));
+		if (core::chemical::is_canonical_D_aa(aatype)) {
+			dummy.add_property("D_AA");
+		} else if (core::chemical::is_canonical_L_aa(aatype)) {
+			dummy.add_property("L_AA");
+		}
+
 		if ( !rsd_selector[ dummy ] ) continue;
 
 		// 4: add to list
