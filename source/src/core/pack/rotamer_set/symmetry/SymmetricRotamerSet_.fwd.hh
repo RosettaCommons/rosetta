@@ -15,12 +15,18 @@
 #ifndef INCLUDED_core_pack_rotamer_set_symmetry_SymmetricRotamerSet__fwd_hh
 #define INCLUDED_core_pack_rotamer_set_symmetry_SymmetricRotamerSet__fwd_hh
 
+// Utility Headers
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
 namespace symmetry {
 
 class SymmetricRotamerSet_;
+
+typedef utility::pointer::shared_ptr< SymmetricRotamerSet_ > SymmetricRotamerSet_OP;
+typedef utility::pointer::shared_ptr< SymmetricRotamerSet_ const > SymmetricRotamerSet_COP;
 
 } // namespace symmetry
 } // namespace rotamer_set

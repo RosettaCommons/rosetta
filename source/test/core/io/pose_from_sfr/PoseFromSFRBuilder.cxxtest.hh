@@ -89,7 +89,7 @@ public:
 		TS_ASSERT_EQUALS( pose.residue(3).aa(), chemical::aa_pro );
 		TS_ASSERT_EQUALS( pose.residue(4).aa(), chemical::aa_ala );
 		TS_ASSERT( pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" ));
-		if ( ! pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" )) return;
+		if ( ! pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" ) ) return;
 
 		id::AtomID_Mask const & missing = builder.missing_atoms();
 		TS_ASSERT( ! missing[ id::AtomID( pose.residue_type(1).atom_index( "CO" ),  1 ) ] );

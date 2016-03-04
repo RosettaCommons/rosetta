@@ -72,7 +72,7 @@
 #include <protocols/contact_map/ContactMapCreator.hh>
 
 #include <protocols/cryst/cryst_movers_creator.hh>
-#include <protocols/cryst/refineable_lattice_creator.hh>
+#include <protocols/cryst/refinable_lattice_creator.hh>
 
 #include <protocols/denovo_design/connection/BridgeChainsCreator.hh>
 #include <protocols/denovo_design/connection/ConnectionCreators.hh>

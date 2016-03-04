@@ -36,7 +36,7 @@ namespace symmetry {
 class SymmetricRotamerSetFactory : public RotamerSetFactory
 {
 public:
-	RotamerSetOP create_rotamer_set( conformation::Residue const & );
+	virtual RotamerSetOP create_rotamer_set( conformation::Residue const & );
 
 };
 

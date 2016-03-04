@@ -84,27 +84,29 @@ MergePDBMover::fresh_instance() const
 
 void MergePDBMover::determine_overlap(Pose const pose, Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose){
 	using namespace core::scoring;
-	if(overlap_location_pose_== "c_term"){
+	if ( overlap_location_pose_== "c_term" ) {
 		Size initial_start_res_parent=1;
 		Size end_res_parent=overlap_max_length_;
 		Size initial_start_res_pose=pose.total_residue()-overlap_max_length_+1;
 		Size end_res_pose=pose.total_residue();
 		Real best_rmsd = 9999;
-		for(Size ii=0; ii<overlap_range_; ++ii){
+		for ( Size ii=0; ii<overlap_range_; ++ii ) {
 			utility::vector1<Size> parent_pose_positions;
 			utility::vector1<Size> pose_positions;
 			Size start_res_parent = initial_start_res_parent+ii;
 			Size start_res_pose = initial_start_res_pose+ii;
-			for (Size jj=start_res_parent; jj<=end_res_parent; ++jj)
+			for ( Size jj=start_res_parent; jj<=end_res_parent; ++jj ) {
 				parent_pose_positions.push_back(jj);
-			for (Size jj=start_res_pose; jj<=end_res_pose; ++jj)
+			}
+			for ( Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
 				pose_positions.push_back(jj);
+			}
 			pose::Pose parent_pose_slice;
 			pose::Pose ref_pose_slice;
 			pdbslice(parent_pose_slice,*parent_pose_,parent_pose_positions);
 			pdbslice(ref_pose_slice,pose,pose_positions);
 			Real rmsd = CA_rmsd(ref_pose_slice,parent_pose_slice);
-			if(rmsd < best_rmsd){
+			if ( rmsd < best_rmsd ) {
 				best_rmsd = rmsd;
 				start_overlap_parent=start_res_parent;
 				end_overlap_parent=end_res_parent;
@@ -113,27 +115,29 @@ void MergePDBMover::determine_overlap(Pose const pose, Size & start_overlap_pare
 			}
 		}
 	}
-	if(overlap_location_pose_== "n_term"){
+	if ( overlap_location_pose_== "n_term" ) {
 		Size start_res_parent=parent_pose_->total_residue()-overlap_max_length_+1;
 		Size initial_end_res_parent=parent_pose_->total_residue();
 		Size start_res_pose=1;
 		Size initial_end_res_pose=overlap_max_length_;
 		Real best_rmsd = 9999;
-		for(Size ii=0; ii<overlap_range_; ++ii){
+		for ( Size ii=0; ii<overlap_range_; ++ii ) {
 			utility::vector1<Size> parent_pose_positions;
 			utility::vector1<Size> pose_positions;
 			Size end_res_parent = initial_end_res_parent-ii;
 			Size end_res_pose = initial_end_res_pose-ii;
-			for (Size jj=start_res_parent; jj<=end_res_parent; ++jj)
+			for ( Size jj=start_res_parent; jj<=end_res_parent; ++jj ) {
 				parent_pose_positions.push_back(jj);
-			for (Size jj=start_res_pose; jj<=end_res_pose; ++jj)
+			}
+			for ( Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
 				pose_positions.push_back(jj);
+			}
 			pose::Pose parent_pose_slice;
 			pose::Pose ref_pose_slice;
 			pdbslice(parent_pose_slice,*parent_pose_,parent_pose_positions);
 			pdbslice(ref_pose_slice,pose,pose_positions);
 			Real rmsd = CA_rmsd(ref_pose_slice,parent_pose_slice);
-			if(rmsd < best_rmsd){
+			if ( rmsd < best_rmsd ) {
 				best_rmsd = rmsd;
 				start_overlap_parent=start_res_parent;
 				end_overlap_parent=end_res_parent;
@@ -150,7 +154,7 @@ void MergePDBMover::generate_overlap(Pose & pose, Size start_overlap_parent, Siz
 	using namespace core::scoring;
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, BOGUS_ATOM_ID );
-	for(Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii){
+	for ( Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii ) {
 		core::id::AtomID const id1(pose.residue(start_overlap_pose+ii).atom_index("CA"),start_overlap_pose+ii);
 		core::id::AtomID const id2(parent_pose_->residue(start_overlap_parent+ii).atom_index("CA"), start_overlap_parent+ii );
 		atom_map[id1]=id2;
@@ -159,30 +163,34 @@ void MergePDBMover::generate_overlap(Pose & pose, Size start_overlap_parent, Siz
 	//create subpose of pose
 	utility::vector1<Size> pose_positions;
 	utility::vector1<Size> parent_pose_positions;
-	if(overlap_location_pose_== "n_term"){
-		for (Size ii=end_overlap_pose+1; ii<=pose.total_residue(); ++ii)
+	if ( overlap_location_pose_== "n_term" ) {
+		for ( Size ii=end_overlap_pose+1; ii<=pose.total_residue(); ++ii ) {
 			pose_positions.push_back(ii);
-		for (Size ii=1; ii<=end_overlap_parent; ++ii)
+		}
+		for ( Size ii=1; ii<=end_overlap_parent; ++ii ) {
 			parent_pose_positions.push_back(ii);
+		}
 	}
-	if(overlap_location_pose_== "c_term"){
-		for(Size ii=1; ii<start_overlap_pose; ++ii)
+	if ( overlap_location_pose_== "c_term" ) {
+		for ( Size ii=1; ii<start_overlap_pose; ++ii ) {
 			pose_positions.push_back(ii);
-		for (Size ii=start_overlap_parent; ii<=parent_pose_->total_residue(); ++ii)
+		}
+		for ( Size ii=start_overlap_parent; ii<=parent_pose_->total_residue(); ++ii ) {
 			parent_pose_positions.push_back(ii);
+		}
 	}
 	pose::Pose ref_pose_slice;
 	pose::Pose parent_pose_slice;
 
 	pdbslice(ref_pose_slice,pose,pose_positions);
 	pdbslice(parent_pose_slice,*parent_pose_,parent_pose_positions);
-	if(overlap_location_pose_== "n_term"){
+	if ( overlap_location_pose_== "n_term" ) {
 		remove_upper_terminus_type_from_pose_residue(parent_pose_slice,parent_pose_slice.total_residue());
 		remove_lower_terminus_type_from_pose_residue(ref_pose_slice,1);
 		append_pose_to_pose(parent_pose_slice,ref_pose_slice,false);
 		pose = parent_pose_slice;
 	}
-	if(overlap_location_pose_== "c_term"){
+	if ( overlap_location_pose_== "c_term" ) {
 		remove_upper_terminus_type_from_pose_residue(ref_pose_slice,ref_pose_slice.total_residue());
 		remove_lower_terminus_type_from_pose_residue(parent_pose_slice,1);
 		append_pose_to_pose(ref_pose_slice,parent_pose_slice,false);
@@ -194,14 +202,14 @@ void MergePDBMover::generate_overlap(Pose & pose, Size start_overlap_parent, Siz
 
 void MergePDBMover::apply( Pose & pose )
 {
-//Step 1 get location
-Size start_overlap_parent =0;
-Size end_overlap_parent=0;
-Size start_overlap_pose=0;
-Size end_overlap_pose=0;
-determine_overlap(pose, start_overlap_parent,end_overlap_parent,start_overlap_pose,end_overlap_pose);
-//Step 2 combine
-generate_overlap(pose,start_overlap_parent,end_overlap_parent,start_overlap_pose,end_overlap_pose);
+	//Step 1 get location
+	Size start_overlap_parent =0;
+	Size end_overlap_parent=0;
+	Size start_overlap_pose=0;
+	Size end_overlap_pose=0;
+	determine_overlap(pose, start_overlap_parent,end_overlap_parent,start_overlap_pose,end_overlap_pose);
+	//Step 2 combine
+	generate_overlap(pose,start_overlap_parent,end_overlap_parent,start_overlap_pose,end_overlap_pose);
 }
 
 

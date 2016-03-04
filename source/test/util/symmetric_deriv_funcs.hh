@@ -387,12 +387,13 @@ public:
 		core::Real start_score = (*sfxn_)(*pose_);
 
 		MoveMap semisym_move_map;
-		SymAtomTreeMinimizer::make_semisymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		SymAtomTreeMinimizer::make_asymmetric_movemap( *pose_, *move_map_, semisym_move_map ); //fd: new minimizer
 
 		SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose_->conformation()) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		sym_min_map_ = core::optimization::symmetry::SymMinimizerMapOP( new core::optimization::symmetry::SymMinimizerMap( *pose_, semisym_move_map, symm_info ) );
+		sym_min_map_ = core::optimization::symmetry::SymMinimizerMapOP(
+			new core::optimization::symmetry::SymMinimizerMap( *pose_, semisym_move_map, symm_info, true ) ); //fd: new minimizer
 
 		pose_->energies().set_use_nblist( *pose_, sym_min_map_->domain_map(), false );
 		sfxn_->setup_for_minimizing( *pose_, *sym_min_map_ );

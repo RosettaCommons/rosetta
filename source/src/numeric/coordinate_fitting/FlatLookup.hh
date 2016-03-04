@@ -64,7 +64,7 @@ public:
 
 		for ( numeric::Size i = 0; i < entries.size(); i++ ) {
 			Real test_distance = entry_distance(query, entries[i]);
-			if (test_distance < distance) { //previous only returned the distance if it was < the entry_radius. This didn't make sense because you want the closest match
+			if ( test_distance < distance ) { //previous only returned the distance if it was < the entry_radius. This didn't make sense because you want the closest match
 				distance = test_distance;
 				entry = entries[i];
 			}
@@ -85,9 +85,9 @@ public:
 		distance = std::numeric_limits<Real>::max();
 
 		for ( numeric::Size i = 0; i < entries.size(); i++ ) {
-			if(subset[i]){
+			if ( subset[i] ) {
 				Real test_distance = entry_distance(query, entries[i]);
-				if (test_distance < distance) { //previous only returned the distance if it was < the entry_radius. This didn't make sense because you want the closest match
+				if ( test_distance < distance ) { //previous only returned the distance if it was < the entry_radius. This didn't make sense because you want the closest match
 					distance = test_distance;
 					entry = entries[i];
 				}

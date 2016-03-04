@@ -196,7 +196,7 @@ PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const
 	if ( options.preserve_crystinfo() && pose.pdb_info() ) {
 		sfr_->crystinfo() = pose.pdb_info()->crystinfo();
 	}
-	
+
 	// Get membrane, other data:
 	grab_additional_pose_data( pose );
 

@@ -45,86 +45,86 @@ namespace simple_filters {
 class SSElementMotifContactFilter : public protocols::filters::Filter{
 public:
 
-    typedef protocols::filters::Filter Super;
-    typedef protocols::filters::Filter Filter;
-    typedef protocols::filters::FilterOP FilterOP;
-    typedef core::Real Real;
-    typedef core::pose::Pose Pose;
-    typedef std::string String;
+	typedef protocols::filters::Filter Super;
+	typedef protocols::filters::Filter Filter;
+	typedef protocols::filters::FilterOP FilterOP;
+	typedef core::Real Real;
+	typedef core::pose::Pose Pose;
+	typedef std::string String;
 
-    typedef utility::tag::TagCOP TagCOP;
-    typedef protocols::filters::Filters_map Filters_map;
-    typedef basic::datacache::DataMap DataMap;
-    typedef protocols::moves::Movers_map Movers_map;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef basic::datacache::DataMap DataMap;
+	typedef protocols::moves::Movers_map Movers_map;
 
 
 public:// constructor/destructor
 
 
-    // @brief default constructor
-    SSElementMotifContactFilter();
+	// @brief default constructor
+	SSElementMotifContactFilter();
 
-    // @brief copy constructor
-    SSElementMotifContactFilter( SSElementMotifContactFilter const & rval );
+	// @brief copy constructor
+	SSElementMotifContactFilter( SSElementMotifContactFilter const & rval );
 
-    virtual ~SSElementMotifContactFilter();
+	virtual ~SSElementMotifContactFilter();
 
 
 public:// virtual constructor
 
 
-    // @brief make clone
-    filters::FilterOP clone() const { return filters::FilterOP(new SSElementMotifContactFilter(*this));}
-    // @brief make fresh instance
-    filters::FilterOP fresh_instance() const { return filters::FilterOP(new SSElementMotifContactFilter());}
+	// @brief make clone
+	filters::FilterOP clone() const { return filters::FilterOP(new SSElementMotifContactFilter(*this));}
+	// @brief make fresh instance
+	filters::FilterOP fresh_instance() const { return filters::FilterOP(new SSElementMotifContactFilter());}
 
 
 public:// mutator
 
 
-    // @brief
-    void filtered_value( Real const & value );
+	// @brief
+	void filtered_value( Real const & value );
 
 
 public:// accessor
 
 
-    // @brief get name of this filter
-    virtual std::string name() const { return "SSElementMotifContactFilter"; }
+	// @brief get name of this filter
+	virtual std::string name() const { return "SSElementMotifContactFilter"; }
 
 
 public:// virtual main operation
 
 
-    Real report_sm(const Pose & pose ) const;
-    void report( std::ostream & out,const Pose & pose ) const;
-    protocols::loops::Loops get_ss_elements(const Pose & pose) const;
-    Size which_ssElement(Size res,protocols::loops::Loops ssElements) const;
-    Size get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
-    Size get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const;
-    Real compute( const Pose & pose ) const;
-    virtual bool apply(const Pose & pose ) const;
+	Real report_sm(const Pose & pose ) const;
+	void report( std::ostream & out,const Pose & pose ) const;
+	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
+	Size which_ssElement(Size res,protocols::loops::Loops ssElements) const;
+	Size get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
+	Size get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const;
+	Real compute( const Pose & pose ) const;
+	virtual bool apply(const Pose & pose ) const;
 
 
 public:// parser
 
-    void parse_my_tag( TagCOP tag,
-        basic::datacache::DataMap &,
-        filters::Filters_map const &,
-        Movers_map const &,
-        Pose const & );
+	void parse_my_tag( TagCOP tag,
+		basic::datacache::DataMap &,
+		filters::Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private:
 
-    Real filtered_value_;
-    Size ignore_terminal_SS_;
-    bool only_n_term_;
-    bool only_c_term_;
-    Real threshold_;
-    Size contacts_between_ssElement_threshold_;
-    bool report_avg_;
-    core::scoring::motif::MotifHashManager *mman_;
+	Real filtered_value_;
+	Size ignore_terminal_SS_;
+	bool only_n_term_;
+	bool only_c_term_;
+	Real threshold_;
+	Size contacts_between_ssElement_threshold_;
+	bool report_avg_;
+	core::scoring::motif::MotifHashManager *mman_;
 };
 
 } // filters

@@ -18,7 +18,7 @@
 #include <protocols/cryst/cryst_movers.hh>
 #include <protocols/cryst/cryst_movers_creator.hh>
 
-#include <protocols/comparative_modeling/coord_util.hh>
+//#include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -782,6 +782,42 @@ void UpdateSolventMover::parse_my_tag(
 
 ////
 
+// helper function
+void get_corresponding_CAs(
+	core::pose::Pose const & model,
+	core::pose::Pose const & native,
+	core::sequence::SequenceAlignment const & aln,
+	ObjexxFCL::FArray2D< core::Real > & p1a,
+	ObjexxFCL::FArray2D< core::Real > & p2a
+) {
+	core::id::SequenceMapping mapping( aln.sequence_mapping(1,2) );
+
+	core::Size natoms = 0;
+	for ( core::Size ii = 1; ii <= model.total_residue(); ++ii ) {
+		Size const native_ii( mapping[ii] );
+		if ( native_ii != 0 && native_ii <= native.total_residue() && model.residue(ii).is_protein() ) {
+			natoms++;
+		}
+	}
+	p1a.dimension(3,natoms); p2a.dimension(3,natoms);
+
+	Size n_gap(0);
+	for ( core::Size ii = 1; ii <= model.total_residue(); ++ii ) {
+		Size const native_ii(mapping[ii]);
+		if ( native_ii != 0 && native_ii <= native.total_residue() && model.residue(ii).is_protein() ) {
+			numeric::xyzVector< core::Real > model_xyz ( model.residue(ii).xyz("CA") );
+			numeric::xyzVector< core::Real > native_xyz( native.residue(native_ii).xyz("CA") );
+			for ( core::Size jj = 1; jj <= 3; ++jj ) {
+				p1a(jj,ii - n_gap) = native_xyz[jj-1];
+				p2a(jj,ii - n_gap) = model_xyz [jj-1];
+			}
+		} else {
+			n_gap++;
+		}
+	}
+}
+
+
 void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	// make sure fmodel is initialized by scoring the pose
 	/*core::Real xraytgt =*/ core::scoring::cryst::getPhenixInterface().getScore( pose );
@@ -815,11 +851,9 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 		core::sequence::SequenceOP model_seq( new core::sequence::Sequence( pose_asu.sequence(),  "model",  1 ) );
 		core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native->sequence(), "native", 1 ) );
 		core::sequence::SequenceAlignment aln = align_naive(model_seq,native_seq);
-
-		int n_atoms;
 		ObjexxFCL::FArray2D< core::Real > p1a, p2a;
-		protocols::comparative_modeling::gather_coords( pose_asu, *native, aln, n_atoms, p1a, p2a );
-		core::Real rms = numeric::model_quality::rms_wrapper( n_atoms, p1a, p2a );
+		get_corresponding_CAs( pose_asu, *native, aln, p1a, p2a );
+		core::Real rms = numeric::model_quality::rms_wrapper( p1a.u2(), p1a, p2a );
 		oss << " rms=" << rms;
 	}
 

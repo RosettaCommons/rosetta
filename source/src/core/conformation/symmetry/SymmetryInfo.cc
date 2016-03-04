@@ -568,7 +568,6 @@ guess_torsion_type_of_dof_id( id::DOF_ID const & id, Conformation const & conf )
 	}
 }
 
-
 void
 SymmetryInfo::update_score_multiply_factor()
 {
@@ -580,6 +579,27 @@ SymmetryInfo::update_score_multiply_factor()
 			break;
 		}
 	}
+}
+
+//fpd force a default score multiply factor
+//    return true if any weights have changed
+// reasonable default: main subunit = score_multiply_factor
+//    all other subunits = score_multiply_factor/2
+//    jump derivative weights = 1
+// this default is required for Phil's new minimization scheme, so it is forced there
+bool
+SymmetryInfo::reset_score_multiply_to_reasonable_default() {
+	bool any_changes = false;
+	for ( Size i = 1; i<= num_total_residues_without_pseudo(); ++i ) {
+		Real newval = score_multiply_factor_/2.0;
+		if ( bb_is_independent(i) ) newval = score_multiply_factor_;
+		if ( score_multiply_[i] != newval ) {
+			any_changes = true;
+			score_multiply_[i] = newval;
+		}
+	}
+	// virtuals can stay unchanged
+	return any_changes;
 }
 
 // Initialize from explicit VRT symmdef files (as from make_symmdef_file.pl)
@@ -1305,8 +1325,6 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 
 	// remember previous
 	std::map< Size, Clones > old_jump_clones = jump_clones_;
-	// AMW: cppcheck flags that this is never used
-	//std::map< Size, Size > old_jump_follows = jump_follows_;
 	std::map< Size, Real > old_jump_clone_weights = jump_clone_wts_;
 	Size old_njump_monomer = njump_monomer_;
 
@@ -1317,14 +1335,39 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 
 	// make new monomer jumps from scratch
 	// the N*njump_monomer internal jumps
+	std::map<Size,std::string> jnum2dofname_new;
+	std::map<std::string,Size> dofname2jnum_new;
+
 	for ( Size i=1; i<= njump_monomer; ++i ) {
+		Size src_intra = i + (scoring_subunit_-1)*njump_monomer_;
+
+		std::string name_new_src = "intra_"+utility::to_string(i)+"_master";
+		jnum2dofname_new[src_intra] = name_new_src;
+		dofname2jnum_new[name_new_src] = src_intra;
+
 		for ( Size k=0; k<N; ++k ) {
 			if ( k != ( scoring_subunit_ - 1 ) ) {
-				add_jump_clone( i + (scoring_subunit_-1)*njump_monomer_, i + k*njump_monomer_, 0.0 );
+				Size tgt_intra = i + k*njump_monomer_;
+				add_jump_clone( src_intra, tgt_intra, 0.0 );
+
+				std::string name_new_tgt = "intra_"+utility::to_string(i)+"_"+utility::to_string(k+1);
+				jnum2dofname_new[tgt_intra] = name_new_tgt;
+				dofname2jnum_new[name_new_tgt] = tgt_intra;
 			}
 		}
-		//jump_clones_.insert( std::make_pair( i, clones ) );
 	}
+
+	//fd update jump names
+	{
+		Size old_nsymm_jumps = jnum2dofname_.size() - N*old_njump_monomer;
+		for ( Size i=1; i<=old_nsymm_jumps; ++i ) {
+			Size i_new = i+N*njump_monomer;
+			std::string old_name = jnum2dofname_[i];
+			jnum2dofname_new[i_new] = old_name;
+			dofname2jnum_new[old_name] = i_new;
+		}
+	}
+
 
 	// 1                 --> N*njump_monomer  : the internal jumps
 	// N*njump_monomer+1 --> N*njump_monomer+N: the pseudo-rsd--monomer jumps
@@ -1333,13 +1376,16 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 			it != it_end; ++it ) {
 		Size source = it->first;
 		Clones target = it->second;
+		std::string old_source_name = jnum2dofname_[source];
 
 		if ( source > N*old_njump_monomer ) {
 			// a symm jump
 			Size new_source = source + N*( njump_monomer - old_njump_monomer );
+
 			for ( Size i=1; i<=target.size(); ++i ) {
-				add_jump_clone( new_source, target[i] + N*(njump_monomer-old_njump_monomer), old_jump_clone_weights[target[i]] );
-				//std::cerr << "Map (" << source << " , " << target[i] << ") to (" << new_source << " , " << target[i] + N*(njump_monomer-old_njump_monomer) << ")\n";
+				Size new_target_i = target[i] + N*(njump_monomer-old_njump_monomer);
+
+				add_jump_clone( new_source, new_target_i, old_jump_clone_weights[target[i]] );
 			}
 		}
 	}
@@ -1350,6 +1396,9 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 		dofs_new.insert( std::make_pair( it->first + N*( njump_monomer - old_njump_monomer ), it->second ) );
 	}
 	set_dofs( dofs_new );
+
+	jnum2dofname_ = jnum2dofname_new;
+	dofname2jnum_ = dofname2jnum_new;
 }
 
 /// this actually only tests to see if the independent residues are contiguous...

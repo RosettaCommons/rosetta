@@ -205,6 +205,23 @@ public:
 	ResidueTypeCOPs
 	get_base_types_name3( std::string const &  name3 ) const;
 
+	/// @brief Given a D-residue, get its L-equivalent.
+	/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not a D-residue.
+	/// Preserves variant types.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	ResidueTypeCOP get_d_equivalent( ResidueTypeCOP l_rsd ) const;
+
+	/// @brief Given an L-residue, get its D-equivalent.
+	/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
+	/// Preserves variant types.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	ResidueTypeCOP get_l_equivalent( ResidueTypeCOP d_rsd ) const;
+
+	/// @brief Given a residue, get its mirror-image type.
+	/// @details Returns the same residue if this is an ACHIRAL type (e.g. gly), the D-equivalent for an L-residue, the L-equivalent of a D-residue,
+	/// or NULL if this is an L-residue with no D-equivalent (or a D- with no L-equivalent).  Preserves variant types.
+	ResidueTypeCOP get_mirrored_type( ResidueTypeCOP original_rsd ) const;
+
 	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 	bool
 	generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const;
@@ -387,10 +404,19 @@ private:
 	/// @brief data for lazy loading of PDB components
 	std::string pdb_components_filename_;
 
-	// @brief all cached residue_type information including generated residue_types, name3_map, etc.
-	// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
-	// const ResidueTypeSet.
+	/// @brief all cached residue_type information including generated residue_types, name3_map, etc.
+	/// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
+	/// const ResidueTypeSet.
 	ResidueTypeSetCacheOP cache_;
+
+	/// @brief A list of L-chirality base types with an equivalent D-chirality base type.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::map < ResidueTypeCOP /*L-type*/, ResidueTypeCOP /*D-type*/> l_to_d_mapping_;
+
+	/// @brief A list of D-chirality base types with an equivalent L-chirality base type.
+	/// @details For reverse searches.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::map < ResidueTypeCOP /*D-type*/, ResidueTypeCOP /*L-type*/> d_to_l_mapping_;
 
 private:
 	// uncopyable

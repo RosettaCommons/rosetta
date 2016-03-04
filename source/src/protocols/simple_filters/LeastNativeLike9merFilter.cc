@@ -93,25 +93,27 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 		endRes = symminfo->num_independent_residues()-fragment_length+1;
 	}
-	if(ignore_terminal_res_){
+	if ( ignore_terminal_res_ ) {
 		startRes = startRes+1;
 		endRes = endRes-1;
 	}
-	for(Size resid=startRes; resid<=endRes; ++resid){
+	for ( Size resid=startRes; resid<=endRes; ++resid ) {
 		std::string fragAbegoStr = "";
 		for ( Size ii=0; ii<fragment_length; ++ii ) {
 			fragAbegoStr += abegoSeq[resid+ii];
 		}
-			if(only_helices_ && fragAbegoStr == "AAAAAAAAA"){
-				Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
-				if(tmpRmsd>worstRmsd)
-					worstRmsd = tmpRmsd;
+		if ( only_helices_ && fragAbegoStr == "AAAAAAAAA" ) {
+			Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
+			if ( tmpRmsd>worstRmsd ) {
+				worstRmsd = tmpRmsd;
+			}
 		}
-		if(!only_helices_){
+		if ( !only_helices_ ) {
 			if ( fragAbegoStr != "AAAAAAAAA" ) {
 				Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
-				if(tmpRmsd>worstRmsd)
+				if ( tmpRmsd>worstRmsd ) {
 					worstRmsd = tmpRmsd;
+				}
 			}
 		}
 	}
@@ -146,10 +148,11 @@ LeastNativeLike9merFilter::parse_my_tag(
 	using namespace core::indexed_structure_store;
 	// set threshold
 	filtered_value_ = tag->getOption<Real>( "threshold", 99.0 );
-	if(filtered_value_!=99.0)
+	if ( filtered_value_!=99.0 ) {
 		rmsd_lookup_thresh_ = filtered_value_;
-	else
+	} else {
 		rmsd_lookup_thresh_ = tag->getOption<Real>("rmsd_lookup_threshold",0.40);
+	}
 	only_helices_ = tag->getOption<bool>( "only_helices", false ); //lower threshold to remove kinked helices
 	ABEGOHashedFragmentStore_ = ABEGOHashedFragmentStore::get_instance();
 	ABEGOHashedFragmentStore_->set_threshold_distance(rmsd_lookup_thresh_);

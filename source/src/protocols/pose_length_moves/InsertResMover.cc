@@ -107,8 +107,9 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	using namespace chemical;
 	core::conformation::ResidueCOPs residues(core::pose::get_chain_residues(*poseOP, chain_id));
 	Size res_position = residue_;
-	if(residue_>poseOP->total_residue())
-			res_position=poseOP->total_residue();
+	if ( residue_>poseOP->total_residue() ) {
+		res_position=poseOP->total_residue();
+	}
 	Size inPoseResidue = residues[res_position]->seqpos();
 	Real tmpPhi =  poseOP->phi(inPoseResidue);
 	Real tmpPsi =  poseOP->psi(inPoseResidue);
@@ -145,12 +146,11 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	poseOP->append_residue_by_jump( *new_rsd,poseOP->total_residue());
 	kinematics::FoldTree ft;
 	if ( inPoseResidue != 1 ) {
-		if(grow_toward_Nterm_){
+		if ( grow_toward_Nterm_ ) {
 			ft.add_edge(1,inPoseResidue-1,core::kinematics::Edge::PEPTIDE);
 			ft.add_edge(1,poseOP->total_residue(),1);
 			ft.add_edge(poseOP->total_residue(),inPoseResidue,core::kinematics::Edge::PEPTIDE);
-		}
-		else{
+		} else {
 			ft.add_edge(1,inPoseResidue,core::kinematics::Edge::PEPTIDE);
 			ft.add_edge(1,poseOP->total_residue(),1);
 			ft.add_edge(poseOP->total_residue(),inPoseResidue+1,core::kinematics::Edge::PEPTIDE);
@@ -165,13 +165,12 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	std::cout << "hereC" << std::endl;
 	*/
 	poseOP->fold_tree(ft);
-	if(grow_toward_Nterm_){
+	if ( grow_toward_Nterm_ ) {
 		for ( Size ii=0; ii<length; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
 			poseOP->conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd,inPoseResidue, true); //was prepend
 		}
-	}
-	else{
+	} else {
 		for ( Size ii=0; ii<length; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
 			poseOP->conformation().safely_append_polymer_residue_after_seqpos( *new_rsd,inPoseResidue, true); //was prepend
@@ -189,11 +188,10 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 
 void InsertResMover::apply(core::pose::Pose & pose) {
 	Size chain_id;
-	if(chain_=="999"){
+	if ( chain_=="999" ) {
 		utility::vector1< Size > chains = get_chains(pose );
 		chain_id = chains[1];
-	}
-	else{
+	} else {
 		if ( !has_chain(chain_,pose) ) {
 			utility_exit_with_message( "Chain does not exit:"+chain_);
 		}

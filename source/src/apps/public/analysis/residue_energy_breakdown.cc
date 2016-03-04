@@ -84,7 +84,7 @@ main( int argc, char* argv [] ) {
 		while ( input.has_another_pose() ) {
 			input.fill_pose( current_pose, *rsd_set );
 
-			if( ! current_pose.pdb_info() ) {
+			if ( ! current_pose.pdb_info() ) {
 				// Make a default PDB info if one doesn't already exist - this simplifies logic later.
 				core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(current_pose) );
 				current_pose.pdb_info( new_pdb_info );

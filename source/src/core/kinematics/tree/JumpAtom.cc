@@ -180,6 +180,13 @@ void
 JumpAtom::update_xyz_coords()
 {
 	Stub stub( get_input_stub() );
+
+	// this code initializes refolding from an inverted jump
+	if ( jump_.get_invert_upstream() ) {
+		stub.M = stub.M * Jump::mirror_z_transform;
+		//stub.v = stub.v; //?
+	}
+
 	JumpAtom::update_xyz_coords( stub );
 }
 
@@ -198,10 +205,6 @@ JumpAtom::update_xyz_coords(
 	jump_.make_jump( stub, new_stub );
 	position( new_stub.v );
 
-	//std::cout << "input_stub: " << stub << std::endl;
-	//std::cout << "jump: " << jump_ << std::endl;
-	//std::cout << "stub: " << new_stub << std::endl;
-
 	for ( Atoms_Iterator it= atoms_begin(), it_end= atoms_end();
 			it != it_end; ++it ) {
 		(*it)->update_xyz_coords( new_stub );
@@ -212,7 +215,7 @@ JumpAtom::update_xyz_coords(
 /////////////////////////////////////////////////////////////////////////////
 /// @details update the jump from the input stub and this atom's own stub. If defined,
 /// will recursively update internal coords for all its offspring atoms.
-/// @note The input stub is not changed.
+/// @note The input stub is not changed
 void
 JumpAtom::update_internal_coords(
 	Stub & stub,
@@ -223,16 +226,55 @@ JumpAtom::update_internal_coords(
 
 	Stub new_stub( get_stub() );
 
-	// fill in my jump data
+
+	// 8 cases dependending on: 1) stub handedness, 2) inv_up, and 3) inv_down
+	// new_stub is always right-handed
+	// jump (internally) is always right-handed
+	// rules
+	//  inv_stub inv_up inv_down   stub  new_stub  new_down
+	//  ---------------------------------------------------
+	//  0        0      0          no    no        no
+	//  0        0      1          no    no        yes
+	//  0        1      0          yes   yes       no
+	//  0        1      1          yes   yes       yes
+	//  1        0      0          yes   no        no
+	//  1        0      1          yes   no        yes
+	//  1        1      0          no    yes       no
+	//  1        1      1          no    yes       yes
+	// perhaps this logic should live in Jump?
+
+	bool inv_stub = (stub.M.det()<0);
+	bool inv_up=jump_.get_invert_upstream(), inv_down=jump_.get_invert_downstream();
+
+	// it is safe to edit this in place since upstream is inverted for all
+	// child atoms (since an atom is either left- or right- handed
+	if ( inv_stub != inv_up ) {
+		stub.M = stub.M * Jump::mirror_z_transform;
+	}
+	if ( inv_up ) {
+		new_stub.M =  new_stub.M * Jump::mirror_z_transform;
+	}
 	jump_.from_stubs( stub, new_stub );
+
+	if ( inv_up != inv_down ) {
+		new_stub.M =  new_stub.M * Jump::mirror_z_transform;
+	}
 
 	if ( recursive ) {
 		for ( Atoms_Iterator it= atoms_begin(), it_end= atoms_end();
 				it != it_end; ++it ) {
-			(*it)->update_internal_coords( new_stub );
+			(*it)->update_internal_coords( new_stub, recursive );
 		}
 	}
 }
+
+void
+JumpAtom::steal_inversion(AtomOP steal_from) {
+	JumpAtomOP steal_fromJ = utility::pointer::dynamic_pointer_cast< JumpAtom >(steal_from);
+	std::pair<bool,bool> inv = steal_fromJ->get_inversion();
+	jump_.set_invert(inv.first, inv.second);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 /// @note this will recursively clone all this atom's offspring atoms
@@ -337,6 +379,13 @@ JumpAtom::get_dof_axis_and_end_pos(
 	using numeric::z_rotation_matrix_degrees;
 
 	Stub input_stub( get_input_stub() );
+
+	// special case #1: inverted upstream jump
+	if ( jump_.get_invert_upstream() ) {
+		assert (input_stub.M.det()>0);
+		input_stub.M = input_stub.M * Jump::mirror_z_transform;
+	}
+
 	int const rb_no( get_rb_number( type ) );
 	if ( rb_no <= 3 ) {
 		axis = input_stub.M.col( rb_no );
@@ -347,20 +396,44 @@ JumpAtom::get_dof_axis_and_end_pos(
 		utility::vector1< Real > const & rb_delta( jump_.get_rb_delta( n2c ) );
 		numeric::xyzVector< Real > const & rb_center( jump_.get_rb_center( n2c ));
 
-		end_pos = my_stub.v + my_stub.M * rb_center;
+		// special case #2: inverted downstream jump
+		//   recall the rotation parameters describe the uninverted jump
+		//   so we work with an uninverted input_stub
+		if ( jump_.get_invert_downstream() ) {
+			assert (my_stub.M.det()>0);
 
-		if ( type == id::RB6 ) {
-			axis = input_stub.M.col(3);
-		} else if ( type == id::RB5 ) {
-			Real const theta_z = rb_delta[6];
-			axis = ( input_stub.M * z_rotation_matrix_degrees( theta_z ) ).col(2);
-		} else if ( type == id::RB4 ) {
-			Real const theta_z = rb_delta[6], theta_y = rb_delta[5];
-			axis = ( input_stub.M * z_rotation_matrix_degrees( theta_z ) *
-				y_rotation_matrix_degrees( theta_y ) ).col(1);
+			my_stub.M = my_stub.M * Jump::mirror_z_transform;
+			end_pos = my_stub.v + my_stub.M * rb_center;
+
+			if ( type == id::RB6 ) {
+				axis = -1.0 * (input_stub.M).col(3);
+			} else if ( type == id::RB5 ) {
+				Real const theta_z = rb_delta[6];
+				axis = -1.0 * ( input_stub.M * z_rotation_matrix_degrees( theta_z ) ).col(2);
+			} else if ( type == id::RB4 ) {
+				Real const theta_z = rb_delta[6], theta_y = rb_delta[5];
+				axis = -1.0 * ( input_stub.M * z_rotation_matrix_degrees( theta_z ) *
+					y_rotation_matrix_degrees( theta_y ) ).col(1);
+			} else {
+				std::cerr << "Bad torsion type for Atom" << type << std::endl;
+				utility_exit();
+			}
 		} else {
-			std::cerr << "Bad torsion type for Atom" << type << std::endl;
-			utility_exit();
+			end_pos = my_stub.v + my_stub.M * rb_center;
+
+			if ( type == id::RB6 ) {
+				axis = input_stub.M.col(3);
+			} else if ( type == id::RB5 ) {
+				Real const theta_z = rb_delta[6];
+				axis = ( input_stub.M * z_rotation_matrix_degrees( theta_z ) ).col(2);
+			} else if ( type == id::RB4 ) {
+				Real const theta_z = rb_delta[6], theta_y = rb_delta[5];
+				axis = ( input_stub.M * z_rotation_matrix_degrees( theta_z ) *
+					y_rotation_matrix_degrees( theta_y ) ).col(1);
+			} else {
+				std::cerr << "Bad torsion type for Atom" << type << std::endl;
+				utility_exit();
+			}
 		}
 	}
 }

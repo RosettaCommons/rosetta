@@ -68,6 +68,11 @@ public: // Properties
 	rsd1() const { return rsd1_; }
 
 	inline
+	Size
+	rsd2() const { return rsd2_; }
+
+	//fd why is this returning a nonconst reference?
+	inline
 	Size &
 	rsd2() { return rsd2_; }
 

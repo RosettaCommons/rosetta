@@ -360,6 +360,12 @@ public:
 
 	virtual
 	void
+	initialize_pose_for_rotsets_creation(
+		core::pose::Pose & /*pose*/
+	) const {}
+
+	virtual
+	void
 	show( std::ostream & out ) const;
 
 protected:

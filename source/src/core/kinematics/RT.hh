@@ -84,11 +84,7 @@ public:
 	from_stubs(
 		Stub const & stub1,
 		Stub const & stub2
-	)
-	{
-		translation = stub1.M.transposed() * ( stub2.v - stub1.v );
-		rotation = stub1.M.transposed() * stub2.M;
-	}
+	);
 
 	/// @brief reverse the "view"
 	void
@@ -139,7 +135,6 @@ public:
 		rotation = r;
 	}
 
-
 	/// @brief get the rotation
 	Matrix const &
 	get_rotation() const
@@ -153,7 +148,6 @@ public:
 	{
 		return translation;
 	}
-
 
 	Real
 	distance_squared( RT const & b ) const
@@ -179,12 +173,7 @@ public:
 	void
 	make_jump(
 		Stub const & stub1,
-		Stub & stub2
-	) const
-	{
-		stub2.M = stub1.M * rotation;
-		stub2.v = stub1.v + stub1.M * translation;
-	}
+		Stub & stub2 ) const;
 
 	/// @brief output operator
 	friend std::ostream & operator <<( std::ostream & os, RT const & rt );
@@ -205,7 +194,6 @@ public:
 	inline
 	Real
 	distance( RT const & a, RT const & b );
-
 
 private: // Fields
 	/// rotation matrix, written in stub1 frame
@@ -229,6 +217,7 @@ Real
 distance( RT const & a, RT const & b )
 {
 	using namespace numeric;
+
 	return
 		std::sqrt( a.rotation.col(1).distance_squared( b.rotation.col(1) ) +
 		a.rotation.col(2).distance_squared( b.rotation.col(2) ) +

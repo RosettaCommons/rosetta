@@ -79,8 +79,7 @@ public:
 	void
 	update_internal_coords(
 		Stub & stub,
-		bool const recursive = true
-	);
+		bool const recursive = true );
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -134,6 +133,15 @@ public:
 	AtomOP
 	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const;
 
+	// get inversion of the wrapped jump
+	std::pair<bool,bool>
+	get_inversion() {
+		return std::make_pair<bool,bool>(jump_.get_invert_upstream(), jump_.get_invert_downstream());
+	}
+
+	virtual
+	void
+	steal_inversion(AtomOP steal_from);
 
 	///////////////////////////////////////////////////////////////////////////
 	/// @brief for minimizing, add DOF(RB) for a JumpAtom into the MinimizerMap

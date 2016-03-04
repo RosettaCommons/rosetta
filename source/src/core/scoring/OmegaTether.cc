@@ -205,7 +205,7 @@ OmegaTether::eval_omega_score_residue(
 		if ( aa == core::chemical::aa_gly ) {
 			table = 2;
 		}
-		if ( aa == core::chemical::aa_pro || aa ==  core::chemical::aa_dpr) {
+		if ( aa == core::chemical::aa_pro || aa ==  core::chemical::aa_dpr ) {
 			table = 3;
 		}
 		if ( aa == core::chemical::aa_ile || aa == core::chemical::aa_val || aa == core::chemical::aa_dil || aa == core::chemical::aa_dva ) {
@@ -218,7 +218,7 @@ OmegaTether::eval_omega_score_residue(
 
 		// D AAs
 		core::Real phi_eff=phi, psi_eff=psi, scale=1.0;
-		if( core::chemical::is_canonical_D_aa(aa) ) {
+		if ( core::chemical::is_canonical_D_aa(aa) ) {
 			phi_eff=360.0-phi;
 			psi_eff=360.0-psi;
 			scale=-1.0;

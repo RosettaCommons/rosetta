@@ -11,8 +11,8 @@
 /// @author Frank DiMaio
 
 
-#ifndef INCLUDED_protocols_cryst_refineable_lattice_hh
-#define INCLUDED_protocols_cryst_refineable_lattice_hh
+#ifndef INCLUDED_protocols_cryst_refinable_lattice_hh
+#define INCLUDED_protocols_cryst_refinable_lattice_hh
 
 #include <protocols/cryst/spacegroup.hh>
 
@@ -76,6 +76,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
 
 namespace protocols {
@@ -165,12 +166,22 @@ class MakeLatticeMover : public protocols::moves::Mover {
 private:
 	Spacegroup sg_;
 	core::Real contact_dist_;
+	bool refinable_lattice_;
 
 	utility::vector1< numeric::xyzMatrix<core::Real> > allRs_;
 	utility::vector1< numeric::xyzVector<core::Real> > allTs_;
 
 public:
-	MakeLatticeMover() : contact_dist_(24.0) {}
+	MakeLatticeMover() {
+		using namespace basic::options;
+		refinable_lattice_ = option[ OptionKeys::cryst::refinable_lattice]();
+		contact_dist_ = option[ OptionKeys::cryst::interaction_shell]();
+	}
+
+	void
+	set_refinable_lattice( bool val ) {
+		refinable_lattice_ = val;
+	}
 
 	// get R and T from subunit index
 	void
@@ -219,7 +230,7 @@ public:
 
 	void
 	setup_xtal_symminfo(
-		core::pose::Pose const & pose,
+		core::pose::Pose & pose,
 		core::Size const num_monomers,
 		core::Size const num_virtuals,
 		core::Size const base_monomer,
@@ -260,10 +271,17 @@ public:
 
 private:
 
-	core::conformation::ResidueOP make_vrt( core::Vector O, core::Vector X, core::Vector Y ) {
-		core::conformation::ResidueOP vrtrsd
-			( core::conformation::ResidueFactory::create_residue(
-			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( "VRT" ) ) );
+	core::conformation::ResidueOP make_vrt( core::Vector O, core::Vector X, core::Vector Y, bool inv=false ) {
+		core::conformation::ResidueOP vrtrsd;
+		if ( inv ) {
+			vrtrsd = core::conformation::ResidueOP( core::conformation::ResidueFactory::create_residue(
+				core::chemical::ChemicalManager::get_instance()->residue_type_set(
+				core::chemical::FA_STANDARD )->name_map( "INV_VRT" ) ) );
+		} else {
+			vrtrsd = core::conformation::ResidueOP( core::conformation::ResidueFactory::create_residue(
+				core::chemical::ChemicalManager::get_instance()->residue_type_set(
+				core::chemical::FA_STANDARD )->name_map( "VRT" ) ) );
+		}
 		vrtrsd->set_xyz("ORIG",O);
 		vrtrsd->set_xyz("X",O+X);
 		vrtrsd->set_xyz("Y",O+Y);

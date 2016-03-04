@@ -19,6 +19,8 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -36,6 +38,8 @@
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.fwd.hh>
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
+
+#include <map>
 
 namespace core {
 namespace pack {
@@ -70,7 +74,7 @@ public:
 	// Graph property accessors.
 
 	/// @brief Get the number of nodes.
-	///
+	/// @details This lies a little bit.  It only returns the number of independent nodes.
 	virtual int get_num_nodes() const;
 
 	/// @brief Get the number of states for a specific node.
@@ -78,7 +82,7 @@ public:
 	virtual int get_num_states_for_node(int node) const;
 
 	/// @brief Get the total number of states for all nodes.
-	///
+	/// @details This lies a little bit.  It only returns the total number of states for the independent nodes.
 	virtual int get_num_total_states() const;
 
 	/// @brief Utility signal.
@@ -135,6 +139,20 @@ private:
 	/// @param[in] resvect 1-vector of const-owning pointers to Residue objects representing current state.
 	core::Real calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect );
 
+	/// @brief Initialize symmetry information.
+	/// @details Called by initialize().
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void initialize_symmetry_info( core::pose::Pose const &pose );
+
+	/// @brief Sets the current consideration.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void set_consideration( int const node_ind, int const node_resid, int const new_state, utility::vector1< std::pair< int, core::conformation::ResidueCOP> > & unset_info );
+
+	/// @brief Clears the current consideration.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void unset_consideration( utility::vector1< std::pair < int, core::conformation::ResidueCOP> > const & unset_info );
+
+
 	/// @brief Abandon the substitution that was being considered.
 	///
 	void clear_consideration();
@@ -174,6 +192,27 @@ private:
 	/// @brief The rotamer sets for each node (vector of const-owning pointers to RotamerSet objects.
 	///
 	utility::vector1< core::pack::rotamer_set::RotamerSetCOP > per_node_rotamer_sets_;
+
+	/// @brief Is this a symmetric packing job?
+	///
+	bool is_symmetric_;
+
+	/// @brief Is this a symmetric packing job with mirror symmetry?
+	///
+	bool has_mirror_symm_;
+
+	/// @brief Number of independent nodes (not symmetry copies).
+	///
+	core::Size num_indep_nodes_;
+
+	/// @brief Map of dependent nodes.
+	/// @details Maps controlling node index -> vector of dependent node indices.
+	std::map < int, utility::vector1< core::Size > > dependent_node_map_;
+
+	/// @brief Map of dependent residues.
+	/// @details Maps controlling node index -> vector of dependent residue indices.
+	std::map < int, utility::vector1< core::Size > > dependent_residue_map_;
+
 };
 
 }

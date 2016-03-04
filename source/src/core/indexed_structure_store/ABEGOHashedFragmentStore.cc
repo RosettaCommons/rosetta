@@ -90,7 +90,7 @@ ABEGOHashedFragmentStore::ABEGOHashedFragmentStore(){
 
 void ABEGOHashedFragmentStore::set_threshold_distance(Real threshold_distance){
 	std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
-	if(ABEGOHashedFragmentStore_.begin()->second->fragment_threshold_distances[0]>threshold_distance){//fragment threshold distance needs to be set to the lowest calling value.
+	if ( ABEGOHashedFragmentStore_.begin()->second->fragment_threshold_distances[0]>threshold_distance ) { //fragment threshold distance needs to be set to the lowest calling value.
 		for ( fragStoreMap_iter = ABEGOHashedFragmentStore_.begin(); fragStoreMap_iter != ABEGOHashedFragmentStore_.end(); fragStoreMap_iter++ ) {
 			fragStoreMap_iter->second->add_threshold_distance_allFrag(threshold_distance);
 		}
@@ -103,13 +103,13 @@ void ABEGOHashedFragmentStore::init_ss_stub_to_abego(){
 	vector1<std::string> loops;
 	std::string tmp_loop = "L";
 	loops.push_back(tmp_loop);
-	for(Size ii=2; ii<=5; ++ii){
+	for ( Size ii=2; ii<=5; ++ii ) {
 		tmp_loop+="L";
 		loops.push_back(tmp_loop);
 	}
-	for(Size ii=1; ii<=types.size(); ++ii){
-		for(Size jj=1; jj<=loops.size(); ++jj){
-			for(Size kk=1; kk<=types.size(); ++kk){
+	for ( Size ii=1; ii<=types.size(); ++ii ) {
+		for ( Size jj=1; jj<=loops.size(); ++jj ) {
+			for ( Size kk=1; kk<=types.size(); ++kk ) {
 				std::string ss_stub = types[ii]+loops[jj]+types[kk];
 				vector1<Size> tmp_vector;
 				ss_stub_to_abego_[ss_stub]=tmp_vector;
@@ -123,13 +123,14 @@ set<std::string> ABEGOHashedFragmentStore::get_ss_stubs_per_fragmentStoreOP(Size
 	//loop must have valid ABEGO and SS to be considered.
 	core::sequence::ABEGOManager AM;
 	std::string abego_string = AM.base5index2symbolString(base5ABEGOindex,9);
-	if(abego_string=="AAAAAAAAA" ||abego_string=="BBBBBBBBB")  //Don't consider helix or sheet fragments.
+	if ( abego_string=="AAAAAAAAA" ||abego_string=="BBBBBBBBB" ) {  //Don't consider helix or sheet fragments.
 		return valid_stubs_present; //Don't consider AAAAAAAAA fragments with
-	for(Size ii=0; ii<fragment_storeOP->num_fragments_; ++ii){//loop through the fragments
+	}
+	for ( Size ii=0; ii<fragment_storeOP->num_fragments_; ++ii ) {//loop through the fragments
 		std::string full_string = fragment_storeOP->string_groups["ss"][ii];
-		for(Size jj=5; jj<=9; ++jj){//1mer - 5mer plus 2 stubs
+		for ( Size jj=5; jj<=9; ++jj ) {//1mer - 5mer plus 2 stubs
 			std::string short_string = full_string.substr(0,jj);//1mer loop
-			if(ss_stub_to_abego_.count(short_string) && valid_ss_stub_abego_match(short_string,abego_string)){
+			if ( ss_stub_to_abego_.count(short_string) && valid_ss_stub_abego_match(short_string,abego_string) ) {
 				valid_stubs_present.insert(short_string);
 			}
 		}
@@ -140,11 +141,12 @@ set<std::string> ABEGOHashedFragmentStore::get_ss_stubs_per_fragmentStoreOP(Size
 bool ABEGOHashedFragmentStore::valid_ss_stub_abego_match(std::string ss_stub,std::string abego_string){
 	//this checks thath the ss_stub helix residues are actually abego A's and ss_stub sheets are actually abego B's. Else this is an inproperly sized loop.
 	bool valid = true;
-	for(Size ii=0; ii<ss_stub.size(); ++ii){
+	for ( Size ii=0; ii<ss_stub.size(); ++ii ) {
 		std::string ss = ss_stub.substr(ii,1);
 		std::string abego = abego_string.substr(ii,1);
-		if((ss=="H" && abego!="A") || (ss=="E"&&abego!="B"))
+		if ( (ss=="H" && abego!="A") || (ss=="E"&&abego!="B") ) {
 			valid=false;
+		}
 	}
 	return valid;
 }
@@ -154,9 +156,9 @@ void ABEGOHashedFragmentStore::generate_ss_stub_to_abego(){
 	std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
 	for ( fragStoreMap_iter = ABEGOHashedFragmentStore_.begin(); fragStoreMap_iter != ABEGOHashedFragmentStore_.end(); fragStoreMap_iter++ ) {
 		set<std::string> valid_ss_stubs = get_ss_stubs_per_fragmentStoreOP(fragStoreMap_iter->first,fragStoreMap_iter->second);
-		for(set<std::string>::iterator itr=valid_ss_stubs.begin(); itr!= valid_ss_stubs.end(); itr++){
+		for ( set<std::string>::iterator itr=valid_ss_stubs.begin(); itr!= valid_ss_stubs.end(); itr++ ) {
 			ss_stub_to_abego_[*itr].push_back(fragStoreMap_iter->first);
-			if(fragStoreMap_iter->second->fragmentStore_groups.count(*itr)==0){//checking for map existance
+			if ( fragStoreMap_iter->second->fragmentStore_groups.count(*itr)==0 ) { //checking for map existance
 				std::vector<Size> residues;
 				residues.push_back(0);
 				residues.push_back(1);
@@ -186,13 +188,14 @@ Real ABEGOHashedFragmentStore::lookback(pose::Pose const pose, Size resid){
 
 std::vector<bool>  ABEGOHashedFragmentStore::generate_ss_subset_match(FragmentStoreOP fragStoreOP,string stub_ss){
 	std::vector<bool> ss_matches;
-	for(Size ii=0; ii<fragStoreOP->num_fragments_; ++ii){
+	for ( Size ii=0; ii<fragStoreOP->num_fragments_; ++ii ) {
 		string full_ss = fragStoreOP->string_groups["ss"][ii];
 		string short_ss = full_ss.substr(0,stub_ss.size());
-		if(short_ss == stub_ss)
+		if ( short_ss == stub_ss ) {
 			ss_matches.push_back(true);
-		else
+		} else {
 			ss_matches.push_back(false);
+		}
 	}
 	return(ss_matches);
 }
@@ -203,7 +206,7 @@ void ABEGOHashedFragmentStore::lookback_stub(std::vector< numeric::xyzVector<num
 	vector1<Size> abego_types = ss_stub_to_abego_[stub_ss];
 	Real low_rmsd = 9999;
 	//Size tmp_match_index;
-	for(Size ii=1; ii<=abego_types.size(); ii++){
+	for ( Size ii=1; ii<=abego_types.size(); ii++ ) {
 		FragmentStoreOP selected_fragStoreOP = ABEGOHashedFragmentStore_.at(abego_types[ii]);
 		FragmentStoreOP stub_fragStoreOP = selected_fragStoreOP->fragmentStore_groups[stub_ss];
 		FragmentLookupOP stub_fragLookupOP = stub_fragStoreOP->get_fragmentLookup();
@@ -211,7 +214,7 @@ void ABEGOHashedFragmentStore::lookback_stub(std::vector< numeric::xyzVector<num
 		FragmentLookupResult lookupResults= stub_fragLookupOP->lookup_closest_fragment_subset(&coordinates[0],ss_subset_match);
 		Real tmp_rmsd = lookupResults.match_rmsd;
 		Size tmp_index = lookupResults.match_index;
-		if(tmp_rmsd<low_rmsd){
+		if ( tmp_rmsd<low_rmsd ) {
 			low_rmsd= tmp_rmsd;
 			match_abego = abego_types[ii];
 			match_index = tmp_index;
@@ -229,21 +232,21 @@ void ABEGOHashedFragmentStore::lookback_uncached_stub(std::vector< numeric::xyzV
 	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &coordinates.front().x() , coordinates.size());
 	numeric::alignment::QCP_Kernel<core::Real> qcp;
 	vector1<Real> rot_vector;
-	for(Size ii=1; ii<=abego_types.size(); ii++){
+	for ( Size ii=1; ii<=abego_types.size(); ii++ ) {
 		FragmentStoreOP selected_fragStoreOP = ABEGOHashedFragmentStore_.at(abego_types[ii]);
 		std::vector<bool> frags_to_check = generate_ss_subset_match(selected_fragStoreOP,short_stub_ss);
-		for(Size jj=0; jj<selected_fragStoreOP->num_fragments_; ++jj){
-			if(frags_to_check[jj]){//correct secondary structure of stub. Quick filter to limit computation
+		for ( Size jj=0; jj<selected_fragStoreOP->num_fragments_; ++jj ) {
+			if ( frags_to_check[jj] ) { //correct secondary structure of stub. Quick filter to limit computation
 				std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates;
 				for ( Size kk = 0;  kk < full_stub_ss.size(); ++kk ) {
-					if(full_stub_ss.substr(kk,1)!="L"){
+					if ( full_stub_ss.substr(kk,1)!="L" ) {
 						fragCoordinates.push_back(selected_fragStoreOP->fragment_coordinates[jj*9+kk]);
 					}
 				}
 				numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates.front().x() , fragCoordinates.size());
 				Real tmp_rmsd = qcp.calc_centered_coordinate_rmsd( &coordinates.front().x(), &fragCoordinates.front().x(), fragCoordinates.size(), &rot_vector[1]);
- 				if(tmp_rmsd<low_rmsd){
- 					low_rmsd = tmp_rmsd;
+				if ( tmp_rmsd<low_rmsd ) {
+					low_rmsd = tmp_rmsd;
 					match_abego = abego_types[ii];
 					match_index = jj;
 					match_rmsd = tmp_rmsd;
@@ -424,13 +427,14 @@ std::string ABEGOHashedFragmentStore::get_abego_string(pose::Pose const pose, Si
 FragmentStoreOP ABEGOHashedFragmentStore::get_fragment_store(std::string fragment_abego){
 	core::sequence::ABEGOManager AM;
 	Size base5index = AM.symbolString2base5index(fragment_abego);
-	if(ABEGOHashedFragmentStore_.find(base5index) != ABEGOHashedFragmentStore_.end())
+	if ( ABEGOHashedFragmentStore_.find(base5index) != ABEGOHashedFragmentStore_.end() ) {
 		return(ABEGOHashedFragmentStore_.at(base5index));
+	}
 	return(NULL);
 }
 
 FragmentStoreOP ABEGOHashedFragmentStore::get_fragment_store(Size base5index){
-	if(ABEGOHashedFragmentStore_.find(base5index) != ABEGOHashedFragmentStore_.end()){
+	if ( ABEGOHashedFragmentStore_.find(base5index) != ABEGOHashedFragmentStore_.end() ) {
 		return(ABEGOHashedFragmentStore_.at(base5index));
 	}
 	return(NULL);

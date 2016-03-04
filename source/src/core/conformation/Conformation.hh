@@ -70,8 +70,6 @@
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
-// Cereal headers
-#include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
 
@@ -1189,6 +1187,15 @@ protected:
 		debug_assert( seqpos <= size() );
 		return *residues_[ seqpos ];
 	}
+
+	/// @brief Force updating of residue torsions.
+	/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
+	void force_update_residue_torsions() const;
+
+	/// @brief Force updating of residue coordinates.
+	/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
+	void force_update_residue_coordinates() const;
+
 
 private:
 

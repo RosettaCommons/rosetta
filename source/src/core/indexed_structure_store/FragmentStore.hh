@@ -63,7 +63,7 @@ public:
 	// @brief Basic structure store, holds a collection of structure and associated residue entries.
 	FragmentStore(FragmentSpecification fragment_specification, numeric::Size num_fragments = 0);
 
-		/// self pointer
+	/// self pointer
 	inline FragmentStoreOP get_self_ptr() { return shared_from_this(); }
 
 

@@ -21,6 +21,7 @@
 // Unit headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/conformation/symmetry/SymmetryTransform.hh> // needs full decl
 
 #include <core/conformation/Conformation.hh>
 
@@ -76,8 +77,10 @@ public:
 	bool
 	same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const;
 
+	virtual
 	SymmetryInfoCOP Symmetry_Info() const;
 
+	virtual
 	SymmetryInfoOP Symmetry_Info();
 
 	/////////////////////////////////////////
@@ -145,7 +148,8 @@ public:
 		bool quiet=false
 	);
 
-	virtual utility::vector1<bool>
+	virtual
+	utility::vector1<bool>
 	get_residue_mask() const;
 
 	virtual Real
@@ -182,15 +186,18 @@ public:
 	get_transformation( core::Size resid );
 
 	/// @brief Remap coordinate X from resid i's frame to resid j's frame
+	virtual
 	PointPosition
 	apply_transformation( PointPosition Xin, core::Size residfrom, core::Size residto, bool rotationonly=false );
 
 	/// @brief Remap coordinate X from resid i's frame to resid j's frame
 	///   assumes that the transformations are already computed (thus can be const)
+	virtual
 	PointPosition
 	apply_transformation_norecompute( PointPosition Xin, core::Size residfrom, core::Size residto, bool rotationonly=false ) const;
 
 	// @brief force recomputation of Tsymm_'s from the current conformation
+	virtual
 	void
 	recalculate_transforms( );
 
@@ -240,7 +247,8 @@ public:
 	/// @brief Declare that a chemical bond exists between two residues
 	/// @details This updates all symmetry copies, so that each one has a chemical
 	/// bond between the residues in question.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+	/// @author Frank DiMaio.
+	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	virtual
 	void
 	declare_chemical_bond(
@@ -250,13 +258,15 @@ public:
 		std::string const & atom_name2
 	);
 
-private:
+protected:
 
-	/////////////////////////////////////////////////////////////////////////////
-	// private methods
-	/////////////////////////////////////////////////////////////////////////////
+	// @brief invalidate current Tsymm settings
+	void
+	clear_Tsymm( );
 
-	// public: -- apl -- does this need to be public?
+	// @brief  invert one of the Tsymm transforms about Z
+	void
+	invert_Tsymm( char sub, core::Size subunit );
 
 	// utility function gets the nearest upstream virtual
 	core::Size
@@ -265,16 +275,14 @@ private:
 
 private:
 
-	/////////////////////////////////////////////////////////////////////////////
-	// data
-	/////////////////////////////////////////////////////////////////////////////
-
 	SymmetryInfoOP symm_info_;
 
 	// stores the symmetric transformation between subunits
 	//   computed when needed, invalidated when a jump changes
-	// multicomp: store transforms for each component
-	std::map< char, utility::vector1< numeric::HomogeneousTransform< core::Real > > > Tsymm_;
+	// multicomp: store transforms for each component (indexed by character)
+	//std::map< char, utility::vector1< numeric::HomogeneousTransform< core::Real > > > Tsymm_;
+	std::map< char, utility::vector1<SymmetryTransform> > Tsymm_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

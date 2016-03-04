@@ -75,6 +75,14 @@ sources = {
 		"pool_util",
 		"util",
 	],
+	"protocols/cryst" : [
+		"cryst_movers",
+		"cryst_rms",
+		"refinable_lattice",
+		"spacegroup",
+		"TwoDLattice",
+		"wallpaper"
+	],
 	"protocols/constraints_additional": [
 		"AdditionalConstraintCreators",
 		"AmbiguousMultiConstraint",

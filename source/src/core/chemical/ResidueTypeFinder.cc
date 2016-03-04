@@ -67,6 +67,10 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 	residue_type_set_( residue_type_set ),
 	aa_( aa_none ),
 	name1_( '?' ),
+	name3_(""),
+	residue_type_base_name_(""),
+	base_type_(),
+	interchangeability_group_(""),
 	base_property_( NO_PROPERTY ),
 	ignore_atom_named_H_( false ),
 	disallow_carboxyl_conjugation_at_glu_asp_( false ),
@@ -153,6 +157,14 @@ ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1<
 ResidueTypeCOPs
 ResidueTypeFinder::get_possible_base_residue_types( bool const include_custom /* = true */ ) const
 {
+	if ( base_type_ ) { //If a base type has already been specified, there's no need to bother with a lot of other rigamarole.
+		ResidueTypeCOPs rsd_types;
+		rsd_types.push_back( base_type_ );
+		return rsd_types;
+	}
+
+	//Otherwise, load the whole set of base types and start pruning:
+
 	ResidueTypeCOPs rsd_types = residue_type_set_.base_residue_types();
 	// Also load the PDB component, if we're specifying a name3 search
 	if ( name3_.size() ) {
@@ -860,6 +872,22 @@ ResidueTypeFinder::variants( utility::vector1< std::string > const & setting )
 	return variants( variants_ );
 }
 
+/// @brief Specify a list of standard variant types (by enum) and custom variant types (by string).
+/// @details This is the most efficient way to handle variants, since it minimizes the string handling.  Everything that
+/// can be handled by enum is handled by enum.
+/// @param[in] std_variants A vector of enums of standard variants that the ResidueTypeFinder should match.
+/// @param[in] custom_variants A vector of strings of custom variant types that the ResidueTypeFinder should match.  Note that
+/// standard types should NOT be included in this list.  There is no check for this!
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+ResidueTypeFinder &
+ResidueTypeFinder::variants(
+	utility::vector1< VariantType > const & std_variants,
+	utility::vector1< std::string > const & custom_variants
+) {
+	custom_variants_ = custom_variants;
+	return variants( std_variants );
+}
+
 ////////////////////////////////////////////////////////////////////
 /// @brief   set function for variant exceptions
 ResidueTypeFinder &
@@ -884,18 +912,18 @@ ResidueTypeFinder::variant_exceptions( utility::vector1< std::string > const & s
 // class ResidueTypeQualifications
 // {
 // public:
-// 	ResidueTypeQualifications();
-// 	ResidueTypeQualifications( ResidueTypeQualifications const & );
-// 	~ResidueTypeQualifications();
+//  ResidueTypeQualifications();
+//  ResidueTypeQualifications( ResidueTypeQualifications const & );
+//  ~ResidueTypeQualifications();
 //
 // private:
-// 	ResidueTypeCOP restype_;
-// 	utility::vector1< bool > variant_sets_satisfied_;
-// 	utility::vector1< bool > disallowed_variants_avoided_;
-// 	utility::vector1< bool > named_atoms_covered_;
-// 	utility::vector1< bool > properties_satisfied_;
-// 	utility::vector1< bool > disallowed_properties_avoided_;
-// 	utility::vector1< bool > patch_names_satified_;
+//  ResidueTypeCOP restype_;
+//  utility::vector1< bool > variant_sets_satisfied_;
+//  utility::vector1< bool > disallowed_variants_avoided_;
+//  utility::vector1< bool > named_atoms_covered_;
+//  utility::vector1< bool > properties_satisfied_;
+//  utility::vector1< bool > disallowed_properties_avoided_;
+//  utility::vector1< bool > patch_names_satified_;
 //
 // }
 

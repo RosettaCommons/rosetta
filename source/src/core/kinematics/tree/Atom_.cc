@@ -118,6 +118,8 @@ Atom_::show(int const & n_level) const
 	using namespace ObjexxFCL::format;
 	TR << "ATOM: " << atom_id_ << std::endl;
 	TR << "POSITION: " << F(8,3,x()) << F(8,3,y()) << F(8,3,z()) << std::endl;
+	TR << "STUB: " << get_stub()  << std::endl;
+	TR << "INPUT_STUB: " << get_input_stub()  << std::endl;
 	TR << "   PARENT: ";
 	AtomCOP parent_op = parent();
 	if ( parent_op ) {
@@ -316,6 +318,8 @@ Atom_::replace_atom(
 	++iter;
 	debug_assert( *iter == old_atom );
 	atoms_.erase( iter );
+
+	new_atom->steal_inversion(old_atom);  //fpd steal the iversion state when replacing this atom
 }
 
 

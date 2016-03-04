@@ -60,7 +60,10 @@ public:
 	void slide_into_contact(bool val) { slide_ = val; }
 
 private:
+	void process_symmdef_file(std::string tag);
+
 	bool slide_;
+	bool cryst1_; //use cryst1 line
 	core::conformation::symmetry::SymmDataOP symmdef_;
 };
 

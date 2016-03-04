@@ -48,7 +48,8 @@ public:
 		phi_(0.0),
 		theta_(0.0),
 		d_(0.0),
-		dof_change_propagates_to_younger_siblings_( false )
+		dof_change_propagates_to_younger_siblings_( false ),
+		inverted_frame_( false )
 	{}
 
 private: // Types
@@ -269,6 +270,13 @@ public: // Properties
 		}
 	}
 
+	virtual
+	void
+	steal_inversion(AtomOP steal_from);
+
+	bool
+	get_inversion() { return inverted_frame_; }
+
 public:
 
 	virtual
@@ -309,6 +317,9 @@ private: // Fields
 	/// @brief Track whether a dof change from this node (since the last update_xyz)
 	/// induces a coordinate change for this node's younger siblings.
 	bool dof_change_propagates_to_younger_siblings_;
+
+	/// @brief Stores whether or not this atom is folding in an inverted coordinate system
+	bool inverted_frame_;
 
 
 #ifdef    SERIALIZATION

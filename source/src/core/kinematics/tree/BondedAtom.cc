@@ -95,6 +95,12 @@ BondedAtom::update_xyz_coords()
 	/// after which the stub is ready to be passed to the younger siblings.
 	Stub stub( get_input_stub() );
 
+	// if we start folding from an inverted subunit, we need to invert the stub
+	if ( inverted_frame_ ) {
+		stub.M = stub.M * Jump::mirror_z_transform;
+		//stub.v = stub.v; //?
+	}
+
 	BondedAtom::update_xyz_coords( stub );
 
 	if ( local_dof_change_propagates_to_younger_siblings ) {
@@ -128,6 +134,13 @@ BondedAtom::update_xyz_coords(
 
 	// TODO: Add PyAssert?
 	debug_assert( stub.is_orthogonal( 1e-3 ) );
+
+	// remember if we are inverted
+	// (one way to invert a subunit is to stick an inverted jump upstream and refold)
+	bool stub_is_inverted = (stub.M.det() < 0);
+	if ( stub_is_inverted && !inverted_frame_ ) {
+		inverted_frame_ = stub_is_inverted;
+	}
 
 	stub.M *= x_rotation_matrix_radians( phi_ ); // this gets passed out
 
@@ -164,7 +177,7 @@ BondedAtom::update_xyz_coords(
 void
 BondedAtom::update_internal_coords(
 	Stub & stub,
-	bool const recursive // = true
+	bool const recursive
 )
 {
 	using numeric::x_rotation_matrix_radians;
@@ -173,7 +186,12 @@ BondedAtom::update_internal_coords(
 
 	debug_assert( stub.is_orthogonal( 1e-3 ) );
 
-	numeric::xyzVector< core::Real > w( position() - stub.v );
+	// remember if we are inverted
+	// (another way is to replace (via xyz replacement) a jump atom and call update_internal_coords)
+	bool stub_is_inverted = (stub.M.det() < 0);
+	inverted_frame_ = stub_is_inverted;
+
+	numeric::xyzVector< core::Real > w = ( position() - stub.v );
 
 	d_ = w.length();
 
@@ -221,7 +239,6 @@ BondedAtom::update_internal_coords(
 
 	stub.M *= x_rotation_matrix_radians( phi_ );
 
-
 	if ( recursive ) {
 		Stub new_stub( stub.M * z_rotation_matrix_radians( theta_ ), position() );
 
@@ -232,7 +249,7 @@ BondedAtom::update_internal_coords(
 
 		for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
 				it != it_end; ++it ) {
-			(*it)->update_internal_coords( new_stub );
+			(*it)->update_internal_coords( new_stub, recursive );
 		}
 	}
 }
@@ -325,6 +342,7 @@ BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 	new_me->position( position() );
 
 	new_me->dof_change_propagates_to_younger_siblings_ = dof_change_propagates_to_younger_siblings_;
+	new_me->inverted_frame_ = inverted_frame_;
 
 	// copy atoms
 	for ( Atoms_ConstIterator a=atoms_begin(), a_end = atoms_end();
@@ -404,12 +422,17 @@ BondedAtom::get_dof_axis_and_end_pos(
 	DOF_Type const type
 ) const
 {
-	Stub const my_stub( get_stub() );
-	Stub const input_stub( get_input_stub() );
+	Stub my_stub( get_stub() );
+	Stub input_stub( get_input_stub() );
+
+	core::Real scale=1.0;
+	if ( inverted_frame_ ) {
+		scale = -1.0;
+	}
 
 	if ( type == PHI ) {
 		end_pos = input_stub.v;
-		axis = input_stub.M.col(1);
+		axis = scale * input_stub.M.col(1);
 	} else if ( type == THETA ) {
 		end_pos = input_stub.v;
 		axis = my_stub.M.col(3);
@@ -490,6 +513,14 @@ BondedAtom::copy_coords( Atom const & src )
 	}
 }
 
+void
+BondedAtom::steal_inversion(AtomOP steal_from) {
+	BondedAtomOP steal_fromB = utility::pointer::dynamic_pointer_cast< BondedAtom >(steal_from);
+	bool inv = steal_fromB->get_inversion();
+	inverted_frame_ = inv;
+}
+
+
 Atom const *
 BondedAtom::raw_stub_atom1() const
 {
@@ -540,6 +571,7 @@ core::kinematics::tree::BondedAtom::save( Archive & arc ) const {
 	arc( CEREAL_NVP( theta_ ) ); // Real
 	arc( CEREAL_NVP( d_ ) ); // Real
 	arc( CEREAL_NVP( dof_change_propagates_to_younger_siblings_ ) ); // _Bool
+	arc( CEREAL_NVP( inverted_frame_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -551,6 +583,7 @@ core::kinematics::tree::BondedAtom::load( Archive & arc ) {
 	arc( theta_ ); // Real
 	arc( d_ ); // Real
 	arc( dof_change_propagates_to_younger_siblings_ ); // _Bool
+	arc( inverted_frame_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::tree::BondedAtom );

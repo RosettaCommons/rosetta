@@ -104,8 +104,9 @@ void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 		core::pose::PoseOP repeat_poseOP( new core::pose::Pose() );
 		initialize_repeat_pose(pose,*repeat_poseOP);
 		copy_phi_psi_omega(pose,*repeat_poseOP);
-		if(maintain_cap_)
+		if ( maintain_cap_ ) {
 			add_caps(pose,*repeat_poseOP);
+		}
 		pose = *repeat_poseOP;
 	}
 }
@@ -117,7 +118,7 @@ void RepeatPropagationMover::initialize_repeat_pose( core::pose::Pose & pose, co
 void RepeatPropagationMover::add_caps(core::pose::Pose & pose, core::pose::Pose & repeat_pose){
 	//create c-term subpose first
 	Size repeat_size = last_res_-first_res_+1;
-	if(cTerm_cap_size_>0){
+	if ( cTerm_cap_size_>0 ) {
 		core::pose::Pose cCap_pose;
 		vector1<Size> cTerm_pose_positions;
 		for ( Size res=pose.total_residue()-cTerm_cap_size_-repeat_size; res<=pose.total_residue(); ++res ) {
@@ -132,7 +133,7 @@ void RepeatPropagationMover::add_caps(core::pose::Pose & pose, core::pose::Pose 
 		determine_overlap(repeat_pose,cCap_pose,repeat_size,5, "c_term", start_overlap_parent,end_overlap_parent,start_overlap_pose,end_overlap_pose);
 		generate_overlap(repeat_pose,cCap_pose, "c_term",start_overlap_parent,end_overlap_parent,start_overlap_pose,end_overlap_pose);
 	}
-	if(nTerm_cap_size_>0){
+	if ( nTerm_cap_size_>0 ) {
 		core::pose::Pose nCap_pose;
 		vector1<Size> nTerm_pose_positions;
 		for ( Size res=1; res<=nTerm_cap_size_+repeat_size; ++res ) {
@@ -207,27 +208,29 @@ void RepeatPropagationMover::copy_phi_psi_omega(core::pose::Pose & pose, core::p
 
 void RepeatPropagationMover::determine_overlap(Pose const pose, Pose & parent_pose,Size overlap_max_length,Size overlap_range, std::string overlap_location_pose,Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose){
 	using namespace core::scoring;
-	if(overlap_location_pose== "c_term"){
+	if ( overlap_location_pose== "c_term" ) {
 		Size initial_start_res_parent=1;
 		Size end_res_parent=overlap_max_length;
 		Size initial_start_res_pose=pose.total_residue()-overlap_max_length+1;
 		Size end_res_pose=pose.total_residue();
 		Real best_rmsd = 9999;
-		for(Size ii=0; ii<overlap_range; ++ii){
+		for ( Size ii=0; ii<overlap_range; ++ii ) {
 			utility::vector1<Size> parent_posepositions;
 			utility::vector1<Size> pose_positions;
 			Size start_res_parent = initial_start_res_parent+ii;
 			Size start_res_pose = initial_start_res_pose+ii;
-			for (Size jj=start_res_parent; jj<=end_res_parent; ++jj)
+			for ( Size jj=start_res_parent; jj<=end_res_parent; ++jj ) {
 				parent_posepositions.push_back(jj);
-			for (Size jj=start_res_pose; jj<=end_res_pose; ++jj)
+			}
+			for ( Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
 				pose_positions.push_back(jj);
+			}
 			pose::Pose parent_poseslice;
 			pose::Pose ref_pose_slice;
 			pdbslice(parent_poseslice,parent_pose,parent_posepositions);
 			pdbslice(ref_pose_slice,pose,pose_positions);
 			Real rmsd = CA_rmsd(ref_pose_slice,parent_poseslice);
-			if(rmsd < best_rmsd){
+			if ( rmsd < best_rmsd ) {
 				best_rmsd = rmsd;
 				start_overlap_parent=start_res_parent;
 				end_overlap_parent=end_res_parent;
@@ -236,27 +239,29 @@ void RepeatPropagationMover::determine_overlap(Pose const pose, Pose & parent_po
 			}
 		}
 	}
-	if(overlap_location_pose== "n_term"){
+	if ( overlap_location_pose== "n_term" ) {
 		Size start_res_parent=parent_pose.total_residue()-overlap_max_length+1;
 		Size initial_end_res_parent=parent_pose.total_residue();
 		Size start_res_pose=1;
 		Size initial_end_res_pose=overlap_max_length;
 		Real best_rmsd = 9999;
-		for(Size ii=0; ii<overlap_range; ++ii){
+		for ( Size ii=0; ii<overlap_range; ++ii ) {
 			utility::vector1<Size> parent_posepositions;
 			utility::vector1<Size> pose_positions;
 			Size end_res_parent = initial_end_res_parent-ii;
 			Size end_res_pose = initial_end_res_pose-ii;
-			for (Size jj=start_res_parent; jj<=end_res_parent; ++jj)
+			for ( Size jj=start_res_parent; jj<=end_res_parent; ++jj ) {
 				parent_posepositions.push_back(jj);
-			for (Size jj=start_res_pose; jj<=end_res_pose; ++jj)
+			}
+			for ( Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
 				pose_positions.push_back(jj);
+			}
 			pose::Pose parent_poseslice;
 			pose::Pose ref_pose_slice;
 			pdbslice(parent_poseslice,parent_pose,parent_posepositions);
 			pdbslice(ref_pose_slice,pose,pose_positions);
 			Real rmsd = CA_rmsd(ref_pose_slice,parent_poseslice);
-			if(rmsd < best_rmsd){
+			if ( rmsd < best_rmsd ) {
 				best_rmsd = rmsd;
 				start_overlap_parent=start_res_parent;
 				end_overlap_parent=end_res_parent;
@@ -273,7 +278,7 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	using namespace core::scoring;
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, BOGUS_ATOM_ID );
-	for(Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii){
+	for ( Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii ) {
 		core::id::AtomID const id1(pose.residue(start_overlap_pose+ii).atom_index("CA"),start_overlap_pose+ii);
 		core::id::AtomID const id2(parent_pose.residue(start_overlap_parent+ii).atom_index("CA"), start_overlap_parent+ii );
 		atom_map[id1]=id2;
@@ -282,30 +287,34 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	//create subpose of pose
 	utility::vector1<Size> pose_positions;
 	utility::vector1<Size> parent_posepositions;
-	if(overlap_location_pose== "n_term"){
-		for (Size ii=end_overlap_pose+1; ii<=pose.total_residue(); ++ii)
+	if ( overlap_location_pose== "n_term" ) {
+		for ( Size ii=end_overlap_pose+1; ii<=pose.total_residue(); ++ii ) {
 			pose_positions.push_back(ii);
-		for (Size ii=1; ii<=end_overlap_parent; ++ii)
+		}
+		for ( Size ii=1; ii<=end_overlap_parent; ++ii ) {
 			parent_posepositions.push_back(ii);
+		}
 	}
-	if(overlap_location_pose== "c_term"){
-		for(Size ii=1; ii<start_overlap_pose; ++ii)
+	if ( overlap_location_pose== "c_term" ) {
+		for ( Size ii=1; ii<start_overlap_pose; ++ii ) {
 			pose_positions.push_back(ii);
-		for (Size ii=start_overlap_parent; ii<=parent_pose.total_residue(); ++ii)
+		}
+		for ( Size ii=start_overlap_parent; ii<=parent_pose.total_residue(); ++ii ) {
 			parent_posepositions.push_back(ii);
+		}
 	}
 	pose::Pose ref_pose_slice;
 	pose::Pose parent_poseslice;
 
 	pdbslice(ref_pose_slice,pose,pose_positions);
 	pdbslice(parent_poseslice,parent_pose,parent_posepositions);
-	if(overlap_location_pose== "n_term"){
+	if ( overlap_location_pose== "n_term" ) {
 		remove_upper_terminus_type_from_pose_residue(parent_poseslice,parent_poseslice.total_residue());
 		remove_lower_terminus_type_from_pose_residue(ref_pose_slice,1);
 		append_pose_to_pose(parent_poseslice,ref_pose_slice,false);
 		pose = parent_poseslice;
 	}
-	if(overlap_location_pose== "c_term"){
+	if ( overlap_location_pose== "c_term" ) {
 		remove_upper_terminus_type_from_pose_residue(ref_pose_slice,ref_pose_slice.total_residue());
 		remove_lower_terminus_type_from_pose_residue(parent_poseslice,1);
 		append_pose_to_pose(ref_pose_slice,parent_poseslice,false);

@@ -39,6 +39,9 @@ bool
 is_symmetric( pose::Pose const & pose );
 
 bool
+is_mirror_symmetric( pose::Pose const & pose );
+
+bool
 is_symmetric( scoring::ScoreFunction const & scorefxn );
 
 bool

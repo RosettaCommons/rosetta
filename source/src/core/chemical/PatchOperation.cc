@@ -738,9 +738,9 @@ ChangeAncestory::apply( ResidueType & rsd ) const
 		std::ostringstream oss;
 		oss << "Failed to apply the ChangeAncestory patch (" << atom_ << ", ";
 		switch ( which_ancestor_ ) {
-			case anc_parent : oss << "parent"; break;
-			case anc_grandparent : oss << "grandparent"; break;
-			case anc_greatgrandparent : oss << "greatgrandparent"; break;
+		case anc_parent : oss << "parent"; break;
+		case anc_grandparent : oss << "grandparent"; break;
+		case anc_greatgrandparent : oss << "greatgrandparent"; break;
 		}
 		oss << ", " << ancestor_name_ << ") to residue type " << rsd.name() << " when constructing ancetor's ICoorAtomID\n";
 		oss << "Message from ICoorAtomID constructor: " << excn.msg() << "\n";

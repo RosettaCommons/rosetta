@@ -105,6 +105,7 @@ residue_types/protonation_states/TYR_D.params
 residue_types/rosetta_specific/GB_AA_PLACEHOLDER.params
 residue_types/rosetta_specific/SUCK.params
 residue_types/rosetta_specific/VRT.params
+residue_types/rosetta_specific/INV_VRT.params
 residue_types/rosetta_specific/VRT1.params
 residue_types/rosetta_specific/VRTBB.params
 

@@ -228,7 +228,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 	kinematics::MinimizerMapBase const & min_map
 ) const
 {
-	bool const new_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::new_sym_min ] );
+	bool const new_sym_min( !basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
 	/// 1. Initialize the nodes of the minimization graph
 	/// 2. Initialize the edges with the short-ranged two-body energies
 	/// 3. Initialize the edges with the long-ranged two-body energies

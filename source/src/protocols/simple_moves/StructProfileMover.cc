@@ -76,7 +76,7 @@ StructProfileMover::StructProfileMover():moves::Mover("StructProfileMover"){
 }
 
 StructProfileMover::StructProfileMover(Real rmsThreshold,Size consider_topN_frags, Real burialWt, bool only_loops , Real allowed_deviation, Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res):moves::Mover("StructProfileMover"){
-  using namespace core::indexed_structure_store;
+	using namespace core::indexed_structure_store;
 	aa_order_="ACDEFGHIKLMNPQRSTVWY";
 	read_P_AA_SS_cen6();
 	rmsThreshold_ = rmsThreshold;
@@ -137,12 +137,13 @@ struct less_then_match_rmsd
 };
 
 Size StructProfileMover::ss_type_convert(char ss_type){
-	if(ss_type == 'H')
+	if ( ss_type == 'H' ) {
 		return 1;
-	else if(ss_type == 'L')
+	} else if ( ss_type == 'L' ) {
 		return 2;
-	else
+	} else {
 		return 3;
+	}
 }
 
 void StructProfileMover::read_P_AA_SS_cen6(){
@@ -152,9 +153,9 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 	Size BURIAL_TYPES = 10;
 	Size aa_types = aa_order_.size();
 	P_AA_SS_burial_.resize(SS_TYPES);
-	for (Size ii = 1; ii <= SS_TYPES; ++ii ){
+	for ( Size ii = 1; ii <= SS_TYPES; ++ii ) {
 		P_AA_SS_burial_[ii].resize(BURIAL_TYPES);
-		for(Size jj = 1; jj <= BURIAL_TYPES; ++jj){
+		for ( Size jj = 1; jj <= BURIAL_TYPES; ++jj ) {
 			P_AA_SS_burial_[ii][jj].resize(aa_types);
 		}
 	}
@@ -166,74 +167,75 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 	while ( getline(stream,line) ) {
 		std::istringstream l(line);
 		l >> ss_type >> burial_type;
-		for(Size ii=1; ii<=aa_types; ++ii){
+		for ( Size ii=1; ii<=aa_types; ++ii ) {
 			l >> tmp_probability >> skip(1);
 			P_AA_SS_burial_[ss_type_convert(ss_type)][burial_type][ii]=tmp_probability;
 			debug_assert( ( tmp_probability >= Probability( 0.0 ) ) && ( tmp_probability <= Probability( 1.0 ) ) );
 			debug_assert( burial_type <= BURIAL_TYPES)
+				}
+				}
+				stream.close();
 		}
-	}
-	stream.close();
-}
 
 
-vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
-	vector1<string> top_hits_aa;
-	//I want to normalize the rmsd & burial
-	vector<FragmentLookupResult> lookupResults = ABEGOHashedFragmentStore_->get_fragments_below_rms(pose,res,rmsThreshold_);
-	std::string abego_str = ABEGOHashedFragmentStore_->get_abego_string(pose,res);
-	FragmentStoreOP selected_fragStoreOP = ABEGOHashedFragmentStore_->get_fragment_store(abego_str);
-	if(selected_fragStoreOP == NULL)
-		return top_hits_aa;
-	vector1<LookupResultPlus>lookupResultsPlusV;
-	for ( Size ii=0; ii<lookupResults.size(); ++ii ) {
-		std::vector<Real> cenListFrag = selected_fragStoreOP->realVector_groups["cen"][lookupResults[ii].match_index];
-		Real cen_deviation = get_cen_deviation(cenListFrag,cenList);
-		struct LookupResultPlus result_tmp(lookupResults[ii],cen_deviation);
-		lookupResultsPlusV.push_back(result_tmp);
-	}
-	//step1 get max and min cen and rmsd
-	Real maxRmsd = -9999;
-	Real minRmsd = 9999;
-	Real maxCend = -9999;
-	Real minCend = 9999;
-	for ( Size ii=1; ii<lookupResultsPlusV.size(); ++ii ) {
-		if ( lookupResultsPlusV[ii].cend>maxCend ) {
-			maxCend = lookupResultsPlusV[ii].cend;
+		vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
+			vector1<string> top_hits_aa;
+		//I want to normalize the rmsd & burial
+		vector<FragmentLookupResult> lookupResults = ABEGOHashedFragmentStore_->get_fragments_below_rms(pose,res,rmsThreshold_);
+		std::string abego_str = ABEGOHashedFragmentStore_->get_abego_string(pose,res);
+		FragmentStoreOP selected_fragStoreOP = ABEGOHashedFragmentStore_->get_fragment_store(abego_str);
+		if ( selected_fragStoreOP == NULL ) {
+			return top_hits_aa;
 		}
-		if ( lookupResultsPlusV[ii].cend<minCend ) {
-			minCend = lookupResultsPlusV[ii].cend;
+		vector1<LookupResultPlus>lookupResultsPlusV;
+		for ( Size ii=0; ii<lookupResults.size(); ++ii ) {
+			std::vector<Real> cenListFrag = selected_fragStoreOP->realVector_groups["cen"][lookupResults[ii].match_index];
+			Real cen_deviation = get_cen_deviation(cenListFrag,cenList);
+			struct LookupResultPlus result_tmp(lookupResults[ii],cen_deviation);
+			lookupResultsPlusV.push_back(result_tmp);
 		}
-		if ( lookupResultsPlusV[ii].rmsd>maxRmsd ) {
-			maxRmsd = lookupResultsPlusV[ii].rmsd;
+		//step1 get max and min cen and rmsd
+		Real maxRmsd = -9999;
+		Real minRmsd = 9999;
+		Real maxCend = -9999;
+		Real minCend = 9999;
+		for ( Size ii=1; ii<lookupResultsPlusV.size(); ++ii ) {
+			if ( lookupResultsPlusV[ii].cend>maxCend ) {
+				maxCend = lookupResultsPlusV[ii].cend;
+			}
+			if ( lookupResultsPlusV[ii].cend<minCend ) {
+				minCend = lookupResultsPlusV[ii].cend;
+			}
+			if ( lookupResultsPlusV[ii].rmsd>maxRmsd ) {
+				maxRmsd = lookupResultsPlusV[ii].rmsd;
+			}
+			if ( lookupResultsPlusV[ii].rmsd<minRmsd ) {
+				minRmsd = lookupResultsPlusV[ii].rmsd;
+			}
 		}
-		if ( lookupResultsPlusV[ii].rmsd<minRmsd ) {
-			minRmsd = lookupResultsPlusV[ii].rmsd;
+		//step2 set normatlized rmsd cend and set score
+		for ( Size ii=1; ii<=lookupResultsPlusV.size(); ++ii ) {
+			lookupResultsPlusV[ii].cend_norm = 1-(maxCend-lookupResultsPlusV[ii].cend)/(maxCend-minCend);
+			lookupResultsPlusV[ii].rmsd_norm = 1-(maxRmsd-lookupResultsPlusV[ii].rmsd)/(maxRmsd-minRmsd);
+			lookupResultsPlusV[ii].score = lookupResultsPlusV[ii].cend_norm*(burialWt_)+lookupResultsPlusV[ii].rmsd_norm*(1-burialWt_);
 		}
+		//step3 sort array based on score
+		if ( consider_topN_frags_ < lookupResultsPlusV.size() ) {
+			std::sort(lookupResultsPlusV.begin(), lookupResultsPlusV.end(), less_then_match_rmsd());
+		}
+		//for(Size ii=1; ii<=lookupResultsPlusV.size(); ++ii){
+		// lookupResultsPlusV[ii].print();
+		//}
+		//step4 get AA from top hits
+		for ( Size ii=1; ii<=lookupResultsPlusV.size()&&ii<consider_topN_frags_; ++ii ) {
+			std::string tmp_AA = selected_fragStoreOP->string_groups["aa"][lookupResultsPlusV[ii].lookupResult.match_index];
+			top_hits_aa.push_back(tmp_AA);
+		}
+		return(top_hits_aa);
 	}
-	//step2 set normatlized rmsd cend and set score
-	for ( Size ii=1; ii<=lookupResultsPlusV.size(); ++ii ) {
-		lookupResultsPlusV[ii].cend_norm = 1-(maxCend-lookupResultsPlusV[ii].cend)/(maxCend-minCend);
-		lookupResultsPlusV[ii].rmsd_norm = 1-(maxRmsd-lookupResultsPlusV[ii].rmsd)/(maxRmsd-minRmsd);
-		lookupResultsPlusV[ii].score = lookupResultsPlusV[ii].cend_norm*(burialWt_)+lookupResultsPlusV[ii].rmsd_norm*(1-burialWt_);
-	}
-	//step3 sort array based on score
-	if ( consider_topN_frags_ < lookupResultsPlusV.size() ) {
-		std::sort(lookupResultsPlusV.begin(), lookupResultsPlusV.end(), less_then_match_rmsd());
-	}
-	//for(Size ii=1; ii<=lookupResultsPlusV.size(); ++ii){
-	// lookupResultsPlusV[ii].print();
-	//}
-	//step4 get AA from top hits
-	for ( Size ii=1; ii<=lookupResultsPlusV.size()&&ii<consider_topN_frags_; ++ii ) {
-		std::string tmp_AA = selected_fragStoreOP->string_groups["aa"][lookupResultsPlusV[ii].lookupResult.match_index];
-		top_hits_aa.push_back(tmp_AA);
-	}
-	return(top_hits_aa);
-}
 
-vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
-	Size fragment_length = ABEGOHashedFragmentStore_->get_fragment_length();
+	vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
+		Size fragment_length = ABEGOHashedFragmentStore_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
 	for ( Size ii=1; ii<=pose.total_residue()-fragment_length+1; ++ii ) {
 		vector1<Real>::const_iterator begin =cenList.begin();
@@ -290,7 +292,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vecto
 		vector1<Real> pos_profile_score;
 		for ( Size jj=1; jj<= res_per_pos[ii].size(); ++jj ) {
 			Real tmp_score = -std::log((Real(res_per_pos[ii][jj]+1))/(Real(total_cts[ii]+20)));
-			if(pose.secstruct(ii) != 'L' && only_loops_){
+			if ( pose.secstruct(ii) != 'L' && only_loops_ ) {
 				tmp_score = 0.0;
 			}
 			pos_profile_score.push_back(tmp_score);
@@ -315,26 +317,27 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 		vector1<Real> pos_profile_score;
 		Size ssType = ss_type_convert(pose.secstruct(ii));
 		Size burialType = round(cenList[ii]);
-		if(burialType>10) //max for centype 6 was set to 10 atoms with 6ang because of low counts.
+		if ( burialType>10 ) { //max for centype 6 was set to 10 atoms with 6ang because of low counts.
 			burialType=10;
+		}
 		for ( Size jj=1; jj<= res_per_pos[ii].size(); ++jj ) {//represents the AA in the same order as in the file.
 			Real rmsdProb = (Real(res_per_pos[ii][jj]+1))/(Real(total_cts[ii]+20));
 			Size aaType = jj;
 			Real backgroundProb = P_AA_SS_burial_[ssType][burialType][aaType];
 			Real tmp_score = 0.0;
-			if(pose.secstruct(ii) == 'L'){
-				if((rmsdProb-backgroundProb-allowed_deviation_loops_)>0.0){
+			if ( pose.secstruct(ii) == 'L' ) {
+				if ( (rmsdProb-backgroundProb-allowed_deviation_loops_)>0.0 ) {
+					tmp_score = -std::log(rmsdProb-backgroundProb);
+				}
+			} else {
+				if ( (rmsdProb-backgroundProb-allowed_deviation_)>0.0 ) {
 					tmp_score = -std::log(rmsdProb-backgroundProb);
 				}
 			}
-			else{
-				if((rmsdProb-backgroundProb-allowed_deviation_)>0.0){
-					tmp_score = -std::log(rmsdProb-backgroundProb);
-				}
-			}
-			if(ignore_terminal_res_ && (ii==1 || ii==pose.total_residue()))
+			if ( ignore_terminal_res_ && (ii==1 || ii==pose.total_residue()) ) {
 				tmp_score = 0.0;  //phi is 0 in first position and psi and omega are 0 in last position. Can cause odd behavior to the profile so no weight is allowed
-			if(pose.secstruct(ii) != 'L' && only_loops_){
+			}
+			if ( pose.secstruct(ii) != 'L' && only_loops_ ) {
 				tmp_score = 0.0;  //0's out when not in loops
 			}
 			pos_profile_score.push_back(tmp_score);
@@ -420,10 +423,11 @@ void StructProfileMover::apply(core::pose::Pose & pose) {
 	vector1<vector1<std::string> > top_frag_sequences = get_closest_sequences(pose,cenList);
 	vector1<vector1<Size> > res_per_pos = generate_counts(top_frag_sequences,pose);
 	vector1<vector1<Real> > profile_score;
-	if(eliminate_background_)
+	if ( eliminate_background_ ) {
 		profile_score = generate_profile_score_wo_background(res_per_pos,cenList,pose);
-	else
+	} else {
 		profile_score =generate_profile_score(res_per_pos,pose);
+	}
 	if ( outputProfile_ ) {
 		save_MSAcst_file(profile_score,pose);
 	}

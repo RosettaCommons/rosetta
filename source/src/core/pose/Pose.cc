@@ -354,7 +354,9 @@ Pose::set_new_conformation( conformation::ConformationCOP new_conformation )
 	metrics_->attach_to( *this );
 
 	/// clone and reassign the pointer
+
 	conformation_ = new_conformation->clone();
+
 	conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
 
 	/* OPERATIONS AFTER THIS POINT NEED TO HAPPEN AFTER THE CONFORMATION

@@ -352,24 +352,6 @@ SymMinimizerMap::add_new_dof_node(
 	bool dependent
 )
 {
-	//id::TorsionID const & parent_tor_id( parent.valid() ? dof_id2torsion_id_[ parent ] : id::BOGUS_TORSION_ID );
-	// std::cout << "add new dof node: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() <<
-	//  ' ' << new_tor_id << ' ' <<new_tor_id.valid() << ' ' << symm_info_->bb_follows( new_torsion.rsd() ) << ' ' <<
-	//  (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) << ' ' <<
-	//  ( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) << std::endl;
-
-	// std::cout << "add new dof node parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << ' ' <<
-	//  parent_tor_id << std::endl;
-
-	// this will not necessarily be true when we have cloned jumps put in the map due to a non-zero jump_clone_wt
-	// or at any rate I don't think it will be OK with -new_sym_min. But email me (pbradley@fhcrc.org) to chat about it.
-	// runtime_assert( ! parent.valid() ||
-	//         (  parent_tor_id.valid() && symm_info_->torsion_is_independent( parent_tor_id ) ) ||
-	//         ( !parent_tor_id.valid() && symm_info_->bb_follows( parent.rsd() ) == 0 ) );
-
-	// runtime_assert( (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) ||
-	//         ( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) );
-
 	DOF_NodeOP dof_node( new DOF_Node( new_torsion, DOF_NodeOP( 0 ) ) );
 	dof_node->dependent( false ); // only used if new_sym_min_
 
@@ -399,7 +381,7 @@ SymMinimizerMap::add_new_dof_node(
 id::DOF_ID
 SymMinimizerMap::asymmetric_dof( DOF_ID const & cloned_dof ) const
 {
-	if ( cloned_dof.type() >= id::RB1 ) {
+	if ( cloned_dof.type() >= id::RB1 && cloned_dof.type() <= id::RB6 ) {
 		/// we have a jump
 		Size cloned_jumpno = pose_.conformation().fold_tree().get_jump_that_builds_residue( cloned_dof.rsd() );
 		debug_assert( symm_info_->jump_follows( cloned_jumpno ) != 0 );

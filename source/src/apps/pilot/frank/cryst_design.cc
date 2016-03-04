@@ -13,7 +13,7 @@
 
 
 #include <protocols/cryst/spacegroup.hh>
-#include <protocols/cryst/refineable_lattice.hh>
+#include <protocols/cryst/refinable_lattice.hh>
 #include <apps/pilot/frank/cryst_reporters.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -65,7 +65,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/cryst/refineable_lattice.hh>
+#include <protocols/cryst/refinable_lattice.hh>
 #include <protocols/cryst/cryst_rms.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/flxbb/LayerDesignOperation.hh>
@@ -3087,7 +3087,6 @@ my_main( void* ) {
 
 	// force some options
 	option[ basic::options::OptionKeys::in::preserve_crystinfo ].value(true);
-	option[ basic::options::OptionKeys::optimization::new_sym_min ].value(true);
 	option[ basic::options::OptionKeys::symmetry::symmetry_definition ].value("dummy");  // get right rot type set for relax
 
 	if ( strategy == "fftdock" ) {

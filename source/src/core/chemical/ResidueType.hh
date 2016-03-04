@@ -1537,6 +1537,20 @@ public:
 	/// @brief Add a property of this ResidueType.
 	void delete_property( std::string const & property );
 
+	/// @brief Is this ResidueType a base type?
+	bool is_base_type() const;
+
+	/// @brief Get a pointer to this ResidueType's base ResidueType.
+	/// @details Returns the base_type_cop_ pointer if not null, self pointer if null.
+	ResidueTypeCOP get_base_type_cop() const;
+
+	/// @brief Reset the base type COP to be null.  This implies that this ResidueType is a base type.
+	///
+	void reset_base_type_cop();
+
+	/// @brief Set the base type COP.  This implies that this ResidueType is NOT a base type.
+	///
+	void set_base_type_cop( ResidueTypeCOP new_base_type );
 
 	/// @brief is polymer?
 	bool is_polymer() const;
@@ -1677,6 +1691,9 @@ public:
 	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
 	bool is_virtual_residue() const;
 
+	/// @brief  Check if atom is an inverted virtual
+	bool is_inverted_virtual_residue( ) const;
+
 	/// @brief is an adduct-modified residue?
 	bool is_adduct() const;
 
@@ -1717,9 +1734,22 @@ public:
 	void enable_custom_variant_types();
 
 	/// @brief get all the variant types for this ResidueType
+	/// @details This will include both on-the-fly custom variants defined by string AND string equivalents
+	/// of standard, enumerated variants.
 	///         -- rhiju (merging roccomoretti/restypeset_fiddle)
 	utility::vector1< std::string >
 	variant_types() const;
+
+	/// @brief Get a vector of VariantType enums for this ResidueType.
+	/// @details This ONLY includes standard, enum-based variants, not on-the-fly custom variants.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	utility::vector1< VariantType > variant_type_enums() const;
+
+	/// @brief Get a list of custom VariantType strings for this ResidueType (by const reference).
+	/// @details This ONLY includes custom, on-the-fly variants, not standard variants.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	utility::vector1< std::string > const & custom_variant_types() const;
+
 
 	/// @brief set our aa-type (could be "UNK")
 	void
@@ -1747,6 +1777,8 @@ public:
 	{
 		rotamer_aa_ = aa_from_name( type );
 	}
+
+	void nondefault(bool const in) { nondefault_ = in;}
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -2431,6 +2463,15 @@ private:
 	/// @details Does not accumulate VariantType names (e.g. "ALA").
 	std::string base_name_;
 
+	/// @brief Const-access owning pointer to the base residue type.
+	/// @details NULL if this ResidueType is a base type.  If this ResidueType is cloned or copied from a base type,
+	/// this will point to the base type.  If this ResidueType is cloned or copied from a non-base type, this will point
+	/// to the non-base type's base type.  The test for whether something is a base type is whether this owning pointer is
+	/// NULL.
+	/// @note The base type must not hold an owning pointer to itself!
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	ResidueTypeCOP base_type_cop_;
+
 	/// @brief Residue id -- Primary, should be unique
 	/// @details Accumulates VariantType names (e.g. "ALA:NtermProteinFull").
 	std::string name_;
@@ -2573,12 +2614,6 @@ private:
 	utility::vector1< Adduct > defined_adducts_;
 
 	bool nondefault_;
-	std::string base_restype_name_;
-
-public:
-	void nondefault(bool in) { nondefault_ = in;}
-	void base_restype_name(std::string const & in) { base_restype_name_ = in;}
-	std::string base_restype_name() const {return base_restype_name_;}
 
 public:
 	static VD const null_vertex;

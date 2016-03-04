@@ -467,7 +467,7 @@ MacrocycleMover::apply(
 	core::Size const max_iterations( static_cast<core::Size>( option[ macrocycles::max_closure_cycles ] ) );
 	while ( !closed ) {
 		++iteration_counter;
-		if( iteration_counter > max_iterations ) {
+		if ( iteration_counter > max_iterations ) {
 			TR << "Max iterations (" << max_iterations << ") exceeded.  Exiting from closure cycle." << std::endl;
 			break;
 		}

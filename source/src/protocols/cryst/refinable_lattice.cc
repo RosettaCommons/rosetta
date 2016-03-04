@@ -12,8 +12,8 @@
 /// @details
 /// @author Frank DiMaio
 
-#include <protocols/cryst/refineable_lattice.hh>
-#include <protocols/cryst/refineable_lattice_creator.hh>
+#include <protocols/cryst/refinable_lattice.hh>
+#include <protocols/cryst/refinable_lattice_creator.hh>
 #include <protocols/cryst/util.hh>
 #include <protocols/cryst/wallpaper.hh>
 #include <protocols/cryst/spacegroup.hh>
@@ -38,8 +38,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -117,7 +119,7 @@ using basic::Warning;
 namespace protocols {
 namespace cryst {
 
-static basic::Tracer TR("protocols.cryst.refineable_lattice");
+static basic::Tracer TR("protocols.cryst.refinable_lattice");
 
 using namespace protocols;
 using namespace core;
@@ -689,20 +691,41 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	conformation::symmetry::SymmetryInfo syminfo;
 	setup_xtal_symminfo( pose, nsubunits, nvrt, base_monomer, nres_monomer, Ajumps, Bjumps, Cjumps, monomer_jumps, syminfo );
 
-	bool symmdetectdiulf = basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ]();
+	bool symmdetectdisulf = basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ]();
 	basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ].value(false);
 	pose::symmetry::make_symmetric_pose( pose, syminfo );
-	basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ].value(symmdetectdiulf);
+	basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ].value(symmdetectdisulf);
 
 	pdbinfo_new = pose::PDBInfoOP( new pose::PDBInfo( pose, true ) );
 	core::pose::symmetry::make_symmetric_pdb_info( pose, pdbinfo_old, pdbinfo_new );
 	pdbinfo_new->set_crystinfo(ci);
 	pose.pdb_info( pdbinfo_new );
 
-	// force symmetrization
-	core::kinematics::Jump j = pose.jump( monomer_jumps[ base_monomer ] );
+	//fpd foldtree above assumes no monomer jumps
+	//fpd here, we reinitialize the foldtree to let the SymmetryInfo machinery take care of
+	//    monomer jumps
+	//fpd this also has the advantage of renumbering jumps in a consistent way so that
+	//    all symmetric foldtree manipulations work well with symm poses made from this function
+	core::kinematics::FoldTree ft = core::conformation::symmetry::get_asymm_unit_fold_tree(pose.conformation());
+	core::conformation::symmetry::symmetrize_fold_tree(pose.conformation(), ft);
+	pose.fold_tree( ft );
 
-	pose.set_jump( monomer_jumps[ base_monomer ], j );
+	// force symmetrization
+	core::conformation::symmetry::SymmetryInfoCOP symminfo_new =
+		dynamic_cast<core::conformation::symmetry::SymmetricConformation const & >( pose.conformation()).Symmetry_Info();
+	for ( core::Size i=pose.fold_tree().num_jump(); i>=1; --i ) {
+		if ( symminfo_new->jump_is_independent(i) ) {
+			core::kinematics::Jump j_i = pose.jump( i );
+			pose.set_jump( i, j_i );
+		}
+	}
+
+	// if we are mirror symmetric, update restypes
+	if ( core::conformation::symmetry::is_mirror_symmetric( pose.conformation() ) ) {
+		core::conformation::symmetry::MirrorSymmetricConformation & mirror_conf(
+			dynamic_cast< core::conformation::symmetry::MirrorSymmetricConformation& >( pose.conformation() ) );
+		mirror_conf.update_residue_identities();
+	}
 
 	// update disulf info
 	pose.conformation().detect_disulfides();
@@ -718,6 +741,7 @@ MakeLatticeMover::place_near_origin (
 	Vector com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) {
 		com += pose.residue(i).xyz("CA");
+		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 	com /= nres;
 
@@ -728,6 +752,7 @@ MakeLatticeMover::place_near_origin (
 			mindis2 = dis2;
 			rootpos = i;
 		}
+		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 
 	Size nsymm = sg_.nsymmops();
@@ -780,7 +805,16 @@ MakeLatticeMover::detect_connecting_subunits(
 	runtime_assert( T0.length() < 1e-6);
 
 	for ( Size i=1; i<= nres_monomer; ++i ) {
-		Vector ca_i = monomer_pose.residue(i).xyz("CA");
+		Vector ca_i(0,0,0);
+		if ( pose.residue(i).is_protein() ) {
+			ca_i = monomer_pose.residue(i).xyz("CA");
+		} else {
+			// com
+			for ( Size j=1; j<= monomer_pose.residue(i).natoms(); ++j ) {
+				ca_i += monomer_pose.residue(i).xyz(j);
+			}
+			ca_i = ca_i/((core::Real)monomer_pose.residue(i).natoms());
+		}
 		monomer_cas[i] = ca_i;
 		radius = std::max( (ca_i).length_squared() , radius );
 	}
@@ -838,19 +872,25 @@ MakeLatticeMover::add_monomers_to_lattice(
 	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.total_residue () );
 
 	monomer_jumps.clear();
+	Size n_framework_jumps = pose.fold_tree().num_jump();
+
 	Size nres_protein(0);
 	for ( Size i=1; i<= num_monomers; ++i ) {
 		//std::cerr << "inserting " << i << " of " << num_monomers << std::endl;
 		Size const anchor( monomer_anchors[i] + nres_protein ); // since we've already done some insertions
 		Size const old_nres_protein( nres_protein );
 		pose.insert_residue_by_jump( monomer_pose.residue(rootpos), old_nres_protein+1, anchor ); ++nres_protein;
-		for ( Size i=rootpos-1; i>=1; --i ) {
-			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(i), old_nres_protein+1, false ); ++nres_protein;
+		for ( Size j=rootpos-1; j>=1; --j ) {
+			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(j), old_nres_protein+1, false ); ++nres_protein;
 		}
-		for ( Size i=rootpos+1; i<= monomer_pose.total_residue(); ++i ) {
-			pose.append_polymer_residue_after_seqpos( monomer_pose.residue(i), nres_protein, false ); ++nres_protein;
+		for ( Size j=rootpos+1; j<= monomer_pose.total_residue(); ++j ) {
+			if ( monomer_pose.residue(j).is_lower_terminus() ) {
+				pose.insert_residue_by_jump( monomer_pose.residue(j), nres_protein+1, nres_protein ); ++nres_protein;
+			} else {
+				pose.append_polymer_residue_after_seqpos( monomer_pose.residue(j), nres_protein, false ); ++nres_protein;
+			}
 		}
-		monomer_jumps.push_back( pose.fold_tree().num_jump() );
+		monomer_jumps.push_back( n_framework_jumps+i );
 	}
 	for ( Size i=1; i<= num_monomers; ++i ) {
 		pose.conformation().insert_chain_ending( nres_monomer*i );
@@ -959,7 +999,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 
 	// add "hanging" virtuals
 	for ( int s=1; s<=(int)sg_.nsymmops(); ++s ) {
-		numeric::xyzMatrix<Real> R_i = sg_.symmop(s).get_rotation();
+		numeric::xyzMatrix<Real> R_i = sg_.symmop(s).get_rotation(), R_i_cart;
 		numeric::xyzVector<Real> T_i = sg_.symmop(s).get_translation();
 
 		// T_i -> indices
@@ -974,13 +1014,15 @@ MakeLatticeMover::build_lattice_of_virtuals(
 					O = posebase.residue(vrtZ(x_i,y_i,z_i)).xyz("ORIG");
 
 					if ( sg_.setting() == HEXAGONAL ) {
-						Ax = sg_.f2c()*R_i*sg_.c2f()*Vector(1,0,0); Ax.normalize();
-						Ay = sg_.f2c()*R_i*sg_.c2f()*Vector(0,1,0); Ay.normalize();
+						R_i_cart = sg_.f2c()*R_i*sg_.c2f();
+						Ax = R_i_cart*Vector(1,0,0); Ax.normalize();
+						Ay = R_i_cart*Vector(0,1,0); Ay.normalize();
 					} else {
+						R_i_cart = R_i;
 						Ax = R_i*Vector(1,0,0); Ax.normalize();
 						Ay = R_i*Vector(0,1,0); Ay.normalize();
 					}
-					ResidueOP vrt_z = make_vrt(O,Ax,Ay);
+					ResidueOP vrt_z = make_vrt(O,Ax,Ay, (R_i_cart.det()<0));
 
 					posebase.append_residue_by_jump( *vrt_z, vrtZ(x_i,y_i,z_i));
 
@@ -1000,7 +1042,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 
 void
 MakeLatticeMover::setup_xtal_symminfo(
-	Pose const & pose,
+	Pose & pose,
 	Size const num_monomers,
 	Size const num_virtuals,
 	Size const base_monomer,
@@ -1012,6 +1054,7 @@ MakeLatticeMover::setup_xtal_symminfo(
 	conformation::symmetry::SymmetryInfo & symminfo
 ) {
 
+	// bb clones
 	for ( Size i=1; i<= num_monomers; ++i ) {
 		if ( i != base_monomer ) {
 			Size const offset( (i-1)*nres_monomer ), base_offset( (base_monomer-1)*nres_monomer);
@@ -1022,14 +1065,13 @@ MakeLatticeMover::setup_xtal_symminfo(
 		}
 	}
 
-	// subunit jump clones
+	// subunit base jump clones
 	Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
 	for ( Size i=1; i<=monomer_jumps.size(); ++i ) {
 		if ( monomer_jumps[i]!= base_monomer_jump ) {
 			symminfo.add_jump_clone( base_monomer_jump, monomer_jumps[i], 0.0 );
 		}
 	}
-
 
 	// unit cell clones
 	using core::conformation::symmetry::SymDof;
@@ -1058,25 +1100,27 @@ MakeLatticeMover::setup_xtal_symminfo(
 	SymDof symdof_b;
 	SymDof symdof_c;
 
-	core::Size nrot_dofs=sg_.get_nrot_dofs();
-	if ( nrot_dofs == 3 ) {
-		symdof_c.read( "x y z" );
-		symdof_b.read( "x z" );
-	} else if ( nrot_dofs == 1 ) {
-		symdof_c.read( "x y" );
-		symdof_b.read( "x" );
-	} else {
-		symdof_c.read( "x" );
-		symdof_b.read( "x" );
-	}
-	symdof_a.read( "x" );
+	if ( refinable_lattice_ ) {
+		core::Size nrot_dofs=sg_.get_nrot_dofs();
+		if ( nrot_dofs == 3 ) {
+			symdof_c.read( "x y z" );
+			symdof_b.read( "x z" );
+		} else if ( nrot_dofs == 1 ) {
+			symdof_c.read( "x y" );
+			symdof_b.read( "x" );
+		} else {
+			symdof_c.read( "x" );
+			symdof_b.read( "x" );
+		}
+		symdof_a.read( "x" );
 
-	symdofs[ Ajumps[1] ] = symdof_a;
-	if ( Bmaster==Bjumps[1] ) {
-		symdofs[ Bjumps[1] ] = symdof_b;
-	}
-	if ( Cmaster==Cjumps[1] ) {
-		symdofs[ Cjumps[1] ] = symdof_c;
+		symdofs[ Ajumps[1] ] = symdof_a;
+		if ( Bmaster==Bjumps[1] ) {
+			symdofs[ Bjumps[1] ] = symdof_b;
+		}
+		if ( Cmaster==Cjumps[1] ) {
+			symdofs[ Cjumps[1] ] = symdof_c;
+		}
 	}
 
 	// jump names
@@ -1088,7 +1132,7 @@ MakeLatticeMover::setup_xtal_symminfo(
 	symminfo.set_jump_name(Cjumps[1], "C");
 
 	SymDof symdof_m;
-	symdof_m.read( sg_.get_moveable_dofs()+" angle_x angle_y angle_z"); // even z!!
+	symdof_m.read( sg_.get_moveable_dofs()+" angle_x angle_y angle_z");
 	symdofs[ base_monomer_jump ] = symdof_m;
 	symminfo.set_jump_name(base_monomer_jump, "SUB");
 
@@ -1104,7 +1148,7 @@ MakeLatticeMover::setup_xtal_symminfo(
 		if ( symminfo.bb_is_independent( i ) ) symminfo.set_score_multiply( i, 2 );
 		else symminfo.set_score_multiply( i, 1 );
 	}
-	symminfo.update_score_multiply_factor(); // is this OK with some 2 and some 1? not sure I know how this works...
+	symminfo.update_score_multiply_factor();
 }
 
 // parse_my_tag

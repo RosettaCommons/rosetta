@@ -585,7 +585,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	initialize_movemap( pose, *local_movemap );
 
-	set_movemap(local_movemap);
+	//set_movemap(local_movemap);  ///fpd NO!  The whole point of the local copy is that subsequent movemap
+	///           changes do not then modify the stored movemap
+	///         If you absolutely must do this use clone!
 	check_nonideal_mintype();
 
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.

@@ -129,13 +129,13 @@ FragmentStoreOP StructureStoreManager::load_fragment_store(std::string lookup_na
 std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types){
 	std::string if_cached_name;
 	if_cached_name = group_field + lookup_name;
-	for(Size ii=1; ii<=fields_to_load.size(); ++ii){
+	for ( Size ii=1; ii<=fields_to_load.size(); ++ii ) {
 		if_cached_name += fields_to_load[ii];
 	}
 	GroupedFragmentMap::const_iterator iter(grouped_fragment_map_.find(if_cached_name));
-	if(iter != grouped_fragment_map_.end())
+	if ( iter != grouped_fragment_map_.end() ) {
 		return(iter->second);
-	else{
+	} else {
 		FragmentStoreOP fullStore = load_fragment_store(lookup_name,store_path,fields_to_load,fields_to_load_types);
 		std::map <Size,Size> type_ct;
 		std::map <Size,Size>::iterator type_ct_iter;

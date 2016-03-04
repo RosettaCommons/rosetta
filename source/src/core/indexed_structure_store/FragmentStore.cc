@@ -57,12 +57,12 @@ void FragmentStore::generate_subset_fragment_store(std::vector<numeric::Size> re
 	numeric::Size tmp_fragment_length = residues.size();
 	FragmentSpecification tmp_fragment_spec = FragmentSpecification(tmp_fragment_length,fragment_specification.fragment_atoms);
 	FragmentStoreOP tmp_fragment_store = FragmentStoreOP(new FragmentStore(tmp_fragment_spec,num_fragments_));
-	for(numeric::Size ii=0; ii<num_fragments_; ++ii){//num fragments
+	for ( numeric::Size ii=0; ii<num_fragments_; ++ii ) {//num fragments
 		Size tmp_frag_index=0;
-		for(numeric::Size jj=0; jj<fragment_specification.coordinates_per_fragment(); ++jj){
-			if(std::find(residues.begin(),residues.end(),jj)!= residues.end()){//only copy the residue that are needed
-				for(numeric::Size kk=0; kk<fragment_specification.fragment_atoms.size(); ++kk){//currently always 1
-					for(numeric::Size ll=0; ll<3; ++ll){//number of residues per atom
+		for ( numeric::Size jj=0; jj<fragment_specification.coordinates_per_fragment(); ++jj ) {
+			if ( std::find(residues.begin(),residues.end(),jj)!= residues.end() ) { //only copy the residue that are needed
+				for ( numeric::Size kk=0; kk<fragment_specification.fragment_atoms.size(); ++kk ) {//currently always 1
+					for ( numeric::Size ll=0; ll<3; ++ll ) {//number of residues per atom
 						Size start_index1 = ii*fragment_specification.coordinates_per_fragment()+jj*fragment_specification.fragment_atoms.size()+kk;
 						Size start_index2 = ll;
 						Size end_index1 = ii*tmp_fragment_spec.coordinates_per_fragment()+tmp_frag_index*fragment_specification.fragment_atoms.size()+kk;
@@ -85,7 +85,7 @@ void FragmentStore::generate_subset_fragment_store(std::vector<numeric::Size> re
 
 //done so that the fragmentLookup is cached when calculated.
 FragmentLookupOP FragmentStore::get_fragmentLookup(){
-	if(fragLookupOP_==NULL){
+	if ( fragLookupOP_==NULL ) {
 		fragLookupOP_ = FragmentLookupOP(new FragmentLookup(this->get_self_ptr()));
 	}
 	return(fragLookupOP_);
@@ -95,8 +95,8 @@ FragmentLookupOP FragmentStore::get_fragmentLookup(){
 std::vector<numeric::xyzVector<numeric::Real> > FragmentStore::get_fragment_coordinates(numeric::Size position){
 	std::vector<numeric::xyzVector<numeric::Real> > tmp_coordinates;
 	Size start_position = position*fragment_specification.coordinates_per_fragment()*fragment_specification.fragment_atoms.size();
-	for(numeric::Size ii=0; ii<fragment_specification.coordinates_per_fragment(); ++ii){
-		for(numeric::Size jj=0; jj<fragment_specification.fragment_atoms.size(); ++jj){
+	for ( numeric::Size ii=0; ii<fragment_specification.coordinates_per_fragment(); ++ii ) {
+		for ( numeric::Size jj=0; jj<fragment_specification.fragment_atoms.size(); ++jj ) {
 			Size db_coord = start_position+ii*fragment_specification.fragment_atoms.size()+jj;
 			//Size frag_coord = ii*fragment_specification.fragment_atoms.size()+jj;
 			tmp_coordinates.push_back(fragment_coordinates[db_coord]);

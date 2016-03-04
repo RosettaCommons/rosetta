@@ -555,6 +555,8 @@ numerical_derivative_check(
 			iter_end= min_map.end(); iter != iter_end; ++iter, ++ii ) {
 		DOF_Node const & dof_node( **iter );
 
+		if ( dof_node.dependent() ) { --ii; continue; } // special case for symmetry
+
 		Real deriv_dev = 10000.0;
 		for ( Size j = 1,factor=1; j <= n_increment; ++j ) {
 			factor*=2;

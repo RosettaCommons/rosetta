@@ -21,6 +21,7 @@
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
@@ -151,15 +152,20 @@ RotamerSets::build_rotamers(
 	graph::GraphCOP packer_neighbor_graph
 )
 {
-	RotamerSetFactory rsf;
+	RotamerSetFactoryOP rsf;
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		rsf = RotamerSetFactoryOP( new symmetry::SymmetricRotamerSetFactory );
+	} else { //if not symmetric
+		rsf = RotamerSetFactoryOP( new RotamerSetFactory );
+	}
 	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 		uint ii_resid = moltenres_2_resid_[ ii ];
-		RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( ii_resid ) ));
+		RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( ii_resid ) ));
 		rotset->set_resid( ii_resid );
 		rotset->build_rotamers( pose, sfxn, *task_, packer_neighbor_graph );
-
 		set_of_rotamer_sets_[ ii ] = rotset;
 	}
+
 
 	Size asym_length = 0;
 	// make sure we have a symmetric RotamerSet_ if we have a symmetric pose
@@ -229,7 +235,7 @@ RotamerSets::build_rotamers(
 					continue;
 				}
 
-				RotamerSetOP smallset( rsf.create_rotamer_set( pose.residue( 1 ) )) ;
+				RotamerSetOP smallset( rsf->create_rotamer_set( pose.residue( 1 ) )) ;
 
 				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
 

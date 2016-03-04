@@ -61,8 +61,6 @@ public:
 	bool
 	operator!=(SymmData const & a, SymmData const & b);
 
-	//void test( SymmData tmp );
-
 private:
 
 	std::string symmetry_name_;
@@ -95,13 +93,6 @@ private:
 	utility::vector1< Size > include_subunit_;
 	utility::vector1< Size > output_subunit_;
 
-	core::Real cell_a_;
-	core::Real cell_b_;
-	core::Real cell_c_;
-	core::Real cell_alfa_;
-	core::Real cell_beta_;
-	core::Real cell_gamma_;
-
 	utility::vector1<char> components_;
 	std::map<std::string,char> name2component_;
 	std::map<std::string,utility::vector1<char> > jname2components_;
@@ -113,30 +104,23 @@ public:
 	typedef numeric::xyzVector< core::Real > Vector;
 	typedef numeric::xyzMatrix< core::Real > Matrix;
 
-public:
 	void
 	read_symmetry_data_from_file(
 		std::string filename
 	);
+
 	void
 	read_symmetry_data_from_stream(
 		std::istream & infile
 	);
 
-	//void read_symmetry_name();
-
-	// void read_symmetry_type();
-
-	//void read_transformation_matrixes();
-
 	void
+
 	sanity_check();
 	void
 	show();
 
-public:
 	// Accessor functions
-
 	std::string const &
 	get_symmetry_name() const;
 
@@ -177,8 +161,6 @@ public:
 
 	std::vector< numeric::xyzMatrix< core::Real > > const &
 	get_translation_matrix() const;
-
-	//std::vector< std::vector< std::string> > get_symm_transforms() const;
 
 	std::map< std::string, VirtualCoordinate > const &
 	get_virtual_coordinates() const;

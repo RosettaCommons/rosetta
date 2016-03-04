@@ -1,0 +1,5 @@
+repeat 1
+ramp_repack_min 0.1  0.025
+ramp_repack_min 1     0.00001
+accept_to_best
+endrepeat

@@ -49,6 +49,15 @@ public:
 
 public:
 	inline
+	std::string
+	to_string() const {
+		std::ostringstream oss;
+		oss << id << " f1=" << F1_[0]<<","<< F1_[1]<<","<< F1_[2]<<"  f2="
+			<<F2_[0]<<","<< F2_[1]<<","<< F2_[2];
+		return oss.str();
+	}
+
+	inline
 	Vector &
 	F1() { return F1_; };
 
@@ -164,7 +173,8 @@ public:
 		depth_(-1),
 		id( id_in ),
 		parent_( parent_in ),
-		torsion_id_( id::BOGUS_TORSION_ID )
+		torsion_id_( id::BOGUS_TORSION_ID ),
+		dependent_( false )
 	{}
 
 	void

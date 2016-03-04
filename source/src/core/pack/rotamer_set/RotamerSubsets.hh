@@ -126,6 +126,15 @@ public:
 	uint
 	moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) const;
 
+	/// @brief Give the pose a chance to stash any data needed by the _rotset_
+	///        need nonconst access to pose
+	virtual
+	void
+	initialize_pose_for_rotsets_creation(
+		pose::Pose & /*pose*/
+	) const {}
+
+
 	virtual
 	void
 	show( std::ostream & out ) const;

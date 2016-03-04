@@ -1,0 +1,19 @@
+symmetry_name c2m
+subunits 2
+#recenter
+number_of_interfaces  1
+E = 2*VRT0001 + 1*(VRT0001:VRT0002)
+anchor_residue COM
+#virtual_transforms_start consecutive
+#start -1,0,0 0,1,0 0,0,0
+#rot Ry_angle 60
+#virtual_transforms_stop
+virtual_coordinates_start
+xyz VRT0001 1,0,0 0,0,1 0,0,0
+xyzM VRT0002 -1,0,0 0,0,-1 0,0,0
+virtual_coordinates_stop
+connect_virtual JUMP1 VRT0001 VRT0002
+connect_virtual JUMP2 VRT0001 SUBUNIT
+connect_virtual JUMP3 VRT0002 SUBUNIT
+set_dof JUMP2 x(50) angle_x(0:360) angle_y(0:360) angle_z(0:360)
+set_jump_group JUMPGROUP1 JUMP2 JUMP3

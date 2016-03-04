@@ -659,6 +659,23 @@ Conformation::const_residues() const
 	return const_rsds;
 }
 
+/// @brief Force updating of residue torsions.
+/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
+void
+Conformation::force_update_residue_torsions() const {
+	residue_torsions_need_updating_ = true;
+	update_residue_torsions();
+}
+
+/// @brief Force updating of residue coordinates.
+/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
+void
+Conformation::force_update_residue_coordinates() const {
+	residue_coordinates_need_updating_ = true;
+	update_residue_coordinates();
+}
+
+
 std::string
 Conformation::annotated_sequence( bool show_all_variants ) const
 {

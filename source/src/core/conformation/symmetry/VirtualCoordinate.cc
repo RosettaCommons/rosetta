@@ -32,12 +32,16 @@ VirtualCoordinate::VirtualCoordinate( VirtualCoordinate const & src )
 	axis_x_ = src.axis_x_;
 	axis_y_ = src.axis_y_;
 	axis_origin_ = src.axis_origin_;
+	mirror_Z_ = src.mirror_Z_;
 }
 
-VirtualCoordinate::VirtualCoordinate(){}
+VirtualCoordinate::VirtualCoordinate():
+	axis_x_(),
+	axis_y_(),
+	axis_origin_(),
+	mirror_Z_(false)
+{}
 
-/// @brief copy constructor
-//VirtualCoordinate::VirtualCoordinate( VirtualCoordinate const & src );
 
 VirtualCoordinate::VirtualCoordinate(
 	numeric::xyzVector< core::Real> axis_x,
@@ -48,6 +52,20 @@ VirtualCoordinate::VirtualCoordinate(
 	axis_x_ = axis_x;
 	axis_y_ = axis_y;
 	axis_origin_ = axis_origin;
+	mirror_Z_ = false;
+}
+
+VirtualCoordinate::VirtualCoordinate(
+	numeric::xyzVector< core::Real> axis_x,
+	numeric::xyzVector< core::Real> axis_y,
+	numeric::xyzVector< core::Real> axis_origin,
+	bool mirror_z
+)
+{
+	axis_x_ = axis_x;
+	axis_y_ = axis_y;
+	axis_origin_ = axis_origin;
+	mirror_Z_ = mirror_z;
 }
 
 VirtualCoordinate &
@@ -55,6 +73,7 @@ VirtualCoordinate::operator=( VirtualCoordinate const & src ) {
 	axis_x_ = src.axis_x_;
 	axis_y_ = src.axis_y_;
 	axis_origin_ = src.axis_origin_;
+	mirror_Z_ = src.mirror_Z_;
 	return *this;
 }
 
@@ -97,6 +116,18 @@ VirtualCoordinate::get_origin() const
 {
 	return axis_origin_;
 }
+
+
+bool
+VirtualCoordinate::get_mirror_z() const {
+	return mirror_Z_;
+}
+
+void
+VirtualCoordinate::set_mirror_z( bool val ) {
+	mirror_Z_ = val;
+}
+
 // @details read the coordinates of a virtual residues from string. Start reading
 // coordinates from coord_start. The coordinates correspond to the unit vectors for
 // X, Y axis and a origin. Vectors are not automatically normalized here. Should we
@@ -133,7 +164,8 @@ operator==(
 	return
 		(a.axis_x_ == b.axis_x_) &&
 		(a.axis_y_ == b.axis_y_) &&
-		(a.axis_origin_ == b.axis_origin_);
+		(a.axis_origin_ == b.axis_origin_) &&
+		(a.mirror_Z_ == b.mirror_Z_);
 }
 
 bool

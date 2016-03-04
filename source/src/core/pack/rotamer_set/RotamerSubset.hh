@@ -168,6 +168,14 @@ public:
 	void
 	drop_rotamers_by_index( utility::vector1< Size > const & rotamer_indices_to_delete );
 
+	/// @brief Give the pose a chance to stash any data needed by the _rotset_
+	///        need nonconst access to pose
+	virtual
+	void
+	initialize_pose_for_rotset_creation(
+		pose::Pose & /*pose*/
+	) const {}
+
 	virtual
 	void
 	show( std::ostream & out ) const;

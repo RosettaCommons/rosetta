@@ -307,7 +307,7 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const
 			% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
 
 		// if the best linear is not the best cyclic but it can also be cyclized, we want to print this information in the best cyclic peptides table
-		if (was_cyclic_pep_modeled && pep_start!=best_cyclic_start_position_ ) {
+		if ( was_cyclic_pep_modeled && pep_start!=best_cyclic_start_position_ ) {
 			best_cyclic_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-24s | %7$-14s | %8$-24s | %9$-20s |" )
 				% current_receptor_chain_letter_
 				% current_partner_chain_letter_
@@ -347,8 +347,8 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const
 			% no_neg_zero_linear_isc
 			% binding_contribution_pct_str ) << std::endl;
 
-		if (disulfide_info != "") {
-			if (!current_pep_length_cyclic_peptide_encountered_) {
+		if ( disulfide_info != "" ) {
+			if ( !current_pep_length_cyclic_peptide_encountered_ ) {
 				cyclic_peptides_ << prefix_ << ( boost::format("### Receptor= %1% Partner= %2% Peptide_length= %3%")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
@@ -847,8 +847,8 @@ PeptideDeriverFilter::derive_peptide(
 	core::Real const total_isc( calculate_interface_score(chain_pair_pose, jump_id) );
 
 	tracer << "Chain pair prepared "
-			<< chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(first_chain_new_index))
-			<< chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(second_chain_new_index)) << std::endl;
+		<< chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(first_chain_new_index))
+		<< chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(second_chain_new_index)) << std::endl;
 
 	output.chain_pair_pose_prepared(chain_pair_pose);
 
@@ -1121,7 +1121,7 @@ PeptideDeriverFilter::derive_peptide(
 		} // for pep_start
 
 		tracer << "Outputting best peptides" << std::endl;
-		if (lin_isc_of_best_lin < UNLIKELY_ISC_VALUE) {
+		if ( lin_isc_of_best_lin < UNLIKELY_ISC_VALUE ) {
 			output.peptide_entry(*lin_pose_of_best_lin, ET_BEST_LINEAR, pep_start_of_best_lin, lin_isc_of_best_lin, (lin_isc_of_best_lin / total_isc), disulfide_info_of_best_lin, was_best_lin_cyclic_model_created, *cyc_pose_of_best_lin, cyc_isc_of_best_lin);
 			//best cyclic information will be printed in a line of its own
 			//since the best disulfide position is not always the position of the best linear position and to make things less confusing

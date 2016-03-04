@@ -165,6 +165,7 @@ core::Real
 AACompositionEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect
 ) const {
+	//for(core::Size i=1, imax=resvect.size(); i<=imax; ++i) { TR << i << ":\t" << resvect[i]->name() << "\t" << resvect[i]->seqpos() << std::endl; } //DELETE ME
 	return calculate_energy( resvect, setup_helpers_for_packing_, setup_helper_masks_for_packing_);
 }
 

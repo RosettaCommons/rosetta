@@ -22,6 +22,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
+#include <utility/vector1.hh>
 #include <map>
 
 namespace core {
@@ -30,6 +31,9 @@ namespace symmetry {
 
 bool
 is_symmetric( conformation::Conformation const & conf );
+
+bool
+is_mirror_symmetric( conformation::Conformation const & conf );
 
 bool
 is_symmetric( conformation::symmetry::SymmetryInfo const & symminfo );
@@ -98,6 +102,15 @@ show_foldtree(
 	SymmData const & symdata,
 	std::map<char,std::pair<Size,Size> > const & chain2range
 );
+
+/// @breif A very specific helper function that counts the number of mirror ops from root->each subunit
+void
+calculate_inverting_virtuals(
+	core::kinematics::FoldTree const & ft,
+	Conformation const & conf,
+	SymmetryInfo const &symm_info,
+	utility::vector1<bool> &mirrored_subs,
+	utility::vector1< std::pair<bool,bool> > &mirrored_jumps );
 
 
 } // symmetry

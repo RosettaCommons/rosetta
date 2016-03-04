@@ -436,9 +436,26 @@ ResidueTypeSet::apply_patches(
 		for ( Size i=1; i<= base_residue_types_.size(); ++i ) {
 			ResidueType const & rsd_type( *base_residue_types_[ i ] );
 			if ( p->applies_to( rsd_type ) && p->adds_properties( rsd_type ).has_value( "D_AA" ) ) {
-				ResidueTypeCOP new_rsd_type = p->apply( rsd_type );
+				ResidueTypeOP new_rsd_type_op = p->apply( rsd_type );
+				new_rsd_type_op->base_name( new_rsd_type_op->name() ); //D-residues have their own base names.
+				new_rsd_type_op->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
+
+				ResidueTypeCOP new_rsd_type( new_rsd_type_op );  //Make const-access pointer.
 				base_residue_types_.push_back( new_rsd_type );
 				cache_->add_residue_type( new_rsd_type );
+
+				// Store the D-to-L and L-to-D mappings:
+				runtime_assert_string_msg(
+					l_to_d_mapping_.count( base_residue_types_[i] ) == 0,
+					"Error in core::chemical::ResidueTypeSet::apply_patches: A D-equivalent for " + rsd_type.name() + " has already been defined."
+				);
+				l_to_d_mapping_[ base_residue_types_[i] ] = new_rsd_type;
+				runtime_assert_string_msg(
+					d_to_l_mapping_.count( new_rsd_type ) == 0,
+					"Error in core::chemical::ResidueTypeSet::apply_patches: An L-equivalent for " + new_rsd_type->name() + " has already been defined."
+				);
+				d_to_l_mapping_[ new_rsd_type ] = base_residue_types_[i];
+
 			}
 		}
 	}
@@ -560,7 +577,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		//patches_.push_back( needed_patch );
 		//patch_map_[ needed_patch->name() ] = needed_patch;
 
-		ResidueTypeOP rsd_instantiated = needed_patch->apply( rsd_base );
+		ResidueTypeOP rsd_instantiated ( needed_patch->apply( rsd_base ) );
 
 		if ( rsd_instantiated == 0 ) {
 			return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
@@ -573,8 +590,15 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		if ( option[ OptionKeys::in::add_orbitals] ) {
 			orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
 		}
-		cache_->add_residue_type( rsd_instantiated );
 
+		//Set the pointer to the base type:
+		if ( rsd_base.get_base_type_cop() ) {
+			rsd_instantiated->set_base_type_cop( rsd_base.get_base_type_cop() );
+		} else {
+			rsd_instantiated->set_base_type_cop( rsd_base.get_self_ptr() );
+		}
+
+		cache_->add_residue_type( rsd_instantiated );
 		return true;
 
 	} else {
@@ -602,6 +626,14 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			if ( option[ OptionKeys::in::add_orbitals] ) {
 				orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
 			}
+
+			//Set the pointer to the base type:
+			if ( rsd_base.get_base_type_cop() ) {
+				rsd_instantiated->set_base_type_cop( rsd_base.get_base_type_cop() );
+			} else {
+				rsd_instantiated->set_base_type_cop( rsd_base.get_self_ptr() );
+			}
+
 			cache_->add_residue_type( rsd_instantiated );
 			patch_applied = true;
 		}
@@ -731,6 +763,73 @@ ResidueTypeSet::get_base_types_name1( char name1 ) const {
 ResidueTypeCOPs
 ResidueTypeSet::get_base_types_name3( std::string const & name3 ) const {
 	return ResidueTypeFinder( *this ).name3( name3 ).get_possible_base_residue_types();
+}
+
+/// @brief Given a D-residue, get its L-equivalent.
+/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not a D-residue.
+/// Preserves variant types.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+ResidueTypeCOP
+ResidueTypeSet::get_d_equivalent(
+	ResidueTypeCOP l_rsd
+) const {
+	runtime_assert_string_msg( l_rsd, "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): A null pointer was passed to this function!" );
+	runtime_assert_string_msg( l_rsd->is_l_aa(), "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): The residue passed to this function is not an L_AA!" );
+
+	ResidueTypeCOP l_basetype( l_rsd->get_base_type_cop() );
+	if ( !l_to_d_mapping_.count(l_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
+
+	ResidueTypeCOP d_basetype( l_to_d_mapping_.at(l_basetype) );
+
+	//Add back the variants, as efficiently as possible:
+	utility::vector1<VariantType> const variant_type_list( l_rsd->variant_type_enums() );
+	utility::vector1<std::string> const & custom_variant_type_list( l_rsd->custom_variant_types() );
+
+	ResidueTypeCOP d_rsd ( ResidueTypeFinder( *this ).base_type(d_basetype).variants( variant_type_list, custom_variant_type_list ).get_representative_type() );
+
+	return d_rsd;
+}
+
+/// @brief Given an L-residue, get its D-equivalent.
+/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
+/// Preserves variant types.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+ResidueTypeCOP
+ResidueTypeSet::get_l_equivalent(
+	ResidueTypeCOP d_rsd
+) const {
+	runtime_assert_string_msg( d_rsd, "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): A null pointer was passed to this function!" );
+	runtime_assert_string_msg( d_rsd->is_d_aa(), "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): The residue passed to this function is not a D_AA!" );
+
+	ResidueTypeCOP d_basetype( d_rsd->get_base_type_cop() );
+	if ( !d_to_l_mapping_.count(d_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
+
+	ResidueTypeCOP l_basetype( d_to_l_mapping_.at(d_basetype) );
+
+	//Add back the variants, as efficiently as possible:
+	utility::vector1<VariantType> const variant_type_list( d_rsd->variant_type_enums() );
+	utility::vector1<std::string> const & custom_variant_type_list( d_rsd->custom_variant_types() );
+
+	ResidueTypeCOP l_rsd ( ResidueTypeFinder( *this ).base_type(l_basetype).variants( variant_type_list, custom_variant_type_list ).get_representative_type() );
+
+	return l_rsd;
+}
+
+/// @brief Given a residue, get its mirror-image type.
+/// @details Returns the same residue if this is an ACHIRAL type (e.g. gly), the D-equivalent for an L-residue, the L-equivalent of a D-residue,
+/// or NULL if this is an L-residue with no D-equivalent (or a D- with no L-equivalent).  Preserves variant types.
+ResidueTypeCOP
+ResidueTypeSet::get_mirrored_type(
+	ResidueTypeCOP original_rsd
+) const {
+	if ( original_rsd->is_achiral_backbone() ) return original_rsd;
+
+	runtime_assert_string_msg( original_rsd->is_d_aa() || original_rsd->is_l_aa(), "Error in core::chemical::ResidueTypeSet::get_mirror_type(): The residue type must be achiral, or must have the D_AA or L_AA property." );
+
+	if ( original_rsd->is_d_aa() ) return get_l_equivalent(original_rsd);
+	if ( original_rsd->is_l_aa() ) return get_d_equivalent(original_rsd);
+
+	return ResidueTypeCOP();
 }
 
 /// @brief Gets all types with the given aa type and variants

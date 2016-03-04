@@ -1,0 +1,12 @@
+symmetry_name C2_big__2
+E = 2*VRT0 + 1*(VRT0:VRT1)
+anchor_residue 1
+virtual_coordinates_start
+xyz  VRT0  1.0,0.0,0.0  0.0,1.0,0.0  0.0,0.0,0.0
+xyzM VRT1  1.0,0.0,0.0  0.0,1.0,0.0  0.0,0.0,0.0
+virtual_coordinates_stop
+connect_virtual JUMP0 VRT0 SUBUNIT
+connect_virtual JUMP1 VRT1 SUBUNIT
+connect_virtual JUMP01 VRT0 VRT1
+set_dof JUMP0 x y z angle_x angle_y angle_z
+set_jump_group JUMPGROUP2 JUMP0 JUMP1

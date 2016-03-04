@@ -212,7 +212,28 @@ ResidueProperties::get_list_of_properties() const
 	return list;
 }
 
-// Generate and return a list of strings representing the VariantTypes of this ResidueType.
+/// @brief Return a list of VariantType enums for this ResidueType.
+/// @details This will not include custom, string-based variant types generated on the fly.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+utility::vector1< VariantType >
+ResidueProperties::get_list_of_variant_enums() const {
+	utility::vector1< VariantType > output_list;
+	for ( VariantType variant = FIRST_VARIANT; variant <= N_VARIANTS; ++variant ) {
+		if ( variant_type_status_[ variant ] ) output_list.push_back(variant);
+	}
+	return output_list;
+}
+
+/// @brief Get a const-access reference to the list of custom VariantType strings for this ResidueType.
+/// @details This will not include enum-based standard variants.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+utility::vector1< std::string > const &
+ResidueProperties::get_list_of_custom_variants_by_reference() const {
+	return custom_variant_types_;
+}
+
+
+/// @brief Generate and return a list of strings representing the VariantTypes of this ResidueType.
 utility::vector1< std::string >
 ResidueProperties::get_list_of_variants() const
 {

@@ -24,6 +24,7 @@
 #include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
@@ -638,12 +639,17 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 
 }
 
-// @details orients all rotamers in a rotamer_set to a different (symmetrical) position
+/// @details orients all rotamers in a rotamer_set to a different (symmetrical) position
+/// @note If set_up_mirror_symmetry_if_has_mirror_symmetry_ is true, then residues in mirrored subunits have their
+/// ResidueTypes switched to the types of the opposite chirality.  If false (the default), then they keep the same
+/// types, and only have their geometry mirrored.  The default is false, which is computationally less expensive
+/// at the expense of having the incorrect types in mirrored subunits.
 RotamerSetOP
 SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 	pose::Pose const & pose,
 	uint const & seqpos,
-	uint const & sympos
+	uint const & sympos,
+	bool const set_up_mirror_types_if_has_mirror_symmetry/*=false*/
 )
 {
 
@@ -651,17 +657,41 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 	SymmetricRotamerSetFactory rsf;
 	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( seqpos ) );
 	sym_rotamer_set->set_resid(sympos);
+
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
+
+	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const>( pose.conformation_ptr() ) );
+
 	for ( Rotamers::const_iterator
 			rot     = rotset_in->begin(),
 			rot_end = rotset_in->end();
 			rot != rot_end; ++rot ) {
-		conformation::ResidueOP target_rsd( (*rot)->clone() /*pose.residue( seqpos )*/ );
+		bool mirrored(false);
+		if ( mirrorconf ) { //If this is a mirror symmetric conformation, figure out whether this subunit is mirrored:
+			mirrored = mirrorconf->res_is_mirrored( sympos );
+		}
+
+		// fpd  the commented line turns on chirality flipping in the packer
+		// fpd  right now, no scorefunctions need it however and it is _very_ slow (triples time of design)
+		// VKM -- I've left it off, but added a function interface to turn it back on.  In the special case the the interaction graph for non-
+		// pairwise score terms, it needs to be on, but for the default interaction graph, it's probably a waste of clock cycles.  So the
+		// ResidueArrayAnnealingEvaluator calls this with set_up_mirror_types-if_has_mirror_symmetry=true, and everything else calls it with
+		// set_up_mirror_types_if_has_mirror_symmetry=false.
+		conformation::ResidueOP target_rsd( set_up_mirror_types_if_has_mirror_symmetry && mirrored ? (*rot)->clone_flipping_chirality() : (*rot)->clone() );
+		//conformation::ResidueOP target_rsd( (*rot)->clone() );
 
 		// peptoids have a different orientation function due to the placement of the first side chain atom
-		if ( target_rsd->type().is_peptoid() ) {
-			target_rsd->orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
-		} else {
-			target_rsd->orient_onto_residue( pose.residue( sympos ) );
+		//if ( target_rsd->type().is_peptoid() ) {
+		// target_rsd->orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
+		//} else {
+		// target_rsd->orient_onto_residue( pose.residue( sympos ) );
+		//}
+
+		//fpd use the stored transforms instead!  Will work for anything!
+		for ( int i=1; i<=(int)target_rsd->natoms(); ++i ) {
+			target_rsd->set_xyz(i ,
+				SymmConf.apply_transformation_norecompute( target_rsd->xyz(i), target_rsd->seqpos(), sympos ) );
 		}
 
 		sym_rotamer_set->add_rotamer( *target_rsd );
@@ -708,6 +738,17 @@ SymmetricRotamerSets::final_visit_to_edge(
 	if ( ii_resid == ii_highest && jj_resid == jj_highest ) return true;
 	else return false;
 }
+
+//fpd function to set some pose data needed SymmetricRotamerSets
+void
+SymmetricRotamerSets::initialize_pose_for_rotsets_creation(
+	pose::Pose & pose
+) const {
+	SymmetricConformation & SymmConf (
+		dynamic_cast<SymmetricConformation &> ( pose.conformation() ) );
+	SymmConf.recalculate_transforms();
+}
+
 
 } // namespace symmetry
 } // namespace rotamer_set

@@ -428,6 +428,10 @@ public: // Methods
 	bool
 	downstream( AtomCOP atom1 ) const = 0;
 
+	// steal the inversion state of the specified atom
+	virtual
+	void
+	steal_inversion( AtomOP ) = 0;
 
 public: // Properties
 

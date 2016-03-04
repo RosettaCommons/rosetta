@@ -182,7 +182,7 @@ GlycanRelaxMover::set_cmd_line_defaults(){
 	final_min_ = option[ OptionKeys::carbohydrates::final_min_glycans]();
 	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_relax_movie]();
 	kt_ = option[ OptionKeys::carbohydrates::glycan_relax_kt]();
-	
+
 }
 
 protocols::moves::MoverOP
@@ -253,7 +253,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	TR << "initializing objects " << std::endl;
 	total_glycan_residues_ = 0;
 	positions_.clear();
-	
+
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
@@ -450,7 +450,7 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 
 	core::Size total_rounds = total_glycan_residues_ * rounds_;
 	TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
-	
+
 	bool accepted = false;
 	mc_->set_last_accepted_pose(pose);
 	for ( core::Size round = 1; round <= total_rounds; ++round ) {

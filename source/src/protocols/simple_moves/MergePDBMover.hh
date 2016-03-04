@@ -45,10 +45,10 @@ public:
 		core::pose::Pose const & pose );
 
 private:
-		core::pose::PoseOP parent_pose_;
-		std::string overlap_location_pose_;
-		Size overlap_range_;
-		Size overlap_max_length_;
+	core::pose::PoseOP parent_pose_;
+	std::string overlap_location_pose_;
+	Size overlap_range_;
+	Size overlap_max_length_;
 };
 
 } // simple_moves

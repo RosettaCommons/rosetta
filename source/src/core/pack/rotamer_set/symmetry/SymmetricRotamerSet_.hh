@@ -92,7 +92,15 @@ public:
 		pose::Pose const & pose,
 		conformation::Residue const & residue_in,
 		int const & sympos,
-		RotamerSet const & rotset_in
+		RotamerSet const & rotset_in,
+		bool const set_up_mirror_types_if_has_mirror_symmetry=false
+	) const;
+
+	//fpd function to set some pose data needed SymmetricRotamerSets
+	virtual
+	void
+	initialize_pose_for_rotset_creation(
+		pose::Pose & pose
 	) const;
 
 #ifdef    SERIALIZATION

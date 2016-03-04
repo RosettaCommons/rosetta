@@ -61,123 +61,129 @@ using namespace core::scoring::motif;
 
 methods::EnergyMethodOP
 SSElementMotifContactEnergyCreator::create_energy_method(
-    methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const &
 ) const {
-    return methods::EnergyMethodOP( new SSElementMotifContactEnergy );
+	return methods::EnergyMethodOP( new SSElementMotifContactEnergy );
 }
 
 ScoreTypes
 SSElementMotifContactEnergyCreator::score_types_for_method() const {
-    ScoreTypes sts;
-    sts.push_back( ss_contact_worst );
-    return sts;
+	ScoreTypes sts;
+	sts.push_back( ss_contact_worst );
+	return sts;
 }
 
 SSElementMotifContactEnergy::SSElementMotifContactEnergy():
-    parent(methods::EnergyMethodCreatorOP( new SSElementMotifContactEnergyCreator ) )
-    {
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-    mman_ = core::scoring::motif::MotifHashManager::get_instance();
+	parent(methods::EnergyMethodCreatorOP( new SSElementMotifContactEnergyCreator ) )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	mman_ = core::scoring::motif::MotifHashManager::get_instance();
 }
 
 
 /// @brief get ss_elements
 vector1<std::pair<Size,Size> > SSElementMotifContactEnergy::get_ss_elements(const Pose & pose) const{
-    core::scoring::dssp::Dssp dssp( pose );
-    dssp.dssp_reduced();
-    char lastSecStruct = dssp.get_dssp_secstruct( 1 );
-    Size startSS = 0;
-    Size endSS = 0;
-    vector1<std::pair<Size,Size> > ss_elements;
-    if(dssp.get_dssp_secstruct(1)=='H' || dssp.get_dssp_secstruct(1)=='E')
-        startSS=  1;
-    for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
-        if((dssp.get_dssp_secstruct(ii) == 'H' || dssp.get_dssp_secstruct(ii)) && lastSecStruct == 'L')
-            startSS = ii;
-        if(dssp.get_dssp_secstruct(ii)!=lastSecStruct && (lastSecStruct ==  'H' || lastSecStruct ==  'E')) {
-            endSS = ii-1;
-            if(endSS-startSS >= 2)
-                ss_elements.push_back(std::make_pair(startSS,endSS));
-        }
-        lastSecStruct = dssp.get_dssp_secstruct(ii);
-    }
-    return(ss_elements);
+	core::scoring::dssp::Dssp dssp( pose );
+	dssp.dssp_reduced();
+	char lastSecStruct = dssp.get_dssp_secstruct( 1 );
+	Size startSS = 0;
+	Size endSS = 0;
+	vector1<std::pair<Size,Size> > ss_elements;
+	if ( dssp.get_dssp_secstruct(1)=='H' || dssp.get_dssp_secstruct(1)=='E' ) {
+		startSS=  1;
+	}
+	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+		if ( (dssp.get_dssp_secstruct(ii) == 'H' || dssp.get_dssp_secstruct(ii)) && lastSecStruct == 'L' ) {
+			startSS = ii;
+		}
+		if ( dssp.get_dssp_secstruct(ii)!=lastSecStruct && (lastSecStruct ==  'H' || lastSecStruct ==  'E') ) {
+			endSS = ii-1;
+			if ( endSS-startSS >= 2 ) {
+				ss_elements.push_back(std::make_pair(startSS,endSS));
+			}
+		}
+		lastSecStruct = dssp.get_dssp_secstruct(ii);
+	}
+	return(ss_elements);
 }
 
 Size SSElementMotifContactEnergy::which_ssElement(Size res,vector1<std::pair<Size,Size> > ssElements) const{
-    for(Size ii=1; ii<=ssElements.size(); ++ii){
-        if(res>= ssElements[ii].first && res<=ssElements[ii].second){
-            return(ii);
-        }
-    }
-    return(0);
+	for ( Size ii=1; ii<=ssElements.size(); ++ii ) {
+		if ( res>= ssElements[ii].first && res<=ssElements[ii].second ) {
+			return(ii);
+		}
+	}
+	return(0);
 }
 
 Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const Pose & pose) const{
-    using core::kinematics::FoldTree;
-    set<Size> ssElements_in_contact;
-    core::scoring::dssp::Dssp dssp( pose );
-    const FoldTree& tree = pose.fold_tree();
-    for(size_t ir = ssElements[element].first; ir <= ssElements[element].second; ++ir){
-        Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
-        char ss1 = dssp.get_dssp_secstruct( ir );
-        char aa1 = pose.residue(ir).name1();
-        for(size_t jr = 1; jr <= pose.n_residue(); ++jr){
-            if(!tree.is_jump_point(ir) && !tree.is_jump_point(jr)){
-                Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
-                if(dist < 12){
-                    char ss2 = dssp.get_dssp_secstruct( jr );
-                    char aa2 = pose.residue(jr).name1();
-                    Xform const jbb_stub = core::pose::motif::get_backbone_reference_frame(pose,jr);
-                    Xform const Xbb = ibb_stub.inverse() * jbb_stub;
-                    core::scoring::motif::XformScoreCOP xs_bb_fxn1(mman_->get_xform_score_BB_BB(ss1,ss2,aa1,aa2));
-                    core::scoring::motif::XformScoreCOP xs_bb_fxn2(mman_->get_xform_score_BB_BB(ss2,ss1,aa2,aa1));
-                    Real tmpScore = 0;
-                    if(xs_bb_fxn1 != NULL){
-                        tmpScore += xs_bb_fxn1->score_of_bin(Xbb);
-                        tmpScore += xs_bb_fxn2->score_of_bin(Xbb.inverse());
-                    }
-                    if(tmpScore>0){
-                        Size resHit = which_ssElement(jr,ssElements);
-                        if(resHit != 0 && resHit !=element) //must be in SS element and not the current element
-                            ssElements_in_contact.insert(resHit);
-                    }
-                }
-            }
-        }
-    }
-    return(ssElements_in_contact.size());
+	using core::kinematics::FoldTree;
+	set<Size> ssElements_in_contact;
+	core::scoring::dssp::Dssp dssp( pose );
+	const FoldTree& tree = pose.fold_tree();
+	for ( size_t ir = ssElements[element].first; ir <= ssElements[element].second; ++ir ) {
+		Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
+		char ss1 = dssp.get_dssp_secstruct( ir );
+		char aa1 = pose.residue(ir).name1();
+		for ( size_t jr = 1; jr <= pose.n_residue(); ++jr ) {
+			if ( !tree.is_jump_point(ir) && !tree.is_jump_point(jr) ) {
+				Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
+				if ( dist < 12 ) {
+					char ss2 = dssp.get_dssp_secstruct( jr );
+					char aa2 = pose.residue(jr).name1();
+					Xform const jbb_stub = core::pose::motif::get_backbone_reference_frame(pose,jr);
+					Xform const Xbb = ibb_stub.inverse() * jbb_stub;
+					core::scoring::motif::XformScoreCOP xs_bb_fxn1(mman_->get_xform_score_BB_BB(ss1,ss2,aa1,aa2));
+					core::scoring::motif::XformScoreCOP xs_bb_fxn2(mman_->get_xform_score_BB_BB(ss2,ss1,aa2,aa1));
+					Real tmpScore = 0;
+					if ( xs_bb_fxn1 != NULL ) {
+						tmpScore += xs_bb_fxn1->score_of_bin(Xbb);
+						tmpScore += xs_bb_fxn2->score_of_bin(Xbb.inverse());
+					}
+					if ( tmpScore>0 ) {
+						Size resHit = which_ssElement(jr,ssElements);
+						if ( resHit != 0 && resHit !=element ) { //must be in SS element and not the current element
+							ssElements_in_contact.insert(resHit);
+						}
+					}
+				}
+			}
+		}
+	}
+	return(ssElements_in_contact.size());
 }
 
 //I have implemented this as a WholeStructureEnergy because the DSSP calls would waste time. But it may be useful in the future to develop this term over each residue
 void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const{
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-    vector1<std::pair<Size,Size> > ss_elements = get_ss_elements(pose);
-    Size ignore_terminal_ss = option[OptionKeys::score::ignore_terminal_ss_elements]();
-    Size startElement = 1;
-    Size endElement = ss_elements.size();
-    if(ignore_terminal_ss>0){
-        startElement+=ignore_terminal_ss;
-        endElement-=ignore_terminal_ss;
-    }
-    Real tmpScore = 9999;
-    for(Size ii=startElement; ii<=endElement; ++ii){
-        Real tmp=get_SSelements_in_contact(ii,ss_elements,pose);
-        if(tmp<tmpScore)
-            tmpScore=tmp;
-    }
-    if(tmpScore>option[OptionKeys::score::max_contacting_ss]())
-        tmpScore=option[OptionKeys::score::max_contacting_ss]();
-    totals[ss_contact_worst] =(-1*tmpScore);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	vector1<std::pair<Size,Size> > ss_elements = get_ss_elements(pose);
+	Size ignore_terminal_ss = option[OptionKeys::score::ignore_terminal_ss_elements]();
+	Size startElement = 1;
+	Size endElement = ss_elements.size();
+	if ( ignore_terminal_ss>0 ) {
+		startElement+=ignore_terminal_ss;
+		endElement-=ignore_terminal_ss;
+	}
+	Real tmpScore = 9999;
+	for ( Size ii=startElement; ii<=endElement; ++ii ) {
+		Real tmp=get_SSelements_in_contact(ii,ss_elements,pose);
+		if ( tmp<tmpScore ) {
+			tmpScore=tmp;
+		}
+	}
+	if ( tmpScore>option[OptionKeys::score::max_contacting_ss]() ) {
+		tmpScore=option[OptionKeys::score::max_contacting_ss]();
+	}
+	totals[ss_contact_worst] =(-1*tmpScore);
 }
 
 
 core::Size
 SSElementMotifContactEnergy::version() const
 {
-    return 1; // Initial versioning
+	return 1; // Initial versioning
 }
 
 }//motif

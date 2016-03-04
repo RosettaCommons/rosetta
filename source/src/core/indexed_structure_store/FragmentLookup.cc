@@ -145,7 +145,7 @@ std::vector<FragmentLookupResult> FragmentLookup::lookup_close_fragments(std::ve
 	numeric::Real* coordinate_start = &(query_coordinates[0].x());
 
 	lookup_.all_matches_below_threshold(coordinate_start, match_indexes, distances,rms_threshold);
-	for(Size ii=0; (ii<match_indexes.size() && results.size()<max_matches); ++ii){
+	for ( Size ii=0; (ii<match_indexes.size() && results.size()<max_matches); ++ii ) {
 		FragmentLookupResult result;
 		result.match_index =match_indexes[ii];
 		result.match_rmsd=distances[ii];

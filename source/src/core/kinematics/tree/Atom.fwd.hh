@@ -27,6 +27,7 @@ namespace tree {
 
 // Forward
 class Atom;
+class JumpAtom;
 
 // Types
 typedef  utility::pointer::weak_ptr< Atom >  AtomAP;
@@ -34,6 +35,12 @@ typedef  utility::pointer::weak_ptr< Atom const >  AtomCAP;
 
 typedef  utility::pointer::shared_ptr< Atom >  AtomOP;
 typedef  utility::pointer::shared_ptr< Atom const >  AtomCOP;
+
+typedef  utility::pointer::weak_ptr< JumpAtom >  JumpAtomAP;
+typedef  utility::pointer::weak_ptr< JumpAtom const >  JumpAtomCAP;
+
+typedef  utility::pointer::shared_ptr< JumpAtom >  JumpAtomOP;
+typedef  utility::pointer::shared_ptr< JumpAtom const >  JumpAtomCOP;
 
 }
 } // namespace kinematics

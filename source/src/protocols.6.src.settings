@@ -96,16 +96,8 @@ sources = {
 		"DisableCDRsOperation",
 		"RestrictToCDRsAndNeighbors",
 	],
-	"protocols/cryst" : [
-	        "cryst_movers",
-	        "cryst_rms",
-	        "refineable_lattice",
-	        "spacegroup",
-	        "TwoDLattice",
-	        "wallpaper"
-	],
 	"protocols/cyclic_peptide_predict" : [
-                "SimpleCycpepPredictApplication",
+		"SimpleCycpepPredictApplication",
 	],
 	"protocols/enzdes": [
 		"AddorRemoveCsts",

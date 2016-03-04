@@ -18,6 +18,7 @@
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -73,6 +74,13 @@ bool
 is_symmetric( pose::Pose const & pose )
 {
 	return conformation::symmetry::is_symmetric( pose.conformation() );
+}
+
+/// @details  Attempt to detect whether a pose is symmetric
+bool
+is_mirror_symmetric( pose::Pose const & pose )
+{
+	return conformation::symmetry::is_mirror_symmetric( pose.conformation() );
 }
 
 
@@ -135,7 +143,22 @@ make_symmetric_pose(
 {
 	using namespace basic::options;
 
-	conformation::symmetry::SymmetricConformationOP symm_conf( new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info ) );
+	// if the pose contains mirrored virtuals, we need to create a mirrored symmetric conformation
+	bool has_mirror=false;
+	for ( core::Size i=1; i<=pose.total_residue() && !has_mirror; ++i ) {
+		if ( pose.residue_type(i).is_inverted_virtual_residue() ) {
+			has_mirror=true;
+		}
+	}
+
+	conformation::symmetry::SymmetricConformationOP symm_conf;
+	if ( has_mirror ) {
+		symm_conf = conformation::symmetry::SymmetricConformationOP (
+			new core::conformation::symmetry::MirrorSymmetricConformation( pose.conformation(), symmetry_info ) );
+	} else {
+		symm_conf = conformation::symmetry::SymmetricConformationOP (
+			new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info ) );
+	}
 
 	scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
 
@@ -180,6 +203,7 @@ make_symmetric_pose(
 	scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
 
 	pose.set_new_conformation( symm_conf );
+
 	pose.set_new_energies_object( symm_energy );
 
 	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
@@ -193,40 +217,6 @@ make_symmetric_pose(
 	if ( option[ OptionKeys::symmetry::detect_bonds ] ) {
 		pose.conformation().detect_bonds();
 	}
-
-
-	// // protocols::viewer::dump_pose_kinemage("test_make_symmetric_pose_end.kin",pose);
-	// using namespace core::conformation::symmetry;
-
-	// SymmetryInfoCOP symm_info( symm_conf->Symmetry_Info() );
-	// std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
-	// std::map< Size, SymDof >::iterator it;
-	// std::map< Size, SymDof >::iterator it_begin = dofs.begin();
-	// std::map< Size, SymDof >::iterator it_end = dofs.end();
-	// int count = 0;
-
-	// for(it=it_begin; it != it_end; ++it,++count){
-	//  core::kinematics::Jump j(pose.jump(it->first));
-	//  j.set_translation(numeric::xyzVector<core::Real>(0,0,0));
-	//  pose.set_jump(it->first,j);
-	//  // pose.dump_pdb("test_make_symmetric_pose_testmove"+ObjexxFCL::string_of(count)+".pdb");
-	// }
-
-	// // for(int i = 1; i <= 10; ++i)
-	//  for(it=it_begin; it != it_end; ++it,++count){
-	//   core::kinematics::Jump j(pose.jump(it->first));
-	//   if(it->second.allow_dof(1)) j.gaussian_move_single_rb(-1,05.0,1);
-	//   if(it->second.allow_dof(2)) j.gaussian_move_single_rb(-1,20.0,2);
-	//   if(it->second.allow_dof(4)) j.gaussian_move_single_rb(-1,40.0,4);
-	//   pose.set_jump_now(it->first,j);
-	//   // protocols::viewer::dump_pose_kinemage("test_make_symmetric_pose_testmove"+ObjexxFCL::string_of(count)+".kin",pose);
-	//   // pose.dump_pdb("test_make_symmetric_pose_testmove"+ObjexxFCL::string_of(count)+".pdb");
-	//  }
-
-
-	// pose.dump_pdb("test_make_symmetric_pose_end.pdb");
-
-	// utility_exit_with_message("test_make_symmetric_pose");
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object from a monomeric pose

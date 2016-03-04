@@ -269,10 +269,10 @@ bah_chi_compute_energy_sp3(
 
 	Real chi_scale = 0;
 	bool chi_range1( false );
-	if ( (chi > pi/3 && chi < pi/2 ) || (chi < -1*pi/3 && chi > -1*pi/2 ) || ( chi > 3*pi/2 && chi < 5*pi/3 )) {
+	if ( (chi > pi/3 && chi < pi/2 ) || (chi < -1*pi/3 && chi > -1*pi/2 ) || ( chi > 3*pi/2 && chi < 5*pi/3 ) ) {
 		chi_scale = ( -1*cos(6*chi) + 1 ) / 2;
 		chi_range1 = true;
-	} else if ( (chi > pi/2 && chi < 3*pi/2) || ( chi < -1*pi/2 && chi > -3*pi/2 )) {
+	} else if ( (chi > pi/2 && chi < 3*pi/2) || ( chi < -1*pi/2 && chi > -3*pi/2 ) ) {
 		chi_scale = 1;
 	}
 
@@ -307,7 +307,7 @@ bah_chi_compute_energy_sp3(
 	// apl -- ok, this was a bad idea: energy += acc_don_scale * cos2ChiShifted;
 	// apl -- ok, this was a bad idea:
 	// apl -- ok, this was a bad idea: if ( &dE_dBAH != &DUMMY_DERIV ) {
-	// apl -- ok, this was a bad idea: 	dE_dchi = -1 * max_penalty * std::sin(chi)/2 * acc_don_scale;
+	// apl -- ok, this was a bad idea:  dE_dchi = -1 * max_penalty * std::sin(chi)/2 * acc_don_scale;
 	// apl -- ok, this was a bad idea: }
 
 

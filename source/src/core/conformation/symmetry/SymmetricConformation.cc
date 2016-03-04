@@ -17,6 +17,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryTransform.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -34,7 +35,6 @@
 #include <core/graph/UpperEdgeGraph.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-//#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/util.hh>
@@ -66,7 +66,7 @@ SymmetricConformation::SymmetricConformation():
 	Conformation(),
 	symm_info_()
 {
-	Tsymm_.clear();
+	clear_Tsymm( );
 }
 
 /// @brief  Default CTOR
@@ -75,7 +75,7 @@ SymmetricConformation::SymmetricConformation(Conformation const & conf, Symmetry
 	symm_info_()
 {
 	symm_info_ = symm_info.clone();
-	Tsymm_.clear();  // force recompute
+	clear_Tsymm( );  // force recompute
 }
 
 
@@ -114,7 +114,6 @@ ConformationOP
 SymmetricConformation::clone() const
 {
 	SymmetricConformationOP copy( new SymmetricConformation(*this, *symm_info_) );
-	copy->Tsymm_.clear();  // force recompute
 	return copy;
 }
 
@@ -152,7 +151,7 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 	typedef SymmetryInfo::DOF_IDs DOF_IDs;
 
 	core::Size parent_rsd;
-	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
+	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
 
 	if ( !symm_info_->dof_is_independent( id, *this ) ) {
 		TR.Debug << "SymmetricConformation:: directly setting a dependent DOF!, try to set its parent" << std::endl;
@@ -167,7 +166,7 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 	}
 
 	if ( id.type() >= id::RB1 && id.type() <= id::RB6 ) {
-		Tsymm_.clear();
+		clear_Tsymm( );
 	}
 
 	id::DOF_ID parent_id ( id::AtomID( id.atomno(), parent_rsd ), id.type() );
@@ -216,7 +215,7 @@ SymmetricConformation::set_torsion( id::TorsionID const & id, Real const setting
 	typedef SymmetryInfo::TorsionIDs TorsionIDs;
 
 	TR.Trace << "SymmetricConformation: set_torsion: " << id << ' ' << setting << std::endl;
-	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
+	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
 
 	core::Size parent_rsd;
 
@@ -253,7 +252,7 @@ SymmetricConformation::set_torsion_angle(
 	AtomID parent_atom1, parent_atom2, parent_atom3, parent_atom4;
 
 	TR.Trace << "SymmetricConformation: set_torsion_angle: " << atom1 << "+ to " << setting << std::endl;
-	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
+	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
 
 	// assume if 1st atom is dependent, all are
 	if ( !symm_info_->bb_is_independent( atom1.rsd() ) ) {
@@ -302,7 +301,7 @@ SymmetricConformation::set_bond_angle(
 	AtomID parent_atom1, parent_atom2, parent_atom3;
 
 	TR.Trace << "SymmetricConformation: set_bond_angle: " << atom1 << "+ to " << setting << std::endl;
-	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
+	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
 
 	// assume if 1st atom is dependent, all are
 	if ( !symm_info_->bb_is_independent( atom1.rsd() ) ) {
@@ -345,7 +344,7 @@ SymmetricConformation::set_bond_length(
 	AtomID parent_atom1, parent_atom2;
 
 	TR.Trace << "SymmetricConformation: set_bond_length: " << atom1 << "+ to " << setting << std::endl;
-	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
+	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
 
 	// assume if 1st atom is dependent, all are
 	if ( !symm_info_->bb_is_independent( atom1.rsd() ) ) {
@@ -384,7 +383,7 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 	TR.Trace << "SymmetricConformation: set_jump jump_number: " << jump_number << std::endl;
 
 	// clear cached transforms
-	Tsymm_.clear();
+	clear_Tsymm( );
 
 	id::AtomID const id( Conformation::jump_atom_id( jump_number ) );
 	Conformation::set_jump( id, new_jump );
@@ -410,7 +409,7 @@ SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const &
 	TR.Trace << "SymmetricConformation: set_jump id:" << id << std::endl;
 
 	// clear cached transforms
-	Tsymm_.clear();
+	clear_Tsymm( );
 
 	Conformation::set_jump( id, new_jump );
 
@@ -484,7 +483,7 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 	}
 
 	//fpd may have implicitly changed a jump
-	if ( residue(seqpos).aa() == core::chemical::aa_vrt ) Tsymm_.clear();
+	clear_Tsymm( );
 }
 
 /// @details symmetry-safe replace residue
@@ -516,8 +515,8 @@ SymmetricConformation::replace_residue( Size const seqpos,
 		Conformation::replace_residue( *pos, new_new_rsd, false );
 	}
 
-	//fpd may have implicitly changed a jump
-	if ( residue(seqpos).aa() == core::chemical::aa_vrt ) Tsymm_.clear();
+	//fpd may have implicitly changed a jump (this should really check for downstream jump residues)
+	clear_Tsymm( );
 }
 
 
@@ -551,7 +550,7 @@ SymmetricConformation::get_transformation( core::Size resid ) {
 		compid = symm_info_->get_component_of_residue( resid );
 	}
 
-	return Tsymm_[ compid ][ symm_info_->subunit_index( resid ) ];
+	return Tsymm_[ compid ][ symm_info_->subunit_index( resid ) ].ht();
 }
 
 //  Remap coordinate X from resid i to j
@@ -572,9 +571,9 @@ SymmetricConformation::apply_transformation(
 	}
 
 	runtime_assert(Tsymm_.find(compid) != Tsymm_.end());
-	utility::vector1< numeric::HomogeneousTransform< core::Real > > const &T_i = (Tsymm_.find(compid))->second;
-	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
-	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
+	utility::vector1< SymmetryTransform > const &T_i = (Tsymm_.find(compid))->second;
+	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ].ht();
+	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ].ht();
 
 	if ( rotationonly ) {
 		Tsymm_from.set_identity_transform();
@@ -584,9 +583,6 @@ SymmetricConformation::apply_transformation(
 	PointPosition Xout;
 	Xout = (Tsymm_from.inverse() * Xin);
 	Xout = (Tsymm_to * Xout);
-	// TR.Debug << "XFORM " << residfrom << " to " << residto << std::endl;
-	// TR.Debug << "                 Xin =  (" << Xin[0] << "," << Xin[1] << "," << Xin[2] << ")" << std::endl;
-	// TR.Debug << "Tto * Tfrom^-1 * Xin =  (" << Xout[0] << "," << Xout[1] << "," << Xout[2] << ")" << std::endl;
 	return Xout;
 }
 
@@ -604,9 +600,9 @@ SymmetricConformation::apply_transformation_norecompute(
 	}
 
 	runtime_assert(Tsymm_.find(compid) != Tsymm_.end());
-	utility::vector1< numeric::HomogeneousTransform< core::Real > > const &T_i = (Tsymm_.find(compid))->second;
-	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
-	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
+	utility::vector1< SymmetryTransform > const &T_i = (Tsymm_.find(compid))->second;
+	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ].ht();
+	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ].ht();
 
 	if ( rotationonly ) {
 		Tsymm_from.set_identity_transform();
@@ -634,7 +630,7 @@ SymmetricConformation::set_xyz(
 	if ( id.rsd() > symm_info_->num_total_residues_without_pseudo() ) {
 		Conformation::set_xyz( id, position );
 		TR<< "***WARN*** XYZ set vrt!" << std::endl;
-		Tsymm_.clear();
+		clear_Tsymm( );
 		return;
 	}
 
@@ -679,7 +675,7 @@ SymmetricConformation::batch_set_xyz(
 			TR<< "***WARN*** XYZ batch set vrt!" << std::endl;
 			ids_with_symm.push_back( id );
 			positions_with_symm.push_back( position );
-			Tsymm_.clear();
+			clear_Tsymm( );
 		} else {
 			if ( !symm_info_->bb_is_independent( id.rsd() ) ) {
 				TR.Debug << "SymmetricConformation::set_xyz setting a dependent XYZ; remapping to its parent" << std::endl;
@@ -706,13 +702,26 @@ SymmetricConformation::batch_set_xyz(
 	Conformation::batch_set_xyz( ids_with_symm, positions_with_symm );
 }
 
-// recalculate the Tsymm_ transforms using the current pose
+// @brief invalidate current Tsymm settings
+void
+SymmetricConformation::clear_Tsymm( ) {
+	Tsymm_.clear();
+}
+
+// @brief invert one transform about Z
+void
+SymmetricConformation::invert_Tsymm( char sub, core::Size subunit ) {
+	Tsymm_[sub][subunit].set_mirror_z(true);
+}
+
+
+// @brief recalculate the Tsymm_ transforms using the current pose
 void
 SymmetricConformation::recalculate_transforms( ) {
 	using namespace numeric;
 
 	// clear current xforms
-	Tsymm_.clear();
+	clear_Tsymm( );
 
 	// rebuild based on virtuals
 	core::Size nsubunits = symm_info_->subunits();
@@ -754,7 +763,7 @@ SymmetricConformation::recalculate_transforms( ) {
 
 	for ( Size icomp=1; icomp <= ncomps; ++icomp ) {
 		char comptag = (ncomps==1)? 'A' : symm_info_->get_component(icomp);
-		Tsymm_[comptag] = utility::vector1< numeric::HomogeneousTransform< core::Real > >(nsubunits);
+		Tsymm_[comptag] = utility::vector1< SymmetryTransform >(nsubunits);
 
 		for ( Size isub=1; isub <= nsubunits; ++isub ) {
 			Size vrt_ctrl(0);
@@ -776,8 +785,6 @@ SymmetricConformation::recalculate_transforms( ) {
 			if ( vrt_ctrl ) {
 				vrt_res_cap = &( residue( vrt_ctrl ) ); /// the standard logic, if virtual rsds are present
 			} else {
-				//runtime_assert( symm_info_->num_virtuals() == 0 ); // not necessarily
-
 				/// construct a pseudo virtual using the "first residue in each monomer"
 				Size first_independent_res( 0 );
 				for ( Size i=1; i<= this->size(); ++i ) {
@@ -846,12 +853,7 @@ SymmetricConformation::recalculate_transforms( ) {
 			xyzVector< core::Real > Y = parent_vrt_res.atom("Y").xyz() - orig;
 			xyzVector< core::Real > Z = X.cross( Y );
 
-			//TR.Debug << "[TRANSFORM " << i << "/" << vrt_ctrl << "]" << std::endl
-			//         << "     X =  (" << X[0] << "," << X[1] << "," << X[2] << ")" << std::endl
-			//      << "     Y =  (" << Y[0] << "," << Y[1] << "," << Y[2] << ")" << std::endl
-			//      << "     Z =  (" << Z[0] << "," << Z[1] << "," << Z[2] << ")" << std::endl
-			//      << "  orig =  (" << orig[0] << "," << orig[1] << "," << orig[2] << ")" << std::endl;
-			Tsymm_[comptag][isub] = HomogeneousTransform< core::Real>( orig-Y,orig-Z, orig );
+			Tsymm_[comptag][isub] = SymmetryTransform( orig-Y,orig-Z, orig );
 		}
 	}
 }
@@ -1249,7 +1251,11 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 	} // use option "-detect_disulf" to control this
 }
 
-// Declare that a chemical bond exists between two residues
+/// @brief Declare that a chemical bond exists between two residues
+/// @details This updates all symmetry copies, so that each one has a chemical
+/// bond between the residues in question.
+/// @author Frank DiMaio
+/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 void
 SymmetricConformation::declare_chemical_bond(
 	Size seqpos1,
@@ -1258,81 +1264,39 @@ SymmetricConformation::declare_chemical_bond(
 	std::string const & atom_name2
 )
 {
-	bool r1_is_indep = symm_info_->bb_is_independent( seqpos1 );
-	bool r2_is_indep = symm_info_->bb_is_independent( seqpos2 );
+	numeric::xyzVector< core::Real > const xform1( residue(seqpos1).xyz(1) ); //Transform for residue 1
+	numeric::xyzVector< core::Real > const xform2( residue(seqpos2).xyz(1) ); //Transform for residue 2
 
-	Size s1master = seqpos1, s2master = seqpos2;
+	//We need to find all pairs (seqpos1', seqpos2') of residues that have the same transform when transformed into the old pair's coordinate frame.
+	core::Size const nclones( symm_info_->num_bb_clones() + 1 );
+	core::Size const masterpos1( symm_info_->bb_is_independent( seqpos1 ) ? seqpos1 : symm_info_->bb_follows( seqpos1 ) );
+	core::Size const masterpos2( symm_info_->bb_is_independent( seqpos2 ) ? seqpos2 : symm_info_->bb_follows( seqpos2 ) );
+	SymmetryInfo::Clones clones1( symm_info_->bb_clones(masterpos1) );
+	clones1.push_back(masterpos1);
+	SymmetryInfo::Clones clones2( symm_info_->bb_clones(masterpos2) );
+	clones2.push_back(masterpos2);
 
-	if ( !r1_is_indep && !r2_is_indep ) {
-		TR.Debug << "Making a chemical bond between two dependent residues, applying to parent!" << std::endl;
-		s1master = symm_info_->bb_follows(seqpos1);
-		s2master = symm_info_->bb_follows(seqpos2);
-	}
-
-	TR << "Add symmetric chemical bond " << s1master << " to " << s2master << std::endl;
-	Conformation::declare_chemical_bond(s1master, atom_name1, s2master, atom_name2);
-
-	// special logic if this crosses a symm boundary
-	if ( r1_is_indep != r2_is_indep ) {
-		Size A = r1_is_indep? seqpos1 : seqpos2;
-		Size Bprime = r1_is_indep? seqpos2 : seqpos1;
-		Size B = symm_info_->bb_follows(Bprime);
-
-		// we need to find the clone A' such that the transform A->B' and A'->B are equivalent
-		core::Size nclones = symm_info_->num_bb_clones( );
-		SymmetryInfo::Clones clonesA = symm_info_->bb_clones( A );
-		bool found = false;
-		numeric::xyzVector< core::Real > xyzA = residue( A ).xyz(1);
-		for ( int i=1; i<=(int)nclones && !found; ++i ) {
-			Size Aprime = clonesA[i];
-			numeric::xyzVector< core::Real > xyzAstar = apply_transformation( residue(Aprime).xyz(1), A, Bprime );
-			core::Real dist = (xyzAstar - xyzA).length();
+	//Now we have lists of all the positions equivalent to seqpos1 (including seqpos1), and all the positions equivalent to seqpos2 (including seqpos2).
+	//Now we iterate over both lists:
+	for ( core::Size i=1; i<=nclones; ++i ) {
+		bool found(false);
+		for ( core::Size j=1; j<=nclones; ++j ) {
+			numeric::xyzVector < core::Real > const xform3( residue(clones1[i]).xyz(1) - residue(clones2[j]).xyz(1) ); //Difference of transforms of residue 1prime and 2prime.
+			numeric::xyzVector < core::Real > const xform4( apply_transformation( xform1, seqpos1, clones1[i] ) - apply_transformation( xform2, seqpos1, clones1[i] ) ); //Difference of (transform of residue 1 in residue 1prime's frame) and (transform of residue2 in residue 1prime's frame).
+			core::Real const dist( ( xform3 - xform4 ).length() ); //Take the difference of the two inter-residue transforms.
 			if ( dist < 1e-4 ) {
-				TR << "Add symmetric chemical bond " << Aprime << " to " << B << std::endl;
-				Conformation::declare_chemical_bond(Aprime, atom_name1, B, atom_name2);
-				found = true;
+				TR << "Add symmetric chemical bond " << clones1[i] << " to " << clones2[j] << std::endl;
+				Conformation::declare_chemical_bond( clones1[i], atom_name1, clones2[j], atom_name2 );
+				found=true;
+				break;
 			}
 		}
 		if ( !found ) {
 			TR << "Error in declare_chemical_bond: unable to find corresponding partner!" << std::endl;
 		}
 	}
+
 }
-
-/*
-/// @brief Declare that a chemical bond exists between two residues
-/// @details This updates all symmetry copies, so that each one has a chemical
-/// bond between the residues in question.
-/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
-void
-SymmetricConformation::declare_chemical_bond(
-Size seqpos1,
-std::string const & atom_name1,
-Size seqpos2,
-std::string const & atom_name2
-) {
-
-//First, declare the bond (using the base class) for the specified residues:
-TR << "Declaring chemical bond in symmetric conformation between res " << seqpos1 << ", atom \"" << atom_name1;
-TR << "\" and res " << seqpos2 << ",  atom \"" << atom_name2 << "\"." << std::endl;
-core::conformation::Conformation::declare_chemical_bond( seqpos1, atom_name1, seqpos2, atom_name2 );
-
-
-//Given seqpos1 and seqpos2, get a list of all of the pairs of residues corresponding to these
-//two residues:
-utility::vector1 < std::pair < core::Size, core::Size > > const symm_res_pairs( symm_info_->map_symmetric_res_pairs(seqpos1, seqpos2) );
-
-//Loop through and declare the bond for all of the copies using the base class.
-//
-for ( core::Size i=1, imax=symm_res_pairs.size(); i<=imax; ++i ) {
-TR << "Declaring chemical bond in symmetric conformation between res " << symm_res_pairs[i].first << ", atom \"" << atom_name1;
-TR << "\" and res " << symm_res_pairs[i].second << ",  atom \"" << atom_name2 << "\"." << std::endl;
-core::conformation::Conformation::declare_chemical_bond( symm_res_pairs[i].first, atom_name1, symm_res_pairs[i].second, atom_name2 );
-}
-
-return;
-}
-*/
 
 
 }

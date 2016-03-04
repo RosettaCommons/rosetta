@@ -2898,7 +2898,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'scmin_nonideal','Boolean', desc='Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)', default='false'),
 		Option( 'scmin_cartesian', 'Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)', default='false'),
 		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
-		Option( 'new_sym_min', 'Boolean', desc='New approach to sym-min where all dofs, dep+indep, go into the map', default='false'),
+		Option( 'old_sym_min', 'Boolean', desc='Use the old approach to symmetric minimization', default='false'),
 		Option( 'debug_inaccurate_G', 'Boolean', desc='Debug innacurate G messages', default='false'),
 	), # -optimization
 
@@ -4111,6 +4111,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'cryst',
 		Option( 'mtzfile', 'String', desc = 'mtz file'),
 		Option( 'crystal_refine', 'Boolean', desc='Turns on crystal-refinement-specific options', default='false' ),
+		Option( 'refinable_lattice', 'Boolean', desc='In MakeLatticeMover, are the lattice dimensions refineable?', default='true' ),
+		Option( 'interaction_shell', 'Real', desc='In MakeLatticeMover, what is default interaction shell?', default='12.0' ),
 	),
 
 	############################################################################

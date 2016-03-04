@@ -44,6 +44,8 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 
@@ -69,6 +71,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/Binary_Util.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
@@ -685,6 +688,12 @@ void BinarySilentStruct::fill_pose (
 		}
 	}
 
+	// additional setup for mirrored poses
+	if ( core::pose::symmetry::is_mirror_symmetric( pose ) ) {
+		conformation::symmetry::MirrorSymmetricConformation & mirror_conf(
+			dynamic_cast< conformation::symmetry::MirrorSymmetricConformation & >( pose.conformation() ) );
+		mirror_conf.update_residue_identities();
+	}
 
 	// fpd if symmetric 'nres' covers the ASU while 'sequence' covers the symmetric pose
 	tr.Debug << "nres = " << nres_pose << std::endl;

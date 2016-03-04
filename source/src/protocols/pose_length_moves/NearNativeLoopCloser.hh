@@ -120,7 +120,7 @@ class NearNativeLoopCloser : public protocols::moves::Mover {
 public:
 	NearNativeLoopCloser();
 	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
-	char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed);
+		char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed);
 	virtual std::string get_name() const;
 	moves::MoverOP clone() const { return moves::MoverOP( new NearNativeLoopCloser( *this ) ); }
 	virtual void apply( Pose & pose );

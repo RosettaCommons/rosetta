@@ -18,15 +18,13 @@
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
-//#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-//#include <core/pose/Pose.hh>
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
-//#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/id/AtomID.hh>
@@ -35,10 +33,7 @@
 #include <basic/Tracer.hh>
 
 // Numeric headers
-//#include <numeric/random/random.hh>
-//#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-//#include <numeric/xyz.functions.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -55,6 +50,66 @@ namespace symmetry {
 static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba");
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.symmetry.util" );
+
+
+/// @details A very specific helper function that counts the number of mirror ops from root->each subunit
+/// returns:
+///   a bool vector 'mirrored_subs' that defines which subunits are mirrored w.r.t. master
+///   a bool pair vector 'mirrored_jumps' that defines which jumps are mirrored w.r.t. master (upstream/downstream)
+void
+calculate_inverting_virtuals(
+	core::kinematics::FoldTree const & ft,
+	Conformation const & conf,  // unsymmetrized conf
+	SymmetryInfo const &symm_info,
+	utility::vector1<bool> &mirrored_subs,
+	utility::vector1< std::pair<bool,bool> > &inverted_jumps )
+{
+	// find all current_res -> other res jumps
+	for ( core::kinematics::FoldTree::EdgeList::const_iterator it = ft.begin(), it_end = ft.end(); it != it_end; ++it ) {
+		if ( it->is_polymer() ) continue;
+
+		int const upstream (it->start());
+		int const downstream (it->stop());
+
+		// if downstream res is non-vrt, mark the subunit array
+		if (
+				downstream <= (int)symm_info.num_total_residues_without_pseudo() &&
+				upstream > (int)symm_info.num_total_residues_without_pseudo()
+				) {
+			// note: this logic neets to be changed for two-comp with different inversion
+			//       within the ASU
+			mirrored_subs[ symm_info.subunit_index( downstream ) ] =
+				conf.residue_type(upstream).is_inverted_virtual_residue();
+			inverted_jumps[ it->label() ] = std::make_pair<bool,bool>(
+				conf.residue_type(upstream).is_inverted_virtual_residue(),
+				conf.residue_type(upstream).is_inverted_virtual_residue() );
+		} else {
+			inverted_jumps[ it->label() ] = std::make_pair<bool,bool> (
+				conf.residue_type(upstream).is_inverted_virtual_residue(),
+				conf.residue_type(downstream).is_inverted_virtual_residue() );
+		}
+	}
+
+	// now mark all intra-res jumps
+	for ( core::kinematics::FoldTree::EdgeList::const_iterator it = ft.begin(), it_end = ft.end(); it != it_end; ++it ) {
+		if ( it->is_polymer() ) continue;
+
+		int const upstream (it->start());
+		int const downstream (it->stop());
+
+		// if downstream res is non-vrt, mark the subunit array
+		if (
+				downstream <= (int)symm_info.num_total_residues_without_pseudo() &&
+				upstream <= (int)symm_info.num_total_residues_without_pseudo()
+				) {
+			inverted_jumps[ it->label() ] = std::make_pair<bool,bool>(
+				mirrored_subs[ symm_info.subunit_index(upstream) ],
+				mirrored_subs[ symm_info.subunit_index(downstream) ] );
+		}
+	}
+}
+
+
 
 Size fold_tree_entry_point(core::kinematics::FoldTree const & ft, Size lb_resi=0, Size ub_resi=0) {
 	int resi = -1;
@@ -139,37 +194,6 @@ get_component_contiguous_foldtree(
 	}
 	f_contig.reorder(1);
 
-	// complicated way....
-	// int jcount = 0;
-	// utility::vector1<Size> intercomp_up,intercomp_dn;
-	// for(int i = 1; i <= f_orig.num_jump(); ++i) {
-	//  Size up = f_orig.upstream_jump_residue(i);
-	//  Size dn = f_orig.downstream_jump_residue(i);
-	//  if( is_jump_intracomponent(chain2range,up,dn) ) {
-	//   jump(1,++jcount) = up;
-	//   jump(1,  jcount) = dn;
-	//  } else {
-	//   intercomp_up.push_back(up);
-	//   intercomp_dn.push_back(dn);
-	//  }
-	// }
-	// for(int i = 1; i <= intercomp_dn.size(); ++i){
-	//  int lb = f_orig.boundary_left(intercomp_dn[i]);
-	// }
-
-	// //test output
-	// std::map<Size,std::string> labels;
-	// for(std::map<char,std::pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i) {
-	//  for(Size ir = i->second.first; ir <= i->second.second; ++ir) {
-	//   labels[ir] = std::string("Chain") + i->first;
-	//  }
-	// }
-	// TR << "get_component_contiguous_foldtree" << std::endl;
-	// TR << "ORIG   " << f_orig << std::endl;
-	// TR << "CONTIG " << f_contig << std::endl;
-	// TR << "ORIG:\n"   << core::kinematics::visualize_fold_tree(f_orig,labels)   << std::endl;
-	// TR << "CONTIG:\n" << core::kinematics::visualize_fold_tree(f_contig,labels) << std::endl;
-	// utility_exit_with_message("SETNETRINT");
 	return f_contig;
 }
 
@@ -215,36 +239,19 @@ is_symmetric( conformation::Conformation const & conf )
 	return ( dynamic_cast< conformation::symmetry::SymmetricConformation const * >( &conf ) );
 }
 
+/// @details  Attempt to detect whether a conformation is mirror symmetric
+bool
+is_mirror_symmetric( conformation::Conformation const & conf )
+{
+	return ( dynamic_cast< conformation::symmetry::MirrorSymmetricConformation const * >( &conf ) );
+}
+
 bool
 is_symmetric( conformation::symmetry::SymmetryInfo const & symminfo )
 {
 	return symminfo.get_use_symmetry();
 }
 
-// utility::vector1<numeric::xyzVector<core::Real> >
-// conf_coords(conformation::Conformation & conf, Size lb=1, Size ub=0) {
-//  if(ub==0) ub = conf.size();
-//  utility::vector1<numeric::xyzVector<core::Real> > coords;
-//  for(int ir = lb; ir <= ub; ++ir){
-//   coords.push_back(conf.residue(ir).xyz(1));
-//  }
-//  return coords;
-// }
-
-// bool check_coords(
-//  utility::vector1<numeric::xyzVector<core::Real> > const & a,
-//  utility::vector1<numeric::xyzVector<core::Real> > const & b
-// ){
-//  if(a.size() != b.size()) utility_exit_with_message("ERROR");
-//  bool err = false;
-//  for(int ir = 1; ir <= a.size(); ++ir) {
-//   if( a[ir].distance(b[ir]) > 0.00001 ) {
-//    std::cerr << "different at " << ir << std::endl;
-//    err = true;
-//   }
-//  }
-//  return err;
-// }
 
 /// @details Generate a symmetric conformation from a monomeric pose and symmetry information
 /// stored in the SymmData object
@@ -255,23 +262,10 @@ setup_symmetric_conformation(
 	std::map< int, char > src_conf2pdb_chain
 )
 {
-	// utility::vector1<numeric::xyzVector<core::Real> > orig_coords = conf_coords(src_conformation);
-
 	if ( symmdata.get_num_components() > 1 ) {
-		// TR << "\n========== BEG orig fold tree ===========" << std::endl;
-		// TR << src_conformation.fold_tree() << std::endl;
-		// TR << "\n" << core::kinematics::visualize_fold_tree(src_conformation.fold_tree()) << std::endl;
-		// TR << "\n========== END orig_fold_tree ===========" << std::endl;
 		std::map<char,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
 		core::kinematics::FoldTree newft = get_component_contiguous_foldtree(src_conformation.fold_tree(),chain2range);
-		// utility::vector1<numeric::xyzVector<core::Real> > before = conf_coords(src_conformation);
 		src_conformation.fold_tree( newft );
-		// utility::vector1<numeric::xyzVector<core::Real> > after = conf_coords(src_conformation);
-		// if(check_coords(before,after)) utility_exit_with_message("error");
-		// TR << "\n========== BEG component_contiguous_foldtree ===========" << std::endl;
-		// TR << src_conformation.fold_tree() << std::endl;
-		// TR << "\n" << core::kinematics::visualize_fold_tree(src_conformation.fold_tree()) << std::endl;
-		// TR << "\n========== END component_contiguous_foldtree ===========" << std::endl;
 	}
 
 	Size njump_orig = src_conformation.fold_tree().num_jump();
@@ -295,17 +289,13 @@ setup_symmetric_conformation(
 	std::map< Size, std::string > virtual_num_to_id (symmdata.get_virtual_num_to_id() );
 
 	// Setup virtual residues
+	bool has_mirror_operations(false);
 	{
 		// create the new residue
 		chemical::ResidueTypeSetCOP rsd_set( src_conformation.residue(1).residue_type_set() );
-		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
 
-		// root the fold_tree at this pseudo residue
-		//    {
-		//      kinematics::FoldTree f( conf.fold_tree() );
-		//      f.reorder( conf.size() );
-		//      conf.fold_tree( f );
-		//    }
+		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
+		conformation::ResidueOP irsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "INV_VRT" ) ) );
 
 		for ( Size i =1; i <= virtual_num_to_id.size(); ++i ) {
 			if ( virtual_num_to_id.find( i ) == virtual_num_to_id.end() ) {
@@ -316,10 +306,19 @@ setup_symmetric_conformation(
 				utility_exit_with_message( "[ERROR] Cannot find tag " + tag );
 			}
 			conformation::symmetry::VirtualCoordinate virt_coord( coords.find( tag )->second );
-			rsd->set_xyz( "ORIG", virt_coord.get_origin() );
-			rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
-			rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
-			conf.append_residue_by_jump( *rsd, conf.size() ); //append it to the end of the monomeri
+			numeric::xyzVector < core::Real > orig( virt_coord.get_origin() );
+			if ( virt_coord.get_mirror_z() ) {
+				has_mirror_operations = true; //There is at least one mirror operation in the set of mirror operations.
+				irsd->set_xyz( "ORIG", orig );
+				irsd->set_xyz( "X", virt_coord.get_x().normalized() + orig );
+				irsd->set_xyz( "Y", virt_coord.get_y().normalized() + orig );
+				conf.append_residue_by_jump( *irsd, conf.size() ); //append it to the end of the monomer
+			} else {
+				rsd->set_xyz( "ORIG", orig );
+				rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
+				rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
+				conf.append_residue_by_jump( *rsd, conf.size() ); //append it to the end of the monomer
+			}
 		}
 	}
 
@@ -332,7 +331,6 @@ setup_symmetric_conformation(
 		Size const anchor_pseudo( nres_monomer * i + i + 1 ); // in current numbering
 		Size const new_jump_number( njump_monomer*( i + 1 ) + i + 1 );
 		conf.insert_conformation_by_jump( src_conformation, insert_seqpos, insert_jumppos, anchor_pseudo, new_jump_number);
-		//  conf.set_jump( new_jump_number, monomer_jump );
 	}
 
 	core::kinematics::visualize_fold_tree(conf.fold_tree());
@@ -340,13 +338,12 @@ setup_symmetric_conformation(
 	// Now generate the fold_tree from the symmdata and set it into the conformation. In the future we want to be able to use a
 	// atom tree for this.
 	kinematics::FoldTree f ( core::conformation::symmetry::set_fold_tree_from_symm_data( src_conformation, symmdata, src_conf2pdb_chain ) );
+
 	// set the root of the fold tree
 	Size new_root ( conf.size() - coords.size() + symmdata.get_root() );
 	f.reorder( new_root );
 	TR.Debug << f << std::endl;
 	conf.fold_tree( f );
-
-	// if(check_coords(orig_coords, conf_coords(conf,1,orig_coords.size()) )) utility_exit_with_message("error");
 
 	// now build the symmetry info object
 	conformation::symmetry::SymmetryInfo symm_info_raw( symmdata, nres_monomer, njump_monomer+1-symmdata.get_num_components() );
@@ -388,9 +385,6 @@ setup_symmetric_conformation(
 			TR << "MULTICOMPONENT " << " moved by dofs:";
 			for ( std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j ) {
 				std::string const & dofname( symm_info.get_jump_name(j->first) );
-				// if( symm_info.get_jump_name_to_components().find(dofname) == symm_info.get_jump_name_to_components().end() ){
-				//  utility_exit_with_message("jump name not in component map: "+dofname);
-				// }
 				utility::vector1<char> compchild = symmdata.components_moved_by_jump(dofname);
 				if ( std::find(compchild.begin(),compchild.end(),*i) == compchild.end() ) continue;
 				TR << " " << dofname;
@@ -402,40 +396,39 @@ setup_symmetric_conformation(
 			}
 			TR << std::endl;
 		}
-
-		// for(std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j){
-		//  std::string const & dofname( symm_info.get_jump_name(j->first) );
-		//  if( symm_info.get_jump_name_to_components().find(dofname) == symm_info.get_jump_name_to_components().end() ){
-		//   utility_exit_with_message("jump name not in component map: "+dofname);
-		//  }
-		//  if( symm_info.get_jump_name_to_components().find(dofname)->second != *i ) continue;
-		//  TR << "MULTICOMPONENT " << dofname << std::endl;
-		// }
 	}
 
 	// now create the symmetric conformation
-	conformation::symmetry::SymmetricConformationOP symm_conf( new conformation::symmetry::SymmetricConformation( conf, symm_info ) );
+	conformation::symmetry::SymmetricConformationOP symm_conf;
 
-	// if(check_coords(orig_coords, conf_coords(*symm_conf,1,orig_coords.size()) ));// utility_exit_with_message("error");
+	if ( has_mirror_operations ) {
+		symm_conf = conformation::symmetry::SymmetricConformationOP (
+			new conformation::symmetry::MirrorSymmetricConformation( conf, symm_info ) );
+	} else {
+		symm_conf = conformation::symmetry::SymmetricConformationOP (
+			new conformation::symmetry::SymmetricConformation( conf, symm_info ) );
+	}
 
-	// apply independent jumps so the structure is created symmetrically
+	// now we make the coordinates of the pose symmetric
+	// -- apply independent jumps so the structure is created symmetrically
 	for ( Size i=1; i<= f.num_jump(); ++i ) {
 		if ( symm_info.jump_is_independent( i ) ) {
 			symm_conf->set_jump( i, conf.jump( i ) );
 		}
 	}
 
-	// if(check_coords(orig_coords, conf_coords(*symm_conf,1,orig_coords.size()) ));// utility_exit_with_message("error");
+	// Now, we need to update the residue identities of symmetric conformations (to ensure that ALA becomes DALA in mirrored subunits, for example):
+	if ( has_mirror_operations ) {
+		conformation::symmetry::MirrorSymmetricConformationOP mirror_conf( utility::pointer::dynamic_pointer_cast< conformation::symmetry::MirrorSymmetricConformation >( symm_conf ) );
+		assert( mirror_conf );
+		mirror_conf->update_residue_identities();
+	}
 
 	// renumber the dof information to take the internal jumps into consideration
 	core::conformation::symmetry::shift_jump_numbers_in_dofs( *symm_conf, (njump_orig+1-symmdata.get_num_components()) * symmdata.get_subunits() );
 
-	// if( symmdata.get_num_components() > 1 ) {
-	//  TR << "=================== SYM FOLD TREE ========================" << std::endl;
-	// TR << symm_conf->fold_tree() << std::endl;
 	TR << "=================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================\n"
 		<< show_foldtree(*symm_conf,symmdata,get_chain2range(src_conformation,src_conf2pdb_chain)) << std::endl;
-	// }
 
 	return symm_conf;
 }

@@ -366,6 +366,7 @@ public:
 		GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
 
 		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( new core::pack::rotamer_set::symmetry::SymmetricRotamerSets() );
+		rotsets->initialize_pose_for_rotsets_creation(pose); //fpd update Tsymm_
 		rotsets->set_task( task );
 		rotsets->build_rotamers( pose, *sfxn, packer_neighbor_graph );
 		rotsets->prepare_sets_for_packing( pose, *sfxn );
@@ -670,6 +671,7 @@ public:
 		// }
 
 		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( new core::pack::rotamer_set::symmetry::SymmetricRotamerSets() );
+		rotsets->initialize_pose_for_rotsets_creation(pose); //fpd update Tsymm_
 		rotsets->set_task( task );
 		rotsets->build_rotamers( pose, *sfxn, packer_neighbor_graph );
 		rotsets->prepare_sets_for_packing( pose, *sfxn );

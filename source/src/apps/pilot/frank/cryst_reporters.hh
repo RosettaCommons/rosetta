@@ -3,11 +3,10 @@
 
 
 // libRosetta headers
-#include <protocols/cryst/refineable_lattice.hh>
+#include <protocols/cryst/refinable_lattice.hh>
 
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#include <protocols/cryst/refineable_lattice.hh>
 
 #include <core/graph/Graph.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>

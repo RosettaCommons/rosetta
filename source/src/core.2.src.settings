@@ -160,11 +160,13 @@ sources = {
 		"LengthEvent",
 	],
 	"core/conformation/symmetry": [
+		"MirrorSymmetricConformation",
 		"SymDof",
 		"SymmData",
 		"SymmDataLoader",
 		"SymmetricConformation",
 		"SymmetryInfo",
+		"SymmetryTransform",
 		"SymSlideInfo",
 		"util",
 		"VirtualCoordinate",

@@ -8,7 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   test/core/scoring/aa_composition_energy/AACompositionEnergy.cxxtest.hh
-/// @brief  test suite for core::scoring::aa_composition_energy::AACompositionEnergy
+/// @brief  Test suite for core::scoring::aa_composition_energy::AACompositionEnergy.
+/// @details See also the core::conformation::symmetry::MirrorSymmetricConformation unit tests.  These have
+/// another example of AAComposition being set up from code (with constraints attached to the pose).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Test headers

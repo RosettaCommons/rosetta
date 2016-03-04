@@ -1067,9 +1067,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		MoveMap movemapAll;
 		std::string ss = remodel_data_.ss;
 		Size singleRepeat = pose.total_residue();
-		if ( option[OptionKeys::remodel::repeat_structure].user() )
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			singleRepeat = (pose.total_residue()/2);
-//------------------------------debug code-----------------------------------------
+		}
+		//------------------------------debug code-----------------------------------------
 		//initialize all of the movemaps to false
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			movemap.set_bb( i, false );
@@ -1079,7 +1080,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 		//set loop locations to true
 		for ( Size ii=1; ii<=loops_->num_loop(); ++ii ) {
-			for (Size jj=(*loops_)[ii].start(); jj<= (*loops_)[ii].stop(); ++jj ){
+			for ( Size jj=(*loops_)[ii].start(); jj<= (*loops_)[ii].stop(); ++jj ) {
 				movemap.set_bb( jj, true );
 				movemap.set_chi( jj, true );
 				movemapAll.set_bb(jj, true);
@@ -2358,8 +2359,7 @@ void RemodelLoopMover::abinitio_stage(
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_pose_.constraint_set()->show_definition(TR, repeat_pose_);
 			mc.score_function().show( TR, repeat_pose_ );
-		}
-		else{
+		} else {
 			repeat_pose_.constraint_set()->show_definition(TR, pose);
 			mc.score_function().show( TR, pose );
 		}
@@ -3490,10 +3490,10 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 				}
 			}
 			ClassicFragmentMoverOP cfm;
-		  if ( smoothMoves ) {
-					cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
-		  } else {
-					cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
+			if ( smoothMoves ) {
+				cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
+			} else {
+				cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
 			}
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
@@ -3668,8 +3668,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 				pose.set_secstruct(ii+repeatRes,'H');
 			}
 		}
-	}
-	else{
+	} else {
 		for ( Size ii=1; ii<=ss.size(); ++ii ) {
 			if ( ss[ii-1] == 'H' ) {
 				pose.set_phi(ii,-57.8);

@@ -55,28 +55,36 @@ public:
 	Jump ():
 		rt_(),
 		rb_delta( 2, ZERO ),
-		rb_center( 2, Vector(0.0) )
+		rb_center( 2, Vector(0.0) ),
+		invert_upstream_(false),
+		invert_downstream_(false)
 	{}
 
 	/// @brief constructor with only RT
 	Jump( const RT & src_rt ):
 		rt_( src_rt ),
 		rb_delta ( 2, ZERO ),
-		rb_center( 2, Vector(0.0) )
+		rb_center( 2, Vector(0.0) ),
+		invert_upstream_(false),
+		invert_downstream_(false)
 	{}
 
 	/// @brief get RT from two stubs and ZERO rb_delta
 	Jump ( Stub const & stub1, Stub const & stub2 ):
 		rt_( stub1, stub2 ),
 		rb_delta( 6, ZERO ),
-		rb_center( 2, Vector(0.0) )
+		rb_center( 2, Vector(0.0) ),
+		invert_upstream_(false),
+		invert_downstream_(false)
 	{}
 
 	/// @brief copy constructor
 	Jump ( const Jump & src ):
 		rt_( src.rt_ ),
 		rb_delta( src.rb_delta ),
-		rb_center( src.rb_center )
+		rb_center( src.rb_center ),
+		invert_upstream_(src.invert_upstream_),
+		invert_downstream_(src.invert_downstream_)
 	{}
 
 	/// @brief copy operator
@@ -85,6 +93,8 @@ public:
 		rt_ = src.rt_;
 		rb_delta = src.rb_delta;
 		rb_center = src.rb_center;
+		invert_upstream_ = src.invert_upstream_;
+		invert_downstream_ = src.invert_downstream_;
 		return *this;
 	}
 
@@ -227,6 +237,17 @@ public:
 		Vector const & center
 	);
 
+	inline bool
+	get_invert_upstream( ) const { return invert_upstream_; }
+	inline bool
+	get_invert_downstream( ) const { return invert_downstream_; }
+
+	// set the upstream or downstream inversion
+	// note that these need the upstream stub in order to properly compute the
+	//   new rotation matrix
+	void
+	set_invert( bool upstream, bool downstream);
+
 	bool operator==( Jump const& ) const;
 
 	bool operator!=( Jump const& other ) const { return !operator==( other ); }
@@ -237,6 +258,9 @@ public:
 	friend std::istream & operator >>( std::istream & is, Jump & jump );
 	/// @brief RT root squared deviation
 	friend Real distance( Jump const & a_in, Jump const & b_in );
+
+	// convenience
+	static Matrix mirror_z_transform;
 
 private:
 	// private methods
@@ -260,21 +284,22 @@ private:
 
 private:
 
-	/// translation and rotation
+	/// @brief translation and rotation
+	///
 	RT rt_;
-	/// changes to translation and rotation
-	/**
-	6x2 table, for each of the two folding directions, the first three are for translations
-	along xyz, and the next three are for rotatation around xyz axes.
-	*/
+
+	/// @brief changes to translation and rotation
+	/// @details 6x2 table, for each of the two folding directions, the first three are for translations
+	/// along xyz, and the next three are for rotatation around xyz axes.
 	utility::vector1< utility::vector1<Real> > rb_delta; // 6x2
 
-	/// the center around which the rotation is performed
-	/**
-	3x2 table, for each of the two folding directions, the rotation center is written in the local frame
-	of the downstream stub.
-	*/
+	/// @brief the center around which the rotation is performed
+	/// @details 3x2 table, for each of the two folding directions, the rotation center is written in the
+	/// local frame of the downstream stub.
 	utility::vector1< Vector > rb_center; // 3x2
+
+	/// @brief are the upstream or downstream residues an inverted coordinate system (Z <- -X cross Y)
+	bool invert_upstream_, invert_downstream_;
 
 #ifdef    SERIALIZATION
 public:

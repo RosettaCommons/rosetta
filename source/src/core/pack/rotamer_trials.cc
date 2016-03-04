@@ -239,6 +239,7 @@ symmetric_rotamer_trials(
 
 		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
 		rotset->set_resid( resid );
+		rotset->initialize_pose_for_rotset_creation( pose );
 		rotset->build_rotamers( pose, scfxn, *rottrial_task, packer_neighbor_graph );
 
 		scfxn.prepare_rotamers_for_packing( pose, *rotset );

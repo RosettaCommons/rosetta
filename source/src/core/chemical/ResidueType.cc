@@ -107,6 +107,7 @@ ResidueType::ResidueType(
 	rotamer_aa_( aa_unk ),
 	backbone_aa_( aa_unk ),
 	base_name_(""),
+	base_type_cop_(), //Assumes that this is a base type by default.
 	name_(""),
 	name3_(""),
 	name1_(' '),
@@ -125,8 +126,7 @@ ResidueType::ResidueType(
 	rings_and_their_edges_(),
 	nbr_atom_indices_( 0 ),
 	finalized_(false),
-	nondefault_(false),
-	base_restype_name_("")
+	nondefault_(false)
 {}
 
 ResidueType::~ResidueType()
@@ -211,8 +211,10 @@ ResidueType::operator=( ResidueType const & residue_type )
 	aa_ = residue_type.aa_;
 	rotamer_aa_ = residue_type.rotamer_aa_;
 	backbone_aa_ = residue_type.backbone_aa_;
-	base_name_ = residue_type.base_name_,
-		name_ = residue_type.name_;
+	base_name_ = residue_type.base_name_;
+	base_type_cop_ = residue_type.base_type_cop_; //If the residue type that we're copying has a base type, copy the base type pointer, too.
+	runtime_assert( base_type_cop_.get() != this );
+	name_ = residue_type.name_;
 	name3_ = residue_type.name3_;
 	name1_ = residue_type.name1_;
 	interchangeability_group_ = residue_type.interchangeability_group_;
@@ -250,7 +252,6 @@ ResidueType::operator=( ResidueType const & residue_type )
 	finalized_ = residue_type.finalized_;
 	defined_adducts_ = residue_type.defined_adducts_;
 	nondefault_ = residue_type.nondefault_;
-	base_restype_name_ = residue_type.base_restype_name_;
 
 	// When you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph.
 	// New vertices are assigned.  You have to map the old vertex to the new vertex.
@@ -2018,6 +2019,39 @@ ResidueType::delete_property( std::string const & property )
 	properties_->set_property( property, false );
 }
 
+/// @brief Is this ResidueType a base type?
+/// @details Checks the base_type_cop_ pointer.  If it's null, this is assumed to be a base type.
+bool
+ResidueType::is_base_type() const {
+	return bool( !base_type_cop_ );
+}
+
+/// @brief Get a pointer to this ResidueType's base ResidueType.
+/// @details Returns the base_type_cop_ pointer if not null, self pointer if null.
+ResidueTypeCOP
+ResidueType::get_base_type_cop() const {
+	if ( base_type_cop_ ) {
+		return base_type_cop_;
+	}
+	return get_self_ptr();
+}
+
+/// @brief Reset the base type COP to be null.  This implies that this ResidueType is a base type.
+///
+void
+ResidueType::reset_base_type_cop() {
+	base_type_cop_ = ResidueTypeCOP();
+}
+
+/// @brief Set the base type COP.  This implies that this ResidueType is NOT a base type.
+///
+void
+ResidueType::set_base_type_cop(
+	ResidueTypeCOP new_base_type
+) {
+	runtime_assert_string_msg( new_base_type, "Error in core::chemical::ResidueType::set_base_type_cop(): A null pointer was passed to this function." );
+	base_type_cop_ = new_base_type;
+}
 
 bool
 ResidueType::is_polymer() const
@@ -2294,6 +2328,15 @@ ResidueType::is_virtual_residue() const
 	return properties_->has_property( VIRTUAL_RESIDUE );
 }
 
+/// @brief  Check if residue is 'INVERTING_VIRTUAL_RESIDUE'
+/// @details Used by the symmetry machinery for mirror symmetry operations.
+bool
+ResidueType::is_inverted_virtual_residue() const
+{
+	return properties_->has_property( INVERTED_VIRTUAL_RESIDUE );
+}
+
+
 bool
 ResidueType::is_adduct() const
 {
@@ -2398,6 +2441,22 @@ void
 ResidueType::enable_custom_variant_types()
 {
 	properties_->enable_custom_variant_types();
+}
+
+/// @brief Get a vector of VariantType enums for this ResidueType.
+/// @details This ONLY includes standard, enum-based variants, not on-the-fly custom variants.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+utility::vector1< VariantType >
+ResidueType::variant_type_enums() const {
+	return properties_->get_list_of_variant_enums();
+}
+
+/// @brief Get a list of custom VariantType strings for this ResidueType (by const reference).
+/// @details This ONLY includes custom, on-the-fly variants, not standard variants.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+utility::vector1< std::string > const &
+ResidueType::custom_variant_types() const{
+	return properties_->get_list_of_custom_variants_by_reference();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

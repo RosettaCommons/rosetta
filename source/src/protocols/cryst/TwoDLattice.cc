@@ -13,7 +13,7 @@
 /// @author Frank DiMaio
 
 #include <protocols/cryst/TwoDLattice.hh>
-#include <protocols/cryst/refineable_lattice_creator.hh>
+#include <protocols/cryst/refinable_lattice_creator.hh>
 #include <protocols/cryst/util.hh>
 
 #include <core/types.hh>
@@ -111,7 +111,7 @@ using basic::Warning;
 namespace protocols {
 namespace cryst {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cryst.refineable_lattice");
+static THREAD_LOCAL basic::Tracer TR("protocols.cryst.refinable_lattice");
 
 using namespace protocols;
 using namespace core;

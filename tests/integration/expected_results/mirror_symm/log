@@ -1,0 +1,1822 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+protocols.jd2.JobDistributor: Parser is present.  Input mover will be overwritten with whatever the parser creates.
+core.chemical.ResidueTypeSet: For ResidueTypeSet centroid there is no shadow_list.txt file to list known PDB ids.
+core.chemical.ResidueTypeSet:     This will turn off PDB component loading for ResidueTypeSet centroid
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch VirtualBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch N_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch C_methylamidated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch ser_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch thr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch ShoveBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch LowerDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch UpperDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet centroid: Skipping patch VirtualDNAPhosphate as requested
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=inputs/test.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights=talaris2014.wts/>
+		<tala_symm symmetric=true weights=talaris2014.wts/>
+		<tala_symm_aacomp symmetric=true weights=talaris2014.wts>
+			<Reweight scoretype=aa_composition weight=1.0/>
+			<Reweight scoretype=atom_pair_constraint weight=1.0/>
+			<Reweight scoretype=angle_constraint weight=1.0/>
+			<Reweight scoretype=dihedral_constraint weight=1.0/>
+		</tala_symm_aacomp>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer core_cutoff=3.5 name=select_core select_boundary=false select_core=true select_surface=false surface_cutoff=2/>
+		<Layer core_cutoff=3.5 name=select_boundary select_boundary=true select_core=false select_surface=false surface_cutoff=2/>
+		<Layer core_cutoff=3.5 name=select_surface select_boundary=false select_core=false select_surface=true surface_cutoff=2/>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name=nodesign/>
+		<ReadResfile filename=inputs/resfile_core.txt name=allowed_core selector=select_core/>
+		<ReadResfile filename=inputs/resfile_boundary.txt name=allowed_boundary selector=select_boundary/>
+		<ReadResfile filename=inputs/resfile_surface.txt name=allowed_surface selector=select_surface/>
+	</TASKOPERATIONS>
+	<FILTERS/>
+	<MOVERS>
+		<BundleGridSampler delta_omega0=0 delta_omega1_max=130 delta_omega1_min=70 delta_omega1_samples=3 delta_t=0 helix_length=12 max_samples=100 name=bgs1 nstruct_mode=1 nstruct_repeats=1 omega0=0 r0=5 scorefxn=tala set_bondangles=true set_bondlengths=true set_dihedrals=true use_degrees=true z1_offset=0.75>
+			<Helix/>
+		</BundleGridSampler>
+		<AtomTree fold_tree_file=inputs/foldtree.txt name=foldtree1/>
+		<SetupForSymmetry definition=inputs/c2m.symm name=setup_symm/>
+		<DeclareBond atom1=C atom2=N name=connect_ends res1=24 res2=1/>
+		<AddCompositionConstraintMover filename=inputs/design.comp name=aacomp/>
+		<MutateResidue name=mut11 new_res=GLY target=11/>
+		<MutateResidue name=mut12 new_res=GLY target=12/>
+		<MutateResidue name=mut13 new_res=GLY target=13/>
+		<MutateResidue name=mut14 new_res=GLY target=14/>
+		<ConstraintSetMover add_constraints=1 cst_file=inputs/constraints.cst name=constrain_pepbonds/>
+		<FastDesign name=fdes relaxscript=inputs/fastdesign.txt repeats=1 scorefxn=tala_symm_aacomp task_operations=allowed_core,allowed_boundary,allowed_surface>
+			<MoveMap name=fdes_mm>
+				<Span bb=1 begin=1 chi=1 end=999/>
+			</MoveMap>
+		</FastDesign>
+		<SymPackRotamersMover name=pack scorefxn=tala_symm_aacomp task_operations=allowed_core,allowed_boundary,allowed_surface/>
+		<SymMinMover bb=1 chi=1 jump=ALL name=min scorefxn=tala_symm>
+			<MoveMap name=min_mm>
+				<Span bb=1 begin=1 chi=1 end=999/>
+			</MoveMap>
+		</SymMinMover>
+		<ParsedProtocol name=genkic_steps>
+			<Add mover=connect_ends/>
+			<Add mover=fdes/>
+			<Add mover=connect_ends/>
+		</ParsedProtocol>
+		<GeneralizedKIC closure_attempts=1200 name=genkic pre_selection_mover=genkic_steps selector=lowest_energy_selector selector_scorefunction=tala_symm_aacomp stop_when_n_solutions_found=1>
+			<AddResidue res_index=11/>
+			<AddResidue res_index=12/>
+			<AddResidue res_index=13/>
+			<AddResidue res_index=14/>
+			<SetPivots atom1=CA atom2=CA atom3=CA res1=11 res2=13 res3=14/>
+			<CloseBond angle1=116.199993 angle2=121.699997 atom1=C atom2=N bondlength=1.328685 res1=12 res2=13 torsion=180/>
+			<AddPerturber effect=randomize_alpha_backbone_by_rama>
+				<AddResidue index=14/>
+				<AddResidue index=13/>
+				<AddResidue index=12/>
+				<AddResidue index=11/>
+			</AddPerturber>
+		</GeneralizedKIC>
+	</MOVERS>
+	<APPLY_TO_POSE/>
+	<PROTOCOLS>
+		<Add mover=bgs1/>
+		<Add mover=foldtree1/>
+		<Add mover=setup_symm/>
+		<Add mover=connect_ends/>
+		<Add mover=mut11/>
+		<Add mover=mut12/>
+		<Add mover=mut13/>
+		<Add mover=mut14/>
+		<Add mover=aacomp/>
+		<Add mover=constrain_pepbonds/>
+		<Add mover=genkic/>
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala_symm/>
+</ROSETTASCRIPTS>
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: talaris2014
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_pp
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+core.scoring.etable: Using alternate parameters: LJ_RADIUS_SOFT in Etable construction.
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "tala" with weights "talaris2014.wts"
+defined score function "tala_symm" with weights "talaris2014.wts"
+symmetrizing tala_symm
+defined score function "tala_symm_aacomp" with weights "talaris2014.wts"
+setting tala_symm_aacomp weight aa_composition to 1
+setting tala_symm_aacomp weight atom_pair_constraint to 1
+setting tala_symm_aacomp weight angle_constraint to 1
+setting tala_symm_aacomp weight dihedral_constraint to 1
+symmetrizing tala_symm_aacomp
+core.select.residue_selector.LayerSelector: Setting core=true boundary=false surface=false in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting LayerSelector to use sidechain neighbors to determine burial.
+core.select.residue_selector.LayerSelector: Set cutoffs for core and surface to 3.5 and 2, respectively, in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting core=false boundary=true surface=false in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting LayerSelector to use sidechain neighbors to determine burial.
+core.select.residue_selector.LayerSelector: Set cutoffs for core and surface to 3.5 and 2, respectively, in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting core=false boundary=false surface=true in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting LayerSelector to use sidechain neighbors to determine burial.
+core.select.residue_selector.LayerSelector: Set cutoffs for core and surface to 3.5 and 2, respectively, in LayerSelector.
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "nodesign" of type RestrictToRepacking
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "allowed_core" of type ReadResfile
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "allowed_boundary" of type ReadResfile
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "allowed_surface" of type ReadResfile
+protocols.helical_bundle.BundleGridSampler: Parsing options for BundleGridSampler ("bgs1") mover.
+protocols.helical_bundle.BundleGridSampler: Setting maximum number of samples to 100.
+protocols.helical_bundle.BundleGridSampler: Setting mover to interpret angles in RosettaScripts as though they were specified in degrees.  Note that internally and in output, the mover uses radians.
+protocols.helical_bundle.MakeBundle: Set the default permission for the mover to set bondlengths to true.
+protocols.helical_bundle.MakeBundle: Set the default permission for the mover to set bondangles to true.
+protocols.helical_bundle.MakeBundle: Set the default permission for the mover to set dihedrals to true.
+protocols.helical_bundle.MakeBundle: Default helix length set to 12.
+protocols.helical_bundle.BundleGridSampler: Setting reset mode to true.
+protocols.helical_bundle.BundleGridSampler: Setting nstruct mode to true.  This means that each job will sample a different set of Crick parameters.
+protocols.helical_bundle.BundleGridSampler: Setting nstruct repeats to 1.
+protocols.helical_bundle.BundleGridSampler: Setting default r0 value to 5.
+protocols.helical_bundle.BundleGridSampler: Setting default omega0 value to 0.
+protocols.helical_bundle.BundleGridSampler: Setting default delta_omega0 value to 0.
+protocols.helical_bundle.BundleGridSampler: Setting default delta_omega1_min and delta_omega1_max values to 70 and 130, respectively.
+protocols.helical_bundle.BundleGridSampler: Setting default delta_omega1 samples to 3.
+protocols.helical_bundle.BundleGridSampler: Setting default delta_t value to 0.
+protocols.helical_bundle.BundleGridSampler: Setting default z1_offset value to 0.75.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "bgs1" of type BundleGridSampler
+protocols.protein_interface_design.movers.SetAtomTree: Read fold tree from file: FOLD_TREE  EDGE 6 12 -1  EDGE 6 1 -1 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "foldtree1" of type AtomTree
+core.conformation.symmetry.SymmData: Setting weight of master jump ( jump-id=1 ) to 1.0 (was undefined)
+core.conformation.symmetry.SymmData: Setting jump_group JUMPGROUP1: [master 1]  2:0 
+core.conformation.symmetry.SymmData: symmetry name: c2m
+core.conformation.symmetry.SymmData: number of subunits: 2
+core.conformation.symmetry.SymmData: number of interfaces: 1
+core.conformation.symmetry.SymmData: score subunit number: VRT0001
+core.conformation.symmetry.SymmData: anchor the subunits at residue: COM
+core.conformation.symmetry.SymmData:  Virtual coordinate system VRT0001
+core.conformation.symmetry.SymmData: x: 1 0 0
+core.conformation.symmetry.SymmData: y: 0 0 1
+core.conformation.symmetry.SymmData: origin: 0 0 0
+core.conformation.symmetry.SymmData:  Virtual coordinate system VRT0002
+core.conformation.symmetry.SymmData: x: -1 0 0
+core.conformation.symmetry.SymmData: y: 0 0 -1
+core.conformation.symmetry.SymmData: origin: 0 0 0
+core.conformation.symmetry.SymmData: Dof for jump: 1
+core.conformation.symmetry.SymmData: x 1:50,50:0,0 n2c
+core.conformation.symmetry.SymmData: y 0:0,0:0,0 n2c
+core.conformation.symmetry.SymmData: z 0:0,0:0,0 n2c
+core.conformation.symmetry.SymmData: x_angle 1:0,360:0,0 n2c
+core.conformation.symmetry.SymmData: y_angle 1:0,360:0,0 n2c
+core.conformation.symmetry.SymmData: z_angle 1:0,360:0,0 n2c
+core.conformation.symmetry.SymmData: Jump JUMP1 VRT0001 VRT0002
+core.conformation.symmetry.SymmData: Jump JUMP2 VRT0001 SUBUNIT
+core.conformation.symmetry.SymmData: Jump JUMP3 VRT0002 SUBUNIT
+core.conformation.symmetry.SymmData: Include subunit: 1 2
+core.conformation.symmetry.SymmData: Output subunit: 1 2
+core.conformation.symmetry.SymmData: SlideType: RANDOM
+core.conformation.symmetry.SymmData: SlideCriteriaType: CEN_DOCK_SCORE
+core.conformation.symmetry.SymmData: SlideCriteriaVal: AUTOMATIC
+core.conformation.symmetry.SymmData: SlideOrder: none
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "setup_symm" of type SetupForSymmetry
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "connect_ends" of type DeclareBond
+protocols.aa_composition.AddCompositionConstraintMover: Set filename to inputs/design.comp.
+protocols.aa_composition.AddCompositionConstraintMover: Initialized AACompositionConstraint object from file inputs/design.comp.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "aacomp" of type AddCompositionConstraintMover
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut11" of type MutateResidue
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut12" of type MutateResidue
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut13" of type MutateResidue
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut14" of type MutateResidue
+protocols.simple_moves.ConstraintSetMover: of type ConstraintSetMover with constraint file: inputs/constraints.cst
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "constrain_pepbonds" of type ConstraintSetMover
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.RosettaScripts.util: Object fdes reading the following task_operations: Adding the following task operations
+allowed_core allowed_boundary allowed_surface 
+protocols.RosettaScripts.util: Adding movemap fdes_mm to datamap
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "fdes" of type FastDesign
+protocols.RosettaScripts.util: Object pack reading the following task_operations: Adding the following task operations
+allowed_core allowed_boundary allowed_surface 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "pack" of type SymPackRotamersMover
+protocols.simple_moves.MinMover: Options chi, bb: 1, 1 omega: 1
+protocols.RosettaScripts.util: Adding movemap min_mm to datamap
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "min" of type SymMinMover
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "connect_ends" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "fdes" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "connect_ends" with filter "true_filter"
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "genkic_steps" of type ParsedProtocol
+protocols.generalized_kinematic_closure.GeneralizedKIC: Parsing options for GeneralizedKIC ("genkic") mover.
+protocols.generalized_kinematic_closure.GeneralizedKIC: GeneralizedKIC mover "genkic" has been assigned mover "genkic_steps" as a pre-selection mover that will be applied to all solutions prior to applying the selector.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "genkic" of type GeneralizedKIC
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "bgs1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "foldtree1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "setup_symm" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "connect_ends" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut11" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut12" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut13" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut14" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "aacomp" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "constrain_pepbonds" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "genkic" with filter "true_filter"
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 3 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 1	delta_omega1	1.2217	1.7453	2.2689	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Warning!  The BundleGridSampler mover is in nstruct mode, meaning that one set of Crick parameters will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of Crick parameters will be missed!
+protocols.helical_bundle.BundleGridSampler: Grid point 1: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset
+protocols.helical_bundle.BundleGridSampler: 1	5.0000	0.0000	0.0000	1.2217	0.0000	0.7500	0.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch LowerDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch UpperDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch ShoveBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch VirtualBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch N_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch C_methylamidated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch SpecialRotamer as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch Cterm_amidation as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case1 as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case2 as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch ser_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch thr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_sulfated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_monomethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_dimethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_trimethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch glu_carboxylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch cys_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_diiodinated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch MethylatedProteinCterm as requested
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is -10.5090.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset
+1	5.0000	0.0000	0.0000	1.2217	0.0000	0.7500	0.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AtomTree - foldtree1=======================
+protocols.protein_interface_design.movers.SetAtomTree: Applying fold_tree: FOLD_TREE  EDGE 6 12 -1  EDGE 6 1 -1 
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - setup_symm=======================
+core.pose.util: WARNING: conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 2u 2d 3d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(25)
+|----#j1#------>7:Sub1A(1-12)
+\----=j3=---->VRT0002(26)----j2=1----->19:Sub2A(13-24)
+core.conformation.Conformation: Connecting residues: 1 ( ALA:protein_cutpoint_lower ) and 24 ( DALA:protein_cutpoint_upper ) at atoms  N   and  C  
+core.conformation.Conformation:  with mutual distances: 7.65355 and 6.73898
+core.conformation.Conformation: Connecting residues: 12 ( ALA:protein_cutpoint_upper ) and 13 ( DALA:protein_cutpoint_lower ) at atoms  C   and  N  
+core.conformation.Conformation:  with mutual distances: 7.15941 and 7.16207
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut11=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut12=======================
+core.conformation.Residue: [ WARNING ] missing an atom: 12  O   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut13=======================
+core.conformation.Residue: [ WARNING ] missing an atom: 13  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut14=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AddCompositionConstraintMover - aacomp=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER ConstraintSetMover - constrain_pepbonds=======================
+core.scoring.constraints.ConstraintsIO: Read in 8 constraints
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER GeneralizedKIC - genkic=======================
+protocols.generalized_kinematic_closure.GeneralizedKIC: Warning!  No filters specified for GeneralizedKIC mover.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Applying pre-selection mover to solution 1 from attempt 4.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - fdes=======================
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+devel.denovo_design.FastDesign: #Packer_Task
+devel.denovo_design.FastDesign: 
+devel.denovo_design.FastDesign: resid	pack?	design?	allowed_aas
+devel.denovo_design.FastDesign: 1	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 2	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 3	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 4	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL
+devel.denovo_design.FastDesign: 5	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 6	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 7	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 8	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL
+devel.denovo_design.FastDesign: 9	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 10	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 11	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 12	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL,DALA,DILE,DLEU,DPRO,DVAL
+devel.denovo_design.FastDesign: 13	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 14	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 15	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 16	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL,DALA
+devel.denovo_design.FastDesign: 17	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 18	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 19	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 20	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL,DALA
+devel.denovo_design.FastDesign: 21	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 22	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 23	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 24	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL
+devel.denovo_design.FastDesign: 25	TRUE	FALSE	VRT
+devel.denovo_design.FastDesign: 26	TRUE	FALSE	INV_VRT
+protocols.relax.FastRelax: CMD: repeat  3658.93  0  0  0.55
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2688 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 10372216 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -41.4202  0.305951  0.305951  0.055
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2235 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 7258400 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -5.3591  0.415777  0.415777  0.55
+protocols.relax.FastRelax: MRP: 0  -5.3591  -5.3591  0.415777  0.415777  
+protocols.relax.FastRelax: CMD: accept_to_best  -5.3591  0.415777  0.415777  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -5.3591  0.415777  0.415777  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+devel.denovo_design.FastDesign: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000     -82.510     -82.510
+ fa_rep                       0.550      34.322      18.877
+ fa_sol                       0.938      51.323      48.115
+ fa_intra_rep                 0.005      28.623       0.143
+ fa_elec                      0.875      -6.459      -5.651
+ pro_close                    1.250       0.616       0.770
+ hbond_sr_bb                  1.170      -8.291      -9.700
+ hbond_lr_bb                  1.170       0.000       0.000
+ hbond_bb_sc                  1.170      -0.068      -0.080
+ hbond_sc                     1.100      -0.502      -0.553
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.005       0.005
+ angle_constraint             1.000       0.020       0.020
+ dihedral_constraint          1.000       0.000       0.000
+ rama                         0.250       5.871       1.468
+ omega                        0.625       3.153       1.971
+ fa_dun                       0.700      26.831      18.782
+ p_aa_pp                      0.400     -12.867      -5.147
+ yhh_planarity                0.625       0.000       0.000
+ ref                          1.000      -4.869      -4.869
+ aa_composition               1.000      13.000      13.000
+---------------------------------------------------
+ Total weighted score:                       -5.359
+devel.denovo_design.FastDesign: [ 3658.93 ]
+devel.denovo_design.FastDesign: [ -5.3591 ]
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.generalized_kinematic_closure.GeneralizedKIC: Storing solution 1 from attempt 4.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Applying pre-selection mover to solution 2 from attempt 4.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - fdes=======================
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+devel.denovo_design.FastDesign: #Packer_Task
+devel.denovo_design.FastDesign: 
+devel.denovo_design.FastDesign: resid	pack?	design?	allowed_aas
+devel.denovo_design.FastDesign: 1	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 2	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 3	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 4	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL
+devel.denovo_design.FastDesign: 5	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 6	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 7	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 8	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL
+devel.denovo_design.FastDesign: 9	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 10	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 11	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 12	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 13	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 14	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 15	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 16	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL,DALA
+devel.denovo_design.FastDesign: 17	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 18	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 19	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 20	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL,DALA
+devel.denovo_design.FastDesign: 21	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 22	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 23	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 24	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 25	TRUE	FALSE	VRT
+devel.denovo_design.FastDesign: 26	TRUE	FALSE	INV_VRT
+protocols.relax.FastRelax: CMD: repeat  3648.28  0  0  0.55
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2893 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 12737420 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -19.7572  0.744193  0.744193  0.055
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue:  --> generating it using idealized coordinates.
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2077 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 6191608 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.0403475 Finite Diff= 0.00873769
+protocols.relax.FastRelax: CMD: ramp_repack_min  7.08738  1.47301  1.47301  0.55
+protocols.relax.FastRelax: MRP: 0  7.08738  7.08738  1.47301  1.47301  
+protocols.relax.FastRelax: CMD: accept_to_best  7.08738  1.47301  1.47301  0.55
+protocols.relax.FastRelax: CMD: endrepeat  7.08738  1.47301  1.47301  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+devel.denovo_design.FastDesign: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000     -79.258     -79.258
+ fa_rep                       0.550      40.109      22.060
+ fa_sol                       0.938      56.252      52.736
+ fa_intra_rep                 0.005      26.511       0.133
+ fa_elec                      0.875     -11.111      -9.722
+ pro_close                    1.250       0.399       0.499
+ hbond_sr_bb                  1.170      -6.355      -7.435
+ hbond_lr_bb                  1.170       0.000       0.000
+ hbond_bb_sc                  1.170      -0.541      -0.633
+ hbond_sc                     1.100      -1.213      -1.334
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.009       0.009
+ angle_constraint             1.000       0.037       0.037
+ dihedral_constraint          1.000       0.022       0.022
+ rama                         0.250       3.104       0.776
+ omega                        0.625       7.376       4.610
+ fa_dun                       0.700      33.185      23.230
+ p_aa_pp                      0.400      -4.476      -1.790
+ yhh_planarity                0.625       0.000       0.000
+ ref                          1.000      -5.851      -5.851
+ aa_composition               1.000       9.000       9.000
+---------------------------------------------------
+ Total weighted score:                        7.087
+devel.denovo_design.FastDesign: [ 3648.28 ]
+devel.denovo_design.FastDesign: [ 7.08738 ]
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.generalized_kinematic_closure.GeneralizedKIC: Storing solution 2 from attempt 4.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Applying pre-selection mover to solution 3 from attempt 4.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - fdes=======================
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+devel.denovo_design.FastDesign: #Packer_Task
+devel.denovo_design.FastDesign: 
+devel.denovo_design.FastDesign: resid	pack?	design?	allowed_aas
+devel.denovo_design.FastDesign: 1	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 2	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 3	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 4	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL
+devel.denovo_design.FastDesign: 5	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 6	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 7	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 8	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL
+devel.denovo_design.FastDesign: 9	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 10	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 11	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 12	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL,DALA,DILE,DLEU,DPRO,DVAL
+devel.denovo_design.FastDesign: 13	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 14	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 15	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 16	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL,DALA
+devel.denovo_design.FastDesign: 17	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 18	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 19	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 20	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL,DALA
+devel.denovo_design.FastDesign: 21	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 22	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 23	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 24	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL
+devel.denovo_design.FastDesign: 25	TRUE	FALSE	VRT
+devel.denovo_design.FastDesign: 26	TRUE	FALSE	INV_VRT
+protocols.relax.FastRelax: CMD: repeat  3660.61  0  0  0.55
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2613 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 10464392 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -35.6386  0.321621  0.321621  0.055
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2397 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 8696448 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.18311 Finite Diff= 0.065427
+protocols.relax.FastRelax: CMD: ramp_repack_min  -15.0233  0.512328  0.512328  0.55
+protocols.relax.FastRelax: MRP: 0  -15.0233  -15.0233  0.512328  0.512328  
+protocols.relax.FastRelax: CMD: accept_to_best  -15.0233  0.512328  0.512328  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -15.0233  0.512328  0.512328  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+devel.denovo_design.FastDesign: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000     -98.545     -98.545
+ fa_rep                       0.550      28.908      15.899
+ fa_sol                       0.938      64.490      60.460
+ fa_intra_rep                 0.005      29.961       0.150
+ fa_elec                      0.875     -11.260      -9.853
+ pro_close                    1.250       0.268       0.335
+ hbond_sr_bb                  1.170      -8.570     -10.026
+ hbond_lr_bb                  1.170       0.000       0.000
+ hbond_bb_sc                  1.170      -0.100      -0.117
+ hbond_sc                     1.100      -0.846      -0.930
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.000       0.000
+ angle_constraint             1.000       0.024       0.024
+ dihedral_constraint          1.000       0.009       0.009
+ rama                         0.250       5.398       1.350
+ omega                        0.625       3.057       1.911
+ fa_dun                       0.700      31.786      22.250
+ p_aa_pp                      0.400      -5.263      -2.105
+ yhh_planarity                0.625       0.000       0.000
+ ref                          1.000      -8.835      -8.835
+ aa_composition               1.000      13.000      13.000
+---------------------------------------------------
+ Total weighted score:                      -15.023
+devel.denovo_design.FastDesign: [ 3660.61 ]
+devel.denovo_design.FastDesign: [ -15.0233 ]
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.generalized_kinematic_closure.GeneralizedKIC: Storing solution 3 from attempt 4.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Applying pre-selection mover to solution 4 from attempt 4.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - fdes=======================
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+devel.denovo_design.FastDesign: #Packer_Task
+devel.denovo_design.FastDesign: 
+devel.denovo_design.FastDesign: resid	pack?	design?	allowed_aas
+devel.denovo_design.FastDesign: 1	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL,DALA,DASP,DGLU,DHIS,DHIS_D,DILE,DLYS,DLEU,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL
+devel.denovo_design.FastDesign: 2	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 3	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 4	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL
+devel.denovo_design.FastDesign: 5	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 6	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 7	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 8	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL
+devel.denovo_design.FastDesign: 9	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 10	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 11	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 12	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA,DASP,DGLU,DHIS,DHIS_D,DLYS,DASN,DPRO,DGLN,DARG,DSER,DTHR
+devel.denovo_design.FastDesign: 13	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL
+devel.denovo_design.FastDesign: 14	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 15	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 16	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL,DALA
+devel.denovo_design.FastDesign: 17	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 18	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 19	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 20	TRUE	TRUE	ALA,ILE,LEU,PRO,VAL,DALA
+devel.denovo_design.FastDesign: 21	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 22	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR,DALA
+devel.denovo_design.FastDesign: 23	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 24	TRUE	TRUE	ALA,ASP,GLU,HIS,HIS_D,LYS,ASN,PRO,GLN,ARG,SER,THR
+devel.denovo_design.FastDesign: 25	TRUE	FALSE	VRT
+devel.denovo_design.FastDesign: 26	TRUE	FALSE	INV_VRT
+protocols.relax.FastRelax: CMD: repeat  3856.52  0  0  0.55
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2651 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 10631972 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.618746 Finite Diff= 0.386763
+protocols.relax.FastRelax: CMD: ramp_repack_min  -21.6285  0.299387  0.299387  0.055
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.select.util.SelectResiduesByLayer:  pore_radius : 2
+core.select.util.SelectResiduesByLayer:  core ( E, L, H ): 3.5 3.5 3.5
+core.select.util.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 2102 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 6699608 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 24-3, 1-1, 1-2, 1-3!
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -1.59981 Finite Diff= 0.548394
+protocols.relax.FastRelax: CMD: ramp_repack_min  1.55412  0.433786  0.433786  0.55
+protocols.relax.FastRelax: MRP: 0  1.55412  1.55412  0.433786  0.433786  
+protocols.relax.FastRelax: CMD: accept_to_best  1.55412  0.433786  0.433786  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1.55412  0.433786  0.433786  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+devel.denovo_design.FastDesign: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000     -91.566     -91.566
+ fa_rep                       0.550      41.358      22.747
+ fa_sol                       0.938      59.771      56.035
+ fa_intra_rep                 0.005      20.054       0.100
+ fa_elec                      0.875     -14.322     -12.532
+ pro_close                    1.250       0.181       0.227
+ hbond_sr_bb                  1.170      -9.791     -11.455
+ hbond_lr_bb                  1.170       0.000       0.000
+ hbond_bb_sc                  1.170      -0.145      -0.170
+ hbond_sc                     1.100       0.000       0.000
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.042       0.042
+ angle_constraint             1.000       0.121       0.121
+ dihedral_constraint          1.000       0.012       0.012
+ rama                         0.250      12.592       3.148
+ omega                        0.625       4.582       2.864
+ fa_dun                       0.700      28.435      19.904
+ p_aa_pp                      0.400       4.446       1.778
+ yhh_planarity                0.625       0.000       0.000
+ ref                          1.000      -2.701      -2.701
+ aa_composition               1.000      13.000      13.000
+---------------------------------------------------
+ Total weighted score:                        1.554
+devel.denovo_design.FastDesign: [ 3856.52 ]
+devel.denovo_design.FastDesign: [ 1.55412 ]
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - connect_ends=======================
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 24 to 1
+core.conformation.symmetry.Conformation: Add symmetric chemical bond 13 to 12
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.generalized_kinematic_closure.GeneralizedKIC: Storing solution 4 from attempt 4.
+protocols.generalized_kinematic_closure.selector.GeneralizedKICselector: Choosing GeneralizedKIC solution.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Closure successful.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.jd2.JobDistributor: no more batches to process... 
+protocols::checkpoint: Deleting checkpoints of FastRelax

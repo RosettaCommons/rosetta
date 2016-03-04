@@ -24,7 +24,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <protocols/cryst/spacegroup.hh>
-#include <protocols/cryst/refineable_lattice.hh>
+#include <protocols/cryst/refinable_lattice.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>

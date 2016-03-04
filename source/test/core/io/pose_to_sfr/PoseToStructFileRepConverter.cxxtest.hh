@@ -129,7 +129,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].element, " H" );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].element, " H" );
 
-		pose->dump_pdb("vmemb.pdb"); //DELETE ME
+		//pose->dump_pdb("vmemb.pdb"); //DELETE ME
 
 	}
 

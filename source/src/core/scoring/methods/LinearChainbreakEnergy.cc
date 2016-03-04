@@ -170,17 +170,30 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 	Real total_dev = 0.0;
 	Real total_ovp = 0.0;
 
-	// Cached ShortestPathInFoldTree instance is invalid and must be recomputed
-	const FoldTree& tree = pose.fold_tree();
-	size_t hash_value = tree.hash_value();
-	if ( ! shortest_paths_.get() || previous_hash_value_ != hash_value ) {
-		shortest_paths_.reset( new ShortestPathInFoldTree( tree ) );
-		previous_hash_value_ = hash_value;
-	}
-
 	// Identify all cutpoint variants defined by the caller
 	vector1< int > cutpoints;
+	const FoldTree& tree = pose.fold_tree();
 	find_cutpoint_variants( pose, tree, &cutpoints );
+
+	//fpd  why is this energy turned on by default in score_jd2??????
+
+	//fpd early stopping #1.  ShortestPathInFoldTree is *horribly slow in poses with many (100+)
+	//fpd   jumps ... just leave if there are no cutpoint variants.
+	//fpd *really horribly slow, like 5 mins+
+	if ( cutpoints.size()==0 ) return;
+
+	//fpd early stopping #2.  if allowable_sequence_sep_ > total_residue()
+	//fpd there is no need to check shortest path
+	bool shortest_path_check_req = (allowable_sequence_sep_ < pose.total_residue());
+
+	// Cached ShortestPathInFoldTree instance is invalid and must be recomputed
+	if ( shortest_path_check_req ) {
+		size_t hash_value = tree.hash_value();
+		if ( ! shortest_paths_.get() || previous_hash_value_ != hash_value ) {
+			shortest_paths_.reset( new ShortestPathInFoldTree( tree ) );
+			previous_hash_value_ = hash_value;
+		}
+	}
 
 	for ( Size i = 1; i <= cutpoints.size(); ++i ) {
 		int const cutpoint = cutpoints[ i ];
@@ -196,8 +209,11 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 		// Determine whether the separation between <lowed_rsd> and <upper_rsd>,
 		// as computed by ShortestPathInFoldTree, exceeds the current allowable
 		// sequence separation
-		Size const separation = shortest_paths_->dist( cutpoint, cutpoint + 1 );
-		if ( separation > allowable_sequence_sep_ ) {
+		Size separation;
+		if ( shortest_path_check_req ) {
+			separation = shortest_paths_->dist( cutpoint, cutpoint + 1 );
+		}
+		if ( shortest_path_check_req && separation > allowable_sequence_sep_ ) {
 			tr.Trace << "Chainbreak skipped-- "
 				<< separation << " > " << allowable_sequence_sep_
 				<< std::endl;

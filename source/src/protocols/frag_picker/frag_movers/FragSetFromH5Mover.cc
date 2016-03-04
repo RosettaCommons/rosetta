@@ -146,12 +146,12 @@ vector1< vector1< core::Real > >  FragSetFromH5Mover::get_ss_prediction(const co
 		prediction_by_pct = ss_predictor_->predict_ss( sequence );
 	}
 	/* else {
-		runtime_assert( psipred_interface_ != 0 );
-		std::string currentSS = pose.secstruct();
-		PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, currentSS );
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-			prediction_by_pct.push_back(psipred_result.psipred_prob[i]);
-		}
+	runtime_assert( psipred_interface_ != 0 );
+	std::string currentSS = pose.secstruct();
+	PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, currentSS );
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	prediction_by_pct.push_back(psipred_result.psipred_prob[i]);
+	}
 	}
 	*/
 	return(prediction_by_pct);
@@ -165,11 +165,10 @@ bool FragSetFromH5Mover::fragSet_needs_update(){
 	}
 }
 core::pose::Pose FragSetFromH5Mover::get_selected_pose(const core::pose::Pose pose){
-	if(chain_.size()!=0){
-		if(!has_chain(chain_,pose)){
+	if ( chain_.size()!=0 ) {
+		if ( !has_chain(chain_,pose) ) {
 			utility_exit_with_message("chain does not exist");
-		}
-		else{
+		} else {
 			Size chain_id =  get_chain_id_from_chain(chain_,pose);
 			return(*pose.split_by_chain(chain_id));
 		}
@@ -178,30 +177,33 @@ core::pose::Pose FragSetFromH5Mover::get_selected_pose(const core::pose::Pose po
 }
 vector1 <std::string> FragSetFromH5Mover::get_ss_strings_for_residue_from_ssPred(vector1<vector1<Real> > ss_prediction,Size position){
 	vector1<std::string> allowed_ss;
-	if(ss_prediction[position][1]>=ssPred_cutoff_)
+	if ( ss_prediction[position][1]>=ssPred_cutoff_ ) {
 		allowed_ss.push_back("H");
-	if(ss_prediction[position][2]>=ssPred_cutoff_)
+	}
+	if ( ss_prediction[position][2]>=ssPred_cutoff_ ) {
 		allowed_ss.push_back("L");
-	if(ss_prediction[position][3]>=ssPred_cutoff_)
+	}
+	if ( ss_prediction[position][3]>=ssPred_cutoff_ ) {
 		allowed_ss.push_back("E");
+	}
 	return(allowed_ss);
 }
 
 
 vector1 <std::string> FragSetFromH5Mover::get_abego_strings_for_residue_from_ssPred(vector1<vector1<Real> > ss_prediction,Size res,Size fragLength){
 	vector1 <std::string> abegos_to_check;
-	for(Size ii=res; ii<=res+fragLength; ++ii){
+	for ( Size ii=res; ii<=res+fragLength; ++ii ) {
 		vector1<std::string> allowed_ss = get_ss_strings_for_residue_from_ssPred(ss_prediction,ii);
-		if(abegos_to_check.size() == 0){
-			for(Size jj=1; jj<=allowed_ss.size(); ++jj)
+		if ( abegos_to_check.size() == 0 ) {
+			for ( Size jj=1; jj<=allowed_ss.size(); ++jj ) {
 				abegos_to_check.push_back(allowed_ss[jj]);
-		}
-		else{
+			}
+		} else {
 			Size abegos_to_check_init_size = abegos_to_check.size();
-			for(Size kk=1; kk<=abegos_to_check_init_size; ++kk){
+			for ( Size kk=1; kk<=abegos_to_check_init_size; ++kk ) {
 				std::string tmpString = abegos_to_check[kk];
 				abegos_to_check[kk]=abegos_to_check[kk]+allowed_ss[1];
-				for(Size jj=2; jj<=allowed_ss.size(); ++jj){
+				for ( Size jj=2; jj<=allowed_ss.size(); ++jj ) {
 					abegos_to_check.push_back(tmpString+allowed_ss[jj]);
 				}
 			}
@@ -213,20 +215,20 @@ vector1 <std::string> FragSetFromH5Mover::get_abego_strings_for_residue_from_ssP
 
 vector1 <std::string> FragSetFromH5Mover::get_abego_strings_for_residue(const core::pose::Pose pose,Size res,Size fragLength){
 	vector1 <std::string> abegos_to_check;
-	if(use_pose_){
+	if ( use_pose_ ) {
 		//use ABEGO manager
 		core::sequence::ABEGOManager AM;
 		utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
 		std::string tmp;
-		for(Size ii=res; ii<=res+fragLength; ++ii)
+		for ( Size ii=res; ii<=res+fragLength; ++ii ) {
 			tmp += abegoSeq[ii];
+		}
 		abegos_to_check.push_back(tmp);
-	}
-	else{
-		if(ss_.size()>0){
+	} else {
+		if ( ss_.size()>0 ) {
 			abegos_to_check = convert_ss_to_abegos(ss_.substr(res-1,fragLength));
 		}
-		if(abego_.size()>0){
+		if ( abego_.size()>0 ) {
 			abegos_to_check.push_back(abego_.substr(res-1,fragLength));
 		}
 	}
@@ -237,34 +239,38 @@ vector1 <std::string> FragSetFromH5Mover::get_abego_strings_for_residue(const co
 void FragSetFromH5Mover::apply(core::pose::Pose & pose){
 	//step0 decide if fragset needs updating
 	std::cout <<"*******here" << fragSet_needs_update() << std::endl;
-	if(fragSet_needs_update()){
+	if ( fragSet_needs_update() ) {
 		//step1 get pose & abegos
 		vector1 <std::string>  abegos_to_check;
 		Size numbRes = 1;
 		core::pose::Pose chosenPose = pose;
-		if(use_pose_){
+		if ( use_pose_ ) {
 			chosenPose = get_selected_pose(pose);
 			numbRes = chosenPose.total_residue();
-		}
-		else{
-			if(ss_.size()>0)
+		} else {
+			if ( ss_.size()>0 ) {
 				numbRes = ss_.size();
-			if(abego_.size()>0)
+			}
+			if ( abego_.size()>0 ) {
 				numbRes = abego_.size();
+			}
 		}
 		std::cout << "ss_.size()" <<  ss_.size() << "abego_" << abego_.size() << "numbRes" << numbRes << std::endl;
 		Size fragLength = 9;
 		vector1<vector1< Real> > ss_prediction;
-		if(use_pose_ && use_ssPred_)
+		if ( use_pose_ && use_ssPred_ ) {
 			ss_prediction = get_ss_prediction(chosenPose);
-		for(Size ii=1; ii<=numbRes-fragLength+1; ++ii){
+		}
+		for ( Size ii=1; ii<=numbRes-fragLength+1; ++ii ) {
 			vector1<string> abegos_to_check;
-			if(use_pose_ && use_ssPred_)
+			if ( use_pose_ && use_ssPred_ ) {
 				abegos_to_check = get_abego_strings_for_residue_from_ssPred(ss_prediction,ii,fragLength);
-			else
+			} else {
 				abegos_to_check = get_abego_strings_for_residue(chosenPose,ii,fragLength);
-			for(Size jj=1; jj<=abegos_to_check.size(); ++jj)
+			}
+			for ( Size jj=1; jj<=abegos_to_check.size(); ++jj ) {
 				std::cout << "pos:" << ii << " abego:" <<  abegos_to_check[jj] << std::endl;
+			}
 		}
 
 	}
@@ -300,7 +306,7 @@ FragSetFromH5Mover::parse_my_tag(
 	use_ssPred_ = false; //True only if usePose && ssPred are set
 	if ( tag->hasOption("use_pose") ) {
 		use_pose_ = true;
-		if (tag->hasOption("use_ssPred")){
+		if ( tag->hasOption("use_ssPred") ) {
 			ssPred_cutoff_ = tag->getOption<Real>( "ssPred_cutoff", 0.3 );
 			use_ssPred_=true;
 			use_svm_ = true; //psipred interface not yet ready
@@ -310,8 +316,7 @@ FragSetFromH5Mover::parse_my_tag(
 			std::string psi_cmd_ = tag->getOption< std::string >( "psipred_cmd", "" );
 			psipred_interface_ = PsiPredInterfaceOP( new PsiPredInterface( psi_cmd_ ) );
 			*/
-		}
-		else{
+		} else {
 			use_svm_ = false;
 		}
 	} else {

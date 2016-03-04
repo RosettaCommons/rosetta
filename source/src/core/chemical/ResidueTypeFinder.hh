@@ -83,6 +83,16 @@ public:
 		return *this;
 	}
 
+	/// @brief Allow a base type to be specified rigidly.  Since any ResidueType's base type COP can now be accessed easily,
+	/// this is a far more efficient way to prune the set of possible ResidueTypes.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	ResidueTypeFinder &
+	base_type( ResidueTypeCOP basetype ) {
+		runtime_assert( basetype );
+		base_type_ = basetype;
+		return *this;
+	}
+
 	ResidueTypeFinder &
 	interchangeability_group( std::string const & setting ) {
 		interchangeability_group_ = setting;
@@ -112,6 +122,19 @@ public:
 
 	ResidueTypeFinder &
 	variants( utility::vector1< std::string > const & setting );
+
+	/// @brief Specify a list of standard variant types (by enum) and custom variant types (by string).
+	/// @details This is the most efficient way to handle variants, since it minimizes the string handling.  Everything that
+	/// can be handled by enum is handled by enum.
+	/// @param[in] std_variants A vector of enums of standard variants that the ResidueTypeFinder should match.
+	/// @param[in] custom_variants A vector of strings of custom variant types that the ResidueTypeFinder should match.  Note that
+	/// standard types should NOT be included in this list.  There is no check for this!
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	ResidueTypeFinder &
+	variants(
+		utility::vector1< VariantType > const & std_variants,
+		utility::vector1< std::string > const & custom_variants
+	);
 
 	ResidueTypeFinder &
 	disallow_variants( utility::vector1< VariantType > const & setting ) {
@@ -275,6 +298,7 @@ private:
 	char name1_;
 	std::string name3_;
 	std::string residue_type_base_name_;
+	ResidueTypeCOP base_type_;
 	std::string interchangeability_group_;
 	utility::vector1< std::string > atom_names_soft_;
 	utility::vector1< utility::vector1< VariantType > > variants_in_sets_;

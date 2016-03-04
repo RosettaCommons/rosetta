@@ -60,7 +60,6 @@ RT::fold_in_rb_deltas(
 	// m2 -> m1: R * V
 	Vector new_center(translation + rotation * rb_center);
 
-
 	// create a transformation matrix from the 3 rb angles
 	Matrix const Rzyx(
 		z_rotation_matrix_degrees( rb[6] ) * (
@@ -68,13 +67,36 @@ RT::fold_in_rb_deltas(
 		x_rotation_matrix_degrees( rb[4] ) )
 	);
 
+	Vector rb_trans = Vector( rb[1], rb[2], rb[3] );
 	rotation.left_multiply_by( Rzyx );
-
-
-	Vector rb_trans( rb[1], rb[2], rb[3] ); // load the first 3
 	translation = new_center + Rzyx * ( translation - new_center ) + rb_trans;
+
 } // fold_in_rb_deltas
 
+
+void
+RT::make_jump(
+	Stub const & stub1,
+	Stub & stub2
+) const
+{
+	Matrix M1 = stub1.M;
+	stub2.M = M1 * rotation;
+	stub2.v = stub1.v + M1 * translation;
+}
+
+/// @brief update from stubs
+void
+RT::from_stubs(
+	Stub const & stub1,
+	Stub const & stub2
+)
+{
+	Matrix M1 = stub1.M;
+	Matrix M2 = stub2.M;
+	translation = M1.transposed() * ( stub2.v - stub1.v );
+	rotation = M1.transposed() * M2;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 bool
@@ -87,20 +109,6 @@ const
 		delta.col_y().length() +
 		delta.col_z().length() ) < tolerance );
 }
-//  // debug orthogonality
-//  Real dev(0.0);
-//  for ( int i=1; i<=3; ++i ) {
-//   for ( int j=1; j<=3; ++j ) {
-//    Real f =
-//     rotation(1,i) * rotation(1,j) +
-//     rotation(2,i) * rotation(2,j) +
-//     rotation(3,i) * rotation(3,j);
-//    if ( i==j ) dev += std::abs(1.0-f);
-//    else dev += std::abs(f);
-//   }
-//  }
-//  return ( dev < 0.01 );
-// }
 
 
 /////////////////////////////////////////////////////////////////////////////

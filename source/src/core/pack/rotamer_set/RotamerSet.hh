@@ -224,6 +224,12 @@ public:
 	void
 	show( std::ostream & out ) const = 0;
 
+	virtual
+	void
+	initialize_pose_for_rotset_creation(
+		pose::Pose & pose
+	) const = 0;
+
 private:
 	// deny use of the copy constructor (no pass-by-value)
 	RotamerSet( RotamerSet const & );

@@ -158,7 +158,7 @@ rebuild_test()
 
 	// this is a bummer: there's some dumb code that doesn't understand that dofs associated with an atom for one residue
 	// can correspond to torsion angles for another. I can fix this if it's a big problem (PB).
-	runtime_assert( !option[ OptionKeys::optimization::new_sym_min ] );
+	runtime_assert( option[ OptionKeys::optimization::old_sym_min ] );
 
 	// this doofy command line flag is the super-secret signal to rotamer building and scorefxn generation that
 	// we are using symmetry. This should probably be changed. In the meantime you can always add

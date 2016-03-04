@@ -60,7 +60,7 @@ public:
 
 	static
 	void
-	make_assymetric_movemap(
+	make_asymmetric_movemap(
 		pose::Pose & pose,
 		kinematics::MoveMap const & move_map_sym,
 		kinematics::MoveMap & move_map_asym

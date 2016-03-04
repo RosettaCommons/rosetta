@@ -15,6 +15,7 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/cryst/refinable_lattice.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 
 #include <utility/tag/Tag.hh>
@@ -28,6 +29,8 @@
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
@@ -105,26 +108,43 @@ ExtractAsymmetricPoseMoverCreator::mover_name() {
 SetupForSymmetryMover::SetupForSymmetryMover() :
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
+	cryst1_(false),
 	symmdef_()
-{
-}
+{}
 
 SetupForSymmetryMover::SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata ) :
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
+	cryst1_(false),
 	symmdef_( symmdata )
 {}
 
 SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) :
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
+	cryst1_(false),
 	symmdef_()
 {
-	symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
-	symmdef_->read_symmetry_data_from_file(symmdef_file);
+	process_symmdef_file(symmdef_file);
 }
 
+
+
 SetupForSymmetryMover::~SetupForSymmetryMover(){}
+
+//fpd centralize the logic for processing a symmdef file tag
+void
+SetupForSymmetryMover::process_symmdef_file(std::string tag) {
+	//fd special logic
+	if ( tag == "CRYST1" ) {
+		cryst1_ = true;
+		return;
+	}
+
+	symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
+	symmdef_->read_symmetry_data_from_file(tag);
+}
+
 
 void
 SetupForSymmetryMover::apply( core::pose::Pose & pose )
@@ -134,12 +154,9 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 	// If we are alredy symmetric do nothing
 	if ( core::pose::symmetry::is_symmetric( pose ) ) return;
 
-	if ( !symmdef_ ) {
+	if ( !symmdef_ && !cryst1_ ) {
 		if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
-			symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
-			symmdef_->read_symmetry_data_from_file(
-				option[OptionKeys::symmetry::symmetry_definition]);
-
+			process_symmdef_file(option[ OptionKeys::symmetry::symmetry_definition]());
 		} else {
 			throw utility::excn::EXCN_BadInput(
 				"The -symmetry:symmetry_definition command line option "
@@ -147,8 +164,19 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 		}
 	}
 
+	if ( cryst1_ ) {
+		protocols::cryst::MakeLatticeMover make_lattice;
+		if ( option[ OptionKeys::cryst::refinable_lattice].user() ) {
+			make_lattice.set_refinable_lattice( option[ OptionKeys::cryst::refinable_lattice]() );
+		} else {
+			// default is not refinable _from this context_
+			make_lattice.set_refinable_lattice( false );
+		}
+		make_lattice.apply(pose);
+	} else {
+		core::pose::symmetry::make_symmetric_pose( pose, *symmdef_ );
+	}
 
-	core::pose::symmetry::make_symmetric_pose( pose, *symmdef_ );
 	assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	//fpd  explicitly update disulfide lr energy container
@@ -181,21 +209,14 @@ void SetupForSymmetryMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("definition") ) {
-		symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
-		symmdef_->read_symmetry_data_from_file(
-			tag->getOption<std::string>("definition"));
+		process_symmdef_file(tag->getOption<std::string>("definition"));
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
-
 	} else if ( tag->hasOption("resource_description") ) {
 		symmdef_ = get_resource< core::conformation::symmetry::SymmData >(
 			tag->getOption<std::string>("resource_description"));
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
-
 	} else if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
-		symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
-		symmdef_->read_symmetry_data_from_file(
-			option[OptionKeys::symmetry::symmetry_definition]);
-
+		process_symmdef_file(option[OptionKeys::symmetry::symmetry_definition]);
 	} else {
 		throw utility::excn::EXCN_BadInput(
 			"To use SetupForSymmetryMover with rosetta scripts please supply either a 'definition' tag, a 'resource_decription' tag or specify -symmetry:symmetry_definition the command line.");

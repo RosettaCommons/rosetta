@@ -97,6 +97,12 @@ protected:
 		core::graph::GraphCOP packer_neighbor_graph
 	) const;
 
+	virtual
+	void
+	initialize_pose_for_rotsets_creation(
+		core::pose::Pose & /*pose*/
+	) const {}
+
 private:
 	ResidueCOP existing_residue_;
 	FlexbbRotamerSetsCAP owner_;

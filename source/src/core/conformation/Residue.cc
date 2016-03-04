@@ -216,33 +216,56 @@ Residue::Residue(
 
 }
 
-
+/// @brief Copy constructor.
+///
 Residue::Residue( Residue const & src ) :
 	utility::pointer::ReferenceCount(),
 	utility::pointer::enable_shared_from_this< Residue >(),
 	rsd_type_ptr_( src.rsd_type_ptr_ ),
-	rsd_type_(src.rsd_type_),
-	atoms_(src.atoms_),
-	orbitals_(src.orbitals_),
-	seqpos_(src.seqpos_),
-	chain_(src.chain_),
-	chi_(src.chi_),
-	nus_(src.nus_),
-	mainchain_torsions_(src.mainchain_torsions_),
-	actcoord_(src.actcoord_),
-	data_cache_(0),
-	nonstandard_polymer_(src.nonstandard_polymer_),
-	connect_map_(src.connect_map_),
-	connections_to_residues_(src.connections_to_residues_),
-	pseudobonds_(src.pseudobonds_)
+	rsd_type_(src.rsd_type_)
 {
+	init_residue_from_other( src );
+}
+
+/// @brief Copy constructor that preserves everything EXCEPT flips ResidueType to its mirror counterpart.
+/// @details The flip_chirality option governs whether this residue keeps the old type or gets the mirror-image type.  All other data
+/// (including xyz coordinates) are preserved, so this ONLY switches the type, not the geometry.
+/// @author Vikram K. Mulligan.
+Residue::Residue( Residue const & src, bool const flip_chirality ):
+	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< Residue >(),
+	rsd_type_ptr_( flip_chirality ? src.residue_type_set()->get_mirrored_type( src.rsd_type_ptr_ ) : src.rsd_type_ptr_ ),
+	rsd_type_( flip_chirality ? * (src.residue_type_set()->get_mirrored_type( src.rsd_type_.get_self_ptr() ) ) : src.rsd_type_ ) /*I don't assume that src.rsd_type_ and src.rsd_type_ptr_ point to the same type, though they should.*/
+{
+	init_residue_from_other( src );
+}
+
+Residue::~Residue() {}
+
+/// @brief Function called by both copy constructors, to avoid code duplication.
+/// @details As private member variables are added, add them to this to copy them.
+/// @author Vikram K. Mulligan.
+void
+Residue::init_residue_from_other(
+	Residue const &src
+) {
+	atoms_ = src.atoms_;
+	orbitals_ = src.orbitals_;
+	seqpos_ = src.seqpos_;
+	chain_ = src.chain_;
+	chi_ = src.chi_;
+	nus_ = src.nus_;
+	mainchain_torsions_ = src.mainchain_torsions_;
+	actcoord_ = src.actcoord_;
 	if ( src.data_cache_ != 0 ) {
 		if ( data_cache_ != 0 ) ( *data_cache_) = (*src.data_cache_);
 		else data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( *src.data_cache_) );
 	}
+	nonstandard_polymer_ = src.nonstandard_polymer_;
+	connect_map_ = src.connect_map_;
+	connections_to_residues_ = src.connections_to_residues_;
+	pseudobonds_ = src.pseudobonds_;
 }
-
-Residue::~Residue() {}
 
 
 /// @details make a copy of this residue( allocate actual memory for it )
@@ -251,6 +274,20 @@ Residue::clone() const
 {
 	return ResidueOP( new Residue( *this ) );
 }
+
+/// @brief Copy this residue( allocate actual memory for it ), keeping everything the same EXCEPT the type.
+/// @details Switches the ResidueType to the mirror type (D->L or L->D).  Preserves it for achiral residues.
+/// @note This function is the best way to convert a D-residue to its L-counterpart, or an L-residue to its D-counterpart.
+/// It assumes that you've already mirrored all of the coordinates, and just allows you to generate a replacement residue
+/// of the mirror type that preserves all other Residue information (connections, seqpos, xyz coordinates of all atoms,
+/// variant types, etc.).
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+ResidueOP
+Residue::clone_flipping_chirality() const
+{
+	return ResidueOP( new Residue( *this, true /*flip the chirality*/ ) );
+}
+
 
 
 /// @author Labonte <JWLabonte@jhu.edu>

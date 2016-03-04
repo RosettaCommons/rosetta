@@ -41,7 +41,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.SSPredict
 namespace protocols {
 namespace denovo_design {
 namespace filters {
-		
+
 using namespace core::io::external;
 // general constructor
 SSPredictionFilter::SSPredictionFilter()

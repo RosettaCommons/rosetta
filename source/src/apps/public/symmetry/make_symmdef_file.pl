@@ -1075,7 +1075,16 @@ if ($cryst_mode == 1) {
 	foreach my $symmkey (@syminterfaces_all) {
 		# crystal lattice
 		my ($j_symm,$shiftX,$shiftY,$shiftZ) = split '_',$symmkey;
+
+		my $realrot = mmult( $f2c, mmult( $Rs->[$j_symm], $c2f ) );
+
+		my $d = mdet( $realrot );
+		if ($d>-0.999 && $d<0.999) {
+			die "Unexpected determinant $d (should be +/-1)\n";
+		}
+
 		my $xyzline = "xyz VRT_".$symmkey;
+		if ($d<-0.999) { $xyzline = "xyzM VRT_".$symmkey; }
 		$xyzline =~ s/_-(\d)/_n\1/g;
 
 		# X
@@ -1104,7 +1113,8 @@ if ($cryst_mode == 1) {
 
 		# centers of mass
 		# X
-		my $xyzline = "xyz VRT_".$symmkey."_base";
+		$xyzline = "xyz VRT_".$symmkey."_base";
+		if ($d<-0.999) { $xyzline = "xyzM VRT_".$symmkey."_base"; }
 		$xyzline =~ s/_-(\d)/_n\1/g;
 		my $fX  = mapply( $c2f , [1,0,0] );
 		my $sfX  = mapply($Rs->[$j_symm],$fX);
@@ -3270,6 +3280,15 @@ sub minv {
 	$Minv->[2][2] =  ($M->[0][0]*$M->[1][1]-$M->[0][1]*$M->[1][0])/$D;
 
 	return $Minv;
+}
+
+# matrix determinant
+sub mdet {
+	my $M = shift;
+	my $D = $M->[0][0] * ( $M->[1][1]*$M->[2][2] - $M->[2][1]*$M->[1][2] ) -
+		    $M->[0][1] * ( $M->[1][0]*$M->[2][2] - $M->[1][2]*$M->[2][0] ) +
+		    $M->[0][2] * ( $M->[1][0]*$M->[2][1] - $M->[1][1]*$M->[2][0] );
+	return $D;
 }
 
 # vector norm

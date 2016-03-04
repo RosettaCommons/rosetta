@@ -47,6 +47,11 @@ namespace kinematics {
 
 //static const utility::vector1<double> ZERO( 6, 0.0 );
 
+// convenience
+numeric::xyzMatrix< core::Real >
+Jump::mirror_z_transform = numeric::xyzMatrix< core::Real >::rows( 1.,0.,0., 0.,1.,0., 0.,0.,-1. );
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // reset
 void
@@ -55,6 +60,7 @@ Jump::reset()
 	rt_.reset();
 	rb_delta[1] = rb_delta[2] = ZERO;
 	rb_center[1] = rb_center[2] = Vector(0.0);
+	invert_downstream_ = invert_upstream_ = false;
 }
 
 
@@ -80,6 +86,13 @@ Jump::fold_in_rb_deltas()
 
 	rb_delta[1] = rb_delta[2] = ZERO;
 }
+
+void
+Jump::set_invert( bool upstream, bool downstream ) {
+	invert_upstream_ = upstream;
+	invert_downstream_ = downstream;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @details stub defines the local reference frame for the corresponding direction
 /// of the jump (forward == folding direction, backward = reverse)
@@ -341,12 +354,23 @@ Jump::make_jump(
 	tmp_rt.reverse();
 
 	// c2n
-	tmp_rt.fold_in_rb_deltas( rb_delta[2], rb_center[2] );
+	tmp_rt.fold_in_rb_deltas( rb_delta[2], rb_center[2]  );
 
 	// back to original direction
 	tmp_rt.reverse();
 
+	// main logic for inversion lives here
+	// ensure correct handedness of input stub
+	//bool stub1_inverted = (stub1.M.det() < 0);
+	//runtime_assert( stub1_inverted == invert_upstream_ ); //fd during pose construction this is not true
 	tmp_rt.make_jump( stub1, stub2 );
+
+	// is this jump an inverting jump?
+	//bool stub2_inverted = (stub2.M.det() < 0);
+
+	if ( invert_upstream_ != invert_downstream_ ) {
+		stub2.M = stub2.M * Jump::mirror_z_transform;
+	}
 }
 
 
@@ -358,6 +382,7 @@ Jump::from_stubs(
 	Stub const & stub2
 )
 {
+	// here we ignore inversion.  R/T of a jump is always stored w.r.t. a right-handed system
 	rt_.from_stubs( stub1, stub2 );
 	rb_delta[1] = rb_delta[2] = ZERO;
 }
@@ -421,6 +446,9 @@ operator <<(
 	const Jump & jump
 )
 {
+	if ( jump.get_invert_upstream() || jump.get_invert_downstream() ) {
+		os << "mirrored: " << jump.get_invert_upstream() << "/" << jump.get_invert_downstream() << " ";
+	}
 	if ( jump.nonzero_deltas() ) {
 		// old-style verbose output
 		os << "Jump:: nonzero_deltas= " << jump.nonzero_deltas() << '\n';
@@ -434,7 +462,7 @@ operator <<(
 			}
 			os << '\n';
 			os << "rb_center " << tag;
-			for ( int j = 1; j <= 3; ++j ) {
+			for ( int j = 0; j <= 2; ++j ) { //fpd Vector is 0-indexed
 				os << jump.rb_center[i][j] << ' ';
 			}
 			os << '\n';
@@ -526,6 +554,8 @@ core::kinematics::Jump::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rt_ ) ); // class core::kinematics::RT
 	arc( CEREAL_NVP( rb_delta ) ); // utility::vector1<utility::vector1<Real> >
 	arc( CEREAL_NVP( rb_center ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( invert_upstream_ ) ); // _Bool
+	arc( CEREAL_NVP( invert_downstream_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -535,6 +565,8 @@ core::kinematics::Jump::load( Archive & arc ) {
 	arc( rt_ ); // class core::kinematics::RT
 	arc( rb_delta ); // utility::vector1<utility::vector1<Real> >
 	arc( rb_center ); // utility::vector1<Vector>
+	arc( invert_upstream_ ); // _Bool
+	arc( invert_downstream_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::Jump );

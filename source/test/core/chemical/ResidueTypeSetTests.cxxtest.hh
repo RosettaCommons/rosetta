@@ -163,5 +163,38 @@ public:
 		TS_ASSERT(!rtset->has_name3("QC1"));
 	}
 
+	/// @brief Tests the ability of the ResidueTypeSet to give me the mirror-image ResidueType to a given type.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_get_mirror_type() {
+		using namespace core::chemical;
+
+		ResidueTypeSetOP restypeset( new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
+		std::vector< std::string > extra_params_files;
+		std::vector< std::string > extra_patch_files;
+		restypeset->init( extra_params_files, extra_patch_files );
+
+		//Test types:
+		ResidueTypeCOP lcys_nterm_cterm( restypeset->name_mapOP("CYS:NtermProteinFull:CtermProteinFull") );
+		ResidueTypeCOP dile_nacetyl( restypeset->name_mapOP("DILE:AcetylatedNtermProteinFull") );
+		ResidueTypeCOP plain_c53( restypeset->name_mapOP("C53") );
+
+		//Return types:
+		ResidueTypeCOP mirrored_lcys_nterm_cterm( restypeset->get_mirrored_type( lcys_nterm_cterm ) );
+		ResidueTypeCOP mirrored_dile_nacetyl( restypeset->get_mirrored_type( dile_nacetyl ) );
+		ResidueTypeCOP mirrored_plain_c53( restypeset->get_mirrored_type( plain_c53 ) );
+
+		TS_ASSERT_EQUALS( mirrored_lcys_nterm_cterm->name3(), "DCS" );
+		TS_ASSERT_EQUALS( mirrored_lcys_nterm_cterm->name(), "DCYS:CtermProteinFull:NtermProteinFull" );
+		TS_ASSERT_EQUALS( mirrored_lcys_nterm_cterm->base_name(), "DCYS" );
+
+		TS_ASSERT_EQUALS( mirrored_dile_nacetyl->name3(), "ILE" );
+		TS_ASSERT_EQUALS( mirrored_dile_nacetyl->name(), "ILE:AcetylatedNtermProteinFull" );
+		TS_ASSERT_EQUALS( mirrored_dile_nacetyl->base_name(), "ILE" );
+
+		TS_ASSERT_EQUALS( mirrored_plain_c53->name3(), "C53" ); //Currently, the D-patches don't update the name3 for noncanonicals.  Fix this if/when they do.
+		TS_ASSERT_EQUALS( mirrored_plain_c53->name(), "DC53" );
+		TS_ASSERT_EQUALS( mirrored_plain_c53->base_name(), "DC53" );
+
+	}
 
 };

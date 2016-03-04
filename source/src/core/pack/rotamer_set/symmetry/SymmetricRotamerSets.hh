@@ -84,6 +84,14 @@ public:
 		bool const finalize_edges = true
 	);
 
+	//fpd function to set some pose data needed SymmetricRotamerSets
+	virtual
+	void
+	initialize_pose_for_rotsets_creation(
+		pose::Pose & pose
+	) const;
+
+
 private:
 	void
 	prepare_symm_otf_interaction_graph(
@@ -106,7 +114,8 @@ private:
 	orient_rotamer_set_to_symmetric_partner(
 		pose::Pose const & pose,
 		uint const & setpos,
-		uint const & symmpos
+		uint const & symmpos,
+		bool const set_up_mirror_types_if_has_mirror_symmetry=false
 	);
 
 	bool

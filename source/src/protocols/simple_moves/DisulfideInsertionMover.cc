@@ -163,8 +163,7 @@ DisulfideInsertionMover::determine_cyclization_viability(
 
 		// the residues are not at the right distance from each other
 		return DCV_NOT_CYCLIZABLE;
-	}
-	else if ( already_bonded_n_cys ) {
+	} else if ( already_bonded_n_cys ) {
 		// the N-terminal is a disulfide-bonded cysteine.
 
 		// check what the N-terminal cysteine is bonded to
@@ -175,13 +174,11 @@ DisulfideInsertionMover::determine_cyclization_viability(
 		// if the bond is between the N- and C- residues, meaning that the peptide is already cyclic
 		if ( resi_bound_to_n_cyd == c_putative_cyd_index ) {
 			return DCV_ALREADY_CYCLIZED;
-		}
-
-		// the N-terminal cysteine is bonded to another residue
-		// in this scenario, we don't replace it, since it is
-		// less likely it will form a disulfide bond with a cysteine we
-		// will introduce.
-		else {
+		} else {
+			// the N-terminal cysteine is bonded to another residue
+			// in this scenario, we don't replace it, since it is
+			// less likely it will form a disulfide bond with a cysteine we
+			// will introduce.
 			return DCV_NOT_CYCLIZABLE;
 		}
 
@@ -263,7 +260,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 
 	// if both the energy of the new disulfide bond AND of all other terms is not much worse call this a success
 	//if (dis_energy_change < REASONABLE_ENERGY_CHANGE && other_energetic_change < REASONABLE_ENERGY_CHANGE) {
-		set_last_move_status(protocols::moves::MS_SUCCESS);
+	set_last_move_status(protocols::moves::MS_SUCCESS);
 	//}
 }
 

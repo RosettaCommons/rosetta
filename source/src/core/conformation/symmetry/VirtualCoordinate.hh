@@ -33,15 +33,28 @@ class VirtualCoordinate {
 
 public:
 
+	/// @brief Default constructor.
+	///
 	VirtualCoordinate();
 
 	/// @brief copy constructor
 	VirtualCoordinate( VirtualCoordinate const & src );
 
+	/// @brief Non-mirror constructor
+	///
 	VirtualCoordinate(
 		numeric::xyzVector< core::Real> axis_x,
 		numeric::xyzVector< core::Real> axis_y,
 		numeric::xyzVector< core::Real> axis_origin
+	);
+
+	/// @brief Mirror constructor
+	///
+	VirtualCoordinate(
+		numeric::xyzVector< core::Real> axis_x,
+		numeric::xyzVector< core::Real> axis_y,
+		numeric::xyzVector< core::Real> axis_origin,
+		bool mirror_z
 	);
 
 	VirtualCoordinate &
@@ -68,6 +81,12 @@ public:
 	numeric::xyzVector< core::Real> const &
 	get_origin() const;
 
+	bool
+	get_mirror_z() const;
+
+	void
+	set_mirror_z( bool val );
+
 	void
 	add_coordinate_from_string(
 		utility::vector1< std::string > coords,
@@ -88,6 +107,7 @@ private:
 	numeric::xyzVector< core::Real> axis_x_; // store unit vector for X
 	numeric::xyzVector< core::Real> axis_y_; // store unit vector for Y
 	numeric::xyzVector< core::Real> axis_origin_; // store origin for coordinate system
+	bool mirror_Z_;
 };
 
 } // symmetry

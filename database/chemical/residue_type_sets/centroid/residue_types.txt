@@ -44,6 +44,7 @@ residue_types/metal_ions/MG.params
 residue_types/metal_ions/CA.params
 
 ## Rosetta Specific Types
+residue_types/rosetta_specific/INV_VRT.params
 residue_types/rosetta_specific/VRT.params
 
 ## Staple Types

@@ -27,6 +27,8 @@
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
+//#include <core/kinematics/FoldTree.hh>
+//#include <core/kinematics/Jump.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -195,7 +197,7 @@ pack_rotamers_setup(
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, task );
 
 	rotsets->set_task( task );
-
+	rotsets->initialize_pose_for_rotsets_creation(pose);
 	rotsets->build_rotamers( pose, scfxn, packer_neighbor_graph );
 	rotsets->prepare_sets_for_packing( pose, scfxn );
 
@@ -255,6 +257,7 @@ pack_rotamers_run(
 		conformation::ResidueOP newresidue( bestrot->create_residue() );
 		pose.replace_residue ( iiresid, *newresidue, false );
 	}
+
 	return bestenergy;
 }
 

@@ -150,6 +150,14 @@ public:
 
 	void prepare_sets_for_packing( pose::Pose const & pose, scoring::ScoreFunction const &);
 
+	/// @brief Give the pose a chance to stash any data needed by the _rotset_
+	///        need nonconst access to pose
+	virtual
+	void
+	initialize_pose_for_rotsets_creation(
+		pose::Pose & /*pose*/
+	) const {}
+
 private:
 	void update_offset_data();
 

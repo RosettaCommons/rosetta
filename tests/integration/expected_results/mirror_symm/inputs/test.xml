@@ -1,0 +1,110 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+		<tala_symm weights="talaris2014.wts" symmetric=true >
+			Reweight scoretype=aa_composition weight=1.0 />
+		</tala_symm>
+		<tala_symm_aacomp weights="talaris2014.wts" symmetric=true >
+			<Reweight scoretype=aa_composition weight=1.0 />
+			<Reweight scoretype=atom_pair_constraint weight=1.0 />
+			<Reweight scoretype=angle_constraint weight=1.0 />
+			<Reweight scoretype=dihedral_constraint weight=1.0 />
+		</tala_symm_aacomp>
+
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name=select_core select_core=true select_boundary=false select_surface=false core_cutoff=3.5 surface_cutoff=2 />
+		<Layer name=select_boundary select_core=false select_boundary=true select_surface=false core_cutoff=3.5 surface_cutoff=2 />
+		<Layer name=select_surface select_core=false select_boundary=false select_surface=true core_cutoff=3.5 surface_cutoff=2 />
+		
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	
+		<RestrictToRepacking name=nodesign />
+
+		<ReadResfile name=allowed_core filename="inputs/resfile_core.txt" selector=select_core />
+		<ReadResfile name=allowed_boundary filename="inputs/resfile_boundary.txt" selector=select_boundary />
+		<ReadResfile name=allowed_surface filename="inputs/resfile_surface.txt" selector=select_surface />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length=12 scorefxn="tala" set_bondlengths=true set_bondangles=true set_dihedrals=true
+			nstruct_mode=1 nstruct_repeats=1 use_degrees=true max_samples=100
+			r0=5 omega0=0 delta_omega0=0 delta_omega1_min=70 delta_omega1_max=130 delta_omega1_samples=3
+			z1_offset=0.75
+			delta_t=0 >
+			<Helix />
+		</BundleGridSampler>
+		
+		<AtomTree name=foldtree1 fold_tree_file="inputs/foldtree.txt" />
+	
+		<SetupForSymmetry name=setup_symm definition="inputs/c2m.symm" />
+	
+		<DeclareBond name=connect_ends res1=24 res2=1 atom1=C atom2=N />
+
+		<AddCompositionConstraintMover name=aacomp filename="inputs/design.comp" />
+		
+		<MutateResidue name=mut11 target=11 new_res="GLY" />
+		<MutateResidue name=mut12 target=12 new_res="GLY" />
+		<MutateResidue name=mut13 target=13 new_res="GLY" />
+		<MutateResidue name=mut14 target=14 new_res="GLY" />
+		
+		<ConstraintSetMover name=constrain_pepbonds add_constraints=1 cst_file="inputs/constraints.cst" />
+		
+		<FastDesign name=fdes scorefxn="tala_symm_aacomp" repeats=1 relaxscript="inputs/fastdesign.txt"  task_operations=allowed_core,allowed_boundary,allowed_surface >
+			<MoveMap name=fdes_mm>
+				<Span begin=1 end=999 bb=1 chi=1 />
+			</MoveMap>
+		</FastDesign>
+
+		<SymPackRotamersMover name=pack scorefxn="tala_symm_aacomp" task_operations=allowed_core,allowed_boundary,allowed_surface />
+
+		<SymMinMover name=min scorefxn="tala_symm" bb=1 chi=1 jump=ALL >
+			<MoveMap name=min_mm>
+				<Span begin=1 end=999 bb=1 chi=1 />
+			</MoveMap>
+		</SymMinMover>
+	
+		<ParsedProtocol name=genkic_steps >
+			<Add mover=connect_ends />
+			<Add mover=fdes />
+			Add mover=pack />
+			Add mover=min />
+			<Add mover=connect_ends />
+		</ParsedProtocol>
+
+		<GeneralizedKIC name=genkic closure_attempts=1200 stop_when_n_solutions_found=1 selector=lowest_energy_selector selector_scorefunction=tala_symm_aacomp pre_selection_mover=genkic_steps >
+			<AddResidue res_index=11 />
+			<AddResidue res_index=12 />
+			<AddResidue res_index=13 />
+			<AddResidue res_index=14 />
+			<SetPivots res1=11 res2=13 res3=14 atom1="CA" atom2="CA" atom3="CA" />
+			<CloseBond res1=12 res2=13 atom1="C" atom2="N" torsion=180 angle1=116.199993 angle2=121.699997 bondlength=1.328685 />
+			<AddPerturber effect="randomize_alpha_backbone_by_rama">
+				<AddResidue index=14 />
+				<AddResidue index=13 />
+				<AddResidue index=12 />
+				<AddResidue index=11 />
+			</AddPerturber>
+		</GeneralizedKIC>		
+	
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bgs1 />
+		<Add mover=foldtree1 />
+		<Add mover=setup_symm />
+		<Add mover=connect_ends />
+		<Add mover=mut11 />
+		<Add mover=mut12 />
+		<Add mover=mut13 />
+		<Add mover=mut14 />
+		<Add mover=aacomp />
+		<Add mover=constrain_pepbonds />
+		<Add mover=genkic />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="tala_symm" />
+</ROSETTASCRIPTS>

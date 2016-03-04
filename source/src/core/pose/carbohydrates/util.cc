@@ -1240,7 +1240,7 @@ remove_carbohydrate_branch_point_variants( Pose & pose, core::Size const seqpos)
 
 
 			for ( core::Size i = 1; i <= branch_types.size(); ++i ) {
-			
+
 				//Must check current residue since we are editing - something gets strange with valgrind
 				//   since we replace the residue on variant type removal
 				if ( pose.residue(seqpos).has_variant_type( branch_types[ i ] ) ) {

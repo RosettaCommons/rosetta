@@ -61,7 +61,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	std::string psipred_cmd_;
 	core::io::external::PsiPredInterfaceOP psipred_interface_;
-	
+
 	protocols::ss_prediction::SS_predictorOP ss_predictor_;
 	protocols::jd2::parser::BluePrintOP blueprint_;
 	core::Real start_time_;

@@ -221,6 +221,11 @@ public:
 	void set_flat_score_multiply( Size const nres, Size const factor );
 	bool get_use_symmetry() const;
 
+	//fpd force a default score multiply factor
+	//    return true if any weights have changed
+	bool
+	reset_score_multiply_to_reasonable_default();
+
 	void set_use_symmetry( bool setting );  //fpd  used in silent file reading(?)
 
 	SymSlideInfo get_slide_info() const;

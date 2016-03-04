@@ -24,6 +24,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>             // for altern...
 #include <basic/options/keys/out.OptionKeys.gen.hh>            // for path, pdb
 #include <basic/options/keys/score.OptionKeys.gen.hh>          // for no_pro...
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
 #include <basic/options/option.cc.gen.hh>                      // for add_al...
 
@@ -125,6 +126,17 @@ process()
 			}
 			alt_codes_list.push_back( "glycam.codes" );
 			option[ in::alternate_3_letter_codes ].value( alt_codes_list );
+		}
+	}
+
+	//fd crystal stuff
+	{
+		using namespace basic::options::OptionKeys;
+
+		if ( option[ symmetry::symmetry_definition ].user() ) {
+			if ( option[ symmetry::symmetry_definition ]() == "CRYST1" ) {
+				option[ in::preserve_crystinfo ].value( true );
+			}
 		}
 	}
 

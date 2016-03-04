@@ -95,7 +95,7 @@ public:
 		return lookup_closest_fragment(query_coordinates);
 	}
 
-		// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
+	// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
 	template<class xyzVectorIterator>
 	FragmentLookupResult lookup_closest_fragment_subset(xyzVectorIterator input, std::vector<bool> subset)
 	{

@@ -20,6 +20,7 @@
 
 // Package Headers
 #include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Utility Headers
@@ -87,6 +88,14 @@ public:
 	virtual
 	uint
 	moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) const = 0;
+
+	/// @brief Give the pose a chance to stash any data needed by the _rotset_
+	///        need nonconst access to pose
+	virtual
+	void
+	initialize_pose_for_rotsets_creation(
+		pose::Pose & pose
+	) const = 0;
 
 	virtual
 	void

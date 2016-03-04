@@ -378,7 +378,6 @@ public:
 			scorefxn->show(TR, pose);
 		}
 
-
 		bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
 		bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
 		std::string minimizer_name = option[ OptionKeys::min::minimizer ]();

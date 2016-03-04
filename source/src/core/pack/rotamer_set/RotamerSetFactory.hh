@@ -38,7 +38,7 @@ class RotamerSetFactory : public utility::pointer::ReferenceCount
 {
 public:
 	virtual ~RotamerSetFactory();
-	RotamerSetOP create_rotamer_set( conformation::Residue const & );
+	virtual RotamerSetOP create_rotamer_set( conformation::Residue const & );
 
 };
 

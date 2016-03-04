@@ -154,6 +154,38 @@ public:
 		//std::cout << "Symmetric score after: " << (* scorefxn )( pose ) << std::endl;
 	}
 
+	//fpd test with mirror symmetry
+	void test_cs_symm_score() {
+		using namespace core;
+		using namespace pose;
+		using namespace conformation::symmetry;
+		using namespace optimization;
+		using namespace optimization::symmetry;
+
+		core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/Cs.sdef -symmetry:initialize_rigid_body_dofs" );
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/optimization/symmetry/Cs_INPUT.pdb" , core::import_pose::PDB_file); // the minimized structure gives better derivative agreement
+
+		core::pose::symmetry::make_symmetric_pose( pose );
+
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
+		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = utility::pointer::dynamic_pointer_cast< scoring::symmetry::SymmetricScoreFunction > ( scorefxn );
+
+		//std::cout << "Symmetric score cs: " << (* scorefxn )( pose ) << std::endl;
+		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
+
+		SymmetricConformation const & SymmConf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+		assert( conformation::symmetry::is_symmetric( SymmConf ) );
+		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
+		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
+		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+
+		SymmetricAtomDerivValidator sadv( pose, *sym_scorefxn, *mm );
+		sadv.simple_deriv_check( true, 5e-4 );
+	}
+
 	void test_c3_symm_score() {
 		using namespace core;
 		using namespace pose;

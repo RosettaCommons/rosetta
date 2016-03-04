@@ -50,7 +50,7 @@ MergeFragSetMoverCreator::create_mover() const {
 MergeFragSetMover::MergeFragSetMover():moves::Mover("MergeFragSetMover"){}
 
 void MergeFragSetMover::apply(core::pose::Pose & pose) {
-    TR << pose.total_residue();
+	TR << pose.total_residue();
 }
 
 std::string MergeFragSetMover::get_name() const {
@@ -59,19 +59,19 @@ std::string MergeFragSetMover::get_name() const {
 
 // void
 // MergeFragSetMover::parse_my_tag(
-// 	utility::tag::TagCOP tag,
-// 	basic::datacache::DataMap & datamap,
-// 	protocols::filters::Filters_map const &,
-// 	protocols::moves::Movers_map const &,
-// 	core::pose::Pose const & ){
+//  utility::tag::TagCOP tag,
+//  basic::datacache::DataMap & datamap,
+//  protocols::filters::Filters_map const &,
+//  protocols::moves::Movers_map const &,
+//  core::pose::Pose const & ){
 // }
 
 void MergeFragSetMover::parse_my_tag(
- utility::tag::TagCOP,
- basic::datacache::DataMap &,
- protocols::filters::Filters_map const &,
- protocols::moves::Movers_map const &,
- core::pose::Pose const & ){
+	utility::tag::TagCOP,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & ){
 }
 
 }//frag_movers

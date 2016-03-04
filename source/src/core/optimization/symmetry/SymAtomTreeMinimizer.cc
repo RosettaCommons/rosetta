@@ -46,12 +46,32 @@
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
-
 using namespace ObjexxFCL::format;
 
 namespace core {
 namespace optimization {
 namespace symmetry {
+
+static THREAD_LOCAL basic::Tracer TR( "core.optimize" );
+
+///////////////////////////////////////////////////////////////////////////////
+// fpd  helper function
+//      for backwards compatability with old symmdef files,
+//      use a default definition for derivative weights when using the new minimizer
+void
+check_and_correct_edge_weights_for_new_minimizer (
+	pose::Pose & pose
+) {
+	core::conformation::symmetry::SymmetricConformation & symm_conf (
+		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
+	core::conformation::symmetry::SymmetryInfoOP symm_info( symm_conf.Symmetry_Info() );
+
+	bool warn = symm_info->reset_score_multiply_to_reasonable_default();
+	if ( warn ) {
+		TR << "Warning!  Updating SymmetryInfo to deal with new minimization scheme!\n";
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
@@ -73,20 +93,22 @@ SymAtomTreeMinimizer::run(
 	// it's important that the structure be scored prior to nblist setup
 	Real const start_score( scorefxn( pose ) );
 
-	// optionally try out a new approach to symmetric minimization
-	bool const new_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::new_sym_min ] );
-
+	// Phil's new approach is now default.
+	// old approach is still available with flag
+	bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
 	kinematics::MoveMap semisym_move_map;
-	// I worry about this routine (make_assymetric_movemap) since it does not see dofs that were set individually (FIX!)
-	if ( new_sym_min ) make_assymetric_movemap( pose, move_map, semisym_move_map ); // this is not quite right...
-	else make_semisymmetric_movemap( pose, move_map, semisym_move_map );
+	if ( !old_sym_min ) {
+		check_and_correct_edge_weights_for_new_minimizer( pose );
+		make_asymmetric_movemap( pose, move_map, semisym_move_map );
+	} else {
+		make_semisymmetric_movemap( pose, move_map, semisym_move_map );
+	}
 
 	SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-	// setup the minimizer map using the semi-symetric min map
-	SymMinimizerMap sym_min_map( pose, semisym_move_map, symm_info, new_sym_min );
+	SymMinimizerMap sym_min_map( pose, semisym_move_map, symm_info, !old_sym_min );
 
 	// if we are using the nblist, set it up
 	if ( use_nblist ) {
@@ -127,6 +149,7 @@ SymAtomTreeMinimizer::run(
 	//std::cout << "end_func:" << std::endl;
 	//pose.energies().show( std::cout );
 
+
 	// turn off nblist
 	if ( use_nblist ) pose.energies().reset_nblist();
 
@@ -146,8 +169,7 @@ SymAtomTreeMinimizer::run(
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
 
-	basic::Tracer core_optimize( "core.optimize", basic::t_debug );
-	core_optimize << "SymAtomTreeMinimizer::run: nangles= " << sym_min_map.nangles() <<
+	TR.Debug << "SymAtomTreeMinimizer::run: nangles= " << sym_min_map.nangles() <<
 		" start_score: " << F(12,3,start_score) <<
 		" start_func: "  << F(12,3,start_func ) <<
 		" end_score: "   << F(12,3,end_score  ) <<
@@ -157,6 +179,10 @@ SymAtomTreeMinimizer::run(
 	return end_score;
 }
 
+/////////////////////////////
+// OLD!
+//   semisymmetric movemap contains all ASU torsions + all ASU & cloned jumps movable
+/////////////////////////////
 void
 SymAtomTreeMinimizer::make_semisymmetric_movemap(
 	pose::Pose & pose,
@@ -165,7 +191,6 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 )
 {
 	using namespace core::conformation::symmetry;
-	//typedef SymmetryInfo::DOF_IDs DOF_IDs;
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
@@ -195,52 +220,153 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 			}
 		}
 	}
-
 }
 
 
-/// this routine will miss dofs that are set individually as opposed to the set_bb set_jump, etc,  instructions
+//
+// create a complete asymmetric movemap
 void
-SymAtomTreeMinimizer::make_assymetric_movemap(
+SymAtomTreeMinimizer::make_asymmetric_movemap(
 	pose::Pose & pose,
 	kinematics::MoveMap const & move_map_sym,
 	kinematics::MoveMap & move_map_asym
 )
 {
 	using namespace core::conformation::symmetry;
-	typedef SymmetryInfo::DOF_IDs DOF_IDs;
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	for ( Size i=1; i<= pose.conformation().size(); ++i ) {
-		if ( symm_info->bb_is_independent( i ) ) {
-			bool bb ( move_map_sym.get_bb(i) );
-			bool chi ( move_map_sym.get_chi(i) );
-			move_map_asym.set_bb ( i, bb );
-			move_map_asym.set_chi( i, chi );
-			for ( std::vector< Size>::const_iterator
-					clone     = symm_info->bb_clones( i ).begin(),
-					clone_end = symm_info->bb_clones( i ).end();
-					clone != clone_end; ++clone ) {
-				move_map_asym.set_bb ( *clone, bb );
-				move_map_asym.set_chi( *clone, chi );
+	//
+	using namespace core::kinematics;
+
+	for ( MoveMap::TorsionTypeMap::const_iterator it=move_map_sym.torsion_type_begin(), it_end=move_map_sym.torsion_type_end();
+			it !=it_end; it++ ) {
+		move_map_asym.set( it->first, it->second );
+	}
+
+	for ( MoveMap::DOF_TypeMap::const_iterator it=move_map_sym.dof_type_begin(), it_end=move_map_sym.dof_type_begin();
+			it !=it_end; it++ ) {
+		move_map_asym.set( it->first, it->second );
+	}
+
+	// iterate (and symmetrize)
+	// 1) MoveMapTorsionIDs
+	for ( MoveMap::MoveMapTorsionID_Map::const_iterator it=move_map_sym.movemap_torsion_id_begin(), it_end=move_map_sym.movemap_torsion_id_end();
+			it !=it_end; it++ ) {
+		Size res = it->first.first;
+		if ( it->first.second == id::JUMP ) {
+			int const jnr ( res );
+			if ( symm_info->jump_is_independent( jnr ) ) {
+				move_map_asym.set( it->first, it->second );
+				for ( std::vector< Size>::const_iterator
+						clone     = symm_info->jump_clones( jnr ).begin(),
+						clone_end = symm_info->jump_clones( jnr ).end();
+						clone != clone_end; ++clone ) {
+					MoveMap::MoveMapTorsionID mmid_new = it->first;
+					mmid_new.first = *clone;
+					move_map_asym.set( mmid_new, it->second );
+				}
+			}
+		} else {
+			if ( symm_info->bb_is_independent( res ) ) {
+				move_map_asym.set( it->first, it->second );
+				for ( std::vector< Size>::const_iterator
+						clone     = symm_info->bb_clones( res ).begin(),
+						clone_end = symm_info->bb_clones( res ).end();
+						clone != clone_end; ++clone ) {
+					MoveMap::MoveMapTorsionID mmid_new = it->first;
+					mmid_new.first = *clone;
+					move_map_asym.set( mmid_new, it->second );
+				}
 			}
 		}
 	}
-	for ( Size i=1; i<= pose.conformation().fold_tree().num_jump(); ++i ) {
-		if ( symm_info->jump_is_independent( i ) ) {
-			for ( int j=1; j<= 6; ++j ) {
-				id::DOF_ID const & id
-					( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,j)));
-				DOF_IDs const & dofs( symm_info->dependent_dofs( id, SymmConf ) );
-				bool allow ( move_map_sym.get( id ) );
-				move_map_asym.set(id, allow );
-				for ( DOF_IDs::const_iterator dof =dofs.begin(), dofe= dofs.end(); dof != dofe; ++dof ) {
-					move_map_asym.set( *dof, allow );
+
+	// 2) TorsionIDs
+	for ( MoveMap::TorsionID_Map::const_iterator it=move_map_sym.torsion_id_begin(), it_end=move_map_sym.torsion_id_end();
+			it !=it_end; it++ ) {
+		Size res = it->first.rsd();
+		if ( it->first.type() == id::JUMP ) {
+			int const jnr ( res ); // i think...
+			if ( symm_info->jump_is_independent( jnr ) ) {
+				move_map_asym.set( it->first, it->second );
+				for ( std::vector< Size>::const_iterator
+						clone     = symm_info->jump_clones( jnr ).begin(),
+						clone_end = symm_info->jump_clones( jnr ).end();
+						clone != clone_end; ++clone ) {
+					MoveMap::TorsionID mmid_new = it->first;
+					mmid_new.rsd() = *clone;
+					move_map_asym.set( mmid_new, it->second );
 				}
+			}
+		} else {
+			if ( symm_info->bb_is_independent( res ) ) {
+				move_map_asym.set( it->first, it->second );
+				for ( std::vector< Size>::const_iterator
+						clone     = symm_info->bb_clones( res ).begin(),
+						clone_end = symm_info->bb_clones( res ).end();
+						clone != clone_end; ++clone ) {
+					MoveMap::TorsionID mmid_new = it->first;
+					mmid_new.rsd() = *clone;
+					move_map_asym.set( mmid_new, it->second );
+				}
+			}
+		}
+	}
+
+	// 3) DOF_IDs
+	for ( MoveMap::DOF_ID_Map::const_iterator it=move_map_sym.dof_id_begin(), it_end=move_map_sym.dof_id_end();
+			it !=it_end; it++ ) {
+		Size res = it->first.rsd();
+		if ( it->first.type() >= id::RB1 && it->first.type() <= id::RB6 ) {
+			int const jnr ( pose.fold_tree().get_jump_that_builds_residue( res ) );
+			if ( symm_info->jump_is_independent( jnr ) ) {
+				move_map_asym.set( it->first, it->second );
+				for ( std::vector< Size>::const_iterator
+						clone     = symm_info->jump_clones( jnr ).begin(),
+						clone_end = symm_info->jump_clones( jnr ).end();
+						clone != clone_end; ++clone ) {
+					Size resnum = pose.fold_tree().downstream_jump_residue(*clone);
+					MoveMap::DOF_ID mmid_new ( id::AtomID( it->first.atomno(), resnum ), it->first.type() );
+					move_map_asym.set( mmid_new, it->second );
+				}
+			}
+		} else {
+			if ( symm_info->bb_is_independent( res ) ) {
+				move_map_asym.set( it->first, it->second );
+				for ( std::vector< Size>::const_iterator
+						clone     = symm_info->bb_clones( res ).begin(),
+						clone_end = symm_info->bb_clones( res ).end();
+						clone != clone_end; ++clone ) {
+					MoveMap::DOF_ID mmid_new ( id::AtomID( it->first.atomno(), *clone ), it->first.type() );
+					move_map_asym.set( mmid_new, it->second );
+				}
+			}
+		}
+	}
+
+	// 4) JumpIDs -- not sure how much these are used ... and if this logic is right ...
+	for ( MoveMap::JumpID_Map::const_iterator it=move_map_sym.jump_id_begin(), it_end=move_map_sym.jump_id_end();
+			it !=it_end; it++ ) {
+		Size res1 = it->first.rsd1(), res2 = it->first.rsd2();
+
+		// is this a jump?
+		int jnr = pose.fold_tree().jump_nr( res1,res2 );
+		if ( jnr==0 ) jnr = pose.fold_tree().jump_nr( res2,res1 );
+
+		if ( jnr != 0 && symm_info->jump_is_independent( jnr ) ) {
+			move_map_asym.set_jump( it->first, it->second );
+			for ( std::vector< Size>::const_iterator
+					clone     = symm_info->jump_clones( jnr ).begin(),
+					clone_end = symm_info->jump_clones( jnr ).end();
+					clone != clone_end; ++clone ) {
+				id::JumpID mmid_new(
+					pose.fold_tree().upstream_jump_residue(*clone),
+					pose.fold_tree().downstream_jump_residue(*clone) );
+				move_map_asym.set_jump( mmid_new, it->second );
 			}
 		}
 	}
