@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/fldsgn/SheetConstraintsRCG.FWD_hh
+/// @file protocols/fldsgn/SheetConstraintGenerator.FWD_hh
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
 
 
-#ifndef INCLUDED_protocols_fldsgn_SheetConstraintsRCG_fwd_hh
-#define INCLUDED_protocols_fldsgn_SheetConstraintsRCG_fwd_hh
+#ifndef INCLUDED_protocols_fldsgn_SheetConstraintGenerator_fwd_hh
+#define INCLUDED_protocols_fldsgn_SheetConstraintGenerator_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace fldsgn {
 
-class SheetConstraintsRCG;
-typedef utility::pointer::shared_ptr< SheetConstraintsRCG > SheetConstraintsRCGOP;
+class SheetConstraintGenerator;
+typedef utility::pointer::shared_ptr< SheetConstraintGenerator > SheetConstraintGeneratorOP;
 
 } //namespace fldsgn
 } //namespace protocols
 
 
-#endif // INCLUDED_protocols_forge_remodel_SheetConstraintsRCG_HH
+#endif // INCLUDED_protocols_forge_remodel_SheetConstraintGenerator_HH

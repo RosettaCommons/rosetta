@@ -16,11 +16,13 @@
 
 
 // Project Headers
+#include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/DimerPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // utility headers
 #include <utility/string_util.hh>
+#include <utility/stream_util.hh>
 #include <utility/exit.hh>
 
 
@@ -54,8 +56,9 @@ StrandPairing::StrandPairing():
 	end2_( 0 ),
 	rgstr_shift_( 99 ),
 	orient_( 'N' ),
-	has_bulge_( false ),
-	name_( "" )
+	name_( "" ),
+	bulges1_(),
+	bulges2_()
 {}
 
 
@@ -77,7 +80,9 @@ StrandPairing::StrandPairing(
 	end2_( b2 ),
 	rgstr_shift_( rs ),
 	orient_( o ),
-	has_bulge_( false )
+	name_( "" ),
+	bulges1_(),
+	bulges2_()
 {
 	runtime_assert( s1 < s2 );
 	runtime_assert( b1 < b2 );
@@ -104,7 +109,9 @@ StrandPairing::StrandPairing(
 	end2_( 0 ),
 	rgstr_shift_( rs ),
 	orient_( o ),
-	has_bulge_( false )
+	name_( "" ),
+	bulges1_(),
+	bulges2_()
 {
 	runtime_assert( s1 < s2 );
 	initialize();
@@ -117,7 +124,9 @@ StrandPairing::StrandPairing( String const & spair ):
 	end1_( 0 ),
 	begin2_( 0 ),
 	end2_( 0 ),
-	has_bulge_( false )
+	name_( spair ),
+	bulges1_(),
+	bulges2_()
 {
 	utility::vector1< String > parts( utility::string_split( spair, '.' ) );
 	runtime_assert( parts.size() == 3 );
@@ -130,8 +139,6 @@ StrandPairing::StrandPairing( String const & spair ):
 	orient_ = parts[2][0];
 	runtime_assert( orient_ == 'P' || orient_ == 'A' || orient_ == 'N'  );
 	rgstr_shift_ = boost::lexical_cast<Real>( parts[3] );
-
-	name_ = spair;
 }
 
 
@@ -142,25 +149,6 @@ StrandPairing::initialize()
 	using namespace boost;
 	name_ = lexical_cast<String>(s1_) + '-' + lexical_cast<String>(s2_) + '.' + orient_ + '.'+ lexical_cast<String>(rgstr_shift_);
 }
-
-
-/// @brief copy constructor
-StrandPairing::StrandPairing( StrandPairing const & sp ) :
-	ReferenceCount(),
-	s1_( sp.s1_ ),
-	s2_( sp.s2_ ),
-	begin1_( sp.begin1_ ),
-	end1_( sp.end1_ ),
-	begin2_( sp.begin2_ ),
-	end2_( sp.end2_ ),
-	pleats1_( sp.pleats1_ ),
-	pleats2_( sp.pleats2_ ),
-	rgstr_shift_( sp.rgstr_shift_ ),
-	orient_( sp.orient_ ),
-	has_bulge_( sp.has_bulge_ ),
-	name_( sp.name_ ),
-	residue_pair_( sp.residue_pair_ )
-{}
 
 
 /// @brief default destructor
@@ -222,9 +210,11 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 	end1_ = r1;
 	end2_ = r2;
 
+	/*
 	if ( size1() != size2() ) {
 		has_bulge_ = true;
 	}
+	*/
 
 	return true;
 }
@@ -263,9 +253,11 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 		end2_ = r2;
 	}
 
+	/*
 	if ( size1() != size2() ) {
 		has_bulge_ = true;
 	}
+	*/
 	return true;
 }
 
@@ -334,45 +326,71 @@ StrandPairing::residue_pair( Size const res ) const
 	return it->second;
 }
 
-/// @brief reset begin1_, end1_, begin2_, end2_ based on ssinfo
-void
-StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
+std::set< core::Size >
+compute_bulges( core::Size const strand_begin, core::Size const strand_end, utility::vector1< String > const & abego )
 {
-	Real ir_ist = ss_info->strand( s1_ )->begin();
-	Real len_ist = ss_info->strand( s1_ )->length();
-	Real ir_jst = ss_info->strand( s2_ )->begin();
-	Real er_jst = ss_info->strand( s2_ )->end();
-	Real len_jst = ss_info->strand( s2_ )->length();
+	std::set< core::Size > bulges;
+	if ( abego.empty() ) return bulges;
 
-	Real start_ist, start_jst, len,inc;
+	TR << "Computing bulges between " << strand_begin << " and " << strand_end << std::endl;
+	// here it is assumed SS=E
+	for ( core::Size resid=strand_begin; resid<=strand_end; ++resid ) {
+		if ( abego[resid] == "A" ) bulges.insert( resid );
+	}
+	return bulges;
+}
+
+
+/// @brief reset begin1_, end1_, begin2_, end2_ based on ssinfo
+/// @detailed abego is used for determining proper pairings in bulges
+void
+StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1< String > const & abego )
+{
+	if ( rgstr_shift_ == 99 ) {
+		TR << "Skipping determining residue pairs, as all register shifts (99) are given as valid." << std::endl;
+		return;
+	}
+	TR << "strand1=" << s1_ << "(" << ss_info->strand( s1_ )->begin() << "," << ss_info->strand( s1_ )->end() << ") " << std::endl;
+	TR << "strand2=" << s2_ << "(" << ss_info->strand( s1_ )->begin() << "," << ss_info->strand( s2_ )->end() << ") " << std::endl;
+	TR << "abego=" <<  abego<< std::endl;
+	bulges1_ = compute_bulges( ss_info->strand( s1_ )->begin(), ss_info->strand( s1_ )->end(), abego );
+	bulges2_ = compute_bulges( ss_info->strand( s2_ )->begin(), ss_info->strand( s2_ )->end(), abego );
+	TR << "Bulges1: " << bulges1_ << " Bulges2: " << bulges2_ << std::endl;
+
+	Size const s1_begin = ss_info->strand( s1_ )->begin();
+	Size const s1_len = ss_info->strand( s1_ )->length() - bulges1_.size();
+	Size const s2_begin = ss_info->strand( s2_ )->begin();
+	Size const s2_end = ss_info->strand( s2_ )->end();
+	Size const s2_len = ss_info->strand( s2_ )->length() - bulges2_.size();
+
+	Size s1_pair_start, s2_pair_start, len;
+	int inc = 1;
 
 	if ( is_parallel() ) { // parallel
-
-		inc = 1;
-
 		if ( rgstr_shift_ >= 0 ) {
-			start_ist = ir_ist + rgstr_shift_;
-			start_jst = ir_jst;
-			if ( len_ist >= (len_jst+rgstr_shift_) ) {
+			s1_pair_start = s1_begin + rgstr_shift_;
+			s2_pair_start = s2_begin;
+
+			if ( s1_len >= (s2_len+rgstr_shift_) ) {
 				//  i =========>
 				//  j   =====>
-				len = len_jst;
+				len = s2_len;
 			} else {
 				//  i =========>
 				//  j   ==========>
-				len = len_ist - rgstr_shift_;
+				len = s1_len - rgstr_shift_;
 			}
 		} else {
-			start_ist = ir_ist;
-			start_jst = ir_jst - rgstr_shift_;
-			if ( len_ist >= (len_jst+rgstr_shift_) ) {
+			s1_pair_start = s1_begin;
+			s2_pair_start = s2_begin - rgstr_shift_;
+			if ( s1_len >= (s2_len+rgstr_shift_) ) {
 				//  i      ==========>
 				//  j   ==========>
-				len = len_jst + rgstr_shift_;
+				len = s2_len + rgstr_shift_;
 			} else {
 				//  i      =====>
 				//  j   ==========>
-				len = len_ist ;
+				len = s1_len;
 			}
 		}
 
@@ -381,45 +399,58 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
 		inc = -1;
 
 		if ( rgstr_shift_ >= 0 ) {
-			start_ist = ir_ist + rgstr_shift_;
-			start_jst = er_jst;
-			if ( len_ist >= (len_jst+rgstr_shift_) ) {
+			s1_pair_start = s1_begin + rgstr_shift_;
+			s2_pair_start = s2_end;
+			if ( s1_len >= (s2_len+rgstr_shift_) ) {
 				//  i   ==========>
 				//  j     <=====
-				len = len_jst;
+				len = s2_len;
 			} else {
 				//  i   =========>
 				//  j      <=========
-				len = len_ist - rgstr_shift_;
+				len = s1_len - rgstr_shift_;
 			}
 
 		} else {
 
-			start_ist = ir_ist;
-			start_jst = er_jst + rgstr_shift_;
-			if ( len_ist >= (len_jst+rgstr_shift_) ) {
+			s1_pair_start = s1_begin;
+			s2_pair_start = s2_end + rgstr_shift_;
+			if ( s1_len >= (s2_len+rgstr_shift_) ) {
 				//  i     =========>
 				//  j  <=========
-				len = len_jst + rgstr_shift_;
+				len = s2_len + rgstr_shift_;
 			} else {
 				//  i     =========>
 				//  j  <==============
-				len = len_ist;
+				len = s1_len;
 			}
 
 		} // if( rgstr_shift_ >= 0 )
 	} // if is_parallel ?
 
 
-	for ( Size i=1; i<=len ; i++ ) {
-		runtime_assert( start_ist > 0 && start_jst > 0 );
-		if ( ! elongate( Size( start_ist ), Size( start_jst ), 0, 0 ) ) {
+	for ( Size i=1; i<=len; i++ ) {
+		TR.Debug << "elongating to include " << s1_pair_start << " " << s2_pair_start << std::endl;
+		// if this residue is a bulge on strand 1, skip it
+		if ( bulges1_.find( s1_pair_start ) != bulges1_.end() ) {
+			++s1_pair_start;
+			--i;
+			continue;
+		}
+		// if this residue is a bulge on strand 2, skip it
+		if ( bulges2_.find( s2_pair_start ) != bulges2_.end() ) {
+			s2_pair_start += inc;
+			--i;
+			continue;
+		}
+		runtime_assert( s1_pair_start > 0 && s2_pair_start > 0 );
+		if ( ! elongate( s1_pair_start, s2_pair_start, 0, 0 ) ) {
 			TR << "elongation failed ! " << std::endl;
 			runtime_assert( false );
 		}
 
-		start_ist ++;
-		start_jst += inc;
+		++s1_pair_start;
+		s2_pair_start += inc;
 	}
 
 }
@@ -458,18 +489,21 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 		return;
 	}
 
-	utility::vector1< String > spairs( utility::string_split( spairstring, ';' ) );
-	for ( utility::vector1< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter ) {
-		String spair( *iter );
-		StrandPairingOP sp( new StrandPairing( spair ) );
-		if ( ssinfo ) {
-			sp->redefine_begin_end( ssinfo );
-		}
-		push_back( sp );
-	}
+	initialize_by_sspair_string( spairstring, ssinfo );
 	finalize();
 }
 
+/// @brief value constructor
+StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo, utility::vector1< String > const & abego ):
+	spairset_name_( "" ),
+	num_strands_( 0 ),
+	finalized_( false ),
+	empty_( StrandPairingOP( new StrandPairing ) )
+{
+	if ( spairstring == "" ) return;
+	initialize_by_sspair_string_and_abego( spairstring, ssinfo, abego );
+	finalize();
+}
 
 /// @brief value constructor
 StrandPairingSet::StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs ):
@@ -769,6 +803,27 @@ StrandPairingSet::make_strand_neighbor_two()
 	}
 
 }
+
+void
+StrandPairingSet::initialize_by_sspair_string( String const & spairstring, SS_Info2_COP const ssinfo )
+{
+	initialize_by_sspair_string_and_abego( spairstring, ssinfo, utility::vector1< String >() );
+}
+
+void
+StrandPairingSet::initialize_by_sspair_string_and_abego( String const & spairstring, SS_Info2_COP const ssinfo, utility::vector1< String > const & abego )
+{
+	utility::vector1< String > spairs( utility::string_split( spairstring, ';' ) );
+	for ( utility::vector1< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter ) {
+		String spair( *iter );
+		StrandPairingOP sp( new StrandPairing( spair ) );
+		if ( ssinfo ) {
+			sp->redefine_begin_end( ssinfo, abego );
+		}
+		push_back( sp );
+	}
+}
+
 
 /// @brief initialize StrandPairingSet based on dimer_pairs ( under developed )
 void

@@ -11,9 +11,6 @@
 /// @brief
 /// @author Nobuyasu Koga (nobuyasua@uw.edu)
 
-#ifndef INCLUDED_protocols_flxbb_utility_HH
-#define INCLUDED_protocols_flxbb_utility_HH
-
 // Unit headers
 #include <protocols/flxbb/utility.hh>
 
@@ -274,4 +271,3 @@ find_ligands( Pose const & pose )
 } //namespace flxbb
 } //namespace protocols
 
-#endif

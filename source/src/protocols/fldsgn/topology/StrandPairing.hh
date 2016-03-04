@@ -27,6 +27,7 @@
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <utility/vector1.hh>
 #include <map>
+#include <set>
 #include <string>
 
 
@@ -70,9 +71,6 @@ public:// construct/destruct
 
 	/// @brief copy constructor
 	StrandPairing( String const & spair);
-
-	/// @brief copy constructor
-	StrandPairing( StrandPairing const & sp );
 
 	/// @brief default destructor
 	virtual ~StrandPairing();
@@ -119,7 +117,10 @@ public: //accessors
 	inline char orient() const { return orient_; }
 
 	/// @brief whether the strand pairing have bulge or not
-	inline bool has_bulge() const { return has_bulge_; }
+	inline bool has_bulge() const { return ( !bulges1_.empty() ) || ( !bulges2_.empty() ); }
+
+	/// @brief whethe the given residue number is a bulge
+	bool is_bulge( Size const resid ) const { return ( bulges1_.find( resid ) != bulges1_.end() ) || ( bulges2_.find( resid ) != bulges2_.end() ); }
 
 	/// @brief StrandPairing is descripbed as s1()-s2().orient().rgstr_shift()
 	/// For example, 2-3.A.1 means 2nd and 3rd strands make anti-parallel strand_pairing with register shift 1
@@ -154,7 +155,8 @@ public:
 	bool is_member( Size const res );
 
 	/// @brief reset begin1_, begin2_, and end1_, end2_ based on ssinfo
-	void redefine_begin_end( SS_Info2_COP const ss_info );
+	/// @detailed abego is used for obtaining bulge information if it is non-empty
+	void redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1< String > const & abego );
 
 
 private: // initialize
@@ -185,16 +187,17 @@ private:  // data
 	/// if not defined, "N"
 	char orient_;
 
-	/// @brief
-	bool has_bulge_;
-
 	/// @brief strand_pairing as in the style: s1_-s2_.orient_.rgstr_shift_
 	String name_;
 
 	/// @brief residue pair
 	std::map< Size, Size > residue_pair_;
 
+	/// @brief list of bulges in strand 1
+	std::set< Size > bulges1_;
 
+	/// @brief list of bulges in strand 2
+	std::set< Size > bulges2_;
 };
 
 
@@ -226,6 +229,9 @@ public:// construct/destruct
 
 	/// @brief value constructor
 	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo = NULL );
+
+	/// @brief value constructor
+	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo, utility::vector1< String > const & abego );
 
 	/// @brief copy constructor
 	StrandPairingSet( StrandPairingSet const & s );
@@ -312,10 +318,14 @@ public:
 	/// @brief finalize this and create_map_strand_pairings
 	void finalize();
 
+protected:
+	void initialize_by_sspair_string( String const & spairstring, SS_Info2_COP const ssinfo );
+	void initialize_by_sspair_string_and_abego(
+		String const & spairstring,
+		SS_Info2_COP const ssinfo,
+		utility::vector1< String > const & abego );
 
 private:
-
-
 	void initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs );
 
 

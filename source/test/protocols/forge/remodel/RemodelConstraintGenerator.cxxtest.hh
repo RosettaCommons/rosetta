@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <protocols/forge/constraints/RemoveCsts.hh>
-#include <protocols/fldsgn/SheetConstraintsRCG.hh>
+#include <protocols/fldsgn/SheetConstraintGenerator.hh>
 //#include <protocols/fldsgn/HSSTripletRCG.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -58,9 +58,9 @@ public:
 	RemodelConstraintGeneratorTest() {};
 
 	core::scoring::ScoreFunctionOP scorefxn;
-	protocols::fldsgn::SheetConstraintsRCGOP sheet_csts;
+	protocols::fldsgn::SheetConstraintGeneratorOP sheet_csts;
 	protocols::forge::constraints::RemoveCsts rm_csts;
-	protocols::fldsgn::SheetConstraintsRCGOP sheet_csts_badpair;
+	protocols::fldsgn::SheetConstraintGeneratorOP sheet_csts_badpair;
 	//protocols::fldsgn::HSSTripletRCGOP hss_csts;
 
 	// Shared initialization goes here.
@@ -71,17 +71,14 @@ public:
 		scorefxn->set_weight( scoring::atom_pair_constraint, 1.0);
 		scorefxn->set_weight( scoring::angle_constraint, 1.0);
 		scorefxn->set_weight( scoring::dihedral_constraint, 1.0);
-		sheet_csts = protocols::fldsgn::SheetConstraintsRCGOP( new protocols::fldsgn::SheetConstraintsRCG() );
-		sheet_csts->set_blueprint( "protocols/forge/remodel/test.blueprint" );
-		sheet_csts_badpair = protocols::fldsgn::SheetConstraintsRCGOP( new protocols::fldsgn::SheetConstraintsRCG() );
-		sheet_csts_badpair->set_blueprint( "protocols/forge/remodel/bad_pair.blueprint" );
-		TR << "Setting generator for rm_csts" << std::endl;
+
+		sheet_csts = protocols::fldsgn::SheetConstraintGeneratorOP( new protocols::fldsgn::SheetConstraintGenerator() );
+		sheet_csts->initialize_from_blueprint( "protocols/forge/remodel/test.blueprint" );
+
+		sheet_csts_badpair = protocols::fldsgn::SheetConstraintGeneratorOP( new protocols::fldsgn::SheetConstraintGenerator() );
+		sheet_csts_badpair->initialize_from_blueprint( "protocols/forge/remodel/bad_pair.blueprint" );
+
 		rm_csts.set_generator( sheet_csts );
-		TR << "Done setting generator for rm_csts" << std::endl;
-		//readd_csts.cst_action( protocols::flxbb::ADD_PREGENERATED );
-		//readd_csts.set_blueprint( "protocols/flxbb/test.blueprint" );
-		//hss_csts = new protocols::fldsgn::HSSTripletRCG();
-		//hss_csts->set_blueprint( "protocols/forge/remodel/test.blueprint" );
 	}
 
 	// Shared finalization goes here.
@@ -130,7 +127,7 @@ public:
 		// first, we should try scoring a pose without constraints
 		core::pose::Pose pose_nocst;
 		core::import_pose::pose_from_file(pose_nocst, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
-		//core::Real no_cst_score( scorefxn->score( pose_nocst ) );
+		scorefxn->score( pose_nocst );
 		TR << "Before adding csts" << std::endl;
 		//scorefxn->show( TR, pose_nocst );  TR.flush();
 		core::Real dihedral_cst( pose_nocst.energies().total_energies()[ scoring::dihedral_constraint ] );
@@ -158,7 +155,7 @@ public:
 		// here, the constraint penalties should be 0 because the defaults are very forgiving
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ], 0.0, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 0.7491, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 0.7594, 1e-4 );
 
 		///////////////////////////////////////////////////////////////////////////////
 		// now, import a new pose and use tighter constraints
@@ -186,7 +183,7 @@ public:
 		// here, the constraint penalties should not be 0
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ], 10.8699, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1114, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1217, 1e-4 );
 
 		///////////////////////////////////////////////////////////////////////////////
 		// we should be able to remove the constraints.
@@ -212,7 +209,7 @@ public:
 		// check to make sure all values for constraints are properly 0
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ], 10.8699, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1114, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1217, 1e-4 );
 
 		///////////////////////////////////////////////////////////////////////////////
 		// when we ramp up the coefficient, the constraints created should be higher.
@@ -233,7 +230,7 @@ public:
 		// check to make sure all values for constraints are properly 0
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ], 54.3497, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 30.5570, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 30.6087, 1e-4 );
 		// reset weight back to 1.0
 		sheet_csts->set_weight( 1.0 );
 
@@ -242,7 +239,10 @@ public:
 		TS_ASSERT( testpose.remove_constraints() );
 		testpose.clear();
 		core::import_pose::pose_from_file( testpose, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
-		sheet_csts->set_constrain_dist_only( true );
+		sheet_csts->set_constrain_ca_ca_dist( true );
+		sheet_csts->set_constrain_bb_cacb_dihedral( false );
+		sheet_csts->set_constrain_bb_dihedral( false );
+		sheet_csts->set_constrain_bb_angle( false );
 		sheet_csts->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)16 );
 		scorefxn->score( testpose );
@@ -252,7 +252,10 @@ public:
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 0.0, 1e-4 );
 		// set to add angles/dihedrals again
-		sheet_csts->set_constrain_dist_only( false );
+		sheet_csts->set_constrain_ca_ca_dist( true );
+		sheet_csts->set_constrain_bb_cacb_dihedral( true );
+		sheet_csts->set_constrain_bb_dihedral( true );
+		sheet_csts->set_constrain_bb_angle( true );
 
 		///////////////////////////////////////////////////////////////////////////////
 		// TEST how well this function plays with existing constraints
@@ -288,7 +291,7 @@ public:
 		// check to make sure all values for constraints are properly 0
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ],11.5306, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1114, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1217, 1e-4 );
 
 		// now add another random cst
 		// LYS18 CB <--> ARG93 CB  dist=11.8
@@ -305,7 +308,7 @@ public:
 		// check to make sure all values for constraints are properly 0
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ],19.1303, 1e-4 );
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 0.0, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1114, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 6.1217, 1e-4 );
 
 		// now remove csts and there should only be 2
 		rm_csts.apply( testpose );
@@ -336,8 +339,8 @@ public:
 
 		//scorefxn->show( TR, testpose );    TR.flush();
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::atom_pair_constraint ], 9.5225, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 20.1780, 1e-4 );
-		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 230.7730, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::angle_constraint ], 20.2293, 1e-4 );
+		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 230.7833, 1e-4 );
 
 		// Remove constraints should be able to switch ids and remove the badpair_constraints
 		rm_csts.set_generator( sheet_csts_badpair );

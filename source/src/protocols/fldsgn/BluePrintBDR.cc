@@ -43,7 +43,7 @@
 #include <protocols/forge/constraints/NtoC_RCG.hh>
 #include <protocols/forge/constraints/ConstraintFileRCG.hh>
 #include <protocols/forge/constraints/InvrotTreeRCG.hh>
-#include <protocols/fldsgn/SheetConstraintsRCG.hh>
+#include <protocols/fldsgn/SheetConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh>
@@ -582,7 +582,10 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	if ( constraints_sheet_ > 0.0 ) {
-		SheetConstraintsRCGOP rcg( new SheetConstraintsRCG( blueprint_, constraints_sheet_ ) );
+		SheetConstraintGeneratorOP rcg( new SheetConstraintGenerator );
+		rcg->initialize_from_blueprint( blueprint_ );
+		rcg->set_weight( constraints_sheet_ );
+		//SheetConstraintsRCGOP rcg( new SheetConstraintsRCG( blueprint_, constraints_sheet_ ) );
 		vlb_->add_rcg( rcg );
 	}
 

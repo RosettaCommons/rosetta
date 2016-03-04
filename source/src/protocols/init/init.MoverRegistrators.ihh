@@ -137,7 +137,7 @@ static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryR
 static MoverRegistrator< fldsgn::BluePrintBDRCreator > reg_BluePrintBDRCreator;
 static MoverRegistrator< fldsgn::CircularPermutationCreator > reg_CircularPermutationCreator;
 static MoverRegistrator< protocols::fldsgn::MatchResiduesMoverCreator > reg_MatchResiduesMoverCreator;
-static MoverRegistrator< protocols::fldsgn::SheetCstGeneratorCreator > reg_SheetCstGeneratorCreator;
+static MoverRegistrator< protocols::fldsgn::SheetConstraintGeneratorCreator > reg_SheetConstraintGeneratorCreator;
 
 static MoverRegistrator< fldsgn::potentials::SetAACompositionPotentialCreator > reg_AACompositionPotentialCreator;
 static MoverRegistrator< fldsgn::potentials::SetSecStructEnergiesCreator > reg_SetSecStructEnergiesCreator;

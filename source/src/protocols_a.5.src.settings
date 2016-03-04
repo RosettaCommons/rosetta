@@ -51,7 +51,7 @@ sources = {
 		"BluePrintBDR",
 		"CircularPermutation",
 		"NcontactsCalculator",
-		"SheetConstraintsRCG",
+		"SheetConstraintGenerator",
 		"MatchResidues",
 		"MatchResiduesMover",
 	],

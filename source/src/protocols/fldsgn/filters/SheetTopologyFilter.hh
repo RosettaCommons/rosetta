@@ -100,7 +100,10 @@ public:// mutator
 	// @brief set filtered sheet_topology by SrandPairingSetOP
 	void filtered_sheet_topology( String const & sheet_topology );
 
+	void set_secstruct( std::string const & ss );
 
+	/// @brief if true, and secstruct is unset, dssp is used on the input.  Otherwise, the pose.secstruct() is used
+	void set_use_dssp( bool const use_dssp );
 public:// accessor
 
 
@@ -119,6 +122,11 @@ public:// parser
 
 public:// virtual main operation
 
+	/// @brief returns the fraction of pairings that pass the filter
+	virtual core::Real compute( Pose const & pose ) const;
+
+	/// @brief returns the fraction of pairings that pass
+	virtual core::Real report_sm( Pose const & pose ) const;
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
@@ -129,11 +137,21 @@ private:
 
 	String filtered_sheet_topology_;
 
-	bool secstruct_input_;
+	String secstruct_input_;
+
+	bool ignore_register_shift_;
+
+	bool use_dssp_;
 
 	SS_Info2_OP ssinfo_;
 
 };
+
+core::Size
+compute_paired_residues( topology::StrandPairingCOP filt_pair, topology::StrandPairingCOP pair );
+
+core::Size
+compute_total_paired_residues( topology::StrandPairingCOP filt_pair );
 
 } // filters
 } // fldsgn

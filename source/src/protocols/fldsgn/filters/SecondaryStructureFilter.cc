@@ -257,7 +257,7 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 		utility_exit_with_message("Length of input abego is not same as total residue of pose.");
 	}
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if this residue is a ligand, ignore and move on
 		if ( ! pose.residue( i ).is_protein() ) continue;
 
@@ -284,7 +284,7 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 		if ( ( filtered_abego_.size() >= 1 ) && use_abego_ ) {
 			String abego( filtered_abego_[ i ] );
 			bool flag( false );
-			for ( Size j = 1; j <= abego.size(); j++ ) {
+			for ( Size j=1; j<=abego.size(); ++j ) {
 				if ( abego_manager.check_rama( *abego.substr( j-1, 1 ).c_str(), pose.phi( i ), pose.psi( i ), pose.omega( i ) ) ) {
 					flag = true;
 				}

@@ -24,6 +24,7 @@
 // Package headers
 
 // Core headers
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -63,6 +64,12 @@ void construct_poly_ala_pose(
 	std::set< core::Size > const & res_set,
 	bool const keep_chirality=false
 );
+
+/// @brief builds an extended-conformation poly-XXX pose
+core::pose::PoseOP construct_dummy_pose( std::string const & restype_name );
+core::pose::PoseOP construct_dummy_pose( std::string const & restype_name, core::Size const length );
+core::pose::PoseOP construct_dummy_pose( core::chemical::ResidueType const & restype );
+core::pose::PoseOP construct_dummy_pose( core::chemical::ResidueType const & restype, core::Size const length );
 
 core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( basic::datacache::DataMap const & data, std::string const & name );

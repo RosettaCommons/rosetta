@@ -110,8 +110,12 @@ sources = {
 		"ReplicateFilter",
 	],
 
+	"fldsgn" : [
+		"SheetConstraintGenerator",
+	],
+
 	"fldsgn/filters" : [
-#"SheetTopologyFilter",
+		"SheetTopologyFilter",
 	],
 
 	"frag_picker" : [

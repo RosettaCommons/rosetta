@@ -25,6 +25,8 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 //Core Headers
+#include <core/chemical/util.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -159,6 +161,42 @@ void construct_poly_ala_pose(
 			true, // bool keep_gly,
 			keep_disulf ); // bool keep_disulfide_cys
 	}
+}
+
+core::pose::PoseOP
+construct_dummy_pose( std::string const & restype_name )
+{
+	return construct_dummy_pose( restype_name, 2 );
+}
+
+core::pose::PoseOP
+construct_dummy_pose( std::string const & restype_name, core::Size const length )
+{
+	core::chemical::ResidueTypeSetCOP typeset = core::chemical::rsd_set_from_cmd_line().lock();
+	core::chemical::ResidueType const & typ = typeset->name_map( restype_name );
+	return construct_dummy_pose( typ, length );
+}
+
+core::pose::PoseOP
+construct_dummy_pose( core::chemical::ResidueType const & restype )
+{
+	return construct_dummy_pose( restype, 2 );
+}
+
+core::pose::PoseOP
+construct_dummy_pose( core::chemical::ResidueType const & restype, core::Size length )
+{
+	debug_assert( length );
+	core::pose::PoseOP newp = core::pose::PoseOP( new core::pose::Pose() );
+	core::conformation::ResidueOP newres = core::conformation::ResidueFactory::create_residue( restype );
+	newp->append_residue_by_jump( *newres, 1 );
+	for ( core::Size i=1; i<=length-1; ++i ) {
+		newp->append_polymer_residue_after_seqpos( *newres, newp->total_residue(), true );
+		newp->set_omega( newp->total_residue()-1, 180.0 );
+	}
+	core::pose::add_lower_terminus_type_to_pose_residue( *newp, 1 );
+	core::pose::add_upper_terminus_type_to_pose_residue( *newp, newp->total_residue() );
+	return newp;
 }
 
 core::select::residue_selector::ResidueSelectorCOP

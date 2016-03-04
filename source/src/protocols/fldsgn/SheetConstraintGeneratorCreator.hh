@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/fldsgn/SheetCstGeneratorCreator.hh
-/// @brief This class will create instances of the SheetConstraintsRCG mover
+/// @file protocols/fldsgn/SheetConstraintGeneratorCreator.hh
+/// @brief This class will create instances of the SheetConstraintGenerator mover
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_fldsgn_SheetCstGeneratorCreator_hh
-#define INCLUDED_protocols_fldsgn_SheetCstGeneratorCreator_hh
+#ifndef INCLUDED_protocols_fldsgn_SheetConstraintGeneratorCreator_hh
+#define INCLUDED_protocols_fldsgn_SheetConstraintGeneratorCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace fldsgn {
 
-class SheetCstGeneratorCreator : public protocols::moves::MoverCreator {
+class SheetConstraintGeneratorCreator : public protocols::moves::MoverCreator {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
