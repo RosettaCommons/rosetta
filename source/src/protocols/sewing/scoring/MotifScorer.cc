@@ -42,7 +42,7 @@ MotifScorer::MotifScorer():
 	res_type_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) )
 {}
 
-/// @details Use the negative normalized motif score
+///@details Use the negative normalized motif score
 core::Real
 MotifScorer::score(
 	AssemblyCOP assembly
@@ -51,7 +51,7 @@ MotifScorer::score(
 }
 
 
-/// @details Motif score of the entire Assembly divided by total residue
+///@details Motif score of the entire Assembly divided by total residue
 core::Real
 MotifScorer::norm_motif_score(
 	AssemblyCOP assembly
@@ -60,7 +60,7 @@ MotifScorer::norm_motif_score(
 }
 
 
-/// @details use Will's Motif score to calculate the motif score for the entire Assembly
+///@details use Will's Motif score to calculate the motif score for the entire Assembly
 core::Real
 MotifScorer::full_motif_score(
 	AssemblyCOP assembly

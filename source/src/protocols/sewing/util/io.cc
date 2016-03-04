@@ -135,11 +135,15 @@ write_hashing_scores_to_file(
 		std::stringstream model_1_segments;
 		std::stringstream model_2_segments;
 		for ( ; seg_it != seg_it_end; ++seg_it ) {
+				TR << "seg_it->second: " << seg_it->second << std::endl;
 			sum += seg_it->second;
 			model_1_segments << seg_it->first.first << " ";
 			model_2_segments << seg_it->first.second << " ";
 		}
 		core::Real average_segment_score = 0;
+			TR << "sum: " << sum << std::endl;
+			TR << "segment_matches.size(): " << segment_matches.size() << std::endl;
+			TR << "sum/segment_matches.size(): " << sum/segment_matches.size() << std::endl;
 		if ( segment_matches.size() > 0 ) {
 			average_segment_score = sum/segment_matches.size();
 		}
@@ -155,78 +159,6 @@ write_hashing_scores_to_file(
 	file.close();
 }
 
-/*
-std::string
-see_whether_model_is_H_bonded_by_terminal_strands(
-Model model){
-if ( !utility::file::file_exists( model.pdb_code_ ) ){
-std::stringstream err;
-err << "You must provide pdb files to make pose as defined in your input model file";
-utility_exit_with_message(err.str());
-}
-
-std::string model_is_H_bonded_by_terminal_strands = "no"; // just initial assignment
-
-// we need to deal with models whose both terminal segments are strands
-if (model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E'){
-if(TR.Debug.visible()){
-TR << "(model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E')" << std::endl;
-}
-return model_is_H_bonded_by_terminal_strands;
-}
-// TR << "model.pdb_code_: " << model.pdb_code_ << std::endl;
-
-
-core::pose::Pose pose;
-core::import_pose::pose_from_file( pose, model.pdb_code_ , core::import_pose::PDB_file);
-if(TR.Debug.visible()){
-TR << "pose.pdb_info()->name(): " << pose.pdb_info()->name() << std::endl;
-TR << "model.segments_[1].residues_.front().resnum_: " << model.segments_[1].residues_.front().resnum_ << std::endl;
-TR << "model.segments_[1].residues_.back().resnum_: " << model.segments_[1].residues_.back().resnum_ << std::endl;
-TR << "model.segments_[model.segments_.size()].residues_.front().resnum_: " << model.segments_[model.segments_.size()].residues_.front().resnum_ << std::endl;
-TR << "model.segments_[model.segments_.size()].residues_.back().resnum_: " << model.segments_[model.segments_.size()].residues_.back().resnum_ << std::endl;
-}
-
-protocols::features::strand_assembly::SandwichFragment strand_i(model.segments_[1].residues_.front().resnum_, model.segments_[1].residues_.back().resnum_);
-protocols::features::strand_assembly::SandwichFragment strand_j(model.segments_[model.segments_.size()].residues_.front().resnum_, model.segments_[model.segments_.size()].residues_.back().resnum_);
-
-
-core::Size return_of_find_sheet_anti = find_sheet(
-pose,
-strand_i,
-strand_j,
-1, //  find anti-parallel sheet
-3.5, //  min_CA_CA_dis_,
-6.2, //  max_CA_CA_dis_,
-120 //  min_C_O_N_angle_
-);
-
-// TR << "return_of_find_sheet_anti: " << return_of_find_sheet_anti << std::endl;
-
-if (return_of_find_sheet_anti == 1){
-model_is_H_bonded_by_terminal_strands = "antiparallel";
-return model_is_H_bonded_by_terminal_strands;
-}
-
-else {
-core::Size return_of_find_sheet_para = find_sheet(
-pose,
-strand_i,
-strand_j,
-0, // find parallel sheet
-3.5, //  min_CA_CA_dis_,
-6.2, //  max_CA_CA_dis_,
-120 //  min_C_O_N_angle_
-);
-//   TR << "return_of_find_sheet_para: " << return_of_find_sheet_para << std::endl;
-if (return_of_find_sheet_para == 1){
-model_is_H_bonded_by_terminal_strands = "parallel";
-}
-return model_is_H_bonded_by_terminal_strands;
-}
-}//see_whether_model_is_H_bonded_by_terminal_strands
-*/
-
 std::string
 see_whether_model_is_H_bonded_by_terminal_strands(
 	Model model,
@@ -239,18 +171,24 @@ see_whether_model_is_H_bonded_by_terminal_strands(
 
 	std::string model_is_H_bonded_by_terminal_strands = "no"; // just initial assignment
 
-	// we need to deal with models whose both terminal segments are strands
-	if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' ) {
-		if ( TR.Debug.visible() ) {
-			TR << "(model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E')" << std::endl;
-		}
-		return model_is_H_bonded_by_terminal_strands;
-	}
+	// We need to deal with 'models whose both terminal segments are strands'
+	// Therefore already
+	// if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' )
+	// is checked in ModelTrimmer.cc
 
+	/*
 	core::pose::Pose pose;
-	core::import_pose::pose_from_file( pose, model.pdb_code_ , core::import_pose::PDB_file);
+	core::import_pose::pose_from_pdb( pose, model.pdb_code_ );
+	//failed for model_id model_id_12493, model_id_12494
+	*/
+	core::pose::Pose pose_for_sw;
+	core::import_pose::pose_from_file( pose_for_sw, model.pdb_code_ , core::import_pose::PDB_file);
+
+	// failed to be compiled 02/29/2016
+	//core::import_pose::pose_from_pdb( pose_for_sw, model.pdb_code_ );
+
 	if ( TR.Debug.visible() ) {
-		TR << "pose.pdb_info()->name(): " << pose.pdb_info()->name() << std::endl;
+		TR << "pose_for_sw()->name(): " << pose_for_sw.pdb_info()->name() << std::endl;
 		TR << "model.segments_[1].residues_.front().resnum_: " << model.segments_[1].residues_.front().resnum_ << std::endl;
 		TR << "model.segments_[1].residues_.back().resnum_: " << model.segments_[1].residues_.back().resnum_ << std::endl;
 		TR << "model.segments_[model.segments_.size()].residues_.front().resnum_: " << model.segments_[model.segments_.size()].residues_.front().resnum_ << std::endl;
@@ -262,7 +200,7 @@ see_whether_model_is_H_bonded_by_terminal_strands(
 
 	if ( P_PA == "antiparallel" ) {
 		core::Size return_of_find_sheet_anti = find_sheet(
-			pose,
+			pose_for_sw,
 			strand_i,
 			strand_j,
 			1, //  find anti-parallel sheet
@@ -276,7 +214,7 @@ see_whether_model_is_H_bonded_by_terminal_strands(
 		return model_is_H_bonded_by_terminal_strands;
 	} else if ( P_PA == "parallel" ) {
 		core::Size return_of_find_sheet_para = find_sheet(
-			pose,
+			pose_for_sw,
 			strand_i,
 			strand_j,
 			0, // find parallel sheet

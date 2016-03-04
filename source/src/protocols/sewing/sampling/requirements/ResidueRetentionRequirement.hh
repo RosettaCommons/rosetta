@@ -35,7 +35,7 @@ class ResidueRetentionRequirement : public GlobalRequirement {
 
 public:
 
-	/// @brief default constructor
+	///@brief default constructor
 	ResidueRetentionRequirement();
 
 	ResidueRetentionRequirement(
@@ -57,14 +57,14 @@ public:
 		core::Size resnum
 	);
 
-	/// @brief Inverse of violated for this requirement
+	///@brief Inverse of violated for this requirement
 	virtual
 	bool
 	satisfies(
 		AssemblyCOP assembly
 	) const;
 
-	/// @brief Has the Assembly removed required residues
+	///@brief Has the Assembly removed required residues
 	///for the specified model
 	virtual
 	bool

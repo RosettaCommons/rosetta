@@ -6517,53 +6517,58 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -sicdock
 
 	################################
-	## In development helix assembly options
+	## Sewing
 	Option_Group( 'sewing',
+								##General options
+								Option('model_file_name','File', desc="Filename for model file (creation or reading)"),
+								Option('score_file_name','File', desc="Filename for scores file (creation or reading)"),
 
-            ##General options
-            Option('model_file_name','File', desc="Filename for model file (creation or reading)"),
-            Option('score_file_name','File', desc="Filename for scores file (creation or reading)"),
+								##ModelTrimmer options
+								Option('new_model_file_name','File', desc="Filename for new model file to be written"),
+								Option('remove_any_dssp','String', desc="If a given model has *any* segments with this DSSP, remove it", default=""),
+								Option('remove_all_dssp','String', desc="If a given model has *all* non-loop segments with this DSSP, remove it", default=""),
+								Option('min_helix_length','Integer', desc="Helices less than supplied length will be removed from model file", default='0'),
+								Option('max_helix_length','Integer', desc="Helices greater than supplied length will be removed from model file", default='1000'),
+								Option('min_loop_length','Integer', desc="Loops less than supplied length will be removed from model file", default='0'),
+								Option('max_loop_length','Integer', desc="Loops greater than supplied length will be removed from model file", default='1000'),
+								Option('min_strand_length','Integer', desc="Strands less than supplied length will be removed from model file", default='0'),
+								Option('max_strand_length','Integer', desc="Strands greater than supplied length will be removed from model file", default='1000'),
 
-			##ModelTrimmer options
-            Option('new_model_file_name','File', desc="Filename for new model file to be written"),
-			Option('remove_any_dssp','String', desc="If a given model has *any* segments with this DSSP, remove it", default=""),
-			Option('remove_all_dssp','String', desc="If a given model has *all* non-loop segments with this DSSP, remove it", default=""),
-			Option('min_helix_length','Integer', desc="Helices less than supplied length will be removed from model file", default='0'),
-			Option('max_helix_length','Integer', desc="Helices greater than supplied length will be removed from model file", default='1000'),
-			Option('min_loop_length','Integer', desc="Loops less than supplied length will be removed from model file", default='0'),
-			Option('max_loop_length','Integer', desc="Loops greater than supplied length will be removed from model file", default='1000'),
-			Option('min_strand_length','Integer', desc="Strands less than supplied length will be removed from model file", default='0'),
-			Option('max_strand_length','Integer', desc="Strands greater than supplied length will be removed from model file", default='1000'),
+								Option('leave_models_by_ss_num','Boolean', desc="Only models with certain number of secondary structures remain", default='false'),
+								Option('model_should_have_this_num_of_ss','Integer', desc="Only models with this number of secondary structures remain"),
 
-			Option('leave_models_by_ss_num','Boolean', desc="Only models with certain number of secondary structures remain", default='false'),
-			Option('model_should_have_this_num_of_ss','Integer', desc="Only models with this number of secondary structures remain", default='5'),
+								Option('model_should_have_at_least_1_E_at_terminal_segment','Boolean', desc="model_should_have_at_least_one_E_at_terminal_segment", default='false'),
+								Option('model_should_have_at_least_1_E','Boolean', desc="model_should_have_at_least_one_E", default='false'),
+								Option('model_should_have_at_least_1_H','Boolean', desc="model_should_have_at_least_one_H", default='false'),
+								Option('leave_models_with_E_terminal_ss','Boolean', desc="leave only models_with_E_terminal_ss", default='false'),
+								Option('leave_models_with_H_terminal_ss','Boolean', desc="leave only models_with_H_terminal_ss", default='false'),
+								Option('leave_antiparallel_way_H_bonded_models_by_terminal_strands','Boolean', desc="leave only anti-pa H_bonded_models by_terminal_strands", default='false'),
+								Option('leave_parallel_way_H_bonded_models_by_terminal_strands','Boolean', desc="leave only pa H_bonded_models by_terminal_strands", default='false'),
+								Option('leave_certain_model_ids','Boolean', desc="Only models with selected ids are left", default='false'),
+								Option('leave_these_model_ids','String', desc="Only models with selected ids are left"),
+								Option('box_length','Integer', desc="Neighborhood lookup box size, 3 for 27 boxes, 4 for 64 boxes etc",default='3'),
 
-			Option('model_should_have_at_least_one_E_at_terminal_segment','Boolean', desc="model_should_have_at_least_one_E_at_terminal_segment", default='false'),
-			Option('model_should_have_at_least_one_E','Boolean', desc="model_should_have_at_least_one_E", default='false'),
-			Option('leave_models_with_E_terminal_ss','Boolean', desc="leave only models_with_E_terminal_ss", default='false'),
-			Option('leave_antiparallel_way_H_bonded_models_by_terminal_strands_only','Boolean', desc="leave only anti-pa H_bonded_models by_terminal_strands", default='false'),
-			Option('leave_parallel_way_H_bonded_models_by_terminal_strands_only','Boolean', desc="leave only pa H_bonded_models by_terminal_strands", default='false'),
-			Option('box_length','Integer', desc="Neighborhood lookup box size, 3 for 27 boxes, 4 for 64 boxes etc",default='3'),
+								##sewing_hasher and ModelDumper options
+								Option( 'mode', 'String',
+												desc="The mode sewing_hasher should run.",
+												default='hash',
+												legal=["hash", "generate", "generate_five_ss_model", "convert", "test"]),
 
+								Option('disregard_num_segment_matches','Boolean', desc="if true, disregard num_segment_matches"),
+								Option('do_not_remove_connection_inconsistencies','Boolean', desc="if true, do not remove_connection_inconsistencies"),
+								Option('score_between_opposite_terminal_segments','Boolean', desc="if true, score_between_opposite_terminal_segments like 1-5 or 5-1"),
+								Option('num_models_to_dump','Integer', desc="Used for ModelDumper. How many random models should be dumped?"),
+								Option('models_to_dump','IntegerVector', desc="Used for ModelDumper for specifying model ids you want to dump"),
+								Option('min_hash_score','Integer', desc="Minimum number of overlapping atoms per segment", default='10'),
+								Option('max_clash_score','Integer', desc="Maximum number of atoms found in the same bin, but not from superimposed fragments",default='0'),
+								Option('num_segments_to_match','Integer', desc="Number of segments required to have min_hash_score atom matches",default='1'),
+								Option('match_segments','IntegerVector', desc="Segment scored by the hasher"),
 
-            ##SewingHasher and ModelDumper options
-            Option( 'mode', 'String',
-                desc="The mode sewing_hasher should run.",
-                default='hash',
-                legal=["hash", "generate", "generate_five_ss_model", "convert", "test"]),
-
-            Option('num_models_to_dump','Integer', desc="Used for ModelDumper. How many random models should be dumped?"),
-            Option('models_to_dump','IntegerVector', desc="Used for ModelDumper for specifying model ids you want to dump"),
-            Option('min_hash_score','Integer', desc="Minimum number of overlapping atoms per segment", default='10'),
-            Option('max_clash_score','Integer', desc="Maximum number of atoms found in the same bin, but not from superimposed fragments",default='0'),
-            Option('num_segments_to_match','Integer', desc="Number of segments required to have min_hash_score atom matches",default='1'),
-            Option('match_segments','IntegerVector', desc="Segment scored by the hasher"),
-
-            Option('max_models','Integer', desc="Maximum models to hash, for testing purposes only"),
-            Option('starting_model','Integer', desc="Starting model for hashing"),
-            Option('num_procs','Integer', desc="Number of processors to split up hashing with"),
-            Option('rank','Integer', desc="The processor rank for this process"),
-						Option('hash_tag_only_terminal_Es','Boolean', desc="hash_tag_only_terminal_Es",default='false'),
+								Option('max_models','Integer', desc="Maximum models to hash, for testing purposes only"),
+								Option('starting_model','Integer', desc="Starting model for hashing"),
+								Option('num_procs','Integer', desc="Number of processors to split up hashing with"),
+								Option('rank','Integer', desc="The processor rank for this process"),
+								Option('hash_tag_only_terminal_Es','Boolean', desc="hash_tag_only_terminal_Es",default='false'),
 
             ##Base AssemblyMover options
             Option('assembly_type','String', desc="Type of Assembly class to generate", default='continuous'),
@@ -6574,6 +6579,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             Option('skip_refinement','Boolean', desc="Should you refine the final assembly", default='false'),
             Option('skip_filters','Boolean', desc="Should the Assembly be filtered before refinment", default='false'),
             Option('min_motif_score','Real',desc="Minimum allowable motif score", default='20'),
+						Option('may_add_already_added_model','Boolean',desc="may_add_already_added_model", default='false'),
 
 						##ClashScore options
             Option('offset_bump_dsq','Real', desc="offset to bump_dsq", default='0'),
@@ -6594,10 +6600,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             Option('skip_loop_generation','Boolean', desc="Should you skip generation of loops", default='false'),
 
 						##ExhaustiveAssemblyMover options
-						Option('max_ss_num','Integer', desc="max_ss_num", default='5'),
-						Option('dump_every_model_for_devel_purpose','Boolean', desc="dump_every_model_for_devel_purpose", default='false'),
+						Option('max_ss_num','Integer', desc="max_ss_num so either 3 (smotif) or 5 (5-ss_models)", default='5'),
+						Option('dump_every_model','Boolean', desc="dump_every_model", default='false'),
 	), # -sewing
-
+	
 	Option_Group( 'SSrbrelax',
 #		Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),
 		Option( 'rb_file','File', desc='rb definition file', default='rb_file' ),
@@ -6833,7 +6839,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('max_sheet_angle','Real', desc="Maximum angle between sheets (CA and CA)"),
 		Option('min_shortest_dis_sidechain_inter_sheet','Real', desc="minimum distance between sidechains between sheets (pairs of strands)"),
 	), # -strand_assembly
-
+	
 	#################################TailSegment####################################################
 	Option_Group( 'TailSegment',
 		Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '100' ),

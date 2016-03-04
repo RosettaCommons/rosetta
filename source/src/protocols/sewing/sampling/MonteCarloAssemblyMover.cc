@@ -85,7 +85,8 @@ MonteCarloAssemblyMover::MonteCarloAssemblyMover():
 	use_best_assembly_score_(true),
 	add_probability_(0.05),
 	delete_probability_(0.005),
-	switch_probability_(0.8)
+	switch_probability_(0.8),
+	remove_non_contiguous_assembly_(true)
 {}
 
 AssemblyOP
@@ -204,7 +205,7 @@ MonteCarloAssemblyMover::generate_assembly(){
 } //generate_assembly
 
 
-/// @details If we haven't added an edges yet, pick a random node to start from. Otherwise
+///@details If we haven't added an edges yet, pick a random node to start from. Otherwise
 ///Pick a random node from the current assembly that has the ability to have edges built
 ///from it. This method returns true if an edge was added, false if we couldn't add an edge
 ///either due to no edges being in the graph, or no edges satisfying requirements.
@@ -233,8 +234,6 @@ MonteCarloAssemblyMover::add_edge(
 
 		ModelNode const * reference_node = graph_->get_model_node(assembly->get_next_reference_node(graph_));
 
-
-
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "edge_file_: " << edge_file_ << std::endl;
 			TR.Debug << "node_id in other word, reference_node->get_node_index(): " << reference_node->get_node_index() << std::endl;
@@ -245,10 +244,7 @@ MonteCarloAssemblyMover::add_edge(
 		graph_->add_edges_from_binary(edge_file_, reference_node->get_node_index());
 		// the 2nd parameter reference_node->get_node_index()
 
-
 		if ( TR.Debug.visible() ) { TR.Debug << "after add_edges_from_binary " << std::endl; }
-
-
 
 		//if there are no edges from this node then this ADD_EDGE operation is a no-op
 		core::Size num_edges = reference_node->num_edges();
@@ -275,18 +271,41 @@ MonteCarloAssemblyMover::add_edge(
 		//Cast the edge to a proper HashEdge and follow it
 		HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 
-		//If we've already added this model, don't add it again. This should theoretically
-		//not be a problem, but due to the way model regeneration is handled in the Assembly
-		//class, you get an error. This should be fixed in Assembly soon.
-		core::Size reference_node_index = reference_node->get_node_index();
-		core::Size mobile_node_index = cur_edge->get_other_ind(reference_node_index);
-		core::Size mobile_model_id( graph_->get_model_node(mobile_node_index)->model().model_id_ );
-		std::set<core::Size> model_ids = assembly->model_ids();
-		if ( model_ids.find(mobile_model_id) != model_ids.end() ) {
-			assembly = pre_op_assembly;
-			assembly_list = pre_op_assembly_list;
-			TR.Debug << "rejecting add, model previously added" << std::endl;
-			return false;
+		//Initialize an empty starting Assembly and add it to the list
+
+		if ( ! option[basic::options::OptionKeys::sewing::may_add_already_added_model].user() ) {
+			option[basic::options::OptionKeys::sewing::may_add_already_added_model].value( 0 );
+		}
+		bool	may_add_already_added_model = option[ basic::options::OptionKeys::sewing::may_add_already_added_model];
+		// as of 2016/1/2, turning on may_add_already_added_model resulted in
+		/*ERROR: reference coords 80 != mobile_coords 40
+		Alignment size 40
+		ERROR:: Exit from: src/protocols/sewing/conformation/Assembly.cc line: 834
+		*/
+
+		// as of 2016/1/18, turning off may_add_already_added_model during RepeatAssemblyMover resulted in
+		/*[ERROR] Exception caught by JobDistributor for job RepeatAssembly__0001
+		[ERROR] EXCN_utility_exit has been thrown from: src/protocols/sewing/conformation/Assembly.cc line: 834
+		ERROR: reference coords 60 != mobile_coords 30
+		Alignment size 30
+		*/
+
+		if (!may_add_already_added_model){
+
+			// If we've already added this model, don't add it again.
+			// This should theoretically not be a problem,
+			// but due to the way model regeneration is handled in the Assembly class, you get an error.
+			// This should be fixed in Assembly soon.
+			core::Size reference_node_index = reference_node->get_node_index();
+			core::Size mobile_node_index = cur_edge->get_other_ind(reference_node_index);
+			core::Size mobile_model_id( graph_->get_model_node(mobile_node_index)->model().model_id_ );
+			std::set<core::Size> model_ids = assembly->model_ids();
+			if ( model_ids.find(mobile_model_id) != model_ids.end() ) {
+				assembly = pre_op_assembly;
+				assembly_list = pre_op_assembly_list;
+					TR.Debug << "rejecting add, model previously added" << std::endl;
+				return false;
+			}
 		}
 
 		//If we are violating requirements, then return false
@@ -307,16 +326,13 @@ MonteCarloAssemblyMover::add_edge(
 
 
 
-/// @details Simply go back to the Assembly before
+///@details Simply go back to the Assembly before
 ///the most recent edge addition
 void
 MonteCarloAssemblyMover::delete_edge(
 	AssemblyOP & assembly,
 	utility::vector1<AssemblyOP> & assembly_list
 ) const {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	if ( TR.Debug.visible() ) { TR << "MonteCarloAssemblyMover::delete_edge" << std::endl;}
 
 	//If we've added edges, simply go back to the
@@ -329,7 +345,7 @@ MonteCarloAssemblyMover::delete_edge(
 }
 
 
-/// @details A switch is just an auto-accepted delete followed by an add, the
+///@details A switch is just an auto-accepted delete followed by an add, the
 ///reason it needs to be its own operation is due to the fact
 ///that our scoring doesn't properly weight the value of an empty
 ///Assembly, and thus removing the first node will never be accepted.
@@ -380,7 +396,6 @@ MonteCarloAssemblyMover::boltzman(
 		TR << "temperature_: " << temperature_ << std::endl;
 	}
 
-
 	// if(TR.Debug.visible()) {
 	//  if (working_assembly->segments().size() > 5){
 	//
@@ -427,7 +442,7 @@ MonteCarloAssemblyMover::boltzman(
 		}
 		if ( check_completeness_of_assembly ) {
 			bool this_pose_is_complete = true;
-			if ( remove_cut_off_assembly_ ) { // remove incomplete (cut-off) assembly (mostly comes from inherent error in pdb file), in the future, removing incomplete model at model extration step will be pursued
+			if ( remove_non_contiguous_assembly_ ) { // remove incomplete (cut-off) assembly (mostly comes from inherent error in pdb file), in the future, removing incomplete model at model extration step will be pursued
 				core::pose::Pose to_be_checked_pose = get_fullatom_pose(working_assembly);
 
 				for ( Size ii=1; ii < to_be_checked_pose.total_residue(); ii++ ) {
@@ -435,13 +450,13 @@ MonteCarloAssemblyMover::boltzman(
 					if ( distance > 5.0 ) {
 						this_pose_is_complete = false;
 						if ( TR.Debug.visible() ) {
-							TR.Debug << "Don't use this assembly, you will throw it away anyway unless you rebuild missing region!" << std::endl;
+							TR.Debug << "Don't use this assembly, you will throw it away anyway unless you rebuild a missing region!" << std::endl;
 						}
 						break;
 					}
 				}
 			}
-			if ( ((remove_cut_off_assembly_) && (this_pose_is_complete)) || (!remove_cut_off_assembly_) ) {
+			if ( ((remove_non_contiguous_assembly_) && (this_pose_is_complete)) || (!remove_non_contiguous_assembly_) ) {
 				if ( TR.Debug.visible() ) {
 					TR.Debug << "SAVING current backbone since (assembly_score: " << score << ") < (min_assembly_score: " << min_assembly_score_ << ")" << std::endl;
 				}
@@ -481,6 +496,18 @@ MonteCarloAssemblyMover::parse_my_tag(
 	if ( tag->hasOption("cycles") ) {
 		cycles_ = tag->getOption<core::Size>("cycles");
 	}
+	if ( tag->hasOption("max_temperature") ) {
+		max_temperature_ = tag->getOption<core::Real>("max_temperature");
+	}
+	if ( tag->hasOption("min_temperature") ) {
+		min_temperature_ = tag->getOption<core::Real>("min_temperature");
+	}
+	if ( tag->hasOption("min_assembly_score") ) {
+		min_assembly_score_ = tag->getOption<core::Real>("min_assembly_score"); // for Doonam's a/b design, -2.0 is recommended
+	}
+	if ( tag->hasOption("use_best_assembly_score") ) {
+		use_best_assembly_score_ = tag->getOption<bool>("use_best_assembly_score");
+	}
 	if ( tag->hasOption("add_probability") ) {
 		add_probability_ = tag->getOption<core::Real>("add_probability");
 	}
@@ -490,21 +517,8 @@ MonteCarloAssemblyMover::parse_my_tag(
 	if ( tag->hasOption("switch_probability") ) {
 		switch_probability_ = tag->getOption<core::Real>("switch_probability");
 	}
-	if ( tag->hasOption("min_temperature") ) {
-		min_temperature_ = tag->getOption<core::Real>("min_temperature");
-	}
-	if ( tag->hasOption("max_temperature") ) {
-		max_temperature_ = tag->getOption<core::Real>("max_temperature");
-	}
-	if ( tag->hasOption("use_best_assembly_score") ) {
-		use_best_assembly_score_ = tag->getOption<bool>("use_best_assembly_score");
-	}
-	if ( tag->hasOption("min_assembly_score") ) {
-		min_assembly_score_ = tag->getOption<core::Real>("min_assembly_score"); // for Doonam's a/b design, -2.0 is recommended
-	}
-
-	if ( tag->hasOption("remove_cut_off_assembly") ) {
-		remove_cut_off_assembly_ = tag->getOption<bool>("remove_cut_off_assembly");
+	if ( tag->hasOption("remove_non_contiguous_assembly") ) {
+		remove_non_contiguous_assembly_ = tag->getOption<bool>("remove_non_contiguous_assembly");
 	}
 }
 

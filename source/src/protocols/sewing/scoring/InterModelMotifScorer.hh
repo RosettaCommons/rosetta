@@ -37,7 +37,7 @@ class InterModelMotifScorer : public MotifScorer {
 
 public:
 
-	/// @brief default construct
+	///@brief default construct
 	InterModelMotifScorer();
 
 	virtual ~InterModelMotifScorer(){}

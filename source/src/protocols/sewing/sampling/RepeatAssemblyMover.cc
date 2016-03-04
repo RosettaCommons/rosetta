@@ -122,7 +122,7 @@ RepeatAssemblyMover::RepeatAssemblyMover():
 		basic::options::option[ basic::options::OptionKeys::sewing::num_repeats ].value();
 }
 
-/// @brief recursive function. Start with a given reference node and randomly traverse
+///@brief recursive function. Start with a given reference node and randomly traverse
 ///edges in a depth-first-search of a cycle of a given size (number of nodes).
 std::pair< bool, AssemblyOP >
 RepeatAssemblyMover::dfs_cycle_finder(
@@ -192,15 +192,16 @@ RepeatAssemblyMover::dfs_cycle_finder(
 				visited_nodes.push_back(other_node);
 				if ( TR.Debug.visible() ) {
 					TR.Debug << "Found cycle!: " << std::endl;
-					TR.Debug << visited_nodes.size() << std::endl;
+					TR.Debug << "visited_nodes.size(): " << visited_nodes.size() << std::endl;
 					for ( core::Size i=1; i<=visited_nodes.size(); ++i ) {
-						TR.Debug << visited_nodes[i]->model().model_id_ << "(node " << visited_nodes[i]->get_node_index() << ")" << std::endl;
+						TR.Debug << "model_id: " << visited_nodes[i]->model().model_id_ << " (node " << visited_nodes[i]->get_node_index() << ")" << std::endl;
 					}
 				}
 				assembly->follow_edge(graph_, cur_edge, reference_node->get_node_index());
 				core::Real score = clash_scorefxn_->score(assembly);
 				TR << "Score of complete cycle " << score << std::endl;
-				if ( score < -0.5 && !requirement_set_->violates(assembly) ) {
+				//if ( score < -0.5 && !requirement_set_->violates(assembly) ) {
+				if ( score < threshold_score_of_complete_cycle_ && !requirement_set_->violates(assembly) ) {
 					TR << "passed Requirements" << std::endl;
 					return std::make_pair(true, assembly);
 				} else {
@@ -219,7 +220,8 @@ RepeatAssemblyMover::dfs_cycle_finder(
 				//////TEST/////////
 
 				//If there is a clash, don't keep going
-				if ( score < -0.5 && !requirement_set_->violates(assembly) && n_recursions < max_recursions ) {
+				//if ( score < -0.5 && !requirement_set_->violates(assembly) && n_recursions < max_recursions ) {
+				if ( score < threshold_score_of_complete_cycle_ && !requirement_set_->violates(assembly) && n_recursions < max_recursions ) {
 					++n_recursions;
 					std::pair< bool, AssemblyOP> result = dfs_cycle_finder(other_node, visited_nodes, assembly);
 					if ( result.first ) {
@@ -265,7 +267,7 @@ RepeatAssemblyMover::generate_assembly(){
 
 		core::Size starttime = time(NULL);
 		TR << "Trying to find cycle from start node " << node->get_node_index()
-			<< "(model " << node->model().model_id_ << ")" << std::endl;
+			<< " (model " << node->model().model_id_ << ")" << std::endl;
 
 		AssemblyOP assembly = AssemblyFactory::create_assembly("continuous");
 		assembly->add_model(graph_, node->model());
@@ -281,7 +283,8 @@ RepeatAssemblyMover::generate_assembly(){
 			add_repeats(repeat_assembly);
 			repeat_assembly->to_pose(core::chemical::FA_STANDARD, false).dump_pdb("post_repeat.pdb");
 			core::Real score = assembly_scorefxn_->score(repeat_assembly);
-			if ( score < -0.5 ) {
+//			if ( score < -0.5 ) {
+			if ( score < threshold_score_of_complete_cycle_ ) {
 				return repeat_assembly;
 			}
 		} else {
@@ -310,6 +313,7 @@ RepeatAssemblyMover::add_repeats(
 	//DIRTY HACK ASSUMES ALL MODELS ARE 3 SEGMENTS LONG!!!!
 	utility::vector1< numeric::xyzVector<core::Real> > mobile_coords;
 	for ( core::Size i=1; i<=assembly->all_segments()[3].size(); ++i ) {
+			TR << "i : " << i << std::endl;
 		if ( segments.back() == assembly->all_segments()[3][i] ) {
 			mobile_coords = get_segment_coords(assembly->all_segments()[3][i]);
 		}
@@ -436,6 +440,10 @@ RepeatAssemblyMover::parse_my_tag(
 
 	if ( tag->hasOption("num_repeating_segments") ) {
 		num_repeating_segments_ = tag->getOption<core::Size>("num_repeating_segments");
+	}
+	if ( tag->hasOption("threshold_score_of_complete_cycle") ) {
+		threshold_score_of_complete_cycle_ = tag->getOption<core::Real>("threshold_score_of_complete_cycle", -0.5);
+		// before this option addition, it was hard-coded as minus 0.5
 	}
 
 }

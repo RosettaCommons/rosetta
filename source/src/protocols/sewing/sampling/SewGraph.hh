@@ -133,7 +133,7 @@ public:
 	SewGraph();
 	SewGraph( SewGraph const & src );
 
-	/// @brief default construct
+	///@brief default construct
 	SewGraph(
 		std::map< int, Model > const & models,
 		core::Size segment_matches_per_edge
@@ -171,11 +171,11 @@ public:
 		std::set<core::Size> segment_ids
 	) const;
 
-	/// @brief get a random node from the graph
+	///@brief get a random node from the graph
 	ModelNode const *
 	get_random_node() const;
 
-	/// @brief get a random node involved in
+	///@brief get a random node involved in
 	///at least one edge from the graph
 	ModelNode const *
 	get_random_node_with_edges() const;

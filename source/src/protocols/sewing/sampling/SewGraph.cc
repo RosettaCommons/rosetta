@@ -173,7 +173,7 @@ SewGraph::SewGraph():
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) )
 {}
 
-/// @details iterate through the models and add all the nodes to the graph
+///@details iterate through the models and add all the nodes to the graph
 SewGraph::SewGraph(
 	std::map< int, Model > const & models,
 	core::Size segment_matches_per_edge
@@ -468,7 +468,6 @@ SewGraph::generate_binary_score_file(
 	std::string score_filename,
 	std::string binary_filename
 ){
-
 	utility::io::izstream file;
 	file.open(score_filename);
 
@@ -543,6 +542,10 @@ SewGraph::generate_binary_score_file(
 	}
 	n_nodes_with_edges = (boost::uint32_t)edges.size();
 
+	if (n_nodes_with_edges != num_nodes()){
+		TR << "n_nodes_with_edges: " << n_nodes_with_edges << std::endl;
+		TR << "num_nodes(): " << num_nodes() << std::endl;
+	}
 	runtime_assert(n_nodes_with_edges == num_nodes());
 
 	//First write the number of models for validation later

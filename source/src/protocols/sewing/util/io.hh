@@ -33,7 +33,6 @@
 #include <string>
 
 //to find "beta-sheet" backbone H-bonded strands
-//#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -56,20 +55,14 @@ read_native_residue_file(
 	std::string filename
 );
 
-/// @brief Take the given StructureScores and save them to disk
+///@brief Take the given StructureScores and save them to disk
 void
 write_hashing_scores_to_file(
 	ScoreResults const & scores,
 	std::string filename
 );
 
-///// @brief Return true if given model is H bonded by terminal strands
-//std::string
-//see_whether_model_is_H_bonded_by_terminal_strands(
-// Model model
-//);
-
-/// @brief Return true if given model is H bonded by terminal strands
+///@brief Return true if given model is H bonded by terminal strands
 std::string
 see_whether_model_is_H_bonded_by_terminal_strands(
 	Model model,
@@ -81,7 +74,7 @@ scores_to_alignments(
 	ScoreResults const & scores
 );
 
-/// @brief Take the given StructureScores and save them to disk
+///@brief Take the given StructureScores and save them to disk
 utility::vector1<BasisPair>
 read_hashing_scores_from_file(
 	std::string filename

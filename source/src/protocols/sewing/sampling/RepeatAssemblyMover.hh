@@ -117,6 +117,7 @@ public:
 private:
 
 	core::Size num_repeating_segments_;
+	core::Real threshold_score_of_complete_cycle_;
 	core::Size num_repeats_;
 	core::Size num_trials_;
 	scoring::AssemblyScoreFunctionOP clash_scorefxn_;

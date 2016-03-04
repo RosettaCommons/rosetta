@@ -1231,8 +1231,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sw_can_by_sh_id)
-{
+	Size sw_can_by_sh_id){
 	// <begin> get starting_res_num/ending_res_num
 	string select_string =
 		"SELECT\n"
@@ -1271,8 +1270,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 //check_whether_this_pdb_should_be_excluded
 bool
 check_whether_this_pdb_should_be_excluded (
-	string tag)
-{
+	string tag){
 	const char* args[] = {"1W8N", "1w8n", "1W8O", "1w8o"};
 	// I need to exclude these since I don't come up with how to correctly extract beta-sandwich from 1W8N
 
@@ -1293,8 +1291,7 @@ bool
 check_whether_this_sheet_is_too_short(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sheet_i)
-{
+	Size sheet_i){
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_i);
 	for ( Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
 		if ( strands_from_sheet_i[i].get_size() > 2 ) {

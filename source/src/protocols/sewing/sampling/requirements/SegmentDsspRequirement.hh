@@ -34,22 +34,22 @@ class SegmentDsspRequirement : public IntraSegmentRequirement {
 
 public:
 
-	/// @brief default constructor
+	///@brief default constructor
 	SegmentDsspRequirement();
 
-	/// @brief explicit constructor
+	///@brief explicit constructor
 	SegmentDsspRequirement(
 		std::set<std::string> valid_dssp_codes
 	);
 
-	/// @brief Does the segment have a valid DSSP code?
+	///@brief Does the segment have a valid DSSP code?
 	virtual
 	bool
 	satisfies(
 		SewSegment segment
 	) const;
 
-	/// @brief Does the segment have an invalid DSSP code?
+	///@brief Does the segment have an invalid DSSP code?
 	virtual
 	bool
 	violates(

@@ -255,7 +255,6 @@ AppendAssemblyMover::hash_pdb_model(
 
 		group_scores = hasher.score(pdb_model, num_segments_to_match, min_hash_score, max_clash_score, segments_to_match, false, 3);
 		// SewingAppend just assumes box_length=3
-		//group_scores = hasher.score(pdb_model, num_segments_to_match, min_hash_score, max_clash_score, segments_to_match, false);
 
 		all_scores.insert(group_scores.begin(), group_scores.end());
 		if ( it == models_.end() ) {

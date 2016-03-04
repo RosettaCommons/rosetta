@@ -132,36 +132,52 @@ main( int argc, char * argv [] ) {
 			comments << "#All models composed of entirely loops and dssp code(s) " << remove_all_dssp << " have been removed" << std::endl;
 		}
 
-		comments << "#Any model with helical (H) segment(s) fewer than " << option[sewing::min_helix_length]
+		comments << "#All models with any helical (H) segment(s) which has fewer than " << option[sewing::min_helix_length]
 			<< " residues or greater than " << option[sewing::max_helix_length] << " residues has been removed" << std::endl;
-		comments << "#Any model with strand (E) segment(s) fewer than " << option[sewing::min_strand_length]
+
+		comments << "#All models with any strand (E) segment(s) which has fewer than " << option[sewing::min_strand_length]
 			<< " residues or greater than " << option[sewing::max_strand_length] << " residues has been removed" << std::endl;
-		comments << "#Any model with loop (L) segment(s) fewer than " << option[sewing::min_loop_length]
+
+		comments << "#All models with any loop (L) segment(s) which has fewer than " << option[sewing::min_loop_length]
 			<< " residues or greater than " << option[sewing::max_loop_length] << " residues has been removed" << std::endl;
 
 		if ( option[sewing::leave_models_by_ss_num] ) {
 			comments << "#Only models with " << option[sewing::model_should_have_this_num_of_ss] << " secondary structures remained " << std::endl;
 		}
 
-		if ( option[sewing::model_should_have_at_least_one_E_at_terminal_segment] ) {
+		if ( option[sewing::model_should_have_at_least_1_E_at_terminal_segment] ) {
 			comments << "#Only models that have at least 1 E segment at terminal segment remained " << std::endl;
 		}
 
-		if ( option[sewing::model_should_have_at_least_one_E] ) {
+		if ( option[sewing::model_should_have_at_least_1_E] ) {
 			comments << "#Only models that have at least 1 E segment remained " << std::endl;
 		}
 
-		if ( option[sewing::leave_models_with_E_terminal_ss] ) {
-			comments << "#All models that lack 'two terminal beta-strands' have been removed " << std::endl;
-			TR << "All models that lack 'two terminal beta-strands' have been removed" << std::endl;
+		if ( option[sewing::model_should_have_at_least_1_H] ) {
+			comments << "#Only models that have at least 1 H segment remained" << std::endl;
 		}
 
-		if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands_only] ) {
+		if ( option[sewing::leave_models_with_E_terminal_ss] ) {
+			comments << "#All models that lack '2 terminal beta-strands' have been removed " << std::endl;
+			TR << "All models that lack '2 terminal beta-strands' have been removed" << std::endl;
+		}
+
+		if ( option[sewing::leave_models_with_H_terminal_ss] ) {
+			comments << "#All models that lack '2 terminal helices' have been removed " << std::endl;
+			TR << "All models that lack '2 terminal helices' have been removed" << std::endl;
+		}
+
+
+		if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) {
 			comments << "#All models that lack 'terminal strands that are parallel way H-bonded with their backbone atoms' have been removed " << std::endl;
 		}
 
-		if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only] ) {
+		if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] ) {
 			comments << "#All models that lack 'terminal strands that are anti-parallel way H-bonded with their backbone atoms' have been removed " << std::endl;
+		}
+
+		if ( option[sewing::leave_certain_model_ids]	)  {
+			comments << "#Only models with specified model_ids are left " << std::endl;
 		}
 
 		models = read_model_file(model_filename);
@@ -175,8 +191,29 @@ main( int argc, char * argv [] ) {
 
 			bool erase = false;
 
+			if ( (!erase) && (option[sewing::leave_certain_model_ids]) ) {
+				erase = true; // temporarily
+				std::string model_ids_str( option[sewing::leave_these_model_ids] );
+				utility::vector1< std::string > model_ids_vec( utility::string_split( model_ids_str, ',' ) );
+
+				for ( core::Size i=1; i<=model_ids_vec.size(); ++i ) {
+					//TR << "model_ids_vec[i]: " << model_ids_vec[i] << std::endl;
+					///// int to string reference: http://www.cplusplus.com/articles/D9j2Nwbp/
+					std::ostringstream convert;
+
+					std::string model_id_str;
+					convert	<< model.model_id_;
+					model_id_str = convert.str();
+
+					if ( model_id_str == model_ids_vec[i] ) {
+						erase = false;
+						break;
+					}
+				}
+			}
+
 			//If a given model has *any* segments with this DSSP, remove it
-			for ( core::Size i=0; i<remove_any_dssp.length(); ++i ) {
+			for ( core::Size i=0; (!erase) && (i<remove_any_dssp.length()); ++i ) {
 				for ( core::Size j=1; j<=model.segments_.size(); ++j ) {
 					if ( model.segments_[j].dssp_ == remove_any_dssp[i] ) {
 						if ( TR.Debug.visible() ) {
@@ -206,13 +243,13 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
-			if ( !erase ) { // since 2015/11/13 this Trimming always runs
+			if (!erase) { // since 2015/11/13 this Trimming always runs
 				if ( (model.segments_[1].dssp_ == 'L') || (model.segments_[model.segments_.size()].dssp_ == 'L') ) {
 					erase=true;
 				}
 			}
 
-			if ( (!erase) && (option[sewing::model_should_have_at_least_one_E_at_terminal_segment]) ) {
+			if ( (!erase) && (option[sewing::model_should_have_at_least_1_E_at_terminal_segment]) ) {
 				if ( (model.segments_[1].dssp_ != 'E') && (model.segments_[model.segments_.size()].dssp_ != 'E') ) {
 					erase=true;
 				}
@@ -224,7 +261,7 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
-			if ( (!erase) && (option[sewing::model_should_have_at_least_one_E]) ) {
+			if ( (!erase) && (option[sewing::model_should_have_at_least_1_E]) ) {
 				bool model_have_E = false;
 				for ( core::Size i=1; i<=model.segments_.size(); ++i ) {
 					if ( model.segments_[i].dssp_ == 'E' ) {
@@ -237,26 +274,40 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
+
+			if ( (!erase) && (option[sewing::model_should_have_at_least_1_H]) ) {
+				bool model_have_H = false;
+				for ( core::Size i=1; i<=model.segments_.size(); ++i ) {
+					if ( model.segments_[i].dssp_ == 'H' ) {
+						model_have_H = true;
+						break; // essential for faster performance
+					}
+				}
+				if ( !model_have_H ) {
+					erase=true;
+				}
+			}
+
 			for ( core::Size i=1; (!erase) && i<=model.segments_.size(); ++i ) {
 				if ( model.segments_[i].dssp_ == 'H' &&
 						((int)model.segments_[i].residues_.size() > option[sewing::max_helix_length] ||
 						(int)model.segments_[i].residues_.size() < option[sewing::min_helix_length] ) ) {
 					if ( TR.Debug.visible() ) {
-						TR.Debug << "model.segments_[i].dssp_ == 'H' " << std::endl;
+						TR.Debug << "model.segments_[i].dssp_ == 'H' and this model will be erased " << std::endl;
 					}
 					erase=true;
 				} else if ( model.segments_[i].dssp_ == 'E' &&
 						((int)model.segments_[i].residues_.size() > option[sewing::max_strand_length] ||
 						(int)model.segments_[i].residues_.size() < option[sewing::min_strand_length] ) ) {
 					if ( TR.Debug.visible() ) {
-						TR.Debug << "model.segments_[i].dssp_ == 'E' " << std::endl;
+						TR.Debug << "model.segments_[i].dssp_ == 'E' and this model will be erased " << std::endl;
 					}
 					erase=true;
 				} else if ( model.segments_[i].dssp_ == 'L' &&
 						((int)model.segments_[i].residues_.size() > option[sewing::max_loop_length] ||
 						(int)model.segments_[i].residues_.size() < option[sewing::min_loop_length] ) ) {
 					if ( TR.Debug.visible() ) {
-						TR.Debug << "model.segments_[i].dssp_ == 'L' " << std::endl;
+						TR.Debug << "model.segments_[i].dssp_ == 'L' and this model will be erased" << std::endl;
 					}
 					erase=true;
 				}
@@ -264,18 +315,26 @@ main( int argc, char * argv [] ) {
 
 			//If a given model lacks appropriate DSSP in its two terminal secondary structures, remove it
 			if ( (!erase) &&
-					( ( option[sewing::leave_models_with_E_terminal_ss] )
-					|| ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only] ) ) ) {
+				(	( option[sewing::leave_models_with_E_terminal_ss]	)
+				||	( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands]	)
+				||	( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands]	) ) ) {
 				if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' ) {
 					erase=true;
 				}
 			}
 
-			// erase=true if first and last segments are not H-bonded by their backbones
-			if ( (!erase) && (option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands_only] ||
-					option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only]) ) {
+			if ( (!erase) &&
+					( option[sewing::leave_models_with_H_terminal_ss]	) ) {
+				if ( model.segments_[1].dssp_ != 'H' || model.segments_[model.segments_.size()].dssp_ != 'H' ) {
+					erase=true;
+				}
+			}
 
-				if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only] ) {
+			// erase=true if first and last segments are not H-bonded by their backbones
+			if ( (!erase) && (option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ||
+					option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands]) ) {
+
+				if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] ) {
 					std::string model_is_H_bonded_by_terminal_strands = see_whether_model_is_H_bonded_by_terminal_strands(model, "antiparallel");
 					//TR << "model_is_H_bonded_by_terminal_strands: " << model_is_H_bonded_by_terminal_strands << std::endl;
 					if ( model_is_H_bonded_by_terminal_strands != "antiparallel" ) {
@@ -283,7 +342,7 @@ main( int argc, char * argv [] ) {
 					}
 				}
 
-				if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands_only] ) {
+				if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) {
 					std::string model_is_H_bonded_by_terminal_strands = see_whether_model_is_H_bonded_by_terminal_strands(model, "parallel");
 					//TR << "model_is_H_bonded_by_terminal_strands: " << model_is_H_bonded_by_terminal_strands << std::endl;
 					if ( model_is_H_bonded_by_terminal_strands != "parallel" ) {
@@ -316,10 +375,10 @@ main( int argc, char * argv [] ) {
 		}//while(it != it_end) {
 		write_model_file(comments.str(), models, new_model_filename);
 	} //try
-catch ( utility::excn::EXCN_Base& excn ) {
-	std::cerr << "Exception : " << std::endl;
-	excn.show( std::cerr );
-	return -1;
-}
+	catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception : " << std::endl;
+		excn.show( std::cerr );
+		return -1;
+	}
 	return 0;
 }

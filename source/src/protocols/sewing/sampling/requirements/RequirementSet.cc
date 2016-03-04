@@ -99,7 +99,7 @@ RequirementSet::satisfies(
 	}
 
 	if ( assembly->segments().size() < min_segments_ || assembly->segments().size() > max_segments_ ) {
-		TR.Debug << "return false: assembly->segments().size() not fit min/max segments" << std::endl;
+			TR.Debug << "return false: assembly->segments().size() not fit min/max segments" << std::endl;
 		return false;
 	}
 
@@ -143,7 +143,7 @@ RequirementSet::satisfies(
 }
 
 
-/// @details This function should return true if any of the requirements contained
+///@details This function should return true if any of the requirements contained
 ///in this set are guaranteed to fail in the case of future edge additions. This is
 ///implemented by considering a 'hypothetical' assembly in which segments which do not
 ///yet exist auto-pass all requirements.

@@ -39,7 +39,7 @@ class MotifScorer : public AssemblyScorer {
 
 public:
 
-	/// @brief default construct
+	///@brief default construct
 	MotifScorer();
 
 	virtual ~MotifScorer(){}

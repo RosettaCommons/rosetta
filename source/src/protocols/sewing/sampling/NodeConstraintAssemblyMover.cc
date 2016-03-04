@@ -135,7 +135,7 @@ NodeConstraintAssemblyMover::check_constraints(
 
 
 
-/// @brief check all constraints that will be evaluated
+///@brief check all constraints that will be evaluated
 bool
 NodeConstraintAssemblyMover::check_all_nodes() const {
 	core::Size n_nodes = graph_->num_nodes();
@@ -155,7 +155,7 @@ NodeConstraintAssemblyMover::check_all_nodes() const {
 
 
 
-/// @details get a starting node that conforms to the
+///@details get a starting node that conforms to the
 ///first node definition. No sense in starting with something
 ///that won't work
 ModelNode const *
@@ -184,7 +184,7 @@ NodeConstraintAssemblyMover::get_starting_model_node() {
 
 
 
-/// @details setup the node constraints and then apply the base
+///@details setup the node constraints and then apply the base
 ///class method
 void
 NodeConstraintAssemblyMover::apply(
@@ -201,7 +201,7 @@ NodeConstraintAssemblyMover::apply(
 	if(option[in::file::native].user()) {
 		core::chemical::ResidueTypeSetCOP res_type_set =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		template_pose = core::import_pose::pose_from_file( *res_type_set, option[ in::file::native ]() , core::import_pose::PDB_file);
+		template_pose = core::import_pose::pose_from_pdb( *res_type_set, option[ in::file::native ]() );
 	}
 	else {
 		utility_exit_with_message("You must provide a template with the in:file:native option");

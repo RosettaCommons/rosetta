@@ -130,8 +130,7 @@ EnumerateAssemblyMover::generate_assembly(){
 	/////// <end> get model_file, edge_file
 
 	core::Size max_ss_num = option[basic::options::OptionKeys::sewing::max_ss_num].def(5);
-	//core::Size box_length = option[sewing::box_length].def(3);
-	// should be either 3 or 5 ss!
+	// so either 3 (smotif) or 5 (5-ss_models)
 
 	/////////////////// with each model, try to add every possible combination of n-terminal edges and c-terminal edges
 
@@ -160,7 +159,7 @@ EnumerateAssemblyMover::generate_assembly(){
 
 		std::set<core::Size> n_node_segments = n_term_node->segment_ids();
 		runtime_assert(n_node_segments.size() == 1);
-		TR << "Segments in n-terminal node: " << *(n_node_segments.begin()) << std::endl;
+			TR << "Segments in n-terminal node: " << *(n_node_segments.begin()) << std::endl;
 		core::Size test_1 = *n_node_segments.begin();
 
 		//Tim's'
@@ -173,7 +172,7 @@ EnumerateAssemblyMover::generate_assembly(){
 			c_term_node = graph_->get_model_node(*node_indices.begin()+4);
 			std::set<core::Size> c_node_segments = c_term_node->segment_ids();
 			runtime_assert(c_node_segments.size() == 1);
-			TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
+				TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
 			core::Size test_2 = *c_node_segments.begin();
 
 			runtime_assert(test_2 - test_1 == 4);
@@ -182,7 +181,7 @@ EnumerateAssemblyMover::generate_assembly(){
 			c_term_node = graph_->get_model_node(*node_indices.begin()+2);
 			std::set<core::Size> c_node_segments = c_term_node->segment_ids();
 			runtime_assert(c_node_segments.size() == 1);
-			TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
+				TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
 			core::Size test_2 = *c_node_segments.begin();
 
 			runtime_assert(test_2 - test_1 == 2);
@@ -193,15 +192,15 @@ EnumerateAssemblyMover::generate_assembly(){
 
 		if ( TR.Debug.visible() ) {
 			//TR << "[analysis] Current model_id with 5 ss: " << utility::to_string(cur_model.model_id_) << std::endl;
-			TR << "n_term_node->get_node_index(): " << n_term_node->get_node_index() << std::endl;
-			TR << "c_term_node->get_node_index(): " << c_term_node->get_node_index() << std::endl;
+				TR << "n_term_node->get_node_index(): " << n_term_node->get_node_index() << std::endl;
+				TR << "c_term_node->get_node_index(): " << c_term_node->get_node_index() << std::endl;
 			//TR << "end_node->get_node_index(): " << end_node->get_node_index() << std::endl;
 		}
 
 		assembly->add_model(graph_, n_term_node->model());
 		// now current model is made as a starting assembly and dumping as a pdb shows appropriate xyzs well
 
-		if ( option[basic::options::OptionKeys::sewing::dump_every_model_for_devel_purpose].user() ) {
+		if ( option[basic::options::OptionKeys::sewing::dump_every_model].user() ) {
 			core::pose::Pose to_be_dumped_pose = get_fullatom_pose(assembly);
 			to_be_dumped_pose.dump_pdb( "model_id_" + utility::to_string(cur_model.model_id_) + ".pdb" );
 			continue;
@@ -217,7 +216,6 @@ EnumerateAssemblyMover::generate_assembly(){
 		core::Size num_edges_from_c_term_node = c_term_node->num_edges();
 
 		if ( TR.Debug.visible() ) {
-			TR << "[variable debug message] better for tr " << std::endl;
 			TR << "[analysis] num_edges_from_n_term_node: " << num_edges_from_n_term_node << std::endl;
 			TR << "[analysis] num_edges_from_c_term_node: " << num_edges_from_c_term_node << std::endl;
 			TR << "[analysis] possible combination (=num_edges_from_n_term_node*num_edges_from_c_term_node) with this model_id ("<< cur_model.model_id_ << "): " << num_edges_from_n_term_node*num_edges_from_c_term_node << std::endl;

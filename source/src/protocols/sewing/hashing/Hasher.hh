@@ -196,7 +196,7 @@ class Hasher : public utility::pointer::ReferenceCount
 
 public:
 
-	/// @brief default constructor
+	///@brief default constructor
 	Hasher();
 
 	ScoreResult
@@ -208,12 +208,13 @@ public:
 		core::Size box_length
 	);
 
-	/// @brief Insert this model into the hash table
+	///@brief Insert this model into the hash table
 	void
 	insert(
 		Model const & model
 	);
 
+	// The 2nd score function with 8 arguments in Hasher.cc
 	ScoreResults
 	score(
 		Model const & model,
@@ -225,7 +226,9 @@ public:
 		core::Size box_length
 	) const;
 
-	/// @brief Score the given model against the models in the hash table
+
+	// The 1st score function with 7 arguments in Hasher.cc
+	///@brief Score the given model against the models in the hash table
 	ScoreResults
 	score(
 		Model const & model,
@@ -236,26 +239,27 @@ public:
 		core::Size box_length
 	) const;
 
-	/// @brief
+
+	///@brief
 	void
-	score_basis(
+	score_basis( // with "regular" 27 neighborhood lookup boxes
 		ScoreResults & alignment_scores,
 		Model const & transformed_model,
 		SewResidue const & basis_residue,
 		bool store_atoms
 	) const;
 
-	//new
-	/// @brief
+	// very similar as in score_basis
+	///@brief
 	void
-	score_basis_125(
+	score_basis_125( // with "larger" 125 neighborhood lookup boxes
 		ScoreResults & alignment_scores,
 		Model const & transformed_model,
 		SewResidue const & basis_residue,
 		bool store_atoms
 	) const;
 
-	/// @brief Trim the ScoreResults to remove weak hits
+	///@brief Trim the ScoreResults to remove weak hits
 	void
 	trim_scores(
 		ScoreResults & scores,
@@ -264,25 +268,24 @@ public:
 		core::Size max_clash_score
 	) const;
 
-	/// @brief keep only best scoring alignment between two models
+	///@brief keep only best scoring alignment between two models
 	ScoreResults
 	remove_duplicates(
 		ScoreResults const & scores
 	) const;
 
-	/// @brief remove edges between segments that both have 'next' or
-	///'previous' segments
+	///@brief remove edges between segments that both have 'next' or 'previous' segments
 	void
 	remove_connection_inconsistencies(
 		std::map< int, Model > const & models,
 		ScoreResults & scores
 	) const;
 
-	/// @brief const accessor to the underlying hash map
+	///@brief const accessor to the underlying hash map
 	HashMap const &
 	hash_map() const;
 
-	/// @brief retrive hits from the bin corresponding to the key (3D voxel) and all neighboring
+	///@brief retrive hits from the bin corresponding to the key (3D voxel) and all neighboring
 	///quarter-angstrom bins
 	//utility::vector1<HashValue>
 	void
@@ -292,7 +295,7 @@ public:
 	) const;
 
 	// new with box_length
-	/// @brief retrive hits from the bin corresponding to the key (3D voxel) and all neighboring
+	///@brief retrive hits from the bin corresponding to the key (3D voxel) and all neighboring
 	///quarter-angstrom bins
 	//utility::vector1<HashValue>
 	void
@@ -301,31 +304,31 @@ public:
 		utility::fixedsizearray1<HashMap::const_iterator, 125> & hit_its
 	) const;
 
-	/// @brief Transform all features to the local coordinate frame of the basis set
+	///@brief Transform all features to the local coordinate frame of the basis set
 	Model
 	transform_model(
 		Model const & model,
 		SewResidue const & basis_residue
 	) const;
 
-	/// @brief Hash the transformed residues into the HashMap
+	///@brief Hash the transformed residues into the HashMap
 	void
 	hash_model(
 		Model const & transformed_model,
 		SewResidue const & basis_residue
 	);
 
-	/// @brief Create the HashKey from a SewAtom
+	///@brief Create the HashKey from a SewAtom
 	HashKey
 	generate_key(
 		SewAtom const & atom
 	) const;
 
-	/// @brief Serialize hash table to disk
+	///@brief Serialize hash table to disk
 	void
 	write_to_disk(std::string filename) const;
 
-	/// @brief Populate the hash table from one on disk.
+	///@brief Populate the hash table from one on disk.
 	void
 	read_from_disk(std::string filename);
 

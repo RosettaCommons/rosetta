@@ -415,7 +415,7 @@ Model::segment_ids() const {
 	return segment_ids;
 }
 
-/// @brief Use the given segment-ranges to create a Model. Give this
+///@brief Use the given segment-ranges to create a Model. Give this
 ///model an id that doesn't currently exist in the given map of models
 Model
 create_model_from_pose(
@@ -427,7 +427,7 @@ create_model_from_pose(
 	return create_model_from_pose(pose, segments, model_id);
 }
 
-/// @brief Use the given segment-ranges to create a Model. Give this
+///@brief Use the given segment-ranges to create a Model. Give this
 ///model an id that doesn't currently exist in the given map of models
 Model
 create_model_from_pose(
@@ -1148,7 +1148,7 @@ add_num_neighbors(
 }
 
 
-/// @details Go through the list of models and add extra 'linker' segments
+///@details Go through the list of models and add extra 'linker' segments
 ///to Models that have secondary structure segments that are separated by a
 ///single "linker" segments. These linker segments will not be hashed by the
 ///Hasher class. Segments with linkers will have their next_segment_ populated
@@ -1586,7 +1586,7 @@ read_model_file(
 	}
 
 	core::Size endttime = time(NULL);
-	TR << "Read " << models.size() << " models in " << endttime - starttime << " seconds" << std::endl;
+		TR << "Read " << models.size() << " models in " << endttime - starttime << " seconds" << std::endl;
 
 	return models;
 } //read_model_file

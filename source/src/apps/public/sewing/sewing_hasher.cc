@@ -177,11 +177,11 @@ main( int argc, char * argv [] ) {
 			std::string model_five_ss_filename;
 			if ( hash_tag_only_terminal_Es ) {
 				hash_between = "hash_tag_only_terminal_Es";
-				comments << "# only_terminal_Es_are_hash_bool_true_to_be_merged_with_other_node " << std::endl;
+				comments << "# only_terminal_Es_are_hashed " << std::endl;
 				model_five_ss_filename = model_filename + "_three_or_five_ss_will_be_hashed_only_between_Es";
 			} else {
 				hash_between = "hash_between_any_HEs";
-				comments << "# hash_between_any_HEs_are_bool_true_to_be_merged_with_other_node " << std::endl;
+				comments << "# will_be_merged_between_any_HEs " << std::endl;
 				model_five_ss_filename = model_filename + "_three_or_five_ss_will_be_hashed_between_any_HEs";
 			}
 
@@ -207,7 +207,7 @@ main( int argc, char * argv [] ) {
 		///////////////////////// MODEL CONVERSION TO BINARY //////////////////////////////
 
 		//If we are generating a binary file then do that and exit
-		if ( option[sewing::mode].value() == "convert" ) {
+		if ( ( option[sewing::mode].value() == "convert" ) ){
 			if ( !option[sewing::score_file_name].user() ) {
 				std::stringstream err;
 				err << "You must provide a score file name to the sewing_hasher for binary conversion.";
@@ -229,20 +229,62 @@ main( int argc, char * argv [] ) {
 
 		//////////// MODEL COMPARISON USING GEOMETRIC HASHING /////////////////
 
-		if ( option[sewing::mode].value() == "hash" ) {
-
+		if (	( option[sewing::mode].value() == "hash" ) ){
 			if ( !option[sewing::score_file_name].user() ) {
 				utility_exit_with_message("You must provide a graph file name to the sewing_hasher using -score_file_name");
 			}
+			core::Size min_hash_score = option[sewing::min_hash_score].def(10);
+			core::Size max_clash_score = option[sewing::max_clash_score].def(0);
+			core::Size num_segments_to_match = option[sewing::num_segments_to_match].def(1);
+			core::Size box_length = option[sewing::box_length].def(3);
+			// box_length 3 is for neighborhood lookup box size 27 (=3^3), while box_length 5 is for neighborhood lookup box size 125 (=5^3)
+
 			std::string score_file_name = option[sewing::score_file_name];
 
-			core::Size min_score = option[sewing::min_hash_score].def(10);
-			core::Size max_clash_score = option[sewing::max_clash_score].def(0);
-			core::Size num_segments_to_match = option[sewing::num_segments_to_match].def(0);
-			core::Size box_length = option[sewing::box_length].def(3);
+
+			///// Size to string reference: http://www.cplusplus.com/articles/D9j2Nwbp/
+			std::ostringstream convert_min_hash_score;
+			std::string min_hash_score_string;
+			convert_min_hash_score	<< min_hash_score;
+			min_hash_score_string = convert_min_hash_score.str();
+
+			std::ostringstream convert_max_clash_score; // using single 'std::ostringstream convert' many times stopped to initialize convert, so I begin to use many 'std::ostringstream convert' since 2016/1/19
+			std::string max_clash_score_string;
+			convert_max_clash_score	<< max_clash_score;
+			max_clash_score_string = convert_max_clash_score.str();
+
+			std::ostringstream convert_num_segments_to_match;
+			std::string num_segments_to_match_string;
+			convert_num_segments_to_match	<< num_segments_to_match;
+			num_segments_to_match_string = convert_num_segments_to_match.str();
+
+			std::ostringstream convert_box_length;
+			std::string box_length_string;
+			convert_box_length	<< box_length;
+			box_length_string = convert_box_length.str();
+
+			/*
+			OK with release compilation, but not ok with mac clang debug
+			"src/apps/public/sewing/sewing_hasher.cc:249:74: error: cannot take the address of an rvalue of type 'std::__1::basic_ostringstream<char, std::__1::char_traits<char>, std::__1::allocator<char> >'
+                        std::string min_hash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << min_hash_score) )->str();
+                                                                                              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+			std::string min_hash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << min_hash_score) )->str();
+			std::string max_clash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << max_clash_score) )->str();
+			std::string num_segments_to_match_string = static_cast<std::ostringstream*>( &(std::ostringstream() << num_segments_to_match) )->str();
+			std::string box_length_string = static_cast<std::ostringstream*>( &(std::ostringstream() << box_length) )->str();
+			*/
+
+			std::string hash_target = option[sewing::mode].value();
+
+
+			// Keep this comment!  Customized_score_file_name is very useful, Doonam just commented here to avoid integration test failure
+			// score_file_name = score_file_name + "_" + hash_target + "_" + min_hash_score_string + "_min_hash_score_" + max_clash_score_string + "_max_clash_score_" + num_segments_to_match_string + "_num_segments_to_match_" + box_length_string + "_box_length";
+			///////////////////
+
 
 			TR << "Bundle Hasher options:" << std::endl;
-			TR << "\tMinimum Score: " << min_score << std::endl;
+			TR << "\tMinimum Score: " << min_hash_score << std::endl;
 			TR << "\tMaximum Clash Score: " << max_clash_score << std::endl;
 			TR << "\tNumber of segments to match: " << num_segments_to_match << std::endl;
 			TR << "\tScore file name: " << score_file_name << std::endl;
@@ -334,8 +376,7 @@ main( int argc, char * argv [] ) {
 	    						break;
 	    					}
 	    				}
-	    				//ScoreResults group_scores = hasher.score(models[model_id], num_segments_to_match, min_score, max_clash_score, false);
-						ScoreResults group_scores = hasher.score(models[model_id], num_segments_to_match, min_score, max_clash_score, false, box_length);
+						ScoreResults group_scores = hasher.score(models[model_id], num_segments_to_match, min_hash_score, max_clash_score, false, box_length);
 	    				hasher.remove_connection_inconsistencies(models, group_scores);
 	    				std::string node_score_file_name = score_file_name + "." + utility::to_string(rank);
 	    				write_hashing_scores_to_file(group_scores, node_score_file_name);
@@ -351,7 +392,7 @@ main( int argc, char * argv [] ) {
 //	    			for(; it != it_end; ++it) {
 //	    				if(it->first == model_id) {
 //	    					TR << "Processor " << rank << " begin scoring " << model_id << std::endl;
-//	    					scores = hasher.score(it->second, 1, min_score, 0, false);
+//	    					scores = hasher.score(it->second, 1, min_hash_score, 0, false);
 //	    					break;
 //	    				}
 //	    				hasher.insert(it->second);
@@ -363,12 +404,12 @@ main( int argc, char * argv [] ) {
 
 	    			//Send message back to master node
 	    			utility::send_integer_to_node(0, rank);
-	    		}
+			}
 	    	TR << "Processor " << rank << " was told to stop working" << std::endl;
-	    	}
+		}
 	    	MPI_Barrier( MPI_COMM_WORLD ); // make all nodes reach this point together.
-	    	MPI_Finalize();
-#else
+		    MPI_Finalize();
+#else // so use 1 cpu
 			Hasher hasher;
 			std::map< int, Model >::const_iterator it1 = models.begin();
 			std::map< int, Model >::const_iterator it_end = models.end();
@@ -376,12 +417,21 @@ main( int argc, char * argv [] ) {
 			for ( ; it1 != it_end; ++it1 ) {
 				ScoreResults scores;
 				for ( ; it2 != it1; ++it2 ) {
-					hasher.insert(it2->second);
+					hasher.insert(it2->second); // it2->second is Model itself
 				}
-				//scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true);
-				scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true, box_length);
-				hasher.remove_connection_inconsistencies(models, scores);
-				TR << "Done scoring " << it2->first << " found " << scores.size() << " valid comparisons" << std::endl;
+					TR << "current model id (it1): " << (it1->second).model_id_ << std::endl;
+					TR << "current model id (it2): " << (it2->second).model_id_ << std::endl;
+				scores = hasher.score(it1->second, num_segments_to_match, min_hash_score, max_clash_score, true, box_length);
+				if ( ! option[sewing::do_not_remove_connection_inconsistencies].user() ) {
+					option[sewing::do_not_remove_connection_inconsistencies].value( 0 );
+				}
+				bool do_not_remove_connection_inconsistencies = option[sewing::do_not_remove_connection_inconsistencies];
+					TR << "do_not_remove_connection_inconsistencies: " << do_not_remove_connection_inconsistencies << std::endl;
+				if ( (!do_not_remove_connection_inconsistencies)){
+					//remove edges between segments that both have 'next' or 'previous' segments
+					hasher.remove_connection_inconsistencies(models, scores);
+				}
+				TR << "Done scoring the " << it2->first << "th model (this is not necessariliy a model_id) found (" << scores.size() << ") valid comparisons" << std::endl;
 				if ( scores.size() > 0 && TR.Debug ) {
 					BasisPair bp = scores.begin()->first;
 					std::map< SegmentPair, core::Size > segment_matches = scores.begin()->second.segment_match_counts;
@@ -400,9 +450,9 @@ main( int argc, char * argv [] ) {
 					}
 				}
 				write_hashing_scores_to_file(scores, score_file_name);
-			}
+			} //for ( ; it1 != it_end; ++it1 ) {
 #endif
-		}
+		}// if (	( option[sewing::mode].value() == "hash" ) )
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );

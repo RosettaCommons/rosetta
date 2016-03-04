@@ -35,7 +35,7 @@ class GlobalLengthRequirement : public GlobalRequirement {
 
 public:
 
-	/// @brief default constructor
+	///@brief default constructor
 	GlobalLengthRequirement();
 
 	GlobalLengthRequirement(
@@ -44,14 +44,14 @@ public:
 		core::Size max_length
 	);
 
-	/// @brief Inverse of violated for this requirement
+	///@brief Inverse of violated for this requirement
 	virtual
 	bool
 	satisfies(
 		AssemblyCOP assembly
 	) const;
 
-	/// @brief Has the Assembly removed required residues
+	///@brief Has the Assembly removed required residues
 	///for the specified model
 	virtual
 	bool

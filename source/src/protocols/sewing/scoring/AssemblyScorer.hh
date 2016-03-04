@@ -33,7 +33,7 @@ class AssemblyScorer : public utility::pointer::ReferenceCount {
 
 public:
 
-	/// @brief default construct
+	///@brief default construct
 	AssemblyScorer(){}
 
 	virtual ~AssemblyScorer(){}
@@ -54,7 +54,7 @@ public:
 
 	typedef std::map< std::string,  std::pair<core::Real, AssemblyScorerOP> > ScorerMap;
 
-	/// @brief return the weighted sum of all scorer scores
+	///@brief return the weighted sum of all scorer scores
 	core::Real
 	score(
 		AssemblyCOP assembly

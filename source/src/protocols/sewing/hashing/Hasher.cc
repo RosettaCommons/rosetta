@@ -10,6 +10,7 @@
 /// @file protocols/sewing/hashing/Hasher.cc
 ///
 /// @author Tim Jacobs
+/// @author Doo Nam Kim (box_length part)
 
 //Unit headers
 #include <protocols/sewing/hashing/Hasher.hh>
@@ -67,7 +68,6 @@ Hasher::score_one(
 	hash_model(transformed_m2, m2_basis);
 	ScoreResults alignment_scores;
 
-
 	if ( box_length == 3 ) {
 		score_basis(alignment_scores, transformed_m1, m1_basis, true);
 	} else if ( box_length == 5 ) {
@@ -100,7 +100,7 @@ Hasher::score_one(
 }
 
 
-/// @details Insert the features  into the HashMap. This is done by
+///@details Insert the features  into the HashMap. This is done by
 ///iterating through all possible basis sets (coordinate frames defined by atom positions), and for each set
 ///transform all features to the corresponding local coordinates and then insert then into the
 ///hash table. The complexity of this operation should be O(m^4) where m is the number of features.
@@ -125,20 +125,23 @@ Hasher::insert(
 			hash_model(transformed_model, basis_residue);
 		}
 	}
-}//insert
+}
 
 ScoreResults
 Hasher::score(
-	Model const & model,
+	Model const & model, // it1->second (Model itself) from sewing_hasher
 	core::Size num_segment_matches,
 	core::Size min_segment_score,
 	core::Size max_clash_score,
 	bool store_atoms,
 	core::Size box_length
 ) const {
-	std::set<core::Size> all_segments;
+		TR << "[First score function in Hasher.cc]" << std::endl;
 
+	std::set<core::Size> all_segments;
 	utility::vector1<SewSegment>::const_iterator it= model.segments_.begin();
+
+	// For 5-ss-models, this 'for loop' iterates 5 times
 	for ( ; it!=model.segments_.end(); ++it ) {
 		all_segments.insert(it->segment_id_);
 	}
@@ -146,44 +149,52 @@ Hasher::score(
 }
 
 
-/// @details Tally the score of each model/basis_set in the HashMap against the input pose. This is very
-///similar to the insert function, but instead of populating the hash with the transformed features,
+///@details Tally the score of each model/basis_set in the HashMap against the input pose.
+///This is very similar to the insert function, but instead of populating the hash with the transformed features,
 ///you tally the number of HashMap hits corresponding to each structure/basis_set pair.
 ScoreResults
 Hasher::score(
-	Model const & model, // it1->second from sewing_hasher
+	Model const & model, // it1->second (Model itself) from sewing_hasher
 	core::Size num_segment_matches,
 	core::Size min_segment_score,
 	core::Size max_clash_score,
-	std::set<core::Size> const & score_segments,
+	std::set<core::Size> const & score_segments, //all_segments with all segment_ids
 	bool store_atoms,
 	core::Size box_length
 ) const {
+		TR << "[Second score function in Hasher.cc]" << std::endl;
 
-	ScoreResults alignment_scores;
+	ScoreResults alignment_scores; //typedef std::map< BasisPair, HashResult > ScoreResults;
+	//Basis is a struct with elements of 'model_id  and resnum'
+	//HashResult is a struct with elements of 'segment_matches, segment_match_counts and clash_count'
 
 	utility::vector1<SewSegment> segments = model.segments_;
 	utility::vector1<SewResidue> all_residues;
-	utility::vector1<SewSegment>::const_iterator it= model.segments_.begin();
+	utility::vector1<SewSegment>::const_iterator it = model.segments_.begin();
 	for ( ; it != model.segments_.end(); ++it ) {
 
-		//Don't score the segments that we aren't hashing, if it is not hashed, it is just a linker segment
+		//Don't score the segments that we aren't hashing, if it is not hashed, it is just a linker segment!
 		if ( ! it->hash_ ) continue;
 
 		if ( score_segments.find(it->segment_id_) != score_segments.end() ) {
 			all_residues.insert(all_residues.begin(), it->residues_.begin(), it->residues_.end());;
 		}
 	}
-	TR << "\nAll residues size " << all_residues.size() << std::endl;
+		TR << "A size of all residues in all hashed segments: " << all_residues.size() << std::endl;
+
 	for ( core::Size basis_i=1; basis_i<=all_residues.size(); ++basis_i ) {
+
 		SewResidue basis_residue = all_residues[basis_i];
+		//SewResidue is a struct with elements of 'resnum_, residue_type_ and num_neighbors_'
+
 		Model transformed_model = transform_model(model, basis_residue);
+		//HomogenousTransform all features into the local coordinate frame
 
-		runtime_assert_msg ( (box_length == 3) || (box_length == 5), "box_length should be either 3 or 5" );
+		runtime_assert_msg ( (box_length == 3) || (box_length == 5), "box_length should be either 3 or 5 as of 2015/December" );
 
-		if ( TR.Debug.visible() ) {
-			TR.Debug << box_length*box_length*box_length << " boxes for neighborhood lookup " << std::endl;
-		}
+//		if ( TR.Debug.visible() ) {
+//			TR.Debug << box_length*box_length*box_length << " boxes for neighborhood lookup " << std::endl;
+//		}
 
 		if ( box_length == 3 ) {
 			score_basis(alignment_scores, transformed_model, basis_residue, store_atoms);
@@ -191,61 +202,94 @@ Hasher::score(
 			score_basis_125(alignment_scores, transformed_model, basis_residue, store_atoms);
 		}
 
+		//	trim the given ScoreResults based on
+		//	the number of segments that match	between two models,
+		//	the number of atom matches for each of these segments (will be compared against to min_hash_score), and the
+		//	clash score (number of hits between atoms of different atom_types)
 		trim_scores(alignment_scores, num_segment_matches, min_segment_score, max_clash_score);
 
-	}//foreach basis residue (from query)
+	}//for each basis_residue (from query)
+
+	//Keep only the segment matches between two models that has the most aligned atoms.
 	alignment_scores = remove_duplicates(alignment_scores);
-	if ( TR.Debug.visible() ) {
-		TR << "Done scoring model " << model.model_id_ << std::endl;
-	}
+
+		TR << "Done scoring model id: " << model.model_id_ << std::endl;
+
 	return alignment_scores;
-}//score
+}// the 2nd score fn
+
 
 void
 Hasher::score_basis(
-	ScoreResults & alignment_scores,
+	ScoreResults & alignment_scores, // here no element, just typedef std::map< BasisPair, HashResult > ScoreResults;
 	Model const & transformed_model,
 	SewResidue const & basis_residue,
 	bool store_atoms
 ) const {
+	//	TR << "Hasher::score_basis" << std::endl;
 
 	utility::fixedsizearray1<HashMap::const_iterator, 27> hit_its(hash_map_.end()); //put here for speed
-
 	Basis reference_bp(transformed_model.model_id_, basis_residue.resnum_);
-
 	ModelConstIterator<SewSegment> model_it = transformed_model.model_begin();
-	for ( ; model_it != transformed_model.model_end(); ++model_it ) {
 
+	for ( ; model_it != transformed_model.model_end(); ++model_it ) {
 		SewAtom const & cur_atom = *model_it.atom();
+			//SewAtom is a struct with elements of 'atomno_ and coords_'
 
 		//iterate through hits in the hash map and tally the score for the model/residue alignment pairs
 		HashKey key = generate_key(cur_atom);
-
 		neighborhood_lookup(key, hit_its);
-		for ( core::Size hit_it_i = 1; hit_it_i<= hit_its.size(); ++hit_it_i ) {
+		for ( core::Size hit_it_i = 1; hit_it_i<= hit_its.size(); ++hit_it_i ) { // hit_its.size() is 27 for 3 box_length
 			if ( hit_its[hit_it_i] == hash_map_.end() ) continue;
-
 			for ( utility::vector1<HashValue>::const_iterator it = hit_its[hit_it_i]->second.begin(); it!=hit_its[hit_it_i]->second.end(); ++it ) {
 				HashValue const & cur_hit = *it;
-
 				if ( transformed_model.model_id_ != cur_hit.model_id ) { //Don't score the model against itself
 					BasisPair basis_pair = std::make_pair(reference_bp, Basis(cur_hit.model_id, cur_hit.basis_resnum));
-
 					if ( cur_atom.atomno_ == cur_hit.atomno ) {
-						SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
-
-						std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
-						if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
-							alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
+						using namespace basic::options;
+						if ( ! option[OptionKeys::sewing::score_between_opposite_terminal_segments].user() ) {
+							option[OptionKeys::sewing::score_between_opposite_terminal_segments].value( 0 );
 						}
+						bool score_between_opposite_terminal_segments = option[OptionKeys::sewing::score_between_opposite_terminal_segments];
+						// <begin> identifying the 1st and the last segment
+						utility::vector1<SewSegment> segments = transformed_model.segments_;
+						utility::vector1<SewSegment>::const_iterator it= transformed_model.segments_.begin();
+						core::Size segment_id_1st = 9999;
+						core::Size segment_id_last = 9999;
+						for ( ; it != transformed_model.segments_.end(); ++it ) {
+							//Don't score the segments that we aren't hashing, if it is not hashed, it is just a linker segment!
+							if ( it->hash_ ) {
+								if (segment_id_1st == 9999){
+									segment_id_1st = it->segment_id_;
+								}
+								else{
+									segment_id_last = it->segment_id_;
+								}
+							}
+						}// <end> identifying the 1st and the last segment
+						if (
+								(!score_between_opposite_terminal_segments) ||
+								(
+									((segment_id_1st == model_it.segment()->segment_id_) && (segment_id_last == cur_hit.segment_id))
+									||
+									((segment_id_last == model_it.segment()->segment_id_) && (segment_id_1st == cur_hit.segment_id))
+								)
+							){
+								SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
 
-						alignment_scores[basis_pair].segment_match_counts[segment_pair]++;
-						if ( store_atoms ) {
-							core::id::AtomID query_atom(cur_atom.atomno_, model_it.residue()->resnum_);
-							core::id::AtomID hit_atom(cur_hit.atomno, cur_hit.resnum);
-							alignment_scores[basis_pair].segment_matches[segment_pair].insert(std::make_pair(query_atom, hit_atom));
-						}
-					} else {
+								std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
+								if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
+									alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
+								}
+								alignment_scores[basis_pair].segment_match_counts[segment_pair]++;
+								if ( store_atoms ) {
+									core::id::AtomID query_atom(cur_atom.atomno_, model_it.residue()->resnum_);
+									core::id::AtomID hit_atom(cur_hit.atomno, cur_hit.resnum);
+									alignment_scores[basis_pair].segment_matches[segment_pair].insert(std::make_pair(query_atom, hit_atom));
+								}
+							}
+					} //if ( cur_atom.atomno_ == cur_hit.atomno ) {
+					else {
 						alignment_scores[basis_pair].clash_count++;
 					}
 				}
@@ -312,7 +356,7 @@ Hasher::score_basis_125(
 } //score_basis_125
 
 
-/// @details trim the given ScoreResults based on the number of segments that match
+///@details trim the given ScoreResults based on the number of segments that match
 ///between two models, the number of atom matches for each of these segments, and the
 ///clash score (number of hits between atoms of different atom_types)
 void
@@ -322,18 +366,43 @@ Hasher::trim_scores(
 	core::Size min_segment_score,
 	core::Size max_clash_score
 ) const{
-	ScoreResults::iterator it = scores.begin();
-	ScoreResults::iterator it_end = scores.end();
-	while ( it!=it_end ) {
+		TR << "Hasher::trim_scores" << std::endl;
+	using namespace core;
+	using namespace basic::options;
+	if ( ! option[OptionKeys::sewing::disregard_num_segment_matches].user() ) {
+		option[OptionKeys::sewing::disregard_num_segment_matches].value( 0 );
+	}
+	bool disregard_num_segment_matches = option[OptionKeys::sewing::disregard_num_segment_matches];
+		//TR << "disregard_num_segment_matches: " << disregard_num_segment_matches << std::endl;
+	//		TR << "[attention] [condition] max_clash_score: " << max_clash_score << std::endl;
+	//		TR << "[attention] [condition] min_segment_score: " << min_segment_score << std::endl;
+	//		TR << "[attention] [condition] num_segment_matches: " << num_segment_matches << std::endl;
 
-		//Ensure there are no clashed
+	ScoreResults::iterator it = scores.begin();
+	//typedef std::map< BasisPair, HashResult > ScoreResults;
+	ScoreResults::iterator it_end = scores.end();
+
+	while ( it!=it_end ) {
+		//	TR << "it!=it_end" << std::endl;
+
+		//Ensure that there are no clashes
 		bool erase=false;
+
+		// it->second represents HashResult which is the struct with elements of 'segment_matches, segment_match_counts and clash_count'
 		if ( it->second.clash_count > max_clash_score ) {
+				TR << "[reason of being erased] it->second.clash_count > max_clash_score" << std::endl;
+				TR << "[being erased] it->second.clash_count: " << it->second.clash_count << std::endl;
 			erase=true;
-		} else if ( it->second.segment_match_counts.size() != num_segment_matches ) {
-			//Ensure hits are between the specified number segments (and only the specified number of segments, to prevent clashes)
-			erase=true;
-		} else {
+		}
+		else if ( it->second.segment_match_counts.size() != num_segment_matches ) {
+			if (	(!disregard_num_segment_matches)	){
+				//Ensure hits are between the specified number segments (and only the specified number of segments, to prevent clashes)
+					TR << "[reason of being erased] it->second.segment_match_counts.size() != num_segment_matches" << std::endl;
+					TR << "[being erased] it->second.segment_match_counts.size(): " << it->second.segment_match_counts.size() << std::endl;
+				erase=true;
+			}
+		}
+		else {
 			//Ensure each matched segment contains at least the minimum number of atoms in the same bin
 			std::map<SegmentPair, core::Size> const & segment_matches = it->second.segment_match_counts;
 			std::map<SegmentPair, core::Size>::const_iterator seg_it = segment_matches.begin();
@@ -344,6 +413,8 @@ Hasher::trim_scores(
 				source_segments.insert(seg_it->first.first);
 				target_segments.insert(seg_it->first.second);
 				if ( seg_it->second < min_segment_score ) {
+						TR << "[attention] seg_it->second (superimposed # of atoms): " << seg_it->second << std::endl;
+						TR << "[reason of being erased] seg_it->second < min_segment_score" << std::endl;
 					erase=true;
 					break;
 				}
@@ -351,7 +422,27 @@ Hasher::trim_scores(
 
 			//Delete any matches where one segment from one model matches more than one segment of another model
 			if ( source_segments.size() != target_segments.size() ) {
+					TR << "[reason of being erased] source_segments.size() != target_segments.size()" << std::endl;
 				erase=true;
+			}
+		}
+
+		// just for devel purpose
+		if ( TR.Debug.visible() ) {
+			std::map<SegmentPair, core::Size> const & segment_matches = it->second.segment_match_counts;
+			std::map<SegmentPair, core::Size>::const_iterator seg_it = segment_matches.begin();
+			std::map<SegmentPair, core::Size>::const_iterator seg_it_end = segment_matches.end();
+			std::set<core::Size> source_segments;
+			std::set<core::Size> target_segments;
+			for ( ; seg_it != seg_it_end; ++seg_it ) {
+				source_segments.insert(seg_it->first.first);
+				target_segments.insert(seg_it->first.second);
+				if ( seg_it->second < min_segment_score ) {
+						TR << "[attention] seg_it->second (superimposed # of atoms): " << seg_it->second << std::endl;
+						TR << "[reason of being erased] seg_it->second < min_segment_score" << std::endl;
+					erase=true;
+					break;
+				}
 			}
 		}
 
@@ -363,13 +454,12 @@ Hasher::trim_scores(
 	}
 }//trim_scores
 
-/// @details Keep only the segment matches between
-///two models that has the most aligned atoms.
+///@details Keep only the segment matches between two models that has the most aligned atoms.
 ScoreResults
 Hasher::remove_duplicates(
 	ScoreResults const & scores
 ) const {
-
+		TR << "Hasher::remove_duplicates" << std::endl;
 	//there is almost certainly a better way to do this....
 	typedef std::pair<int, std::set<core::Size> > score_node;
 
@@ -414,12 +504,13 @@ Hasher::remove_duplicates(
 }//remove_duplicates
 
 
+//remove edges between segments that both have 'next' or 'previous' segments
 void
 Hasher::remove_connection_inconsistencies(
 	std::map< int, Model > const & models,
 	ScoreResults & scores
 ) const {
-
+		TR << "[remove_connection_inconsistencies]" << std::endl;
 	ScoreResults::iterator scores_it = scores.begin();
 	ScoreResults::iterator scores_it_end = scores.end();
 	while ( scores_it != scores_it_end ) {
@@ -427,6 +518,8 @@ Hasher::remove_connection_inconsistencies(
 
 		int model_id_1 = bp.first.model_id;
 		int model_id_2 = bp.second.model_id;
+		TR << "model_id_1: " << model_id_1 << std::endl;
+		TR << "model_id_2: " << model_id_2 << std::endl;
 
 		std::map<SegmentPair, core::Size> segment_matches = scores_it->second.segment_match_counts;
 		std::map<SegmentPair, core::Size>::const_iterator seg_it = segment_matches.begin();
@@ -471,7 +564,7 @@ Hasher::remove_connection_inconsistencies(
 }
 
 
-/// @details when doing a lookup, look in each of the quarter angstrom bins surrounding
+///@details when doing a lookup, look in each of the quarter angstrom bins surrounding
 ///the query key. This should prevent issues of close matches being missed due to being
 ///across bin boundaries.
 //utility::vector1<HashValue>
@@ -497,9 +590,7 @@ Hasher::neighborhood_lookup(
 }
 
 
-
-
-/// @details when doing a lookup, look in each of the quarter angstrom bins surrounding
+///@details when doing a lookup, look in each of the quarter angstrom bins surrounding
 ///the query key. This should prevent issues of close matches being missed due to being
 ///across bin boundaries.
 //utility::vector1<HashValue>
@@ -533,9 +624,7 @@ Hasher::neighborhood_lookup_125(
 }
 
 
-
-
-/// @details Construct a HomogenousTransform using the 3 points in the BasisSet. Use this
+///@details Construct HomogenousTransform using the 3 points in the BasisSet. Use this
 ///HomogenousTransform to transform all features into the local coordinate frame
 Model
 Hasher::transform_model(
@@ -562,7 +651,7 @@ Hasher::transform_model(
 	return model;
 }
 
-/// @details For each of the transformed features, insert the appropriate
+///@details For each of the transformed features, insert the appropriate
 ///key-value pair into the hash table. The key is the 3D-voxel (or bin)
 ///corresponding to the basis set. The value is the residues number for the
 ///residue that generated basis set that the transformed atom coordinates are in frame of
@@ -602,7 +691,7 @@ Hasher::generate_key(
 
 
 
-/// @details write the hash table to disk!
+///@details write the hash table to disk!
 void
 Hasher::write_to_disk(std::string filename) const {
 
@@ -622,7 +711,7 @@ Hasher::write_to_disk(std::string filename) const {
 
 
 
-/// @details read the hash table from disk. This function clears the contents of the hash map
+///@details read the hash table from disk. This function clears the contents of the hash map
 void
 Hasher::read_from_disk(std::string filename) {
 

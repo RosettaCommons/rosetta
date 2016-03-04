@@ -39,14 +39,14 @@ class IntraSegmentRequirement : public utility::pointer::ReferenceCount {
 
 public:
 
-	/// @brief does the segment satisfy this requirement?
+	///@brief does the segment satisfy this requirement?
 	virtual
 	bool
 	satisfies(
 		SewSegment segment
 	) const = 0;
 
-	/// @brief does the segment violate this requirement?
+	///@brief does the segment violate this requirement?
 	virtual
 	bool
 	violates(

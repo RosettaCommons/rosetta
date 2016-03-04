@@ -1318,8 +1318,7 @@ WriteToDB_rkde_in_strands(
 	Size sw_can_by_sh_id,
 	Size residue_number,
 	string residue_type,
-	string heading_direction)
-{
+	string heading_direction)	{
 	string insert = "INSERT INTO rkde_in_strands (struct_id, rkde_in_strands_PK_id, tag, sw_can_by_sh_id, residue_number, residue_type,\theading_direction)  VALUES (?,?,?,?,\t?,?,?);";
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert, db_session));
@@ -1342,8 +1341,7 @@ WriteToDB_sheet (
 	utility::sql_database::sessionOP db_session,
 	Size sheet_PK_id_counter,
 	Size sheet_id,
-	Size segment_id)
-{
+	Size segment_id)	{
 	string sheet_insert_i =
 		"INSERT INTO sheet (sheet_PK_id, sheet_id, struct_id, segment_id)  VALUES (?,?,?,?);";
 	statement sheet_insert_i_stmt(basic::database::safely_prepare_statement(sheet_insert_i,db_session));
@@ -2236,7 +2234,7 @@ WriteToDB_topology_candidate (
 	return 0;
 } // WriteToDB_topology_candidate
 
-
+// ref. Protein Science (1994) 3:2207-2216 "A revised set of potentials for beta-turn formation in proteins" by Hutchinson and Thornton
 void
 WriteToDB_turn_AA(
 	Pose const & pose,
@@ -2404,7 +2402,7 @@ WriteToDB_turn_type(
 	Real second_phi = pose.phi(second_res);
 	Real second_psi = pose.psi(second_res);
 
-	// I use mean dihedral values in Protein Science (1994), 3:2207-2216 "A revised set of potentials for beta-turn formation in proteins" by Hutchinson and Thornton
+	// I use mean dihedral values in Protein Science (1994) 3:2207-2216 "A revised set of potentials for beta-turn formation in proteins" by Hutchinson and Thornton
 	// worth to be referred http://en.wikipedia.org/wiki/Turn_(biochemistry)#Hairpins
 	// I didn't use Brian's BetaTurnDetectionFeatures since I don't understand it fully
 	string turn_type = "uncertain";

@@ -134,7 +134,7 @@ ReadRepeatNativeRotamersFile::clone() const {
 	return core::pack::task::operation::TaskOperationOP( new ReadRepeatNativeRotamersFile( *this ) );
 }
 
-/// @brief apply the normal ReadNativeRotamerFile operations, then add RotamerLinks for the repeating unit
+///@brief apply the normal ReadNativeRotamerFile operations, then add RotamerLinks for the repeating unit
 void
 ReadRepeatNativeRotamersFile::apply(
 	core::pose::Pose const & pose,

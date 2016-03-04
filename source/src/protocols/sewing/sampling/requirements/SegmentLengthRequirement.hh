@@ -34,7 +34,7 @@ class SegmentLengthRequirement : public IntraSegmentRequirement {
 
 public:
 
-	/// @brief default constructor
+	///@brief default constructor
 	SegmentLengthRequirement();
 
 	SegmentLengthRequirement(
@@ -42,13 +42,13 @@ public:
 		core::Size max_length
 	);
 
-	/// @brief Do we have the right number of residues in the SewSegment
+	///@brief Do we have the right number of residues in the SewSegment
 	bool
 	satisfies(
 		SewSegment segment
 	) const;
 
-	/// @brief Can we, through more edge additions, get the right number of residues?
+	///@brief Can we, through more edge additions, get the right number of residues?
 	bool
 	violates(
 		SewSegment segment
