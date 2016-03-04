@@ -13,7 +13,6 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit headers
-#include <apps/pilot/james/james_util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -48,6 +47,30 @@
 #include <string>
 
 #include <utility/excn/Exceptions.hh>
+
+utility::vector1< int > calculate_burial(
+	core::pose::Pose & mypose,
+	core::Real const dist_cutoff) {
+	utility::vector1< int > burial;
+	burial.resize( mypose.total_residue() );
+
+	using core::Size;
+	for ( Size i = 1; i <= mypose.total_residue(); ++i ) {
+		for ( Size j = i + 1; j <= mypose.total_residue(); ++j ) {
+			core::conformation::Residue resi = mypose.residue(i);
+			core::conformation::Residue resj = mypose.residue(j);
+
+			core::Real const dist(
+				resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) )
+			);
+			if ( dist < dist_cutoff ) {
+				burial[ i ]++;
+				burial[ j ]++;
+			}
+		}
+	}
+	return burial;
+}
 
 using namespace ObjexxFCL::format;
 
@@ -99,7 +122,7 @@ int main( int argc, char* argv [] ) {
 			core::pose::Pose pose;
 			input.fill_pose( pose, *rsd_set );
 			string const pose_tag( file_basename( core::pose::tag_from_pose( pose ) ) );
-			utility::vector1< int > burial = calculate_burial( pose );
+			utility::vector1< int > burial = calculate_burial( pose, 8 );
 			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 				for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
 					const core::conformation::Residue& resi = pose.residue(i);
