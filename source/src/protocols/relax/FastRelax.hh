@@ -58,6 +58,7 @@ struct RelaxScriptCommand {
 	core::Real  param3;
 	core::Real  param4;
 	core::Size  nparams;
+	utility::vector1< core::Real > params_vec;
 };
 
 class FastRelax : public RelaxProtocolBase {
@@ -179,6 +180,9 @@ protected:
 		core::scoring::ScoreFunctionOP local_scorefxn
 	);
 
+protected:
+	bool script_file_specified_; // whether user specified script file
+
 private:
 
 	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );
@@ -237,7 +241,6 @@ private:   // options
 	bool symmetric_rmsd_;
 
 private:   // other data
-
 	protocols::checkpoint::CheckPointer checkpoints_;
 
 	std::vector <RelaxScriptCommand> script_;

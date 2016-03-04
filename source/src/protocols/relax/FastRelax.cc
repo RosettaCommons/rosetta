@@ -143,7 +143,6 @@ endrepeat
 
 //Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -159,6 +158,8 @@ endrepeat
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreTypeManager.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 //Protocol Headers
@@ -215,6 +216,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.relax.FastRelax" );
 
 using namespace core;
 using namespace core::io::silent;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -364,6 +366,7 @@ FastRelax::parse_my_tag(
 
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
+	script_file_specified_ = true;
 
 	// Only support single file; is there a way to support multiple input files in rosetta scripts?
 	std::string cstfile = tag->getOption< std::string >("cst_file", "");
@@ -434,7 +437,7 @@ void FastRelax::set_to_default( )
 	ramady_force_ = basic::options::option[ OptionKeys::relax::ramady_force ]();
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
 	dualspace_ = basic::options::option[ basic::options::OptionKeys::relax::dualspace ]();
-
+	script_file_specified_ = false;
 
 	// cartesian
 
@@ -763,7 +766,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				do_md( pose, cmd.param1, cmd.param2, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
-
 		} else if ( cmd.command.substr(0,5) == "scale" ) {
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
@@ -772,6 +774,30 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
+
+		} else if ( cmd.command.substr(0,9) == "reference" ) { 
+			// added for design applications
+			if( cmd.nparams < 20 ){
+				utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <20 reference weights in ACDEF order>" );
+			} else {
+				//local_scorefxn->energy_method_options().set_method_weights( 
+				// scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+				methods::EnergyMethodOptions eopts( local_scorefxn->energy_method_options() );
+
+				eopts.set_method_weights( 
+				 scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+
+				local_scorefxn->set_energy_method_options( eopts );
+
+				/*
+				utility::vector1< Real > refw = 
+					local_scorefxn->energy_method_options().method_weights( 
+					 scoring::ScoreTypeManager::score_type_from_name( "ref" ) );
+				TR << "Check, Refweight: " << refw[1] << " " << refw[2] << " " << refw[3] 
+				<< std::endl;
+				*/
+			}
+
 		}   else if ( cmd.command.substr(0,6) == "switch" ) {
 			// no input validation as of now, relax will just die
 			if ( cmd.command.substr(7) == "torsion" ) {
@@ -958,48 +984,33 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 		filelines.push_back( "ramp_repack_min 1     0.00001"  );
 		filelines.push_back( "accept_to_best"  );
 	}
-	int linecount=0;
 
-	script_.clear();
-
-	core::Size i;
-	for ( i =0; i< filelines.size(); i++ ) {
-		line = filelines[i];
-		TR.Debug << line << std::endl;
-		linecount++;
-		utility::vector1< std::string > tokens ( utility::split( line ) );
-
-		if ( tokens.size() > 0 ) {
-			RelaxScriptCommand newcmd;
-			newcmd.command = tokens[1];
-
-			if ( tokens.size() > 1 ) { newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
-			if ( tokens.size() > 2 ) { newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
-			if ( tokens.size() > 3 ) { newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
-			if ( tokens.size() > 4 ) { newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
-
-			script_.push_back( newcmd );
-		}
-	}
+	set_script_from_lines( filelines );
 }
 
 // Override the stored script with the default script for batchrelax
-void FastRelax::set_script_from_lines( std::vector< std::string > const filelines ) {
-
-	script_.clear();
+void FastRelax::set_script_from_lines( std::vector< std::string > const filelines ) 
+{
 	std::string line;
 
-	int linecount=0;
 	script_.clear();
 
 	core::Size i;
 	for ( i =0; i< filelines.size(); i++ ) {
 		line = filelines[i];
 		TR.Debug << line << std::endl;
-		linecount++;
 		utility::vector1< std::string > tokens ( utility::split( line ) );
 
-		if ( tokens.size() > 0 ) {
+		if ( tokens.size() > 20 ) { // large data; now used for reference weights storage only.
+			RelaxScriptCommand newcmd;
+			newcmd.command = tokens[1];
+			for( Size i = 2; i <= tokens.size(); ++i ){
+				newcmd.params_vec.push_back( atof(tokens[i].c_str()) );
+			}
+			newcmd.nparams = newcmd.params_vec.size();
+			script_.push_back( newcmd );
+
+		} else if ( tokens.size() > 0 ) {
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
 
@@ -1007,6 +1018,7 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const fileline
 			if ( tokens.size() > 2 ) { newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
 			if ( tokens.size() > 3 ) { newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
 			if ( tokens.size() > 4 ) { newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
+
 			script_.push_back( newcmd );
 		}
 	}
@@ -1108,36 +1120,10 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 		infile.close();
 	}
 
-	int linecount=0;
-
-	script_.clear();
-
-	core::Size i;
-	for ( i =0; i< filelines.size(); i++ ) {
-		line = filelines[i];
-		TR.Debug << line << std::endl;
-		linecount++;
-		utility::vector1< std::string > tokens ( utility::split( line ) );
-
-		if ( tokens.size() > 0 ) {
-			RelaxScriptCommand newcmd;
-			newcmd.command = tokens[1];
-
-			if ( tokens.size() > 1 ) { newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
-			if ( tokens.size() > 2 ) { newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
-			if ( tokens.size() > 3 ) { newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
-			if ( tokens.size() > 4 ) { newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
-
-			script_.push_back( newcmd );
-		}
-	}
-
-
+	set_script_from_lines( filelines );
 }
 
-
 // Batch Relax stuff
-
 
 struct SRelaxPose {
 	SRelaxPose(): active(true), accept_count(0){}

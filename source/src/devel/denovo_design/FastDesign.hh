@@ -136,6 +136,8 @@ private:
 	protocols::toolbox::task_operations::DesignAroundOperationOP
 	create_worst_region_operation( core::pose::Pose const & pose );
 
+	void modify_scripts_for_alternative_scorefunctions();
+
 private:   // options
 
 	/// @brief Allow design as well as repacking? default=false

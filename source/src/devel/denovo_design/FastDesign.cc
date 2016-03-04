@@ -37,6 +37,7 @@
 
 //Basic Headers
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -339,6 +340,9 @@ void FastDesign::apply( core::pose::Pose & pose ){
 
 	TR.Debug << "number of filters=" << filters_.size() << std::endl;
 
+	// support for ramping reference weights 
+	modify_scripts_for_alternative_scorefunctions();
+
 	FastRelax::apply( pose );
 
 	best_score.push_back( (*get_scorefxn())(pose) );
@@ -469,6 +473,40 @@ FastDesign::set_constraint_weight(
 		local_scorefxn->set_weight( core::scoring::dihedral_constraint, full_weights[ core::scoring::dihedral_constraint ] * weight );
 		TR << "[coordinate:atom_pair:angle:dihedral] = " << local_scorefxn->get_weight( core::scoring::coordinate_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::atom_pair_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::angle_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::dihedral_constraint ) << std::endl;
 	}
+}
+
+void
+FastDesign::modify_scripts_for_alternative_scorefunctions()
+{
+	using namespace basic::options;
+
+	// will attempt to modify the relax script for beta_nov15 only
+	// options for any other score functions could be also added below 
+	std::vector< std::string > filelines;
+
+	if ( !(FastRelax::script_file_specified_) && 
+			 (option[ OptionKeys::corrections::beta_nov15 ]() || option[ OptionKeys::corrections::beta_nov15_cart ] )) {
+
+		// hard-coded reference weights for now...
+		filelines.push_back( "repeat 4"                                );
+		filelines.push_back( "reference 0.3     3.0     -2.2     -2.7     5.0     -0.2    0.5     5.2     -0.5     4.5     5.0     -1.8     -0.3     -1.5     0.0     -0.8     1.0     4.0     9.5     3.5" );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+
+		filelines.push_back( "reference 1.32468 3.74979 -2.16074 -2.40953 1.99829 0.41816 0.27935 3.02374 -0.54958 2.20647 2.50235 -1.34026 -1.17821 -1.31095 0.08526 -0.27469 1.31675 3.12269 3.24099 1.18223" );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
+
+		filelines.push_back( "reference 1.32468 3.5979  -2.16074 -2.50953 1.79829 0.51816 0.17935 2.82374 -0.54958 2.00647 2.30235 -1.34026 -1.27821 -1.31095 0.08526 -0.27469 1.31675 3.02269 2.94099 1.00223" );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
+
+		filelines.push_back( "reference 1.32468 3.25479 -2.14574 -2.72453 1.21829 0.79816 -0.30065 2.30374 -0.71458 1.66147 1.65735 -1.34026 -1.64321 -1.45095 -0.09474 -0.28969 1.15175 2.64269 2.26099 0.58223" );
+		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
+	}
+
+	if( filelines.size() > 0 )
+		FastRelax::set_script_from_lines( filelines );
 }
 
 } // namespace denovo_design
