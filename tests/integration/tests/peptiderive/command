@@ -9,4 +9,4 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-
+sed -i '/^- Rosetta version:/d' *.peptiderive.txt
