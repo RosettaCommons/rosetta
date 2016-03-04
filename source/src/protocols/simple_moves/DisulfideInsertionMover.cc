@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_moves/DisulfideInsersionMover.cc
 /// @brief a mover that closes a receptor bound peptide by an added disulfide bond
-/// @author Orly Marcu ( orlymarcu@mail.huji.ac.il )
+/// @author Orly Marcu ( orly.marcu@mail.huji.ac.il )
 /// @date Jan. 12, 2014
 
 // unit headers
@@ -29,6 +29,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -46,6 +47,12 @@
 #include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
+
+
+//remove after removing prints
+#include <utility/io/ozstream.hh>
+#include <core/io/pdb/pdb_writer.hh>
+
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -104,48 +111,84 @@ protocols::moves::MoverOP DisulfideInsertionMover::clone() const {
 /// in which case 4.5-6.5 Ang) so that the peptide they wrap can be stabilized by
 /// cyclization.
 ///
-/// @param partner_pose the protein from which peptides are derived
+/// @param pose the protein from which peptides are derived
 /// @param n_putative_cyd position in the partner pose where a putative cysteine immediatly before a derived peptide might exist
 /// @param c_putative_cyd position in the partner pose where a putative cysteine immediatly after a derived peptide might exist
+
 DisulfideCyclizationViability
 DisulfideInsertionMover::determine_cyclization_viability(
-	core::pose::Pose const & partner_pose,
-	core::Size const n_putative_cyd, core::Size const c_putative_cyd) {
+	core::pose::Pose const & pose,
+	core::Size const n_putative_cyd_index, core::Size const c_putative_cyd_index) {
+
+	// assume it is safe to hold a const reference to the Residues, since we are given
+	// a const Pose
+	core::conformation::Residue const & n_putative_cyd( pose.residue(n_putative_cyd_index) );
+	core::conformation::Residue const & c_putative_cyd( pose.residue(c_putative_cyd_index) );
 
 	//lower and upper boundries for atom distances that indicate closability by a disulfide
 	core::Length min_distance;
 	core::Length max_distance;
 
-	if ( !partner_pose.residue(n_putative_cyd).is_protein() || !partner_pose.residue(c_putative_cyd).is_protein() ) {
+	if ( !n_putative_cyd.is_protein() || !c_putative_cyd.is_protein() ) {
 		return DCV_NOT_CYCLIZABLE;
 	}
 
-	std::string atom_to_check;
-	if ( (partner_pose.residue(n_putative_cyd).name1() == 'G' ) ||( partner_pose.residue( c_putative_cyd ).name1() == 'G' ) ) {
-		atom_to_check = "CA";
-		min_distance = 4.5;
-		max_distance = 6.5;
-	} else {
-		atom_to_check = "CB";
-		min_distance = 3;
-		max_distance = 5;
-	}
-	core::Length distance = partner_pose.residue( n_putative_cyd ).xyz( atom_to_check ).distance(partner_pose.residue( c_putative_cyd ).xyz( atom_to_check ));
-	bool already_bonded_n_cys (partner_pose.conformation().residue(n_putative_cyd).has_variant_type( core::chemical::DISULFIDE ));
-	bool already_bonded_c_cys (partner_pose.conformation().residue(c_putative_cyd).has_variant_type( core::chemical::DISULFIDE ));
-	// both don't form disulfide bonds and so their potential can be estimated according to distance alone
+	// first, check if the requested residues are already disulfide-bonded
+	// (implicitly, if the residue has a DISULFIDE variant type, we assume it is CYS)
+	bool already_bonded_n_cys (n_putative_cyd.has_variant_type( core::chemical::DISULFIDE ));
+	bool already_bonded_c_cys (c_putative_cyd.has_variant_type( core::chemical::DISULFIDE ));
+
 	if ( !already_bonded_n_cys && !already_bonded_c_cys ) {
+		// both residues don't already have a disulfide bond
+
+		// estimate potential for cyclization by distance (CB-CB)
+		// glycines don't have CBs, so we use CA-CA distance
+		std::string atom_to_check;
+		if ( (n_putative_cyd.name1() == 'G') ||
+				(c_putative_cyd.name1() == 'G') ) {
+			atom_to_check = "CA";
+			min_distance = 4.5;
+			max_distance = 6.5;
+		} else {
+			atom_to_check = "CB";
+			min_distance = 3;
+			max_distance = 5;
+		}
+
+		core::Length distance = n_putative_cyd.xyz( atom_to_check ).distance(c_putative_cyd.xyz( atom_to_check ));
+
 		if ( distance <= max_distance && distance >= min_distance ) {
 			return DCV_CYCLIZABLE;
 		}
-	} else if ( already_bonded_n_cys && already_bonded_c_cys ) {
-		// both cysteins are bonded but not neccessarily to each other
-		core::Size lower_SG_id = partner_pose.residue(n_putative_cyd).atom_index( "SG" );
-		core::Size cys_SG_connect_id =  partner_pose.residue(n_putative_cyd).type().residue_connection_id_for_atom( lower_SG_id );
-		if ( partner_pose.residue(n_putative_cyd).residue_connection_partner(cys_SG_connect_id) == c_putative_cyd ) {
+
+		// the residues are not at the right distance from each other
+		return DCV_NOT_CYCLIZABLE;
+	}
+	else if ( already_bonded_n_cys ) {
+		// the N-terminal is a disulfide-bonded cysteine.
+
+		// check what the N-terminal cysteine is bonded to
+		core::Size n_cys_SG_id = n_putative_cyd.atom_index( "SG" );
+		core::Size n_cys_SG_connect_id =  n_putative_cyd.type().residue_connection_id_for_atom( n_cys_SG_id );
+		core::Size resi_bound_to_n_cyd = n_putative_cyd.residue_connection_partner(n_cys_SG_connect_id);
+
+		// if the bond is between the N- and C- residues, meaning that the peptide is already cyclic
+		if ( resi_bound_to_n_cyd == c_putative_cyd_index ) {
 			return DCV_ALREADY_CYCLIZED;
 		}
+
+		// the N-terminal cysteine is bonded to another residue
+		// in this scenario, we don't replace it, since it is
+		// less likely it will form a disulfide bond with a cysteine we
+		// will introduce.
+		else {
+			return DCV_NOT_CYCLIZABLE;
+		}
+
 	}
+
+	// the C-terminal cysteine has a disulfide bond, but it is not to the N-terminal cysteine
+	// see above for our considerations.
 	return DCV_NOT_CYCLIZABLE;
 }
 
@@ -153,7 +196,6 @@ void
 DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 {
 	set_last_move_status(protocols::moves::FAIL_RETRY);
-
 	core::Size peptide_start_pos = peptide_receptor_pose.conformation().chain_begin(peptide_chain_num_);
 	core::Size peptide_end_pos =  peptide_receptor_pose.conformation().chain_end(peptide_chain_num_);
 
@@ -166,6 +208,9 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	if ( cyclizable == DCV_NOT_CYCLIZABLE ) {
 		return;
 	}
+
+	// a copy of the pose to compare energies to after disulfide insertion step
+	//core::pose::PoseOP original_peptide (new core::pose::Pose (peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_) );
 
 	// eliminate cases where a disulfide should not be formed since the residues already form a disulfide (DCV_ALREADY_CYCLIZED)
 	// in that case we will only want to optimize it using the rebuild_disulfide function
@@ -199,16 +244,30 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 		scorefxn_->set_weight( core::scoring::angle_constraint, 0 );
 	}
 
-	// evaluate internal total energy of newly formed peptide
-	// no matter where the disulfide bond was formed
-	core::pose::PoseOP minimized_peptide( new core::pose::Pose (peptide_receptor_pose, peptide_start_pos, peptide_end_pos));
-	core::Real cyclic_peptide_energy = (*scorefxn_)(*minimized_peptide);
-	const core::Real PRACTICALLY_ZERO_ISC = 1e-7;
-	if ( cyclic_peptide_energy < PRACTICALLY_ZERO_ISC ) {
-		set_last_move_status(protocols::moves::MS_SUCCESS);
-	}
+	// evaluate energy of newly formed peptide
+	//core::pose::PoseOP cyclic_peptide (new core::pose::Pose (peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_)  );
+	//core::Real cyclic_peptide_energy = (*scorefxn_)(*cyclic_peptide);
+	//core::Real original_peptide_energy = (*scorefxn_)(*original_peptide);
 
+	// exclude energetic gain by disulfide when comparing all other aspects of peptide change
+	//core::scoring::EnergyMap cyclic_pep_emap (cyclic_peptide->energies().total_energies());
+	//core::scoring::EnergyMap original_pep_emap (original_peptide->energies().total_energies());
+
+
+	//core::Real baseline_dslf_energy = original_pep_emap.get(core::scoring::score_type_from_name("dslf_fa13"));
+	//core::Real cyc_pep_dslf_energy = cyclic_pep_emap.get(core::scoring::score_type_from_name("dslf_fa13"));
+
+	//const core::Real REASONABLE_ENERGY_CHANGE = 1.55;
+	//core::Real dis_energy_change = cyc_pep_dslf_energy - baseline_dslf_energy;
+	//core::Real other_energetic_change = (cyclic_peptide_energy - original_peptide_energy) - dis_energy_change;
+
+	// if both the energy of the new disulfide bond AND of all other terms is not much worse call this a success
+	//if (dis_energy_change < REASONABLE_ENERGY_CHANGE && other_energetic_change < REASONABLE_ENERGY_CHANGE) {
+		set_last_move_status(protocols::moves::MS_SUCCESS);
+	//}
 }
+
+
 
 /// @brief Setup the score function with the appropriate weights on the constraints.
 ///        If user has provided a score function and set the weights to a specific value,

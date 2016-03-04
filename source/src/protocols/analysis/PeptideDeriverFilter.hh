@@ -36,13 +36,17 @@
 namespace protocols {
 namespace analysis {
 
-/// @brief an enum specifying the type of peptide entry, when calling PeptideDeriverOuputter::peptide_entry()
+/// @brief an enum specifying whether the peptide entry encountered during the
+///        sliding window run in known to be the "best" peptide, when calling
+///        PeptideDeriverOuputter::peptide_entry()
 enum PeptideDeriverEntryType {
-	/// a general peptide from the sliding window run
+	/// a peptide from the sliding window run
 	ET_GENERAL,
-	/// the peptide with the best interface score (as calculated for the linear peptide)
+	/// the peptide whose linear model had the best interface score
 	ET_BEST_LINEAR,
-	/// the peptide with the best interface score (as calculated for the cyclic peptide)
+	/// the cyclizable peptide whose cyclic model had the best interface score,
+	/// or, if no cyclic models were produced, the cyclizable peptide whose linear
+	/// model had the best interface score.
 	ET_BEST_CYCLIC
 };
 
@@ -83,7 +87,7 @@ public:
 	/// @brief called by PeptideDeriverFilter for each 'peptide' entry that should be output.
 	/// besides the peptides for each sliding window, this is being called for the 'best' peptides (@see PeptideDeriverEntryType)
 	virtual void peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
+		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
 		core::pose::Pose const & cyclic_pose, core::Real const cyclic_isc) = 0;
 
 	/// @brief called by PeptideDeriverFilter when calculation concludes for a receptor-partner pair (for all the different peptide lengths)
@@ -91,6 +95,7 @@ public:
 
 	/// @brief called by PeptideDeriverFilter when processing of a strucuture (all chain-pairs considered) ends
 	virtual void end_structure() = 0;
+
 };
 
 /// @brief a container class which holds a list of PeptideDeriverOutputter instances and delegates calls to those.
@@ -114,9 +119,10 @@ public:
 
 	virtual void peptide_entry(core::pose::Pose const & pose,
 		PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, std::string const & disulfide_info,
+		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info,
 		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
 		core::Real const cyclic_isc);
+
 
 	virtual void end_receptor_partner_pair();
 
@@ -151,8 +157,9 @@ public:
 	// TODO : consider using a PeptideDeriverEntry struct to make this signature less verbose and more tolerant to changes in the protocol
 	//        e.g.,  virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntry const & peptide_deriver_entry) --yuvals
 	virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
+		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
 		core::pose::Pose const &, core::Real const cyclic_isc);
+
 
 	virtual void end_receptor_partner_pair();
 
@@ -194,7 +201,7 @@ public:
 
 	virtual void peptide_entry(core::pose::Pose const & pose,
 		PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, std::string const & disulfide_info,
+		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info,
 		bool const was_cyclic_pep_modeled, core::pose::Pose const &,
 		core::Real const cyclic_isc );
 
@@ -204,10 +211,14 @@ private:
 	/// clear accumulating member variables
 	void clear_buffers();
 
+	/// store location of best cyclic peptide for comparison reasons
+	core::Size best_cyclic_start_position_;
+
 	utility::io::orstream * out_p_;
 	std::string prefix_;
 
 	core::Size current_pep_length_;
+	bool current_pep_length_cyclic_peptide_encountered_;
 	core::Real current_total_isc_;
 	char current_receptor_chain_letter_;
 	char current_partner_chain_letter_;
@@ -217,6 +228,7 @@ private:
 	std::ostringstream best_linear_peptides_;
 	std::ostringstream best_cyclic_peptides_;
 	std::ostringstream all_peptides_;
+	std::ostringstream cyclic_peptides_;
 	std::ostringstream footer_;
 
 }; // PeptideDeriverMarkdownStreamOutputter
@@ -254,7 +266,7 @@ public:
 
 	virtual void peptide_entry(core::pose::Pose const & pose,
 		PeptideDeriverEntryType const entry_type, core::Size const,
-		core::Real const, std::string const & disulfide_info,
+		core::Real const, core::Real const, std::string const & disulfide_info,
 		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
 		core::Real const);
 

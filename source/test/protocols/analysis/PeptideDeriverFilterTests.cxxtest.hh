@@ -66,7 +66,7 @@ public:
 
 	virtual void peptide_entry(core::pose::Pose const & /*pose*/,
 		protocols::analysis::PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const /*linear_isc*/, std::string const & /*disulfide_info*/,
+		core::Real const /*linear_isc*/, core::Real const /*binding_contribution_fraction*/, std::string const & /*disulfide_info*/,
 		bool const /*was_cyclic_pep_modeled*/, core::pose::Pose const & /*cyclic_pose*/,
 		core::Real const /*cyclic_isc*/) {
 		(*ut_) << "peptide_entry" <<
@@ -104,6 +104,7 @@ public:
 		// 3. hydrogens and score terms removed from minimized file
 		// 4. residue 117 from chain B removed
 		// 5. residues 114-121 from chain B duplicated as 135-142 and shifted 100A in each axis
+		// 6. residues 114-121 from chain B duplicated as chain C 1-12, shifted 100A in x, y and 121A in z
 		//
 		// Steps 1-2 are made so that processing time is minimal for the unit tests.
 		//
@@ -119,7 +120,14 @@ public:
 		// should be extracted. This also has the advantage for different control flow for the
 		// 10-mer, which should be skipped because the peptide is not long enough (and is an
 		// edge case).
-		core::import_pose::pose_from_file( *test_pose_, "protocols/analysis/2hle_AB_mod.pdb" , core::import_pose::PDB_file);
+		//
+		// Step 6 made so that we test the case for far-away chains C and A (where no peptide
+		// will be derived at all), and so that we test more than two chains. The value of 121A
+		// for the shift in the z-axis is 100A (the same as those residues shifted in chain B)
+		// plus 21A, which makes sure chain C is shifted completely away from chain B (the width
+		// in the z-axis of this segment is 18A), but still close enough so a B-C interaction
+		// exists.
+		core::import_pose::pose_from_file( *test_pose_, "protocols/analysis/2hle_remixed.pdb" , core::import_pose::PDB_file);
 
 		peptiderive_ = protocols::analysis::PeptideDeriverFilterOP( new protocols::analysis::PeptideDeriverFilter() );
 
@@ -168,16 +176,17 @@ public:
 			TS_ASSERT_EQUALS(filter.get_is_report_gzip(), true);
 			TS_ASSERT_EQUALS(filter.get_is_dump_cyclic_poses(), true);
 			TS_ASSERT_EQUALS(filter.get_is_dump_peptide_pose(), true);
-			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains().size(), 1);
+			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains().size(), 2);
 			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains()[1], 'A');
-			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains().size(), 1);
+			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains()[2], 'B');
+			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains().size(), 2);
 			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[1], 'B');
-
+			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[2], 'C');
 		}
-catch ( utility::excn::EXCN_Msg_Exception e ) {
-	std::cerr << "Raised exception: " << e.msg() << std::endl;
-	TS_ASSERT( false );
-}
+		catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::cerr << "Raised exception: " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
 
 	}
 
@@ -187,7 +196,13 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 		pep_lengths.push_back(10);
 		pep_lengths.push_back(7);
 		peptiderive_->set_pep_lengths(pep_lengths);
-		peptiderive_->derive_peptide( ut_out, *test_pose_, /* first_chain= */1, /* second_chain= */2, /*both_ways=*/ true );
+		peptiderive_->derive_peptide( ut_out, *test_pose_, /*first_chain=*/1, /*second_chain=*/2, /*both_ways=*/true );
+
+		// chain A and C are far apart. Here we look at what happens in this case (no peptide should be derived)
+		peptiderive_->set_is_skip_zero_isc(true);
+		peptiderive_->derive_peptide( ut_out, *test_pose_, /*first_chain=*/1, /*second_chain=*/3, /*both_ways=*/true );
+		peptiderive_->set_is_skip_zero_isc(false);
+
 	}
 
 	void test_report_format_parsing() {

@@ -13,8 +13,8 @@
 			do_minimize="false"
 			scorefxn_deriver="soft_rep"
 			optimize_cyclic_threshold="0.5"
-			restrict_receptors_to_chains="A"
-			restrict_partners_to_chains="B"
+			restrict_receptors_to_chains="A,B"
+			restrict_partners_to_chains="B,C"
 			report_format="basic"
 			/>
 	</FILTERS>

@@ -1,0 +1,27 @@
+# note: 3gxu_remixed_min is the structure of 3gxu, cleaned to include only ATOM records,
+#       the B chain replicated according to the crystal symmtery to chain B, and
+#       minimized using the minimize app, with -run:min_type dfpmin_armijo_atom
+#       -run:min_tolerance 0.005. Then the remarks with Rosetta scores at the end of
+#       the PDB were removed.
+-in:file:s 3gxu_remixed_min.pdb.gz
+
+-nstruct 1
+-out:no_nstruct_label
+-out:mute core.conformation.Conformation
+-out:mute protocols.moves.RigidBodyMover
+-run:other_pose_to_scorefile
+-ex1
+-ex2
+-randomize_missing_coords
+-ignore_unrecognized_res
+-peptide_deriver:pep_lengths=6,10
+-peptide_deriver:dump_peptide_pose=true
+-peptide_deriver:dump_report_file=true
+-peptide_deriver:dump_prepared_pose=true
+-peptide_deriver:dump_cyclic_poses=true
+-peptide_deriver:restrict_receptors_to_chains=A B
+-peptide_deriver:restrict_partners_to_chains=B C
+-peptide_deriver:skip_zero_isc=true
+-peptide_deriver:do_minimize=true
+-peptide_deriver:report_format=markdown
+-peptide_deriver:optimize_cyclic_threshold=0.2

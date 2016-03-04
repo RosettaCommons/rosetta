@@ -46,4 +46,13 @@ peptide_entry entry_type=0 pep_start=8
 peptide_entry entry_type=1 pep_start=4
 peptide_entry entry_type=2 pep_start=6
 end_receptor_partner_pair
+chain_pair_pose_prepared
+begin_receptor_partner_pair receptor=A partner=C options=pep_lengths= 10,7 is_skip_zero_isc= 1 is_do_minimize= 1
+peptide_length 10
+peptide_length 7
+end_receptor_partner_pair
+begin_receptor_partner_pair receptor=C partner=A options=pep_lengths= 10,7 is_skip_zero_isc= 1 is_do_minimize= 1
+peptide_length 10
+peptide_length 7
+end_receptor_partner_pair
 
