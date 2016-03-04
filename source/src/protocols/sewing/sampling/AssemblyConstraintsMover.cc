@@ -16,6 +16,9 @@
 #include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
 #include <protocols/sewing/sampling/AssemblyConstraintsMoverCreator.hh>
 
+#include <protocols/sewing/sampling/ReadNativeRotamersFileCreator.hh>
+#include <protocols/sewing/sampling/ReadRepeatNativeRotamersFileCreator.hh>
+
 // Package Headers
 #include <protocols/sewing/util/io.hh>
 

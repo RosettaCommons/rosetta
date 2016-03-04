@@ -20,7 +20,6 @@
 #include <protocols/sewing/sampling/AssemblyConstraintsMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperationCreator.hh>
 
 // Package Headers
 #include <protocols/sewing/util/io.hh>
@@ -29,17 +28,6 @@ namespace protocols {
 namespace sewing  {
 
 //////////////ReadNativeRotamersFile/////////////////
-
-class ReadNativeRotamersFileCreator : public core::pack::task::operation::TaskOperationCreator {
-public:
-	virtual
-	core::pack::task::operation::TaskOperationOP
-	create_task_operation() const;
-
-	virtual
-	std::string keyname()
-	const { return "ReadNativeRotamersFile"; }
-};
 
 
 class ReadNativeRotamersFile : public core::pack::task::operation::TaskOperation
@@ -79,17 +67,6 @@ private:
 };
 
 //////////////ReadRepeatNativeRotamersFile/////////////////
-
-class ReadRepeatNativeRotamersFileCreator : public core::pack::task::operation::TaskOperationCreator {
-public:
-	virtual
-	core::pack::task::operation::TaskOperationOP
-	create_task_operation() const;
-
-	virtual
-	std::string keyname()
-	const { return "ReadRepeatNativeRotamersFile"; }
-};
 
 class ReadRepeatNativeRotamersFile : public ReadNativeRotamersFile
 {

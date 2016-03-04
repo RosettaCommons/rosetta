@@ -21,7 +21,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperationCreator.hh>
+
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -97,12 +97,6 @@ private:
 
 };
 
-class DisableAntibodyRegionOperationCreator : public core::pack::task::operation::TaskOperationCreator {
-public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "DisableAntibodyRegionOperation"; }
-	//core::pack::task::operation::TaskOperationOP clone() const;
-};
 
 } //task_operations
 } //antibody

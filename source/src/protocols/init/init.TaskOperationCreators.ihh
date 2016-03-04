@@ -11,17 +11,20 @@
 /// @brief  Creator #includes for TaskOperations for init
 /// @author Steven Lewis smlewi@gmail.com
 
+// Note: 
+//  ALL Task Operation Creators should be by themselves or in their own file to speed compile!
+
 //TaskOperationCreator #includes
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/ResFilterRegistrator.hh>
 #include <core/pack/task/operation/ResFilterCreators.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <protocols/antibody/task_operations/AddCDRProfilesOperation.hh>
-#include <protocols/antibody/task_operations/AddCDRProfileSetsOperation.hh>
-#include <protocols/antibody/task_operations/DisableAntibodyRegionOperation.hh>
-#include <protocols/antibody/task_operations/DisableCDRsOperation.hh>
-#include <protocols/antibody/task_operations/RestrictToCDRsAndNeighbors.hh>
+#include <protocols/antibody/task_operations/AddCDRProfilesOperationCreator.hh>
+#include <protocols/antibody/task_operations/AddCDRProfileSetsOperationCreator.hh>
+#include <protocols/antibody/task_operations/DisableAntibodyRegionOperationCreator.hh>
+#include <protocols/antibody/task_operations/DisableCDRsOperationCreator.hh>
+#include <protocols/antibody/task_operations/RestrictToCDRsAndNeighborsCreator.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
 
@@ -39,8 +42,9 @@
 
 #include <protocols/denovo_design/task_operations/ConsensusLoopDesignCreator.hh>
 
-//TODO move this elsewhere!
-#include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
+
+#include <protocols/sewing/sampling/ReadRepeatNativeRotamersFileCreator.hh>
+#include <protocols/sewing/sampling/ReadNativeRotamersFileCreator.hh>
 
 #include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/DatabaseThreadCreator.hh>

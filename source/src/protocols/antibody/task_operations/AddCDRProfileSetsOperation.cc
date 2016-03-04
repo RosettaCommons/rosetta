@@ -13,6 +13,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/task_operations/AddCDRProfileSetsOperation.hh>
+#include <protocols/antibody/task_operations/AddCDRProfileSetsOperationCreator.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>

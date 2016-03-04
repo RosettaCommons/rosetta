@@ -27,7 +27,6 @@
 #include <protocols/toolbox/task_operations/ConservativeDesignOperation.fwd.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperationCreator.hh>
 #include <core/chemical/AA.hh>
 
 // Utility headers
@@ -224,12 +223,6 @@ private:
 
 };
 
-class AddCDRProfilesOperationCreator : public core::pack::task::operation::TaskOperationCreator {
-public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "AddCDRProfilesOperation"; }
-	//core::pack::task::operation::TaskOperationOP clone() const;
-};
 
 } //task_operations
 } //antibody

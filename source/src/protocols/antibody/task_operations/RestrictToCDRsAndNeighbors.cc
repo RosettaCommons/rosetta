@@ -13,6 +13,8 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/task_operations/RestrictToCDRsAndNeighbors.hh>
+#include <protocols/antibody/task_operations/RestrictToCDRsAndNeighborsCreator.hh>
+
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
