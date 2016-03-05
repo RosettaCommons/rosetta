@@ -9,4 +9,7 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-sed -i '/^- Rosetta version:/d' *.peptiderive.txt
+# For some reason sed breaks the mac integration test. Use egrep which is known to work, instead.
+report_file=3gxu_remixed_min.peptiderive.txt
+egrep -v '^- Rosetta version:' ${report_file} > ${report_file}.filtered
+mv ${report_file} ${report_file}.ignore
