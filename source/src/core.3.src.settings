@@ -347,7 +347,6 @@ sources = {
 		"ElectronDensityLoader",
 		"ElectronDensityOptions",
 		"FastDensEnergy",
-		"PattersonCorrEnergy",
 		"SplineInterp",
 		"util",
 		"xray_scattering",

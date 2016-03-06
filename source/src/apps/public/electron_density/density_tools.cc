@@ -230,7 +230,7 @@ densityTools()
 
 	//  fft
 	std::cout << "Stage 1: FFT rho_obs" << std::endl;
-	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), FrhoO);
+	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), FrhoO);
 	core::scoring::electron_density::getDensityMap().getIntensities(FrhoO, nresobins, lowres, hires, mapI, bin_squared);
 
 	// load model, mask density
@@ -275,7 +275,7 @@ densityTools()
 
 		rhoOmask = rhoMask;
 		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
-			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().data()[i];
+			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().get_data()[i];
 		}
 
 		core::scoring::electron_density::getDensityMap().set_data(rhoOmask);
@@ -291,7 +291,7 @@ densityTools()
 
 		rhoOmask = rhoMask;
 		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
-			rhoOmask[i] = (1-rhoOmask[i])*core::scoring::electron_density::getDensityMap().data()[i];
+			rhoOmask[i] = (1-rhoOmask[i])*core::scoring::electron_density::getDensityMap().get_data()[i];
 		}
 
 		core::scoring::electron_density::getDensityMap().set_data(rhoOmask);
@@ -309,7 +309,7 @@ densityTools()
 		std::cout << "       : mask map" << std::endl;
 		rhoOmask = rhoMask;
 		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
-			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().data()[i];
+			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().get_data()[i];
 		}
 		numeric::fourier::fft3(rhoOmask, FrhoOmask);
 
@@ -331,13 +331,13 @@ densityTools()
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
 		std::cout << "       : load alt_map + FFT" << std::endl;
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
-		numeric::fourier::fft3(mapAlt.data(), FrhoO2);
+		numeric::fourier::fft3(mapAlt.get_data(), FrhoO2);
 
 		if ( userpose ) {
 			std::cout << "       : mask alt_map" << std::endl;
 			rhoO2mask = rhoMask;
 			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
-				rhoO2mask[i] *= mapAlt.data()[i];
+				rhoO2mask[i] *= mapAlt.get_data()[i];
 			}
 			numeric::fourier::fft3(rhoO2mask, FrhoO2mask);
 		}

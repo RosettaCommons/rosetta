@@ -1805,7 +1805,7 @@ void render_density(
 
 	const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
 	const float thresh = edm.getMean() + gs.density_sigma*edm.getStdev();
-	triangleIterator tri_it( edm.data(), thresh );
+	triangleIterator tri_it( edm.get_data(), thresh );
 
 	numeric::xyzVector_float vertex[3], normal[3];
 	numeric::xyzVector< core::Real> cart_vi[3], cart_ni[3];

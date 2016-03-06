@@ -548,9 +548,6 @@ enum ScoreType {
 	elec_dens_whole_structure_allatom,
 	elec_dens_atomwise,
 
-	// patterson correlation
-	patterson_cc,
-
 	// crystallographic ML target
 	xtal_ml,
 	xtal_rwork,

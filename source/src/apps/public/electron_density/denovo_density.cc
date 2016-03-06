@@ -638,7 +638,7 @@ DockFragmentsMover::cut_from_map( core::pose::Pose const &pose ) {
 	core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask, -1, 600, mask_radius );
 
 	// apply mask to map
-	ObjexxFCL::FArray3D< float > densnew = core::scoring::electron_density::getDensityMap().data();
+	ObjexxFCL::FArray3D< float > densnew = core::scoring::electron_density::getDensityMap().get_data();
 	for ( int z=1; z<=(int)densnew.u3(); z++ ) {
 		for ( int y=1; y<=(int)densnew.u2(); y++ ) {
 			for ( int x=1; x<=(int)densnew.u1(); x++ ) {
@@ -646,7 +646,7 @@ DockFragmentsMover::cut_from_map( core::pose::Pose const &pose ) {
 			}
 		}
 	}
-	core::scoring::electron_density::getDensityMap().set( densnew );
+	core::scoring::electron_density::getDensityMap().set_data( densnew );
 
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
 		core::scoring::electron_density::getDensityMap().writeMRC( "trimmed.mrc" );

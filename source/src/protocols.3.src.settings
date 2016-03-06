@@ -102,12 +102,12 @@ sources = {
 	],
 	"protocols/electron_density": [
 		"BfactorFittingMover",
-		"DensityMorphingMover",
 		"DockIntoDensityMover",
 		"ScaleMapIntensities",
 		"ReportFSC",
 		"SetupForDensityScoringMover",
 		"util",
+		"VoxelSpacingRefinementMover",
 	],
 	"protocols/fibril": [
 		"fibril_util",

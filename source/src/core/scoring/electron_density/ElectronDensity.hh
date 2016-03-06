@@ -54,13 +54,14 @@ class ElectronDensity : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ElectronDensity();
-	/// @brief constructor
+
+	/// @brief default constructor
 	ElectronDensity();
 
 	/// @brief calulated density from a vector of poses
 	ElectronDensity( utility::vector1< core::pose::PoseOP > poses, core::Real reso, core::Real apix );
 
-	/// @brief constructor from an FArray3D (used for debugging only!)
+	/// @brief constructor from an FArray3D (debugging only!)
 	template<class T>
 	ElectronDensity( ObjexxFCL::FArray3D< T > const &map,
 		core::Real apix = 1.0,
@@ -69,7 +70,7 @@ public:
 		init();
 
 		isLoaded = true;
-		efforigin = origin = new_origin;
+		origin = new_origin;
 		grid = numeric::xyzVector< int >(map.u1(),map.u2(),map.u3());
 		cellDimensions = numeric::xyzVector< float >(apix*map.u1(),apix*map.u2(),apix*map.u3());
 		cellAngles = numeric::xyzVector< float >(90,90,90);
@@ -87,18 +88,18 @@ public:
 		}
 	}
 
-	/// @brief Initialize map from cmd line options
+	/// @brief initialize vars from command line options
 	void
 	init();
 
-	/// @brief Load an MRC (="new-CCP4") density map
+	/// @brief Load an MRC density map
 	bool
 	readMRCandResize(
 		std::string mapfile,
 		core::Real reso=5.0,
 		core::Real gridSpacing=0.0);
 
-	/// @brief Load an MRC (="new-CCP4") density map
+	/// @brief Load an MRC density map
 	bool readMRCandResize(
 		std::istream & mapin,
 		std::string mapfile, // just used as information about the map
@@ -106,13 +107,7 @@ public:
 		core::Real gridSpacing=0.0);
 
 	/// @brief (debugging) Write MRC mapfile
-	bool writeMRC(std::string mapfilestem, bool writeRhoCalc=false, bool writeRhoMask=false);
-
-	/// @brief (debugging) Write MATLAB v5 mapfile
-	bool writeMAT(std::string mapfilestem);
-
-	/// @brief Align a pose about a 2D rotation axis
-	numeric::xyzMatrix< core::Real > rotAlign2DPose( core::pose::Pose const &pose, std::string axis );
+	bool writeMRC(std::string mapfilestem);
 
 	/// @brief resample the map in spherical shells around a pose
 	void
@@ -140,13 +135,7 @@ public:
 		bool cacheCCs=false
 	);
 
-
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	/////  "Density tools"
-	/////    -- all use "light pose" representation
-	/////
-	/// @brief get resolution bins (informational)
+	/// @brief get resolution bins
 	void
 	getResolutionBins(
 		core::Size nbuckets, core::Real maxreso, core::Real minreso,
@@ -164,7 +153,7 @@ public:
 		utility::vector1< core::Real > &Imap,
 		bool S2_bin=false );
 
-	/// @brief Compute model-map FSC & errors
+	/// @brief Compute map-map FSC
 	void
 	getFSC(
 		ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
@@ -173,6 +162,7 @@ public:
 		utility::vector1< core::Real >& FSC,
 		bool S2_bin=false);
 
+	/// @brief Compute map-map phase error
 	void
 	getPhaseError(
 		ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
@@ -180,24 +170,6 @@ public:
 		core::Size nbuckets, core::Real maxreso, core::Real minreso,
 		utility::vector1< core::Real >& phaseError,
 		bool S2_bin=false);
-
-	/// @brief Real-space correlation
-	core::Real
-	getRSCC( ObjexxFCL::FArray3D< double > const &density2,  ObjexxFCL::FArray3D< double > const &mask);
-
-	core::Real
-	getRSCC( ObjexxFCL::FArray3D< double > &rhoC ) {
-		ObjexxFCL::FArray3D< double > nullmask;
-		return getRSCC( rhoC, nullmask );
-	}
-
-	/// @brief Compute intensities, update density
-	void
-	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso, bool S2_bin=false );
-
-	/// @brief Compute intensities, update density
-	void
-	reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, core::Real fadewidth );
 
 	/// @brief get Rho Calc
 	void
@@ -210,23 +182,28 @@ public:
 		core::Real B_upper_limit = 600,
 		core::Real force_mask = -1.0 );
 
+	/// @brief Real-space correlation
+	core::Real
+	getRSCC( ObjexxFCL::FArray3D< double > const &density2,  ObjexxFCL::FArray3D< double > const &mask);
+
+	/// @brief Real-space correlation
+	core::Real
+	getRSCC( ObjexxFCL::FArray3D< double > &rhoC ) {
+		ObjexxFCL::FArray3D< double > nullmask;
+		return getRSCC( rhoC, nullmask );
+	}
+
+	/// @brief Scale map intensities to a target spectum
+	void
+	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso, bool S2_bin=false );
+
+	/// @brief Filter the map in reciprocal space
+	void
+	reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, core::Real fadewidth );
+
+	/// @brief Return the highest possible resolution relection in reciprocal space for the given grid
 	core::Real
 	maxNominalRes();
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-
-
-	/////
-	/////  Scorefunction stuff
-	/////
-	/// @brief Match a pose to a patterson map
-	core::Real matchPoseToPatterson( core::pose::Pose const &pose, bool cacheCCs=false );
-
-	/// @brief Rematch the pose to a patterson map, using previous rho_calc with only rsd changed
-	core::Real rematchResToPatterson( core::conformation::Residue const &rsd ) const;
-
-	/// @brief Update cached rho_calc by changing residue 'rsd'
-	void updateCachedDensity( core::conformation::Residue const &rsd );
 
 	/// @brief Match a residue's conformation to the density map.
 	///   Backbone atoms from adjacent residues are also used for scoring.
@@ -332,31 +309,9 @@ public:
 		numeric::xyzVector<core::Real> &gradX
 	);
 
-	/// @brief Return the gradient of patterson-CC w.r.t. atom X's movement
-	void
-	dCCdx_pat(
-		int atmid,
-		int resid,
-		numeric::xyzVector<core::Real> const &X,
-		core::pose::Pose const &pose,
-		numeric::xyzVector<core::Real> &gradX
-	);
-
 	/// @brief Resets the counters used for derivative computation in
 	///   sliding-window/fast scoring
 	void clear_dCCdx_res_cache( core::pose::Pose const &pose );
-
-	void compute_rho(
-		core::pose::Pose const & pose,
-		utility::vector1<core::id::AtomID> const & atom_ids,
-		ObjexxFCL::FArray3D< double > & rho_calc,
-		ObjexxFCL::FArray3D< double > & inv_rho_mask);
-
-	numeric::xyzVector< double > match_fragment(
-		ObjexxFCL::FArray3D< double > const & rho_calc,
-		ObjexxFCL::FArray3D< double > const & mask,
-		ObjexxFCL::FArray3D< double > const & rho_obs,
-		core::Real radius = 6.0 );
 
 	/// @brief Get the transformation from indices to Cartesian coords using 'real' origin
 	numeric::xyzVector<core::Real> getTransform() {
@@ -377,21 +332,6 @@ public:
 		}
 	}
 
-	/// @brief Print cached CCs
-	void showCachedScores( utility::vector1< int > const &reses );
-	inline core::Real getCachedScore( core::Size resid ) {
-		runtime_assert( resid <= CCs.size() );
-		return CCs[resid];
-	}
-
-	//////////////////////////////////
-	// property getters and setters
-	inline void setUseDensityInMinimizer( bool newVal ) { DensScoreInMinimizer = newVal; }
-	inline bool getUseDensityInMinimizer() const { return DensScoreInMinimizer; }
-
-	inline void setUseExactDerivatives( bool newVal ) { ExactDerivatives = newVal; }
-	inline bool getUseExactDerivatives() const { return ExactDerivatives; }
-
 	inline void setSCscaling( core::Real SC_scalingin) { SC_scaling_=SC_scalingin; }
 	inline core::Real getSCscaling() { return SC_scaling_; }
 
@@ -401,132 +341,130 @@ public:
 	inline void setScoreWindowContext( bool newVal ) { score_window_context_ = newVal; }
 	inline bool getScoreWindowContext() const { return score_window_context_; }
 
-	//////////////////////////////////
 	//  map properties
 	inline bool isMapLoaded() const { return this->isLoaded; };
-	inline core::Real getNumDerivH() const { return NUM_DERIV_H; }
-	inline core::Real getMean() const { return dens_mean; }
-	inline core::Real getMin()  const { return dens_min;  }
-	inline core::Real getMax()  const { return dens_max;  }
-	inline core::Real getStdev() const { return dens_stdev; }
 	inline core::Real getResolution( ) const { return this->reso; }
-	inline numeric::xyzVector<core::Real> getCoM() const { return centerOfMass; }
 	inline numeric::xyzVector<core::Real> getOrigin() const { return origin; }
 	inline numeric::xyzVector<int> getGrid() const { return grid; }
-	inline numeric::xyzVector<core::Real> getEffOrigin() const { return efforigin; }
+	numeric::xyzVector<core::Real> get_cellDimensions() const { return cellDimensions; }
 	inline utility::vector1< core::kinematics::RT > getsymmOps() const { return symmOps; }
 
 	inline core::Real getAtomMask( ) const { return ATOM_MASK; }
 
+	///@brief set scoring to use only a subset of residues
 	void maskResidues( int scoring_mask ) {
 		scoring_mask_[ scoring_mask ] = 1;
 	}
+
+	///@brief set scoring to use only a subset of residues
 	void maskResidues( utility::vector1< int > const & scoring_mask ) {
 		for ( core::Size i=1; i<= scoring_mask.size(); ++i ) {
 			scoring_mask_[ scoring_mask[i] ] = 1;
 		}
 	}
+
+	///@brief reset scoring to use all residues
 	void clearMask( ) {
 		scoring_mask_.clear();
 	}
 
+	///@brief  access raw density data
+	inline ObjexxFCL::FArray3D< float > const & get_data() const { return density; };
 
-	//////////////////////////////////
-	//////////////////////////////////
-	// raw data pointer
-	inline ObjexxFCL::FArray3D< float > const & data() const { return density; };
-	inline void set_data(ObjexxFCL::FArray3D< double > const & density_in) {
-		debug_assert(density.u1() == density_in.u1());
-		debug_assert(density.u2() == density_in.u2());
-		debug_assert(density.u3() == density_in.u3());
+	///@brief  set raw density data.  Assumes new map sampling grid same as current
+	template <class Q>
+	inline void set_data(ObjexxFCL::FArray3D< Q > const & density_in) {
+		runtime_assert(density.u1() == density_in.u1());
+		runtime_assert(density.u2() == density_in.u2());
+		runtime_assert(density.u3() == density_in.u3());
 		for ( Size i=0; i<density_in.size(); ++i ) density[i] = density_in[i];
-	};
+		density_change_trigger();
+	}
 
+	///@brief get the density at a grid point
+	core::Real
+	get(int i, int j, int k) { return density(i,j,k); }
 
-	//////////////////////////////////
-	//////////////////////////////////
+	///@brief get the interpolated density at a point _in index space_
+	core::Real
+	get(numeric::xyzVector<core::Real> X);
+
+	///@brief set voxel spacing of the map
+	void
+	set_voxel_spacing( numeric::xyzVector<core::Real> apix );
+
+	///@brief set voxel spacing of the map
+	void
+	set_voxel_spacing( core::Real apix ) {
+		set_voxel_spacing( numeric::xyzVector<core::Real>(apix,apix,apix) );
+	}
+
+	///@brief set voxel spacing of the map
+	numeric::xyzVector<core::Real>
+	get_voxel_spacing(  ) {
+		numeric::xyzVector<core::Real> apix(
+			cellDimensions[0]/grid[0],
+			cellDimensions[1]/grid[1],
+			cellDimensions[2]/grid[2]
+		);
+		return apix;
+	}
+
+	///@brief get the precomputed CC (THIS SHOULD LIVE IN POSE DATACACHE!)
+	inline core::Real getCachedScore( core::Size resid ) {
+		runtime_assert( resid <= CCs.size() );
+		return CCs[resid];
+	}
+
 	// helper functions to convert between indices and cartesian coords
 	inline void cart2idx( numeric::xyzVector<core::Real> const & cartX , numeric::xyzVector<core::Real> &idxX ) const {
 		numeric::xyzVector<core::Real> fracX = c2f*cartX;
-		idxX = numeric::xyzVector<core::Real>( fracX[0]*grid[0] - efforigin[0] + 1,
-			fracX[1]*grid[1] - efforigin[1] + 1,
-			fracX[2]*grid[2] - efforigin[2] + 1);
+		idxX = numeric::xyzVector<core::Real>(
+			fracX[0]*grid[0] - origin[0] + 1,
+			fracX[1]*grid[1] - origin[1] + 1,
+			fracX[2]*grid[2] - origin[2] + 1);
 	}
 
 	template<class Q>
 	void idx2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
-		numeric::xyzVector<core::Real> fracX( (idxX[0]  + efforigin[0] -1 ) / grid[0],
-			(idxX[1]  + efforigin[1] -1 ) / grid[1],
-			(idxX[2]  + efforigin[2] -1 ) / grid[2] );
+		numeric::xyzVector<core::Real> fracX(
+			(idxX[0]  + origin[0] -1 ) / grid[0],
+			(idxX[1]  + origin[1] -1 ) / grid[1],
+			(idxX[2]  + origin[2] -1 ) / grid[2] );
 		cartX = f2c*fracX;
 	}
 
 	template<class Q>
 	void idxoffset2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
-		numeric::xyzVector<core::Real> fracX( ( (core::Real) idxX[0] ) / grid[0],
+		numeric::xyzVector<core::Real> fracX(
+			( (core::Real) idxX[0] ) / grid[0],
 			( (core::Real) idxX[1] ) / grid[1],
 			( (core::Real) idxX[2] ) / grid[2] );
 		cartX = f2c*fracX;
 	}
 
-	//////////////////////////////////
-	//////////////////////////////////
-	// helper functions to convert between fractional and cartesian coords
-	inline void cart2frac( numeric::xyzVector<core::Real> const & cartX , numeric::xyzVector<core::Real> & fracX ) const {
-		fracX = c2f*(cartX);
-	}
-	inline void frac2cart( numeric::xyzVector<core::Real> const & fracX , numeric::xyzVector<core::Real> &cartX ) const {
-		cartX = f2c*fracX;
-	}
-
+	///@brief get frac<=>cartesian conversion matrices
 	numeric::xyzMatrix<core::Real> get_f2c() { return f2c; }
 	numeric::xyzMatrix<core::Real> get_c2f() { return c2f; }
 
-	numeric::xyzVector<core::Real> dens_grad ( numeric::xyzVector<core::Real> const & idxX ) const;
-
-	/// resize the map via FFT
+	///@brief resize the map via FFT resampling
 	void resize( core::Real approxGridSpacing );
 
-	//// access cached data from last scored pose
+	///@brief get symmetrized gradients for -score_symm_complex
 	void get_symmMap(int vrtid, utility::vector1<int> &X_map, numeric::xyzMatrix<core::Real> &R) {
 		runtime_assert( symmap.find( vrtid ) != symmap.end() );
 		X_map = symmap[ vrtid ].first;
 		R = symmap[ vrtid ].second;
 	}
 
-	// gets rotation vactor for subunit 'subunit' in last-scored pose (Rosetta symmetry)
+	///@brief gets rotation vactor for subunit 'subunit' in last-scored pose (Rosetta symmetry)
 	void get_R(int subunit, numeric::xyzMatrix<core::Real> &R) {
 		runtime_assert( symmap.find( -subunit ) != symmap.end() );
 		R = symmap[ -subunit ].second;
 	}
 
-	// get effective B factor : a global b factor based on input flags and map grid spacing
-	double getEffectiveBfactor() {
-		return effectiveB;
-	}
-
-	// accessor
-	core::Real
-	get(int i, int j, int k) { return density(i,j,k); }
-
-	//void
-	//set(int i, int j, int k, core::Real val) {
-	// density(i,j,k) = val;
-	// density_change_trigger();
-	//}
-
-	void
-	set (ObjexxFCL::FArray3D< float > const &dens_new) {
-		runtime_assert( dens_new.u1() == density.u1() && dens_new.u2() == density.u2() && dens_new.u3() == density.u3());
-		density = dens_new;
-		density_change_trigger();
-	}
-
-	numeric::xyzVector<core::Real> call_getCoM() const { return centerOfMass; }
-	numeric::xyzVector<core::Real> call_getOrigin() const { return origin; }
-	numeric::xyzVector<int> get_grid() const { return grid; }
-	numeric::xyzVector<core::Real> get_cellDimensions() const { return cellDimensions; }
-	//ObjexxFCL::FArray3D< float > get_density_data_array() const { return density; }
+	///@brief get the "effective B factor": a global b factor based on map resolution
+	double getEffectiveBfactor() { return effectiveB; }
 
 	// get S2 (reciprocal space dist^2)
 	double S2(int h, int k, int l) {
@@ -538,9 +476,19 @@ public:
 			+ 2*k*l*RcellDimensions[1]*RcellDimensions[2]*cosRcellAngles[0] );
 	}
 
-	///////////
-	// PRIVATE MEMBER FUNCTIONS
-	///////////
+	// map statistics
+	void computeStats();
+	inline core::Real getMean() const { return dens_mean; }
+	inline core::Real getMin()  const { return dens_min;  }
+	inline core::Real getMax()  const { return dens_max;  }
+	inline core::Real getStdev() const { return dens_stdev; }
+
+
+	static core::Real NUM_DERIV_H;
+
+	// density gradients (visualization only)
+	numeric::xyzVector<core::Real> dens_grad ( numeric::xyzVector<core::Real> const & idxX ) const;
+
 private:
 	/// @brief The function is called everytime the density changes
 	void
@@ -552,15 +500,11 @@ private:
 
 	// helper functions for map statistics
 	void computeGradients();
-	void computeStats();
 
 	// helper functions for symmetry
 	void initializeSymmOps( utility::vector1< std::string > const & symList );
 	void computeCrystParams();
 	void expandToUnitCell();
-
-	// setup patterson map scoring data
-	void setup_patterson_first_time(core::pose::Pose const &pose);
 
 	// setup fast density scoring data
 	void setup_fastscoring_first_time(core::pose::Pose const &pose);
@@ -575,11 +519,8 @@ private:
 		return V / (grid[0]*grid[1]*grid[2]);
 	}
 
-	///////////
-	// DATA
-	///////////
+
 private:
-	// do we have a map loaded?
 	bool isLoaded;
 
 	// the density data array and spline coeffs
@@ -591,21 +532,10 @@ private:
 
 	// Controllable parameters
 	std::map< core::Size, bool > scoring_mask_;
-	core::Real reso, ATOM_MASK, CA_MASK, force_apix_, SC_scaling_;
+	core::Real reso, ATOM_MASK, CA_MASK, force_apix_on_map_load_, SC_scaling_;
 	core::Real ATOM_MASK_PADDING;
 	core::Size WINDOW_;
 	bool score_window_context_, remap_symm_;
-
-	// turn on legacy options
-	bool legacy_;
-
-	bool DensScoreInMinimizer, ExactDerivatives;
-	core::Real NUM_DERIV_H, NUM_DERIV_H_CEN, PattersonMinR, PattersonMaxR;
-	ObjexxFCL::FArray3D< float > PattersonEpsilon;
-
-	// (patterson only) map resamped on p_calc grid
-	ObjexxFCL::FArray3D< double >  p_o;
-	double po_bar;
 
 	// (fast scoring) precomputed rhocrhoo, d_rhocrhoo
 	ObjexxFCL::FArray4D< double > fastdens_score;
@@ -614,52 +544,17 @@ private:
 	numeric::xyzVector< int > fastgrid;           // grid & origin
 	numeric::xyzVector< core::Real > fastorigin;  // for resampled maps
 
-	///////////////////
-	/// TONS OF CACHED STUFF <<< this should live in its own class!
-	///////////////////
-	// previously scored computed density map, fft(rho_calc), and patterson map
-	ObjexxFCL::FArray3D< double > rho_calc, rho_solv, inv_rho_mask;
-
-	core::Real rho_calc_sum;
-	ObjexxFCL::FArray3D< std::complex<double> > Frho_calc, Frho_solv;
-	utility::vector1<core::Size> bucket_counts;
-	ObjexxFCL::FArray3D< core::Size > bucket_id;
-	core::Real lowres_cut, hires_cut;
-	ObjexxFCL::FArray3D< double > F_s2;
-	ObjexxFCL::FArray3D< double > Pcalc;
-	utility::vector1<core::Real> F2;
-
-	// symm pointer matrices
-	utility::vector1< ObjexxFCL::FArray3D< core::Size > > symm_ptrs;
-
-	// (precomputed)
-	// FFT of gradient of rho_calc with respec to an atom at the origin's movement in x/y/z
-	// computed for each scatterer
-	std::map< int , ObjexxFCL::FArray3D< std::complex<double> > > Fdrhoc_dx;
-	std::map< int , ObjexxFCL::FArray3D< std::complex<double> > > Fdrhoc_dy;
-	std::map< int , ObjexxFCL::FArray3D< std::complex<double> > > Fdrhoc_dz;
-
-	// atoms, scattering used to calculate density map rho_calc
-	utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > rho_calc_atms;
-	utility::vector1< utility::vector1< OneGaussianScattering > > rho_calc_as;
-
-	// cached patterson map statistics
-	core::Real p_sumC, p_sumC2, p_sumO, p_sumO2, p_sumCO, p_vol;
-
-	// patterson map is calculated in P1, in an alternate (padded) grid to avoid self peaks
-	numeric::xyzVector< core::Real > d_min,d_max;  // (remember bounding coords)
-	numeric::xyzVector< core::Real > p_extent, p_origin;
-	numeric::xyzVector< core::Size > p_grid;
-	numeric::xyzVector< core::Real > p_CoM;
-
 	// map info
 	core::Real minimumB;    // minimum B factor allowed by map
 	core::Real effectiveB;  // B factor blurring based on map resolution
 	numeric::xyzVector< int > grid;
-	numeric::xyzVector< core::Real > origin, efforigin;
-	bool use_altorigin;   // which field to write origin to ... only affects map outputting
+	numeric::xyzVector< core::Real > origin;
+	bool use_altorigin;   // which field to write origin to ... only affects map outputting!
+	core::Real dens_mean, dens_min, dens_max, dens_stdev;
 
-	// cache scoring-related statistics
+	///////////////////
+	/// CACHED STUFF that is not thread safe and should live in its own class
+	///////////////////
 	utility::vector1<core::Real>  CCs;
 	core::Real CC_cen, CC_aacen;
 	utility::vector1< numeric::xyzVector< core::Real > > dCCdxs_cen;
@@ -672,6 +567,7 @@ private:
 	///////////////////
 	// map vrtid -> subunit mapping, rotation
 	// if (vrtid < 0) then it refers to the mapping from a non-vrt in subunit# -vrtid
+	// symm pointer matrices for -edensity::score_symm_complex
 	std::map< int , std::pair< utility::vector1<int> , numeric::xyzMatrix<core::Real> > > symmap;
 
 	///////////////////
@@ -702,10 +598,6 @@ private:
 
 	// min multiples in each dim
 	numeric::xyzVector<core::Size> MINMULT;
-
-	// map statistics
-	numeric::xyzVector<core::Real> centerOfMass;
-	core::Real dens_mean, dens_min, dens_max, dens_stdev;
 };
 
 /// @brief The EDM instance

@@ -135,11 +135,11 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		// reuse rhoC
 		if ( mask_ ) {
 			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
-				rhoC[i] = rhoMask[i] * core::scoring::electron_density::getDensityMap().data()[i];
+				rhoC[i] = rhoMask[i] * core::scoring::electron_density::getDensityMap().get_data()[i];
 			}
 			if ( mask_output_ ) core::scoring::electron_density::getDensityMap().set_data( rhoC );
 		} else {
-			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) rhoC[i] = core::scoring::electron_density::getDensityMap().data()[i];
+			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) rhoC[i] = core::scoring::electron_density::getDensityMap().get_data()[i];
 		}
 		numeric::fourier::fft3(rhoC, Frho);
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_ );
@@ -154,7 +154,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		//// bfactor sharpen
 		////
 		ObjexxFCL::FArray3D< std::complex<double> > Frho;
-		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), Frho);
+		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), Frho);
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
 
 		for ( Size i=1; i<=nresbins_; ++i ) {

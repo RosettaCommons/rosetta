@@ -65,59 +65,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.util" );
 using namespace protocols;
 using namespace core;
 
-// find stratch of residues worst agreeing with patterson map
-// for each possible segment, remove and rescore
-protocols::loops::Loops findLoopFromPatterson( core::pose::Pose & pose, core::Size N, core::Size nloops, bool allow_termini ) {
-	int nres = pose.total_residue();
-	while ( !pose.residue(nres).is_protein() ) nres--;
-
-	runtime_assert( nres > (int)N );
-
-	utility::vector1< core::Real > scores(nres, -1);
-	int start_res = allow_termini? 1 : 6;
-	int stop_res = allow_termini? nres : nres-5;
-
-	// SLOW
-	for ( int i=start_res+1; i<= stop_res-(int)N; i++ ) {
-		// check for cutpoints in this segment
-		bool contains_cut = false;
-		for ( int j=i; j<i+(int)N; ++j ) {
-			contains_cut |= pose.fold_tree().is_cutpoint( j );
-		}
-		if ( contains_cut ) continue;
-
-		core::scoring::electron_density::getDensityMap().clearMask();
-
-		// mask i->i+N-1
-		for ( int j=i; j<i+(int)N; ++j ) {
-			core::scoring::electron_density::getDensityMap().maskResidues( j );
-		}
-
-		// score
-		scores[i] = core::scoring::electron_density::getDensityMap().matchPoseToPatterson( pose, false );
-		//std::cerr << "res " << i << " to " << i+N-1 << " --- " << scores[i] << std::endl;
-	}
-
-	protocols::loops::Loops retval;
-	for ( int i=0; i<(int)nloops; ++i ) {
-		core::Real worst_match = -1;
-		int worst_match_idx = -1;
-		for ( int j=0; j<nres; ++j ) {
-			if ( scores[j] > worst_match ) {
-				worst_match = scores[j];
-				worst_match_idx = j;
-			}
-		}
-
-		retval.push_back( protocols::loops::Loop( worst_match_idx, worst_match_idx+N-1 ) );
-		for ( int j=worst_match_idx; j<worst_match_idx+(int)N; ++j ) {
-			scores[j] = -1;
-		}
-	}
-
-	return ( retval );
-}
-
 
 protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real frac, int max_helix_melt, int max_strand_melt ) {
 	int nres = pose.total_residue();
@@ -262,15 +209,16 @@ protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real
 }
 
 
-// dock pose into a density map
-//    respect recentering flags
-//    should we ensure we are set up for density scoring?????
 core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* ="" */ ) {
 	using namespace basic::options;
 
 	std::string align = align_in;
 	if ( align.length() == 0 ) {
 		align = option[ OptionKeys::edensity::realign ]();
+	}
+
+	if ( align == "no" ) {
+		return 0.0; // do nothing
 	}
 
 	// minimization
@@ -281,13 +229,12 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
 
 	core::scoring::ScoreFunctionOP scorefxn_input = core::scoring::get_score_function();
-	core::Real dens_patt = scorefxn_input->get_weight( core::scoring::patterson_cc );
+
 	core::Real dens_wind = scorefxn_input->get_weight( core::scoring::elec_dens_window );
 	core::Real dens_allca = scorefxn_input->get_weight( core::scoring::elec_dens_whole_structure_ca );
 	core::Real dens_allatom = scorefxn_input->get_weight( core::scoring::elec_dens_whole_structure_allatom );
 	core::Real dens_fast = scorefxn_input->get_weight( core::scoring::elec_dens_fast );
 
-	if ( dens_patt>0 )    scorefxn_dens->set_weight( core::scoring::patterson_cc, dens_patt );
 	if ( dens_wind>0 )    scorefxn_dens->set_weight( core::scoring::elec_dens_window, dens_wind );
 	if ( dens_allca>0 )   scorefxn_dens->set_weight( core::scoring::elec_dens_whole_structure_ca, dens_allca );
 	if ( dens_allatom>0 ) scorefxn_dens->set_weight( core::scoring::elec_dens_whole_structure_allatom, dens_allatom );
@@ -295,63 +242,26 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 
 	// make sure at least 1 density term is on
 	core::Real dens_score_sum =
-		scorefxn_dens->get_weight( core::scoring::patterson_cc ) +
 		scorefxn_dens->get_weight( core::scoring::elec_dens_window ) +
 		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_ca ) +
 		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_allatom );
 	scorefxn_dens->get_weight( core::scoring::elec_dens_fast );
 
-	if ( align != "no" && align != "random" && dens_score_sum==0 ) {
+	if ( align != "no" && dens_score_sum==0 ) {
 		scorefxn_dens->set_weight( core::scoring::elec_dens_fast, 1.0 );
 	}
 
 	core::Real dens_score = 0.0;
 
-	if ( align == "no" ) {
-		//dens_score = (*scorefxn_dens)( pose );
-		return dens_score; // do nothing
-	}
-	if ( align == "random" ) {
-		// get jump index of root jump
-		int root = pose.fold_tree().root();
-		utility::vector1< core::kinematics::Edge > root_edges = pose.fold_tree().get_outgoing_edges (root);
-		numeric::xyzMatrix< Real > rot = protocols::geometry::random_reorientation_matrix();
-		for ( int i=1; i<=(int)root_edges.size(); ++i ) {
-			core::kinematics::Jump flexible_jump = pose.jump( i );
-			flexible_jump.set_rotation( rot * flexible_jump.get_rotation() );
-			pose.set_jump( i, flexible_jump );
-		}
-		dens_score = (*scorefxn_dens)( pose );
-		return dens_score;
-	}
-
-	/////
-	// initial alignment
-	if ( align.substr(0,8) == "membrane" ) {
-		// align centers of mass
-		fastTransAlignPose( pose );
-
-		// rotation
-		fast2DRotAlignPose( pose, option[ OptionKeys::edensity::membrane_axis ]());
-	}
-
-	/////
-	// minimization
-	// special case for symmetric poses
-	if ( align.length() >= 3 && align.substr( align.length()-3 ) == "min" ) {
+	if ( align == "min" ) {
 		bool isSymm = core::pose::symmetry::is_symmetric(pose);
 
-		// get jump index of root jump
 		int root = pose.fold_tree().root();
 		utility::vector1< core::kinematics::Edge > root_edges = pose.fold_tree().get_outgoing_edges (root);
 
 		core::kinematics::MoveMapOP rbmm( new core::kinematics::MoveMap );
 		rbmm->set_bb( false ); rbmm->set_chi( false );
-		// TODO? a flag which toggles minimization of:
-		//  a) all rigid-body DOFs
-		//  b) all symmetric DOFs
-		// HOWEVER, if this is done then fa_rep / vdw should be turned on
-		TR << "RBminimizing pose into density alongs jump(s)";
+		TR << "RB minimizing pose into density alongs jump(s)";
 		for ( core::Size i=1; i<=root_edges.size(); ++i ) {
 			TR << "  " << root_edges[i].label();
 			rbmm->set_jump ( root_edges[i].label() , true );
@@ -360,109 +270,20 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 
 		if ( isSymm ) {
 			core::scoring::ScoreFunctionOP symmscorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
-
 			core::pose::symmetry::make_symmetric_movemap( pose, *rbmm );
-			moves::MoverOP min_mover( new simple_moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "dfpmin_armijo_nonmonotone", 1e-5, true ) );
-
-			bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
-			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );
+			moves::MoverOP min_mover( new simple_moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 			min_mover->apply( pose );
-			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( densInMinimizer );
-
 			symmscorefxn_dens->show( TR, pose ); TR<<std::endl;
 			dens_score = (*symmscorefxn_dens)( pose );
 		} else {
-			moves::MoverOP min_mover( new protocols::simple_moves::MinMover( rbmm, scorefxn_dens, "dfpmin_armijo_nonmonotone", 1e-5, true ) );
-
-			bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
-			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );
+			moves::MoverOP min_mover( new protocols::simple_moves::MinMover( rbmm, scorefxn_dens, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 			min_mover->apply( pose );
-			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( densInMinimizer );
 			dens_score = (*scorefxn_dens)( pose );
 		}
 	}
 	return dens_score;
 }
 
-
-// align pose CoM to density CoM
-core::Real fastTransAlignPose(core::pose::Pose & pose) {
-	// align CoM of map and fragment
-	int  nres( pose.total_residue() ), nAtms = 0;
-	numeric::xyzVector<core::Real> massSum(0,0,0), poseCoM, mapCoM, mapOri;
-	for ( int i=1; i<= nres; ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-
-		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-			conformation::Atom const & atom( rsd.atom(j) );
-			massSum += atom.xyz();
-			nAtms++;
-		}
-	}
-	poseCoM = massSum / (core::Real)nAtms;
-
-	mapCoM = core::scoring::electron_density::getDensityMap().getCoM();
-	//mapOri = core::scoring::electron_density::getDensityMap().getOrigin();
-
-	// grid coords -> cart coords
-	numeric::xyzVector< core::Real > mapCoMxyz;
-	core::scoring::electron_density::getDensityMap().idx2cart( mapCoM , mapCoMxyz );
-
-	numeric::xyzVector<core::Real> translation = mapCoMxyz-poseCoM;
-	//TR << "Aligning inital pose to density ... " << std::endl;
-	//TR << "   pdb center-of-mass = " << poseCoM << std::endl;
-	//TR << "   map center-of-mass = " << mapCoM << std::endl;
-	//TR << "   translation (structure -> map) = " << translation  << std::endl;
-
-	// apply translation to each residue in the pose
-	for ( int i=1; i<= nres; ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( rsd.type().aa() == core::chemical::aa_vrt ) {
-			continue;
-		}
-		for ( Size j=1; j<= rsd.natoms(); ++j ) {
-			numeric::xyzVector<core::Real> atom_ij = pose.xyz( id::AtomID(j,i) );
-			pose.set_xyz( id::AtomID(j,i) ,  (atom_ij+translation) );
-		}
-	}
-	return 0.0;
-}
-
-core::Real fast2DRotAlignPose( core::pose::Pose & pose , std::string axis ) {
-	if ( axis != "X" && axis != "Y" && axis != "Z" ) {
-		TR.Error << "Unrecognized membrane-normal axis '" << axis << "'" << std::endl;
-		TR.Error << "Not aligning!" << std::endl;
-		return 0.0;
-	}
-
-	int  nres( pose.total_residue() ), nAtms = 0;
-	numeric::xyzVector<core::Real> massSum(0,0,0), poseCoM, mapCoM, mapOri;
-	for ( int i=1; i<= nres; ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-			conformation::Atom const & atom( rsd.atom(j) );
-			massSum += atom.xyz();
-			nAtms++;
-		}
-	}
-	poseCoM = massSum / (core::Real)nAtms;
-
-	numeric::xyzMatrix< core::Real > R
-		= core::scoring::electron_density::getDensityMap().rotAlign2DPose( pose, axis );
-
-	// apply translation to each residue in the pose
-	for ( int i=1; i<= nres; ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( rsd.type().aa() == core::chemical::aa_vrt ) continue;
-		for ( Size j=1; j<= rsd.natoms(); ++j ) {
-			numeric::xyzVector<core::Real> atom_ij = pose.xyz( id::AtomID(j,i) );
-			pose.set_xyz( id::AtomID(j,i) ,  R*(atom_ij-poseCoM)+poseCoM );
-		}
-	}
-	return 0.0;
-}
 
 
 }

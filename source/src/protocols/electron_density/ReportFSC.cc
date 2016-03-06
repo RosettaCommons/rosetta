@@ -105,14 +105,14 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask );
 	numeric::fourier::fft3(rhoC, FrhoC);
 
-	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), FrhoO);
+	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), FrhoO);
 
 	core::scoring::electron_density::getDensityMap().getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, bin_squared_ );
 	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
 	if ( testmap_ && testmap_->isMapLoaded() ) {
-		numeric::fourier::fft3(testmap_->data(), FrhoO);
+		numeric::fourier::fft3(testmap_->get_data(), FrhoO);
 		testmap_->getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, bin_squared_ );
 		for ( Size i=1; i<=modelmap2FSC.size(); ++i ) fsc2+=modelmap2FSC[i];
 		fsc2 /= modelmap2FSC.size();
@@ -134,6 +134,19 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	}
 
 	TR << oss.str() << std::endl;
+	remark.num = 1; remark.value = oss.str();
+	pose.pdb_info()->remarks().push_back( remark );
+
+	// now tag map parameters (which may have been refined)
+	oss.str(""); oss.clear();
+	numeric::xyzVector<core::Real> apix = core::scoring::electron_density::getDensityMap().get_voxel_spacing(  );
+	oss << "voxel spacing = " << apix[0] << ", " << apix[1] << ", " << apix[2];
+	remark.num = 1; remark.value = oss.str();
+	pose.pdb_info()->remarks().push_back( remark );
+
+	oss.str(""); oss.clear();
+	numeric::xyzVector<core::Real> origin = core::scoring::electron_density::getDensityMap().getOrigin(  );
+	oss << "origin = " << origin[0] << ", " << origin[1] << ", " << origin[2];
 	remark.num = 1; remark.value = oss.str();
 	pose.pdb_info()->remarks().push_back( remark );
 }

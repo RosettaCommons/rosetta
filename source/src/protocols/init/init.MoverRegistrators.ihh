@@ -120,8 +120,8 @@ static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > 
 
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
 static MoverRegistrator< electron_density::BfactorFittingMoverCreator > reg_BfactorFittingMoverCreator;
-static MoverRegistrator< electron_density::DensityMorphingMoverCreator > reg_DensityMorphingMoverCreator;
 static MoverRegistrator< electron_density::ScaleMapIntensitiesCreator > reg_ScaleMapIntensitiesCreator;
+static MoverRegistrator< electron_density::VoxelSpacingRefinementMoverCreator > reg_VoxelSpacingRefinementCreator;
 static MoverRegistrator< electron_density::ReportFSCCreator > reg_ReportFSCCreator;
 
 static MoverRegistrator< enzdes::AddOrRemoveMatchCstsCreator > reg_AddOrRemoveMatchCstsCreator;

@@ -39,10 +39,6 @@ namespace electron_density {
 void add_dens_scores_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &scorefxn ) {
 	using namespace basic::options;
 
-	if ( option[ OptionKeys::patterson::weight ].user() ) {
-		scorefxn.set_weight( core::scoring::patterson_cc,
-			option[ OptionKeys::patterson::weight ]() );
-	}
 	if ( option[ OptionKeys::edensity::fastdens_wt ].user() ) {
 		scorefxn.set_weight( core::scoring::elec_dens_fast,
 			option[ OptionKeys::edensity::fastdens_wt ]() );

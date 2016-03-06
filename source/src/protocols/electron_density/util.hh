@@ -32,15 +32,6 @@ namespace electron_density {
 // docks the pose into the map using the protocol specified in -edensity::realign
 core::Real dockPoseIntoMap( core::pose::Pose & pose , std::string align_in="");
 
-// helper function called by dockPoseIntoMap
-core::Real fastTransAlignPose( core::pose::Pose & pose );
-
-// helper function called by dockPoseIntoMap -- 2D rotation alignment
-core::Real fast2DRotAlignPose( core::pose::Pose & pose , std::string axis );
-
-// find stretch of N residues with worst agreement to patterson
-protocols::loops::Loops findLoopFromPatterson( core::pose::Pose & pose, core::Size N, core::Size nloops, bool allow_termini );
-
 // find N residues with worst agreement to density
 protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real frac, int max_helix, int max_strand );
 

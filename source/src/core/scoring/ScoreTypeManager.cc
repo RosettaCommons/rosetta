@@ -481,7 +481,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "elec_dens_whole_structure_ca" ] = elec_dens_whole_structure_ca;
 	name2score_type_[ "elec_dens_whole_structure_allatom" ] = elec_dens_whole_structure_allatom;
 	name2score_type_[ "elec_dens_atomwise" ] = elec_dens_atomwise;
-	name2score_type_[ "patterson_cc" ] = patterson_cc;
 	name2score_type_[ "xtal_ml" ] = xtal_ml;
 	name2score_type_[ "xtal_rwork" ] = xtal_rwork;
 	name2score_type_[ "xtal_rfree" ] = xtal_rfree;

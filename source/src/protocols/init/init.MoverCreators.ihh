@@ -96,8 +96,8 @@
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
-#include <protocols/electron_density/DensityMorphingMoverCreator.hh>
 #include <protocols/electron_density/BfactorFittingMoverCreator.hh>
+#include <protocols/electron_density/VoxelSpacingRefinementMoverCreator.hh>
 #include <protocols/electron_density/ScaleMapIntensitiesCreator.hh>
 #include <protocols/electron_density/ReportFSCCreator.hh>
 

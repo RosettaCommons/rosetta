@@ -307,7 +307,7 @@ DockIntoDensityMover::predefine_search( utility::vector1< numeric::xyzVector<cor
 
 void
 DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
-	ObjexxFCL::FArray3D< float > const & densdata = core::scoring::electron_density::getDensityMap().data();
+	ObjexxFCL::FArray3D< float > const & densdata = core::scoring::electron_density::getDensityMap().get_data();
 	ObjexxFCL::FArray3D< std::complex<double> > Fdens, Frot;
 	numeric::fourier::fft3(densdata, Fdens);
 
@@ -513,7 +513,7 @@ DockIntoDensityMover::density_grid_search (
 	RBfitResultDB & results
 ) {
 	core::scoring::electron_density::ElectronDensity &density = core::scoring::electron_density::getDensityMap();
-	numeric::xyzVector<int> grid = density.get_grid();
+	numeric::xyzVector<int> grid = density.getGrid();
 
 	// allocate space for SHT
 	numeric::fourier::SHT SOFT(B_, nRsteps_);

@@ -11,15 +11,15 @@
 /// @brief This class will create instances of Mover ConstraintSetMover for the MoverFactory
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_electron_density_DensityMorphingMoverCreator_hh
-#define INCLUDED_protocols_electron_density_DensityMorphingMoverCreator_hh
+#ifndef INCLUDED_protocols_electron_density_VoxelSpacingRefinementMoverCreator_hh
+#define INCLUDED_protocols_electron_density_VoxelSpacingRefinementMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace electron_density {
 
-class DensityMorphingMoverCreator : public protocols::moves::MoverCreator {
+class VoxelSpacingRefinementMoverCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
