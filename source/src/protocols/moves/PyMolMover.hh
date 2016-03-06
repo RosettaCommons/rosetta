@@ -242,7 +242,7 @@ class UDPSocketClient
 {
 public:
 	/// @brief ctor
-	UDPSocketClient();
+	UDPSocketClient(std::string const & address, int port);
 
 	/// @brief cctor
 	UDPSocketClient( UDPSocketClient const & other );
@@ -285,7 +285,7 @@ class PyMolMover : public protocols::moves::Mover
 {
 public:
 	/// @brief ctor
-	PyMolMover();
+	PyMolMover(std::string const & address="127.0.0.1", int port=65000);
 
 	/// @brief cctor
 	PyMolMover( PyMolMover const & other );

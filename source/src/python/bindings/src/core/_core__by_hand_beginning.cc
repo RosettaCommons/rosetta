@@ -69,6 +69,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
+#include <core/io/Remarks.hh>
 
 // Includes for dummy bindings to simplify import orders
 // #include <core/chemical/ChemicalManager.hh>

@@ -102,7 +102,7 @@ getRG()
 }
 
 
-UDPSocketClient::UDPSocketClient() : sentCount_(0)
+UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCount_(0)
 {
 #ifndef  __native_client__
 	/*
@@ -121,8 +121,8 @@ UDPSocketClient::UDPSocketClient() : sentCount_(0)
 	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 
 	socket_addr_.sin_family = AF_INET;     // host byte order
-	socket_addr_.sin_port = htons(65000);  // short, network byte order
-	socket_addr_.sin_addr.s_addr = inet_addr("127.0.0.1");
+	socket_addr_.sin_port = htons(port);  // short, network byte order
+	socket_addr_.sin_addr.s_addr = inet_addr( address.c_str() );
 
 	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
 	//#endif
@@ -234,7 +234,8 @@ PyMolMover Class
 ---------------------------------------------------------------------------------------------- */
 
 /// @brief ctor
-PyMolMover::PyMolMover() :
+PyMolMover::PyMolMover(std::string const & address, int port) :
+	link_(address, port),
 	update_energy_(false),
 	energy_type_(core::scoring::total_score),
 	update_membrane_(false),
