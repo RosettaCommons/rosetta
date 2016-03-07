@@ -573,7 +573,7 @@ JobDistributor::run_one_job(
 		retries_this_job = 0;
 	}
 
-	if ( option[OptionKeys::jd2::delete_old_poses].user() ) {
+	if ( option[OptionKeys::jd2::delete_old_poses].value() ) {
 		//to improve jd2 memory performance, we will delete the last
 		//input's starting pose. (Previous to this, jd2 never deleted
 		//input poses and would accumulate memory over large input sets

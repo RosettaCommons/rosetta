@@ -851,6 +851,7 @@ sources = {
 		#"Extender",
 		#"LoopAnalyzer",
 		#"ForgetPDBInfo",
+		"ChemXRW/PDB_diagnostic",
 	],
 	"pilot/sthyme" : [
 		"dna_motifs_collector",

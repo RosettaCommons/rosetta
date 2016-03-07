@@ -1,0 +1,8 @@
+../../tests/AnchorFinder/pdbs/3cy0.pdb.gz
+../../tests/AnchorFinder/pdbs/3cy5.pdb.gz
+../../tests/AnchorFinder/pdbs/3cy1.pdb.gz
+#These have cys-heme or his-heme adducts that the PDB reader currently can't handle.  They're disabled to prevent screwing up the itests.
+
+../../tests/AnchorFinder/pdbs/3cy4.pdb.gz
+../../tests/AnchorFinder/pdbs/3cye.pdb.gz
+#these have sugars which cause a crash

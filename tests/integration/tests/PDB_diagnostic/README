@@ -1,0 +1,5 @@
+Two notes about this test:
+
+1) It depends on the files of AnchorFinder.  Both programs are meant to run on unfiltered PDBs - in fact, both were meant to run on literally the whole PDB.  The convenience sample of PDBs in AnchorFinder is appropriate here; I saw no need to duplicate the data, so this test paths to that one.
+
+2) This test can't run correctly in the absence of the PDB CCD (chemical components dictionary).  The presence of that file (in database/chemical) and the flag -load_PDB_components, and the absence of -ignore_unrecognized_res, is how it's meant to be run.  That file won't be installed usually, and having this test crash because of its absence isn't helpful.

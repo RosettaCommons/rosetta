@@ -7,12 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file relax_initialization_protocols
-/// @brief initialization protocols for relax
-/// @details
-///   Contains currently: Classic Abinitio
-///
-///
+/// @file basic/options/option_macros.hh
+/// @brief macros to define options on a per-application basis at the top of app files (those with main)
+/// @details macros to define options on a per-application basis at the top of app files (those with main).  Used in place of putting the options in the option system proper for single-use / silly / testing stuff
 /// @author Oliver Lange
 
 #ifndef INCLUDED_basic_options_option_macros_hh

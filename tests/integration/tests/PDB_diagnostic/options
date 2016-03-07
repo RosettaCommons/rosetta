@@ -1,0 +1,29 @@
+#-database <path to database>
+
+-l pdblist
+
+#Necessary for reading in structures w/ligands, etc
+-ignore_unrecognized_res
+#NOTICE that this is not actually necessary, IF the CCD is installed locally (but let's assume it isn't)
+
+#Test is better if this is "true", but we can't assume all y'all installed the CCD
+-load_PDB_components false
+
+#forced by app: delete old poses, no design, no pack missing sidechains.  The app turns these on.
+#-jd2::delete_old_poses true
+#-packing::pack_missing_sidechains false
+#-packing::repack_only true
+
+#necessary to read PDB-sourced multimodel NMR files quickly
+-in:file:obey_ENDMDL
+
+#App requires score_only (to properly manage what could accidentally be 400 GB of output)
+-out:file:score_only scorefile
+
+#These flags activate sugars; there are none in the test set unfortunately
+-alternate_3_letter_codes pdb_sugar
+-include_sugars
+
+#for speed, skip the more expensive part of the test
+-PDB_diagnostic::skip_pack_and_min true
+-PDB_diagnostic::reading_only true
