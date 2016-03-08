@@ -30,6 +30,7 @@
 #include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/excn/Exceptions.hh>
@@ -100,27 +101,28 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sequence_file                );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts      );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count    );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclic_permutations          );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_rama_filter              );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_cutoff                  );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::high_hbond_weight_multiplier );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::min_genkic_hbonds            );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::min_final_hbonds             );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff          );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds            );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds              );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier    );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::default_rama_sampling_table  );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_sampling_table_by_res   );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_file              );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file         );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_disulfides           );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_prerelax       );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax      );
-
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sequence_file                        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts              );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count            );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclic_permutations                  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_rama_filter                      );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_cutoff                          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::high_hbond_weight_multiplier         );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::min_genkic_hbonds                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::min_final_hbonds                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff                  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds                      );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier            );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::default_rama_sampling_table          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_sampling_table_by_res           );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_file                      );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file                 );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_disulfides                   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_prerelax               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax              );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals             );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation );
 	return;
 }
 
@@ -157,7 +159,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	rand_checkpoint_file_("rng.state.gz"),
 	try_all_disulfides_(false),
 	disulf_energy_cutoff_prerelax_(15.0),
-	disulf_energy_cutoff_postrelax_(0.5)
+	disulf_energy_cutoff_postrelax_(0.5),
+	user_set_alpha_dihedrals_(),
+	user_set_dihedral_perturbation_(0.0)
 {
 	initialize_from_options();
 }
@@ -196,7 +200,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	rand_checkpoint_file_(src.rand_checkpoint_file_),
 	try_all_disulfides_(src.try_all_disulfides_),
 	disulf_energy_cutoff_prerelax_(src.disulf_energy_cutoff_prerelax_),
-	disulf_energy_cutoff_postrelax_(src.disulf_energy_cutoff_postrelax_)
+	disulf_energy_cutoff_postrelax_(src.disulf_energy_cutoff_postrelax_),
+	user_set_alpha_dihedrals_(src.user_set_alpha_dihedrals_),
+	user_set_dihedral_perturbation_(src.user_set_dihedral_perturbation_)
 	//TODO -- copy variables here.
 {}
 
@@ -269,6 +275,23 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	//Figure out what custom Ramachandran tables we're using, if any:
 	set_default_rama_table_type( option[basic::options::OptionKeys::cyclic_peptide::default_rama_sampling_table]() );
 	set_rama_table_type_by_res( option[basic::options::OptionKeys::cyclic_peptide::rama_sampling_table_by_res]() );
+
+	//If the user has set particular dihedrals, read them in
+	if ( option[basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals].user() ) {
+		utility::vector1 < core::Real > const user_set_dihedrals( option[basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals]() );
+		runtime_assert_string_msg( user_set_dihedrals.size() % 4 == 0, "Error in simple_cycpep_predict app: the \"-user_set_alpha_dihedrals\" option must be followed by one or more groups of four numbers.  Each group must consist of a sequence position, then phi/psi/omega values." );
+		for ( core::Size i=1, imax=user_set_dihedrals.size(); i<=imax; i+=4 ) {
+			core::Size const seqpos( static_cast< core::Size >( user_set_dihedrals[i] ) );
+			runtime_assert_string_msg( user_set_alpha_dihedrals_.count(seqpos) == 0, "Error in simple_cycpep_predict app: a residue index was specified more than once with the \"-user_set_alpha_dihedrals\" option." );
+			utility::vector1< core::Real > phipsiomegavect;
+			phipsiomegavect.reserve(3);
+			phipsiomegavect.push_back( user_set_dihedrals[i+1] );
+			phipsiomegavect.push_back( user_set_dihedrals[i+2] );
+			phipsiomegavect.push_back( user_set_dihedrals[i+3] );
+			user_set_alpha_dihedrals_[seqpos] = phipsiomegavect;
+		}
+	}
+	user_set_dihedral_perturbation_ = option[basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation]();
 
 	return;
 } //initialize_from_options()
@@ -961,13 +984,38 @@ SimpleCycpepPredictApplication::genkic_close(
 	for ( core::Size i=1; i<=nres; ++i ) {
 		if ( i==anchor_res ) continue; //Can't perturb the anchor residue.
 		if ( pose->residue(i).type().is_alpha_aa() ) {
-			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
-			genkic->add_residue_to_perturber_residue_list(i);
 			core::Size const res_in_original( current_position(i, cyclic_offset, pose->n_residue() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
-			if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
-				genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
-			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) { //If there is a default custom rama table defined for sampling, use it.
-				genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
+				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
+				core::id::NamedAtomID Natom( "N", i );
+				core::id::NamedAtomID CAatom( "CA", i );
+				core::id::NamedAtomID Catom( "C", i );
+				core::Size const nextres( i==nres ? 1 : i+1 );
+				core::id::NamedAtomID Nnextatom( "N", nextres );
+				utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
+				utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
+				utility::vector1< core::id::NamedAtomID > omegavect; omegavect.push_back( Catom ); omegavect.push_back( Nnextatom );
+				genkic->add_atomset_to_perturber_atomset_list(phivect);
+				genkic->add_atomset_to_perturber_atomset_list(psivect);
+				if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
+				genkic->add_value_to_perturber_value_list( user_set_alpha_dihedrals_.at(res_in_original)[1] );
+				genkic->add_value_to_perturber_value_list( user_set_alpha_dihedrals_.at(res_in_original)[2] );
+				if ( nextres != anchor_res ) genkic->add_value_to_perturber_value_list( user_set_alpha_dihedrals_.at(res_in_original)[3] );
+				if ( user_set_dihedral_perturbation_ ) {
+					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::perturb_dihedral );
+					genkic->add_atomset_to_perturber_atomset_list(phivect);
+					genkic->add_atomset_to_perturber_atomset_list(psivect);
+					if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
+					genkic->add_value_to_perturber_value_list( user_set_dihedral_perturbation_ );
+				}
+			} else { //If this position is not set, randomize it.
+				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
+				genkic->add_residue_to_perturber_residue_list(i);
+				if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
+					genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
+				} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) { //If there is a default custom rama table defined for sampling, use it.
+					genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+				}
 			}
 		} else {
 			//TODO Randomize mainchain torsions here for beta- and gamma-amino acids.

@@ -1,0 +1,628 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+apps.public.cyclic_peptide.simple_cycpep_predict: Starting simple_cycpep_predict.cc
+apps.public.cyclic_peptide.simple_cycpep_predict: Pilot app created 16 September 2015 by Vikram K. Mulligan, Ph.D., Baker laboratory.
+apps.public.cyclic_peptide.simple_cycpep_predict: For questions, contact vmullig@uw.edu.
+apps.public.cyclic_peptide.simple_cycpep_predict: 
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: talaris2014
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+core.scoring.ramachandran: Symmetrizing glycine Ramachandran table.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_pp
+core.scoring.P_AA: Symmetrizing P_AA_pp glycine table.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Parsed the following sequence:
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: ASP, PRO, ASP, TRP, ARG, ASN, ILE, ARG, ASN, LEU, ALA, DSER, DASP, DPRO, DASP, DTRP, DARG, DASN, DILE, DARG, DASN, DLEU, DALA, SER, ASP, PRO, ASP, TRP, ARG, ASN, ILE, ARG, ASN, LEU, ALA, DSER, DASP, DPRO, DASP, DTRP, DARG, DASN, DILE, DARG, DASN, DLEU, DALA, SER.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: No native structure specified by the user.  No RMSD values will be calculated.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Circularly shifted residue list by 1.  New list is: PRO, ASP, TRP, ARG, ASN, ILE, ARG, ASN, LEU, ALA, DSER, DASP, DPRO, DASP, DTRP, DARG, DASN, DILE, DARG, DASN, DLEU, DALA, SER, ASP, PRO, ASP, TRP, ARG, ASN, ILE, ARG, ASN, LEU, ALA, DSER, DASP, DPRO, DASP, DTRP, DARG, DASN, DILE, DARG, DASN, DLEU, DALA, SER, ASP
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Building sequence PRO ASP TRP ARG ASN ILE ARG ASN LEU ALA DSER DASP DPRO DASP DTRP DARG DASN DILE DARG DASN DLEU DALA SER ASP PRO ASP TRP ARG ASN ILE ARG ASN LEU ALA DSER DASP DPRO DASP DTRP DARG DASN DILE DARG DASN DLEU DALA SER ASP.
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch LowerDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch UpperDNA as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch ShoveBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch VirtualBB as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch N_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch C_methylamidated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch SpecialRotamer as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch Cterm_amidation as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case1 as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case2 as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch ser_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch thr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_phosphorylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_sulfated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_monomethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_dimethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_trimethylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch lys_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch glu_carboxylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch cys_acetylated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch tyr_diiodinated as requested
+core.chemical.ResidueTypeSet: While generating ResidueTypeSet fa_standard: Skipping patch MethylatedProteinCterm as requested
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Build successful.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up terminal bond between residue 1, atom  N   and residue 48, atom  C  .
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up cyclic constraints.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: The following four atoms define the terminal bond:
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 1.	Res=48	Atom= CA 
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 2.	Res=48	Atom= C  
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 3.	Res=1	Atom= N  
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 4.	Res=1	Atom= CA 
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Finished setting up constraints.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Randomizing mainchain torsions.
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: DOF for this torsion angle could not be found in AtomTree.
+core.conformation.Conformation: Unable to set torsion angle in atom_tree: TorsionID 1 BB 1
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: DOF for this torsion angle could not be found in AtomTree.
+core.conformation.Conformation: Unable to set torsion angle in atom_tree: TorsionID 48 BB 2
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Performing GeneralizedKIC closure of loop.
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.generalized_kinematic_closure.GeneralizedKIC: Applying pre-selection mover to solution 1 from attempt 225.
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER NullMover - Total_Hbonds=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          5         8         N         N    -0.129     0.000     0.000     0.000     5.744
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          6        10         I         A    -0.216     0.000     0.000     0.000     6.571
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          7        11         R         S    -0.544     0.000     0.000     0.000     6.452
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          8         5         N         N    -0.129     0.000     0.000     0.000     5.744
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         10         6         A         I    -0.216     0.000     0.000     0.000     6.571
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         11         7         S         R    -0.544     0.000     0.000     0.000     6.452
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         14        18         D         I    -0.601     0.000     0.000     0.000     6.281
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         16        20         R         N    -0.376     0.000     0.000     0.000     7.457
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         18        14         I         D    -0.601     0.000     0.000     0.000     6.281
+        18        22         I         A    -0.406     0.000     0.000     0.000     7.051
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         20        16         N         R    -0.376     0.000     0.000     0.000     7.457
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         22        18         A         I    -0.406     0.000     0.000     0.000     7.051
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         27        31         W         R    -0.168     0.000     0.000     0.000     7.014
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         28        32         R         N    -0.296     0.000     0.000     0.000     7.279
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         29        33         N         L    -0.451     0.000     0.000     0.000     7.193
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         30        34         I         A    -0.977     0.000     0.000     0.000     6.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         31        27         R         W    -0.168     0.000     0.000     0.000     7.014
+        31        36         R         D     0.000    -0.304     0.000     0.000     4.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         32        28         N         R    -0.296     0.000     0.000     0.000     7.279
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         33        29         L         N    -0.451     0.000     0.000     0.000     7.193
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         34        30         A         I    -0.977     0.000     0.000     0.000     6.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         36        31         D         R     0.000    -0.304     0.000     0.000     4.319
+        36        40         D         R    -0.222     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         37        42         P         I     0.000    -0.538     0.000     0.000     4.608
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         40        36         R         D    -0.222     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         42        37         I         P     0.000    -0.538     0.000     0.000     4.608
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.filters.Filter: CombinedFilter value is -13, threshold is -5.
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          5         8         N         N    -0.129     0.000     0.000     0.000     5.744
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          6        10         I         A    -0.216     0.000     0.000     0.000     6.571
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          7        11         R         S    -0.544     0.000     0.000     0.000     6.452
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          8         5         N         N    -0.129     0.000     0.000     0.000     5.744
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         10         6         A         I    -0.216     0.000     0.000     0.000     6.571
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         11         7         S         R    -0.544     0.000     0.000     0.000     6.452
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         14        18         D         I    -0.601     0.000     0.000     0.000     6.281
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         16        20         R         N    -0.376     0.000     0.000     0.000     7.457
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         18        14         I         D    -0.601     0.000     0.000     0.000     6.281
+        18        22         I         A    -0.406     0.000     0.000     0.000     7.051
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         20        16         N         R    -0.376     0.000     0.000     0.000     7.457
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         22        18         A         I    -0.406     0.000     0.000     0.000     7.051
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         27        31         W         R    -0.168     0.000     0.000     0.000     7.014
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         28        32         R         N    -0.296     0.000     0.000     0.000     7.279
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         29        33         N         L    -0.451     0.000     0.000     0.000     7.193
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         30        34         I         A    -0.977     0.000     0.000     0.000     6.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         31        27         R         W    -0.168     0.000     0.000     0.000     7.014
+        31        36         R         D     0.000    -0.304     0.000     0.000     4.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         32        28         N         R    -0.296     0.000     0.000     0.000     7.279
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         33        29         L         N    -0.451     0.000     0.000     0.000     7.193
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         34        30         A         I    -0.977     0.000     0.000     0.000     6.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         36        31         D         R     0.000    -0.304     0.000     0.000     4.319
+        36        40         D         R    -0.222     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         37        42         P         I     0.000    -0.538     0.000     0.000     4.608
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         40        36         R         D    -0.222     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         42        37         I         P     0.000    -0.538     0.000     0.000     4.608
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          5         8         N         N    -0.129     0.000     0.000     0.000     5.744
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          6        10         I         A    -0.216     0.000     0.000     0.000     6.571
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          7        11         R         S    -0.544     0.000     0.000     0.000     6.452
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          8         5         N         N    -0.129     0.000     0.000     0.000     5.744
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         10         6         A         I    -0.216     0.000     0.000     0.000     6.571
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         11         7         S         R    -0.544     0.000     0.000     0.000     6.452
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         14        18         D         I    -0.601     0.000     0.000     0.000     6.281
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         16        20         R         N    -0.376     0.000     0.000     0.000     7.457
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         18        14         I         D    -0.601     0.000     0.000     0.000     6.281
+        18        22         I         A    -0.406     0.000     0.000     0.000     7.051
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         20        16         N         R    -0.376     0.000     0.000     0.000     7.457
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         22        18         A         I    -0.406     0.000     0.000     0.000     7.051
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         27        31         W         R    -0.168     0.000     0.000     0.000     7.014
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         28        32         R         N    -0.296     0.000     0.000     0.000     7.279
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         29        33         N         L    -0.451     0.000     0.000     0.000     7.193
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         30        34         I         A    -0.977     0.000     0.000     0.000     6.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         31        27         R         W    -0.168     0.000     0.000     0.000     7.014
+        31        36         R         D     0.000    -0.304     0.000     0.000     4.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         32        28         N         R    -0.296     0.000     0.000     0.000     7.279
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         33        29         L         N    -0.451     0.000     0.000     0.000     7.193
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         34        30         A         I    -0.977     0.000     0.000     0.000     6.319
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         36        31         D         R     0.000    -0.304     0.000     0.000     4.319
+        36        40         D         R    -0.222     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         37        42         P         I     0.000    -0.538     0.000     0.000     4.608
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         40        36         R         D    -0.222     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         42        37         I         P     0.000    -0.538     0.000     0.000     4.608
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.rosetta_scripts.ParsedProtocol.REPORT: Combined filter returns: -13
+============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastRelax - High_Hbond_FastRelax=======================
+protocols.relax.FastRelax: CMD: repeat  36393.8  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 674 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 351916 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -279.935  1.59567  1.59567  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 638 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 336656 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -272.61  1.79354  1.79354  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 633 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 327220 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.optimization.LineMinimizer: Inaccurate G! step= 4.76837e-09 Deriv= -18.8167 Finite Diff= 42.085
+protocols.relax.FastRelax: CMD: ramp_repack_min  -253.354  1.79358  1.79358  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 613 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 313072 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.optimization.LineMinimizer: Inaccurate G! step= 9.53674e-09 Deriv= -301.595 Finite Diff= 38.1079
+protocols.relax.FastRelax: CMD: ramp_repack_min  -222.631  1.79369  1.79369  0.55
+protocols.relax.FastRelax: MRP: 0  -222.631  -222.631  1.79369  1.79369  
+protocols.relax.FastRelax: CMD: accept_to_best  -222.631  1.79369  1.79369  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -222.631  1.79369  1.79369  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          5         8         N         N    -1.031     0.000     0.000     0.000     6.298
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          6         9         I         L    -1.002     0.000     0.000     0.000     6.732
+         6        10         I         A    -1.147     0.000     0.000     0.000     5.277
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          7        11         R         S    -1.212     0.000     0.000     0.000     4.991
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          8         5         N         N    -1.031     0.000     0.000     0.000     6.298
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          9         6         L         I    -1.002     0.000     0.000     0.000     6.732
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         10         6         A         I    -1.147     0.000     0.000     0.000     5.277
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         11         7         S         R    -1.212     0.000     0.000     0.000     4.991
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         14        18         D         I    -0.895     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         15        19         W         R    -0.961     0.000     0.000     0.000     6.766
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         16        20         R         N    -0.846     0.000     0.000     0.000     6.867
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         17        21         N         L    -0.926     0.000     0.000     0.000     6.824
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         18        14         I         D    -0.895     0.000     0.000     0.000     6.456
+        18        22         I         A    -0.855     0.000     0.000     0.000     6.890
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         19        15         R         W    -0.961     0.000     0.000     0.000     6.766
+        19        23         R         S    -0.960     0.000     0.000     0.000     7.222
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         20        16         N         R    -0.846     0.000     0.000     0.000     6.867
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         21        17         L         N    -0.926     0.000     0.000     0.000     6.824
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         22        18         A         I    -0.855     0.000     0.000     0.000     6.890
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         23        19         S         R    -0.960     0.000     0.000     0.000     7.222
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         26        28         D         R    -0.840     0.000     0.000     0.000     6.396
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         27        31         W         R    -1.016     0.000     0.000     0.000     6.627
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         28        26         R         D    -0.840     0.000     0.000     0.000     6.396
+        28        32         R         N    -0.755     0.000     0.000     0.000     6.804
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         29        33         N         L    -1.108     0.000     0.000     0.000     6.765
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         30        34         I         A    -0.718     0.000     0.000     0.000     6.956
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         31        27         R         W    -1.016     0.000     0.000     0.000     6.627
+        31        35         R         S    -1.124     0.000     0.000     0.000     7.637
+        31        36         R         D     0.000    -1.029     0.000     0.000     4.056
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         32        28         N         R    -0.755     0.000     0.000     0.000     6.804
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         33        29         L         N    -1.108     0.000     0.000     0.000     6.765
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         34        30         A         I    -0.718     0.000     0.000     0.000     6.956
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         35        31         S         R    -1.124     0.000     0.000     0.000     7.637
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         36        31         D         R     0.000    -1.029     0.000     0.000     4.056
+        36        39         D         W    -0.704     0.000     0.000     0.000     5.540
+        36        40         D         R    -1.262     0.000     0.000     0.000     6.963
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         37        41         P         N    -0.794     0.000     0.000     0.000     7.316
+        37        42         P         I     0.000    -1.084     0.000     0.000     3.345
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         39        36         W         D    -0.704     0.000     0.000     0.000     5.540
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         40        36         R         D    -1.262     0.000     0.000     0.000     6.963
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         41        37         N         P    -0.794     0.000     0.000     0.000     7.316
+        41        45         N         L    -0.940     0.000     0.000     0.000     6.029
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         42        37         I         P     0.000    -1.084     0.000     0.000     3.345
+        42        46         I         A    -0.826     0.000     0.000     0.000     6.716
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         43        47         R         S    -1.059     0.000     0.000     0.000     8.285
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         45        41         L         N    -0.940     0.000     0.000     0.000     6.029
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         46        42         A         I    -0.826     0.000     0.000     0.000     6.716
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         47        43         S         R    -1.059     0.000     0.000     0.000     8.285
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.generalized_kinematic_closure.GeneralizedKIC: Storing solution 1 from attempt 225.
+protocols.generalized_kinematic_closure.selector.GeneralizedKICselector: Choosing GeneralizedKIC solution.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Closure successful.
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Closure successful.
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Applying final FastRelax, round 1.
+protocols.relax.FastRelax: CMD: repeat  20.5494  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 675 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 368708 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  -46.0743  0.000131644  0.000131644  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 646 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 342124 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -8.81936 Finite Diff= 9.54033
+protocols.relax.FastRelax: CMD: ramp_repack_min  -29.1629  0.000131644  0.000131644  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 633 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 327220 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -76.1963 Finite Diff= -3.82379
+protocols.relax.FastRelax: CMD: ramp_repack_min  -8.03489  0.000131644  0.000131644  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.rotamer_set.RotamerSet_: Using simple Rotamer generation logic for DALA
+core.pack.pack_rotamers: built 613 rotamers at 48 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 313072 bytes
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-3, 1-1, 1-2, 1-3!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-1, 48-2, 48-3, 1-1!
+core.kinematics.AtomTree: No proper DoF can be found for these four atoms: 48-2, 48-3, 1-1, 1-2!
+core.optimization.LineMinimizer: Inaccurate G! step= 9.53674e-09 Deriv= -446.74 Finite Diff= 9.38147
+protocols.relax.FastRelax: CMD: ramp_repack_min  22.2725  0.00141256  0.00141256  0.55
+protocols.relax.FastRelax: MRP: 0  22.2725  22.2725  0.00141256  0.00141256  
+protocols.relax.FastRelax: CMD: accept_to_best  22.2725  0.00141256  0.00141256  0.55
+protocols.relax.FastRelax: CMD: endrepeat  22.2725  0.00141256  0.00141256  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up terminal bond between residue 1, atom  N   and residue 48, atom  C  .
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          6         9         N         N    -1.031     0.000     0.000     0.000     6.298
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          7        10         I         L    -1.002     0.000     0.000     0.000     6.732
+         7        11         I         A    -1.147     0.000     0.000     0.000     5.277
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          8        12         R         S    -1.212     0.000     0.000     0.000     4.991
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:          9         6         N         N    -1.031     0.000     0.000     0.000     6.298
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         10         7         L         I    -1.002     0.000     0.000     0.000     6.732
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         11         7         A         I    -1.147     0.000     0.000     0.000     5.277
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         12         8         S         R    -1.212     0.000     0.000     0.000     4.991
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         15        19         D         I    -0.895     0.000     0.000     0.000     6.456
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         16        20         W         R    -0.961     0.000     0.000     0.000     6.766
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         17        21         R         N    -0.846     0.000     0.000     0.000     6.867
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         18        22         N         L    -0.926     0.000     0.000     0.000     6.824
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         19        15         I         D    -0.895     0.000     0.000     0.000     6.456
+        19        23         I         A    -0.855     0.000     0.000     0.000     6.890
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         20        16         R         W    -0.961     0.000     0.000     0.000     6.766
+        20        24         R         S    -0.960     0.000     0.000     0.000     7.222
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         21        17         N         R    -0.846     0.000     0.000     0.000     6.867
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         22        18         L         N    -0.926     0.000     0.000     0.000     6.824
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         23        19         A         I    -0.855     0.000     0.000     0.000     6.890
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         24        20         S         R    -0.960     0.000     0.000     0.000     7.222
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         27        29         D         R    -0.840     0.000     0.000     0.000     6.396
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         28        32         W         R    -1.016     0.000     0.000     0.000     6.627
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         29        27         R         D    -0.840     0.000     0.000     0.000     6.396
+        29        33         R         N    -0.755     0.000     0.000     0.000     6.804
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         30        34         N         L    -1.108     0.000     0.000     0.000     6.765
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         31        35         I         A    -0.718     0.000     0.000     0.000     6.956
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         32        28         R         W    -1.016     0.000     0.000     0.000     6.627
+        32        36         R         S    -1.124     0.000     0.000     0.000     7.637
+        32        37         R         D     0.000    -1.029     0.000     0.000     4.056
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         33        29         N         R    -0.755     0.000     0.000     0.000     6.804
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         34        30         L         N    -1.108     0.000     0.000     0.000     6.765
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         35        31         A         I    -0.718     0.000     0.000     0.000     6.956
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         36        32         S         R    -1.124     0.000     0.000     0.000     7.637
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         37        32         D         R     0.000    -1.029     0.000     0.000     4.056
+        37        40         D         W    -0.704     0.000     0.000     0.000     5.540
+        37        41         D         R    -1.262     0.000     0.000     0.000     6.963
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         38        42         P         N    -0.794     0.000     0.000     0.000     7.316
+        38        43         P         I     0.000    -1.084     0.000     0.000     3.345
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         40        37         W         D    -0.704     0.000     0.000     0.000     5.540
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         41        37         R         D    -1.262     0.000     0.000     0.000     6.963
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         42        38         N         P    -0.794     0.000     0.000     0.000     7.316
+        42        46         N         L    -0.940     0.000     0.000     0.000     6.029
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         43        38         I         P     0.000    -1.084     0.000     0.000     3.345
+        43        47         I         A    -0.826     0.000     0.000     0.000     6.716
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         44        48         R         S    -1.059     0.000     0.000     0.000     8.285
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         46        42         L         N    -0.940     0.000     0.000     0.000     6.029
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         47        43         A         I    -0.826     0.000     0.000     0.000     6.716
+protocols.protein_interface_design.design_utils: decomposing bb hydrogen bond terms
+protocols.protein_interface_design.design_utils:         48        44         S         R    -1.059     0.000     0.000     0.000     8.285
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Result	RMSD	Energy	Hbonds
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 1	--	41.3742	24
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 1 jobs attempted.  1 jobs returned solutions.
+apps.public.cyclic_peptide.simple_cycpep_predict: Finished simple_cycpep_predict.cc.  Exiting.

@@ -402,6 +402,14 @@ private:
 	/// @details Read from options.
 	core::Real disulf_energy_cutoff_postrelax_;
 
+	/// @brief Map of (seqpos -> phi/psi/omega triplet).
+	/// @details The user can set certain alpha-amino acid mainchain dihedral values, if he or she so wishes.
+	std::map< core::Size, utility::vector1 < core::Real > > user_set_alpha_dihedrals_;
+
+	/// @brief A small random value added to all user-set dihedral values.  Defaults to 0.
+	///
+	core::Real user_set_dihedral_perturbation_;
+
 
 };
 

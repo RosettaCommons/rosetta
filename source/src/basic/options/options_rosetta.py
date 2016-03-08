@@ -4158,6 +4158,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'require_disulfides', 'Boolean', desc="If true, accepted conformations must permit disulfides to be formed.  All permutations of disulfides will be considered, between all disulfide-forming residues.  Default false.", default='false' ),
 		Option( 'disulf_cutoff_prerelax', 'Real', desc="If require_disulfides is true, this is the maximum disulfide energy per disulfide bond that is allowed prior to relaxation.  If the energy exceeds this value, the solution is rejected.  Default 15.0.", default='15.0' ),
 		Option( 'disulf_cutoff_postrelax', 'Real', desc="If require_disulfides is true, this is the maximum disulfide energy per disulfide bond that is allowed following relaxation.  If the energy exceeds this value, the solution is rejected.  Default 0.5.", default='0.5' ),
+		Option( 'user_set_alpha_dihedrals', 'RealVector', desc="Allows the user to specify the dihedrals values at one or more alpha-amino acid positions in the peptide.  The flag must be followed by groups of four numbers, where the first is the sequence position and the second, third, and fourth are the phi, psi, and omega values, respectively.  Not used if not specified." ),
+		Option( 'user_set_alpha_dihedral_perturbation', 'Real', desc="A small, random perturbation added to all dihedral values set with the -user_set_alpha_dihedrals value.  Zero if not specified.", default='0.0' ),
 	), # -cyclic_peptide
 
 	Option_Group('dc',
