@@ -77,7 +77,7 @@ public:
 					(*sfxn)(*pose);
 					(*sfxn)(*pose2);
 					//TR << "phi=" << iphi << " psi=" << ipsi << " E1=" << pose->energies().total_energy() << " E2=" << pose2->energies().total_energy() << std::endl;
-					TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ) );
+					TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::max( std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ), 0.00001 ) );
 				}
 			}
 		}
@@ -112,6 +112,30 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_intra_rep, 1.0 );
 		TR << "Testing fa_intra_rep score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
+	/// @brief Tests symmetric scoring of glycine with the lk_ball_wtd scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_lk_ball_wtd() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball_wtd, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball_wtd score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
+	/// @brief Tests symmetric scoring of glycine with the fa_intra_sol_xover4 scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_fa_intra_sol_xover4() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_intra_sol_xover4, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing fa_intra_sol_xover4 score term." << std::endl;
 		repeat_structure_test(scorefxn);
 		return;
 	}

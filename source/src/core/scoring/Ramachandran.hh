@@ -296,7 +296,7 @@ private:
 	/// to bicubic interpolation setup.  Note that symmetrization is based on the probability table, and carries over to the energy table; the
 	/// counts table is left as-is (asymmetric).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	void symmetrize_gly_table();
+	void symmetrize_gly_table( );
 
 	void read_rama_map_file ( utility::io::izstream * iunit );
 	//MaximCode

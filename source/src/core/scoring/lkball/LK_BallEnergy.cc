@@ -1012,9 +1012,11 @@ determine_crossover_behavior(
 )
 {
 	using namespace scoring::etable::count_pair;
-	// maybe should ask "are these two residues polymers and do they share a polymeric bond"
-	//debug_assert( !sfxn.has_zero_weight( mm_twist ) );
-	if ( res1.polymeric_sequence_distance(res2) == 1 ) {
+	// Ask "are these two residues polymers and do they share a polymeric bond?"
+	if (
+			//res1.polymeric_sequence_distance(res2) == 1 //VKM, 20 Feb 2016: Doesn't handle cyclic geometry properly.  The following code does, however:
+			res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2)
+			) {
 		if ( ( !( res1.is_protein() && res2.is_protein() ) ) &&
 				( !( use_intra_dna_cp_crossover_4 && res1.is_DNA() && res2.is_DNA() ) ) &&
 				( !( res1.is_RNA() && res2.is_RNA() ) ) ) {

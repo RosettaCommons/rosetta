@@ -141,16 +141,27 @@ OmegaTether::eval_omega_score_residue(
 
 	debug_assert( rsd.is_protein() );
 
+	bool const is_d( rsd.type().is_d_aa() );
+	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
+	core::chemical::AA the_aa( rsd.aa() );
+	if ( !core::chemical::is_canonical_L_aa( the_aa ) /*includes gly*/ && !core::chemical::is_canonical_D_aa( the_aa ) ) {
+		the_aa = core::chemical::aa_gly;
+	} else {
+		if ( is_d ) {
+			the_aa = core::chemical::get_L_equivalent( the_aa );
+		}
+	}
+
 	// vkm -- changing this yet again, so that now we have the is_beta_aa() check in one and only one place.
 	// amw changing this to is_beta_aa as well
 	// old:
 	//Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom AND by checking the size of the mainchain_torsions vector (since methylated lysine has a CM)
 	Real const phi_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion( phi_index(rsd) )));
+		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( phi_index(rsd) )));
 	Real const psi_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion( psi_index(rsd) )));
+		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( psi_index(rsd) )));
 	Real const omega_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion( omega_index(rsd) ))); //omega_index is 3 by default, 4 for beta-amino acids.
+		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( omega_index(rsd) ))); //omega_index is 3 by default, 4 for beta-amino acids.
 
 	if ( rsd.is_upper_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		score = 0.0;
@@ -158,7 +169,11 @@ OmegaTether::eval_omega_score_residue(
 		return;
 	}
 
-	eval_omega_score_residue( rsd.aa(), omega_angle, phi_angle, psi_angle, score, dscore_domega, dscore_dphi, dscore_dpsi );
+	eval_omega_score_residue( the_aa, omega_angle, phi_angle, psi_angle, score, dscore_domega, dscore_dphi, dscore_dpsi );
+
+	dscore_dphi *= d_multiplier;
+	dscore_dpsi *= d_multiplier;
+	dscore_domega *= d_multiplier;
 }
 
 

@@ -538,9 +538,9 @@ Assembly::follow_edge(
 ) {
 
 	core::Size other_index = edge->get_other_ind(source_index);
-		if ( TR.Debug.visible() ) {
-			TR << "Appending node " << *graph->get_model_node(other_index) << " to assembly" << std::endl;
-		}
+	if ( TR.Debug.visible() ) {
+		TR << "Appending node " << *graph->get_model_node(other_index) << " to assembly" << std::endl;
+	}
 
 	//Regenerate the source model from the Assembly (it can have changed coordinates from the ModelNode)
 	Model const reference_model = regenerate_model(graph->get_model_node(source_index)->model().model_id_);
@@ -556,7 +556,7 @@ Assembly::follow_edge(
 
 	ScoreResult edge_score = hasher.score_one(reference_model, reference_residue, mobile_model, mobile_residue, box_length);
 
-			// std::pair< BasisPair, HashResult > ScoreResult
+	// std::pair< BasisPair, HashResult > ScoreResult
 
 	//This 'check' is due to slight differences in geometric hashing before and after a
 	//model transformation. For example, Model X, model Y, and model Z are scored from the initial model

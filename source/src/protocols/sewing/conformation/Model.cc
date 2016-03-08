@@ -1586,7 +1586,7 @@ read_model_file(
 	}
 
 	core::Size endttime = time(NULL);
-		TR << "Read " << models.size() << " models in " << endttime - starttime << " seconds" << std::endl;
+	TR << "Read " << models.size() << " models in " << endttime - starttime << " seconds" << std::endl;
 
 	return models;
 } //read_model_file

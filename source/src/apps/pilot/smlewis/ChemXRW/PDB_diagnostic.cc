@@ -111,47 +111,47 @@ public:
 		core::Size is_adduct(0);
 
 		//loop over pose residues, accumulating properties
-		for(core::Size i(1); i<=nres; ++i) {
+		for ( core::Size i(1); i<=nres; ++i ) {
 			//if(pose.residue_type(i).??) ++??;
-			if( pose.residue_type(i).is_polymer()) ++is_polymer;
-			if( pose.residue_type(i).is_sidechain_thiol()) ++is_sidechain_thiol;
-			if( pose.residue_type(i).is_disulfide_bonded()) ++is_disulfide_bonded;
-			if( pose.residue_type(i).is_sidechain_amine()) ++is_sidechain_amine;
-			if( pose.residue_type(i).is_protein()) ++is_protein;
-			if( pose.residue_type(i).is_alpha_aa()) ++is_alpha_aa;
-			if( pose.residue_type(i).is_beta_aa()) ++is_beta_aa;
-			if( pose.residue_type(i).is_gamma_aa()) ++is_gamma_aa;
-			if( pose.residue_type(i).is_sri()) ++is_sri;
-			if( pose.residue_type(i).is_triazolemer()) ++is_triazolemer;
-			if( pose.residue_type(i).is_d_aa()) ++is_d_aa;
-			if( pose.residue_type(i).is_l_aa()) ++is_l_aa;
-			if( pose.residue_type(i).is_achiral_backbone()) ++is_achiral_backbone;
-			if( pose.residue_type(i).is_DNA()) ++is_DNA;
-			if( pose.residue_type(i).is_RNA()) ++is_RNA;
-			if( pose.residue_type(i).is_coarse()) ++is_coarse;
-			if( pose.residue_type(i).is_NA()) ++is_NA;
-			if( pose.residue_type(i).is_peptoid()) ++is_peptoid;
-			if( pose.residue_type(i).is_carbohydrate()) ++is_carbohydrate;
-			if( pose.residue_type(i).is_ligand()) ++is_ligand;
-			if( pose.residue_type(i).is_lipid()) ++is_lipid;
-			if( pose.residue_type(i).is_metal()) ++is_metal;
-			if( pose.residue_type(i).is_metalbinding()) ++is_metalbinding;
-			if( pose.residue_type(i).is_membrane()) ++is_membrane;
-			if( pose.residue_type(i).is_surface()) ++is_surface;
-			if( pose.residue_type(i).has_sc_orbitals()) ++has_sc_orbitals;
-			if( pose.residue_type(i).is_polar()) ++is_polar;
-			if( pose.residue_type(i).is_charged()) ++is_charged;
-			if( pose.residue_type(i).is_aromatic()) ++is_aromatic;
-			if( pose.residue_type(i).is_cyclic()) ++is_cyclic;
-			if( pose.residue_type(i).is_terminus()) ++is_terminus;
-			if( pose.residue_type(i).is_lower_terminus()) ++is_lower_terminus;
-			if( pose.residue_type(i).is_upper_terminus()) ++is_upper_terminus;
-			if( pose.residue_type(i).is_branch_point()) ++is_branch_point;
-			if( pose.residue_type(i).is_branch_lower_terminus()) ++is_branch_lower_terminus;
-			if( pose.residue_type(i).is_acetylated_nterminus()) ++is_acetylated_nterminus;
-			if( pose.residue_type(i).is_methylated_cterminus()) ++is_methylated_cterminus;
-			if( pose.residue_type(i).is_virtual_residue()) ++is_virtual_residue;
-			if( pose.residue_type(i).is_adduct()) ++is_adduct;
+			if ( pose.residue_type(i).is_polymer() ) ++is_polymer;
+			if ( pose.residue_type(i).is_sidechain_thiol() ) ++is_sidechain_thiol;
+			if ( pose.residue_type(i).is_disulfide_bonded() ) ++is_disulfide_bonded;
+			if ( pose.residue_type(i).is_sidechain_amine() ) ++is_sidechain_amine;
+			if ( pose.residue_type(i).is_protein() ) ++is_protein;
+			if ( pose.residue_type(i).is_alpha_aa() ) ++is_alpha_aa;
+			if ( pose.residue_type(i).is_beta_aa() ) ++is_beta_aa;
+			if ( pose.residue_type(i).is_gamma_aa() ) ++is_gamma_aa;
+			if ( pose.residue_type(i).is_sri() ) ++is_sri;
+			if ( pose.residue_type(i).is_triazolemer() ) ++is_triazolemer;
+			if ( pose.residue_type(i).is_d_aa() ) ++is_d_aa;
+			if ( pose.residue_type(i).is_l_aa() ) ++is_l_aa;
+			if ( pose.residue_type(i).is_achiral_backbone() ) ++is_achiral_backbone;
+			if ( pose.residue_type(i).is_DNA() ) ++is_DNA;
+			if ( pose.residue_type(i).is_RNA() ) ++is_RNA;
+			if ( pose.residue_type(i).is_coarse() ) ++is_coarse;
+			if ( pose.residue_type(i).is_NA() ) ++is_NA;
+			if ( pose.residue_type(i).is_peptoid() ) ++is_peptoid;
+			if ( pose.residue_type(i).is_carbohydrate() ) ++is_carbohydrate;
+			if ( pose.residue_type(i).is_ligand() ) ++is_ligand;
+			if ( pose.residue_type(i).is_lipid() ) ++is_lipid;
+			if ( pose.residue_type(i).is_metal() ) ++is_metal;
+			if ( pose.residue_type(i).is_metalbinding() ) ++is_metalbinding;
+			if ( pose.residue_type(i).is_membrane() ) ++is_membrane;
+			if ( pose.residue_type(i).is_surface() ) ++is_surface;
+			if ( pose.residue_type(i).has_sc_orbitals() ) ++has_sc_orbitals;
+			if ( pose.residue_type(i).is_polar() ) ++is_polar;
+			if ( pose.residue_type(i).is_charged() ) ++is_charged;
+			if ( pose.residue_type(i).is_aromatic() ) ++is_aromatic;
+			if ( pose.residue_type(i).is_cyclic() ) ++is_cyclic;
+			if ( pose.residue_type(i).is_terminus() ) ++is_terminus;
+			if ( pose.residue_type(i).is_lower_terminus() ) ++is_lower_terminus;
+			if ( pose.residue_type(i).is_upper_terminus() ) ++is_upper_terminus;
+			if ( pose.residue_type(i).is_branch_point() ) ++is_branch_point;
+			if ( pose.residue_type(i).is_branch_lower_terminus() ) ++is_branch_lower_terminus;
+			if ( pose.residue_type(i).is_acetylated_nterminus() ) ++is_acetylated_nterminus;
+			if ( pose.residue_type(i).is_methylated_cterminus() ) ++is_methylated_cterminus;
+			if ( pose.residue_type(i).is_virtual_residue() ) ++is_virtual_residue;
+			if ( pose.residue_type(i).is_adduct() ) ++is_adduct;
 
 		}
 
@@ -225,7 +225,7 @@ public:
 		residue_type_statistics(pose, job_me, nres);
 
 		//if option, cut and run! Useful for not-mega-clusters where packing a virus/ribosome will crush memory.
-		if(basic::options::option[ basic::options::OptionKeys::PDB_diagnostic::reading_only ].value()) {
+		if ( basic::options::option[ basic::options::OptionKeys::PDB_diagnostic::reading_only ].value() ) {
 			return;
 		}
 
@@ -239,10 +239,10 @@ public:
 		score_mover->set_verbose(false);
 		score_mover->apply(pose);
 
-		if(!basic::options::option[ basic::options::OptionKeys::PDB_diagnostic::skip_pack_and_min ].value()) {
+		if ( !basic::options::option[ basic::options::OptionKeys::PDB_diagnostic::skip_pack_and_min ].value() ) {
 
 			//packing crashes on zero nres
-			if(nres > 0) {
+			if ( nres > 0 ) {
 
 				//step 4: packing
 				//note the main function forces -repack_only
@@ -315,7 +315,7 @@ main( int argc, char * argv [] )
 
 		//force no-output, otherwise we are wasting time
 		bool const score_only(basic::options::option[ basic::options::OptionKeys::out::file::score_only ].user());
-		if(!score_only){ //if not, do nothing
+		if ( !score_only ) { //if not, do nothing
 			//do nothing
 			TR << "PDB_diagnostic requires -score_only (or you'll write god knows how many PDBs out!)" << std::endl;
 		} else { //do work

@@ -87,7 +87,7 @@ VoxelSpacingMultifunc::operator ()( core::optimization::Multivec const & vars ) 
 	numeric::xyzVector< core::Real > ori ( vars[1],vars[2],vars[3] );
 	numeric::xyzVector< core::Real > apix_scale;
 
-	if (vars.size() == 4) {
+	if ( vars.size() == 4 ) {
 		apix_scale[0] = apix_scale[1] = apix_scale[2] = vars[4];
 	} else {
 		apix_scale[0] = vars[4];
@@ -99,9 +99,9 @@ VoxelSpacingMultifunc::operator ()( core::optimization::Multivec const & vars ) 
 	core::Real sumC=0, sumC2=0, sumO=0, sumO2=0, sumCO=0;
 	core::Real N = rhoC_.u1()*rhoC_.u2()*rhoC_.u3();
 
-	for (int k=1; k<=rhoC_.u3(); ++k) {
-		for (int j=1; j<=rhoC_.u2(); ++j) {
-			for (int i=1; i<=rhoC_.u1(); ++i) {
+	for ( int k=1; k<=rhoC_.u3(); ++k ) {
+		for ( int j=1; j<=rhoC_.u2(); ++j ) {
+			for ( int i=1; i<=rhoC_.u1(); ++i ) {
 				core::Real rhoC_ijk = rhoC_(i,j,k);
 
 				numeric::xyzVector< core::Real > mapidx(
@@ -165,7 +165,7 @@ VoxelSpacingMultifunc::getMapSpacingAndOrigin( core::optimization::Multivec & va
 
 	// scale
 	vars.push_back(1);
-	if (aniso) {
+	if ( aniso ) {
 		vars.push_back(1);
 		vars.push_back(1);
 	}
@@ -175,7 +175,7 @@ void
 VoxelSpacingMultifunc::foldInChanges( core::pose::Pose &pose, core::optimization::Multivec & vars ) {
 	// read origin & apix_scale parameters, apply to pose
 	numeric::xyzVector< core::Real > apix_scale(1.,1.,1.);
-	if (vars.size() == 4) {
+	if ( vars.size() == 4 ) {
 		apix_scale[0] = apix_scale[1] = apix_scale[2] = vars[4];
 	} else {
 		apix_scale[0] = vars[4];
@@ -188,10 +188,10 @@ VoxelSpacingMultifunc::foldInChanges( core::pose::Pose &pose, core::optimization
 	numeric::xyzVector<core::Real> origin = core::scoring::electron_density::getDensityMap().getOrigin(), origin_shift;
 
 	origin_shift = f2c * numeric::xyzVector<core::Real>(
-			(vars[1] + (origin[0]+1)*(1.-1./apix_scale[0]))/grid[0],
-			(vars[2] + (origin[1]+1)*(1.-1./apix_scale[1]))/grid[1],
-			(vars[3] + (origin[2]+1)*(1.-1./apix_scale[2]))/grid[2]
-		);
+		(vars[1] + (origin[0]+1)*(1.-1./apix_scale[0]))/grid[0],
+		(vars[2] + (origin[1]+1)*(1.-1./apix_scale[1]))/grid[1],
+		(vars[3] + (origin[2]+1)*(1.-1./apix_scale[2]))/grid[2]
+	);
 
 	pose.apply_transform_Rx_plus_v( numeric::xyzMatrix<core::Real>::identity(), origin_shift );
 
@@ -231,7 +231,7 @@ void VoxelSpacingRefinementMover::apply(core::pose::Pose & pose) {
 
 	f_voxel.foldInChanges( pose, y );
 
-	if (mapout_.length() > 0) {
+	if ( mapout_.length() > 0 ) {
 		core::scoring::electron_density::getDensityMap().writeMRC(mapout_);
 	}
 }

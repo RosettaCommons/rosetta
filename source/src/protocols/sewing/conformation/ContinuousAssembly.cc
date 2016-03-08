@@ -72,10 +72,10 @@ ContinuousAssembly::append_model(
 	Model const & model,
 	ScoreResult const & edge_score
 ){
-		TR << "ContinuousAssembly::append_model " << std::endl;
+	TR << "ContinuousAssembly::append_model " << std::endl;
 	utility::vector1<core::Size> matched_indices;
 
-	std::map<SewSegment,SewSegment> matching_segments =	get_matching_model_segments(model, edge_score); //mobile_model, edge_score
+	std::map<SewSegment,SewSegment> matching_segments = get_matching_model_segments(model, edge_score); //mobile_model, edge_score
 	std::set<SewSegment> mobile_match_segments;
 	std::map<SewSegment,SewSegment>::const_iterator it = matching_segments.begin();
 	std::map<SewSegment,SewSegment>::const_iterator it_end = matching_segments.end();
@@ -86,7 +86,7 @@ ContinuousAssembly::append_model(
 		mobile_match_segments.insert(it->second);
 		for ( core::Size i=1; i<=all_segments_.size(); ++i ) {
 			for ( core::Size j=1; j<=all_segments_[i].size(); ++j ) {
-					TR << "j: " << j << std::endl;
+				TR << "j: " << j << std::endl;
 				if ( all_segments_[i][j] == ref_seg ) {
 					all_segments_[i].push_back(mobile_seg);
 					matched_indices.push_back(i);
@@ -97,25 +97,25 @@ ContinuousAssembly::append_model(
 
 	//Generate the chimera segments
 	utility::vector1<SewSegment> chimeras = get_chimera_segments(matching_segments, edge_score.second.segment_matches, model);
-															   //matching_segments, segment_matches,                   mobile_model
+	//matching_segments, segment_matches,                   mobile_model
 
 	///* this is for devel/debug purpose
-	if(matched_indices.size() != chimeras.size()) {
-			TR.Warning << "Matched indices isn't the same size as chimeras!" << std::endl;
-			TR.Warning << "Matched indices (" << matched_indices.size() << "): " << std::endl;
-		for(core::Size i=1; i<=matched_indices.size(); ++i){
-	   		TR.Warning << "\t" << i << "-" << matched_indices[i] << std::endl;
+	if ( matched_indices.size() != chimeras.size() ) {
+		TR.Warning << "Matched indices isn't the same size as chimeras!" << std::endl;
+		TR.Warning << "Matched indices (" << matched_indices.size() << "): " << std::endl;
+		for ( core::Size i=1; i<=matched_indices.size(); ++i ) {
+			TR.Warning << "\t" << i << "-" << matched_indices[i] << std::endl;
 		}
 
-		  TR.Warning << "Chimeras (" << chimeras.size() << "): " << std::endl;
-		for(core::Size i=1; i<=chimeras.size(); ++i) {
+		TR.Warning << "Chimeras (" << chimeras.size() << "): " << std::endl;
+		for ( core::Size i=1; i<=chimeras.size(); ++i ) {
 			TR.Warning << "\t" << i << " - " << chimeras[i].model_id_ << " " << chimeras[i].segment_id_ << std::endl;
-		  }
+		}
 
-			TR.Warning << "Matching segments (" << matching_segments.size() << "): " << std::endl;
+		TR.Warning << "Matching segments (" << matching_segments.size() << "): " << std::endl;
 		std::map<SewSegment, SewSegment>::const_iterator it = matching_segments.begin();
 		std::map<SewSegment, SewSegment>::const_iterator it_end = matching_segments.end();
-		for(; it != it_end; ++it) {
+		for ( ; it != it_end; ++it ) {
 			TR.Warning << it->first.model_id_ << " " << it->first.segment_id_ << " -> " << it->second.model_id_ << " " << it->second.segment_id_ << std::endl;
 		}
 

@@ -276,7 +276,7 @@ MonteCarloAssemblyMover::add_edge(
 		if ( ! option[basic::options::OptionKeys::sewing::may_add_already_added_model].user() ) {
 			option[basic::options::OptionKeys::sewing::may_add_already_added_model].value( 0 );
 		}
-		bool	may_add_already_added_model = option[ basic::options::OptionKeys::sewing::may_add_already_added_model];
+		bool may_add_already_added_model = option[ basic::options::OptionKeys::sewing::may_add_already_added_model];
 		// as of 2016/1/2, turning on may_add_already_added_model resulted in
 		/*ERROR: reference coords 80 != mobile_coords 40
 		Alignment size 40
@@ -290,7 +290,7 @@ MonteCarloAssemblyMover::add_edge(
 		Alignment size 30
 		*/
 
-		if (!may_add_already_added_model){
+		if ( !may_add_already_added_model ) {
 
 			// If we've already added this model, don't add it again.
 			// This should theoretically not be a problem,
@@ -303,7 +303,7 @@ MonteCarloAssemblyMover::add_edge(
 			if ( model_ids.find(mobile_model_id) != model_ids.end() ) {
 				assembly = pre_op_assembly;
 				assembly_list = pre_op_assembly_list;
-					TR.Debug << "rejecting add, model previously added" << std::endl;
+				TR.Debug << "rejecting add, model previously added" << std::endl;
 				return false;
 			}
 		}

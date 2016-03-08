@@ -542,7 +542,7 @@ SewGraph::generate_binary_score_file(
 	}
 	n_nodes_with_edges = (boost::uint32_t)edges.size();
 
-	if (n_nodes_with_edges != num_nodes()){
+	if ( n_nodes_with_edges != num_nodes() ) {
 		TR << "n_nodes_with_edges: " << n_nodes_with_edges << std::endl;
 		TR << "num_nodes(): " << num_nodes() << std::endl;
 	}

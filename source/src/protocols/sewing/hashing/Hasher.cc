@@ -136,7 +136,7 @@ Hasher::score(
 	bool store_atoms,
 	core::Size box_length
 ) const {
-		TR << "[First score function in Hasher.cc]" << std::endl;
+	TR << "[First score function in Hasher.cc]" << std::endl;
 
 	std::set<core::Size> all_segments;
 	utility::vector1<SewSegment>::const_iterator it= model.segments_.begin();
@@ -162,7 +162,7 @@ Hasher::score(
 	bool store_atoms,
 	core::Size box_length
 ) const {
-		TR << "[Second score function in Hasher.cc]" << std::endl;
+	TR << "[Second score function in Hasher.cc]" << std::endl;
 
 	ScoreResults alignment_scores; //typedef std::map< BasisPair, HashResult > ScoreResults;
 	//Basis is a struct with elements of 'model_id  and resnum'
@@ -180,7 +180,7 @@ Hasher::score(
 			all_residues.insert(all_residues.begin(), it->residues_.begin(), it->residues_.end());;
 		}
 	}
-		TR << "A size of all residues in all hashed segments: " << all_residues.size() << std::endl;
+	TR << "A size of all residues in all hashed segments: " << all_residues.size() << std::endl;
 
 	for ( core::Size basis_i=1; basis_i<=all_residues.size(); ++basis_i ) {
 
@@ -192,9 +192,9 @@ Hasher::score(
 
 		runtime_assert_msg ( (box_length == 3) || (box_length == 5), "box_length should be either 3 or 5 as of 2015/December" );
 
-//		if ( TR.Debug.visible() ) {
-//			TR.Debug << box_length*box_length*box_length << " boxes for neighborhood lookup " << std::endl;
-//		}
+		//  if ( TR.Debug.visible() ) {
+		//   TR.Debug << box_length*box_length*box_length << " boxes for neighborhood lookup " << std::endl;
+		//  }
 
 		if ( box_length == 3 ) {
 			score_basis(alignment_scores, transformed_model, basis_residue, store_atoms);
@@ -202,10 +202,10 @@ Hasher::score(
 			score_basis_125(alignment_scores, transformed_model, basis_residue, store_atoms);
 		}
 
-		//	trim the given ScoreResults based on
-		//	the number of segments that match	between two models,
-		//	the number of atom matches for each of these segments (will be compared against to min_hash_score), and the
-		//	clash score (number of hits between atoms of different atom_types)
+		// trim the given ScoreResults based on
+		// the number of segments that match between two models,
+		// the number of atom matches for each of these segments (will be compared against to min_hash_score), and the
+		// clash score (number of hits between atoms of different atom_types)
 		trim_scores(alignment_scores, num_segment_matches, min_segment_score, max_clash_score);
 
 	}//for each basis_residue (from query)
@@ -213,7 +213,7 @@ Hasher::score(
 	//Keep only the segment matches between two models that has the most aligned atoms.
 	alignment_scores = remove_duplicates(alignment_scores);
 
-		TR << "Done scoring model id: " << model.model_id_ << std::endl;
+	TR << "Done scoring model id: " << model.model_id_ << std::endl;
 
 	return alignment_scores;
 }// the 2nd score fn
@@ -226,7 +226,7 @@ Hasher::score_basis(
 	SewResidue const & basis_residue,
 	bool store_atoms
 ) const {
-	//	TR << "Hasher::score_basis" << std::endl;
+	// TR << "Hasher::score_basis" << std::endl;
 
 	utility::fixedsizearray1<HashMap::const_iterator, 27> hit_its(hash_map_.end()); //put here for speed
 	Basis reference_bp(transformed_model.model_id_, basis_residue.resnum_);
@@ -234,7 +234,7 @@ Hasher::score_basis(
 
 	for ( ; model_it != transformed_model.model_end(); ++model_it ) {
 		SewAtom const & cur_atom = *model_it.atom();
-			//SewAtom is a struct with elements of 'atomno_ and coords_'
+		//SewAtom is a struct with elements of 'atomno_ and coords_'
 
 		//iterate through hits in the hash map and tally the score for the model/residue alignment pairs
 		HashKey key = generate_key(cur_atom);
@@ -259,10 +259,9 @@ Hasher::score_basis(
 						for ( ; it != transformed_model.segments_.end(); ++it ) {
 							//Don't score the segments that we aren't hashing, if it is not hashed, it is just a linker segment!
 							if ( it->hash_ ) {
-								if (segment_id_1st == 9999){
+								if ( segment_id_1st == 9999 ) {
 									segment_id_1st = it->segment_id_;
-								}
-								else{
+								} else {
 									segment_id_last = it->segment_id_;
 								}
 							}
@@ -270,26 +269,25 @@ Hasher::score_basis(
 						if (
 								(!score_between_opposite_terminal_segments) ||
 								(
-									((segment_id_1st == model_it.segment()->segment_id_) && (segment_id_last == cur_hit.segment_id))
-									||
-									((segment_id_last == model_it.segment()->segment_id_) && (segment_id_1st == cur_hit.segment_id))
+								((segment_id_1st == model_it.segment()->segment_id_) && (segment_id_last == cur_hit.segment_id))
+								||
+								((segment_id_last == model_it.segment()->segment_id_) && (segment_id_1st == cur_hit.segment_id))
 								)
-							){
-								SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
+								) {
+							SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
 
-								std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
-								if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
-									alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
-								}
-								alignment_scores[basis_pair].segment_match_counts[segment_pair]++;
-								if ( store_atoms ) {
-									core::id::AtomID query_atom(cur_atom.atomno_, model_it.residue()->resnum_);
-									core::id::AtomID hit_atom(cur_hit.atomno, cur_hit.resnum);
-									alignment_scores[basis_pair].segment_matches[segment_pair].insert(std::make_pair(query_atom, hit_atom));
-								}
+							std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
+							if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
+								alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
 							}
-					} //if ( cur_atom.atomno_ == cur_hit.atomno ) {
-					else {
+							alignment_scores[basis_pair].segment_match_counts[segment_pair]++;
+							if ( store_atoms ) {
+								core::id::AtomID query_atom(cur_atom.atomno_, model_it.residue()->resnum_);
+								core::id::AtomID hit_atom(cur_hit.atomno, cur_hit.resnum);
+								alignment_scores[basis_pair].segment_matches[segment_pair].insert(std::make_pair(query_atom, hit_atom));
+							}
+						}
+					} else { //if ( cur_atom.atomno_ == cur_hit.atomno ) {
 						alignment_scores[basis_pair].clash_count++;
 					}
 				}
@@ -366,43 +364,41 @@ Hasher::trim_scores(
 	core::Size min_segment_score,
 	core::Size max_clash_score
 ) const{
-		TR << "Hasher::trim_scores" << std::endl;
+	TR << "Hasher::trim_scores" << std::endl;
 	using namespace core;
 	using namespace basic::options;
 	if ( ! option[OptionKeys::sewing::disregard_num_segment_matches].user() ) {
 		option[OptionKeys::sewing::disregard_num_segment_matches].value( 0 );
 	}
 	bool disregard_num_segment_matches = option[OptionKeys::sewing::disregard_num_segment_matches];
-		//TR << "disregard_num_segment_matches: " << disregard_num_segment_matches << std::endl;
-	//		TR << "[attention] [condition] max_clash_score: " << max_clash_score << std::endl;
-	//		TR << "[attention] [condition] min_segment_score: " << min_segment_score << std::endl;
-	//		TR << "[attention] [condition] num_segment_matches: " << num_segment_matches << std::endl;
+	//TR << "disregard_num_segment_matches: " << disregard_num_segment_matches << std::endl;
+	//  TR << "[attention] [condition] max_clash_score: " << max_clash_score << std::endl;
+	//  TR << "[attention] [condition] min_segment_score: " << min_segment_score << std::endl;
+	//  TR << "[attention] [condition] num_segment_matches: " << num_segment_matches << std::endl;
 
 	ScoreResults::iterator it = scores.begin();
 	//typedef std::map< BasisPair, HashResult > ScoreResults;
 	ScoreResults::iterator it_end = scores.end();
 
 	while ( it!=it_end ) {
-		//	TR << "it!=it_end" << std::endl;
+		// TR << "it!=it_end" << std::endl;
 
 		//Ensure that there are no clashes
 		bool erase=false;
 
 		// it->second represents HashResult which is the struct with elements of 'segment_matches, segment_match_counts and clash_count'
 		if ( it->second.clash_count > max_clash_score ) {
-				TR << "[reason of being erased] it->second.clash_count > max_clash_score" << std::endl;
-				TR << "[being erased] it->second.clash_count: " << it->second.clash_count << std::endl;
+			TR << "[reason of being erased] it->second.clash_count > max_clash_score" << std::endl;
+			TR << "[being erased] it->second.clash_count: " << it->second.clash_count << std::endl;
 			erase=true;
-		}
-		else if ( it->second.segment_match_counts.size() != num_segment_matches ) {
-			if (	(!disregard_num_segment_matches)	){
+		} else if ( it->second.segment_match_counts.size() != num_segment_matches ) {
+			if ( (!disregard_num_segment_matches) ) {
 				//Ensure hits are between the specified number segments (and only the specified number of segments, to prevent clashes)
-					TR << "[reason of being erased] it->second.segment_match_counts.size() != num_segment_matches" << std::endl;
-					TR << "[being erased] it->second.segment_match_counts.size(): " << it->second.segment_match_counts.size() << std::endl;
+				TR << "[reason of being erased] it->second.segment_match_counts.size() != num_segment_matches" << std::endl;
+				TR << "[being erased] it->second.segment_match_counts.size(): " << it->second.segment_match_counts.size() << std::endl;
 				erase=true;
 			}
-		}
-		else {
+		} else {
 			//Ensure each matched segment contains at least the minimum number of atoms in the same bin
 			std::map<SegmentPair, core::Size> const & segment_matches = it->second.segment_match_counts;
 			std::map<SegmentPair, core::Size>::const_iterator seg_it = segment_matches.begin();
@@ -413,8 +409,8 @@ Hasher::trim_scores(
 				source_segments.insert(seg_it->first.first);
 				target_segments.insert(seg_it->first.second);
 				if ( seg_it->second < min_segment_score ) {
-						TR << "[attention] seg_it->second (superimposed # of atoms): " << seg_it->second << std::endl;
-						TR << "[reason of being erased] seg_it->second < min_segment_score" << std::endl;
+					TR << "[attention] seg_it->second (superimposed # of atoms): " << seg_it->second << std::endl;
+					TR << "[reason of being erased] seg_it->second < min_segment_score" << std::endl;
 					erase=true;
 					break;
 				}
@@ -422,7 +418,7 @@ Hasher::trim_scores(
 
 			//Delete any matches where one segment from one model matches more than one segment of another model
 			if ( source_segments.size() != target_segments.size() ) {
-					TR << "[reason of being erased] source_segments.size() != target_segments.size()" << std::endl;
+				TR << "[reason of being erased] source_segments.size() != target_segments.size()" << std::endl;
 				erase=true;
 			}
 		}
@@ -438,8 +434,8 @@ Hasher::trim_scores(
 				source_segments.insert(seg_it->first.first);
 				target_segments.insert(seg_it->first.second);
 				if ( seg_it->second < min_segment_score ) {
-						TR << "[attention] seg_it->second (superimposed # of atoms): " << seg_it->second << std::endl;
-						TR << "[reason of being erased] seg_it->second < min_segment_score" << std::endl;
+					TR << "[attention] seg_it->second (superimposed # of atoms): " << seg_it->second << std::endl;
+					TR << "[reason of being erased] seg_it->second < min_segment_score" << std::endl;
 					erase=true;
 					break;
 				}
@@ -459,7 +455,7 @@ ScoreResults
 Hasher::remove_duplicates(
 	ScoreResults const & scores
 ) const {
-		TR << "Hasher::remove_duplicates" << std::endl;
+	TR << "Hasher::remove_duplicates" << std::endl;
 	//there is almost certainly a better way to do this....
 	typedef std::pair<int, std::set<core::Size> > score_node;
 
@@ -510,7 +506,7 @@ Hasher::remove_connection_inconsistencies(
 	std::map< int, Model > const & models,
 	ScoreResults & scores
 ) const {
-		TR << "[remove_connection_inconsistencies]" << std::endl;
+	TR << "[remove_connection_inconsistencies]" << std::endl;
 	ScoreResults::iterator scores_it = scores.begin();
 	ScoreResults::iterator scores_it_end = scores.end();
 	while ( scores_it != scores_it_end ) {

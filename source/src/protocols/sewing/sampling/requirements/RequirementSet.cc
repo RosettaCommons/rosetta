@@ -99,7 +99,7 @@ RequirementSet::satisfies(
 	}
 
 	if ( assembly->segments().size() < min_segments_ || assembly->segments().size() > max_segments_ ) {
-			TR.Debug << "return false: assembly->segments().size() not fit min/max segments" << std::endl;
+		TR.Debug << "return false: assembly->segments().size() not fit min/max segments" << std::endl;
 		return false;
 	}
 

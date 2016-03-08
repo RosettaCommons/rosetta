@@ -21,7 +21,7 @@ namespace protocols {
 namespace antibody {
 namespace task_operations {
 
-	class DisableCDRsOperationCreator : public core::pack::task::operation::TaskOperationCreator {
+class DisableCDRsOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const { return "DisableCDRsOperation"; }

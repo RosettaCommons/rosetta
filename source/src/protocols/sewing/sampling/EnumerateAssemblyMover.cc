@@ -159,7 +159,7 @@ EnumerateAssemblyMover::generate_assembly(){
 
 		std::set<core::Size> n_node_segments = n_term_node->segment_ids();
 		runtime_assert(n_node_segments.size() == 1);
-			TR << "Segments in n-terminal node: " << *(n_node_segments.begin()) << std::endl;
+		TR << "Segments in n-terminal node: " << *(n_node_segments.begin()) << std::endl;
 		core::Size test_1 = *n_node_segments.begin();
 
 		//Tim's'
@@ -172,7 +172,7 @@ EnumerateAssemblyMover::generate_assembly(){
 			c_term_node = graph_->get_model_node(*node_indices.begin()+4);
 			std::set<core::Size> c_node_segments = c_term_node->segment_ids();
 			runtime_assert(c_node_segments.size() == 1);
-				TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
+			TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
 			core::Size test_2 = *c_node_segments.begin();
 
 			runtime_assert(test_2 - test_1 == 4);
@@ -181,7 +181,7 @@ EnumerateAssemblyMover::generate_assembly(){
 			c_term_node = graph_->get_model_node(*node_indices.begin()+2);
 			std::set<core::Size> c_node_segments = c_term_node->segment_ids();
 			runtime_assert(c_node_segments.size() == 1);
-				TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
+			TR << "Segments in c-terminal node: " << *(c_node_segments.begin()) << std::endl;
 			core::Size test_2 = *c_node_segments.begin();
 
 			runtime_assert(test_2 - test_1 == 2);
@@ -192,8 +192,8 @@ EnumerateAssemblyMover::generate_assembly(){
 
 		if ( TR.Debug.visible() ) {
 			//TR << "[analysis] Current model_id with 5 ss: " << utility::to_string(cur_model.model_id_) << std::endl;
-				TR << "n_term_node->get_node_index(): " << n_term_node->get_node_index() << std::endl;
-				TR << "c_term_node->get_node_index(): " << c_term_node->get_node_index() << std::endl;
+			TR << "n_term_node->get_node_index(): " << n_term_node->get_node_index() << std::endl;
+			TR << "c_term_node->get_node_index(): " << c_term_node->get_node_index() << std::endl;
 			//TR << "end_node->get_node_index(): " << end_node->get_node_index() << std::endl;
 		}
 

@@ -161,6 +161,30 @@ public:
 		return;
 	}
 
+	/// @brief Tests symmetric scoring of glycine with the lk_ball_wtd scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_min_lk_ball_wtd() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball_wtd, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball_wtd score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
+	/// @brief Tests symmetric scoring of glycine with the fa_intra_sol_xover4 scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_min_fa_intra_sol_xover4() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_intra_sol_xover4, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing fa_intra_sol_xover4 score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
 	/// @brief Tests symmetric scoring of glycine with the fa_elec scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_symm_gly_min_fa_elec() {

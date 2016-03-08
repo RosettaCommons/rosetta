@@ -135,15 +135,15 @@ write_hashing_scores_to_file(
 		std::stringstream model_1_segments;
 		std::stringstream model_2_segments;
 		for ( ; seg_it != seg_it_end; ++seg_it ) {
-				TR << "seg_it->second: " << seg_it->second << std::endl;
+			TR << "seg_it->second: " << seg_it->second << std::endl;
 			sum += seg_it->second;
 			model_1_segments << seg_it->first.first << " ";
 			model_2_segments << seg_it->first.second << " ";
 		}
 		core::Real average_segment_score = 0;
-			TR << "sum: " << sum << std::endl;
-			TR << "segment_matches.size(): " << segment_matches.size() << std::endl;
-			TR << "sum/segment_matches.size(): " << sum/segment_matches.size() << std::endl;
+		TR << "sum: " << sum << std::endl;
+		TR << "segment_matches.size(): " << segment_matches.size() << std::endl;
+		TR << "sum/segment_matches.size(): " << sum/segment_matches.size() << std::endl;
 		if ( segment_matches.size() > 0 ) {
 			average_segment_score = sum/segment_matches.size();
 		}

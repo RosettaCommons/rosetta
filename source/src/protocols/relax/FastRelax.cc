@@ -777,25 +777,25 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
 
-		} else if ( cmd.command.substr(0,9) == "reference" ) { 
+		} else if ( cmd.command.substr(0,9) == "reference" ) {
 			// added for design applications
-			if( cmd.nparams < 20 ){
+			if ( cmd.nparams < 20 ) {
 				utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <20 reference weights in ACDEF order>" );
 			} else {
-				//local_scorefxn->energy_method_options().set_method_weights( 
+				//local_scorefxn->energy_method_options().set_method_weights(
 				// scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
 				methods::EnergyMethodOptions eopts( local_scorefxn->energy_method_options() );
 
-				eopts.set_method_weights( 
-				 scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+				eopts.set_method_weights(
+					scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
 
 				local_scorefxn->set_energy_method_options( eopts );
 
 				/*
-				utility::vector1< Real > refw = 
-					local_scorefxn->energy_method_options().method_weights( 
-					 scoring::ScoreTypeManager::score_type_from_name( "ref" ) );
-				TR << "Check, Refweight: " << refw[1] << " " << refw[2] << " " << refw[3] 
+				utility::vector1< Real > refw =
+				local_scorefxn->energy_method_options().method_weights(
+				scoring::ScoreTypeManager::score_type_from_name( "ref" ) );
+				TR << "Check, Refweight: " << refw[1] << " " << refw[2] << " " << refw[3]
 				<< std::endl;
 				*/
 			}
@@ -991,7 +991,7 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 }
 
 // Override the stored script with the default script for batchrelax
-void FastRelax::set_script_from_lines( std::vector< std::string > const filelines ) 
+void FastRelax::set_script_from_lines( std::vector< std::string > const filelines )
 {
 	std::string line;
 
@@ -1006,7 +1006,7 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const fileline
 		if ( tokens.size() > 20 ) { // large data; now used for reference weights storage only.
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
-			for( Size i = 2; i <= tokens.size(); ++i ){
+			for ( Size i = 2; i <= tokens.size(); ++i ) {
 				newcmd.params_vec.push_back( atof(tokens[i].c_str()) );
 			}
 			newcmd.nparams = newcmd.params_vec.size();

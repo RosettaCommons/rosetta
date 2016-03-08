@@ -207,7 +207,7 @@ main( int argc, char * argv [] ) {
 		///////////////////////// MODEL CONVERSION TO BINARY //////////////////////////////
 
 		//If we are generating a binary file then do that and exit
-		if ( ( option[sewing::mode].value() == "convert" ) ){
+		if ( ( option[sewing::mode].value() == "convert" ) ) {
 			if ( !option[sewing::score_file_name].user() ) {
 				std::stringstream err;
 				err << "You must provide a score file name to the sewing_hasher for binary conversion.";
@@ -229,7 +229,7 @@ main( int argc, char * argv [] ) {
 
 		//////////// MODEL COMPARISON USING GEOMETRIC HASHING /////////////////
 
-		if (	( option[sewing::mode].value() == "hash" ) ){
+		if ( ( option[sewing::mode].value() == "hash" ) ) {
 			if ( !option[sewing::score_file_name].user() ) {
 				utility_exit_with_message("You must provide a graph file name to the sewing_hasher using -score_file_name");
 			}
@@ -245,29 +245,29 @@ main( int argc, char * argv [] ) {
 			///// Size to string reference: http://www.cplusplus.com/articles/D9j2Nwbp/
 			std::ostringstream convert_min_hash_score;
 			std::string min_hash_score_string;
-			convert_min_hash_score	<< min_hash_score;
+			convert_min_hash_score << min_hash_score;
 			min_hash_score_string = convert_min_hash_score.str();
 
 			std::ostringstream convert_max_clash_score; // using single 'std::ostringstream convert' many times stopped to initialize convert, so I begin to use many 'std::ostringstream convert' since 2016/1/19
 			std::string max_clash_score_string;
-			convert_max_clash_score	<< max_clash_score;
+			convert_max_clash_score << max_clash_score;
 			max_clash_score_string = convert_max_clash_score.str();
 
 			std::ostringstream convert_num_segments_to_match;
 			std::string num_segments_to_match_string;
-			convert_num_segments_to_match	<< num_segments_to_match;
+			convert_num_segments_to_match << num_segments_to_match;
 			num_segments_to_match_string = convert_num_segments_to_match.str();
 
 			std::ostringstream convert_box_length;
 			std::string box_length_string;
-			convert_box_length	<< box_length;
+			convert_box_length << box_length;
 			box_length_string = convert_box_length.str();
 
 			/*
 			OK with release compilation, but not ok with mac clang debug
 			"src/apps/public/sewing/sewing_hasher.cc:249:74: error: cannot take the address of an rvalue of type 'std::__1::basic_ostringstream<char, std::__1::char_traits<char>, std::__1::allocator<char> >'
-                        std::string min_hash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << min_hash_score) )->str();
-                                                                                              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+			std::string min_hash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << min_hash_score) )->str();
+			^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 			std::string min_hash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << min_hash_score) )->str();
 			std::string max_clash_score_string = static_cast<std::ostringstream*>( &(std::ostringstream() << max_clash_score) )->str();
@@ -419,15 +419,15 @@ main( int argc, char * argv [] ) {
 				for ( ; it2 != it1; ++it2 ) {
 					hasher.insert(it2->second); // it2->second is Model itself
 				}
-					TR << "current model id (it1): " << (it1->second).model_id_ << std::endl;
-					TR << "current model id (it2): " << (it2->second).model_id_ << std::endl;
+				TR << "current model id (it1): " << (it1->second).model_id_ << std::endl;
+				TR << "current model id (it2): " << (it2->second).model_id_ << std::endl;
 				scores = hasher.score(it1->second, num_segments_to_match, min_hash_score, max_clash_score, true, box_length);
 				if ( ! option[sewing::do_not_remove_connection_inconsistencies].user() ) {
 					option[sewing::do_not_remove_connection_inconsistencies].value( 0 );
 				}
 				bool do_not_remove_connection_inconsistencies = option[sewing::do_not_remove_connection_inconsistencies];
-					TR << "do_not_remove_connection_inconsistencies: " << do_not_remove_connection_inconsistencies << std::endl;
-				if ( (!do_not_remove_connection_inconsistencies)){
+				TR << "do_not_remove_connection_inconsistencies: " << do_not_remove_connection_inconsistencies << std::endl;
+				if ( (!do_not_remove_connection_inconsistencies) ) {
 					//remove edges between segments that both have 'next' or 'previous' segments
 					hasher.remove_connection_inconsistencies(models, scores);
 				}
@@ -452,7 +452,7 @@ main( int argc, char * argv [] ) {
 				write_hashing_scores_to_file(scores, score_file_name);
 			} //for ( ; it1 != it_end; ++it1 ) {
 #endif
-		}// if (	( option[sewing::mode].value() == "hash" ) )
+		}// if ( ( option[sewing::mode].value() == "hash" ) )
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );

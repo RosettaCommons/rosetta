@@ -77,7 +77,7 @@ public:
 					(*sfxn)(*pose);
 					(*sfxn)(*pose2);
 					//TR << "phi=" << iphi << " psi=" << ipsi << " E1=" << pose->energies().total_energy() << " E2=" << pose2->energies().total_energy() << std::endl;
-					TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ) );
+					TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::max( std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ), 0.00001 ) );
 				}
 			}
 		}

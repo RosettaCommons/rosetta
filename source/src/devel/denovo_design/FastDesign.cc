@@ -340,7 +340,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 
 	TR.Debug << "number of filters=" << filters_.size() << std::endl;
 
-	// support for ramping reference weights 
+	// support for ramping reference weights
 	modify_scripts_for_alternative_scorefunctions();
 
 	FastRelax::apply( pose );
@@ -481,11 +481,11 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 	using namespace basic::options;
 
 	// will attempt to modify the relax script for beta_nov15 only
-	// options for any other score functions could be also added below 
+	// options for any other score functions could be also added below
 	std::vector< std::string > filelines;
 
-	if ( !(FastRelax::script_file_specified_) && 
-			 (option[ OptionKeys::corrections::beta_nov15 ]() || option[ OptionKeys::corrections::beta_nov15_cart ] )) {
+	if ( !(FastRelax::script_file_specified_) &&
+			(option[ OptionKeys::corrections::beta_nov15 ]() || option[ OptionKeys::corrections::beta_nov15_cart ] ) ) {
 
 		// hard-coded reference weights for now...
 		filelines.push_back( "repeat 4"                                );
@@ -505,8 +505,9 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 		filelines.push_back( "endrepeat "                      );
 	}
 
-	if( filelines.size() > 0 )
+	if ( filelines.size() > 0 ) {
 		FastRelax::set_script_from_lines( filelines );
+	}
 }
 
 } // namespace denovo_design

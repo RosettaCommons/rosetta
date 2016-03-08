@@ -212,7 +212,7 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 
 	/*
 	if ( size1() != size2() ) {
-		has_bulge_ = true;
+	has_bulge_ = true;
 	}
 	*/
 
@@ -255,7 +255,7 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 
 	/*
 	if ( size1() != size2() ) {
-		has_bulge_ = true;
+	has_bulge_ = true;
 	}
 	*/
 	return true;

@@ -283,7 +283,7 @@ RepeatAssemblyMover::generate_assembly(){
 			add_repeats(repeat_assembly);
 			repeat_assembly->to_pose(core::chemical::FA_STANDARD, false).dump_pdb("post_repeat.pdb");
 			core::Real score = assembly_scorefxn_->score(repeat_assembly);
-//			if ( score < -0.5 ) {
+			//   if ( score < -0.5 ) {
 			if ( score < threshold_score_of_complete_cycle_ ) {
 				return repeat_assembly;
 			}
@@ -313,7 +313,7 @@ RepeatAssemblyMover::add_repeats(
 	//DIRTY HACK ASSUMES ALL MODELS ARE 3 SEGMENTS LONG!!!!
 	utility::vector1< numeric::xyzVector<core::Real> > mobile_coords;
 	for ( core::Size i=1; i<=assembly->all_segments()[3].size(); ++i ) {
-			TR << "i : " << i << std::endl;
+		TR << "i : " << i << std::endl;
 		if ( segments.back() == assembly->all_segments()[3][i] ) {
 			mobile_coords = get_segment_coords(assembly->all_segments()[3][i]);
 		}

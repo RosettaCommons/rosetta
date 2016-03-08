@@ -1140,6 +1140,10 @@ return CP_NO_BONDS;
 }
 */
 
+// Note: The core::scoring::lkball::determine_crossover_behavior() function seems to copy code from this function.  There is a note there
+// indicating that if this function is changed, that function should be changed correspondingly.  Why the author didn't add that note
+// here is beyond me -- or, better yet, have both functions call a common utility function in order to avoid code duplication and drift.
+// --VKM, 8 March 2016.
 template < class Derived >
 count_pair::CPCrossoverBehavior
 BaseEtableEnergy< Derived >::determine_crossover_behavior(

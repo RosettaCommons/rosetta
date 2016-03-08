@@ -159,6 +159,7 @@ is_canonical_D_aa( AA aa );
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type, return true if and only if
 /// it is a canonical L-amino acid.
+/// @note Also returns true if this is a glycine.
 /// @author Steven Cobms (steven.combs1@gmail.com)
 //////////////////////////////////////////////////////////
 bool

@@ -176,7 +176,7 @@ main( int argc, char * argv [] ) {
 			comments << "#All models that lack 'terminal strands that are anti-parallel way H-bonded with their backbone atoms' have been removed " << std::endl;
 		}
 
-		if ( option[sewing::leave_certain_model_ids]	)  {
+		if ( option[sewing::leave_certain_model_ids] )  {
 			comments << "#Only models with specified model_ids are left " << std::endl;
 		}
 
@@ -202,7 +202,7 @@ main( int argc, char * argv [] ) {
 					std::ostringstream convert;
 
 					std::string model_id_str;
-					convert	<< model.model_id_;
+					convert << model.model_id_;
 					model_id_str = convert.str();
 
 					if ( model_id_str == model_ids_vec[i] ) {
@@ -243,7 +243,7 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
-			if (!erase) { // since 2015/11/13 this Trimming always runs
+			if ( !erase ) { // since 2015/11/13 this Trimming always runs
 				if ( (model.segments_[1].dssp_ == 'L') || (model.segments_[model.segments_.size()].dssp_ == 'L') ) {
 					erase=true;
 				}
@@ -315,16 +315,16 @@ main( int argc, char * argv [] ) {
 
 			//If a given model lacks appropriate DSSP in its two terminal secondary structures, remove it
 			if ( (!erase) &&
-				(	( option[sewing::leave_models_with_E_terminal_ss]	)
-				||	( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands]	)
-				||	( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands]	) ) ) {
+					( ( option[sewing::leave_models_with_E_terminal_ss] )
+					|| ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] )
+					|| ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) ) ) {
 				if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' ) {
 					erase=true;
 				}
 			}
 
 			if ( (!erase) &&
-					( option[sewing::leave_models_with_H_terminal_ss]	) ) {
+					( option[sewing::leave_models_with_H_terminal_ss] ) ) {
 				if ( model.segments_[1].dssp_ != 'H' || model.segments_[model.segments_.size()].dssp_ != 'H' ) {
 					erase=true;
 				}
@@ -375,10 +375,10 @@ main( int argc, char * argv [] ) {
 		}//while(it != it_end) {
 		write_model_file(comments.str(), models, new_model_filename);
 	} //try
-	catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base& excn ) {
+	std::cerr << "Exception : " << std::endl;
+	excn.show( std::cerr );
+	return -1;
+}
 	return 0;
 }

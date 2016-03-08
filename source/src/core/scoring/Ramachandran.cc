@@ -795,7 +795,7 @@ Ramachandran::draw_random_phi_psi_from_extra_cdf(
 /// counts table is left as-is (asymmetric).
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
-Ramachandran::symmetrize_gly_table()
+Ramachandran::symmetrize_gly_table( )
 {
 	if ( TR.visible() ) {
 		TR << "Symmetrizing glycine Ramachandran table." << std::endl;
@@ -987,8 +987,13 @@ Ramachandran::read_rama(
 	//KMa add_phospho_ser 2006-01
 
 	//MaximCode
-	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable] ) {
+	bool const dont_use_shap(
+		!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+		|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable]
+	);
+	bool const symm_gly( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() );
+
+	if ( dont_use_shap ) {
 		read_rama_map_file(&iunit);
 	} else {
 		read_rama_map_file_shapovalov(&iunit);
@@ -998,8 +1003,8 @@ Ramachandran::read_rama(
 	iunit.clear();
 
 	//If the option is set to do this, symmetrize the glycine Ramachandran map.
-	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() ) {
-		symmetrize_gly_table();
+	if ( symm_gly ) {
+		symmetrize_gly_table( );
 	}
 
 	if ( use_bicubic_interpolation ) {
@@ -1040,6 +1045,11 @@ Ramachandran::read_rama(
 			} else {
 				start_vals[0] = start_vals[1] = 5.0; // otherwise, the grid is shifted by five degrees.
 			}
+
+			// Special case: don't shift the gly tables if the -symmetric_gly_tables flag is passed.
+			// (This is not strictly correct if the Shapovalov tables are used, but good enough.)
+			if ( ii == static_cast<core::Size>( core::chemical::aa_gly ) && symm_gly ) { start_vals[0] = start_vals[1] = 5.0; }
+
 			Real deltas[2] = {10.0, 10.0}; // grid is 10 degrees wide
 			bool lincont[2] = {false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
 			std::pair< Real, Real > unused[2];

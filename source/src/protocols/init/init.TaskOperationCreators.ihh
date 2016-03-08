@@ -11,7 +11,7 @@
 /// @brief  Creator #includes for TaskOperations for init
 /// @author Steven Lewis smlewi@gmail.com
 
-// Note: 
+// Note:
 //  ALL Task Operation Creators should be by themselves or in their own file to speed compile!
 
 //TaskOperationCreator #includes
