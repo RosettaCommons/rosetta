@@ -424,6 +424,7 @@ sources = {
 		"NotResidueSelector",
 		"NumNeighborsSelector",
 		"OrResidueSelector",
+		"ResidueRanges",
 		"ResidueSelectorFactory",
 		"NeighborhoodResidueSelector",
 		"SecondaryStructureSelector",

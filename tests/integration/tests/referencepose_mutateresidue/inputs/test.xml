@@ -11,11 +11,11 @@
 		<SwitchResidueTypeSetMover name=fullatom set=fa_standard/>
 		<StorePoseSnapshot name=storesnapshot1 reference_pose_name="ref1" />
 		
-		<DeleteRegionMover name=delete5to8 start_res_num=5 end_res_num=8 /> 
+		<DeleteRegionMover name=delete5to8 start=5 end=8 /> 
 
 		<MutateResidue name=mutate_old_10 target="refpose(ref1,10)" new_res="LEU" />
 
-		<DeleteRegionMover name=delete3to5 start_res_num=3 end_res_num=5 /> 
+		<DeleteRegionMover name=delete3to5 start=3 end=5 /> 
 
 		<MutateResidue name=mutate_res_before_old_10 target="refpose(ref1,10)-1" new_res="LYS" />
 	

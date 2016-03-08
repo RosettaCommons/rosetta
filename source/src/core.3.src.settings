@@ -789,6 +789,7 @@ sources = {
 		"ResidueIndexSelector",
 		"ResidueNameSelector",
 		"ResiduePDBInfoHasLabelSelector",
+		"ResidueRanges",
 		"ResidueSelector",
 		"ResidueSelectorFactory",
 		"SecondaryStructureSelector",

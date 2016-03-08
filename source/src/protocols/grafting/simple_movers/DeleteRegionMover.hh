@@ -18,6 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 
 namespace protocols {
@@ -30,38 +31,23 @@ class DeleteRegionMover : public  protocols::moves::Mover {
 public:
 
 	DeleteRegionMover();
-	DeleteRegionMover(core::Size res_start, core::Size res_end);
-
-	DeleteRegionMover(DeleteRegionMover const & src);
+	DeleteRegionMover( core::Size const res_start, core::Size const res_end );
 
 	virtual ~DeleteRegionMover();
 
 	virtual void
-	apply(core::pose::Pose & pose);
+	apply( core::pose::Pose & pose );
 
 
 public:
 
 	/// @brief Set the region of the pose where deletion will occur
 	void
-	region(core::Size res_start, core::Size res_end);
+	region( core::Size const res_start, core::Size const res_end );
 
-	std::pair<core::Size, core::Size>
-	region() const;
-
-	/// @brief Set the first residue that will be deleted.
+	/// @brief Sets the residue selector
 	void
-	start(core::Size res_start);
-
-	core::Size
-	start() const;
-
-	/// @brief Set the last residue that will be deleted.
-	void
-	end(core::Size res_end);
-
-	core::Size
-	end() const;
+	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
 public:
 
@@ -83,11 +69,9 @@ public:
 		Pose const & pose);
 
 private:
-	core::Size start_;
-	core::Size end_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	core::Size nter_overhang_;
 	core::Size cter_overhang_;
-	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 };
 
 
