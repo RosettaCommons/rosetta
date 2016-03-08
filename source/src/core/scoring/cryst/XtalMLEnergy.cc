@@ -148,8 +148,7 @@ void XtalMLEnergy::eval_atom_derivative(
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 
 	if ( rsd_i.aa() == core::chemical::aa_vrt ) return;
-
-	if ( dml_dx.size() == 0 ) return; //
+	if ( resid > dml_dx.size() ) return; // calling from outside ASU (since this is wholestructure energy it calls on everything)
 
 	// look up derivative
 	numeric::xyzVector< core::Real > dCCdx = dml_dx[resid][atmid];

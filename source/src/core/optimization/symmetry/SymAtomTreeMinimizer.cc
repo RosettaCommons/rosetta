@@ -59,7 +59,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.optimize" );
 //      for backwards compatability with old symmdef files,
 //      use a default definition for derivative weights when using the new minimizer
 void
-check_and_correct_edge_weights_for_new_minimizer (
+SymAtomTreeMinimizer::check_and_correct_edge_weights_for_new_minimizer (
 	pose::Pose & pose
 ) {
 	core::conformation::symmetry::SymmetricConformation & symm_conf (

@@ -319,8 +319,6 @@ atom_tree_get_atompairE_deriv(
 		DOF_Node & dof_node( **iter );
 
 		core::Real dof_wt_i =  symm_info->get_dof_derivative_weight( dof_node.dof_id(), symm_conf );
-		// if( dof_wt_i == 0 ) continue;
-		//std::cout << "  dof_node: " << dof_node.rsd() << " " << dof_node.atomno() << " " << dof_node.type() << " " << dof_wt_i << std::endl;
 
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion
@@ -348,8 +346,6 @@ atom_tree_get_atompairE_deriv(
 		DOF_Node & dof_node( **iter );
 
 		core::Real dof_wt_i =  symm_info->get_dof_derivative_weight( dof_node.dof_id(), symm_conf );
-		// if( dof_wt_i == 0 ) continue;
-		//std::cout << "  dof_node: " << dof_node.rsd() << " " << dof_node.atomno() << " " << dof_node.type() << " " << dof_wt_i << std::endl;
 
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion

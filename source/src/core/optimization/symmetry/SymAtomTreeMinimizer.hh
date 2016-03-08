@@ -74,6 +74,12 @@ public:
 		kinematics::MoveMap & move_map_semisym
 	);
 
+	void
+	check_and_correct_edge_weights_for_new_minimizer (
+		pose::Pose & pose
+	);
+
+
 }; // SymAtomTreeMinimizer
 
 } // symmetry
