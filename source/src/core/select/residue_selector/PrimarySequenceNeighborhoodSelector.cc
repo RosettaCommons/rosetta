@@ -19,6 +19,7 @@
 
 // Core headers
 #include <core/conformation/Residue.hh>
+#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
@@ -46,14 +47,6 @@ PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector() :
 {
 }
 
-/// @brief Copy constructor
-///
-PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector( PrimarySequenceNeighborhoodSelector const &src) :
-	lower_residues_( src.lower_residues_ ),
-	upper_residues_( src.upper_residues_ ),
-	selector_( src.selector_ )
-{}
-
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP PrimarySequenceNeighborhoodSelector::clone() const { return ResidueSelectorOP( new PrimarySequenceNeighborhoodSelector(*this) ); }
@@ -75,28 +68,14 @@ ResidueSubset
 PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) const
 {
 	runtime_assert( selector_ );
-	ResidueSubset subset = selector_->apply( pose );
-	debug_assert( subset.size() == pose.total_residue() );
-
-	typedef std::set< std::pair< core::Size, core::Size > > IntervalSet;
-	IntervalSet intervals;
-	core::Size intervalstart = 0;
-	for ( core::Size i=1; i<=subset.size(); ++i ) {
-		if ( subset[i] && !intervalstart ) {
-			intervalstart = i;
-		}
-		if ( !subset[i] && intervalstart ) {
-			intervals.insert( std::make_pair( intervalstart, i-1 ) );
-			intervalstart = 0;
-		}
-	}
+	ResidueRanges const ranges( selector_->apply( pose ) );
 
 	core::select::residue_selector::ResidueSubset retval( pose.total_residue(), false );
 	TR << "Intervals: [";
-	for ( IntervalSet::const_iterator i = intervals.begin(); i != intervals.end(); ++i ) {
-		TR << " " << i->first << "->" << i->second << ",";
-		core::Size start = i->first;
-		core::Size end = i->second;
+	for ( ResidueRanges::const_iterator range=ranges.begin(); range!=ranges.end(); ++range ) {
+		TR << " " << range->start << "->" << range->stop << ",";
+		core::Size start = range->start;
+		core::Size end = range->stop;
 		core::Size count = 0;
 		while ( ( count < lower_residues_ ) && !core::pose::is_lower_terminus( pose, start ) ) {
 			++count;
@@ -110,11 +89,11 @@ PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) cons
 		}
 		TR.Debug << count << " residues added to upper terminus" << std::endl;
 		for ( core::Size r=start; r<=end; ++r ) {
-			subset[r] = true;
+			retval[r] = true;
 		}
 	}
 	TR << "]" << std::endl;
-	return subset;
+	return retval;
 }
 
 void
@@ -197,6 +176,12 @@ PrimarySequenceNeighborhoodSelectorCreator::create_residue_selector() const {
 std::string
 PrimarySequenceNeighborhoodSelectorCreator::keyname() const {
 	return PrimarySequenceNeighborhoodSelector::class_name();
+}
+
+void
+PrimarySequenceNeighborhoodSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const
+{
+	//hopefully it's OK to do nothing here -- I'm not sure what this is for
 }
 
 } //namespace residue_selector

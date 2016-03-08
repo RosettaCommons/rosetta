@@ -260,6 +260,7 @@
 
 // ResidueSelectors
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
+#include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
 #include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
@@ -668,6 +669,7 @@ static ResidueSelectorRegistrator< NotResidueSelectorCreator > reg_NotResidueSel
 static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighborsSelectorCreator;
 static ResidueSelectorRegistrator< LayerSelectorCreator > reg_LayerSelectorCreator;
 static ResidueSelectorRegistrator< OrResidueSelectorCreator > reg_OrResidueSelectorCreator;
+static ResidueSelectorRegistrator< PrimarySequenceNeighborhoodSelectorCreator > reg_PrimarySequenceNeighborhoodSelectorCreator;
 static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;
 static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_ResiduePDBInfoHasLabelSelectorCreator;
