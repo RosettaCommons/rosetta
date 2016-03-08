@@ -161,9 +161,9 @@ class GenerateRosettaTemplates(object):
         if hasattr(self.options, "type"):
 
             if self.options.type == "util":
-                print "\ngit add "+self.start_pwd+"/"+self.get_outfile_rel_path()+"/util"+"*"
+                print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/util"+"*"
             else:
-                print "\ngit add "+self.start_pwd+"/"+self.get_outfile_rel_path()+"/"+\
+                print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
                       self.get_option("class_name", fail_on_none=False)+"*"
 
 
