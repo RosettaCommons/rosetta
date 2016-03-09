@@ -51,6 +51,7 @@ OPT_KEY (RealVector, r0_end)
 OPT_KEY (RealVector, omega0)
 OPT_KEY (RealVector, omega0_end)
 OPT_KEY (RealVector, delta_omega0)
+OPT_KEY (RealVector, delta_omega0_end)
 OPT_KEY (IntegerVector, residue_repeats)
 OPT_KEY (String, residue_type)
 OPT_KEY (String, tail_residue_type)
@@ -58,10 +59,16 @@ OPT_KEY (RealVector, r1)
 OPT_KEY (Real, omega1)
 OPT_KEY (Real, z1)
 OPT_KEY (RealVector, delta_omega1)
+OPT_KEY (RealVector, delta_omega1_end)
 OPT_KEY (RealVector, delta_omega1_per_atom)
 OPT_KEY (RealVector, delta_z1_per_atom)
 OPT_KEY (BooleanVector, invert_helix)
 OPT_KEY (RealVector, delta_t)
+OPT_KEY (RealVector, delta_t_end)
+OPT_KEY (RealVector, z0_offset)
+OPT_KEY (RealVector, z0_offset_end)
+OPT_KEY (RealVector, z1_offset)
+OPT_KEY (RealVector, z1_offset_end)
 OPT_KEY (String, minor_helix_params)
 OPT_KEY (Boolean, set_bondlengths)
 OPT_KEY (Boolean, set_bondangles)
@@ -98,6 +105,8 @@ void register_options()
 	utility::vector1 < core::Real > delta_omega1_default; delta_omega1_default.push_back(0.0);
 	utility::vector1 < bool > invert_default; invert_default.push_back(false);
 	utility::vector1 < core::Real > delta_t_default; delta_t_default.push_back(0.0);
+	utility::vector1 < core::Real > z0_offset_default; z0_offset_default.push_back(0.0);
+	utility::vector1 < core::Real > z1_offset_default; z1_offset_default.push_back(0.0);
 
 	NEW_OPT( animation_frames, "The number of frames of animation to produce.  If not specified (or set to 0 or 1), then no animation is generated.", 0 );
 	NEW_OPT( animation_cyclic, "Should the animation loop (by rocking sinusoidally between the start and end states), or just be linear?  Default false (linear).", false);
@@ -108,6 +117,7 @@ void register_options()
 	NEW_OPT( omega0, "The turn per residue of the major helix, in radians.  Default -0.05.  One value for each helix.", omega0_default );
 	NEW_OPT( omega0_end, "The turn per residue of the major helix, in radians, at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( delta_omega0, "The offset of the major helix, in radians.  Default 0.0.  One value for each helix.",  delta_omega0_default );
+	NEW_OPT( delta_omega0_end, "The offset of the major helix, in radians, at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( residue_repeats, "How many residues are in the helix.  Default 20.  One value for each helix.", repeats_default );
 	NEW_OPT( residue_type, "The residue type from which the helix will be constructed.  (This needs to be the full Rosetta name, not just the 3-letter code).  Default \"ALA\"", "ALA" );
 	NEW_OPT( tail_residue_type, "The residue type that will cap the helix.  (This needs to be the full Rosetta name, not just the 3-letter code).  No caps if not specified.", "" );
@@ -115,10 +125,16 @@ void register_options()
 	NEW_OPT( omega1, "The omega1 (turn per residue, in radians) value for the minor helix.  Default parameter is for an alpha helix.", 1.7277092);
 	NEW_OPT( z1, "The z1 value (rise per residue, in Angstroms) for the minor helix.  Default parameter is for an alpha helix.", 1.5513078);
 	NEW_OPT( delta_omega1, "The offset of the minor helix, in radians.  Default 0.0.  One value for each helix.", delta_omega1_default );
+	NEW_OPT( delta_omega1_end, "The offset of the minor helix, in radians, at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( delta_omega1_per_atom, "The per-atom omega1 offset of the minor helix, in radians.  Default parameters are for an alpha helix.", alpha_helix_delta_omega1 );
 	NEW_OPT( delta_z1_per_atom, "The per-atom z1 offset of the minor helix, in Angstroms.  Default parameters are for an alpha helix.", alpha_helix_delta_z1 );
 	NEW_OPT( invert_helix, "If this flag is added, the helix runs in the opposite direction (but with the same chirality).  Not inverted by default.  One value for each helix.", invert_default);
 	NEW_OPT( delta_t, "An offset for the value of t (the residue index), used to shift the register of the helix up or down.  Default 0.  One value for each helix.", delta_t_default);
+	NEW_OPT( delta_t_end, "The offset for the value of t (the residue index) at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
+	NEW_OPT( z0_offset, "An offset in the z-direction along the major helix axis.  One value per helix.  Default 0.", z0_offset_default);
+	NEW_OPT( z0_offset_end, "The offset in the z-direction along the major helix axis at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
+	NEW_OPT( z1_offset, "An offset in the z-direction along the minor helix axis.  One value per helix.  Default 0.", z1_offset_default);
+	NEW_OPT( z1_offset_end, "The offset in the z-direction along the minor helix axis at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( minor_helix_params, "The .crick_params file specifying the minor helix params for the type of backbone and secondary structure that one wants to use.  If this option is used, all minor helix params set with other flags are ignored.  Default unused.", "");
 	NEW_OPT( set_bondlengths, "Should the generator set mainchain bond lengths?  If true, non-ideal geometry results, but a more perfect helix of helices is possible.  Default false.", false);
 	NEW_OPT( set_bondangles, "Should the generator set mainchain bond angles?  If true, non-ideal geometry results, but a more perfect helix of helices is possible.  Default false.", false);
@@ -149,12 +165,19 @@ main( int argc, char * argv [] )
 		runtime_assert_string_msg( option[residue_repeats]().size() >= helixcount, "A value must be provided with the -residue_repeats flag for EACH helix." );
 		runtime_assert_string_msg( option[r0]().size() >= helixcount, "A value must be provided with the -r0 flag for EACH helix." );
 		if(option[r0_end].user()) runtime_assert_string_msg( option[r0_end]().size() >= helixcount, "A value must be provided with the -r0_end flag for EACH helix if this flag is used." );
+		if(option[delta_omega0_end].user()) runtime_assert_string_msg( option[delta_omega0_end]().size() >= helixcount, "A value must be provided with the -delta_omega0_end flag for EACH helix if this flag is used." );
+		if(option[delta_omega1_end].user()) runtime_assert_string_msg( option[delta_omega1_end]().size() >= helixcount, "A value must be provided with the -delta_omega1_end flag for EACH helix if this flag is used." );
+		if(option[delta_t_end].user()) runtime_assert_string_msg( option[delta_t_end]().size() >= helixcount, "A value must be provided with the -delta_t_end flag for EACH helix if this flag is used." );
+		if(option[z0_offset_end].user()) runtime_assert_string_msg( option[z0_offset_end]().size() >= helixcount, "A value must be provided with the -z0_offset_end flag for EACH helix if this flag is used." );
+		if(option[z1_offset_end].user()) runtime_assert_string_msg( option[z1_offset_end]().size() >= helixcount, "A value must be provided with the -z1_offset_end flag for EACH helix if this flag is used." );
 		runtime_assert_string_msg( option[omega0]().size() >= helixcount, "A value must be provided with the -omega0 flag for EACH helix." );
 		if(option[omega0_end].user()) runtime_assert_string_msg( option[omega0_end]().size() >= helixcount, "A value must be provided with the -omega0_end flag for EACH helix if this flag is used." );
 		runtime_assert_string_msg( option[delta_omega0]().size() >= helixcount, "A value must be provided with the -delta_omega0 flag for EACH helix." );
 		runtime_assert_string_msg( option[invert_helix]().size() >= helixcount, "A value must be provided with the -invert_helix flag for EACH helix." );
 		runtime_assert_string_msg( option[delta_t]().size() >= helixcount, "A value must be provided with the -delta_t flag for EACH helix." );
 		runtime_assert_string_msg( option[delta_omega1]().size() >= helixcount, "A value must be provided with the -delta_omega1 flag for EACH helix." );
+		runtime_assert_string_msg( option[z0_offset]().size() >= helixcount, "A value must be provided with the -z0_offset flag for EACH helix." );
+		runtime_assert_string_msg( option[z1_offset]().size() >= helixcount, "A value must be provided with the -z1_offset flag for EACH helix." );
 		if(option[animation_cyclic].user()) runtime_assert_string_msg( option[animation_frames]() >= 2, "If the -animation_cyclic flag is used, the animation must be at least 2 frames long." );
 
 		core::Size const nframes = (option[animation_frames]() > 2 ? static_cast<core::Size>(option[animation_frames]()) : 1);
@@ -179,6 +202,16 @@ main( int argc, char * argv [] )
 				if(option[animation_frames]()>2 && option[r0_end].user()) r0val = (1.0-cur_frame_time)*option[r0]()[ihelix] + cur_frame_time*option[r0_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real omega0val = option[omega0]()[ihelix];
 				if(option[animation_frames]()>2 && option[omega0_end].user()) omega0val = (1.0-cur_frame_time)*option[omega0]()[ihelix] + cur_frame_time*option[omega0_end]()[ihelix]; //Linearly interpolate start and end values.
+				core::Real deltaomega0val = option[delta_omega0]()[ihelix];
+				if(option[animation_frames]()>2 && option[delta_omega0_end].user()) deltaomega0val = (1.0-cur_frame_time)*option[delta_omega0]()[ihelix] + cur_frame_time*option[delta_omega0_end]()[ihelix]; //Linearly interpolate start and end values.
+				core::Real deltaomega1val = option[delta_omega1]()[ihelix];
+				if(option[animation_frames]()>2 && option[delta_omega1_end].user()) deltaomega1val = (1.0-cur_frame_time)*option[delta_omega1]()[ihelix] + cur_frame_time*option[delta_omega1_end]()[ihelix]; //Linearly interpolate start and end values.
+				core::Real deltatval = option[delta_t]()[ihelix];
+				if(option[animation_frames]()>2 && option[delta_t].user()) deltatval = (1.0-cur_frame_time)*option[delta_t]()[ihelix] + cur_frame_time*option[delta_t_end]()[ihelix]; //Linearly interpolate start and end values.
+				core::Real z0offsetval = option[z0_offset]()[ihelix];
+				if(option[animation_frames]()>2 && option[z0_offset].user()) z0offsetval = (1.0-cur_frame_time)*option[z0_offset]()[ihelix] + cur_frame_time*option[z0_offset_end]()[ihelix]; //Linearly interpolate start and end values.
+				core::Real z1offsetval = option[z1_offset]()[ihelix];
+				if(option[animation_frames]()>2 && option[z1_offset].user()) z1offsetval = (1.0-cur_frame_time)*option[z1_offset]()[ihelix] + cur_frame_time*option[z1_offset_end]()[ihelix]; //Linearly interpolate start and end values.
 
 				makebundle.add_helix();
 
@@ -186,14 +219,16 @@ main( int argc, char * argv [] )
 				utility::vector1< std::string > restypevect; restypevect.push_back( option[residue_type]() );
 				makebundle.helix(ihelix)->set_residue_name( restypevect );
 				makebundle.helix(ihelix)->set_tail_residue_name( option[tail_residue_type]() );
-				makebundle.helix(ihelix)->set_major_helix_params ( r0val, omega0val, option[delta_omega0]()[ihelix]);
+				makebundle.helix(ihelix)->set_major_helix_params ( r0val, omega0val, deltaomega0val);
 				makebundle.helix(ihelix)->set_invert_helix( option[invert_helix]()[ihelix] );
-				makebundle.helix(ihelix)->set_delta_t( option[delta_t]()[ihelix] );
+				makebundle.helix(ihelix)->set_delta_t( deltatval );
+				makebundle.helix(ihelix)->set_z0_offset( z0offsetval );
+				makebundle.helix(ihelix)->set_z1_offset( z1offsetval );
 
 				utility::vector1 < core::Real > r1vals = option[r1]();
 
 				utility::vector1 < core::Real > delta_omega1vals = option[delta_omega1_per_atom]();
-				makebundle.helix(ihelix)->set_delta_omega1_all( option[delta_omega1]()[ihelix] );
+				makebundle.helix(ihelix)->set_delta_omega1_all( deltaomega1val );
 
 				utility::vector1 < core::Real > delta_z1vals = option[delta_z1_per_atom]();
 
