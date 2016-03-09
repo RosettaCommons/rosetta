@@ -45,6 +45,8 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+
 #include <basic/Tracer.hh>
 
 #include <iostream>
@@ -85,13 +87,25 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
+		SymAtomTreeMinimizer sym_min; // not using this directly but we will call functions from this...
+
 		// symmetrize scorefunct & movemap
+		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+
 		rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
 		xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 
+		kinematics::MoveMap semisym_move_map;
+		if ( !old_sym_min ) {
+			sym_min.check_and_correct_edge_weights_for_new_minimizer( pose );
+			sym_min.make_asymmetric_movemap( pose, move_map, semisym_move_map );
+		} else {
+			sym_min.make_semisymmetric_movemap( pose, move_map, semisym_move_map );
+		}
+
 		// compute gradients using both scorefunctions
-		SymMinimizerMap min_map( pose, move_map, symm_info );
+		SymMinimizerMap min_map( pose, semisym_move_map, symm_info, !old_sym_min );
 		Multivec vars( min_map.nangles() ), dEros_dvars, dExtal_dvars;
 		min_map.copy_dofs_from_pose( pose, vars );
 

@@ -714,7 +714,7 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	core::conformation::symmetry::SymmetryInfoCOP symminfo_new =
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation const & >( pose.conformation()).Symmetry_Info();
 	for ( core::Size i=pose.fold_tree().num_jump(); i>=1; --i ) {
-		if ( symminfo_new->jump_is_independent(i) ) {
+		if ( symminfo_new->jump_is_independent(i) && symminfo_new->jump_clones(i).size() > 0 ) {
 			core::kinematics::Jump j_i = pose.jump( i );
 			pose.set_jump( i, j_i );
 		}
@@ -729,6 +729,7 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 
 	// update disulf info
 	pose.conformation().detect_disulfides();
+
 }
 
 Size

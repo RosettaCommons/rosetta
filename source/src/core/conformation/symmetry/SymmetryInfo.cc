@@ -1339,7 +1339,7 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	std::map<std::string,Size> dofname2jnum_new;
 
 	for ( Size i=1; i<= njump_monomer; ++i ) {
-		Size src_intra = i + (scoring_subunit_-1)*njump_monomer_;
+		Size src_intra = (i-1)*N + scoring_subunit_; //i + (scoring_subunit_-1)*njump_monomer_;
 
 		std::string name_new_src = "intra_"+utility::to_string(i)+"_master";
 		jnum2dofname_new[src_intra] = name_new_src;
@@ -1347,7 +1347,7 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 
 		for ( Size k=0; k<N; ++k ) {
 			if ( k != ( scoring_subunit_ - 1 ) ) {
-				Size tgt_intra = i + k*njump_monomer_;
+				Size tgt_intra = (i-1)*N + k + 1; //i + k*njump_monomer_;
 				add_jump_clone( src_intra, tgt_intra, 0.0 );
 
 				std::string name_new_tgt = "intra_"+utility::to_string(i)+"_"+utility::to_string(k+1);
