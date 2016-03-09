@@ -207,11 +207,11 @@ main( int argc, char * argv [] )
 				core::Real deltaomega1val = option[delta_omega1]()[ihelix];
 				if(option[animation_frames]()>2 && option[delta_omega1_end].user()) deltaomega1val = (1.0-cur_frame_time)*option[delta_omega1]()[ihelix] + cur_frame_time*option[delta_omega1_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real deltatval = option[delta_t]()[ihelix];
-				if(option[animation_frames]()>2 && option[delta_t].user()) deltatval = (1.0-cur_frame_time)*option[delta_t]()[ihelix] + cur_frame_time*option[delta_t_end]()[ihelix]; //Linearly interpolate start and end values.
+				if(option[animation_frames]()>2 && option[delta_t_end].user()) deltatval = (1.0-cur_frame_time)*option[delta_t]()[ihelix] + cur_frame_time*option[delta_t_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real z0offsetval = option[z0_offset]()[ihelix];
-				if(option[animation_frames]()>2 && option[z0_offset].user()) z0offsetval = (1.0-cur_frame_time)*option[z0_offset]()[ihelix] + cur_frame_time*option[z0_offset_end]()[ihelix]; //Linearly interpolate start and end values.
+				if(option[animation_frames]()>2 && option[z0_offset_end].user()) z0offsetval = (1.0-cur_frame_time)*option[z0_offset]()[ihelix] + cur_frame_time*option[z0_offset_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real z1offsetval = option[z1_offset]()[ihelix];
-				if(option[animation_frames]()>2 && option[z1_offset].user()) z1offsetval = (1.0-cur_frame_time)*option[z1_offset]()[ihelix] + cur_frame_time*option[z1_offset_end]()[ihelix]; //Linearly interpolate start and end values.
+				if(option[animation_frames]()>2 && option[z1_offset_end].user()) z1offsetval = (1.0-cur_frame_time)*option[z1_offset]()[ihelix] + cur_frame_time*option[z1_offset_end]()[ihelix]; //Linearly interpolate start and end values.
 
 				makebundle.add_helix();
 
