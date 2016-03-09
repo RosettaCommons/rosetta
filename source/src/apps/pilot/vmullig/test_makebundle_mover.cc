@@ -183,7 +183,8 @@ main( int argc, char * argv [] )
 				makebundle.add_helix();
 
 				makebundle.helix(ihelix)->set_helix_length( static_cast<core::Size>(option[residue_repeats]()[ihelix]) );
-				makebundle.helix(ihelix)->set_residue_name( option[residue_type]() );
+				utility::vector1< std::string > restypevect; restypevect.push_back( option[residue_type]() );
+				makebundle.helix(ihelix)->set_residue_name( restypevect );
 				makebundle.helix(ihelix)->set_tail_residue_name( option[tail_residue_type]() );
 				makebundle.helix(ihelix)->set_major_helix_params ( r0val, omega0val, option[delta_omega0]()[ihelix]);
 				makebundle.helix(ihelix)->set_invert_helix( option[invert_helix]()[ihelix] );
