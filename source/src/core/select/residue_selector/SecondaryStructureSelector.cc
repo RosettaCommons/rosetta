@@ -176,8 +176,8 @@ void SecondaryStructureSelector::parse_my_tag(
 		set_include_terminal_loops( tag->getOption< bool >( "include_terminal_loops" ) );
 	}
 
-	if ( tag->hasOption( "dssp" ) ) {
-		set_always_use_dssp( tag->getOption< bool >( "always_use_dssp" ) );
+	if ( tag->hasOption( "use_dssp" ) ) {
+		set_always_use_dssp( tag->getOption< bool >( "use_dssp" ) );
 	}
 
 	if ( tag->hasOption( "pose_secstruct" ) ) {
