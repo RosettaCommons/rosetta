@@ -76,6 +76,7 @@
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 
 #include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
+#include <core/scoring/etable/etrie/TrieCountPair1BC3.hh>
 #include <core/scoring/etable/etrie/TrieCountPairAll.hh>
 #include <core/scoring/etable/etrie/TrieCountPairNone.hh>
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
@@ -1007,8 +1008,6 @@ determine_crossover_behavior(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
 	bool const use_intra_dna_cp_crossover_4
-	//pose::Pose const &
-	//ScoreFunction const & sfxn
 )
 {
 	using namespace scoring::etable::count_pair;
@@ -1112,7 +1111,7 @@ LK_BallEnergy::residue_pair_energy(
 	//CountPairFunctionOP cpfxn =
 	// CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
-	CPCrossoverBehavior crossover = determine_crossover_behavior( rsd1, rsd2, use_intra_dna_cp_crossover_4_ ); //, pose ); //, sfxn );
+	CPCrossoverBehavior crossover = determine_crossover_behavior( rsd1, rsd2, use_intra_dna_cp_crossover_4_ );
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
 
 	// setup residue information
@@ -1526,20 +1525,19 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 	temp_table3 = 0;
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
-	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
-	emap.zero();
-	residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
-	temp_table3( jj, ii ) += weights.dot( emap );
-	if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
-	std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
-	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
-	std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
-	}
-	}
+		for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
+			emap.zero();
+			residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
+			temp_table3( jj, ii ) += weights.dot( emap );
+			if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
+				std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
+				std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
+				std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
+			}
+		}
 	}
 	std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
 	*/
-
 }
 
 void
@@ -2036,7 +2034,7 @@ LK_BallEnergy::get_count_pair_function_trie(
 	conformation::Residue const & res2,
 	trie::RotamerTrieBaseCOP trie1,
 	trie::RotamerTrieBaseCOP trie2,
-	pose::Pose const &,
+	pose::Pose const & ,
 	ScoreFunction const &
 ) const
 {
@@ -2052,14 +2050,35 @@ LK_BallEnergy::get_count_pair_function_trie(
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 
 	if ( connection == CP_ONE_BOND ) {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
-	} else if ( connection == CP_NO_BONDS ) {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
+		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, use_intra_dna_cp_crossover_4_ );
+		switch ( crossover ) {
+		case CP_CROSSOVER_3 :
+			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+			break;
+		case CP_CROSSOVER_4 :
+			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
+			break;
+		default :
+			utility_exit();
+			break;
+		}
+	} else if ( connection == CP_MULTIPLE_BONDS_OR_PSEUDOBONDS ) {
+		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, use_intra_dna_cp_crossover_4_ );
+
+		TrieCountPairGenericOP cpgen( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
+		if ( crossover == CP_CROSSOVER_3 ) {
+			cpgen->crossover( 3 );
+		} else if ( crossover == CP_CROSSOVER_4 ) {
+			cpgen->crossover( 4 );
+		} else {
+			utility_exit();
+		}
+		cpgen->hard_crossover( false );
+		tcpfxn = cpgen;
 	} else {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
 	}
 	return tcpfxn;
-
 }
 
 core::Size
