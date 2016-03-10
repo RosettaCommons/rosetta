@@ -58,8 +58,6 @@ namespace match {
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.match.MatcherMover" );
 
-std::string const MatcherMover::MATCH_POS_FILE = "selector_generated_match.pos";
-
 std::string
 MatcherMoverCreator::keyname() const
 {
@@ -169,17 +167,12 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 		mtask->set_original_scaffold_build_points( match_positions_ );
 	}
 
+
 	// if selectors are set, use them to generate a match.pos file
 	if ( selectors_.size() ) {
-		generate_match_pos( pose );
+		setup_seqpos_from_selectors( *mtask, pose );
 	}
-
 	mtask->initialize_from_command_line();
-
-	// if selectors are set, clean up match pos file
-	if ( selectors_.size() ) {
-		clean_match_pos();
-	}
 
 	if ( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
@@ -249,37 +242,23 @@ MatcherMover::get_name() const
 }
 
 void
-MatcherMover::generate_match_pos( core::pose::Pose const & pose ) const
+MatcherMover::setup_seqpos_from_selectors( protocols::match::MatcherTask & mtask, core::pose::Pose const & pose ) const
 {
-	std::stringstream outfile;
-	outfile << "N_CST " << selectors_.size() << std::endl;
-	core::Size idx = 1;
-	for ( utility::vector1< core::select::residue_selector::ResidueSelectorCOP >::const_iterator s = selectors_.begin();
-			s != selectors_.end(); ++s, ++idx ) {
-		outfile << idx << " : ";
-		debug_assert( *s );
+	mtask.set_ignore_cmdline_for_build_points( true );
+	mtask.use_different_build_points_for_each_geometric_constraint( selectors_.size() );
+
+	core::Size cst_idx = 1;
+	for ( utility::vector1< core::select::residue_selector::ResidueSelectorCOP >::const_iterator s=selectors_.begin(); s!=selectors_.end(); ++s, ++cst_idx ) {
 		core::select::residue_selector::ResidueSubset const subset = (*s)->apply( pose );
-		for ( core::Size i=1; i<=subset.size(); ++i ) {
-			if ( subset[i] ) {
-				outfile << i << " ";
+		utility::vector1< core::Size > residues;
+		for ( core::Size resid=1; resid<=subset.size(); ++resid ) {
+			if ( subset[ resid ] ) {
+				residues.push_back( resid );
 			}
 		}
-		outfile << std::endl;
+		tr << "Residues for geomcst " << cst_idx << ": " << residues << std::endl;
+		mtask.set_original_scaffold_build_points_for_geometric_constraint( cst_idx, residues );
 	}
-	tr << "Going to write the following to " << MATCH_POS_FILE << std::endl;
-	tr << outfile.str();
-	tr.flush();
-	std::ofstream outfile_real( MATCH_POS_FILE.c_str() );
-	outfile_real << outfile.str();
-	outfile_real.close();
-	basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues_for_geomcsts ].value( MATCH_POS_FILE );
-}
-
-void
-MatcherMover::clean_match_pos() const
-{
-	remove( MATCH_POS_FILE.c_str() );
-	basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues_for_geomcsts ].deactivate();
 }
 
 void
