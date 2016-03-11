@@ -43,7 +43,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <protocols/relax/MiniRelax.cc>
+#include <protocols/relax/MiniRelax.hh>
 
 #include <protocols/loophash/FastGapMover.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>

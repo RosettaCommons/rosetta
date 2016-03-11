@@ -21,7 +21,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
-#include <core/io/rna/RNA_DataReader.cc> // temporary, for scoring RNA chemical mapping data. Move into core?
+#include <core/io/rna/RNA_DataReader.hh> // temporary, for scoring RNA chemical mapping data. Move into core?
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
 #include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>

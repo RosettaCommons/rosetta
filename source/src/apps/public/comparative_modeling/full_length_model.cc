@@ -46,7 +46,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <protocols/relax/MiniRelax.cc>
+#include <protocols/relax/MiniRelax.hh>
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/comparative_modeling/util.hh>
