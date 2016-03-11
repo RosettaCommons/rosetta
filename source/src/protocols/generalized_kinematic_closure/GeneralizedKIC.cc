@@ -99,7 +99,7 @@ GeneralizedKIC::GeneralizedKIC():
 	perturberlist_(),
 	filterlist_(),
 	selector_( selector::GeneralizedKICselectorOP( new selector::GeneralizedKICselector ) ),
-	n_closure_attempts_(2000),
+	n_closure_attempts_(100),
 	min_solution_count_(0),
 	rosettascripts_filter_(),
 	rosettascripts_filter_exists_(false),
@@ -264,7 +264,7 @@ GeneralizedKIC::parse_my_tag(
 		set_selector_kbt( tag->getOption<core::Real>("selector_kbt", 1.0) );
 	}
 	set_ntries_before_giving_up(tag->getOption<core::Size>("stop_if_no_solution", 0)); //Number of tries to make before stopping if no solution has been found yet.
-	if ( tag->hasOption("closure_attempts") ) set_closure_attempts( tag->getOption<core::Size>("closure_attempts", 2000) );
+	if ( tag->hasOption("closure_attempts") ) set_closure_attempts( tag->getOption<core::Size>("closure_attempts", 100) );
 
 	//Check for depreciated option:
 	runtime_assert_string_msg ( !tag->hasOption("stop_when_solution_found"),
