@@ -14,4 +14,4 @@
 //ResidueSelectorCreator #includes
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
-#include <protocols/denovo_design/residue_selectors/TaskSelectorCreator.hh>
+#include <protocols/residue_selectors/TaskSelectorCreator.hh>

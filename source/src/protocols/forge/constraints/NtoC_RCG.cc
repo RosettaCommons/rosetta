@@ -34,6 +34,8 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
+// boost headers
+#include <boost/assign.hpp>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.NtoC_RCG" );
 
@@ -63,12 +65,6 @@ NtoC_RCG::NtoC_RCG():
 	RemodelConstraintGenerator(),
 	dist_( 11.0 ),
 	coef_( 1.0 )
-{}
-
-NtoC_RCG::NtoC_RCG( NtoC_RCG const & rval )
-: RemodelConstraintGenerator( rval ),
-	dist_( rval.dist_ ),
-	coef_( rval.coef_ )
 {}
 
 /// @brief
@@ -127,8 +123,8 @@ NtoC_RCG::set_distance( Real const dist )
 
 
 /// @brief
-void
-NtoC_RCG::generate_remodel_constraints( Pose const & pose )
+core::scoring::constraints::ConstraintCOPs
+NtoC_RCG::generate_constraints( Pose const & pose )
 {
 	using namespace core::scoring::constraints;
 
@@ -147,7 +143,7 @@ NtoC_RCG::generate_remodel_constraints( Pose const & pose )
 
 	TR << "Constraints between N- and C- terminal: " << first_residue << "-" << last_residue << ", dist=" << dist_ << std::endl;
 
-	this->add_constraint( cst );
+	return boost::assign::list_of( cst );
 } //generate constraints
 
 

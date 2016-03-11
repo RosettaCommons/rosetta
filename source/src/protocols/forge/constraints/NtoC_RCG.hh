@@ -26,9 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-
 #include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace forge {
@@ -44,8 +42,6 @@ public:
 public:
 
 	NtoC_RCG();
-
-	NtoC_RCG( NtoC_RCG const & rval );
 
 	NtoC_RCG( Real const dist, Real const coef );
 
@@ -67,8 +63,8 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-	virtual
-	void generate_remodel_constraints( Pose const & pose );
+	virtual core::scoring::constraints::ConstraintCOPs
+	generate_constraints( Pose const & pose );
 
 	void set_weight( Real const coef );
 

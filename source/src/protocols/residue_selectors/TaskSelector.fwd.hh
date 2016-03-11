@@ -7,28 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/forge/constraints/ConstraintFileRCG.fwd.hh
-///
-/// @brief
-/// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
+/// @file   protocols/residue_selectors/TaskSelector.fwd.hh
+/// @brief  Forward declaration of a class that selects residues using their names
+/// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_forge_constraints_ConstraintFileRCG_fwd_hh
-#define INCLUDED_protocols_forge_constraints_ConstraintFileRCG_fwd_hh
+#ifndef INCLUDED_protocols_residue_selectors_TaskSelector_FWD_HH
+#define INCLUDED_protocols_residue_selectors_TaskSelector_FWD_HH
 
+// Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
+#include <utility/vector1.fwd.hh>
+
 
 namespace protocols {
-namespace forge {
-namespace constraints {
+namespace residue_selectors {
 
-class ConstraintFileRCG;
+class TaskSelector;
 
-typedef utility::pointer::shared_ptr< ConstraintFileRCG > ConstraintFileRCGOP;
-typedef utility::pointer::weak_ptr< ConstraintFileRCG const > ConstraintFileRCGCAP;
+typedef utility::pointer::shared_ptr< TaskSelector > TaskSelectorOP;
+typedef utility::pointer::shared_ptr< TaskSelector const > TaskSelectorCOP;
 
-} //namespace constraints
-} //namespace forge
+} //namespace residue_selectors
 } //namespace protocols
 
-#endif // INCLUDED_protocols_forge_constraints_ResidueVicinityRCG_FWD_HH
+
+#endif

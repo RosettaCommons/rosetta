@@ -84,6 +84,9 @@ static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 static MoverRegistrator< denovo_design::connection::BridgeChainsCreator > reg_BridgeChainsCreator;
 static MoverRegistrator< denovo_design::connection::StapleChainsCreator > reg_StapleChainsCreator;
 static MoverRegistrator< denovo_design::connection::ExtendChainCreator > reg_ExtendChainCreator;
+static MoverRegistrator< denovo_design::connection::ConnectTerminiWithDisulfideCreator > reg_ConnectTerminiWithDisulfideCreator;
+static MoverRegistrator< denovo_design::constraints::CoordinateConstraintGeneratorCreator > reg_CoordinateConstraintGeneratorCreator;
+static MoverRegistrator< denovo_design::constraints::FileConstraintGeneratorCreator > reg_FileConstraintGeneratorCreator;
 static MoverRegistrator< denovo_design::DisulfidizeMoverCreator > reg_DisulfidizeMoverCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
@@ -147,8 +150,6 @@ static MoverRegistrator< flexpep_docking::FlexPepDockingProtocolCreator > reg_Fl
 static MoverRegistrator< flxbb::FlxbbDesignCreator > reg_FlxbbDesignCreator;
 static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreator;
 
-
-static MoverRegistrator< forge::constraints::ConstraintFileCstGeneratorCreator > reg_ConstraintFileCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InverseRotamersCstGeneratorCreator > reg_InverseRotamersCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InvrotTreeCstGeneratorCreator > reg_InvrotTreeCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::NtoCCstGeneratorCreator > reg_NtoCCstGeneratorCreator;

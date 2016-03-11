@@ -82,8 +82,8 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-	virtual
-	void generate_remodel_constraints( Pose const & pose );
+	virtual core::scoring::constraints::ConstraintCOPs
+	generate_constraints( Pose const & pose );
 
 	/// @brief sets the secondary structure to be used for constraint generation
 	void set_secstruct( std::string const & ss );

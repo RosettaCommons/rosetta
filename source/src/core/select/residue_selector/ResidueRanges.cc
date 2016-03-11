@@ -24,13 +24,13 @@ namespace select {
 namespace residue_selector {
 
 ResidueRanges::ResidueRanges( ResidueSubset const & subset )
-	: utility::vector1< ResidueRange >()
+: utility::vector1< ResidueRange >()
 {
 	this->clear();
 	core::Size start_interval = 0;
 	for ( core::Size resid=1; resid<=subset.size(); ++resid ) {
 		if ( ( start_interval == 0 ) && ( subset[ resid ] ) ) {
-				start_interval = resid;
+			start_interval = resid;
 		} else if ( ( start_interval == 0 ) && ( ! subset[ resid ] ) ) {
 			continue;
 		} else if ( ( start_interval != 0 ) && ( subset[ resid ] ) ) {

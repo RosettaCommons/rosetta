@@ -30,7 +30,7 @@
 
 //Protocol Headers
 #include <basic/datacache/DataMap.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+#include <protocols/moves/ConstraintGenerator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
@@ -113,14 +113,14 @@ FastDesign::FastDesign() :
 	//frag_qual_op_( NULL ),
 	regions_to_design_( 1 ),
 	run_count_( 0 ),
-	cached_sequence_( "" )
+	cached_sequence_( "" ),
+	cgs_()
 	//worst_region_mover_( NULL )
 {
 	filters_.clear();
 	allowed_aas_.clear();
 	num_redesigns_.clear();
 	set_enable_design( true );
-	rcgs_.clear();
 	//read_script_file( "", default_repeats_ );
 }
 
@@ -197,11 +197,11 @@ FastDesign::parse_my_tag(
 	for ( core::Size i=1, endi=rcgs.size(); i<=endi; ++i ) {
 		if ( rcgs[i] == "" ) continue;
 		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( rcgs[i], movers );
-		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
-		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
-		protocols::forge::remodel::RemodelConstraintGeneratorOP newrcg =
-			utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
-		rcgs_.push_back( newrcg );
+		// check to make sure the mover provided is a ConstraintGenerator and if so, add it to the list
+		assert( utility::pointer::dynamic_pointer_cast< protocols::moves::ConstraintGenerator >( mover ) );
+		protocols::moves::ConstraintGeneratorOP newcg =
+			utility::pointer::static_pointer_cast< protocols::moves::ConstraintGenerator >( mover );
+		cgs_.push_back( newcg );
 	}
 
 	/*std::string const filters_str( tag->getOption< std::string >( "filters", "," ) );
@@ -458,13 +458,18 @@ FastDesign::set_constraint_weight(
 	core::pose::Pose & pose ) const
 {
 	runtime_assert( local_scorefxn != 0 );
-	if ( rcgs_.size() ) {
-		for ( core::Size i=1, endi=rcgs_.size(); i<=endi; ++i ) {
-			rcgs_[i]->remove_remodel_constraints_from_pose( pose );
-			if ( weight > 0.0001 ) {
-				rcgs_[i]->add_remodel_constraints_to_pose( pose );
+	if ( cgs_.size() ) {
+		for ( core::Size i=1, endi=cgs_.size(); i<=endi; ++i ) {
+			try {
+				cgs_[i]->remove_constraints_from_pose( pose );
+			} catch ( protocols::moves::EXCN_RemoveCstsFailed const & e ) {
+				// if removing constraints fails, we don't really care
+				// they are only being removed to clean up before re-adding them below
 			}
-			TR << "Changed weight of " << rcgs_[i]->get_name() << " to " << weight << std::endl;
+			if ( weight > 0.0001 ) {
+				cgs_[i]->add_constraints_to_pose( pose );
+			}
+			TR << "Changed weight of " << cgs_[i]->get_name() << " to " << weight << std::endl;
 		}
 	} else {
 		local_scorefxn->set_weight( core::scoring::coordinate_constraint, full_weights[ core::scoring::coordinate_constraint ] * weight );

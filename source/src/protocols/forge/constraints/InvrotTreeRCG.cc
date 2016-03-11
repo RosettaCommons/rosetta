@@ -33,6 +33,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
+// boost headers
+#include <boost/assign.hpp>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
 
@@ -136,11 +138,11 @@ InvrotTreeRCG::apply( core::pose::Pose & pose )
 
 	//tr << "now id=" << id() << std::endl;
 	// generate and add constraints
-	this->add_remodel_constraints_to_pose( pose );
+	this->add_constraints_to_pose( pose );
 }
 
-void
-InvrotTreeRCG::generate_remodel_constraints(
+core::scoring::constraints::ConstraintCOPs
+InvrotTreeRCG::generate_constraints(
 	core::pose::Pose const & pose )
 {
 	tr << "in invrottreercg" << std::endl;
@@ -155,7 +157,7 @@ InvrotTreeRCG::generate_remodel_constraints(
 	core::scoring::constraints::ConstraintCOP cst_to_add( invrot_tree_->get_constraint_for_target_state( target_state ) );
 
 	if ( !cst_to_add ) utility_exit_with_message("InvrotTree failed to generate anything but NULL pointer csts. Something is wrong somewhere. Check your starting structure for whether it already has every interaction in the cstfile." );
-	this->add_constraint( cst_to_add  );
+	return boost::assign::list_of ( cst_to_add );
 }
 
 /// @brief tells the mover whether it should add the ligand to the pose

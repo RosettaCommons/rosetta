@@ -628,7 +628,7 @@ EnzdesRemodelMover::refine_pose(
 	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
 			rcg_it != rcgs_.end(); ++rcg_it ) {
 
-		(*rcg_it)->add_remodel_constraints_to_pose( pose );
+		(*rcg_it)->add_constraints_to_pose( pose );
 
 	}
 	(*(enz_prot_->reduced_scorefxn()))(pose);
@@ -655,7 +655,7 @@ EnzdesRemodelMover::refine_pose(
 
 	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
 			rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->remove_remodel_constraints_from_pose( pose );
+		(*rcg_it)->remove_constraints_from_pose( pose );
 	}
 
 	//std::cerr << " done removing fa remcsts." << std::endl;

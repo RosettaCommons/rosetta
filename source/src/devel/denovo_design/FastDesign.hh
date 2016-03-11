@@ -29,7 +29,7 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
+#include <protocols/moves/ConstraintGenerator.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 //// C++ headers
@@ -180,7 +180,7 @@ private:   // other data
 	core::Size regions_to_design_;
 	core::Size run_count_;
 	std::string cached_sequence_;
-	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
+	utility::vector1< protocols::moves::ConstraintGeneratorOP > cgs_;
 	//RestrictWorstRegionOP worst_region_mover_;
 };
 

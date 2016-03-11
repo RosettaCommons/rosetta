@@ -40,8 +40,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
+#include <protocols/denovo_design/constraints/FileConstraintGenerator.hh>
 #include <protocols/forge/constraints/NtoC_RCG.hh>
-#include <protocols/forge/constraints/ConstraintFileRCG.hh>
 #include <protocols/forge/constraints/InvrotTreeRCG.hh>
 #include <protocols/fldsgn/SheetConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
@@ -525,8 +525,8 @@ bool BluePrintBDR::centroid_build(
 	using protocols::forge::methods::restore_residues;
 	using protocols::forge::constraints::NtoC_RCG;
 	using protocols::forge::constraints::NtoC_RCGOP;
-	using protocols::forge::constraints::ConstraintFileRCG;
-	using protocols::forge::constraints::ConstraintFileRCGOP;
+	using protocols::denovo_design::constraints::FileConstraintGenerator;
+	using protocols::denovo_design::constraints::FileConstraintGeneratorOP;
 	//using protocols::forge::constraints::SheetConstraintsRCG;
 	//using protocols::forge::constraints::SheetConstraintsRCGOP;
 
@@ -590,7 +590,7 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	if ( constraint_file_ != "" ) {
-		ConstraintFileRCGOP cst( new ConstraintFileRCG( constraint_file_ ) );
+		FileConstraintGeneratorOP cst( new FileConstraintGenerator( constraint_file_ ) );
 		vlb_->add_rcg( cst );
 	}
 

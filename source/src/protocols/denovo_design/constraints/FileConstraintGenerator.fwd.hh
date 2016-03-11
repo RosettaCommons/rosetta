@@ -7,31 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/denovo_design/residue_selectors/TaskSelector.fwd.hh
-/// @brief  Forward declaration of a class that selects residues using their names
-/// @author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/forge/constraints/FileConstraintGenerator.fwd.hh
+///
+/// @brief
+/// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
+/// @author Tom Linsky ( tlinsky at uw dot edu ), Mar 2016
 
-#ifndef INCLUDED_protocols_denovo_design_residue_selectors_TaskSelector_FWD_HH
-#define INCLUDED_protocols_denovo_design_residue_selectors_TaskSelector_FWD_HH
+#ifndef INCLUDED_protocols_forge_constraints_FileConstraintGenerator_fwd_hh
+#define INCLUDED_protocols_forge_constraints_FileConstraintGenerator_fwd_hh
 
-// Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
-#include <utility/vector1.fwd.hh>
-
 
 namespace protocols {
 namespace denovo_design {
-namespace residue_selectors {
+namespace constraints {
 
-class TaskSelector;
+class FileConstraintGenerator;
 
-typedef utility::pointer::shared_ptr< TaskSelector > TaskSelectorOP;
-typedef utility::pointer::shared_ptr< TaskSelector const > TaskSelectorCOP;
+typedef utility::pointer::shared_ptr< FileConstraintGenerator > FileConstraintGeneratorOP;
+typedef utility::pointer::weak_ptr< FileConstraintGenerator const > FileConstraintGeneratorCAP;
 
-} //namespace residue_selectors
+} //namespace constraints
 } //namespace denovo_design
 } //namespace protocols
 
-
-#endif
+#endif // INCLUDED_protocols_denovo_design_constraints_FileConstraintGenerator_fwd_hh

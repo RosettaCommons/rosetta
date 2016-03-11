@@ -191,13 +191,10 @@ ResidueVicinityRCG::clone() const
 
 /// @brief for every ResidueVicinityInfo (RVI) that this generator has, an AmbiguousConstraint between the
 /// @brief neighbor atoms of all residues in the remodel region and the RVI are generated.
-void
-ResidueVicinityRCG::generate_remodel_constraints(
+core::scoring::constraints::ConstraintCOPs
+ResidueVicinityRCG::generate_constraints(
 	core::pose::Pose const & pose  )
 {
-
-	this->clear_constraints();
-
 	//pose.dump_pdb("remodel_start.pdb"); //debug
 
 	//std::set< Interval > regions = vlb()->manager().intervals_containing_undefined_positions();
@@ -213,6 +210,7 @@ ResidueVicinityRCG::generate_remodel_constraints(
 
 	tr << "setting up constraints for res " << remstart << " to res " << remend << std::endl;
 
+	core::scoring::constraints::ConstraintCOPs csts;
 	for ( utility::vector1< ResidueVicinityInfoOP >::const_iterator rv_it = rv_infos_.begin(), rv_end = rv_infos_.end();
 			rv_it != rv_end; ++rv_it ) {
 
@@ -242,18 +240,18 @@ ResidueVicinityRCG::generate_remodel_constraints(
 
 		//and finally add the constraints to the RGC
 		if ( (*rv_it)->desired_remodelres_in_vicinity() == 1 ) {
-			this->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( rv_csts ) ) ) );
+			csts.push_back( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( rv_csts ) ) ) );
 			//debug
 			//tr << "creating ambig constraint of size " << rv_csts.size() << std::endl;
 		} else {
-			this->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new protocols::constraints_additional::AmbiguousMultiConstraint( (*rv_it)->desired_remodelres_in_vicinity(), rv_csts ) ) ) );
+			csts.push_back( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new protocols::constraints_additional::AmbiguousMultiConstraint( (*rv_it)->desired_remodelres_in_vicinity(), rv_csts ) ) ) );
 
 			//debug
 			//tr << "creating ambig multi constraint of size " << rv_csts.size() << " and n " << (*rv_it)->desired_remodelres_in_vicinity() <<  std::endl;
 		}
 
 	} //loop over residue vicinity infos
-
+	return csts;
 } //generate constraints
 
 

@@ -1050,7 +1050,7 @@ VarLengthBuild::setup_remodel_constraints(
 	for ( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ) {
 		(*rcg_it)->set_seqmap( this->manager().sequence_mapping());
 		TR << "Adding remodel constraints to pose using " << (*rcg_it)->get_name() << std::endl;
-		(*rcg_it)->add_remodel_constraints_to_pose( pose );
+		(*rcg_it)->add_constraints_to_pose( pose );
 	}
 }
 
@@ -1065,7 +1065,7 @@ VarLengthBuild::remove_remodel_constraints(
 	}
 
 	for ( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->remove_remodel_constraints_from_pose( pose );
+		(*rcg_it)->remove_constraints_from_pose( pose );
 	}
 }
 

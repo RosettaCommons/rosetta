@@ -76,7 +76,7 @@ SheetConstraintGeneratorCreator::mover_name()
 
 /// @brief
 SheetConstraintGenerator::SheetConstraintGenerator():
-	RemodelConstraintGenerator(),
+	protocols::forge::remodel::RemodelConstraintGenerator(),
 	weight_( 1.0 ),
 	dist_( 5.5 ),
 	dist_tolerance_( 1.0 ),
@@ -102,7 +102,7 @@ SheetConstraintGenerator::parse_my_tag( TagCOP const tag,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose )
 {
-	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	protocols::forge::remodel::RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 
 	// for all of these, the default is to not change what is already  present in the class
 	if ( tag->hasOption( "blueprint" ) ) {
@@ -445,8 +445,8 @@ SheetConstraintGenerator::create_bb_cacb_dihedral_constraint(
 }
 
 /// @brief
-void
-SheetConstraintGenerator::generate_remodel_constraints( Pose const & pose )
+core::scoring::constraints::ConstraintCOPs
+SheetConstraintGenerator::generate_constraints( Pose const & pose )
 {
 	using core::scoring::func::FuncOP;
 
@@ -524,7 +524,7 @@ SheetConstraintGenerator::generate_remodel_constraints( Pose const & pose )
 			TR << "Added dihedral constraint between residues " << iaa << " and " << jaa << std::endl;
 		}
 	} // residue pairs
-	this->add_constraints( csts );
+	return csts;
 } //generate constraints
 
 } //namespace fldsgn

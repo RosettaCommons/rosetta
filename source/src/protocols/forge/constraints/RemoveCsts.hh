@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_forge_constraints_RemoveCsts_hh
 
 // Unit Header
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+#include <protocols/moves/ConstraintGenerator.fwd.hh>
 
 // Package Header
 
@@ -44,9 +44,7 @@ public:
 
 	RemoveCsts();
 
-	RemoveCsts( RemoveCsts const & rval );
-
-	RemoveCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
+	RemoveCsts( protocols::moves::ConstraintGeneratorOP generator );
 
 	virtual ~RemoveCsts();
 
@@ -71,10 +69,10 @@ public:
 	clone() const;
 
 	void
-	set_generator( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
+	set_generator( protocols::moves::ConstraintGeneratorOP generator );
 
 private:
-	protocols::forge::remodel::RemodelConstraintGeneratorOP generator_;
+	protocols::moves::ConstraintGeneratorOP generator_;
 	std::string generator_id_;
 }; //class NtoC_RCG
 

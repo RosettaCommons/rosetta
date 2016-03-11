@@ -55,7 +55,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 
-#include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>

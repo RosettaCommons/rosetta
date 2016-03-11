@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/denovo_design/residue_selectors/TaskSelector.hh
+/// @file   protocols/residue_selectors/TaskSelector.hh
 /// @brief  The TaskSelector selects residues using a string containing residue names
 /// @author Tom Linsky (tlinsky@uw.edu))
 
 // Unit headers
-#include <protocols/denovo_design/residue_selectors/TaskSelector.hh>
-#include <protocols/denovo_design/residue_selectors/TaskSelectorCreator.hh>
+#include <protocols/residue_selectors/TaskSelector.hh>
+#include <protocols/residue_selectors/TaskSelectorCreator.hh>
 
 // Protocol Headers
 
@@ -32,10 +32,9 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.residue_selector.TaskSelector" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.TaskSelector" );
 
 namespace protocols {
-namespace denovo_design {
 namespace residue_selectors {
 
 core::select::residue_selector::ResidueSelectorOP
@@ -186,7 +185,6 @@ TaskSelector::class_name()
 	return "Task";
 }
 
-} //namespace residue_selector
-} //namespace select
+} //namespace residue_selectors
 } //namespace protocols
 

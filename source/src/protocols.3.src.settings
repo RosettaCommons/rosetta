@@ -403,6 +403,9 @@ sources = {
         "MPFastRelaxMover",
 				"MPRangeRelaxMover",
     ],
+	"protocols/residue_selectors": [
+		"TaskSelector",
+	],
 	"protocols/pb_potential": [
 		"SetupPoissonBoltzmannPotential",
 	],

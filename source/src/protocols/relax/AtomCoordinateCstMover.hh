@@ -18,34 +18,38 @@
 #include <protocols/relax/AtomCoordinateCstMover.fwd.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/ConstraintGenerator.hh>
 
 // Project headers
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+//#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/types.hh>
 
-//// C++ headers
+// C++ headers
 #include <string>
 
 namespace protocols {
 namespace relax {
 
-class AtomCoordinateCstMover : public moves::Mover {
+class AtomCoordinateCstMover : public moves::ConstraintGenerator {
 public:
-	typedef moves::Mover parent;
+	typedef moves::ConstraintGenerator parent;
 
 public:
 
 	AtomCoordinateCstMover();
-	AtomCoordinateCstMover( AtomCoordinateCstMover const & other);
 	~AtomCoordinateCstMover();
+
+	virtual core::scoring::constraints::ConstraintCOPs
+	generate_constraints( core::pose::Pose const & pose );
+
 	std::string get_name() const { return "AtomCoordinateCstMover"; }
 
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual protocols::moves::MoverOP clone() const;
-	virtual void apply( core::pose::Pose & pose );
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -76,6 +80,10 @@ public:
 	void set_task_segments( core::pack::task::TaskFactoryCOP taskfactory);
 
 private:
+	core::select::residue_selector::ResidueSubset
+	compute_residue_subset( core::pose::Pose const & pose ) const;
+
+private:
 	/// @brief If set, the pose to make the constraints to
 	core::pose::PoseCOP refpose_;
 
@@ -99,7 +107,6 @@ private:
 
 	/// @brief A task definition of constrained segments
 	core::pack::task::TaskFactoryCOP task_segments_;
-
 };
 
 }

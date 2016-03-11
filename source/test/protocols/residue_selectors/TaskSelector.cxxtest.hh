@@ -18,7 +18,7 @@
 #include <test/core/select/residue_selector/DummySelectors.hh>
 
 // Package headers
-#include <protocols/denovo_design/residue_selectors/TaskSelector.hh>
+#include <protocols/residue_selectors/TaskSelector.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 
 // Project headers
@@ -51,7 +51,7 @@ public:
 	}
 
 	void test_TaskSelector_parse_my_tag() {
-		using namespace protocols::denovo_design::residue_selectors;
+		using namespace protocols::residue_selectors;
 		std::stringstream ss;
 		ss << "<Task name=\"allloops\" />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );

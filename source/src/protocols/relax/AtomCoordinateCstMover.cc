@@ -65,22 +65,14 @@ AtomCoordinateCstMoverCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
+	refpose_(),
 	cst_sd_( 0.5 ),
 	bounded_( false ),
 	cst_width_( 0 ),
 	cst_sidechain_( false ),
-	amb_hnq_( false )
-{}
-
-AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const & other ) : protocols::moves::Mover(other),
-	refpose_( other.refpose_ ),
-	cst_sd_( other.cst_sd_ ),
-	bounded_( other.bounded_ ),
-	cst_width_( other.cst_width_ ),
-	cst_sidechain_( other.cst_sidechain_ ),
-	amb_hnq_( other.amb_hnq_ ),
-	loop_segments_( other.loop_segments_ ),
-	task_segments_( other.task_segments_ )
+	amb_hnq_( false ),
+	loop_segments_(),
+	task_segments_()
 {}
 
 AtomCoordinateCstMover::~AtomCoordinateCstMover() {}
@@ -107,8 +99,30 @@ AtomCoordinateCstMover::set_refstruct( core::pose::PoseCOP ref ) {
 	refpose_ = ref;
 }
 
-void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
+core::select::residue_selector::ResidueSubset
+AtomCoordinateCstMover::compute_residue_subset( core::pose::Pose const & pose ) const
+{
+	core::Size const nres = pose.total_residue();
+	core::select::residue_selector::ResidueSubset constrain_residues( nres, false );
+	core::pack::task::PackerTaskOP task;
+	if ( task_segments_ ) {
+		task = task_segments_->create_task_and_apply_taskoperations( pose );
+	}
+	for ( core::Size ii = 1; ii <= nres; ++ii ) {
+		if ( pose.residue( ii ).aa() == core::chemical::aa_vrt ) continue; // Skip virtual residues.
+		// Constrain residue if it's in a loop, or in the task, or if we don't have task/loop limitations.
+		if ( (loop_segments_ && loop_segments_->is_loop_residue( ii )) ||
+				( task && task->being_packed(ii) ) ||
+				( !loop_segments_ && !task ) ) {
+			constrain_residues[ ii ] = true;
+		}
+	}
+	return constrain_residues;
+}
 
+core::scoring::constraints::ConstraintCOPs
+AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
+{
 	using namespace core::scoring::constraints;
 
 	core::pose::Pose constraint_target_pose = pose;
@@ -140,32 +154,17 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 		seq_map = core::id::SequenceMapping::identity( pose.total_residue() );
 	}
 
-	core::Size nres = pose.total_residue();
-
-	utility::vector1< bool > constrain_residues( nres, false );
-	core::pack::task::PackerTaskOP task;
-	if ( task_segments_ ) {
-		task = task_segments_->create_task_and_apply_taskoperations(pose);
-	}
-	for ( core::Size ii = 1; ii <= nres; ++ii ) {
-		// Constrain residue if it's in a loop, or in the task, or if we don't have task/loop limitations.
-		if ( (loop_segments_ && loop_segments_->is_loop_residue( ii )) ||
-				( task && task->being_packed(ii) ) ||
-				( !loop_segments_ && !task ) ) {
-			constrain_residues[ ii ] = true;
-		}
-	}
-
 	// Warn about not having a virtual root (but go ahead with constraints).
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		TR.Warning << "WARNING: Adding coordinate constraints to a pose without a virtual root - results may not be as expected." << std::endl;
 	}
 
-	for ( core::Size i = 1; i<= nres; ++i ) {
-		if ( pose.residue( i ).aa() == core::chemical::aa_vrt ) continue; // Skip virtual residues.
+	core::select::residue_selector::ResidueSubset const constrain_residues( compute_residue_subset( pose ) );
+	core::scoring::constraints::ConstraintCOPs csts;
 
+	for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
 		if ( constrain_residues[i] ) {
-			core::Size j(seq_map[i]);
+			core::Size const j = seq_map[i];
 			if ( j == 0 ) continue;
 			assert( j <= constraint_target_pose.total_residue() ); // Should be, if map was set up properly.
 
@@ -185,7 +184,7 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 				continue;
 			}
 			for ( core::Size ii = 1; ii<= last_atom; ++ii ) {
-				core::Size jj(ii);
+				core::Size jj = ii;
 				if ( use_atom_names ) {
 					std::string atomname( pose_i_rsd.atom_name(ii) );
 					if ( ! targ_j_rsd.has(atomname) ) {
@@ -234,14 +233,16 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 						core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) ) ) );
 					amb_constr->add_individual_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
 						core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) ) ) );
-					pose.add_constraint( amb_constr );
+					csts.push_back( amb_constr );
 				} else {
-					pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( core::id::AtomID(ii,i),
-						core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) ) ) );
+					TR.Debug << "Adding constraint " << core::id::AtomID(ii, i) << std::endl;
+					csts.push_back( ConstraintCOP(
+						new CoordinateConstraint( core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz(jj), function ) ) );
 				}
 			} // for atom
 		} // if(loop)
 	} // for residue
+	return csts;
 }
 
 void

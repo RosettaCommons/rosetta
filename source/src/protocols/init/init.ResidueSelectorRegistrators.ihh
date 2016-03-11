@@ -17,7 +17,7 @@
 namespace protocols {
 using core::select::residue_selector::ResidueSelectorRegistrator;
 
-static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
+static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 
 } // namespace protocols
 

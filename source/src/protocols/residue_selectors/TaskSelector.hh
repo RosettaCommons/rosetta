@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/denovo_design/residue_selectors/TaskSelector.hh
+/// @file   protocols/residue_selectors/TaskSelector.hh
 /// @brief  The TaskSelector selects residues using a string containing residue names
 /// @author Tom Linsky (tlinsky@uw.edu))
 
-#ifndef INCLUDED_protocols_denovo_design_residue_selectors_TaskSelector_HH
-#define INCLUDED_protocols_denovo_design_residue_selectors_TaskSelector_HH
+#ifndef INCLUDED_protocols_residue_selectors_TaskSelector_HH
+#define INCLUDED_protocols_residue_selectors_TaskSelector_HH
 
 // Unit headers
-#include <protocols/denovo_design/residue_selectors/TaskSelector.fwd.hh>
+#include <protocols/residue_selectors/TaskSelector.fwd.hh>
 
 // Package headers
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -30,7 +30,6 @@
 // C++ headers
 
 namespace protocols {
-namespace denovo_design {
 namespace residue_selectors {
 
 /// @brief The TaskSelector returns a ResidueSubset, i.e. a utility::vector1< bool > containing
@@ -75,7 +74,6 @@ private: // data members
 };
 
 } //namespace residue_selectors
-} //namespace denovo_design
 } //namespace protocols
 
 

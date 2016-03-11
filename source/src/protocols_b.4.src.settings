@@ -31,7 +31,6 @@ sources = {
                 "VarLengthBuild",
         ],
         "protocols/forge/constraints": [
-                "ConstraintFileRCG",
                 "InverseRotamersRCG",
                 "InvrotTreeRCG",
                 "NtoC_RCG",
@@ -46,7 +45,7 @@ sources = {
         ],
         "protocols/forge/remodel": [
                 "RemodelAccumulator",
-                "RemodelConstraintGenerator",
+								"RemodelConstraintGenerator",
                 "RemodelData",
                 "RemodelDesignMover",
                 "RemodelEnzdesCstModule",

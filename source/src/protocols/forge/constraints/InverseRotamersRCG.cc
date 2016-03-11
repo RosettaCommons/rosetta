@@ -113,16 +113,15 @@ InverseRotamersRCG::clone() const
 	return protocols::moves::MoverOP( new InverseRotamersRCG( *this ) );
 }
 
-void
-InverseRotamersRCG::generate_remodel_constraints(
-	core::pose::Pose const & pose )
+core::scoring::constraints::ConstraintCOPs
+InverseRotamersRCG::generate_constraints( core::pose::Pose const & pose )
 {
 	//tr << "Generating remodel constraints" << std::endl;
 	//using namespace core::scoring::constraints;
 	//safeguard against bad user input
 	if ( inverse_rotamers_.size() == 0 ) {
 		std::cerr << "WARNING: InverseRotamersRCG is asked to produce constraints but was not given any inverse rotamers. Something's probably wrong somewhere." << std::endl;
-		return;
+		return core::scoring::constraints::ConstraintCOPs();
 	}
 
 	//if no constraint func has been set, we'll create a default one
@@ -140,13 +139,15 @@ InverseRotamersRCG::generate_remodel_constraints(
 			seqpos.push_back( remres );
 		}
 	}
+	core::scoring::constraints::ConstraintCOPs csts;
 	//tr << "adding the constraint to RCG" << std::endl;
-	this->add_constraint( protocols::toolbox::match_enzdes_util::constrain_pose_res_to_invrots( inverse_rotamers_, seqpos, pose, constraint_func_ ) );
+	csts.push_back( protocols::toolbox::match_enzdes_util::constrain_pose_res_to_invrots( inverse_rotamers_, seqpos, pose, constraint_func_ ) );
 	//tr << "clearing inverse rotamers" << std::endl;
 
 	//we can probably delete the inverse rotamers now, to save some memory
 	this->clear_inverse_rotamers();
 	//tr << "done generating remodel constraints!" << std::endl;
+	return csts;
 }
 
 void

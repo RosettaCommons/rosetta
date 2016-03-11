@@ -33,7 +33,11 @@ sources = {
 		"Connection",
 		"ExtendChain",
 	],
-    "protocols/denovo_design/filters": [
+	"protocols/denovo_design/constraints" : [
+		"CoordinateConstraintGenerator",
+		"FileConstraintGenerator",
+	],
+	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
 		"PreProlineFilter",
 		"SSPredictionFilter",
@@ -41,9 +45,6 @@ sources = {
 	"protocols/denovo_design/movers" : [
 		"DisulfidizeMover",
     ],
-	"protocols/denovo_design/residue_selectors": [
-		"TaskSelector",
-	],
 	"protocols/denovo_design/task_operations": [
 		"ConsensusLoopDesign",
 	],

@@ -3455,11 +3455,11 @@ StructureData::apply_mover( protocols::moves::MoverOP mover )
 
 /// @brief removes constraints added by the given RCG
 void
-StructureData::remove_constraints_from_pose( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg )
+StructureData::remove_constraints_from_pose( protocols::moves::ConstraintGeneratorOP cg )
 {
 	debug_assert( pose_ );
-	debug_assert( rcg );
-	rcg->remove_remodel_constraints_from_pose( *pose_ );
+	debug_assert( cg );
+	cg->remove_constraints_from_pose( *pose_ );
 }
 
 /// @brief creates a new jump and cutpoint to build the given loop object

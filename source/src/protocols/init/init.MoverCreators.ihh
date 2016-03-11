@@ -77,6 +77,8 @@
 #include <protocols/denovo_design/connection/BridgeChainsCreator.hh>
 #include <protocols/denovo_design/connection/ConnectionCreators.hh>
 #include <protocols/denovo_design/connection/ExtendChainCreator.hh>
+#include <protocols/denovo_design/constraints/CoordinateConstraintGeneratorCreator.hh>
+#include <protocols/denovo_design/constraints/FileConstraintGeneratorCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
@@ -123,7 +125,6 @@
 #include <protocols/flxbb/FlxbbDesignCreator.hh>
 #include <protocols/flxbb/InterlockAromaCreator.hh>
 
-#include <protocols/forge/constraints/ConstraintFileCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/NtoCCstGeneratorCreator.hh>

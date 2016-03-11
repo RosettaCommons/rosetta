@@ -7,14 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file  protocols/forge/constraints/ConstraintFileRCG.cc
+/// @file  protocols/denovo_design/constraints/FileConstraintGenerator.cc
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
+/// @author Tom Linsky ( tlinsky at uw dot edu ), Mar 2016
 
 // Unit header
-#include <protocols/forge/constraints/ConstraintFileRCG.hh>
-#include <protocols/forge/constraints/ConstraintFileCstGeneratorCreator.hh>
+#include <protocols/denovo_design/constraints/FileConstraintGenerator.hh>
+#include <protocols/denovo_design/constraints/FileConstraintGeneratorCreator.hh>
 
 // Package headers
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -28,32 +29,32 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.ConstraintFileRCG" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.denovo_design.constraints.FileConstraintGenerator" );
 
 namespace protocols {
-namespace forge {
+namespace denovo_design {
 namespace constraints {
 
 std::string
-ConstraintFileCstGeneratorCreator::keyname() const
+FileConstraintGeneratorCreator::keyname() const
 {
-	return ConstraintFileCstGeneratorCreator::mover_name();
+	return FileConstraintGeneratorCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-ConstraintFileCstGeneratorCreator::create_mover() const
+FileConstraintGeneratorCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new ConstraintFileRCG() );
+	return protocols::moves::MoverOP( new FileConstraintGenerator() );
 }
 
 std::string
-ConstraintFileCstGeneratorCreator::mover_name()
+FileConstraintGeneratorCreator::mover_name()
 {
-	return "ConstraintFileCstGenerator";
+	return "FileConstraintGenerator";
 }
 
 /// @brief
-ConstraintFileRCG::ConstraintFileRCG():
+FileConstraintGenerator::FileConstraintGenerator():
 	RemodelConstraintGenerator(),
 	filename_( "" )
 {
@@ -65,16 +66,16 @@ ConstraintFileRCG::ConstraintFileRCG():
 }
 
 /// @brief
-ConstraintFileRCG::ConstraintFileRCG( String const & filename ):
+FileConstraintGenerator::FileConstraintGenerator( String const & filename ):
 	RemodelConstraintGenerator(),
 	filename_( filename )
 {}
 
 /// @brief
-ConstraintFileRCG::~ConstraintFileRCG() {}
+FileConstraintGenerator::~FileConstraintGenerator() {}
 
 void
-ConstraintFileRCG::parse_my_tag( TagCOP const tag,
+FileConstraintGenerator::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
@@ -85,43 +86,43 @@ ConstraintFileRCG::parse_my_tag( TagCOP const tag,
 }
 
 std::string
-ConstraintFileRCG::get_name() const
+FileConstraintGenerator::get_name() const
 {
-	return ConstraintFileCstGeneratorCreator::mover_name();
+	return FileConstraintGeneratorCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-ConstraintFileRCG::fresh_instance() const
+FileConstraintGenerator::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ConstraintFileRCG() );
+	return protocols::moves::MoverOP( new FileConstraintGenerator() );
 }
 
 protocols::moves::MoverOP
-ConstraintFileRCG::clone() const
+FileConstraintGenerator::clone() const
 {
-	return protocols::moves::MoverOP( new ConstraintFileRCG( *this ) );
+	return protocols::moves::MoverOP( new FileConstraintGenerator( *this ) );
 }
 
 /// @brief
 void
-ConstraintFileRCG::set_cstfile( String const & filename )
+FileConstraintGenerator::set_cstfile( String const & filename )
 {
 	filename_ = filename;
 }
 
 /// @brief
-void
-ConstraintFileRCG::generate_remodel_constraints( Pose const & pose )
+core::scoring::constraints::ConstraintCOPs
+FileConstraintGenerator::generate_constraints( Pose const & pose )
 {
 	using namespace core::scoring::constraints;
 	if ( filename_ == "" ) {
-		utility_exit_with_message( "ConstraintFileCstGenerator requires that a constraint filename be specified." );
+		utility_exit_with_message( "FileConstraintGenerator requires that a constraint filename be specified." );
 	}
 	ConstraintSetOP constraints = ConstraintIO::get_instance()->read_constraints( filename_, ConstraintSetOP( new ConstraintSet ), pose );
-	this->add_constraints( constraints->get_all_constraints() );
+	return constraints->get_all_constraints();
 } //generate constraints
 
 
 } //namespace constraints
-} //namespace forge
+} //namespace denovo_design
 } //namespace protocols

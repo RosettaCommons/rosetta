@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/forge/constraints/ConstraintFileRCG.hh
+/// @file protocols/denovo_design/constraints/FileConstraintGenerator.hh
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
 /// @modified Tom Linsky ( tlinsky@uw.edu ), Nov 2012
 
-#ifndef INCLUDED_protocols_forge_constraints_ConstraintFileRCG_hh
-#define INCLUDED_protocols_forge_constraints_ConstraintFileRCG_hh
+#ifndef INCLUDED_protocols_denovo_design_constraints_FileConstraintGenerator_hh
+#define INCLUDED_protocols_denovo_design_constraints_FileConstraintGenerator_hh
 
 // Unit Header
-#include <protocols/forge/constraints/ConstraintFileRCG.fwd.hh>
+#include <protocols/denovo_design/constraints/FileConstraintGenerator.fwd.hh>
 
 // Package Header
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
@@ -33,21 +33,21 @@
 
 
 namespace protocols {
-namespace forge {
+namespace denovo_design {
 namespace constraints {
 
-class ConstraintFileRCG : public protocols::forge::remodel::RemodelConstraintGenerator{
+class FileConstraintGenerator : public protocols::forge::remodel::RemodelConstraintGenerator{
 public:
 
 	typedef std::string String;
 	typedef core::pose::Pose Pose;
 
 public:
-	ConstraintFileRCG();
+	FileConstraintGenerator();
 
-	ConstraintFileRCG( String const & filename );
+	FileConstraintGenerator( String const & filename );
 
-	virtual ~ConstraintFileRCG();
+	virtual ~FileConstraintGenerator();
 
 	void set_cstfile( String const & filename );
 
@@ -67,19 +67,19 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-	virtual
-	void generate_remodel_constraints( Pose const & pose );
+	virtual core::scoring::constraints::ConstraintCOPs
+	generate_constraints( Pose const & pose );
 
 private:
 
 	String filename_;
 
-}; //class ConstraintFileRCG
+}; //class FileConstraintGenerator
 
 
 } //namespace constraints
-} //namespace forge
+} //namespace denovo_design
 } //namespace protocols
 
 
-#endif // INCLUDED_protocols_forge_constraints_ConstraintFileRCG_HH
+#endif // INCLUDED_protocols_denovo_design_constraints_FileConstraintGenerator_HH

@@ -51,7 +51,7 @@ public:
 		// simple test of ranges -- residues 2-10 inclusive are selected
 		core::select::residue_selector::ResidueSubset subset( 20, false );
 		for ( core::Size resid=2; resid<=10; ++resid ) {
-				subset[ resid ] = true;
+			subset[ resid ] = true;
 		}
 
 		core::select::residue_selector::ResidueRanges ranges( subset );

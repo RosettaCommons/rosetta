@@ -20,6 +20,7 @@
 #include <protocols/denovo_design/components/Picker.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/constraints/CoordinateConstraintGenerator.hh>
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
@@ -51,6 +52,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/sequence/ABEGOManager.hh>
 
 //Basic Headers
@@ -77,45 +79,6 @@ namespace protocols {
 namespace denovo_design {
 namespace connection {
 ///////////////////////////////////////////////////////////////////////////////
-
-// coordinate cst rcg class
-class CoordinateCstRCG : public protocols::forge::remodel::RemodelConstraintGenerator {
-public:
-	CoordinateCstRCG() { residues_.clear(); }
-	virtual ~CoordinateCstRCG() {}
-	virtual std::string get_name() const { return "CoordinateCstRCG"; }
-	virtual void generate_remodel_constraints( core::pose::Pose const & pose ) {
-		for ( core::Size idx=1; idx<=residues_.size(); ++idx ) {
-			add_constraint( create_coordinate_cst( pose, residues_[idx] ) );
-		}
-	}
-
-	void add_residue( core::Size const res ) { residues_.push_back(res); }
-
-	/// @brief creates a Ca coordinate constraint for residue resi
-	core::scoring::constraints::ConstraintOP
-	create_coordinate_cst( core::pose::Pose const & pose,
-		core::Size const resi ) const
-	{
-		core::Size atom( pose.residue_type(resi).nbr_atom() );
-		if ( pose.residue_type(resi).has("CA") ) {
-			atom = pose.residue_type(resi).atom_index("CA");
-		}
-
-		return core::scoring::constraints::ConstraintOP(
-			new core::scoring::constraints::CoordinateConstraint(
-			core::id::AtomID(atom,resi),
-			core::id::AtomID(pose.residue(1).nbr_atom(),1),
-			pose.residue(resi).xyz(atom),
-			core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(0.0, 0.5) ) ) );
-	}
-
-private:
-	utility::vector1< core::Size > residues_;
-};
-typedef utility::pointer::shared_ptr< CoordinateCstRCG > CoordinateCstRCGOP;
-
-////////////////////////////////////////////////////////////////////////////////
 
 std::string
 BridgeChainsCreator::keyname() const
@@ -296,16 +259,28 @@ BridgeChains::build_loop( components::StructureData & perm ) const
 	// setup cutpoints
 	core::Size const cutres = perm.segment( loop_lower(perm) ).cterm_resi();
 
+
 	// setup coordinate csts
-	CoordinateCstRCGOP coord_cst( new CoordinateCstRCG() );
+	constraints::CoordinateConstraintGeneratorOP coord_cst( new constraints::CoordinateConstraintGenerator() );
+	utility::vector1< core::Size > resids;
 	for ( core::Size i=left; i<loopstart; ++i ) {
 		TR << "Creating cst for residue " << i << std::endl;
-		coord_cst->add_residue( i );
+		resids.push_back( i );
 	}
 	for ( core::Size i=loopend+1; i<=right; ++i ) {
 		TR << "Creating cst for residue " << i << std::endl;
-		coord_cst->add_residue( i );
+		resids.push_back( i );
 	}
+	std::stringstream resid_str;
+	for ( utility::vector1< core::Size >::const_iterator r=resids.begin(); r!=resids.end(); ++r ) {
+		if ( r != resids.begin() ) {
+			resid_str << ",";
+		}
+		resid_str << *r;
+	}
+	core::select::residue_selector::ResidueSelectorOP selector(
+		new core::select::residue_selector::ResidueIndexSelector( resid_str.str() ) );
+	coord_cst->set_selector( selector );
 
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
 	debug_assert( cutres >= left );

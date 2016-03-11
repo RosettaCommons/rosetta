@@ -151,6 +151,7 @@ sources = {
 	],
 	"protocols/moves": [
 		"CompositionMover",
+		"ConstraintGenerator",
 		"CyclicMover",
 		"DsspMover",
 		"DualMonteCarlo",

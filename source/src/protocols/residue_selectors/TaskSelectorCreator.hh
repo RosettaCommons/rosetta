@@ -7,19 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/denovo_design/residue_selectors/TaskCreators.hh
-/// @brief  Creator for denovo design residue selectors
+/// @file   protocols/residue_selectors/TaskCreators.hh
+/// @brief  Creator for PackerTask-based residue selectors
 /// @author Tom Linsky (tlinsky@gmail.com)
 
-#ifndef INCLUDED_protocols_denovo_design_residue_selectors_TaskSelectorCreator_HH
-#define INCLUDED_protocols_denovo_design_residue_selectors_TaskSelectorCreator_HH
+#ifndef INCLUDED_protocols_residue_selectors_TaskSelectorCreator_HH
+#define INCLUDED_protocols_residue_selectors_TaskSelectorCreator_HH
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 
 namespace protocols {
-namespace denovo_design {
 namespace residue_selectors {
 
 class TaskSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
@@ -30,7 +29,6 @@ public:
 };
 
 } //namespace residue_selectors
-} //namespace denovo_design
 } //namespace protocols
 
 

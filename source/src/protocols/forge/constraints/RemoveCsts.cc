@@ -18,7 +18,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+#include <protocols/moves/ConstraintGenerator.hh>
 
 // Project headers
 #include <core/scoring/constraints/Constraint.hh>
@@ -61,14 +61,8 @@ RemoveCsts::RemoveCsts()
 	generator_id_( "" )
 {}
 
-RemoveCsts::RemoveCsts( RemoveCsts const & rval )
-: Mover( rval ),
-	generator_( rval.generator_ ),
-	generator_id_( rval.generator_id_ )
-{}
-
 /// @brief
-RemoveCsts::RemoveCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
+RemoveCsts::RemoveCsts( protocols::moves::ConstraintGeneratorOP generator )
 : Mover()
 {
 	set_generator( generator );
@@ -89,14 +83,14 @@ RemoveCsts::parse_my_tag( TagCOP const tag,
 		utility_exit_with_message( "No Cst Generator was specified in the XML for RemoveCsts." );
 	}
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( generator_id_, movers );
-	assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
-	protocols::forge::remodel::RemodelConstraintGeneratorOP rcg;
-	if ( (rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover )) ) {
-		set_generator( rcg );
+	debug_assert( utility::pointer::dynamic_pointer_cast< protocols::moves::ConstraintGenerator >( mover ) );
+	protocols::moves::ConstraintGeneratorOP cg;
+	if ( ( cg = utility::pointer::static_pointer_cast< protocols::moves::ConstraintGenerator >( mover ) ) ) {
+		set_generator( cg );
 	} else {
 		utility_exit_with_message( "Error parsing generator option to RemoveCsts: the specified mover " + generator_id_ + " is not a constraint generator." );
 	}
-	TR << "Cst generator =" << generator_->get_name() << " with name=" << generator_id_ << std::endl;
+	TR << "Cst generator =" << generator_->id() << " with name=" << generator_id_ << std::endl;
 }
 
 std::string
@@ -118,7 +112,7 @@ RemoveCsts::clone() const
 }
 
 void
-RemoveCsts::set_generator( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
+RemoveCsts::set_generator( protocols::moves::ConstraintGeneratorOP generator )
 {
 	runtime_assert( generator != 0 );
 	generator_ = generator;
@@ -130,14 +124,15 @@ RemoveCsts::apply( core::pose::Pose & pose )
 {
 	runtime_assert( generator_ || ( generator_id_ != "" ) );
 	// if the generator_id_ is set, look up constraints in the static map and remove them.
+	core::Size const start_ncsts = pose.constraint_set()->get_all_constraints().size();
 	if ( generator_id_ != "" ) {
-		TR << "Before removing csts from " << generator_->get_name() << ", there were " << pose.constraint_set()->get_all_constraints().size() << " constraints in the pose." << std::endl;
-		pose.remove_constraints( protocols::forge::remodel::RemodelConstraintGenerator::lookup_stored_constraints( generator_id_ ) );
+		TR << "Before removing csts from " << generator_->get_name() << ", there were " << start_ncsts << " constraints in the pose." << std::endl;
+		pose.remove_constraints( protocols::moves::ConstraintGenerator::lookup_stored_constraints( generator_id_ ) );
 		TR << "There are " << pose.constraint_set()->get_all_constraints().size() << " constraints remaining in the pose." << std::endl;
 	} else {
 		// otherwise, use the pointer
-		TR << "Before removing csts from " << generator_->get_name() << ", there were " << pose.constraint_set()->get_all_constraints().size() << " constraints in the pose." << std::endl;
-		generator_->remove_remodel_constraints_from_pose( pose );
+		TR << "Before removing csts from " << generator_->get_name() << ", there were " << start_ncsts << " constraints in the pose." << std::endl;
+		generator_->remove_constraints_from_pose( pose );
 		TR << "There are " << pose.constraint_set()->get_all_constraints().size() << " constraints remaining in the pose." << std::endl;
 	}
 }
