@@ -220,13 +220,13 @@ GenericMonteCarloMover::initialize()
 {
 	last_accepted_scores_.clear();
 	lowest_scores_.clear();
+
+	runtime_assert_string_msg( sample_type_ == "high" || sample_type_ == "low", "Error!  The sample type, " + sample_type_ + ", is not defined." );
+
 	if ( sample_type_ == "high" ) {
 		flip_sign_ = -1;
 	} else if ( sample_type_ == "low" ) {
 		flip_sign_ = 1;
-	} else {
-		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined." << std::endl;
-		runtime_assert( false );
 	}
 	trial_counter_ = 0;
 	accept_counter_ = 0;
@@ -354,10 +354,7 @@ GenericMonteCarloMover::set_temperature( Real const temp )
 void
 GenericMonteCarloMover::set_sampletype( String const & type )
 {
-	if ( sample_type_ != "high" && sample_type_ != "low" ) {
-		TR << "WARNING !! the sample type, " << type << ", is not defined." << std::endl;
-		runtime_assert( false );
-	}
+	runtime_assert_string_msg( type == "high" || type == "low", "Error!  The sample type, " + type + ", is not defined." );
 	sample_type_ = type;
 }
 
@@ -1034,10 +1031,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 
 	parse_task_operations( tag, data, filters, movers );
 
-	if ( filter_name == "true_filter" && !scorefxn_ ) {
-		TR.Error << "You need to set filter_name or scorefxn_name for MC criteria." << std::endl;
-		runtime_assert( false );
-	}
+	runtime_assert_string_msg( filter_name != "true_filter" || scorefxn_, "You need to set filter_name or scorefxn_name for MC criteria." );
 
 	if ( filters_.size() == 0 ) {
 		TR << "Apply mover of " << user_defined_mover_name_ << ", and evaluate score by " << sfxn
