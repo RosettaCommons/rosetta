@@ -62,6 +62,7 @@ namespace pose {
 class UnrecognizedAtomRecord {
 
 public:
+ 	UnrecognizedAtomRecord();
 
 	UnrecognizedAtomRecord(
 		Size res_num,
@@ -90,9 +91,9 @@ private:
 	Real temp_;
 
 #ifdef    SERIALIZATION
-public:
+	//public:
 	/// @brief Default constructor for the purpose of serialization only. Do not use.
-	UnrecognizedAtomRecord();
+	//	UnrecognizedAtomRecord();
 
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -1365,6 +1366,7 @@ public:
 
 // for Python bindings
 std::ostream & operator << ( std::ostream & os, PDBInfo const & info);
+std::ostream & operator << ( std::ostream & os, UnrecognizedAtomRecord const & uar );
 
 } // namespace pose
 } // namespace core

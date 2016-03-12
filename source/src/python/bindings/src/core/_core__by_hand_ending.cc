@@ -67,4 +67,6 @@ void __core_by_hand_ending__()
     //}
     //wrap_vector1_part<core::conformation::Atom, CP_REF, CP_REF>("vector1_core_conformation_Atom");
     wrap_vector1_part<core::conformation::Atom, CP_CNCR, CP_CCR>("vector1_core_conformation_Atom");
+    wrap_vector1<core::pose::UnrecognizedAtomRecord, CP_CNCR, CP_CCR>("vector1_core_pose_UnrecognizedAtomRecord");
+
 }

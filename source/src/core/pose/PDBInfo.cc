@@ -67,6 +67,10 @@ namespace pose {
 
 static THREAD_LOCAL basic::Tracer TR( "core.pose.PDBInfo" );
 
+ core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
+
+
+
 /// @brief default constructor, obsolete is *true*
 PDBInfo::PDBInfo() :
 	Super(),
@@ -877,6 +881,20 @@ std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 	return os;
 }
 
+std::ostream & operator << ( std::ostream & os, core::pose::UnrecognizedAtomRecord const & uar )
+{
+	/*	Size res_num,
+    std::string res_name,
+    std::string atom_name,
+    numeric::xyzVector<Real> coords,
+    Real temp
+	*/
+	os << "Res Number " << uar.res_num() << " Atom Name " <<  uar.atom_name() << " Coords " << uar.coords().to_string() << " Temp " << uar.temp() << std::endl;
+	return os;
+}
+
+
+
 } // pose
 } // core
 
@@ -884,7 +902,7 @@ std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 #ifdef    SERIALIZATION
 
 /// @brief Default constructor required by cereal to deserialize this class
-core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
+//core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
 
 /// @brief Automatically generated serialization method
 template< class Archive >

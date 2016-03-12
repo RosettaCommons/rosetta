@@ -18,7 +18,7 @@
 #include "core/chemical/ResidueTypeSet.hh"
 
 #include "core/conformation/Atom.hh"
-
+#include "core/pose/PDBInfo.hh"
 //#include "core/coarse/Translator.hh"
 //#include "core/coarse/CoarseEtable.hh"
 
