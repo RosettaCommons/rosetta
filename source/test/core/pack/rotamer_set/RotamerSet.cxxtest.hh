@@ -90,8 +90,8 @@ public:
 
 		typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
-		core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
-		core::Real const pi = numeric::constants::f::pi;
+		//core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
+		//core::Real const pi = numeric::constants::f::pi;
 
 		TR << "Beginning RotamerSets test... " << std::endl;
 
