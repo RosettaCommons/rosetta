@@ -239,15 +239,10 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
 		weight_set = CENTROID_WTS;
 
-	} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::talaris2014 ] ) {
-
-		weight_set = "talaris2014";
-
 	} else {
 
-		// Default score is score12 if the user has not specified a score weights file or a patch file
-		// on the command line.  If the user has specified that they would like the standard weight set,
-		// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
+		// Default score is talaris2014 if the user has not specified a score weights file or a patch file
+		// on the command line.
 
 		//tr << "get_score_function1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
 		//tr << "option[ score::weights ].user() ? " << option[ score::weights ].user() << std::endl;

@@ -909,10 +909,10 @@ public: // test functions
 		utility::vector1< int > chains = get_chains( pose );
 
 		// initializations
-		core::Vector com1( -8.6948, 3.75347, 19.414 );
+		core::Vector com1( -8.6927, 3.7495, 19.4293 );
 		core::Vector com2( -4.70189, -9.09737, 19.3467 );
-		core::Vector com3( 8.92337, -3.8912, 18.6833 );
-		core::Vector com4( 4.46868, 9.22617, 19.3293 );
+		core::Vector com3( 8.92337, -3.8958, 18.6790 );
+		core::Vector com4( 4.4793, 9.22617, 19.3396 );
 
 		// compute chain COM for all chains and pushback into vector
 		core::Vector com_1 = protocols::membrane::chain_com( pose, chains[ 1 ] );

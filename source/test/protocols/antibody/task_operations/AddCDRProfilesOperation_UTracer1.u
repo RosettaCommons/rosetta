@@ -232,4 +232,3 @@ resid	pack?	design?	allowed_aas
 229	TRUE	TRUE	ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
 230	TRUE	TRUE	ALA:CtermProteinFull,CYS:CtermProteinFull,ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,GLY:CtermProteinFull,HIS:CtermProteinFull,HIS_D:CtermProteinFull,ILE:CtermProteinFull,LYS:CtermProteinFull,LEU:CtermProteinFull,MET:CtermProteinFull,ASN:CtermProteinFull,PRO:CtermProteinFull,GLN:CtermProteinFull,ARG:CtermProteinFull,SER:CtermProteinFull,THR:CtermProteinFull,VAL:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 
-

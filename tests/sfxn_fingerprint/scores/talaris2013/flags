@@ -2,3 +2,4 @@
 -in:file:silent_struct_type binary
 -in:file:fullatom
 -out:nooutput
+-score:weights talaris2013
