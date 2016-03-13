@@ -163,7 +163,6 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 /// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 /// @param[in] total_solutions -- Total number of solutions found.
 /// @param[in] solutions -- Reference to vector of owning pointers of poses representing solutions, with pre-selection filters already applied.
-/// @param[in] energies_for_solution -- Vector of energies for each solution.  Used only in low-memory mode.
 core::Size GeneralizedKICselector::apply (
 	core::pose::Pose const &pose,
 	core::pose::Pose const &original_pose, //The original pose
@@ -175,13 +174,11 @@ core::Size GeneralizedKICselector::apply (
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 	utility::vector1 <core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions,
-	utility::vector1 <core::pose::PoseCOP> const &solutions,
-	bool const low_memory_mode,
-	utility::vector1 <core::Real> const &energies_for_solution
+	utility::vector1 <core::pose::PoseCOP> const &solutions
 ) const {
 
 	TR << "Choosing GeneralizedKIC solution." << std::endl;
-	if ( total_solutions < 1 && !low_memory_mode ) {
+	if ( total_solutions < 1 ) {
 		TR.Warning << "Warning!  No solutions passed to GeneralizedKICselector::apply.  The loop pose could not be updated!  No solution chosen!" << std::endl;
 	}
 
@@ -194,12 +191,12 @@ core::Size GeneralizedKICselector::apply (
 		break;
 	case lowest_energy_selector :
 		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_solution, selector_sfxn_,
-			pose, original_pose, boltzmann_kbt_, false, solutions, low_memory_mode, energies_for_solution
+			pose, original_pose, boltzmann_kbt_, false, solutions
 		);
 		break;
 	case boltzmann_energy_selector :
 		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_solution, selector_sfxn_,
-			pose, original_pose, boltzmann_kbt_, true, solutions, low_memory_mode, energies_for_solution
+			pose, original_pose, boltzmann_kbt_, true, solutions
 		); //Recycle this function from lowest_energy_selector to avoid code duplication
 		break;
 	case lowest_rmsd_selector :
@@ -259,14 +256,9 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 	core::pose::Pose const &ref_pose,
 	core::Real const &boltzmann_kbt,
 	bool const use_boltzmann,
-	utility::vector1 <core::pose::PoseCOP> const &solutions,
-	bool const low_memory_mode,
-	utility::vector1 <core::Real> const &energies_for_solution
+	utility::vector1 <core::pose::PoseCOP> const &solutions
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
-
-	if ( low_memory_mode ) { debug_assert( energies_for_solution.size() == total_solutions ); }
-	else { debug_assert( solutions.size() == total_solutions ); }
 
 	core::scoring::ScoreFunctionOP my_sfxn=sfxn;
 	if ( !my_sfxn ) my_sfxn=core::scoring::get_score_function(); //Get the default scorefunction if one has not been supplied.
@@ -284,24 +276,18 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 	core::pose::Pose looppose = ref_loop_pose;
 
 	for ( core::Size i=1; i<=total_solutions; ++i ) { //Loop through all attempts
-		core::Real curenergy(0.0);
-		if ( low_memory_mode ) {
-			curenergy=energies_for_solution[i];
-		} else {
-			core::pose::PoseOP temppose( solutions[i]->clone() ); //Copy the ith solution.
-			(*my_sfxn)(*temppose);
-			curenergy=temppose->energies().total_energy();
-		}
+		core::pose::PoseOP temppose( solutions[i]->clone() ); //Copy the ith solution.
+		(*my_sfxn)(*temppose);
 		if ( !use_boltzmann ) { //If we're just finding the lowest-energy solution:
-			TR.Debug << "Scoring solution " << i << ".  E = " << curenergy << std::endl;
-			if ( lowest_energy_solution==0 || curenergy < lowest_energy ) {
-				lowest_energy = curenergy;
+			TR.Debug << "Scoring solution " << i << ".  E = " << temppose->energies().total_energy() << std::endl;
+			if ( lowest_energy_solution==0 || temppose->energies().total_energy() < lowest_energy ) {
+				lowest_energy = temppose->energies().total_energy();
 				lowest_energy_solution = i;
 			}
 		} else { //If we're randomly picking weighted by Boltzmann factors:
-			boltzmann_factors.push_back( exp( -1.0*( curenergy ) / boltzmann_kbt) );
+			boltzmann_factors.push_back( exp( -1.0*( temppose->energies().total_energy() ) / boltzmann_kbt) );
 			boltzmann_factor_accumulator += boltzmann_factors[boltzmann_factors.size()]; //For normalization
-			TR.Debug << "Scoring solution " << i << " from closure attempt " << i << ".  E = " << curenergy << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
+			TR.Debug << "Scoring solution " << i << " from closure attempt " << i << ".  E = " << temppose->energies().total_energy() << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
 		}
 	} //End loop through all attempts.
 

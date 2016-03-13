@@ -27,7 +27,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/ContingentFilter.fwd.hh>
 #include <protocols/filters/ContingentFilter.hh>
 
@@ -425,7 +424,7 @@ public:
 
 	/// @brief Clear the stored solution poses.
 	///
-	void clear_stored_solutions();
+	inline void clear_stored_solutions() { solutions_.clear(); }
 
 	/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
 	///
@@ -439,17 +438,8 @@ public:
 	/// @details Only does anything in the BOINC graphics build.
 	inline bool attach_boinc_ghost_observer() const { return attach_boinc_ghost_observer_; }
 
-	/// @brief Sets whether we're using low-memory mode.
-	/// @details If false (the default) then a vector of result poses is stored.  This can use a lot of memory, though.
-	/// If true, then only loop DOFs are stored.  This loses the results of applying any preselection movers, though.
-	inline void set_low_memory_mode( bool const setting ) { low_memory_mode_=setting; return; }
-
-	/// @brief Gets whether we're using low-memory mode.
-	/// @details If false (the default) then a vector of result poses is stored.  This can use a lot of memory, though.
-	/// If true, then only loop DOFs are stored.  This loses the results of applying any preselection movers, though.
-	inline bool low_memory_mode() const { return low_memory_mode_; }
-
 private:
+
 
 	/// @brief The list of residues (as inidices of the original pose) making up the loop to be closed.
 	utility::vector1 < core::Size > loopresidues_;
@@ -566,21 +556,6 @@ private:
 	/// @details Default false.  Only does anything in the BOINC build.
 	bool attach_boinc_ghost_observer_;
 
-	/// @brief Use low memory mode?  Default false.
-	/// @details If false (the default) then a vector of result poses is stored.  This can use a lot of memory, though.
-	/// If true, then only loop DOFs are stored.  This loses the results of applying any preselection movers, though.
-	bool low_memory_mode_;
-
-	/// @brief Vector of loop bond angles from final solutions.
-	/// @details Only stored in low-memory mode.
-	utility::vector1 < utility::vector1 < core::Real > > bondangle_solutions_;
-
-	/// @brief Vector of loop bond lengths from final solutions.
-	/// @details Only stored in low-memory mode.
-	utility::vector1 < utility::vector1 < core::Real > > bondlength_solutions_;
-
-private:
-
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //
 	////////////////////////////////////////////////////////////////////////////////
@@ -670,16 +645,12 @@ private:
 	/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), residue_map (the mapping of
 	/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is the index
 	/// of the solution in the solutions_ vector.
-	/// @notes The selected_torsions, selected_bondangles, and selected_bondlengths vectors are output only in low-memory mode.
 	bool doKIC(
 		core::pose::Pose const &pose,
 		core::pose::Pose const &original_pose,
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
 		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map,
-		core::Size &solution_index,
-		utility::vector1 < core::Real > & selected_torsions,
-		utility::vector1 < core::Real > & selected_bondangles,
-		utility::vector1 < core::Real > & selected_bondlengths
+		core::Size &solution_index
 	);
 
 
@@ -767,7 +738,6 @@ private:
 	/// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 	/// @param[in] total_solutions -- Total number of solutions found.
-	/// @param[in] energies_for_solution -- Vectors of the energies from each attempt.  Used only in low-memory mode.
 	core::Size select_solution (
 		core::pose::Pose const &pose,
 		core::pose::Pose const &original_pose, //The original pose
@@ -778,8 +748,7 @@ private:
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 		utility::vector1 <core::Size> const &nsol_for_attempt,
-		core::Size const total_solutions,
-		utility::vector1 <core::Real> const &energies_for_solution
+		core::Size const total_solutions
 	) const;
 
 	/// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
@@ -791,25 +760,11 @@ private:
 	bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
 
 	/// @brief Add a solution to the solutions list.
-	/// @details Stores an owning pointer to a pose.  Not used in low-memory mode (see function overload).
-	void add_solution( core::pose::PoseOP pose_in );
-
-	/// @brief Sets the pose to a particular solution from the solutions list.
-	/// @details This is for regular mode, so it just grabs this from the stored solution pose vector.
-	void set_final_solution( core::pose::Pose &output_pose, core::Size const solution_index ) const;
-
-	/// @brief Sets the pose to a particular solution from the solutions list.
-	/// @details This is for low-memory mode, so it constructs the pose from DoF vectors and reapplies preselection movers.
-	protocols::moves::MoverStatus
-	set_final_solution(
-		core::pose::Pose &pose,
-		core::pose::Pose &looppose,
-		utility::vector1 < std::pair < core::Size, core::Size > > const & residue_map,
-		utility::vector1 < std::pair < core::Size, core::Size > > const & tail_residue_map,
-		utility::vector1< core::Real > const &torsions,
-		utility::vector1< core::Real > const &bondangles,
-		utility::vector1< core::Real > const &bondlengths
-	) const;
+	/// @details Stores an owning pointer to a pose.
+	inline void add_solution( core::pose::PoseOP pose_in ) {
+		solutions_.push_back(pose_in);
+		return;
+	}
 
 	/// @brief Return the number of stored solutions
 	///

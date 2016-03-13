@@ -64,8 +64,8 @@ LKBTrieEvaluator::heavyatom_heavyatom_energy(
 		lkb_.get_lk_fractional_contribution( at1.atom( ).xyz(), at1.atom( ).type(), at2.waters() );
 
 	core::Real lk_ij = 0.0;
-	if ( !at1.waters().empty() ) lk_ij += lk_desolvation_of_atom1_by_atom2;
-	if ( !at2.waters().empty() ) lk_ij += lk_desolvation_of_atom2_by_atom1;
+	if (!at1.waters().empty()) lk_ij += lk_desolvation_of_atom1_by_atom2;
+	if (!at2.waters().empty()) lk_ij += lk_desolvation_of_atom2_by_atom1;
 	core::Real lkbr_ij = lk_desolvation_of_atom1_by_atom2_lkb+lk_desolvation_of_atom2_by_atom1_lkb;
 
 	core::Real score =

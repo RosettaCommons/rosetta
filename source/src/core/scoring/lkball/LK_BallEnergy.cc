@@ -1525,16 +1525,16 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 	temp_table3 = 0;
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
-	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
-	emap.zero();
-	residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
-	temp_table3( jj, ii ) += weights.dot( emap );
-	if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
-	std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
-	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
-	std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
-	}
-	}
+		for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
+			emap.zero();
+			residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
+			temp_table3( jj, ii ) += weights.dot( emap );
+			if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
+				std::cout << "lkballE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
+				std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
+				std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
+			}
+		}
 	}
 	std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
 	*/
