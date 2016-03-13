@@ -62,7 +62,7 @@ namespace pose {
 class UnrecognizedAtomRecord {
 
 public:
- 	UnrecognizedAtomRecord();
+	UnrecognizedAtomRecord();
 
 	UnrecognizedAtomRecord(
 		Size res_num,

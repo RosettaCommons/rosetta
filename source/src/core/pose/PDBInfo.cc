@@ -67,7 +67,7 @@ namespace pose {
 
 static THREAD_LOCAL basic::Tracer TR( "core.pose.PDBInfo" );
 
- core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
+core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
 
 
 
@@ -883,11 +883,11 @@ std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 
 std::ostream & operator << ( std::ostream & os, core::pose::UnrecognizedAtomRecord const & uar )
 {
-	/*	Size res_num,
-    std::string res_name,
-    std::string atom_name,
-    numeric::xyzVector<Real> coords,
-    Real temp
+	/* Size res_num,
+	std::string res_name,
+	std::string atom_name,
+	numeric::xyzVector<Real> coords,
+	Real temp
 	*/
 	os << "Res Number " << uar.res_num() << " Atom Name " <<  uar.atom_name() << " Coords " << uar.coords().to_string() << " Temp " << uar.temp() << std::endl;
 	return os;
