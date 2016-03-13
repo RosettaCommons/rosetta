@@ -194,7 +194,7 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 
 	// quick SC minimization
 	core::optimization::AtomTreeMinimizer mzr;
-	core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1e-5, true, false );
 	core::kinematics::MoveMap mm;
 	mm.set_bb( false );
 	mm.set_chi( true );

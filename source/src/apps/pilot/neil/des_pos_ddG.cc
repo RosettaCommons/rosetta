@@ -189,7 +189,7 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
   // Make MoveMap symmetric, apply it to minimize the pose
   core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
   // print_movemap( *movemap );
-  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
   m.apply(pose);
 }
 

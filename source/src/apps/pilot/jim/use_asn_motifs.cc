@@ -170,7 +170,7 @@ place_waters_and_minimize( Pose & pose )
 
   	{
     // setup the options
-    MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
+    MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
 
 		AtomTreeMinimizer minimizer;
 //    minimizer.run( pose, mm, scorefxn, options );

@@ -184,7 +184,7 @@ void SymDockingHiRes::set_default( core::pose::Pose & pose ) {
 
 	//sets up minimization parameters
 	min_tolerance_ = 0.01;
-	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
+	min_type_ = std::string( "lbfgs_armijo_nonmonotone" );
 	nb_list_ = true;
 
 	setup_packing( pose );

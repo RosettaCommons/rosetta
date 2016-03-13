@@ -302,8 +302,8 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	bool const use_nblist( true );
 	float const tolerance = 0.000000000000025; //Sept 21, 2011, same result for  dfp_min and dfpmin_atol| converge to identical energy score with 0.00000025 of dfpmin_atol!
 	//Fang: This number is insanely small....
-	MinimizerOptions options_standard( "dfpmin_atol", tolerance, use_nblist, false, false );      //Switch to absolute tolerance on Sept 21, 2011
-	MinimizerOptions options_armijo( "dfpmin_armijo_atol", tolerance, use_nblist, false, false ); //Add this on Sept 21, 2011
+	MinimizerOptions options_standard( "lbfgs_armijo_atol", tolerance, use_nblist, false, false );      //Switch to absolute tolerance on Sept 21, 2011
+	MinimizerOptions options_armijo( "lbfgs_armijo_atol", tolerance, use_nblist, false, false ); //Add this on Sept 21, 2011
 
 	TR.Debug << "options_standard: min_type = " << options_standard.min_type() << " minimize_tolerance = "  << options_standard.minimize_tolerance() << std::endl;
 	TR.Debug << "options_armijo  : min_type = " << options_armijo.min_type()   << " minimize_tolerance = "  << options_armijo.minimize_tolerance()   << std::endl;
@@ -608,7 +608,7 @@ VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< PoseOP > & p
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.00000025 );
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 
 	core::kinematics::MoveMap mm;

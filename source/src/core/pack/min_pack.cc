@@ -796,8 +796,8 @@ min_pack_setup(
 	atc = scmin::AtomTreeCollectionOP( new scmin::AtomTreeCollection( pose, *rotsets ) );
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
-	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
-	std::string minimizer = "dfpmin";
+	//optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
+	std::string minimizer = "lbfgs_armijo_nonmonotone";
 	Size max_iter=200;
 	if ( cartesian || nonideal ) {
 		if ( !sfxn.ready_for_nonideal_scoring() ) {

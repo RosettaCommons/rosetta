@@ -258,7 +258,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					core::scoring::ScoreFunctionOP copy_score( hires_score_->clone() );
 					copy_score->set_weight( core::scoring::chainbreak, 10.0 ); // upweight chainbreak, to strongly disfavor breaks
 					copy_score->set_weight( core::scoring::omega, 0.5 ); // omega term to keep backbone healthy
-					protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, copy_score, "dfpmin", 1e-5, true) ); // DJM has reported better results with dfpmin
+					protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, copy_score, "lbfgs_armijo_nonmonotone", 1e-5, true) ); // DJM has reported better results with dfpmin
 					minmover->apply( pose );
 				} // if refine
 				outer_mc.boltzmann( pose );

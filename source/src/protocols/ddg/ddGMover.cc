@@ -471,7 +471,7 @@ ddGMover::minimize_with_constraints(
 	core::optimization::AtomTreeMinimizer min_struc;
 	float minimizer_tol = 0.000001;
 	core::optimization::MinimizerOptions options(
-		"dfpmin_armijo_nonmonotone", minimizer_tol,
+		"lbfgs_armijo_nonmonotone", minimizer_tol,
 		true /*use_nb_list*/,
 		false /*deriv_check_in*/,
 		true /*deriv_check_verbose_in*/);

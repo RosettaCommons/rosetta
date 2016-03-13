@@ -124,7 +124,7 @@ void DockMinMover::set_default() {
 	// min_tolerance_ = 1.0; /////was 0.01, in r++ docking, it is actually 1.0!! with 0.02 as the "tight" tolerance
 	// JQX commented the line right above, the Legacy code use 0.01. Just want to match it
 	min_tolerance_ = 0.01; //JQX added this line
-	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
+	min_type_ = std::string( "lbfgs_armijo_nonmonotone" );
 	nb_list_ = true;
 }
 

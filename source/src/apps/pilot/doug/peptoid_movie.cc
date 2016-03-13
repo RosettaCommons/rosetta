@@ -200,8 +200,8 @@ PeptiodMovieMover::apply( core::pose::Pose & pose )
 	}
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min_sc_bb( new simple_moves::MinMover( desn_mm_sc_bb, score_fxn, "dfpmin", 0.01,	true ) );
-	simple_moves::MinMoverOP desn_min_sc( new simple_moves::MinMover( desn_mm_sc, score_fxn, "dfpmin", 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min_sc_bb( new simple_moves::MinMover( desn_mm_sc_bb, score_fxn, "lbfgs_armijo_nonmonotone", 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min_sc( new simple_moves::MinMover( desn_mm_sc, score_fxn, "lbfgs_armijo_nonmonotone", 0.01,	true ) );
 
 	// create a sequence mover to hold pack rotamers and minimization movers
 	moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );

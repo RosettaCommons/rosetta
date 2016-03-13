@@ -117,12 +117,12 @@ void real_test_GA()
 	TR << "Start minimization... En=" << en << " -------------------------------" << std::endl;
 
 	std::string stype = "unknow";
-	stype = "dfpmin";
+	stype = "lbfgs_armijo_nonmonotone";
 	//stype = "GA";
-	//stype = "dfpmin_armijo";
-	//stype = "dfpmin_armijo_nonmonotone";
+	//stype = "lbfgs_armijo";
+	//stype = "lbfgs_armijo_nonmonotone";
 
-	core::optimization::MinimizerOptions options( stype/*"dfpmin"*/, 1e-4, true, true );
+	core::optimization::MinimizerOptions options( stype/*"lbfgs_armijo_nonmonotone"*/, 1e-4, true, true );
 	options.minimize_tolerance(.001),
 	options.ga_mutation_probability(.5);
 	options.max_iter(1000);

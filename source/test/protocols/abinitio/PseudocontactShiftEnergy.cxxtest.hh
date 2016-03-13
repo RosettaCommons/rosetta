@@ -291,7 +291,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 
 		core::import_pose::pose_from_file( *the_pose_, "protocols/abinitio/pdb_idealized_for_pcs_test.pdb" , core::import_pose::PDB_file);
 		core::Real pcs_score_total = pcs_energy_->calculate_pcs_score(*the_pose_, false);
-		core::Real expected_value(0.5398201739);
+		core::Real expected_value(0.5401);
 		core::Real tolerance(0.0001);
 		Tracer_PCS << std::setprecision(10) << "Expected: "  << expected_value << " Calculated: " << pcs_score_total << "Tolerance: " << tolerance  << std::endl;
 		TS_ASSERT_DELTA( pcs_score_total, expected_value, tolerance);

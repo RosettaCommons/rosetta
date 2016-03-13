@@ -120,7 +120,7 @@ optimize_suite(
 	start_pose = pose;
 
 	// setup the options
-	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/,
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/,
 		false /*no verbose-deriv-check, is default*/ );
 	//// setup the moving degrees of freedom
 	kinematics::MoveMap mm;

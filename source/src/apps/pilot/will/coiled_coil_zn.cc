@@ -632,7 +632,7 @@ void design_AFILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 
 void minimize(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	core::kinematics::MoveMapOP movemap = make_move_map(cc);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-2, true );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-2, true );
 	m.apply(cc);
 }
 
@@ -824,7 +824,7 @@ align_zns(
 	mm->set_chi(false); mm->set_bb(false);	mm->set_jump(false);
 	mm->set_jump(4,true);
 	// mm->set(core::id::RB1,false);   mm->set(core::id::RB2,false);   mm->set(core::id::RB3,false);
-	protocols::simple_moves::MinMover mnm( mm, sf, "dfpmin_armijo_nonmonotone", 1e-4, true );
+	protocols::simple_moves::MinMover mnm( mm, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 	ResidueOP cys = ResidueFactory::create_residue( residue_set->name_map("CYV") );
 	ResidueOP zns = ResidueFactory::create_residue( residue_set->name_map("ZHC") );

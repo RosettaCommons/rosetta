@@ -479,7 +479,7 @@ int main( int argc, char * argv [] ) {
 				TR << "Starting minimization...." << std::endl;
 				//AtomTreeMinimizer minimizer;
 				AtomTreeMinimizer minimizer;
-				MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+				MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 				kinematics::MoveMap mm_all;
 				mm_all.set_chi( true );
 				mm_all.set_bb( true );

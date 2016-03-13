@@ -187,7 +187,7 @@ void DockMCMCycle::set_default()
 
 	// setup values for minimization
 	min_tolerance_ = 0.01;
-	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
+	min_type_ = std::string( "lbfgs_armijo_nonmonotone" );
 	nb_list_ = true;
 
 	// setup the mc object

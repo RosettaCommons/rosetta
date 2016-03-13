@@ -84,7 +84,7 @@ MinimizerOptions::clone() const
 /////////////////////////////////////////////////////////////////////////////
 // high-level params
 
-// the min-type, eg "dfpmin", "linmin"
+// the min-type, eg "lbfgs_armijo_nonmonotone", "linmin"
 std::string const &
 MinimizerOptions::min_type() const
 {

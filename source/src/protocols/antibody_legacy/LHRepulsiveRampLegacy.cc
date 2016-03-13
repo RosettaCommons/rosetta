@@ -154,7 +154,7 @@ void LHRepulsiveRampLegacy::set_default() {
 	temperature_     = 0.8;
 	min_threshold_   = 15.0;
 	num_repeats_     = 4;
-	min_type_        = "dfpmin_armijo_nonmonotone";
+	min_type_        = "lbfgs_armijo_nonmonotone";
 
 	if ( !user_defined_ ) {
 		dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );

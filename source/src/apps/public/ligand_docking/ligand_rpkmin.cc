@@ -127,7 +127,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 			movemap->set_chi(i, true);
 		}
 	}
-	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 

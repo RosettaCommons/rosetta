@@ -147,7 +147,7 @@ void test( std::string fname ) {
     // Run local optimization to get to a local min
 
 	std::cout << "Energy of input structure: " << sfxn(pose) <<  " #residues: " << N <<std::endl;
-	minimizer.run( pose, movemap, sfxn, MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.001, true ) );
+	minimizer.run( pose, movemap, sfxn, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	std::cout << "Energy after local minimization:  " << sfxn(pose) << std::endl;
 
 	ntrial=100;
@@ -192,7 +192,7 @@ L1:
 		}
 
 		std::cout << "trial: " << trial << " #local min: " << nlm << " energy after perturbation: " << sfxn(pose) << std::endl;
-		minimizer.run( pose, movemap, sfxn, MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.001, true ) );
+		minimizer.run( pose, movemap, sfxn, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
         // Check if "new" local min is near x0 and its energy is not too high (so it's in the valley floor)
 		lmdel=0.0;

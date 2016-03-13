@@ -687,7 +687,7 @@ CloseOneMover::close_one_loop_stem_helper(
 
 	Real min_tolerance = 0.001;
 	if ( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover(
 		new protocols::simple_moves::MinMover( loop_map,
@@ -879,7 +879,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 	Real min_tolerance = 0.001;
 	if ( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
 		highres_scorefxn_, min_type, min_tolerance, nb_list ) );

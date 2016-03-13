@@ -201,8 +201,8 @@ basic_idealize(
 	Size const njump( pose.num_jump() );
 
 	// setup the minimizer options
-	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
-	//MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, true /*deriv_check*/, true );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+	//MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, true /*deriv_check*/, true );
 	kinematics::MoveMap final_mm;
 
 	bool const lastjumpmin (

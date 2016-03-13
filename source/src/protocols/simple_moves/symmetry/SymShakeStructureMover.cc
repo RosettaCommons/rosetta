@@ -159,7 +159,7 @@ SymShakeStructureMover::minimize_with_constraints(core::pose::Pose & p,
 
 	core::optimization::symmetry::SymAtomTreeMinimizer min_struc;
 	float const minimizer_tol = 0.0000001;
-	core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone",
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone",
 		minimizer_tol,
 		true /*use_nb_list*/,
 		false /*deriv_check_in*/,

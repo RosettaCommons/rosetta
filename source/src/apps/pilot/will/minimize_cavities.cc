@@ -142,7 +142,7 @@ test_suck_res( std::string fname ) {
 										 << F(8,4,ps ) << " "
 										 << std::endl;
 
-	protocols::simple_moves::MinMover minstd( mm, sfstd , "dfpmin", 0.001, true, false, false );
+	protocols::simple_moves::MinMover minstd( mm, sfstd , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	minstd.min_options()->nblist_auto_update(true);
 	pack::task::PackerTaskOP taskstd = pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
@@ -165,7 +165,7 @@ test_suck_res( std::string fname ) {
 										 << F(8,4,ps ) << " "
 										 << std::endl;
 
-	protocols::simple_moves::MinMover min( mm, sf , "dfpmin", 0.001, true, false, false );
+	protocols::simple_moves::MinMover min( mm, sf , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	min.min_options()->nblist_auto_update(true);
 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
 	task->restrict_to_repacking();
@@ -282,9 +282,9 @@ test_suck_res( std::string fname ) {
 // 	}
 // 	pose.constraint_set( cstset );
 //
-// 	protocols::simple_moves::MinMover mincst( mm, sf   , "dfpmin", 0.1, true );
+// 	protocols::simple_moves::MinMover mincst( mm, sf   , "lbfgs_armijo_nonmonotone", 0.1, true );
 // 	mincst.min_options()->nblist_auto_update(true);
-// 	protocols::simple_moves::MinMover minnoc( mm, sfnoc, "dfpmin", 0.1, true );
+// 	protocols::simple_moves::MinMover minnoc( mm, sfnoc, "lbfgs_armijo_nonmonotone", 0.1, true );
 // 	minnoc.min_options()->nblist_auto_update(true);
 //
 // 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );

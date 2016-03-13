@@ -129,7 +129,7 @@ public:
 		grafter.set_cycles( cycles );
 		core::pose::Pose piece( anchor );
 		grafter.set_piece( piece, 0, 0 );
-		grafter.set_mintype( "dfpmin_armijo_nonmonotone" );//mintype from pose_into_pose
+		grafter.set_mintype( "lbfgs_armijo_nonmonotone" );//mintype from pose_into_pose
 
 		grafter.final_repack( false );
 		grafter.stop_at_closure( false );

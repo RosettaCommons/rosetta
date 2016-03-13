@@ -253,9 +253,9 @@ public:
 		movemap_->set_jump( true ); //first and second jumps are to zinc from chain A
 
 
-		sym_minmover_sc_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
-		sym_minmover_bb_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
-		sym_minmover_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
+		sym_minmover_sc_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		sym_minmover_bb_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		sym_minmover_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
 
 
 		return;

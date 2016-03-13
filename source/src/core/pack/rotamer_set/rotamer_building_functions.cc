@@ -229,7 +229,7 @@ build_lib_dna_rotamers(
 		sf.set_weight( angle_constraint    , 1.0 );
 
 		// setup the options
-		MinimizerOptions options( "dfpmin" /* or "linmin" */, min_tolerance, true /*use_nblist*/, false /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone" /* or "linmin" */, min_tolerance, true /*use_nblist*/, false /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 
 		kinematics::MoveMap mm;
 		// allow minimizer to change these five dihedrals

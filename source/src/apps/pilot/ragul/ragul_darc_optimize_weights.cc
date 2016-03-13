@@ -485,7 +485,7 @@ int main( int argc, char * argv [] ) {
 
 	// minimize protein
   AtomTreeMinimizer minimizer;
-  MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+  MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 
   minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
   minimizer.run( bound_pose, mm_all, *scorefxn, min_options );

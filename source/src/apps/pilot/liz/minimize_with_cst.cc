@@ -228,7 +228,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 		core::optimization::AtomTreeMinimizer min_struc;
 		float minimizer_tol = 0.000001;
 
-		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
+		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
 																									false /*deriv_check_in*/, true /*deriv_check_verbose_in*/);
 		options.nblist_auto_update( true );
 		options.max_iter(5000); //otherwise, they don't seem to converge

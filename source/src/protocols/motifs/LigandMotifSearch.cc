@@ -1031,7 +1031,7 @@ LigandMotifSearch::incorporate_motifs(
 						} */
 						core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 						movemap->set_chi( (*ir)->seqpos(), true );
-						protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true ) );
+						protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone_atol", 0.000001, true ) );
 						minmover->apply( pose_dump );
 						core::Real sc_constraint_check( pose_dump.energies().total_energies()[ coordinate_constraint ] );
 						ms_tr << "After sidechain refinement constraints score is " << sc_constraint_check << std::endl;

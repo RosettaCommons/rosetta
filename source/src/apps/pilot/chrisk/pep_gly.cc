@@ -581,7 +581,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -634,7 +634,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -895,7 +895,7 @@ packmin_unbound_pep(
 	if( !option[ pep_spec::test_no_min ] ){
 		kinematics::MoveMapOP mm ( new kinematics::MoveMap );
 		mm->set_chi( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true );
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		min_mover->apply( pose );
 	}
 	return pose;
@@ -1019,7 +1019,7 @@ RunPepSpec()
 		}
 */
 		//define movers//
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 		//define design task and repack task
 		pack::task::PackerTaskOP dz_task( pack::task::TaskFactory::create_packer_task( pose ));

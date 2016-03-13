@@ -166,7 +166,7 @@ erraser_monte_carlo()
 	CartesianMinimizer cartesian_minimizer;
 	float const dummy_tol( 0.00000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 	MoveMap move_map;
 	figure_out_stepwise_rna_movemap( move_map, pose, sample_res_list );

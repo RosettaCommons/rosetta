@@ -66,7 +66,7 @@ void ProlineFixMover::apply( core::pose::Pose & pose ) {
 	mm.set_chi(true);
 
 	core::optimization::AtomTreeMinimizer().run(
-		pose, mm, (*scorefxn), core::optimization::MinimizerOptions("dfpmin",0.001,true)
+		pose, mm, (*scorefxn), core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true)
 	);
 
 } // apply

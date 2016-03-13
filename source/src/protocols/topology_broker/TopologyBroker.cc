@@ -1042,7 +1042,6 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 	if ( pose::symmetry::is_symmetric( pose ) ) {
 		protocols::simple_moves::symmetry::SymPackRotamersMover pack1( repack_scorefxn_ , taskstd );
 		pack1.apply( pose );
-
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 		core::optimization::symmetry::SymAtomTreeMinimizer smzr;
 		smzr.run( pose, *mm, *repack_scorefxn_, options );

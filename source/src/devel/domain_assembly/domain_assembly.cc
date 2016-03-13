@@ -377,7 +377,7 @@ optimize_linkers_fullatom_mode(
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
 
 	// MOVER minimization
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 	//TrialMoverOP min_trial_mover( new TrialMover( min_mover, mc ) );
 
 	// Initial Minimization //
@@ -495,7 +495,7 @@ optimize_linkers_rna_fullatom_mode(
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_cont, *base_packer_task, mc, 0.01 ) );
 
 	// MOVER: minimization
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_cont, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_cont, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	// MOVER: coarse small moves
 	protocols::simple_moves::SmallMoverOP coarse_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );

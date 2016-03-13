@@ -118,7 +118,7 @@ void LHSnugFitLegacy::init(loops::LoopsOP loops_in, bool camelid ) {
 
 
 void LHSnugFitLegacy::set_default() {
-	min_type_="dfpmin_armijo_nonmonotone";
+	min_type_="lbfgs_armijo_nonmonotone";
 	rot_mag_ = 5.0 ;
 	trans_mag_ = 0.1 ;
 	temperature_ = 0.8;

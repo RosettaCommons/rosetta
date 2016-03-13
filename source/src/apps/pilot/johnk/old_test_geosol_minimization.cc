@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 	// minimize protein with deriv check on
 	TR << "Starting minimization...." << std::endl;
 	AtomTreeMinimizer minimizer;
-	MinimizerOptions min_options( "dfpmin", 0.0001, true, true, false );
+	MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.0001, true, true, false );
 
 	minimizer.run( pose, mm_all, *scorefxn, min_options );
 	(*scorefxn)(pose);

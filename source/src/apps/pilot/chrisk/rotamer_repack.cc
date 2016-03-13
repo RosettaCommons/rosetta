@@ -781,7 +781,7 @@ minimize_all_sidechains(
 		}
 	}
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -800,7 +800,7 @@ minimize_sidechain(
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( false );
 	mm->set_chi( seqpos, true );
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	min_mover->apply( pose );
 
 }

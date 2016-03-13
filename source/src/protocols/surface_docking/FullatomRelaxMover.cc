@@ -94,7 +94,7 @@ void FullatomRelaxMover::setup_defaults()
 	score_high_res_ = scoring::get_score_function();
 	score_high_res_->set_weight( core::scoring::fa_elec, 0.25 );
 	small_min_type_="linmin";
-	shear_min_type_="dfpmin";
+	shear_min_type_="lbfgs_armijo_nonmonotone";
 	nmoves_ = 6;
 	kT_ = 0.5;
 	Mover::type("FullatomRelaxMover");
@@ -249,8 +249,8 @@ void FullatomRelaxMover::dock_mcm_on_surface(core::pose::Pose & pose)
 
 void FullatomRelaxMover::outer_loop_refinement_solution(core::pose::Pose & pose)
 {
-	small_min_mover_->min_type("dfpmin");
-	shear_min_mover_->min_type("dfpmin");
+	small_min_mover_->min_type("lbfgs_armijo_nonmonotone");
+	shear_min_mover_->min_type("lbfgs_armijo_nonmonotone");
 	set_secondary_struct(pose);
 	small_trial_min_mover_->apply(pose); // dfpmin
 	set_secondary_struct(pose);

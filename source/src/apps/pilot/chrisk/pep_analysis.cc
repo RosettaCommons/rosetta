@@ -517,7 +517,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -586,7 +586,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -780,7 +780,7 @@ RunPepSpec()
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_pep_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		}
 */
 

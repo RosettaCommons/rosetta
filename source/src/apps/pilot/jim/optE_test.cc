@@ -503,7 +503,7 @@ simple_opte_test()
 	OptEMultifunc opt_min( full_data_set, fixed_terms, free_count, score_list, fixed_score_list, component_weights );
 	optimization::Multivec start_dofs  = opt_min.get_dofs_from_energy_map( include_terms );
 
-	optimization::MinimizerOptions options( "dfpmin", 0.0000001, true, false );
+	optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.0000001, true, false );
 
 	optimization::Minimizer minimizer( opt_min, options );
 	minimizer.run( start_dofs );
@@ -636,7 +636,7 @@ optimize_weights(
 		component_weights);
 	optimization::Multivec start_dofs  = opt_min.get_dofs_from_energy_map( include_terms );
 
-	optimization::MinimizerOptions options( "dfpmin", 0.0000001, true, false );
+	optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.0000001, true, false );
 
 	optimization::Minimizer minimizer( opt_min, options );
 	minimizer.run( start_dofs );

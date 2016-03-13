@@ -294,7 +294,7 @@ main( int argc, char * argv [] )
 			*/
 
 			core::optimization::AtomTreeMinimizer minimizer;
-			core::optimization::MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+			core::optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 			minimizer.run( min_pose, mm_pArg, *scorefxn, min_options );
 
 			// Throw out those where the desired P is off by > 0.75 A or the desired N is off by > 1.5 A

@@ -551,7 +551,7 @@ zf_relax_test()
 																															cst_scorefxn ) ) );
 		MoverOP rb_mover( new ZF_PatchupMover( new devel::dna::RB_Mover( protein_jumps_mm, rb_mover_trans_mag,
 																																		 rb_mover_rot_mag ) ) );
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( min_mm, scorefxn, "dfpmin", min_tol, true ) );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( min_mm, scorefxn, "lbfgs_armijo_nonmonotone", min_tol, true ) );
 		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn, pack_task, 25 ) );
 
 		// rotamer trials w/ energycut

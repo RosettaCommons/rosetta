@@ -319,7 +319,7 @@ int main( int argc, char * argv[] ) {
 
 
   core::optimization::AtomTreeMinimizerOP minimizer;
-  core::optimization::MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+  core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
   minimizer = new core::optimization::AtomTreeMinimizer;
 
 

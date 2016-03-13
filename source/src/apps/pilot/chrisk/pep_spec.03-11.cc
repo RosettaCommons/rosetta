@@ -583,7 +583,7 @@ RunPepSpec()
 		if( option[ pep_spec::score_binding_min ] ){
 			kinematics::MoveMapOP mm_prot_eval ( new kinematics::MoveMap );
 			mm_prot_eval->set_chi( true );
-			protocols::simple_moves::MinMoverOP prot_eval_min_mover = new protocols::simple_moves::MinMover( mm_prot_eval, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP prot_eval_min_mover = new protocols::simple_moves::MinMover( mm_prot_eval, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 			prot_eval_min_mover->apply( prot_eval_pose );
 			prot_score = prot_eval_pose.energies().total_energies().dot( full_scorefxn->weights() );
 			dump_pdb( prot_eval_pose,  option[ out::file::o ] + "_prot.pdb" );
@@ -877,7 +877,7 @@ RunPepSpec()
 				mc_rep->recover_low( pose );
 			}
 			if( has_clash( pose, is_pep_not_anchor, rep_scorefxn, 5.0 ) ){
-				protocols::simple_moves::MinMoverOP rep_min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+				protocols::simple_moves::MinMoverOP rep_min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 				rep_min_mover->apply( pose );
 			}
 */
@@ -912,7 +912,7 @@ RunPepSpec()
 					clash_scorefxn->set_weight( fa_atr, new_full_fa_atr  );
 					soft_clash_scorefxn->set_weight( fa_rep, new_soft_fa_rep  );
 					soft_clash_scorefxn->set_weight( fa_atr, new_soft_fa_atr  );
-					protocols::simple_moves::MinMoverOP clash_min_mover = new protocols::simple_moves::MinMover( mm_min, soft_clash_scorefxn, "dfpmin", 0.001, true );
+					protocols::simple_moves::MinMoverOP clash_min_mover = new protocols::simple_moves::MinMover( mm_min, soft_clash_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 					clash_min_mover->apply( pose );
 					if( option[ pep_spec::test_dump_all_ramp ] ) dump_efactor_pdb( pose, full_scorefxn,  option[ out::file::o ] + "_" + string_of( peptide_loop ) + "_ramp" + string_of( ramp_loop - 1 ) + ".pdb" );
 				}
@@ -936,7 +936,7 @@ RunPepSpec()
 			if( !option[ pep_spec::freeze_pep_anchor ] ) mm_min->set_jump( 1, true );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( mm_move, 5.0, 1 ) );	//LOOP
 			shear_mover->angle_max( 'H', 5.0 );
@@ -1065,7 +1065,7 @@ RunPepSpec()
 						kinematics::MoveMapOP mm_pep_eval ( new kinematics::MoveMap );
 						mm_pep_eval->set_chi( true );
 //						mm_pep_eval->set_bb( true );
-						protocols::simple_moves::MinMoverOP pep_eval_min_mover = new protocols::simple_moves::MinMover( mm_pep_eval, final_scorefxn, "dfpmin", 0.001, true );
+						protocols::simple_moves::MinMoverOP pep_eval_min_mover = new protocols::simple_moves::MinMover( mm_pep_eval, final_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 						Real premin_pep_score = pep_eval_pose.energies().total_energies().dot( final_scorefxn->weights() );
 						//Pose pep_eval_premin_pose( pep_eval_pose );
 						pep_eval_min_mover->apply( pep_eval_pose );

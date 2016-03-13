@@ -110,7 +110,7 @@ void VIP_Mover::minimize_conformation(){
 	movemap->set_jump(false);
 	movemap->set_chi(true);
 	movemap->set_bb(true);
-	protocols::moves::MoverOP min_native( new protocols::simple_moves::MinMover( movemap, sf2, "dfpmin_armijo_nonmonotone", 1e-2, true ) );
+	protocols::moves::MoverOP min_native( new protocols::simple_moves::MinMover( movemap, sf2, "lbfgs_armijo_nonmonotone", 1e-2, true ) );
 	min_native->apply( pose );
 	initial_pose = pose;
 }

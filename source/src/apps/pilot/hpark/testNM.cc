@@ -171,7 +171,7 @@ void test_NMmin( pose::Pose pose ){
 	core::scoring::ScoreFunctionCOP sfxn 
     = core::scoring::ScoreFunctionFactory::create_score_function( option[score::weights] );
 
-	core::optimization::MinimizerOptions options( "dfpmin_armijo", 0.01, 
+	core::optimization::MinimizerOptions options( "lbfgs_armijo", 0.01, 
 																								true, 
 																								false, false );
 

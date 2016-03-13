@@ -84,6 +84,18 @@ from options_class import Option, Option_Group
 if __name__ == "__main__": print "Don't run this one, run options.py instead!"
 
 ##################################################################
+# Legal value sets
+##################################################################
+
+legal_minimization_types = [ "linmin", "linmin_iterated", "linmin_iterated_atol",
+														 "dfpmin", "dfpmin_armijo", "dfpmin_armijo_nonmonotone", "dfpmin_atol",
+														 "dfpmin_armijo_atol", "dfpmin_armijo_nonmonoton_atol",
+														 "dfpmin_strong_wolfe", "dfpmin_strong_wolfe_atol",
+														 "lbfgs_armijo", "lbfgs_armijo_rescored",
+														 "lbfgs_armijo_atol", "lbfgs_armijo_nonmonotone",
+														 "lbfgs_armijo_nonmonotone_atol", "lbfgs_strong_wolfe" ]
+
+##################################################################
 # Option Group Ordering:
 # First comes the "major" option groups: in, out, run, jd2, score, packing
 # Next comes "general" option groups in alphabetical order
@@ -1078,7 +1090,8 @@ Options = Option_Group( '',
 			desc="Sets the use_ss_length_screen flag in the Fragment Mover to false",
 			),
 		Option( 'min_type', 'String',
-			default='dfpmin', desc='type of minimizer to use'
+			default='lbfgs_armijo_nonmonotone', desc='type of minimizer to use',
+      legal=legal_minimization_types,
 			),
 		Option( 'min_tolerance', 'Real', default='0.000001', desc='minimizer tolerance' ),
 		Option( 'nblist_autoupdate', 'Boolean',
@@ -4259,7 +4272,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'minimize_tolerance', 'Real', default='0.001'),
 			Option( 'weights_tag', 'String'),
 			Option( 'weights_tag_list', 'String'),
-			Option( 'min_type', 'String', default='dfpmin'),
+			Option( 'min_type', 'String', default='lbfgs_armijo_nonmonotone', legal=legal_minimization_types ),
 			#Option( 'output_tag', 'String'),
 #			Option( 'tf', 'String'),
 			Option( 'mode', 'String'),
@@ -6235,7 +6248,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 4          Ca-Cb only",
 			),
 		## Use an alternate minimizer
-		Option( 'min_type', 'String', default = 'dfpmin_armijo_nonmonotone', desc = 'minimizer to use during relax.'),
+		Option( 'min_type', 'String', default = 'lbfgs_armijo_nonmonotone', desc = 'minimizer to use during relax.', legal=legal_minimization_types ),
 		Option( 'cartesian', 'Boolean', default='false', desc='Use Cartesian minimizer' ),
 
 		Option( 'chainbreak_weight',            'Real',    desc='chainbreak weight', default='0.0'),
@@ -6653,7 +6666,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'sampler_silent_file', 'String', desc='In StepWiseConnectionSampler, where to output all poses that pass filters', default='' ),
 		Option( 'superimpose_over_all', 'Boolean', desc='In final superimposition, do not keep any domains fixed, superimpose over everything',default="false" ),
 		Option( 'move', 'StringVector', desc="For SWM. Format: 'ADD 5 BOND_TO_PREVIOUS 4'", default=[] ),
-		Option( 'min_type', 'String', desc="Minimizer type",default="dfpmin_armijo_nonmonotone" ),
+		Option( 'min_type', 'String', desc="Minimizer type",default="lbfgs_armijo_nonmonotone", legal=legal_minimization_types ),
 		Option( 'min_tolerance', 'Real', desc="Minimizer tolerance",default="0.000025" ),
 		Option( 'vary_polar_hydrogen_geometry', 'Boolean', desc='Optimize hydrogens that form hydrogen bonds', default='false' ),
 		Option( 'output_minimized_pose_list', 'Boolean', desc='Use legacy output that puts out all minimized poses; set to true in legacy SWA', default='false' ),
@@ -6975,7 +6988,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'torsion_thresholds', 'RealVector', default = 'utility::vector1<float>(1, 30.0)' ),
 #		Option( 'sog_cutoff', 'Real', default='5.0' ),
 #		Option( 'shift_sog_func', 'Boolean', default = 'true' ),
-#		Option( 'min_type', 'String', default='dfpmin_armijo_nonmonotone' ),
+#		Option( 'min_type', 'String', default='lbfgs_armijo_nonmonotone' ),
 #		Option( 'min_tol', 'Real', default='0.0001' ),
 		Option( 'debug', 'Boolean', default='false'),
 		Option( 'real', 'Real', default = '7.0', desc = 'Option for keeping things real.' ),

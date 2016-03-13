@@ -304,7 +304,7 @@ my_main( void* )
 
 	// minimizer
 	AtomTreeMinimizer minimizer;
-	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
 
 	// default move map
 	bool const fix_natsc = option[OptionKeys::loops::fix_natsc];

@@ -122,7 +122,7 @@ refine_pose( Pose & pose, int seqpos = 0 ){
 	if ( 0 != seqpos ) {
 		mm->set_bb( seqpos, true );
 	}
-	protocols::simple_moves::MinMover minstd( mm, sfstd , "dfpmin", 0.001, true, false, false );
+	protocols::simple_moves::MinMover minstd( mm, sfstd , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	minstd.min_options()->nblist_auto_update(true);
 
 	pack::task::PackerTaskOP taskstd = pack::task::TaskFactory::create_packer_task( pose );

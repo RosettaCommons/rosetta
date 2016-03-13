@@ -118,7 +118,7 @@ void SaneMinMover::set_defaults_() {
 	cartesian_   = false;
 	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 	scorefxn_    = core::scoring::get_score_function();
-	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true, false, false ) );
+	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false ) );
 }
 
 } // moves

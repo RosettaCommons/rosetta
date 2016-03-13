@@ -351,7 +351,7 @@ void MinMover::parse_opts(
 		}
 	}
 	max_iter( tag->getOption< int >( "max_iter", 200 ) );
-	min_type( tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" ) );
+	min_type( tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" ) );
 	tolerance( tag->getOption< core::Real >( "tolerance", 0.01 ) );
 	cartesian( tag->getOption< core::Real >( "cartesian", false ) );
 

@@ -94,7 +94,7 @@ namespace relax {
 
 RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) :
 	parent( "RelaxProtocol" ),
-	min_type_("dfpmin_armijo_nonmonotone"),
+	min_type_("lbfgs_armijo_nonmonotone"),
 	scorefxn_( score_in ),
 	task_factory_(/* NULL */)
 {
@@ -103,7 +103,7 @@ RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) 
 
 RelaxProtocolBase::RelaxProtocolBase( std::string const & movername ) :
 	parent( movername ),
-	min_type_("dfpmin_armijo_nonmonotone"),
+	min_type_("lbfgs_armijo_nonmonotone"),
 	scorefxn_( /* 0 */ ),
 	task_factory_(/* NULL */)
 {
@@ -112,7 +112,7 @@ RelaxProtocolBase::RelaxProtocolBase( std::string const & movername ) :
 
 RelaxProtocolBase::RelaxProtocolBase( std::string const & movername, core::scoring::ScoreFunctionOP score_in ) :
 	parent( movername ),
-	min_type_("dfpmin_armijo_nonmonotone"),
+	min_type_("lbfgs_armijo_nonmonotone"),
 	scorefxn_(score_in ),
 	task_factory_(/* NULL */)
 {

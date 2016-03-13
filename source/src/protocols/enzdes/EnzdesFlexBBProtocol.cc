@@ -2070,7 +2070,7 @@ EnzdesFlexibleRegion::minimize_region(
 	//trial_score->set_weight( core::scoring::mm_bend, 0.0 );
 	//(*trial_score)(pose);
 	(*min_scorefxn)(pose);
-	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", min_tolerance, true  ) );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, min_scorefxn, "lbfgs_armijo_nonmonotone_atol", min_tolerance, true  ) );
 	dfpMinTightTol->apply(pose);
 	core::Real totE_end = (*scorefxn)(pose);
 	core::Real cbE_end = pose.energies().total_energies()[ core::scoring::chainbreak ];

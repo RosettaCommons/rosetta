@@ -188,15 +188,15 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
   // movemap->set_jump(false);
   // movemap->set_bb(false);
   // movemap->set_chi(true);
-  // protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  // protocols::simple_moves::MinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   // movemap->set_jump(false);
   // movemap->set_bb(true);
   // movemap->set_chi(true);
-  // protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  // protocols::simple_moves::MinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   movemap->set_jump(true);
   movemap->set_bb(true);
   movemap->set_chi(true);
-  protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  protocols::simple_moves::MinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 
 
 }

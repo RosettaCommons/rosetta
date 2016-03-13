@@ -424,8 +424,8 @@ LoopHashLibrary::graft_loop(
 )
 {
 
-	core::optimization::MinimizerOptions options( "dfpmin", 0.2 , true , false );
-	core::optimization::MinimizerOptions options2( "dfpmin", 0.02 ,true , false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.2 , true , false );
+	core::optimization::MinimizerOptions options2( "lbfgs_armijo_nonmonotone", 0.02 ,true , false );
 
 
 	kinematics::MoveMap final_mm;

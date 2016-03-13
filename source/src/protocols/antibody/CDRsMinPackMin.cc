@@ -92,7 +92,7 @@ void CDRsMinPackMin::init() {
 	rt_min_ = false;
 	turnoff_minimization_ = false;
 
-	min_type_ = "dfpmin_armijo_nonmonotone";
+	min_type_ = "lbfgs_armijo_nonmonotone";
 	Temperature_ = 0.8;
 	min_tolerance_ = 0.1;
 	update_rounds_ = 0;

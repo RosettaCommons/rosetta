@@ -1668,7 +1668,7 @@ spec_test(
 			show_pairing_info( pose, seqpos );
 		}
 
-		AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions("dfpmin",0.001,true ) );
+		AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true ) );
 
 		std::cout << "nat_chi-min energies: " << pose.energies().total_energies().show_nonzero() << std::endl;
 		show_protein_DNA_interactions( pose, scorefxn );
@@ -1681,7 +1681,7 @@ spec_test(
 		std::cout << "nat_packed energies: " << pose.energies().total_energies().show_nonzero() << std::endl;
 		show_protein_DNA_interactions( pose, scorefxn );
 
-		AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions("dfpmin",0.001,true ) );
+		AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true ) );
 
 		std::cout << "nat_packed-chimin energies: " << pose.energies().total_energies().show_nonzero() << std::endl;
 		show_protein_DNA_interactions( pose, scorefxn );
@@ -1849,7 +1849,7 @@ idealize_tf_pose( pose::Pose & pose )
 			pose = start_pose;
 
 			// setup the options
-			MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/,
+			MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
 																false /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 			kinematics::MoveMap mm;
 
@@ -1912,7 +1912,7 @@ idealize_tf_pose( pose::Pose & pose )
 			mm.set_bb( 49, true );
 
 			// setup the options
-			MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/,
+			MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
 																true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 
 			AtomTreeMinimizer().run( pose, mm, scorefxn, options );
@@ -2001,7 +2001,7 @@ zif268_test()
 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
-		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "dfpmin", 0.001, true,
+		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
 																					option[ out::output_tag ]+weights_files[j], !option[ fast ] );
 
 	}
@@ -2053,7 +2053,7 @@ bzip_test()
 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
-		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "dfpmin", 0.001, true,
+		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
 																					weights_files[j] );
 
 	}
@@ -2106,7 +2106,7 @@ endo_test()
 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
-		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "dfpmin", 0.001, true,
+		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
 																					weights_files[j] );
 
 		utility::vector1< int > motif_positions;
@@ -3305,7 +3305,7 @@ water_test()
 
 		dump_hbond_pdb( pose, "packed_pose.pdb" );
 
-		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
 		dump_hbond_pdb( pose, "packed_pose_min.pdb" );
 
@@ -3415,7 +3415,7 @@ water_test_fixed_O()
 
 		dump_hbond_pdb( pose, "packed_pose.pdb" );
 
-		optimization::AtomTreeMinimizer().run( pose, mm, scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+		optimization::AtomTreeMinimizer().run( pose, mm, scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
 		dump_hbond_pdb( pose, "packed_pose_min.pdb" );
 
@@ -3571,7 +3571,7 @@ not1_test()
 		Pose min_pose( pose );
 		MoveMap mm;
 		for ( Size i=1; i<= pose.total_residue(); ++i ) mm.set_chi( i, pose.residue(i).is_protein() );
-		AtomTreeMinimizer().run( min_pose, mm, *scorefxn, MinimizerOptions("dfpmin",0.00001,true) );
+		AtomTreeMinimizer().run( min_pose, mm, *scorefxn, MinimizerOptions("lbfgs_armijo_nonmonotone",0.00001,true) );
 		scorefxn->show( std::cout, min_pose );
 		min_pose.dump_pdb( "minimized.pdb" );
 
@@ -3603,7 +3603,7 @@ not1_test()
 		pose.dump_pdb( "premin.pdb" );
 		MoveMap mm;
 		mm.set_chi( 178, true );
-		AtomTreeMinimizer().run( pose, mm, *scorefxn, MinimizerOptions("dfpmin",0.001,true) );
+		AtomTreeMinimizer().run( pose, mm, *scorefxn, MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true) );
 		pose.dump_pdb( "postmin.pdb" );
 	}
 
@@ -4000,7 +4000,7 @@ zf_test()
 			scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 			scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
-			devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin_dna, motif_size, "dfpmin", 0.001, true,
+			devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin_dna, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
 																						option[ out::output_tag ]+weights_files[j]+"_"+pdb_id, !option[ fast ] );
 		}
 	} // n -- file loop

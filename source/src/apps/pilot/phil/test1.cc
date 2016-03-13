@@ -934,7 +934,7 @@ dna_deriv_test_old()
 
 	{
 		// setup the options
-		MinimizerOptions options( "dfpmin", 0.01, true /*use_nblist*/ );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( dna_bs, 0.5 );
 		scorefxn.set_weight( dna_bp, 0.5 );
@@ -950,7 +950,7 @@ dna_deriv_test_old()
 
 	{ // dna_bs minimize
 		// setup the options
-		MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.1, true /*use_nblist*/,
 			true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( dna_bs, 0.5 );
@@ -968,7 +968,7 @@ dna_deriv_test_old()
 	}
 	{
 		// dna_bs minimize
-		MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.1, true /*use_nblist*/,
 			true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( dna_bp, 0.5 );
@@ -1061,7 +1061,7 @@ dna_deriv_test()
 
 	// setup the options
 	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
-	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin", 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
 
 	{
 		scorefxn->set_weight( dna_bs, 0.5 );
@@ -1602,7 +1602,7 @@ simple_hbond_test()
 	mm4->set( THETA, true );
 	mm4->set( D, true );
 
-	protocols::simple_moves::MinMover min_mover( mm1, scorefxn, "dfpmin", 0.001, true /*use_nblist*/,
+	protocols::simple_moves::MinMover min_mover( mm1, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
 		true /*deriv_check*/ );
 
 	dump_pdb( pose, "output/before.pdb" );
@@ -1904,7 +1904,7 @@ small_min_test()
 	mm->set_chi( true );
 
 	// options for minimizer
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 
 	// packer options
 	pack::task::PackerTaskOP task
@@ -2164,7 +2164,7 @@ ccd_test()
 	{ // minimization
 
 		// setup the options
-		MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, true /*deriv_check*/ );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, true /*deriv_check*/ );
 
 		AtomTreeMinimizer minimizer;
 		scoring::ScoreFunction scorefxn;
@@ -2478,7 +2478,7 @@ backrub_min_test()
 		scorefxn.set_weight( hbond_sc, 1.0 );
 
 		pose.dump_pdb( "before.pdb");
-		AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions( "dfpmin", 0.001, true ) );
+		AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true ) );
 		pose.dump_pdb( "after.pdb");
 
 	}
@@ -2659,7 +2659,7 @@ bk_test2()
 		// this doen't work very well in my simple case since the cysteine is somewhat internal and the
 		// clashes are so bad that it moves too far and violates the nblist
 		//
-		AtomTreeMinimizer().run( pose1, mm, scorefxn, MinimizerOptions( "dfpmin", 0.0001, true ) );
+		AtomTreeMinimizer().run( pose1, mm, scorefxn, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 		pose1.dump_pdb("test6.pdb");
 	}
@@ -2743,7 +2743,7 @@ proclose_test()
 			mm.set_chi( i, true );
 		}
 	}
-	AtomTreeMinimizer().run( pose, mm, *scorefxn, MinimizerOptions( "dfpmin", 0.001, true ) );
+	AtomTreeMinimizer().run( pose, mm, *scorefxn, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	(*scorefxn)(pose);
 	scorefxn->show( std::cout, pose );
 
@@ -2876,7 +2876,7 @@ lk_ball_wtd_deriv_test()
 	}
 
 
-	MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.1, true /*use_nblist*/,
 		true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 	AtomTreeMinimizer minimizer;
 

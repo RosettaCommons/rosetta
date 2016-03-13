@@ -2660,7 +2660,7 @@ make_float_sc_min_mover(core::pose::Pose & pose, vector1<Size> rsd_, Real tol) {
 	core::conformation::symmetry::make_symmetric_movemap( pose, *movemap );
 	// print_movemap(*movemap);
 	// std::exit(-1);
-	MoverOP min_ = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf_, "dfpmin_armijo_nonmonotone", tol, true, false, false );
+	MoverOP min_ = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf_, "lbfgs_armijo_nonmonotone", tol, true, false, false );
 	return min_;
 }
 
@@ -2920,7 +2920,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 	TR << "///////////////////////////////" << std::endl;
 	core::conformation::symmetry::make_symmetric_movemap( pose, *movemap );
 	print_movemap(*movemap);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 	// TR << "movemap " << std::endl;
 	// for(std::map< DOF_ID, bool >::const_iterator i = movemap->dof_id_begin(); i != movemap->dof_id_end(); ++i) {

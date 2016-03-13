@@ -353,7 +353,7 @@ RNA_HelixAssembler::initialize_minimizer(){
 
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( false );
-	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "dfpmin", dummy_tol, use_nblist, false, false ) );
+	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false ) );
 	minimizer_options_->nblist_auto_update( true );
 }
 

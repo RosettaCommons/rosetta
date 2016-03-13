@@ -82,7 +82,7 @@ void do_minimization(
 	// minimize protein
 	TR << "Starting minimization...." << std::endl;
 	AtomTreeMinimizer minimizer;
-	MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+	MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 
 	minimizer.run( pose, mm, *scorefxn, min_options );
 	(*scorefxn)(pose);

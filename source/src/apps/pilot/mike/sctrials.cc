@@ -148,7 +148,7 @@ ScTrials::apply( Pose & pose ) {
 				pose.set_chi( ichi, ir, chis[ichi] );
 			}
 
-			core::optimization::MinimizerOptions options( "dfpmin", 0.001, true, false );
+			core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true, false );
 			core::kinematics::MoveMap final_mm;
 			final_mm.set_chi( true );
 			final_mm.set_bb( false );

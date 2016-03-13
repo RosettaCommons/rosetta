@@ -102,7 +102,7 @@ void SymSidechainMinMover::set_default_options()
 		movemap_->set_chi( true );
 	}
 	scorefxn_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
-	minmover_ = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover(movemap_, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
+	minmover_ = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover(movemap_, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
 }
 
 std::string

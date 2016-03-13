@@ -378,7 +378,7 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
 
 	// MOVER minimization
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 
 	//// STAGE1 ////
 	protocols::moves::SequenceMoverOP stage1_seq( new protocols::moves::SequenceMover );
@@ -495,7 +495,7 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 			movemap_->set_chi( to_repack );
 			//movemap_->set_bb( to_repack );
 
-			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn, "dfpmin_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 			min_mover->apply( pose );
 
 			// repack residues at the domain interface

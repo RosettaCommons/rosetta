@@ -69,7 +69,7 @@ int main( int argc, char * argv [] )
 		// minimize bound pose, if requested
 		if ( option[min_first] ) {
 
-			core::optimization::MinimizerOptions minoptions("dfpmin", 0.00001, true);
+			core::optimization::MinimizerOptions minoptions("lbfgs_armijo_nonmonotone", 0.00001, true);
 			minoptions.nblist_auto_update( true );
 
 			core::kinematics::MoveMap mm;

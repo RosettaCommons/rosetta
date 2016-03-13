@@ -221,7 +221,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 
 		// Short fast minimization
 		if ( do_minimize_ ) {
-			optimization::MinimizerOptions minopt( "dfpmin", 0.02, true, false, false );
+			optimization::MinimizerOptions minopt( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 			minopt.max_iter( 50 );
 			optimization::AtomTreeMinimizer minimizer;
 			kinematics::MoveMap mm_loc;

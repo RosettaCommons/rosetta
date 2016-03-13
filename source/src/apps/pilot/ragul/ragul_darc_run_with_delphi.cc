@@ -384,7 +384,7 @@ int main( int argc, char * argv [] ) {
 		// start minimizing protein
 		TR << "Starting minimization...." << std::endl;
 		AtomTreeMinimizer minimizer;
-		MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+		MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
 		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
 		(*scorefxn)(bound_pose);

@@ -174,7 +174,7 @@ main( int argc, char * argv [] )
 	if ( option[ minimize_chi ] || option[ minimize_bb ] || option[ minimize_jump ] ) {
 		TR << "Starting minimization...." << std::endl;
 		AtomTreeMinimizer minimizer;
-		MinimizerOptions min_options( "dfpmin", 0.001, true );
+		MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.001, true );
 		minimizer.run( pose, mm_all, *scorefxn, min_options );
 	}
 

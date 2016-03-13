@@ -211,7 +211,7 @@ void SmallMinCCDTrial::init()
 	type( "SmallMinCCDTrial" );
 
 	nmoves_ = 1;
-	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
+	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
 	init_options();
 }
 

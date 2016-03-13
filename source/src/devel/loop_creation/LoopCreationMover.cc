@@ -556,7 +556,7 @@ LoopCreationMover::refine_loop(
 		}
 		TR.Debug << "Movemap for minimization: " << *movemap << std::endl;
 
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(movemap, scorefxn_min, "dfpmin_armijo_nonmonotone", 0.01, false ) );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(movemap, scorefxn_min, "lbfgs_armijo_nonmonotone", 0.01, false ) );
 
 		TR << "Score prior to minimization: " << scorefxn_min->score(pose) << std::endl;
 		//  pose.dump_pdb("pre_minimization.pdb");

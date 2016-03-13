@@ -270,7 +270,7 @@ minimize_test()
 	//Default: use_nb_list= false, but MM potential fails in minimization when use_nb_list = false so use true instead
 	bool const use_nblist( use_mm_potential ? true : false );
 	bool const deriv_check( false );
-	MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check);
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check);
 
 	kinematics::MoveMap mm;
 

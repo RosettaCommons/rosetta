@@ -1657,7 +1657,7 @@ rna_close_chainbreaks_test(){
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 
 	kinematics::MoveMap mm;
@@ -3063,7 +3063,7 @@ dinucleotide_test()
 		AtomTreeMinimizer minimizer;
 		float const dummy_tol( 0.0000025);
 		bool const use_nblist( true );
-		MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
 		options.nblist_auto_update( true );
 
 		kinematics::MoveMap mm;
@@ -3282,7 +3282,7 @@ build_next_nucleotide_test()
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 
 	kinematics::MoveMap mm;
@@ -3603,7 +3603,7 @@ rotamerize_rna_test()
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 
 	kinematics::MoveMap mm;

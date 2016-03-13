@@ -168,7 +168,7 @@ void ShearMinCCDTrial::init()
 {
 	type( "ShearMinCCDTrial" );
 	nmoves_ = 1;
-	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions("dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
+	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
 	init_options();
 }
 

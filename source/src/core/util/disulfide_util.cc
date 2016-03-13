@@ -219,9 +219,9 @@ rebuild_disulfide( core::pose::Pose & pose,
 		core::pose::symmetry::make_symmetric_movemap( pose, *symm_mm );
 		core::optimization::symmetry::SymAtomTreeMinimizer symm_minimizer;
 		(*minimizer_score)(pose);
-		symm_minimizer.run( pose, *symm_mm, *minimizer_score, MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+		symm_minimizer.run( pose, *symm_mm, *minimizer_score, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	} else {
-		AtomTreeMinimizer().run( pose, *mm, *minimizer_score, MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+		AtomTreeMinimizer().run( pose, *mm, *minimizer_score, MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	}
 
 	// update score

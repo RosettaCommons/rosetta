@@ -162,7 +162,7 @@ public:
 
 			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
 			rr->show( TR );
-			TS_ASSERT_DELTA( rr->recovery_rate(), Real(57)/Real(89) , .001 );
+			TS_ASSERT_DELTA( rr->recovery_rate(), Real(58)/Real(89) , .001 );
 		}
 
 		{
@@ -171,7 +171,7 @@ public:
 				"RRProtocolRTMin", "RRComparerAutomorphicRMSD", "RRReporterSimple"));
 			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
 			rr->show( TR );
-			TS_ASSERT_DELTA( rr->recovery_rate(), Real(12)/Real(89) , .001 );
+			TS_ASSERT_DELTA( rr->recovery_rate(), Real(11)/Real(89) , .001 );
 		}
 
 

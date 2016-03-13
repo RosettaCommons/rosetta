@@ -89,7 +89,7 @@ bool SAXSScoreFilter::apply( core::pose::Pose const & pose ) const {
 	}
 	if ( option[ casp::sc_min ] ) {
 		// std::string const min_type( option[ run::min_type ]() );
-		std::string min_type("dfpmin");
+		std::string min_type("lbfgs_armijo_nonmonotone");
 		core::kinematics::MoveMap final_mm;
 		final_mm.set_chi( true );
 		final_mm.set_bb( false );

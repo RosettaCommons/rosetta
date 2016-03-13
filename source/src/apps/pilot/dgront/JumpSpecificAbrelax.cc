@@ -593,7 +593,7 @@ void JumpSpecificAbrelax::setup() {
 
 // 	protocols::simple_moves::MinMoverOP min_move_ = new protocols::simple_moves::MinMover;
 // 	min_move_->movemap( movemap );
-// 	min_move_->min_type( "dfpmin" );
+// 	min_move_->min_type( "lbfgs_armijo_nonmonotone" );
 // 	//get currently used score_function...
 // 	min_move_->score_function( scorefxn_ );
 // 	min_move_->apply( pose );

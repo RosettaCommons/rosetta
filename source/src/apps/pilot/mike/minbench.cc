@@ -105,7 +105,7 @@ Benchmark::apply( Pose & pose ) {
 	using namespace pose;
 	//using datacache::CacheableDataType::SCORE_MAP;
 
-	core::optimization::MinimizerOptions options( "dfpmin", 0.000, true, false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000, true, false );
 	core::kinematics::MoveMap final_mm;
 	final_mm.set_chi( true );
 	final_mm.set_bb( true );

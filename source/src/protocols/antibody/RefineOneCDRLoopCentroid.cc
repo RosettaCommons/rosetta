@@ -190,7 +190,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 
 	Real min_tolerance = 0.001;
 	if ( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
 	MinMoverOP loop_min_mover( new MinMover( loop_map, lowres_scorefxn_, min_type, min_tolerance, nb_list ) );
 

@@ -126,7 +126,7 @@ void minimize(core::pose::Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_r
 	movemap->set_chi(true);
 	// uncomment this to minimize BB in interface res
 	// for(vector1<Size>::iterator i = iface_res.begin(); i != iface_res.end(); ++i) movemap->set_bb(*i,true);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true );
 	m.apply(pose);
 }
 

@@ -70,7 +70,7 @@ class CentroidRelax:
         print ">> Loading score function..."
         self.score_low = create_score_function("RS_centroid.wts")
         self.smallmin_type = "linmin"
-        self.shearmin_type = "dfpmin_armijo"
+        self.shearmin_type = "lbfgs_armijo"
         
         # Construct movemap
         self.movemap = rosetta.MoveMap()
@@ -156,8 +156,8 @@ class FullAtomRelax:
         
         self.nosmallshear = nosmallshear    
         # Initial min movers for small and shear
-        self.smallmin_type = "dfpmin_armijo"
-        self.shearmin_type = "dfpmin_armijo"
+        self.smallmin_type = "lbfgs_armijo"
+        self.shearmin_type = "lbfgs_armijo"
         
         # Initialize constraint files
         self.constraints = 'False' # constraints toggle. false by default
@@ -297,7 +297,7 @@ class FullAtomRelax:
         self.shearmin_mover = rosetta.MinMover(self.movemap, self.score_high, self.shearmin_type, self.tolerance, True)
     
         # Set up specific min movers
-        self.min_dfp_mover = rosetta.MinMover(self.movemap, self.score_high,"dfpmin_armijo", self.tolerance, True)
+        self.min_dfp_mover = rosetta.MinMover(self.movemap, self.score_high,"lbfgs_armijo", self.tolerance, True)
         self.min_lin_mover = rosetta.MinMover(self.movemap, self.score_high,"linmin", self.tolerance, True)
         
     def _setupTrial(self, pose):
@@ -425,7 +425,7 @@ class FullAtomRelax:
         if self.chi_mm is None:
             self._setChimap(pose)
         
-        chi_minmover = rosetta.MinMover(self.chi_mm, self.score_pack, "dfpmin_armijo", self.tolerance, True)
+        chi_minmover = rosetta.MinMover(self.chi_mm, self.score_pack, "lbfgs_armijo", self.tolerance, True)
         chi_minmover.apply(pose)
         print "After chi minmover", #self.score_high.show(pose)
         """
@@ -471,7 +471,7 @@ class FullAtomRelax:
             self.score_high(pose)
         
             # Outer cycle refinements ============================
-            self._setMinmovers("dfpmin_armijo")
+            self._setMinmovers("lbfgs_armijo")
             print ">>> Small/shear refinements outer cycle..."
             self.min_seq.apply(pose)
         

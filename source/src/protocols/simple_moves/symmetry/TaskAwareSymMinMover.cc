@@ -73,7 +73,7 @@ TaskAwareSymMinMover::TaskAwareSymMinMover() :
 	min_chi_(false),
 	min_bb_(false),
 	min_rb_(false),
-	min_type_("dfpmin_armijo_nonmonotone"),
+	min_type_("lbfgs_armijo_nonmonotone"),
 	tolerance_(1e-5),
 	minmover_(/* 0 */),
 	factory_(/* 0 */),
@@ -182,7 +182,7 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
 	min_chi_ = tag->getOption< bool >( "chi", true );
 	min_bb_ = tag->getOption< bool >( "bb", false );
 	min_rb_ = tag->getOption< bool >( "rb", false );
-	min_type_ = tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" );
+	min_type_ = tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" );
 	tolerance_ = tag->getOption< core::Real >( "tolerance", 1e-5 );
 	designable_only_ = tag->getOption< bool >( "designable_only", true );
 	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap

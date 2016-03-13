@@ -257,7 +257,7 @@ hard_minimize( pose::Pose & pose ){
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.000001 );
 	bool const use_nblist( true ), deriv_check( false );
-	MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check);
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check);
 
 	kinematics::MoveMap mm;
 

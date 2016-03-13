@@ -157,7 +157,7 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 
 protocols::simple_moves::MinMoverOP const
 FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
-	std::string min_type= "dfpmin_armijo_nonmonotone_atol";
+	std::string min_type= "lbfgs_armijo_nonmonotone_atol";
 	core::Real tolerance= 0.02;
 	bool use_nb_list=true;
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);

@@ -908,7 +908,7 @@ my_main( void* )
 			// setup the MinMover
 			protocols::simple_moves::MinMover minmover;
 			minmover.score_function(score_fxn);
-			minmover.min_type("dfpmin");
+			minmover.min_type("lbfgs_armijo_nonmonotone");
 
 			// first minimize just the side chains
 			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();

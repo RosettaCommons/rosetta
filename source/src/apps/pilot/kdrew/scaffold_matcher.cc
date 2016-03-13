@@ -216,7 +216,7 @@ HotspotPlacementMover::apply(
 	place_hs_mm->set_bb( false );
 	place_hs_mm->set_chi( false );
 	place_hs_mm->set_jump( 1, true );
-	protocols::simple_moves::MinMoverOP place_hs_min( new protocols::simple_moves::MinMover( place_hs_mm, place_hs_score_fxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP place_hs_min( new protocols::simple_moves::MinMover( place_hs_mm, place_hs_score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	//Primary Hotspot Setup
 	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );

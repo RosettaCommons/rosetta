@@ -161,7 +161,7 @@ AnchoredGraftMover::set_defaults(){
 
 	idealize_insert(false);
 	set_skip_sampling(false);
-	set_mintype("dfpmin_armijo_nonmonotone");
+	set_mintype("lbfgs_armijo_nonmonotone");
 	set_test_control_mode(false);
 	use_default_movemap_ = true;
 	set_scaffold_flexibility(2, 2);

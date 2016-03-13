@@ -117,7 +117,7 @@ build_template( void* )
 
 	fold_pose.dump_pdb("before_min.pdb");
 	AtomTreeMinimizer().run(
-		fold_pose, mm, (*bump_scorefxn), MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.001, true )
+		fold_pose, mm, (*bump_scorefxn), MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true )
 	);
 	fold_pose.dump_pdb("after_min.pdb");
 

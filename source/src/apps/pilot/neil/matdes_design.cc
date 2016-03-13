@@ -314,7 +314,7 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 
 	// Make MoveMap symmetric, apply it to minimize the pose
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 */
@@ -341,13 +341,13 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 
    // Make MoveMap symmetric, apply it to minimize the pose
    core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-   protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+   protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
    m1.apply(pose);
 
   if (move_rb) {
     movemap->set_jump(true);
     core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-    protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+    protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
     m2.apply(pose);
   }
 }

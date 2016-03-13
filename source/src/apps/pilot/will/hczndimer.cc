@@ -289,7 +289,7 @@ utility_exit_with_message("NOT DONE CODING!!!!!!!");
   movemap->set_jump(true);
   movemap->set_bb(true);
   movemap->set_chi(true);
-  protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 
 
 }
@@ -314,7 +314,7 @@ void dock(Pose init, std::string const & fn) {
   // sf->set_weight(core::scoring::angle_constraint,1.0);
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
   movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
-  protocols::simple_moves::MinMover( movemap, sfnosym, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
+  protocols::simple_moves::MinMover( movemap, sfnosym, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
   /*///////////////////////////////////////////////////////////////////////////////////*/ tr << "make mbcount" << endl; /*//////////////////////*/
   vector1<Size> nbcount(init.n_residue(),0);
   for(Size ir = 1; ir <= init.n_residue(); ++ir)
@@ -511,7 +511,7 @@ void dock(Pose init, std::string const & fn) {
 
         //sf->show(q);
         //q.dump_pdb("test0.pdb");
-        protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ).apply(q);
+        protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(q);
         sf->show(q);
         //q.dump_pdb("test1.pdb");
         //utility_exit_with_message("aorsitn");

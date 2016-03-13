@@ -639,7 +639,7 @@ append_water_by_hbond_jump_near_atom(
 	//just min the new jump
 	MoveMapOP mm = new MoveMap;
 	mm->set_jump( jump_number, true );
-	protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
+	protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true );
 
 	//now go to chemical bond
 	FoldTree f_rot( pose.total_residue() );
@@ -885,7 +885,7 @@ solvate_residue(
 			//just min the new jump
 			MoveMapOP mm = new MoveMap;
 			mm->set_jump( pose.fold_tree().num_jump(), true );
-			protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "dfpmin", 0.001, false );
+			protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, false );
 			min_mover->apply( pose );
 			if( mc->boltzmann( pose ) ) ++n_wat;
 		}
@@ -911,7 +911,7 @@ solvate_residue(
 			//just min the new jump
 			MoveMapOP mm = new MoveMap;
 			mm->set_jump( pose.fold_tree().num_jump(), true );
-			protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "dfpmin", 0.001, false );
+			protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, false );
 			min_mover->apply( pose );
 			if( mc->boltzmann( pose ) ) ++n_wat;
 		}

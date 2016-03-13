@@ -517,7 +517,7 @@ AntibodyModeler::relax_cdrs() {
 
 	Real min_tolerance = 0.1;
 	if ( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP all_cdr_min_mover( new protocols::simple_moves::MinMover( allcdr_map,
 		scorefxn, min_type, min_tolerance, nb_list ) );
@@ -760,7 +760,7 @@ AntibodyModeler::snugfit_MC_min (
 	Size nres = pose_in.total_residue();
 
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn,
-		"dfpmin_armijo_nonmonotone", minimization_threshold, nb_list ) );
+		"lbfgs_armijo_nonmonotone", minimization_threshold, nb_list ) );
 
 	//set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover(pose_in,
@@ -813,7 +813,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	Real rot_mag ( 5.0 );
 
 	// rb minimization
-	std::string min_type = "dfpmin_armijo_nonmonotone";
+	std::string min_type = "lbfgs_armijo_nonmonotone";
 	Real min_threshold ( 15.0 ); /* score unit */
 
 	// score functions

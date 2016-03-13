@@ -119,7 +119,7 @@ main( int argc, char * argv [] )
 		movemap->set_bb(true);
 		movemap->set_chi(true);
 		movemap->set_jump(false);
-		protocols::simple_moves::MinMover minimizer(movemap, scorefxn, "dfpmin_armijo_atol", 0.01, true /*nb_list*/);
+		protocols::simple_moves::MinMover minimizer(movemap, scorefxn, "lbfgs_armijo_atol", 0.01, true /*nb_list*/);
 
 		//////////////////////!!!!!!!!!!!!1111
 		/////////////!!!!!!!!!!!!!!!!

@@ -284,7 +284,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 
 		// quick SC minimization
 		core::optimization::AtomTreeMinimizer mzr;
-		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
+		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1e-5, true, false );
 		core::kinematics::MoveMapOP mm_min( new core::kinematics::MoveMap() );
 		mm_min->set_bb( false );
 		mm_min->set_chi( true );

@@ -328,7 +328,7 @@ void repack_step (
 		// minimize with hard -- requires movemap that must be derived from PackerTask
 		core::kinematics::MoveMapOP mm = derive_MoveMap_from_cluster_lst(repacked, allow_repacked);
 		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover() ); // no symmetry support for now
-		//const std::string min_type = "dfpmin"; // use as many defaults as possible -- not sure if we want to fix this, actually
+		//const std::string min_type = "lbfgs_armijo_nonmonotone"; // use as many defaults as possible -- not sure if we want to fix this, actually
 		//min_mover->min_type( min_type );
 		min_mover->score_function( score_fxn );
 		min_mover->cartesian( cartmin );

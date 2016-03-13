@@ -109,7 +109,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf) {
 	movemap->set_chi(true);
 	movemap->set_bb(true);
 	// movemap->set_bb(1,false);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-4, true );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
 	m.apply(pose);
 }
 

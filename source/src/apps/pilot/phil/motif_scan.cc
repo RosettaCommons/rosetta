@@ -447,7 +447,7 @@ motif_scan()
 				if ( pose.residue(i).is_protein() ) mm.set_chi(i, true );
 			}
 			Real const score1( (*scorefxn)(pose) );
-			optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true ) );
+			optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true ) );
 			Real const score2( (*scorefxn)(pose) );
 			tt << "pre-min scores: " << F(9,3,score1) << F(9,3,score2) << std::endl;
 		}

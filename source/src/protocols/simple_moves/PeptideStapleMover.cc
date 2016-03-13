@@ -273,7 +273,7 @@ void PeptideStapleMover::minimize_( core::pose::Pose & pose )
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi( seqpos_, true );
 	mm->set_chi( seqpos_ + staple_gap_, true);
-	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 10.0 /*tolerance*/,
+	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone_atol", 10.0 /*tolerance*/,
 		true /*use_nblist*/, false /*deriv_check*/, false /* non verbose-deriv-check, default*/ );
 	min_mover.min_options()->nblist_auto_update( true );
 	min_mover.apply( pose );

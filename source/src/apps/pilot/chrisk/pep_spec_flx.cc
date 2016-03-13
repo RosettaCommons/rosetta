@@ -1207,7 +1207,7 @@ refine_fa_pep_bb(
 	rep_small_mover->angle_max( 'E', 1.0 );
 	rep_small_mover->angle_max( 'L', 1.0 );
 
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 	RandomMoverOP rand_mover( new protocols::moves::RandomMover() );
 	rand_mover->add_mover( rep_small_mover, 8 );
@@ -1305,7 +1305,7 @@ mutate_random_residue(
 	kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 	if( !option[ pep_spec::test_no_min ] ) mm_min->set_chi( seqpos );
 	if( !option[ pep_spec::test_no_min ] ) mm_min->set_chi( is_nbr );
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 	min_mover->apply( pose );
 }
 
@@ -1325,7 +1325,7 @@ packmin_unbound_pep(
 	if( !option[ pep_spec::test_no_min ] ){
 		kinematics::MoveMapOP mm ( new kinematics::MoveMap );
 		mm->set_chi( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true );
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		min_mover->apply( pose );
 	}
 }
@@ -1775,7 +1775,7 @@ RunPepSpec()
 			if( option[ pep_spec::constrain_pep_anchor ] ) mm_min->set_jump( 1, true );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			MonteCarloOP mc_relax ( new MonteCarlo( pose, *full_scorefxn, 1.0 ) );
 

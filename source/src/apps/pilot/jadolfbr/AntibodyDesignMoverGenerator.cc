@@ -492,7 +492,7 @@ AntibodyDesignMoverGenerator::setup_minimizer(Pose& pose, MinMoverOP min_mover){
 
 	min_mover->set_movemap(mm);
 	min_mover->score_function(local_scorefxn);
-	min_mover->min_type("dfpmin_armijo_nonmonotone");
+	min_mover->min_type("lbfgs_armijo_nonmonotone");
 	min_mover->tolerance(0.001);
 
 	if (cartmin_){

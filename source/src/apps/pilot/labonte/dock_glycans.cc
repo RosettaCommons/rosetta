@@ -362,13 +362,13 @@ private:  // Private methods
 		ring_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
 		torsion_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
 
-		jump_minimizer_ = MinMoverOP( new MinMover( jump_mm_, sf_, "dfpmin", 0.01, true ) );
+		jump_minimizer_ = MinMoverOP( new MinMover( jump_mm_, sf_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 
 		ring_mover_ = RingConformationMoverOP( new RingConformationMover( ring_mm_ ) );
 		small_mover_ = SmallMoverOP( new SmallMover( torsion_mm_, kt_, 3 ) );
 		shear_mover_ = ShearMoverOP( new ShearMover( torsion_mm_, kt_, 3 ) );
 
-		torsion_minimizer_ = MinMoverOP( new MinMover( torsion_mm_, sf_, "dfpmin", 0.01, true ) );
+		torsion_minimizer_ = MinMoverOP( new MinMover( torsion_mm_, sf_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 
 		n_cycles_ = 100;
 

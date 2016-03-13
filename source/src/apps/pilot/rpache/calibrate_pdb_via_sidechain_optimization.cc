@@ -101,7 +101,7 @@ my_main( void* )
 
 	//create minimizer
 	optimization::AtomTreeMinimizer minimizer;
-	optimization::MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+	optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
 
 	//prepare move map for repacking, rotamer trials and minimization, changing non-disulfide bonded residues only
 	kinematics::MoveMap mm_all_sc;

@@ -373,8 +373,8 @@ PCS_Energy_Ts4::minimize_tensors_from_PCS_data( utility::vector1<PCS_tensor_Ts4>
 	}
 
 	TensorsOptimizer_Ts4 tensors_opt(pcs_d);
-	// optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 0.0000001, true, false, false );
-	core::optimization::MinimizerOptions options( "dfpmin", 0.00001, true, false, false );
+	// optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone_atol", 0.0000001, true, false, false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.00001, true, false, false );
 	core::optimization::Minimizer minimizer(tensors_opt, options );
 
 	core::Real optimized_cost(minimizer.run( vect_to_opt ));

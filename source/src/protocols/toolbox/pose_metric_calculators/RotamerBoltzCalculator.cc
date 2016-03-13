@@ -193,7 +193,7 @@ protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover() );
 	min_mover->score_function( scorefxn() );
 	min_mover->movemap( mm );
-	min_mover->min_options()->min_type( "dfpmin_armijo_nonmonotone" );
+	min_mover->min_options()->min_type( "lbfgs_armijo_nonmonotone" );
 	return min_mover;
 }
 

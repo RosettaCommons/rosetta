@@ -841,7 +841,7 @@ refine_fa_pep_bb(
 		mc_rep->recover_low( pose );
 	}
 	if( has_clash( pose, is_pep, rep_scorefxn, option[ pep_spec::clash_fa_rep_tol ] ) ){
-		protocols::simple_moves::MinMoverOP rep_min_mover = new protocols::simple_moves::MinMover( mm, rep_scorefxn, "dfpmin", 0.001, true );
+		protocols::simple_moves::MinMoverOP rep_min_mover = new protocols::simple_moves::MinMover( mm, rep_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		rep_min_mover->apply( pose );
 	}
 }
@@ -863,7 +863,7 @@ packmin_unbound_pep(
 	if( !option[ pep_spec::test_no_min ] ){
 		kinematics::MoveMapOP mm ( new kinematics::MoveMap );
 		mm->set_chi( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true );
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		min_mover->apply( pose );
 	}
 }
@@ -1155,7 +1155,7 @@ RunPepSpec()
 			if( option[ pep_spec::constrain_pep_anchor ] ) mm_min->set_jump( 1, true );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( mm_move, 5.0, 1 ) );	//LOOP
 			shear_mover->angle_max( 'H', 5.0 );

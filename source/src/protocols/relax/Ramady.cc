@@ -145,7 +145,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 	Energies & energies( pose.energies() );
 	rama_scorefxn(pose); //apply score
 
-	MinimizerOptions options( "dfpmin", 0.02, true /*use_nblist*/, false /*deriv_check*/ );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.02, true /*use_nblist*/, false /*deriv_check*/ );
 	kinematics::MoveMap final_mm;
 	final_mm.set_bb(true);
 

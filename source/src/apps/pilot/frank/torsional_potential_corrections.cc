@@ -901,7 +901,7 @@ calc_scores() {
 				kinematics::MoveMap mm;
 				mm.set_bb  ( false ); mm.set_chi ( false ); mm.set_jump( false );
 				mm.set_chi ( center, true );
-				core::optimization::MinimizerOptions options( "dfpmin", 0.1, true, false, false );
+				core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
 				core::optimization::AtomTreeMinimizer minimizer;
 
 				scorefxn->set_weight( core::scoring::fa_dun_dev , fadundev_wt );
@@ -961,7 +961,7 @@ calc_scores() {
 					kinematics::MoveMap mm;
 					mm.set_bb  ( false ); mm.set_chi ( false ); mm.set_jump( false );
 					mm.set_chi ( center, true );
-					core::optimization::MinimizerOptions options( "dfpmin", 0.1, true, false, false );
+					core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
 					core::optimization::AtomTreeMinimizer minimizer;
 
 					scorefxn->set_weight( core::scoring::fa_dun_dev , fadundev_wt );

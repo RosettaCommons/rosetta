@@ -53,7 +53,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// high-level params
 
-	// the min-type, eg "dfpmin", "linmin"
+	// the min-type, eg "lbfgs_armijo_nonmonotone", "linmin"
 	std::string const &
 	min_type() const;
 

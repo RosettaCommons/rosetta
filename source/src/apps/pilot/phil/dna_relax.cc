@@ -259,7 +259,7 @@ dna_stats()
 			// movers
 			BasePairMoverOP bp_mover( new BasePairMover( fraglib, 2.0, 20, 2.0, cst_scorefxn ) );
 			BaseStepMoverOP bs_mover( new BaseStepMover( fraglib, 2.0, 20, 2.0, cst_scorefxn ) );
-			protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", min_tol, true ) );
+			protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", min_tol, true ) );
 			TrialMoverOP bp_trial, bs_trial;
 			{
 				SequenceMoverOP bpseq( new SequenceMover() ), bsseq( new SequenceMover() );

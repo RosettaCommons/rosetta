@@ -905,10 +905,10 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
   // if( core::pose::symmetry::is_symmetric(pose) ) {
   //  core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-  //  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // } else {
-  //  protocols::simple_moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //  protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // }
   // //TR << "done" << std::endl;

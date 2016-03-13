@@ -63,7 +63,7 @@ StepWiseBasicOptions::initialize_variables(){
 	rmsd_screen_ = 0.0;
 	output_minimized_pose_list_ = false;
 	output_cluster_size_ = false;
-	min_type_ = "dfpmin_armijo_nonmonotone"; // used to be dfpmin
+	min_type_ = "lbfgs_armijo_nonmonotone"; // used to be dfpmin
 	min_tolerance_ = 0.000025;
 	vary_rna_bond_geometry_ = false;
 	vary_polar_hydrogen_geometry_ = false;

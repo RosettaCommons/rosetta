@@ -177,7 +177,7 @@ static core::io::silent::SilentFileData sfd;
 // 	  	movemap->set_bb(true);
 // 	  	movemap->set_chi(true);
 // 	  	core::pose::symmetry::make_symmetric_movemap(p,*movemap);
-// 	//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+// 	//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 
 
 // 		// get frags
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
   	movemap->set_bb(true);
   	movemap->set_chi(true);
   	core::pose::symmetry::make_symmetric_movemap(p,*movemap);
-//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 
 
 	// get frags
@@ -546,7 +546,7 @@ int main(int argc, char *argv[]) {
 	// 			// 	p.set_psi(1,uniform()*360.0);
 	// 			// 	p.set_omega(1,170.0+uniform()*20.0);
 	// 			// }
-	// 		 	//  protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+	// 		 	//  protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 	// 			if(1==ippo) tmp.set_phi  (ir,tmp.phi  (ir)+10.0);
 	// 			if(2==ippo) tmp.set_psi  (ir,tmp.psi  (ir)+10.0);
 	// 			if(3==ippo) tmp.set_omega(ir,tmp.omega(ir)+10.0);

@@ -613,7 +613,7 @@ run_pep_prep()
 
 			kinematics::MoveMapOP mm_prepack ( new kinematics::MoveMap );
 			mm_prepack->set_chi( true );
-			protocols::simple_moves::MinMoverOP prepack_min_mover = new protocols::simple_moves::MinMover( mm_prepack, scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP prepack_min_mover = new protocols::simple_moves::MinMover( mm_prepack, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 			prepack_min_mover->apply( pose );
 
 			dump_pdb( pose, pdb_filename + ".prepack" );
@@ -1094,7 +1094,7 @@ run_pep_prep()
 				//mm_min->set_jump( pep_jump, true );
 				mm_min->set_chi( pep_anchor );
 				mm_min->set_chi( is_pep_nbr );
-				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "dfpmin", 0.001, true );
+				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 				min_mover->apply( pose );
 			}
 			mc_dock->boltzmann( pose );
@@ -1117,7 +1117,7 @@ run_pep_prep()
 				//mm_min->set_jump( pep_jump, true );
 				mm_min->set_chi( pep_anchor );
 				mm_min->set_chi( is_pep_nbr );
-				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "dfpmin", 0.001, true );
+				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 				min_mover->apply( pose );
 			}
 			mc_dock->boltzmann( pose );

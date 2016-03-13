@@ -155,7 +155,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	}
 	if ( min_bb() ) { //premin bb+sc
 		if ( !mm() ) mm_general->set_bb( true );
-		protocols::simple_moves::MinMover min_bb_mover( mm_general, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+		protocols::simple_moves::MinMover min_bb_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 		min_bb_mover.apply( pose );
 	}
 
@@ -169,7 +169,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	}
 	mm_general->set_bb( false );
 	mm_general->set_jump( false );
-	protocols::simple_moves::MinMover min_mover( mm_general, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+	protocols::simple_moves::MinMover min_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 	// pre-minimize sidechains
 	min_mover.apply( pose );
 

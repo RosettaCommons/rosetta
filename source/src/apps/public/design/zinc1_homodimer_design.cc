@@ -330,9 +330,9 @@ public:
     sym_pack_mover_->score_function( sym_scorefxn_ );
 
     TR << "Generating softrep and score12 minmovers..." << std::endl;
-    softrep_min_mover_ = new SymMinMover( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "dfpmin_armijo", 0.01, true );
-    sc_min_mover_ = new SymMinMover( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "dfpmin_armijo", 0.01, true );
-    sc_bb_min_mover_ = new SymMinMover( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "dfpmin_armijo", 0.01, true );
+    softrep_min_mover_ = new SymMinMover( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "lbfgs_armijo", 0.01, true );
+    sc_min_mover_ = new SymMinMover( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
+    sc_bb_min_mover_ = new SymMinMover( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
 
     interface_analyzer_ = new protocols::anchored_design::InterfaceAnalyzerMover( 2, false, centroid_scorefxn_for_ddG_calc_ );
 

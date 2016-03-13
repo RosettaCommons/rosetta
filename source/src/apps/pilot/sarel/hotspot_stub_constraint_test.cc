@@ -127,7 +127,7 @@ void run_test() {
 	bool const deriv_check(true);
 	bool const deriv_check_verbose(true);
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose ) );
-	// protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin", 0.0001, true, deriv_check, deriv_check_verbose );
+	// protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true, deriv_check, deriv_check_verbose );
 	(*scorefxn)(pose);
 	min_mover->apply( pose );
 	pose.dump_pdb("minimized.pdb");

@@ -121,8 +121,8 @@ int main(int argc, char *argv[]) {
 	//Movers:
 	protocols::relax::FastRelax frlx(sfxn, 5);
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn);
-	//core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000000001, true, false, false);
-	core::optimization::MinimizerOptions minoptions("dfpmin", 0.000000001, true, false, false);
+	// AMW: VKM prefers dfpmin here
+	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000000001, true, false, false);
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_bb(true); //Allow backbone motion
 	mm->set_chi(true); //Allow side-chain motion

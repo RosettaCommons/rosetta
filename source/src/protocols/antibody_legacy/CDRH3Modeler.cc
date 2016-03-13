@@ -1194,7 +1194,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 	Real min_tolerance = 0.001;
 	if ( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( cdrh3_map,
 		highres_scorefxn_, min_type, min_tolerance, nb_list ) );
@@ -1458,7 +1458,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 
 	Real min_tolerance = 0.001;
 	if ( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
 		lowres_scorefxn_, min_type, min_tolerance, nb_list ) );

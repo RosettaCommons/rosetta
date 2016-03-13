@@ -200,7 +200,7 @@ main( int argc, char * argv [] )
 
 		// setup minimizer
 		//		AtomTreeMinimizer minimizer;
-		//		MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+		//		MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 		//		kinematics::MoveMap min_mm;
 
 		// setting degrees of freedom which can move during minimization (backbone and sidechains, not jump)

@@ -89,7 +89,7 @@ void CentroidRelaxMover::setup_defaults()
 	score_low_res_ =
 		scoring::ScoreFunctionFactory::create_score_function("RS_centroid.wts");//("cen_std.wts");
 	small_min_type_="linmin";
-	shear_min_type_="dfpmin";
+	shear_min_type_="lbfgs_armijo_nonmonotone";
 }
 
 

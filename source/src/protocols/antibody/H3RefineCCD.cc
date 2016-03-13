@@ -147,7 +147,7 @@ void H3RefineCCD::set_default() {
 
 	high_cst_       = 100.0;
 	max_cycle_close_trial_ = 20;
-	minimization_type_ = "dfpmin_armijo_nonmonotone" ;
+	minimization_type_ = "lbfgs_armijo_nonmonotone" ;
 
 
 	if ( !user_defined_ ) {

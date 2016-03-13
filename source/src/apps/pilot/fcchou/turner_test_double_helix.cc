@@ -532,7 +532,7 @@ helix_minimize (core::pose::Pose & pose, scoring::ScoreFunctionOP scorefxn) {
 
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
-	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, false, false, false );
+	MinimizerOptions min_options1 ( "lbfgs_armijo_nonmonotone", dummy_tol, false, false, false );
 
 	kinematics::MoveMap mm;
 	mm.set_bb ( true );

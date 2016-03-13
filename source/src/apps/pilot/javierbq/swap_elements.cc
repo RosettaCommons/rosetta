@@ -632,7 +632,7 @@ public:
 			//minimize
 			option[OptionKeys::symmetry::symmetry_definition].value( path_to_symdef );
 			core::pose::symmetry::make_symmetric_movemap( symm_pose, *movemap );
-			protocols::simple_moves::symmetry::SymMinMover symm_min( movemap, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+			protocols::simple_moves::symmetry::SymMinMover symm_min( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 			symm_min.apply(symm_pose);
 			option[OptionKeys::symmetry::symmetry_definition].value( "" );
 

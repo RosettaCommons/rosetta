@@ -435,7 +435,7 @@ MinimizeInterface(
 	TR<<'\n';
 	if ( !simultaneous_minimization ) {
 		AtomTreeMinimizer().run( pose, mm, *scorefxn,
-			MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+			MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	}
 
 	for ( core::Size rb_jump=1; rb_jump<=pose.num_jump(); ++rb_jump ) {
@@ -444,7 +444,7 @@ MinimizeInterface(
 	if ( !simultaneous_minimization && std::find( min_rb.begin(), min_rb.end(), true ) != min_rb.end() ) {
 		TR<<"minimizing rigid body orientation\n";
 		AtomTreeMinimizer().run( pose, mm, *scorefxn,
-			MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+			MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	}
 
 	if ( !simultaneous_minimization ) {
@@ -460,7 +460,7 @@ MinimizeInterface(
 	}
 	TR<<"\nAnd now minimizing all dofs together\n";
 	AtomTreeMinimizer().run( pose, mm, *scorefxn,
-		MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+		MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 
 	if ( 0/* target_residues.size() > 0*/ ) { //reset fold_tree
 		pose.fold_tree( saved_ft );
@@ -500,7 +500,7 @@ SymMinimizeInterface(
 
 	if ( !simultaneous_minimization ) {
 		optimization::symmetry::SymAtomTreeMinimizer().run( pose, mm, *scorefxn,
-			MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+			MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	}
 
 	mm.set_jump( true );
@@ -510,7 +510,7 @@ SymMinimizeInterface(
 		TR<<"minimizing rigid body orientation\n";
 		TR<<"By default all dofs in the symmetry input are used!!!Should change?\n";
 		optimization::symmetry::SymAtomTreeMinimizer().run( pose, mm, *scorefxn,
-			MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+			MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	}
 
 	if ( !simultaneous_minimization ) {
@@ -527,7 +527,7 @@ SymMinimizeInterface(
 	TR<<"\nAnd now minimizing all dofs together\n";
 	core::pose::symmetry::make_symmetric_movemap( pose, mm );
 	optimization::symmetry::SymAtomTreeMinimizer().run( pose, mm, *scorefxn,
-		MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+		MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 	TR.flush();
 }
 

@@ -276,7 +276,7 @@ my_main( void* )
 
 	// minimizer
 	AtomTreeMinimizer minimizer;
-	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
 
 	// set up the packer task
 	pack::task::PackerTaskOP base_packer_task( pack::task::TaskFactory::create_packer_task( pose ));

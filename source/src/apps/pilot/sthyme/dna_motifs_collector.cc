@@ -161,7 +161,7 @@ place_waters_and_minimize(
 	if ( preminimize_motif_pdbs || preminimize_motif_pdbs_sconly ) {
 
 		core::Real min_tolerance = basic::options::option[ basic::options::OptionKeys::run::min_tolerance ]();
-		std::string min_type("dfpmin_armijo_nonmonotone");
+		std::string min_type("lbfgs_armijo_nonmonotone");
 		if ( basic::options::option[ basic::options::OptionKeys::run::min_type ].user() ) min_type = basic::options::option[ basic::options::OptionKeys::run::min_type ]();
 		core::optimization::MinimizerOptions options( min_type, min_tolerance, true, false );
 

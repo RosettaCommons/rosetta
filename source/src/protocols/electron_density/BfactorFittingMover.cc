@@ -441,7 +441,7 @@ void BfactorFittingMover::init() {
 	radius_exp_ = 1;
 	max_iter_ = 200;
 	scorescale_ = 5000.0;
-	//minimizer_ = "dfpmin_armijo";
+	//minimizer_ = "lbfgs_armijo";
 	minimizer_ = "lbfgs_armijo_nonmonotone_atol";
 	init_ = true;
 	exact_ = false;

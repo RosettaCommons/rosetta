@@ -445,9 +445,9 @@ PcsEnergy::minimize_tensors_fix_from_PCS_data( utility::vector1<PcsTensor> & vec
 	}
 	//FIX
 	TensorsOptimizerFix tensors_opt_fix(pcs_d_c);
-	// optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 0.0000001, true, false, false );
-	// optimization::MinimizerOptions options( "dfpmin", 0.000001, true, false, false );
-	core::optimization::MinimizerOptions options( "dfpmin", 0.000001, true, false, false );
+	// optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone_atol", 0.0000001, true, false, false );
+	// optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true, false, false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true, false, false );
 	core::optimization::Minimizer minimizer(tensors_opt_fix, options );
 
 	core::Real optimized_cost(minimizer.run( vect_to_opt ));
@@ -487,11 +487,11 @@ PcsEnergy::CA_search_scores_and_tensors(utility::vector1<core::Real> & vec_best_
 
 	//CA_SEARCH
 	TensorsOptimizer tensors_opt(pcs_d_c);
-	//optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 0.0000001, true, false, false );
-	// optimization::MinimizerOptions options( "dfpmin", 0.00001, true, false, false );
-	//GOOD optimization::MinimizerOptions options( "dfpmin", 0.000001, true, false, false );
-	// optimization::MinimizerOptions options( "dfpmin", 0.000001, true, false, false );
-	core::optimization::MinimizerOptions options( "dfpmin", 0.000001, true, false, false );
+	//optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone_atol", 0.0000001, true, false, false );
+	// optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.00001, true, false, false );
+	//GOOD optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true, false, false );
+	// optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true, false, false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true, false, false );
 	core::optimization::Minimizer minimizer(tensors_opt, options );
 
 	//some basic checking...
@@ -675,9 +675,9 @@ PcsEnergy::CA_search_scores_and_tensors_with_svd(utility::vector1<core::Real> & 
 
 	TensorsOptimizerSvd tensors_opt_svd(pcs_d_c);
 	//CA_SVD_SEARCH
-	//optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 0.0000001, true, false, false );
-	// optimization::MinimizerOptions options( "dfpmin", 0.00001, true, false, false );
-	core::optimization::MinimizerOptions options( "dfpmin", 0.000001, true, false, false );
+	//optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone_atol", 0.0000001, true, false, false );
+	// optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.00001, true, false, false );
+	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true, false, false );
 	core::optimization::Minimizer minimizer(tensors_opt_svd, options );
 
 	//some basic checking...

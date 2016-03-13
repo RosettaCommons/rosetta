@@ -427,7 +427,7 @@ public:
 		movemap->set_bb(true);
 		movemap->set_chi(true);
 		movemap->set_jump(false);
-		string min_type("dfpmin");
+		string min_type("lbfgs_armijo_nonmonotone");
 		bool use_nb_list( true );  //default for Classic Relax
 		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(movemap, scfxn, min_type, tolerance, use_nb_list ));
 

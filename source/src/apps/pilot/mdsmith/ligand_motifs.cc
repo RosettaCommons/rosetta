@@ -234,7 +234,7 @@ place_waters_and_minimize( Pose & pose )
 	//io::pdb::dump_pdb( pose, "post_pack.pdb" );
 
 	// Minimization depends on the weight set used, so therefore I am nervous to use it at all, in case it disturbs native interactions
-	//MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
+	//MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
 
 	//AtomTreeMinimizer minimizer;
 	//minimizer.run( pose, mm, scorefxn, options );

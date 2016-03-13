@@ -115,7 +115,7 @@ main( int argc, char * argv [] )
 		movemap->set_chi(true);
 		movemap->set_jump(true);
 		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
-			movemap, score_fxn, "dfpmin_armijo_nonmonotone", 0.01, true );
+			movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true );
 		seq_mover->add_mover( min_mover );
 	} else {
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 		movemap->set_chi(true);
 		movemap->set_jump(true);
 		protocols::simple_moves::symmetry::SymMinMoverOP min_mover = new protocols::simple_moves::symmetry::SymMinMover(
-			movemap, score_fxn, "dfpmin_armijo_nonmonotone", 0.01, true );
+			movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true );
 		seq_mover->add_mover( min_mover );
 	}
 

@@ -237,7 +237,7 @@ void ClassicRelax::set_default( core::scoring::ScoreFunctionOP scorefxn_in ) {
 void ClassicRelax::set_default( bool const use_default_movemap ){
 	TR <<  "Setting up default relax setting" << std::endl;
 	// minimization
-	//min_type = std::string("dfpmin_armijo_nonmonotone");
+	//min_type = std::string("lbfgs_armijo_nonmonotone");
 	min_type = RelaxProtocolBase::min_type();                 // use the base class min_type value
 	nb_list = true;
 

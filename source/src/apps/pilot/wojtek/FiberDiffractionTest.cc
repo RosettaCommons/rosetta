@@ -163,7 +163,7 @@ main( int argc, char * argv [] )
 
 
 		protocols::simple_moves::MinMoverOP min_mover(
-			new protocols::simple_moves::symmetry::SymMinMover( movemap, core::scoring::get_score_function(), "dfpmin_armijo_nonmonotone",0.2, false, false, false) ); //Last two should be true to have deriv check
+			new protocols::simple_moves::symmetry::SymMinMover( movemap, core::scoring::get_score_function(), "lbfgs_armijo_nonmonotone",0.2, false, false, false) ); //Last two should be true to have deriv check
 		min_mover->apply(pose);
 		scoremover->apply(pose);
 		pose.dump_pdb("min.pdb");

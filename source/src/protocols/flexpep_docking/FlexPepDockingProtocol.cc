@@ -522,7 +522,7 @@ FlexPepDockingProtocol::prepack_only(
 	protocols::simple_moves::PackRotamersMoverOP prepack_protein( new protocols::simple_moves::PackRotamersMover( scorefxn_, task ) );
 
 	// set up min mover to pre-minimize the side chains + backbone // TODO: 1e-5 - is this a good threshold? optimize this
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(mm_protein, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(mm_protein, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
 
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
@@ -1214,14 +1214,14 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 		*/
 		if ( flags_.rbMCM  && ! flags_.pep_fold_only ) {
 			rigidbody_monte_carlo_minimize(
-				pose, flags_.mcm_cycles , "dfpmin_armijo_atol", /* TODO: switch to dfpmin_armijo_nonmonotone_atol, or by flag*/
+				pose, flags_.mcm_cycles , "lbfgs_armijo_atol", /* TODO: switch to dfpmin_armijo_nonmonotone_atol, or by flag*/
 				rb_trans_mag, rb_rot_mag,
 				15.0/*min_thresh*/, 1.0 /*tolerance*/ );
 		}
 		if ( flags_.torsionsMCM ) {
 			torsions_monte_carlo_minimize(
 				pose, flags_.mcm_cycles ,
-				"dfpmin_armijo_atol", 15.0/*min_thresh*/, /* TODO: switch to dfpmin_armijo_nonmonotone_atol, or by flag */
+				"lbfgs_armijo_atol", 15.0/*min_thresh*/, /* TODO: switch to dfpmin_armijo_nonmonotone_atol, or by flag */
 				1.0 /*tolerance*/ ); // tolerance of 0.1?
 		}
 		if ( flags_.peptide_loop_model ) {
@@ -1231,7 +1231,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 	scorefxn_ = orig_scorefxn->clone(); // restore (note that this removes the coordinate constraints weight set above)
 
 	// final minimization, with stringent tolerance
-	protocols::simple_moves::MinMover minimizer(movemap_minimizer_, scorefxn_, "dfpmin_armijo_atol", 0.001, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(movemap_minimizer_, scorefxn_, "lbfgs_armijo_atol", 0.001, true /*nb_list*/ );
 	minimizer.apply(pose);
 	// final scoring, w/o constraints for receptor backbone
 	if ( flags_.min_receptor_bb ) {
@@ -1356,7 +1356,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	if ( flags_.ppk_only ) {
 		prepack_only(pose, !flags_.no_prepack1/*ppk_receptor*/, !flags_.no_prepack2/*ppk_peptide*/);
 	} else if ( flags_.min_only ) {
-		minimize_only(pose,"dfpmin_armijo_atol", 0.01/*tolerance*/);
+		minimize_only(pose,"lbfgs_armijo_atol", 0.01/*tolerance*/);
 	} else if ( flags_.torsionsMCM || flags_.rbMCM || flags_.lowres_preoptimize || flags_.lowres_abinitio ) {
 		// Main protocol:
 		bool passed_filter = false;

@@ -876,7 +876,7 @@ pdb_minimizer() {
 	float const dummy_tol ( 0.00000001 );
 
 	std::cout << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
-	MinimizerOptions min_options_dfpmin ( "dfpmin", dummy_tol, true, false, false );
+	MinimizerOptions min_options_dfpmin ( "lbfgs_armijo_nonmonotone", dummy_tol, true, false, false );
 	min_options_dfpmin.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 	minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin );
 
@@ -890,7 +890,7 @@ pdb_minimizer() {
 
 		pose = start_pose;
 
-		MinimizerOptions min_options_dfpmin_no_nb ( "dfpmin", dummy_tol, false, false, false );
+		MinimizerOptions min_options_dfpmin_no_nb ( "lbfgs_armijo_nonmonotone", dummy_tol, false, false, false );
 		min_options_dfpmin_no_nb.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 		minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin_no_nb );
 		scorefxn -> show ( std::cout, pose );

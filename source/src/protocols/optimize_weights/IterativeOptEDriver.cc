@@ -2028,15 +2028,15 @@ void IterativeOptEDriver::optimize_weights()
 
 			using namespace core::optimization;
 			/// High tolerance -- don't over minimize before pswarm gets to explore
-			optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 1, true, false, false );
+			optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone_atol", 1, true, false, false );
 			optimization::Minimizer minimizer( *opt_min2, options );
 
 			/// Low tolerance -- drill down!
-			optimization::MinimizerOptions options2( "dfpmin", 1e-4, true, false, false );
+			optimization::MinimizerOptions options2( "lbfgs_armijo_nonmonotone", 1e-4, true, false, false );
 			optimization::Minimizer minimizer2( *opt_min2, options2 );
 
 			/// Lowest tolerance -- drill down!
-			optimization::MinimizerOptions options3( "dfpmin", 1e-9, true, false, false );
+			optimization::MinimizerOptions options3( "lbfgs_armijo_nonmonotone", 1e-9, true, false, false );
 			optimization::Minimizer minimizer3( *opt_min2, options3 );
 
 			// create two Multivec's (vector1 Real) that will hold the minimum and maximum weights a Particle can achieve
@@ -2142,7 +2142,7 @@ void IterativeOptEDriver::optimize_weights()
 			if ( using_unfolded_energy_term_ ) {
 				TR << "optimize_weights(): minimization not recommended when using unfolded state energy" << std::endl;
 			}
-			optimization::MinimizerOptions options( "dfpmin", 1e-9, true, false, false );
+			optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1e-9, true, false, false );
 			optimization::Minimizer minimizer( opt_min, options );
 			minimizer.run( start_dofs );
 		}
@@ -5250,7 +5250,7 @@ IterativeOptEDriver::repack_and_minimize_pose(
 	packer.apply( pose );
 
 	protocols::simple_moves::MinMover minmover;
-	minmover.min_type( "dfpmin_armijo_nonmonotone_atol" );
+	minmover.min_type( "lbfgs_armijo_nonmonotone_atol" );
 	minmover.score_function( sfxn );
 
 	minmover.apply( pose );

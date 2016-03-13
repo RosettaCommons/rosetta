@@ -1374,7 +1374,7 @@ int main (int argc, char *argv[]) {
 			movemap->set_chi(true);
 			movemap->set_jump(false);
 			movemap->set_jump(4,true);
-			protocols::simple_moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+			protocols::simple_moves::MinMover minm( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 			for(Size is = 1; is <= rhits.size(); ++is) {
 				Hit const shit(*rhits[is]);
 				if(rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2) continue;
@@ -1565,7 +1565,7 @@ int main (int argc, char *argv[]) {
 								movemap2->set_bb(true);
 								movemap2->set_chi(true);
 								movemap2->set_jump(true);
-								protocols::simple_moves::MinMover minm2( movemap2, sf2, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+								protocols::simple_moves::MinMover minm2( movemap2, sf2, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 								//tmp3.dump_pdb("pre.pdb");
 								minm2.apply(tmp3);

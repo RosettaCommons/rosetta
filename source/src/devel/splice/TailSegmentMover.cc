@@ -158,7 +158,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
 		movemap_,
 		fullatom_scorefunction_,
-		"dfpmin_armijo_nonmonotone",
+		"lbfgs_armijo_nonmonotone",
 		0.01,
 		true /*use_nblist*/ ) );
 

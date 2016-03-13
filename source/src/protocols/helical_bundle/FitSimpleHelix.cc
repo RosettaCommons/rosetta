@@ -73,7 +73,7 @@ FitSimpleHelix::FitSimpleHelix():
 	dz1_initial_(1.0),
 	start_index_(0),
 	end_index_(0),
-	min_type_("dfpmin"),
+	min_type_("lbfgs_armijo_nonmonotone"),
 	min_tolerance_(0.00000001),
 	reference_atom_("CA"),
 	reference_residue_(1),

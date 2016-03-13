@@ -184,7 +184,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 		s.show(std::cout, p);
 		// This used to be higher, but then it couldn't respond to the adjustment
 		// for in case we are only doing sidechain minimization!
-		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
+		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
 			false /*deriv_check_in*/, true /*deriv_check_verbose_in*/);
 
 		options.nblist_auto_update( true );

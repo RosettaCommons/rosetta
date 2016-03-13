@@ -1139,7 +1139,7 @@ juke_sam_pos(
 	full_protein_repack( pose, *scorefxn );
 
 	// minimize
-	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
 	/// now pack and minimize with a full strenght (soft) rep weight //////////////////////////////
 	scorefxn->set_weight( fa_rep, save_fa_rep_weight );
@@ -1148,7 +1148,7 @@ juke_sam_pos(
 	full_protein_repack( pose, *scorefxn );
 
 	/// minimize
-	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
 	/// now try again with hard rep scorefxn ////////////////////////////////////////////////////
 	scorefxn = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
@@ -1158,7 +1158,7 @@ juke_sam_pos(
 	full_protein_repack( pose, *scorefxn );
 
 	/// minimize
-	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
 
 }
@@ -1309,7 +1309,7 @@ capri15_relax(
 
 	// 		/// confirm that nangles == 6 here!
 	// 		pose.dump_pdb( "start.pdb");
-	// 		optimization::AtomTreeMinimizer().run( pose, *mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+	// 		optimization::AtomTreeMinimizer().run( pose, *mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
 	// 		pose.dump_pdb( "final.pdb");
 
@@ -1330,7 +1330,7 @@ capri15_relax(
 	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn, pack_task, 25 ) );
 
 	// min mover
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", min_atol, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone_atol", min_atol, true ) );
 
 	// rb mover
 	MoverOP sam_mover( new protocols::simple_moves::DME_FilterMover( new RB_Mover( mm, trans_mag, rot_mag ), dme_threshold, max_tries ) );
@@ -1830,7 +1830,7 @@ capri_t033_trim_dock_test()
 		pose.dump_scored_pdb("afterpack1.pdb", *scorefxn );
 
 		// minimize
-		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 		pose.dump_scored_pdb("aftermin1.pdb", *scorefxn );
 
 		/// now pack and minimize with a full strenght (soft) rep weight //////////////////////////////
@@ -1842,7 +1842,7 @@ capri_t033_trim_dock_test()
 		pose.dump_scored_pdb("afterpack2.pdb", *scorefxn );
 
 		/// minimize
-		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 		pose.dump_scored_pdb("aftermin2.pdb", *scorefxn );
 
 		/// now try again with hard rep scorefxn ////////////////////////////////////////////////////
@@ -1855,7 +1855,7 @@ capri_t033_trim_dock_test()
 		pose.dump_scored_pdb("afterpack3.pdb", *scorefxn );
 
 		/// minimize
-		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
+		optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 		pose.dump_scored_pdb("aftermin3.pdb", *scorefxn );
 
 

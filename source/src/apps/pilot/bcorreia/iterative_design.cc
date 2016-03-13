@@ -233,7 +233,7 @@ main( int argc, char * argv [] )
 		//setting a minimizer objet that will be ran after each design step
 
 		core::optimization::AtomTreeMinimizer mzr;
-		core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
+		core::optimization::MinimizerOptions options("lbfgs_armijo_nonmonotone", 1e-5, true, false);
 		core::kinematics::MoveMap mm;
 		mm.set_bb(false);
 

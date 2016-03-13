@@ -955,7 +955,7 @@ rep_small_mover->angle_max( 'H', 1.5 );
 rep_small_mover->angle_max( 'E', 1.5 );
 rep_small_mover->angle_max( 'L', 1.5 );
 
-protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, cen_scorefxn, "dfpmin", 0.001, true );
+protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, cen_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 RandomMoverOP rand_mover( new protocols::moves::RandomMover() );
 rand_mover->add_mover( rep_small_mover, 9 );
@@ -1387,7 +1387,7 @@ mutate_random_residue(
 	kinematics::MoveMapOP mm_min( new kinematics::MoveMap );
 	mm_min->set_chi( seqpos );
 	mm_min->set_chi( is_nbr );
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -1406,7 +1406,7 @@ packmin_unbound_pep(
 	pack->apply( pose );
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( true );
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -1853,7 +1853,7 @@ RunPepSpec()
 			mm_min->set_chi( is_pep_nbr );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true ) );
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 			MonteCarloOP mc_relax( new MonteCarlo( pose, *full_scorefxn, 1.0 ) );
 

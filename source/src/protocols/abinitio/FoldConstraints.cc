@@ -380,7 +380,7 @@ FoldConstraints::setup_default_min_move() {
 	tr.Info << "setup basic minmove" << std::endl;
 	min_move_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover );
 	min_move_->movemap( movemap() );
-	min_move_->min_type( "dfpmin" );
+	min_move_->min_type( "lbfgs_armijo_nonmonotone" );
 }
 
 //@detail overload if your extension stores additional moves as member variables

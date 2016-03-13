@@ -190,7 +190,7 @@ main( int argc, char * argv [] )
 ////	scorefxn->set_weight( hbond_sc   , 1.10 );
 //
 //	// setup the options
-//	MinimizerOptions options( "dfpmin", 0.000001, true ,
+//	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true ,
 //													true , false );
 //
 //

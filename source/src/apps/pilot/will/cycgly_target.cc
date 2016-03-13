@@ -195,7 +195,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf) {
 	movemap->set_bb(true);
 	movemap->set_chi(true);
 	movemap->set_jump(true);
-	protocols::simple_moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 
@@ -437,7 +437,7 @@ public:
 		movemap->set_bb(true);
 		movemap->set_chi(true);
 		movemap->set_jump(true);
-		minmover_ = new protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+		minmover_ = new protocols::simple_moves::MinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 		using namespace core::pack::task;
 		PackerTaskOP task = TaskFactory::create_packer_task(pose);

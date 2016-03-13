@@ -624,7 +624,7 @@ EnzdesBaseProtocol::cst_minimize(
 	//create movemap
 	core::kinematics::MoveMapOP movemap = create_enzdes_movemap( pose, task, min_all_jumps_);
 	//setting up move map done, now do minimization
-	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, min_scorefxn, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->apply(pose);
 
 	min_scorefxn->set_weight( core::scoring::chainbreak, orig_cbreak_weight);

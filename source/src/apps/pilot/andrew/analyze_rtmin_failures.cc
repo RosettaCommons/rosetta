@@ -125,7 +125,7 @@ int main( int argc, char * argv [] )
 		rotamer_set::RotamerSetCOP roi_rotset = rotsets->rotamer_set_for_residue( residue_of_interest );
 
 		kinematics::MoveMapOP mm( new kinematics::MoveMap ); mm->set_chi( residue_of_interest, true );
-		protocols::simple_moves::MinMover minmover( mm, sfxn, "dfpmin", 0.1, true, false, false );
+		protocols::simple_moves::MinMover minmover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
 
 		//utility::vector1< ResidueOP > minimized_rotamers( roi_rotset->num_rotamers() );
 		//utility::vector1< EnergyMap > minimized_scores( roi_rotset->num_rotamers() );

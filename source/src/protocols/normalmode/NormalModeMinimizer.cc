@@ -207,7 +207,7 @@ void NormalModeMinimizer::parse_my_tag(
 
 	// minimizer
 	options_->max_iter( tag->getOption< int >( "max_iter", 200 ) );
-	options_->min_type( tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" ) );
+	options_->min_type( tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" ) );
 	options_->minimize_tolerance( tag->getOption< core::Real >( "tolerance", 0.01 ) );
 
 	// nma-min specific

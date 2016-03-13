@@ -122,7 +122,7 @@ pose_ns::Pose* Single_tree_RRT::build_and_score_pose_from_node(RRT_node* n)
       // minimize (locally for backbone, unconstrained for sidechains) // TODO: flag? for tolerance? for any minimization? make same as in local-planner?
       poseP->set_allow_bb_move(true);
       double min_tolerance = 10;
-      char* min_type = "dfpmin_atol"; // DFP gradient descent + absolute tolerance
+      char* min_type = "lbfgs_armijo_atol"; // DFP gradient descent + absolute tolerance
       minimize_set_tolerance( min_tolerance );
       cst_set_ns::Cst_set bb_tor_cst_set;     //Backbone torsional constraints:
       _score_weight_map.set_weight( pose_ns::PHIPSI_CST, 250.0 );

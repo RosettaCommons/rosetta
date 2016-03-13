@@ -171,8 +171,8 @@ RTMin::rtmin(
 	EnergyMap emap_dummy;
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
-	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
-	std::string minimizer = "dfpmin";
+	//optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
+	std::string minimizer = "lbfgs_armijo_nonmonotone";
 	Size max_iter=200;
 	if ( cartesian_ || nonideal_ ) {
 		if ( !scfxn.ready_for_nonideal_scoring() ) {
@@ -567,7 +567,7 @@ if( minimize_ligand_jumps_ ){
 movemap.set_jump( pose.fold_tree().get_jump_that_builds_residue( resid ), true );
 }
 }
-optimization::MinimizerOptions min_options("dfpmin", 0.1, true , false, false);
+optimization::MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 0.1, true , false, false);
 
 Size best_jj = 0;
 Real best_score = 1e99;

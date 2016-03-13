@@ -646,7 +646,7 @@ packmin_unbound_pep(
 	if( !option[ pep_spec::test_no_min ] ){
 		kinematics::MoveMapOP mm ( new kinematics::MoveMap );
 		mm->set_chi( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true );
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		min_mover->apply( pose );
 	}
 	return pose;

@@ -133,7 +133,7 @@ void LoopMover_Refine_KIC::apply(core::pose::Pose & pose) {
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
 	protocols::simple_moves::MinMoverOP min_mover;
 	
-	const std::string min_type = "dfpmin";
+	const std::string min_type = "lbfgs_armijo_nonmonotone";
 	core::Real dummy_tol( 0.001 ); 
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 

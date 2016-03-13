@@ -108,7 +108,7 @@ FlexPepDockingLowRes::setup_for_apply( core::pose::Pose& pose )
 	double temperature = 0.8;
 	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature ) );
 	// setup minimizer
-	std::string min_type = "dfpmin_atol"; // armijo_nonmonotone? different tolerance?
+	std::string min_type = "lbfgs_armijo_atol"; // armijo_nonmonotone? different tolerance?
 	double min_func_tol = 0.1;
 	minimizer_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
 		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ ) );

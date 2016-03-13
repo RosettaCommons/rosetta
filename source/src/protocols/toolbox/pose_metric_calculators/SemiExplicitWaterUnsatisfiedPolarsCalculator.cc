@@ -329,7 +329,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	//just min the new jump
 	//MoveMapOP mm = new MoveMap;
 	//mm->set_jump( jump_number, true );
-	//protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
+	//protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true );
 
 	//new naive fold tree
 	FoldTree f_rot( pose.total_residue() );

@@ -129,7 +129,7 @@ public:
 		scorefxn_->show(std::cout, *pose);
 
 		// setup the options
-		MinimizerOptions options( "dfpmin", 0.000010, true ,
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000010, true ,
 				false , false );
 		AtomTreeMinimizer minimizer;
 		std::cout << "MINTEST: p_aa_pp" << "\n";

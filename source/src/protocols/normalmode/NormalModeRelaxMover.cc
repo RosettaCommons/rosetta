@@ -447,9 +447,9 @@ TorsionNormalModeMover::~TorsionNormalModeMover(){}
 void
 TorsionNormalModeMover::set_default_minoption(){
 	//optimization::MinimizerOptionsCOP minoption =
-	// new ( "dfpmin", 0.02, true, false, false );
+	// new ( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 	//set_minoption( minoption );
-	minoption_ = optimization::MinimizerOptionsCOP( optimization::MinimizerOptionsOP( new optimization::MinimizerOptions( "dfpmin", 0.02, true, false, false ) ) );
+	minoption_ = optimization::MinimizerOptionsCOP( optimization::MinimizerOptionsOP( new optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.02, true, false, false ) ) );
 }
 
 void

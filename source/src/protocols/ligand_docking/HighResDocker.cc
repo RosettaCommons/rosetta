@@ -266,7 +266,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 		// Wrap it in something to disable the torsion constraints before packing!
 		pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
 
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, score_fxn_, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 		core::Real const score1 = (*score_fxn_)( pose );

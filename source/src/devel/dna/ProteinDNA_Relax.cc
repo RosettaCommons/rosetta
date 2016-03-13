@@ -165,7 +165,7 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn_, pack_task, 25 ) );
 
 	// min mover
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_, "dfpmin", min_tol_, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", min_tol_, true ) );
 
 	// rb mover
 	RB_MoverOP rb_mover( new RB_Mover( mm, trans_mag_, rot_mag_ ) );

@@ -90,7 +90,7 @@ StepWiseProteinMinimizer::initialize_parameters(){
 	rescore_only_ = false;
 	move_jumps_between_chains_ = false;
 	//fa_scorefxn_ = core::scoring::get_score_function();
-	min_type_ = "dfpmin_armijo_nonmonotone"; // used to be dfpmin
+	min_type_ = "lbfgs_armijo_nonmonotone"; // used to be dfpmin
 	cartesian_ = true;
 	min_tolerance_ = 0.000025 ; // used to be 0.00000025
 	use_coordinate_constraints_ = true;

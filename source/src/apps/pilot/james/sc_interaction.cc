@@ -120,7 +120,7 @@ public:
 
 		core::kinematics::MoveMap mm;
 		mm.set_chi( true );
-		std::string const min_type("dfpmin_armijo_nonmonotone");
+		std::string const min_type("lbfgs_armijo_nonmonotone");
 
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		for ( Size jj = ii+1; jj <= pose.total_residue(); ++jj ) {

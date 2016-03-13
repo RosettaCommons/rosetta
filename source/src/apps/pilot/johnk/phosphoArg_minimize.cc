@@ -110,7 +110,7 @@ main( int argc, char * argv [] )
 		TR << "Running first minimization" << std::endl;
 
 		core::optimization::AtomTreeMinimizer minimizer;
-		core::optimization::MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
+		core::optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true, false );
 		minimizer.run( pose, mm_sc, *scorefxn, min_options );
 
 		// JK DEBUG

@@ -700,7 +700,7 @@ RNA_LoopCloser::tight_minimize( core::pose::Pose & pose ) const
 	static AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	static MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false /*deriv_check_*/, false /*deriv_check_*/ );
+	static MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false /*deriv_check_*/, false /*deriv_check_*/ );
 	static ScoreFunctionOP lores_scorefxn( ScoreFunctionFactory::create_score_function( core::scoring::RNA_LORES_WTS ) );
 	lores_scorefxn->set_weight( linear_chainbreak, 5.0 );
 	lores_scorefxn->set_weight( coordinate_constraint, 2.0 );
@@ -726,7 +726,7 @@ RNA_LoopCloser::local_minimize_at_chainbreaks(
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false /*deriv_check_*/, false /*deriv_check_*/ );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false /*deriv_check_*/, false /*deriv_check_*/ );
 
 	kinematics::MoveMap mm;
 	mm.set_bb( false );

@@ -1326,6 +1326,7 @@ int main( int argc, char * argv [] ) {
 	mm->set_jump(option[relaxjumps]());
 	mm->set_bb(option[relaxbb]());
 	mm->set_chi(true);
+	// AMW: VKM prefers dfpmin here
 	protocols::simple_moves::MinMoverOP minmove = new protocols::simple_moves::MinMover(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000001, true, false, false);
 	protocols::relax::FastRelaxOP frlx;
 	if(option[OptionKeys::relax::script].user()) {

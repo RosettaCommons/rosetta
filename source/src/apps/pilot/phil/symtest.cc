@@ -315,7 +315,7 @@ bk_test()
 		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
 		movemap->set_jump(1,true);
 		protocols::simple_moves::symmetry::SymMinMoverOP min_mover
-			( new protocols::simple_moves::symmetry::SymMinMover(movemap, scorefxn, "dfpmin", 0.00001, true ) );
+			( new protocols::simple_moves::symmetry::SymMinMover(movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.00001, true ) );
 
 		min_mover->apply( dimer );
 		dimer.dump_pdb("dimer_aftermin.pdb");

@@ -462,7 +462,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 	movemap->set_bb(true);
 	movemap->set_chi(true);
 	core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
-	protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+	protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 	pose.remove_constraints();
 
 
@@ -511,7 +511,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 																							AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
 																							new HarmonicFunc(1.570796,0.1) ) );
 	}
-	protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+	protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 	pose.remove_constraints();
 
 }
@@ -934,7 +934,7 @@ void run() {
 					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
 					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 					movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
-					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 					relax_mover->apply(psym);
 					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
 					sfsym->show(psym);

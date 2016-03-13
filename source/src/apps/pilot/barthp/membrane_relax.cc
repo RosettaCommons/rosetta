@@ -233,7 +233,7 @@ main( int argc, char * argv [] )
 
 	// setup the options
 
-  MinimizerOptions options( "dfpmin_armijo_nonmonotone", 0.001, true , /*was 0.000001*/
+  MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true , /*was 0.000001*/
                           false , false );
 
 	AtomTreeMinimizer minimizer;

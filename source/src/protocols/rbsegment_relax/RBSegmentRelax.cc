@@ -358,7 +358,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 	//Minimizer object
 	optimization::AtomTreeMinimizer mzr;
 	optimization::MinimizerOptions options1( "linmin", 0.1, true, false );
-	core::optimization::MinimizerOptions options2( "dfpmin_armijo_nonmonotone", 1e-3, true, false );
+	core::optimization::MinimizerOptions options2( "lbfgs_armijo_nonmonotone", 1e-3, true, false );
 
 	// set movemaps
 	if ( fullatom ) {

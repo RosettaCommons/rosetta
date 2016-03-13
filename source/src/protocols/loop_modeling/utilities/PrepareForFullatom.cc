@@ -173,7 +173,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 
 	PackRotamersMoverOP packer;
 	AtomTreeMinimizerOP minimizer;
-	MinimizerOptions min_options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
+	MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 1e-5, true, false);
 	ScoreFunctionCOP fa_score_function = get_score_function();
 
 	if ( is_symmetric(pose) ) {

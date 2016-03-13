@@ -271,7 +271,7 @@ void performMinimization(pose::Pose& workpose, core::scoring::ScoreFunctionOP sc
 	core::kinematics::MoveMapOP tempMap = new core::kinematics::MoveMap();
 
 	tempMap->set_bb_true_range(1,workpose.n_residue());
-	protocols::simple_moves::MinMover minimizer(tempMap, scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(tempMap, scorefxn, "lbfgs_armijo_atol", 0.0001, true /*nb_list*/ );
 	std::cout<<"Score before minimization: "<<scorefxn->score(workpose)<<std::endl;
 	workpose.dump_pdb("before_minimization.pdb");
 	minimizer.apply(workpose);

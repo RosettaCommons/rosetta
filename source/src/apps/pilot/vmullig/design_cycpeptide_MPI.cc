@@ -730,6 +730,7 @@ void perturb_bb_and_relax (
 	core::Size MCcounter = 0; //The counter for Monte Carlo trajectory steps.
 
 	//Variables and objects for Cartesian minimization:
+	// AMW: note that Vikram wants to retain dfpmin here; do not change.
 	core::Real const cartweight = sfxn->get_weight(cart_bonded);
 	core::Real const procloseweight = sfxn->get_weight(pro_close);
 	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000001, true, false, false);

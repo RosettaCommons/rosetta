@@ -258,7 +258,7 @@ build_helix_test(){
     mm.set_jump( true );
 
 
-    MinimizerOptions options( "dfpmin_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
+    MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
     AtomTreeMinimizer minimizer;
     minimizer.run( pose, mm, *scorefxn, options );
 

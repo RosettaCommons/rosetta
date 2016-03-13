@@ -128,7 +128,7 @@ kinematics::MoveMap mm;
 	}
 //	mm.set_jump(1,true);
   // setup the options
-//	MinimizerOptions options( "dfpmin_armijo_nonmonotone", 10.0, true, true, true );
+//	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 10.0, true, true, true );
 //  MinimizerOptions options( "linmin", 10.0, true use_nblist,
 //    true deriv_check, true );
 

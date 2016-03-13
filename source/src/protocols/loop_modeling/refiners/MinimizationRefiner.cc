@@ -115,7 +115,7 @@ void MinimizationRefiner::set_min_options(MinimizerOptionsOP options) {
 
 	if ( ! options ) {
 		min_options_ = MinimizerOptionsOP( new MinimizerOptions(
-			"dfpmin",   // min_type
+			"lbfgs_armijo_nonmonotone",   // min_type
 			1e-3,       // min_tolerance
 			true,       // use_nblist
 			false) );   // deriv_check

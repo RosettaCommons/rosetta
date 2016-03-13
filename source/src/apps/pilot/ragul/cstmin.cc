@@ -93,7 +93,7 @@ int main( int argc, char * argv [] )
 
 		// create minimizer
 		core::optimization::AtomTreeMinimizer minimizer;
-		core::optimization::MinimizerOptions min_options( "dfpmin", 0.00001, true);
+		core::optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.00001, true);
 		min_options.nblist_auto_update(true);
 
 		core::kinematics::MoveMap mm;

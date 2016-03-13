@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   using protocols::loops::loop_mover::loops_set_chainbreak_weight;
 
   MinMoverOP minimizer = new MinMover();
-  minimizer->min_type("dfpmin");
+  minimizer->min_type("lbfgs_armijo_nonmonotone");
   minimizer->tolerance(1e-3);
   minimizer->nb_list(true);
   minimizer->deriv_check(false);

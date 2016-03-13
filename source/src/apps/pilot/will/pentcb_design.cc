@@ -296,7 +296,7 @@ minimize(Pose & pose,  utility::vector1<Size> const & iface) {
 		movemap->set_chi(*i,true);
 	}
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 

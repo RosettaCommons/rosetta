@@ -41,7 +41,7 @@ CycPepMover::~CycPepMover() {
 void CycPepMover::minimize(core::pose::Pose& workpose){
 	core::kinematics::MoveMapOP moveMap = new core::kinematics::MoveMap();
 	moveMap->set_jump( 1, true );
-	protocols::simple_moves::MinMover minimizer(moveMap, _scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(moveMap, _scorefxn, "lbfgs_armijo_atol", 0.0001, true /*nb_list*/ );
 	minimizer.apply(workpose);
 }
 

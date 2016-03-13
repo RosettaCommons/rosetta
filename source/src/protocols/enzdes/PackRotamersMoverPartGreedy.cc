@@ -290,7 +290,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 				movemap->set_jump( false );
 				movemap->set_bb( false );
 				movemap->set_chi( allow_minimization );
-				protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, scorefxn_minimize_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/) );
+				protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, scorefxn_minimize_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/) );
 				minmover->apply(working_pose);
 
 				//Check energy

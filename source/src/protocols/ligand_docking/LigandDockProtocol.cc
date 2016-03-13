@@ -289,7 +289,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
 	// Putting it here, we will get a slightly different interface than is used during classic_protocol() ...
-	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 
@@ -360,7 +360,7 @@ LigandDockProtocol::classic_protocol(
 		//MoverOP dockmcm_mover = make_dockmcm_mover(pose, jump_id, pack_mover, simple_rigbod, movemap, scorefxn, monteCarlo);
 		//dockmcm_mover->apply(pose);
 		{
-			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 			min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 			core::Real const score1 = (*scorefxn)( pose );
@@ -422,7 +422,7 @@ LigandDockProtocol::shear_min_protocol(
 	//monteCarlo->reset_counters();
 	for ( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		//TR << "shear_min_protocol(), cycle " << cycle << std::endl;
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 		//core::Real const score1 = (*scorefxn)( pose );
 
@@ -703,7 +703,7 @@ LigandDockProtocol::make_dockmcm_mover(
 {
 	using namespace protocols::moves;
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 	MoverOP sequence_mover( new SequenceMover(

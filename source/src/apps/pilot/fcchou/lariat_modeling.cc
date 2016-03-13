@@ -274,7 +274,7 @@ lariat_modeling ()
 
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
-	MinimizerOptions min_options1 ( "dfpmin_armijo", dummy_tol, true, false, false );
+	MinimizerOptions min_options1 ( "lbfgs_armijo", dummy_tol, true, false, false );
 
 	kinematics::MoveMap mm;
 	mm.set_bb ( false );

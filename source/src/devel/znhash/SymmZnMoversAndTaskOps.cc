@@ -743,7 +743,7 @@ ZNCoordinationConstraintPlacerMover::minimize_zinc_coordination( core::pose::Pos
 	mm->set_chi( m1_.res2(), true );
 	mm->set_chi( m2_.res1(), true );
 	mm->set_chi( m2_.res2(), true );
-	protocols::simple_moves::symmetry::SymMinMoverOP symminmover( new protocols::simple_moves::symmetry::SymMinMover( mm, fa_sfxn, "dfpmin_armijo_nonmonotone", 1e-4, true ) );
+	protocols::simple_moves::symmetry::SymMinMoverOP symminmover( new protocols::simple_moves::symmetry::SymMinMover( mm, fa_sfxn, "lbfgs_armijo_nonmonotone", 1e-4, true ) );
 
 	core::scoring::EnergyMap start_weights = fa_sfxn->weights();
 	core::scoring::EnergyMap end_weights = start_weights;

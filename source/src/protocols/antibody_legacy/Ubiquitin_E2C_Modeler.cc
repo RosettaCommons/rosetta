@@ -155,7 +155,7 @@ void ubi_e2c_modeler::set_default() {
 	applied_fullatom_pert_ = false;
 
 	min_tolerance_ = 0.1;
-	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
+	min_type_ = std::string( "lbfgs_armijo_nonmonotone" );
 	nb_list_ = true;
 
 	if ( cov_bond_only_flag_ ) {

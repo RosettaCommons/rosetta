@@ -415,7 +415,7 @@ simple_opte_test()
 		std::cout << std::endl;
 	}
 
-	std::string min_type("dfpmin_armijo_nonmonotone");
+	std::string min_type("lbfgs_armijo_nonmonotone");
 	if ( option[ run::min_type ].user() ) min_type = option[ run::min_type ]();
 	optimization::MinimizerOptions options( min_type, 0.0000001, true, true );
 

@@ -90,7 +90,7 @@ RNA_Minimizer::RNA_Minimizer( RNA_MinimizerOptionsCOP options /* = 0 */ ):
 	perform_minimizer_run_( true ),
 	include_default_linear_chainbreak_( true  ),
 	close_loops_( true ),
-	min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
+	min_type_( "lbfgs_armijo_nonmonotone" ) //Parin S. Jan 12, 2012
 {
 	Mover::type("RNA_Minimizer");
 }

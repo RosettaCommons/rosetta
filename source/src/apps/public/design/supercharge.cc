@@ -500,8 +500,8 @@ public:
 		movemap_scbb->set_chi( true );
 		movemap_scbb->set_bb( true );
 
-		protocols::simple_moves::MinMoverOP min_sc( new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "dfpmin_armijo", 0.01, true ) );
-		protocols::simple_moves::MinMoverOP min_scbb( new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "dfpmin_armijo", 0.01, true ) );
+		protocols::simple_moves::MinMoverOP min_sc( new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		protocols::simple_moves::MinMoverOP min_scbb( new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "lbfgs_armijo", 0.01, true ) );
 
 
 		TR << "Packrotamers" << std::endl;
@@ -1061,8 +1061,8 @@ public:
 		//movemap_scbb->set_chi( true );
 		//movemap_scbb->set_bb( true );
 
-		//protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "dfpmin_armijo", 0.01, true );
-		//protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "dfpmin_armijo", 0.01, true );
+		//protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "lbfgs_armijo", 0.01, true );
+		//protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "lbfgs_armijo", 0.01, true );
 
 		TR << "Packing designed" << std::endl;
 		packrot_mover->apply( pose );

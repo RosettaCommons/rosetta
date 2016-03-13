@@ -388,7 +388,7 @@ minimizer_test()
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, deriv_check_, deriv_check_ );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check_, deriv_check_ );
 	options.nblist_auto_update( true );
 	kinematics::MoveMap mm;
 	mm.set_bb( true );

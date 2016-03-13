@@ -117,7 +117,7 @@ void SidechainMinMover::set_default()
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 		movemap_->set_chi( true );
 	}
-	minmover_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap_, scorefxn(), "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
+	minmover_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap_, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
 }
 
 std::string

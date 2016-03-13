@@ -217,7 +217,7 @@ main( int argc, char * argv [] )
 			// Check for disulfide bonded cysteines
 			if( pose.residue(i).type().is_disulfide_bonded() ) mm->set_chi( i, false );
 		}
-		protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+		protocols::simple_moves::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 		min_mover.apply( pose );
 
 		pose.update_residue_neighbors();	// make sure graph_state == GOOD

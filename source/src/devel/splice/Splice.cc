@@ -1715,7 +1715,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			TR<<"Fold tree before minimization: "<<pose.fold_tree()<<std::endl;
 			core::scoring::ScoreFunctionOP scorefxn_with_chainbrk = scorefxn()->clone();
 			scorefxn_with_chainbrk->set_weight( core::scoring::chainbreak, 1.0 );
-			protocols::simple_moves::MinMover min_mover( mm, scorefxn_with_chainbrk, "dfpmin_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
+			protocols::simple_moves::MinMover min_mover( mm, scorefxn_with_chainbrk, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
 
 			TR << "scorefxn before min mover " << std::endl;
 			scorefxn_with_chainbrk->show(pose);

@@ -311,7 +311,7 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 	//  make_symmetric_movemap( pose, *mm );
 
 	//   SymAtomTreeMinimizer minimizer;
-	//   MinimizerOptionsOP min_options = new MinimizerOptions( "dfpmin", 0.00001, true, false, false );
+	//   MinimizerOptionsOP min_options = new MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.00001, true, false, false );
 	//   minimizer.run( pose, *mm, *scorefxn, *min_options );
 
 

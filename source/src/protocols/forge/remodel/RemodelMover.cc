@@ -1055,7 +1055,7 @@ void RemodelMover::apply( Pose & pose ) {
 					centroid_sfx_->set_weight( core::scoring::env, 0.0);
 					}*/
 
-					//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
+					//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
 					simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true) );
 					TR << "cen_minimize pose foldtree: " << pose.fold_tree() << std::endl;
 					minMover->apply(pose);

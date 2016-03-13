@@ -857,7 +857,7 @@ juke_sam_test(){
 		AtomTreeMinimizer minimizer;
 		float const dummy_tol( 0.0000025);
 		bool const use_nblist( true ), deriv_check( false );
-		MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check, deriv_check );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check, deriv_check );
 		options.nblist_auto_update( true );
 		minimizer.run( pose, mm, *scorefxn_soft_norep, options );
 

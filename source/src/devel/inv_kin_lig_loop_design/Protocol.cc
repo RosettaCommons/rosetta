@@ -207,7 +207,7 @@ void Protocol::phase_lores() {
 					cout << "start_3mer_1mer: " << REPORTCYCLES3(cycles_start,max_cycles_start,cycles_start_3mer,max_cycles_start_3mer,cycles_start_3mer_1mer,max_cycles_start_3mer_1mer) << endl;
 
 					mover.insertFragment(a,b,1);
-					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
+					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",1,true,false,false) );
 
 					min_start_3mer_inner.boltzmann(*pose);
 
@@ -248,7 +248,7 @@ void Protocol::phase_lores() {
 			mover.smallMoves(loop.lo,loop.hi);
 			//mover.insertFragment(a,b,1);
 
-			atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",0.01,true,false,false) );
+			atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.01,true,false,false) );
 
 			if ( loop.to ) {
 				protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
@@ -283,7 +283,7 @@ void Protocol::phase_lores() {
 				assert( false );
 			}
 
-			atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",0.01,true,false,false) );
+			atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.01,true,false,false) );
 
 			pose->energies().show_total_headers( cout ); cout << endl;
 			pose->energies().show_totals( cout ); cout << endl;
@@ -388,7 +388,7 @@ void Protocol::phase_hires() {
 						assert( false );
 					}
 
-					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
+					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",1,true,false,false) );
 
 					min_ramp.boltzmann(*pose); // !!! don't recover here
 
@@ -480,7 +480,7 @@ void Protocol::phase_hires() {
 						assert( false );
 					}
 
-					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
+					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",1,true,false,false) );
 
 					min_design_sm.boltzmann(*pose);
 

@@ -1003,7 +1003,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				pack1.apply( pose );
 
 				core::optimization::symmetry::SymAtomTreeMinimizer mzr;
-				core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
+				core::optimization::MinimizerOptions options("lbfgs_armijo_nonmonotone", 1e-5, true, false);
 				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
 				mzr.run( pose, *mm, *fa_scorefxn_, options );
@@ -1013,7 +1013,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 				// quick SC minimization
 				core::optimization::AtomTreeMinimizer mzr;
-				core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
+				core::optimization::MinimizerOptions options("lbfgs_armijo_nonmonotone", 1e-5, true, false);
 				mzr.run( pose, *mm, *fa_scorefxn_, options );
 			}
 

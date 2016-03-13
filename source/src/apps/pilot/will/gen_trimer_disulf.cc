@@ -352,7 +352,7 @@ Real repackmin(core::pose::Pose & pose, core::scoring::ScoreFunction const & sfx
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
 	movemap->set_bb(false); movemap->set_chi(true); movemap->set_jump(false);
 	// movemap->set_dof();
-	protocols::simple_moves::MinMover min(movemap, &sfxn, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::MinMover min(movemap, &sfxn, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	min.apply(pose);
 
 	Real s = sfxn(pose);

@@ -128,7 +128,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	repack->task_factory( get_stem_taskfactory(pose, "NC") );
 
 	/// Min_Mover
-	MinMoverOP min_mover( new MinMover( get_stem_movemap(pose, "NC"), scorefxn_, "dfpmin_armijo_nonmonotone", 0.001, true ) );
+	MinMoverOP min_mover( new MinMover( get_stem_movemap(pose, "NC"), scorefxn_, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	/// Sequence_Mover
 	optimize_stems_ = moves::SequenceMoverOP( new moves::SequenceMover() );
