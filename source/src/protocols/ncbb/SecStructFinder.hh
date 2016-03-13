@@ -87,10 +87,8 @@ private:
 	bool uniq_refers_to_beta ( char uniq );
 	void initialize_rtype_vector( utility::vector1< core::chemical::ResidueType > & restypes );
 	std::string make_filename ( Size number_dihedrals, utility::vector1< Real > dihedrals );
-	Size get_number_dihedrals ( utility::vector1< char > uniqs );
 	bool too_similar( Size i, Size j, utility::vector1< Real > dihedrals );
 	void show_current_dihedrals( Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< Real > dihedrals );
-	Pose add_dihedral_constraints_to_pose( Pose pose, utility::vector1< Real > dihedrals, Size number_dihedral_sets, utility::vector1< char > uniqs );
 };
 
 }

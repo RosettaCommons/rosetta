@@ -112,6 +112,7 @@ static MoverRegistrator< helical_bundle::MakeBundleHelixCreator > reg_MakeBundle
 static MoverRegistrator< helical_bundle::PerturbBundleCreator > reg_PerturbBundleCreator;
 static MoverRegistrator< helical_bundle::PerturbBundleHelixCreator > reg_PerturbBundleHelixCreator;
 
+static MoverRegistrator< ncbb::SecStructMinimizeMoverCreator > reg_SecStructMinimizeMoverCreator;
 static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesignProtocolCreator;
 static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;
 static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;

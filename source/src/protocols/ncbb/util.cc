@@ -19,58 +19,40 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoringManager.hh>
 
-#include <core/chemical/VariantType.hh>
-
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <utility/pointer/owning_ptr.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-//#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-
+#include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
-#include <basic/options/util.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/Tracer.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <string>
@@ -86,7 +68,6 @@ using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
-using namespace protocols::simple_moves::hbs;
 using namespace protocols::rigid;
 using namespace protocols::toolbox;
 using namespace protocols::toolbox::pose_metric_calculators;
@@ -132,6 +113,32 @@ give_dihedral_index(
 		}
 	}
 	return index;
+}
+
+Size
+get_number_dihedrals (
+	utility::vector1< char > uniqs,
+	std::string const & dihedral_pattern,
+	std::string const & alpha_beta_pattern
+) {
+	Size number = 0;
+	for ( Size i = 1; i <= uniqs.size(); ++i ) {
+		// look through dihedral pattern until you find uniqs
+		for ( Size j = 0; j < dihedral_pattern.length(); ++j ) {
+			if ( dihedral_pattern[j] == uniqs[i] ) {
+				if ( alpha_beta_pattern[j] == 'A' || alpha_beta_pattern[j] == 'P' ) {
+					// it's an alpha or a peptoid
+					// TODO: figure out an appropriate way to decide if you want to do omega sampling
+					// for peptoids; I don't suggest this yet--at worst you can minimize it later?
+					number += 2;
+				} else if ( alpha_beta_pattern[j] == 'B' ) {
+					number += 3;
+				}
+				j = dihedral_pattern.length();
+			}
+		}
+	}
+	return number;
 }
 
 void

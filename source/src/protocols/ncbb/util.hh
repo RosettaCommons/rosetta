@@ -13,65 +13,22 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.hh>
-
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoringManager.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <core/chemical/VariantType.hh>
-
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-
-#include <utility/pointer/owning_ptr.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 // Mover headers
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-
-// Filter headers
-#include <basic/MetricValue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-//#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.fwd.hh>
 
 // Utility Headers
-#include <basic/options/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <string>
 #include <sstream>
@@ -79,25 +36,14 @@
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces
 using namespace core;
-using namespace conformation;
-using namespace chemical;
-using namespace scoring;
-using namespace pose;
-using namespace protocols;
+using namespace core::pose;
+using namespace core::scoring;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
-using namespace protocols::simple_moves::hbs;
-using namespace protocols::rigid;
-using namespace protocols::toolbox;
-using namespace protocols::toolbox::pose_metric_calculators;
-using namespace core::pack::task;
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
 using namespace core::id;
 using basic::T;
 using basic::Error;
 using basic::Warning;
-using utility::file::FileName;
 
 namespace protocols {
 namespace ncbb {
@@ -111,6 +57,13 @@ give_dihedral_index(
 	utility::vector1< char > uniqs,
 	std::string dihedral_pattern,
 	std::string alpha_beta_pattern
+);
+
+Size
+get_number_dihedrals(
+	utility::vector1< char > uniqs,
+	std::string const & dihedral_pattern,
+	std::string const & alpha_beta_pattern
 );
 
 void

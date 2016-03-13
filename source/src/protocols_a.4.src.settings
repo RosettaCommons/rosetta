@@ -89,6 +89,7 @@ sources = {
 	"protocols/ncbb": [
 		"NcbbDockDesignProtocol",
 		"SecStructFinder",
+		"SecStructMinimizeMover",
 		"SecStructMinimizeMultiFunc",
 		"util",
 	],

@@ -16,6 +16,8 @@
 #define INCLUDED_utility_factory_WidgetRegistrator_hh
 
 #include <utility/pointer/owning_ptr.hh>
+// AMW REMOVE
+#include <utility/excn/Exceptions.hh>
 
 namespace utility {
 namespace factory {

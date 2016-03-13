@@ -434,6 +434,7 @@ BackboneGridSampler::parse_my_tag(
 	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & /*pose*/
 ) {
+	try {
 
 	if ( tag->getName() != "BackboneGridSampler" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
@@ -563,6 +564,10 @@ BackboneGridSampler::parse_my_tag(
 	} // looping through sub-tags
 	/*** End Parse of Sub-Tags ***/
 
+	} catch ( utility::excn::EXCN_RosettaScriptsOption const & e ) {
+		TR << "kill me " << e.msg() << std::endl;
+	}
+	
 	if ( TR.visible() ) TR.flush();
 	return;
 } //parse_my_tag

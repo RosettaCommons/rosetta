@@ -83,10 +83,6 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 
 	setup_minimization_graph( pose_, scorefxn_, min_map_ );
 
-	// The alpha beta pattern and dihedral pattern
-	// give a mapping between torsion IDs and the variable index that will control them
-	// (hooray!)
-
 	utility::vector1< char > uniqs;
 	Size num;
 	count_uniq_char( dihedral_pattern_, num, uniqs );
@@ -105,26 +101,22 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 			nvar_ += 2;
 		}
 	}
-	TR << "nvar_ = " << nvar_ << std::endl;
+	//TR << "nvar_ = " << nvar_ << std::endl;
 
 	for ( Size i = 1; i <= uniqs.size(); ++i ) {
 		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
-			if ( dihedral_pattern_[ j-1 ] == uniqs[ i ] ) { //alignment
-				//TR << "Dihedral pattern at " << j << " equals uniqs[ " << i << " ] = " << uniqs[ i ] << std::endl;
-				// we're looking at one of many residues represented by this uniq
-				// therefore, identify this residue (resnum j!)
-				// and push back its torsions
-				id::TorsionID bb1( j, id::BB, 1 );
-				vars_index_to_torsion_id_[ starters[ i ] ].push_back( bb1 );
-				//TR << "So variable " << starters[ i ] << " controls residue " << j << " torsion 1 " << std::endl;
-				id::TorsionID bb2( j, id::BB, 2 );
-				vars_index_to_torsion_id_[ starters[ i ] + 1 ].push_back( bb2 );
-				//TR << "So variable " << (starters[ i ]+1) << " controls residue " << j << " torsion 2 " << std::endl;
-				if ( alpha_beta_pattern_[ j-1 ] == 'B' ) {
-					id::TorsionID bb3( j, id::BB, 3 );
-					vars_index_to_torsion_id_[ starters[ i ] + 2 ].push_back( bb3 );
-					//TR << "So variable " << (starters[ i ]+2) << " controls residue " << j << " torsion 3 " << std::endl;
-				}
+			if ( dihedral_pattern_[ j-1 ] != uniqs[ i ] ) continue;
+			
+			id::TorsionID bb1( j, id::BB, 1 );
+			vars_index_to_torsion_id_[ starters[ i ] ].push_back( bb1 );
+			//TR << "So variable " << starters[ i ] << " controls residue " << j << " torsion 1 " << std::endl;
+			id::TorsionID bb2( j, id::BB, 2 );
+			vars_index_to_torsion_id_[ starters[ i ] + 1 ].push_back( bb2 );
+			//TR << "So variable " << (starters[ i ]+1) << " controls residue " << j << " torsion 2 " << std::endl;
+			if ( alpha_beta_pattern_[ j-1 ] == 'B' ) {
+				id::TorsionID bb3( j, id::BB, 3 );
+				vars_index_to_torsion_id_[ starters[ i ] + 2 ].push_back( bb3 );
+				//TR << "So variable " << (starters[ i ]+2) << " controls residue " << j << " torsion 3 " << std::endl;
 			}
 		}
 	}
@@ -136,11 +128,6 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 Real
 SecStructMinimizeMultiFunc::operator ()( Multivec const & vars ) const
 {
-	//TR << "Vars ";
-	//for ( Size i = 1; i <= vars.size(); ++i ) {
-	// TR << vars[i] << " ";
-	//}
-	//TR << std::endl;
 	Multivec dofs( vars_to_dofs( vars ) );
 	min_map_.copy_dofs_to_pose( pose_, dofs );
 
@@ -230,7 +217,6 @@ void
 SecStructMinimizeMultiFunc::get_dofs_for_pose0()
 {
 	dofs_for_pose0_.resize( min_map_.dof_nodes().size() );
-	//TR << "Resized the pose0 dofs to hold " << min_map_.dof_nodes().size() << " vals " << std::endl;
 	min_map_.copy_dofs_from_pose( pose0_, dofs_for_pose0_ );
 }
 
@@ -241,17 +227,12 @@ SecStructMinimizeMultiFunc::vars_to_dofs( Multivec const & vars ) const {
 
 	for ( Size i_var = 1; i_var <= vars.size(); ++i_var ) {
 		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
-		//TR << "Finding DOFs for " << i_var << std::endl;
-		if ( it != map_BB_to_DOF_.end() ) {
+		if ( it == map_BB_to_DOF_.end() ) continue;
 
-			utility::vector1< Size > const i_dofs( it->second );
-			//TR << "There are " << i_dofs.size() << " dofs! " << std::endl;
-			// Overwrite values into dofs
-			for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
-				//TR << "i_dofs[ iii ]  = i_dofs[ " << iii << " ] = " << i_dofs[ iii ] << std::endl;
-				dofs[ i_dofs[ iii ] ] = vars[ i_var ];
-				//TR << "Setting dofs[ " << i_dofs[ iii ] << " ] to " << vars[ i_var ] << std::endl;
-			}
+		utility::vector1< Size > const i_dofs( it->second );
+		// impose vars on dofs.
+		for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
+			dofs[ i_dofs[ iii ] ] = vars[ i_var ];
 		}
 	}
 
@@ -261,19 +242,19 @@ SecStructMinimizeMultiFunc::vars_to_dofs( Multivec const & vars ) const {
 Multivec
 SecStructMinimizeMultiFunc::dofs_to_vars( Multivec const & dofs ) const
 {
-
 	// Next, iter over vars to convert dofs info to vars info
 	Multivec vars( nvar_, 0.0 );
 
 	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
 		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
-		if ( it != map_BB_to_DOF_.end() ) {
-			utility::vector1< Size > const i_dofs( it->second );
-
-			for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
-				vars[ i_var ] = dofs[ i_dofs[ iii ] ];
-			}
+		if ( it == map_BB_to_DOF_.end() ) continue;
+		
+		utility::vector1< Size > const i_dofs( it->second );
+		
+		for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
+			vars[ i_var ] += dofs[ i_dofs[ iii ] ];
 		}
+		vars[ i_var ] /= i_dofs.size();
 	}
 
 	return vars;
@@ -284,18 +265,19 @@ SecStructMinimizeMultiFunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 {
 	Multivec dEdvars( nvar_, 0.0 );
 
+	// i_var: index in reduced coordinate set
+	// obtain dofs corresponding
+	// derivative d var is average derivative d correpsonding dofs.
 	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
 		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
-		if ( it != map_BB_to_DOF_.end() ) {
-
-			utility::vector1< Size > const i_dofs( it->second );
-
-			// average!
-			for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
-				dEdvars[ i_var ] += dEddofs[ i_dofs[ iii ] ];
-			}
-			dEdvars[ i_var ] /= i_dofs.size();
+		if ( it == map_BB_to_DOF_.end() ) continue;
+		utility::vector1< Size > const i_dofs( it->second );
+		
+		// average!
+		for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
+			dEdvars[ i_var ] += dEddofs[ i_dofs[ iii ] ];
 		}
+		dEdvars[ i_var ] /= i_dofs.size();
 	}
 
 	return dEdvars;

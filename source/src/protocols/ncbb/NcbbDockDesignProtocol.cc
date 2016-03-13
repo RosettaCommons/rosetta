@@ -16,12 +16,13 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoringManager.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <utility/pointer/owning_ptr.hh>
+#include <utility/tag/Tag.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
@@ -67,10 +68,7 @@ using namespace protocols::ncbb;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::oop;
-using namespace protocols::simple_moves::hbs;
 using namespace protocols::rigid;
-using namespace protocols::toolbox;
-using namespace protocols::toolbox::pose_metric_calculators;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -485,8 +483,7 @@ NcbbDockDesignProtocol::clone() const
 }
 
 void
-NcbbDockDesignProtocol::parse_my_tag
-(
+NcbbDockDesignProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
 	protocols::filters::Filters_map const &,

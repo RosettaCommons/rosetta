@@ -53,6 +53,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 //#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>

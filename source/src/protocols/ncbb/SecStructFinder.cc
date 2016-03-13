@@ -30,17 +30,10 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -59,11 +52,11 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/ncbb/SecStructMinimizeMultiFunc.hh>
+#include <protocols/ncbb/SecStructMinimizeMover.hh>
 #include <protocols/ncbb/SecStructFinder.hh>
 #include <protocols/ncbb/SecStructFinderCreator.hh>
 #include <protocols/ncbb/util.hh>
 
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
 //Basic headers
@@ -309,29 +302,6 @@ SecStructFinder::make_filename (
 	return filename.str();
 }
 
-Size
-SecStructFinder::get_number_dihedrals (
-	utility::vector1< char > uniqs
-) {
-	Size number = 0;
-	for ( Size i = 1; i <= uniqs.size(); ++i ) {
-		// look through dihedral pattern until you find uniqs
-		for ( Size j = 0; j < dihedral_pattern_.length(); ++j ) {
-			if ( dihedral_pattern_[j] == uniqs[i] ) {
-				if ( alpha_beta_pattern_[j] == 'A' || alpha_beta_pattern_[j] == 'P' ) {
-					// it's an alpha or a peptoid
-					// TODO: figure out an appropriate way to decide if you want to do omega sampling
-					// for peptoids; I don't suggest this yet--at worst you can minimize it later?
-					number += 2;
-				} else if ( alpha_beta_pattern_[j] == 'B' ) {
-					number += 3;
-				}
-				j = dihedral_pattern_.length();
-			}
-		}
-	}
-	return number;
-}
 
 bool
 SecStructFinder::too_similar( Size i, Size j, utility::vector1< Real > dihedrals ) {
@@ -364,87 +334,6 @@ SecStructFinder::show_current_dihedrals( Size number_dihedral_sets, utility::vec
 	}
 }
 
-Pose
-SecStructFinder::add_dihedral_constraints_to_pose(
-	Pose pose,
-	utility::vector1< Real > dihedrals,
-	Size number_dihedral_sets,
-	utility::vector1< char > uniqs
-) {
-	Pose minpose( pose );
-
-	Real bin_size_rad = bin_size_ * numeric::NumericTraits<float>::pi()/180;
-
-	for ( Size resi = 1; resi <= pose.n_residue(); ++resi ) {
-
-		Size vec_index = 1;
-		for ( Size i = 2; i <= number_dihedral_sets; ++i ) {
-			if ( dihedral_pattern_[ resi-1 ] == uniqs[ i ] ) vec_index = i;
-		}
-
-		if ( pose.residue( resi ).type().is_beta_aa() ) {
-
-			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
-
-			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			CircularHarmonicFuncOP dih_func_tht (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+2 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-
-			AtomID aidC1( ( resi == 1 ) ? pose.residue( resi ).atom_index( "CO" )
-				: pose.residue(resi-1).atom_index( "C" ),
-				( resi == 1 ) ? resi : resi - 1 );
-
-
-			AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
-			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
-			AtomID aidCM( pose.residue( resi ).atom_index( "CM" ), resi );
-			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
-			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "NM" )
-				: pose.residue(resi+1).atom_index( "N" ),
-				( resi == pose.n_residue() ) ? resi : resi + 1 );
-
-
-			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidCM, dih_func_phi ) );
-			ConstraintCOP thtconstraint( new DihedralConstraint( aidN1, aidCA, aidCM, aidC2, dih_func_tht ) );
-			ConstraintCOP psiconstraint( new DihedralConstraint( aidCA, aidCM, aidC2, aidN2, dih_func_psi ) );
-
-			minpose.add_constraint( phiconstraint );
-			minpose.add_constraint( thtconstraint );
-			minpose.add_constraint( psiconstraint );
-
-		} else if ( pose.residue( resi ).type().is_alpha_aa() ) {
-
-			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
-
-			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-
-
-			AtomID aidC1( ( resi == 1 ) ? pose.residue( resi ).atom_index( "CO" )
-				: pose.residue(resi-1).atom_index( "C" ),
-				( resi == 1 ) ? resi : resi - 1 );
-
-
-			AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
-			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
-			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
-			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "NM" )
-				: pose.residue(resi+1).atom_index( "N" ),
-				( resi == pose.n_residue() ) ? resi : resi + 1 );
-
-
-			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidC2, dih_func_phi ) );
-			ConstraintCOP psiconstraint( new DihedralConstraint( aidN1, aidCA, aidC2, aidN2, dih_func_psi ) );
-
-			minpose.add_constraint( phiconstraint );
-			minpose.add_constraint( psiconstraint );
-
-		}
-	}
-
-	return minpose;
-}
-
 void
 SecStructFinder::apply( Pose & pose )
 {
@@ -452,7 +341,7 @@ SecStructFinder::apply( Pose & pose )
 	utility::vector1< char > uniqs;
 	count_uniq_char( dihedral_pattern_, number_dihedral_sets, uniqs );
 
-	Size number_dihedrals = get_number_dihedrals( uniqs );//2 * number_dihedral_sets; // plus one per beta AA!
+	Size number_dihedrals = get_number_dihedrals( uniqs, dihedral_pattern_, alpha_beta_pattern_ );//2 * number_dihedral_sets; // plus one per beta AA!
 	TR << "Investigating dihedral pattern " << dihedral_pattern_ << " with " << number_dihedral_sets << " uniques " << std::endl;
 
 	utility::vector1< ResidueType > restypes;
@@ -475,8 +364,6 @@ SecStructFinder::apply( Pose & pose )
 	kinematics::MoveMapOP min_mm( new kinematics::MoveMap );
 	min_mm->set_bb( true );
 	min_mm->set_chi( true );
-	// amw NEVERMIND
-	// for now do not minimize chi because of interaction with the min map
 
 	protocols::simple_moves::MinMover minmover( min_mm, score_fxn_, "lbfgs_armijo_nonmonotone", 0.0001, true );
 	minmover.cartesian( cart_ );
@@ -543,28 +430,16 @@ SecStructFinder::apply( Pose & pose )
 					score_fxn_->set_weight( core::scoring::dihedral_constraint, 1.0 );
 				}
 
-				Pose minpose = constrain_ ?
-					add_dihedral_constraints_to_pose( pose, dihedrals, number_dihedral_sets, uniqs )
-					: pose;
+				Pose minpose = pose;
 
-				core::optimization::MinimizerMap min_map;
-				min_map.setup( minpose, *min_mm );
-
-				( *score_fxn_ ) ( minpose );
-				SecStructMinimizeMultiFunc ssmmf( minpose, *score_fxn_, min_map, alpha_beta_pattern_, dihedral_pattern_ );
-
-				core::optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 0.0001, true, false, false ); // investigate the final bools?
-				minpose.energies().set_use_nblist( minpose, min_map.domain_map(), false );
-				core::optimization::Minimizer minimizer( ssmmf, minoptions );
-
-				utility::vector1< Real > dihedrals_for_minimization;
-				for ( Size index = 1; index <= number_dihedrals; ++index ) {
-					dihedrals_for_minimization.push_back( dihedrals[ index ] );
-				}
-				minimizer.run( dihedrals_for_minimization );
-
-				minpose.energies().reset_nblist();
-
+				SecStructMinimizeMoverOP ssmm( new SecStructMinimizeMover() );
+				ssmm->set_constrain( constrain_ );
+				ssmm->set_scorefunction( score_fxn_ );
+				ssmm->set_alpha_beta_pattern( alpha_beta_pattern_ );
+				ssmm->set_dihedral_pattern( dihedral_pattern_ );
+				ssmm->set_dihedrals( dihedrals );
+				ssmm->apply( minpose );
+				
 				score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 				Real score = ( ( *score_fxn_ ) ( minpose ) );
 
@@ -626,25 +501,15 @@ SecStructFinder::apply( Pose & pose )
 
 	for ( Size ii = 1, sz = poses_to_min.size(); ii < sz; ++ii ) {
 
-		Pose minpose = constrain_ ?
-			add_dihedral_constraints_to_pose( poses_to_min[ii], dihedrals, number_dihedral_sets, uniqs )
-			: poses_to_min[ii];
+		Pose minpose = poses_to_min[ii];
 
-		core::optimization::MinimizerMap min_map;
-		min_map.setup( minpose, *min_mm );
-		( *score_fxn_ ) ( minpose );
-		SecStructMinimizeMultiFunc ssmmf( minpose, *score_fxn_, min_map, alpha_beta_pattern_, dihedral_pattern_ );
-
-		core::optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 0.0001, true, false, false ); // investigate the final bools?
-		minpose.energies().set_use_nblist( minpose, min_map.domain_map(), false );
-		core::optimization::Minimizer minimizer( ssmmf, minoptions );
-
-		utility::vector1< Real > dihedrals_for_minimization;
-		for ( Size index = 1; index <= number_dihedrals; ++index ) {
-			dihedrals_for_minimization.push_back( dihedrals_to_min[ii][ index ] );
-		}
-		minimizer.run( dihedrals_for_minimization );
-		minpose.energies().reset_nblist();
+		SecStructMinimizeMoverOP ssmm( new SecStructMinimizeMover() );
+		ssmm->set_constrain( constrain_ );
+		ssmm->set_scorefunction( score_fxn_ );
+		ssmm->set_alpha_beta_pattern( alpha_beta_pattern_ );
+		ssmm->set_dihedral_pattern( dihedral_pattern_ );
+		ssmm->set_dihedrals( dihedrals );
+		ssmm->apply( minpose );
 
 		score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 		Real score = ( ( *score_fxn_ ) ( minpose ) );

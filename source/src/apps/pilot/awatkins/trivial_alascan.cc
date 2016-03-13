@@ -89,7 +89,6 @@ using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
-using namespace protocols::simple_moves::hbs;
 using namespace protocols::rigid;
 using namespace protocols::toolbox;
 using namespace protocols::toolbox::pose_metric_calculators;

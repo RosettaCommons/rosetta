@@ -98,7 +98,6 @@ using namespace protocols;
 using namespace protocols::ncbb;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
-using namespace protocols::simple_moves::hbs;
 using namespace protocols::simple_moves::chiral;
 using namespace core::pack::task;
 using namespace basic::options;
