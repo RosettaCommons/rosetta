@@ -103,7 +103,11 @@ public:
 
 
 	/// @brief Set the scorefunction used by this selector.
-	void set_scorefunction( core::scoring::ScoreFunctionOP sfxn ) { selector_sfxn_=sfxn; return; }
+	inline void set_scorefunction( core::scoring::ScoreFunctionOP sfxn ) { selector_sfxn_=sfxn; return; }
+
+	/// @brief Get the scorefunction used by this selector.
+	///
+	inline core::scoring::ScoreFunctionOP scorefunction() const { return selector_sfxn_; }
 
 
 	/// @brief Set the Boltzmann temperature used by this selector.
@@ -126,6 +130,8 @@ public:
 	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 	/// @param[in] total_solutions -- Total number of solutions found.
 	/// @param[in] solutions -- Reference to vector of owning pointers of poses representing solutions, with pre-selection filters already applied.
+	/// @param[in] low_memory_mode -- Are we running in low memory mode (where vectors of torsions/bondangles/bondlengths are used to store solutions), or default mode (where full poses are stored)?
+	/// @param[in] energies_for_solution -- Vector of energies for each solution.  Used only in low-memory mode.
 	core::Size apply (
 		core::pose::Pose const &pose,
 		core::pose::Pose const &original_pose, //The original pose
@@ -137,7 +143,9 @@ public:
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 		utility::vector1 <core::Size> const &nsol_for_attempt,
 		core::Size const total_solutions,
-		utility::vector1 <core::pose::PoseCOP> const &solutions
+		utility::vector1 <core::pose::PoseCOP> const &solutions,
+		bool const low_memory_mode,
+		utility::vector1 <core::Real> const &energies_for_solution
 	) const;
 
 
@@ -187,7 +195,9 @@ private:
 		core::pose::Pose const &ref_pose,
 		core::Real const &boltzmann_kbt,
 		bool const use_boltzmann,
-		utility::vector1 <core::pose::PoseCOP> const &solutions
+		utility::vector1 <core::pose::PoseCOP> const &solutions,
+		bool const low_memory_mode,
+		utility::vector1 <core::Real> const &energies_for_solution
 	) const;
 
 	/// @brief Applies a lowest_rmsd_selector selector.

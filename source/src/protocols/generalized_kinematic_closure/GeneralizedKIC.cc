@@ -35,6 +35,7 @@
 #include <utility/tag/Tag.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/scoring/Energies.hh>
 
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -107,7 +108,8 @@ GeneralizedKIC::GeneralizedKIC():
 	pre_selection_mover_exists_(false),
 	ntries_before_giving_up_(0),
 	solutions_(),
-	attach_boinc_ghost_observer_(false)
+	attach_boinc_ghost_observer_(false),
+	low_memory_mode_(false)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -139,7 +141,8 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	pre_selection_mover_exists_(src.pre_selection_mover_exists_),
 	ntries_before_giving_up_(src.ntries_before_giving_up_),
 	solutions_(), //Copied below.
-	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
+	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_),
+	low_memory_mode_(src.low_memory_mode_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	//Clone elements in the perturber list
@@ -186,8 +189,15 @@ protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
 
 
 /// @brief Actually apply the mover to the pose.
-void GeneralizedKIC::apply (core::pose::Pose & pose)
+void GeneralizedKIC::apply ( core::pose::Pose & pose )
 {
+	if ( preselection_mover_exists() && low_memory_mode() && TR.Warning.visible() ) {
+		TR.Warning << "*******************************************************************************" << std::endl;
+		TR.Warning << "WARNING!  Use of a preselection mover with GeneralizedKIC's low-memory mode is not advisable.  To save memory, in low-memory mode GeneralizedKIC stores only mainchain DoFs of solutions, not full solution poses.  As a result, preselection movers' effects are not stored.  The preselection mover is reapplied after a solution is selected, but if the preselection mover has any stochastic behaviour, it is not guaranteed to produce the same result." << std::endl;
+		TR.Warning << "*******************************************************************************" << std::endl;
+		TR.Warning.flush();
+	}
+
 	clear_stored_solutions(); //Wipe any solution poses that have been stored.
 
 	if ( loopresidues_.size()==0 ) {
@@ -200,7 +210,6 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 	infer_anchor_connIDs(pose);
 
 	core::pose::Pose perturbedloop_pose; //A pose in which the perturbed loop will be stored.
-	//core::Size const loopsize = loopresidues_.size();
 	utility::vector1 < std::pair < core::Size, core::Size > > residue_map; //Map of < residue in perturbedloop_pose, residue in pose >
 	utility::vector1 < std::pair < core::Size, core::Size > > tail_residue_map; //Map of < tail residue in perturbedloop_pose, residue in pose >.
 	//Tail residues are residues that are not in the loop to be closed, but which "come along for the ride".
@@ -212,13 +221,23 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 
 	core::Size solution_index(0); //Storage for the index of the solution chosen by the selector.
 
-	last_run_successful_ = doKIC(perturbedloop_pose, pose, residue_map, tail_residue_map, solution_index);
+	//Storage for the torsions, bondangles, and bondlengths vectors for the selected solution in low-memory mode:
+	utility::vector1 < core::Real > selected_torsions;
+	utility::vector1 < core::Real > selected_bondangles;
+	utility::vector1 < core::Real > selected_bondlengths;
+
+	last_run_successful_ = doKIC(perturbedloop_pose, pose, residue_map, tail_residue_map, solution_index, selected_torsions, selected_bondangles, selected_bondlengths );
 	if ( rosettascripts_filter_exists_ ) rosettascripts_filter_->set_value(last_run_successful_);
 
 	if ( last_run_successful_ && solution_index!=0 ) {
-		if ( TR.visible() ) { TR << "Closure successful." << std::endl; TR.flush();}
-		pose = *solutions_[solution_index]; //Set the pose to the solution.
-		set_last_move_status( protocols::moves::MS_SUCCESS );
+		if ( TR.visible() ) { TR << "Closure successful." << std::endl; TR.flush(); }
+		if ( low_memory_mode() ) {
+			set_last_move_status( set_final_solution( pose, perturbedloop_pose, residue_map, tail_residue_map, selected_torsions, selected_bondangles, selected_bondlengths ) );
+			if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) { set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY ); }
+		} else {
+			set_final_solution( pose, solution_index ); //Set the pose to the solution.
+			set_last_move_status( protocols::moves::MS_SUCCESS );
+		}
 	} else {
 		if ( TR.visible() ) { TR << "Closure unsuccessful." << std::endl; TR.flush();}
 		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
@@ -254,6 +273,10 @@ GeneralizedKIC::parse_my_tag(
 	using namespace protocols::filters;
 
 	TR << "Parsing options for GeneralizedKIC (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
+
+	if ( tag->hasOption("low_memory_mode") ) {
+		set_low_memory_mode( tag->getOption<bool>( "low_memory_mode" , false ) );
+	}
 
 	runtime_assert_string_msg( tag->hasOption("selector"), "RosettaScript parsing error: the <GeneralizedKIC> mover must have a selector specfied with the selector=<selector_name> statement." );
 	set_selector_type( tag->getOption<std::string>("selector", "") );
@@ -1504,12 +1527,17 @@ void GeneralizedKIC::addupperanchor(
 /// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), residue_map (the mapping of
 /// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is the index
 /// of the solution in the solutions_ vector.
-bool GeneralizedKIC::doKIC(
+/// @notes The selected_torsions, selected_bondangles, and selected_bondlengths vectors are output only in low-memory mode.
+bool
+GeneralizedKIC::doKIC(
 	core::pose::Pose const &pose,
 	core::pose::Pose const &original_pose,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map,
-	core::Size &solution_index
+	core::Size &solution_index,
+	utility::vector1 < core::Real > & selected_torsions,
+	utility::vector1 < core::Real > & selected_bondangles,
+	utility::vector1 < core::Real > & selected_bondlengths
 ) {
 	using namespace core::id;
 	using namespace numeric::kinematic_closure;
@@ -1527,6 +1555,7 @@ bool GeneralizedKIC::doKIC(
 	utility::vector1 < utility::vector1 < utility::vector1 <core::Real> > > b_ang;  //Resulting bond angles.  This is a 3-matrix of [closure attempt #][solution #][bond angle #].
 	utility::vector1 < utility::vector1 < utility::vector1 <core::Real> > > b_len; //Resulting bond lengths.  This is a 3-matrix of [closure attempt #][solution #][bond length #].
 	utility::vector1 <core::Size> nsol_for_attempt; //Number of solutions for each attempt.
+	utility::vector1 < core::Real > energies_for_solution; //Energy for each solution, used only in low-memory mode.
 
 	//Total solutions found:
 	core::Size total_solution_count=0;
@@ -1558,6 +1587,9 @@ bool GeneralizedKIC::doKIC(
 		//Filter solutions found.  This decrements nsol as solutions are eliminated, and deletes solutions from the t_ang, b_ang, and b_len vectors.
 		if ( nsol>0 ) filter_solutions(original_pose, pose, residue_map, tail_residue_map, atomlist_, t_ang[iattempt], b_ang[iattempt], b_len[iattempt], nsol );
 
+		//Flag certain solutions for deletion based on whether preselection movers fail.
+		utility::vector1< bool > solutions_to_delete( nsol, false );
+
 		//Only at this point do we actually build poses:
 		for ( core::Size j=1, jmax=nsol; j<=jmax; ++j ) {
 			core::pose::PoseOP curpose( original_pose.clone() ); //Clone the original pose.
@@ -1582,15 +1614,43 @@ bool GeneralizedKIC::doKIC(
 				if ( pre_selection_mover_->get_last_move_status()!=protocols::moves::MS_SUCCESS ) {
 					TR << "Preselection mover failed!  Continuing to next solution." << std::endl;
 					--nsol;
+					solutions_to_delete[j] = true;
 					continue;
 				}
 			}
-			TR << "Storing solution " << j << " from attempt " << iattempt << "." << std::endl;
-			add_solution(curpose);
+			if ( !low_memory_mode() ) {
+				add_solution(curpose);
+				TR << "Storing solution " << j << " from attempt " << iattempt << "." << std::endl;
+			} else {
+				( *( selector_->scorefunction() ) )( *curpose );
+				energies_for_solution.push_back( curpose->energies().total_energy() );
+			}
+		}
+
+		//Delete solutions for which the preselection mover failed:
+		core::Size solcount(0);
+		for ( utility::vector1< utility::vector1< core::Real > >::iterator it=t_ang[iattempt].begin(); it!=t_ang[iattempt].end(); ) {
+			++solcount;
+			if ( solutions_to_delete[solcount] ) { t_ang[iattempt].erase( it ); }
+			else { ++it; }
+		}
+		solcount=0;
+		for ( utility::vector1< utility::vector1< core::Real > >::iterator it=b_ang[iattempt].begin(); it!=b_ang[iattempt].end(); ) {
+			++solcount;
+			if ( solutions_to_delete[solcount] ) { b_ang[iattempt].erase( it ); }
+			else { ++it; }
+		}
+		solcount=0;
+		for ( utility::vector1< utility::vector1< core::Real > >::iterator it=b_len[iattempt].begin(); it!=b_len[iattempt].end(); ) {
+			++solcount;
+			if ( solutions_to_delete[solcount] ) { b_len[iattempt].erase( it ); }
+			else { ++it; }
 		}
 
 		total_solution_count += static_cast<core::Size>(nsol);
-		debug_assert(total_solution_count == total_stored_solutions());
+		if ( !low_memory_mode() ) {
+			debug_assert(total_solution_count == total_stored_solutions());
+		}
 		nsol_for_attempt[iattempt] = static_cast<core::Size>(nsol);
 
 		if ( min_solution_count()!=0 && total_solution_count >= min_solution_count() ) {
@@ -1606,12 +1666,30 @@ bool GeneralizedKIC::doKIC(
 	} //End loop for closure attempts
 
 	// Apply the selector here.  This ultimately picks a single solution and sets pose (the loop pose) to the conformation for that solution, but doesn't touch the original pose.
-	// Preselection movers are also applied by select_solution(), though the loop pose returned will NOT have this applied.
 	bool selector_success(false);
 	solution_index=0;
 	if ( total_solution_count>0 ) {
-		solution_index=select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
+		solution_index=select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count, energies_for_solution );
 		selector_success=(solution_index!=0);
+	}
+
+	// In low-memory mode, populate vectors for the solution's conformation:
+	if ( solution_index && low_memory_mode() ) {
+		core::Size counter(0);
+		bool breaknow(false);
+		for ( core::Size i=1, imax=t_ang.size(); i<=imax; ++i ) {
+			for ( core::Size j=1, jmax=t_ang[i].size(); j<=jmax; ++j ) {
+				++counter;
+				if ( counter == solution_index ) {
+					selected_torsions=t_ang[i][j];
+					selected_bondangles=b_ang[i][j];
+					selected_bondlengths=b_len[i][j];
+					breaknow=true;
+					break;
+				}
+			}
+			if ( breaknow ) break;
+		}
 	}
 
 	return (total_solution_count>0 && selector_success);
@@ -1900,6 +1978,7 @@ void GeneralizedKIC::filter_solutions(
 /// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 /// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 /// @param[in] total_solutions -- Total number of solutions found.
+/// @param[in] energies_for_solution -- Vectors of the energies from each attempt.  Used only in low-memory mode.
 core::Size GeneralizedKIC::select_solution (
 	core::pose::Pose const &pose,
 	core::pose::Pose const &original_pose, //The original pose
@@ -1910,9 +1989,11 @@ core::Size GeneralizedKIC::select_solution (
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 	utility::vector1 <core::Size> const &nsol_for_attempt,
-	core::Size const total_solutions
+	core::Size const total_solutions,
+	utility::vector1 <core::Real> const &energies_for_solution
 ) const {
-	return selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions, solutions_);
+	return selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles,
+		bondlengths, nsol_for_attempt, total_solutions, solutions_, low_memory_mode(), energies_for_solution );
 }
 
 /// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
@@ -1939,6 +2020,13 @@ void GeneralizedKIC::prune_extra_atoms( utility::vector1 <core::Size> &pivots )
 	return;
 }
 
+/// @brief Clear the stored solution poses.
+///
+void
+GeneralizedKIC::clear_stored_solutions() {
+	solutions_.clear();
+}
+
 /// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
 ///
 void GeneralizedKIC::set_preselection_mover ( protocols::moves::MoverOP mover )
@@ -1947,6 +2035,57 @@ void GeneralizedKIC::set_preselection_mover ( protocols::moves::MoverOP mover )
 	pre_selection_mover_exists_ = true;
 	return;
 }
+
+/// @brief Add a solution to the solutions list.
+/// @details Stores an owning pointer to a pose.  Not used in low-memory mode (see function overload).
+void
+GeneralizedKIC::add_solution(
+	core::pose::PoseOP pose_in
+) {
+	debug_assert( !low_memory_mode() );
+	solutions_.push_back(pose_in);
+	return;
+}
+
+/// @brief Sets the pose to a particular solution from the solutions list.
+/// @details This is for regular mode, so it just grabs this from the stored solution pose vector.
+void
+GeneralizedKIC::set_final_solution(
+	core::pose::Pose &output_pose,
+	core::Size const solution_index
+) const {
+	debug_assert( !low_memory_mode() );
+	output_pose = *solutions_[solution_index];
+}
+
+/// @brief Sets the pose to a particular solution from the solutions list.
+/// @details This is for low-memory mode, so it constructs the pose from DoF vectors and reapplies preselection movers.
+/// The pose is the original pose (input/output), and the looppose is the loop alone (input/output).
+protocols::moves::MoverStatus
+GeneralizedKIC::set_final_solution(
+	core::pose::Pose &pose,
+	core::pose::Pose &looppose,
+	utility::vector1 < std::pair < core::Size, core::Size > > const & residue_map,
+	utility::vector1 < std::pair < core::Size, core::Size > > const & tail_residue_map,
+	utility::vector1< core::Real > const &torsions,
+	utility::vector1< core::Real > const &bondangles,
+	utility::vector1< core::Real > const &bondlengths
+) const {
+	debug_assert( low_memory_mode() );
+	set_loop_pose( looppose, atomlist_, torsions, bondangles, bondlengths);
+	copy_loop_pose_to_original( pose, looppose, residue_map, tail_residue_map);
+	if ( preselection_mover_exists() ) {
+		TR << "Re-applying pre-selection mover to solution." << std::endl;
+		pre_selection_mover_->apply( pose );
+		if ( pre_selection_mover_->get_last_move_status() != protocols::moves::MS_SUCCESS && TR.Warning.visible() ) {
+			TR.Warning << "Warning: in re-applying the preselection mover, the mover failed.  Setting GeneralizedKIC mover status to failure." << std::endl;
+			TR.Warning.flush();
+		}
+		return pre_selection_mover_->get_last_move_status();
+	}
+	return protocols::moves::MS_SUCCESS;
+}
+
 
 } //namespace generalized_kinematic_closure
 } //namespace protocols

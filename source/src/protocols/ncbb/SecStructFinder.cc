@@ -439,7 +439,7 @@ SecStructFinder::apply( Pose & pose )
 				ssmm->set_dihedral_pattern( dihedral_pattern_ );
 				ssmm->set_dihedrals( dihedrals );
 				ssmm->apply( minpose );
-				
+
 				score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 				Real score = ( ( *score_fxn_ ) ( minpose ) );
 

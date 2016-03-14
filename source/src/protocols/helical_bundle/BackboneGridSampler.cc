@@ -436,138 +436,138 @@ BackboneGridSampler::parse_my_tag(
 ) {
 	try {
 
-	if ( tag->getName() != "BackboneGridSampler" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
-	}
-
-	if ( TR.visible() ) TR << "Parsing options for BackboneGridSampler (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
-
-	//Global options for this mover:
-	runtime_assert_string_msg( tag->hasOption("scorefxn" ), "In BackboneGridSampler::parse_my_tag(): A \"scorefxn\" option must be specified!");
-	set_sfxn(protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data_map )->clone()); // The scorefunction.
-	if ( tag->hasOption("max_samples") ) {
-		core::Size const val( tag->getOption<core::Size>("max_samples", 10000) );
-		if ( TR.visible() ) TR << "Setting maximum number of samples to " << val << "." << std::endl;
-		set_max_samples(val);
-	}
-	if ( tag->hasOption("selection_type") ) {
-		std::string const val = tag->getOption<std::string>("selection_type", "");
-		runtime_assert_string_msg( val=="high" || val=="low",
-			"When parsing options for the BackboneGridSampler mover, could not interpret the selection_type.  This must be set to \"high\" or \"low\"." );
-		if ( TR.visible() ) TR << "Setting selection type to " << val << "." << std::endl;
-		if ( val=="high" ) set_selection_low(false);
-		else set_selection_low(true);
-	}
-	if ( tag->hasOption("pre_scoring_mover") ) {
-		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_scoring_mover" ), movers );
-		set_prescoring_mover(curmover);
-		if ( TR.visible() ) TR << "BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_scoring_mover") << "\" as a pre-scoring mover that will be applied to all sampled conformations prior to energy evaluation." << std::endl;
-	}
-	if ( tag->hasOption("pre_scoring_filter") ) {
-		protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_scoring_filter" ), filters );
-		set_prescoring_filter(curfilter);
-		if ( TR.visible() ) TR << "BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned filter \"" << tag->getOption< std::string >("pre_scoring_filter") << "\" as a pre-scoring filter that will be applied to all sampled conformations prior to energy evaluation." << std::endl;
-	}
-	if ( tag->hasOption("dump_pdbs") ) {
-		bool const val = tag->getOption<bool>("dump_pdbs", false);
-		set_pdb_output(val);
-		if ( TR.visible() ) {
-			if ( val ) TR << "Setting BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" to write out PDB files." << std::endl;
-			else TR << "No PDB output will occur from this mover." << std::endl;
+		if ( tag->getName() != "BackboneGridSampler" ) {
+			throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
 		}
-	}
-	if ( tag->hasOption("pdb_prefix") ) {
-		std::string const val = tag->getOption<std::string>("pdb_prefix", "bgs_out");
-		set_pdb_prefix(val);
-		if ( TR.visible() ) TR << "Setting prefix for PDB output to " << val << "." << std::endl;
-	}
 
-	//Set nstruct mode and options:
-	bool nstructmode = tag->getOption<bool>("nstruct_mode", false);
-	if ( TR.visible() ) TR << "Setting nstruct mode to " << (nstructmode ? "true." : "false.") << "  This means that " << (nstructmode ? "each job will sample a different set of mainchain torsion values." : "every job will sample all sets of mainchain torsion values.") << std::endl;
-	set_nstruct_mode(nstructmode);
-	core::Size nstructrepeats( tag->getOption<core::Size>( "nstruct_repeats", 1 ) );
-	if ( nstructrepeats<1 ) nstructrepeats=1;
-	if ( TR.visible() ) TR << "Setting nstruct repeats to " << nstructrepeats << "." << std::endl;
-	set_nstruct_repeats(nstructrepeats);
+		if ( TR.visible() ) TR << "Parsing options for BackboneGridSampler (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
 
-	//Set number of repeats, residues per repeat, and residue type:
-	set_residues_per_repeat( tag->getOption<core::Size>( "residues_per_repeat", 1 ));
-	if ( TR.visible() ) TR << "Set number of residues per repeating unit to " << residues_per_repeat() << "." << std::endl;
-
-	if ( residues_per_repeat() == 1 && tag->hasOption("residue_count") ) { //For backwards compatibility.
-		if ( tag->hasOption("repeat_count") ) {
-			utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): Either \"residue_count\" or \"repeat_count\" may be specified if there is one residue per repeating unit, but both options may not be used.  Both were found.\n" );
+		//Global options for this mover:
+		runtime_assert_string_msg( tag->hasOption("scorefxn" ), "In BackboneGridSampler::parse_my_tag(): A \"scorefxn\" option must be specified!");
+		set_sfxn(protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data_map )->clone()); // The scorefunction.
+		if ( tag->hasOption("max_samples") ) {
+			core::Size const val( tag->getOption<core::Size>("max_samples", 10000) );
+			if ( TR.visible() ) TR << "Setting maximum number of samples to " << val << "." << std::endl;
+			set_max_samples(val);
 		}
-		set_nres( tag->getOption<core::Size>("residue_count", 12) );
-	} else {
-		if ( tag->hasOption("residue_count") ) {
-			utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A \"residue_count\" option was found, but more than one residue per repeat was specified.  Use \"repeat_count\" instead.\n" );
+		if ( tag->hasOption("selection_type") ) {
+			std::string const val = tag->getOption<std::string>("selection_type", "");
+			runtime_assert_string_msg( val=="high" || val=="low",
+				"When parsing options for the BackboneGridSampler mover, could not interpret the selection_type.  This must be set to \"high\" or \"low\"." );
+			if ( TR.visible() ) TR << "Setting selection type to " << val << "." << std::endl;
+			if ( val=="high" ) set_selection_low(false);
+			else set_selection_low(true);
 		}
-		set_nres( tag->getOption<core::Size>("repeat_count", 12) );
-	}
-	if ( TR.visible() ) TR << "Set number of repeats to " << nres() << "." << std::endl;
-
-	if ( residues_per_repeat() == 1 && tag->hasOption("residue_name") ) { //For backwards compatibility.
-		set_resname(1, tag->getOption<std::string>( "residue_name", "ALA" ) );
-		if ( TR.visible() ) TR << "Set residue type to " << resname(1) << "." << std::endl;
-	} else {
-		for ( core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i ) {
-			std::stringstream curtagstream;
-			curtagstream << "residue_name_" << i;
-			set_resname( i, tag->getOption<std::string>(curtagstream.str(), "ALA") );
-			if ( TR.visible() ) TR << "Set residue type for residue " << i << " in the repeating unit to " << resname(i) << "." << std::endl;
+		if ( tag->hasOption("pre_scoring_mover") ) {
+			protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_scoring_mover" ), movers );
+			set_prescoring_mover(curmover);
+			if ( TR.visible() ) TR << "BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_scoring_mover") << "\" as a pre-scoring mover that will be applied to all sampled conformations prior to energy evaluation." << std::endl;
 		}
-	}
-
-	//Determine whether the ends should be capped
-	set_cap_ends( tag->getOption<bool>( "cap_ends", false ) );
-	if ( TR.visible() ) TR << "Set end-capping to " << (cap_ends()?"true":"false") << ".  This means that the termini will " << (cap_ends() ? "have acetylated and carboxyamidated N- and C-termini, respectively." : "have unmodified termini (NH3+/COO-)." ) << std::endl;
-
-	/*** Parse Sub-Tags ***/
-	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) { //Loop through all sub-tags
-		if ( (*tag_it)->getName() == "MainchainTorsion" ) { //A mainchain torsion index has been specified.  Parse its options:
-			if ( !(*tag_it)->hasOption("index") ) {
-				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a mainchain torsion index with an \"index\" option.\n" );
+		if ( tag->hasOption("pre_scoring_filter") ) {
+			protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_scoring_filter" ), filters );
+			set_prescoring_filter(curfilter);
+			if ( TR.visible() ) TR << "BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned filter \"" << tag->getOption< std::string >("pre_scoring_filter") << "\" as a pre-scoring filter that will be applied to all sampled conformations prior to energy evaluation." << std::endl;
+		}
+		if ( tag->hasOption("dump_pdbs") ) {
+			bool const val = tag->getOption<bool>("dump_pdbs", false);
+			set_pdb_output(val);
+			if ( TR.visible() ) {
+				if ( val ) TR << "Setting BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" to write out PDB files." << std::endl;
+				else TR << "No PDB output will occur from this mover." << std::endl;
 			}
-			core::Size index( (*tag_it)->getOption<core::Size>( "index", 0 ) );
-			core::Size resindex( (*tag_it)->getOption<core::Size>( "res_index", 1 ) );
+		}
+		if ( tag->hasOption("pdb_prefix") ) {
+			std::string const val = tag->getOption<std::string>("pdb_prefix", "bgs_out");
+			set_pdb_prefix(val);
+			if ( TR.visible() ) TR << "Setting prefix for PDB output to " << val << "." << std::endl;
+		}
 
-			if ( (*tag_it)->hasOption("value") ) {
-				core::Real val( (*tag_it)->getOption<core::Real>( "value", 0 ) );
-				if ( TR.visible() ) {
-					TR << "Adding mainchain torsion index " << index << " for residue " << resindex << " in the repeating unit to be fixed to " << val << " degrees." << std::endl;
-					TR.flush();
-				}
-				add_torsion_to_fix(resindex, index, val);
-			} else {
-				if ( !(*tag_it)->hasOption("start") ) {
-					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"start\" option.  (Values are in DEGREES.)\n" );
-				}
-				if ( !(*tag_it)->hasOption("end") ) {
-					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"end\" option.  (Values are in DEGREES.)\n" );
-				}
-				if ( !(*tag_it)->hasOption("samples") ) {
-					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify the number of samples for a mainchain torsion with a \"samples\" option.\n" );
-				}
-				core::Real start( (*tag_it)->getOption<core::Real>( "start", -180.0 ) );
-				core::Real end( (*tag_it)->getOption<core::Real>( "end", 180.0 ) );
-				core::Size samples( (*tag_it)->getOption<core::Real>( "samples", 2 ) );
-				if ( TR.visible() ) {
-					TR << "Adding mainchain torsion index " << index << " to sample angle range " << start << " to end " << end << " with " << samples << " sample(s)." << std::endl;
-					TR.flush();
-				}
-				add_torsion_to_sample( resindex, index, start, end, samples ); //Actually add the torsion (checking that it hasn't already been added, and that values are reasonable).
+		//Set nstruct mode and options:
+		bool nstructmode = tag->getOption<bool>("nstruct_mode", false);
+		if ( TR.visible() ) TR << "Setting nstruct mode to " << (nstructmode ? "true." : "false.") << "  This means that " << (nstructmode ? "each job will sample a different set of mainchain torsion values." : "every job will sample all sets of mainchain torsion values.") << std::endl;
+		set_nstruct_mode(nstructmode);
+		core::Size nstructrepeats( tag->getOption<core::Size>( "nstruct_repeats", 1 ) );
+		if ( nstructrepeats<1 ) nstructrepeats=1;
+		if ( TR.visible() ) TR << "Setting nstruct repeats to " << nstructrepeats << "." << std::endl;
+		set_nstruct_repeats(nstructrepeats);
+
+		//Set number of repeats, residues per repeat, and residue type:
+		set_residues_per_repeat( tag->getOption<core::Size>( "residues_per_repeat", 1 ));
+		if ( TR.visible() ) TR << "Set number of residues per repeating unit to " << residues_per_repeat() << "." << std::endl;
+
+		if ( residues_per_repeat() == 1 && tag->hasOption("residue_count") ) { //For backwards compatibility.
+			if ( tag->hasOption("repeat_count") ) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): Either \"residue_count\" or \"repeat_count\" may be specified if there is one residue per repeating unit, but both options may not be used.  Both were found.\n" );
 			}
-		} //if tag name == MainchainTorsion
-	} // looping through sub-tags
-	/*** End Parse of Sub-Tags ***/
+			set_nres( tag->getOption<core::Size>("residue_count", 12) );
+		} else {
+			if ( tag->hasOption("residue_count") ) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A \"residue_count\" option was found, but more than one residue per repeat was specified.  Use \"repeat_count\" instead.\n" );
+			}
+			set_nres( tag->getOption<core::Size>("repeat_count", 12) );
+		}
+		if ( TR.visible() ) TR << "Set number of repeats to " << nres() << "." << std::endl;
+
+		if ( residues_per_repeat() == 1 && tag->hasOption("residue_name") ) { //For backwards compatibility.
+			set_resname(1, tag->getOption<std::string>( "residue_name", "ALA" ) );
+			if ( TR.visible() ) TR << "Set residue type to " << resname(1) << "." << std::endl;
+		} else {
+			for ( core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i ) {
+				std::stringstream curtagstream;
+				curtagstream << "residue_name_" << i;
+				set_resname( i, tag->getOption<std::string>(curtagstream.str(), "ALA") );
+				if ( TR.visible() ) TR << "Set residue type for residue " << i << " in the repeating unit to " << resname(i) << "." << std::endl;
+			}
+		}
+
+		//Determine whether the ends should be capped
+		set_cap_ends( tag->getOption<bool>( "cap_ends", false ) );
+		if ( TR.visible() ) TR << "Set end-capping to " << (cap_ends()?"true":"false") << ".  This means that the termini will " << (cap_ends() ? "have acetylated and carboxyamidated N- and C-termini, respectively." : "have unmodified termini (NH3+/COO-)." ) << std::endl;
+
+		/*** Parse Sub-Tags ***/
+		utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+		for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) { //Loop through all sub-tags
+			if ( (*tag_it)->getName() == "MainchainTorsion" ) { //A mainchain torsion index has been specified.  Parse its options:
+				if ( !(*tag_it)->hasOption("index") ) {
+					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a mainchain torsion index with an \"index\" option.\n" );
+				}
+				core::Size index( (*tag_it)->getOption<core::Size>( "index", 0 ) );
+				core::Size resindex( (*tag_it)->getOption<core::Size>( "res_index", 1 ) );
+
+				if ( (*tag_it)->hasOption("value") ) {
+					core::Real val( (*tag_it)->getOption<core::Real>( "value", 0 ) );
+					if ( TR.visible() ) {
+						TR << "Adding mainchain torsion index " << index << " for residue " << resindex << " in the repeating unit to be fixed to " << val << " degrees." << std::endl;
+						TR.flush();
+					}
+					add_torsion_to_fix(resindex, index, val);
+				} else {
+					if ( !(*tag_it)->hasOption("start") ) {
+						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"start\" option.  (Values are in DEGREES.)\n" );
+					}
+					if ( !(*tag_it)->hasOption("end") ) {
+						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"end\" option.  (Values are in DEGREES.)\n" );
+					}
+					if ( !(*tag_it)->hasOption("samples") ) {
+						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify the number of samples for a mainchain torsion with a \"samples\" option.\n" );
+					}
+					core::Real start( (*tag_it)->getOption<core::Real>( "start", -180.0 ) );
+					core::Real end( (*tag_it)->getOption<core::Real>( "end", 180.0 ) );
+					core::Size samples( (*tag_it)->getOption<core::Real>( "samples", 2 ) );
+					if ( TR.visible() ) {
+						TR << "Adding mainchain torsion index " << index << " to sample angle range " << start << " to end " << end << " with " << samples << " sample(s)." << std::endl;
+						TR.flush();
+					}
+					add_torsion_to_sample( resindex, index, start, end, samples ); //Actually add the torsion (checking that it hasn't already been added, and that values are reasonable).
+				}
+			} //if tag name == MainchainTorsion
+		} // looping through sub-tags
+		/*** End Parse of Sub-Tags ***/
 
 	} catch ( utility::excn::EXCN_RosettaScriptsOption const & e ) {
 		TR << "kill me " << e.msg() << std::endl;
 	}
-	
+
 	if ( TR.visible() ) TR.flush();
 	return;
 } //parse_my_tag

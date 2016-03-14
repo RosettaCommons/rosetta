@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/ncbb/SecStructMinimizeMover.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -49,13 +49,13 @@ public:
 
 	//destructor
 	~SecStructMinimizeMover();
-	
+
 	protocols::moves::MoverOP fresh_instance() const { return SecStructMinimizeMoverOP( new SecStructMinimizeMover ); }
 	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new SecStructMinimizeMover(
 		score_fxn_,
 		dihedral_pattern_,
 		alpha_beta_pattern_ ) ); }
-	
+
 	void add_dihedral_constraints_to_pose( Pose & pose, Size number_dihedral_sets, utility::vector1< char > uniqs );
 
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
@@ -74,38 +74,38 @@ public:
 	get_scorefunction() {
 		return score_fxn_;
 	}
-	
+
 	void set_dihedral_pattern( std::string const & dihedral_pattern ) {
 		dihedral_pattern_ = dihedral_pattern;
 	}
-	
+
 	std::string
 	get_dihedral_pattern() {
 		return dihedral_pattern_;
 	}
-	
+
 	void set_alpha_beta_pattern( std::string const & alpha_beta_pattern ) {
 		alpha_beta_pattern_ = alpha_beta_pattern;
 	}
-	
+
 	std::string
 	get_alpha_beta_pattern() {
 		return alpha_beta_pattern_;
 	}
-	
+
 	void set_dihedrals( utility::vector1< core::Real > const & dihedrals ) {
 		dihedrals_ = dihedrals;
 	}
-	
+
 	utility::vector1< core::Real >
 	get_dihedrals() {
 		return dihedrals_;
 	}
-	
+
 	void set_constrain( bool const constrain ) {
 		constrain_ = constrain;
 	}
-	
+
 	bool
 	get_constrain() {
 		return constrain_;
@@ -120,7 +120,7 @@ private:
 	utility::vector1< core::Real > dihedrals_;
 };
 
-} //ncbb 
-} //protocols 
+} //ncbb
+} //protocols
 
 #endif

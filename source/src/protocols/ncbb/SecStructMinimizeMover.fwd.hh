@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/ncbb/SecStructMinimizeMover.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace ncbb {
-	
-	class SecStructMinimizeMover;
-	typedef utility::pointer::shared_ptr< SecStructMinimizeMover > SecStructMinimizeMoverOP;
-	typedef utility::pointer::shared_ptr< SecStructMinimizeMover const > SecStructMinimizeMoverCOP;
-	
-} //ncbb 
-} //protocols 
+
+class SecStructMinimizeMover;
+typedef utility::pointer::shared_ptr< SecStructMinimizeMover > SecStructMinimizeMoverOP;
+typedef utility::pointer::shared_ptr< SecStructMinimizeMover const > SecStructMinimizeMoverCOP;
+
+} //ncbb
+} //protocols
 
 #endif
