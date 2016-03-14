@@ -92,6 +92,7 @@ sources = {
 		"score_aln",
 		"score_aln2",
 		"super_aln",
+		"template_features",
 		"validate_silent",
 	],
 	"public/coupled_moves": [

@@ -419,7 +419,6 @@ sources = {
 		#"jidealize",
 		#"boost_hacks",
 		#"exhaustive_align",
-		"template_features",
 		"jcluster",
 		#"ca_build",
 		#"silent_cst_quality",

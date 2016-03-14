@@ -33,6 +33,8 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/conformation/Residue.hh>
 
+#include <basic/Tracer.hh>
+
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -48,6 +50,8 @@
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+static THREAD_LOCAL basic::Tracer TR("apps.public.comparative_modeling.thread_local");
 
 utility::vector1< int > calculate_burial(
 	core::pose::Pose & mypose,
@@ -129,12 +133,12 @@ main( int argc, char* argv [] ) {
 			vector1< SequenceAlignment > alns(
 				read_aln( option[ cm::aln_format ](), *file_it )
 			);
-			//tr.Debug << "read " << alns.size() << " alignments from " << *file_it
+			//TR.Debug << "read " << alns.size() << " alignments from " << *file_it
 			// << std::endl;
 
 			typedef vector1< SequenceAlignment >::iterator align_iter;
 			for ( align_iter it = alns.begin(), end = alns.end(); it != end; ++it ) {
-				//tr.Debug << "processing alignment between " << it->sequence(1)->id()
+				//TR.Debug << "processing alignment between " << it->sequence(1)->id()
 				// << " and " << it->sequence(2)->id() << std::endl;
 
 				std::string const aln_id = it->sequence(2)->id();
@@ -144,8 +148,12 @@ main( int argc, char* argv [] ) {
 				if ( pose_it == poses.end() ) {
 					//print_seq_map( std::cerr, seqs );
 					string msg( "Error: can't find seq (id = " + template_id + ")" );
+					TR.Error << msg << std::endl;
+					TR.Error << "Availible sequences: " << std::endl;
+					for ( map< string, Pose >::const_iterator itr( poses.begin() ), itr_end( poses.end() ); itr != itr_end; ++itr ) {
+						TR.Error << "\t" << itr->first << std::endl;
+					}
 					//utility_exit_with_message(msg);
-					//tr.Error << msg << std::endl;
 					//continue;
 				} else {
 					core::pose::Pose pose = pose_it->second;;

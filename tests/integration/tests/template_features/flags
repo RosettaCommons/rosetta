@@ -1,0 +1,5 @@
+-james:dist_thresholds 10
+-in:file:template_pdb input/1VYHA.pdb input/1FXWF.pdb
+-in:file:alignment input/T0286.all0.T20.aln.filt
+-cm:aln_format grishin
+
