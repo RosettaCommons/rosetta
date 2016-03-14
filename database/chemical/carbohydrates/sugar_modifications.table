@@ -3,6 +3,7 @@
 #                    Substituent           Short  Patch Name     Default   Reducing    Glycoside  Following
 # Modification Name  Full Name    Implies  Affix  (no position)  Position  End Suffix  Suffix     Word/Phrase
   amino_sugar        amino        deoxy    N      NH3+                  2  ose         oside      N/A
+  acetyl_sugar       acetyl       N/A      Ac     Ac                    5  ose         oside      N/A
   acetylamino_sugar  acetylamino  deoxy    NAc    AcNH                  2  ose         oside      N/A
   methyl_sugar       methyl       deoxy    OMe    Me                    0  ose         oside      N/A
   deoxy_sugar        deoxy        N/A      N/A    deoxy                 0  ose         oside      N/A

@@ -421,7 +421,8 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 				if ( ! anomer_assigned ) {
 					residue_type_name << "alpha-";
 				}
-				if ( ! L_or_D_assigned ) {
+				if ( ( ! L_or_D_assigned ) && ( code != "Neu" ) ) {
+					// TODO: Check for other codes where L and D are implied.
 					residue_type_name << "D-";
 				}
 
