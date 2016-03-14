@@ -181,8 +181,8 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 
 		// add constraints
 		for ( Size iatom=iatom_start; iatom<=iatom_stop; ++iatom ) {
-			csts.push_back( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
-				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func_ ) ) ) );
+			csts.push_back( scoring::constraints::ConstraintCOP( new CoordinateConstraint(
+				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func_ ) ) );
 			TR.Debug << "coordinate constraint generated for residue " << ires << ", atom " << iatom << std::endl;
 		}
 	} //loop through residues
@@ -238,8 +238,11 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 					if ( dist > max_distance_ ) continue;
 
-					csts.push_back(
-						scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) ) ) ) ) );
+					core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, coord_dev_ ) );
+					core::scoring::func::FuncOP weighted_func( new core::scoring::func::ScalarWeightedFunc( cst_weight_, sog_func ) );
+					core::scoring::constraints::ConstraintCOP newcst(
+						new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( iatom, ires ), core::id::AtomID( jatom, jres ), weighted_func ) );
+					csts.push_back( newcst );
 					TR.Debug << "atom_pair_constraint generated for residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
 				}
 			}
@@ -257,46 +260,24 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	moves::Movers_map const & movers,
 	Pose const & pose
 ) {
-	if ( tag->hasOption("use_distance_cst") ) {
-		use_distance_cst_ = tag->getOption<bool>("use_distance_cst");
-	}
-	if ( tag->hasOption("max_distance") ) {
-		max_distance_ = tag->getOption<core::Real>("max_distance");
-	}
-	if ( tag->hasOption("coord_dev") ) {
-		coord_dev_ = tag->getOption<core::Real>("coord_dev");
-	}
+	moves::ConstraintGenerator::parse_my_tag( tag, datamap, filters, movers, pose );
+	use_distance_cst_ = tag->getOption< bool >( "use_distance_cst", use_distance_cst_ );
+	max_distance_ = tag->getOption< core::Real >( "max_distance", max_distance_ );
+	coord_dev_ = tag->getOption< core::Real >( "coord_dev", coord_dev_ );
+	bound_width_ = tag->getOption< core::Real >( "bound_width", bound_width_ );
+	min_seq_sep_ = tag->getOption< core::Size>( "min_seq_sep", min_seq_sep_ );
+	cst_weight_ = tag->getOption< core::Real >( "cst_weight" );
+	CA_only_ = tag->getOption< bool >( "CA_only", CA_only_ );
+	bb_only_ = tag->getOption< bool >( "bb_only", bb_only_ );
+	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
 
-	if ( tag->hasOption("bound_width") ) {
-		bound_width_ = tag->getOption<core::Real>("bound_width");
-	}
-	if ( bound_width_ < 1e-3 ) cc_func_ = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(0.0,coord_dev_) );
-	else cc_func_ = core::scoring::func::FuncOP( new BoundFunc(0,bound_width_,coord_dev_,"xyz") );
-
-	if ( tag->hasOption("min_seq_sep") ) {
-		min_seq_sep_ = tag->getOption<core::Size>("min_seq_sep");
-	}
-	if ( tag->hasOption("cst_weight") ) {
-		cst_weight_ = tag->getOption<core::Real>("cst_weight");
-	}
+	if ( bound_width_ < 1e-3 ) cc_func_ = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, coord_dev_ ) );
+	else cc_func_ = core::scoring::func::FuncOP( new BoundFunc( 0, bound_width_, coord_dev_, "xyz" ) );
 
 	if ( tag->hasOption( "task_operations" ) ) {
-		TR << "WARNING: task_operations only active for proteins" << std::endl;
+		TR.Warning << "WARNING: task_operations only active for proteins" << std::endl;
 		parse_task_operations( tag, datamap, filters, movers, pose );
 	}
-
-	if ( tag->hasOption("CA_only") ) {
-		CA_only_ = tag->getOption<bool>("CA_only",true);
-	}
-
-	if ( tag->hasOption("bb_only") ) {
-		bb_only_ = tag->getOption<bool>("bb_only",false);
-	}
-
-	if ( tag->hasOption("inter_chain_") ) {
-		inter_chain_ = tag->getOption<bool>("inter_chain",true);
-	}
-
 }
 
 void

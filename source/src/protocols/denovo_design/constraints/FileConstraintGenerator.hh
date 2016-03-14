@@ -38,18 +38,16 @@ namespace constraints {
 
 class FileConstraintGenerator : public protocols::forge::remodel::RemodelConstraintGenerator{
 public:
-
-	typedef std::string String;
 	typedef core::pose::Pose Pose;
 
 public:
 	FileConstraintGenerator();
 
-	FileConstraintGenerator( String const & filename );
+	FileConstraintGenerator( std::string const & filename );
 
 	virtual ~FileConstraintGenerator();
 
-	void set_cstfile( String const & filename );
+	void set_cstfile( std::string const & filename );
 
 	virtual void
 	parse_my_tag( TagCOP tag,
@@ -70,9 +68,12 @@ public:
 	virtual core::scoring::constraints::ConstraintCOPs
 	generate_constraints( Pose const & pose );
 
-private:
+protected:
+	std::string
+	clean_constraint_string( std::string const & cst_str ) const;
 
-	String filename_;
+private:
+	std::string filename_;
 
 }; //class FileConstraintGenerator
 

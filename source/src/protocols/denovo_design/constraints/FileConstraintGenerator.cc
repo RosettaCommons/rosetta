@@ -18,18 +18,21 @@
 #include <protocols/denovo_design/constraints/FileConstraintGeneratorCreator.hh>
 
 // Package headers
+#include <protocols/denovo_design/components/StructureData.hh>
+
+// Core headers
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/id/SequenceMapping.hh>
 
-// Project headers
+// Utility headers
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
-
-static THREAD_LOCAL basic::Tracer tr( "protocols.denovo_design.constraints.FileConstraintGenerator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.constraints.FileConstraintGenerator" );
 
 namespace protocols {
 namespace denovo_design {
@@ -66,7 +69,7 @@ FileConstraintGenerator::FileConstraintGenerator():
 }
 
 /// @brief
-FileConstraintGenerator::FileConstraintGenerator( String const & filename ):
+FileConstraintGenerator::FileConstraintGenerator( std::string const & filename ):
 	RemodelConstraintGenerator(),
 	filename_( filename )
 {}
@@ -105,7 +108,7 @@ FileConstraintGenerator::clone() const
 
 /// @brief
 void
-FileConstraintGenerator::set_cstfile( String const & filename )
+FileConstraintGenerator::set_cstfile( std::string const & filename )
 {
 	filename_ = filename;
 }
@@ -114,14 +117,43 @@ FileConstraintGenerator::set_cstfile( String const & filename )
 core::scoring::constraints::ConstraintCOPs
 FileConstraintGenerator::generate_constraints( Pose const & pose )
 {
-	using namespace core::scoring::constraints;
 	if ( filename_ == "" ) {
 		utility_exit_with_message( "FileConstraintGenerator requires that a constraint filename be specified." );
 	}
-	ConstraintSetOP constraints = ConstraintIO::get_instance()->read_constraints( filename_, ConstraintSetOP( new ConstraintSet ), pose );
+
+	// Read constraint file and substitute any StructureData variables
+	// File format: %%SEGMENT_NAME#resid%% will be replaced by an integer resid
+	TR.Debug << "Opening " << filename_ << std::endl;
+	utility::io::izstream infile( filename_ );
+	if ( !infile.good() ) {
+		throw utility::excn::EXCN_BadInput( "Could not open " + filename_ + " for reading." );
+	}
+	components::StructureDataOP sd = components::StructureData::create_from_pose( pose, "FileConstraintGenerator" );
+	debug_assert( sd );
+	std::stringstream cst_stream( clean_constraint_string( sd->substitute_variables( infile ) ) );
+	infile.close();
+	TR.Debug << "Parsed " << filename_ << " : " << cst_stream.str() << std::endl;
+
+	core::scoring::constraints::ConstraintSetOP constraints( new core::scoring::constraints::ConstraintSet );
+	constraints = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints(
+		cst_stream,
+		constraints,
+		pose );
+	TR.Debug << "generated " << constraints->get_all_constraints().size() << " constraints" << std::endl;
+
 	return constraints->get_all_constraints();
 } //generate constraints
 
+std::string
+FileConstraintGenerator::clean_constraint_string( std::string const & cst_str ) const
+{
+	utility::vector1< std::string > const lines = utility::string_split( cst_str, '\n' );
+	std::string newstr = "";
+	for ( utility::vector1< std::string >::const_iterator l=lines.begin(); l!=lines.end(); ++l ) {
+		if ( l->find_first_not_of( "\t\n\v\f\r " ) != std::string::npos ) newstr += *l + "\n";
+	}
+	return newstr;
+}
 
 } //namespace constraints
 } //namespace denovo_design
