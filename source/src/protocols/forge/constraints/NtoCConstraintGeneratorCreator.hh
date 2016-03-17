@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/forge/constraints/RemoveCstsCreator.hh
-/// @brief This class will create instances of the RemoveCsts mover
+/// @file protocols/forge/constraints/NtoCConstraintGeneratorCreator.hh
+/// @brief This class will create instances of the NtoCConstraintGenerator mover
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_forge_constraints_RemoveCstsCreator_hh
-#define INCLUDED_protocols_forge_constraints_RemoveCstsCreator_hh
+#ifndef INCLUDED_protocols_forge_constraints_NtoCConstraintGeneratorCreator_hh
+#define INCLUDED_protocols_forge_constraints_NtoCConstraintGeneratorCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
@@ -20,7 +20,7 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-class RemoveCstsCreator : public protocols::moves::MoverCreator {
+class NtoCConstraintGeneratorCreator : public protocols::moves::MoverCreator {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
@@ -32,4 +32,3 @@ public:
 }
 
 #endif
-

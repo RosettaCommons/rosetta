@@ -153,8 +153,8 @@ static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreato
 
 static MoverRegistrator< forge::constraints::InverseRotamersCstGeneratorCreator > reg_InverseRotamersCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InvrotTreeCstGeneratorCreator > reg_InvrotTreeCstGeneratorCreator;
-static MoverRegistrator< forge::constraints::NtoCCstGeneratorCreator > reg_NtoCCstGeneratorCreator;
-static MoverRegistrator< forge::constraints::RemoveCstsCreator > reg_RemoveCstsCreator;
+static MoverRegistrator< forge::constraints::NtoCConstraintGeneratorCreator > reg_NtoCConstraintGeneratorCreator;
+static MoverRegistrator< forge::constraints::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
 
 static MoverRegistrator< forge::remodel::ResidueVicinityCstGeneratorCreator > reg_ResidueVicinityCstGeneratorCreator;
 static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverCreator;

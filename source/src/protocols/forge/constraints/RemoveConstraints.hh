@@ -7,32 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/forge/constraints/NtoC_RCG.hh
+/// @file protocols/forge/constraints/RemoveConstraints.hh
 ///
 /// @brief
-/// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
-/// @modified Tom Linsky (tlinsky@uw.edu), Nov 2012
+/// @author Tom Linsky (tlinsky@uw.edu), Nov 2012
 
-#ifndef INCLUDED_protocols_forge_constraints_NtoC_RCG_hh
-#define INCLUDED_protocols_forge_constraints_NtoC_RCG_hh
+#ifndef INCLUDED_protocols_forge_constraints_RemoveConstraints_hh
+#define INCLUDED_protocols_forge_constraints_RemoveConstraints_hh
 
 // Unit Header
-#include <protocols/forge/constraints/NtoC_RCG.fwd.hh>
+#include <protocols/moves/ConstraintGenerator.fwd.hh>
 
 // Package Header
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 // Proeject Header
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <protocols/moves/Mover.hh>
+
 
 #include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace forge {
 namespace constraints {
 
-class NtoC_RCG : public protocols::forge::remodel::RemodelConstraintGenerator{
+class RemoveConstraints : public protocols::moves::Mover {
 public:
 
 	typedef core::Size Size;
@@ -41,11 +42,15 @@ public:
 
 public:
 
-	NtoC_RCG();
+	RemoveConstraints();
 
-	NtoC_RCG( Real const dist, Real const coef );
+	RemoveConstraints( protocols::moves::ConstraintGeneratorOP generator );
 
-	virtual ~NtoC_RCG();
+	virtual ~RemoveConstraints();
+
+	/// @brief this function looks up the constraints created by the object with the given generator and removes them
+	virtual void
+	apply( core::pose::Pose & pose );
 
 	virtual void
 	parse_my_tag( TagCOP tag,
@@ -63,18 +68,12 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( Pose const & pose );
-
-	void set_weight( Real const coef );
-
-	void set_distance( Real const dist );
+	void
+	set_generator( protocols::moves::ConstraintGeneratorOP generator );
 
 private:
-
-	Real dist_;
-	Real coef_;
-
+	protocols::moves::ConstraintGeneratorOP generator_;
+	std::string generator_id_;
 }; //class NtoC_RCG
 
 

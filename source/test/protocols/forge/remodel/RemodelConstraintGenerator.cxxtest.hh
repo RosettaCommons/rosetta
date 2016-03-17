@@ -16,7 +16,7 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <protocols/forge/constraints/RemoveCsts.hh>
+#include <protocols/forge/constraints/RemoveConstraints.hh>
 #include <protocols/fldsgn/SheetConstraintGenerator.hh>
 //#include <protocols/fldsgn/HSSTripletRCG.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
@@ -59,7 +59,7 @@ public:
 
 	core::scoring::ScoreFunctionOP scorefxn;
 	protocols::fldsgn::SheetConstraintGeneratorOP sheet_csts;
-	protocols::forge::constraints::RemoveCsts rm_csts;
+	protocols::forge::constraints::RemoveConstraints rm_csts;
 	protocols::fldsgn::SheetConstraintGeneratorOP sheet_csts_badpair;
 	//protocols::fldsgn::HSSTripletRCGOP hss_csts;
 

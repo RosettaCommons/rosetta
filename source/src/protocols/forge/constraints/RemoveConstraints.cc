@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file  protocols/forge/constraints/RemoveCsts.cc
+/// @file  protocols/forge/constraints/RemoveConstraints.cc
 ///
 /// @brief
 /// @author Tom Linsky (tlinsky@uw.edu), Nov 2012
 
 // Unit header
-#include <protocols/forge/constraints/RemoveCsts.hh>
-#include <protocols/forge/constraints/RemoveCstsCreator.hh>
+#include <protocols/forge/constraints/RemoveConstraints.hh>
+#include <protocols/forge/constraints/RemoveConstraintsCreator.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
@@ -31,48 +31,48 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.RemoveCsts" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.RemoveConstraints" );
 
 namespace protocols {
 namespace forge {
 namespace constraints {
 
 std::string
-RemoveCstsCreator::keyname() const
+RemoveConstraintsCreator::keyname() const
 {
-	return RemoveCstsCreator::mover_name();
+	return RemoveConstraintsCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-RemoveCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RemoveCsts() );
+RemoveConstraintsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RemoveConstraints() );
 }
 
 std::string
-RemoveCstsCreator::mover_name()
+RemoveConstraintsCreator::mover_name()
 {
-	return "RemoveCsts";
+	return "RemoveConstraints";
 }
 
 /// @brief
-RemoveCsts::RemoveCsts()
+RemoveConstraints::RemoveConstraints()
 : Mover(),
 	generator_( /* NULL */ ),
 	generator_id_( "" )
 {}
 
 /// @brief
-RemoveCsts::RemoveCsts( protocols::moves::ConstraintGeneratorOP generator )
+RemoveConstraints::RemoveConstraints( protocols::moves::ConstraintGeneratorOP generator )
 : Mover()
 {
 	set_generator( generator );
 }
 
 /// @brief
-RemoveCsts::~RemoveCsts() {}
+RemoveConstraints::~RemoveConstraints() {}
 
 void
-RemoveCsts::parse_my_tag( TagCOP const tag,
+RemoveConstraints::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const & movers,
@@ -80,7 +80,7 @@ RemoveCsts::parse_my_tag( TagCOP const tag,
 {
 	generator_id_ = tag->getOption< std::string >( "generator", generator_id_ );
 	if ( generator_id_ == "" ) {
-		utility_exit_with_message( "No Cst Generator was specified in the XML for RemoveCsts." );
+		utility_exit_with_message( "No Cst Generator was specified in the XML for RemoveConstraints." );
 	}
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( generator_id_, movers );
 	debug_assert( utility::pointer::dynamic_pointer_cast< protocols::moves::ConstraintGenerator >( mover ) );
@@ -88,31 +88,31 @@ RemoveCsts::parse_my_tag( TagCOP const tag,
 	if ( ( cg = utility::pointer::static_pointer_cast< protocols::moves::ConstraintGenerator >( mover ) ) ) {
 		set_generator( cg );
 	} else {
-		utility_exit_with_message( "Error parsing generator option to RemoveCsts: the specified mover " + generator_id_ + " is not a constraint generator." );
+		utility_exit_with_message( "Error parsing generator option to RemoveConstraints: the specified mover " + generator_id_ + " is not a constraint generator." );
 	}
 	TR << "Cst generator =" << generator_->id() << " with name=" << generator_id_ << std::endl;
 }
 
 std::string
-RemoveCsts::get_name() const
+RemoveConstraints::get_name() const
 {
-	return RemoveCstsCreator::mover_name();
+	return RemoveConstraintsCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-RemoveCsts::fresh_instance() const
+RemoveConstraints::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RemoveCsts() );
+	return protocols::moves::MoverOP( new RemoveConstraints() );
 }
 
 protocols::moves::MoverOP
-RemoveCsts::clone() const
+RemoveConstraints::clone() const
 {
-	return protocols::moves::MoverOP( new RemoveCsts( *this ) );
+	return protocols::moves::MoverOP( new RemoveConstraints( *this ) );
 }
 
 void
-RemoveCsts::set_generator( protocols::moves::ConstraintGeneratorOP generator )
+RemoveConstraints::set_generator( protocols::moves::ConstraintGeneratorOP generator )
 {
 	runtime_assert( generator != 0 );
 	generator_ = generator;
@@ -120,7 +120,7 @@ RemoveCsts::set_generator( protocols::moves::ConstraintGeneratorOP generator )
 
 /// @brief find the constraint set added by the generator and remove them
 void
-RemoveCsts::apply( core::pose::Pose & pose )
+RemoveConstraints::apply( core::pose::Pose & pose )
 {
 	runtime_assert( generator_ || ( generator_id_ != "" ) );
 	// if the generator_id_ is set, look up constraints in the static map and remove them.

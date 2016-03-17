@@ -22,10 +22,10 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 
 // Package headers
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
+#include <protocols/moves/ConstraintGenerator.fwd.hh>
 
 // Core headers
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -368,8 +368,8 @@ public:
 
 	inline void set_connecting_bond_dist( core::Real const val ) { connecting_bond_dist_ = val; }
 
-	void add_rcg( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg );
-	void clear_rcgs();
+	void add_constraint_generator( protocols::moves::ConstraintGeneratorOP );
+	void clear_constraint_generators();
 
 public:
 	/// @brief Performs pre-build setup and makes loop residues
@@ -475,7 +475,7 @@ private:
 	// explicitly disabled pairings
 	std::set< std::pair< std::string, std::string > > disallowed_pairs_;
 	// constraint generators
-	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
+	utility::vector1< protocols::moves::ConstraintGeneratorOP > cgs_;
 	// Tells whether or not to construct motifs based on Nobu/Rie/YuRu abego rules
 	bool idealized_abego_;
 	// Tells whether or not to include SS extensions in the loop length, or just build loop residues only (defualt=true)

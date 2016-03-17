@@ -41,7 +41,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <protocols/denovo_design/constraints/FileConstraintGenerator.hh>
-#include <protocols/forge/constraints/NtoC_RCG.hh>
+#include <protocols/forge/constraints/NtoCConstraintGenerator.hh>
 #include <protocols/forge/constraints/InvrotTreeRCG.hh>
 #include <protocols/fldsgn/SheetConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
@@ -523,8 +523,8 @@ bool BluePrintBDR::centroid_build(
 
 	using core::util::switch_to_residue_type_set;
 	using protocols::forge::methods::restore_residues;
-	using protocols::forge::constraints::NtoC_RCG;
-	using protocols::forge::constraints::NtoC_RCGOP;
+	using protocols::forge::constraints::NtoCConstraintGenerator;
+	using protocols::forge::constraints::NtoCConstraintGeneratorOP;
 	using protocols::denovo_design::constraints::FileConstraintGenerator;
 	using protocols::denovo_design::constraints::FileConstraintGeneratorOP;
 	//using protocols::forge::constraints::SheetConstraintsRCG;
@@ -577,7 +577,7 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	if ( constraints_NtoC_ > 0.0 ) {
-		NtoC_RCGOP rcg( new NtoC_RCG );
+		NtoCConstraintGeneratorOP rcg( new NtoCConstraintGenerator );
 		vlb_->add_rcg( rcg );
 	}
 

@@ -26,10 +26,10 @@
 //Protocol Headers
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/denovo_design/util.hh>
-#include <protocols/forge/constraints/RemoveCsts.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+#include <protocols/forge/constraints/RemoveConstraints.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
+#include <protocols/moves/ConstraintGenerator.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
@@ -97,7 +97,7 @@ Connection::Connection() :
 	performs_orientation_( false ),
 	check_abego_( true )
 {
-	rcgs_.clear();
+	cgs_.clear();
 	motifs_.clear();
 	motifs_.push_back( Motif( 0, 'L', "X" ) );
 	cut_resis_.clear();
@@ -207,33 +207,33 @@ Connection::set_id( std::string const & newid )
 }
 
 void
-Connection::clear_rcgs()
+Connection::clear_constraint_generators()
 {
-	rcgs_.clear();
+	cgs_.clear();
 }
 
 void
-Connection::add_rcg( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg )
+Connection::add_constraint_generator( protocols::moves::ConstraintGeneratorOP cg )
 {
-	rcgs_.push_back( rcg );
+	cgs_.push_back( cg );
 }
 
 void
 Connection::apply_constraints( components::StructureData & sd ) const
 {
-	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::const_iterator rcg=rcgs_.begin(); rcg!=rcgs_.end(); ++rcg ) {
-		debug_assert( *rcg );
-		sd.apply_mover( **rcg );
+	for ( utility::vector1< protocols::moves::ConstraintGeneratorOP >::const_iterator cg=cgs_.begin(); cg!=cgs_.end(); ++cg ) {
+		debug_assert( *cg );
+		sd.apply_mover( **cg );
 	}
 }
 
 void
 Connection::remove_constraints( components::StructureData & sd ) const
 {
-	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::const_iterator rcg=rcgs_.begin(); rcg!=rcgs_.end(); ++rcg ) {
-		debug_assert( *rcg );
-		protocols::forge::constraints::RemoveCsts remover;
-		remover.set_generator( *rcg );
+	for ( utility::vector1< protocols::moves::ConstraintGeneratorOP >::const_iterator cg=cgs_.begin(); cg!=cgs_.end(); ++cg ) {
+		debug_assert( *cg );
+		protocols::forge::constraints::RemoveConstraints remover;
+		remover.set_generator( *cg );
 		sd.apply_mover( remover );
 	}
 }
@@ -243,21 +243,21 @@ void
 Connection::parse_subtag( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers )
 {
 	if ( tag->getName() == "Add" ) {
-		if ( tag->hasOption( "rcg" ) ) {
-			std::string const rcgname = tag->getOption< std::string >( "rcg" );
-			protocols::moves::Movers_map::const_iterator mover_it = movers.find( rcgname );
+		std::string const cgname = tag->getOption< std::string >( "cg", "" );
+		if ( !cgname.empty() ) {
+			protocols::moves::Movers_map::const_iterator mover_it = movers.find( cgname );
 			if ( mover_it == movers.end() ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": can't find constraint generator named " + rcgname + " in the MOVERS section.\n" );
+				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": can't find constraint generator named " + cgname + " in the MOVERS section.\n" );
 			}
-			protocols::forge::remodel::RemodelConstraintGeneratorOP rcg =
-				utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover_it->second->clone() );
-			if ( !rcg ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": mover named " + rcgname + " is not a remodel constraint generator.\n" );
+			protocols::moves::ConstraintGeneratorOP cg =
+				utility::pointer::dynamic_pointer_cast< protocols::moves::ConstraintGenerator >( mover_it->second->clone() );
+			if ( !cg ) {
+				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": mover named " + cgname + " is not a constraint generator.\n" );
 			}
-			add_rcg( rcg );
+			add_constraint_generator( cg );
 		} else {
 			std::stringstream msg;
-			msg << id() << ": no valid options found in connection subtag: " << *tag << std::endl;
+			msg << id() << ": no valid options (e.g. 'cg') found in connection subtag: " << *tag << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 		}
 	} else {

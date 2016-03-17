@@ -127,8 +127,8 @@
 
 #include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>
-#include <protocols/forge/constraints/NtoCCstGeneratorCreator.hh>
-#include <protocols/forge/constraints/RemoveCstsCreator.hh>
+#include <protocols/forge/constraints/NtoCConstraintGeneratorCreator.hh>
+#include <protocols/forge/constraints/RemoveConstraintsCreator.hh>
 
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 #include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>

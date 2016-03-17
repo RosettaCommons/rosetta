@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file  protocols/forge/constraints/NtoC_RCG.cc
+/// @file  protocols/forge/constraints/NtoCConstraintGenerator.cc
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
 /// @modified Tom Linsky (tlinsky@uw.edu), Nov 2012
 
 // Unit header
-#include <protocols/forge/constraints/NtoC_RCG.hh>
-#include <protocols/forge/constraints/NtoCCstGeneratorCreator.hh>
+#include <protocols/forge/constraints/NtoCConstraintGenerator.hh>
+#include <protocols/forge/constraints/NtoCConstraintGeneratorCreator.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
@@ -37,48 +37,48 @@
 // boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.NtoC_RCG" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.NtoCConstraintGenerator" );
 
 namespace protocols {
 namespace forge {
 namespace constraints {
 
 std::string
-NtoCCstGeneratorCreator::keyname() const
+NtoCConstraintGeneratorCreator::keyname() const
 {
-	return NtoCCstGeneratorCreator::mover_name();
+	return NtoCConstraintGeneratorCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-NtoCCstGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NtoC_RCG() );
+NtoCConstraintGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NtoCConstraintGenerator() );
 }
 
 std::string
-NtoCCstGeneratorCreator::mover_name()
+NtoCConstraintGeneratorCreator::mover_name()
 {
-	return "NtoCCstGenerator";
+	return "NtoCConstraintGenerator";
 }
 
 /// @brief
-NtoC_RCG::NtoC_RCG():
+NtoCConstraintGenerator::NtoCConstraintGenerator():
 	RemodelConstraintGenerator(),
 	dist_( 11.0 ),
 	coef_( 1.0 )
 {}
 
 /// @brief
-NtoC_RCG::NtoC_RCG( Real const dist, Real const coef ):
+NtoCConstraintGenerator::NtoCConstraintGenerator( Real const dist, Real const coef ):
 	RemodelConstraintGenerator(),
 	dist_( dist ),
 	coef_( coef )
 {}
 
 /// @brief
-NtoC_RCG::~NtoC_RCG() {}
+NtoCConstraintGenerator::~NtoCConstraintGenerator() {}
 
 void
-NtoC_RCG::parse_my_tag( TagCOP const tag,
+NtoCConstraintGenerator::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
@@ -90,33 +90,33 @@ NtoC_RCG::parse_my_tag( TagCOP const tag,
 }
 
 std::string
-NtoC_RCG::get_name() const
+NtoCConstraintGenerator::get_name() const
 {
-	return NtoCCstGeneratorCreator::mover_name();
+	return NtoCConstraintGeneratorCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-NtoC_RCG::fresh_instance() const
+NtoCConstraintGenerator::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new NtoC_RCG() );
+	return protocols::moves::MoverOP( new NtoCConstraintGenerator() );
 }
 
 protocols::moves::MoverOP
-NtoC_RCG::clone() const
+NtoCConstraintGenerator::clone() const
 {
-	return protocols::moves::MoverOP( new NtoC_RCG( *this ) );
+	return protocols::moves::MoverOP( new NtoCConstraintGenerator( *this ) );
 }
 
 /// @brief set weight
 void
-NtoC_RCG::set_weight( Real const coef )
+NtoCConstraintGenerator::set_weight( Real const coef )
 {
 	coef_ = coef;
 }
 
 /// @brief set distance of constraint
 void
-NtoC_RCG::set_distance( Real const dist )
+NtoCConstraintGenerator::set_distance( Real const dist )
 {
 	dist_ = dist;
 }
@@ -124,7 +124,7 @@ NtoC_RCG::set_distance( Real const dist )
 
 /// @brief
 core::scoring::constraints::ConstraintCOPs
-NtoC_RCG::generate_constraints( Pose const & pose )
+NtoCConstraintGenerator::generate_constraints( Pose const & pose )
 {
 	using namespace core::scoring::constraints;
 
