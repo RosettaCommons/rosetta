@@ -414,8 +414,10 @@ sources = {
 	],
 	"select/residue_selector" : [
 		"AndResidueSelector",
+		"ByMembraneDepthSelector",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",
+		"MembraneResidueSelector",
 		"ResidueIndexSelector",
 		"ResidueNameSelector",
 		"ResiduePDBInfoHasLabelSelector",
@@ -428,6 +430,7 @@ sources = {
 		"ResidueSelectorFactory",
 		"NeighborhoodResidueSelector",
 		"SecondaryStructureSelector",
+		"TMSpanSelector",
 	],
 	"sequence" : [
 		"ABEGOManager",
@@ -836,6 +839,8 @@ testinputfiles = [
 	"scoring/test.wts_patch",
 	"scoring/test_in.pdb",
 	"scoring/unaligned_for_rmstest.pdb",
+	"select/residue_selector/DsbB_4tm_segs.pdb",
+	"select/residue_selector/DsbB_4tm_segs_B.span",
 	"sequence/abego_test.pdb",
 	"sequence/1aho_.fasta.pssm",
 	"sequence/1aho_hom.fasta.pssm",

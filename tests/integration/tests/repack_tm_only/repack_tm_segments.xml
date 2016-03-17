@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<membrane12 weights=mpframework_smooth_fa_2012 />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<TMSpanSelector name=tm_span select_all=1 />
+		<Not name=not_tm_span selector=tm_span/>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name=only_pack_tms selector=tm_span >
+			<RestrictToRepackingRLT />
+		</OperateOnResidueSubset>
+			<OperateOnResidueSubset name=dont_pack_non_tms selector=not_tm_span >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS> 
+	<MOVERS>
+		<AddMembraneMover name=add_memb/>
+		<PackRotamersMover name=packrot scorefxn=membrane12 task_operations=only_pack_tms,dont_pack_non_tms/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover=add_memb/>
+		<Add mover=packrot/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+

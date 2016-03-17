@@ -1,0 +1,4 @@
+-in:file:s DsbB_4tm_segs.pdb
+-mp:setup:spanfiles DsbB_4tm_segs_B.span
+-parser:protocol repack_tm_segments.xml
+
