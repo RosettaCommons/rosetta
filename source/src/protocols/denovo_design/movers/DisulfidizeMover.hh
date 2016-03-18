@@ -47,7 +47,7 @@ public:
 
 	/// @brief Copy constructor
 	///
-	DisulfidizeMover( DisulfidizeMover const &src );
+	DisulfidizeMover( DisulfidizeMover const & src );
 
 	/// @brief virtual constructor to allow derivation
 	virtual ~DisulfidizeMover();
@@ -146,7 +146,8 @@ public:
 	bool check_disulfide_cb_distance(
 		core::pose::Pose const & pose,
 		core::Size const res1,
-		core::Size const res2 ) const;
+		core::Size const res2
+	) const;
 
 	/// @brief checks disulfide rosetta score
 	bool check_disulfide_score(
@@ -169,7 +170,7 @@ public:
 	/// @brief Returns true if this is a mixed D/L disulfide, false otherwise.
 	///
 	bool mixed_disulfide (
-		core::pose::Pose const &pose,
+		core::pose::Pose const & pose,
 		core::Size const res1,
 		core::Size const res2
 	) const;
@@ -198,7 +199,19 @@ public: //mutators
 
 	/// @brief Set the scorefunction to use for scoring disulfides, minimizing, and repacking.
 	/// @details Clones the input scorefunction; does not copy it.
-	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in);
+	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in );
+
+	/// @brief If true, GLY --> CYS mutations will be allowed. Default=false
+	void set_mutate_gly( bool const mutate_gly );
+
+	/// @brief If true, PRO --> CYS mutations will be allowed. Default=false
+	void set_mutate_pro( bool const mutate_pro );
+
+protected:
+	/// @brief Identifies disulfides for a given input pose
+	virtual bool process_pose(
+		core::pose::Pose & pose,
+		utility::vector1 < core::pose::PoseOP > & additional_poses );
 
 	/// @brief Given a list of disulfides and a symmetric pose, prune the list to remove symmetry
 	/// duplicates.
@@ -208,12 +221,6 @@ public: //mutators
 		core::pose::Pose const &pose,
 		DisulfideList & disulf_list
 	) const;
-
-protected:
-	/// @brief Identifies disulfides for a given input pose
-	virtual bool process_pose(
-		core::pose::Pose & pose,
-		utility::vector1 < core::pose::PoseOP > & additional_poses );
 
 private:   // options
 	core::Real match_rt_limit_;
@@ -225,19 +232,21 @@ private:   // options
 	bool include_current_ds_;
 	bool keep_current_ds_;
 	bool score_or_matchrt_;
+	/// @brief Can disulfides involve L-cystine?
+	/// @details Default true
+	bool allow_l_cys_;
+	/// @brief Can disulfides involve D-cystine?
+	/// @details Default false
+	bool allow_d_cys_;
+	/// @brief Can GLY be mutated?
+	bool mutate_gly_;
+	/// @brief Can PRO be mutated?
+	bool mutate_pro_;
 
 private:   // other data
 	/// @brief disulfides connect residues from set1 to residues from set2
 	core::select::residue_selector::ResidueSelectorCOP set1_selector_;
 	core::select::residue_selector::ResidueSelectorCOP set2_selector_;
-
-	/// @brief Can disulfides involve L-cystine?
-	/// @details Default true
-	bool allow_l_cys_;
-
-	/// @brief Can disulfides involve D-cystine?
-	/// @details Default false
-	bool allow_d_cys_;
 
 	/// @brief The scorefunction that we will use for:
 	/// -- scoring disulfides

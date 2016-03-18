@@ -254,10 +254,10 @@ main( int argc, char *argv[] )
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating Sialyl-Lewisx from sequence: " <<
-				"->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc:" << endl;
+			"->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc:" << endl;
 
 		make_pose_from_saccharide_sequence(
-				SLex, "->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
+			SLex, "->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
 
 		test_sugar( SLex );
 

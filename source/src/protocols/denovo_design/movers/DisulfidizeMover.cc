@@ -98,10 +98,12 @@ DisulfidizeMover::DisulfidizeMover() :
 	include_current_ds_( false ),
 	keep_current_ds_( false ),
 	score_or_matchrt_( false ),
+	allow_l_cys_( true ),
+	allow_d_cys_( false ),
+	mutate_gly_( false ),
+	mutate_pro_( false ),
 	set1_selector_(),
 	set2_selector_(),
-	allow_l_cys_(true),
-	allow_d_cys_(false),
 	sfxn_()
 {
 	set_rosetta_scripts_tag( utility::tag::TagOP( new utility::tag::Tag() ) );
@@ -120,10 +122,12 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 	include_current_ds_( src.include_current_ds_ ),
 	keep_current_ds_( src.keep_current_ds_ ),
 	score_or_matchrt_( src.score_or_matchrt_ ),
-	set1_selector_( src.set1_selector_ ), //Copies the const owning pointer -- points to same object!
-	set2_selector_( src.set2_selector_ ), //Copies the const owning pointer -- points to same object!
 	allow_l_cys_( src.allow_l_cys_ ),
 	allow_d_cys_( src.allow_d_cys_ ),
+	mutate_gly_( src.mutate_gly_ ),
+	mutate_pro_( src.mutate_pro_ ),
+	set1_selector_( src.set1_selector_ ), //Copies the const owning pointer -- points to same object!
+	set2_selector_( src.set2_selector_ ), //Copies the const owning pointer -- points to same object!
 	sfxn_() //Cloned below, if it exists.  NULL pointer is possible, too.
 {
 	if ( src.sfxn_ ) {
@@ -187,9 +191,10 @@ DisulfidizeMover::set_match_rt_limit( core::Real const matchrtval )
 /// @brief Set the types of cysteines that we design with:
 /// @details By default, we use only L-cysteine (not D-cysteine).
 void
-DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys ) {
-	allow_l_cys_=lcys;
-	allow_d_cys_=dcys;
+DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys )
+{
+	allow_l_cys_ = lcys;
+	allow_d_cys_ = dcys;
 	runtime_assert_string_msg( allow_l_cys_ || allow_d_cys_, "Error in protocols::denovo_design::movers::DisulfidizeMover::set_cys_types():  The Disulfidize mover must use at least one of L-cysteine or D-cysteine.  The user has specified that both are prohibited.  Check your input, please." );
 	return;
 }
@@ -197,11 +202,24 @@ DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys ) {
 /// @brief Set the scorefunction to use for scoring disulfides, minimizing, and repacking.
 /// @details Clones the input scorefunction; does not copy it.
 void
-DisulfidizeMover::set_scorefxn(
-	core::scoring::ScoreFunctionCOP sfxn_in
-) {
-	sfxn_=sfxn_in->clone();
+DisulfidizeMover::set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in )
+{
+	sfxn_ = sfxn_in->clone();
 	return;
+}
+
+/// @brief If true, GLY --> CYS mutations will be allowed. Default=false
+void
+DisulfidizeMover::set_mutate_gly( bool const mutate_gly )
+{
+	mutate_gly_ = mutate_gly;
+}
+
+/// @brief If true, PRO --> CYS mutations will be allowed. Default=false
+void
+DisulfidizeMover::set_mutate_pro( bool const mutate_pro )
+{
+	mutate_pro_ = mutate_pro;
 }
 
 /// @brief Given a list of disulfides and a symmetric pose, prune the list to remove symmetry
@@ -210,9 +228,9 @@ DisulfidizeMover::set_scorefxn(
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
 void
 DisulfidizeMover::prune_symmetric_disulfides (
-	core::pose::Pose const &pose,
-	DisulfideList & disulf_list
-) const {
+	core::pose::Pose const & pose,
+	DisulfideList & disulf_list ) const
+{
 	//Number of disulfides in the input list:
 	core::Size const ndisulf(disulf_list.size());
 	if ( ndisulf < 2 ) return; //Nothing to prune.
@@ -246,42 +264,27 @@ DisulfidizeMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-	if ( tag->hasOption("scorefxn") ) {
+	if ( tag->hasOption( "scorefxn" ) ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	}
-	if ( tag->hasOption( "match_rt_limit" ) ) {
-		set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit" ) );
-	}
-	if ( tag->hasOption( "min_disulfides" ) ) {
-		min_disulfides_ = tag->getOption< core::Size >( "min_disulfides" );
-	}
-	if ( tag->hasOption( "max_disulfides" ) ) {
-		max_disulfides_ = tag->getOption< core::Size >( "max_disulfides" );
-	}
-	if ( tag->hasOption( "keep_current_disulfides" ) ) {
-		keep_current_ds_ = tag->getOption< bool >( "keep_current_disulfides" );
-	}
-	if ( tag->hasOption( "include_current_disulfides" ) ) {
-		include_current_ds_ = tag->getOption< bool >( "include_current_disulfides" );
-	}
-	if ( tag->hasOption( "min_loop" ) ) {
-		set_min_loop( tag->getOption< core::Size >( "min_loop" ) );
-	}
-	if ( tag->hasOption( "max_disulf_score" ) ) {
-		set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score" ) );
-	}
+	set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit", match_rt_limit_ ) );
+	min_disulfides_ = tag->getOption< core::Size >( "min_disulfides", min_disulfides_ );
+	max_disulfides_ = tag->getOption< core::Size >( "max_disulfides", max_disulfides_ );
+	keep_current_ds_ = tag->getOption< bool >( "keep_current_disulfides", keep_current_ds_ );
+	include_current_ds_ = tag->getOption< bool >( "include_current_disulfides", include_current_ds_ );
+	set_min_loop( tag->getOption< core::Size >( "min_loop", min_loop_  ) );
+	set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score", max_disulf_score_ ) );
+	set_mutate_gly( tag->getOption< bool >( "mutate_gly", mutate_gly_ ) );
+	set_mutate_pro( tag->getOption< bool >( "mutate_pro", mutate_pro_ ) );
 
 	if ( tag->hasOption( "max_cb_dist" ) ) {
-		core::Real max_dist = tag->getOption< core::Real >( "max_cb_dist" );
+		core::Real const max_dist = tag->getOption< core::Real >( "max_cb_dist" );
 		max_dist_sq_ = max_dist*max_dist;
 	}
 
 	// by default, a disulfide is valid if it passes score OR matchrt
 	// if this option is false, disulfides must pass score AND matchrt
-	if ( tag->hasOption( "score_or_matchrt" ) ) {
-		score_or_matchrt_ = tag->getOption< bool >( "score_or_matchrt" );
-	}
-
+	score_or_matchrt_ = tag->getOption< bool >( "score_or_matchrt", score_or_matchrt_ );
 	if ( tag->hasOption( "set1" ) ) {
 		set_set1_selector( get_residue_selector( data, tag->getOption< std::string >( "set1" ) ) );
 	}
@@ -290,7 +293,9 @@ DisulfidizeMover::parse_my_tag(
 	}
 
 	//By default, we only design with L-cystine:
-	set_cys_types( tag->getOption<bool>("use_l_cys", true), tag->getOption<bool>("use_d_cys", false) );
+	set_cys_types(
+		tag->getOption< bool >( "use_l_cys", allow_l_cys_ ),
+		tag->getOption< bool >( "use_d_cys", allow_d_cys_ ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -678,8 +683,8 @@ DisulfidizeMover::make_disulfide(
 	core::Size const res1,
 	core::Size const res2,
 	bool const relax_bb,
-	core::scoring::ScoreFunctionOP sfxn
-) const {
+	core::scoring::ScoreFunctionOP sfxn ) const
+{
 	if ( TR.Debug.visible() ) TR.Debug << "build_disulf between " << res1 << " and " << res2 << std::endl;
 	// create movemap which allows only chi to move
 	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
@@ -703,8 +708,8 @@ DisulfidizeMover::make_disulfides(
 	core::pose::Pose & pose,
 	DisulfidizeMover::DisulfideList const & disulf,
 	bool const relax_bb,
-	core::scoring::ScoreFunctionOP sfxn
-) const {
+	core::scoring::ScoreFunctionOP sfxn ) const
+{
 	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
 		make_disulfide( pose, (*itr).first, (*itr).second, relax_bb, sfxn );
 	}
@@ -718,8 +723,8 @@ DisulfidizeMover::build_and_score_disulfide(
 	core::scoring::ScoreFunctionOP sfxn_full,
 	const bool relax_bb,
 	core::Size const res1,
-	core::Size const res2
-) const {
+	core::Size const res2 ) const
+{
 	assert( sfxn_disulfonly );
 	assert( sfxn_full );
 	assert( res1 );
@@ -749,10 +754,11 @@ bool
 DisulfidizeMover::check_residue_type( core::pose::Pose const & pose, core::Size const res ) const
 {
 	bool const retval = ( pose.residue(res).is_protein() &&
-		( pose.residue(res).aa() != core::chemical::aa_pro ) &&
-		( pose.residue(res).aa() != core::chemical::aa_gly ) );
+		( mutate_pro_ ||
+		( ( pose.residue(res).aa() != core::chemical::aa_pro ) && ( pose.residue(res).aa() != core::chemical::aa_dpr ) ) ) &&
+		( mutate_gly_ || ( pose.residue(res).aa() != core::chemical::aa_gly ) ) );
 	if ( !retval && TR.Debug.visible() ) {
-		TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << " ) cannot be mutated to CYD." << std::endl;
+		TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << ") cannot be mutated to CYD." << std::endl;
 	}
 	return retval;
 }
@@ -791,8 +797,7 @@ DisulfidizeMover::check_disulfide_score(
 	core::Size const res1,
 	core::Size const res2,
 	core::scoring::ScoreFunctionOP sfxn_disulfonly,
-	core::scoring::ScoreFunctionOP sfxn_full
-) const
+	core::scoring::ScoreFunctionOP sfxn_full ) const
 {
 	core::Real const disulfide_fa_score ( build_and_score_disulfide( pose, sfxn_disulfonly, sfxn_full, false /*relax_bb*/, res1, res2 ) );
 	if ( TR.visible() ) TR << "DISULF FA SCORE RES " << res1 << " " << res2 << " " << disulfide_fa_score << std::endl;
@@ -810,8 +815,8 @@ DisulfidizeMover::check_disulfide_match_rt(
 	core::Size const res1,
 	core::Size const res2,
 	core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot,
-	bool const mirror
-) const {
+	bool const mirror ) const
+{
 	core::Energy match_t = 0.0;
 	core::Energy match_r = 0.0;
 	core::Energy match_rt = 0.0;
@@ -827,10 +832,10 @@ DisulfidizeMover::check_disulfide_match_rt(
 /// @brief Returns true if this is a mixed D/L disulfide, false otherwise.
 ///
 bool DisulfidizeMover::mixed_disulfide (
-	core::pose::Pose const &pose,
+	core::pose::Pose const & pose,
 	core::Size const res1,
-	core::Size const res2
-) const {
+	core::Size const res2 ) const
+{
 	if ( allow_l_cys_ && !allow_d_cys_ ) return false;
 	if ( allow_d_cys_ && !allow_l_cys_ ) return false;
 
