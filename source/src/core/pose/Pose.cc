@@ -1580,13 +1580,8 @@ Pose::apply_transform_Rx_plus_v(
 	numeric::xyzMatrix< Real > const & R,
 	Vector const & v
 ) {
-	for ( Size i = 1; i <= total_residue(); ++i ) {
-		for ( Size j = 1; j <= residue_type(i).natoms(); ++j ) {
-			AtomID id( j, i );
-			set_xyz( id, R * xyz(id) + v );
-			//apply_transform_Rx_plus_v( R, v );
-		}
-	}
+	//fpd move this to conformation since behvaior is very different for symm versus non-symm conformations!
+	conformation_->apply_transform_Rx_plus_v(R,v);
 }
 
 void

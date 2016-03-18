@@ -111,7 +111,14 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
+	numeric::xyzVector<core::Real> apix = core::scoring::electron_density::getDensityMap().get_voxel_spacing(  );
+	numeric::xyzVector<core::Real> origin = core::scoring::electron_density::getDensityMap().getOrigin(  );
+
 	if ( testmap_ && testmap_->isMapLoaded() ) {
+		// set voxel spacing and origin of testmap
+		testmap_->set_voxel_spacing( apix );
+		testmap_->setOrigin( origin );
+
 		numeric::fourier::fft3(testmap_->get_data(), FrhoO);
 		testmap_->getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, bin_squared_ );
 		for ( Size i=1; i<=modelmap2FSC.size(); ++i ) fsc2+=modelmap2FSC[i];
@@ -139,13 +146,11 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 
 	// now tag map parameters (which may have been refined)
 	oss.str(""); oss.clear();
-	numeric::xyzVector<core::Real> apix = core::scoring::electron_density::getDensityMap().get_voxel_spacing(  );
 	oss << "voxel spacing = " << apix[0] << ", " << apix[1] << ", " << apix[2];
 	remark.num = 1; remark.value = oss.str();
 	pose.pdb_info()->remarks().push_back( remark );
 
 	oss.str(""); oss.clear();
-	numeric::xyzVector<core::Real> origin = core::scoring::electron_density::getDensityMap().getOrigin(  );
 	oss << "origin = " << origin[0] << ", " << origin[1] << ", " << origin[2];
 	remark.num = 1; remark.value = oss.str();
 	pose.pdb_info()->remarks().push_back( remark );

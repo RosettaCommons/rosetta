@@ -345,6 +345,7 @@ public:
 	inline bool isMapLoaded() const { return this->isLoaded; };
 	inline core::Real getResolution( ) const { return this->reso; }
 	inline numeric::xyzVector<core::Real> getOrigin() const { return origin; }
+	inline void setOrigin( numeric::xyzVector<core::Real> newori ) { origin = newori; }
 	inline numeric::xyzVector<int> getGrid() const { return grid; }
 	numeric::xyzVector<core::Real> get_cellDimensions() const { return cellDimensions; }
 	inline utility::vector1< core::kinematics::RT > getsymmOps() const { return symmOps; }
@@ -388,6 +389,10 @@ public:
 	///@brief get the interpolated density at a point _in index space_
 	core::Real
 	get(numeric::xyzVector<core::Real> X);
+
+	///@brief get the interpolated gradient at a point _in index space_
+	numeric::xyzVector<core::Real>
+	grad(numeric::xyzVector<core::Real> X);
 
 	///@brief set voxel spacing of the map
 	void

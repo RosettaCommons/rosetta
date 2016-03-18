@@ -131,22 +131,92 @@ VoxelSpacingMultifunc::operator ()( core::optimization::Multivec const & vars ) 
 
 void
 VoxelSpacingMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const {
-	core::Real B_EPS = 0.0001;
+	// analytic
+	dE_dvars.clear( );
+	dE_dvars.resize( vars.size(), 0.0 );
+	numeric::xyzVector< core::Real > ori ( vars[1],vars[2],vars[3] );
+	numeric::xyzVector< core::Real > apix_scale;
 
-	// numeric (for now)
-	dE_dvars.resize( vars.size() );
-
-	core::optimization::Multivec varsCopy = vars;
-
-	for ( core::Size i = 1; i <= vars.size(); ++i ) {
-		varsCopy[i]+=B_EPS;
-		core::Real scorep = (*this)(varsCopy);
-		varsCopy[i]-=2*B_EPS;
-		core::Real scoren = (*this)(varsCopy);
-		varsCopy[i]+=B_EPS;
-
-		dE_dvars[i] = (scorep-scoren)/(2*B_EPS);
+	if ( vars.size() == 4 ) {
+		apix_scale[0] = apix_scale[1] = apix_scale[2] = vars[4];
+	} else {
+		apix_scale[0] = vars[4];
+		apix_scale[1] = vars[5];
+		apix_scale[2] = vars[6];
 	}
+
+
+	// get CC between rhoC and map
+	core::Real sumC=0, sumC2=0, sumO=0, sumO2=0, sumCO=0;
+	core::optimization::Multivec dsumCO(6,0), dsumO(6,0), dsumO2(6,0);
+	core::Real N = rhoC_.u1()*rhoC_.u2()*rhoC_.u3();
+
+	for ( int k=1; k<=rhoC_.u3(); ++k ) {
+		for ( int j=1; j<=rhoC_.u2(); ++j ) {
+			for ( int i=1; i<=rhoC_.u1(); ++i ) {
+				core::Real rhoC_ijk = rhoC_(i,j,k);
+
+				numeric::xyzVector< core::Real > offset(
+					(i-1)/apix_scale[0] +1,
+					(j-1)/apix_scale[1] +1,
+					(k-1)/apix_scale[2] +1
+				);
+
+				numeric::xyzVector< core::Real > mapidx(
+					ori[0] + offset[0],
+					ori[1] + offset[1],
+					ori[2] + offset[2]
+				);
+
+				core::Real rhoO_ijk = core::scoring::electron_density::getDensityMap().get( mapidx );
+
+				sumC  += rhoC_ijk;
+				sumC2 += rhoC_ijk*rhoC_ijk;
+				sumO  += rhoO_ijk;
+				sumO2 += rhoO_ijk*rhoO_ijk;
+				sumCO += rhoC_ijk*rhoO_ijk;
+
+				numeric::xyzVector< core::Real > drhoO_ijk = core::scoring::electron_density::getDensityMap().grad( mapidx );
+				dsumCO[1] += rhoC_ijk * drhoO_ijk[0];
+				dsumCO[2] += rhoC_ijk * drhoO_ijk[1];
+				dsumCO[3] += rhoC_ijk * drhoO_ijk[2];
+				dsumCO[4] += rhoC_ijk * drhoO_ijk[0] * (-(i-1) / (apix_scale[0]*apix_scale[0]));
+				dsumCO[5] += rhoC_ijk * drhoO_ijk[1] * (-(j-1) / (apix_scale[1]*apix_scale[1]));
+				dsumCO[6] += rhoC_ijk * drhoO_ijk[2] * (-(k-1) / (apix_scale[2]*apix_scale[2]));
+
+				dsumO[1] += drhoO_ijk[0];
+				dsumO[2] += drhoO_ijk[1];
+				dsumO[3] += drhoO_ijk[2];
+				dsumO[4] += drhoO_ijk[0] * (-(i-1) / (apix_scale[0]*apix_scale[0]));
+				dsumO[5] += drhoO_ijk[1] * (-(j-1) / (apix_scale[1]*apix_scale[1]));
+				dsumO[6] += drhoO_ijk[2] * (-(k-1) / (apix_scale[2]*apix_scale[2]));
+
+				dsumO2[1] += 2 * rhoO_ijk * drhoO_ijk[0];
+				dsumO2[2] += 2 * rhoO_ijk * drhoO_ijk[1];
+				dsumO2[3] += 2 * rhoO_ijk * drhoO_ijk[2];
+				dsumO2[4] += 2 * rhoO_ijk * drhoO_ijk[0] * (-(i-1) / (apix_scale[0]*apix_scale[0]));
+				dsumO2[5] += 2 * rhoO_ijk * drhoO_ijk[1] * (-(j-1) / (apix_scale[1]*apix_scale[1]));
+				dsumO2[6] += 2 * rhoO_ijk * drhoO_ijk[2] * (-(k-1) / (apix_scale[2]*apix_scale[2]));
+			}
+		}
+	}
+
+	core::Real varC = sqrt(sumC2 - sumC*sumC / N );
+	core::Real varO = sqrt(sumO2 - sumO*sumO / N ) ;
+	runtime_assert ( varC != 0 && varO != 0 );
+	core::Real CC = (sumCO - sumC*sumO/N) / ( varC * varO );
+
+	for (core::Size i=1; i<=6; ++i) {
+		core::Size i_eff = std::min( i, vars.size() );
+		core::Real dvarO_i = (dsumO2[i] - 2*sumO*dsumO[i]/N) / (2*varO);
+		dE_dvars[i_eff] += -100.0 * ( (dsumCO[i] - sumC*dsumO[i]/N) / ( varC * varO ) - CC*dvarO_i / varO );
+	}
+
+	std::cerr << "CC(" << vars[1];
+	for (core::Size i=2; i<=vars.size(); ++i) {
+		std::cerr << "," << vars[i];
+	}
+	std::cerr << ") = " << CC << std::endl;
 }
 
 void
@@ -214,11 +284,12 @@ VoxelSpacingRefinementMover::VoxelSpacingRefinementMover() : moves::Mover() {
 void VoxelSpacingRefinementMover::init() {
 	aniso_ = false;
 	minimizer_ = "lbfgs_armijo";
+	max_iter_ = 100;
 }
 
 void VoxelSpacingRefinementMover::apply(core::pose::Pose & pose) {
-	core::optimization::MinimizerOptions options( minimizer_, 1e-4, true, false, false );
-	options.max_iter(100);
+	core::optimization::MinimizerOptions options( minimizer_, 1e-2, true, false, false );
+	options.max_iter(max_iter_);
 
 	// set up optimizer
 	VoxelSpacingMultifunc f_voxel( pose );
@@ -247,6 +318,10 @@ VoxelSpacingRefinementMover::parse_my_tag(TagCOP const tag, basic::datacache::Da
 
 	if ( tag->hasOption("mapout") ) {
 		mapout_ = tag->getOption<std::string>("mapout");
+	}
+
+	if ( tag->hasOption("max_iter") ) {
+		max_iter_ = tag->getOption<core::Size>("max_iter");
 	}
 
 }

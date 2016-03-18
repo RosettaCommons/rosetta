@@ -75,6 +75,7 @@ public:
 private:
 	std::string minimizer_, mapout_;
 	bool aniso_;
+	core::Size max_iter_;
 };
 
 } // moves

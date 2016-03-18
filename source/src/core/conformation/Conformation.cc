@@ -2607,6 +2607,23 @@ Conformation::batch_get_xyz(
 	}
 }
 
+void
+Conformation::apply_transform_Rx_plus_v(
+	numeric::xyzMatrix< Real > const & R,
+	Vector const & v
+) {
+	utility::vector1<AtomID> ids;
+	utility::vector1<Vector> xyzs;
+	for ( Size i = 1; i <= size(); ++i ) {
+		Residue const & rsd( residue_(i) );
+		for ( Size j = 1; j <= rsd.natoms(); ++j ) {
+			AtomID id( j, i );
+			ids.push_back(id);
+			xyzs.push_back( R * xyz(id) + v );
+		}
+	}
+	batch_set_xyz( ids, xyzs );
+}
 
 /// @details Set two bond angles and a bond length. DOES NOT DO ANY DIHEDRALS -- NOT EVEN OMEGA IF IT'S A PROTEIN
 void

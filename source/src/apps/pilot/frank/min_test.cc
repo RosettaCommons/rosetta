@@ -21,6 +21,7 @@
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -101,8 +102,9 @@ OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, debug_verbose)
 OPT_1GRP_KEY(Boolean, min, cartesian)
 OPT_1GRP_KEY(Boolean, min, pack)
-OPT_1GRP_KEY(Integer, min, repeats)
+OPT_1GRP_KEY(RealVector, min, ramp)
 OPT_1GRP_KEY(String, min, minimizer)
+OPT_1GRP_KEY(StringVector, min, fix_chains)
 
 static THREAD_LOCAL basic::Tracer TR( "min_test" );
 
@@ -290,6 +292,45 @@ public:
 		}
 	}
 
+	void set_foldtree_for_variable_movement(core::pose::Pose & pose) {
+		core::pose::addVirtualResAsRoot( pose );
+
+		core::kinematics::FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
+		Size totres = f_in.nres();
+		Size nres = totres - 1;
+		core::Size vrtid = nres+1;
+
+		utility::vector1< core::Size > cuts;
+		utility::vector1< std::pair<core::Size,core::Size> > jumps;
+		utility::vector1< int > cuts_in = f_in.cutpoints();
+		std::sort( cuts_in.begin(), cuts_in.end() );
+		for (core::Size i=1; i<=cuts_in.size(); ++i) {
+			core::Size seg_start = (i==1) ? 1 : cuts_in[i-1]+1;
+			core::Size seg_end = cuts_in[i];
+			core::Size jump_end = seg_start + (seg_end-seg_start)/2;
+			cuts.push_back( cuts_in[i] );
+			jumps.push_back( std::pair<core::Size,core::Size>( vrtid, jump_end ) );
+		}
+
+		ObjexxFCL::FArray2D_int fjumps( 2, jumps.size() );
+		ObjexxFCL::FArray1D_int fcuts ( cuts.size() );
+		for ( Size i=1; i<=jumps.size(); ++i ) {
+			fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
+			fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );
+		}
+		for ( Size i = 1; i<=cuts.size(); ++i ) {
+			fcuts(i) = cuts[i];
+		}
+
+		kinematics::FoldTree f;
+		bool valid_tree = f.tree_from_jumps_and_cuts( nres+1, jumps.size(), fjumps, fcuts );
+		runtime_assert( valid_tree );
+		f.reorder( vrtid );
+
+		TR << "New (asu) fold tree: " << f << std::endl;
+		core::pose::symmetry::set_asymm_unit_fold_tree( pose , f );
+	}
+
 	void apply( core::pose::Pose & pose) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
@@ -309,7 +350,8 @@ public:
 		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
 		mm.set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 
-		core::Size repeats = option[ OptionKeys::min::repeats ]();
+		utility::vector1< core::Real > ramp =  option[ OptionKeys::min::ramp ]();
+		core::Size repeats = ramp.size();
 
 		if ( option[ OptionKeys::relax::jump_move ].user() ) {
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
@@ -321,6 +363,27 @@ public:
 			mm.set_chi( option[ OptionKeys::relax::chi_move ]() );
 		}
 
+		if ( option[ OptionKeys::min::fix_chains ].user() ) {
+			set_foldtree_for_variable_movement(pose);
+
+			utility::vector1<std::string> chains_to_fix = option[ OptionKeys::min::fix_chains ]();
+			for (core::Size i=1; i<=chains_to_fix.size(); ++i) {
+				runtime_assert( chains_to_fix[i].length() == 1);
+				for (core::Size j=1; j<=pose.total_residue(); ++j) {
+					if (pose.pdb_info()->chain(j) == chains_to_fix[i][0]) {
+						mm.set_bb  ( j, false );
+						mm.set_chi ( j, false );
+					}
+				}
+
+				for (core::Size j=1; j<=pose.num_jump(); ++j) {
+					id::AtomID atm_j = pose.conformation().jump_atom_id( j );
+					if (pose.pdb_info()->chain(atm_j.rsd()) == chains_to_fix[i][0]) {
+						mm.set_jump ( j, false );
+					}
+				}
+			}
+		}
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
@@ -360,69 +423,71 @@ public:
 			fix_worst_bad_ramas( pose );
 		}
 
-		// repack
-		if ( option[ OptionKeys::min::pack ]() || option[ OptionKeys::relax::ramady ]() )  {
-			TaskFactoryOP local_tf( new TaskFactory() );
-			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
-			local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
-			local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		long t1=clock();
+		TR << "start score: " << (*scorefxn)(pose) << std::endl;
+		for ( int i=1; i<=(int)repeats; ++i ) {
+			core::scoring::ScoreFunctionOP local_sf = scorefxn->clone();
+			local_sf->set_weight( core::scoring::fa_rep,
+				ramp[i]*scorefxn->get_weight( core::scoring::fa_rep )
+			);
 
-			protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
-			if ( core::pose::symmetry::is_symmetric( pose ) )  {
-				pack_full_repack = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( scorefxn ) );
+			// repack
+			if ( option[ OptionKeys::min::pack ]() || option[ OptionKeys::relax::ramady ]() )  {
+				TaskFactoryOP local_tf( new TaskFactory() );
+				local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
+				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+				local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+
+				// mask by movemap
+				bool repack = true;
+				if ( basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
+					repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
+				}
+
+				PreventRepackingOP prevent_some( new PreventRepacking() );
+				for ( Size i = 1; i<= pose.total_residue() ; ++i ) {
+					if (!mm.get_chi(i) || !repack) {
+						prevent_some->include_residue(i);
+					}
+				}
+				local_tf->push_back( prevent_some );
+
+				protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+				if ( core::pose::symmetry::is_symmetric( pose ) )  {
+					pack_full_repack = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( scorefxn ) );
+				}
+				pack_full_repack->task_factory(local_tf);
+				pack_full_repack->apply( pose );
+
+				(*scorefxn)(pose);
 			}
-			pack_full_repack->task_factory(local_tf);
-			pack_full_repack->apply( pose );
 
-			(*scorefxn)(pose);
-			scorefxn->show(TR, pose);
-		}
+			bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
+			bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
+			std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
 
-		bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
-		bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
-		std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
-
-		// setup the options
-		if ( !option[ OptionKeys::min::cartesian ]() )  {
-			if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
-				core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
-				TR << "SYMTORSION MINTEST: " << std::endl;
-				TR << "start score: " << (*scorefxn)(pose)  << std::endl;
-				long t1=clock();
-				for ( int i=1; i<=(int)repeats; ++i ) minimizer.run( pose, mm, *scorefxn, options );
-				long t2=clock();
-				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-				TR << "end score: " << (*scorefxn)(pose)  << std::endl;
-				TR << "MIN TIME: " << time << " sec " << std::endl;
+			// setup the options
+			if ( !option[ OptionKeys::min::cartesian ]() )  {
+				if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+					core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
+					core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
+					minimizer.run( pose, mm, *scorefxn, options );
+				} else {
+					core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
+					core::optimization::AtomTreeMinimizer minimizer;
+					minimizer.run( pose, mm, *scorefxn, options );
+				}
 			} else {
 				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
-				core::optimization::AtomTreeMinimizer minimizer;
-				TR << "TORSION MINTEST: "  << std::endl;
-				TR << "start score: " << (*scorefxn)(pose) << std::endl;
-				long t1=clock();
-				for ( int i=1; i<=(int)repeats; ++i ) minimizer.run( pose, mm, *scorefxn, options );
-				long t2=clock();
-				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-				TR << "end score: " << (*scorefxn)(pose) << std::endl;
-				TR << "MIN TIME: " << time << " sec" << std::endl;
-				(*scorefxn)(pose);
-				scorefxn->show(TR, pose);
+				core::optimization::CartesianMinimizer minimizer;
+				minimizer.run( pose, mm, *scorefxn, options );
 			}
-		} else {
-			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
-			core::optimization::CartesianMinimizer minimizer;
-			TR << "CART MINTEST: "  << std::endl;
-			TR << "start score: " << (*scorefxn)(pose)  << std::endl;
-			long t1=clock();
-			for ( int i=1; i<=(int)repeats; ++i ) minimizer.run( pose, mm, *scorefxn, options );
-			long t2=clock();
-			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-			TR << "end score: " << (*scorefxn)(pose)  << std::endl;
-			TR << "MIN TIME: " << time << " sec " << std::endl;
-			(*scorefxn)(pose);
-			scorefxn->show(TR, pose);
 		}
+		scorefxn->show(TR, pose);
+		long t2=clock();
+		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+		TR << "end score: " << (*scorefxn)(pose) << std::endl;
+		TR << "MIN TIME: " << time << " sec" << std::endl;
 
 		core::scoring::dssp::Dssp my_dssp( pose );
 		//core::scoring::dssp::DsspOP my_dssp_OP = new core::scoring::dssp::Dssp( pose );
@@ -471,9 +536,10 @@ main( int argc, char * argv [] )
 		NEW_OPT(min::debug, "debug derivs?", false);
 		NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 		NEW_OPT(min::cartesian, "cartesian minimization?", false);
-		NEW_OPT(min::repeats, "#repeats", 1);
+		NEW_OPT(min::ramp, "ramp", utility::vector1<core::Real>(1,1.0));
 		NEW_OPT(min::pack, "pack first?", false);
 		NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
+		NEW_OPT(min::fix_chains, "fix chains", utility::vector1<std::string>());
 
 		devel::init(argc, argv);
 

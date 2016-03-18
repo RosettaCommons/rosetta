@@ -907,6 +907,12 @@ public:  // DoFs/xyzs
 	void
 	batch_get_xyz( utility::vector1<AtomID> const & id, utility::vector1<PointPosition> & position ) const;
 
+	virtual
+	void
+	apply_transform_Rx_plus_v(
+		numeric::xyzMatrix< Real > const & R,
+		Vector const & v
+	);
 
 	void
 	insert_ideal_geometry_at_polymer_bond( Size seqpos );

@@ -3188,6 +3188,19 @@ ElectronDensity::get(numeric::xyzVector<core::Real> X) {
 	return (interp_spline( coeffs_density_ , X ));
 }
 
+numeric::xyzVector<core::Real>
+ElectronDensity::grad(numeric::xyzVector<core::Real> X) {
+	if ( !isLoaded ) {
+		utility_exit_with_message("ElectronDensity::get_interp_dens called but no map is loaded!");
+	}
+
+	if ( coeffs_density_.u1()*coeffs_density_.u2()*coeffs_density_.u3() == 0 ) {
+		spline_coeffs( density , coeffs_density_ );
+	}
+
+	return (interp_dspline( coeffs_density_ , X ));
+}
+
 
 void
 ElectronDensity::set_voxel_spacing( numeric::xyzVector<core::Real> apix ) {
@@ -3223,7 +3236,6 @@ void ElectronDensity::density_change_trigger() {
 
 	computeGradients();  // visualization only
 }
-
 
 /////////////////////////////////////
 // resize a map (using FFT-interpolation)

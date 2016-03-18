@@ -702,6 +702,29 @@ SymmetricConformation::batch_set_xyz(
 	Conformation::batch_set_xyz( ids_with_symm, positions_with_symm );
 }
 
+void
+SymmetricConformation::apply_transform_Rx_plus_v(
+	numeric::xyzMatrix< Real > const & R,
+	Vector const & v
+) {
+	utility::vector1<AtomID> ids;
+	utility::vector1<Vector> xyzs;
+	for ( Size i = 1; i <= size(); ++i ) {
+		for ( Size j = 1; j <= residue_type(i).natoms(); ++j ) {
+			AtomID id( j, i );
+			ids.push_back(id);
+			xyzs.push_back( R * xyz(id) + v );
+		}
+	}
+
+	//fpd Explicitly call base class
+	Conformation::batch_set_xyz( ids, xyzs );
+
+	//fpd then invalidate Tsymm
+	clear_Tsymm( );
+}
+
+
 // @brief invalidate current Tsymm settings
 void
 SymmetricConformation::clear_Tsymm( ) {

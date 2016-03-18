@@ -212,6 +212,12 @@ public:
 		utility::vector1<PointPosition> const & positions
 	);
 
+	virtual
+	void
+	apply_transform_Rx_plus_v(
+		numeric::xyzMatrix< Real > const & R,
+		Vector const & v
+	);
 
 	virtual
 	~SymmetricConformation();
