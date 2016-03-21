@@ -80,6 +80,7 @@ private:
 	SequenceMoverOP pack_operations_;
 	bool dock_ppk_;
 	FaDockingSlideIntoContactOP fa_dock_slide_into_contact_;
+    bool movers_setup_;
 
 	/// @brief Performs setup that requires a pose
 	void finalize_setup( core::pose::Pose & );

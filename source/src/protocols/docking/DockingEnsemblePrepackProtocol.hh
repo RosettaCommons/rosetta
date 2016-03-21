@@ -63,6 +63,7 @@ private:
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec_;
 
 	core::Real trans_magnitude_;
+    bool movers_setup_; //only append sequence mover once
 
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
 	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;

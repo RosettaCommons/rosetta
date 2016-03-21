@@ -79,6 +79,7 @@ void DockingEnsemblePrepackProtocol::setup_defaults()
 	ensemble2_ = NULL;
 	ensemble1_filename_ = "";
 	ensemble2_filename_ = "";
+    movers_setup_ = false;
 }
 
 DockingEnsemblePrepackProtocol::~DockingEnsemblePrepackProtocol(){
@@ -138,14 +139,16 @@ void DockingEnsemblePrepackProtocol::setup_pack_operation_movers()
 		scmin_mover_->set_task_factory( task_factory() );
 		pack_operations_->add_mover( scmin_mover_ );
 	}
-
+    movers_setup_ = true;
 }
 
 void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	setup_foldtree( pose, partners(), movable_jumps() );
 	tf2()->set_prepack_only(true);
 	tf2()->create_and_attach_task_factory( this, pose );
-	setup_pack_operation_movers();
+    if ( !movers_setup_ ) {
+	    setup_pack_operation_movers();
+    }
 
 	core::scoring::ScoreFunctionOP scorefxn_low = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 
