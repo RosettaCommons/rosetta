@@ -80,7 +80,7 @@ bool SCS_BlastComparator::compare(AntibodySequence const &antibody_sequence, SCS
 
 
 /// @details filter helper function: generate string with results sizes
-string result_sizes(SCS_ResultsOP r, int width=4)
+string result_sizes(SCS_ResultsOP r, int width)
 {
 	std::stringstream s;
 
@@ -221,9 +221,6 @@ void SCS_BlastFilter_by_alignment_length::apply(AntibodySequence const &/*antibo
 	}
 	TR.Debug << "SCS_BlastFilter_by_alignment_length: Results count after filtering  " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
 }
-
-
-
 
 
 } // namespace grafting

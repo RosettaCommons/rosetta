@@ -36,3 +36,18 @@ bool antibody_grafting_usable() {
 } // grafting
 } // antibody
 } // protocols
+
+
+
+#ifdef __ANTIBODY_GRAFTING__
+
+namespace protocols {
+namespace antibody {
+namespace grafting {
+
+
+} // namespace grafting
+} // namespace antibody
+} // namespace protocols
+
+#endif // __ANTIBODY_GRAFTING__

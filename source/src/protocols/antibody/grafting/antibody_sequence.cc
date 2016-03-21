@@ -166,7 +166,9 @@ string AntibodySequence::l3_sequence() const { return light.cdr3_sequence(); }
 /// @brief IO operator for debug and Python bindings
 std::ostream & operator << (std::ostream & os, CDR_Bounds const &b)
 {
-	os << "CDR_Bounds{begin=" << b.begin << ", end=" << b.end << ", size=" << b.size() << ", defined=" << b.defined() << '}';
+	os << "CDR_Bounds{begin=" << b.begin << ", end=" << b.end << ", size=" << b.size();
+	if( !b.defined() ) os << ", defined=" << b.defined();
+	os << '}';
 	return os;
 }
 

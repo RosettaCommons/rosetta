@@ -22,14 +22,18 @@
 
 #include <protocols/antibody/grafting/antibody_sequence.hh>
 
+#include <basic/report.hh>
+
+
 namespace protocols {
 namespace antibody {
 namespace grafting {
 
 
 /// @brief Base class for antibody CDR detector. Sub-class it to implement particular detection methods
-class CDR_Detector {
+class CDR_Detector : public basic::Reporter {
 public:
+	using Reporter::Reporter;
 
 	virtual ~CDR_Detector() {}
 
@@ -40,8 +44,9 @@ public:
 
 
 /// @brief Use RegEx and antibody sequence information to detect CDR's
-class RegEx_based_CDR_Detector : CDR_Detector {
+class RegEx_based_CDR_Detector : public CDR_Detector {
 public:
+	using CDR_Detector::CDR_Detector;
 
 	/// @brief Detect CDR's
 	/// @throw _AE_cdr_detection_failed_ if for some of the loops detection failed

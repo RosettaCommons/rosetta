@@ -101,7 +101,6 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	struct {
 		char chain;
 		core::pose::PoseOP &pose;
-		//AntibodyChainNumbering::NumberingVector numbering;
 		AntibodyChainNumbering numbering;
 		string trimmed_sequence;
 		string color;
@@ -148,8 +147,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		frh->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment.pdb" );
 
 		PoseOP O = orientation->split_by_chain( find_chain(*orientation, j.chain, "orientation" ) );
-		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover(*O, 1 /*ref_start*/, std::min(O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
-																						     1 /*target_start*/, j.pose->n_residue()/*target_end*/, true /*CA_only*/) );
+		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover(*O, 1 /*ref_start*/,    std::min(O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
+																						     1 /*target_start*/, std::min(O->n_residue(), j.pose->n_residue() ) /*target_end*/, true /*CA_only*/) );
 		imposer->apply(*j.pose);
 	}
 

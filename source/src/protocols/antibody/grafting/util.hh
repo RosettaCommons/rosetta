@@ -32,7 +32,24 @@ namespace protocols {
 namespace antibody {
 namespace grafting {
 
+/// Check if regex library is functional
 bool antibody_grafting_usable();
+
+
+} // grafting
+} // antibody
+} // protocols
+
+#endif // __ANTIBODY_GRAFTING__
+
+
+
+
+#ifdef __ANTIBODY_GRAFTING__
+
+namespace protocols {
+namespace antibody {
+namespace grafting {
 
 } // grafting
 } // antibody

@@ -29,7 +29,10 @@
 
 #include <core/types.hh>
 
+#include <basic/report.hh>
+
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace antibody {
@@ -41,6 +44,9 @@ struct SCS_Result
 	virtual ~SCS_Result() {}  // This datatype is pure struct but we need to add at least one virtual method so we can use dynamic_cast later
 
 	std::string pdb;
+
+	// true if this result originated from results-padding instead of 'normal' tempalte selection
+	bool padded = false;
 };
 
 
@@ -86,11 +92,15 @@ struct SCS_ResultSet
 };
 
 
-class SCS_Base {
+class SCS_Base : public basic::Reporter {
 	std::vector<SCS_FunctorCOP> filters_;
 	SCS_FunctorCOP sorter_;
 
 public:
+	typedef std::string string;
+
+	using Reporter::Reporter;
+
 	virtual ~SCS_Base() {}
 
 	/// Results post-processing options: use filter to filter out resutls and sorting for chnaging results priority
@@ -102,22 +112,73 @@ public:
 	/// @throw _AE_scs_failed_ on failure
 	virtual SCS_ResultsOP raw_select(AntibodySequence const &) = 0;
 
-	/// @brief Select CDR's template, filter it and sort
+	/// @brief Select CDR's template, filter it and sort. Try to provide at least 'n' templates if possible
 	/// @throw _AE_scs_failed_ on failure
-	virtual SCS_ResultsOP select(AntibodySequence const &);
+	virtual SCS_ResultsOP select(uint n, AntibodySequence const &);
+
+	/// @brief Pad results vectors for each region (if possible) by adding arbitraty but compatible templates so at least n templates for each region is avalible
+	virtual void pad_results(uint n, AntibodySequence const &, SCS_Results &) = 0;
+
+private:
+	/// @brief output summary to 'Report'
+	void report(SCS_ResultsOP r, uint n);
 };
 
 
-
-
-class SCS_BlastPlus : public SCS_Base
+class SCS_LoopOverSCs : public SCS_Base
 {
+protected:
+	typedef utility::vector0< std::map<string, string> > Antibody_SCS_Database;
+
+private:
+	std::string database_path_; // path to antibody grafting database root, should point to tools/antibody
+
+	Antibody_SCS_Database antibody_scs_database_;
+
 public:
+	using SCS_Base::SCS_Base;
+
+
 	/// @brief Select CDR's template
 	/// @throw _AE_scs_failed_ on failure
 	SCS_ResultsOP raw_select(AntibodySequence const &) override;  //, AntibodyNumbering const &);
 
 
+	/// @brief set working dir/output-prefix for intermediate files based on command-line options
+	void init_from_options();
+
+	/// @brief set path to antibody grafting database root, should point to tools/antibody
+	void set_database_path(string const &database) { database_path_ = database; }
+
+	// /// @brief return database path
+	// string database_path(void) const { return database_; }
+
+protected:
+	struct Result { std::string name, sequence; SCS_ResultsVector &results; };
+
+	virtual void select_template(Result & j,
+								 std::string const & db_to_query,
+								 std::map< std::string, std::map< std::string, std::string> > const & ab_db ) const = 0;
+
+	/// Return Antibody_SCS_Database object by ether reading it from database or from cache if it was read before
+	Antibody_SCS_Database &antibody_scs_database();
+
+};
+
+
+class SCS_BlastPlus : public SCS_LoopOverSCs
+{
+	typedef std::string string;
+
+public:
+	using SCS_LoopOverSCs::SCS_LoopOverSCs;
+
+	/// @brief Select CDR's template
+	/// @throw _AE_scs_failed_ on failure
+	// SCS_ResultsOP raw_select(AntibodySequence const &) override;  //, AntibodyNumbering const &);
+
+	/// Pad results vectors for each region (if possible) by adding arbitraty but compatible templates so at least n templates for each region is avalible
+	void pad_results(uint n, AntibodySequence const &, SCS_Results &) override;
 
 	/// @brief set working dir/output-prefix for intermediate files based on command-line options
 	void init_from_options();
@@ -125,20 +186,17 @@ public:
 	/// @brief set custom working dir/output-prefix for intermediate files
 	void set_output_prefix(std::string const &prefix) { prefix_ = prefix; }
 
-	/// @brief set path to antibody grafting database root, should point to tools/antibody
-	void set_database_path(std::string const &database) { database_ = database; }
-
 	/// @brief set path to NCBI-Blast+ executable
 	void set_blastp_executable(std::string const &blastp) { blastp_ = blastp; }
-
 
 private:
 	std::string prefix_; // output prefix for intermediate files
 
-	std::string database_; // path to antibody grafting database root, should point to tools/antibody
-
-
 	std::string blastp_ = "blastp"; // path to NCBI-Blast+ executable
+
+	void select_template( Result & j,
+	                      std::string const & db_to_query, std::map< std::string,
+												std::map< std::string, std::string> > const & ab_db ) const override;
 };
 
 

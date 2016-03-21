@@ -24,7 +24,6 @@
 #include <protocols/antibody/grafting/scs_functor.hh>
 #include <protocols/antibody/grafting/grafter.hh>
 
-
 // Grafting util function related includes
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -32,6 +31,7 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
+#include <basic/report.hh>
 
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
@@ -59,11 +59,13 @@ static THREAD_LOCAL basic::Tracer TR("antibody");
 // Command-line options relevant only to this application
 OPT_KEY( String, heavy )
 OPT_KEY( String, light )
+OPT_KEY( Integer, n)
 
 void register_options()
 {
 	NEW_OPT( heavy, "Sequence of antibody heavy chain", "" );
 	NEW_OPT( light, "Sequence of antibody light chain", "" );
+	NEW_OPT( n, "Number of templates to generate", 1);
 }
 
 
@@ -76,6 +78,8 @@ int antibody_main()
 	using std::string;
 
 	string heavy_chain_sequence, light_chain_sequence;
+
+	int n_templates = basic::options::option[ basic::options::OptionKeys::n ];
 
 	if ( basic::options::option[ basic::options::OptionKeys::heavy ].user() ) {
 		heavy_chain_sequence = basic::options::option[ basic::options::OptionKeys::heavy ]();
@@ -97,9 +101,13 @@ int antibody_main()
 		TR << TR.Blue  << "Light chain sequence: " << TR.Bold << light_chain_sequence << TR.Reset << std::endl;
 	}
 
+	string const prefix = basic::options::option[basic::options::OptionKeys::antibody::prefix]();
+
+	basic::ReportOP report = std::make_shared<basic::Report>(prefix+"report");
+
 	AntibodySequence as(heavy_chain_sequence, light_chain_sequence);
 
-	RegEx_based_CDR_Detector().detect(as);
+	RegEx_based_CDR_Detector(report).detect(as);
 	std::cout << std::endl;
 
 	AntibodyFramework heavy_fr = as.heavy_framework();
@@ -114,7 +122,7 @@ int antibody_main()
 		// std::cout << "Heavy Numbering: " << an.heavy << std::endl << std::endl;
 		// std::cout << "Light Numbering: " << an.heavy << std::endl << std::endl;
 
-		SCS_BlastPlus scs;
+		SCS_BlastPlus scs(report);
 		scs.init_from_options();
 
 		scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
@@ -122,7 +130,9 @@ int antibody_main()
 
 		scs.set_sorter( SCS_FunctorCOP(new SCS_BlastComparator_BitScore_Resolution) );
 
-		SCS_ResultsOP scs_results { scs.select(as) };
+		SCS_ResultsOP scs_results { scs.select(n_templates, as) };
+
+		report->write();
 
 		if( scs_results->frh.size()  and  scs_results->frl.size()  and  scs_results->orientation.size() and
 			scs_results->h1.size() and scs_results->h2.size() and scs_results->h3.size() and
@@ -132,10 +142,7 @@ int antibody_main()
 			TR << "SCS frl best template: " << TR.Bold << TR.Green << scs_results->frl[0]->pdb << TR.Reset << std::endl;
 			TR << "SCS Orientation best template: " << TR.Bold << TR.Yellow << scs_results->orientation[0]->pdb << TR.Reset << std::endl;
 
-			graft_cdr_loops(as, scs_results->get_result_set(0),
-							basic::options::option[basic::options::OptionKeys::antibody::prefix](),
-							basic::options::option[basic::options::OptionKeys::antibody::grafting_database]()
-							);
+			graft_cdr_loops(as, scs_results->get_result_set(0), prefix, basic::options::option[basic::options::OptionKeys::antibody::grafting_database]() );
 		}
 		else {
 			TR << TR.Red << "Blast+ results for some of the regions are empty!!! Exiting..." << std::endl;

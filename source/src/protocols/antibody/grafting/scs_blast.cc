@@ -90,9 +90,77 @@ struct ResultsItem {
 };
 
 
+void SCS_Base::report(SCS_ResultsOP r, uint n)
+{
+	// text report
+	for(uint i=0; i<n; ++i) {
+		SCS_ResultSet s = r->get_result_set(i);
+
+		*this << "Template №" << i << "\n";
+
+		struct {
+			string name;
+			SCS_ResultOP SCS_ResultSet::*region;
+		} J[] {
+			{"h1", &SCS_ResultSet::h1}, {"h2", &SCS_ResultSet::h2}, {"h3", &SCS_ResultSet::h3},
+			{"l1", &SCS_ResultSet::l1}, {"l2", &SCS_ResultSet::l2}, {"l3", &SCS_ResultSet::l3},
+			{"frh", &SCS_ResultSet::frh}, {"frl", &SCS_ResultSet::frl}, {"orientation", &SCS_ResultSet::orientation},
+		};
+
+		for(auto &j : J) {
+			if( SCS_ResultOP p = s.*j.region ) {
+				SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p.get() );
+
+				*this << "\t" << j.name << "\n";
+				*this << "\t\tpdb: " << br->pdb << "\n";
+				*this << "\t\tpadded: " << br->padded << "\n";
+				*this << "\t\tstructure source: " << br->struct_source << "\n";
+				*this << "\t\tlight type iso-type: " << br->light_type << "\n";
+				*this << "\t\tbio type: " << br->bio_type << "\n";
+				*this << "\n";
+			}
+			else *this << "\tNO TEMPLATE FOR REGION: " << j.name << " SELECTED!\n";
+		}
+	}
+
+	// json report
+	struct {
+		string name;
+		SCS_ResultsVector SCS_Results::*region;
+	} J[] {
+		{"h1", &SCS_Results::h1}, {"h2", &SCS_Results::h2}, {"h3", &SCS_Results::h3},
+		{"l1", &SCS_Results::l1}, {"l2", &SCS_Results::l2}, {"l3", &SCS_Results::l3},
+		{"frh", &SCS_Results::frh}, {"frl", &SCS_Results::frl}, {"orientation", &SCS_Results::orientation},
+	};
+
+	utility::json_spirit::Object root;
+	for(auto &j : J) {
+		utility::json_spirit::Array region;
+
+		for(auto &p : (*r).*j.region) {
+			if(p) {
+				SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p.get() );
+
+				utility::json_spirit::Object jbr;
+				jbr.push_back( utility::json_spirit::Pair("pdb", br->pdb) );
+				jbr.push_back( utility::json_spirit::Pair("padded", br->padded) );
+				jbr.push_back( utility::json_spirit::Pair("struct_source", br->struct_source) );
+				jbr.push_back( utility::json_spirit::Pair("iso-type", br->light_type) );
+				jbr.push_back( utility::json_spirit::Pair("bio-type", br->bio_type) );
+				jbr.push_back( utility::json_spirit::Pair("resolution", br->resolution) );
+				jbr.push_back( utility::json_spirit::Pair("identity", br->identity) );
+				jbr.push_back( utility::json_spirit::Pair("bit_score", br->bit_score) );
+
+				region.push_back(jbr);
+			}
+		}
+		root.push_back( utility::json_spirit::Pair(j.name, region) );
+	}
+	set("scs-results", root);
+}
 
 
-SCS_ResultsOP SCS_Base::select(AntibodySequence const &A)
+SCS_ResultsOP SCS_Base::select(uint n, AntibodySequence const &A)
 {
 	SCS_ResultsOP r = raw_select(A);
 
@@ -100,10 +168,24 @@ SCS_ResultsOP SCS_Base::select(AntibodySequence const &A)
 
 	if(sorter_) sorter_->apply(A, r);
 
+	pad_results(n, A, *r);
+
+	TR.Debug << "SCS_Base::select:                              Final results count: " << TR.Red << result_sizes(r) << TR.Reset << std::endl;
+
+	report(r, n);
+
 	return r;
 }
 
+void SCS_LoopOverSCs::init_from_options()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
+	TR << "Setting antibody grafting database path from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::grafting_database]() << std::endl;
+	set_database_path( option[OptionKeys::antibody::grafting_database]() );
+
+}
 
 
 /// @details Parse plain text file with following format, Replace some of the charactes in legend
@@ -188,12 +270,12 @@ SCS_ResultsVector parse_blastp_output(string file_name, string query, std::map< 
 		r->identity  = utility::string2Real( fields.at("%-identity") );
 		r->bit_score = utility::string2Real( fields.at("bit-score") );
 
-		r->bio_type      = db.at(r->pdb)["bio_type"];
-		r->light_type    = db.at(r->pdb)["light_type"];
-		r->struct_source = db.at(r->pdb)["struct_source"];
+		r->bio_type      = db.at(r->pdb).at("BioType");
+		r->light_type    = db.at(r->pdb).at("LightType");
+		r->struct_source = db.at(r->pdb).at("StructSouce");
 
-		r->h1 = db[r->pdb]["h1"];  r->h2 = db[r->pdb]["h2"];  r->h3 = db[r->pdb]["h3"];  r->frh = db[r->pdb]["frh"];
-		r->l1 = db[r->pdb]["l1"];  r->l2 = db[r->pdb]["l2"];  r->l3 = db[r->pdb]["l3"];  r->frl = db[r->pdb]["frl"];
+		r->h1 = db[r->pdb].at("h1");  r->h2 = db[r->pdb].at("h2");  r->h3 = db[r->pdb].at("h3");  r->frh = db[r->pdb].at("frh");
+		r->l1 = db[r->pdb].at("l1");  r->l2 = db[r->pdb].at("l2");  r->l3 = db[r->pdb].at("l3");  r->frl = db[r->pdb].at("frl");
 
 		//r->sequence = db[r->pdb][results.sequence];
 		//TR << "PDB:" << r->pdb << std::endl;
@@ -205,23 +287,14 @@ SCS_ResultsVector parse_blastp_output(string file_name, string query, std::map< 
 }
 
 
-void SCS_BlastPlus::init_from_options()
+SCS_LoopOverSCs::Antibody_SCS_Database & SCS_LoopOverSCs::antibody_scs_database()
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	TR << "Setting output prefix from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::prefix]() << std::endl;
-	set_output_prefix( option[OptionKeys::antibody::prefix]() );
-
-	TR << "Setting antibody grafting database path from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::grafting_database]() << std::endl;
-	set_database_path( option[OptionKeys::antibody::grafting_database]() );
-
-	TR << "Setting path to NCBI-Blast+ executable from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::blastp]() << std::endl;
-	set_blastp_executable( option[OptionKeys::antibody::blastp]() );
+	if( antibody_scs_database_.size() == 0 ) antibody_scs_database_ = std::move( parse_plain_text_with_columns(database_path_ + "/info/antibody.info") );
+	return antibody_scs_database_;
 }
 
 
-SCS_ResultsOP SCS_BlastPlus::raw_select(AntibodySequence const &A) //, AntibodyNumbering const &N)
+SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, AntibodyNumbering const &N)
 {
 	//AntibodyFramework const frh( A.heavy_framework() );
 	//AntibodyFramework const frl( A.light_framework() );
@@ -241,69 +314,134 @@ SCS_ResultsOP SCS_BlastPlus::raw_select(AntibodySequence const &A) //, AntibodyN
 
 	// _framework_names_ = ['FRL', 'FRH', 'light', 'heavy', 'L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'light_heavy']
 
-
 	SCS_ResultsOP results(new SCS_Results);
 	//results->antibody_sequence = A;
 
-	struct {
-		string name, sequence;
-		SCS_ResultsVector &results;
-	} J[] {
+	Result J[] {
 		{"frh", frh, results->frh}, {"h1", A.h1_sequence(), results->h1}, {"h2", A.h2_sequence(), results->h2}, {"h3", A.h3_sequence(), results->h3},
 		{"frl", frl, results->frl}, {"l1", A.l1_sequence(), results->l1}, {"l2", A.l2_sequence(), results->l2}, {"l3", A.l3_sequence(), results->l3},
 	    {"orientation", orientation, results->orientation},
 	};
 
-	string blast_database( database_ + "/blast_database/database" );
+	string blast_database( database_path_ + "/blast_database/database" );
 
-	utility::vector0< std::map<string, string> > antibody_info_lines( parse_plain_text_with_columns(database_ + "/info/antibody.info") );
+	Antibody_SCS_Database & antibody_info_lines( antibody_scs_database() );
 	std::map< string, std::map<string, string> > antibody_info_db;
 	for(auto fields : antibody_info_lines) antibody_info_db[fields["pdb"]] = fields;
 
 	//TR << antibody_info_db;
 
 	for(auto &j : J) {
-		string fasta_file_name(prefix_ + j.name + ".fasta");
-		string align_file_name(prefix_ + j.name + ".align");
 
-		//TR << "Working on: " << j.name << std::endl;
-
-		std::ofstream f(fasta_file_name);  f << "> " << fasta_file_name << '\n' << j.sequence << '\n';  f.close();
-
-		// len_cdr = len(cdr_query[k])
-		// if k.count('FR') or k.count('heavy') or k.count('light'): db = blast_database + '/database.%s' % k
-		// else: db = blast_database + '/database.%s.%s' % (k, len_cdr)
-
-		//string db_suffix = (j.name.find("fr") < string::npos  or  j.name.find("heavy") < string::npos  or j.name.find("light") < string::npos) ? j.name : j.name + '.' + ( std::stringstream() << j.sequence.size() ).str();
 		std::stringstream sq;  sq << j.sequence.size();
-
 		string db_suffix = j.name + '.' + sq.str();
 
-		if (j.name.find("fr") < string::npos) db_suffix = j.name;
-
+		if (j.name.find("fr") < string::npos) { db_suffix = j.name; }
 		std::transform(db_suffix.begin(), db_suffix.end(), db_suffix.begin(), toupper);
+		if( j.name.find("orientation")  < string::npos ) { db_suffix = "light_heavy"; }
 
-		if( j.name.find("orientation")  < string::npos ) db_suffix = "light_heavy";    // or  j.name.find("heavy") < string::npos  or j.name.find("light") < string::npos
+		string db_to_query = blast_database + '.' + db_suffix;
 
-		// wordsize, e_value, matrix = (2, 0.00001, 'BLOSUM62') if k.count('FR') or k.count('heavy') or k.count('light') else (2, 2000, 'PAM30')
-		//string extra = (j.name.find("fr") < string::npos  or  j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
-		string extra = (j.name.find("fr") < string::npos  or  \
-						j.name.find("orientation") < string::npos or \
-						j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
+		select_template( j, db_to_query, antibody_info_db );
 
-		//string command_line ("cd "+working_dir+" && "+blast+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
-		string command_line (blastp_+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
-
-		basic::execute("Running blast+ for " + j.name + "...", command_line);
-
-		//j.results.name = j.name;
-		//j.results.sequence = j.sequence;
-		j.results = parse_blastp_output(align_file_name, fasta_file_name, antibody_info_db);
 	}
 
 	return results;
 }
 
+
+void SCS_BlastPlus::init_from_options()
+{
+	SCS_LoopOverSCs::init_from_options();
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	TR << "Setting output prefix from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::prefix]() << std::endl;
+	set_output_prefix( option[OptionKeys::antibody::prefix]() );
+
+	TR << "Setting path to NCBI-Blast+ executable from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::blastp]() << std::endl;
+	set_blastp_executable( option[OptionKeys::antibody::blastp]() );
+}
+
+
+void SCS_BlastPlus::select_template(
+	Result & j,
+	string const & db_to_query,
+	std::map< string, std::map<string, string> > const & ab_db ) const
+{
+	string fasta_file_name(prefix_ + j.name + ".fasta");
+	string align_file_name(prefix_ + j.name + ".align");
+
+	//TR << "Working on: " << j.name << std::endl;
+
+	std::ofstream f(fasta_file_name);  f << "> " << fasta_file_name << '\n' << j.sequence << '\n';  f.close();
+
+	// wordsize, e_value, matrix = (2, 0.00001, 'BLOSUM62') if k.count('FR') or k.count('heavy') or k.count('light') else (2, 2000, 'PAM30')
+	//string extra = (j.name.find("fr") < string::npos  or  j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
+	string extra = (j.name.find("fr") < string::npos  or  \
+									j.name.find("orientation") < string::npos or \
+									j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
+
+	//string command_line ("cd "+working_dir+" && "+blast+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
+	string command_line (blastp_+" -db "+db_to_query+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
+
+	basic::execute("Running blast+ for " + j.name + "...", command_line);
+
+	//j.results.name = j.name;
+	//j.results.sequence = j.sequence;
+	j.results = parse_blastp_output(align_file_name, fasta_file_name, ab_db);
+
+}
+
+/// Pad results vectors for each region (if possible) by adding arbitraty but compatible templates so at least n templates for each region is avalible
+void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &results)
+{
+	Antibody_SCS_Database & antibody_info_lines( antibody_scs_database() );
+
+	FRH_FRL fr( calculate_frh_frl(A) );
+
+	string frh = fr.frh1 + fr.frh2 + fr.frh3 + fr.frh4;
+	string frl = fr.frl1 + fr.frl2 + fr.frl3 + fr.frl4;
+
+	string heavy_orientation = fr.frh1 + A.h1_sequence() + fr.frh2 + A.h2_sequence() + fr.frh3 + A.h3_sequence() + fr.frh4;
+	string light_orientation = fr.frl1 + A.l1_sequence() + fr.frl2 + A.l2_sequence() + fr.frl3 + A.l3_sequence() + fr.frl4;
+
+	string orientation = heavy_orientation + light_orientation; // Note: this is in reverse order if compared to Python code!!!
+
+	Result J[] {
+		{"frh", frh, results.frh}, {"h1", A.h1_sequence(), results.h1}, {"h2", A.h2_sequence(), results.h2}, {"h3", A.h3_sequence(), results.h3},
+		{"frl", frl, results.frl}, {"l1", A.l1_sequence(), results.l1}, {"l2", A.l2_sequence(), results.l2}, {"l3", A.l3_sequence(), results.l3},
+		{"orientation", orientation, results.orientation},
+	};
+
+	for(auto &j : J) {
+		for(auto i = antibody_info_lines.begin(); j.results.size() < N  and  i != antibody_info_lines.end(); ++i) {
+			if( j.sequence.size() == i->at(j.name).size() ) {
+				SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
+
+				r->padded = true;
+
+				r->pdb = i->at("pdb");
+
+				r->alignment_length = 0;
+				r->identity  = 0;
+				r->bit_score = 0;
+
+				r->bio_type      = i->at("BioType");
+				r->light_type    = i->at("LightType");
+				r->struct_source = i->at("StructSouce");
+
+				r->h1 = i->at("h1");  r->h2 = i->at("h2");  r->h3 = i->at("h3");  r->frh = i->at("frh");
+				r->l1 = i->at("l1");  r->l2 = i->at("l2");  r->l3 = i->at("l3");  r->frl = i->at("frl");
+
+				j.results.push_back(r);
+
+				TR << TR.Red << "Not enought templates for region " << TR.bgRed << TR.Black << j.name << TR.Reset << TR.Red << " was selected... Adding arbitrary template " << TR.bgRed << TR.Black << r->pdb << TR.Reset /*<< " sequence: " << j.sequence << " → " << i->at(j.name)*/ << std::endl;
+			}
+		}
+	}
+}
 
 void trim_framework(AntibodySequence const &A, AntibodyFramework &heavy_fr, AntibodyFramework &light_fr)
 {

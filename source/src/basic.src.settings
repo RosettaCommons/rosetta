@@ -21,6 +21,7 @@ sources = {
 		"MetricValueIO",
 		"prof",
 		"pymol_chains",
+		"report",
 		"Tracer",
 		"TracerToFile",
 	],
