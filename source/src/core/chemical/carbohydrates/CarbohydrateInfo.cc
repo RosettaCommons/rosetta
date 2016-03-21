@@ -302,7 +302,7 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.modifications_ = object_to_copy_from.modifications_;
 	object_to_copy_to.mainchain_glycosidic_bond_acceptor_ = object_to_copy_from.mainchain_glycosidic_bond_acceptor_;
 	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
-	object_to_copy_to.has_exocyclic_linkage_ = object_to_copy_from.has_exocyclic_linkage_;
+	object_to_copy_to.has_exocyclic_linkage_to_child_mainchain_ = object_to_copy_from.has_exocyclic_linkage_to_child_mainchain_;
 }
 
 
@@ -489,9 +489,9 @@ CarbohydrateInfo::determine_polymer_connections()
 
 	// Exocyclic linkage?
 	if ( mainchain_glycosidic_bond_acceptor_ > last_carbon_in_ring() ) {
-		has_exocyclic_linkage_ = true;
+		has_exocyclic_linkage_to_child_mainchain_ = true;
 	} else {
-		has_exocyclic_linkage_ = false;
+		has_exocyclic_linkage_to_child_mainchain_ = false;
 	}
 }
 

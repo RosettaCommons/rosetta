@@ -121,7 +121,9 @@ static Size const omega_torsion_beta_aa( 4 );
 enum MainchainTorsionType {
 	phi_dihedral = 1,
 	psi_dihedral,
-	omega_dihedral
+	omega_dihedral,
+	omega2_dihedral,
+	omega3_dihedral
 };
 
 

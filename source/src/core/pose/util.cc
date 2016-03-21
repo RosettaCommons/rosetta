@@ -2128,7 +2128,7 @@ setup_dof_mask_from_move_map(
 		if ( rsd.is_carbohydrate() ) {
 			if ( rsd.carbohydrate_info()->is_acyclic() ) {
 				n_cyclic_main_chain_torsions = 0;
-			} else if ( rsd.carbohydrate_info()->has_exocyclic_linkage() ) {
+			} else if ( rsd.carbohydrate_info()->has_exocyclic_linkage_to_child_mainchain() ) {
 				n_cyclic_main_chain_torsions = n_bb_torsions - 3;  // minus PHI, PSI, & OMEGA, the actual BB torsions
 			} else /* doesn't have an omega angle */ {
 				n_cyclic_main_chain_torsions = n_bb_torsions - 2;  // minus PHI & PSI, the actual BB torsions
@@ -3308,6 +3308,12 @@ set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core
 	case id::omega_dihedral :
 		pose.set_omega( sequence_position, new_angle );
 		break;
+	
+	//Omega2+3 undefined for bb of AA.
+	case id::omega2_dihedral :
+		break;
+	case id::omega3_dihedral :
+		break;
 	}
 
 
@@ -3329,6 +3335,10 @@ get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position
 		return pose.psi( sequence_position );
 	case id::omega_dihedral :
 		return pose.omega( sequence_position );
+	case id::omega2_dihedral :
+		return 0.0;
+	case id::omega3_dihedral :
+		return 0.0;
 	}
 	return 0.0;  // Code cannot reach here.
 }

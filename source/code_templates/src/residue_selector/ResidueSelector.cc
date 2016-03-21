@@ -46,7 +46,7 @@ using namespace core::select::residue_selector;
 --class--::~--class--() {}
 
 ResidueSubset
---class--::apply( core::pose::Pose const & pose ) const
+--class--::apply( core::pose::Pose const & ) const
 {
 
 
@@ -54,8 +54,8 @@ ResidueSubset
 
 void
 --class--::parse_my_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap)
+	utility::tag::TagCOP,
+	basic::datacache::DataMap & )
 
 
 }

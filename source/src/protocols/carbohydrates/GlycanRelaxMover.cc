@@ -337,90 +337,94 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 		utility_exit_with_message( " No glycan residues in pose.  Cannot continue. ");
 	}
 
-	//////////  Setup Phi/Psi/Omega movemaps. /////////////////////////
-	MoveMapOP phi_glycan_movemap = glycan_movemap_->clone();
-	MoveMapOP psi_glycan_movemap = glycan_movemap_->clone(); //Phi without exocyclic torsions - has sugar bb data!
-	MoveMapOP omega_glycan_movemap = glycan_movemap_->clone();
-
+	//////////  Setup Phi/Psi/N-Omega movemaps. /////////////////////////
+	MoveMapOP sugar_bb_movemap = MoveMapOP( new MoveMap() );
+	MoveMapOP glycan_dih_movemap = MoveMapOP( new MoveMap() );
+	
+	core::Size max_glycan_dihedrals = 2;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		if ( ! glycan_movemap_->get_bb( i ) ) { continue;}
-
-		//Turn of phi/psi/omega if N terminal carbohydrate not attached to anything.
-		if ( find_seqpos_of_saccharides_parent_residue( pose.residue( i ) ) == 0 ) {
-			psi_glycan_movemap->set_bb( i, false );
-			phi_glycan_movemap->set_bb( i, false );
-			omega_glycan_movemap->set_bb( i, false );
+		
+		//Turn off if not carbohydrates or if N terminal carbohydrate not attached to anything.
+		if ( ! glycan_movemap_->get_bb( i )  || find_seqpos_of_saccharides_parent_residue( pose.residue( i ) ) == 0 ){
+			sugar_bb_movemap->set_bb( i, false );
+			glycan_dih_movemap->set_bb( i, false );
 			continue;
 		}
-
+		
 		//Need Psi Movemap (Non-Exocyclic) and Omega for only Exocyclic
-		if ( has_exocyclic_glycosidic_linkage( pose, i ) ) {
-			psi_glycan_movemap->set_bb( i, false );
-			TR << "has exocyclic glycosidic torsion: " << i << std::endl;
-		} else {
-			omega_glycan_movemap->set_bb( i, false );
+		core::Size n_dihedrals = get_n_glycosidic_torsions_in_res( pose, i );
+		
+		sugar_bb_movemap->set_bb(i , 1, true); //Turn on for Phi
+		sugar_bb_movemap->set_bb(i, 2, true);
+		
+		//Turn off psi for residue if it has any omegas.  We don't have data for this.
+		if ( n_dihedrals > 2 ){
+			sugar_bb_movemap->set_bb( i, 2, false );
+		}
+		
+		if ( n_dihedrals > max_glycan_dihedrals ){
+			max_glycan_dihedrals = n_dihedrals;
+		}
+		
+		//Turn on only dihedrals for which these residues actually have
+		for (core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ){
+			glycan_dih_movemap->set_bb( i, torsion_id, true );
 		}
 	}
-
-	std::map< core::id::MainchainTorsionType, MoveMapOP > movemaps;
-	movemaps[ core::id::phi_dihedral ] = phi_glycan_movemap;
-	movemaps[ core::id::psi_dihedral ] = psi_glycan_movemap;
-	movemaps[ core::id::omega_dihedral ] = omega_glycan_movemap;
 
 	TR << "Modeling " << total_glycan_residues_ << " glycan residues" << std::endl;
 
 	////////////////// Mover Setup //////////////
 	//Create Movers that will be part of our sequence mover.
-	SugarBBSamplerOP phi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
-	SugarBBSamplerOP psi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
+	SugarBBSamplerOP phi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
+	SugarBBSamplerOP psi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
 
 
-	BBDihedralSamplerMoverOP phi_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( phi_sampler, glycan_movemap_ ) );
-	BBDihedralSamplerMoverOP psi_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( psi_sampler, psi_glycan_movemap ) );
-
-
+	BBDihedralSamplerMoverOP sugar_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
+	BBDihedralSamplerMoverOP small_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
+	
 	//Tolerance of .001 can significantly decrease energies, but it takes ~ 25% faster.  This tolerance should be optimized here.
 	min_mover_ = MinMoverOP( new MinMover( glycan_movemap_->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, false /* use_nblist*/ ) );
 	linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( glycan_movemap_ ));
 
+	//Setup Sugar Samplers
+	sugar_sampler_mover->add_sampler( phi_sugar_sampler );
+	sugar_sampler_mover->add_sampler( psi_sugar_sampler );
+	sugar_sampler_mover->set_movemap( sugar_bb_movemap );
+	
 	////////// Sequence Mover Setup //////////////
 	//Settings for linkage conformer mover here!
 	weighted_random_mover_ = RandomMoverOP(new RandomMover);
-	weighted_random_mover_->add_mover(phi_sampler_mover, .20);
-
-	//If we have all 1-6 linkages/exocyclic atoms in the linkage,
-	// we don't use the psi sampler mover as we currently do not have phi data for them.
-	if ( get_residues_from_movemap_with_id( BB, *psi_glycan_movemap).size() > 0 ) {
-		weighted_random_mover_->add_mover(psi_sampler_mover, .20);
-	}
-
+	weighted_random_mover_->add_mover(sugar_sampler_mover, .40);
 	weighted_random_mover_->add_mover(linkage_mover_, .2);
 	weighted_random_mover_->add_mover(min_mover_, .10); // This .2 will be split to packing and minimization when we implement TaskFactory support and OH optimization.
 
-	//Setup SmallBBSamplers
-	core::Size total_torsion_types = 2;
-	if ( get_residues_from_movemap_with_id( core::id::BB, *omega_glycan_movemap).size() > 0 ) {
-		total_torsion_types = 3;
-		TR << "Omega present.  Sampling on omega." << std::endl;
-	}
-	for ( core::Size i =1; i <= total_torsion_types; ++i ) {
+
+	//Setup Small Sampler
+	BBDihedralSamplerMoverOP glycan_small_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
+	BBDihedralSamplerMoverOP glycan_medium_mover= BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
+	BBDihedralSamplerMoverOP glycan_large_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
+	
+	glycan_small_mover->set_movemap(  glycan_dih_movemap );
+	glycan_medium_mover->set_movemap( glycan_dih_movemap );
+	glycan_large_mover->set_movemap(  glycan_dih_movemap );
+
+	for ( core::Size i =1; i <= max_glycan_dihedrals; ++i ) {
 		core::id::MainchainTorsionType dih_type = static_cast< core::id::MainchainTorsionType >( i );
 
 		SmallBBSamplerOP small_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 30 ) ); // +/- 15 degrees
 		SmallBBSamplerOP medium_sampler= SmallBBSamplerOP( new SmallBBSampler( dih_type, 90 ) ); // +/- 45 degrees
 		SmallBBSamplerOP large_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 180) ); // +/- 90 degrees
-
-		BBDihedralSamplerMoverOP glycan_small_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( small_sampler, movemaps[ dih_type ]) );
-		BBDihedralSamplerMoverOP glycan_medium_mover= BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( medium_sampler, movemaps[ dih_type ]) );
-		BBDihedralSamplerMoverOP glycan_large_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( large_sampler, movemaps[ dih_type ]) );
-
-		// total_weight (.3) = 4y+2y+y; y = total_weight(.3)/7
-		//
-		weighted_random_mover_->add_mover(glycan_small_mover, 0.17142857142857143/total_torsion_types);
-		weighted_random_mover_->add_mover(glycan_medium_mover, 0.08571428571428572/total_torsion_types);
-		weighted_random_mover_->add_mover(glycan_large_mover, 0.04285714285714286/total_torsion_types);
-
+		
+		glycan_small_mover->add_sampler( small_sampler );
+		glycan_medium_mover->add_sampler( medium_sampler );
+		glycan_large_mover->add_sampler( large_sampler );
 	}
+	
+	weighted_random_mover_->add_mover( glycan_small_mover, 0.17142857142857143 );
+	weighted_random_mover_->add_mover( glycan_medium_mover, 0.08571428571428572 );
+	weighted_random_mover_->add_mover( glycan_large_mover, 0.04285714285714286 );
+		
 }
 
 void
@@ -458,7 +462,9 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 		weighted_random_mover_->apply(pose);
 		if ( weighted_random_mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
 			core::Real energy = scorefxn_->score(pose);
-			TR.Debug << "energy post MC: "<< energy << std::endl;
+			if (TR.Debug.visible()){
+				TR.Debug << "energy post MC: "<< energy << std::endl;
+			}
 
 			if ( pymol_movie_ ) {
 				pmm_trials.apply( pose );

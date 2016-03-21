@@ -28,7 +28,7 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --class--::~--class--(){}
 
---class--::--class--( --class-- const & src ) {
+--class--::--class--( --class-- const & ) {
 
 }
 

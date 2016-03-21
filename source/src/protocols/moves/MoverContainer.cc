@@ -242,8 +242,10 @@ void RandomMover::apply( core::pose::Pose & pose )
 		//  TR.Trace << "choose move " << m+1 << " of " << nr_moves() << std::endl;
 		// apply the chosen move
 
-		//Difficult to debug without this:
-		//TR << "Applying " << movers_[m]->get_name() << std::endl;
+		//Difficult to debug without this - JAB:
+		if (TR.Debug.visible()) {
+			TR.Debug << "Applying " << movers_[m]->get_name() << std::endl;
+		}
 
 		movers_[m]->apply( pose );
 		type( type() + movers_[m]->type());

@@ -41,7 +41,7 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 void
 --class--::parse_my_tag(
-	utility::tag::TagCOP tag,
+	utility::tag::TagCOP ,
 	basic::datacache::DataMap& ,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
@@ -87,7 +87,7 @@ std::ostream &operator<< (std::ostream &os, --class-- const &mover)
 
 
 void
---class--::apply( core::pose::Pose& pose ){
+--class--::apply( core::pose::Pose& ){
 
 }
 

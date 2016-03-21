@@ -127,65 +127,59 @@ get_linkage_position_of_saccharide_residue( Pose const & pose, uint const resnum
 
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
 	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( pose, resnum ) );
+	return get_linkage_position_of_saccharide_residue(*residues.first, *residues.second);
 
-	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
+}
+
+core::uint
+get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, conformation::Residue const & parent_rsd){
+
+	if ( rsd.seqpos() == parent_rsd.seqpos() ) {  // This occurs when there is no parent residue.
 		TR.Debug << "This residue is a lower terminus! Returning 0." << endl;
 		return 0;
 	}
-	if ( ! residues.second->is_carbohydrate() ) {
+	if ( ! parent_rsd.is_carbohydrate() ) {
 		TR.Debug << "Parent is a non-saccharide. Returning 0." << endl;
 		return 0;
 	}
-	if ( residues.first->seqpos() == residues.second->seqpos() + 1 ) {
+	if ( rsd.seqpos() == parent_rsd.seqpos() + 1 ) {
 		// We have a main chain connection. ( JAB - can we trust this numbering )?
 
-		return residues.second->carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
+		return parent_rsd.carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
 	}
 
 	// If we get this far, we have a branch and need more information.
 
-	/*
-	vector1< uint > const connections_from_parent( residues.second->connections_to_residue( *residues.first ) );
-	TR << "Connections: " << utility::to_string(connections_from_parent) << std::endl;;
-
-	debug_assert( connections_from_parent.size() == 1 );  // else we aren't dealing with glycans
-	uint const branch_connection_id( connections_from_parent[ 1 ] );
-	uint const branch_num( branch_connection_id - residues.second->n_polymeric_residue_connections() );
-	TR << "Branch connection ID: " << branch_connection_id << " branch_num: " << branch_num << " branch point: "<< residues.second->carbohydrate_info()->branch_point( branch_num ) << std::endl;
-
-	return residues.second->carbohydrate_info()->branch_point( branch_num );
-	*/
-
 	//JAB - this looks OK to me - Jason - please check this over!
 	// This will be replaced with a graph-search of the ResidueType once I know how to do that.
-	core::Size parent_resnum = residues.second->seqpos();
+	core::Size parent_resnum = parent_rsd.seqpos();
 	core::Size parent_connect= 0;
 	//core::Size res_connect = 0;
-	for ( core::Size con = 1; con <= residues.first->n_possible_residue_connections(); ++con ) {
-		if ( residues.first->connected_residue_at_resconn(con) == parent_resnum ) {
+	for ( core::Size con = 1; con <= rsd.n_possible_residue_connections(); ++con ) {
+		if ( rsd.connected_residue_at_resconn(con) == parent_resnum ) {
 
-			parent_connect = residues.first->residue_connection_conn_id(con);
+			parent_connect = rsd.residue_connection_conn_id(con);
 			//res_connect = con;
 			break;
 		}
 	}
-	core::Size connect_atom = residues.second->residue_connect_atom_index(parent_connect);
+	core::Size connect_atom = parent_rsd.residue_connect_atom_index(parent_connect);
 
 	core::Size c_atom_index = 0;
 
 	//Get all bonded neighbors of this atom from the ResidueType.
 	//This is important.  Our upper neighbor Carbon is not present, and the only other bonded atom is the H that would be a monosacharide.
 	// So, we are good to go here as long as other carbons wouldn't be coming off of the O in any monosacharide (which i don't think is possible and still have a glycan linkage?
-	utility::vector1< core::Size > bonded_atoms = residues.second->bonded_neighbor( connect_atom );
+	utility::vector1< core::Size > bonded_atoms = parent_rsd.bonded_neighbor( connect_atom );
 	for ( core::Size i  = 1; i <= bonded_atoms.size(); ++i ) {
 		c_atom_index = bonded_atoms[ i ];
-		std::string element = residues.second->atom_type( c_atom_index ).element();
+		std::string element = parent_rsd.atom_type( c_atom_index ).element();
 		if ( element == "C" ) {
 			break;
 		}
 	}
 
-	std::string connect_atom_name = residues.second->atom_name(c_atom_index);
+	std::string connect_atom_name = parent_rsd.atom_name(c_atom_index);
 	return utility::string2Size(utility::to_string(connect_atom_name[2]) );
 }
 
@@ -203,24 +197,31 @@ has_exocyclic_glycosidic_linkage( Pose const & pose, uint seqpos){
 	//TR << "lower resnum: " << lower_resnum << std::endl;
 
 	conformation::Residue const & prev_rsd = pose.residue( lower_resnum );
+	return has_exocyclic_glycosidic_linkage( rsd, prev_rsd );
 
-	if ( ! prev_rsd.is_carbohydrate() ) {
-		TR.Debug << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false." << endl;
+}
+
+///@brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
+/// Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
+bool
+has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd ){
+	
+	//What does this mean for ASN-glycan connections?? Technically, it won't be an exocyclic atom - but it WILL have omega and omega2 if ASN - so be careful here!
+	if ( ! parent_rsd.is_carbohydrate() ) {
+		TR << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false. " << endl;
 		return false;
 	}
 
-	core::Size n_carbons = prev_rsd.carbohydrate_info()->n_carbons();
-	core::Size linkage_position = get_linkage_position_of_saccharide_residue(pose, rsd.seqpos());
-	core::Size last_carbon = prev_rsd.carbohydrate_info()->last_carbon_in_ring();
+	core::Size n_carbons = parent_rsd.carbohydrate_info()->n_carbons();
+	core::Size linkage_position = get_linkage_position_of_saccharide_residue(rsd, parent_rsd);
+	core::Size last_carbon = parent_rsd.carbohydrate_info()->last_carbon_in_ring();
 
 	if ( (n_carbons == linkage_position) && (last_carbon != linkage_position) ) {
 		return true;
 	} else {
 		return false;
 	}
-
 }
-
 
 
 // Return the AtomIDs of the four phi torsion reference atoms.
@@ -255,7 +256,7 @@ get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 	if ( residues.first->carbohydrate_info()->is_cyclic() ) {
 		ref1 = AtomID( residues.first->carbohydrate_info()->virtual_cyclic_oxygen_index(), residues.first->seqpos() );
 	} else /* is linear */ {
-		;  // TODO: Figure out how linear polysaccharides are handled by IUPAC.
+		utility_exit_with_message("Linear Polysacharides are not yet handled!");  // TODO: Figure out how linear polysaccharides are handled by IUPAC.
 	}
 	ids[ 1 ] = ref1;
 
@@ -342,7 +343,7 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
 		return ids;
 	}
-	if ( residues.second->is_carbohydrate() && ( ! residues.second->carbohydrate_info()->has_exocyclic_linkage() ) ) {
+	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
 		TR.Warning << "Omega is undefined for this residue, because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
@@ -386,19 +387,19 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 	using namespace conformation;
 
 	vector1< AtomID > ids;
-
+	
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
 	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( pose, sequence_position ) );
 
 	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
 		return ids;
 	}
-	if ( residues.second->is_carbohydrate() && ( ! residues.second->carbohydrate_info()->has_exocyclic_linkage() ) ) {
-		TR.Warning << "Omega is undefined for this residue, because the glycosidic linkage is not exocyclic." << endl;
+	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
+		TR.Warning << "Omega2 is undefined for this residue, because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
 
-	ids.resize( 4 );  // A torsion has 4 reference atoms.
+	
 
 	// Set the atom names of the four reference atoms.
 	// Reference 0 is OX(n-1) for polysaccharides.
@@ -406,12 +407,24 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 
 	// Reference 1 is CX(n-1) for polysaccharides.
 	AtomID const ref1( residues.second->type().atom_base( ref0.atomno() ), residues.second->seqpos() );
-	ids[ 1 ] = ref1;
+	
 
 	// Reference 2 is CX-1(n-1) for polysaccharides.
 	AtomID const ref2( residues.second->type().atom_base( ref1.atomno() ), residues.second->seqpos() );
+	
+	//If Ref2 is a ring atom and we do not have an omega2 angle
+	if (residues.second->is_carbohydrate() && residues.second->type().is_ring_atom( 1, ref2.atomno() ) ){
+		return ids;
+	}
+	//O-linked Glycosylation has 3 dihedrals.  We should address this better.
+	else if ((! residues.second->is_carbohydrate() ) && (residues.second->aa() == core::chemical::aa_ser || residues.second->aa() == core::chemical::aa_thr ) ){
+		return ids;
+	}
+	
+	ids.resize( 4 );  // A torsion has 4 reference atoms.
+	ids[ 1 ] = ref1;
 	ids[ 2 ] = ref2;
-
+	
 	// Reference 3 is CX-2(n-1) for polysaccharides.
 	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
 	ids[ 3 ] = ref3;
@@ -677,7 +690,7 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 				next_rsd_num = torsion_id.rsd() + 1;
 				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
 					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-					if ( info->has_exocyclic_linkage() ) {
+					if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
 						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
 					}
 				}
@@ -708,6 +721,24 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 
 // Torsion Access /////////////////////////////////////////////////////////////
 // Getters ////////////////////////////////////////////////////////////////////
+
+///@brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
+Size get_n_glycosidic_torsions_in_res(
+	Pose & pose,
+	uint const sequence_position)
+{
+	
+	core::Size n_torsions = 0;
+	for (core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id){
+		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
+		if (ref_atoms.size() != 0){
+			n_torsions+=1;
+		}
+	}
+	return n_torsions;
+}
+
+
 // Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 /// @details This method is used in place of Residue::mainchain_torsion() since the main-chain torsions of saccharide
 /// residues only make sense in the context of two residues.  Moreover, the reference atoms as defined by the IUPAC are
@@ -726,7 +757,7 @@ get_glycosidic_torsion( uint const torsion_id, Pose const & pose, uint const seq
 	using namespace numeric;
 	using namespace utility;
 
-	vector1< AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
+	utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
 
 	if ( ref_atoms.size() == 0 ) {
 		// This occurs when there is no parent residue or when the glycosidic bond is not exocyclic (omega only).
@@ -1092,7 +1123,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 }
 
 core::chemical::carbohydrates::LinkageType
-get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conformation::Residue const & rsd,
+get_linkage_type_for_residue_for_CHI( core::Size torsion, conformation::Residue const & rsd,
 	pose::Pose const & pose)
 
 {
@@ -1199,7 +1230,7 @@ get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conforma
 }
 
 utility::vector1< core::chemical::carbohydrates::LinkageType >
-get_linkage_types_for_dihedral( id::MainchainTorsionType torsion ){
+get_linkage_types_for_dihedral( core::Size torsion ){
 
 	using namespace core::chemical::carbohydrates;
 

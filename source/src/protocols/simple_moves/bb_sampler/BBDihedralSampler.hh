@@ -44,12 +44,14 @@ enum BBSampleType {
 ///
 ///    Feel free to implement more types. See the SugarBBSampler and RangedBBSampler as examples.
 ///
+///   Technically - with now storing the torsion_types as Size (due to waay to many in sugars) - we can now remove the 'BB' part of this whole thing.
+///
 class BBDihedralSamplerBase : public utility::pointer::ReferenceCount {
 
 public:
 
 	BBDihedralSamplerBase();
-	BBDihedralSamplerBase(core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability);
+	BBDihedralSamplerBase(core::Size torsion_type, BBSampleType sampling_type = probability);
 
 	BBDihedralSamplerBase(BBDihedralSamplerBase const & src);
 
@@ -67,7 +69,7 @@ public:
 		torsion_type_ = torsion_type;
 	};
 
-	core::id::MainchainTorsionType
+	core::Size
 	get_torsion_type( ) const {
 		return torsion_type_;
 	};
@@ -84,7 +86,7 @@ public:
 
 protected:
 
-	core::id::MainchainTorsionType torsion_type_;
+	core::Size torsion_type_;
 	BBSampleType sampling_type_;
 
 
@@ -101,7 +103,7 @@ class BBDihedralSampler : public BBDihedralSamplerBase {
 public:
 
 	BBDihedralSampler();
-	BBDihedralSampler( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSampler( core::Size torsion_type, BBSampleType sampling_type = probability );
 
 	BBDihedralSampler( BBDihedralSampler const & src );
 
@@ -125,11 +127,12 @@ public:
 };
 
 
+
 class BBDihedralSampler2D : public BBDihedralSamplerBase {
 
 public:
 	BBDihedralSampler2D();
-	BBDihedralSampler2D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSampler2D( core::Size torsion_type, BBSampleType sampling_type = probability );
 
 	BBDihedralSampler2D(BBDihedralSampler2D const & src);
 
@@ -165,7 +168,7 @@ class BBDihedralSampler3D : public BBDihedralSamplerBase {
 
 public:
 	BBDihedralSampler3D();
-	BBDihedralSampler3D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSampler3D( core::Size torsion_type, BBSampleType sampling_type = probability );
 
 	BBDihedralSampler3D(BBDihedralSampler3D const & src);
 
@@ -199,7 +202,7 @@ class BBDihedralSamplerND : public BBDihedralSamplerBase {
 
 public:
 	BBDihedralSamplerND();
-	BBDihedralSamplerND( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSamplerND( core::Size torsion_type, BBSampleType sampling_type = probability );
 	BBDihedralSamplerND(BBDihedralSamplerND const & src);
 
 	virtual ~BBDihedralSamplerND();

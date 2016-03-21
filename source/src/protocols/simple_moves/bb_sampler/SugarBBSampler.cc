@@ -83,7 +83,6 @@ SugarBBSampler::clone() const {
 core::Real
 SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 
-	TR.Debug << "Getting torsion for resnum " << resnum << std::endl;
 	using core::scoring::ScoringManager;
 
 	if ( ! pose.residue( resnum ).is_carbohydrate() ) {
@@ -94,10 +93,12 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 		utility_exit_with_message("Cannot currently sample using SugarBB data for omega torsion.");
 	}
 
-	if ( torsion_type_ == core::id::phi_dihedral && has_exocyclic_glycosidic_linkage( pose, resnum  ) ) {
+	//This test for exocyclic takes too long - store in LinkageInfo
+	if ( torsion_type_ == core::id::psi_dihedral && has_exocyclic_glycosidic_linkage( pose, resnum  ) ) {
 		std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";
 		//Throw here.  We expect an angle, better to use exception then throw a bogus angle.
 		//Catch this to keep going.
+		TR << msg << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( msg );
 	}
 
@@ -114,6 +115,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 		std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";
 		//Throw here.  We expect an angle, better to use exception then throw a bogus angle.
 		//Catch this to keep going.
+		TR << msg << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( msg );
 	}
 	CHIDihedralSamplingData const & sampling_data = sugar_bb.get_chi_sampling_data( linkage_type );
@@ -158,7 +160,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 void
 SugarBBSampler::set_torsion_to_pose(Pose & pose, core::Size resnum) const{
 	Angle torsion_angle = get_torsion(pose, resnum);
-	set_glycosidic_torsion( core::Size(torsion_type_), pose, resnum, torsion_angle );
+	set_glycosidic_torsion( torsion_type_, pose, resnum, torsion_angle );
 
 }
 

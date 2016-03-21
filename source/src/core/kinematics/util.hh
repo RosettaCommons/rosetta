@@ -122,6 +122,10 @@ remodel_fold_tree_to_account_for_insertion(
 utility::vector1< core::Size >
 get_residues_from_movemap_with_id( id::TorsionType query_torsion, MoveMap const & movemap);
 
+/// @brief Get a vector of residues that have any of their BB torsions on - either by way of the full bb or torsion ID setting in Movemap.
+utility::vector1< core::Size >
+get_residues_from_movemap_bb_any_torsion(MoveMap const & movemap, Size total_resnum);
+
 } // namespace kinematics
 } // namespace core
 

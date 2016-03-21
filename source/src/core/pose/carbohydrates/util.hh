@@ -53,12 +53,18 @@ get_glycosidic_bond_residues( Pose const & pose,
 core::uint
 get_linkage_position_of_saccharide_residue( Pose const & pose, uint const seqpos );
 
+core::uint
+get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, conformation::Residue const & parent_rsd);
 
 ///@brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
 /// Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
 bool
 has_exocyclic_glycosidic_linkage( Pose const & pose, uint const seqpos);
 
+///@brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
+/// Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
+bool
+has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd );
 
 /// @brief  Return the AtomIDs of the four phi torsion reference atoms.
 utility::vector1< id::AtomID > get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position );
@@ -101,6 +107,12 @@ bool is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsi
 
 // Torsion Access
 // Getters
+
+///@brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
+Size get_n_glycosidic_torsions_in_res(
+	Pose & pose,
+	uint const sequence_position);
+	
 /// @brief  Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 core::Angle get_glycosidic_torsion( uint const torsion_id, Pose const & pose, uint const sequence_position );
 
@@ -112,7 +124,6 @@ void set_glycosidic_torsion(
 	Pose & pose,
 	uint const sequence_position,
 	core::Angle const setting );
-
 
 // Glycosylation
 /// @brief  Idealize the glycosidic torsion angles for the last n glycan residues added or built.
@@ -162,11 +173,11 @@ set_dihedrals_from_linkage_conformer_data( Pose & pose,
 /// @brief Get the linkage type for a particular residue.
 /// Be warned: If NO STATISTICS for that residue exist for SugarBB/CHI (such as not a pyranose, will return LINKAGE_NA )
 chemical::carbohydrates::LinkageType
-get_linkage_type_for_residue_for_CHI( id::MainchainTorsionType torsion, conformation::Residue const & rsd,
+get_linkage_type_for_residue_for_CHI( core::Size torsion_id, conformation::Residue const & rsd,
 	pose::Pose const & pose);
 
 utility::vector1< chemical::carbohydrates::LinkageType >
-get_linkage_types_for_dihedral( id::MainchainTorsionType torsion );
+get_linkage_types_for_dihedral( core::Size torsion_id );
 
 
 /// @brief Remove ALL/Any branch points from a carbohydrate or aa residue.

@@ -42,8 +42,7 @@ namespace carbohydrates {
 /// Currently uses a random sampler with a set of weights to each mover for sampling.
 ///
 /// Weights are currently as follows:
-///  .20 Phi Sugar BB Sampling
-///  .20 Psi Sugar BB Sampling
+///  .40 Phi/Psi Sugar BB Sampling
 ///  .20 Linkage Conformer Sampling
 ///  .30 Small BB Sampling - equal weight to phi, psi, or omega
 ///    -> .17 +/- 15 degrees
@@ -51,6 +50,7 @@ namespace carbohydrates {
 ///    -> .044 +/- 90 degrees
 ///  .10 MinMover
 ///
+///  ?.10 PackRotamersMover for neighbor sidechains if set?
 class GlycanRelaxMover : public protocols::moves::Mover {
 
 public:

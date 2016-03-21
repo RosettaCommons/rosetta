@@ -50,7 +50,7 @@ TaskOperationOP
 }
 
 void
---class--::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap& ){
+--class--::parse_tag( utility::tag::TagCOP , basic::datacache::DataMap& ){
 
 
 }
@@ -58,7 +58,7 @@ void
 
 
 void
---class--::apply( const core::pose::Pose& pose, core::pack::task::PackerTask& task ) const {
+--class--::apply( const core::pose::Pose& pose, core::pack::task::PackerTask& ) const {
 
 
 }

@@ -35,7 +35,11 @@ namespace protocols {
 namespace simple_moves {
 
 ///@brief Mover interface to BBDihedralSampler ( 1D ).
-/// Randomly samples a particular torsion type set in the sampler using residues from a movemap.
+/// Samples using BBDihedralSamplers randomly using residues set in the movemap.
+/// If multiple samplers are given, will randomly sample on them.
+///
+///@details Obeys Movemap BB Torsion ID settings if given in movemap.
+///
 class BBDihedralSamplerMover : public protocols::moves::Mover {
 
 public:
@@ -57,18 +61,21 @@ public:
 
 public:
 
-	///@brief Sets residues to sample on FROM movemap.
+	///@brief Sets residues (and optionally torsions) to sample on FROM movemap.
 	void
 	set_movemap( core::kinematics::MoveMapCOP movemap);
 
 	///@brief Set a single resnum instead of a movemap.
 	void
 	set_single_resnum( core::Size resnum );
-
+	
+	///@brief Set a single sampler this mover will use.
 	void
-	set_sampler( bb_sampler::BBDihedralSamplerOP sampler) {
-		sampler_ = sampler;
-	}
+	set_sampler( bb_sampler::BBDihedralSamplerOP sampler );
+	
+	///@brief Add a sampler to this mover.
+	void
+	add_sampler( bb_sampler::BBDihedralSamplerOP sampler );
 
 
 public:
@@ -99,11 +106,27 @@ public:
 	protocols::moves::MoverOP
 	clone() const;
 
-
+private:
+	
+	//@brief Sets the union of residues available in movemap and sampler torsion ids.
+	void
+	setup_sampler_movemap_union( core::pose::Pose const & pose );
+	
+	///@brief Sets up bb_residues_ variable as all residues in the pose.
+	void
+	setup_all_bb_residues( core::pose::Pose const & pose );
+	
 private:
 
-	bb_sampler::BBDihedralSamplerOP sampler_;
-	utility::vector1< core::Size > bb_residues_; //This is faster than holding a movemap, as we will need to randomly sample on these residues.
+	//bb_sampler::BBDihedralSamplerOP sampler_;
+	
+	std::map< core::Size, utility::vector1< bb_sampler::BBDihedralSamplerOP > > samplers_;
+	utility::vector1< core::Size > sampler_torsion_types_;
+	
+	core::kinematics::MoveMapCOP movemap_;
+	utility::vector1< core::Size > bb_residues_; //This is faster than turning the movemap into a vector each apply, as we will need to randomly sample on these residues.
+	
+	std::map< core::Size, utility::vector1< core::Size > > sampler_movemap_union_; //Union of the torsion samplers we have and torsion IDs on in the movemap.
 
 };
 

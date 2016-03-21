@@ -449,9 +449,9 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	///  This residue may still have an exocylic linkage through a branch point.
 	///  See core::pose::has_exocylic_carbon_linkage to get more specific exocyclic carbon linkage info.
 	bool
-	has_exocyclic_linkage() const
+	has_exocyclic_linkage_to_child_mainchain() const
 	{
-		return has_exocyclic_linkage_;
+		return has_exocyclic_linkage_to_child_mainchain_;
 	}
 
 	// Side-chain modifications
@@ -510,7 +510,7 @@ private: // Private data //////////////////////////////////////////////////////
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
 	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
 	utility::vector1< core::uint > branch_points_;
-	bool has_exocyclic_linkage_;
+	bool has_exocyclic_linkage_to_child_mainchain_;
 
 	// Constants.
 	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta

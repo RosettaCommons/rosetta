@@ -430,8 +430,11 @@ public:
 	{
 		return ring_atoms_indices_;
 	}
-
-
+	
+	/// @brief Return whether this atom is in a particular ring
+	bool
+	is_ring_atom( uint const ring_num, uint const atom_id ) const;
+	
 	/// @brief Gets indices of all atoms that can form bonds to metals
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void
