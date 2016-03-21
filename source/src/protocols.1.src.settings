@@ -64,6 +64,7 @@ sources = {
 		"AtomTreeDiffJobOutputter",
 		"BatchJobInputter",
 		"BOINCJobDistributor",
+		"EnsembleJobInputter",
 		"FileJobOutputter",
 		"FileSystemJobDistributor",
 		"InnerJob",

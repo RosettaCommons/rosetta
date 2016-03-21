@@ -50,9 +50,9 @@ get_lines_from_file_data( std::string const & filename )
 	vector1< string > lines;
 
 	while ( getline( data, line ) ) {
+		
 		trim( line, " \t\n" );  // Remove leading and trailing whitespace.
 		if ( ( line.size() < 1 ) || ( line[ 0 ] == '#' ) ) { continue; }  // Skip comments and blank lines.
-
 		lines.push_back( line );
 	}
 

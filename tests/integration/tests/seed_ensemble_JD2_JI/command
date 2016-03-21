@@ -1,0 +1,5 @@
+# Do the tests actually exist?
+[ -x %(bin)s/glycan_relax.%(binext)s ] || exit 1
+
+%(bin)s/glycan_relax.%(binext)s %(additional_flags)s @flags -database %(database)s \
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true

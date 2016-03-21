@@ -1,0 +1,15 @@
+
+-include_sugars
+-read_pdb_link_records
+-write_pdb_link_records
+
+-ex1
+-ex2
+
+-s input/9_mer_linear_glycan_test.pdb input/alpha-L-Fucp-\(1-\>6\)-D-GlcpNAc.pdb
+-overwrite
+
+-nstruct 5
+
+-seed_ensemble_weights_file test_weights.txt
+
