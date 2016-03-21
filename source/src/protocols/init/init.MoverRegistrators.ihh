@@ -323,6 +323,7 @@ static MoverRegistrator< rigid::RigidBodyTiltMoverCreator > reg_RigidBodyTiltMov
 static MoverRegistrator< rigid::RigidBodyTransMoverCreator > reg_RigidBodyTransMoverCreator;
 static MoverRegistrator< rigid::RollMoverCreator > reg_RollMoverCreator;
 static MoverRegistrator< rigid::UniformRigidBodyCMCreator > reg_UniformRigidBodyCMCreator;
+static MoverRegistrator< rigid::UniformRigidBodyMoverCreator > reg_UniformRigidBodyMoverCreator;
 
 static MoverRegistrator< rosetta_scripts::ParsedProtocolCreator > reg_ParsedProtocolCreator;
 static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCreator;

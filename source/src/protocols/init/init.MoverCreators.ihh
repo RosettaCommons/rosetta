@@ -308,6 +308,7 @@
 #include <protocols/rigid/RigidBodyMoverCreator.hh>
 #include <protocols/rigid/RollMoverCreator.hh>
 #include <protocols/rigid/UniformRigidBodyCMCreator.hh>
+#include <protocols/rigid/UniformRigidBodyMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>
