@@ -83,7 +83,7 @@ bool PolymerBondedNeighborIterator::operator != ( ResidueNeighborIterator const 
 
 Size PolymerBondedNeighborIterator::upper_neighbor_id() const {
 	core::Size other = 0;
-	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	if ( curr_idx_ <= pos_.size() ) other = pos_[curr_idx_];
 	return other;
 }
 
@@ -97,7 +97,7 @@ Size PolymerBondedNeighborIterator::residue_iterated_on() const {
 
 Size PolymerBondedNeighborIterator::neighbor_id() const {
 	core::Size other = 0;
-	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	if ( curr_idx_ <= pos_.size() ) other = pos_[curr_idx_];
 	return other;
 }
 
@@ -174,7 +174,7 @@ bool PolymerBondedNeighborConstIterator::operator != ( ResidueNeighborConstItera
 
 Size PolymerBondedNeighborConstIterator::upper_neighbor_id() const {
 	core::Size other = 0;
-	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	if ( curr_idx_ <= pos_.size() ) other = pos_[curr_idx_];
 	return other;
 }
 
@@ -188,7 +188,7 @@ Size PolymerBondedNeighborConstIterator::residue_iterated_on() const {
 
 Size PolymerBondedNeighborConstIterator::neighbor_id() const {
 	core::Size other = 0;
-	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	if ( curr_idx_ <= pos_.size() ) other = pos_[curr_idx_];
 	return other;
 }
 
@@ -263,11 +263,11 @@ PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
 
 	utility::vector1<core::Size> neighbors;
 	std::map <core::Size, core::Size >::const_iterator it = peptide_bonded_pair_indices_.find(resid);
-	if (it != peptide_bonded_pair_indices_.end()) {
+	if ( it != peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(it->second);
 	}
 	std::map <core::Size, core::Size >::const_iterator itinv = inv_peptide_bonded_pair_indices_.find(resid);
-	if (itinv != inv_peptide_bonded_pair_indices_.end()) {
+	if ( itinv != inv_peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(itinv->second);
 	}
 
@@ -288,7 +288,7 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) c
 
 	utility::vector1<core::Size> neighbors;
 	std::map <core::Size, core::Size >::const_iterator it = peptide_bonded_pair_indices_.find(resid);
-	if (it != peptide_bonded_pair_indices_.end()) {
+	if ( it != peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(it->second);
 	}
 
@@ -309,10 +309,10 @@ PolymerBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
 	}
 
 	utility::vector1<core::Size> neighbors;
-	if (peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end()) {
+	if ( peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(peptide_bonded_pair_indices_[resid]);
 	}
-	if (inv_peptide_bonded_pair_indices_.find(resid) != inv_peptide_bonded_pair_indices_.end()) {
+	if ( inv_peptide_bonded_pair_indices_.find(resid) != inv_peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(inv_peptide_bonded_pair_indices_[resid]);
 	}
 
@@ -333,7 +333,7 @@ PolymerBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 	}
 
 	utility::vector1<core::Size> neighbors;
-	if (peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end()) {
+	if ( peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(peptide_bonded_pair_indices_[resid]);
 	}
 

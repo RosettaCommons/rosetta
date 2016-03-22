@@ -669,6 +669,7 @@ static ResidueSelectorRegistrator< NotResidueSelectorCreator > reg_NotResidueSel
 static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighborsSelectorCreator;
 static ResidueSelectorRegistrator< LayerSelectorCreator > reg_LayerSelectorCreator;
 static ResidueSelectorRegistrator< OrResidueSelectorCreator > reg_OrResidueSelectorCreator;
+static ResidueSelectorRegistrator< PhiSelectorCreator > reg_PhiSelectorCreator;
 static ResidueSelectorRegistrator< PrimarySequenceNeighborhoodSelectorCreator > reg_PrimarySequenceNeighborhoodSelectorCreator;
 static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;

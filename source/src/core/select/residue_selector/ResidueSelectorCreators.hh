@@ -95,6 +95,13 @@ public:
 	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
 };
 
+class PhiSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+};
+
 class JumpUpstreamSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;

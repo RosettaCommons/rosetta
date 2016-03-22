@@ -1,0 +1,155 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/pack/task/residue_selector/PhiSelector.hh
+/// @brief  The PhiSelector selects residues in a given proximity of set focus residues
+/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+
+// Unit headers
+#include <core/select/residue_selector/PhiSelector.hh>
+#include <core/select/residue_selector/ResidueSelectorCreators.hh>
+#include <core/select/residue_selector/util.hh>
+
+// Basic Headers
+#include <basic/datacache/DataMap.hh>
+
+// Package headers
+#include <core/pose/selection.hh>
+#include <core/conformation/Residue.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
+
+// Utility Headers
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <basic/Tracer.hh>
+
+// C++ headers
+#include <utility/assert.hh>
+
+static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.PhiSelector" );
+
+
+namespace core {
+namespace select {
+namespace residue_selector {
+
+using namespace core::select::residue_selector;
+
+/// @brief Constructor.
+///
+PhiSelector::PhiSelector() :
+	select_positive_phi_(true),
+	ignore_unconnected_upper_(true)
+	//TODO -- initialize all vars here.
+{}
+
+/// @brief Destructor.
+///
+PhiSelector::~PhiSelector() {}
+
+/// @brief Clone function.
+/// @details Copy this object and return owning pointer to the copy (created on the heap).
+ResidueSelectorOP
+PhiSelector::clone() const {
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( PhiSelectorOP( new PhiSelector(*this) ) ) );
+}
+
+/// @brief "Apply" function.
+/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
+/// indicating whether each residue is selected ("true") or not ("false").
+ResidueSubset
+PhiSelector::apply(
+	core::pose::Pose const & pose
+) const {
+	core::Size const nres( pose.n_residue() ); //The number of residues in the pose.
+
+	ResidueSubset selected( nres, false ); //Output, initialized to a vector of "false".
+
+	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues.
+		if ( !pose.residue(i).type().is_alpha_aa() ) continue; //Skip non-alpha amino acid positions.
+		if ( !pose.residue(i).has_lower_connect() || (ignore_unconnected_upper() && !pose.residue(i).has_upper_connect() ) ) continue; //Ignore residues with no lower or upper connection.
+		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue(i).type().lower_connect_id() ) ) continue; //Ignore residues with a lower connection, but nothing there.
+		if ( ignore_unconnected_upper() && !pose.residue(i).connected_residue_at_resconn( pose.residue(i).type().upper_connect_id() ) ) continue; //Ignore residues with an upper connection, but nothing there.
+		if ( pose.phi(i) >= 0 ) { //Select positive phi positions or negative phi positions.
+			selected[i] = select_positive_phi();
+		} else {
+			selected[i] = !select_positive_phi();
+		}
+	}
+
+	return selected;
+}
+
+/// @brief XML parse.
+/// @details Parse RosettaScripts tags and set up this mover.
+void
+PhiSelector::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/
+) {
+	std::string const name( tag->getOption<std::string>( "name" ) );
+	if ( TR.visible() ) TR << "Parsing options for PhiSelector \"" << name << "\"." << std::endl;
+	set_select_positive_phi( tag->getOption<bool>( "select_positive_phi", select_positive_phi() ) );
+	set_ignore_unconnected_upper( tag->getOption<bool>( "ignore_unconnected_upper", ignore_unconnected_upper() ) );
+	if ( TR.visible() ) {
+		TR << "Set selector to select residues in the "
+			<< (select_positive_phi() ? "positive" : "negative") << " phi region of Ramachandran space, "
+			<< (ignore_unconnected_upper() ? "ignoring" : "including") << " residues with no upper (C-terminal) connection."
+			<< std::endl;
+	}
+}
+
+/// @brief Get the mover class name.
+///
+std::string
+PhiSelector::get_name() const {
+	return PhiSelector::class_name();
+}
+
+/// @brief Get the mover class name.
+///
+std::string
+PhiSelector::class_name() {
+	return "Phi";
+}
+
+/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
+///
+void
+PhiSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "select_positive_phi", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "ignore_unconnected_upper", xs_boolean, "true" ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
+ResidueSelectorOP
+PhiSelectorCreator::create_residue_selector() const {
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( PhiSelectorOP( new PhiSelector ) ) );
+}
+
+std::string
+PhiSelectorCreator::keyname() const {
+	return PhiSelector::class_name();
+}
+
+/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
+///
+void
+PhiSelectorCreator::provide_selector_xsd(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	PhiSelector::provide_selector_xsd( xsd );
+}
+
+
+} //core
+} //select
+} //residue_selector

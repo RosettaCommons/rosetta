@@ -1650,16 +1650,16 @@ CartesianBondedEnergy::eval_intrares_energy(
 	//(fpd) NOTE: this must agree with logic in PolymerBondedEnergyContainer::other_res_index
 	//    that is, this function must be evaluated for all residues that do not take part in a two-body energy
 	bool dont_score_this = ( rsd.type().is_polymer() && rsd.has_upper_connect() );
-	if (dont_score_this) {
+	if ( dont_score_this ) {
 		core::Size const other_res( rsd.residue_connection_partner( rsd.upper_connect().index() ) );
 		dont_score_this = (
 			other_res != 0
 			&& pose.residue(other_res).type().is_polymer()
-	  	&& pose.residue(other_res).has_lower_connect()
-	  	&& pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) == rsd.seqpos()
+			&& pose.residue(other_res).has_lower_connect()
+			&& pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) == rsd.seqpos()
 		);
 	}
-	if (dont_score_this) return;
+	if ( dont_score_this ) return;
 
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ;
 	Real phi=0,psi=0;
@@ -1689,16 +1689,16 @@ CartesianBondedEnergy::eval_intrares_derivatives(
 	//(fpd) NOTE: this must agree with logic in PolymerBondedEnergyContainer::other_res_index
 	//    that is, this function must be evaluated for all residues that do not take part in a two-body energy
 	bool dont_score_this = ( rsd.type().is_polymer() && rsd.has_upper_connect() );
-	if (dont_score_this) {
+	if ( dont_score_this ) {
 		core::Size const other_res( rsd.residue_connection_partner( rsd.upper_connect().index() ) );
 		dont_score_this = (
 			other_res != 0
 			&& pose.residue(other_res).type().is_polymer()
-	  	&& pose.residue(other_res).has_lower_connect()
-	  	&& pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) == rsd.seqpos()
+			&& pose.residue(other_res).has_lower_connect()
+			&& pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) == rsd.seqpos()
 		);
 	}
-	if (dont_score_this) return;
+	if ( dont_score_this ) return;
 
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ;
 	Real phi=0,psi=0;
@@ -1765,10 +1765,10 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	// cterm special case
 	//Size nres = pose.total_residue();
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
-	//	nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 	//}
 	//if ( rsd2.seqpos() == nres ) {
-	//	eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
+	// eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
 	//}
 
 	if ( rsd1.aa() == core::chemical::aa_vrt ) return;
@@ -2004,11 +2004,11 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the last residue
 	//Size nres = pose.total_residue();
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
-	//	nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 	//}
 	//if ( rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt ) {
-	//	// get one body component for the last residue
-	//	eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
+	// // get one body component for the last residue
+	// eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
 	//}
 
 	// If residue1 and 2 are the same, stop here to avoid double-counting.

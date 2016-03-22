@@ -37,45 +37,89 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 using namespace core::select::residue_selector;
 
+/// @brief Constructor.
+///
+--class--::--class--() //:
+	//TODO -- initialize all vars here.
+{}
 
---class--::--class--(){
-
-}
-
-
+/// @brief Destructor.
+///
 --class--::~--class--() {}
 
-ResidueSubset
---class--::apply( core::pose::Pose const & ) const
-{
-
-
+/// @brief Clone function.
+/// @details Copy this object and return owning pointer to the copy (created on the heap).
+core::select::residue_selector::ResidueSelectorOP
+--class--::clone() const {
+	return core::select::residue_selector::ResidueSelectorOP(
+		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
+			--class--OP( new --class--(*this) )
+		)
+	);
 }
 
+/// @brief "Apply" function.
+/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
+/// indicating whether each residue is selected ("true") or not ("false").
+ResidueSubset
+--class--::apply(
+	core::pose::Pose const & //pose
+) const {
+	//TODO -- write your apply function here.
+}
+
+/// @brief XML parse.
+/// @details Parse RosettaScripts tags and set up this mover.
 void
 --class--::parse_my_tag(
-	utility::tag::TagCOP,
-	basic::datacache::DataMap & )
-
+	utility::tag::TagCOP /*tag*/,
+	basic::datacache::DataMap & /*datamap*/
+) {
+	//TODO -- write your XML-parsing function here.
 
 }
 
+/// @brief Get the mover class name.
+///
 std::string --class--::get_name() const {
 	return --class--::class_name();
 }
 
+/// @brief Get the mover class name.
+///
 std::string --class--::class_name() {
 	return "--class--";
 }
 
-ResidueSelectorOP
+/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
+///
+void
+--class--::provide_selector_xsd( utility::tag::XMLSchemaDefinition & /*xsd*/ ) {
+	using namespace utility::tag;
+	//TODO -- add XSD information here.
+}
+
+core::select::residue_selector::ResidueSelectorOP
 --class--Creator::create_residue_selector() const {
-	return ResidueSelectorOP( new --class-- );
+	return core::select::residue_selector::ResidueSelectorOP(
+		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
+			--class--OP( new --class-- )
+		)
+	);
 }
 
 std::string
 --class--Creator::keyname() const {
 	return --class--::class_name();
+}
+
+/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
+///
+void
+--class--Creator::provide_selector_xsd(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	--class--::provide_selector_xsd( xsd );
 }
 
 
