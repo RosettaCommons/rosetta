@@ -39,6 +39,7 @@
 #include <core/scoring/func/IdentityFunc.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>
+#include <core/scoring/func/AmberPeriodicFunc.hh>
 
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -71,6 +72,7 @@ FuncOP FuncFactory::new_func( std::string const& type ) const {
 FuncFactory::FuncFactory(void) {
 	FuncFactory::add_type( "HARMONIC", FuncOP( new HarmonicFunc(0,0) ) );
 	FuncFactory::add_type( "SIGMOID", FuncOP( new SigmoidFunc(0,1) ) );
+	FuncFactory::add_type( "AMBERPERIODIC", FuncOP( new AmberPeriodicFunc(0.0, 0.5, 1.0) ) );
 	FuncFactory::add_type( "CIRCULARHARMONIC", FuncOP( new CircularHarmonicFunc(0,0) ) );
 	FuncFactory::add_type( "MIXTUREFUNC", FuncOP( new MixtureFunc(0,0,0,0,0,0) ) );
 	FuncFactory::add_type( "SCALARWEIGHTEDFUNC", FuncOP( new ScalarWeightedFunc(0,0) ) );
