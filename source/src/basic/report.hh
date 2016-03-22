@@ -60,10 +60,11 @@ public:
 	Reporter(ReportOP report=basic::ReportOP()) { report_ =  report; }
 
 	template <typename T>
-	Reporter& operator<<(T const &v) { if(report_) *report_ << v; return *this; }
+	Reporter& operator<<(T const &v) { if ( report_ ) *report_ << v;
+		return *this; }
 
 	template <typename T>
-	void set(std::string const &key, T const &value) { if(report_) report_->set(key, value); }
+	void set(std::string const &key, T const &value) { if ( report_ ) report_->set(key, value); }
 };
 
 

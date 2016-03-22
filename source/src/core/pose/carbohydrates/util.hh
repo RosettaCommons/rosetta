@@ -112,7 +112,7 @@ bool is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsi
 Size get_n_glycosidic_torsions_in_res(
 	Pose & pose,
 	uint const sequence_position);
-	
+
 /// @brief  Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 core::Angle get_glycosidic_torsion( uint const torsion_id, Pose const & pose, uint const sequence_position );
 

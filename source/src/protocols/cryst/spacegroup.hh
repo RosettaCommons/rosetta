@@ -14,6 +14,7 @@
 #define INCLUDED_protocols_cryst_spacegroup_hh
 
 #include <protocols/cryst/util.hh>
+#include <protocols/cryst/CheshireCell.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -96,15 +97,6 @@ enum SpacegroupSetting {
 	HEXAGONAL,  // includes trigonal
 	CUBIC,
 	NOSETTING
-};
-
-struct CheshireCell {
-	CheshireCell() : low(0.0,0.0,0.0),high(0.0,0.0,0.0) {};
-	CheshireCell( numeric::xyzVector<core::Real> low_in, numeric::xyzVector<core::Real> high_in ) {
-		low=low_in;
-		high=high_in;
-	}
-	numeric::xyzVector<core::Real> low, high;
 };
 
 class Spacegroup {

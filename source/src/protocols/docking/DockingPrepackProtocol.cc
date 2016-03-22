@@ -84,7 +84,7 @@ void DockingPrepackProtocol::setup_defaults()
 	pack_operations_ = SequenceMoverOP( new SequenceMover() );
 	dock_ppk_ = false;
 	membrane_ = false;
-    movers_setup_ = false;
+	movers_setup_ = false;
 }
 
 DockingPrepackProtocol::~DockingPrepackProtocol(){
@@ -166,7 +166,7 @@ void DockingPrepackProtocol::setup_pack_operation_movers()
 		scmin_mover_->set_task_factory( task_factory() );
 		pack_operations_->add_mover( scmin_mover_ );
 	}
-    movers_setup_ = true;
+	movers_setup_ = true;
 }
 
 void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
@@ -200,10 +200,10 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	}
 	tf2()->set_prepack_only(true);
 	tf2()->create_and_attach_task_factory( this, pose );
-    // JRJ Says this should only be done once... if we pass a list this is done more than once... bad.
-    if ( !movers_setup_ ) {
-	    setup_pack_operation_movers();
-    }
+	// JRJ Says this should only be done once... if we pass a list this is done more than once... bad.
+	if ( !movers_setup_ ) {
+		setup_pack_operation_movers();
+	}
 }
 
 void DockingPrepackProtocol::apply( core::pose::Pose & pose )

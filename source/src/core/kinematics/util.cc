@@ -713,29 +713,29 @@ utility::vector1< core::Size >
 get_residues_from_movemap_bb_any_torsion(MoveMap const & movemap, Size total_resnum){
 	utility::vector1< bool > bb_on(total_resnum, false);
 	utility::vector1< core::Size > final_vec;
-	
-	for (core::Size i = 1; i <= total_resnum; ++i){
-		if (movemap.get_bb( i )){
+
+	for ( core::Size i = 1; i <= total_resnum; ++i ) {
+		if ( movemap.get_bb( i ) ) {
 			bb_on[ i ] = true;
 			continue;
 		}
-		
-		for (core::Size x = 1; x <= 4; ++x){
-			if (movemap.get_bb( i, x )){
+
+		for ( core::Size x = 1; x <= 4; ++x ) {
+			if ( movemap.get_bb( i, x ) ) {
 				bb_on[ i ] = true;
 				break;
 			}
 		}
 	}
-	
+
 	//Probably a better way for this, but I don't know it.
-	for (core::Size resnum = 1; resnum <= total_resnum; ++resnum){
-		if (bb_on[ resnum ]){
+	for ( core::Size resnum = 1; resnum <= total_resnum; ++resnum ) {
+		if ( bb_on[ resnum ] ) {
 			final_vec.push_back( resnum );
 		}
 	}
 	return final_vec;
-			
+
 }
 
 

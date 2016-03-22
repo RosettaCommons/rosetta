@@ -80,6 +80,10 @@ sources = {
 		"cryst_rms",
 		"refinable_lattice",
 		"spacegroup",
+		"spacegroup_symmops1",
+		"spacegroup_symmops2",
+		"spacegroup_symmops3",
+		"spacegroup_symmops4",
 		"TwoDLattice",
 		"wallpaper"
 	],

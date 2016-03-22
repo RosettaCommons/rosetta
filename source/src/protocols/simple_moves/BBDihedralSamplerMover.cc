@@ -32,9 +32,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBDihedralSamplerM
 
 namespace protocols {
 namespace simple_moves {
-	using namespace protocols::simple_moves::bb_sampler;
-	using namespace core::kinematics;
-	
+using namespace protocols::simple_moves::bb_sampler;
+using namespace core::kinematics;
+
 BBDihedralSamplerMover::BBDihedralSamplerMover():
 	protocols::moves::Mover( "BBDihedralSamplerMover" ),
 	movemap_(/* NULL */)
@@ -139,37 +139,36 @@ BBDihedralSamplerMover::set_sampler( bb_sampler::BBDihedralSamplerOP sampler ){
 	sampler_movemap_union_.clear();
 	samplers_[ sampler->get_torsion_type() ]; //Initialize vector
 	samplers_[ sampler->get_torsion_type() ].push_back( sampler );
-	
+
 	sampler_torsion_types_.push_back( sampler->get_torsion_type() );
-	
+
 }
 
 void
 BBDihedralSamplerMover::add_sampler( bb_sampler::BBDihedralSamplerOP sampler ){
 	sampler_movemap_union_.clear();
-	if (samplers_.count( sampler->get_torsion_type() ) != 0 ){
+	if ( samplers_.count( sampler->get_torsion_type() ) != 0 ) {
 		samplers_[ sampler->get_torsion_type() ].push_back( sampler );
 		sampler_torsion_types_.push_back( sampler->get_torsion_type() );
-	}
-	else {
+	} else {
 		samplers_[ sampler->get_torsion_type() ];
 		samplers_[ sampler->get_torsion_type() ].push_back( sampler );
 		sampler_torsion_types_.push_back( sampler->get_torsion_type() );
 	}
-	
+
 }
 
 void
 BBDihedralSamplerMover::setup_all_bb_residues( core::pose::Pose const & pose) {
-	
-	if (TR.Debug.visible()) {
+
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "Setting up all bb residues" << std::endl;
 	}
-	
+
 	MoveMapOP mm = MoveMapOP( new MoveMap );
 	mm->set_bb(true);
 	movemap_ = mm;
-	
+
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		bb_residues_.push_back( i );
 	}
@@ -179,28 +178,28 @@ void
 BBDihedralSamplerMover::setup_sampler_movemap_union( core::pose::Pose const & pose ) {
 
 	utility::vector1< core::Size > pruned_resnums;
-	if (TR.Debug.visible()) {
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "Initializing sampler and movemap union." << std::endl;
 	}
-	
+
 	if ( bb_residues_.size() == 0 ) {
 		setup_all_bb_residues( pose );
 	}
 
-	for (core::Size i = 1; i <= bb_residues_.size(); ++i){
+	for ( core::Size i = 1; i <= bb_residues_.size(); ++i ) {
 		core::Size resnum = bb_residues_[ i ];
 		sampler_movemap_union_[ resnum ];
-		for (core::Size x = 1; x <= sampler_torsion_types_.size(); ++x){
-			if ( movemap_->get_bb( resnum, sampler_torsion_types_[x])){
+		for ( core::Size x = 1; x <= sampler_torsion_types_.size(); ++x ) {
+			if ( movemap_->get_bb( resnum, sampler_torsion_types_[x]) ) {
 				sampler_movemap_union_[ resnum ].push_back( sampler_torsion_types_[x] );
 			}
 		}
 	}
-	
+
 	//Update BB Residues to only those residues which both have torsions set on in the movemap and we have samplers to actually sample those torsions.
 	typedef std::map<core::Size, utility::vector1< core::Size > >::const_iterator iter_type;
-	for ( iter_type it = sampler_movemap_union_.begin(); it != sampler_movemap_union_.end(); ++it){
-		if (it->second.size() > 0){
+	for ( iter_type it = sampler_movemap_union_.begin(); it != sampler_movemap_union_.end(); ++it ) {
+		if ( it->second.size() > 0 ) {
 			pruned_resnums.push_back( it->first );
 		}
 	}
@@ -209,10 +208,10 @@ BBDihedralSamplerMover::setup_sampler_movemap_union( core::pose::Pose const & po
 
 void
 BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
-	if (movemap_ && bb_residues_.size() == 0){
+	if ( movemap_ && bb_residues_.size() == 0 ) {
 		bb_residues_ = get_residues_from_movemap_bb_any_torsion( *movemap_, pose.total_residue() ); //This is done here so we dont have to do this at each apply and waste time.
 	}
-	
+
 	if ( samplers_.size() == 0 ) {
 		utility_exit_with_message(" No Sampler set for BBDihedralSamplerMover!");
 	}
@@ -220,52 +219,49 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 	if ( bb_residues_.size() == 0 ) {
 		setup_all_bb_residues( pose );
 	}
-	
-	if (sampler_movemap_union_.empty()){
+
+	if ( sampler_movemap_union_.empty() ) {
 		setup_sampler_movemap_union( pose );
 	}
-	
-	
+
+
 	core::Size index = numeric::random::rg().random_range( 1, bb_residues_.size() );
 	core::Size resnum = bb_residues_[ index ];
 
-	
-	
+
+
 	//Get the one sampler or choose a sampler:
 	bb_sampler::BBDihedralSamplerCOP sampler;
-	if (sampler_torsion_types_.size() == 1 && samplers_[ sampler_torsion_types_[ 1 ] ].size() == 1){
+	if ( sampler_torsion_types_.size() == 1 && samplers_[ sampler_torsion_types_[ 1 ] ].size() == 1 ) {
 		//Check to make sure this is in the movemap.
-		if (! movemap_->get_bb( resnum, sampler_torsion_types_[ 1 ] )){
+		if ( ! movemap_->get_bb( resnum, sampler_torsion_types_[ 1 ] ) ) {
 			TR << "Resnum set as true, but torsion set to false in Movemap.  Cannot sample. "<< resnum <<","<< sampler_torsion_types_[ 1 ] << std::endl;
 			set_last_move_status(protocols::moves::MS_FAIL);
 			return;
-		}
-		else{
+		} else {
 			sampler = samplers_[ sampler_torsion_types_[ 1 ] ][ 1 ]; //First and only torsion type, first and only sampler that samples that torsion type.
 		}
-		
-	}
-	else if ( sampler_movemap_union_[ resnum ].size() == 0 ){
+
+	} else if ( sampler_movemap_union_[ resnum ].size() == 0 ) {
 		utility_exit_with_message(" BBDihedralSamplerMover - a chosen residue num has no dihedral union between movemaps and set bb samplers.  We should never be here!");
-	}
-	else{
-		
+	} else {
+
 		//Choose a TorsionType based on what kind of samplers we have and the MoveMap of the residue.
 		core::Size torsion_index = numeric::random::rg().random_range( 1, sampler_movemap_union_[ resnum ].size() );
 		core::Size torsion = sampler_movemap_union_[ resnum ][ torsion_index ];
-		
-		
+
+
 		//Choose a sampler from the samplers available for that torsion type.
 		core::Size sampler_index = numeric::random::rg().random_range( 1, samplers_[ torsion ].size() );
 		sampler = samplers_[ torsion ][ sampler_index ];
 	}
-	
-	
+
+
 	// Apply the sampler
-	if (TR.Debug.visible()) {
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "Optimizing "<< resnum << " with " << sampler->name() << " torsion " << core::Size(sampler->get_torsion_type()) << std::endl;
 	}
-	
+
 	try {
 		sampler->set_torsion_to_pose( pose, resnum );
 		set_last_move_status(protocols::moves::MS_SUCCESS);

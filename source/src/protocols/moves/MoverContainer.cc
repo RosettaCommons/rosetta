@@ -243,7 +243,7 @@ void RandomMover::apply( core::pose::Pose & pose )
 		// apply the chosen move
 
 		//Difficult to debug without this - JAB:
-		if (TR.Debug.visible()) {
+		if ( TR.Debug.visible() ) {
 			TR.Debug << "Applying " << movers_[m]->get_name() << std::endl;
 		}
 

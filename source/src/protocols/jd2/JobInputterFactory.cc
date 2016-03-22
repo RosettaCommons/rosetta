@@ -126,7 +126,7 @@ JobInputterFactory::get_new_JobInputter()
 		}
 		if ( option[ OptionKeys::jd2::dd_parser ].user() && option[ OptionKeys::parser::patchdock ].user() ) {
 			return get_JobInputter_from_string( "ParserJobInputter" );
-		} else if ( option[ OptionKeys::jd2::grid_ensemble]() || option[ OptionKeys::jd2::seed_ensemble]() || option[ OptionKeys::jd2::seed_ensemble_weights].user() ){
+		} else if ( option[ OptionKeys::jd2::grid_ensemble]() || option[ OptionKeys::jd2::seed_ensemble]() || option[ OptionKeys::jd2::seed_ensemble_weights].user() ) {
 			return get_JobInputter_from_string( "EnsembleJobInputter");
 		} else {
 			return get_JobInputter_from_string( "PDBJobInputter" ); //SML override until we have other child classes

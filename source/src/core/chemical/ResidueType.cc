@@ -854,7 +854,7 @@ ResidueType::is_ring_atom( uint const ring_num, uint const atom_id ) const{
 	debug_assert( ring_num <= ring_atoms_indices_.size() );
 	return std::find(ring_atoms_indices_[ ring_num ].begin(), ring_atoms_indices_[ ring_num ].end(), atom_id) != ring_atoms_indices_[ ring_num ].end();
 }
-	
+
 const HeavyAtomGraph
 ResidueType::heavy_atoms(){
 	HeavyAtomFilter filter(graph_, atom_types_);

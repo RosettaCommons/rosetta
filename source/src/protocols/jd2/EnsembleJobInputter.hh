@@ -95,7 +95,7 @@ private:
 
 	utility::vector1< core::Real >
 	read_get_weights(std::string const & filename, utility::vector1< std::string > const & inputs ) const ;
-	
+
 };
 
 

@@ -340,34 +340,34 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	//////////  Setup Phi/Psi/N-Omega movemaps. /////////////////////////
 	MoveMapOP sugar_bb_movemap = MoveMapOP( new MoveMap() );
 	MoveMapOP glycan_dih_movemap = MoveMapOP( new MoveMap() );
-	
+
 	core::Size max_glycan_dihedrals = 2;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		
+
 		//Turn off if not carbohydrates or if N terminal carbohydrate not attached to anything.
-		if ( ! glycan_movemap_->get_bb( i )  || find_seqpos_of_saccharides_parent_residue( pose.residue( i ) ) == 0 ){
+		if ( ! glycan_movemap_->get_bb( i )  || find_seqpos_of_saccharides_parent_residue( pose.residue( i ) ) == 0 ) {
 			sugar_bb_movemap->set_bb( i, false );
 			glycan_dih_movemap->set_bb( i, false );
 			continue;
 		}
-		
+
 		//Need Psi Movemap (Non-Exocyclic) and Omega for only Exocyclic
 		core::Size n_dihedrals = get_n_glycosidic_torsions_in_res( pose, i );
-		
+
 		sugar_bb_movemap->set_bb(i , 1, true); //Turn on for Phi
 		sugar_bb_movemap->set_bb(i, 2, true);
-		
+
 		//Turn off psi for residue if it has any omegas.  We don't have data for this.
-		if ( n_dihedrals > 2 ){
+		if ( n_dihedrals > 2 ) {
 			sugar_bb_movemap->set_bb( i, 2, false );
 		}
-		
-		if ( n_dihedrals > max_glycan_dihedrals ){
+
+		if ( n_dihedrals > max_glycan_dihedrals ) {
 			max_glycan_dihedrals = n_dihedrals;
 		}
-		
+
 		//Turn on only dihedrals for which these residues actually have
-		for (core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ){
+		for ( core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ) {
 			glycan_dih_movemap->set_bb( i, torsion_id, true );
 		}
 	}
@@ -382,7 +382,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	BBDihedralSamplerMoverOP sugar_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
 	BBDihedralSamplerMoverOP small_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
-	
+
 	//Tolerance of .001 can significantly decrease energies, but it takes ~ 25% faster.  This tolerance should be optimized here.
 	min_mover_ = MinMoverOP( new MinMover( glycan_movemap_->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, false /* use_nblist*/ ) );
 	linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( glycan_movemap_ ));
@@ -391,7 +391,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	sugar_sampler_mover->add_sampler( phi_sugar_sampler );
 	sugar_sampler_mover->add_sampler( psi_sugar_sampler );
 	sugar_sampler_mover->set_movemap( sugar_bb_movemap );
-	
+
 	////////// Sequence Mover Setup //////////////
 	//Settings for linkage conformer mover here!
 	weighted_random_mover_ = RandomMoverOP(new RandomMover);
@@ -404,7 +404,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	BBDihedralSamplerMoverOP glycan_small_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
 	BBDihedralSamplerMoverOP glycan_medium_mover= BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
 	BBDihedralSamplerMoverOP glycan_large_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
-	
+
 	glycan_small_mover->set_movemap(  glycan_dih_movemap );
 	glycan_medium_mover->set_movemap( glycan_dih_movemap );
 	glycan_large_mover->set_movemap(  glycan_dih_movemap );
@@ -415,16 +415,16 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 		SmallBBSamplerOP small_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 30 ) ); // +/- 15 degrees
 		SmallBBSamplerOP medium_sampler= SmallBBSamplerOP( new SmallBBSampler( dih_type, 90 ) ); // +/- 45 degrees
 		SmallBBSamplerOP large_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 180) ); // +/- 90 degrees
-		
+
 		glycan_small_mover->add_sampler( small_sampler );
 		glycan_medium_mover->add_sampler( medium_sampler );
 		glycan_large_mover->add_sampler( large_sampler );
 	}
-	
+
 	weighted_random_mover_->add_mover( glycan_small_mover, 0.17142857142857143 );
 	weighted_random_mover_->add_mover( glycan_medium_mover, 0.08571428571428572 );
 	weighted_random_mover_->add_mover( glycan_large_mover, 0.04285714285714286 );
-		
+
 }
 
 void
@@ -462,7 +462,7 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 		weighted_random_mover_->apply(pose);
 		if ( weighted_random_mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
 			core::Real energy = scorefxn_->score(pose);
-			if (TR.Debug.visible()){
+			if ( TR.Debug.visible() ) {
 				TR.Debug << "energy post MC: "<< energy << std::endl;
 			}
 

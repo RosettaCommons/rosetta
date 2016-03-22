@@ -173,7 +173,7 @@ public:
 		PyAssert( (seqpos>0), "MoveMap::set_bb( Size const seqpos , bool const setting ): input variable seqpos has a meaningless value");
 		set( MoveMapTorsionID( seqpos, BB ), setting );
 	}
-	
+
 	/// @brief Sets whether or not the BB torsion of residue  <seqpos> and torsion <torsion_id> are movable
 	///
 	/// example:
@@ -194,7 +194,7 @@ public:
 		PyAssert( (seqpos>0), "MoveMap::set_bb( Size const seqpos , bool const setting ): input variable seqpos has a meaningless value");
 		set( TorsionID( seqpos, BB, torsion_id ), setting );
 	}
-	
+
 	/// @brief Sets BB torsions movable based on input array
 	inline
 	void
@@ -548,7 +548,7 @@ public: // accessors
 		PyAssert( (seqpos>0), "MoveMap::get_bb( Size const seqpos ): input variable seqpos has a meaningless value");
 		return get( MoveMapTorsionID( seqpos, id::BB ) );
 	}
-	
+
 	/// @brief Returns if a specific BB torsion is movable or not for residue  <seqpos>
 	///
 	/// example:
@@ -560,7 +560,7 @@ public: // accessors
 		PyAssert( (seqpos>0), "MoveMap::get_bb( Size const seqpos ): input variable seqpos has a meaningless value");
 		return get( TorsionID( seqpos, BB, torsion_id));
 	}
-	
+
 	/// @brief Returns if SC torsions are movable or not for residue  <seqpos>
 	///
 	/// example:

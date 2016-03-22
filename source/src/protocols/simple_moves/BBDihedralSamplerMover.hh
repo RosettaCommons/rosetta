@@ -68,11 +68,11 @@ public:
 	///@brief Set a single resnum instead of a movemap.
 	void
 	set_single_resnum( core::Size resnum );
-	
+
 	///@brief Set a single sampler this mover will use.
 	void
 	set_sampler( bb_sampler::BBDihedralSamplerOP sampler );
-	
+
 	///@brief Add a sampler to this mover.
 	void
 	add_sampler( bb_sampler::BBDihedralSamplerOP sampler );
@@ -107,25 +107,25 @@ public:
 	clone() const;
 
 private:
-	
+
 	//@brief Sets the union of residues available in movemap and sampler torsion ids.
 	void
 	setup_sampler_movemap_union( core::pose::Pose const & pose );
-	
+
 	///@brief Sets up bb_residues_ variable as all residues in the pose.
 	void
 	setup_all_bb_residues( core::pose::Pose const & pose );
-	
+
 private:
 
 	//bb_sampler::BBDihedralSamplerOP sampler_;
-	
+
 	std::map< core::Size, utility::vector1< bb_sampler::BBDihedralSamplerOP > > samplers_;
 	utility::vector1< core::Size > sampler_torsion_types_;
-	
+
 	core::kinematics::MoveMapCOP movemap_;
 	utility::vector1< core::Size > bb_residues_; //This is faster than turning the movemap into a vector each apply, as we will need to randomly sample on these residues.
-	
+
 	std::map< core::Size, utility::vector1< core::Size > > sampler_movemap_union_; //Union of the torsion samplers we have and torsion IDs on in the movemap.
 
 };

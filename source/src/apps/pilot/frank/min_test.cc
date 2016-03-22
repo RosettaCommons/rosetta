@@ -304,7 +304,7 @@ public:
 		utility::vector1< std::pair<core::Size,core::Size> > jumps;
 		utility::vector1< int > cuts_in = f_in.cutpoints();
 		std::sort( cuts_in.begin(), cuts_in.end() );
-		for (core::Size i=1; i<=cuts_in.size(); ++i) {
+		for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 			core::Size seg_start = (i==1) ? 1 : cuts_in[i-1]+1;
 			core::Size seg_end = cuts_in[i];
 			core::Size jump_end = seg_start + (seg_end-seg_start)/2;
@@ -367,18 +367,18 @@ public:
 			set_foldtree_for_variable_movement(pose);
 
 			utility::vector1<std::string> chains_to_fix = option[ OptionKeys::min::fix_chains ]();
-			for (core::Size i=1; i<=chains_to_fix.size(); ++i) {
+			for ( core::Size i=1; i<=chains_to_fix.size(); ++i ) {
 				runtime_assert( chains_to_fix[i].length() == 1);
-				for (core::Size j=1; j<=pose.total_residue(); ++j) {
-					if (pose.pdb_info()->chain(j) == chains_to_fix[i][0]) {
+				for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
+					if ( pose.pdb_info()->chain(j) == chains_to_fix[i][0] ) {
 						mm.set_bb  ( j, false );
 						mm.set_chi ( j, false );
 					}
 				}
 
-				for (core::Size j=1; j<=pose.num_jump(); ++j) {
+				for ( core::Size j=1; j<=pose.num_jump(); ++j ) {
 					id::AtomID atm_j = pose.conformation().jump_atom_id( j );
-					if (pose.pdb_info()->chain(atm_j.rsd()) == chains_to_fix[i][0]) {
+					if ( pose.pdb_info()->chain(atm_j.rsd()) == chains_to_fix[i][0] ) {
 						mm.set_jump ( j, false );
 					}
 				}
@@ -446,7 +446,7 @@ public:
 
 				PreventRepackingOP prevent_some( new PreventRepacking() );
 				for ( Size i = 1; i<= pose.total_residue() ; ++i ) {
-					if (!mm.get_chi(i) || !repack) {
+					if ( !mm.get_chi(i) || !repack ) {
 						prevent_some->include_residue(i);
 					}
 				}

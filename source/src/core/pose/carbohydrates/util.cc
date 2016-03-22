@@ -205,7 +205,7 @@ has_exocyclic_glycosidic_linkage( Pose const & pose, uint seqpos){
 /// Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
 bool
 has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd ){
-	
+
 	//What does this mean for ASN-glycan connections?? Technically, it won't be an exocyclic atom - but it WILL have omega and omega2 if ASN - so be careful here!
 	if ( ! parent_rsd.is_carbohydrate() ) {
 		TR << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false. " << endl;
@@ -387,7 +387,7 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 	using namespace conformation;
 
 	vector1< AtomID > ids;
-	
+
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
 	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( pose, sequence_position ) );
 
@@ -399,7 +399,7 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 		return ids;
 	}
 
-	
+
 
 	// Set the atom names of the four reference atoms.
 	// Reference 0 is OX(n-1) for polysaccharides.
@@ -407,24 +407,23 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 
 	// Reference 1 is CX(n-1) for polysaccharides.
 	AtomID const ref1( residues.second->type().atom_base( ref0.atomno() ), residues.second->seqpos() );
-	
+
 
 	// Reference 2 is CX-1(n-1) for polysaccharides.
 	AtomID const ref2( residues.second->type().atom_base( ref1.atomno() ), residues.second->seqpos() );
-	
+
 	//If Ref2 is a ring atom and we do not have an omega2 angle
-	if (residues.second->is_carbohydrate() && residues.second->type().is_ring_atom( 1, ref2.atomno() ) ){
+	if ( residues.second->is_carbohydrate() && residues.second->type().is_ring_atom( 1, ref2.atomno() ) ) {
+		return ids;
+	} else if ( (! residues.second->is_carbohydrate() ) && (residues.second->aa() == core::chemical::aa_ser || residues.second->aa() == core::chemical::aa_thr ) ) {
+		//O-linked Glycosylation has 3 dihedrals.  We should address this better.
 		return ids;
 	}
-	//O-linked Glycosylation has 3 dihedrals.  We should address this better.
-	else if ((! residues.second->is_carbohydrate() ) && (residues.second->aa() == core::chemical::aa_ser || residues.second->aa() == core::chemical::aa_thr ) ){
-		return ids;
-	}
-	
+
 	ids.resize( 4 );  // A torsion has 4 reference atoms.
 	ids[ 1 ] = ref1;
 	ids[ 2 ] = ref2;
-	
+
 	// Reference 3 is CX-2(n-1) for polysaccharides.
 	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
 	ids[ 3 ] = ref3;
@@ -727,11 +726,11 @@ Size get_n_glycosidic_torsions_in_res(
 	Pose & pose,
 	uint const sequence_position)
 {
-	
+
 	core::Size n_torsions = 0;
-	for (core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id){
+	for ( core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id ) {
 		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
-		if (ref_atoms.size() != 0){
+		if ( ref_atoms.size() != 0 ) {
 			n_torsions+=1;
 		}
 	}

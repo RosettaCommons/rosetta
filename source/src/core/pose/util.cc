@@ -3308,8 +3308,8 @@ set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core
 	case id::omega_dihedral :
 		pose.set_omega( sequence_position, new_angle );
 		break;
-	
-	//Omega2+3 undefined for bb of AA.
+
+		//Omega2+3 undefined for bb of AA.
 	case id::omega2_dihedral :
 		break;
 	case id::omega3_dihedral :
