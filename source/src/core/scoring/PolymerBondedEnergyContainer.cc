@@ -45,48 +45,46 @@ PolymerBondedNeighborIterator::~PolymerBondedNeighborIterator(){}
 
 PolymerBondedNeighborIterator::PolymerBondedNeighborIterator(
 	Size const base_in,
-	Size const pos_in,
-	utility::vector1< ScoreType > const & st,
-	utility::vector1< utility::vector1< Real > > * table_in,
-	utility::vector1< bool > * computed_in
+	utility::vector1< Size > const & pos_in,
+	PolymerBondedEnergyContainer & parent
 ):
 	base_( base_in ),
 	pos_( pos_in ),
-	score_types_( st ),
-	tables_( table_in ),
-	computed_( computed_in )
-{}
+	parent_( &parent )
+{
+	curr_idx_=1;
+}
 
 ResidueNeighborIterator & PolymerBondedNeighborIterator::operator = ( ResidueNeighborIterator const & src ) {
 	debug_assert( dynamic_cast< PolymerBondedNeighborIterator const * >( &src ) );
 	PolymerBondedNeighborIterator const & my_src( static_cast< PolymerBondedNeighborIterator const & >( src ) );
 	base_ = my_src.base_;
 	pos_ = my_src.pos_;
-	tables_ = my_src.tables_;
-	computed_ = my_src.computed_;
+	parent_ = my_src.parent_;
+
 	return *this;
 }
 
 ResidueNeighborIterator const & PolymerBondedNeighborIterator::operator ++ () {
-	// Since PolymerBondedEnergyContainers can store only 0 or 1 entries per residue, iterating should result in the end-of-iterators result.
-	base_ = 0;
-	pos_ = 0;
+	curr_idx_++;
 	return *this;
 }
 
 bool PolymerBondedNeighborIterator::operator == ( ResidueNeighborIterator const & other ) const
 {
-	return ( residue_iterated_on() == other.residue_iterated_on() &&
+	return (
+		residue_iterated_on() == other.residue_iterated_on() &&
 		neighbor_id() == other.neighbor_id() );
 }
 
-bool PolymerBondedNeighborIterator::operator != ( ResidueNeighborIterator const & other ) const
-{
+bool PolymerBondedNeighborIterator::operator != ( ResidueNeighborIterator const & other ) const {
 	return !( *this == other );
 }
 
 Size PolymerBondedNeighborIterator::upper_neighbor_id() const {
-	return pos_;
+	core::Size other = 0;
+	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	return other;
 }
 
 Size PolymerBondedNeighborIterator::lower_neighbor_id() const {
@@ -98,40 +96,41 @@ Size PolymerBondedNeighborIterator::residue_iterated_on() const {
 }
 
 Size PolymerBondedNeighborIterator::neighbor_id() const {
-	return pos_;
+	core::Size other = 0;
+	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	return other;
 }
 
 void PolymerBondedNeighborIterator::save_energy( EnergyMap const & emap ) {
-	for ( Size i=1; i<=score_types_.size(); ++i ) {
-		Real const energy( emap[ score_types_[i] ] );
-		(*tables_)[ base_ ][i] = energy;
+	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
+		Real const energy( emap[ parent_->score_types()[i] ] );
+		parent_->set_energy( base_ , i , energy);
 	}
 }
 
 void PolymerBondedNeighborIterator::retrieve_energy( EnergyMap & emap ) const {
-	for ( Size i=1; i<=score_types_.size(); ++i ) {
-		emap[ score_types_[i] ] = (*tables_)[base_][i];
+	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
+		emap[ parent_->score_types()[i] ] = parent_->get_energy( base_ , i );
 	}
 }
 
 void PolymerBondedNeighborIterator::accumulate_energy( EnergyMap & emap ) const {
-	for ( Size i=1; i<=score_types_.size(); ++i ) {
-		emap[ score_types_[i] ] += (*tables_)[base_][i];
+	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
+		emap[ parent_->score_types()[i] ] += parent_->get_energy( base_ , i );
 	}
 }
 
 void PolymerBondedNeighborIterator::mark_energy_computed() {
-	(*computed_)[ base_ ] = true;
+	parent_->set_computed( base_ , true );
 }
 
 void PolymerBondedNeighborIterator::mark_energy_uncomputed() {
-	(*computed_)[ base_ ] = false;
+	parent_->set_computed( base_ , false );
 }
 
 bool PolymerBondedNeighborIterator::energy_computed() const {
-	return (*computed_)[ base_ ];
+	return parent_->get_computed( base_ );
 }
-
 
 /////////////////////////////////////////////////////
 
@@ -139,36 +138,33 @@ PolymerBondedNeighborConstIterator::~PolymerBondedNeighborConstIterator(){}
 
 PolymerBondedNeighborConstIterator::PolymerBondedNeighborConstIterator(
 	Size const base_in,
-	Size const pos_in,
-	utility::vector1< ScoreType > const & st,
-	utility::vector1< utility::vector1< Real > > const * table_in,
-	utility::vector1< bool > const * computed_in
+	utility::vector1< Size > const & pos_in,
+	PolymerBondedEnergyContainer const & parent
 ):
 	base_( base_in ),
 	pos_( pos_in ),
-	score_types_( st ),
-	tables_( table_in ),
-	computed_( computed_in )
-{}
+	parent_( &parent )
+{
+	curr_idx_=1;
+}
 
 ResidueNeighborConstIterator & PolymerBondedNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src ) {
 	debug_assert( dynamic_cast< PolymerBondedNeighborConstIterator const * >( &src ) );
 	PolymerBondedNeighborConstIterator const & my_src( static_cast< PolymerBondedNeighborConstIterator const & >( src ) );
+	base_ = my_src.base_;
 	pos_ = my_src.pos_;
-	tables_ = my_src.tables_;
-	computed_ = my_src.computed_;
+	parent_ = my_src.parent_;
 	return *this;
 }
 
 ResidueNeighborConstIterator const & PolymerBondedNeighborConstIterator::operator ++ () {
-	// Since PolymerBondedEnergyContainers can store only 0 or 1 entries per residue, iterating should result in the end-of-iterators result.
-	base_ = 0;
-	pos_ = 0;
+	curr_idx_++;
 	return *this;
 }
 
 bool PolymerBondedNeighborConstIterator::operator == ( ResidueNeighborConstIterator const & other ) const {
-	return ( residue_iterated_on() == other.residue_iterated_on() &&
+	return (
+		residue_iterated_on() == other.residue_iterated_on() &&
 		neighbor_id() == other.neighbor_id() );
 }
 
@@ -177,7 +173,9 @@ bool PolymerBondedNeighborConstIterator::operator != ( ResidueNeighborConstItera
 }
 
 Size PolymerBondedNeighborConstIterator::upper_neighbor_id() const {
-	return pos_;
+	core::Size other = 0;
+	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	return other;
 }
 
 Size PolymerBondedNeighborConstIterator::lower_neighbor_id() const {
@@ -189,23 +187,25 @@ Size PolymerBondedNeighborConstIterator::residue_iterated_on() const {
 }
 
 Size PolymerBondedNeighborConstIterator::neighbor_id() const {
-	return pos_;
+	core::Size other = 0;
+	if (curr_idx_ <= pos_.size()) other = pos_[curr_idx_];
+	return other;
 }
 
 void PolymerBondedNeighborConstIterator::retrieve_energy( EnergyMap & emap ) const {
-	for ( Size i=1; i<=score_types_.size(); ++i ) {
-		emap[ score_types_[i] ] = (*tables_)[base_][i];
+	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
+		emap[ parent_->score_types()[i] ] = parent_->get_energy( base_ , i );
 	}
 }
 
 void PolymerBondedNeighborConstIterator::accumulate_energy( EnergyMap & emap ) const {
-	for ( Size i=1; i<=score_types_.size(); ++i ) {
-		emap[ score_types_[i] ] += (*tables_)[base_][i];
+	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
+		emap[ parent_->score_types()[i] ] += parent_->get_energy( base_ , i );
 	}
 }
 
 bool PolymerBondedNeighborConstIterator::energy_computed() const {
-	return (*computed_)[ base_ ];
+	return parent_->get_computed( base_ );
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -224,12 +224,10 @@ LREnergyContainerOP PolymerBondedEnergyContainer::clone() const {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 PolymerBondedEnergyContainer::PolymerBondedEnergyContainer(
 	core::pose::Pose const & pose,
-	utility::vector1< ScoreType > const & score_type_in,
-	bool const include_nonpolymeric_residues_in
+	utility::vector1< ScoreType > const & score_type_in
 ) :
 	size_(0),
-	score_types_( score_type_in ),
-	include_nonpolymeric_residues_( include_nonpolymeric_residues_in )
+	score_types_( score_type_in )
 {
 	initialize_peptide_bonded_pair_indices( pose ); //Sets size_ and peptide_bonded_pair_indices_.
 	computed_.resize( size_, false);
@@ -243,12 +241,12 @@ bool PolymerBondedEnergyContainer::empty() const {
 
 bool
 PolymerBondedEnergyContainer::any_neighbors_for_residue( int /*resid*/ ) const {
-	return true; //?? I'm not sure I understand this data structure
+	return true;
 }
 
 bool
 PolymerBondedEnergyContainer::any_upper_neighbors_for_residue( int /*resid*/ ) const {
-	return true; // ?? I'm not sure I understand this data structure
+	return true;
 }
 
 Size
@@ -258,22 +256,43 @@ PolymerBondedEnergyContainer::size() const {
 
 ResidueNeighborConstIteratorOP
 PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
-	if ( resid <= (int)(0) || resid > static_cast<int>(size_) || peptide_bonded_pair_indices_.count(resid) == 0 ) {
-		//If out of range, return iterator matching the _end iterator (no iteration).
-		return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( 0, 0, score_types_, &tables_, &computed_ ) );
+	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
+		//If out of range, return no interactions
+		return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, utility::vector1<core::Size>(), *this ) );
 	}
-	int const beginat (static_cast< int >( peptide_bonded_pair_indices_.at(resid) ) );
-	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, beginat, score_types_, &tables_, &computed_ ) );
+
+	utility::vector1<core::Size> neighbors;
+	std::map <core::Size, core::Size >::const_iterator it = peptide_bonded_pair_indices_.find(resid);
+	if (it != peptide_bonded_pair_indices_.end()) {
+		neighbors.push_back(it->second);
+	}
+	std::map <core::Size, core::Size >::const_iterator itinv = inv_peptide_bonded_pair_indices_.find(resid);
+	if (itinv != inv_peptide_bonded_pair_indices_.end()) {
+		neighbors.push_back(itinv->second);
+	}
+
+	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, neighbors, *this ) );
 }
 
 ResidueNeighborConstIteratorOP
-PolymerBondedEnergyContainer::const_neighbor_iterator_end( int /*resid*/ ) const {
-	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( 0, 0, score_types_, &tables_, &computed_ ) );
+PolymerBondedEnergyContainer::const_neighbor_iterator_end( int resid ) const {
+	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, utility::vector1<core::Size>(), *this ) );
 }
 
 ResidueNeighborConstIteratorOP
 PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const {
-	return const_neighbor_iterator_begin( resid );
+	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
+		//If out of range, return no interactions
+		return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, utility::vector1<core::Size>(), *this ) );
+	}
+
+	utility::vector1<core::Size> neighbors;
+	std::map <core::Size, core::Size >::const_iterator it = peptide_bonded_pair_indices_.find(resid);
+	if (it != peptide_bonded_pair_indices_.end()) {
+		neighbors.push_back(it->second);
+	}
+
+	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, neighbors, *this ) );
 }
 
 ResidueNeighborConstIteratorOP
@@ -284,23 +303,41 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_end( int resid ) con
 //////////////////// non-const versions
 ResidueNeighborIteratorOP
 PolymerBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
-	if ( resid <= (int)(0) || resid > static_cast<int>(size_) || peptide_bonded_pair_indices_.count(resid) == 0 ) {
-		//If out of range, return iterator matching the _end iterator (no iteration).
-		return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( 0, 0, score_types_, &tables_, &computed_ ) );
+	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
+		//If out of range, return no interactions
+		return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, utility::vector1<core::Size>(), *this ) );
 	}
-	int const beginat (static_cast< int >( peptide_bonded_pair_indices_.at(resid) ) );
-	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, beginat, score_types_, &tables_, &computed_ ) );
+
+	utility::vector1<core::Size> neighbors;
+	if (peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end()) {
+		neighbors.push_back(peptide_bonded_pair_indices_[resid]);
+	}
+	if (inv_peptide_bonded_pair_indices_.find(resid) != inv_peptide_bonded_pair_indices_.end()) {
+		neighbors.push_back(inv_peptide_bonded_pair_indices_[resid]);
+	}
+
+	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, neighbors, *this ) );
 }
 
 ResidueNeighborIteratorOP
-PolymerBondedEnergyContainer::neighbor_iterator_end( int /*resid*/ ) {
-	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( 0, 0, score_types_, &tables_, &computed_ ) );
+PolymerBondedEnergyContainer::neighbor_iterator_end( int resid ) {
+	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, utility::vector1<core::Size>(), *this ) );
 }
 
 ResidueNeighborIteratorOP
 PolymerBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	return neighbor_iterator_begin(resid);
+	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
+		//If out of range, return no interactions
+		return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, utility::vector1<core::Size>(), *this ) );
+	}
+
+	utility::vector1<core::Size> neighbors;
+	if (peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end()) {
+		neighbors.push_back(peptide_bonded_pair_indices_[resid]);
+	}
+
+	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, neighbors, *this ) );
 }
 
 ResidueNeighborIteratorOP
@@ -358,13 +395,16 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 	}
 
 	peptide_bonded_pair_indices_.clear();
+	inv_peptide_bonded_pair_indices_.clear();
 	for ( core::Size ir=1; ir<=size_; ++ir ) { //Loop through all resiudes (asymmetric case) or residues in asymmetric unit (symmetric case).
 		core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
 		if ( !other_res ) continue; //These are not connected by normal polymeric connection.
 
 		//OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
 		debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
+		debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
 		peptide_bonded_pair_indices_[ir] =  other_res;
+		inv_peptide_bonded_pair_indices_[other_res] =  ir;
 	}
 }
 
@@ -378,6 +418,8 @@ PolymerBondedEnergyContainer::other_res_index(
 	core::pose::Pose const &pose,
 	core::Size const this_res_index
 ) const {
+	//fpd if this logic is updated, the logic in CartesianBondedEnergy::eval_intrares_energy must similarly be updated
+
 	if ( !pose.residue(this_res_index).type().is_polymer() ) return 0; //Skip this residue if it's not a polymer.
 	if ( !pose.residue(this_res_index).has_upper_connect() ) return 0; //Skip this residue if it's not one that has an upper_connect.
 	core::Size const other_res( pose.residue(this_res_index).residue_connection_partner( pose.residue(this_res_index).upper_connect().index() ) ); //Index of residue connected to at upper_conect.
@@ -411,7 +453,7 @@ core::scoring::PolymerBondedEnergyContainer::save( Archive & arc ) const {
 	arc( CEREAL_NVP( tables_ ) ); // utility::vector1<utility::vector1<Real> >
 	arc( CEREAL_NVP( computed_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( peptide_bonded_pair_indices_ ) ); // std::map<Size,Size>
-	arc( CEREAL_NVP( include_nonpolymeric_residues_ ) ); // _Bool
+	arc( CEREAL_NVP( inv_peptide_bonded_pair_indices_ ) ); // std::map<Size,Size>
 }
 
 /// @brief Automatically generated deserialization method
@@ -423,7 +465,7 @@ core::scoring::PolymerBondedEnergyContainer::load( Archive & arc ) {
 	arc( tables_ ); // utility::vector1<utility::vector1<Real> >
 	arc( computed_ ); // utility::vector1<_Bool>
 	arc( peptide_bonded_pair_indices_ ); // std::map<Size,Size>
-	arc( include_nonpolymeric_residues_ ); // _Bool
+	arc( inv_peptide_bonded_pair_indices_ ); // std::map<Size,Size>
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::PolymerBondedEnergyContainer );

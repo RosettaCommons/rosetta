@@ -1586,7 +1586,7 @@ CartesianBondedEnergy::setup_for_scoring(
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types, true /*include iteration list for non-polymer-bonded residues*/ ) );
+		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -1637,15 +1637,81 @@ CartesianBondedEnergy::residue_pair_energy(
 }
 
 
-// because of preproline potential, everything is done in res_pair
 void
 CartesianBondedEnergy::eval_intrares_energy(
-	conformation::Residue const &,
-	pose::Pose const &,
+	conformation::Residue const &rsd,
+	pose::Pose const &pose,
 	ScoreFunction const &,
-	EnergyMap &
+	EnergyMap &emap
 ) const
 {
+	using namespace numeric;
+
+	//(fpd) NOTE: this must agree with logic in PolymerBondedEnergyContainer::other_res_index
+	//    that is, this function must be evaluated for all residues that do not take part in a two-body energy
+	bool dont_score_this = ( rsd.type().is_polymer() && rsd.has_upper_connect() );
+	if (dont_score_this) {
+		core::Size const other_res( rsd.residue_connection_partner( rsd.upper_connect().index() ) );
+		dont_score_this = (
+			other_res != 0
+			&& pose.residue(other_res).type().is_polymer()
+	  	&& pose.residue(other_res).has_lower_connect()
+	  	&& pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) == rsd.seqpos()
+		);
+	}
+	if (dont_score_this) return;
+
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ;
+	Real phi=0,psi=0;
+	if ( rsd.is_protein() ) {
+		phi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(1));
+		psi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(2));
+	}
+
+	ResidueCartBondedParameters const & rsdparams = db_->parameters_for_restype( rsd.type(), false );
+
+	if ( rsd.aa() != core::chemical::aa_vrt ) {
+		eval_singleres_energy(rsd, rsdparams, phi, psi, pose, emap ); // calls singleres improper
+	}
+}
+
+
+void
+CartesianBondedEnergy::eval_intrares_derivatives(
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & /*res_data_cache*/,
+	pose::Pose const & pose,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & atom_derivs
+) const {
+	using namespace numeric;
+
+	//(fpd) NOTE: this must agree with logic in PolymerBondedEnergyContainer::other_res_index
+	//    that is, this function must be evaluated for all residues that do not take part in a two-body energy
+	bool dont_score_this = ( rsd.type().is_polymer() && rsd.has_upper_connect() );
+	if (dont_score_this) {
+		core::Size const other_res( rsd.residue_connection_partner( rsd.upper_connect().index() ) );
+		dont_score_this = (
+			other_res != 0
+			&& pose.residue(other_res).type().is_polymer()
+	  	&& pose.residue(other_res).has_lower_connect()
+	  	&& pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) == rsd.seqpos()
+		);
+	}
+	if (dont_score_this) return;
+
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ;
+	Real phi=0,psi=0;
+	if ( rsd.is_protein() ) {
+		phi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(1));
+		psi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(2));
+	}
+
+	ResidueCartBondedParameters const & rsdparams = db_->parameters_for_restype( rsd.type(), false );
+
+	if ( rsd.aa() != core::chemical::aa_vrt ) {
+		eval_singleres_derivatives( rsd, rsdparams, phi, psi, weights, atom_derivs );
+	}
 }
 
 ///////////////////////////
@@ -1657,7 +1723,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
 	ResPairMinimizationData const & /*min_data*/,
-	pose::Pose const & pose,
+	pose::Pose const & /*pose*/,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
@@ -1665,7 +1731,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 {
 	using namespace numeric;
 
-	debug_assert( rsd2.seqpos() >= rsd1.seqpos() );
+	debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	bool preproline = (rsd2.aa()==core::chemical::aa_pro || rsd2.aa()==core::chemical::aa_dpr); //Is rsd2 either D-proline or L-proline?
 
 
@@ -1695,14 +1761,15 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	// If residue1 and 2 are the same (signal used by the PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
 
+	//fpd now handled by intrares
 	// cterm special case
-	Size nres = pose.total_residue();
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
-	}
-	if ( rsd2.seqpos() == nres ) {
-		eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
-	}
+	//Size nres = pose.total_residue();
+	//if ( core::pose::symmetry::is_symmetric(pose) ) {
+	//	nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	//}
+	//if ( rsd2.seqpos() == nres ) {
+	//	eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
+	//}
 
 	if ( rsd1.aa() == core::chemical::aa_vrt ) return;
 
@@ -1905,8 +1972,10 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	debug_assert( rsd2.seqpos() >= rsd1.seqpos() );
 
 	core::Size resid = rsd1.seqpos();
-	bool preproline = pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
-		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
+	bool preproline =
+		rsd1.seqpos() != rsd2.seqpos() &&
+		pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
+		(pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_pro || pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_dpr);
 
 
 	//Multipliers for D-amino acids:
@@ -1931,27 +2000,22 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 		eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
 	}
 
+	//fpd this logic is now handled in eval_intrares_energy
+	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the last residue
+	//Size nres = pose.total_residue();
+	//if ( core::pose::symmetry::is_symmetric(pose) ) {
+	//	nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	//}
+	//if ( rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt ) {
+	//	// get one body component for the last residue
+	//	eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
+	//}
+
 	// If residue1 and 2 are the same, stop here to avoid double-counting.
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return; //Used for residues that aren't polymer-bonded.
-
-	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the
-	// last residue
-	Size nres = pose.total_residue();
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
-	}
-	if ( rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt ) {
-		// get one body component for the last residue
-		eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
-	}
-
 	if ( rsd1.aa() == core::chemical::aa_vrt ) return;
-
-	// bail out if the residues aren't bonded or we cross a cutpoint
-	if ( !rsd1.is_bonded(rsd2) ) { return; }
-	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
-	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
+	if ( !rsd1.is_bonded(rsd2) ) return;
+	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
+	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
 
 	/// evaluate all the inter-residue energy components
 	eval_residue_pair_energies( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, phi2, psi2, pose, emap );

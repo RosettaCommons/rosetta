@@ -410,6 +410,14 @@ public:
 		EnergyMap &
 	) const;
 
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & res_data_cache,
+		pose::Pose const & pose,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
 
 	void
 	eval_residue_pair_derivatives(
@@ -439,7 +447,7 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
 
 	virtual
 	bool

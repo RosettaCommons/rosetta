@@ -51,10 +51,8 @@ public:
 
 	PolymerBondedNeighborIterator(
 		Size const base_in,
-		Size const pos_in,
-		utility::vector1< ScoreType > const & st,
-		utility::vector1< utility::vector1< Real > > * table_in,
-		utility::vector1< bool > * computed_in
+		utility::vector1< Size > const & positions_in,
+		PolymerBondedEnergyContainer & parent
 	);
 
 	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src );
@@ -86,12 +84,9 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	Size base_;
-	Size pos_;
-	utility::vector1< ScoreType > score_types_;
-	utility::vector1< utility::vector1< Real > > * tables_;
-	utility::vector1< bool > * computed_;
-
+	Size base_, curr_idx_;
+	utility::vector1< Size > pos_; // positions to loop over (bonded neighbors of base)
+	PolymerBondedEnergyContainer *parent_;
 };
 
 
@@ -104,10 +99,8 @@ public:
 
 	PolymerBondedNeighborConstIterator(
 		Size const base_in,
-		Size const pos_in,
-		utility::vector1< ScoreType > const & st,
-		utility::vector1< utility::vector1< Real > > const * table_in,
-		utility::vector1< bool > const * computed_in
+		utility::vector1< Size > const & positions_in,
+		PolymerBondedEnergyContainer const & parent
 	);
 
 	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src );
@@ -133,12 +126,9 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	Size base_;
-	Size pos_;
-	utility::vector1< ScoreType > score_types_;
-	utility::vector1< utility::vector1< Real > > const * tables_;
-	utility::vector1< bool > const * computed_;
-
+	Size base_, curr_idx_;
+	utility::vector1< Size > pos_; // positions to loop over (bonded neighbors of base)
+	PolymerBondedEnergyContainer const *parent_;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -155,7 +145,7 @@ public:
 	/// @details Initializes PolymerBondedEnergyContainer from a pose, facilitating calculations involving non-canonical connections
 	/// (e.g. terminal peptide bonds).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	PolymerBondedEnergyContainer( core::pose::Pose const & pose, utility::vector1< ScoreType > const & score_type_in, bool const include_nonpolymeric_residues_in = false );
+	PolymerBondedEnergyContainer( core::pose::Pose const & pose, utility::vector1< ScoreType > const & score_type_in );
 
 	virtual
 	bool empty() const;
@@ -208,6 +198,32 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool is_valid( core::pose::Pose const &pose ) const;
 
+	utility::vector1< ScoreType > const &
+	score_types() const {
+		return score_types_;
+	}
+
+	bool
+	get_computed(core::Size resnum) const {
+		return computed_[resnum];
+	}
+
+	void
+	set_computed(core::Size resnum, bool val) {
+		computed_[resnum] = val;
+	}
+
+	core::Real
+	get_energy(core::Size resnum, core::Size scoreterm) const {
+		return (tables_[resnum][scoreterm]);
+	}
+
+	void
+	set_energy(core::Size resnum, core::Size scoreterm, core::Real E) {
+		tables_[resnum][scoreterm] = E;
+	}
+
+
 private:
 	/// @brief Given a pose, set up a list of pairs of peptide-bonded residues.
 	/// @details The first index is the lower residue (the residue contributing the carboxyl/UPPER_CONNECT) and the second is the
@@ -246,12 +262,8 @@ private:
 	/// geometry.
 	std::map <core::Size, core::Size > peptide_bonded_pair_indices_;
 
-	/// @brief Should we include residues in the peptide_bonded_pair_indices_ list that are not polymer-bonded to
-	/// anything?
-	/// @details The CartesianBondedEnergy requires this, or it won't iterate over nonpolymeric residues.  If these
-	/// are included, they are stored in peptide_bonded_pair_indices_ as <N, N>, where N is the index of the nonbonded
-	/// residue.  False by default.
-	bool include_nonpolymeric_residues_;
+	/// @brief Inverse of the map above
+	std::map <core::Size, core::Size > inv_peptide_bonded_pair_indices_;
 
 #ifdef    SERIALIZATION
 protected:

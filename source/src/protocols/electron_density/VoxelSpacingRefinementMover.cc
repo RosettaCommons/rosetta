@@ -207,7 +207,7 @@ VoxelSpacingMultifunc::dfunc( core::optimization::Multivec const & vars, core::o
 	core::Real CC = (sumCO - sumC*sumO/N) / ( varC * varO );
 
 	for ( core::Size i=1; i<=6; ++i ) {
-		core::Size i_eff = std::min( i, vars.size() );
+		core::Size i_eff = std::min( i, static_cast< core::Size >( vars.size() ) );
 		core::Real dvarO_i = (dsumO2[i] - 2*sumO*dsumO[i]/N) / (2*varO);
 		dE_dvars[i_eff] += -100.0 * ( (dsumCO[i] - sumC*dsumO[i]/N) / ( varC * varO ) - CC*dvarO_i / varO );
 	}

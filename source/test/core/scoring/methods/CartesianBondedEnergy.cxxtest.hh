@@ -176,6 +176,7 @@ public:
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, emap );
+			cartbond_energy.eval_intrares_energy( trpcage.residue( 20 ), trpcage, sfxn, emap );
 			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.431813105970174, 1e-12 );
 		}
 
