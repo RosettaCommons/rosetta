@@ -792,7 +792,8 @@ ProteinUpstreamBuilder::build(
 					/// are still valid since (by construction) the chi upstream has not changed from the
 					/// previous iteration.
 					for ( Size kk = ii_nchi - n_chi_needing_update + 1; kk <= ii_nchi; ++kk ) {
-						chitip_frames[ kk ] = chitip_frames[ kk - 1 ] *
+						chitip_frames[ kk ] =
+							chitip_frames[ kk - 1 ] *
 							geom.pre_chitip_transform( kk ) *
 							additional_chi_samples.frame( kk, lex[ kk ] ) *
 							geom.ht_for_chitip_atom( kk ); // matrix * matrix * matrix * matrix
@@ -989,7 +990,9 @@ ProteinUpstreamBuilder::recover_hits(
 					chitip_frames[ 0 ] = initialize_rescoords( ii, rescoords, build_point );
 
 					for ( Size kk = 1; kk <= ii_nchi; ++kk ) {
-						chitip_frames[ kk ] = chitip_frames[ kk - 1 ] *
+						chitip_frames[ kk ] =
+							chitip_frames[ kk - 1 ] *
+							geom.pre_chitip_transform( kk ) *
 							additional_chi_samples.frame( kk, lex[ kk ] ) *
 							geom.ht_for_chitip_atom( kk ); // matrix * matrix * matrix
 						rescoords.set_xyz( geom.chitip_atom( kk ), chitip_frames[ kk ].point());
