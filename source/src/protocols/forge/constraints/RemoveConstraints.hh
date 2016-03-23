@@ -74,7 +74,7 @@ public:
 private:
 	protocols::moves::ConstraintGeneratorOP generator_;
 	std::string generator_id_;
-}; //class NtoC_RCG
+}; //class RemoveConstraints
 
 
 } //namespace constraints
@@ -82,4 +82,4 @@ private:
 } //namespace protocols
 
 
-#endif // INCLUDED_protocols_forge_constraints_NtoC_RCG_HH
+#endif // INCLUDED_protocols_forge_constraints_RemoveConstraints_hh

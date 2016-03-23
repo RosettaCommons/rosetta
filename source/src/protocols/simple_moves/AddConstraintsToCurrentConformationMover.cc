@@ -266,7 +266,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	coord_dev_ = tag->getOption< core::Real >( "coord_dev", coord_dev_ );
 	bound_width_ = tag->getOption< core::Real >( "bound_width", bound_width_ );
 	min_seq_sep_ = tag->getOption< core::Size>( "min_seq_sep", min_seq_sep_ );
-	cst_weight_ = tag->getOption< core::Real >( "cst_weight" );
+	cst_weight_ = tag->getOption< core::Real >( "cst_weight", cst_weight_ );
 	CA_only_ = tag->getOption< bool >( "CA_only", CA_only_ );
 	bb_only_ = tag->getOption< bool >( "bb_only", bb_only_ );
 	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
@@ -277,6 +277,15 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	if ( tag->hasOption( "task_operations" ) ) {
 		TR.Warning << "WARNING: task_operations only active for proteins" << std::endl;
 		parse_task_operations( tag, datamap, filters, movers, pose );
+	}
+
+	core::select::residue_selector::ResidueSelectorCOP selector = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
+	if ( selector ) residue_selector( selector );
+
+	if ( tag->hasOption( "task_operations" ) && tag->hasOption( "residue_selector" ) ) {
+		std::stringstream msg;
+		msg << "AddConstraintsToCurrentConformationMover::parse_my_tag(): 'task_operations' and 'residue_selector' cannot both be specified." << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
 }
 
