@@ -278,6 +278,7 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 	} else {
 		utility_exit_with_message("A stored task with the name " + task_name_ + " already exists; you must set overwrite flag to true to overwrite." );
 	}
+	compound_task_.clear();
 }
 
 void
