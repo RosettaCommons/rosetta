@@ -559,6 +559,10 @@ CloudPDBWriter::write_match_groups()
 		core::Size allmodelcount(0), num_files_this_group(1), modelcount(2), atomcounter(0);
 		bool all_hitset_iterators_at_end( false );
 		//UpstreamHitSets const & us_hitset_ref( match_groups_ushits_[ ii ] );
+
+		core::io::StructFileRepOptionsOP pdb_writer_options( new core::io::StructFileRepOptions );
+		pdb_writer_options->set_skip_connect_info( true );
+
 		while ( ! all_hitset_iterators_at_end ) {
 			all_hitset_iterators_at_end = true;
 			bool modeltag_written( false );
@@ -572,7 +576,7 @@ CloudPDBWriter::write_match_groups()
 					modeltag_written = true;
 				}
 				core::conformation::ResidueCOP conf = coordinate_cacher()->upstream_conformation_for_hit( jj, fake_hit(*us_hitset_its_[jj] ) );
-				core::io::pdb::dump_pdb_residue( *conf, atomcounter, file_out );
+				core::io::pdb::dump_pdb_residue( *conf, atomcounter, file_out, pdb_writer_options );
 				//TR <<"nm upstream res for cstid " << jj << "; ";
 				us_hitset_its_[jj]++;
 			} //jj loop over all geom csts
