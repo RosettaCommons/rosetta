@@ -55,7 +55,8 @@ RestrictNativeResiduesOperation::RestrictNativeResiduesOperation():
 	TaskOperation(),
 	reference_pose_( /* NULL */ ),
 	verbose_( false ),
-	prevent_repacking_( 0 )
+	prevent_repacking_( 0 ),
+	invert_( 0 )
 {
 }
 
@@ -220,9 +221,9 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Native PDB not specified." );
 	}
-	if ( tag->hasOption("invert") ) {
-		invert_ = tag->getOption< bool >( "invert", false );
-	}
+	
+	invert_ = tag->getOption< bool >( "invert", invert_ );
+
 }
 
 } // TaskOperations
