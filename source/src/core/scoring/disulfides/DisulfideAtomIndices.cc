@@ -39,7 +39,7 @@ namespace disulfides {
 DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) :
 	derivative_atom_types_( res.natoms(), NO_DERIVATIVES_FOR_ATOM )
 {
-	core::chemical::ResidueType rt = res.type();
+	core::chemical::ResidueType const & rt = res.type();
 
 	std::string disulf_atom_name = rt.get_disulfide_atom_name();
 	disulf_atom_index_ = rt.has( disulf_atom_name ) ? res.atom_index( disulf_atom_name ) : 0;
