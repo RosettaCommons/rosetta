@@ -182,10 +182,24 @@ MakeLayerMover::apply( core::pose::Pose & pose ) {
 	pdbinfo_new->set_crystinfo(ci);
 	pose.pdb_info( pdbinfo_new );
 
-	// force symmetrization
-	core::kinematics::Jump j = pose.jump( monomer_jumps[ base_monomer ] );
+	//fpd foldtree above assumes no monomer jumps
+	//fpd here, we reinitialize the foldtree to let the SymmetryInfo machinery take care of
+	//    monomer jumps
+	//fpd this also has the advantage of renumbering jumps in a consistent way so that
+	//    all symmetric foldtree manipulations work well with symm poses made from this function
+	core::kinematics::FoldTree ft = core::conformation::symmetry::get_asymm_unit_fold_tree(pose.conformation());
+	core::conformation::symmetry::symmetrize_fold_tree(pose.conformation(), ft);
+	pose.fold_tree( ft );
 
-	pose.set_jump( monomer_jumps[ base_monomer ], j );
+	// force symmetrization
+	core::conformation::symmetry::SymmetryInfoCOP symminfo_new =
+		dynamic_cast<core::conformation::symmetry::SymmetricConformation const & >( pose.conformation()).Symmetry_Info();
+	for ( core::Size i=pose.fold_tree().num_jump(); i>=1; --i ) {
+		if ( symminfo_new->jump_is_independent(i) && symminfo_new->jump_clones(i).size() > 0 ) {
+			core::kinematics::Jump j_i = pose.jump( i );
+			pose.set_jump( i, j_i );
+		}
+	}
 
 	// update disulf info
 	pose.conformation().detect_disulfides();
@@ -202,6 +216,7 @@ MakeLayerMover::place_near_origin (
 	Vector com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) {
 		com += pose.residue(i).xyz("CA");
+		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 	com /= nres;
 
@@ -212,6 +227,7 @@ MakeLayerMover::place_near_origin (
 			mindis2 = dis2;
 			rootpos = i;
 		}
+		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 
 	Size nsymm = wg_.nsymmops();
@@ -312,19 +328,25 @@ MakeLayerMover::add_monomers_to_layer(
 	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.total_residue () );
 
 	monomer_jumps.clear();
+	Size n_framework_jumps = pose.fold_tree().num_jump();
+
 	Size nres_protein(0);
 	for ( Size i=1; i<= num_monomers; ++i ) {
 		//std::cerr << "inserting " << i << " of " << num_monomers << std::endl;
 		Size const anchor( monomer_anchors[i] + nres_protein ); // since we've already done some insertions
 		Size const old_nres_protein( nres_protein );
 		pose.insert_residue_by_jump( monomer_pose.residue(rootpos), old_nres_protein+1, anchor ); ++nres_protein;
-		for ( Size i=rootpos-1; i>=1; --i ) {
-			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(i), old_nres_protein+1, false ); ++nres_protein;
+		for ( Size j=rootpos-1; j>=1; --j ) {
+			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(j), old_nres_protein+1, false ); ++nres_protein;
 		}
-		for ( Size i=rootpos+1; i<= monomer_pose.total_residue(); ++i ) {
-			pose.append_polymer_residue_after_seqpos( monomer_pose.residue(i), nres_protein, false ); ++nres_protein;
+		for ( Size j=rootpos+1; j<= monomer_pose.total_residue(); ++j ) {
+			if ( monomer_pose.residue(j).is_lower_terminus() ) {
+				pose.insert_residue_by_jump( monomer_pose.residue(j), nres_protein+1, nres_protein ); ++nres_protein;
+			} else {
+				pose.append_polymer_residue_after_seqpos( monomer_pose.residue(j), nres_protein, false ); ++nres_protein;
+			}
 		}
-		monomer_jumps.push_back( pose.fold_tree().num_jump() );
+		monomer_jumps.push_back( n_framework_jumps+i );
 	}
 	for ( Size i=1; i<= num_monomers; ++i ) {
 		pose.conformation().insert_chain_ending( nres_monomer*i );
