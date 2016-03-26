@@ -793,6 +793,7 @@ sources = {
 		"ResidueRanges",
 		"ResidueSelector",
 		"ResidueSelectorFactory",
+		"ResidueVector",
 		"SecondaryStructureSelector",
 		"TrueResidueSelector",
 		"util",
