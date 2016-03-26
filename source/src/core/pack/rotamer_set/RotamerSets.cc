@@ -452,19 +452,22 @@ RotamerSets::precompute_two_body_energies(
 				uint const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
 				if ( jj == 0 ) continue; // Andrew, remove this magic number! (it's the signal that jj_resid is not "molten")
 
-				FArray2D< core::PackerEnergy > pair_energy_table(
-					nrotamers_for_moltenres_[ jj ],
-					nrotamers_for_moltenres_[ ii ], 0.0 );
+				uint const iiprime( ii < jj ? ii : jj );
+				uint const jjprime( ii < jj ? jj : ii );
 
-				RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ ii ];
-				RotamerSetCOP jj_rotset = set_of_rotamer_sets_[ jj ];
+				FArray2D< core::PackerEnergy > pair_energy_table(
+					nrotamers_for_moltenres_[ jjprime ],
+					nrotamers_for_moltenres_[ iiprime ], 0.0 );
+
+				RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ iiprime ];
+				RotamerSetCOP jj_rotset = set_of_rotamer_sets_[ jjprime ];
 
 				(*lr_iter)->evaluate_rotamer_pair_energies(
 					*ii_rotset, *jj_rotset, pose, scfxn, scfxn.weights(), pair_energy_table );
 
-				if ( ! pig->get_edge_exists( ii, jj ) ) { pig->add_edge( ii, jj ); }
-				pig->add_to_two_body_energies_for_edge( ii, jj, pair_energy_table );
-				if ( finalize_edges ) pig->declare_edge_energies_final( ii, jj );
+				if ( ! pig->get_edge_exists( iiprime, jjprime ) ) { pig->add_edge( iiprime, jjprime ); }
+				pig->add_to_two_body_energies_for_edge( iiprime, jjprime, pair_energy_table );
+				if ( finalize_edges ) pig->declare_edge_energies_final( iiprime, jjprime );
 			}
 		}
 	}

@@ -66,6 +66,11 @@ sources = {
 		"ContactMap",
 	],
 
+	"cyclic_peptide_predict" : [
+		"SimpleCycpepPredictApplication",
+		"SimpleCycpepPredictApplication_betanov15",
+	],
+
 	"docking" : [
 		"DockingTest",
 		"SetupDockingFoldTree",
@@ -541,6 +546,8 @@ testinputfiles = [
 	"comparative_modeling/1f4pA.pdb",
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",
+	"cyclic_peptide_predict/native.pdb",
+	"cyclic_peptide_predict/seq.txt",
 	"denovo_design/disulf_test.pdb",
 	"denovo_design/test_pdbcomp.pdb",
 	"denovo_design/test_sd.xml",

@@ -221,7 +221,7 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Native PDB not specified." );
 	}
-	
+
 	invert_ = tag->getOption< bool >( "invert", invert_ );
 
 }
