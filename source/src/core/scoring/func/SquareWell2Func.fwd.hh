@@ -29,8 +29,8 @@ typedef utility::pointer::shared_ptr< SquareWell2Func > SquareWell2FuncOP;
 typedef utility::pointer::shared_ptr< SquareWell2Func const > SquareWell2FuncCOP;
 
 //class CircularSquareWell2Func;
-//typedef utility::pointer::owning_ptr< CircularSquareWell2Func > CircularSquareWell2FuncOP;
-//typedef utility::pointer::owning_ptr< CircularSquareWell2Func const > CircularSquareWell2FuncCOP;
+//typedef utility::pointer::shared_ptr< CircularSquareWell2Func > CircularSquareWell2FuncOP;
+//typedef utility::pointer::shared_ptr< CircularSquareWell2Func const > CircularSquareWell2FuncCOP;
 
 }
 }

@@ -36,8 +36,8 @@ template < class T >
 class ArrayPool;
 
 
-typedef utility::pointer::owning_ptr< ArrayPool< platform::Real > > RealArrayPoolOP;
-typedef utility::pointer::owning_ptr< ArrayPool< platform::Real > const > RealArrayPoolCOP;
+typedef utility::pointer::shared_ptr< ArrayPool< platform::Real > > RealArrayPoolOP;
+typedef utility::pointer::shared_ptr< ArrayPool< platform::Real > const > RealArrayPoolCOP;
 
 }
 }

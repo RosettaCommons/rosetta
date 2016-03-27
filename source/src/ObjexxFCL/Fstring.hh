@@ -1839,18 +1839,18 @@ equali( char const c, Fstring const & s );
 
 
 /// @brief Fstring == Fstring Case-Optionally?
-bool
-equal( Fstring const & s, Fstring const & t, bool const exact_case );
+//bool
+//equal( Fstring const & s, Fstring const & t, bool exact_case );
 
 
 /// @brief Fstring == char Case-Optionally?
-bool
-equal( Fstring const & s, char const c, bool const exact_case );
+//bool
+//equal( Fstring const & s, char const c, bool exact_case );
 
 
 /// @brief char == Fstring Case-Optionally?
-bool
-equal( char const c, Fstring const & s, bool const exact_case );
+//bool
+//equal( char const c, Fstring const & s, bool exact_case );
 
 
 /// @brief Fstring <= Fstring

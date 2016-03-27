@@ -23,10 +23,10 @@ namespace methods {
 
 class MMBondLengthEnergy;
 
-typedef  utility::pointer::access_ptr< MMBondLengthEnergy > MMBondLengthEnergyAP;
-typedef  utility::pointer::access_ptr< MMBondLengthEnergy const > MMBondLengthEnergyCAP;
-typedef  utility::pointer::owning_ptr< MMBondLengthEnergy > MMBondLengthEnergyOP;
-typedef  utility::pointer::owning_ptr< MMBondLengthEnergy const > MMBondLengthEnergyCOP;
+typedef  utility::pointer::weak_ptr< MMBondLengthEnergy > MMBondLengthEnergyAP;
+typedef  utility::pointer::weak_ptr< MMBondLengthEnergy const > MMBondLengthEnergyCAP;
+typedef  utility::pointer::shared_ptr< MMBondLengthEnergy > MMBondLengthEnergyOP;
+typedef  utility::pointer::shared_ptr< MMBondLengthEnergy const > MMBondLengthEnergyCOP;
 
 } // namespace methods
 } // namespace scoring

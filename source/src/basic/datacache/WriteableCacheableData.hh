@@ -55,6 +55,8 @@ public:
 	virtual
 	std::string datatype() const = 0;
 
+	WriteableCacheableDataOP shared_from_this() { return utility::pointer::static_pointer_cast<WriteableCacheableData>( CacheableData::shared_from_this() ); }
+
 };
 
 

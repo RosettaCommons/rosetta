@@ -28,8 +28,8 @@ namespace membrane {
 	
 /// @brief Membrane Residue Pair Energy Term
 class MPPairEnergy;
-typedef utility::pointer::owning_ptr< MPPairEnergy > MPPairEnergyOP;
-typedef utility::pointer::owning_ptr< MPPairEnergy const > MPPairEnergyCOP;
+typedef utility::pointer::shared_ptr< MPPairEnergy > MPPairEnergyOP;
+typedef utility::pointer::shared_ptr< MPPairEnergy const > MPPairEnergyCOP;
 
 } // membrane
 } // scoring

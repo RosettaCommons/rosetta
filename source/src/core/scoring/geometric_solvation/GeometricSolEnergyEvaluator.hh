@@ -110,8 +110,8 @@ public:
 		pose::Pose const & pose,
 		Real & energy,
 		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS,
-		hbonds::HBEvalTuple & hbe = hbonds::DUMMY_HBE
+		hbonds::HBondDerivs & deriv = core::scoring::hbonds::DUMMY_DERIVS,
+		hbonds::HBEvalTuple & hbe = core::scoring::hbonds::DUMMY_HBE
 	) const;
 
 	void
@@ -123,8 +123,8 @@ public:
 		pose::Pose const & pose,
 		Real & energy,
 		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS,
-		hbonds::HBEvalTuple & hbe = hbonds::DUMMY_HBE
+		hbonds::HBondDerivs & deriv = core::scoring::hbonds::DUMMY_DERIVS,
+		hbonds::HBEvalTuple & hbe = core::scoring::hbonds::DUMMY_HBE
 	) const;
 
 	void
@@ -254,7 +254,7 @@ private:
 		Size const & polar_nb,
 		Size const & occ_nb,
 		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
+		hbonds::HBondDerivs & deriv = core::scoring::hbonds::DUMMY_DERIVS
 	) const;
 
 	inline

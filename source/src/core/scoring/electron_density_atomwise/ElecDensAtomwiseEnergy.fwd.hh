@@ -23,8 +23,8 @@ namespace electron_density_atomwise {
 
 class ElecDensAtomwiseEnergy;
 
-typedef utility::pointer::owning_ptr< ElecDensAtomwiseEnergy > ElecDensAtomwiseEnergyOP;
-typedef utility::pointer::owning_ptr< ElecDensAtomwiseEnergy const > ElecDensAtomwiseEnergyCOP;
+typedef utility::pointer::shared_ptr< ElecDensAtomwiseEnergy > ElecDensAtomwiseEnergyOP;
+typedef utility::pointer::shared_ptr< ElecDensAtomwiseEnergy const > ElecDensAtomwiseEnergyCOP;
 
 } // electron_density_atomwise
 } // scoring

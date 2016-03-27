@@ -28,8 +28,8 @@ typedef utility::pointer::shared_ptr< FadeFunc > FadeFuncOP;
 typedef utility::pointer::shared_ptr< FadeFunc const > FadeFuncCOP;
 
 //class CircularFadeFunc;
-//typedef utility::pointer::owning_ptr< CircularFadeFunc > CircularFadeFuncOP;
-//typedef utility::pointer::owning_ptr< CircularFadeFunc const > CircularFadeFuncCOP;
+//typedef utility::pointer::shared_ptr< CircularFadeFunc > CircularFadeFuncOP;
+//typedef utility::pointer::shared_ptr< CircularFadeFunc const > CircularFadeFuncCOP;
 
 }
 }

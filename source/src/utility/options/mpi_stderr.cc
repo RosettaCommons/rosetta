@@ -20,13 +20,13 @@
 
 // C++ headers
 #include <iostream>
-#include <set>
 
 namespace utility {
 namespace options {
 
 
-void mpi_safe_std_err( std::string msg ) {
+void mpi_safe_std_err( std::string const &msg )
+{
 #ifdef  __native_client__
 	throw( std::string( msg ) ); // exceptions provide a good mechanism to get the rror message back to where the browser can display it. stdout/stderr are useless here.
 #endif
@@ -44,4 +44,3 @@ void mpi_safe_std_err( std::string msg ) {
 
 }
 }
-

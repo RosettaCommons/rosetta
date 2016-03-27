@@ -37,8 +37,8 @@
 #include <map>
 #include <list>
 
-#include <utility/OrderedTuple.fwd.hh>
-#include <utility/fixedsizearray1.fwd.hh>
+#include <utility/OrderedTuple.hh>
+#include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
 
 

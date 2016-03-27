@@ -563,33 +563,24 @@ public: // Swap
 
 
 	/// @brief swap( vectorL, vectorL )
+	template< platform::SSize LL, typename AA >
 	friend
-	inline
 	void
-	swap( vectorL & a, vectorL & b )
-	{
-		static_cast< super & >( a ).swap( static_cast< super & >( b ) );
-	}
+	swap( vectorL<LL, AA> & a, vectorL<LL, AA> & b );
 
 
 	/// @brief swap( vectorL, std::vector )
+	template< platform::SSize LL, typename AA >
 	friend
-	inline
 	void
-	swap( vectorL & a, super & b )
-	{
-		static_cast< super & >( a ).swap( b );
-	}
+	swap( vectorL<LL, AA> & a, std::vector< bool, AA > & b );
 
 
 	/// @brief swap( std::vector, vectorL )
+	template< platform::SSize LL, typename AA >
 	friend
-	inline
 	void
-	swap( super & a, vectorL & b )
-	{
-		a.swap( static_cast< super & >( b ) );
-	}
+	swap( std::vector< bool, AA > & a, vectorL<LL, AA> & b );
 
 
 private: // Static fields
@@ -721,20 +712,26 @@ operator >( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 /// @brief swap( vectorL, vectorL )
 template< platform::SSize L, typename A >
 void
-swap( vectorL< L, bool, A > & a, vectorL< L, bool, A > & b );
-
+swap( vectorL< L, bool, A > & a, vectorL< L, bool, A > & b )
+{
+	static_cast< std::vector< bool, A > & >( a ).swap( static_cast< std::vector< bool, A > & >( b ) );
+}
 
 /// @brief swap( vectorL, std::vector )
 template< platform::SSize L, typename A >
 void
-swap( vectorL< L, bool, A > & a, std::vector< bool, A > & b );
-
+swap( vectorL< L, bool, A > & a, std::vector< bool, A > & b )
+{
+	static_cast< std::vector< bool, A > & >( a ).swap( b );
+}
 
 /// @brief swap( std::vector, vectorL )
 template< platform::SSize L, typename A >
 void
-swap( std::vector< bool, A > & a, vectorL< L, bool, A > & b );
-
+swap( std::vector< bool, A > & a, vectorL< L, bool, A > & b )
+{
+	a.swap( static_cast< std::vector< bool, A > & >( b ) );
+}
 
 } // namespace utility
 

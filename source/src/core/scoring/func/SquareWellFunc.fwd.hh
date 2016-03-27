@@ -28,8 +28,8 @@ typedef utility::pointer::shared_ptr< SquareWellFunc > SquareWellFuncOP;
 typedef utility::pointer::shared_ptr< SquareWellFunc const > SquareWellFuncCOP;
 
 //class CircularSquareWellFunc;
-//typedef utility::pointer::owning_ptr< CircularSquareWellFunc > CircularSquareWellFuncOP;
-//typedef utility::pointer::owning_ptr< CircularSquareWellFunc const > CircularSquareWellFuncCOP;
+//typedef utility::pointer::shared_ptr< CircularSquareWellFunc > CircularSquareWellFuncOP;
+//typedef utility::pointer::shared_ptr< CircularSquareWellFunc const > CircularSquareWellFuncCOP;
 
 }
 }

@@ -540,66 +540,31 @@ public: // Friend
 
 
 	/// @brief Dot Product
+	template< typename U >
 	friend
-	inline
-	T
-	dot_product( FArray1 const & a, FArray1 const & b )
-	{
-		assert( equal_dimensions( a, b ) );
-		T sum( T( 0 ) );
-		for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
-			sum += a( i ) * b( i );
-		}
-		return sum;
-	}
+	U
+	dot_product( FArray1<U> const & a, FArray1<U> const & b );
 
 
 	/// @brief Dot Product
+	template< typename U >
 	friend
-	inline
-	T
-	dot( FArray1 const & a, FArray1 const & b )
-	{
-		assert( equal_dimensions( a, b ) );
-		T sum( T( 0 ) );
-		for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
-			sum += a( i ) * b( i );
-		}
-		return sum;
-	}
+	U
+	dot( FArray1<U> const & a, FArray1<U> const & b );
 
 
 	/// @brief Distance
+	template< typename U >
 	friend
-	inline
-	T
-	distance( FArray1 const & a, FArray1 const & b )
-	{
-		assert( equal_dimensions( a, b ) );
-		T distance_sq( T( 0 ) );
-		for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
-			T const distance_i( a( i ) - b( i ) );
-			distance_sq += distance_i * distance_i;
-		}
-		return std::sqrt( distance_sq );
-	}
+	U
+	distance( FArray1<U> const & a, FArray1<U> const & b );
 
 
 	/// @brief Distance Squared
+	template< typename U >
 	friend
-	inline
-	T
-	distance_squared( FArray1 const & a, FArray1 const & b )
-	{
-		assert( equal_dimensions( a, b ) );
-		T distance_sq( T( 0 ) );
-		for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
-			T const distance_i( a( i ) - b( i ) );
-			distance_sq += distance_i * distance_i;
-		}
-		return distance_sq;
-	}
-
+	U
+	distance_squared( FArray1<U> const & a, FArray1<U> const & b );
 
 protected: // Functions
 
@@ -665,6 +630,64 @@ bool
 equal_dimensions( FArray1< U > const & a, FArray1< V > const & b )
 {
 	return ( a.I() == b.I() );
+}
+
+
+/// @brief Dot Product
+template< typename U >
+U
+dot_product( FArray1<U> const & a, FArray1<U> const & b )
+{
+	assert( equal_dimensions( a, b ) );
+	U sum( U( 0 ) );
+	for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
+		sum += a( i ) * b( i );
+	}
+	return sum;
+}
+
+
+/// @brief Dot Product
+template< typename U >
+U
+dot( FArray1<U> const & a, FArray1<U> const & b )
+{
+	assert( equal_dimensions( a, b ) );
+	U sum( U( 0 ) );
+	for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
+		sum += a( i ) * b( i );
+	}
+	return sum;
+}
+
+
+/// @brief Distance
+template< typename U >
+U
+distance( FArray1<U> const & a, FArray1<U> const & b )
+{
+	assert( equal_dimensions( a, b ) );
+	U distance_sq( U( 0 ) );
+	for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
+		U const distance_i( a( i ) - b( i ) );
+		distance_sq += distance_i * distance_i;
+	}
+	return std::sqrt( distance_sq );
+}
+
+
+/// @brief Distance Squared
+template< typename U >
+U
+distance_squared( FArray1<U> const & a, FArray1<U> const & b )
+{
+	assert( equal_dimensions( a, b ) );
+	U distance_sq( U( 0 ) );
+	for ( int i = a.l(), e = a.u(); i <= e; ++i ) {
+		U const distance_i( a( i ) - b( i ) );
+		distance_sq += distance_i * distance_i;
+	}
+	return distance_sq;
 }
 
 

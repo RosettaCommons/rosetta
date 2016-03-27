@@ -52,6 +52,8 @@ public:
 	virtual ~CacheableStringFloatMap(){};
 	virtual CacheableDataOP clone() const { return CacheableDataOP( new CacheableStringFloatMap(*this) ); }
 
+	CacheableStringFloatMapOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableStringFloatMap>( CacheableData::shared_from_this() ); }
+
 	virtual std::map< std::string, float > & map(){ return map_; }
 	virtual const std::map< std::string, float > & map() const { return map_; }
 private:

@@ -23,7 +23,7 @@ namespace rna {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA centroid information inside the pose.
 class RNA_FilteredBaseBaseInfo;
-typedef utility::pointer::owning_ptr< RNA_FilteredBaseBaseInfo > RNA_FilteredBaseBaseInfoOP;
+typedef utility::pointer::shared_ptr< RNA_FilteredBaseBaseInfo > RNA_FilteredBaseBaseInfoOP;
 
 } //rna
 } //scoring

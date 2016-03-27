@@ -64,6 +64,8 @@ public:
 		return map_;
 	}
 
+	CacheableStringMapOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableStringMap>( CacheableData::shared_from_this() ); }
+
 private:
 
 	std::map< std::string, std::string > map_;

@@ -105,6 +105,9 @@ public:
 		map_[ data->datatype() ].insert( data );
 	}
 
+	WriteableCacheableMapOP shared_from_this() { return utility::pointer::static_pointer_cast<WriteableCacheableMap>( CacheableData::shared_from_this() ); }
+
+
 private:
 
 	DataMap map_;

@@ -23,7 +23,7 @@ namespace silent {
 
 class SequenceFactory;
 
-typedef utility::pointer::owning_ptr< SequenceFactory > SequenceFactoryOP;
+typedef utility::pointer::shared_ptr< SequenceFactory > SequenceFactoryOP;
 
 } // namespace silent
 } // namespace io

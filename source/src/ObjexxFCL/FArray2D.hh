@@ -779,13 +779,10 @@ public: // Friend
 
 
 	/// @brief Swap
+	template< typename U >
 	friend
-	inline
 	void
-	swap( FArray2D & a, FArray2D & b )
-	{
-		a.swap( b );
-	}
+	swap( FArray2D<U> & a, FArray2D<U> & b );
 
 
 public: // Generator
@@ -913,20 +910,10 @@ public: // Generator
 
 
 	/// @brief Transposed
+	template< typename U >
 	friend
-	inline
-	FArray2D
-	transposed( Super const & a )
-	{
-		assert( a.square() );
-		FArray2D aT( a.I1(), a.I2() );
-		for ( int i = a.l1(), ie = a.u1(); i <= ie; ++i ) {
-			for ( int j = a.l2(), je = a.u2(); j <= je; ++j ) {
-				aT( i, j ) = a( j, i );
-			}
-		}
-		return aT;
-	}
+	FArray2D<U>
+	transposed( FArray2< U > const & a );
 
 
 protected: // Functions
@@ -1103,6 +1090,30 @@ operator /( FArray2< T > const & a, T const & t );
 template< typename T >
 FArray2D< T >
 transposed( FArray2< T > const & a );
+
+
+template< typename T >
+FArray2D<T>
+transposed( FArray2< T > const & a )
+{
+	assert( a.square() );
+	FArray2D<T> aT( a.I1(), a.I2() );
+	for ( int i = a.l1(), ie = a.u1(); i <= ie; ++i ) {
+		for ( int j = a.l2(), je = a.u2(); j <= je; ++j ) {
+			aT( i, j ) = a( j, i );
+		}
+	}
+	return aT;
+}
+
+
+/// @brief Swap
+template< typename T >
+void
+swap( FArray2D<T> & a, FArray2D<T> & b )
+{
+	a.swap( b );
+}
 
 
 } // namespace ObjexxFCL

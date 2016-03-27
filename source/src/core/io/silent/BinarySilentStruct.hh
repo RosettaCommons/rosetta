@@ -38,6 +38,11 @@ namespace core {
 namespace io {
 namespace silent {
 
+class BinarySilentStruct;
+
+typedef utility::pointer::shared_ptr< BinarySilentStruct > BinarySilentStructOP;
+
+
 /// why this inheritance pathway? this makes no sense!
 //class BinarySilentStruct : public ProteinSilentStruct {
 class BinarySilentStruct : public SilentStruct {
@@ -55,6 +60,8 @@ public:
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
 	);
+
+	BinarySilentStructOP shared_from_this() { return utility::pointer::static_pointer_cast<BinarySilentStruct>( SilentStruct::shared_from_this() ); }
 
 	virtual SilentStructOP clone() const {
 		return SilentStructOP( new BinarySilentStruct( *this ) );

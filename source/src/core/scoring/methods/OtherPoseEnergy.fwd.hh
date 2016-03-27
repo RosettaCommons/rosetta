@@ -21,11 +21,11 @@
 namespace core {
 namespace scoring {
 namespace methods {
-	
-	class OtherPoseEnergy;
-	typedef utility::pointer::owning_ptr< OtherPoseEnergy > OtherPoseEnergyOP;
-	typedef utility::pointer::owning_ptr< OtherPoseEnergy const > OtherPoseEnergyCOP;
-	
+
+class OtherPoseEnergy;
+typedef utility::pointer::shared_ptr< OtherPoseEnergy > OtherPoseEnergyOP;
+typedef utility::pointer::shared_ptr< OtherPoseEnergy const > OtherPoseEnergyCOP;
+
 } //methods 
 } //scoring 
 } //core 

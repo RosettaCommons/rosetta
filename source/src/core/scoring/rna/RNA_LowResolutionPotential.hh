@@ -97,9 +97,9 @@ public:
 		Distance const x, // used in fading
 		Distance const y, // used in fading
 		Distance const z, // used in fading
-		Real & deriv_x = dummy_deriv,
-		Real & deriv_y = dummy_deriv,
-		Real & deriv_z = dummy_deriv ) const;
+		Real & deriv_x = RNA_LowResolutionPotential::dummy_deriv,
+		Real & deriv_y = RNA_LowResolutionPotential::dummy_deriv,
+		Real & deriv_z = RNA_LowResolutionPotential::dummy_deriv ) const;
 
 	void
 	eval_atom_derivative_base_base(
@@ -229,9 +229,9 @@ private:
 
 	Real get_rna_axis_score(
 		Real const cos_theta,
-		Real & deriv = dummy_deriv ) const;
+		Real & deriv = RNA_LowResolutionPotential::dummy_deriv ) const;
 
-	Real get_rna_stagger_score( Distance const height, Real & deriv = dummy_deriv ) const;
+	Real get_rna_stagger_score( Distance const height, Real & deriv = RNA_LowResolutionPotential::dummy_deriv ) const;
 
 	Real get_rna_basepair_xy(
 		Distance const x,
@@ -241,21 +241,21 @@ private:
 		conformation::Residue const & res_i,
 		conformation::Residue const & res_j,
 		bool const deriv_check = true,
-		Real & deriv_x = dummy_deriv,
-		Real & deriv_y = dummy_deriv,
-		Real & deriv_z = dummy_deriv ) const;
+		Real & deriv_x = RNA_LowResolutionPotential::dummy_deriv,
+		Real & deriv_y = RNA_LowResolutionPotential::dummy_deriv,
+		Real & deriv_z = RNA_LowResolutionPotential::dummy_deriv ) const;
 
 	Real
 	get_rna_backbone_backbone_score(
 		Distance const & r,
 		Size const & atom_num_j_bin,
-		Real & deriv = dummy_deriv ) const;
+		Real & deriv = RNA_LowResolutionPotential::dummy_deriv ) const;
 
 	Real
 	get_rna_repulsive_score(
 		Distance const & r,
 		Size const & atom_num_j_bin,
-		Real & deriv = dummy_deriv ) const;
+		Real & deriv = RNA_LowResolutionPotential::dummy_deriv ) const;
 
 
 	Real
@@ -277,9 +277,9 @@ private:
 		conformation::Residue const & res_i,
 		Size const & atom_num_j_bin,
 		bool const deriv_check = false,
-		Real & deriv_x = dummy_deriv,
-		Real & deriv_y = dummy_deriv,
-		Real & deriv_z = dummy_deriv ) const;
+		Real & deriv_x = RNA_LowResolutionPotential::dummy_deriv,
+		Real & deriv_y = RNA_LowResolutionPotential::dummy_deriv,
+		Real & deriv_z = RNA_LowResolutionPotential::dummy_deriv ) const;
 
 	Real
 	get_rna_backbone_backbone_xy( Distance const x,

@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class CircularGeneral1D_Func;
-typedef utility::pointer::owning_ptr< CircularGeneral1D_Func > CircularGeneral1D_FuncOP;
-typedef utility::pointer::owning_ptr< CircularGeneral1D_Func const > CircularGeneral1D_FuncCOP;
+typedef utility::pointer::shared_ptr< CircularGeneral1D_Func > CircularGeneral1D_FuncOP;
+typedef utility::pointer::shared_ptr< CircularGeneral1D_Func const > CircularGeneral1D_FuncCOP;
 
 }
 }

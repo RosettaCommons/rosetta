@@ -38,8 +38,8 @@ typedef utility::vector1<Pairing> PairingList;
 
 // Types
 // NO PairingsList is not a Ref-Counted class
-//typedef  utility::pointer::owning_ptr< PairingsList >  PairingsListOP;
-//typedef  utility::pointer::owning_ptr< PairingsList const >  PairingsListCOP;
+//typedef  utility::pointer::shared_ptr< PairingsList >  PairingsListOP;
+//typedef  utility::pointer::shared_ptr< PairingsList const >  PairingsListCOP;
 
 
 } //dssp

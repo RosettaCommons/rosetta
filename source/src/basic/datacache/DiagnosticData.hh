@@ -54,6 +54,9 @@ public:
 	virtual ~DiagnosticData(){};
 	virtual CacheableDataOP clone() const { return CacheableDataOP( new DiagnosticData(*this) ); }
 	virtual std::map < std::string, double > const & data() const { return data_; }
+
+	DiagnosticDataOP shared_from_this() { return utility::pointer::static_pointer_cast<DiagnosticData>( CacheableData::shared_from_this() ); }
+
 private:
 	std::map < std::string, double > data_;
 };

@@ -24,7 +24,7 @@ namespace methods {
 
 class ChemicalShiftAnisotropyEnergy;
 
-typedef utility::pointer::owning_ptr< ChemicalShiftAnisotropyEnergy > ChemicalShiftAnisotropyEnergyOP;
+typedef utility::pointer::shared_ptr< ChemicalShiftAnisotropyEnergy > ChemicalShiftAnisotropyEnergyOP;
 
 
 } // methods

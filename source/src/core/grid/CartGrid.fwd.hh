@@ -19,8 +19,8 @@ namespace grid {
 
 template <typename T>
 class CartGrid; // fwd declaration
-//typedef utility::pointer::owning_ptr< Grid > GridOP;
-//typedef utility::pointer::owning_ptr< Grid const > GridCOP;
+//typedef utility::pointer::shared_ptr< Grid > GridOP;
+//typedef utility::pointer::shared_ptr< Grid const > GridCOP;
 }
 }
 

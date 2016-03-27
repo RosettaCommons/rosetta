@@ -40,17 +40,17 @@ namespace gpu {
 #ifndef USEOPENCL
 
 // provide a non-GPU definition of basic::gpu::float4 for function definitions that can be GPU or non-GPU
-typedef struct
+struct float4
 {
 	float x, y, z, w;
-} float4;
+};
 
 #else // USEOPENCL
 
-typedef struct
+struct float4
 {
 	cl_float x, y, z, w;
-} float4;
+};
 
 #define GPU_MEM_RO (CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR)
 #define GPU_MEM_RW (CL_MEM_READ_WRITE)
@@ -65,7 +65,8 @@ typedef struct
 #define GPU_FLOAT 0x0300
 #define GPU_DOUBLE 0x0400
 
-typedef struct {
+struct GPU_DEV
+{
 	int ndevice;
 	char name[128];
 	size_t threads;
@@ -78,9 +79,10 @@ typedef struct {
 	cl_device_id device;
 	cl_command_queue commandQueue;
 
-} GPU_DEV;
+};
 
-typedef struct {
+struct GPU_KERNEL_ARG
+{
 	int type;		// argument type GPU_xxx
 	int size;		// argument size (memory size)
 	union {
@@ -91,7 +93,7 @@ typedef struct {
 	cl_mem mem;		// device memory
 	size_t k_size;	// kernel argument size
 	void *k_p;		// kernel argument pointer
-} GPU_KERNEL_ARG;
+};
 
 class GPU {
 

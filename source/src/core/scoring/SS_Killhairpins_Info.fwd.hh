@@ -24,8 +24,8 @@ namespace scoring {
 struct Hairpins;
 class SS_Killhairpins_Info;
 
-typedef utility::pointer::owning_ptr< SS_Killhairpins_Info > SS_Killhairpins_InfoOP;
-typedef utility::pointer::owning_ptr< SS_Killhairpins_Info const > SS_Killhairpins_InfoCOP;
+typedef utility::pointer::shared_ptr< SS_Killhairpins_Info > SS_Killhairpins_InfoOP;
+typedef utility::pointer::shared_ptr< SS_Killhairpins_Info const > SS_Killhairpins_InfoCOP;
 
 } // namespace scoring
 } // namespace core

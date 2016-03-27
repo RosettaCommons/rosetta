@@ -36,6 +36,10 @@ namespace core {
 namespace io {
 namespace silent {
 
+class ScoreJumpFileSilentStruct;
+
+typedef utility::pointer::shared_ptr< ScoreJumpFileSilentStruct > ScoreJumpFileSilentStructOP;
+
 class ScoreJumpFileSilentStruct : public SilentStruct {
 
 public:
@@ -49,6 +53,8 @@ public:
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
 	);
+
+	ScoreJumpFileSilentStructOP shared_from_this() { return utility::pointer::static_pointer_cast<ScoreJumpFileSilentStruct>( SilentStruct::shared_from_this() ); }
 
 	virtual SilentStructOP clone() const {
 		return SilentStructOP( new ScoreJumpFileSilentStruct( *this ) );

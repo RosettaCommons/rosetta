@@ -63,7 +63,7 @@ BannedFiles = [
     #'utility/pointer', 'utility/pointer/boost', 'utility/pointer/std',
     #'utility/pointer/std', 'utility/pointer/refcount',
     'basic/options/keys', 'utility/exit.hh',
-    'numeric/xyzVector.hh',
+    'numeric/xyzVector.hh', 'numeric/internal',
 
     'numeric/PCA.hh', 'numeric/linear_algebra/GeneralizedEigenSolver.hh', 'protocols/forge/remodel/RemodelGlobalFrame.hh', 'protocols/forge/remodel/RemodelLoopMover.hh',
     'protocols/simple_filters/RepeatParameterFilter.hh',
@@ -105,7 +105,7 @@ BannedFiles = [
     'protocols/jd3',
     'protocols/jd3/job_distributors',
     'protocols/jd3/pose_inputters',
-    'protocols/jd3/pose_outputters',    
+    'protocols/jd3/pose_outputters',
     'protocols/jd3/MoverAndPoseJob.hh',
     'protocols/jd3/JobDistributor.fwd.hh',
     'protocols/jd3/LarvalJob.fwd.hh',

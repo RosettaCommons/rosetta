@@ -24,7 +24,7 @@ namespace scoring {
 namespace func {
 
 class EtableFunc;
-typedef utility::pointer::owning_ptr< EtableFunc > EtableFuncOP;
+typedef utility::pointer::shared_ptr< EtableFunc > EtableFuncOP;
 
 } // constraints
 } // scoring

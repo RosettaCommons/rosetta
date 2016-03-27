@@ -81,8 +81,8 @@ enum BondIsometry
 
 class Bond;
 
-//typedef  utility::pointer::owning_ptr< Bond >  BondOP;
-//typedef  utility::pointer::owning_ptr< Bond const >  BondCOP;
+//typedef  utility::pointer::shared_ptr< Bond >  BondOP;
+//typedef  utility::pointer::shared_ptr< Bond const >  BondCOP;
 //typedef  utility::vector1< BondOP >  BondOPs;
 //typedef  utility::vector1< BondCOP >  BondCOPs;
 

@@ -22,8 +22,8 @@ namespace symmetry {
 
 // Forward
 class SymAtomTreeMinimizer;
-typedef utility::pointer::owning_ptr< AtomTreeMinimizer       > SymAtomTreeMinimizerOP;
-typedef utility::pointer::owning_ptr< AtomTreeMinimizer const > SymAtomTreeMinimizerCOP;
+typedef utility::pointer::shared_ptr< AtomTreeMinimizer       > SymAtomTreeMinimizerOP;
+typedef utility::pointer::shared_ptr< AtomTreeMinimizer const > SymAtomTreeMinimizerCOP;
 
 
 } // symmetry

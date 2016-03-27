@@ -307,14 +307,10 @@ public: // Methods
 
 
 	/// @brief swap( BitVector, BitVector )
+	template <typename U>
 	friend
-	inline
 	void
-	swap( BitVector & a, BitVector & b )
-	{
-		a.bits_.swap( b.bits_ );
-	}
-
+	swap( BitVector<U> & a, BitVector<U> & b );
 
 public: // Properties
 
@@ -458,6 +454,15 @@ operator ==( BitVector< B > const & a, BitVector< B > const & b );
 template< typename B >
 bool
 operator !=( BitVector< B > const & a, BitVector< B > const & b );
+
+
+/// @brief swap( BitVector, BitVector )
+template <typename U>
+void
+swap( BitVector<U> & a, BitVector<U> & b )
+{
+	a.bits_.swap( b.bits_ );
+}
 
 
 } // namespace utility

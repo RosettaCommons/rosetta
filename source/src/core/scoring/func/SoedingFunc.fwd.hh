@@ -24,7 +24,7 @@ namespace scoring {
 namespace func {
 
 class SoedingFunc;
-typedef utility::pointer::owning_ptr< SoedingFunc > SoedingFuncOP;
+typedef utility::pointer::shared_ptr< SoedingFunc > SoedingFuncOP;
 
 }
 }

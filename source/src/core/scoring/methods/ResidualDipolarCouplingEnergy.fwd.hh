@@ -24,7 +24,7 @@ namespace methods {
 
 class ResidualDipolarCouplingEnergy;
 
-typedef utility::pointer::owning_ptr< ResidualDipolarCouplingEnergy > ResidualDipolarCouplingEnergyOP;
+typedef utility::pointer::shared_ptr< ResidualDipolarCouplingEnergy > ResidualDipolarCouplingEnergyOP;
 
 
 } // methods

@@ -248,7 +248,7 @@ public:
 
 	virtual
 	void
-	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< Size >() );
+	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >() );
 
 	/// @brief Declare that a chemical bond exists between two residues
 	/// @details This updates all symmetry copies, so that each one has a chemical

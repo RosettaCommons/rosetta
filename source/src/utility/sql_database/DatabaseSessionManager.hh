@@ -179,7 +179,7 @@ public:
 	sessionOP
 	get_session_sqlite3(
 		std::string const & database,
-		TransactionMode::e transaction_mode=TransactionMode::standard,
+		TransactionMode::e transaction_mode=utility::sql_database::TransactionMode::standard,
 		platform::Size chunk_size=0,
 		bool const readonly=false,
 		platform::SSize db_partition=-1);

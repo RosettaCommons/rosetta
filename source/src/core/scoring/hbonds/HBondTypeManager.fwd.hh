@@ -22,8 +22,8 @@ namespace hbonds{
 
 class HBondTypeManager;
 
-typedef utility::pointer::owning_ptr< HBondTypeManager > HBondTypeManagerOP;
-typedef utility::pointer::owning_ptr< HBondTypeManager const > HBondTypeManagerCOP;
+typedef utility::pointer::shared_ptr< HBondTypeManager > HBondTypeManagerOP;
+typedef utility::pointer::shared_ptr< HBondTypeManager const > HBondTypeManagerCOP;
 
 } //hbonds
 } //scoring

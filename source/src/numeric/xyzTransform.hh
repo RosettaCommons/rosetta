@@ -352,8 +352,8 @@ public:
 	// SoftSurfer makes no warranty for this code, and cannot be held
 	// liable for any real or imagined damage resulting from its use.
 	// Users of this code must verify correctness for their application.
-	typedef struct { Vector P0,P1; } Line;
-	typedef struct { Vector n,V0; } Plane;
+	struct Line { Vector P0,P1; };
+	struct Plane { Vector n,V0; };
 
 	// intersect3D_2Planes(): find the 3D intersection of two planes
 	//    Input:  two planes Pn1 and Pn2

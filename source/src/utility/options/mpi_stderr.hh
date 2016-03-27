@@ -27,7 +27,7 @@ namespace utility {
 namespace options {
 
 
-extern void mpi_safe_std_err( std::string msg );
+void mpi_safe_std_err( std::string const &msg );
 
 }
 }

@@ -20,8 +20,8 @@ namespace core {
 namespace sequence {
 
 class NWAligner;
-typedef utility::pointer::owning_ptr< NWAligner > NWAlignerOP;
-typedef utility::pointer::owning_ptr< NWAligner const > NWAlignerCOP;
+typedef utility::pointer::shared_ptr< NWAligner > NWAlignerOP;
+typedef utility::pointer::shared_ptr< NWAligner const > NWAlignerCOP;
 
 } // sequence
 } // core

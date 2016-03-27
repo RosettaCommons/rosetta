@@ -17,7 +17,7 @@
 #define INCLUDED_core_io_pdb_Record_HH
 
 // Unit header
-#include <core/io/pdb/Field.fwd.hh>
+#include <core/io/pdb/Field.hh>
 
 // C++ headers
 #include <map>

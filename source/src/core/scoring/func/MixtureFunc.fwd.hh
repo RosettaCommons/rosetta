@@ -24,7 +24,7 @@ namespace scoring {
 namespace func {
 
 class MixtureFunc;
-typedef utility::pointer::owning_ptr< MixtureFunc > MixtureFuncOP;
+typedef utility::pointer::shared_ptr< MixtureFunc > MixtureFuncOP;
 
 }
 }

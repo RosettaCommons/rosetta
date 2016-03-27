@@ -23,7 +23,8 @@ namespace nls {
 
 // Compact high-level interface.
 // Collection of control (input) parameters.
-typedef struct {
+struct lm_control_struct
+{
 	double ftol;      // relative error desired in the sum of squares.
 	double xtol;      // relative error between last two approximations.
 	double gtol;      // orthogonality desired between fvec and its derivs.
@@ -32,14 +33,14 @@ typedef struct {
 	int maxcall;      // maximum number of iterations.
 	int scale_diag;   // UNDOCUMENTED, TESTWISE automatical diag rescaling?
 	int printflags;   // OR'ed to produce more noise
-} lm_control_struct;
+};
 
 // Collection of status (output) parameters.
-typedef struct {
+struct lm_status_struct {
 	double fnorm;     // norm of the residue vector fvec.
 	int nfev;       // actual number of iterations.
 	int info;       // status of minimization.
-} lm_status_struct;
+};
 
 // Recommended control parameter settings.
 //const lm_control_struct lm_control_double;

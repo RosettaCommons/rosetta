@@ -124,7 +124,7 @@ get_nearest_neighbor(
 template <class Vertex, class Edge>
 void
 find_neighbors(
-utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 core::Real neighbor_cutoff,
 Strategy strategy = AUTOMATIC
 );
@@ -132,7 +132,7 @@ Strategy strategy = AUTOMATIC
 template <class Vertex, class Edge>
 void
 find_neighbors_restricted(
-utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 core::Real neighbor_cutoff,
 utility::vector1< bool > const & residue_selection,
 Strategy strategy = AUTOMATIC

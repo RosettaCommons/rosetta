@@ -720,13 +720,10 @@ public: // Friend
 
 
 	/// @brief Swap
+	template< typename U >
 	friend
-	inline
 	void
-	swap( FArray1D & a, FArray1D & b )
-	{
-		a.swap( b );
-	}
+	swap( FArray1D<U> & a, FArray1D<U> & b );
 
 
 public: // Generator
@@ -854,37 +851,17 @@ public: // Generator
 
 
 	/// @brief Cross Product of Two 3-Tuple Vectors
+	template< typename U >
 	friend
-	inline
-	FArray1D
-	cross_product( Super const & a, Super const & b )
-	{
-		assert( equal_dimensions( a, b ) );
-		assert( a.size() == 3 );
-		FArray1D c( a.I() );
-		int const x( a.l() ), y( x + 1 ), z( y + 1 );
-		c( x ) = ( a( y ) * b( z ) ) - ( a( z ) * b( y ) );
-		c( y ) = ( a( z ) * b( x ) ) - ( a( x ) * b( z ) );
-		c( z ) = ( a( x ) * b( y ) ) - ( a( y ) * b( x ) );
-		return c;
-	}
+	FArray1D<U>
+	cross_product( FArray1< U > const & a, FArray1< U > const & b );
 
 
 	/// @brief Cross Product of Two 3-Tuple Vectors
+	template< typename U >
 	friend
-	inline
 	FArray1D
-	cross( Super const & a, Super const & b )
-	{
-		assert( equal_dimensions( a, b ) );
-		assert( a.size() == 3 );
-		FArray1D c( a.I() );
-		int const x( a.l() ), y( x + 1 ), z( y + 1 );
-		c( x ) = ( a( y ) * b( z ) ) - ( a( z ) * b( y ) );
-		c( y ) = ( a( z ) * b( x ) ) - ( a( x ) * b( z ) );
-		c( z ) = ( a( x ) * b( y ) ) - ( a( y ) * b( x ) );
-		return c;
-	}
+	cross( FArray1< U > const & a, FArray1< U > const & b );
 
 
 protected: // Functions
@@ -1059,6 +1036,47 @@ cross_product( FArray1< T > const & a, FArray1< T > const & b );
 template< typename T >
 FArray1D< T >
 cross( FArray1< T > const & a, FArray1< T > const & b );
+
+
+	/// @brief Swap
+template< typename T >
+void
+swap( FArray1D<T> & a, FArray1D<T> & b )
+{
+	a.swap( b );
+}
+
+
+/// @brief Cross Product of Two 3-Tuple Vectors
+template< typename T >
+FArray1D<T>
+cross_product( FArray1< T > const & a, FArray1< T > const & b )
+{
+	assert( equal_dimensions( a, b ) );
+	assert( a.size() == 3 );
+	FArray1D<T> c( a.I() );
+	int const x( a.l() ), y( x + 1 ), z( y + 1 );
+	c( x ) = ( a( y ) * b( z ) ) - ( a( z ) * b( y ) );
+	c( y ) = ( a( z ) * b( x ) ) - ( a( x ) * b( z ) );
+	c( z ) = ( a( x ) * b( y ) ) - ( a( y ) * b( x ) );
+	return c;
+}
+
+
+/// @brief Cross Product of Two 3-Tuple Vectors
+template< typename T >
+FArray1D<T>
+cross( FArray1< T > const & a, FArray1< T > const & b )
+{
+	assert( equal_dimensions( a, b ) );
+	assert( a.size() == 3 );
+	FArray1D<T> c( a.I() );
+	int const x( a.l() ), y( x + 1 ), z( y + 1 );
+	c( x ) = ( a( y ) * b( z ) ) - ( a( z ) * b( y ) );
+	c( y ) = ( a( z ) * b( x ) ) - ( a( x ) * b( z ) );
+	c( z ) = ( a( x ) * b( y ) ) - ( a( y ) * b( x ) );
+	return c;
+}
 
 
 } // namespace ObjexxFCL

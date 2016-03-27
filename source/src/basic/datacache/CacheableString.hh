@@ -51,6 +51,9 @@ public:
 	virtual ~CacheableString(){};
 	virtual CacheableDataOP clone() const { return CacheableDataOP( new CacheableString(*this) ); }
 	virtual std::string const & str() const { return str_; }
+
+	CacheableStringOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableString>( CacheableData::shared_from_this() ); }
+
 private:
 	std::string str_;
 };

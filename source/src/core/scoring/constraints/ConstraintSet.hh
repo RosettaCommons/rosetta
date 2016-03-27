@@ -401,7 +401,7 @@ public:
 	add_dof_constraint(
 		DOF_ID const & id,
 		func::FuncOP func,
-		ScoreType const & t = dof_constraint
+		ScoreType const & t = core::scoring::dof_constraint
 	);
 
 	/// @brief Returns all constraints in the set as a flat list, regardless of

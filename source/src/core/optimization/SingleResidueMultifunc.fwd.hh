@@ -23,8 +23,8 @@ namespace optimization {
 
 
 class SingleResidueMultifunc; // fwd declaration
-//typedef utility::pointer::owning_ptr< SingleResidueMultifunc > SingleResidueMultifuncOP;
-//typedef utility::pointer::owning_ptr< SingleResidueMultifunc const > SingleResidueMultifuncCOP;
+//typedef utility::pointer::shared_ptr< SingleResidueMultifunc > SingleResidueMultifuncOP;
+//typedef utility::pointer::shared_ptr< SingleResidueMultifunc const > SingleResidueMultifuncCOP;
 
 
 } // namespace optimization

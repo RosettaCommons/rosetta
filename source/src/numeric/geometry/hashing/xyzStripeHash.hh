@@ -97,7 +97,7 @@ public:
 
 	bool sanity_check() const;
 
-	std::string debug_pdb(Xform const & x=Xform::identity()) const;
+	std::string debug_pdb(Xform const & x=numeric::Xform::identity()) const;
 
 	int nbcount( Vec const & v_in ) const;
 	int nbcount_raw( Vec const & v ) const;

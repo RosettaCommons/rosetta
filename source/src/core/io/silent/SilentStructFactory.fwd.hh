@@ -23,7 +23,7 @@ namespace silent {
 
 class SilentStructFactory;
 
-typedef utility::pointer::owning_ptr< SilentStructFactory > SilentStructFactoryOP;
+typedef utility::pointer::shared_ptr< SilentStructFactory > SilentStructFactoryOP;
 
 } // namespace silent
 } // namespace io

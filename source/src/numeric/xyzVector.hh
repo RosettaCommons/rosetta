@@ -50,8 +50,11 @@
 // C++ headers
 #include <cstdlib>
 
-namespace numeric {
+#ifdef PYROSETTA
+	#include <numeric/xyz.functions.hh>
+#endif
 
+namespace numeric {
 
 /// @brief xyzVector: Fast (x,y,z)-coordinate numeric vector
 template< typename T >
@@ -533,113 +536,66 @@ public: // Methods
 
 
 	/// @brief Add: xyzVector + xyzVector
+	template <typename U>
 	friend
-	inline
 	void
-	add( xyzVector const & a, xyzVector const & b, xyzVector & r )
-	{
-		r.x_ = a.x_ + b.x_;
-		r.y_ = a.y_ + b.y_;
-		r.z_ = a.z_ + b.z_;
-	}
+	add( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r );
 
 
 	/// @brief Add: xyzVector + Value
+	template <typename U>
 	friend
-	inline
 	void
-	add( xyzVector const & v, Value const & t, xyzVector & r )
-	{
-		r.x_ = v.x_ + t;
-		r.y_ = v.y_ + t;
-		r.z_ = v.z_ + t;
-	}
+	add( xyzVector<U> const & v, U const & t, xyzVector<U> & r );
 
 
 	/// @brief Add: Value + xyzVector
+	template <typename U>
 	friend
-	inline
 	void
-	add( Value const & t, xyzVector const & v, xyzVector & r )
-	{
-		r.x_ = t + v.x_;
-		r.y_ = t + v.y_;
-		r.z_ = t + v.z_;
-	}
+	add( U const & t, xyzVector<U> const & v, xyzVector<U> & r );
 
 
 	/// @brief Subtract: xyzVector - xyzVector
+	template <typename U>
 	friend
-	inline
 	void
-	subtract( xyzVector const & a, xyzVector const & b, xyzVector & r )
-	{
-		r.x_ = a.x_ - b.x_;
-		r.y_ = a.y_ - b.y_;
-		r.z_ = a.z_ - b.z_;
-	}
+	subtract( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r );
 
 
 	/// @brief Subtract: xyzVector - Value
+	template <typename U>
 	friend
-	inline
 	void
-	subtract( xyzVector const & v, Value const & t, xyzVector & r )
-	{
-		r.x_ = v.x_ - t;
-		r.y_ = v.y_ - t;
-		r.z_ = v.z_ - t;
-	}
+	subtract( xyzVector<U> const & v, U const & t, xyzVector<U> & r );
 
 
 	/// @brief Subtract: Value - xyzVector
+	template <typename U>
 	friend
-	inline
 	void
-	subtract( Value const & t, xyzVector const & v, xyzVector & r )
-	{
-		r.x_ = t - v.x_;
-		r.y_ = t - v.y_;
-		r.z_ = t - v.z_;
-	}
+	subtract( U const & t, xyzVector<U> const & v, xyzVector<U> & r );
 
 
 	/// @brief Multiply: xyzVector * Value
+	template <typename U>
 	friend
-	inline
 	void
-	multiply( xyzVector const & v, Value const & t, xyzVector & r )
-	{
-		r.x_ = v.x_ * t;
-		r.y_ = v.y_ * t;
-		r.z_ = v.z_ * t;
-	}
+	multiply( xyzVector<U> const & v, U const & t, xyzVector<U> & r );
 
 
 	/// @brief Multiply: Value * xyzVector
+	template <typename U>
 	friend
-	inline
 	void
-	multiply( Value const & t, xyzVector const & v, xyzVector & r )
-	{
-		r.x_ = t * v.x_;
-		r.y_ = t * v.y_;
-		r.z_ = t * v.z_;
-	}
+	multiply( U const & t, xyzVector<U> const & v, xyzVector<U> & r );
 
 
 	/// @brief Divide: xyzVector / Value
+	template <typename U>
 	friend
-	inline
 	void
-	divide( xyzVector const & v, Value const & t, xyzVector & r )
-	{
-		assert( t != Value( 0 ) );
-		Value const inv_t( Value( 1 ) / t );
-		r.x_ = v.x_ * inv_t;
-		r.y_ = v.y_ * inv_t;
-		r.z_ = v.z_ * inv_t;
-	}
+	divide( xyzVector<U> const & v, U const & t, xyzVector<U> & r );
 
 
 	/// @brief Set minimum coordinates wrt another xyzVector
@@ -667,31 +623,17 @@ public: // Methods
 
 
 	/// @brief xyzVector with min coordinates of two xyzVectors
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	min( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			( a.x_ <= b.x_ ? a.x_ : b.x_ ),
-			( a.y_ <= b.y_ ? a.y_ : b.y_ ),
-			( a.z_ <= b.z_ ? a.z_ : b.z_ )
-		);
-	}
+	xyzVector<U>
+	min( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief xyzVector with max coordinates of two xyzVectors
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	max( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			( a.x_ >= b.x_ ? a.x_ : b.x_ ),
-			( a.y_ >= b.y_ ? a.y_ : b.y_ ),
-			( a.z_ >= b.z_ ? a.z_ : b.z_ )
-		);
-	}
+	xyzVector<U>
+	max( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Normalize
@@ -1168,33 +1110,24 @@ public: // Methods
 
 
 	/// @brief Dot product
+	template <typename U>
 	friend
-	inline
-	Value
-	dot( xyzVector const & a, xyzVector const & b )
-	{
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
-	}
+	U
+	dot( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Dot product
+	template <typename U>
 	friend
-	inline
-	Value
-	dot_product( xyzVector const & a, xyzVector const & b )
-	{
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
-	}
+	U
+	dot_product ( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Inner product ( == dot product )
+	template <typename U>
 	friend
-	inline
-	Value
-	inner_product( xyzVector const & a, xyzVector const & b )
-	{
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
-	}
+	U
+	inner_product( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Cross product
@@ -1223,304 +1156,153 @@ public: // Methods
 	}
 
 	/// @brief Cross product
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	cross( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
-			( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
-			( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-		);
-	}
+	xyzVector<U>
+	cross( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Cross product
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	cross_product( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
-			( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
-			( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-		);
-	}
+	xyzVector<U>
+	cross_product( xyzVector<U> const & a, xyzVector<U> const & b );
+
+	/// @brief Cross product: Return via argument (slightly faster)
+	template <typename U>
+	friend
+	void
+	cross( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c );
 
 
 	/// @brief Cross product: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	cross( xyzVector const & a, xyzVector const & b, xyzVector & c )
-	{
-		c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
-		c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
-		c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
-	}
-
-
-	/// @brief Cross product: Return via argument (slightly faster)
-	friend
-	inline
-	void
-	cross_product( xyzVector const & a, xyzVector const & b, xyzVector & c )
-	{
-		c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
-		c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
-		c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
-	}
+	cross_product( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c );
 
 
 	/// @brief Midpoint of 2 xyzVectors
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	midpoint( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			Value( 0.5 * ( a.x_ + b.x_ ) ),
-			Value( 0.5 * ( a.y_ + b.y_ ) ),
-			Value( 0.5 * ( a.z_ + b.z_ ) )
-		);
-	}
+	xyzVector<U>
+	midpoint( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Midpoint of 2 xyzVectors: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	midpoint( xyzVector const & a, xyzVector const & b, xyzVector & m )
-	{
-		m.x_ = Value( 0.5 * ( a.x_ + b.x_ ) );
-		m.y_ = Value( 0.5 * ( a.y_ + b.y_ ) );
-		m.z_ = Value( 0.5 * ( a.z_ + b.z_ ) );
-	}
+	midpoint( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m );
 
 
 	/// @brief Center of 2 xyzVectors
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	center( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			Value( 0.5 * ( a.x_ + b.x_ ) ),
-			Value( 0.5 * ( a.y_ + b.y_ ) ),
-			Value( 0.5 * ( a.z_ + b.z_ ) )
-		);
-	}
+	xyzVector<U>
+	center( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Center of 2 xyzVectors: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	center( xyzVector const & a, xyzVector const & b, xyzVector & m )
-	{
-		m.x_ = Value( 0.5 * ( a.x_ + b.x_ ) );
-		m.y_ = Value( 0.5 * ( a.y_ + b.y_ ) );
-		m.z_ = Value( 0.5 * ( a.z_ + b.z_ ) );
-	}
+	center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m );
 
 
 	/// @brief Center of 3 xyzVectors
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	center( xyzVector const & a, xyzVector const & b, xyzVector const & c )
-	{
-		long double const third( 1.0 / 3.0 );
-		return xyzVector(
-			Value( third * ( a.x_ + b.x_ + c.x_ ) ),
-			Value( third * ( a.y_ + b.y_ + c.y_ ) ),
-			Value( third * ( a.z_ + b.z_ + c.z_ ) )
-		);
-	}
+	xyzVector<U>
+	center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c );
 
 
 	/// @brief Center of 3 xyzVectors: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	center( xyzVector const & a, xyzVector const & b, xyzVector const & c, xyzVector & m )
-	{
-		long double const third( 1.0 / 3.0 );
-		m.x_ = Value( third * ( a.x_ + b.x_ + c.x_ ) );
-		m.y_ = Value( third * ( a.y_ + b.y_ + c.y_ ) );
-		m.z_ = Value( third * ( a.z_ + b.z_ + c.z_ ) );
-	}
-
+	center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> & m );
 
 	/// @brief Center of 4 xyzVectors
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	center( xyzVector const & a, xyzVector const & b, xyzVector const & c, xyzVector const & d )
-	{
-		return xyzVector(
-			Value( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) ),
-			Value( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) ),
-			Value( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) )
-		);
-	}
+	xyzVector<U>
+	center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d );
 
 
 	/// @brief Center of 4 xyzVectors: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	center( xyzVector const & a, xyzVector const & b, xyzVector const & c, xyzVector const & d, xyzVector & m )
-	{
-		m.x_ = Value( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) );
-		m.y_ = Value( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) );
-		m.z_ = Value( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) );
-	}
+	center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d, xyzVector<U> & m );
 
 
 	/// @brief Angle between two vectors (in radians on [ 0, pi ])
+	template <typename U>
 	friend
-	inline
-	Value
-	angle_of( xyzVector const & a, xyzVector const & b )
-	{
-		Value const mag = a.length() * b.length();
-		return ( mag > Value( 0 ) ? std::acos( sin_cos_range( a.dot( b ) / mag ) ) : Value( 0 ) );
-	}
+	U
+	angle_of( xyzVector const & a, xyzVector const & b );
 
 
 	/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
 	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 	///        in other words, the positive angle about b from a to c
+	template <typename U>
 	friend
-	inline
-	Value
-	angle_of( xyzVector const & a, xyzVector const & b, xyzVector const & c )
-	{
-		return angle_of( a - b, c - b );
-	}
+	U
+	angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c );
 
 
 	/// @brief Cosine of angle between two vectors
+	template <typename U>
 	friend
-	inline
-	Value
-	cos_of( xyzVector const & a, xyzVector const & b )
-	{
-		Value const mag = a.length() * b.length();
-		return ( mag > Value( 0 ) ? sin_cos_range( a.dot( b ) / mag ) : Value( 1 ) );
-	}
+	U
+	cos_of( xyzVector const & a, xyzVector const & b );
 
 
 	/// @brief Cosine of angle formed by three consecutive points
 	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 	///        in other words, the positive angle about b from a to c.
+	template <typename U>
 	friend
-	inline
-	Value
-	cos_of( xyzVector const & a, xyzVector const & b, xyzVector const & c )
-	{
-		return cos_of( a - b, c - b );
-	}
+	U
+	cos_of( xyzVector const & a, xyzVector const & b, xyzVector const & c );
 
 
 	/// @brief Sine of angle between two vectors
+	template <typename U>
 	friend
-	inline
-	Value
-	sin_of( xyzVector const & a, xyzVector const & b )
-	{
-		return std::sqrt( Value( 1 ) - square( cos_of( a, b ) ) );
-	}
+	U
+	sin_of( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Sine of angle formed by three consecutive points
 	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 	///        in other words, the positive angle about b from a to c
+	template <typename U>
 	friend
-	inline
-	Value
-	sin_of( xyzVector const & a, xyzVector const & b, xyzVector const & c )
-	{
-		return sin_of( a - b, c - b );
-	}
+	U
+	sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c );
 
 	// AMW: for md code
 	// TODO: figure out what this is in fundamental vector operations
+	template <typename U>
 	friend
-	inline
-	xyzVector
-	update_operation( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector(
-			a.y_ * a.y_ * b.x_
-			+ a.z_ * a.z_ * b.x_
-			- a.x_ * a.y_ * b.y_
-			- a.x_ * a.z_ * b.z_,
-
-			a.z_ * a.z_ * b.y_
-			+ a.x_ * a.x_ * b.y_
-			- a.y_ * a.z_ * b.z_
-			- a.y_ * a.x_ * b.x_,
-
-			a.x_ * a.x_ * b.z_
-			+ a.y_ * a.y_ * b.z_
-			- a.z_ * a.x_ * b.x_
-			- a.z_ * a.y_ * b.y_
-
-		);
-	}
+	xyzVector<U>
+	update_operation( xyzVector<U> const & a, xyzVector<U> const & b );
 
 	// AMW: for md code
 	// TODO: figure out what this is in fundamental vector operations
+	template <typename U>
 	friend
-	inline
-	xyzVector
+	xyzVector<U>
 	update_5way_operation(
-		xyzVector const & a,
-		xyzVector const & b,
-		xyzVector const & c,
-		xyzVector const & d,
-		xyzVector const & e
-	) {
-		return xyzVector(
-			- a.y_ * b.y_ * c.x_
-			- a.z_ * b.z_ * c.x_
-			+ a.x_ * b.y_ * c.y_
-			+ a.x_ * b.y_ * c.y_
-			- b.x_ * a.y_ * c.y_
-			+ a.x_ * b.z_ * c.z_
-			+ a.x_ * b.z_ * c.z_
-			- b.x_ * a.z_ * c.z_
-			+ d.z_ * e.y_
-			- d.y_ * e.z_,
-
-			- a.z_ * b.z_ * c.y_
-			- a.x_ * b.x_ * c.y_
-			+ a.y_ * b.z_ * c.z_
-			+ a.y_ * b.z_ * c.z_
-			- b.y_ * a.z_ * c.z_
-			+ a.y_ * b.x_ * c.x_
-			+ a.y_ * b.x_ * c.x_
-			- b.y_ * a.x_ * c.x_
-			+ d.x_ * e.z_
-			- d.z_ * e.x_,
-
-			- a.x_ * b.x_ * c.z_
-			- a.y_ * b.y_ * c.z_
-			+ a.z_ * b.x_ * c.x_
-			+ a.z_ * b.x_ * c.x_
-			- b.z_ * a.x_ * c.x_
-			+ a.z_ * b.x_ * c.y_
-			+ a.z_ * b.x_ * c.y_
-			- b.z_ * a.y_ * c.y_
-			+ d.y_ * e.x_
-			- d.x_ * e.y_
-
-		);
-	}
+		xyzVector<U> const & a,
+		xyzVector<U> const & b,
+		xyzVector<U> const & c,
+		xyzVector<U> const & d,
+		xyzVector<U> const & e
+    );
 
 public: // Properties: predicates
 
@@ -1975,13 +1757,10 @@ public: // Comparison
 
 
 	/// @brief Equal length?
+	template <typename U>
 	friend
-	inline
 	bool
-	equal_length( xyzVector const & a, xyzVector const & b )
-	{
-		return ( a.length_squared() == b.length_squared() );
-	}
+	equal_length( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Not equal length?
@@ -1994,13 +1773,9 @@ public: // Comparison
 
 
 	/// @brief Not equal length?
-	friend
-	inline
+	template <typename U>
 	bool
-	not_equal_length( xyzVector const & a, xyzVector const & b )
-	{
-		return ( a.length_squared() != b.length_squared() );
-	}
+	not_equal_length( xyzVector<U> const & a, xyzVector<U> const & b );
 
 
 	/// @brief Longer?
@@ -2457,13 +2232,468 @@ bool
 not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 
 
-// PyRosetta work around for templates classes
+
+/// @brief Subtract: xyzVector - xyzVector
+template <typename U>
+void
+subtract( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r )
+{
+	r.x_ = a.x_ - b.x_;
+	r.y_ = a.y_ - b.y_;
+	r.z_ = a.z_ - b.z_;
+}
+
+
+/// @brief Subtract: xyzVector - Value
+template <typename U>
+void
+subtract( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
+{
+	r.x_ = v.x_ - t;
+	r.y_ = v.y_ - t;
+	r.z_ = v.z_ - t;
+}
+
+
+/// @brief Subtract: Value - xyzVector
+template <typename U>
+void
+subtract( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
+{
+	r.x_ = t - v.x_;
+	r.y_ = t - v.y_;
+	r.z_ = t - v.z_;
+}
+
+
+/// @brief Multiply: xyzVector * Value
+template <typename U>
+void
+multiply( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
+{
+	r.x_ = v.x_ * t;
+	r.y_ = v.y_ * t;
+	r.z_ = v.z_ * t;
+}
+
+
+/// @brief Multiply: Value * xyzVector
+template <typename U>
+void
+multiply( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
+{
+	r.x_ = t * v.x_;
+	r.y_ = t * v.y_;
+	r.z_ = t * v.z_;
+}
+
+
+/// @brief Dot product
+template< typename T >
+T
+dot_product( xyzVector<T> const & a, xyzVector<T> const & b )
+{
+		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+}
+
+// AMW: for md code
+// TODO: figure out what this is in fundamental vector operations
+template< typename T >
+xyzVector<T>
+update_operation( xyzVector<T> const & a, xyzVector<T> const & b )
+{
+	return xyzVector<T>(
+		a.y_ * a.y_ * b.x_
+		+ a.z_ * a.z_ * b.x_
+		- a.x_ * a.y_ * b.y_
+		- a.x_ * a.z_ * b.z_,
+
+		a.z_ * a.z_ * b.y_
+		+ a.x_ * a.x_ * b.y_
+		- a.y_ * a.z_ * b.z_
+		- a.y_ * a.x_ * b.x_,
+
+		a.x_ * a.x_ * b.z_
+		+ a.y_ * a.y_ * b.z_
+		- a.z_ * a.x_ * b.x_
+		- a.z_ * a.y_ * b.y_
+
+					 );
+}
+
+// AMW: for md code
+// TODO: figure out what this is in fundamental vector operations
+template< typename T >
+xyzVector<T>
+update_5way_operation(
+	xyzVector<T> const & a,
+	xyzVector<T> const & b,
+	xyzVector<T> const & c,
+	xyzVector<T> const & d,
+	xyzVector<T> const & e
+					  ) {
+	return xyzVector<T>(
+		- a.y_ * b.y_ * c.x_
+		- a.z_ * b.z_ * c.x_
+		+ a.x_ * b.y_ * c.y_
+		+ a.x_ * b.y_ * c.y_
+		- b.x_ * a.y_ * c.y_
+		+ a.x_ * b.z_ * c.z_
+		+ a.x_ * b.z_ * c.z_
+		- b.x_ * a.z_ * c.z_
+		+ d.z_ * e.y_
+		- d.y_ * e.z_,
+
+		- a.z_ * b.z_ * c.y_
+		- a.x_ * b.x_ * c.y_
+		+ a.y_ * b.z_ * c.z_
+		+ a.y_ * b.z_ * c.z_
+		- b.y_ * a.z_ * c.z_
+		+ a.y_ * b.x_ * c.x_
+		+ a.y_ * b.x_ * c.x_
+		- b.y_ * a.x_ * c.x_
+		+ d.x_ * e.z_
+		- d.z_ * e.x_,
+
+		- a.x_ * b.x_ * c.z_
+		- a.y_ * b.y_ * c.z_
+		+ a.z_ * b.x_ * c.x_
+		+ a.z_ * b.x_ * c.x_
+		- b.z_ * a.x_ * c.x_
+		+ a.z_ * b.x_ * c.y_
+		+ a.z_ * b.x_ * c.y_
+		- b.z_ * a.y_ * c.y_
+		+ d.y_ * e.x_
+		- d.x_ * e.y_
+
+					 );
+}
+
+/// @brief Angle between two vectors (in radians on [ 0, pi ])
+template <typename U>
+U
+angle_of( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	U const mag = a.length() * b.length();
+	return ( mag > U( 0 ) ? std::acos( sin_cos_range( a.dot( b ) / mag ) ) : U( 0 ) );
+}
+
+
+/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c
+template <typename U>
+U
+angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	return angle_of( a - b, c - b );
+}
+
+
+/// @brief Cosine of angle between two vectors
+template <typename U>
+U
+cos_of( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	U const mag = a.length() * b.length();
+	return ( mag > U( 0 ) ? sin_cos_range( a.dot( b ) / mag ) : U( 1 ) );
+}
+
+
+/// @brief Cosine of angle formed by three consecutive points
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c.
+template <typename U>
+U
+cos_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	return cos_of( a - b, c - b );
+}
+
+
+/// @brief Sine of angle between two vectors
+template <typename U>
+U
+sin_of( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return std::sqrt( U( 1 ) - square( cos_of( a, b ) ) );
+}
+
+
+/// @brief Sine of angle formed by three consecutive points
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c
+template <typename U>
+U
+sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	return sin_of( a - b, c - b );
+}
+
+
+/// @brief xyzVector with min coordinates of two xyzVectors
+template <typename U>
+xyzVector<U>
+min( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return xyzVector<U>(
+		( a.x_ <= b.x_ ? a.x_ : b.x_ ),
+		( a.y_ <= b.y_ ? a.y_ : b.y_ ),
+		( a.z_ <= b.z_ ? a.z_ : b.z_ )
+					 );
+}
+
+
+/// @brief xyzVector with max coordinates of two xyzVectors
+template <typename U>
+xyzVector<U>
+max( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return xyzVector<U>(
+		( a.x_ >= b.x_ ? a.x_ : b.x_ ),
+		( a.y_ >= b.y_ ? a.y_ : b.y_ ),
+		( a.z_ >= b.z_ ? a.z_ : b.z_ )
+					 );
+}
+
+/// @brief Cross product
+template <typename U>
+xyzVector<U>
+cross( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return xyzVector<U>(
+		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
+		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
+		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
+					 );
+}
+
+
+/// @brief Cross product
+template <typename U>
+xyzVector<U>
+cross_product( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return xyzVector<U>(
+		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
+		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
+		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
+					 );
+}
+
+
+/// @brief Cross product: Return via argument (slightly faster)
+template <typename U>
+void
+cross( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c )
+{
+	c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
+	c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
+	c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
+}
+
+
+/// @brief Cross product: Return via argument (slightly faster)
+template <typename U>
+void
+cross_product( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c )
+{
+	c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
+	c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
+	c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
+}
+
+
+/// @brief Midpoint of 2 xyzVectors
+template <typename U>
+xyzVector<U>
+midpoint( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return xyzVector<U>(
+		U( 0.5 * ( a.x_ + b.x_ ) ),
+		U( 0.5 * ( a.y_ + b.y_ ) ),
+		U( 0.5 * ( a.z_ + b.z_ ) )
+					 );
+}
+
+
+/// @brief Midpoint of 2 xyzVectors: Return via argument (slightly faster)
+template <typename U>
+void
+midpoint( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m )
+{
+	m.x_ = U( 0.5 * ( a.x_ + b.x_ ) );
+	m.y_ = U( 0.5 * ( a.y_ + b.y_ ) );
+	m.z_ = U( 0.5 * ( a.z_ + b.z_ ) );
+}
+
+
+/// @brief Center of 2 xyzVectors
+template <typename U>
+xyzVector<U>
+center( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return xyzVector<U>(
+		U( 0.5 * ( a.x_ + b.x_ ) ),
+		U( 0.5 * ( a.y_ + b.y_ ) ),
+		U( 0.5 * ( a.z_ + b.z_ ) )
+					 );
+}
+
+
+/// @brief Center of 2 xyzVectors: Return via argument (slightly faster)
+template <typename U>
+void
+center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m )
+{
+	m.x_ = U( 0.5 * ( a.x_ + b.x_ ) );
+	m.y_ = U( 0.5 * ( a.y_ + b.y_ ) );
+	m.z_ = U( 0.5 * ( a.z_ + b.z_ ) );
+}
+
+
+/// @brief Center of 3 xyzVectors
+template <typename U>
+xyzVector<U>
+center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	long double const third( 1.0 / 3.0 );
+	return xyzVector<U>(
+		U( third * ( a.x_ + b.x_ + c.x_ ) ),
+		U( third * ( a.y_ + b.y_ + c.y_ ) ),
+		U( third * ( a.z_ + b.z_ + c.z_ ) )
+					 );
+}
+
+
+/// @brief Center of 3 xyzVectors: Return via argument (slightly faster)
+template <typename U>
+void
+center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> & m )
+{
+	long double const third( 1.0 / 3.0 );
+	m.x_ = U( third * ( a.x_ + b.x_ + c.x_ ) );
+	m.y_ = U( third * ( a.y_ + b.y_ + c.y_ ) );
+	m.z_ = U( third * ( a.z_ + b.z_ + c.z_ ) );
+}
+
+
+/// @brief Center of 4 xyzVectors
+template <typename U>
+xyzVector<U>
+center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d )
+{
+	return xyzVector<U>(
+		U( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) ),
+		U( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) ),
+		U( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) )
+						);
+}
+
+
+/// @brief Center of 4 xyzVectors: Return via argument (slightly faster)
+template <typename U>
+void
+center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d, xyzVector<U> & m )
+{
+	m.x_ = U( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) );
+	m.y_ = U( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) );
+	m.z_ = U( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) );
+}
+
+
+/// @brief Add: xyzVector + xyzVector
+template <typename U>
+void
+add( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r )
+{
+	r.x_ = a.x_ + b.x_;
+	r.y_ = a.y_ + b.y_;
+	r.z_ = a.z_ + b.z_;
+}
+
+
+/// @brief Add: xyzVector + Value
+template <typename U>
+void
+add( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
+{
+	r.x_ = v.x_ + t;
+	r.y_ = v.y_ + t;
+	r.z_ = v.z_ + t;
+}
+
+
+/// @brief Add: Value + xyzVector
+template <typename U>
+void
+add( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
+{
+	r.x_ = t + v.x_;
+	r.y_ = t + v.y_;
+	r.z_ = t + v.z_;
+}
+
+
+/// @brief Equal length?
+template <typename U>
+bool
+equal_length( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return ( a.length_squared() == b.length_squared() );
+}
+
+/// @brief Not equal length?
+template <typename U>
+bool
+not_equal_length( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return ( a.length_squared() != b.length_squared() );
+}
+
+/// @brief Dot product
+template <typename U>
+U
+dot( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+}
+
+/// @brief Inner product ( == dot product )
+template <typename U>
+U
+inner_product( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+}
+
+/// @brief Divide: xyzVector / Value
+template <typename U>
+void
+divide( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
+{
+	assert( t != U( 0 ) );
+	U const inv_t( U( 1 ) / t );
+	r.x_ = v.x_ * inv_t;
+	r.y_ = v.y_ * inv_t;
+	r.z_ = v.z_ * inv_t;
+}
+
+
+// PyRosetta work around for instantiation of template classes (workaround for GCC inline-friend bug)
+#ifdef PYROSETTA
+//template class xyzVector<double>;
+//template double dot_product( xyzVector< double > const & a, xyzVector< double > const & b );
+#endif
+
 //class xyzVector_Double : public xyzVector< double >
 //{};
 
 // we don't need to define it here, it already defined in numeric/xyzVector.io.hh
 // template< typename T >
 // std::ostream & operator <<(std::ostream & os, xyzVector< T > const & v) { os << "[x=" << v.x() << ", y=" << v.y() << ", z=" << v.z() << "]"; }
+
+
 
 } // namespace numeric
 
@@ -2486,6 +2716,7 @@ struct FArrayTraits < numeric::xyzVector< T > >
 }; // FArrayTraits
 
 }
+
 
 
 #endif // INCLUDED_numeric_xyzVector_HH
