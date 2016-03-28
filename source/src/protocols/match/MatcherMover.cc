@@ -33,7 +33,10 @@
 #include <core/id/AtomID.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -156,11 +159,13 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	tr << " " << ligres_->atom_name( cent );
 	tr << " " << ligres_->atom_name( nbr1 );
 	tr << " " << ligres_->atom_name( nbr2 ) << std::endl;
+	core::scoring::get_score_function()->setup_for_scoring( pose );
 	mtask->set_upstream_pose( pose );
 
 	utility::vector1< core::id::AtomID > oats( 3 );
 	oats[ 1 ] = core::id::AtomID( nbr2, 1 ); oats[ 2 ] = core::id::AtomID( nbr1, 1 ); oats[ 3 ] = core::id::AtomID( cent, 1 );
 
+	core::scoring::get_score_function()->setup_for_scoring( ligpose );
 	mtask->set_downstream_pose( ligpose,  oats );
 	if ( match_positions_.size() != 0 ) {
 		mtask->set_ignore_cmdline_for_build_points( true );

@@ -665,7 +665,7 @@ void SecondaryMatcherToUpstreamResidue::reorder_restypes(
 )
 {
 	utility::vector1< Size > old_2_new( target_restypes_.size(), 0 );
-	//TR << "TARGET RESTYPES: "<< target_restypes_.size() << "UPSTREAMBUILDER RESTYPES: " <<usbuilder.n_restypes_to_build() << std::endl;
+	//TR << "TARGET RESTYPES: "<< target_restypes_.size() << " UPSTREAMBUILDER RESTYPES: " << usbuilder.n_restypes_to_build() << std::endl;
 	runtime_assert( target_restypes_.size() == usbuilder.n_restypes_to_build() );
 	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
 		std::map< core::chemical::ResidueTypeCOP, Size >::const_iterator
