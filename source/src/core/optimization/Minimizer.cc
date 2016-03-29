@@ -638,11 +638,11 @@ Minimizer::lbfgs(
 	// Evaluate the function value and its gradient
 	int func_memory_filled( 1 );
 	Real prior_func_value = func_(X);
-	pf[1] = prior_func_value;
+	pf[1] = FRET = prior_func_value;
 	func_.dfunc(X,G);
 
 	if ( w_rescore ) {  //fpd   reevaluate score after gradient computation
-		pf[1] = prior_func_value = func_(X);
+		pf[1] = FRET = prior_func_value = func_(X);
 	}
 
 	// Compute the direction
