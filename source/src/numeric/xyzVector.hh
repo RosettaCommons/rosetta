@@ -1302,7 +1302,7 @@ public: // Methods
 		xyzVector<U> const & c,
 		xyzVector<U> const & d,
 		xyzVector<U> const & e
-    );
+	);
 
 public: // Properties: predicates
 
@@ -2293,7 +2293,7 @@ template< typename T >
 T
 dot_product( xyzVector<T> const & a, xyzVector<T> const & b )
 {
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+	return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
 }
 
 // AMW: for md code
@@ -2318,7 +2318,7 @@ update_operation( xyzVector<T> const & a, xyzVector<T> const & b )
 		- a.z_ * a.x_ * b.x_
 		- a.z_ * a.y_ * b.y_
 
-					 );
+	);
 }
 
 // AMW: for md code
@@ -2331,7 +2331,7 @@ update_5way_operation(
 	xyzVector<T> const & c,
 	xyzVector<T> const & d,
 	xyzVector<T> const & e
-					  ) {
+) {
 	return xyzVector<T>(
 		- a.y_ * b.y_ * c.x_
 		- a.z_ * b.z_ * c.x_
@@ -2366,7 +2366,7 @@ update_5way_operation(
 		+ d.y_ * e.x_
 		- d.x_ * e.y_
 
-					 );
+	);
 }
 
 /// @brief Angle between two vectors (in radians on [ 0, pi ])
@@ -2440,7 +2440,7 @@ min( xyzVector<U> const & a, xyzVector<U> const & b )
 		( a.x_ <= b.x_ ? a.x_ : b.x_ ),
 		( a.y_ <= b.y_ ? a.y_ : b.y_ ),
 		( a.z_ <= b.z_ ? a.z_ : b.z_ )
-					 );
+	);
 }
 
 
@@ -2453,7 +2453,7 @@ max( xyzVector<U> const & a, xyzVector<U> const & b )
 		( a.x_ >= b.x_ ? a.x_ : b.x_ ),
 		( a.y_ >= b.y_ ? a.y_ : b.y_ ),
 		( a.z_ >= b.z_ ? a.z_ : b.z_ )
-					 );
+	);
 }
 
 /// @brief Cross product
@@ -2465,7 +2465,7 @@ cross( xyzVector<U> const & a, xyzVector<U> const & b )
 		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
 		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
 		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-					 );
+	);
 }
 
 
@@ -2478,7 +2478,7 @@ cross_product( xyzVector<U> const & a, xyzVector<U> const & b )
 		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
 		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
 		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-					 );
+	);
 }
 
 
@@ -2513,7 +2513,7 @@ midpoint( xyzVector<U> const & a, xyzVector<U> const & b )
 		U( 0.5 * ( a.x_ + b.x_ ) ),
 		U( 0.5 * ( a.y_ + b.y_ ) ),
 		U( 0.5 * ( a.z_ + b.z_ ) )
-					 );
+	);
 }
 
 
@@ -2537,7 +2537,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b )
 		U( 0.5 * ( a.x_ + b.x_ ) ),
 		U( 0.5 * ( a.y_ + b.y_ ) ),
 		U( 0.5 * ( a.z_ + b.z_ ) )
-					 );
+	);
 }
 
 
@@ -2562,7 +2562,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 		U( third * ( a.x_ + b.x_ + c.x_ ) ),
 		U( third * ( a.y_ + b.y_ + c.y_ ) ),
 		U( third * ( a.z_ + b.z_ + c.z_ ) )
-					 );
+	);
 }
 
 
@@ -2587,7 +2587,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, 
 		U( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) ),
 		U( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) ),
 		U( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) )
-						);
+	);
 }
 
 

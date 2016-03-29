@@ -429,8 +429,12 @@ SimpleCycpepPredictApplication::run() const {
 #endif
 		}
 
+		//pose->dump_pdb( "before.pdb" ); //DELETE ME -- for debugging only.
+
 		//Undo the cyclic permutation in anticipation of re-aligning to the native:
 		depermute( pose, cyclic_offset );
+
+		//pose->dump_pdb( "after.pdb" ); //DELETE ME -- for debugging only.
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -1092,14 +1096,19 @@ SimpleCycpepPredictApplication::depermute_disulfide_list(
 	core::Size const offset,
 	core::Size const nres
 ) const {
+	//TR << "Depermuting disulfide list." << std::endl; //DELETE ME -- FOR DEBUGGING ONLY.
+
 	new_disulfides.clear();
 	for ( core::Size i=1, imax=old_disulfides.size(); i<=imax; ++i ) {
+		//TR << "Old:\t" << old_disulfides[i].first << "\t" << old_disulfides[i].second << std::endl; //DELETE ME -- FOR DEBUGGING ONLY.
 		core::Size res1( old_disulfides[i].first + offset );
 		if ( res1 > nres ) res1 -= nres;
 		core::Size res2( old_disulfides[i].second + offset );
 		if ( res2 > nres ) res2 -= nres;
 		new_disulfides.push_back( std::pair< core::Size, core::Size >( res1, res2 ) );
+		//TR << "New:\t" << new_disulfides[i].first << "\t" << new_disulfides[i].second << std::endl; //DELETE ME -- FOR DEBUGGING ONLY.
 	}
+
 	return;
 }
 
@@ -1149,7 +1158,7 @@ SimpleCycpepPredictApplication::depermute (
 	depermute_disulfide_list( old_disulfides, new_disulfides, offset, nres );
 
 	//Re-form the disulfides:
-	rebuild_disulfides( pose, new_disulfides );
+	rebuild_disulfides( newpose, new_disulfides );
 
 	//I don't bother to set up cyclic constraints, since we won't be doing any more minimization after calling this function.
 
