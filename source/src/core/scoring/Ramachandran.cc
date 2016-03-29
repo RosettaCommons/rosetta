@@ -793,15 +793,19 @@ Ramachandran::draw_random_phi_psi_from_extra_cdf(
 /// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
 /// to bicubic interpolation setup.  Note that symmetrization is based on the probability table, and carries over to the energy table; the
 /// counts table is left as-is (asymmetric).
+/// @note If dont_use_shap is set to true, tables for all secondary structures are symmetrized.  If it's set to false, then only ss=3 tables
+/// have been loaded, so they're the only ones symmetrized.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
-Ramachandran::symmetrize_gly_table( )
+Ramachandran::symmetrize_gly_table(
+	bool const dont_use_shap
+)
 {
 	if ( TR.visible() ) {
 		TR << "Symmetrizing glycine Ramachandran table." << std::endl;
 	}
 
-	for ( core::Size ss=1; ss<=3; ++ss ) { //Repeat for each secondary structure type
+	for ( core::Size ss=(dont_use_shap ? 1 : 3); ss<=3; ++ss ) { //Repeat for each secondary structure type, if we're not using the Shapovalov tables.  If we are, then only ss=3 has been loaded.
 
 		//For debugging only:
 		if ( TR.Debug.visible() ) {
@@ -1004,7 +1008,7 @@ Ramachandran::read_rama(
 
 	//If the option is set to do this, symmetrize the glycine Ramachandran map.
 	if ( symm_gly ) {
-		symmetrize_gly_table( );
+		symmetrize_gly_table( dont_use_shap );
 	}
 
 	if ( use_bicubic_interpolation ) {

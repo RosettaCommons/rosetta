@@ -295,8 +295,10 @@ private:
 	/// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
 	/// to bicubic interpolation setup.  Note that symmetrization is based on the probability table, and carries over to the energy table; the
 	/// counts table is left as-is (asymmetric).
+	/// @note If dont_use_shap is set to true, tables for all secondary structures are symmetrized.  If it's set to false, then only ss=3 tables
+	/// have been loaded, so they're the only ones symmetrized.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	void symmetrize_gly_table( );
+	void symmetrize_gly_table( bool const dont_use_shap );
 
 	void read_rama_map_file ( utility::io::izstream * iunit );
 	//MaximCode
