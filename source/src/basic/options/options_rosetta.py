@@ -299,7 +299,7 @@ Options = Option_Group( '',
 			Option( 'tags', 'StringVector', desc="Tag(s) of structures to be used from silent-file"),
 			Option( 'user_tags', 'StringVector', desc="user_tag(s) of structures to be used from silent-file"),
 			Option( 'tagfile', 'File',
-					desc='file with list of tags to be resampled from file given with in:resample:silent',
+					desc='File with list of tags tou be used from silent-file. (an -in:file:l for silent file tags.)',
 					default='TAGS' ),
 			Option( 'frag_files', 'FileVector', desc="Fragment input file names", default=[] ),
 #			Option( 'frag_sizes', 'IntegerVector', desc="Fragment file sizes" ),
@@ -1195,12 +1195,12 @@ Options = Option_Group( '',
 		Option( 'failed_job_exception', 'Boolean', default = 'true', desc = 'If JD2 encounters an error during job execution, raise an exception at the end of the run', ),
 		Option( 'max_nstruct_in_memory', 'Integer', default = '1000000', desc = 'If nstruct is set higher than this number, JD2 will keep only this many jobs in memory in the jobs list at any given time (to keep the jobs list from filling up memory).  As jobs complete, they will be deleted and the jobs list will be filled out with new jobs.  This option is intended for exteremly large runs on systems like the Blue Gene/Q supercomputer.  To disable this sort of memory management, set this option to 0.', ),
 		Option( 'sequential_mpi_job_distribution', 'Boolean', default='false', desc = 'If specified, MPI versions of the JobDistributor send jobs to each slave in sequence (slave1, slave2, slave3 etc.).  False by default.  Note that this should NOT be used for production runs; it is intended only for regression tests in which non-sequential job distribution would result in stochastic variations.', ),
-		
+
 		Option( 'grid_ensemble', 'Boolean', default = 'false', desc='Do an ensemble search where each input pdb is used for an ensemble based search.  Instead of each in file outputting nstruct, we use the input files to generate a total nstruct across the inputs'),
 		Option( 'seed_ensemble', 'Boolean', default = 'false', desc='Do an ensemble search as in grid_search, but randomly choose the seeds over the inputs.  See seed_ensemble_weights to weight the inputs'),
 		Option( 'seed_ensemble_weights', 'RealVector', desc = "Specifiy weights for seeded ensemble.  Must match number of inputs.  See also: -seed_ensemble_weights_file"),
 		Option( 'seed_ensemble_weights_file', 'File', desc='A file specifying weights to use for each input structure.  Two columns.  basename with extension (or relative path or full path), weight'),
-	
+
 	), # jd2
 
 	# score function settings  -----------------------------------------------------------
@@ -6636,7 +6636,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 						Option('max_ss_num','Integer', desc="max_ss_num so either 3 (smotif) or 5 (5-ss_models)", default='5'),
 						Option('dump_every_model','Boolean', desc="dump_every_model", default='false'),
 	), # -sewing
-	
+
 	Option_Group( 'SSrbrelax',
 #		Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),
 		Option( 'rb_file','File', desc='rb definition file', default='rb_file' ),
@@ -6872,7 +6872,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('max_sheet_angle','Real', desc="Maximum angle between sheets (CA and CA)"),
 		Option('min_shortest_dis_sidechain_inter_sheet','Real', desc="minimum distance between sidechains between sheets (pairs of strands)"),
 	), # -strand_assembly
-	
+
 	#################################TailSegment####################################################
 	Option_Group( 'TailSegment',
 		Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '100' ),

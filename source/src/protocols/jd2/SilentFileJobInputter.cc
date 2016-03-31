@@ -26,6 +26,7 @@
 #include <basic/options/option.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
+#include <utility/io/izstream.hh>
 
 ///C++ headers
 #include <string>
@@ -113,8 +114,8 @@ void protocols::jd2::SilentFileJobInputter::pose_from_job(
 	}
 }
 
-/// @details this function determines what jobs exist from -in::file::silent and
-/// -in::file::tags
+/// @details this function determines what jobs exist from -in::file::silent,
+/// -in::file::tags and -in::file::tagfile
 void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 	tr.Debug << "SilentFileJobInputter::fill_jobs" << std::endl;
 
@@ -132,8 +133,18 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 			current_fn_ != silent_files.end(); ++current_fn_
 			) {
 		tr.Debug << "reading " << *current_fn_ << std::endl;
-		if ( option[ in::file::tags ].user() ) {
-			utility::vector1< string > const& tags( option[ in::file::tags ]() );
+		if ( option[ in::file::tags ].user() || option[ in::file::tagfile ].user() ) {
+			utility::vector1< string > tags;
+			if ( option[ in::file::tags ].user() ) {
+				tags.append( option[ in::file::tags ]() );
+			}
+			if ( option[ in::file::tagfile ].user() ) {
+				utility::io::izstream tag_file( option[ in::file::tagfile ]() );
+
+				// Add the whitespace separated tag entries to the file
+				std::copy( std::istream_iterator< std::string >( tag_file ), std::istream_iterator< std::string >(),
+					std::back_inserter( tags ) );
+			}
 			sfd_.read_file( *current_fn_, tags );
 		} else {
 			sfd_.read_file( *current_fn_ );
