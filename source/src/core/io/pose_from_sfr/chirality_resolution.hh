@@ -14,25 +14,27 @@
 #ifndef INCLUDED_core_io_pose_from_sfr_chirality_resolution_hh
 #define INCLUDED_core_io_pose_from_sfr_chirality_resolution_hh
 
-// Unit headers
+// Unit header
 #include <core/io/pose_from_sfr/chirality_resolution.fwd.hh> // For typedefs
 
 // Package headers
-#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRep.fwd.hh>
+#include <core/io/ResidueInformation.fwd.hh>
 
 // Project headers
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
+// Utility header
 #include <utility/vector1.hh>
+
+// Numeric header
 #include <numeric/xyzVector.hh>
 
-#include <core/types.hh>
-
-//External headers
-
+//External header
 #include <boost/bimap.hpp>
 
 // C++ headers
@@ -103,10 +105,8 @@ remap_names_on_geometry( NameBimap & mapping,
 	ResidueInformation const & rinfo,
 	chemical::ResidueType const & rsd_type);
 
-
 } // namespace pose_from_sfr
 } // namespace io
 } // namespace core
-
 
 #endif // INCLUDED_core_io_pose_from_sfr_chirality_fixup_HH

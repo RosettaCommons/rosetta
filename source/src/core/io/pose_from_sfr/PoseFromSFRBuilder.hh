@@ -12,17 +12,20 @@
 /// @author Sergey Lyskov
 /// @author Andrew Leaver-Fay
 
+
 #ifndef INCLUDED_core_io_pose_builder_PoseFromSFRBuilder_HH
 #define INCLUDED_core_io_pose_builder_PoseFromSFRBuilder_HH
 
 // Package headers
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
+#include <core/io/ResidueInformation.fwd.hh>
 #include <core/io/pose_from_sfr/chirality_resolution.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/NamedAtomID_Map.hh>
 #include <core/chemical/MergeBehaviorManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -43,7 +46,6 @@
 namespace core {
 namespace io {
 namespace pose_from_sfr {
-
 
 /// @brief The %PoseFromSFRBuilder is responsible for taking a partially-processed representation of a
 /// structure file, a structure-file repersentation or StructFileRep, and it constructs a Pose from it.

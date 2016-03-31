@@ -14,31 +14,27 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_core_io_mmcif_cif_writer_hh
-#define INCLUDED_core_io_mmcif_cif_writer_hh
+#ifndef INCLUDED_core_io_mmcif_cif_writer_HH
+#define INCLUDED_core_io_mmcif_cif_writer_HH
 
+// Package headers
 #include <core/io/StructFileRep.hh>
-#include <core/io/StructFileRepOptions.hh>
+#include <core/io/StructFileReaderOptions.fwd.hh>
 
+// Project header
 #include <core/pose/Pose.hh>
+
 
 namespace core {
 namespace io {
 namespace mmcif {
 
-void
-dump_cif( core::pose::Pose const & pose, std::string const & cif_file);
+void dump_cif( core::pose::Pose const & pose, std::string const & cif_file );
 
+void dump_cif( std::string const & cif_file, StructFileRepOP sfr, StructFileReaderOptions const & options );
 
-void
-dump_cif( std::string const & cif_file, StructFileRepOP sfr, StructFileReaderOptions const & options );
+}  // namespace mmcif
+}  // namespace io
+}  // namespace core
 
-
-
-} //core
-} //io
-} //mmcif
-
-
-#endif //core/io/mmcif_util_hh
-
+#endif  // INCLUDED_core_io_mmcif_cif_writer_HH

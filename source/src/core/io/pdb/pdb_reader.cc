@@ -23,10 +23,9 @@
 // Package headers
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactoring is complete.
+#include <core/io/HeaderInformation.hh>
+#include <core/io/Remarks.hh>
 #include <core/io/NomenclatureManager.hh>
-
-// Project header
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>  // TEMP
 
 // Utility headers
 #include <utility/string_constants.hh>
@@ -132,7 +131,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			// TODO: Add rest of Title Section records.
 			sfr.header()->store_record( records[ i ] );
 
-			// Record contains a remark from the Title Section of the PDB file.
+		// Record contains a remark from the Title Section of the PDB file.
 		} else if ( record_type == "REMARK" )  {
 			RemarkInfo ri;
 			ri.num = atoi( records[ i ][ "remarkNum" ].value.c_str() ),
@@ -146,54 +145,54 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			sfr.remarks()->push_back( ri );
 
 
-			// Primary Structure Section //////////////////////////////////////////
-			// Record contains cross-references from PDB sequence fragments to a corresponding database sequence.
+		// Primary Structure Section //////////////////////////////////////////
+		// Record contains cross-references from PDB sequence fragments to a corresponding database sequence.
 		} else if ( record_type == "DBREF " || record_type == "DBREF1" || record_type == "DBREF2" ||
 				record_type == "SEQADV" ) {
 			//sfr.primary_struct_info()->store_sequence_database_refs( records[ i ] );  // TODO
 			continue;  // TEMP
 
-			// Record contains a linear (or cyclic) primary sequence declaration.
+		// Record contains a linear (or cyclic) primary sequence declaration.
 		} else if ( record_type == "SEQRES" ) {
 			store_chain_sequence_record_in_sfr( records[ i ], sfr );
 
-			// Record that a residue is modified and how.
+		// Record that a residue is modified and how.
 		} else if ( record_type == "MODRES" ) {
 			store_mod_res_record_in_sfr( records[ i ], sfr );
 
 
-			// Heterogen Section //////////////////////////////////////////////////
-			// Record contains heterogen nomenclature information.
+		// Heterogen Section //////////////////////////////////////////////////
+		// Record contains heterogen nomenclature information.
 		} else if ( record_type == "HETNAM" ) {
-			store_heterogen_names_in_sfr( records[ i ], sfr );
+			store_heterogen_name_record_in_sfr( records[ i ], sfr );
 
-			// Record contains heterogen synonym information.
+		// Record contains heterogen synonym information.
 		} else if ( record_type == "HETSYN" ) {
 			store_heterogen_synonym_record_in_sfr( records[ i ], sfr );
 
-			// Record contains formula information.
+		// Record contains formula information.
 		} else if ( record_type == "FORMUL" ) {
 			store_formula_record_in_sfr( records[ i ], sfr );
 
 
-			// Secondary Structure Section ////////////////////////////////////////
-			// Record contains helix definitions.
+		// Secondary Structure Section ////////////////////////////////////////
+		// Record contains helix definitions.
 		} else if ( record_type == "HELIX " ) {
 			// TODO: Store HELIX record types here.
 			continue;
 
-			// Record contains sheet definitions.
+		// Record contains sheet definitions.
 		} else if ( record_type == "SHEET " ) {
 			// TODO: Store SHEET record types here.
 			continue;
 
 
-			// Connectivity Annotation Section ////////////////////////////////////
-			// Record contains disulfide linkage information.
+		// Connectivity Annotation Section ////////////////////////////////////
+		// Record contains disulfide linkage information.
 		} else if ( record_type == "SSBOND" ) {
 			store_ssbond_record_in_sfr( records[ i ], sfr );
 
-			// Record contains nonstandard polymer linkage information.
+		// Record contains nonstandard polymer linkage information.
 		} else if ( record_type == "LINK  " ) {
 			store_link_record_in_sfr( records[ i ], sfr );
 
@@ -201,19 +200,19 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			store_cis_peptide_record_in_sfr( records[ i ], sfr );
 
 
-			// Miscellaneous Features Section /////////////////////////////////////
+		// Miscellaneous Features Section /////////////////////////////////////
 		} else if ( record_type == "SITE  " ) {
 			// TODO: Store SITE record types here.
 			continue;
 
-			// Crystallographic and Coordinate Transformation Section /////////////
-			// Record contains crystal information.
+		// Crystallographic and Coordinate Transformation Section /////////////
+		// Record contains crystal information.
 		} else if ( records[i]["type"].value == "CRYST1" )  {
 			store_crystallographic_parameter_record_in_sfr( records[ i ], sfr );
 
 
-			// Coordinate Section /////////////////////////////////////////////////
-			// Record contains multimodel PDBs.
+		// Coordinate Section /////////////////////////////////////////////////
+		// Record contains multimodel PDBs.
 		} else if ( record_type == "MODEL " ) {
 			if ( stop_reading_coordinate_section ) continue;
 
@@ -238,7 +237,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 				}
 			}
 
-			// Record contains atom information.
+		// Record contains atom information.
 		} else if ( record_type == "ATOM  " || record_type == "HETATM" ) {
 			if ( stop_reading_coordinate_section ) continue;
 
@@ -433,35 +432,38 @@ store_mod_res_record_in_sfr( Record modres_record, StructFileRep & sfr )
 
 
 // Parse .pdb HETNAM text field to extract full resID and convert into SFR data.
-/// @remarks Called by store_heterogen_names_in_sfr().
+/// @remarks Called by store_heterogen_name_record_in_sfr().
 void
-store_base_residue_type_name_in_sfr( std::string const & text_field, StructFileRep & sfr )
+store_base_residue_type_name_in_sfr( std::string const & hetID, std::string const & text_field, StructFileRep & sfr )
 {
 	using namespace std;
 
-	string const chainID( string( text_field.begin(), text_field.begin() + 1 ) );  // 1 character for chainID
-	string const resSeq( string( text_field.begin() + 1, text_field.begin() + 5 ) );  // 4 characters for resSeq
-	string const iCode( string( text_field.begin() + 5, text_field.begin() + 6 ) );  // 1 character for iCode
+	if ( text_field.size() < 8 ) { return; }  // must contain the 6-char. resID, a space, and at least 1 more char.
+
+	string const chainID( string( text_field, 0, 1 ) );  // 1 character for chainID
+	string const resSeq( string( text_field, 1, 4 ) );  // 4 characters for resSeq
+	string const iCode( string( text_field, 5, 1 ) );  // 1 character for iCode
 	string const key( resSeq + iCode + chainID );  // a resID, as defined elsewhere in StructFileRep
 
-	// name starts after 7th character
-	string const needed_residue_type_base_name( String( text_field.begin() + 7, text_field.end() ) );
+	// The name starts after 7th character; any word after a comma is ignored.
+	uint const comma_location( text_field.find( ", " ) );  // if not found, will be set as string::npos
+	string const needed_residue_type_base_name( string( text_field, 7, comma_location - 7 ) );  // npos-7 >> 80!
 
-	sfr.residue_type_base_names()[ key ] = needed_residue_type_base_name;
+	sfr.residue_type_base_names()[ key ] = make_pair( hetID, needed_residue_type_base_name );
 }
 
-// TODO: Refactor this further.
 // Convert .pdb HETNAM record into SFR data.
-/// @remarks  Heterogen "names" for carbohydrates (from "Rosetta-ready" PDB files) instead have the name field parsed
-/// to extract the base (non-variant) ResidueType needed for a particular residue.
+/// @remarks  Heterogen "names" for carbohydrates (from "Rosetta-ready" PDB
+/// files) additionally have the name field parsed to extract the base (non-
+/// variant) ResidueType needed for a particular residue.
 void
-store_heterogen_names_in_sfr( Record hetnam_record, StructFileRep & sfr )
+store_heterogen_name_record_in_sfr( Record hetnam_record, StructFileRep & sfr )
 {
 	using namespace std;
-	using namespace core::chemical::carbohydrates;
 
 	string const & hetID( hetnam_record[ "hetID" ].value );
 	string text( hetnam_record[ "text" ].value );
+	utility::trim( text );
 
 	if ( hetID.empty() ) {
 		TR.Warning << "PDB HETNAM record is missing an heterogen ID field." << endl;
@@ -472,28 +474,20 @@ store_heterogen_names_in_sfr( Record hetnam_record, StructFileRep & sfr )
 		return;
 	}
 
-	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
-	if ( CarbohydrateInfoManager::is_valid_sugar_code( hetID ) ) {
-		ObjexxFCL::strip_whitespace( text );
-		store_base_residue_type_name_in_sfr( text, sfr );
+	if ( sfr.heterogen_names().count( hetID ) == 0 ) {
+		sfr.heterogen_names()[ hetID ] = text;
 	} else {
-		// Search through current list of HETNAM records: append or create records as needed.
-		bool record_found( false );
-		Size const n_heterogen_names( sfr.heterogen_names().size() );
-		for ( uint i( 1 ); i <= n_heterogen_names; ++i ) {
-			// If a record already exists with this hetID, this is a continuation line; append.
-			if ( hetID == sfr.heterogen_names()[ i ].first ) {
-				sfr.heterogen_names()[ i ].second.append( ObjexxFCL::rstripped_whitespace( text ) );
-				record_found = true;
-				break;
-			}
-		}
-		if ( ! record_found ) {
-			// Non-carbohydrate heterogen names are simply stored in the standard PDB way.
-			ObjexxFCL::strip_whitespace( text );
-			sfr.heterogen_names().push_back( make_pair( hetID, text ) );
+		// Check whether we are continuing a hyphenated word or adding a new one.
+		if ( sfr.heterogen_names()[ hetID ][ sfr.heterogen_names()[ hetID ].size() - 1 ] == '-' ) {
+			// The last character is a hyphen.
+			// (If we were using C++11, I would just call back()....)
+			sfr.heterogen_names()[ hetID ] += text;
+		} else {
+			sfr.heterogen_names()[ hetID ] += " " + text;
 		}
 	}
+
+	store_base_residue_type_name_in_sfr( hetID, text, sfr );
 }
 
 // Convert .pdb HETSYN record into SFR data.

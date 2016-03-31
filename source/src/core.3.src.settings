@@ -11,7 +11,7 @@
 
 sources = {
 	"core/indexed_structure_store": [
-        "ABEGOHashedFragmentStore",
+		"ABEGOHashedFragmentStore",
 		"FragmentStore",
 		"FragmentLookup",
 		"H5FragmentStoreBackend",
@@ -24,6 +24,7 @@ sources = {
 		"HeaderInformation",
 		"NomenclatureManager",
 		"Remarks",
+		"ResidueInformation",
 		"StructFileRep",
 		"StructFileRepOptions",
 		"StructFileReaderOptions",

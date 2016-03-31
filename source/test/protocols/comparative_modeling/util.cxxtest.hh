@@ -27,6 +27,8 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/comparative_modeling/util.hh>
 
+#include <numeric/xyzVector.hh>
+
 //Auto Headers
 
 

@@ -48,50 +48,47 @@ StructFileRepOptions::clone() const {
 
 void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
-	//set_check_if_residues_are_termini( tag->getOption< std::string >( "termini", "ALL" ));
-	set_check_if_residues_are_Ntermini( tag->getOption< std::string >( "Ntermini", "ALL" ));
-	set_check_if_residues_are_Ctermini( tag->getOption< std::string >( "Ctermini", "ALL" ));
-	set_skip_connect_info( tag->getOption< bool >( "skip_connect_info", 0 ));
-	set_connect_info_cutoff( tag->getOption< Real >( "connect_info_cutoff", 0.0 ));
-	set_exit_if_missing_heavy_atoms( tag->getOption< bool >( "exit_if_missing_heavy_atoms", 0 ));
-	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ));
-	set_ignore_unrecognized_res( tag->getOption< bool >( "ignore_unrecognized_res", 0 ));
-	set_ignore_sugars( ! tag->getOption< bool >( "include_sugars", 0 ));
-	set_ignore_waters( tag->getOption< bool >( "ignore_waters", 0 ));
-	set_ignore_zero_occupancy( tag->getOption< bool >( "ignore_zero_occupancy", 1 ));
-	set_keep_input_protonation_state( tag->getOption< bool >( "keep_input_protonation_state", 0 ));
-	set_preserve_header( tag->getOption< bool >( "preserve_header", 0 ));
-	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", 0 ));
-	set_missing_dens_as_jump( tag->getOption< bool >( "missing_dens_as_jump", 0 ));
-	set_no_chainend_ter( tag->getOption< bool >( "no_chainend_ter", 0 ));
-	set_no_output_cen( tag->getOption< bool >( "no_output_cen", 0 ));
-	set_normalize_to_thk( tag->getOption< bool >( "normalize_to_thk", 0 ));
-	set_output_torsions( tag->getOption< bool >( "output_torsions", 0 ));
-	set_output_virtual( tag->getOption< bool >( "output_virtual", 0 ));
-	set_output_virtual_zero_occ( tag->getOption< bool >( "output_virtual_zero_occ", 0 ));
-	set_pdb_comments( tag->getOption< bool >( "pdb_comments", 0 ));
-	set_pdb_parents( tag->getOption< bool >( "pdb_parents", 0 ));
-	set_per_chain_renumbering( tag->getOption< bool >( "per_chain_renumbering", 0 ));
-	set_randomize_missing_coords( tag->getOption< bool >( "randomize_missing_coords", 0 ));
-	set_remember_unrecognized_res( tag->getOption< bool >( "remember_unrecognized_res", 0 ));
-	set_remember_unrecognized_water( tag->getOption< bool >( "remember_unrecognized_water", 0 ));
+	set_check_if_residues_are_Ntermini( tag->getOption< std::string >( "Ntermini", "ALL" ) );
+	set_check_if_residues_are_Ctermini( tag->getOption< std::string >( "Ctermini", "ALL" ) );
+	set_skip_connect_info( tag->getOption< bool >( "skip_connect_info", 0 ) );
+	set_connect_info_cutoff( tag->getOption< Real >( "connect_info_cutoff", 0.0 ) );
+	set_exit_if_missing_heavy_atoms( tag->getOption< bool >( "exit_if_missing_heavy_atoms", 0 ) );
+	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ) );
+	set_ignore_unrecognized_res( tag->getOption< bool >( "ignore_unrecognized_res", 0 ) );
+	set_ignore_sugars( ! tag->getOption< bool >( "include_sugars", 0 ) );
+	set_ignore_waters( tag->getOption< bool >( "ignore_waters", 0 ) );
+	set_ignore_zero_occupancy( tag->getOption< bool >( "ignore_zero_occupancy", 1 ) );
+	set_keep_input_protonation_state( tag->getOption< bool >( "keep_input_protonation_state", 0 ) );
+	set_preserve_header( tag->getOption< bool >( "preserve_header", 0 ) );
+	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", 0 ) );
+	set_missing_dens_as_jump( tag->getOption< bool >( "missing_dens_as_jump", 0 ) );
+	set_no_chainend_ter( tag->getOption< bool >( "no_chainend_ter", 0 ) );
+	set_no_output_cen( tag->getOption< bool >( "no_output_cen", 0 ) );
+	set_normalize_to_thk( tag->getOption< bool >( "normalize_to_thk", 0 ) );
+	set_output_torsions( tag->getOption< bool >( "output_torsions", 0 ) );
+	set_output_virtual( tag->getOption< bool >( "output_virtual", 0 ) );
+	set_output_virtual_zero_occ( tag->getOption< bool >( "output_virtual_zero_occ", 0 ) );
+	set_pdb_comments( tag->getOption< bool >( "pdb_comments", 0 ) );
+	set_pdb_parents( tag->getOption< bool >( "pdb_parents", 0 ) );
+	set_per_chain_renumbering( tag->getOption< bool >( "per_chain_renumbering", 0 ) );
+	set_randomize_missing_coords( tag->getOption< bool >( "randomize_missing_coords", 0 ) );
+	set_remember_unrecognized_res( tag->getOption< bool >( "remember_unrecognized_res", 0 ) );
+	set_remember_unrecognized_water( tag->getOption< bool >( "remember_unrecognized_water", 0 ) );
 	set_renumber_pdb( tag->getOption< bool >( "renumber_pdb", 0 ) );
 	set_suppress_zero_occ_pdb_output( tag->getOption< bool >( "suppress_zero_occ_pdb_output", 0 ) );
-	set_write_pdb_link_records(tag->getOption<bool>("write_pdb_link_records", 0));
-	set_write_pdb_parametric_info( tag->getOption<bool>("write_pdb_parametric_info", 1) );
-	set_write_all_connect_info( tag->getOption<bool>("write_all_connect_info", 0) );
-
-
+	set_use_pdb_format_HETNAM_records( tag->getOption< bool >( "use_pdb_format_HETNAM_records", 0 ) );
+	set_write_pdb_link_records( tag->getOption <bool >( "write_pdb_link_records", 0 ) );
+	set_write_pdb_parametric_info( tag->getOption< bool >("write_pdb_parametric_info", 1) );
+	set_write_all_connect_info( tag->getOption< bool >("write_all_connect_info", 0) );
 
 	set_chains_whose_residues_are_separate_chemical_entities(
-		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ));
+		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ) );
 
-	set_residues_for_atom_name_remapping( utility::string_split( tag->getOption< std::string >("remap_pdb_atom_names_for",""),
-		','));
+	set_residues_for_atom_name_remapping(
+			utility::string_split( tag->getOption< std::string >( "remap_pdb_atom_names_for", "" ), ',') );
 
 	set_show_all_fixes( tag->getOption< bool >( "show_all_fixes", 0 ) );
 	set_constraints_from_link_records( tag->getOption< bool >( "constraints_from_link_records", 0 ) );
-
 }
 
 std::string StructFileRepOptions::type() const { return "file_data_options"; }
@@ -126,9 +123,10 @@ bool StructFileRepOptions::remember_unrecognized_res() const { return remember_u
 bool StructFileRepOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
 bool StructFileRepOptions::renumber_pdb() const { return renumber_pdb_; }
 bool StructFileRepOptions::suppress_zero_occ_pdb_output() const { return suppress_zero_occ_pdb_output_; }
-bool StructFileRepOptions::write_pdb_link_records() const {return write_pdb_link_records_;}
-bool StructFileRepOptions::write_pdb_parametric_info() const {return write_pdb_parametric_info_;}
-bool StructFileRepOptions::write_all_connect_info() const {return write_all_connect_info_;}
+bool StructFileRepOptions::use_pdb_format_HETNAM_records() const { return use_pdb_format_HETNAM_records_; }
+bool StructFileRepOptions::write_pdb_link_records() const { return write_pdb_link_records_; }
+bool StructFileRepOptions::write_pdb_parametric_info() const { return write_pdb_parametric_info_; }
+bool StructFileRepOptions::write_all_connect_info() const { return write_all_connect_info_; }
 std::string const & StructFileRepOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 utility::vector1<std::string> const & StructFileRepOptions::residues_for_atom_name_remapping() const { return residues_for_atom_name_remapping_; }
 bool StructFileRepOptions::pdb_comments() const { return pdb_comments_; }
@@ -223,19 +221,22 @@ void StructFileRepOptions::set_remember_unrecognized_res( bool const remember_un
 void StructFileRepOptions::set_remember_unrecognized_water( bool const remember_unrecognized_water )
 { remember_unrecognized_water_ = remember_unrecognized_water; }
 
-void StructFileRepOptions::set_renumber_pdb(bool const setting)
+void StructFileRepOptions::set_renumber_pdb( bool const setting )
 { renumber_pdb_ = setting; }
 
-void StructFileRepOptions::set_suppress_zero_occ_pdb_output(bool const setting)
+void StructFileRepOptions::set_suppress_zero_occ_pdb_output( bool const setting )
 { suppress_zero_occ_pdb_output_ = setting; }
 
-void StructFileRepOptions::set_write_pdb_link_records(bool const setting)
+void StructFileRepOptions::set_use_pdb_format_HETNAM_records( bool const setting )
+{ use_pdb_format_HETNAM_records_ = setting; }
+
+void StructFileRepOptions::set_write_pdb_link_records( bool const setting )
 { write_pdb_link_records_ = setting; }
 
-void StructFileRepOptions::set_write_pdb_parametric_info(bool const setting)
+void StructFileRepOptions::set_write_pdb_parametric_info( bool const setting )
 { write_pdb_parametric_info_ = setting; }
 
-void StructFileRepOptions::set_write_all_connect_info(bool const setting)
+void StructFileRepOptions::set_write_all_connect_info( bool const setting )
 { write_all_connect_info_ = setting; }
 
 void StructFileRepOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
@@ -289,7 +290,8 @@ void StructFileRepOptions::init_from_options()
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]() );
 	set_renumber_pdb( option[ OptionKeys::out::file::renumber_pdb ].value() );
 	set_suppress_zero_occ_pdb_output( option[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() );
-	set_write_pdb_link_records(option[out::file::write_pdb_link_records]());
+	set_use_pdb_format_HETNAM_records( option[ out::file::use_pdb_format_HETNAM_records ]() );
+	set_write_pdb_link_records( option[ out::file::write_pdb_link_records ]() );
 	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
 	if ( option[ in::file::remap_pdb_atom_names_for ].active() ) {
 		set_residues_for_atom_name_remapping( option[ in::file::remap_pdb_atom_names_for ] );
@@ -298,7 +300,6 @@ void StructFileRepOptions::init_from_options()
 	set_write_all_connect_info( option[inout::write_all_connect_info]() );
 	set_show_all_fixes( option[ in::show_all_fixes ]() );
 	set_constraints_from_link_records( option[ in::constraints_from_link_records ]() );
-
 }
 
 } // namespace io

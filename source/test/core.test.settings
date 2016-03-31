@@ -90,6 +90,7 @@ sources = {
 		"CartGrid",
 	],
 	"import_pose" : [
+		"3-letter_code_ambiguity_resolution",
 		"component_reading",
 		"PoseFromPDBResourceLoader",
 		"PoseFromFile",

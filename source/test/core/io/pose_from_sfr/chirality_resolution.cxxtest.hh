@@ -18,10 +18,11 @@
 // Unit headers
 #include <core/io/pose_from_sfr/chirality_resolution.hh>
 
-// Program headers
+// Project headers
 #include <core/io/StructFileRep.hh>
 #include <core/io/pdb/pdb_reader.hh>
-#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>  // TODO: Remove after refactor is complete.
+#include <core/io/ResidueInformation.hh>
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/import_pose/import_pose_options.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -35,12 +36,9 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
-// Utility headers
-
-// ObjexxFCL headers
-
 // C++ headers
 #include <string>
+
 
 static basic::Tracer TR("core.io.pose_from_sfr.chirality_resolution.cxxtest");
 

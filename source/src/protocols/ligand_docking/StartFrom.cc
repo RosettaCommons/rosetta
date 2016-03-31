@@ -17,24 +17,27 @@
 #include <protocols/ligand_docking/StartFromCreator.hh>
 #include <protocols/ligand_docking/util.hh>
 
+// Package headers
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-//project headers
-#include <numeric/random/random.hh>
-#include <basic/Tracer.hh>
+// Project headers
 #include <core/types.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <core/io/ResidueInformation.hh>
+#include <core/io/AtomInformation.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pdb/pdb_reader.hh>
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
+
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
-#include <core/io/pdb/pdb_reader.hh>
+// Numeric header
+#include <numeric/random/random.hh>
 
-// Utility Headers
-
+// Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
@@ -43,13 +46,16 @@
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/FileName.hh>
-
 #include <utility/json_spirit/json_spirit_reader.h>
+#include <utility/excn/Exceptions.hh>
 
-// Boost headers
+// Basic header
+#include <basic/Tracer.hh>
+
+// Boost header
 #include <boost/foreach.hpp>
 
-#include <utility/excn/Exceptions.hh>
+// C++ header
 #include <fstream>
 
 using basic::T;

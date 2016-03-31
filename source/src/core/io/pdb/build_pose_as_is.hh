@@ -22,8 +22,6 @@
 
 // Unit headers
 #include <core/io/pdb/Field.fwd.hh>
-//#include <core/io/HeaderInformation.hh>
-//#include <core/io/pdb/file_data_fixup.fwd.hh>
 
 // Package headers
 #include <core/io/StructFileRep.fwd.hh>
@@ -36,8 +34,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-//#include <core/io/Remarks.hh>
-//#include <core/io/CrystInfo.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Numeric headers

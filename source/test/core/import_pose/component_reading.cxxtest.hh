@@ -20,14 +20,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-// Program headers
-
 // Basic headers
 #include <basic/Tracer.hh>
-
-// Utility headers
-
-// ObjexxFCL headers
 
 // C++ headers
 #include <string>
@@ -51,13 +45,10 @@ public:
 
 		TS_ASSERT_EQUALS( pose->total_residue(), 496 ); // No Waters
 		TS_ASSERT_EQUALS( pose->residue(244).name3(), "WOW"); // Actually the 494th residue in file
-		TS_ASSERT_EQUALS( pose->residue(245).name3(), "SO4"); // Acutally the 495th residue in file
+		TS_ASSERT_EQUALS( pose->residue(245).name3(), "SO4"); // Actually the 495th residue in file
 		TS_ASSERT_EQUALS( pose->residue(496).name3(), "WOW");
 		TS_ASSERT_EQUALS( pose->residue(244).natoms(), 49 ); // WOW
 		TS_ASSERT_EQUALS( pose->residue(244).nheavyatoms(), 27 ); // WOW
-
-
 	}
-
 };
 

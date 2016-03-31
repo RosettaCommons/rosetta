@@ -34,7 +34,6 @@
 #include <core/io/pdb/Field.hh>
 #include <core/io/HeaderInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
-//#include <core/io/pdb/file_data_fixup.hh>
 #include <core/io/StructFileRep.hh>
 
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
@@ -166,32 +165,13 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	if ( block.IsTablePresent( "chem_comp" ) ) {
 		ISTable& chem_comp = block.GetTable("chem_comp");
 		for ( Size i = 0; i <= chem_comp.GetLastRowIndex(); ++i ) {
-			// TODO: Aah! Duplicated code!
 			std::string name = chem_comp( i, "name" );
 			string const & hetID( chem_comp( i, "id" ) );
+			utility::trim( name );
 
-			// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
-			if ( chemical::carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( hetID ) ) {
-				ObjexxFCL::strip_whitespace( name );
-				pdb::store_base_residue_type_name_in_sfr( name, *sfr );  // TEMP
-			} else {
-				// Search through current list of HETNAM records: append or create records as needed.
-				bool record_found( false );
-				Size const n_heterogen_names( sfr->heterogen_names().size() );
-				for ( uint i( 1 ); i <= n_heterogen_names; ++i ) {
-					// If a record already exists with this hetID, this is a continuation line; append.
-					if ( hetID == sfr->heterogen_names()[ i ].first ) {
-						sfr->heterogen_names()[ i ].second.append( ObjexxFCL::rstripped_whitespace( name ) );
-						record_found = true;
-						break;
-					}
-				}
-				if ( ! record_found ) {
-					// Non-carbohydrate heterogen names are simply stored in the standard PDB way.
-					ObjexxFCL::strip_whitespace( name );
-					sfr->heterogen_names().push_back( make_pair( hetID, name ) );
-				}
-			}
+			sfr->heterogen_names()[ hetID ] = name;
+
+			pdb::store_base_residue_type_name_in_sfr( hetID, name, *sfr );
 		}
 	}
 

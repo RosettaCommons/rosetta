@@ -40,17 +40,13 @@ public:
 	virtual ~StructFileRepOptions();
 
 	/// @brief Copy this object and return an owning pointer to the copy.
-	///
 	virtual StructFileRepOptionsOP clone() const;
 
-	virtual
-	void parse_my_tag( utility::tag::TagCOP tag );
+	virtual void parse_my_tag( utility::tag::TagCOP tag );
 
-	virtual
-	std::string type() const;
+	virtual std::string type() const;
 
 	// accessors
-	//std::string check_if_residues_are_termini() const;
 	std::string const & check_if_residues_are_Ntermini() const;
 	std::string const & check_if_residues_are_Ctermini() const;
 	bool skip_connect_info() const;
@@ -78,6 +74,7 @@ public:
 	bool remember_unrecognized_water() const;
 	bool renumber_pdb() const;
 	bool suppress_zero_occ_pdb_output() const;
+	bool use_pdb_format_HETNAM_records() const;
 	bool write_pdb_link_records() const;
 	bool write_pdb_parametric_info() const;
 	bool write_all_connect_info() const;
@@ -88,7 +85,6 @@ public:
 	bool constraints_from_link_records() const;
 
 	// mutators
-	//void set_check_if_residues_are_termini( std::string check_if_residues_are_termini );
 	void set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini );
 	void set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini );
 	void set_skip_connect_info( bool const skip_connect_info );
@@ -114,13 +110,14 @@ public:
 	void set_randomize_missing_coords( bool const randomize_missing_coords );
 	void set_remember_unrecognized_res( bool const remember_unrecognized_res );
 	void set_remember_unrecognized_water( bool const remember_unrecognized_water );
-	void set_renumber_pdb(bool const setting);
-	void set_suppress_zero_occ_pdb_output(bool const setting);
-	void set_write_pdb_link_records(bool const setting);
-	void set_write_pdb_parametric_info(bool const setting);
-	void set_write_all_connect_info(bool const setting);
+	void set_renumber_pdb( bool const setting );
+	void set_suppress_zero_occ_pdb_output( bool const setting );
+	void set_use_pdb_format_HETNAM_records( bool const setting );
+	void set_write_pdb_link_records( bool const setting );
+	void set_write_pdb_parametric_info( bool const setting );
+	void set_write_all_connect_info( bool const setting );
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
-	void set_residues_for_atom_name_remapping(utility::vector1<std::string> const & setting);
+	void set_residues_for_atom_name_remapping( utility::vector1<std::string> const & setting );
 	void set_pdb_comments( bool const pdb_comments );
 	void set_show_all_fixes( bool setting );
 	void set_constraints_from_link_records( bool setting );
@@ -157,18 +154,18 @@ private:
 	bool remember_unrecognized_water_;
 	bool renumber_pdb_;
 	bool suppress_zero_occ_pdb_output_;
+	bool use_pdb_format_HETNAM_records_;
 	bool write_pdb_link_records_;
 	bool write_pdb_parametric_info_;
 	bool write_all_connect_info_;
 
 	std::string chains_whose_residues_are_separate_chemical_entities_; //treat_residues_in_these_chains_as_separate_chemical_entities
 	/// @brief Three letter codes of residues for which to allow atom renaming.
-	utility::vector1<std::string> residues_for_atom_name_remapping_;
+	utility::vector1< std::string > residues_for_atom_name_remapping_;
 
 	bool pdb_comments_;
 	bool show_all_fixes_;
 	bool constraints_from_link_records_;
-
 };
 
 } // namespace io

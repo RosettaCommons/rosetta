@@ -23,15 +23,12 @@
 #include <core/io/pose_from_sfr/chirality_resolution.hh>
 
 // Package headers
-#include <core/io/pdb/Field.hh>
-#include <core/io/HeaderInformation.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/StructFileRep.hh>
-#include <core/io/pdb/pdb_reader.hh>
+#include <core/io/HeaderInformation.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/NomenclatureManager.hh>
+#include <core/io/ResidueInformation.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -57,12 +54,9 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
-
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/pose/PDBInfo.hh>
-
 #include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -126,7 +120,7 @@ PoseFromSFRBuilder::~PoseFromSFRBuilder() {}
 
 /// @details The process of building a Pose occurs in several phases.  First, in the setup() function,
 /// the builder converts the SFR into a vector of ResidueInformation objects -- renaming some atoms along
-/// the way. The next four phases involve four passes over this ResidueInformation vector.
+/// the way. The next five phases involve five passes over this ResidueInformation vector.
 void
 PoseFromSFRBuilder::build_pose(
 	StructFileRep const & sfr,
@@ -163,7 +157,7 @@ missing_O2prime( utility::vector1< core::io::AtomInformation > const & atoms ) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// @brief introduced in 2013 with changes of RNA and DNA atom types to match PDB -- rhiju.
+//  introduced in 2013 with changes of RNA and DNA atom types to match PDB -- rhiju.
 //  Could also include cleanup/handling of chirality of hydrogens (e.g., H5' <--> H5'') in here,
 //  but actually easier to do it later when we actually are instantiating ResidueType and have Rosetta's
 //  ideal coordinates.
@@ -177,7 +171,6 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 	static bool showed_warning( false );
 
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
-
 		core::io::ResidueInformation & rinfo  = rinfos_[ ii ];
 		std::string const original_name = rinfo.resName();
 
@@ -209,7 +202,6 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 		// Now apply atom mapping.
 		// We are going to try to handle that using atom aliasing.
 		//if ( core::io::NomenclatureManager::is_NA( rinfo.resName ) ) convert_nucleic_acid_atom_names_to_standard( rinfo );
-
 	}
 
 	if ( nfix > max_fix && !show_all_fixup && !showed_warning ) {
@@ -273,7 +265,6 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 		}
 	}
 	sfr_.link_map() = pruned_links;
-
 }
 
 void
@@ -366,7 +357,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		std::string const & name3( rosetta_names.first );
 		rosetta_residue_name3s_[ ii ] = name3;
 		if ( rosetta_names.second != "" ) {
-			sfr_.residue_type_base_names()[ resid ] = rosetta_names.second;
+			sfr_.residue_type_base_names()[ resid ] = std::make_pair( name3, rosetta_names.second );
 		}
 
 		bool const separate_chemical_entity = determine_separate_chemical_entity( chainID );
@@ -951,8 +942,8 @@ PoseFromSFRBuilder::determine_carbohydrate_polymer_info(
 	bool unknown_main_chain_connectivity( false );
 	if ( sfr_.residue_type_base_names().count( resid ) ) {
 		TR.Trace << "Current residue has its base name extracted from the PDB file: ";
-		TR.Trace << sfr_.residue_type_base_names()[ resid ] << std::endl;
-		unknown_main_chain_connectivity = ( sfr_.residue_type_base_names()[ resid ][ carb_mainchain_connectivity_position ] == '?' );
+		TR.Trace << sfr_.residue_type_base_names()[ resid ].second << std::endl;
+		unknown_main_chain_connectivity = ( sfr_.residue_type_base_names()[ resid ].second[ carb_mainchain_connectivity_position ] == '?' );
 	}
 
 	is_branch_point = false;
@@ -981,7 +972,7 @@ PoseFromSFRBuilder::determine_carbohydrate_polymer_info(
 				char const connectivity( link_info.name1[ carb_mainchain_connectivity_position ] );  // where the connect atom name is " O? "
 				TR.Trace << "Assigning main-chain connectivity to position " << connectivity;
 				TR.Trace << " of this residue." << std::endl;
-				sfr_.residue_type_base_names()[ resid ][ carb_mainchain_connectivity_position ] = connectivity;
+				sfr_.residue_type_base_names()[ resid ].second[ carb_mainchain_connectivity_position ] = connectivity;
 			} else {
 				TR.Trace << "This residue is a branch point with corresponding branch lower terminus: ";
 				TR.Trace << link_info.resID2 << std::endl;
@@ -996,7 +987,7 @@ PoseFromSFRBuilder::determine_carbohydrate_polymer_info(
 		// First, assign an arbitrary main-chain connection and then reset this to be the NOT of the same chain as
 		// the next residue.
 		TR.Trace << "Assigning main-chain connectivity to position 3 of this terminal residue." << std::endl;
-		sfr_.residue_type_base_names()[ resid ][ carb_mainchain_connectivity_position ] = '3';  // TODO: In the future, we might want something else.
+		sfr_.residue_type_base_names()[ resid ].second[ carb_mainchain_connectivity_position ] = '3';  // TODO: In the future, we might want something else.
 		same_chain_next = false;
 	}
 	is_branch_lower_terminus = branch_lower_termini_.contains( resid );
@@ -1074,7 +1065,7 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 
 
 ///////////////////////////////////////////////////////////////////////
-// @brief Use ResidueTypeFinder to efficiently figure out best match
+// Use ResidueTypeFinder to efficiently figure out best match
 //    residue_type to these PDB atom_names, name3, etc.
 chemical::ResidueTypeCOP
 PoseFromSFRBuilder::get_rsd_type(
@@ -1101,10 +1092,13 @@ PoseFromSFRBuilder::get_rsd_type(
 
 	vector1< vector1< VariantType > > required_variants_in_sets;
 	vector1< ResidueProperty > properties, disallow_properties;
-	vector1< VariantType >     disallow_variants;  // are variants different from properties?
-	std::string                residue_base_name( "" ); // carbohydrates
-	vector1< std::string >     patch_names;
-	bool  disallow_carboxyl_conjugation_at_glu_asp( false );
+	vector1< VariantType > disallow_variants;  // are variants different from properties?
+	std::string residue_base_name( "" );  // used when we have more information then just a 3-letter code
+	if ( sfr_.residue_type_base_names().count( resid ) ) {
+		residue_base_name = sfr_.residue_type_base_names()[ resid ].second;
+	}
+	vector1< std::string > patch_names;
+	bool disallow_carboxyl_conjugation_at_glu_asp( false );
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *residue_type_set_ ).name3( rosetta_residue_name3 ).get_representative_type();
 	if ( rsd_type->is_polymer() ) {
@@ -1121,22 +1115,37 @@ PoseFromSFRBuilder::get_rsd_type(
 			disallow_variants.push_back( UPPERTERM_TRUNC_VARIANT );
 		}
 		// note that carbohydrate branch points will be covered by patch_names below.
-		if ( !rsd_type->is_carbohydrate() ) {
-			if ( is_branch_point  )  properties.push_back( BRANCH_POINT ); else disallow_properties.push_back( BRANCH_POINT );
+		if ( ! rsd_type->is_carbohydrate() ) {
+			if ( is_branch_point ) {
+				properties.push_back( BRANCH_POINT );
+			} else {
+				disallow_properties.push_back( BRANCH_POINT );
+			}
 		}
-		if ( is_branch_lower_terminus )  properties.push_back( BRANCH_LOWER_TERMINUS ); else disallow_properties.push_back( BRANCH_LOWER_TERMINUS );
-		if ( is_d_aa )  properties.push_back( D_AA );
-		if ( is_l_aa )  properties.push_back( L_AA );
+		if ( is_branch_lower_terminus ) {
+			properties.push_back( BRANCH_LOWER_TERMINUS );
+		} else {
+			disallow_properties.push_back( BRANCH_LOWER_TERMINUS );
+		}
+		if ( is_d_aa ) {
+			properties.push_back( D_AA );
+		}
+		if ( is_l_aa ) {
+			properties.push_back( L_AA );
+		}
 	}
-	if ( rsd_type->aa() == aa_cys && rosetta_residue_name3 != "CYD" ) disallow_variants.push_back( DISULFIDE );
-	if ( !is_branch_lower_terminus ) disallow_carboxyl_conjugation_at_glu_asp = true;
+	if ( rsd_type->aa() == aa_cys && rosetta_residue_name3 != "CYD" ) {
+		disallow_variants.push_back( DISULFIDE );
+	}
+	if ( !is_branch_lower_terminus ) {
+		disallow_carboxyl_conjugation_at_glu_asp = true;
+	}
 
 	if ( !options_.keep_input_protonation_state() ) {
 		disallow_variants.push_back( PROTONATED );
 		disallow_variants.push_back( DEPROTONATED );
 	}
 	if ( rsd_type->is_carbohydrate() ) {
-		residue_base_name = sfr_.residue_type_base_names()[ resid ];
 		// The below assumes that ResidueTypes with fewer patches are selected 1st, that is, that an
 		// :->2-branch ResidueType will be checked as a possible match before an :->2-branch:->6-branch
 		// ResidueType.  If this were not the case, Rosetta could misassign an :->2-branch:->6-branch
@@ -1407,7 +1416,6 @@ create_working_data(
 			rinfos.back().append_atom( ai );
 		}
 	}
-
 }
 
 

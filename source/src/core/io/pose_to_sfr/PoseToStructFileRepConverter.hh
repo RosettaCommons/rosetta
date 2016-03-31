@@ -19,23 +19,29 @@
 
 // Unit headers
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.fwd.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverterTests.fwd.hh> //Needed for friendship
+#include <core/io/pose_to_sfr/PoseToStructFileRepConverterTests.fwd.hh>  // needed for friendship
 
-// Core headers
-#include <core/pose/Pose.fwd.hh>
+// Package headers
 #include <core/io/StructFileRep.hh>
-#include <core/types.hh>
 #include <core/io/StructFileRepOptions.hh>
+#include <core/io/StructFileReaderOptions.fwd.hh>
 #include <core/io/Remarks.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <core/io/ResidueInformation.fwd.hh>
 
+// Project headers
+#include <core/types.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+
+// Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>
 #include <map>
 
-#include <utility/vector1.hh>
 
 namespace core {
 namespace io {
@@ -136,16 +142,14 @@ private:
 		core::Size atom_index,
 		bool use_pdb_info ) const;
 
-	bool use_pdb_info_for_num(  pose::Pose const & pose,
-		Size resnum);
+	bool use_pdb_info_for_num( pose::Pose const & pose, Size resnum );
 
 
 	/// @brief Append just residue-based info to StructFileRep
-	///  For now, it is carbohydrate HETNAM Data
+	///  For now, it is only HETNAM Data
 	void append_residue_info_to_sfr(
-		core::pose::Pose const & pose,
 		ResidueInformation const & res_info,
-		core::conformation::Residue const & rsd);
+		core::conformation::Residue const & rsd );
 
 	/// @brief Append just atom-based info to StructFileRep.
 	///  New atom number will be detected from current SFR or start from 1.

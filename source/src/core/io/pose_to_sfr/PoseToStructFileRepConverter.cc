@@ -17,22 +17,26 @@
 // Unit headers
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
-// Core headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/kinematics/FoldTree.hh>
+// Package headers
+#include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/Remarks.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/io/HeaderInformation.hh>
+#include <core/io/ResidueInformation.hh>
+
+// Core headers
+#include <core/id/AtomID.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/io/HeaderInformation.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/id/AtomID.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -47,11 +51,10 @@
 // C++ Headers
 #include <sstream>
 
+
 namespace core {
 namespace io {
 namespace pose_to_sfr {
-
-
 
 static THREAD_LOCAL basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepConverter" );
 
@@ -70,7 +73,7 @@ PoseToStructFileRepConverter::PoseToStructFileRepConverter() :
 /// @brief Constructor with options input.
 /// @details Creates the StructFileRep object, which is subsequently accessible by owning pointer
 /// (using the sfr() object).  The options_ object is duplicated from the input options object.
-PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions const &options_in ) :
+PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions const & options_in ) :
 	utility::pointer::ReferenceCount(),
 	options_( options_in )
 {
@@ -89,7 +92,6 @@ PoseToStructFileRepConverter::new_sfr() {
 
 
 /// @details Non-const access to the StructFileRep object.
-///
 StructFileRepOP
 PoseToStructFileRepConverter::sfr() {
 	return sfr_;
@@ -98,7 +100,7 @@ PoseToStructFileRepConverter::sfr() {
 
 /// @details Read atoms/residue information from Pose object and put it in StructFileRep object.
 void
-PoseToStructFileRepConverter::init_from_pose(core::pose::Pose const & pose)
+PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose )
 {
 	init_from_pose( pose, options_ );
 }
@@ -106,11 +108,11 @@ PoseToStructFileRepConverter::init_from_pose(core::pose::Pose const & pose)
 /// @details Read atoms/residue information from Pose object and put it in StructFileRep object using options defined in
 /// StructFileRepOptions.
 void
-PoseToStructFileRepConverter::init_from_pose(core::pose::Pose const & pose, StructFileRepOptions const & options)
+PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, StructFileRepOptions const & options )
 {
 	id::AtomID_Mask mask = id::AtomID_Mask( pose.total_residue() );
-	for ( Size resnum = 1; resnum <= pose.total_residue(); ++ resnum ) {
-		for ( Size atom_index = 1; atom_index <= pose.residue( resnum ).natoms(); ++ atom_index ) {
+	for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+		for ( Size atom_index = 1; atom_index <= pose.residue( resnum ).natoms(); ++atom_index ) {
 			id::AtomID atm = id::AtomID( atom_index, resnum );
 			mask.set( atm, true );
 		}
@@ -144,23 +146,22 @@ PoseToStructFileRepConverter::init_from_pose(
 	}
 
 	init_from_pose( pose, mask );
-
 }
 
 void
-PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const id::AtomID_Mask &mask)
+PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, id::AtomID_Mask const & mask )
 {
-
-	init_from_pose( pose, mask, options_);
-
+	init_from_pose( pose, mask, options_ );
 }
 
 
-////////////////////////////////// Main Init Function //////////////
+// Main Init Function /////////////////////////////////////////////////////////
 void
-PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const id::AtomID_Mask &mask, StructFileRepOptions const & options){
-
-
+PoseToStructFileRepConverter::init_from_pose(
+		core::pose::Pose const & pose,
+		id::AtomID_Mask const & mask,
+		StructFileRepOptions const & options )
+{
 	using namespace core;
 	using core::pose::PDBInfo;
 
@@ -171,20 +172,21 @@ PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const
 	}
 
 	// Get Title Section information.
-	if ( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
+	if ( ( options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
 		*(sfr_->remarks()) = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
 		if ( pose.pdb_info()->header_information() ) {
-			sfr_->header() = core::io::HeaderInformationOP( new core::io::HeaderInformation(*(pose.pdb_info()->header_information())) );
+			sfr_->header() =
+					io::HeaderInformationOP( new io::HeaderInformation( *( pose.pdb_info()->header_information() ) ) );
 		} else {
-			sfr_->header() = core::io::HeaderInformationOP( new core::io::HeaderInformation() );
+			sfr_->header() = io::HeaderInformationOP( new io::HeaderInformation() );
 		}
 	} else {
-		sfr_->header() = core::io::HeaderInformationOP( new core::io::HeaderInformation() );
+		sfr_->header() = io::HeaderInformationOP( new io::HeaderInformation() );
 	}
 
 	// Get parametric information
 	if ( options.write_pdb_parametric_info() ) {
-		get_parametric_info(sfr_->remarks(), pose);
+		get_parametric_info( sfr_->remarks(), pose );
 	}
 
 	// Get Connectivity Annotation Section information.
@@ -201,65 +203,62 @@ PoseToStructFileRepConverter::init_from_pose(const core::pose::Pose &pose, const
 	grab_additional_pose_data( pose );
 
 	// Setup options.
-	bool renumber_chains(false);
+	bool renumber_chains( false );
 	if ( options.per_chain_renumbering() ) {
 		renumber_chains = true;
 	}
 
-	utility::vector1< bool > res_info_added( pose.total_residue(), false );
+	//utility::vector1< bool > res_info_added( pose.total_residue(), false );
 
-	core::Size new_atom_num(1);
-	core::Size new_tercount(0);
-	for ( Size resnum=1, resnum_max=pose.n_residue(); resnum<=resnum_max; ++resnum ) {
+	core::Size new_atom_num( 1 );
+	core::Size new_tercount( 0 );
+	for ( Size resnum = 1, resnum_max = pose.n_residue(); resnum <= resnum_max; ++resnum ) {
 		conformation::Residue const & rsd( pose.residue( resnum ) );
-		bool use_pdb_info = use_pdb_info_for_num( pose, resnum );
+		bool const use_pdb_info( use_pdb_info_for_num( pose, resnum ) );
 
-		if ( resnum > 1 && pose.chain(resnum) != pose.chain(resnum-1) ) ++new_tercount;
+		if ( ( resnum > 1 ) && ( pose.chain( resnum ) != pose.chain( resnum - 1 ) ) ) {
+			++new_tercount;
+		}
 
-		for ( Size atom_index=1; atom_index<= rsd.natoms(); ++atom_index ) {
+		ResidueInformation res_info;
+		get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info );
 
-			id::AtomID atm = id::AtomID( atom_index,resnum );
-			if ( ! mask[ atm ]  || ! mask.has( atm ) ) continue;
-			ResidueInformation res_info;
-			get_residue_information(pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info);
+		// Add res information only if we havn't done so already.
+		//if ( ! res_info_added[ resnum ] ) {
+			append_residue_info_to_sfr( res_info, rsd );
+			//res_info_added[ resnum ] = true;
+		//}
 
-			///Add res information only if we havn't done so already.
-			if ( ! res_info_added[ resnum ] ) {
-				append_residue_info_to_sfr(pose, res_info, rsd);
-				res_info_added[ resnum ] = true;
-			}
+		for ( Size atom_index = 1; atom_index <= rsd.natoms(); ++atom_index ) {
+			id::AtomID atm = id::AtomID( atom_index, resnum );
+			if ( ( ! mask[ atm ] ) || ( ! mask.has( atm ) ) ) { continue; }
 
-			bool success = append_atom_info_to_sfr(pose, res_info, rsd, atom_index, use_pdb_info, new_atom_num, new_tercount);
-			if ( success ) new_atom_num += 1;
+			bool const success( append_atom_info_to_sfr(
+					pose, res_info, rsd, atom_index, use_pdb_info, new_atom_num, new_tercount ) );
+			if ( success ) { ++new_atom_num; }
 		}
 	}
-
 }
 
 
 // Append pdb information to StructFileRep for a single residue.
 void
-PoseToStructFileRepConverter::append_residue_to_sfr(
-	core::pose::Pose const & pose,
-	core::Size const resnum
-) {
-
+PoseToStructFileRepConverter::append_residue_to_sfr( core::pose::Pose const & pose, core::Size const resnum )
+{
 	core::Size new_atom_num_start = get_new_atom_serial_num();
-	core::Size const new_tercount( pose.chain(resnum)-1 );
+	core::Size const new_tercount( pose.chain( resnum ) - 1 );
 	append_residue_to_sfr( pose, resnum, new_atom_num_start, new_tercount );
-
 }
 
 /// @brief Append pdb information to StructFileRep for a single residue.
-///  @brief Start atom numbering from given n
+/// @details Start atom numbering from given n
 void
 PoseToStructFileRepConverter::append_residue_to_sfr(
-	pose::Pose const & pose,
-	core::Size const resnum,
-	core::Size & new_atom_num,
-	core::Size const new_tercount )
+		pose::Pose const & pose,
+		core::Size const resnum,
+		core::Size & new_atom_num,
+		core::Size const new_tercount )
 {
-
 	using namespace core;
 	using namespace utility;
 
@@ -272,50 +271,53 @@ PoseToStructFileRepConverter::append_residue_to_sfr(
 	}
 
 	ResidueInformation res_info;
-	get_residue_information(pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info );
-	append_residue_info_to_sfr( pose, res_info, rsd );
+	get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info );
+	append_residue_info_to_sfr( res_info, rsd );
 
 	// Loop through each atom in the residue and generate ATOM or HETATM data.
 	for ( Size j = 1; j <= rsd.natoms(); ++j ) {
-		bool success = append_atom_info_to_sfr( pose, res_info, rsd, j, use_pdb_info, new_atom_num, new_tercount);
-		if ( success ) new_atom_num += 1;
+		bool const success( append_atom_info_to_sfr(
+				pose, res_info, rsd, j, use_pdb_info, new_atom_num, new_tercount ) );
+		if ( success ) { ++new_atom_num; }
 	}
-
 }
 
 
 /// @brief Append just residue-based info to StructFileRep
 void PoseToStructFileRepConverter::append_residue_info_to_sfr(
-	pose::Pose const & /* pose */,
-	ResidueInformation const & res_info,
-	conformation::Residue const & rsd )
+		ResidueInformation const & res_info,
+		conformation::Residue const & rsd )
 {
-
 	// Determine residue identifier information.
 
 	// Generate HETNAM data, if applicable.
-	// TODO: For now, only output HETNAM records for saccharide residues, but in the future, outputting HETNAM records
-	// for any HETATM residues could be done.
-	if ( rsd.is_carbohydrate() ) {
-		String const & hetID = rsd.name3();
+	if ( ! ( rsd.is_protein() ||
+			rsd.is_NA() ||
+			rsd.is_virtual_residue() ||
+			rsd.type().is_membrane() ) ) {
+		String const & hetID( rsd.name3() );
+		String const & base_name( rsd.type().base_name() );
 
-		String resSeq( utility::pad_left(res_info.resSeq(), 4) ); //("%4d", res_info.resSeq);
-		String const resID = String(1, res_info.chainID()) + resSeq + String(1, res_info.iCode());
+		String resSeq( utility::pad_left( res_info.resSeq(), 4 ) ); //("%4d", res_info.resSeq);
+		String const resID = String( 1, res_info.chainID() ) + resSeq + String( 1, res_info.iCode() );
 
-		String const text = resID + " " + rsd.type().base_name();
+		String const text = resID + " " + base_name;
 
-		sfr_->heterogen_names().push_back(make_pair(hetID, text));
+		if ( ! sfr_->heterogen_names().count( hetID ) ) {
+			sfr_->heterogen_names()[ hetID ] = base_name;
+		}
+		sfr_->residue_type_base_names()[ res_info.resid() ] = std::make_pair( hetID, base_name );
 	}
 }
 
 
 bool
 PoseToStructFileRepConverter::append_atom_info_to_sfr(
-	core::pose::Pose const & pose,
-	ResidueInformation const & res_info,
-	core::conformation::Residue const & rsd,
-	core::Size const atom_index,
-	bool const use_pdb_info)
+		core::pose::Pose const & pose,
+		ResidueInformation const & res_info,
+		core::conformation::Residue const & rsd,
+		core::Size const atom_index,
+		bool const use_pdb_info)
 {
 	return append_atom_info_to_sfr( pose, res_info, rsd, atom_index, use_pdb_info, get_new_atom_serial_num() /*atom index*/, pose.chain( rsd.seqpos() ) - 1 /*Number of termini before this atom*/);
 }
@@ -323,20 +325,18 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 
 bool
 PoseToStructFileRepConverter::append_atom_info_to_sfr(
-	core::pose::Pose const & pose,
-	ResidueInformation const & res_info,
-	core::conformation::Residue const & rsd,
-	core::Size const atom_index,
-	bool const use_pdb_info,
-	core::Size const new_atom_num,
-	core::Size const new_tercount)
-
+		core::pose::Pose const & pose,
+		ResidueInformation const & res_info,
+		core::conformation::Residue const & rsd,
+		core::Size const atom_index,
+		bool const use_pdb_info,
+		core::Size const new_atom_num,
+		core::Size const new_tercount )
 {
-
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	conformation::Atom const & atom = rsd.atom( atom_index ) ;
 
-	if ( ! add_atom_to_sfr( pose, rsd, atom_index, use_pdb_info ) ) return false;
+	if ( ! add_atom_to_sfr( pose, rsd, atom_index, use_pdb_info ) ) { return false; }
 
 	AtomInformation ai;
 	AtomInformation orb;  //have to initialize this out here.
@@ -403,13 +403,11 @@ PoseToStructFileRepConverter::get_new_atom_serial_num() const {
 
 bool
 PoseToStructFileRepConverter::add_atom_to_sfr(
-	pose::Pose const & pose,
-	conformation::Residue const & rsd,
-	core::Size atom_index,
-	bool use_pdb_info ) const
-
+		pose::Pose const & pose,
+		conformation::Residue const & rsd,
+		core::Size atom_index,
+		bool use_pdb_info ) const
 {
-
 	//skip outputting virtual atom unless specified
 	if ( !options_.output_virtual() &&
 			rsd.atom_type( atom_index ).is_virtual() ) return false;
@@ -428,26 +426,19 @@ PoseToStructFileRepConverter::add_atom_to_sfr(
 }
 
 bool
-PoseToStructFileRepConverter::use_pdb_info_for_num(
-	pose::Pose const & pose,
-	Size resnum)
+PoseToStructFileRepConverter::use_pdb_info_for_num( pose::Pose const & pose, Size resnum )
 {
 	// Setup options.
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	if (
-			pdb_info
-			&& !(pdb_info->obsolete())
+	if ( pdb_info
+			&& !( pdb_info->obsolete() )
 			&& resnum <= pdb_info->nres()
 			&& !( options_.renumber_pdb() ) ) {
-
 		return true;
 	} else {
-
 		return false;
 	}
-
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -673,7 +664,6 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 }
 
 /// @brief Get parametric information from the Pose object and add it to the PDB remarks.
-///
 void PoseToStructFileRepConverter::get_parametric_info(
 	core::io::RemarksOP remarks,
 	core::pose::Pose const & pose
@@ -682,7 +672,7 @@ void PoseToStructFileRepConverter::get_parametric_info(
 	using namespace core::conformation::parametric;
 
 	core::Size const nsets(pose.conformation().n_parameters_sets()); //How many ParametersSet objects are there in the pose?
-	if ( nsets==0 ) return; //No need to proceed if this isn't a parametric conformation.
+	if ( nsets == 0 ) { return; }  //No need to proceed if this isn't a parametric conformation.
 
 	for ( core::Size iset=1; iset<=nsets; ++iset ) { //Loop through all of the ParametersSet objects.
 		ParametersSetCOP curset( pose.conformation().parameters_set(iset) );
@@ -719,9 +709,6 @@ PoseToStructFileRepConverter::grab_additional_pose_data( core::pose::Pose const 
 	grab_torsion_records( pose, options_.output_torsions() );
 	grab_pdbinfo_labels( pose );
 }
-
-
-
 
 
 /// @brief Set whether to write the fold tree, in the
@@ -991,7 +978,6 @@ PoseToStructFileRepConverter::grab_pdbinfo_labels(
 }
 
 /// @brief Get the total number of atoms in the SFR.
-///
 core::Size
 PoseToStructFileRepConverter::total_sfr_atoms(
 	StructFileRep const & sfr
@@ -1004,7 +990,6 @@ PoseToStructFileRepConverter::total_sfr_atoms(
 }
 
 /// @brief Get the total number of atoms in a chain in the SFR.
-///
 core::Size
 PoseToStructFileRepConverter::total_sfr_atoms(
 	StructFileRep const & sfr,
@@ -1018,13 +1003,13 @@ PoseToStructFileRepConverter::total_sfr_atoms(
 /// @details Output is res_info.
 void
 PoseToStructFileRepConverter::get_residue_information(
-	core::pose::Pose const & pose,
-	core::uint const seqpos,
-	bool const use_PDB,
-	bool const renumber_chains,
-	core::Size const new_tercount,
-	ResidueInformation &res_info
-) const {
+		core::pose::Pose const & pose,
+		core::uint const seqpos,
+		bool const use_PDB,
+		bool const renumber_chains,
+		core::Size const new_tercount,
+		ResidueInformation & res_info ) const
+{
 	using namespace std;
 	using namespace utility;
 	using namespace core;
@@ -1037,32 +1022,32 @@ PoseToStructFileRepConverter::get_residue_information(
 	if ( use_PDB ) {
 		PDBInfoCOP pdb_info = pose.pdb_info();
 
-		res_info.chainID( pdb_info->chain(seqpos) );
+		res_info.chainID( pdb_info->chain( seqpos ) );
 		if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
 			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
-				<< "', denoting an empty record; for convenience, replacing with space." << endl;
+					<< "', denoting an empty record; for convenience, replacing with space." << endl;
 			res_info.chainID( ' ' );
 		}
-		res_info.resSeq(    pdb_info->number(seqpos));
-		res_info.iCode(     pdb_info->icode(seqpos));
-		res_info.segmentID( pdb_info->segmentID(seqpos));
+		res_info.resSeq(    pdb_info->number( seqpos ) );
+		res_info.iCode(     pdb_info->icode( seqpos ) );
+		res_info.segmentID( pdb_info->segmentID( seqpos ) );
 		res_info.terCount( new_tercount );
 		// ...or not?
 	} else {
-		uint chain_num = pose.chain(seqpos);
-		runtime_assert(chain_num > 0);
+		uint const chain_num = pose.chain( seqpos );
+		runtime_assert( chain_num > 0 );
 
-		res_info.chainID( chr_chains[(chain_num - 1) % chr_chains.size()] );
-		res_info.resSeq(  seqpos );
+		res_info.chainID( chr_chains[ ( chain_num - 1 ) % chr_chains.size() ] );
+		res_info.resSeq( seqpos );
 		res_info.iCode( ' ' );
 		res_info.terCount( new_tercount );
 
 		// If option is specified, renumber per-chain.
 		if ( renumber_chains ) {
-			vector1<uint> const & chn_ends = pose.conformation().chain_endings();
+			vector1< uint > const & chn_ends = pose.conformation().chain_endings();
 			for ( uint i = 1; i <= chn_ends.size(); ++i ) {
-				if ( chn_ends[i] < seqpos ) {
-					res_info.resSeq( seqpos - chn_ends[i] );
+				if ( chn_ends[ i ] < seqpos ) {
+					res_info.resSeq( seqpos - chn_ends[ i ] );
 				}
 			}
 		}

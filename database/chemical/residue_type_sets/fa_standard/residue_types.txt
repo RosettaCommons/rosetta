@@ -502,3 +502,7 @@ residue_types/pna/CPN.params
 residue_types/pna/GPN.params
 residue_types/pna/TPN.params
 residue_types/pna/UPN.params
+
+## Coenzymes
+residue_types/coenzymes/flavin_oxidized.params
+residue_types/coenzymes/flavin_reduced.params

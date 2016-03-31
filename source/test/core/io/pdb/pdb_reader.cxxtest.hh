@@ -171,6 +171,84 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( modres_map[ "  32 B" ].chainID, 'B' );
 	}
 
+	// Confirm that HETNAM records are stored properly.
+	void test_store_heterogen_name_record_in_sfr_and_store_base_residue_type_name_in_sfr()
+	{
+		using namespace std;
+		using namespace utility;
+		using namespace core::io;
+		using namespace core::io::pdb;
+
+		TS_TRACE( "Testing store_heterogen_name_record_in_sfr() method." );
+
+		// These example lines are taken directly from the given examples at
+		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
+		// with the addition of a single "Rosetta-format" line.
+		string const sample_pdb_lines(
+				"HETNAM     NAG N-ACETYL-D-GLUCOSAMINE                                          \n"
+				"HETNAM     SAD BETA-METHYLENE SELENAZOLE-4-CARBOXAMIDE ADENINE                 \n"
+				"HETNAM  2  SAD DINUCLEOTIDE                                                    \n"
+				"HETNAM     UDP URIDINE-5'-DIPHOSPHATE                                          \n"
+				"HETNAM     UNX UNKNOWN ATOM OR ION                                             \n"
+				"HETNAM     UNL UNKNOWN LIGAND                                                  \n"
+				"HETNAM     B3P 2-[3-(2-HYDROXY-1,1-DIHYDROXYMETHYL-ETHYLAMINO)-                \n"
+				"HETNAM   2 B3P  PROPYLAMINO]-2-HYDROXYMETHYL-PROPANE-1,3-DIOL                  \n"
+				"HETNAM     Krp X  13Z Kryptonite, which will kill Superman -- Bwahaha!         \n" );
+
+		vector1< Record > records( create_records_from_pdb_file_contents( sample_pdb_lines ) );
+
+		StructFileRep sfr;
+
+		core::Size const n_records( records.size() );
+		TS_ASSERT_EQUALS( n_records, 9 );
+
+		for ( core::uint i( 1 ); i <= n_records; ++i ) {
+			store_heterogen_name_record_in_sfr( records[ i ], sfr );
+		}
+
+		map< string, string > names_map( sfr.heterogen_names() );
+		TS_ASSERT_EQUALS( names_map.size(), 7 );
+
+		TS_ASSERT( names_map.count( "NAG" ) );
+		TS_ASSERT( names_map.count( "SAD" ) );
+		TS_ASSERT( names_map.count( "UDP" ) );
+		TS_ASSERT( names_map.count( "UNX" ) );
+		TS_ASSERT( names_map.count( "UNL" ) );
+		TS_ASSERT( names_map.count( "B3P" ) );
+		TS_ASSERT( names_map.count( "Krp" ) );
+
+		TS_ASSERT_EQUALS( names_map[ "NAG" ], "N-ACETYL-D-GLUCOSAMINE" );
+		TS_ASSERT_EQUALS( names_map[ "SAD" ], "BETA-METHYLENE SELENAZOLE-4-CARBOXAMIDE ADENINE DINUCLEOTIDE" );
+		TS_ASSERT_EQUALS( names_map[ "UDP" ], "URIDINE-5'-DIPHOSPHATE" );
+		TS_ASSERT_EQUALS( names_map[ "UNX" ], "UNKNOWN ATOM OR ION" );
+		TS_ASSERT_EQUALS( names_map[ "UNL" ], "UNKNOWN LIGAND" );
+		TS_ASSERT_EQUALS( names_map[ "B3P" ],
+				"2-[3-(2-HYDROXY-1,1-DIHYDROXYMETHYL-ETHYLAMINO)-PROPYLAMINO]-2-HYDROXYMETHYL-PROPANE-1,3-DIOL" );
+		TS_ASSERT_EQUALS( names_map[ "Krp" ], "X  13Z Kryptonite, which will kill Superman -- Bwahaha!" );
+
+
+		TS_TRACE( "Testing (indirectly) store_base_residue_type_name_in_sfr method, "
+				"which is called from within store_heterogen_name_record_in_sfr()...");
+
+		map< string, pair< string, string > > base_names( sfr.residue_type_base_names() );
+
+		// Each record is treated as separate for base names.
+		// However, because the resID (See below.) for both "UNKNOWN ATOM OR
+		// ION" and "UNKNOWN LIGAND" are the same, the latter overwrites the
+		// former, giving us 8 records instead of 9.
+		TS_ASSERT_EQUALS( base_names.size(), 8 );
+
+		// Each key here is a 6-character "resID" used internally by Rosetta during Pose building/unbuilding.
+		TS_ASSERT( base_names.count( "-ACETN" ) );  // a meaningless code, since this record was a PDB-format record
+		TS_ASSERT( base_names.count( "  13ZX" ) );  // residue 13Z of chain X
+
+		TS_ASSERT_EQUALS( base_names[ "-ACETN" ].first, "NAG" );
+		TS_ASSERT_EQUALS( base_names[ "-ACETN" ].second, "L-D-GLUCOSAMINE" );  // meaningless junk
+
+		TS_ASSERT_EQUALS( base_names[ "  13ZX" ].first, "Krp" );
+		TS_ASSERT_EQUALS( base_names[ "  13ZX" ].second, "Kryptonite" );  // Any word after a comma is ignored.
+	}
+
 	// Confirm that HETSYM records are stored properly.
 	void test_store_heterogen_synonym_record_in_sfr()
 	{
@@ -184,10 +262,10 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
 		string const sample_pdb_lines(
-			"HETSYN     HV5 3-METHYL-L-VALINE                                               \n"
-			"HETSYN     AB1 ABT-378; LOPINAVIR                                              \n"
-			"HETSYN     CMP CYCLIC AMP; CAMP                                                \n"
-			"HETSYN     TRS TRIS  BUFFER;                                                   \n" );
+				"HETSYN     HV5 3-METHYL-L-VALINE                                               \n"
+				"HETSYN     AB1 ABT-378; LOPINAVIR                                              \n"
+				"HETSYN     CMP CYCLIC AMP; CAMP                                                \n"
+				"HETSYN     TRS TRIS  BUFFER;                                                   \n" );
 
 		vector1< Record > records( create_records_from_pdb_file_contents( sample_pdb_lines ) );
 

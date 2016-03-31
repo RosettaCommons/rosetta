@@ -169,10 +169,11 @@ dump_cif(
 	ISTable* chem_comp = new ISTable( "chem_comp" );
 	chem_comp->AddColumn( "id" );
 	chem_comp->AddColumn( "name" );
-	for ( Size i = 1; i <= sfr->heterogen_names().size(); ++i ) {
+	for ( std::map< std::string, std::string >::const_iterator iter = sfr->heterogen_names().begin(),
+			end = sfr->heterogen_names().end(); iter != end; ++iter ) {
 		std::vector< std::string > vec;
-		vec.push_back( sfr->heterogen_names()[ i ].first );
-		vec.push_back( sfr->heterogen_names()[ i ].second );
+		vec.push_back( iter->first );
+		vec.push_back( iter->second );
 		chem_comp->AddRow( vec );
 	}
 	block.WriteTable( chem_comp );
@@ -353,11 +354,6 @@ dump_cif(
 	cifFile.Write( cif_file );
 }
 
-
-
-
 } //core
 } //io
 } //mmcif
-
-

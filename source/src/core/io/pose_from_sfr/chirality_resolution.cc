@@ -12,8 +12,13 @@
 /// @author Rhiju Das
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
-// Unit headers
+
+// Unit header
 #include <core/io/pose_from_sfr/chirality_resolution.hh>
+
+// Package headers
+#include <core/io/ResidueInformation.hh>
+#include <core/io/AtomInformation.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -280,7 +285,7 @@ core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & 
 			std::string const & posename( rsd_type.atom_name(nbrs[jj]) );
 			if ( inverse.count( posename ) &&
 					rinfo.xyz().count( inverse.find(posename)->second ) ) {
-				// Only look at neighbors with correspeondences and coordinates
+				// Only look at neighbors with correspondences and coordinates
 				type_nbrs.push_back( posename );
 			}
 		}

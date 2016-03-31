@@ -49,15 +49,7 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
-// Basic headers (JAB - remove as many of these as possible)
-//#include <basic/options/option.hh>
-//#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-//#include <basic/options/keys/run.OptionKeys.gen.hh>
-//#include <basic/options/keys/in.OptionKeys.gen.hh>
-//#include <basic/options/keys/mp.OptionKeys.gen.hh>
-//#include <basic/options/keys/inout.OptionKeys.gen.hh>
-//#include <basic/options/keys/out.OptionKeys.gen.hh>
-//#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// Basic headers
 #include <basic/Tracer.hh>
 
 // External headers
@@ -286,11 +278,8 @@ create_pdb_line_from_record( Record const & record )
 
 
 /// @details Create vector of Record from given StructFileRep object.  Used in PDB writing support.
-std::vector<Record>
-create_records_from_sfr(
-	StructFileRep const & sfr,
-	core::io::StructFileRepOptionsCOP options
-) {
+std::vector< Record >
+create_records_from_sfr( StructFileRep const & sfr, core::io::StructFileRepOptionsCOP options ) {
 	std::vector<Record> VR;
 
 	sfr.header()->fill_records( VR );
@@ -308,13 +297,32 @@ create_records_from_sfr(
 
 	// Heterogen Section //////////////////////////////////////////////////////
 	R = RecordCollection::record_from_record_type( HETNAM );
-	Size n_het_names = sfr.heterogen_names().size();
-	for ( uint i = 1; i <= n_het_names; ++i ) {
-		R["type"].value = "HETNAM";
-		R["continuation"].value = "  ";  // TODO: Wrap long text fields.
-		R["hetID"].value = sfr.heterogen_names()[i].first;
-		R["text"].value = sfr.heterogen_names()[i].second;
-		VR.push_back(R);
+	if ( options->use_pdb_format_HETNAM_records() ) {
+		// TODO: Also have this option output HET, HETSYM, and FORMUL records.
+		for ( std::map< std::string, std::string >::const_iterator iter = sfr.heterogen_names().begin(),
+				end = sfr.heterogen_names().end(); iter != end; ++iter ) {
+			R[ "type" ].value = "HETNAM";
+			R[ "continuation" ].value = "  ";  // TODO: Wrap long text fields.
+			R[ "hetID" ].value = iter->first;
+			R[ "text" ].value = iter->second;
+			VR.push_back( R );
+		}
+	} else {  // Use the Rosetta HETNAM format, which specifies base ResidueTypes.
+		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator iter(
+				sfr.residue_type_base_names().begin() ), end = sfr.residue_type_base_names().end();
+				iter != end; ++iter ) {
+			// The 6-character resID key for the map has a fixed format.
+			std::string const & chainID( iter->first.substr( 5, 1 ) );  // 6th character
+			std::string const & resSeq( iter->first.substr( 0, 4 ) );  // 1st through 4th characters
+			std::string const & iCode( iter->first.substr( 4, 1 ) );  // 5th character
+			std::string const & base_name( iter->second.second );
+
+			R[ "type" ].value = "HETNAM";
+			R[ "continuation" ].value = "  ";  // unused
+			R[ "hetID" ].value = iter->second.first;  // 3-letter code
+			R[ "text" ].value = chainID + resSeq + iCode + " " + base_name;
+			VR.push_back( R );
+		}
 	}
 
 	// Connectivity Annotation Section ////////////////////////////////////////
@@ -409,9 +417,13 @@ create_records_from_sfr(
 			R["segmentID"].value = ai.segmentID;
 			VR.push_back(R);
 		}
-		if ( !no_chainend_ter && i>0 ) VR.push_back(T);
+		if ( ! no_chainend_ter && i > 0 ) {
+			VR.push_back( T );
+		}
 	}
-	if ( no_chainend_ter ) VR.push_back(T); //Put a TER record at the end of the ATOM lines if we're using the no_chainend_ter option.
+	if ( no_chainend_ter ) {
+		VR.push_back( T );  //Put a TER record at the end of the ATOM lines if we're using the no_chainend_ter option.
+	}
 
 	// Connectivity Section ///////////////////////////////////////////////////
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {

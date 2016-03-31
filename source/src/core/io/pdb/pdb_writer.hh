@@ -17,12 +17,18 @@
 #ifndef INCLUDED_core_io_pdb_pdb_writer_hh
 #define INCLUDED_core_io_pdb_pdb_writer_hh
 
-#include <core/io/StructFileRep.hh>
-#include <core/io/StructFileRepOptions.hh>
-#include <core/io/pdb/Field.fwd.hh>
+// Unit headers
+#include <core/io/pdb/Record.hh>
 
-// Package header
-#include <core/io/StructFileRep.hh>
+// Package headers
+#include <core/io/StructFileRep.fwd.hh>
+#include <core/io/StructFileRepOptions.hh>
+#include <core/io/StructFileReaderOptions.fwd.hh>
+
+// Project header
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility header
 #include <utility/io/ozstream.fwd.hh>
