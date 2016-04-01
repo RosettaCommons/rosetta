@@ -359,6 +359,8 @@ SimpleCycpepPredictApplication::run() const {
 		utility::vector1 < std::string > resnames_copy;
 		if ( cyclic_permutations_ ) {
 			cyclic_offset = do_cyclic_permutation( resnames, resnames_copy );
+		} else {
+			resnames_copy = resnames;
 		}
 		runtime_assert(cyclic_offset < resnames_copy.size() ); //Should be true.
 
