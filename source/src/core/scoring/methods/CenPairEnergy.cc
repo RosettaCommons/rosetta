@@ -124,17 +124,8 @@ CenPairEnergy::residue_pair_energy(
 	potential_.evaluate_pair_and_cenpack_score( rsd1, rsd2, cendist,
 		pair_score, cenpack_score );
 
-	//if ( rsd1.aa() == chemical::aa_his && rsd2.aa() == chemical::aa_his && true /*replace with option[ no_his_his_pairE ]*/ ) {
-	// pair_score = 0;
-	//}
-
 	pair_score *= 2.019f;
 	cenpack_score *= 2.0f;
-
-	//core::Real rsd_wt = 0.5 *
-	// ( get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() ) ) +
-	//   get_residue_weight_by_ss( pose.conformation().secstruct( rsd2.seqpos() ) )
-	// );
 
 	//Rosetta++ used the first residue's weight for both sides of the pair. I hate that. The above
 	//comment is an example of an alternative we should probably test in the distant future.

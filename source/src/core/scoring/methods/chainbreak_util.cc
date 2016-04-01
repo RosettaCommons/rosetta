@@ -37,7 +37,6 @@ bool is_lower_cutpoint(
 	using namespace basic::options::OptionKeys;
 
 	const bool is_cutpoint_in_tree_lower  = pose.fold_tree().is_cutpoint(residue);
-	//const bool is_cutpoint_in_tree_upper  = pose.fold_tree().is_cutpoint(residue - 1);
 	const bool use_pose_cutpoint_variants = option[OptionKeys::score::score_pose_cutpoint_variants]();
 	const bool has_lower_variant_type     = pose.residue(residue).has_variant_type(chemical::CUTPOINT_LOWER);
 	return (has_lower_variant_type && (is_cutpoint_in_tree_lower || use_pose_cutpoint_variants));

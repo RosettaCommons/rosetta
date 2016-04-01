@@ -18,19 +18,12 @@
 
 // Package headers
 
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/rms_util.hh>
-
-
 #include <basic/options/option.hh>
-
 #include <core/pose/Pose.hh>
-
 #include <utility/exit.hh>
 
-
 // option key includes
-
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -59,7 +52,6 @@ RMS_EnergyCreator::score_types_for_method() const {
 	sts.push_back( rms );
 	return sts;
 }
-
 
 /// c-tor
 RMS_Energy::RMS_Energy() :

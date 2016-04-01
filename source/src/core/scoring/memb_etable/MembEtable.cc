@@ -127,7 +127,6 @@ MembEtable::dimension_memb_etable_arrays() {
 	memb_lk_dgfree_.resize( n_atomtypes(), 0.0 );
 	lk_dgrefce_.dimension( n_atomtypes() );
 	memb_lk_dgrefce_.dimension( n_atomtypes() );
-
 }
 
 void
@@ -170,7 +169,6 @@ MembEtable::initialize_from_atomset( chemical::AtomTypeSetCAP atom_set_in_ap ) {
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const mb_lkref_index( atom_set_in->extra_parameter_index( param_name ) );
 	for ( int i=1; i<= n_atomtypes(); ++i ) memb_lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( mb_lkref_index );
-
 }
 
 
@@ -292,7 +290,6 @@ MembEtable::make_pairenergy_table()
 			solv2_(etable_disbins(),atype2,atype1) = 0.0;
 			memb_solv1_(etable_disbins(),atype2,atype1) = 0.0;
 			memb_solv2_(etable_disbins(),atype2,atype1) = 0.0;
-
 		}
 	}
 
@@ -384,7 +381,6 @@ MembEtable::make_pairenergy_table()
 void
 MembEtable::modify_pot()
 {
-
 	using namespace std;
 
 	bool mod_hhrep = false;
@@ -415,30 +411,30 @@ MembEtable::modify_pot()
 			carbon_types.push_back( atom_set_ac->atom_type_index("CH3") );
 			carbon_types.push_back( atom_set_ac->atom_type_index("aroC") );
 
-			if ( dis < 4.2 ) {
-				for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {
-					for ( int j = 1, j_end = carbon_types.size(); j <= j_end; ++j ) {
-
-						int const ii = carbon_types[i];
-						int const jj = carbon_types[j];
-
-						solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
-						solv1_(k,ii,jj) = solv1_(ibin,ii,jj);
-						solv2_(k,jj,ii) = solv2_(ibin,jj,ii);
-						solv2_(k,ii,jj) = solv2_(ibin,ii,jj);
-						dsolv2_(k,jj,ii) = 0.0;
-						dsolv2_(k,ii,jj) = 0.0;
-						dsolv1_(k,ii,jj) = 0.0;
-						dsolv1_(k,jj,ii) = 0.0;
-						memb_solv1_(k,jj,ii) = memb_solv1_(ibin,jj,ii);
-						memb_solv1_(k,ii,jj) = memb_solv1_(ibin,ii,jj);
-						memb_solv2_(k,jj,ii) = memb_solv2_(ibin,jj,ii);
-						memb_solv2_(k,ii,jj) = memb_solv2_(ibin,ii,jj);
-						memb_dsolv2_(k,jj,ii) = 0.0;
-						memb_dsolv2_(k,ii,jj) = 0.0;
-						memb_dsolv1_(k,ii,jj) = 0.0;
-						memb_dsolv1_(k,jj,ii) = 0.0;
-					}
+			if ( dis >= 4.2 )  continue;
+			
+			for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {
+				for ( int j = 1, j_end = carbon_types.size(); j <= j_end; ++j ) {
+					
+					int const ii = carbon_types[i];
+					int const jj = carbon_types[j];
+					
+					solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
+					solv1_(k,ii,jj) = solv1_(ibin,ii,jj);
+					solv2_(k,jj,ii) = solv2_(ibin,jj,ii);
+					solv2_(k,ii,jj) = solv2_(ibin,ii,jj);
+					dsolv2_(k,jj,ii) = 0.0;
+					dsolv2_(k,ii,jj) = 0.0;
+					dsolv1_(k,ii,jj) = 0.0;
+					dsolv1_(k,jj,ii) = 0.0;
+					memb_solv1_(k,jj,ii) = memb_solv1_(ibin,jj,ii);
+					memb_solv1_(k,ii,jj) = memb_solv1_(ibin,ii,jj);
+					memb_solv2_(k,jj,ii) = memb_solv2_(ibin,jj,ii);
+					memb_solv2_(k,ii,jj) = memb_solv2_(ibin,ii,jj);
+					memb_dsolv2_(k,jj,ii) = 0.0;
+					memb_dsolv2_(k,ii,jj) = 0.0;
+					memb_dsolv1_(k,ii,jj) = 0.0;
+					memb_dsolv1_(k,jj,ii) = 0.0;
 				}
 			}
 		}
@@ -545,10 +541,8 @@ MembEtable::smooth_etables()
 				memb_dsolv2_(i,at1,at2) = d2;
 				memb_dsolv1_(i,at1,at2) = d1;
 			}
-
 		}
 	}
-
 }
 
 
@@ -581,7 +575,6 @@ MembEtable::output_etable(
 			out << endl;
 		}
 	}
-
 }
 
 
@@ -828,10 +821,8 @@ MembEtable::calc_etable_value(
 	FArray2< Real > & memb_lk_min_dis2sigma_value,
 	Real & memb_dsolvE1,
 	Real & memb_dsolvE2
-)
-{
+) {
 	// locals
-	//Real ljE,d_ljE,
 	Real x1,x2;
 	Real dis;
 	Real inv_dis,inv_dis2;
@@ -891,9 +882,7 @@ MembEtable::calc_etable_value(
 			(((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
 		memb_dsolvE2 = -2.0 * memb_solvE2 *
 			(((dis-lj_radius(atype2))*lk_inv_lambda2(atype2))+inv_dis);
-
 	}
-
 }
 
 } // etable

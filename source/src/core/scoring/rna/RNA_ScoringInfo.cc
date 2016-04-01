@@ -86,8 +86,6 @@ rna_scoring_info_from_pose( pose::Pose const & pose )
 RNA_ScoringInfo &
 nonconst_rna_scoring_info_from_pose( pose::Pose & pose )
 {
-	//using core::pose::datacache::CacheableDataType::RNA_SCORING_INFO;
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) ) {
 		return *( utility::pointer::static_pointer_cast< core::scoring::rna::RNA_ScoringInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) ) );
 	}
@@ -108,8 +106,6 @@ clear_rna_scoring_info( pose::Pose & pose )
 {
 	pose.data().clear( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO );
 }
-
-
 
 
 } //rna

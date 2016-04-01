@@ -83,7 +83,6 @@ AmberPeriodicFunc::show_violations( std::ostream& out, Real x, Size verbose_leve
 		out << "AMBER PERIODIC " <<  func(x) << std::endl;
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);
-
 }
 
 

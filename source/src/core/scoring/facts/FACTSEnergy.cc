@@ -159,7 +159,6 @@ void FACTSEnergy::eval_intrares_energy(
 	emap[ facts_elec ] += E_elec;
 	emap[ facts_solv ] += E_solv_self + E_solv_pair;
 	emap[ facts_sasa ] += potential_.evaluate_nonpolar_energy( rsd, facts, rsd );
-
 }
 
 

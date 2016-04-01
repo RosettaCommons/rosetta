@@ -127,7 +127,6 @@ void BurialEnergy::init_from_file() {
 	using namespace basic::options::OptionKeys;
 
 	std::string const & burial_fn( option[ in::file::burial ]()[1] );
-	//utility::vector1< core::Real > pred_burial_;
 	utility::io::izstream input(burial_fn);
 	if ( !input.good() ) {
 		std::string const msg( "Error opening file: " + burial_fn );

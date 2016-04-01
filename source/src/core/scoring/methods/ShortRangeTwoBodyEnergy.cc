@@ -69,21 +69,20 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.atom( jj_example_rotamer.type().nbr_atom() ).xyz());
 			Real const jj_radius( jj_example_rotamer.type().nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 ) ) {
-				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-					Size const kk_rot_id = ii_offset + kk - 1;
-					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
-						Size const ll_rot_id = jj_offset + ll - 1;
-
-						emap.zero( score_types() );
-						residue_pair_energy( set1.rotamer_ref( kk_rot_id ), set2.rotamer_ref( ll_rot_id ), pose, sfxn, emap );
-						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (weights.dot( emap, score_types() ));
-					}
+			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 ) ) return;
+			
+			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+				Size const kk_rot_id = ii_offset + kk - 1;
+				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
+					Size const ll_rot_id = jj_offset + ll - 1;
+					
+					emap.zero( score_types() );
+					residue_pair_energy( set1.rotamer_ref( kk_rot_id ), set2.rotamer_ref( ll_rot_id ), pose, sfxn, emap );
+					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (weights.dot( emap, score_types() ));
 				}
 			}
 		}
 	}
-
 }
 
 void

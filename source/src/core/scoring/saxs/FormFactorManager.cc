@@ -36,8 +36,7 @@ static THREAD_LOCAL basic::Tracer trFormFactorManager( "core.scoring.saxs.FormFa
 FormFactorManager* FormFactorManager::singleton_;
 
 FormFactorManager* FormFactorManager::get_manager() {
-
-	if ( singleton_==0 ) {
+	if ( singleton_ == 0 ) {
 		singleton_ = new FormFactorManager();
 	}
 
@@ -45,7 +44,6 @@ FormFactorManager* FormFactorManager::get_manager() {
 }
 
 void FormFactorManager::load_ff(std::string file_name) {
-
 	utility::io::izstream input(file_name.c_str());
 	std::string line;
 
@@ -64,7 +62,6 @@ void FormFactorManager::load_ff(std::string file_name) {
 }
 
 void FormFactorManager::load_ff_from_db(std::string file_name) {
-
 	utility::io::izstream input(file_name.c_str());
 	std::string line;
 
@@ -82,17 +79,15 @@ void FormFactorManager::load_ff_from_db(std::string file_name) {
 	}
 }
 
-
 void FormFactorManager::register_ff(std::string atom_name,FormFactorOP new_ff) {
-
 	Size n = known_atoms_.size() + 1;
 	new_ff->id_ = n;
-	if ( ff_map_.find(atom_name) == ff_map_.end() ) {
-		ff_map_.insert( std::pair<std::string,FormFactorOP> (atom_name,new_ff) );
-		known_atoms_.push_back( atom_name );
-		names_to_indexes_.insert( std::pair<std::string,Size> (atom_name, n) );
-		ff_vector_.push_back(new_ff);
-	}
+	if ( ff_map_.find(atom_name) != ff_map_.end() ) return;
+	
+	ff_map_.insert( std::pair<std::string,FormFactorOP> (atom_name,new_ff) );
+	known_atoms_.push_back( atom_name );
+	names_to_indexes_.insert( std::pair<std::string,Size> (atom_name, n) );
+	ff_vector_.push_back(new_ff);
 }
 
 /// @brief returns true if the manager has form factor function for a given atom

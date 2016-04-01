@@ -40,11 +40,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/io/izstream.hh>
-//#include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <basic/prof.hh>
 // ObjexxFCL headers
-//#include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -87,7 +85,6 @@ SecondaryStructurePotential::SecondaryStructurePotential():
 SS_Info const &
 retrieve_const_ss_info_from_pose( pose::Pose const & pose )
 {
-	// ////using core::pose::datacache::CacheableDataType::SS_INFO;
 	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) );
 	debug_assert( dynamic_cast< SS_Info const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO ))));
 	return ( static_cast< SS_Info const &>(    pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO )));
@@ -97,8 +94,6 @@ retrieve_const_ss_info_from_pose( pose::Pose const & pose )
 SS_Info &
 retrieve_nonconst_ss_info_from_pose( pose::Pose & pose )
 {
-	// ////using core::pose::datacache::CacheableDataType::SS_INFO;
-
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) ) {
 		// create new one
 		using basic::datacache::DataCache_CacheableData;
@@ -114,8 +109,7 @@ void
 fill_bb_pos(
 	pose::Pose const & pose,
 	BB_Pos & bb_pos
-)
-{
+) {
 	bb_pos.take_coordinates_from_pose( pose );
 }
 
@@ -138,9 +132,7 @@ SecondaryStructurePotential::setup_for_scoring( pose::Pose & pose ) const
 
 	// identify strand and helix segments
 	identify_ss( pose, ss_info.helices(), ss_info.strands() );
-
 	// std::cout << "identify_ss:\n" << ss_info.helices() << ss_info.strands();
-
 }
 
 
@@ -153,17 +145,14 @@ SecondaryStructurePotential::score(
 	Real & ss_score,
 	Real & rsigma_score,
 	Real & sheet_score
-) const
-{
+) const {
 	basic::ProfileThis doit( basic::SECONDARY_STRUCTURE_ENERGY );
 	ss_score = 0.0;
 	hs_score = 0.0;
 	rsigma_score = 0.0;
 
 	hspair( pose, hs_score );
-
 	sspair( pose, weights, ss_score, rsigma_score );
-
 	sheet_score = sheets_from_dimers( pose ); // execute after scoring sspair
 }
 
@@ -173,8 +162,7 @@ void
 SecondaryStructurePotential::hspair(
 	pose::Pose const & pose,
 	Real & hs_score
-) const
-{
+) const{
 	basic::ProfileThis doit( basic::SECONDARY_STRUCTURE_HSPAIR_ENERGY );
 	hs_score = 0.0;
 
@@ -254,8 +242,6 @@ SecondaryStructurePotential::hspair(
 				int iseqsep;
 				int itemp = std::min( get_foldtree_seqsep( pose, strands.SS_strand_end(2,ss2), HH_helix_end_1ss1 ) + 1,
 					get_foldtree_seqsep( pose, HH_helix_end_2ss1, strands.SS_strand_end(1,ss2) ) + 1 );
-				//    int itemp = std::min( std::abs( strands.SS_strand_end(2,ss2) - HH_helix_end_1ss1 ) + 1,
-				//                std::abs( HH_helix_end_2ss1 - strands.SS_strand_end(1,ss2) ) + 1 );
 				if ( itemp >= 2 && itemp <= 10 ) {
 					iseqsep = 2;
 				} else {
@@ -269,7 +255,6 @@ SecondaryStructurePotential::hspair(
 				//    std::cout << "hs_intxn: " << HH_resnum_ss1 << ' ' << SS_resnum_ss2 << ' ' << pts_(1,iseqsep,iph,ith) <<
 				//     "      " << cendist << " " <<
 				//     std::endl;
-
 				if ( symmetric ) {
 					hs_score += pts_(1,iseqsep,iph,ith)*symm_info->score_multiply(HH_resnum_ss1,SS_resnum_ss2);
 				} else {
@@ -278,7 +263,6 @@ SecondaryStructurePotential::hspair(
 			}
 		} // loop over neighbors of HH_resnum_ss1
 	} // ss1
-
 
 	// modify by proper weighting
 	hs_score *= 0.090;
@@ -380,13 +364,10 @@ SecondaryStructurePotential::sspair(
 	SecondaryStructureWeights const & wts,
 	Real & ss_score,
 	Real & rsigma_score
-) const
-{
+) const {
 	basic::ProfileThis doit( basic::SECONDARY_STRUCTURE_SSPAIR_ENERGY );
-	////using core::pose::datacache::CacheableDataType::core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO;
 	ss_score = 0.0;
 	rsigma_score = 0.0;
-
 
 	int const lowstrand( wts.get_ss_lowstrand() );
 	int const cutoff( wts.get_ss_cutoff() );
@@ -429,7 +410,6 @@ SecondaryStructurePotential::sspair(
 		strands.dimer_neighbor(2,ss1) = 0;
 	}
 
-
 	//car ss1 is the first dimer in the possible pair
 	for ( int ss1 = 1; ss1 < strands.total_SS_dimer; ++ss1 ) {
 
@@ -461,8 +441,6 @@ SecondaryStructurePotential::sspair(
 			//car pair to count in ss_score based on the value of cutoff
 
 			int const dimer_seqsep = get_foldtree_seqsep( pose, SS_resnum_ss2, SS_resnum_ss1 );
-			//   int const dimer_seqsep = SS_resnum_ss2 - SS_resnum_ss1;
-
 			int const SS_strand_end_1ss2 = strands.SS_strand_end(1,ss2);
 
 			if ( SS_strand_end_1ss1 != SS_strand_end_1ss2 ) { // not in same strand
@@ -610,8 +588,6 @@ SecondaryStructurePotential::sspair(
 						}
 						int idist = static_cast< int >( ( dist - 3.5 ) / 0.25 ) + 1;
 
-						//tempscore_rsigma = rsigma_dot_(idist,isig,sign1,sign2);
-
 						// The definition of dimer signs (sign1,sign2)
 						// appears inverted (1 should be 2, vice versa).
 						Real tempscore_rsigma = rsigma_dot_(idist, isig, 3 - sign1, 3 - sign2);
@@ -681,18 +657,15 @@ SecondaryStructurePotential::sspair(
 								core::Size const resnum_ss1( SS_resnum_ss1 );
 								core::Size const resnum_ss2_offset( SS_resnum_ss2+dimer2_offset);
 
-								//static_cast< SS_KILLHAIRPINS_Info const &>( pose.data().get( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO )));
-
 								float const score_delta( hairpin_killing_score( pose, resnum_ss1,
 									resnum_ss2_offset,
 									theta, dimer_score ));
 								if ( symmetric ) { // multiply with score factors for the edge
-									ss_score += dimer_pair_score*symm_info->score_multiply(SS_resnum_ss1, SS_resnum_ss2); // [ l ]; // dimer_pair_score(ss1,ss2)
+									ss_score += dimer_pair_score*symm_info->score_multiply(SS_resnum_ss1, SS_resnum_ss2);
 									ss_score += score_delta*symm_info->score_multiply(SS_resnum_ss1, SS_resnum_ss2);
 								} else {
 									ss_score += score_delta;
 								}
-								//if ( false && std::abs( score_delta ) > 0.1 )
 								if ( false && std::abs( score_delta ) > 0.1 ) {
 									std::cout << "Apply score: " << score_delta << ' ' <<
 										SS_resnum_ss1 << ' ' << SS_resnum_ss2 << std::endl;
@@ -745,9 +718,9 @@ SecondaryStructurePotential::sspair(
 						} else {
 							if ( symmetric ) { // multiply with the score_mulptipy for the edge
 								if ( symm_info->bb_follows(SS_resnum_ss1) !=0 && symm_info->bb_follows(SS_resnum_ss2) != 0 ) continue; // we have already added this score
-								ss_score += dimer_pair_score*symm_info->score_multiply(SS_resnum_ss1, SS_resnum_ss2); // [ l ]; // dimer_pair_score(ss1,ss2)
+								ss_score += dimer_pair_score*symm_info->score_multiply(SS_resnum_ss1, SS_resnum_ss2);
 							} else {
-								ss_score += dimer_pair_score; // [ l ]; // dimer_pair_score(ss1,ss2)
+								ss_score += dimer_pair_score;
 							}
 						}
 					}      // good phi/th ( phithetascore<0.0 )
@@ -815,12 +788,10 @@ SecondaryStructurePotential::sspair(
 							}      // within sheet distance cutoff (5.5 Angstrom)
 						}
 					}
-
 				}         // within distance cutoff (6.5 Angstrom)
 			}            // not the same strand
 		} // nbrs of SS_resnum_ss1
 	} // ss1
-
 
 	//car okay, we've now scored all dimer pairs and we have to figure out
 	//car if there are inconsistent pairs on our list (ie each dimer can
@@ -895,14 +866,12 @@ SecondaryStructurePotential::sspair(
 
 		int const SS_strand_dimer1 = strands.SS_strand( dimer1 );
 		int const SS_strand_dimer2 = strands.SS_strand( dimer2 );
-
 		// ARE THERE OTHER DIMERS INTERACTING WITH THE BEST PAIR?
 
 		DimerPairings::iterator it2( it );
 		++it2;
 
 		for ( ; it2 != ite; ++it2 ) {
-
 			DimerPairing & other( **it2 );
 			if ( !other.valid() ) continue;
 
@@ -938,9 +907,7 @@ SecondaryStructurePotential::hairpin_killing_score(
 	Size const & pos2,
 	Real const & theta,
 	float const & ss_score
-) const
-{
-	////using core::pose::datacache::CacheableDataType::core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO;
+) const {
 	basic::ProfileThis doit( basic::SECONDARY_STRUCTURE_ENERGY );
 	float total_score(0.0);
 	// will this be too slow? called inside sspair score
@@ -948,8 +915,6 @@ SecondaryStructurePotential::hairpin_killing_score(
 	// with favorable dimer scores... probably not too many then
 
 	//ITERATE OVER HAIRPINS
-	//for ( constraint_const_iterator it = cst_list.begin(),
-	//    it_end = cst_list.end(); it != it_end; ++it ) {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO ) ) {
 
 		runtime_assert( dynamic_cast< SS_Killhairpins_Info const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO ))));
@@ -963,8 +928,6 @@ SecondaryStructurePotential::hairpin_killing_score(
 		}
 
 		//ALL HAIRPINS ARE ANTIPARALLEL
-		//int const orientation( int_value );
-
 		if ( (kill_hairpin_info.check_hairpin(pos1, pos2)) && kill_hairpin_info.kill_antiparallel() &&
 				( theta > 90.0 ) ) { //theta > 90.0 means the pairing is antiparallel
 			float const penalty(100.0); //PENALTY VALUE, MAYBE PUT IN DATA CACHE???
@@ -978,7 +941,6 @@ SecondaryStructurePotential::hairpin_killing_score(
 			// penalty constraint or unmatched bonus constraint
 			total_score += -1 * penalty * ss_score;
 		}
-
 	}
 	return total_score;
 }
@@ -1034,8 +996,7 @@ SecondaryStructurePotential::hairpin_killing_score(
 Real
 SecondaryStructurePotential::sheets_from_dimers(
 	pose::Pose const & pose
-) const
-{
+) const {
 	basic::ProfileThis doit( basic::SECONDARY_STRUCTURE_SHEETS_FROM_DIMERS_ENERGY );
 	SS_Info const & ss_info( retrieve_const_ss_info_from_pose( pose ) );
 	Strands const & strands( ss_info.strands() );
@@ -1067,30 +1028,6 @@ SecondaryStructurePotential::sheets_from_dimers(
 
 
 	/// This code duplicates r++ behavior -- but it's not at all clear this is what should be done
-	/*utility::vector1< bool > visited( strands.total_SS_dimer, false );
-	graph::DisjointSets sheet_sets( strands.total_strands );
-
-	for ( int ii = 1; ii <= strands.total_SS_dimer; ++ii ) {
-	if ( visited[ ii ] ) continue;
-	visited[ ii ] = true;
-	for ( int direction = 1; direction <= 2; ++direction ) {
-	int searching = ii;
-	while ( true ) {
-	int neighbor = strands.dimer_neighbor( direction, ii );
-	if ( neighbor != 0 ) {
-	if ( visited[ neighbor ] ) break;
-	int const searching_sheet = strands.SS_strand( searching );
-	int const neighbor_sheet = strands.SS_strand( neighbor );
-	sheet_sets.ds_union( searching_sheet, neighbor_sheet );
-	visited[ neighbor ] = true;
-	searching = neighbor;
-	} else {
-	break;
-	}
-	}
-	}
-	}*/
-
 	if ( symmetric ) {
 		// The basic idea is to go through all sheets and weigh the sheet_score by the multiply_score factors.
 		// If a sheet is across a subunit interface the score gets weighted by the score factors for that interface.
@@ -1156,14 +1093,6 @@ SecondaryStructurePotential::sheets_from_dimers(
 		sheet_score += m_term_( std::min( sheet_sizes[ ii ], size_four ) );
 	}
 
-	/// APL -- to be ported in the future
-	//if ( get_handedness_score_flag() && files_paths::use_filter(files_paths::sheet_type) ){
-	// int result = 0;
-	// sheet_filter::SheetFilter sf(position_, secstruct_, total_residue_);
-	// sf.compute_result(result); // Trigger evaluation if Ingo's sheet filter, including handedness checks.
-	// sheet_score += sf.get_handedness_score();
-	//}
-
 	//std::cout << " SHEET-SCORE: " << sheet_score << std::endl;
 	return sheet_score * 2.019; // pre-weighting from r++::structure.cc:733
 }
@@ -1176,9 +1105,7 @@ SecondaryStructurePotential::identify_ss(
 	pose::Pose const & pose,
 	Helices & helices,
 	Strands & strands
-) const
-{
-
+) const {
 	conformation::Conformation const & conf( pose.conformation() ); // get secstruct info from this guy
 	int const total_residue( pose.total_residue() );
 
@@ -1280,7 +1207,6 @@ SecondaryStructurePotential::identify_ss(
 		strands.total_strands = 0;
 	}
 	///std::cout << " strands.total_strands " <<  strands.total_strands;// << std::endl;
-
 }
 
 
@@ -1292,8 +1218,7 @@ SecondaryStructurePotential::helix_end(
 	BB_Pos const & bb_pos,
 	Vector & p1,
 	Vector & p2
-) const
-{
+) const {
 	int const s1 = pos1-1;
 	int const s2 = pos1;
 	int const s3 = pos1+1;
@@ -1308,16 +1233,6 @@ SecondaryStructurePotential::helix_end(
 
 	p1 = ( Epos_sum + bb_pos.N( s1 ) ) * eleven_inv;
 	p2 = ( Epos_sum + bb_pos.C( s4 ) ) * eleven_inv;
-
-	//  for ( int i = 1; i <= 3; ++i ) {
-	//   Real const Epos_sum =
-	//    Eposition(i,2,s1) + Eposition(i,4,s1) +
-	//    Eposition(i,1,s2) + Eposition(i,2,s2) + Eposition(i,4,s2) +
-	//    Eposition(i,1,s3) + Eposition(i,2,s3) + Eposition(i,4,s3) +
-	//    Eposition(i,1,s4) + Eposition(i,2,s4);
-	//   p1(i) = ( Epos_sum + Eposition(i,1,s1) ) * eleven_inv;
-	//   p2(i) = ( Epos_sum + Eposition(i,4,s4) ) * eleven_inv;
-	//  }
 }
 
 
@@ -1334,11 +1249,8 @@ SecondaryStructurePotential::pair_dp(
 	Vector const & vdist,
 	int & sign1,
 	int & sign2
-) const
-{
-
+) const {
 	//car parameters
-	// static Real const dist_co = { 1.231015f }; // length of C=O bond
 	static Real const dist_co_inv = { 1.0f / 1.231015f };
 
 	//car local
@@ -1353,51 +1265,27 @@ SecondaryStructurePotential::pair_dp(
 	for ( int i = ss1; i <= ss1+1; ++i ) {
 		if ( i == ss1+1 ) {
 			temp = dist_co_inv * ( bb_pos.C(i) - bb_pos.O(i) );
-			//    for ( int j = 1, l = l0; j <= 3; ++j, ++l ) {
-			//     temp(j) = -( Eposition[ l+3 ] - Eposition[ l ] ) * dist_co_inv; // 5=O, 4=C
-			// //     temp(j) = -( Eposition[ l+3 ] - Eposition[ l ] ) * dist_co_inv; // 5=O, 4=C
-			//      //       -( Eposition(j,5,i) - Eposition(j,4,i) )
-			//    }
 		} else {
 			temp = dist_co_inv * ( bb_pos.O(i) - bb_pos.C(i) );
-			//    for ( int j = 1, l = l0; j <= 3; ++j, ++l ) {
-			//     temp(j) = ( Eposition[ l+3 ] - Eposition[ l ] ) * dist_co_inv; // 5=O, 4=C
-			//      //       ( Eposition(j,5,i) - Eposition(j,4,i) )
-			//    }
 		}
-		//if ( vdist(1) != 10.0 ) {   // why is this checked?  (car)
 		Real const tempdot = temp.dot( vdist );
 		dp1 += std::abs(tempdot);
 		sdp1 += tempdot;
-		//}
 	}
 	dp1 *= 0.5;
 
 	for ( int i = ss2; i <= ss2+1; ++i ) {
 		if ( i == ss2+1 ) {
 			temp = dist_co_inv * ( bb_pos.C(i) - bb_pos.O(i) );
-			//    for ( int j = 1, l = l0; j <= 3; ++j, ++l ) {
-			//     temp(j) = -( Eposition[ l+3 ] - Eposition[ l ] ) * dist_co_inv; // 5=O, 4=C
-			//      //       -( Eposition(j,5,i) - Eposition(j,4,i) )
-			//    }
 		} else {
 			temp = dist_co_inv * ( bb_pos.O(i) - bb_pos.C(i) );
-			//    for ( int j = 1, l = l0; j <= 3; ++j, ++l ) {
-			//     temp(j) = ( Eposition[ l+3 ] - Eposition[ l ] ) * dist_co_inv; // 5=O, 4=C
-			//      //       ( Eposition(j,5,i) - Eposition(j,4,i) )
-			//    }
 		}
-		//if ( vdist(1) != 10.0 ) {
 		Real const tempdot = temp.dot( vdist );
 		dp2 += std::abs(tempdot);
 		sdp2 += tempdot;
-		//}
 	}
 	dp2 *= 0.5;
 
-	//  if ( vdist(1) == 10.0 ) {
-	//   dp = 10.0;
-	//  } else {
 	dp = dp1 + dp2;
 	//js These signs tell whether the first c=o bond vector of a dimer points
 	//js at the other dimer.  sign1 = 1 means that the first c=o bond of dimer1
@@ -1417,8 +1305,7 @@ SecondaryStructurePotential::get_foldtree_seqsep(
 	int pos1,
 	int pos2,
 	int gap_size
-) const
-{
+) const {
 	if ( pose.fold_tree().is_simple_tree() ) return std::abs( pos1 - pos2 );
 
 	int begin ( std::min(pos1,pos2) );
@@ -1427,7 +1314,6 @@ SecondaryStructurePotential::get_foldtree_seqsep(
 	bool is_break ( false );
 
 	for ( int i = begin; i < end; ++i ) {
-		//if( pose.fold_tree().is_cutpoint(i) ) { is_break=true; break; }
 		if ( pose.residue_type(i).is_terminus() ) { is_break=true; break; }
 	}
 
@@ -1436,7 +1322,6 @@ SecondaryStructurePotential::get_foldtree_seqsep(
 	} else {
 		return end-begin;
 	}
-
 }
 
 
@@ -1454,8 +1339,7 @@ SecondaryStructurePotential::dist_pair(
 	Vector & cen1,
 	Vector & cen2,
 	Vector & v21 // vector connecting midpoints
-)
-{
+) {
 	//car find midpoint coordinates
 	cen1 = Real( 0.5 )*( a1 + a2 );
 	cen2 = Real( 0.5 )*( a3 + a4 );
@@ -1463,21 +1347,6 @@ SecondaryStructurePotential::dist_pair(
 	//car find distance between midpoint coordinates
 	v21 = cen2 - cen1;
 	dist = v21.length();
-	//  cen1(1) = ( a1(1) + a2(1) )*0.5f;
-	//  cen1(2) = ( a1(2) + a2(2) )*0.5f;
-	//  cen1(3) = ( a1(3) + a2(3) )*0.5f;
-
-	//  cen2(1) = ( a3(1) + a4(1) )*0.5f;
-	//  cen2(2) = ( a3(2) + a4(2) )*0.5f;
-	//  cen2(3) = ( a3(3) + a4(3) )*0.5f;
-
-	//  v21(1) = cen2(1) - cen1(1);
-	//  v21(2) = cen2(2) - cen1(2);
-	//  v21(3) = cen2(3) - cen1(3);
-	//  dist = std::sqrt(
-	//   v21(1) * v21(1) +
-	//   v21(2) * v21(2) +
-	//   v21(3) * v21(3) );
 }
 
 
@@ -1505,13 +1374,7 @@ SecondaryStructurePotential::spherical(
 	//car v2                                   2
 
 	Vector v1( a2 - cen1 );
-	//  v1(1) = a2(1) - cen1(1);
-	//  v1(2) = a2(2) - cen1(2);
-	//  v1(3) = a2(3) - cen1(3);
 	Vector v2( a4 - cen2 );
-	//  v2(1) = a4(1) - cen2(1);
-	//  v2(2) = a4(2) - cen2(2);
-	//  v2(3) = a4(3) - cen2(3);
 
 	//car find unit vector along v1 = uz
 	Vector const uz( v1.normalized_or_zero() );
@@ -1523,9 +1386,9 @@ SecondaryStructurePotential::spherical(
 	Vector const ux( uy.cross( uz ).normalized_or_zero() );
 
 	//car find projection of v2 onto each of these azes
-	Real const v2x = v2.dot( ux ); //v2(1)*ux(1) + v2(2)*ux(2) + v2(3)*ux(3); // v2x=v2.ux
-	Real const v2y = v2.dot( uy ); //v2(1)*uy(1) + v2(2)*uy(2) + v2(3)*uy(3); // v2y=v2.uy
-	Real const v2z = v2.dot( uz ); //v2(1)*uz(1) + v2(2)*uz(2) + v2(3)*uz(3); // v2z=v2.uz
+	Real const v2x = v2.dot( ux );
+	Real const v2y = v2.dot( uy );
+	Real const v2z = v2.dot( uz );
 
 	//car and length of v2
 	Real r1 = v2.length();
@@ -1534,11 +1397,6 @@ SecondaryStructurePotential::spherical(
 
 	//car unit vector along v21
 	Vector const u21( v21.normalized_or_zero() );
-
-	//car projection of u21 on uz
-	// pb -- this doesnt seem to be used
-	//Real const u21z = u21.dot( uz ); //u21(1)*uz(1) + u21(2)*uz(2) + u21(3)*uz(3); // u21z=u21.uz
-
 
 	//car the same thing in function calls (is this expensive?)
 	//$$$      unitvec(v1,uz);
@@ -1554,7 +1412,6 @@ SecondaryStructurePotential::spherical(
 	//$$$
 	//$$$      unitvec(v21,u21);
 	//$$$      u21z = dotprod(u21,uz);
-
 
 	phi = 200.0; // why set to 200?  if v2y = 0, v2 lies in xz plane and phi
 	// is zero; if v2x=0, v2 lies in yz plane and phi is 90 or -90
@@ -1581,23 +1438,11 @@ SecondaryStructurePotential::sigma(
 	Vector const & cen1,
 	Vector const & v21,
 	Real & sig
-)
-{
+) {
 	//car this could be done in spherical
-
-	//  subvec(a2,cen1,v1);
-	//  unitvec(v1,uz);
-	//  unitvec(v21,u21);
 	Real const u21z = ( a2 - cen1 ).normalized().dot( v21.normalized() ); //dotprod(u21,uz);
 
 	sig = numeric::conversions::degrees( numeric::arccos( u21z ) ); //std::acos( sin_cos_range( u21z ) );
-
-	//  sig = 200.0; // why 200? should be 0 or 180
-	//  if ( std::abs(u21z) <= 1.0 ) { //Objexx:SGM This logic is hackery that should be cleaned up
-	//   if ( std::abs(u21z) < 1.0 ) {
-	//   }
-	//   to_degrees( sig );
-	//  }
 }
 
 
@@ -1607,8 +1452,7 @@ void
 SecondaryStructurePotential::load_phi_theta_bins(
 	std::string const & hs_filename,
 	std::string const & ss_filename
-)
-{
+) {
 	using ObjexxFCL::format::skip;
 
 	// local
@@ -1633,7 +1477,6 @@ SecondaryStructurePotential::load_phi_theta_bins(
 	}
 
 	// FIXME: need equivalent to open_data_file() function here
-	//utility::io::izstream & HS_stream( open_data_file( hs_filename ) );
 	utility::io::izstream HS_stream;
 	basic::database::open( HS_stream, hs_filename );
 	for ( isep = 1; isep <= 3; ++isep ) {
@@ -1728,8 +1571,7 @@ SecondaryStructurePotential::load_phi_theta_bins(
 void
 SecondaryStructurePotential::idsn_initializer(
 	FArray1D_int & idsn
-)
-{
+) {
 	// triangle-2 random numbers
 	//     data idsn/56,167,278,278,167,56/
 	// sort of triangle-4 random numbers
@@ -1746,8 +1588,7 @@ SecondaryStructurePotential::idsn_initializer(
 void
 SecondaryStructurePotential::ids_initializer(
 	FArray1D_int & ids
-)
-{
+) {
 	int i = 0;
 	ids( ++i ) = 1;
 	ids( ++i ) = 48;
@@ -1761,8 +1602,7 @@ SecondaryStructurePotential::ids_initializer(
 void
 SecondaryStructurePotential::ssdist_initializer(
 	FArray2D_real & ssdist
-)
-{
+) {
 	//  DATA 0-12A, GOES BACK TO PROTEINS 1999 PAPER
 	//     data ssdist/2.652527,0.7284873,0.0176830,-0.2566608,
 	//    #           -1.471609,0.0104174,0.0679096, 0.4667910/
@@ -1784,8 +1624,7 @@ SecondaryStructurePotential::ssdist_initializer(
 void
 SecondaryStructurePotential::hs_dp_initializer(
 	FArray1D_real & hs_dp
-)
-{
+) {
 	int i = 0;
 	hs_dp( ++i ) = 0.416;
 	hs_dp( ++i ) = -0.412;
@@ -1803,8 +1642,7 @@ SecondaryStructurePotential::hs_dp_initializer(
 void
 SecondaryStructurePotential::rsigma_dot_initializer(
 	FArray4D_real & rsigma_dot
-)
-{
+) {
 	std::string filename = basic::database::full_name( "/scoring/score_functions/SecondaryStructurePotential/rsigma_dot.txt" );
 	std::ifstream in( filename.c_str() );
 	utility::vector1< std::string > lines;
@@ -1830,8 +1668,7 @@ SecondaryStructurePotential::rsigma_dot_initializer(
 void
 SecondaryStructurePotential::m_term_initializer(
 	FArray1D_real & m_term
-)
-{
+) {
 	m_term(1) = 1.87;
 	m_term(2) = .61;
 	m_term(3) = .74;
@@ -1845,8 +1682,7 @@ SecondaryStructurePotential::m_term_initializer(
 void
 SecondaryStructurePotential::ss_penalty_initializer(
 	FArray1D_real & SS_penalty
-)
-{
+) {
 	// For strand separations less than 5, statistics become small, so
 	// set penalty to be a constant.
 	SS_penalty( 1) = 1.13386;
@@ -1865,189 +1701,3 @@ SecondaryStructurePotential::ss_penalty_initializer(
 
 } // ns scoring
 } // ns core
-
-
-/// @brief This function takes a set of dimer neighbors, and determines how
-/// @brief many sheets there, and how many strands are in each sheet
-/// @brief This information is then used to calculate the "poker hand" score,
-/// @brief which reflects to probability of that distribution of strands and
-/// @brief sheets.
-//
-//js This function takes a set of dimer neighbors, and determines how
-//js many sheets there, and how many strands are in each sheet
-//js This information is then used to calculate the "poker hand" score,
-//js which reflects to probability of that distribution of strands and
-//js sheets.
-//js In current version, it seems to simply penalize sheets with fewer
-//js strands compared to those with more strands.
-//
-//js This function looks at a list of dimers, which contains up to
-//js two neighbors for each dimer.  In priniciple these neighbors would
-//js be hydrogen bond partners in neighboring strands.  This function
-//js will take this list, however it is made.
-//
-//js Currently, dimer neighbors are defined somewhat arbitrarily.
-//js If I understand the code correctly, the first and last dimers in
-//js sequence that follow the current dimer, and that are within 6.5
-//js angstroms, are the neighbors.  There is no orientation dependence
-//js on what counts as a strand neighbor.
-//
-//js A sheet is then loosely defined by all the strands that are connected
-//js by one of these neighbors.  This amounts to "single-linkage clustering."
-//js A sheet is determined by the set of strands that can be linked by
-//js the dimer neighbors.  Note that a one neighbor is enough to say that
-//js two strands are in a sheet.
-//
-//js The final score is put into sheet_score, and is determined by the
-//js number of sheets of each size.
-//
-//js   Basic strategy:  go through all dimers, finding neigboring strands
-//js   Because each dimer can only have two neighbors we can first search
-//js   all the way down one side, and then the other.  This will give a set
-//js   of dimers that are connected.  The strands in which these dimers reside
-//js   are then considered connected into sheets.  By going through all
-//js   dimers with the proper bookkeeping, we can determine how many sheets
-//js   there are, and how many strands in e
-
-
-/**
-
-NOT PORTING IN FIRST PASS (PB)
-
-void
-SecondaryStructurePotential::sheets_from_dimers(
-Real & sheet_score
-)
-{
-int const & total_residue = *total_residue_; // yab: misc removal
-
-static FArray1D_bool searched( MAX_RES() );
-static FArray1D_int strand_sheet( MAX_RES() );
-// 40 is the maximum number of strands
-static FArray1D_int num_of_strands( MAX_RES() );
-// 11 is the maxmumber number of sheets
-static FArray2D_int strand_sheet_list( MAX_RES(), MAX_RES() );
-static FArray1D_real const m_term( 4, m_term_initializer );
-
-for ( int current_dimer = 1; current_dimer <= strands.total_SS_dimer;
-++current_dimer ) {
-//js      Set all dimers as unchecked.
-searched(current_dimer) = false;
-//js      set all sheet locations as null
-//js         dimer_sheet(current_dimer) = 0
-}
-for ( int current_strand = 1; current_strand <= strands.total_strands;
-++current_strand ) {
-//js      Set the sheets of all strands as null
-strand_sheet(current_strand) = 0;
-}
-for ( int current_sheet = 1; current_sheet <= total_residue;
-++current_sheet ) {
-num_of_strands(current_sheet) = 0;
-}
-
-//js Find the neighbors of each dimer.  Some will be found during
-//js the search, some will be initial nodes.  That is why we keep
-//js track of whether it has been searched.
-int num_of_sheets = 0;
-int current_sheet = 0;
-for ( int current_dimer = 1; current_dimer <= strands.total_SS_dimer;
-++current_dimer ) {
-if ( !searched(current_dimer) ) {
-//js we need to check this one
-searched(current_dimer) = true;
-int current_strand = strands.SS_strand(current_dimer);
-// place node strand in sheet
-if ( strand_sheet(current_strand) == 0 ) { // it is not in a sheet, so:
-// make new sheet
-++num_of_sheets;
-current_sheet = num_of_sheets;
-
-// place strand in current sheet
-strand_sheet(current_strand) = current_sheet;
-++num_of_strands(current_sheet);
-strand_sheet_list(num_of_strands(current_sheet),current_sheet) =
-current_strand;
-} else {
-current_sheet = strand_sheet(current_strand);
-}
-for ( int direction = 1; direction <= 2; ++direction ) {
-// the two directions of searching
-int neighbor = strands.dimer_neighbor(direction,current_dimer);
-while ( neighbor != 0 ) {
-//               if ( neighbor != 0 ) {
-//js                  if ( !searched(neighbor) ) {
-searched(neighbor) = true;
-
-current_strand = strands.SS_strand(neighbor);
-if ( strand_sheet(current_strand) == 0 ) {
-// js  if neighbor strand is not in a sheet already, put it in the working sheet
-strand_sheet(current_strand) = current_sheet;
-++num_of_strands(current_sheet);
-
-strand_sheet_list(num_of_strands(current_sheet),current_sheet) =
-current_strand;
-} else if ( strand_sheet(current_strand) != current_sheet ) {
-// js if neighbor strand is  already in a different sheet, merge the sheets.
-// js the sheet of the new strand must have a lower sheet number, so give the
-// js strands of the current sheet to its sheet
-int const new_sheet = strand_sheet(current_strand);
-int & num_of_strandsnew_sheet( num_of_strands(new_sheet) );
-for ( int merge = 1,
-lss = strand_sheet_list.index(merge,current_sheet),
-mergee = num_of_strands(current_sheet);
-merge <= mergee; ++merge, ++lss ) {
-++num_of_strandsnew_sheet;
-int const strand_sheet_list_mc = strand_sheet_list[ lss ];
-// strand_sheet_list(merge,current_sheet)
-strand_sheet_list(num_of_strandsnew_sheet,new_sheet) =
-strand_sheet_list_mc;
-strand_sheet(strand_sheet_list_mc) = new_sheet;
-}
---num_of_sheets;
-// rhiju After merging one sheet with another, need to erase traces
-// rhiju of sheet that got eaten up, and reorder other sheets.
-num_of_strands(current_sheet) = 0;
-for (int shiftsheet = current_sheet; shiftsheet <= num_of_sheets;
-++shiftsheet){
-num_of_strands(shiftsheet) = num_of_strands(shiftsheet+1);
-for (int i = 1; i <= num_of_strands(shiftsheet); ++i){
-int strandtoshift = strand_sheet_list(i,shiftsheet+1);
-strand_sheet_list(i,shiftsheet) = strandtoshift;
-strand_sheet(strandtoshift) = shiftsheet;
-}
-}
-current_sheet = new_sheet;
-}
-//js                  }
-neighbor = strands.dimer_neighbor(direction,neighbor);
-}
-}
-}
-}
-
-//js calculate score, based on the number of sheets of each size
-Real sheet_score_sum = 0.0;
-for ( int current_sheet = 1; current_sheet <= num_of_sheets; ++current_sheet ) {
-sheet_score_sum += m_term( std::min( num_of_strands(current_sheet), 4 ) );
-}
-sheet_score = sheet_score_sum;
-// sheet_score *+ get_sheet_wt();
-
-// FIXME: keep Ingo's sheet filter?  the sheet filter class is in classic rosetta
-//        sheet_filter.h/sheet_filter.cc and should be self contained, so it's
-//        directly liftable into mini without much modification
-// FIXME: need equivalent for files::paths below
-if ( get_handedness_score_flag() && files_paths::use_filter(files_paths::sheet_type) ){
-int result = 0;
-sheet_filter::SheetFilter sf(position_, secstruct_, total_residue_);
-sf.compute_result(result); // Trigger evaluation if Ingo's sheet filter, including handedness checks.
-sheet_score += sf.get_handedness_score();
-}
-
-// modify by proper weighting
-sheet_score *= 2.019 * get_sheet_weight();
-}
-
-**/
-

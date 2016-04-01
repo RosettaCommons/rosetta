@@ -80,10 +80,6 @@ CenListInfo::initialize( pose::Pose const & pose )
 EnvPairPotential::EnvPairPotential():
 	cen_dist_cutoff2( 144.0 ),
 
-	// unused cen_dist6sqr_( 6 * 6 ),
-	// unused cen_dist10sqr_( 10 * 10 ),
-	// unused cen_dist12sqr_( 12 * 12 ),
-
 	//cems transition regions between environment bins
 	//cems transition is from +/- sqrt(36+pad6) +/- sqrt(100+pad10) etc
 	cen_dist5_pad( 0.5 ),
@@ -164,7 +160,6 @@ EnvPairPotential::EnvPairPotential():
 		}
 	}
 
-
 	{ // pair_log
 		pair_log_.dimension( pair_log_table_size, max_aa, max_aa );
 
@@ -236,29 +231,8 @@ EnvPairPotential::fill_cenlist(
 	Size const res1,
 	Size const res2,
 	Real const cendist
-) const
-{
-
+) const {
 	debug_assert( cendist <= cen_dist12_pad_plus );
-
-	/*
-	// If we should ever need the integer "cenX" arrays and not
-	// the floating-point fcen arrays
-	if ( cendist <= cen_dist10sqr_ ) {
-	if ( cendist <= cen_dist6sqr_ ) {
-	cenlist.cen6(res1) += 1;
-	cenlist.cen6(res2) += 1;
-	} else {
-	cenlist.cen12(res1) += 1;
-	cenlist.cen12(res2) += 1;
-	}
-	cenlist.cen10(res1) += 1;
-	cenlist.cen10(res2) += 1;
-	} else {
-	cenlist.cen12(res1) += 1;
-	cenlist.cen12(res2) += 1;
-	}
-	*/
 
 	//  compute arrays needed for C-beta  energy function
 	Real const one( 1.0 );
@@ -319,38 +293,36 @@ EnvPairPotential::compute_centroid_environment(
 	Size const nres( energy_graph.num_nodes() );
 
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
-	if ( !cenlist.calculated() ) {
+	if ( cenlist.calculated() ) return;
 
-		// ensure that cenlist has pose.total_residue() elements in case the pose has
-		// changed its sequence lenght since the last cenlist update
-		cenlist.initialize( pose );
-
-		for ( Size i = 1; i < nres; ++i ) {
-			conformation::Residue const & rsd1 ( pose.residue(i) );
-			if ( !rsd1.is_protein() ) continue;
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const j( edge->get_second_node_ind() );
-				conformation::Residue const & rsd2 ( pose.residue(j) );
-				if ( !rsd2.is_protein() ) continue;
-
-				Real const cendist = edge->square_distance();
-
-				//  compute arrays needed for C-beta  energy function
-				//  first do a coarse grain reality check on centroid separations
-				if ( cendist <= cen_dist_cutoff_12_pad ) {
-					fill_cenlist( cenlist, i, j, cendist );
-				}
+	// ensure that cenlist has pose.total_residue() elements in case the pose has
+	// changed its sequence lenght since the last cenlist update
+	cenlist.initialize( pose );
+	
+	for ( Size i = 1; i < nres; ++i ) {
+		conformation::Residue const & rsd1 ( pose.residue(i) );
+		if ( !rsd1.is_protein() ) continue;
+		for ( graph::Graph::EdgeListConstIter
+			 iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+			 irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+			 iru != irue; ++iru ) {
+			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			Size const j( edge->get_second_node_ind() );
+			conformation::Residue const & rsd2 ( pose.residue(j) );
+			if ( !rsd2.is_protein() ) continue;
+			
+			Real const cendist = edge->square_distance();
+			
+			//  compute arrays needed for C-beta  energy function
+			//  first do a coarse grain reality check on centroid separations
+			if ( cendist <= cen_dist_cutoff_12_pad ) {
+				fill_cenlist( cenlist, i, j, cendist );
 			}
 		}
-
-		truncate_cenlist_values( cenlist );
-		cenlist.calculated() = true;
 	}
-
+	
+	truncate_cenlist_values( cenlist );
+	cenlist.calculated() = true;
 }
 
 void
@@ -368,8 +340,7 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 	Real & env_score,
 	Real & cb_score6,
 	Real & cb_score12
-) const
-{
+) const {
 	//using ObjexxFCL::format::F; // debugging
 	//using ObjexxFCL::format::I;
 	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
@@ -382,7 +353,11 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 	Real const fcen10 ( cenlist.fcen10(position) );
 	Real const fcen12 ( cenlist.fcen12(position) );
 
-	if ( rsd.is_protein() ) {
+	if ( ! rsd.is_protein() ) { // amino acid check
+		env_score = 0.0;
+		cb_score6  = 0.0;
+		cb_score12 = 0.0;
+	} else {
 
 		env_score = env_log_( rsd.aa(), static_cast< int >( fcen10 ) );
 
@@ -410,12 +385,6 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 		//std::cout << "fcen6( " << position << " ) = " << fcen6 << " fcen10( " <<  position << " ) " << fcen10 << " fcen12( " << position << " ) = ";
 		//std::cout << fcen12 << " "; //<< std::endl;
 		// " interp1: " << interp1 << " interp2: " << interp2 << std::endl;
-
-
-	} else { // amino acid check
-		env_score = 0.0;
-		cb_score6  = 0.0;
-		cb_score12 = 0.0;
 	}
 }
 
@@ -429,8 +398,7 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 	Real const cendist,
 	Real & pair_contribution,
 	Real & cenpack_contribution
-) const
-{
+) const {
 	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	pair_contribution = 0.0;
@@ -506,8 +474,6 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 	if ( cendist_bin <   1 )   cendist_bin = 1;
 
 	cenpack_contribution = cenpack_log_( cendist_bin );
-
-	return;
 }
 
 /// @details Pose must already contain a cenlist object or this method will fail.
@@ -524,7 +490,6 @@ EnvPairPotential::cenlist_from_pose( pose::Pose const & pose )
 CenListInfo &
 EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose )
 {
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) ) {
 		return static_cast< core::scoring::CenListInfo & > ( pose.data().get( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ));
 	}
@@ -532,7 +497,6 @@ EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose )
 	CenListInfoOP cenlist( new CenListInfo );
 	pose.data().set( core::pose::datacache::CacheableDataType::CEN_LIST_INFO, cenlist );
 	return *cenlist;
-
 }
 
 

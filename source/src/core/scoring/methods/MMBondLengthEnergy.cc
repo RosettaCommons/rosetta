@@ -191,27 +191,27 @@ MMBondLengthEnergy::eval_intrares_energy(
 		chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
 		for ( Size j=1; j<=atm_nbrs.size(); ++j ) {
 			Size atm_j = atm_nbrs[j];
-			if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
-				int mmat1 = rsd_type.atom( atm_i ).mm_atom_type_index();
-				int mmat2 = rsd_type.atom( atm_j ).mm_atom_type_index();
-
-				// check for vrt
-				if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() ) {
-					continue;
-				}
-
-				Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
-
-				TR(basic::t_trace)
-					<< "r1 " << atm_i << " " << rsd.atom_name( atm_i ) << "("
-					<< rsd_type.atom( atm_i ).mm_name() << ") - "
-					<< "r2 " << atm_j << " " << rsd.atom_name( atm_j ) << "("
-					<< rsd_type.atom( atm_j ).mm_name() << ")" << std::endl;
-
-				// score bond angle
-				energy += potential_.mm::MMBondLengthScore::score
-					(  mm::mm_bondlength_atom_pair( mmat1, mmat2 ), d );
+			if ( atm_i >= atm_j ) continue; // only score each bond once -- use restype index to define ordering
+			
+			int mmat1 = rsd_type.atom( atm_i ).mm_atom_type_index();
+			int mmat2 = rsd_type.atom( atm_j ).mm_atom_type_index();
+			
+			// check for vrt
+			if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() ) {
+				continue;
 			}
+			
+			Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
+			
+			TR(basic::t_trace)
+			<< "r1 " << atm_i << " " << rsd.atom_name( atm_i ) << "("
+			<< rsd_type.atom( atm_i ).mm_name() << ") - "
+			<< "r2 " << atm_j << " " << rsd.atom_name( atm_j ) << "("
+			<< rsd_type.atom( atm_j ).mm_name() << ")" << std::endl;
+			
+			// score bond angle
+			energy += potential_.mm::MMBondLengthScore::score
+				(  mm::mm_bondlength_atom_pair( mmat1, mmat2 ), d );
 		}
 	}
 

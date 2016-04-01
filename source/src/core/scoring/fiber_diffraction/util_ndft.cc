@@ -35,9 +35,7 @@ FBnl_R(
 	core::Size & rindex,
 	//core::Real & c,
 	ObjexxFCL::FArray3D< std::complex<float> > & fourier_out
-)
-{
-	//nfft_plan p1,p2;
+) {
 	int NZ=fourier_in.size3();      // z
 	int ML=lmax+1;                  // l
 	int NPHI=fourier_in.size2();    // phi
@@ -95,7 +93,6 @@ FBnl_R(
 			fourier_out(rindex,ml,mn)=fout(mn);
 		}
 	}
-
 }
 
 
@@ -106,14 +103,11 @@ ft_nfft(
 	core::Size & lmax,
 	core::Size & total_rvals,
 	ObjexxFCL::FArray3D< std::complex<float> > & fourier_out
-)
-{
-
+) {
 	//Main FFT loop
 	for ( Size ri=1; ri<= total_rvals; ++ri ) {
 		FBnl_R( fourier_in, nvals, lmax, ri, fourier_out );
 	}
-
 }
 
 void
@@ -122,8 +116,7 @@ ndft(
 	ObjexxFCL::FArray1D< float > & phi,
 	ObjexxFCL::FArray1D< int > & n,
 	ObjexxFCL::FArray1D< std::complex <float> > & fout
-)
-{
+) {
 	Size Nt=fin.size();
 	Size Nphi=phi.size();
 	Size Nn=n.size();
@@ -146,8 +139,7 @@ ndft_1d(
 	ObjexxFCL::FArray1D < std::complex< float> >  & f0,
 	ObjexxFCL::FArray1D< float > & x0,
 	ObjexxFCL::FArray1D< std::complex< float> > & f2
-)
-{
+) {
 	Size NZ=f0.size();
 	Size ML=f2.size();
 	int m;

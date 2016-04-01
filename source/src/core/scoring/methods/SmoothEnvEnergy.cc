@@ -36,10 +36,6 @@
 #include <core/pose/symmetry/util.hh>
 
 
-// Utility headers
-
-// C++
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -126,9 +122,6 @@ SmoothEnvEnergy::residue_energy(
 	//fpd  constants match nonsmooth variants
 	env_score *= 2.019;
 	cb_score = 2.667 * ( cb_score6 + cb_score12 ) * 0.3;
-
-	//fpd get rid of secstruct weighing
-	//core::Real rsd_wt = get_residue_weight_by_ss( pose.conformation().secstruct( rsd.seqpos() ) );
 
 	emap[ cen_env_smooth ] += env_score;
 	emap[ cbeta_smooth ] += cb_score;

@@ -70,7 +70,6 @@ SA_Energy::finalize_total_energy(
 	using namespace conformation;
 
 	totals[ sa ] = calc_total_sasa( pose, 1.4 ); //default water probe
-	// totals[ sa ] = core::scoring::packing::get_surf_tot(pose, 1.4); //default water probe
 
 } // finalize_total_energy
 core::Size

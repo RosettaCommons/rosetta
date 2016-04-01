@@ -40,9 +40,6 @@ retrieve_fa_scatter_from_pose( pose::Pose & pose )
 	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_FA_SCATTERING ) );
 	debug_assert( dynamic_cast< FAScatter *>( &( pose.data().get( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_FA_SCATTERING ))));
 	return ( static_cast< FAScatter &>(    pose.data().get( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_FA_SCATTERING )));
-	//return utility::pointer::static_pointer_cast< CentroidScatter > ( pose.data().get_ptr(
-	//      core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING) );
-
 }
 
 

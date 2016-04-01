@@ -63,8 +63,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
 MMBondAngleLibrary::MMBondAngleLibrary(
 	std::string filename,
 	core::chemical::MMAtomTypeSetCAP mm_atom_set_ap
-)
-{
+) {
 	mm_atom_set_ = mm_atom_set_ap;
 
 	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
@@ -142,8 +141,8 @@ mm_bondangle_library_citer_pair
 MMBondAngleLibrary::lookup (
 	int atom1,
 	int atom2,
-	int atom3) const
-{
+	int atom3
+) const {
 	static std::string const x_string = "X";
 	static std::string const virt_string = "VIRT";
 
@@ -170,7 +169,6 @@ MMBondAngleLibrary::lookup (
 			mm_bondangle_atom_tri( virt_atom_type, virt_atom_type, virt_atom_type ));
 	}
 
-
 	int const wild_atom_type = mm_atom_set->atom_type_index( x_string );
 
 	if ( wildcard_mm_bondangle_library_.count(
@@ -196,8 +194,7 @@ MMBondAngleLibrary::lookup
 	std::string atom1,
 	std::string atom2,
 	std::string atom3
-) const
-{
+) const {
 	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
 	return (*this).lookup( mm_atom_set->atom_type_index( atom1 ),
 		mm_atom_set->atom_type_index( atom2 ),
@@ -205,8 +202,7 @@ MMBondAngleLibrary::lookup
 }
 
 void
-MMBondAngleLibrary::pretty_print() const
-{
+MMBondAngleLibrary::pretty_print() const {
 	// for each key print out its value
 	for ( mm_bondangle_library_citer i = fully_assigned_mm_bondangle_library_.begin(),
 			e = fully_assigned_mm_bondangle_library_.end(); i != e; ++i ) {
@@ -230,8 +226,7 @@ MMBondAngleLibrary::pretty_print() const
 }
 
 void
-MMBondAngleLibrary::pretty_print(  int atom1, int atom2, int atom3 ) const
-{
+MMBondAngleLibrary::pretty_print(  int atom1, int atom2, int atom3 ) const {
 	mm_bondangle_library_citer_pair temppair = (*this).lookup(atom1, atom2, atom3);
 	for ( mm_bondangle_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
@@ -244,8 +239,7 @@ MMBondAngleLibrary::pretty_print(  int atom1, int atom2, int atom3 ) const
 }
 
 void
-MMBondAngleLibrary::pretty_print( std::string atom1, std::string atom2, std::string atom3 ) const
-{
+MMBondAngleLibrary::pretty_print( std::string atom1, std::string atom2, std::string atom3 ) const {
 	mm_bondangle_library_citer_pair temppair = (*this).lookup(atom1, atom2, atom3);
 	for ( mm_bondangle_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"

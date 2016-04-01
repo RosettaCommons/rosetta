@@ -132,7 +132,6 @@ void Membrane_FAPotential::finalize( pose::Pose & pose ) const
 /// @brief Compute FullAtom TM projection
 void Membrane_FAPotential::compute_fa_projection(pose::Pose & pose) const
 {
-
 	core::scoring::MembraneEmbed & membrane_embed(core::scoring::nonconst_MembraneEmbed_from_pose( pose ));
 	Membrane_FAEmbed & membrane_faembed(nonconst_Membrane_FAEmbed_from_pose( pose ));
 
@@ -158,10 +157,8 @@ void Membrane_FAPotential::fa_projection(
 	Real const & thickness,
 	Real const & steepness,
 	Real const & penalty
-) const
-{
+) const {
 	// mjo commenting out 'topology' because it is unused and causes a warning
-	//core::scoring::MembraneTopology const & topology( core::scoring::MembraneTopology_from_pose(pose) );
 	Membrane_FAEmbed & membrane_faembed(nonconst_Membrane_FAEmbed_from_pose( pose ));
 
 	Size nres=pose.total_residue();
@@ -169,7 +166,6 @@ void Membrane_FAPotential::fa_projection(
 
 	membrane_faembed.fa_center() = std::abs(dot(center, normal));
 	membrane_faembed.fa_penalty() = penalty;
-
 
 	//pbadebug
 	if ( !membrane_faembed.calculated() ) {
@@ -216,7 +212,6 @@ Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & pose )
 /// @brief Return a Non Const Reference to the Embedding Object from the Pose Cache
 Membrane_FAEmbed & nonconst_Membrane_FAEmbed_from_pose( pose::Pose & pose )
 {
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ) {
 		return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 	}

@@ -92,7 +92,6 @@ void MixtureFunc::verify_parameters_() {
 		bg_sd_   =  6.60232;
 	}
 
-
 	rmax_ = anchor_ + 8;
 	fmax_ = func_(rmax_);
 	// std::cout << "(" << rmax_ << "," << fmax_ << ")" << std::endl;
@@ -131,10 +130,7 @@ Real MixtureFunc::func_( Real local_x ) const {
 Real
 MixtureFunc::func( Real const x ) const {
 	Real local_x = x;
-	// Real exp_score   = dexponential( local_x, anchor_, exp_param_, mixture_param_ );
-	// Real gauss_score = dgaussian   ( local_x, anchor_, gaussian_param_, (1 - mixture_param_) );
-	// Real bg_score    = dgaussian( local_x, bg_mean_, bg_sd_, 1 );
-
+	
 	Real score = func_(local_x);
 	if ( local_x < rmax_ ) {
 		score = func_(local_x);
@@ -154,13 +150,8 @@ MixtureFunc::func( Real const x ) const {
 
 Real
 MixtureFunc::dfunc( Real const x ) const {
-	//Real g, h, g_prime, h_prime;
-	//Real df = dfunc_component( x, g, h, g_prime, h_prime );
-
-	//Real local_x = x;
 	Real df = estimate_dfunc( x );
-	// std::cout << "df = " << df << std::endl;
-
+	
 	return df;
 } // dfunc_component
 

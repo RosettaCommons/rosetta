@@ -194,7 +194,6 @@ LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 	} // loop_cycles
 
 	if ( verbose ) TR << TR.Blue << "Total loop close energy  ==> " << total_energy_ << TR.Reset << std::endl;
-
 }
 
 
@@ -286,7 +285,6 @@ LoopGraph::figure_out_loop_cycles_tiernan() {
 	typedef boost::directed_graph<> Graph;
 	Size const num_domains = loops_from_domain_.size();
 	Graph g( num_domains );
-	// for ( Size n = 1; n <= num_domains; n++ ) add_vertex( int(n), g );
 	for ( Size n = 1; n <= loops_.size(); n++ ) {
 		Size const domain1 = loops_[n].takeoff_domain();
 		if ( domain1 == 0 ) continue; // terminal loop
@@ -315,7 +313,6 @@ LoopGraph::figure_out_loop_cycles_tiernan() {
 		utility::vector1< Loop > loops_for_cycle;
 		record_loop_cycle( elementary_cycles[ n ], 1, loops_for_cycle );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -436,9 +433,7 @@ LoopGraph::look_for_cycles_recursively( Size const current_domain,
 			if ( domain_visited_[ next_domain ] ) continue; // may have visited on a previous pass through subgraphs.
 			look_for_cycles_recursively( next_domain, parent_domains, loops_so_far );
 		}
-
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -473,17 +468,18 @@ LoopGraph::check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) const 
 
 	for ( Size i = 1; i <= loop_cycle1.size(); i++ ) {
 		for ( Size j = 1; j <= loop_cycle2.size(); j++ ) {
-			if ( loop_cycle1.loop(i) == loop_cycle2.loop( j ) ) {
-				if ( error_out_on_complex_cycles_ ) {
-					TR << "loop # " << loop_cycle1.loop(i) << " shared between different cycles: "  << std::endl;
-					TR << "Cycle1: " << std::endl;
-					TR << loop_cycle1 << std::endl;
-					TR << "Cycle2: " << std::endl;
-					TR << loop_cycle2 << std::endl;
-					utility_exit_with_message( "The term loop_close cannot handle multiloops beyond simple cycles! You can run again with approximate handling of nested cycles using the flag: -allow_complex_loop_graph." );
-				}
-				return false;
+			// Don't change to != - that's not defined
+			if ( ! ( loop_cycle1.loop(i) == loop_cycle2.loop( j ) ) ) continue;
+			
+			if ( error_out_on_complex_cycles_ ) {
+				TR << "loop # " << loop_cycle1.loop(i) << " shared between different cycles: "  << std::endl;
+				TR << "Cycle1: " << std::endl;
+				TR << loop_cycle1 << std::endl;
+				TR << "Cycle2: " << std::endl;
+				TR << loop_cycle2 << std::endl;
+				utility_exit_with_message( "The term loop_close cannot handle multiloops beyond simple cycles! You can run again with approximate handling of nested cycles using the flag: -allow_complex_loop_graph." );
 			}
+			return false;
 		}
 	}
 
@@ -531,7 +527,6 @@ LoopGraph::update_loops( utility::vector1< Size > const & pose_domain_map,
 			takeoff_pos = n;
 			takeoff_domain = at_cutpoint ? 0 : pose_domain_map[ n ];
 		}
-
 	}
 
 	Size num_domains( 0 );
@@ -566,7 +561,6 @@ LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose ) const {
 			runtime_assert( ! pose.residue( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 		}
 	}
-
 }
 
 /////////////////////////////////////////////

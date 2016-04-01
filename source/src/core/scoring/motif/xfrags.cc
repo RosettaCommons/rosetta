@@ -70,13 +70,6 @@
 #include <pthread.h>
 #endif
 
-
-// #include <core/pack/task/PackerTask.hh>
-// #include <core/pack/packer_neighbors.hh>
-// #include <core/pack/rotamer_set/RotamerSet.hh>
-// #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-// #include <core/pack/task/TaskFactory.hh>
-
 #define MAX_UINT16 65535
 #define MAX_UINT8    255
 #define XFORM_SCORE_FILE_VERSION 1
@@ -129,39 +122,6 @@ using numeric::geometry::hashing::Real6;
 using core::pose::xyzStripeHashPoseCOP;
 
 /************************************************ helpers ***********************************************/
-// static inline double sqr(double const & x) { return x*x; }
-// static inline float  sqr(float  const & x) { return x*x; }
-
-// static inline float
-// fastpow2 (float p)
-// {
-//   float offset = (p < 0) ? 1.0f : 0.0f;
-//   float clipp = (p < -126) ? -126.0f : p;
-//   int w = clipp;
-//   float z = clipp - w + offset;
-//   union { uint32_t i; float f; } v = { (1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z) };
-
-//   return v.f;
-//  }
-// static inline float
-// fastexp (float p)
-// {
-//   return fastpow2 (1.442695040f * p);
-//  }
-// static inline float
-// fastsinh (float p)
-// {
-//   return 0.5f * (fastexp (p) - fastexp (-p));
-//  }
-// static void xform_pose( core::pose::Pose & pose, Xform const & s, Size sres=1, Size eres=0 ) {
-//   if(eres==0) eres = pose.n_residue();
-//   for(Size ir = sres; ir <= eres; ++ir) {
-//     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
-//       core::id::AtomID const aid(core::id::AtomID(ia,ir));
-//       pose.set_xyz( aid, s*pose.xyz(aid) );
-//     }
-//   }
-//  }
 
 static utility::fixedsizearray1<Real,6> get_bins(Real c, Real a) {
 utility::fixedsizearray1<Real,6> bins(c);

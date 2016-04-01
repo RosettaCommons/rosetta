@@ -15,13 +15,11 @@
 #include <core/scoring/MinimizationGraph.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/OneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
@@ -58,7 +56,6 @@ void MinimizationNode::print() const
 /// invoked by copy ctor and operator= methods from Graph base class
 void MinimizationNode::copy_from( parent const * source )
 {
-	//MinimizationNode const * mn_source = utility::down_cast< MinimizationNode const * > ( source );
 	MinimizationNode const & mn_source = static_cast< MinimizationNode const & > ( * source );
 
 	res_min_data_ = mn_source.res_min_data_; // deep copy
@@ -111,8 +108,7 @@ bool MinimizationNode::add_twobody_enmeth(
 	Pose const & pose,
 	EnergyMap const & weights,
 	int domain_map_color
-)
-{
+) {
 	//if ( enmeth->minimize_in_whole_structure_context( pose ) ) return false;
 
 	twobody_enmeths_.push_back( enmeth );
@@ -125,8 +121,7 @@ MinimizationNode::setup_for_minimizing(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
-)
-{
+) {
 	for ( OneBodyEnergiesIterator iter = active_1benmeths_begin(),
 			iter_end = active_1benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_minimizing_for_residue( rsd, pose, sfxn, min_map, res_min_data_ );
@@ -141,8 +136,7 @@ void MinimizationNode::setup_for_scoring(
 	Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn
-)
-{
+) {
 	/// 1a 1body energy methods
 	for ( OneBodyEnergiesIterator iter = sfs_req_1benmeths_begin(),
 			iter_end = sfs_req_1benmeths_end(); iter != iter_end; ++iter ) {
@@ -159,8 +153,7 @@ void MinimizationNode::setup_for_derivatives(
 	Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn
-)
-{
+) {
 	/// 1a 1body energy methods
 	for ( OneBodyEnergiesIterator iter = sfd_req_1benmeths_begin(),
 			iter_end = sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
@@ -178,8 +171,7 @@ void MinimizationNode::update_active_enmeths_for_residue(
 	pose::Pose const & pose,
 	EnergyMap const & weights,
 	int domain_map_color
-)
-{
+) {
 	active_1benmeths_.clear();
 	active_1benmeths_std_.clear();
 	active_1benmeths_ext_.clear();
@@ -580,7 +572,6 @@ bool MinimizationEdge::classify_twobody_enmeth(
 	bool res_moving_wrt_eachother
 )
 {
-	///if ( enmeth->minimize_in_whole_structure_context( pose ) ) return false; !NO! Go ahead and include them for scoring.
 	if ( ! enmeth->defines_score_for_residue_pair( rsd1, rsd2, res_moving_wrt_eachother ) ) return false;
 
 	if ( enmeth->use_extended_residue_pair_energy_interface() ) {
@@ -784,125 +775,6 @@ MinimizationGraph::create_new_edge( Edge const * example_edge )
 
 ///// NON MEMBER FUNCTIONS////
 
-/*void
-reinitialize_minedge_for_respair(
-MinimizationEdge & min_edge,
-conformation::Residue const & rsd1,
-conformation::Residue const & rsd2,
-ResSingleMinimizationData const & res1_ressingle_min_data,
-ResSingleMinimizationData const & res2_ressingle_min_data,
-pose::Pose & pose,
-ScoreFunction const & sfxn,
-kinematics::MinimizerMapBase const & minmap
-)
-{
-
-//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-for ( MinimizationEdge::TwoBodyEnergiesIterator
-iter = min_edge.active_2benmeths_begin(),
-iter_end = min_edge.active_2benmeths_end();
-iter != iter_end; ++iter ) {
-
-(*iter)->setup_for_minimizing_for_residue_pair(
-rsd1, rsd2, pose, sfxn, minmap,
-res1_ressingle_min_data,
-res2_ressingle_min_data,
-min_edge.res_pair_min_data() );
-
-}
-
-
-}*/
-
-
-/*void
-setup_for_scoring_for_minnode(
-MinimizationNode & min_node,
-conformation::Residue const & rsd,
-pose::Pose const & pose
-)
-{
-/// 1a 1body energy methods
-for ( MinimizationNode::OneBodyEnergiesIterator
-iter = min_node.sfd_req_1benmeths_begin(),
-iter_end = min_node.sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->setup_for_scoring_for_residue( rsd, pose, min_node.res_min_data() );
-}
-/// 1b 2body intraresidue contributions
-for ( MinimizationNode::TwoBodyEnergiesIterator
-iter = min_node.sfd_req_2benmeths_begin(),
-iter_end = min_node.sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->setup_for_scoring_for_residue( rsd, pose, min_node.res_min_data() );
-}
-
-}*/
-
-/*void
-setup_for_scoring_for_minedge(
-MinimizationEdge & min_edge,
-conformation::Residue const & rsd1,
-conformation::Residue const & rsd2,
-pose::Pose const & pose,
-ResSingleMinimizationData const & res1_ressingle_min_data,
-ResSingleMinimizationData const & res2_ressingle_min_data
-)
-{
-//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-for ( MinimizationEdge::TwoBodyEnergiesIterator
-iter = min_edge.sfd_req_2benmeths_begin(),
-iter_end = min_edge.sfd_req_2benmeths_end();
-iter != iter_end; ++iter ) {
-(*iter)->setup_for_scoring_for_residue_pair(
-rsd1, rsd2, res1_ressingle_min_data, res2_ressingle_min_data, pose, min_edge.res_pair_min_data() );
-}
-
-}*/
-
-/*void
-setup_for_derivatives_for_minnode(
-MinimizationNode & min_node,
-conformation::Residue const & rsd,
-pose::Pose const & pose
-)
-{
-ResSingleMinimizationData & ressingle_min_data( min_node.res_min_data() );
-
-/// 1a 1body energy methods
-for ( MinimizationNode::OneBodyEnergiesIterator
-iter = min_node.sfd_req_1benmeths_begin(),
-iter_end = min_node.sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->setup_for_derivatives_for_residue( rsd, pose, ressingle_min_data );
-}
-/// 1b 2body intraresidue contributions
-for ( MinimizationNode::TwoBodyEnergiesIterator
-iter = min_node.sfd_req_2benmeths_begin(),
-iter_end = min_node.sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->setup_for_derivatives_for_residue( rsd, pose, ressingle_min_data );
-}
-
-}*/
-
-/*void
-setup_for_derivatives_for_minedge(
-MinimizationEdge & min_edge,
-conformation::Residue const & rsd1,
-conformation::Residue const & rsd2,
-pose::Pose const & pose,
-ResSingleMinimizationData const & res1_min_data,
-ResSingleMinimizationData const & res2_min_data
-)
-{
-//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-for ( MinimizationEdge::TwoBodyEnergiesIterator
-iter = min_edge.sfd_req_2benmeths_begin(),
-iter_end = min_edge.sfd_req_2benmeths_end();
-iter != iter_end; ++iter ) {
-(*iter)->setup_for_derivatives_for_residue_pair(
-rsd1, rsd2, res1_min_data, res2_min_data, pose, min_edge.res_pair_min_data() );
-}
-
-}*/
-
 void
 eval_atom_derivatives_for_minnode(
 	MinimizationNode const & min_node,
@@ -910,8 +782,7 @@ eval_atom_derivatives_for_minnode(
 	pose::Pose const & pose,
 	EnergyMap const & res_weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
-)
-{
+) {
 	for ( MinimizationNode::OneBodyEnergiesIterator
 			iter = min_node.active_1benmeths_begin(),
 			iter_end = min_node.active_1benmeths_end(); iter != iter_end; ++iter ) {
@@ -928,39 +799,6 @@ eval_atom_derivatives_for_minnode(
 
 }
 
-/*void
-eval_atom_derivative_for_minnode(
-MinimizationNode const & min_node,
-Size atom_index,
-conformation::Residue const & rsd,
-pose::Pose const & pose,
-kinematics::DomainMap const & domain_map,
-ScoreFunction const & sfxn,
-EnergyMap const & res_weights,
-Vector & F1, // accumulated into
-Vector & F2  // accumulated into
-)
-{
-utility_exit_with_message( "Deprecated" );
-
-/// 1. eval 1 body derivatives
-/// 1a 1body energy methods
-for ( MinimizationNode::OneBodyEnergiesIterator
-iter = min_node.active_1benmeths_begin(),
-iter_end = min_node.active_1benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->eval_atom_derivative_for_residue(
-atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, F1, F2 );
-}
-/// 1b 2body intraresidue contributions
-for ( MinimizationNode::TwoBodyEnergiesIterator
-iter = min_node.active_intrares2benmeths_begin(),
-iter_end = min_node.active_intrares2benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->eval_intrares_atom_derivative(
-atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, F1, F2 );
-}
-
-}*/
-
 void
 eval_res_onebody_energies_for_minnode(
 	MinimizationNode const & min_node,
@@ -968,8 +806,7 @@ eval_res_onebody_energies_for_minnode(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap // accumulated into
-)
-{
+) {
 	for ( MinimizationNode::OneBodyEnergiesIterator
 			iter = min_node.active_1benmeths_std_begin(),
 			iter_end = min_node.active_1benmeths_std_end();
@@ -1009,8 +846,7 @@ eval_atom_derivatives_for_minedge(
 	EnergyMap const & respair_weights,
 	utility::vector1< DerivVectorPair > & r1atom_derivs,
 	utility::vector1< DerivVectorPair > & r2atom_derivs
-)
-{
+) {
 	for ( MinimizationEdge::TwoBodyEnergiesIterator
 			iter = min_edge.active_2benmeths_begin(),
 			iter_end = min_edge.active_2benmeths_end();
@@ -1032,8 +868,7 @@ eval_weighted_atom_derivatives_for_minedge(
 	EnergyMap const & respair_weights,
 	utility::vector1< DerivVectorPair > & r1atom_derivs,
 	utility::vector1< DerivVectorPair > & r2atom_derivs
-)
-{
+) {
 	//fpd rather then change eval_residue_pair_derivatives interface
 	//    we will just modify the energymap
 	EnergyMap respair_weight_new = respair_weights;
@@ -1049,36 +884,6 @@ eval_weighted_atom_derivatives_for_minedge(
 	}
 }
 
-/*void
-eval_atom_deriv_for_minedge(
-MinimizationEdge const & min_edge,
-Size atom_index,
-conformation::Residue const & res1,
-conformation::Residue const & res2,
-ResSingleMinimizationData const & res1_min_data,
-ResSingleMinimizationData const & res2_min_data,
-pose::Pose const & pose,
-kinematics::DomainMap const & domain_map,
-ScoreFunction const & sfxn,
-EnergyMap const & respair_weights,
-Vector & F1, // accumulated into
-Vector & F2  // accumulated into
-)
-{
-utility_exit_with_message( "Deprecated" );
-/// iterate across the two-body energies for this edge
-for ( MinimizationEdge::TwoBodyEnergiesIterator
-iter = min_edge.active_2benmeths_begin(),
-iter_end = min_edge.active_2benmeths_end();
-iter != iter_end; ++iter ) {
-(*iter)->eval_atom_derivative_for_residue_pair(
-atom_index, res1, res2,
-res1_min_data, res2_min_data, min_edge.res_pair_min_data(),
-pose, domain_map, sfxn, respair_weights, F1, F2 );
-}
-}
-*/
-
 void
 eval_res_pair_energy_for_minedge(
 	MinimizationEdge const & min_edge,
@@ -1087,8 +892,7 @@ eval_res_pair_energy_for_minedge(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
-)
-{
+) {
 	for ( MinimizationEdge::TwoBodyEnergiesIterator
 			iter = min_edge.active_2benmeths_std_begin(),
 			iter_end = min_edge.active_2benmeths_std_end();
@@ -1114,8 +918,7 @@ eval_dof_deriv_for_minnode(
 	id::TorsionID const & torsion_id,
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights
-)
-{
+) {
 	Real deriv( 0 );
 	/// 1. eval 1 body derivatives
 	/// 1a 1body energy methods
@@ -1135,42 +938,6 @@ eval_dof_deriv_for_minnode(
 	return deriv;
 }
 
-
-/*void
-eval_weighted_atom_derivative_for_minnode(
-MinimizationNode const & min_node,
-Size atom_index,
-conformation::Residue const & rsd,
-pose::Pose const & pose,
-kinematics::DomainMap const & domain_map,
-ScoreFunction const & sfxn,
-EnergyMap const & res_weights,
-Vector & F1, // accumulated into
-Vector & F2  // accumulated into
-)
-{
-utility_exit_with_message( "DEPRECATED" );
-
-Vector f1(0.0), f2(0.0);
-/// 1. eval 1 body derivatives
-/// 1a 1body energy methods
-for ( MinimizationNode::OneBodyEnergiesIterator
-iter = min_node.active_1benmeths_begin(),
-iter_end = min_node.active_1benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->eval_atom_derivative_for_residue(
-atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, f1, f2 );
-}
-/// 1b 2body intraresidue contributions
-for ( MinimizationNode::TwoBodyEnergiesIterator
-iter = min_node.active_intrares2benmeths_begin(),
-iter_end = min_node.active_intrares2benmeths_end(); iter != iter_end; ++iter ) {
-(*iter)->eval_intrares_atom_derivative(
-atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, f1, f2 );
-}
-F1 += min_node.weight() * f1;
-F2 += min_node.weight() * f2;
-}*/
-
 void
 eval_weighted_res_onebody_energies_for_minnode(
 	MinimizationNode const & min_node,
@@ -1179,8 +946,7 @@ eval_weighted_res_onebody_energies_for_minnode(
 	ScoreFunction const & sfxn,
 	EnergyMap & emap, // accumulated into
 	EnergyMap & scratch_emap
-)
-{
+) {
 	for ( MinimizationNode::OneBodyEnergiesIterator
 			iter = min_node.active_1benmeths_std_begin(),
 			iter_end = min_node.active_1benmeths_std_end();
@@ -1214,43 +980,7 @@ eval_weighted_res_onebody_energies_for_minnode(
 		emap.accumulate( scratch_emap, (*iter)->score_types(), min_node.weight() );
 		scratch_emap.zero( (*iter)->score_types() );
 	}
-
 }
-
-/// @details evaluates the atom derivative for this edge, and applies the
-/// edge weight into the f1 and f2 vectors before accumulating into the F1 and F2
-/// vectors
-/*void
-eval_weighted_atom_deriv_for_minedge(
-MinimizationEdge const & min_edge,
-Size atom_index,
-conformation::Residue const & res1,
-conformation::Residue const & res2,
-ResSingleMinimizationData const & res1_min_data,
-ResSingleMinimizationData const & res2_min_data,
-pose::Pose const & pose,
-kinematics::DomainMap const & domain_map,
-ScoreFunction const & sfxn,
-EnergyMap const & respair_weights,
-Vector & F1, // accumulated into
-Vector & F2  // accumulated into
-)
-{
-utility_exit_with_message( "DEPRECATED" );
-/// iterate across the two-body energies for this edge
-Vector f1( 0.0 ), f2( 0.0 );
-for ( MinimizationEdge::TwoBodyEnergiesIterator
-iter = min_edge.active_2benmeths_begin(),
-iter_end = min_edge.active_2benmeths_end();
-iter != iter_end; ++iter ) {
-(*iter)->eval_atom_derivative_for_residue_pair(
-atom_index, res1, res2,
-res1_min_data, res2_min_data, min_edge.res_pair_min_data(),
-pose, domain_map, sfxn, respair_weights, f1, f2 );
-}
-F1 += min_edge.weight() * f1;
-F2 += min_edge.weight() * f2;
-}*/
 
 void
 eval_weighted_res_pair_energy_for_minedge(
@@ -1261,8 +991,7 @@ eval_weighted_res_pair_energy_for_minedge(
 	ScoreFunction const & sfxn,
 	EnergyMap & emap,
 	EnergyMap & scratch_emap // should be zeros coming in, left zeroed at the end;
-)
-{
+) {
 	for ( MinimizationEdge::TwoBodyEnergiesIterator
 			iter = min_edge.active_2benmeths_std_begin(),
 			iter_end = min_edge.active_2benmeths_std_end();
@@ -1292,8 +1021,7 @@ eval_weighted_dof_deriv_for_minnode(
 	id::TorsionID const & torsion_id,
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights
-)
-{
+) {
 	Real deriv( 0 );
 	/// 1. eval 1 body derivatives
 	/// 1a 1body energy methods

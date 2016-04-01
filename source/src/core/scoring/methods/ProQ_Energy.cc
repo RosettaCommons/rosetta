@@ -29,9 +29,6 @@
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-//#include <core/scoring/EnvPairPotential.hh>
-//#include <basic/datacache/CacheableData.hh> //TMP HAC
-//#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -43,8 +40,6 @@
 #include <core/chemical/AtomType.hh>
 
 #include <basic/options/option.hh>
-//#include <basic/options/keys/in.OptionKeys.gen.hh>
-//#include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/ProQ.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
@@ -100,22 +95,6 @@ ProQ_Energy::ProQ_Energy( ProQ_Energy const & src) :
 	parent( src ),
 	potential_( src.potential_ )
 {
-	/*ObjexxFCL::FArray2D< Real > prob_profile_;
-	ObjexxFCL::FArray2D< Real > scaled_logodds_profile_;
-	ObjexxFCL::FArray1D< Real > entropy_;
-	Size nres_;
-	ObjexxFCL::FArray2D< Real > ss_pred_;
-	ObjexxFCL::FArray1D< char > ss1_;
-	ObjexxFCL::FArray1D< Real > z_pred_;
-	ObjexxFCL::FArray1D< Real > rsa_pred_; //Only used for ProQM where the prediction is a real value
-	//ObjexxFCL::FArray1D< char > rsa_class_; //This is from mpSA currently not used...
-	ObjexxFCL::FArray1D< char > rsa_class_pred_; //Only used for ProQ2 where the prediction is buried/exposed
-
-	bool all_inputs_ProQM_;
-	bool all_inputs_ProQ2_;
-	*/
-	//std::cout << "Inside copy constructor...\n";
-	//std::cout << nres_ << " " << src.nres_ << "";
 	nres_=src.nres_;
 	entropy_=src.entropy_;
 	topology_=src.topology_;
@@ -128,14 +107,6 @@ ProQ_Energy::ProQ_Energy( ProQ_Energy const & src) :
 	rsa_class_pred_=src.rsa_class_pred_;
 	all_inputs_ProQM_=src.all_inputs_ProQM_;
 	all_inputs_ProQ2_=src.all_inputs_ProQ2_;
-	//std::cout << "prob_profile " << "\n";
-	//for(Size i=1;i<=nres_;i++) {
-	// for(Size j=1;j<=20;j++) {
-	//  std::cout << "PROB PROFILE " << prob_profile_(i,j) << " " << src.prob_profile_(i,j) << "\n";
-	// }
-	//}
-	//initialize(); //HACK Re-read from files...
-	//std::cout << nres_ << " " << src.nres_;
 }
 
 
@@ -169,19 +140,11 @@ ProQ_Energy::finalize_total_energy(
 	Size nres=nres_;
 
 	TR.Debug << "NRES: " << nres_ <<  " " << nres2 << " " << entropy_.size() << std::endl;
-	//const Size nres=pose.total_residue();
-	//const Size num_features_ProQM(260);
-	//const Size num_features_ProQ2(174);
 	const Size num_features_ProQM(potential_.num_features_proqm());
 	const Size num_features_ProQ2(potential_.num_features_proq2());
 	totals[ ProQ ] = 0;
 	totals[ ProQM ] = 0;
 	Real normalizing_factor=basic::options::option[ basic::options::OptionKeys::ProQ::normalize ]();
-	/*if(nres != nres_) {
-	pose.dump_pdb("pose.pdb");
-	std::cout << "pose nres: " << nres << " mtx nres: " << nres_ << std::endl;
-	utility_exit_with_message( "nres from pose and .mtx is different...\n");
-	}*/
 
 	if ( scorefxn.get_weight(ProQM)!=0 && all_inputs_ProQM_ ) {
 		TR.Debug << "ProQM: " << std::endl;
@@ -197,7 +160,6 @@ ProQ_Energy::finalize_total_energy(
 			TR.Debug << "ProQM: " << i << " " << proq(i) << std::endl;
 			proq_mean+=proq(i);
 		}
-		//totals[ ProQM ] = proq_mean/nres;
 		totals[ ProQM ] = proq_mean/normalizing_factor;
 		if ( basic::options::option[ basic::options::OptionKeys::ProQ::output_local_prediction ]() ) {
 			output_local_prediction(pose,proq,"ProQM");
@@ -218,14 +180,11 @@ ProQ_Energy::finalize_total_energy(
 			//std::cout << "ProQ: " << i << " " << proq(i) << std::endl;
 			proq_mean+=proq(i);
 		}
-		//totals[ ProQ ] = proq_mean/nres;
 		totals[ ProQ ] = proq_mean/normalizing_factor;
 		if ( basic::options::option[ basic::options::OptionKeys::ProQ::output_local_prediction ]() ) {
 			output_local_prediction(pose,proq,"ProQ2");
 		}
 	}
-
-
 } // finalize_total_energy
 
 
@@ -234,16 +193,13 @@ Distance
 ProQ_Energy::atomic_interaction_cutoff() const
 {
 	return 6.0; /// now subtracted off 6.0 from cutoffs in centroid params files
-	//  return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
 }
-
 
 core::Size
 ProQ_Energy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 void
 ProQ_Energy::initialize() {
@@ -256,11 +212,9 @@ ProQ_Energy::initialize() {
 		utility_exit_with_message( "Need ProQ::basename to read in the seq. specific stuff...");
 	}
 
-
 	std::string ss2file(basename + ".ss2");
 	std::string profile(basename + ".psi");
 	std::string mtxfile(basename + ".mtx");
-	//profile_.read_from_checkpoint(chkfile); //Cannot use the profile readers in core/sequence/ since ProQ uses the fraction part of the profile, and the higher precision .mtx file from makemat for log-odds.
 	Size tmp=read_profiles_and_entropy(profile,mtxfile); //this will also initialize nres_ needs to called first, stupied... yes..
 	TR.Debug << "AFTER MTX READ: " << nres_ << " " << tmp << " " << entropy_.size() << std::endl;
 	read_ss2(ss2file);
@@ -280,13 +234,10 @@ ProQ_Energy::initialize() {
 		std::string accfile(basename + ".acc");
 		read_acc(accfile);
 		all_inputs_ProQ2_=true;
-		//utility_exit_with_message( "ProQ2 not yet implemented only ProQ::membrane works...");
 	}
-	// profile_.profile();
 	// utility::vector1< Real > row(profile_.prof_row(1));
 	//for(Size i=1;i<=20;++i) {
 	// std::cout << "check: " << i << " " << row[i] << std::endl;
-
 	//}
 }
 
@@ -295,9 +246,6 @@ ProQ_Energy::output_local_prediction(pose::Pose & pose,
 	ObjexxFCL::FArray1D< Real > & proq,
 	std::string name) const {
 	std::string outfile(basic::options::option[ basic::options::OptionKeys::ProQ::prefix]());
-	//if(basic::options::option[ basic::options::OptionKeys::ProQ::prefix ].user()) {
-	// outfile=basic::options::option[ basic::options::OptionKeys::ProQ::prefix]();
-	//}
 	using namespace core::pose::datacache;
 	std::string tag( "empty_tag" );
 	if ( pose.data().has( CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
@@ -325,10 +273,8 @@ void
 ProQ_Energy::read_ss2(std::string ss2file) {
 	utility::io::izstream stream;
 
-	//std::ifstream stream;
 	std::string line;
-	//Real buff_float;
-
+	
 	std::string buff_str;
 	std::cout << "Reading ss2 from " << ss2file << std::endl;
 	ss_pred_.dimension(nres_,3);
@@ -348,7 +294,6 @@ ProQ_Energy::read_ss2(std::string ss2file) {
 	//else {
 	// //std::cout << "ss2 format without header"<< std::endl;
 	//}
-	//char ss_temp;
 	for ( Size i=1; i<=nres_; ++i ) {
 		getline(stream,line);
 		std::istringstream l(line);
@@ -378,9 +323,6 @@ ProQ_Energy::read_acc(std::string accfile) {
 	std::cout << "Read acc " << accfile << std::endl;
 	utility::io::izstream stream;
 	std::string line;
-	//Real buff_float;
-	//int buff_int;
-	//char buff_str;
 	rsa_class_pred_.dimension(nres_);
 	stream.open(accfile);
 	if ( stream.fail() ) {
@@ -395,7 +337,6 @@ ProQ_Energy::read_acc(std::string accfile) {
 		l >>  rsa_class_pred_(i);
 		runtime_assert(rsa_class_pred_(i) == 'e' ||
 			rsa_class_pred_(i) == 'b');
-		//  l >> ss_pred_(i,1) >> ss_pred_(i,2) >> ss_pred_(i,3); // 1.coil,2.helix,3.sheet
 	}
 	/*
 	for(Size i=1;i<=nres_;++i) {
@@ -407,13 +348,9 @@ ProQ_Energy::read_mpSA(std::string mpSAfile) {
 	std::cout << "Read mpSA " << mpSAfile << std::endl;
 	utility::io::izstream stream;
 	std::string line;
-	//Real buff_float;
-	//int buff_int;
 	std::string buff_str;
-	//char buff_char;
 	rsa_pred_.dimension(nres_);
 	rsa_class_pred_.dimension(nres_);
-	//rsa_class_.dimension(nres_);
 	stream.open(mpSAfile);
 	if ( stream.fail() ) {
 		utility_exit_with_message( "ERROR: Unable to open: " + mpSAfile);
@@ -431,7 +368,6 @@ ProQ_Energy::read_mpSA(std::string mpSAfile) {
 		} else {
 			rsa_class_pred_(i)='b';
 		}
-		//  l >> ss_pred_(i,1) >> ss_pred_(i,2) >> ss_pred_(i,3); // 1.coil,2.helix,3.sheet
 	}
 	/*for(Size i=1;i<=nres_;++i) {
 	std::cout << i << " " << rsa_pred_(i) << std::endl;
@@ -443,8 +379,6 @@ ProQ_Energy::read_zpred(std::string zpredfile) {
 	std::cout << "Reading zpred from " << zpredfile << std::endl;
 	utility::io::izstream stream;
 	std::string line;
-	//Real buff_float;
-	//int buff_int;
 	z_pred_.dimension(nres_);
 	stream.open(zpredfile);
 	if ( stream.fail() ) {
@@ -454,7 +388,6 @@ ProQ_Energy::read_zpred(std::string zpredfile) {
 		getline(stream,line);
 		std::istringstream l(line);
 		l >>  z_pred_(i);
-		//  l >> ss_pred_(i,1) >> ss_pred_(i,2) >> ss_pred_(i,3); // 1.coil,2.helix,3.sheet
 	}
 	//for(Size i=1;i<=nres_;++i) {
 	// std::cout << z_pred_(i) << std::endl;
@@ -469,17 +402,9 @@ ProQ_Energy::read_profiles_and_entropy(std::string profile,
 	std::cout << "Reading profile and entropy from " << profile << std::endl;
 	utility::io::izstream stream;
 	std::string line;
-	// Real buff_float;
 	int buff_int;
 	std::string buff_str;
-	// char buff_char;
-	//int pos=1;
-	// stream.open(profile);  //get sizes...
-	//while(getline(stream,line)) {
-	// nres++;
-	//}
-	//stream.close();
-
+	
 	//initialize
 	Size nres;
 	stream.open(mtxfile);
@@ -490,10 +415,7 @@ ProQ_Energy::read_profiles_and_entropy(std::string profile,
 	std::istringstream l(line);
 	l >> nres_;
 	nres=nres_;
-	//buff_int;
-
-	//nres_=buff_int;
-	//nres3_=(int)nres2_;
+	
 	TR.Debug << "NRES from  " << mtxfile << " : " << nres_ <<std::endl;
 	//initialize
 	prob_profile_.dimension(nres_,20);
@@ -506,9 +428,6 @@ ProQ_Energy::read_profiles_and_entropy(std::string profile,
 	}
 	for ( Size i=1; i<=nres_; ++i ) {
 		getline(stream,line);
-		//get element 2, 4..21 and 23 elements, really nice format...
-		//if (sscanf(buf, "%*d%d%*d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%*d%d", &profile[j][ALA],  &profile[j][CYS], &profile[j][ASP],  &profile[j][GLU],  &profile[j][PHE],  &profile[j][GLY],  &profile[j][HIS],  &profile[j][ILE],  &profile[j][LYS],  &profile[j][LEU],  &profile[j][MET],  &profile[j][ASN],  &profile[j][PRO],  &profile[j][GLN],  &profile[j][ARG],  &profile[j][SER],  &profile[j][THR],  &profile[j][VAL],  &profile[j][TRP],  &profile[j][TYR]) != 20)
-		//  l.str(line);
 		std::istringstream l(line);
 		// std::cout << line << std::endl;
 		l >> buff_int;
@@ -569,7 +488,6 @@ ProQ_Energy::calculate_feature_vector_proq2(pose::Pose & pose,
 	ObjexxFCL::FArray2D< Real > & feature_vector) const{
 
 	//std::cout << "Calculating Feature vector ProQ2" << std::endl;
-	//const int nres=(int)pose.total_residue();
 	const int nres=(int)nres_;
 	//Calculate secondary structure
 	ObjexxFCL::FArray2D< Real > feature_vector_orig(nres,174);
@@ -583,57 +501,7 @@ ProQ_Energy::calculate_feature_vector_proq2(pose::Pose & pose,
 	//for(int i=1;i<=nres_;++i) {
 	// std::cout << "RSA: " << rsd_sasa_rel[i] << std::endl;
 	//}
-	/*
-	bool use_naccess=false; //false; //just to verify with original method, since the sasa routine is not exactly like naccess.
-	if(use_naccess) {
-	utility::io::izstream stream;
-	std::string line;
-	std::string buff_str;
-	stream.open("ProQ2/BAKER-ROSETTASERVER_TS1.rsa");
-	if(stream.fail()) {
-	utility_exit_with_message( "ERROR: Unable to open: ProQ2/BAKER-ROSETTASERVER_TS1.rsa");
-	}
-	getline(stream,line);
-	getline(stream,line);
-	getline(stream,line);
-	getline(stream,line);
-
-	for(int i=1;i<=nres;++i) {
-	getline(stream,line);
-	std::istringstream l(line);
-	l >> buff_str >> buff_str >> buff_str ;
-	l >> buff_str >> buff_str ;
-	l >> buff_str >> rsd_sasa_rel[i];
-	//  rsd_sasa_rel[i]=rsa_sasa_rel[i];
-	//std::cout << line << std::endl << rsa_sasa_all[i] << " " << rsa_sasa_all[i] << " " << rsa_sasa[i] << std::endl;
-	}
-
-	}
-
-	{
-	utility::io::izstream stream("ProQ2/svmdata-Sscore3-ac4-atom1-entropy3-grsa_sc1-gss_sc1-profile0-prsa0-pw1-pwin23-rc6-res1-restypes6-rsa13-rsa_sc21-ss1-ss_sc21-stride5-surf1001-surf251-surf501-surf751-termini5-topology0-z0-z_sc0-zpred0/BAKER-ROSETTASERVER_TS1.svm");
-	Size idx;
-	char colon;
-	std::string line;
-	Real val;
-
-	for(Size i=1;i<=nres_;++i) {
-	getline(stream,line);
-	std::istringstream l(line);
-	l >> val; // skipping first
-	for(Size j=1;j<=174;++j) {
-	l >> idx >> colon;
-	l >> feature_vector_orig(i,j);
-	//feature_vector(i,j)=feature_vector_orig(i,j);
-	//feature_vector(i,j)=0;
-	// std::cout << feature_vector(i,j) << " " ;
-	}
-	// std::cout << std::endl;
-	}
-	}
-	*/
-	//if(1==0)
-
+	
 	//ATOM 91
 	atom_feature(pose,feature_vector,1,23);
 	//RES 21
@@ -682,22 +550,8 @@ ProQ_Energy::calculate_feature_vector_proq2(pose::Pose & pose,
 			std::cout << std::endl;
 		}
 	}
-
-	/*
-	for(Size i=1;i<=nres_;++i) {
-	Real diff(0);
-	for(Size j=1;j<=174;++j) {
-	Real posdiff=fabs(feature_vector(i,j)-feature_vector_orig(i,j));
-	diff+=posdiff;
-	//if(diff < 0.5)
-	{
-	std::cout << "POS: " << j << " " << i << " " << feature_vector(i,j) << " " << feature_vector_orig(i,j) << " " << posdiff << std::endl;
-	}
-	}
-	std::cout << "DIFF: " << i << " " << diff << std::endl;
-	}
-	*/
 }
+
 void
 ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	ObjexxFCL::FArray2D< Real > & feature_vector) const{
@@ -735,7 +589,6 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 			//  rsd_sasa_rel[i]=rsa_sasa_rel[i];
 			//std::cout << line << std::endl << rsa_sasa_all[i] << " " << rsa_sasa_all[i] << " " << rsa_sasa[i] << std::endl;
 		}
-
 	}
 
 	ObjexxFCL::FArray1D< Real > Z;
@@ -745,29 +598,7 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	// for(Size i=1;i<=pose.total_residue();++i) {
 	// std::cout << "DSSP " << i << " " << ss.get_dssp_secstruct(i) << std::endl;
 	//}
-	/*
-	{
-	utility::io::izstream stream("ProQM/idealized_test.orig/svmdata-Sscore3-ac4-atom1-entropy11-profile3-prsa1-pw1-pwin21-rc6-res1-restypes6-rsa1-rsa_sc21-ss1-ss_sc21-stride11-surf1001-surf251-surf501-surf751-termini23-topology11-z1-z_sc0-zpred1/1e12A_0001.pdb.svm");
-	Size idx;
-	char colon;
-	std::string line;
-	Real val;
-
-	for(Size i=1;i<=nres_;++i) {
-	getline(stream,line);
-	std::istringstream l(line);
-	l >> val; // skipping first
-	for(Size j=1;j<=260;++j) {
-	l >> idx >> colon;
-	l >> feature_vector_orig(i,j);
-	//feature_vector(i,j)=feature_vector_orig(i,j);
-	//feature_vector(i,j)=0;
-	// std::cout << feature_vector(i,j) << " " ;
-	}
-	// std::cout << std::endl;
-	}
-	}
-	*/
+	
 	//ATOM 91
 	atom_feature(pose,feature_vector,1);
 	//RES 21
@@ -822,20 +653,6 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 			std::cout << std::endl;
 		}
 	}
-
-	/*
-	for(Size i=1;i<=nres_;++i) {
-	Real diff(0);
-	for(Size j=1;j<=260;++j) {
-	Real posdiff=fabs(feature_vector(i,j)-feature_vector_orig(i,j));
-	diff+=posdiff;
-	if(diff < 0.5) {
-	std::cout << "POS: " << j << " " << i << " " << feature_vector(i,j) << " " << feature_vector_orig(i,j) << " " << posdiff << std::endl;
-	}
-	}
-	std::cout << "DIFF: " << i << " " << diff << std::endl;
-	}
-	*/
 }
 
 
@@ -857,38 +674,38 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 				ir != ire; ++ir ) {
 			int const j( (*ir)->get_other_ind( i ) );
 			//    for(int j=i+1;j<=nres;++j) {
-			if ( std::abs(i-j)>1 ) {
-				conformation::Residue const & rsd_j( pose.residue(j) );
-				for ( Size ii=1; ii<=rsd_i.nheavyatoms(); ++ii ) {
-					core::conformation::Atom const & atom_i = rsd_i.atom(ii);
-					int atype1=atom13(rsd_i,ii);
-					//std::cout << "ATOMTYPES " << rsd_i.name3() << rsd_i.atom_name(ii) << " " << atype1 << std::endl;
-					if ( atype1==0 ) {
-						// std::cout << "Skipping: " << rsd_i.atom_name(ii) << std::endl;
+			if ( std::abs(i-j)<=1 ) continue;
+			
+			conformation::Residue const & rsd_j( pose.residue(j) );
+			for ( Size ii=1; ii<=rsd_i.nheavyatoms(); ++ii ) {
+				core::conformation::Atom const & atom_i = rsd_i.atom(ii);
+				int atype1=atom13(rsd_i,ii);
+				//std::cout << "ATOMTYPES " << rsd_i.name3() << rsd_i.atom_name(ii) << " " << atype1 << std::endl;
+				if ( atype1==0 ) {
+					// std::cout << "Skipping: " << rsd_i.atom_name(ii) << std::endl;
+					continue;
+					
+				}
+				
+				for ( Size jj=1; jj<=rsd_j.nheavyatoms(); ++jj ) {
+					core::conformation::Atom const & atom_j = rsd_j.atom(jj);
+					int atype2=atom13(rsd_j,jj);
+					//std::cout << "ATOMTYPES " << rsd_j.name3() << rsd_j.atom_name(jj) << " " << atype2 << std::endl;
+					if ( atype2==0 ) {
 						continue;
-
 					}
-
-					for ( Size jj=1; jj<=rsd_j.nheavyatoms(); ++jj ) {
-						core::conformation::Atom const & atom_j = rsd_j.atom(jj);
-						int atype2=atom13(rsd_j,jj);
-						//std::cout << "ATOMTYPES " << rsd_j.name3() << rsd_j.atom_name(jj) << " " << atype2 << std::endl;
-						if ( atype2==0 ) {
-							continue;
-						}
-						//std::cout << i << " " << j << " jj: " << jj << " ii:" << ii << std::endl;
-						Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
-						if ( sqdist < 16 ) {
-							/*if(i<=11 || j<=11) {
-							if(atype1==1 && atype2==3) {
-							printf("Contact between %d %d - %d %d dist: %f\n",i,atype1,j,atype2,sqrt(sqdist));
-							}
-							}*/
-							// std::cout <<  rsd_i.name3() << " " << rsd_i.atom_name(ii) << " " << atype1 << " - " << rsd_j.name3() << " " << rsd_j.atom_name(jj) << " " << atype2 << " " << sqrt(sqdist) << std::endl;
-							atomcontacts(i,atype1,atype2)++;
-							//atomcontacts(j,atype2,atype1)++;
-						}
-					}
+					//std::cout << i << " " << j << " jj: " << jj << " ii:" << ii << std::endl;
+					Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
+					if ( sqdist >= 16 ) continue;
+					
+					/*if(i<=11 || j<=11) {
+					 if(atype1==1 && atype2==3) {
+					 printf("Contact between %d %d - %d %d dist: %f\n",i,atype1,j,atype2,sqrt(sqdist));
+					 }
+					 }*/
+					// std::cout <<  rsd_i.name3() << " " << rsd_i.atom_name(ii) << " " << atype1 << " - " << rsd_j.name3() << " " << rsd_j.atom_name(jj) << " " << atype2 << " " << sqrt(sqdist) << std::endl;
+					atomcontacts(i,atype1,atype2)++;
+					//atomcontacts(j,atype2,atype1)++;
 				}
 			}
 		}
@@ -942,19 +759,14 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 		}
 		//  std::cout << std::endl;
 	}
-	//std::exit(1);
 }
+
 void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,Size index, int windowsize) const{
 	const int nres=(int)nres_;
-	//const int windowsize=21;
 	ObjexxFCL::FArray2D< bool >res_contact_map(nres,nres);
 	ObjexxFCL::FArray2D< Real >res_contact_dist(nres,nres);
-	// ObjexxFCL::FArray2D< Real >res_contact_prof(6,6);
 	res_contact_map=false;
-	// for ( int i = 1; i <= nres; ++i ) for ( int j = 1; j <= nres; ++j ) res_contact_map(i,j)=false;
-	//for ( int i = 1; i <= 6; ++i ) for ( int j = 1; j <= 6; ++j ) res_contact_prof(i,j)=0.0;
-
-
+	
 	for ( int i = 1; i <= nres; i=i+1 ) {
 		//i=5;
 		// get the appropriate residue from the pose.
@@ -964,7 +776,6 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 		//core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
 		const Energies & energies( pose.energies() );
 		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
-		//Real countN    =  0.0;
 		// iterate across neighbors within 12 angstroms
 		//  for ( int j = i+1; j <= nres; j=j+1 ) {
 		//j=53;
@@ -973,72 +784,56 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 				ire = graph.get_node(i)->const_edge_list_end();
 				ir != ire; ++ir ) {
 			int const j( (*ir)->get_other_ind( i ) );
-			//if(i>j && std::abs(i-j)>5) {
-			if ( std::abs(i-j)>5 ) {
-				Real dist=crd(pose,i,j);
-				if ( dist<36 ) { // 6Å
-					//   conformation::Residue const & rsd_j( pose.residue(j) );
-					//Size atomindex_j( rsd_j.type().nbr_atom() );
-					//core::conformation::Atom const & atom_j = rsd_j.atom(atomindex_j);
-					//Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
-					res_contact_map(i,j)=true;
-					res_contact_map(j,i)=true;
-					res_contact_dist(i,j)=sqrt(dist);
-					res_contact_dist(j,i)=sqrt(dist);
-				}
+			if ( std::abs(i-j)<=5 ) continue;
+			
+			Real dist=crd(pose,i,j);
+			if ( dist<36 ) { // 6Å
+				//   conformation::Residue const & rsd_j( pose.residue(j) );
+				//Size atomindex_j( rsd_j.type().nbr_atom() );
+				//core::conformation::Atom const & atom_j = rsd_j.atom(atomindex_j);
+				//Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
+				res_contact_map(i,j)=true;
+				res_contact_map(j,i)=true;
+				res_contact_dist(i,j)=sqrt(dist);
+				res_contact_dist(j,i)=sqrt(dist);
 			}
 		}
-
 	}
 
-	//Size tmp(0);
 	ObjexxFCL::FArray2D< Real >res_contact_prof(6,6);
 	ObjexxFCL::FArray1D< Real >resfrac(21);
-	for ( int i=1; i<=nres; ++i ) { //nres;++i) { //central residue
+	for ( int i=1; i<=nres; ++i ) { //central residue
 		// std::cout << i << " " << pose.residue(i).name3() << " " << res6(pose.residue(i).name1()) << " " << res6(pose.residue(i)) << ": " << std::endl;;
 		res_contact_prof=0;
 		resfrac=0;
 		Size total_res_contacts_count(0);
 		Real total_res_contacts(0);
 		// std::cout << "Done init... " << std::endl;
-		//  for ( int k = 1; k <= 6; ++k ) for ( int l = 1; l <= 6; ++l ) res_contact_prof(k,l)=0.0;
-
+		
 		for ( int j=i-(windowsize-1)/2; j<=i+(windowsize-1)/2; ++j ) { // each residue in window /retrain with a tertiary window <12Å
 			if ( j>=1 && j<=nres ) {
 				//    std::cout << j << " ";
 				for ( int k=1; k<=nres; ++k ) {
 					if ( res_contact_map(j,k) ) {
-						//int res_j=res6(pose.residue(j));
-						//int res_k=res6(pose.residue(k));
 						//std::cout << " Contact between " << j << " and " << k << " dist: " << res_contact_dist(j,k) << ",restype1: (" << pose.residue(j).name1()<< ")" << res_j << ", restype2: " << " (" << pose.residue(k).name1() << ") " << res_k << std::endl;
 						total_res_contacts_count++;
-						//Real joined_prob=1;
-						//res_contact_prof(res_j,res_k)+=joined_prob;
-						//total_res_contacts+=joined_prob;
-
 						for ( int l=1; l<=20; l++ ) {
-							//char aa1=profile_index_to_aa(l);
 							int res1=res6(profile_index_to_aa(l));
 
 							for ( int n=1; n<=20; n++ ) {
-								//char aa2=profile_index_to_aa(n);
 								int res2=res6(profile_index_to_aa(n));
 								if ( basic::options::option[ basic::options::OptionKeys::ProQ::prof_bug ]() ) {
-									//res2=res_k;
 									res2=res6(pose.residue(k));
 								}
-								//
 								Real joined_prob=prob_profile_(j,l)*prob_profile_(k,n);
 								//  std::cout << "PROF: " << i << " " << j << " " << aa1 << " " << aa2 << " " << l << " " << n << " " << res1 << " " << res2 << " " <<  prob_profile_(j,l) << " " << prob_profile_(k,n) << std::endl;
 								res_contact_prof(res1,res2)+=joined_prob;
 								total_res_contacts+=joined_prob;
 								//         std::cout << aa1 << " " << res1 << " " << aa2 << " " << res2 << std::endl;
 							}
-
 						}
 					}
 				}
-
 			}
 		}
 		if ( total_res_contacts!=0 ) {
@@ -1062,8 +857,6 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 			}
 		}
 		for ( int j = 1; j <= 21; ++j ) {
-			//resfrac(j)=0;
-			//int pos=index+j-1;
 			//std::cout << pos << ":" << resfrac(j) << " " ;
 			vec(i,index+j-1)=resfrac(j);
 		}
@@ -1226,32 +1019,30 @@ Real ProQ_Energy::crd(pose::Pose & pose,Size i,Size j) const {
 	//ignore backbone except CA
 	for ( Size ii=1; ii<=rsd_i.nheavyatoms(); ++ii ) {
 		//std::cout << "ii: " << ii << " nheavy:" << rsd_i.nheavyatoms() << " " << "name: " << rsd_i.atom_type(ii).name() << " " << rsd_i.atom_is_backbone(ii) << " " << rsd_i.atom_type(ii).name().rfind("bb") << " " << rsd_i.atom_type(ii).name().find("CA") << std::endl;
-		if ( !rsd_i.atom_is_backbone(ii) || rsd_i.atom_name(ii).compare(1,2,"CA")==0 ) { // || rsd_i.atom_type(ii).name().find("CA"))  //ii!=3 && ii!=4)
-
-			core::conformation::Atom const & atom_i = rsd_i.atom(ii);
-
-			//std::cout << "ii: " << ii << " " << atom_i << ", name: " << rsd_i.atom_type(ii).name() << " " << rsd_i.atom_type(ii).atom_type_name() << std::endl;
-			//std::cout << rsd_i.atom_type(ii);
-
-			for ( Size jj=1; jj<=rsd_j.nheavyatoms(); ++jj ) {
-				if ( !rsd_j.atom_is_backbone(jj) || rsd_j.atom_name(jj).compare(1,2,"CA")==0 ) {
-					core::conformation::Atom const & atom_j = rsd_j.atom(jj);
-					Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
-
-					//std::cout << "jj: " << jj << " " << atom_j << ", name: " << rsd_i.atom_type(jj).name() << " " << rsd_i.atom_type(jj).atom_type_name() << std::endl;
-					//std::cout << i << ":" << ii << " " << rsd_i.atom_name(ii) << " " << j << ":" << jj << " " << rsd_j.atom_name(jj) << " " << sqrt(sqdist) << std::endl;
-					if ( sqdist<mindist ) {
-						mindist=sqdist;
-					}
-				}
+		if ( rsd_i.atom_is_backbone(ii) && rsd_i.atom_name(ii).compare(1,2,"CA") != 0 ) continue;
+		
+		core::conformation::Atom const & atom_i = rsd_i.atom(ii);
+		
+		//std::cout << "ii: " << ii << " " << atom_i << ", name: " << rsd_i.atom_type(ii).name() << " " << rsd_i.atom_type(ii).atom_type_name() << std::endl;
+		//std::cout << rsd_i.atom_type(ii);
+		
+		for ( Size jj=1; jj<=rsd_j.nheavyatoms(); ++jj ) {
+			if ( rsd_j.atom_is_backbone(jj) && rsd_j.atom_name(jj).compare(1,2,"CA")!=0 ) continue;
+			
+			core::conformation::Atom const & atom_j = rsd_j.atom(jj);
+			Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
+			
+			//std::cout << "jj: " << jj << " " << atom_j << ", name: " << rsd_i.atom_type(jj).name() << " " << rsd_i.atom_type(jj).atom_type_name() << std::endl;
+			//std::cout << i << ":" << ii << " " << rsd_i.atom_name(ii) << " " << j << ":" << jj << " " << rsd_j.atom_name(jj) << " " << sqrt(sqdist) << std::endl;
+			if ( sqdist<mindist ) {
+				mindist=sqdist;
 			}
 		}
 	}
 
-
 	return mindist;
-
 }
+
 void ProQ_Energy::sum_profile(Size j,ObjexxFCL::FArray1D< Real > & vec) const {
 	for ( int k=1; k<=20; k++ ) {
 		int res=res6(profile_index_to_aa(k));
@@ -1322,6 +1113,7 @@ void ProQ_Energy::surf_feature(pose::Pose &, utility::vector1< Real > & rsd_sasa
 	}
 	//std::exit(1);
 }
+
 void ProQ_Energy::stride_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
 	int windowsize) const
 {
@@ -1354,8 +1146,8 @@ void ProQ_Energy::stride_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArra
 		<< index-1 << ":" << vec(pos,index-1) << " "; */
 	}
 	//std::cout << std::endl;
-	//std::exit(1);
 }
+
 void ProQ_Energy::ss_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
 	int windowsize) const
 {
@@ -1381,6 +1173,7 @@ void ProQ_Energy::ss_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D<
 	}
 	//std::cout << std::endl;
 }
+
 void ProQ_Energy::gss_sc_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, Size index) const
 {
 	const int nres=(int)nres_;
@@ -1436,8 +1229,8 @@ void ProQ_Energy::ss_sc_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray
 	}
 	vec(pos,index)=(Real)correct/count;
 	//std::cout << "Q3: " << pos << ":" << vec(pos,index) << std::endl;;
-
 }
+
 void ProQ_Energy::topology_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index) const
 {
 	const int win=11;
@@ -1450,12 +1243,10 @@ void ProQ_Energy::topology_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & v
 		if ( i>=1 && i <= nres ) {
 			vec(pos,index)=topology_.tmregion(i);
 		}
-
 		//std::cout << " " << i << ":" << index << "(" << vec(pos,index) << ")";
 	}
 
 	//std::cout << std::endl;
-
 }
 
 void ProQ_Energy::zpred_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index) const
@@ -1477,10 +1268,10 @@ void ProQ_Energy::zpred_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec,
 }
 
 void ProQ_Energy::calculateZ(pose::Pose & pose,ObjexxFCL::FArray1D< Real > & Z) const {
+	
 	if ( !basic::options::option[ basic::options::OptionKeys::ProQ::membrane ]() ) {
 		return;
 	}
-
 
 	//Determine the membrane center and normal
 	Vector normal(0);
@@ -1512,8 +1303,6 @@ void ProQ_Energy::calculateZ(pose::Pose & pose,ObjexxFCL::FArray1D< Real > & Z) 
 		Z(i)=fabs(normal.dot(coord-center));
 		//std::cout << i << " " << Z(i) << std::endl;
 	}
-	//std::exit(1);
-
 }
 
 void ProQ_Energy::z_feature(pose::Pose &, ObjexxFCL::FArray1D< Real > & Z, ObjexxFCL::FArray2D< Real > & vec,
@@ -1541,7 +1330,6 @@ void ProQ_Energy::z_feature(pose::Pose &, ObjexxFCL::FArray1D< Real > & Z, Objex
 		vec(pos,index)=(z-5)/20;  //min zpred is 5 => 0 in membrane > 1 outside 20Å.
 		//std::cout << "Z " << pos << ": " << vec(pos,index) << std::endl;
 	}
-
 }
 
 void ProQ_Energy::entropy_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index,
@@ -1574,17 +1362,14 @@ void ProQ_Energy::profile_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & ve
 				vec(pos,index)=0;
 				//std::cout << "profile " << pos << "," << index << " " << i << " : " << vec(pos,index) << std::endl;
 			}
-
 		}
 	}
-
 }
 
 void ProQ_Energy::rsa_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, utility::vector1< Real> & rsd_sasa_rel,
 	int const pos, Size index, int windowsize) const
 {
 	const int nres=(int)nres_;
-
 	for ( int i=(int)pos-(windowsize-1)/2; i<=(int)pos+(windowsize-1)/2; ++i,++index ) {
 		vec(pos,index)=0;
 		if ( i>=1 && i<=nres ) {
@@ -1592,7 +1377,6 @@ void ProQ_Energy::rsa_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, u
 		}
 		//std::cout << "RSA_FEAT " << pos << "," << index << " " << i << " : " << vec(pos,index) << std::endl;
 	}
-
 }
 
 void ProQ_Energy::prsa_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index,

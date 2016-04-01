@@ -98,14 +98,12 @@ Ramachandran::Ramachandran() :
 	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	phi_psi_bins_above_thold_( n_aa_ )
 {
-	//MaximCode
 	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable] ) {
 		read_rama(
 			basic::options::option[basic::options::OptionKeys::corrections::score::rama_map]().name(),
 			basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
 	} else {
-		//MaximCode
 		{
 			std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_smooth_level ];
 			std::string _smoothingAsKeyword = "undefined";
@@ -276,8 +274,6 @@ Ramachandran::eval_rama_score_all(
 {
 	if ( scorefxn.has_zero_weight( rama ) ) return; // unnecessary, righ?
 
-	//double rama_sum = 0.0;
-
 	// in pose mode, we use fold_tree.cutpoint info to exclude terminus
 	// residues from rama calculation. A cutpoint could be either an artificial
 	// cutpoint such as loop cutpoint or a real physical chain break such as
@@ -295,35 +291,22 @@ Ramachandran::eval_rama_score_all(
 
 	int const total_residue = pose.total_residue();
 
-	// retrieve cutpoint info // apl do we actually need this data?
-	// if so, Pose must provide it 'cause we're offing all global data
-	//
-	//kinematics::FoldTree const & fold_tree(
-	//  pose.fold_tree() );
-	//int const n_cut( fold_tree.num_cutpoint() );
-
-	//FArray1D< Real > cut_weight( n_cut,
-	// scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
-
-	//if( cut_weight.size1() == scorefxns::cut_weight.size1() )
-	// cut_weight = scorefxns::cut_weight;
-
 	// exclude chain breaks
 
 	Energies & pose_energies( pose.energies() );
 
 	for ( int ii = 1; ii <= total_residue; ++ii ) {
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue() ) {
-			Real rama_score,dphi,dpsi;
-			if ( is_normally_connected(pose.residue(ii)) ) {
-				eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
-				//printf("Residue %i is normal.\n", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
-				//std::cout << "Rama: residue " << ii << " = " << rama_score << std::endl;
-				pose_energies.onebody_energies( ii )[rama] = rama_score;
-			} else {
-				//printf("Residue %i: THIS SHOULD HAPPEN ONLY IF THIS RESIDUE HAS WEIRD CONNECTIONS.", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
-				eval_rama_score_residue_nonstandard_connection(pose, pose.residue(ii),rama_score,dphi,dpsi);
-			}
+		if ( !pose.residue(ii).is_protein() || pose.residue(ii).is_terminus() || pose.residue(ii).is_virtual_residue() ) continue;
+		
+		Real rama_score,dphi,dpsi;
+		if ( is_normally_connected(pose.residue(ii)) ) {
+			eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
+			//printf("Residue %i is normal.\n", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
+			//std::cout << "Rama: residue " << ii << " = " << rama_score << std::endl;
+			pose_energies.onebody_energies( ii )[rama] = rama_score;
+		} else {
+			//printf("Residue %i: THIS SHOULD HAPPEN ONLY IF THIS RESIDUE HAS WEIRD CONNECTIONS.", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
+			eval_rama_score_residue_nonstandard_connection(pose, pose.residue(ii),rama_score,dphi,dpsi);
 		}
 	}
 }
@@ -351,8 +334,7 @@ Ramachandran::random_phipsi_from_rama(
 	AA const res_aa,
 	Real & phi,
 	Real & psi
-) const
-{
+) const {
 	AA res_aa2 = res_aa;
 	core::Real phipsi_multiplier=1.0;
 	if ( is_canonical_d_aminoacid(res_aa) ) {
@@ -370,8 +352,7 @@ Ramachandran::uniform_phipsi_from_allowed_rama(
 	AA const res_aa,
 	Real & phi,
 	Real & psi
-) const
-{
+) const {
 	using numeric::random::uniform;
 	using numeric::random::random_range;
 
@@ -392,8 +373,7 @@ Ramachandran::phipsi_in_allowed_rama(
 	AA const aa,
 	Real phi,
 	Real psi
-) const
-{
+) const {
 	phi = numeric::nonnegative_principal_angle_degrees(phi);
 	psi = numeric::nonnegative_principal_angle_degrees(psi);
 
@@ -408,8 +388,7 @@ Ramachandran::phipsi_in_forbidden_rama(
 	AA const aa,
 	Real phi,
 	Real psi
-) const
-{
+) const {
 	return ! phipsi_in_allowed_rama(aa, phi, psi);
 }
 
@@ -428,8 +407,7 @@ Ramachandran::random_phipsi_from_rama_by_torsion_bin(
 	Real & phi,
 	Real & psi,
 	conformation::ppo_torsion_bin torsion_bin
-) const
-{
+) const {
 	draw_random_phi_psi_from_cdf( cdf_by_torsion_bin_( res_aa, torsion_bin ), phi, psi );
 }
 
@@ -438,8 +416,7 @@ void
 Ramachandran::get_entries_per_torsion_bin(
 	AA const res_aa,
 	std::map< conformation::ppo_torsion_bin, core::Size > & tb_frequencies
-) const
-{
+) const {
 	tb_frequencies[ conformation::ppo_torbin_A ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_A ];
 	tb_frequencies[ conformation::ppo_torbin_B ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_B ];
 	tb_frequencies[ conformation::ppo_torbin_E ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_E ];
@@ -492,16 +469,13 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	if ( res.backbone_aa() != core::chemical::aa_unk ) ref_aa = res.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
 
 	eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
-
-	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
 Ramachandran::eval_rama_score_residue(
 	conformation::Residue const & rsd
-) const
-{
+) const {
 	Real rama, drama_dphi, drama_dpsi;
 	eval_rama_score_residue( rsd, rama, drama_dphi, drama_dpsi );
 	return rama;
@@ -514,8 +488,7 @@ Ramachandran::eval_rama_score_residue(
 	Real & rama,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 
 	debug_assert( rsd.is_protein() );
@@ -550,8 +523,6 @@ Ramachandran::eval_rama_score_residue(
 		drama_dpsi = 0.0;
 		return;
 	}
-
-	return;
 }
 
 
@@ -562,9 +533,7 @@ Ramachandran::eval_rama_score_residue(
 	AA const res_aa,
 	Real const phi,
 	Real const psi
-) const
-{
-
+) const {
 	Real rama, drama_dphi, drama_dpsi;
 	eval_rama_score_residue( res_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 	return rama;
@@ -598,14 +567,8 @@ Ramachandran::eval_rama_score_residue(
 	Real & rama,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
-
-	// AMW: formerly we assigned an "ss_type" based on secondary structure annotation
-	// and scored rama accordingly
-	// this is 8 years old and involves some commented out code and a poorly scoped "ss_type"
-	// so I am fixing this. (cppcheck)
 
 	core::chemical::AA res_aa2 = res_aa;
 	core::Real phi2 = phi;
@@ -620,28 +583,10 @@ Ramachandran::eval_rama_score_residue(
 	}
 
 	if ( use_bicubic_interpolation ) {
-
 		rama = rama_energy_splines_[ res_aa2 ].F(phi2,psi2);
-		//MaximCode:
-		//core::chemical::AA resTest = chemical::aa_phe;
-		//Real ramaTest1 = rama_energy_splines_[ resTest ].F(300,320);
-		//Real ramaTest2 = rama_energy_splines_[ resTest ].F(305,325);
-		//Real ramaTest3 = rama_energy_splines_[ resTest ].F(295,315);
-		//
-		//ramaTest1 = 0;
-		//ramaTest2 = 0;
-		//ramaTest3 = 0;
-		//
-		//core::chemical::AA resTest2 = chemical::aa_pro;
-		//Real ramaTest4 = rama_energy_splines_[ resTest2 ].F(295,145);
-		//Real ramaTest5 = rama_energy_splines_[ resTest2 ].F(295,155);
-		//
-		//ramaTest4 = 0;
-		//ramaTest5 = 0;
-
 		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
 		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
-		return; // temp -- just stop right here
+		return;
 	} else {
 
 		int ss_type = 3;
@@ -688,21 +633,10 @@ Ramachandran::eval_rama_score_residue(
 	}
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-//void Ramachandran::eval_procheck_rama(
-// Pose const & /*pose*/,
-// Real & /*favorable*/,
-// Real & /*allowed*/,
-// Real & /*generous*/
-//) const
-//{}
-
 bool
 Ramachandran::is_normally_connected (
 	conformation::Residue const & res
 ) const {
-
 	if ( res.is_upper_terminus() || res.is_lower_terminus() || res.connect_map_size() < 2 ) {
 		return true; //Termini register as normally connected since they're not to be scored by rama.
 	}
@@ -783,8 +717,6 @@ Ramachandran::draw_random_phi_psi_from_extra_cdf(
 		phi *= -1.0;
 		psi *= -1.0;
 	}
-
-	return;
 }
 
 /// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
@@ -799,23 +731,18 @@ Ramachandran::draw_random_phi_psi_from_extra_cdf(
 void
 Ramachandran::symmetrize_gly_table(
 	bool const dont_use_shap
-)
-{
-	if ( TR.visible() ) {
-		TR << "Symmetrizing glycine Ramachandran table." << std::endl;
-	}
-
+) {
+	TR << "Symmetrizing glycine Ramachandran table." << std::endl;
+	
 	for ( core::Size ss=(dont_use_shap ? 1 : 3); ss<=3; ++ss ) { //Repeat for each secondary structure type, if we're not using the Shapovalov tables.  If we are, then only ss=3 has been loaded.
 
 		//For debugging only:
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "Old gly probability table for ss " << ss << ":" << std::endl;
-			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
-				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
-					TR.Debug << ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
-				}
-				TR.Debug << std::endl;
+		TR.Debug << "Old gly probability table for ss " << ss << ":" << std::endl;
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				TR.Debug << ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
 			}
+			TR.Debug << std::endl;
 		}
 
 		//Need to rebuild probability tables by averaging:
@@ -840,28 +767,24 @@ Ramachandran::symmetrize_gly_table(
 			}
 		}
 
-		if ( TR.Debug.visible() ) { //For debugging only!
-			TR.Debug << "Old gly entropy for ss " << ss << " was " << ram_entropy_(ss,static_cast<int>(core::chemical::aa_gly)) << ".  New is " << entropy << "." << std::endl;
-		}
+		TR.Debug << "Old gly entropy for ss " << ss << " was " << ram_entropy_(ss,static_cast<int>(core::chemical::aa_gly)) << ".  New is " << entropy << "." << std::endl;
+
 		ram_entropy_(ss,static_cast<int>(core::chemical::aa_gly)) = entropy;
 
-
 		//For debugging only:
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "New gly probability table for ss " << ss << ":" << std::endl;
-			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
-				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
-					TR.Debug << ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
-				}
-				TR.Debug << std::endl;
+		TR.Debug << "New gly probability table for ss " << ss << ":" << std::endl;
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				TR.Debug << ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
 			}
-			TR.Debug << "Old gly energy table for ss " << ss << ":" << std::endl;
-			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
-				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
-					TR.Debug << ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
-				}
-				TR.Debug << std::endl;
+			TR.Debug << std::endl;
+		}
+		TR.Debug << "Old gly energy table for ss " << ss << ":" << std::endl;
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				TR.Debug << ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
 			}
+			TR.Debug << std::endl;
 		}
 
 		//Finally, need to recalculate energy:
@@ -876,15 +799,12 @@ Ramachandran::symmetrize_gly_table(
 			}
 		}
 
-		//For debugging only:
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "New gly energy table for ss " << ss << ":" << std::endl;
-			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
-				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
-					TR.Debug << ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
-				}
-				TR.Debug << std::endl;
+		TR.Debug << "New gly energy table for ss " << ss << ":" << std::endl;
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				TR.Debug << ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
 			}
+			TR.Debug << std::endl;
 		}
 
 	} // Looping through secondary structures
@@ -964,7 +884,6 @@ Ramachandran::read_rama_map_file (
 		//cj  std::cout << SS( check ) << SS( std::log(min_prob) ) <<
 		//cj   SS( std::log(max_prob) ) << SS( entropy ) << std::endl;
 	}
-
 }
 
 void
@@ -972,7 +891,6 @@ Ramachandran::read_rama(
 	std::string const & rama_map_filename,
 	bool use_bicubic_interpolation
 ) {
-
 	utility::io::izstream  iunit;
 
 	// search in the local directory first
@@ -990,7 +908,6 @@ Ramachandran::read_rama(
 	//cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
 	//KMa add_phospho_ser 2006-01
 
-	//MaximCode
 	bool const dont_use_shap(
 		!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 		|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable]
@@ -1007,9 +924,7 @@ Ramachandran::read_rama(
 	iunit.clear();
 
 	//If the option is set to do this, symmetrize the glycine Ramachandran map.
-	if ( symm_gly ) {
-		symmetrize_gly_table( dont_use_shap );
-	}
+	if ( symm_gly ) symmetrize_gly_table( dont_use_shap );
 
 	if ( use_bicubic_interpolation ) {
 		using namespace numeric;
@@ -1076,7 +991,6 @@ void
 Ramachandran::load_custom_rama_table(
 	Rama_Table_Type const type
 ) {
-
 	runtime_assert_string_msg( !has_custom_rama_energy_table(type) && !has_custom_rama_probability_table(type) && !has_custom_rama_count_table(type),
 		"Error in core::scoring::Ramachandran::load_custom_rama_table(): the tables for type " + get_ramatable_name_by_type(type) + " have already been loaded!" );
 
@@ -1153,8 +1067,6 @@ Ramachandran::load_custom_rama_table(
 	extra_ram_probabil_[type] = prob;
 	extra_ram_counts_[type] = counts;
 	extra_ram_energ_[type] = energy;
-
-	return;
 }
 
 void
@@ -1190,7 +1102,6 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 				Real const cur_phi = binw_ * ( jj - ( jj > n_phi_ / 2 ? n_phi_ : 0 ));
 				Real const cur_psi = binw_ * ( kk - ( kk > n_psi_ / 2 ? n_psi_ : 0 ));
 
-
 				conformation::ppo_torsion_bin cur_tb = conformation::ppo_torbin_X;
 				if ( torsion_bin != conformation::ppo_torbin_X ) {
 					//  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long...
@@ -1205,7 +1116,6 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 					// then increment the cumulative sum with the current table entry
 					allowed_probability_sum += jjkk_prob;
 				}
-
 			}
 		}
 
@@ -1222,9 +1132,6 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 		Real const inv_allowed_probability_sum = 1 / allowed_probability_sum;
 		for ( int jj = 1; jj <= n_phi_ * n_psi_; ++jj ) {
 			inner_cdf[ jj ] *= inv_allowed_probability_sum;
-			//if ( inner_cdf[ jj ] == 0 && jj != 1 ) {
-			// inner_cdf[ jj ] = inner_cdf[ jj-1 ];
-			//}
 		}
 
 		// now update the cdf, cdf_by_torsion_bin, and n_valid_pp_bins_by_ppo_torbin tables
@@ -1233,9 +1140,7 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 		}
 		cdf_by_torsion_bin_( ii, torsion_bin ) = inner_cdf;
 		n_valid_pp_bins_by_ppo_torbin_( ii, torsion_bin ) = actual_allowed;
-
 	}
-
 }
 
 void
@@ -1316,8 +1221,6 @@ Ramachandran::generate_custom_rama_cdf(
 
 	//Store the computed CDF in the map:
 	extra_cdf_[type] = inner_cdf;
-
-	return;
 }
 
 //MaximCode
@@ -1345,8 +1248,7 @@ Ramachandran::read_rama_map_file_shapovalov (
 	std::string aaStr;
 	double phi, psi, prob, minusLogProb;
 
-	do
-	{
+	do {
 		iunit->getline( line, 255 );
 
 		if ( iunit->eof() ) {
@@ -1375,13 +1277,9 @@ Ramachandran::read_rama_map_file_shapovalov (
 
 		//j, k (aka phi and psi indices) start with 1 and correspond to 0 and go all way to 36 corresponding to 350
 		//since the storage type is FArray4D, Fortran-Compatible 4D Array where indices start from 1 by default
-		if ( phi < 0 ) {
-			phi += 360;
-		}
-		if ( psi < 0 ) {
-			psi += 360;
-		}
-		//MaximCode
+		if ( phi < 0 ) phi += 360;
+		if ( psi < 0 ) psi += 360;
+
 		//round produces unidentified symbol on Windows compilation, so replaced with ceil
 		j = (int) ceil(phi / 10.0 - 0.5) + 1;
 		k = (int) ceil(psi / 10.0 - 0.5) + 1;
@@ -1401,8 +1299,6 @@ Ramachandran::read_rama_map_file_shapovalov (
 		max_prob = std::max(ram_probabil_(j,k,ii,i),max_prob);
 
 	} while (true);
-
-
 }
 
 

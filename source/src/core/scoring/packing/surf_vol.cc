@@ -98,7 +98,6 @@ get_surf_tot(
 	PROF_STOP( basic::DALPHABALL );
 
 #endif
-
 	return tot_surf;
 }
 

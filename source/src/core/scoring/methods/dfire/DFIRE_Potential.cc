@@ -79,38 +79,34 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 	}
 	string line;
 	while ( getline(input,line) ) {
-		if ( line.substr(0,1) != "#" ) {
-			std::istringstream ss(line);
-			string res1(""), atom1(""), res2(""), atom2("");
-			ss >> res1 >> atom1 >> res2 >> atom2;
-
-			//Size const res_idx1(res_index(res1)), res_idx2(res_index(res2));
-			//Size const atom_idx1(atom_index(atom1)), atom_idx2(atom_index(atom2));
-
-			//std::cout << "line = " << line << std::endl;
-			//if ( res_idx1 != INVALID && res_idx2 != INVALID && atom_idx1 != INVALID && atom_idx2 != INVALID ) {
-			vector1< Real > pair_potential; // for (res1,atom1,res2,atom2)
-			Real value(-999);
+		if ( line.substr(0,1) == "#" ) continue;
+		
+		std::istringstream ss(line);
+		string res1(""), atom1(""), res2(""), atom2("");
+		ss >> res1 >> atom1 >> res2 >> atom2;
+		
+		//std::cout << "line = " << line << std::endl;
+		vector1< Real > pair_potential; // for (res1,atom1,res2,atom2)
+		Real value(-999);
+		ss >> value;
+		while ( !ss.fail() ) {
+			pair_potential.push_back(value);
 			ss >> value;
-			while ( !ss.fail() ) {
-				pair_potential.push_back(value);
-				ss >> value;
-				//std::cout << "value = " << value << std::endl;
-			}
-
-			potential_.push_back( pair_potential );
-			string const joint_id(get_joint_id(res1,atom1,res2,atom2));
-			atom_res_idx_[joint_id] = potential_.size();
-			//std::cout << "joint_id = (" << joint_id << ")" << std::endl;
-			//std::cout << "potential size = " << potential_.size() << std::endl;
-			//std::cout << "pair_potential size = " << pair_potential.size() << std::endl;
-			//std::cout << joint_id;
-			//for ( Size ii = 1; ii <= pair_potential.size(); ++ii ) {
-			// std::cout << " " << pair_potential[ii];
-			//}
-			//std::cout << std::endl;
-			//}
+			//std::cout << "value = " << value << std::endl;
 		}
+		
+		potential_.push_back( pair_potential );
+		string const joint_id(get_joint_id(res1,atom1,res2,atom2));
+		atom_res_idx_[joint_id] = potential_.size();
+		//std::cout << "joint_id = (" << joint_id << ")" << std::endl;
+		//std::cout << "potential size = " << potential_.size() << std::endl;
+		//std::cout << "pair_potential size = " << pair_potential.size() << std::endl;
+		//std::cout << joint_id;
+		//for ( Size ii = 1; ii <= pair_potential.size(); ++ii ) {
+		// std::cout << " " << pair_potential[ii];
+		//}
+		//std::cout << std::endl;
+		//}
 	} // getline
 
 	potential_is_loaded_ = true;
@@ -178,22 +174,22 @@ DFIRE_Potential::eval_dfire_pair_energy(
 			Real const dist = rsd1.xyz(ii).distance( rsd2.xyz(jj) );
 			Size const dist_bin_idx = (Size) (2*dist + 0.5);
 			//std::cout << "bin(" << dist << ") = " << dist_bin_idx << std::endl;
-			if ( dist_bin_idx < 30 ) {
-				string const atom_id1( rsd1.type().atom_name(ii) );
-				string const atom_id2( rsd2.type().atom_name(jj) );
-				string const res_id1 ( rsd1.type().name3() );
-				string const res_id2 ( rsd2.type().name3() );
-				string const joint_bin_id( get_joint_id( res_id1, atom_id1, res_id2, atom_id2 ) );
-				boost::unordered_map< string, Size >::const_iterator it = atom_res_idx_.find(joint_bin_id);
-				utility::vector1< Real > const & scores( potential_[it->second] );;
-				if ( it != atom_res_idx_.end() && dist_bin_idx <= scores.size() ) {
-					score += scores[dist_bin_idx];
-					//for ( Size kk = 1; kk <= scores.size(); ++kk ) {
-					// std::cout << " " << scores[kk];
-					//}
-					//std::cout << std::endl;
-					//std::cout << "score(" << joint_bin_id << "," << dist << "," << dist_bin_idx <<  ") = " << score << std::endl;
-				}
+			if ( dist_bin_idx >= 30 ) continue;
+			
+			string const atom_id1( rsd1.type().atom_name(ii) );
+			string const atom_id2( rsd2.type().atom_name(jj) );
+			string const res_id1 ( rsd1.type().name3() );
+			string const res_id2 ( rsd2.type().name3() );
+			string const joint_bin_id( get_joint_id( res_id1, atom_id1, res_id2, atom_id2 ) );
+			boost::unordered_map< string, Size >::const_iterator it = atom_res_idx_.find(joint_bin_id);
+			utility::vector1< Real > const & scores( potential_[it->second] );;
+			if ( it != atom_res_idx_.end() && dist_bin_idx <= scores.size() ) {
+				score += scores[dist_bin_idx];
+				//for ( Size kk = 1; kk <= scores.size(); ++kk ) {
+				// std::cout << " " << scores[kk];
+				//}
+				//std::cout << std::endl;
+				//std::cout << "score(" << joint_bin_id << "," << dist << "," << dist_bin_idx <<  ") = " << score << std::endl;
 			}
 		}
 	}

@@ -137,8 +137,7 @@ void
 AtomVDW::setup_approximate_vdw_radii(
 	utility::vector1< int > const & atom_type_index,
 	chemical::AtomTypeSet const & atom_type_set
-)
-{
+) {
 	using namespace ObjexxFCL::format;
 
 	Size const natoms_full( atom_vdw_.size() );
@@ -161,7 +160,6 @@ AtomVDW::setup_approximate_vdw_radii(
 	for ( Size r=1; r<= niter; ++r ) {
 
 		utility::vector1< Real > new_R( R );
-
 		// calculate deviations
 		Real total_dev( 0.0 );
 

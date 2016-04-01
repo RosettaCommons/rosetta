@@ -89,7 +89,6 @@ HolesEnergy::HolesEnergy() : parent( methods::EnergyMethodCreatorOP( new HolesEn
 	min_params_  .read_data_file(basic::database::full_name("scoring/rosettaholes/"+p+".params"));
 }
 
-
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
@@ -112,7 +111,6 @@ HolesEnergy::finalize_total_energy(
 
 	decoy_score /= pb.nballs();
 	resl_score  /= pb.nballs();
-	// min_score   /= pb.nballs();
 	Real composite_score = 1.0 - (1.0 / (1.0 + exp( -3.768941 * decoy_score - 0.5842765 ) ));
 	composite_score = resl_score + 3*composite_score;
 
@@ -121,7 +119,6 @@ HolesEnergy::finalize_total_energy(
 	totals[ holes_resl ] = resl_score;
 	totals[ holes_min ] = min_score;
 	totals[ holes_min_mean ] = min_score / pb.nballs();
-
 }
 
 void
@@ -129,8 +126,6 @@ HolesEnergy::setup_for_derivatives(
 	pose::Pose & pose,
 	ScoreFunction const &
 ) const {
-
-	//using namespace core::pose::datacache::CacheableDataType;
 	using namespace basic::datacache;
 	using namespace id;
 	using namespace numeric;
@@ -147,7 +142,6 @@ HolesEnergy::setup_for_derivatives(
 	/*Real score = */compute_holes_deriv( pose, min_params_, derivs );//.score;
 }
 
-
 void
 HolesEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
@@ -157,8 +151,7 @@ HolesEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
+) const {
 	//using namespace core::pose::datacache::CacheableDataType;
 	using namespace basic::datacache;
 	using namespace id;
@@ -179,6 +172,7 @@ HolesEnergy::eval_atom_derivative(
 	F1 += weights[ holes_min ] * f1;
 	F2 += weights[ holes_min ] * f2;
 }
+
 core::Size
 HolesEnergy::version() const
 {

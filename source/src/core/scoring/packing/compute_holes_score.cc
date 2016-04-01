@@ -17,7 +17,6 @@
 #include <core/pose/util.hh>  // REQUIRED FOR WINDOWS
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/packing/PoseBalls.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <basic/database/open.hh>
 #include <iomanip>
 #include <iostream>
@@ -140,7 +139,6 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 
 #endif
 #endif
-
 }
 
 
@@ -153,8 +151,7 @@ compute_rosettaholes_score(
 	HolesParams const & dec15_params,
 	bool use_cached_surfs,
 	std::string cmd
-)
-{
+) {
 	if ( cmd == "" ) {
 		cmd = basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]();
 	}
@@ -200,8 +197,7 @@ compute_rosettaholes_score(
 Real
 compute_dec15_score(
 	pose::Pose  const & pose
-)
-{
+) {
 	std::string cmd = basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]();
 
 	HolesParams dec15_params;
@@ -236,7 +232,6 @@ compute_holes_score(
 	bool use_cached_surfs,
 	std::string cmd
 ) {
-
 	if ( cmd == "" ) {
 		cmd = basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]();
 	}
@@ -257,7 +252,6 @@ compute_holes_score(
 		result.score += tmp;
 		result.atom_scores.set( pb.index_to_id(i), tmp );
 	}
-	// result.score /= pb.nballs();
 	TR << "compute_holes_score done: " << result.score << std::endl;
 	return result;
 }
@@ -309,22 +303,22 @@ core::Real compute_smooth_nb_deriv(
 			if ( !pb.is_heavy(j) ) continue;
 			xyzVector<Real> & jxyz( pb.ball(j).xyz() );
 			Real d2( ixyz.distance_squared(jxyz) );
-			if ( d2 < 121.0 ) {
-				Real  sn = sigmoidish_neighbor(d2);
-				Real dsn = sigmoidish_neighbor_deriv(d2);
-				Size at2 = pb.atom_type(j);
-				char ss2 = pb.secstruct(j);
-				xyzVector<core::Real> dxyz = ixyz-jxyz;
-				dxyz.normalize();
-				Real w = 0.0;
-				if ( params.have_params(at1,ss1) ) w += params.nb_weight(at1,ss1);
-				if ( params.have_params(at2,ss2) ) w += params.nb_weight(at2,ss2);
-				tot_snb += sn * w;
-				if ( d2 > 81 ) {
-					// // TODO: sheffler why 4*?
-					deriv[pb.index_to_id(i)] += dxyz*dsn*w;
-					deriv[pb.index_to_id(j)] -= dxyz*dsn*w;
-				}
+			if ( d2 >= 121.0 ) continue;
+			
+			Real  sn = sigmoidish_neighbor(d2);
+			Real dsn = sigmoidish_neighbor_deriv(d2);
+			Size at2 = pb.atom_type(j);
+			char ss2 = pb.secstruct(j);
+			xyzVector<core::Real> dxyz = ixyz-jxyz;
+			dxyz.normalize();
+			Real w = 0.0;
+			if ( params.have_params(at1,ss1) ) w += params.nb_weight(at1,ss1);
+			if ( params.have_params(at2,ss2) ) w += params.nb_weight(at2,ss2);
+			tot_snb += sn * w;
+			if ( d2 > 81 ) {
+				// // TODO: sheffler why 4*?
+				deriv[pb.index_to_id(i)] += dxyz*dsn*w;
+				deriv[pb.index_to_id(j)] -= dxyz*dsn*w;
 			}
 		}
 	}

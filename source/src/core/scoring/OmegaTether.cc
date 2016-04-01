@@ -74,11 +74,11 @@ OmegaTether::eval_omega_score_all(
 	Energies & pose_energies( pose.energies() );
 
 	for ( int ii = 1; ii <= total_residue; ++ii ) {
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue()  ) {
-			Real omega_score,dscore_domega, dscore_dphi, dscore_dpsi ;
-			eval_omega_score_residue(pose.residue(ii),omega_score,dscore_domega, dscore_dphi, dscore_dpsi );
-			pose_energies.onebody_energies( ii )[omega] = omega_score;
-		}
+		if ( !pose.residue(ii).is_protein()  || pose.residue(ii).is_terminus() || pose.residue(ii).is_virtual_residue() ) continue;
+
+		Real omega_score,dscore_domega, dscore_dphi, dscore_dpsi ;
+		eval_omega_score_residue(pose.residue(ii),omega_score,dscore_domega, dscore_dphi, dscore_dpsi );
+		pose_energies.onebody_energies( ii )[omega] = omega_score;
 	}
 }
 
@@ -119,8 +119,7 @@ OmegaTether::eval_omega_score_residue(
 	Real const omega,
 	Real const phi,
 	Real const psi
-) const
-{
+) const {
 	Real score, dscore_domega, dscore_dphi, dscore_dpsi ;
 	eval_omega_score_residue( res_aa, omega, phi, psi, score, dscore_domega, dscore_dphi, dscore_dpsi  );
 	return score;
@@ -135,8 +134,7 @@ OmegaTether::eval_omega_score_residue(
 	Real & dscore_domega,
 	Real & dscore_dphi,
 	Real & dscore_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 
 	debug_assert( rsd.is_protein() );
@@ -146,23 +144,17 @@ OmegaTether::eval_omega_score_residue(
 	core::chemical::AA the_aa( rsd.aa() );
 	if ( !core::chemical::is_canonical_L_aa( the_aa ) /*includes gly*/ && !core::chemical::is_canonical_D_aa( the_aa ) ) {
 		the_aa = core::chemical::aa_gly;
-	} else {
-		if ( is_d ) {
-			the_aa = core::chemical::get_L_equivalent( the_aa );
-		}
+	} else if ( is_d ) {
+		the_aa = core::chemical::get_L_equivalent( the_aa );
 	}
 
-	// vkm -- changing this yet again, so that now we have the is_beta_aa() check in one and only one place.
-	// amw changing this to is_beta_aa as well
-	// old:
-	//Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom AND by checking the size of the mainchain_torsions vector (since methylated lysine has a CM)
+	//Use backbone torsion angle 4 for omega if this is a beta-amino acid.
 	Real const phi_angle
 		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( phi_index(rsd) )));
 	Real const psi_angle
 		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( psi_index(rsd) )));
 	Real const omega_angle
-		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( omega_index(rsd) ))); //omega_index is 3 by default, 4 for beta-amino acids.
-
+		( d_multiplier * nonnegative_principal_angle_degrees( rsd.mainchain_torsion( omega_index(rsd) )));
 	if ( rsd.is_upper_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		score = 0.0;
 		dscore_domega = dscore_dphi = dscore_dpsi = 0.0;
@@ -189,8 +181,7 @@ OmegaTether::eval_omega_score_residue(
 	Real & dscore_domega,
 	Real & dscore_dphi,
 	Real & dscore_dpsi
-) const
-{
+) const {
 	using basic::subtract_degree_angles;
 
 	core::Real omega_p = omega;
@@ -271,7 +262,7 @@ OmegaTether::eval_omega_score_residue(
 
 /// load bb-dep omega tables
 void
-OmegaTether::read_omega_tables( ) {
+OmegaTether::read_omega_tables() {
 	omega_mus_all_.resize(4);
 	omega_sigmas_all_.resize(4);
 	omega_mus_all_splines_.resize(4);

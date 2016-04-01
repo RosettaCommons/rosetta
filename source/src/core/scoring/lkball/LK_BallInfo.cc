@@ -92,18 +92,8 @@ using namespace conformation;
 
 static Real const optimal_water_distance( 2.65 ); /// note that this number is re-defined in hbonds.cc !!
 
-/// Not doing backbone waters on protein or DNA
-// inline
-// bool
-// residue_type_has_waters( ResidueType const & rsd_type ) {
-//  return ( !sidechain_only_hack || ( rsd_type.is_polar() || rsd_type.is_charged() ||
-//                    ( rsd_type.is_aromatic() &&
-//                     ( rsd_type.aa() == aa_trp || rsd_type.aa() == aa_tyr ) ) ) );
-// }
-
 LKB_ResidueInfo::WaterBuilderMap LKB_ResidueInfo::water_builder_map_;
 LKB_ResidueInfo::AtomWeightsMap LKB_ResidueInfo::atom_weights_map_;
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -155,7 +145,6 @@ WaterBuilder::derivatives(
 	dw_da1.col_x( (w100-w000) / NUM_H ); dw_da1.col_y( (w010-w000) / NUM_H ); dw_da1.col_z( (w001-w000) / NUM_H );
 	dw_da2.col_x( (w200-w000) / NUM_H ); dw_da2.col_y( (w020-w000) / NUM_H ); dw_da2.col_z( (w002-w000) / NUM_H );
 	dw_da3.col_x( (w300-w000) / NUM_H ); dw_da3.col_y( (w030-w000) / NUM_H ); dw_da3.col_z( (w003-w000) / NUM_H );
-
 }
 
 /// The next two functions were taken from protocols/water/rotamer_building_functions.cc with slight modifications
@@ -178,8 +167,7 @@ build_optimal_water_Os_on_acceptor(
 	Vector b1_xyz, // local copy
 	Vector b2_xyz,// local copy
 	chemical::Hybridization const & hybrid
-)
-{
+) {
 	using numeric::conversions::radians;
 	using namespace chemical;
 
@@ -331,26 +319,27 @@ setup_water_builders_for_residue_type(
 	/// let's do a sanity check on something we assume down below
 	if ( rsd_type.aa() != aa_h2o ) {
 		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
-			if ( rsd_type.heavyatom_has_polar_hydrogens(i) ) { //want to confirm that all waters are matched to a hydrogen
-				WaterBuilders const & water_builders( rsd_water_builders[i] );
-				for ( Size j=1; j<= water_builders.size(); ++j ) {
-					// look for a polar hydrogen that matches to this guy
-					Size hpos(0);
-					if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom1() ) ) {
-						hpos = water_builders[j].atom1();
-					}
-					if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom2() ) ) {
-						runtime_assert( !hpos );
-						hpos = water_builders[j].atom2();
-					}
-					if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom3() ) ) {
-						runtime_assert( !hpos );
-						hpos = water_builders[j].atom3();
-					}
-					runtime_assert( hpos );
-					TR.Trace << "donor-water-anchor: " << j << ' ' << rsd_type.name() << ' ' << rsd_type.atom_name(hpos ) <<
-						std::endl;
+			//want to confirm that all waters are matched to a hydrogen
+			if ( ! rsd_type.heavyatom_has_polar_hydrogens(i) ) continue;
+			
+			WaterBuilders const & water_builders( rsd_water_builders[i] );
+			for ( Size j=1; j<= water_builders.size(); ++j ) {
+				// look for a polar hydrogen that matches to this guy
+				Size hpos(0);
+				if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom1() ) ) {
+					hpos = water_builders[j].atom1();
 				}
+				if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom2() ) ) {
+					runtime_assert( !hpos );
+					hpos = water_builders[j].atom2();
+				}
+				if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom3() ) ) {
+					runtime_assert( !hpos );
+					hpos = water_builders[j].atom3();
+				}
+				runtime_assert( hpos );
+				TR.Trace << "donor-water-anchor: " << j << ' ' << rsd_type.name() << ' ' << rsd_type.atom_name(hpos ) <<
+				std::endl;
 			}
 		}
 	}
@@ -430,163 +419,45 @@ LKB_ResidueInfo::setup_atom_weights(
 	using utility::vector1;
 	using ObjexxFCL::stripped;
 
-	if ( true ) { // new new way
-
-		chemical::AtomTypeSet const & atom_set( rsd_type.atom_type_set() );
-		std::string atom_wts_tag( "_RATIO23.0_DEFAULT" );
-		if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_tag ].user() ) {
-			atom_wts_tag = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_tag ]();
+	chemical::AtomTypeSet const & atom_set( rsd_type.atom_type_set() );
+	std::string atom_wts_tag( "_RATIO23.0_DEFAULT" );
+	if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_tag ].user() ) {
+		atom_wts_tag = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_tag ]();
+	}
+	
+	utility::vector1< Real > lk_ball_wtd_prefactors( 6, 1.0 ); //
+	if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_prefactors ].user() ) {
+		lk_ball_wtd_prefactors = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_prefactors ]();
+		if ( lk_ball_wtd_prefactors.size() != 6 ) {
+			utility_exit_with_message("Option -lk_ball_wtd_prefactors should provide 6 numbers: <don-iso> <don-ball> <acc-iso> <acc-ball> <don+acc-iso> <don+acc-ball>");
 		}
-
-		utility::vector1< Real > lk_ball_wtd_prefactors( 6, 1.0 ); //
-		if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_prefactors ].user() ) {
-			lk_ball_wtd_prefactors = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_prefactors ]();
-			if ( lk_ball_wtd_prefactors.size() != 6 ) {
-				utility_exit_with_message("Option -lk_ball_wtd_prefactors should provide 6 numbers: <don-iso> <don-ball> <acc-iso> <acc-ball> <don+acc-iso> <don+acc-ball>");
-			}
-		}
-		// wts of 1.0 for non-donor, non-acceptor atoms; they will presumably not have waters attached...
-		lk_ball_wtd_prefactors.insert( lk_ball_wtd_prefactors.begin(), 1.0 );
-		lk_ball_wtd_prefactors.insert( lk_ball_wtd_prefactors.begin(), 1.0 );
-
-		Size const lkbi_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ISO_ATOM_WEIGHT"+atom_wts_tag ) );
-		Size const  lkb_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ATOM_WEIGHT"+atom_wts_tag ) );
-
-		atom_wts.clear(); atom_wts.resize( rsd_type.natoms() );
-		for ( Size i=1; i<= rsd_type.natoms(); ++i ) atom_wts[i] = utility::tools::make_vector1( Real(0.0), Real(0.0) );
-
-		runtime_assert( lk_ball_wtd_prefactors.size() == 8 );
-		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
-			bool const is_donor( rsd_type.atom_type(i).is_donor() ), is_acceptor( rsd_type.atom_type(i).is_acceptor() );
-			Size const prefactor_offset( 4 * is_acceptor + 2 * is_donor );
-			Real const lkbi_prefactor( lk_ball_wtd_prefactors[ prefactor_offset + 1 ] ), lkb_prefactor( lk_ball_wtd_prefactors[ prefactor_offset + 2 ] );
-
-			atom_wts[i][1] = lkbi_prefactor * rsd_type.atom_type(i).extra_parameter( lkbi_atom_wt_index );
-			atom_wts[i][2] =  lkb_prefactor * rsd_type.atom_type(i).extra_parameter(  lkb_atom_wt_index );
-			if ( !rsd_water_builders[i].empty() ) {
-				using ObjexxFCL::format::F;
-				TR.Trace << "lk_ball_wtd atom_wts: " <<
-					" iso_prefactor: " << F(9,3,lkbi_prefactor) <<
-					" iso_wt: " << F(9,3,atom_wts[i][1]) <<
-					" ball_prefactor: " << F(9,3,lkb_prefactor) <<
-					" ball_wt: " << F(9,3,atom_wts[i][2]) <<
-					' ' << rsd_type.atom_name(i) << ' ' << rsd_type.atom_type(i).name() << ' ' << rsd_type.name() << std::endl;
-			}
-		}
-
-	} else if ( false ) { // new way
-
-		chemical::AtomTypeSet const & atom_set( rsd_type.atom_type_set() );
-		Size const atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ATOM_WEIGHT" ) );
-
-		atom_wts.clear(); atom_wts.resize( rsd_type.natoms() );
-		for ( Size i=1; i<= rsd_type.natoms(); ++i ) atom_wts[i] = utility::tools::make_vector1( Real(0.0), Real(1.0) );
-
-		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
-			atom_wts[i][1] = 0.0; // the iso weight
-			atom_wts[i][2] = rsd_type.atom_type(i).extra_parameter( atom_wt_index );
-			if ( !rsd_water_builders[i].empty() ) {
-				TR.Trace << "lk_ball_wtd atom_wts: " <<
-					ObjexxFCL::format::F(9,3,atom_wts[i][1]) << ObjexxFCL::format::F(9,3,atom_wts[i][2]) << ' ' <<
-					rsd_type.atom_name(i) << ' ' << rsd_type.name() << std::endl;
-			}
-		}
-
-	} else { // the OLD WAY
-		static bool init( false );
-		static vector1< vector1< Real > > residue_sidechain_weights;
-		if ( !init ) {
-			init = true;
-			residue_sidechain_weights.clear();
-			residue_sidechain_weights.resize( chemical::num_aa_types );
-
-			for ( Size i=1; i<= chemical::num_aa_types; ++i ) residue_sidechain_weights[i].clear();
-
-			utility::io::izstream data;
-			basic::database::open( data, "scoring/lk_ball_wtd_weights.txt" );
-			std::string line;
-			while ( getline( data, line ) ) {
-				std::istringstream l( line );
-				std::string tmp, tag1,tag2,tag3,tag4,name1s;
-				Real polwt, donwt, accwt;
-				l >> tag1 >> name1s >> tmp >> tmp >> tmp >> tmp >> tmp >> tmp >> tmp >> tmp >> tmp >> tmp >>
-					tag2 >> polwt >>
-					tag3 >> donwt >>
-					tag4 >> accwt;
-				if ( l.fail() || tag1 != "FITSOL" || tag2 != "polwt:" || tag3 != "donwt:" || tag4 != "accwt:" ) {
-					utility_exit_with_message("parse error: "+line);
-				}
-				chemical::AA const aa( aa_from_oneletter_code( name1s[0] ) );
-				residue_sidechain_weights[ aa ] = utility::tools::make_vector1( polwt, donwt, accwt );
-			}
-		} // initialize aa wts from file
-
-		// initialize weights to 0.0 !!!!!!!!!!!!!!!!
-		atom_wts.clear(); atom_wts.resize( rsd_type.natoms() );
-		for ( Size i=1; i<= rsd_type.natoms(); ++i ) atom_wts[i] = utility::tools::make_vector1( Real(1.0), Real(0.0) );
-
-		vector1< Real > sc_wts( residue_sidechain_weights[rsd_type.aa()] );
-
-		if ( sc_wts.empty() ) {
-			sc_wts = utility::tools::make_vector1( 1.0, 0.0, 0.0 );
-			for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
-				if ( !rsd_water_builders[i].empty() && !rsd_type.atom_is_backbone(i) ) {
-					TR.Trace << "[WARNING] Using default lk_ball_wtd atom_weights of iso=1, aniso=0 for " <<
-						rsd_type.atom_name(i) << ' ' << rsd_type.atom_type(i).name() << ' ' << rsd_type.name() << std::endl;
-				}
-			}
-		}
-
-		Real const polwt( sc_wts[1] ), donwt( sc_wts[2] ), accwt( sc_wts[3] );
-
-		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
-			Size const nwaters( rsd_water_builders[i].size() );
-			if ( !nwaters ) continue;
-			std::string const atomname( stripped( rsd_type.atom_name(i) ) ),
-				atomtypename( stripped( rsd_type.atom_type(i).name()));
-
-			if ( rsd_type.atom_is_backbone(i) ) {
-				if        ( rsd_type.is_lower_terminus() && atomname == "N" && rsd_type.aa() != aa_pro ) {
-					runtime_assert( nwaters == 3 );
-					runtime_assert( atomtypename == "Nlys" );
-					atom_wts[i][1] = 1.053; atom_wts[i][2] = 1.955; // taken from Lysine sidechain
-				} else if ( rsd_type.is_lower_terminus() && atomname == "N" && rsd_type.aa() == aa_pro ) {
-					runtime_assert( nwaters == 2 );
-					//runtime_assert( atomtypename == "Nlys" );
-					atom_wts[i][1] = 1.0; atom_wts[i][2] = 0.0; // these were just made up, not sure if I understand Nterm-pro
-				} else if ( rsd_type.is_upper_terminus() && ( atomname == "O" || atomname == "OXT" ) ) {
-					runtime_assert( nwaters == 2 );
-					runtime_assert( atomtypename == "OOC" );
-					atom_wts[i][1] = 1.888; atom_wts[i][2] = 1.584; // taken from Asp sidechain
-				} else if ( atomname == "N" && rsd_type.aa() != aa_pro ) { // these next 2 are fitted by apbs/ajob1c.bb.py:
-					// python ajob1c.bb.py tmp.ros_pairs.hiq_flipv2.cp3_md9.log
-					// using APBS backbone solvation data computed in apbs/job12
-					// need to double-check that we get the same results from job14, which had correct Nterm H locations
-					runtime_assert( nwaters == 1 );
-					runtime_assert( atomtypename == "Nbb" );
-					atom_wts[i][1] = 0.26; atom_wts[i][2] = 0.53;
-				} else if ( atomname == "O" ) {
-					runtime_assert( nwaters == 2 );
-					runtime_assert( atomtypename == "OCbb" );
-					atom_wts[i][1] = 1.48; atom_wts[i][2] = 0.0;
-				} else {
-					runtime_assert( nwaters == 0 );
-					continue;
-				}
-			} else {
-				chemical::AtomType const & at( rsd_type.atom_type(i) );
-				atom_wts[i][1] = polwt; // iso wt
-				atom_wts[i][2] = 0.0; // aniso wt
-				if ( at.is_acceptor() ) atom_wts[i][2] = accwt; // aniso wt
-				if ( at.is_donor() ) atom_wts[i][2] = donwt; // aniso wt, DONOR GOES LAST ==> SP3 uses donor weight
-			}
-			TR.Trace << "lk_ball_wtd atom_weight: " << rsd_type.name1() << ' ' <<
-				ObjexxFCL::format::A(6,atomname) <<
-				ObjexxFCL::format::A(6,atomtypename) <<
-				" nwaters: " << nwaters <<
-				" iso_wt: " << ObjexxFCL::format::F(9,3,atom_wts[i][1] ) <<
-				" aniso_wt: " << ObjexxFCL::format::F(9,3,atom_wts[i][2] ) <<
-				' ' << rsd_type.name() << std::endl;
+	}
+	// wts of 1.0 for non-donor, non-acceptor atoms; they will presumably not have waters attached...
+	lk_ball_wtd_prefactors.insert( lk_ball_wtd_prefactors.begin(), 1.0 );
+	lk_ball_wtd_prefactors.insert( lk_ball_wtd_prefactors.begin(), 1.0 );
+	
+	Size const lkbi_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ISO_ATOM_WEIGHT"+atom_wts_tag ) );
+	Size const  lkb_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ATOM_WEIGHT"+atom_wts_tag ) );
+	
+	atom_wts.clear(); atom_wts.resize( rsd_type.natoms() );
+	for ( Size i=1; i<= rsd_type.natoms(); ++i ) atom_wts[i] = utility::tools::make_vector1( Real(0.0), Real(0.0) );
+	
+	runtime_assert( lk_ball_wtd_prefactors.size() == 8 );
+	for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
+		bool const is_donor( rsd_type.atom_type(i).is_donor() ), is_acceptor( rsd_type.atom_type(i).is_acceptor() );
+		Size const prefactor_offset( 4 * is_acceptor + 2 * is_donor );
+		Real const lkbi_prefactor( lk_ball_wtd_prefactors[ prefactor_offset + 1 ] ), lkb_prefactor( lk_ball_wtd_prefactors[ prefactor_offset + 2 ] );
+		
+		atom_wts[i][1] = lkbi_prefactor * rsd_type.atom_type(i).extra_parameter( lkbi_atom_wt_index );
+		atom_wts[i][2] =  lkb_prefactor * rsd_type.atom_type(i).extra_parameter(  lkb_atom_wt_index );
+		if ( !rsd_water_builders[i].empty() ) {
+			using ObjexxFCL::format::F;
+			TR.Trace << "lk_ball_wtd atom_wts: " <<
+			" iso_prefactor: " << F(9,3,lkbi_prefactor) <<
+			" iso_wt: " << F(9,3,atom_wts[i][1]) <<
+			" ball_prefactor: " << F(9,3,lkb_prefactor) <<
+			" ball_wt: " << F(9,3,atom_wts[i][2]) <<
+			' ' << rsd_type.atom_name(i) << ' ' << rsd_type.atom_type(i).name() << ' ' << rsd_type.name() << std::endl;
 		}
 	}
 }

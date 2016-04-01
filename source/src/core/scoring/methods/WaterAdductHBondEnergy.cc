@@ -31,12 +31,6 @@
 #include <utility/vector1.hh>
 
 
-// Utility headers
-
-
-// C++
-
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -110,9 +104,7 @@ WaterAdductHBondEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
 	emap[ h2o_hbond ] += potential_.water_adduct_hbond_score( rsd1, rsd2 );
-
 }
 
 
@@ -205,6 +197,7 @@ void
 WaterAdductHBondEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
 {
 }
+
 core::Size
 WaterAdductHBondEnergy::version() const
 {

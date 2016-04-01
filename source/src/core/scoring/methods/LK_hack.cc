@@ -142,9 +142,6 @@ LK_SigmoidalFunc::dfunc( Real const x ) const
 		// x on a zero-to-one range
 		static Real const range = ANGLE_CUTOFF_HIGH - ANGLE_CUTOFF_LOW;
 		Real const xprime = ( ANGLE_CUTOFF_HIGH - x ) / range;
-		//Real const eps = 0.00001;
-		//Real const numD = ( func( x + eps ) - func( x ) ) / eps ;
-		//Real const anD  = ( 4.0 / (range) ) * ( 1 - xprime*xprime ) * ( xprime );
 		//std::cout << "LK_SigmoidalFunc::dfunc x= " << radians_to_degrees * x << " xprime= " << xprime << " d: " <<  anD << " range: " << range << " invrange " << 1 / range << std::endl;
 		//std::cout << "func( " << x << ") " << func( x ) << " func( " << x + eps << " )= " <<  func( x + eps ) << " numD : " << numD << " numD rat: "<< numD / anD << std::endl;
 		return  ( 4.0 / (range) ) * ( 1 - xprime*xprime ) * ( xprime );
@@ -216,65 +213,64 @@ LK_hack::residue_pair_energy(
 	utility::vector1< Size >   res2_heavy_is_polar( rsd2.nheavyatoms(), false );
 
 	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
-		if ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor() ) {
-			res1_heavy_is_polar[ i ] = true;
-			Size non_H_neib = 0;
-			Vector  base_pseudo_atom(0);
-			for ( Size ii = 1; ii <=rsd1.bonded_neighbor(i).size(); ++ii ) {
-				Size neighbor_id = rsd1.bonded_neighbor(i)[ii];
-				if ( !  rsd1.atom_is_hydrogen(neighbor_id) ) {
-					base_pseudo_atom += rsd1.xyz(neighbor_id);
+		if ( !rsd1.atom_type(i).is_acceptor() && !rsd1.atom_type(i).is_donor() ) continue;
+		
+		res1_heavy_is_polar[ i ] = true;
+		Size non_H_neib = 0;
+		Vector  base_pseudo_atom(0);
+		for ( Size ii = 1; ii <=rsd1.bonded_neighbor(i).size(); ++ii ) {
+			Size neighbor_id = rsd1.bonded_neighbor(i)[ii];
+			if ( !  rsd1.atom_is_hydrogen(neighbor_id) ) {
+				base_pseudo_atom += rsd1.xyz(neighbor_id);
+				non_H_neib++;
+			}
+		}
+		if ( rsd1.type().n_residue_connections_for_atom(i) > 0 ) {
+			/// CONTEXT DEPENDENCY HERE -- e.g. if c_prev moves, rsd1 needs to be rescored.  Fortunately,
+			/// if c_prev moves, the internal "psi" for rsd1 will be updated, and this residue will be rescored.
+			for ( Size ii = 1; ii <= rsd1.type().residue_connections_for_atom(i).size(); ++ii ) {
+				chemical::ResConnID const ii_conn = rsd1.connect_map( rsd1.type().residue_connections_for_atom(i)[ ii ] );
+				Size const neighbor_res_id(  ii_conn.resid() );
+				Size const nieghbor_atom_id( pose.residue( ii_conn.resid() ).residue_connection( ii_conn.connid() ).atomno() );
+				if ( ! pose.residue( neighbor_res_id ).atom_is_hydrogen( nieghbor_atom_id ) ) {
+					base_pseudo_atom += pose.residue( neighbor_res_id ).xyz( nieghbor_atom_id );
 					non_H_neib++;
 				}
 			}
-			if ( rsd1.type().n_residue_connections_for_atom(i) > 0 ) {
-				/// CONTEXT DEPENDENCY HERE -- e.g. if c_prev moves, rsd1 needs to be rescored.  Fortunately,
-				/// if c_prev moves, the internal "psi" for rsd1 will be updated, and this residue will be rescored.
-				for ( Size ii = 1; ii <= rsd1.type().residue_connections_for_atom(i).size(); ++ii ) {
-					chemical::ResConnID const ii_conn = rsd1.connect_map( rsd1.type().residue_connections_for_atom(i)[ ii ] );
-					Size const neighbor_res_id(  ii_conn.resid() );
-					Size const nieghbor_atom_id( pose.residue( ii_conn.resid() ).residue_connection( ii_conn.connid() ).atomno() );
-					if ( ! pose.residue( neighbor_res_id ).atom_is_hydrogen( nieghbor_atom_id ) ) {
-						base_pseudo_atom += pose.residue( neighbor_res_id ).xyz( nieghbor_atom_id );
-						non_H_neib++;
-					}
-				}
-			}
-			base_pseudo_atom /= non_H_neib;
-			res1_base_vectors[i] =  rsd1.xyz(i) - base_pseudo_atom;
-			res1_base_vectors[i].normalize();
 		}
+		base_pseudo_atom /= non_H_neib;
+		res1_base_vectors[i] =  rsd1.xyz(i) - base_pseudo_atom;
+		res1_base_vectors[i].normalize();
 	}
 	//same for residue 2//
 	for ( Size i = 1, i_end = rsd2.nheavyatoms(); i <= i_end; ++i ) {
-		if ( rsd2.atom_type(i).is_acceptor() || rsd2.atom_type(i).is_donor() ) {
-			res2_heavy_is_polar[ i ] = true;
-			Size non_H_neib = 0;
-			Vector  base_pseudo_atom(0);
-			for ( Size ii = 1; ii <=rsd2.bonded_neighbor(i).size(); ++ii ) {
-				Size neighbor_id = rsd2.bonded_neighbor(i)[ii];
-				if ( ! rsd2.atom_is_hydrogen(neighbor_id) ) {
-					base_pseudo_atom += rsd2.xyz(neighbor_id);
+		if ( !rsd2.atom_type(i).is_acceptor() && !rsd2.atom_type(i).is_donor() ) continue;
+		
+		res2_heavy_is_polar[ i ] = true;
+		Size non_H_neib = 0;
+		Vector  base_pseudo_atom(0);
+		for ( Size ii = 1; ii <=rsd2.bonded_neighbor(i).size(); ++ii ) {
+			Size neighbor_id = rsd2.bonded_neighbor(i)[ii];
+			if ( ! rsd2.atom_is_hydrogen(neighbor_id) ) {
+				base_pseudo_atom += rsd2.xyz(neighbor_id);
+				non_H_neib++;
+			}
+		}
+		if ( rsd2.type().n_residue_connections_for_atom(i) > 0 ) {
+			for ( Size ii = 1; ii <= rsd2.type().residue_connections_for_atom(i).size(); ++ii ) {
+				chemical::ResConnID const ii_conn = rsd2.connect_map( rsd2.type().residue_connections_for_atom(i)[ ii ] );
+				Size const neighbor_res_id( ii_conn.resid() );
+				Size const nieghbor_atom_id( pose.residue( ii_conn.resid() ).residue_connection( ii_conn.connid() ).atomno() );
+				if ( ! pose.residue( neighbor_res_id ).atom_is_hydrogen( nieghbor_atom_id ) ) {
+					base_pseudo_atom += pose.residue( neighbor_res_id ).xyz( nieghbor_atom_id );
 					non_H_neib++;
 				}
 			}
-			if ( rsd2.type().n_residue_connections_for_atom(i) > 0 ) {
-				for ( Size ii = 1; ii <= rsd2.type().residue_connections_for_atom(i).size(); ++ii ) {
-					chemical::ResConnID const ii_conn = rsd2.connect_map( rsd2.type().residue_connections_for_atom(i)[ ii ] );
-					Size const neighbor_res_id( ii_conn.resid() );
-					Size const nieghbor_atom_id( pose.residue( ii_conn.resid() ).residue_connection( ii_conn.connid() ).atomno() );
-					if ( ! pose.residue( neighbor_res_id ).atom_is_hydrogen( nieghbor_atom_id ) ) {
-						base_pseudo_atom += pose.residue( neighbor_res_id ).xyz( nieghbor_atom_id );
-						non_H_neib++;
-					}
-				}
-			}
-
-			base_pseudo_atom /= non_H_neib;
-			res2_base_vectors[i] = rsd2.xyz(i) - base_pseudo_atom;
-			res2_base_vectors[i].normalize();
-
 		}
+		
+		base_pseudo_atom /= non_H_neib;
+		res2_base_vectors[i] = rsd2.xyz(i) - base_pseudo_atom;
+		res2_base_vectors[i].normalize();
 	}
 
 	Real cp_weight=0.;
@@ -283,81 +279,80 @@ LK_hack::residue_pair_energy(
 
 			cp_weight = 1.0;
 			Size path_dist( 0 );
-			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
-				/// if ( weight < 0.1 ) continue; // apl --- I don't think this ever happens
-				Real d2 =   rsd1.atom(i).xyz().distance_squared( rsd2.atom(j).xyz() );
-
-				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-
-				Real const d2_bin = d2 * get_bins_per_A2_;
-				int disbin = static_cast< int >( d2_bin ) + 1;
-				Real frac = d2_bin - ( disbin - 1 );
-				int const l1 = solv1_.index( disbin, rsd2.atom(j).type(), rsd1.atom(i).type() ); // atom i being desolvated by atom j
-				int const l2 = l1 + 1;
-
-				Vector i_to_j_vec( rsd2.xyz( j ) - rsd1.xyz( i ) );
-				bool i_to_j_vec_normalized( false ); // don't normalize twice!
-
-				Real i_to_j_angle_weight( 1.0 ), j_to_i_angle_weight( 1.0 );
-
-				if ( res1_heavy_is_polar[i] ) {
-					if ( res1_base_vectors[i].dot( i_to_j_vec )  >=  0 ) {
-						//std::cout << "Normalizing i_to_j" << std::endl;
-
-						i_to_j_vec *= 1 / ( std::sqrt( d2 ) ); /// we already have d2, reuse it
-						i_to_j_vec_normalized = true;
-						Real dotprod = res1_base_vectors[i].dot( i_to_j_vec );
-						//std::cout << "r1 base dot prod: " << dotprod << " angle " << radians_to_degrees * (pi - std::acos( dotprod )) << " with " << rsd2.seqpos() << " " << j << std::endl;
-						if ( dotprod >= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_HIGH ) {
-							// noop, i_to_j weight is already 1.
-						} else if ( dotprod <= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW ) {
-							i_to_j_angle_weight = 0;
-						} else {
-							Real angle = pi - std::acos( dotprod );
-							i_to_j_angle_weight = lksigmoidalfunc.func( angle );
-							//std::cout << "Angle: " << radians_to_degrees * angle << " func " << i_to_j_angle_weight << std::endl;
-						}
-					} else { // Dot product is 0 or negative; do not count this interaction
-						i_to_j_angle_weight = 0.0;
+			if ( !cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
+			
+			Real d2 =   rsd1.atom(i).xyz().distance_squared( rsd2.atom(j).xyz() );
+			
+			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			
+			Real const d2_bin = d2 * get_bins_per_A2_;
+			int disbin = static_cast< int >( d2_bin ) + 1;
+			Real frac = d2_bin - ( disbin - 1 );
+			int const l1 = solv1_.index( disbin, rsd2.atom(j).type(), rsd1.atom(i).type() ); // atom i being desolvated by atom j
+			int const l2 = l1 + 1;
+			
+			Vector i_to_j_vec( rsd2.xyz( j ) - rsd1.xyz( i ) );
+			bool i_to_j_vec_normalized( false ); // don't normalize twice!
+			
+			Real i_to_j_angle_weight( 1.0 ), j_to_i_angle_weight( 1.0 );
+			
+			if ( res1_heavy_is_polar[i] ) {
+				if ( res1_base_vectors[i].dot( i_to_j_vec )  >=  0 ) {
+					//std::cout << "Normalizing i_to_j" << std::endl;
+					
+					i_to_j_vec *= 1 / ( std::sqrt( d2 ) ); /// we already have d2, reuse it
+					i_to_j_vec_normalized = true;
+					Real dotprod = res1_base_vectors[i].dot( i_to_j_vec );
+					//std::cout << "r1 base dot prod: " << dotprod << " angle " << radians_to_degrees * (pi - std::acos( dotprod )) << " with " << rsd2.seqpos() << " " << j << std::endl;
+					if ( dotprod >= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_HIGH ) {
+						// noop, i_to_j weight is already 1.
+					} else if ( dotprod <= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW ) {
+						i_to_j_angle_weight = 0;
+					} else {
+						Real angle = pi - std::acos( dotprod );
+						i_to_j_angle_weight = lksigmoidalfunc.func( angle );
+						//std::cout << "Angle: " << radians_to_degrees * angle << " func " << i_to_j_angle_weight << std::endl;
 					}
-				} // else, rsd1 is apolar, and its weight should be 1, which it already is
-
-				//std::cout << "Desolvation of atom i: " << rsd1.atom_name( i ) << " on " << rsd1.name() << " with weight: " << i_to_j_angle_weight << std::endl;
-				if ( i_to_j_angle_weight != 0 ) {
-					score += i_to_j_angle_weight * cp_weight * ( (1.-frac)* solv1_[ l1 ] + frac * solv1_[ l2 ]);
+				} else { // Dot product is 0 or negative; do not count this interaction
+					i_to_j_angle_weight = 0.0;
 				}
-
-				if ( res2_heavy_is_polar[j] ) {
-					Vector j_to_i_vec = -1 * i_to_j_vec;
-					if ( res2_base_vectors[j].dot( j_to_i_vec )  >  0 ) {
-						if ( ! i_to_j_vec_normalized ) {
-							//std::cout << "Normalizing j_to_i" << std::endl;
-							j_to_i_vec *= 1 / ( std::sqrt( d2 ));
-						}
-						Real dotprod = res2_base_vectors[j].dot( j_to_i_vec );
-						//std::cout << "r2 base dot prod: " << dotprod << " angle " << radians_to_degrees * (pi - std::acos( dotprod ))  << " with " << rsd1.seqpos() << " " << i << std::endl;
-
-						if ( dotprod >= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_HIGH ) {
-							// noop, i_to_j weight is already 1.
-						} else if ( dotprod <= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW ) {
-							j_to_i_angle_weight = 0;
-						} else {
-							Real angle = pi - std::acos( dotprod );
-							j_to_i_angle_weight = lksigmoidalfunc.func( angle );
-							//std::cout << "Angle: " << radians_to_degrees * angle << " func " << j_to_i_angle_weight << std::endl;
-
-						}
-					} else { // Dot product is 0 or negative; do not count this interaction
-						j_to_i_angle_weight = 0.0;
-					}
-				} // else, rsd2 is apolar, and its weight should be 1, which it already is
-
-				//std::cout << "Desolvation of atom j: " << rsd2.atom_name( j ) << " on " << rsd2.name() << " with weight: " << j_to_i_angle_weight << std::endl;
-				if ( j_to_i_angle_weight != 0 ) {
-					score += j_to_i_angle_weight * cp_weight * ( (1.-frac)* solv2_[ l1 ] + frac * solv2_[ l2 ]);
-				}
-				//std::cout << "Finished pair " << i << " " << j << std::endl;
+			} // else, rsd1 is apolar, and its weight should be 1, which it already is
+			
+			//std::cout << "Desolvation of atom i: " << rsd1.atom_name( i ) << " on " << rsd1.name() << " with weight: " << i_to_j_angle_weight << std::endl;
+			if ( i_to_j_angle_weight != 0 ) {
+				score += i_to_j_angle_weight * cp_weight * ( (1.-frac)* solv1_[ l1 ] + frac * solv1_[ l2 ]);
 			}
+			
+			if ( res2_heavy_is_polar[j] ) {
+				Vector j_to_i_vec = -1 * i_to_j_vec;
+				if ( res2_base_vectors[j].dot( j_to_i_vec )  >  0 ) {
+					if ( ! i_to_j_vec_normalized ) {
+						//std::cout << "Normalizing j_to_i" << std::endl;
+						j_to_i_vec *= 1 / ( std::sqrt( d2 ));
+					}
+					Real dotprod = res2_base_vectors[j].dot( j_to_i_vec );
+					//std::cout << "r2 base dot prod: " << dotprod << " angle " << radians_to_degrees * (pi - std::acos( dotprod ))  << " with " << rsd1.seqpos() << " " << i << std::endl;
+					
+					if ( dotprod >= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_HIGH ) {
+						// noop, i_to_j weight is already 1.
+					} else if ( dotprod <= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW ) {
+						j_to_i_angle_weight = 0;
+					} else {
+						Real angle = pi - std::acos( dotprod );
+						j_to_i_angle_weight = lksigmoidalfunc.func( angle );
+						//std::cout << "Angle: " << radians_to_degrees * angle << " func " << j_to_i_angle_weight << std::endl;
+						
+					}
+				} else { // Dot product is 0 or negative; do not count this interaction
+					j_to_i_angle_weight = 0.0;
+				}
+			} // else, rsd2 is apolar, and its weight should be 1, which it already is
+			
+			//std::cout << "Desolvation of atom j: " << rsd2.atom_name( j ) << " on " << rsd2.name() << " with weight: " << j_to_i_angle_weight << std::endl;
+			if ( j_to_i_angle_weight != 0 ) {
+				score += j_to_i_angle_weight * cp_weight * ( (1.-frac)* solv2_[ l1 ] + frac * solv2_[ l2 ]);
+			}
+			//std::cout << "Finished pair " << i << " " << j << std::endl;
 		}
 	}
 
@@ -715,31 +710,21 @@ LK_hack::eval_dE_dR_over_r(
 	f1_2 = -1.0 * f1_1;
 	f2_2 = -1.0 * f2_1;
 
-	if ( ( d2 < safe_max_dis2_) && ( d2 != Real(0.0) ) ) {
-
-		Real const d2_bin = d2 * get_bins_per_A2_;
-		int disbin = static_cast< int >( d2_bin ) + 1;
-		Real frac = d2_bin - ( disbin - 1 );
-
-		//Real deriv = 0.0;
-
-		// l1 and l2 are FArray LINEAR INDICES for fast lookup:
-		// [ l1 ] == (disbin  ,attype2,attype1)
-		// [ l2 ] == (disbin+1,attype2,attype1)
-
-		int const l1 = dsolv1_.index( disbin, atom2.type(), atom1.type() ),
-			l2 = l1 + 1;
-
-		Real e1 = dsolv1_[ l1 ];
-		Real deriv = lk_hack_weight_ * ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
-
-		//std::cout << "dsolv1_ deriv: " << deriv << " numeric: " << ((solv1_[ l2 ] - solv1_[ l1 ] )*get_bins_per_A2_)*2*sqrt(d2) << std::endl;
-
-		return deriv * one_over_d;
-	} else {
-		return 0.0;
-	}
-
+	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return 0.0;
+	
+	Real const d2_bin = d2 * get_bins_per_A2_;
+	int disbin = static_cast< int >( d2_bin ) + 1;
+	Real frac = d2_bin - ( disbin - 1 );
+	
+	int const l1 = dsolv1_.index( disbin, atom2.type(), atom1.type() ),
+	l2 = l1 + 1;
+	
+	Real e1 = dsolv1_[ l1 ];
+	Real deriv = lk_hack_weight_ * ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+	
+	//std::cout << "dsolv1_ deriv: " << deriv << " numeric: " << ((solv1_[ l2 ] - solv1_[ l1 ] )*get_bins_per_A2_)*2*sqrt(d2) << std::endl;
+	
+	return deriv * one_over_d;
 }
 
 /// @details iterates across polar atoms, and increments the f1/f2 derivative vectors
@@ -785,7 +770,6 @@ LK_hack::distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) cons
 			debug_assert( count_neighbors_found == jj_nneighbs );
 		}
 	}
-
 }
 
 

@@ -141,7 +141,6 @@ DNA_BaseEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
 	if ( !rsd1.is_DNA() || !rsd2.is_DNA() ) return;
 
 	Real bp_score( 0.0 ), bs_score( 0.0 );
@@ -190,7 +189,6 @@ DNA_BaseEnergy::eval_atom_derivative(
 	conformation::Residue const & rsd1( pose.residue( pos1 ) );
 	if ( ( !rsd1.is_DNA() ) || ( rsd1.atom_name( atom1 ) != dna_deriv_atom ) ) return;
 
-
 	// retrieve DNA basepair info from pose
 	BasePartner const & base_partner( retrieve_base_partner_from_pose_inline( pose ) );
 
@@ -215,7 +213,6 @@ DNA_BaseEnergy::eval_atom_derivative(
 			}
 		}
 	}
-
 
 	///////////////////
 	// base pair derivs

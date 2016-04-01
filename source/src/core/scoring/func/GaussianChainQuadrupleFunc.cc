@@ -174,7 +174,6 @@ GaussianChainQuadrupleFunc::dfunc( Real const z ) const
 	second_logderiv_term *= -1.0 * kB_T_ / s;
 
 	return first_logderiv_term + second_logderiv_term;
-
 }
 
 void

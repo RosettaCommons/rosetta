@@ -328,11 +328,9 @@ NMerSVMEnergy::add_encoded_termini( std::string const chain_sequence, Size const
 		if ( chain_seqpos - offset >= 1 ) {
 			nterm_seq = chain_sequence[ ( chain_seqpos - 1 ) - offset ] + nterm_seq;
 		} else nterm_seq = "X" + nterm_seq;
-		//else nterm_seq = '-' + nterm_seq;
 		if ( chain_seqpos + offset <= chain_sequence.length() ) {
 			cterm_seq = cterm_seq + chain_sequence[ ( chain_seqpos - 1 ) + ( nmer_length_ - 1 ) + offset ];
 		} else cterm_seq = cterm_seq + "X";
-		//else cterm_seq = cterm_seq + '-';
 	}
 	//construct wts
 	vector1< Real > nterm_wts( term_length_, 1.0 ), cterm_wts( term_length_, 1.0 );

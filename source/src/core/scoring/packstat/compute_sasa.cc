@@ -144,9 +144,6 @@ input_sasa_dats()
 		for ( int j = 1; j <= ntheta; ++j ) {
 			angles_stream >> angles(i,j);
 		} angles_stream >> skip;
-		//cj       for ( j = 1; j <= ntheta; ++j ) {
-		//cj          ++angles(i,j);
-		//cj       }
 	}
 	angles_stream.close();
 
@@ -484,7 +481,6 @@ compute_cav_ball_volumes(
 				cavballs[ib].area = expose;
 			}
 		}
-
 	}
 	// TRcs << std::endl;
 }
@@ -612,9 +608,7 @@ prune_1pass(
 			for ( int bb = 1, l = prune_sasa_masks.index(bb,ib); bb <= nbytes; ++bb, ++l ) {
 				prune_sasa_masks[ l ] = bit::bit_or( prune_sasa_masks[ l ], masks(bb,masknum) );
 			}
-
 		}
-
 	} // cav ball
 
 	// make new list with only buried cav balls
@@ -652,7 +646,7 @@ prune_cavity_balls(
 	int    iter_th  = opts.prune_max_iters;
 
 	{
-		TRcs << "prune raduis " << largest_probe_radius << " ";
+		TRcs << "prune radius " << largest_probe_radius << " ";
 		int num_prune_steps(0);
 		size_t last_num = 0;
 		while ( true ) {
@@ -678,7 +672,7 @@ prune_cavity_balls(
 	// mark balls for rest of radii
 	for ( size_t i = 2; i <= opts.prune_cavity_burial_probe_radii.size(); ++i ) {
 		PackstatReal const pr = opts.prune_cavity_burial_probe_radii[i];
-		TRcs << "prune raduis " << pr << " ";
+		TRcs << "prune radius " << pr << " ";
 		int num_prune_steps(0);
 		size_t last_num = 0;
 		while ( true ) {
@@ -855,21 +849,20 @@ compute_cav_ball_clusters( CavBalls & cavballs, SasaOptions const & opts ) {
 		//        << ", "       << cluster_centers[i].y()
 		//        << ", "       << cluster_centers[i].z()
 		//        << std::endl;
-		if ( cluster_volume[i] > opts.cluster_min_volume ) {
-			CavityBallCluster cbc;
-			cbc.volume = cluster_volume[i];
-			cbc.surface_area = cluster_surf[i];
-			cbc.center = cluster_centers[i];
-			cbc.surface_accessibility = cluster_surface_accessibility[i];
-			for ( Size j = 1; j <= cavballs.size(); j++ ) {
-				CavityBall const & cb( cavballs[j] );
-				if ( cb.cluster_ == (int)i ) {
-					// std::cout << "cluster " << i << " add cav ball" << std::endl;
-					cbc.cavballs.push_back(cb);
-				}
+		if ( cluster_volume[i] <= opts.cluster_min_volume ) continue;
+		CavityBallCluster cbc;
+		cbc.volume = cluster_volume[i];
+		cbc.surface_area = cluster_surf[i];
+		cbc.center = cluster_centers[i];
+		cbc.surface_accessibility = cluster_surface_accessibility[i];
+		for ( Size j = 1; j <= cavballs.size(); j++ ) {
+			CavityBall const & cb( cavballs[j] );
+			if ( cb.cluster_ == (int)i ) {
+				// std::cout << "cluster " << i << " add cav ball" << std::endl;
+				cbc.cavballs.push_back(cb);
 			}
-			result.push_back( cbc );
 		}
+		result.push_back( cbc );
 	}
 
 	std::sort( result.begin(), result.end(), OrderCBC() );
@@ -1339,7 +1332,6 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 			}
 		}
 	}
-
 	// std::ofstream dbg("DEBUG.pdb");
 	// pose.dump_pdb(dbg);
 	// for( Size i = 1; i <= clusters.size(); i++ ) {
@@ -1348,7 +1340,6 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 	//    }
 	// }
 	// dbg.close();
-
 }
 
 

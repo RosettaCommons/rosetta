@@ -56,8 +56,7 @@ ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunctionInfo const & src ) : utility:
 	context_graphs_required_( src.context_graphs_required_ ),
 	scores_present_( src.scores_present_ ),
 	energy_method_options_( src.energy_method_options_ ? new methods::EnergyMethodOptions( * src.energy_method_options_ ) : 0 )
-{
-}
+{}
 
 ScoreFunctionInfo::~ScoreFunctionInfo() {}
 

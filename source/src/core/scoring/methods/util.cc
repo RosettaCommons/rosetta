@@ -41,7 +41,6 @@ static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods" );
 core::Real get_residue_weight_by_ss(
 	const char ss
 ) {
-
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	core::Real rsd_wt = 1.0;
@@ -55,7 +54,6 @@ core::Real get_residue_weight_by_ss(
 		tr.Error << "Error: don't recognize secondary structure character '" <<  ss << "' " << std::endl;
 		rsd_wt = option[ abinitio::rsd_wt_loop   ]();
 	}
-
 	return rsd_wt;
 } // get_residue_wt_by_ss
 
@@ -64,7 +62,6 @@ bool residues_interact(
 	conformation::Residue const & rsd2,
 	core::Real const interaction_cutoff
 ) {
-
 	Real const rsd1_reach( rsd1.nbr_radius() ),
 		rsd2_reach( rsd2.nbr_radius() );
 	Distance const intxn_dist( rsd1_reach + rsd2_reach + interaction_cutoff );

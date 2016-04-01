@@ -28,7 +28,6 @@
 // Utility headers
 #include <utility/io/izstream.hh>
 
-
 #include <cmath>
 
 #include <utility/vector1.hh>
@@ -45,7 +44,6 @@ static THREAD_LOCAL basic::Tracer tr( "core.scoring.DatabaseOccSolEne" );
 DatabaseOccSolEne::DatabaseOccSolEne( std::string const & etable_name, Real const & min_occ_energy ):
 	min_occ_energy_(min_occ_energy)
 {
-
 	if ( etable_name != scoring::FA_STANDARD_DEFAULT ) {
 		utility_exit_with_message( "cannot presently use OccludedHbondSolEnergy in any mode but FA_STANDARD_DEFAULT, current mode is " + etable_name );
 	}
@@ -58,7 +56,6 @@ DatabaseOccSolEne::DatabaseOccSolEne( std::string const & etable_name, Real cons
 	tr << "reading params" << std::endl;
 	read_datafile( atom_set, atom_set.directory() + "/occluded_hbond_solvation_params.donors.txt", donor_occ_data_, true );
 	read_datafile( atom_set, atom_set.directory() + "/occluded_hbond_solvation_params.acceptors.txt", acc_occ_data_, false );
-
 }
 
 
@@ -68,9 +65,7 @@ DatabaseOccSolEne::read_datafile(
 	std::string const & database_name,
 	utility::vector1< utility::vector1< utility::vector1< Real > > > & occ_data_,
 	bool const process_donors // needed solely to distinguish OH's in reweighting, can go away once reweighting goes into the param files
-)
-{
-
+) {
 	// initialize the values
 	Size const n_atom_types( atom_set.n_atomtypes() );
 	occ_data_.clear();
@@ -163,21 +158,17 @@ DatabaseOccSolEne::read_datafile(
 		Real min_cos_angle_to_compute = cos_angle_mu - cos_angle_away_from_mu;
 		if ( min_cos_angle_to_compute < -1. ) min_cos_angle_to_compute = -1.;
 		occ_data_[ polar_atom_type_index ][ occ_atom_type_index ][ OccFitParam_min_cos_angle ] = min_cos_angle_to_compute;
-
 	}
-
 }
 
 
 Real
 DatabaseOccSolEne::compute_jumpout_diff( Real const & amp, Real const & twice_sigma_sq )
 {
-
 	// At what difference from mu will this gaussian (passed in) give a value less than min_occ_energy_ ?
 	debug_assert ( amp > min_occ_energy_ );
 	debug_assert ( twice_sigma_sq > 0. );
 	return sqrt ( - twice_sigma_sq * log( min_occ_energy_ / amp ) );
-
 }
 
 

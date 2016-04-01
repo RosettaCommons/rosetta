@@ -92,7 +92,6 @@ RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd,
 void
 RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 {
-
 	base_centroids_.clear();
 	base_stubs_.clear();
 
@@ -109,9 +108,7 @@ RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 
 		base_centroids_.push_back( centroid_i );
 		base_stubs_.push_back( stub_i );
-
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

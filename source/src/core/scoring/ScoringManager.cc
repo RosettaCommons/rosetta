@@ -30,9 +30,6 @@
 #include <core/scoring/Membrane_FAPotential.hh> //pba
 #include <core/scoring/ProQPotential.hh>
 #include <core/scoring/SecondaryStructurePotential.hh>
-//#include <core/pack/dunbrack/RotamerLibrary.hh>
-//#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
-//#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Ramachandran2B.hh>

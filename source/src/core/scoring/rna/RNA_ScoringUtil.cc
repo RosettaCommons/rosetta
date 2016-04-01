@@ -51,9 +51,6 @@ get_fade_correction(
 		fade_value = ( 2 * b3 - 3 * b2 + 1 );
 		fade_deriv = ( 6 * b2 - 6 * b ) / fade_zone;
 	}
-
-	return;
-
 }
 
 } //rna

@@ -112,10 +112,10 @@ ContactOrderEnergy::calculate_contact_order( pose::Pose const & pose ) const
 	Real co_score = 0.0;
 	Size n_in_contact = 0;
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		Vector const v1( pose.residue(i).nbr_atom_xyz() );
+		Vector const & v1( pose.residue(i).nbr_atom_xyz() );
 
 		for ( Size j = i + 3; j <= pose.total_residue(); ++j ) {
-			Vector const v2( pose.residue(j).nbr_atom_xyz() );
+			Vector const & v2( pose.residue(j).nbr_atom_xyz() );
 			if ( v1.distance_squared( v2 ) < 64.0 ) {
 				co_score += j - i;
 				++n_in_contact;

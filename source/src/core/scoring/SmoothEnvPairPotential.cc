@@ -279,7 +279,6 @@ SmoothEnvPairPotential::fill_smooth_dcenlist(
 	dcenlist.fcen12(res2) -= (d12-d6)*gradx;
 }
 
-
 void
 SmoothEnvPairPotential::compute_centroid_environment(
 	pose::Pose & pose
@@ -297,49 +296,49 @@ SmoothEnvPairPotential::compute_centroid_environment(
 	Size const nres( energy_graph.num_nodes() );
 
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
-	if ( !cenlist.calculated() ) {
-		cenlist.initialize( pose.total_residue(), 1 );  // every res has 1 neighbor (itself)
-
+	if ( cenlist.calculated() ) return;
+	
+	cenlist.initialize( pose.total_residue(), 1 );  // every res has 1 neighbor (itself)
+	
+	for ( Size i = 1; i <= nres; ++i ) {
+		conformation::Residue const & rsd1 ( pose.residue(i) );
+		if ( !rsd1.is_protein() ) continue;
+		for ( graph::Graph::EdgeListConstIter
+			 iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+			 irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+			 iru != irue; ++iru ) {
+			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			Size const j( edge->get_second_node_ind() );
+			conformation::Residue const & rsd2 ( pose.residue(j) );
+			if ( !rsd2.is_protein() ) continue;
+			
+			//Real const cendist = edge->square_distance();
+			numeric::xyzVector<Real> cenvec =
+			rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
+			Real const cendist = cenvec.length_squared();
+			
+			if ( cendist <= cen_dist_cutoff_12_pad ) {
+				fill_smooth_cenlist( cenlist, i, j, sqrt(cendist) );
+			}
+		}
+	}
+	
+	// symetrize cenlist (if necessary)
+	if ( symminfo ) {
 		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
 			if ( !rsd1.is_protein() ) continue;
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const j( edge->get_second_node_ind() );
-				conformation::Residue const & rsd2 ( pose.residue(j) );
-				if ( !rsd2.is_protein() ) continue;
-
-				//Real const cendist = edge->square_distance();
-				numeric::xyzVector<Real> cenvec =
-					rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
-				Real const cendist = cenvec.length_squared();
-
-				if ( cendist <= cen_dist_cutoff_12_pad ) {
-					fill_smooth_cenlist( cenlist, i, j, sqrt(cendist) );
-				}
+			if ( !symminfo->bb_is_independent( i ) ) continue; // probably unnecessary...
+			utility::vector1< core::Size > bbclones = symminfo->bb_clones( i );
+			for ( Size j = 1; j <= bbclones.size(); ++j ) {
+				cenlist.fcen6( bbclones[j] ) = cenlist.fcen6(i);
+				cenlist.fcen10( bbclones[j] ) = cenlist.fcen10(i);
+				cenlist.fcen12( bbclones[j] ) = cenlist.fcen12(i);
 			}
 		}
-
-		// symetrize cenlist (if necessary)
-		if ( symminfo ) {
-			for ( Size i = 1; i <= nres; ++i ) {
-				conformation::Residue const & rsd1 ( pose.residue(i) );
-				if ( !rsd1.is_protein() ) continue;
-				if ( !symminfo->bb_is_independent( i ) ) continue; // probably unnecessary...
-				utility::vector1< core::Size > bbclones = symminfo->bb_clones( i );
-				for ( Size j = 1; j <= bbclones.size(); ++j ) {
-					cenlist.fcen6( bbclones[j] ) = cenlist.fcen6(i);
-					cenlist.fcen10( bbclones[j] ) = cenlist.fcen10(i);
-					cenlist.fcen12( bbclones[j] ) = cenlist.fcen12(i);
-				}
-			}
-		}
-
-		cenlist.calculated() = true;
 	}
+	
+	cenlist.calculated() = true;
 }
 
 void
@@ -359,52 +358,52 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	Size const nres( energy_graph.num_nodes() );
 
-	if ( !dcenlist.calculated() ) {
-		dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
-
+	if ( dcenlist.calculated() ) return;
+	
+	dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
+	
+	for ( Size i = 1; i <= nres; ++i ) {
+		conformation::Residue const & rsd1 ( pose.residue(i) );
+		if ( !rsd1.is_protein() ) continue;
+		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
+		
+		for ( graph::Graph::EdgeListConstIter
+			 iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+			 irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+			 iru != irue; ++iru ) {
+			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			Size const j( edge->get_second_node_ind() );
+			conformation::Residue const & rsd2 ( pose.residue(j) );
+			if ( !rsd2.is_protein() ) continue;
+			
+			numeric::xyzVector<Real> cenvec =
+			rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
+			Real const cendist = cenvec.length_squared();
+			
+			if ( cendist <= cen_dist_cutoff_12_pad ) {
+				fill_smooth_dcenlist( dcenlist, i, j, cenvec );
+			}
+		}
+	}
+	
+	// symetrize cenlist (if necessary)
+	if ( symminfo ) {
+		core::conformation::symmetry::SymmetricConformation const &symmconf =
+		dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
 			if ( !rsd1.is_protein() ) continue;
-			if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
-
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const j( edge->get_second_node_ind() );
-				conformation::Residue const & rsd2 ( pose.residue(j) );
-				if ( !rsd2.is_protein() ) continue;
-
-				numeric::xyzVector<Real> cenvec =
-					rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
-				Real const cendist = cenvec.length_squared();
-
-				if ( cendist <= cen_dist_cutoff_12_pad ) {
-					fill_smooth_dcenlist( dcenlist, i, j, cenvec );
-				}
+			if ( !symminfo->bb_is_independent( i ) ) continue; // probably unnecessary...
+			utility::vector1< core::Size > bbclones = symminfo->bb_clones( i );
+			for ( Size j = 1; j <= bbclones.size(); ++j ) {
+				dcenlist.fcen6( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen6(i), bbclones[j], i, true );
+				dcenlist.fcen10( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen10(i), bbclones[j], i, true );
+				dcenlist.fcen12( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen12(i), bbclones[j], i, true );
 			}
 		}
-
-		// symetrize cenlist (if necessary)
-		if ( symminfo ) {
-			core::conformation::symmetry::SymmetricConformation const &symmconf =
-				dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
-			for ( Size i = 1; i <= nres; ++i ) {
-				conformation::Residue const & rsd1 ( pose.residue(i) );
-				if ( !rsd1.is_protein() ) continue;
-				if ( !symminfo->bb_is_independent( i ) ) continue; // probably unnecessary...
-				utility::vector1< core::Size > bbclones = symminfo->bb_clones( i );
-				for ( Size j = 1; j <= bbclones.size(); ++j ) {
-					dcenlist.fcen6( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen6(i), bbclones[j], i, true );
-					dcenlist.fcen10( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen10(i), bbclones[j], i, true );
-					dcenlist.fcen12( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen12(i), bbclones[j], i, true );
-				}
-			}
-		}
-
-		dcenlist.calculated() = true;
 	}
+	
+	dcenlist.calculated() = true;
 }
 
 
@@ -506,39 +505,39 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 		numeric::xyzVector<Real> cenvec = rsd2.atom( rsd2.nbr_atom() ).xyz() - atom_x;
 		Real const cendist = cenvec.length_squared();
 
-		if ( cendist <= cen_dist_cutoff_12_pad ) {
-			Real x = sqrt(cendist);
-			numeric::xyzVector<Real> gradx = cenvec/x;
-
-			Real d6,d10,d12, z;
-			z =  SIGMOID_SLOPE*(x-6);
-			if ( z>-20 && z<20 ) {
-				Real e6 = exp(z);
-				d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
-			} else {
-				d6 = 0;
-			}
-
-			z = SIGMOID_SLOPE*(x-10);
-			if ( z>-20 && z<20 ) {
-				Real e10 = exp(z);
-				d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
-			} else {
-				d10 = 0;
-			}
-
-			z = SIGMOID_SLOPE*(x-12);
-			if ( z>-20 && z<20 ) {
-				Real e12 = exp(z);
-				d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
-			} else {
-				d12 = 0;
-			}
-
-			d_env_score  += env_[ rsd2.aa() ].dfunc( cenlist.fcen10(j) ) * (d10*gradx);
-			d_cb_score6  += cbeta6_.dfunc( cenlist.fcen6(j) ) * (d6*gradx);
-			d_cb_score12 += cbeta12_.dfunc( cenlist.fcen12(j) ) * ((d12-d6)*gradx);
+		if ( cendist > cen_dist_cutoff_12_pad ) continue;
+		
+		Real x = sqrt(cendist);
+		numeric::xyzVector<Real> gradx = cenvec/x;
+		
+		Real d6,d10,d12, z;
+		z =  SIGMOID_SLOPE*(x-6);
+		if ( z>-20 && z<20 ) {
+			Real e6 = exp(z);
+			d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
+		} else {
+			d6 = 0;
 		}
+		
+		z = SIGMOID_SLOPE*(x-10);
+		if ( z>-20 && z<20 ) {
+			Real e10 = exp(z);
+			d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
+		} else {
+			d10 = 0;
+		}
+		
+		z = SIGMOID_SLOPE*(x-12);
+		if ( z>-20 && z<20 ) {
+			Real e12 = exp(z);
+			d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+		} else {
+			d12 = 0;
+		}
+		
+		d_env_score  += env_[ rsd2.aa() ].dfunc( cenlist.fcen10(j) ) * (d10*gradx);
+		d_cb_score6  += cbeta6_.dfunc( cenlist.fcen6(j) ) * (d6*gradx);
+		d_cb_score12 += cbeta12_.dfunc( cenlist.fcen12(j) ) * ((d12-d6)*gradx);
 	}
 }
 

@@ -301,13 +301,10 @@ ContextDependentGeometricSolEnergy::residue_pair_energy(
 	//  energy cannot change (Joseph Yesselman 9/11/13)
 	// note from rhiju -- this looks dangerous
 	if ( precalculated_bb_bb_energy_ > 0.0f ) {
-
 		emap[ geom_sol ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
 			evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
-	}  else {
-
+	} else {
 		evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
-
 	}
 }
 
@@ -325,70 +322,9 @@ ContextDependentGeometricSolEnergy::finalize_total_energy(
 	ScoreFunction const &,
 	EnergyMap & totals ) const
 {
-
 	if ( !using_extended_method_ ) {
 		totals[ geom_sol ] += precalculated_bb_bb_energy_;
-		return;
 	}
-
-	return; //early return -- must check in packer????
-
-
-	/*---
-	//if ( !using_extended_method_ ) return;
-	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
-	NeighborList const & nblist
-	( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
-	nblist.check_domain_map( pose.energies().domain_map() );
-	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	resvect.push_back( & pose.residue( ii ) );
-	}
-	Real score( 0.0 );
-	Real energy( 0.0 );
-
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-	conformation::Residue const & ires( *resvect[i] );
-	for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
-	AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
-	for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-	nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
-	AtomNeighbor const & nbr( *nbr_iter );
-
-	Size const  j( nbr.rsd() );
-	if ( i==j ) continue;
-	Size const jj( nbr.atomno() );
-	// could reorder the nbr lists so that we dont need this check:
-	//if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
-
-	conformation::Residue const & jres( *resvect[j] );
-
-	if ( evaluator_->atom_is_heavy( jres, jj ) ) {
-	if ( ires.atom_is_polar_hydrogen( ii ) ) {
-	evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy );
-	score += energy;
-	} else if ( ires.heavyatom_is_an_acceptor( ii ) ) {
-	evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy );
-	score += energy;
-	}
-	}
-	if ( evaluator_->atom_is_heavy ( ires, ii ) ) {
-	if ( evaluator_->atom_is_donor_h( jres, jj ) ) {
-	evaluator_->get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy );
-	score += energy;
-	} else if ( evaluator_->atom_is_acceptor( jres, jj ) ) {
-	evaluator_->get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy );
-	score += energy;
-	}
-	}
-	}
-	}
-	}
-
-	totals[ geom_sol ] += score;
-
-	--*/
 }
 
 
@@ -402,8 +338,6 @@ ContextDependentGeometricSolEnergy::atomic_interaction_cutoff() const
 bool
 ContextDependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &  ) const
 {
-	//Change to this on Feb 06, 2012. Ensure that the function returns false if weights[geom_sol_intra_RNA] == 0.0
-	// return ( weights[geom_sol_intra_RNA] > 0.0001 );
 	return true;
 }
 

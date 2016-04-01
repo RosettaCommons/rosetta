@@ -241,7 +241,7 @@ FA_ElecEnergy::get_countpair_representative_atom(
 		} else {
 			std::map<std::string,std::string> const & atms = name_iter->second;
 			for ( std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter ) {
-				if ( restype.has(atom_iter->first) &&  restype.has(atom_iter->second) ) {
+				if ( restype.has(atom_iter->first) && restype.has(atom_iter->second) ) {
 					core::Size idx1 = restype.atom_index(atom_iter->first);
 					core::Size idx2 = restype.atom_index(atom_iter->second);
 					rsd_map.insert( std::make_pair(idx1,idx2) );
@@ -285,22 +285,22 @@ FA_ElecEnergy::setup_for_minimizing(
 
 	set_nres_mono(pose);
 
-	if ( pose.energies().use_nblist() ) {
-		// stash our nblist inside the pose's energies object
-		Energies & energies( pose.energies() );
-
-		// setup the atom-atom nblist
-		NeighborListOP nblist;
-		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
-		if ( pose.energies().use_nblist_auto_update() ) {
-			nblist->set_auto_update( tolerated_motion );
-		}
-		// this partially becomes the EtableEnergy classes's responsibility
-		nblist->setup( pose, sfxn, *this);
-		energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
+	if ( ! pose.energies().use_nblist() ) return;
+	
+	// stash our nblist inside the pose's energies object
+	Energies & energies( pose.energies() );
+	
+	// setup the atom-atom nblist
+	NeighborListOP nblist;
+	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+	Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
+	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	if ( pose.energies().use_nblist_auto_update() ) {
+		nblist->set_auto_update( tolerated_motion );
 	}
+	// this partially becomes the EtableEnergy classes's responsibility
+	nblist->setup( pose, sfxn, *this);
+	energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
 }
 
 
@@ -320,10 +320,10 @@ FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn
 {
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
-	if ( pose.energies().use_nblist() ) {
-		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
-		nblist.prepare_for_scoring( pose, scfxn, *this );
-	}
+	if ( ! pose.energies().use_nblist() ) return;
+	
+	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+	nblist.prepare_for_scoring( pose, scfxn, *this );
 }
 
 
@@ -656,21 +656,21 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 		Vector f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
 		Real const dE_dr_over_r = wt_envdep * neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
-		if ( dE_dr_over_r != 0.0 ) {
-			Real sfxn_weight = elec_weight(
-				rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
-				rsd2.atom_is_backbone( neighbs[ ii ].atomno2() ),
-				wtrip );
-			Vector f1 = atom1xyz.cross( atom2xyz );
-			f1 *= dE_dr_over_r * sfxn_weight;
-			f2 *= dE_dr_over_r * sfxn_weight;
-			r1_atom_derivs[ neighbs[ ii ].atomno1() ].f1() += f1;
-			r1_atom_derivs[ neighbs[ ii ].atomno1() ].f2() += f2;
-			r2_atom_derivs[ neighbs[ ii ].atomno2() ].f1() -= f1;
-			r2_atom_derivs[ neighbs[ ii ].atomno2() ].f2() -= f2;
-		}
+		
+		if ( dE_dr_over_r == 0.0 ) continue;
+		
+		Real sfxn_weight = elec_weight(
+			rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
+			rsd2.atom_is_backbone( neighbs[ ii ].atomno2() ),
+			wtrip );
+		Vector f1 = atom1xyz.cross( atom2xyz );
+		f1 *= dE_dr_over_r * sfxn_weight;
+		f2 *= dE_dr_over_r * sfxn_weight;
+		r1_atom_derivs[ neighbs[ ii ].atomno1() ].f1() += f1;
+		r1_atom_derivs[ neighbs[ ii ].atomno1() ].f2() += f2;
+		r2_atom_derivs[ neighbs[ ii ].atomno2() ].f1() -= f1;
+		r2_atom_derivs[ neighbs[ ii ].atomno2() ].f2() -= f2;
 	}
-
 }
 
 /// @details for use only with the nblist auto-update algorithm
@@ -727,14 +727,14 @@ FA_ElecEnergy::eval_atom_derivative(
 		Vector f2 = ( ii_xyz - jj_xyz );
 		Real const dis2( f2.length_squared() );
 		Real const dE_dr_over_r = wt_envdep * nbr.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, ii_charge, jj_charge );
-		if ( dE_dr_over_r != 0.0 ) {
-			Real sfxn_weight = elec_weight( ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
-			Vector f1 = ii_xyz.cross( jj_xyz );
-			f1 *= dE_dr_over_r * sfxn_weight;
-			f2 *= dE_dr_over_r * sfxn_weight;
-			F1 += f1;
-			F2 += f2;
-		}
+		if ( dE_dr_over_r == 0.0 ) continue;
+		
+		Real sfxn_weight = elec_weight( ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
+		Vector f1 = ii_xyz.cross( jj_xyz );
+		f1 *= dE_dr_over_r * sfxn_weight;
+		f2 *= dE_dr_over_r * sfxn_weight;
+		F1 += f1;
+		F2 += f2;
 	}
 }
 
@@ -1000,9 +1000,7 @@ FA_ElecEnergy::finalize_total_energy(
 
 				Size const  j( nbr.rsd() );
 				Size const jj( nbr.atomno() );
-				// could reorder the nbr lists so that we dont need this check:
-				//if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
-
+				
 				conformation::Residue const & jres( *resvect[j] );
 				int jj_isbb = jres.atom_is_backbone( jj );
 
@@ -1057,10 +1055,6 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
 	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
 	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
-
-	/// this will later retrieve a stored rotamer trie from inside the set;
-	//EtableRotamerTrieBaseOP trie1 = create_rotamer_trie( set1, pose );
-	//EtableRotamerTrieBaseOP trie2 = create_rotamer_trie( set2, pose );
 
 	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( elec_method ) ));
 	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( elec_method ) ));
@@ -1121,12 +1115,6 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
-	//iwd  Temporary hack:  for ligands, call base class implementation
-	//if ( !residue.is_polymer() ) {
-	// ShortRangeTwoBodyEnergy::evaluate_rotamer_background_energies(set, residue, pose, sfxn, weights, energy_vector);
-	// return;
-	//}
-
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
 	if ( ! defines_score_for_residue_pair( pose.residue(set.resid()), residue, true) ) return;

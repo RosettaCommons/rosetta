@@ -151,8 +151,7 @@ void setup_cylindrical_coords(
 void find_pitch(
 	pose::Pose const & pose,
 	core::Real & pitch
-)
-{
+) {
 	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
@@ -194,8 +193,7 @@ find_min_xyz(
 	core::Real &maxX,
 	core::Real &maxY,
 	core::Real &maxZ
-)
-{
+) {
 
 	// Are we symmetric?
 	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
@@ -251,8 +249,7 @@ void
 find_max_r(
 	pose::Pose const & pose,
 	core::Real & maxR
-)
-{
+) {
 	// Are we symmetric?
 	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -312,8 +309,7 @@ void
 centroid_scatter(
 	const std::string & res_name,
 	OneGaussianScattering & sig_centroid
-)
-{
+) {
 	using namespace core::conformation;
 	using namespace core::chemical;
 
@@ -341,8 +337,7 @@ centroid_scatter(
 
 utility::vector1< OneGaussianScattering > setup_centroid_scatter(
 	pose::Pose & pose
-)
-{
+) {
 	utility::vector1< OneGaussianScattering > sig_centroid_;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING ) ) {
 		CentroidScatter & centroid_sct_factor( retrieve_centroid_scatter_from_pose( pose ) );
@@ -375,8 +370,7 @@ utility::vector0< utility::vector1< utility::vector1< core::Real > > > setup_for
 	core::Real const & B_factor,
 	core::Real const & B_factor_solv,
 	core::Real const & Ksolv
-)
-{
+) {
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_;
 	TR << "Calculating form factors..." << std::endl;
 	std::string atoms[] = {"C", "O", "N", "S", "P" };

@@ -67,7 +67,6 @@ BB_Pos::resize( int const nres )
 	CB_index_.resize( nres );      std::fill( CB_index_.begin(), CB_index_.end(), 0 );
 	C_index_.resize( nres );       std::fill( C_index_.begin(), C_index_.end(), 0 );
 	O_index_.resize( nres );       std::fill( O_index_.begin(), O_index_.end(), 0 );
-
 }
 
 /// @details: Optimize the common case where the sequence of the pose is not changing from
@@ -75,9 +74,7 @@ BB_Pos::resize( int const nres )
 void
 BB_Pos::take_coordinates_from_pose( pose::Pose const & pose )
 {
-	if ( ! bbindices_up_to_date( pose ) ) {
-		update_indices( pose );
-	}
+	if ( ! bbindices_up_to_date( pose ) ) update_indices( pose );
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
@@ -104,7 +101,6 @@ BB_Pos::take_coordinates_from_pose( pose::Pose const & pose )
 			CB_[i] = 0.0;
 		}
 	}
-
 }
 
 bool
@@ -152,8 +148,6 @@ BB_Pos::update_indices( pose::Pose const & pose )
 			CB_index_[ i ] = 0;
 		}
 	}
-
-
 }
 
 
@@ -188,7 +182,6 @@ Strands::Strands(
 Strands::~Strands()
 {}
 
-
 void
 Strands::resize( Size const nres )
 {
@@ -221,7 +214,6 @@ Strands::operator =( Strands const & s )
 		SS_dimer = s.SS_dimer;
 		SS_strand_end = s.SS_strand_end;
 		dimer_neighbor = s.dimer_neighbor;
-		//strand_strand_score = s.strand_strand_score;
 	}
 	return *this;
 }

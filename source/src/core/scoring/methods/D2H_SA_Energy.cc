@@ -80,102 +80,61 @@ D2H_SA_Energy::D2H_SA_Energy() :
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::d2h_sa_reweight ].user() ) {
 		reweight_=basic::options::option[ basic::options::OptionKeys::in::file::d2h_sa_reweight]();
 	}
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::HDX ].user() ) {
-		TR << "Reading Hydrogen Exchange data\n";
-		std::string HDX_datafile(basic::options::option[ basic::options::OptionKeys::in::file::HDX ]());
-
-
-		utility::io::izstream stream (HDX_datafile);
-		getline(stream,line);
+	
+	if ( ! basic::options::option[ basic::options::OptionKeys::in::file::HDX ].user() ) return;
+	
+	TR << "Reading Hydrogen Exchange data\n";
+	std::string HDX_datafile(basic::options::option[ basic::options::OptionKeys::in::file::HDX ]());
+	
+	utility::io::izstream stream (HDX_datafile);
+	getline(stream,line);
+	TR << line << std::endl;
+	getline(stream,line);
+	{
+		std::istringstream l(line);
 		TR << line << std::endl;
+		l>> total_length >> chain_ >> rsa_index_start_ >> rsa_index_end_;
+	}
+	//Reading to local variables to allow for missing data, which is not implemented ... :-)
+	std::map<core::Size, core::Real> data_map;
+	std::map<core::Size, core::Size> group_map;
+	
+	for ( Size i=1; i<=total_length; i++ ) {
 		getline(stream,line);
 		{
 			std::istringstream l(line);
-			TR << line << std::endl;
-			l>> total_length >> chain_ >> rsa_index_start_ >> rsa_index_end_;
+			Size pos;
+			Real tmp;
+			Size g;
+			l >> pos >> tmp >> g;
+			data_map[pos]=tmp;
+			group_map[pos]=g;
 		}
-		//Reading to local variables to allow for missing data, which is not implemented ... :-)
-		//utility::vector1 < core::Size > positions,group; //(total_length,0);
-		//  utility::vector1 < core::Size > group(total_length,0);
-		//  utility::vector1 < core::Real > data; //(total_length,0.0);
-		std::map<core::Size, core::Real> data_map;
-		std::map<core::Size, core::Size> group_map;
-
-
-		// Size pos;
-		//Real tmp;
-		for ( Size i=1; i<=total_length; i++ ) {
-			getline(stream,line);
-			{
-				std::istringstream l(line);
-				Size pos;
-				Real tmp;
-				Size g;
-				l >> pos >> tmp >> g;
-				data_map[pos]=tmp;
-				group_map[pos]=g;
-
-				//positions.push_back(pos);
-				//data.push_back(tmp);
-				//group.push_back(g);
-
-
-			}
-			TR << line << std::endl ;
-		}
-
-
-
-
-		if ( total_length==0 ) {
-			utility_exit_with_message("bad format for d2h file total_length=0");
-		}
-		// std::cout << sd << " " << mean << " "<< sd2 << " " << "\n";
-		utility::vector1 < core::Size > keys;
-		for ( std::map<Size, Real>::iterator i = data_map.begin(); i != data_map.end(); ++i ) {
-			keys.push_back(i->first);
-		}
-		sort(keys.begin(), keys.end());
-		for ( Size i=1; i<=keys.size(); i++ ) {
-			data_.push_back(data_map[keys[i]]);
-			position_.push_back(keys[i]);
-			group_.push_back(group_map[keys[i]]);
-		}
-
-		//all_data_.resize(positions[total_length],-1);
-		//all_group_.resize(positions[total_length],-1);
-		//chain_=5;
-		//for(Size i=1;i<=total_length;i++)
-		// {
-		//  all_data_[positions[i]]=data[i]; //-mean_;
-		//  all_group_[positions[i]]=group[i]; //-mean_;
-		// }
-		//for(Size i=1;i<=all_data_.size();i++)
-		// {
-		//  TR.Debug << i << " " << all_data_[i] << std::endl;
-		//  if(all_data_[i]!=-1) {
-		//   data2_.push_back(all_data_[i]);
-		//   position2_.push_back(i);
-		//   group2_.push_back(all_group_[i]);
-		//  }
-		//
-		// }
-		//
-		//  for(Size i=1;i<=data_.size();i++)
-		//   {
-		//    TR.Debug <<  data_[i] << " " << position_[i] << " - " << group_[i] << std::endl;
-		//   }
-
-
-		Real mean = numeric::statistics::mean(data_.begin(),data_.end(),0.0);
-		Real sd = numeric::statistics::std_dev_with_provided_mean(data_.begin(),data_.end(),mean);
-		mean_=mean;
-		sd_=sd;
-		HDX_data_defined_=true;
-		stream.close();
-		stream.clear();
+		TR << line << std::endl ;
 	}
-
+	
+	if ( total_length==0 ) {
+		utility_exit_with_message("bad format for d2h file total_length=0");
+	}
+	// std::cout << sd << " " << mean << " "<< sd2 << " " << "\n";
+	utility::vector1 < core::Size > keys;
+	for ( std::map<Size, Real>::iterator i = data_map.begin(); i != data_map.end(); ++i ) {
+		keys.push_back(i->first);
+	}
+	sort(keys.begin(), keys.end());
+	for ( Size i=1; i<=keys.size(); i++ ) {
+		data_.push_back(data_map[keys[i]]);
+		position_.push_back(keys[i]);
+		group_.push_back(group_map[keys[i]]);
+	}
+	
+	Real mean = numeric::statistics::mean(data_.begin(),data_.end(),0.0);
+	Real sd = numeric::statistics::std_dev_with_provided_mean(data_.begin(),data_.end(),mean);
+	mean_=mean;
+	sd_=sd;
+	HDX_data_defined_=true;
+	stream.close();
+	stream.clear();
 }
 
 /// clone
@@ -206,7 +165,6 @@ D2H_SA_Energy::finalize_total_energy(
 
 	Size len(data_.size());
 	Size nres( pose.total_residue() );
-	//Size max_res( pose.total_residue() );  // unused
 	const Real probe_radius(1.4); //default water probe
 	//std::cout << "Length " << len << "\n";
 	Size chain_for_rsa(1);
@@ -214,7 +172,6 @@ D2H_SA_Energy::finalize_total_energy(
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf(dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-		//max_res = symm_info->num_independent_residues();  // unused
 		chain_for_rsa=pose.residue(symm_info->bb_follows(1)).chain();
 		//for(Size i=1;i<=nres;i++) {
 		// TR.Debug  << "BB_FOLLOWS " << i << " " << symm_info->bb_follows(i) << std::endl;

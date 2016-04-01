@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/scoring/Energies.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
@@ -69,22 +68,17 @@ methods::EnergyMethodOP symEnergy::clone() const
 
 void symEnergy::setup_for_scoring(pose::Pose &pose, const ScoreFunction &) const
 {
-
 	using namespace methods;
 	if ( pose.energies().long_range_container(sym_bonus_lr) == 0 ) {
 		DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.total_residue(), symE_bonus) );
-		//LREnergyContainerOP lr_container = new LREnergyContainer(pose);
 		pose.energies().set_long_range_container(sym_bonus_lr, lr_container);
 	} else {
 		DenseEnergyContainerOP lr_container_copied = DenseEnergyContainerOP(utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( pose.energies().nonconst_long_range_container(sym_bonus_lr) ));
 		if ( lr_container_copied->size() !=pose.total_residue() ) {
 			DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.total_residue(), symE_bonus) );
-			//LREnergyContainerOP lr_container = new LREnergyContainer(pose);
 			pose.energies().set_long_range_container(sym_bonus_lr, lr_container);
 		}
-		//lr_container_copied->update(pose);
 	}
-
 	pose.update_residue_neighbors();
 }
 
@@ -94,9 +88,7 @@ void symEnergy::setup_for_packing(pose::Pose &pose, utility::vector1< bool > con
 }
 
 void symEnergy::indicate_required_context_graphs(utility::vector1< bool > &  ) const
-{
-	//
-}
+{}
 
 bool symEnergy::defines_intrares_energy(const EnergyMap & ) const
 {
@@ -104,24 +96,25 @@ bool symEnergy::defines_intrares_energy(const EnergyMap & ) const
 }
 
 void symEnergy::eval_intrares_energy(conformation::Residue const & , pose::Pose const & , ScoreFunction const & , EnergyMap & ) const
-{
-	//
-}
+{}
 
 bool symEnergy::defines_residue_pair_energy(const core::pose::Pose& , platform::Size , platform::Size ) const
 {
 	return true;
 }
 
-
 methods::LongRangeEnergyType symEnergy::long_range_type() const
 {
 	return methods::sym_bonus_lr;
 }
 
-
-void symEnergy::residue_pair_energy(conformation::Residue const &rsd1, conformation::Residue const &rsd2,  pose::Pose const &pose,  scoring::ScoreFunction const &, EnergyMap & emap) const
-{
+void symEnergy::residue_pair_energy(
+	conformation::Residue const &rsd1,
+	conformation::Residue const &rsd2,
+	pose::Pose const &pose,
+	scoring::ScoreFunction const &,
+	EnergyMap & emap
+) const {
 	Size rsd1Pos = rsd1.seqpos();
 	Size rsd2Pos = rsd2.seqpos();
 	Size totalLength = pose.total_residue();
@@ -129,22 +122,21 @@ void symEnergy::residue_pair_energy(conformation::Residue const &rsd1, conformat
 	int symUnits = basic::options::option[ basic::options::OptionKeys::score::symE_units ]();
 	core::Real symBonus = basic::options::option[ basic::options::OptionKeys::score::symE_bonus ]();
 
-	if ( symUnits >0 ) {
-
+	if ( symUnits > 0 ) {
 		if ( rsd1Pos % (totalLength/symUnits) ==  rsd2Pos % (totalLength/symUnits) && rsd1Pos != rsd2Pos ) {
-
 			if ( rsd1.name() == rsd2.name() ) {
 				emap[ symE_bonus ] += symBonus;
 			}
 		}
 	}
-
 }
+
 core::Size
 symEnergy::version() const
 {
 	return 1; // Initial versioning
 }
+
 } //symE
 } //scoring
 } //core

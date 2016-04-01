@@ -141,7 +141,6 @@ RNA_MgPointEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
@@ -152,8 +151,6 @@ RNA_MgPointEnergy::residue_pair_energy(
 	if ( rsd2.is_RNA() && is_magnesium[ rsd1.seqpos() ] ) {
 		residue_pair_energy_one_way( rsd2, rsd1, pose, emap );
 	}
-
-	return;
 }
 
 
@@ -234,32 +231,25 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 			}
 		}
 
-
 		// indirect interactions, simple pair-wise
 		GaussianParameter const & mg_potential_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_indirect_gaussian_parameter( rsd1, i );
 
-		if ( d < indirect_interaction_cutoff_ && mg_potential_indirect_gaussian_parameter.center > 0.0 ) {
-
-			if ( mg_potential_indirect_gaussian_parameter.center > 0.0 ) {
-				Real binding_score_indirect = get_gaussian_potential_score( mg_potential_indirect_gaussian_parameter, i_xyz, j_xyz );
-
-				if ( get_angle_form_factor ) {
-
-					if ( cos_theta < -1.0 ) cos_theta = get_cos_theta( rsd1, i, j_xyz );
-
-					GaussianParameter const & mg_potential_costheta_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_indirect_gaussian_parameter( rsd1, i );
-					Real const angle_potential_indirect = get_gaussian_score( mg_potential_costheta_indirect_gaussian_parameter, cos_theta );
-					binding_score_indirect *= angle_potential_indirect;
-
-				}
-				score_indirect += binding_score_indirect;
-
-				if ( verbose_ && std::abs( binding_score_indirect ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << " indirect to ligand " << pos1 << ' ' << rsd1.atom_name( i ) << "  score: " <<  binding_score_indirect << std::endl;
-
-			}
+		if ( d >= indirect_interaction_cutoff_ || mg_potential_indirect_gaussian_parameter.center <= 0.0 ) continue;
+		
+		Real binding_score_indirect = get_gaussian_potential_score( mg_potential_indirect_gaussian_parameter, i_xyz, j_xyz );
+		
+		if ( get_angle_form_factor ) {
+			
+			if ( cos_theta < -1.0 ) cos_theta = get_cos_theta( rsd1, i, j_xyz );
+			
+			GaussianParameter const & mg_potential_costheta_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_indirect_gaussian_parameter( rsd1, i );
+			Real const angle_potential_indirect = get_gaussian_score( mg_potential_costheta_indirect_gaussian_parameter, cos_theta );
+			binding_score_indirect *= angle_potential_indirect;
+			
 		}
-
-
+		score_indirect += binding_score_indirect;
+		
+		if ( verbose_ && std::abs( binding_score_indirect ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << " indirect to ligand " << pos1 << ' ' << rsd1.atom_name( i ) << "  score: " <<  binding_score_indirect << std::endl;
 	}
 
 	// there appear to be very few (if any) metal ions that bind to both the OP2 and OP1 of a single phosphate -- so let's use the best of those scores.
@@ -271,10 +261,7 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 	}
 
 	emap[ rna_mg_point ] += score;
-
 	emap[ rna_mg_point_indirect ] += score_indirect;
-
-
 }
 
 /////////////////////////////////

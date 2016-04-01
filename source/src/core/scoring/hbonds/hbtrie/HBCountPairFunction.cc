@@ -17,22 +17,12 @@
 // Package Headers
 #include <core/scoring/trie/trie_vs_trie.hh>
 #include <core/scoring/trie/trie_vs_path.hh>
-//#include <core/scoring/etable/etrie/CountPairData_1_1.hh>
-//#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
-//#include <core/scoring/etable/etrie/CountPairData_1_3.hh>
-//#include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh>
 #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
 
-
-// Project Headers
-//#include <core/scoring/etable/EtableEnergy.hh>
-//XRW_B_T1
-//#include <core/scoring/etable/CoarseEtableEnergy.hh>
-//XRW_E_T1
 // STL Headers
 #include <iostream>
 

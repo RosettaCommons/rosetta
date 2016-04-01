@@ -26,7 +26,6 @@
 #include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyGraph.hh>
-//#include <core/scoring/etable/count_pair/CountPair1BC4.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
@@ -35,7 +34,6 @@
 #include <core/pose/Pose.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/conformation/Residue.hh>
-//#include <basic/prof.hh>
 
 
 //using namespace std;
@@ -69,8 +67,6 @@ DNA_EnvPairEnergy::DNA_EnvPairEnergy(): // constructor
 	parent( EnergyMethodCreatorOP( new DNA_EnvPairEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_DNA_EnvPairPotential() )
 {
-	//  add_score_type( dna_env  );
-	//  add_score_type( dna_pair );
 }
 
 
@@ -90,9 +86,6 @@ DNA_EnvPairEnergy::finalize_total_energy(
 	EnergyMap & emap
 ) const
 {
-
-
-
 	//PROF_START( basic::DNA_ENV_PAIR_ENERGY );
 
 	Size const nres( pose.total_residue() );
@@ -134,11 +127,6 @@ DNA_EnvPairEnergy::finalize_total_energy(
 
 	//PROF_STOP( basic::DNA_ENV_PAIR_ENERGY );
 }
-
-
-
-
-
 
 
 } // ns methods

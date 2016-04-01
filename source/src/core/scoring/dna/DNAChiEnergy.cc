@@ -78,15 +78,15 @@ DNAChiEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-	if ( rsd.is_DNA() ) {
-		//  Real this_chi( (rsd.chi())[1] );
-		//  tr << "Calculating chi as:  " << this_chi << std::endl;
-		Real this_score( 0.0 );
-		Real this_deriv( 0.0 );
-		potential_.eval_dna_bform_chi_torsion_score_residue( rsd, this_score, this_deriv );
-		//  tr << "Calculating dna chi score as:  " << this_score << std::endl;
-		emap[ dna_chi ] = this_score;
-	}
+	if ( ! rsd.is_DNA() ) return;
+ 
+	//  Real this_chi( (rsd.chi())[1] );
+	//  tr << "Calculating chi as:  " << this_chi << std::endl;
+	Real this_score( 0.0 );
+	Real this_deriv( 0.0 );
+	potential_.eval_dna_bform_chi_torsion_score_residue( rsd, this_score, this_deriv );
+	//  tr << "Calculating dna chi score as:  " << this_score << std::endl;
+	emap[ dna_chi ] = this_score;
 }
 
 

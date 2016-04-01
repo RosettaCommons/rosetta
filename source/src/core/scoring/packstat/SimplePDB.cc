@@ -52,7 +52,6 @@ SimplePDB::get_spheres(
 			TR << "(" << i->first << "," << i->second << "), ";
 		}
 		TR << std::endl;
-		// spheres.clear();
 	}
 	return spheres;
 }

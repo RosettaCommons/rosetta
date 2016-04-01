@@ -28,7 +28,6 @@
 #include <string>
 
 // option key includes
-
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
@@ -79,7 +78,6 @@ extern ResidualDipolarCoupling_RohlOP retrieve_RDC_ROHL_from_pose( core::pose::P
 
 void ResidualDipolarCoupling_Rohl::read_RDC_file()
 {
-
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	runtime_assert( option[ OptionKeys::in::file::rdc ]().size() );
@@ -115,27 +113,25 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 			Size data_type( get_RDC_data_type( atom1, atom2 ) );
 			All_RDC_lines.push_back( RDC_Rohl( data_type, res1, Jdipolar, weight ) );
 		}
-
 	}
 
 	//extra weight file?
-	if ( option[ OptionKeys::rdc::weights ].user() ) {
-		std::string filename( option[ OptionKeys::rdc::weights ]().name() );
-		std::ifstream infile( filename.c_str() );
-		while ( getline( infile, line ) ) {
-			std::istringstream line_stream( line );
-			Real weight; Size res1;
-			line_stream >> res1 >> weight;
-			if ( line_stream.fail() ) {
-				tr.Error << "[Error] reading rdc-weight-file " << filename << std::endl;
-				throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-weight-file "+filename));
-			}
-			for ( RDC_lines::iterator it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
-				if ( it->res() == res1 ) it->weight( weight );
-			}
+	if ( !option[ OptionKeys::rdc::weights ].user() ) return;
+	
+	std::string filename2( option[ OptionKeys::rdc::weights ]().name() );
+	std::ifstream infile2( filename2.c_str() );
+	while ( getline( infile2, line ) ) {
+		std::istringstream line_stream( line );
+		Real weight; Size res1;
+		line_stream >> res1 >> weight;
+		if ( line_stream.fail() ) {
+			tr.Error << "[Error] reading rdc-weight-file " << filename << std::endl;
+			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-weight-file "+filename));
+		}
+		for ( RDC_lines::iterator it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
+			if ( it->res() == res1 ) it->weight( weight );
 		}
 	}
-
 }
 
 
@@ -145,9 +141,7 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 Size ResidualDipolarCoupling_Rohl::get_RDC_data_type(
 	std::string const & atom1,
 	std::string const & atom2
-)
-{
-
+) {
 	Size RDC_type(0);
 
 	if ( ( atom1 == "N" && atom2 == "H" ) || ( atom1 == "H" && atom2 == "N" ) ) {
@@ -162,13 +156,10 @@ Size ResidualDipolarCoupling_Rohl::get_RDC_data_type(
 	} else if ( atom1 == "H" && atom2 == "H" ) {
 		RDC_type = 6;
 	}
-
 	// std::cout << "RDC_type " << RDC_type << std::endl;
 
 	debug_assert(RDC_type != 0 );
-
 	return RDC_type;
-
 }
 
 

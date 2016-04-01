@@ -298,16 +298,12 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 	//  energy cannot change (Joseph Yesselman 9/11/13)
 	// note from rhiju -- this looks dangerous
 	if ( precalculated_bb_bb_energy_ > 0.0f ) {
-
 		emap[ geom_sol_fast ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
 			evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
-
 	} else {
-
 		EnergyMap emap_local;
 		evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap_local );
 		emap[ geom_sol_fast ] += emap_local[ geom_sol ];
-
 	}
 }
 

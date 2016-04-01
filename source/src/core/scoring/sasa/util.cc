@@ -50,12 +50,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-
-//#define FILE_DEBUG 1
-
-//#ifdef FILE_DEBUG
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa" );
-//#endif
 
 using namespace ObjexxFCL::format;
 
@@ -124,7 +119,6 @@ utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
 	// create vector with relative sasa
 	utility::vector1< Real > rel_sasa;
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-
 		// debug
 		//  if ( pose.residue( i ).name3() == "GLY" ) {
 		//   TR << "res_sasa " << i << " " << res_sasa[ i ] << std::endl;
@@ -133,7 +127,6 @@ utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
 	}
 
 	return rel_sasa;
-
 } // relative per residue sidechain sasa
 
 /// @brief Is residue exposed?
@@ -147,13 +140,8 @@ bool is_res_exposed( const pose::Pose & pose, core::Size resnum ) {
 	utility::vector1< Real > rel_sasa = rel_per_res_sc_sasa( pose );
 
 	// if relative sc SASA > 0.5, residue is exposed
-	if ( rel_sasa[ resnum ] >= 0.5 ) {
-		return true;
-	}
-
 	// otherwise residue is buried
-	return false;
-
+	return ( rel_sasa[ resnum ] >= 0.5 );
 } // is residue exposed?
 
 
@@ -231,9 +219,6 @@ get_sasa_method_from_string(std::string method) {
 
 	methods["LeGrand"] = LeGrand;
 
-	//if (methods.find(method) == methods.end()){
-	// utility_exit_with_message("SasaMethod unrecognized");
-	//}
 	return methods[method];
 }
 
@@ -249,9 +234,6 @@ get_sasa_radii_parameter_name(SasaRadii radii_set) {
 	radii_names[reduce] = "REDUCE_SASA_RADIUS";
 	radii_names[chothia] = radii_names[naccess];
 
-	//if (std::find(radii_names.begin(), radii_names.end(), radii_set) == radii_names.end()){
-	// utility_exit_with_message("Sasa Radii set unrecognized");
-	//}
 	return radii_names[radii_set];
 }
 
@@ -263,10 +245,6 @@ get_sasa_radii_set_from_string(std::string radii_set){
 	radii_enums["reduce"] = reduce;
 	radii_enums["legacy"] = legacy;
 	radii_enums["LJ"] = LJ;
-
-	//if (radii_enums.find(radii_set) == radii_enums.end()){
-	// utility_exit_with_message("Sasa Radii set unrecognized");
-	//}
 
 	return radii_enums[radii_set];
 }
@@ -330,9 +308,8 @@ void input_legrand_sasa_dats() {
 
 	// this booleans checks whether we've done this already or not. if we have, then return immediately.
 	static bool init = false;
-	if ( init ) {
-		return;
-	}
+	if ( init ) return;
+	
 	init = true;
 
 	//j inputting the masks. they are 21 ubytes long, 162x100 (see header). expects file to be complete
@@ -365,7 +342,6 @@ void input_legrand_sasa_dats() {
 		angles_stream >> skip;
 	}
 	angles_stream.close();
-
 }
 
 ///
@@ -481,12 +457,8 @@ void get_legrand_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 	using namespace numeric::constants::d;
 	using numeric::sin_cos_range;
 
-	//static FArray1D_float diff( 3 ); //apl allocate this once only
 	//pb -- static can cause problems in multi-threading
 	Vector ab_diff( ( a_xyz - b_xyz ) / distance_ijxyz );
-
-	//j now figure out polar values of phi and theta. Normalize the difference. first get the length of the vector.
-	//vector_normalize(ab_diff);
 
 	//j figuring phi
 	//ronj sin_cos_range adjust the range of the passed in argument to a valid [-1,1]. acos(x) returns the arccos of x
@@ -570,12 +542,8 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 	using namespace numeric::constants::d;
 	using numeric::sin_cos_range;
 
-	//static FArray1D_float diff( 3 ); //apl allocate this once only
 	//pb -- static can cause problems in multi-threading
 	Vector ab_diff( ( a_xyz - b_xyz ) / distance_ijxyz );
-
-	//j now figure out polar values of phi and theta. Normalize the difference. first get the length of the vector.
-	//vector_normalize(ab_diff);
 
 	//j figuring phi, for a2b
 	//ronj sin_cos_range adjust the range of the passed in argument to a valid [-1,1]. acos(x) returns the arccos of x
@@ -614,7 +582,6 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 	if ( phi_b2a_index > num_phi ) {
 		phi_b2a_index = 1;
 	}
-
 
 	//j figuring theta
 	//ronj atan2 is the arc tangent of y/x, expressed in radians.
@@ -658,7 +625,6 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 		theta_b2a_index = 1;
 	}
 
-
 #ifdef FILE_DEBUG
 	/*TR << "get_2way_orientation(): ";
 	TR << "a: " << F(5,2,a_xyz.x()) << "," << F(5,2,a_xyz.y()) << "," << F(5,2,a_xyz.z())
@@ -671,7 +637,6 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 		 << ", theta_b2a: " << temp_theta_b2a << ", theta_b2a_index: " << SS( theta_b2a_index )
 		 << std::endl;*/
 #endif
-
 }
 
 

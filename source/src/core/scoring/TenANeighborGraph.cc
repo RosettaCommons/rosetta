@@ -183,8 +183,7 @@ TenANeighborGraph::conditionally_add_edge(
 	Size lower_node_id,
 	Size upper_node_id,
 	DistanceSquared dsq
-)
-{
+) {
 	if ( dsq < tenA_squared_ ) add_edge( lower_node_id, upper_node_id );
 }
 

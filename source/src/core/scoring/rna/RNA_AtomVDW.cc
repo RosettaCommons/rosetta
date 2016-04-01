@@ -100,7 +100,6 @@ RNA_AtomVDW::RNA_AtomVDW()
 			rna_residue_name_to_num( which_residue1 ),
 			rna_residue_name_to_num( which_residue2 ) ) = input_bump_parameter;
 		//perhaps we should explicitly force symmetry here?
-
 	}
 
 	// for ( Size i = 1; i <= 9; i++ ) {
@@ -112,7 +111,6 @@ RNA_AtomVDW::RNA_AtomVDW()
 	//   }
 	//  }
 	// }
-
 }
 
 //////////////////////////////////////////////

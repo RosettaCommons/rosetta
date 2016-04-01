@@ -150,7 +150,6 @@ GenBornEnergy::update_residue_for_packing(
 	/// update born radii for residue that has changed during packing, eg in rotamer trials
 	/// need to double-check the current logic on this...
 	potential_.update_residue_for_packing( pose, resid );
-
 }
 
 
@@ -180,7 +179,6 @@ GenBornEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.total_residue(), gb_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
-
 }
 
 
@@ -204,7 +202,6 @@ GenBornEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	//using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
 	GenBornPoseInfo const & gb_info
@@ -312,18 +309,18 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.nbr_atom_xyz() );
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-					Size const kk_rot_id = ii_offset + kk - 1;
-					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
-						Size const ll_rot_id = jj_offset + ll - 1;
-
-						Real const elecE(
-							potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), gb_info1.residue_info( kk_rot_id ),
+			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+			
+			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+				Size const kk_rot_id = ii_offset + kk - 1;
+				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
+					Size const ll_rot_id = jj_offset + ll - 1;
+					
+					Real const elecE(
+						potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), gb_info1.residue_info( kk_rot_id ),
 							*set2.rotamer( ll_rot_id ), gb_info2.residue_info( ll_rot_id ) ) );
-
-						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ gb_elec ] *  elecE );
-					}
+					
+					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ gb_elec ] *  elecE );
 				}
 			}
 		}
@@ -367,16 +364,16 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				Real const elecE(
-					potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			Real const elecE(
+				potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
 					rsd, gb_rsd_info ) );
-				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ gb_elec ] *  elecE );
-			} // kk - rotamers for residue types
-		} // nbrs
+			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ gb_elec ] *  elecE );
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 	PROF_STOP( basic::GEN_BORN_ROTAMER_BACKGROUND_ENERGIES );
 }
@@ -395,16 +392,12 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::GEN_BORN_ROTAMER_SET_INFO;
-	//using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
-
+	
 	GenBornResidueInfo const & gb_rsd_info
 		( pose.data().get< GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
-	//GenBornResidueInfo const & gb_rsd_info( retrieve_gen_born_pose_info( pose ).residue_info( rsd.seqpos ) );
-
 	GenBornRotamerSetInfo const & gb_set_info
 		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
-	//GenBornRotamersInfo const & gb_set_info( retrieve_gen_born_rotamers_info( set ) );
-
+	
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
 		Size const ii_offset = set.get_residue_type_begin( ii );
 		Residue const & ii_example_rotamer( *set.rotamer( ii_offset ));
@@ -417,16 +410,16 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				Real const elecE
-					( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
-					rsd, gb_rsd_info ) );
-				(emaps[ kk_rot_id ])[ gb_elec ] += elecE;
-			} // kk - rotamers for residue types
-		} // nbrs
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			Real const elecE
+			( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
+				rsd, gb_rsd_info ) );
+			(emaps[ kk_rot_id ])[ gb_elec ] += elecE;
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
 
@@ -445,13 +438,6 @@ GenBornEnergy::eval_atom_derivative(
 {
 	potential_.eval_atom_derivative( atom_id, weights[ gb_elec ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
 }
-
-/// @brief GenBornEnergy distance cutoff set to the same cutoff used by EtableEnergy, for now
-// Distance
-// GenBornEnergy::atomic_interaction_cutoff() const
-// {
-//  return 5.5; /// APL remove this magic number!
-// }
 
 /// @brief GenBornEnergy requires no context graphs
 void
@@ -474,8 +460,6 @@ GenBornEnergy::eval_intrares_energy(
 	EnergyMap & emap
 ) const
 {
-	//using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
-
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	GenBornResidueInfo const & gb

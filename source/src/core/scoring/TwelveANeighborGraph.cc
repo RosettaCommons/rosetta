@@ -75,7 +75,6 @@ TwelveANeighborEdge::TwelveANeighborEdge(
 
 void TwelveANeighborEdge::copy_from( Edge const * /*source*/ )
 {
-	//debug_assert( dynamic_cast< TwelveNeighborEdge const * > ( source ) );
 }
 
 Size TwelveANeighborEdge::count_static_memory() const

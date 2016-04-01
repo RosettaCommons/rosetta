@@ -186,17 +186,17 @@ void ScoreFunction::perturb_weights() {
 	ScoreTypes terms = get_nonzero_weighted_scoretypes();
 	for ( ScoreTypes::const_iterator i = terms.begin(); i != terms.end(); ++i ) {
 		const ScoreType& term = *i;
-		if ( has_nonzero_weight(term) ) {
-			Real weight = get_weight(term);
-
-			normal dist(0, weight / 8);
-			DistributionSampler<normal> sampler(dist);
-
-			Real perturbed_weight = weight + sampler.sample();
-			set_weight(term, std::max(perturbed_weight, 0.0));
-			tr.Debug << name_from_score_type(term) << ": "
-				<< weight << " => " << perturbed_weight << std::endl;
-		}
+		if ( !has_nonzero_weight(term) ) continue;
+		
+		Real weight = get_weight(term);
+		
+		normal dist(0, weight / 8);
+		DistributionSampler<normal> sampler(dist);
+		
+		Real perturbed_weight = weight + sampler.sample();
+		set_weight(term, std::max(perturbed_weight, 0.0));
+		tr.Debug << name_from_score_type(term) << ": "
+		<< weight << " => " << perturbed_weight << std::endl;
 	}
 }
 
@@ -399,7 +399,6 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			l.str( line );
 
 			if ( ! patch ) {
-
 				// Weights file parsing
 				l >> score_type >> wt;
 				if ( l.fail() ) {
@@ -408,7 +407,6 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 				score_types_from_file.push_back( std::make_pair(  score_type, wt ) ); // will apply at end.
 
 			} else {
-
 				// Patch file parsing
 				l >> score_type >> operation >> wt;
 				if ( l.fail() ) {
@@ -417,7 +415,6 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 				}
 				// will apply at end.
 				patches_from_file.push_back( std::make_pair( std::make_pair( score_type, wt ), operation ) );
-
 			} // if ( ! patch )
 		} // if ... else if ... else if ...
 	} // while ( getline( data, line ) )
@@ -441,8 +438,6 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			);
 		}
 	}
-
-
 }
 
 
@@ -454,8 +449,7 @@ ScoreFunction::set_energy_method_options(
 {
 	energy_method_options_
 		= methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( energy_method_options_in ) );
-	//*energy_method_options_ = energy_method_options_in;
-
+	
 	// Some of the energy methods only know about these options when
 	// they are constructed. So the safest thing is to destroy them and
 	// create them again.
@@ -481,7 +475,6 @@ ScoreFunction::reset_energy_methods()
 	for ( Size i = 1; i <= n_score_types; ++i ) {
 		set_weight( ScoreType( i ), weights_old.get( ScoreType( i ) ) );
 	}
-
 }
 
 void
@@ -495,8 +488,7 @@ ScoreFunction::apply_patch_from_file( std::string const & patch_tag )
 void
 ScoreFunction::set_etable(
 	std::string const & etable_name
-)
-{
+) {
 	energy_method_options_->etable_type( etable_name );
 	reset_energy_methods();
 	score_function_info_current_ = false;
@@ -507,9 +499,7 @@ void
 ScoreFunction::set_method_weights(
 	ScoreType const & t,
 	utility::vector1< Real > const & wts
-)
-{
-	//debug_assert( weights_[ t ] == 0.0 );
+) {
 	energy_method_options_->set_method_weights( t, wts );
 	reset_energy_methods();
 	score_function_info_current_ = false;
@@ -645,19 +635,17 @@ show_detail( std::ostream & out, EnergyMap & energies,  EnergyMap weights )
 void
 ScoreFunction::show_line_headers( std::ostream & out ) const
 {
-
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( weights_[ ScoreType(i) ] != 0.0 ) {
 			out << ' ' << LJ(16,ScoreType(i)) << ' ';
 		}
 	}
-
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::show_line( std::ostream & out,  pose::Pose const & pose ) const
 {
-
 	float sum_weighted=0.0;
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( weights_[ ScoreType(i) ] != 0.0 ) {
@@ -674,7 +662,6 @@ ScoreFunction::show_line( std::ostream & out,  pose::Pose const & pose ) const
 			out << " " << F(8,3, weights_[ ScoreType(i) ] * pose.energies().total_energies()[ ScoreType(i) ] );
 		}
 	}
-
 }
 
 
@@ -1157,8 +1144,7 @@ ScoreFunction::get_sub_score_exclude_res(
 void
 ScoreFunction::eval_twobody_neighbor_energies(
 	pose::Pose & pose
-) const
-{
+) const {
 
 	/// Use the EnergyGraph or the MinimizationGraph to direct scoring
 
@@ -1207,7 +1193,6 @@ ScoreFunction::eval_twobody_neighbor_energies(
 				Size const j( edge.get_second_node_ind() );
 				conformation::Residue const & resu( pose.residue( j ) );
 				// the pair energies cached in the link
-				///EnergyMap & emap( energy_edge->energy_map() );
 				tbemap.zero( cd_2b_types() );
 				tbemap.zero( ci_2b_types() );
 
@@ -1221,9 +1206,6 @@ ScoreFunction::eval_twobody_neighbor_energies(
 					if ( minimizing ) { // APL -- 5/18/2010 -- DEPRICATED
 						// confirm that this rsd-rsd interaction will be included
 						// in the atom pairs on the nblist:
-						//debug_assert( ( pose.energies().domain_map(i) !=
-						//     pose.energies().domain_map(j) ) ||
-						//    ( pose.energies().res_moved(i) ) );
 						// ensure that these are zeroed, since we will hit them at the
 						// end inside the nblist calculation
 						// they almost certainly should be, since the energies have not
@@ -1322,7 +1304,6 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 
 			}
 		}
-
 	}
 }
 
@@ -1362,7 +1343,6 @@ ScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 			emap.zero( cd_1b_types() ); // cant be cached
 			eval_cd_1b( pose.residue(i), pose, emap );
 
-
 			// 2body energy methods are allowed to define 1body intxns ///////////////////////////
 			if ( any_intrares_energies_ ) {
 				// context independent:
@@ -1388,8 +1368,7 @@ ScoreFunction::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	if ( ! any_intrares_energies_ ) return;
 	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
 			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
@@ -1406,8 +1385,7 @@ ScoreFunction::evaluate_rotamer_intrares_energies(
 	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
 	utility::vector1< core::PackerEnergy > & energies
-) const
-{
+) const {
 	if ( ! any_intrares_energies_ ) return;
 	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
 			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
@@ -1424,8 +1402,7 @@ ScoreFunction::evaluate_rotamer_intrares_energy_maps(
 	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
 	utility::vector1< EnergyMap > & emaps
-) const
-{
+) const {
 	if ( ! any_intrares_energies_ ) return;
 	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
 			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
@@ -1442,8 +1419,7 @@ ScoreFunction::eval_ci_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	if ( ! any_intrares_energies_ ) return;
 	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
 			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
@@ -1456,8 +1432,7 @@ ScoreFunction::eval_cd_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	if ( ! any_intrares_energies_ ) return;
 	for ( TWO_B_Methods::const_iterator iter = cd_2b_intrares_.begin(),
 			iter_end = cd_2b_intrares_.end(); iter != iter_end; ++iter ) {
@@ -1472,8 +1447,7 @@ ScoreFunction::eval_ci_1b(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
 			iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_energy( rsd, pose, emap );
@@ -1485,8 +1459,7 @@ ScoreFunction::eval_cd_1b(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_1B_Methods::const_iterator iter = cd_1b_methods_.begin(),
 			iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_energy( rsd, pose, emap );
@@ -1501,13 +1474,11 @@ ScoreFunction::eval_ci_2b(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 
@@ -1517,13 +1488,11 @@ ScoreFunction::eval_ci_2b_bb_bb(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->backbone_backbone_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 
@@ -1533,13 +1502,11 @@ ScoreFunction::eval_ci_2b_bb_sc(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->backbone_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 void
@@ -1548,13 +1515,11 @@ ScoreFunction::eval_ci_2b_sc_sc(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->sidechain_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 
@@ -1565,8 +1530,7 @@ ScoreFunction::eval_cd_2b(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator
 			iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
@@ -1580,13 +1544,11 @@ ScoreFunction::eval_cd_2b_bb_bb(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->backbone_backbone_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 
@@ -1596,13 +1558,11 @@ ScoreFunction::eval_cd_2b_bb_sc(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->backbone_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 void
@@ -1611,13 +1571,11 @@ ScoreFunction::eval_cd_2b_sc_sc(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->sidechain_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 
@@ -1635,8 +1593,7 @@ ScoreFunction::bump_check_full(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->bump_energy_full( rsd1, rsd2, pose, *this, emap );
@@ -1645,7 +1602,6 @@ ScoreFunction::bump_check_full(
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->bump_energy_full( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 
@@ -1663,8 +1619,7 @@ ScoreFunction::bump_check_backbone(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->bump_energy_backbone( rsd1, rsd2, pose, *this, emap );
@@ -1673,7 +1628,6 @@ ScoreFunction::bump_check_backbone(
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->bump_energy_backbone( rsd1, rsd2, pose, *this, emap );
 	}
-
 }
 
 void
@@ -1682,8 +1636,7 @@ ScoreFunction::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
 	FArray2D< core::PackerEnergy > & energy_table
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->evaluate_rotamer_pair_energies(
@@ -1694,7 +1647,6 @@ ScoreFunction::evaluate_rotamer_pair_energies(
 		(*iter)->evaluate_rotamer_pair_energies(
 			set1, set2, pose, *this, weights(), energy_table );
 	}
-
 }
 
 /// @details Determines whether two positions could have non-zero interaction energy
@@ -1703,8 +1655,7 @@ ScoreFunction::are_they_neighbors(
 	pose::Pose const & pose,
 	Size const pos1,
 	Size const pos2
-) const
-{
+) const {
 	conformation::Residue const & rsd1( pose.residue( pos1 ) );
 	conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
@@ -1721,8 +1672,7 @@ ScoreFunction::any_lr_residue_pair_energy(
 	pose::Pose const & pose,
 	Size res1,
 	Size res2
-) const
-{
+) const {
 	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
 			iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 		if ( (*iter)->defines_residue_pair_energy( pose, res1, res2 ) ) {
@@ -1849,8 +1799,7 @@ ScoreFunction::evaluate_rotamer_background_energies(
 	conformation::Residue const & residue2,
 	pose::Pose const & pose,
 	utility::vector1< core::PackerEnergy > & energy_vector
-) const
-{
+) const {
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->evaluate_rotamer_background_energies(
@@ -2021,9 +1970,7 @@ ScoreFunction::update_intrares_energy_status()
 void
 ScoreFunction::setup_for_scoring(
 	pose::Pose & pose
-) const
-{
-
+) const {
 	if ( ! pose.energies().use_nblist() ) {
 		for ( AllMethods::const_iterator it=all_methods_.begin(),
 				it_end = all_methods_.end(); it != it_end; ++it ) {
@@ -2065,8 +2012,7 @@ ScoreFunction::setup_for_packing(
 	pose::Pose & pose,
 	utility::vector1< bool > const & residues_repacking,
 	utility::vector1< bool > const & residues_designing
-) const
-{
+) const {
 	for ( AllMethods::const_iterator iter=all_methods_.begin(),
 			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_packing( pose, residues_repacking, residues_designing );
@@ -2078,8 +2024,7 @@ void
 ScoreFunction::prepare_rotamers_for_packing(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & set
-) const
-{
+) const {
 	for ( AllMethods::const_iterator iter=all_methods_.begin(),
 			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->prepare_rotamers_for_packing( pose, set );
@@ -2091,8 +2036,7 @@ void
 ScoreFunction::update_residue_for_packing(
 	pose::Pose & pose,
 	Size resid
-) const
-{
+) const {
 	for ( AllMethods::const_iterator iter=all_methods_.begin(),
 			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
 		(*iter)->update_residue_for_packing( pose, resid );
@@ -2103,14 +2047,9 @@ ScoreFunction::update_residue_for_packing(
 void
 ScoreFunction::setup_for_derivatives(
 	pose::Pose & pose
-) const
-{
+) const {
 	//std::cout << "ScoreFunction::setup_for_derivatives" << std::endl;
-	//for ( AllMethods::const_iterator iter=all_methods_.begin(),
-	//  iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-	// (*iter)->setup_for_derivatives( pose, *this );
-	//}
-
+	
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
@@ -2138,15 +2077,13 @@ ScoreFunction::setup_for_derivatives(
 			iter != iter_end; ++iter ) {
 		(*iter)->setup_for_derivatives( pose, *this );
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::finalize_after_derivatives(
 	pose::Pose & pose
-) const
-{
+) const {
 	//std::cout << "ScoreFunction::setup_for_derivatives" << std::endl;
 	for ( AllMethods::const_iterator iter=all_methods_.begin(),
 			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
@@ -2159,8 +2096,7 @@ void
 ScoreFunction::setup_for_minimizing(
 	pose::Pose & pose,
 	kinematics::MinimizerMapBase const & min_map
-) const
-{
+) const {
 
 	/// 1. Initialize the nodes in the energy graph with one-body
 	/// and the intra-residue two-body energy methods
@@ -2176,7 +2112,6 @@ ScoreFunction::setup_for_minimizing(
 
 	/// 5. Setup whole-structure energies and energy methods that opt-out
 	/// of the minimization-graph control over derivative evaluation.
-
 
 	MinimizationGraphOP g( new MinimizationGraph( pose.total_residue() ) );
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
@@ -2195,7 +2130,6 @@ ScoreFunction::setup_for_minimizing(
 			min_map, pose, true, fixed_energies );
 	}
 
-	//EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	g->copy_connectivity( pose.energies().energy_graph() );
 	// 2. Now initialize the edges of the minimization graph using the edges of the EnergyGraph;
 	// The energy graph should be up-to-date before this occurs
@@ -2235,9 +2169,6 @@ ScoreFunction::setup_for_minimizing(
 			iter = long_range_energies_begin(),
 			iter_end = long_range_energies_end();
 			iter != iter_end; ++iter ) {
-
-		// NO! go ahead an include these terms in the minimization graph for the sake of scoring
-		/// if ( (*iter)->minimize_in_whole_structure_context( pose ) ) continue;
 
 		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
 		if ( !lrec || lrec->empty() ) continue;
@@ -2319,8 +2250,7 @@ ScoreFunction::setup_for_minimizing_for_node(
 	pose::Pose & pose, // context
 	bool accumulate_fixed_energies,
 	EnergyMap & fixed_energies
-) const
-{
+) const {
 	kinematics::DomainMap const & domain_map( min_map.domain_map() );
 	Size seqpos( rsd.seqpos() );
 	/// 1a: context-independent 1body energies
@@ -2373,67 +2303,9 @@ ScoreFunction::reinitialize_minnode_for_residue(
 	conformation::Residue const & rsd,
 	kinematics::MinimizerMapBase const & min_map,
 	pose::Pose & pose // context
-) const
-{
+) const {
 	min_node.update_active_enmeths_for_residue( rsd, pose, weights_, min_map.domain_map()( rsd.seqpos() ) );
 	min_node.setup_for_minimizing( rsd, pose, *this, min_map );
-	/*
-	kinematics::DomainMap const & domain_map( min_map.domain_map() );
-	Size seqpos( rsd.seqpos() );
-	/// 1a: context-independent 1body energies
-	for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
-	iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
-	if ( domain_map( seqpos ) == 0 && ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-	if ( (*iter)->defines_score_for_residue( rsd )) {
-	(*iter)->setup_for_minimizing_for_residue(
-	rsd, pose, *this, min_map,
-	min_node.res_min_data() );
-	}
-	}
-	}
-	/// 1b: context-dependent 1body energies
-	for ( CD_1B_Methods::const_iterator iter = cd_1b_methods_.begin(),
-	iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
-	// domain map check here?
-	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) && (*iter)->defines_score_for_residue( rsd )) {
-	(*iter)->setup_for_minimizing_for_residue(
-	rsd, pose, *this, min_map,
-	min_node.res_min_data() );
-	}
-	}
-	/// 1c: context-independent 2body energies
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-	iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-	/// Only provide the setup opportunity to enmeths that are not relying on whole-structure
-	/// minimization logic
-	(*iter)->setup_for_minimizing_for_residue(
-	rsd, pose, *this, min_map,
-	min_node.res_min_data() );
-	}
-	}
-
-	/// 1d: context-dependent 2body energies
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-	iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-	// domain map check here?
-	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-	(*iter)->setup_for_minimizing_for_residue(
-	rsd, pose, *this, min_map,
-	min_node.res_min_data() );
-	}
-	}
-	/// 1e: all long-range 2body energies -- maybe this should be divided into ci and cd loops?
-	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
-	iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-	// domain map check here? -- should separate CI and CD LR2B energies
-	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-	(*iter)->setup_for_minimizing_for_residue(
-	rsd, pose, *this, min_map,
-	min_node.res_min_data() );
-	}
-	}*/
-
 }
 
 
@@ -2449,8 +2321,7 @@ ScoreFunction::setup_for_minimizing_sr2b_enmeths_for_minedge(
 	EnergyEdge const * energy_edge,
 	EnergyMap & fixed_energies,
 	Real const // apl -- remove this parameter edge_weight
-) const
-{
+) const {
 	debug_assert( ! accumulate_fixed_energies || energy_edge );
 
 	/// First, the context-independent 2body energies
@@ -2487,8 +2358,7 @@ ScoreFunction::setup_for_lr2benmeth_minimization_for_respair(
 	EnergyMap & fixed_energies,
 	Real const edge_weight,
 	Real const edge_dweight
-) const
-{
+) const {
 	Size const seqpos1( res1.seqpos() );
 	Size const seqpos2( res2.seqpos() );
 
@@ -2510,7 +2380,6 @@ ScoreFunction::setup_for_lr2benmeth_minimization_for_respair(
 		/// because, in the case of symmetric scoring, these energies have already been scaled.
 		rni->accumulate_energy( fixed_energies );
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2523,11 +2392,6 @@ ScoreFunction::eval_npd_atom_derivative(
 	Vector & F2
 ) const
 {
-	//for ( AllMethods::const_iterator iter=all_methods_.begin(),
-	//  iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-	// (*iter)->eval_atom_derivative( atom_id, pose, domain_map, *this, weights_, F1, F2 );
-	//}
-
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
@@ -2538,7 +2402,6 @@ ScoreFunction::eval_npd_atom_derivative(
 			iter != iter_end; ++iter ) {
 		(*iter)->eval_atom_derivative( atom_id, pose, domain_map, *this, weights_, F1, F2 );
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2547,16 +2410,7 @@ ScoreFunction::eval_dof_derivative(
 	id::DOF_ID const & dof_id,
 	id::TorsionID const & torsion_id,
 	pose::Pose const & pose
-) const
-{
-
-	/*for ( AllMethods::const_iterator iter=all_methods_.begin(),
-	iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-	//  for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
-	//    iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
-	deriv += (*iter)->eval_dof_derivative( dof_id, torsion_id, pose, *this, weights_ );
-	}*/
-
+) const {
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
@@ -2659,8 +2513,7 @@ ScoreFunction::add_extra_method(
 	ScoreType const & new_type,
 	Real const new_weight,
 	methods::EnergyMethod const & new_method
-)
-{
+) {
 	if ( weights_[ new_type]  != Real( 0.0 ) ||
 			new_weight == Real(0.0) ||
 			new_method.score_types().size() != 1 ||
@@ -2678,8 +2531,7 @@ void
 ScoreFunction::add_extra_method(
 	std::map< ScoreType, Real > const & new_weights,
 	methods::EnergyMethod const & new_method
-)
-{
+) {
 	for ( std::map< ScoreType, Real >::const_iterator it= new_weights.begin(); it != new_weights.end(); ++it ) {
 		ScoreType const new_type( it->first );
 		Real const new_weight( it->second );
@@ -2777,7 +2629,6 @@ ScoreFunction::remove_method( methods::EnergyMethodOP method )
 			lr_2b_methods_.push_back( *iter );
 		}
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2800,7 +2651,6 @@ ScoreFunction::initialize_methods_arrays()
 
 	// some need resizing
 	methods_by_score_type_.resize( n_score_types, 0 );
-	//std::fill( methods_by_score_type_.begin(), methods_by_score_type_.end(),  ); // wipe old pointers
 	for ( Size ii = 1; ii <= n_score_types; ++ii ) { methods_by_score_type_[ ii ] = 0; }
 	score_types_by_method_type_.resize( methods::n_energy_method_types );
 	for ( Size ii = 1; ii <= methods::n_energy_method_types; ++ii ) {

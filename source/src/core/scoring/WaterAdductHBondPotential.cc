@@ -76,10 +76,7 @@ Real
 WaterAdductHBondPotential::h2o_hbond_score_1way(
 	conformation::Residue const & h2o_rsd,
 	conformation::Residue const & other_rsd
-) const
-{
-
-
+) const {
 	Real h2o_hbond_score( 0.0 );
 	hbonds::HBondDerivs deriv;
 
@@ -122,7 +119,6 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 			if ( h2o_hbond_energy < 0.0 ) {
 				h2o_hbond_score += h2o_hbond_energy;
 			}
-
 		}
 
 		// Second check for interactions with acceptors
@@ -172,8 +168,7 @@ void
 WaterAdductHBondPotential::fill_h2o_hbond_set(
 	pose::Pose const & pose,
 	hbonds::HBondSet & hbond_set
-) const
-{
+) const {
 	// clear old data
 	hbond_set.clear();
 	hbond_set.set_hbond_options( *hbondoptions_ );
@@ -195,9 +190,7 @@ WaterAdductHBondPotential::fill_h2o_hbond_set(
 				iru != irue; ++iru ) {
 
 			int const res2( (*iru)->get_second_node_ind() );
-
 			conformation::Residue const & rsd2( pose.residue( res2 ) );
-
 			int const nb2 = tenA_neighbor_graph.get_node( res2 )->num_neighbors_counting_self();
 
 			// rsd1 as water, rsd2 as other
@@ -205,7 +198,6 @@ WaterAdductHBondPotential::fill_h2o_hbond_set(
 
 			// rsd2 as water, rsd1 as other
 			get_residue_residue_h2o_hbonds_1way( rsd2, rsd1, nb2, nb1, hbond_set );
-
 		} // nbrs of res1
 	} // res1
 }
@@ -226,8 +218,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 	int const & /*other_nb*/,
 	// output
 	hbonds::HBondSet & hbond_set
-) const
-{
+) const {
 	debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in allow
 
 	// <f1,f2> -- derivative vectors
@@ -269,25 +260,24 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 				hbe_type, donor_coord, hyd_coord, h2o_coord, h2o_base_coord, h2o_base2_coord,
 				h2o_hbond_energy, eval_deriv, deriv );
 
-			if ( h2o_hbond_energy < 0.0 ) {
-				//    Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
-				Real const weight ( 1.0 );
-				hbond_set.append_hbond(
-					hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type,
-					h2o_hbond_energy, weight, deriv );
-				//    std::cout << "Stashing h2o hbond, water is acceptor " << std::endl;
-				//    std::cout << "Energy is " << h2o_hbond_energy << std::endl;
-				//    std::cout << "F1 is " <<
-				//    deriv.first[0] << " " <<
-				//    deriv.first[1] << " " <<
-				//    deriv.first[2] << " " <<
-				//    std::endl;
-				//    std::cout << "F2 is " <<
-				//    deriv.second[0] << " " <<
-				//    deriv.second[1] << " " <<
-				//    deriv.second[2] << " " <<
-				//    std::endl;
-			}
+			if ( h2o_hbond_energy >= 0.0 ) continue;
+			
+			Real const weight ( 1.0 );
+			hbond_set.append_hbond(
+				hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type,
+				h2o_hbond_energy, weight, deriv );
+			//    std::cout << "Stashing h2o hbond, water is acceptor " << std::endl;
+			//    std::cout << "Energy is " << h2o_hbond_energy << std::endl;
+			//    std::cout << "F1 is " <<
+			//    deriv.first[0] << " " <<
+			//    deriv.first[1] << " " <<
+			//    deriv.first[2] << " " <<
+			//    std::endl;
+			//    std::cout << "F2 is " <<
+			//    deriv.second[0] << " " <<
+			//    deriv.second[1] << " " <<
+			//    deriv.second[2] << " " <<
+			//    std::endl;
 		}
 
 		// Second check for interactions with acceptors
@@ -316,24 +306,23 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 				accpt_coord, accpt_base_coord, accpt_base2_coord,
 				h2o_hbond_energy, eval_deriv, deriv );
 
-			if ( h2o_hbond_energy < 0.0 ) {
-				//    Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
-				Real const weight ( 1.0 );
-				hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type,
-					h2o_hbond_energy, weight, deriv );
-				//    std::cout << "Stashing h2o hbond, water is donor " << std::endl;
-				//    std::cout << "Energy is " << h2o_hbond_energy << std::endl;
-				//    std::cout << "F1 is " <<
-				//    deriv.first[0] << " " <<
-				//    deriv.first[1] << " " <<
-				//    deriv.first[2] << " " <<
-				//    std::endl;
-				//    std::cout << "F2 is " <<
-				//    deriv.second[0] << " " <<
-				//    deriv.second[1] << " " <<
-				//    deriv.second[2] << " " <<
-				//    std::endl;
-			}
+			if ( h2o_hbond_energy >= 0.0 ) continue;
+			
+			Real const weight ( 1.0 );
+			hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type,
+				h2o_hbond_energy, weight, deriv );
+			//    std::cout << "Stashing h2o hbond, water is donor " << std::endl;
+			//    std::cout << "Energy is " << h2o_hbond_energy << std::endl;
+			//    std::cout << "F1 is " <<
+			//    deriv.first[0] << " " <<
+			//    deriv.first[1] << " " <<
+			//    deriv.first[2] << " " <<
+			//    std::endl;
+			//    std::cout << "F2 is " <<
+			//    deriv.second[0] << " " <<
+			//    deriv.second[1] << " " <<
+			//    deriv.second[2] << " " <<
+			//    std::endl;
 		}
 	}
 }

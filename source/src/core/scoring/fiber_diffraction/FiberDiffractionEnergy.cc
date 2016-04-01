@@ -97,10 +97,6 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 
 	if ( !pose.is_fullatom() ) return;
 
-	//timeval t1, t2;
-	//double elapsedTime;
-	//gettimeofday(&t1, NULL);
-
 	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
 	}
@@ -158,14 +154,12 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 		for ( Size i=1; i<= Rmax; ++i ) I[l][i] = 0.0;
 	}
 
-
 	TR << "Preparing fiber model data..." << std::endl;
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
 	utility::vector1< Real > phi, z, r, bfactors;
 	setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 	TR << "Model contains " << natoms << " atoms" << std::endl;
-
 
 	TR << "Calculating Chi2..." << std::endl;
 	Size n_iter(0);
@@ -316,7 +310,6 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	}
 
 	if ( chi_iterations_ > 0 ) {
-
 		core::Real max_r_value;
 		find_max_r( pose, max_r_value );
 
@@ -335,18 +328,14 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 
 		TR<<"Chi free: "<<chi_free<<" after "<<chi_iterations_<<" iterations."<<std::endl;
 		///////////////////////////////////////////
-
 	}
 
 	if ( output_fiber_spectra_ ) {
 		out.close();
 	}
-
-
 }
 
 void FiberDiffractionEnergy::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
-
 	// all the work is done in setup for scoring
 	// just return results here
 	emap[ fiberdiffraction ] += chi2_;
@@ -360,7 +349,6 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
 	utility::vector0< utility::vector0 < int > >::iterator nvals;
 	core::Size lmax, Rmax;
-
 
 	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user() ) {
 		a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
@@ -412,7 +400,6 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 		rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
 	}
 
-
 	TR << "Calculating deriv Chi2..." << std::endl;
 	if ( rfactor_refinement_ ) {
 		TR << "Scale factor deriv? " << Rscale_factor <<" square_obs " << Rsum_obs << std::endl;
@@ -433,7 +420,6 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 		Size max_b_order( nvals[l].size() );
 
 		for ( Size b_order=1; b_order <= max_b_order; ++b_order ) {
-
 			int n( nvals[l][b_order-1] );
 			int abs_n( abs(n) );
 			// Precalculate phases. Initialize vector
@@ -463,10 +449,12 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 			for ( Size R=1; R<= max_R_values; ++R ) {
 				Rinv=layer_lines_R[l][R];
 				Real x_factor( 2*M_PI*Rinv );
+				
 				// precalculate jn for each n,R
 				utility::vector1< Real > jn_vec, jn_vec_plus_1;
 				jn_vec.resize(natoms);
 				jn_vec_plus_1.resize(natoms);
+				
 				// Calculate scattering...
 				for ( Size atom1=1; atom1 <= natoms; ++atom1 ) {
 					// Calculate only the jn values once.
@@ -478,13 +466,16 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 					}
 
 					Real X1 (x_factor*r[atom1]);
+					
 					// calculate R_min
 					if ( abs_n > X1 +2 ) continue;
 					Real jn1 (jn_vec[atom1]);
 					Real jn1_plus_1 (jn_vec_plus_1[atom1]);
 					Size atom_type_index1 ( atom_type_number[atom1] );
 					Real Jn_deriv_atom1( -x_factor*jn1_plus_1+n*jn1/r[atom1] );
+					
 					if ( fabs(r[atom1] ) < 1e-2 ) Jn_deriv_atom1=0.0;
+					
 					// cartesian coords and unit vectors...
 					numeric::xyzVector< core::Real > cartesian_coord_atom1( r[atom1]*cos(phi[atom1]), r[atom1]*sin(phi[atom1]), z[atom1] );
 					numeric::xyzVector< core::Real > unit_r(cos(phi[atom1]), sin(phi[atom1]), 0 );
@@ -493,23 +484,30 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 					numeric::xyzVector< core::Real > unit_z(0, 0, 1 );
 					numeric::xyzVector< core::Real > D(0,0,0);
 					numeric::xyzVector< core::Real > D_cross_R(0,0,0);
+					
 					Real tmp( 2*form_factors[l][atom_type_index1][R]*form_factors[l][atom_type_index1][R]*jn1*Jn_deriv_atom1);
 					D += tmp*unit_r;
+					
 					//cross of ATOM1 X ATOM1?
 					D_cross_R += D.cross(cartesian_coord_atom1);
 					for ( Size atom2=1; atom2 <= natoms; ++atom2 ) {
 						if ( atom2 == atom1 ) continue;
+						
 						Real X2 (x_factor*r[atom2]);
 						if ( abs_n > X2 +2 ) continue;
+						
 						Real jn2 (jn_vec[atom2]);
 						Size atom_type_index2 ( atom_type_number[ atom2 ] );
 						Real fact( form_factors[l][atom_type_index1][R]*form_factors[l][atom_type_index2][R]*jn2 );
+						
 						//Jn_deriv_atom1
 						Real dr( Jn_deriv_atom1*fact*phases[atom1][atom2] );
 						Real dphi( n*jn1*fact*phases_prime[atom1][atom2] );
 						Real dz ( 2*M_PI*l/c_*jn1*fact*phases_prime[atom1][atom2] );
+						
 						numeric::xyzVector< core::Real > D_tmp(0,0,0);
 						numeric::xyzVector< core::Real > dphi_vec(0,0,0);
+						
 						if ( r[atom1] >= 1e-2 ) {
 							if ( fabs(sin(phi[atom1])) > 1e-3 ) {
 								dphi_vec = (unit_x-cos(phi[atom1])*unit_r)/(sin(phi[atom1])*r[atom1]);
@@ -518,10 +516,12 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 							}
 						}
 						D_tmp += 2*(dr*unit_r + dz*unit_z + dphi*dphi_vec);
+						
 						numeric::xyzVector< core::Real > t1( dr*unit_r);
 						numeric::xyzVector< core::Real > t2( dz*unit_z );
 						numeric::xyzVector< core::Real > t3( dphi_vec  );
 						numeric::xyzVector< core::Real > t4( (unit_x-cos(phi[atom1]+0e-6)*unit_r)  );
+						
 						D += D_tmp;
 						D_cross_R += D_tmp.cross(cartesian_coord_atom1);
 						++n_iter;
@@ -564,7 +564,6 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
 
-	// if (hydrogen) return
 	if ( rsd_i.aa() != core::chemical::aa_vrt && !rsd_i.atom_type(atmid).is_heavyatom() ) return;
 
 	std::map<  core::id::AtomID, core::Size >::iterator it( AtomID_to_atomnbr_.find( id ) );

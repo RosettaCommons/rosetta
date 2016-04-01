@@ -21,9 +21,7 @@
 //Package headers
 
 #include <core/conformation/Residue.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
-//#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
@@ -148,13 +146,6 @@ ResidualDipolarCouplingEnergy::rdc_from_pose(
 	pose::Pose & pose
 ) const
 {
-	//  //using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
-
-	//  if( pose.data().has( RESIDUAL_DIPOLAR_COUPLING_DATA ) )
-	//   return *( static_cast< ResidualDipolarCoupling const * >( pose.data().get_const_ptr( RESIDUAL_DIPOLAR_COUPLING_DATA )() ) );
-
-	//  ResidualDipolarCouplingOP rdc_info = new ResidualDipolarCoupling;
-	//  pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
 	ResidualDipolarCouplingOP rdc_info( retrieve_RDC_from_pose( pose ) );
 	if ( !rdc_info ) {
 		rdc_info = ResidualDipolarCouplingOP( new ResidualDipolarCoupling );
@@ -299,8 +290,8 @@ ResidualDipolarCouplingEnergy::eval_atom_derivative(
 
 	F1 += score_weights[ rdc ] * f1;
 	F2 += score_weights[ rdc ] * f2;
-
 }
+
 core::Size
 ResidualDipolarCouplingEnergy::version() const
 {

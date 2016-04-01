@@ -607,13 +607,12 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 		if ( ( pose.residue( ii ).aa() == chemical::aa_cys || pose.residue( ii ).aa() == chemical::aa_dcs || pose.residue( ii ).aa() == chemical::aa_unk ) &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-				( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) // full atom residue
+				pose.residue_type( ii ).has( pose.residue_type( ii ).get_disulfide_atom_name() ) &&
+				pose.residue_type( ii ).get_disulfide_atom_name() != "CEN" // full atom residue
 				) {
 			//amw std::cout << "We are identifying a disulfide for scoring purposes at " << ii << std::endl;
 			++count_disulfides;
-			Size const ii_connect_atom( pose.residue_type( ii ).has( "SD" ) ?
-				pose.residue( ii ).atom_index( "SD" ) :
-				pose.residue( ii ).atom_index( "SG" ) );
+			Size const ii_connect_atom = pose.residue( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
 			Size other_res( 0 );
 			for ( Size jj = pose.residue( ii ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
 				if ( (Size) pose.residue( ii ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
@@ -661,13 +660,12 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 			if ( (pose.residue( ii ).aa() != chemical::aa_cys || pose.residue(ii).aa() != chemical::aa_dcs)
 					|| disulfide_residue_types_[ ii ].get() != & ( pose.residue_type( ii ) )
 					|| ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) /// subsumed by residue type check amw but reactivating
-					|| ! ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) //no longer full atom
+					|| pose.residue_type( ii ).get_disulfide_atom_name() == "CEN" //no longer full atom
 					|| ! ( pose.residue( ii ).connect_map(
 					pose.residue( ii ).type().residue_connection_id_for_atom(
-					pose.residue( ii ).atom_index(
-					pose.residue_type( ii ).has( "SG" ) ? "SG" : "SD" ) ) ).resid()
-					== other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) )
-					) {
+					pose.residue( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() ) ) ).resid()
+					== other_neighbor_id( resid_2_disulfide_index_[ ii ], ii )
+					) ) {
 				return true;
 			}
 		} else if ( ( pose.residue( ii ).aa() == chemical::aa_cys

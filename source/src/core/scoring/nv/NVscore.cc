@@ -75,7 +75,6 @@ NVscore::NVscore() :
 
 	lower_bound_squared_ = lower_bound_*lower_bound_;
 	upper_bound_squared_ = upper_bound_*upper_bound_;
-
 }
 
 
@@ -114,14 +113,12 @@ void NVscore::indicate_required_context_graphs(utility::vector1< bool > & contex
 ///Calculate the weighted neighbor count given an upper and lower bound
 Real NVscore::neighbor_weight(Vector::Value const & distance2) const
 {
-
-
 	if ( distance2 <= lower_bound_squared_ ) {
 		//neighbor count score is 1 if less than the lower bound
-		return(1);
+		return 1;
 	} else if ( distance2 >= upper_bound_squared_ ) {
 		//neighbor count score is 0 if greater than upper bound
-		return(0);
+		return 0 ;
 	} else if ( (lower_bound_squared_ < distance2) && (upper_bound_squared_ > distance2) ) {
 		//if between upper and lower bound, score follows a smooth function
 		core::Real distance(sqrt(distance2));
@@ -165,7 +162,6 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 			neighbor_count += weight;
 			neighbor_vector_sum += weighted_vector;
 		}
-
 	}
 
 
@@ -182,7 +178,6 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 	emap[ neigh_vect ] += nv_potential;
 	emap[ neigh_vect_raw ] += neighbor_vector;
 	emap[ neigh_count ] += neighbor_count;
-
 }
 
 core::Size

@@ -160,7 +160,6 @@ DNATorsionEnergy::eval_intrares_energy(
 	dna_torsion_potential_.add_sugar_ring_closure_constraints( rsd, residue_dna_sugar_close_constraints );
 	residue_dna_sugar_close_constraints.eval_intrares_energy( rsd, pose, sfxn, emap );
 	if ( verbose_ ) std::cout << "accumulated dna_sugar_close " <<   rsd.seqpos() << " " << emap[ dna_sugar_close ] << std::endl;
-
 }
 
 
@@ -172,7 +171,6 @@ DNATorsionEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const
 {
-
 	if ( dna_torsion_constraints_ == 0 ) return;
 	if ( !constraints_ready_ ) return;
 
@@ -184,7 +182,6 @@ DNATorsionEnergy::finalize_total_energy(
 	//dna_sugar_close_constraints_->eval_non_residue_pair_energy( pose, sfxn, totals );
 
 	constraints_ready_ = false;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -237,11 +234,9 @@ DNATorsionEnergy::finalize_after_derivatives(
 	ScoreFunction const &
 ) const
 {
-
 	if ( dna_torsion_constraints_ == 0 ) return;
 	if ( !constraints_ready_ ) return;
 	constraints_ready_ = false;
-
 }
 
 

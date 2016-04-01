@@ -55,7 +55,6 @@ MMLJEnergyTable::score( Size atom1, Size atom2, Size path_distance, Real squared
 	rep = atr = 0;
 
 	if ( squared_distance > max_dist_ ) return;
-
 	if ( path_distance != 3 ) path_distance = 4;
 
 	// subtract max dist slope and value
@@ -67,8 +66,7 @@ MMLJEnergyTable::score( Size atom1, Size atom2, Size path_distance, Real squared
 	// get the distance and energy for when the function is a minimum
 	Real min_ener_dist = mm_lj_score_.min_dist( atom1, atom2, path_distance );
 	Real min_ener      = mm_lj_score_.score( atom1, atom2, path_distance, min_ener_dist*min_ener_dist );
-	//min_ener -= max_ener;// max_slope * min_ener_dist * min_ener_dist + max_int;
-
+	
 	// get values for linear switching at short distances
 	Real switch_dist         = linear_switch_point * min_ener_dist;
 	Real switch_dist_squared = switch_dist * switch_dist;
@@ -82,8 +80,7 @@ MMLJEnergyTable::score( Size atom1, Size atom2, Size path_distance, Real squared
 	} else {
 		temp_score = mm_lj_score_.score( atom1, atom2, path_distance, squared_distance );
 	}
-	//temp_score -= max_ener;// max_slope * squared_distance + max_int;
-
+	
 	if ( squared_distance < min_ener_dist * min_ener_dist ) { // repulsive
 		rep = temp_score - min_ener;
 		atr = min_ener - (max_int + max_slope * squared_distance );//max_ener;
@@ -103,28 +100,23 @@ MMLJEnergyTable::deriv_score( Size atom1, Size atom2, Size path_distance, Real s
 	// Split out behavior for path distance 3 only
 	if ( path_distance != 3 ) path_distance = 4;
 
-	//Real max_ener  = mm_lj_score_.score( atom1, atom2, path_distance, max_dist_ );
 	Real max_slope = mm_lj_score_.deriv_score( atom1, atom2, path_distance, max_dist_ );
 
 	// get the distance and energy for when the function is a minimum
 	Real min_ener_dist = mm_lj_score_.min_dist( atom1, atom2, path_distance );
-	//Real min_ener      = mm_lj_score_.score(    atom1, atom2, path_distance, min_ener_dist*min_ener_dist );
-
+	
 	// get values for linear switching at short distances
 	Real switch_dist = linear_switch_point * min_ener_dist;
 	Real switch_dist_squared = switch_dist * switch_dist;
 	Real switch_slope = mm_lj_score_.deriv_score( atom1, atom2, path_distance, switch_dist_squared );
-	//Real switch_ener  = mm_lj_score_.score(       atom1, atom2, path_distance, switch_dist_squared );
-	//Real switch_intercept = switch_ener - switch_slope * switch_dist_squared;
-
+	
 	Real temp_deriv = 0;
 	if ( squared_distance <= switch_dist_squared ) { // in switch region
 		temp_deriv = switch_slope;
 	} else {
 		temp_deriv = mm_lj_score_.deriv_score( atom1, atom2, path_distance, squared_distance );
 	}
-	//temp_deriv -= max_slope;
-
+	
 	if ( squared_distance < min_ener_dist * min_ener_dist ) { // repulsive
 		drep = temp_deriv;
 		datr = 0 - max_slope;

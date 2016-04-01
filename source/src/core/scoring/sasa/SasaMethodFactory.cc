@@ -20,14 +20,11 @@ namespace sasa {
 
 
 SasaMethodOP
-create_sasa_method(SasaMethodEnum /*method*/, core::Real probe_radius, SasaRadii radii_set){
-
-	// switch(method){
-	//  case LeGrand:
-	return SasaMethodOP( new LeGrandSasa(probe_radius, radii_set) );
-	// }
-
-
+create_sasa_method(
+	SasaMethodEnum /*method*/,
+	core::Real probe_radius,
+	SasaRadii radii_set
+) {
 	return SasaMethodOP( new LeGrandSasa(probe_radius, radii_set) );
 }
 

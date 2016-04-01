@@ -125,7 +125,6 @@ HackAroEnergy::residue_pair_energy(
 Vector
 HackAroEnergy::get_centroid( conformation::Residue const & rsd ) const
 {
-
 	Vector centroid( 0.0 );
 	Size numatoms = 0;
 	for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
@@ -185,9 +184,7 @@ HackAroEnergy::get_base_coordinate_system( conformation::Residue const & rsd, Ve
 Real
 HackAroEnergy::get_aro_axis_score_ANGLE(
 	Real const cos_theta,
-	Real & deriv ) const{
-
-	//Size cos_theta_bin;
+	Real & deriv ) const {
 
 	// Favor "T-shaped" arrangements with theta = 90 degrees.
 	// - sin^4 ( theta )
@@ -195,11 +192,6 @@ HackAroEnergy::get_aro_axis_score_ANGLE(
 	deriv = 4 * ( 1 - cos_theta * cos_theta ) * cos_theta;
 
 	return value;
-
-	// DON'T KEEP THIS AROUND!
-	//deriv = 0.0;
-	// return 1.0;
-
 }
 
 ///////////////////////////////////////////////////////////////
@@ -220,10 +212,6 @@ HackAroEnergy::get_aro_axis_score_DIST(
 	deriv = dist_func_->dfunc( dist );
 
 	return value;
-
-	//deriv = 0.0;
-	//return 1.0;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +222,6 @@ HackAroEnergy::residue_pair_energy_aro_aro(
 	EnergyMap & emap
 ) const
 {
-
 	debug_assert( rsd1.is_aromatic() );
 	debug_assert( rsd2.is_aromatic() );
 
@@ -254,7 +241,6 @@ HackAroEnergy::residue_pair_energy_aro_aro(
 	Real const total_score = angle_score * dist_score;
 
 	emap[ hack_aro ] += total_score;
-
 }
 
 /////////////////////////////////////////////////////////////
@@ -277,7 +263,6 @@ HackAroEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
-
 	using namespace chemical;
 
 	Size const pos1( atom_id.rsd() );
@@ -306,17 +291,12 @@ HackAroEnergy::eval_atom_derivative(
 		Size const pos2( (*iru)->get_other_ind( pos1 ) );
 
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
-
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
-
 		if ( !rsd2.is_aromatic() ) continue;
 
 		debug_assert( pos2 != pos1 );
-
 		eval_atom_derivative_aro_aro( rsd1, rsd2, weights, F1, F2 );
-
 	} // loop over nbrs of rsd1
-
 }
 
 
@@ -349,8 +329,6 @@ HackAroEnergy::eval_atom_derivative_aro_aro(
 	Real const angle_score = get_aro_axis_score_ANGLE( cos_theta, angle_deriv );
 	Real const dist_score  = get_aro_axis_score_DIST( cen_dist, dist_deriv );
 
-	//Real const total_score = angle_score * dist_score;
-
 	// checked my previous wrk for rna_stack_axis, et.c., in RNA_LowResolutionPotential.cc
 	Matrix const & M_i( stub1.M );
 	Vector const & z_i = M_i.col_z();
@@ -364,7 +342,6 @@ HackAroEnergy::eval_atom_derivative_aro_aro(
 
 	F1 -= weights[ hack_aro ] * f1;
 	F2 -= weights[ hack_aro ] * f2;
-
 }
 
 

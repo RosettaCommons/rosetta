@@ -214,14 +214,6 @@ DirectReadoutPotential::get_z_bin(Real coord) const
 	return bin;
 }
 
-// int
-// DirectReadoutPotential::num_pairs(int b, int a)
-// {
-//  for (int i=0; i<80; i++)
-//   {  if (pair_base[i]==b && pair_aa[i]==a)  {  return pair_num[i];  }
-//  }
-// }
-
 
 } // ns dna
 } // ns scoring

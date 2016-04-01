@@ -935,7 +935,6 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 
 				//fold to make it in the range [-0.5*grid, 0.5*grid]
 				if ( dist_index[0] > grid_half[0] ) dist_index[0] -= grid[0];
-
 				if ( dist_index[0] <= - grid_half[0] ) dist_index[0] += grid[0];
 
 				//skip if the dist is too large
@@ -949,7 +948,6 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 
 					//fold to make it in the range [-0.5*grid, 0.5*grid]
 					if ( dist_index[1] > grid_half[1] ) dist_index[1] -= grid[1];
-
 					if ( dist_index[1] <= - grid_half[1] ) dist_index[1] += grid[1];
 
 					//skip if the dist is too large

@@ -18,11 +18,7 @@
 #include <core/types.hh>
 
 // ObjexxFCL headers
-
-
 // Numeric headers
-
-
 // Utility headers
 
 // C++ headers
@@ -58,8 +54,7 @@ std::istream &
 operator >>(
 	std::istream & is,
 	ScoreType & score_type
-)
-{
+) {
 	std::string name;
 	is >> name;
 	if ( ScoreTypeManager::is_score_type( name ) ) {
@@ -81,8 +76,7 @@ std::ostream &
 operator <<(
 	std::ostream & os,
 	ScoreType const & score_type
-)
-{
+) {
 	os << ScoreTypeManager::name_from_score_type( score_type );
 	return os;
 }
@@ -93,8 +87,7 @@ std::ostream &
 operator <<(
 	std::ostream & os,
 	ScoreTypes const & score_types
-)
-{
+) {
 	for ( core::Size ii(1); ii <= score_types.size(); ++ii ) {
 		if ( ii == 1 ) {
 			os << "( ";

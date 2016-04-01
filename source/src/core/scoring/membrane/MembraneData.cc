@@ -259,7 +259,6 @@ MembraneData::load_menv_info() {
 			}
 		}
 	} // end pair log
-
 }
 
 /// @brief Membrane Base Potential Statistics

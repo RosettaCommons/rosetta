@@ -220,7 +220,6 @@ MembranePotential::MembranePotential():
 		mem_cbeta_4TM_den6_.dimension( cbeta_den_table_size );
 		mem_cbeta_4TM_den12_.dimension( cbeta_den_table_size );
 
-
 		// Read in etables into private vars
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/memcbeta_den.txt" );
@@ -283,7 +282,6 @@ MembranePotential::MembranePotential():
 				}
 				if ( l.fail() || tag != "MEMCBETA_4TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN12)");
 			}
-
 		}
 	}
 
@@ -305,7 +303,6 @@ MembranePotential::MembranePotential():
 					}
 					if ( l.fail() || ii != i || jj != j || tag != "MEM_PAIR_LOG:"  ) utility_exit_with_message("scoring/score_functions/MembranePotential/mem_pair_log.txt");
 				}
-
 			}
 		}
 	}
@@ -363,7 +360,6 @@ MembranePotential::evaluate_env(
 ) const {
 	Real t2 = 2.0;
 	Real t3 = 2.0;
-	//int layer1, layer2, layer;
 	Real f, z, zn, low;
 
 	Real const env6_weight=1.0;
@@ -376,12 +372,12 @@ MembranePotential::evaluate_env(
 	if ( fcen6 > 15 ) fcen6 = 15 ;
 	if ( fcen10 > 40 ) fcen10 = 40;
 
-	if ( rsd.is_protein() ) {
-
+	if ( !rsd.is_protein() ) { // amino acid check
+		membrane_env_score = 0.0;
+	} else {
 		if ( ( MembraneDepth < 11.0 ) || ( MembraneDepth > 49.0 ) ) {
 			//pure water layer
 			int layer = 3;
-			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 (env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ));
 			Real score10 (env10_weight* mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
 			membrane_env_score = score6 + score10;
@@ -390,8 +386,7 @@ MembranePotential::evaluate_env(
 			//interpolate between water and interface phases
 			int layer1 = 2; //interface layer
 			int layer2 = 3; //water layer
-			//B_layer = 1;  // set but never used ~Labonte
-
+			
 			if ( MembraneDepth <= 13.0 ) {
 				low = 13.0;
 			} else {
@@ -408,15 +403,9 @@ MembranePotential::evaluate_env(
 			Real score10_layer1( env10_weight*mem_env_log10_( rsd.aa(), layer1, static_cast< int >( fcen10 ) ) );
 
 			membrane_env_score = f * ( score6_layer2 + score10_layer2 ) + ( 1 - f ) * ( score6_layer1 + score10_layer1 );
-
-			// amw what's the point of this? it immediately leaves scope and wasn't being used
-			// in higher scope either.
-			//int layer = ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) ? 2 : 3;
-
 		} else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
 			//pure interface phase
 			int layer = 2; //interface layer
-			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 ( env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ) );
 			Real score10 ( env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
 			membrane_env_score = score6 + score10;
@@ -441,9 +430,6 @@ MembranePotential::evaluate_env(
 			Real score10_layer1( env10_weight*mem_env_log10_( rsd.aa(), layer1, static_cast< int >( fcen10 ) ) );
 
 			membrane_env_score = f * ( score6_layer2  + score10_layer2 ) + ( 1 - f ) * ( score6_layer1 + score10_layer1 );
-
-			//int layer = ( MembraneDepth <= 18.0 || MembraneDepth >= 42.0 ) ? 2 : 1;
-
 		} else {
 			//pure hydrophobic phase
 			int layer = 1;
@@ -452,11 +438,7 @@ MembranePotential::evaluate_env(
 			Real score10 (env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ));
 			membrane_env_score = score6+score10;
 		}
-
 		membrane_env_score*=0.5; //bw membrane_embed_weight...
-
-	} else { // amino acid check
-		membrane_env_score = 0.0;
 	}
 }
 
@@ -466,8 +448,7 @@ MembranePotential::evaluate_cbeta(
 	pose::Pose const & pose,
 	conformation::Residue const & rsd,
 	Real & membrane_cb_score
-) const
-{
+) const {
 	membrane_cb_score=0;
 	Real const fcen6 ( cenlist_from_pose( pose ).fcen6( rsd.seqpos() ) );
 	Real const fcen12 ( cenlist_from_pose( pose ).fcen12( rsd.seqpos() ) );
@@ -514,9 +495,7 @@ MembranePotential::evaluate_pair(
 	conformation::Residue const & rsd2,
 	Real const cendist,
 	Real & membrane_pair_score
-) const
-{
-
+) const {
 	membrane_pair_score = 0.0;
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
@@ -525,6 +504,8 @@ MembranePotential::evaluate_pair(
 	chemical::AA const aa2( rsd2.aa() );
 
 	//CAR  no pair score if a disulfide
+	// AMW TODO: note that this has been commented out of pair evaluation
+	// for a while, but not here! hooray, duplication...
 	if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
 			rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
 			rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
@@ -543,7 +524,6 @@ MembranePotential::evaluate_pair(
 
 	int icon = 5;
 	Real interp2( 0.0 );
-	//Real interp1( 0.0);
 	Real const MembraneDepth1 (MembraneEmbed_from_pose( pose ).depth(rsd1.seqpos() ) );
 	Real const MembraneDepth2 (MembraneEmbed_from_pose( pose ).depth(rsd2.seqpos() ) );
 
@@ -580,8 +560,13 @@ MembranePotential::evaluate_pair(
 	if ( interp2 > 1.0 ) interp2 = 1.0;
 	// handle last bin specially since icon+1 would be past array end
 	Real f(0);
-	if ( icon != 5 ) {
-		if ( !no_interpolate_Mpair_ ) { //bw new mini specfic, true by default.
+	if ( icon == 5 ) {
+		membrane_pair_score =   ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer,icon  , aa1, aa2 );
+	} else {
+		if ( no_interpolate_Mpair_ ) {
+			membrane_pair_score = ( ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer, icon  , aa1, aa2 ) +
+								   (       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
+		} else { //bw new mini specfic, true by default.
 
 			if ( std::abs(AverageDepth - 18)<4 ) {
 				f=1/(1+std::exp(1.5*(18-AverageDepth)));
@@ -599,15 +584,9 @@ MembranePotential::evaluate_pair(
 				membrane_pair_score = ( ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer, icon  , aa1, aa2 ) +
 					(       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
 			}
-		} else {
-			membrane_pair_score = ( ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer, icon  , aa1, aa2 ) +
-				(       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
 		}
-	} else {
-		membrane_pair_score =   ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer,icon  , aa1, aa2 );
 	}
 	membrane_pair_score*=2.019;//why is this multiplied by 2.019???
-	return;
 }
 
 // duplicated in Embedding Factory and Embedding Residues
@@ -833,8 +812,7 @@ void MembranePotential::init_membrane_center_normal(
 	pose::Pose const & pose,
 	Vector & normal,
 	Vector & center
-) const
-{
+) const {
 	/// Load from
 
 	if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {
@@ -886,9 +864,7 @@ void MembranePotential::score_normal_center(
 	Vector const & normal,
 	Vector const & center,
 	Real & score
-) const
-{
-
+) const {
 	// Compute Starting Conditions
 	Size const nres=pose.total_residue();
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) ); // @ra should be SpanningTopology total
@@ -903,14 +879,11 @@ void MembranePotential::score_normal_center(
 	// For every residue in the pose, evaluate membrane environment based on center and normal given. Makes corrections
 	// for symmetry
 	for ( Size i = 1; i <= nres; ++i ) {
-
 		Size rsdSeq(i);
 
 		// Symmetry
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-
 			using namespace core::conformation::symmetry;
-
 			SymmetricConformation const & symm_conf ( dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
@@ -931,7 +904,6 @@ void MembranePotential::score_normal_center(
 		core::Real depth = dot( xyz-center, normal ) + 30;
 		evaluate_env( pose, pose.residue(i), depth, residue_score );
 		score+=residue_score;
-
 	}
 
 	// if the user specified to apply mp penalties, append the score
@@ -949,8 +921,7 @@ void MembranePotential::search_memb_normal(
 	Vector & n,
 	Real const & alpha,
 	Real const & theta
-) const
-{
+) const {
 	Real r_alpha = numeric::conversions::radians(alpha);
 	Real r_theta = numeric::conversions::radians(theta);
 	Vector u(std::sin(r_alpha) * std::cos(r_theta), std::sin(r_alpha) * std::sin(r_theta), std::cos(r_alpha));
@@ -964,8 +935,7 @@ MembranePotential::search_memb_center(
 	Vector & c,
 	Vector & n,
 	Real const & delta
-) const
-{
+) const {
 	c = c + delta*n;
 }
 
@@ -975,17 +945,17 @@ void
 MembranePotential::rot_perturb_vector(
 	Vector & v,
 	Real const & std_dev
-) const
-{
+) const {
 	Vector u( numeric::random::gaussian(), numeric::random::gaussian(), numeric::random::gaussian() ); //bw rotation_matrix will normalize.
 	Real alpha( numeric::random::gaussian() * std_dev );
 	v = rotation_matrix(u, alpha) * v;
 }
 
 void
-MembranePotential::rigid_perturb_vector(Vector & v,
-	Real const & std_dev) const
-{
+MembranePotential::rigid_perturb_vector(
+	Vector & v,
+	Real const & std_dev
+) const {
 	Vector u(numeric::random::gaussian(),numeric::random::gaussian(),numeric::random::gaussian()); // there is a weird thing here???
 	u.normalize();
 	v=v+std_dev*u;
@@ -1122,9 +1092,8 @@ void
 MembranePotential::termini_penalty(pose::Pose const & pose, Real & termini_pen) const
 {
 	termini_pen=0.0;
-	if ( !Menv_penalties_ ) {
-		return;
-	}
+	if ( !Menv_penalties_ ) return;
+
 	Vector const normal(MembraneEmbed_from_pose( pose ).normal());
 	Vector const center(MembraneEmbed_from_pose( pose ).center());
 	termini_penalty(pose,normal,center,termini_pen);
@@ -1134,9 +1103,8 @@ void
 MembranePotential::termini_penalty(pose::Pose const & pose, Vector const & normal,Vector const & center,Real & termini_pen) const
 {
 	termini_pen=0.0;
-	if ( !Menv_penalties_ ) {
-		return;
-	}
+	if ( !Menv_penalties_ ) return;
+
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
 
 	for ( Size i=1; i<=pose.total_residue(); ++i ) {
@@ -1185,7 +1153,6 @@ MembraneEmbed_from_pose( pose::Pose const & pose )
 /// a non-const reference to it.
 MembraneEmbed & nonconst_MembraneEmbed_from_pose( pose::Pose & pose )
 {
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ) {
 		return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 	}

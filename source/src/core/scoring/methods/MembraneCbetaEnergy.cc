@@ -87,7 +87,6 @@ MembraneCbetaEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 	potential_.compute_centroid_environment( pose );
 
 	//No need to calculate embedding...
-
 }
 
 
@@ -122,7 +121,6 @@ MembraneCbetaEnergy::residue_energy(
 	///emap[ Menv   ] = env_score;// * rsd_wt;
 	//std::cout << "CB " << MembraneTopology_from_pose( pose ).allow_scoring(rsd.seqpos()) << " "  << rsd.seqpos() << " " << cb_score << "\n";
 	emap[ Mcbeta ] += cb_score;// * rsd_wt;
-
 } // residue_energy
 
 void

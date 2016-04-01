@@ -82,53 +82,50 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 
 	std::cout << "JL checking for SequenceDependentRefEnergy weights" << std::endl;
 
-	if ( option[ OptionKeys::score::seqdep_refene_fname ].user() ) {
-		std::string const in_fname( option[ OptionKeys::score::seqdep_refene_fname ] );
-		std::cout << "JL reading SequenceDependentRefEnergy weights from " << in_fname << std::endl;
-		utility::io::izstream in_stream( in_fname );
-		if ( !in_stream.good() ) {
-			utility_exit_with_message( "[ERROR] Error opening SequenceDependentRefEnergy file" );
-		}
-		std::string line;
-		core::Size seqpos(0);
-		while ( getline( in_stream, line) ) {
-			++seqpos;
-			std::cout << "JL got " << seqpos << " line " << line << std::endl;
-			utility::vector1< std::string > const tokens ( utility::split( line ) );
-			utility::vector1< Real > energies;
-			for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
-				energies.push_back( atof(it->c_str()) );
-			}
-			aa_seq_weights_.push_back(energies);
-		}
-
-		if ( option[ OptionKeys::score::secondary_seqdep_refene_fname ].user() ) {
-			std::string const in_fname( option[ OptionKeys::score::secondary_seqdep_refene_fname ] );
-			std::cout << "JL reading SECONDARY SequenceDependentRefEnergy weights from " << in_fname << std::endl;
-			utility::io::izstream in_stream( in_fname );
-			if ( !in_stream.good() ) {
-				utility_exit_with_message( "[ERROR] Error opening SECONDARY SequenceDependentRefEnergy file" );
-			}
-			std::string line;
-			core::Size seqpos(0);
-			while ( getline( in_stream, line) ) {
-				++seqpos;
-				std::cout << "JL got " << seqpos << " line " << line << std::endl;
-				utility::vector1< std::string > const tokens ( utility::split( line ) );
-				utility::vector1< Real > energies;
-				for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
-					energies.push_back( atof(it->c_str()) );
-				}
-				core::Size aa(0);
-				for ( utility::vector1< Real >::const_iterator it = energies.begin(); it != energies.end(); ++it ) {
-					++aa;
-					(aa_seq_weights_[seqpos])[ aa ] += *it;
-				}
-			}
-		}
-
+	if ( !option[ OptionKeys::score::seqdep_refene_fname ].user() ) return;
+	
+	std::string const in_fname( option[ OptionKeys::score::seqdep_refene_fname ] );
+	std::cout << "JL reading SequenceDependentRefEnergy weights from " << in_fname << std::endl;
+	utility::io::izstream in_stream( in_fname );
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening SequenceDependentRefEnergy file" );
 	}
-
+	std::string line;
+	core::Size seqpos(0);
+	while ( getline( in_stream, line) ) {
+		++seqpos;
+		std::cout << "JL got " << seqpos << " line " << line << std::endl;
+		utility::vector1< std::string > const tokens ( utility::split( line ) );
+		utility::vector1< Real > energies;
+		for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
+			energies.push_back( atof(it->c_str()) );
+		}
+		aa_seq_weights_.push_back(energies);
+	}
+	
+	if ( ! option[ OptionKeys::score::secondary_seqdep_refene_fname ].user() ) return;
+	
+	std::string const in_fname2( option[ OptionKeys::score::secondary_seqdep_refene_fname ] );
+	std::cout << "JL reading SECONDARY SequenceDependentRefEnergy weights from " << in_fname2 << std::endl;
+	utility::io::izstream in_stream2( in_fname2 );
+	if ( !in_stream2.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening SECONDARY SequenceDependentRefEnergy file" );
+	}
+	seqpos = 0;
+	while ( getline( in_stream2, line ) ) {
+		++seqpos;
+		std::cout << "JL got " << seqpos << " line " << line << std::endl;
+		utility::vector1< std::string > const tokens ( utility::split( line ) );
+		utility::vector1< Real > energies;
+		for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
+			energies.push_back( atof(it->c_str()) );
+		}
+		core::Size aa(0);
+		for ( utility::vector1< Real >::const_iterator it = energies.begin(); it != energies.end(); ++it ) {
+			++aa;
+			(aa_seq_weights_[seqpos])[ aa ] += *it;
+		}
+	}
 }
 
 
@@ -156,10 +153,6 @@ SequenceDependentRefEnergy::residue_energy(
 
 	Real const ene = (aa_seq_weights_[seqpos])[ aa ];
 	emap[ seqdep_ref ] += ene;
-	// std::cout << "JL at seqpos " << seqpos << " for aa " << aa << " using seqdep_ref " <<  ene << std::endl;
-
-	return;
-
 }
 
 

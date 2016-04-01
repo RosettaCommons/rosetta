@@ -127,7 +127,6 @@ RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & opti
 	rna_fitted_torsion_info_( chemical::rna::RNA_FittedTorsionInfoOP( new chemical::rna::RNA_FittedTorsionInfo ) ),
 	intrares_side_chain_score_( 0.0 )
 {
-
 	path_to_torsion_files_ = "scoring/rna/torsion_potentials/" + options.torsion_potential();
 
 	//Turn on the new torsional potential if the folder name ends wirh "new"
@@ -146,7 +145,6 @@ RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & opti
 	init_potentials_from_rna_torsion_database_files();
 
 	init_fade_functions();
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -283,9 +281,7 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 		score += pseudozeta_score;
 		if ( verbose_ ) TR << "Pseudozeta torsion: " << rsd.seqpos() << " -- " << pseudozeta << "  score: " << pseudozeta_score << std::endl;
 	}
-
 	return score;
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -342,7 +338,6 @@ RNA_TorsionPotential::residue_pair_energy( core::conformation::Residue const & r
 bool
 RNA_TorsionPotential::get_f1_f2( core::id::TorsionID const & torsion_id, pose::Pose const & pose, core::id::AtomID const & id, Vector & f1, Vector & f2 ) const
 {
-
 	conformation::Conformation const & conformation( pose.conformation() );
 
 	if ( !pose.residue_type( torsion_id.rsd() ).is_RNA() ) return false;
@@ -375,6 +370,7 @@ RNA_TorsionPotential::get_f1_f2( core::id::TorsionID const & torsion_id, pose::P
 	} else {
 		return false;
 	}
+
 	return true;
 }
 
@@ -386,8 +382,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const{
-
+) const {
 	using numeric::principal_angle_degrees;
 
 	Real const radians2degrees = 1.0 / radians( 1.0 );
@@ -626,7 +621,6 @@ RNA_TorsionPotential::eval_atom_derivative(
 			F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 		}
 	}
-
 }
 
 
@@ -691,7 +685,6 @@ RNA_TorsionPotential::init_potentials_from_rna_torsion_database_files() {
 
 	chi_potential_syn_guanosine_bonus_ = core::scoring::func::FuncOP( new core::scoring::func::FadeFunc( -120.0/*cutoff_lower*/, 0.0 /*cutoff_upper*/, 10.0 /*fade_zone*/,
 		syn_G_potential_bonus_ /*well depth*/, 0 ) );
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -715,7 +708,6 @@ RNA_TorsionPotential::initialize_potential_from_file( core::scoring::func::FuncO
 void
 RNA_TorsionPotential::init_fade_functions()
 {
-
 	using namespace scoring::constraints;
 
 	Real const DELTA_CUTOFF_ = rna_fitted_torsion_info_->delta_cutoff();

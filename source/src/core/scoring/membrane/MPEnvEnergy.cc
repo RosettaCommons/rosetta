@@ -113,7 +113,6 @@ MPEnvEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-
 	// Check Structure is a membrane protein
 	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Error: Cannot use mpframework energy term using a non membrane pose!");

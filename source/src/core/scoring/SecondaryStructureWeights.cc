@@ -18,11 +18,8 @@
 
 #include <utility/vector1.hh>
 
-
 // utility headers
-
 // ObjexxFCL headers
-
 // C++ headers
 
 #ifdef SERIALIZATION
@@ -67,8 +64,7 @@ SecondaryStructureWeights::initialize()
 void
 SecondaryStructureWeights::setup_parallel_antiparallel_weights(
 	bool const & randomize_weights
-)
-{
+) {
 	if ( randomize_weights ) {
 		// Choose whether to weight up parallel or antiparallel
 		Real randomnumber = numeric::random::rg().uniform();

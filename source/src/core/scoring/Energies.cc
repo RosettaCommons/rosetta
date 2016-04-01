@@ -158,7 +158,6 @@ Energies::operator = ( Energies const & rhs )
 	minimization_graph_ = MinimizationGraphOP( rhs.minimization_graph_ ? new MinimizationGraph( * rhs.minimization_graph_ ) : 0 );
 	onebody_energies_ =  rhs.onebody_energies_;
 	residue_total_energies_uptodate_ = false;
-	//std::fill( residue_total_energies_.begin(), residue_total_energies_.end(), EnergyMap() ); // unncessary
 	residue_total_energy_uptodate_ = rhs.residue_total_energy_uptodate_;
 	residue_total_energy_ = rhs.residue_total_energy_;
 	total_energies_ = rhs.total_energies_;
@@ -594,13 +593,6 @@ Energies::set_use_nblist(
 	domain_map_ = domain_map_in;
 	internalize_new_domain_map();
 
-	// setup the energy graph and context graphs
-	// this deletes pair-moved edges
-	// APL MOD 6.29.2010 -- no longer delete edges holding CD scores -- prepare_neighbor_graphs();
-
-	// this adds appropriate pair-moved edges
-	/// APL MOD 6.29.2010 -- do not try to add new edges either -- update_neighbor_links( pose );
-
 	// so at this point, the neighbor links are correct and complete
 	// but the neighbor-links for moving pairs are empty (no cached energies)
 	// (here moving pairs are defined wrt the passed-in set of moving
@@ -873,9 +865,7 @@ void
 Energies::update_residue_neighbors(
 	DomainMap const & domain_map_in,
 	pose::Pose const & pose
-)
-{
-
+) {
 	if ( graph_state_ == GOOD ) return;
 
 	if ( size_ != pose.total_residue() ) {
@@ -903,7 +893,6 @@ Energies::update_residue_neighbors(
 	prepare_neighbor_graphs();
 	update_neighbor_links( pose );
 	graph_state_ = GOOD;
-
 }
 
 
@@ -1328,8 +1317,6 @@ Energies::require_context_graph_( scoring::ContextGraphType type, bool external 
 			}
 		}
 	}
-
-
 }
 
 
@@ -1367,18 +1354,6 @@ Energies::scoring_begin(
 		scorefunction_changed = true;
 	}
 
-	/*if ( ! scorefunction_changed ) {
-	/// Force a rescore if weights have changed.
-	for ( Size ii = 1; ii <= n_shortranged_2b_score_types; ++ii ) {
-	if ( scorefxn_weights_[ (ScoreType) ii ] != sfxn.weights()[ (ScoreType) ii ] ) {
-	energy_state_ = BAD;
-	graph_state_ = BAD;
-	scorefunction_changed = true;
-	break;
-	}
-	}
-	}*/
-
 	// check size
 	if ( size_ != pose.total_residue() ) {
 		energy_state_ = BAD;
@@ -1406,7 +1381,6 @@ Energies::scoring_begin(
 	residue_total_energy_uptodate_ = false;
 
 	scorefxn_weights_ = sfxn.weights();
-
 }
 
 
@@ -1429,93 +1403,6 @@ Energies::res_moved( int const seqpos ) const
 } // scoring
 } // core
 
-// ///////////////////////////////////////////////////////////////////////////////
-// // this is called by ScoreFunction at the start of an energy calculation
-// //
-// //
-// void
-// Energies::scoring_begin(
-//  DomainMap const & domain_map_in,
-//  ScoreFunctionInfo const & info,
-//  bool update_neighbors,
-//  pose::Pose const & pose // for the neighbor calculation
-// )
-// {
-
-//  // check size
-//  if ( size_ != pose.total_residue() ) {
-//   energy_state_ = BAD;
-//   graph_state_ = BAD;
-//   set_size( pose.total_residue() );
-//  }
-
-//  // check for info mismatch
-//  if ( info != scorefxn_info_ ) {
-//   energy_state_ = BAD;
-//   scorefxn_info_ = info;
-//  }
-
-//  // set our scoring flag to true
-//  scoring_ = true;
-
-//  // update the domain_map
-//  if ( ( update_neighbors && graph_state_ == BAD ) ||
-//     ( energy_state_ == BAD ) ) {
-//   domain_map_ = 0;
-//   energy_state_ = MOD;
-//   graph_state_ = MOD;
-//  } else {
-//   domain_map_ = domain_map_in;
-//  }
-
-
-//  // reset energy/neighbor links
-//  if ( !use_nblist_ ) {
-//   // deletes the moving links
-//   prepare_neighbor_graphs();
-//  } else {
-//   // pass -- preserve the nbr graphs during minimization
-//  }
-
-
-//  // total and twobody energies have to be reset if anything has changed
-//  for ( Size i=1; i<= size_; ++i ) {
-//   if ( domain_map_(i) == 0 || domain_map_(i) != domain_map_(1) ) {
-//    total_energies_.clear();
-//    break;
-//   }
-//  }
-
-//  // onebody residue energies are still valid unless bb/chi changed
-//  // for that sequence position
-//  for ( Size i=1; i<= size_; ++i ) {
-//   if ( res_moved(i) ) {
-//    onebody_energies_[i].clear();
-//   }
-//  }
-
-
-//  ////////////////////////////////////////////
-//  // update the neighbor links if desired
-//  if ( use_nblist_ ) {
-//   // don't modify the graphs at all
-//   // we pretend that the graph_state is good
-//   if ( update_neighbors ) graph_state_ = GOOD;
-//  } else if ( update_neighbors ) {
-//   scoring::update_neighbor_energy_links
-//    ( pose, energy_graph_, tenA_neighbor_graph_, domain_map_ );
-//   graph_state_ = GOOD;
-//  } else {
-//   //apl do we really want to do this?
-//   //if graph state was good going into this, why would it no longer be good?
-//   //  rotamer trials wants to use the neighbor graph that already exists
-//   //  (and it has to call this function once for each residue it modifies)
-//   //
-//   //graph_state_ = BAD;
-//  }
-
-
-// }
 
 #ifdef    SERIALIZATION
 

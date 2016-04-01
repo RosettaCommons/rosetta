@@ -144,7 +144,6 @@ void FACTSPoseInfo::set_repack_list( utility::vector1< bool > const & repacking_
 
 bool FACTSPoseInfo::is_changed( pose::Pose const &pose ){
 	for ( Size ires = 1; ires <= pose.total_residue(); ++ ires ) {
-
 		Size const natom( pose.residue(ires).natoms() );
 		utility::vector1<Vector> const facts_xyz = residue_info( ires ).xyz();
 
@@ -157,7 +156,6 @@ bool FACTSPoseInfo::is_changed( pose::Pose const &pose ){
 			Real const d2 = dxyz.dot(dxyz);
 			if ( d2 > 1.0e-6 ) return true;
 		}
-
 	}
 	return false;
 }
@@ -198,7 +196,6 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 			facts2.set_enumeration_shell( true );
 		}
 	}
-
 }
 
 } // namespace scoring

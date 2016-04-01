@@ -129,13 +129,6 @@ bool DFIRE_Energy::defines_residue_pair_energy(
 	Size res1,
 	Size res2
 ) const {
-	//std::cout << "testing " << res1 << "," << res2 << " ";
-	//if (pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() ) {
-	// std::cout << "true!" << std::endl;
-	//} else {
-	// std::cout << "false!" << std::endl;
-	//}
-
 	return ( pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() );
 }
 

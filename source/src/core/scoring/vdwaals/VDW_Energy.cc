@@ -121,8 +121,7 @@ void
 VDW_Energy::prepare_rotamers_for_packing(
 	pose::Pose const &,
 	conformation::RotamerSetBase & set
-) const
-{
+) const {
 	VDWRotamerTrieOP trie = create_rotamer_trie( set );
 	set.store_trie( methods::vdw_method, trie );
 }
@@ -135,8 +134,7 @@ VDW_Energy::residue_pair_energy(
 	pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
+) const {
 	using namespace etable::count_pair;
 	Real score(0.0);
 	// basic::ProfileThis doit( basic::VDW_ENERGY );
@@ -153,18 +151,18 @@ VDW_Energy::residue_pair_energy(
 			for ( Size j = 1, j_end = rsd2.natoms(); j <= j_end; ++j ) {
 				Real weight(1.0);
 				Size path_dist( 0 );
-				if ( cpfxn->count( i, j, weight, path_dist ) ) {
-					if ( weight < 0.99 ) continue; // don't count half-weight interxns in vdw_compute
-					if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ) {
-						Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
-						Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
-						if ( clash > 0.0 ) {
-							score += ( clash * clash ) / bump_dsq;
-						}
-					} else {
-						std::cerr << "Etable: "  <<  rsd2.atom_type_index(j) << " " <<  i_atom_vdw.size() << "  " << i << " " <<  j << std::endl;
-						utility_exit_with_message( "Fatal Error in VDW_Energy" );
+				if ( !cpfxn->count( i, j, weight, path_dist ) ) continue;
+				
+				if ( weight < 0.99 ) continue; // don't count half-weight interxns in vdw_compute
+				if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ) {
+					Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
+					Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
+					if ( clash > 0.0 ) {
+						score += ( clash * clash ) / bump_dsq;
 					}
+				} else {
+					std::cerr << "Etable: "  <<  rsd2.atom_type_index(j) << " " <<  i_atom_vdw.size() << "  " << i << " " <<  j << std::endl;
+					utility_exit_with_message( "Fatal Error in VDW_Energy" );
 				}
 			}
 		}
@@ -210,8 +208,7 @@ VDW_Energy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
+) const {
 	using namespace etable::count_pair;
 	// basic::ProfileThis doit( basic::VDW_ENERGY );
 	// what is my charge?
@@ -240,7 +237,6 @@ VDW_Energy::eval_atom_derivative(
 		Size const pos2( (*iru)->get_other_ind( pos1 ) );
 
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
-
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
 		debug_assert( pos2 != pos1 );
@@ -284,9 +280,7 @@ VDW_Energy::eval_atom_derivative(
 				F2 += dE_dr_over_r * f2;
 			}
 		} // are rsd1 and rsd2 bonded?
-
 	} // loop over nbrs of rsd1
-
 }
 
 
@@ -312,8 +306,7 @@ VDW_Energy::evaluate_rotamer_pair_energies(
 	ScoreFunction const &,
 	EnergyMap const & weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-) const
-{
+) const {
 	debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
@@ -339,8 +332,7 @@ VDW_Energy::get_count_pair_function_trie(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	core::pose::Pose const & pose
-) const
-{
+) const {
 	conformation::Residue const & res1( pose.residue( set1.resid() ) );
 	conformation::Residue const & res2( pose.residue( set2.resid() ) );
 	trie::RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( methods::vdw_method ) ));
@@ -355,8 +347,7 @@ VDW_Energy::get_count_pair_function_trie(
 	conformation::Residue const & res2,
 	trie::RotamerTrieBaseCOP trie1,
 	trie::RotamerTrieBaseCOP trie2
-) const
-{
+) const {
 	using namespace etable::count_pair;
 	using namespace etable::etrie;
 
@@ -370,8 +361,6 @@ VDW_Energy::get_count_pair_function_trie(
 	} else {
 		return trie::TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
 	}
-
-
 	return 0;
 }
 
@@ -392,16 +381,16 @@ VDW_Energy::calculate_hydrogen_interaction_cutoff()
 	hydrogen_interaction_cutoff2_ = 0;
 	Size which_ii(0), which_jj(0);
 	for ( core::Size ii = 1; ii <= atom_set.n_atomtypes(); ++ii ) {
-		if ( atom_set[ ii ].is_hydrogen() ) {
-			for ( core::Size jj = ii; jj <= atom_set.n_atomtypes(); ++jj ) {
-				if ( atom_set[ jj ].is_hydrogen() ) {
-					Real iijj_interaction_dist = atom_vdw_(ii)[jj];
-					if ( iijj_interaction_dist > hydrogen_interaction_cutoff2_ ) {
-						hydrogen_interaction_cutoff2_ = iijj_interaction_dist * iijj_interaction_dist;
-						which_ii = ii;
-						which_jj = jj;
-					}
-				}
+		if ( !atom_set[ ii ].is_hydrogen() ) continue;
+		
+		for ( core::Size jj = ii; jj <= atom_set.n_atomtypes(); ++jj ) {
+			if ( !atom_set[ jj ].is_hydrogen() ) continue;
+			
+			Real iijj_interaction_dist = atom_vdw_(ii)[jj];
+			if ( iijj_interaction_dist > hydrogen_interaction_cutoff2_ ) {
+				hydrogen_interaction_cutoff2_ = iijj_interaction_dist * iijj_interaction_dist;
+				which_ii = ii;
+				which_jj = jj;
 			}
 		}
 	}

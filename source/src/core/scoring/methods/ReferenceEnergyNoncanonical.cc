@@ -84,9 +84,7 @@ ReferenceEnergyNoncanonical::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
-		return;
-	}
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 
 	std::string const res_name = rsd.name3();
 	Size index_find = 0;
@@ -104,6 +102,7 @@ ReferenceEnergyNoncanonical::residue_energy(
 		return;
 	}
 
+	//AMW TODO: this assigns ref style reference energies to beta AAs.
 	switch ( index_find ) {
 	case 1 :  emap[ ref_nc ] +=   0.16; break;
 	case 2 :  emap[ ref_nc ] +=   1.70; break;

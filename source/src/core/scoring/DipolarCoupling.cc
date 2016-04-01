@@ -346,8 +346,6 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 
 	//return energy
 	return  total_dev;
-	//return  total_dev/All_DC_lines_.size();
-
 }//end of compute_dcscore
 
 } //namespace Scoring

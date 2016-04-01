@@ -62,11 +62,6 @@ void SplitUnfoldedTwoBodyPotential::get_restype_emap(const chemical::ResidueType
 		EnergyMap retmap=iter->second;
 		emap=retmap;
 	} else {
-		// residue_two_body_energies_[resname]=calculate_residue_emap(restype);
-		//GRR CONST METHODS NOT LETTING ME SAVE THIS!!!!!
-		//    residue_two_body_energies_.insert(std::pair<std::string,core::scoring::EnergyMap>(resname,calculate_residue_emap(restype)));
-		//    residue_two_body_energies_[resname]=calculate_residue_emap(restype);
-		//emap=residue_two_body_energies_.find(resname)->second;
 		emap=calculate_residue_emap(restype);
 	}
 }
@@ -107,7 +102,6 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 
 		//now need to add the energies for this atom to the running total
 		//not sure this is the best way to do this...
-		// EnergyMap curratommap=atom_two_body_energies_[curratomname];
 		//hacky workaround to avoid using the [] operator, which const functions disallow for some reason.
 		std::map<std::string,core::scoring::EnergyMap>::const_iterator curratomiter=atom_two_body_energies_.find(curratomname);
 		if ( curratomiter==atom_two_body_energies_.end() ) {
@@ -133,7 +127,6 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 		retmap.set(fa_elec,retmap.get(fa_elec)+curratommap.get(fa_elec));
 		retmap.set(hbond_sc,retmap.get(hbond_sc)+curratommap.get(hbond_sc));
 		retmap.set(dslf_fa13,retmap.get(dslf_fa13)+curratommap.get(dslf_fa13));
-
 	}
 	return retmap;
 }

@@ -124,7 +124,6 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 	}
 
 	// offset_ adjustment was too confusing, as we optimize potentials. -- rhiju, 2014
-	//figure_out_offset();
 
 	// Load information on how 'wide' the basins are.
 	if ( calculate_suiteness_bonus_ ) {
@@ -208,7 +207,6 @@ bool RNA_SuitePotential::eval_score(
 		torsions.push_back( tor );
 	}
 
-
 	eval_score( torsions );
 	// TR << rsdnum1 << "--" << rsdnum2 << ": " << score_ << std::endl;
 	return true;
@@ -218,13 +216,11 @@ bool RNA_SuitePotential::eval_score(
 void RNA_SuitePotential::eval_score(
 	utility::vector1<Real> const & torsions
 ) const {
-
 	if ( calculate_suiteness_bonus_ ) {
 		eval_suiteness_bonus( torsions );
 	} else {
 		eval_likelihood_potential( torsions );
 	}
-
 }
 
 ////////////////////////////////////////////////////////
@@ -239,7 +235,6 @@ void RNA_SuitePotential::eval_suiteness_bonus(
 
 	score_ = bonus_weight * assignment.suiteness;
 	for ( Size n = 1; n <= deriv_.size(); n++ ) deriv_[ n ] *= bonus_weight;
-
 }
 
 ////////////////////////////////////////////////////////

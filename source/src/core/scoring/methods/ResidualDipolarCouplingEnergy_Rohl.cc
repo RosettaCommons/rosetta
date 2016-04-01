@@ -21,9 +21,7 @@
 //Package headers
 
 #include <core/conformation/Residue.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
-//#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
@@ -134,13 +132,6 @@ ResidualDipolarCouplingEnergy_Rohl::rdc_from_pose(
 	pose::Pose & pose
 ) const
 {
-	//  //using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
-
-	//  if( pose.data().has( RESIDUAL_DIPOLAR_COUPLING_DATA ) )
-	//   return *( static_cast< ResidualDipolarCoupling const * >( pose.data().get_const_ptr( RESIDUAL_DIPOLAR_COUPLING_DATA )() ) );
-
-	//  ResidualDipolarCouplingOP rdc_info = new ResidualDipolarCoupling;
-	//  pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
 	ResidualDipolarCoupling_RohlOP rdc_info( retrieve_RDC_ROHL_from_pose( pose ) );
 	if ( !rdc_info ) {
 		rdc_info = ResidualDipolarCoupling_RohlOP( new ResidualDipolarCoupling_Rohl );
@@ -172,7 +163,6 @@ Real ResidualDipolarCouplingEnergy_Rohl::eval_dipolar(
 	Real Azz, eta;
 	bool reject = false;
 
-
 	assemble_datamatrix( pose, All_RDC_lines, A, b, weights);
 	/* for ( core::Size i = 1; i <= nrow; ++i ) {
 	std::cout << "Matrices A & b  " << A(i,1) << " " << A(i,2) << " " << A(i,3) << " " << A(i,4) << " " << A(i,5) << " " << b(i) << std::endl;
@@ -198,14 +188,11 @@ void ResidualDipolarCouplingEnergy_Rohl::assemble_datamatrix(
 	ObjexxFCL::FArray1D< Real > & weights
 ) const
 {
-
-
 	numeric::xyzVector< Real > umn;
 	utility::vector1< core::scoring::RDC_Rohl >::const_iterator it;
 	Size nrow( 0 );
 
 	for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
-
 		++nrow;
 		umn = pose.residue(it->res()).atom("N").xyz() - pose.residue(it->res()).atom("H").xyz();
 
@@ -226,8 +213,6 @@ void ResidualDipolarCouplingEnergy_Rohl::assemble_datamatrix(
 		//   std::cout << "nrow " << nrow << std::endl;
 		//  std::cout << "Matrix A " << A(nrow,1) << " " << A(nrow,2) << " " << A(nrow,3) << " " << A(nrow,4) << " " << A(nrow,5) << std::endl;
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////
@@ -243,8 +228,6 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 	bool & reject
 ) const
 {
-
-
 	core::Real factor = { 1e-6 }; // cutoff factor for singular values in svd
 
 	ObjexxFCL::FArray2D< Real > U( nrow, ORDERSIZE );
@@ -258,15 +241,15 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 	// why not U=A; ? should even be faster!
 	Size ct_align = 0;
 	for ( core::Size i = 1; i <= nrow; ++i ) { // copy A
-		if ( weights( i ) > 0.000001 ) {
-			++ct_align;
-			U( ct_align, 1 ) = A(i,1) * weights( i ); // copy into U
-			U( ct_align, 2 ) = A(i,2) * weights( i );
-			U( ct_align, 3 ) = A(i,3) * weights( i );
-			U( ct_align, 4 ) = A(i,4) * weights( i );
-			U( ct_align, 5 ) = A(i,5) * weights( i );
-			bweighted( ct_align  ) = b( i ) * weights( i );
-		}
+		if ( weights( i ) <= 0.000001 ) continue;
+		
+		++ct_align;
+		U( ct_align, 1 ) = A(i,1) * weights( i ); // copy into U
+		U( ct_align, 2 ) = A(i,2) * weights( i );
+		U( ct_align, 3 ) = A(i,3) * weights( i );
+		U( ct_align, 4 ) = A(i,4) * weights( i );
+		U( ct_align, 5 ) = A(i,5) * weights( i );
+		bweighted( ct_align  ) = b( i ) * weights( i );
 	}
 
 	svdcmp( U, ct_align, ORDERSIZE, w, v );
@@ -289,7 +272,6 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 	}
 
 	// find solution for exact dipolar values
-
 	svbksb( U, w, v, ct_align, ORDERSIZE, bweighted, x );
 
 	// x components: (Syy,Szz,Sxy,Sxz,Syz)
@@ -310,8 +292,6 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 		//  score = 0.0;
 		return;
 	}
-
-
 }
 
 
@@ -320,34 +300,33 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 ////////////////////////////////////////////////////////////////
 void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 	ObjexxFCL::FArray2D< Real > & a,
-	Size const & m,
-	Size const & n,
+	Size const & row,
+	Size const & row_length,
 	ObjexxFCL::FArray1D< Real > & w,
 	ObjexxFCL::FArray2D< Real > & v
 ) const
 {
-
 	//U    USES pythag
 	Size i,its,j,jj,k,l,nm;
-	ObjexxFCL::FArray1D< core::Real > rv1( n );
+	ObjexxFCL::FArray1D< core::Real > rv1( row_length );
 	Real anorm, c, f, g, h, s, scale, x, y, z;
 	g = 0.0;
 	scale = 0.0;
 	anorm = 0.0;
 	l = 0;
 	nm = 0;
-	for ( i = 1; i <= n; ++i ) {
+	for ( i = 1; i <= row_length; ++i ) {
 		l = i+1;
 		rv1(i) = scale*g;
 		g = 0.0;
 		s = 0.0;
 		scale = 0.0;
-		if ( i <= m ) {
-			for ( k = i; k <= m; ++k ) {
+		if ( i <= row ) {
+			for ( k = i; k <= row; ++k ) {
 				scale += std::abs(a(k,i));
 			}
 			if ( scale != 0.0 ) {
-				for ( k = i; k <= m; ++k ) {
+				for ( k = i; k <= row; ++k ) {
 					a(k,i) /= scale;
 					s += a(k,i)*a(k,i);
 				}
@@ -355,31 +334,31 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 				g = -sign(std::sqrt(s),f);
 				h = f*g-s;
 				a(i,i) = f-g;
-				for ( j = l; j <= n; ++j ) {
+				for ( j = l; j <= row_length; ++j ) {
 					s = 0.0;
-					for ( k = i; k <= m; ++k ) {
+					for ( k = i; k <= row; ++k ) {
 						s += a(k,i)*a(k,j);
 					}
 					f = s/h;
-					for ( k = i; k <= m; ++k ) {
+					for ( k = i; k <= row; ++k ) {
 						a(k,j) += f*a(k,i);
 					}
 				}
-				for ( k = i; k <= m; ++k ) {
+				for ( k = i; k <= row; ++k ) {
 					a(k,i) *= scale;
 				}
 			}
 		}
-		w(i) = scale *g;
+		w(i) = scale * g;
 		g = 0.0;
 		s = 0.0;
 		scale = 0.0;
-		if ( (i <= m) && (i != n) ) {
-			for ( k = l; k <= n; ++k ) {
+		if ( (i <= row) && (i != row_length) ) {
+			for ( k = l; k <= row_length; ++k ) {
 				scale += std::abs(a(i,k));
 			}
 			if ( scale != 0.0 ) {
-				for ( k = l; k <= n; ++k ) {
+				for ( k = l; k <= row_length; ++k ) {
 					a(i,k) /= scale;
 					s += a(i,k)*a(i,k);
 				}
@@ -387,79 +366,82 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 				g = -sign(std::sqrt(s),f);
 				h = f*g-s;
 				a(i,l) = f-g;
-				for ( k = l; k <= n; ++k ) {
+				for ( k = l; k <= row_length; ++k ) {
 					rv1(k) = a(i,k)/h;
 				}
-				for ( j = l; j <= m; ++j ) {
+				for ( j = l; j <= row; ++j ) {
 					s = 0.0;
-					for ( k = l; k <= n; ++k ) {
+					for ( k = l; k <= row_length; ++k ) {
 						s += a(j,k)*a(i,k);
 					}
-					for ( k = l; k <= n; ++k ) {
+					for ( k = l; k <= row_length; ++k ) {
 						a(j,k) += s*rv1(k);
 					}
 				}
-				for ( k = l; k <= n; ++k ) {
+				for ( k = l; k <= row_length; ++k ) {
 					a(i,k) *= scale;
 				}
 			}
 		}
 		anorm = std::max(anorm,(std::abs(w(i))+std::abs(rv1(i))));
 	}
-	for ( i = n; i >= 1; --i ) {
-		if ( i < n ) {
-			if ( g != 0.0 ) {
-				for ( j = l; j <= n; ++j ) {
-					v(j,i) = (a(i,j)/a(i,l))/g;
+	v(i,i) = 1.0;
+	g = rv1(i);
+	l = i;
+	for ( i = row_length-1; i >= 1; --i ) {
+		if ( g != 0.0 ) {
+			for ( j = l; j <= row_length; ++j ) {
+				v(j,i) = (a(i,j)/a(i,l))/g;
+			}
+			for ( j = l; j <= row_length; ++j ) {
+				s = 0.0;
+				for ( k = l; k <= row_length; ++k ) {
+					s += a(i,k)*v(k,j);
 				}
-				for ( j = l; j <= n; ++j ) {
-					s = 0.0;
-					for ( k = l; k <= n; ++k ) {
-						s += a(i,k)*v(k,j);
-					}
-					for ( k = l; k <= n; ++k ) {
-						v(k,j) += s*v(k,i);
-					}
+				for ( k = l; k <= row_length; ++k ) {
+					v(k,j) += s*v(k,i);
 				}
 			}
-			for ( j = l; j <= n; ++j ) {
-				v(i,j) = 0.0;
-				v(j,i) = 0.0;
-			}
+		}
+		for ( j = l; j <= row_length; ++j ) {
+			v(i,j) = 0.0;
+			v(j,i) = 0.0;
 		}
 		v(i,i) = 1.0;
 		g = rv1(i);
 		l = i;
 	}
-	for ( i = std::min(m,n); i >= 1; --i ) {
+	
+	for ( i = std::min(row, row_length); i >= 1; --i ) {
 		l = i+1;
 		g = w(i);
-		for ( j = l; j <= n; ++j ) {
+		for ( j = l; j <= row_length; ++j ) {
 			a(i,j) = 0.0;
 		}
 		if ( g != 0.0 ) {
 			g = 1.0/g;
-			for ( j = l; j <= n; ++j ) {
+			for ( j = l; j <= row_length; ++j ) {
 				s = 0.0;
-				for ( k = l; k <= m; ++k ) {
+				for ( k = l; k <= row; ++k ) {
 					s += a(k,i)*a(k,j);
 				}
 				f = (s/a(i,i))*g;
-				for ( k = i; k <= m; ++k ) {
+				for ( k = i; k <= row; ++k ) {
 					a(k,j) += f*a(k,i);
 				}
 			}
-			for ( j = i; j <= m; ++j ) {
+			for ( j = i; j <= row; ++j ) {
 				a(j,i) *= g;
 			}
 		} else {
-			for ( j = i; j <= m; ++j ) {
+			for ( j = i; j <= row; ++j ) {
 				a(j,i) = 0.0;
 			}
 		}
 		a(i,i) += 1.0;
 	}
-	for ( k = n; k >= 1; --k ) {
+	
+	for ( k = row_length; k >= 1; --k ) {
 		for ( its = 1; its <= 30; ++its ) {
 			bool skipnow(false);
 			for ( l = k; l >= 1; --l ) {
@@ -483,7 +465,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 					h = 1.0/h;
 					c = (g*h);
 					s = -(f*h);
-					for ( j = 1; j <= m; ++j ) {
+					for ( j = 1; j <= row; ++j ) {
 						y = a(j,nm);
 						z = a(j,i);
 						a(j,nm) = (y*c)+(z*s);
@@ -495,7 +477,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 			if ( l == k ) {
 				if ( z < 0.0 ) {
 					w(k) = -z;
-					for ( j = 1; j <= n; ++j ) {
+					for ( j = 1; j <= row_length; ++j ) {
 						v(j,k) = -v(j,k);
 					}
 				}
@@ -526,7 +508,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 				g = -(x*s)+(g*c);
 				h = y*s;
 				y *= c;
-				for ( jj = 1; jj <= n; ++jj ) {
+				for ( jj = 1; jj <= row_length; ++jj ) {
 					x = v(jj,j);
 					z = v(jj,i);
 					v(jj,j) = (x*c)+(z*s);
@@ -541,7 +523,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 				}
 				f = (c*g)+(s*y);
 				x = -(s*g)+(c*y);
-				for ( jj = 1; jj <= m; ++jj ) {
+				for ( jj = 1; jj <= row; ++jj ) {
 					y = a(jj,j);
 					z = a(jj,i);
 					a(jj,j) = (y*c)+(z*s);
@@ -553,9 +535,8 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 			w(k) = x;
 		}
 	}
-
-
 }
+
 ////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////
@@ -564,7 +545,6 @@ Real ResidualDipolarCouplingEnergy_Rohl::pythag(
 	Real const & b
 ) const
 {
-
 	Real pythag;
 
 	Real absa = std::abs(a);
@@ -581,9 +561,8 @@ Real ResidualDipolarCouplingEnergy_Rohl::pythag(
 		}
 	}
 	return pythag;
-
-
 }
+
 ////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////
@@ -597,8 +576,6 @@ void ResidualDipolarCouplingEnergy_Rohl::svbksb(
 	ObjexxFCL::FArray1D< Real > & x
 ) const
 {
-
-
 	ObjexxFCL::FArray1D< core::Real > tmp( n );
 	Real s;
 
@@ -619,9 +596,8 @@ void ResidualDipolarCouplingEnergy_Rohl::svbksb(
 		}
 		x(j) = s;
 	}
-
-
 }
+
 ////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////
@@ -632,7 +608,6 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_orderparam(
 	Real & eta
 ) const
 {
-
 	using numeric::xyzMatrix;
 
 	ObjexxFCL::FArray1D< Size > sort( 3 ); // sorted index to val, val(sort(1)) = largest abs val.

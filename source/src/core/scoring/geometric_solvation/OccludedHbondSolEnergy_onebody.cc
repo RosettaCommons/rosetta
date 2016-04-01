@@ -162,7 +162,6 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-
 	core::Size polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.), energy(0.);
 
@@ -214,7 +213,6 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 	}
 
 	emap[ occ_sol_fitted_onebody ] += residue_geosol;
-
 }
 
 
@@ -223,7 +221,6 @@ OccludedHbondSolEnergy_onebody::res_res_occ_sol_one_way(
 	conformation::Residue const & polar_rsd,
 	conformation::Residue const & occ_rsd ) const
 {
-
 	// Rhiju importantly notes: for GeometricSolvation he originally had the code in
 	// the following functions written out inside these loop -- and packing was faster.
 	// Perhaps something to do with inlining or compiler optimization.
@@ -269,15 +266,13 @@ OccludedHbondSolEnergy_onebody::get_atom_atom_occ_solvation(
 	Real & energy
 ) const
 {
-
 	// In case of early return, initialize. Note that energy does NOT accumulate, but f1/f2 do.
 	// Also note that f1 and f2 are returned unweighted.
 	energy = 0.;
 
 	// note: after testing, hydrogens need not occlude
 	if ( occ_rsd.atom_is_hydrogen(occ_atom) ) return;
-	// if ( occ_atom > occ_rsd.nheavyatoms() ) return;
-
+	
 	// note: the lines above don't exclude Proline NV...
 	// catch proline NV here (and other virtual atoms, etc.)
 	if ( occ_rsd.atom_type(occ_atom).lj_radius() < 0.1 ) return;

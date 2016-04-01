@@ -31,7 +31,6 @@
 #include <core/chemical/MMAtomType.hh>
 #include <utility/vector1.hh>
 
-
 // C++ headers
 
 static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParam" );
@@ -62,8 +61,7 @@ score_atom_centrally(
 	core::chemical::ResidueType const & restype,
 	utility::vector1<std::string> const & central_atoms_to_score,
 	Size atomno
-)
-{
+) {
 	if ( central_atoms_to_score.size() == 0 ) return true;
 
 	for ( Size ii = 1; ii <= central_atoms_to_score.size(); ++ii ) {
@@ -81,8 +79,7 @@ MMBondAngleResidueTypeParam::init(
 	MMBondAngleLibrary const & mm_bondangle_library,
 	bool use_residue_type_theta0,
 	utility::vector1<std::string> const & central_atoms_to_score
-)
-{
+) {
 	// add data for intraresidue bond angles
 	bondangle_atom_sets_.clear();
 	Ktheta_.clear();
@@ -125,7 +122,6 @@ MMBondAngleResidueTypeParam::init(
 		} else {
 			//TR << " Ignoring";
 		}
-
 		//TR << std::endl;
 	}
 

@@ -105,8 +105,7 @@ Size CPDataCorrespondence::connid_for_entry_connpoint( Size entry, Size connpoin
 CPDataCorrespondence
 create_cpdata_correspondence_for_rotamerset(
 	conformation::RotamerSetBase const & rotset
-)
-{
+) {
 
 	if ( rotset.num_rotamers() == 0 ) { CPDataCorrespondence cpdat; return cpdat; }
 	return create_cpdata_correspondence_for_rotamer( *rotset.rotamer( 1 ) );
@@ -115,8 +114,7 @@ create_cpdata_correspondence_for_rotamerset(
 CPDataCorrespondence
 create_cpdata_correspondence_for_rotamer(
 	conformation::Residue const & example_rotamer
-)
-{
+) {
 	using namespace conformation;
 
 	Size n_connection_partners( 0 );
@@ -179,24 +177,6 @@ create_cpdata_correspondence_for_rotamer(
 		pseudobonds_to_residues[ other_resid ] = pseudobond_connection_points;
 	}
 
-	/*
-	CPDataCorrespondence cpdata_map;
-	cpdata_map.n_entries( connections_to_residues_.size() );
-	for ( Size ii = 1; ii <= n_connection_partners; ++ii ) {
-	cpdata_map.resid_for_entry( ii, found_connections_other_resid[ ii ] );
-	cpdata_map.n_connpoints_for_entry( ii, n_connections_for_resid[ ii ] );
-
-	utility::vector1< Size > const & ii_conns(
-	rotset.rotamer( found_connections_examplerots[ ii ] )->
-	connections_to_residue( found_connections_other_resid[ ii ]  ) );
-
-	for ( Size jj = 1; jj <= n_connections_for_resid[ ii ]; ++jj ) {
-	cpdata_map.connid_for_entry_connpoint( ii, jj, ii_conns[ jj ] );
-	}
-	}
-	return cpdata_map;
-	*/
-
 	CPDataCorrespondence cpdata_map;
 	cpdata_map.n_entries( n_connection_partners );
 	for ( Size ii = 1; ii <= n_connection_partners; ++ii ) {
@@ -232,7 +212,6 @@ create_cpdata_correspondence_for_rotamer(
 			}
 			cpdata_map.note_has_pseudobonds();
 		}
-
 	}
 	return cpdata_map;
 }

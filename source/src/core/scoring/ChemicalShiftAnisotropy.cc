@@ -219,24 +219,21 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 
 		//apply matrix rotation here
 		numeric::xyzMatrix< Real > malpha = numeric::x_rotation_matrix_degrees( it->alpha() );
-		numeric::xyzMatrix< Real > mbeta = numeric::z_rotation_matrix_degrees( it->beta() );
-
+		numeric::xyzMatrix< Real > mbeta  = numeric::z_rotation_matrix_degrees( it->beta() );
 		numeric::xyzMatrix< Real > PAF(F*mbeta*malpha);
 
 		numeric::xyzMatrix<Real> sigmas(numeric::xyzMatrix<Real>::cols(it->sigma3(),0,0,0,it->sigma1(),0,0,0,it->sigma2()));
 
 
 		//compute the observed CSA
-		Real compCSA=it->CSAval_computed_=dot_product(memnorm,numeric::product(PAF*sigmas*PAF.transposed(),memnorm));
+		Real compCSA = it->CSAval_computed_=dot_product(memnorm,numeric::product(PAF*sigmas*PAF.transposed(),memnorm));
 
 		//compute the difference and then energy
 		Real devCSA = fabs(compCSA - it->CSAval()) < it->CSAerr() ? 0.0 : fabs(fabs(compCSA - it->CSAval())-it->CSAerr());
 		//Add weight to energy and derivatives
-		total_dev+=it->weight()*devCSA*devCSA;
+		total_dev += it->weight()*devCSA*devCSA;
 
-		if ( tr.Trace.visible() ) {
-			tr.Trace << "resi: " << it->res1() << " compCSA: " << compCSA << " expCSA: " << it->CSAval() << " expErr " << it->CSAerr() << " devCSA: " << devCSA  << " total_dev "<< total_dev << std::endl;
-		}
+		tr.Trace << "resi: " << it->res1() << " compCSA: " << compCSA << " expCSA: " << it->CSAval() << " expErr " << it->CSAerr() << " devCSA: " << devCSA  << " total_dev "<< total_dev << std::endl;
 
 		//derivatives
 		numeric::xyzVector<Real> v0(numeric::xyzVector<Real> (0.0,0.0,0.0));
@@ -554,14 +551,11 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			csa.f3ij_[2]=dE_zC;
 			//tr.Info << "csa.f3ij_[2]: " << csa.f3ij_[2] << std::endl;
 		}
-
 	}
 	//tr.Info << "All_CSA_lines_.size(): " << All_CSA_lines_.size() << std::endl;
 
 	//return energy
 	return  total_dev;
-	//return  total_dev/All_CSA_lines_.size();
-
 }//end of compute_csascore
 
 } //namespace Scoring

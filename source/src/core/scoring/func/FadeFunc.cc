@@ -72,7 +72,6 @@ bool FadeFunc::same_type_as_me( Func const & other ) const
 Real
 FadeFunc::func( Real const z ) const
 {
-
 	Real fade_value( 1.0 );
 
 	if ( z < cutoff_lower_ || z > cutoff_upper_ ) {
@@ -93,14 +92,12 @@ FadeFunc::func( Real const z ) const
 		//  fade_deriv = (6 * b2 - 6 * b ) / fade_zone_;
 	}
 
-
 	return well_depth_ * fade_value + well_offset_;
 }
 
 Real
 FadeFunc::dfunc( Real const z ) const
 {
-
 	Real fade_deriv( 0.0 );
 
 	if ( z < cutoff_lower_ || z > cutoff_upper_ ) {
@@ -139,7 +136,6 @@ FadeFunc::read_data( std::istream& in ) {
 			in >> well_offset_;
 		}
 	}
-
 }
 
 void

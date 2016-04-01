@@ -235,7 +235,6 @@ bool FiberDiffraction::loadFiberDiffractionData(
 	}
 
 	return isLoaded;
-
 }
 
 bool FiberDiffraction::setupBesselOrder()

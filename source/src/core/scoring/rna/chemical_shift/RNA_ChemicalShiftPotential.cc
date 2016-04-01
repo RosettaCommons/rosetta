@@ -90,7 +90,6 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 	cs_verbose_mode_( false ),
 	total_exp_chemical_shift_data_points_( 0 )
 {
-
 	if ( include_ring_current_effect_ ) {
 		std::cout << "include_ring_current_effect_ = true " << std::endl;
 	} else {
@@ -128,7 +127,6 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord ]() ) {
-
 		nuchemics_mode_ = false;
 		// for now, when using LARMORD, deriv_check fails when H5_prime_mode_ = "LEAST"
 		// until fixed will set H5_prime_mode_ = "UNIQUE" when using LARMORD
@@ -184,9 +182,6 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 	proton_entry_list.push_back( string_list( "H1" ) );
 	proton_entry_list.push_back( string_list( "H3" ) );
 
-
-
-
 	// load data from files
 	path_to_parameter_files_ = "scoring/rna/chem_shift_larmor_d/";
 
@@ -227,7 +222,6 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 
 	// read in chemical shift data
 	import_exp_chemical_shift_data( exp_CS_data_filename, include_res_list, proton_entry_list );
-
 }
 
 
@@ -278,46 +272,31 @@ RNA_ChemicalShiftPotential::get_alpha(const std::string &key) const
 chemical::AA
 get_res_aa_from_BASE_name( std::string BASE_name, std::string const & text_line )
 {
-
 	chemical::AA res_aa = chemical::aa_unk;
 
 	if ( BASE_name == "G" ) {
-
 		res_aa = chemical::na_rgu;
-
 	} else if ( BASE_name == "A" ) {
-
 		res_aa = chemical::na_rad;
-
 	} else if ( BASE_name == "C" ) {
-
 		res_aa = chemical::na_rcy;
-
 	} else if ( BASE_name == "U" ) {
-
 		res_aa = chemical::na_ura;
-
 	} else {
 		utility_exit_with_message( "Invalid BASE_name ( " + BASE_name + " ) | line = ( " + text_line + " )" );
 	}
 
 	return res_aa;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 std::string
 remove_whitespaces( std::string const & in_atom_name )
 {
-
 	std::string out_atom_name = "";
-
 	for ( Size n = 0; n < in_atom_name.size(); n++ ) {
-
 		if ( in_atom_name[n] != ' ' ) out_atom_name += in_atom_name[n];
-
 	}
-
 	return out_atom_name;
 }
 
@@ -339,38 +318,25 @@ add_whitespaces( std::string const & in_atom_name )
 bool
 is_polar_hydrogen( std::string const & input_atom_name )
 {
-
 	if ( input_atom_name == "HO2'" /*|| input_atom_name == "HO2'"*/ ) return true;
-
 	if ( input_atom_name == "H22"  || input_atom_name == "H21" ) return true;
-
 	//if ( input_atom_name == "H21"  || input_atom_name == "H22" ) return true;
-
 	if ( input_atom_name == "H41"  /*|| input_atom_name == "H41"*/ ) return true;
-
 	if ( input_atom_name == "H42"  /*|| input_atom_name == "H42"*/ ) return true;
-
 	if ( input_atom_name == "H61"  /*|| input_atom_name == "H61"*/ ) return true;
-
 	if ( input_atom_name == "H62"  /*|| input_atom_name == "H62"*/ ) return true;
-
 	if ( input_atom_name == "H1" ) return true;
-
 	if ( input_atom_name == "H3" ) return true;
-
 	if ( input_atom_name == "HO3'" ) return true; //Can occur at 3' ends of RNA's chain. This is not part of the standard rosetta atom-set
-
 	if ( input_atom_name == "HO5'" ) return true; //Can occur at 5' ends of RNA's chain. this is not part of the standard rosetta atom-set
 
 	return false;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 std::string
 get_rosetta_hatom_name( std::string const & input_atom_name, std::string const & text_line, utility::vector1< std::string > const & flat_proton_entry_list )
 {
-
 	using namespace ObjexxFCL;
 
 	std::string rosetta_atom_name = "";
@@ -378,19 +344,14 @@ get_rosetta_hatom_name( std::string const & input_atom_name, std::string const &
 	//Assume that input_atom_name is a non_polar hydrogen atom! Other atoms should be filtered before reaching this point!
 	if ( input_atom_name == "H1'" ) {
 		rosetta_atom_name = "H1'";
-
 	} else if ( input_atom_name == "H2'" ) {
 		rosetta_atom_name = "H2'";
-
 	} else if ( input_atom_name == "H3'" ) {
 		rosetta_atom_name = "H3'";
-
 	} else if ( input_atom_name == "H4'" ) {
 		rosetta_atom_name = "H4'";
-
 	} else if ( input_atom_name == "H5'" ) {
 		rosetta_atom_name = "H5'";
-
 	} else if ( input_atom_name == "H5''" ) {
 		rosetta_atom_name = "H5''";
 	} else {
@@ -411,14 +372,12 @@ get_rosetta_hatom_name( std::string const & input_atom_name, std::string const &
 	}
 
 	return rosetta_atom_name;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void
 print_chemical_shift_data( std::string prestring, ChemicalShiftData const & CS_data, bool const print_data_line )
 {
-
 	std::cout << prestring  << "seq_num = " << std::setw( 3 ) << CS_data.seq_num;
 	std::cout << " | res_aa = " << std::setw( 3 ) << name_from_aa( CS_data.res_aa );
 	std::cout << " | atom_name = " << std::setw( 5 ) << CS_data.atom_name;
@@ -426,23 +385,18 @@ print_chemical_shift_data( std::string prestring, ChemicalShiftData const & CS_d
 	std::cout << " | exp_shift = " << std::setw( 8 ) << CS_data.exp_shift;
 	if ( print_data_line ) std::cout << " | data_line = " << CS_data.data_line;
 	std::cout << std::endl;
-
 }
 
 ////////////////////////////////copied from protocols/swa/rna/StepWiseRNA_Util.cc/////////////////////////////
 core::Size
 string_to_int( std::string const & input_string )
 {
-
 	Size int_of_string; //misnomer
 	std::stringstream ss ( std::stringstream::in | std::stringstream::out );
 
 	ss << input_string;
-
 	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss << input_string | string ( " + input_string + " )" );
-
 	ss >> int_of_string;
-
 	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss >> int_of_string | string ( " + input_string + " )" );
 
 	return int_of_string;
@@ -452,20 +406,14 @@ string_to_int( std::string const & input_string )
 core::Real
 string_to_real( std::string const & input_string )
 {
-
 	Real real_of_string;
 	std::stringstream ss ( std::stringstream::in | std::stringstream::out );
-
 	ss << input_string;
-
 	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss << input_string | string ( " + input_string + " )" );
-
 	ss >> real_of_string;
-
 	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss >> real_of_string | string ( " + input_string + " )" );
 
 	return real_of_string;
-
 }
 
 ////////////////////////////////copied from protocols/swa/rna/StepWiseRNA_Util.cc/////////////////////////////
@@ -485,25 +433,19 @@ Contain_seq_num( Size const & seq_num, utility::vector1< core::Size > const & re
 utility::vector1 < ChemicalShiftData >
 filter_chem_shift_data_list( utility::vector1 < ChemicalShiftData > const & flat_EXP_chem_shift_data_list, core::Size const seq_num, utility::vector1 < std::string > const & proton_entry )
 {
-
 	utility::vector1 < ChemicalShiftData > filtered_CS_data_list;
 
 	for ( Size ii = 1; ii <= flat_EXP_chem_shift_data_list.size(); ii++ ) {
-
 		ChemicalShiftData const & CS_data = flat_EXP_chem_shift_data_list[ii];
-
 		if ( CS_data.seq_num != seq_num ) continue;
 
 		Size num_matching_atom_name = 0;
-
 		for ( Size jj = 1; jj <= proton_entry.size(); jj++ ) {
 			if ( proton_entry[jj] == CS_data.atom_name ) num_matching_atom_name++;
 		}
 
 		if ( num_matching_atom_name > 1 ) utility_exit_with_message( "num_matching_atom_name > 1!" );
-
 		if ( num_matching_atom_name == 1 ) filtered_CS_data_list.push_back( CS_data );
-
 	}
 
 	if ( filtered_CS_data_list.size() > 0 ) {
@@ -517,24 +459,19 @@ filter_chem_shift_data_list( utility::vector1 < ChemicalShiftData > const & flat
 			for ( Size jj = 1; jj <= filtered_CS_data_list.size(); jj++ ) {
 				print_chemical_shift_data( "#" + ObjexxFCL::lead_zero_string_of(jj, 3) + " :", filtered_CS_data_list[jj], true );
 			}
-
 			utility_exit_with_message( "filtered_CS_data_list.size() > 0 BUT filtered_CS_data_list.size() != proton_entry.size()!" );
 		}
 	}
 
 	return filtered_CS_data_list;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 Size
 RNA_ChemicalShiftPotential::get_total_exp_chemical_shift_data_points() const
 {
-
 	if ( total_exp_chemical_shift_data_points_ == 0 ) utility_exit_with_message( "total_exp_chemical_shift_data_points_ == 0!" );
-
 	return total_exp_chemical_shift_data_points_;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -542,11 +479,8 @@ RNA_ChemicalShiftPotential::get_total_exp_chemical_shift_data_points() const
 utility::vector1< std::string >
 RNA_ChemicalShiftPotential::string_list( std::string const string_one ) const
 {
-
 	utility::vector1< std::string > string_list;
-
 	string_list.push_back( string_one );
-
 	return string_list;
 }
 
@@ -555,7 +489,6 @@ RNA_ChemicalShiftPotential::string_list( std::string const string_one ) const
 utility::vector1< std::string >
 RNA_ChemicalShiftPotential::string_list( std::string const string_one, const std::string string_two ) const
 {
-
 	utility::vector1< std::string > string_list;
 
 	string_list.push_back( string_one );
@@ -569,39 +502,32 @@ RNA_ChemicalShiftPotential::string_list( std::string const string_one, const std
 Size
 RNA_ChemicalShiftPotential::get_realatomdata_index( std::string const & in_atom_name, chemical::AA const res_aa ) const
 {
-
 	using namespace ObjexxFCL;
-
 	std::string const atom_name = remove_whitespaces( in_atom_name );
 
 	RNA_CS_residue_parameters const & rna_cs_rsd_params = rna_cs_params_.get_RNA_CS_residue_parameters( res_aa );
 
 	Size const maxatoms = rna_cs_rsd_params.get_atomnames_size();
-
 	Size num_matching_atom_name = 0;
 
 	Size realatomdata_index = 0;
 
 	for ( Size count = 1; count <= maxatoms; count++ ) {
-
 		if ( rna_cs_rsd_params.get_atomname( count ) == atom_name ) {
 			num_matching_atom_name++;
 			realatomdata_index = count;
 		}
-
 	}
 
 	if ( num_matching_atom_name != 1 ) utility_exit_with_message( "num_matching_atom_name = ( " + string_of( num_matching_atom_name ) + " ) != 1 | atom_name ( " + atom_name + " )!" );
 
 	return realatomdata_index;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void
 RNA_ChemicalShiftPotential::assert_is_calc_chem_shift_atom( ChemicalShiftData const & CS_data ) const
 {
-
 	using namespace ObjexxFCL;
 
 	//OK this is another layer of consistency check////
@@ -662,7 +588,6 @@ RNA_ChemicalShiftPotential::assert_is_calc_chem_shift_atom( ChemicalShiftData co
 bool
 RNA_ChemicalShiftPotential::Is_magnetic_anisotropy_source_atom( core::conformation::Residue const & rsd, Size const atomno ) const
 {
-
 	using namespace ObjexxFCL;
 
 	std::string const atom_name = remove_whitespaces( rsd.atom_name( atomno ) );
@@ -672,80 +597,61 @@ RNA_ChemicalShiftPotential::Is_magnetic_anisotropy_source_atom( core::conformati
 	Size const realatomdata_index = get_realatomdata_index( atom_name, rsd.aa() );
 
 	bool const Is_MA_source_atom = ( dround( rna_cs_rsd_params.atom_data( realatomdata_index, maca ) ) == 1 );
-
 	return Is_MA_source_atom;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 bool
 RNA_ChemicalShiftPotential::atom_has_exp_chemical_shift_data( core::conformation::Residue const & rsd, Size const atomno ) const
 {
-
 	using namespace ObjexxFCL;
 
 	Size num_matching_CS_data = 0;
-
 	Size const seq_num = rsd.seqpos();
 
 	std::string const atom_name = remove_whitespaces( rsd.atom_name( atomno ) );
 
 	for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
-
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_list_[outer_data_ID].size(); inner_data_ID++ ) {
 
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_list_[outer_data_ID][inner_data_ID];
-
 			if ( CS_data.seq_num != seq_num ) continue;
-
 			if ( CS_data.atom_name != atom_name ) continue;
 
 			num_matching_CS_data++;
-
 		}
 	}
 
 	if ( num_matching_CS_data > 1 ) utility_exit_with_message( "num_matching_CS_data > 1 for seq_num = ( " + string_of( seq_num ) + " ) | atom_name = ( " + atom_name + " )" );
 
 	return ( num_matching_CS_data == 1 );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 utility::vector1 < ChemicalShiftData > const &
 RNA_ChemicalShiftPotential::get_matching_CS_data_entry( Size const seq_num, std::string const in_atom_name ) const
 {
-
 	using namespace ObjexxFCL;
-
 	Size num_matching_CS_data = 0;
-
 	Size matching_outer_data_ID = 0;
 
 	std::string const atom_name = remove_whitespaces( in_atom_name );
 
 	for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
-
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_list_[outer_data_ID].size(); inner_data_ID++ ) {
-
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_list_[outer_data_ID][inner_data_ID];
 
 			if ( CS_data.seq_num != seq_num ) continue;
-
 			if ( CS_data.atom_name != atom_name ) continue;
 
 			num_matching_CS_data++;
-
 			matching_outer_data_ID = outer_data_ID;
-
 		}
-
 	}
 
 	if ( num_matching_CS_data != 1 ) utility_exit_with_message( "num_matching_CS_data != 1 for seq_num = ( " + string_of( seq_num ) + " ) | atom_name = ( " + atom_name + " )" );
 
 	return EXP_chem_shift_data_list_[matching_outer_data_ID];
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -754,7 +660,6 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 	utility::vector1 < Size > include_res_list,
 	utility::vector1< utility::vector1< std::string > > const & proton_entry_list )
 {
-
 	using namespace ObjexxFCL;
 
 	//////////////////////////////////////////////////////////////////////
@@ -781,24 +686,17 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 
 	//////////////////////////////////////////////////////////////////////
 
-	std::string text_line;
-
 	Size max_seq_num = 0;
 
+	std::string text_line;
 	while ( getline( data, text_line ) ) {
 
 		std::istringstream text_stream( text_line );
-
 		utility::vector1 < std::string > text_line_list;
-
 		while ( true ) {
-
 			std::string str_element;
-
 			text_stream >> str_element;
-
 			if ( text_stream.fail() ) break;
-
 			text_line_list.push_back( str_element );
 		}
 
@@ -812,7 +710,6 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 		}
 
 		Size const seq_num = string_to_int( text_line_list[3] );
-
 
 		chemical::AA res_aa = get_res_aa_from_BASE_name( text_line_list[4], text_line );
 
@@ -829,7 +726,6 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 
 		Size const realatomdata_index = get_realatomdata_index( atom_name, res_aa );
 
-		//Real const accuracy_weight = get_accuracy_weight( remove_whitespaces( atom_name ) );
 		std::string const res_name( chemical::name_from_aa( res_aa ) );
 		Real const accuracy_weight = get_accuracy_weight( remove_whitespaces( atom_name ) );
 		Real const ref_shift = get_reference_shift( remove_whitespaces( res_name + ":" + atom_name ) );
@@ -842,7 +738,6 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 		flat_EXP_chem_shift_data_list.push_back( chem_shift_data );
 
 		if ( max_seq_num < seq_num ) max_seq_num = seq_num;
-
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -865,9 +760,7 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 	EXP_chem_shift_data_list_.clear();
 
 	for ( Size proton_entry_ID = 1; proton_entry_ID <= proton_entry_list.size(); proton_entry_ID++ ) {
-
 		for ( Size res_ID = 1; res_ID <= include_res_list.size(); res_ID++ ) {
-
 			Size const seq_num = include_res_list[res_ID];
 			utility::vector1< std::string > const proton_entry = proton_entry_list[proton_entry_ID];
 
@@ -877,7 +770,6 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 				EXP_chem_shift_data_list_.push_back( filterd_CS_data_list );
 			}
 		}
-
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -897,22 +789,18 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 
 		get_best_exp_to_calc_chem_shift_mapping( EXP_chem_shift_data_entry, mock_calc_chem_shift_entry, actual_exp_chem_shift_entry, do_include_CS_data );
 
-
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_entry.size(); inner_data_ID++ ) {
-
 			if ( do_include_CS_data[inner_data_ID] == false ) continue;
-
 			total_exp_chemical_shift_data_points_++;
-
 		}
 	}
+
 	std::cout << "total_exp_chemical_shift_data_points_ ( possibly ignoring duplicates ) = " << total_exp_chemical_shift_data_points_ << std::endl;
 
 	//////////////////////////////////////////////////////////////////////
 	Size data_count = 0;
 
 	if ( verbose_ ) {
-
 		std::cout << "------------------Imported exp_chem_shift_data_list------------------" << std::endl;
 		for ( Size ii = 1; ii <= EXP_chem_shift_data_list_.size(); ii++ ) {
 			for ( Size jj = 1; jj <= EXP_chem_shift_data_list_[ii].size(); jj++ ) {
@@ -925,15 +813,12 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_d
 		}
 		std::cout << "---------------------------------------------------------------------" << std::endl;
 	}
-	//////////////////////////////////////////////////////////////////////
-
 }
 
 //////////////////////////////////////////////////////////////////////
 Real
 RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftData const & CS_data, pose::Pose const & pose ) const
 {
-
 	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.total_residue() ) ) {
 		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
 		std::cout << "ERROR: pose.total_residue() = " << pose.total_residue() << std::endl;
@@ -950,57 +835,24 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftDa
 	Real calc_chem_shift = 0.0;
 
 	core::conformation::Residue const & curr_rsd = pose.residue( CS_data.seq_num );
-
+	Size const curr_atom_index = curr_rsd.atom_index( CS_data.atom_name );
+	numeric::xyzVector< core::Real > const & curr_atom_xyz = curr_rsd.xyz( curr_atom_index );
 	RNA_CS_residue_parameters const & rna_cs_curr_rsd_params = rna_cs_params_.get_RNA_CS_residue_parameters( curr_rsd.aa() );
 
-	Size const curr_atom_index = curr_rsd.atom_index( CS_data.atom_name );
-
-	numeric::xyzVector< core::Real > const & curr_atom_xyz = curr_rsd.xyz( curr_atom_index );
-
 	bool curr_atom_is_sugar = ( dround( rna_cs_curr_rsd_params.atom_data( CS_data.realatomdata_index, suga ) ) == 1 ); //NUCHEMIC defines phosphate as part of sugar!
-
 	bool curr_atom_is_base = ( curr_atom_is_sugar == false );
 
 	calc_chem_shift += rna_cs_curr_rsd_params.atom_data( CS_data.realatomdata_index, oshi ); //reference offset
 
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
-
 		core::conformation::Residue const & source_rsd = pose.residue( seq_num );
-
 		RNA_CS_residue_parameters const & source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( source_rsd.aa() );
 
 		if ( ( CS_data.seq_num == seq_num ) && ( curr_atom_is_base ) ) continue;
-
 		if ( include_ring_current_effect_ )     calc_chem_shift += ring_current_effect(       curr_atom_xyz, source_rsd, source_rsd_CS_params );
 		if ( include_magnetic_anisotropy_effect_ ) calc_chem_shift += magnetic_anisotropy_effect( curr_atom_xyz, source_rsd, source_rsd_CS_params );
-
 	}
 
-
-	if ( false ) {
-
-		std::cout << rna_cs_curr_rsd_params.base_name() << " " << CS_data.seq_num << " " << CS_data.atom_name << "\n";
-
-		std::cout << "duetores  : rc ma\n";
-		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
-
-			core::conformation::Residue const & source_rsd = pose.residue( seq_num );
-
-			RNA_CS_residue_parameters const & source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( source_rsd.aa() );
-
-			std::cout << " " << source_rsd_CS_params.base_name() << " " << seq_num << " : ";
-
-			if ( ( CS_data.seq_num == seq_num ) && ( curr_atom_is_base ) ) {
-				std::cout <<  "0 0\n";
-			} else {
-				std::cout << ring_current_effect(       curr_atom_xyz, source_rsd, source_rsd_CS_params ) << " ";
-				std::cout << magnetic_anisotropy_effect( curr_atom_xyz, source_rsd, source_rsd_CS_params ) << "\n";
-			}
-
-		}
-		std::cout << "offset : " << rna_cs_curr_rsd_params.atom_data( CS_data.realatomdata_index, oshi ) << "\n";
-		std::cout << "charge effect : " << 0.0 <<  "\n\n\n"; //Currently electric field effect is not yet implemented.
-	}
 	if ( cs_verbose_mode_ ) {
 		TR << "NUCHEMICS " << CS_data.seq_num << " "  << remove_whitespaces( chemical::name_from_aa( CS_data.res_aa ) ) << " " << CS_data.atom_name << " " << calc_chem_shift << " " << CS_data.exp_shift/CS_data.accuracy_weight << std::endl;
 	}
@@ -1012,7 +864,6 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftDa
 Real
 RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData const & CS_data, pose::Pose const & pose) const
 {
-
 	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.total_residue() ) ) {
 		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
 		std::cout << "ERROR: pose.total_residue() = " << pose.total_residue() << std::endl;
@@ -1033,37 +884,36 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData
 	Vector const curr_nmr_atom_pos ( curr_nmr_rsd.xyz( curr_nmr_atom_name ) ); // (C) position
 	//std::string const reference_key( curr_nmr_rsd_name + ":" + curr_nmr_atom_name ); // (D) reference chemical shifts
 
-	Real calc_chem_shift = 0.0;
-
+	
 	// start with reference shifts
-	if ( CS_data.ref_shift != 0.0 ) {
-		calc_chem_shift += CS_data.ref_shift;
-		// now looping over residues
-		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
-			// get data for "neighbor" residue
-			core::conformation::Residue const & curr_rsd = pose.residue( seq_num );
-			std::string const curr_rsd_name( chemical::name_from_aa( curr_rsd.aa() ) );
-			// then loop over atoms in residue
-			for ( Size atom_num = 1; atom_num <= curr_rsd.natoms(); atom_num++ ) {
-				// get data for "neighbor" atoms
-				std::string const curr_atom_name( ( curr_rsd.atom_name( atom_num ) ) );
-				if ( get_neighbor_atom( curr_atom_name ) ) {
-					Vector const curr_atom_pos = curr_rsd.xyz( curr_atom_name );
-					numeric::xyzVector< core::Real > const r_vector = curr_atom_pos - curr_nmr_atom_pos;
-					Real const r_length = r_vector.length();
-					if ( r_length > 0.0  && r_length < larmord_distance_cutoff_ ) {
-						std::string const alpha_key( curr_nmr_atom_name + ":" + curr_rsd_name + ":" + curr_atom_name );
-						//std::cout << "Checking Keys" << alpha_key << "here" << std::endl;
-						calc_chem_shift += get_alpha( alpha_key ) * pow( r_length, larmord_beta_  );
-					}
-				}
+	if ( CS_data.ref_shift == 0.0 ) return 0.0;
+	
+	Real calc_chem_shift = CS_data.ref_shift;
+	// now looping over residues
+	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+		// get data for "neighbor" residue
+		core::conformation::Residue const & curr_rsd = pose.residue( seq_num );
+		std::string const curr_rsd_name( chemical::name_from_aa( curr_rsd.aa() ) );
+		// then loop over atoms in residue
+		for ( Size atom_num = 1; atom_num <= curr_rsd.natoms(); atom_num++ ) {
+			// get data for "neighbor" atoms
+			std::string const curr_atom_name( ( curr_rsd.atom_name( atom_num ) ) );
+			if ( !get_neighbor_atom( curr_atom_name ) ) continue;
+			
+			Vector const curr_atom_pos = curr_rsd.xyz( curr_atom_name );
+			numeric::xyzVector< core::Real > const r_vector = curr_atom_pos - curr_nmr_atom_pos;
+			Real const r_length = r_vector.length();
+			if ( r_length > 0.0  && r_length < larmord_distance_cutoff_ ) {
+				std::string const alpha_key( curr_nmr_atom_name + ":" + curr_rsd_name + ":" + curr_atom_name );
+				//std::cout << "Checking Keys" << alpha_key << "here" << std::endl;
+				calc_chem_shift += get_alpha( alpha_key ) * pow( r_length, larmord_beta_  );
 			}
 		}
-		if ( cs_verbose_mode_ ) {
-			TR << "LARMORD " << CS_data.seq_num << " "  << curr_nmr_rsd_name << " " << curr_nmr_atom_name << " " << calc_chem_shift << " " << CS_data.exp_shift/CS_data.accuracy_weight << std::endl;
-		}
-		calc_chem_shift = CS_data.accuracy_weight*calc_chem_shift;
 	}
+	if ( cs_verbose_mode_ ) {
+		TR << "LARMORD " << CS_data.seq_num << " "  << curr_nmr_rsd_name << " " << curr_nmr_atom_name << " " << calc_chem_shift << " " << CS_data.exp_shift/CS_data.accuracy_weight << std::endl;
+	}
+	calc_chem_shift = CS_data.accuracy_weight*calc_chem_shift;
 	return calc_chem_shift;
 }
 
@@ -1080,7 +930,6 @@ RNA_ChemicalShiftPotential::update_calc_chem_shift_list( pose::Pose const & pose
 		calc_chem_shift_entry.clear();
 
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_list_[outer_data_ID].size(); inner_data_ID++ ) {
-
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_list_[outer_data_ID][inner_data_ID];
 
 			if ( nuchemics_mode_ && CS_data.atom_name.find ( "H" ) != std::string::npos ) {
@@ -1104,7 +953,6 @@ RNA_ChemicalShiftPotential::update_calc_chem_shift_list( pose::Pose const & pose
 			utility_exit_with_message( "EXP_chem_shift_data_list_[ii].size() != calc_chem_shift_list[ii].size()" );
 		}
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1114,7 +962,6 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 	utility::vector1 < Real > & actual_exp_chem_shift_entry,
 	utility::vector1 < bool > & do_include_CS_data ) const
 {
-
 	using namespace ObjexxFCL;
 
 	actual_exp_chem_shift_entry.clear();
@@ -1123,7 +970,6 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 	if ( EXP_chem_shift_data_entry.size() != calc_chem_shift_entry.size() ) {
 		utility_exit_with_message( "EXP_chem_shift_data_entry.size() != calc_chem_shift_entry.size()" );
 	}
-
 
 	if ( EXP_chem_shift_data_entry.size() == 2 ) { // Two choice either direct or flipped match.
 
@@ -1143,7 +989,6 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 		Size num_matching_atom_pairs_found = 0;
 
 		if ( CS_data_one.atom_name == "H5'" && CS_data_two.atom_name == "H5''" ) num_matching_atom_pairs_found++;
-
 		if ( CS_data_one.atom_name == "H5''" && CS_data_two.atom_name == "H5'" ) num_matching_atom_pairs_found++;
 
 		if ( num_matching_atom_pairs_found != 1 ) utility_exit_with_message( "num_matching_atom_pairs_found = ( " + string_of( num_matching_atom_pairs_found ) + " ) != 1" );
@@ -1165,10 +1010,7 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 				do_include_CS_data.push_back( false );
 				actual_exp_chem_shift_entry.push_back( CS_data_one.exp_shift );
 				actual_exp_chem_shift_entry.push_back( 0.0 );
-
-
 			} else {
-
 				if ( false ) { /*verbose_*/
 					std::cout << "---------------------------------------------------" << std::endl;
 					std::cout << "Keeping the better_fit of the duplicated H5_prime data | calc_shift_two = " << calc_shift_two; print_chemical_shift_data( "CS_data_two:", CS_data_two, true );
@@ -1181,11 +1023,8 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 				do_include_CS_data.push_back( true );
 				actual_exp_chem_shift_entry.push_back( 0.0 );
 				actual_exp_chem_shift_entry.push_back( CS_data_one.exp_shift );
-
 			}
-
 		} else {
-
 			do_include_CS_data.push_back( true );
 			do_include_CS_data.push_back( true );
 
@@ -1200,25 +1039,19 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 				actual_exp_chem_shift_entry.push_back( CS_data_one.exp_shift );
 			}
 		}
-
 	} else if ( EXP_chem_shift_data_entry.size() == 1 ) {
-
 		do_include_CS_data.push_back( true );
 		actual_exp_chem_shift_entry.push_back( EXP_chem_shift_data_entry[1].exp_shift );
-
 	} else {
 		std::cout << "ERROR: EXP_chem_shift_data_entry.size() = " << EXP_chem_shift_data_entry.size() << std::endl;
 		utility_exit_with_message( "EXP_chem_shift_data_entry.size() != 1 and EXP_chem_shift_data_entry.size() != 2" );
 	}
-
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 core::Real
 RNA_ChemicalShiftPotential::get_chemical_shift_energy( utility::vector1 < utility::vector1 < Real > > const & calc_chem_shift_list ) const
 {
-
 	using namespace ObjexxFCL;
 
 	//Consistency_check:
@@ -1243,7 +1076,6 @@ RNA_ChemicalShiftPotential::get_chemical_shift_energy( utility::vector1 < utilit
 			if ( do_include_CS_data[inner_data_ID] == false ) continue;
 
 			Real const exp_chem_shift = actual_exp_chem_shift_entry[inner_data_ID];
-
 			Real const calc_chem_shift = calc_chem_shift_entry[inner_data_ID];
 
 			if ( calc_chem_shift != 0.0 ) {
@@ -1274,8 +1106,6 @@ RNA_ChemicalShiftPotential::finalize_total_energy( pose::Pose const & pose, Ener
 	Real const chem_shift_score = get_chemical_shift_energy( cal_chem_shift_list ) ;
 
 	totals[ rna_chem_shift ] = chem_shift_score;
-
-
 } // finalize_total_energy
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1290,8 +1120,7 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(
 	Size const CS_data_atomno,
 	Vector & f1,
 	Vector & f2
-) const
-{
+) const {
 
 	using namespace ObjexxFCL;
 
@@ -1332,7 +1161,6 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(
 		if ( do_include_CS_data[inner_data_ID] == false ) continue;
 
 		Real const calc_chem_shift = calc_chem_shift_entry[inner_data_ID];
-
 		Real const act_exp_chem_shift = actual_exp_chem_shift_entry[inner_data_ID];
 
 		if ( false ) { /*verbose_*/
@@ -1349,9 +1177,7 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(
 		RNA_CS_residue_parameters const & CS_data_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( CS_data.res_aa );
 
 		bool const CS_data_atom_is_sugar = ( dround( CS_data_rsd_CS_params.atom_data( CS_data.realatomdata_index, suga ) ) == 1 ); //NUCHEMIC defines phosphate as part of sugar!
-
 		bool const CS_data_atom_is_base = ( CS_data_atom_is_sugar == false );
-
 		Size const CS_data_atom_index = CS_data_rsd.atom_index( CS_data.atom_name );
 
 		numeric::xyzVector< core::Real > const & CS_data_atom_xyz = CS_data_rsd.xyz( CS_data_atom_index );
@@ -1359,7 +1185,6 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(
 		for ( Size source_seq_num = 1; source_seq_num <= pose.total_residue(); source_seq_num++ ) {
 
 			core::conformation::Residue const & source_rsd = pose.residue( source_seq_num );
-
 			RNA_CS_residue_parameters const & source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( source_rsd.aa() );
 
 			if ( ( CS_data.seq_num == source_seq_num ) && ( CS_data_atom_is_base ) ) continue;
@@ -1420,13 +1245,10 @@ RNA_ChemicalShiftPotential::get_ring_current_deriv_for_src_base(
 	Size const chi1_torsion_atomnno,
 	Vector & f1,
 	Vector & f2
-) const
-{
-
+) const {
 	if ( include_ring_current_effect_ == false ) return;
 
 	Size const rc_source_seq_num = rc_source_rsd.seqpos();
-
 	RNA_CS_residue_parameters const & rc_source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( rc_source_rsd.aa() );
 
 	std::string const chi1_torsion_atomn_name = rc_source_rsd.atom_name( chi1_torsion_atomnno );
@@ -1467,19 +1289,15 @@ RNA_ChemicalShiftPotential::get_ring_current_deriv_for_src_base(
 			if ( CS_data.atom_name.find( "H" ) == std::string::npos ) continue;
 
 			Real const calc_chem_shift = calc_chem_shift_entry[inner_data_ID];
-
 			Real const act_exp_chem_shift = actual_exp_chem_shift_entry[inner_data_ID];
 
 			core::conformation::Residue const & CS_data_rsd = pose.residue( CS_data.seq_num );
-
 			Size const CS_data_atom_index = CS_data_rsd.atom_index( CS_data.atom_name );
 
 			numeric::xyzVector< core::Real > const & CS_data_atom_xyz = CS_data_rsd.xyz( CS_data_atom_index );
-
 			RNA_CS_residue_parameters const & CS_data_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( CS_data.res_aa );
 
 			bool const CS_data_atom_is_sugar = ( dround( CS_data_rsd_CS_params.atom_data( CS_data.realatomdata_index, suga ) ) == 1 ); //NUCHEMIC defines phosphate as part of sugar!
-
 			bool const CS_data_atom_is_base = ( CS_data_atom_is_sugar == false );
 
 			if ( ( CS_data.seq_num == rc_source_seq_num ) && ( CS_data_atom_is_base ) ) continue;
@@ -1493,7 +1311,6 @@ RNA_ChemicalShiftPotential::get_ring_current_deriv_for_src_base(
 
 				f1 += 2.0*CS_data.accuracy_weight*( calc_chem_shift - act_exp_chem_shift )*( f1_calc_chem_shift ); //Convert deriv_vector of calc_chem_shift to deriv_vector of chemical_shift_energy
 				f2 += 2.0*CS_data.accuracy_weight*( calc_chem_shift - act_exp_chem_shift )*( f2_calc_chem_shift ); //Convert deriv_vector of calc_chem_shift to deriv_vector of chemical_shift_energy
-
 			}
 		}
 	}
@@ -1509,19 +1326,15 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_base(
 	Size const chi1_torsion_atomno,
 	Vector & f1,
 	Vector & f2
-) const
-{
-
+) const {
 	if ( include_magnetic_anisotropy_effect_ == false ) return;
 
 	Size const ma_source_seq_num = ma_source_rsd.seqpos();
-
 	RNA_CS_residue_parameters const & ma_source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( ma_source_rsd.aa() );
 
 	std::string const chi1_torsion_atom_name = ma_source_rsd.atom_name( chi1_torsion_atomno );
 
 	Size const ma_source_rsd_maxatoms = ma_source_rsd_CS_params.get_atomnames_size();
-
 	numeric::xyzMatrix< core::Real > const ma_source_base_coordinate_matrix = get_rna_base_coordinate_system_from_CS_params( ma_source_rsd, ma_source_rsd_CS_params );
 
 	if ( false ) { /*verbose_*/
@@ -1534,10 +1347,9 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_base(
 	for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
 
 		utility::vector1 < ChemicalShiftData > const & EXP_chem_shift_data_entry = EXP_chem_shift_data_list_[outer_data_ID];
-
 		utility::vector1 < Real > calc_chem_shift_entry;
+		
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_entry.size(); inner_data_ID++ ) {
-
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_entry[inner_data_ID];
 			if ( CS_data.atom_name.find ( "H" ) != std::string::npos ) {
 				Real const calc_chem_shift = get_calc_chem_shift_value_nuchemics( CS_data, pose );
@@ -1563,19 +1375,14 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_base(
 			if ( CS_data.atom_name.find( "H" ) == std::string::npos ) continue;
 
 			Real const calc_chem_shift = calc_chem_shift_entry[inner_data_ID];
-
 			Real const act_exp_chem_shift = actual_exp_chem_shift_entry[inner_data_ID];
 
 			core::conformation::Residue const & CS_data_rsd = pose.residue( CS_data.seq_num );
-
 			Size const CS_data_atom_index = CS_data_rsd.atom_index( CS_data.atom_name );
-
 			numeric::xyzVector< core::Real > const & CS_data_atom_xyz = CS_data_rsd.xyz( CS_data_atom_index );
-
 			RNA_CS_residue_parameters const & CS_data_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( CS_data.res_aa );
 
 			bool const CS_data_atom_is_sugar = ( dround( CS_data_rsd_CS_params.atom_data( CS_data.realatomdata_index, suga ) ) == 1 ); //NUCHEMIC defines phosphate as part of sugar!
-
 			bool const CS_data_atom_is_base = ( CS_data_atom_is_sugar == false );
 
 			if ( ( CS_data.seq_num == ma_source_seq_num ) && ( CS_data_atom_is_base ) ) continue;
@@ -1596,12 +1403,9 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_base(
 
 				f1 += 2.0*CS_data.accuracy_weight*( calc_chem_shift - act_exp_chem_shift )*( f1_calc_chem_shift ); //Convert deriv_vector of calc_chem_shift to deriv_vector of chemical_shift_energy
 				f2 += 2.0*CS_data.accuracy_weight*( calc_chem_shift - act_exp_chem_shift )*( f2_calc_chem_shift ); //Convert deriv_vector of calc_chem_shift to deriv_vector of chemical_shift_energy
-
-
 			}
 		}
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1614,21 +1418,14 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_atom(
 	Size const ma_source_atomno,
 	Vector & f1,
 	Vector & f2
-) const
-{
-
+) const {
 	if ( include_magnetic_anisotropy_effect_ == false ) return;
 
 	Size const ma_source_seq_num = ma_source_rsd.seqpos();
-
 	RNA_CS_residue_parameters const & ma_source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( ma_source_rsd.aa() );
-
 	std::string const ma_source_atom_name = ma_source_rsd.atom_name( ma_source_atomno );
-
 	numeric::xyzMatrix< core::Real > const ma_source_base_coordinate_matrix = get_rna_base_coordinate_system_from_CS_params( ma_source_rsd, ma_source_rsd_CS_params );
-
 	numeric::xyzVector< core::Real > const & ma_source_atom_xyz = ma_source_rsd.xyz( ma_source_atomno );
-
 	Size const ma_source_realatomdata_index = get_realatomdata_index( ma_source_atom_name, ma_source_rsd.aa() );
 
 	if ( dround( ma_source_rsd_CS_params.atom_data( ma_source_realatomdata_index, maca ) ) != 1 ) {
@@ -1645,10 +1442,9 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_atom(
 	for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
 
 		utility::vector1 < ChemicalShiftData > const & EXP_chem_shift_data_entry = EXP_chem_shift_data_list_[outer_data_ID];
-
 		utility::vector1 < Real > calc_chem_shift_entry;
-		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_entry.size(); inner_data_ID++ ) {
 
+		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_entry.size(); inner_data_ID++ ) {
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_entry[inner_data_ID];
 			if ( CS_data.atom_name.find ( "H" ) != std::string::npos ) {
 				Real const calc_chem_shift = get_calc_chem_shift_value_nuchemics( CS_data, pose );
@@ -1672,19 +1468,15 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_atom(
 			if ( CS_data.atom_name.find( "H" ) == std::string::npos ) continue;
 
 			Real const calc_chem_shift = calc_chem_shift_entry[inner_data_ID];
-
 			Real const act_exp_chem_shift = actual_exp_chem_shift_entry[inner_data_ID];
 
 			core::conformation::Residue const & CS_data_rsd = pose.residue( CS_data.seq_num );
-
 			Size const CS_data_atom_index = CS_data_rsd.atom_index( CS_data.atom_name );
 
 			numeric::xyzVector< core::Real > const & CS_data_atom_xyz = CS_data_rsd.xyz( CS_data_atom_index );
-
 			RNA_CS_residue_parameters const & CS_data_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( CS_data.res_aa );
 
 			bool const CS_data_atom_is_sugar = ( dround( CS_data_rsd_CS_params.atom_data( CS_data.realatomdata_index, suga ) ) == 1 ); //NUCHEMIC defines phosphate as part of sugar!
-
 			bool const CS_data_atom_is_base = ( CS_data_atom_is_sugar == false );
 
 			if ( ( CS_data.seq_num == ma_source_seq_num ) && ( CS_data_atom_is_base ) ) continue;
@@ -1700,7 +1492,6 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_atom(
 			f1 += 2.0*CS_data.accuracy_weight*( calc_chem_shift - act_exp_chem_shift )*( f1_calc_chem_shift ); //Convert deriv_vector of calc_chem_shift to deriv_vector of chemical_shift_energy
 			f2 += 2.0*CS_data.accuracy_weight*( calc_chem_shift - act_exp_chem_shift )*( f2_calc_chem_shift ); //Convert deriv_vector of calc_chem_shift to deriv_vector of chemical_shift_energy
 		}
-
 	}
 }
 
@@ -1715,9 +1506,7 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-
+) const {
 	using namespace conformation;
 
 	Size const seq_num = atom_id.rsd();
@@ -1749,7 +1538,6 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 
 		F1 += weights[ rna_chem_shift ] * f1;
 		F2 += weights[ rna_chem_shift ] * f2;
-
 	}
 
 	f1[0] = f1[1] = f1[2] = 0.0;
@@ -1758,44 +1546,44 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 	bool const is_source_atom( atom_has_exp_chemical_shift_data( rsd, atomno ) );
 	bool const is_neighbor_atom( get_neighbor_atom( atom_name_whitespace ) );
 
-	if ( is_source_atom || is_neighbor_atom ) {
-		utility::vector1 < std::string > atom_names;
-		//loop over residues
-		Size atmn ( 1 );
-		for ( Size seq_num_tmp = 1; seq_num_tmp <= pose.total_residue(); seq_num_tmp++ ) {
-			core::conformation::Residue const & curr_rsd_tmp = pose.residue( seq_num_tmp );
-			//std::string const curr_rsd_name_tmp( chemical::name_from_aa( curr_rsd_tmp.aa() ) );
-			//loop over atoms
-			for ( Size atom_num_tmp = 1; atom_num_tmp <= curr_rsd_tmp.natoms(); atom_num_tmp++ ) {
-				//std::cout << "Checking for whitespace" << curr_rsd_tmp.atom_name( atom_num_tmp) << "here" << std::endl;
-				std::string const curr_atom_name_tmp( ( curr_rsd_tmp.atom_name( atom_num_tmp) ) );
-				atom_names.push_back( curr_atom_name_tmp );
-				//std::cout << "Outside " << atmn << " " << atom_names[ atmn ] << std::endl;
-				atmn++;
-			}
-		}
-
-		// neighbor atom here does not refer to covalent distance or 3D distance, but any atom that contributes --
-		// for now, most heavy atoms but not hydrogens.
-		std::string curr_active( "" );
-		if ( is_source_atom || is_neighbor_atom ) {
-			for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
-				for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_list_[outer_data_ID].size(); inner_data_ID++ ) {
-					ChemicalShiftData const & CS_data = EXP_chem_shift_data_list_[outer_data_ID][inner_data_ID];
-
-					if ( ( !( nuchemics_mode_ ) || CS_data.atom_name.find ( "H" ) == std::string::npos ) && ( is_source_atom || is_neighbor_atom ) ) {
-						if ( curr_active != CS_data.atom_name ) {
-							atmn = 1;
-							curr_active = CS_data.atom_name;
-						}
-						get_deriv_for_chemical_shift( atom_id, CS_data, pose, f1, f2, atom_names, atom_name, atom_name_whitespace, is_source_atom, is_neighbor_atom );
-					}
-				}
-			}
-			F1 += weights[ rna_chem_shift ] * f1;
-			F2 += weights[ rna_chem_shift ] * f2;
+	if ( !is_source_atom && !is_neighbor_atom ) return;
+	
+	utility::vector1 < std::string > atom_names;
+	//loop over residues
+	Size atmn ( 1 );
+	for ( Size seq_num_tmp = 1; seq_num_tmp <= pose.total_residue(); seq_num_tmp++ ) {
+		core::conformation::Residue const & curr_rsd_tmp = pose.residue( seq_num_tmp );
+		//std::string const curr_rsd_name_tmp( chemical::name_from_aa( curr_rsd_tmp.aa() ) );
+		//loop over atoms
+		for ( Size atom_num_tmp = 1; atom_num_tmp <= curr_rsd_tmp.natoms(); atom_num_tmp++ ) {
+			//std::cout << "Checking for whitespace" << curr_rsd_tmp.atom_name( atom_num_tmp) << "here" << std::endl;
+			std::string const curr_atom_name_tmp( ( curr_rsd_tmp.atom_name( atom_num_tmp) ) );
+			atom_names.push_back( curr_atom_name_tmp );
+			//std::cout << "Outside " << atmn << " " << atom_names[ atmn ] << std::endl;
+			atmn++;
 		}
 	}
+	
+	// neighbor atom here does not refer to covalent distance or 3D distance, but any atom that contributes --
+	// for now, most heavy atoms but not hydrogens.
+	std::string curr_active( "" );
+	if ( !is_source_atom && !is_neighbor_atom ) return;
+	
+	for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
+		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_list_[outer_data_ID].size(); inner_data_ID++ ) {
+			ChemicalShiftData const & CS_data = EXP_chem_shift_data_list_[outer_data_ID][inner_data_ID];
+			
+			if ( ( !( nuchemics_mode_ ) || CS_data.atom_name.find ( "H" ) == std::string::npos ) && ( is_source_atom || is_neighbor_atom ) ) {
+				if ( curr_active != CS_data.atom_name ) {
+					atmn = 1;
+					curr_active = CS_data.atom_name;
+				}
+				get_deriv_for_chemical_shift( atom_id, CS_data, pose, f1, f2, atom_names, atom_name, atom_name_whitespace, is_source_atom, is_neighbor_atom );
+			}
+		}
+	}
+	F1 += weights[ rna_chem_shift ] * f1;
+	F2 += weights[ rna_chem_shift ] * f2;
 }
 
 void
@@ -1813,7 +1601,6 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift(
 {
 	Size const seq_num_in = atom_id.rsd();
 	conformation::Residue const rsd_in = pose.residue( seq_num_in );
-
 
 	// get data for query NMR nucleus
 	std::string const curr_nmr_atom_name( CS_data.atom_name  );
@@ -1834,7 +1621,6 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift(
 	Vector f1_vec;
 	Vector f2_vec;
 	Vector curr_atom_pos;
-
 
 	// start with reference shifts
 	if ( CS_data.ref_shift != 0.0 ) {

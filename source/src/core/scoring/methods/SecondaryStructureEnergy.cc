@@ -29,12 +29,6 @@
 #include <utility/vector1.hh>
 
 
-// Utility headers
-
-
-// C++
-
-
 namespace core {
 namespace scoring {
 namespace methods {

@@ -74,7 +74,6 @@ RG_Energy_FastCreator::score_types_for_method() const {
 	return sts;
 }
 
-
 /// c-tor
 RG_Energy_Fast::RG_Energy_Fast() :
 	parent( EnergyMethodCreatorOP( new RG_Energy_FastCreator ) )
@@ -114,7 +113,6 @@ RG_Energy_Fast::finalize_total_energy(
 core::Real
 RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 {
-
 	Size const nres( pose.total_residue() );
 	Size nres_counted=0;
 
@@ -153,7 +151,6 @@ RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 	rg_score /= (nres_counted - 1);
 
 	return sqrt( rg_score );
-
 }
 
 core::Real
@@ -204,7 +201,6 @@ RG_Energy_Fast::calculate_rg_score(
 	rg_score /= (nres_counted - 1);
 
 	return sqrt( rg_score );
-
 }
 
 

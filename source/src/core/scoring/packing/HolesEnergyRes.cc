@@ -59,10 +59,7 @@ namespace packing {
 //////////////////////////////////////////////////////
 HolesEnergyRes::HolesEnergyRes() :
 	parent( 0 ) // THIS WILL FAIL
-{
-	//add_score_type( scoring::holes );
-}
-
+{}
 
 //////////////////////////////////////////////////////
 //@brief
@@ -72,8 +69,7 @@ HolesEnergyRes::finalize_total_energy(
 	pose::Pose & pose,
 	ScoreFunction const &,
 	EnergyMap & totals
-) const
-{
+) const {
 	totals[ holes ] = compute_holes_score_res(pose,params_);
 }
 
@@ -98,9 +94,7 @@ HolesEnergyRes::setup_for_derivatives(
 	core::pose::initialize_atomid_map_heavy_only(derivs,pose);
 
 	compute_holes_deriv_res( pose, params_, derivs );
-
 }
-
 
 void
 HolesEnergyRes::eval_atom_derivative(
@@ -141,6 +135,7 @@ HolesEnergyRes::version() const
 {
 	return 1; //Initial version
 }
+
 } // packing
 } // scoring
 } // core

@@ -29,7 +29,6 @@ namespace chemical_shift {
 
 /////////////////////////////////////////////////////////RNA_CS_residue_parameters Class////////////////////////////////////////////////////////////////////
 
-
 RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_aa ):
 	res_aa_( res_aa ),
 	maxatoms_( 40 ),
@@ -44,7 +43,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 	// CHD0 dielectric constant 0th order
 	// CHD1 dielectric constant 1st order
 {
-
 	// Standard configuration file for the cs calculation in DNA
 	// Numbers for RC and MA parameters from F.Ribas Prado & C.Giessner Prettre
 	// Parameters for the calculation of the ring current and atomic magnetic anisotryopy
@@ -141,7 +139,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		realatomdata_[9 ][maqz] = 2.000; realatomdata_[9 ][marx] = 5.537; realatomdata_[9 ][mary] = 5.537;   realatomdata_[9 ][marz] = 5.609;
 		realatomdata_[10][maqz] = 2.000; realatomdata_[10][marx] = 4.942; realatomdata_[10][mary] = 4.942;   realatomdata_[10][marz] = 4.443;
 
-
 		//     11     12     13    14     15    16     17    18    19     20    21  22
 		//ATOM P      OP2    OP1   C1'    C2'   C3'    O3'   C4'   O4'    C5'   O5' O2'
 		//SUGA 1      1      1     1      1     1      1     1     1      1     1   1
@@ -157,7 +154,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		atomnames_.push_back( "C5'" );  realatomdata_[20][suga] = 1.0; //20
 		atomnames_.push_back( "O5'" );  realatomdata_[21][suga] = 1.0; //21
 		atomnames_.push_back( "O2'" );  realatomdata_[22][suga] = 1.0; //22
-
 
 		//     23    24    25    26    27    28    29    30    31   32   33
 		//ATOM H1'   H2'   HO2'  H3'   H4'   H5'   H5''  H2    H61  H62  H8
@@ -176,7 +172,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		atomnames_.push_back( "H61" );  realatomdata_[31][csca] = 0.0;  realatomdata_[31][suga] = 0.0; realatomdata_[31][oshi] = 0.00;  //31
 		atomnames_.push_back( "H62" );  realatomdata_[32][csca] = 0.0;   realatomdata_[32][suga] = 0.0; realatomdata_[32][oshi] = 0.00;  //32
 		atomnames_.push_back( "H8"  );  realatomdata_[33][csca] = 1.0;  realatomdata_[33][suga] = 0.0; realatomdata_[33][oshi] = 8.64;  //33
-
 
 	} else if ( res_aa_ == chemical::na_rgu ) {
 
@@ -244,7 +239,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		realatomdata_[10][maca] = 1.0;   realatomdata_[10][maqx] = 3.289; realatomdata_[10][maqw] =  - 0.122;  realatomdata_[10][maqy] = 2.429;
 		realatomdata_[11][maca] = 1.0;   realatomdata_[11][maqx] = 2.330; realatomdata_[11][maqw] =  - 0.051;  realatomdata_[11][maqy] = 2.990;
 
-
 		realatomdata_[1 ][maqz] = 2.000; realatomdata_[1 ][marx] = 5.060; realatomdata_[1 ][mary] = 5.060;   realatomdata_[1 ][marz] = 4.503;
 		realatomdata_[2 ][maqz] = 2.000; realatomdata_[2 ][marx] = 5.415; realatomdata_[2 ][mary] = 5.415;   realatomdata_[2 ][marz] = 5.548;
 		realatomdata_[3 ][maqz] = 2.000; realatomdata_[3 ][marx] = 5.289; realatomdata_[3 ][mary] = 5.289;   realatomdata_[3 ][marz] = 4.617;
@@ -273,7 +267,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		atomnames_.push_back( "O5'" );  realatomdata_[22][suga] = 1.0; //22
 		atomnames_.push_back( "O2'" );  realatomdata_[23][suga] = 1.0; //23
 
-
 		//     24    25    26    27    28    29    30    31    32   33  34
 		//ATOM H1'   H2'   HO2'  H3'   H4'   H5'   H5''  H1   H21  H22  H8
 		//CSCA 1     1     0     1     1     1     1     0    0    0    1
@@ -292,17 +285,13 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		atomnames_.push_back( "H21" );  realatomdata_[33][csca] = 0.0;  realatomdata_[33][suga] = 0.0; realatomdata_[33][oshi] = 0.00;  //33
 		atomnames_.push_back( "H8"  );  realatomdata_[34][csca] = 1.0;  realatomdata_[34][suga] = 0.0; realatomdata_[34][oshi] = 8.10;  //34
 
-
 	} else if ( res_aa_ == chemical::na_rcy ) {
 
 		BASE_ = "CYT"; //BASE CYT //NUCHEMICS abbreviation.
 
 		num_rings_ = 1; //RCCA 1
-
 		ring_intensity_.push_back( 0.2750 );  //RCI1 0.2750
-
 		ring_radius_.push_back( 1.3675 ); //RCR1 1.3675
-
 		ring_height_.push_back( 0.5770 ); //RCH1 0.5770
 
 		//      1      2      3      4      5     6     7      8
@@ -392,15 +381,11 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 
 	} else if ( res_aa_ == chemical::na_ura ) {
 
-
 		BASE_ = "URI"; //BASE URI //NUCHEMICS abbreviation.
 
 		num_rings_ = 1; //RCCA 1
-
 		ring_intensity_.push_back( 0.1110 );  //RCI1 0.1110
-
 		ring_radius_.push_back( 1.3790 ); //RCR1 1.3790
-
 		ring_height_.push_back( 0.5770 ); //RCH1 0.5770
 
 		//      1      2      3      4      5     6     7      8
@@ -425,7 +410,6 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		atomnames_.push_back( "O4" ); //6
 		atomnames_.push_back( "C5" ); //7
 		atomnames_.push_back( "C6" ); //8
-
 
 		realatomdata_[1 ][ydir] = 1.0;    realatomdata_[1 ][rcl1] = 1.0;
 		realatomdata_[2 ][xdir] = 2.0;    realatomdata_[2 ][ydir] = 2.0;    realatomdata_[2 ][rcl1] = 1.0;
@@ -487,15 +471,9 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 		atomnames_.push_back( "H6"  );  realatomdata_[29][csca] = 1.0;  realatomdata_[29][suga] = 0.0; realatomdata_[29][oshi] = 8.25;  //29
 		atomnames_.push_back( "H5"  );  realatomdata_[30][csca] = 1.0;  realatomdata_[30][suga] = 0.0; realatomdata_[30][oshi] = 6.04;  //30
 
-
 	} else {
 		utility_exit_with_message( "Invalid res_aa_ ( " + ObjexxFCL::string_of( res_aa_ ) + " )!" );
 	}
-
-	///Consistency check////
-	//if(num_rings_!=atoms_in_ring_list_.size()){
-	// utility_exit_with_message("atom ("+ string_of(num_rings_) + ")>atomnames_.size() ("+ string_of(atoms_in_ring_list_.size()) + ")!");
-	//}
 
 	if ( num_rings_ != ring_intensity_.size() ) {
 		utility_exit_with_message( "atom ( " + string_of( num_rings_ ) + " ) > ring_intensity_.size() ( " + string_of( ring_intensity_.size() ) + " )!" );
@@ -540,9 +518,7 @@ RNA_CS_residue_parameters::ring_intensity( Size const ring_ID ) const{
 
 	if ( ring_ID < 1 ) utility_exit_with_message( "ring_ID ( " + string_of( ring_ID ) + " ) < 1!" );
 
-
 	return ring_intensity_[ring_ID];
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -554,7 +530,6 @@ RNA_CS_residue_parameters::ring_radius( Size const ring_ID ) const{
 	if ( ring_ID < 1 ) utility_exit_with_message( "ring_ID ( " + string_of( ring_ID ) + " ) < 1!" );
 
 	return ring_radius_[ring_ID];
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -566,15 +541,12 @@ RNA_CS_residue_parameters::ring_height( Size const ring_ID ) const{
 	if ( ring_ID < 1 ) utility_exit_with_message( "ring_ID ( " + string_of( ring_ID ) + " ) < 1!" );
 
 	return ring_height_[ring_ID];
-
 }
 
 ////////////////////////////////////////////////////////////
 Size
 RNA_CS_residue_parameters::get_atomnames_size() const{
-
 	return atomnames_.size();
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -591,17 +563,13 @@ RNA_CS_residue_parameters::get_atomname( Size const count ) const{
 Real
 RNA_CS_residue_parameters::atom_data( Size const atom, atomitem const item ) const{
 
-
 	if ( atom > atomnames_.size() ) utility_exit_with_message( "atom ( " + string_of( atom ) + " ) > atomnames_.size() ( " + string_of( atomnames_.size() ) + " )!" );
 
 	if ( item > last_atomdesc ) utility_exit_with_message( "atom ( " + string_of( item ) + " ) > atomnames_.size() ( " + string_of( last_atomdesc ) + " )!" );
 
 	if ( item < 1 ) utility_exit_with_message( "item ( " + ObjexxFCL::string_of( item ) + " ) < 1!" );
 
-
 	return realatomdata_[atom][item];
-
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -609,7 +577,6 @@ Real
 RNA_CS_residue_parameters::ring_current_coeff() const
 {
 	return RCCO_;
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -617,7 +584,6 @@ Real
 RNA_CS_residue_parameters::magentic_anisotropy_r_coeff() const
 {
 	return MACR_;
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -625,8 +591,8 @@ Real
 RNA_CS_residue_parameters::magentic_anisotropy_q_coeff() const
 {
 	return MACQ_;
-
 }
+
 ////////////////////////////////////////////////////////////
 chemical::AA
 RNA_CS_residue_parameters::aa() const{
@@ -650,7 +616,6 @@ RNA_CS_parameters::RNA_CS_parameters():
 	CS_RGU_params_( RNA_CS_residue_parameters( chemical::na_rgu ) ),
 	CS_RCY_params_( RNA_CS_residue_parameters( chemical::na_rcy ) ),
 	CS_URA_params_( RNA_CS_residue_parameters( chemical::na_ura ) )
-
 {
 }
 
@@ -662,21 +627,15 @@ RNA_CS_parameters::~RNA_CS_parameters(){}
 RNA_CS_residue_parameters const &
 RNA_CS_parameters::get_RNA_CS_residue_parameters( chemical::AA const res_aa ) const
 {
-
 	if ( res_aa == chemical::na_rad ) return CS_RAD_params_;
-
 	if ( res_aa == chemical::na_rgu ) return CS_RGU_params_;
-
 	if ( res_aa == chemical::na_rcy ) return CS_RCY_params_;
-
 	if ( res_aa == chemical::na_ura ) return CS_URA_params_;
 
 	utility_exit_with_message( "Invalid res_aa_ ( " + string_of( res_aa ) + " )!" );
-
 	utility_exit_with_message( "SHOULD NOT REACH THIS POINT OF THE FUNCTION!!" );
 
 	return CS_RGU_params_; //This is just for prevent compiler warning!
-
 }
 
 

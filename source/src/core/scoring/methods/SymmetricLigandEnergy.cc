@@ -17,7 +17,6 @@
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
-//#include <core/scoring/ScoringManager.hh>
 
 #include <core/scoring/ScoreType.hh>
 
@@ -94,7 +93,6 @@ SymmetricLigandEnergy::residue_energy(
 			Real penalty = rsd.xyz("CA" ).y();
 			penalty *= penalty;
 			emap[sym_lig] += penalty * 0.01;
-
 		}
 		emap[sym_lig] += numeric::min( 0.0, rsd.xyz("CEN").distance(target) - 20.0 ) / 20;
 	} else { // full atom
@@ -109,8 +107,6 @@ SymmetricLigandEnergy::residue_energy(
 			emap[sym_lig] += score;
 		}
 	}
-
-
 }
 
 
@@ -125,13 +121,11 @@ SymmetricLigandEnergy::eval_atom_derivative(
 	Vector & F2
 ) const {
 	if ( "HIS" != pose.residue(id.rsd()).name3() ) return;
-
 	if ( "NE2" != pose.residue(id.rsd()).atom_name(id.atomno()) ) return;
 
 	// std::cerr << "SymmetricLigandEnergy deriv " << id << std::endl;
 
 	numeric::xyzVector<core::Real> target(0,0,4.0);
-	//if( pose.xyz(id).z() < 0.0 ) target *= -1.0;
 
 	if ( pose.xyz(id).distance(target) > 5.0 ) return;
 
@@ -144,7 +138,6 @@ SymmetricLigandEnergy::eval_atom_derivative(
 
 	F1 += weights[ sym_lig ] * f1;
 	F2 += weights[ sym_lig ] * f2;
-
 }
 
 

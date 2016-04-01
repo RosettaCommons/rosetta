@@ -13,13 +13,10 @@
 
 
 #include <core/scoring/func/GaussianFunc.hh>
-
 #include <core/scoring/constraints/util.hh>
-
 #include <core/types.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
-
 
 // C++ Headers
 

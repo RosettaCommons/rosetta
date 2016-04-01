@@ -122,8 +122,7 @@ MinimizationGraphCOP SymmetricEnergies::derivative_graph() const
 void
 SymmetricEnergies::update_neighbor_links(
 	pose::Pose const & pose
-)
-{
+) {
 	using namespace graph;
 	using namespace scoring;
 
@@ -165,34 +164,23 @@ SymmetricEnergies::update_neighbor_links(
 				ii_end_iter = pg->get_vertex( ii ).upper_edge_list_end();
 				ii_iter != ii_end_iter; ++ii_iter ) {
 			uint const jj = ii_iter->upper_vertex();
-			if ( ( domain_map_during_minimization(jj) != ii_map ) || ii_moved ) {
-
-				Distance const jjradius( pose.residue_type( jj ).nbr_radius() );
-				DistanceSquared const square_distance( ii_iter->data().dsq() );
-
-				// How about we simply make sure the radii sum is positive instead of paying for a sqrt
-				// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
-				if ( ii_intxn_radius + jjradius > 0 ) {
-					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
-						//      bool symm_add;
-						//      if (SymmConf.Symmetry_Info().subunits() > 2 ) {
-						//       bool symm_add = symm_info.scoring_residue(jj);
-						//      } else {
-						//       symm_add = ( symm_info.bb_is_independent(jj) )
-						//             || ( !symm_info.bb_is_independent(jj) &&
-						//                symm_info.bb_follows(jj) <= ii );
-						//      }
-						//      if ( symm_add ) {
-						energy_graph_no_state_check().add_energy_edge( ii, jj, square_distance );
-						//      }
-					}
-					for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
-						context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
-					}
-				}
+			if ( ( domain_map_during_minimization(jj) == ii_map ) && !ii_moved ) continue;
+			
+			Distance const jjradius( pose.residue_type( jj ).nbr_radius() );
+			DistanceSquared const square_distance( ii_iter->data().dsq() );
+			
+			// How about we simply make sure the radii sum is positive instead of paying for a sqrt
+			if ( ii_intxn_radius + jjradius <= 0 ) continue;
+			
+			if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
+				energy_graph_no_state_check().add_energy_edge( ii, jj, square_distance );
+			}
+			for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
+				context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
 			}
 		}
 	}
+
 	/// Manually set the neighbour count for the energy_graph to be symmetrical
 	for ( uint res = 1; res <= pose.total_residue(); ++res ) {
 		if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
@@ -227,9 +215,7 @@ SymmetricEnergies::fill_point_graph( pose::Pose const & pose, conformation::Poin
 
 	Distance const max_pair_radius = pose::pose_max_nbr_radius( pose );
 	Distance const energy_neighbor_cutoff = 2 * max_pair_radius + get_scorefxn_info().max_atomic_interaction_distance();
-
 	Distance const context_cutoff = max_context_neighbor_cutoff();
-
 	Distance const neighbor_cutoff = numeric::max( energy_neighbor_cutoff, context_cutoff );
 
 	// Stuarts O( n log n ) octree algorithm
@@ -289,8 +275,6 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 			cgraphs[ type ]->get_node( res )->set_num_neighbors_counting_self_static( neighbors_symm );
 		}
 	}
-
-
 }
 
 

@@ -211,9 +211,6 @@ CustomAtomPairEnergy::residue_pair_energy(
 	Size seqpos1( rsd1.seqpos() ), seqpos2( rsd2.seqpos() );
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
 
-	//swap_seqpos( seqpos1, seqpos2 );
-	//if ( std::abs( seqpos1 - seqpos2 ) > max_cst_seq_sep_ ) return;
-
 	// return early if we don't have a weight for this ScoreType
 	if ( scorefxn.has_zero_weight(custom_atom_pair) ) return;
 
@@ -228,9 +225,7 @@ CustomAtomPairEnergy::residue_pair_energy(
 	Distance dist( rsd1.xyz(atom_name).distance( rsd2.xyz(atom_name) ) );
 	if ( dist > interaction_cutoff() ) {
 		emap[ custom_atom_pair ] += dist - interaction_cutoff();
-	} //else {
-	//Real const score( funcs_[seqpos1][seqpos2].func( dist ) );
-	//emap[ custom_atom_pair ] += funcs_[seqpos1][seqpos2].func( dist );
+	}
 } // residue_pair_energy
 
 /////////////////////////////////////////////////////////////////////////////
@@ -252,26 +247,22 @@ CustomAtomPairEnergy::eval_atom_derivative(
 	if ( atom_id.atomno() != 2 ) return; // tex - fix this!
 
 	for ( Size seqpos2 = 1; seqpos2 <= pose.total_residue(); ++seqpos2 ) {
-		if ( seqpos1 != seqpos2 && have_cst_[seqpos1][seqpos2] ) {
-			core::id::AtomID other_atom( atom_id.atomno(), seqpos2 );
+		if ( seqpos1 == seqpos2 || ! have_cst_[seqpos1][seqpos2] ) continue;
+		
+		core::id::AtomID other_atom( atom_id.atomno(), seqpos2 );
+		
+		Real dist(0.0);
+		Vector f1(0.0), f2(0.0);
+		numeric::deriv::distance_f1_f2_deriv(
+			pose.conformation().xyz( atom_id ), pose.conformation().xyz( other_atom ),
+			dist, f1, f2 );
 
-			Real dist(0.0);
-			Vector f1(0.0), f2(0.0);
-			numeric::deriv::distance_f1_f2_deriv(
-				pose.conformation().xyz( atom_id ), pose.conformation().xyz( other_atom ),
-				dist, f1, f2
+		if ( dist <= interaction_cutoff() ) {
+			Real const wderiv(
+				weights[ custom_atom_pair ] * funcs_[seqpos1][seqpos2].dfunc(dist)
 			);
-			if ( dist <= interaction_cutoff() ) {
-				Real const wderiv(
-					weights[ custom_atom_pair ] * funcs_[seqpos1][seqpos2].dfunc(dist)
-				);
-				F1 += f1 * wderiv;
-				F2 += f2 * wderiv;
-			} //else {
-			//Real const wderiv( weights[ custom_atom_pair ] );
-			//F1 += f1 * wderiv;
-			//F2 += f2 * wderiv;
-			//}
+			F1 += f1 * wderiv;
+			F2 += f2 * wderiv;
 		}
 	}
 } // eval_atom_derivative

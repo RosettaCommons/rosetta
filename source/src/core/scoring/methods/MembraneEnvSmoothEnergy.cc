@@ -143,8 +143,7 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 		const Energies & energies( pose.energies() );
 		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
 
-		Real countN    =  0.0;
-
+		Real countN = 0.0;
 		// iterate across neighbors within 12 angstroms
 		for ( graph::Graph::EdgeListConstIter
 				ir  = graph.get_node(i)->const_edge_list_begin(),
@@ -171,7 +170,6 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 
 		//std::cout << "ENV:  " << i << "  " << score << std::endl;
 	}
-
 }
 
 void
@@ -315,9 +313,7 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 				F1, F2 );
 
 		}
-
 	}
-
 }
 
 /// @details returns const & to static data members to avoid expense
@@ -556,7 +552,6 @@ MembraneEnvSmoothEnergy::calc_energy(
 			layer = 1;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
-
 		}
 	}
 

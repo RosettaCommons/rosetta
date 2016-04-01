@@ -207,9 +207,7 @@ fill_intra_res_hbond_set(
 	bool const exclude_bsc /* default false */,
 	bool const exclude_scb /* default false */,
 	bool const exclude_sc  /* default false */
-)
-{
-
+) {
 	HBondDatabase const & database( * HBondDatabase::get_database(hbond_set.hbond_options().params_database_tag()));
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
@@ -220,7 +218,6 @@ fill_intra_res_hbond_set(
 		identify_intra_res_hbonds( database, rsd1, rsd_nb, calculate_derivative, hbond_set,
 			exclude_bb, exclude_bsc, exclude_scb, exclude_sc );
 	}
-
 }
 
 
@@ -231,34 +228,32 @@ get_ssdep_weight(
 	pose::Pose const & pose,
 	SSWeightParameters const & ssdep
 ) {
-
-	Real ss_len_scalefactor = 1.0;
-
-	if ( ssdep.ssdep_ ) {
-		// check if they are in same helix
-		bool connected=true;
-		Size hstart = std::min( rsd1.seqpos(), rsd2.seqpos()), hend=std::max( rsd1.seqpos(), rsd2.seqpos());
-		for ( Size i=hstart; i<=hend && connected; ++i ) {
-			connected = (pose.secstruct(i) == 'H');
-		}
-		if ( connected ) {
-			while ( hstart >= 1 && pose.secstruct(hstart) == 'H' ) hstart--;
-			while ( hend <= pose.total_residue() && pose.secstruct(hend) == 'H' ) hend++;
-
-			Size hlen = hend-hstart-1;
-			if ( pose.secstruct(hstart) == 'H' ) hlen++;
-			if ( pose.secstruct(hend) == 'H' ) hlen++;
-
-			if ( hlen<=ssdep.len_l_ ) ss_len_scalefactor = ssdep.l_;
-			else if ( hlen>=ssdep.len_h_ ) ss_len_scalefactor = ssdep.h_;
-			else {
-				Real m = (ssdep.h_-ssdep.l_)/(ssdep.len_h_-ssdep.len_l_);
-				Real b = ssdep.l_-ssdep.len_l_*m;
-				ss_len_scalefactor = m*hlen+b;
-			}
-			//std::cerr << "hlen = " << hlen << "scale = " << ss_len_scalefactor << std::endl;
-		}
+	if ( ! ssdep.ssdep_ ) return 1.0;
+	
+	// check if they are in same helix
+	bool connected=true;
+	Size hstart = std::min( rsd1.seqpos(), rsd2.seqpos()), hend=std::max( rsd1.seqpos(), rsd2.seqpos());
+	for ( Size i=hstart; i<=hend && connected; ++i ) {
+		connected = (pose.secstruct(i) == 'H');
 	}
+	if ( !connected ) return 1.0;
+	Real ss_len_scalefactor = 1.0;
+	
+	while ( hstart >= 1 && pose.secstruct(hstart) == 'H' ) hstart--;
+	while ( hend <= pose.total_residue() && pose.secstruct(hend) == 'H' ) hend++;
+	
+	Size hlen = hend-hstart-1;
+	if ( pose.secstruct(hstart) == 'H' ) hlen++;
+	if ( pose.secstruct(hend) == 'H' ) hlen++;
+	
+	if ( hlen<=ssdep.len_l_ ) ss_len_scalefactor = ssdep.l_;
+	else if ( hlen>=ssdep.len_h_ ) ss_len_scalefactor = ssdep.h_;
+	else {
+		Real m = (ssdep.h_-ssdep.l_)/(ssdep.len_h_-ssdep.len_l_);
+		Real b = ssdep.l_-ssdep.len_l_*m;
+		ss_len_scalefactor = m*hlen+b;
+	}
+	//std::cerr << "hlen = " << hlen << "scale = " << ss_len_scalefactor << std::endl;
 
 	return ss_len_scalefactor;
 }
@@ -766,7 +761,6 @@ identify_intra_res_hbonds(
 
 			// now we have identified a hbond -> put it into the hbond_set//////
 			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type, unweighted_energy, environmental_weight, derivs );
-
 
 		} // loop over donors
 	} // loop over acceptors

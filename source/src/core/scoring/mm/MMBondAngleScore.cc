@@ -98,7 +98,6 @@ MMBondAngleScore::score( mm_bondangle_atom_tri mm_atomtype_set, Real angle ) con
 	}
 	}
 	*/
-
 	return score;
 }
 

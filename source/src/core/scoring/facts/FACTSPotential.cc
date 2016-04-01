@@ -795,8 +795,7 @@ void FACTSPotential::calculate_GBpair_fast(
 	conformation::Residue const & rsd2,
 	FACTSResidueInfo & facts1,
 	FACTSResidueInfo & facts2
-) const
-{
+) const {
 	using namespace core::scoring::etable::count_pair;
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
@@ -1224,7 +1223,6 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 
 				}
 			} // end inter-res
-
 		} // atm1
 	} // res1
 
@@ -1244,8 +1242,7 @@ FACTSPotential::atom_atom_context_derivative( FACTSResidueInfo & facts1,
 	Size const & atm2,
 	Vector const & dxyz,
 	bool const full_update
-) const
-{
+) const {
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 	FACTSRsdTypeInfoCOP factstype2 = facts2.restypeinfo();
 
@@ -1352,7 +1349,6 @@ FACTSPotential::atom_atom_context_derivative( FACTSResidueInfo & facts1,
 		facts2.solvF2BR_[atm2] -= dsolv_drij;
 		facts2.sasaF2_[atm2] -= dSA_drij;
 	}
-
 }
 
 // Called at scoring step - for polar energy
@@ -1375,7 +1371,6 @@ void FACTSPotential::evaluate_polar_energy(Residue const & rsd1,
 	TR.Debug << " " << std::setw(10) << E_solv_pair;
 	TR.Debug << " " << std::setw(4) << rsd1.name() << " " << std::setw(4) << rsd2.name();
 	TR.Debug << std::endl;
-
 }
 
 // Called at scoring step - for nonpolar energy
@@ -1430,7 +1425,6 @@ void FACTSPotential::eval_atom_polar_derivative(
 	Vector const &crd1 = pose.residue(res1).xyz(atm1);
 	Vector virtualcrd = -tmpv + crd1;
 	F1 += crd1.cross( virtualcrd );
-
 }
 
 // Called during minimization; Just call derivatives calculated at setup_for_derivative
@@ -1501,8 +1495,8 @@ void FACTSPotential::get_template_born_radii(pose::Pose const & pose, FACTSPoseI
 		}
 		get_self_terms( factstype1, facts1, true );
 	}
-
 }
+
 /// called eg after a rotamer substitution is accepted during rotamer trials
 void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seqpos) const
 {
@@ -1653,13 +1647,8 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			Real const arg = MultiplicitiveFactor()*q1*q2;
 			Real fsolv( 0.0 );
 			Real tmp1 = dis2/Kappa();
-			//tmp2 = exp(-tmp1/BRij);
 			Real tmp2 = (Real)fastexp((float)(-tmp1/BRij));
 			Real tmp3 = dis2 + BRij*tmp2 - dshift2;
-
-			// Fast version
-			//tmp2 = BRij - tmp1;
-			//tmp3 = dis2 + tmp2 - dshift2;
 
 			if ( !self_pair && tmp3 < dis2 ) {
 				tmp1 = 0.0; tmp2 = 0.0; tmp3 = dis2;

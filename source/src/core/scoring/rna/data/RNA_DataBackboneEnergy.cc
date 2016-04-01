@@ -106,13 +106,6 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C3'" ) );
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C4'" ) );
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C5'" ) );
-
-	//rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
-	///ResidueTypeCOP const & rsd_type_coarse( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
-
-	//atom_numbers_sugar_coarse_.clear();
-	// atom_numbers_sugar_coarse_.push_back( rsd_type_coarse->atom_index( " S  " ) );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -125,8 +118,6 @@ RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
 {
 	// need to make sure scoring info is in there...
 	rna::nonconst_rna_scoring_info_from_pose( pose );
-	// Commented out - unused variable warning
-	//rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 
 	pose.update_residue_neighbors();
 }
@@ -167,8 +158,6 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	if ( !rsd1.is_RNA() ) return;
 	if ( !rsd2.is_RNA() ) return;
 
-	// if ( std::abs( static_cast<int>( rsd1.seqpos() ) - static_cast<int>( rsd2.seqpos() )  ) < 2 ) return;
-
 	//  rna_filtered_base_base_info.set_calculated( false );
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
@@ -191,41 +180,29 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	} else if ( rna_data_backbone_exposed( rsd2.seqpos() )  ) {
 		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_DataBackboneEnergy::get_sugar_env_score( core::conformation::Residue const & rsd_buried, core::conformation::Residue const & rsd_other ) const
 {
-
 	Real score( 0.0 );
-
-	// Vector const mean_sugar_pos = get_mean_sugar_pos( rsd_buried );
 	bool is_coarse = ( rsd_buried.is_coarse() );
 
 	utility::vector1< Size > const & atom_numbers_sugar = ( is_coarse ? atom_numbers_sugar_coarse_ : atom_numbers_sugar_ );
-
 	Size const num_sugar_atoms( atom_numbers_sugar.size() );
 
 	for ( Size j = 1; j <= num_sugar_atoms; j++ ) {
-
 		numeric::xyzVector< Real > const & sugar_atom( rsd_buried.xyz( atom_numbers_sugar[j] ) );
-
 		for ( Size m = 1; m <= rsd_other.nheavyatoms(); m++ ) {
-
 			numeric::xyzVector< Real > const & other_atom( rsd_other.xyz( m ) );
 			Real const dist = ( other_atom - sugar_atom ).length();
-
 			Real const burial_score = burial_function_->func( dist );
 			score += burial_score;
-
 		}
-
 	}
 
 	return score;
-
 }
 
 
@@ -241,7 +218,6 @@ RNA_DataBackboneEnergy::check_sugar_atom( Size const & n ) const {
 	return false;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DataBackboneEnergy::eval_atom_derivative(
@@ -252,15 +228,12 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-
+) const {
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 
 	if ( ! rsd1.is_RNA() ) return;
-
 	if ( m > rsd1.nheavyatoms() ) return;
 
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -273,7 +246,6 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
-
 	bool const pos1_fixed( domain_map( i ) != 0 );
 
 	// cached energies object
@@ -288,16 +260,13 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 			iter != itere; ++iter ) {
 
 		Size const j( ( *iter )->get_other_ind( i ) );
-
 		if ( pos1_fixed && domain_map( i ) == domain_map( j ) ) continue; //Fixed w.r.t. one another.
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
-
 		if ( ! rsd2.is_RNA() ) continue;
 
 		// This could be faster if split into separate loops.
 		if ( rna_data_backbone_burial( i ) && check_sugar_atom( m ) ) { // other heavy atoms are possible buriers
-
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
@@ -310,12 +279,9 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				F1 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f1;
 				F2 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f2;
 			}
-
 		}
-
 
 		if ( rna_data_backbone_exposed( i ) && check_sugar_atom( m ) ) { // other heavy atoms are possible buriers
-
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
@@ -328,14 +294,11 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				F1 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f1;
 				F2 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f2;
 			}
-
 		}
 
 
-		if ( rna_data_backbone_burial( j )  ) { // other residue's sugar atoms might be buried.
-
+		if ( rna_data_backbone_burial( j ) ) { // other residue's sugar atoms might be buried.
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
-
 				if ( ! check_sugar_atom( n ) ) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
@@ -349,14 +312,11 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				F1 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f1;
 				F2 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f2;
 			}
-
 		}
 
 
-		if ( rna_data_backbone_exposed( j )  ) { // other residue's sugar atoms might be buried.
-
+		if ( rna_data_backbone_exposed( j ) ) { // other residue's sugar atoms might be buried.
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
-
 				if ( ! check_sugar_atom( n ) ) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
@@ -370,12 +330,8 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				F1 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f1;
 				F2 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f2;
 			}
-
 		}
-
-
 	}
-
 }
 
 

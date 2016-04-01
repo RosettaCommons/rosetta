@@ -114,14 +114,11 @@ RNA_VDW_Energy::residue_pair_energy(
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
-
+) const {
 	//std::cout << "Checking out VDW: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
-
 
 	Size const pos1 = rsd1.seqpos();
 	Size const pos2 = rsd2.seqpos();
@@ -163,18 +160,13 @@ RNA_VDW_Energy::residue_pair_energy(
 			Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz( j ) ) );
 
 			if ( clash > 0.0 ) {
-
 				score += ( clash * clash ) / bump_dsq;
-
 				//     tr << "BUMP " << rsd1.name3() << I(4,rsd1.seqpos() ) << ' ' << rsd1.atom_name(i) << " --- " << rsd2.name3() << I(4,rsd2.seqpos() ) << ' ' << rsd2.atom_name(j) << " Penalty: " << ( clash * clash ) / bump_dsq << " sqrt(atomvdw) " << sqrt( bump_dsq ) <<  " dist "  << i_xyz.distance( rsd2.xyz(j)) << "  index: "  << m << " " << n << std::endl;
-
 			}
-
 		}
 	}
 
 	emap[ rna_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
-
 }
 
 
@@ -183,8 +175,8 @@ Size
 RNA_VDW_Energy::get_vdw_atom_number(
 	utility::vector1< utility::vector1< Size > > const & atom_numbers_for_vdw_calculation,
 	Size const & pos1,
-	Size const & i ) const
-{
+	Size const & i
+) const {
 	Size m( 0 );
 	bool is_vdw_atom( false );
 
@@ -209,9 +201,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-	//using namespace etable::count_pair;
+) const {
 
 	Size const pos1( atom_id.rsd() );
 	Size const i   ( atom_id.atomno() );
@@ -275,9 +265,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 				F2 += dE_dr_over_r * f2;
 			}
 		}
-
 	} // loop over nbrs of rsd1
-
 }
 
 
@@ -329,21 +317,20 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 		is_magnesium[ i ] = ( rsd.name3() == " MG" );
 		atom_numbers_for_vdw_calculation[ i ].clear();
 
-		if ( rsd.is_RNA() || is_magnesium[ i ] /*magnesium now OK!*/ ) {
-			//a,c,g, or u?
-			char const which_nucleotide = rsd.name1();
-			//What atom names to look at?
-			utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( which_nucleotide );
-			for ( Size m = 1; m <= vdw_atom_list.size(); m++ ) {
-				Size const vdw_atom_index =  rsd.atom_index( vdw_atom_list[ m ] );
-				atom_numbers_for_vdw_calculation[ i ].push_back( vdw_atom_index );
-				//std::cout << i << " " << rsd.name1() << " " << m << " of " << vdw_atom_list.size() << ": " << vdw_atom_list[ m ] << " " << vdw_atom_index << std::endl;
-			}
-
+		if ( !rsd.is_RNA() && !is_magnesium[ i ] ) continue;
+		
+		//a,c,g, or u?
+		char const which_nucleotide = rsd.name1();
+		//What atom names to look at?
+		utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( which_nucleotide );
+		for ( Size m = 1; m <= vdw_atom_list.size(); m++ ) {
+			Size const vdw_atom_index =  rsd.atom_index( vdw_atom_list[ m ] );
+			atom_numbers_for_vdw_calculation[ i ].push_back( vdw_atom_index );
+			//std::cout << i << " " << rsd.name1() << " " << m << " of " << vdw_atom_list.size() << ": " << vdw_atom_list[ m ] << " " << vdw_atom_index << std::endl;
 		}
-
 	}
 }
+
 core::Size
 RNA_VDW_Energy::version() const
 {

@@ -88,7 +88,6 @@ PairEPotential::PairEPotential() :
 	}
 	stream.close();
 
-
 	//bk One interesting property of the pair statistics are that they favor unlike charges being
 	//bk near each other, but only very close range interactions between like charges are
 	//bk disfavored.  This is presumably because like charged residues frequently come togethor to
@@ -98,46 +97,45 @@ PairEPotential::PairEPotential() :
 	//bk if the -use_electrostic_repulsion flag is turned on.  The penalty is set to be roughly equal
 	//bk but opposite to the favorable energy given to unlike charges.
 	{ // Electrostatic repulsion
-		//using namespace core::conformation::amino::AminoAcidKeys;
 		using namespace core::chemical;//conformation;
 		using namespace basic::options;
 		using namespace OptionKeys::packing;
 
-		if ( option[ use_electrostatic_repulsion ] ) {
-			for ( int e1 = 1; e1 <= 2; ++e1 ) {
-				for ( int e2 = 1; e2 <= 2; ++e2 ) {
-					pair_corr_( aa_asp, aa_asp, e1, e2, 1 ) = 0.3;   // 3-4.5 angstroms
-					pair_corr_( aa_asp, aa_asp, e1, e2, 2 ) = 0.5;   // 4.5-6 angstroms
-					pair_corr_( aa_asp, aa_asp, e1, e2, 3 ) = 0.75;  // 6-7.5 angstroms
-
-					pair_corr_( aa_asp, aa_glu, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_asp, aa_glu, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_asp, aa_glu, e1, e2, 3 ) = 0.75;
-
-					pair_corr_( aa_glu, aa_asp, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_glu, aa_asp, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_glu, aa_asp, e1, e2, 3 ) = 0.75;
-
-					pair_corr_( aa_glu, aa_glu, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_glu, aa_glu, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_glu, aa_glu, e1, e2, 3 ) = 0.75;
-
-					pair_corr_( aa_lys, aa_lys, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_lys, aa_lys, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_lys, aa_lys, e1, e2, 3 ) = 0.75;
-
-					pair_corr_( aa_arg, aa_arg, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_arg, aa_arg, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_arg, aa_arg, e1, e2, 3 ) = 0.75;
-
-					pair_corr_( aa_arg, aa_lys, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_arg, aa_lys, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_arg, aa_lys, e1, e2, 3 ) = 0.75;
-
-					pair_corr_( aa_lys, aa_arg, e1, e2, 1 ) = 0.3;
-					pair_corr_( aa_lys, aa_arg, e1, e2, 2 ) = 0.5;
-					pair_corr_( aa_lys, aa_arg, e1, e2, 3 ) = 0.75;
-				}
+		if ( !option[ use_electrostatic_repulsion ] ) return;
+		
+		for ( int e1 = 1; e1 <= 2; ++e1 ) {
+			for ( int e2 = 1; e2 <= 2; ++e2 ) {
+				pair_corr_( aa_asp, aa_asp, e1, e2, 1 ) = 0.3;   // 3-4.5 angstroms
+				pair_corr_( aa_asp, aa_asp, e1, e2, 2 ) = 0.5;   // 4.5-6 angstroms
+				pair_corr_( aa_asp, aa_asp, e1, e2, 3 ) = 0.75;  // 6-7.5 angstroms
+				
+				pair_corr_( aa_asp, aa_glu, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_asp, aa_glu, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_asp, aa_glu, e1, e2, 3 ) = 0.75;
+				
+				pair_corr_( aa_glu, aa_asp, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_glu, aa_asp, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_glu, aa_asp, e1, e2, 3 ) = 0.75;
+				
+				pair_corr_( aa_glu, aa_glu, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_glu, aa_glu, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_glu, aa_glu, e1, e2, 3 ) = 0.75;
+				
+				pair_corr_( aa_lys, aa_lys, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_lys, aa_lys, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_lys, aa_lys, e1, e2, 3 ) = 0.75;
+				
+				pair_corr_( aa_arg, aa_arg, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_arg, aa_arg, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_arg, aa_arg, e1, e2, 3 ) = 0.75;
+				
+				pair_corr_( aa_arg, aa_lys, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_arg, aa_lys, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_arg, aa_lys, e1, e2, 3 ) = 0.75;
+				
+				pair_corr_( aa_lys, aa_arg, e1, e2, 1 ) = 0.3;
+				pair_corr_( aa_lys, aa_arg, e1, e2, 2 ) = 0.5;
+				pair_corr_( aa_lys, aa_arg, e1, e2, 3 ) = 0.75;
 			}
 		}
 	}
@@ -155,8 +153,7 @@ PairEPotential::pair_term_energy(
 	int res1_num_10A_neighbors,
 	conformation::Residue const & res2,
 	int res2_num_10A_neighbors
-) const
-{
+) const {
 	Probability temp1, temp2, temp3;
 	return pair_term_energy( res1, res1_num_10A_neighbors, res2, res2_num_10A_neighbors, temp1, temp2, temp3 );
 }
@@ -170,24 +167,17 @@ PairEPotential::pair_term_energy(
 	Probability & pair_lhood_ratio,
 	Probability & pair_lhood_ratio_high,
 	Probability & pair_lhood_ratio_low
-) const
-{
-	//using namespace pdbstatistics_pack; // Various constants and tables
-	//using namespace pdbstatistics_pack::pdbstatistics; // Energy lookup tables
+) const {
 	using namespace basic::options;
 	using namespace core::chemical; //conformation;
 	using namespace basic::options::OptionKeys;
-	//using namespace core::conformation::amino::AminoAcidKeys;
 	using numeric::abs_difference;
 	using numeric::interpolation::interpolated;
 
 	debug_assert( res1.seqpos() != res2.seqpos() ); // Only call for distinct residues
 	debug_assert( res1.is_polar() || res1.is_aromatic() );
 	debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino acids: Caller does exclusion (prevents call overhead)
-	//debug_assert( pair_corr_.I1() == pair_corr_.I2() ); // First 2 index ranges should match //this is a silly assert
-
-	// if ( !is_protein(aa1)  ||  !is_protein(aa2) ) ) return; //dr okay for dupes but not other nnaa where we won't have this info     //! Change to an NCAA exclusion????
-
+	
 	//jk option to suppress computing pair term for histidine (numbers are skewed due to metal-binding sites)
 	if ( ( option[ corrections::score::no_his_his_pairE ] ) &&
 			( ( res1.aa() == aa_his ) &&
@@ -232,8 +222,6 @@ PairEPotential::pair_term_energy(
 	//
 	// 2. Find the difference between the low_bin average and the actual value of r12 in bin units
 	//
-	//int const max_bin( 3 ); //apl should this be hard coded here?
-
 	Distance const r12_bin_real( std::max(
 		( r12 / pair_score_bin_range_ ) + 1 - pair_score_bin_base_,
 		Distance( 0.5 ) ) ); // First bin is [ 3 A, 4.5 A ] but we use it to represent r12 down to 0 A
@@ -254,7 +242,6 @@ PairEPotential::pair_term_energy(
 	//std::cout << "pairE potential: residues " << res1.seqpos() << " & " << res2.seqpos() << " with pairE = ";
 	//std::cout << -std::log( interpolated( r12_alpha, pair_lhood_ratio_low, pair_lhood_ratio_high ) ) << std::endl;
 
-
 	// Return the energy
 	pair_lhood_ratio = interpolated( r12_alpha, pair_lhood_ratio_low, pair_lhood_ratio_high );
 	return -std::log( pair_lhood_ratio );
@@ -268,8 +255,7 @@ PairEPotential::pair_term_energy_and_deriv(
 	conformation::Residue const & res2,
 	int res2_num_10A_neighbors,
 	EnergyDerivative & dpairE_dr
-) const
-{
+) const {
 	Probability pair_lhood_ratio( 1.0 ), pair_lhood_ratio_low( 1.0 ), pair_lhood_ratio_high( 1.0 );
 
 	Energy pairE = pair_term_energy( res1, res1_num_10A_neighbors, res2, res2_num_10A_neighbors,
@@ -279,7 +265,6 @@ PairEPotential::pair_term_energy_and_deriv(
 		( pair_lhood_ratio_high - pair_lhood_ratio_low ) / pair_score_bin_range_;
 
 	return pairE;
-
 }
 
 }

@@ -86,16 +86,13 @@ MMBondAngleResidueTypeParamSet::get(
 {
 	std::map<std::string, MMBondAngleResidueTypeParam>::iterator iter(reside_type_param_map_.find(residue_type.name()));
 
-	if ( iter == reside_type_param_map_.end() ) {
-
-		MMBondAngleResidueTypeParam new_param;
-		new_param.init(residue_type, *mm_bondangle_library_, use_residue_type_theta0_, central_atoms_to_score_);
-		reside_type_param_map_[residue_type.name()] = new_param;
-
-		return reside_type_param_map_[residue_type.name()];
-	}
-
-	return iter->second;
+	if ( iter != reside_type_param_map_.end() ) return iter->second;
+	
+	MMBondAngleResidueTypeParam new_param;
+	new_param.init(residue_type, *mm_bondangle_library_, use_residue_type_theta0_, central_atoms_to_score_);
+	reside_type_param_map_[residue_type.name()] = new_param;
+	
+	return reside_type_param_map_[residue_type.name()];
 }
 
 /// @brief lookup a param object for a given ResidueType, does not auto-create
@@ -106,12 +103,9 @@ MMBondAngleResidueTypeParamSet::get(
 {
 	std::map<std::string, MMBondAngleResidueTypeParam>::const_iterator iter(reside_type_param_map_.find(residue_type.name()));
 
-	if ( iter == reside_type_param_map_.end() ) {
-
-		return NULL;
-	}
-
-	return &(iter->second);
+	if ( iter != reside_type_param_map_.end() ) return &(iter->second);
+	
+	return NULL;
 }
 
 /// @brief get the indices of the connections that connects one of my atoms to an atom on another residue
@@ -126,14 +120,12 @@ connection_indices(
 )
 {
 	for ( core::Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
-		if ( residue.residue_connection(i).atomno() == (signed)my_atomno ) {
-			if ( residue.connect_map(i).resid() == other_residue.seqpos() ) {
-				my_connection = i;
-				other_connection = residue.connect_map(i).connid();
-				if ( other_residue.residue_connection(other_connection).atomno() == (signed)other_atomno ) {
-					return true;
-				}
-			}
+		if ( residue.residue_connection(i).atomno() != (signed)my_atomno ) continue;
+		if ( residue.connect_map(i).resid() != other_residue.seqpos() ) continue;
+		my_connection = i;
+		other_connection = residue.connect_map(i).connid();
+		if ( other_residue.residue_connection(other_connection).atomno() == (signed)other_atomno ) {
+			return true;
 		}
 	}
 
@@ -199,7 +191,6 @@ MMBondAngleResidueTypeParamSet::lookup(
 	theta0 = 0;
 
 	if ( atomid1.rsd() == atomid2.rsd() && atomid1.rsd() == atomid3.rsd() ) {
-
 		// simple case, all atoms are in the same residue
 		three_atom_set atom_set(atomid1.atomno(), atomid2.atomno(), atomid3.atomno());
 		core::Size bondangle_index(residue_type_param.bondangle_index(atom_set));
@@ -209,7 +200,6 @@ MMBondAngleResidueTypeParamSet::lookup(
 			Ktheta = residue_type_param.Ktheta(bondangle_index);
 			theta0 = residue_type_param.theta0(bondangle_index);
 		}
-
 		return;
 	}
 

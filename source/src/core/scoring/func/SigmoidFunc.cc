@@ -19,7 +19,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-
 #include <sstream>
 
 

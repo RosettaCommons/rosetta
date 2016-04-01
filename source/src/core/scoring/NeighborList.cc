@@ -16,7 +16,6 @@
 #include <core/scoring/NeighborList.hh>
 
 // Package headers
-//#include <core/scoring/etable/EtableEnergy.hh>
 #include <basic/options/option.hh>
 
 // Project headers
@@ -25,7 +24,6 @@
 #include <basic/Tracer.hh>
 
 // option key includes
-
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
@@ -81,17 +79,15 @@ NeighborList::NeighborList(
 	n_update_from_wide_( 0 ),
 	n_full_updates_( 0 )
 {
-	//debug_assert( XX_cutoff_ >= XH_cutoff_ + 1e-3 &&
-	// XH_cutoff_ >= HH_cutoff_ + 1e-3 ); //debug order of arguments
 }
 
 NeighborList::~NeighborList()
 {
-	if ( auto_update_ ) {
-		tr.Debug << "Minimization stats: " << n_prepare_for_scorings_ << " score/deriv cals, ";
-		tr.Debug << n_update_from_wide_ << " narrow-from-wide updates, ";
-		tr.Debug << n_full_updates_ << " full updates." << std::endl;
-	}
+	if ( !auto_update_ ) return;
+
+	tr.Debug << "Minimization stats: " << n_prepare_for_scorings_ << " score/deriv cals, ";
+	tr.Debug << n_update_from_wide_ << " narrow-from-wide updates, ";
+	tr.Debug << n_full_updates_ << " full updates." << std::endl;
 }
 
 
@@ -166,12 +162,9 @@ NeighborList::update_from_wide_nblist( pose::Pose const & pose ) const
 		}
 
 		/// Clear out the stale nblist data
-		//AtomNeighbors & ii_nblist = nblist_[ ii_atom.rsd() ][ ii_atom.atomno() ];
-		//ii_nblist.clear();
 		nblist_[ ii_atom.rsd() ][ ii_atom.atomno() ].clear();
 		upper_nblist_[ ii_atom.rsd() ][ ii_atom.atomno() ].clear();
 		intrares_upper_nblist_[ ii_atom.rsd() ][ ii_atom.atomno() ].clear();
-
 
 		Vector const & ii_coord = reference_coords_[ ii_atom.rsd() ][ ii_atom.atomno() ];
 
@@ -182,19 +175,17 @@ NeighborList::update_from_wide_nblist( pose::Pose const & pose ) const
 			int const nbr_atom = ii_wide_nblist[ jj ].atomno();
 			bool const nbr_is_hydrogen = pose.residue( nbr_rsd ).atom_is_hydrogen( nbr_atom );
 
-			if ( ii_coord.distance_squared( reference_coords_[ nbr_rsd ][ nbr_atom ] ) <=
-					atom_pair_cutoff( ii_is_hydrogen, nbr_is_hydrogen ) ) {
-				//ii_nblist.push_back( ii_wide_nblist[ jj ] ); // copy from wide into narrow
-				declare_atom_neighbor_1sided( ii_atom, id::AtomID( nbr_atom, nbr_rsd ), ii_wide_nblist[ jj ].path_dist(), ii_wide_nblist[ jj ].weight() );
+			if ( ii_coord.distance_squared( reference_coords_[ nbr_rsd ][ nbr_atom ] ) >
+				atom_pair_cutoff( ii_is_hydrogen, nbr_is_hydrogen ) ) continue;
 
-				/// Neighbors of one of the original atoms to exceed the move_tolerance_sqr_ movement
-				/// limitation need to have their nblist_'s updated.
-				if ( ii_original_atom_moved && atom_needs_update_from_wide_[ nbr_rsd ][ nbr_atom ] == 0 ) {
-					// add the neighbor atom to the to-do list
-					atom_needs_update_from_wide_[ nbr_rsd ][ nbr_atom ] = 1;
-					atoms_to_update_.push_back( id::AtomID( nbr_atom, nbr_rsd ) );
-				}
-
+			declare_atom_neighbor_1sided( ii_atom, id::AtomID( nbr_atom, nbr_rsd ), ii_wide_nblist[ jj ].path_dist(), ii_wide_nblist[ jj ].weight() );
+			
+			/// Neighbors of one of the original atoms to exceed the move_tolerance_sqr_ movement
+			/// limitation need to have their nblist_'s updated.
+			if ( ii_original_atom_moved && atom_needs_update_from_wide_[ nbr_rsd ][ nbr_atom ] == 0 ) {
+				// add the neighbor atom to the to-do list
+				atom_needs_update_from_wide_[ nbr_rsd ][ nbr_atom ] = 1;
+				atoms_to_update_.push_back( id::AtomID( nbr_atom, nbr_rsd ) );
 			}
 		}
 	}

@@ -20,8 +20,6 @@
 #include <core/scoring/packing/surf_vol.hh>
 
 //Package headers
-
-//#include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -86,8 +84,7 @@ SurfEnergy::finalize_total_energy(
 	pose::Pose & pose,
 	ScoreFunction const &,
 	EnergyMap & totals
-) const
-{
+) const {
 	totals[ dab_sasa ] = get_surf_tot(pose,1.4);
 }
 
@@ -129,7 +126,6 @@ SurfEnergy::setup_for_derivatives(
 			sev_derivs[i] = svd. dvol[i];
 		}
 	}
-
 }
 
 
@@ -145,14 +141,9 @@ SurfEnergy::eval_atom_derivative(
 ) const
 {
 	// std::cerr << "SurfEnergy::eval_atom_derivative " << aid << std::endl;
-	//using namespace core::pose::datacache::CacheableDataType;
 	using namespace basic::datacache;
 	using namespace id;
 	using namespace numeric;
-
-	// CacheableDataCOP dat( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
-	// CacheableAtomID_MapVector const *cachemap = (CacheableAtomID_MapVector const *)dat();
-	// AtomID_Map<xyzVector<Real> > const & derivs(cachemap->map());
 
 	CacheableDataCOP dat1( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
 	CacheableAtomID_MapVectorCOP cachemap1 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat1 );
@@ -166,9 +157,6 @@ SurfEnergy::eval_atom_derivative(
 		return;
 	}
 	// std::cerr << "eval_atom_derivative " << aid << " " << derivs[aid].x() << " " << derivs[aid].y() << " " << derivs[aid].z() << std::endl;
-	// F2 += weights * derivs[aid];
-	// F1 += weights * derivs[aid].cross(xyzVector<Real>(1,0,0));
-
 	{
 		numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 		numeric::xyzVector<core::Real> const f2( sasa_derivs[aid] );
@@ -185,8 +173,8 @@ SurfEnergy::eval_atom_derivative(
 		F1 += weights[ dab_sev ] * f1;
 		F2 += weights[ dab_sev ] * f2;
 	}
-
 }
+
 core::Size
 SurfEnergy::version() const
 {

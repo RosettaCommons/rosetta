@@ -53,39 +53,6 @@ PeptideBondEnergyCreator::score_types_for_method() const {
 
 PeptideBondEnergy::PeptideBondEnergy() : parent( methods::EnergyMethodCreatorOP( new PeptideBondEnergyCreator ) ) {}
 
-/// called at the end of energy evaluation
-/// In this case (PeptideBondEnergy), all the calculation is done here
-
-//void
-//PeptideBondEnergy::finalize_total_energy(
-// pose::Pose & pose,
-// ScoreFunction const &,
-// EnergyMap & totals
-//) const
-//{
-// using conformation::Residue;
-//
-// Real const mean( 1.325883 );
-// Real const sdev( 0.012547 );
-// Real total_dev(0.0);
-// core::scoring::constraints::GaussianFunc gfunc( mean, sdev );
-//
-// std::string const bbN_( "N" );
-// std::string const bbC_( "C" );
-//
-// typedef core::conformation::ResidueOPs ResidueOPs;
-// for ( ResidueOPs::iterator this_res = pose.res_begin(),
-//    next_res = this_res + 1,
-//    end = pose.res_end();
-//    next_res != end; ++this_res, ++next_res
-// ) {
-//  total_dev += gfunc.func(
-//   (*this_res)->xyz( bbC_ ).distance( (*next_res)->xyz( bbN_ ) )
-//  );
-// }
-// totals[ peptide_bond ] = total_dev;
-//}
-
 void
 PeptideBondEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,

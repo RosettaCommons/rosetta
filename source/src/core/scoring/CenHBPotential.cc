@@ -14,7 +14,6 @@
 
 #include <core/scoring/CenHBPotential.hh>
 
-
 #include <basic/database/open.hh>
 #include <utility/io/izstream.hh>
 

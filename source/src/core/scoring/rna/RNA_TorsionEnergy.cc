@@ -78,10 +78,9 @@ RNA_TorsionEnergy::residue_pair_energy(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	ScoreFunction const &,
-	EnergyMap & emap ) const {
-
+	EnergyMap & emap
+) const {
 	emap[ rna_torsion ] += rna_torsion_potential_->residue_pair_energy( rsd1, rsd2, pose );
-
 }
 
 
@@ -95,7 +94,6 @@ RNA_TorsionEnergy::eval_intrares_energy(
 
 	emap[ rna_torsion ]    += rna_torsion_potential_->eval_intrares_energy( rsd, pose );
 	emap[ rna_torsion_sc ] += rna_torsion_potential_->intrares_side_chain_score(); // evaluated at same time as above.
-
 }
 
 
@@ -109,11 +107,8 @@ RNA_TorsionEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-
+) const {
 	rna_torsion_potential_->eval_atom_derivative( id, pose, weights, F1, F2 );
-
 }
 
 

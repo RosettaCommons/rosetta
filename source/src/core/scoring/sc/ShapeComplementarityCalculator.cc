@@ -102,9 +102,7 @@ core::Real ShapeComplementarityCalculator::CalcSc(core::pose::Pose const & pose,
 {
 	ShapeComplementarityCalculator sc;
 
-	if ( quick ) {
-		sc.settings.density = 5;
-	}
+	if ( quick ) sc.settings.density = 5;
 
 	if ( sc.Calc(pose, jump_id) ) {
 		return sc.GetResults().sc;
@@ -148,7 +146,6 @@ int ShapeComplementarityCalculator::Calc()
 #endif
 
 	try {
-
 		basic::gpu::Timer timer(TR.Debug);
 
 		run_.results.valid = 0;
@@ -179,12 +176,8 @@ int ShapeComplementarityCalculator::Calc()
 		for ( int i = 0; i < 2; ++i ) {
 			run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], trimmed_dots[i]);
 			if ( !trimmed_dots[i].size() ) {
-				//throw ShapeComplementarityCalculatorException("No molecular dots for surface %d", i); (JAB) This actually segfaults during the throw. Commenting out
-
-
 				throw utility::excn::EXCN_Msg_Exception("No molecular dots for surface " + utility::to_string( i ));
 			}
-
 			run_.results.surface[i].nTrimmedDots = trimmed_dots[i].size();
 			run_.results.surface[i].nAllDots = run_.dots[i].size();
 		}
@@ -205,8 +198,6 @@ int ShapeComplementarityCalculator::Calc()
 		run_.results.surface[2].nBlockedAtoms = (run_.results.surface[0].nBuriedAtoms + run_.results.surface[1].nBuriedAtoms);
 		run_.results.surface[2].nAllDots = (run_.results.surface[0].nAllDots + run_.results.surface[1].nAllDots);
 		run_.results.surface[2].nTrimmedDots = (run_.results.surface[0].nTrimmedDots + run_.results.surface[1].nTrimmedDots);
-		//run_.results.surface[2].nBuriedDots = (run_.results.surface[0].nBuriedDots + run_.results.surface[1].nBuriedDots);
-		//run_.results.surface[2].nAccessibleDots = (run_.results.surface[0].nAccessibleDots + run_.results.surface[1].nAccessibleDots);
 		run_.results.surface[2].trimmedArea = (run_.results.surface[0].trimmedArea + run_.results.surface[1].trimmedArea);
 
 		run_.results.sc = run_.results.surface[2].s_median;
@@ -222,8 +213,7 @@ int ShapeComplementarityCalculator::Calc()
 			std::endl;
 
 		return 1;
-
-	} catch(ShapeComplementarityCalculatorException & e) {
+	} catch ( ShapeComplementarityCalculatorException & e ) {
 		TR.Error << "Failed: " << e.error << std::endl;
 	}
 
@@ -277,9 +267,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 {
 	ScValue area = 0;
 
-	if ( sdots.empty() ) {
-		return 0.0;
-	}
+	if ( sdots.empty() ) return 0.0;
 
 #ifdef USEOPENCL
 	if(settings.gpu) {
@@ -317,15 +305,9 @@ int ShapeComplementarityCalculator::TrimPeripheralBandCheckDot(
 
 	for ( std::vector<DOT>::const_iterator idot2 = sdots.begin(); idot2 < sdots.end(); ++idot2 ) {
 		DOT const &dot2 = *idot2;
-		if ( &dot == &dot2 ) {
-			continue;
-		}
-		if ( dot2.buried ) {
-			continue;
-		}
-		if ( dot.coor.distance_squared(dot2.coor) <= r2 ) {
-			return 0;
-		}
+		if ( &dot == &dot2 ) continue;
+		if ( dot2.buried ) continue;
+		if ( dot.coor.distance_squared(dot2.coor) <= r2 ) return 0;
 	}
 	return 1;
 }
@@ -346,16 +328,10 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	int ibin;
 	ScValue total = 0.0;
 
-	if ( my_dots.empty() || their_dots.empty() ) {
-		return 0;
-	}
+	if ( my_dots.empty() || their_dots.empty() ) return 0;
 
 	for ( std::vector<DOT const*>::const_iterator idot = my_dots.begin();
 			idot < my_dots.end(); ++idot ) {
-		//if((*idot)->buried)
-		// run_.results.surface[molecule].nBuriedDots++;
-		//else
-		// run_.results.surface[molecule].nAccessibleDots++;
 		total += (*idot)->area;
 	}
 
@@ -377,22 +353,16 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		DOT const *neighbor = NULL;
 
 #ifdef USEOPENCL
-		if(settings.gpu)
-		{
+		if ( settings.gpu ) {
 			neighbor = *iNeighbor++;
-		}
-		else
-		{
+		} else {
 			neighbor = CalcNeighborDistanceFindClosestNeighbor(dot1, their_dots);
 		}
 #else
 		neighbor = CalcNeighborDistanceFindClosestNeighbor(dot1, their_dots);
 #endif
 
-
-		if ( !neighbor ) {
-			continue;
-		}
+		if ( !neighbor ) continue;
 
 		// having looked at all possible neighbours now accumulate stats
 		distmin = neighbor->coor.distance(dot1.coor);
@@ -489,7 +459,6 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		}
 #endif
 	}
-
 	run_.results.surface[molecule].s_mean= -norm_sum / my_dots.size();
 	run_.results.surface[molecule].s_median = -rmedian;
 
@@ -500,8 +469,8 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 // NOTE: ~20% of time is spent in this function
 DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighbor(
 	DOT const &dot1,
-	std::vector<DOT const*> const &their_dots)
-{
+	std::vector<DOT const*> const &their_dots
+) {
 	ScValue distmin = 999999.0, d;
 	DOT const *neighbor = NULL;
 
@@ -511,14 +480,11 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 	for ( std::vector<DOT const*>::const_iterator idot2 = their_dots.begin();
 			idot2 < their_dots.end(); ++idot2 ) {
 		DOT const &dot2 = **idot2;
-		if ( !dot2.buried ) {
-			continue;
-		}
+		if ( !dot2.buried ) continue;
 		d = dot2.coor.distance_squared(dot1.coor);
 		if ( d <= distmin ) {
 			distmin = d;
-			// AMW cppcheck can't assign neighbor &dot2 because it's stack?
-			neighbor = *idot2; //&dot2;
+			neighbor = *idot2;
 		}
 	}
 	return neighbor;
@@ -573,9 +539,10 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 	hBurDotCoords = new float4[UPPER_MULTIPLE(n, threads)];
 	hDotColl = new char[UPPER_MULTIPLE(n, threads)];
 
-	if(!hAccDotCoords || !hBurDotCoords || !hDotColl)
+	if(!hAccDotCoords || !hBurDotCoords || !hDotColl) {
 		throw ShapeComplementarityCalculatorException("Out of host memory!");
-
+	}
+	
 	// Make GPU copy of (x, y, z) buried and accessible coordinates
 	phAccDotCoords = hAccDotCoords;
 	phBurDotCoords = hBurDotCoords;

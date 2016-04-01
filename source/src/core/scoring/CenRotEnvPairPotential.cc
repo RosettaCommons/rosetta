@@ -237,56 +237,6 @@ CenRotEnvPairPotential::CenRotEnvPairPotential() {
 		}
 	}
 	stream.close();
-
-	//read cen_rot_pair_dih_params.txt
-	/* worse the sidechain recovery test, may need to be P(dih|ang, r)
-	basic::database::open( stream, "scoring/score_functions/centroid_smooth/cen_rot_pair_dih_params.txt");
-	while ( stream.getline( line ) ) {
-	std::istringstream l(line);
-	l >> tag;
-
-	if (tag=="DIHEDRAL:") {
-	//read one spline for aa1 and aa2
-	l >> aa1 >> aa2;
-	BicubicSpline &cspline = dihsplines_[std::min(aa1,aa2)][std::max(aa1,aa2)];
-
-	//and train
-	Real start_r, end_r;
-	Size nbin_r;
-	l >> start_r >> end_r >> nbin_r;
-	Real start_a, end_a;
-	Size nbin_a;
-	l >> start_a >> end_a >> nbin_a;
-
-	numeric::MathMatrix< Real > results( nbin_r, nbin_a );
-	for (Size i=0; i<nbin_r; i++) {
-	stream.getline( line );
-	std::istringstream ll(line);
-	for (Size j=0; j<nbin_a; j++) {
-	ll >> results(i,j);
-	}
-	}
-
-	std::pair< Real, Real > unused[2];
-	unused[0] = std::make_pair( 0.0, 0.0 );
-	unused[1] = std::make_pair( 0.0, 0.0 );
-	BorderFlag periodic_boundary[2] = { e_Natural, e_Periodic };
-	Real start_vals[2] = {start_r, start_a};
-	Real deltas[2] = {(end_r-start_r)/(nbin_r-1), (end_a-start_a)/(nbin_a-1)};
-	bool lincont[2] = {false,false};
-
-	cspline.train(periodic_boundary, start_vals, deltas, results, lincont, unused);
-	}
-	else if (tag != "#") {
-	utility_exit_with_message("bad format for cen_rot_pair_dih_params.txt");
-	}
-
-	if ( l.fail() ) {
-	utility_exit_with_message("bad format for cen_rot_pair_dih_params.txt");
-	}
-	}
-	stream.close();
-	*/
 }
 
 void
@@ -301,11 +251,6 @@ CenRotEnvPairPotential::evaluate_cen_rot_pair_score(
 
 	chemical::AA const aa1( rsd1.aa() );
 	chemical::AA const aa2( rsd2.aa() );
-
-	// no pair score if a disulfide
-	//if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-	//   rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-	//   rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
 
 	// no pair score for residues closer than 9 in sequence
 	if ( rsd1.polymeric_sequence_distance( rsd2 ) /* j - i */ < 9 ) return;
@@ -364,9 +309,6 @@ CenRotEnvPairPotential::evaluate_cen_rot_pair_orientation_score(
 
 	ang1_contribution = angsplines_[aa1][aa2].F(cendist, ang1);
 	ang2_contribution = angsplines_[aa2][aa1].F(cendist, ang2);
-
-	//Real dih = numeric::dihedral_degrees(ra,rb,rc,rd);
-	//dih_contribution = dihsplines_[std::min(aa1,aa2)][std::max(aa1,aa2)].F(cendist, dih);
 }
 
 void
@@ -416,13 +358,10 @@ CenRotEnvPairPotential::evaluate_cen_rot_env_and_cbeta_score(
 	Real fcen10 ( cenlist.fcen10(position) );
 	Real fcen12 ( cenlist.fcen12(position) );
 
-	//fcen10 = std::max(std::min(38.0 ,fcen10), 2.0);
 	fcen10 = std::min(40.0, fcen10);
 	env_contribution = envsplines_[ rsd.aa() ].F( fcen10 );
 	fcen6 = std::min(60.0, fcen6);
 	fcen12 = std::min(60.0, fcen12);
-	//cbeta6_contribution = cbeta6splines_.F( fcen6 );
-	//cbeta12_contribution = cbeta12splines_.F( fcen12 );
 	cbeta6_contribution = cbeta6_.func( fcen6 );
 	cbeta12_contribution = cbeta12_.func( fcen12 );
 }
@@ -487,44 +426,44 @@ CenRotEnvPairPotential::evaluate_cen_rot_env_and_cbeta_deriv(
 		numeric::xyzVector<Real> cenvec = rsd2.atom("CEN").xyz() - atom_x;
 		Real const cendist = cenvec.length_squared();
 
-		if ( cendist <= cen_dist_cutoff_12_pad ) {
-			Real x = sqrt(cendist);
-			numeric::xyzVector<Real> gradx = cenvec/x;
-
-			Real d6,d10,d12, z;
-
-			z = SIGMOID_SLOPE*(x-6);
-			if ( z>-30 && z<30 ) {
-				Real e6 = exp(z);
-				d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
-			} else {
-				d6 = 0;
-			}
-
-			z = SIGMOID_SLOPE*(x-10);
-			if ( z>-20 && z<20 ) {
-				Real e10 = exp(z);
-				d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
-			} else {
-				d10 = 0;
-			}
-
-			z = SIGMOID_SLOPE*(x-12);
-			if ( z>-20 && z<20 ) {
-				Real e12 = exp(z);
-				d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
-			} else {
-				d12 = 0;
-			}
-
-			fcen10 = std::min(40.0, cenlist.fcen10(j));
-			fcen6 = std::min(60.0, cenlist.fcen6(j));
-			fcen12 = std::min(60.0, cenlist.fcen12(j));
-
-			f2_cb_env += envsplines_[ rsd2.aa() ].dF( fcen10 ) * (d10*gradx);
-			f2_cb_cb6 += cbeta6_.dfunc( fcen6 ) * (d6*gradx);
-			f2_cb_cb12 += cbeta12_.dfunc( fcen12 ) *((d12-d6)*gradx);
+		if ( cendist > cen_dist_cutoff_12_pad ) continue;
+		
+		Real x = sqrt(cendist);
+		numeric::xyzVector<Real> gradx = cenvec/x;
+		
+		Real d6,d10,d12, z;
+		
+		z = SIGMOID_SLOPE*(x-6);
+		if ( z>-30 && z<30 ) {
+			Real e6 = exp(z);
+			d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
+		} else {
+			d6 = 0;
 		}
+		
+		z = SIGMOID_SLOPE*(x-10);
+		if ( z>-20 && z<20 ) {
+			Real e10 = exp(z);
+			d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
+		} else {
+			d10 = 0;
+		}
+		
+		z = SIGMOID_SLOPE*(x-12);
+		if ( z>-20 && z<20 ) {
+			Real e12 = exp(z);
+			d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+		} else {
+			d12 = 0;
+		}
+		
+		fcen10 = std::min(40.0, cenlist.fcen10(j));
+		fcen6 = std::min(60.0, cenlist.fcen6(j));
+		fcen12 = std::min(60.0, cenlist.fcen12(j));
+		
+		f2_cb_env += envsplines_[ rsd2.aa() ].dF( fcen10 ) * (d10*gradx);
+		f2_cb_cb6 += cbeta6_.dfunc( fcen6 ) * (d6*gradx);
+		f2_cb_cb12 += cbeta12_.dfunc( fcen12 ) *((d12-d6)*gradx);
 	}
 }
 
@@ -618,37 +557,37 @@ CenRotEnvPairPotential::compute_centroid_environment(
 	Size const nres( energy_graph.num_nodes() );
 
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
-	if ( !cenlist.calculated() ) {
-		cenlist.initialize( pose.total_residue(), 0 );  //different from smoothenvpairpotential, starts from 0
-
-		for ( Size i = 1; i <= nres; ++i ) {
-			conformation::Residue const & rsd1 ( pose.residue(i) );
-			if ( !rsd1.is_protein() ) continue;
-
-			//we need to go through all the edges here rather than just upper ones
-			//because the edges aren't sym due to the new env def
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_edge_list_end();
-					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const j( edge->get_other_ind(i) );
-				conformation::Residue const & rsd2 ( pose.residue(j) );
-				if ( !rsd2.is_protein() ) continue;
-
-				//Real const cendist = edge->square_distance();
-				numeric::xyzVector<Real> cenvec =
-					rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom("CEN").xyz();
-				Real const cendist = cenvec.length_squared();
-
-				if ( cendist <= cen_dist_cutoff_12_pad ) {
-					fill_smooth_cenlist( cenlist, i, j, sqrt(cendist) );
-				}
+	if ( cenlist.calculated() ) return;
+	
+	cenlist.initialize( pose.total_residue(), 0 );  //different from smoothenvpairpotential, starts from 0
+	
+	for ( Size i = 1; i <= nres; ++i ) {
+		conformation::Residue const & rsd1 ( pose.residue(i) );
+		if ( !rsd1.is_protein() ) continue;
+		
+		//we need to go through all the edges here rather than just upper ones
+		//because the edges aren't sym due to the new env def
+		for ( graph::Graph::EdgeListConstIter
+			 iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+			 irue = energy_graph.get_node(i)->const_edge_list_end();
+			 iru != irue; ++iru ) {
+			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			Size const j( edge->get_other_ind(i) );
+			conformation::Residue const & rsd2 ( pose.residue(j) );
+			if ( !rsd2.is_protein() ) continue;
+			
+			//Real const cendist = edge->square_distance();
+			numeric::xyzVector<Real> cenvec =
+			rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom("CEN").xyz();
+			Real const cendist = cenvec.length_squared();
+			
+			if ( cendist <= cen_dist_cutoff_12_pad ) {
+				fill_smooth_cenlist( cenlist, i, j, sqrt(cendist) );
 			}
 		}
-
-		cenlist.calculated() = true;
 	}
+	
+	cenlist.calculated() = true;
 }
 
 void
@@ -661,33 +600,33 @@ CenRotEnvPairPotential::compute_dcentroid_environment(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	Size const nres( energy_graph.num_nodes() );
 
-	if ( !dcenlist.calculated() ) {
-		dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
-
-		for ( Size i = 1; i <= nres; ++i ) {
-			conformation::Residue const & rsd1 ( pose.residue(i) );
-			if ( !rsd1.is_protein() ) continue;
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_edge_list_end();
-					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const j( edge->get_other_ind(i) );
-				conformation::Residue const & rsd2 ( pose.residue(j) );
-				if ( !rsd2.is_protein() ) continue;
-
-				numeric::xyzVector<Real> cenvec =
-					rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom("CEN").xyz();
-				Real const cendist = cenvec.length_squared();
-
-				if ( cendist <= cen_dist_cutoff_12_pad ) {
-					fill_smooth_dcenlist( dcenlist, i, j, cenvec );
-				}
+	if ( dcenlist.calculated() ) return;
+	
+	dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
+	
+	for ( Size i = 1; i <= nres; ++i ) {
+		conformation::Residue const & rsd1 ( pose.residue(i) );
+		if ( !rsd1.is_protein() ) continue;
+		for ( graph::Graph::EdgeListConstIter
+			 iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+			 irue = energy_graph.get_node(i)->const_edge_list_end();
+			 iru != irue; ++iru ) {
+			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			Size const j( edge->get_other_ind(i) );
+			conformation::Residue const & rsd2 ( pose.residue(j) );
+			if ( !rsd2.is_protein() ) continue;
+			
+			numeric::xyzVector<Real> cenvec =
+			rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom("CEN").xyz();
+			Real const cendist = cenvec.length_squared();
+			
+			if ( cendist <= cen_dist_cutoff_12_pad ) {
+				fill_smooth_dcenlist( dcenlist, i, j, cenvec );
 			}
 		}
-
-		dcenlist.calculated() = true;
 	}
+	
+	dcenlist.calculated() = true;
 }
 
 void

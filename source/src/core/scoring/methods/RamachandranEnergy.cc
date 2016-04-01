@@ -86,9 +86,7 @@ RamachandranEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
-		return;
-	}
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) )  return;
 
 	if ( rsd.is_protein() &&
 			(   (rsd.aa() <= chemical::num_canonical_aas) ||
@@ -127,32 +125,31 @@ RamachandranEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
-		return 0.0;
-	}
-
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) )  return 0.0;
+	
+	// Ignore invalid or non-BB torsions
+	if ( !tor_id.valid() || tor_id.type() != id::BB ) return 0.0;
+	
 	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB ) {
-		//conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if ( rsd.is_protein() &&
-				( (rsd.aa() <= chemical::num_canonical_aas) ||
-				(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
-				(rsd.backbone_aa() <= chemical::num_canonical_aas)
-				) && tor_id.torsion() <= 2 ) {
-			Real rama_score, drama_dphi, drama_dpsi;
-			if ( potential_.is_normally_connected(rsd) ) { //If this residue is connected to the N-1 and N+1 residues
-				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
-				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
-			} else { //If this residue is connected to things out of sequence
-				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
-				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
-			}
-			//std::cout << "Phi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[1] << std::endl;
-			//std::cout << "Psi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[2] << std::endl;
-			//std::cout << "Residue deriv for " << rsd.name() << " is " << deriv << std::endl;
+	if ( rsd.is_protein() &&
+		( (rsd.aa() <= chemical::num_canonical_aas) ||
+		 (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
+		 (rsd.backbone_aa() <= chemical::num_canonical_aas)
+		 ) && tor_id.torsion() <= 2
+		) {
+		Real rama_score, drama_dphi, drama_dpsi;
+		if ( potential_.is_normally_connected(rsd) ) { //If this residue is connected to the N-1 and N+1 residues
+			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+		} else { //If this residue is connected to things out of sequence
+			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
+			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 		}
+		//std::cout << "Phi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[1] << std::endl;
+		//std::cout << "Psi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[2] << std::endl;
+		//std::cout << "Residue deriv for " << rsd.name() << " is " << deriv << std::endl;
 	}
-
+	
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
 	return numeric::conversions::degrees( weights[ rama ] * deriv );
@@ -174,24 +171,27 @@ RamachandranEnergy::eval_dof_derivative(
 		return 0.0;
 	}
 
+	// Ignore invalid or non-BB torsions
+	if ( !tor_id.valid() || tor_id.type() != id::BB ) return 0.0;
+	
 	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB ) {
-		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if ( rsd.is_protein() &&
-				(  (rsd.aa() <= chemical::num_canonical_aas) ||
-				(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
-				(rsd.backbone_aa() <= chemical::num_canonical_aas)
-				) && tor_id.torsion() <= 2 ) {
-			Real rama_score, drama_dphi, drama_dpsi;
-			if ( potential_.is_normally_connected(rsd) ) { //If this residue is connected to the N-1 and N+1 residues
-				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
-				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
-			} else { //If this residue is connected to things out of sequence
-				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
-				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
-			}
+	conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
+	if ( rsd.is_protein() &&
+		(  (rsd.aa() <= chemical::num_canonical_aas) ||
+		(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
+		(rsd.backbone_aa() <= chemical::num_canonical_aas)
+		) && tor_id.torsion() <= 2
+		) {
+		Real rama_score, drama_dphi, drama_dpsi;
+		if ( potential_.is_normally_connected(rsd) ) { //If this residue is connected to the N-1 and N+1 residues
+			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+		} else { //If this residue is connected to things out of sequence
+			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
+			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 		}
 	}
+	
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
 	return numeric::conversions::degrees( weights[ rama ] * deriv );

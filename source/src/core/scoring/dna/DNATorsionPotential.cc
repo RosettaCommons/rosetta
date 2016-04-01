@@ -327,9 +327,6 @@ DNATorsionPotential::add_DNA_torsion_constraint(
 	Size const dna_torsion_number,
 	utility::vector1< func::AmberPeriodicFuncOP > const & torsion_components ) const
 {
-
-	conformation::Residue rsd( pose.residue( i ) );
-
 	// Get the atoms involved
 	id::AtomID id1,id2,id3,id4;
 	bool fail = get_atom_ids_by_torsion( dna_torsion_number, pose, i, id1, id2, id3, id4 );
@@ -339,15 +336,12 @@ DNATorsionPotential::add_DNA_torsion_constraint(
 	}
 
 	// Generate dihedral constraints for each term in the vector of Fourier components
-
 	for ( Size this_comp = 1 ; this_comp <= torsion_components.size() ; ++this_comp ) {
 		//  tr << "Adding torsion at residue " << i << " ids " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
 		constraints::ConstraintOP dihedral( new constraints::DihedralConstraint( id1, id2, id3, id4,
 			torsion_components[ this_comp ], dna_bb_torsion ) );
 		cst_set.add_constraint( dihedral );
-
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -456,7 +450,6 @@ DNATorsionPotential::init_dna_torsion_parameters()
 	nu4_atom_names_.push_back( "C4'" );
 	nu4_atom_names_.push_back( "O4'" );
 	nu4_atom_names_.push_back( "C1'" );
-
 }
 
 bool

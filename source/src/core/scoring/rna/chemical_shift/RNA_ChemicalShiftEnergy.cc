@@ -80,10 +80,7 @@ RNA_ChemicalShiftEnergy::clone() const
 void
 RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & ) const
 {
-
-
 	//MIGHT BENEFIT FROM SOME BOOKKEEPING such as MAPPING atom_namerealatomdata_index/ to atom_index for fast look-up;
-
 }
 
 
@@ -91,12 +88,9 @@ RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & 
 void
 RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const
 {
-
-
 	//MIGHT BENEFIT FROM SOME BOOKKEEPING such as MAPPING atom_namerealatomdata_index/ to atom_index for fast look-up;
 	//or precalculate the calc_chem_shift values of the atoms with CS_data
 	//this assumes that the pose conformation does change between the call to setup_for_derivative() and the calls to eval_atom_derivative()
-
 }
 
 
@@ -107,9 +101,7 @@ RNA_ChemicalShiftEnergy::finalize_total_energy(
 	ScoreFunction const &,
 	EnergyMap & totals
 ) const {
-
 	rna_chemical_shift_potential_.finalize_total_energy( pose, totals );
-
 } // finalize_total_energy
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -124,10 +116,7 @@ RNA_ChemicalShiftEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
-
 	rna_chemical_shift_potential_.eval_atom_derivative( atom_id, pose, domain_map, weights, F1, F2 );
-
-
 } // eval atom derivative
 
 core::Size

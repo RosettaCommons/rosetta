@@ -176,7 +176,6 @@ RNA_DMS_Potential::figure_out_potential(){
 	//
 	// log-odds score is: -kT log P( is_bonded, DMS, occ, binding_energy ) / [ P( DMS ) P( is_bonded, occ, binding_energy ) ]
 
-
 	// first of all, need to normalize everything to total.
 	Real DMS_stats_total( 0.0 );
 	for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
@@ -279,7 +278,6 @@ RNA_DMS_Potential::figure_out_potential(){
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_Potential::initialize( core::pose::Pose const & pose ) {
-
 
 	// calculate H-bonds -- this is currently very inefficient, as we
 	// really only need to look at Hbond status of adenosine N1's.
@@ -588,7 +586,6 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 	// std::cout << "checking binding energy at " << seqpos << " : " << binding_energy << std::endl;
 
 	return binding_energy;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

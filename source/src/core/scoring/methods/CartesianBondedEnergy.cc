@@ -444,8 +444,6 @@ IdealParametersDatabase::read_torsion_database(std::string infile) {
 		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
 		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
 		torsions_indep_.insert( std::make_pair( tuple, params_i) );
-		//tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
-		//torsions_indep_.insert( std::make_pair( tuple, params_i) );
 	}
 	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
 
@@ -646,20 +644,20 @@ IdealParametersDatabase::read_bbdep_table(
 	// fill in missing values
 	for ( int i=1; i<=36; ++i ) {
 		for ( int j=1; j<=36; ++j ) {
-			if ( Ns(i,j) == 0 ) {
-				CNavg_tbl(i,j) = CN_indep_avg; CNdev_tbl(i,j) = CN_indep_K;
-				NCAavg_tbl(i,j) = NCA_indep_avg; NCAdev_tbl(i,j) = NCA_indep_K;
-				CACBavg_tbl(i,j) = CACB_indep_avg; CACBdev_tbl(i,j) = CACB_indep_K;
-				CACavg_tbl(i,j) = CAC_indep_avg; CACdev_tbl(i,j) = CAC_indep_K;
-				COavg_tbl(i,j) = CO_indep_avg; COdev_tbl(i,j) = CO_indep_K;
-				CNCAavg_tbl(i,j) = CNCA_indep_avg; CNCAdev_tbl(i,j) = CNCA_indep_K;
-				NCACBavg_tbl(i,j) = NCACB_indep_avg; NCACBdev_tbl(i,j) = NCACB_indep_K;
-				NCACavg_tbl(i,j) = NCAC_indep_avg; NCACdev_tbl(i,j) = NCAC_indep_K;
-				CBCACavg_tbl(i,j) = CBCAC_indep_avg; CBCACdev_tbl(i,j) = CBCAC_indep_K;
-				CACOavg_tbl(i,j) = CACO_indep_avg; CACOdev_tbl(i,j) = CACO_indep_K;
-				CACNavg_tbl(i,j) = CACN_indep_avg; CACNdev_tbl(i,j) = CACN_indep_K;
-				OCNavg_tbl(i,j) = OCN_indep_avg; OCNdev_tbl(i,j) = OCN_indep_K;
-			}
+			if ( Ns(i,j) != 0 ) continue;
+			
+			CNavg_tbl(i,j)    = CN_indep_avg;    CNdev_tbl(i,j)    = CN_indep_K;
+			NCAavg_tbl(i,j)   = NCA_indep_avg;   NCAdev_tbl(i,j)   = NCA_indep_K;
+			CACBavg_tbl(i,j)  = CACB_indep_avg;  CACBdev_tbl(i,j)  = CACB_indep_K;
+			CACavg_tbl(i,j)   = CAC_indep_avg;   CACdev_tbl(i,j)   = CAC_indep_K;
+			COavg_tbl(i,j)    = CO_indep_avg;    COdev_tbl(i,j)    = CO_indep_K;
+			CNCAavg_tbl(i,j)  = CNCA_indep_avg;  CNCAdev_tbl(i,j)  = CNCA_indep_K;
+			NCACBavg_tbl(i,j) = NCACB_indep_avg; NCACBdev_tbl(i,j) = NCACB_indep_K;
+			NCACavg_tbl(i,j)  = NCAC_indep_avg;  NCACdev_tbl(i,j)  = NCAC_indep_K;
+			CBCACavg_tbl(i,j) = CBCAC_indep_avg; CBCACdev_tbl(i,j) = CBCAC_indep_K;
+			CACOavg_tbl(i,j)  = CACO_indep_avg;  CACOdev_tbl(i,j)  = CACO_indep_K;
+			CACNavg_tbl(i,j)  = CACN_indep_avg;  CACNdev_tbl(i,j)  = CACN_indep_K;
+			OCNavg_tbl(i,j)   = OCN_indep_avg;   OCNdev_tbl(i,j)   = OCN_indep_K;
 		}
 	}
 
@@ -1225,30 +1223,6 @@ IdealParametersDatabase::create_parameters_for_restype(
 		restype_params->add_torsion_parameter( ids, tor_params );
 	}
 
-	/*
-	for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
-	// get ResidueType ints
-	Size rt1 = ( rsd_type.dihedral( dihe ) ).key1();
-	Size rt2 = ( rsd_type.dihedral( dihe ) ).key2();
-	Size rt3 = ( rsd_type.dihedral( dihe ) ).key3();
-	Size rt4 = ( rsd_type.dihedral( dihe ) ).key4();
-	ResidueCartBondedParameters::Size4 ids;
-	ids[ 1 ] = rt1; ids[ 2 ] = rt2; ids[ 3 ] = rt3; ids[ 4 ] = rt4;
-
-	// lookup Kphi and phi0
-	std::string atm1name=rsd_type.atom_name(rt1); boost::trim(atm1name);
-	std::string atm2name=rsd_type.atom_name(rt2); boost::trim(atm2name);
-	std::string atm3name=rsd_type.atom_name(rt3); boost::trim(atm3name);
-	std::string atm4name=rsd_type.atom_name(rt4); boost::trim(atm4name);
-	CartBondedParametersCOP tor_params = lookup_torsion(rsd_type,
-	atm1name,atm2name,atm3name,atm4name );
-
-	if ( !tor_params || tor_params->is_null() ) continue;
-
-	restype_params->add_torsion_parameter( ids, tor_params );
-	}
-	*/
-
 	// for each angle in the residue
 	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
 		// get ResidueType ints
@@ -1275,58 +1249,23 @@ IdealParametersDatabase::create_parameters_for_restype(
 		chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
 		for ( Size j=1; j<=atm_nbrs.size(); ++j ) {
 			Size atm_j = atm_nbrs[j];
-			if ( atm_i < atm_j ) { // only score each bond once -- use restype index to define ordering
+			if ( atm_i >= atm_j ) continue; // only score each bond once -- use restype index to define ordering
 
-				ResidueCartBondedParameters::Size2 ids;
-				ids[1] = atm_i; ids[2] = atm_j;
+			ResidueCartBondedParameters::Size2 ids;
+			ids[1] = atm_i; ids[2] = atm_j;
+			
+			// lookup Kd and d0
+			std::string atm1name = rsd_type.atom_name(atm_i); boost::trim(atm1name);
+			std::string atm2name = rsd_type.atom_name(atm_j); boost::trim(atm2name);
+			CartBondedParametersCOP len_params = lookup_length(rsd_type, prepro,
+				atm1name,atm2name, atm_i, atm_j );
+			
+			if ( len_params->is_null() ) continue;
+			
+			restype_params->add_length_parameter( ids, len_params );
 
-				// lookup Kd and d0
-				std::string atm1name = rsd_type.atom_name(atm_i); boost::trim(atm1name);
-				std::string atm2name = rsd_type.atom_name(atm_j); boost::trim(atm2name);
-				CartBondedParametersCOP len_params = lookup_length(rsd_type, prepro,
-					atm1name,atm2name, atm_i, atm_j );
-
-				if ( len_params->is_null() ) continue;
-
-				restype_params->add_length_parameter( ids, len_params );
-			}
 		}
 	}
-
-	/*
-	// improper torsions
-	{
-	using namespace core::chemical;
-
-	std::string atm1, atm2, atm3, atm4;
-	if (rsd_type.aa() == aa_asp && rsd_type.has( "CB" ) && rsd_type.has( "CG" ) && rsd_type.has( "OD1" ) && rsd_type.has( "OD2" ) ) {
-	// asp CB-CG-OD1-OD2
-	atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "OD2";
-	} else if (rsd_type.aa() == aa_glu && rsd_type.has( "CG" ) && rsd_type.has( "CD" ) && rsd_type.has( "OE1" ) && rsd_type.has( "OE2" )) {
-	// glu CG-CD-OE1-OE2
-	atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "OE2";
-	} else if (rsd_type.aa() == aa_asn && rsd_type.has( "CB" ) && rsd_type.has( "CG" ) && rsd_type.has( "OD1" ) && rsd_type.has( "ND2" )) {
-	// asn CB-CG-OD-ND
-	atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "ND2";
-	} else if (rsd_type.aa() == aa_gln && rsd_type.has( "CG" ) && rsd_type.has( "CD" ) && rsd_type.has( "OE1" ) && rsd_type.has( "NE2" )) {
-	// gln CG-CD-OE-NE
-	atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "NE2";
-	}
-
-	if ( atm1 != "" ) {
-	ResidueCartBondedParameters::Size4 ids;
-	ids[1] = rsd_type.atom_index(atm1);
-	ids[2] = rsd_type.atom_index(atm2);
-	ids[3] = rsd_type.atom_index(atm3);
-	ids[4] = rsd_type.atom_index(atm4);
-
-	CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, atm1, atm2, atm3, atm4 );
-	if ( ! tor_params->is_null() ) {
-	restype_params->add_improper_torsion_parameter( ids, tor_params );
-	}
-	}
-	}
-	*/
 
 	// Virtual shadows: for the sake of working with virtual atoms that are
 	// used to keep intra-residue rings closed, apply a loose constraint between
@@ -1557,8 +1496,6 @@ CartesianBondedEnergy::setup_for_scoring(
 	ScoreFunction const &
 ) const {
 	using namespace methods;
-
-	//idealize_proline_nvs(pose);
 
 	// create LR energy container
 	LongRangeEnergyType const & lr_type( long_range_type() );

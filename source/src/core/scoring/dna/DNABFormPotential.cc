@@ -83,7 +83,6 @@ DNABFormPotential::DNABFormPotential()
 void
 DNABFormPotential::init_dna_bform_data()
 {
-
 	// Parameters for DNA backbone torsions are taken from the Amber MM code -
 	// Alpha and gamma are from the refitting of Perez et.al. in Biophys. J. (2007)
 	// v92 pp. 3816-3829.
@@ -153,7 +152,6 @@ DNABFormPotential::eval_dna_bform_bb_torsion_score_residue(
 
 	score = total_score;
 	dscore_dchi = total_deriv;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -210,7 +208,6 @@ DNABFormPotential::eval_dna_bform_chi_torsion_score_residue(
 
 	score = (pot_depth*( chi - pot_min )*( chi - pot_min ))/( pot_width * pot_width );
 	dscore_dchi = -1.0*(pot_depth/(pot_width*pot_width))*( chi - pot_min );
-
 }
 
 

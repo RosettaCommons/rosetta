@@ -62,10 +62,6 @@
 #include <numeric/angle.functions.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
-// options
-//#include <basic/options/option.hh>
-//#include <basic/options/keys/score.OptionKeys.gen.hh>
-
 // C++ headers
 #include <iostream>
 #include <utility/vector1.hh>
@@ -125,22 +121,10 @@ RamaPreProEnergy::setup_for_scoring(
 		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
 		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
-		}/* else {
-		Size nres = pose.total_residue();
-		if ( core::pose::symmetry::is_symmetric(pose) ) {
-		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		}
-		if ( dec->size() != nres ) {
-		create_new_lre_container = true;
-		}
-		}*/
 	}
 
 	if ( create_new_lre_container ) {
-		/*Size nres = pose.total_residue();
-		if ( core::pose::symmetry::is_symmetric(pose) ) {
-		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-		}*/
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rama_prepro );
 		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );

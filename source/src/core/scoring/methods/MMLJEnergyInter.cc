@@ -119,30 +119,30 @@ MMLJEnergyInter::setup_for_minimizing(
 {
 	// taken for the most part from BaseETableEnergy.hh
 
-	if ( pose.energies().use_nblist() ) {
-		// stash our nblist inside the pose's energies object
-		Energies & energies( pose.energies() );
-
-		// get a reference to the MMLJLibrary we are using
-		core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();
-
-		// setup the atom-atom nblist
-		NeighborListOP nblist( new NeighborList(
-			min_map.domain_map(),
-			library.nblist_dis2_cutoff_XX(),
-			library.nblist_dis2_cutoff_XH(),
-			library.nblist_dis2_cutoff_HH()) );
-
-		if ( pose.energies().use_nblist_auto_update() ) {
-			// setting this to one angstrom fudge factor
-			nblist->set_auto_update( 1 ); // MAGIC NUMBER
-		}
-		// this partially becomes the MMLJEnergy classes's responsibility
-		nblist->setup( pose, sfxn, *this );
-
-		energies.set_nblist( EnergiesCacheableDataType::MM_LJ_INTER_NBLIST, nblist );
-		//std::cout << "In MMLJEnergyInter setup_for_minimizing()" << std::endl;
+	if ( !pose.energies().use_nblist() ) return;
+	
+	// stash our nblist inside the pose's energies object
+	Energies & energies( pose.energies() );
+	
+	// get a reference to the MMLJLibrary we are using
+	core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();
+	
+	// setup the atom-atom nblist
+	NeighborListOP nblist( new NeighborList(
+											min_map.domain_map(),
+											library.nblist_dis2_cutoff_XX(),
+											library.nblist_dis2_cutoff_XH(),
+											library.nblist_dis2_cutoff_HH()) );
+	
+	if ( pose.energies().use_nblist_auto_update() ) {
+		// setting this to one angstrom fudge factor
+		nblist->set_auto_update( 1 ); // MAGIC NUMBER
 	}
+	// this partially becomes the MMLJEnergy classes's responsibility
+	nblist->setup( pose, sfxn, *this );
+	
+	energies.set_nblist( EnergiesCacheableDataType::MM_LJ_INTER_NBLIST, nblist );
+	//std::cout << "In MMLJEnergyInter setup_for_minimizing()" << std::endl;
 }
 
 // The MMLJEnergyInter method stores a vector of rotamer trie objects in the Energies
@@ -256,7 +256,6 @@ MMLJEnergyInter::update_residue_for_packing(
 	TrieCollection & trie_collection
 		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::MM_LJ_TRIE_COLLECTION )));
 	trie_collection.trie( resid, one_rotamer_trie );
-
 }
 
 
@@ -302,40 +301,39 @@ MMLJEnergyInter::residue_pair_energy(
 			Size path_dist(0);
 
 			// ask count pair if we should score it
-			if ( cpfxn->count( i, j, weight, path_dist ) ) {
-				// calc dist
-				Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
-				// calc energy
-				Real rep(0), atr(0);
+			if ( ! cpfxn->count( i, j, weight, path_dist ) ) continue;
+		
+			// calc dist
+			Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
+			// calc energy
+			Real rep(0), atr(0);
+			potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
+			
+			if ( rep != rep ) {
+				std::cout << "REP NAN REP NAN REP NAN" << std::endl;
+				rep = 0;
 				potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
-
-				if ( rep != rep ) {
-					std::cout << "REP NAN REP NAN REP NAN" << std::endl;
-					rep = 0;
-					potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
-				}
-				if ( atr != atr ) {
-					std::cout << "ATR NAN ATR NAN ATR NAN" << std::endl;
-					atr = 0;
-					potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
-				}
-
-				total_rep += rep;
-				total_atr += atr;
-
-				//     std::cout << "INTER"
-				//          << " RSD1: " << std::setw(22) << rsd1type.name()
-				//          << " ATM1: " << std::setw(4)  << rsd1type.atom(i).mm_atom_name()
-				//          << " RSD2: " << std::setw(22) << rsd2type.name()
-				//          << " ATM2: " << std::setw(4)  << rsd2type.atom(j).mm_atom_name()
-				//          << " PDST: " << std::setw(3)  << path_dist
-				//          << " DIST: " << std::setw(8)  << std::sqrt(dist_squared)
-				//          << " WGHT: " << std::setw(4)  << weight
-				//          << " REP: " << std::setw(8)  << rep
-				//          << " ATR: " << std::setw(8)  << atr
-				//          << std::endl;
-
 			}
+			if ( atr != atr ) {
+				std::cout << "ATR NAN ATR NAN ATR NAN" << std::endl;
+				atr = 0;
+				potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
+			}
+			
+			total_rep += rep;
+			total_atr += atr;
+			
+			//     std::cout << "INTER"
+			//          << " RSD1: " << std::setw(22) << rsd1type.name()
+			//          << " ATM1: " << std::setw(4)  << rsd1type.atom(i).mm_atom_name()
+			//          << " RSD2: " << std::setw(22) << rsd2type.name()
+			//          << " ATM2: " << std::setw(4)  << rsd2type.atom(j).mm_atom_name()
+			//          << " PDST: " << std::setw(3)  << path_dist
+			//          << " DIST: " << std::setw(8)  << std::sqrt(dist_squared)
+			//          << " WGHT: " << std::setw(4)  << weight
+			//          << " REP: " << std::setw(8)  << rep
+			//          << " ATR: " << std::setw(8)  << atr
+			//          << std::endl;
 		}
 	}
 
@@ -359,7 +357,9 @@ MMLJEnergyInter::eval_atom_derivative(
 	conformation::Atom const & atom1( pose.residue( id.rsd() ).atom( id.atomno() ) );
 
 	// check to see if we are using the neighbor list
-	if ( pose.energies().use_nblist() ) {
+	if ( !pose.energies().use_nblist() ) {
+		utility_exit_with_message("non-nblist minimize!");
+	} else {
 
 		// get atom1's neighbors
 		scoring::Energies const & energies( pose.energies() );
@@ -395,8 +395,6 @@ MMLJEnergyInter::eval_atom_derivative(
 				F2 += deriv * f2;
 			}
 		}
-	} else {
-		utility_exit_with_message("non-nblist minimize!");
 	}
 }
 

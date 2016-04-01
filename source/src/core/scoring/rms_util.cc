@@ -165,9 +165,11 @@ core::Real gdtsc(const core::pose::Pose& ref,
 	return sum / num_dists;
 }
 
-core::Real gdtha(const core::pose::Pose& ref,
+core::Real gdtha(
+	const core::pose::Pose& ref,
 	const core::pose::Pose& mod,
-	const std::map<core::Size, core::Size>& residues) {
+	const std::map<core::Size, core::Size>& residues
+) {
 	using core::Real;
 	using core::Size;
 	using core::id::NamedAtomID;
@@ -228,7 +230,11 @@ core::Real gdtha(const core::pose::Pose& ref,
 	return sum / num_dists;
 }
 
-void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, ResidueSelection& residue_selection ) {
+void invert_exclude_residues(
+	Size nres,
+	utility::vector1<int> const& exclude_list,
+	ResidueSelection& residue_selection
+) {
 	residue_selection.clear();
 
 	for ( Size ir = 1; ir <= nres; ++ir ) {
@@ -252,7 +258,7 @@ ResidueSelection invert_exclude_residues( core::Size nres, utility::vector1<int>
 	return tmp;
 }
 
-Real native_CA_rmsd( const core::pose::Pose & native_pose, const core::pose::Pose & pose ){
+Real native_CA_rmsd( const core::pose::Pose & native_pose, const core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -266,7 +272,7 @@ Real native_CA_rmsd( const core::pose::Pose & native_pose, const core::pose::Pos
 	}
 } // native_CA_rmsd
 
-Real native_CA_gdtmm( const core::pose::Pose & native_pose, const core::pose::Pose & pose ){
+Real native_CA_gdtmm( const core::pose::Pose & native_pose, const core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -286,8 +292,7 @@ automorphic_rmsd(
 	core::conformation::Residue const & rsd1,
 	core::conformation::Residue const & rsd2,
 	bool superimpose
-)
-{
+) {
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -380,8 +385,7 @@ is_protein_CA(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return rsd.is_protein() && rsd.has("CA") && rsd.atom_index("CA") == atomno;
 }
@@ -392,8 +396,7 @@ is_protein_CA_or_CB(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return rsd.is_protein() && ( ( rsd.has("CA") && rsd.atom_index("CA") == atomno ) || ( rsd.has("CB") && rsd.atom_index("CB") == atomno ) );
 }
@@ -404,8 +407,7 @@ is_protein_backbone(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return  (rsd.is_protein() && ( rsd.has("CA") && rsd.atom_index("CA") == atomno )) ||
 		( rsd.has("N") && rsd.atom_index("N") == atomno ) ||
@@ -418,8 +420,7 @@ is_protein_backbone_including_O(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return  (rsd.is_protein() && ( rsd.has("CA") && rsd.atom_index("CA") == atomno )) ||
 		( rsd.has("N") && rsd.atom_index("N") == atomno ) ||
@@ -433,8 +434,7 @@ is_protein_sidechain_heavyatom(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::chemical::ResidueType const & rsd = pose1.residue_type(resno);
 	return rsd.is_protein() && (rsd.first_sidechain_atom() <= atomno ) && ( !rsd.atom_is_hydrogen( atomno ) );
 }
@@ -446,8 +446,7 @@ is_ligand_heavyatom(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return !rsd.is_polymer() && !rsd.atom_is_hydrogen(atomno);
 }
@@ -458,7 +457,7 @@ is_ligand_heavyatom_residues(
 	core::conformation::Residue const & residue1,
 	core::conformation::Residue const &, // residue2
 	core::Size atomno
-){
+) {
 	return !residue1.is_polymer() && !residue1.atom_is_hydrogen(atomno);
 }
 
@@ -468,8 +467,7 @@ is_polymer_heavyatom(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return rsd.is_polymer() && !rsd.atom_is_hydrogen(atomno);
 }
@@ -482,8 +480,7 @@ is_non_peptide_heavy_atom(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & /* pose2 */,
 	core::uint const resno,
-	core::uint const atomno )
-{
+	core::uint const atomno ) {
 	core::conformation::Residue const & rsd = pose1.residue( resno );
 	return ! rsd.is_protein() && ! rsd.atom_is_hydrogen( atomno );
 }
@@ -494,8 +491,7 @@ is_heavyatom(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return !rsd.atom_is_hydrogen(atomno);
 }
@@ -506,8 +502,7 @@ is_scatom(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return !rsd.atom_is_backbone(atomno);
 }
@@ -518,8 +513,7 @@ is_nbr_atom(
 	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
-)
-{
+) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return rsd.nbr_atom() == atomno;
 }

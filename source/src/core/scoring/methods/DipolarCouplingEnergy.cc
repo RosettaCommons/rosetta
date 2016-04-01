@@ -21,9 +21,7 @@
 //Package headers
 
 #include <core/conformation/Residue.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
-//#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
@@ -44,7 +42,6 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-//#include <basic/options/keys/dc.OptionKeys.gen.hh>
 
 //C++ headers
 #include <iostream>

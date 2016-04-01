@@ -289,48 +289,45 @@ LK_PolarNonPolarEnergy::get_residue_energy_RNA_intra(
 
 			Real cp_weight = 1.0;
 			Size path_dist( 0 );
-			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
-
-				if ( !is_base_phosphate_atom_pair(rsd1, rsd2, i, j) ) continue;
-
-				Vector const heavy_atom_j( rsd2.xyz( j ) );
-
+			if ( !cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
+			
+			if ( !is_base_phosphate_atom_pair(rsd1, rsd2, i, j) ) continue;
+			
+			Vector const heavy_atom_j( rsd2.xyz( j ) );
+			
+			Vector const d_ij = heavy_atom_j - heavy_atom_i;
+			Real const d2 = d_ij.length_squared();
+			
+			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			
+			Real dotprod( 1.0 );
+			Real dummy_deriv( 0.0 );
+			Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv, false);
+			
+			if ( is_polar ) {
+				lk_polar_intra_RNA_score += temp_score;
+				
 				Vector const d_ij = heavy_atom_j - heavy_atom_i;
-				Real const d2 = d_ij.length_squared();
-
-				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-
-				Real dotprod( 1.0 );
-				Real dummy_deriv( 0.0 );
-				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv, false);
-
-				if ( is_polar ) {
-					lk_polar_intra_RNA_score += temp_score;
-
-					Vector const d_ij = heavy_atom_j - heavy_atom_i;
-					Vector const d_ij_norm = d_ij.normalized();
-					dotprod = dot( res1_base_vector_norm, d_ij_norm );
-					temp_score *= dotprod;
-					lk_costheta_intra_RNA_score += temp_score;
-
-					if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
-						TR << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
-							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
-					}
-
-				} else {
-					lk_nonpolar_intra_RNA_score += temp_score;
-					if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
-						TR << "Nonpolar occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
-							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
-					}
+				Vector const d_ij_norm = d_ij.normalized();
+				dotprod = dot( res1_base_vector_norm, d_ij_norm );
+				temp_score *= dotprod;
+				lk_costheta_intra_RNA_score += temp_score;
+				
+				if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
+					TR << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+					rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
 				}
-
-			} // cp
+				
+			} else {
+				lk_nonpolar_intra_RNA_score += temp_score;
+				if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
+					TR << "Nonpolar occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+					rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
+				}
+			}
 
 		} // j
 	} // i
-
 }
 
 ////////////////////////////////////////////////
@@ -373,47 +370,43 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 
 			Real cp_weight = 1.0;
 			Size path_dist( 0 );
-			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
-
-				Vector const heavy_atom_j( rsd2.xyz( j ) );
-
+			if ( !cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
+			
+			Vector const heavy_atom_j( rsd2.xyz( j ) );
+			
+			Vector const d_ij = heavy_atom_j - heavy_atom_i;
+			Real const d2 = d_ij.length_squared();
+			
+			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			
+			Real dotprod( 1.0 );
+			Real dummy_deriv( 0.0 );
+			Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv, false);
+			
+			if ( is_polar ) {
+				lk_polar_score += temp_score;
+				
 				Vector const d_ij = heavy_atom_j - heavy_atom_i;
-				Real const d2 = d_ij.length_squared();
-
-				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-
-				Real dotprod( 1.0 );
-				Real dummy_deriv( 0.0 );
-				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv, false);
-
-				if ( is_polar ) {
-					lk_polar_score += temp_score;
-
-					Vector const d_ij = heavy_atom_j - heavy_atom_i;
-					Vector const d_ij_norm = d_ij.normalized();
-					dotprod = dot( res1_base_vector_norm, d_ij_norm );
-					temp_score *= dotprod;
-					lk_costheta_score += temp_score;
-
-					if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
-						TR << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
-							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
-					}
-
-				} else {
-					lk_nonpolar_score += temp_score;
-					if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
-						TR << "Nonpolar occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
-							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << temp_score << ' ' << F(8,3,dotprod) << std::endl;
-					}
+				Vector const d_ij_norm = d_ij.normalized();
+				dotprod = dot( res1_base_vector_norm, d_ij_norm );
+				temp_score *= dotprod;
+				lk_costheta_score += temp_score;
+				
+				if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
+					TR << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+					rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
 				}
-
-
-			} // cp
-
+				
+			} else {
+				lk_nonpolar_score += temp_score;
+				if ( verbose_ && std::abs( temp_score ) > 0.1 ) {
+					TR << "Nonpolar occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+					rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << temp_score << ' ' << F(8,3,dotprod) << std::endl;
+				}
+			}
+			
 		} // j
 	} // i
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -433,8 +426,6 @@ LK_PolarNonPolarEnergy::setup_for_derivatives(
 void
 LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
 {
-	//using core::scoring::EnergiesCacheableDataType::HBOND_SET;
-
 	// We need the H-bond set -- well, at least the backbone/backbone h-bonds
 	// when computing geometric solvation scores.
 	// Since this is probably being computed elsewhere, might make sense
@@ -448,10 +439,6 @@ LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
 		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
-
-	//hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
-	//hbond_set->setup_for_residue_pair_energies( pose );
-	//pose.energies().data().set( HBOND_SET, hbond_set );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -471,23 +458,23 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
 	//    if ( pose.energies().use_nblist() ) {
 	//        TR << "Using neighborlist..." << std::endl;
 	//    }
-	if ( pose.energies().use_nblist() ) {
-		// stash our nblist inside the pose's energies object
-		Energies & energies( pose.energies() );
-
-		// setup the atom-atom nblist
-		NeighborListOP nblist;
-		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = max_dis_ + 2 * tolerated_motion;
-		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
-		if ( pose.energies().use_nblist_auto_update() ) {
-			//TR << "Using neighborlist auto-update..." << std::endl;
-			nblist->set_auto_update( tolerated_motion );
-		}
-		// this partially becomes the EtableEnergy classes's responsibility
-		nblist->setup( pose, sfxn, *this);
-		energies.set_nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST, nblist );
+	if ( !pose.energies().use_nblist() ) return;
+	
+	// stash our nblist inside the pose's energies object
+	Energies & energies( pose.energies() );
+	
+	// setup the atom-atom nblist
+	NeighborListOP nblist;
+	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+	Real const XX = max_dis_ + 2 * tolerated_motion;
+	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	if ( pose.energies().use_nblist_auto_update() ) {
+		//TR << "Using neighborlist auto-update..." << std::endl;
+		nblist->set_auto_update( tolerated_motion );
 	}
+	// this partially becomes the EtableEnergy classes's responsibility
+	nblist->setup( pose, sfxn, *this);
+	energies.set_nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST, nblist );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -574,12 +561,10 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//if ( pose.energies().use_nblist_auto_update() ) return;
 	//TR << "setup_for_minimizing_for_residue_pair() was called..." << std::endl;
 
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
-	//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-
+	
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( lk_PolarNonPolar_pair_nblist ) ));
 	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
@@ -604,7 +589,6 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	EnergyMap & emap
 ) const
 {
-	//if ( pose.energies().use_nblist_auto_update() ) return;
 	//TR << "residue_pair_energy_ext() was called..." << std::endl;
 
 	using namespace etable::count_pair;
@@ -617,9 +601,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
 	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
 
-	//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
-	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -666,8 +648,6 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 			lk_nonpolar_score += temp_score;
 		}
 
-		//dummy_deriv = 0.0;
-		//temp_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), dummy_deriv, false);
 		temp_score = cp_weight * scores.second;
 
 		if ( is_polar_n && compute_polar ) {
@@ -737,8 +717,6 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 	Vector & F2
 ) const
 {
-
-
 	bool do_eval_intra_RNA= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
 
 	if ( do_eval_intra_RNA==false ) return; //early return.
@@ -760,9 +738,6 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 		std::cout << "Start LK_PolarNonPolarEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
 	}
 
-	//bool const pos1_fixed( domain_map( i ) != 0 );
-
-	//if( pos1_fixed && domain_map(i) == domain_map(j) ){ //MOD OUT ON July 19th, 2011...THIS MIGHT BE BUGGY!
 	//std::cout << "LK_PolarNonPolarEnergy::eval_atom_derivative early return since pos1_fixed && domain_map(i=" << i << ") == domain_map(j=" << j << ")" << std::endl;
 	//  return; //Fixed w.r.t. one another.
 	//}
@@ -783,105 +758,88 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 
 		Real cp_weight = 1.0;
 		Size path_dist( 0 );
-		if ( cpfxn->count(m, n, cp_weight, path_dist ) ) {
-
-			if ( is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false ) continue;
-
-			Vector const heavy_atom_j( rsd2.xyz( n ) );
-			Vector const d_ij = heavy_atom_j - heavy_atom_i;
-			Real const d2 = d_ij.length_squared();
-			Real const d = std::sqrt( d2 );
-			Vector const d_ij_norm = d_ij.normalized();
-
-			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-
-			bool atom2_is_polar( false );
-			if ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor() ) atom2_is_polar = true;
-
-			Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
-
-			// Real const dist_ij = d_ij.length();
-
-			Vector f1_fwd( 0.0 ), f2_fwd( 0.0 ), f1_bkd( 0.0 ), f2_bkd( 0.0 );
-			Real lk_score1( 0.0 ), lk_score2( 0.0 );
-			Real dotprod_fwd( 1.0 ), dotprod_bkd( 1.0 );
-
-			//Forward direction first.
-			lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), deriv, true );
-
-			f2_fwd =   -1.0 * cp_weight * deriv * d_ij_norm;
+		if ( !cpfxn->count(m, n, cp_weight, path_dist ) ) continue;
+		
+		if ( is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false ) continue;
+		
+		Vector const heavy_atom_j( rsd2.xyz( n ) );
+		Vector const d_ij = heavy_atom_j - heavy_atom_i;
+		Real const d2 = d_ij.length_squared();
+		Real const d = std::sqrt( d2 );
+		Vector const d_ij_norm = d_ij.normalized();
+		
+		if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+		
+		bool atom2_is_polar( false );
+		if ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor() ) atom2_is_polar = true;
+		
+		Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
+		
+		Vector f1_fwd( 0.0 ), f2_fwd( 0.0 ), f1_bkd( 0.0 ), f2_bkd( 0.0 );
+		Real lk_score1( 0.0 ), lk_score2( 0.0 );
+		Real dotprod_fwd( 1.0 ), dotprod_bkd( 1.0 );
+		
+		//Forward direction first.
+		lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), deriv, true );
+		
+		f2_fwd =   -1.0 * cp_weight * deriv * d_ij_norm;
+		f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
+		
+		if ( atom1_is_polar ) {
+			
+			F1 += weights[ lk_polar_intra_RNA ] * f1_fwd;
+			F2 += weights[ lk_polar_intra_RNA ] * f2_fwd;
+			
+			dotprod_fwd = dot( res1_base_vector_norm, d_ij_norm );
+			
+			f2_fwd *= dotprod_fwd;
+			f2_fwd -= lk_score1 * ( 1/d ) *  (res1_base_vector_norm  - dotprod_fwd * d_ij_norm );
+			
 			f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
-
-			if ( atom1_is_polar ) {
-
-				F1 += weights[ lk_polar_intra_RNA ] * f1_fwd;
-				F2 += weights[ lk_polar_intra_RNA ] * f2_fwd;
-
-				dotprod_fwd = dot( res1_base_vector_norm, d_ij_norm );
-
-				f2_fwd *= dotprod_fwd;
-				f2_fwd -= lk_score1 * ( 1/d ) *  (res1_base_vector_norm  - dotprod_fwd * d_ij_norm );
-
-				f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
-
-				//F1 += weights[ lk_costheta ] * f1_fwd;
-				//F2 += weights[ lk_costheta ] * f2_fwd;
-
-				lk_score1 *= dotprod_fwd; //to check later (verbose)
-			} else {
-
-				F1 += weights[ lk_nonpolar_intra_RNA  ] * f1_fwd;
-				F2 += weights[ lk_nonpolar_intra_RNA  ] * f2_fwd;
-
-			}
-
-			/////////////////////////////////
-			// Backwards
-			Vector d_ji_norm = -d_ij_norm;
-
-			lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  deriv, true );
-
-			f2_bkd =   -1.0 * deriv * cp_weight * d_ji_norm;
-			f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
-
-
-			if ( atom2_is_polar ) {
-
-				F1 -= weights[ lk_polar_intra_RNA ] * f1_bkd;
-				F2 -= weights[ lk_polar_intra_RNA ] * f2_bkd;
-
-				dotprod_bkd = dot( res2_base_vector_norm, d_ji_norm );
-
-				f2_bkd *= dotprod_bkd;
-				f2_bkd -= lk_score2 * ( 1/d ) *  (res2_base_vector_norm  - dotprod_bkd * d_ji_norm );
-
-				f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
-
-				//F1 -= weights[ lk_costheta ] * f1_bkd;
-				//F2 -= weights[ lk_costheta ] * f2_bkd;
-
-				lk_score2 *= dotprod_bkd; //to check later (verbose)
-			} else {
-
-				F1 -= weights[ lk_nonpolar_intra_RNA ] * f1_bkd;
-				F2 -= weights[ lk_nonpolar_intra_RNA  ] * f2_bkd;
-
-			}
-
-			if ( verbose_  &&  (std::abs( lk_score1 ) > 0.1 || std::abs( lk_score2 ) > 0.1 ) ) {
-				std::cout << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( m ) << " covered by " <<
-					rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(n) <<
-					" " << F(8,3,lk_score1) << " " << F(8,3,lk_score2) <<
-					" ==> " << " DERIV " <<
-					F(8,6,f2_fwd( 1 ) ) <<  ' ' << F(8,6,f2_bkd(1) ) <<
-					' ' << std::sqrt( d2 ) << " " << cp_weight << " " <<
-					F(8,3,dotprod_fwd) << " " << F(8,3,dotprod_bkd) << std::endl;
-			}
-
-
+			
+			lk_score1 *= dotprod_fwd; //to check later (verbose)
+		} else {
+			F1 += weights[ lk_nonpolar_intra_RNA  ] * f1_fwd;
+			F2 += weights[ lk_nonpolar_intra_RNA  ] * f2_fwd;
 		}
-
-
+		
+		/////////////////////////////////
+		// Backwards
+		Vector d_ji_norm = -d_ij_norm;
+		
+		lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  deriv, true );
+		
+		f2_bkd =   -1.0 * deriv * cp_weight * d_ji_norm;
+		f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
+		
+		
+		if ( atom2_is_polar ) {
+			
+			F1 -= weights[ lk_polar_intra_RNA ] * f1_bkd;
+			F2 -= weights[ lk_polar_intra_RNA ] * f2_bkd;
+			
+			dotprod_bkd = dot( res2_base_vector_norm, d_ji_norm );
+			
+			f2_bkd *= dotprod_bkd;
+			f2_bkd -= lk_score2 * ( 1/d ) *  (res2_base_vector_norm  - dotprod_bkd * d_ji_norm );
+			
+			f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
+			
+			lk_score2 *= dotprod_bkd; //to check later (verbose)
+		} else {
+			F1 -= weights[ lk_nonpolar_intra_RNA ] * f1_bkd;
+			F2 -= weights[ lk_nonpolar_intra_RNA  ] * f2_bkd;
+		}
+		
+		if ( verbose_  &&  (std::abs( lk_score1 ) > 0.1 || std::abs( lk_score2 ) > 0.1 ) ) {
+			std::cout << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( m ) << " covered by " <<
+			rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(n) <<
+			" " << F(8,3,lk_score1) << " " << F(8,3,lk_score2) <<
+			" ==> " << " DERIV " <<
+			F(8,6,f2_fwd( 1 ) ) <<  ' ' << F(8,6,f2_bkd(1) ) <<
+			' ' << std::sqrt( d2 ) << " " << cp_weight << " " <<
+			F(8,3,dotprod_fwd) << " " << F(8,3,dotprod_bkd) << std::endl;
+		}
 	}
 
 	if ( verbose_ ) {
@@ -890,7 +848,6 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 		std::cout << " F2= " << F2[0] << " " << F2[1] << " " << F2[2] << std::endl;
 		std::cout << "Finish LK_PolarNonPolarEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -921,8 +878,6 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
 
 	// Size const nres = pose.total_residue();
-	//static bool const update_deriv( true );
-	//debug_assert( pose.energies().use_nblist() );
 	NeighborList const & nblist
 		( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
 	//TR << "checkpoint..." << std::endl;
@@ -1006,7 +961,6 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 			F2 -= weights[ lk_nonpolar ] * f2;
 		}
 	}
-
 }
 
 ////////////////////////////////////////////////
@@ -1026,103 +980,6 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
 	//TR << "finalize_total_energy() was called..." << std::endl;
 	//TR << pose.energies().use_nblist() << std::endl;
 	return;
-	// AMW cppcheck notes that these statements are not being executed
-	// so they will be commented out to make this fact explicit.
-	// These should not be removed; we do not yet know if they are dead code
-	/*
-	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
-	NeighborList const & nblist
-	( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
-	nblist.check_domain_map( pose.energies().domain_map() );
-	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	resvect.push_back( & pose.residue( ii ) );
-	}
-
-	using namespace etable::count_pair;
-	CountPairFunctionOP cpfxn;
-
-	Real lk_polar_score( 0.0 );
-	Real lk_nonpolar_score( 0.0 );
-	Real lk_costheta_score ( 0.0 );
-	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
-	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
-
-	Real cp_weight;
-	Size path_dist;
-	Real dotprod;
-	Real dummy_deriv;
-	Real temp_score;
-
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-	conformation::Residue const & rsd1( *resvect[i] );
-	for ( Size m=1, m_end=rsd1.natoms(); m <= m_end; ++m ) {
-	if ( rsd1.atom_type(m).is_hydrogen() ) continue;
-	bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
-	Vector const & heavy_atom_m( rsd1.xyz( m ) );
-	AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,m) );
-	for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-	nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
-	AtomNeighbor const & nbr( *nbr_iter );
-
-	Size const  j( nbr.rsd() );
-	if ( i==j ) continue;
-	Size const n( nbr.atomno() );
-	// could reorder the nbr lists so that we dont need this check:
-	//if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
-
-	conformation::Residue const & rsd2( *resvect[j] );
-	if ( rsd2.atom_type(n).is_hydrogen() ) continue;
-	cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
-	cp_weight = 1.0;
-	path_dist = 0;
-	if ( !cpfxn->count( m, n, cp_weight, path_dist ) ) continue;
-
-	bool const is_polar_n = ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor());
-	if ( is_polar_m && is_polar_n  && !compute_polar ) continue;
-	if ( !is_polar_m && !is_polar_n && !compute_nonpolar ) continue;
-
-	Vector const & heavy_atom_n( rsd2.xyz( n ) );
-	Vector const d_ij = heavy_atom_n - heavy_atom_m;
-	Vector const d_ij_norm = d_ij.normalized();
-
-	dummy_deriv = 0.0;
-	temp_score = cp_weight * eval_lk( rsd1.atom( m ), rsd2.atom( n ), dummy_deriv, false);
-
-	if ( is_polar_m && compute_polar ) {
-	lk_polar_score += temp_score;
-	Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
-	dotprod = dot( res1_base_vector_norm, d_ij_norm );
-	temp_score *= dotprod;
-	lk_costheta_score += temp_score;
-	} else if ( !is_polar_m && compute_nonpolar ) {
-	lk_nonpolar_score += temp_score;
-	}
-
-	dummy_deriv = 0.0;
-	temp_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), dummy_deriv, false);
-
-	if ( is_polar_n && compute_polar ) {
-	lk_polar_score += temp_score;
-	Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
-	dotprod = -1.0*dot( res2_base_vector_norm, d_ij_norm );
-	temp_score *= dotprod;
-	lk_costheta_score += temp_score;
-	} else if ( !is_polar_n && compute_nonpolar ) {
-	lk_nonpolar_score += temp_score;
-	}
-	}
-	}
-	}
-
-	totals[ lk_polar ]    += lk_polar_score;
-	totals[ lk_nonpolar ] += lk_nonpolar_score;
-	totals[ lk_costheta ] += lk_costheta_score;
-
-	if (verbose_) std::cout << "DONE SCORING" << std::endl;
-	*/
-
 }
 
 /////////////////////////////////////////

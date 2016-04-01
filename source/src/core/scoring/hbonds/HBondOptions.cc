@@ -278,8 +278,6 @@ HBondOptions::parse_my_tag(
 	if ( tag->hasOption( "hbonds:mphbond" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:mphbond" ) );
 	}
-
-
 }
 
 

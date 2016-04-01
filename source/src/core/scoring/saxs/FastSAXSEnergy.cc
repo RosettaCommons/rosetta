@@ -29,16 +29,13 @@
 
 #include <core/id/AtomID.hh>
 
-
 // Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
-
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -115,7 +112,6 @@ core::Real ref_spectrum[][21] = {
 {  13.428, 16.120, 15.414,  7.848,  4.726,  8.211, 10.317,  8.329, 13.874,  8.681, 0.663, 0.759, 1.538,  8.946, 2.836, 1.119, 3.592, 6.113,  9.573, 5.830, 0.853  },
 {  13.429, 16.122, 16.070,  8.492,  5.115,  8.209,  9.842,  8.817, 14.105,  7.768, 0.832, 1.064, 2.204,  8.227, 2.715, 1.187, 3.629, 6.077, 10.749, 7.011, 0.983  }
 };
-
 
 ScoreTypes FastSAXSEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
@@ -563,7 +559,7 @@ void load_fastsax_spectrum(
 	nq = saved_q.size();
 }
 
-// load per-resiude form factors (resampled onto the same grid as the input spectrum)
+// load per-residue form factors (resampled onto the same grid as the input spectrum)
 //    cache resampled values so resampling only happens once for each q_in
 //    use linear resampling because I'm lazy (also matlab doesn't show a diffence between spline interp until the 4th sig digit)
 void load_form_factors(

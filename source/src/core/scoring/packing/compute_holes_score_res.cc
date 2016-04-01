@@ -16,8 +16,6 @@
 #include <core/scoring/packing/PoseBalls.hh>
 
 //Package headers
-
-//#include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 
@@ -117,12 +115,12 @@ compute_holes_score_res(
 			if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
 			if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 			if( !params.have_params(res_name) ) skip = true;
-			if( !skip ) {
-				raw_score += val;
-				if( a==1 && atom_num==1 ) {
-					raw_score -= params.rho( pb.res_name(i) );
-					raw_score -= params.rho();
-				}
+			if( skip ) continue;
+			
+			raw_score += val;
+			if( a==1 && atom_num==1 ) {
+				raw_score -= params.rho( pb.res_name(i) );
+				raw_score -= params.rho();
 			}
 		}
 	}
@@ -137,22 +135,22 @@ compute_holes_score_res(
 		if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
 		if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 		if( !params.have_params(res_name) ) skip = true;
-		if( !skip ) {
-			Real anb5=0,anb10=0,anb15=0,anb20=0;
-			for( Size j = 1; j < i; j++ ) {
-				Real dis2 = pb.ball(i).xyz().distance_squared(pb.ball(j).xyz());
-				if( 400 >= dis2 ) {
-					anb20++;
-					if( 225 >= dis2 ) anb15++;
-					if( 100 >= dis2 ) anb10++;
-					if(  25 >= dis2 ) anb5 ++;
-				}
+		if( skip ) continue;
+		
+		Real anb5=0,anb10=0,anb15=0,anb20=0;
+		for( Size j = 1; j < i; j++ ) {
+			Real dis2 = pb.ball(i).xyz().distance_squared(pb.ball(j).xyz());
+			if( 400 >= dis2 ) {
+				anb20++;
+				if( 225 >= dis2 ) anb15++;
+				if( 100 >= dis2 ) anb10++;
+				if(  25 >= dis2 ) anb5 ++;
 			}
-			raw_score += params.param(res_name)[24*(atom_num-1)+1] * anb5  / 14.61869 ;
-			raw_score += params.param(res_name)[24*(atom_num-1)+2] * anb10 / 116.94952;
-			raw_score += params.param(res_name)[24*(atom_num-1)+3] * anb15 / 394.70462;
-			raw_score += params.param(res_name)[24*(atom_num-1)+4] * anb20 / 935.59614;
 		}
+		raw_score += params.param(res_name)[24*(atom_num-1)+1] * anb5  / 14.61869 ;
+		raw_score += params.param(res_name)[24*(atom_num-1)+2] * anb10 / 116.94952;
+		raw_score += params.param(res_name)[24*(atom_num-1)+3] * anb15 / 394.70462;
+		raw_score += params.param(res_name)[24*(atom_num-1)+4] * anb20 / 935.59614;
 	}
 
 #endif
@@ -221,13 +219,13 @@ compute_holes_deriv_res(
 			if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
 			if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 			if( !params.have_params(res_name) ) skip = true;
-			if( !skip ) {
-				derivs[ id::AtomID(atom_num,res_num) ] += xyzVector<Real>(dx,dy,dz);
-				raw_score += val;
-				if( a==1 && atom_num==1 ) {
-					raw_score -= params.rho( pb.res_name(i) );
-					raw_score -= params.rho();
-				}
+			if( skip ) continue;
+			
+			derivs[ id::AtomID(atom_num,res_num) ] += xyzVector<Real>(dx,dy,dz);
+			raw_score += val;
+			if( a==1 && atom_num==1 ) {
+				raw_score -= params.rho( pb.res_name(i) );
+				raw_score -= params.rho();
 			}
 		}
 	}

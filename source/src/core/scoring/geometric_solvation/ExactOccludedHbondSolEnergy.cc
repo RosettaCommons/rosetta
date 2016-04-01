@@ -157,13 +157,9 @@ GridInfo::GridInfo() {
 	core::Real const water_grid_width = 10.;
 	core::Real const water_grid_depth = 8.;
 	// For speed use only 52 thousand points per grid - gives identical results...
-	xnum_points_ = 41;
-	ynum_points_ = 41;
-	znum_points_ = 31;
-	// Note: below gives 51 million points per grid
-	// xnum_points_ = 401;
-	// ynum_points_ = 401;
-	// znum_points_ = 321;
+	xnum_points_ = 41; // 401
+	ynum_points_ = 41; // 401
+	znum_points_ = 31; // 321
 
 	xstep_ = water_grid_width / ( xnum_points_ - 1 );
 	ystep_ = water_grid_width / ( ynum_points_ - 1 );
@@ -172,7 +168,6 @@ GridInfo::GridInfo() {
 	xorigin_ = -xstep_ * ( xnum_points_ + 1) / 2.;
 	yorigin_ = -ystep_ * ( ynum_points_ + 1) / 2.;
 	zorigin_ = 0.;
-
 }
 
 WaterWeightGridSet *
@@ -244,7 +239,6 @@ core::Real WaterWeightGridSet::fill_water_grid(
 				// Compute the current geometry
 				core::Real AHdis, xD, xH;
 				if ( water_is_donor ) {
-
 					// water is the donor, give it perfect geometry
 					xD = 0.9999;
 
@@ -259,9 +253,7 @@ core::Real WaterWeightGridSet::fill_water_grid(
 					// note: this is the same as the base-acceptor-water_oxygen angle
 					// note: careful to normalize-by-copy, since water_position is reused around the loop
 					xH = dot( base_to_outer, water_position.normalized() );
-
 				} else {
-
 					// water is the acceptor, give it perfect geometry
 					xH = 1./3.;  // perfect geometry is cos( 180 - 109.5 degrees), which is 1/3
 
@@ -271,7 +263,6 @@ core::Real WaterWeightGridSet::fill_water_grid(
 					// find the cosine of the base-proton-water angle (xD)
 					// note: careful to normalize-by-copy, since water_position is reused around the loop
 					xD = dot( base_to_outer, water_position.normalized() );
-
 				}
 
 				if ( xH < MIN_xH ) continue;
@@ -298,7 +289,6 @@ core::Real WaterWeightGridSet::fill_water_grid(
 			}
 		}
 	}
-
 	return sum_grid_water_weight;
 }
 
@@ -455,7 +445,6 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 	for ( chemical::AtomIndices::const_iterator
 			hnum  = polar_rsd.Hpos_polar().begin(),
 			hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-
 		Size const polar_atom( *hnum );
 		residue_geosol += compute_donor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
 	}
@@ -464,20 +453,17 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 	for ( chemical::AtomIndices::const_iterator
 			anum  = polar_rsd.accpt_pos().begin(),
 			anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
 		Size const polar_atom( *anum );
 		residue_geosol += compute_acceptor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
 	}
 
 	if ( exact_occ_split_between_res_ ) {
-		TR << "PAIRWISE OUTPUT FORMAT IS NOT YET SUPPORTED" << std::endl;
 		// Here we need to add contributions from this residue occluding all neighboring polar groups then divide everything by two
 		// note: this will make the code run twice as slow as it otherwise would, but that's okay because it's just for parameterization / analysis
-		exit(1);
+		utility_exit_with_message( "PAIRWISE OUTPUT FORMAT IS NOT YET SUPPORTED" );
 	}
 
 	emap[ occ_sol_exact ] += LK_MATCHING_WEIGHT_EXACT * residue_geosol;
-
 }
 
 
@@ -836,41 +822,41 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 				for ( chemical::AtomIndices::const_iterator hnum = occ_rsd.Hpos_polar().begin(), hnume = occ_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 					Size const don_h_atom( *hnum );
 					Size const base_atom ( occ_rsd.atom_base( don_h_atom ) );
-					if ( occ_atomno == base_atom ) {
-						// make sure the polar atom is an acceptor
-						for ( chemical::AtomIndices::const_iterator anum = polar_rsd.accpt_pos().begin(), anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-							Size const acc_atom( *anum );
-							if ( polar_atomno == acc_atom ) {
-								// If so, check if we have an Hbond to the polar group of interest
-								HBDonChemType don_chem_type = get_hb_don_chem_type( occ_atomno, occ_rsd );
-								HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
-								// Note: this should really test if things are on different chains (comment from Hbond code)
-								HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, polar_resnum - occ_resnum));
-								HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep);
-								Real hb_ener(0.);
-								hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type,
-									occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( don_h_atom ).xyz(),
-									polar_rsd.atom( polar_atomno ).xyz(), polar_rsd.atom( polar_rsd.atom_base( polar_atomno ) ).xyz(),
-									polar_rsd.atom( polar_rsd.abase2( polar_atomno ) ).xyz(), hb_ener);
-
-								if ( hb_ener < 0. ) {
-									switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
-									case hbw_SC :
-										hb_ener *= 1.1;
-										break;
-									case hbw_LR_BB:
-									case hbw_SR_BB :
-										hb_ener *= 1.17;
-										break;
-									default :
-										break;
-									}
-									polar_group_hb_energy += hb_ener;
-								}
-								if ( hb_ener < SKIP_HBONDER_CUT ) {
-									occ_atom_is_Hbonded = true;
-								}
+					if ( occ_atomno != base_atom ) continue;
+					
+					// make sure the polar atom is an acceptor
+					for ( chemical::AtomIndices::const_iterator anum = polar_rsd.accpt_pos().begin(), anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+						Size const acc_atom( *anum );
+						if ( polar_atomno != acc_atom ) continue;
+						
+						// If so, check if we have an Hbond to the polar group of interest
+						HBDonChemType don_chem_type = get_hb_don_chem_type( occ_atomno, occ_rsd );
+						HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
+						// Note: this should really test if things are on different chains (comment from Hbond code)
+						HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, polar_resnum - occ_resnum));
+						HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep);
+						Real hb_ener(0.);
+						hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type,
+										occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( don_h_atom ).xyz(),
+										polar_rsd.atom( polar_atomno ).xyz(), polar_rsd.atom( polar_rsd.atom_base( polar_atomno ) ).xyz(),
+										polar_rsd.atom( polar_rsd.abase2( polar_atomno ) ).xyz(), hb_ener);
+						
+						if ( hb_ener < 0. ) {
+							switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
+								case hbw_SC :
+									hb_ener *= 1.1;
+									break;
+								case hbw_LR_BB:
+								case hbw_SR_BB :
+									hb_ener *= 1.17;
+									break;
+								default :
+									break;
 							}
+							polar_group_hb_energy += hb_ener;
+						}
+						if ( hb_ener < SKIP_HBONDER_CUT ) {
+							occ_atom_is_Hbonded = true;
 						}
 					}
 				}
@@ -879,41 +865,41 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 				// figure out if the occluding atom is an acceptor
 				for ( chemical::AtomIndices::const_iterator anum = occ_rsd.accpt_pos().begin(), anume = occ_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 					Size const acc_atom( *anum );
-					if ( occ_atomno == acc_atom ) {
-						// make sure the polar atom is a donor
-						for ( chemical::AtomIndices::const_iterator hnum = polar_rsd.Hpos_polar().begin(), hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-							Size const don_h_atom( *hnum );
-							if ( polar_atomno == don_h_atom ) {
-								Size const base_atom ( polar_rsd.atom_base( don_h_atom ) );
-								// If so, check if we have an Hbond to the polar group of interest
-								HBDonChemType don_chem_type = get_hb_don_chem_type( base_atom, polar_rsd );
-								HBAccChemType acc_chem_type = get_hb_acc_chem_type( occ_atomno, occ_rsd );
-								// Note: this should really test if things are on different chains (comment from Hbond code)
-								HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, occ_resnum - polar_resnum ));
-								HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep );
-								Real hb_ener(0.);
-								hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type, polar_rsd.atom( base_atom ).xyz(), polar_rsd.atom( polar_atomno ).xyz(),
-									occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( occ_rsd.atom_base( occ_atomno ) ).xyz(),
-									occ_rsd.atom( occ_rsd.abase2( occ_atomno ) ).xyz(), hb_ener);
-
-								if ( hb_ener < 0. ) {
-									switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
-									case hbw_SC :
-										hb_ener *= 1.1;
-										break;
-									case hbw_LR_BB:
-									case hbw_SR_BB :
-										hb_ener *= 1.17;
-										break;
-									default :
-										break;
-									}
-									polar_group_hb_energy += hb_ener;
-								}
-								if ( hb_ener < SKIP_HBONDER_CUT ) {
-									occ_atom_is_Hbonded = true;
-								}
+					if ( occ_atomno != acc_atom ) continue;
+					
+					// make sure the polar atom is a donor
+					for ( chemical::AtomIndices::const_iterator hnum = polar_rsd.Hpos_polar().begin(), hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+						Size const don_h_atom( *hnum );
+						if ( polar_atomno != don_h_atom ) continue;
+						
+						Size const base_atom ( polar_rsd.atom_base( don_h_atom ) );
+						// If so, check if we have an Hbond to the polar group of interest
+						HBDonChemType don_chem_type = get_hb_don_chem_type( base_atom, polar_rsd );
+						HBAccChemType acc_chem_type = get_hb_acc_chem_type( occ_atomno, occ_rsd );
+						// Note: this should really test if things are on different chains (comment from Hbond code)
+						HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, occ_resnum - polar_resnum ));
+						HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep );
+						Real hb_ener(0.);
+						hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type, polar_rsd.atom( base_atom ).xyz(), polar_rsd.atom( polar_atomno ).xyz(),
+										occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( occ_rsd.atom_base( occ_atomno ) ).xyz(),
+										occ_rsd.atom( occ_rsd.abase2( occ_atomno ) ).xyz(), hb_ener);
+						
+						if ( hb_ener < 0. ) {
+							switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
+								case hbw_SC :
+									hb_ener *= 1.1;
+									break;
+								case hbw_LR_BB:
+								case hbw_SR_BB :
+									hb_ener *= 1.17;
+									break;
+								default :
+									break;
 							}
+							polar_group_hb_energy += hb_ener;
+						}
+						if ( hb_ener < SKIP_HBONDER_CUT ) {
+							occ_atom_is_Hbonded = true;
 						}
 					}
 				}
@@ -977,11 +963,8 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	core::Real desired_hb_weight = 0.;
 
 	if ( exact_occ_include_Hbond_contribution_ ) {
-
 		if ( exact_occ_self_res_occ_ ) {
-
 			if ( polar_group_is_acceptor ) {
-
 				HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
 
 				switch( acc_chem_type) {
@@ -1166,9 +1149,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 					}
 				}
 			}
-
 		}
-
 	}
 
 	geometric_solvation_energy = geometric_solvation_energy + (desired_hb_weight*polar_group_hb_energy );

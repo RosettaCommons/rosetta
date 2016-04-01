@@ -148,9 +148,7 @@ FreeDOF_Energy::residue_energy(
 	emap[ free_suite      ] += free_suite_energy;
 	emap[ free_2HOprime   ] += free_2HOprime_energy;
 	emap[ free_side_chain ] += free_side_chain_energy;
-
 	emap[ free_dof        ] += free_suite_energy + free_2HOprime_energy + free_side_chain_energy;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -218,8 +216,6 @@ FreeDOF_Energy::finalize_total_energy(
 	}
 
 	totals[ free_base ] += total_free_base_score;
-	//totals[ free_dof  ] += total_free_base_score;
-
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -272,7 +268,6 @@ FreeDOF_Energy::accumulate_stack_energy(
 			stack_energy[ j ] += fa_stack_weight * edge[ fa_stack_upper ];
 		}
 	}
-
 }
 
 
@@ -288,12 +283,7 @@ FreeDOF_Energy::get_hbond_energy(
 	using namespace core::scoring::hbonds;
 
 	EnergyMap const & weights( scorefxn.weights() );
-	// unfortunately, HBondEnergy is not guaranteed to fill hbond_set.
-	// runtime_assert( scorefxn.has_nonzero_weight( hbond ) || scorefxn.has_nonzero_weight( hbond_sc ) );
-	// HBondSet const & hbond_set
-	//  ( static_cast< HBondSet const & >
-	//   ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-
+	
 	// unclear whether we can avoid repeating work elsewhere through caching this.
 	HBondSet hbond_set;
 	fill_hbond_set( pose, false /*calculate derivative*/, hbond_set );
@@ -326,9 +316,7 @@ FreeDOF_Energy::get_hbond_energy(
 		if ( pose.residue_type( j ).is_RNA() && ( hbond_.acc_atm() == pose.residue_type( j ).RNA_type().o2prime_index() ) ) {
 			sugar_hbond_energy[ j ] += hbE;
 		}
-
 	}
-
 }
 
 /// @brief FreeDOF_Energy is context independent; indicates that no context graphs are required

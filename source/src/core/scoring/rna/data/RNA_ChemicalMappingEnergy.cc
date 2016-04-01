@@ -93,6 +93,7 @@ RNA_ChemicalMappingEnergy::finalize_total_energy(
 	if ( scorefxn.has_nonzero_weight( rna_chem_map ) )       totals[ rna_chem_map ]       += calculate_energy( pose, false /*use_low_res*/, rna_base_pair_computed );
 	if ( scorefxn.has_nonzero_weight( rna_chem_map_lores ) ) totals[ rna_chem_map_lores ] += calculate_energy( pose, true  /*use_low_res*/, rna_base_pair_computed );
 }
+
 /////////////////////////////////////////////////////////////////////////////
 Real
 RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose & pose,

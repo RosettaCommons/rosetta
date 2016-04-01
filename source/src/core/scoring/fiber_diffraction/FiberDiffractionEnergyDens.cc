@@ -162,7 +162,6 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	ObjexxFCL::FArray1D< float > rc, phic, zc, Rinv_ht;
 	phic.dimension( grid_phi_ );
 	zc.dimension( grid_z_ );
-
 	rc.dimension( grid_r_ );
 	Rinv_ht.dimension( grid_r_ );
 
@@ -310,7 +309,6 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	utility::vector1< OneGaussianScattering >::iterator sig_centroid( sig_centroid_.begin() );
 
 	core::Real minX, minY, minZ, maxX, maxY, maxZ;
-
 	find_min_xyz(pose, minX, minY, minZ, maxX, maxY, maxZ);
 
 	if ( fabs(maxZ-minZ) > c_ ) maxZ = minZ+c_;
@@ -324,7 +322,6 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	maxX += pad;
 	maxY += pad;
 	maxZ += pad;
-
 
 	// initialize grid and density
 	core::Real grid_reso = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::grid_reso ]();
@@ -486,8 +483,7 @@ void gnl_R_qfht(
 	double & qfht_K1,
 	double & qfht_K2,
 	ObjexxFCL::FArray3D< std::complex<float> > & Gnl
-)
-{
+) {
 	Size max_n_val(0);
 	for ( Size i=0; i<= lmax; ++i ) {
 		if ( nvals[i].size() > max_n_val ) max_n_val = nvals[i].size();

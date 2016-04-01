@@ -188,7 +188,6 @@ FaMPEnvSmoothEnergy::setup_for_derivatives(
 		residue_N_.push_back( countN );
 		residue_E_.push_back( score );
 		residue_dEdN_.push_back( dscoredN );
-
 	}
 }
 
@@ -334,9 +333,7 @@ FaMPEnvSmoothEnergy::eval_atom_derivative(
 				F1, F2 );
 
 		}
-
 	}
-
 }
 
 /// @details returns const & to static data members to avoid expense

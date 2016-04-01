@@ -16,8 +16,6 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-//#include <core/scoring/etable/count_pair/CountPairIntraResC3.hh>
-//#include <core/scoring/etable/count_pair/CountPair1BC3.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
@@ -30,8 +28,6 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
-//#include <core/pack/task/PackerTask.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -86,23 +82,14 @@ bool
 VdWShouldItCount(
 	conformation::Residue const & rsd,
 	Size const & atm
-)
-{
-	//  if( rsd.atom_name( atm ) == " CB " ||  rsd.atom_name( atm ) == " O  " )  {
-	//  if( rsd.atom_name( atm ) == " CB " )  {
-	//   return true;
-	//  }
-
-
+) {
 	if ( rsd.seqpos() == 2 ) return false;
 
-	//  if( rsd.atom_name( atm ) == " C  " ||  rsd.atom_name( atm ) == " O  " ||  rsd.atom_name( atm ) == " CB " ) {
 	if ( rsd.atom_name( atm ) == " CB " ) {
 		return true;
 	} else {
 		return false;
 	}
-
 }
 
 ///
@@ -246,7 +233,6 @@ VdWTinkerPotential::read_in_vdw_tinker_parameters() {
 	}
 
 	vdw_file.close();
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,8 +242,7 @@ VdWTinkerPotential::amoeba_type_lookup(
 	std::string const & atomname,
 	std::string const & resname,
 	std::string const & variantname
-) const
-{
+) const {
 
 	std::string const not_variant( "NONE" );
 	core::Size type( 0 );
@@ -300,8 +285,7 @@ void
 VdWTinkerPotential::assign_residue_amoeba_type(
 	Residue const & rsd,
 	VdWTinkerResidueInfo & vdw
-) const
-{
+) const {
 	utility::vector1< std::string > parsed_resname( utility::string_split_simple( rsd.name(), ':' ) );
 	std::string resname( parsed_resname[1] );
 
@@ -333,18 +317,13 @@ VdWTinkerPotential::assign_residue_amoeba_type(
 void
 VdWTinkerPotential::assign_all_amoeba_types(
 	pose::Pose & pose
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO;
-
+) const {
 	//TR << "Assigning amoeba vdw types!" << std::endl;
 
 	Size const nres( pose.total_residue() );
 
 	// Look up the Amoeba vdw type information
-
 	VdWTinkerPoseInfoOP vdw_info;
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) {
 		vdw_info = utility::pointer::static_pointer_cast< VdWTinkerPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) );
 	} else {
@@ -358,7 +337,6 @@ VdWTinkerPotential::assign_all_amoeba_types(
 	}
 
 	pose.data().set( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO, vdw_info );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,12 +344,10 @@ VdWTinkerPotential::assign_all_amoeba_types(
 void
 VdWTinkerPotential::setup_for_scoring(
 	pose::Pose & pose
-) const
-{
+) const {
 	// TR << "in setup_for_scoring use_nblist is " << pose.energies().use_nblist() << std::endl;
 
 	VdWTinkerPoseInfoOP vdw_info;
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) {
 		vdw_info = utility::pointer::static_pointer_cast< VdWTinkerPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) );
 	} else {
@@ -392,9 +368,7 @@ VdWTinkerPotential::setup_for_scoring(
 
 	vdw_info->initialize( pose );
 	assign_all_amoeba_types( pose );
-
 	// TR << "Exiting setup_for_scoring" << std::endl;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -406,10 +380,7 @@ void
 VdWTinkerPotential::setup_for_packing(
 	pose::Pose & , // ellided
 	utility::vector1< bool > const & // repacking_residues
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO;
-
+) const {
 	// jjh Commenting out for now.  First need to get regular scoring done.  Worry
 	// about packing later.
 #ifdef NOTDEF
@@ -424,21 +395,17 @@ VdWTinkerPotential::setup_for_packing(
 	}
 
 	//jjh zero out arrays
-	//born_radius = 0.0;
 	vdw_info->initialize( pose );
 
 	/// store info about which positions are moving
 	vdw_info->set_repack_list( repacking_residues );
-
 	build_placeholders( pose, *vdw_info );
-
 	get_template_born_radii( pose, *vdw_info );
 
 	pose.data().set( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO, vdw_info );
 
 	PROF_STOP( basic::GB_SETUP_FOR_PACKING );
 #endif
-
 }
 
 
@@ -447,18 +414,13 @@ void
 VdWTinkerPotential::get_rotamers_vdw_info(
 	core::pose::Pose const &,
 	conformation::RotamerSetBase & rotamer_set
-) const
-{
-
+) const {
 	VdWTinkerRotamerSetInfoOP vdw_info_rotamers( new VdWTinkerRotamerSetInfo( rotamer_set ) );
-
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
 		assign_residue_amoeba_type( *rotamer_set.rotamer(n), vdw_info_rotamers->residue_info( n ) );
 	}
 
 	rotamer_set.data().set( core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO, vdw_info_rotamers );
-
-	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -467,10 +429,7 @@ void
 VdWTinkerPotential::update_residue_for_packing(
 	pose::Pose & pose,
 	Size const seqpos
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO;
-
+) const {
 	VdWTinkerPoseInfo & vdw_info( static_cast< VdWTinkerPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) );
 	VdWTinkerResidueInfo & vdw_residue_info( vdw_info.residue_info( seqpos ) );
 
@@ -478,7 +437,6 @@ VdWTinkerPotential::update_residue_for_packing(
 
 	vdw_residue_info.initialize( rsd );
 	assign_residue_amoeba_type( rsd, vdw_residue_info );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -488,8 +446,7 @@ VdWTinkerPotential::get_res_res_vdw(
 	VdWTinkerResidueInfo const & vdw1,
 	Residue const & rsd2,
 	VdWTinkerResidueInfo const & vdw2
-) const
-{
+) const {
 	using namespace etable::count_pair;
 
 	Size natoms1 = rsd1.natoms();
@@ -551,28 +508,24 @@ VdWTinkerPotential::get_res_res_vdw(
 
 			// Assuming all the checks tell us to calculate the interaction
 
-			if ( cpfxn->count( atm1, atm2, weight, path_dist ) &&
-					(!same_res || (atm1 != atm2) ) ) {
-
-				Real const dist( p1.distance( p2 ) );
-				Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
-				Real const eff_rad( ( rad1*rad1*rad1 + rad2*rad2*rad2 ) / ( rad1*rad1 + rad2*rad2 ) );
-				Real const rad_ratio( dist / eff_rad );
-
-				Real const factor1( std::pow( 1.07/( rad_ratio + 0.07 ), 7.0 ) );
-				Real const factor2( 1.12/( std::pow( rad_ratio, 7.0 ) + 0.12 ) - 2.0 );
-
-
-				atom_atomE = eff_dep*factor1*factor2;
-
-			}
+			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) &&
+				(!same_res || (atm1 != atm2) ) ) continue;
+			
+			Real const dist( p1.distance( p2 ) );
+			Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
+			Real const eff_rad( ( rad1*rad1*rad1 + rad2*rad2*rad2 ) / ( rad1*rad1 + rad2*rad2 ) );
+			Real const rad_ratio( dist / eff_rad );
+			
+			Real const factor1( std::pow( 1.07/( rad_ratio + 0.07 ), 7.0 ) );
+			Real const factor2( 1.12/( std::pow( rad_ratio, 7.0 ) + 0.12 ) - 2.0 );
+			
+			
+			atom_atomE = eff_dep*factor1*factor2;
 
 			vdwE += atom_atomE;
 		}
 	}
-
 	// TR << "res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << vdwE << std::endl;
-
 	// TR << "res-res interaction between residue " << rsd1.seqpos() << " and " << rsd2.seqpos() << std::endl;
 	// TR << "Returning vdwE of " << vdwE << std::endl;
 
@@ -591,8 +544,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 	Real const & factor,
 	utility::vector1< DerivVectorPair > & r1_at_derivs,
 	utility::vector1< DerivVectorPair > & r2_at_derivs
-) const
-{
+) const {
 	using namespace etable::count_pair;
 
 	Size natoms1 = rsd1.natoms();
@@ -600,8 +552,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 	Size path_dist( 1 );
 	Real weight( 0.0 );
-	//Real vdwE( 0.0 );
-
+	
 	Size const resi( rsd1.seqpos() );
 	Size const resj( rsd2.seqpos() );
 	bool const same_res( resi == resj );
@@ -662,36 +613,32 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 			// Assuming all the checks tell us to calculate the interaction
 
-			if ( cpfxn->count( atm1, atm2, weight, path_dist ) &&
-					(!same_res || (atm1 != atm2) ) ) {
-
-				Real const dist( p1.distance( p2 ) );
-				Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
-				Real const eff_rad( ( rad1*rad1*rad1 + rad2*rad2*rad2 ) / ( rad1*rad1 + rad2*rad2 ) );
-				Real const rad_ratio( dist / eff_rad );
-
-				Real const factor1( std::pow( 1.07/( rad_ratio + 0.07 ), 7.0 ) );
-				Real const factor2( 1.12/( std::pow( rad_ratio, 7.0 ) + 0.12 ) - 2.0 );
-
-				Real const dfactor1( -6.542*std::pow( 1.07/(rad_ratio+0.07), 8.0 ) );
-				Real const dfactor2( -7.84*std::pow(rad_ratio,6.0)/( std::pow( ( std::pow(rad_ratio,7.0) + 0.12 ) , 2.0 ) ) );
-
-				Real const dEdr( -1.0*eff_dep*factor*( factor1*dfactor2 + factor2*dfactor1 )/eff_rad );
-
-				//    Vector const & Rij( p2 - p1 );
-				//    Real const dist2( Rij.magnitude_squared() );
-				Vector const deriv_dr_f1( p2.cross_product( p1 ) );
-				Vector const deriv_dr_f2( p2 - p1 );
-
-				Vector const f1( dEdr * deriv_dr_f1 / dist );
-				Vector const f2( dEdr * deriv_dr_f2 / dist );
-
-				r1_at_derivs[ atm1 ].f1() += f1;
-				r1_at_derivs[ atm1 ].f2() += f2;
-				r2_at_derivs[ atm2 ].f1() -= f1;
-				r2_at_derivs[ atm2 ].f2() -= f2;
-
-			}
+			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) &&
+				(!same_res || (atm1 != atm2) ) ) continue;
+			
+			Real const dist( p1.distance( p2 ) );
+			Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
+			Real const eff_rad( ( rad1*rad1*rad1 + rad2*rad2*rad2 ) / ( rad1*rad1 + rad2*rad2 ) );
+			Real const rad_ratio( dist / eff_rad );
+			
+			Real const factor1( std::pow( 1.07/( rad_ratio + 0.07 ), 7.0 ) );
+			Real const factor2( 1.12/( std::pow( rad_ratio, 7.0 ) + 0.12 ) - 2.0 );
+			
+			Real const dfactor1( -6.542*std::pow( 1.07/(rad_ratio+0.07), 8.0 ) );
+			Real const dfactor2( -7.84*std::pow(rad_ratio,6.0)/( std::pow( ( std::pow(rad_ratio,7.0) + 0.12 ) , 2.0 ) ) );
+			
+			Real const dEdr( -1.0*eff_dep*factor*( factor1*dfactor2 + factor2*dfactor1 )/eff_rad );
+			
+			Vector const deriv_dr_f1( p2.cross_product( p1 ) );
+			Vector const deriv_dr_f2( p2 - p1 );
+			
+			Vector const f1( dEdr * deriv_dr_f1 / dist );
+			Vector const f2( dEdr * deriv_dr_f2 / dist );
+			
+			r1_at_derivs[ atm1 ].f1() += f1;
+			r1_at_derivs[ atm1 ].f2() += f2;
+			r2_at_derivs[ atm2 ].f1() -= f1;
+			r2_at_derivs[ atm2 ].f2() -= f2;
 		}
 	}
 }

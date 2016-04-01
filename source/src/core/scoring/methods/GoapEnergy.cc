@@ -178,8 +178,6 @@ GoapEnergy::set_default(){
 	N_ANGLE2_BINS = 12;
 
 	// adjustable options
-	//max_dis_ = option[ scoring::goap_max_dis ]();
-	//MIN_SEQ_SEPARATIONS = option[ scoring::goap_min_seq_separation ]();
 	max_dis_ = 15.0;
 	MIN_SEQ_SEPARATIONS = 7;
 }
@@ -200,7 +198,6 @@ GoapEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )  const
 	for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
 
 		conformation::Residue const &rsd = pose.residue( ires );
-		//chemical::AA const &aa = pose.residue(ires).aa();
 		chemical::ResidueType const &rsdtype = pose.residue(ires).type();
 
 		// Energy won't work for terminus residues! this might change in the future,
@@ -466,7 +463,6 @@ GoapEnergy::read_potential_values( std::string const distance_file,
 			}
 		} // if read_type == 1
 	} // while instream
-
 } // read_database
 
 //////////////////////////////////////////////////////
@@ -479,7 +475,6 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 	EnergyMap & emap
 ) const
 {
-
 	//std::cout << "Respair start: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 
 	// Passing terminus is original Goap convention
@@ -549,7 +544,6 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 				printf(" %8.3f %8.3f %8.3f\n", dis, Edist, Eang );
 				*/
 			}
-
 		}
 	}
 
@@ -559,7 +553,6 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 	emap[ scoring::goap       ] += Edist_sum+Eang_sum;
 	emap[ scoring::goap_dist  ] += Edist_sum;
 	emap[ scoring::goap_angle ] += Eang_sum;
-
 }
 
 Real

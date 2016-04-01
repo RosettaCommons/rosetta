@@ -253,8 +253,9 @@ MPPairEnergy::compute_mpair_score(
 	// handle last bin specially since icon+1 would be past array end
 	Real f(0);
 
-	if ( icon != 5 ) {
-
+	if ( icon == 5 ) {
+		mpair_score = ( 1.0f - interp2 ) * mpdata_.mem_pair_log()( hydro_layer, icon, aa1, aa2 );
+	} else {
 		// if interpolation is true (by default):
 		if ( !no_interpolate_mpair_ ) {
 
@@ -283,8 +284,6 @@ MPPairEnergy::compute_mpair_score(
 				(        interp2 ) * mpdata_.mem_pair_log()( hydro_layer, icon+1, aa1, aa2 ));
 		}
 
-	} else {
-		mpair_score = ( 1.0f - interp2 ) * mpdata_.mem_pair_log()( hydro_layer, icon, aa1, aa2 );
 	}
 
 	mpair_score *= 2.019; // if this is a weight, it should be applied somewhere else

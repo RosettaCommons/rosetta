@@ -23,9 +23,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
-//#include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/DenseEnergyContainer.hh>
 
@@ -118,8 +115,7 @@ void
 VdWTinkerResPairMinData::initialize(
 	VdWTinkerResidueInfoCOP res1_data,
 	VdWTinkerResidueInfoCOP res2_data
-)
-{
+) {
 	initialized_ = true;
 	res1_data_ = res1_data;
 	res2_data_ = res2_data;
@@ -131,8 +127,7 @@ inline
 VdWTinkerResPairMinData &
 retrieve_nonconst_vdw_pairdata(
 	ResPairMinimizationData & pairdata
-)
-{
+) {
 	VdWTinkerResPairMinDataOP vdw_pairdata(0);
 	if ( pairdata.get_data( vdw_respair_data ) ) {
 		assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) ));
@@ -148,8 +143,7 @@ inline
 VdWTinkerResPairMinData const &
 retrieve_vdw_pairdata(
 	ResPairMinimizationData const & pairdata
-)
-{
+) {
 	assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData const > ( pairdata.get_data( vdw_respair_data ) ) );
 	return ( static_cast< VdWTinkerResPairMinData const & > ( pairdata.get_data_ref( vdw_respair_data ) ) );
 
@@ -159,9 +153,7 @@ inline
 VdWTinkerResidueInfo &
 retrieve_nonconst_vdw_resdata(
 	ResSingleMinimizationData & resdata
-)
-{
-
+) {
 	VdWTinkerResidueInfoOP vdw_resdata( 0 );
 	if ( resdata.get_data( vdw_res_data ) ) {
 		assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) ) );
@@ -171,15 +163,13 @@ retrieve_nonconst_vdw_resdata(
 		resdata.set_data( vdw_res_data, vdw_resdata );
 	}
 	return *vdw_resdata;
-
 }
 
 inline
 VdWTinkerResidueInfo const &
 retrieve_vdw_resdata(
 	ResSingleMinimizationData const & resdata
-)
-{
+) {
 	return ( static_cast< VdWTinkerResidueInfo const & > ( resdata.get_data_ref( vdw_res_data ) ) );
 }
 
@@ -187,8 +177,7 @@ inline
 VdWTinkerResidueInfoCOP
 retrieve_vdw_resdata_ptr(
 	ResSingleMinimizationData const & resdata
-)
-{
+) {
 	assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo const > ( resdata.get_data( vdw_res_data ) ) );
 	return ( utility::pointer::static_pointer_cast< VdWTinkerResidueInfo const > ( resdata.get_data( vdw_res_data ) ) );
 }
@@ -251,9 +240,7 @@ VdWTinkerEnergy::setup_for_packing(
 	pose::Pose & pose,
 	utility::vector1< bool > const & , // residues_repacking,
 	utility::vector1< bool > const &
-) const
-{
-
+) const {
 	potential_.setup_for_scoring( pose );
 	pose.update_residue_neighbors();
 
@@ -263,30 +250,19 @@ void
 VdWTinkerEnergy::prepare_rotamers_for_packing(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & rotamer_set
-) const
-{
-
+) const {
 	// Need to assign types, etc.
 	potential_.get_rotamers_vdw_info( pose, rotamer_set );
-
 }
 
-
-//  void
-//  update_residue_for_packing(
-//   pose::Pose &,
-//   Size /*resid*/ ) const
-//  {}
 void
 VdWTinkerEnergy::update_residue_for_packing(
 	pose::Pose & pose,
 	Size resid
-) const
-{
+) const {
 	/// update amoeba type information for residue that has changed during packing, eg in rotamer trials
 	/// need to double-check the current logic on this...
 	potential_.update_residue_for_packing( pose, resid );
-
 }
 
 ///
@@ -315,7 +291,6 @@ VdWTinkerEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.total_residue(), fa_vdw_tinker ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
-
 }
 
 
@@ -345,7 +320,6 @@ VdWTinkerEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.total_residue(), fa_vdw_tinker ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -383,8 +357,7 @@ VdWTinkerEnergy::setup_for_minimizing_for_residue(
 	ScoreFunction const &, // scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
 	ResSingleMinimizationData & resdata
-) const
-{
+) const {
 	VdWTinkerPoseInfo const & vdw_info
 		( static_cast< VdWTinkerPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) );
 
@@ -411,9 +384,7 @@ VdWTinkerEnergy::setup_for_minimizing_for_residue_pair(
 	ResSingleMinimizationData const & res1data,
 	ResSingleMinimizationData const & res2data,
 	ResPairMinimizationData & pairdata
-) const
-{
-
+) const {
 	VdWTinkerResPairMinData & vdw_pairdata( retrieve_nonconst_vdw_pairdata( pairdata ) );
 	vdw_pairdata.initialize( retrieve_vdw_resdata_ptr( res1data ),
 		retrieve_vdw_resdata_ptr( res2data ) );
@@ -474,8 +445,7 @@ VdWTinkerEnergy::residue_pair_energy_ext(
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
+) const {
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
 	//TR << "Calculating residue pair energy ext" << std::endl;
@@ -500,8 +470,7 @@ VdWTinkerEnergy::eval_intrares_energy_ext(
 	pose::Pose const & ,
 	ScoreFunction const & ,
 	EnergyMap & emap
-) const
-{
+) const {
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	//TR << "Calculating intraresidue energy ext" << std::endl;
@@ -509,11 +478,6 @@ VdWTinkerEnergy::eval_intrares_energy_ext(
 	VdWTinkerResidueInfo const & vdw_info( retrieve_vdw_resdata( data_cache ) );
 	emap[ fa_vdw_tinker ] += potential_.get_res_res_vdw( rsd, vdw_info, rsd, vdw_info );
 }
-
-
-
-
-
 
 
 /////////////////////////////////
@@ -526,10 +490,7 @@ VdWTinkerEnergy::evaluate_rotamer_intrares_energies(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	utility::vector1< core::PackerEnergy > & energies
-) const
-{
-	// using namespace conformation;
-	// using namespace numeric;
+) const {
 	using core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
@@ -538,9 +499,7 @@ VdWTinkerEnergy::evaluate_rotamer_intrares_energies(
 		( set.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-
 		//TR << "Calculating rotamer intraresidue energy ext" << std::endl;
-
 		Real const vdwE
 			( potential_.get_res_res_vdw( *set.rotamer( ii ), vdw_info.residue_info( ii ),
 			*set.rotamer( ii ), vdw_info.residue_info( ii ) ) );
@@ -557,8 +516,6 @@ VdWTinkerEnergy::evaluate_rotamer_intrares_energy_maps(
 	utility::vector1< EnergyMap > & emaps
 ) const
 {
-	// using namespace conformation;
-	// using namespace numeric;
 	using core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
@@ -569,9 +526,7 @@ VdWTinkerEnergy::evaluate_rotamer_intrares_energy_maps(
 		( set.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-
 		//TR << "Calculating rotamer intraresidue energy maps" << std::endl;
-
 		Real const vdwE
 			( potential_.get_res_res_vdw( *set.rotamer( ii ), vdw_info.residue_info( ii ),
 			*set.rotamer( ii ), vdw_info.residue_info( ii ) ) );
@@ -618,21 +573,21 @@ VdWTinkerEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.nbr_atom_xyz() );
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-					Size const kk_rot_id = ii_offset + kk - 1;
-					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
-						Size const ll_rot_id = jj_offset + ll - 1;
-
-						//TR << "Calculating rotamer-rotamer pair energy" << std::endl;
-
-						Real const vdwE(
-							potential_.get_res_res_vdw( *set1.rotamer( kk_rot_id ), vdw_info1.residue_info( kk_rot_id ),
+			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+			
+			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+				Size const kk_rot_id = ii_offset + kk - 1;
+				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
+					Size const ll_rot_id = jj_offset + ll - 1;
+					
+					//TR << "Calculating rotamer-rotamer pair energy" << std::endl;
+					
+					Real const vdwE(
+						potential_.get_res_res_vdw( *set1.rotamer( kk_rot_id ), vdw_info1.residue_info( kk_rot_id ),
 							*set2.rotamer( ll_rot_id ), vdw_info2.residue_info( ll_rot_id ) ) );
-
-						energy_table( ll_rot_id, kk_rot_id ) +=
-							static_cast< core::PackerEnergy >( weights[ fa_vdw_tinker ] *  vdwE );
-					}
+					
+					energy_table( ll_rot_id, kk_rot_id ) +=
+					static_cast< core::PackerEnergy >( weights[ fa_vdw_tinker ] *  vdwE );
 				}
 			}
 		}
@@ -647,9 +602,7 @@ VdWTinkerEnergy::evaluate_rotamer_background_energies(
 	ScoreFunction const & , // sfxn,
 	EnergyMap const & weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
-) const
-{
-
+) const {
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO;
 
@@ -670,18 +623,18 @@ VdWTinkerEnergy::evaluate_rotamer_background_energies(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				//TR << "Calculating rotamer-background pair energy" << std::endl;
-
-				Real const vdwE(
-					potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			//TR << "Calculating rotamer-background pair energy" << std::endl;
+			
+			Real const vdwE(
+				potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
 					rsd, vdw_rsd_info ) );
-				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ fa_vdw_tinker ] *  vdwE );
-			} // kk - rotamers for residue types
-		} // nbrs
+			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ fa_vdw_tinker ] *  vdwE );
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
 
@@ -693,8 +646,7 @@ VdWTinkerEnergy::evaluate_rotamer_background_energy_maps(
 	ScoreFunction const & , // sfxn,
 	EnergyMap const & ,
 	utility::vector1< EnergyMap > & emaps
-) const
-{
+) const {
 
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO;
@@ -716,18 +668,18 @@ VdWTinkerEnergy::evaluate_rotamer_background_energy_maps(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				//TR << "Calculating rotamer-background pair energy maps" << std::endl;
-
-				Real const vdwE
-					( potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
-					rsd, vdw_rsd_info ) );
-				(emaps[ kk_rot_id ])[ fa_vdw_tinker ] += vdwE;
-			} // kk - rotamers for residue types
-		} // nbrs
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			//TR << "Calculating rotamer-background pair energy maps" << std::endl;
+			
+			Real const vdwE
+			( potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
+				rsd, vdw_rsd_info ) );
+			(emaps[ kk_rot_id ])[ fa_vdw_tinker ] += vdwE;
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
 
@@ -749,13 +701,6 @@ VdWTinkerEnergy::eval_atom_derivative(
 }
 #endif
 
-/// @brief VdWTinkerEnergy distance cutoff set to the same cutoff used by EtableEnergy, for now
-// Distance
-// VdWTinkerEnergy::atomic_interaction_cutoff() const
-// {
-//  return 5.5; /// APL remove this magic number!
-// }
-
 /// @brief VdWTinkerEnergy requires no context graphs
 void
 VdWTinkerEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const
@@ -775,10 +720,7 @@ VdWTinkerEnergy::eval_intrares_energy(
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
-	//using core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO;
-
+) const {
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	VdWTinkerPoseInfo const & vdw_info
@@ -795,9 +737,7 @@ VdWTinkerEnergy::eval_intrares_derivatives(
 	pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
-) const
-{
-
+) const {
 	VdWTinkerResidueInfo const & mp( retrieve_vdw_resdata( min_data ) );
 
 	Real const factor( weights[ fa_vdw_tinker] );
@@ -818,15 +758,12 @@ VdWTinkerEnergy::eval_residue_pair_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
-) const
-{
-
+) const {
 	VdWTinkerResidueInfo const & mp1( retrieve_vdw_resdata( data1 ) );
 	VdWTinkerResidueInfo const & mp2( retrieve_vdw_resdata( data2 ) );
 
 	potential_.eval_residue_pair_derivatives( rsd1, rsd2, mp1, mp2, pose, weights[ fa_vdw_tinker ],
 		r1_atom_derivs, r2_atom_derivs );
-
 }
 
 

@@ -341,7 +341,6 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		hbond_set->copy_bb_donor_acceptor_arrays( existing_set );
 	}
 	pose.energies().data().set( HBOND_SET, hbond_set );
-
 }
 
 
@@ -643,7 +642,6 @@ HBondEnergy::setup_for_minimizing_for_residue_pair(
 		data_cache.set_data( hbond_respair_data, hbpairdat );
 	}
 	//hbpairdat->update_natoms();
-
 }
 
 bool
@@ -751,13 +749,11 @@ HBondEnergy::hbond_derivs_1way(
 			// ring-acceptor derivative assignment logic is tricky
 			assign_abase_derivs( *options_, acc_rsd, aatm, hbe_type, deriv.abase_deriv, weighted_energy, acc_atom_derivs );
 
-
 			acc_atom_derivs[ base2 ].f1() += weighted_energy * deriv.abase2_deriv.f1();
 			acc_atom_derivs[ base2 ].f2() += weighted_energy * deriv.abase2_deriv.f2();
 
 		} // loop over acceptors
 	} // loop over donors
-
 }
 
 void
@@ -833,10 +829,8 @@ HBondEnergy::eval_residue_pair_derivatives(
 		/// case B: bb is acceptor, sc is donor && res1 is the acceptor residue -> look at the acceptor availability of residue 1
 		bool exclude_bsc( ! hb_pair_dat.res1_data().bb_acc_avail() );
 
-
 		hbond_derivs_1way( weights, hbondset, database_, rsd2, rsd1, rsd2nneighbs, rsd1nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r2_atom_derivs, r1_atom_derivs );
 	}
-
 }
 
 void
@@ -1383,8 +1377,6 @@ HBondEnergy::create_rotamer_trie(
 		( static_cast< hbonds::HBondSet const & >
 		( pose.energies().data().get( HBOND_SET ) ) );
 
-	//Size const resid( rotset.resid() );
-
 	utility::vector1< RotamerDescriptor< HBAtom, HBCPData > > rotamer_descriptors( rotset.num_rotamers() );
 
 	for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -1396,7 +1388,6 @@ HBondEnergy::create_rotamer_trie(
 	sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
 
 	return hbtrie::HBondRotamerTrieOP( new RotamerTrie< HBAtom, HBCPData >( rotamer_descriptors, atomic_interaction_cutoff()) );
-
 }
 
 hbtrie::HBondRotamerTrieOP
@@ -1419,7 +1410,6 @@ HBondEnergy::create_rotamer_trie(
 	rotamer_descriptors[ 1 ].rotamer_id( 1 );
 
 	return hbtrie::HBondRotamerTrieOP( new RotamerTrie< HBAtom, HBCPData >( rotamer_descriptors, atomic_interaction_cutoff()) );
-
 }
 
 
@@ -1433,7 +1423,6 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	bool flipped // is at1 from residue 1?
 ) const
 {
-
 	// When acc and don are both polymers and on the same chain:
 	// ss = acc.seqpos - don.seqpos
 	int ss = (flipped ? -rotamer_seq_sep_ : rotamer_seq_sep_);

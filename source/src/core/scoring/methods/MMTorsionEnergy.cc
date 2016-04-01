@@ -185,9 +185,7 @@ MMTorsionEnergy::residue_pair_energy(
 
 					energy += potential_.core::scoring::mm::MMTorsionScore::score(
 						mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
-
 				}
-
 			}
 		} // end Scope section 1.
 
@@ -215,8 +213,6 @@ MMTorsionEnergy::residue_pair_energy(
 
 				energy += potential_.core::scoring::mm::MMTorsionScore::score(
 					mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
-
-
 			}
 		} // end Scope section 2.
 
@@ -245,14 +241,11 @@ MMTorsionEnergy::residue_pair_energy(
 
 				energy += potential_.core::scoring::mm::MMTorsionScore::score(
 					mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
-
-
 			}
 		} // end Scope section 3.
 	}
 
 	emap[ mm_twist ] += energy;
-
 }
 
 void
@@ -385,10 +378,8 @@ MMTorsionEnergy::eval_atom_derivative(
 			mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), theta );
 		//TR << "    theta " << numeric::conversions::degrees( theta ) << " dE_dtheta " << dE_dtheta << " f1: " << f1.x() << " " << f1.y() << " " << f1.z() << " f2: " << f2.x() << " " << f2.y() << " " << f2.z() << std::endl;
 
-
 		LF1 += dE_dtheta * f1;
 		LF2 += dE_dtheta * f2;
-
 	}
 
 	{ // Scope 2a.  Bond angles involving three atoms on this residue.
@@ -573,7 +564,6 @@ MMTorsionEnergy::eval_atom_derivative(
 
 				LF1 += dE_dtheta * f1;
 				LF2 += dE_dtheta * f2;
-
 			}
 		}
 	} // end scope 2c.
@@ -665,7 +655,6 @@ MMTorsionEnergy::eval_intrares_derivatives(
 
 			atom_derivs[ atomno ].f1() += dE_dtheta * f1;
 			atom_derivs[ atomno ].f2() += dE_dtheta * f2;
-
 		}
 
 		{ // Scope 2a.  Bond angles involving three atoms on this residue.
@@ -850,7 +839,6 @@ MMTorsionEnergy::eval_intrares_derivatives(
 
 					atom_derivs[ atomno ].f1() += dE_dtheta * f1;
 					atom_derivs[ atomno ].f2() += dE_dtheta * f2;
-
 				}
 			}
 		} // end scope 2c.

@@ -135,9 +135,7 @@ OccludedHbondSolEnergy::residue_pair_energy(
 	pose::Pose const & ,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
-
+) const {
 	if ( verbose_ ) tr << "jk evaluating residue pair energy" << std::endl;
 
 	// Note: no count-pair stuff, these will just be computed normally
@@ -151,7 +149,6 @@ OccludedHbondSolEnergy::residue_pair_energy(
 
 	// store the energies
 	emap[ occ_sol_fitted ] += occ_solE;
-
 }
 
 void
@@ -205,7 +202,6 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
-
 	Real energy(0); // dummy variable
 	Real const atom_pair_cutoff( occ_hbond_sol_database_.atomic_interaction_cutoff() );
 	Real const atom_pair_cutoff2( atom_pair_cutoff*atom_pair_cutoff );
@@ -243,7 +239,6 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 				r2_atom_derivs[ jj ].f1(), r2_atom_derivs[ jj ].f2() );
 		}
 	}
-
 }
 
 
@@ -266,7 +261,6 @@ OccludedHbondSolEnergy::res_res_occ_sol_one_way(
 	conformation::Residue const & occ_rsd
 ) const
 {
-
 	// Rhiju importantly notes: for GeometricSolvation he originally had the code in
 	// the following functions written out inside these loop -- and packing was faster.
 	// Perhaps something to do with inlining or compiler optimization.
@@ -328,15 +322,13 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 	Vector & f2_occ // = dummy vector
 ) const
 {
-
 	// In case of early return, initialize. Note that energy does NOT accumulate, but f1/f2 do.
 	// Also note that f1 and f2 are returned unweighted.
 	energy = 0.;
 
 	// note: after testing, hydrogens need not occlude
 	if ( occ_rsd.atom_is_hydrogen(occ_atom) ) return;
-	// if ( occ_atom > occ_rsd.nheavyatoms() ) return;
-
+	
 	// note: the lines above don't exclude Proline NV...
 	// catch proline NV here (and other virtual atoms, etc.)
 	if ( occ_rsd.atom_type(occ_atom).lj_radius() < 0.1 ) return;
@@ -352,29 +344,11 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 
 	if ( polar_atom_donates ) {
 		// polar donor cannot be occluded by an acceptor (analogous to exact_occ_skip_Hbonders in exact model, but not quite the same)
-		//for ( chemical::AtomIndices::const_iterator anum = occ_rsd.accpt_pos().begin(), anume = occ_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		// if ( occ_atom == *anum ) {
-		//  return;
-		// }
-		//}
 		if ( occ_rsd.heavyatom_is_an_acceptor( occ_atom ) ) return;
 	} else {
 		// polar acceptor cannot be occluded by an donor base (analogous to exact_occ_skip_Hbonders in exact model, but not quite the same)
-		//for ( chemical::AtomIndices::const_iterator hnum = occ_rsd.Hpos_polar().begin(), hnume = occ_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		// Size const don_h_atom( *hnum );
-		// if ( occ_atom == occ_rsd.atom_base( don_h_atom ) ) {
-		//  return;
-		// }
-		//}
 		if ( occ_rsd.heavyatom_has_polar_hydrogens( occ_atom ) ) return;
 	}
-
-	//bool update_deriv = false;
-	//if ( update_deriv_polar || update_deriv_base || update_deriv_occ) update_deriv = true;
-	// only one at a time
-	//debug_assert( ! ( update_deriv_polar && update_deriv_base ) );
-	//debug_assert( ! ( update_deriv_polar && update_deriv_occ ) );
-	//debug_assert( ! ( update_deriv_base && update_deriv_occ ) );
 
 	debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
 		( ( ! polar_atom_donates ) && atom_is_acceptor( polar_rsd, polar_atom ) ) );
@@ -442,13 +416,10 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 
 	numeric::deriv::angle_p1_p2_p3_deriv( base_atom_xyz, polar_atom_xyz, occ_atom_xyz, theta,
 		angle_f1_p1, angle_f2_p1, angle_f1_p2, angle_f2_p2, angle_f1_p3, angle_f2_p3 );
-	//numeric::deriv::angle_p2_deriv( base_atom_xyz, polar_atom_xyz, occ_atom_xyz, theta, angle_f1, angle_f2 );
 	f1_polar += angle_dfunc * angle_f1_p2;
 	f2_polar += angle_dfunc * angle_f2_p2;
-	//numeric::deriv::angle_p1_deriv( base_atom_xyz, polar_atom_xyz, occ_atom_xyz, theta, angle_f1, angle_f2 );
 	f1_base += angle_dfunc * angle_f1_p1;
 	f2_base += angle_dfunc * angle_f2_p1;
-	//numeric::deriv::angle_p1_deriv( occ_atom_xyz, polar_atom_xyz, base_atom_xyz, theta, angle_f1, angle_f2 );
 	f1_occ += angle_dfunc * angle_f1_p3;
 	f2_occ += angle_dfunc * angle_f2_p3;
 
@@ -465,113 +436,8 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 	f1_occ -= dist_dfunc * dist_f1;
 	f2_occ -= dist_dfunc * dist_f2;
 
-	//} else {
-	// numeric::deriv::distance_f1_f2_deriv( occ_atom_xyz, polar_atom_xyz, dist, dist_f1, dist_f2 );
-	//}
-	//f1 += dist_dfunc * dist_f1;
-	//f2 += dist_dfunc * dist_f2;
-
 	return;
-
 }
-
-/*void
-OccludedHbondSolEnergy::deprecated_eval_atom_derivative(
-id::AtomID const & atom_id,
-pose::Pose const & pose,
-kinematics::DomainMap const & domain_map,
-ScoreFunction const &,
-EnergyMap const & weights,
-Vector & F1,
-Vector & F2
-) const
-{
-
-Size const curr_resnum( atom_id.rsd() );
-Size const curr_atomno( atom_id.atomno() );
-conformation::Residue const & curr_rsd( pose.residue( curr_resnum ) );
-int const curr_res_map( domain_map( curr_resnum ) );
-bool const curr_res_fixed( curr_res_map != 0 );
-
-// Loop over all atoms of neighboring residues, INCLUDING SELF
-utility::vector1 <core::Size> neighborlist;
-neighborlist.push_back( curr_resnum );
-EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-for ( graph::Graph::EdgeListConstIter
-iru  = energy_graph.get_node( curr_resnum )->const_edge_list_begin(),
-irue = energy_graph.get_node( curr_resnum )->const_edge_list_end();
-iru != irue; ++iru ) {
-Size const other_resnum( (*iru)->get_other_ind( curr_resnum ) );
-if ( curr_res_fixed && curr_res_map == domain_map( other_resnum ) ) continue; // fixed wrt one another
-neighborlist.push_back( other_resnum );
-}
-
-Vector f1(0.), f2(0.);
-core::Real energy(0.); // dummy variable
-
-// If this atom is a polar atom, consider its occlusion by all other (neighboring) residues
-if ( atom_is_donor_h( curr_rsd, curr_atomno ) || atom_is_acceptor( curr_rsd, curr_atomno ) ) {
-Size const curr_base_atom ( curr_rsd.atom_base( curr_atomno ) );
-for ( Size other_res_inx = 1; other_res_inx <= neighborlist.size(); ++other_res_inx ) {
-Size const other_resnum( neighborlist[other_res_inx] );
-conformation::Residue const & other_rsd( pose.residue( other_resnum ) );
-for ( Size occ_atom = 1; occ_atom <= other_rsd.natoms(); occ_atom++ ) {
-get_atom_atom_occ_solvation( curr_atomno, curr_base_atom, curr_rsd, occ_atom, other_rsd, energy, true, false, false, f1, f2 );
-}
-}
-}
-
-// If this atom is a base atom, consider occlusion of its polar atom by all other (neighboring) residues
-if ( atom_is_valid_base( curr_rsd, curr_atomno ) ) {
-// because a base atom can have multiple polar atoms, we need to loop over them here
-for ( chemical::AtomIndices::const_iterator hnum = curr_rsd.Hpos_polar().begin(), hnume = curr_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-Size const don_h_atom( *hnum );
-Size const base_atom ( curr_rsd.atom_base( don_h_atom ) );
-if ( base_atom != curr_atomno ) continue;
-for ( Size other_res_inx = 1; other_res_inx <= neighborlist.size(); ++other_res_inx ) {
-Size const other_resnum( neighborlist[other_res_inx] );
-conformation::Residue const & other_rsd( pose.residue( other_resnum ) );
-for ( Size occ_atom = 1; occ_atom <= other_rsd.natoms(); occ_atom++ ) {
-get_atom_atom_occ_solvation( don_h_atom, curr_atomno, curr_rsd, occ_atom, other_rsd, energy, false, true, false, f1, f2 );
-}
-}
-}
-for ( chemical::AtomIndices::const_iterator anum = curr_rsd.accpt_pos().begin(), anume = curr_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-Size const acc_atom( *anum );
-Size const base_atom ( curr_rsd.atom_base( acc_atom ) );
-if ( base_atom != curr_atomno ) continue;
-for ( Size other_res_inx = 1; other_res_inx <= neighborlist.size(); ++other_res_inx ) {
-Size const other_resnum( neighborlist[other_res_inx] );
-conformation::Residue const & other_rsd( pose.residue( other_resnum ) );
-for ( Size occ_atom = 1; occ_atom <= other_rsd.natoms(); occ_atom++ ) {
-get_atom_atom_occ_solvation( acc_atom, curr_atomno, curr_rsd, occ_atom, other_rsd, energy, false, true, false, f1, f2 );
-}
-}
-}
-}
-
-// Now consider occlusion of polar groups on neighboring residues by this atom
-for ( Size other_res_inx = 1; other_res_inx <= neighborlist.size(); ++other_res_inx ) {
-Size const other_resnum( neighborlist[other_res_inx] );
-conformation::Residue const & other_rsd( pose.residue( other_resnum ) );
-for ( chemical::AtomIndices::const_iterator hnum = other_rsd.Hpos_polar().begin(), hnume = other_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-Size const don_h_atom( *hnum );
-Size const don_base_atom( other_rsd.atom_base( don_h_atom ) );
-get_atom_atom_occ_solvation( don_h_atom, don_base_atom, other_rsd, curr_atomno, curr_rsd, energy, false, false, true, f1, f2 );
-}
-for ( chemical::AtomIndices::const_iterator anum = other_rsd.accpt_pos().begin(), anume = other_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-Size const acc_atom( *anum );
-Size const base_atom ( other_rsd.atom_base( acc_atom ) );
-get_atom_atom_occ_solvation( acc_atom, base_atom, other_rsd, curr_atomno, curr_rsd, energy, false, false, true, f1, f2 );
-}
-}
-
-// F1/F2 accumulate
-F1 += weights[ occ_sol_fitted ] * f1;
-F2 += weights[ occ_sol_fitted ] * f2;
-
-}*/
-
 
 Distance
 OccludedHbondSolEnergy::atomic_interaction_cutoff() const

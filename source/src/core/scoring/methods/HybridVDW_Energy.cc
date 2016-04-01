@@ -119,19 +119,7 @@ HybridVDW_Energy::residue_pair_energy(
 	} else {
 		return;
 	}
-	//  bool swap( false );
-	//  if ( rsd1_in.is_protein() && !rsd2_in.is_protein() ) {
-	//   // pass
-	//  } else if ( rsd2_in.is_protein() && !rsd1_in.is_protein() ) {
-	//   swap = true;
-	//  } else {
-	//   return;
-	//  }
-
-	//  conformation::Residue const & rsd1( swap ? rsd2_in : rsd1_in );
-	//  conformation::Residue const & rsd2( swap ? rsd1_in : rsd2_in );
-	// debug_assert( rsd1.is_protein() && !rsd2.is_protein() );
-
+	
 	Real score(0.0);
 	debug_assert( ! rsd1.is_bonded( rsd2 ) );
 
@@ -181,7 +169,6 @@ HybridVDW_Energy::eval_atom_derivative(
 	Vector const & i_xyz( rsd1.xyz(i) );
 	Size const i_type( rsd1.atom_type_index(i) );
 	Real const i_radius( atom_vdw_.approximate_vdw_radius( i_type ) );
-	//utility::vector1< Real > const & i_atom_vdw( atom_vdw_( i_type ) );
 
 	// cached energies object
 	Energies const & energies( pose.energies() );
@@ -194,8 +181,6 @@ HybridVDW_Energy::eval_atom_derivative(
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {
-		//EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-		//Size const pos2( edge->get_second_node_ind() );
 		Size const pos2( (*iru)->get_other_ind( pos1 ) );
 
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another

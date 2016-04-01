@@ -102,7 +102,6 @@ DisulfideMatchingPotential::score_disulfide(
 	rt_dist = core::kinematics::distance( scoring_RT, db_disulfides[1] );
 
 	if ( ( r_dist <= mr_dist ) && ( mt_dist <= probe_radius ) ) mr_dist = r_dist;
-
 	if ( ( rt_dist <= mrt_dist ) && ( mt_dist <= probe_radius ) ) mrt_dist = rt_dist;
 
 	//std::cout << "CHECKING " << db_disulfides.size() << " " << mt_dist << " " << mr_dist << " " << mrt_dist << " " << std::endl;
@@ -138,22 +137,18 @@ Energy DisulfideMatchingPotential::compute_matching_energy( pose::Pose const & p
 	utility::vector1< std::pair<Size, Size> > disulfides;
 	core::conformation::disulfide_bonds( pose.conformation(), disulfides );
 
-	if ( disulfides.size() > 0 ) {
-
-		for ( Size i = 1; i <= disulfides.size(); ++i ) {
-
-			Energy temp_RT(0.0), junk_rot(0.0), junk_trans(0.0);
-
-			score_disulfide(
-				pose.residue(disulfides[i].first),
-				pose.residue(disulfides[i].second),
-				junk_rot,
-				junk_trans,
-				temp_RT
-			);
-
-			match_RT += temp_RT;
-		}
+	for ( Size i = 1; i <= disulfides.size(); ++i ) {
+		
+		Energy temp_RT(0.0), junk_rot(0.0), junk_trans(0.0);
+		score_disulfide(
+						pose.residue(disulfides[i].first),
+						pose.residue(disulfides[i].second),
+						junk_rot,
+						junk_trans,
+						temp_RT
+						);
+		
+		match_RT += temp_RT;
 	}
 
 	return match_RT;

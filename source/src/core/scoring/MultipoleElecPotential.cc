@@ -16,8 +16,6 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-//#include <core/scoring/etable/count_pair/CountPairIntraResC3.hh>
-//#include <core/scoring/etable/count_pair/CountPair1BC3.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
@@ -31,8 +29,6 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
-//#include <core/pack/task/PackerTask.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -101,23 +97,14 @@ bool
 ShouldItCount(
 	conformation::Residue const & rsd,
 	Size const & atm
-)
-{
-	//  if( rsd.atom_name( atm ) == " CB " ||  rsd.atom_name( atm ) == " O  " )  {
-	//  if( rsd.atom_name( atm ) == " CB " )  {
-	//   return true;
-	//  }
-
-
+) {
 	if ( rsd.seqpos() == 2 ) return false;
 
-	//  if( rsd.atom_name( atm ) == " C  " ||  rsd.atom_name( atm ) == " O  " ||  rsd.atom_name( atm ) == " CB " ) {
 	if ( rsd.atom_name( atm ) == " CB " ) {
 		return true;
 	} else {
 		return false;
 	}
-
 }
 
 ///
@@ -148,7 +135,6 @@ MultipoleElecResidueInfo::initialize( conformation::Residue const & rsd )
 	// Assign each atom their Amoeba type, which is the atom type
 	// assigned by Amoeba.  It does not have a one-to-one mapping with
 	// Rosetta atom types.
-
 
 	// Look up values by Amoeba type
 	for ( Size i=1; i<= natoms; ++i ) {
@@ -384,7 +370,6 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		// now stash in the multimap
 		MultipoleParameter::MultipoleParameterOP new_mp_param( new MultipoleParameter( axis, amoeba_type_keys, chirality_check, mono_mom, di_mom, quad_mom ) );
 		multipole_info_.insert( std::pair< Size, MultipoleParameter::MultipoleParameterOP >( amoeba_type_keys[1], new_mp_param ) );
-
 	}
 
 	multipole_file.close();
@@ -400,7 +385,6 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		Size const num_tokens( tokens.size() );
 
 		//TR << "Processing line: " << input_line << std::endl;
-
 		//TR << "Found " << num_tokens << " tokens in line: " << "\n" << input_line << std::endl;
 
 		Size const this_type( static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[2] ) ) );
@@ -448,10 +432,8 @@ MultipoleElecPotential::find_params_and_neighbors(
 	core::conformation::Residue const & rsd,
 	Size const j,
 	Size const this_type
-) const
-{
+) const {
 	using namespace id;
-
 	if ( rsd.is_virtual( j ) ) return;
 
 	// I feel dirty doing this, but I really need to know if this
@@ -466,8 +448,6 @@ MultipoleElecPotential::find_params_and_neighbors(
 
 	// MultipoleElecPoseInfoCOP multipole_info;
 	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
-
-	//multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfoCOP const & >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 
 	// Get iterators for the range of possible multipole parameters
 	std::pair<
@@ -557,20 +537,20 @@ MultipoleElecPotential::find_params_and_neighbors(
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for ( Size ichk2 = ichk + 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
-						Size const chk_atom2( bonded[ ichk2 ].atomno() );
-						Size const chk_res2( bonded[ ichk2 ].rsd() );
-						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
-						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
-							mp_param = this_mp;
-							mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
-							mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
-							//TR << "Found match!" << std::endl;
-							return;
-						}
-					}
+				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
+				
+				for ( Size ichk2 = ichk + 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+					Size const chk_atom2( bonded[ ichk2 ].atomno() );
+					Size const chk_res2( bonded[ ichk2 ].rsd() );
+					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
+					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
+					if ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) continue;
+					
+					mp_param = this_mp;
+					mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
+					mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
+					//TR << "Found match!" << std::endl;
+					return;
 				}
 			}
 			continue;
@@ -582,28 +562,28 @@ MultipoleElecPotential::find_params_and_neighbors(
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
-						Size const chk_atom2( bonded[ ichk2 ].atomno() );
-						Size const chk_res2( bonded[ ichk2 ].rsd() );
-						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
-						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
-							for ( Size ichk3 = ichk2 + 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
-								Size const chk_atom3( bonded[ ichk3 ].atomno() );
-								Size const chk_res3( bonded[ ichk3 ].rsd() );
-								bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
-								MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
-								if ( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
-									mp_param = this_mp;
-									mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
-									mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
-									mp.my_local_coord_frame( j ).push_back( bonded[ ichk3 ] );
-									//TR << "Found match!" << std::endl;
-									return;
-								}
-							}
-						}
+				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
+				
+				for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+					Size const chk_atom2( bonded[ ichk2 ].atomno() );
+					Size const chk_res2( bonded[ ichk2 ].rsd() );
+					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
+					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
+					if ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) continue;
+					
+					for ( Size ichk3 = ichk2 + 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
+						Size const chk_atom3( bonded[ ichk3 ].atomno() );
+						Size const chk_res3( bonded[ ichk3 ].rsd() );
+						bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
+						MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
+						if ( this_mp->atom_type()[4] != chk_mp3.type( chk_atom3 ) ) continue;
+						
+						mp_param = this_mp;
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk3 ] );
+						//TR << "Found match!" << std::endl;
+						return;
 					}
 				}
 			}
@@ -615,28 +595,28 @@ MultipoleElecPotential::find_params_and_neighbors(
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
-						Size const chk_atom2( bonded[ ichk2 ].atomno() );
-						Size const chk_res2( bonded[ ichk2 ].rsd() );
-						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
-						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
-							for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
-								Size const chk_atom3( bonded[ ichk3 ].atomno() );
-								Size const chk_res3( bonded[ ichk3 ].rsd() );
-								bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
-								MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
-								if ( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
-									mp_param = this_mp;
-									mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
-									mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
-									mp.my_local_coord_frame( j ).push_back( bonded[ ichk3 ] );
-									//TR << "Found match!" << std::endl;
-									return;
-								}
-							}
-						}
+				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
+				
+				for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+					Size const chk_atom2( bonded[ ichk2 ].atomno() );
+					Size const chk_res2( bonded[ ichk2 ].rsd() );
+					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
+					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
+					if ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) continue;
+					
+					for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
+						Size const chk_atom3( bonded[ ichk3 ].atomno() );
+						Size const chk_res3( bonded[ ichk3 ].rsd() );
+						bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
+						MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
+						if ( this_mp->atom_type()[4] != chk_mp3.type( chk_atom3 ) ) continue;
+						
+						mp_param = this_mp;
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk3 ] );
+						//TR << "Found match!" << std::endl;
+						return;
 					}
 				}
 			}
@@ -663,73 +643,73 @@ MultipoleElecPotential::find_params_and_neighbors(
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
-						Size const chk_atom2( bonded[ ichk2 ].atomno() );
-						Size const chk_res2( bonded[ ichk2 ].rsd() );
-						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
-						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if ( ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) &&
-								( ichk2 != ichk ) ) {
-							if ( this_mp->atom_type()[4] == 0 ) {
-								// This is the simple, achiral case
-								mp_param = this_mp;
-								mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
-								mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
-								//TR << "Found match!" << std::endl;
-								return;
-							} else {
-								// Chiral case - look for the third match
-								for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
-									Size const chk_atom3( bonded[ ichk3 ].atomno() );
-									Size const chk_res3( bonded[ ichk3 ].rsd() );
-									bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
-									MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
-									if ( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
-										mp_param = this_mp;
-										mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
-										mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
-										mp.my_local_coord_frame( j ).push_back( bonded[ ichk3 ] );
-										//TR << "Found match!" << std::endl;
-										return;
-									}
-								}
-							}
+				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
+				
+				for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+					Size const chk_atom2( bonded[ ichk2 ].atomno() );
+					Size const chk_res2( bonded[ ichk2 ].rsd() );
+					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
+					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
+					if ( ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) ||
+						( ichk2 == ichk ) ) continue;
+					
+					if ( this_mp->atom_type()[4] == 0 ) {
+						// This is the simple, achiral case
+						mp_param = this_mp;
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
+						mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
+						//TR << "Found match!" << std::endl;
+						return;
+					} else {
+						// Chiral case - look for the third match
+						for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
+							Size const chk_atom3( bonded[ ichk3 ].atomno() );
+							Size const chk_res3( bonded[ ichk3 ].rsd() );
+							bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
+							MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
+							if ( this_mp->atom_type()[4] != chk_mp3.type( chk_atom3 ) ) continue;
+							
+							mp_param = this_mp;
+							mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
+							mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
+							mp.my_local_coord_frame( j ).push_back( bonded[ ichk3 ] );
+							//TR << "Found match!" << std::endl;
+							return;
 						}
 					}
 				}
 			}
 
 			for ( Size iatom = 1 ; iatom <= rsd.natoms() ; ++iatom ) {
-				if ( ( rsd.path_distance( j, iatom ) == 1 ) &&
-						( mp.type( iatom ) == this_mp->atom_type()[2] ) ) {
-					for ( Size iatom2 = 1 ; iatom2 <= rsd.natoms() ; ++iatom2 ) {
-						if ( ( ( rsd.path_distance( j, iatom2 )  == 1 ) ||
-								( rsd.path_distance( j, iatom2 ) == 2 ) ) &&
-								( mp.type( iatom2 ) == this_mp->atom_type()[3] ) &&
-								( iatom != iatom2 ) ) {
-							if ( this_mp->atom_type()[4] == 0 ) {
-								// This is the simple, achiral case
-								mp_param = this_mp;
-								mp.my_local_coord_frame( j ).push_back( AtomID( iatom, rsd.seqpos()  ) );
-								mp.my_local_coord_frame( j ).push_back( AtomID( iatom2, rsd.seqpos() ) );
-								//TR << "Found match!" << std::endl;
-								return;
-							} else {
-								// Chiral case - look for the third match
-								for ( Size iatom3 = 1 ; iatom3 <= rsd.natoms() ; ++iatom3 ) {
-									if ( ( ( rsd.path_distance( j, iatom3 )  == 1 ) ||
-											( rsd.path_distance( j, iatom3 ) == 2 ) ) &&
-											( mp.type( iatom3 ) == this_mp->atom_type()[4] ) ) {
-										mp_param = this_mp;
-										mp.my_local_coord_frame( j ).push_back( AtomID( iatom, rsd.seqpos() ) );
-										mp.my_local_coord_frame( j ).push_back( AtomID( iatom2, rsd.seqpos() ) );
-										mp.my_local_coord_frame( j ).push_back( AtomID( iatom3, rsd.seqpos() ) );
-										//TR << "Found match!" << std::endl;
-										return;
-									}
-								}
-							}
+				if ( ( rsd.path_distance( j, iatom ) != 1 ) ||
+					( mp.type( iatom ) != this_mp->atom_type()[2] ) ) continue;
+				
+				for ( Size iatom2 = 1 ; iatom2 <= rsd.natoms() ; ++iatom2 ) {
+					if ( ( ( rsd.path_distance( j, iatom2 )  != 1 ) &&
+								( rsd.path_distance( j, iatom2 ) != 2 ) ) ||
+						( mp.type( iatom2 ) != this_mp->atom_type()[3] ) ||
+						( iatom == iatom2 ) ) continue;
+					
+					if ( this_mp->atom_type()[4] == 0 ) {
+						// This is the simple, achiral case
+						mp_param = this_mp;
+						mp.my_local_coord_frame( j ).push_back( AtomID( iatom, rsd.seqpos()  ) );
+						mp.my_local_coord_frame( j ).push_back( AtomID( iatom2, rsd.seqpos() ) );
+						//TR << "Found match!" << std::endl;
+						return;
+					} else {
+						// Chiral case - look for the third match
+						for ( Size iatom3 = 1 ; iatom3 <= rsd.natoms() ; ++iatom3 ) {
+							if ( ( ( rsd.path_distance( j, iatom3 )  != 1 ) &&
+								  ( rsd.path_distance( j, iatom3 ) != 2 ) ) ||
+								( mp.type( iatom3 ) != this_mp->atom_type()[4] ) ) continue;
+							
+							mp_param = this_mp;
+							mp.my_local_coord_frame( j ).push_back( AtomID( iatom, rsd.seqpos() ) );
+							mp.my_local_coord_frame( j ).push_back( AtomID( iatom2, rsd.seqpos() ) );
+							mp.my_local_coord_frame( j ).push_back( AtomID( iatom3, rsd.seqpos() ) );
+							//TR << "Found match!" << std::endl;
+							return;
 						}
 					}
 				}
@@ -743,8 +723,6 @@ MultipoleElecPotential::find_params_and_neighbors(
 
 	TR << "Error - All matching multipole parameters exhausted without finding a match!" << std::endl;
 	TR << "Residue " << rsd.name() << " atom " << rsd.atom_name( j ) << " position " << rsd.seqpos() << std::endl;
-
-	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -754,8 +732,7 @@ MultipoleElecPotential::amoeba_type_lookup(
 	std::string const & atomname,
 	std::string const & resname,
 	std::string const & variantname
-) const
-{
+) const {
 
 	std::string const not_variant( "NONE" );
 	core::Size type( 0 );
@@ -784,7 +761,6 @@ MultipoleElecPotential::amoeba_type_lookup(
 	}
 
 	// Give a holler if nothing has been found
-
 	if ( type == 0 ) {
 		TR << "PROBLEM - NO BIOTYPE FOUND FOR " << atomname << " " << resname << " " << variantname << std::endl;
 	}
@@ -800,9 +776,7 @@ MultipoleElecPotential::align_residue_multipole_axes(
 	core::pose::Pose const & pose,
 	Residue const & rsd,
 	MultipoleElecResidueInfo & mp
-) const
-{
-
+) const {
 	// First find a reference atom for each in the residue.  This atom
 	// must be a direct bonded neighbor, but must not be in the torsion
 	// path.  The easiest guess is an attached hydrogen.  After that,
@@ -944,17 +918,8 @@ MultipoleElecPotential::align_residue_multipole_axes(
 						TR << "Parent doesn't match either option!" << std::endl;
 						std::exit( 1 );
 					}
-
-
-
 				}
-
-
-
-
 			}
-
-
 		}
 	}
 
@@ -981,15 +946,13 @@ MultipoleElecPotential::align_residue_multipole_axes(
 		// the z, x, and y determining neighbor atoms - note that all neighbors
 		// are assumed to be in the same residue.
 
-		MultipoleParameter::MultipoleParameterOP mp_param;
-
 		// This information could/should be cached, but must know when to be updated
+		MultipoleParameter::MultipoleParameterOP mp_param;
 		find_params_and_neighbors( pose, mp_param, mp, rsd, j, this_type );
 
 		// Build a matrix for the coordinate system - for the three-fold systems,
 		// this also involves a chirality check.  Then use this to rotate the dipole
 		// and quadrupole moments into the global frame and store.
-
 		build_frame_and_rotate( pose, mp_param, j, mp, rsd );
 
 		if ( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
@@ -1005,10 +968,7 @@ MultipoleElecPotential::align_residue_multipole_axes(
 void
 MultipoleElecPotential::align_multipole_axes(
 	pose::Pose & pose
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
-
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
 	Size const nres( pose.total_residue() );
@@ -1017,13 +977,10 @@ MultipoleElecPotential::align_multipole_axes(
 	//  * Build the orthonormal axis
 	//  * Rotate the dipole and quadrupole info into the global frame
 	//
-
 	MultipoleElecPoseInfoOP multipole_info;
-
 	multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 
 	// Rotate all dipole and quadrupole moments into the global frame
-
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
@@ -1037,20 +994,16 @@ MultipoleElecPotential::align_multipole_axes(
 		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 
 			Vector const & dipole( mp1.dipole( atm1 ) );
-
 			if ( dipole != dipole ) {
 				TR << "align_multi_axis Problem in dipole! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( atm1 ) << std::endl;
 				std::exit(1);
 			}
-
 		}
 	}
-
 
 	pose.data().set( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO, multipole_info );
 
 	PROF_STOP( basic::MULTIPOLE_SETUP );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1062,8 +1015,7 @@ MultipoleElecPotential::build_frame_and_rotate(
 	Size orig_atom,
 	MultipoleElecResidueInfo & mp,
 	core::conformation::Residue const & rsd
-) const
-{
+) const {
 	if ( rsd.is_virtual( orig_atom ) ) return;
 
 	bool const is_a_rotamer( &rsd != &(pose.residue( rsd.seqpos() )) );
@@ -1192,7 +1144,6 @@ MultipoleElecPotential::build_frame_and_rotate(
 			mp.nonconst_quadrupole( orig_atom ).yx() *= -1.0;
 			mp.nonconst_quadrupole( orig_atom ).zx() *= -1.0;
 		}
-
 	}
 
 	// Diagnostic output for comparison to tinker
@@ -1214,8 +1165,7 @@ void
 MultipoleElecPotential::assign_residue_amoeba_type(
 	Residue const & rsd,
 	MultipoleElecResidueInfo & mp
-) const
-{
+) const {
 	utility::vector1< std::string > parsed_resname( utility::string_split_simple( rsd.name(), ':' ) );
 	std::string resname( parsed_resname[1] );
 
@@ -1251,18 +1201,12 @@ MultipoleElecPotential::assign_residue_amoeba_type(
 void
 MultipoleElecPotential::assign_all_amoeba_types(
 	pose::Pose & pose
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
-
-	//TR << "Assigning amoeba types!" << std::endl;
-
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
 	Size const nres( pose.total_residue() );
 
 	// Look up the Amoeba type information
-
 	MultipoleElecPoseInfoOP multipole_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
@@ -1278,9 +1222,7 @@ MultipoleElecPotential::assign_all_amoeba_types(
 	}
 
 	pose.data().set( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO, multipole_info );
-
 	PROF_STOP( basic::MULTIPOLE_SETUP );
-
 }
 
 
@@ -1288,14 +1230,12 @@ MultipoleElecPotential::assign_all_amoeba_types(
 void
 MultipoleElecPotential::determine_polarization_groups(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
 	Size const nres( pose.total_residue() );
 
 	// Look up the Amoeba type information
-
 	MultipoleElecPoseInfoOP multipole_info;
 	multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 
@@ -1359,11 +1299,6 @@ MultipoleElecPotential::determine_polarization_groups(
 					utility::vector1<core::id::AtomID> const & nbr_neighbors( direct_group_neighbors[ cur_nbr_atm ]  );
 					for ( Size inbr = 1 ; inbr <= nbr_neighbors.size() ; inbr++ ) {
 						id::AtomID nbr_atom( nbr_neighbors[inbr] );
-						//Size atm2( nbr_atom.atomno() );
-						//Size res2( nbr_atom.rsd() );
-						//Residue const & nbr_res( pose.residue( res2 ) );
-						//MultipoleElecResidueInfo & nbr_mp( multipole_info->residue_info( res2 ) );
-						//core::Size const nbr_type( nbr_mp.type( atm2 ) );
 						// To be added now, the type must be correct, and the AtomID can't
 						// already be in the current vector.
 						//TR << "Trying " << nbr_res.name() << " atom " << nbr_res.atom_name( atm2 ) << std::endl;
@@ -1400,16 +1335,13 @@ MultipoleElecPotential::determine_polarization_groups(
 			//  }
 		}
 	}
-
 	PROF_STOP( basic::MULTIPOLE_SETUP );
-
 }
 
 void
 MultipoleElecPotential::calculate_fixed_fields_for_polarization(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1458,8 +1390,7 @@ MultipoleElecPotential::calculate_fixed_fields_for_polarization(
 void
 MultipoleElecPotential::calculate_induced_fields_for_polarization(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1506,8 +1437,7 @@ MultipoleElecPotential::calculate_induced_fields_for_polarization(
 void
 MultipoleElecPotential::clear_induced_fields(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1534,8 +1464,7 @@ MultipoleElecPotential::clear_induced_fields(
 void
 MultipoleElecPotential::store_induced_dipoles(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1558,8 +1487,7 @@ MultipoleElecPotential::store_induced_dipoles(
 void
 MultipoleElecPotential::get_polarization_from_fields(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1580,7 +1508,6 @@ MultipoleElecPotential::get_polarization_from_fields(
 			if ( pol == 0.0 ) {
 				mp1.nonconst_induced_dipole( atm1 ) = 0.0;
 			} else {
-
 #ifdef NOTDEF
 				if( mp1.Efield_fixed( atm1 ) != mp1.Efield_fixed( atm1 ) ) {
 					TR << "Bad field fixed for " << res1 << " atom " << rsd.atom_name( atm1 ) << std::endl;
@@ -1592,7 +1519,6 @@ MultipoleElecPotential::get_polarization_from_fields(
 					TR << "Bad field induced for " << res1 << " atom " << rsd.atom_name( atm1 ) << std::endl;
 				}
 #endif
-
 				mp1.nonconst_induced_dipole( atm1 ) =  mp1.mp_param( atm1 )->polarity() *
 					( mp1.Efield_fixed( atm1 ) + mp1.Efield_rf_fixed( atm1 ) + mp1.Efield_induced( atm1 ) );
 			}
@@ -1616,8 +1542,7 @@ MultipoleElecPotential::get_polarization_from_fields(
 void
 MultipoleElecPotential::get_effective_radii(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1706,8 +1631,7 @@ core::Real
 MultipoleElecPotential::relax_induced_dipoles(
 	pose::Pose & pose,
 	core::Real const relax
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1741,8 +1665,7 @@ MultipoleElecPotential::relax_induced_dipoles(
 void
 MultipoleElecPotential::induce_polarizable_dipoles(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -1806,10 +1729,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
 		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
-
-			if ( rsd.is_virtual( atm1 ) ) {
-				continue;
-			}
+			if ( rsd.is_virtual( atm1 ) ) continue;
 
 			Vector const old_value( mp1.induced_dipole( atm1 ) );
 			//   Real check_pdamp( mp1.mp_param( atm1 )->pdamp() );
@@ -1828,8 +1748,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 void
 MultipoleElecPotential::setup_for_scoring(
 	pose::Pose & pose
-) const
-{
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
 	// TR << "in setup_for_scoring use_nblist is " << pose.energies().use_nblist() << std::endl;
@@ -1890,8 +1809,7 @@ void
 MultipoleElecPotential::setup_for_packing(
 	pose::Pose & , // ellided
 	utility::vector1< bool > const & // repacking_residues
-) const
-{
+) const {
 	// ////using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
 
 	// jjh Commenting out for now.  First need to get regular scoring done.  Worry
@@ -1908,34 +1826,24 @@ MultipoleElecPotential::setup_for_packing(
 	}
 
 	//jjh zero out arrays
-	//born_radius = 0.0;
 	mp_info->initialize( pose );
 
 	/// store info about which positions are moving
 	mp_info->set_repack_list( repacking_residues );
-
 	build_placeholders( pose, *mp_info );
-
 	get_template_born_radii( pose, *mp_info );
 
 	pose.data().set( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO, mp_info );
 
 	PROF_STOP( basic::GB_SETUP_FOR_PACKING );
 #endif
-
 }
-
-
 
 void
 MultipoleElecPotential::get_rotamers_multipole_info(
 	core::pose::Pose const & pose,
 	conformation::RotamerSetBase & rotamer_set
-) const
-{
-
-	// mp_info_rotamers = utility::pointer::static_pointer_cast< MultipoleElecRotamerSetInfo >( rotamer_set.data().get_ptr( core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
-
+) const {
 	MultipoleElecRotamerSetInfoOP mp_info_rotamers( new MultipoleElecRotamerSetInfo( rotamer_set ) );
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
@@ -1944,18 +1852,13 @@ MultipoleElecPotential::get_rotamers_multipole_info(
 	}
 
 	rotamer_set.data().set( core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO, mp_info_rotamers );
-
-	return;
 }
-
-
 
 void
 MultipoleElecPotential::get_rotamers_effective_radii(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & rotamer_set
-) const
-{
+) const {
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	MultipoleElecPoseInfoCOP mp_info_pose;
@@ -1964,17 +1867,12 @@ MultipoleElecPotential::get_rotamers_effective_radii(
 
 	// this will get cached in the rotamer set
 	// this call should initialize the residue_info objects with the appropriate Residue info
-
 	MultipoleElecRotamerSetInfo & mp_info_rotamers
 		( rotamer_set.data().get< MultipoleElecRotamerSetInfo >( MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
-
-	// MultipoleElecRotamerSetInfoOP mp_info_rotamers( new MultipoleElecRotamerSetInfo( rotamer_set ) );
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
 		get_single_rotamer_effective_radii( *rotamer_set.rotamer(n), pose, mp_info_pose, mp_info_rotamers.residue_info( n ) );
 	}
-
-	//rotamer_set.data().set( MULTIPOLE_ELEC_ROTAMER_SET_INFO, mp_info_rotamers );
 }
 
 
@@ -1985,9 +1883,7 @@ MultipoleElecPotential::get_single_rotamer_effective_radii(
 	pose::Pose const & pose,
 	MultipoleElecPoseInfoCOP , //mp_info,
 	MultipoleElecResidueInfo & mp1
-) const
-{
-
+) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.total_residue() );
 
@@ -2082,17 +1978,13 @@ MultipoleElecPotential::get_single_rotamer_effective_radii(
 }
 
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// called eg after a rotamer substitution is accepted during rotamer trials
 void
 MultipoleElecPotential::update_residue_for_packing(
 	pose::Pose & pose,
 	Size const seqpos
-) const
-{
+) const {
 	// ////using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
 
 	MultipoleElecPoseInfo & multipole_info( static_cast< MultipoleElecPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) );
@@ -2116,21 +2008,19 @@ get_damped_scale_factors(
 	core::Real & scale3,
 	core::Real & scale5,
 	core::Real & scale7
-)
-{
+) {
 	// Damping for scale factors
 	Real damp( mp_param1->pdamp() *  mp_param2->pdamp() );
-	if ( damp != 0.0 ) {
-		Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
-		damp = -pgamma * std::pow((dist/damp), 3);
-		if ( damp > -50.0 ) {
-			Real const expdamp( std::exp( damp ) );
-			scale3 = 1.0 - expdamp;
-			scale5 = 1.0 - expdamp*(1.0-damp);
-			scale7 = 1.0 - expdamp*(1.0-damp+0.6*damp*damp);
-		}
+	if ( damp == 0.0 ) return;
+	
+	Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
+	damp = -pgamma * std::pow((dist/damp), 3);
+	if ( damp > -50.0 ) {
+		Real const expdamp( std::exp( damp ) );
+		scale3 = 1.0 - expdamp;
+		scale5 = 1.0 - expdamp*(1.0-damp);
+		scale7 = 1.0 - expdamp*(1.0-damp+0.6*damp*damp);
 	}
-	return;
 }
 
 inline void
@@ -2144,24 +2034,22 @@ get_damped_scale_factors_with_derivs(
 	core::Real & dscale3_dr,
 	core::Real & dscale5_dr,
 	core::Real & dscale7_dr
-)
-{
+) {
 	// Damping for scale factors
 	Real damp( mp_param1->pdamp() *  mp_param2->pdamp() );
-	if ( damp != 0.0 ) {
-		Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
-		damp = -pgamma * std::pow((dist/damp), 3);
-		if ( damp > -50.0 ) {
-			Real const expdamp( std::exp( damp ) );
-			scale3 = 1.0 - expdamp;
-			dscale3_dr = -3.0*damp*expdamp/dist;
-			scale5 = 1.0 - expdamp*(1.0-damp);
-			dscale5_dr = 3.0*damp*damp*expdamp/dist;
-			scale7 = 1.0 - expdamp*(1.0-damp+0.6*damp*damp);
-			dscale7_dr = -3.0*expdamp*damp*damp*( 0.2 + 0.6*damp )/dist;
-		}
+	if ( damp == 0.0 ) return;
+
+	Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
+	damp = -pgamma * std::pow((dist/damp), 3);
+	if ( damp > -50.0 ) {
+		Real const expdamp( std::exp( damp ) );
+		scale3 = 1.0 - expdamp;
+		dscale3_dr = -3.0*damp*expdamp/dist;
+		scale5 = 1.0 - expdamp*(1.0-damp);
+		dscale5_dr = 3.0*damp*damp*expdamp/dist;
+		scale7 = 1.0 - expdamp*(1.0-damp+0.6*damp*damp);
+		dscale7_dr = -3.0*expdamp*damp*damp*( 0.2 + 0.6*damp )/dist;
 	}
-	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2172,8 +2060,7 @@ same_polarization_group(
 	core::Size atm1,
 	core::conformation::Residue const & rsd2,
 	core::Size atm2
-)
-{
+) {
 	if ( abs( static_cast<int>(rsd1.seqpos()) - static_cast<int>(rsd2.seqpos()) ) > 1 ) {
 		return false;
 	} else {
@@ -2194,8 +2081,7 @@ MultipoleElecPotential::get_res_res_elecE(
 	MultipoleElecResidueInfo const & mp1,
 	Residue const & rsd2,
 	MultipoleElecResidueInfo const & mp2
-) const
-{
+) const {
 	using namespace etable::count_pair;
 
 	Size natoms1 = rsd1.natoms();
@@ -2425,31 +2311,13 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 	MultipoleElecResidueInfo & mp1,
 	Residue const & rsd2,
 	MultipoleElecResidueInfo & mp2
-) const
-{
+) const {
 	using namespace etable::count_pair;
-
-	// Size const GK_RADIUS_INDEX( rsd1.atom_type_set().extra_parameter_index( "GK_RADIUS" ) );
 
 	Size natoms1 = rsd1.natoms();
 	Size natoms2 = rsd2.natoms();
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
-
-	// etable::count_pair::CountPairFunctionOP cpfxn( 0 );
-	// if ( same_res ) {
-	//  cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_34 );
-	// } else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
-	//  cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
-	// } else {
-	//  cpfxn = etable::count_pair::CountPairFunctionOP( new etable::count_pair::CountPairAll() );
-	// }
-
-	// if ( same_res ) {
-	//  cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_34 );
-	// } else {
-	//  cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
-	// }
 
 	// Members of a group
 	// do not polarize each other via their permanent multipole, although
@@ -2457,7 +2325,6 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 	// The information determining which other atoms are in the same group
 	// as a given atom is in the polarization parameter file.
 
-	//Size path_dist( 0 );
 	Real const gkc( 2.455 );
 	Real const dprotein( Ep );
 	Real const dwater( Ew );
@@ -2539,7 +2406,6 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 				Real const gf3( gf2 * gf );
 				Real const gf5( gf3 * gf2 );
 				Real const gf7( gf5 * gf2 );
-				//    Real A00( gf );
 				Real A10( -gf3 );
 				Real A20( 3.0*gf5 );
 				Real A30( -15.0*gf7 );
@@ -2669,8 +2535,6 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 			}
 		}
 	}
-
-	return;
 }
 
 void
@@ -2679,11 +2543,8 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 	MultipoleElecResidueInfo & mp1,
 	Residue const & rsd2,
 	MultipoleElecResidueInfo & mp2
-) const
-{
+) const {
 	using namespace etable::count_pair;
-
-	//Size const GK_RADIUS_INDEX( rsd1.atom_type_set().extra_parameter_index( "GK_RADIUS" ) );
 
 	Size natoms1 = rsd1.natoms();
 	Size natoms2 = rsd2.natoms();
@@ -2758,7 +2619,6 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 				Real const rs1_rs2( rkirk1 * rkirk2 );
 				Real const expterm( std::exp( -dist2/( gkc* rs1_rs2 ) ) );
 				Real const expc( expterm / gkc );
-				//Real const dexpc( -2.0/(gkc*rs1_rs2) );
 				Real const gf2( 1.0 / (dist2 + rs1_rs2*expterm ) );
 				Real const gf( std::sqrt( gf2 ) );
 				Real const gf3( gf2 * gf );
@@ -2820,10 +2680,8 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 void
 MultipoleElecPotential::calculate_and_store_all_derivs(
 	pose::Pose const & pose
-) const
-{
+) const {
 	using namespace etable::count_pair;
-
 
 	// TR << "Precalculating all of the derivatives" << std::endl;
 
@@ -2852,8 +2710,6 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 			assert( pose.energies().use_nblist() );
 
-			//   Size const resi( rsd1.seqpos() );
-			//   Size const resj( rsd2.seqpos() );
 			bool const same_res( resi == resj );
 
 			// TR << "Calculating deriv for " << resi << " and " << resj << std::endl;
@@ -2958,7 +2814,6 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Real const inv_dist_7( inv_dist_5 / dist2 );
 						Real const inv_dist_8( inv_dist_6 / dist2 );
 						Real const inv_dist_9( inv_dist_7 / dist2 );
-						//Real const inv_dist_10( inv_dist_8 / dist2 );
 						Real const inv_dist_11( inv_dist_9 / dist2 );
 						Vector const pi_cross_pj( p1.cross_product( p2 ) );
 						Vector const pi_cross_r( p1.cross_product( Rij ) );
@@ -3559,8 +3414,6 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 			//    }
 			//
 			//    std::exit(1);
-
-
 		}
 	}
 }
@@ -3590,12 +3443,6 @@ MultipoleElecPotential::eval_residue_pair_derivatives(
 		r1_at_derivs[ iat ].f1() += factor * cached_atom_derivs_[ rsd1.seqpos() ][ iat ].f1();
 		r1_at_derivs[ iat ].f2() += factor * cached_atom_derivs_[ rsd1.seqpos() ][ iat ].f2();
 	}
-	//   for( Size iat = 1 ; iat <= rsd2.natoms() ; ++iat ) {
-	//    r2_at_derivs[ iat ].f1() = factor * cached_atom_derivs_[ rsd2.seqpos() ][ iat ].f1();
-	//    r2_at_derivs[ iat ].f2() = factor * cached_atom_derivs_[ rsd2.seqpos() ][ iat ].f2();
-	//   }
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

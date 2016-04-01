@@ -515,69 +515,12 @@ Real align_motif_pose_break( Pose & /*motif_pose*/, Pose const & /*paln1*/, Size
 	utility_exit_with_message("NOT IMPL");
 	using namespace core::id;
 	return(1);//python build was complaining.
-	// if(type!=BB_BB) utility_exit_with_message("not impl");
-	// Pose start(motif_pose);
-	// //align separately to bb's
-	// Xform const stub1  = get(paln1.xyz(AtomID(2,ir)),paln1.xyz(AtomID(1,ir)),paln1.xyz(AtomID(2,ir)),paln1.xyz(AtomID(3,ir)));
-	// Xform const stub2  = get(paln2.xyz(AtomID(2,jr)),paln2.xyz(AtomID(1,jr)),paln2.xyz(AtomID(2,jr)),paln2.xyz(AtomID(3,jr)));
-	// Xform const mstub1 = Xform().from_four_points(motif_pose.xyz(AtomID(2,1)),motif_pose.xyz(AtomID(1,1)),motif_pose.xyz(AtomID(2,1)),motif_pose.xyz(AtomID(3,1)));
-	// Xform const mstub2 = Xform().from_four_points(motif_pose.xyz(AtomID(2,2)),motif_pose.xyz(AtomID(1,2)),motif_pose.xyz(AtomID(2,2)),motif_pose.xyz(AtomID(3,2)));
-	// xform_pose(motif_pose,stub1*~mstub1,1,1);
-	// xform_pose(motif_pose,stub2*~mstub2,2,2);
-
-	// return core::scoring::bb_rmsd(motif_pose,start);
-
 }
 
 Real align_motif_pose_by_one_frame( Pose & /*motif_pose*/, Pose const & /*paln1*/, Size const & /*ir*/, Pose const & /*paln2*/, Size const & /*jr*/, RPM_Type const & /*type*/ ){
 	utility_exit_with_message("align_motif_pose_by_one_frame not implemented");
 	using namespace core::id;
-	// Size mres1=0,mres2=0;
-	// get_motif_resnums(motif_pose,mres1,mres2,type);
-
-	// Xform frame1, frame2, mframe1, mframe2;
-	// switch(type){
-	//  case RM_PO: mframe1 = get_cterminal_peptide_bond_reference_frame(motif_pose,mres1); break;
-	//  case RM_BB: mframe1 =               get_backbone_reference_frame(motif_pose,mres1); break;
-	//  case RM_SC: mframe1 =              get_sidechain_reference_frame(motif_pose,mres1); break;
-	//  default: utility_exit_with_message("unknown motif type");
-	// }
-	// switch(type){
-	//  case RM_PO: mframe2 = get_cterminal_peptide_bond_reference_frame(motif_pose,mres2); break;
-	//  case RM_BB: mframe2 =               get_backbone_reference_frame(motif_pose,mres2); break;
-	//  case RM_SC: mframe2 =              get_sidechain_reference_frame(motif_pose,mres2); break;
-	//  default: utility_exit_with_message("unknown motif type");
-	// }
-	// switch(type){
-	//  case RM_PO: frame1 = get_cterminal_peptide_bond_reference_frame(paln1,ir); break;
-	//  case RM_BB: frame1 =               get_backbone_reference_frame(paln1,ir); break;
-	//  case RM_SC: frame1 =              get_sidechain_reference_frame(paln1,ir); break;
-	//  default: utility_exit_with_message("unknown motif type");
-	// }
-	// switch(type){
-	//  case RM_PO: frame2 = get_cterminal_peptide_bond_reference_frame(paln2,jr); break;
-	//  case RM_BB: frame2 =               get_backbone_reference_frame(paln2,jr); break;
-	//  case RM_SC: frame2 =              get_sidechain_reference_frame(paln2,jr); break;
-	//  default: utility_exit_with_message("unknown motif type");
-	// }
-
-	// // motif_pose.dump_pdb("test0.pdb");
-
-	// switch(type){
-	//  case RM_BB: case PB_SC: xform_pose(motif_pose,frame2*~mframe2); break;
-	//  default:                                        xform_pose(motif_pose,frame1*~mframe1); break;
-	// }
-
-	// // motif_pose.dump_pdb("test1.pdb");
-	// // utility_exit_with_message("aoirts");
-
-	// //align separately to bb's
-	// // xform_pose(motif_pose,frame1*~mframe1);
-	// // xform_pose(motif_pose,frame1*~mframe1,1,1);
-	// // xform_pose(motif_pose,frame2*~mframe2,2,2);
-
 	return -1;
-
 }
 
 Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type ){
@@ -699,7 +642,6 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 }
 
 Real align_motif_pose( Pose & motif_pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type ){
-	// return align_motif_pose_by_one_frame(motif_pose,paln1,ir,paln2,jr,type);
 	return align_motif_pose_super(motif_pose,paln1,ir,paln2,jr,type);
 }
 

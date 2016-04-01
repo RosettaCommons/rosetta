@@ -92,7 +92,6 @@ RNA_BulgeEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-
 	if ( !is_RNA_bulge( rsd ) ) return;
 
 	if ( rna_bulge_bonus_once_per_loop_ && rsd.seqpos() > 1 ) {
@@ -103,7 +102,6 @@ RNA_BulgeEnergy::residue_energy(
 	}
 
 	emap[ rna_bulge ] += bulge_bonus_;
-
 }
 
 
@@ -115,27 +113,25 @@ RNA_BulgeEnergy::finalize_total_energy(
 	ScoreFunction const &,
 	EnergyMap & totals
 ) const {
-
 	using namespace core::pose::full_model_info;
 
 	// This allows new stepwise monte carlo to encapsulate the physics
 	//  modeled in Parin's rna_bulge term. SWM no longer uses VIRTUAL_RNA_RESIDUE or BULGE
 	//  variant types, but does have  a full_model_info object that tracks all residues that
 	//  need to be built ("missing").
-	if ( full_model_info_defined( pose ) ) {
-		utility::vector1< utility::vector1< Size > > loop_suites;
-		Size nmissing = get_number_missing_residues_and_connections( pose, loop_suites );
-
-		if ( rna_bulge_bonus_once_per_loop_ ) {
-			// refactor -- have entropic bonus for each loop, but don't increase the
-			//  bonus with the number of residues in the loop.
-			totals[ rna_bulge ] += bulge_bonus_ * loop_suites.size();
-		} else {
-			// initial setting -- each missing residue gets a bonus.
-			totals[ rna_bulge ] += bulge_bonus_ * nmissing;
-		}
+	if ( !full_model_info_defined( pose ) ) return;
+ 
+	utility::vector1< utility::vector1< Size > > loop_suites;
+	Size nmissing = get_number_missing_residues_and_connections( pose, loop_suites );
+	
+	if ( rna_bulge_bonus_once_per_loop_ ) {
+		// refactor -- have entropic bonus for each loop, but don't increase the
+		//  bonus with the number of residues in the loop.
+		totals[ rna_bulge ] += bulge_bonus_ * loop_suites.size();
+	} else {
+		// initial setting -- each missing residue gets a bonus.
+		totals[ rna_bulge ] += bulge_bonus_ * nmissing;
 	}
-
 }
 
 /// @brief RNA_BulgeEnergy is context independent; indicates that no context graphs are required

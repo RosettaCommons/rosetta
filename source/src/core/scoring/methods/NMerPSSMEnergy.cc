@@ -248,7 +248,6 @@ NMerPSSMEnergy::residue_energy(
 			//get pssm index of seqpos in this p1 frame
 			Size rsd_iseq_nmer( seqpos - p1_seqpos + 1 );
 			//now go ahead and get pssm energy from all_nmer_pssms_[ ipssm ]
-			//   Real rsd_energy_this_nmer( all_nmer_pssms_[ ipssm ].find( rsd_aa )->second[ rsd_iseq_nmer ] );
 			Real rsd_energy_this_nmer( pssm_energy_at_frame_seqpos( rsd_iseq_nmer, rsd_aa, ipssm ) );
 
 			//skip this part if not doing gating
@@ -259,9 +258,6 @@ NMerPSSMEnergy::residue_energy(
 					//bail if we fall off end of chain
 					if ( iseq_pose > chain_end ) break;
 					chemical::AA const aa( pose.residue( iseq_pose ).aa() );
-					//skip if aa not in this pssm
-					//     if( !all_nmer_pssms_[ ipssm ].count( aa ) ) continue;
-					//     Real this_rsd_energy( all_nmer_pssms_[ ipssm ].find( aa )->second[ iseq_nmer ] );
 					Real this_rsd_energy( pssm_energy_at_frame_seqpos( iseq_nmer, aa, ipssm ) );
 					energy += this_rsd_energy;
 				}

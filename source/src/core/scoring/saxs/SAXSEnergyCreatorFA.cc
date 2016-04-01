@@ -23,14 +23,12 @@ namespace saxs {
 
 
 ScoreTypes SAXSEnergyCreatorFA::score_types_for_method() const {
-
 	ScoreTypes sts;
 	sts.push_back( saxs_fa_score );
 	return sts;
 }
 
 methods::EnergyMethodOP SAXSEnergyCreatorFA::create_energy_method( methods::EnergyMethodOptions const &) const {
-
 	return methods::EnergyMethodOP( new SAXSEnergyFA() );
 }
 core::Size

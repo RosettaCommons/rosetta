@@ -42,7 +42,7 @@ public:
 	Size id_;
 
 	/// @brief  Constructor reads a file with a spline function
-	FormFactor(std::string,std::string);
+	FormFactor(std::string const &,std::string const &);
 
 	/// @brief  evaluates an atomic form factor for a given scattering angle (defined in 1/A)
 	Real ff(Real q) const {

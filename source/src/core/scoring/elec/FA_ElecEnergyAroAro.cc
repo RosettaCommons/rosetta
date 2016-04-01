@@ -241,13 +241,10 @@ FA_ElecEnergyAroAro::residue_pair_energy_aro_aro(
 
 				total_score += score;
 				emap[ fa_elec_aro_aro ] += score;
-
 			}
 		}
 	}
-
 	return total_score;
-
 }
 
 void
@@ -308,8 +305,6 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 
 	if ( i_charge == 0.0 ) return;
 
-	//Vector const & i_xyz( rsd1.xyz(i) );
-
 	// cached energies object
 	Energies const & energies( pose.energies() );
 
@@ -325,8 +320,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {
-		//EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-		//Size const pos2( edge->get_second_node_ind() );
+		
 		Size const pos2( (*iru)->get_other_ind( pos1 ) );
 
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
@@ -338,9 +332,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 		if ( rsd2.is_aromatic() ) {
 			eval_atom_derivative_aro_aro( rsd1, i, rsd2, weights, F1, F2 );
 		}
-
 	} // loop over nbrs of rsd1
-
 }
 
 
@@ -355,7 +347,6 @@ FA_ElecEnergyAroAro::eval_atom_derivative_aro_aro(
 	Vector & F2
 ) const
 {
-
 	using namespace etable::count_pair;
 
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -384,13 +375,12 @@ FA_ElecEnergyAroAro::eval_atom_derivative_aro_aro(
 			Real const dE_dr_over_r = weight *
 				coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
 
-			if ( dE_dr_over_r != 0.0 ) {
-				Vector const f1( i_xyz.cross( j_xyz ) );
-
-				F1 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f1;
-				F2 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f2;
-			}
-
+			if ( dE_dr_over_r == 0.0 ) continue;
+			
+			Vector const f1( i_xyz.cross( j_xyz ) );
+			
+			F1 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f2;
 		}
 	}
 }

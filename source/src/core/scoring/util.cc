@@ -44,8 +44,7 @@ eval_scsc_sr2b_energies(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
-)
-{
+) {
 	Real const scsc_d2 = r1sc_centroid.distance_squared( r2sc_centroid );
 	Real const scsc_radsum = r1sc_radius + r2sc_radius;
 	for ( ScoreFunction::CI_2B_Methods::const_iterator
@@ -77,8 +76,7 @@ eval_bbsc_sr2b_energies(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
-)
-{
+) {
 	Real const bbsc_d2 = r1bb_centroid.distance_squared( r2sc_centroid );
 	Real const bbsc_radsum = r1bb_radius + r2sc_radius;
 	for ( ScoreFunction::CI_2B_Methods::const_iterator
@@ -114,8 +112,7 @@ eval_bbbb_sr2b_energies(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
-)
-{
+) {
 	Real const bbbb_d2 = r1bb_centroid.distance_squared( r2bb_centroid );
 	Real const bbbb_radsum = r1bb_radius + r2bb_radius;
 	for ( ScoreFunction::CI_2B_Methods::const_iterator
@@ -144,8 +141,7 @@ eval_bbbb_sr2b_energies(
 Vector
 compute_bb_centroid(
 	conformation::Residue const & res
-)
-{
+) {
 	Vector bb_centroid( 0.0 );
 	Size count_n_bb( 0 );
 	for ( Size ii = 1; ii <= res.type().first_sidechain_atom() - 1; ++ii ) {
@@ -160,8 +156,7 @@ Real
 compute_bb_radius(
 	conformation::Residue const & res,
 	Vector const & bb_centroid
-)
-{
+) {
 	Real bb_radius = 0;
 	for ( Size ii = 1; ii <= res.type().first_sidechain_atom() - 1; ++ii ) {
 		Real d2 = res.xyz( ii ).distance_squared( bb_centroid );
@@ -173,8 +168,7 @@ compute_bb_radius(
 Vector
 compute_sc_centroid(
 	conformation::Residue const & res
-)
-{
+) {
 	Vector centroid( 0.0 );
 	Size count( 0 );
 	for ( Size ii = res.type().first_sidechain_atom(); ii <= res.type().nheavyatoms(); ++ii ) {
@@ -193,8 +187,7 @@ Real
 compute_sc_radius(
 	conformation::Residue const & res,
 	Vector const & centroid
-)
-{
+) {
 	Real max_d2 = 0;
 	for ( Size ii = res.type().first_sidechain_atom(); ii <= res.type().nheavyatoms(); ++ii ) {
 		Real d2 = res.xyz(ii).distance_squared( centroid );

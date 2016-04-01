@@ -106,48 +106,21 @@ ReferenceEnergy::residue_energy(
 	/// else -- use the default reference weights from r++
 	if ( rsd.type().aa() > num_canonical_aas ) return;
 
-	/* Stolen from rosetta++; negated so that Wref is a positive number
-	Waa( aa_ala ) = -0.16;  //ALA,1
-	Waa( aa_cys ) = -1.70;  //CYS,2
-	Waa( aa_asp ) =  0.67;  //ASP,3
-	Waa( aa_glu ) =  0.81;  //GLU,4
-	Waa( aa_phe ) = -0.63;  //PHE,5
-	Waa( aa_gly ) =  0.17;  //GLY,6
-	Waa( aa_his ) = -0.56;  //HIS,7
-	Waa( aa_ile ) = -0.24;  //ILE,8
-	Waa( aa_lys ) =  0.65;  //LYS,9
-	Waa( aa_leu ) =  0.10;  //LEU,10
-	Waa( aa_met ) =  0.34;  //MET,11
-	Waa( aa_asn ) =  0.89;  //ASN,12
-	Waa( aa_pro ) = -0.02;  //PRO,13
-	Waa( aa_gln ) =  0.97;  //GLN,14
-	Waa( aa_arg ) =  0.98;  //ARG,15
-	Waa( aa_ser ) =  0.37;  //SER,16
-	Waa( aa_thr ) =  0.27;  //THR,17
-	Waa( aa_val ) = -0.29;  //VAL,18
-	Waa( aa_trp ) = -0.91;  //TRP,19
-	Waa( aa_tyr ) = -0.51;  //TYR,20
-	*/
-
 	switch ( rsd.type().aa() ) {
 	case aa_ala : emap[ ref ] +=  0.16; break;
 	case aa_cys : emap[ ref ] +=  1.70; break;
-		//    case aa_asp: emap[ ref ] +=  -0.67; break;
 	case aa_asp :
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
 		break;
-		//    case aa_glu: emap[ ref ] +=  -0.81; break;
 	case aa_glu :
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
 		break;
 	case aa_phe : emap[ ref ] +=  0.63; break;
 	case aa_gly : emap[ ref ] +=  -0.17; break;
-		//    case aa_his: emap[ ref ] +=  0.56; break;
 	case aa_his :
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.288 : 0.56;
 		break;
 	case aa_ile : emap[ ref ] +=  0.24; break;
-		//    case aa_lys: emap[ ref ] +=  -0.65; break;
 	case aa_lys :
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
 		break;
@@ -161,7 +134,6 @@ ReferenceEnergy::residue_energy(
 	case aa_thr : emap[ ref ] +=  -0.27; break;
 	case aa_val : emap[ ref ] +=  0.29; break;
 	case aa_trp : emap[ ref ] +=  0.91; break;
-		//    case aa_tyr: emap[ ref ] +=  0.51; break;
 	case aa_tyr :
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
 		break;

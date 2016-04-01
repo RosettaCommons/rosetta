@@ -20,7 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/methods/SuckerEnergy.hh>
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <utility/io/izstream.hh>
@@ -31,7 +30,6 @@
 
 
 #define DIST_TH 6.0
-//#define TETHER_WT 10.0
 
 namespace core {
 namespace scoring {
@@ -93,7 +91,8 @@ SuckerEnergy::SuckerEnergy() :
 	// }
 
 	using namespace numeric::interpolation::spline;
-	SplineGenerator sg( points[      1      ][1], points[      1      ][2], points[      1      ][3],
+	SplineGenerator sg(
+		points[      1      ][1], points[      1      ][2], points[      1      ][3],
 		points[points.size()][1], points[points.size()][2], points[points.size()][3] );
 
 	for ( Size i = 2; i < points.size(); ++i ) {
@@ -108,7 +107,6 @@ SuckerEnergy::SuckerEnergy() :
 	//  interp_->interpolate(x,y,dy);
 	//  std::cerr << "SUCKERE " << x << " " << y << " " << dy << std::endl;
 	// }
-
 }
 
 
@@ -160,15 +158,14 @@ SuckerEnergy::residue_pair_energy(
 		if ( !count_atom( atom.type() ) ) continue;
 		numeric::xyzVector<Real> atom_xyz( rsd.xyz(i) );
 		Real const d = atom_xyz.distance( suck_xyz );
-		if ( d <= DIST_TH ) {
-			Real f, df;
-			interp_->interpolate( d, f, df );
-			// std::cerr << rsd.seqpos() << " " << i << " " << d << " " << f << " " << df << " SUCKER" << std::endl;
-			// std::cerr << "SCOREATOMS " << rsd.seqpos() << " " << i << " " << sck.seqpos() << " " << 1 << " " << d << std::endl;
-			emap[ suck ] += f;
-		}
+		if ( d > DIST_TH ) continue;
+		
+		Real f, df;
+		interp_->interpolate( d, f, df );
+		// std::cerr << rsd.seqpos() << " " << i << " " << d << " " << f << " " << df << " SUCKER" << std::endl;
+		// std::cerr << "SCOREATOMS " << rsd.seqpos() << " " << i << " " << sck.seqpos() << " " << 1 << " " << d << std::endl;
+		emap[ suck ] += f;
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -217,27 +214,8 @@ SuckerEnergy::eval_atom_derivative(
 				// std::cerr << "sck_atm " << deriv << std::endl;
 				F1 += ( deriv / dist ) * weights[ suck ] * f1;
 				F2 += ( deriv / dist ) * weights[ suck ] * f2;
-
 			}
 		}
-
-		// // teathers, orig pos from pose data cache
-		// using namespace basic;
-		// CacheableData const & cd = pose.data().get(SUCKER_ORIG_POSITIONS);
-		// CacheableIntXyzVectorMap const & cxmap = dynamic_cast<CacheableIntXyzVectorMap const &>( cd );
-		// numeric::xyzVector<Real> const & orig_xyz = cxmap.map().find( id.rsd() )->second;
-		//
-		// numeric::xyzVector<Real> const f1( suck_xyz.cross( orig_xyz ));
-		// numeric::xyzVector<Real> const f2( suck_xyz -  orig_xyz  );
-		// std::cerr << "intrares dE " << distance(suck_xyz,orig_xyz) << " " << 2*TETHER_WT*distance(suck_xyz,orig_xyz) << std::endl;
-		// std::cerr << "  SUCKER ORIG POS " << id.rsd() << " " << orig_xyz.x() << "," << orig_xyz.y() << "," << orig_xyz.z() << std::endl;
-		// std::cerr << "  SUCKER  POS " << id.rsd() << " " << suck_xyz.x() << "," << suck_xyz.y() << "," << suck_xyz.z() << std::endl;
-		// Real dist  = distance( suck_xyz, orig_xyz );
-		// Real deriv = -dist * 2;
-		// F1 += ( deriv / dist ) * TETHER_WT * weights[ suck ] * f1;
-		// F2 += ( deriv / dist ) * TETHER_WT * weights[ suck ] * f2;
-
-
 	} else { // loop over suck residues and suck
 
 		// heavy atoms only
@@ -253,27 +231,21 @@ SuckerEnergy::eval_atom_derivative(
 			conformation::Residue const & sck( pose.residue(i) );
 			numeric::xyzVector<Real> suck_xyz( sck.xyz(1) );
 			Real const d = suck_xyz.distance(atom_xyz);
-			if ( d <= DIST_TH ) {
+			if ( d > DIST_TH ) continue;
 
-				// std::cerr << "DERIVATOMS " << id.rsd() << " " << id.atomno() << " " << sck.seqpos() << " " << 1 << " " << d << " LPB " << id.rsd() << " " << id.atomno() << std::endl;
-
-				// compute suck F1, F2
-				numeric::xyzVector<Real> const f1( atom_xyz.cross( suck_xyz ));
-				numeric::xyzVector<Real> const f2( atom_xyz -  suck_xyz );
-				Real const dist( f2.length() );
-				Real deriv, dummy;
-				interp_->interpolate( dist, dummy, deriv );
-				// std::cerr << "reg_atm " << deriv << std::endl;
-				F1 += ( deriv / dist ) * weights[ suck ] * f1;
-				F2 += ( deriv / dist ) * weights[ suck ] * f2;
-
-			}
-			// --i;
-
+			// std::cerr << "DERIVATOMS " << id.rsd() << " " << id.atomno() << " " << sck.seqpos() << " " << 1 << " " << d << " LPB " << id.rsd() << " " << id.atomno() << std::endl;
+			
+			// compute suck F1, F2
+			numeric::xyzVector<Real> const f1( atom_xyz.cross( suck_xyz ));
+			numeric::xyzVector<Real> const f2( atom_xyz -  suck_xyz );
+			Real const dist( f2.length() );
+			Real deriv, dummy;
+			interp_->interpolate( dist, dummy, deriv );
+			// std::cerr << "reg_atm " << deriv << std::endl;
+			F1 += ( deriv / dist ) * weights[ suck ] * f1;
+			F2 += ( deriv / dist ) * weights[ suck ] * f2;
 		}
-
 	}
-
 }
 
 void
@@ -282,20 +254,8 @@ SuckerEnergy::eval_intrares_energy(
 	pose::Pose const & /*pose*/,
 	ScoreFunction const & /*sfxn*/,
 	EnergyMap & /*emap*/
-) const {
-	// using namespace basic;
-	// if( "SUCK" == rsd.name() ) {
-	//  CacheableData const & cd = pose.data().get(SUCKER_ORIG_POSITIONS);
-	//  CacheableIntXyzVectorMap const & cxmap = dynamic_cast<CacheableIntXyzVectorMap const &>( cd );
-	//  numeric::xyzVector<Real> const & orig_xyz = cxmap.map().find( rsd.seqpos() )->second;
-	//  numeric::xyzVector<Real> const & curr_xyz( rsd.xyz(1) );
-	//  Real const d2( distance_squared(orig_xyz,curr_xyz) );
-	//  std::cerr << "intrareas E " << distance(curr_xyz,orig_xyz) << " " << TETHER_WT*d2 << std::endl;
-	//  std::cerr << "  SUCKER ORIG POS " << rsd.seqpos() << " " << orig_xyz.x() << "," << orig_xyz.y() << "," << orig_xyz.z() << std::endl;
-	//  std::cerr << "  SUCKER  POS " << rsd.seqpos() << " " << curr_xyz.x() << "," << curr_xyz.y() << "," << curr_xyz.z() << std::endl;
-	//  emap[ suck ] += TETHER_WT*d2;
-	// }
-}
+) const
+{}
 
 
 /// @brief SuckerEnergy distance cutoff set to the same cutoff used by EtableEnergy, for now

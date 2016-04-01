@@ -132,9 +132,7 @@ GeometricSolEnergyEvaluator::residue_pair_energy(
 	ScoreFunction const &,
 	EnergyMap & emap ) const
 {
-
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;  //Is this necessary?
-	// if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
 	//////////////////////////////////
 	// Yo, what about count_pair?
@@ -157,7 +155,6 @@ GeometricSolEnergyEvaluator::res_res_geometric_sol_one_way(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose ) const
 {
-
 	Real geo_solE =
 		donorRes_occludingRes_geometric_sol_one_way(    polar_rsd, occ_rsd, pose ) +
 		acceptorRes_occludingRes_geometric_sol_one_way( polar_rsd, occ_rsd, pose );
@@ -198,7 +195,6 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_sc(
 		Size const acc_atm( *anum );
 
 		Size start (1);
-
 		if ( acc_rsd.atom_is_backbone(acc_atm) ) { start = occ_rsd.first_sidechain_atom(); }
 
 		for ( Size occ_atm = start; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
@@ -232,8 +228,6 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_sc(
 			hnum  = don_rsd.Hpos_polar().begin(),
 			hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const don_h_atm( *hnum );
-
-
 		Size start (1);
 
 		if ( don_rsd.atom_is_backbone(don_h_atm) ) { start = occ_rsd.first_sidechain_atom(); }
@@ -264,14 +258,11 @@ GeometricSolEnergyEvaluator::geometric_sol_one_way_bb_bb(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose ) const
 {
-
 	Real geo_solE =
 		donorRes_occludingRes_geometric_sol_one_way_bb_bb( polar_rsd, occ_rsd, pose ) +
 		acceptorRes_occludingRes_geometric_sol_one_way_bb_bb( polar_rsd, occ_rsd, pose );
 
 	return geo_solE;
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -281,21 +272,15 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_bb_b
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose) const
 {
-
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	for ( chemical::AtomIndices::const_iterator
 			anum  = acc_rsd.accpt_pos().begin(),
 			anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
 		Size const acc_atm( *anum );
-
 		if ( !acc_rsd.atom_is_backbone(acc_atm) ) continue;
 
-		//if(acc_atm > acc_rsd_last_backbone_num) continue;
-
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
 			if ( !occ_rsd.atom_is_backbone(occ_atm) ) continue;
 
 			//Important NOTE. I originally had the code in the following function
@@ -312,7 +297,6 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_bb_b
 	}
 
 	return res_solE;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -329,11 +313,9 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_bb_bb(
 			hnum  = don_rsd.Hpos_polar().begin(),
 			hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const don_h_atm( *hnum );
-
 		if ( !don_rsd.atom_is_backbone(don_h_atm) ) continue;
 
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
 			if ( !occ_rsd.atom_is_backbone(occ_atm) ) continue;
 
 			//Important NOTE. I originally had the code in the following function
@@ -360,7 +342,6 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose ) const
 {
-
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
@@ -394,13 +375,11 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose ) const
 {
-
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	for ( chemical::AtomIndices::const_iterator
 			anum  = acc_rsd.accpt_pos().begin(),
 			anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
 		Size const acc_atm( *anum );
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
@@ -454,7 +433,6 @@ GeometricSolEnergyEvaluator::set_water_base_atm(
 	// Plop the atom down
 	direction = xH * y  + Real( std::sqrt( 1 - (xH * xH) ) ) * x;
 	water_base_v = water_v + bond_length * direction;
-
 }
 
 
@@ -474,7 +452,6 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 	bool const update_deriv /* = false*/,
 	HBondDerivs & deriv /* = DUMMY_DERIV2D*/ ) const
 {
-
 	// toggling this on turns on derivative calculations only when necessary
 	// this actually does not help speed detectably. however, checking that
 	// we get the same answer with true/false helps catch inconsistencies between
@@ -522,7 +499,6 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
 		}
 	} else {
-
 		// water is the donor, give it perfect geometry. This used to be 0.9999, but that caused imperfect derivatives.
 		xD = 1.0;
 
@@ -606,7 +582,6 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 	}
 
 	return sol_penalty; // return a positive number (this is a penalty)
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -879,7 +854,6 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 			" with energy "<< F(8,3,energy)<<std::endl;
 
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1008,13 +982,10 @@ Real
 GeometricSolEnergyEvaluator::eval_atom_energy(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose
-) const
-{
-
+) const {
 	Real total_energy( 0.0 );
 
 	conformation::Residue const & current_rsd( pose.residue( atom_id.rsd() ) );
-
 	Size const i( atom_id.rsd() );
 	Size const current_atm( atom_id.atomno() );
 
@@ -1099,7 +1070,6 @@ fill_atom_derivs_for_acceptor( hbonds::HBondDerivs const & deriv,
 	hbonds::HBondOptions const & hbond_options,
 	Real const & weighted_energy )
 {
-
 	acc_atom_derivs[ aatm ].f1() += weighted_energy * deriv.acc_deriv.f1();
 	acc_atom_derivs[ aatm ].f2() += weighted_energy * deriv.acc_deriv.f2();
 
@@ -1131,7 +1101,6 @@ GeometricSolEnergyEvaluator::eval_intrares_derivatives(
 	bool const just_RNA
 ) const
 {
-
 	if ( just_RNA && !rsd.is_RNA() ) return;
 	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return;
 
@@ -1179,10 +1148,7 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 	Real const geom_sol_weight,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
-) const
-{
-
-
+) const {
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -1215,7 +1181,6 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 				fill_atom_derivs_for_acceptor( deriv, jres, jj, ii, r2_atom_derivs, r1_atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
 			}
 		}
-
 	}
 }
 
@@ -1323,9 +1288,7 @@ GeometricSolEnergyEvaluator::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	ResPairMinimizationData & pair_data
-) const
-{
-
+) const {
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
 
 	// update the existing nblist if it's already present in the min_data object
@@ -1347,14 +1310,12 @@ Real
 GeometricSolEnergyEvaluator::precalculate_bb_bb_energy_for_design(
 	pose::Pose const & pose
 ) const {
-
 	Real precalculated_bb_bb_energy( 0.0 );
 	Size const total_residue = pose.total_residue();
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 	for ( Size i = 1; i <= total_residue; i++ ) {
-
 		conformation::Residue const & res_i( pose.residue( i ) );
 
 		for ( graph::Graph::EdgeListConstIter
@@ -1368,7 +1329,6 @@ GeometricSolEnergyEvaluator::precalculate_bb_bb_energy_for_design(
 
 			//only need to do it one way since will sample the reverse when res_i is at j
 			precalculated_bb_bb_energy += geometric_sol_one_way_bb_bb(res_i, res_j, pose);
-
 		}
 	}
 

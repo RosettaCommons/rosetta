@@ -27,8 +27,7 @@ convert_inorder_table_to_original_order(
 	utility::vector1< Size > const & total_rotamers_2_unique_rotamers_2,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2A< core::PackerEnergy > const & rot_rot_table
-)
-{
+) {
 	using namespace ObjexxFCL;
 
 	Size const nrots1 = total_rotamers_2_unique_rotamers_1.size();

@@ -85,7 +85,6 @@ CharmmPeriodicFunc::show_violations( std::ostream& out, Real x, Size verbose_lev
 		out << "CHARMM_PERIODIC " <<  func(x) << std::endl;
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);
-
 }
 
 

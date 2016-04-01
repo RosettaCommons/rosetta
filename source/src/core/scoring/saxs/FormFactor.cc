@@ -32,8 +32,10 @@ FormFactor::~FormFactor() {}
 
 static THREAD_LOCAL basic::Tracer trFormFactor( "core.scoring.saxs.FormFactor" );
 
-FormFactor::FormFactor(std::string atom_name,std::string file_name) {
-
+FormFactor::FormFactor(
+	std::string const & atom_name,
+	std::string const & file_name
+) {
 	name_ = atom_name;
 	utility::vector1<Real> x;
 	utility::vector1<Real> y;
@@ -67,7 +69,6 @@ FormFactor::FormFactor(std::string atom_name,std::string file_name) {
 }
 
 void FormFactor::tabulate(const utility::vector1<Real> & q) {
-
 	ff_values_.clear();
 	for ( Size i_s=1; i_s<=q.size(); ++i_s ) {
 		ff_values_.push_back(ff(q[i_s]));

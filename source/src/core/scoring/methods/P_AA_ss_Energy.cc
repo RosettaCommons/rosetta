@@ -53,8 +53,6 @@ P_AA_ss_EnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-
-
 /// @remarks
 /// get_P_AA_ss calls a method in ScoringManager which create a new object of type P_AA_ss.  The constructor for that created object
 /// reads in the three database files: P_AA_ss, P_AA_ss_pp, and P_AA_ss_n.  That object is returned and then stored as a private member

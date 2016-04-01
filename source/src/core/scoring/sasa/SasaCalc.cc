@@ -56,9 +56,7 @@ SasaCalc::SasaCalc(SasaMethodEnum method):
 	method_type_ = method;
 }
 
-
 SasaCalc::~SasaCalc(){}
-
 
 void
 SasaCalc::set_defaults() {
@@ -76,12 +74,8 @@ SasaCalc::set_defaults() {
 	set_implicit_hydrogen_included_radii_set(get_sasa_radii_set_from_string(option[OptionKeys::sasa::implicit_hydrogen_radii_set]()));
 	set_explicit_hydrogen_included_radii_set(get_sasa_radii_set_from_string(option[OptionKeys::sasa::explicit_hydrogen_radii_set]()));
 
-	//set_expand_polar_radii(false);
 	set_use_big_polar_hydrogen(false);
-
-
 }
-
 
 void
 SasaCalc::set_include_hydrogens_explicitly(bool include_hydrogens) {
@@ -114,7 +108,6 @@ SasaCalc::setup_sasa_method(SasaRadii radii_set) {
 	method_ = create_sasa_method(method_type_, probe_radius_, radii_set);
 	method_->set_include_probe_radius_in_calc(include_probe_radius_);
 	method_->set_use_big_polar_hydrogen(big_polar_h_);
-
 }
 
 void
@@ -136,11 +129,6 @@ SasaCalc::set_include_carbon_sulfer_only_in_hydrophobic_calc(bool include_c_s_on
 	include_c_s_only_in_hsasa_ = include_c_s_only;
 }
 
-//SasaCalc::set_expand_polar_radii(bool expand_polars, core::Size expansion_radius /*1.0*/) {
-// expand_polars_ = expand_polars;
-// polar_expansion_radius_ = expansion_radius;
-//}
-
 void
 SasaCalc::set_use_big_polar_hydrogen(bool big_polar_h) {
 	big_polar_h_ = big_polar_h;
@@ -148,7 +136,6 @@ SasaCalc::set_use_big_polar_hydrogen(bool big_polar_h) {
 
 vector1<Real>
 SasaCalc::get_residue_sasa_bb() const {
-
 	vector1<Real> sasa_bb;
 	for ( Size i = 1; i <= rsd_sasa_sc_.size(); ++i ) {
 		sasa_bb[i] = rsd_sasa_[i] - rsd_sasa_sc_[i];
@@ -158,13 +145,13 @@ SasaCalc::get_residue_sasa_bb() const {
 
 vector1<Real>
 SasaCalc::get_residue_hsasa_bb() const {
-
 	vector1< Real > sasa_bb;
 	for ( Size i = 1; i <= rsd_hsasa_sc_.size(); ++i ) {
 		sasa_bb[i] = rsd_hsasa_[i] - rsd_hsasa_sc_[i];
 	}
 	return sasa_bb;
 }
+
 void
 SasaCalc::fill_data(Real& total_hsasa,Real & total_rel_hsasa,  id::AtomID_Map<Real>& atom_sasa, vector1<Real>& rsd_sasa, vector1<Real>& rsd_hsasa, vector1<Real>& rel_hsasa){
 	total_hsasa = total_hsasa_;
@@ -188,7 +175,6 @@ SasaCalc::calculate(const pose::Pose& pose, id::AtomID_Map<Real>& atom_sasa, vec
 	Real total_sasa = calculate(pose, rsd_sasa, rsd_hsasa);
 	atom_sasa = atom_sasa_;
 	return total_sasa;
-
 }
 
 Real
@@ -206,13 +192,10 @@ SasaCalc::calculate(const pose::Pose& pose, id::AtomID_Map<Real>& atom_sasa){
 	return total_sasa;
 }
 
-///// //////////
+///////////////
 
 Real
 SasaCalc::calculate(const pose::Pose& pose) {
-
-
-
 	//Figure out which radii to use.
 	SasaRadii radii_set;
 	if ( include_hydrogens_ ) {
@@ -221,15 +204,11 @@ SasaCalc::calculate(const pose::Pose& pose) {
 		radii_set = implicit_radii_set_;
 	}
 
-
-
 	init(pose);
 	setup_sasa_method(radii_set);
 
 	total_sasa_ = method_->calculate(pose, atom_subset_, atom_sasa_, rsd_sasa_);
-
 	calc_per_res_sasas(pose);
-
 	return total_sasa_;
 }
 
@@ -283,17 +262,13 @@ void
 SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		if ( rsd_sasa_[i] == 0.0 ) {
-			continue;
-		}
+		if ( rsd_sasa_[i] == 0.0 ) continue;
 
 		core::conformation::Residue const & res = pose.residue(i);
 
 		core::Real sasa_sc = 0.0;
-
 		core::Real hsasa = 0.0;
 		core::Real hsasa_sc = 0.0;
-
 		core::Real hsasa_rel = 0.0;
 
 		for ( Size x = 1; x <= pose.residue(i).natoms(); ++x ) {
@@ -302,7 +277,6 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 			bool is_sc = ! pose.residue(i).atom_is_backbone(x);
 
 			if ( ! atom_subset_[atomid] || atom_sasa_[atomid] <= 0.0 ) continue;
-
 			if ( is_sc ) sasa_sc += atom_sasa_[atomid];
 
 			core::Real charge = res.type().atom(x).charge();
@@ -321,7 +295,6 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 
 			//If we are excluding polars, skip the polar from inclusion into hsasa if charge is too great.
 			if ( exclude_polar_all_in_hsasa_   && std::abs(res.type().atom(x).charge()) > polar_charge_cutoff_ ) {
-
 				continue;
 			}
 
@@ -336,14 +309,12 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 				for ( core::Size nb = 1; nb <= bonded_indices.size(); ++nb ) {
 					core::Size x_bonded = bonded_indices[nb];
 
-
 					if ( res.atom_type(x_bonded).element() == "H" ) {
 						core::id::AtomID bonded_id(x_bonded, i);
 						hsasa = hsasa + atom_sasa_[bonded_id];
 					}
 				} // for bonded atom neighbors
 			}
-
 		} //for atom
 
 		//TR << sasa<<" " << hsasa << " " << hsasa_rel << std::endl;
@@ -359,23 +330,8 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 		total_rel_hsasa_= total_rel_hsasa_ + hsasa_rel;
 		total_hsasa_  = total_hsasa_ + hsasa;
 		total_hsasa_sc_ = total_hsasa_sc_ + hsasa_sc;
-
 	} //for residue
 }
-
-
-//SasaCalc::calculate(const pose::Pose& pose, id::AtomID_Map<Real>& atom_sasa) {
-
-//}
-
-//SasaCalc::calculate(const pose::Pose& pose, vector1<Real>& rsd_sasa, vector1<Real>& rsd_hsasa) {
-
-//}
-
-//SasaCalc::calculate(const pose::Pose& pose, id::AtomID_Map<Real>& atom_sasa, vector1<Real>& rsd_sasa, vector1<Real>& rsd_hsasa){
-
-//}
-
 
 }
 }

@@ -78,7 +78,6 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 	return methods::EnergyMethodOP( new RNA_FullAtomVDW_BasePhosphate( options ) );
 }
 
-
 ScoreTypes
 RNA_FullAtomVDW_BasePhosphateCreator::score_types_for_method() const {
 	ScoreTypes sts;
@@ -132,8 +131,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 	Size const at2hbegin,
 	Size const at2hend,
 	EnergyMap & emap
-) const
-{
+) const {
 	using conformation::Atom;
 
 	Weight weight( 1.0 );
@@ -171,8 +169,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 void
 RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	conformation::Residue const & rsd,
-	EnergyMap & emap  ) const
-{
+	EnergyMap & emap  ) const {
 	using conformation::Atom;
 
 	if ( rsd.is_RNA() == false ) return;
@@ -207,7 +204,6 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 			}
 		}
 	}
-
 }
 
 
@@ -232,9 +228,7 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-
+) const {
 	if ( weights[ fa_intra_RNA_base_phos_sol] != 0.0 ) {
 		//Please refer to paragraph at the end of RNA_FullAtomVDW_BasePhosphate::residue_energy for explanation.
 		//Again, if you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc),
@@ -270,9 +264,7 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 			F1 += dE_dR_over_r * cp_weight * f1;
 			F2 += dE_dR_over_r * cp_weight * f2;
 		}
-
 	}
-
 }
 
 void RNA_FullAtomVDW_BasePhosphate::indicate_required_context_graphs( utility::vector1< bool > & ) const{}

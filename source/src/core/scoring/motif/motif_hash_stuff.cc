@@ -1395,35 +1395,8 @@ void MotifHash::add_motif(Motif const & d){
 	if ( std::fabs(rt[3]) > cart_size_ ) return;
 	Key key = bin_index(rt);
 	add_motif(d,key);
-	// if( d.type1()==RM_SC && (d.aa1()=='D'||d.aa1()=='E'||d.aa1()=='F'||d.aa1()=='Y') ){
-	//  Mat const R = numeric::x_rotation_matrix_degrees(180.0);
-	//  Xform x(rt);
-	//  x = Xform( R * x.R , R*x.t );
-	//  rt = x.rt6();
-	//  Key key2 = bin_index(rt);
-	//  // add_motif(d,key2);
-	//  // cout << "flip!" << endl;
-	//  // d.dump_pdb("test1.pdb");
-	//  // ResPairMotif d2(d);
-	//  // d2.rt(rt);
-	//  // d2.dump_pdb("test2.pdb");
-	//  // utility_exit_with_message("foo");
-	// }
 }
-// void MotifHash::add_motif_shift(Motif const & d, Real6 const & shift){
-//  Real6 rt( d.rt() );
-//  if( std::fabs(rt[1]) > cart_size_ ) return;
-//  if( std::fabs(rt[2]) > cart_size_ ) return;
-//  if( std::fabs(rt[3]) > cart_size_ ) return;
-//  rt[1] = rt[1] + cart_resl_ * shift[1];
-//  rt[2] = rt[2] + cart_resl_ * shift[2];
-//  rt[3] = rt[3] + cart_resl_ * shift[3];
-//  rt[4] = fmod(rt[4] + angle_resl_*shift[4],360.0);
-//  rt[5] = fmod(rt[5] + angle_resl_*shift[5],360.0);
-//  rt[6] = fmod(rt[6] + angle_resl_*shift[6],180.0);
-//  Key key = bin_index(rt);
-//  add_motif(d,key);
-//  }
+
 void MotifHash::find_motifs(Key const & k, ResPairMotifs & results ) const {
 	std::pair<MotifMap::const_iterator,MotifMap::const_iterator> range = motif_umap_.equal_range(k);
 	for ( MotifMap::const_iterator it = range.first; it != range.second; ++it ) {
@@ -1435,10 +1408,6 @@ void MotifHash::find_motifs(Real6 const & rt6, ResPairMotifs & results ) const {
 }
 Size MotifHash::count_motifs(Key const & k ) const {
 	return motif_umap_.count(k);
-	// std::pair<MotifMap::const_iterator,MotifMap::const_iterator> range = motif_umap_.equal_range(k);
-	// Size c = 0;
-	// for( MotifMap::const_iterator it = range.first; it != range.second; ++it) ++c;
-	// return c;
 }
 Size MotifHash::count_motifs(Real6 const & rt6) const {
 	return count_motifs(bin_index(rt6));
@@ -1516,40 +1485,7 @@ void MotifHash::find_motifs_with_radius(Real6 const & rt6, Real radius, vector1<
 	// if(bin6[4]==0) utility_exit_with_message("arst");
 	// if(bin6[5]==0) utility_exit_with_message("arst");
 }
-// void MotifHash::find_motifs_with_radius(Real6 const & rt6, Real radius, vector1<Motif> & results) const {
-//  if( !check_bounds(rt6) ) return;
-//  Real const cart_frac = radius / cart_resl_;
-//  Real const ang2dis = cart_resl_/angle_resl_;
-//  int const lookuprad_max = std::ceil(cart_frac + 1.0 ); // fudge factor
-//  int count_this_rt=0;
-//  for(int lookuprad = 0; lookuprad <= lookuprad_max; ++lookuprad){
-//   // cerr << "lookuprad " << lookuprad << " cart_frac " << cart_frac << " radius " << radius << " cart_resl " << cart_resl_ << " ang2dis " << ang2dis <<  endl;
-//   // if(lookuprad>3) utility_exit_with_message("NOTE!!!! huge lookup radius");
-//   Xform const x1(rt6);
-//   std::vector<MotifHash::Key> surrounding_cells = hasher_.radial_bin_index(lookuprad,rt6);
-//   // cout << surrounding_cells.size() << endl;
-//   // utility_exit_with_message("foo");
-//   BOOST_FOREACH(MotifHash::Key key,surrounding_cells){
-//    MotifHash::MotifMap::const_iterator i = motif_umap_.equal_range(key).first;
-//    MotifHash::MotifMap::const_iterator e = motif_umap_.equal_range(key).second;
-//    for(; i != e; ++i){
-//     ResPairMotif const & sm(i->second);
-//     Real6 const ot6 = sm.rt();
-//     Xform const x2(ot6);
-//     Real const dis2 = x1.t.distance_squared(x2.t);
-//     Mat const r = x1.R * x2.R.transposed();
-//     Real const cos_theta = (r.xx()+r.yy()+r.zz()-1.0)/2.0;
-//     // Real sin2_theta = 1.0-cos_theta*cos_theta;
-//     Real const theta = degrees(acos(cos_theta));
-//     Real const angdis2 = ang2dis*ang2dis*theta*theta;
-//     if( dis2+angdis2 <= radius*radius ){
-//      results.push_back(sm);
-//      if(++count_this_rt>=option[mh::dump::limit_per_pair]()) return;
-//     }
-//    }
-//   }
-//   }
-//  }
+
 ostream & operator << (ostream & out, MotifHash const & x){
 	numeric::geometry::BoundingBox<numeric::xyzVector<numeric::Real> > const & bb(x.hasher_.bounding_box() );
 	Real3 const & eo( x.hasher_.euler_offsets() );
@@ -1578,7 +1514,7 @@ void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 		pose2_ = pose2op;
 	}
 
-	/*intra_clash1_ = intra_clash2_ =*/ inter_clash1_ = inter_clash2_ = NULL;
+	inter_clash1_ = inter_clash2_ = NULL;
 	auto_clash_ = false;
 	match_ss1_ = option[mh::match::ss1].user() ? option[mh::match::ss1]() : option[mh::match::ss]();
 	match_ss2_ = option[mh::match::ss2].user() ? option[mh::match::ss2]() : option[mh::match::ss]();
@@ -1617,6 +1553,7 @@ void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 	runtime_assert(useres1_.size()==pose1_->n_residue());
 	runtime_assert(useres2_.size()==pose2_->n_residue());
 }
+
 std::ostream & operator<<(std::ostream & out, ResPairMotifQuery const & opt){
 	out << "ResPairMotifQuery(";
 	out << " same_pose=" << (opt.pose1_==opt.pose2_);
@@ -1659,10 +1596,12 @@ MotifHits MotifHash::get_matching_motifs( ResPairMotifQuery const & opt ) const 
 	this->get_matching_motifs(opt,h);
 	return h;
 }
+
 int MotifHash::get_matching_motifs( ResPairMotifQuery const & opt, MotifHits & hits ) const{
 	MotifHits dummy;
 	return get_matching_motifs(opt,hits,dummy);
 }
+
 int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hits, MotifHits & newhits ) const {
 	// std::cout << "PING /Users/sheffler/rosetta/scheme/source/src/core/scoring/motif/motif_hash_stuff.cc/motif_hash_stuff.cc:1678" << std::endl;  runtime_assert(motif_umap_.size()>0);
 	runtime_assert(type_!=RPM_Type_NONE);
@@ -1689,7 +1628,6 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 		res_end1 = sym_info->num_total_residues_without_pseudo();
 		res_end2 = sym_info->num_independent_residues();
 		if ( multicomponent ) {
-			// runtime_assert( sym_dof_names(pose1).size() == 2 );
 			if ( sym_dof_names(pose1).size() != 2 ) {
 				cout << "WARNING: more than two symdofname, you better know what you're doing..." << endl;
 			}
@@ -1708,7 +1646,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 		if ( !samepose ) ccheck2bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,PoseCoordPickMode_BB,2.8) );
 		else ccheck2bb32 = ccheck1bb32;
 	}
-	// int nbadmotifs = 0;
+
 	for ( Size ir = res_begin1; ir <= res_end1; ++ir ) {
 
 		if ( !useres1[ir] ) { /*<<"not useres1"<<endl;*/ continue; }
@@ -1749,9 +1687,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 			}
 			// cout << "MOTIFS " << motifs.size() << endl;
 			for ( ResPairMotifs::const_iterator i = motifs.begin(); i != motifs.end(); ++i ) {
-				// if( i->hb_bb() > 0 ) continue;
-
-
+				
 				///////////////////////////////////// hack intended to ignore strand pairs ////////////////////////////////////////
 				if ( i->ss1()=='E' && i->ss2()=='E' && dsqCA < 10025.0 ) continue;
 				///////////////////////////////////////////////////////////////////////////////
@@ -1766,7 +1702,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 				i->fill_pose_with_motif(h.mpose());
 				h.rms = align_motif_pose_super(h.mpose(),pose1,ir,pose2,jr,i->type());
 				if ( h.rms > option[mh::dump::max_rms]() ) continue;
-				// compuse chi rmsd if same residues, weight chi1 higest, etc...
+				// compute chi rmsd if same residues, weight chi1 highest, etc...
 				if ( i->aa1() == aa1 && i->aa2() == aa2 ) {
 					Real chirms = 0.0, totchi = 0.0;
 					if ( i->type1()==RM_BB ) {
@@ -1807,9 +1743,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 				bool motif_clashes = false;
 				if ( opt.clash_check() ) {
 
-					Size /*nst1ra=6,nst2ra=6,testing server complained*/nst1er=6,nst2er=6;
-					/*if(i->aa1()=='P') nst1ra = 999;
-					if(i->aa2()=='P') nst2ra = 999;*/
+					Size nst1er=6,nst2er=6;
 					if ( ccheck1bb32 && ccheck2bb32 ) {
 						if ( !samepose ) {
 							for ( Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia ) { if ( ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,1)),ir) ) { motif_clashes = true; }} if ( motif_clashes ) continue;
@@ -2118,7 +2052,6 @@ bool XformScore::read_binary(XformScoreOP & xs, vector1<string> const & fnames, 
 	TR << endl;
 	return true;
 }
-
 
 void XformScore::print_scores(ostream & out, std::string const tag) const {
 	for ( ScoreMap::const_iterator i = scores_.begin(); i != scores_.end(); ++i ) {

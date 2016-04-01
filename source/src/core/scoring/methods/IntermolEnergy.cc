@@ -110,10 +110,6 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 	utility::vector1< std::pair< Size, Size > > chain_connections = get_chain_connections( pose );
 	utility::vector1< Size > connection_domains = get_connection_domains( chain_connections, num_chains  );
 
-	// there used to be an alternative way to calculate # chains frozen, but I discovered
-	// a bug in it & deprecated it -- rhiju.
-	// runtime_assert( num_subgraphs == max( connection_domains ) );
-
 	return ( num_chains - max( connection_domains ) );
 }
 

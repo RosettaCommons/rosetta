@@ -118,26 +118,28 @@ MgKnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformati
 
 /////////////////////////////////
 core::chemical::rna::GaussianParameter
-MgKnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
+MgKnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter(
+	core::conformation::Residue const & rsd,
+	Size const j
+) const {
 
-	if ( rsd.is_RNA() ) {
+	if ( !rsd.is_RNA() ) return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
 
-		std::string const atom_type_name = rsd.atom_type( j ).name();
-
-		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
-			return gaussian_parameter_phosphate_oxygen_indirect_;
-		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
-			return gaussian_parameter_imine_indirect_;
-		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
-			return gaussian_parameter_exocyclic_oxygen_indirect_;
-		} else if ( rsd.atom_name( j ) == " O2'" ) {
-			return gaussian_parameter_o2prime_indirect_;
-		} else if ( rsd.atom_name( j ) == " O  " ) {
-			return gaussian_parameter_water_oxygen_;
-		}
+	std::string const atom_type_name = rsd.atom_type( j ).name();
+	
+	// This information should probably go into a special RNA_Mg_Potential.cc function or something.
+	if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
+		return gaussian_parameter_phosphate_oxygen_indirect_;
+	} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
+		return gaussian_parameter_imine_indirect_;
+	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
+		return gaussian_parameter_exocyclic_oxygen_indirect_;
+	} else if ( rsd.atom_name( j ) == " O2'" ) {
+		return gaussian_parameter_o2prime_indirect_;
+	} else if ( rsd.atom_name( j ) == " O  " ) {
+		return gaussian_parameter_water_oxygen_;
 	}
-
+	
 	return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
 }
 
@@ -224,21 +226,17 @@ MgKnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) co
 		atom_numbers[ i ].clear();
 
 		if ( rsd.is_RNA() ) {
-
-
 			// we go over all atoms, because we are putting in some repulsions (from polar hydrogens & phosphorus)
 			for ( Size j = 1; j <= rsd.natoms(); j++ ) {
 				core::chemical::rna::GaussianParameter gaussian_parameter = get_mg_potential_gaussian_parameter( rsd, j );
 				//tr << j << rsd.atom_name(j) << " ==> gaussian parameter " << gaussian_parameter.center << std::endl;
 				if ( gaussian_parameter.center > 0.0 ) atom_numbers[ i ].push_back( j );
 			}
-
 		} else if ( rsd.name3() == " MG" ) {
 			is_magnesium[ i ] = true;
 		}
 
 		//tr << rsd.name3() << ' ' << i << ' ' << is_magnesium[ i ] << std::endl;
-
 	}
 }
 

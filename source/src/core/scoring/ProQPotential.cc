@@ -15,11 +15,8 @@
 // Unit headers
 #include <core/scoring/ProQPotential.hh>
 #include <core/scoring/ProQPotential.fwd.hh>
-//#include <core/scoring/MembraneTopology.hh>
 
 // Package headers
-
-//#include <core/scoring/EnvPairPotential.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -67,15 +64,8 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.ProQPotential" );
 ProQPotential::ProQPotential()
 {
 	//  load the data
-	// Size const num_models( 5 );
-	//Size const num_features( 260 );
 	Size const num_head( 11 );
-	//Size const num_features_=260;
-	//Size const num_features_proq2_=174;
-
-
-	//Size num_models_=5;
-
+	
 	cross_val_=false;
 
 
@@ -86,10 +76,7 @@ ProQPotential::ProQPotential()
 
 
 	std::string tag,line;
-	//std::string aa;
 	Size pos;
-	// chemical::AA aa;
-	//
 	linear_weights_.dimension(num_models_,num_features_proqm_)=0;
 	b_.dimension(num_models_);
 	utility::io::izstream stream;
@@ -128,12 +115,9 @@ ProQPotential::ProQPotential()
 
 	linear_weights_proq2_.dimension(num_models_,num_features_proq2_);
 	b_proq2_.dimension(num_models_);
-	//utility::io::izstream stream;
 	for ( Size i=1; i<= num_models_; ++i ) {
 		std::ostringstream i_stream;
 		i_stream << i;;
-		//std::cout << file << "\n";
-		//utility::io::izstream stream;
 		std::string file("scoring/ProQ/ProQ2_model." + i_stream.str() + ".linear_retrained_for_rosetta"); //_retrained_for_rosetta");
 		basic::database::open( stream, file);
 		for ( Size j=1; j<=num_features_proq2_+num_head; ++j ) {
@@ -169,21 +153,18 @@ void
 ProQPotential::score(pose::Pose & pose,
 	ObjexxFCL::FArray2D< Real > & feature_vector,
 	ObjexxFCL::FArray1D< Real > & score,
-	bool ProQ2) const
-{
-
+	bool ProQ2
+) const {
 	Size nres=pose.total_residue();
 	Size n=1; //if position in sequence.
 	if ( !ProQ2 ) {
 		for ( Size l=1; l<=nres; ++l ) {
 			if ( pose.residue(l).type().aa() == core::chemical::aa_vrt ) continue;
-			//if(pose.residue(l).is_virtual_residue()) continue;
 			score(n)=0;
 			for ( Size i=1; i<=num_models_; ++i ) {
 				if ( cross_val_ && i!=svm_model_ ) continue;
 				Real pred(-b_(i));
 				for ( Size k=1; k<=num_features_proqm_; ++k ) {
-					//Real factor=feature_vector(l,k)*linear_weights_(i,k);
 					//std::cout << "SVMcalc: " << l << " " << i << " " << k << " " << feature_vector(l,k) << " " << linear_weights_(i,k) << " " << pred << std::endl;
 					pred+=feature_vector(l,k)*linear_weights_(i,k);
 				}
@@ -196,18 +177,15 @@ ProQPotential::score(pose::Pose & pose,
 		}
 	} else { //ProQ2
 		for ( Size l=1; l<=nres; ++l ) {
-			//if(pose.residue(l).is_virtual_residue()) continue; //This was not true for some VRT residue !
 			//std::cout << l << " " << pose.residue(l).type().aa() << std::endl;
 			if ( pose.residue(l).type().aa() == core::chemical::aa_vrt ) continue;
 			//std::cout << "PASSED: " << l << std::endl;
-			//if(pose.residue(l).name().compare("VRT")==0) continue;
 			//std::cout << pose.residue(l) << "dimension " << dim1 << " " << dim2 << "l: " << l << " n: " << l << " virtual: " << pose.residue(l).is_virtual_residue() << " virt_from_name: " << pose.residue(l).name().compare("VRT") << " res: " << pose.residue(l).name3() << " " << pose.residue(l).name() << std::endl;
 			score(n)=0;
 			for ( Size i=1; i<=num_models_; ++i ) {
 				if ( cross_val_ && i!=svm_model_ ) continue;
 				Real pred(-b_proq2_(i));
 				for ( Size k=1; k<=num_features_proq2_; ++k ) {
-					//Real factor=feature_vector(l,k)*linear_weights_proq2_(i,k);
 					//std::cout << "SVMcalc: " << l << " " << i << " " << k << " " << feature_vector(l,k) << " " << linear_weights_(i,k) << " " << pred << std::endl;
 					pred+=feature_vector(l,k)*linear_weights_proq2_(i,k);
 				}
@@ -218,9 +196,7 @@ ProQPotential::score(pose::Pose & pose,
 			}
 			n++;
 		}
-
 	}
-
 	//std::cout << "IN SCORE: " << b_.size() << " " << feature_vector.size() << std::endl;
 	//score/=num_models_; //#0.750107;
 }

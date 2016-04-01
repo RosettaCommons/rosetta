@@ -42,7 +42,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-
 // Utility headers
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
@@ -73,7 +72,6 @@ ScoreTypes SAXSEnergyCreator::score_types_for_method() const {
 }
 
 methods::EnergyMethodOP SAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-
 	methods::EnergyMethodCreatorOP creator( new SAXSEnergyCreatorCEN );
 	return methods::EnergyMethodOP( new SAXSEnergy(SAXSEnergy::cen_cfg_file_,
 		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),
@@ -186,18 +184,19 @@ Real SAXSEnergy::total_energy(const pose::Pose & pose) const {
 	return compute_chi(pose_intensities_,reference_intensities_);
 }
 
-void SAXSEnergy::finalize_total_energy(pose::Pose & pose, ScoreFunction const &,
-	EnergyMap & totals ) const {
+void SAXSEnergy::finalize_total_energy(
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
+) const {
 
 	// PROF_START( basic::SAXS );
 	if ( q_.size() != pose_intensities_.size() ) {
 		pose_intensities_.resize( q_.size() );
 	}
 	compute_intensities(pose,pose_intensities_);
-	// totals[ saxs_score_variant_ ] = compute_L1(pose_intensities,reference_intensities_);
 	totals[ saxs_score_variant_ ] = compute_chi(pose_intensities_,reference_intensities_);
 	// PROF_STOP( basic::SAXS );
-
 }
 
 void SAXSEnergy::read_spectrum(std::string & file_name,utility::vector1<Real> & q,utility::vector1<Real> & I) const {
@@ -327,8 +326,6 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 }
 
 void SAXSEnergy::compute_distance_histogram(const core::pose::Pose & pose) const {
-
-
 	for ( Size i=1; i<=ff_ops_.size(); i++ ) {
 		for ( Size j=1; j<=ff_ops_.size(); j++ ) {
 			dhist_[i][j]->zeros();
@@ -353,12 +350,9 @@ void SAXSEnergy::compute_distance_histogram(const core::pose::Pose & pose) const
 			}
 		}
 	}
-
 }
 
 void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vector1<Real> & result) const {
-
-
 	SinXOverX *sin_x_by_x_ = SinXOverX::get_instance();
 
 	if ( ff_ops_.size() == 0 ) rehash_form_factors(pose);
@@ -367,7 +361,6 @@ void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vect
 	zero_ = compute_zero_intensity();
 
 	for ( Size i_s=1; i_s<=q_.size(); ++i_s ) {
-
 		Real sum(0);
 		Real val_s = q_[i_s];
 		for ( Size i = 1; i <= ff_ops_.size(); ++i ) {
@@ -383,7 +376,6 @@ void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vect
 				}
 			}
 		}
-
 		//      trSAXSEnergy.Trace <<std::setw(8)<<std::setprecision(4)<<val_s<<" "
 		//  << std::setw(8)<<std::setprecision(4)<<sum<<std::endl;
 		result[i_s] = sum;
@@ -429,9 +421,7 @@ Real SAXSEnergy::compute_L1(utility::vector1<Real> const & saxs_scored, utility:
 }
 
 Real SAXSEnergy::compute_chi(utility::vector1<Real> const & saxs_scored, utility::vector1<Real> const & saxs_reference) const {
-
 	Real chi = 0;
-	//Real sum = 0;
 	debug_assert( saxs_scored.size() == saxs_reference.size() );
 
 	trSAXSEnergy.Trace << "\nComputing SAXS energy:\n";

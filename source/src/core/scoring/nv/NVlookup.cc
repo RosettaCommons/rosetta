@@ -43,7 +43,6 @@ using namespace numeric::interpolation::spline;
 
 void NVlookup::set_up_spline_from_data(core::chemical::AA const & aa_type, utility::vector1<core::Real> const & bin_centers, utility::vector1<core::Real> const & data)
 {
-
 	debug_assert(bin_centers.size() == data.size()); //You need to have the same number of bin centers and spline points
 
 	Real lower_bound_x = 0;
@@ -63,11 +62,7 @@ void NVlookup::set_up_spline_from_data(core::chemical::AA const & aa_type, utili
 		spline.add_known_value(x_value,y_value);
 	}
 
-	//InterpolatorOP interpolator = spline.get_interpolator();
-
 	lookup_table_[aa_type] = spline.get_interpolator();
-
-
 }
 
 NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_canonical_aas,0)
@@ -108,25 +103,20 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 	}
 
 	infile.close();
-
 }
+
 //Given a neighbor vector score and a single letter AA abbrev, get the potential from the lookup table
 core::Real NVlookup::get_potentials(core::chemical::AA const & aa_type, core::Real const & score) const
 {
-
-	if ( aa_type <= core::chemical::num_canonical_aas ) {
-		InterpolatorOP row(lookup_table_[aa_type]);
-		Real potential_energy;
-		Real delta_potential_energy;
-
-		row->interpolate(score,potential_energy,delta_potential_energy);
-
-		return potential_energy;
-	}
-
-	return 0;
-
-
+	if ( aa_type > core::chemical::num_canonical_aas ) return 0;
+	
+	InterpolatorOP row(lookup_table_[aa_type]);
+	Real potential_energy;
+	Real delta_potential_energy;
+	
+	row->interpolate(score,potential_energy,delta_potential_energy);
+	
+	return potential_energy;
 }
 
 } //NVscore

@@ -225,7 +225,6 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	cst_set.add_constraint( angle1 ); //Note to Rhiju (12/25/2011): Previously in Trunk version, angle1 was not added to the cst_set!
 	cst_set.add_constraint( angle2 );
 	cst_set.add_constraint( angle3 );
-
 }
 
 

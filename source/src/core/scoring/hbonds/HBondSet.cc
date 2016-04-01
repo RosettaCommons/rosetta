@@ -312,7 +312,6 @@ HBond::show( std::ostream & out ) const
 	out << acc_atm_ << " ";
 	out << energy_ << " ";
 	out << weight_ << std::endl;
-	//out << deriv_ << std::endl;
 }
 
 void
@@ -399,13 +398,7 @@ operator==(HBond const & a, HBond const & b)
 		a.acc_res_                      == b.acc_res_                     &&
 		a.eval_tuple_                   == b.eval_tuple_                  &&
 		a.energy_                       == b.energy_                      &&
-		a.weight_                       == b.weight_                      ); /*&&
-	a.deriv_.first[0]               == b.deriv_.first[0]              &&
-	a.deriv_.first[1]               == b.deriv_.first[1]              &&
-	a.deriv_.first[2]               == b.deriv_.first[2]              &&
-	a.deriv_.second[0]              == b.deriv_.second[0]             &&
-	a.deriv_.second[1]              == b.deriv_.second[1]             &&
-	a.deriv_.second[2]              == b.deriv_.second[2]             );*/
+		a.weight_                       == b.weight_                      );
 }
 
 
@@ -492,7 +485,6 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 	basic::datacache::CacheableData(),
 	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
-
 	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
@@ -519,7 +511,6 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask 
 	basic::datacache::CacheableData(),
 	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
-
 	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
@@ -751,16 +742,6 @@ HBondSet::clear()
 	nbrs_.clear();
 }
 
-/*
-/// @details Leave the backbone_backbone_donor_ and backbone_backbone_acceptor_ arrays
-/// intact
-void
-HBondSet::clear_hbonds()
-{
-hbonds_.clear();
-}
-*/
-
 /// \brief Resize bb info arrays
 void
 HBondSet::resize_bb_donor_acceptor_arrays( Size const new_dimension )
@@ -811,15 +792,12 @@ HBondSet::setup_for_residue_pair_energies(
 	pose::Pose const & pose,
 	bool const calculate_derivative /*= false*/,
 	bool const backbone_only /*= true*/
-)
-{
-
+) {
 	// now fill the hbond set with only bb-bb hbonds
 	// in the process we fill the arrays that keep track of which protein bb groups are making a
 	// bb-bb hbond
 	//
 	// sc-bb hbonds with these groups are disallowed
-
 
 	SSWeightParameters ssdep;
 	ssdep.ssdep_ = options_->length_dependent_srbb();
@@ -838,7 +816,6 @@ HBondSet::setup_for_residue_pair_energies(
 
 	nbrs_.resize( pose.total_residue() );
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		//nbrs_[i] = tenA_neighbor_graph.get_node(i)->num_neighbors_counting_self();
 
 		{ // hacky thing here until we update to current svn
 			nbrs_[i] = 1;
@@ -849,7 +826,6 @@ HBondSet::setup_for_residue_pair_energies(
 				Size const neighbor_id( (*ir)->get_other_ind( i ) );
 				// Don't include VRTs in neighbor count
 				if ( pose.residue( neighbor_id ).aa() == core::chemical::aa_vrt ) continue;
-				//chemical::ResidueType const & nbr_rsd( pose.residue_type( neighbor_id ) );
 				nbrs_[i] += 1;
 
 			}
@@ -862,11 +838,6 @@ HBondSet::setup_for_residue_pair_energies(
 	// the bb arrays ought to be resized once at the beginning of this function
 	// and not resized to 0 for later push_back operations.... such a waste.
 	resize_bb_donor_acceptor_arrays( pose.total_residue() );
-
-	// this is a bug:
-	//std::fill( backbone_backbone_donor_.begin(), backbone_backbone_donor_.end(), false );
-	//std::fill( backbone_backbone_acceptor_.begin(), backbone_backbone_acceptor_.end(), false );
-
 }
 
 HBondOptions const &
@@ -963,7 +934,6 @@ HBondSet::show(
 			first_found = false;
 		}
 	}
-
 }
 
 

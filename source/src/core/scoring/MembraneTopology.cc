@@ -210,21 +210,16 @@ MembraneTopology::initialize(std::string const & spanfile)
 		} else {
 			TR << "unable to open " << lipofile << std::endl;
 		}
-
-
 	}
-
-
+	
 	init_=true;
 	//pba
 	initialized_=true;
-	return;
 }
 
 void
 MembraneTopology::shift_span( Size shift )
 {
-
 	for ( Size i=1; i<=total_tmhelix_; ++i ) {
 		span_(i,1)+=shift;
 		span_(i,2)+=shift;
@@ -235,20 +230,6 @@ MembraneTopology::shift_span( Size shift )
 		}
 	}
 }
-
-//void
-//MembraneTopology::attach_to_pose(pose::Pose & pose)
-//{
-// if ( pose.data().has( basic::MEMBRANE_TOPOLOGY ) ) {
-//
-//  core::scoring::MembraneTopologyOP topology = *this; //new core::scoring::MembraneTopology;
-//  return *( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( basic::MEMBRANE_TOPOLOGY )() ));
-// }
-// else
-// core::scoring::MembraneTopologyOP topology = *this;
-// pose.data().set( basic::MEMBRANE_TOPOLOGY, *this); //topology );
-
-//}
 
 void
 MembraneTopology::print() const
@@ -263,7 +244,6 @@ MembraneTopology::print() const
 void
 MembraneTopology::get_subset( utility::vector1< Size > & TMH_list, MembraneTopology & src)
 {
-
 	// Assume list is sorted for now...
 	// Will add a sorter here later....
 
@@ -286,18 +266,13 @@ MembraneTopology::get_subset( utility::vector1< Size > & TMH_list, MembraneTopol
 			relative_tmh_ori_(i,j)=src.relative_tmh_ori_(TMH_list[i],TMH_list[j]);
 		}
 	}
-
-
 	total_tmhelix_=TMH_list.size();
-
-
 }
+
 //pbadebug
 MembraneTopology const &
 MembraneTopology_from_pose( pose::Pose const & pose )
 {
-	// ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-
 	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) );
 	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
@@ -308,8 +283,6 @@ MembraneTopology_from_pose( pose::Pose const & pose )
 MembraneTopology &
 nonconst_MembraneTopology_from_pose( pose::Pose & pose )
 {
-	// ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
 		return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 	}
@@ -318,14 +291,7 @@ nonconst_MembraneTopology_from_pose( pose::Pose & pose )
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, membrane_topology );
 	return *membrane_topology;
 }
-//pbadebug
-/*
-MembraneTopology &
-MembraneTopology_from_pose( pose::Pose const & pose ) const
-{
-return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( basic::MEMBRANE_TOPOLOGY )() ));
-}
-*/
+
 }
 }
 

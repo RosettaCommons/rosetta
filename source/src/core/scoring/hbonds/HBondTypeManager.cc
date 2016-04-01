@@ -72,7 +72,6 @@ HBondTypeManager::setup_type_names()
 	if ( initialized_ ) return;
 	initialized_ = true;
 
-
 	name2weight_type_["hbw_NONE"] = hbw_NONE;
 	name2weight_type_["hbw_SR_BB"] = hbw_SR_BB;
 	name2weight_type_["hbw_LR_BB"] = hbw_LR_BB;

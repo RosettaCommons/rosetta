@@ -67,8 +67,7 @@ PoseBallsLite::PoseBallsLite(
 	core::pose::Pose const & pose,
 	core::Size Hmode,
 	bool /*ignore_water*/
-)
-{
+) {
 	using namespace numeric;
 
 	// std::cerr << "PoseBallsLite.cc:67 (" << pose.total_residue() << ")" << std::endl;
@@ -123,8 +122,7 @@ PoseBallsLite::PoseBallsLite(
 PoseBallsLite::PoseBallsLite(
 	core::pose::Pose const & pose,
 	core::id::AtomID_Mask const & whichatoms
-)
-{
+) {
 	using namespace numeric;
 
 	// initialize index and vars

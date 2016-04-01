@@ -70,14 +70,9 @@ SurfaceEnergies::operator = ( Energies const & rhs )
 	total_residue_ = surf_rhs.total_residue_;
 	non_surface_ranges_ = surf_rhs.non_surface_ranges_;
 	is_surface_ = surf_rhs.is_surface_;
-
 	neighbor_cutoff_ = surf_rhs.neighbor_cutoff_;
-	//surface_grid_ = surf_rhs.surface_grid_;
-	//surf_bb_ = surf_rhs.surf_bb_;
-	//surf_dim_ = surf_rhs.surf_dim_;
-
+	
 	parent::operator = ( rhs );
-
 	return *this;
 }
 
@@ -161,93 +156,11 @@ SurfaceEnergies::fill_point_graph( pose::Pose const & pose, conformation::PointG
 
 	Distance const max_pair_radius = pose::pose_max_nbr_radius( pose );
 	Distance const energy_neighbor_cutoff = 2 * max_pair_radius + get_scorefxn_info().max_atomic_interaction_distance();
-
 	Distance const context_cutoff = max_context_neighbor_cutoff();
-
 	Distance const neighbor_cutoff = numeric::max( energy_neighbor_cutoff, context_cutoff );
 
-	//if ( neighbor_cutoff != neighbor_cutoff_ ) { // the surface grid is out of date!
-	// prepare_surface_grid( pg, neighbor_cutoff );
-	//}
-
 	core::conformation::find_neighbors_naive_surface<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, neighbor_cutoff, non_surface_ranges_, is_surface_ );
-
-
-	//core::conformation::find_neighbors_octree_surface<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>(
-	//pg, neighbor_cutoff, non_surface_ranges_, is_surface_, surface_grid_, surf_bb_, surf_dim_ );
 }
-
-/// @brief Create a new surface grid, bounding box and dimension for the surface residues.
-/// This might get called if the range on the score function changes or if the surface
-/// moves.  (NOTE: currently not prepared to handle the case where the surface moves!)
-/*void
-SurfaceEnergies::prepare_surface_grid( conformation::PointGraphOP pg, Real neighbor_cutoff ) const
-{
-neighbor_cutoff_ = neighbor_cutoff;
-
-core::Size const n_points( pg->num_vertices() );
-
-//local copy
-utility::vector1< PointPosition > points( n_points );
-for ( core::Size ii = 1; ii <= n_points; ++ii ) { points[ ii ] = pg->get_vertex( ii ).data().xyz(); }
-
-bool first_surface_residue_found = false;
-for ( Size ii = 1; ii <= total_residue_; ++ii ) {
-if ( ! is_surface_[ ii ] ) continue;
-if ( first_surface_residue_found ) {
-surf_bb_.add( points[ ii ] );
-} else {
-surf_bb_.set_lower( points[ ii ] );
-surf_bb_.set_upper( points[ ii ] );
-first_surface_residue_found = true;
-}
-}
-
-core::Size const epsilon_multiplier( 10 ); // Increase this if assert failures hit in finding a point's cube
-core::Real const epsilon( epsilon_multiplier * std::numeric_limits< core::Real >::epsilon() );
-surf_bb_.set_lower( surf_bb_.lower() - epsilon ); // Expand bounding box to assure all points get assigned cubes in it
-surf_bb_.set_upper( surf_bb_.upper() + epsilon );
-
-// Set cube size and dimensions within bounding box
-core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
-// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
-core::Real const side( side_factor * neighbor_cutoff );
-debug_assert( side > core::Real( 0 ) );
-core::Real const side_inv( core::Real( 1 ) / side );
-surf_dim_ = core::conformation::CubeKey(
-core::Size( std::ceil( ( surf_bb_.upper().x() - surf_bb_.lower().x() ) * side_inv ) ),
-core::Size( std::ceil( ( surf_bb_.upper().y() - surf_bb_.lower().y() ) * side_inv ) ),
-core::Size( std::ceil( ( surf_bb_.upper().z() - surf_bb_.lower().z() ) * side_inv ) ));
-surface_grid_.clear();
-for ( Size ii = 1; ii <= total_residue_; ++ii ) {
-if ( ! is_surface_[ ii ] ) continue;
-PointPosition const pp( points[ ii ]);
-
-// Find the residue's cube: Cube coords are indexed from 0 to cube_dim -1
-core::conformation::CubeKey const cube_key(
-core::Size( ( pp.x() - surf_bb_.lower().x() ) * side_inv ),
-core::Size( ( pp.y() - surf_bb_.lower().y() ) * side_inv ),
-core::Size( ( pp.z() - surf_bb_.lower().z() ) * side_inv )
-);
-
-// Check that it is within the expanded bounding box
-debug_assert( cube_key.x() < surf_dim_.x() );
-debug_assert( cube_key.y() < surf_dim_.y() );
-debug_assert( cube_key.z() < surf_dim_.z() );
-
-// Add the point's position to the cube's collection
-surface_grid_[ cube_key ].push_back( ii ); // Creates the cube if it doesn't exist yet
-}
-
-}
-
-/// @brief Wipe everything held in the surface grid, ensuring that in the next score function
-/// evaluation, a new grid will be computed.
-void
-SurfaceEnergies::reset_surface_grid() const
-{
-
-} */
 
 
 } // solid_surface

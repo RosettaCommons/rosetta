@@ -77,8 +77,7 @@ TMscore::set_default()
 void
 TMscore::convert_FArray2D_to_vector0( FArray2D< core::Real > const & p1,
 	utility::vector0< core::Vector > &xyz
-)
-{
+) {
 	core::Size n( p1.size()/3 );
 	xyz.resize( n , core::Vector(0,0,0));
 	for ( core::Size i = 0; i < n; ++i ) {
@@ -135,13 +134,12 @@ TMscore::apply( FArray2D< core::Real > const &p2 )
 }
 
 void
-TMscore::apply( FArray2D< core::Real > const &p2,
+TMscore::apply(
+	FArray2D< core::Real > const &p2,
 	utility::vector0< core::Vector > &u,
 	core::Vector &t,
-	bool const get_ut )
-
-{
-
+	bool const get_ut
+) {
 	// Minimize usage of FArray2D... could be easily converted into other array type
 	convert_FArray2D_to_vector0( p2, xyzb_ );
 	runtime_assert( xyza_.size() == xyzb_.size() );
@@ -205,18 +203,16 @@ TMscore::apply( FArray2D< core::Real > const &p2,
 	if ( get_ut ) {
 		utility::vector0< core::Vector > vt = get_transrot_ref( k_ali0 , u, t );
 	}
-
-	return;
-
 } /// end apply
 
 /// 1, collect those residues with dis<d
 /// 2. calculate score_GDT, score_maxsub, score_TM
 utility::vector0< core::Size >
-TMscore::score_fun( core::Real const d,
+TMscore::score_fun(
+	core::Real const d,
 	utility::vector0< core::Vector > const vt,
-	TMscoreStore &score ) const
-{
+	TMscoreStore &score
+) const {
 	utility::vector0< core::Size > i_ali;
 	core::Real d_tmp( d );
 
@@ -251,19 +247,18 @@ TMscore::score_fun( core::Real const d,
 }
 
 void
-TMscore::extend( core::Real const &d,
+TMscore::extend(
+	core::Real const &d,
 	TMscoreStore &score,
 	utility::vector0< core::Vector > &u,
 	core::Vector &t,
 	utility::vector0< core::Size > &i_ali,
 	utility::vector0< core::Size > &k_ali0
-) const
-{
+) const {
 
 	// iterative parameters;
 	core::Size const n_it( 20 );
-	// dummy
-
+	
 	// Iterate until
 	// 1) all the residues are matched
 	// 2) or iteration exceed
@@ -293,15 +288,14 @@ TMscore::extend( core::Real const &d,
 	}
 
 	TR.Debug << "extension done after " << it << " with condition" << (it == n_it) << std::endl;
-	return;
 }
 
 utility::vector0< core::Vector >
-TMscore::get_transrot_ref( utility::vector0< core::Size > const &k_ali,
+TMscore::get_transrot_ref(
+	utility::vector0< core::Size > const &k_ali,
 	utility::vector0< core::Vector > &u,
 	core::Vector &t
-) const
-{
+) const {
 	// 1. Let's get u,t first
 	// Kabsch using Rosetta built-in function
 	{

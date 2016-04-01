@@ -125,7 +125,6 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-
 	/// new mechanism: set multiple weights using string vector option
 	if ( option[ score::set_weights ].user() ) {
 		std::string const errmsg("proper format for -set_weights is a list of paired strings, e.g: '-set_weights fa_atr 0.6 -fa_rep 0.55 -fa_sol 0.9' ");
@@ -140,58 +139,55 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 		}
 	}
 
-
 	if ( option[ abinitio::rg_reweight ].user() ) {
 		scorefxn->set_weight( rg, scorefxn->get_weight( rg ) * option[ abinitio::rg_reweight ]() );
 	}
 	// offset reference energies using user options, for example: -score:ref_offsets TRP 0.9 HIS 0.3
-	if ( option[ score::ref_offsets ].user() || option[ score::ref_offset ].user() ) {
-
-		// get the ref weights from the EnergyMethodOptions object
-		methods::EnergyMethodOptions energy_method_options(scorefxn->energy_method_options());
-		if ( !energy_method_options.has_method_weights(ref) ) {
-			// utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
-		} else {
-			utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
-
-			if ( option[ score::ref_offset ].user() ) {
-				Real const offset = option[ score::ref_offset ]();
-				for ( Size n = 1; n <= ref_weights.size(); n++ ) {
-					ref_weights[ n ] += offset;
-				}
-			} else {
-				runtime_assert(  option[ score::ref_offsets ].user() );
-				// get the offsets vector and make sure it contains pairs
-				utility::vector1<std::string> const & ref_offsets( option[ score::ref_offsets ]() );
-				if ( ref_offsets.size() % 2 != 0 ) {
-					utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
-				}
-
-				// iterate over all pairs
-				for ( utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
-						iter != iter_end; ++iter ) {
-					// get the aa type from the pair
-					std::istringstream aa_iss(*iter);
-					core::chemical::AA aa;
-					if ( !(aa_iss >> aa) ) {
-						utility_exit_with_message(aa_iss.str()+" is not a valid 3 character residue type for -score:ref_offsets");
-					}
-					// get the offset from the pair
-					std::istringstream offset_iss(*(++iter));
-					core::Real offset;
-					if ( !(offset_iss >> offset) ) {
-						utility_exit_with_message(offset_iss.str()+" is not a valid offset for -score:ref_offsets");
-					}
-					// offset the weight
-					ref_weights[aa] += offset;
-				}
+	if ( !option[ score::ref_offsets ].user() && !option[ score::ref_offset ].user() ) return;
+	
+	// get the ref weights from the EnergyMethodOptions object
+	methods::EnergyMethodOptions energy_method_options(scorefxn->energy_method_options());
+	if ( !energy_method_options.has_method_weights(ref) ) {
+		// utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
+	} else {
+		utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
+		
+		if ( option[ score::ref_offset ].user() ) {
+			Real const offset = option[ score::ref_offset ]();
+			for ( Size n = 1; n <= ref_weights.size(); n++ ) {
+				ref_weights[ n ] += offset;
 			}
-			// load the ref weights back into the EnergyMethodOptions object
-			energy_method_options.set_method_weights(ref, ref_weights);
-			scorefxn->set_energy_method_options(energy_method_options);
+		} else {
+			runtime_assert(  option[ score::ref_offsets ].user() );
+			// get the offsets vector and make sure it contains pairs
+			utility::vector1<std::string> const & ref_offsets( option[ score::ref_offsets ]() );
+			if ( ref_offsets.size() % 2 != 0 ) {
+				utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
+			}
+			
+			// iterate over all pairs
+			for ( utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
+				 iter != iter_end; ++iter ) {
+				// get the aa type from the pair
+				std::istringstream aa_iss(*iter);
+				core::chemical::AA aa;
+				if ( !(aa_iss >> aa) ) {
+					utility_exit_with_message(aa_iss.str()+" is not a valid 3 character residue type for -score:ref_offsets");
+				}
+				// get the offset from the pair
+				std::istringstream offset_iss(*(++iter));
+				core::Real offset;
+				if ( !(offset_iss >> offset) ) {
+					utility_exit_with_message(offset_iss.str()+" is not a valid offset for -score:ref_offsets");
+				}
+				// offset the weight
+				ref_weights[aa] += offset;
+			}
 		}
+		// load the ref weights back into the EnergyMethodOptions object
+		energy_method_options.set_method_weights(ref, ref_weights);
+		scorefxn->set_energy_method_options(energy_method_options);
 	}
-
 }
 
 
@@ -227,18 +223,14 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-	//if( option[ score::empty ]() || option[ abinitio::membrane ]() /*fullatom not implemented for membrane yet */) return scorefxn;
-
 	if ( option[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
 	std::string weight_set = option[ score::weights ];
 	utility::vector1< std::string > patch_tags = option[ score::patch ]();
 
 	if ( !option[ score::weights ].user() && !is_fullatom ) {
-
 		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
 		weight_set = CENTROID_WTS;
-
 	} else {
 
 		// Default score is talaris2014 if the user has not specified a score weights file or a patch file
@@ -269,7 +261,6 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 			}
 		}
 		//tr << "get_score_function2: weight set " << weight_set << std::endl;
-
 	}
 
 	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << utility::CSI_Green << weight_set << utility::CSI_Reset << std::endl;
@@ -325,8 +316,7 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 core::scoring::ScoreFunctionOP get_score_function_legacy(
 	std::string pre_talaris_2013_weight_set,
 	std::string pre_talaris_2013_patch_file
-)
-{
+) {
 	if ( basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {
 		return ScoreFunctionFactory::create_score_function( pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
 	}
@@ -347,12 +337,9 @@ get_score_functionName(
 
 
 	if ( !option[ score::weights ].user() && !is_fullatom ) {
-
-		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
+		// Default score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
 		weight_set = CENTROID_WTS;
-
 	} else {
-
 		/// Default score is score12 if the user has not specified a score weights file or a patch file
 		/// on the command line.  If the user has specified that they would like the standard weight set,
 		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.

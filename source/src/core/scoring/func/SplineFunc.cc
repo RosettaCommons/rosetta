@@ -170,18 +170,15 @@ core::Real SplineFunc::get_upper_bound_dy()
 // Read in data (e.g., experimental distance), weight, and histogram filename.  Bind filename to stream.
 void SplineFunc::read_data( std::istream &in)
 {
-
 	utility::io::izstream potential_file;
 
 	// If constraints::epr_distance specified, read in histogram from database
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::epr_distance]() ) {
 		in >> KB_description_ >> exp_val_ >> weight_ >> bin_size_;
 		filename_ = basic::database::full_name("scoring/constraints/epr_distance_potential.histogram");
-		//basic::database::open( potential_file, "scoring/constraints/epr_distance_potential.histogram");
 	} else {
 		// Else, read in potential specified in constraints file
 		in >> KB_description_ >> filename_ >> exp_val_ >> weight_ >> bin_size_;
-		//potential_file.open( filename_.c_str());
 	}
 
 	numeric::interpolation::spline::SplineGenerator common_spline(numeric::interpolation::spline_from_file(filename_,bin_size_));
@@ -343,7 +340,6 @@ core::Size SplineFunc::show_violations( std::ostream &out, core::Real x, core::S
 	}
 
 	return Func::show_violations( out, x, verbose_level, threshold);
-
 } // show_violations()
 
 } // constraints

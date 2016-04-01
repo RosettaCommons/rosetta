@@ -110,7 +110,6 @@ GroupElec::initialize( etable::coulomb::Coulomb const &coulomb )
 
 	cpfxn_weight_.resize( 3 ); cpfxn_weight_[1] = 0.0; cpfxn_weight_[2] = 0.2; cpfxn_weight_[3] = 1.0;
 	if ( option[ score::grpelec_cpfxn_weight ].user() ) cpfxn_weight_ = option[ score::grpelec_cpfxn_weight ]();
-
 }
 
 
@@ -120,42 +119,28 @@ GroupElec::get_group( core::chemical::ResidueType const &rsdtype ) const
 	std::map< std::string const, ResElecGroup >::const_iterator it
 		= rsdgrps_.find( rsdtype.name() );
 
-	if ( it == rsdgrps_.end() ) {
-		TR.Debug << "Building extra group on " << rsdtype.name() << std::endl;
-
-		// otherwise assign new group
-		ResElecGroup resgrp;
-		resgrp.resize( 0 );
-
-		// if one wants to use whole residue as group
-		/*
-		core::Size nheavy( 0.0 );
-		utility::vector1< Size > resgrp;
-		for( core::Size iatm = 1; iatm <= rsdtype->natoms(); ++iatm ){
-		resgrp.push_back( iatm );
-		if( !rsdtype->atom_is_hydrogen( iatm ) && !rsdtype->is_virtual( iatm ) ) nheavy++;
-		}
-		grp.grps.push_back( resgrp );
-		grp.nheavy.push_back( nheavy );
-		*/
-
-		// or, each atom as group
-		for ( core::Size iatm = 1; iatm <= rsdtype.natoms(); ++iatm ) {
-			if ( rsdtype.is_virtual( iatm ) ) continue;
-
-			ElecGroup grp;
-			grp.atms.push_back( iatm );
-			grp.comatms.push_back( iatm );
-			grp.n_acceptor = 0.0;
-			grp.n_donor = 0.0;
-			grp.qeps = 0.0;
-			resgrp.push_back( grp );
-		}
-
-		rsdgrps_[ rsdtype.name() ] = resgrp;
-		it = rsdgrps_.find( rsdtype.name() );
+	if ( it != rsdgrps_.end() ) return it->second;
+	
+	// otherwise assign new group
+	TR.Debug << "Building extra group on " << rsdtype.name() << std::endl;
+	ResElecGroup resgrp;
+	resgrp.resize( 0 );
+	
+	// or, each atom as group
+	for ( core::Size iatm = 1; iatm <= rsdtype.natoms(); ++iatm ) {
+		if ( rsdtype.is_virtual( iatm ) ) continue;
+		
+		ElecGroup grp;
+		grp.atms.push_back( iatm );
+		grp.comatms.push_back( iatm );
+		grp.n_acceptor = 0.0;
+		grp.n_donor = 0.0;
+		grp.qeps = 0.0;
+		resgrp.push_back( grp );
 	}
-	//return rsdgrps_.at( rsdtype.name() );
+	
+	rsdgrps_[ rsdtype.name() ] = resgrp;
+	it = rsdgrps_.find( rsdtype.name() );
 	return it->second;
 }
 
@@ -268,7 +253,6 @@ GroupElec::build_groupinfo( std::string const group_file,
 			grp.n_acceptor =  n_acceptor;
 			rsdgrps_[resname].push_back( grp );
 		}
-
 	}
 }
 
@@ -285,7 +269,6 @@ GroupElec::get_grpdis2(
 	com1 = core::Vector( 0.0 );
 	com2 = core::Vector( 0.0 );
 
-	//core::Size n1( 0 ), n2( 0 );
 	for ( core::Size i = 1; i <= com1atms.size(); ++i ) com1 += rsd1.xyz( com1atms[i] );
 	for ( core::Size i = 1; i <= com2atms.size(); ++i ) com2 += rsd2.xyz( com2atms[i] );
 
@@ -344,10 +327,8 @@ GroupElec::eval_respair_group_coulomb(
 
 			core::Real const grpdis2 = dcom.length_squared();
 
-			//if( !use_subtract && (grpdis2 > coulomb().max_dis2()) ) continue;
 			if ( use_shift && (grpdis2 > coulomb().max_dis2()) ) continue;
-			//if( grpdis2 > coulomb().max_dis2() ) continue;
-
+			
 			Real grp_cpweight( 1.0 );
 			Size path_dist( 0 );
 			if ( is_bonded && grp_cpfxn_ ) {
@@ -359,7 +340,6 @@ GroupElec::eval_respair_group_coulomb(
 			core::Real group_score( 0.0 );
 
 			Real dsw_dr( 1.0 ), sw( 1.0 );
-			//if( !use_subtract )
 			if ( use_shift ) {
 				sw = eval_grp_trunc( false, grpdis2, false, dsw_dr );
 			}
@@ -385,8 +365,7 @@ GroupElec::eval_respair_group_coulomb(
 					}
 
 					if ( !is_count ) continue;
-					//atom_cpweight = 1.0;
-
+					
 					Real atompair_score( 0.0 );
 					if ( use_subtract ) {
 						atompair_score = coulomb().eval_atom_atom_fa_elecE( rsd1.xyz( atm1 ), q1,
@@ -415,11 +394,8 @@ GroupElec::eval_respair_group_coulomb(
 
 			// converge to constant for hbonding groups
 			bool is_hbond_pair = (grp1.n_donor*grp2.n_acceptor + grp2.n_donor*grp1.n_acceptor > 0);
-			//bool is_hbond_pair_from_HBscore = check_hbond_pairing_from_HBscore( grp1, grp2, hbond_set );
-			//Real score_exp( group_score );
-
+			
 			Real dw_dE( 0.0 );
-			//bool do_fade( false );
 			if ( is_hbond_pair && fade_hbond_ ) {
 				fade_hbonding_group_score( grp1, grp2, group_score, dw_dE );
 			}
@@ -438,7 +414,6 @@ GroupElec::eval_respair_group_coulomb(
 			*/
 
 			group_score *= sw;
-
 			score += group_score;
 		} // grp2
 	} // grp1
@@ -530,9 +505,7 @@ GroupElec::eval_respair_group_derivatives(
 			core::Real const grpdis2 = dcom.length_squared();
 
 			if ( use_shift && (grpdis2 > coulomb().max_dis2()) ) continue;
-			//if ( !use_subtract && (grpdis2 > coulomb().max_dis2()) ) continue;
-			//if ( grpdis2 > coulomb().max_dis2() ) continue;
-
+			
 			Real grp_cpweight( 1.0 );
 			Size path_dist( 0 );
 
@@ -541,14 +514,11 @@ GroupElec::eval_respair_group_derivatives(
 					path_dist );
 			}
 
-			//core::Real grpdis = std::sqrt( grpdis2 );
-
-			core::Size const &n1 = grp1.atms.size();
-			core::Size const &n2 = grp2.atms.size();
+			core::Size const n1 = grp1.atms.size();
+			core::Size const n2 = grp2.atms.size();
 
 			// get group-truncation info first
 			Real dsw_dr( 1.0 ), sw( 1.0 );
-			//if( !use_subtract )
 			if ( use_shift ) {
 				sw = eval_grp_trunc( false, grpdis2, true, dsw_dr );
 			}
@@ -644,7 +614,6 @@ GroupElec::eval_respair_group_derivatives(
 			// 2. derivative on truncation part: E*dsw
 			// below will matter if applying different weight on bb/sc...
 
-			//if( !use_subtract ){
 			if ( use_shift ) {
 				if ( ncom1 > 0 ) {
 					core::Real const c_grp1_heavy = 1.0/((core::Real)(ncom1));
@@ -666,7 +635,6 @@ GroupElec::eval_respair_group_derivatives(
 					}
 				}
 			}
-
 		} // grp2
 	} // grp2
 	//TR << "end deriv" << std::endl;
@@ -686,7 +654,6 @@ GroupElec::eval_respair_group_derivatives(
 	}
 
 	Erespair *= elec_weight;
-
 }
 
 Real
@@ -713,14 +680,8 @@ GroupElec::get_grp_countpair(
 		}
 	}
 
-	//if( grp_cpfxn_mode_.compare( "max" ) == 0 ){
-	//path_dist = path_dist_max;
-	//} else if( grp_cpfxn_mode_.compare( "average" ) == 0 ){
-	//path_dist = Size(path_dist_avrg);
-	//} else {
 	path_dist = path_dist_min;
-	//}
-
+	
 	if ( path_dist > 5 ) return 1.0; // >1-6
 	else if ( path_dist < 3 ) return 0.0; // <1-4
 	else return cpfxn_weight_[path_dist-2];

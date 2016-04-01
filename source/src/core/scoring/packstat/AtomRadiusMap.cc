@@ -15,11 +15,9 @@
 
 // Unit header or inline function header
 #include <core/scoring/packstat/AtomRadiusMap.hh>
-
 #include <basic/options/option.hh>
 
 // option key includes
-
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
@@ -234,8 +232,6 @@ AtomRadiusMap::AtomRadiusMap(
 	type_map_add( type_map_, "Hapo","*", HYDROGEN_RADIUS );
 	type_map_add( type_map_, "Haro","*", HYDROGEN_RADIUS );
 	type_map_add( type_map_, "HNbb","*", HYDROGEN_RADIUS );
-
-
 }
 
 PackstatReal

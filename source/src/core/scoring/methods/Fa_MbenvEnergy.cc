@@ -112,16 +112,8 @@ Fa_MbenvEnergy::eval_fa_mbenv(
 {
 
 	Real temp_score( 0.0 );
-	//Make this an input option for efficiency
-	//bool const eval_deriv( true );
-
-	// l1 and l2 are FArray LINEAR INDICES for fast lookup:
-	// [ l1 ] == (disbin  ,attype2,attype1)
-	// [ l2 ] == (disbin+1,attype2,attype1)
-
 	temp_score = (1 - f1) * (memb_lk_dgrefce_(atom1.type()) - lk_dgrefce_(atom1.type()));
 	return temp_score;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -157,8 +149,7 @@ Fa_MbenvEnergy::eval_atom_derivative(
 	if ( m > rsd1.nheavyatoms() ) return;
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
-	//  bool const pos1_fixed( domain_map( i ) != 0 );
-
+	
 	Real cp_weight = 1.0;
 
 	Vector const center(MembraneEmbed_from_pose( pose ).center());
@@ -192,7 +183,6 @@ Fa_MbenvEnergy::finalize_total_energy(
 ) const
 {
 	//std::cout << "BEFORE emap[ fa_mbenv ] " << emap[ fa_mbenv ] << std::endl;
-	//emap[ fa_mbenv ] += Membrane_FAEmbed_from_pose( pose ).fa_penalty();
 	emap[ fa_mbenv ] += 0.0;
 	//std::cout << "AFTER emap[ fa_mbenv ] " << emap[ fa_mbenv ] << std::endl;
 }
@@ -205,14 +195,12 @@ Fa_MbenvEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) c
 Membrane_FAEmbed const &
 Fa_MbenvEnergy::Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const
 {
-	//using core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED;
 	return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 }
 
 MembraneEmbed const &
 Fa_MbenvEnergy::MembraneEmbed_from_pose( pose::Pose const & pose ) const
 {
-	//using core::pose::datacache::CacheableDataType::MEMBRANE_EMBED;
 	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
 	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 }
@@ -220,7 +208,6 @@ Fa_MbenvEnergy::MembraneEmbed_from_pose( pose::Pose const & pose ) const
 MembraneTopology const &
 Fa_MbenvEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
-	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 core::Size

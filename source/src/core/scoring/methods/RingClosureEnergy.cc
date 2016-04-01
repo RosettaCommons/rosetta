@@ -60,7 +60,6 @@ RingClosureEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-
 /// @brief Constructor.
 ///
 RingClosureEnergy::RingClosureEnergy() :
@@ -89,7 +88,6 @@ RingClosureEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-
 void
 RingClosureEnergy::residue_energy(
 	conformation::Residue const &rsd,
@@ -107,8 +105,6 @@ RingClosureEnergy::residue_energy(
 		Distance const distsq ( rsd.xyz( ia ).distance_squared( rsd.xyz( ia2 ) ) ); //Measure the square of the distance between the atom that shadows and the atom being shadowed.
 		emap[ ring_close ] += distsq / ( std_dev_sq_ ); //Note that std_dev_sq_ is actually the SQUARE of the standard deviation.  This is a harmonic potential.
 	}
-
-	return;
 }
 
 /// @brief Evaluate the derivatives for all atoms in this residue.
@@ -130,8 +126,8 @@ RingClosureEnergy::eval_residue_derivatives(
 		if ( ia2==0 ) continue; //If this atom doesn't shadow anything, continue.
 
 		//Positions of atom 1 and atom 2:
-		Vector const atom1_pos( rsd.xyz( ia  ) );
-		Vector const atom2_pos( rsd.xyz( ia2 ) );
+		Vector const & atom1_pos( rsd.xyz( ia  ) );
+		Vector const & atom2_pos( rsd.xyz( ia2 ) );
 
 		//Storage for f1 and f2 components of the atomic derivatives:
 		Vector f1( 0.0 ), f2( 0.0 );
@@ -156,7 +152,6 @@ RingClosureEnergy::eval_residue_derivatives(
 		atom_derivs[ ia  ].f2() += f2;
 		atom_derivs[ ia2 ].f1() -= f1;
 		atom_derivs[ ia2 ].f2() -= f2;
-
 	} //End loop through atoms.
 
 	return;

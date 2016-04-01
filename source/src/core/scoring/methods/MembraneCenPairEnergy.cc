@@ -38,12 +38,6 @@
 #include <utility/vector1.hh>
 
 
-// Utility headers
-
-
-// C++
-
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -93,8 +87,6 @@ MembraneCenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
 	potential_.compute_membrane_embedding( pose );
-
-
 }
 
 
@@ -136,7 +128,6 @@ MembraneCenPairEnergy::residue_pair_energy(
 		if ( symm_info->is_virtual(rsd2.seqpos()) ) {
 			rsd2Seq = 0;
 		}
-
 	}
 	if ( rsd1Seq ==0 || rsd2Seq ==0 ) {
 		return;
@@ -149,29 +140,9 @@ MembraneCenPairEnergy::residue_pair_energy(
 		Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
 
 		/// accumulate total energies
-
 		potential_.evaluate_pair( pose, rsd1, rsd2, cendist, pair_score);
-
-		//if ( rsd1.aa() == chemical::aa_his && rsd2.aa() == chemical::aa_his && true /*replace with option[ no_his_his_pairE ]*/ ) {
-		// pair_score = 0;
-		//}
-
-		//pair_score *= 2.019f;
-		// cenpack_score *= 2.0f;
-
-		//core::Real rsd_wt = 0.5 *
-		// ( get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() ) ) +
-		//   get_residue_weight_by_ss( pose.conformation().secstruct( rsd2.seqpos() ) )
-		// );
-
-		//Rosetta++ used the first residue's weight for both sides of the pair. I hate that. The above
-		//comment is an example of an alternative we should probably test in the distant future.
-		//bw is this something we like?
-		// core::Real rsd_wt =  get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() )) ;
 	}
 	emap[ Mpair ]    += pair_score ; // * rsd_wt;
-	//}
-	// emap[ cenpack ] += cenpack_score;
 }
 
 void
@@ -194,8 +165,8 @@ Distance
 MembraneCenPairEnergy::atomic_interaction_cutoff() const
 {
 	return 6.0; /// now subtracted off 6.0 from cutoffs in MembraneCentroid params files
-	//  return 0.0; /// since all the cutoffs for MembraneCentroid mode are rolled into the MembraneCendist check
 }
+
 core::Size
 MembraneCenPairEnergy::version() const
 {

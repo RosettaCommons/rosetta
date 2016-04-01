@@ -172,14 +172,11 @@ MgEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
 	if ( rsd2.name3() == " MG" ) {
 		residue_pair_energy_one_way( rsd1, rsd2, pose, emap );
 	} else if ( rsd1.name3() == " MG" ) {
 		residue_pair_energy_one_way( rsd2, rsd1, pose, emap );
 	}
-
-	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +186,7 @@ MgEnergy::residue_pair_energy_one_way(
 	conformation::Residue const & rsd2, // The Mg(2+)
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const{
+) const {
 
 	EnergyMap weights; // empty, would be used for derivs.
 	utility::vector1< DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
@@ -227,10 +224,8 @@ MgEnergy::eval_intrares_energy(
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {
-
 	if ( rsd.name3() == " MG" ) emap[ mg_ref  ] += mg_ref_score_;
 	if ( rsd.name3() == "HOH" ) emap[ hoh_ref ] += hoh_ref_score_;
-
 }
 
 ////////////////////////////////////////////////////
@@ -287,9 +282,7 @@ MgEnergy::eval_mg_interaction(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
-) const
-{
-
+) const {
 	using namespace numeric::deriv;
 
 	// get magnesium position
@@ -341,171 +334,166 @@ MgEnergy::eval_mg_interaction(
 
 	if ( !rsd1.heavyatom_is_an_acceptor( i ) ) return;
 
-	if ( d < mg_lig_interaction_cutoff_  ) {
-
-		////////////////////
-		// Term 1: distance
-		////////////////////
-		GaussianParameter const & mg_potential_gaussian_parameter = mg_lig_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i );
-		runtime_assert( mg_potential_gaussian_parameter.center > 0.0 ); // should be defined for all acceptors.
-		Real dist_score = get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
-
-		//////////////////////////////////////////////////////////////////
-		// Term 2: form factor for angle Mg -- Acceptor -- Acceptor-Base
-		//////////////////////////////////////////////////////////////////
-		GaussianParameter const & mg_potential_costheta_gaussian_parameter = mg_lig_knowledge_based_potential_->get_mg_potential_costheta_gaussian_parameter( rsd1, i );
-		Real acc_angle_form_factor( 1.0 ), acc_angle_form_factor_OH1( 1.0 ), acc_angle_form_factor_OH2( 1.0 );
-		Real cos_theta( 0.0 ), cos_theta_OH1( 0.0 ), cos_theta_OH2( 0.0 );
-		Size i_base( 0 ), OH1( 2 ), OH2( 3 );
-		Vector base_xyz( 0.0 );
-		bool const is_water( rsd1.name3() == "HOH" );
-		if ( is_water ) { // treat both H's as base atoms, symmetrically
-			cos_theta_OH1     = get_cos_theta( rsd1, i, j_xyz, OH1 );
-			cos_theta_OH2 = get_cos_theta( rsd1, i, j_xyz, OH2 );
-			acc_angle_form_factor_OH1 = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
-			acc_angle_form_factor_OH2 = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
-			acc_angle_form_factor = 0.5 * ( acc_angle_form_factor_OH1 + acc_angle_form_factor_OH2);
-		} else {
-			cos_theta = get_cos_theta( rsd1, i, j_xyz, i_base, base_xyz );
-			acc_angle_form_factor = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
-		}
-
-		//////////////////////////////////////////////////////////////////
-		// Term 3: form factor for angle Acceptor -- Mg -- V
-		//////////////////////////////////////////////////////////////////
-		Real const cos_v_angle = get_cos_angle_to_closest_orbital_axis( rsd2, i_xyz );
-		Real const v_angle_form_factor = exp( - ( 1.0 - cos_v_angle ) / (2.0 * v_angle_width2_ ) ); // funny functional form ~ (v_angle/2 width)^2
-		Real const v_angle_form_factor_faded = v_angle_baseline + ( 1.0 - v_angle_baseline ) * v_angle_form_factor; // unity if perfect angle, v_angle_baseline if not.
-
-		// Note: treated as a product -- not quite consistent with derivation from log-stats.
-		// [ could instead add as sum, and then do fading on potential near boundaries, as in hbonds. ]
-		Real const mg_lig_score = dist_score * acc_angle_form_factor * v_angle_form_factor_faded;
-
-		emap[ mg ]     += mg_lig_score;
-		emap[ mg_lig ] += mg_lig_score;
-
-		/////////////////
-		// Derivatives
-		/////////////////
-		if ( r1_atom_derivs.size() > 0 ) {
-			Real const weight = weights[ mg ] + weights[ mg_lig ];
-
-			////////////////////
-			// Term 1: distance
-			////////////////////
-			Real dist_deriv = get_gaussian_deriv( mg_potential_gaussian_parameter, d );
-			Real const dE_ddist = dist_deriv * acc_angle_form_factor * v_angle_form_factor_faded * weight;
-			Vector f2 =   -1.0 * ( j_xyz - i_xyz ).normalized();
-			Vector f1 =    1.0 * cross( f2, j_xyz );
-			// acceptor atom
-			r1_atom_derivs[ i ].f1() -= dE_ddist * f1;
-			r1_atom_derivs[ i ].f2() -= dE_ddist * f2;
-
-			// Mg atom
-			r2_atom_derivs[ j ].f1() += dE_ddist * f1;
-			r2_atom_derivs[ j ].f2() += dE_ddist * f2;
-
-			Real theta( 0.0 );
-			//////////////////////////////////////////////////////////////////
-			// Term 2: form factor for angle Mg -- Acceptor -- Acceptor-Base
-			//////////////////////////////////////////////////////////////////
-			// adapted from hbond_geom.cc
-			if ( is_water ) {
-				///////////////////////////////////////////
-				Vector const OH1_xyz( rsd1.xyz( OH1 ) );
-				Real acc_angle_form_factor_OH1_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
-				angle_p1_deriv(  j_xyz, i_xyz, OH1_xyz, theta, f1, f2);
-				Real const dE_dcosAtheta_sin_theta_OH1 = 0.5 * dist_score * acc_angle_form_factor_OH1_deriv * v_angle_form_factor_faded * weight * sin( theta );
-
-				// Mg atom
-				r2_atom_derivs[ j ].f1() += dE_dcosAtheta_sin_theta_OH1 * f1;
-				r2_atom_derivs[ j ].f2() += dE_dcosAtheta_sin_theta_OH1 * f2;
-
-				// acceptor atom
-				angle_p2_deriv(  OH1_xyz, i_xyz, j_xyz, theta, f1, f2);
-				r1_atom_derivs[ i ].f1() += dE_dcosAtheta_sin_theta_OH1 * f1;
-				r1_atom_derivs[ i ].f2() += dE_dcosAtheta_sin_theta_OH1 * f2;
-
-				// acceptor base atom
-				angle_p1_deriv(  OH1_xyz, i_xyz, j_xyz, theta, f1, f2);
-				r1_atom_derivs[ OH1 ].f1() += dE_dcosAtheta_sin_theta_OH1 * f1;
-				r1_atom_derivs[ OH1 ].f2() += dE_dcosAtheta_sin_theta_OH1 * f2;
-
-				///////////////////////////////////////////
-				Vector const OH2_xyz( rsd1.xyz( OH2 ) );
-				Real acc_angle_form_factor_OH2_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
-				angle_p1_deriv(  j_xyz, i_xyz, OH2_xyz, theta, f1, f2);
-				Real const dE_dcosAtheta_sin_theta_OH2 = 0.5 * dist_score * acc_angle_form_factor_OH2_deriv * v_angle_form_factor_faded * weight * sin( theta );
-
-				// Mg atom
-				r2_atom_derivs[ j ].f1() += dE_dcosAtheta_sin_theta_OH2 * f1;
-				r2_atom_derivs[ j ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
-
-				// acceptor atom
-				angle_p2_deriv(  OH2_xyz, i_xyz, j_xyz, theta, f1, f2);
-				r1_atom_derivs[ i ].f1() += dE_dcosAtheta_sin_theta_OH2 * f1;
-				r1_atom_derivs[ i ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
-
-				// acceptor base atom
-				angle_p1_deriv(  OH2_xyz, i_xyz, j_xyz, theta, f1, f2);
-				r1_atom_derivs[ OH2 ].f1() += dE_dcosAtheta_sin_theta_OH2 * f1;
-				r1_atom_derivs[ OH2 ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
-
-			} else {
-				Real acc_angle_form_factor_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta );
-				angle_p1_deriv(  j_xyz, i_xyz, base_xyz, theta, f1, f2);
-				Real const dE_dcosAtheta_sin_theta = dist_score * acc_angle_form_factor_deriv * v_angle_form_factor_faded * weight * sin( theta );
-
-				// Mg atom
-				r2_atom_derivs[ j ].f1() += dE_dcosAtheta_sin_theta * f1;
-				r2_atom_derivs[ j ].f2() += dE_dcosAtheta_sin_theta * f2;
-
-				// acceptor atom
-				angle_p2_deriv(  base_xyz, i_xyz, j_xyz, theta, f1, f2);
-				r1_atom_derivs[ i ].f1() += dE_dcosAtheta_sin_theta * f1;
-				r1_atom_derivs[ i ].f2() += dE_dcosAtheta_sin_theta * f2;
-
-				// acceptor base atom
-				angle_p1_deriv(  base_xyz, i_xyz, j_xyz, theta, f1, f2);
-				DerivVectorPair abase_deriv;
-				abase_deriv.f1() = dE_dcosAtheta_sin_theta * f1;
-				abase_deriv.f2() = dE_dcosAtheta_sin_theta * f2;
-
-				runtime_assert( rsd1.heavyatom_is_an_acceptor( i ) );
-				static hbonds::HBondOptions const hbond_options;
-				chemical::Hybridization acc_hybrid( rsd1.atom_type( i ).hybridization() );
-				assign_abase_derivs( hbond_options, rsd1, i, acc_hybrid, abase_deriv, 1.0, r1_atom_derivs );
-			}
-
-			//////////////////////////////////////////////////////////////////
-			// Term 3: form factor for angle Acceptor -- Mg -- V
-			//////////////////////////////////////////////////////////////////
-			Real const v_angle_form_factor_deriv = ( 1.0 / ( 2.0 * v_angle_width2_ ) ) * exp( - ( 1.0 - cos_v_angle ) / (2.0 * v_angle_width2_ ) );
-			Real const v_angle_form_factor_faded_deriv = ( 1.0 - v_angle_baseline ) * v_angle_form_factor_deriv;
-
-			Size const v = get_closest_orbital_axis( rsd2, i_xyz ) + 1; // offset is due to Mg(2+), then V1, V2, ...
-			Vector const & v_xyz( rsd2.xyz( v ) );
-			angle_p1_deriv( v_xyz, j_xyz, i_xyz, theta, f1, f2);
-			// there's a -1.0 here because the angle in numeric::deriv::angle_p1_deriv is A-->M-->V, not A<--M-->V.
-			Real const dE_dcosVtheta_sin_theta = -1.0 * dist_score * acc_angle_form_factor * v_angle_form_factor_faded_deriv * weight * sin( theta );
-			r2_atom_derivs[ v ].f1() += dE_dcosVtheta_sin_theta * f1;
-			r2_atom_derivs[ v ].f2() += dE_dcosVtheta_sin_theta * f2;
-
-			// Mg atom
-			angle_p2_deriv( i_xyz, j_xyz, v_xyz, theta, f1, f2);
-			r2_atom_derivs[ j ].f1() += dE_dcosVtheta_sin_theta * f1;
-			r2_atom_derivs[ j ].f2() += dE_dcosVtheta_sin_theta * f2;
-
-			// acceptor atom
-			angle_p1_deriv( i_xyz, j_xyz, v_xyz, theta, f1, f2);
-			r1_atom_derivs[ i ].f1() += dE_dcosVtheta_sin_theta * f1;
-			r1_atom_derivs[ i ].f2() += dE_dcosVtheta_sin_theta * f2;
-
-		}
-
+	if ( d >= mg_lig_interaction_cutoff_  ) return;
+	
+	////////////////////
+	// Term 1: distance
+	////////////////////
+	GaussianParameter const & mg_potential_gaussian_parameter = mg_lig_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i );
+	runtime_assert( mg_potential_gaussian_parameter.center > 0.0 ); // should be defined for all acceptors.
+	Real dist_score = get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
+	
+	//////////////////////////////////////////////////////////////////
+	// Term 2: form factor for angle Mg -- Acceptor -- Acceptor-Base
+	//////////////////////////////////////////////////////////////////
+	GaussianParameter const & mg_potential_costheta_gaussian_parameter = mg_lig_knowledge_based_potential_->get_mg_potential_costheta_gaussian_parameter( rsd1, i );
+	Real acc_angle_form_factor( 1.0 ), acc_angle_form_factor_OH1( 1.0 ), acc_angle_form_factor_OH2( 1.0 );
+	Real cos_theta( 0.0 ), cos_theta_OH1( 0.0 ), cos_theta_OH2( 0.0 );
+	Size i_base( 0 ), OH1( 2 ), OH2( 3 );
+	Vector base_xyz( 0.0 );
+	bool const is_water( rsd1.name3() == "HOH" );
+	if ( is_water ) { // treat both H's as base atoms, symmetrically
+		cos_theta_OH1     = get_cos_theta( rsd1, i, j_xyz, OH1 );
+		cos_theta_OH2 = get_cos_theta( rsd1, i, j_xyz, OH2 );
+		acc_angle_form_factor_OH1 = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
+		acc_angle_form_factor_OH2 = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
+		acc_angle_form_factor = 0.5 * ( acc_angle_form_factor_OH1 + acc_angle_form_factor_OH2);
+	} else {
+		cos_theta = get_cos_theta( rsd1, i, j_xyz, i_base, base_xyz );
+		acc_angle_form_factor = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
 	}
-
-
+	
+	//////////////////////////////////////////////////////////////////
+	// Term 3: form factor for angle Acceptor -- Mg -- V
+	//////////////////////////////////////////////////////////////////
+	Real const cos_v_angle = get_cos_angle_to_closest_orbital_axis( rsd2, i_xyz );
+	Real const v_angle_form_factor = exp( - ( 1.0 - cos_v_angle ) / (2.0 * v_angle_width2_ ) ); // funny functional form ~ (v_angle/2 width)^2
+	Real const v_angle_form_factor_faded = v_angle_baseline + ( 1.0 - v_angle_baseline ) * v_angle_form_factor; // unity if perfect angle, v_angle_baseline if not.
+	
+	// Note: treated as a product -- not quite consistent with derivation from log-stats.
+	// [ could instead add as sum, and then do fading on potential near boundaries, as in hbonds. ]
+	Real const mg_lig_score = dist_score * acc_angle_form_factor * v_angle_form_factor_faded;
+	
+	emap[ mg ]     += mg_lig_score;
+	emap[ mg_lig ] += mg_lig_score;
+	
+	/////////////////
+	// Derivatives
+	/////////////////
+	if ( r1_atom_derivs.size() <= 0 ) return;
+	
+	Real const weight = weights[ mg ] + weights[ mg_lig ];
+	
+	////////////////////
+	// Term 1: distance
+	////////////////////
+	Real dist_deriv = get_gaussian_deriv( mg_potential_gaussian_parameter, d );
+	Real const dE_ddist = dist_deriv * acc_angle_form_factor * v_angle_form_factor_faded * weight;
+	Vector f2 =   -1.0 * ( j_xyz - i_xyz ).normalized();
+	Vector f1 =    1.0 * cross( f2, j_xyz );
+	// acceptor atom
+	r1_atom_derivs[ i ].f1() -= dE_ddist * f1;
+	r1_atom_derivs[ i ].f2() -= dE_ddist * f2;
+	
+	// Mg atom
+	r2_atom_derivs[ j ].f1() += dE_ddist * f1;
+	r2_atom_derivs[ j ].f2() += dE_ddist * f2;
+	
+	Real theta( 0.0 );
+	//////////////////////////////////////////////////////////////////
+	// Term 2: form factor for angle Mg -- Acceptor -- Acceptor-Base
+	//////////////////////////////////////////////////////////////////
+	// adapted from hbond_geom.cc
+	if ( is_water ) {
+		///////////////////////////////////////////
+		Vector const OH1_xyz( rsd1.xyz( OH1 ) );
+		Real acc_angle_form_factor_OH1_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
+		angle_p1_deriv(  j_xyz, i_xyz, OH1_xyz, theta, f1, f2);
+		Real const dE_dcosAtheta_sin_theta_OH1 = 0.5 * dist_score * acc_angle_form_factor_OH1_deriv * v_angle_form_factor_faded * weight * sin( theta );
+		
+		// Mg atom
+		r2_atom_derivs[ j ].f1() += dE_dcosAtheta_sin_theta_OH1 * f1;
+		r2_atom_derivs[ j ].f2() += dE_dcosAtheta_sin_theta_OH1 * f2;
+		
+		// acceptor atom
+		angle_p2_deriv(  OH1_xyz, i_xyz, j_xyz, theta, f1, f2);
+		r1_atom_derivs[ i ].f1() += dE_dcosAtheta_sin_theta_OH1 * f1;
+		r1_atom_derivs[ i ].f2() += dE_dcosAtheta_sin_theta_OH1 * f2;
+		
+		// acceptor base atom
+		angle_p1_deriv(  OH1_xyz, i_xyz, j_xyz, theta, f1, f2);
+		r1_atom_derivs[ OH1 ].f1() += dE_dcosAtheta_sin_theta_OH1 * f1;
+		r1_atom_derivs[ OH1 ].f2() += dE_dcosAtheta_sin_theta_OH1 * f2;
+		
+		///////////////////////////////////////////
+		Vector const OH2_xyz( rsd1.xyz( OH2 ) );
+		Real acc_angle_form_factor_OH2_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
+		angle_p1_deriv(  j_xyz, i_xyz, OH2_xyz, theta, f1, f2);
+		Real const dE_dcosAtheta_sin_theta_OH2 = 0.5 * dist_score * acc_angle_form_factor_OH2_deriv * v_angle_form_factor_faded * weight * sin( theta );
+		
+		// Mg atom
+		r2_atom_derivs[ j ].f1() += dE_dcosAtheta_sin_theta_OH2 * f1;
+		r2_atom_derivs[ j ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
+		
+		// acceptor atom
+		angle_p2_deriv(  OH2_xyz, i_xyz, j_xyz, theta, f1, f2);
+		r1_atom_derivs[ i ].f1() += dE_dcosAtheta_sin_theta_OH2 * f1;
+		r1_atom_derivs[ i ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
+		
+		// acceptor base atom
+		angle_p1_deriv(  OH2_xyz, i_xyz, j_xyz, theta, f1, f2);
+		r1_atom_derivs[ OH2 ].f1() += dE_dcosAtheta_sin_theta_OH2 * f1;
+		r1_atom_derivs[ OH2 ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
+		
+	} else {
+		Real acc_angle_form_factor_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta );
+		angle_p1_deriv(  j_xyz, i_xyz, base_xyz, theta, f1, f2);
+		Real const dE_dcosAtheta_sin_theta = dist_score * acc_angle_form_factor_deriv * v_angle_form_factor_faded * weight * sin( theta );
+		
+		// Mg atom
+		r2_atom_derivs[ j ].f1() += dE_dcosAtheta_sin_theta * f1;
+		r2_atom_derivs[ j ].f2() += dE_dcosAtheta_sin_theta * f2;
+		
+		// acceptor atom
+		angle_p2_deriv(  base_xyz, i_xyz, j_xyz, theta, f1, f2);
+		r1_atom_derivs[ i ].f1() += dE_dcosAtheta_sin_theta * f1;
+		r1_atom_derivs[ i ].f2() += dE_dcosAtheta_sin_theta * f2;
+		
+		// acceptor base atom
+		angle_p1_deriv(  base_xyz, i_xyz, j_xyz, theta, f1, f2);
+		DerivVectorPair abase_deriv;
+		abase_deriv.f1() = dE_dcosAtheta_sin_theta * f1;
+		abase_deriv.f2() = dE_dcosAtheta_sin_theta * f2;
+		
+		runtime_assert( rsd1.heavyatom_is_an_acceptor( i ) );
+		static hbonds::HBondOptions const hbond_options;
+		chemical::Hybridization acc_hybrid( rsd1.atom_type( i ).hybridization() );
+		assign_abase_derivs( hbond_options, rsd1, i, acc_hybrid, abase_deriv, 1.0, r1_atom_derivs );
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	// Term 3: form factor for angle Acceptor -- Mg -- V
+	//////////////////////////////////////////////////////////////////
+	Real const v_angle_form_factor_deriv = ( 1.0 / ( 2.0 * v_angle_width2_ ) ) * exp( - ( 1.0 - cos_v_angle ) / (2.0 * v_angle_width2_ ) );
+	Real const v_angle_form_factor_faded_deriv = ( 1.0 - v_angle_baseline ) * v_angle_form_factor_deriv;
+	
+	Size const v = get_closest_orbital_axis( rsd2, i_xyz ) + 1; // offset is due to Mg(2+), then V1, V2, ...
+	Vector const & v_xyz( rsd2.xyz( v ) );
+	angle_p1_deriv( v_xyz, j_xyz, i_xyz, theta, f1, f2);
+	// there's a -1.0 here because the angle in numeric::deriv::angle_p1_deriv is A-->M-->V, not A<--M-->V.
+	Real const dE_dcosVtheta_sin_theta = -1.0 * dist_score * acc_angle_form_factor * v_angle_form_factor_faded_deriv * weight * sin( theta );
+	r2_atom_derivs[ v ].f1() += dE_dcosVtheta_sin_theta * f1;
+	r2_atom_derivs[ v ].f2() += dE_dcosVtheta_sin_theta * f2;
+	
+	// Mg atom
+	angle_p2_deriv( i_xyz, j_xyz, v_xyz, theta, f1, f2);
+	r2_atom_derivs[ j ].f1() += dE_dcosVtheta_sin_theta * f1;
+	r2_atom_derivs[ j ].f2() += dE_dcosVtheta_sin_theta * f2;
+	
+	// acceptor atom
+	angle_p1_deriv( i_xyz, j_xyz, v_xyz, theta, f1, f2);
+	r1_atom_derivs[ i ].f1() += dE_dcosVtheta_sin_theta * f1;
+	r1_atom_derivs[ i ].f2() += dE_dcosVtheta_sin_theta * f2;
 }
 
 
@@ -548,7 +536,6 @@ MgEnergy::setup_for_minimizing_for_residue_pair(
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
 	pair_data.set_data( mg_pair_nblist, nblist );
-
 }
 
 /////////////

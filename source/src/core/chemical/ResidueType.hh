@@ -159,7 +159,7 @@ public:
 	/// @brief Copies  <src>  into the ResidueType
 	ResidueType &
 	operator=( ResidueType const & src );
-
+	
 	/// self pointers
 	inline ResidueTypeCOP get_self_ptr() const      { return shared_from_this(); }
 	inline ResidueTypeOP  get_self_ptr()            { return shared_from_this(); }

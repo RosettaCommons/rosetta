@@ -211,9 +211,6 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 	EnergyMap & emap
 ) const
 {
-	//debug_assert( rsd1.is_aromatic() );
-	//debug_assert( rsd2.is_aromatic() );
-
 	using namespace etable::count_pair;
 
 	Real total_score( 0.0 );
@@ -233,10 +230,7 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 
 		if ( i_charge == 0.0 ) continue;
 
-
 		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
-
-			//  if ( !atom_is_aro2( rsd2, j ) ) continue;
 
 			Real const j_charge( rsd2.atomic_charge(j) );
 			if ( j_charge == 0.0 ) continue;
@@ -250,13 +244,10 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 				emap[ fa_elec_aro_all ] += score;
 				//debug output
 				//std::cout << "elecenergy: " << rsd1.seqpos() << "  " << rsd1.atom_name(i) << "  " << rsd2.seqpos() << " " << rsd2.atom_name(j) << " is: " << score << std::endl;
-
 			}
 		}
 	}
-
 	return total_score;
-
 }
 
 void
@@ -316,8 +307,6 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 	bool const pos1_fixed( pos1_map != 0 );
 
 	if ( i_charge == 0.0 ) return;
-
-	//Vector const & i_xyz( rsd1.xyz(i) );
 
 	// cached energies object
 	Energies const & energies( pose.energies() );
@@ -393,13 +382,12 @@ FA_ElecEnergyAroAll::eval_atom_derivative_aro_aro(
 			Real const dE_dr_over_r = weight *
 				coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
 
-			if ( dE_dr_over_r != 0.0 ) {
-				Vector const f1( i_xyz.cross( j_xyz ) );
+			if ( dE_dr_over_r == 0.0 ) continue;
 
-				F1 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f1;
-				F2 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f2;
-			}
-
+			Vector const f1( i_xyz.cross( j_xyz ) );
+			
+			F1 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f2;
 		}
 	}
 }

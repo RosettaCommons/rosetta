@@ -29,10 +29,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
-//#include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/ScoreFunctionFactory.hh>
-
-
 // Utility Headers
 #include <utility/vector1.hh>
 
@@ -245,7 +241,6 @@ void add_to_individual_sol_energies(
 					residue_energies[ polar_resnum ] += geometric_solvation_energy;
 				}
 			}
-
 		}
 	}
 
@@ -345,11 +340,9 @@ core::Real compute_exact_geosol(
 				anum  = polar_rsd.accpt_pos().begin(),
 				anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const polar_atom( *anum );
-			//Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
 			hbonds::HBEvalType const curr_hbeval_type = (*hbonds::HBEval_lookup)( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 			// Figure out max LK energy
-			//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
 			core::Real max_possible_LK = etable_ptr->lk_dgfree( polar_rsd.atom_type_index( polar_atom ) );
 			//   TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 			// Compute Ebulk (using the LK energy)
@@ -364,7 +357,6 @@ core::Real compute_exact_geosol(
 				WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbeval_type ), occluded_sites, hydrogens_can_occlude,
 				pairwise_additive, pairwise_additive_output, residue_energies );
 		}
-
 	}
 
 	TR << "jk finished computing exact geometric solvation scores" << std::endl;

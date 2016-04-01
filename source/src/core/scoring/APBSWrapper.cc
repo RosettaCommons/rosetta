@@ -46,9 +46,8 @@ APBSWrapper::~APBSWrapper()
 APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 	std::map<std::string, bool> const & charged_residues,
 	int dbg,
-	bool calcenergy)
-{
-
+	bool calcenergy
+) {
 	int natoms = count_atoms(pose);
 	pqr = PQROP( new PQR(pose, natoms, charged_residues) );
 	TR << "PQR data is prepared." << std::endl;
@@ -65,6 +64,7 @@ APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 		config->i_param.write_atompot) );
 	TR << "APBS result data structure is prepared." << std::endl;
 }
+
 APBSResultCOP
 APBSWrapper::exec() {
 
@@ -77,52 +77,50 @@ APBSWrapper::exec() {
     raw_grid_data.push_back(result->grid_data[i].data());
 	}
 
-	ret = apbsdrv_(&pqr->natoms_,
-									pqr->x.data(),
-									pqr->y.data(),
-									pqr->z.data(),
-									pqr->radius.data(),
-									pqr->charge.data(),
-									config->r_param.raw_array(),
-									config->i_param.raw_array(),
-									config->grid,
-									config->dime,
-									config->pdime,
-									config->glen,
-									config->center,
-									config->cglen,
-									config->fglen,
-									config->ccenter,
-									config->fcenter,
-									&config->ofrac,
-									&config->dbg,
-									config->ionq,
-									config->ionc,
-									config->ionr,
-									result->esEnergy.data(),
-									result->npEnergy.data(),
-									result->dx.data(),
-									result->dy.data(),
-									result->dz.data(),
-									result->qfx.data(),
-									result->qfy.data(),
-									result->qfz.data(),
-									result->ibx.data(),
-									result->iby.data(),
-									result->ibz.data(),
-									result->npx.data(),
-									result->npy.data(),
-									result->npz.data(),
-									result->dbx.data(),
-									result->dby.data(),
-									result->dbz.data(),
-									result->grid_meta,
-									raw_grid_data.data() );
+	ret = apbsdrv_( &pqr->natoms_,
+		pqr->x.data(),
+		pqr->y.data(),
+		pqr->z.data(),
+		pqr->radius.data(),
+		pqr->charge.data(),
+		config->r_param.raw_array(),
+		config->i_param.raw_array(),
+		config->grid,
+		config->dime,
+		config->pdime,
+		config->glen,
+		config->center,
+		config->cglen,
+		config->fglen,
+		config->ccenter,
+		config->fcenter,
+		&config->ofrac,
+		&config->dbg,
+		config->ionq,
+		config->ionc,
+		config->ionr,
+		result->esEnergy.data(),
+		result->npEnergy.data(),
+		result->dx.data(),
+		result->dy.data(),
+		result->dz.data(),
+		result->qfx.data(),
+		result->qfy.data(),
+		result->qfz.data(),
+		result->ibx.data(),
+		result->iby.data(),
+		result->ibz.data(),
+		result->npx.data(),
+		result->npy.data(),
+		result->npz.data(),
+		result->dbx.data(),
+		result->dby.data(),
+		result->dbz.data(),
+		result->grid_meta,
+		raw_grid_data.data() );
 #endif
 
-	if ( ret != 0 ) {
-		return NULL;
-	}
+	if ( ret != 0 ) return NULL;
 	return result;
 }
 
@@ -169,6 +167,7 @@ PQR::PQR(core::pose::Pose const & pose, int natoms,
 		}
 	}
 }
+
 PQR::~PQR(){}
 
 APBSResult::APBSResult(int nsims, int natoms, int grid_dimes[3],
@@ -238,6 +237,7 @@ APBSConfig::I_PARAM::I_PARAM() :
 	use_diel(0)
 {
 }
+
 APBSConfig::I_PARAM::~I_PARAM() {}
 
 int * APBSConfig::I_PARAM::raw_array()
@@ -278,8 +278,8 @@ APBSConfig::R_PARAM::R_PARAM() :
 	temp(310),
 	sdens(10),
 	gamma(0.105)
-{
-}
+{}
+
 APBSConfig::R_PARAM::~R_PARAM() {}
 
 double * APBSConfig::R_PARAM::raw_array()
@@ -335,6 +335,7 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 		dime[i] = static_cast<int>(fglen[i] / space + 1);
 	}
 }
+
 APBSConfig::~APBSConfig()
 {}
 

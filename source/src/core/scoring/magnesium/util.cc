@@ -94,7 +94,6 @@ get_gaussian_potential_score(
 { // later expand to do derivative calculation
 
 	Distance const d = ( pos1 - pos2 ).length();
-
 	return get_gaussian_score( mg_potential_gaussian_parameter, d );
 }
 

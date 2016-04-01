@@ -69,8 +69,7 @@ RamaPrePro::eval_rpp_rama_score(
 	Real & score_rama,
 	Real & denergy_dphi,
 	Real & denergy_dpsi
-) const
-{
+) const {
 	bool const is_d( core::chemical::is_canonical_D_aa(res_aa1) );
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
 
@@ -153,7 +152,6 @@ RamaPrePro::read_rama_map_file_shapovalov (
 			utility_exit_with_message(err_msg.str());
 		}
 	}
-
 
 	char line[256];
 
@@ -240,10 +238,8 @@ RamaPrePro::symmetrize_gly_table(
 	ObjexxFCL::FArray2D< core::Real > & data,
 	core::Real &entropy
 ) const {
-	if ( TR.visible() ) {
-		TR << "Symmetrizing glycine RamaPrePro table." << std::endl;
-	}
-
+	TR << "Symmetrizing glycine RamaPrePro table." << std::endl;
+	
 	//The following is for debugging only:
 	/*TR << "MATRIX_BEFORE:" << std::endl;
 	for(core::Size j=1; j<=36; ++j) {
@@ -279,7 +275,6 @@ RamaPrePro::symmetrize_gly_table(
 	}
 	TR << std::endl;
 	}*/
-
 }
 
 }

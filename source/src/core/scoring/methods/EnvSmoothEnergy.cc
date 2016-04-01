@@ -64,10 +64,6 @@ EnvSmoothEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-
-//const core::Real start_sig =  9.9999;
-//const core::Real end_sig   = 10.001;
-
 Distance const start_sig = 9.8;
 Distance const end_sig   = 10.2;
 
@@ -379,9 +375,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 				F1, F2 );
 
 		}
-
 	}
-
 }
 
 /// @details returns const & to static data members to avoid expense
@@ -521,8 +515,6 @@ EnvSmoothEnergy::increment_f1_f2_for_atom_pair(
 		F1 += dscoredd * f1;
 		F2 += dscoredd * f2;
 	}
-
-
 }
 
 core::Size

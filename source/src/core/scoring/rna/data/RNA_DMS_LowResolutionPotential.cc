@@ -174,7 +174,6 @@ RNA_DMS_LowResolutionPotential::figure_out_low_resolution_potential( utility::ve
 				-1.0 * log( DMS_stats[ h ][ k ] /( p_model[ h ] * p_DMS[ k ]) );
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +214,6 @@ RNA_DMS_LowResolutionPotential::evaluate( core::pose::Pose const & pose,
 	//  TR << pos << " "  <<  pose.pdb_info()->number(i) << " ade_wc_protected " << ade_wc_protected << " (" << protected_idx << ")" << "  value " << rna_reactivity.value() << " (" << DMS_idx << ")" << " SCORE " << score << std::endl;
 
 	return score;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -232,7 +230,6 @@ RNA_DMS_LowResolutionPotential::update_edge_paired(  Size const i, Size const k,
 		runtime_assert( k == chemical::rna::SUGAR );
 		sugar_edge_paired[i] = true;
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -304,7 +301,6 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 			is_bulged[ i ] = true;
 		}
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////

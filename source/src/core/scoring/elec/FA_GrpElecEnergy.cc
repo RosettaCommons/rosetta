@@ -182,25 +182,24 @@ FA_GrpElecEnergy::setup_for_minimizing(
 
 	set_nres_mono(pose);
 
-	if ( pose.energies().use_nblist() ) {
-		// stash our nblist inside the pose's energies object
-		Energies & energies( pose.energies() );
-
-		// setup the atom-atom nblist
-		NeighborListOP nblist;
-		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
-		if ( pose.energies().use_nblist_auto_update() ) {
-			nblist->set_auto_update( tolerated_motion );
-		}
-		// this partially becomes the EtableEnergy classes's responsibility
-		nblist->setup( pose, sfxn, *this);
-		energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
+	if ( !pose.energies().use_nblist() ) return;
+	
+	// stash our nblist inside the pose's energies object
+	Energies & energies( pose.energies() );
+	
+	// setup the atom-atom nblist
+	NeighborListOP nblist;
+	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+	Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
+	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	if ( pose.energies().use_nblist_auto_update() ) {
+		nblist->set_auto_update( tolerated_motion );
 	}
-
+	// this partially becomes the EtableEnergy classes's responsibility
+	nblist->setup( pose, sfxn, *this);
+	energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
+	
 	//TR.Debug << "done setup_for_minimization" << std::endl;
-
 }
 
 
@@ -233,7 +232,6 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 	}
 
 	precalc_context( pose, data );
-
 	pose.data().set( pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA, data );
 }
 
@@ -247,7 +245,6 @@ FA_GrpElecEnergy::setup_for_derivatives( pose::Pose & pose,
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
 
-	//Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
 	setup_for_scoring( pose, scfxn );
 
 	//TR.Debug << "done: setup_for_deriv" << std::endl;
@@ -307,13 +304,6 @@ FA_GrpElecEnergy::residue_pair_energy(
 
 	Real score(0.0);
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
-
-	// use to avoid double counting with hbond_set
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
@@ -383,7 +373,6 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 	EnergyMap & emap
 ) const
 {
-
 	//TR.Debug << "residue_pair_energy_ext" << std::endl;
 
 	if ( pose.energies().use_nblist_auto_update() ) return;
@@ -391,13 +380,6 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
 	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
 	Real score( 0.0 );
-
-	// use to avoid double counting with hbond_set
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
@@ -442,20 +424,6 @@ FA_GrpElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-
-	/*
-	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( elec_pair_nblist )() ));
-	if ( ! nblist ) nblist = new ResiduePairNeighborList;
-
-	/// STOLEN CODE!
-	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
-	Real const XX2 = std::pow( coulomb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
-
-	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
-
-	pair_data.set_data( elec_pair_nblist, nblist );
-	*/
 }
 
 
@@ -485,13 +453,6 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 
 	Size res1( rsd1.seqpos() );
 	Size res2( rsd2.seqpos() );
-
-	// use to avoid double counting with hbond_set
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
 
 	Real elec_weight = weights[ fa_grpelec ];
 	Real Erespair( 0.0 );
@@ -529,13 +490,6 @@ FA_GrpElecEnergy::eval_intrares_energy(
 
 	Real score(0.0);
 	if ( ! defines_score_for_residue_pair(rsd, rsd, true) ) return;
-
-	// use to avoid double counting with hbond_set
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
@@ -583,13 +537,6 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 	// get deriv on context
 	// turn off for now
 	//eval_context_derivatives( rsd, data, weights, r1_atom_derivs );
-
-	// use to avoid double counting with hbond_set
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
 
 	Real elec_weight = weights[ fa_grpelec ];
 	Real Erespair( 0.0 );
@@ -650,12 +597,6 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
-
 	for ( Size ii = 1; ii <= set1.num_rotamers(); ++ii ) {
 		conformation::Residue const &rot1 = *set1.rotamer(ii);
 		for ( Size jj = 1; jj <= set2.num_rotamers(); ++jj ) {
@@ -691,12 +632,6 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
-	/*
-	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-	*/
-
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) { // restype
 
 		Size const ii_offset = set.get_residue_type_begin( ii );
@@ -711,24 +646,23 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 
 		Real dcut = ii_radius+jj_radius+5.5;
 
-		if ( ii_coord.distance_squared( jj_coord ) < dcut*dcut ) {
-
-			Size const n = set.get_n_rotamers_for_residue_type( ii );
-			for ( Size kk = 1; kk <= n; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				Size res2 = set.rotamer( kk_rot_id)->seqpos();
-
-				Real const res_energy =
-					groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
-					residue );
-				Real w( 1.0 );
-				if ( context_dependent_ ) {
-					w = burial_weight( data->get_n( residue.seqpos() ) )
-						+ burial_weight( data->get_n( res2 ) );
-				}
-				energy_vector[ kk_rot_id ] += w*res_energy;
+		if ( ii_coord.distance_squared( jj_coord ) >= dcut*dcut ) continue;
+		
+		Size const n = set.get_n_rotamers_for_residue_type( ii );
+		for ( Size kk = 1; kk <= n; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			Size res2 = set.rotamer( kk_rot_id )->seqpos();
+			
+			Real const res_energy =
+			groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
+												   residue );
+			Real w( 1.0 );
+			if ( context_dependent_ ) {
+				w = burial_weight( data->get_n( residue.seqpos() ) )
+				+ burial_weight( data->get_n( res2 ) );
 			}
+			energy_vector[ kk_rot_id ] += w*res_energy;
 		}
 	}
 	return;
@@ -800,12 +734,10 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 	FAElecContextDataOP data
 ) const
 {
-
 	//TR.Debug << "precalc_context" << std::endl;
 
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-
-	Real cen_dist_cut2 = 10.0*10.0;
+	Real cen_dist_cut2 = 10.0 * 10.0;
 
 	//if( data->) TR.Debug << "?" << data->get_n( 1 ) << std::endl;
 
@@ -902,19 +834,11 @@ FA_GrpElecEnergy::eval_context_derivatives(
 	Size const atm1 = rsd1.nbr_atom();
 
 	utility::vector1< Size > neighs = data->get_boundary_neighs( rsd1.seqpos() );
-	/*
-	for( Size jres = 1; jres <= neighs.size(); ++jres ){
-	Size res2 = neighs[ jres ];
-	f2 += Eres_[ res2 ]*(data->get_dw_dr( res2 ));
-	}
-	*/
 	r1_atom_derivs[ atm1 ].f1() += f1;
-
 	f2 = rsd1.xyz( atm1 ).cross( f1 );
 	r1_atom_derivs[ atm1 ].f2() += f2;
 
 	//TR.Debug << "done eval context deriv" << std::endl;
-
 }
 
 // same as in hbond;
@@ -933,7 +857,6 @@ FA_GrpElecEnergy::burial_deriv( core::Real const nb ) const
 	if ( nb < ncb_minburial_ ) return 0.0;
 	if ( nb > ncb_maxburial_ ) return 0.0;
 	return 0.5*(1.0-context_minstrength_)/(ncb_maxburial_ - ncb_minburial_);
-	//return 0.5/21.25;
 }
 
 core::Size

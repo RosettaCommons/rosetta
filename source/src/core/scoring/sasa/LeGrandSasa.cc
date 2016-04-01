@@ -79,7 +79,6 @@ LeGrandSasa::LeGrandSasa(Real probe_radius, SasaRadii radii_set):
 	init();
 }
 
-
 LeGrandSasa::~LeGrandSasa(){}
 
 void
@@ -96,30 +95,20 @@ LeGrandSasa::init() {
 
 	read_masks();
 	read_angles();
-
 }
-
-
-//LeGrandSasa::calculate(const pose::Pose& pose) {
-// id::AtomID_Map<bool> atom_subset;
-// core::pose::initialize_atomid_map(atom_subset, pose);
-// calculate(pose, atom_subset);
-//}
 
 std::string
 LeGrandSasa::get_name() const {
 	return "LeGrandSasa";
 }
 
-
 Real
 LeGrandSasa::calculate(
 	const pose::Pose& pose,
 	const id::AtomID_Map<bool> & atom_subset,
 	id::AtomID_Map<Real> & atom_sasa,
-	vector1<Real> & rsd_sasa) {
-
-
+	vector1<Real> & rsd_sasa
+) {
 	using core::conformation::Residue;
 	using core::conformation::Atom;
 	using core::id::AtomID;
@@ -135,11 +124,7 @@ LeGrandSasa::calculate(
 		3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,   4,5,5,6,5,6,6,7, 5,6,6,7,6,7,7,8,  // Ex Fx
 		};
 
-
-	if ( pose.total_residue() < 1 ) {
-		return 0.0; // nothing to do
-	}
-
+	if ( pose.total_residue() < 1 ) return 0.0; // nothing to do
 
 	Real const big_polar_H_radius( 1.08 ); // increase radius of polar hydrogens, eg when doing unsatisfied donorH check
 
@@ -160,12 +145,10 @@ LeGrandSasa::calculate(
 			radii[ii] = atom_type_set[ii].extra_parameter( SASA_RADIUS_INDEX );
 		}
 
-
 		if ( use_big_polar_H_ && at.is_polar_hydrogen() && big_polar_H_radius > radii[ii] ) {
 			TR << "Using " << big_polar_H_radius << " instead of " << radii[ii] << " for atomtype " << at.name() << " in sasa calculation!\n";
 			radii[ii] = big_polar_H_radius;
 		}
-
 	}
 
 	// create an AtomID_Map which will map atom ids to the mask for that atom. right now, just make all atom ids point
@@ -173,7 +156,6 @@ LeGrandSasa::calculate(
 	core::id::AtomID_Map< utility::vector1< ObjexxFCL::ubyte > > atom_masks;
 	utility::vector1< ObjexxFCL::ubyte > zero_mask( num_bytes_, ObjexxFCL::ubyte( 0 ) );
 	core::pose::initialize_atomid_map( atom_masks, pose, zero_mask ); // calls AtomID_Map.Pose.hh::initialize()
-
 
 	// identify the maxium radius we have for all atoms in the pose.  this will be used to set a cutoff distance for use
 	// in skipping residue pairs if their nbr atoms are too far apart.
@@ -199,13 +181,11 @@ LeGrandSasa::calculate(
 		for ( Size jj=ii; jj <= pose.total_residue(); ++jj ) {
 			Residue const & jrsd( pose.residue( jj ) );
 
-
 			calc_atom_masks(
 				irsd, jrsd,
 				probe_radius_, cutoff_distance, radii,
 				atom_subset,
 				atom_masks );
-
 		}
 	}
 
@@ -221,7 +201,6 @@ LeGrandSasa::calculate(
 	int num_ones = 0;
 	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
 		Residue const & rsd( pose.residue(ii) );
-
 
 		//TR.Debug << "sasa dots: res: " << rsd.name3() << pose.pdb_info()->number(ii) << std::endl;
 		for ( Size iia = 1; iia <= rsd.natoms(); ++iia ) {
@@ -274,7 +253,6 @@ LeGrandSasa::calculate(
 
 void
 LeGrandSasa::read_angles() {
-
 	//ronj iterate over all 64 lines of the sampling/SASA-angles.database file and save them to the FArray 'angles'
 	//ronj these lines have 64 space-delimited ints which need to be stored
 	utility::io::izstream angles_stream( basic::database::full_name( "sampling/SASA-angles.dat" ) );
@@ -290,8 +268,6 @@ LeGrandSasa::read_angles() {
 
 void
 LeGrandSasa::read_masks() {
-
-
 	//j inputting the masks. they are 21 ubytes long, 162x100 (see header). expects file to be complete
 	utility::io::izstream masks_stream( basic::database::full_name("sampling/SASA-masks.dat" ) );
 
@@ -314,8 +290,12 @@ LeGrandSasa::read_masks() {
 
 
 void
-LeGrandSasa::get_overlap( Real const radius_a, Real const radius_b, Real const distance_ijxyz, int & degree_of_overlap ) const  {
-
+LeGrandSasa::get_overlap(
+	Real const radius_a,
+	Real const radius_b,
+	Real const distance_ijxyz,
+	int & degree_of_overlap
+) const {
 	//j min distance cutoff
 	Real epsilon = 0.01;
 
@@ -327,15 +307,12 @@ LeGrandSasa::get_overlap( Real const radius_a, Real const radius_b, Real const d
 		} else {
 			degree_of_overlap = 1;
 		}
-
 	} else if ( radius_b + distance_ijxyz <= radius_a ) {
 		//j If atom a completely engulfs atom b, consider a to have no overlap due to atom b.
 		degree_of_overlap = 1;
-
 	} else if ( radius_a + distance_ijxyz <= radius_b ) {
 		//j If atom a is completely engulfed by atom b, then turn it completely off (i.e. d2 = 99).
 		degree_of_overlap = 100;
-
 	} else {
 		//j Otherwise, compute the amount of overlap using the law of cosines. "costh" is the angle of the cone of
 		//j intersection that atom b imposes on atom a.
@@ -347,7 +324,6 @@ LeGrandSasa::get_overlap( Real const radius_a, Real const radius_b, Real const d
 
 		if ( degree_of_overlap > 100 ) {
 			degree_of_overlap = 100;
-
 		} else if ( degree_of_overlap < 0 ) {
 			//j We already hopefully accounted for this possibility by requiring that distance_ijxyz > epsilon,
 			//j but in case not we don't want a potential bug to go unnoticed.
@@ -361,17 +337,18 @@ LeGrandSasa::get_overlap( Real const radius_a, Real const radius_b, Real const d
 
 
 void
-LeGrandSasa::get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_index, int & theta_index, Real distance_ijxyz ) const {
-
+LeGrandSasa::get_orientation(
+	Vector const & a_xyz,
+	Vector const & b_xyz,
+	int & phi_index,
+	int & theta_index,
+	Real distance_ijxyz
+) const {
 	using namespace numeric::constants::d;
 	using numeric::sin_cos_range;
 
-	//static FArray1D_float diff( 3 ); //apl allocate this once only
 	//pb -- static can cause problems in multi-threading
 	Vector ab_diff( ( a_xyz - b_xyz ) / distance_ijxyz );
-
-	//j now figure out polar values of phi and theta. Normalize the difference. first get the length of the vector.
-	//vector_normalize(ab_diff);
 
 	//j figuring phi
 	//ronj sin_cos_range adjust the range of the passed in argument to a valid [-1,1]. acos(x) returns the arccos of x
@@ -395,7 +372,6 @@ LeGrandSasa::get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 	} else if ( theta_index > num_theta_ ) {
 		theta_index = 1; // reset back to index of 1?
 	}
-
 }
 
 
@@ -407,17 +383,13 @@ LeGrandSasa::get_2way_orientation(
 	int & theta_a2b_index,
 	int & phi_b2a_index,
 	int & theta_b2a_index,
-	Real distance_ijxyz ) const  {
-
+	Real distance_ijxyz
+) const {
 	using namespace numeric::constants::d;
 	using numeric::sin_cos_range;
 
-	//static FArray1D_float diff( 3 ); //apl allocate this once only
 	//pb -- static can cause problems in multi-threading
 	Vector ab_diff( ( a_xyz - b_xyz ) / distance_ijxyz );
-
-	//j now figure out polar values of phi and theta. Normalize the difference. first get the length of the vector.
-	//vector_normalize(ab_diff);
 
 	//j figuring phi, for a2b
 	//ronj sin_cos_range adjust the range of the passed in argument to a valid [-1,1]. acos(x) returns the arccos of x
@@ -442,9 +414,7 @@ LeGrandSasa::get_2way_orientation(
 		phi_b2a_index = 1;
 	}
 
-
 	Real theta_a2b = std::atan2( ab_diff(2), ab_diff(1) );
-
 
 	theta_a2b = theta_a2b * ( num_theta_ / pi_2 );
 	theta_a2b_index = static_cast< int >( theta_a2b );
@@ -468,7 +438,6 @@ LeGrandSasa::get_2way_orientation(
 	} else if ( theta_b2a_index > num_theta_ ) {
 		theta_b2a_index = 1;
 	}
-
 }
 
 
@@ -482,10 +451,8 @@ LeGrandSasa::calc_atom_masks(
 	id::AtomID_Map< bool > const & atom_subset,
 	core::id::AtomID_Map< utility::vector1< ObjexxFCL::ubyte > > & atom_masks
 ) const {
-
 	using core::id::AtomID;
 	using core::conformation::Atom;
-
 
 	Size const ii = irsd.seqpos();
 	Size const jj = jrsd.seqpos();
@@ -503,9 +470,7 @@ LeGrandSasa::calc_atom_masks(
 		//ronj check to see if this atom is in the subset of atoms we're considering. if not, continue to the next one.
 		//ronj have to translate the index 'iia' into an AtomID to check if we're in the subset.
 		AtomID const iia_atomid( iia, ii );
-		if ( ! atom_subset[ iia_atomid ] ) {
-			continue; // jk skip this atom if not part of the subset
-		}
+		if ( ! atom_subset[ iia_atomid ] ) continue; // jk skip this atom if not part of the subset
 
 		//ronj convert the atom index into an Atom 'iia_atom' to make getting the xyz() and type() easier
 		Atom const & iia_atom( irsd.atom( iia ) );
@@ -516,9 +481,7 @@ LeGrandSasa::calc_atom_masks(
 
 			//ronj for all atoms in residue 'j', check to make sure that atom is in the subset of atoms we're considering
 			AtomID const jji_atomid( jja, jj );
-			if ( ! atom_subset[ jji_atomid ] ) {
-				continue; // jk skip this atom if not part of the subset
-			}
+			if ( ! atom_subset[ jji_atomid ] ) continue; // jk skip this atom if not part of the subset
 
 			Atom const & jja_atom( jrsd.atom( jja ) );
 			Vector const & jja_atom_xyz = jja_atom.xyz();
@@ -530,9 +493,7 @@ LeGrandSasa::calc_atom_masks(
 				continue;
 			}
 
-			if ( distance_ijxyz <= 0.0 ) {
-				continue;
-			}
+			if ( distance_ijxyz <= 0.0 ) continue;
 
 			// account for atom j overlapping atom i:
 			// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
@@ -545,13 +506,11 @@ LeGrandSasa::calc_atom_masks(
 					<< "calculating orientation of " << jrsd.name3() << jj << " atom " << jrsd.atom_name( jja ) << " on "
 					<< irsd.name3() << ii << " atom " << irsd.atom_name ( iia ) << std::endl;
 
-
 				get_orientation( iia_atom_xyz, jja_atom_xyz, aphi, theta, distance_ijxyz );
 				point = angles_( aphi, theta );
 				masknum = point * 100 + degree_of_overlap;
 
 				TR.Debug << "calculated masknum " << masknum << std::endl;
-
 
 				//ronj overlap bit values for all atoms should have been init'd to zero before the main for loops
 				utility::vector1< ObjexxFCL::ubyte > & iia_bit_values = atom_masks[ AtomID( iia, ii ) ];
@@ -575,7 +534,6 @@ LeGrandSasa::calc_atom_masks(
 					//}
 					//TR << " ";
 #endif
-
 				}
 #ifdef FILE_DEBUG
 				//TR << std::endl;
@@ -592,13 +550,11 @@ LeGrandSasa::calc_atom_masks(
 					<< "calculating orientation of " << irsd.name3() << ii << " atom " << irsd.atom_name( iia ) << " on "
 					<< jrsd.name3() << jj << " atom " << jrsd.atom_name ( jja ) << std::endl;
 
-
 				get_orientation( jja_atom_xyz, iia_atom_xyz, aphi, theta, distance_ijxyz );
 				point = angles_( aphi, theta );
 				masknum = point * 100 + degree_of_overlap;
 
 				TR.Debug << "calculated masknum " << masknum << std::endl;
-
 
 				utility::vector1< ObjexxFCL::ubyte > & jja_bit_values( atom_masks[ AtomID( jja, jj ) ] );
 
@@ -618,7 +574,6 @@ LeGrandSasa::calc_atom_masks(
 					//}
 					//TR << " ";
 #endif
-
 				}
 #ifdef FILE_DEBUG
 				//TR.Debug << std::endl
@@ -626,10 +581,7 @@ LeGrandSasa::calc_atom_masks(
 				//print_dot_bit_string( jja_bit_values );
 #endif
 			}
-
-
 			TR.Debug << "------" << std::endl;
-
 		}
 	}
 }
@@ -661,7 +613,6 @@ LeGrandSasa::print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values
 		TR << " ";
 	}
 	TR << std::endl;
-
 }
 
 } //sasa

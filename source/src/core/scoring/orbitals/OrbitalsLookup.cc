@@ -47,11 +47,9 @@ OrbitalsLookup::OrbitalsLookup(
 	number_stats_(6),
 	number_elements_(600)
 {
-
 	if ( basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != true ) {
 		utility_exit_with_message( "Trying to run orbitals score without orbitals! Pass the flag -add_orbitals!" );
 	}
-
 
 	std::map<core::Size, std::pair<core::Size, core::Size> > DHO_Hpol_scOrbscH_map;
 	utility::vector1< utility::vector1< core::Real > > DHO_Hpol_scOrbH_vector = parse_files(DHO_energies[1], DHO_Hpol_scOrbscH_map);
@@ -77,7 +75,6 @@ OrbitalsLookup::OrbitalsLookup(
 		DHO_Haro_scOrbH_vector_matrix.push_back(Haro_scOrbH_matrix);
 
 	}
-
 
 	//the spline will behave as a natural spline. This is controlled through an enum and put into an array. Using the natural spline
 	//allows for the border conditions to actuallay be met, unlike derivatives, where border conditions are never met
@@ -160,14 +157,12 @@ OrbitalsLookup::OrbitalsLookup(
 
 	//std::cout << "###################################################################################\n#####################3" << std::endl;
 
-
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_Hpol_scOrbscH_map;
 	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_scOrbH_vector = parse_files(AOH_energies[1], AOH_Hpol_scOrbscH_map);
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_bbOrbscH_map;
 	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_bbOrbH_vector = parse_files(AOH_energies[2], AOH_bbOrbscH_map);
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_HARO_scOrbscH_map;
 	utility::vector1< utility::vector1< core::Real > > AOH_Haro_scOrbH_vector = parse_files(AOH_energies[3], AOH_HARO_scOrbscH_map);
-
 
 	//initial construction of a vector of MathMatrix. We will be pushing back matrixes into this
 	utility::vector1< numeric::MathMatrix<core::Real> > AOH_Hpol_scOrbH_vector_matrix;
@@ -209,7 +204,6 @@ OrbitalsLookup::OrbitalsLookup(
 		AOH_Hpol_bbOrbH_splines_.push_back(AOH_Hpol_bbOrbH_vector_spline[count]);
 		AOH_Haro_scOrbH_splines_.push_back(AOH_Haro_scOrbH_vector_spline[count]);
 	}
-
 
 	//std::cout << "###################################################################################\n#####################3" << std::endl;
 	/* for(core::Real i=0.00; i <= 4; i+=0.1){
@@ -272,7 +266,6 @@ OrbitalsLookup::OrbitalsLookup(
 
 	*/
 
-
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOD_orb_orb_map;
 	utility::vector1< utility::vector1< core::Real > > AOD_orb_orb_vector = parse_files(AOD_orb_orb_energies[1], AOD_orb_orb_map);
 
@@ -309,7 +302,6 @@ OrbitalsLookup::OrbitalsLookup(
 		DOA_orb_orb_splines_.push_back(DOA_orb_orb_vector_spline[count]);
 	}
 
-
 	/*
 	for(core::Real i=0.00; i <= 4; i+=0.1){
 	core::Size number=0;
@@ -334,11 +326,9 @@ OrbitalsLookup::OrbitalsLookup(
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 	*/
 
-
 	std::map<core::Size, std::pair<core::Size, core::Size> > ACO_AOH_orb_Hpol_map;
 	utility::vector1< utility::vector1< core::Real > > ACO_AOH_orb_Hpol_vector = parse_files(ACO_AOH_orb_Hpol_energies[1], ACO_AOH_orb_Hpol_map);
 	utility::vector1< numeric::MathMatrix<core::Real> > ACO_AOH_orb_Hpol_vector_matrix;
-
 
 	//MathMatrix requires an array, not a vector. To get an array from a vector, we can use the & vector[1]. See wikipedia!
 	numeric::MathMatrix<core::Real> ACO_AOH_orb_Hpol_matrix(ACO_AOH_orb_Hpol_map[1].second, ACO_AOH_orb_Hpol_map[1].first, & ACO_AOH_orb_Hpol_vector[1][1] );
@@ -346,24 +336,19 @@ OrbitalsLookup::OrbitalsLookup(
 
 	utility::vector1<numeric::interpolation::spline::BicubicSpline> ACO_AOH_orb_Hpol_vector_spline;
 
-
 	bicubic_spline.train(behavior, start, delta, ACO_AOH_orb_Hpol_vector_matrix[1], linear_cont, first_deriv);
 	ACO_AOH_orb_Hpol_vector_spline.push_back( bicubic_spline );
-
 
 	//store all splines in a private member look up table. This allows for looking up the values in the actual score and provides an
 	//interface for the OrbitalsScore class.
 	ACO_AOH_orb_Hpol_splines_.push_back(ACO_AOH_orb_Hpol_vector_spline[1]);
-
-
 }//end orbitalsLookup
 
 
 utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
 	std::string const & file,
 	std::map<core::Size, std::pair<core::Size, core::Size> > & orbital_angle_dist_map
-)const
-{
+) const {
 	utility::vector1< core::Real > E_vector(number_elements_, 0);
 	utility::vector1< utility::vector1< core::Real > > energy_vector(static_cast <core::Size> (number_stats_), E_vector); //600 default value for KBP, resized later
 	std::string line;
@@ -407,11 +392,6 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 	bool check_derivative
 ) const
 {
-
-	//if ( (distance > 4.0 ) ) { energy = distance_derivative = angle_derivative = 0.0; return; }
-
-	//if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
-
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DHO_angle));
 	if ( check_derivative ) {
 		if ( h_enum == Hpol_scOrbH ) {
@@ -469,10 +449,6 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 	bool ACO //action centor orbital?
 ) const
 {
-	//if ( distance > 4.0 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
-	//if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
-	// if(orb_type_name == core::chemical::orbitals::C_pi_sp2 && h_enum==Hpol_bbOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
-
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, AOH_angle));
 	if ( check_derivative ) {
 		if ( h_enum == Hpol_scOrbH ) {
@@ -606,9 +582,7 @@ void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
 	core::Real & distance_derivative,
 	core::Real & angle_derivative,
 	bool check_derivative
-
-)const{
-	//if(DOO_angle > 0) energy=distance_derivative=angle_derivative=0.0;
+) const {
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DOO_angle));
 
 	if ( check_derivative ) {
@@ -640,7 +614,6 @@ void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
-
 	} else {
 		if ( orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2) ) {
 			if ( orb_type_name2==core::chemical::orbitals::N_pi_sp2 ) {
@@ -670,7 +643,5 @@ void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
 
 
 }//namespace orbitals
-
 }//namespace scoring
-
 }//namespace core

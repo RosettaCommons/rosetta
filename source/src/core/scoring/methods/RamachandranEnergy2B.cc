@@ -135,7 +135,7 @@ RamachandranEnergy2B::eval_intrares_energy(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( ! rsd.is_protein() ) return;
+	if ( !rsd.is_protein() ) return;
 
 	if ( rsd.is_terminus() ) {
 		/// -- no op --  Rama does not have a defined score for termini
@@ -160,25 +160,26 @@ RamachandranEnergy2B::eval_dof_derivative(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	// ignore invalid or non-BB torsions
+	if ( !tor_id.valid() || tor_id.type() != id::BB ) return 0.0;
+	
 	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB ) {
-		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if ( rsd.is_protein() && tor_id.torsion() <= 2 && ! rsd.is_terminus() ) {
-			Real rama_score, drama_dphi, drama_dpsi;
-			if ( option[ score::ramaneighbors ] ) {
-				// Neighbor dependent rama score + derivatives.
-				Size const seqpos( rsd.seqpos() );
-				potential_.eval_rama_score_residue( rsd,
-					pose.residue_type( seqpos - 1 ).aa(),
-					pose.residue_type( seqpos + 1 ).aa(),
-					rama_score, drama_dphi, drama_dpsi );
-			} else {
-				/// Neighbor independent rama score + derivatives
-				potential_.eval_rama_score_residue( rsd,
-					rama_score, drama_dphi, drama_dpsi );
-			}
-			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+	conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
+	if ( rsd.is_protein() && tor_id.torsion() <= 2 && ! rsd.is_terminus() ) {
+		Real rama_score, drama_dphi, drama_dpsi;
+		if ( option[ score::ramaneighbors ] ) {
+			// Neighbor dependent rama score + derivatives.
+			Size const seqpos( rsd.seqpos() );
+			potential_.eval_rama_score_residue( rsd,
+											   pose.residue_type( seqpos - 1 ).aa(),
+											   pose.residue_type( seqpos + 1 ).aa(),
+											   rama_score, drama_dphi, drama_dpsi );
+		} else {
+			/// Neighbor independent rama score + derivatives
+			potential_.eval_rama_score_residue( rsd,
+											   rama_score, drama_dphi, drama_dpsi );
 		}
+		deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 	}
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator

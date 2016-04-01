@@ -15,9 +15,6 @@
 #include <core/scoring/GenBornPotential.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-//#include <core/scoring/etable/count_pair/CountPairIntraResC3.hh>
-//#include <core/scoring/etable/count_pair/CountPair1BC3.hh>
-//#include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 
@@ -27,7 +24,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-//#include <core/pack/task/PackerTask.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -176,8 +172,7 @@ GenBornPotential::res_res_burial(
 	GenBornResidueInfo & gb1,
 	Residue const & rsd2,
 	GenBornResidueInfo const & gb2
-) const
-{
+) const {
 	bool const same_res( rsd1.seqpos() == rsd2.seqpos() );
 
 	//jjh local
@@ -191,7 +186,6 @@ GenBornPotential::res_res_burial(
 	for ( int atm2 = 1, atm2e = rsd2.natoms(); atm2 <= atm2e; ++atm2 ) {
 		atm_radii2[ atm2]  = gb2.scale_factor( atm2 ) * ( gb2.atomic_radius( atm2 ) - ParamS );
 	}
-
 
 	for ( int atm1 = 1, atm1e = rsd1.natoms(); atm1 <= atm1e; ++atm1 ) {
 		Real const rad1 = atm_radii1[ atm1 ];
@@ -230,8 +224,6 @@ GenBornPotential::res_res_burial(
 			}
 		}
 	}
-
-
 }
 
 
@@ -258,10 +250,7 @@ GenBornPotential::finalize_born_radii( GenBornResidueInfo & gb_info ) const
 void
 GenBornPotential::get_all_born_radii(
 	pose::Pose & pose
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
-
+) const {
 	PROF_START( basic::GB_GET_ALL_BORN_RADII );
 
 	Size const nres( pose.total_residue() );
@@ -270,7 +259,6 @@ GenBornPotential::get_all_born_radii(
 	//  * zeros born radii for start of calculations
 	//  * fills the atomic radii  (from the Pose/AtomTypeSet)
 	//  * fills the scale factors (from the Pose/AtomTypeSet)
-
 
 	GenBornPoseInfoOP gb_info;
 
@@ -281,9 +269,7 @@ GenBornPotential::get_all_born_radii(
 	}
 
 	//jjh zero out arrays
-	//born_radius = 0.0;
 	gb_info->initialize( pose );
-
 
 	//jjh get the residue-residue burial
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
@@ -304,7 +290,6 @@ GenBornPotential::get_all_born_radii(
 	pose.data().set( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO, gb_info );
 
 	PROF_STOP( basic::GB_GET_ALL_BORN_RADII );
-
 }
 
 
@@ -317,10 +302,7 @@ void
 GenBornPotential::setup_for_packing(
 	pose::Pose & pose,
 	utility::vector1< bool > const & repacking_residues
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
-
+) const {
 	PROF_START( basic::GB_SETUP_FOR_PACKING );
 
 	GenBornPoseInfoOP gb_info;
@@ -332,20 +314,17 @@ GenBornPotential::setup_for_packing(
 	}
 
 	//jjh zero out arrays
-	//born_radius = 0.0;
 	gb_info->initialize( pose );
 
 	/// store info about which positions are moving
 	gb_info->set_repack_list( repacking_residues );
 
 	build_placeholders( pose, *gb_info );
-
 	get_template_born_radii( pose, *gb_info );
 
 	pose.data().set( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO, gb_info );
 
 	PROF_STOP( basic::GB_SETUP_FOR_PACKING );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,53 +333,48 @@ void
 GenBornPotential::build_placeholders(
 	pose::Pose const & pose,
 	GenBornPoseInfo & gb_info
-) const
-{
+) const {
 	Size const nres( pose.total_residue() );
 
 	chemical::ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
-	//chemical::ResidueType const & protein_placeholder_residue_type( residue_set->name_map("GB_AA_PLACEHOLDER") );
 
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( gb_info.being_packed(i) ) {
-			Residue const & existing_rsd( pose.residue(i) );
+		if ( !gb_info.being_packed(i) ) continue;
+		Residue const & existing_rsd( pose.residue(i) );
+		
+		if ( !existing_rsd.is_protein() ) {
+			std::cout << "WARNING: no mechanism for building genborn placeholders at non-protein positions\n" <<
+			"Using existing residue coords" << std::endl;
+			gb_info.set_placeholder( i, existing_rsd.clone(), GenBornResidueInfoOP( new GenBornResidueInfo( existing_rsd ) ) );
+		} else {
 			// build a placeholder at this position
-			if ( existing_rsd.is_protein() ) {
-				chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set->name_map("GB_AA_PLACEHOLDER").get_self_ptr() );
-				// use appropriate termini variants if necessary:
-				if ( existing_rsd.is_lower_terminus() ) {
-					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
-						residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-						chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr() );
-				}
-				if ( existing_rsd.is_upper_terminus() ) {
-					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
-						residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-						chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
-				}
-
-				conformation::ResidueOP rsd
-					( conformation::ResidueFactory::create_residue( *protein_placeholder_residue_type, existing_rsd,
-					pose.conformation() ) );
-				GenBornResidueInfoOP rsd_info( new GenBornResidueInfo( *rsd ) );
-
-				Size const dummy_index( rsd->atom_index("DUMM") );
-				rsd_info->atomic_radius( dummy_index ) = dummy_radius;
-				rsd_info->scale_factor ( dummy_index ) = dummy_scale;
-
-				// debug placement of dummy atom
-				runtime_assert( std::abs( rsd->xyz("CA").distance( rsd->xyz( dummy_index )) - dummy_distance ) < 1e-2 );
-				gb_info.set_placeholder( i, rsd, rsd_info );
-
-			} else {
-				std::cout << "WARNING: no mechanism for building genborn placeholders at non-protein positions\n" <<
-					"Using existing residue coords" << std::endl;
-				gb_info.set_placeholder( i, existing_rsd.clone(), GenBornResidueInfoOP( new GenBornResidueInfo( existing_rsd ) ) );
+			chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set->name_map("GB_AA_PLACEHOLDER").get_self_ptr() );
+			// use appropriate termini variants if necessary:
+			if ( existing_rsd.is_lower_terminus() ) {
+				protein_placeholder_residue_type = chemical::ResidueTypeCOP(
+					residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
+					chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr() );
 			}
+			if ( existing_rsd.is_upper_terminus() ) {
+				protein_placeholder_residue_type = chemical::ResidueTypeCOP(
+					residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
+					chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
+			}
+			
+			conformation::ResidueOP rsd
+			( conformation::ResidueFactory::create_residue( *protein_placeholder_residue_type, existing_rsd,
+				pose.conformation() ) );
+			GenBornResidueInfoOP rsd_info( new GenBornResidueInfo( *rsd ) );
+			
+			Size const dummy_index( rsd->atom_index("DUMM") );
+			rsd_info->atomic_radius( dummy_index ) = dummy_radius;
+			rsd_info->scale_factor ( dummy_index ) = dummy_scale;
+			
+			// debug placement of dummy atom
+			runtime_assert( std::abs( rsd->xyz("CA").distance( rsd->xyz( dummy_index )) - dummy_distance ) < 1e-2 );
+			gb_info.set_placeholder( i, rsd, rsd_info );
 		}
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -445,17 +419,12 @@ void
 GenBornPotential::update_residue_for_packing(
 	pose::Pose & pose,
 	Size const seqpos
-) const
-{
-	// ////using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
-
+) const {
 	GenBornPoseInfo & gb_info( static_cast< GenBornPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) );
 	GenBornResidueInfo & gb( gb_info.residue_info( seqpos ) );
 
 	Residue const & rsd( pose.residue( seqpos ) );
-
 	gb.initialize( rsd );
-
 	get_single_rotamer_born_radii( rsd, pose, gb_info, gb );
 }
 
@@ -470,9 +439,7 @@ GenBornPotential::get_single_rotamer_born_radii(
 	pose::Pose const & pose,
 	GenBornPoseInfo const & gb_info,
 	GenBornResidueInfo & gb1
-) const
-{
-
+) const {
 	debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
 
 	for ( Size res2=1; res2<= pose.total_residue(); ++res2 ) {
@@ -492,10 +459,8 @@ void
 GenBornPotential::get_rotamers_born_radii(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & rotamer_set
-) const
-{
+) const {
 	using core::conformation::RotamerSetCacheableDataType::GEN_BORN_ROTAMER_SET_INFO;
-	// ////using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
 
 	// this holds placeholders, info for non-packed residues
 	GenBornPoseInfo const & gb_info_pose
@@ -519,8 +484,7 @@ GenBornPotential::get_res_res_elecE(
 	GenBornResidueInfo const & gb1,
 	Residue const & rsd2,
 	GenBornResidueInfo const & gb2
-) const
-{
+) const {
 	using namespace etable::count_pair;
 
 	int natoms1 = rsd1.natoms();
@@ -533,11 +497,6 @@ GenBornPotential::get_res_res_elecE(
 	etable::count_pair::CountPairFunctionOP cpfxn( 0 );
 	if ( same_res ) {
 		cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
-		//} else if ( rsd1.is_bonded( rsd2 ) ) {
-		// cpfxn = new etable::count_pair::CountPair1BC3( rsd1, rsd1.connect_atom( rsd2 ), rsd2, rsd2.connect_atom( rsd1 ) );
-		//} else {
-		// cpfxn = new etable::count_pair::CountPairAll();
-		//}
 	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
 	}
@@ -581,9 +540,7 @@ GenBornPotential::get_res_res_elecE(
 				this_intx = 166.0 * gb_shell_intxn( inv_Ep * q1, r1, q2, r2, dis);
 				if ( !same_res ) this_intx *= 2.0;
 			}
-
 			elecE += this_intx;
-			//      total_coul += this_intx;
 		}
 	}
 
@@ -605,20 +562,15 @@ GenBornPotential::gb_shell_intxn(
 	Real const qbi,
 	Real const rbi,
 	Real const dist
-) const
-{
-
-	if ( dist >= (rai+rbi) ) {
-		return (qai * qbi /dist);
-	}
-
-	// Make sure rb is larger than ra
+) const {
+	if ( dist >= (rai+rbi) ) return (qai * qbi /dist);
 
 	Real qa;
 	Real ra;
 	Real qb;
 	Real rb;
 
+	// Make sure rb is larger than ra
 	if ( rai > rbi ) {
 		qa = qbi;
 		ra = rbi;
@@ -653,21 +605,15 @@ GenBornPotential::gb_shell_intxn_deriv(
 	Real const qbi,
 	Real const rbi,
 	Real const dist
-) const
-{
-
-	if ( dist >= (rai+rbi) ) {
-		return (-1.0 * qai * qbi / ( dist * dist ) );
-	}
-
-
-	// Make sure rb is larger than ra
+) const {
+	if ( dist >= (rai+rbi) ) return (-1.0 * qai * qbi / ( dist * dist ) );
 
 	Real qa;
 	Real ra;
 	Real qb;
 	Real rb;
 
+	// Make sure rb is larger than ra
 	if ( rai > rbi ) {
 		qa = qbi;
 		ra = rbi;
@@ -710,10 +656,8 @@ GenBornPotential::eval_atom_derivative(
 	bool const exclude_DNA_DNA,
 	Vector & F1,
 	Vector & F2
-) const
-{
+) const {
 	using namespace etable::count_pair;
-	// ////using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
 
 	Size const i( id.rsd() ), ii( id.atomno() );
 
@@ -731,8 +675,6 @@ GenBornPotential::eval_atom_derivative(
 	Vector const & xyzi( rsd1.xyz( ii ) );
 
 	// gb stuff
-	//Real const Ep = 4.0; // dielectric for protein
-	//Real const Ew = 80.0; // dielectric for water
 	Real const tau = (1.0/Ep - 1.0/Ew);
 	Real const q1 = rsd1.atomic_charge( ii );
 	Real const b1 = gb1.born_radius( ii );
@@ -750,7 +692,6 @@ GenBornPotential::eval_atom_derivative(
 		} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 			cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
 		}
-
 
 		for ( Size jj=1, jj_end=rsd2.natoms(); jj<= jj_end; ++jj ) {
 			Real cp_weight;

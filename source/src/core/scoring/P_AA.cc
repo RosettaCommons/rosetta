@@ -54,16 +54,6 @@ namespace core {
 namespace scoring {
 
 
-/// @brief Amino acid probability array: P(aa)
-//Probability_AA P_AA;
-
-/// @brief Amino acid conditional probability wrt number of neighbors array: P(aa|neighbors)
-//Probability_AA_n P_AA_n;
-
-/// @brief Amino acid conditional probability wrt (phi,psi) array: P(aa|phi,psi)
-//Probability_AA_pp P_AA_pp;
-
-
 /// @brief ctor -- Initialize the amino acid probability data structures
 P_AA::P_AA()
 {
@@ -158,7 +148,6 @@ P_AA::read_P_AA_n()
 			debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 			AA aa = aa_from_name( id );
 			debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
-			//AminoAcidKey const & key( AminoAcidKeys::key( id ) );
 			P_AA_n_[ aa ][ n ] = probability;
 		} //! ADD INPUT ERROR HANDLING
 	}
@@ -197,11 +186,9 @@ P_AA::read_P_AA_pp()
 	Angle phi, psi;
 	std::string id;
 	Probability probability;
-	//MaximCode:
 	Probability minusLogProbability;
 	utility::io::izstream stream;
 
-	//MaximCode
 	if ( option[shapovalov_lib_fixes_enable] &&
 			option[shapovalov_lib::shap_p_aa_pp_enable] ) {
 		std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
@@ -218,7 +205,6 @@ P_AA::read_P_AA_pp()
 	}
 
 	// search in the local directory first
-	//MaximCode:
 	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 		stream.open( option[ p_aa_pp ] );
@@ -229,7 +215,6 @@ P_AA::read_P_AA_pp()
 	// then database
 	if ( !stream.good() ) {
 		stream.close();
-		//MaximCode:
 		if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 			basic::database::open(stream, option[p_aa_pp]);
@@ -247,14 +232,12 @@ P_AA::read_P_AA_pp()
 	while ( stream ) {
 		using namespace ObjexxFCL::format;
 
-		//MaximCode:
 		if ( stream.peek() == '#' ) {
 			std::string line;
 			stream.getline(line);
 			continue;
 		}
 
-		//MaximCode:
 		if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 			stream >> bite(4, phi) >> skip(1) >> bite(4, psi) >> skip(1)
@@ -312,7 +295,6 @@ P_AA::read_P_AA_pp()
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-
 		// Now prepare the bicubic spline
 		using namespace numeric;
 		using namespace numeric::interpolation::spline;
@@ -349,19 +331,17 @@ P_AA::read_P_AA_pp()
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void P_AA::symmetrize_gly_table()
 {
-	if ( TR.visible() ) TR << "Symmetrizing P_AA_pp glycine table." << std::endl;
+	TR << "Symmetrizing P_AA_pp glycine table." << std::endl;
 	core::Size const glyindex( static_cast<core::Size>(core::chemical::aa_gly) );
 
 	//Debug-mode check:
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "P_AA_pp gly table before symmetry operation:" << std::endl;
-		for ( core::Size iphi=0; iphi < 36; ++iphi ) {
-			for ( core::Size ipsi=0; ipsi < 36; ++ipsi ) {
-				TR.Debug << P_AA_pp_[glyindex](iphi,ipsi) << "\t";
-			}
-			TR.Debug << std::endl;
+	TR.Debug << "P_AA_pp gly table before symmetry operation:" << std::endl;
+	for ( core::Size iphi=0; iphi < 36; ++iphi ) {
+		for ( core::Size ipsi=0; ipsi < 36; ++ipsi ) {
+			TR.Debug << P_AA_pp_[glyindex](iphi,ipsi) << "\t";
 		}
-	} //end debug output
+		TR.Debug << std::endl;
+	}
 
 	for ( core::Size iphi = 0 /*Ugh, zero-based*/; iphi < 36 /*Ugh, hard-coded*/; ++iphi ) {
 		core::Size const opposite_phi( 35 - iphi );
@@ -376,19 +356,16 @@ void P_AA::symmetrize_gly_table()
 	//To my knowledge, there's no need for normalization -- the values were unnormalized to begin with.  So we're done.
 
 	//Debug-mode check:
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "P_AA_pp gly table after symmetry operation:" << std::endl;
-		for ( core::Size iphi=0; iphi < 36; ++iphi ) {
-			for ( core::Size ipsi=0; ipsi < 36; ++ipsi ) {
-				TR.Debug << P_AA_pp_[glyindex](iphi,ipsi) << "\t";
-			}
-			TR.Debug << std::endl;
+	TR.Debug << "P_AA_pp gly table after symmetry operation:" << std::endl;
+	for ( core::Size iphi=0; iphi < 36; ++iphi ) {
+		for ( core::Size ipsi=0; ipsi < 36; ++ipsi ) {
+			TR.Debug << P_AA_pp_[glyindex](iphi,ipsi) << "\t";
 		}
-	} //end debug output
+		TR.Debug << std::endl;
+	}
 
 	if ( TR.visible() ) TR.flush();
 	if ( TR.Debug.visible() ) TR.Debug.flush();
-	return;
 }
 
 
@@ -407,24 +384,23 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 	// sets up for eventual removal of prior condition
 	const core::Real d_multiplier = res.has_property( "D_AA" ) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to invert phi and psi for D.
 
-	if ( ! res.is_terminus()  && ! res.is_virtual_residue()  ) { //ToDo Also exclude chainbreaks
-		// Probabilities for this amino acid are present in files and it is not a terminus
-		Angle const phi( d_multiplier*res.mainchain_torsion( 1 ) );
-		Angle const psi( d_multiplier*res.mainchain_torsion( 2 ) );
-		//printf("P_AA_pp: res=%lu phi=%.2f psi=%.2f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-			return P_AA_pp_energy_splines_[ aa ].F( phi, psi );
+	//ToDo Also exclude chainbreaks
+	if ( res.is_terminus() || res.is_virtual_residue()  ) return Energy( 0.0 );
+	
+	// Probabilities for this amino acid are present in files and it is not a terminus
+	Angle const phi( d_multiplier*res.mainchain_torsion( 1 ) );
+	Angle const psi( d_multiplier*res.mainchain_torsion( 2 ) );
+	//printf("P_AA_pp: res=%lu phi=%.2f psi=%.2f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+		return P_AA_pp_energy_splines_[ aa ].F( phi, psi );
+	} else {
+		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
+			using numeric::interpolation::periodic_range::full::bilinearly_interpolated;
+			return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 		} else {
-			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
-				using numeric::interpolation::periodic_range::full::bilinearly_interpolated;
-				return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
-			} else {
-				using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
-				return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
-			}
+			using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
+			return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 		}
-	} else { // Probabilities for this amino acid aren't present in files or it is a terminus
-		return Energy( 0.0 );
 	}
 }
 
@@ -438,19 +414,17 @@ P_AA::P_AA_pp_energy( chemical::AA const aa, Angle const phi, Angle const psi ) 
 	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 
 	// Here we no longer turn aa into aa2 because we don't need to--we handle that at a higher level.
-	if ( aa <= chemical::num_canonical_aas ) {
-		// Probabilities for this amino acid are present in files
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
-			return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
-		} else {
-			//return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
-			numeric::MathVector< Real > args(2);
-			args(0) = phi;
-			args(1) = psi;
-			return P_AA_pp_energy_splines_[ aa ].F( args );
-		}
-	} else { // Probabilities for this amino acid aren't present in files or it is a terminus
-		return Energy( 0.0 );
+	if ( aa > chemical::num_canonical_aas ) return Energy( 0.0 );
+	
+	// Probabilities for this amino acid are present in files
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
+		return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
+	} else {
+		//return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
+		numeric::MathVector< Real > args(2);
+		args(0) = phi;
+		args(1) = psi;
+		return P_AA_pp_energy_splines_[ aa ].F( args );
 	}
 }
 
@@ -459,9 +433,7 @@ EnergyDerivative
 P_AA::get_Paa_pp_deriv(
 	conformation::Residue const & res,
 	id::TorsionID const & tor_id
-) const
-{
-
+) const {
 	using namespace core::chemical;
 	using numeric::conversions::degrees;
 	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
@@ -476,48 +448,45 @@ P_AA::get_Paa_pp_deriv(
 	Size const phi_id = 1;
 	Size const psi_id = 2;
 
-	if ( res.type().is_alpha_aa() && !res.is_terminus() && ( tor_id.type() == id::BB && (tor_id.torsion() == phi_id || tor_id.torsion() == psi_id )) & ! res.is_virtual_residue() ) {
-		//ToDo Also exclude chainbreaks
-		// Probabilities for this amino acid are present in files and it is not a terminus
-		Angle const phi( d_multiplier*res.mainchain_torsion( phi_id ));
-		Angle const psi( d_multiplier*res.mainchain_torsion( psi_id ));
-		Probability dp_dphi( 0.0 ), dp_dpsi( 0.0 );
-
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-			switch ( tor_id.torsion()  ) {
+	//ToDo Also exclude chainbreaks
+	if ( !res.type().is_alpha_aa() || res.is_terminus() || ( tor_id.type() != id::BB || (tor_id.torsion() != phi_id && tor_id.torsion() != psi_id )) || res.is_virtual_residue() ) return EnergyDerivative( 0.0 );
+	
+	// Probabilities for this amino acid are present in files and it is not a terminus
+	Angle const phi( d_multiplier*res.mainchain_torsion( phi_id ));
+	Angle const psi( d_multiplier*res.mainchain_torsion( psi_id ));
+	Probability dp_dphi( 0.0 ), dp_dpsi( 0.0 );
+	
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+		switch ( tor_id.torsion()  ) {
 			case phi_id :
 				return d_multiplier*P_AA_pp_energy_splines_[ aa ].dFdx( phi, psi );
 			case psi_id :
 				return d_multiplier*P_AA_pp_energy_splines_[ aa ].dFdy( phi, psi );
 			default :
 				return EnergyDerivative( 0.0 );
+		}
+	} else {
+		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
+			Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
+			switch ( tor_id.torsion()  ) {
+				case phi_id :
+					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
+				case psi_id :
+					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
+				default :
+					return EnergyDerivative( 0.0 );
 			}
 		} else {
-			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
-				Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
-				//Energy Paa_ppE = -std::log( interp_p / P_AA_[ aa ] );
-				switch ( tor_id.torsion()  ) {
+			Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
+			switch ( tor_id.torsion()  ) {
 				case phi_id :
 					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
 				case psi_id :
 					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
 				default :
 					return EnergyDerivative( 0.0 );
-				}
-			} else {
-				Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
-				switch ( tor_id.torsion()  ) {
-				case phi_id :
-					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
-				case psi_id :
-					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
-				default :
-					return EnergyDerivative( 0.0 );
-				}
 			}
 		}
-	} else { // Probabilities for this amino acid aren't present in files or it is a terminus
-		return EnergyDerivative( 0.0 );
 	}
 }
 

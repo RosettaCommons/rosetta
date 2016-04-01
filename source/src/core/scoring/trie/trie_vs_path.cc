@@ -33,8 +33,7 @@ convert_inorder_vector_to_original_order(
 	utility::vector1< Size > const & total_rotamers_2_unique_rotamers,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< Energy > const & temp_vector
-)
-{
+) {
 	Size const nrots1 = total_rotamers_2_unique_rotamers.size();
 
 	for ( Size ii = 1; ii <= nrots1; ++ii ) {

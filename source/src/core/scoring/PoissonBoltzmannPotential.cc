@@ -105,7 +105,6 @@ PB::eval_PB_energy_residue(
 	Real & PB_energy_sidechain,
 	Real const & PB_burial_weight
 ) const {
-
 	PB_energy_residue = 0.0;
 	PB_energy_backbone = 0.0;
 	PB_energy_sidechain = 0.0;
@@ -124,17 +123,17 @@ PB::eval_PB_energy_residue(
 		}
 		PB_energy_residue += atom_energy;
 	}
-
 }
 
 //============================================================================
 #ifdef LINK_APBS_LIB   // APBS libraries are linked
 
 void
-PB::solve_pb( core::pose::Pose const & pose,
-							std::string const & tag,
-							std::map<std::string, bool> const &charged_residues )
-{
+PB::solve_pb(
+	core::pose::Pose const & pose,
+	std::string const & tag,
+	std::map<std::string, bool> const & charged_residues
+) {
 	using namespace std;
 	time_t begin;
 	time(&begin);
@@ -151,11 +150,12 @@ PB::solve_pb( core::pose::Pose const & pose,
 
 	result = apbs.exec();
 
-  if( result == 0 ) {
+	if ( result == 0 ) {
 		TR.Error << "APBS failed!  Terminating the program..." << std::endl;
 		TR.flush();
 		runtime_assert(false);
-  }
+	}
+
 	TR.Debug << "Solved PB. Loading potential..." << std::endl;
 	const double * meta = result->grid_meta;
 	const double * data = &(result->grid_data[0][0]);
@@ -165,37 +165,37 @@ PB::solve_pb( core::pose::Pose const & pose,
 	time(&end);
 	TR << "PB took " << end-begin << " seconds" << std::endl;
 }
+
 void
-PB::load_potential(const double grid_meta[],
-									 const double pot[]) {
+PB::load_potential(
+	const double grid_meta[],
+	const double pot[]
+) {
 	int nx = grid_meta[1];
 	int ny = grid_meta[2];
 	int nz = grid_meta[3];
-  n_grid_[0] = nx;
-  n_grid_[1] = ny;
-  n_grid_[2] = nz;
-  grid_spacing_[0] = grid_meta[4];
-  grid_spacing_[1] = grid_meta[5];
-  grid_spacing_[2] = grid_meta[6];
-  //double centx = grid_meta[7];
-  //double centy = grid_meta[8];
-  //double centz = grid_meta[9];
-  lower_bound_[0] = grid_meta[10];
-  lower_bound_[1] = grid_meta[11];
-  lower_bound_[2] = grid_meta[12];
+	n_grid_[0] = nx;
+	n_grid_[1] = ny;
+	n_grid_[2] = nz;
+	grid_spacing_[0] = grid_meta[4];
+	grid_spacing_[1] = grid_meta[5];
+	grid_spacing_[2] = grid_meta[6];
+	lower_bound_[0] = grid_meta[10];
+	lower_bound_[1] = grid_meta[11];
+	lower_bound_[2] = grid_meta[12];
 
 	i2c_ = numeric::xyzMatrix <core::Real>::rows(
-																							 grid_spacing_[0],0.,0.,
-																							 0.,grid_spacing_[1],0.,
-																							 0.,0.,grid_spacing_[2]);
+		grid_spacing_[0], 0., 0.,
+		0., grid_spacing_[1], 0.,
+		0., 0., grid_spacing_[2] );
 	c2i_ = numeric::xyzMatrix <core::Real>::rows(
-																							 1./grid_spacing_[0],0.,0.,
-																							 0.,1./grid_spacing_[1],0.,
-																							 0.,0.,1./grid_spacing_[2]);
+		1./grid_spacing_[0], 0., 0.,
+		0., 1./grid_spacing_[1], 0.,
+		0., 0., 1./grid_spacing_[2] );
 
 	potential_.dimension(nx, ny, nz);
 
-  double cap =  basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
+	double cap =  basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
 
 	int icol=0;
 	int u;
@@ -213,13 +213,13 @@ PB::load_potential(const double grid_meta[],
 				icol++;
 				if (icol == 3) {
 				    icol = 0;
-						lines++;
-						//ofs << std::endl;
+					lines++;
+					//ofs << std::endl;
 				}
-				if( pot[u] > cap ){
+				if ( pot[u] > cap ) {
 					potential_(i,j,k) = cap;
 				}
-				else if( pot[u] < -cap ) {
+				else if ( pot[u] < -cap ) {
 					potential_(i,j,k) = -cap;
 				}
 				else{
@@ -351,7 +351,6 @@ PB::load_APBS_potential()
 		break;
 	}
 
-
 	TR << "PB potential is successfully loaded from: " << dx_filename_ << std::endl;
 
 	idx2cart(n_grid_, upper_bound_);
@@ -362,14 +361,15 @@ PB::load_APBS_potential()
 	//component "positions" value 1
 	//component "connections" value 2
 	//component "data" value 3
-
 }
 
 #endif // LINK_APBS_LIB
 //==============================================================================
 void
-PB::write_pqr( core::pose::Pose const & pose,
-	std::map<std::string, bool> const & is_residue_charged_by_name_) const {
+PB::write_pqr(
+	core::pose::Pose const & pose,
+	std::map<std::string, bool> const & is_residue_charged_by_name_
+) const {
 	// Generate .pqr
 	std::ofstream pqr_ostr(pqr_filename_.c_str());
 
@@ -378,8 +378,7 @@ PB::write_pqr( core::pose::Pose const & pose,
 	charged_chains.push_back(1);
 
 	Size const nres( pose.total_residue() );
-
-	Size number(0);
+	Size number( 0 );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
@@ -391,16 +390,11 @@ PB::write_pqr( core::pose::Pose const & pose,
 
 			//skip outputing virtual atom unless specified.
 			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
-			//if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
-			// rsd.atom_type(j).is_virtual() ) continue;
 			if ( rsd.atom_type(j).is_virtual() ) continue;
 
 			++number;
 
-			//   runtime_assert( rsd.chain() < chains.size() ); // silly restriction
-
 			char const chain( chr_chains[ (rsd.chain()-1)%chr_chains.size() ] );
-			//   char const chain( chains[ rsd.chain() ] );
 			if ( residue_charged ) {
 				using namespace ObjexxFCL::format;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
@@ -426,11 +420,14 @@ PB::write_pqr( core::pose::Pose const & pose,
 
 	TR << pqr_filename_ << " is successfully written." << std::endl;
 }
+
 ///
 /// Write out the configurati
 ///
 void
-PB::write_config (core::pose::Pose const & pose) const {
+PB::write_config(
+	core::pose::Pose const & pose
+) const {
 
 	// Generate .in
 	std::ofstream config_ostr(config_filename_.c_str());
@@ -451,8 +448,6 @@ PB::write_config (core::pose::Pose const & pose) const {
 		}
 	}
 
-	//min_r -= numeric::xyzVector <core::Real> (20,20,20);
-	//max_r += numeric::xyzVector <core::Real> (20,20,20);
 	numeric::xyzVector <core::Real> length = max_r - min_r;       // grid widths
 	numeric::xyzVector <core::Real> center = (min_r + max_r)/2.;  // grid center coords
 	//APBS psize.py paramters:

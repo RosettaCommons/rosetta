@@ -72,8 +72,6 @@ Real const Ramachandran2B::binw_( 10.0 );
 // directly copied from the Ramachandran.cc implementation, might need tweaking
 Real const Ramachandran2B::rama_sampling_thold_(0.00075 );
 
-//Real const Ramachandran2B::rama_sampling_factor_( 10.0 ); // factor for increased precision of Rama sampling table
-
 Ramachandran2B::Ramachandran2B() :
 	ram_energ_( n_phi_, n_psi_, n_aa_, 0.0 ),
 	ram_entropy_( n_aa_, 0.0 ),
@@ -103,11 +101,8 @@ void
 Ramachandran2B::eval_rama_score_all(
 	pose::Pose & pose,
 	ScoreFunction const & scorefxn
-) const
-{
+) const {
 	if ( scorefxn.has_zero_weight( rama ) ) return; // unnecessary, righ?
-
-	//double rama_sum = 0.0;
 
 	// in pose mode, we use fold_tree.cutpoint info to exclude terminus
 	// residues from rama calculation. A cutpoint could be either an artificial
@@ -126,32 +121,18 @@ Ramachandran2B::eval_rama_score_all(
 
 	int const total_residue = pose.total_residue();
 
-	// retrieve cutpoint info // apl do we actually need this data?
-	// if so, Pose must provide it 'cause we're offing all global data
-	//
-	//kinematics::FoldTree const & fold_tree(
-	//  pose.fold_tree() );
-	//int const n_cut( fold_tree.num_cutpoint() );
-
-	//FArray1D< Real > cut_weight( n_cut,
-	// scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
-
-	//if( cut_weight.size1() == scorefxns::cut_weight.size1() )
-	// cut_weight = scorefxns::cut_weight;
-
 	// exclude chain breaks
-
 	Energies & pose_energies( pose.energies() );
 
 	for ( int ii = 1; ii <= total_residue; ++ii ) {
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus()  ) {
-			Real rama_score,dphi,dpsi;
-			eval_rama_score_residue(pose.residue(ii), pose.residue(ii-1).aa(), pose.residue(ii+1).aa(), rama_score, dphi, dpsi);
-			T << "Rama:eval_all: residue " << ii << " " << pose.residue(ii).name() <<
-				" " << ii-1 << " " << pose.residue(ii-1).name() << " " << ii+1 << " " <<
-				pose.residue(ii+1).name() << " = " << rama_score << std::endl;
-			pose_energies.onebody_energies( ii )[rama] = rama_score;
-		}
+		if ( !pose.residue(ii).is_protein() || pose.residue(ii).is_terminus() ) continue;
+		
+		Real rama_score,dphi,dpsi;
+		eval_rama_score_residue(pose.residue(ii), pose.residue(ii-1).aa(), pose.residue(ii+1).aa(), rama_score, dphi, dpsi);
+		T << "Rama:eval_all: residue " << ii << " " << pose.residue(ii).name() <<
+		" " << ii-1 << " " << pose.residue(ii-1).name() << " " << ii+1 << " " <<
+		pose.residue(ii+1).name() << " = " << rama_score << std::endl;
+		pose_energies.onebody_energies( ii )[rama] = rama_score;
 	}
 }
 
@@ -169,11 +150,9 @@ Ramachandran2B::eval_rama_score_residue(
 	Real & rama,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 
-	//debug_assert( pose.residue(res).is_protein() );
 	debug_assert( rsd.is_protein() );
 
 	Real const phi
@@ -204,8 +183,7 @@ Ramachandran2B::eval_rama_score_residue(
 	Real & rama,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 
 	debug_assert( center.is_protein() );
@@ -237,8 +215,7 @@ Ramachandran2B::eval_rama_score_residue(
 	chemical::AA const res,
 	chemical::AA const left_aa,
 	chemical::AA const right_aa
-) const
-{
+) const {
 	Real drama_dphi, drama_dpsi;
 	return eval_rama_score_residue( phi, psi, res, left_aa, right_aa, drama_dphi, drama_dpsi );
 }
@@ -252,8 +229,7 @@ Ramachandran2B::eval_rama_score_residue(
 	chemical::AA const right_aa,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	Real rama_L( 0.0 ), drama_dphi_L( 0.0 ), drama_dpsi_L( 0.0 );
 	Real rama_R( 0.0 ), drama_dphi_R( 0.0 ), drama_dpsi_R( 0.0 );
 	Real rama_0( 0.0 ), drama_dphi_0( 0.0 ), drama_dpsi_0( 0.0 );
@@ -276,11 +252,9 @@ Ramachandran2B::IdealizeRamaEnergy(
 	Real & drama_dpsi,
 	Real const entropy,
 	FArray2A< Real > const & rama_for_res
-) const
-{
+) const {
 	using namespace numeric::interpolation::periodic_range::half;
 	Real interp_E = bilinearly_interpolated( phi, psi, binw_, n_phi_, rama_for_res, drama_dphi, drama_dpsi );
-	// rama = IdealizeRamaEnergy(ram_entropy_(center.aa(), leftIndex, rightIndex), interp_E, drama_dphi, drama_dpsi);
 	rama = entropy + interp_E;
 	// std::cout << "Rama::eval_res: " <<  interp_E << " rama " << rama << std::endl;
 
@@ -298,7 +272,6 @@ Ramachandran2B::IdealizeRamaEnergy(
 			}
 		}
 	}
-
 	// std::cout << " rama: " << rama << " dphi " << drama_dphi << " dpsi " << drama_dpsi << std::endl;
 }
 
@@ -310,8 +283,7 @@ Real
 Ramachandran2B::RamaE_Lower(
 	conformation::Residue const &rsd,
 	chemical::AA const &neighbor
-) const
-{
+) const {
 	Real drama_dphi, drama_dpsi;
 	return RamaE_Lower( rsd, neighbor, drama_dphi, drama_dpsi );
 }
@@ -322,8 +294,7 @@ Ramachandran2B::RamaE_Lower(
 	chemical::AA const &neighbor,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -354,8 +325,7 @@ Ramachandran2B::RamaE_Lower(
 	Real psi,
 	chemical::AA const & rsd,
 	chemical::AA const & neighbor
-) const
-{
+) const {
 	Real drama_dphi, drama_dpsi;
 	return RamaE_Lower( phi, psi, rsd, neighbor, drama_dphi, drama_dpsi );
 }
@@ -368,8 +338,7 @@ Ramachandran2B::RamaE_Lower(
 	chemical::AA const & neighbor,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
 	FArray2A< Real > const rama_for_res( ram_energ_left_(1, 1, rsd, neighbor), zero_index, zero_index );
 	Real entropy = ram_entropy_left_(rsd, neighbor);
@@ -383,8 +352,7 @@ Real
 Ramachandran2B::RamaE_Upper(
 	conformation::Residue const &rsd,
 	chemical::AA const &neighbor
-) const
-{
+) const {
 	Real drama_dphi, drama_dpsi;
 	return RamaE_Upper( rsd, neighbor, drama_dphi, drama_dpsi );
 }
@@ -395,8 +363,7 @@ Ramachandran2B::RamaE_Upper(
 	chemical::AA const &neighbor,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 
 	debug_assert( rsd.is_protein() );
@@ -425,8 +392,7 @@ Ramachandran2B::RamaE_Upper(
 	Real psi,
 	chemical::AA const & rsd,
 	chemical::AA const & neighbor
-) const
-{
+) const {
 	Real drama_dphi, drama_dpsi;
 	return RamaE_Upper( phi, psi, rsd, neighbor, drama_dphi, drama_dpsi );
 }
@@ -439,8 +405,7 @@ Ramachandran2B::RamaE_Upper(
 	chemical::AA const & neighbor,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1 );
 	FArray2A< Real > const rama_for_res( ram_energ_right_( 1, 1, rsd, neighbor ), zero_index, zero_index );
 	Real entropy = ram_entropy_right_( rsd, neighbor );
@@ -453,8 +418,7 @@ Ramachandran2B::RamaE_Upper(
 Real
 Ramachandran2B::RamaE(
 	conformation::Residue const &rsd
-) const
-{
+) const {
 	Real drama_dphi(0.0), drama_dpsi(0.0);
 	return RamaE( rsd, drama_dphi, drama_dpsi );
 }
@@ -464,9 +428,7 @@ Ramachandran2B::RamaE(
 	conformation::Residue const &rsd,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
-
+) const {
 	using namespace numeric;
 
 	debug_assert( rsd.is_protein() );
@@ -491,8 +453,7 @@ Ramachandran2B::RamaE(
 	chemical::AA const & rsd,
 	Real &drama_dphi,
 	Real &drama_dpsi
-) const
-{
+) const {
 	Real ramaE(0.0);
 	eval_rama_score_residue( rsd, phi, psi, ramaE, drama_dphi, drama_dpsi );
 	return ramaE;
@@ -505,8 +466,7 @@ Ramachandran2B::eval_rama_score_residue(
 	AA const res_aa,
 	Real const phi,
 	Real const psi
-) const
-{
+) const {
 
 	Real rama, drama_dphi, drama_dpsi;
 	eval_rama_score_residue( res_aa, phi, psi, rama, drama_dphi, drama_dpsi );
@@ -523,8 +483,7 @@ Ramachandran2B::eval_rama_score_residue(
 	Real & rama,
 	Real & drama_dphi,
 	Real & drama_dpsi
-) const
-{
+) const {
 	using namespace numeric;
 
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
@@ -550,8 +509,7 @@ Ramachandran2B::random_phipsi_from_rama_left(
 	AA const pos_aa,
 	Real & phi,
 	Real & psi
-) const
-{
+) const {
 	draw_random_phi_psi_from_cdf( left_cdf_( left_aa, pos_aa ), phi, psi );
 }
 
@@ -571,8 +529,7 @@ Ramachandran2B::random_phipsi_from_rama_right(
 	AA const right_aa,
 	Real & phi,
 	Real & psi
-) const
-{
+) const {
 	draw_random_phi_psi_from_cdf( right_cdf_( right_aa, pos_aa ), phi, psi );
 }
 
@@ -592,8 +549,7 @@ Ramachandran2B::random_phipsi_from_rama_by_torsion_bin_left(
 	Real & phi,
 	Real & psi,
 	conformation::ppo_torsion_bin const torsion_bin
-) const
-{
+) const {
 	draw_random_phi_psi_from_cdf( left_cdf_by_torsion_bin_( left_aa, pos_aa, torsion_bin ), phi, psi );
 } // random_phipsi_from_rama_by_torsion_bin_left
 
@@ -604,8 +560,7 @@ Ramachandran2B::random_phipsi_from_rama_by_torsion_bin_right(
 	Real & phi,
 	Real & psi,
 	conformation::ppo_torsion_bin const torsion_bin
-) const
-{
+) const {
 	draw_random_phi_psi_from_cdf( right_cdf_by_torsion_bin_( right_aa, pos_aa, torsion_bin ), phi, psi );
 }
 
@@ -614,8 +569,7 @@ Ramachandran2B::get_entries_per_torsion_bin_left(
 	AA const left_aa,
 	AA const pos_aa,
 	std::map< conformation::ppo_torsion_bin, core::Size > & tb_frequencies
-) const
-{
+) const {
 	tb_frequencies[conformation::ppo_torbin_A] = n_valid_left_pp_bins_by_ppo_torbin_( left_aa, pos_aa, conformation::ppo_torbin_A );
 	tb_frequencies[conformation::ppo_torbin_B] = n_valid_left_pp_bins_by_ppo_torbin_( left_aa, pos_aa, conformation::ppo_torbin_B );
 	tb_frequencies[conformation::ppo_torbin_E] = n_valid_left_pp_bins_by_ppo_torbin_( left_aa, pos_aa, conformation::ppo_torbin_E );
@@ -629,8 +583,7 @@ Ramachandran2B::get_entries_per_torsion_bin_right(
 	AA const pos_aa,
 	AA const right_aa,
 	std::map< conformation::ppo_torsion_bin, core::Size > & tb_frequencies
-) const
-{
+) const {
 	tb_frequencies[conformation::ppo_torbin_A] = n_valid_right_pp_bins_by_ppo_torbin_( right_aa, pos_aa, conformation::ppo_torbin_A );
 	tb_frequencies[conformation::ppo_torbin_B] = n_valid_right_pp_bins_by_ppo_torbin_( right_aa, pos_aa, conformation::ppo_torbin_B );
 	tb_frequencies[conformation::ppo_torbin_E] = n_valid_right_pp_bins_by_ppo_torbin_( right_aa, pos_aa, conformation::ppo_torbin_E );
@@ -678,8 +631,7 @@ utility::vector1< Real > const &
 Ramachandran2B::left_cdf(
 	core::chemical::AA aa_left,
 	core::chemical::AA aa_center
-) const
-{
+) const {
 	return left_cdf_( aa_left, aa_center );
 }
 
@@ -687,8 +639,7 @@ utility::vector1< Real > const &
 Ramachandran2B::right_cdf(
 	core::chemical::AA aa_center,
 	core::chemical::AA aa_right
-) const
-{
+) const {
 	return right_cdf_( aa_right, aa_center );
 }
 
@@ -697,8 +648,7 @@ Ramachandran2B::left_cdf_for_torsion_bin(
 	chemical::AA aa_left,
 	chemical::AA aa_center,
 	conformation::ppo_torsion_bin torsion_bin
-) const
-{
+) const {
 	return left_cdf_by_torsion_bin_( aa_left, aa_center, torsion_bin );
 }
 
@@ -707,8 +657,7 @@ Ramachandran2B::right_cdf_for_torsion_bin(
 	chemical::AA aa_center,
 	chemical::AA aa_right,
 	conformation::ppo_torsion_bin torsion_bin
-) const
-{
+) const {
 	return right_cdf_by_torsion_bin_( aa_right, aa_center, torsion_bin );
 }
 
@@ -726,7 +675,6 @@ Ramachandran2B::read_rama()
 	Real tProb( 0.0 ), tEnergy( 0.0 );
 
 	Size line_count( 0 );
-
 
 	//utility::io::izstream  iunit;
 #ifndef WIN32
@@ -773,7 +721,6 @@ Ramachandran2B::read_rama()
 #endif
 
 	initialize_rama_sampling_tables();
-
 }
 
 void
@@ -808,8 +755,7 @@ Ramachandran2B::init_rama_sampling_table(
 	ObjexxFCL::FArray2D< utility::vector1< Real > > & cdf,
 	ObjexxFCL::FArray3D< utility::vector1< Real > > & cdf_by_torsion_bin,
 	ObjexxFCL::FArray3D< Size > & n_valid_pp_bins_by_ppo_torbin
-) const
-{
+) const {
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
 	utility::vector1< Real > inner_cdf( n_phi_ * n_psi_, 0.0 );
 	for ( int ii=1; ii <= n_aa_; ++ii ) {
@@ -873,8 +819,7 @@ Ramachandran2B::draw_random_phi_psi_from_cdf(
 	utility::vector1< Real > const & cdf,
 	Real & phi,
 	Real & psi
-) const
-{
+) const {
 	// the bin index can be unpacked to give the phi and psi indices
 	Size bin_from_cdf = numeric::random::pick_random_index_from_cdf( cdf, numeric::random::rg() );
 	--bin_from_cdf;

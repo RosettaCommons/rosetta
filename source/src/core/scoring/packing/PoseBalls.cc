@@ -67,13 +67,11 @@ inline std::string strip_whitespace( std::string const & name )
 	return trimmed_name;
 }
 
-
 PoseBalls::PoseBalls(
 	core::pose::Pose const & pose,
 	core::Size Hmode,
 	bool ignore_water
-)
-{
+) {
 	using namespace numeric;
 
 	// std::cerr << "PoseBalls.cc:67 (" << pose.total_residue() << ")" << std::endl;
@@ -125,18 +123,13 @@ PoseBalls::PoseBalls(
 			balls_.push_back( Ball( pose.xyz(aid), pose.residue(ir).atom_type(ia).lj_radius() ) );
 			res_name_.push_back(pose.residue(ir).name3());
 			atom_num_.push_back(ia);
-			// if( pose.residue(ir).atom_type(ia).is_polar_hydrogen() ) {
-			//  atom_type_.push_back(100+pose.residue(ir).atom_type_index(pose.residue(ir).atom_base(ia)));
-			// } else {
 			atom_type_.push_back(pose.residue(ir).atom_type_index(ia));
-			// }
 			secstruct_.push_back( dssp_reduced_secstruct(ir) );
 			atom_name_.push_back(pose.residue(ir).atom_type(ia).name());
 			if ( pose.pdb_info() ) bfac_.push_back( pose.pdb_info()->temperature(ir,ia) );
-			else                  bfac_.push_back( 0.0 );
+			else                   bfac_.push_back( 0.0 );
 			is_heavy_.push_back( pose.residue(ir).atom_type(ia).is_heavyatom() );
-			if ( pose.residue(ir).atom_type(ia).is_hydrogen() /*&&
-					!pose.residue(ir).atom_type(ia).is_polar_hydrogen()*/ ) {
+			if ( pose.residue(ir).atom_type(ia).is_hydrogen() ) {
 				// if is apolar H, set add surf to base heavy atom rather than H itself
 				core::Size iabase = pose.residue(ir).atom_base(ia);
 				atom_parent_.push_back( id_to_index(core::id::AtomID(iabase,ir)) );
@@ -189,8 +182,8 @@ PoseBalls::PoseBalls(
 		res_num_.push_back(resnum[a.res_num()]);
 		bfac_.push_back( a.temp() );
 		balls_.push_back( Ball( a.coords(), radius ) );
-
 	}
+
 	nballs_ = index;
 	reset_surf();
 	compute_smooth_nb();
@@ -234,18 +227,13 @@ PoseBalls::PoseBalls(
 			balls_.push_back( Ball( pose.xyz(aid), pose.residue(ir).atom_type(ia).lj_radius() ) );
 			res_name_.push_back(pose.residue(ir).name3());
 			atom_num_.push_back(ia);
-			// if( pose.residue(ir).atom_type(ia).is_polar_hydrogen() ) {
-			//  atom_type_.push_back(100+pose.residue(ir).atom_type_index(pose.residue(ir).atom_base(ia)));
-			// } else {
 			atom_type_.push_back(pose.residue(ir).atom_type_index(ia));
-			// }
 			secstruct_.push_back( dssp_reduced_secstruct(ir) );
 			atom_name_.push_back(pose.residue(ir).atom_type(ia).name());
 			if ( pose.pdb_info() ) bfac_.push_back( pose.pdb_info()->temperature(ir,ia) );
-			else                  bfac_.push_back( 0.0 );
+			else                   bfac_.push_back( 0.0 );
 			is_heavy_.push_back( pose.residue(ir).atom_type(ia).is_heavyatom() );
-			if ( pose.residue(ir).atom_type(ia).is_hydrogen() /*&&
-					!pose.residue(ir).atom_type(ia).is_polar_hydrogen()*/ ) {
+			if ( pose.residue(ir).atom_type(ia).is_hydrogen() ) {
 				// if is apolar H, set add surf to base heavy atom rather than H itself
 				core::Size iabase = pose.residue(ir).atom_base(ia);
 				atom_parent_.push_back( id_to_index(core::id::AtomID(iabase,ir)) );
@@ -288,26 +276,19 @@ PoseBalls::PoseBalls(
 		res_num_.push_back(resnum[a.res_num()]);
 		bfac_.push_back( a.temp() );
 		balls_.push_back( Ball( a.coords(), radius ) );
-
 	}
+
 	nballs_ = index;
 	reset_surf();
 	compute_smooth_nb();
 }
 
-
 void PoseBalls::compute_smooth_nb() {
-
 	using namespace numeric;
-
 	// compute NB counts -- no Hs for neighbors
 	smooth_nb_.resize(nballs_);
-	// nbhist_.resize(29);
-	// for( core::Size i = 1; i <= 29; ++i ) nbhist_[i].resize(100,0);
 	for ( core::Size i = 1; i <= nballs_; i++ ) smooth_nb_[i] = 0.0;
 	for ( core::Size i = 1; i <= nballs_; i++ ) {
-		// if( is_heavy_[i] ) smooth_nb_[i] += 1.0;
-		// else continue;
 		xyzVector<Real> const & ixyz( balls_[i].xyz() );
 		core::Size atype = atom_type_[i];
 		if ( atype >= 18 ) {
@@ -328,22 +309,16 @@ void PoseBalls::compute_smooth_nb() {
 	}
 }
 
-
 void
 PoseBalls::output_pdb( std::ostream & out ) const {
-
 	using namespace ObjexxFCL::format;
-
 	for ( Size i = 1; i <= nballs(); i++ ) {
-
 		out << std::string("ATOM  " + I( 5, i ) + " "+LJ(4,atom_name(i))+" "+LJ(3,res_name(i))+" " + " "
 			+ I( 4, res_num(i) ) + "    "
 			+ F( 8, 3, ball(i).x() ) + F( 8, 3, ball(i).y() ) + F( 8, 3, ball(i).z() )
 			+ F( 6, 2, 1.0 ) + ' ' + F( 5, 2, ball(i).r() ) ) + "\n";
 	}
-
 }
-
 
 } // namespace packing
 } // namespace scoring

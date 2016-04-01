@@ -118,9 +118,7 @@ get_mean_median_and_sdev(
 	mean = median = sdev = 0.0;
 
 	if ( vals.empty() ) return;
-
 	std::sort( vals.begin(), vals.end() );
-
 	median = vals[ (vals.size()+1)/2 ];
 
 	for ( vector1< Real >::const_iterator val= vals.begin(); val != vals.end(); ++val ) mean += *val;

@@ -17,23 +17,11 @@
 #include <core/scoring/methods/MembraneEnvPenaltiesCreator.hh>
 
 // Package headers
-
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/ScoringManager.hh>
-//#include <core/scoring/rms_util.hh>
-
-//
-
-//#include <basic/options/option.hh>
-//#include <basic/options/keys/OptionKeys.hh>
-
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-
-
-//#include <basic/prof.hh>
-//#include <utility/exit.hh>
 
 namespace core {
 namespace scoring {
@@ -57,7 +45,6 @@ MembraneEnvPenaltiesCreator::score_types_for_method() const {
 	sts.push_back( Menv_tm_proj );
 	return sts;
 }
-
 
 /// c-tor
 MembraneEnvPenalties::MembraneEnvPenalties() :
@@ -84,17 +71,6 @@ MembraneEnvPenalties::clone() const
 /// the option -score::rms_target.
 
 
-/*
-void
-MembraneEnvPenalties::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
-{
-// compute interpolated number of neighbors at various distance cutoffs
-pose.update_residue_neighbors();
-potential_.compute_centroid_environment( pose );
-potential_.compute_membrane_embedding( pose );
-
-}
-*/
 void
 MembraneEnvPenalties::finalize_total_energy(
 	pose::Pose & pose,
@@ -113,15 +89,12 @@ MembraneEnvPenalties::finalize_total_energy(
 		emap[ Menv_termini ]=termini_pen;
 		emap[ Menv_tm_proj ]=tm_projection;
 
-
 		//  std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
 	}
 	potential_.finalize( pose );
-	// totals[ rms ]  = std::abs( rms_target_ - rmsd );
-
-	// PROF_STOP( basic::RMS );
 }
-core::Size
+
+	core::Size
 MembraneEnvPenalties::version() const
 {
 	return 1; // Initial versioning

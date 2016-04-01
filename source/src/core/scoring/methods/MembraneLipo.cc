@@ -17,13 +17,9 @@
 #include <core/scoring/methods/MembraneLipoCreator.hh>
 
 // Package headers
-
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoringManager.hh>
-//#include <core/scoring/rms_util.hh>
-
-//
 
 //symmetry
 #include <core/pose/symmetry/util.hh>
@@ -31,19 +27,12 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-//#include <basic/options/option.hh>
-//#include <basic/options/keys/OptionKeys.hh>
-
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-
-
-//#include <basic/prof.hh>
-//#include <utility/exit.hh>
 
 namespace core {
 namespace scoring {
@@ -134,20 +123,20 @@ MembraneLipo::finalize_total_energy(
 
 			if ( rsdSeq ==0 ) continue;
 			if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
-			if ( topology.allow_scoring(rsdSeq) ) {
-				Real B(topology.LipidBurial(rsdSeq));
-				Real E(topology.LipidExposure(rsdSeq));
-				if ( B!=0 ) {
-					cen10Buried+=B*cenlist.fcen10(i);
-					cen10Buried_norm+=1;
-				}
-				if ( E!=0 ) {
-					cen10Exposed+=E*cenlist.fcen10(i);
-					cen10Exposed_norm+=1;
-				}
-
+			if ( !topology.allow_scoring(rsdSeq) ) continue;
+			
+			Real B(topology.LipidBurial(rsdSeq));
+			Real E(topology.LipidExposure(rsdSeq));
+			if ( B!=0 ) {
+				cen10Buried+=B*cenlist.fcen10(i);
+				cen10Buried_norm+=1;
+			}
+			if ( E!=0 ) {
+				cen10Exposed+=E*cenlist.fcen10(i);
+				cen10Exposed_norm+=1;
 			}
 		}
+		
 		Real B_mean(0);
 		Real E_mean(0);
 		if ( cen10Exposed_norm!=0 ) {

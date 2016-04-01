@@ -40,22 +40,21 @@ namespace methods {
 methods::EnergyMethodOP
 UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & options ) const {
 
-	if ( options.has_method_weights( unfolded ) ) {
-
-		utility::vector1< Real > const & v = options.method_weights( unfolded );
-		debug_assert( v.size() == scoring::n_score_types );
-
-		// convert the vector of Reals into an EnergyMap, because that's what the constructor for USE takes.
-		// assumes that the vector of Reals coming in contains the weights for each of the score types in the
-		// scoring namespace enumeration, and more importantly, in the same order.
-		EnergyMap e;
-		for ( Size ii=1; ii < scoring::n_score_types; ++ii ) {
-			e[ (ScoreType) ii ] = v[ii];
-		}
-
-		return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type(), e ) );
+	if ( !options.has_method_weights( unfolded ) )
+		return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type() ) );
+	
+	utility::vector1< Real > const & v = options.method_weights( unfolded );
+	debug_assert( v.size() == scoring::n_score_types );
+	
+	// convert the vector of Reals into an EnergyMap, because that's what the constructor for USE takes.
+	// assumes that the vector of Reals coming in contains the weights for each of the score types in the
+	// scoring namespace enumeration, and more importantly, in the same order.
+	EnergyMap e;
+	for ( Size ii=1; ii < scoring::n_score_types; ++ii ) {
+		e[ (ScoreType) ii ] = v[ii];
 	}
-	return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type() ) );
+	
+	return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type(), e ) );
 }
 
 ScoreTypes
@@ -115,7 +114,6 @@ UnfoldedStateEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-
 	// the value this function returns depends on how this class was constructed. if a set of weights was
 	// passed in when the class was constructed, then this function will return a non-zero value.
 	// if no weights were passed in, the member variable energy map will be just zeros and the function
@@ -152,8 +150,6 @@ UnfoldedStateEnergy::residue_energy(
 	emap[ mm_twist_ref ] += unweighted_unfolded_energies[ mm_twist ];
 
 	//Leaving out two body terms since for the split unfolded energy they are covered in SplitUnfoldedTwoBodyEnergy, and I'm not sure if the standard unfolded energy should be optimized with separated energies. It's simple enough to add them later if need be.
-
-
 	return;
 }
 

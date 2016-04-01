@@ -17,7 +17,6 @@
 #include <core/scoring/methods/PackStatEnergyCreator.hh>
 
 // Package headers
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
 // Project headers
@@ -47,7 +46,6 @@ PackStatEnergyCreator::score_types_for_method() const {
 	sts.push_back( pack_stat );
 	return sts;
 }
-
 
 /// c-tor
 PackStatEnergy::PackStatEnergy() :
@@ -80,8 +78,8 @@ PackStatEnergy::finalize_total_energy(
 	core::Real packing_score = compute_packing_score(pose);
 	// std::cerr << "ps " << packing_score << " " << std::endl;
 	totals[ pack_stat ] = - packing_score * pose.total_residue();
-
 }
+
 core::Size
 PackStatEnergy::version() const
 {

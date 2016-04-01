@@ -155,7 +155,6 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	initialize_rna_backbone_backbone();
 	initialize_rna_repulsive_weights();
 	initialize_more_precise_base_pair_cutoffs();
-
 }
 
 
@@ -219,7 +218,6 @@ RNA_LowResolutionPotential::initialize_rna_stagger(){
 	rna_stagger_(  8 ) = -2.253;
 	rna_stagger_(  9 ) = -1.156;
 	rna_stagger_( 10 ) = -0.461;
-	// rna_stagger_( 11 ) = -0.354;
 	// This needs to asymptote to zero, or derivatives don't look so nice.
 	rna_stagger_( 11 ) = 0.000;
 }
@@ -240,8 +238,6 @@ RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
 	//Useful for preventing string lookups:
 	o2p_index_within_special_backbone_atoms_    =  2;
 	o2prime_index_within_special_backbone_atoms_ =  6;
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -427,9 +423,7 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 			deriv_y = fade_value * deriv_y  +  value * fade_deriv * ( y / rho );
 			deriv_z *= fade_value;
 			value   *= fade_value;
-
 		}
-
 	}
 
 	return value;
@@ -476,7 +470,6 @@ RNA_LowResolutionPotential::get_rna_stack_score(
 			deriv_z *= fade_value;
 			value   *= fade_value;
 		}
-
 	}
 
 	return value;
@@ -603,7 +596,6 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 		value = rna_base_backbone_xy_( x_bin, y_bin, res_i_bin, atom_num_j_bin );
 	}
 
-
 	if ( fade_ ) {
 		Real fade_value( 1.0 ), fade_deriv( 0.0 );
 
@@ -631,10 +623,7 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 
 			//   std::cout << "BASE_BACKBONE_RHO_FADE: " << rho << " " << base_backbone_rho_cutoff_ <<  " " << base_backbone_rho_fade_zone_ << " ==> " << fade_value << std::endl;
 		}
-
 	}
-
-
 	// std::cout << "BASE_BACKBONE: " << x << " " << y << " ==> " << value <<  " " << interpolate_value << std::endl;
 
 	return value;
@@ -646,8 +635,7 @@ RNA_LowResolutionPotential::get_rna_backbone_backbone_score(
 	Distance const & r,
 	Size const & atom_num_j_bin,
 	Real & deriv /* = 0.0 */
-) const
-{
+) const {
 
 	Real value( 0.0 );
 	deriv = 0.0;
@@ -677,7 +665,6 @@ RNA_LowResolutionPotential::get_rna_repulsive_score(
 	Size const & atom_num_j_bin,
 	Real & deriv /* = 0.0 */ ) const
 {
-
 	static Real const rna_repulsive_max_penalty_ = 8.0; //In kT.
 	static Real const rna_repulsive_screen_scale_ = 2.5; //In Angstroms
 	static Real const rna_repulsive_distance_cutoff_ = 8.0; //In Angstroms
@@ -697,7 +684,6 @@ RNA_LowResolutionPotential::get_rna_repulsive_score(
 	}
 
 	return 0.0;
-
 }
 
 
@@ -718,28 +704,19 @@ RNA_LowResolutionPotential::update_rna_centroid_info(
 void
 RNA_LowResolutionPotential::update_rna_base_base_interactions(
 	pose::Pose & pose
-) const
-{
-
-	// If we want to play some cache-ing tricks later...
-	// FArray2D_bool const & pair_moved( pose.get_pair_moved() );
-
+) const {
 	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	
 	//Doesn't recalculate stuff if already updated:
 	rna_centroid_info.update( pose );
 
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
-
-	// Real const Z_CUTOFF( 2.5 );
-
 	Size const total_residue = pose.total_residue();
 
 	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
-	// rna_raw_base_base_info.resize( total_residue );
-	// if (rna_raw_base_base_info.calculated()) return;
 
 	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
 	ObjexxFCL::FArray3D < Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );
@@ -852,7 +829,6 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 					base_pair_array    ( i, j, edge_bin ) = temp_rna_bp_score;
 					base_axis_array    ( i, j, edge_bin ) = get_rna_axis_score( cos_theta );
 					base_stagger_array ( i, j, edge_bin ) = get_rna_stagger_score( dist_z );
-
 				}
 			}
 
@@ -866,19 +842,14 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 
 			base_geometry_orientation_array ( i, j ) = cos_theta;
 			base_geometry_height_array      ( i, j ) = dist_z;
-
 		} //j
 	} //i
-
-	// rna_raw_base_base_info.set_calculated( true );
-
 }
 
 void
 RNA_LowResolutionPotential::update_rna_base_pair_list(
 	pose::Pose & pose
-) const
-{
+) const {
 	using namespace core::scoring::rna;
 
 	pose.update_residue_neighbors();
@@ -901,8 +872,7 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy(
 	Vector const & centroid2,
 	kinematics::Stub const & stub1,
 	kinematics::Stub const & stub2
-) const
-{
+) const {
 	// Following fills in arrays inside rna_raw_base_base_info, which you have to
 	// look inside to get computed energies.
 	eval_rna_base_pair_energy_one_way( rna_raw_base_base_info, rsd1, rsd2, centroid1, centroid2, stub1, stub2 );
@@ -916,8 +886,7 @@ void
 RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_rad,
 	std::string const & hoogsteen_cutoff_atom,
 	std::string const & sugar_cutoff_atom
-)
-{
+) {
 	using namespace core::chemical;
 	using namespace core::conformation;
 
@@ -949,19 +918,15 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 		zeta_sugar_cutoff_precise_( res_i_bin ) = zeta + 10.0;
 	}
 
-	//zeta_hoogsteen_cutoff_precise_( res_i_bin ) =  zeta_hoogsteen_cutoff_precise_( res_i_bin ) - 120.0;
-
 	//std::cout << "HEY! PRECISION CUTOFF FOR ZETA: " <<
 	//  zeta_hoogsteen_cutoff_precise_( res_i_bin ) << " " <<
 	//  zeta_sugar_cutoff_precise_( res_i_bin ) << " " <<  std::endl;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////
 void
 RNA_LowResolutionPotential::initialize_more_precise_base_pair_cutoffs() //Doesn't do anything if already initialized.
 {
-
 	using namespace core::chemical;
 
 	zeta_hoogsteen_cutoff_precise_.dimension ( 4 );
@@ -971,8 +936,6 @@ RNA_LowResolutionPotential::initialize_more_precise_base_pair_cutoffs() //Doesn'
 	setup_precise_zeta_cutoffs( na_rcy, " H42", " O2 " );
 	setup_precise_zeta_cutoffs( na_rgu, " O6 ", " N2 " );
 	setup_precise_zeta_cutoffs( na_ura, " O4 ", " O2 " );
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1003,9 +966,7 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 	Vector const & centroid_j,
 	kinematics::Stub const & stub_i,
 	kinematics::Stub const & stub_j
-) const
-{
-
+) const {
 	if ( !res_i.is_RNA() ) return;
 	if ( !res_j.is_RNA() ) return;
 
@@ -1095,7 +1056,6 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 			base_pair_array    ( i, j, edge_bin ) = temp_rna_bp_score;
 			base_axis_array    ( i, j, edge_bin ) = get_rna_axis_score( cos_theta );
 			base_stagger_array ( i, j, edge_bin ) = get_rna_stagger_score( dist_z );
-
 		}
 	}
 
@@ -1109,7 +1069,6 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 
 	base_geometry_orientation_array ( i, j ) = cos_theta;
 	base_geometry_height_array      ( i, j ) = dist_z;
-
 }
 
 
@@ -1120,9 +1079,8 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 	pose::Pose const & pose,
 	scoring::EnergyMap const & weights,
 	Vector & F1,
-	Vector & F2 ) const
-{
-
+	Vector & F2
+) const {
 	Size const & i = atom_id.rsd();
 	conformation::Residue const & res_i( pose.residue( i ) );
 	Size const & atom_num_i( atom_id.atomno() );
@@ -1130,12 +1088,10 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 	if ( !res_i.is_RNA() ) return;
 
 	//First an easy filter -- only need to put derivs on base's torsion.
-
 	if ( atom_num_i != core::chemical::rna::chi1_torsion_atom_index( res_i ) ) return;
 
 	// Information saved from the last score.
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	// rna::RNA_RawBaseBaseInfo const & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
 	rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 
 	//debug_assert( rna_filtered_base_base_info.calculated()  );
@@ -1152,11 +1108,8 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 	ObjexxFCL::FArray2D < Real > const & filtered_base_stack_axis_array( rna_filtered_base_base_info.filtered_base_stack_axis_array() );
 
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	//debug_assert( rna_centroid_info.calculated()  );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
-
-	// Vector const & heavy_atom_i_xyz( res_i.xyz( atom_num_i ) ) ;
 
 	Vector const & centroid_i( base_centroids[i] );
 	kinematics::Stub const & stub_i( base_stubs[i] );
@@ -1185,8 +1138,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 		Vector const & z_j = M_j.col_z();
 		Real const cos_theta = dot_product( z_i, z_j );
 		//This arc-cosine costs a lot actually:
-		//  Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
-
+		
 		//First cycle through all base pairs that count... anything involving this residue?
 		if ( filtered_base_pair_array( i, j ) < 0.0 ) {
 
@@ -1223,7 +1175,6 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 				F1 -= f1;
 				F2 -= f2;
-
 				//    std::cout << "BASEPAIR_DERIV1: " << i << " " << j << " " << cos_theta << " " << f1(1) << " " << f2(1) << std::endl;
 			}
 
@@ -1253,7 +1204,6 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 				F1 += f1;
 				F2 += f2;
-
 				//    std::cout << "BASEPAIR_DERIV2: " << i << " " << j << " " << cos_theta << " " << f1(1) << " " << f2(1) << std::endl;
 			}
 
@@ -1283,7 +1233,6 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 				F1 -= f1;
 				F2 -= f2;
-
 				//    std::cout << "BASESTACK_DERIV1: " << i << " " << j << " " << cos_theta << " " << f1(1) << " " << f2(1) << std::endl;
 			}
 			{
@@ -1307,13 +1256,10 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 				F1 += f1;
 				F2 += f2;
-
 				//    std::cout << "BASESTACK_DERIV2: " << i << " " << j << " " << cos_theta << " " << f1(1) << " " << f2(1) << std::endl;
 			}
 		}
-
 	}
-
 }
 
 

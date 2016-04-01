@@ -138,8 +138,6 @@ void input_sasa_dats() {
 		angles_stream >> skip;
 	}
 	angles_stream.close();
-
-
 }
 
 ///
@@ -564,8 +562,6 @@ calc_per_atom_sasa(
 		//ronj for the other 'j' residue, only iterate over residues which have indexes > residue 'i'
 		for ( Size jj=ii; jj <= pose.total_residue(); ++jj ) {
 			Residue const & jrsd( pose.residue( jj ) );
-
-
 			calc_atom_masks(
 				irsd, jrsd,
 				probe_radius, cutoff_distance, radii,
@@ -668,11 +664,9 @@ calc_atom_masks(
 	utility::vector1< Real > const & radii,
 	id::AtomID_Map< bool > const & atom_subset,
 	core::id::AtomID_Map< utility::vector1< ObjexxFCL::ubyte > > & atom_masks
-){
-
+) {
 	using core::id::AtomID;
 	using core::conformation::Atom;
-
 
 	Size const ii = irsd.seqpos();
 	Size const jj = jrsd.seqpos();
@@ -712,110 +706,108 @@ calc_atom_masks(
 			Real const jja_atom_radius = radii[ jja_atom.type() ] + probe_radius;
 
 			Real const distance_ijxyz( iia_atom_xyz.distance( jja_atom_xyz ) ); // could be faster w/o sqrt, using Jeff Gray's rsq_min stuff
-			if ( distance_ijxyz <= iia_atom_radius + jja_atom_radius ) {
-
-				if ( distance_ijxyz <= 0.0 ) {
-					continue;
+			if ( distance_ijxyz > iia_atom_radius + jja_atom_radius ) continue;
+			
+			if ( distance_ijxyz <= 0.0 ) {
+				continue;
+			}
+			
+			// account for atom j overlapping atom i:
+			// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
+			int degree_of_overlap, aphi, theta, point, masknum;
+			
+			if ( ! jrsd.atom_type( jja ).is_h2o() ) {
+				get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
+#ifdef FILE_DEBUG
+				//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
+				//TR << "calculating orientation of " << jrsd.name3() << jj << " atom " << jrsd.atom_name( jja ) << " on "
+				//	<< irsd.name3() << ii << " atom " << irsd.atom_name ( iia ) << std::endl;
+#endif
+				
+				get_orientation( iia_atom_xyz, jja_atom_xyz, aphi, theta, distance_ijxyz );
+				point = angles( aphi, theta );
+				masknum = point * 100 + degree_of_overlap;
+#ifdef FILE_DEBUG
+				//TR << "calculated masknum " << masknum << std::endl;
+#endif
+				
+				//ronj overlap bit values for all atoms should have been init'd to zero before the main for loops
+				utility::vector1< ObjexxFCL::ubyte > & iia_bit_values = atom_masks[ AtomID( iia, ii ) ];
+				
+				// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
+				// bitwise_or the atoms current values with the values from the database/masks array
+#ifdef FILE_DEBUG
+				//TR << "starting bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
+				//print_dot_bit_string( iia_bit_values );
+				//TR << "mask bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
+#endif
+				for ( int bb = 1, m = masks.index( bb, masknum ); bb <= num_bytes; ++bb, ++m ) {
+					iia_bit_values[ bb ] = ObjexxFCL::bit::bit_or( iia_bit_values[ bb ], masks[ m ] );
+					
+#ifdef FILE_DEBUG
+					//int bit;
+					//TR << (bb-1) * 8 << ":";
+					//for ( int index=7; index >= 0; index-- ) {
+					//	bit = ( ( (int)masks[m] >> index ) & 1 );
+					//	TR << bit;
+					//}
+					//TR << " ";
+#endif
+					
 				}
-
-				// account for atom j overlapping atom i:
-				// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
-				int degree_of_overlap, aphi, theta, point, masknum;
-
-				if ( ! jrsd.atom_type( jja ).is_h2o() ) {
-					get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
 #ifdef FILE_DEBUG
-						//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
-						//TR << "calculating orientation of " << jrsd.name3() << jj << " atom " << jrsd.atom_name( jja ) << " on "
-						//	<< irsd.name3() << ii << " atom " << irsd.atom_name ( iia ) << std::endl;
+				//TR << std::endl;
+				//TR << "overlap bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
+				//print_dot_bit_string( iia_bit_values );
 #endif
-
-					get_orientation( iia_atom_xyz, jja_atom_xyz, aphi, theta, distance_ijxyz );
-					point = angles( aphi, theta );
-					masknum = point * 100 + degree_of_overlap;
+			}
+			
+			// account for i overlapping j:
+			// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
+			// ronj I don't think this is necessary since we'll eventually perform this calculation when we start
+			// ronj iterating over the j atoms
+			if ( irsd.atom_type(iia).is_h2o() ) continue;
+			
+			get_overlap( jja_atom_radius, iia_atom_radius, distance_ijxyz, degree_of_overlap );
 #ifdef FILE_DEBUG
-						//TR << "calculated masknum " << masknum << std::endl;
+			//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
+			//TR << "calculating orientation of " << irsd.name3() << ii << " atom " << irsd.atom_name( iia ) << " on "
+			//	<< jrsd.name3() << jj << " atom " << jrsd.atom_name ( jja ) << std::endl;
 #endif
-
-					//ronj overlap bit values for all atoms should have been init'd to zero before the main for loops
-					utility::vector1< ObjexxFCL::ubyte > & iia_bit_values = atom_masks[ AtomID( iia, ii ) ];
-
-					// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
-					// bitwise_or the atoms current values with the values from the database/masks array
+			
+			get_orientation( jja_atom_xyz, iia_atom_xyz, aphi, theta, distance_ijxyz );
+			point = angles( aphi, theta );
+			masknum = point * 100 + degree_of_overlap;
 #ifdef FILE_DEBUG
-						//TR << "starting bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
-						//print_dot_bit_string( iia_bit_values );
-						//TR << "mask bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
+			//TR << "calculated masknum " << masknum << std::endl;
 #endif
-					for ( int bb = 1, m = masks.index( bb, masknum ); bb <= num_bytes; ++bb, ++m ) {
-						iia_bit_values[ bb ] = ObjexxFCL::bit::bit_or( iia_bit_values[ bb ], masks[ m ] );
-
+			
+			utility::vector1< ObjexxFCL::ubyte > & jja_bit_values( atom_masks[ AtomID( jja, jj ) ] );
+			
+			// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
+			// bitwise_or the atoms current values with the values from the database/masks array
 #ifdef FILE_DEBUG
-							//int bit;
-							//TR << (bb-1) * 8 << ":";
-							//for ( int index=7; index >= 0; index-- ) {
-							//	bit = ( ( (int)masks[m] >> index ) & 1 );
-							//	TR << bit;
-							//}
-							//TR << " ";
+			//TR << "mask bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
 #endif
-
-					}
+			for ( int bb = 1, m = masks.index(bb,masknum); bb <= num_bytes; ++bb, ++m ) {
+				jja_bit_values[ bb ] = ObjexxFCL::bit::bit_or( jja_bit_values[ bb ], masks[ m ] );
 #ifdef FILE_DEBUG
-						//TR << std::endl;
-						//TR << "overlap bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
-						//print_dot_bit_string( iia_bit_values );
+				//int bit;
+				//TR << (bb-1) * 8 << ":";
+				//for ( int index=7; index >= 0; index-- ) {
+				//	bit = ( ( (int)masks[m] >> index ) & 1 );
+				//	TR << bit;
+				//}
+				//TR << " ";
 #endif
-				}
-
-				// account for i overlapping j:
-				// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
-				// ronj I don't think this is necessary since we'll eventually perform this calculation when we start
-				// ronj iterating over the j atoms
-				if ( !irsd.atom_type(iia).is_h2o() ) {
-					get_overlap( jja_atom_radius, iia_atom_radius, distance_ijxyz, degree_of_overlap );
+				
+			}
 #ifdef FILE_DEBUG
-						//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
-						//TR << "calculating orientation of " << irsd.name3() << ii << " atom " << irsd.atom_name( iia ) << " on "
-						//	<< jrsd.name3() << jj << " atom " << jrsd.atom_name ( jja ) << std::endl;
+			//TR << std::endl;
+			//TR << "final bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
+			//print_dot_bit_string( jja_bit_values );
 #endif
-
-					get_orientation( jja_atom_xyz, iia_atom_xyz, aphi, theta, distance_ijxyz );
-					point = angles( aphi, theta );
-					masknum = point * 100 + degree_of_overlap;
-#ifdef FILE_DEBUG
-						//TR << "calculated masknum " << masknum << std::endl;
-#endif
-
-					utility::vector1< ObjexxFCL::ubyte > & jja_bit_values( atom_masks[ AtomID( jja, jj ) ] );
-
-					// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
-					// bitwise_or the atoms current values with the values from the database/masks array
-#ifdef FILE_DEBUG
-						//TR << "mask bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
-#endif
-					for ( int bb = 1, m = masks.index(bb,masknum); bb <= num_bytes; ++bb, ++m ) {
-						jja_bit_values[ bb ] = ObjexxFCL::bit::bit_or( jja_bit_values[ bb ], masks[ m ] );
-
-#ifdef FILE_DEBUG
-							//int bit;
-							//TR << (bb-1) * 8 << ":";
-							//for ( int index=7; index >= 0; index-- ) {
-							//	bit = ( ( (int)masks[m] >> index ) & 1 );
-							//	TR << bit;
-							//}
-							//TR << " ";
-#endif
-
-					}
-#ifdef FILE_DEBUG
-						//TR << std::endl;
-						//TR << "final bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
-						//print_dot_bit_string( jja_bit_values );
-#endif
-				}
-
-			} // distance_ijxyz <= iia_atom_radius + jja_atom_radius
+			
 #ifdef FILE_DEBUG
 				//TR << "------" << std::endl;
 #endif
@@ -913,9 +905,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 
 			// exclude hydrogens from consideration of hydrophobic SASA.
 			// they should be excluded already because of the atom_subset mask, but just in case.
-			if ( rsd.atom_type( at ).is_hydrogen() ) {
-				continue;
-			}
+			if ( rsd.atom_type( at ).is_hydrogen() ) continue;
 
 			if ( rsd.atom_type( at ).element() == "C" || rsd.atom_type( at ).element() == "S" ) {
 				res_hsasa += atom_sasa[ atid ];

@@ -92,17 +92,13 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 
 	if (!pose.is_fullatom()) return;
 
-	//timeval t1, t2;
-	//double elapsedTime;
-	//gettimeofday(&t1, NULL);
-
 	if (!core::pose::symmetry::is_symmetric(pose)) {
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
 	}
 
 	// load fiber diffraction data
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_I;
-  utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
+	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
 	utility::vector0< utility::vector0 < int > >::iterator nvals;
 	core::Size lmax, Rmax;
 
@@ -123,26 +119,26 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 	}
 
 	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user()) {
-  	p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
-  } else {
-  	find_pitch( pose, p_ );
- }
+		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
+	} else {
+		find_pitch( pose, p_ );
+	}
 
 	c_ = p_*a_;
 
 	core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
-  core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
+	core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 
-  core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
-  core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
-  core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
+	core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
+	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
+	core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
 
 	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
-  TR << "Trimmed Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
+	TR << "Trimmed Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
-  setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
-  utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
+	setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
+	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
 
 	I.resize(lmax+1);
 	for ( Size l=0; l<= lmax; ++l ) {
@@ -154,16 +150,16 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
 	utility::vector1< Real > phi, z, r, bfactors;
-  setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
+	setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 	TR << "Model contains " << natoms << " atoms" << std::endl;
 
 
 	TR << "Calculating Chi2..." << std::endl;
 
 	int gpu_processor_=0;
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ].user()) {
-          gpu_processor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ]();
-  }
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ].user()) {
+		gpu_processor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ]();
+	}
 
 	//Caluculating all intensities on the gpu.
 	calculate_intensity_gpu(lmax, natoms, nvals, layer_lines_R, I, form_factors, 
@@ -177,105 +173,92 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 	for ( Size l=0; l <= lmax; ++l ) {
 		for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
 			if ( I[l][R] < -10.0 ) {
-					utility_exit_with_message("Intensity lower than -10.0. Something went wrong...");
+				utility_exit_with_message("Intensity lower than -10.0. Something went wrong...");
 			}
-      if ( I[l][R] < 0 ) { 
-				TR << "Due to rounding error, intenisty is slightly bellow zero..., so it is set to 0.0" << std::endl; 
+			if ( I[l][R] < 0 ) {
+				TR << "Due to rounding error, intenisty is slightly bellow zero..., so it is set to 0.0" << std::endl;
 				I[l][R]=0.0;
 			}
-			//if ( layer_lines_R[l][R] < res_cutoff_low_ || layer_lines_R[l][R] > res_cutoff_high_ ) continue;
 			Real I_obs_ ( layer_lines_I[l][R]*layer_lines_I[l][R] );
-      prod += I[l][R]*I_obs_;
-      square_obs_ += I_obs_*I_obs_;
-      sum_obs_ +=  I_obs_;
+			prod += I[l][R]*I_obs_;
+			square_obs_ += I_obs_*I_obs_;
+			sum_obs_ +=  I_obs_;
 		}
 	}
-        //Scale factor is crucial for numerical derivatives check
-        //Even small differences cause significant dicsrapancies in derivatives
-        //We found that by fixing scale factor you may correct numeric vs. analytical deriv check
+	//Scale factor is crucial for numerical derivatives check
+	//Even small differences cause significant dicsrapancies in derivatives
+	//We found that by fixing scale factor you may correct numeric vs. analytical deriv check
 
 	scale_factor_ = square_obs_/prod;
 
 	bool output_fiber_spectra_(false);
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user()) {
-  	output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
-  }
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user()) {
+		output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
+	}
 
 	std::ofstream out;
-  if ( output_fiber_spectra_ ) {
-  	std::string outfile = "IntensityGpu.txt";
-  	out.open(outfile.c_str(), std::ios::out);
-  }
+	if ( output_fiber_spectra_ ) {
+		std::string outfile = "IntensityGpu.txt";
+		out.open(outfile.c_str(), std::ios::out);
+	}
 
 	bool rfactor_refinement_=false;
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
-  	rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
-  }
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
+		rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
+	}
 
-  if (rfactor_refinement_) {
-  	Rsum_obs = 0;
-  	Real Rfactor(0);
-  	Real Rprod(0);
-  	Real Rsquare_obs(0);
-  	for ( Size l=0; l <= lmax; ++l ) {
-    	for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
-      	if (I[l][R] > 0.0) {
-        	Rprod += sqrt(I[l][R])*fabs(layer_lines_I[l][R]);
-        	Rsquare_obs += layer_lines_I[l][R]*layer_lines_I[l][R];
-        	Rsum_obs += fabs(layer_lines_I[l][R]);
-        		//Real F_diff (Rscale_factor*sqrt(I[l][R]) - fabs(layer_lines_I[l][R]));
-        		//Rdiff_sum += F_diff/fabs(F_diff);
-        	}
-  		}
-  	}
-  	Rscale_factor =Rsquare_obs/Rprod;
-
-  	for ( Size l=0; l <= lmax; ++l ) {
-    	for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
-      	if (I[l][R] > 0.0) {
-        	Rfactor +=  fabs(Rscale_factor*sqrt(I[l][R])-fabs(layer_lines_I[l][R]));
-          //Rfactor +=  fabs(fabs(sqrt(I[l][R])-fabs(layer_lines_I[l][R]))); 
-				}
+	if (rfactor_refinement_) {
+		Rsum_obs = 0;
+		Real Rfactor(0);
+		Real Rprod(0);
+		Real Rsquare_obs(0);
+		for ( Size l=0; l <= lmax; ++l ) {
+			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
+				if (I[l][R] <= 0.0) continue;
+				
+				Rprod += sqrt(I[l][R])*fabs(layer_lines_I[l][R]);
+				Rsquare_obs += layer_lines_I[l][R]*layer_lines_I[l][R];
+				Rsum_obs += fabs(layer_lines_I[l][R]);
+			}
 		}
-  	}
-  	TR<<"Rfactor (unnormalized): "<<Rfactor << std::endl;
-  	Rfactor /=Rsum_obs;
-  	TR<<"Rfactor: "<<Rfactor << " scale factor " << Rscale_factor <<" sum obsreved " << Rsum_obs << std::endl;
-  	scale_factor_ = Rscale_factor;
-  	chi2_ = Rfactor;
+		Rscale_factor =Rsquare_obs/Rprod;
+
+		for ( Size l=0; l <= lmax; ++l ) {
+			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
+				if (I[l][R] > 0.0) {
+					Rfactor +=  fabs(Rscale_factor*sqrt(I[l][R])-fabs(layer_lines_I[l][R]));
+				}
+			}
+		}
+		TR<<"Rfactor (unnormalized): "<<Rfactor << std::endl;
+		Rfactor /=Rsum_obs;
+		TR<<"Rfactor: "<<Rfactor << " scale factor " << Rscale_factor <<" sum obsreved " << Rsum_obs << std::endl;
+		scale_factor_ = Rscale_factor;
+		chi2_ = Rfactor;
 		square_obs_ = Rsum_obs;
-  }
+	}
 	///////////////////////////END Rfactor/////////////////////////////     
 	else {
-  	chi2_=0;
-  		for ( Size l=0; l <= lmax; ++l ) {
-  	  	for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
-  	    	chi2_ +=  (scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R])*(scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R]);
-  	      if (output_fiber_spectra_) {
-  	      	out << scale_factor_*I[l][R] << " " << layer_lines_R[l][R] <<" "<< l << std::endl;
-  	      }
-  	   	}
-   	}
-    chi2_ /=square_obs_;
+		chi2_=0;
+		for ( Size l=0; l <= lmax; ++l ) {
+			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
+				chi2_ +=  (scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R])*(scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R]);
+				if (output_fiber_spectra_) {
+					out << scale_factor_*I[l][R] << " " << layer_lines_R[l][R] <<" "<< l << std::endl;
+				}
+			}
+		}
+		chi2_ /=square_obs_;
 	}
 
 	TR << "Chi2: " << chi2_<< " sum_obs_ " << sum_obs_ <<" scale factor " << scale_factor_ << std::endl;
-	//gettimeofday(&t2, NULL);
-  // compute and print the elapsed time in millisec
-	//elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
-	//elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
-	//TR << " end score time " << elapsedTime << " ms."<<std::endl;
-
+	
 	if (output_fiber_spectra_) {
 		out.close();
 	}
-
 }
 
 void FiberDiffractionEnergyGpu::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
-
-	// all the work is done in setup for scoring
-	// just return results here
 	emap[ fiberdiffractiongpu ] += chi2_;
 }
 
@@ -284,68 +267,63 @@ void FiberDiffractionEnergyGpu::setup_for_derivatives( pose::Pose & pose, ScoreF
 	if (!pose.is_fullatom()) return;
 
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_I;
-  utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
+	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
 	utility::vector0 < utility::vector0 < int > >::iterator nvals;
 	core::Size lmax, Rmax;
 
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user()) {
-  	a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
-  }
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user()) {
+		a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
+	}
 
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user()) {
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user()) {
  		b_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ]();
-  }
+	}
 
-  if ( !(a_ > 0 ) ){
-  	utility_exit_with_message("The number of subunits per repeat, score::fiber_diffraction::a, must be set!");
-  }
+	if ( !(a_ > 0 ) ){
+		utility_exit_with_message("The number of subunits per repeat, score::fiber_diffraction::a, must be set!");
+	}
 
-  if ( !(b_ > 0 ) ){
-  	utility_exit_with_message("The number of turns per repeat, score::fiber_diffraction::b, must be set!");
-  }
+	if ( !(b_ > 0 ) ){
+		utility_exit_with_message("The number of turns per repeat, score::fiber_diffraction::b, must be set!");
+	}
 
 	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user()) {
-  	p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
-  } else {
-  	find_pitch( pose, p_ );
-  }
+		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
+	} else {
+		find_pitch( pose, p_ );
+	}
 	c_ = p_*a_;
 
 	core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
-  core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
+	core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 
-  core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
-  core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
-  core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
+	core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
+	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
+	core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
 
 	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
-  TR << "Trimmed Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
-
+	TR << "Trimmed Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
-  setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
-  utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
-
+	setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
+	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
 
 	bool rfactor_refinement_=false;
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
-  	rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
-  }
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
+		rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
+	}
 
 	int gpu_processor_=0;
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ].user()) {
-  	gpu_processor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ]();
-  }
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ].user()) {
+		gpu_processor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::gpu_processor ]();
+	}
 
 	TR << "Preparing fiber model data for deriv calculation..." << std::endl;
-	//timeval t1, t2;
- 	//double elapsedTime;
-	//gettimeofday(&t1, NULL);
 
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
 	utility::vector1< Real > phi, z, r, bfactors;
-  setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
+	setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 
 
 	TR << "Calculating deriv Chi2..." << std::endl;
@@ -362,12 +340,6 @@ void FiberDiffractionEnergyGpu::setup_for_derivatives( pose::Pose & pose, ScoreF
 				phi, z, r, atom_type_number, dchi2_d, dchi2_d_cross_R, c_, 
 				res_cutoff_low_, res_cutoff_high_, scale_factor_, square_obs_,
 				gpu_processor_, rfactor_refinement_);	
-
-	//gettimeofday(&t2, NULL);
-	// compute and print the elapsed time in millisec
-	//elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
-	//elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
-	//TR << "Deriv calculation time: " << elapsedTime << " ms."<<std::endl;
 
 }
 

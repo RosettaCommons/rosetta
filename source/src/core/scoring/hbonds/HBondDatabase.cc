@@ -604,18 +604,6 @@ HBondDatabase::initialize_HBEval()
 				cosAHD_long_poly_lookup_[hbe_type] = cosAHD_long_poly;
 			}
 		}
-		//if (tokens[i] != ""){  // chi dimension is not yet defined!
-		// stringstream buf;
-		// buf << tokens[i];
-		// buf >> chi_poly_name;
-		// chi_poly = HBPoly1D_from_name(chi_poly_name);
-		// if(chi_poly_lookup_[hbe_type]){
-		// debug_assert(chi_poly_lookup_[hbe_type] == chi_poly);
-		// } else {
-		//  chi_poly_lookup_[hbe_type] = chi_poly;
-		// }
-		//}
-		//i++;
 		{
 			stringstream buf;
 			buf << tokens[i]; i++;
@@ -792,7 +780,6 @@ HBondDatabase::initialize_acc_strength() {
 				site_strength << std::endl;
 		}
 	}
-
 }
 
 FadeIntervalCOP
@@ -1166,7 +1153,6 @@ HBondDatabase::write_hbond_polynomial_1d_table_schema(
 	Column c_j("c_j", DbDataTypeOP( new DbReal() ));
 	Column c_k("c_k", DbDataTypeOP( new DbReal() ));
 
-
 	Columns primary_key_columns;
 	primary_key_columns.push_back(database_tag);
 	primary_key_columns.push_back(name);
@@ -1193,7 +1179,6 @@ HBondDatabase::write_hbond_polynomial_1d_table_schema(
 	table.add_column(c_j);
 	table.add_column(c_k);
 	table.write(db_session);
-
 }
 
 void
@@ -1440,7 +1425,6 @@ HBondDatabase::report_parameter_features(
 				hbond_evaluation_statement.bind(13,cosAHD_long_poly_lookup(hbe)->name());
 				hbond_evaluation_statement.bind(14,HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe)));
 				basic::database::safely_write_to_database(hbond_evaluation_statement);
-
 			}
 		}
 	}

@@ -151,10 +151,7 @@ LoopCloseEnergy::eval_atom_derivative(
 			F1 += weights[ loop_close ] * f1;
 			F2 += weights[ loop_close ] * f2;
 		}
-
 	}
-
-
 } // eval atom derivative
 
 core::Size

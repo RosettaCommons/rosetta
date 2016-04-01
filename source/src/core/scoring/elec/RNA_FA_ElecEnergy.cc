@@ -171,30 +171,19 @@ RNAAtomType
 assign_rna_atom_type(
 	conformation::Residue const & rsd,
 	Size const i
-)
-{
-
+) {
 	if ( rsd.atom_is_hydrogen(i) ) {
-
-		return assign_rna_atom_type(rsd, rsd.atom_base(i));
-
+		return assign_rna_atom_type( rsd, rsd.atom_base( i ) );
 	}
 
-	if ( i==1 || i==2 || i==3 || i==4 || i==9 ) { //P, OP2, OP1, O5', O3'
-
+	// AMW TODO: this cannot stand.
+	if ( i == 1 || i == 2 || i == 3 || i == 4 || i == 9 ) { //P, OP2, OP1, O5', O3'
 		return PHOSPHATE;
-
 	} else if ( i < rsd.first_sidechain_atom() || i == 12 ) {
-
 		return SUGAR;
-
 	} else {
-
 		return BASE;
-
 	}
-
-
 }
 
 
@@ -206,11 +195,8 @@ RNA_FA_ElecEnergy::residue_pair_energy(
 	pose::Pose const &,
 	ScoreFunction const & scfxn,
 	EnergyMap & emap
-) const
-{
-
+) const {
 	if ( ! rsd1.is_RNA() || ! rsd2.is_RNA() ) { return; }
-
 
 	if ( scfxn.has_nonzero_weight(fa_elec_rna_phos_phos) ) {
 		emap[ fa_elec_rna_phos_phos ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,PHOSPHATE);
@@ -283,9 +269,7 @@ RNA_FA_ElecEnergy::rna_fa_elec_one_way(
 	conformation::Residue const & rsd2,
 	RNAAtomType const & type1 ,
 	RNAAtomType const & type2
-) const
-{
-
+) const {
 	Real energy( 0.0 );
 
 	using namespace etable::count_pair;
@@ -296,7 +280,6 @@ RNA_FA_ElecEnergy::rna_fa_elec_one_way(
 	for ( Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
 
 		RNAAtomType const atom_type_1 = assign_rna_atom_type(rsd1, i);
-
 		if ( atom_type_1 != type1 ) continue;
 
 		Vector const & i_xyz( rsd1.xyz(i) );
@@ -305,7 +288,6 @@ RNA_FA_ElecEnergy::rna_fa_elec_one_way(
 		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
 
 			RNAAtomType const atom_type_2 = assign_rna_atom_type(rsd2, j);
-
 			if ( atom_type_2 != type2 ) continue;
 
 			Real weight(1.0);
@@ -313,18 +295,10 @@ RNA_FA_ElecEnergy::rna_fa_elec_one_way(
 			if ( ! cpfxn->count( i, j, weight, path_dist ) ) continue;
 
 			energy += weight * coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), rsd2.atomic_charge(j));
-
 		}
-
 	}
-
 	return energy;
-
-
-
 }
-
-
 
 void
 RNA_FA_ElecEnergy::evaluate_rotamer_background_energies(
@@ -375,8 +349,6 @@ bool is_base_2( conformation::Residue const & rsd, Size const i )
 	}
 }
 
-
-
 void
 RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
 	conformation::Residue const & rsd1,
@@ -385,16 +357,13 @@ RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-
+) const {
 	using namespace etable::count_pair;
 
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 	Real const i_charge( rsd1.atomic_charge( i ) );
 	Vector const & i_xyz( rsd1.xyz(i) );
-
 
 	// NOTE THAT is_base, is_sugar, and is_phosphate contains MAGIC NUMBERS (for speed!)
 	// Might be better to make it precomputed as part of the residue_type definition?
@@ -409,43 +378,40 @@ RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
 		if ( j_charge == 0.0 ) continue;
 		Real weight(1.0);
 		Size path_dist( 0 );
-		if ( cpfxn->count( i, j, weight, path_dist ) ) {
-			Vector const & j_xyz( rsd2.xyz(j) );
-			Vector const f2( i_xyz - j_xyz );
-			Real const dis2( f2.length_squared() );
-			Real const dE_dr_over_r = weight *
-				coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
-			if ( dE_dr_over_r != 0.0 ) {
-				Vector const f1( i_xyz.cross( j_xyz ) );
-				//F1 += weights[ fa_elec ] * dE_dr_over_r * f1;
-				//F2 += weights[ fa_elec ] * dE_dr_over_r * f2;
-
-				bool const atom2_is_base = is_base_2(rsd2, j);
-				bool const atom2_is_sugar = is_sugar_2(rsd2, j);
-				bool const atom2_is_phosphate = is_phosphate_2(rsd2, j);
-				debug_assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
-
-				if ( atom1_is_base && atom2_is_base ) {
-					F1 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f1;
-					F2 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_base && atom2_is_sugar)  || (atom1_is_sugar && atom2_is_base) ) {
-					F1 += weights[ fa_elec_rna_sugr_base ] * dE_dr_over_r * f1;
-					F2 += weights[ fa_elec_rna_sugr_base ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_base && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_base) ) {
-					F1 += weights[ fa_elec_rna_phos_base ] * dE_dr_over_r * f1;
-					F2 += weights[ fa_elec_rna_phos_base ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_sugar && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_sugar) ) {
-					F1 += weights[ fa_elec_rna_phos_sugr ] * dE_dr_over_r * f1;
-					F2 += weights[ fa_elec_rna_phos_sugr ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_sugar && atom2_is_sugar)  ) {
-					F1 += weights[ fa_elec_rna_sugr_sugr ] * dE_dr_over_r * f1;
-					F2 += weights[ fa_elec_rna_sugr_sugr ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
-					F1 += weights[ fa_elec_rna_phos_phos ] * dE_dr_over_r * f1;
-					F2 += weights[ fa_elec_rna_phos_phos ] * dE_dr_over_r * f2;
-				}
-
-			}
+		if ( ! cpfxn->count( i, j, weight, path_dist ) ) continue;
+		
+		Vector const & j_xyz( rsd2.xyz(j) );
+		Vector const f2( i_xyz - j_xyz );
+		Real const dis2( f2.length_squared() );
+		Real const dE_dr_over_r = weight *
+		coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
+		if ( dE_dr_over_r == 0.0 ) continue;
+		
+		Vector const f1( i_xyz.cross( j_xyz ) );
+		
+		bool const atom2_is_base = is_base_2(rsd2, j);
+		bool const atom2_is_sugar = is_sugar_2(rsd2, j);
+		bool const atom2_is_phosphate = is_phosphate_2(rsd2, j);
+		debug_assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
+		
+		if ( atom1_is_base && atom2_is_base ) {
+			F1 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f2;
+		} else if (  (atom1_is_base && atom2_is_sugar)  || (atom1_is_sugar && atom2_is_base) ) {
+			F1 += weights[ fa_elec_rna_sugr_base ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_rna_sugr_base ] * dE_dr_over_r * f2;
+		} else if (  (atom1_is_base && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_base) ) {
+			F1 += weights[ fa_elec_rna_phos_base ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_rna_phos_base ] * dE_dr_over_r * f2;
+		} else if (  (atom1_is_sugar && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_sugar) ) {
+			F1 += weights[ fa_elec_rna_phos_sugr ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_rna_phos_sugr ] * dE_dr_over_r * f2;
+		} else if (  (atom1_is_sugar && atom2_is_sugar)  ) {
+			F1 += weights[ fa_elec_rna_sugr_sugr ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_rna_sugr_sugr ] * dE_dr_over_r * f2;
+		} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
+			F1 += weights[ fa_elec_rna_phos_phos ] * dE_dr_over_r * f1;
+			F2 += weights[ fa_elec_rna_phos_phos ] * dE_dr_over_r * f2;
 		}
 	}
 }
@@ -475,10 +441,7 @@ RNA_FA_ElecEnergy::eval_atom_derivative(
 	int const pos1_map( domain_map( pos1 ) );
 	bool const pos1_fixed( pos1_map != 0 );
 
-
 	if ( i_charge == 0.0 ) return;
-
-	//Vector const & i_xyz( rsd1.xyz(i) );
 
 	// cached energies object
 	Energies const & energies( pose.energies() );
@@ -486,31 +449,21 @@ RNA_FA_ElecEnergy::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
-	//  kinematics::DomainMap const & domain_map( energies.domain_map() );
-	//  bool const pos1_fixed( !energies.res_moved( pos1 ) );
-	// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
-
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {
-		//EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-		//Size const pos2( edge->get_second_node_ind() );
 		Size const pos2( (*iru)->get_other_ind( pos1 ) );
-
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
-
 		debug_assert( pos2 != pos1 );
 
 		if ( rsd2.is_RNA() ) {
 			eval_atom_derivative_RNA( rsd1, i, rsd2, weights, F1, F2 );
 		}
-
 	} // loop over nbrs of rsd1
-
 }
 
 

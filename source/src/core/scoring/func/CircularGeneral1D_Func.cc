@@ -103,9 +103,7 @@ Real
 CircularGeneral1D_Func::func( Real const x ) const {
 
 	Real bin_real =  ( x - xmin_ ) / xbin_;
-
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
-
 	debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_+1 );
 
 	Size const bin = static_cast< Size >( bin_wrap_real );
@@ -115,12 +113,10 @@ CircularGeneral1D_Func::func( Real const x ) const {
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.
 
 	return  (data_( bin ) * ( 1 - leftover ))   +   (data_( next_bin ) * leftover) ;
-
 }
 
 Real
 CircularGeneral1D_Func::dfunc( Real const x ) const {
-
 	Real bin_real =  ( x - xmin_ ) / xbin_;
 
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
@@ -132,7 +128,6 @@ CircularGeneral1D_Func::dfunc( Real const x ) const {
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.
 
 	return  ( data_( next_bin ) - data_( bin ) )/ xbin_;
-
 }
 
 } // namespace constraints

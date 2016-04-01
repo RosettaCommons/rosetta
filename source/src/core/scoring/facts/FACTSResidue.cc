@@ -289,7 +289,6 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 	}
 	}
 	*/
-
 }
 
 void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd )
@@ -374,15 +373,6 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 				}
 
 			} else if ( is_atm1_bb || is_atm2_bb ) { // bb-sc
-				// Terminus correction: turn full strength since fa_dun won't work here
-				/*
-				if( rsd.is_terminus() ){
-				intra_solv_scale_[atm1][atm2] = 1.0;
-				intra_elec_scale_[atm1][atm2] = 1.0;
-
-				// aa_specific rules
-				} else
-				*/
 				if ( ( rsd.aa() == core::chemical::aa_ser || rsd.aa() == core::chemical::aa_thr )
 						&& path_dist == 3 ) {
 					intra_solv_scale_[atm1][atm2] = 1.0;

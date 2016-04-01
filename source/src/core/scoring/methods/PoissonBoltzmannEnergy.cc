@@ -247,20 +247,6 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	// Update the cache
 	cached_data->set_conformational_data( energy_state, pose, poisson_boltzmann_potential_ );
 
-	// make sure the root of the FoldTree is a virtual atom and is followed by a jump
-	// if not, emit warning
-	//kinematics::Edge const &root_edge ( *pose.fold_tree().begin() );
-	//int virt_res_idx = root_ede.start();
-	//conformation::Residue const &root_res( pose.residue( virt_res_idx ) );
-
-	//pose_is_proper = true;
-	//if (root_res.aa() != core::chemical::aa_vrt || root_edge.label() < 0) {
-	//utility_exit_with_message("Fold tree is not set properly for density scoring!");
-	//TR.Error << "Fold tree is not set properly for density scoring!" << std::endl;
-	//pose_is_proper = false;
-	//}
-
-
 	// create LR energy container
 	LongRangeEnergyType const & lr_type( long_range_type() );
 	Energies & energies( pose.energies() );
@@ -282,10 +268,6 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( fixed_residue_, pose.total_residue(), PB_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
-
-	// allocate space for per-AA stats
-	//int nres = pose.total_residue();
-	//core::scoring::electron_density::getDensityMap().set_nres( nres );
 }
 
 
@@ -333,21 +315,20 @@ PoissonBoltzmannEnergy::revamp_weight_by_burial(
 	Real threshold = 4.;
 	for ( Size j_res = 1; j_res <= pose.total_residue(); ++j_res ) {
 		if ( pose.residue(j_res).is_virtual_residue() ) continue;
-
-		if ( residue_in_chains(pose.residue(j_res), chains) ) {
-			bool found_neighbor = false;
-			for ( Size i_atom = rsd.last_backbone_atom() + 1; i_atom <= rsd.nheavyatoms(); ++i_atom ) {
-				for ( Size j_atom = 1; j_atom <= rsd.nheavyatoms(); ++j_atom ) {
-					if ( pose.residue(j_res).is_virtual(j_atom) ) continue;
-					Real distance = rsd.xyz(i_atom).distance(pose.residue(j_res).xyz(j_atom));
-					if ( distance < threshold ) {
-						neighbor_count += 1.;
-						found_neighbor = true;
-						break;
-					}
+		if ( !residue_in_chains(pose.residue(j_res), chains) ) continue;
+		
+		bool found_neighbor = false;
+		for ( Size i_atom = rsd.last_backbone_atom() + 1; i_atom <= rsd.nheavyatoms(); ++i_atom ) {
+			for ( Size j_atom = 1; j_atom <= rsd.nheavyatoms(); ++j_atom ) {
+				if ( pose.residue(j_res).is_virtual(j_atom) ) continue;
+				Real distance = rsd.xyz(i_atom).distance(pose.residue(j_res).xyz(j_atom));
+				if ( distance < threshold ) {
+					neighbor_count += 1.;
+					found_neighbor = true;
+					break;
 				}
-				if ( found_neighbor ) break;
 			}
+			if ( found_neighbor ) break;
 		}
 	}
 	if ( neighbor_count > 0 ) weight = 1./neighbor_count;
@@ -433,23 +414,28 @@ PoissonBoltzmannEnergy::protein_position_equal_within(
 
 	for ( Size i=1; i<=pose1.total_residue(); ++i ) {
 
-		if ( pose1.residue(i).is_protein() ) {
-			if ( ! pose2.residue(i).is_protein() ) {
-				return false;
-			}
-			if ( pose1.residue(i).natoms() != pose2.residue(i).natoms() ) {
-				return false;
-			}
-			const core::conformation::Atom atom1 = pose1.residue(i).atom(atom_num);
-			const core::conformation::Atom atom2 = pose2.residue(i).atom(atom_num);
-			const numeric::xyzVector<Real> xyz1 = atom1.xyz();
-			const numeric::xyzVector<Real> xyz2 = atom2.xyz();
+		// Skip nonprotein pose 1.
+		if ( !pose1.residue(i).is_protein() ) continue;
+		
+		// If a protein residue from pose 1 matches seqpos of a nonprotein
+		// residue from pose 2, must be false.
+		if ( !pose2.residue(i).is_protein() ) return false;
+		
+		// Nonmatching by definition.
+		if ( pose1.residue_type(i).natoms() != pose2.residue(i).natoms() 
+			|| pose1.residue_type(i).aa() != pose2.residue_type(i).aa() ) {
+			return false;
+		}
 
-			const Real delta = xyz1.distance(xyz2);
-			if ( delta > tol ) {
-				// exceed tolerance
-				return false;
-			}
+		const core::conformation::Atom atom1 = pose1.residue(i).atom(atom_num);
+		const core::conformation::Atom atom2 = pose2.residue(i).atom(atom_num);
+		const numeric::xyzVector<Real> xyz1 = atom1.xyz();
+		const numeric::xyzVector<Real> xyz2 = atom2.xyz();
+		
+		const Real delta = xyz1.distance(xyz2);
+		if ( delta > tol ) {
+			// exceed tolerance
+			return false;
 		}
 	}
 	return true;

@@ -24,7 +24,6 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/EnergyMap.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 
@@ -83,7 +82,6 @@ DistanceChainbreakEnergy::finalize_total_energy(
 		tr.Trace << "cutpoint " << n << "has CUTPOINT variant" << std::endl;
 		Residue const & upper_rsd( pose.residue( cutpoint+1 ) );
 		debug_assert( upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) );
-		//    Size const nbb( lower_rsd.mainchain_atoms().size() );
 
 		total_dev +=
 			std::abs( dist_target - ( upper_rsd.xyz( upper_rsd.lower_connect_atom() ).distance( lower_rsd.xyz( lower_rsd.upper_connect_atom() ) ) ) );

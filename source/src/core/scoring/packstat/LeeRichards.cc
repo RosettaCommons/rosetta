@@ -84,10 +84,7 @@ LeeRichards::compute(
 	bool csa,
 	numeric::xyzVector<core::Real> plane
 ) {
-
 	// time_t t = clock();
-
-	// Spheres & spheres(pd->spheres);
 
 	// get coord system for slices
 	plane.normalize();
@@ -172,9 +169,7 @@ LeeRichards::compute(
 		// std::cerr << "computing area for slice " << i << " " << slice_coords_[i] << " " << dynamic_cast<AreaAccumulator*>(accum())->total_area - prev << std::endl;
 
 	}
-
 	// std::cerr << "slices " << slices_.size() << " area " << dynamic_cast<AreaAccumulator*>(accum())->total_area << " " << clock()-t << std::endl;
-
 }
 
 MultiProbePoseAccumulator::MultiProbePoseAccumulator(
@@ -214,15 +209,6 @@ struct HTL_EventX { bool operator()( Event const *a, Event const *b ) {
 	if ( a->x==b->x ) return a->y > b->y;
 	else             return a->x > b->x;
 } };
-
-// struct OrderArc { bool operator()( Arc const *a, Arc const *b ) {
-//  if( a->circle == b->circle ) {
-//   return fmin(a->start_angle,a->end_angle) < fmin(b->start_angle,b->end_angle);
-//  } else {
-//   return a->circle < b->circle;
-//  }
-// } };
-
 
 PointPair
 Circle::overlap(
@@ -270,11 +256,9 @@ Slice::~Slice() {
 	for ( traceIter  i =  traces_.begin(); i !=  traces_.end(); ++i ) delete *i;
 }
 
-
 void
 Slice::compute_events()
 {
-
 	Octree2D nbr(circles_);
 
 	for ( CircleIter ia = circles_.begin(); ia != circles_.end(); ia++ ) {
@@ -312,8 +296,6 @@ Slice::compute_events()
 	}
 	std::sort( events_.begin(), events_.end(), HTL_EventX() );
 	// std::cerr << "DONE " << events_.size() << std::endl;
-
-	return;
 }
 
 
@@ -395,20 +377,7 @@ Slice::compute_derivatives()
 		Real dir = (e->cw_angle + e->ccw_angle) / 2.0 + numeric::constants::d::pi/2.0;
 		accum_->accumulate_dxdy( e->circle->atom,  mg*cos(dir), -mg*sin(dir), is_internal );
 		accum_->accumulate_dxdy( e->ccw   ->atom, -mg*cos(dir),  mg*sin(dir), is_internal );
-		//dz// accum_->accumulate_dz  ( e->circle->atom,  mg1*cos(dir-e->cw_angle ) * e->circle->drdz );
-		//dz// accum_->accumulate_dz  ( e->ccw   ->atom, -mg2*cos(dir-e->ccw_angle) * e->ccw   ->drdz );
-		// e->circle->dx += mg *  cos/*360*/(dir);
-		// e-> ccw->dx -= mg *  cos/*360*/(dir);
-		// e->circle->dy += mg * -sin/*360*/(dir);
-		// e-> ccw->dy -= mg * -sin/*360*/(dir);
-		// e->circle->dr += mg * cos/*360*/(dir - e->cw_angle);
-		// e-> ccw->dr -= mg * cos/*360*/(dir - e->ccw_angle);
 	}
-	// for( ArcIter ia = arcs_.begin(); ia != arcs_.end(); ++ia ) {
-	//  Arc *a(*ia);
-	//  a->circle->dr += fabs(a->start_angle-a->end_angle);///180.0*3.14159265;
-	// }
-
 }
 
 
@@ -580,7 +549,6 @@ check_surface_area_leerichards_deriv(
 		new_area2 = compute_surface_area_leerichards(pd,slicesize,pr,csa,XYZ(0,1,0));
 		rtn[i].z( ((new_area1+new_area2)/2.0-(orig_area_x+orig_area_y)/2.0) / D );
 		pd->spheres[i].xyz.z() -= D;
-
 	}
 	return rtn;
 }
@@ -608,11 +576,9 @@ compute_packing_score_leerichards(
 	}
 	PackingScore ps_discrim(7,30,true);
 	init_packing_score_discrim( ps_discrim );
-	return ps_discrim.score( psrds );
-
 	// accum->show(std::cerr);
+	return ps_discrim.score( psrds );
 }
-
 
 } // namespace packstat
 } // namespace scoring

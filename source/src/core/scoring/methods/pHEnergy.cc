@@ -36,8 +36,6 @@
 #include <utility/vector1.hh>
 
 
-// C++
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -146,7 +144,6 @@ pHEnergy::residue_energy(
 	}//end switch
 
 	emap[ e_pH ] += pH_score_; //add pHEnergy to the EmapVector
-
 } // residue_energy
 
 

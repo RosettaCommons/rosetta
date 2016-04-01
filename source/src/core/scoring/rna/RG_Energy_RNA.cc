@@ -81,7 +81,6 @@ RG_Energy_RNA::clone() const
 void
 RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
-
 	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	//Doesn't recalculate stuff if already updated:
@@ -119,8 +118,6 @@ RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 	// future.
 	rg_squared /= ( nres - 1 );
 	rg_ = sqrt( rg_squared ); //Save in this class
-
-
 }
 
 
@@ -143,15 +140,12 @@ RG_Energy_RNA::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 	using namespace conformation;
-
-
 	totals[ rna_rg ] = rg_;
 
 	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.set_calculated( false );
-
-} // finalize_total_energy
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -166,9 +160,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
-
+) const {
 	using namespace conformation;
 
 	Size const i ( atom_id.rsd() );
@@ -181,7 +173,6 @@ RG_Energy_RNA::eval_atom_derivative(
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 
-
 	Size const nres( pose.total_residue() );
 
 	//Apply force at base sidechain atom?
@@ -192,18 +183,16 @@ RG_Energy_RNA::eval_atom_derivative(
 	// Or alternatively, if I set up a base centroid virtual atom with a fixed
 	// geometry relative to the base first sidechain atom -- apply it there.
 
-
-	if ( atom_num_i == first_base_atom_index( rsd ) ) {
-
-		Vector const v( base_centroids[i] );
-		Vector f2 = ( v - center_of_mass_ )/ ( ( nres - 1 ) * rg_ );
-		Vector f1 = cross( f2, v );
-
-		F1 += weights[ rna_rg ] * f1;
-		F2 += weights[ rna_rg ] * f2;
-	}
-
+	if ( atom_num_i != first_base_atom_index( rsd ) ) return;
+	
+	Vector const v( base_centroids[i] );
+	Vector f2 = ( v - center_of_mass_ )/ ( ( nres - 1 ) * rg_ );
+	Vector f1 = cross( f2, v );
+	
+	F1 += weights[ rna_rg ] * f1;
+	F2 += weights[ rna_rg ] * f2;
 } // eval atom derivative
+
 core::Size
 RG_Energy_RNA::version() const
 {

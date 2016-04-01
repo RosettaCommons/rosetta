@@ -191,7 +191,6 @@ FaMPEnvEnergy::setup_for_scoring(
 
 	// Setup Projection and Derivatives
 	init( pose );
-
 }
 
 /// @brief Evaluate Per-Atom Env term
@@ -295,11 +294,9 @@ FaMPEnvEnergy::compute_fa_proj_coord(
 	core::Vector center,
 	core::Vector normal
 ) const {
-
 	Vector proj_i = center + z_position * normal;
 	Vector i_ip = proj_i - xyz;
 	return ( center - i_ip );
-
 }
 
 

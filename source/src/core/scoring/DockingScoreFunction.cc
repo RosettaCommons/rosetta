@@ -97,7 +97,6 @@ DockingScoreFunction::operator()( pose::Pose & pose ) const
 	cst_free_weights[ atom_pair_constraint ] = 0;
 	Real unbound_energy = pose.energies().total_energies().dot( cst_free_weights );
 
-
 	pose.set_jump( interface_jump_id, bound_pose_jump );
 
 	ScoreFunction::operator() ( pose );

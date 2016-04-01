@@ -164,8 +164,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	using namespace chemical;
 
 	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	//bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
-
+	
 	conformation::Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
 
@@ -226,8 +225,6 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	f1 *= deriv; f2 *= deriv;
 	lower_res_atom_derivs[ O_lo_id ].f1() += f1;
 	lower_res_atom_derivs[ O_lo_id ].f2() += f2;
-
-
 }
 
 
@@ -247,25 +244,6 @@ ProClosureEnergy::bump_energy_full(
 	EnergyMap &
 ) const
 {
-	/*
-	static const std::string prd_name( "PRD" );
-	static const std::string pru_name( "PRU" );
-
-	if ( pro_residue.aa() == chemical::aa_pro ) {
-	if ( pro_residue.is_bonded( other_residue ) &&
-	( ! pro_residue.is_upper_terminus() &&
-	pro_residue.seqpos() + 1 == other_residue.seqpos() )
-	||
-	( pro_residue.is_upper_terminus() &&
-	pro_residue.seqpos() == other_residue.seqpos() + 1 ) ) {
-	if ( pro_residue.name3() == prd_name && pro_residue.chi( 1 ) < 0 ) {
-	emap[ pro_close ] = 10;
-	} else if ( pro_residue.name3() == pru_name && pro_residue.chi( 1 ) > 0 ) {
-	emap[ pro_close ] = 10;
-	}
-	}
-	}
-	*/
 }
 
 /// @brief Penalize the pucker-up residue type if its chi1 is positive;
@@ -284,7 +262,6 @@ ProClosureEnergy::bump_energy_backbone(
 	EnergyMap &
 ) const
 {
-	//bump_energy_full( pro_residue, other_residue, pose, sfxn, emap );
 }
 
 
@@ -303,15 +280,14 @@ ProClosureEnergy::eval_intrares_energy(
 	EnergyMap & emap
 ) const
 {
-
-	if ( skip_ring_closure() ) return; //Do nothing here if we're skipping the ring closure energy calculation.
-
+	if ( skip_ring_closure() ) return;
 	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
 		if ( rsd.is_virtual_residue() ) return;
 		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
-		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ ); //Note that n_nv_dist_sd_ is actually the SQUARE of the standard deviation, now.
+		
+		//Note that n_nv_dist_sd_ is the SQUARE of the standard deviation
+		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ );
 	}
-
 }
 
 
@@ -332,12 +308,8 @@ ProClosureEnergy::eval_intrares_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-
-	if ( skip_ring_closure() ) return; //Do nothing here if we're skipping the ring closure energy calculation.
-
+	if ( skip_ring_closure() ) return;
 	debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
-
-	//const core::Real d_multiplier = ( (rsd.aa() == chemical::aa_dpr) ? -1.0 : 1.0 ); //Multiplier for derivatives
 
 	debug_assert( rsd.has( scNV_ ) );
 	debug_assert( rsd.has( bbN_ ) );
@@ -349,17 +321,17 @@ ProClosureEnergy::eval_intrares_derivatives(
 	Vector const & nv_pos( rsd.xyz( NV_ind ));
 	Vector const & n_pos(  rsd.xyz( N_ind ));
 	/// Numeric deriv version to consolidate code.
+	
 	Vector f1( 0.0 ), f2( 0.0 );
 	Distance dist( 0.0 );
 	numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist, f1, f2 );
-	Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ )); //Note that n_nv_dist_sd_ is actually the SQUARE of the standard deviation, now.
+	Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ ));
 	f1 *= deriv; f2 *= deriv;
 
 	atom_derivs[ NV_ind ].f1() += f1;
 	atom_derivs[ NV_ind ].f2() += f2;
 	atom_derivs[ N_ind  ].f1() -= f1;
 	atom_derivs[ N_ind  ].f2() -= f2;
-
 }
 
 /// @brief ProClosureEnergy Energy is context independent and thus

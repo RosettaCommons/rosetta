@@ -23,9 +23,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
-//#include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/DenseEnergyContainer.hh>
 
@@ -59,14 +56,6 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-
-/// inline retrieval methods here
-//inline
-//MultipoleElecRotamerSetInfo const &
-//retrieve_mp_rotamer_set_info( conformation::RotamerSetBase const & set ) {
-//  return static_cast< MulitpoleElecRotamerSetInfo const & >
-//    ( set.data().get( conformation::RotamerSetCacheableDataType::MULTIPOLE_ROTAMER_SET_INFO ) );
-//}
 
 inline
 MultipoleElecResidueInfo const &
@@ -161,7 +150,6 @@ retrieve_mp_pairdata(
 {
 	assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData const > ( pairdata.get_data( mp_respair_data ) ) );
 	return ( static_cast< MultipoleElecResPairMinData const & > ( pairdata.get_data_ref( mp_respair_data ) ) );
-
 }
 
 inline
@@ -170,7 +158,6 @@ retrieve_nonconst_mp_resdata(
 	ResSingleMinimizationData & resdata
 )
 {
-
 	MultipoleElecResidueInfoOP mp_resdata( 0 );
 	if ( resdata.get_data( mp_res_data ) ) {
 		assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) ) );
@@ -180,7 +167,6 @@ retrieve_nonconst_mp_resdata(
 		resdata.set_data( mp_res_data, mp_resdata );
 	}
 	return *mp_resdata;
-
 }
 
 inline
@@ -274,16 +260,13 @@ MultipoleElecEnergy::prepare_rotamers_for_packing(
 	conformation::RotamerSetBase & rotamer_set
 ) const
 {
-
 	// Need to assign types, etc.
 	potential_.get_rotamers_multipole_info( pose, rotamer_set );
-
 
 	// This will calculate effective Kirkwood radii and cache
 	potential_.get_rotamers_effective_radii( pose, rotamer_set );
 
 	// At this point, if we were doing polarization, it would go here.
-
 }
 
 
@@ -301,7 +284,6 @@ MultipoleElecEnergy::update_residue_for_packing(
 	/// update amoeba type information for residue that has changed during packing, eg in rotamer trials
 	/// need to double-check the current logic on this...
 	potential_.update_residue_for_packing( pose, resid );
-
 }
 
 ///
@@ -330,7 +312,6 @@ MultipoleElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.total_residue(), multipole_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
-
 }
 
 
@@ -362,7 +343,6 @@ MultipoleElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction con
 	}
 
 	potential_.calculate_and_store_all_derivs( pose );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -385,12 +365,6 @@ MultipoleElecEnergy::residue_pair_energy(
 	MultipoleElecResidueInfo const & mp1( retrieve_mp_residue_info( pose, rsd1.seqpos() ) );
 	MultipoleElecResidueInfo const & mp2( retrieve_mp_residue_info( pose, rsd2.seqpos() ) );
 
-	// MultipoleElecPoseInfo const & mp_info
-	// ( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) ); // SHOULD BE FAST!
-	//
-	// emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp_info.residue_info( rsd1.seqpos() ),
-	//                          rsd2, mp_info.residue_info( rsd2.seqpos() ) );
-
 	//TR << "Calculating residue pair energy" << std::endl;
 
 	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp1, rsd2, mp2 );
@@ -412,8 +386,6 @@ MultipoleElecEnergy::setup_for_minimizing_for_residue(
 {
 	MultipoleElecPoseInfo const & mp_info
 		( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) );
-
-	//  mp_info.initialize( rsd );
 
 	MultipoleElecResidueInfo const & mp_pose_data( mp_info.residue_info( rsd.seqpos() ) );
 
@@ -441,7 +413,6 @@ MultipoleElecEnergy::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData & pairdata
 ) const
 {
-
 	MultipoleElecResPairMinData & mp_pairdata( retrieve_nonconst_mp_pairdata( pairdata ) );
 	mp_pairdata.initialize( retrieve_mp_resdata_ptr( res1data ),
 		retrieve_mp_resdata_ptr( res2data ) );
@@ -513,13 +484,6 @@ MultipoleElecEnergy::residue_pair_energy_ext(
 	MultipoleElecResidueInfo const & mp2( retrieve_mp_residue_info( pose, rsd2.seqpos() ) );
 
 	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp1, rsd2, mp2 );
-
-	// MultipoleElecResPairMinData const & mp_pairdata( retrieve_mp_pairdata( pairdata ) );
-	// emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp_pairdata.res1_data(),
-	//                          rsd2, mp_pairdata.res2_data() );
-	// if( rsd1.seqpos() == 5 ) {
-	//  TR << "res pair ext " << mp_pairdata.res1_data().monopole( 1 ) << " and dipole " << mp_pairdata.res1_data().dipole( 1 ) << " at position " << rsd1.xyz( 1 ) << std::endl;
-	// }
 }
 
 bool
@@ -543,9 +507,6 @@ MultipoleElecEnergy::eval_intrares_energy_ext(
 
 	MultipoleElecResidueInfo const & mp_info( retrieve_mp_resdata( data_cache ) );
 	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd, mp_info, rsd, mp_info );
-	// if( rsd.seqpos() == 5 ) {
-	//  TR << "intrares ext " << mp_info.monopole( 1 ) << " and dipole " << mp_info.dipole( 1 ) << " at position " << rsd.xyz( 1 ) << std::endl;
-	// }
 }
 
 
@@ -566,8 +527,6 @@ MultipoleElecEnergy::evaluate_rotamer_intrares_energies(
 	utility::vector1< core::PackerEnergy > & energies
 ) const
 {
-	// using namespace conformation;
-	// using namespace numeric;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
@@ -595,21 +554,16 @@ MultipoleElecEnergy::evaluate_rotamer_intrares_energy_maps(
 	utility::vector1< EnergyMap > & emaps
 ) const
 {
-	// using namespace conformation;
-	// using namespace numeric;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
 
 	// std::cout << "MultipoleElec rotamer_intrares_energies: " << set.resid() << std::endl;
-
 	MultipoleElecRotamerSetInfo const & mp_info
 		( set.data().get< MultipoleElecRotamerSetInfo >( MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-
 		//TR << "Calculating rotamer intraresidue energy maps" << std::endl;
-
 		Real const elecE
 			( potential_.get_res_res_elecE( *set.rotamer( ii ), mp_info.residue_info( ii ),
 			*set.rotamer( ii ), mp_info.residue_info( ii ) ) );
@@ -656,21 +610,21 @@ MultipoleElecEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.nbr_atom_xyz() );
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-					Size const kk_rot_id = ii_offset + kk - 1;
-					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
-						Size const ll_rot_id = jj_offset + ll - 1;
-
-						//TR << "Calculating rotamer-rotamer pair energy" << std::endl;
-
-						Real const elecE(
-							potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), mp_info1.residue_info( kk_rot_id ),
+			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+			
+			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+				Size const kk_rot_id = ii_offset + kk - 1;
+				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
+					Size const ll_rot_id = jj_offset + ll - 1;
+					
+					//TR << "Calculating rotamer-rotamer pair energy" << std::endl;
+					
+					Real const elecE(
+						potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), mp_info1.residue_info( kk_rot_id ),
 							*set2.rotamer( ll_rot_id ), mp_info2.residue_info( ll_rot_id ) ) );
-
-						energy_table( ll_rot_id, kk_rot_id ) +=
-							static_cast< core::PackerEnergy >( weights[ multipole_elec ] *  elecE );
-					}
+					
+					energy_table( ll_rot_id, kk_rot_id ) +=
+					static_cast< core::PackerEnergy >( weights[ multipole_elec ] *  elecE );
 				}
 			}
 		}
@@ -708,18 +662,18 @@ MultipoleElecEnergy::evaluate_rotamer_background_energies(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				//TR << "Calculating rotamer-background pair energy" << std::endl;
-
-				Real const elecE(
-					potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), mp_set_info.residue_info( kk_rot_id ),
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			//TR << "Calculating rotamer-background pair energy" << std::endl;
+			
+			Real const elecE(
+				potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), mp_set_info.residue_info( kk_rot_id ),
 					rsd, mp_rsd_info ) );
-				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ multipole_elec ] *  elecE );
-			} // kk - rotamers for residue types
-		} // nbrs
+			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ multipole_elec ] *  elecE );
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
 
@@ -754,18 +708,17 @@ MultipoleElecEnergy::evaluate_rotamer_background_energy_maps(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
-
-				//TR << "Calculating rotamer-background pair energy maps" << std::endl;
-
-				Real const elecE
-					( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), mp_set_info.residue_info( kk_rot_id ),
-					rsd, mp_rsd_info ) );
-				(emaps[ kk_rot_id ])[ multipole_elec ] += elecE;
-			} // kk - rotamers for residue types
-		} // nbrs
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
+			
+			//TR << "Calculating rotamer-background pair energy maps" << std::endl;
+			
+			Real const elecE
+			( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), mp_set_info.residue_info( kk_rot_id ),
+										   rsd, mp_rsd_info ) );
+			(emaps[ kk_rot_id ])[ multipole_elec ] += elecE;
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
 
@@ -786,13 +739,6 @@ MultipoleElecEnergy::eval_atom_derivative(
 	potential_.eval_atom_derivative( atom_id, weights[ multipole_elec ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
 }
 #endif
-
-/// @brief MultipoleElecEnergy distance cutoff set to the same cutoff used by EtableEnergy, for now
-// Distance
-// MultipoleElecEnergy::atomic_interaction_cutoff() const
-// {
-//  return 5.5; /// APL remove this magic number!
-// }
 
 /// @brief MultipoleElecEnergy requires no context graphs
 void
@@ -815,8 +761,6 @@ MultipoleElecEnergy::eval_intrares_energy(
 	EnergyMap & emap
 ) const
 {
-	//using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
-
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	MultipoleElecPoseInfo const & mp_info
@@ -860,13 +804,6 @@ MultipoleElecEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > &
 ) const
 {
-
-	//  MultipoleElecResidueInfo const & mp1( retrieve_mp_resdata( data1 ) );
-	//  MultipoleElecResidueInfo const & mp2( retrieve_mp_resdata( data2 ) );
-
-	// potential_.eval_residue_pair_derivatives( rsd1, rsd2, mp1, mp2, pose, weights[ multipole_elec ],
-	//   r1_atom_derivs, r2_atom_derivs );
-
 }
 
 
