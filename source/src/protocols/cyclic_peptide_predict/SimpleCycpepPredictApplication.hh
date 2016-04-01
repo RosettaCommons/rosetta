@@ -264,6 +264,18 @@ private:
 		if ( returnval < 1 ) returnval += nresidue;
 		return static_cast<core::Size>(returnval);
 	}
+	
+	/// @brief Given an position in the current (perturbed) pose, return the position in the original (unperturbed) pose.
+	///
+	inline core::Size original_position(
+		core::Size const curr_position,
+		core::Size const permutation_offset,
+		core::Size const nresidue
+	) const {
+		core::Size returnval( curr_position + permutation_offset );
+		if ( returnval > nresidue ) returnval -= nresidue;
+		return returnval;
+	}
 
 	/// @brief Does a position have a custom Rama table defined?
 	/// @details Does not include a default custom Rama table -- only position-specific Rama tables are checked.

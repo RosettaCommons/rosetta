@@ -841,7 +841,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 			core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Get the Rama scoring function; must be nonconst to allow lazy loading
 			core::Real phi(0.0), psi(0.0);
 			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME
-			core::Size const cur_abs_pos( current_position( i, cyclic_offset, pose->n_residue() ) );
+			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->n_residue() ) );
 			if ( custom_rama_table_defined( cur_abs_pos ) ) {
 				rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), phi, psi);
 			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
@@ -988,7 +988,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	for ( core::Size i=1; i<=nres; ++i ) {
 		if ( i==anchor_res ) continue; //Can't perturb the anchor residue.
 		if ( pose->residue(i).type().is_alpha_aa() ) {
-			core::Size const res_in_original( current_position(i, cyclic_offset, pose->n_residue() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
+			core::Size const res_in_original( original_position(i, cyclic_offset, pose->n_residue() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
 				core::id::NamedAtomID Natom( "N", i );
