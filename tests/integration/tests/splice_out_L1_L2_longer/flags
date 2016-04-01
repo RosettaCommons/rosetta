@@ -10,6 +10,7 @@
 -loops:max_inner_cycles 1
 #-TailSegment::refine_cycles 50
 -constant_seed 1
+-run:jran 11113
 
 -parser:script_vars  source=2Y6S.pdb
 #-out:prefix source_pdb= H1_H2_1AHW_  
