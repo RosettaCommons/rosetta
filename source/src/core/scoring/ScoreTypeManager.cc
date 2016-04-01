@@ -228,6 +228,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "coordinate_constraint" ] = coordinate_constraint;
 	name2score_type_[ "site_constraint" ] = site_constraint;
 	name2score_type_[ "metalhash_constraint" ] = metalhash_constraint;
+	name2score_type_[ "metalbinding_constraint" ] = metalbinding_constraint;
 	name2score_type_[ "bond_geometry"] = bond_geometry;
 	name2score_type_[ "Hpol_bond_geometry"] = Hpol_bond_geometry;
 

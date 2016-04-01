@@ -75,7 +75,10 @@ public:
 		pose::Pose const & pose,
 		func::FuncFactory const & func_factory );
 
-	virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	//fpd use the same machinery as NamedAtomPairConstraint where names are mapped to indices here
+	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+
+	//virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 protected:
 	NamedAngleConstraint( NamedAngleConstraint const & src );
@@ -85,6 +88,11 @@ private:
 	id::NamedAtomID named_atom1_;
 	id::NamedAtomID named_atom2_;
 	id::NamedAtomID named_atom3_;
+
+	core::Size type1_id_;
+	core::Size type2_id_;
+	core::Size type3_id_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;

@@ -570,6 +570,21 @@ func::FuncCOP AngleConstraint::func() const { return func_; }
 /// @brief set func
 void AngleConstraint::set_func( func::FuncOP f ) { func_ = f; }
 
+void
+AngleConstraint::atom1( AtomID setting ) const {
+	atom1_ = setting;
+}
+
+void
+AngleConstraint::atom2( AtomID setting ) const {
+	atom2_ = setting;
+}
+
+void
+AngleConstraint::atom3( AtomID setting ) const {
+	atom3_ = setting;
+}
+
 } // constraints
 } // scoring
 } // core

@@ -53,6 +53,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <numeric/conversions.hh>
+
 // C++ headers
 #include <algorithm>
 
@@ -2492,6 +2494,136 @@ ResidueType::delete_terminal_chi(
 
 } // delete_terminal_chi
 
+void
+ResidueType::delete_child_proton( std::string const & atom ) {
+	std::string res_varname( atom + "-PRUNEH" );
+	Size count = 0;
+	while ( true ) {
+		if ( count > 20 ) {
+			utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + name() );
+		}
+		++count;
+		if ( count == 1 ) {
+			if ( ! has_variant_type( res_varname ) ) break;
+		} else {
+			res_varname = atom + "-PRUNEH" + utility::to_string( count );
+			if ( ! has_variant_type( res_varname ) ) break;
+		}
+	}
+	enable_custom_variant_types();
+	add_variant_type( res_varname );
+
+	// AMW: It seems like when we "delete" a proton, or fail to do so and virt
+	// instead, it doesn't keep track of it...
+	core::Size nhydrogens = number_bonded_hydrogens( atom_index( atom ) );
+	if ( nhydrogens == 0 ) {
+		tr.Trace << "No bonded hydrogens at " << atom << " in " << name() << std::endl;
+	} else {
+		// delete last proton
+		Size proton_index = attached_H_end( atom_index( atom ) );
+
+		// 1: delete
+		tr.Trace << "Removing " << atom_name( proton_index ) << std::endl;
+		delete_atom( proton_index );
+
+		// 2: remove any chi containing this H
+		for ( Size ii = 1; ii <= nchi(); ++ii ) {
+			if ( chi_atoms( ii )[ 4 ] != proton_index )  continue;
+
+			if ( ii == nchi() ) {
+				delete_terminal_chi();
+			} else {
+				// Redefine every chi from ii to nchi - 1 to jj + 1
+				// Then delete the terminal one.
+				for ( Size jj = ii; jj <= nchi() - 1; ++jj ) {
+					redefine_chi( jj,
+								 atom_name( chi_atoms( jj + 1 )[ 1 ] ),
+								 atom_name( chi_atoms( jj + 1 )[ 2 ] ),
+								 atom_name( chi_atoms( jj + 1 )[ 3 ] ),
+								 atom_name( chi_atoms( jj + 1 )[ 4 ] ) );
+				}
+				delete_terminal_chi();
+			}
+		}
+
+		// 3: ensure that the deleted proton is not used to build another atom in the residue
+		//    die for now.  If this is a problem this logic could be made smarter.
+		for (Size ii = 1; ii <= natoms(); ++ii ) {
+			AtomICoor aicoor = icoor( ii );
+			if (aicoor.stub_atom1().atomno() == proton_index
+					|| aicoor.stub_atom2().atomno() == proton_index
+					|| aicoor.stub_atom3().atomno() == proton_index
+			) {
+				utility_exit_with_message( "Deleted proton " + atom_name( proton_index ) + " used to build neighbor atom!" );
+ 			}
+		}
+
+		// 4: if there is more than one proton, allow the remain proton to occupy other positions
+		if (nhydrogens > 1) {
+			Size alt_proton_index = attached_H_begin( atom_index( atom ) );
+			AtomICoor aicoor = icoor( alt_proton_index );
+
+			for ( Size ii = 1; ii <= nchi(); ++ii ) {
+				if ( chi_atoms( ii )[ 4 ] != proton_index )  continue;
+				utility::vector1< Real > dihedral_samples;
+				for (Size jj = 0; jj<nhydrogens; ++jj) {
+					dihedral_samples.push_back( fmod( aicoor.phi() + jj*(360.0/nhydrogens), 360.0) );
+				}
+				set_proton_chi( ii, dihedral_samples, utility::vector1< Real >() );
+			}
+		}
+	}
+
+	//fd  we need to update the attachedH mappings so call finalize rather than update_derived
+	finalize();
+}
+
+void
+ResidueType::add_metapatch_connect( std::string const & atom ) {
+	// Provide unique variant name
+	// We have to do this or connections get dropped--not all variants get put
+	// back in. This is worse than you think--because they DON'T get dropped by
+	// the metal!
+	using namespace numeric::conversions;
+	std::string res_varname( atom + "-CONNECT" );
+	Size count=0;
+	while ( true ) {
+		if ( count > 20 ) {
+			utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + name() );
+		}
+		++count;
+		if ( count == 1 ) {
+			if ( ! has_variant_type( res_varname ) ) break;
+		} else {
+			res_varname = atom + "-CONNECT" + utility::to_string( count );
+			if ( ! has_variant_type( res_varname ) ) break;
+		}
+	}
+	enable_custom_variant_types();
+	add_variant_type( res_varname );
+
+	if ( number_bonded_hydrogens( atom_index( atom ) ) == 0 ) {
+		Size const connid( add_residue_connection( atom ) );
+		AtomICoor aicoor = icoor( atom_index( atom ) );
+
+		// These coordinates are generic.
+		set_icoor( "CONN"+ObjexxFCL::string_of( connid ), 3.14159, 70.600000*3.14159/180.000000, 1.37, atom, atom_name( aicoor.stub_atom1().atomno() ), atom_name( aicoor.stub_atom2().atomno() ) );
+	} else {
+		Size proton_index = attached_H_begin( atom_index( atom ) );
+		AtomICoor aicoor = icoor( proton_index );
+
+		Size const connid( add_residue_connection( atom ) );
+		set_icoor( "CONN"+ObjexxFCL::string_of( connid ),
+					  aicoor.phi()+radians(180.0),
+					  aicoor.theta(),
+					  1.37,
+					  atom_name( aicoor.stub_atom1().atomno() ),
+					  atom_name( aicoor.stub_atom2().atomno() ),
+					  atom_name( aicoor.stub_atom3().atomno() ) );
+	}
+
+	update_derived_data();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -335,6 +335,7 @@ enum ScoreType {
 	dunbrack_constraint,
 	site_constraint,
 	metalhash_constraint, // Rigid body, metal binding constraints for centroid mode
+	metalbinding_constraint, // constraints set by -auto_setup_metals
 	Hpol_bond_geometry, // deviations from ideal geometry for just polar hydrogens. [PolarHydrogenBondGeometryEnergy.hh]
 	bond_geometry,      // deviations from ideal geometry [accessed through constraints framework]
 	rna_bond_geometry,  // deviations from ideal geometry -- rna-backbone specific [accessed through constraints framework]

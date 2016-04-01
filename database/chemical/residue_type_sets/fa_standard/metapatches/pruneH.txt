@@ -1,5 +1,6 @@
 ## Metapatch for aromatic bromination
 NAME pruneH
+TYPES blank-PRUNEH
 
 PERTINENT_PROPERTY NO_ATOM_PROPERTY
 

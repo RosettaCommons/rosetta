@@ -66,9 +66,25 @@ NamedAngleConstraint::NamedAngleConstraint(
 	AngleConstraint( id::AtomID( 0, a1.rsd() ), id::AtomID( 0, a2.rsd() ), id::AtomID( 0, a3.rsd() ), func, scoretype ),
 	named_atom1_( a1 ),
 	named_atom2_( a2 ),
-	named_atom3_( a3 )
+	named_atom3_( a3 ),
+	type1_id_( 0 ),
+	type2_id_( 0 ),
+	type3_id_( 0 )
 {
 }
+
+NamedAngleConstraint::NamedAngleConstraint(NamedAngleConstraint const & other) :
+	AngleConstraint( other ),
+	named_atom1_( other.named_atom1_ ),
+	named_atom2_( other.named_atom2_ ),
+	named_atom3_( other.named_atom3_ ),
+	type1_id_( other.type1_id_ ),
+	type2_id_( other.type2_id_ ),
+	type3_id_( other.type3_id_ )
+{
+}
+
+
 
 std::string
 NamedAngleConstraint::type() const
@@ -123,6 +139,10 @@ bool NamedAngleConstraint::operator == ( Constraint const & rhs ) const {
 	if ( named_atom2_ != rhs_napc.named_atom2_ ) return false;
 	if ( named_atom3_ != rhs_napc.named_atom3_ ) return false;
 
+	if ( type1_id_ != rhs_napc.type1_id_ ) return false;
+	if ( type2_id_ != rhs_napc.type2_id_ ) return false;
+	if ( type3_id_ != rhs_napc.type3_id_ ) return false;
+
 	return true;
 }
 
@@ -131,14 +151,30 @@ bool NamedAngleConstraint::same_type_as_me( Constraint const & other ) const
 	return dynamic_cast< NamedAngleConstraint const * > ( &other );
 }
 
-
 void
-NamedAngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
-{
-	emap[ this->score_type() ] += AngleConstraint::score(
-		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
-		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
-		xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() ) );
+NamedAngleConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunction const& ) const {
+	// if ( pose_chemical_checksum_ == pose.get_current_chemical_checksum() )
+	core::Size type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
+	core::Size type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
+	core::Size type3_id_now = (core::Size)&( xyz.residue( named_atom3_.rsd() ).type() );
+	if ( type1_id_ != type1_id_now || type2_id_ != type2_id_now  || type3_id_ != type3_id_now ) {
+		atom1( id::AtomID( xyz.residue( named_atom1_.rsd() ).atom_index( named_atom1_.atom() ), named_atom1_.rsd() ));
+		atom2( id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() ));
+		atom3( id::AtomID( xyz.residue( named_atom3_.rsd() ).atom_index( named_atom3_.atom() ), named_atom3_.rsd() ));
+		if ( !atom1().valid() || !atom2().valid() || !atom3().valid() ) {
+			TR.Warning << "[WARNING] can't find atom for constraint"; show_def_nopose( TR.Warning );
+			TR.Warning << std::endl;
+		}
+		if ( !atom1().valid() ) {
+			throw core::id::EXCN_AtomNotFound( named_atom1_ );
+		}
+		if ( !atom2().valid() ) {
+			throw core::id::EXCN_AtomNotFound( named_atom2_ );
+		}
+		if ( !atom3().valid() ) {
+			throw core::id::EXCN_AtomNotFound( named_atom3_ );
+		}
+	}
 }
 
 void
@@ -212,14 +248,6 @@ NamedAngleConstraint::read_def(
 	}
 } // read_def
 
-NamedAngleConstraint::NamedAngleConstraint( NamedAngleConstraint const & src ) :
-	AngleConstraint( src ),
-	named_atom1_( src.named_atom1_ ),
-	named_atom2_( src.named_atom2_ ),
-	named_atom3_( src.named_atom3_ )
-{}
-
-
 }
 }
 }
@@ -237,6 +265,9 @@ core::scoring::constraints::NamedAngleConstraint::save( Archive & arc ) const {
 	arc( CEREAL_NVP( named_atom1_ ) ); // id::NamedAtomID
 	arc( CEREAL_NVP( named_atom2_ ) ); // id::NamedAtomID
 	arc( CEREAL_NVP( named_atom3_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( type1_id_ ) ); // core::Size
+	arc( CEREAL_NVP( type2_id_ ) ); // core::Size
+	arc( CEREAL_NVP( type3_id_ ) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -247,6 +278,9 @@ core::scoring::constraints::NamedAngleConstraint::load( Archive & arc ) {
 	arc( named_atom1_ ); // id::NamedAtomID
 	arc( named_atom2_ ); // id::NamedAtomID
 	arc( named_atom3_ ); // id::NamedAtomID
+	arc( type1_id_ ); // core::Size
+	arc( type2_id_ ); // core::Size
+	arc( type3_id_ ); // core::Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::NamedAngleConstraint );

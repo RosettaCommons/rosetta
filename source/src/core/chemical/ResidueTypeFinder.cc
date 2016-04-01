@@ -89,6 +89,10 @@ ResidueTypeFinder::get_representative_type() const
 	rsd_types = get_possible_base_residue_types( false /* include_custom */ );
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
 	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
+	// We need to apply metapatches again just in case there are some double variants.
+	// Only needed for packing metapatched residues.
+	// TODO: this is atrocious.
+	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_custom_residue_types();
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
@@ -107,7 +111,10 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/ );
 	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 
-	//rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
+	// We need to apply metapatches again just in case there are some double variants.
+	// Only needed for packing metapatched residues.
+	// TODO: this is atrocious.
+	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 
 	// add in any custom residues.
 	rsd_types.append( get_possible_custom_residue_types() );
@@ -351,16 +358,6 @@ ResidueTypeFinder::apply_metapatches_recursively(
 				fixes_name3( patch, rsd_type ) ||
 				fixes_interchangeability_group( patch, rsd_type ) );
 
-			//bool adds_any_variant = adds_any_variant( patch );
-			//bool adds_any_property = adds_any_property( patch );
-			//bool matches_any_patch_name = matches_any_patch_name( patch );
-			//bool matches_any_atom_name = matches_any_atom_name( patch );
-			//bool fixes_name3 = fixes_name3( patch );
-			//bool fixes_interchangeability_group = fixes_interchangeability_group( patch );
-
-			//bool apply_patch = adds_any_variant || adds_any_property || matches_any_patch_name
-			// || matches_any_atom_name || fixes_name3 || fixes_interchangeability_group;
-
 			if ( apply_patch ) {
 				// following just gets the right name of the patched residue
 				ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
@@ -513,6 +510,7 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 	vector1< std::string> const & patch_variant_types = patch->types();
 
 	for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
+		
 		VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
 
 		for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
@@ -520,7 +518,21 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 		}
 
 		for ( Size k = 1; k <= custom_variants_.size(); k++ ) {
+		
 			if ( custom_variants_[ k ] == patch_variant_types[ n ] ) return true;
+			// AMW: I am kicking an issue down the road a ways because I imagine
+			// that once the PackerPalette and variant type design are out, we
+			// may think about variant type matching a little differently.
+			// But right now, I need to be able to match a subset of a variant type
+			// too for e.g. SG-CONNECT vs SG-CONNECT2.
+			// Email andy.watkins2@gmail.com for a long-winded conversation about
+			// just quite why. Maybe you know how to do this better.
+			
+			// If we do the C++11 transition before finishing palette, rewrite as
+			// a regex. Right now I think the variant types form an appropriate prefix code.
+			if ( custom_variants_[ k ].substr(0, custom_variants_.size()-1) == patch_variant_types[ n ] ) return true;
+			if ( custom_variants_[ k ].substr(0, custom_variants_.size()-2) == patch_variant_types[ n ] ) return true;
+			
 		}
 
 		// following could also be managed by looking to see if patch *virtualizes* a missing atom.

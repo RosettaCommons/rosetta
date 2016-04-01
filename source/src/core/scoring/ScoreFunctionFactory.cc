@@ -287,15 +287,9 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 
 	//Turn on constraints if the user has used the auto_setup_metals flag.  Constraints are added automatically on PDB import.
 	if ( option[in::auto_setup_metals].user() ) {
-		if ( (option[in::metals_distance_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(atom_pair_constraint) < 1.0e-10) ) {
-			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no atom_pair_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
-			scorefxn->set_weight(atom_pair_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
-			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
-			// don't need to set this to 1.0 -- any nonzero value is fine.
-		}
-		if ( (option[in::metals_angle_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(angle_constraint) < 1.0e-10) ) {
-			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no angle_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
-			scorefxn->set_weight(angle_constraint, 1.0); // Turn on the angle_constraint weight if and only if it isn't already turned on.
+		if ( scorefxn->get_weight(metalbinding_constraint) < 1.0e-10) {
+			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no metalbinding_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
+			scorefxn->set_weight(metalbinding_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
 			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
 			// don't need to set this to 1.0 -- any nonzero value is fine.
 		}

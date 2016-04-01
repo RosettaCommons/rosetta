@@ -1804,73 +1804,15 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 
 bool
 AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
-
-	using numeric::conversions::radians;
-
 	if ( !rsd.has( atom_ ) ) return true; // failure!
-
-	// Provide unique variant name
-	std::string res_varname( atom_ + "-CONNECT" );
-	Size count=0;
-	while ( true ) {
-		if ( count > 20 ) {
-			utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + rsd.name() );
-		}
-		++count;
-		if ( count == 1 ) {
-			if ( ! rsd.has_variant_type( res_varname ) ) break;
-		} else {
-			res_varname = atom_ + "-CONNECT" + utility::to_string( count );
-			if ( ! rsd.has_variant_type( res_varname ) ) break;
-		}
-	}
-	rsd.enable_custom_variant_types();
-	rsd.add_variant_type( res_varname );
-
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
-		Size const connid( rsd.add_residue_connection( atom_ ) );
-		AtomICoor icoor = rsd.icoor( rsd.atom_index( atom_ ) );
-
-		// These coordinates are generic.
-		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( connid ), 3.14159, 70.600000*3.14159/180.000000, 1.37, atom_, rsd.atom_name( icoor.stub_atom1().atomno() ), rsd.atom_name( icoor.stub_atom2().atomno() ) );
-	} else {
-		Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-		AtomICoor icoor = rsd.icoor( proton_index );
-		//rsd.delete_atom( proton_index );
-		// just virtualize it
-		// Don't even do that: instead, make the connection go opposite of it!
-		// If you want to have no proton there, start from CYZ or another
-		// deprotonated type (add deprotonation metapatch for metals?).
-		//rsd.set_atom_type( proton_name, "VIRT" );
-		//rsd.set_mm_atom_type( proton_name, "VIRT" );
-
-		Size const connid( rsd.add_residue_connection( atom_ ) );
-		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( connid ),
-			icoor.phi()+radians(180.0),
-			icoor.theta(),
-			1.37,
-			rsd.atom_name( icoor.stub_atom1().atomno() ),
-			rsd.atom_name( icoor.stub_atom2().atomno() ),
-			rsd.atom_name( icoor.stub_atom3().atomno() ) );
-	}
-
+	rsd.add_metapatch_connect( atom_ );
 	return false;
 }
 
 bool
 DeleteChildProton::apply( ResidueType & rsd ) const {
-
-	using numeric::conversions::radians;
-
 	if ( !rsd.has( atom_ ) ) return true; // failure!
-
-
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
-		return false; // this isn't a problem, just have to say "job's been done"
-	} else {
-		Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-		rsd.delete_atom( proton_index );
-	}
+	rsd.delete_child_proton( atom_ );
 	return false;
 }
 
@@ -1898,15 +1840,11 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 
 
 	Size const con_res = rsd.add_residue_connection( atom_ );
-	//tr << "Forming connection number " << con_res << " for " << rsd.name() << std::endl;
+	tr.Trace << "Forming connection number " << con_res << " for " << rsd.name() << std::endl;
 	Size virtcount = rsd.n_virtual_atoms();
-	//tr << "rsd has " << virtcount << " virts to begin with " << std::endl;
-	//AtomICoor icoor;
 
-	//std::string virtname = "V" + ObjexxFCL::string_of( con_res - rsd.n_polymeric_residue_connections() );
-	//tr << "perhaps we'll start with " << virtname << std::endl;
-	if ( virtcount < con_res-rsd.n_polymeric_residue_connections() ) {
-		//tr << "must add a virt" << std::endl;
+	if ( con_res > rsd.n_polymeric_residue_connections() // no underflow!!
+		&& virtcount < con_res-rsd.n_polymeric_residue_connections() ) {
 
 		// Add a virt.  First, find a unique name for it:
 		std::string virtname = "V" + ObjexxFCL::string_of( ++virtcount );
@@ -1914,7 +1852,7 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 			virtname = "V" + ObjexxFCL::string_of( ++virtcount );
 		}
 
-		//tr << "adding " << virtname << std::endl;
+		tr.Trace << "Adding " << virtname << std::endl;
 		//Create a new virt atom, using the unique name found above:
 		rsd.add_atom( virtname, "VIRT", "VIRT", 0.0 );
 		rsd.add_bond( virtname, atom_ );
@@ -1924,8 +1862,11 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	//icoor = rsd.icoor( rsd.atom_index( virtname ) );
 
 	// Okay, give CONN the icoor of the selected virt.
-	rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 1.0, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
-
+	if ( virtcount <= 3 ) { // like FE
+		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 0, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), ( "V" + ObjexxFCL::string_of( virtcount ) ), true );
+	} else {
+		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 10, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
+	}
 	return false;
 }
 

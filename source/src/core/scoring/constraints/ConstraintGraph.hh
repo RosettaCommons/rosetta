@@ -69,6 +69,7 @@ public:
 	void backbone_stub_constraint_energy( Energy );
 	void backbone_stub_linear_constraint_energy( Energy );
 	void res_type_linking_constraint_energy( Energy );
+	void metalbinding_constraint_energy( Energy );
 
 
 	Energy bond_geometry_energy() const;
@@ -80,6 +81,7 @@ public:
 	Energy backbone_stub_constraint_energy() const;
 	Energy backbone_stub_linear_constraint_energy() const;
 	Energy res_type_linking_constraint_energy() const;
+	Energy metalbinding_constraint_energy() const;
 
 	void energy_computed( bool setting );
 	bool energy_computed() const;
@@ -95,6 +97,7 @@ private:
 	Energy backbone_stub_constraint_energy_;
 	Energy backbone_stub_linear_constraint_energy_;
 	Energy res_type_linking_constraint_energy_;
+	Energy metalbinding_constraint_energy_;
 
 
 	bool energy_computed_;

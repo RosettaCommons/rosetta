@@ -22,6 +22,7 @@
 #include <core/scoring/constraints/NamedAngleConstraint.hh>
 
 //Protocol headers
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -71,15 +72,19 @@ public:
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 
-		// pose.dump_pdb( "trpcage.pdb" );
+		//pose.dump_pdb( "trpcage.pdb" );
 		core::scoring::func::ConformationXYZ confxyz( pose.conformation() );
 
+		// fd change 109->109.0 to avoid integer math
 		core::scoring::func::HarmonicFuncOP func(
-			new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
+			new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109.0 ), 10 ) );
+
+		core::scoring::ScoreFunction sf;
 
 		// angle is 146.3 = 2.5534167 radians
 		// 109 degrees = 1.90240888 radians
-		// func(x) = (x-x0)/sd = 0.065100782
+		// func(x) = ((x-x0)/sd)^2 = 0.00423374
+		//fd this was initially incorrect, func was originally centered around 0
 		NamedAtomID at1( "N", 15 ), at2( "H", 15 ), at3( "C", 12 );
 		AtomID an1( 1, 15 ), an2( 5, 15 ), an3( 3, 12 );
 
@@ -87,9 +92,10 @@ public:
 		NamedAngleConstraint ang_cst( at1, at2, at3, func );
 		EnergyMap weights, emap, emap_num;
 		weights[ angle_constraint ] = 1.0;
+		ang_cst.setup_for_scoring( confxyz, sf ); //fd
 		ang_cst.score( confxyz, weights, emap );
 		num_ang_cst.score( confxyz, weights, emap_num );
-		TS_ASSERT_DELTA( emap[ angle_constraint ], 0.0651, 1e-4 );
+		TS_ASSERT_DELTA( emap[ angle_constraint ], 0.00423, 1e-5 );
 		TS_ASSERT_DELTA( emap[ angle_constraint ], emap_num[ angle_constraint ], 1e-16 );
 
 		// angle should also be 146.3 after conversion to centroid
@@ -97,8 +103,9 @@ public:
 		core::util::switch_to_residue_type_set( pose, "centroid" );
 		core::scoring::func::ConformationXYZ cenconfxyz( pose.conformation() );
 		EnergyMap emap2;
+		ang_cst.setup_for_scoring( confxyz, sf ); //fd
 		ang_cst.score( cenconfxyz, weights, emap2 );
-		TS_ASSERT_DELTA( emap2[ angle_constraint ], 0.0651, 1e-4 );
+		TS_ASSERT_DELTA( emap2[ angle_constraint ], 0.00423, 1e-5 );
 	}
 
 	void test_named_angle_constraint_clone() {

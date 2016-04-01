@@ -151,10 +151,10 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 		} else {
 			if ( setting /* == true */ ) {
 				if ( custom_variant_types_.has_value( variant_type ) ) {
-					TR.Warning << "Custom variant " << variant_type <<
+					TR.Trace << "Custom variant " << variant_type <<
 						" already exists in " << residue_type_->name() << endl;
 				} else {
-					TR.Info << "Adding the custom variant " << variant_type <<
+					TR.Trace << "Adding the custom variant " << variant_type <<
 						" to " << residue_type_->name() << endl;
 					custom_variant_types_.push_back( variant_type );
 				}
@@ -165,7 +165,7 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 					utility_exit_with_message( "Rosetta does not recognize the custom variant " + variant_type +
 						" in " + residue_type_->name() );
 				} else {
-					TR.Info << "Removing the custom variant " << variant_type <<
+					TR.Trace << "Removing the custom variant " << variant_type <<
 						" from " << residue_type_->name() << endl;
 					custom_variant_types_.erase( i );
 				}

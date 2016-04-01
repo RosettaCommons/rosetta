@@ -38,8 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-//#include <core/scoring/constraints/AtomPairConstraint.hh>
-//#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/NamedAngleConstraint.hh>
 
@@ -331,15 +330,20 @@ auto_setup_all_metal_constraints(
 		Size const ir_nconn = ir_res.n_possible_residue_connections();
 
 		// Make a vector of indices of virtual atoms in this residue:
-		//utility::vector1< Size > ir_virts;
-		utility::vector1< std::string > ir_virts;
+		utility::vector1< std::string > ir_virt_names;
+		utility::vector1< Size > ir_virt_atomnos;
 		for ( Size ia = 1, ia_max = ir_res.natoms(); ia <= ia_max; ++ia ) {
-			if ( ir_res.is_virtual( ia ) ) ir_virts.push_back( ir_res.atom_name( ia ) );
+			if ( ir_res.is_virtual( ia ) ) {
+				ir_virt_atomnos.push_back( ia );
+				ir_virt_names.push_back( ir_res.atom_name( ia ) );
+			}
 		}
 
 		// We must have at least as many virt atoms as connections
-		if ( ir_nconn > ir_virts.size() ) {
-			std::string message = "Error!  The number of connections to a metal is greater than the number of virtual atoms in that metal's residuetype.  Unable to continue.";
+		if ( ir_nconn > ir_virt_names.size() ) {
+			std::stringstream ss;
+			ss << "Error!  The number of connections to a metal, " << ir_nconn << ", is greater than the number of virtual atoms , " << ir_virt_names.size() << ", in that metal's residuetype, " << ir_res.name() << ".  Unable to continue.";
+			std::string const & message = ss.str();
 			utility_exit_with_message(message);
 		}
 
@@ -357,36 +361,55 @@ auto_setup_all_metal_constraints(
 
 			// Note: assumes that metal residue types have the first atom as the metal.
 			NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
-			NamedAtomID virtID(ir_virts[jr], ir);
+			NamedAtomID virtID(ir_virt_names[jr], ir);
 			NamedAtomID otherID(conn_res_atom, conn_res);
 			NamedAtomID otherparentID(conn_res_atom_parent, conn_res);
 
-			/*
-			AtomID metalID(1, ir);
-			AtomID virtID(ir_virts[jr], ir);
-			AtomID otherID(conn_res_atom, conn_res);
-			AtomID otherparentID(conn_res_atom_parent, conn_res);
-			*/
-
 			pose.set_xyz(virtID, pose.xyz(otherID)); //Move this residue's virt to the other residue's metal-binding atom position.
 
-			//Setting up distance constraints:
+			// Setting up distance constraints:
 			if ( distance_constraint_multiplier > 1.0e-10 ) {
-				HarmonicFuncOP hfunc( new HarmonicFunc( 0.0, 0.1 / sqrt(distance_constraint_multiplier)) ); //Harmonic function for constraining the position.
-				NamedAtomPairConstraintOP pairconst( new NamedAtomPairConstraint(virtID, otherID, hfunc) ); //Atom pair constraint holding the virt at the position of the metal-binding atom.
+				FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( 0.0, 0.1 )) ));
+				//Atom pair constraint holding the virt at the position of the metal-binding atom.
+				NamedAtomPairConstraintOP pairconst(
+					new NamedAtomPairConstraint(virtID, otherID, hfunc, core::scoring::metalbinding_constraint) );
 				pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
 			}
 
-			//Setting up angle constraints:
+			// Setting up angle constraints
 			if ( angle_constraint_multiplier > 1.0e-10 ) {
 				core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
-				CircularHarmonicFuncOP circfunc1( new CircularHarmonicFunc( ang1, 0.05/sqrt(angle_constraint_multiplier) ) ); //Circular harmonic function for constraining angles (works in RADIANS).
-				NamedAngleConstraintOP angleconst1( new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1 ) ); //Angle constraint holding the metal
+				//Circular harmonic function for constraining angles (works in RADIANS).
+				FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, FuncOP(new CircularHarmonicFunc( ang1, 0.05 )) ));
+				NamedAngleConstraintOP angleconst1(
+					new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1, core::scoring::metalbinding_constraint ) );
 				pose.add_constraint(angleconst1);
 			}
-
 		} //Loop through all of the metal's connections
 
+		// set up coordinate constraints to the generated virtuals (for cartrefine)
+		if ( distance_constraint_multiplier > 1.0e-10 ) {
+			for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
+				NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
+				NamedAtomID virtID(ir_virt_names[jr], ir);
+				core::Real const mvdist =
+					(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(1)).length();
+				FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( mvdist, 0.1 )) ));
+				NamedAtomPairConstraintOP pairconst_mv(
+					new NamedAtomPairConstraint(metalID, virtID, mvfunc, core::scoring::metalbinding_constraint) );
+				pose.add_constraint(pairconst_mv);
+
+				for ( Size kr = jr+1; kr <= ir_nconn; ++kr ) {
+					NamedAtomID virtID_j(ir_virt_names[kr], ir);
+					core::Real const vvdist =
+						(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(ir_virt_atomnos[kr])).length();
+					FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( vvdist, 0.1 )) ));
+					NamedAtomPairConstraintOP pairconst_vv(
+						new NamedAtomPairConstraint(virtID, virtID_j, vvfunc, core::scoring::metalbinding_constraint) );
+					pose.add_constraint(pairconst_vv);
+				}
+			}
+		}
 	} //Loop through all residues
 
 	return;
@@ -414,21 +437,11 @@ auto_setup_all_metal_constraints(
 ) {
 	using namespace core::scoring;
 
-	core::Real distmult = 1.0; //Constraint weight multiplier, for cases in which the atom_pair_constraint has already been turned on but is not equal to 1.0.
-	if ( sfxn->get_weight(atom_pair_constraint) < 1.0e-10 ) { //If this score term is turned off, turn it on.
-		sfxn->set_weight(atom_pair_constraint, 1.0);
-	} else { //Otherwise, if this score term is already turned on, set the weight multiplier appropriately.
-		distmult = 1.0 / sfxn->get_weight(atom_pair_constraint); //Note -- we will take the square root of this later on.
+	if ( std::fabs( sfxn->get_weight(metalbinding_constraint) ) < 1.0e-10 ) {
+		sfxn->set_weight(metalbinding_constraint, 1.0);
 	}
 
-	core::Real angmult=1.0; //Constraint weight multiplier, for cases in which the atom_pair_constraint has already been turned on but is not equal to 1.0.
-	if ( sfxn->get_weight(angle_constraint) < 1.0e-10 ) { //If this score term is turned off, turn it on.
-		sfxn->set_weight(angle_constraint, 1.0);
-	} else { //Otherwise, if this score term is already turned on, set the weight multiplier appropriately.
-		angmult = 1.0 / sfxn->get_weight(angle_constraint); //Note -- we will take the square root of this later on.
-	}
-
-	auto_setup_all_metal_constraints( pose, distmult*distance_constraint_multiplier, angmult*angle_constraint_multiplier );
+	auto_setup_all_metal_constraints( pose, distance_constraint_multiplier, angle_constraint_multiplier );
 
 	return;
 }

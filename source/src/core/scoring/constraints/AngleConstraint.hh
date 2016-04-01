@@ -186,6 +186,11 @@ public:
 		Vector & F2
 	) const;
 
+
+	AtomID const & atom1() const { return atom1_; }
+	AtomID const & atom2() const { return atom2_; }
+	AtomID const & atom3() const { return atom3_; }
+
 protected:
 	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
 	/// of the Func this class contains.
@@ -197,9 +202,13 @@ protected:
 	/// @brief set func
 	void set_func( func::FuncOP f );
 
+	void atom1( AtomID newid ) const;
+	void atom2( AtomID newid ) const;
+	void atom3( AtomID newid ) const;
+
 private:
 	// data
-	AtomID atom1_, atom2_, atom3_;
+	mutable AtomID atom1_, atom2_, atom3_;
 	core::scoring::func::FuncOP func_;
 #ifdef    SERIALIZATION
 protected:
