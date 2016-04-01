@@ -42,6 +42,8 @@ public:
 		moves::Movers_map const &,
 		Pose const & );
 
+	void set_remove( bool const remove );
+	void set_removable( bool const removable );
 private:
 	bool remove_;
 	bool removable_;

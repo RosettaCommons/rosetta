@@ -111,8 +111,20 @@ void VirtualRootMover::parse_my_tag(
 	moves::Movers_map const &,
 	Pose const &
 ) {
-	remove_ =  tag->getOption<bool>("remove", false);
-	removable_ = tag->getOption<bool>("removable", false);
+	set_remove( tag->getOption<bool>( "remove",  remove_ ) );
+	set_removable( tag->getOption<bool>( "removable", removable_ ) );
+}
+
+void
+VirtualRootMover::set_removable( bool const removable )
+{
+	removable_ = removable;
+}
+
+void
+VirtualRootMover::set_remove( bool const remove )
+{
+	remove_ = remove;
 }
 
 } // simple_moves
