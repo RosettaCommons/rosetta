@@ -463,7 +463,7 @@ private:
 	ObjexxFCL::FArray2D< Size > packed_rotno_2_sorted_rotno_;
 
 	// Entropy correction
-	utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShanonEntropy_n_derivs_;
+	utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShannonEntropy_n_derivs_;
 
 };
 

@@ -178,7 +178,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	Real score = eval_rotameric_energy_deriv( rsd, scratch, true );
 
 	//Multiplier for D-amino acids:
-	const core::Real d_multiplier = rsd.has_property( "D_AA" ) ? -1.0 : 1.0;
+	const core::Real d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
 
 	if ( score != score ) { // NaN check
 		score = 0;
@@ -202,20 +202,19 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-			dE_dbb[ bbi ]   = d_multiplier * ( scratch.dneglnrotprob_dbb()[ bbi ] + scratch.dchidevpen_dbb()[ bbi ] );
 			dE_dbb_dev[ bbi ] = d_multiplier * scratch.dchidevpen_dbb()[ bbi ];
 			dE_dbb_rot[ bbi ] = d_multiplier * scratch.dneglnrotprob_dbb()[ bbi ];
 		} else {
-			dE_dbb[ bbi ]   = d_multiplier * ( invp * scratch.drotprob_dbb()[ bbi ] + scratch.dchidevpen_dbb()[ bbi ] );
 			dE_dbb_dev[ bbi ] = d_multiplier * scratch.dchidevpen_dbb()[ bbi ];
 			dE_dbb_rot[ bbi ] = d_multiplier * invp * scratch.drotprob_dbb()[ bbi ];
 		}
 
 		// Correction for entropy
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
-			dE_dbb[ bbi ]   += d_multiplier * scratch.dentropy_dbb()[ bbi ];
 			dE_dbb_rot[ bbi ] += d_multiplier * scratch.dentropy_dbb()[ bbi ];
 		}
+
+		dE_dbb[ bbi ]   = dE_dbb_dev[ bbi ] + dE_dbb_rot[ bbi ];
 	}
 
 	for ( Size i = 1; i <= T; ++i ) {
@@ -245,21 +244,21 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	//Invert if we're dealing with a D-amino acid.
 	if ( core::chemical::is_canonical_D_aa( rsd.aa() ) ) for ( core::Size i = 1; i <= chi.size(); i++ ) chi[ i ] *= -1.0;
 
-	Real4 & chimean    ( scratch.chimean() );
-	Real4 & chisd    ( scratch.chisd()   );
-	Real4 & chidev    ( scratch.chidev()  );
-	Real4 & chidevpen   ( scratch.chidevpen() );
-	Real4 & dchidevpen_dchi  ( scratch.dchidevpen_dchi() );
-	Real5 & drotprob_dbb  ( scratch.drotprob_dbb() );
+	Real4 & chimean           ( scratch.chimean()           );
+	Real4 & chisd             ( scratch.chisd()             );
+	Real4 & chidev            ( scratch.chidev()            );
+	Real4 & chidevpen         ( scratch.chidevpen()         );
+	Real4 & dchidevpen_dchi   ( scratch.dchidevpen_dchi()   );
+	Real5 & dchidevpen_dbb    ( scratch.dchidevpen_dbb()    );
+	Real5 & drotprob_dbb      ( scratch.drotprob_dbb()      );
 	Real5 & dneglnrotprob_dbb ( scratch.dneglnrotprob_dbb() ); // for bicubic interpolation
-	Real5 & dchidevpen_dbb  ( scratch.dchidevpen_dbb()  );
-	FiveReal4 & dchimean_dbb ( scratch.dchimean_dbb()  );
-	FiveReal4 & dchisd_dbb  ( scratch.dchisd_dbb()  );
+	FiveReal4 & dchimean_dbb  ( scratch.dchimean_dbb()      );
+	FiveReal4 & dchisd_dbb    ( scratch.dchisd_dbb()        );
 
-	std::fill( chimean.begin(),        chimean.end(),           0.0 );
-	std::fill( chisd.begin(),        chisd.end(),             0.0 );
-	std::fill( chidev.begin(),        chidev.end(),            0.0 );
-	std::fill( chidevpen.begin(),       chidevpen.end(),         0.0 );
+	std::fill( chimean.begin(),           chimean.end(),           0.0 );
+	std::fill( chisd.begin(),             chisd.end(),             0.0 );
+	std::fill( chidev.begin(),            chidev.end(),            0.0 );
+	std::fill( chidevpen.begin(),         chidevpen.end(),         0.0 );
 	std::fill( dchidevpen_dchi.begin(),   dchidevpen_dchi.end(),   0.0 );
 	std::fill( drotprob_dbb.begin(),      drotprob_dbb.end(),      0.0 );
 	std::fill( dneglnrotprob_dbb.begin(), dneglnrotprob_dbb.end(), 0.0 );
@@ -318,21 +317,19 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 
 
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-		scratch.fa_dun_tot() = scratch.negln_rotprob() + chidevpensum;
 		scratch.fa_dun_rot() = scratch.negln_rotprob();
 		scratch.fa_dun_dev() = chidevpensum;
 	} else {
 		scratch.fa_dun_rot() = -std::log(scratch.rotprob());
-		scratch.fa_dun_tot() = scratch.fa_dun_rot() + chidevpensum;
 		scratch.fa_dun_dev() = chidevpensum;
 	}
 
-	// Corrections for Shanon Entropy
+	// Corrections for Shannon Entropy
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
 		scratch.fa_dun_rot() += scratch.entropy();
-		scratch.fa_dun_tot() += scratch.entropy();
 	}
 
+	scratch.fa_dun_tot() = scratch.fa_dun_rot() + scratch.fa_dun_dev();
 	Real const score( scratch.fa_dun_tot() );
 
 	if ( ! eval_deriv ) return score;
@@ -363,7 +360,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 
 			// Derivatives for the change in the Gaussian height normalization due to sd changing as a function of phi
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_normsd ] ) {
-				dchidevpen_dbb[ bbi ]      += 1.0 / chisd[ ii ] * dchisd_dbb[ bbi ][ ii ];
+				dchidevpen_dbb[ bbi ]                    += 1.0 / chisd[ ii ] * dchisd_dbb[ bbi ][ ii ];
 				scratch.dE_dbb_dev_perchi()[ bbi ][ ii ] += 1.0 / chisd[ ii ] * dchisd_dbb[ bbi ][ ii ];
 			}
 		}
@@ -467,6 +464,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::find_another_representative_for_u
 	/// Start from the furthest chi and work inwards trying to find another rotamer that could work
 	for ( Size ii = T; ii >= 1; --ii ) {
 		Size ii_orig_value = rotwell[ ii ];
+		// AMW: this seems risky. If we ever have an "unlikely rotamer" situation for a residue
+		// with an intermediate nonrotameric chi (imagine 4-ethyl-phenylalanine)
+		// this will skip bins.
 		for ( Size jj = 1; jj <= 3; ++jj ) { /// 3 == NUMBER OF ROTAMERIC CHI BINS
 			if ( jj == ii_orig_value ) continue;
 			rotwell[ ii ] = jj;
@@ -516,8 +516,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::correct_termini_derivatives(
 		scratch.dE_dbb_rot()[ N ] = 0;
 		scratch.dE_dbb_semi()[ N ] = 0;
 	}
-
-
 }
 
 /// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
@@ -543,19 +541,22 @@ RotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 		maxprob = interpolated_rotamer.rotamer_probability();
 
 	} else {
+		// Obtain bin numbers and relative position between bins for this residue's torsions.
 		utility::fixedsizearray1< Real, N > const bbs = get_bbs_from_rsd( rsd );
 		utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 		utility::fixedsizearray1< Real, N > bb_alpha;
 		get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
+		// Determine rotamer indices for each interpolation gridpoint.
 		utility::fixedsizearray1< Size, (1 << N ) > packed_rotnos;
 		for ( Size indi = 1; indi <= num_packed_rots; ++indi ) {
 			Size index = make_conditional_index( N, N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
 			packed_rotnos[ indi ] = rotamers_( index, 1 ).packed_rotno();
 		}
 
-		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
+		// Interpolate each packed rotamer.
 		for ( Size ii = 1; ii <= num_packed_rots; ++ii ) {
+			PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 			interpolate_rotamers( rsd, scratch, packed_rotnos[ ii ], interpolated_rotamer );
 			maxprob = ( maxprob < interpolated_rotamer.rotamer_probability() ?
 				interpolated_rotamer.rotamer_probability() : maxprob );
@@ -694,7 +695,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		// populate S_n_derivs
 		utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > S_n_derivs;
 		for ( Size i = 1; i <= ( 1 << N ); ++i ) {
-			for ( Size j = 1; j <= ( 1 << N ); ++j ) S_n_derivs[i][j] = ShanonEntropy_n_derivs_[ i ][ j ];
+			for ( Size j = 1; j <= ( 1 << N ); ++j ) S_n_derivs[i][j] = ShannonEntropy_n_derivs_[ i ][ j ];
 		}
 		utility::fixedsizearray1< Real, N > binw( PHIPSI_BINRANGE );
 
@@ -741,7 +742,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_phi_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	core::Real const d_multiplier( rsd.has_property( "D_AA" ) ? -1.0 : 1.0 );
+	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
 	if ( rsd.is_lower_terminus() ) return d_multiplier * parent::NEUTRAL_PHI;
 	else return rsd.mainchain_torsion( 1 );
 }
@@ -754,7 +755,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_psi_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	core::Real const d_multiplier( rsd.has_property( "D_AA" ) ? -1.0 : 1.0 );
+	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
 	if ( rsd.is_upper_terminus() ) return d_multiplier * parent::NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( 2 );
 }
@@ -768,7 +769,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	core::Real const d_multiplier( rsd.has_property( "D_AA" ) ? -1.0 : 1.0 );
+	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
 	if      ( rsd.is_lower_terminus() && bbn == 1 ) return d_multiplier * parent::NEUTRAL_PHI;
 	else if ( rsd.is_upper_terminus() && bbn == N ) return d_multiplier * parent::NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( bbn );
@@ -784,7 +785,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bbs_from_rsd(
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
 
 	utility::fixedsizearray1< Real, N > tors;
-	core::Real const d_multiplier( rsd.has_property( "D_AA" ) ? -1.0 : 1.0 );
+	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
 	for ( Size ii = 1; ii <= N; ++ii ) {
 		if      ( rsd.is_lower_terminus() && ii == 1 ) tors[ ii ] = d_multiplier*parent::NEUTRAL_PHI;
 		else if ( rsd.is_upper_terminus() && ii == N ) tors[ ii ] = d_multiplier*parent::NEUTRAL_PSI;
@@ -811,7 +812,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	RotamerLibraryScratchSpace scratch;
 
 	///Determine whether this is a D-amino acid:
-	const core::Real d_multiplier = existing_residue.has_property( "D_AA" ) ? -1.0 : 1.0;
+	const core::Real d_multiplier = existing_residue.type().is_d_aa() ? -1.0 : 1.0;
 
 	/// Save backbone interpolation data for reuse
 	utility::fixedsizearray1< Real, N > bbs = get_bbs_from_rsd( existing_residue );
@@ -1329,18 +1330,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::chisamples_for_rotamer_and_chi(
 	}
 }
 
-//XRW_B_T1
-/*
-template < Size T, Size N >
-SingleResidueRotamerLibraryOP
-RotamericSingleResidueDunbrackLibrary< T, N >::coarsify(coarse::Translator const & map) const
-{
-utility_exit_with_message("Unimplemented!");
-return 0;
-}
-*/
-//XRW_E_T1
-
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::write_to_file( utility::io::ozstream & /*out*/ ) const
@@ -1667,7 +1656,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 		}
 	}
 
-	/// Other variables ( ShanonEntropy_, S_dsecophi_, S_dsecopsi_, S_dsecophipsi_) are set up from the loaded data
+	/// Other variables ( ShannonEntropy_, S_dsecophi_, S_dsecopsi_, S_dsecophipsi_) are set up from the loaded data
 	/// automatically - they should be equivalent if all other data is equivalent.
 
 	return equal;
@@ -1678,9 +1667,9 @@ template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 {
-	// Iter again in order to reference ShanonEntropy
+	// Iter again in order to reference ShannonEntropy
 	for ( Size dimi = 1; dimi <= ( 1 << N ); ++dimi ) {
-		ShanonEntropy_n_derivs_[ dimi ].dimension( product( N_PHIPSI_BINS ) );
+		ShannonEntropy_n_derivs_[ dimi ].dimension( product( N_PHIPSI_BINS ) );
 	}
 
 	// Get entropy values first
@@ -1694,7 +1683,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 
 		// Initialize
 		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
-			ShanonEntropy_n_derivs_[ deriv_i ]( bb_rot_index ) = 0.0;
+			ShannonEntropy_n_derivs_[ deriv_i ]( bb_rot_index ) = 0.0;
 		}
 
 		// Divide probability by psum in order to make probability normalized
@@ -1707,7 +1696,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 		// The values actually stored are positive sign ( == negative entropy )
 		// which corresponds to Free energy contribution by Entropy
 		for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-			ShanonEntropy_n_derivs_[ 1 ]( bb_rot_index ) += -rotamers_( bb_rot_index, ii ).n_derivs()[ 1 ] * rotamers_( bb_rot_index, ii ).rotamer_probability() / psum;
+			ShannonEntropy_n_derivs_[ 1 ]( bb_rot_index ) += -rotamers_( bb_rot_index, ii ).n_derivs()[ 1 ] * rotamers_( bb_rot_index, ii ).rotamer_probability() / psum;
 		}
 
 		bb_bin[ 1 ]++;
@@ -1729,8 +1718,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 
 	// Derivatives
 
-	for ( Size i = 1; i <= N; ++i ) bb_bin       = 1;
-	for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
+	for ( Size i = 1; i <= N+1; ++i ) bb_bin[ i ] = 1;
 	p = 1;
 	while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -1775,10 +1763,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 		}
 
 		// Indices all acquired... now to calculate.
-		// Note that ShanonEntropy_n_derivs_ has already been set for 1
+		// Note that ShannonEntropy_n_derivs_ has already been set for 1
 		// because that is the value
 		for ( Size deriv_i = 2; deriv_i <= ( 1 << N ); ++deriv_i ) {
-			ShanonEntropy_n_derivs_[ deriv_i ]( bin_index ) = 1;
+			ShannonEntropy_n_derivs_[ deriv_i ]( bin_index ) = 1;
 		}
 
 		for ( Size deriv_i = 2; deriv_i <= ( 1 << N ); ++deriv_i ) {
@@ -1792,9 +1780,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 				// the derivative bit is set for this bb angle
 				// Otherwise, factor of 1
 				if ( ( deriv_i - 1 ) & ( 1 << ( N - bbi ) ) ) {
-					ShanonEntropy_n_derivs_[ deriv_i ]( bin_index ) *=
-						( ShanonEntropy_n_derivs_[ 1 ]( next_bb_index[ bbi ] )
-						- ShanonEntropy_n_derivs_[ 1 ]( prev_bb_index[ bbi ] ) )
+					ShannonEntropy_n_derivs_[ deriv_i ]( bin_index ) *=
+						( ShannonEntropy_n_derivs_[ 1 ]( next_bb_index[ bbi ] )
+						- ShannonEntropy_n_derivs_[ 1 ]( prev_bb_index[ bbi ] ) )
 						/ dbb2[ bbi ];
 				}
 			}
