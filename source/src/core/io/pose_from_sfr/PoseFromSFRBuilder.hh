@@ -19,7 +19,7 @@
 // Package headers
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
-#include <core/io/ResidueInformation.fwd.hh>
+#include <core/io/ResidueInformation.hh>
 #include <core/io/pose_from_sfr/chirality_resolution.fwd.hh>
 
 // Project headers
