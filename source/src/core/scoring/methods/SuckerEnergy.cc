@@ -159,7 +159,7 @@ SuckerEnergy::residue_pair_energy(
 		numeric::xyzVector<Real> atom_xyz( rsd.xyz(i) );
 		Real const d = atom_xyz.distance( suck_xyz );
 		if ( d > DIST_TH ) continue;
-		
+
 		Real f, df;
 		interp_->interpolate( d, f, df );
 		// std::cerr << rsd.seqpos() << " " << i << " " << d << " " << f << " " << df << " SUCKER" << std::endl;
@@ -234,7 +234,7 @@ SuckerEnergy::eval_atom_derivative(
 			if ( d > DIST_TH ) continue;
 
 			// std::cerr << "DERIVATOMS " << id.rsd() << " " << id.atomno() << " " << sck.seqpos() << " " << 1 << " " << d << " LPB " << id.rsd() << " " << id.atomno() << std::endl;
-			
+
 			// compute suck F1, F2
 			numeric::xyzVector<Real> const f1( atom_xyz.cross( suck_xyz ));
 			numeric::xyzVector<Real> const f2( atom_xyz -  suck_xyz );

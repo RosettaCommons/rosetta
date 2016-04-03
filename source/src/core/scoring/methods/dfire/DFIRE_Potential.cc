@@ -80,11 +80,11 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 	string line;
 	while ( getline(input,line) ) {
 		if ( line.substr(0,1) == "#" ) continue;
-		
+
 		std::istringstream ss(line);
 		string res1(""), atom1(""), res2(""), atom2("");
 		ss >> res1 >> atom1 >> res2 >> atom2;
-		
+
 		//std::cout << "line = " << line << std::endl;
 		vector1< Real > pair_potential; // for (res1,atom1,res2,atom2)
 		Real value(-999);
@@ -94,7 +94,7 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 			ss >> value;
 			//std::cout << "value = " << value << std::endl;
 		}
-		
+
 		potential_.push_back( pair_potential );
 		string const joint_id(get_joint_id(res1,atom1,res2,atom2));
 		atom_res_idx_[joint_id] = potential_.size();
@@ -175,7 +175,7 @@ DFIRE_Potential::eval_dfire_pair_energy(
 			Size const dist_bin_idx = (Size) (2*dist + 0.5);
 			//std::cout << "bin(" << dist << ") = " << dist_bin_idx << std::endl;
 			if ( dist_bin_idx >= 30 ) continue;
-			
+
 			string const atom_id1( rsd1.type().atom_name(ii) );
 			string const atom_id2( rsd2.type().atom_name(jj) );
 			string const res_id1 ( rsd1.type().name3() );

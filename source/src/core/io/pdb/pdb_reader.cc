@@ -131,7 +131,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			// TODO: Add rest of Title Section records.
 			sfr.header()->store_record( records[ i ] );
 
-		// Record contains a remark from the Title Section of the PDB file.
+			// Record contains a remark from the Title Section of the PDB file.
 		} else if ( record_type == "REMARK" )  {
 			RemarkInfo ri;
 			ri.num = atoi( records[ i ][ "remarkNum" ].value.c_str() ),
@@ -145,54 +145,54 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			sfr.remarks()->push_back( ri );
 
 
-		// Primary Structure Section //////////////////////////////////////////
-		// Record contains cross-references from PDB sequence fragments to a corresponding database sequence.
+			// Primary Structure Section //////////////////////////////////////////
+			// Record contains cross-references from PDB sequence fragments to a corresponding database sequence.
 		} else if ( record_type == "DBREF " || record_type == "DBREF1" || record_type == "DBREF2" ||
 				record_type == "SEQADV" ) {
 			//sfr.primary_struct_info()->store_sequence_database_refs( records[ i ] );  // TODO
 			continue;  // TEMP
 
-		// Record contains a linear (or cyclic) primary sequence declaration.
+			// Record contains a linear (or cyclic) primary sequence declaration.
 		} else if ( record_type == "SEQRES" ) {
 			store_chain_sequence_record_in_sfr( records[ i ], sfr );
 
-		// Record that a residue is modified and how.
+			// Record that a residue is modified and how.
 		} else if ( record_type == "MODRES" ) {
 			store_mod_res_record_in_sfr( records[ i ], sfr );
 
 
-		// Heterogen Section //////////////////////////////////////////////////
-		// Record contains heterogen nomenclature information.
+			// Heterogen Section //////////////////////////////////////////////////
+			// Record contains heterogen nomenclature information.
 		} else if ( record_type == "HETNAM" ) {
 			store_heterogen_name_record_in_sfr( records[ i ], sfr );
 
-		// Record contains heterogen synonym information.
+			// Record contains heterogen synonym information.
 		} else if ( record_type == "HETSYN" ) {
 			store_heterogen_synonym_record_in_sfr( records[ i ], sfr );
 
-		// Record contains formula information.
+			// Record contains formula information.
 		} else if ( record_type == "FORMUL" ) {
 			store_formula_record_in_sfr( records[ i ], sfr );
 
 
-		// Secondary Structure Section ////////////////////////////////////////
-		// Record contains helix definitions.
+			// Secondary Structure Section ////////////////////////////////////////
+			// Record contains helix definitions.
 		} else if ( record_type == "HELIX " ) {
 			// TODO: Store HELIX record types here.
 			continue;
 
-		// Record contains sheet definitions.
+			// Record contains sheet definitions.
 		} else if ( record_type == "SHEET " ) {
 			// TODO: Store SHEET record types here.
 			continue;
 
 
-		// Connectivity Annotation Section ////////////////////////////////////
-		// Record contains disulfide linkage information.
+			// Connectivity Annotation Section ////////////////////////////////////
+			// Record contains disulfide linkage information.
 		} else if ( record_type == "SSBOND" ) {
 			store_ssbond_record_in_sfr( records[ i ], sfr );
 
-		// Record contains nonstandard polymer linkage information.
+			// Record contains nonstandard polymer linkage information.
 		} else if ( record_type == "LINK  " ) {
 			store_link_record_in_sfr( records[ i ], sfr );
 
@@ -200,19 +200,19 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			store_cis_peptide_record_in_sfr( records[ i ], sfr );
 
 
-		// Miscellaneous Features Section /////////////////////////////////////
+			// Miscellaneous Features Section /////////////////////////////////////
 		} else if ( record_type == "SITE  " ) {
 			// TODO: Store SITE record types here.
 			continue;
 
-		// Crystallographic and Coordinate Transformation Section /////////////
-		// Record contains crystal information.
+			// Crystallographic and Coordinate Transformation Section /////////////
+			// Record contains crystal information.
 		} else if ( records[i]["type"].value == "CRYST1" )  {
 			store_crystallographic_parameter_record_in_sfr( records[ i ], sfr );
 
 
-		// Coordinate Section /////////////////////////////////////////////////
-		// Record contains multimodel PDBs.
+			// Coordinate Section /////////////////////////////////////////////////
+			// Record contains multimodel PDBs.
 		} else if ( record_type == "MODEL " ) {
 			if ( stop_reading_coordinate_section ) continue;
 
@@ -237,7 +237,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 				}
 			}
 
-		// Record contains atom information.
+			// Record contains atom information.
 		} else if ( record_type == "ATOM  " || record_type == "HETATM" ) {
 			if ( stop_reading_coordinate_section ) continue;
 

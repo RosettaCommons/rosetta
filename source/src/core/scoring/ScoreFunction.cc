@@ -187,16 +187,16 @@ void ScoreFunction::perturb_weights() {
 	for ( ScoreTypes::const_iterator i = terms.begin(); i != terms.end(); ++i ) {
 		const ScoreType& term = *i;
 		if ( !has_nonzero_weight(term) ) continue;
-		
+
 		Real weight = get_weight(term);
-		
+
 		normal dist(0, weight / 8);
 		DistributionSampler<normal> sampler(dist);
-		
+
 		Real perturbed_weight = weight + sampler.sample();
 		set_weight(term, std::max(perturbed_weight, 0.0));
 		tr.Debug << name_from_score_type(term) << ": "
-		<< weight << " => " << perturbed_weight << std::endl;
+			<< weight << " => " << perturbed_weight << std::endl;
 	}
 }
 
@@ -449,7 +449,7 @@ ScoreFunction::set_energy_method_options(
 {
 	energy_method_options_
 		= methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( energy_method_options_in ) );
-	
+
 	// Some of the energy methods only know about these options when
 	// they are constructed. So the safest thing is to destroy them and
 	// create them again.
@@ -2049,7 +2049,7 @@ ScoreFunction::setup_for_derivatives(
 	pose::Pose & pose
 ) const {
 	//std::cout << "ScoreFunction::setup_for_derivatives" << std::endl;
-	
+
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 

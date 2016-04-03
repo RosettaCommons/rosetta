@@ -79,7 +79,7 @@ DNAChiEnergy::residue_energy(
 ) const
 {
 	if ( ! rsd.is_DNA() ) return;
- 
+
 	//  Real this_chi( (rsd.chi())[1] );
 	//  tr << "Calculating chi as:  " << this_chi << std::endl;
 	Real this_score( 0.0 );

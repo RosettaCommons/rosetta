@@ -71,7 +71,7 @@ SurfaceEnergies::operator = ( Energies const & rhs )
 	non_surface_ranges_ = surf_rhs.non_surface_ranges_;
 	is_surface_ = surf_rhs.is_surface_;
 	neighbor_cutoff_ = surf_rhs.neighbor_cutoff_;
-	
+
 	parent::operator = ( rhs );
 	return *this;
 }

@@ -235,20 +235,20 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 		GaussianParameter const & mg_potential_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_indirect_gaussian_parameter( rsd1, i );
 
 		if ( d >= indirect_interaction_cutoff_ || mg_potential_indirect_gaussian_parameter.center <= 0.0 ) continue;
-		
+
 		Real binding_score_indirect = get_gaussian_potential_score( mg_potential_indirect_gaussian_parameter, i_xyz, j_xyz );
-		
+
 		if ( get_angle_form_factor ) {
-			
+
 			if ( cos_theta < -1.0 ) cos_theta = get_cos_theta( rsd1, i, j_xyz );
-			
+
 			GaussianParameter const & mg_potential_costheta_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_indirect_gaussian_parameter( rsd1, i );
 			Real const angle_potential_indirect = get_gaussian_score( mg_potential_costheta_indirect_gaussian_parameter, cos_theta );
 			binding_score_indirect *= angle_potential_indirect;
-			
+
 		}
 		score_indirect += binding_score_indirect;
-		
+
 		if ( verbose_ && std::abs( binding_score_indirect ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << " indirect to ligand " << pos1 << ' ' << rsd1.atom_name( i ) << "  score: " <<  binding_score_indirect << std::endl;
 	}
 

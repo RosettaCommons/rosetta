@@ -294,7 +294,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			}
 		}
 	}
-	
+
 	emap[ mm_bend ] += energy;
 }
 

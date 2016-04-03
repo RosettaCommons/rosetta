@@ -318,7 +318,7 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 		atom_numbers_for_vdw_calculation[ i ].clear();
 
 		if ( !rsd.is_RNA() && !is_magnesium[ i ] ) continue;
-		
+
 		//a,c,g, or u?
 		char const which_nucleotide = rsd.name1();
 		//What atom names to look at?

@@ -183,10 +183,10 @@ FA_GrpElecEnergy::setup_for_minimizing(
 	set_nres_mono(pose);
 
 	if ( !pose.energies().use_nblist() ) return;
-	
+
 	// stash our nblist inside the pose's energies object
 	Energies & energies( pose.energies() );
-	
+
 	// setup the atom-atom nblist
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
@@ -198,7 +198,7 @@ FA_GrpElecEnergy::setup_for_minimizing(
 	// this partially becomes the EtableEnergy classes's responsibility
 	nblist->setup( pose, sfxn, *this);
 	energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
-	
+
 	//TR.Debug << "done setup_for_minimization" << std::endl;
 }
 
@@ -647,20 +647,20 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 		Real dcut = ii_radius+jj_radius+5.5;
 
 		if ( ii_coord.distance_squared( jj_coord ) >= dcut*dcut ) continue;
-		
+
 		Size const n = set.get_n_rotamers_for_residue_type( ii );
 		for ( Size kk = 1; kk <= n; ++kk ) {
 			Size const kk_rot_id = ii_offset + kk - 1;
-			
+
 			Size res2 = set.rotamer( kk_rot_id )->seqpos();
-			
+
 			Real const res_energy =
-			groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
-												   residue );
+				groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
+				residue );
 			Real w( 1.0 );
 			if ( context_dependent_ ) {
 				w = burial_weight( data->get_n( residue.seqpos() ) )
-				+ burial_weight( data->get_n( res2 ) );
+					+ burial_weight( data->get_n( res2 ) );
 			}
 			energy_vector[ kk_rot_id ] += w*res_energy;
 		}

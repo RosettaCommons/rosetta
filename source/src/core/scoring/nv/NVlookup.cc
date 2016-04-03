@@ -109,13 +109,13 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 core::Real NVlookup::get_potentials(core::chemical::AA const & aa_type, core::Real const & score) const
 {
 	if ( aa_type > core::chemical::num_canonical_aas ) return 0;
-	
+
 	InterpolatorOP row(lookup_table_[aa_type]);
 	Real potential_energy;
 	Real delta_potential_energy;
-	
+
 	row->interpolate(score,potential_energy,delta_potential_energy);
-	
+
 	return potential_energy;
 }
 

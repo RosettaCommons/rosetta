@@ -298,21 +298,21 @@ EnvPairPotential::compute_centroid_environment(
 	// ensure that cenlist has pose.total_residue() elements in case the pose has
 	// changed its sequence lenght since the last cenlist update
 	cenlist.initialize( pose );
-	
+
 	for ( Size i = 1; i < nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
 		for ( graph::Graph::EdgeListConstIter
-			 iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-			 irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-			 iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
-			
+
 			Real const cendist = edge->square_distance();
-			
+
 			//  compute arrays needed for C-beta  energy function
 			//  first do a coarse grain reality check on centroid separations
 			if ( cendist <= cen_dist_cutoff_12_pad ) {
@@ -320,7 +320,7 @@ EnvPairPotential::compute_centroid_environment(
 			}
 		}
 	}
-	
+
 	truncate_cenlist_values( cenlist );
 	cenlist.calculated() = true;
 }

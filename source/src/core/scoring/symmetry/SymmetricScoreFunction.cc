@@ -780,7 +780,7 @@ SymmetricScoreFunction::eval_npd_atom_derivative(
 
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph  = symm_energies.minimization_graph();
-	
+
 	/// 3. Whole-pose-context energies should have their contribution calculated here.
 	for ( MinimizationGraph::Energies::const_iterator
 			iter     = mingraph->whole_pose_context_enmeths_begin(),
@@ -906,7 +906,7 @@ SymmetricScoreFunction::set_symmetric_residue_neighbors_hbonds( pose::Pose & pos
 	if ( symm_info->get_use_symmetry() ) {
 		for ( uint res = 1; res <= pose.total_residue(); ++res ) {
 			if ( symm_info->fa_is_independent( res ) ) continue;
-			
+
 			int symm_res ( symm_info->bb_follows( res ) );
 			int neighbors_symm ( hbond_set.nbrs( symm_res ) );
 			hbond_set.set_nbrs( res, neighbors_symm );
@@ -935,7 +935,7 @@ SymmetricScoreFunction::set_symmetric_cenlist( pose::Pose & pose ) const {
 	if ( symm_info->get_use_symmetry() ) {
 		for ( uint res = 1; res <= pose.total_residue(); ++res ) {
 			if ( symm_info->fa_is_independent( res ) ) continue;
-			
+
 			int symm_res ( symm_info->bb_follows( res ) );
 			double fcen6_symm ( cenlist->fcen6( symm_res) );
 			double fcen10_symm ( cenlist->fcen10( symm_res ) );

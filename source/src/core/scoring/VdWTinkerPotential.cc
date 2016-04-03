@@ -509,17 +509,17 @@ VdWTinkerPotential::get_res_res_vdw(
 			// Assuming all the checks tell us to calculate the interaction
 
 			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) &&
-				(!same_res || (atm1 != atm2) ) ) continue;
-			
+					(!same_res || (atm1 != atm2) ) ) continue;
+
 			Real const dist( p1.distance( p2 ) );
 			Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
 			Real const eff_rad( ( rad1*rad1*rad1 + rad2*rad2*rad2 ) / ( rad1*rad1 + rad2*rad2 ) );
 			Real const rad_ratio( dist / eff_rad );
-			
+
 			Real const factor1( std::pow( 1.07/( rad_ratio + 0.07 ), 7.0 ) );
 			Real const factor2( 1.12/( std::pow( rad_ratio, 7.0 ) + 0.12 ) - 2.0 );
-			
-			
+
+
 			atom_atomE = eff_dep*factor1*factor2;
 
 			vdwE += atom_atomE;
@@ -552,7 +552,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 	Size path_dist( 1 );
 	Real weight( 0.0 );
-	
+
 	Size const resi( rsd1.seqpos() );
 	Size const resj( rsd2.seqpos() );
 	bool const same_res( resi == resj );
@@ -614,27 +614,27 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 			// Assuming all the checks tell us to calculate the interaction
 
 			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) &&
-				(!same_res || (atm1 != atm2) ) ) continue;
-			
+					(!same_res || (atm1 != atm2) ) ) continue;
+
 			Real const dist( p1.distance( p2 ) );
 			Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
 			Real const eff_rad( ( rad1*rad1*rad1 + rad2*rad2*rad2 ) / ( rad1*rad1 + rad2*rad2 ) );
 			Real const rad_ratio( dist / eff_rad );
-			
+
 			Real const factor1( std::pow( 1.07/( rad_ratio + 0.07 ), 7.0 ) );
 			Real const factor2( 1.12/( std::pow( rad_ratio, 7.0 ) + 0.12 ) - 2.0 );
-			
+
 			Real const dfactor1( -6.542*std::pow( 1.07/(rad_ratio+0.07), 8.0 ) );
 			Real const dfactor2( -7.84*std::pow(rad_ratio,6.0)/( std::pow( ( std::pow(rad_ratio,7.0) + 0.12 ) , 2.0 ) ) );
-			
+
 			Real const dEdr( -1.0*eff_dep*factor*( factor1*dfactor2 + factor2*dfactor1 )/eff_rad );
-			
+
 			Vector const deriv_dr_f1( p2.cross_product( p1 ) );
 			Vector const deriv_dr_f2( p2 - p1 );
-			
+
 			Vector const f1( dEdr * deriv_dr_f1 / dist );
 			Vector const f2( dEdr * deriv_dr_f2 / dist );
-			
+
 			r1_at_derivs[ atm1 ].f1() += f1;
 			r1_at_derivs[ atm1 ].f2() += f2;
 			r2_at_derivs[ atm2 ].f1() -= f1;

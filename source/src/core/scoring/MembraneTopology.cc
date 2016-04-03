@@ -211,7 +211,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 			TR << "unable to open " << lipofile << std::endl;
 		}
 	}
-	
+
 	init_=true;
 	//pba
 	initialized_=true;

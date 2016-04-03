@@ -102,37 +102,37 @@ PairEPotential::PairEPotential() :
 		using namespace OptionKeys::packing;
 
 		if ( !option[ use_electrostatic_repulsion ] ) return;
-		
+
 		for ( int e1 = 1; e1 <= 2; ++e1 ) {
 			for ( int e2 = 1; e2 <= 2; ++e2 ) {
 				pair_corr_( aa_asp, aa_asp, e1, e2, 1 ) = 0.3;   // 3-4.5 angstroms
 				pair_corr_( aa_asp, aa_asp, e1, e2, 2 ) = 0.5;   // 4.5-6 angstroms
 				pair_corr_( aa_asp, aa_asp, e1, e2, 3 ) = 0.75;  // 6-7.5 angstroms
-				
+
 				pair_corr_( aa_asp, aa_glu, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_asp, aa_glu, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_asp, aa_glu, e1, e2, 3 ) = 0.75;
-				
+
 				pair_corr_( aa_glu, aa_asp, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_glu, aa_asp, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_glu, aa_asp, e1, e2, 3 ) = 0.75;
-				
+
 				pair_corr_( aa_glu, aa_glu, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_glu, aa_glu, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_glu, aa_glu, e1, e2, 3 ) = 0.75;
-				
+
 				pair_corr_( aa_lys, aa_lys, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_lys, aa_lys, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_lys, aa_lys, e1, e2, 3 ) = 0.75;
-				
+
 				pair_corr_( aa_arg, aa_arg, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_arg, aa_arg, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_arg, aa_arg, e1, e2, 3 ) = 0.75;
-				
+
 				pair_corr_( aa_arg, aa_lys, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_arg, aa_lys, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_arg, aa_lys, e1, e2, 3 ) = 0.75;
-				
+
 				pair_corr_( aa_lys, aa_arg, e1, e2, 1 ) = 0.3;
 				pair_corr_( aa_lys, aa_arg, e1, e2, 2 ) = 0.5;
 				pair_corr_( aa_lys, aa_arg, e1, e2, 3 ) = 0.75;
@@ -177,7 +177,7 @@ PairEPotential::pair_term_energy(
 	debug_assert( res1.seqpos() != res2.seqpos() ); // Only call for distinct residues
 	debug_assert( res1.is_polar() || res1.is_aromatic() );
 	debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino acids: Caller does exclusion (prevents call overhead)
-	
+
 	//jk option to suppress computing pair term for histidine (numbers are skewed due to metal-binding sites)
 	if ( ( option[ corrections::score::no_his_his_pairE ] ) &&
 			( ( res1.aa() == aa_his ) &&

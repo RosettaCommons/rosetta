@@ -255,7 +255,7 @@ ElecDensCenEnergy::eval_atom_derivative(
 	using namespace numeric::statistics;
 
 	if ( !pose_is_proper ) return;
-	
+
 	// derivative
 	int resid = id.rsd();
 	int atmid = id.atomno();

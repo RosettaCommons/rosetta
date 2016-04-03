@@ -823,12 +823,12 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 					Size const don_h_atom( *hnum );
 					Size const base_atom ( occ_rsd.atom_base( don_h_atom ) );
 					if ( occ_atomno != base_atom ) continue;
-					
+
 					// make sure the polar atom is an acceptor
 					for ( chemical::AtomIndices::const_iterator anum = polar_rsd.accpt_pos().begin(), anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 						Size const acc_atom( *anum );
 						if ( polar_atomno != acc_atom ) continue;
-						
+
 						// If so, check if we have an Hbond to the polar group of interest
 						HBDonChemType don_chem_type = get_hb_don_chem_type( occ_atomno, occ_rsd );
 						HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
@@ -837,21 +837,21 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 						HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep);
 						Real hb_ener(0.);
 						hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type,
-										occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( don_h_atom ).xyz(),
-										polar_rsd.atom( polar_atomno ).xyz(), polar_rsd.atom( polar_rsd.atom_base( polar_atomno ) ).xyz(),
-										polar_rsd.atom( polar_rsd.abase2( polar_atomno ) ).xyz(), hb_ener);
-						
+							occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( don_h_atom ).xyz(),
+							polar_rsd.atom( polar_atomno ).xyz(), polar_rsd.atom( polar_rsd.atom_base( polar_atomno ) ).xyz(),
+							polar_rsd.atom( polar_rsd.abase2( polar_atomno ) ).xyz(), hb_ener);
+
 						if ( hb_ener < 0. ) {
 							switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
-								case hbw_SC :
-									hb_ener *= 1.1;
-									break;
-								case hbw_LR_BB:
-								case hbw_SR_BB :
-									hb_ener *= 1.17;
-									break;
-								default :
-									break;
+							case hbw_SC :
+								hb_ener *= 1.1;
+								break;
+							case hbw_LR_BB:
+							case hbw_SR_BB :
+								hb_ener *= 1.17;
+								break;
+							default :
+								break;
 							}
 							polar_group_hb_energy += hb_ener;
 						}
@@ -866,12 +866,12 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 				for ( chemical::AtomIndices::const_iterator anum = occ_rsd.accpt_pos().begin(), anume = occ_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 					Size const acc_atom( *anum );
 					if ( occ_atomno != acc_atom ) continue;
-					
+
 					// make sure the polar atom is a donor
 					for ( chemical::AtomIndices::const_iterator hnum = polar_rsd.Hpos_polar().begin(), hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 						Size const don_h_atom( *hnum );
 						if ( polar_atomno != don_h_atom ) continue;
-						
+
 						Size const base_atom ( polar_rsd.atom_base( don_h_atom ) );
 						// If so, check if we have an Hbond to the polar group of interest
 						HBDonChemType don_chem_type = get_hb_don_chem_type( base_atom, polar_rsd );
@@ -881,20 +881,20 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 						HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep );
 						Real hb_ener(0.);
 						hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type, polar_rsd.atom( base_atom ).xyz(), polar_rsd.atom( polar_atomno ).xyz(),
-										occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( occ_rsd.atom_base( occ_atomno ) ).xyz(),
-										occ_rsd.atom( occ_rsd.abase2( occ_atomno ) ).xyz(), hb_ener);
-						
+							occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( occ_rsd.atom_base( occ_atomno ) ).xyz(),
+							occ_rsd.atom( occ_rsd.abase2( occ_atomno ) ).xyz(), hb_ener);
+
 						if ( hb_ener < 0. ) {
 							switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
-								case hbw_SC :
-									hb_ener *= 1.1;
-									break;
-								case hbw_LR_BB:
-								case hbw_SR_BB :
-									hb_ener *= 1.17;
-									break;
-								default :
-									break;
+							case hbw_SC :
+								hb_ener *= 1.1;
+								break;
+							case hbw_LR_BB:
+							case hbw_SR_BB :
+								hb_ener *= 1.17;
+								break;
+							default :
+								break;
 							}
 							polar_group_hb_energy += hb_ener;
 						}

@@ -210,13 +210,13 @@ void StrandPairingSet::add_pairing( Size res1, Size res2, bool antiparallel, Siz
 		}
 	}
 	if ( ! addnew ) return;
-	
+
 	StrandPairing add(res1,res2, antiparallel, pleating);
 	runtime_assert( add.range_check() );
 	bool added = false;
 	for ( iterator it = pairings_.begin(), end = pairings_.end();
-		 it != end;
-		 ++it ) {
+			it != end;
+			++it ) {
 		if ( add < *it ) {
 			added = true;
 			pairings_.insert( it, add );
@@ -563,15 +563,15 @@ bool StrandPairing::mergeable( const StrandPairing &other ) const {
 bool StrandPairing::merge(const StrandPairing &other, bool domerge) {
 	bool possible ( mergeable( other ) );
 	if ( ! domerge || ! possible ) return possible;
-	
+
 	StrandPairing myex(*this);
 	myex.extend_to(other.begin1_);
 	myex.extend_to(other.end1_);
-	
+
 	StrandPairing otherex(other);
 	otherex.extend_to(begin1_);
 	otherex.extend_to(end1_);
-	
+
 	//bool changed = other.begin1_ < begin1_ || other.end1_ > end1_;
 	// Now do actual merge
 	// Add in holes in myex extension that are present in otherex
@@ -597,7 +597,7 @@ bool StrandPairing::merge(const StrandPairing &other, bool domerge) {
 	}
 	if ( !myex.valid_ends() ) return false;
 	*this = myex;
-	
+
 	return possible;
 }
 
@@ -623,7 +623,7 @@ char StrandPairingSet::dssp_state( Size res ) const {
 			it != end;
 			++it ) {
 		if ( ! it->contains(res) ) continue;
-		
+
 		if ( it->is_ladder() ) {
 			state = 'E';
 		} else if ( state == ' ' ) {
@@ -639,7 +639,7 @@ char StrandPairingSet::featurizer_state(Size res) const {
 			it != end;
 			++it ) {
 		if ( ! it->contains(res) ) continue;
-		
+
 		if ( it->is_bulge(res) ) {
 			if ( state == 'e' ) {
 				state = 'B';
@@ -970,7 +970,7 @@ Size StrandPairing::operator<( StrandPairing const& other) const {
 bool StrandPairing::has_common_pairing( const StrandPairing &other ) const {
 	for ( Size i = begin1_; i <= end1_; i++ ) {
 		if ( pairing1[ i - begin1_ ] == 0 )  continue;
-		
+
 		Pairing pair;
 		pair.Pos1(i);
 		pair.Pos2(pairing1[ i - begin1_ ]);
@@ -1026,7 +1026,7 @@ bool StrandPairing::antiparallel() const {
 void StrandPairing::get_beta_pairs( core::scoring::dssp::PairingList& beta_pairs ) const {
 	for ( Size i = begin1_; i <= end1_; i++ ) {
 		if ( pairing1[ i - begin1_ ] == 0 ) continue;
-		
+
 		core::scoring::dssp::Pairing pair;
 		pair.Pos1(i);
 		pair.Pos2(pairing1[ i - begin1_ ]);

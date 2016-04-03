@@ -162,7 +162,7 @@ RamachandranEnergy2B::eval_dof_derivative(
 
 	// ignore invalid or non-BB torsions
 	if ( !tor_id.valid() || tor_id.type() != id::BB ) return 0.0;
-	
+
 	Real deriv(0.0);
 	conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
 	if ( rsd.is_protein() && tor_id.torsion() <= 2 && ! rsd.is_terminus() ) {
@@ -171,13 +171,13 @@ RamachandranEnergy2B::eval_dof_derivative(
 			// Neighbor dependent rama score + derivatives.
 			Size const seqpos( rsd.seqpos() );
 			potential_.eval_rama_score_residue( rsd,
-											   pose.residue_type( seqpos - 1 ).aa(),
-											   pose.residue_type( seqpos + 1 ).aa(),
-											   rama_score, drama_dphi, drama_dpsi );
+				pose.residue_type( seqpos - 1 ).aa(),
+				pose.residue_type( seqpos + 1 ).aa(),
+				rama_score, drama_dphi, drama_dpsi );
 		} else {
 			/// Neighbor independent rama score + derivatives
 			potential_.eval_rama_score_residue( rsd,
-											   rama_score, drama_dphi, drama_dpsi );
+				rama_score, drama_dphi, drama_dpsi );
 		}
 		deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 	}

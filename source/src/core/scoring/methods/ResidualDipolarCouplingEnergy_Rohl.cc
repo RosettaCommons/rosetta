@@ -242,7 +242,7 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 	Size ct_align = 0;
 	for ( core::Size i = 1; i <= nrow; ++i ) { // copy A
 		if ( weights( i ) <= 0.000001 ) continue;
-		
+
 		++ct_align;
 		U( ct_align, 1 ) = A(i,1) * weights( i ); // copy into U
 		U( ct_align, 2 ) = A(i,2) * weights( i );
@@ -411,7 +411,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 		g = rv1(i);
 		l = i;
 	}
-	
+
 	for ( i = std::min(row, row_length); i >= 1; --i ) {
 		l = i+1;
 		g = w(i);
@@ -440,7 +440,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 		}
 		a(i,i) += 1.0;
 	}
-	
+
 	for ( k = row_length; k >= 1; --k ) {
 		for ( its = 1; its <= 30; ++its ) {
 			bool skipnow(false);

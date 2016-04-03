@@ -149,7 +149,7 @@ Fa_MbenvEnergy::eval_atom_derivative(
 	if ( m > rsd1.nheavyatoms() ) return;
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
-	
+
 	Real cp_weight = 1.0;
 
 	Vector const center(MembraneEmbed_from_pose( pose ).center());

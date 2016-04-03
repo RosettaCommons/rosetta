@@ -176,10 +176,10 @@ NeighborList::update_from_wide_nblist( pose::Pose const & pose ) const
 			bool const nbr_is_hydrogen = pose.residue( nbr_rsd ).atom_is_hydrogen( nbr_atom );
 
 			if ( ii_coord.distance_squared( reference_coords_[ nbr_rsd ][ nbr_atom ] ) >
-				atom_pair_cutoff( ii_is_hydrogen, nbr_is_hydrogen ) ) continue;
+					atom_pair_cutoff( ii_is_hydrogen, nbr_is_hydrogen ) ) continue;
 
 			declare_atom_neighbor_1sided( ii_atom, id::AtomID( nbr_atom, nbr_rsd ), ii_wide_nblist[ jj ].path_dist(), ii_wide_nblist[ jj ].weight() );
-			
+
 			/// Neighbors of one of the original atoms to exceed the move_tolerance_sqr_ movement
 			/// limitation need to have their nblist_'s updated.
 			if ( ii_original_atom_moved && atom_needs_update_from_wide_[ nbr_rsd ][ nbr_atom ] == 0 ) {

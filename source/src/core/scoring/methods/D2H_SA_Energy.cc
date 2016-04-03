@@ -80,12 +80,12 @@ D2H_SA_Energy::D2H_SA_Energy() :
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::d2h_sa_reweight ].user() ) {
 		reweight_=basic::options::option[ basic::options::OptionKeys::in::file::d2h_sa_reweight]();
 	}
-	
+
 	if ( ! basic::options::option[ basic::options::OptionKeys::in::file::HDX ].user() ) return;
-	
+
 	TR << "Reading Hydrogen Exchange data\n";
 	std::string HDX_datafile(basic::options::option[ basic::options::OptionKeys::in::file::HDX ]());
-	
+
 	utility::io::izstream stream (HDX_datafile);
 	getline(stream,line);
 	TR << line << std::endl;
@@ -98,7 +98,7 @@ D2H_SA_Energy::D2H_SA_Energy() :
 	//Reading to local variables to allow for missing data, which is not implemented ... :-)
 	std::map<core::Size, core::Real> data_map;
 	std::map<core::Size, core::Size> group_map;
-	
+
 	for ( Size i=1; i<=total_length; i++ ) {
 		getline(stream,line);
 		{
@@ -112,7 +112,7 @@ D2H_SA_Energy::D2H_SA_Energy() :
 		}
 		TR << line << std::endl ;
 	}
-	
+
 	if ( total_length==0 ) {
 		utility_exit_with_message("bad format for d2h file total_length=0");
 	}
@@ -127,7 +127,7 @@ D2H_SA_Energy::D2H_SA_Energy() :
 		position_.push_back(keys[i]);
 		group_.push_back(group_map[keys[i]]);
 	}
-	
+
 	Real mean = numeric::statistics::mean(data_.begin(),data_.end(),0.0);
 	Real sd = numeric::statistics::std_dev_with_provided_mean(data_.begin(),data_.end(),mean);
 	mean_=mean;

@@ -126,12 +126,12 @@ Ramachandran2B::eval_rama_score_all(
 
 	for ( int ii = 1; ii <= total_residue; ++ii ) {
 		if ( !pose.residue(ii).is_protein() || pose.residue(ii).is_terminus() ) continue;
-		
+
 		Real rama_score,dphi,dpsi;
 		eval_rama_score_residue(pose.residue(ii), pose.residue(ii-1).aa(), pose.residue(ii+1).aa(), rama_score, dphi, dpsi);
 		T << "Rama:eval_all: residue " << ii << " " << pose.residue(ii).name() <<
-		" " << ii-1 << " " << pose.residue(ii-1).name() << " " << ii+1 << " " <<
-		pose.residue(ii+1).name() << " = " << rama_score << std::endl;
+			" " << ii-1 << " " << pose.residue(ii-1).name() << " " << ii+1 << " " <<
+			pose.residue(ii+1).name() << " = " << rama_score << std::endl;
 		pose_energies.onebody_energies( ii )[rama] = rama_score;
 	}
 }

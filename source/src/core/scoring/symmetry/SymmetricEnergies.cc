@@ -165,13 +165,13 @@ SymmetricEnergies::update_neighbor_links(
 				ii_iter != ii_end_iter; ++ii_iter ) {
 			uint const jj = ii_iter->upper_vertex();
 			if ( ( domain_map_during_minimization(jj) == ii_map ) && !ii_moved ) continue;
-			
+
 			Distance const jjradius( pose.residue_type( jj ).nbr_radius() );
 			DistanceSquared const square_distance( ii_iter->data().dsq() );
-			
+
 			// How about we simply make sure the radii sum is positive instead of paying for a sqrt
 			if ( ii_intxn_radius + jjradius <= 0 ) continue;
-			
+
 			if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
 				energy_graph_no_state_check().add_energy_edge( ii, jj, square_distance );
 			}

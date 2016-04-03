@@ -449,12 +449,12 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 			for ( Size R=1; R<= max_R_values; ++R ) {
 				Rinv=layer_lines_R[l][R];
 				Real x_factor( 2*M_PI*Rinv );
-				
+
 				// precalculate jn for each n,R
 				utility::vector1< Real > jn_vec, jn_vec_plus_1;
 				jn_vec.resize(natoms);
 				jn_vec_plus_1.resize(natoms);
-				
+
 				// Calculate scattering...
 				for ( Size atom1=1; atom1 <= natoms; ++atom1 ) {
 					// Calculate only the jn values once.
@@ -466,16 +466,16 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 					}
 
 					Real X1 (x_factor*r[atom1]);
-					
+
 					// calculate R_min
 					if ( abs_n > X1 +2 ) continue;
 					Real jn1 (jn_vec[atom1]);
 					Real jn1_plus_1 (jn_vec_plus_1[atom1]);
 					Size atom_type_index1 ( atom_type_number[atom1] );
 					Real Jn_deriv_atom1( -x_factor*jn1_plus_1+n*jn1/r[atom1] );
-					
+
 					if ( fabs(r[atom1] ) < 1e-2 ) Jn_deriv_atom1=0.0;
-					
+
 					// cartesian coords and unit vectors...
 					numeric::xyzVector< core::Real > cartesian_coord_atom1( r[atom1]*cos(phi[atom1]), r[atom1]*sin(phi[atom1]), z[atom1] );
 					numeric::xyzVector< core::Real > unit_r(cos(phi[atom1]), sin(phi[atom1]), 0 );
@@ -484,30 +484,30 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 					numeric::xyzVector< core::Real > unit_z(0, 0, 1 );
 					numeric::xyzVector< core::Real > D(0,0,0);
 					numeric::xyzVector< core::Real > D_cross_R(0,0,0);
-					
+
 					Real tmp( 2*form_factors[l][atom_type_index1][R]*form_factors[l][atom_type_index1][R]*jn1*Jn_deriv_atom1);
 					D += tmp*unit_r;
-					
+
 					//cross of ATOM1 X ATOM1?
 					D_cross_R += D.cross(cartesian_coord_atom1);
 					for ( Size atom2=1; atom2 <= natoms; ++atom2 ) {
 						if ( atom2 == atom1 ) continue;
-						
+
 						Real X2 (x_factor*r[atom2]);
 						if ( abs_n > X2 +2 ) continue;
-						
+
 						Real jn2 (jn_vec[atom2]);
 						Size atom_type_index2 ( atom_type_number[ atom2 ] );
 						Real fact( form_factors[l][atom_type_index1][R]*form_factors[l][atom_type_index2][R]*jn2 );
-						
+
 						//Jn_deriv_atom1
 						Real dr( Jn_deriv_atom1*fact*phases[atom1][atom2] );
 						Real dphi( n*jn1*fact*phases_prime[atom1][atom2] );
 						Real dz ( 2*M_PI*l/c_*jn1*fact*phases_prime[atom1][atom2] );
-						
+
 						numeric::xyzVector< core::Real > D_tmp(0,0,0);
 						numeric::xyzVector< core::Real > dphi_vec(0,0,0);
-						
+
 						if ( r[atom1] >= 1e-2 ) {
 							if ( fabs(sin(phi[atom1])) > 1e-3 ) {
 								dphi_vec = (unit_x-cos(phi[atom1])*unit_r)/(sin(phi[atom1])*r[atom1]);
@@ -516,12 +516,12 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 							}
 						}
 						D_tmp += 2*(dr*unit_r + dz*unit_z + dphi*dphi_vec);
-						
+
 						numeric::xyzVector< core::Real > t1( dr*unit_r);
 						numeric::xyzVector< core::Real > t2( dz*unit_z );
 						numeric::xyzVector< core::Real > t3( dphi_vec  );
 						numeric::xyzVector< core::Real > t4( (unit_x-cos(phi[atom1]+0e-6)*unit_r)  );
-						
+
 						D += D_tmp;
 						D_cross_R += D_tmp.cross(cartesian_coord_atom1);
 						++n_iter;

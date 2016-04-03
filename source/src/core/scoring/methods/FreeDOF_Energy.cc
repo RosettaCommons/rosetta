@@ -283,7 +283,7 @@ FreeDOF_Energy::get_hbond_energy(
 	using namespace core::scoring::hbonds;
 
 	EnergyMap const & weights( scorefxn.weights() );
-	
+
 	// unclear whether we can avoid repeating work elsewhere through caching this.
 	HBondSet hbond_set;
 	fill_hbond_set( pose, false /*calculate derivative*/, hbond_set );

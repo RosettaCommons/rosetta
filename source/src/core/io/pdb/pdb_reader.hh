@@ -78,9 +78,9 @@ void store_mod_res_record_in_sfr( Record modres_record, StructFileRep & sfr );
 
 /// @brief  Parse .pdb HETNAM text field to extract full resID and convert into SFR data.
 void store_base_residue_type_name_in_sfr(
-		std::string const & hetID,
-		std::string const & text_field,
-		StructFileRep & sfr );
+	std::string const & hetID,
+	std::string const & text_field,
+	StructFileRep & sfr );
 
 /// @brief  Convert .pdb HETNAM record into SFR data.
 void store_heterogen_name_record_in_sfr( Record hetnam_record, StructFileRep & sfr );

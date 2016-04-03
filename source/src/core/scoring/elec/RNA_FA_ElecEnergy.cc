@@ -379,21 +379,21 @@ RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
 		Real weight(1.0);
 		Size path_dist( 0 );
 		if ( ! cpfxn->count( i, j, weight, path_dist ) ) continue;
-		
+
 		Vector const & j_xyz( rsd2.xyz(j) );
 		Vector const f2( i_xyz - j_xyz );
 		Real const dis2( f2.length_squared() );
 		Real const dE_dr_over_r = weight *
-		coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
+			coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
 		if ( dE_dr_over_r == 0.0 ) continue;
-		
+
 		Vector const f1( i_xyz.cross( j_xyz ) );
-		
+
 		bool const atom2_is_base = is_base_2(rsd2, j);
 		bool const atom2_is_sugar = is_sugar_2(rsd2, j);
 		bool const atom2_is_phosphate = is_phosphate_2(rsd2, j);
 		debug_assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
-		
+
 		if ( atom1_is_base && atom2_is_base ) {
 			F1 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f1;
 			F2 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f2;

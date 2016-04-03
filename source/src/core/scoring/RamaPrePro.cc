@@ -239,7 +239,7 @@ RamaPrePro::symmetrize_gly_table(
 	core::Real &entropy
 ) const {
 	TR << "Symmetrizing glycine RamaPrePro table." << std::endl;
-	
+
 	//The following is for debugging only:
 	/*TR << "MATRIX_BEFORE:" << std::endl;
 	for(core::Size j=1; j<=36; ++j) {

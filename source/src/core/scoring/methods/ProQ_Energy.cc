@@ -274,7 +274,7 @@ ProQ_Energy::read_ss2(std::string ss2file) {
 	utility::io::izstream stream;
 
 	std::string line;
-	
+
 	std::string buff_str;
 	std::cout << "Reading ss2 from " << ss2file << std::endl;
 	ss_pred_.dimension(nres_,3);
@@ -404,7 +404,7 @@ ProQ_Energy::read_profiles_and_entropy(std::string profile,
 	std::string line;
 	int buff_int;
 	std::string buff_str;
-	
+
 	//initialize
 	Size nres;
 	stream.open(mtxfile);
@@ -415,7 +415,7 @@ ProQ_Energy::read_profiles_and_entropy(std::string profile,
 	std::istringstream l(line);
 	l >> nres_;
 	nres=nres_;
-	
+
 	TR.Debug << "NRES from  " << mtxfile << " : " << nres_ <<std::endl;
 	//initialize
 	prob_profile_.dimension(nres_,20);
@@ -501,7 +501,7 @@ ProQ_Energy::calculate_feature_vector_proq2(pose::Pose & pose,
 	//for(int i=1;i<=nres_;++i) {
 	// std::cout << "RSA: " << rsd_sasa_rel[i] << std::endl;
 	//}
-	
+
 	//ATOM 91
 	atom_feature(pose,feature_vector,1,23);
 	//RES 21
@@ -598,7 +598,7 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	// for(Size i=1;i<=pose.total_residue();++i) {
 	// std::cout << "DSSP " << i << " " << ss.get_dssp_secstruct(i) << std::endl;
 	//}
-	
+
 	//ATOM 91
 	atom_feature(pose,feature_vector,1);
 	//RES 21
@@ -675,7 +675,7 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 			int const j( (*ir)->get_other_ind( i ) );
 			//    for(int j=i+1;j<=nres;++j) {
 			if ( std::abs(i-j)<=1 ) continue;
-			
+
 			conformation::Residue const & rsd_j( pose.residue(j) );
 			for ( Size ii=1; ii<=rsd_i.nheavyatoms(); ++ii ) {
 				core::conformation::Atom const & atom_i = rsd_i.atom(ii);
@@ -684,9 +684,9 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 				if ( atype1==0 ) {
 					// std::cout << "Skipping: " << rsd_i.atom_name(ii) << std::endl;
 					continue;
-					
+
 				}
-				
+
 				for ( Size jj=1; jj<=rsd_j.nheavyatoms(); ++jj ) {
 					core::conformation::Atom const & atom_j = rsd_j.atom(jj);
 					int atype2=atom13(rsd_j,jj);
@@ -697,12 +697,12 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 					//std::cout << i << " " << j << " jj: " << jj << " ii:" << ii << std::endl;
 					Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
 					if ( sqdist >= 16 ) continue;
-					
+
 					/*if(i<=11 || j<=11) {
-					 if(atype1==1 && atype2==3) {
-					 printf("Contact between %d %d - %d %d dist: %f\n",i,atype1,j,atype2,sqrt(sqdist));
-					 }
-					 }*/
+					if(atype1==1 && atype2==3) {
+					printf("Contact between %d %d - %d %d dist: %f\n",i,atype1,j,atype2,sqrt(sqdist));
+					}
+					}*/
 					// std::cout <<  rsd_i.name3() << " " << rsd_i.atom_name(ii) << " " << atype1 << " - " << rsd_j.name3() << " " << rsd_j.atom_name(jj) << " " << atype2 << " " << sqrt(sqdist) << std::endl;
 					atomcontacts(i,atype1,atype2)++;
 					//atomcontacts(j,atype2,atype1)++;
@@ -766,7 +766,7 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 	ObjexxFCL::FArray2D< bool >res_contact_map(nres,nres);
 	ObjexxFCL::FArray2D< Real >res_contact_dist(nres,nres);
 	res_contact_map=false;
-	
+
 	for ( int i = 1; i <= nres; i=i+1 ) {
 		//i=5;
 		// get the appropriate residue from the pose.
@@ -785,7 +785,7 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 				ir != ire; ++ir ) {
 			int const j( (*ir)->get_other_ind( i ) );
 			if ( std::abs(i-j)<=5 ) continue;
-			
+
 			Real dist=crd(pose,i,j);
 			if ( dist<36 ) { // 6Å
 				//   conformation::Residue const & rsd_j( pose.residue(j) );
@@ -809,7 +809,7 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 		Size total_res_contacts_count(0);
 		Real total_res_contacts(0);
 		// std::cout << "Done init... " << std::endl;
-		
+
 		for ( int j=i-(windowsize-1)/2; j<=i+(windowsize-1)/2; ++j ) { // each residue in window /retrain with a tertiary window <12Å
 			if ( j>=1 && j<=nres ) {
 				//    std::cout << j << " ";
@@ -1020,18 +1020,18 @@ Real ProQ_Energy::crd(pose::Pose & pose,Size i,Size j) const {
 	for ( Size ii=1; ii<=rsd_i.nheavyatoms(); ++ii ) {
 		//std::cout << "ii: " << ii << " nheavy:" << rsd_i.nheavyatoms() << " " << "name: " << rsd_i.atom_type(ii).name() << " " << rsd_i.atom_is_backbone(ii) << " " << rsd_i.atom_type(ii).name().rfind("bb") << " " << rsd_i.atom_type(ii).name().find("CA") << std::endl;
 		if ( rsd_i.atom_is_backbone(ii) && rsd_i.atom_name(ii).compare(1,2,"CA") != 0 ) continue;
-		
+
 		core::conformation::Atom const & atom_i = rsd_i.atom(ii);
-		
+
 		//std::cout << "ii: " << ii << " " << atom_i << ", name: " << rsd_i.atom_type(ii).name() << " " << rsd_i.atom_type(ii).atom_type_name() << std::endl;
 		//std::cout << rsd_i.atom_type(ii);
-		
+
 		for ( Size jj=1; jj<=rsd_j.nheavyatoms(); ++jj ) {
 			if ( rsd_j.atom_is_backbone(jj) && rsd_j.atom_name(jj).compare(1,2,"CA")!=0 ) continue;
-			
+
 			core::conformation::Atom const & atom_j = rsd_j.atom(jj);
 			Real sqdist = atom_i.xyz().distance_squared(atom_j.xyz());
-			
+
 			//std::cout << "jj: " << jj << " " << atom_j << ", name: " << rsd_i.atom_type(jj).name() << " " << rsd_i.atom_type(jj).atom_type_name() << std::endl;
 			//std::cout << i << ":" << ii << " " << rsd_i.atom_name(ii) << " " << j << ":" << jj << " " << rsd_j.atom_name(jj) << " " << sqrt(sqdist) << std::endl;
 			if ( sqdist<mindist ) {
@@ -1268,7 +1268,7 @@ void ProQ_Energy::zpred_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec,
 }
 
 void ProQ_Energy::calculateZ(pose::Pose & pose,ObjexxFCL::FArray1D< Real > & Z) const {
-	
+
 	if ( !basic::options::option[ basic::options::OptionKeys::ProQ::membrane ]() ) {
 		return;
 	}

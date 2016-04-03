@@ -116,7 +116,7 @@ compute_holes_score_res(
 			if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 			if( !params.have_params(res_name) ) skip = true;
 			if( skip ) continue;
-			
+
 			raw_score += val;
 			if( a==1 && atom_num==1 ) {
 				raw_score -= params.rho( pb.res_name(i) );
@@ -136,7 +136,7 @@ compute_holes_score_res(
 		if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 		if( !params.have_params(res_name) ) skip = true;
 		if( skip ) continue;
-		
+
 		Real anb5=0,anb10=0,anb15=0,anb20=0;
 		for( Size j = 1; j < i; j++ ) {
 			Real dis2 = pb.ball(i).xyz().distance_squared(pb.ball(j).xyz());
@@ -220,7 +220,7 @@ compute_holes_deriv_res(
 			if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 			if( !params.have_params(res_name) ) skip = true;
 			if( skip ) continue;
-			
+
 			derivs[ id::AtomID(atom_num,res_num) ] += xyzVector<Real>(dx,dy,dz);
 			raw_score += val;
 			if( a==1 && atom_num==1 ) {

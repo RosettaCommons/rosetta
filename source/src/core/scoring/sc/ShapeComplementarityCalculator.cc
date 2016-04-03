@@ -542,7 +542,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 	if(!hAccDotCoords || !hBurDotCoords || !hDotColl) {
 		throw ShapeComplementarityCalculatorException("Out of host memory!");
 	}
-	
+
 	// Make GPU copy of (x, y, z) buried and accessible coordinates
 	phAccDotCoords = hAccDotCoords;
 	phBurDotCoords = hBurDotCoords;

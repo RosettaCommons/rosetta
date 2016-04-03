@@ -37,21 +37,21 @@ struct AtomInformation {
 	/// @brief default constructor to initialize all values (except the
 	/// connected indices)
 	AtomInformation() :
-			isHet( false ),
-			serial( 0 ),
-			name( "" ),
-			altLoc( ' ' ),
-			resName( "" ),
-			chainID( ' ' ),
-			resSeq( 0 ),
-			iCode( ' ' ),
-			x( 0.0 ), y( 0.0 ), z( 0.0 ),
-			occupancy( 0.0 ),
-			temperature( 0.0 ),
-			segmentID( "" ),
-			element( "" ),
-			formalcharge( 0 ),
-			terCount( 0 )
+		isHet( false ),
+		serial( 0 ),
+		name( "" ),
+		altLoc( ' ' ),
+		resName( "" ),
+		chainID( ' ' ),
+		resSeq( 0 ),
+		iCode( ' ' ),
+		x( 0.0 ), y( 0.0 ), z( 0.0 ),
+		occupancy( 0.0 ),
+		temperature( 0.0 ),
+		segmentID( "" ),
+		element( "" ),
+		formalcharge( 0 ),
+		terCount( 0 )
 	{}
 
 	// For now, all member names have the same names as fields in PDB standard.

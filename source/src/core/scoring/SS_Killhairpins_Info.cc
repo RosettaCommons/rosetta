@@ -330,20 +330,20 @@ SS_Killhairpins_Info::setup_from_kill_hairpins_file(utility::io::izstream & inpu
 		getline(input_file, line);
 
 		if ( line.length() <= 5 ) continue;
-		
+
 		std::istringstream line_stream(line);
-		
+
 		core::Real frequency;
 		core::Size res1, res2, res3, res4;
-		
+
 		line_stream >> frequency >> res1 >> res2 >> res3 >> res4;
-		
+
 		runtime_assert((res1<=res2) && (res2<=res3) && (res3<=res4));
-		
+
 		core::Real freq_attempt(numeric::random::uniform());
-		
+
 		trKillHairpinsIO.Info << "KHP: Hairpin Read from Kill Hairpins File: " << res1 << "-" << res2 << " " << res3 << "-" << res4;
-		
+
 		if ( freq_attempt <= frequency ) {
 			hairpins_.append_hairpin( res1, res2, res3, res4 );
 			trKillHairpinsIO.Info << " KILLED!";
@@ -358,13 +358,13 @@ SS_Killhairpins_Info::setup_killhairpins()
 	hairpins_.clear();
 
 	if ( ! basic::options::option[ basic::options::OptionKeys::abinitio::kill_hairpins ].user() ) return;
-	
+
 	utility::io::izstream input_file( basic::options::option[ basic::options::OptionKeys::abinitio::kill_hairpins ] );
-	
+
 	if ( !input_file ) {
 		utility_exit_with_message("[ERROR] Unable to open kill_hairpins file");
 	}
-	
+
 	std::string line, a(""), b("");
 	getline(input_file, line);
 	utility::vector1< std::string > tokens ( utility::split( line ) );
@@ -377,21 +377,21 @@ SS_Killhairpins_Info::setup_killhairpins()
 	else {
 		utility_exit_with_message("[ERROR] invalid header input for kill_hairpins file. ");
 	}
-	
+
 	if ( a != "ANTI" && a != "PARA" && a != "" ) {
 		utility_exit_with_message("[ERROR] invalid kill type for kill_hairpins. ANTI or PARA, is required. ");
 	}
 	if ( b != "ANTI" && b != "PARA" && b != "" ) {
 		utility_exit_with_message("[ERROR] invalid kill type for kill_hairpins. ANTI or PARA, is required. ");
 	}
-	
+
 	if ( a == "ANTI" || b == "ANTI" ) {
 		kill_antiparallel_ = true; // as default, kill_parallel_ is false
 	}
 	if ( a == "PARA" || b == "PARA" ) {
 		kill_parallel_ = true;  // as default, kill_antiparallel_ is true
 	}
-	
+
 	std::string keyword = tokens[ 2 ];
 	if ( keyword == "PSIPRED" ) {
 		setup_from_psipred(input_file);

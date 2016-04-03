@@ -385,7 +385,7 @@ FA_ElecEnergyAroAll::eval_atom_derivative_aro_aro(
 			if ( dE_dr_over_r == 0.0 ) continue;
 
 			Vector const f1( i_xyz.cross( j_xyz ) );
-			
+
 			F1 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f1;
 			F2 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f2;
 		}

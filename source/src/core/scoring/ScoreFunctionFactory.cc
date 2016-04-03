@@ -144,14 +144,14 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 	}
 	// offset reference energies using user options, for example: -score:ref_offsets TRP 0.9 HIS 0.3
 	if ( !option[ score::ref_offsets ].user() && !option[ score::ref_offset ].user() ) return;
-	
+
 	// get the ref weights from the EnergyMethodOptions object
 	methods::EnergyMethodOptions energy_method_options(scorefxn->energy_method_options());
 	if ( !energy_method_options.has_method_weights(ref) ) {
 		// utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
 	} else {
 		utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
-		
+
 		if ( option[ score::ref_offset ].user() ) {
 			Real const offset = option[ score::ref_offset ]();
 			for ( Size n = 1; n <= ref_weights.size(); n++ ) {
@@ -164,10 +164,10 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 			if ( ref_offsets.size() % 2 != 0 ) {
 				utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
 			}
-			
+
 			// iterate over all pairs
 			for ( utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
-				 iter != iter_end; ++iter ) {
+					iter != iter_end; ++iter ) {
 				// get the aa type from the pair
 				std::istringstream aa_iss(*iter);
 				core::chemical::AA aa;

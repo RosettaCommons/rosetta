@@ -161,6 +161,8 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 							if ( stub_insert_pos_[istub] == 0 ) {
 								pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd + i_repeat - 1, true);
 							}
+						} else if ( stub_mode_[istub] == prepend ) {
+							pose.prepend_polymer_residue_before_seqpos(*new_rsd, anchor_rsd, true);
 						}
 					} else {
 						TR << "Cannot use repeat for non-canonical insertion" << std::endl;

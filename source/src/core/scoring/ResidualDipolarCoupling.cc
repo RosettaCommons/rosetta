@@ -177,7 +177,7 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 
 		if ( atom1 == "HN" ) atom1 = "H"; //take care of typical NMR community notation
 		if ( atom2 == "HN" ) atom2 = "H";
-		
+
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in rdc-file " << filename << std::endl;
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-file "+filename));
@@ -506,7 +506,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		D_[d][2] = pfac * (2* r [0] * r[2]);
 		D_[d][3] = pfac * (2* r [1] * r[1] + r[0] * r[0] - r.norm_squared());
 		D_[d][4] = pfac * (2* r [1] * r[2]);
-		
+
 		core::Size ex = it->expid(); //only one experiment now
 		core::Real weight = it->weight(); //force constant
 		core::Real obs = it->Jdipolar();
@@ -593,7 +593,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		throw;
 	}
 
-	//Compute the fitting stats
+//Compute the fitting stats
 	Real wsv2 = 0;
 	Real sw = 0;
 	Real vtot = 0;
@@ -1325,7 +1325,7 @@ void ResidualDipolarCoupling::show_rdc_values( std::ostream& out, Size ex ) cons
 	utility::vector1<core::scoring::RDC>::const_iterator it;
 	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 		if ( it->expid() != ex ) continue;
-		
+
 		Size count( it->res1() );
 		std::string type;
 		if ( it->type() == RDC::RDC_TYPE_NH ) { type ="NH";}
@@ -1531,13 +1531,13 @@ void jacobi( ResidualDipolarCoupling::Tensor5 & a, ResidualDipolarCoupling::rvec
 		throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
 	}
 
-void jacobi3(
-	ResidualDipolarCoupling::Tensor & a,
-	ResidualDipolarCoupling::rvec & d,
-	ResidualDipolarCoupling::Tensor & v,
-	int & nrot
-) {
-	int j,i;
+	void jacobi3(
+		ResidualDipolarCoupling::Tensor & a,
+		ResidualDipolarCoupling::rvec & d,
+		ResidualDipolarCoupling::Tensor & v,
+		int & nrot
+		) {
+		int j,i;
 	int iq,ip;
 	Real tresh,theta,tau,t,sm,s,h,g,c;
 	Real b[3];

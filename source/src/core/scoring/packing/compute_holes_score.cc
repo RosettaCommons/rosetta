@@ -304,7 +304,7 @@ core::Real compute_smooth_nb_deriv(
 			xyzVector<Real> & jxyz( pb.ball(j).xyz() );
 			Real d2( ixyz.distance_squared(jxyz) );
 			if ( d2 >= 121.0 ) continue;
-			
+
 			Real  sn = sigmoidish_neighbor(d2);
 			Real dsn = sigmoidish_neighbor_deriv(d2);
 			Size at2 = pb.atom_type(j);

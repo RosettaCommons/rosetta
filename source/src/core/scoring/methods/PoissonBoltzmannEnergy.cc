@@ -316,7 +316,7 @@ PoissonBoltzmannEnergy::revamp_weight_by_burial(
 	for ( Size j_res = 1; j_res <= pose.total_residue(); ++j_res ) {
 		if ( pose.residue(j_res).is_virtual_residue() ) continue;
 		if ( !residue_in_chains(pose.residue(j_res), chains) ) continue;
-		
+
 		bool found_neighbor = false;
 		for ( Size i_atom = rsd.last_backbone_atom() + 1; i_atom <= rsd.nheavyatoms(); ++i_atom ) {
 			for ( Size j_atom = 1; j_atom <= rsd.nheavyatoms(); ++j_atom ) {
@@ -416,14 +416,14 @@ PoissonBoltzmannEnergy::protein_position_equal_within(
 
 		// Skip nonprotein pose 1.
 		if ( !pose1.residue(i).is_protein() ) continue;
-		
+
 		// If a protein residue from pose 1 matches seqpos of a nonprotein
 		// residue from pose 2, must be false.
 		if ( !pose2.residue(i).is_protein() ) return false;
-		
+
 		// Nonmatching by definition.
-		if ( pose1.residue_type(i).natoms() != pose2.residue(i).natoms() 
-			|| pose1.residue_type(i).aa() != pose2.residue_type(i).aa() ) {
+		if ( pose1.residue_type(i).natoms() != pose2.residue(i).natoms()
+				|| pose1.residue_type(i).aa() != pose2.residue_type(i).aa() ) {
 			return false;
 		}
 
@@ -431,7 +431,7 @@ PoissonBoltzmannEnergy::protein_position_equal_within(
 		const core::conformation::Atom atom2 = pose2.residue(i).atom(atom_num);
 		const numeric::xyzVector<Real> xyz1 = atom1.xyz();
 		const numeric::xyzVector<Real> xyz2 = atom2.xyz();
-		
+
 		const Real delta = xyz1.distance(xyz2);
 		if ( delta > tol ) {
 			// exceed tolerance

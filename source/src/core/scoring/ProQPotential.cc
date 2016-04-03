@@ -65,7 +65,7 @@ ProQPotential::ProQPotential()
 {
 	//  load the data
 	Size const num_head( 11 );
-	
+
 	cross_val_=false;
 
 

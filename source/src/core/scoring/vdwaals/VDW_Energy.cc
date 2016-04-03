@@ -152,7 +152,7 @@ VDW_Energy::residue_pair_energy(
 				Real weight(1.0);
 				Size path_dist( 0 );
 				if ( !cpfxn->count( i, j, weight, path_dist ) ) continue;
-				
+
 				if ( weight < 0.99 ) continue; // don't count half-weight interxns in vdw_compute
 				if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ) {
 					Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
@@ -382,10 +382,10 @@ VDW_Energy::calculate_hydrogen_interaction_cutoff()
 	Size which_ii(0), which_jj(0);
 	for ( core::Size ii = 1; ii <= atom_set.n_atomtypes(); ++ii ) {
 		if ( !atom_set[ ii ].is_hydrogen() ) continue;
-		
+
 		for ( core::Size jj = ii; jj <= atom_set.n_atomtypes(); ++jj ) {
 			if ( !atom_set[ jj ].is_hydrogen() ) continue;
-			
+
 			Real iijj_interaction_dist = atom_vdw_(ii)[jj];
 			if ( iijj_interaction_dist > hydrogen_interaction_cutoff2_ ) {
 				hydrogen_interaction_cutoff2_ = iijj_interaction_dist * iijj_interaction_dist;

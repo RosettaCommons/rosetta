@@ -147,7 +147,7 @@ get_delta_magnetic_anisotropy_deriv( numeric::xyzVector< core::Real > const & CS
 	Real const dtermyy_dx = ( ( 6.0 * y_length * dy_dx             ) - ( 2.0 * x_length ) ) * ( coeff_yy );
 	Real const dtermzz_dx = ( ( 0.0                            ) - ( 2.0 * x_length ) ) * ( coeff_zz );
 	Real const dtermxy_dx = ( ( ( 3.0 * y_length ) + ( 3.0 * x_length * dy_dx ) ) - ( 0.0            ) ) * ( coeff_xy );
-	
+
 	Real const dchem_shift_MA_dx = ( ( dtermr_dx ) * ( termxx + termyy + termzz + termxy ) ) + ( ( termr ) * ( dtermxx_dx + dtermyy_dx + dtermzz_dx + dtermxy_dx ) );
 
 	/////////////////////////////////

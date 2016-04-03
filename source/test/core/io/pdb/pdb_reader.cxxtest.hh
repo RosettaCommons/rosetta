@@ -185,15 +185,15 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
 		// with the addition of a single "Rosetta-format" line.
 		string const sample_pdb_lines(
-				"HETNAM     NAG N-ACETYL-D-GLUCOSAMINE                                          \n"
-				"HETNAM     SAD BETA-METHYLENE SELENAZOLE-4-CARBOXAMIDE ADENINE                 \n"
-				"HETNAM  2  SAD DINUCLEOTIDE                                                    \n"
-				"HETNAM     UDP URIDINE-5'-DIPHOSPHATE                                          \n"
-				"HETNAM     UNX UNKNOWN ATOM OR ION                                             \n"
-				"HETNAM     UNL UNKNOWN LIGAND                                                  \n"
-				"HETNAM     B3P 2-[3-(2-HYDROXY-1,1-DIHYDROXYMETHYL-ETHYLAMINO)-                \n"
-				"HETNAM   2 B3P  PROPYLAMINO]-2-HYDROXYMETHYL-PROPANE-1,3-DIOL                  \n"
-				"HETNAM     Krp X  13Z Kryptonite, which will kill Superman -- Bwahaha!         \n" );
+			"HETNAM     NAG N-ACETYL-D-GLUCOSAMINE                                          \n"
+			"HETNAM     SAD BETA-METHYLENE SELENAZOLE-4-CARBOXAMIDE ADENINE                 \n"
+			"HETNAM  2  SAD DINUCLEOTIDE                                                    \n"
+			"HETNAM     UDP URIDINE-5'-DIPHOSPHATE                                          \n"
+			"HETNAM     UNX UNKNOWN ATOM OR ION                                             \n"
+			"HETNAM     UNL UNKNOWN LIGAND                                                  \n"
+			"HETNAM     B3P 2-[3-(2-HYDROXY-1,1-DIHYDROXYMETHYL-ETHYLAMINO)-                \n"
+			"HETNAM   2 B3P  PROPYLAMINO]-2-HYDROXYMETHYL-PROPANE-1,3-DIOL                  \n"
+			"HETNAM     Krp X  13Z Kryptonite, which will kill Superman -- Bwahaha!         \n" );
 
 		vector1< Record > records( create_records_from_pdb_file_contents( sample_pdb_lines ) );
 
@@ -223,12 +223,12 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( names_map[ "UNX" ], "UNKNOWN ATOM OR ION" );
 		TS_ASSERT_EQUALS( names_map[ "UNL" ], "UNKNOWN LIGAND" );
 		TS_ASSERT_EQUALS( names_map[ "B3P" ],
-				"2-[3-(2-HYDROXY-1,1-DIHYDROXYMETHYL-ETHYLAMINO)-PROPYLAMINO]-2-HYDROXYMETHYL-PROPANE-1,3-DIOL" );
+			"2-[3-(2-HYDROXY-1,1-DIHYDROXYMETHYL-ETHYLAMINO)-PROPYLAMINO]-2-HYDROXYMETHYL-PROPANE-1,3-DIOL" );
 		TS_ASSERT_EQUALS( names_map[ "Krp" ], "X  13Z Kryptonite, which will kill Superman -- Bwahaha!" );
 
 
 		TS_TRACE( "Testing (indirectly) store_base_residue_type_name_in_sfr method, "
-				"which is called from within store_heterogen_name_record_in_sfr()...");
+			"which is called from within store_heterogen_name_record_in_sfr()...");
 
 		map< string, pair< string, string > > base_names( sfr.residue_type_base_names() );
 
@@ -262,10 +262,10 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
 		string const sample_pdb_lines(
-				"HETSYN     HV5 3-METHYL-L-VALINE                                               \n"
-				"HETSYN     AB1 ABT-378; LOPINAVIR                                              \n"
-				"HETSYN     CMP CYCLIC AMP; CAMP                                                \n"
-				"HETSYN     TRS TRIS  BUFFER;                                                   \n" );
+			"HETSYN     HV5 3-METHYL-L-VALINE                                               \n"
+			"HETSYN     AB1 ABT-378; LOPINAVIR                                              \n"
+			"HETSYN     CMP CYCLIC AMP; CAMP                                                \n"
+			"HETSYN     TRS TRIS  BUFFER;                                                   \n" );
 
 		vector1< Record > records( create_records_from_pdb_file_contents( sample_pdb_lines ) );
 

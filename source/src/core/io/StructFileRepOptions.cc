@@ -85,7 +85,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ) );
 
 	set_residues_for_atom_name_remapping(
-			utility::string_split( tag->getOption< std::string >( "remap_pdb_atom_names_for", "" ), ',') );
+		utility::string_split( tag->getOption< std::string >( "remap_pdb_atom_names_for", "" ), ',') );
 
 	set_show_all_fixes( tag->getOption< bool >( "show_all_fixes", 0 ) );
 	set_constraints_from_link_records( tag->getOption< bool >( "constraints_from_link_records", 0 ) );

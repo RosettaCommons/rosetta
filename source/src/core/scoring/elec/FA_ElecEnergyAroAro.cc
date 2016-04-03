@@ -320,7 +320,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {
-		
+
 		Size const pos2( (*iru)->get_other_ind( pos1 ) );
 
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
@@ -376,9 +376,9 @@ FA_ElecEnergyAroAro::eval_atom_derivative_aro_aro(
 				coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
 
 			if ( dE_dr_over_r == 0.0 ) continue;
-			
+
 			Vector const f1( i_xyz.cross( j_xyz ) );
-			
+
 			F1 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f1;
 			F2 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f2;
 		}

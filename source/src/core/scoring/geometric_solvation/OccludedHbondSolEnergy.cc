@@ -328,7 +328,7 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 
 	// note: after testing, hydrogens need not occlude
 	if ( occ_rsd.atom_is_hydrogen(occ_atom) ) return;
-	
+
 	// note: the lines above don't exclude Proline NV...
 	// catch proline NV here (and other virtual atoms, etc.)
 	if ( occ_rsd.atom_type(occ_atom).lj_radius() < 0.1 ) return;

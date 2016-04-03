@@ -164,7 +164,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	using namespace chemical;
 
 	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	
+
 	conformation::Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
 
@@ -284,7 +284,7 @@ ProClosureEnergy::eval_intrares_energy(
 	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
 		if ( rsd.is_virtual_residue() ) return;
 		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
-		
+
 		//Note that n_nv_dist_sd_ is the SQUARE of the standard deviation
 		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ );
 	}
@@ -321,7 +321,7 @@ ProClosureEnergy::eval_intrares_derivatives(
 	Vector const & nv_pos( rsd.xyz( NV_ind ));
 	Vector const & n_pos(  rsd.xyz( N_ind ));
 	/// Numeric deriv version to consolidate code.
-	
+
 	Vector f1( 0.0 ), f2( 0.0 );
 	Distance dist( 0.0 );
 	numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist, f1, f2 );

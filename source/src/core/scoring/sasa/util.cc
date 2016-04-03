@@ -309,7 +309,7 @@ void input_legrand_sasa_dats() {
 	// this booleans checks whether we've done this already or not. if we have, then return immediately.
 	static bool init = false;
 	if ( init ) return;
-	
+
 	init = true;
 
 	//j inputting the masks. they are 21 ubytes long, 162x100 (see header). expects file to be complete

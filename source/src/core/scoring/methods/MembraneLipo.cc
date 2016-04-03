@@ -124,7 +124,7 @@ MembraneLipo::finalize_total_energy(
 			if ( rsdSeq ==0 ) continue;
 			if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
 			if ( !topology.allow_scoring(rsdSeq) ) continue;
-			
+
 			Real B(topology.LipidBurial(rsdSeq));
 			Real E(topology.LipidExposure(rsdSeq));
 			if ( B!=0 ) {
@@ -136,7 +136,7 @@ MembraneLipo::finalize_total_energy(
 				cen10Exposed_norm+=1;
 			}
 		}
-		
+
 		Real B_mean(0);
 		Real E_mean(0);
 		if ( cen10Exposed_norm!=0 ) {

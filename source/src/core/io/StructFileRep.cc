@@ -32,19 +32,19 @@ namespace io {
 
 // Standard Methods ///////////////////////////////////////////////////////////
 StructFileRep::StructFileRep() : utility::pointer::ReferenceCount(),
-		filename_( "" ),
-		modeltag_( "" ),
-		header_( HeaderInformationOP( new HeaderInformation() ) ),
-		remarks_( RemarksOP( new Remarks ) ),
-		heterogen_names_(),
-		residue_type_base_names_(),
-		ssbond_map_(),
-		link_map_(),
-		crystinfo_(),
-		chains_(),
-		foldtree_string_( "" ),
-		pdb_comments_(),
-		additional_string_output_( "" )
+	filename_( "" ),
+	modeltag_( "" ),
+	header_( HeaderInformationOP( new HeaderInformation() ) ),
+	remarks_( RemarksOP( new Remarks ) ),
+	heterogen_names_(),
+	residue_type_base_names_(),
+	ssbond_map_(),
+	link_map_(),
+	crystinfo_(),
+	chains_(),
+	foldtree_string_( "" ),
+	pdb_comments_(),
+	additional_string_output_( "" )
 {}
 
 StructFileRep::~StructFileRep()

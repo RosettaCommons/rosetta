@@ -470,7 +470,7 @@ LoopGraph::check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) const 
 		for ( Size j = 1; j <= loop_cycle2.size(); j++ ) {
 			// Don't change to != - that's not defined
 			if ( ! ( loop_cycle1.loop(i) == loop_cycle2.loop( j ) ) ) continue;
-			
+
 			if ( error_out_on_complex_cycles_ ) {
 				TR << "loop # " << loop_cycle1.loop(i) << " shared between different cycles: "  << std::endl;
 				TR << "Cycle1: " << std::endl;

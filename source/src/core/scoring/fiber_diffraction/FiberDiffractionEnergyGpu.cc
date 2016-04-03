@@ -215,7 +215,7 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 		for ( Size l=0; l <= lmax; ++l ) {
 			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
 				if (I[l][R] <= 0.0) continue;
-				
+
 				Rprod += sqrt(I[l][R])*fabs(layer_lines_I[l][R]);
 				Rsquare_obs += layer_lines_I[l][R]*layer_lines_I[l][R];
 				Rsum_obs += fabs(layer_lines_I[l][R]);
@@ -252,7 +252,7 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 	}
 
 	TR << "Chi2: " << chi2_<< " sum_obs_ " << sum_obs_ <<" scale factor " << scale_factor_ << std::endl;
-	
+
 	if (output_fiber_spectra_) {
 		out.close();
 	}

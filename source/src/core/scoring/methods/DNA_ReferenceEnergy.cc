@@ -125,13 +125,13 @@ DNA_ReferenceEnergy::residue_pair_energy(
 ) const
 {
 	if ( !rsd1.is_DNA() || !rsd2.is_DNA() ) return;
-	
+
 	Size const pos1( rsd1.seqpos() ), pos2( rsd2.seqpos() );
 	if ( pos2 == pos1 + 1 && !rsd1.is_upper_terminus() &&
-		count_pair_bs( pos1, pos2, retrieve_base_partner_from_pose_inline( pose ) ) ) {
+			count_pair_bs( pos1, pos2, retrieve_base_partner_from_pose_inline( pose ) ) ) {
 		emap[ dna_ref ] += base_step_energy( rsd1.aa(), rsd2.aa() );
 	} else if ( pos1 == pos2+1 && !rsd2.is_upper_terminus() &&
-			   count_pair_bs( pos2, pos1, retrieve_base_partner_from_pose_inline( pose ) ) ) {
+			count_pair_bs( pos2, pos1, retrieve_base_partner_from_pose_inline( pose ) ) ) {
 		emap[ dna_ref ] += base_step_energy( rsd2.aa(), rsd1.aa() );
 	}
 }

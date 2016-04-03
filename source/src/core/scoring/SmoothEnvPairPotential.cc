@@ -297,32 +297,32 @@ SmoothEnvPairPotential::compute_centroid_environment(
 
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
 	if ( cenlist.calculated() ) return;
-	
+
 	cenlist.initialize( pose.total_residue(), 1 );  // every res has 1 neighbor (itself)
-	
+
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
 		for ( graph::Graph::EdgeListConstIter
-			 iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-			 irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-			 iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
-			
+
 			//Real const cendist = edge->square_distance();
 			numeric::xyzVector<Real> cenvec =
-			rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
+				rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
 			Real const cendist = cenvec.length_squared();
-			
+
 			if ( cendist <= cen_dist_cutoff_12_pad ) {
 				fill_smooth_cenlist( cenlist, i, j, sqrt(cendist) );
 			}
 		}
 	}
-	
+
 	// symetrize cenlist (if necessary)
 	if ( symminfo ) {
 		for ( Size i = 1; i <= nres; ++i ) {
@@ -337,7 +337,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 			}
 		}
 	}
-	
+
 	cenlist.calculated() = true;
 }
 
@@ -359,37 +359,37 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 	Size const nres( energy_graph.num_nodes() );
 
 	if ( dcenlist.calculated() ) return;
-	
+
 	dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
-	
+
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
 		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
-		
+
 		for ( graph::Graph::EdgeListConstIter
-			 iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-			 irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-			 iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
-			
+
 			numeric::xyzVector<Real> cenvec =
-			rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
+				rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
 			Real const cendist = cenvec.length_squared();
-			
+
 			if ( cendist <= cen_dist_cutoff_12_pad ) {
 				fill_smooth_dcenlist( dcenlist, i, j, cenvec );
 			}
 		}
 	}
-	
+
 	// symetrize cenlist (if necessary)
 	if ( symminfo ) {
 		core::conformation::symmetry::SymmetricConformation const &symmconf =
-		dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
+			dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
 			if ( !rsd1.is_protein() ) continue;
@@ -402,7 +402,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 			}
 		}
 	}
-	
+
 	dcenlist.calculated() = true;
 }
 
@@ -506,10 +506,10 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 		Real const cendist = cenvec.length_squared();
 
 		if ( cendist > cen_dist_cutoff_12_pad ) continue;
-		
+
 		Real x = sqrt(cendist);
 		numeric::xyzVector<Real> gradx = cenvec/x;
-		
+
 		Real d6,d10,d12, z;
 		z =  SIGMOID_SLOPE*(x-6);
 		if ( z>-20 && z<20 ) {
@@ -518,7 +518,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 		} else {
 			d6 = 0;
 		}
-		
+
 		z = SIGMOID_SLOPE*(x-10);
 		if ( z>-20 && z<20 ) {
 			Real e10 = exp(z);
@@ -526,7 +526,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 		} else {
 			d10 = 0;
 		}
-		
+
 		z = SIGMOID_SLOPE*(x-12);
 		if ( z>-20 && z<20 ) {
 			Real e12 = exp(z);
@@ -534,7 +534,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 		} else {
 			d12 = 0;
 		}
-		
+
 		d_env_score  += env_[ rsd2.aa() ].dfunc( cenlist.fcen10(j) ) * (d10*gradx);
 		d_cb_score6  += cbeta6_.dfunc( cenlist.fcen6(j) ) * (d6*gradx);
 		d_cb_score12 += cbeta12_.dfunc( cenlist.fcen12(j) ) * ((d12-d6)*gradx);

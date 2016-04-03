@@ -884,10 +884,10 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData
 	Vector const curr_nmr_atom_pos ( curr_nmr_rsd.xyz( curr_nmr_atom_name ) ); // (C) position
 	//std::string const reference_key( curr_nmr_rsd_name + ":" + curr_nmr_atom_name ); // (D) reference chemical shifts
 
-	
+
 	// start with reference shifts
 	if ( CS_data.ref_shift == 0.0 ) return 0.0;
-	
+
 	Real calc_chem_shift = CS_data.ref_shift;
 	// now looping over residues
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
@@ -899,7 +899,7 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData
 			// get data for "neighbor" atoms
 			std::string const curr_atom_name( ( curr_rsd.atom_name( atom_num ) ) );
 			if ( !get_neighbor_atom( curr_atom_name ) ) continue;
-			
+
 			Vector const curr_atom_pos = curr_rsd.xyz( curr_atom_name );
 			numeric::xyzVector< core::Real > const r_vector = curr_atom_pos - curr_nmr_atom_pos;
 			Real const r_length = r_vector.length();
@@ -1348,7 +1348,7 @@ RNA_ChemicalShiftPotential::get_magnetic_anisotropy_deriv_for_src_base(
 
 		utility::vector1 < ChemicalShiftData > const & EXP_chem_shift_data_entry = EXP_chem_shift_data_list_[outer_data_ID];
 		utility::vector1 < Real > calc_chem_shift_entry;
-		
+
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_entry.size(); inner_data_ID++ ) {
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_entry[inner_data_ID];
 			if ( CS_data.atom_name.find ( "H" ) != std::string::npos ) {
@@ -1547,7 +1547,7 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 	bool const is_neighbor_atom( get_neighbor_atom( atom_name_whitespace ) );
 
 	if ( !is_source_atom && !is_neighbor_atom ) return;
-	
+
 	utility::vector1 < std::string > atom_names;
 	//loop over residues
 	Size atmn ( 1 );
@@ -1563,16 +1563,16 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 			atmn++;
 		}
 	}
-	
+
 	// neighbor atom here does not refer to covalent distance or 3D distance, but any atom that contributes --
 	// for now, most heavy atoms but not hydrogens.
 	std::string curr_active( "" );
 	if ( !is_source_atom && !is_neighbor_atom ) return;
-	
+
 	for ( Size outer_data_ID = 1; outer_data_ID <= EXP_chem_shift_data_list_.size(); outer_data_ID++ ) {
 		for ( Size inner_data_ID = 1; inner_data_ID <= EXP_chem_shift_data_list_[outer_data_ID].size(); inner_data_ID++ ) {
 			ChemicalShiftData const & CS_data = EXP_chem_shift_data_list_[outer_data_ID][inner_data_ID];
-			
+
 			if ( ( !( nuchemics_mode_ ) || CS_data.atom_name.find ( "H" ) == std::string::npos ) && ( is_source_atom || is_neighbor_atom ) ) {
 				if ( curr_active != CS_data.atom_name ) {
 					atmn = 1;

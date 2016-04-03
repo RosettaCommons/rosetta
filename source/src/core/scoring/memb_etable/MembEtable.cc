@@ -412,13 +412,13 @@ MembEtable::modify_pot()
 			carbon_types.push_back( atom_set_ac->atom_type_index("aroC") );
 
 			if ( dis >= 4.2 )  continue;
-			
+
 			for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {
 				for ( int j = 1, j_end = carbon_types.size(); j <= j_end; ++j ) {
-					
+
 					int const ii = carbon_types[i];
 					int const jj = carbon_types[j];
-					
+
 					solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
 					solv1_(k,ii,jj) = solv1_(ibin,ii,jj);
 					solv2_(k,jj,ii) = solv2_(ibin,jj,ii);

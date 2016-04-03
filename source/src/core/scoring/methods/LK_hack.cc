@@ -214,7 +214,7 @@ LK_hack::residue_pair_energy(
 
 	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
 		if ( !rsd1.atom_type(i).is_acceptor() && !rsd1.atom_type(i).is_donor() ) continue;
-		
+
 		res1_heavy_is_polar[ i ] = true;
 		Size non_H_neib = 0;
 		Vector  base_pseudo_atom(0);
@@ -245,7 +245,7 @@ LK_hack::residue_pair_energy(
 	//same for residue 2//
 	for ( Size i = 1, i_end = rsd2.nheavyatoms(); i <= i_end; ++i ) {
 		if ( !rsd2.atom_type(i).is_acceptor() && !rsd2.atom_type(i).is_donor() ) continue;
-		
+
 		res2_heavy_is_polar[ i ] = true;
 		Size non_H_neib = 0;
 		Vector  base_pseudo_atom(0);
@@ -267,7 +267,7 @@ LK_hack::residue_pair_energy(
 				}
 			}
 		}
-		
+
 		base_pseudo_atom /= non_H_neib;
 		res2_base_vectors[i] = rsd2.xyz(i) - base_pseudo_atom;
 		res2_base_vectors[i].normalize();
@@ -280,26 +280,26 @@ LK_hack::residue_pair_energy(
 			cp_weight = 1.0;
 			Size path_dist( 0 );
 			if ( !cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
-			
+
 			Real d2 =   rsd1.atom(i).xyz().distance_squared( rsd2.atom(j).xyz() );
-			
+
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-			
+
 			Real const d2_bin = d2 * get_bins_per_A2_;
 			int disbin = static_cast< int >( d2_bin ) + 1;
 			Real frac = d2_bin - ( disbin - 1 );
 			int const l1 = solv1_.index( disbin, rsd2.atom(j).type(), rsd1.atom(i).type() ); // atom i being desolvated by atom j
 			int const l2 = l1 + 1;
-			
+
 			Vector i_to_j_vec( rsd2.xyz( j ) - rsd1.xyz( i ) );
 			bool i_to_j_vec_normalized( false ); // don't normalize twice!
-			
+
 			Real i_to_j_angle_weight( 1.0 ), j_to_i_angle_weight( 1.0 );
-			
+
 			if ( res1_heavy_is_polar[i] ) {
 				if ( res1_base_vectors[i].dot( i_to_j_vec )  >=  0 ) {
 					//std::cout << "Normalizing i_to_j" << std::endl;
-					
+
 					i_to_j_vec *= 1 / ( std::sqrt( d2 ) ); /// we already have d2, reuse it
 					i_to_j_vec_normalized = true;
 					Real dotprod = res1_base_vectors[i].dot( i_to_j_vec );
@@ -317,12 +317,12 @@ LK_hack::residue_pair_energy(
 					i_to_j_angle_weight = 0.0;
 				}
 			} // else, rsd1 is apolar, and its weight should be 1, which it already is
-			
+
 			//std::cout << "Desolvation of atom i: " << rsd1.atom_name( i ) << " on " << rsd1.name() << " with weight: " << i_to_j_angle_weight << std::endl;
 			if ( i_to_j_angle_weight != 0 ) {
 				score += i_to_j_angle_weight * cp_weight * ( (1.-frac)* solv1_[ l1 ] + frac * solv1_[ l2 ]);
 			}
-			
+
 			if ( res2_heavy_is_polar[j] ) {
 				Vector j_to_i_vec = -1 * i_to_j_vec;
 				if ( res2_base_vectors[j].dot( j_to_i_vec )  >  0 ) {
@@ -332,7 +332,7 @@ LK_hack::residue_pair_energy(
 					}
 					Real dotprod = res2_base_vectors[j].dot( j_to_i_vec );
 					//std::cout << "r2 base dot prod: " << dotprod << " angle " << radians_to_degrees * (pi - std::acos( dotprod ))  << " with " << rsd1.seqpos() << " " << i << std::endl;
-					
+
 					if ( dotprod >= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_HIGH ) {
 						// noop, i_to_j weight is already 1.
 					} else if ( dotprod <= LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW ) {
@@ -341,13 +341,13 @@ LK_hack::residue_pair_energy(
 						Real angle = pi - std::acos( dotprod );
 						j_to_i_angle_weight = lksigmoidalfunc.func( angle );
 						//std::cout << "Angle: " << radians_to_degrees * angle << " func " << j_to_i_angle_weight << std::endl;
-						
+
 					}
 				} else { // Dot product is 0 or negative; do not count this interaction
 					j_to_i_angle_weight = 0.0;
 				}
 			} // else, rsd2 is apolar, and its weight should be 1, which it already is
-			
+
 			//std::cout << "Desolvation of atom j: " << rsd2.atom_name( j ) << " on " << rsd2.name() << " with weight: " << j_to_i_angle_weight << std::endl;
 			if ( j_to_i_angle_weight != 0 ) {
 				score += j_to_i_angle_weight * cp_weight * ( (1.-frac)* solv2_[ l1 ] + frac * solv2_[ l2 ]);
@@ -711,19 +711,19 @@ LK_hack::eval_dE_dR_over_r(
 	f2_2 = -1.0 * f2_1;
 
 	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return 0.0;
-	
+
 	Real const d2_bin = d2 * get_bins_per_A2_;
 	int disbin = static_cast< int >( d2_bin ) + 1;
 	Real frac = d2_bin - ( disbin - 1 );
-	
+
 	int const l1 = dsolv1_.index( disbin, atom2.type(), atom1.type() ),
-	l2 = l1 + 1;
-	
+		l2 = l1 + 1;
+
 	Real e1 = dsolv1_[ l1 ];
 	Real deriv = lk_hack_weight_ * ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
-	
+
 	//std::cout << "dsolv1_ deriv: " << deriv << " numeric: " << ((solv1_[ l2 ] - solv1_[ l1 ] )*get_bins_per_A2_)*2*sqrt(d2) << std::endl;
-	
+
 	return deriv * one_over_d;
 }
 

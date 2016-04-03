@@ -286,10 +286,10 @@ FA_ElecEnergy::setup_for_minimizing(
 	set_nres_mono(pose);
 
 	if ( ! pose.energies().use_nblist() ) return;
-	
+
 	// stash our nblist inside the pose's energies object
 	Energies & energies( pose.energies() );
-	
+
 	// setup the atom-atom nblist
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
@@ -321,7 +321,7 @@ FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
 	if ( ! pose.energies().use_nblist() ) return;
-	
+
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
 	nblist.prepare_for_scoring( pose, scfxn, *this );
 }
@@ -656,9 +656,9 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 		Vector f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
 		Real const dE_dr_over_r = wt_envdep * neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
-		
+
 		if ( dE_dr_over_r == 0.0 ) continue;
-		
+
 		Real sfxn_weight = elec_weight(
 			rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
 			rsd2.atom_is_backbone( neighbs[ ii ].atomno2() ),
@@ -728,7 +728,7 @@ FA_ElecEnergy::eval_atom_derivative(
 		Real const dis2( f2.length_squared() );
 		Real const dE_dr_over_r = wt_envdep * nbr.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, ii_charge, jj_charge );
 		if ( dE_dr_over_r == 0.0 ) continue;
-		
+
 		Real sfxn_weight = elec_weight( ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
 		Vector f1 = ii_xyz.cross( jj_xyz );
 		f1 *= dE_dr_over_r * sfxn_weight;
@@ -1000,7 +1000,7 @@ FA_ElecEnergy::finalize_total_energy(
 
 				Size const  j( nbr.rsd() );
 				Size const jj( nbr.atomno() );
-				
+
 				conformation::Residue const & jres( *resvect[j] );
 				int jj_isbb = jres.atom_is_backbone( jj );
 

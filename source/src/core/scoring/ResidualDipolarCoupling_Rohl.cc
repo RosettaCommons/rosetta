@@ -117,7 +117,7 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 
 	//extra weight file?
 	if ( !option[ OptionKeys::rdc::weights ].user() ) return;
-	
+
 	std::string filename2( option[ OptionKeys::rdc::weights ]().name() );
 	std::ifstream infile2( filename2.c_str() );
 	while ( getline( infile2, line ) ) {

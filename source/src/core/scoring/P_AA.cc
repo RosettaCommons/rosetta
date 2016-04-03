@@ -386,7 +386,7 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 
 	//ToDo Also exclude chainbreaks
 	if ( res.is_terminus() || res.is_virtual_residue()  ) return Energy( 0.0 );
-	
+
 	// Probabilities for this amino acid are present in files and it is not a terminus
 	Angle const phi( d_multiplier*res.mainchain_torsion( 1 ) );
 	Angle const psi( d_multiplier*res.mainchain_torsion( 2 ) );
@@ -415,7 +415,7 @@ P_AA::P_AA_pp_energy( chemical::AA const aa, Angle const phi, Angle const psi ) 
 
 	// Here we no longer turn aa into aa2 because we don't need to--we handle that at a higher level.
 	if ( aa > chemical::num_canonical_aas ) return Energy( 0.0 );
-	
+
 	// Probabilities for this amino acid are present in files
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
 		return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
@@ -450,41 +450,41 @@ P_AA::get_Paa_pp_deriv(
 
 	//ToDo Also exclude chainbreaks
 	if ( !res.type().is_alpha_aa() || res.is_terminus() || ( tor_id.type() != id::BB || (tor_id.torsion() != phi_id && tor_id.torsion() != psi_id )) || res.is_virtual_residue() ) return EnergyDerivative( 0.0 );
-	
+
 	// Probabilities for this amino acid are present in files and it is not a terminus
 	Angle const phi( d_multiplier*res.mainchain_torsion( phi_id ));
 	Angle const psi( d_multiplier*res.mainchain_torsion( psi_id ));
 	Probability dp_dphi( 0.0 ), dp_dpsi( 0.0 );
-	
+
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 		switch ( tor_id.torsion()  ) {
-			case phi_id :
-				return d_multiplier*P_AA_pp_energy_splines_[ aa ].dFdx( phi, psi );
-			case psi_id :
-				return d_multiplier*P_AA_pp_energy_splines_[ aa ].dFdy( phi, psi );
-			default :
-				return EnergyDerivative( 0.0 );
+		case phi_id :
+			return d_multiplier*P_AA_pp_energy_splines_[ aa ].dFdx( phi, psi );
+		case psi_id :
+			return d_multiplier*P_AA_pp_energy_splines_[ aa ].dFdy( phi, psi );
+		default :
+			return EnergyDerivative( 0.0 );
 		}
 	} else {
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
 			Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
 			switch ( tor_id.torsion()  ) {
-				case phi_id :
-					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
-				case psi_id :
-					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
-				default :
-					return EnergyDerivative( 0.0 );
+			case phi_id :
+				return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
+			case psi_id :
+				return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
+			default :
+				return EnergyDerivative( 0.0 );
 			}
 		} else {
 			Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
 			switch ( tor_id.torsion()  ) {
-				case phi_id :
-					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
-				case psi_id :
-					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
-				default :
-					return EnergyDerivative( 0.0 );
+			case phi_id :
+				return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
+			case psi_id :
+				return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
+			default :
+				return EnergyDerivative( 0.0 );
 			}
 		}
 	}

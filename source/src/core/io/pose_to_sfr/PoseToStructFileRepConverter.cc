@@ -158,9 +158,9 @@ PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, id:
 // Main Init Function /////////////////////////////////////////////////////////
 void
 PoseToStructFileRepConverter::init_from_pose(
-		core::pose::Pose const & pose,
-		id::AtomID_Mask const & mask,
-		StructFileRepOptions const & options )
+	core::pose::Pose const & pose,
+	id::AtomID_Mask const & mask,
+	StructFileRepOptions const & options )
 {
 	using namespace core;
 	using core::pose::PDBInfo;
@@ -176,7 +176,7 @@ PoseToStructFileRepConverter::init_from_pose(
 		*(sfr_->remarks()) = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
 		if ( pose.pdb_info()->header_information() ) {
 			sfr_->header() =
-					io::HeaderInformationOP( new io::HeaderInformation( *( pose.pdb_info()->header_information() ) ) );
+				io::HeaderInformationOP( new io::HeaderInformation( *( pose.pdb_info()->header_information() ) ) );
 		} else {
 			sfr_->header() = io::HeaderInformationOP( new io::HeaderInformation() );
 		}
@@ -225,8 +225,8 @@ PoseToStructFileRepConverter::init_from_pose(
 
 		// Add res information only if we havn't done so already.
 		//if ( ! res_info_added[ resnum ] ) {
-			append_residue_info_to_sfr( res_info, rsd );
-			//res_info_added[ resnum ] = true;
+		append_residue_info_to_sfr( res_info, rsd );
+		//res_info_added[ resnum ] = true;
 		//}
 
 		for ( Size atom_index = 1; atom_index <= rsd.natoms(); ++atom_index ) {
@@ -234,7 +234,7 @@ PoseToStructFileRepConverter::init_from_pose(
 			if ( ( ! mask[ atm ] ) || ( ! mask.has( atm ) ) ) { continue; }
 
 			bool const success( append_atom_info_to_sfr(
-					pose, res_info, rsd, atom_index, use_pdb_info, new_atom_num, new_tercount ) );
+				pose, res_info, rsd, atom_index, use_pdb_info, new_atom_num, new_tercount ) );
 			if ( success ) { ++new_atom_num; }
 		}
 	}
@@ -254,10 +254,10 @@ PoseToStructFileRepConverter::append_residue_to_sfr( core::pose::Pose const & po
 /// @details Start atom numbering from given n
 void
 PoseToStructFileRepConverter::append_residue_to_sfr(
-		pose::Pose const & pose,
-		core::Size const resnum,
-		core::Size & new_atom_num,
-		core::Size const new_tercount )
+	pose::Pose const & pose,
+	core::Size const resnum,
+	core::Size & new_atom_num,
+	core::Size const new_tercount )
 {
 	using namespace core;
 	using namespace utility;
@@ -277,7 +277,7 @@ PoseToStructFileRepConverter::append_residue_to_sfr(
 	// Loop through each atom in the residue and generate ATOM or HETATM data.
 	for ( Size j = 1; j <= rsd.natoms(); ++j ) {
 		bool const success( append_atom_info_to_sfr(
-				pose, res_info, rsd, j, use_pdb_info, new_atom_num, new_tercount ) );
+			pose, res_info, rsd, j, use_pdb_info, new_atom_num, new_tercount ) );
 		if ( success ) { ++new_atom_num; }
 	}
 }
@@ -285,8 +285,8 @@ PoseToStructFileRepConverter::append_residue_to_sfr(
 
 /// @brief Append just residue-based info to StructFileRep
 void PoseToStructFileRepConverter::append_residue_info_to_sfr(
-		ResidueInformation const & res_info,
-		conformation::Residue const & rsd )
+	ResidueInformation const & res_info,
+	conformation::Residue const & rsd )
 {
 	// Determine residue identifier information.
 
@@ -313,11 +313,11 @@ void PoseToStructFileRepConverter::append_residue_info_to_sfr(
 
 bool
 PoseToStructFileRepConverter::append_atom_info_to_sfr(
-		core::pose::Pose const & pose,
-		ResidueInformation const & res_info,
-		core::conformation::Residue const & rsd,
-		core::Size const atom_index,
-		bool const use_pdb_info)
+	core::pose::Pose const & pose,
+	ResidueInformation const & res_info,
+	core::conformation::Residue const & rsd,
+	core::Size const atom_index,
+	bool const use_pdb_info)
 {
 	return append_atom_info_to_sfr( pose, res_info, rsd, atom_index, use_pdb_info, get_new_atom_serial_num() /*atom index*/, pose.chain( rsd.seqpos() ) - 1 /*Number of termini before this atom*/);
 }
@@ -325,13 +325,13 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 
 bool
 PoseToStructFileRepConverter::append_atom_info_to_sfr(
-		core::pose::Pose const & pose,
-		ResidueInformation const & res_info,
-		core::conformation::Residue const & rsd,
-		core::Size const atom_index,
-		bool const use_pdb_info,
-		core::Size const new_atom_num,
-		core::Size const new_tercount )
+	core::pose::Pose const & pose,
+	ResidueInformation const & res_info,
+	core::conformation::Residue const & rsd,
+	core::Size const atom_index,
+	bool const use_pdb_info,
+	core::Size const new_atom_num,
+	core::Size const new_tercount )
 {
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	conformation::Atom const & atom = rsd.atom( atom_index ) ;
@@ -403,10 +403,10 @@ PoseToStructFileRepConverter::get_new_atom_serial_num() const {
 
 bool
 PoseToStructFileRepConverter::add_atom_to_sfr(
-		pose::Pose const & pose,
-		conformation::Residue const & rsd,
-		core::Size atom_index,
-		bool use_pdb_info ) const
+	pose::Pose const & pose,
+	conformation::Residue const & rsd,
+	core::Size atom_index,
+	bool use_pdb_info ) const
 {
 	//skip outputting virtual atom unless specified
 	if ( !options_.output_virtual() &&
@@ -1003,12 +1003,12 @@ PoseToStructFileRepConverter::total_sfr_atoms(
 /// @details Output is res_info.
 void
 PoseToStructFileRepConverter::get_residue_information(
-		core::pose::Pose const & pose,
-		core::uint const seqpos,
-		bool const use_PDB,
-		bool const renumber_chains,
-		core::Size const new_tercount,
-		ResidueInformation & res_info ) const
+	core::pose::Pose const & pose,
+	core::uint const seqpos,
+	bool const use_PDB,
+	bool const renumber_chains,
+	core::Size const new_tercount,
+	ResidueInformation & res_info ) const
 {
 	using namespace std;
 	using namespace utility;
@@ -1025,7 +1025,7 @@ PoseToStructFileRepConverter::get_residue_information(
 		res_info.chainID( pdb_info->chain( seqpos ) );
 		if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
 			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
-					<< "', denoting an empty record; for convenience, replacing with space." << endl;
+				<< "', denoting an empty record; for convenience, replacing with space." << endl;
 			res_info.chainID( ' ' );
 		}
 		res_info.resSeq(    pdb_info->number( seqpos ) );

@@ -83,7 +83,7 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 	std::cout << "JL checking for SequenceDependentRefEnergy weights" << std::endl;
 
 	if ( !option[ OptionKeys::score::seqdep_refene_fname ].user() ) return;
-	
+
 	std::string const in_fname( option[ OptionKeys::score::seqdep_refene_fname ] );
 	std::cout << "JL reading SequenceDependentRefEnergy weights from " << in_fname << std::endl;
 	utility::io::izstream in_stream( in_fname );
@@ -102,9 +102,9 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 		}
 		aa_seq_weights_.push_back(energies);
 	}
-	
+
 	if ( ! option[ OptionKeys::score::secondary_seqdep_refene_fname ].user() ) return;
-	
+
 	std::string const in_fname2( option[ OptionKeys::score::secondary_seqdep_refene_fname ] );
 	std::cout << "JL reading SECONDARY SequenceDependentRefEnergy weights from " << in_fname2 << std::endl;
 	utility::io::izstream in_stream2( in_fname2 );

@@ -184,9 +184,9 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 /// Init() must be called before this function.
 /// Returns true on success.
 int MolecularSurfaceCalculator::Calc() {
-	
+
 	try
-	{
+{
 		basic::gpu::Timer timer(TR.Debug);
 
 		run_.results.valid = 0;
@@ -385,8 +385,8 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 	// Assign radius with wildcard matching
 	for ( radius = radii_.begin(); radius != radii_.end(); ++radius ) {
 		if ( !WildcardMatch(atom.residue, radius->residue, sizeof(atom.residue)) ||
-			!WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom)) ) continue;
-		
+				!WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom)) ) continue;
+
 		atom.radius = radius->radius;
 		if ( TR.Trace.visible() ) {
 			char buf[256];
@@ -524,11 +524,11 @@ private:
 int MolecularSurfaceCalculator::FindNeighbordsAndBuriedAtoms(Atom &atom1)
 {
 	if ( !FindNeighborsForAtom(atom1) ) return 0;
-	
+
 	// sort neighbors by distance from atom1
 	CloserToAtom closer_to_atom1( &atom1 );
 	std::sort(atom1.neighbors.begin(), atom1.neighbors.end(), closer_to_atom1 );
-	
+
 	SecondLoop(atom1);
 	return atom1.neighbors.size();
 }
@@ -598,7 +598,7 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 	for ( std::vector<Atom*>::iterator iAtom2 = neighbors.begin(); iAtom2 < neighbors.end(); ++iAtom2 ) {
 		Atom &atom2 = **iAtom2;
 		if ( atom2 <= atom1 ) continue;
-		
+
 		erj = atom2.radius + settings.rp;
 		dij = atom1.distance(atom2);
 
@@ -610,7 +610,7 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 
 		_far_ = (eri + erj) * (eri + erj) - dij * dij;
 		if ( _far_ <= 0.0 ) continue;
-		
+
 		_far_ = sqrt(_far_);
 
 		contain = dij * dij - ((atom1.radius - atom2.radius) * (atom1.radius - atom2.radius));

@@ -195,7 +195,7 @@ StackElecEnergy::setup_for_minimizing(
 
 	// stash our nblist inside the pose's energies object
 	Energies & energies( pose.energies() );
-	
+
 	// setup the atom-atom nblist
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
@@ -300,7 +300,7 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	etable::count_pair::CountPairFunctionCOP count_pair =
 		get_count_pair_function( rsd1, rsd2 );
-	
+
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ) );
 	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
@@ -325,32 +325,32 @@ StackElecEnergy::residue_pair_energy_ext(
 	EnergyMap & emap
 ) const {
 	using_extended_method_ = true;
-	
+
 	if ( pose.energies().use_nblist_auto_update() ) return;
 	Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
 
 	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
-	
+
 	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
-	
+
 	if ( neighbs.size() <= 0 ) return;
-	
+
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 	Size const i( rsd1.seqpos() );
 	Size const j( rsd2.seqpos() );
-	
+
 	kinematics::Stub stub_i = base_stubs[i];
 	kinematics::Stub stub_j = base_stubs[j];
-	
+
 	Matrix const M_i ( stub_i.M );
 	Matrix const M_j ( stub_j.M );
 	Size m = 0;
 	Size n = 0;
-	
+
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
 		m = neighbs[ ii ].atomno1();
 		if ( rsd1.is_virtual( m ) ) continue;
@@ -364,7 +364,7 @@ StackElecEnergy::residue_pair_energy_ext(
 		if ( n_charge == 0.0 ) continue;
 		Vector const atom_m( rsd1.xyz( m ) );
 		Vector const atom_n( rsd2.xyz( n ) );
-		
+
 		if ( is_rna_base( rsd1, m ) ) {
 			Real cos_kappa2( 0.0 ); // useful for output...
 			Real const stack_elec_score = get_stack_elec_score( atom_m, atom_n, m_charge, n_charge, M_i, cos_kappa2 );
@@ -386,7 +386,7 @@ StackElecEnergy::residue_pair_energy_ext(
 			}
 		}
 	}
-	
+
 	emap[ stack_elec ]           += score;
 	emap[ stack_elec_base_base ] += score_base_base;
 	emap[ stack_elec_base_bb ]   += score_base_bb;
@@ -677,22 +677,22 @@ StackElecEnergy::finalize_total_energy(
 	rna_centroid_info.calculated() = false;
 
 	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
-	
+
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
-	
+
 	// add in contributions from the nblist atom-pairs
 	NeighborList const & nblist
-	( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
-	
+		( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
+
 	nblist.check_domain_map( pose.energies().domain_map() );
 	utility::vector1< conformation::Residue const * > resvect;
 	resvect.reserve( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		resvect.push_back( & pose.residue( ii ) );
 	}
-	
+
 	Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
-	
+
 	for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		conformation::Residue const & ires( *resvect[i] );
 		for ( Size ii = 1, ii_end = ires.natoms(); ii <= ii_end; ++ii ) {
@@ -706,26 +706,26 @@ StackElecEnergy::finalize_total_energy(
 			Matrix const M_i ( stub_i.M );
 			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors( i, ii ) );
 			for ( AtomNeighbors::const_iterator nbr_iter = nbrs.begin(),
-				 nbr_end = nbrs.end(); nbr_iter != nbr_end; ++nbr_iter ) {
+					nbr_end = nbrs.end(); nbr_iter != nbr_end; ++nbr_iter ) {
 				AtomNeighbor const & nbr( *nbr_iter );
-				
+
 				Size const  j( nbr.rsd() );
 				if ( i == j ) continue;
 				Size const jj( nbr.atomno() );
 				// could reorder the nbr lists so that we dont need this check:
-				
+
 				conformation::Residue const & jres( *resvect[j] );
 				if ( jres.is_virtual ( jj ) ) continue;
 				bool res2_is_base = is_rna_base( jres, jj );
 				if ( base_base_only_ && !res2_is_base ) continue;
 				Real const n_charge( jres.atomic_charge( jj ) );
 				if ( n_charge == 0.0 ) continue;
-				
+
 				Vector const atom_n( jres.xyz( jj ) );
 				kinematics::Stub stub_j = base_stubs[j];
-				
+
 				Matrix const M_j ( stub_j.M );
-				
+
 				if ( res1_is_base ) {
 					Real cos_kappa2( 0.0 ); // useful for output...
 					Real const stack_elec_score = get_stack_elec_score( atom_m, atom_n, m_charge, n_charge, M_i, cos_kappa2 );

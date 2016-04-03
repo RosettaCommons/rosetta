@@ -120,10 +120,10 @@ RNA_BulgeEnergy::finalize_total_energy(
 	//  variant types, but does have  a full_model_info object that tracks all residues that
 	//  need to be built ("missing").
 	if ( !full_model_info_defined( pose ) ) return;
- 
+
 	utility::vector1< utility::vector1< Size > > loop_suites;
 	Size nmissing = get_number_missing_residues_and_connections( pose, loop_suites );
-	
+
 	if ( rna_bulge_bonus_once_per_loop_ ) {
 		// refactor -- have entropic bonus for each loop, but don't increase the
 		//  bonus with the number of residues in the loop.

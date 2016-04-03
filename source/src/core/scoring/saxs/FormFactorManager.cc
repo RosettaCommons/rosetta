@@ -83,7 +83,7 @@ void FormFactorManager::register_ff(std::string atom_name,FormFactorOP new_ff) {
 	Size n = known_atoms_.size() + 1;
 	new_ff->id_ = n;
 	if ( ff_map_.find(atom_name) != ff_map_.end() ) return;
-	
+
 	ff_map_.insert( std::pair<std::string,FormFactorOP> (atom_name,new_ff) );
 	known_atoms_.push_back( atom_name );
 	names_to_indexes_.insert( std::pair<std::string,Size> (atom_name, n) );

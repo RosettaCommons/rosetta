@@ -155,16 +155,16 @@ UnfoldedStatePotential::raw_unfolded_state_energymap( std::string const & aa_nam
 	std::map< std::string, core::scoring::EnergyMap >::const_iterator i( unfolded_energy_.find( aa_name3 ) );
 	e = i->second;
 	debug_assert(i->first == aa_name3) // assert that the name3 is in the map, if this fails, you are missing params for that residue type
-}
+		}
 
-void
-UnfoldedStatePotential::pose_raw_unfolded_state_energymap(
-	pose::Pose const & pose,
-	scoring::EnergyMap & e
-) const {
+		void
+		UnfoldedStatePotential::pose_raw_unfolded_state_energymap(
+		pose::Pose const & pose,
+		scoring::EnergyMap & e
+		) const {
 
-	EnergyMap unf_total;
-	
+		EnergyMap unf_total;
+
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( ! pose.residue(ii).is_protein() && ! pose.residue(ii).is_RNA() ) continue;
 

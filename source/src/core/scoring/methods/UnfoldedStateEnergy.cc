@@ -40,12 +40,13 @@ namespace methods {
 methods::EnergyMethodOP
 UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & options ) const {
 
-	if ( !options.has_method_weights( unfolded ) )
+	if ( !options.has_method_weights( unfolded ) ) {
 		return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type() ) );
-	
+	}
+
 	utility::vector1< Real > const & v = options.method_weights( unfolded );
 	debug_assert( v.size() == scoring::n_score_types );
-	
+
 	// convert the vector of Reals into an EnergyMap, because that's what the constructor for USE takes.
 	// assumes that the vector of Reals coming in contains the weights for each of the score types in the
 	// scoring namespace enumeration, and more importantly, in the same order.
@@ -53,7 +54,7 @@ UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions c
 	for ( Size ii=1; ii < scoring::n_score_types; ++ii ) {
 		e[ (ScoreType) ii ] = v[ii];
 	}
-	
+
 	return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type(), e ) );
 }
 

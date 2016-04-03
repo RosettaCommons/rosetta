@@ -129,15 +129,15 @@ DNA_DihedralEnergy::residue_energy(
 ) const
 {
 	if ( !rsd.is_DNA() ) return;
- 
+
 	//   TR.Trace << "defines_score_for_residue: " << this->defines_score_for_residue( rsd ) <<
 	//    " use_extended_residue_energy_interface: "<< this->use_extended_residue_energy_interface() <<
 	//    " defines_dof_derivatives: " << this->defines_dof_derivatives( pose ) << std::endl;
-	
+
 	assert( this->defines_score_for_residue( rsd ) );
 	assert( !this->use_extended_residue_energy_interface() );
 	assert( this->defines_dof_derivatives( pose ) );
-	
+
 	Real bb_score( 0.0 );
 	for ( Size tor=1; tor<= 6; ++tor ) {
 		if ( tor == 1 && rsd.is_lower_terminus() ) continue;
@@ -147,16 +147,16 @@ DNA_DihedralEnergy::residue_energy(
 		potential_.eval_harmonic_backbone_torsion_score_and_deriv( tor, rsd, pose, score, dscore_dtor );
 		bb_score += score;
 	}
-	
+
 	/// need to know the sugar pucker for chi scoring and for delta + three sugar torsions
 	std::pair< std::string, int > pucker;
 	scoring::dna::get_sugar_pucker( rsd, pucker );
 	Size const pucker_index( pucker.second );
-	
+
 	Real chi_score, dscore_dchi;
 	potential_.eval_harmonic_sugar_pucker_dependent_chi_torsion_score_and_deriv( rsd, pose, pucker_index, chi_score,
 		dscore_dchi );
-	
+
 	Real sugar_score( 0.0 );
 	{ /// score the sugar deviation, this only goes into emap[ dna_dihedral_sugar ]
 		utility::vector1< Real > torsions;
@@ -168,11 +168,11 @@ DNA_DihedralEnergy::residue_energy(
 			sugar_score += score;
 		}
 	}
-	
+
 	emap[ dna_dihedral_bb    ] += bb_score;
 	emap[ dna_dihedral_chi   ] += chi_score;
 	emap[ dna_dihedral_sugar ] += sugar_score;
-	
+
 	//   TR.Trace << "residue_energy: " << rsd.seqpos() << ' ' << rsd.name() << " pucker: "<< pucker.first << ' ' <<
 	//    pucker.second << " bb_score: " << bb_score << " chi_score: " << chi_score << " sugar_score: " <<
 	//    sugar_score << std::endl;
@@ -197,7 +197,7 @@ DNA_DihedralEnergy::eval_dof_derivative(
 	//  TR.Trace << "eval_dof_derivative: dof_id= " << dof_id << " tor_id= " << tor_id << std::endl;
 
 	if ( !tor_id.valid() || ( !is_bb && !is_chi ) || !pose.residue( tor_id.rsd() ).is_DNA() ) return 0.0;
-	
+
 	conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
 	if ( is_bb && tor != 4 ) {
 		potential_.eval_harmonic_backbone_torsion_score_and_deriv( tor, rsd, pose, score, dscore_dtor );
@@ -210,7 +210,7 @@ DNA_DihedralEnergy::eval_dof_derivative(
 		if ( is_chi && tor == 1 ) {
 			// chi
 			potential_.eval_harmonic_sugar_pucker_dependent_chi_torsion_score_and_deriv( rsd, pose, pucker_index, score,
-																						dscore_dtor );
+				dscore_dtor );
 			deriv = ( /*weights[ dna_dihedral ] + */ weights[ dna_dihedral_chi ] ) * dscore_dtor;
 		} else {
 			assert( ( is_bb && tor == 4 ) || ( is_chi && ( tor >= 2 && tor <= 4 ) ) );
@@ -218,8 +218,8 @@ DNA_DihedralEnergy::eval_dof_derivative(
 			utility::vector1< Real > torsions;
 			scoring::dna::get_sugar_torsions( rsd, torsions );
 			potential_.eval_sugar_torsion_score_and_deriv( torsions[ sugar_tor ], sugar_tor, rsd, pucker_index, score,
-														  dscore_dtor );
-			
+				dscore_dtor );
+
 			deriv = weights[ dna_dihedral_sugar ] * dscore_dtor;
 		}
 	}

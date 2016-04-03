@@ -119,7 +119,7 @@ HybridVDW_Energy::residue_pair_energy(
 	} else {
 		return;
 	}
-	
+
 	Real score(0.0);
 	debug_assert( ! rsd1.is_bonded( rsd2 ) );
 

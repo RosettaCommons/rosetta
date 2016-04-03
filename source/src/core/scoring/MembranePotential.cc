@@ -386,7 +386,7 @@ MembranePotential::evaluate_env(
 			//interpolate between water and interface phases
 			int layer1 = 2; //interface layer
 			int layer2 = 3; //water layer
-			
+
 			if ( MembraneDepth <= 13.0 ) {
 				low = 13.0;
 			} else {
@@ -565,7 +565,7 @@ MembranePotential::evaluate_pair(
 	} else {
 		if ( no_interpolate_Mpair_ ) {
 			membrane_pair_score = ( ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer, icon  , aa1, aa2 ) +
-								   (       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
+				(       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
 		} else { //bw new mini specfic, true by default.
 
 			if ( std::abs(AverageDepth - 18)<4 ) {

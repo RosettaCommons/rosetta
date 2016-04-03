@@ -120,27 +120,27 @@ MMLJEnergyInter::setup_for_minimizing(
 	// taken for the most part from BaseETableEnergy.hh
 
 	if ( !pose.energies().use_nblist() ) return;
-	
+
 	// stash our nblist inside the pose's energies object
 	Energies & energies( pose.energies() );
-	
+
 	// get a reference to the MMLJLibrary we are using
 	core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();
-	
+
 	// setup the atom-atom nblist
 	NeighborListOP nblist( new NeighborList(
-											min_map.domain_map(),
-											library.nblist_dis2_cutoff_XX(),
-											library.nblist_dis2_cutoff_XH(),
-											library.nblist_dis2_cutoff_HH()) );
-	
+		min_map.domain_map(),
+		library.nblist_dis2_cutoff_XX(),
+		library.nblist_dis2_cutoff_XH(),
+		library.nblist_dis2_cutoff_HH()) );
+
 	if ( pose.energies().use_nblist_auto_update() ) {
 		// setting this to one angstrom fudge factor
 		nblist->set_auto_update( 1 ); // MAGIC NUMBER
 	}
 	// this partially becomes the MMLJEnergy classes's responsibility
 	nblist->setup( pose, sfxn, *this );
-	
+
 	energies.set_nblist( EnergiesCacheableDataType::MM_LJ_INTER_NBLIST, nblist );
 	//std::cout << "In MMLJEnergyInter setup_for_minimizing()" << std::endl;
 }
@@ -302,13 +302,13 @@ MMLJEnergyInter::residue_pair_energy(
 
 			// ask count pair if we should score it
 			if ( ! cpfxn->count( i, j, weight, path_dist ) ) continue;
-		
+
 			// calc dist
 			Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
 			// calc energy
 			Real rep(0), atr(0);
 			potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
-			
+
 			if ( rep != rep ) {
 				std::cout << "REP NAN REP NAN REP NAN" << std::endl;
 				rep = 0;
@@ -319,10 +319,10 @@ MMLJEnergyInter::residue_pair_energy(
 				atr = 0;
 				potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 			}
-			
+
 			total_rep += rep;
 			total_atr += atr;
-			
+
 			//     std::cout << "INTER"
 			//          << " RSD1: " << std::setw(22) << rsd1type.name()
 			//          << " ATM1: " << std::setw(4)  << rsd1type.atom(i).mm_atom_name()

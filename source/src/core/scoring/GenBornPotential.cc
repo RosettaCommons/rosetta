@@ -341,10 +341,10 @@ GenBornPotential::build_placeholders(
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( !gb_info.being_packed(i) ) continue;
 		Residue const & existing_rsd( pose.residue(i) );
-		
+
 		if ( !existing_rsd.is_protein() ) {
 			std::cout << "WARNING: no mechanism for building genborn placeholders at non-protein positions\n" <<
-			"Using existing residue coords" << std::endl;
+				"Using existing residue coords" << std::endl;
 			gb_info.set_placeholder( i, existing_rsd.clone(), GenBornResidueInfoOP( new GenBornResidueInfo( existing_rsd ) ) );
 		} else {
 			// build a placeholder at this position
@@ -360,16 +360,16 @@ GenBornPotential::build_placeholders(
 					residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
 					chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
 			}
-			
+
 			conformation::ResidueOP rsd
-			( conformation::ResidueFactory::create_residue( *protein_placeholder_residue_type, existing_rsd,
+				( conformation::ResidueFactory::create_residue( *protein_placeholder_residue_type, existing_rsd,
 				pose.conformation() ) );
 			GenBornResidueInfoOP rsd_info( new GenBornResidueInfo( *rsd ) );
-			
+
 			Size const dummy_index( rsd->atom_index("DUMM") );
 			rsd_info->atomic_radius( dummy_index ) = dummy_radius;
 			rsd_info->scale_factor ( dummy_index ) = dummy_scale;
-			
+
 			// debug placement of dummy atom
 			runtime_assert( std::abs( rsd->xyz("CA").distance( rsd->xyz( dummy_index )) - dummy_distance ) < 1e-2 );
 			gb_info.set_placeholder( i, rsd, rsd_info );

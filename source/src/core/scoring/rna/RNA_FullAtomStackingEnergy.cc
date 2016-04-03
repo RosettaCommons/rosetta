@@ -158,7 +158,7 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
 ) const {
 
 	if ( !pose.energies().use_nblist() ) return;
-	
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// I think jyesselm put this in, but use of nblist is not activated -- need to define residue_pair_energy_ext(),
@@ -172,13 +172,13 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
 	// -- rhiju.
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	// stash our nblist inside the pose's energies object
 	Energies & energies( pose.energies() );
-	
+
 	// untested -- rhiju
 	Distance const dist_cutoff = sfxn.has_nonzero_weight( fa_stack_lr ) ? lr_dist_cutoff_ : ( sfxn.has_nonzero_weight( fa_stack_sol ) ? sol_dist_cutoff_ : dist_cutoff_ );
-	
+
 	// setup the atom-atom nblist
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate_narrow ] : 1.5;
@@ -313,7 +313,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 			if ( dist2 >= dist_cutoff2 ) continue;
 			Real const fa_stack_score = get_fa_stack_score( r, M_i, prefactor, stack_cutoff, dist_cutoff );
 			score += fa_stack_score;
-			
+
 			if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) score_aro += fa_stack_score;
 		}
 	}
@@ -454,31 +454,31 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 			///////////////////////////////////////////////////////////////////////////////////
 
 			if ( dist2 >= dist_cutoff2 ) continue;
-			
+
 			if ( check_base_base_OK( rsd1, rsd2, m, n ) ) {
-				
+
 				Vector const deriv = get_fa_stack_deriv( r, M_i, prefactor, stack_cutoff, dist_cutoff );
-				
+
 				Vector force_vector_i = fa_stack_weight * deriv;
 				force_vector_i += fa_stack_lower_weight * deriv;
 				if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_i += fa_stack_aro_weight * deriv;
-				
+
 				//Force/torque with which occluding atom j acts on "dipole" i.
 				F1 += -1.0 * cross( force_vector_i, heavy_atom_j );
 				F2 += -1.0 * force_vector_i;
 			}
-			
+
 			if ( check_base_base_OK( rsd2, rsd1, n, m ) ) {
 				//Force/torque with which occluding atom i acts on "dipole" j.
 				// Note that this calculation is a repeat of some other calls to this function.
 				// Might make more sense to do some (alternative) bookkeeping, e.g. with _ext interface.
-				
+
 				Vector const deriv = get_fa_stack_deriv( -r, M_j, prefactor, stack_cutoff, dist_cutoff );
-				
+
 				Vector force_vector_j = fa_stack_weight * deriv;
 				force_vector_j += fa_stack_upper_weight * deriv;
 				if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_j += fa_stack_aro_weight * deriv;
-				
+
 				F1 += cross( force_vector_j, heavy_atom_i );
 				F2 += force_vector_j;
 			}

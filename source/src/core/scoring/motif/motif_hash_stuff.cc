@@ -1687,7 +1687,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 			}
 			// cout << "MOTIFS " << motifs.size() << endl;
 			for ( ResPairMotifs::const_iterator i = motifs.begin(); i != motifs.end(); ++i ) {
-				
+
 				///////////////////////////////////// hack intended to ignore strand pairs ////////////////////////////////////////
 				if ( i->ss1()=='E' && i->ss2()=='E' && dsqCA < 10025.0 ) continue;
 				///////////////////////////////////////////////////////////////////////////////

@@ -258,7 +258,7 @@ TMscore::extend(
 
 	// iterative parameters;
 	core::Size const n_it( 20 );
-	
+
 	// Iterate until
 	// 1) all the residues are matched
 	// 2) or iteration exceed

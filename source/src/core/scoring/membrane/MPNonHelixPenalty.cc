@@ -122,7 +122,7 @@ MPNonHelixPenalty::residue_energy(
 	// Skip Cases
 	if ( rsd.seqpos() == 0 ) return;
 	if ( rsd.aa() == core::chemical::aa_vrt ) return;
-	
+
 	// Grab appropriate resnum and chain num for topology
 	core::Size chain = rsd.chain();
 	core::Size resnum = rsd.seqpos() - ( pose.conformation().chain_begin(chain) - 1);

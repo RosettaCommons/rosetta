@@ -130,7 +130,7 @@ Real MixtureFunc::func_( Real local_x ) const {
 Real
 MixtureFunc::func( Real const x ) const {
 	Real local_x = x;
-	
+
 	Real score = func_(local_x);
 	if ( local_x < rmax_ ) {
 		score = func_(local_x);
@@ -151,7 +151,7 @@ MixtureFunc::func( Real const x ) const {
 Real
 MixtureFunc::dfunc( Real const x ) const {
 	Real df = estimate_dfunc( x );
-	
+
 	return df;
 } // dfunc_component
 

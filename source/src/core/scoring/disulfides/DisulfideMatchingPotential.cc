@@ -138,16 +138,16 @@ Energy DisulfideMatchingPotential::compute_matching_energy( pose::Pose const & p
 	core::conformation::disulfide_bonds( pose.conformation(), disulfides );
 
 	for ( Size i = 1; i <= disulfides.size(); ++i ) {
-		
+
 		Energy temp_RT(0.0), junk_rot(0.0), junk_trans(0.0);
 		score_disulfide(
-						pose.residue(disulfides[i].first),
-						pose.residue(disulfides[i].second),
-						junk_rot,
-						junk_trans,
-						temp_RT
-						);
-		
+			pose.residue(disulfides[i].first),
+			pose.residue(disulfides[i].second),
+			junk_rot,
+			junk_trans,
+			temp_RT
+		);
+
 		match_RT += temp_RT;
 	}
 

@@ -87,11 +87,11 @@ MMBondAngleResidueTypeParamSet::get(
 	std::map<std::string, MMBondAngleResidueTypeParam>::iterator iter(reside_type_param_map_.find(residue_type.name()));
 
 	if ( iter != reside_type_param_map_.end() ) return iter->second;
-	
+
 	MMBondAngleResidueTypeParam new_param;
 	new_param.init(residue_type, *mm_bondangle_library_, use_residue_type_theta0_, central_atoms_to_score_);
 	reside_type_param_map_[residue_type.name()] = new_param;
-	
+
 	return reside_type_param_map_[residue_type.name()];
 }
 
@@ -104,7 +104,7 @@ MMBondAngleResidueTypeParamSet::get(
 	std::map<std::string, MMBondAngleResidueTypeParam>::const_iterator iter(reside_type_param_map_.find(residue_type.name()));
 
 	if ( iter != reside_type_param_map_.end() ) return &(iter->second);
-	
+
 	return NULL;
 }
 

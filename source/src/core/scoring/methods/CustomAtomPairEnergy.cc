@@ -248,9 +248,9 @@ CustomAtomPairEnergy::eval_atom_derivative(
 
 	for ( Size seqpos2 = 1; seqpos2 <= pose.total_residue(); ++seqpos2 ) {
 		if ( seqpos1 == seqpos2 || ! have_cst_[seqpos1][seqpos2] ) continue;
-		
+
 		core::id::AtomID other_atom( atom_id.atomno(), seqpos2 );
-		
+
 		Real dist(0.0);
 		Vector f1(0.0), f2(0.0);
 		numeric::deriv::distance_f1_f2_deriv(

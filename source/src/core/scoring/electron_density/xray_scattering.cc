@@ -173,7 +173,7 @@ int findSampling5(double MINSMP, int NMUL) {
 
 	// increment until no factors >= 5
 	while ( !factorsLTE5(N) )
-		N += NMUL;
+			N += NMUL;
 
 	return N;
 }
@@ -187,7 +187,7 @@ int findSampling(double MINSMP, int NMUL) {
 
 	// increment until no factors >= 19
 	while ( !factorsLTE19(N) )
-		N += NMUL;
+			N += NMUL;
 
 	return N;
 }

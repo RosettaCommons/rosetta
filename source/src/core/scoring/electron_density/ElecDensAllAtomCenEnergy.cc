@@ -264,7 +264,7 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 
 	// derivatives only defined for (non-VRT) heavyatoms
 	if ( !pose_is_proper ) return;
-	
+
 	if ( pose.residue(resid).aa() != core::chemical::aa_vrt && !pose.residue(resid).atom_type(atmid).is_heavyatom() ) return;
 
 	numeric::xyzVector<core::Real> X = pose.xyz(id);

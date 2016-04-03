@@ -229,7 +229,7 @@ get_ssdep_weight(
 	SSWeightParameters const & ssdep
 ) {
 	if ( ! ssdep.ssdep_ ) return 1.0;
-	
+
 	// check if they are in same helix
 	bool connected=true;
 	Size hstart = std::min( rsd1.seqpos(), rsd2.seqpos()), hend=std::max( rsd1.seqpos(), rsd2.seqpos());
@@ -238,14 +238,14 @@ get_ssdep_weight(
 	}
 	if ( !connected ) return 1.0;
 	Real ss_len_scalefactor = 1.0;
-	
+
 	while ( hstart >= 1 && pose.secstruct(hstart) == 'H' ) hstart--;
 	while ( hend <= pose.total_residue() && pose.secstruct(hend) == 'H' ) hend++;
-	
+
 	Size hlen = hend-hstart-1;
 	if ( pose.secstruct(hstart) == 'H' ) hlen++;
 	if ( pose.secstruct(hend) == 'H' ) hlen++;
-	
+
 	if ( hlen<=ssdep.len_l_ ) ss_len_scalefactor = ssdep.l_;
 	else if ( hlen>=ssdep.len_h_ ) ss_len_scalefactor = ssdep.h_;
 	else {

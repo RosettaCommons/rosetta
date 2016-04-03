@@ -71,21 +71,21 @@ LinearChainbreakEnergy::LinearChainbreakEnergy(const LinearChainbreakEnergy& o)
 }
 
 LinearChainbreakEnergy& LinearChainbreakEnergy::operator=(const LinearChainbreakEnergy& o) {
-	
+
 	if ( this == &o ) return *this;
-	
+
 	// base class assignments
 	parent::operator=(o);
-	
+
 	// assignment to non-cache-related variables
 	allowable_sequence_sep_ = o.allowable_sequence_sep_;
-	
+
 	// assign cache-related variables to their default values. this will trigger
 	// a cache miss on their first use, but greatly simplifies the design and
 	// improves reasoning about code paths in the event of copying/cloning
 	shortest_paths_.reset();
 	previous_hash_value_ = 0;
-	
+
 	return *this;
 }
 

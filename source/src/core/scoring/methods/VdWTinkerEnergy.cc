@@ -574,20 +574,20 @@ VdWTinkerEnergy::evaluate_rotamer_pair_energies(
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
 			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
-			
+
 			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
 					Size const ll_rot_id = jj_offset + ll - 1;
-					
+
 					//TR << "Calculating rotamer-rotamer pair energy" << std::endl;
-					
+
 					Real const vdwE(
 						potential_.get_res_res_vdw( *set1.rotamer( kk_rot_id ), vdw_info1.residue_info( kk_rot_id ),
-							*set2.rotamer( ll_rot_id ), vdw_info2.residue_info( ll_rot_id ) ) );
-					
+						*set2.rotamer( ll_rot_id ), vdw_info2.residue_info( ll_rot_id ) ) );
+
 					energy_table( ll_rot_id, kk_rot_id ) +=
-					static_cast< core::PackerEnergy >( weights[ fa_vdw_tinker ] *  vdwE );
+						static_cast< core::PackerEnergy >( weights[ fa_vdw_tinker ] *  vdwE );
 				}
 			}
 		}
@@ -624,15 +624,15 @@ VdWTinkerEnergy::evaluate_rotamer_background_energies(
 		Real const jj_radius( rsd.nbr_radius() );
 
 		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
-		
+
 		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 			Size const kk_rot_id = ii_offset + kk - 1;
-			
+
 			//TR << "Calculating rotamer-background pair energy" << std::endl;
-			
+
 			Real const vdwE(
 				potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
-					rsd, vdw_rsd_info ) );
+				rsd, vdw_rsd_info ) );
 			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ fa_vdw_tinker ] *  vdwE );
 		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
@@ -669,14 +669,14 @@ VdWTinkerEnergy::evaluate_rotamer_background_energy_maps(
 		Real const jj_radius( rsd.nbr_radius() );
 
 		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) continue;
-		
+
 		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 			Size const kk_rot_id = ii_offset + kk - 1;
-			
+
 			//TR << "Calculating rotamer-background pair energy maps" << std::endl;
-			
+
 			Real const vdwE
-			( potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
+				( potential_.get_res_res_vdw( *set.rotamer( kk_rot_id ), vdw_set_info.residue_info( kk_rot_id ),
 				rsd, vdw_rsd_info ) );
 			(emaps[ kk_rot_id ])[ fa_vdw_tinker ] += vdwE;
 		} // kk - rotamers for residue types

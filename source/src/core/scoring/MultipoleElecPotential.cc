@@ -538,14 +538,14 @@ MultipoleElecPotential::find_params_and_neighbors(
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
 				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
-				
+
 				for ( Size ichk2 = ichk + 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 					Size const chk_atom2( bonded[ ichk2 ].atomno() );
 					Size const chk_res2( bonded[ ichk2 ].rsd() );
 					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
 					if ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) continue;
-					
+
 					mp_param = this_mp;
 					mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 					mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -563,21 +563,21 @@ MultipoleElecPotential::find_params_and_neighbors(
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
 				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
-				
+
 				for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 					Size const chk_atom2( bonded[ ichk2 ].atomno() );
 					Size const chk_res2( bonded[ ichk2 ].rsd() );
 					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
 					if ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) continue;
-					
+
 					for ( Size ichk3 = ichk2 + 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
 						Size const chk_atom3( bonded[ ichk3 ].atomno() );
 						Size const chk_res3( bonded[ ichk3 ].rsd() );
 						bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
 						MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
 						if ( this_mp->atom_type()[4] != chk_mp3.type( chk_atom3 ) ) continue;
-						
+
 						mp_param = this_mp;
 						mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 						mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -596,21 +596,21 @@ MultipoleElecPotential::find_params_and_neighbors(
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
 				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
-				
+
 				for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 					Size const chk_atom2( bonded[ ichk2 ].atomno() );
 					Size const chk_res2( bonded[ ichk2 ].rsd() );
 					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
 					if ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) continue;
-					
+
 					for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
 						Size const chk_atom3( bonded[ ichk3 ].atomno() );
 						Size const chk_res3( bonded[ ichk3 ].rsd() );
 						bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
 						MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
 						if ( this_mp->atom_type()[4] != chk_mp3.type( chk_atom3 ) ) continue;
-						
+
 						mp_param = this_mp;
 						mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 						mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -644,15 +644,15 @@ MultipoleElecPotential::find_params_and_neighbors(
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
 				if ( this_mp->atom_type()[2] != chk_mp.type( chk_atom ) ) continue;
-				
+
 				for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 					Size const chk_atom2( bonded[ ichk2 ].atomno() );
 					Size const chk_res2( bonded[ ichk2 ].rsd() );
 					bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 					MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
 					if ( ( this_mp->atom_type()[3] != chk_mp2.type( chk_atom2 ) ) ||
-						( ichk2 == ichk ) ) continue;
-					
+							( ichk2 == ichk ) ) continue;
+
 					if ( this_mp->atom_type()[4] == 0 ) {
 						// This is the simple, achiral case
 						mp_param = this_mp;
@@ -668,7 +668,7 @@ MultipoleElecPotential::find_params_and_neighbors(
 							bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
 							MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
 							if ( this_mp->atom_type()[4] != chk_mp3.type( chk_atom3 ) ) continue;
-							
+
 							mp_param = this_mp;
 							mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 							mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -682,14 +682,14 @@ MultipoleElecPotential::find_params_and_neighbors(
 
 			for ( Size iatom = 1 ; iatom <= rsd.natoms() ; ++iatom ) {
 				if ( ( rsd.path_distance( j, iatom ) != 1 ) ||
-					( mp.type( iatom ) != this_mp->atom_type()[2] ) ) continue;
-				
+						( mp.type( iatom ) != this_mp->atom_type()[2] ) ) continue;
+
 				for ( Size iatom2 = 1 ; iatom2 <= rsd.natoms() ; ++iatom2 ) {
 					if ( ( ( rsd.path_distance( j, iatom2 )  != 1 ) &&
-								( rsd.path_distance( j, iatom2 ) != 2 ) ) ||
-						( mp.type( iatom2 ) != this_mp->atom_type()[3] ) ||
-						( iatom == iatom2 ) ) continue;
-					
+							( rsd.path_distance( j, iatom2 ) != 2 ) ) ||
+							( mp.type( iatom2 ) != this_mp->atom_type()[3] ) ||
+							( iatom == iatom2 ) ) continue;
+
 					if ( this_mp->atom_type()[4] == 0 ) {
 						// This is the simple, achiral case
 						mp_param = this_mp;
@@ -701,9 +701,9 @@ MultipoleElecPotential::find_params_and_neighbors(
 						// Chiral case - look for the third match
 						for ( Size iatom3 = 1 ; iatom3 <= rsd.natoms() ; ++iatom3 ) {
 							if ( ( ( rsd.path_distance( j, iatom3 )  != 1 ) &&
-								  ( rsd.path_distance( j, iatom3 ) != 2 ) ) ||
-								( mp.type( iatom3 ) != this_mp->atom_type()[4] ) ) continue;
-							
+									( rsd.path_distance( j, iatom3 ) != 2 ) ) ||
+									( mp.type( iatom3 ) != this_mp->atom_type()[4] ) ) continue;
+
 							mp_param = this_mp;
 							mp.my_local_coord_frame( j ).push_back( AtomID( iatom, rsd.seqpos() ) );
 							mp.my_local_coord_frame( j ).push_back( AtomID( iatom2, rsd.seqpos() ) );
@@ -2012,7 +2012,7 @@ get_damped_scale_factors(
 	// Damping for scale factors
 	Real damp( mp_param1->pdamp() *  mp_param2->pdamp() );
 	if ( damp == 0.0 ) return;
-	
+
 	Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
 	damp = -pgamma * std::pow((dist/damp), 3);
 	if ( damp > -50.0 ) {

@@ -184,24 +184,24 @@ FaMPSolvEnergy::eval_atom_derivative(
 			Real cp_weight = 1.0; Size path_dist(0);
 
 			if ( ! cpfxn->count(m, n, cp_weight, path_dist ) ) continue;
-			
+
 			// Grab proj from both atoms
 			core::Real proj_m = fa_proj_[ rsd1.seqpos() ][ m ];
 			core::Real proj_n = fa_proj_[ rsd2.seqpos() ][ n ];
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
 			Vector const d_ij_norm = d_ij.normalized();
-			
+
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-			
+
 			Vector f1( 0.0 ), f2( 0.0 );
-			
+
 			Real const dE_dR_over_r
-			( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2, proj_m, proj_n ) );
+				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2, proj_m, proj_n ) );
 			if ( dE_dR_over_r == 0.0 ) continue;
-			
+
 			if ( same_res ) {
 				F1 += 0.5 * dE_dR_over_r * cp_weight * f1;
 				F2 += 0.5 * dE_dR_over_r * cp_weight * f2;
@@ -306,24 +306,24 @@ FaMPSolvEnergy::get_residue_pair_energy(
 
 			Real cp_weight = 1.0; Size path_dist( 0 );
 			if ( ! cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
-			
+
 			// Grab proj from both atoms
 			core::Real proj_i = fa_proj_[ rsd1.seqpos() ][ i ];
 			core::Real proj_j = fa_proj_[ rsd2.seqpos() ][ j ];
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( j ) );
-			
+
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
-			
+
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-			
+
 			Real dummy_deriv( 0.0 );
 			bool debug( false );
-			
+
 			score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv, proj_i, proj_j, debug );
 			if ( same_res ) score *= 0.5;
-			
+
 			fa_mbsolv_score += score;
 		}
 	}
@@ -342,7 +342,7 @@ FaMPSolvEnergy::eval_lk(
 ) const {
 
 	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return 0.0;
-	
+
 	// Initialize Variables
 	Real temp_score( 0.0 );
 	deriv = 0.0;
@@ -351,34 +351,34 @@ FaMPSolvEnergy::eval_lk(
 	Real const d2_bin = d2 * get_bins_per_A2_;
 	int disbin = static_cast< int >( d2_bin ) + 1;
 	Real frac = d2_bin - ( disbin - 1 );
-	
+
 	int const l1 = solv1_.index( disbin, atom2.type(), atom1.type() );
 	int const l2 = l1 + 1;
-	
+
 	// Membrane specific solvation
 	// solvation of atom1 based on its distance from the membrane center on the membrane normal
 	Real e11 = f1 * solv1_[ l1 ] + (1 - f1) * memb_solv1_[ l1 ];
 	Real e12 = f1 * solv1_[ l2 ] + (1 - f1) * memb_solv1_[ l2 ];
-	
+
 	//pba solvation of atom2 based on its distance from the membrane center on the membrane normal
 	Real e21 = f2 * solv2_[ l1 ] + (1 - f2) * memb_solv2_[ l1 ];
 	Real e22 = f2 * solv2_[ l2 ] + (1 - f2) * memb_solv2_[ l2 ];
-	
+
 	Real e1 = e11 + e21;
 	Real e2 = e12 + e22;
-	
+
 	temp_score = e1 + frac * ( e2 - e1 );
-	
+
 	// Always evaluate derivatives
 	if ( eval_deriv ) {
-		
+
 		e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
 		e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
 		e21 = f2 * dsolv2_[ l1 ] + (1 - f2) * memb_dsolv2_[ l1 ];
 		e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
 		e1 = e11 + e21;
 		e2 = e12 + e22;
-		
+
 		deriv = e1 + frac * ( e2 - e1 );
 		deriv = deriv / std::sqrt( d2 );
 	}
@@ -402,24 +402,24 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 	Real d2 = atom1.xyz().distance_squared( atom2.xyz() );
 
 	if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) return 0.0;
-	
+
 	// bin by distance:
 	Real const d2_bin = d2 * get_bins_per_A2_;
 	int disbin = static_cast< int >( d2_bin ) + 1;
 	Real frac = d2_bin - ( disbin - 1 );
-	
+
 	int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
-	l2 = l1 + 1;
-	
+		l2 = l1 + 1;
+
 	Real e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
 	Real e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
 	Real e21 = f2 * dsolv2_[ l1 ] + (1 - f2) * memb_dsolv2_[ l1 ];
 	Real e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
 	Real e1 = e11 + e21;
 	Real e2 = e12 + e22;
-	
+
 	Real deriv = fa_weight_ * ( e1 + frac * ( e2 - e1 ) );
-	
+
 	return deriv / std::sqrt( d2 );
 }
 

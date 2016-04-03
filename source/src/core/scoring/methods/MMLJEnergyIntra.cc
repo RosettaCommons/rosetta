@@ -162,7 +162,7 @@ MMLJEnergyIntra::eval_intrares_energy(
 
 			// ask count pair if we should score it
 			if ( !cpfxn->count( i, j, weight, path_dist ) ) continue;
-			
+
 			// calc dist
 			Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
 			// calc energy

@@ -707,15 +707,15 @@ calc_atom_masks(
 
 			Real const distance_ijxyz( iia_atom_xyz.distance( jja_atom_xyz ) ); // could be faster w/o sqrt, using Jeff Gray's rsq_min stuff
 			if ( distance_ijxyz > iia_atom_radius + jja_atom_radius ) continue;
-			
+
 			if ( distance_ijxyz <= 0.0 ) {
 				continue;
 			}
-			
+
 			// account for atom j overlapping atom i:
 			// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
 			int degree_of_overlap, aphi, theta, point, masknum;
-			
+
 			if ( ! jrsd.atom_type( jja ).is_h2o() ) {
 				get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
 #ifdef FILE_DEBUG
@@ -723,17 +723,17 @@ calc_atom_masks(
 				//TR << "calculating orientation of " << jrsd.name3() << jj << " atom " << jrsd.atom_name( jja ) << " on "
 				//	<< irsd.name3() << ii << " atom " << irsd.atom_name ( iia ) << std::endl;
 #endif
-				
+
 				get_orientation( iia_atom_xyz, jja_atom_xyz, aphi, theta, distance_ijxyz );
 				point = angles( aphi, theta );
 				masknum = point * 100 + degree_of_overlap;
 #ifdef FILE_DEBUG
 				//TR << "calculated masknum " << masknum << std::endl;
 #endif
-				
+
 				//ronj overlap bit values for all atoms should have been init'd to zero before the main for loops
 				utility::vector1< ObjexxFCL::ubyte > & iia_bit_values = atom_masks[ AtomID( iia, ii ) ];
-				
+
 				// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
 				// bitwise_or the atoms current values with the values from the database/masks array
 #ifdef FILE_DEBUG
@@ -743,7 +743,7 @@ calc_atom_masks(
 #endif
 				for ( int bb = 1, m = masks.index( bb, masknum ); bb <= num_bytes; ++bb, ++m ) {
 					iia_bit_values[ bb ] = ObjexxFCL::bit::bit_or( iia_bit_values[ bb ], masks[ m ] );
-					
+
 #ifdef FILE_DEBUG
 					//int bit;
 					//TR << (bb-1) * 8 << ":";
@@ -753,7 +753,7 @@ calc_atom_masks(
 					//}
 					//TR << " ";
 #endif
-					
+
 				}
 #ifdef FILE_DEBUG
 				//TR << std::endl;
@@ -761,29 +761,29 @@ calc_atom_masks(
 				//print_dot_bit_string( iia_bit_values );
 #endif
 			}
-			
+
 			// account for i overlapping j:
 			// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
 			// ronj I don't think this is necessary since we'll eventually perform this calculation when we start
 			// ronj iterating over the j atoms
 			if ( irsd.atom_type(iia).is_h2o() ) continue;
-			
+
 			get_overlap( jja_atom_radius, iia_atom_radius, distance_ijxyz, degree_of_overlap );
 #ifdef FILE_DEBUG
 			//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
 			//TR << "calculating orientation of " << irsd.name3() << ii << " atom " << irsd.atom_name( iia ) << " on "
 			//	<< jrsd.name3() << jj << " atom " << jrsd.atom_name ( jja ) << std::endl;
 #endif
-			
+
 			get_orientation( jja_atom_xyz, iia_atom_xyz, aphi, theta, distance_ijxyz );
 			point = angles( aphi, theta );
 			masknum = point * 100 + degree_of_overlap;
 #ifdef FILE_DEBUG
 			//TR << "calculated masknum " << masknum << std::endl;
 #endif
-			
+
 			utility::vector1< ObjexxFCL::ubyte > & jja_bit_values( atom_masks[ AtomID( jja, jj ) ] );
-			
+
 			// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
 			// bitwise_or the atoms current values with the values from the database/masks array
 #ifdef FILE_DEBUG
@@ -800,14 +800,14 @@ calc_atom_masks(
 				//}
 				//TR << " ";
 #endif
-				
+
 			}
 #ifdef FILE_DEBUG
 			//TR << std::endl;
 			//TR << "final bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
 			//print_dot_bit_string( jja_bit_values );
 #endif
-			
+
 #ifdef FILE_DEBUG
 				//TR << "------" << std::endl;
 #endif

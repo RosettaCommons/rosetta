@@ -139,17 +139,17 @@ PairEnergy::residue_pair_energy(
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ||
 			(!rsd1.is_polar() && !rsd1.is_aromatic() ) ||
 			(!rsd2.is_polar() && !rsd2.is_aromatic() ) ) return;
-	
+
 	/// Enforce interaction cutoff
 	Real const rsd1_reach( rsd1.nbr_radius() ), rsd2_reach( rsd2.nbr_radius() );
 	Distance const intxn_dist = rsd1_reach + rsd2_reach + interaction_cutoff();
 	DistanceSquared const intxn_dist2 = intxn_dist * intxn_dist;
 	DistanceSquared const nbr_dist2 = rsd1.xyz( rsd1.nbr_atom() ).distance_squared( rsd2.xyz( rsd2.nbr_atom() ) );
 	if ( nbr_dist2 > intxn_dist2 ) return;
-	
+
 	TenANeighborGraph const & tenA_neighbor_graph
-	( pose.energies().tenA_neighbor_graph() );
-	
+		( pose.energies().tenA_neighbor_graph() );
+
 	Real pairE = potential_.pair_term_energy(
 		rsd1,
 		tenA_neighbor_graph.get_node( rsd1.seqpos() )->
@@ -157,7 +157,7 @@ PairEnergy::residue_pair_energy(
 		rsd2,
 		tenA_neighbor_graph.get_node( rsd2.seqpos() )->
 		num_neighbors_counting_self_static() );
-	
+
 	if ( rsd1.is_polar() && rsd2.is_polar() ) {
 		emap[ fa_pair_pol_pol ] += pairE;
 		emap[ fa_pair ] += pairE;
@@ -166,16 +166,16 @@ PairEnergy::residue_pair_energy(
 	} else {
 		emap[ fa_pair_aro_pol ] += pairE;
 	}
-	
+
 	//if ( rsd1.actcoord_atoms().size() == 1 && rsd1.actcoord().distance( rsd1.xyz( rsd1.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
 	// std::cout << "Actcoord discrepancy!" << std::endl;
 	//}
-	
+
 	//if ( rsd2.actcoord_atoms().size() == 1 && rsd2.actcoord().distance( rsd2.xyz( rsd2.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
 	// std::cout << "Actcoord discrepancy2!" << std::endl;
 	//}
-	
-	
+
+
 	//if ( pairE != 0.0 )
 	// std::cout << "  pairE " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << pairE << " " << std::sqrt( nbr_dist2 ) << std::endl;
 	//std::cout << "  pairE: " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << pairE << std::endl;
@@ -219,12 +219,12 @@ PairEnergy::evaluate_rotamer_pair_energies(
 			Real const jj_radius( jj_example_rotamer.type().nbr_radius() );
 
 			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 ) ) continue;
-			
+
 			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
 					Size const ll_rot_id = jj_offset + ll - 1;
-					
+
 					//emap.zero();
 					emap[ fa_pair ] = 0;
 					emap[ fa_pair_aro_aro ] = 0;

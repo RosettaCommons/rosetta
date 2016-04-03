@@ -94,7 +94,7 @@ MembraneEnvPenalties::finalize_total_energy(
 	potential_.finalize( pose );
 }
 
-	core::Size
+core::Size
 MembraneEnvPenalties::version() const
 {
 	return 1; // Initial versioning

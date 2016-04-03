@@ -155,29 +155,29 @@ Fa_MbsolvEnergy::get_residue_pair_energy(
 
 			Real cp_weight = 1.0; Size path_dist( 0 );
 			if ( !cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( j ) );
-			
+
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
-			
+
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-			
+
 			Real dummy_deriv( 0.0 );
-			
+
 			//pbadebug WARNING
 			bool debug(false);
-			
+
 			temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv,
 				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),i),
 				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),j),debug);
-			
+
 			if ( same_res ) temp_score *= 0.5;
 			fa_mbsolv_score += temp_score;
-			
+
 			/*if ( verbose_ && std::abs( fa_mbsolv_score ) > 0.1 )
-				std::cout << "fa_mbsolv_score: rsd1 " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " rsd2 " << rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,3,fa_mbsolv_score) << ' ' << std::
-				endl;*/
+			std::cout << "fa_mbsolv_score: rsd1 " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " rsd2 " << rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,3,fa_mbsolv_score) << ' ' << std::
+			endl;*/
 		} // j
 	} // i
 }
@@ -215,41 +215,41 @@ Fa_MbsolvEnergy::eval_lk(
 	bool const eval_deriv( true );
 
 	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return 0.0;
-	
+
 	Real const d2_bin = d2 * get_bins_per_A2_;
 	int disbin = static_cast< int >( d2_bin ) + 1;
 	Real frac = d2_bin - ( disbin - 1 );
-	
+
 	// l1 and l2 are FArray LINEAR INDICES for fast lookup:
 	// [ l1 ] == (disbin  ,attype2,attype1)
 	// [ l2 ] == (disbin+1,attype2,attype1)
-	
+
 	int const l1 = solv1_.index( disbin, atom2.type(), atom1.type() );
 	int const l2 = l1 + 1;
-	
+
 	//pba Membrane specific solvation
 	//pba solvation of atom1 based on its distance from the membrane center on the membrane normal
-	
+
 	Real e11 = f1 * solv1_[ l1 ] + (1 - f1) * memb_solv1_[ l1 ];
 	Real e12 = f1 * solv1_[ l2 ] + (1 - f1) * memb_solv1_[ l2 ];
-	
+
 	//pba solvation of atom2 based on its distance from the membrane center on the membrane normal
-	
+
 	Real e21 = f2 * solv2_[ l1 ] + (1 - f2) * memb_solv2_[ l1 ];
 	Real e22 = f2 * solv2_[ l2 ] + (1 - f2) * memb_solv2_[ l2 ];
-	
+
 	Real e1 = e11 + e21;
 	Real e2 = e12 + e22;
-	
+
 	temp_score = e1 + frac * ( e2 - e1 ); //temp_score = weight * ( e1 + frac * ( e2 - e1 ) );
-	
+
 	if ( debug ) {
 		std::cout << "f1 s1l1 mbs1l1 s1l2 mbs1l2 " << f1 << " " << solv1_[ l1 ] << " " << memb_solv1_[ l1 ] << " " <<
-		solv1_[ l2 ] << " " << memb_solv1_[ l2 ] << std::endl;
+			solv1_[ l2 ] << " " << memb_solv1_[ l2 ] << std::endl;
 		std::cout << "f2 s2l1 mbs2l1 s2l2 mbs2l2 " << f2 << " " << solv2_[ l1 ] << " " << memb_solv2_[ l1 ] << " " <<
-		solv2_[ l2 ] << " " << memb_solv2_[ l2 ] << std::endl;
+			solv2_[ l2 ] << " " << memb_solv2_[ l2 ] << std::endl;
 	}
-	
+
 	if ( eval_deriv ) {
 		//   int const l1 = dsolv1_.index( disbin, atom2.type(), atom1.type() ),
 		//    l2 = l1 + 1;
@@ -261,7 +261,7 @@ Fa_MbsolvEnergy::eval_lk(
 		e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
 		e1 = e11 + e21;
 		e2 = e12 + e22;
-		
+
 		deriv = e1 + frac * ( e2 - e1 );
 		deriv = deriv / std::sqrt( d2 );
 	}
@@ -288,24 +288,24 @@ Fa_MbsolvEnergy::eval_dE_dR_over_r(
 	d2 = atom1.xyz().distance_squared( atom2.xyz() );
 
 	if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) return 0.0;
-	
+
 	// bin by distance:
 	Real const d2_bin = d2 * get_bins_per_A2_;
 	int disbin = static_cast< int >( d2_bin ) + 1;
 	frac = d2_bin - ( disbin - 1 );
-	
+
 	int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
-	l2 = l1 + 1;
-	
+		l2 = l1 + 1;
+
 	Real e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
 	Real e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
 	Real e21 = f2 * dsolv2_[ l1 ] + (1 - f2) * memb_dsolv2_[ l1 ];
 	Real e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
 	Real e1 = e11 + e21;
 	Real e2 = e12 + e22;
-	
+
 	Real deriv = fa_mbsolv_weight_ * ( e1 + frac * ( e2 - e1 ) );
-	
+
 	return deriv / std::sqrt( d2 );
 }
 
@@ -363,21 +363,21 @@ Fa_MbsolvEnergy::eval_atom_derivative(
 			Real cp_weight = 1.0; Size path_dist(0);
 
 			if ( !cpfxn->count(m, n, cp_weight, path_dist ) ) continue;
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
 			Vector const d_ij_norm = d_ij.normalized();
-			
+
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-			
+
 			Vector f1( 0.0 ), f2( 0.0 );
 			Real const dE_dR_over_r
-			( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2,
-								Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),m),
-								Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),n) ) );
+				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2,
+				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),m),
+				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),n) ) );
 			if ( dE_dR_over_r == 0.0 ) continue;
-			
+
 			if ( same_res ) {
 				F1 += 0.5 * dE_dR_over_r * cp_weight * f1;
 				F2 += 0.5 * dE_dR_over_r * cp_weight * f2;

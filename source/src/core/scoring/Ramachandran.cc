@@ -297,7 +297,7 @@ Ramachandran::eval_rama_score_all(
 
 	for ( int ii = 1; ii <= total_residue; ++ii ) {
 		if ( !pose.residue(ii).is_protein() || pose.residue(ii).is_terminus() || pose.residue(ii).is_virtual_residue() ) continue;
-		
+
 		Real rama_score,dphi,dpsi;
 		if ( is_normally_connected(pose.residue(ii)) ) {
 			eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
@@ -733,7 +733,7 @@ Ramachandran::symmetrize_gly_table(
 	bool const dont_use_shap
 ) {
 	TR << "Symmetrizing glycine Ramachandran table." << std::endl;
-	
+
 	for ( core::Size ss=(dont_use_shap ? 1 : 3); ss<=3; ++ss ) { //Repeat for each secondary structure type, if we're not using the Shapovalov tables.  If we are, then only ss=3 has been loaded.
 
 		//For debugging only:

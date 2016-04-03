@@ -707,7 +707,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 ) const {
 	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	
+
 	//Doesn't recalculate stuff if already updated:
 	rna_centroid_info.update( pose );
 
@@ -1138,7 +1138,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 		Vector const & z_j = M_j.col_z();
 		Real const cos_theta = dot_product( z_i, z_j );
 		//This arc-cosine costs a lot actually:
-		
+
 		//First cycle through all base pairs that count... anything involving this residue?
 		if ( filtered_base_pair_array( i, j ) < 0.0 ) {
 

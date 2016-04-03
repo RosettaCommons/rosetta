@@ -184,11 +184,11 @@ RG_Energy_RNA::eval_atom_derivative(
 	// geometry relative to the base first sidechain atom -- apply it there.
 
 	if ( atom_num_i != first_base_atom_index( rsd ) ) return;
-	
+
 	Vector const v( base_centroids[i] );
 	Vector f2 = ( v - center_of_mass_ )/ ( ( nres - 1 ) * rg_ );
 	Vector f1 = cross( f2, v );
-	
+
 	F1 += weights[ rna_rg ] * f1;
 	F2 += weights[ rna_rg ] * f2;
 } // eval atom derivative

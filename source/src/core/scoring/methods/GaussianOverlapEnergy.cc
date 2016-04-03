@@ -117,10 +117,10 @@ GaussianOverlapEnergy::residue_pair_energy(
 			Real const d2( i_xyz.distance_squared( j_xyz ) );
 
 			if ( d2 > 150.0 ) continue;
-			
+
 			core::Real r1 = rsd1.atom_type(i).lj_radius();
 			core::Real r2 = rsd2.atom_type(j).lj_radius();
-			
+
 			r1 = .92*r1; r2 = .92*r2;
 			if ( d2 <= .5*(r1+r2) ) {
 				score = 1000;

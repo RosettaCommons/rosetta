@@ -126,7 +126,7 @@ MgKnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter(
 	if ( !rsd.is_RNA() ) return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
 
 	std::string const atom_type_name = rsd.atom_type( j ).name();
-	
+
 	// This information should probably go into a special RNA_Mg_Potential.cc function or something.
 	if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
 		return gaussian_parameter_phosphate_oxygen_indirect_;
@@ -139,7 +139,7 @@ MgKnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter(
 	} else if ( rsd.atom_name( j ) == " O  " ) {
 		return gaussian_parameter_water_oxygen_;
 	}
-	
+
 	return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
 }
 

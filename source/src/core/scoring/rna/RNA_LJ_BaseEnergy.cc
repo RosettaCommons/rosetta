@@ -144,21 +144,21 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 			Real cp_weight = 1.0;
 			Size path_dist( 0 );
 			if ( !cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( j ) );
-			
+
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
-			
+
 			if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real( 0.0 ) ) ) continue;
-			
+
 			Real dummy_deriv( 0.0 );
 			Real temp_atr_score( 0.0 ), temp_rep_score( 0.0 );
-			
+
 			eval_lj( rsd1.atom( i ), rsd2.atom( j ), d2,
 				temp_atr_score, temp_rep_score,
 				dummy_deriv, dummy_deriv );
-			
+
 			fa_atr_score += cp_weight * temp_atr_score;
 			fa_rep_score += cp_weight * temp_rep_score;
 		} // j
@@ -200,15 +200,15 @@ RNA_LJ_BaseEnergy::eval_lj(
 	bool const eval_deriv( true );
 
 	if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real( 0.0 ) ) ) return;
-	
+
 	Real const d2_bin = d2 * get_bins_per_A2_;
 	int disbin = static_cast< int > ( d2_bin ) + 1;
 	Real frac = d2_bin - ( disbin - 1 );
-	
+
 	// l1 and l2 are FArray LINEAR INDICES for fast lookup:
 	// [ l1 ] == (disbin ,attype2,attype1)
 	// [ l2 ] == (disbin+1,attype2,attype1)
-	
+
 	{
 		int const l1 = ljatr_.index( disbin, atom2.type(), atom1.type() );
 		int const l2 = l1 + 1;
@@ -217,8 +217,8 @@ RNA_LJ_BaseEnergy::eval_lj(
 			deriv_atr = ( ljatr_[ l2 ] - ljatr_[ l1 ] ) * get_bins_per_A2_ * std::sqrt( d2 ) * 2;
 		}
 	}
-	
-	
+
+
 	{
 		int const l1 = ljrep_.index( disbin, atom2.type(), atom1.type() );
 		int const l2 = l1 + 1;
@@ -279,22 +279,22 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 			Real cp_weight = 1.0;
 			Size path_dist( 0 );
 			if ( !cpfxn->count( m, n, cp_weight, path_dist ) ) continue;
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
 			//Real const d = std::sqrt( d2 );
 			Vector const d_ij_norm = d_ij.normalized();
-			
+
 			if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real( 0.0 ) ) ) continue;
-			
+
 			Real dummy( 0.0 ), fa_atr_deriv( 0.0 ), fa_rep_deriv( 0.0 );
 			eval_lj( rsd1.atom( m ), rsd2.atom( n ), d2, dummy, dummy, fa_atr_deriv, fa_rep_deriv );
-			
+
 			Vector const f2_fwd =   -1.0 * cp_weight * d_ij_norm * ( fa_atr_deriv * weights[ rna_fa_atr_base ] +
-																	fa_rep_deriv * weights[ rna_fa_rep_base ] );
+				fa_rep_deriv * weights[ rna_fa_rep_base ] );
 			Vector const f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
-			
+
 			F1 += f1_fwd;
 			F2 += f2_fwd;
 		}
@@ -337,18 +337,18 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 			Real cp_weight = 1.0;
 			Size path_dist( 0 );
 			if ( !cpfxn->count( m, n, cp_weight, path_dist ) ) continue;
-			
+
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
 			//Real const d = std::sqrt( d2 );
 			Vector const d_ij_norm = d_ij.normalized();
-			
+
 			if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real( 0.0 ) ) ) continue;
-			
+
 			Real dummy( 0.0 ), fa_atr( 0.0 ), fa_rep( 0.0 );
 			eval_lj( rsd1.atom( m ), rsd2.atom( n ), d2, fa_atr, fa_rep, dummy, dummy );
-			
+
 			// In principle could pass in an emap and weight the components
 			// by the Emap.
 			score += cp_weight * ( fa_atr + fa_rep );

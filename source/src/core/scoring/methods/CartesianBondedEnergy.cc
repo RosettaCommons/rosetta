@@ -645,7 +645,7 @@ IdealParametersDatabase::read_bbdep_table(
 	for ( int i=1; i<=36; ++i ) {
 		for ( int j=1; j<=36; ++j ) {
 			if ( Ns(i,j) != 0 ) continue;
-			
+
 			CNavg_tbl(i,j)    = CN_indep_avg;    CNdev_tbl(i,j)    = CN_indep_K;
 			NCAavg_tbl(i,j)   = NCA_indep_avg;   NCAdev_tbl(i,j)   = NCA_indep_K;
 			CACBavg_tbl(i,j)  = CACB_indep_avg;  CACBdev_tbl(i,j)  = CACB_indep_K;
@@ -1253,15 +1253,15 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 			ResidueCartBondedParameters::Size2 ids;
 			ids[1] = atm_i; ids[2] = atm_j;
-			
+
 			// lookup Kd and d0
 			std::string atm1name = rsd_type.atom_name(atm_i); boost::trim(atm1name);
 			std::string atm2name = rsd_type.atom_name(atm_j); boost::trim(atm2name);
 			CartBondedParametersCOP len_params = lookup_length(rsd_type, prepro,
 				atm1name,atm2name, atm_i, atm_j );
-			
+
 			if ( len_params->is_null() ) continue;
-			
+
 			restype_params->add_length_parameter( ids, len_params );
 
 		}

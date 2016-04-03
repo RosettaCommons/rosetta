@@ -120,16 +120,16 @@ GroupElec::get_group( core::chemical::ResidueType const &rsdtype ) const
 		= rsdgrps_.find( rsdtype.name() );
 
 	if ( it != rsdgrps_.end() ) return it->second;
-	
+
 	// otherwise assign new group
 	TR.Debug << "Building extra group on " << rsdtype.name() << std::endl;
 	ResElecGroup resgrp;
 	resgrp.resize( 0 );
-	
+
 	// or, each atom as group
 	for ( core::Size iatm = 1; iatm <= rsdtype.natoms(); ++iatm ) {
 		if ( rsdtype.is_virtual( iatm ) ) continue;
-		
+
 		ElecGroup grp;
 		grp.atms.push_back( iatm );
 		grp.comatms.push_back( iatm );
@@ -138,7 +138,7 @@ GroupElec::get_group( core::chemical::ResidueType const &rsdtype ) const
 		grp.qeps = 0.0;
 		resgrp.push_back( grp );
 	}
-	
+
 	rsdgrps_[ rsdtype.name() ] = resgrp;
 	it = rsdgrps_.find( rsdtype.name() );
 	return it->second;
@@ -328,7 +328,7 @@ GroupElec::eval_respair_group_coulomb(
 			core::Real const grpdis2 = dcom.length_squared();
 
 			if ( use_shift && (grpdis2 > coulomb().max_dis2()) ) continue;
-			
+
 			Real grp_cpweight( 1.0 );
 			Size path_dist( 0 );
 			if ( is_bonded && grp_cpfxn_ ) {
@@ -365,7 +365,7 @@ GroupElec::eval_respair_group_coulomb(
 					}
 
 					if ( !is_count ) continue;
-					
+
 					Real atompair_score( 0.0 );
 					if ( use_subtract ) {
 						atompair_score = coulomb().eval_atom_atom_fa_elecE( rsd1.xyz( atm1 ), q1,
@@ -394,7 +394,7 @@ GroupElec::eval_respair_group_coulomb(
 
 			// converge to constant for hbonding groups
 			bool is_hbond_pair = (grp1.n_donor*grp2.n_acceptor + grp2.n_donor*grp1.n_acceptor > 0);
-			
+
 			Real dw_dE( 0.0 );
 			if ( is_hbond_pair && fade_hbond_ ) {
 				fade_hbonding_group_score( grp1, grp2, group_score, dw_dE );
@@ -505,7 +505,7 @@ GroupElec::eval_respair_group_derivatives(
 			core::Real const grpdis2 = dcom.length_squared();
 
 			if ( use_shift && (grpdis2 > coulomb().max_dis2()) ) continue;
-			
+
 			Real grp_cpweight( 1.0 );
 			Size path_dist( 0 );
 
@@ -681,7 +681,7 @@ GroupElec::get_grp_countpair(
 	}
 
 	path_dist = path_dist_min;
-	
+
 	if ( path_dist > 5 ) return 1.0; // >1-6
 	else if ( path_dist < 3 ) return 0.0; // <1-4
 	else return cpfxn_weight_[path_dist-2];

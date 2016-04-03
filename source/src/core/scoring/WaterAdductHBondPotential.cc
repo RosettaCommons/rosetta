@@ -261,7 +261,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 				h2o_hbond_energy, eval_deriv, deriv );
 
 			if ( h2o_hbond_energy >= 0.0 ) continue;
-			
+
 			Real const weight ( 1.0 );
 			hbond_set.append_hbond(
 				hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type,
@@ -307,7 +307,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 				h2o_hbond_energy, eval_deriv, deriv );
 
 			if ( h2o_hbond_energy >= 0.0 ) continue;
-			
+
 			Real const weight ( 1.0 );
 			hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type,
 				h2o_hbond_energy, weight, deriv );
