@@ -25,8 +25,8 @@ namespace antibody {
 // Forward
 class AntibodyFeatures;
 
-typedef utility::pointer::owning_ptr< AntibodyFeatures > AntibodyFeaturesOP;
-typedef utility::pointer::owning_ptr< AntibodyFeatures const > AntibodyFeaturesCOP;
+typedef utility::pointer::shared_ptr< AntibodyFeatures > AntibodyFeaturesOP;
+typedef utility::pointer::shared_ptr< AntibodyFeatures const > AntibodyFeaturesCOP;
 
 
 } //namespace antibody

@@ -13,6 +13,7 @@
 ///
 /// @author Rhiju Das
 
+#ifdef NOT_IN_SCONS_DEPRECATED
 
 #ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_DeNovoProtocol_HH
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_DeNovoProtocol_HH
@@ -219,5 +220,7 @@ private:
 
 }
 } // protocols
+
+#endif
 
 #endif

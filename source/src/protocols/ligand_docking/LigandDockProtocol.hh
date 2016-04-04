@@ -65,6 +65,9 @@ public:
 
 	virtual ~LigandDockProtocol();
 
+
+	LigandDockProtocolOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<LigandDockProtocol>( Mover::shared_from_this() ); }
+
 	void add_start_from(core::Real x, core::Real y, core::Real z);
 
 	virtual void apply( core::pose::Pose & pose );

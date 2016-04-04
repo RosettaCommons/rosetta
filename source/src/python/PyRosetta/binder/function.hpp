@@ -47,7 +47,7 @@ std::string bind_function(clang::FunctionDecl *F, Context &);
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(clang::FunctionDecl const *F, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack/*, bool for_template_arg_only=false*/);
+void add_relevant_includes(clang::FunctionDecl const *F, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level/*, bool for_template_arg_only=false*/);
 
 
 /// check if generator can create binding

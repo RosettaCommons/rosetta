@@ -86,8 +86,8 @@ public:
 
 	pose::Pose & pose();
 
-	void set_scorefxn( scoring::ScoreFunctionCOP scorefxn );
-	scoring::ScoreFunctionCOP get_scorefxn() { return scorefxn_; }
+	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
+	core::scoring::ScoreFunctionCOP get_scorefxn() { return scorefxn_; }
 
 	utility::vector1< PhosphateMove> phosphate_move_list() const { return phosphate_move_list_; }
 	void set_phosphate_move_list( utility::vector1< PhosphateMove> const & setting ) { phosphate_move_list_ = setting; }
@@ -141,7 +141,7 @@ private:
 
 	pose::PoseCOP pose_with_original_phosphates_;
 	pose::PoseOP phosphate_sample_pose_;
-	scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
 	Real phosphate_takeoff_donor_distance_cutoff2_;
 	bool screen_all_;
 	bool force_phosphate_instantiation_;

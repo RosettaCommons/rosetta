@@ -7,7 +7,14 @@
 
 namespace aaaa {
 
-// enum EA {EA_A, EA_B};
+enum EA {EA_A, EA_B};
+
+struct C
+{
+typedef EA QWE;
+};
+
+
 
 // class A
 // {};

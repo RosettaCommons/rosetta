@@ -71,6 +71,9 @@
 #include <ObjexxFCL/string.functions.hh>
 
 using namespace core;
+using namespace core::pose;
+using namespace core::pose::full_model_info;
+
 using ObjexxFCL::string_of;
 using utility::operator<<;
 

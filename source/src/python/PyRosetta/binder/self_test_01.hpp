@@ -2,22 +2,24 @@
 #define self_test_01_hpp
 
 // #include <string>
-// #include <vector>
-#include <memory>
-// #include <complex>
-// #include <utility>
+#include <vector>
+#include <map>
 #include <iostream>
+//#include <memory>
+// #include <complex>
+//#include <utility>
+//#include <iostream>
 
 #include <self_test.incl.hpp>
 
 namespace aa {
 
-class AA {
-public:
-	int n;
-	float f;
-	double d;
-};
+// class AA {
+// public:
+// 	int n;
+// 	float f;
+// 	double d;
+// };
 
 // typedef int aa_INT;
 
@@ -47,17 +49,67 @@ enum E1 {E1A, E1B};
 
 namespace utility {
 
-class A //: public std::enable_shared_from_this<A>
-{
-	~A() {}
-public:
-	A(int &r) : c(r) {}
+// void foo_p(std::pair<int, int> &) {}
+// void foo_cp(std::pair<int, int> const &) {}
+// void foo_t(std::tuple<int, int> &) {}
+// void foo_ct(std::tuple<int, int> const &) {}
+//void foo_a(aa::AA const &) {}
+//void foo_i(int const &) {}
 
-	static void delete_(A* p) { p->~A(); }
+// // template <typename T>
+// class A {
+// };
+// // void foo_t(A<enum aaaa::EA> &) {}
 
-	int a, b;
-	int &c;
-};
+// struct no_property {};
+// template <class Tag, class T, class Base = no_property>
+// struct property {
+// };
+
+// template <class T> void foo_t(T &) {}
+
+
+// template <> void foo_t(property<aaaa::C::QWE, int> &) {};
+//void foo_t(property<enum aaaa::EA, int> &) {}
+
+
+
+class A {};
+
+void foo(int a = 1) {}
+
+
+// std::vector<int> foo_v(std::vector<std::string> &)
+// {
+// 	std::vector<int> v {1,2,3};
+// 	return v;
+// }
+
+// std::vector<A> foo_a()
+// {
+// 	std::vector<A> v {A(),A(),A()};
+// 	return v;
+// }
+
+// void foo_at(std::vector<A>) {}
+
+// std::map<int, int> foo_m()
+// {
+// 	std::map<int, int> m {{1,1}, {2,3} };
+// 	return m;
+// }
+
+// class A //: public std::enable_shared_from_this<A>
+// {
+// 	~A() {}
+// public:
+// 	A(int &r) : c(r) {}
+
+// 	static void delete_(A* p) { p->~A(); }
+
+// 	int a, b;
+// 	int &c;
+// };
 
 // Test for binding data member with deleted operator=
 

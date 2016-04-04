@@ -27,8 +27,9 @@
 
 #include <basic/Tracer.hh>
 
-using namespace core::chemical;
 using namespace core;
+using namespace core::pose;
+using namespace core::chemical;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.TransientCutpointHandler" );
 

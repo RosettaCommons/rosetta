@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   DetectSymmetryMover.fwd.hh
-/// @brief  
+/// @brief
 /// @author Javier Castellanos (javierv@uw.edu)
 
 
@@ -22,8 +22,8 @@ namespace simple_moves {
 namespace symmetry {
 
 class DetectSymmetryMover;
-typedef utility::pointer::owning_ptr< DetectSymmetryMover > DetectSymmetryMoverOP;
-typedef utility::pointer::owning_ptr< DetectSymmetryMover const > DetectSymmetryMoverCOP;
+typedef utility::pointer::shared_ptr< DetectSymmetryMover > DetectSymmetryMoverOP;
+typedef utility::pointer::shared_ptr< DetectSymmetryMover const > DetectSymmetryMoverCOP;
 
 } // symmetry
 } // moves

@@ -32,6 +32,10 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.FromScratchMover" );
 using namespace protocols::stepwise::modeler;
 
+using namespace core;
+using namespace core::pose;
+using namespace core::pose::full_model_info;
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {

@@ -74,7 +74,7 @@ public:
 	TaskOperationOP newTaskOperation(
 		std::string const &,
 		basic::datacache::DataMap & datamap,
-		TagCOP = TagCOP( TagOP( new Tag() ) )
+		TagCOP = utility::tag::TagCOP( utility::tag::TagOP( new utility::tag::Tag() ) )
 	) const;
 	/// @brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagCOP
 	void newTaskOperations( TaskOperationOPs &, basic::datacache::DataMap & datamap, TagCOP ) const;

@@ -25,8 +25,8 @@ namespace perturb {
 // Forward
 class LoopMover_Perturb_QuickCCD_Moves;
 
-typedef utility::pointer::owning_ptr< LoopMover_Perturb_QuickCCD_Moves > LoopMover_Perturb_QuickCCD_MovesOP;
-typedef utility::pointer::owning_ptr< LoopMover_Perturb_QuickCCD_Moves const > LoopMover_Perturb_QuickCCD_MovesCOP;
+typedef utility::pointer::shared_ptr< LoopMover_Perturb_QuickCCD_Moves > LoopMover_Perturb_QuickCCD_MovesOP;
+typedef utility::pointer::shared_ptr< LoopMover_Perturb_QuickCCD_Moves const > LoopMover_Perturb_QuickCCD_MovesCOP;
 
 } //namespace perturb
 } //namespace loop_mover

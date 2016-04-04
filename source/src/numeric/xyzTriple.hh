@@ -489,113 +489,66 @@ public: // Methods
 
 
 	/// @brief Add: xyzTriple + xyzTriple
+	template <typename U>
 	friend
-	inline
 	void
-	add( xyzTriple const & a, xyzTriple const & b, xyzTriple & r )
-	{
-		r.x_ = a.x_ + b.x_;
-		r.y_ = a.y_ + b.y_;
-		r.z_ = a.z_ + b.z_;
-	}
+	add( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r );
 
 
 	/// @brief Add: xyzTriple + Value
+	template <typename U>
 	friend
-	inline
 	void
-	add( xyzTriple const & v, Value const & t, xyzTriple & r )
-	{
-		r.x_ = v.x_ + t;
-		r.y_ = v.y_ + t;
-		r.z_ = v.z_ + t;
-	}
+	add( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r );
 
 
 	/// @brief Add: Value + xyzTriple
+	template <typename U>
 	friend
-	inline
 	void
-	add( Value const & t, xyzTriple const & v, xyzTriple & r )
-	{
-		r.x_ = t + v.x_;
-		r.y_ = t + v.y_;
-		r.z_ = t + v.z_;
-	}
+	add( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r );
 
 
 	/// @brief Subtract: xyzTriple - xyzTriple
+	template <typename U>
 	friend
-	inline
 	void
-	subtract( xyzTriple const & a, xyzTriple const & b, xyzTriple & r )
-	{
-		r.x_ = a.x_ - b.x_;
-		r.y_ = a.y_ - b.y_;
-		r.z_ = a.z_ - b.z_;
-	}
+	subtract( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r );
 
 
 	/// @brief Subtract: xyzTriple - Value
+	template <typename U>
 	friend
-	inline
 	void
-	subtract( xyzTriple const & v, Value const & t, xyzTriple & r )
-	{
-		r.x_ = v.x_ - t;
-		r.y_ = v.y_ - t;
-		r.z_ = v.z_ - t;
-	}
+	subtract( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r );
 
 
 	/// @brief Subtract: Value - xyzTriple
+	template <typename U>
 	friend
-	inline
 	void
-	subtract( Value const & t, xyzTriple const & v, xyzTriple & r )
-	{
-		r.x_ = t - v.x_;
-		r.y_ = t - v.y_;
-		r.z_ = t - v.z_;
-	}
+	subtract( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r );
 
 
 	/// @brief Multiply: xyzTriple * Value
+	template <typename U>
 	friend
-	inline
 	void
-	multiply( xyzTriple const & v, Value const & t, xyzTriple & r )
-	{
-		r.x_ = v.x_ * t;
-		r.y_ = v.y_ * t;
-		r.z_ = v.z_ * t;
-	}
+	multiply( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r );
 
 
 	/// @brief Multiply: Value * xyzTriple
+	template <typename U>
 	friend
-	inline
 	void
-	multiply( Value const & t, xyzTriple const & v, xyzTriple & r )
-	{
-		r.x_ = t * v.x_;
-		r.y_ = t * v.y_;
-		r.z_ = t * v.z_;
-	}
+	multiply( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r );
 
 
 	/// @brief Divide: xyzTriple / Value
+	template <typename U>
 	friend
-	inline
 	void
-	divide( xyzTriple const & v, Value const & t, xyzTriple & r )
-	{
-		assert( t != Value( 0 ) );
-		Value const inv_t( Value( 1 ) / t );
-		r.x_ = v.x_ * inv_t;
-		r.y_ = v.y_ * inv_t;
-		r.z_ = v.z_ * inv_t;
-	}
+	divide( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r );
 
 
 	/// @brief Set minimum coordinates wrt another xyzTriple
@@ -623,31 +576,17 @@ public: // Methods
 
 
 	/// @brief xyzTriple with min coordinates of two xyzTriples
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	min( xyzTriple const & a, xyzTriple const & b )
-	{
-		return xyzTriple(
-			( a.x_ <= b.x_ ? a.x_ : b.x_ ),
-			( a.y_ <= b.y_ ? a.y_ : b.y_ ),
-			( a.z_ <= b.z_ ? a.z_ : b.z_ )
-		);
-	}
+	xyzTriple<U>
+	min( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief xyzTriple with max coordinates of two xyzTriples
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	max( xyzTriple const & a, xyzTriple const & b )
-	{
-		return xyzTriple(
-			( a.x_ >= b.x_ ? a.x_ : b.x_ ),
-			( a.y_ >= b.y_ ? a.y_ : b.y_ ),
-			( a.z_ >= b.z_ ? a.z_ : b.z_ )
-		);
-	}
+	xyzTriple<U>
+	max( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Normalize
@@ -1046,13 +985,10 @@ public: // Methods
 
 
 	/// @brief Distance
+	template <typename U>
 	friend
-	inline
-	Value
-	distance( xyzTriple const & a, xyzTriple const & b )
-	{
-		return std::sqrt( square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ ) );
-	}
+	U
+	distance( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Distance squared
@@ -1065,13 +1001,10 @@ public: // Methods
 
 
 	/// @brief Distance squared
+	template <typename U>
 	friend
-	inline
-	Value
-	distance_squared( xyzTriple const & a, xyzTriple const & b )
-	{
-		return square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ );
-	}
+	U
+	distance_squared( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Dot product
@@ -1102,33 +1035,23 @@ public: // Methods
 
 
 	/// @brief Dot product
+	template <typename U>
 	friend
-	inline
-	Value
-	dot( xyzTriple const & a, xyzTriple const & b )
-	{
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
-	}
+	U
+	dot( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Dot product
+	template <typename U>
 	friend
-	inline
-	Value
-	dot_product( xyzTriple const & a, xyzTriple const & b )
-	{
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
-	}
-
+	U
+	dot_product( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 	/// @brief Inner product ( == dot product )
+	template <typename U>
 	friend
-	inline
-	Value
-	inner_product( xyzTriple const & a, xyzTriple const & b )
-	{
-		return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
-	}
+	U
+	inner_product( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Cross product
@@ -1158,229 +1081,135 @@ public: // Methods
 
 
 	/// @brief Cross product
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	cross( xyzTriple const & a, xyzTriple const & b )
-	{
-		return xyzTriple(
-			( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
-			( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
-			( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-		);
-	}
+	xyzTriple<U>
+	cross( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Cross product
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	cross_product( xyzTriple const & a, xyzTriple const & b )
-	{
-		return xyzTriple(
-			( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
-			( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
-			( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-		);
-	}
+	xyzTriple<U>
+	cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Cross product: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	cross( xyzTriple const & a, xyzTriple const & b, xyzTriple & c )
-	{
-		c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
-		c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
-		c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
-	}
+	cross( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c );
 
 
 	/// @brief Cross product: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	cross_product( xyzTriple const & a, xyzTriple const & b, xyzTriple & c )
-	{
-		c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
-		c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
-		c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
-	}
+	cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c );
 
 
 	/// @brief Midpoint of 2 xyzTriples
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	midpoint( xyzTriple const & a, xyzTriple const & b )
-	{
-		return xyzTriple(
-			Value( 0.5 * ( a.x_ + b.x_ ) ),
-			Value( 0.5 * ( a.y_ + b.y_ ) ),
-			Value( 0.5 * ( a.z_ + b.z_ ) )
-		);
-	}
+	xyzTriple<U>
+	midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Midpoint of 2 xyzTriples: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	midpoint( xyzTriple const & a, xyzTriple const & b, xyzTriple & m )
-	{
-		m.x_ = Value( 0.5 * ( a.x_ + b.x_ ) );
-		m.y_ = Value( 0.5 * ( a.y_ + b.y_ ) );
-		m.z_ = Value( 0.5 * ( a.z_ + b.z_ ) );
-	}
+	midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m );
 
 
 	/// @brief Center of 2 xyzTriples
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	center( xyzTriple const & a, xyzTriple const & b )
-	{
-		return xyzTriple(
-			Value( 0.5 * ( a.x_ + b.x_ ) ),
-			Value( 0.5 * ( a.y_ + b.y_ ) ),
-			Value( 0.5 * ( a.z_ + b.z_ ) )
-		);
-	}
+	xyzTriple<U>
+	center( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Center of 2 xyzTriples: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	center( xyzTriple const & a, xyzTriple const & b, xyzTriple & m )
-	{
-		m.x_ = Value( 0.5 * ( a.x_ + b.x_ ) );
-		m.y_ = Value( 0.5 * ( a.y_ + b.y_ ) );
-		m.z_ = Value( 0.5 * ( a.z_ + b.z_ ) );
-	}
+	center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m );
 
 
 	/// @brief Center of 3 xyzTriples
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	center( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c )
-	{
-		long double const third( 1.0 / 3.0 );
-		return xyzTriple(
-			Value( third * ( a.x_ + b.x_ + c.x_ ) ),
-			Value( third * ( a.y_ + b.y_ + c.y_ ) ),
-			Value( third * ( a.z_ + b.z_ + c.z_ ) )
-		);
-	}
+	xyzTriple<U>
+	center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c );
 
 
 	/// @brief Center of 3 xyzTriples: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	center( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c, xyzTriple & m )
-	{
-		long double const third( 1.0 / 3.0 );
-		m.x_ = Value( third * ( a.x_ + b.x_ + c.x_ ) );
-		m.y_ = Value( third * ( a.y_ + b.y_ + c.y_ ) );
-		m.z_ = Value( third * ( a.z_ + b.z_ + c.z_ ) );
-	}
+	center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> & m );
 
 
 	/// @brief Center of 4 xyzTriples
+	template <typename U>
 	friend
-	inline
-	xyzTriple
-	center( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c, xyzTriple const & d )
-	{
-		return xyzTriple(
-			Value( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) ),
-			Value( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) ),
-			Value( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) )
-		);
-	}
+	xyzTriple<U>
+	center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> const & d );
 
 
 	/// @brief Center of 4 xyzTriples: Return via argument (slightly faster)
+	template <typename U>
 	friend
-	inline
 	void
-	center( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c, xyzTriple const & d, xyzTriple & m )
-	{
-		m.x_ = Value( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) );
-		m.y_ = Value( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) );
-		m.z_ = Value( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) );
-	}
+	center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> const & d, xyzTriple<U> & m );
 
 
 	/// @brief Angle between two vectors (in radians on [ 0, pi ])
+	template <typename U>
 	friend
-	inline
-	Value
-	angle_of( xyzTriple const & a, xyzTriple const & b )
-	{
-		Value const mag = a.length() * b.length();
-		return ( mag > Value( 0 ) ? std::acos( sin_cos_range( a.dot( b ) / mag ) ) : Value( 0 ) );
-	}
+	U
+	angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
 	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 	///        in other words, the positive angle about b from a to c
+	template <typename U>
 	friend
-	inline
-	Value
-	angle_of( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c )
-	{
-		return angle_of( a - b, c - b );
-	}
+	U
+	angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c );
 
 
 	/// @brief Cosine of angle between two vectors
+	template <typename U>
 	friend
-	inline
-	Value
-	cos_of( xyzTriple const & a, xyzTriple const & b )
-	{
-		Value const mag = a.length() * b.length();
-		return ( mag > Value( 0 ) ? sin_cos_range( a.dot( b ) / mag ) : Value( 1 ) );
-	}
+	U
+	cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Cosine of angle formed by three consecutive points
 	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 	///        in other words, the positive angle about b from a to c.
+	template <typename U>
 	friend
-	inline
-	Value
-	cos_of( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c )
-	{
-		return cos_of( a - b, c - b );
-	}
+	U
+	cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c );
 
 
 	/// @brief Sine of angle between two vectors
+	template <typename U>
 	friend
-	inline
-	Value
-	sin_of( xyzTriple const & a, xyzTriple const & b )
-	{
-		return std::sqrt( Value( 1 ) - square( cos_of( a, b ) ) );
-	}
+	U
+	sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Sine of angle formed by three consecutive points
 	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 	///        in other words, the positive angle about b from a to c
+	template <typename U>
 	friend
-	inline
-	Value
-	sin_of( xyzTriple const & a, xyzTriple const & b, xyzTriple const & c )
-	{
-		return sin_of( a - b, c - b );
-	}
+	U
+	sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c );
 
 
 public: // Properties: predicates
@@ -1856,13 +1685,10 @@ public: // Comparison
 
 
 	/// @brief Equal length?
+	template <typename U>
 	friend
-	inline
 	bool
-	equal_length( xyzTriple const & a, xyzTriple const & b )
-	{
-		return ( a.length_squared() == b.length_squared() );
-	}
+	equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Not equal length?
@@ -1875,13 +1701,10 @@ public: // Comparison
 
 
 	/// @brief Not equal length?
+	template <typename U>
 	friend
-	inline
 	bool
-	not_equal_length( xyzTriple const & a, xyzTriple const & b )
-	{
-		return ( a.length_squared() != b.length_squared() );
-	}
+	not_equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b );
 
 
 	/// @brief Longer?
@@ -2321,6 +2144,400 @@ equal_length( xyzTriple< T > const & a, xyzTriple< T > const & b );
 template< typename T >
 bool
 not_equal_length( xyzTriple< T > const & a, xyzTriple< T > const & b );
+
+
+
+/// @brief Dot product
+template <typename U>
+U
+dot( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+}
+
+
+/// @brief Dot product
+template <typename U>
+U
+dot_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+}
+
+
+/// @brief Inner product ( == dot product )
+template <typename U>
+U
+inner_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return ( a.x_ * b.x_ ) + ( a.y_ * b.y_ ) + ( a.z_ * b.z_ );
+}
+
+/// @brief Equal length?
+template <typename U>
+bool
+equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return ( a.length_squared() == b.length_squared() );
+}
+
+
+/// @brief Cross product
+template <typename U>
+xyzTriple<U>
+cross( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return xyzTriple<U>(
+		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
+		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
+		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
+					 );
+}
+
+
+/// @brief Cross product
+template <typename U>
+xyzTriple<U>
+cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return xyzTriple<U>(
+		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
+		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
+		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
+					 );
+}
+
+
+/// @brief Cross product: Return via argument (slightly faster)
+template <typename U>
+void
+cross( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c )
+{
+	c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
+	c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
+	c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
+}
+
+
+/// @brief Cross product: Return via argument (slightly faster)
+template <typename U>
+void
+cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c )
+{
+	c.x_ = ( a.y_ * b.z_ ) - ( a.z_ * b.y_ );
+	c.y_ = ( a.z_ * b.x_ ) - ( a.x_ * b.z_ );
+	c.z_ = ( a.x_ * b.y_ ) - ( a.y_ * b.x_ );
+}
+
+
+/// @brief Midpoint of 2 xyzTriples
+template <typename U>
+xyzTriple<U>
+midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return xyzTriple<U>(
+		U( 0.5 * ( a.x_ + b.x_ ) ),
+		U( 0.5 * ( a.y_ + b.y_ ) ),
+		U( 0.5 * ( a.z_ + b.z_ ) )
+					 );
+}
+
+
+/// @brief Midpoint of 2 xyzTriples: Return via argument (slightly faster)
+template <typename U>
+void
+midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m )
+{
+	m.x_ = U( 0.5 * ( a.x_ + b.x_ ) );
+	m.y_ = U( 0.5 * ( a.y_ + b.y_ ) );
+	m.z_ = U( 0.5 * ( a.z_ + b.z_ ) );
+}
+
+
+/// @brief Center of 2 xyzTriples
+template <typename U>
+xyzTriple<U>
+center( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return xyzTriple<U>(
+		U( 0.5 * ( a.x_ + b.x_ ) ),
+		U( 0.5 * ( a.y_ + b.y_ ) ),
+		U( 0.5 * ( a.z_ + b.z_ ) )
+					 );
+}
+
+
+/// @brief Center of 2 xyzTriples: Return via argument (slightly faster)
+template <typename U>
+void
+center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m )
+{
+	m.x_ = U( 0.5 * ( a.x_ + b.x_ ) );
+	m.y_ = U( 0.5 * ( a.y_ + b.y_ ) );
+	m.z_ = U( 0.5 * ( a.z_ + b.z_ ) );
+}
+
+
+/// @brief Center of 3 xyzTriples
+template <typename U>
+xyzTriple<U>
+center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
+{
+	long double const third( 1.0 / 3.0 );
+	return xyzTriple<U>(
+		U( third * ( a.x_ + b.x_ + c.x_ ) ),
+		U( third * ( a.y_ + b.y_ + c.y_ ) ),
+		U( third * ( a.z_ + b.z_ + c.z_ ) )
+					 );
+}
+
+
+/// @brief Center of 3 xyzTriples: Return via argument (slightly faster)
+template <typename U>
+void
+center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> & m )
+{
+	long double const third( 1.0 / 3.0 );
+	m.x_ = U( third * ( a.x_ + b.x_ + c.x_ ) );
+	m.y_ = U( third * ( a.y_ + b.y_ + c.y_ ) );
+	m.z_ = U( third * ( a.z_ + b.z_ + c.z_ ) );
+}
+
+
+/// @brief Center of 4 xyzTriples
+template <typename U>
+xyzTriple<U>
+center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> const & d )
+{
+	return xyzTriple<U>(
+		U( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) ),
+		U( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) ),
+		U( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) )
+					 );
+}
+
+
+/// @brief Center of 4 xyzTriples: Return via argument (slightly faster)
+template <typename U>
+void
+center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> const & d, xyzTriple<U> & m )
+{
+	m.x_ = U( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) );
+	m.y_ = U( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) );
+	m.z_ = U( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) );
+}
+
+
+/// @brief Angle between two vectors (in radians on [ 0, pi ])
+template <typename U>
+U
+angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	U const mag = a.length() * b.length();
+	return ( mag > U( 0 ) ? std::acos( sin_cos_range( a.dot( b ) / mag ) ) : U( 0 ) );
+}
+
+
+/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c
+template <typename U>
+U
+angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
+{
+	return angle_of( a - b, c - b );
+}
+
+
+/// @brief Cosine of angle between two vectors
+template <typename U>
+U
+cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	U const mag = a.length() * b.length();
+	return ( mag > U( 0 ) ? sin_cos_range( a.dot( b ) / mag ) : U( 1 ) );
+}
+
+
+/// @brief Cosine of angle formed by three consecutive points
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c.
+template <typename U>
+U
+cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
+{
+	return cos_of( a - b, c - b );
+}
+
+
+/// @brief Sine of angle between two vectors
+template <typename U>
+U
+sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return std::sqrt( U( 1 ) - square( cos_of( a, b ) ) );
+}
+
+
+/// @brief Sine of angle formed by three consecutive points
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c
+template <typename U>
+U
+sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
+{
+	return sin_of( a - b, c - b );
+}
+
+	/// @brief Distance squared
+template <typename U>
+U
+distance_squared( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ );
+}
+
+	/// @brief Not equal length?
+template <typename U>
+bool
+not_equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return ( a.length_squared() != b.length_squared() );
+}
+
+/// @brief Add: xyzTriple + xyzTriple
+template <typename U>
+void
+add( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r )
+{
+	r.x_ = a.x_ + b.x_;
+	r.y_ = a.y_ + b.y_;
+	r.z_ = a.z_ + b.z_;
+}
+
+
+/// @brief Add: xyzTriple + Value
+template <typename U>
+void
+add( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
+{
+	r.x_ = v.x_ + t;
+	r.y_ = v.y_ + t;
+	r.z_ = v.z_ + t;
+}
+
+
+/// @brief Add: Value + xyzTriple
+template <typename U>
+void
+add( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
+{
+	r.x_ = t + v.x_;
+	r.y_ = t + v.y_;
+	r.z_ = t + v.z_;
+}
+
+
+/// @brief Subtract: xyzTriple - xyzTriple
+template <typename U>
+void
+subtract( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r )
+{
+	r.x_ = a.x_ - b.x_;
+	r.y_ = a.y_ - b.y_;
+	r.z_ = a.z_ - b.z_;
+}
+
+
+/// @brief Subtract: xyzTriple - Value
+template <typename U>
+void
+subtract( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
+{
+	r.x_ = v.x_ - t;
+	r.y_ = v.y_ - t;
+	r.z_ = v.z_ - t;
+}
+
+
+/// @brief Subtract: Value - xyzTriple
+template <typename U>
+void
+subtract( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
+{
+	r.x_ = t - v.x_;
+	r.y_ = t - v.y_;
+	r.z_ = t - v.z_;
+}
+
+
+/// @brief Multiply: xyzTriple * Value
+template <typename U>
+void
+multiply( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
+{
+	r.x_ = v.x_ * t;
+	r.y_ = v.y_ * t;
+	r.z_ = v.z_ * t;
+}
+
+
+/// @brief Multiply: Value * xyzTriple
+template <typename U>
+void
+multiply( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
+{
+	r.x_ = t * v.x_;
+	r.y_ = t * v.y_;
+	r.z_ = t * v.z_;
+}
+
+
+/// @brief Divide: xyzTriple / Value
+template <typename U>
+void
+divide( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
+{
+	assert( t != U( 0 ) );
+	U const inv_t( U( 1 ) / t );
+	r.x_ = v.x_ * inv_t;
+	r.y_ = v.y_ * inv_t;
+	r.z_ = v.z_ * inv_t;
+}
+
+/// @brief xyzTriple with min coordinates of two xyzTriples
+template <typename U>
+xyzTriple<U>
+min( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return xyzTriple<U>(
+		( a.x_ <= b.x_ ? a.x_ : b.x_ ),
+		( a.y_ <= b.y_ ? a.y_ : b.y_ ),
+		( a.z_ <= b.z_ ? a.z_ : b.z_ )
+						);
+}
+
+
+/// @brief xyzTriple with max coordinates of two xyzTriples
+template <typename U>
+xyzTriple<U>
+max( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return xyzTriple<U>(
+		( a.x_ >= b.x_ ? a.x_ : b.x_ ),
+		( a.y_ >= b.y_ ? a.y_ : b.y_ ),
+		( a.z_ >= b.z_ ? a.z_ : b.z_ )
+						);
+}
+
+	/// @brief Distance
+template <typename U>
+U
+distance( xyzTriple<U> const & a, xyzTriple<U> const & b )
+{
+	return std::sqrt( square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ ) );
+}
+
 
 
 // PyRosetta work around for templates classes

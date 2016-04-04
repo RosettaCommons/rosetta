@@ -24,7 +24,7 @@ namespace methods {
 
 class ResidualDipolarCouplingEnergyRigidSegments;
 
-typedef utility::pointer::owning_ptr< ResidualDipolarCouplingEnergyRigidSegments > ResidualDipolarCouplingEnergyRigidSegmentsOP;
+typedef utility::pointer::shared_ptr< ResidualDipolarCouplingEnergyRigidSegments > ResidualDipolarCouplingEnergyRigidSegmentsOP;
 
 
 } // protocols

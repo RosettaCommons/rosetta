@@ -26,7 +26,7 @@ namespace modeler {
 namespace rna {
 
 class RNA_AnalyticLoopCloser;
-typedef utility::pointer::owning_ptr< RNA_AnalyticLoopCloser > RNA_AnalyticLoopCloserOP;
+typedef utility::pointer::shared_ptr< RNA_AnalyticLoopCloser > RNA_AnalyticLoopCloserOP;
 
 } //rna
 } //modeler

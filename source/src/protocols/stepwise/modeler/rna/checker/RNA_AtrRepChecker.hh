@@ -40,13 +40,13 @@ public:
 	RNA_AtrRepChecker( pose::Pose const & pose,
 		working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 		bool const loose_rep_cutoff = false,
-		scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
+					   core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
 
 	RNA_AtrRepChecker( pose::Pose const & pose,
 		Size const moving_res,
 		Size const reference_res,
 		Size const gap_size,
-		scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
+		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
 	);
 
 	//destructor

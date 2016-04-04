@@ -42,46 +42,44 @@
 namespace protocols {
 namespace constraints_additional {
 
-using namespace core;
-
-class COMCoordinateConstraint : public scoring::constraints::Constraint {
+class COMCoordinateConstraint : public core::scoring::constraints::Constraint {
 public:
 
 	/// null constructor
 	COMCoordinateConstraint( ) :
-		scoring::constraints::Constraint( scoring::coordinate_constraint )
+		core::scoring::constraints::Constraint( core::scoring::coordinate_constraint )
 	{ }
 
 	/// ctor from atom list + input pose
 	COMCoordinateConstraint(
 		utility::vector1< AtomID > const & atms,
-		Vector const & COM_target,
-		Real stdv,
-		Real interval,
-		scoring::ScoreType scoretype = scoring::coordinate_constraint
+		core::Vector const & COM_target,
+		core::Real stdv,
+		core::Real interval,
+		core::scoring::ScoreType scoretype = core::scoring::coordinate_constraint
 	);
 
 	COMCoordinateConstraint(
 		utility::vector1< AtomID > const & atms,
-		Vector const & COM_target,
-		Real stdv,
-		scoring::ScoreType scoretype = scoring::coordinate_constraint
+		core::Vector const & COM_target,
+		core::Real stdv,
+		core::scoring::ScoreType scoretype = core::scoring::coordinate_constraint
 	);
 
 	COMCoordinateConstraint(
 		utility::vector1< AtomID > const & atms,
-		Vector const & COM_target,
-		scoring::ScoreType scoretype = scoring::coordinate_constraint
+		core::Vector const & COM_target,
+		core::scoring::ScoreType scoretype = core::scoring::coordinate_constraint
 	);
 
-	virtual scoring::constraints::ConstraintOP clone() const {
-		return scoring::constraints::ConstraintOP( new COMCoordinateConstraint( atms_, COM_target_, stdv_, interval_ ) );
+	virtual core::scoring::constraints::ConstraintOP clone() const {
+		return core::scoring::constraints::ConstraintOP( new COMCoordinateConstraint( atms_, COM_target_, stdv_, interval_ ) );
 	}
 
-	virtual scoring::constraints::ConstraintOP remapped_clone(
-		pose::Pose const& src,
-		pose::Pose const& dest,
-		id::SequenceMappingCOP smap
+	virtual core::scoring::constraints::ConstraintOP remapped_clone(
+		core::pose::Pose const& src,
+		core::pose::Pose const& dest,
+		core::id::SequenceMappingCOP smap
 	) const ;
 
 	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
@@ -91,25 +89,25 @@ public:
 
 
 	void
-	score( scoring::func::XYZ_Func const & xyz,
-		scoring::EnergyMap const &, scoring::EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz,
+		core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
 
 	// do some pre-scoring calculations
-	void setup_for_scoring( scoring::func::XYZ_Func const & xyz,
-		scoring::ScoreFunction const &scfxn ) const;
+	void setup_for_scoring( core::scoring::func::XYZ_Func const & xyz,
+		core::scoring::ScoreFunction const &scfxn ) const;
 
 	// call the setup_for_derivatives for each constraint
-	void setup_for_derivatives(  scoring::func::XYZ_Func const & xyz, scoring::ScoreFunction const &scfxn ) const;
+	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
 
 	// atom deriv
 	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		scoring::func::XYZ_Func const & xyz,
-		Vector & F1,
-		Vector & F2,
-		scoring::EnergyMap const & weights
+		core::scoring::func::XYZ_Func const & xyz,
+		core::Vector & F1,
+		core::Vector & F2,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	std::string type() const;
@@ -119,8 +117,8 @@ public:
 	natoms() const;
 
 	virtual
-	scoring::constraints::ConstraintOP
-	remap_resid( id::SequenceMapping const & ) const { return NULL; }
+	core::scoring::constraints::ConstraintOP
+	remap_resid( core::id::SequenceMapping const & ) const { return NULL; }
 
 
 	AtomID const &
@@ -128,21 +126,21 @@ public:
 
 	void show( std::ostream& out ) const;
 
-	void show_def( std::ostream& out, pose::Pose const & pose ) const;
-	void read_def( std::istream& in, pose::Pose const & pose, scoring::func::FuncFactory const & func_factory );
+	void show_def( std::ostream& out, core::pose::Pose const & pose ) const;
+	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
 
-	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream & out, core::pose::Pose const & pose, Size verbose_level, core::Real threshold = 1.0 ) const;
 
 	//protected:
 	//void init( pose::Pose const & start_pose );
 
 private:
 	// data
-	mutable Vector dCOM_; // to change value at setup_for_scoring...is there any better way than this?
-	Vector COM_target_;
+	mutable core::Vector dCOM_; // to change value at setup_for_scoring...is there any better way than this?
+	core::Vector COM_target_;
 	utility::vector1< AtomID > atms_;
-	Real stdv_;
-	Real interval_;
+	core::Real stdv_;
+	core::Real interval_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

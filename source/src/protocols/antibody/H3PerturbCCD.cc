@@ -65,9 +65,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.H3PerturbCCD" );
 
 
 using namespace core;
+
 namespace protocols {
 namespace antibody {
-
 
 // default constructor
 H3PerturbCCD::H3PerturbCCD() : Mover() {
@@ -390,5 +390,3 @@ void H3PerturbCCD::read_and_store_fragments( ) {
 
 }// namespace antibody
 }// namespace protocols
-
-

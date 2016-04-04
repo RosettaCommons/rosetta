@@ -49,6 +49,7 @@ void Config::read(string const &file_name)
 					bool bind = line[0] == '+' ? true : false;
 					string token = line.substr(1, space-1);
 					string name = line.substr(space+1);
+					name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
 
 					//outs() << token << " " << name << "\n";
 
@@ -128,8 +129,11 @@ bool Config::is_namespace_skipping_requested(string const &namespace_) const
 }
 
 
-bool Config::is_function_binding_requested(string const &function) const
+bool Config::is_function_binding_requested(string const &function_) const
 {
+	string function {function_};
+	function.erase(std::remove(function.begin(), function.end(), ' '), function.end());
+
 	auto bind = std::find(functions_to_bind.begin(), functions_to_bind.end(), function);
 
 	if( bind != functions_to_bind.end() ) return true;
@@ -137,8 +141,10 @@ bool Config::is_function_binding_requested(string const &function) const
 	return false;
 }
 
-bool Config::is_function_skipping_requested(string const &function) const
+bool Config::is_function_skipping_requested(string const &function_) const
 {
+	string function {function_};
+	function.erase(std::remove(function.begin(), function.end(), ' '), function.end());
 
 	auto bind = std::find(functions_to_skip.begin(), functions_to_skip.end(), function);
 
@@ -152,8 +158,11 @@ bool Config::is_function_skipping_requested(string const &function) const
 
 
 
-bool Config::is_class_binding_requested(string const &class_) const
+bool Config::is_class_binding_requested(string const &class__) const
 {
+	string class_ {class__};
+	class_.erase(std::remove(class_.begin(), class_.end(), ' '), class_.end());
+
 	auto bind = std::find(classes_to_bind.begin(), classes_to_bind.end(), class_);
 
 	if( bind != classes_to_bind.end() ) return true;
@@ -162,8 +171,10 @@ bool Config::is_class_binding_requested(string const &class_) const
 }
 
 
-bool Config::is_class_skipping_requested(string const &class_) const
+bool Config::is_class_skipping_requested(string const &class__) const
 {
+	string class_ {class__};
+	class_.erase(std::remove(class_.begin(), class_.end(), ' '), class_.end());
 
 	auto bind = std::find(classes_to_skip.begin(), classes_to_skip.end(), class_);
 

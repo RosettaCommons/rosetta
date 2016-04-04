@@ -57,7 +57,7 @@ public:
 	reset( pose::Pose const & pose );
 
 	void
-	set_scorefxn( scoring::ScoreFunctionCOP scorefxn );
+	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
 	void
 	set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
@@ -97,7 +97,7 @@ private:
 private:
 
 	utility::vector1< Size > const working_moving_res_list_;
-	scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
 	bool use_packer_instead_of_rotamer_trials_;
 	bool allow_virtual_side_chains_;
 	bool allow_virtual_o2prime_hydrogens_;

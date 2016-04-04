@@ -12,12 +12,14 @@
 /// @author Tim Jacobs
 
 
+#ifdef NOT_IN_SCONS_DEPRECATED
+
 #ifndef INCLUDED_protocols_sewing_sampling_NodeConstraintAssemblyMover_HH
 #define INCLUDED_protocols_sewing_sampling_NodeConstraintAssemblyMover_HH
 
 // Unit Headers
 #include <protocols/sewing/sampling/NodeConstraintAssemblyMover.fwd.hh>
-#include <protocols/sewing/sampling/MotifDirectedAssemblyMover.hh>
+//#include <protocols/sewing/sampling/MotifDirectedAssemblyMover.hh>
 
 // Package Headers
 #include <protocols/sewing/conformation/Assembly.hh>
@@ -64,7 +66,7 @@ struct NodeConstraint {
 };
 
 class NodeConstraintAssemblyMover : public MotifDirectedAssemblyMover {
-	
+
 public:
 
 	typedef MotifDirectedAssemblyMover parent;
@@ -76,7 +78,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
+
 	std::string
 	get_name() const;
 
@@ -115,8 +117,10 @@ private:
 	utility::vector1<NodeConstraint> node_constraints_;
 
 };
-	
+
 } //sewing
 } //protocols
+
+#endif
 
 #endif

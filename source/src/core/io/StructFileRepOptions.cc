@@ -290,7 +290,7 @@ void StructFileRepOptions::init_from_options()
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]() );
 	set_renumber_pdb( option[ OptionKeys::out::file::renumber_pdb ].value() );
 	set_suppress_zero_occ_pdb_output( option[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() );
-	set_use_pdb_format_HETNAM_records( option[ out::file::use_pdb_format_HETNAM_records ]() );
+	set_use_pdb_format_HETNAM_records( option[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
 	set_write_pdb_link_records( option[ out::file::write_pdb_link_records ]() );
 	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
 	if ( option[ in::file::remap_pdb_atom_names_for ].active() ) {

@@ -35,8 +35,8 @@ struct SerializedLoop;
 
 typedef utility::vector1< SerializedLoop > SerializedLoopList;
 
-//typedef utility::pointer::owning_ptr< SerializedLoopList > SerializedLoopListOP;
-//typedef utility::pointer::owning_ptr< SerializedLoopList const > SerializedLoopListCOP;
+//typedef utility::pointer::shared_ptr< SerializedLoopList > SerializedLoopListOP;
+//typedef utility::pointer::shared_ptr< SerializedLoopList const > SerializedLoopListCOP;
 
 } //namespace loops
 } //namespace protocols

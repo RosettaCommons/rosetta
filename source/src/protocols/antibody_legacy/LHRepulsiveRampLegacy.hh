@@ -65,11 +65,11 @@ public:
 
 	void set_default();
 
-	void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ) {
+	void set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ) {
 		dock_scorefxn_ = dock_scorefxn->clone();
 	}
 
-	void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn) {
+	void set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn) {
 		pack_scorefxn_ = pack_scorefxn->clone();
 	}
 
@@ -107,8 +107,8 @@ private:
 	core::Size num_repeats_;
 
 
-	scoring::ScoreFunctionOP dock_scorefxn_;
-	scoring::ScoreFunctionOP pack_scorefxn_;
+	core::scoring::ScoreFunctionOP dock_scorefxn_;
+	core::scoring::ScoreFunctionOP pack_scorefxn_;
 
 	void init(loops::Loops loops_in, bool camelid);
 
@@ -132,5 +132,3 @@ private:
 } // namespace protocols
 
 #endif
-
-

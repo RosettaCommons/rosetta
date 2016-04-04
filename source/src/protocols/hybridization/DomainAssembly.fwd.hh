@@ -23,8 +23,8 @@ namespace protocols {
 namespace hybridization {
 			
 class TemlateAssembly;
-typedef utility::pointer::owning_ptr< TemlateAssembly > TemlateAssemblyOP;
-typedef utility::pointer::owning_ptr< TemlateAssembly const > TemlateAssemblyCOP;
+typedef utility::pointer::shared_ptr< TemlateAssembly > TemlateAssemblyOP;
+typedef utility::pointer::shared_ptr< TemlateAssembly const > TemlateAssemblyCOP;
 
 
 } // hybridize 

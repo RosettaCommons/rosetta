@@ -88,7 +88,7 @@ public: // conversion
 	/// @param[in] srfd_type BBTorsionSRFD::create() will be called from this object.
 	/// @return A BBTorsionSRFD of the given type initialized with the backbone
 	///  torsion information from this page.
-	BBTorsionSRFDOP bbtorsion_srfd( BBTorsionSRFD const & srfd_type = BBTorsionSRFD() ) const;
+	BBTorsionSRFDOP bbtorsion_srfd( BBTorsionSRFD const & srfd_type = core::fragment::BBTorsionSRFD() ) const;
 
 
 public: // accessors

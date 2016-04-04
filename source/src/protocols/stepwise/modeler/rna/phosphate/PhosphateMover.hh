@@ -41,11 +41,11 @@ public:
 	//constructor
 	PhosphateMover( Size const sample_res,
 		PhosphateTerminus which_terminus_,
-		scoring::ScoreFunctionCOP scorefxn );
+					core::scoring::ScoreFunctionCOP scorefxn );
 
 	//constructor
 	PhosphateMover( PhosphateMove const phosphate_move,
-		scoring::ScoreFunctionCOP scorefxn );
+		core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
 	~PhosphateMover();
@@ -104,7 +104,7 @@ private:
 private:
 
 	PhosphateMove const phosphate_move_;
-	scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
 
 	bool do_screening_;
 	bool screen_for_donor_contact_;

@@ -88,7 +88,7 @@ private:
 	bool integration_test_mode_;
 	std::string tag_;
 
-	scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 
 };
 

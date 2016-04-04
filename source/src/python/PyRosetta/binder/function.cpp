@@ -120,7 +120,7 @@ vector<QualType> get_type_dependencies(FunctionDecl const *F)
 
 	r.push_back( F->getReturnType() ); //.getDesugaredType(F->getASTContext()) );
 
-	for(uint i=0; i<F->getNumParams(); ++i) r.push_back(F->getParamDecl(i)->getOriginalType() );
+	for(uint i=0; i<F->getNumParams(); ++i) r.push_back(F->getParamDecl(i)->getOriginalType()/*.getDesugaredType(F->getASTContext())*/ );
 
 	if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
 		if( TemplateArgumentList const *tal = F->getTemplateSpecializationArgs() ) {
@@ -174,7 +174,16 @@ bool is_binding_requested(FunctionDecl const *F, Config const &config)
 /// check if user requested skipping for the given declaration
 bool is_skipping_requested(FunctionDecl const *F, Config const &config)
 {
-	bool skip = config.is_function_skipping_requested( F->getQualifiedNameAsString() ) or config.is_class_skipping_requested( function_qualified_name(F) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(F) );
+	// {
+	// 	string name = F->getQualifiedNameAsString();
+	// 	if( begins_with(name, "utility::vector1<core::fragment::picking_old::vall::scores::VallFragmentScore") ) outs() << "____  " << name << "\n";
+	// }
+	string name = F->getQualifiedNameAsString();
+	bool skip = config.is_function_skipping_requested(name) or config.is_class_skipping_requested( function_qualified_name(F) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(F) );
+
+    name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
+	skip |= config.is_function_skipping_requested(name);
+
 
 	for(auto & t : get_type_dependencies(F) ) skip |= is_skipping_requested(t, config);
 
@@ -220,23 +229,17 @@ string bind_function(FunctionDecl *F, Context &context)
 	request_bindings(F->getReturnType(), context);
 
 	for(auto p = F->param_begin(); p != F->param_end(); ++p) {
-		// .def("myFunction", py::arg("arg") = SomeType(123));
-		//string defalt_argument = (*p)->hasDefaultArg() ? " = ({})({})"_format( (*p)->getOriginalType().getCanonicalType().getAsString(), expresion_to_string( (*p)->getDefaultArg() ) ) : "";
-		//string defalt_argument = (*p)->hasDefaultArg() ? expresion_to_string( (*p)->getDefaultArg() ) : "";
-		//r += ", pybind11::arg(\"{}\"){}"_format( string( (*p)->getName() ), defalt_argument );
 
-		// .def("myFunction", py::arg_t<int>("arg", 123, "123"));
-		if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg() ) {
-			string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
-			r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type,
-																	string( (*p)->getName() ),
-																	expresion_to_string( (*p)->getDefaultArg() ),
-																	replace(expresion_to_string( (*p)->getDefaultArg() ), "\"", "\\\"") );
+		string default_argument = expresion_to_string( (*p)->getDefaultArg() );
 
-			// clang::Expr *e = (*p)->getDefaultArg();
-			// clang::Expr::EvalResult result;
-			// outs() << "ex: " << expresion_to_string(e) << " EvaluateAsRValue: " << e->EvaluateAsRValue(result, F->getASTContext());
-			// outs() << " res: " << result.Val.getAsString(F->getASTContext(), (*p)->getOriginalType()) << "\n";
+		bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
+
+		string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
+
+		bool good_default = default_argument.find("std::cout") == std::string::npos  and  default_argument.find("std::cerr") == std::string::npos;
+
+		if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg()  and  !is_function_call  and  good_default  and  false) {
+			r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type, string( (*p)->getName() ), default_argument, replace(default_argument, "\"", "\\\"") );
 		}
 		else r += ", pybind11::arg(\"{}\")"_format( string( (*p)->getName() ) );
 
@@ -270,13 +273,15 @@ string bind_function(FunctionDecl *F, Context &context)
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(FunctionDecl const *F, std::vector<std::string> &includes, std::set<NamedDecl const *> &stack /*, bool for_template_arg_only*/)
+void add_relevant_includes(FunctionDecl const *F, std::vector<std::string> &includes, std::set<NamedDecl const *> &stack, int level /*, bool for_template_arg_only*/)
 {
 	if( stack.count(F) ) return; else stack.insert(F);
 
+	// if( begins_with(F->getQualifiedNameAsString(), "boost::get_property_value") ) outs() << "add_relevant_includes(function): " << F->getQualifiedNameAsString() << " templ:" << template_specialization(F) << "\n";
+
 	add_relevant_include_for_decl(F, includes);
 
-	for(auto & t : get_type_dependencies(F) ) binder::add_relevant_includes(t, includes, stack);
+	for(auto & t : get_type_dependencies(F) ) binder::add_relevant_includes(t, includes, stack, level);
 }
 
 
@@ -350,7 +355,7 @@ void FunctionBinder::request_bindings_and_skipping(Config const &config)
 /// extract include needed for this generator and add it to includes vector
 void FunctionBinder::add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const
 {
-	binder::add_relevant_includes(F, includes, stack);
+	binder::add_relevant_includes(F, includes, stack, 0);
 }
 
 
@@ -361,9 +366,10 @@ void FunctionBinder::bind(Context &context)
 
 	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(F) );
 	string const include = relevant_include(F);
+	string const namespace_ = namespace_from_named_decl(F);
 
 	code()  = "\t{ // " + F->getQualifiedNameAsString() + "(" + function_arguments(F) + ") file:" + include.substr(1, include.size()-2) + " line:" + line_number(F) + "\n";
-	code() += "\t\tusing namespace " + namespace_from_named_decl(F) + ";\n";
+	if( namespace_.size() ) code() += "\t\tusing namespace " + namespace_ + ";\n";
 	code() += "\t\t"+ module_variable_name + bind_function(F, context) + ";\n";
 	code() += "\t}\n\n";
 }

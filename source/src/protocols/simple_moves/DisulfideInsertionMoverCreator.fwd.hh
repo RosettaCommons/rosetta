@@ -29,12 +29,11 @@ namespace simple_moves {
 
 class DisulfideInsertionMoverCreator;
 
-typedef utility::pointer::owning_ptr< DisulfideInsertionMoverCreator >  DisulfideInsertionMoverCreatorOP;
-typedef utility::pointer::owning_ptr< DisulfideInsertionMoverCreator const >  DisulfideInsertionMoverCreatorCOP;
+typedef utility::pointer::shared_ptr< DisulfideInsertionMoverCreator >  DisulfideInsertionMoverCreatorOP;
+typedef utility::pointer::shared_ptr< DisulfideInsertionMoverCreator const >  DisulfideInsertionMoverCreatorCOP;
 
 } // namespace simple_moves
 } // namespace protocols
 
 #endif
 // INCLUDED_protocols_simple_moves_DisulfideInsertionMoverCreator_fwd_hh
-

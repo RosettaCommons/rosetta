@@ -41,6 +41,10 @@
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 using namespace core;
+using namespace core::pose;
+using namespace core::pose::full_model_info;
+
+
 using core::Real;
 using utility::make_tag_with_dashes;
 using namespace protocols::stepwise::modeler;

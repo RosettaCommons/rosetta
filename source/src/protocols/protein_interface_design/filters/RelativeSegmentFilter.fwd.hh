@@ -25,10 +25,11 @@ namespace filters {
 
 // Forward
 class RelativeSegmentFilter;
+class RelativeSegment;
 
 // Types
-typedef utility::pointer::owning_ptr< RelativeSegment >  RelativeSegmentOP;
-typedef utility::pointer::owning_ptr< RelativeSegment const >  RelativeSegmentCOP;
+typedef utility::pointer::shared_ptr< RelativeSegment >  RelativeSegmentOP;
+typedef utility::pointer::shared_ptr< RelativeSegment const >  RelativeSegmentCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

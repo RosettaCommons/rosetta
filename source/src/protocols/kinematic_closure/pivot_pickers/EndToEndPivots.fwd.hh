@@ -18,8 +18,8 @@ namespace pivot_pickers {
 
 class EndToEndPivots;
 
-typedef utility::pointer::owning_ptr<EndToEndPivots> EndToEndPivotsOP;
-typedef utility::pointer::owning_ptr<EndToEndPivots const> EndToEndPivotsCOP;
+typedef utility::pointer::shared_ptr<EndToEndPivots> EndToEndPivotsOP;
+typedef utility::pointer::shared_ptr<EndToEndPivots const> EndToEndPivotsCOP;
 
 }
 }

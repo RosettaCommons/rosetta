@@ -71,6 +71,7 @@
 #include <utility/vector1.hh>
 
 using namespace core;
+using namespace core::pose::full_model_info;
 using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::protein;
 

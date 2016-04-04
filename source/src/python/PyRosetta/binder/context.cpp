@@ -143,7 +143,7 @@ std::string Context::module_variable_name(std::string const& namespace_)
 void Context::request_bindings(std::string const &type)
 {
 	if( types.count(type)  and  !types[type]->is_binded()  and  types[type]->bindable()  and  !types[type]->skipping_requested()  and  !is_python_builtin( types[type]->named_decl() ) ) {
-		outs() << "Context::bind: requesting bindings for: " << type << "...\n";
+		//outs() << "Context::bind: requesting bindings for: " << type << "...\n";
 		types[type]->request_bindings();
 	}
 	//else outs() << "Context::bind: Could not find generator for type:" << type << "\n";
@@ -168,7 +168,7 @@ void Context::bind(Config const &config)
 		for(auto & sp : binders) {
 			Binder & b( *sp );
 			if( !b.is_binded()  and  b.bindable() and  b.binding_requested() ) {
-				outs() << "Binding: " << b.id() /*named_decl()->getQualifiedNameAsString()*/ << "\n";
+				//outs() << "Binding: " << b.id() /*named_decl()->getQualifiedNameAsString()*/ << "\n";
 				b.bind(*this);
 				flag=true;
 			}
@@ -227,7 +227,7 @@ PYBIND11_PLUGIN({1}) {{
 }}
 )_";
 
-const char * module_header = "\n#include <pybind11/pybind11.h>\n//#include <pybind11/stl.h>\n\n";
+const char * module_header = "\n#include <pybind11/pybind11.h>\n#include <pybind11/stl.h>\n\n//PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n";
 
 const char * module_function_suffix = "(std::function< pybind11::module &(std::string const &namespace_) > &M)";
 
@@ -240,6 +240,7 @@ void Context::generate(Config const &config)
 
 	std::map<string, int> file_names;
 
+	outs() << "Writing code...\n";
 	for(uint i=0; i<binders.size(); ++i) {
 		if( /*binders[i]->is_binded()  and*/  binders[i]->code().size() ) {
 			string np = file_name_prefix_for_binder(binders[i]);
@@ -256,11 +257,11 @@ void Context::generate(Config const &config)
 			string code;
 			string namespace_ = namespace_from_named_decl( binders[i]->named_decl() );
 			vector<string> includes;
+			std::set<NamedDecl const *> stack;
 
 			for(; code.size()<config.maximum_file_length  and  i<binders.size()  and  namespace_==namespace_from_named_decl( binders[i]->named_decl() ); ++i) {
 				//outs() << "Binding: " << string(*binders[i]) << "\n";
 				code += binders[i]->code();
-				std::set<NamedDecl const *> stack;
 				binders[i]->add_relevant_includes(includes, stack);
 			}
 			if( i < binders.size() ) --i;
@@ -270,6 +271,7 @@ void Context::generate(Config const &config)
 			update_source_file(config.prefix, file_name, code);
 		}
 	}
+	outs() << "Writing code... Done!\n";
 
 	string namespace_pairs;
 	std::set<string> namespaces = create_all_nested_namespaces();

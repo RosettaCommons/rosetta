@@ -23,7 +23,7 @@ namespace rna {
 namespace helix {
 
 	class RNA_HelixAssembler;
-	typedef utility::pointer::owning_ptr< RNA_HelixAssembler > RNA_HelixAssemblerOP;
+	typedef utility::pointer::shared_ptr< RNA_HelixAssembler > RNA_HelixAssemblerOP;
 
 } //helix
 } //rna

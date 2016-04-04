@@ -49,6 +49,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.Resa
 //
 //////////////////////////////////////////////////////////////////////////
 
+using namespace core::pose::full_model_info;
+
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {

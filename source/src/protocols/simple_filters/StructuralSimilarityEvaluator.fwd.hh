@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_filters {
 
 class StructuralSimilarityEvaluator;
-typedef utility::pointer::owning_ptr< StructuralSimilarityEvaluator > StructuralSimilarityEvaluatorOP;
-typedef utility::pointer::owning_ptr< StructuralSimilarityEvaluator const > StructuralSimilarityEvaluatorCOP;
+typedef utility::pointer::shared_ptr< StructuralSimilarityEvaluator > StructuralSimilarityEvaluatorOP;
+typedef utility::pointer::shared_ptr< StructuralSimilarityEvaluator const > StructuralSimilarityEvaluatorCOP;
 
 } // simple_filter
 } // protocols

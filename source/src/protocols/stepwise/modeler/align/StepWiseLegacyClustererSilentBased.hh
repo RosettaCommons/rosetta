@@ -91,7 +91,7 @@ public:
 	PoseList
 	clustered_pose_list();
 
-	utility::vector1< PoseOP > get_pose_list();
+	utility::vector1< core::pose::PoseOP > get_pose_list();
 
 	utility::vector1< core::io::silent::SilentStructOP > &
 	silent_struct_output_list(){ return silent_struct_output_list_; };

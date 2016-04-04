@@ -29,8 +29,8 @@ class BoundedCollector;
 
 /*class StrictWeakOrdering;
 
-typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > > BoundedCollectorOP;
-typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > const> BoundedCollectorCOP;
+typedef utility::pointer::shared_ptr< BoundedCollector< StrictWeakOrdering > > BoundedCollectorOP;
+typedef utility::pointer::shared_ptr< BoundedCollector< StrictWeakOrdering > const> BoundedCollectorCOP;
 */
 
 } // frag_picker

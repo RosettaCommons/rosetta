@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class PoseSelectionScreener;
-	typedef utility::pointer::owning_ptr< PoseSelectionScreener > PoseSelectionScreenerOP;
-	typedef utility::pointer::owning_ptr< PoseSelectionScreener const > PoseSelectionScreenerCOP;
+	typedef utility::pointer::shared_ptr< PoseSelectionScreener > PoseSelectionScreenerOP;
+	typedef utility::pointer::shared_ptr< PoseSelectionScreener const > PoseSelectionScreenerCOP;
 	
 } //screener
 } //stepwise

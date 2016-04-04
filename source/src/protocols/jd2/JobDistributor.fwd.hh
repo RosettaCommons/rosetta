@@ -21,7 +21,7 @@ namespace protocols {
 namespace jd2 {
 
 class JobDistributor;
-//typedef utility::pointer::owning_ptr< JobDistributor > JobDistributorOP;
+//typedef utility::pointer::shared_ptr< JobDistributor > JobDistributorOP;
 
 }//jd2
 }//protocols

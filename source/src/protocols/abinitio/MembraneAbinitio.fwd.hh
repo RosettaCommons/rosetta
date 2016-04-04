@@ -27,8 +27,8 @@ namespace abinitio {
 class MembraneAbinitio;
 
 // Types
-typedef  utility::pointer::owning_ptr< MembraneAbinitio >  MembraneAbinitioOP;
-typedef  utility::pointer::owning_ptr< MembraneAbinitio const >  MembraneAbinitioCOP;
+typedef  utility::pointer::shared_ptr< MembraneAbinitio >  MembraneAbinitioOP;
+typedef  utility::pointer::shared_ptr< MembraneAbinitio const >  MembraneAbinitioCOP;
 
 
 } // namespace kinematics

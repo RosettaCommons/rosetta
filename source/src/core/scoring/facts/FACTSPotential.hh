@@ -86,18 +86,18 @@ public:
 		Residue const & rsd2
 	) const;
 
-	void evaluate_context_change_for_packing(
-		Residue const & rsd1_ref,
-		Residue const & rsd1,
-		FACTSResidueInfo const & facts1,
-		Residue const & rsd2_ref,
-		Residue const & rsd2,
-		FACTSResidueInfo const & facts2,
-		utility::vector1< Real > & dBRi1,
-		utility::vector1< Real > & dBRi2,
-		utility::vector1< Real > & dSAi1,
-		utility::vector1< Real > & dSAi2
-	) const;
+	// void evaluate_context_change_for_packing(
+	// 	Residue const & rsd1_ref,
+	// 	Residue const & rsd1,
+	// 	FACTSResidueInfo const & facts1,
+	// 	Residue const & rsd2_ref,
+	// 	Residue const & rsd2,
+	// 	FACTSResidueInfo const & facts2,
+	// 	utility::vector1< Real > & dBRi1,
+	// 	utility::vector1< Real > & dBRi2,
+	// 	utility::vector1< Real > & dSAi1,
+	// 	utility::vector1< Real > & dSAi2
+	// ) const;
 
 	void evaluate_polar_otf_energy(Residue const & rsd1,
 		FACTSResidueInfo const & facts1,
@@ -136,11 +136,11 @@ public:
 		FACTSResidueInfo & facts1
 	) const;
 
-	Real polar_energy_pack_corrector(
-		Residue const & ref_rsd,
-		Residue const & rsd,
-		FACTSResidueInfo const & facts_info
-	) const;
+	// Real polar_energy_pack_corrector(
+	// 	Residue const & ref_rsd,
+	// 	Residue const & rsd,
+	// 	FACTSResidueInfo const & facts_info
+	// ) const;
 
 private:
 	void res_res_burial(
@@ -225,7 +225,7 @@ private: //list of private variables and parameters for the FACTS method common 
 	// Map storing parameters for residue types
 	mutable FACTSRsdTypeMap FACTSrsdtypemap_;
 
-	bool options_registered_;
+	//bool options_registered_;
 
 	Real MultiplicitiveFactor_;
 	Real inv_die_;
@@ -254,12 +254,12 @@ private: //list of private variables and parameters for the FACTS method common 
 	//Real min_dis_;
 
 	// Below are not being used
-	Real cut_off_born_radius_; //The cut off used for calculating born radius
-	Real extra_cut_off_self_;
-	Real extra_cut_off_interaction_;
-	Real dummy_radius_;
-	Real dummy_scale_;
-	Real dummy_distance_; // also implicitly defined by the gb placeholder params file
+	//Real cut_off_born_radius_; //The cut off used for calculating born radius
+	//Real extra_cut_off_self_;
+	//Real extra_cut_off_interaction_;
+	//Real dummy_radius_;
+	//Real dummy_scale_;
+	//Real dummy_distance_; // also implicitly defined by the gb placeholder params file
 
 };
 

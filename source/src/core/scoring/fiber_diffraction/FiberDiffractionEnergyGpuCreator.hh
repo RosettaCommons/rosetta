@@ -21,6 +21,7 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
+#ifdef USECUDA
 class FiberDiffractionEnergyGpuCreator : public methods::EnergyMethodCreator {
 public:
 
@@ -33,6 +34,7 @@ public:
 	/// this EnergyMethodCreator creates in its create_energy_method() function
 	virtual ScoreTypes score_types_for_method() const;
 };
+#endif
 
 }
 }

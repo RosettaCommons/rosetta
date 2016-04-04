@@ -41,7 +41,7 @@ class DOFHistogramRecorder;
 
 // Typedefs
 // --- typedef utility::pointer::access_ptr< DOFHistogramRecorder > DOFHistogramRecorderAP;
-// --- typedef utility::pointer::owning_ptr< DOFHistogramRecorder > DOFHistogramRecorderOP;
+// --- typedef utility::pointer::shared_ptr< DOFHistogramRecorder > DOFHistogramRecorderOP;
 
 
 // Smart pointer required functions

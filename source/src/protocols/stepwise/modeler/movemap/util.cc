@@ -116,7 +116,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 				}
 			}
 
-			if ( check_sample_sugar_in_full_model_info( pose, n ) ) atom_level_domain_map->set_sugar( n, pose, true );
+			if ( core::pose::full_model_info::check_sample_sugar_in_full_model_info( pose, n ) ) atom_level_domain_map->set_sugar( n, pose, true );
 		}
 		if ( pose.residue_type(n).is_protein() ) {
 			if ( move_takeoff_torsions ) {

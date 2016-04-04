@@ -28,18 +28,16 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockMCMCycle.hh>
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.LHRepulsiveRamp" );
 
-
 using namespace core;
+
 namespace protocols {
 namespace antibody {
-
 
 // default constructor
 LHRepulsiveRamp::LHRepulsiveRamp() : Mover() {}
@@ -188,4 +186,3 @@ void LHRepulsiveRamp::set_dock_jump(docking::DockJumps jump) {
 
 } // namespace antibody
 } // namespace protocols
-

@@ -90,7 +90,7 @@ private:
 	bool benchmark_;
 	bool snug_fit_;
 	bool refine_input_loop_;
-	scoring::ScoreFunctionOP lowres_scorefxn_;
+	core::scoring::ScoreFunctionOP lowres_scorefxn_;
 
 };
 
@@ -99,5 +99,3 @@ private:
 } // namespace protocols
 
 #endif
-
-

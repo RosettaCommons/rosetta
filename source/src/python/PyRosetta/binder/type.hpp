@@ -36,11 +36,11 @@ std::string relevant_include(clang::NamedDecl const *decl);
 
 
 // extract include path needed for declaration itself (without template dependency if any), do nothing if include could not be found (ie for build-in's)
-void add_relevant_include_for_decl(clang::NamedDecl const *decl, std::vector<std::string> &includes);
+void add_relevant_include_for_decl(clang::NamedDecl const *decl, std::vector<std::string> &includes/*, std::set<clang::NamedDecl const *> &stack*/);
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(clang::QualType const &qt, /*clang::ASTContext const &context,*/ std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack);
+void add_relevant_includes(clang::QualType const &qt, /*clang::ASTContext const &context,*/ std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level);
 
 
 // check if given QualType is bindable

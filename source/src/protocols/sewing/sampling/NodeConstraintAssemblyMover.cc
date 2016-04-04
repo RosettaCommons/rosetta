@@ -12,6 +12,8 @@
 /// @brief
 /// @author Tim Jacobs
 
+#ifdef NOT_IN_SCONS_DEPRECATED
+
 // Unit Headers
 #include <devel/sewing/sampling/NodeConstraintAssemblyMover.hh>
 #include <devel/sewing/sampling/NodeConstraintAssemblyMoverCreator.hh>
@@ -319,3 +321,5 @@ NodeConstraintAssemblyMover::check_edge(
 
 } //sewing
 } //devel
+
+#endif

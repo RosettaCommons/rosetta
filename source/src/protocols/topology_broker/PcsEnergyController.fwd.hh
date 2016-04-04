@@ -40,11 +40,11 @@ namespace topology_broker {
 
 class PcsEnergyController;
 
-typedef  utility::pointer::owning_ptr< PcsEnergyController >  PcsEnergyControllerOP;
-typedef  utility::pointer::owning_ptr< PcsEnergyController const >  PcsEnergyControllerCOP;
+typedef  utility::pointer::shared_ptr< PcsEnergyController >  PcsEnergyControllerOP;
+typedef  utility::pointer::shared_ptr< PcsEnergyController const >  PcsEnergyControllerCOP;
 
-typedef  utility::pointer::access_ptr< PcsEnergyController >  PcsEnergyControllerAP;
-typedef  utility::pointer::access_ptr< PcsEnergyController const >  PcsEnergyControllerCAP;
+typedef  utility::pointer::weak_ptr< PcsEnergyController >  PcsEnergyControllerAP;
+typedef  utility::pointer::weak_ptr< PcsEnergyController const >  PcsEnergyControllerCAP;
 
 } // namespace topology_broker
 } // namespace protocols

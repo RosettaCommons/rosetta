@@ -312,8 +312,8 @@ StepWiseModeler::look_for_precompute_move( pose::Pose & pose ) {
 	// no further backbone resampling:
 	set_moving_res_and_reset( 0 );
 	// just pack and minimize:
-	set_working_prepack_res( const_full_model_info( pose ).res_list() );
-	set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
+	set_working_prepack_res( core::pose::full_model_info::const_full_model_info( pose ).res_list() );
+	set_working_minimize_res( core::pose::full_model_info::get_moving_res_from_full_model_info( pose ) );
 }
 
 /////////////////////////////////////////////////////////////////////

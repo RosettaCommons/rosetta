@@ -88,21 +88,21 @@ public:
 
 	void set_moving_res_list( utility::vector1< Size > const & setting ){ moving_res_list_ = setting; }
 
-	scoring::ScoreFunctionCOP scorefxn() { return scorefxn_; }
+	core::scoring::ScoreFunctionCOP scorefxn() { return scorefxn_; }
 
 private:
 
 	void
-	initialize( pose::Pose & pose );
+	initialize( core::pose::Pose & pose );
 
 	void
-	reinitialize( pose::Pose & pose );
+	reinitialize( core::pose::Pose & pose );
 
 	void
 	initialize_working_parameters_and_root( core::pose::Pose & pose );
 
 	void
-	initialize_scorefunctions( pose::Pose const & pose );
+	initialize_scorefunctions( core::pose::Pose const & pose );
 
 	void
 	do_prepacking( core::pose::Pose & pose );
@@ -125,7 +125,7 @@ private:
 	sampling_successful();
 
 	void
-	look_for_precompute_move( pose::Pose & pose );
+	look_for_precompute_move( core::pose::Pose & pose );
 
 private:
 
@@ -136,8 +136,8 @@ private:
 
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 	options::StepWiseModelerOptionsCOP options_;
-	scoring::ScoreFunctionCOP scorefxn_;
-	scoring::ScoreFunctionCOP sample_scorefxn_, pack_scorefxn_; // will be derived from scorefxn_
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreFunctionCOP sample_scorefxn_, pack_scorefxn_; // will be derived from scorefxn_
 
 	// setup in swa_protein_main, but not implemented/necessary for stepwise monte carlo.
 	utility::vector1< protein::InputStreamWithResidueInfoOP > input_streams_;
@@ -147,7 +147,7 @@ private:
 	bool figure_out_prepack_res_;
 	bool prepack_res_was_inputted_;
 	packer::StepWiseMasterPackerOP master_packer_;
-	scoring::constraints::ConstraintSetOP cst_set_;
+	core::scoring::constraints::ConstraintSetOP cst_set_;
 	precomputed::PrecomputedLibraryMoverCOP precomputed_library_mover_;
 
 };

@@ -27,8 +27,8 @@ namespace filters {
 class CalculatorFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< CalculatorFilter >  CalculatorFilterOP;
-typedef utility::pointer::owning_ptr< CalculatorFilter const >  CalculatorFilterCOP;
+typedef utility::pointer::shared_ptr< CalculatorFilter >  CalculatorFilterOP;
+typedef utility::pointer::shared_ptr< CalculatorFilter const >  CalculatorFilterCOP;
 
 } // namespace filters
 } // namespace protocols

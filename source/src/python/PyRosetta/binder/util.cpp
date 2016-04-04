@@ -159,13 +159,17 @@ void fix_boolean_types(string &type)
 // Generate string representation of given expression
 string expresion_to_string(clang::Expr *e)
 {
-	clang::LangOptions lang_opts;
-	lang_opts.CPlusPlus = true;
-	clang::PrintingPolicy Policy(lang_opts);
-
 	std::string _;
 	llvm::raw_string_ostream s(_);
-	e->printPretty(s, 0, Policy);
+
+	if(e) {
+		clang::LangOptions lang_opts;
+		lang_opts.CPlusPlus = true;
+		clang::PrintingPolicy Policy(lang_opts);
+
+		e->printPretty(s, 0, Policy);
+	}
+
 	return s.str();
 }
 

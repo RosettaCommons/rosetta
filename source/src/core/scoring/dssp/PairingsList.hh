@@ -30,7 +30,7 @@
 #include <utility/exit.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1A.fwd.hh>
+#include <ObjexxFCL/FArray1A.hh>
 
 //// C++ headers
 #include <string>

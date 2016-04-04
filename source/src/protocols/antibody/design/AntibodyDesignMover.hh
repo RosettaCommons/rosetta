@@ -291,7 +291,7 @@ private:
 
 	//Runs graft then cartmin on AnchoredGraftMover or CCDEndsGraftMover.  Returns boolean of closure.
 	std::pair<bool, core::Size>
-	run_graft(core::pose::Pose & pose, CDRNameEnum const cdr, CDRDBPose & cdr_pose, grafting::AnchoredGraftMoverOP grafter);
+	run_graft(core::pose::Pose & pose, CDRNameEnum const cdr, CDRDBPose & cdr_pose, protocols::grafting::AnchoredGraftMoverOP grafter);
 
 	/// @brief Run the inner structure/sequence optimization cycle
 	void

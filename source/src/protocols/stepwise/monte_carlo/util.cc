@@ -42,6 +42,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
 
 using ObjexxFCL::lead_zero_string_of;
 using namespace core;
+using namespace core::pose;
 using namespace protocols::stepwise::modeler;
 
 namespace protocols {
@@ -82,7 +83,7 @@ prepare_silent_struct( std::string const & out_tag,
 	Real rms( 0.0 ), rms_fill( 0.0 );
 	if ( native_pose != 0 ) {
 		// if built from scratch, make sure to superimpose over everything.
-		bool superimpose_over_all_instantiated_ = superimpose_over_all_instantiated || check_all_residues_sampled( pose );
+		bool superimpose_over_all_instantiated_ = superimpose_over_all_instantiated || core::pose::full_model_info::check_all_residues_sampled( pose );
 		rms = superimpose_with_stepwise_aligner( pose, *native_pose, superimpose_over_all_instantiated_ );
 
 		if ( do_rms_fill_calculation ) {
@@ -93,7 +94,7 @@ prepare_silent_struct( std::string const & out_tag,
 	}
 
 	SilentStructOP s( new BinarySilentStruct( pose, out_tag ) );
-	s->add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residues_and_connections( pose ) ) );
+	s->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ) );
 
 	if ( native_pose != 0 ) {
 		s->add_energy( "rms",      rms );
@@ -157,8 +158,8 @@ get_move_type_string( mover::StepWiseMove const & swa_move ) {
 std::string
 get_all_res_list( pose::Pose & pose ) {
 	std::string out_string;
-	out_string = make_tag_with_dashes( get_res_list_from_full_model_info_const( pose ) );
-	utility::vector1< pose::PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
+	out_string = make_tag_with_dashes( core::pose::full_model_info::get_res_list_from_full_model_info_const( pose ) );
+	utility::vector1< pose::PoseOP > const & other_pose_list = core::pose::full_model_info::const_full_model_info( pose ).other_pose_list();
 	if ( other_pose_list.size() == 0 ) return out_string;
 	out_string += " [ other_pose: ";
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {

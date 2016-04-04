@@ -27,8 +27,8 @@ namespace analysis {
 
 class PeptideDeriverFilterCreator;
 
-typedef utility::pointer::owning_ptr< PeptideDeriverFilterCreator >  PeptideDeriverFilterCreatorOP;
-typedef utility::pointer::owning_ptr< PeptideDeriverFilterCreator const >  PeptideDeriverFilterCreatorCOP;
+typedef utility::pointer::shared_ptr< PeptideDeriverFilterCreator >  PeptideDeriverFilterCreatorOP;
+typedef utility::pointer::shared_ptr< PeptideDeriverFilterCreator const >  PeptideDeriverFilterCreatorCOP;
 
 } // namespace analysis
 } // namespace protocols

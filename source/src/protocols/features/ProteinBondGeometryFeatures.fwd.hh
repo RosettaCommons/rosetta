@@ -29,9 +29,9 @@ typedef utility::pointer::shared_ptr< ProteinBondGeometryFeatures const > Protei
 class BondAngleDatabase;
 //class BondLengthDatabase;
 
-//typedef  utility::pointer::owning_ptr< TorsionDatabase > TorsionDatabaseOP;
+//typedef  utility::pointer::shared_ptr< TorsionDatabase > TorsionDatabaseOP;
 typedef  utility::pointer::shared_ptr< BondAngleDatabase > BondAngleDatabaseOP;
-//typedef  utility::pointer::owning_ptr< BondLengthDatabase > BondLengthDatabaseOP;
+//typedef  utility::pointer::shared_ptr< BondLengthDatabase > BondLengthDatabaseOP;
 
 
 } // namespace

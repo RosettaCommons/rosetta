@@ -47,7 +47,9 @@
 
 //Auto Headers
 #include <core/id/AtomID.hh>
+
 using namespace core;
+using namespace core::pose;
 using core::Real;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseLegacyClusterer" );

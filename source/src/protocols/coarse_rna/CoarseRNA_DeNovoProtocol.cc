@@ -12,6 +12,7 @@
 /// @details
 /// @author Rhiju Das
 
+#ifdef NOT_IN_SCONS_DEPRECATED
 
 // Unit headers
 #include <protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh>
@@ -514,3 +515,5 @@ CoarseRNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 
 } // namespace rna
 } // namespace protocols
+
+#endif

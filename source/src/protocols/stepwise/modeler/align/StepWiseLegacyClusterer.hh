@@ -44,9 +44,9 @@ class StepWiseLegacyClusterer: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor!
-	StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list );
+	StepWiseLegacyClusterer( utility::vector1< core::pose::PoseOP > const & pose_list );
 
-	StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list,
+	StepWiseLegacyClusterer( utility::vector1< core::pose::PoseOP > const & pose_list,
 		utility::vector1< Size > const & moving_res_list,
 		options::StepWiseModelerOptionsCOP options,
 		bool const force_align );
@@ -74,9 +74,9 @@ public:
 
 	void cluster();
 
-	utility::vector1< PoseOP > rms_pose_list() { return rms_pose_list_; }
+	utility::vector1< core::pose::PoseOP > rms_pose_list() { return rms_pose_list_; }
 
-	utility::vector1< PoseOP > get_pose_list() { return output_pose_list_; }
+	utility::vector1< core::pose::PoseOP > get_pose_list() { return output_pose_list_; }
 
 private:
 

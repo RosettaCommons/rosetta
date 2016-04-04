@@ -32,31 +32,31 @@ class StructAvrgMover : public protocols::moves::Mover
 {
 public:
 	// Constructor
-	StructAvrgMover( pose::Pose const &pose,
+	StructAvrgMover( core::pose::Pose const &pose,
 		protocols::wum::SilentStructStore const &decoys,
 		bool const minimize );
 
 	~StructAvrgMover();
 
 	virtual std::string get_name() const{ return "StructAvrgMover"; }
-	virtual void apply( pose::Pose &ref_pose );
+	virtual void apply( core::pose::Pose &ref_pose );
 
 	void
 	set_default();
 
 	void set_mulfactor( core::Real const mulfactor ){ mulfactor_ = mulfactor; }
 
-	void report_dev( pose::Pose const&ref_pose ) const;
+	void report_dev( core::pose::Pose const&ref_pose ) const;
 
 private:
 
-	utility::vector1< Real >
-	calculate_variations( utility::vector1< utility::vector1< Real > > const deviation );
+	utility::vector1< core::Real >
+	calculate_variations( utility::vector1< utility::vector1< core::Real > > const deviation );
 
 	void
-	add_deviations( pose::Pose ref_pose,
-		pose::Pose pose,
-		utility::vector1< utility::vector1< Real > > &deviation
+	add_deviations( core::pose::Pose ref_pose,
+		core::pose::Pose pose,
+		utility::vector1< utility::vector1< core::Real > > &deviation
 	);
 
 	utility::vector1< std::pair< Size, Size > >
@@ -66,29 +66,29 @@ private:
 		core::Real const frac_base = 0.4
 	) const;
 
-	pose::Pose
-	weighted_average( utility::vector1< pose::Pose > &poses,
-		scoring::ScoreFunctionCOP sfxn,
-		pose::Pose const &pose_ref,
+	core::pose::Pose
+	weighted_average( utility::vector1< core::pose::Pose > &poses,
+					  core::scoring::ScoreFunctionCOP sfxn,
+		core::pose::Pose const &pose_ref,
 		utility::vector1< Real > const, //CAvar,
 		bool const weighted = true
 	);
 
 	void
-	shave_poses( utility::vector1< pose::Pose > &poses,
-		pose::Pose const &avrg_pose,
-		Real const frac );
+	shave_poses( utility::vector1< core::pose::Pose > &poses,
+		core::pose::Pose const &avrg_pose,
+		core::Real const frac );
 
 private:
-	utility::vector1< pose::Pose > poses_;
+	utility::vector1< core::pose::Pose > poses_;
 	utility::vector1< core::Real > CAvar_;
 
-	Real mulfactor_;
-	Real kT_; // denominator for score-weighted averaging
-	Real shave_frac_;
+	core::Real mulfactor_;
+	core::Real kT_; // denominator for score-weighted averaging
+	core::Real shave_frac_;
 	bool minimize_;
 	core::Size niter_; // Num iter for shaving outlier poses
-	scoring::ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 };
 

@@ -21,7 +21,7 @@ namespace protocols {
 namespace moves {
 
 	class DsspMover;
-	typedef utility::pointer::owning_ptr< DsspMover > DsspMoverOP;
+	typedef utility::pointer::shared_ptr< DsspMover > DsspMoverOP;
 
 } // moves
 } // protocols

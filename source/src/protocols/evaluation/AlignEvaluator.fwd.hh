@@ -20,8 +20,8 @@ namespace protocols {
 namespace evaluation {
 
 class AlignEvaluator;
-typedef utility::pointer::owning_ptr< AlignEvaluator > AlignEvaluatorOP;
-typedef utility::pointer::owning_ptr< AlignEvaluator const > AlignEvaluatorCOP;
+typedef utility::pointer::shared_ptr< AlignEvaluator > AlignEvaluatorOP;
+typedef utility::pointer::shared_ptr< AlignEvaluator const > AlignEvaluatorCOP;
 
 } // evaluation
 } // protocols

@@ -17,7 +17,6 @@
 namespace protocols {
 namespace multistate_design {
 
-template <typename T>
 class PartitionAggregateFunction;
 
 }

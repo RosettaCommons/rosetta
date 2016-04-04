@@ -19,6 +19,8 @@
 
 #include <fmt/format.h>
 
+#include <clang/AST/ASTContext.h>
+
 using namespace llvm;
 using namespace clang;
 
@@ -31,8 +33,28 @@ namespace binder {
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(clang::EnumDecl const *E, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack)
+void add_relevant_includes(clang::EnumDecl const *E, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int /*level*/)
 {
+	if( stack.count(E) ) return; else stack.insert(E);
+
+	// if( begins_with(E->getQualifiedNameAsString(), "boost::vertex_index_t") ) {
+	// 	outs() << "add_relevant_includes(enum): " << E->getQualifiedNameAsString() << "  include: " << relevant_include(E) << " isCXXClassMember:" << E->isCXXClassMember() << " isCXXInstanceMember:" << E->isCXXInstanceMember() << "\n";
+	// 	//E->dump();
+	// 	//outs() << "add_relevant_includes(enum): " << E->getQualifiedNameAsString() << "  include: " << relevant_include(E->getDefinition()) << " isCXXClassMember:" << E->isCXXClassMember() << " isCXXInstanceMember:" << E->isCXXInstanceMember() << "\n";
+	// 	//NamedDecl const *decl = E;
+	// 	// ASTContext & ast_context( decl->getASTContext() );
+	// 	// SourceManager & sm( ast_context.getSourceManager() );
+	// 	// FileID fid = sm.getFileID( decl->getLocation() );
+	// 	// SourceLocation include = sm.getIncludeLoc(fid);
+	// 	// include.dump(sm);
+	// 	//FileEntry const *fe = sm.getFileEntryForID(fid);
+	// 	//if(fe) outs() << fe->getName() << "\n";
+	// 	//SourceLocation sl = decl->getLocation();
+	// 	//if( sl.isValid()  and  sl.isFileID() ) sl.dump(sm);
+	// 	//FileID fid = sm.getFileID(sl);
+	// 	//if( fid.isValid() ) sl.dump(sm);
+	// }
+	//outs() << "add_relevant_includes(enum): " << E->getQualifiedNameAsString() << "\n";
 	add_relevant_include_for_decl(E, includes);
 }
 
@@ -87,7 +109,7 @@ void EnumBinder::request_bindings_and_skipping(Config const &config)
 /// extract include needed for this generator and add it to includes vector
 void EnumBinder::add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const
 {
-	binder::add_relevant_includes(E, includes, stack);
+	binder::add_relevant_includes(E, includes, stack, 0);
 }
 
 /// generate binding code for this object and all its dependencies

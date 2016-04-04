@@ -47,7 +47,7 @@ public: // Creation
 	NormalModeMultifunc(
 		pose::Pose & pose_in,
 		MinimizerMap & min_map_in,
-		scoring::ScoreFunction const & scorefxn_in,
+		core::scoring::ScoreFunction const & scorefxn_in,
 		protocols::normalmode::NormalMode const & normalmode_in,
 		bool const use_omega = true,
 		bool const deriv_check_in = false,
@@ -105,7 +105,7 @@ protected: // accessors for subclasses
 
 	MinimizerMap const & min_map() const;
 
-	scoring::ScoreFunction const & score_function() const;
+	core::scoring::ScoreFunction const & score_function() const;
 
 private: // data
 
@@ -115,7 +115,7 @@ private: // data
 	// non-const since min_map_ is modified by calls to dfunc()
 	MinimizerMap & min_map_;
 
-	scoring::ScoreFunction const & score_function_;
+	core::scoring::ScoreFunction const & score_function_;
 
 	// Number of variables
 	Size nvar_;

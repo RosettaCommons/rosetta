@@ -40,6 +40,8 @@
 static THREAD_LOCAL basic::Tracer TR("StepWisePoseAlignerTest");
 
 
+using namespace core::pose;
+
 class StepWisePoseAlignerTest : public CxxTest::TestSuite {
 	//Define Variables
 
@@ -157,6 +159,3 @@ public:
 
 
 };
-
-
-

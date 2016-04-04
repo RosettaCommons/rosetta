@@ -81,12 +81,16 @@ string relevant_include(NamedDecl const *decl)
 	if( include.isValid() ) {
 		char const *data = sm.getCharacterData(include);
 
-		char terminator = *data == '"' ? '"' : '>';
+		if( strlen(data) > 2 ) {  // should be at least 3 chars: open/close symbol + file name
+			char terminator = *data == '"' ? '"' : '>';
 
-		for(; *data and  *data != terminator; ++data ) include_string.push_back(*data);
-		if(*data == terminator) include_string.push_back(*data);
+			include_string.push_back(*data); ++data;
+			for(; *data and  *data != terminator; ++data ) include_string.push_back(*data);
+			if(*data == terminator) include_string.push_back(*data);
 
-		//outs() << "  Include for " << decl->getNameAsString() << ": " << include_string << "\n";
+			//outs() << "  Include for " << decl->getNameAsString() << ": " << include_string << "\n";
+		}
+		if( include_string.size()  and  include_string[0]=='"' ) include_string.resize(0); // avoid adding include in quotes because compiler will not be able to find them
 	}
 
 	return include_string;
@@ -94,7 +98,7 @@ string relevant_include(NamedDecl const *decl)
 
 
 // extract include path needed for declaration itself (without template dependency if any), do nothing if include could not be found (ie for build-in's)
-void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includes)
+void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includes/*, std::set<clang::NamedDecl const *> &stack*/)
 {
 	using std::make_pair;
 	static vector< std::pair<string, string> > const name_map = {
@@ -128,6 +132,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		make_pair("<bits/fstream.tcc>", "<fstream>"),
 		make_pair("<bits/sstream.tcc>", "<sstream>"),
 		make_pair("<bits/stl_list.h>", "<list>"),
+		make_pair("<bits/stl_deque.h>", "<deque>"),
 	};
 
 
@@ -142,6 +147,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 			return;
 		}
 	}
+
 
 	string include = relevant_include(decl);
 
@@ -159,42 +165,61 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		//#endif
 		includes.push_back(include);
 	}
+	// else {
+	// 	for(;;) {
+	// 		if(DeclContext const * d = decl->getDeclContext() ) {
+	// 			if( auto r = dyn_cast<CXXRecordDecl>(d) ) {
+	// 				outs() << "include from decl context for: " << decl->getQualifiedNameAsString() << "\n";
+	// 				add_relevant_includes(r, includes, stack);
+	// 			}
+	// 		}
+	// 		else break;
+	// 	}
+	// }
 }
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(QualType const &qt, /*const ASTContext &context,*/ std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack)
+void add_relevant_includes(QualType const &qt, /*const ASTContext &context,*/ std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level)
 {
 	//QualType qt = qt.getDesugaredType(context);
 	//outs() << "add_relevant_includes(qt): " << qt.getAsString() << "\n";
-	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) add_relevant_includes(pt->getPointeeType(), includes, stack);
-	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) add_relevant_includes(rt->getPointeeType(), includes, stack);
-	if( CXXRecordDecl *r = qt->getAsCXXRecordDecl() ) add_relevant_includes(r, includes, stack);
-	if( EnumDecl *e = dyn_cast_or_null<EnumDecl>( qt->getAsTagDecl() ) ) add_relevant_includes(e, includes, stack);
+	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) add_relevant_includes(pt->getPointeeType(), includes, stack, level);
+	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) add_relevant_includes(rt->getPointeeType(), includes, stack, level);
+	if( CXXRecordDecl *r = qt->getAsCXXRecordDecl() ) add_relevant_includes(r, includes, stack, level);
+	if( EnumDecl *e = dyn_cast_or_null<EnumDecl>( qt->getAsTagDecl() ) ) add_relevant_includes(e, includes, stack, level);
 }
 
 
 // check if given QualType is bindable
 bool is_bindable(QualType const &qt)
 {
-	//if( qt->isVoidPointerType() ) return false; // for now refuse to bind void* types - note the recent pybind11 can handle bindings for void*
+	// if( qt->isVoidPointerType() ) return false; // for now refuse to bind void* types - note the recent pybind11 can handle bindings for void*
 
 	bool r = true;
 
-	r &= !qt->isFunctionPointerType()  and  ! qt->isRValueReferenceType()  and  !qt->isInstantiationDependentType()  and  !qt->isArrayType();  //and  !qt->isConstantArrayType()  and  !qt->isIncompleteArrayType()  and  !qt->isVariableArrayType()  and  !qt->isDependentSizedArrayType()
+	r &= !qt->isFunctionPointerType()  and  !qt->isRValueReferenceType()  and  !qt->isInstantiationDependentType()  and  !qt->isArrayType();  //and  !qt->isConstantArrayType()  and  !qt->isIncompleteArrayType()  and  !qt->isVariableArrayType()  and  !qt->isDependentSizedArrayType()
 
 	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) {
 		if( pt->getPointeeType()->isPointerType() ) return false;  // refuse to bind 'value**...' types
 		if( pt->getPointeeType()->isArithmeticType() ) return false;  // refuse to bind 'int*, doublle*...' types
 		if( pt->getPointeeType()->isArrayType() or pt->getPointeeType()->isConstantArrayType() ) return false;  // refuse to bind 'T* v[]...' types
+
 		//qt->dump();
 		r &= is_bindable( pt->getPointeeType()/*.getCanonicalType()*/ );
 	}
 
 	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) {
+		QualType pqt = rt->getPointeeType();
+		//outs() << "#### " << pqt.getAsString() << "\n";
+
+		// special handling for std::pair&  and  std::tuple&  whitch pybind11 can't pass by refference
+		string pqt_name = pqt.getAsString();
+		if( begins_with(pqt_name, "std::pair")  or  begins_with(pqt_name, "std::tuple") ) return false;  // but we allow bindings for 'const std::tuple' and 'const std::pair'
+
 		//rt->dump();
-		//outs() << "Ref " << qt.getAsString() << " -> " << is_bindable( rt->getPointeeType() ) << "\n";
-		r &= is_bindable( rt->getPointeeType()/*.getCanonicalType()*/ );
+		//outs() << "Ref " << qt.getAsString() << " -> " << is_bindable( rt->getPointeeType().getCanonicalType() ) << "\n";
+		r &= is_bindable( pqt/*.getCanonicalType()*/ );
 	}
 
 	if( Type const *tp = qt/*.getCanonicalType()*/.getTypePtrOrNull() ) {
@@ -240,9 +265,12 @@ bool is_python_builtin(NamedDecl const *C)
 	string name = C->getQualifiedNameAsString();
 	//if( begins_with(name, "class ") ) name = name.substr(6); // len("class ")
 
-	std::vector<string> known_builtin = {"std::pair", "std::tuple", "std::allocator", "std::basic_string", "std::initializer_list", "std::shared_ptr", "std::weak_ptr", "std::less",
+	std::vector<string> known_builtin = {"std::pair", "std::tuple", "std::vector", "std::map", "std::list", "std::set", "std::basic_string",
+										 "std::allocator", "std::initializer_list", "std::shared_ptr", "std::weak_ptr", "std::less",
 										 "std::iterator", "std::reverse_iterator",
-										 "std::_Rb_tree_iterator", "std::_Rb_tree_const_iterator", "__gnu_cxx::__normal_iterator",};
+										 "std::_Rb_tree_iterator", "std::_Rb_tree_const_iterator", "__gnu_cxx::__normal_iterator",
+ 										 "std::_List_iterator", "std::_List_const_iterator",
+ 	};
 
 	for(auto &k : known_builtin) {
 		if( begins_with(name, k) ) return true;

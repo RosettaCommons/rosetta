@@ -96,7 +96,7 @@ private:
 	std::map< Size, Size > map_DOF_to_BB_;
 
 	void
-	setup_minimization_graph( pose::Pose & pose, scoring::ScoreFunction const & sfxn, MinimizerMap const & min_map ) const;
+	setup_minimization_graph( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, MinimizerMap const & min_map ) const;
 
 	bool uniq_refers_to_beta( char const uniq ) const;
 

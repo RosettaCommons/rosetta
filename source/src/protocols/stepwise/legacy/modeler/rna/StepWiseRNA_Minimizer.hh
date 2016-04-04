@@ -77,10 +77,10 @@ public:
 	core::io::silent::SilentFileDataOP & silent_file_data();
 
 	void
-	set_base_centroid_checker( checker::RNA_BaseCentroidCheckerOP & checker );
+	set_base_centroid_checker( protocols::stepwise::modeler::rna::checker::RNA_BaseCentroidCheckerOP & checker );
 
 	void
-	set_user_input_VDW_bin_checker( checker::RNA_VDW_BinCheckerOP const & user_input_VDW_bin_checker ){ user_input_VDW_bin_checker_ = user_input_VDW_bin_checker; }
+	set_user_input_VDW_bin_checker( protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP const & user_input_VDW_bin_checker ){ user_input_VDW_bin_checker_ = user_input_VDW_bin_checker; }
 
 
 	void
@@ -152,8 +152,8 @@ private:
 
 	utility::vector1< core::Size > fixed_res_;
 
-	checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
-	checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker_;
+	protocols::stepwise::modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
+	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker_;
 
 	core::Real vary_bond_geometry_frequency_;
 

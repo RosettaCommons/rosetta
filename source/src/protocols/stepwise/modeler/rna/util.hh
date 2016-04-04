@@ -49,10 +49,10 @@ namespace modeler {
 namespace rna {
 
 void
-minimize_with_constraints( pose::Pose & pose, kinematics::MoveMap const & mm, scoring::ScoreFunctionOP const & scorefxn, optimization::MinimizerOptions const & options );
+minimize_with_constraints( core::pose::Pose & pose, core::kinematics::MoveMap const & mm, core::scoring::ScoreFunctionOP const & scorefxn, core::optimization::MinimizerOptions const & options );
 
 void
-apply_protonated_H1_adenosine_variant_type( pose::Pose & pose, Size const & seq_num, bool const apply_check = true );
+apply_protonated_H1_adenosine_variant_type( core::pose::Pose & pose, Size const & seq_num, bool const apply_check = true );
 
 void
 remove_all_variant_types( pose::Pose & pose );
@@ -206,11 +206,11 @@ utility::vector1< Size >
 get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< Size > const & moving_res, bool verbose = false );
 
 void
-o2prime_trials( pose::Pose& pose, scoring::ScoreFunctionCOP const & packer_scorefxn,
+o2prime_trials( core::pose::Pose& pose, core::scoring::ScoreFunctionCOP const & packer_scorefxn,
 	bool const pack_virtual_o2prime_hydrogen = false );
 
 void
-o2prime_trials( pose::Pose& pose, scoring::ScoreFunctionCOP const & packer_scorefxn, utility::vector1< Size > const & O2prime_seq_num_list,
+o2prime_trials( pose::Pose& pose, core::scoring::ScoreFunctionCOP const & packer_scorefxn, utility::vector1< Size > const & O2prime_seq_num_list,
 	bool const pack_virtual_o2prime_hydrogen = false );
 
 pack::task::PackerTaskOP
@@ -256,17 +256,17 @@ print_base_state( std::string const & tag, Size const base_state, std::ostream &
 void
 print_sugar_pucker_state( std::string const & tag, Size const pucker_state, std::ostream & outstream = std::cout );
 
-scoring::ScoreFunctionOP
-get_modeler_scorefxn( scoring::ScoreFunctionCOP scorefxn_ );
+core::scoring::ScoreFunctionOP
+get_modeler_scorefxn( core::scoring::ScoreFunctionCOP scorefxn_ );
 
 void
 copy_all_o2prime_torsions( pose::Pose & mod_pose, pose::Pose const & template_pose );
 
-scoring::ScoreFunctionOP
-rescale_scorefxn( scoring::ScoreFunctionOP const & starting_scorefxn, Real const scaling_factor );
+core::scoring::ScoreFunctionOP
+rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, Real const scaling_factor );
 
 void
-show_scorefxn_weight_lines( scoring::ScoreFunctionOP const & scorefxn, std::string const & title );
+show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std::string const & title );
 
 void
 choose_random_if_unspecified_nucleotide( char & newrestype );

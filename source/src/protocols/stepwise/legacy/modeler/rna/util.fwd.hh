@@ -25,8 +25,8 @@ namespace modeler {
 namespace rna {
 	
 	class util;
-	typedef utility::pointer::owning_ptr< util > utilOP;
-	typedef utility::pointer::owning_ptr< util const > utilCOP;
+	typedef utility::pointer::shared_ptr< util > utilOP;
+	typedef utility::pointer::shared_ptr< util const > utilCOP;
 	
 } //rna
 } //modeler

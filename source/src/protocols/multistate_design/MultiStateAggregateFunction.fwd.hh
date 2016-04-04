@@ -20,8 +20,8 @@ namespace protocols {
 namespace multistate_design {
 
 class MultiStateAggregateFunction;
-typedef utility::pointer::owning_ptr< MultiStateAggregateFunction > MultiStateAggregateFunctionOP;
-typedef utility::pointer::owning_ptr< MultiStateAggregateFunction const > MultiStateAggregateFunctionCOP;
+typedef utility::pointer::shared_ptr< MultiStateAggregateFunction > MultiStateAggregateFunctionOP;
+typedef utility::pointer::shared_ptr< MultiStateAggregateFunction const > MultiStateAggregateFunctionCOP;
 
 }
 }

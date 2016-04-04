@@ -186,20 +186,28 @@ bool is_bindable(clang::CXXRecordDecl const *C)
 {
 	bool r = true;
 
-	if( C->isDependentType() ) return false;
-	if( !C->isCompleteDefinition() ) return false;
-	if( C->getAccess() == AS_protected  or  C->getAccess() == AS_private ) return false;
-
-	//r &= C->isCompleteDefinition() /* and C->getDefinition() */  /*and  C->hasDefinition()*/;
-
-	// outs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() //<< template_specialization(C)
+	// outs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() << template_specialization(C)
 	// 	   << " C->hasDefinition():" << C->hasDefinition()
 	// 	   << " C->isCompleteDefinition():" << C->isCompleteDefinition()
 	// 	   // << " C->isThisDeclarationADefinition():" << C->isThisDeclarationADefinition()
 	// 	   // << " C->getDefinition():" << C->getDefinition()
-	// 	//<< " C->isDependentType():" << C->isDependentType()
+	// 	   << " C->isDependentType():" << C->isDependentType()
 	// 	   <<"\n";
+	string qualified_name = C->getQualifiedNameAsString();
+	// if( qualified_name != "std::pair"  and  qualified_name != "std::tuple" ) {
+	// 	if( C->isDependentType() ) return false;
+	// 	if( !C->isCompleteDefinition() ) return false;
+	// 	if( C->getAccess() == AS_protected  or  C->getAccess() == AS_private ) return false;
+	// }
 
+	if( C->isDependentType() ) return false;
+	if( !C->isCompleteDefinition()  and  !dyn_cast<ClassTemplateSpecializationDecl>(C) ) return false;
+	if( C->getAccess() == AS_protected  or  C->getAccess() == AS_private ) return false;
+
+
+	//r &= C->isCompleteDefinition() /* and C->getDefinition() */  /*and  C->hasDefinition()*/;
+
+	//outs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() << template_specialization(C) << " " << r << "\n";
 
 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
 		//C->dump();
@@ -245,6 +253,9 @@ bool is_bindable(clang::CXXRecordDecl const *C)
 				// }
 			}
 
+			//if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Integral ) return true;
+
+
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Declaration )  {
 				if( ValueDecl *v = t->getTemplateArgs()[i].getAsDecl() ) {
 					if( v->getAccess() == AS_protected   or  v->getAccess() == AS_private ) {
@@ -274,6 +285,7 @@ bool is_bindable(clang::CXXRecordDecl const *C)
 /// check if user requested binding for the given declaration
 bool is_binding_requested(clang::CXXRecordDecl const *C, Config const &config)
 {
+	if( dyn_cast<ClassTemplateSpecializationDecl>(C) ) return false;
 	bool bind = config.is_class_binding_requested( C->getQualifiedNameAsString() ) or config.is_class_binding_requested( class_qualified_name(C) ) or config.is_namespace_binding_requested( namespace_from_named_decl(C) );
 	for(auto & t : get_type_dependencies(C) ) bind &= !is_skipping_requested(t, config);
 	return bind;
@@ -330,10 +342,13 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config)
 
 
 // extract include needed for declaration and add it to includes
-void add_relevant_includes(clang::CXXRecordDecl const *C, vector<string> &includes, set<NamedDecl const *> &stack)
+void add_relevant_includes(clang::CXXRecordDecl const *C, vector<string> &includes, set<NamedDecl const *> &stack, int level)
 {
-	//outs() << "add_relevant_includes(class): " << C->getQualifiedNameAsString() << template_specialization(C) << "\n";
-	if( stack.count(C) ) return; else stack.insert(C);
+	if( stack.count(C)  /*or  stack.size() > 16*/ ) return; else stack.insert(C);
+
+	//outs() << stack.size() << " ";
+	// if( begins_with(C->getQualifiedNameAsString(), "boost::property")
+	// 	) outs() << "add_relevant_includes(class): " << C->getQualifiedNameAsString() << template_specialization(C) << "\n";
 
 	add_relevant_include_for_decl(C, includes);
 
@@ -341,7 +356,7 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, vector<string> &includ
 
 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
-				add_relevant_includes( t->getTemplateArgs()[i].getAsType().getDesugaredType(C->getASTContext()) , includes, stack);
+				add_relevant_includes( t->getTemplateArgs()[i].getAsType().getDesugaredType(C->getASTContext()) , includes, stack, level+1);
 
 				// Type const *tp = t->getTemplateArgs()[i].getAsType().getTypePtrOrNull();
 				// if( tp  and  (tp->isRecordType() or tp->isEnumeralType()) and  !tp->isBuiltinType() ) {
@@ -353,15 +368,29 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, vector<string> &includ
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Template ) {
 				add_relevant_include_for_decl( t->getTemplateArgs()[i].getAsTemplate().getAsTemplateDecl()->getTemplatedDecl(), includes);
 			}
+
+			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Declaration ) {
+				ValueDecl *v = t->getTemplateArgs()[i].getAsDecl();
+				add_relevant_include_for_decl(v, includes);
+			}
+			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Integral ) {
+				add_relevant_includes(t->getTemplateArgs()[i].getIntegralType(), includes, stack, level+1);
+			}
 		}
 	}
 
 	//outs() << "isCompleteDefinition:" << C->isCompleteDefinition() << " id: " << C->getQualifiedNameAsString() << "\n";
-	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-		if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
-			add_relevant_includes(*m, includes, stack);
+	if( level < 2 ) {
+		for(auto m = C->method_begin(); m != C->method_end(); ++m) {
+			if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
+				add_relevant_includes(*m, includes, stack, level+1);
+			}
 		}
 	}
+	// if( C->isCXXInstanceMember() ) {
+	// 	if( auto r = dyn_cast<CXXRecordDecl>(C->getDeclContext()) ) add_relevant_includes(r, includes, stack);
+	// 	if( auto e = dyn_cast<EnumDecl>(C->getDeclContext()) ) add_relevant_includes(e, includes, stack);
+	// }
 }
 
 
@@ -396,7 +425,7 @@ void  ClassBinder::request_bindings_and_skipping(Config const &config)
 /// extract include needed for this generator and add it to includes vector
 void ClassBinder::add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const
 {
-	binder::add_relevant_includes(C, includes, stack);
+	binder::add_relevant_includes(C, includes, stack, 0);
 }
 
 
@@ -417,12 +446,17 @@ void ClassBinder::bind(Context &context)
 	c += "\tusing namespace " + namespace_from_named_decl(C) + ";\n\t";
 
 	// class_<A>(module_a, "A") or class_<A, std::shared_ptr<A>>(module_a, "A")
-	string maybe_holder_type;
+	//string maybe_holder_type;
+	// if( is_inherited_from_enable_shared_from_this(C) ) maybe_holder_type = ", std::shared_ptr<{}>"_format(qualified_name);
+	// else if( CXXDestructorDecl * d = C->getDestructor() ) {
+	// 	if( d->getAccess() != AS_public ) maybe_holder_type = ", " + qualified_name + '*';
+	// }
+
+	string maybe_holder_type =  ", std::shared_ptr<{}>"_format(qualified_name);
 	if( is_inherited_from_enable_shared_from_this(C) ) maybe_holder_type = ", std::shared_ptr<{}>"_format(qualified_name);
 	else if( CXXDestructorDecl * d = C->getDestructor() ) {
 		if( d->getAccess() != AS_public ) maybe_holder_type = ", " + qualified_name + '*';
 	}
-
 
 	c += R"(pybind11::class_<{}{}> cl({}, "{}");)"_format(qualified_name, maybe_holder_type, module_variable_name, class_name(C)) + '\n';
 

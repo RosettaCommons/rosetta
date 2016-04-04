@@ -111,7 +111,7 @@ public:
 private:
 	// functions
 	void cal_perrsd_score( pose::Pose &pose,
-		scoring::ScoreType const &score_type,
+						   core::scoring::ScoreType const &score_type,
 		utility::vector1<core::Real> &perrsd_score,
 		Real weight );
 

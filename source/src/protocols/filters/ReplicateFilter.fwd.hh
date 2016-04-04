@@ -27,8 +27,8 @@ namespace filters {
 class ReplicateFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ReplicateFilter >  ReplicateFilterOP;
-typedef utility::pointer::owning_ptr< ReplicateFilter const >  ReplicateFilterCOP;
+typedef utility::pointer::shared_ptr< ReplicateFilter >  ReplicateFilterOP;
+typedef utility::pointer::shared_ptr< ReplicateFilter const >  ReplicateFilterCOP;
 
 } // namespace filters
 } // namespace protocols

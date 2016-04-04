@@ -102,8 +102,7 @@ public:
 		if( O_config.size() ) config.read(O_config);
 	}
 
-	//bool shouldVisitTemplateInstantiations () const { return true; }
-
+	bool shouldVisitTemplateInstantiations () const { return true; }
 
 	virtual bool VisitFunctionDecl(FunctionDecl *F)
 	{

@@ -29,19 +29,19 @@ class RemodelLigandHandler;
 
 
 /// @brief RemodelLigandHandler owning pointer
-typedef utility::pointer::owning_ptr< RemodelLigandHandler > RemodelLigandHandler_OP;
+typedef utility::pointer::shared_ptr< RemodelLigandHandler > RemodelLigandHandler_OP;
 
 
 /// @brief RemodelLigandHandler const owning pointer
-typedef utility::pointer::owning_ptr< RemodelLigandHandler const > RemodelLigandHandler_COP;
+typedef utility::pointer::shared_ptr< RemodelLigandHandler const > RemodelLigandHandler_COP;
 
 
 /// @brief RemodelLigandHandler access pointer
-typedef utility::pointer::access_ptr< RemodelLigandHandler > RemodelLigandHandler_AP;
+typedef utility::pointer::shared_ptr< RemodelLigandHandler > RemodelLigandHandler_AP;
 
 
 /// @brief RemodelLigandHandler const access pointer
-typedef utility::pointer::access_ptr< RemodelLigandHandler const > RemodelLigandHandler_CAP;
+typedef utility::pointer::shared_ptr< RemodelLigandHandler const > RemodelLigandHandler_CAP;
 
 
 } // namespace remodel

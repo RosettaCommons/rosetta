@@ -161,7 +161,7 @@ get_bridge_res( pose::Pose const & pose,
 			runtime_assert( !moving_res_list.has_value( bridge_res ) );
 			if ( sample_res_for_pose.has_value( bridge_res ) ) working_bridge_res.push_back( bridge_res );
 		}
-		bridge_res = merge_vectors( bridge_res, const_full_model_info( pose ).sub_to_full( working_bridge_res ) );
+		bridge_res = merge_vectors( bridge_res, core::pose::full_model_info::const_full_model_info( pose ).sub_to_full( working_bridge_res ) );
 	}
 	return bridge_res;
 

@@ -65,7 +65,7 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config);
 
 
 // extract include needed for declaration and add it to includes
-void add_relevant_includes(clang::CXXRecordDecl const *C, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack);
+void add_relevant_includes(clang::CXXRecordDecl const *C, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level);
 
 
 class ClassBinder : public Binder

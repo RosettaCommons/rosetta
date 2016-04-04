@@ -18,7 +18,7 @@ namespace docking {
 
 class RigidBodyInfo;
 typedef utility::pointer::shared_ptr< RigidBodyInfo > RigidBodyInfoOP;
-//typedef utility::pointer::owning_ptr< RigidBodyInfo const > RigidBodyInfoCOP;
+typedef utility::pointer::shared_ptr< RigidBodyInfo const > RigidBodyInfoCOP;
 
 }
 }

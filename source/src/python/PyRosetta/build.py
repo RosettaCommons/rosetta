@@ -25,9 +25,9 @@ else: Platform = "unknown"
 PlatformBits = platform.architecture()[0][:2]
 
 
-_banned_dirs_ = 'src/utility/pointer'.split()  # src/utility/keys src/utility/options src/basic/options
+_banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
-
+_banned_headers_ +=' core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh' # GPU code
 
 # moved to config file _banned_namespaces_ = 'utility::options'.split()
 
@@ -123,17 +123,38 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
 
 
 def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
-    libs = OrderedDict([ ('cppdb', ['cppdb/atomic_counter', 'cppdb/conn_manager', 'cppdb/driver_manager', 'cppdb/frontend', 'cppdb/backend',
-                                            'cppdb/mutex', 'cppdb/pool', 'cppdb/shared_object', 'cppdb/sqlite3_backend', 'cppdb/utils'] ),
-                         ('sqlite3', ['sqlite3/sqlite3'] ), ])
+    libs = OrderedDict([ ('cppdb', ['dbio/cppdb/atomic_counter', 'dbio/cppdb/conn_manager', 'dbio/cppdb/driver_manager', 'dbio/cppdb/frontend', 'dbio/cppdb/backend',
+                                    'dbio/cppdb/mutex', 'dbio/cppdb/pool', 'dbio/cppdb/shared_object', 'dbio/cppdb/sqlite3_backend', 'dbio/cppdb/utils'] ),
+                         ('sqlite3', ['dbio/sqlite3/sqlite3'] ), ])
 
     defines = dict(cppdb = 'CPPDB_EXPORTS CPPDB_DISABLE_SHARED_OBJECT_LOADING CPPDB_DISABLE_THREAD_SAFETY CPPDB_WITH_SQLITE3' +
                            ' CPPDB_LIBRARY_PREFIX=\\"lib\\" CPPDB_LIBRARY_SUFFIX=\\".dylib\\" CPPDB_SOVERSION=\\"0\\" ' +
                            ' CPPDB_MAJOR=0 CPPDB_MINOR=3 CPPDB_PATCH=0 CPPDB_VERSION=\\"0.3.0\\"',
                    sqlite3 = 'SQLITE_DISABLE_LFS SQLITE_OMIT_LOAD_EXTENSION SQLITE_THREADSAFE=0')
 
+    scons_file_extension = '.external.settings'
+    external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)]
+    for scons_file in external_scons_files:
+        G = {}
+        sources = []
+        with open(rosetta_source_path+'/external/'+scons_file) as f:
+            code = compile(f.read(), rosetta_source_path+'/external/'+scons_file, 'exec')
+            exec(code, G)
+
+        for dir_ in G['sources']:
+            for f in G['sources'][dir_]:
+                if '.' in f: sources.append( dir_ + '/' + f )
+                else: sources.append( dir_ + '/' + f + '.cc')
+
+            for h in os.listdir(rosetta_source_path+'/external/' + dir_):
+                if h.endswith('.hh') or h.endswith('.h'): sources.append(dir_ + '/' + h)
+
+            lib_name = scons_file[:-len(scons_file_extension)]
+            libs[lib_name] = sources
+            defines[lib_name] = ' '.join( G['defines'] )
+
     for l in libs:
-        t  = 'add_library({}\n{})\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/dbio/' + s for s in libs[l]] ))
+        t  = 'add_library({}\n{})\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s for s in libs[l]] ))
         t += '\ntarget_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
         update_source_file(prefix + l + '.cmake', t)
 
@@ -155,14 +176,14 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
         if k.startswith('numeric'):   i = '2'
         if k.startswith('basic'):     i = '3'
         if k.startswith('core'):      i = '4'
-        if k.startswith('protocols'): i = '5'
+        if k.startswith('protocols'): i = '5' + k.split('.')[1]
         return i+k
 
     all_libs.sort(key=key, reverse=True)
 
     for lib in all_libs:
         #if lib not in 'ObjexxFCL utility numeric basic': continue
-        if lib.startswith('protocols'): continue
+        #if lib.startswith('protocols'): continue
 
         G = {}
         sources = []
@@ -188,8 +209,6 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
         update_source_file(prefix + lib + '.cmake', t)
 
         libs.append(lib)
-
-    print(libs)
 
     return libs
 
@@ -255,7 +274,7 @@ def generate_bindings(rosetta_source_path):
     include = prefix + 'all_rosetta_includes.hh'
     with open(include, 'w') as fh:
         #for path in 'ObjexxFCL utility numeric basic core'.split():
-        for path in 'ObjexxFCL utility numeric basic core'.split():
+        for path in 'ObjexxFCL utility numeric basic core protocols'.split():
             for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
                 for f in files:
                     if f.endswith('.hh'):

@@ -34,13 +34,6 @@ typedef utility::vector1<DisulfPairing> DisulfPairingsList;
 // new better version of the name --- try to phase out DisulfPairingsList
 typedef utility::vector1<DisulfPairing> DisulfPairingList;
 
-
-// Types
-// NO DisulfPairingsList is not a Ref-Counted class
-//typedef  utility::pointer::owning_ptr< DisulfPairingsList >  DisulfPairingsListOP;
-//typedef  utility::pointer::owning_ptr< DisulfPairingsList const >  DisulfPairingsListCOP;
-
-
 } // namespace jumping
 } // namespace protocols
 

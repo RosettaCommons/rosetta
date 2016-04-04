@@ -27,7 +27,6 @@
 #include <protocols/docking/types.hh>
 
 
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -52,11 +51,11 @@ public:
 
 	void set_default();
 
-	void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ) {
+	void set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ) {
 		dock_scorefxn_ = dock_scorefxn->clone();
 	}
 
-	void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn) {
+	void set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn) {
 		pack_scorefxn_ = pack_scorefxn->clone();
 	}
 
@@ -65,13 +64,13 @@ public:
 	virtual std::string get_name() const;
 
 
-	void set_task_factory(pack::task::TaskFactoryCOP tf);
-	void set_move_map(kinematics::MoveMapCOP movemap);
+	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
+	void set_move_map(core::kinematics::MoveMapCOP movemap);
 	void set_dock_jump(docking::DockJumps jump);
-	Real set_rot_mag  (core::Real rot_mag)  {
+	core::Real set_rot_mag  (core::Real rot_mag)  {
 		return rot_mag_  =rot_mag;
 	}
-	Real set_trans_mag(core::Real trans_mag) {
+	core::Real set_trans_mag(core::Real trans_mag) {
 		return trans_mag_=trans_mag;
 	}
 
@@ -94,18 +93,18 @@ private:
 	core::Real trans_mag_;
 	core::Size num_repeats_;
 
-	scoring::ScoreFunctionOP dock_scorefxn_;
-	scoring::ScoreFunctionOP pack_scorefxn_;
+	core::scoring::ScoreFunctionOP dock_scorefxn_;
+	core::scoring::ScoreFunctionOP pack_scorefxn_;
 
 	void init();
 
-	void repulsive_ramp( pose::Pose & pose_in, loops::Loops loops_in );
+	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
 
 
 	//packer task
 	docking::DockJumps jump_;
-	pack::task::TaskFactoryOP tf_;
-	kinematics::MoveMapOP movemap_;
+	core::pack::task::TaskFactoryOP tf_;
+	core::kinematics::MoveMapOP movemap_;
 	bool sc_min_;
 	bool rt_min_;
 };
@@ -115,5 +114,3 @@ private:
 } // namespace protocols
 
 #endif
-
-

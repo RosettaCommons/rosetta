@@ -41,7 +41,7 @@ class PDBTrajectoryRecorder;
 
 // Typedefs
 // --- typedef utility::pointer::access_ptr< PDBTrajectoryRecorder > PDBTrajectoryRecorderAP;
-// --- typedef utility::pointer::owning_ptr< PDBTrajectoryRecorder > PDBTrajectoryRecorderOP;
+// --- typedef utility::pointer::shared_ptr< PDBTrajectoryRecorder > PDBTrajectoryRecorderOP;
 
 
 // Smart pointer required functions

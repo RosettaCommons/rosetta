@@ -25,8 +25,8 @@ namespace pcsTs4{
 
 class GridSearchIterator_Ts4;
 
-typedef utility::pointer::owning_ptr< GridSearchIterator_Ts4 > GridSearchIterator_Ts4OP;
-typedef utility::pointer::owning_ptr< GridSearchIterator_Ts4 const > GridSearchIterator_Ts4COP;
+typedef utility::pointer::shared_ptr< GridSearchIterator_Ts4 > GridSearchIterator_Ts4OP;
+typedef utility::pointer::shared_ptr< GridSearchIterator_Ts4 const > GridSearchIterator_Ts4COP;
 
 }//namespace pcsTs4
 }//namespace methods

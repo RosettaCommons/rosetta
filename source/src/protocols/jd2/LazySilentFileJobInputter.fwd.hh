@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class LazySilentFileJobInputter;
-typedef utility::pointer::owning_ptr< LazySilentFileJobInputter > LazySilentFileJobInputterOP;
+typedef utility::pointer::shared_ptr< LazySilentFileJobInputter > LazySilentFileJobInputterOP;
 
 } // jd2
 } // protocols

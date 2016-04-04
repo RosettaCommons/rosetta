@@ -24,7 +24,7 @@
 namespace binder {
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(clang::EnumDecl const *E, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack);
+void add_relevant_includes(clang::EnumDecl const *E, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level);
 
 
 // Generate binding for given function: py::enum_<MyEnum>(module, "MyEnum")...

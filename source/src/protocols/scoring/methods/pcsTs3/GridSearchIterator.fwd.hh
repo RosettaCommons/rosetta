@@ -25,8 +25,8 @@ namespace pcsTs3{
 
 class GridSearchIterator_Ts3;
 
-typedef utility::pointer::owning_ptr< GridSearchIterator_Ts3 > GridSearchIterator_Ts3OP;
-typedef utility::pointer::owning_ptr< GridSearchIterator_Ts3 const > GridSearchIterator_Ts3COP;
+typedef utility::pointer::shared_ptr< GridSearchIterator_Ts3 > GridSearchIterator_Ts3OP;
+typedef utility::pointer::shared_ptr< GridSearchIterator_Ts3 const > GridSearchIterator_Ts3COP;
 
 }//namespace pcsTs3
 }//namespace methods

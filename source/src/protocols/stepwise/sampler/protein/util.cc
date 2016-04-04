@@ -72,6 +72,8 @@ using namespace core;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.protein.util" );
 
+using namespace core::pose;
+
 namespace protocols {
 namespace stepwise {
 namespace sampler {

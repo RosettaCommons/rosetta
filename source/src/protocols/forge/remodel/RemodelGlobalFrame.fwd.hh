@@ -29,19 +29,19 @@ class RemodelGlobalFrame;
 
 
 /// @brief RemodelGlobalFrame owning pointer
-typedef utility::pointer::owning_ptr< RemodelGlobalFrame > RemodelGlobalFrame_OP;
+typedef utility::pointer::shared_ptr< RemodelGlobalFrame > RemodelGlobalFrame_OP;
 
 
 /// @brief RemodelGlobalFrame const owning pointer
-typedef utility::pointer::owning_ptr< RemodelGlobalFrame const > RemodelGlobalFrame_COP;
+typedef utility::pointer::shared_ptr< RemodelGlobalFrame const > RemodelGlobalFrame_COP;
 
 
 /// @brief RemodelGlobalFrame access pointer
-typedef utility::pointer::access_ptr< RemodelGlobalFrame > RemodelGlobalFrame_AP;
+typedef utility::pointer::shared_ptr< RemodelGlobalFrame > RemodelGlobalFrame_AP;
 
 
 /// @brief RemodelGlobalFrame const access pointer
-typedef utility::pointer::access_ptr< RemodelGlobalFrame const > RemodelGlobalFrame_CAP;
+typedef utility::pointer::shared_ptr< RemodelGlobalFrame const > RemodelGlobalFrame_CAP;
 
 
 } // namespace remodel
