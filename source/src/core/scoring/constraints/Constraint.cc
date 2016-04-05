@@ -182,7 +182,7 @@ void Constraint::unimplemented_method_error( std::string const & method_name ) c
 	);
 }
 
-std::ostream& operator<< ( std::ostream & out, Constraint & cst ) {
+std::ostream& operator<< ( std::ostream & out, Constraint const & cst ) {
 	cst.show( out );
 	return out;
 }

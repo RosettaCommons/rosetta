@@ -313,7 +313,7 @@ public:
 }; // class Constraint
 
 
-std::ostream& operator<< ( std::ostream & out, Constraint & cst );
+std::ostream& operator<< ( std::ostream & out, Constraint const & cst );
 
 
 } // constraints
