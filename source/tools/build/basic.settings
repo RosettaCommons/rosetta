@@ -1352,7 +1352,7 @@ settings = {
                     "wd279,2259,1682"
                 ],
                 # "warn" : [ "wd383,869,981,1505,1572" ]
-                "link" : [ "lsvml" ],
+                "link" : [ "lsvml", "shared-intel", ],
             },
         },
         "overrides" : {
