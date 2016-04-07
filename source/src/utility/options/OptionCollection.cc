@@ -36,6 +36,8 @@
 #include <utility>
 //#include <list>
 
+#include <boost/algorithm/string/erase.hpp>
+
 namespace utility {
 namespace options {
 
@@ -1150,6 +1152,47 @@ OptionCollection::check_key( Option const & option )
 	}
 }
 
+std::string
+OptionCollection::lower_no_under( std::string const & instring ) {
+	return boost::algorithm::erase_all_copy( utility::lowercased(instring), "_" );
+}
+
+void
+OptionCollection::add_edits( std::set<std::string> & items ) {
+	std::set< std::string > new_edits;
+	std::string const charset( "abcdefghijklmnopqrstuvwxyz1234567890" ); // all lowercase, no underscores
+	for ( std::set< std::string >::const_iterator itr( items.begin() ), itr_end( items.end() ); itr != itr_end; ++itr ) {
+		// keep the unmodified item
+		std::string const & instring( *itr );
+		new_edits.insert( instring );
+		//delete a single charachter
+		for( unsigned long ii(0); ii < instring.size(); ++ii ) {
+			//delete a single charachter (ii)
+			new_edits.insert( instring.substr(0,ii) + instring.substr(ii+1) );
+			//transpose the charachter with the one before it
+			if ( ii != 0 ) {
+				std::string transposed( instring );
+				transposed[ii] = instring[ii-1];
+				transposed[ii-1] = instring[ii];
+				new_edits.insert( transposed );
+			}
+			for( unsigned long jj(0); jj < charset.size(); ++jj ) {
+				// add a single charachter before ii
+				new_edits.insert( instring.substr(0,ii) + charset[jj] + instring.substr(ii) );
+				// replace a charachter at ii
+				std::string replaced( instring );
+				replaced[ii] = charset[jj];
+				new_edits.insert( replaced );
+			}
+		}
+		// add a single charachter at the end of the string
+		for( unsigned long jj(0); jj < charset.size(); ++jj ) {
+			new_edits.insert( instring + charset[jj] );
+		}
+	}
+	items = new_edits;
+}
+
 
 /// @brief Find a user-specified option key in a command line context
 /// @note  Searches up the context to find a match
@@ -1229,21 +1272,45 @@ OptionCollection::find_key_cl(
 		if ( n_best == 1 ) { // Unique best match found
 			kid = bid;
 		} else if ( n_best > 1 ) { // Nonunique matches found
-			std::string too_many_choices_error("Unique best command line context option match not found for -" + key_string + ".  Possible matches include:");
-			for ( unsigned long i(0); i<possible_matches.size(); ++i ) {
-				too_many_choices_error += (" " + possible_matches[i]);
+			std::string too_many_choices_error("Unique best command line context option match not found for -" + key_string + ".\nPossible matches include:\n");
+			for ( unsigned long i(0); i < possible_matches.size(); ++i ) {
+				too_many_choices_error += ("\t -" + possible_matches[i]) += "\n";
 			}
-			too_many_choices_error += ". Either specify namespace from command line; or in code, use add_relevant() to register option.";
+			too_many_choices_error += "Either specify namespace from command line; or in code, use add_relevant() to register option.\n";
 			throw ( excn::EXCN_Msg_Exception( too_many_choices_error ) );
 		}
 	}
 
 	if ( kid.empty() ) { // No such option
+		std::string not_found_error( "Option matching -" + key_string + " not found" );
 		if ( cid.empty() ) {
-			throw ( excn::EXCN_Msg_Exception( "Option matching -" + key_string + " not found in command line top-level context" ) );
+			not_found_error += " in command line top-level context";
 		} else {
-			throw ( excn::EXCN_Msg_Exception( "Option matching -" + key_string + " not found in command line context -" + cid ) );
+			not_found_error += " in command line context -" + cid;
 		}
+
+		std::set< std::string > all_edits;
+		all_edits.insert( lower_no_under( suffix( key_string, 1 ) ) );
+		// Everything with edit distance of 2
+		add_edits( all_edits );
+		add_edits( all_edits );
+
+		std::set< std::string > possible_fixes; // The set will sort the entries
+
+		for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+			OptionKey const & key( *i );
+			if ( all_edits.count( lower_no_under( suffix( key.id() ) ) ) == 1 ) {
+				possible_fixes.insert( key.id() );
+			}
+		}
+
+		if ( ! possible_fixes.empty() ) {
+			not_found_error += "\nDid you mean:\n";
+			for ( std::set< std::string >::const_iterator itr( possible_fixes.begin() ); itr != possible_fixes.end(); ++itr ) {
+				not_found_error += "\t -" + *itr + "\n";
+			}
+		}
+		throw ( excn::EXCN_Msg_Exception( not_found_error ) );
 	}
 
 	return kid;

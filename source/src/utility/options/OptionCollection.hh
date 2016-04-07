@@ -2240,6 +2240,17 @@ public: // Static functions
 	void
 	check_key( Option const & option );
 
+	/// @brief Remove underscores and lowercase string
+	static
+	std::string
+	lower_no_under( std::string const & instring );
+
+	/// @brief Add to the set possible typos for a given word
+	/// @details These are strings with Levenshtein distance of 1
+	/// - Based off of the approach from http://norvig.com/spell-correct.html
+	static
+	void
+	add_edits( std::set<std::string> & items );
 
 	/// @brief Find a user-specified option key in a command line context
 	/// @note  Searches up the context to find a match

@@ -66,6 +66,7 @@ parser.add_argument('-my', action='store_true', help="Use instead *.src.settings
 parser.add_argument('-clean', action='store_true', help="Remove all old files in build folder.")
 parser.add_argument('-clean_exit', action='store_true', help="Remove all old files in build folder and exit. Overides all building options.")
 parser.add_argument('-v', action='store_true', help="Where possible, run the verbose version of the commands.")
+parser.add_argument('-k', action='store_true', help="Keep going on errors.")
 parser.add_argument('-j', type=int, default=None, help="The -j value to pass to ninja. NOTE: Ninja is good at autodiscovery for this value. Don't set it unless you know that's what you need.")
 args = parser.parse_args()
 
@@ -121,6 +122,8 @@ if args.t is not None:
 
 if args.v:
     ninja_command.append( "-v" )
+if args.k:
+    ninja_command.extend( ["-k","5000"] )
 
 subprocess.check_call(ninja_command)
 
