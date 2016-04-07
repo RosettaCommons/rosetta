@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+		<DesignAround name="around_res_3" resnums="3" />
+	</TASKOPERATIONS>
+	<MOVERS>
+		<AddConstraintsToCurrentConformationMover name="add_csts" bb_only="1" task_operations="around_res_3" />
+		<PackRotamersMover name="repack" />
+		<MinMover name="minimize" bb="1" chi="1" jump="0" tolerance="0.001" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="add_csts" />
+		<Add mover="repack" />
+		<Add mover="minimize" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
