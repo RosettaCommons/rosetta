@@ -37,6 +37,11 @@ namespace residue_selectors {
 class TaskSelector : public core::select::residue_selector::ResidueSelector {
 public:
 	TaskSelector();
+	TaskSelector(
+		core::pack::task::TaskFactoryOP tf,
+		bool const select_designable,
+		bool const select_packable,
+		bool const select_fixed );
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.

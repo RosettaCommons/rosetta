@@ -58,11 +58,21 @@ TaskSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & x
 TaskSelector::TaskSelector() :
 	ResidueSelector(),
 	tf_(),
-	select_designable_( false ),
-	select_packable_( false ),
+	select_designable_( true ),
+	select_packable_( true ),
 	select_fixed_( false )
-{
-}
+{}
+
+TaskSelector::TaskSelector(
+	core::pack::task::TaskFactoryOP tf,
+	bool const select_designable,
+	bool const select_packable,
+	bool const select_fixed ):
+	tf_( tf ),
+	select_designable_( select_designable ),
+	select_packable_( select_packable ),
+	select_fixed_( select_fixed )
+{}
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.

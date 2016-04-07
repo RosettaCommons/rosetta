@@ -14,42 +14,38 @@
 #ifndef INCLUDED_protocols_simple_moves_AddConstraintsToCurrentConformationMover_hh
 #define INCLUDED_protocols_simple_moves_AddConstraintsToCurrentConformationMover_hh
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/ConstraintGenerator.hh>
+
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 namespace protocols {
 namespace simple_moves {
 
-class AddConstraintsToCurrentConformationMover : public moves::Mover {
+class AddConstraintsToCurrentConformationMover : public moves::ConstraintGenerator {
 
 public:
-	typedef core::pack::task::TaskFactoryCOP TaskFactoryCOP;
+	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
 
 	AddConstraintsToCurrentConformationMover();
 	virtual ~AddConstraintsToCurrentConformationMover();
 
-	virtual void apply( core::pose::Pose & );
+	virtual core::scoring::constraints::ConstraintCOPs
+	generate_constraints( Pose const & pose );
+
 	virtual std::string get_name() const;
 
-	bool residue_to_constrain(Size const & i) const;
-
-	void task_factory( TaskFactoryCOP tf );
+	void task_factory( TaskFactoryOP tf );
+	void residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	virtual moves::MoverOP clone() const;
 	virtual moves::MoverOP fresh_instance() const;
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
-
-	/// @brief parse "task_operations" XML option (can be employed virtually by derived movers)
-	virtual void parse_task_operations(
-		TagCOP,
-		basic::datacache::DataMap const &,
-		Filters_map const &,
-		moves::Movers_map const &,
-		Pose const & );
 
 
 	bool       & use_distance_cst() { return use_distance_cst_; }
@@ -71,13 +67,29 @@ public:
 	core::Real const & bound_width() const { return bound_width_; }
 	core::Size const & min_seq_sep() const { return min_seq_sep_; }
 
+protected:
+	core::Size
+	find_best_anchor( core::pose::Pose const & pose ) const;
+
+	/// @brief parse "task_operations" XML option (can be employed virtually by derived movers)
+	virtual void parse_task_operations(
+		TagCOP,
+		basic::datacache::DataMap const &,
+		Filters_map const &,
+		moves::Movers_map const &,
+		Pose const & );
+
+	core::scoring::constraints::ConstraintCOPs
+	generate_coordinate_constraints(
+		core::pose::Pose const & pose,
+		core::select::residue_selector::ResidueSubset const & subset ) const;
+
+	core::scoring::constraints::ConstraintCOPs
+	generate_atom_pair_constraints(
+		core::pose::Pose const & pose,
+		core::select::residue_selector::ResidueSubset const & subset ) const;
 
 private:
-	// pointers to data that are passed in
-	core::pack::task::TaskFactoryCOP task_factory_;
-	core::pack::task::PackerTaskOP task_;
-	bool has_task_factory_;
-
 	bool use_distance_cst_;
 	bool CA_only_;
 	bool bb_only_;
@@ -88,6 +100,7 @@ private:
 	core::Real bound_width_;
 	core::Size min_seq_sep_;
 
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	core::scoring::func::FuncOP cc_func_;
 
 };

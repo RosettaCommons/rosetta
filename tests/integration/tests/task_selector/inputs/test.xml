@@ -3,8 +3,8 @@
 		<DesignAround name="around_res_3" resnums="3" />
 	</TASKOPERATIONS>
 	<RESIDUE_SELECTORS>
-		<Task name="select_by_task" fixed="1" task_operations="around_res_3" />
-		<Task name="select_by_task2" packable="1" task_operations="around_res_3" />
+		<Task name="select_by_task" packable="0" designable="0" fixed="1" task_operations="around_res_3" />
+		<Task name="select_by_task2" packable="1" designable="0" fixed="0" task_operations="around_res_3" />
 	</RESIDUE_SELECTORS>
 	<TASKOPERATIONS>
 		<OperateOnResidueSubset name="repack_close_to_res3" selector="select_by_task" >
