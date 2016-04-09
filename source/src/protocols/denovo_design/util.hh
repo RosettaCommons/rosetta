@@ -95,7 +95,10 @@ core::Size
 loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, core::Size const overlap );
 
 core::kinematics::FoldTree
-remove_jump_atoms( core::kinematics::FoldTree const & orig );
+remove_all_jump_atoms( core::kinematics::FoldTree const & orig );
+
+core::kinematics::FoldTree
+remove_missing_jump_atoms( core::pose::Pose const & pose, core::kinematics::FoldTree const & orig );
 
 /// @brief given a residue, rebuilds all missing atoms
 void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi );

@@ -1184,9 +1184,7 @@ void
 StructureData::switch_residue_type_set( std::string const & typeset )
 {
 	debug_assert( pose_ );
-	if ( typeset == "centroid" ) {
-		set_fold_tree( remove_jump_atoms( pose_->fold_tree() ) );
-	}
+	set_fold_tree( remove_missing_jump_atoms( *pose_, pose_->fold_tree() ) );
 	core::util::switch_to_residue_type_set( *pose_, typeset );
 }
 
@@ -2379,11 +2377,12 @@ StructureData::consolidate_movable_groups(
 		throw utility::excn::EXCN_Msg_Exception( "Bad nres" );
 	}
 	if ( pose->is_centroid() ) {
-		remove_jump_atoms( ft );
+		TR << "Pose is centroid" << std::endl;
+		ft = remove_missing_jump_atoms( *pose, ft );
 	}
-	pose->fold_tree( ft );
-	TR.Debug << "Created fold tree: " << pose->fold_tree() << std::endl;
+	TR.Debug << "Created fold tree: " << ft << std::endl;
 	TR.Debug << "FT Perm = " << *this << std::endl;
+	pose->fold_tree( ft );
 }
 
 /// @brief declares a covalent bond between the specified atoms

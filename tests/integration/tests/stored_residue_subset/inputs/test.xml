@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+		<DesignAround name="around_res_3" resnums="3" />
+	</TASKOPERATIONS>
+	<RESIDUE_SELECTORS>
+		<ResidueName name="trp" residue_name3="TRP" />
+		<StoredResidueSubset name="stored_subset" subset_name="trp_residues" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="freeze_non_trp" >
+			<Not selector="stored_subset" />
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<StoreResidueSubset name="store_subset" residue_selector="trp" subset_name="trp_residues" />
+		<FastDesign name="fastdes" task_operations="freeze_non_trp" repeats="1" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="store_subset" />
+		<Add mover="fastdes" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

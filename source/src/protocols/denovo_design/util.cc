@@ -86,7 +86,7 @@ bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
 }
 
 core::kinematics::FoldTree
-remove_jump_atoms( core::kinematics::FoldTree const & orig )
+remove_all_jump_atoms( core::kinematics::FoldTree const & orig )
 {
 	core::kinematics::FoldTree ft;
 	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=orig.begin(); e!=orig.end(); ++e ) {
@@ -94,6 +94,28 @@ remove_jump_atoms( core::kinematics::FoldTree const & orig )
 			core::kinematics::Edge newedge = *e;
 			newedge.start_atom() = "";
 			newedge.stop_atom() = "";
+			ft.add_edge( newedge );
+		} else {
+			ft.add_edge( *e );
+		}
+	}
+	TR.Debug << "Removed all jump atoms, fold tree=" << ft << std::endl;
+	return ft;
+}
+
+
+/// @brief removes atoms missing from the current pose
+core::kinematics::FoldTree
+remove_missing_jump_atoms( core::pose::Pose const & pose, core::kinematics::FoldTree const & orig )
+{
+	core::kinematics::FoldTree ft;
+	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=orig.begin(); e!=orig.end(); ++e ) {
+		if ( e->is_jump() && e->has_atom_info() ) {
+			core::kinematics::Edge newedge = *e;
+			if ( ( !pose.residue(e->start()).has(e->start_atom()) ) || ( !pose.residue(e->stop()).has(e->stop_atom()) ) ) {
+				newedge.start_atom() = "";
+				newedge.stop_atom() = "";
+			}
 			ft.add_edge( newedge );
 		} else {
 			ft.add_edge( *e );
@@ -131,7 +153,7 @@ void construct_poly_ala_pose(
 	utility::vector1< core::Size > d_positions;
 
 	// remove jump atoms, which may cause problems in mutating residues
-	pose.fold_tree( remove_jump_atoms( pose.fold_tree() ) );
+	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
 		if ( pose.residue(i).is_protein() && ( res_set.find(i) != res_set.end() ) ) {

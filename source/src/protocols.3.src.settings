@@ -408,6 +408,8 @@ sources = {
 				"MPRangeRelaxMover",
     ],
 	"protocols/residue_selectors": [
+		"StoredResidueSubsetSelector",
+		"StoreResidueSubsetMover",
 		"TaskSelector",
 	],
 	"protocols/pb_potential": [

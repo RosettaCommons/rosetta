@@ -318,6 +318,8 @@ static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinat
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
 
+static MoverRegistrator< residue_selectors::StoreResidueSubsetMoverCreator> reg_StoreResidueSubsetMoverCreator;
+
 static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
 static MoverRegistrator< rigid::RigidBodyTiltMoverCreator > reg_RigidBodyTiltMoverCreator;
 static MoverRegistrator< rigid::RigidBodyTransMoverCreator > reg_RigidBodyTransMoverCreator;

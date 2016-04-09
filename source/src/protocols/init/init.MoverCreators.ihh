@@ -305,6 +305,8 @@
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/LocalRelaxCreator.hh>
 
+#include <protocols/residue_selectors/StoreResidueSubsetMoverCreator.hh>
+
 #include <protocols/rigid/RigidBodyMoverCreator.hh>
 #include <protocols/rigid/RollMoverCreator.hh>
 #include <protocols/rigid/UniformRigidBodyCMCreator.hh>

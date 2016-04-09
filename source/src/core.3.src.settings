@@ -777,6 +777,7 @@ sources = {
 	],
 	"core/select/residue_selector": [
 		"AndResidueSelector",
+		"CachedResidueSubset",
 		"ChainSelector",
 		"InterGroupInterfaceByVectorSelector",
 		"JumpDownstreamSelector",

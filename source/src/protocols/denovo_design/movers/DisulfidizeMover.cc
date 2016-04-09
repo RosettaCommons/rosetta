@@ -308,7 +308,7 @@ DisulfidizeMover::process_pose(
 	bool const is_symmetric( core::pose::symmetry::is_symmetric(pose) ); //Is the pose symmetric?
 
 	// remove any jump atoms from the fold tree which might cause problems when converting pose to poly-ala
-	pose.fold_tree( remove_jump_atoms( pose.fold_tree() ) );
+	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
 	core::scoring::ScoreFunctionOP sfxn( sfxn_ ? sfxn_->clone() : core::scoring::get_score_function() );
 	if ( is_symmetric ) {

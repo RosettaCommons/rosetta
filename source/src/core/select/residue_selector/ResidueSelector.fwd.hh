@@ -25,6 +25,10 @@ namespace select {
 namespace residue_selector {
 
 typedef utility::vector1< bool > ResidueSubset;
+typedef utility::pointer::shared_ptr< ResidueSubset > ResidueSubsetOP;
+typedef utility::pointer::shared_ptr< ResidueSubset const > ResidueSubsetCOP;
+typedef utility::pointer::weak_ptr< ResidueSubset > ResidueSubsetAP;
+typedef utility::pointer::weak_ptr< ResidueSubset const > ResidueSubsetCAP;
 
 class ResidueSelector;
 

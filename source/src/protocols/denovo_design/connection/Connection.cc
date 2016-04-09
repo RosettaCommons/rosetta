@@ -1892,7 +1892,8 @@ BridgeTomponents::parse_my_tag(
 	MotifList my_motifs;
 	for ( MotifList::const_iterator m=motifs().begin(); m!=motifs().end(); ++m ) {
 		if ( !m->len ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("No loop lengths are specified to ConnectByKIC named " + id());
+			continue;
+			//throw utility::excn::EXCN_RosettaScriptsOption("No loop lengths are specified to ConnectByKIC named " + id());
 		}
 		Motif newmotif = *m;
 		newmotif.len += 2;
