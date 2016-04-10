@@ -59,6 +59,7 @@ public:
 	CutBiasClaimer( core::fragment::SecondaryStructure const& ss_def );
 	CutBiasClaimer( core::fragment::SecondaryStructure const& ss_def, std::string label );
 
+	CutBiasClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<CutBiasClaimer>( TopologyClaimer::shared_from_this() ); }
 
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new CutBiasClaimer( *this ) );

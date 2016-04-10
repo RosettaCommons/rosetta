@@ -54,6 +54,8 @@ public:
 		image_start_( symmetric_residue )
 	{};
 
+	SymmetricFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SymmetricFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
+
 	virtual
 	bool
 	apply_fragment(
@@ -97,6 +99,8 @@ public:
 		SymmetricFragmentMover( fragset, movemap, symmetric_residue, "SmoothSymmetricFragmentMover" ),
 		SmoothFragmentMover( fragset, movemap, cost, "SmoothSymmetricFragmentMover" )
 	{}
+
+	SmoothSymmetricFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SmoothSymmetricFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
 
 	virtual std::string get_name() const { return "SmoothSymmetricFragmentMover"; }
 

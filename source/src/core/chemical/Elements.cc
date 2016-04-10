@@ -43,7 +43,6 @@ elements_from_name(std::string name) {
 }
 
 
-inline
 std::map< std::string, Elements > & name2element() {
 	// static initialization only happens once
 	static std::map< std::string, Elements > * name2element_ = new std::map< std::string, Elements >( setup_name2element() );

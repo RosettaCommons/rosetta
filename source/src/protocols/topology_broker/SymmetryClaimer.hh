@@ -52,6 +52,9 @@ public:
 
 	SymmetryClaimer( SymmetryClaimer const & src );
 
+	SymmetryClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SymmetryClaimer>( TopologyClaimer::shared_from_this() ); }
+
+
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new SymmetryClaimer( *this ) );
 	}

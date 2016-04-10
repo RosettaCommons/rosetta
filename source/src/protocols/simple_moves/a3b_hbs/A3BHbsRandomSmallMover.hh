@@ -10,6 +10,9 @@
 /// @file /protocols/simple_moves/hbs/HbsRandomSmallMover.hh
 /// @brief
 /// @author Andrew Watkins, amw579@nyu.edu
+
+#ifdef NOT_IN_SCONS_DEPRECATED
+
 #ifndef INCLUDED_protocols_simple_moves_a3b_hbs_A3BHbsRandomSmallMover_hh
 #define INCLUDED_protocols_simple_moves_a3b_hbs_A3BHbsRandomSmallMover_hh
 // Unit Headers
@@ -62,3 +65,5 @@ private:
 }//namespace protocols
 
 #endif // INCLUDED_protocols_simple_moves_hbs_HbsRandomSmallMover_hh
+
+#endif

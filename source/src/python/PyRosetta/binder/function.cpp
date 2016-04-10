@@ -179,11 +179,21 @@ bool is_skipping_requested(FunctionDecl const *F, Config const &config)
 	// 	if( begins_with(name, "utility::vector1<core::fragment::picking_old::vall::scores::VallFragmentScore") ) outs() << "____  " << name << "\n";
 	// }
 	string name = F->getQualifiedNameAsString();
-	bool skip = config.is_function_skipping_requested(name) or config.is_class_skipping_requested( function_qualified_name(F) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(F) );
+	bool skip = config.is_function_skipping_requested(name) or config.is_function_skipping_requested( function_qualified_name(F) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(F) );
 
-    name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
+    // moved to config -> name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
 	skip |= config.is_function_skipping_requested(name);
 
+	// calculating skipping for template classes without template specialization specified as: myclass::member_function_to_skip
+	//outs() << "Checking skipping for function: " << name << "... ";
+	if( CXXMethodDecl const *M = dyn_cast<CXXMethodDecl>(F) ) {
+		CXXRecordDecl const *C = M->getParent();
+		if( dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
+			//outs() << C->getQualifiedNameAsString() << "::" << F->getNameAsString() << "\n";
+			skip |= config.is_function_skipping_requested( C->getQualifiedNameAsString() + "::" + F->getNameAsString() );
+		}
+	}
+	//outs() << "OK\n";
 
 	for(auto & t : get_type_dependencies(F) ) skip |= is_skipping_requested(t, config);
 
@@ -230,7 +240,8 @@ string bind_function(FunctionDecl *F, Context &context)
 
 	for(auto p = F->param_begin(); p != F->param_end(); ++p) {
 
-		string default_argument = expresion_to_string( (*p)->getDefaultArg() );
+		string default_argument;
+		if( !(*p)->hasUninstantiatedDefaultArg() ) default_argument = expresion_to_string( (*p)->getDefaultArg() );
 
 		bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
 

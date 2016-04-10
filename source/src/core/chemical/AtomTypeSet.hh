@@ -45,6 +45,10 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
+#ifdef PYROSETTA
+#include <utility/sql_database/DatabaseSessionManager.hh>
+#endif
+
 namespace core {
 namespace chemical {
 

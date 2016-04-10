@@ -35,16 +35,17 @@ typedef float Mat3[3][3];
 //typedef boost::unordered_map<int, boost::unordered_map<int, double> > DoubleD2;
 //typedef boost::unordered_map<int, double>  DoubleD1;
 
-typedef struct CORdata {
+struct PDB_Entry
+{
 	int atomNum, resNum;
 	std::string atomName, resName, chainName;
 	float X, Y, Z, B_Factor;
 	Vec3 Coord;
-} PDB_Entry;
+};
 
 extern std::ostream& operator<<( std::ostream&, PDB_Entry const& );
 
-typedef struct {
+struct RingData {
 	int resID, atomNo;
 	std::string resName;
 	PDB_Entry atoms[6];
@@ -55,7 +56,7 @@ typedef struct {
 	float rad;
 
 	float ringFact;
-} RingData;
+};
 
 typedef boost::unordered_map<int, PDB_Entry> Mol; //atom list indexed by atom number
 typedef boost::unordered_map<int, Mol> Mols;
@@ -194,4 +195,3 @@ public:
 }
 
 #endif
-

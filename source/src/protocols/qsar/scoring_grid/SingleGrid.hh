@@ -116,7 +116,7 @@ public:
 		core::Real value
 	);
 	void diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude);
-	void set_distance_sphere( core::Vector const & coords,core::Real cutoff);
+	//void set_distance_sphere( core::Vector const & coords,core::Real cutoff);
 	void set_point(core::Vector const & coords, core::Real value);
 	void set_distance_sphere_for_atom(core::Real const & atom_shell, core::Vector const & coords,core::Real cutoff);
 	void set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorOP lj_spline,core::Vector const & coords, core::Real cutoff);

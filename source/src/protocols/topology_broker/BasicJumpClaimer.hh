@@ -38,6 +38,8 @@ public:
 
 	BasicJumpClaimer() {}
 
+	BasicJumpClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<BasicJumpClaimer>( TopologyClaimer::shared_from_this() ); }
+
 	TopologyClaimerOP clone() const { return TopologyClaimerOP( new BasicJumpClaimer( *this ) ); }
 
 	std::string type() const { return _static_type_name(); }

@@ -34,6 +34,14 @@
 #include <list>
 #include <map>
 
+#ifdef PYROSETTA
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
+#endif
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {

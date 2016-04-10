@@ -34,12 +34,15 @@
 
 #include <string>
 
-
-// option key includes
-
-
 #include <utility/vector1.hh>
 #include <iostream>
+
+#ifdef PYROSETTA
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#endif
 
 
 namespace protocols {

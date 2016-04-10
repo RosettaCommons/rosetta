@@ -1,3 +1,5 @@
+#include <binder.hpp>
+
 // Declares clang::SyntaxOnlyAction.
 #include "clang/Frontend/FrontendActions.h"
 #include "clang/Tooling/CommonOptionsParser.h"
@@ -17,6 +19,7 @@
 #include <class.hpp>
 #include <util.hpp>
 
+
 using namespace clang::tooling;
 using namespace llvm;
 
@@ -34,9 +37,12 @@ static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 static cl::extrahelp MoreHelp("\nMore help text...\n");
 
 
+using binder::Config;
+
 using namespace clang;
 
 using std::string;
+
 
 // using namespace clang::driver;
 // using namespace clang::tooling;
@@ -54,6 +60,8 @@ cl::list<std::string> O_bind("bind", cl::desc("Namespace to bind, could be speci
 cl::list<std::string> O_skip("skip", cl::desc("Namespace to skip, could be specified more then once"), cl::cat(BinderToolCategory)); // , cl::OneOrMore
 
 cl::opt<std::string> O_config("config", cl::desc("Specify config file from which bindings setting will be read"), cl::init(""), cl::cat(BinderToolCategory));
+
+cl::opt<bool> O_annotate_includes("annotate-includes", cl::desc("Annotate each includes in generated code with type name that trigger it inclusion"), cl::init(false), cl::cat(BinderToolCategory));
 
 
 class ClassVisitor : public RecursiveASTVisitor<ClassVisitor>
@@ -93,12 +101,18 @@ string wrap_CXXRecordDecl(CXXRecordDecl *R)
 
 class BinderVisitor : public RecursiveASTVisitor<BinderVisitor>
 {
-	binder::Config config;
-
 public:
-    explicit BinderVisitor(CompilerInstance *ci) :
-		config(O_root_module, O_bind, O_skip, O_prefix, O_max_file_size),
-		ast_context( &( ci->getASTContext() ) ) {
+    explicit BinderVisitor(CompilerInstance *ci) : ast_context( &( ci->getASTContext() ) )
+	{
+		Config & config = Config::get();
+
+		config.root_module = O_root_module;
+		config.prefix = O_prefix;
+		config.maximum_file_length = O_max_file_size;
+
+		config.namespaces_to_bind = O_bind;
+		config.namespaces_to_skip = O_skip;
+
 		if( O_config.size() ) config.read(O_config);
 	}
 
@@ -208,7 +222,7 @@ public:
 
 
 	void generate(void) {
-		context.generate(config);
+		context.generate( Config::get() );
 	}
 
 private:

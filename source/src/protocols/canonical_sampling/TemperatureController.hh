@@ -41,7 +41,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-typedef enum { linear, exponential } InterpolationType;
+enum InterpolationType { linear, exponential };
 
 std::string
 interpolation_type_enum_to_string( InterpolationType interp_enum );

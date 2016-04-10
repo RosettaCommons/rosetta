@@ -13,6 +13,7 @@
 
 #include <type.hpp>
 
+#include <binder.hpp>
 #include <class.hpp>
 #include <enum.hpp>
 #include <util.hpp>
@@ -118,21 +119,23 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 	};
 
 	static vector< std::pair<string, string> > const include_map = {
-		make_pair("<bits/postypes.h>", "<ios>"),
-		make_pair("<bits/shared_ptr.h>", "<memory>"),
+		make_pair("<bits/ios_base.h>",     "<ios>"),
+		make_pair("<bits/istream.tcc>",    "<istream>"),
+		make_pair("<bits/ostream.tcc>",    "<ostream>"),
+		make_pair("<bits/postypes.h>",     "<ios>"),
+		make_pair("<bits/shared_ptr.h>",   "<memory>"),
 		make_pair("<bits/stl_function.h>", "<functional>"),
-		make_pair("<bits/stl_tree.h>", "<map>"),
-		make_pair("<bits/ios_base.h>", "<ios>"),
-		make_pair("<bits/istream.tcc>", "<istream>"),
-		make_pair("<bits/ostream.tcc>", "<ostream>"),
-		make_pair("<bits/streambuf.tcc>", "<streambuf>"),
-		make_pair("<bits/stl_bvector.h>", "<vector>"),
+		make_pair("<bits/stl_tree.h>",     "<map>"),
+		make_pair("<bits/streambuf.tcc>",  "<streambuf>"),
+		make_pair("<bits/stl_bvector.h>",  "<vector>"),
 		make_pair("<bits/algorithmfwd.h>", "<algorithm>"),
-		make_pair("<bits/stl_algo.h>", "<algorithm>"),
-		make_pair("<bits/fstream.tcc>", "<fstream>"),
-		make_pair("<bits/sstream.tcc>", "<sstream>"),
-		make_pair("<bits/stl_list.h>", "<list>"),
-		make_pair("<bits/stl_deque.h>", "<deque>"),
+		make_pair("<bits/stl_algo.h>",     "<algorithm>"),
+		make_pair("<bits/fstream.tcc>",    "<fstream>"),
+		make_pair("<bits/sstream.tcc>",    "<sstream>"),
+		make_pair("<bits/stl_list.h>",     "<list>"),
+		make_pair("<bits/stl_deque.h>",    "<deque>"),
+		make_pair("<bits/stl_queue.h>",    "<queue>"),
+		make_pair("<bits/stl_multimap.h>", "<map>"),
 	};
 
 
@@ -142,7 +145,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		if( begins_with(name, p.first) ) {
 			includes.push_back(p.second);
 			//#ifndef NDEBUG
-			//includes.back() += " // " + name;
+			if(O_annotate_includes) includes.back() += " // " + name;
 			//#endif
 			return;
 		}
@@ -161,7 +164,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 
 	if( include.size() ) {
 		//#ifndef NDEBUG
-		//include += " // " + name;
+		if(O_annotate_includes) include += " // " + name;
 		//#endif
 		includes.push_back(include);
 	}
@@ -265,11 +268,15 @@ bool is_python_builtin(NamedDecl const *C)
 	string name = C->getQualifiedNameAsString();
 	//if( begins_with(name, "class ") ) name = name.substr(6); // len("class ")
 
-	std::vector<string> known_builtin = {"std::pair", "std::tuple", "std::vector", "std::map", "std::list", "std::set", "std::basic_string",
-										 "std::allocator", "std::initializer_list", "std::shared_ptr", "std::weak_ptr", "std::less",
+	std::vector<string> known_builtin = {"std::pair", "std::tuple", "std::basic_string", "std::allocator", "std::initializer_list", "std::shared_ptr", "std::weak_ptr",
 										 "std::iterator", "std::reverse_iterator",
 										 "std::_Rb_tree_iterator", "std::_Rb_tree_const_iterator", "__gnu_cxx::__normal_iterator",
  										 "std::_List_iterator", "std::_List_const_iterator",
+
+										 "std::less",  // lead to an error in include detection code, probably could be fixed
+
+										 //"std::vector", "std::map", "std::list", "std::set",
+
  	};
 
 	for(auto &k : known_builtin) {

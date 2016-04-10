@@ -147,6 +147,7 @@ namespace canonical_sampling {
 namespace mc_convergence_checks {
 
 
+#ifdef USEMPI
 class MPIPool_RMSD : public Pool_RMSD {
 
 public:
@@ -261,6 +262,7 @@ private:
   //int pool_status();
 
 };
+#endif
 
 } //mc_convergence_checks
 } //moves

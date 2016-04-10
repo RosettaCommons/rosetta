@@ -105,8 +105,6 @@ inline
 int
 viewer_main( VoidFunc worker_main ){ worker_main(NULL); return 0; }
 
-void set_bg_color( core::Vector new_bg_color );
-
 #else // GL_GRAPHICS ////////////////////////////////////////////////////
 
 void
@@ -208,14 +206,15 @@ draw_sphere(
 core::Vector
 get_center( utility::vector1< core::conformation::ResidueCOP > const & residues );
 
-#endif ////////////////////////////////////////////////////////////////
-
 void
 add_monte_carlo_silent_viewer(
 	moves::MonteCarlo & mc,
 	std::string const name_in,
 	bool fullatom
 );
+
+#endif ////////////////////////////////////////////////////////////////
+
 
 /// @brief Allows for graceful exit of graphics viewers.
 void

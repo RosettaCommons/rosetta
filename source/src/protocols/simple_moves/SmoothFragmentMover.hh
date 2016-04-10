@@ -79,6 +79,8 @@ public:
 
 	~SmoothFragmentMover();
 
+	SmoothFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SmoothFragmentMover>( Mover::shared_from_this() ); }
+
 	virtual std::string get_name() const;
 
 	//  void apply( core::pose::Pose & );

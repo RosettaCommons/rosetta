@@ -227,7 +227,7 @@ PYBIND11_PLUGIN({1}) {{
 }}
 )_";
 
-const char * module_header = "\n#include <pybind11/pybind11.h>\n#include <pybind11/stl.h>\n\n//PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n";
+const char * module_header = "\n#include <pybind11/pybind11.h>\n//#include <pybind11/stl.h>\n\nPYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n";
 
 const char * module_function_suffix = "(std::function< pybind11::module &(std::string const &namespace_) > &M)";
 

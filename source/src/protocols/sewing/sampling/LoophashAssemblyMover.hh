@@ -12,6 +12,7 @@
 /// bridge a gap with minimal modifications to the original pose.
 /// @author Tim Jacobs
 
+#ifdef NOT_IN_SCONS_DEPRECATED
 
 #ifndef INCLUDED_protocols_sewing_sampling_LoophashAssemblyMover_HH
 #define INCLUDED_protocols_sewing_sampling_LoophashAssemblyMover_HH
@@ -34,9 +35,9 @@
 
 namespace protocols {
 namespace sewing  {
-	
+
 class LoophashAssemblyMover : public AssemblyMover {
-	
+
 public:
 
 	typedef utility::vector1< std::pair< protocols::loophash::BackboneSegment, std::string > > BackboneSegments;
@@ -48,12 +49,11 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
+
 	std::string
 	get_name() const;
 
-	void
-	init();
+	//void init();
 
 	///@brief override complete assembly to include building
 	///of Loophash segments
@@ -161,8 +161,10 @@ private:
 	core::scoring::ScoreFunctionOP loop_refine_scorefxn_;
 
 };
-	
+
 } //sewing
 } //protocols
+
+#endif
 
 #endif

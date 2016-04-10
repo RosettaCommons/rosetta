@@ -61,6 +61,8 @@ class DensityScoringClaimer : public virtual TopologyClaimer {
 public:
 	DensityScoringClaimer(); //for factory
 
+	DensityScoringClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<DensityScoringClaimer>( TopologyClaimer::shared_from_this() ); }
+
 	virtual TopologyClaimerOP clone() const;
 
 	///mainly calls parent function... but is also used to figure out what residue number we are jumping to.

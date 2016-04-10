@@ -49,11 +49,11 @@ public:
 	AssemblyOP
 	generate_assembly();
 
-	void
-	follow_random_edge_from_node(
-		AssemblyOP assembly,
-		ModelNode const * node
-	);
+	// void
+	// follow_random_edge_from_node(
+	// 	AssemblyOP assembly,
+	// 	ModelNode const * node
+	// );
 
 	void
 	parse_my_tag(

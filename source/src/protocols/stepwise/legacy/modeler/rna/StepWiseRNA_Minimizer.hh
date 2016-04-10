@@ -13,6 +13,7 @@
 ///
 /// @author Rhiju Das
 
+#ifdef NOT_IN_SCONS_DEPRECATED
 
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_Minimizer_HH
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_Minimizer_HH
@@ -175,3 +176,5 @@ private:
 } //protocols
 
 #endif
+
+#endif 

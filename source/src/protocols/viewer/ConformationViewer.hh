@@ -11,6 +11,8 @@
 /// @brief
 /// @author
 
+#ifdef GL_GRAPHICS
+
 #ifndef INCLUDED_protocols_viewer_ConformationViewer_hh
 #define INCLUDED_protocols_viewer_ConformationViewer_hh
 
@@ -41,9 +43,7 @@
 
 // C++ Headers
 
-#ifdef GL_GRAPHICS
 #include <pthread.h>
-#endif
 
 namespace protocols {
 namespace viewer {
@@ -191,10 +191,7 @@ private:
 	///  debug_pause is reset upon detachment
 	core::conformation::Conformation const * conf_;
 
-#ifdef GL_GRAPHICS
 	pthread_mutex_t residues_mut_;
-#endif
-
 };
 
 } // viewer
@@ -202,3 +199,5 @@ private:
 
 
 #endif
+
+#endif 

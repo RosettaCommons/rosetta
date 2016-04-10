@@ -24,6 +24,11 @@
 
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
+#ifdef PYROSETTA
+#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreManager.hh>
+#endif
 
 namespace protocols {
 namespace frag_picker {

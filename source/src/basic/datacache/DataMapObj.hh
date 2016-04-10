@@ -33,6 +33,11 @@ public:
 	Ty obj;
 };
 
+#ifdef PYROSETTA
+//template class DataMapObj<bool>;
+class DataMapObj_bool : public DataMapObj<bool> {};
+#endif
+
 } // datacache
 } // basic
 

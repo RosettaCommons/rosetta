@@ -44,7 +44,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <protocols/constraints_additional/ConstraintEvaluator.fwd.hh>
+#include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <utility/vector1.hh>
 
 

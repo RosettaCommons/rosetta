@@ -24,6 +24,11 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef PYROSETTA
+#include <numeric/kdtree/KDTree.hh>
+#include <numeric/kdtree/KDPoint.hh>
+#endif
+
 namespace numeric {
 namespace kdtree {
 

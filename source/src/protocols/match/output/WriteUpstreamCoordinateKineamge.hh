@@ -25,7 +25,7 @@
 
 
 // Project headers
-#ifdef WIN32
+#if defined(WIN32) || defined(PYROSETTA)
 #include <core/id/AtomID.hh>
 #endif
 

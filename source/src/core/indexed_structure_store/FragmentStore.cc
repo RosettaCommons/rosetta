@@ -14,7 +14,6 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
 #include <core/indexed_structure_store/FragmentStore.hh>
-#include <numeric/xyzVector.hh>
 #include <core/indexed_structure_store/FragmentLookup.hh>
 
 namespace core

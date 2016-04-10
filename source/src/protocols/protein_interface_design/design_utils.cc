@@ -59,6 +59,8 @@
 
 // option key includes
 
+namespace protocols {
+namespace protein_interface_design {
 
 using ObjexxFCL::format::A;
 using ObjexxFCL::format::I;
@@ -68,7 +70,6 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.design_utils" );
 
-using namespace protocols::protein_interface_design;
 using namespace core;
 
 typedef core::Real Real;
@@ -77,7 +78,7 @@ typedef core::pose::Pose Pose;
 
 // it is assumed that the pose is scored prior to calling this function
 core::Real
-protocols::protein_interface_design::sum_total_residue_energy( pose::Pose const & pose, core::Size const resid )
+sum_total_residue_energy( pose::Pose const & pose, core::Size const resid )
 {
 	using namespace core::scoring;
 
@@ -730,3 +731,5 @@ hbonded_atom (
 	return( hbonded_list );
 }
 
+} // namespace protocols
+} // namespace protein_interface_design

@@ -137,9 +137,6 @@ private:
 };
 
 
-} // protein_interface_design
-} // devel
-
 /// @brief utility function for minimizing sidechain in rigid-body dof, the interface sc, and bb in the entire protein.
 // The fold_tree for minimization will be set from the centre of target_residues to the closest residue on the partner.
 // The packertask is used to decide which residues to minimize (those that are not set to prevent_repacking)
@@ -158,6 +155,10 @@ hbonded( core::pose::Pose const & pose, core::Size const target_residue, std::se
 std::list< core::Size >
 hbonded_atom( core::pose::Pose const & pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,
 	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false, core::scoring::ScoreFunctionOP sfxn = NULL );
+
+} // protein_interface_design
+} // protocols
+
 
 #endif /*INCLUDED_DESIGN_UTILS_H_*/
 

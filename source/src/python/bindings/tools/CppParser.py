@@ -858,7 +858,7 @@ class CppClass:
         ::protocols::scoring::methods::pcs2::TensorsOptimizerFix ::protocols::scoring::methods::pcsTs1::TensorsOptimizer_Ts1 ::protocols::scoring::methods::pcsTs3::TensorsOptimizer_Ts3
         ::protocols::scoring::methods::pcsTs4::TensorsOptimizer_Ts4 ::protocols::scoring::methods::pcs2::TensorsOptimizerSvd ::protocols::scoring::methods::pcs2::TensorsOptimizer ::protocols::scoring::methods::pcs::TensorsOptimizer
         ::protocols::scoring::methods::pcsTs2::TensorsOptimizer_Ts2
-        ::protocols::sic_dock::CBScore ::protocols::sparta::RingData ::protocols::sparta::ANN ::protocols::sparta::PDB ::protocols::sparta::CORdata
+        ::protocols::sic_dock::CBScore ::protocols::sparta::RingData ::protocols::sparta::ANN ::protocols::sparta::PDB ::protocols::sparta::CORdata ::protocols::sparta::PDB_Entry
         '''.split(): return self.dataMembers
         else: return []
 

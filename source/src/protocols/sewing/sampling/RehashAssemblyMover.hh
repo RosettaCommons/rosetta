@@ -11,6 +11,7 @@
 /// @brief A Mover that uses more sewing to close gaps from discontinous assemblies
 /// @author Tim Jacobs
 
+#ifdef NOT_IN_SCONS_DEPRECATED
 
 #ifndef INCLUDED_protocols_sewing_sampling_RehashAssemblyMover_HH
 #define INCLUDED_protocols_sewing_sampling_RehashAssemblyMover_HH
@@ -55,10 +56,10 @@ public:
 		AssemblyOP & assembly
 	);
 
-	bool
-	rearrange_assembly(
-		AssemblyOP & assembly
-	) const;
+	//bool
+	//rearrange_assembly(
+	//	AssemblyOP & assembly
+	//) const;
 
 	void
 	parse_my_tag(
@@ -78,5 +79,7 @@ private:
 	
 } //sewing
 } //protocols
+
+#endif
 
 #endif

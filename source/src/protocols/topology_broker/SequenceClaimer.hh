@@ -55,6 +55,8 @@ public:
 		std::string const& rsd_type_set_identifier
 	);
 
+	SequenceClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SequenceClaimer>( TopologyClaimer::shared_from_this() ); }
+
 	virtual TopologyClaimerOP clone() const;
 
 	virtual void generate_sequence_claims( claims::DofClaims& );

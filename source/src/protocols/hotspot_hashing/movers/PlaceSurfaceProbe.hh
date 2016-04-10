@@ -43,7 +43,7 @@ namespace hotspot_hashing
 namespace movers
 {
 
-class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeMover, virtual public protocols::moves::Mover
+class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeMover
 {
 public:
 	PlaceSurfaceProbe();
@@ -60,6 +60,9 @@ public:
 		core::pack::task::TaskFactoryOP surface_selection = NULL,
 		core::Size search_partition = 1,
 		core::Size total_search_partition = 1);
+
+	PlaceSurfaceProbeOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<PlaceSurfaceProbe>( PlaceProbeMover::shared_from_this() ); }
+
 
 	virtual std::string get_name() const { return "PlaceSurfaceProbe"; }
 

@@ -37,6 +37,17 @@
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
+#ifdef PYROSETTA
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ppo_torsion_bin.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ppo_torsion_bin.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.hh>
+#endif
+
 
 namespace protocols {
 namespace loops {

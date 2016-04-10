@@ -273,7 +273,7 @@ def generate_bindings(rosetta_source_path):
     # generate include file that contains all headers
     include = prefix + 'all_rosetta_includes.hh'
     with open(include, 'w') as fh:
-        #for path in 'ObjexxFCL utility numeric basic core'.split():
+        #for path in 'ObjexxFCL utility numeric basic core protocols'.split():
         for path in 'ObjexxFCL utility numeric basic core protocols'.split():
             for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
                 for f in files:
@@ -291,7 +291,7 @@ def generate_bindings(rosetta_source_path):
     includes = ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
 
-    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) )
+    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --annotate-includes --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) )
 
     sources = open(prefix+'rosetta.sources').read().split()
 

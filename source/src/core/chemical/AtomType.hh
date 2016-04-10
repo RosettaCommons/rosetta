@@ -303,7 +303,8 @@ private:
 	std::string name_; // non-const for use in cloning at time of atomtypeset creation...
 
 	// element
-	std::string const element_;
+	//std::string const element_;
+	std::string element_; 	// changing this to non-const so copy assignment operator of 'AtomType' could be used in C++11
 
 	// lj
 	Real lj_radius_;

@@ -57,6 +57,8 @@ public:
 
 	~FragmentClaimer();
 
+	FragmentClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<FragmentClaimer>( TopologyClaimer::shared_from_this() ); }
+
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new FragmentClaimer( *this ) );
 	}

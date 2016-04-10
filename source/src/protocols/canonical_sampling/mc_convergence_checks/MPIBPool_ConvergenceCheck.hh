@@ -23,7 +23,6 @@
 
 #ifdef USEMPI
 #include <mpi.h>
-#endif
 
 
 namespace protocols {
@@ -158,9 +157,7 @@ private:
   std::string new_decoys_out_;
   bool tracer_visible_;
   //
-#ifdef USEMPI
   static MPI_Comm MPI_COMM_POOL;
-#endif
 
   TransferBuffer transfer_buf_;
 
@@ -170,5 +167,7 @@ private:
 } //mc_convergence_checks
 } //moves
 } //protocols
+#endif
+
 
 #endif

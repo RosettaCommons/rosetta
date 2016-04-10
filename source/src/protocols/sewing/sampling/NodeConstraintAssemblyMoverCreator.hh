@@ -12,7 +12,7 @@
 /// @brief
 /// @author Tim Jacobs
 
-
+#ifdef NOT_IN_SCONS_DEPRECATED
 
 #ifndef INCLUDED_protocols_sewing_sampling_NodeConstraintAssemblyMoverCreator_hh
 #define INCLUDED_protocols_sewing_sampling_NodeConstraintAssemblyMoverCreator_hh
@@ -22,17 +22,18 @@
 
 namespace protocols {
 namespace sewing  {
-		
+
 class NodeConstraintAssemblyMoverCreator : public protocols::moves::MoverCreator
 {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
-	static  std::string mover_name();
+	//static  std::string mover_name();
 };
-		
+
 }
 }
 
 #endif
 
+#endif

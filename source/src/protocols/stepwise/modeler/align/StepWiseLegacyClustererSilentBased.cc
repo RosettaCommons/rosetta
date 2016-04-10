@@ -45,9 +45,6 @@
 	#include <time.h>
 #endif
 
-//Auto Headers
-#include <core/id/AtomID.hh>
-
 using namespace core;
 using namespace core::pose;
 

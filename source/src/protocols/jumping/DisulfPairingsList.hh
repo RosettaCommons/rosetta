@@ -37,7 +37,9 @@
 //// C++ headers
 #include <string>
 
-//#include <vector>
+#ifdef PYROSETTA
+#include <ObjexxFCL/FArray1A.hh>
+#endif
 
 namespace protocols {
 namespace jumping {
@@ -103,4 +105,3 @@ extern void read_disulf_pairing_list( std::istream &is, DisulfPairingsList& disu
 } //jumping
 
 #endif
-

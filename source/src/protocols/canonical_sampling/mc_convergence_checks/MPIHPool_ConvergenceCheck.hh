@@ -26,8 +26,6 @@
 
 #ifdef USEMPI
 #include <mpi.h>
-#endif
-
 
 namespace protocols {
 namespace canonical_sampling {
@@ -171,13 +169,13 @@ private:
 	DataBuffer buf_;
 	core::Size current_trajectory_state_;
 
-#ifdef USEMPI
 	static MPI_Comm MPI_COMM_POOL;
-#endif
 };
 
 } //mc_convergence_checks
 } //moves
 } //protocols
+
+#endif
 
 #endif

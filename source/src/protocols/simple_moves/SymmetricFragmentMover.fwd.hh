@@ -21,11 +21,18 @@
 namespace protocols {
 namespace simple_moves {
 
-// Forward
+
 class SymmetricFragmentMover;
 
 typedef utility::pointer::shared_ptr< SymmetricFragmentMover > SymmetricFragmentMoverOP;
 typedef utility::pointer::shared_ptr< SymmetricFragmentMover const > SymmetricFragmentMoverCOP;
+
+
+class SmoothSymmetricFragmentMover;
+
+typedef utility::pointer::shared_ptr< SmoothSymmetricFragmentMover > SmoothSymmetricFragmentMoverOP;
+typedef utility::pointer::shared_ptr< SmoothSymmetricFragmentMover const > SmoothSymmetricFragmentMoverCOP;
+
 
 } // namespace simple_moves
 } // namespace protocols

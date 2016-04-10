@@ -96,7 +96,7 @@ private:
 	clang::CXXRecordDecl *C;
 
 	// set of members which user asked to exclude from bindings
-	std::set<clang::NamedDecl const *> members_to_skip;
+	//std::set<clang::NamedDecl const *> members_to_skip;
 };
 
 

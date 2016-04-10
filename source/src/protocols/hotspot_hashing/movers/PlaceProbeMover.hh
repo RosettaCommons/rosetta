@@ -15,6 +15,8 @@
 #define INCLUDED_protocols_hotspot_hashing_movers_PlaceProbeMover_hh
 
 
+#include <protocols/hotspot_hashing/movers/PlaceProbeMover.fwd.hh>
+
 // Project Headers
 #include <string>
 
@@ -32,12 +34,9 @@
 
 // Unit headers
 
-namespace protocols
-{
-namespace hotspot_hashing
-{
-namespace movers
-{
+namespace protocols {
+namespace hotspot_hashing {
+namespace movers {
 
 class PlaceProbeMover : virtual public protocols::moves::Mover
 {
@@ -59,6 +58,9 @@ public:
 		core::conformation::ResidueCOP target_residue,
 		core::Size search_partition = 1,
 		core::Size total_search_partition = 1);
+
+
+	PlaceProbeMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<PlaceProbeMover>( Mover::shared_from_this() ); }
 
 	virtual void apply( Pose & );
 

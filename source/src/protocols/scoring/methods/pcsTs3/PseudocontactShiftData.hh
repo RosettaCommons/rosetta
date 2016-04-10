@@ -30,10 +30,11 @@
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs3_PseudocontactShiftData_hh
 #define INCLUDED_protocols_scoring_methods_pcsTs3_PseudocontactShiftData_hh
 
+#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftData.fwd.hh>
+
 // Package headers
 #include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.fwd.hh>
 #include <protocols/scoring/methods/pcsTs3/PseudocontactShiftTensor.fwd.hh>
-#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftData.fwd.hh>
 
 // Project headers
 #include <basic/datacache/CacheableData.hh>
@@ -49,6 +50,12 @@
 
 // C++ headers
 #include <iostream>
+
+#ifdef PYROSETTA
+#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.hh>
+#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftTensor.hh>
+#endif
+
 
 namespace protocols {
 namespace scoring {

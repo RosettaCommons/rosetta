@@ -22,14 +22,15 @@
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
-#ifdef WIN32
+#include <core/sequence/SequenceAlignment.fwd.hh>
+
+#if defined(WIN32) || defined(PYROSETTA)
 #include <core/sequence/SequenceAlignment.hh>
 #endif
 
 //utility headers
 #include <map>
 
-#include <core/sequence/SequenceAlignment.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

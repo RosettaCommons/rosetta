@@ -38,6 +38,9 @@
 #include <core/id/AtomID.fwd.hh>
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#endif
 
 namespace protocols {
 namespace match {

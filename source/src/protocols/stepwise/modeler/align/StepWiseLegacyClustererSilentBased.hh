@@ -26,7 +26,9 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/id/AtomID.hh>
 #include <core/types.hh>
+
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 

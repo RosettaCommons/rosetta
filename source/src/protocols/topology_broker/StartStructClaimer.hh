@@ -68,6 +68,7 @@ public:
 	StartStructClaimer(); //for factory
 	StartStructClaimer( core::pose::Pose const& /*idealized*/ );
 
+	StartStructClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<StartStructClaimer>( FragmentClaimer::shared_from_this() ); }
 
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new StartStructClaimer( *this ) );

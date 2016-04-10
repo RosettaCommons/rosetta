@@ -34,30 +34,30 @@
 namespace protocols {
 namespace pockets {
 
-typedef struct {
+struct spherical_coor_triplet {
 	// note: these are in radians
 	core::Real phi;
 	core::Real psi;
 	core::Real rho;
 	core::Size ori;
-} spherical_coor_triplet;
+};
 
-typedef struct {
+struct triplet_and_originnum {
 	// note: these are in radians
 	core::Real phi;
 	core::Real psi;
 	core::Real rho;
 	core::Size originnum;
-} triplet_and_originnum;
+};
 
-typedef struct {
+struct ray_distance_derivs {
 	core::Real dDist_dv1;
 	core::Real dDist_dv2;
 	core::Real dDist_dv3;
 	core::Real dDist_dv4;
 	core::Real dDist_dv5;
 	core::Real dDist_dv6;
-} ray_distance_derivs;
+};
 
 class FingerprintBase : public utility::pointer::ReferenceCount {
 

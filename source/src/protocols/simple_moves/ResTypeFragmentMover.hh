@@ -53,6 +53,8 @@ public:
 
 	~ResTypeFragmentMover();
 
+	ResTypeFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<ResTypeFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
+
 protected:
 
 	// frame and fragment of choice, returns false if no good fragment is found

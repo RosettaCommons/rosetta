@@ -29,6 +29,15 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+#include <core/pose/Pose.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/rotamer_recovery/RRComparer.hh>
+#include <protocols/rotamer_recovery/RRProtocol.hh>
+#include <protocols/rotamer_recovery/RRReporter.hh>
+#endif
+
 
 namespace protocols {
 namespace rotamer_recovery {

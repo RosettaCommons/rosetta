@@ -5,9 +5,9 @@
 #include <vector>
 #include <map>
 #include <iostream>
-//#include <memory>
+#include <memory>
 // #include <complex>
-//#include <utility>
+#include <utility>
 //#include <iostream>
 
 #include <self_test.incl.hpp>
@@ -74,10 +74,47 @@ namespace utility {
 
 
 
-class A {};
 
-void foo(int a = 1) {}
+template <typename T>
+class A
+{
+public:
+	void foo_a_1() {}
+	void foo_a_2() {}
 
+	int a;
+};
+
+
+template <typename T>
+class B : public A<T>
+{
+public:
+	void foo_b_1() {}
+	void foo_b_2() {}
+
+	int b;
+};
+
+class Ac
+{
+public:
+	//void foo() {}
+
+	//virtual bool f(int) = 0;
+
+};
+
+//void foo( std::pair<Ac,Ac> ) {}
+void foo( std::pair<std::shared_ptr<Ac>,std::shared_ptr<Ac> > ) {}
+
+//template <> class A<int>;
+//template <> class A<float>;
+
+//void a(B<int>, B<float>) {}
+
+//void foo(std::vector<int>) {}
+//void foo(std::map<int, int>) {}
 
 // std::vector<int> foo_v(std::vector<std::string> &)
 // {

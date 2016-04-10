@@ -411,11 +411,37 @@ bool ClassBinder::bindable() const
 /// check if user requested binding for the given declaration
 void  ClassBinder::request_bindings_and_skipping(Config const &config)
 {
-	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-		if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
-			if( is_skipping_requested(*m, config) ) members_to_skip.insert(*m);
-		}
-	}
+	// for(auto m = C->method_begin(); m != C->method_end(); ++m) {
+	// 	if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
+	// 		if( is_skipping_requested(*m, config) ) members_to_skip.insert(*m);
+	// 	}
+	// }
+
+	// //if( C->isCompleteDefinition()  or  dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
+	// //if( CXXRecordDecl const *CD = C->getDefinition() ) {
+	// if( C->hasDefinition() ) {
+	// 	//outs() << "request_bindings_and_skipping for class: " << /*C->getQualifiedNameAsString()*/ class_qualified_name(C) << "... \n";
+	// 	if( /*ClassTemplateSpecializationDecl const *tsp =*/ dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // for template classes explicitly bind data members and member functions from public base classes
+	// 		//if( ClassTemplateDecl const * ctd = tsp->getSpecializedTemplate() ) {
+	// 		//	if( ctd->isThisDeclarationADefinition() ) {
+	// 		for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
+	// 			if( b->getAccessSpecifier() == AS_public ) {
+	// 				if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
+	// 					if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+	// 						if( is_bindable(R)  ) {
+	// 							for(auto m = R->method_begin(); m != R->method_end(); ++m) {
+	// 								if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
+	// 									if( is_skipping_requested(*m, config) ) members_to_skip.insert(*m);
+	// 								}
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	//outs() << "request_bindings_and_skipping for class: " << C->getQualifiedNameAsString() << "... OK\n";
+	// }
 
 	if( is_skipping_requested(C, config) ) Binder::request_skipping();
 	else if( is_binding_requested(C, config) ) Binder::request_bindings();
@@ -426,6 +452,33 @@ void  ClassBinder::request_bindings_and_skipping(Config const &config)
 void ClassBinder::add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const
 {
 	binder::add_relevant_includes(C, includes, stack, 0);
+}
+
+string binding_public_data_members(CXXRecordDecl const *C)
+{
+	string c;
+	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
+		if(FieldDecl *f = dyn_cast<FieldDecl>(*d) ) {
+			if( f->getAccess() == AS_public  and  is_bindable(f) ) c+= "\tcl" + bind_data_member(f, class_qualified_name(C)) + ";\n";
+		}
+	}
+	return c;
+}
+
+string binding_public_member_functions(CXXRecordDecl const *C, /*std::set<clang::NamedDecl const *> const &members_to_skip, */Context &context)
+{
+	string c;
+	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
+		if( m->getAccess() == AS_public  and  is_bindable(*m)  //and  !is_skipping_requested(FunctionDecl const *F, Config const &config)
+			//and  !members_to_skip.count(*m)
+			and  !is_skipping_requested(*m, Config::get())
+			and  !isa<CXXConstructorDecl>(*m)  and   !isa<CXXDestructorDecl>(*m) ) {
+			//(*m)->dump();
+			c += "\tcl" + bind_function(*m, context) + ";\n";
+		}
+	}
+
+	return c;
 }
 
 
@@ -483,20 +536,19 @@ void ClassBinder::bind(Context &context)
 		}
 	}
 
-	// binding public data members
-	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
-		if(FieldDecl *f = dyn_cast<FieldDecl>(*d) ) {
-			if( f->getAccess() == AS_public  and  is_bindable(f) ) c+= "\tcl" + bind_data_member(f, class_qualified_name(C)) + ";\n";
-		}
-	}
+	c += binding_public_data_members(C);
+	c += binding_public_member_functions(C, /*members_to_skip,*/ context);
 
-	// binding public member functions
-	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-		if( m->getAccess() == AS_public  and  is_bindable(*m)  //and  !is_skipping_requested(FunctionDecl const *F, Config const &config)
-			and  !members_to_skip.count(*m)
-			and  !isa<CXXConstructorDecl>(*m)  and   !isa<CXXDestructorDecl>(*m) ) {
-			//(*m)->dump();
-			c += "\tcl" + bind_function(*m, context) + ";\n";
+	if( dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // for template classes explicitly bind data members and member functions from public base classes
+		for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
+			if( b->getAccessSpecifier() == AS_public) {
+				if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
+					if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+							c += binding_public_data_members(R);
+							c += binding_public_member_functions(R, /*members_to_skip,*/ context);
+					}
+				}
+			}
 		}
 	}
 

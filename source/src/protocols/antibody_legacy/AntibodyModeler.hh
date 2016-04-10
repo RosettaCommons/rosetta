@@ -23,7 +23,6 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
@@ -34,6 +33,16 @@
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
+
+#ifdef PYROSETTA
+#include <protocols/antibody_legacy/AntibodyModeler.hh>
+#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragData.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#endif
 
 namespace protocols {
 namespace antibody_legacy {

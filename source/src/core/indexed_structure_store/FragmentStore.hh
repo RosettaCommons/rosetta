@@ -17,6 +17,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
+#include <numeric/xyzVector.hh>
 #include <numeric/types.hh>
 
 #include <core/indexed_structure_store/FragmentStore.fwd.hh>

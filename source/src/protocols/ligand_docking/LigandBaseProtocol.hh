@@ -88,6 +88,8 @@ public:
 
 	virtual ~LigandBaseProtocol();
 
+	LigandBaseProtocolOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<LigandBaseProtocol>( Mover::shared_from_this() ); }
+
 	core::scoring::ScoreFunctionOP  get_scorefxn();
 	core::scoring::ScoreFunctionCOP get_scorefxn() const;
 

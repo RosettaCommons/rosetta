@@ -28,6 +28,15 @@ using std::string;
 namespace binder {
 
 
+Config &Config::get()
+{
+	static Config * instance = nullptr;
+
+	if( !instance ) instance = new Config();
+
+	return *instance;
+}
+
 /// Read config setting from file
 void Config::read(string const &file_name)
 {

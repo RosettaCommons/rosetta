@@ -6,10 +6,12 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
 /// @file /protocols/simple_moves/a3b_hbs/A3BHbsMover.hh
 /// @brief
 /// @author Andy Watkins, amw579@nyu.edu
+
+#ifdef NOT_IN_SCONS_DEPRECATED
+
 #ifndef INCLUDED_protocols_simple_moves_a3b_hbs_A3BHbsMover_hh
 #define INCLUDED_protocols_simple_moves_a3b_hbs_A3BHbsMover_hh
 // Unit Headers
@@ -56,3 +58,6 @@ private:
 }//namespace protocols
 
 #endif // INCLUDED_protocols_simple_moves_hbs_HbsMover_hh
+
+#endif
+ 

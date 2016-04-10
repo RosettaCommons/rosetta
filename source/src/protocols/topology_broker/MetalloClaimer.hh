@@ -64,6 +64,8 @@ public:
 	//MetalloClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
 	//MetalloClaimer( simple_moves::FragmentMoverOP );
 
+	MetalloClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<MetalloClaimer>( TopologyClaimer::shared_from_this() ); }
+
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new MetalloClaimer( *this ) );
 	}

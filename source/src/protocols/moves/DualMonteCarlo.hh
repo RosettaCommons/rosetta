@@ -39,12 +39,12 @@ namespace moves {
 //   2 = accepted:score beat last_accepted score
 //   1 = thermally accepted: score worse than last_accepted score
 //   0 = not accepted
-// typedef enum {
+// enum MCA {
 //  MCA_accepted_score_beat_low=3,
 //  MCA_accepted_score_beat_last=2,
 //  MCA_accepted_thermally=1,
 //  MCA_rejected=0
-// } MCA; // mc_accepted state
+// }; // mc_accepted state
 
 /// @details DualMonteCarlo is a wrapper class around MonteCarlo.  Its original purpose is to allow for Boltzmann scoring a pose in centroid mode while simultaneously tracking a fullatom equivalent.  It should work for any paired poses.  Generally, "DMC_pose" refers to the pose this class tracks, whereas "MC_pose" refers to the one used by the underlying MC object.  While this class contains a MonteCarlo object (by composition, not inheritance); you cannot pass in a MC object to it, nor can you get an OP to that object.  const access to the underlying MC is provided at this time; if you want nonconst access you can write it in but beware that the user can then ruin the bookkeeping!  Also note that I (SML) left the framework in place in comments for a lot of MC's functions within DMC like checkpointing and counters.  Flesh these out if you want them...
 class DualMonteCarlo : public utility::pointer::ReferenceCount {
