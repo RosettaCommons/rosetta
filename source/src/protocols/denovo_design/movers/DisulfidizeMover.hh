@@ -68,8 +68,12 @@ public:
 
 	// public methods
 public:
-	/// @brief finds existing disulfides within a pose
-	DisulfideList find_current_disulfides( core::pose::Pose const & pose ) const;
+	/// @brief finds disulfides within a pose subset
+	DisulfideList
+	find_current_disulfides(
+		core::pose::Pose const & pose,
+		core::select::residue_selector::ResidueSubset const & subset1,
+		core::select::residue_selector::ResidueSubset const & subset2	) const;
 
 	/// @brief mutates the given disulfides to ALA
 	void mutate_disulfides_to_ala(

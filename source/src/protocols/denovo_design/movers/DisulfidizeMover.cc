@@ -315,22 +315,26 @@ DisulfidizeMover::process_pose(
 		runtime_assert_string_msg( core::pose::symmetry::is_symmetric(*sfxn), "Error in protocols::denovo_design::movers::DisulfidizeMover::process_pose().  A symmetric scorefunction must be provided for symmetric poses." );
 	}
 
-	DisulfideList current_ds = find_current_disulfides( pose );
+	// get two sets of residues which will be connected by disulfides
+	core::select::residue_selector::ResidueSubset subset1;
+	core::select::residue_selector::ResidueSubset subset2;
+	if ( set1_selector_ ) {
+		subset1 = set1_selector_->apply( pose );
+	} else {
+		subset1.assign( pose.total_residue(), true );
+	}
+	if ( set2_selector_ ) {
+		subset2 = set2_selector_->apply( pose );
+	} else {
+		subset2.assign( pose.total_residue(), true );
+	}
+
+	DisulfideList current_ds = find_current_disulfides( pose, subset1, subset2 );
 	if ( current_ds.size() > 0 ) { TR << "Current disulfides are: " << current_ds << std::endl; }
 	else { TR << "No disulfides were already present in the pose." << std::endl; }
 
 	if ( !keep_current_ds_ ) {
 		mutate_disulfides_to_ala( pose, current_ds ); //Updated for D-cys, VKM 17 Aug 2015.
-	}
-
-	// get two sets of residues which will be connected by disulfides
-	core::select::residue_selector::ResidueSubset subset1( pose.total_residue(), true );
-	core::select::residue_selector::ResidueSubset subset2( pose.total_residue(), true );
-	if ( set1_selector_ ) {
-		subset1 = set1_selector_->apply( pose );
-	}
-	if ( set2_selector_ ) {
-		subset2 = set2_selector_->apply( pose );
 	}
 
 	// create initial list of possible disulfides between residue subset 1 and subset 2
@@ -407,19 +411,26 @@ DisulfidizeMover::process_pose(
 	return true;
 }
 
-/// @brief finds disulfides within a pose
+/// @brief finds disulfides within a pose subset
 DisulfidizeMover::DisulfideList
-DisulfidizeMover::find_current_disulfides( core::pose::Pose const & pose ) const
+DisulfidizeMover::find_current_disulfides(
+	core::pose::Pose const & pose,
+	core::select::residue_selector::ResidueSubset const & subset1,
+	core::select::residue_selector::ResidueSubset const & subset2	) const
 {
+	debug_assert( pose.total_residue() == subset1.size() );
+	debug_assert( pose.total_residue() == subset2.size() );
 	DisulfideList retval;
 	std::set< core::Size > cyds;
-	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
-		if ( pose.residue(i).type().is_disulfide_bonded() ) {
-			cyds.insert( i );
+	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+		if ( ( !subset1[ resi ] ) && ( !subset2[ resi ] ) ) continue;
+		if ( pose.residue(resi).type().is_disulfide_bonded() ) {
+			cyds.insert( resi );
 		}
 	}
-	for ( std::set< core::Size >::const_iterator cyd1=cyds.begin(), endcyds=cyds.end(); cyd1!=endcyds; ++cyd1 ) {
-		for ( std::set< core::Size >::const_iterator cyd2=cyd1; cyd2!=endcyds; ++cyd2 ) {
+
+	for ( std::set< core::Size >::const_iterator cyd1=cyds.begin(); cyd1!=cyds.end(); ++cyd1 ) {
+		for ( std::set< core::Size >::const_iterator cyd2=cyd1; cyd2!=cyds.end(); ++cyd2 ) {
 			if ( pose.residue(*cyd1).is_bonded( pose.residue(*cyd2) ) ) {
 				retval.push_back( std::make_pair( *cyd1, *cyd2 ) );
 			}
