@@ -154,7 +154,9 @@ private:
 	bool test_;
 	bool final_min_;
 	bool pack_glycans_; //Problem packing glycans for now.
-
+	bool random_start_;
+	bool sugar_bb_start_;
+	
 	core::Size total_glycan_residues_;
 	bool pymol_movie_;
 
@@ -163,6 +165,8 @@ private:
 
 	utility::vector1< std::string > parsed_positions_;
 	utility::vector1< core::Size > positions_;
+	
+
 };
 
 std::ostream &operator<< (std::ostream &os, GlycanRelaxMover const &mover);

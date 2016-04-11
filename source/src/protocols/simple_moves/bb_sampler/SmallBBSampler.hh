@@ -38,9 +38,10 @@ class SmallBBSampler : public bb_sampler::BBDihedralSampler {
 public:
 
 	SmallBBSampler();
-
-	SmallBBSampler( core::id::MainchainTorsionType torsion_type);
-	SmallBBSampler( core::id::MainchainTorsionType torsion_type, core::Real all_ss_angle_max);
+	SmallBBSampler( core::Real all_ss_angle_max);
+	
+	SmallBBSampler( core::Size torsion_type);
+	SmallBBSampler( core::Size torsion_type, core::Real all_ss_angle_max);
 
 public:
 

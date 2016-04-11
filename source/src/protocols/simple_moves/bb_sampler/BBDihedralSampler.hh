@@ -65,7 +65,7 @@ public:
 
 	///@brief Set the torsion type we will be querying.
 	void
-	set_torsion_type( core::id::MainchainTorsionType torsion_type ) {
+	set_torsion_type( core::Size torsion_type ) {
 		torsion_type_ = torsion_type;
 	};
 
