@@ -1,0 +1,24 @@
+
+# FIX GraftDesign and SeqDesign for Heavy chain to shorten test
+ALL FIX
+L1 ALLOW
+
+
+####### L1 Grafting Tests #############
+L1 CDR_SET INCLUDEONLY CLUSTERS L1-16-1 L1-17-1 L1-15-1 L1-14-1
+
+
+
+####### Minimization Setting Tests #########
+ALL GraftDesign MINTYPE min
+L1 GraftDesign MIN_NEIGHBORS L4
+
+
+####### DE Testing #####
+DE SeqDesign ALLOW
+H4 SeqDesign FIX
+
+
+L4 SeqDesign PRIMARY_STRATEGY conservative
+
+

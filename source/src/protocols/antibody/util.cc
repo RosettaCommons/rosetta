@@ -121,7 +121,7 @@ get_cdr_loops(
 		if ( cdrs[ i ] ) {
 			//TR <<"CDR: " << i << std::endl;
 			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-
+			//TR << "Getting CDR Loop: "<<ab_info->get_CDR_name( cdr ) << std::endl;
 			if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
 
 			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));

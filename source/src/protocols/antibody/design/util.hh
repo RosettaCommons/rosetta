@@ -73,7 +73,8 @@ core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_region(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose & pose,
-	AntibodyRegionEnum region);
+	AntibodyRegionEnum region,
+	bool cdr4_as_framework = true);
 
 /// @brief Disable design of the antigen residues
 core::pack::task::operation::RestrictResidueToRepackingOP
@@ -85,7 +86,8 @@ disable_design_antigen(
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_framework(
 	AntibodyInfoCOP ab_info,
-	const core::pose::Pose & pose);
+	const core::pose::Pose & pose,
+	bool cdr4_as_framework = true);
 
 /// @brief Get a Restrict operation to turn OFF design for all CDRs.
 core::pack::task::operation::RestrictResidueToRepackingOP

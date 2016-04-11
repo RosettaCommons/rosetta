@@ -106,7 +106,7 @@ AddCDRProfileSetsOperation::~AddCDRProfileSetsOperation(){}
 void
 AddCDRProfileSetsOperation::set_defaults(){
 	cdrs_.clear();
-	cdrs_.resize(6, true);
+	cdrs_.resize(8, true);
 	limit_only_to_length_ = false;
 	force_north_paper_db_ = false;
 	use_light_chain_type_ = option [OptionKeys::antibody::design::use_light_chain_type]();
@@ -131,7 +131,7 @@ void
 AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
 	if ( tag->hasOption("cdrs") ) {
 		TR << "Setting CDRs from settings" << std::endl;
-		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
+		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs", true /* include cdr4 */);
 	}
 
 	limit_only_to_length_ = tag->getOption< bool >("limit_only_to_length", limit_only_to_length_);
@@ -160,13 +160,20 @@ AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache
 void
 AddCDRProfileSetsOperation::set_cdr_only(CDRNameEnum cdr) {
 	cdrs_.clear();
-	cdrs_.resize(6, false);
+	cdrs_.resize(8, false);
 	cdrs_[ cdr ] = true;
 }
 
 void
 AddCDRProfileSetsOperation::set_cdrs(const utility::vector1<bool>& cdrs) {
 	cdrs_ = cdrs;
+	if ( cdrs_.size() < CDRNameEnum_proto_total ) {
+		for ( core::Size i = cdrs_.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
+			cdrs_.push_back( false );
+		}
+	}
+	assert( cdrs_.size() == 8);
+	
 }
 
 void
@@ -222,12 +229,18 @@ AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
 
 	pre_loaded_data_ = true;
 
-	utility::vector1<bool> no_data_cdrs(6, false);
+	utility::vector1<bool> no_data_cdrs(8, false);
 
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= 8; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		if ( ! cdrs_[ i ] ) continue;
-
+		
+		if (cdr == l4 || cdr == h4){
+			TR << "Skipping CDR4 profile data!" << std::endl;
+			no_data_cdrs[ i ] = true;
+			continue;
+		}
+		
 		if (  sequences_.count(cdr) == 0 || (  sequences_.count(cdr) != 0  &&  sequences_[ cdr ].size() <= cutoff_ ) ) {
 			no_data_cdrs[ i ] = true;
 		}
@@ -259,7 +272,7 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 
 	MutationSetDesignOperation mut_set_op = MutationSetDesignOperation();
 
-	for ( core::Size i_cdr = 1; i_cdr <= core::Size(local_ab_info->get_total_num_CDRs()); ++i_cdr ) {
+	for ( core::Size i_cdr = 1; i_cdr <= core::Size(local_ab_info->get_total_num_CDRs( true /* inlude cdr4 */)); ++i_cdr ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i_cdr );
 		if ( sequences.count(cdr) == 0 || sequences[ cdr ].size() <= cutoff_ ) continue;
 		TR << "applying profile set operation for " << local_ab_info->get_CDR_name(cdr) << std::endl;

@@ -461,21 +461,26 @@ AntibodyDesignMover::setup_options_classes(){
 	}
 
 	if ( design_override_.size() > 0 ) {
-		for ( core::Size i = 1; i <= 6; ++i ) {
+		for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 			cdr_set_options_[i]->load(false);
 			cdr_graft_design_options_[i]->design(false);
 			cdr_seq_design_options_[i]->design(false);
 		}
 		for ( core::Size i = 1; i <= design_override_.size(); ++i ) {
 			CDRNameEnum cdr_enum = design_override_[ i ];
-			cdr_set_options_[cdr_enum]->load(true);
-			cdr_graft_design_options_[cdr_enum]->design(true);
+			
+			//Design override only works for l4 and h4 in regard to sequence design.
+			if (cdr_enum != l4 && cdr_enum != h4){
+				cdr_set_options_[cdr_enum]->load(true);
+				cdr_graft_design_options_[cdr_enum]->design(true);
+			}
+			
 			cdr_seq_design_options_[cdr_enum]->design(true);
 		}
 	}
 
 	//Disable CDRs that are not present (aka camelid design)
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdr_seq_design_options_[ cdr ]->design( false );
@@ -483,7 +488,7 @@ AntibodyDesignMover::setup_options_classes(){
 		}
 	}
 
-	///Set it up so that if we design the cdr, we load CDRs from the database.
+	///Set it up so that if we design the cdr, we load CDRs from the database.  Only canonical for now.
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRGraftDesignOptionsOP options = cdr_graft_design_options_[i];
 		cdr_set_options_[i]->load(options->design());
@@ -923,24 +928,24 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 	//Setup Neighbor CDR minimization - instruction file/options controlled..
 	// This should either be refactored into its own class, or the modeler should incorporate most of these.
 	//
-	scorefxn_->score(pose);
-	CDRGraftDesignOptionsOP options = cdr_graft_design_options_[cdr];
-	CDRSeqDesignOptionsOP seq_des_options = cdr_seq_design_options_[cdr];
+	scorefxn_->score( pose );
+	CDRGraftDesignOptionsOP options = cdr_graft_design_options_[ cdr ];
+	CDRSeqDesignOptionsOP seq_des_options = cdr_seq_design_options_[ cdr ];
 
-	vector1<bool> cdrs_to_min(6, false);
+	vector1<bool> cdrs_to_min( core::Size( CDRNameEnum_proto_total ), false );
 	utility::vector1<CDRNameEnum> neighbor_min = options->neighbor_min();
 
 	//Convert from vector of cdrs to vector1 bool.
-	cdrs_to_min[cdr] = true;
+	cdrs_to_min[ cdr ] = true;
 	for ( core::Size i = 1; i <= neighbor_min.size(); ++i ) {
-		TR <<"Add min neighbors : "<< ab_info_->get_CDR_name(neighbor_min[ i ])<<std::endl;
-		cdrs_to_min[neighbor_min[i]] = true;
+		TR <<"Add min neighbors : "<< ab_info_->get_CDR_name( neighbor_min[ i ] )<<std::endl;
+		cdrs_to_min[ neighbor_min[ i ] ] = true;
 	}
 
 	modeler_->set_cdrs(cdrs_to_min);
 
 	//Setup design task factory.
-	TaskFactoryOP design_tf = seq_design_creator_->generate_tf_seq_design_graft_design(pose, cdr, cdrs_to_min);
+	TaskFactoryOP design_tf = seq_design_creator_->generate_tf_seq_design_graft_design( pose, cdr, cdrs_to_min );
 	//TR <<"CDRDesignTF" << std::endl;
 	//design_tf->create_task_and_apply_taskoperations(pose)->show(TR);
 
@@ -949,9 +954,9 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 
 	if ( dock_post_graft_ ) {
 		TR << "Setting up DockDesign TF" << std::endl;
-		dock_design_tf = seq_design_creator_->generate_tf_seq_design(pose);
-		seq_design_creator_->disable_design_for_non_designing_cdrs(dock_design_tf, pose);
-		dock_design_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface(1, interface_dis_) ));
+		dock_design_tf = seq_design_creator_->generate_tf_seq_design( pose );
+		seq_design_creator_->disable_design_for_non_designing_cdrs( dock_design_tf, pose );
+		dock_design_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( 1, interface_dis_) ));
 	}
 	//TR <<"DockDesign task" << std::endl;
 	//dock_design_tf->create_task_and_apply_taskoperations(pose)->show(TR);

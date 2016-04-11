@@ -34,7 +34,6 @@ L3 CDR_SET CENTERS_ONLY
 
 
 ####### Sequence Design Tests #########
-L1 GraftDesign MINTYPE relax
 L1 SeqDesign FALLBACK_STRATEGY BASIC
 
 #Test L3 conservative design works
@@ -46,10 +45,12 @@ L2 SeqDesign PRIMARY_STRATEGY PROFILES_COMBINED
 
 
 ####### Minimization Setting Tests #########
-L3 GraftDesign MINTYPE relax
 L3 GraftDesign MIN_NEIGHBORS L1
 
-H2 GraftDesign MINTYPE min
+#Speed
+ALL GraftDesign MINTYPE min
+
+
 H2 GraftDesign MIN_NEIGHBORS H1
 
 #L1 CDR_SET LENGTH MIN 14

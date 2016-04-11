@@ -45,7 +45,7 @@ public:
 	void
 	set_cdr(CDRNameEnum cdr);
 
-	bool
+	CDRNameEnum
 	cdr() const {
 		return cdr_;
 	}

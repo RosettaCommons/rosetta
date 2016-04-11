@@ -202,7 +202,7 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	} else {
 		cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(cdr) );
 	}
-
+	
 	instructions_path_ = path;
 
 	check_path();
@@ -235,7 +235,9 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		std::string mode = lineSP[2];
 		boost::to_upper(mode);
 
-		if ( cdr_type == "ALL" ) {
+		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4)) {
+			parse_cdr_option(mode, lineSP);
+		} else if ( ( cdr_type == "DE" || cdr_type == "CDR4") && (cdr == l4 || cdr == h4) ){
 			parse_cdr_option(mode, lineSP);
 		} else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
 			if ( ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr ) {
@@ -245,12 +247,17 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 			//If expansion to chains, frameworks, etc.  Do it here.
 			//We may have separate parsers for framework or L2.5 or whatever.
 			//If its not a CDR, just skip it for now so we can have
-			TR << "Unrecognized CDR: "<<cdr_type <<" skipping...."<<std::endl;
+			//TR << "Unrecognized CDR: "<<cdr_type <<" skipping...."<<std::endl;
 			continue;
 		}
 	}
 	instruction_file.close();
 	//TR << "Instructions read successfully" <<std::endl;
+	
+	if (cdr == l4 || cdr == h4){
+		cdr_options_->design( false ); // Disable graft design of CDR4 as it is not yet implemented.
+	}
+	
 	return cdr_options_->clone();
 }
 
@@ -294,6 +301,7 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 	}
 
 }
+
 
 void
 CDRGraftDesignOptionsParser::check_line_len(const vector1<string> & lineSP, const core::Size len_check) const {

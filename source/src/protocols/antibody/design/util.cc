@@ -519,11 +519,12 @@ core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_region(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose & pose,
-	AntibodyRegionEnum region)
+	AntibodyRegionEnum region,
+	bool cdr4_as_framework /* true */)
 {
 	RestrictResidueToRepackingOP restrict( new RestrictResidueToRepacking() );
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		if ( ab_info->get_region_of_residue(pose, i) == region ) {
+		if ( ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region ) {
 			restrict->include_residue(i);
 		}
 	}
@@ -541,9 +542,10 @@ disable_design_antigen(
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_framework(
 	AntibodyInfoCOP ab_info,
-	const core::pose::Pose & pose)
+	const core::pose::Pose & pose,
+	bool cdr4_as_framework /* true */)
 {
-	return disable_design_region(ab_info, pose, framework_region);
+	return disable_design_region(ab_info, pose, framework_region, cdr4_as_framework);
 }
 
 core::pack::task::operation::RestrictResidueToRepackingOP
@@ -642,7 +644,7 @@ get_cdr_set_options(){
 
 	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRSetOptions from: " << filename << std::endl;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_options(cdr, filename));
 	}
@@ -660,7 +662,7 @@ get_cdr_set_options(std::string filename){
 	AntibodyCDRSetOptions options_settings;
 
 	TR << "Reading CDRSetOptions from: " << filename << std::endl;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_default_and_user_options(cdr, filename));
 
@@ -676,7 +678,7 @@ get_graft_design_options(){
 
 	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRGraftDesignOptions from: " << filename << std::endl;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_options(cdr, filename));
 
@@ -694,7 +696,7 @@ get_graft_design_options(std::string filename){
 	AntibodyCDRGraftDesignOptions options_settings;
 
 	TR << "Reading CDRGraftDesignOptions from: " << filename << std::endl;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_default_and_user_options(cdr, filename));
 	}
@@ -709,7 +711,7 @@ get_seq_design_options(){
 
 	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRSeqDesignOptions from: " << filename << std::endl;
-	for ( core::Size i = 1; i <=6; ++i ) {
+	for ( core::Size i = 1; i <=core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_options(cdr, filename));
 	}
@@ -726,7 +728,7 @@ get_seq_design_options(std::string filename){
 	AntibodyCDRSeqDesignOptions options_settings;
 
 	TR << "Reading CDRSeqDesignOptions from: " << filename << std::endl;
-	for ( core::Size i = 1; i <=6; ++i ) {
+	for ( core::Size i = 1; i <=core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_default_and_user_options(cdr, filename));
 	}

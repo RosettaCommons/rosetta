@@ -71,6 +71,7 @@ public:
 	AntibodyInfoOP ab_info;
 	core::scoring::ScoreFunctionOP score;
 	utility::vector1<CDRSeqDesignOptionsOP> design_options;
+	utility::vector1< CDRSeqDesignOptionsOP > design_options2;
 	bool first_run;
 	std::string inpath;
 
@@ -85,7 +86,7 @@ public:
 		core_init();
 		first_run = false;
 		inpath = "protocols/antibody/design";
-		first_run_outpath = "/Users/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test/ut_files";
+		first_run_outpath = "/Users/jadolfbr/Documents/Rosetta/main/source";
 
 
 		core::import_pose::pose_from_file(pose, "protocols/antibody/2r0l_1_1.pdb", core::import_pose::PDB_file); //AHO renumbered pose
@@ -99,42 +100,67 @@ public:
 		// L1 - Profiles
 		// L2 - OFF
 		// L3 - Profiles
+		// L4 - Conservative
+
 		// H1 - Conservative
 		// H2 - OFF
 		// H3 - Basic Design
-
+		// H4 - OFF
 
 		CDRSeqDesignOptionsOP l1_options( new CDRSeqDesignOptions(l1) );
 		CDRSeqDesignOptionsOP l2_options( new CDRSeqDesignOptions(l2) );
 		CDRSeqDesignOptionsOP l3_options( new CDRSeqDesignOptions(l3) );
+		CDRSeqDesignOptionsOP l4_options( new CDRSeqDesignOptions(l4) );
 
 		CDRSeqDesignOptionsOP h1_options( new CDRSeqDesignOptions(h1) );
 		CDRSeqDesignOptionsOP h2_options( new CDRSeqDesignOptions(h2) );
 		CDRSeqDesignOptionsOP h3_options( new CDRSeqDesignOptions(h3) );
+		CDRSeqDesignOptionsOP h4_options( new CDRSeqDesignOptions(h4) );
 
 		l1_options->design(true);
 		l2_options->design(false);
 		l3_options->design(true);
+		l4_options->design(true);
+
 		h1_options->design(true);
 		h2_options->design(false);
 		h3_options->design(true);
+		h4_options->design(true);
 
 		l1_options->design_strategy(seq_design_profiles);
 		l2_options->design_strategy(seq_design_profiles);
 		l3_options->design_strategy(seq_design_profiles);
+		l4_options->design_strategy(seq_design_basic);
+
 		h1_options->design_strategy(seq_design_conservative);
 		h2_options->design_strategy(seq_design_conservative);
 		h3_options->design_strategy(seq_design_basic);
+		h4_options->design_strategy(seq_design_conservative);
 
 		design_options.clear();
-		design_options.resize(6, NULL);
+		design_options.resize(8, NULL);
 
 		design_options[ l1 ] = l1_options;
 		design_options[ l2 ] = l2_options;
 		design_options[ l3 ] = l3_options;
+		design_options[ l4 ] = l4_options;
+
 		design_options[ h1 ] = h1_options;
 		design_options[ h2 ] = h2_options;
 		design_options[ h3 ] = h3_options;
+		design_options[ h4 ] = h4_options;
+
+
+		//ALL Basic
+		design_options2.clear();
+		design_options2.resize(8, NULL);
+		
+		for (core::Size i = 1; i <= design_options.size(); ++i){
+			design_options2[ i ] = design_options[ i ]->clone();
+			design_options2[ i ]->design_strategy(seq_design_basic);
+		}
+
+		assert(design_options[1]->design_strategy() != design_options2[1]->design_strategy()); //Make sure copy worked.
 
 	}
 
@@ -149,7 +175,7 @@ public:
 		TR << "--CDRs with all of them designing" << std::endl;
 		RestrictToLoopsAndNeighborsOP all_cdrs = creator.generate_task_op_all_cdr_design(pose, false);
 		tf->push_back(all_cdrs);
-		utility::vector1<bool> disabled_cdrs(6, false);
+		utility::vector1<bool> disabled_cdrs(8, false);
 		assert_cdr_design_is_enabled_or_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, disabled_cdrs);
 
 		TR << "--CDRs with only those from options designing" << std::endl;
@@ -157,13 +183,15 @@ public:
 		tf->clear();
 		tf->push_back(design_cdrs);
 		disabled_cdrs[ h2 ] = true;
-		disabled_cdrs[ l2 ] =true;
+		disabled_cdrs[ l2 ] = true;
+
 		assert_cdr_design_is_enabled_or_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, disabled_cdrs);
 
 		TR<< "--CDRs designing based on vector1 bool." << std::endl;
-		utility::vector1<bool> designing(6, true);
+		utility::vector1<bool> designing(8, true);
 		designing[ h1 ] = false;
 		designing[ l2 ] =false;
+
 		RestrictToLoopsAndNeighborsOP design_vec_cdrs = creator.generate_task_op_cdr_design(pose, designing, false);
 		tf->clear();
 		tf->push_back(design_vec_cdrs);
@@ -174,46 +202,79 @@ public:
 
 	}
 	void test_normal_tf_generation() {
-		AntibodySeqDesignTFCreator creator =  AntibodySeqDesignTFCreator(ab_info, design_options, true);
-		creator.set_design_H3_stem(false);
+
+
+		///  What is on and off
+		//l1_options->design(true);
+		//l2_options->design(false);
+		//l3_options->design(true);
+		//l4_options->design(true);
+
+		//h1_options->design(true);
+		//h2_options->design(false);
+		//h3_options->design(true);
+		//h4_options->design(true);
+
+
+
+		AntibodySeqDesignTFCreator creator =  AntibodySeqDesignTFCreator(ab_info, design_options2, true);
+		creator.set_design_H3_stem(true);
 		TaskFactoryOP tf( new TaskFactory() );
 
-		TR << "--General TF - no limts on packing or design" << std::endl;
+		TR << "--General TF - Seq Design TF" << std::endl;
 		creator.design_antigen(false);
 		creator.design_framework(false);
 
-		utility::vector1<bool> disabled_cdrs(6, false);
+		utility::vector1<bool> disabled_cdrs(8, false);
 		disabled_cdrs[ h2 ] = true;
 		disabled_cdrs[ l2 ] =true;
 
-		tf = creator.generate_tf_seq_design(pose);
+		TaskFactoryOP tf_on = creator.generate_tf_seq_design(pose, false /* disable non-designing cdrs */);
+		std::cout << "TF NO DISABLE DESIGN: " << std::endl;
+		tf_on->create_task_and_apply_taskoperations(pose)->show(std::cout);
+
+
+		tf = creator.generate_tf_seq_design(pose, true /* disable non-designing cdrs */);
+		
+
 		PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
+		//task->show(std::cout);
+
 		assert_region_design_is_disabled(pose, task, ab_info, antigen_region);
-		assert_region_design_is_disabled(pose, task, ab_info, framework_region);
+		assert_region_design_is_disabled(pose, task, ab_info, framework_region, false /*cdr4_as_framework*/);
+		assert_cdr_design_is_enabled_or_disabled(pose, tf->create_task_and_apply_taskoperations(pose),ab_info, disabled_cdrs); //Must be disabled - as conservative
 
 		///Make sure conservative and profile-based sequences match up.
 		///Extremely complicated without the diff.
 		// L1 - Profiles
 		// L2 - OFF
 		// L3 - Profiles
+		// L4 - Basic Design
+
 		// H1 - Conservative
 		// H2 - OFF
 		// H3 - Basic Design
+		// H4 - Conservative
 
-		creator.disable_design_for_non_designing_cdrs(tf, pose); //Simplify
+		creator =  AntibodySeqDesignTFCreator(ab_info, design_options, true);
+		creator.set_design_H3_stem(false);
+		tf = creator.generate_tf_seq_design(pose, true /* disable non-designing cdrs */);
+		
+		task = tf->create_task_and_apply_taskoperations(pose);
+
 		output_or_test(tf, pose, first_run, "AntibodySeqDesign_general_tf", inpath, first_run_outpath);
 
 		TR << "--TF enable antigen "<< std::endl;
 		creator.design_antigen(true);
 		tf = creator.generate_tf_seq_design(pose);
-		assert_region_design_is_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, framework_region);
+		assert_region_design_is_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, framework_region, false /*cdr4_as_framework */);
 
 
 		TR << "--TF enable framework " << std::endl;
 		creator.design_framework(true);
 		creator.design_antigen(false);
 		tf = creator.generate_tf_seq_design(pose);
-		assert_region_design_is_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, antigen_region);
+		assert_region_design_is_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, antigen_region, false /*cdr4_as_framework */);
 
 
 
@@ -224,7 +285,7 @@ public:
 		TaskFactoryOP tf( new TaskFactory() );
 
 		TR << "--TF used for graft design" << std::endl;
-		utility::vector1<bool> l1_neighbors(6, false);
+		utility::vector1<bool> l1_neighbors(8, false);
 		l1_neighbors[ l3 ] = true;
 		l1_neighbors[ l2 ] = true;
 		l1_neighbors[ h3 ] = true;
@@ -238,9 +299,12 @@ public:
 		creator.design_framework(false);
 		tf = creator.generate_tf_seq_design_graft_design(pose, l1, l1_neighbors);
 
-		utility::vector1<bool> disabled_cdrs(6, false);
+		utility::vector1<bool> disabled_cdrs(8, false);
 		disabled_cdrs[ h2 ] = true; //Goes with options above.
 		disabled_cdrs[ l2 ] = true;
+
+		//H1 is set to design in design_options.
+
 		assert_cdr_design_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, disabled_cdrs);
 		output_or_test(tf, pose, first_run, "AntibodySeqDesign_graft_tf", inpath, first_run_outpath);
 
@@ -265,10 +329,5 @@ public:
 
 
 	}
-
-
-	////////////////////////////////////////////////////////////////////////
-	/// Utility functions
-	////////////////////////////////////////////////////////////////////////
 
 };

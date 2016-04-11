@@ -21,6 +21,14 @@ ALL CDRSet LENGTH MIN 1
 #Profile Design
 ALL SeqDesign STRATEGY PROFILES
 ALL SeqDesign FALLBACK_STRATEGY CONSERVATIVE
+
+##DE Loops can be designed.  They use conservative design by default since we have no profile data!
+DE SeqDesign STRATEGY CONSERVATIVE
+
+
+
+
+
 #ALL SeqDesign FALLBACK_STRATEGY NO_DESIGN - Turns off design if fallback needed.
 
 

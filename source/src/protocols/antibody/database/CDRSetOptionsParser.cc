@@ -61,7 +61,7 @@ CDRSetOptionsParser::~CDRSetOptionsParser() {}
 utility::vector1<CDRSetOptionsOP>
 CDRSetOptionsParser::parse_default_and_user_options(std::string filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		antibody_options.push_back(parse_default_and_user_options(cdr, filename));
 	}
@@ -84,7 +84,7 @@ CDRSetOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string
 utility::vector1<CDRSetOptionsOP>
 CDRSetOptionsParser::parse_options(std::string filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		antibody_options.push_back(parse_options(cdr, filename));
 	}
@@ -97,12 +97,15 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	using namespace utility;
 	using namespace std;
 
+
 	if ( default_and_user_ ) {
 		cdr_options_->set_cdr(cdr);
 	} else {
 		cdr_options_ = CDRSetOptionsOP( new CDRSetOptions(cdr) );
 	}
 
+
+	
 	instructions_path_ = path;
 
 	check_path();
@@ -136,9 +139,11 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		std::string mode = lineSP[2];
 		boost::to_upper(mode);
 
-		if ( cdr_type == "ALL" ) {
+		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4))  {
 			parse_cdr_option(mode, lineSP);
-		} else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
+		} else if ( ( cdr_type == "DE" || cdr_type == "CDR4") && (cdr == l4 || cdr == h4) ){
+			parse_cdr_option(mode, lineSP);
+		}else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
 			if ( ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr ) {
 				parse_cdr_option(mode, lineSP);
 			}
@@ -146,12 +151,18 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 			//If expansion to chains, frameworks, etc.  Do it here.
 			//We may have separate parsers for framework or L2.5 or whatever.
 			//If its not a CDR, just skip it for now so we can have
-			TR << "Unrecognized CDR: "<<cdr_type <<" skipping...."<<std::endl;
+			//TR << "Unrecognized CDR: "<<cdr_type <<" skipping...."<<std::endl;
 			continue;
 		}
 	}
 	instruction_file.close();
 	//TR << "Instructions read successfully" <<std::endl;
+	
+	if (cdr == l4 || cdr == h4){
+		cdr_options_->load( false ); //Can't do any DE grafting yet.  Disable, but have it in our list!
+	}
+	
+	
 	return cdr_options_->clone();
 }
 

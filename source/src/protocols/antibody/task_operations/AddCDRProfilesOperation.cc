@@ -97,9 +97,13 @@ AddCDRProfilesOperation::set_defaults(){
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 
-	for ( core::Size i = 1; i <=6; ++i ) {
+	for ( core::Size i = 1; i <=CDRNameEnum_proto_total; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRSeqDesignOptionsOP opt = CDRSeqDesignOptionsOP(new CDRSeqDesignOptions(cdr));
+		if (cdr == l4 || cdr == h4){
+			opt->design(false);
+		}
+
 		seq_design_options_.push_back(opt);
 	}
 
@@ -145,7 +149,7 @@ void
 AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
 	if ( tag->hasOption("cdrs") ) {
 		TR << "Setting CDRs from settings" << std::endl;
-		set_cdrs(get_cdr_bool_from_tag(tag, "cdrs"));
+		set_cdrs(get_cdr_bool_from_tag(tag, "cdrs", true /*include CDR4 */));
 	}
 
 	AntibodyDesignEnumManager manager = AntibodyDesignEnumManager();
@@ -176,7 +180,7 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 
 void
 AddCDRProfilesOperation::set_cdr_only(CDRNameEnum cdr){
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		CDRNameEnum current_cdr = static_cast<CDRNameEnum>( i );
 
 		if ( current_cdr == cdr ) {
@@ -188,8 +192,17 @@ AddCDRProfilesOperation::set_cdr_only(CDRNameEnum cdr){
 }
 
 void
-AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& cdrs) {
-	for ( core::Size i = 1; i <= 6; ++i ) {
+AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& c) {
+	
+	utility::vector1< bool > cdrs = c;
+	if ( cdrs.size() < CDRNameEnum_proto_total ) {
+		for ( core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
+			cdrs.push_back( false );
+		}
+	}
+	assert( cdrs.size() == 8);
+	
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( cdrs[ i ] ) {
 			seq_design_options_[ i ]->design(true);
 		} else {
@@ -210,14 +223,14 @@ AddCDRProfilesOperation::set_add_to_current(bool add_to_current){
 
 void
 AddCDRProfilesOperation::set_fallback_strategy(SeqDesignStrategyEnum fallback_strategy){
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		seq_design_options_[ i ]->fallback_strategy(fallback_strategy);
 	}
 }
 
 void
 AddCDRProfilesOperation::set_primary_strategy(SeqDesignStrategyEnum primary_strategy){
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		seq_design_options_[ i ]->design_strategy(primary_strategy);
 	}
 }
@@ -264,8 +277,8 @@ AddCDRProfilesOperation::set_cons_design_data_source(std::string data_source){
 
 utility::vector1<bool>
 AddCDRProfilesOperation::get_profile_and_design_cdrs() const {
-	utility::vector1<bool> profiles(6, false);
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	utility::vector1<bool> profiles(CDRNameEnum_proto_total, false);
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( ! seq_design_options_[ i ]->design() ) continue;
 		SeqDesignStrategyEnum strat = seq_design_options_[ i ]->design_strategy();
 		if ( strat == seq_design_profiles || strat == seq_design_profile_sets_combined ) {
@@ -277,8 +290,8 @@ AddCDRProfilesOperation::get_profile_and_design_cdrs() const {
 
 utility::vector1<bool>
 AddCDRProfilesOperation::get_profile_set_and_design_cdrs() const {
-	utility::vector1<bool> profiles(6, false);
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	utility::vector1<bool> profiles(CDRNameEnum_proto_total, false);
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( ! seq_design_options_[ i ]->design() ) continue;
 
 		SeqDesignStrategyEnum strat = seq_design_options_[ i ]->design_strategy();
@@ -291,8 +304,8 @@ AddCDRProfilesOperation::get_profile_set_and_design_cdrs() const {
 
 utility::vector1<bool>
 AddCDRProfilesOperation::get_design_cdrs() const{
-	utility::vector1<bool> designing(6, false);
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	utility::vector1<bool> designing(CDRNameEnum_proto_total, false);
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( seq_design_options_[ i ]->design() ) {
 			designing[ i ] = true;
 		}
@@ -420,7 +433,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 		prob_task.apply(pose, task);
 	}
 
-	utility::vector1< bool > no_data_cdrs(6, false);
+	utility::vector1< bool > no_data_cdrs(8, false);
 
 	if ( n_profile_cdrs > 0 ) {
 		no_data_cdrs = no_profile_cdrs;
@@ -433,7 +446,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	cons_task_->include_native_aa(include_native_restype_);
 	core::Size cons_task_residues = 0;
 
-	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i ) {
+	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs(true /* Include DE */)); ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
 		if ( (no_data_cdrs[ i ]  && seq_design_options_[ i ]->fallback_strategy() == seq_design_conservative) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_conservative) ) {
 

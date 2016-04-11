@@ -239,22 +239,6 @@ private:
 	add_extra_restrict_operations(core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose) const;
 
 
-	/// @brief Removes  residues from prob_set from instruction settings.  Used so that we speed task generation instead of overwriting these residues.
-	//void
-	//remove_conservative_design_residues_from_prob_set(
-	//utility::vector1<core::Size> const & positions,
-	//std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set);
-
-	/// @brief Get a list of residues where conservative design will be used.
-	//utility::vector1<core::Size>
-	//get_conservative_design_residues(const core::pose::Pose & pose);
-
-
-
-	/// @brief If profile stats are less then cutoff and fallback is set to false, we do not touch this CDR.
-	//void
-	//disable_design_for_no_fallback_cdrs( core::pack::task::TaskFactoryOP tf, const core::pose::Pose& pose) const;
-
 private:
 
 	AntibodyInfoCOP ab_info_;

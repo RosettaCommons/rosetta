@@ -140,7 +140,7 @@ public:
 
 	utility::vector1< bool >
 	load_cdr_design_data_for_cdrs(
-		utility::vector1<bool> cdrs,
+		utility::vector1<bool> const & cdrs,
 		core::pose::Pose const & pose,
 		std::map< core::Size, AAProbabilities > & prob_set,
 		core::Size const cutoff);
@@ -148,7 +148,7 @@ public:
 	/// @brief Load a set of CDR sequences from the database
 	CDRDBSequenceSet
 	load_cdr_sequences(
-		utility::vector1< bool > cdrs,
+		utility::vector1< bool > const & cdrs,
 		core::pose::Pose const & pose,
 		bool match_on_length = false);
 

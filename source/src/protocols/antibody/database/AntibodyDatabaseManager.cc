@@ -593,14 +593,21 @@ AntibodyDatabaseManager::load_cdr_design_data(
 
 vector1< bool >
 AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
-	utility::vector1<bool> cdrs,
+	utility::vector1<bool> const & c,
 	const core::pose::Pose& pose,
 	std::map<core::Size,AAProbabilities>& prob_set,
 	const core::Size cutoff)
 {
-
-	assert(cdrs.size() == 6);
-	vector1<bool> cdrs_with_no_data(6, false);
+	
+	utility::vector1< bool > cdrs = c;
+	if (cdrs.size() == 6){
+		cdrs.push_back(false);
+		cdrs.push_back(false);
+	}
+	
+	
+	assert(cdrs.size() == 8);
+	vector1<bool> cdrs_with_no_data(8, false);
 
 	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -677,17 +684,27 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 
 CDRDBSequenceSet
 AntibodyDatabaseManager::load_cdr_sequences(
-	utility::vector1<bool> cdrs,
+	utility::vector1<bool> const & c,
 	const core::pose::Pose& pose,
 	bool match_on_length)
 {
 
+	utility::vector1< bool > cdrs = c;
+	if (cdrs.size() == 6){
+		cdrs.push_back(false);
+		cdrs.push_back(false);
+	}
+
 	CDRDBSequenceSet sequence_set;
 
-	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
+	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
 		if ( ! cdrs[ i ] ) { continue; }
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-
+		
+		if (cdr == l4 || cdr == h4 ){
+			TR << "Skipping L4/H4 sequence loading.  No profiles exist!" << std::endl;
+			continue;
+		}
 		// Load data from either the stored DataCache or AntibodyInfo.
 		CDRClusterEnum current_cluster;
 

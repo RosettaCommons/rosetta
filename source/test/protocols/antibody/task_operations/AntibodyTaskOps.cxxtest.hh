@@ -94,11 +94,14 @@ public:
 	}
 	void test_DisableCDRsOperation(){
 
-		utility::vector1< bool > cdrs(6, false);
-		utility::vector1< bool > all_cdrs(6, true);
+		utility::vector1< bool > cdrs(8, false);
+		utility::vector1< bool > all_cdrs(8, true);
 
 		cdrs[ l1 ] = true;
 		cdrs[ l2 ] = true;
+
+		all_cdrs[ l4 ] = false;
+		all_cdrs[ h4 ] = false;
 
 		//Test Constructions
 
@@ -192,10 +195,13 @@ public:
 	}
 	void test_RestrictToCDRsAndNeighbors(){
 
-		utility::vector1< bool > cdrs(6, false);
-		utility::vector1< bool > all_cdrs(6, true);
+		utility::vector1< bool > cdrs(8, false);
+		utility::vector1< bool > all_cdrs(8, true);
 		cdrs[ l1 ] = true;
 		cdrs[ l2 ] = true;
+
+		all_cdrs[ l4 ] = false;
+		all_cdrs[ h4 ] = false;
 
 		//UTracer 1
 		RestrictToCDRsAndNeighborsOP default_op = RestrictToCDRsAndNeighborsOP( new RestrictToCDRsAndNeighbors());
@@ -242,10 +248,14 @@ public:
 
 	}
 	void test_AddCDRProfilesOperation() {
-		utility::vector1< bool > cdrs(6, false);
-		utility::vector1< bool > all_cdrs(6, true);
+		utility::vector1< bool > cdrs(8, false);
+		utility::vector1< bool > all_cdrs(8, true);
 		cdrs[ l1 ] = true;
 		cdrs[ l2 ] = true;
+
+		all_cdrs[ l4 ] = false;
+		all_cdrs[ h4 ] = false;
+
 		AddCDRProfilesOperationOP default_op = AddCDRProfilesOperationOP(new AddCDRProfilesOperation());
 		default_op->set_force_north_paper_db(true);
 
@@ -311,9 +321,13 @@ public:
 		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer7",  inpath_, first_run_outpath_);
 	}
 	void test_AddCDRProfileSetsOperation() {
-		utility::vector1< bool > cdrs(6, false);
-		utility::vector1< bool > all_cdrs(6, true);
+		utility::vector1< bool > cdrs(8, false);
+		utility::vector1< bool > all_cdrs(8, true);
 		cdrs[ l2 ] = true;
+
+		all_cdrs[ l4 ] = false;
+		all_cdrs[ h4 ] = false;
+		
 		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
 
 		AddCDRProfileSetsOperationOP default_ab_info = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));

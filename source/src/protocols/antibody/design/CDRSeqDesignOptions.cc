@@ -192,6 +192,7 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(cdr) );
 	}
 
+	
 	instructions_path_ = path;
 
 	check_path();
@@ -224,17 +225,21 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		std::string mode = lineSP[2];
 		boost::to_upper(mode);
 
-		if ( cdr_type == "ALL" ) {
+		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4)) {
 			parse_cdr_option(mode, lineSP);
-		} else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
+			
+		} else if ( ( cdr_type == "DE" || cdr_type == "CDR4") && (cdr == l4 || cdr == h4) ){
+			parse_cdr_option(mode, lineSP);
+			
+		}else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
 			if ( ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr ) {
 				parse_cdr_option(mode, lineSP);
 			}
 		} else {
 			//If expansion to chains, frameworks, etc.  Do it here.
 			//We may have separate parsers for framework or L2.5 or whatever.
-			//If its not a CDR, just skip it for now so we can have
-			TR << "Unrecognized CDR: "<<cdr_type <<" skipping...."<<std::endl;
+			//If its not a CDR, just skip it for now
+			//TR << "Unrecognized CDR: "<<cdr_type <<" skipping...."<<std::endl;
 			continue;
 		}
 	}
@@ -318,8 +323,14 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 
 void
 CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const option) {
-
-	cdr_options_->design_strategy(design_enum_manager_->seq_design_strategy_string_to_enum( option ));
+	
+	SeqDesignStrategyEnum strategy = design_enum_manager_->seq_design_strategy_string_to_enum( option );
+	if ( (cdr_options_->cdr() == l4 || cdr_options_->cdr() == h4) && ( strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined )  ){
+		utility_exit_with_message("Sequence design with the DE Loop cannot currently use profiles.  Please use conservative, or basic design.");
+	}else{
+		cdr_options_->design_strategy( strategy );
+	}
+	
 
 }
 

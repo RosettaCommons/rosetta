@@ -116,11 +116,12 @@ DisableCDRsOperation::clone() const {
 void
 DisableCDRsOperation::set_cdrs(const utility::vector1<bool>& cdrs){
 	cdrs_ = cdrs;
-	if ( cdrs.size() < CDRNameEnum_proto_total ) {
-		for ( core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
+	if ( cdrs_.size() < CDRNameEnum_proto_total ) {
+		for ( core::Size i = cdrs_.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
 			cdrs_.push_back( false );
 		}
 	}
+	assert( cdrs_.size() == 8);
 
 }
 

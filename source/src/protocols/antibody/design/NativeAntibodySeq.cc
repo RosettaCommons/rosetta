@@ -73,14 +73,14 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose) {
 		//info.chain = pose.pdb_info()->chain(i);
 		//info.icode = pose.pdb_info()->icode(i);
 
-		if ( ab_info_->get_region_of_residue(pose, i) != cdr_region ) {
+		if ( ab_info_->get_region_of_residue(pose, i, false /* count CDR4 as framework */) != cdr_region ) {
 			seq_[ pose.pdb_info()->pose2pdb( i )] = res;
 
 		}
 	}
 
 	//Setup CDR Regions
-	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
+	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
 		set_from_cdr( pose, cdr );
 	}
