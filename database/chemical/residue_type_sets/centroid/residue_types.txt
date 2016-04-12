@@ -81,6 +81,7 @@ residue_types/carbohydrates/to3-alpha-D-Manp.params
 residue_types/carbohydrates/to4-alpha-D-Manp.params
 residue_types/carbohydrates/to4-beta-L-Manp.params
 residue_types/carbohydrates/to6-beta-D-Manp.params
+residue_types/carbohydrates/to4-alpha-L-Rhap.params
 #### Idoses
 residue_types/carbohydrates/to4-alpha-L-Idop.params
 #### Guloses
