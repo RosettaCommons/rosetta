@@ -643,7 +643,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	interpolated_rotamer.packed_rotno() = packed_rotno;
 	utility::fixedsizearray1< Size, ( 1 << N ) > sorted_rotno;
 	utility::vector1< PackedDunbrackRotamer< T, N > > rot( 1 << N );
-	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > derivs_vec;
+	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs;
 	utility::fixedsizearray1< Real, ( 1 << N ) > rotprob;
 
 	for ( Size sri = 1; sri <= ( 1 << N ); ++sri ) {
@@ -654,7 +654,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		for ( Size i = 1; i <= T; ++i ) rot[ sri ].chi_sd(   i ) = rotamers_( index, sorted_rotno[ sri ] ).chi_sd(   i );
 		rot[ sri ].rotamer_probability() = rotamers_( index, sorted_rotno[ sri ] ).rotamer_probability();
 		for ( Size di = 1; di <= ( 1 << N ); ++di ) {
-			derivs_vec[ sri ][ di ] = static_cast< Real >( rotamers_( index, sorted_rotno[ sri ] ).n_derivs()[ di ] );
+			n_derivs[ di ][ sri ] = static_cast< Real >( rotamers_( index, sorted_rotno[ sri ] ).n_derivs()[ di ] );
 		}
 		rotprob[ sri ] = static_cast< Real >( rot[ sri ].rotamer_probability() );
 		if ( rotprob[ sri ] <= 1e-6 ) rotprob[ sri ] = 1e-6;
@@ -675,11 +675,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 
-		// populate derivatives vector
-		utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs;
-		for ( Size i = 1; i <= ( 1 << N ); ++i ) {
-			for ( Size j = 1; j <= ( 1 << N ); ++j ) n_derivs[i][j] = derivs_vec[ j ][ i ];
-		}
 		utility::fixedsizearray1< Real, N > binw( PHIPSI_BINRANGE );
 		utility::fixedsizearray1< Real, N > scratch_dneglnrotprob_dbb;
 		polycubic_interpolation( n_derivs, bb_alpha, binw, scratch.negln_rotprob(), scratch_dneglnrotprob_dbb );

@@ -1348,10 +1348,19 @@ settings = {
             "flags" : {
                 "cc" : [ "std=c99" ],
                 "warn" : [
+                    "Wall",
+                    # When we ICC on the test server, we should probably turn on warnings-as-errors 
+		    "w2", # More verbose warnings
                     "Wp64",
-                    "wd279,2259,1682"
+		    # Disable Specific warinings
+		    # 279: controlling expression is constant
+		    # 1682: implicit conversion of a 64-bit integral type to a smaller integral type
+		    # 1684: conversion from pointer to same-sized integral type -- Boost has issues with this
+		    # 1170: invalid redeclaration of nested class -- Boost has issues with this
+		    # 2196: routine is both "inline" and "noinline" -- Boost has issues with this
+		    # 2259: non-pointer conversion from "type" to "type" may lose significant bits
+                    "wd279,1682,1684,1170,2196,2259",
                 ],
-                # "warn" : [ "wd383,869,981,1505,1572" ]
                 "link" : [ "lsvml", "shared-intel", ],
             },
         },
