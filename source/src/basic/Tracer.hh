@@ -152,6 +152,10 @@ public:
 	);
 
 	/// @brief Create Tracer object with channel color, channel name color and given channel and priority
+	/// @details
+	///  Ex:
+	///  static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue);
+	///
 	Tracer(
 		std::string const & channel,
 		std::string const & channel_color,
@@ -198,8 +202,15 @@ public:
 	void priority(int priority);
 
 	std::string const & channel() const { return channel_; }
-
+	
+	///@brief Get the channel color.
 	std::string const &channel_color() { return channel_color_; }
+	
+	///@brief Set the channel color.
+	///
+	///@details
+	/// This can be done in a stream like this:
+	///  TR << TR.bgWhite << TR.Black << "Example" << TR.Reset << std::endl;
 	void channel_color(std::string const &color) { channel_color_ = color; }
 
 	std::string const &channel_name_color() { return channel_name_color_; }

@@ -55,7 +55,23 @@ public:
 	/// @brief Get the closest cluster of a region.  Used to detect CDR-like regions in normal proteins.
 	CDRClusterOP
 	get_closest_cluster(core::pose::Pose const & pose, core::Size const start, core::Size const end) const;
-
+	
+	
+	/// @brief skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.
+	///  Default False
+	bool
+	allow_rama_mismatches() const {
+		return allow_rama_mismatches_;
+	}
+	
+	/// @brief Set to skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.
+	///  Default False
+	void
+	allow_rama_mismatches( bool const allow){
+		allow_rama_mismatches_ = allow;
+	}
+	
+	
 private:
 
 	void
@@ -70,6 +86,9 @@ private:
 
 	std::string center_cluster_db_path_;
 	vector1< ClusterData > cluster_data_;
+	
+	/// @brief skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.
+	bool allow_rama_mismatches_;
 
 };
 

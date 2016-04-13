@@ -1,0 +1,8 @@
+-s 2j88_renum.pdb
+
+-ignore_unrecognized_res
+
+-cdr_definition North
+-numbering_scheme AHO_Scheme
+
+-no_output

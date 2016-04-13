@@ -3522,6 +3522,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             desc = 'Standard deviation to use for psi while using general dihedral circular harmonic constraints',
             default = '16.0'
             ),
+        Option('allow_omega_mismatches_for_north_clusters', 'Boolean',
+            desc = "Skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.",
+            default = 'false'),
+        
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------
 		Option_Group( 'design',

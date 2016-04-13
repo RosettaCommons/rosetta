@@ -25,11 +25,17 @@
 
 #include <numeric/NumericTraits.hh>
 
+
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <core/types.hh>
 #include <math.h>
 #include <map>
+
+//Options
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 // Boost headers
 #include <boost/algorithm/string/classification.hpp>
@@ -37,6 +43,7 @@
 #include <boost/lexical_cast.hpp>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.cluster.CDRClusterMatcher" );
+
 
 namespace protocols {
 namespace antibody {
@@ -46,8 +53,13 @@ using utility::vector1;
 using core::Real;
 
 CDRClusterMatcher::CDRClusterMatcher(){
+	using namespace basic::options;
+
 	center_cluster_db_path_="sampling/antibodies/cluster_center_dihedrals.txt";
+	
+	allow_rama_mismatches_ = option [ OptionKeys::antibody::allow_omega_mismatches_for_north_clusters]();
 	load_center_data();
+	
 }
 
 CDRClusterMatcher::~CDRClusterMatcher(){}
@@ -103,6 +115,7 @@ CDRClusterMatcher::load_center_data(){
 
 CDRClusterOP
 CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const start, core::Size const end) const {
+
 	std::string cis_trans_conf= get_pose_cis_trans_conformation(pose, start, end);
 
 	std::map< std::string, vector1< Real > > pose_angles = get_pose_angles(pose, start, end);
@@ -111,29 +124,55 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 
 	core::Size length = end - start +1;
 	bool cluster_found = false;
-	TR << length << " "<< cis_trans_conf << std::endl;
+	TR << "Length: " << length << " Omega: "<< cis_trans_conf << std::endl;
 	bool cis_trans_match = false;
+	bool length_match = false;
 
 	for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 		ClusterData data = cluster_data_[i];
-
-		if ( (data.cdr ==  cdr) && (data.length ==  length) && (data.cis_trans_conf == cis_trans_conf ) ) {
+		
+		//Overall Booleans
+		if ( (data.cdr ==  cdr) && (data.length ==  length) ) length_match = true;
+		if (  (data.cdr ==  cdr) && (data.length ==  length) && data.cis_trans_conf == cis_trans_conf ) cis_trans_match = true;
+		
+		
+		if ( data.cdr ==  cdr && data.length ==  length && data.cis_trans_conf == cis_trans_conf) {
 			cluster_found = true;
-			cis_trans_match = true;
+
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 			k_distances_to_cluster[k_distance_to_cluster] = data;
 			k_distances.push_back(k_distance_to_cluster);
 		} else { continue; }
 	}
+	
+	if ( ( ! cluster_found ) && length_match && allow_rama_mismatches_){
+		for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
+			ClusterData data = cluster_data_[i];
 
+			if ( (data.cdr ==  cdr) && (data.length ==  length) ) {
+				cluster_found = true;
+				core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
+				k_distances_to_cluster[k_distance_to_cluster] = data;
+				k_distances.push_back(k_distance_to_cluster);
+			} else { continue; }
+		}
+	}
 
 	///Take the minimum distance as the cluster.
-
 	CDRClusterEnum cluster;
 	core::Real distance;
 	if ( ! cluster_found ) {
 		cluster = NA;
 		distance = 1000;
+		
+		if (! length_match ){
+			TR.Warning << std::endl << TR.Red << "No known cluster of CDR length "<< length << "found. Setting as NA" << TR.Reset << std::endl;
+		}
+		else if ( ! cis_trans_match ){
+			TR.Warning << std::endl << TR.Red << "*** No known cluster of CDR length " << length << " omega of " << cis_trans_conf << " found. ***" << TR.Reset << std::endl;
+			TR.Warning << TR.Red << "*** Consider using the command-line option -allow_omega_mismatches_for_north_clusters to find the closest cluster! ***" << TR.Reset << std::endl << std::endl;
+		}
+		
 	} else {
 
 		//Get minimum and set cluster.
@@ -158,17 +197,39 @@ CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size
 
 	core::Size length = end - start +1;
 	bool cluster_found = false;
+	bool length_match = false;
+	bool cis_trans_match = false;
+	
+	
 	for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 		ClusterData data = cluster_data_[i];
-		if ( data.length ==  length && data.cis_trans_conf == cis_trans_conf ) {
+		
+		if ( data.length == length) length_match = true;
+		if ( data.length == length && data.cis_trans_conf == cis_trans_conf ) cis_trans_match = true;
+		
+		if ( data.length == length && data.cis_trans_conf == cis_trans_conf ) {
 			cluster_found = true;
-
+			
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 			k_distances_to_cluster[k_distance_to_cluster] = data;
 			k_distances.push_back(k_distance_to_cluster);
 		} else { continue; }
 	}
 
+	if ( (! cluster_found ) && length_match && allow_rama_mismatches_){
+		for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
+			ClusterData data = cluster_data_[i];
+
+			if ( data.length ==  length) {
+				cluster_found = true;
+				core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
+				k_distances_to_cluster[k_distance_to_cluster] = data;
+				k_distances.push_back(k_distance_to_cluster);
+			} else { continue; }
+		}
+	}
+	
+	
 	///Take the minimum distance as the cluster.
 
 	CDRClusterEnum cluster;
@@ -178,7 +239,13 @@ CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size
 		cluster = NA;
 		distance = 1000;
 		cdr = l1;
-
+		if (! length_match ){
+			TR.Warning << std::endl << TR.Red << "No known cluster of length "<< length << "found. Setting as NA" << TR.Reset << std::endl;
+		}
+		else if ( ! cis_trans_match ){
+			TR.Warning << std::endl << TR.Red << "*** No known cluster of length " << length << " and omega of " << cis_trans_conf << " found. ***" << TR.Reset << std::endl;
+			TR.Warning << TR.Red << "*** Consider using the command-line option -allow_omega_mismatches_for_north_clusters to find the closest cluster! ***" << TR.Reset << std::endl << std::endl;
+		}
 	} else {
 
 		//Get minimum and set cluster.
