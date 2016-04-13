@@ -132,14 +132,13 @@ ResidueLevelTask_::ResidueLevelTask_(
 	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
 
 		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
-		
+
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
 		ResidueType const & match_residue_type( residue_set->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			for ( Size jj = 1; jj <= match_residue_type.variant_types().size(); ++jj ) {
-			}
+			for ( Size jj = 1; jj <= match_residue_type.variant_types().size(); ++jj ) {}
 			ResidueTypeCOPs const & aas( residue_set->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
 			for ( ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(),
@@ -1068,11 +1067,9 @@ void ResidueLevelTask_::reset() {
 	designing_ = true;
 	disabled_ = false;
 	design_disabled_ = false;
-	determine_if_designing();
+	determine_if_designing(); // This will ensure that disulfides aren't designed away.
 	determine_if_repacking();
 
-	debug_assert( being_packed() );
-	debug_assert( being_designed() );
 	return;
 }
 

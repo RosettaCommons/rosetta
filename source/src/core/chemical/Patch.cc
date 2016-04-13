@@ -577,22 +577,22 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 					std::string name_new;
 					if ( name_ == "D" ) {
 						name_new = "D" + patched_rsd_type->name();
-					} /*
-					   AMW: briefly I thought this would be necessary. Nope.
-					   else if ( name_.substr( 0, 3 ) == "MP-" ) {
+					} else { /*
+						AMW: briefly I thought this would be necessary. Nope.
+						else if ( name_.substr( 0, 3 ) == "MP-" ) {
 						Size count = 0;
 						// Look for any other instances of this name.
 						std::string haystack = patched_rsd_type->name();
 						while ( haystack.find( name_ ) != std::string::npos ) {
-							haystack = haystack.substr( haystack.find( name_ ) + name_.size() );
-							++count;
+						haystack = haystack.substr( haystack.find( name_ ) + name_.size() );
+						++count;
 						}
 						if ( count > 0 ) {
-							name_new = patched_rsd_type->name() + PATCH_LINKER + name_ + ObjexxFCL::string_of( count ); 
+						name_new = patched_rsd_type->name() + PATCH_LINKER + name_ + ObjexxFCL::string_of( count );
 						} else {
-							name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
+						name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
 						}
-					}*/ else {
+						}*/
 						name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
 					}
 					patched_rsd_type->name( name_new );

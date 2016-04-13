@@ -202,10 +202,10 @@ public:
 	void priority(int priority);
 
 	std::string const & channel() const { return channel_; }
-	
+
 	///@brief Get the channel color.
 	std::string const &channel_color() { return channel_color_; }
-	
+
 	///@brief Set the channel color.
 	///
 	///@details

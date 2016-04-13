@@ -304,7 +304,7 @@ private:
 
 	// element
 	//std::string const element_;
-	std::string element_; 	// changing this to non-const so copy assignment operator of 'AtomType' could be used in C++11
+	std::string element_;  // changing this to non-const so copy assignment operator of 'AtomType' could be used in C++11
 
 	// lj
 	Real lj_radius_;

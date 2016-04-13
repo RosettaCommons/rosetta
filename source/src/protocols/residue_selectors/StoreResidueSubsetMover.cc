@@ -79,7 +79,7 @@ StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 	core::select::residue_selector::ResidueSubsetCOP const subset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
 	/*
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
+	core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
 	}
 	*/
 	// If the pose doesn't have cached subset data, add blank data

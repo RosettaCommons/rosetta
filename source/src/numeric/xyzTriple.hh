@@ -2191,7 +2191,7 @@ cross( xyzTriple<U> const & a, xyzTriple<U> const & b )
 		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
 		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
 		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-					 );
+	);
 }
 
 
@@ -2204,7 +2204,7 @@ cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 		( a.y_ * b.z_ ) - ( a.z_ * b.y_ ),
 		( a.z_ * b.x_ ) - ( a.x_ * b.z_ ),
 		( a.x_ * b.y_ ) - ( a.y_ * b.x_ )
-					 );
+	);
 }
 
 
@@ -2239,7 +2239,7 @@ midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b )
 		U( 0.5 * ( a.x_ + b.x_ ) ),
 		U( 0.5 * ( a.y_ + b.y_ ) ),
 		U( 0.5 * ( a.z_ + b.z_ ) )
-					 );
+	);
 }
 
 
@@ -2263,7 +2263,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b )
 		U( 0.5 * ( a.x_ + b.x_ ) ),
 		U( 0.5 * ( a.y_ + b.y_ ) ),
 		U( 0.5 * ( a.z_ + b.z_ ) )
-					 );
+	);
 }
 
 
@@ -2288,7 +2288,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 		U( third * ( a.x_ + b.x_ + c.x_ ) ),
 		U( third * ( a.y_ + b.y_ + c.y_ ) ),
 		U( third * ( a.z_ + b.z_ + c.z_ ) )
-					 );
+	);
 }
 
 
@@ -2313,7 +2313,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, 
 		U( 0.25 * ( a.x_ + b.x_ + c.x_ + d.x_ ) ),
 		U( 0.25 * ( a.y_ + b.y_ + c.y_ + d.y_ ) ),
 		U( 0.25 * ( a.z_ + b.z_ + c.z_ + d.z_ ) )
-					 );
+	);
 }
 
 
@@ -2389,7 +2389,7 @@ sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 	return sin_of( a - b, c - b );
 }
 
-	/// @brief Distance squared
+/// @brief Distance squared
 template <typename U>
 U
 distance_squared( xyzTriple<U> const & a, xyzTriple<U> const & b )
@@ -2397,7 +2397,7 @@ distance_squared( xyzTriple<U> const & a, xyzTriple<U> const & b )
 	return square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ );
 }
 
-	/// @brief Not equal length?
+/// @brief Not equal length?
 template <typename U>
 bool
 not_equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
@@ -2514,7 +2514,7 @@ min( xyzTriple<U> const & a, xyzTriple<U> const & b )
 		( a.x_ <= b.x_ ? a.x_ : b.x_ ),
 		( a.y_ <= b.y_ ? a.y_ : b.y_ ),
 		( a.z_ <= b.z_ ? a.z_ : b.z_ )
-						);
+	);
 }
 
 
@@ -2527,10 +2527,10 @@ max( xyzTriple<U> const & a, xyzTriple<U> const & b )
 		( a.x_ >= b.x_ ? a.x_ : b.x_ ),
 		( a.y_ >= b.y_ ? a.y_ : b.y_ ),
 		( a.z_ >= b.z_ ? a.z_ : b.z_ )
-						);
+	);
 }
 
-	/// @brief Distance
+/// @brief Distance
 template <typename U>
 U
 distance( xyzTriple<U> const & a, xyzTriple<U> const & b )

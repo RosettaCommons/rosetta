@@ -73,7 +73,7 @@ public:
 	find_current_disulfides(
 		core::pose::Pose const & pose,
 		core::select::residue_selector::ResidueSubset const & subset1,
-		core::select::residue_selector::ResidueSubset const & subset2	) const;
+		core::select::residue_selector::ResidueSubset const & subset2 ) const;
 
 	/// @brief mutates the given disulfides to ALA
 	void mutate_disulfides_to_ala(

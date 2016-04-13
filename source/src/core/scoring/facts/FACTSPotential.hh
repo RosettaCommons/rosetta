@@ -87,16 +87,16 @@ public:
 	) const;
 
 	// void evaluate_context_change_for_packing(
-	// 	Residue const & rsd1_ref,
-	// 	Residue const & rsd1,
-	// 	FACTSResidueInfo const & facts1,
-	// 	Residue const & rsd2_ref,
-	// 	Residue const & rsd2,
-	// 	FACTSResidueInfo const & facts2,
-	// 	utility::vector1< Real > & dBRi1,
-	// 	utility::vector1< Real > & dBRi2,
-	// 	utility::vector1< Real > & dSAi1,
-	// 	utility::vector1< Real > & dSAi2
+	//  Residue const & rsd1_ref,
+	//  Residue const & rsd1,
+	//  FACTSResidueInfo const & facts1,
+	//  Residue const & rsd2_ref,
+	//  Residue const & rsd2,
+	//  FACTSResidueInfo const & facts2,
+	//  utility::vector1< Real > & dBRi1,
+	//  utility::vector1< Real > & dBRi2,
+	//  utility::vector1< Real > & dSAi1,
+	//  utility::vector1< Real > & dSAi2
 	// ) const;
 
 	void evaluate_polar_otf_energy(Residue const & rsd1,
@@ -137,9 +137,9 @@ public:
 	) const;
 
 	// Real polar_energy_pack_corrector(
-	// 	Residue const & ref_rsd,
-	// 	Residue const & rsd,
-	// 	FACTSResidueInfo const & facts_info
+	//  Residue const & ref_rsd,
+	//  Residue const & rsd,
+	//  FACTSResidueInfo const & facts_info
 	// ) const;
 
 private:

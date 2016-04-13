@@ -1166,7 +1166,7 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 		std::string const & instring( *itr );
 		new_edits.insert( instring );
 		//delete a single charachter
-		for( unsigned long ii(0); ii < instring.size(); ++ii ) {
+		for ( unsigned long ii(0); ii < instring.size(); ++ii ) {
 			//delete a single charachter (ii)
 			new_edits.insert( instring.substr(0,ii) + instring.substr(ii+1) );
 			//transpose the charachter with the one before it
@@ -1176,7 +1176,7 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 				transposed[ii-1] = instring[ii];
 				new_edits.insert( transposed );
 			}
-			for( unsigned long jj(0); jj < charset.size(); ++jj ) {
+			for ( unsigned long jj(0); jj < charset.size(); ++jj ) {
 				// add a single charachter before ii
 				new_edits.insert( instring.substr(0,ii) + charset[jj] + instring.substr(ii) );
 				// replace a charachter at ii
@@ -1186,7 +1186,7 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 			}
 		}
 		// add a single charachter at the end of the string
-		for( unsigned long jj(0); jj < charset.size(); ++jj ) {
+		for ( unsigned long jj(0); jj < charset.size(); ++jj ) {
 			new_edits.insert( instring + charset[jj] );
 		}
 	}

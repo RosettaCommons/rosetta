@@ -2537,10 +2537,10 @@ ResidueType::delete_child_proton( std::string const & atom ) {
 				// Then delete the terminal one.
 				for ( Size jj = ii; jj <= nchi() - 1; ++jj ) {
 					redefine_chi( jj,
-								 atom_name( chi_atoms( jj + 1 )[ 1 ] ),
-								 atom_name( chi_atoms( jj + 1 )[ 2 ] ),
-								 atom_name( chi_atoms( jj + 1 )[ 3 ] ),
-								 atom_name( chi_atoms( jj + 1 )[ 4 ] ) );
+						atom_name( chi_atoms( jj + 1 )[ 1 ] ),
+						atom_name( chi_atoms( jj + 1 )[ 2 ] ),
+						atom_name( chi_atoms( jj + 1 )[ 3 ] ),
+						atom_name( chi_atoms( jj + 1 )[ 4 ] ) );
 				}
 				delete_terminal_chi();
 			}
@@ -2548,25 +2548,25 @@ ResidueType::delete_child_proton( std::string const & atom ) {
 
 		// 3: ensure that the deleted proton is not used to build another atom in the residue
 		//    die for now.  If this is a problem this logic could be made smarter.
-		for (Size ii = 1; ii <= natoms(); ++ii ) {
+		for ( Size ii = 1; ii <= natoms(); ++ii ) {
 			AtomICoor aicoor = icoor( ii );
-			if (aicoor.stub_atom1().atomno() == proton_index
+			if ( aicoor.stub_atom1().atomno() == proton_index
 					|| aicoor.stub_atom2().atomno() == proton_index
 					|| aicoor.stub_atom3().atomno() == proton_index
-			) {
+					) {
 				utility_exit_with_message( "Deleted proton " + atom_name( proton_index ) + " used to build neighbor atom!" );
- 			}
+			}
 		}
 
 		// 4: if there is more than one proton, allow the remain proton to occupy other positions
-		if (nhydrogens > 1) {
+		if ( nhydrogens > 1 ) {
 			Size alt_proton_index = attached_H_begin( atom_index( atom ) );
 			AtomICoor aicoor = icoor( alt_proton_index );
 
 			for ( Size ii = 1; ii <= nchi(); ++ii ) {
 				if ( chi_atoms( ii )[ 4 ] != proton_index )  continue;
 				utility::vector1< Real > dihedral_samples;
-				for (Size jj = 0; jj<nhydrogens; ++jj) {
+				for ( Size jj = 0; jj<nhydrogens; ++jj ) {
 					dihedral_samples.push_back( fmod( aicoor.phi() + jj*(360.0/nhydrogens), 360.0) );
 				}
 				set_proton_chi( ii, dihedral_samples, utility::vector1< Real >() );
@@ -2614,12 +2614,12 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 
 		Size const connid( add_residue_connection( atom ) );
 		set_icoor( "CONN"+ObjexxFCL::string_of( connid ),
-					  aicoor.phi()+radians(180.0),
-					  aicoor.theta(),
-					  1.37,
-					  atom_name( aicoor.stub_atom1().atomno() ),
-					  atom_name( aicoor.stub_atom2().atomno() ),
-					  atom_name( aicoor.stub_atom3().atomno() ) );
+			aicoor.phi()+radians(180.0),
+			aicoor.theta(),
+			1.37,
+			atom_name( aicoor.stub_atom1().atomno() ),
+			atom_name( aicoor.stub_atom2().atomno() ),
+			atom_name( aicoor.stub_atom3().atomno() ) );
 	}
 
 	update_derived_data();

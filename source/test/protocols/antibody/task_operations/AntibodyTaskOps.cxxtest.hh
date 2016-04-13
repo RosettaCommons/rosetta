@@ -327,7 +327,7 @@ public:
 
 		all_cdrs[ l4 ] = false;
 		all_cdrs[ h4 ] = false;
-		
+
 		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
 
 		AddCDRProfileSetsOperationOP default_ab_info = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));

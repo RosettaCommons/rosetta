@@ -9,7 +9,8 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file core/select/residue_selector/PhiSelector.fwd.hh
-/// @brief A ResidueSelector that selects alpha-amino acids that are either in the positive phi or negative phi region of Ramachandran space (depending on user preferences).
+/// @brief A ResidueSelector that selects alpha-amino acids that are either in the positive
+/// phi or negative phi region of Ramachandran space (depending on user preferences).
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 
@@ -18,8 +19,6 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
-
 
 // Forward
 namespace core {
@@ -30,8 +29,6 @@ class PhiSelector;
 
 typedef utility::pointer::shared_ptr< PhiSelector > PhiSelectorOP;
 typedef utility::pointer::shared_ptr< PhiSelector const > PhiSelectorCOP;
-
-
 
 } //core
 } //select

@@ -101,13 +101,13 @@ private:
 	/// and branch polymer connectivity.
 	void
 	determine_residue_branching_info(
-			std::string const & resid,
-			std::string const & name3,
-			bool & same_chain_prev,
-			bool & same_chain_next,
-			utility::vector1< std::string > & branch_points_on_this_residue,
-			bool & is_branch_point,
-			bool & is_branch_lower_terminus );
+		std::string const & resid,
+		std::string const & name3,
+		bool & same_chain_prev,
+		bool & same_chain_next,
+		utility::vector1< std::string > & branch_points_on_this_residue,
+		bool & is_branch_point,
+		bool & is_branch_lower_terminus );
 
 	bool
 	is_residue_type_recognized(

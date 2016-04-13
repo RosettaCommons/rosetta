@@ -307,7 +307,7 @@ VdWTinkerPotential::assign_residue_amoeba_type(
 		//TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
 		//TR << "Using first variant name only!!!" << std::endl;
 		variantname = parsed_resname[2];
-		for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
+		for ( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
 			//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
 		}
 	}

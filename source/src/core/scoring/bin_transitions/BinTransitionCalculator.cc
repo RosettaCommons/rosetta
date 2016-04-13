@@ -303,13 +303,24 @@ bool BinTransitionCalculator::is_in_bin (
 	}
 	if ( data_index==0 ) utility_exit_with_message( "In core::scoring::bin_transitions::BinTransitionCalculator::is_in_bin(): Could not find suitable bin definitions for the given residue type." );
 
+	return is_in_bin( res, data_index, bin_index, use_iplus1 );
+}
+
+/// @brief Is the given residue in the bin given by a data object index and a bin index?
+///
+bool
+BinTransitionCalculator::is_in_bin (
+	core::conformation::Residue const &res,
+	core::Size const data_index,
+	core::Size const bin_index,
+	bool const use_iplus1
+) const {
 	if ( !use_iplus1 ) {
 		return bin_transition_data(data_index)->in_bin_i( bin_index, res );
 	} else {
 		return bin_transition_data(data_index)->in_bin_iplus1( bin_index, res );
 	}
-
-	return true;
+	return true; //To make compiler happy.
 }
 
 /// @brief Initialize a string of residues to a bunch of random bins, based on bin transition probabilities; then draw random mainchain torsion angles from those bins.
@@ -664,6 +675,18 @@ core::Size BinTransitionCalculator::random_bin_based_on_prev_and_next(
 	if ( TR.Debug.visible() ) TR.Debug.flush();
 	return random_bin;
 } //random_bin_based_on_prev_and_next
+
+/// @brief Is a particular bin defined for at least one residue type?
+///
+bool
+BinTransitionCalculator::bin_definition_exists(
+	std::string const &name
+) const {
+	for ( core::Size i=1, imax=bin_transition_data_.size(); i<=imax; ++i ) {
+		if ( bin_transition_data_[i]->bin_exists( name ) ) return true;
+	}
+	return false;
+}
 
 /// @brief Given a bin, generate phi and psi values from within the bin, biased by the sub-bin cumulative probability distribution function.
 /// @details bin_index, iplus1, and data_index are inputs, mainchain_torsions vector is cleared and set by this function (i.e. it's output).

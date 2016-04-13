@@ -173,7 +173,7 @@ AddCDRProfileSetsOperation::set_cdrs(const utility::vector1<bool>& cdrs) {
 		}
 	}
 	assert( cdrs_.size() == 8);
-	
+
 }
 
 void
@@ -234,13 +234,13 @@ AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
 	for ( core::Size i = 1; i <= 8; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		if ( ! cdrs_[ i ] ) continue;
-		
-		if (cdr == l4 || cdr == h4){
+
+		if ( cdr == l4 || cdr == h4 ) {
 			TR << "Skipping CDR4 profile data!" << std::endl;
 			no_data_cdrs[ i ] = true;
 			continue;
 		}
-		
+
 		if (  sequences_.count(cdr) == 0 || (  sequences_.count(cdr) != 0  &&  sequences_[ cdr ].size() <= cutoff_ ) ) {
 			no_data_cdrs[ i ] = true;
 		}

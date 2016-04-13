@@ -107,8 +107,8 @@ bool sort_patchop_by_name( PatchOP p, PatchOP q ) {
 }
 
 void ResidueTypeSet::init(
-		std::vector< std::string > const & extra_res_param_files,  // defaults to empty
-		std::vector< std::string > const & extra_patch_files )  // defaults to empty
+	std::vector< std::string > const & extra_res_param_files,  // defaults to empty
+	std::vector< std::string > const & extra_patch_files )  // defaults to empty
 {
 	using namespace basic::options;
 
@@ -629,7 +629,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 /// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 bool
 ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name,
-		std::string const & name3 ) const
+	std::string const & name3 ) const
 {
 	if ( name3_generated_by_base_residue_name_.find( base_residue_name ) ==
 			name3_generated_by_base_residue_name_.end() ) return false;
@@ -641,14 +641,14 @@ ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & b
 /// interchangeability group (like "SCY" (via cys_acetylated))
 bool
 ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name,
-		std::string const & interchangeability_group ) const
+	std::string const & interchangeability_group ) const
 {
 	if ( interchangeability_group_generated_by_base_residue_name_.find( base_residue_name ) ==
 			interchangeability_group_generated_by_base_residue_name_.end() ) {
 		return false;
 	}
 	std::set< std::string> const & interchangeability_group_set =
-			interchangeability_group_generated_by_base_residue_name_.find( base_residue_name )->second;
+		interchangeability_group_generated_by_base_residue_name_.find( base_residue_name )->second;
 	return interchangeability_group_set.count( interchangeability_group );
 }
 

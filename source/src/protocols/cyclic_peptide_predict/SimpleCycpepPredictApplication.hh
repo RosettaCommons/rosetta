@@ -264,7 +264,7 @@ private:
 		if ( returnval < 1 ) returnval += nresidue;
 		return static_cast<core::Size>(returnval);
 	}
-	
+
 	/// @brief Given an position in the current (perturbed) pose, return the position in the original (unperturbed) pose.
 	///
 	inline core::Size original_position(

@@ -56,10 +56,10 @@ CDRClusterMatcher::CDRClusterMatcher(){
 	using namespace basic::options;
 
 	center_cluster_db_path_="sampling/antibodies/cluster_center_dihedrals.txt";
-	
+
 	allow_rama_mismatches_ = option [ OptionKeys::antibody::allow_omega_mismatches_for_north_clusters]();
 	load_center_data();
-	
+
 }
 
 CDRClusterMatcher::~CDRClusterMatcher(){}
@@ -130,13 +130,13 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 
 	for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 		ClusterData data = cluster_data_[i];
-		
+
 		//Overall Booleans
 		if ( (data.cdr ==  cdr) && (data.length ==  length) ) length_match = true;
 		if (  (data.cdr ==  cdr) && (data.length ==  length) && data.cis_trans_conf == cis_trans_conf ) cis_trans_match = true;
-		
-		
-		if ( data.cdr ==  cdr && data.length ==  length && data.cis_trans_conf == cis_trans_conf) {
+
+
+		if ( data.cdr ==  cdr && data.length ==  length && data.cis_trans_conf == cis_trans_conf ) {
 			cluster_found = true;
 
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
@@ -144,8 +144,8 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 			k_distances.push_back(k_distance_to_cluster);
 		} else { continue; }
 	}
-	
-	if ( ( ! cluster_found ) && length_match && allow_rama_mismatches_){
+
+	if ( ( ! cluster_found ) && length_match && allow_rama_mismatches_ ) {
 		for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 			ClusterData data = cluster_data_[i];
 
@@ -164,15 +164,14 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 	if ( ! cluster_found ) {
 		cluster = NA;
 		distance = 1000;
-		
-		if (! length_match ){
+
+		if ( ! length_match ) {
 			TR.Warning << std::endl << TR.Red << "No known cluster of CDR length "<< length << "found. Setting as NA" << TR.Reset << std::endl;
-		}
-		else if ( ! cis_trans_match ){
+		} else if ( ! cis_trans_match ) {
 			TR.Warning << std::endl << TR.Red << "*** No known cluster of CDR length " << length << " omega of " << cis_trans_conf << " found. ***" << TR.Reset << std::endl;
 			TR.Warning << TR.Red << "*** Consider using the command-line option -allow_omega_mismatches_for_north_clusters to find the closest cluster! ***" << TR.Reset << std::endl << std::endl;
 		}
-		
+
 	} else {
 
 		//Get minimum and set cluster.
@@ -199,28 +198,28 @@ CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size
 	bool cluster_found = false;
 	bool length_match = false;
 	bool cis_trans_match = false;
-	
-	
+
+
 	for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 		ClusterData data = cluster_data_[i];
-		
-		if ( data.length == length) length_match = true;
+
+		if ( data.length == length ) length_match = true;
 		if ( data.length == length && data.cis_trans_conf == cis_trans_conf ) cis_trans_match = true;
-		
+
 		if ( data.length == length && data.cis_trans_conf == cis_trans_conf ) {
 			cluster_found = true;
-			
+
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 			k_distances_to_cluster[k_distance_to_cluster] = data;
 			k_distances.push_back(k_distance_to_cluster);
 		} else { continue; }
 	}
 
-	if ( (! cluster_found ) && length_match && allow_rama_mismatches_){
+	if ( (! cluster_found ) && length_match && allow_rama_mismatches_ ) {
 		for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 			ClusterData data = cluster_data_[i];
 
-			if ( data.length ==  length) {
+			if ( data.length ==  length ) {
 				cluster_found = true;
 				core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 				k_distances_to_cluster[k_distance_to_cluster] = data;
@@ -228,8 +227,8 @@ CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size
 			} else { continue; }
 		}
 	}
-	
-	
+
+
 	///Take the minimum distance as the cluster.
 
 	CDRClusterEnum cluster;
@@ -239,10 +238,9 @@ CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size
 		cluster = NA;
 		distance = 1000;
 		cdr = l1;
-		if (! length_match ){
+		if ( ! length_match ) {
 			TR.Warning << std::endl << TR.Red << "No known cluster of length "<< length << "found. Setting as NA" << TR.Reset << std::endl;
-		}
-		else if ( ! cis_trans_match ){
+		} else if ( ! cis_trans_match ) {
 			TR.Warning << std::endl << TR.Red << "*** No known cluster of length " << length << " and omega of " << cis_trans_conf << " found. ***" << TR.Reset << std::endl;
 			TR.Warning << TR.Red << "*** Consider using the command-line option -allow_omega_mismatches_for_north_clusters to find the closest cluster! ***" << TR.Reset << std::endl << std::endl;
 		}

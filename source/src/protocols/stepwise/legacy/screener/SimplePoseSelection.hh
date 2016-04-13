@@ -35,9 +35,9 @@ public:
 
 	//constructor
 	SimplePoseSelection( pose::Pose const & pose,
-						 utility::vector1< Size > const & moving_res_list,
-						 protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options,
-						 bool const full_optimize );
+		utility::vector1< Size > const & moving_res_list,
+		protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options,
+		bool const full_optimize );
 
 	//destructor
 	~SimplePoseSelection();

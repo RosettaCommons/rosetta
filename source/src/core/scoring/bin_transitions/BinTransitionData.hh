@@ -115,7 +115,7 @@ private: //Private functions:
 
 	/// @brief Check whether a value is in a list
 	///
-	bool is_in_list( BT_PROPERTIES const val, utility::vector1 < BT_PROPERTIES > const &list ) const  {
+	inline bool is_in_list( BT_PROPERTIES const val, utility::vector1 < BT_PROPERTIES > const &list ) const  {
 		for ( core::Size i=1, imax=list.size(); i<=imax; ++i ) {
 			if ( list[i]==val ) return true;
 		}
@@ -124,7 +124,7 @@ private: //Private functions:
 
 	/// @brief Check whether a string is in a list
 	///
-	bool is_in_list( std::string const &str, utility::vector1 < std::string > const &list ) const {
+	inline bool is_in_list( std::string const &str, utility::vector1 < std::string > const &list ) const {
 		for ( core::Size i=1, imax=list.size(); i<=imax; ++i ) {
 			if ( list[i]==str ) return true;
 		}
@@ -257,6 +257,18 @@ public: //Public functions -- cleanups and checks:
 			}
 		}
 	} //check_residentities_overlap
+
+	/// @brief Does a bin with the specified name exist?
+	///
+	bool bin_exists( std::string const &name ) const;
+
+	/// @brief Does a bin with the specified name exist, defined for the ith residue?
+	///
+	bool bin_exists_i( std::string const &name ) const;
+
+	/// @brief Does a bin with the specified name exist, defined for the i+1st residue?
+	///
+	bool bin_exists_iplus1( std::string const &name ) const;
 
 public: //Public functions -- getters:
 

@@ -1454,10 +1454,10 @@ public:
 
 	void
 	delete_child_proton( std::string const & atom );
-	
+
 	void
 	add_metapatch_connect( std::string const & atom );
-	
+
 	/// @brief Annotate a given chi as a proton chi, and set the sampling behavior
 	/// If the chi is already listed as a proton chi, change the sampling behavior
 	void

@@ -28,7 +28,7 @@ enum MCA {
 	MCA_accepted_score_beat_last=2,
 	MCA_accepted_thermally=1,
 	MCA_rejected=0
-	}; // mc_accepted state
+}; // mc_accepted state
 
 std::string
 to_string( MCA const & mc_accepted );

@@ -41,7 +41,7 @@ public:
 	//constructor
 	PhosphateMover( Size const sample_res,
 		PhosphateTerminus which_terminus_,
-					core::scoring::ScoreFunctionCOP scorefxn );
+		core::scoring::ScoreFunctionCOP scorefxn );
 
 	//constructor
 	PhosphateMover( PhosphateMove const phosphate_move,

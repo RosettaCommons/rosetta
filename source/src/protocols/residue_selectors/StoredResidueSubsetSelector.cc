@@ -101,7 +101,7 @@ StoredResidueSubsetSelector::apply( core::pose::Pose const & pose ) const
 
 	// check for cached subset in data
 	if ( !stored_subsets.has_subset( subset_name_ ) ) {
-			utility_exit_with_message( "No stored residue subset exists in the pose with the name " + subset_name_ );
+		utility_exit_with_message( "No stored residue subset exists in the pose with the name " + subset_name_ );
 	}
 
 	core::select::residue_selector::ResidueSubsetCOP subset = stored_subsets.get_subset( subset_name_ );

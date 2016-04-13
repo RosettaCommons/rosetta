@@ -8,12 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/--class--.hh
-/// @brief  The --class-- selects residues in a given proximity of set focus residues
+/// @brief  --brief-- 
 /// @author --name-- (--email--)
 
 // Unit headers
 #include <--path--/--class--.hh>
 #include --res_sel_creator--
+#include <core/select/residue_selector/util.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -25,6 +26,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers

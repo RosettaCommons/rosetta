@@ -68,7 +68,7 @@ private:
 
 	core::pose::Pose
 	weighted_average( utility::vector1< core::pose::Pose > &poses,
-					  core::scoring::ScoreFunctionCOP sfxn,
+		core::scoring::ScoreFunctionCOP sfxn,
 		core::pose::Pose const &pose_ref,
 		utility::vector1< Real > const, //CAvar,
 		bool const weighted = true

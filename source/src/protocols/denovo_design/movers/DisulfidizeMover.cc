@@ -416,7 +416,7 @@ DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_current_disulfides(
 	core::pose::Pose const & pose,
 	core::select::residue_selector::ResidueSubset const & subset1,
-	core::select::residue_selector::ResidueSubset const & subset2	) const
+	core::select::residue_selector::ResidueSubset const & subset2 ) const
 {
 	debug_assert( pose.total_residue() == subset1.size() );
 	debug_assert( pose.total_residue() == subset2.size() );

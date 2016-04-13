@@ -154,11 +154,11 @@ GlycanRelaxMover::parse_my_tag(
 		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("branches"), ",'`~+*&|;. ");
 		use_branches_ = true;
 	}
-	
+
 	random_start_ = tag->getOption< bool >( "random_start", random_start_);
 	sugar_bb_start_ = tag->getOption< bool >("sugar_bb_start", sugar_bb_start_);
-	
-	
+
+
 }
 
 void
@@ -191,7 +191,7 @@ GlycanRelaxMover::set_cmd_line_defaults(){
 	kt_ = option[ OptionKeys::carbohydrates::glycan_relax_kt]();
 	random_start_ = option[ OptionKeys::carbohydrates::glycan_relax_random_start]();
 	sugar_bb_start_ = option[ OptionKeys::carbohydrates::glycan_relax_sugar_bb_start]();
-	
+
 
 }
 
@@ -350,11 +350,11 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	//////////  Setup Phi/Psi/N-Omega movemaps. /////////////////////////
 	MoveMapOP sugar_bb_movemap = MoveMapOP( new MoveMap() );
 	MoveMapOP glycan_dih_movemap = MoveMapOP( new MoveMap() );
-	
+
 	SmallBBSamplerOP random_sampler = SmallBBSamplerOP( new SmallBBSampler( 360.0 ) ); // +/- 180 degrees
 	SugarBBSamplerOP random_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( ) );
-	
-	
+
+
 	core::Size max_glycan_dihedrals = 2;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
@@ -382,16 +382,15 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 		//Turn on only dihedrals for which these residues actually have
 		for ( core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ) {
-			
+
 			glycan_dih_movemap->set_bb( i, torsion_id, true );
 
 			//Randomize starting structure if set.
-			if (random_start_){
+			if ( random_start_ ) {
 				random_sampler->set_torsion_type( torsion_id);
 				random_sampler->set_torsion_to_pose(pose, i);
-			}
-			else if (sugar_bb_start_){
-				
+			} else if ( sugar_bb_start_ ) {
+
 				//Continue if we don't have sugar bb data.  Its ok.
 				try {
 					random_sugar_sampler->set_torsion_type( torsion_id );
@@ -399,15 +398,15 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 				} catch ( utility::excn::EXCN_Base& excn ) {
 					continue;
 				}
-				
+
 			}
 		}
-	
+
 	}
 
 	TR << "Modeling " << total_glycan_residues_ << " glycan residues" << std::endl;
 	pose.dump_pdb("post_random.pdb");
-	
+
 	////////////////// Mover Setup //////////////
 	//Create Movers that will be part of our sequence mover.
 	SugarBBSamplerOP phi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
@@ -439,20 +438,20 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	BBDihedralSamplerMoverOP glycan_medium_mover= BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
 	BBDihedralSamplerMoverOP glycan_large_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
 
-	
+
 	glycan_small_mover->set_movemap(  glycan_dih_movemap );
 	glycan_medium_mover->set_movemap( glycan_dih_movemap );
 	glycan_large_mover->set_movemap(  glycan_dih_movemap );
-	
-	
+
+
 	for ( core::Size i =1; i <= max_glycan_dihedrals; ++i ) {
 		core::id::MainchainTorsionType dih_type = static_cast< core::id::MainchainTorsionType >( i );
 
 		SmallBBSamplerOP small_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 30 ) ); // +/- 15 degrees
 		SmallBBSamplerOP medium_sampler= SmallBBSamplerOP( new SmallBBSampler( dih_type, 90 ) ); // +/- 45 degrees
 		SmallBBSamplerOP large_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 180) ); // +/- 90 degrees
-		
-		
+
+
 		glycan_small_mover->add_sampler( small_sampler );
 		glycan_medium_mover->add_sampler( medium_sampler );
 		glycan_large_mover->add_sampler( large_sampler );
@@ -461,7 +460,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	weighted_random_mover_->add_mover( glycan_small_mover, 0.17142857142857143 );
 	weighted_random_mover_->add_mover( glycan_medium_mover, 0.08571428571428572 );
 	weighted_random_mover_->add_mover( glycan_large_mover, 0.04285714285714286 );
-	
+
 
 
 }

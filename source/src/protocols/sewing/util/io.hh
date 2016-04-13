@@ -77,7 +77,7 @@ scores_to_alignments(
 ///@brief Take the given StructureScores and save them to disk
 // utility::vector1<BasisPair>
 // read_hashing_scores_from_file(
-// 	std::string filename
+//  std::string filename
 // );
 
 std::string

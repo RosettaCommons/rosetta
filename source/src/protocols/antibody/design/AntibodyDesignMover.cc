@@ -468,13 +468,13 @@ AntibodyDesignMover::setup_options_classes(){
 		}
 		for ( core::Size i = 1; i <= design_override_.size(); ++i ) {
 			CDRNameEnum cdr_enum = design_override_[ i ];
-			
+
 			//Design override only works for l4 and h4 in regard to sequence design.
-			if (cdr_enum != l4 && cdr_enum != h4){
+			if ( cdr_enum != l4 && cdr_enum != h4 ) {
 				cdr_set_options_[cdr_enum]->load(true);
 				cdr_graft_design_options_[cdr_enum]->design(true);
 			}
-			
+
 			cdr_seq_design_options_[cdr_enum]->design(true);
 		}
 	}

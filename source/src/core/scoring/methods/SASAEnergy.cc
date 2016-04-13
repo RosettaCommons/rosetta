@@ -269,10 +269,10 @@ SASAEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose con
 
 void
 SASAEnergy::setup_for_scoring_for_residue(
-  conformation::Residue const & ,
-  pose::Pose const & ,
-  ScoreFunction const &, // sfxn,
-  ResSingleMinimizationData &
+	conformation::Residue const & ,
+	pose::Pose const & ,
+	ScoreFunction const &, // sfxn,
+	ResSingleMinimizationData &
 ) const
 {
 }
@@ -287,10 +287,10 @@ SASAEnergy::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose
 
 void
 SASAEnergy::setup_for_derivatives_for_residue(
-  conformation::Residue const & ,
-  pose::Pose const & ,
-  ScoreFunction const & ,
-  ResSingleMinimizationData &
+	conformation::Residue const & ,
+	pose::Pose const & ,
+	ScoreFunction const & ,
+	ResSingleMinimizationData &
 ) const
 {
 }

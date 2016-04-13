@@ -250,7 +250,7 @@ public:
 	std::list< PDinterOP > get_intersections_for_atom( PDsphereOP patom );
 
 	PDsphereOP sphere_lookup( Size ires, Size iatm  )
-		{ return sphere_lookup_[ ires ][ iatm ]; }
+	{ return sphere_lookup_[ ires ][ iatm ]; }
 
 	Real extract_sasa_for_atom( Size ires, Size iatm );
 
@@ -275,14 +275,14 @@ Real power_distance( Vector const & pt, PDsphereOP const & sph );
 inline void
 link_vertex_to_generators( PDvertexOP vrt )
 {
-  //TR << "New Vertex has generators: ";
-	for( utility::vector1< PDsphereOP >::iterator itr( vrt->nonconst_generators().begin() ) ;
-				itr != vrt->nonconst_generators().end() ; ++itr ) {
+	//TR << "New Vertex has generators: ";
+	for ( utility::vector1< PDsphereOP >::iterator itr( vrt->nonconst_generators().begin() ) ;
+			itr != vrt->nonconst_generators().end() ; ++itr ) {
 		(*itr)->vertices().push_back( vrt );
 		//TR << " res " << (*itr)->res() << " atom " << (*itr)->atom();
 	}
 	//TR << std::endl;
-return;
+	return;
 }
 
 Vector vertex_xyz_from_generators( PDsphereCOP a1, PDsphereCOP a2, PDsphereCOP a3, PDsphereCOP a4 );
@@ -325,11 +325,11 @@ get_sasa_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles, P
 
 void
 get_derivs_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles,
-		PDsphereOP & this_atom, PDsphereOP & check_atom, Vector & f1, Vector & f2 );
+	PDsphereOP & this_atom, PDsphereOP & check_atom, Vector & f1, Vector & f2 );
 
 void
 get_derivs_from_cycle( utility::vector1< SAnode > & cycle,
-		PDsphereOP & this_atom, PDsphereOP & check_atom, Vector & f1, Vector & f2 );
+	PDsphereOP & this_atom, PDsphereOP & check_atom, Vector & f1, Vector & f2 );
 
 #ifdef NOTDEF
 void

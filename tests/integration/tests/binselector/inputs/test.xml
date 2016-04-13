@@ -1,0 +1,51 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+        <tala weights=talaris2014/>
+        <tala_comp weights=talaris2014 > <!--score function that has constraints and composition on-->
+            <Reweight scoretype=coordinate_constraint weight=1 />
+            <Reweight scoretype=atom_pair_constraint weight=1 />
+            <Reweight scoretype=dihedral_constraint weight=1 />
+            <Reweight scoretype=angle_constraint weight=1 />
+            <Reweight scoretype=aa_composition weight=1.0 />
+        </tala_comp>
+        <tala_cst weights=talaris2014 > <!--score function that has constriants on-->
+            <Reweight scoretype=coordinate_constraint weight=1 />
+            <Reweight scoretype=atom_pair_constraint weight=1 />
+            <Reweight scoretype=dihedral_constraint weight=1 />
+            <Reweight scoretype=angle_constraint weight=1 />
+            Reweight scoretype=aa_composition weight=1.0 />
+        </tala_cst>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+        <Bin name="posPhisheet" bin="Bprime" bin_params_file="ABBA" /> 
+        <Bin name="posPhihelix" bin="Aprime" bin_params_file="ABBA" /> 
+        <Bin name="negPhisheet" bin="B" bin_params_file="ABBA" />  
+        <Bin name="negPhihelix" bin="A" bin_params_file="ABBA" />  
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+          <ReadResfile name="lala" filename="inputs/l_ala.txt" selector="negPhihelix"/>
+          <ReadResfile name="lval" filename="inputs/l_val.txt" selector="negPhisheet"/>
+          <ReadResfile name="dala" filename="inputs/d_ala.txt" selector="posPhihelix"/>
+          <ReadResfile name="dval" filename="inputs/d_val.txt" selector="posPhisheet"/>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        
+        <DeclareBond name=terminal_bond2 res1=24 res2=1 atom1=C atom2=N add_termini=false />
+        <DeclareBond name=terminal_bond1 res1=12 res2=13 atom1=C atom2=N add_termini=false />
+        
+        <!--required torsions to keep things in place. make sure you have them set for both ends-->
+        
+        <PackRotamersMover name="packer" scorefxn=tala_comp task_operations=lala,dala,lval,dval />
+
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+        <Add mover=terminal_bond1/>
+        <Add mover=terminal_bond2/>
+        <Add mover=packer/>
+    </PROTOCOLS>
+    <OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

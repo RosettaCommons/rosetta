@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/PhiSelector.hh
-/// @brief  The PhiSelector selects residues in a given proximity of set focus residues
+/// @brief  A ResidueSelector that selects alpha-amino acids that are either in the positive phi or negative
+/// phi region of Ramachandran space (depending on user preferences).
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 // Unit headers
@@ -81,6 +82,20 @@ PhiSelector::apply(
 		} else {
 			selected[i] = !select_positive_phi();
 		}
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "PhiSelector has selected:" << std::endl;
+		for ( core::Size i=1, imax=selected.size(); i<=imax; ++i ) {
+			TR.Debug << i << "\t" << "phi:";
+			if ( pose.residue(i).type().is_alpha_aa() ) {
+				TR.Debug << pose.phi(i);
+			} else {
+				TR.Debug << "N/A";
+			}
+			TR.Debug << "\t" << (selected[i] ? "TRUE" : "FALSE") << std::endl;
+		}
+		TR.Debug.flush();
 	}
 
 	return selected;

@@ -598,14 +598,14 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 	std::map<core::Size,AAProbabilities>& prob_set,
 	const core::Size cutoff)
 {
-	
+
 	utility::vector1< bool > cdrs = c;
-	if (cdrs.size() == 6){
+	if ( cdrs.size() == 6 ) {
 		cdrs.push_back(false);
 		cdrs.push_back(false);
 	}
-	
-	
+
+
 	assert(cdrs.size() == 8);
 	vector1<bool> cdrs_with_no_data(8, false);
 
@@ -690,7 +690,7 @@ AntibodyDatabaseManager::load_cdr_sequences(
 {
 
 	utility::vector1< bool > cdrs = c;
-	if (cdrs.size() == 6){
+	if ( cdrs.size() == 6 ) {
 		cdrs.push_back(false);
 		cdrs.push_back(false);
 	}
@@ -700,8 +700,8 @@ AntibodyDatabaseManager::load_cdr_sequences(
 	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
 		if ( ! cdrs[ i ] ) { continue; }
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		
-		if (cdr == l4 || cdr == h4 ){
+
+		if ( cdr == l4 || cdr == h4 ) {
 			TR << "Skipping L4/H4 sequence loading.  No profiles exist!" << std::endl;
 			continue;
 		}

@@ -142,21 +142,21 @@ SASAPotential::get_res_res_sasa(
 
 	Real sasaE( 0.0 );
 	Size natoms1 = rsd1.natoms();
-//	Size natoms2 = rsd2.natoms();
+	// Size natoms2 = rsd2.natoms();
 
 	Size const res1( rsd1.seqpos() );
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
 	// As a convention, surface are is strictly considered intrares
-	if( !same_res ) { return 0.0; }
+	if ( !same_res ) { return 0.0; }
 
 	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
 		if ( rsd1.is_virtual( atm1 ) ) continue;
 
-			// Get the surface area for this atom
-			Real const atom_atomE( pd_->extract_sasa_for_atom( res1, atm1 ) );
-			sasaE += atom_atomE;
+		// Get the surface area for this atom
+		Real const atom_atomE( pd_->extract_sasa_for_atom( res1, atm1 ) );
+		sasaE += atom_atomE;
 	}
 
 
@@ -184,79 +184,79 @@ SASAPotential::eval_residue_pair_derivatives(
 	Size res2( rsd2.seqpos() );
 	bool const same_res( res1 == res2 );
 
-//	assert( pose.energies().use_nblist() );
+	// assert( pose.energies().use_nblist() );
 	assert( r1_at_derivs.size() >= rsd1.natoms() );
 	assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-//	Real SASA_check( 0.0 );
+	// Real SASA_check( 0.0 );
 
 	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
 		if ( rsd1.is_virtual( atm1 ) ) continue;
 
 		PDsphereOP patom1( pd_->sphere_lookup( res1, atm1 ) );
-//		std::list< power_diagram::PDinterOP > intersections1( pd_->get_intersections_for_atom( res1, atm1 ) );
+		//  std::list< power_diagram::PDinterOP > intersections1( pd_->get_intersections_for_atom( res1, atm1 ) );
 
-//		for( std::list< power_diagram::PDinterOP >::iterator itr = intersections1.begin() ;
-//			itr != intersections1.end() ; ++itr ) {
-//			find_common_intersection_atoms( (*itr) );
-//		}
+		//  for( std::list< power_diagram::PDinterOP >::iterator itr = intersections1.begin() ;
+		//   itr != intersections1.end() ; ++itr ) {
+		//   find_common_intersection_atoms( (*itr) );
+		//  }
 
-//		utility::vector1< utility::vector1< power_diagram::SAnode > >
-//				cycles1( get_cycles_from_intersections( intersections1, patom1 ) );
+		//  utility::vector1< utility::vector1< power_diagram::SAnode > >
+		//    cycles1( get_cycles_from_intersections( intersections1, patom1 ) );
 
 		//  if( !SASAShouldItCount( rsd1, atm1 ) ) continue;
 
-    Size const start_atom( same_res ? atm1 + 1 : 1 );
+		Size const start_atom( same_res ? atm1 + 1 : 1 );
 		for ( Size atm2 = start_atom ; atm2 <= natoms2 ; ++atm2 ) {
 			if ( rsd2.is_virtual( atm2 ) ) continue;
 
-//			if( same_res && ( atm1 == atm2 ) ) { continue; }
+			//   if( same_res && ( atm1 == atm2 ) ) { continue; }
 
 			PDsphereOP patom2( pd_->sphere_lookup( res2, atm2 ) );
-//			std::list< power_diagram::PDinterOP > intersections2( pd_->get_intersections_for_atom( res2, atm2 ) );
+			//   std::list< power_diagram::PDinterOP > intersections2( pd_->get_intersections_for_atom( res2, atm2 ) );
 
-//			for( std::list< power_diagram::PDinterOP >::iterator itr = intersections2.begin() ;
-//				itr != intersections2.end() ; ++itr ) {
-//				find_common_intersection_atoms( (*itr) );
-//			}
+			//   for( std::list< power_diagram::PDinterOP >::iterator itr = intersections2.begin() ;
+			//    itr != intersections2.end() ; ++itr ) {
+			//    find_common_intersection_atoms( (*itr) );
+			//   }
 
-//			utility::vector1< utility::vector1< power_diagram::SAnode > >
-//					cycles2( get_cycles_from_intersections( intersections2, patom2 ) );
+			//   utility::vector1< utility::vector1< power_diagram::SAnode > >
+			//     cycles2( get_cycles_from_intersections( intersections2, patom2 ) );
 
 
 			//   if( !SASAShouldItCount( rsd2, atm2 ) ) continue;
 
 			// Figure out if atom 2 is involved with any of the arcs for atom 1
 
-				Vector f1( 0.0 );
-				Vector f2( 0.0 );
+			Vector f1( 0.0 );
+			Vector f2( 0.0 );
 
-//				TR << "Getting derivs for res1 " << res1 << " atom1 " << atm1 << " and res2 " << res2 << " atom2 " << atm2 << std::endl;
+			//    TR << "Getting derivs for res1 " << res1 << " atom1 " << atm1 << " and res2 " << res2 << " atom2 " << atm2 << std::endl;
 
-				get_derivs_from_cycles( patom1->cycles(), patom1, patom2, f1, f2 );
-				r1_at_derivs[ atm1 ].f1() += factor*f1;
-				r1_at_derivs[ atm1 ].f2() += factor*f2;
-				r2_at_derivs[ atm2 ].f1() -= factor*f1;
-				r2_at_derivs[ atm2 ].f2() -= factor*f2;
+			get_derivs_from_cycles( patom1->cycles(), patom1, patom2, f1, f2 );
+			r1_at_derivs[ atm1 ].f1() += factor*f1;
+			r1_at_derivs[ atm1 ].f2() += factor*f2;
+			r2_at_derivs[ atm2 ].f1() -= factor*f1;
+			r2_at_derivs[ atm2 ].f2() -= factor*f2;
 
-				f1 = 0.0;
-				f2 = 0.0;
+			f1 = 0.0;
+			f2 = 0.0;
 
-				get_derivs_from_cycles( patom2->cycles(), patom2, patom1, f1, f2 );
-				r1_at_derivs[ atm1 ].f1() -= factor*f1;
-				r1_at_derivs[ atm1 ].f2() -= factor*f2;
-				r2_at_derivs[ atm2 ].f1() += factor*f1;
-				r2_at_derivs[ atm2 ].f2() += factor*f2;
+			get_derivs_from_cycles( patom2->cycles(), patom2, patom1, f1, f2 );
+			r1_at_derivs[ atm1 ].f1() -= factor*f1;
+			r1_at_derivs[ atm1 ].f2() -= factor*f2;
+			r2_at_derivs[ atm2 ].f1() += factor*f1;
+			r2_at_derivs[ atm2 ].f2() += factor*f2;
 
 
 		}
 
 
-//		Real const atom_atomE( get_sasa_from_cycles( cycles, patom1 ) );
-//		SASA_check += atom_atomE;
+		//  Real const atom_atomE( get_sasa_from_cycles( cycles, patom1 ) );
+		//  SASA_check += atom_atomE;
 
 	}
-//	TR << "SASA for residue " << res1 << " is " << SASA_check << std::endl;
+	// TR << "SASA for residue " << res1 << " is " << SASA_check << std::endl;
 }
 
 

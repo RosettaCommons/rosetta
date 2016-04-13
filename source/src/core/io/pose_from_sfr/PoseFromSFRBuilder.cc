@@ -103,10 +103,10 @@ using namespace ObjexxFCL;
 
 
 PoseFromSFRBuilder::PoseFromSFRBuilder( chemical::ResidueTypeSetCOP rts, StructFileRepOptions const & options ) :
-		residue_type_set_( rts ),
-		options_( options ),
-		coordinates_assigned_( false ),
-		outputted_ignored_water_warning_( false )
+	residue_type_set_( rts ),
+	options_( options ),
+	coordinates_assigned_( false ),
+	outputted_ignored_water_warning_( false )
 {}
 
 PoseFromSFRBuilder::~PoseFromSFRBuilder() {}
@@ -230,9 +230,9 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 			LinkInformation const & link = *link_iter;
 
 			bool const link_has_metal( NomenclatureManager::is_metal( link.resName1 ) ||
-					NomenclatureManager::is_metal( link.resName2 ) );
+				NomenclatureManager::is_metal( link.resName2 ) );
 			bool const link_has_sugar( NomenclatureManager::is_sugar( link.resName1 ) ||
-					NomenclatureManager::is_sugar( link.resName2 ) );
+				NomenclatureManager::is_sugar( link.resName2 ) );
 
 			if ( link_has_metal ) {
 				TR.Debug << "Omitting LINK record that uses a metal. These will be processed ";
@@ -285,7 +285,7 @@ PoseFromSFRBuilder::pass_1_merge_residues_as_necessary()
 
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
 		MergeBehaviorManager::ResidueMergeInstructions const & behavior_map_pair =
-				residue_type_set_->merge_behavior_manager().merge_behavior_for_name3( rinfos_[ ii ].resName() );
+			residue_type_set_->merge_behavior_manager().merge_behavior_for_name3( rinfos_[ ii ].resName() );
 
 		merge_behaviors_[ ii ] = behavior_map_pair.first;
 		if ( merge_behaviors_[ ii ] != mrb_do_not_merge ) {
@@ -348,7 +348,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 		// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
 		std::pair< std::string, std::string > const & rosetta_names(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
 		std::string const & name3( rosetta_names.first );
 		rosetta_residue_name3s_[ ii ] = name3;
 		if ( rosetta_names.second != "" ) {
@@ -364,7 +364,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		bool is_branch_point( false ), is_branch_lower_terminus( false );
 		utility::vector1< std::string > branch_points_on_this_residue;
 		determine_residue_branching_info(
-				rinfos_[ ii ].resid(), name3, same_chain_prev, same_chain_next, branch_points_on_this_residue, is_branch_point, is_branch_lower_terminus );
+			rinfos_[ ii ].resid(), name3, same_chain_prev, same_chain_next, branch_points_on_this_residue, is_branch_point, is_branch_lower_terminus );
 
 
 		bool const is_lower_terminus( ( ii == 1 || rinfos_.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
@@ -516,7 +516,7 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 				!residue_types_[ ii ]->is_branch_lower_terminus() ) ) ) ) ) {
 			TR << "Adding undetected lower terminus type to residue " << ii << std::endl;
 			residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
-					*residue_types_[ ii ], chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr();
+				*residue_types_[ ii ], chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr();
 			type_changed = true;
 		}
 		if ( !residue_types_[ ii ]->is_upper_terminus() &&
@@ -527,7 +527,7 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 				residue_types_[  ii_next ]->has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)*/ ) ) ) ) {
 			TR << "Adding undetected upper terminus type to residue " << ii << std::endl;
 			residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
-					*residue_types_[ ii ], chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr();
+				*residue_types_[ ii ], chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr();
 			type_changed = true;
 		}
 
@@ -916,13 +916,13 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 ///   names.
 void
 PoseFromSFRBuilder::determine_residue_branching_info(
-		std::string const & resid,
-		std::string const & name3,
-		bool & same_chain_prev,
-		bool & same_chain_next,
-		utility::vector1< std::string > & branch_points_on_this_residue,
-		bool & is_branch_point,
-		bool & is_branch_lower_terminus )
+	std::string const & resid,
+	std::string const & name3,
+	bool & same_chain_prev,
+	bool & same_chain_next,
+	utility::vector1< std::string > & branch_points_on_this_residue,
+	bool & is_branch_point,
+	bool & is_branch_lower_terminus )
 {
 	using namespace std;
 	using namespace core::io::pdb;
@@ -939,7 +939,7 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 		TR.Trace << "Current residue has had its base name extracted from the PDB file: ";
 		TR.Trace << sfr_.residue_type_base_names()[ resid ].second << endl;
 		unknown_main_chain_connectivity =
-				( sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] == '?' );
+			( sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] == '?' );
 	}
 
 	//is_branch_point = false;
@@ -1392,9 +1392,9 @@ convert_res_name( std::string const & name )
 
 void
 create_working_data(
-		StructFileRepOptions const & options,
-		StructFileRep const & sfr,
-		utility::vector1< core::io::ResidueInformation > & rinfos )
+	StructFileRepOptions const & options,
+	StructFileRep const & sfr,
+	utility::vector1< core::io::ResidueInformation > & rinfos )
 {
 	rinfos.clear();
 

@@ -1844,7 +1844,7 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	Size virtcount = rsd.n_virtual_atoms();
 
 	if ( con_res > rsd.n_polymeric_residue_connections() // no underflow!!
-		&& virtcount < con_res-rsd.n_polymeric_residue_connections() ) {
+			&& virtcount < con_res-rsd.n_polymeric_residue_connections() ) {
 
 		// Add a virt.  First, find a unique name for it:
 		std::string virtname = "V" + ObjexxFCL::string_of( ++virtcount );

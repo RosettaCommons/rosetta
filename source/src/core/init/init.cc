@@ -661,6 +661,7 @@ static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCrea
 // register ResidueSelectorCreators
 using namespace core::select::residue_selector;
 static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSelectorCreator;
+static ResidueSelectorRegistrator< BinSelectorCreator > reg_BinSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
 static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
 static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;

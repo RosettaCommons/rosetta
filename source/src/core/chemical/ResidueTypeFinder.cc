@@ -510,7 +510,7 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 	vector1< std::string> const & patch_variant_types = patch->types();
 
 	for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
-		
+
 		VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
 
 		for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
@@ -518,7 +518,7 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 		}
 
 		for ( Size k = 1; k <= custom_variants_.size(); k++ ) {
-		
+
 			if ( custom_variants_[ k ] == patch_variant_types[ n ] ) return true;
 			// AMW: I am kicking an issue down the road a ways because I imagine
 			// that once the PackerPalette and variant type design are out, we
@@ -527,12 +527,12 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 			// too for e.g. SG-CONNECT vs SG-CONNECT2.
 			// Email andy.watkins2@gmail.com for a long-winded conversation about
 			// just quite why. Maybe you know how to do this better.
-			
+
 			// If we do the C++11 transition before finishing palette, rewrite as
 			// a regex. Right now I think the variant types form an appropriate prefix code.
 			if ( custom_variants_[ k ].substr(0, custom_variants_.size()-1) == patch_variant_types[ n ] ) return true;
 			if ( custom_variants_[ k ].substr(0, custom_variants_.size()-2) == patch_variant_types[ n ] ) return true;
-			
+
 		}
 
 		// following could also be managed by looking to see if patch *virtualizes* a missing atom.

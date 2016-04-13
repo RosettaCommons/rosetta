@@ -51,8 +51,8 @@ public:
 
 	//void
 	//follow_random_edge_from_node(
-	//	AssemblyOP assembly,
-	//	ModelNode const * node
+	// AssemblyOP assembly,
+	// ModelNode const * node
 	//);
 
 	void

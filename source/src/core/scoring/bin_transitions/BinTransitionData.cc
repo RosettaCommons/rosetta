@@ -822,6 +822,34 @@ void BinTransitionData::finalize() {
 	return;
 } //finalize
 
+/// @brief Does a bin with the specified name exist?
+///
+bool
+BinTransitionData::bin_exists(
+	std::string const &name
+) const {
+	return bin_exists_i(name) || bin_exists_iplus1(name);
+}
+
+/// @brief Does a bin with the specified name exist, defined for the ith residue?
+///
+bool
+BinTransitionData::bin_exists_i(
+	std::string const &name
+) const {
+	return is_in_list( name, binnames_i_);
+}
+
+/// @brief Does a bin with the specified name exist, defined for the i+1st residue?
+///
+bool
+BinTransitionData::bin_exists_iplus1(
+	std::string const &name
+) const {
+	return is_in_list( name, binnames_iplus1_);
+}
+
+
 /// @brief Writes a report summarizing the data stored in this BinTransitionData object.
 /// @details If verbose is true, the full set of sub-bins is written out, too.
 std::string BinTransitionData::summarize_data( bool const verbose ) const

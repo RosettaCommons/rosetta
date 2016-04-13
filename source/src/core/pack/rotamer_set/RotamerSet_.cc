@@ -331,7 +331,7 @@ RotamerSet_::build_rotamers_for_concrete(
 		utility::vector1< ResidueOP > suggested_rotamers;
 		// For D-amino acids, returns the rotamer library for the corresponding L-amino acid.
 		rotamers::SingleResidueRotamerLibraryCOP rotlib =
-				rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue );
+			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue );
 
 		if ( rotlib ) {
 			/// DOUG DOUG DOUG DEBUG OUTPUT

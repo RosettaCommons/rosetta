@@ -118,6 +118,15 @@ public: //Public functions -- calculators and initializers:
 		std::string const &bin_name
 	) const;
 
+	/// @brief Is the given residue in the bin given by a data object index and a bin index?
+	///
+	bool is_in_bin (
+		core::conformation::Residue const &res,
+		core::Size const data_index,
+		core::Size const bin_index,
+		bool const use_iplus1
+	) const;
+
 	/// @brief Initialize a string of residues to a bunch of random bins, based on bin transition probabilities; then draw random mainchain torsion angles from those bins.
 	/// @details Takes a const conformation and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain torsions, etc.
 	/// The residue indices must be in order, defining a contiguous chain (running backwards or forwards).  Output is the mainchain_torsions vector of vectors (reset and
@@ -213,6 +222,10 @@ public: //Public functions -- getters:
 	/// @brief Number of BinTransitionData objects stored (i.e. number of transition probability matrices stored).
 	///
 	core::Size n_bin_transition_data() const { return bin_transition_data_.size(); }
+
+	/// @brief Is a particular bin defined for at least one residue type?
+	///
+	bool bin_definition_exists( std::string const &name ) const;
 
 public: //Public functions -- setters:
 

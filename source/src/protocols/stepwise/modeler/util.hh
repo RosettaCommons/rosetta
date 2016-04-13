@@ -147,13 +147,13 @@ fix_up_residue_type_variants( core::pose::Pose & pose );
 
 void
 switch_focus_to_other_pose( core::pose::Pose & pose,
-							Size const & focus_pose_idx,
-							core::scoring::ScoreFunctionCOP scorefxn = 0 );
+	Size const & focus_pose_idx,
+	core::scoring::ScoreFunctionCOP scorefxn = 0 );
 
 bool
 switch_focus_among_poses_randomly( core::pose::Pose & pose,
-								   core::scoring::ScoreFunctionCOP scorefxn = 0,
-								   bool force_switch = false );
+	core::scoring::ScoreFunctionCOP scorefxn = 0,
+	bool force_switch = false );
 
 utility::vector1< Size >
 figure_out_moving_chain_break_res( core::pose::Pose const & pose, core::kinematics::MoveMap const & mm );

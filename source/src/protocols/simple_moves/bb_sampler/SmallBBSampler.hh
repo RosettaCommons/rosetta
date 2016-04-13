@@ -39,7 +39,7 @@ public:
 
 	SmallBBSampler();
 	SmallBBSampler( core::Real all_ss_angle_max);
-	
+
 	SmallBBSampler( core::Size torsion_type);
 	SmallBBSampler( core::Size torsion_type, core::Real all_ss_angle_max);
 

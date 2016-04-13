@@ -100,7 +100,7 @@ AddCDRProfilesOperation::set_defaults(){
 	for ( core::Size i = 1; i <=CDRNameEnum_proto_total; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRSeqDesignOptionsOP opt = CDRSeqDesignOptionsOP(new CDRSeqDesignOptions(cdr));
-		if (cdr == l4 || cdr == h4){
+		if ( cdr == l4 || cdr == h4 ) {
 			opt->design(false);
 		}
 
@@ -193,7 +193,7 @@ AddCDRProfilesOperation::set_cdr_only(CDRNameEnum cdr){
 
 void
 AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& c) {
-	
+
 	utility::vector1< bool > cdrs = c;
 	if ( cdrs.size() < CDRNameEnum_proto_total ) {
 		for ( core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
@@ -201,7 +201,7 @@ AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& c) {
 		}
 	}
 	assert( cdrs.size() == 8);
-	
+
 	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( cdrs[ i ] ) {
 			seq_design_options_[ i ]->design(true);

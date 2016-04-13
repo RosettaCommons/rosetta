@@ -154,8 +154,8 @@ public:
 		//ALL Basic
 		design_options2.clear();
 		design_options2.resize(8, NULL);
-		
-		for (core::Size i = 1; i <= design_options.size(); ++i){
+
+		for ( core::Size i = 1; i <= design_options.size(); ++i ) {
 			design_options2[ i ] = design_options[ i ]->clone();
 			design_options2[ i ]->design_strategy(seq_design_basic);
 		}
@@ -235,7 +235,7 @@ public:
 
 
 		tf = creator.generate_tf_seq_design(pose, true /* disable non-designing cdrs */);
-		
+
 
 		PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 		//task->show(std::cout);
@@ -259,7 +259,7 @@ public:
 		creator =  AntibodySeqDesignTFCreator(ab_info, design_options, true);
 		creator.set_design_H3_stem(false);
 		tf = creator.generate_tf_seq_design(pose, true /* disable non-designing cdrs */);
-		
+
 		task = tf->create_task_and_apply_taskoperations(pose);
 
 		output_or_test(tf, pose, first_run, "AntibodySeqDesign_general_tf", inpath, first_run_outpath);

@@ -202,7 +202,7 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	} else {
 		cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(cdr) );
 	}
-	
+
 	instructions_path_ = path;
 
 	check_path();
@@ -235,9 +235,9 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		std::string mode = lineSP[2];
 		boost::to_upper(mode);
 
-		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4)) {
+		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4) ) {
 			parse_cdr_option(mode, lineSP);
-		} else if ( ( cdr_type == "DE" || cdr_type == "CDR4") && (cdr == l4 || cdr == h4) ){
+		} else if ( ( cdr_type == "DE" || cdr_type == "CDR4") && (cdr == l4 || cdr == h4) ) {
 			parse_cdr_option(mode, lineSP);
 		} else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
 			if ( ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr ) {
@@ -253,11 +253,11 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	}
 	instruction_file.close();
 	//TR << "Instructions read successfully" <<std::endl;
-	
-	if (cdr == l4 || cdr == h4){
+
+	if ( cdr == l4 || cdr == h4 ) {
 		cdr_options_->design( false ); // Disable graft design of CDR4 as it is not yet implemented.
 	}
-	
+
 	return cdr_options_->clone();
 }
 

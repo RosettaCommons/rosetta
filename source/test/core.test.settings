@@ -415,6 +415,7 @@ sources = {
 	],
 	"select/residue_selector" : [
 		"AndResidueSelector",
+		"BinSelector",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",
 		"ResidueIndexSelector",

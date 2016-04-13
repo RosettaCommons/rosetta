@@ -361,8 +361,8 @@ AntibodySeqDesignTFCreator::disable_design_for_non_designing_cdrs(
 	const core::pose::Pose& pose) {
 	for ( core::Size i =1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include DE loops */) ); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		
-		
+
+
 		if ( ! cdr_design_options_[ i ]->design() ) {
 			//TR << "Disabling2 " << ab_info_->get_CDR_name( cdr ) << std::endl;
 			tf->push_back(protocols::antibody::design::disable_design_cdr(ab_info_, cdr, pose));
@@ -392,7 +392,7 @@ AntibodySeqDesignTFCreator::get_design_cdr_loops(const core::pose::Pose& pose, c
 	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( cdr_design_options_[ i ]->design() ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-			if (TR.Debug.visible() ){
+			if ( TR.Debug.visible() ) {
 				TR.Debug << "Design on: " << ab_info_->get_CDR_name( cdr ) << std::endl;
 			}
 			design_cdrs[ i ] = true;
@@ -423,11 +423,11 @@ AntibodySeqDesignTFCreator::generate_task_op_cdr_design(const core::pose::Pose& 
 protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
 AntibodySeqDesignTFCreator::generate_task_op_all_cdr_design( const core::pose::Pose& pose, bool design_neighbors /* true */ ) const {
 	///Limit Packing and Design to CDR loops and neighbors
-	
+
 	utility::vector1< bool > cdrs(8, true);
-	for (core::Size i = 1; i <= 8; ++i){
+	for ( core::Size i = 1; i <= 8; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		if (! ab_info_->has_CDR( cdr )){
+		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdrs[ i ] = false;
 		}
 	}
