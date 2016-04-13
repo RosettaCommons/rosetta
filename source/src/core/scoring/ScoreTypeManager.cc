@@ -196,6 +196,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "gb_elec" ] = gb_elec;
 	name2score_type_[ "multipole_elec" ] = multipole_elec;
+	name2score_type_[ "fa_sasa" ] = fa_sasa;
 
 	name2score_type_[ "facts_elec" ] = facts_elec;
 	name2score_type_[ "facts_solv" ] = facts_solv;

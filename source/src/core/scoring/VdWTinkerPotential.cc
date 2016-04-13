@@ -188,15 +188,22 @@ VdWTinkerPotential::read_in_amoeba_parameters() {
 	std::string type_file_name = basic::database::full_name( "chemical/amoeba/amoeba09_types.txt" );
 	std::ifstream types_file( type_file_name.c_str() );
 	std::string input_line;
+
 	while ( getline( types_file, input_line ) ) {
 		//TR << "Processing line: " << input_line << std::endl;
 		utility::vector1< std::string > tokens( utility::split_whitespace( input_line ) );
 		Size const num_tokens( tokens.size() );
+		Size const num_variant_qualifiers( num_tokens - 5 );
 		//TR << "Found " << num_tokens << " tokens " << std::endl;
 		std::string atomname( tokens[2] );
 		utility::trim( atomname, " " );
-		//TR << "Atom name " << atomname << " Residue name " << tokens[3] << std::endl;
+		//TR << "Atom name " << atomname << " Residue name " << tokens[3];
 		std::string new_key = atomname + tokens[3];
+		for ( Size ivar = 1 ; ivar <= num_variant_qualifiers ; ++ivar ) {
+			new_key = new_key + tokens[4];
+			//TR << "   " << tokens[ ivar + 3 ];
+		}
+		//TR << " type index is:  " << tokens[ num_tokens ] << std::endl;
 		type_lookup_[ new_key ] = static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[ num_tokens ] ) );
 		//TR << "Stashing key X" << new_key << "X" << std::endl;
 	}
@@ -295,18 +302,18 @@ VdWTinkerPotential::assign_residue_amoeba_type(
 		//TR << "Using variant specialization " << parsed_resname[2] << std::endl;
 		variantname = parsed_resname[2];
 	} else if ( parsed_resname.size() > 2 ) {
-		//   TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
-		//   TR << "Full resname is " << rsd.name() <<  std::endl;
-		//   TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
-		//   TR << "Using first variant name only!!!" << std::endl;
+		//TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
+		//TR << "Full resname is " << rsd.name() <<  std::endl;
+		//TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
+		//TR << "Using first variant name only!!!" << std::endl;
 		variantname = parsed_resname[2];
-		//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
-		//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
-		//}
+		for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
+			//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
+		}
 	}
 
 	for ( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
-		//TR << "Residue " << resname << " Atom " << rsd.atom_name( j )   << std::endl;
+		//TR << "Residue " << resname << " Atom " << rsd.atom_name( j ) << " variant " << variantname << std::endl;
 		// Lookup amoeba type
 		core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname ) );
 		//TR << "Found Amoeba VdW type " << this_type << std::endl;
@@ -471,6 +478,9 @@ VdWTinkerPotential::get_res_res_vdw(
 
 		//  if( !VdWShouldItCount( rsd1, atm1 ) ) continue;
 
+		//TR << "resid " << rsd1.seqpos() << " atomname " << rsd1.atom_name( atm1 ) << std::endl;
+		//TR << "Type check " << vdw1.vdw_type(atm1) << std::endl;
+
 		Real const rad1( vdw_radius_[ vdw1.vdw_type( atm1 ) ] );
 		Real const dep1( vdw_depth_[ vdw1.vdw_type( atm1 ) ] );
 		Real const red1( vdw_reduce_[ vdw1.vdw_type( atm1 ) ] );
@@ -508,8 +518,8 @@ VdWTinkerPotential::get_res_res_vdw(
 
 			// Assuming all the checks tell us to calculate the interaction
 
-			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) &&
-					(!same_res || (atm1 != atm2) ) ) continue;
+			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) ||
+					(same_res && (atm1 == atm2) ) ) continue;
 
 			Real const dist( p1.distance( p2 ) );
 			Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );
@@ -521,6 +531,8 @@ VdWTinkerPotential::get_res_res_vdw(
 
 
 			atom_atomE = eff_dep*factor1*factor2;
+
+			//TR << "Interaction p1 " << rsd1.xyz( atm1 ) <<  " and p2 " << rsd2.xyz( atm2 ) << " intxn " << atom_atomE <<  std::endl;
 
 			vdwE += atom_atomE;
 		}
@@ -613,8 +625,8 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 			// Assuming all the checks tell us to calculate the interaction
 
-			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) &&
-					(!same_res || (atm1 != atm2) ) ) continue;
+			if ( !cpfxn->count( atm1, atm2, weight, path_dist ) ||
+					(same_res && (atm1 == atm2) ) ) continue;
 
 			Real const dist( p1.distance( p2 ) );
 			Real const eff_dep( 4.0*dep1*dep2 / std::pow( std::sqrt( dep1 ) + std::sqrt( dep2 ), 2.0 ) );

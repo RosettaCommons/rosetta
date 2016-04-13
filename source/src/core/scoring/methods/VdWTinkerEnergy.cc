@@ -453,7 +453,9 @@ VdWTinkerEnergy::residue_pair_energy_ext(
 	VdWTinkerResidueInfo const & mp1( retrieve_vdw_residue_info( pose, rsd1.seqpos() ) );
 	VdWTinkerResidueInfo const & mp2( retrieve_vdw_residue_info( pose, rsd2.seqpos() ) );
 
+	//TR << "Start energy is " << emap[ fa_vdw_tinker ] << std::endl;
 	emap[ fa_vdw_tinker ] += potential_.get_res_res_vdw( rsd1, mp1, rsd2, mp2 );
+	//TR << "Energy is " << emap[ fa_vdw_tinker ] << " after res " << rsd1.seqpos() << " and " << rsd2.seqpos() << std::endl;
 
 }
 
@@ -476,7 +478,9 @@ VdWTinkerEnergy::eval_intrares_energy_ext(
 	//TR << "Calculating intraresidue energy ext" << std::endl;
 
 	VdWTinkerResidueInfo const & vdw_info( retrieve_vdw_resdata( data_cache ) );
+	//TR << "Start energy is " << emap[ fa_vdw_tinker ] << std::endl;
 	emap[ fa_vdw_tinker ] += potential_.get_res_res_vdw( rsd, vdw_info, rsd, vdw_info );
+	//TR << "Energy is " << emap[ fa_vdw_tinker ] << " after intra res " << rsd.seqpos() << std::endl;
 }
 
 

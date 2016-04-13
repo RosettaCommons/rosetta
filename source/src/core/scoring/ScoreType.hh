@@ -306,6 +306,7 @@ enum ScoreType {
 	// Other One-Body and Two-Body Energy Method Types ////////////////////////
 	gb_elec,
 	multipole_elec,
+	fa_sasa,
 
 	//Full atom disulfide terms
 	dslf_ss_dst,

@@ -177,6 +177,7 @@ sources = {
 		"EnvPairPotential",
 		"GenBornPotential",
 		"MultipoleElecPotential",
+		"SASAPotential",
 		"LREnergyContainer",
 		"Membrane_FAPotential",
 		"MembranePotential",
@@ -615,6 +616,7 @@ sources = {
 		"RG_LocalEnergy",
 		"RMS_Energy",
 		"SA_Energy",
+		"SASAEnergy",
 		"SecondaryStructureEnergy",
 		"SequenceDependentRefEnergy",
 		"SSElementMotifContactEnergy",
@@ -693,6 +695,9 @@ sources = {
 		"PackingScore",
 		"SimplePDB",
 		"SimplePDB_Atom",
+	],
+	"core/scoring/power_diagram": [
+		"PowerDiagram",
 	],
 	"core/scoring/rna": [
 		"RG_Energy_RNA",

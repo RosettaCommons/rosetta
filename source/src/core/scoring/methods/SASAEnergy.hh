@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/VdWTinkerEnergy.hh
-/// @brief  VdW treatment using buffered 14-7 approach in Tinker/Amoeba
+/// @file   core/scoring/methods/SASAEnergy.hh
+/// @brief  Power Diagram-derived solvent-accessible surface area energy
 /// @author Jim Havranek
 
 
-#ifndef INCLUDED_core_scoring_methods_VdWTinkerEnergy_hh
-#define INCLUDED_core_scoring_methods_VdWTinkerEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_SASAEnergy_hh
+#define INCLUDED_core_scoring_methods_SASAEnergy_hh
 
 // Unit Headers
-#include <core/scoring/methods/VdWTinkerEnergy.fwd.hh>
+#include <core/scoring/methods/SASAEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-#include <core/scoring/VdWTinkerPotential.fwd.hh>
+#include <core/scoring/SASAPotential.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 
@@ -43,21 +43,21 @@ namespace scoring {
 namespace methods {
 
 ///
-class VdWTinkerEnergy : public ContextIndependentLRTwoBodyEnergy  {
+class SASAEnergy : public ContextIndependentLRTwoBodyEnergy  {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
 public:
 
 	/// for use by ScoringManager
-	VdWTinkerEnergy( EnergyMethodOptions const & options );
+	SASAEnergy( EnergyMethodOptions const & options );
 
 	///
-	VdWTinkerEnergy( VdWTinkerEnergy const & src );
+	SASAEnergy( SASAEnergy const & src );
 
 
 	LongRangeEnergyType long_range_type() const
 	{
-		return vdw_tinker_lr;
+		return sasa_lr;
 	}
 
 	virtual
@@ -294,20 +294,6 @@ public:
 		utility::vector1< EnergyMap > & emaps
 	) const;
 
-#ifdef NOTDEF
-	virtual
-	void
-	eval_atom_derivative(
-		id::AtomID const & atom_id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;
-#endif
-
 	//  virtual
 	//  Distance
 	//  atomic_interaction_cutoff() const;
@@ -342,7 +328,7 @@ public:
 private:
 
 	// const-ref to scoring database
-	VdWTinkerPotential const & potential_;
+	SASAPotential const & potential_;
 
 	///
 	bool const exclude_DNA_DNA_;

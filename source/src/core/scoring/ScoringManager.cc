@@ -36,6 +36,7 @@
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/MultipoleElecPotential.hh>
+#include <core/scoring/SASAPotential.hh>
 #include <core/scoring/VdWTinkerPotential.hh>
 #include <core/scoring/facts/FACTSPotential.hh>
 #include <core/scoring/AtomVDW.hh>
@@ -368,6 +369,16 @@ ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const &
 		multipole_elec_potential_->Ew = options.water_dielectric();
 	}
 	return *multipole_elec_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+SASAPotential const &
+ScoringManager::get_SASAPotential() const
+{
+	if ( sasa_potential_ == 0 ) {
+		sasa_potential_ = SASAPotentialOP( new SASAPotential() );
+	}
+	return *sasa_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

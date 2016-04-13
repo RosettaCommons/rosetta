@@ -24,6 +24,7 @@
 #include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/GenBornPotential.fwd.hh>
 #include <core/scoring/MultipoleElecPotential.fwd.hh>
+#include <core/scoring/SASAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
 #include <core/scoring/OmegaTether.fwd.hh>
@@ -129,6 +130,8 @@ public:
 	VdWTinkerPotential const & get_VdWTinkerPotential() const;
 
 	MultipoleElecPotential const & get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const;
+
+	SASAPotential const & get_SASAPotential() const;
 
 	FACTSPotential const & get_FACTSPotential() const;
 
@@ -335,6 +338,7 @@ private:
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;
 	mutable MultipoleElecPotentialOP multipole_elec_potential_;
+	mutable SASAPotentialOP sasa_potential_;
 	mutable FACTSPotentialOP facts_potential_;
 	mutable disulfides::FullatomDisulfidePotentialOP fa_disulfide_potential_;
 	mutable disulfides::CentroidDisulfidePotentialOP cen_disulfide_potential_;
