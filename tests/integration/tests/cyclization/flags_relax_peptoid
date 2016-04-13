@@ -1,6 +1,5 @@
 -s peptoid_link.pdb
 
--read_pdb_link_records
 -write_pdb_link_records
 -constraints_from_link_records
 -cst_weight 1
@@ -9,3 +8,4 @@
 -chemical:patch_selectors NTERM_CONNECT CTERM_CONNECT
 
 -out:suffix _relax_peptoid
+-extra_patch_fa ../../../../database/chemical/residue_type_sets/fa_standard/patches/branching/C-terminal_conjugation.txt

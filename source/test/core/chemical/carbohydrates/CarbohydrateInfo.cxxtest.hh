@@ -38,10 +38,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 		using namespace core::import_pose;
 		using namespace basic::options;
 
-		core_init_with_additional_options( "-out:level 500" );
-
-		option[ OptionKeys::in::include_sugars ]( true );
-		option[ OptionKeys::in::file::read_pdb_link_records ]( true );
+		core_init_with_additional_options( "-include_sugars -out:level 500" );
 
 		// Test that oligosaccharides are loaded correctly.
 		pose_from_file( maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb" , core::import_pose::PDB_file);

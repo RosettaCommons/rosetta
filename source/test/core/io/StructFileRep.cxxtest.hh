@@ -51,7 +51,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	void test_extra_res_fa_flag() {
 		// This has to be the first one called because we don't re-initialize core and we really need to get this extra res
 		// in the RTS...
-		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1 -extra_res_fa core/io/pdb/test.params");
+		core_init_with_additional_options( "-obey_ENDMDL -constraints_from_link_records -cst_weight 1 -extra_res_fa core/io/pdb/test.params");
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/io/pdb/extra_res_pose.pdb" , core::import_pose::PDB_file);
 		TS_ASSERT_EQUALS( pose.n_residue(), 181 );
@@ -64,7 +64,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		using namespace core::io;
 		using namespace core::io::pdb;
-		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1");
+		core_init_with_additional_options( "-obey_ENDMDL -constraints_from_link_records -cst_weight 1");
 
 		TS_TRACE( "Testing get_connectivity_annotation_info() method of StructFileRep." );
 

@@ -3,7 +3,6 @@
 -parser:protocol model_glycans_simple.xml 
 -parser:script_vars positions=463G,460G glycosylation=man3,man5,man9
 -include_sugars
--read_pdb_link_records
 -write_pdb_link_records
 -glycan_relax_rounds 25
 -overwrite

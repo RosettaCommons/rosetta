@@ -329,7 +329,9 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		// We assume here that all the rotamers being added to suggested_rotamers are of the same type and group
 		utility::vector1< ResidueOP > suggested_rotamers;
-		rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
+		// For D-amino acids, returns the rotamer library for the corresponding L-amino acid.
+		rotamers::SingleResidueRotamerLibraryCOP rotlib =
+				rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue );
 
 		if ( rotlib ) {
 			/// DOUG DOUG DOUG DEBUG OUTPUT

@@ -1,6 +1,5 @@
 
 -include_sugars
--read_pdb_link_records
 -write_pdb_link_records
 
 -ex1

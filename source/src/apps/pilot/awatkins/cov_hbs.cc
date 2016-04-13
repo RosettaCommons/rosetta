@@ -136,7 +136,6 @@ int main ( int argc, char* argv[] )
 		//option[ chemical::patch_selectors ].push_back( "CTERM_AMIDATION" );
 
 		devel::init(argc, argv);
-		option[ OptionKeys::in::file::read_pdb_link_records ].value( true );
 		option[ OptionKeys::in::constraints_from_link_records ].value( true );
 		option[ OptionKeys::out::file::write_pdb_link_records ].value( true );
 

@@ -1,4 +1,4 @@
 -chemical:patch_selectors aryl-C-conjugated NtermProteinMethylated aryl-O-conjugated  phg_cd1_conjugation phg_cd2_conjugation
--read_pdb_link_records
 -include_sugars 
 -mute core.kinematics.AtomTree
+-extra_patch_fa ../../../../database/chemical/residue_type_sets/fa_standard/patches/branching/C-terminal_conjugation.txt

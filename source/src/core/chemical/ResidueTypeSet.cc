@@ -53,8 +53,6 @@
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
 
-
-
 // Basic headers
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
@@ -109,9 +107,8 @@ bool sort_patchop_by_name( PatchOP p, PatchOP q ) {
 }
 
 void ResidueTypeSet::init(
-	std::vector< std::string > const & extra_res_param_files, // defaults to empty
-	std::vector< std::string > const & extra_patch_files // defaults to empty
-)
+		std::vector< std::string > const & extra_res_param_files,  // defaults to empty
+		std::vector< std::string > const & extra_patch_files )  // defaults to empty
 {
 	using namespace basic::options;
 
@@ -197,7 +194,6 @@ void ResidueTypeSet::init(
 			base_residue_types_.push_back( rsd_type );
 			cache_->add_residue_type( rsd_type );
 		}
-
 	}  // ResidueTypes read
 
 	// now apply patches
@@ -228,19 +224,11 @@ void ResidueTypeSet::init(
 		// if you specified it explicitly, you probably want it to load.
 		std::string line;
 		while ( getline( data,line) ) {
-			if ( line.size() < 1 || line[0] == '#' ) continue;
+			if ( line.size() < 1 || line[ 0 ] == '#' ) continue;
 
 			// get rid of any comment lines.
-			line = utility::string_split( line, '#' )[1];
-			line = utility::string_split( line, ' ' )[1];
-
-			// Skip branching/conjugation patches unless included with read_pdb_link_records flag.
-			// AMW: ultimately we don't want to skip these, but we have to for now:
-			// they possess missing atoms that screw up readin
-			if ( ( ! option[ OptionKeys::in::file::read_pdb_link_records ] ) &&
-					( line.substr( 0, 17 ) == "patches/branching" ) ) {
-				continue;
-			}
+			line = utility::string_split( line, '#' )[ 1 ];
+			line = utility::string_split( line, ' ' )[ 1 ];
 
 			// Skip carbohydrate patches unless included with include_sugars flag.
 			if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
@@ -455,7 +443,6 @@ ResidueTypeSet::apply_patches(
 					"Error in core::chemical::ResidueTypeSet::apply_patches: An L-equivalent for " + new_rsd_type->name() + " has already been defined."
 				);
 				d_to_l_mapping_[ new_rsd_type ] = base_residue_types_[i];
-
 			}
 		}
 	}
@@ -463,7 +450,6 @@ ResidueTypeSet::apply_patches(
 	// separate this to handle a set of base residue types and a set of patches.
 	// this would allow addition of patches and/or base_residue_types at stages after initialization.
 	update_info_on_name3_and_interchangeability_group( base_residue_types_ );
-
 }
 
 /// @details following assumes that all new name3 and interchangeability groups for residue types
@@ -492,7 +478,6 @@ ResidueTypeSet::update_info_on_name3_and_interchangeability_group( ResidueTypeCO
 				if ( interchangeability_group.size() > 0 ) {
 					interchangeability_group_generated_by_base_residue_name_[ rsd_type.name() ].insert( interchangeability_group );
 				}
-
 			}
 		}
 	}
@@ -637,14 +622,14 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			cache_->add_residue_type( rsd_instantiated );
 			patch_applied = true;
 		}
-
 		return patch_applied;
 	}
 }
 
 /// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 bool
-ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const
+ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name,
+		std::string const & name3 ) const
 {
 	if ( name3_generated_by_base_residue_name_.find( base_residue_name ) ==
 			name3_generated_by_base_residue_name_.end() ) return false;
@@ -652,14 +637,19 @@ ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & b
 	return ( name3_set.count( name3 ) );
 }
 
-/// @brief Check if a base type (like "CYS") generates any types with a new interchangeability group (like "SCY" (via cys_acetylated))
+/// @brief Check if a base type (like "CYS") generates any types with a new
+/// interchangeability group (like "SCY" (via cys_acetylated))
 bool
-ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name, std::string const & interchangeability_group ) const
+ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name,
+		std::string const & interchangeability_group ) const
 {
 	if ( interchangeability_group_generated_by_base_residue_name_.find( base_residue_name ) ==
-			interchangeability_group_generated_by_base_residue_name_.end() ) return false;
-	std::set< std::string> const & interchangeability_group_set = interchangeability_group_generated_by_base_residue_name_.find( base_residue_name )->second;
-	return ( interchangeability_group_set.count( interchangeability_group ) );
+			interchangeability_group_generated_by_base_residue_name_.end() ) {
+		return false;
+	}
+	std::set< std::string> const & interchangeability_group_set =
+			interchangeability_group_generated_by_base_residue_name_.find( base_residue_name )->second;
+	return interchangeability_group_set.count( interchangeability_group );
 }
 
 

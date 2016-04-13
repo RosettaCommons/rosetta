@@ -52,10 +52,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 		using namespace core::import_pose;
 		using namespace basic::options;
 
-		core_init();
-
-		option[ OptionKeys::in::include_sugars ]( true );
-		option[ OptionKeys::in::file::read_pdb_link_records ]( true );
+		core_init_with_additional_options( "-include_sugars" );
 
 		// Test branched oligosaccharide.
 		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);

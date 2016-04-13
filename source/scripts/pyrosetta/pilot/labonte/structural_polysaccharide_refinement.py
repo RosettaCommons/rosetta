@@ -170,8 +170,7 @@ if __name__ == '__main__':
     # Initialize Rosetta.
     print '\nInitializing Rosetta...'
     init(extra_options='-include_sugars '
-                       '-read_pdb_link_records -write_pdb_link_records '
-                       '-override_rsd_type_limit '
+                       '-write_pdb_link_records '
                        '-mute basic -mute numeric -mute utility '
                        '-mute core -mute protocols '
                        '-missing_density_to_jump '

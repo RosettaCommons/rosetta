@@ -33,7 +33,7 @@ patches/nucleic/rna/Virtual_Phosphate.txt
 #patches/NtermTruncation.txt
 
 ## Branching patches
-patches/branching/C-terminal_conjugation.txt
+#patches/branching/C-terminal_conjugation.txt  # Something is broken with this patch. ~Labonte
 patches/branching/S-linked_conjugation.txt
 patches/branching/N-linked_conjugation.txt
 patches/branching/O-linked_conjugation.txt
@@ -47,7 +47,7 @@ patches/carbohydrates/upper_terminus.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
-### patches/branching (requires -read_pdb_link_records flag to patch)
+### patches/branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt

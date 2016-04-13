@@ -45,13 +45,13 @@ patches/nucleic/rna/BlockStackBelow.txt # blocker to define terminal base pairs
 # Special
 patches/SpecialRotamer.txt
 
-# Branching/Conjugation (requires -read_pdb_link_records flag to patch)
+# Branching/Conjugation
 patches/branching/O-linked_conjugation.txt
 patches/branching/N-linked_conjugation.txt
 patches/branching/aryl-O-conjugated.txt
 patches/branching/aryl-C-conjugated.txt
 patches/branching/S-linked_conjugation.txt
-patches/branching/C-terminal_conjugation.txt
+#patches/branching/C-terminal_conjugation.txt  # Something is broken with this patch. ~Labonte
 patches/branching/sidechain_carboxyl_conjugation.txt
 patches/branching/sidechain_electrophile_conjugation.txt
 patches/branching/phg_cd1_conjugation.txt
@@ -137,7 +137,7 @@ patches/carbohydrates/upper_terminus.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
-### branching (requires -read_pdb_link_records flag to patch)
+### branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt

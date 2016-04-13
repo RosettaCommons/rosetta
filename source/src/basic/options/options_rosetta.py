@@ -471,12 +471,6 @@ Options = Option_Group( '',
 			Option( 'input_res', 'ResidueChainVector', desc='Residues already present in starting file',default=[]),
 			Option( 'minimize_res', 'IntegerVector', desc='Residues to minimize',default=[]),
 			Option( 'md_schfile', 'String', desc='File name containing MD schedule'),
-			Option("read_pdb_link_records", "Boolean",
-					desc='Sets whether or not the LINK records in PDB files are read.  '
-							'The default value is false.',
-					short="Read LINK records?",
-					legal=["true", "false"],
-					default="false"),
 			Option( 'native_contacts', 'File',
 					desc='native contacts pair list for fnat/fnon-nat calculation in Docking'),
 		), # in:file
