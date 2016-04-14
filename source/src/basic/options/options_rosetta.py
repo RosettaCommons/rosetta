@@ -1912,40 +1912,76 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default='default.table'
 			),
 
-		##### Glycan Relax Options #####
-		Option('glycan_relax_test', 'Boolean',
-			desc='Indicates to go into testing mode for Glycan Relax.  '\
-				'Will try all torsions in a given PDB in a linear fashion',
-			default = 'false'
-			),
-		Option('glycan_relax_rounds', 'Integer',
-			desc = 'Number of rounds to use for Glycan Relax. Total rounds is this # times number of glycan residues in movemap',
-			default = '25'
-			),
-		Option('pack_glycans', 'Boolean',
-			desc = 'Pack Glycan OH groups during Glycan Relax. Currently time consuming',
-			default = 'false'
-			),
-		Option('final_min_glycans', 'Boolean',
-			desc = 'Do a final minimization of glycans after glycan relax protocol?',
-			default = 'true'
-			),
-		Option('glycan_relax_movie', 'Boolean',
-			desc = "Make a movie of accepts and trials (send to pymol)",
-			default = 'false',
-			),
-		Option('glycan_relax_kt', 'Real',
-			desc = "KT for GlycanRelaxMover",
-			default = '2.0',
-			),
-		Option('glycan_relax_random_start', 'Boolean',
-			desc = "Randomize the starting glycans set to move before the protocol.  Used to create increased diversity.",
-			default = 'false'
-			),
-		Option('glycan_relax_sugar_bb_start', 'Boolean',
-			desc = "Randomize the starting glycans using sugar bb data before the protocol.",
-			default = 'false'
-			),
+
+		#### Glycan Relax Options #####
+		Option_Group('glycan_relax',
+			Option('glycan_relax_test', 'Boolean',
+				desc='Indicates to go into testing mode for Glycan Relax.  '\
+					'Will try all torsions in a given PDB in a linear fashion',
+				default = 'false'
+				),
+			Option('glycan_relax_rounds', 'Integer',
+				desc = 'Number of rounds to use for Glycan Relax. Total rounds is this # times number of glycan residues in movemap',
+				default = '25'
+				),
+			Option('pack_glycans', 'Boolean',
+				desc = 'Pack Glycan OH groups during Glycan Relax. Currently time consuming',
+				default = 'false'
+				),
+			Option('final_min_glycans', 'Boolean',
+				desc = 'Do a final minimization of glycans after glycan relax protocol?',
+				default = 'true'
+				),
+			Option('glycan_relax_movie', 'Boolean',
+				desc = "Make a movie of accepts and trials (send to pymol)",
+				default = 'false',
+				),
+			Option('glycan_relax_kt', 'Real',
+				desc = "KT for GlycanRelaxMover",
+				default = '2.0',
+				),
+			Option('glycan_relax_random_start', 'Boolean',
+				desc = "Randomize the starting glycans set to move before the protocol.  Used to create increased diversity.",
+				default = 'false'
+				),
+			Option('glycan_relax_sugar_bb_start', 'Boolean',
+				desc = "Randomize the starting glycans using sugar bb data before the protocol.",
+				default = 'false'
+				),
+
+		), # - glycan_relax
+
+
+		##### Glycan Clash Check Options ######
+		Option_Group('clash_check',
+			Option('glycan_branches', 'StringVector',
+				desc = "Required. Vector of glycan branches.  Rosetta Residue numbering or PDB like RosettaScripts"
+				),
+			Option('check_chains', 'StringVector',
+				desc = "Required. A list of chains to compute chain-based clashes.  If not given, will only compute glycan-glycan clashes!"
+				),
+			Option('soft_clash', 'Real',
+				desc = "When we calculate atom-atom distances using VDW, clash if distance < (atomI_vdw + atomJ_vdw)*(1 - soft_clash)",
+				default = "0.33",
+				),
+			Option('cb_clash_distance', 'Real',
+				desc = "NOT CURRENTLY USED. Distance for CB distance clash check. Residue is clashing if at least 1 atom is less than this distance"
+				),
+			Option('ignore_hydrogens', 'Boolean',
+				desc = "Should we calculate only heavy-heavy atom clashes?",
+				default = 'false'
+				),
+			Option('ignore_full_res_output', 'Boolean',
+				desc = 'Should we output each glycan residue clash information in scorefile?  Ignoring will make scorefile a bit smaller.',
+				default = 'false'
+				),
+			Option('output_per_glycan_data', 'Boolean',
+				desc = "Should we output per glycan branch data?  Easy to compute later on if full res output is on. ",
+				default = 'false'
+				),
+
+		), # - clash_check
+
 	), # -carbohydrates
 
 	##########################################################################

@@ -183,15 +183,15 @@ void
 GlycanRelaxMover::set_cmd_line_defaults(){
 	using namespace basic::options;
 
-	rounds_ = option [OptionKeys::carbohydrates::glycan_relax_rounds]();
-	test_ = option [OptionKeys::carbohydrates::glycan_relax_test]();
-	pack_glycans_ = option[ OptionKeys::carbohydrates::pack_glycans]();
-	final_min_ = option[ OptionKeys::carbohydrates::final_min_glycans]();
-	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_relax_movie]();
-	kt_ = option[ OptionKeys::carbohydrates::glycan_relax_kt]();
-	random_start_ = option[ OptionKeys::carbohydrates::glycan_relax_random_start]();
-	sugar_bb_start_ = option[ OptionKeys::carbohydrates::glycan_relax_sugar_bb_start]();
-
+	rounds_ = option [OptionKeys::carbohydrates::glycan_relax::glycan_relax_rounds]();
+	test_ = option [OptionKeys::carbohydrates::glycan_relax::glycan_relax_test]();
+	pack_glycans_ = option[ OptionKeys::carbohydrates::glycan_relax::pack_glycans]();
+	final_min_ = option[ OptionKeys::carbohydrates::glycan_relax::final_min_glycans]();
+	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_movie]();
+	kt_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_kt]();
+	random_start_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_random_start]();
+	sugar_bb_start_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_sugar_bb_start]();
+	
 
 }
 

@@ -131,6 +131,23 @@ public:
 	}
 
 	/// @brief Lennard-Jones 6-12 potential parameter -- atom radius
+	///
+	/// @details
+	///   There are two functionally identical versions of the Lennard-Jones potential:
+	///
+	///   E ~ 4eps(sigma1/d)^12 - (sigma1/d)^6 and
+	///      and
+    ///   E ~ eps(sigma2/d)^12 - 2*(sigma2/d)^6
+	///
+    /// where sigma1 and sigma2 represent two different interpretations of the radius. eps represents the depth of the potential well.
+	/// Sigma1 represents the distance between the two atoms where the Lennard-Jones energy is 0, i.e. where a collision is just forming/resolving.
+	/// Sigma2 represents the distance between the two atoms where the derivative of the Lennard-Jones energy is 0, i.e. the minimum of the well depth.
+	///
+	/// In rosetta, we mean sigma2 when we talk about radii, but PyMol usually sets the radii to sigma1.
+	///  If you see two atoms overlapping using the Rosetta radii, they're not necessarily in collision. They are just not
+	///  at their minimum value.
+	///
+	/// The distances are related as sigma2 = 2^(1.0/6)*sigma1;  sigma2 ~= 1.22*sigma1
 	Real
 	lj_radius() const
 	{

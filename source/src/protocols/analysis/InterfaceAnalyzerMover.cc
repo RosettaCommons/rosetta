@@ -1605,7 +1605,7 @@ void InterfaceAnalyzerMover::add_score_info_to_pose( core::pose::Pose & pose ){
 		return;
 	}
 
-	typedef std::map< std::string , core::Real >::iterator it_type;
+	typedef std::map< std::string , core::Real >::const_iterator it_type;
 	for ( it_type it = score_data_.begin(); it != score_data_.end(); it++ ) {
 		core::pose::setPoseExtraScore(pose, it->first, it->second);
 	}

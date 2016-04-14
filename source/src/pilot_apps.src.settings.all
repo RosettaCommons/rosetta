@@ -179,6 +179,7 @@ sources = {
 		"build_full_model",
     	],
     	"pilot/carbohydrates" : [
+    		"glycan_clash_check",
     		"glycan_info",
     		"glycan_relax",
     	],

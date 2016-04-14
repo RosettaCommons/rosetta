@@ -147,7 +147,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
                 self.options.app_options.append(opt)
 
         lines = ["\n"]
-        line_fmt = "\toption.add_relavent( {opt} );"
+        line_fmt = "\toption.add_relevant( {opt} );"
         for opt in self.options.app_options:
 
             line = line_fmt.format(opt=opt)

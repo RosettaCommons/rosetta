@@ -34,7 +34,6 @@ static THREAD_LOCAL basic::Tracer TR("--app_name--");
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace utility::options::OptionCollection;
 	
 	--app_options--
 
