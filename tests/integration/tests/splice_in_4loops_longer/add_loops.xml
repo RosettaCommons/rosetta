@@ -5,12 +5,12 @@
 		<SeqprofConsensus name=seqprofcons min_aa_probability=2 conservation_cutoff_protein_interface_design=0 conservation_cutoff_aligned_segments=1 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1> avoid identities that are very unlikely according to the PSSM. At the binding interface use cutoff -2. At the CDRs (but not interface) cutoff -0. Rest of the Ab cutoff 2. 3Aug13 experimenting with rest of Ab cutoff 2, interface-1 and cdr cutoff 1 to reduce memory. For antibodies: conservation_cutoff_protein_interface_design=PIDO, conservation_cutoff_aligned_segments=CDRs.
 			<ProteinInterfaceDesign design_chain1=1 design_chain2=0/> 8A cutoff around the ligand defines the binding surface
 			<RestrictToAlignedSegments chain=1>
-				<L1 source_pdb="%%source_pdb%%" start_res=24 stop_res=40/>
-				<L2 source_pdb="%%source_pdb%%" start_res=47 stop_res=56/>
-				<L3 source_pdb="%%source_pdb%%" start_res=90 stop_res=101/>
-				<H1 source_pdb="%%source_pdb%%" start_res=130 stop_res=142/>
-				<H2 source_pdb="%%source_pdb%%" start_res=149 stop_res=164/>
-				<H3 source_pdb="%%source_pdb%%" start_res=202 stop_res=220/>
+				<AlignedSegment name=L1 source_pdb="%%source_pdb%%" start_res=24 stop_res=40/>
+				<AlignedSegment name=L2 source_pdb="%%source_pdb%%" start_res=47 stop_res=56/>
+				<AlignedSegment name=L3 source_pdb="%%source_pdb%%" start_res=90 stop_res=101/>
+				<AlignedSegment name=H1 source_pdb="%%source_pdb%%" start_res=130 stop_res=142/>
+				<AlignedSegment name=H2 source_pdb="%%source_pdb%%" start_res=149 stop_res=164/>
+				<AlignedSegment name=H3 source_pdb="%%source_pdb%%" start_res=202 stop_res=220/>
 			</RestrictToAlignedSegments>
 		</SeqprofConsensus>
 

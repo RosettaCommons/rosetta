@@ -23,6 +23,8 @@
 #include <core/pack/task/TaskFactory.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+
 
 
 // Utility Headers
@@ -55,6 +57,7 @@ using namespace std;
 
 RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 {
+	segment_names_.clear();
 	source_pose_.clear();
 	start_res_.clear();
 	stop_res_.clear();
@@ -86,7 +89,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		core::Size const nearest_to_from = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
 		core::Size const nearest_to_to = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
 
-		TR<<"Finding nearest residue to residue pair "<<start_res_[ count ]<<','<<stop_res_[ count ]<<" in source pose"<<std::endl;
+		TR<<"On Segment "<<segment_names_[count]<<" finding nearest residue to residue pair "<<start_res_[ count ]<<','<<stop_res_[ count ]<<" in source pose: "<<source_pose_[ count ]->pdb_info()->name() <<std::endl;
 		if ( nearest_to_from == 0 || nearest_to_to == 0 ) {
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			continue;
@@ -167,6 +170,11 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 
 	utility::vector0< TagCOP > const & btags( tag->getTags() );
 	BOOST_FOREACH ( TagCOP const btag, btags ) {
+		if (btag->getName()!="AlignedSegment")
+			utility_exit_with_message( "RestrictToAlignedSegments subtag not recognized: " + btag->getName() );
+		if ( std::find(segment_names_.begin(), segment_names_.end(), btag->getOption< std::string >( "name" )) != segment_names_.end() )
+			utility_exit_with_message("\""+btag->getOption< std::string >( "name" )+"\""+ " is already used as an AlignedSegment name. Use a different name for segment"  );
+		segment_names_.push_back(btag->getOption< std::string >( "name" ));
 		pdb_names.push_back( btag->getOption< std::string >( "source_pdb" ) );
 		start_res.push_back( btag->getOption< std::string >( "start_res" ) );
 		stop_res.push_back( btag->getOption< std::string >( "stop_res" ) );

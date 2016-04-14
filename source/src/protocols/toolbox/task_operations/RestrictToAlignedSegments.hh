@@ -64,6 +64,7 @@ public:
 	core::Real repack_shell() const{ return repack_shell_;}
 	void repack_shell( core::Real const r ){ repack_shell_ = r; }
 private:
+	utility::vector1< std::string > segment_names_;
 	utility::vector1< core::pose::PoseOP > source_pose_;
 	utility::vector1< core::Size > start_res_; // start and end will be parsed at apply time to determine the relevant residue numbers
 	utility::vector1< core::Size > stop_res_;
