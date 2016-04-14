@@ -114,6 +114,10 @@ private:
 	/// @brief Should the mover try to preserve the xyz coordinates of the atoms in the side-chain if the
 	/// new residue has an atom name matching an atom name in the old residue?  Default false.
 	bool preserve_atom_coords_;
+
+	/// @brief If true, mutates the residue to itself, ie. Ala -> Ala. This fixes some problems with TerCards being attached to residues that shouldn't have them for RotamerLinks.
+	bool mutate_self_;
+	
 };
 
 } // moves

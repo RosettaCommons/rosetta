@@ -10,6 +10,7 @@
 /// @file
 /// @author Spencer Bliven <blivens@u.washington.edu>
 /// @date 6/26/2009
+/// @edit Yang Hsia <yhsia@uw.edu> added extra option for mutating a residue to itself (to remove TERcards for RotamerLinks)
 
 // Unit headers
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -77,7 +78,8 @@ MutateResidue::MutateResidue() :
 	parent(),
 	target_(""),
 	res_name_(""),
-	preserve_atom_coords_(false)
+	preserve_atom_coords_(false),
+	mutate_self_(false)
 {}
 
 /// @brief copy ctor
@@ -86,17 +88,20 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 	parent( dm ),
 	target_(dm.target_),
 	res_name_(dm.res_name_),
-	preserve_atom_coords_(dm.preserve_atom_coords_)
+	preserve_atom_coords_(dm.preserve_atom_coords_),
+	mutate_self_(dm.mutate_self_)
 {}
 
 /// @brief Mutate a single residue to a new amino acid
 /// @param target The residue index to mutate
 /// @param new_res The name of the replacement residue
+
 MutateResidue::MutateResidue( core::Size const target, string const &new_res ) :
 	parent(),
 	target_(""),
 	res_name_(new_res),
-	preserve_atom_coords_(false)
+	preserve_atom_coords_(false),
+	mutate_self_(false)
 {
 	set_target( target );
 }
@@ -105,7 +110,8 @@ MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 	parent(),
 	target_(""),
 	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
-	preserve_atom_coords_(false)
+	preserve_atom_coords_(false),
+	mutate_self_(false)
 {
 	set_target( target );
 }
@@ -114,7 +120,8 @@ MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const 
 	parent(),
 	target_(""),
 	res_name_( name_from_aa( aa )),
-	preserve_atom_coords_(false)
+	preserve_atom_coords_(false),
+	mutate_self_(false)
 {
 	set_target( target );
 }
@@ -146,6 +153,9 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 	set_res_name( tag->getOption<string>("new_res") );
+
+	//set if you want to mutate the residue to itself, default false.
+	mutate_self_ = tag->getOption< bool >( "mutate_self", false );
 
 	//Set whether the mover should try to preserve atom XYZ coordinates or not.  (Default false).
 	set_preserve_atom_coords( tag->getOption<bool>("preserve_atom_coords", false) );
@@ -180,7 +190,12 @@ void MutateResidue::apply( Pose & pose ) {
 		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
 		utility_exit();
 	}
-
+	
+	if( mutate_self_ ) {
+		TR << "Setting target residue: " << rosetta_target << " to self (" << pose.residue( rosetta_target ).name3() << ")" << std::endl;
+		set_res_name( pose.residue( rosetta_target ).name3() ); //sets res_name to the residue of target
+	}
+	
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Mutating residue " << rosetta_target << " from "
 			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
