@@ -1,6 +1,6 @@
-HETNAM     Glc X   1  ->4)-alpha-D-Glcp
+HETNAM     Glc X   1  ->4)-alpha-D-Glcp, 2-acetylamino-2-deoxy-
 HETNAM     Gal X   2  ->3)-beta-D-Galp
-HETNAM     Neu X   3  ->8)-alpha-Neup
+HETNAM     Neu X   3  ->8)-alpha-Neup, N5-acetyl-
 HETNAM     Fuc Y   1  ->4)-alpha-L-Fucp
 LINK         O3  Glc X   1                 C1  Fuc Y   1     1555   1555  1.5
 HETATM    1  C1  Glc X   1      31.664   5.109   3.322  1.00 17.37           C

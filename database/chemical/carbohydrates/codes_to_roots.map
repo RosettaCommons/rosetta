@@ -17,6 +17,11 @@
 #    PDB files parsed by FileData to determine specific saccharide
 #    ResidueTypes.
 
+# Sources:
+# IUPAC
+# (2015) Glycobiology 25(12), 1323-4. (Appendix 1B)
+
+
 # ALDOSES
 # Aldotriose
 Gly glycer  # TODO: Deal with this special case later.
@@ -25,11 +30,14 @@ Gly glycer  # TODO: Deal with this special case later.
 Ery erythr
 Thr thre
 
-# Aldopentoses
+# Aldopentoses, Linear
 Rib rib
 Ara arabin
 Xyl xyl
 Lyx lyx
+
+# Aldopentoses, Branched-chain
+Api api  # trivial name for 3-C-(hydroxymethyl)-D-erythrofuranose
 
 # Aldohexoses
 All all
@@ -42,14 +50,22 @@ Gal galact
 Tal tal
 
 Fuc fuc  # trivial name for 6-deoxygalactose
-Abe abequ  # trivial name for 3,6-dideoxygalactose
 Rha rhamn  # trivial name for 6-deoxymannose
-Mur muram  # trivial name for a lactic acid derivative of glucosamine
-Qui quinov  # trivial name for 6-deoxygalactose
-Dau daun  # trivial name for 2,6-dideoxygalactose; Dau is (I think) my own invention ~Labonte
+Qui quinov  # trivial name for 6-deoxyglucose
 
-# Branched-chain
-Api api
+Dau daun  # trivial name for 2,6-dideoxygalactose/talose; Dau is (I think) my own invention ~Labonte
+Dig digitox  # trivial name for 2,6-dideoxyaltrose/allose
+Oli oliv  # trivial name for 2,6-dideoxyglucose/mannose
+
+Col colit  # trivial name for 3,6-dideoxy-L-galactose/gulose; "L-Abe"
+Abe abequ  # trivial name for 3,6-dideoxy-D-galactose/gulose; "D-Col"
+Tyv tyvel  # trivial name for 3,6-dideoxymannose/altrose
+Par parat  # trivial name for 3,6-dideoxyglucose/allose
+
+Rho rhodin  # trivial name for 2,3,6-trideoxyglucose/mannose/altrose/allose; Rho is (I think) my own invention ~Labonte
+
+Mur muram  # trivial name for a lactic acid derivative of glucosamine
+Bac bacill  # trivial name for 2,4,6-trideoxy-2,4-diamino-D-glucose
 
 
 # KETOSES
@@ -69,9 +85,12 @@ Fru fruct
 Sor sorb
 Tag tagat
 
+# Ketoheptoses
+Dha 3-deoxy-D-lyxo-hept-2-ulosar
+
 # Ketooctose
-Kdo 3-deoxy-D-manno-oct-2-uloson
+Kdo keto-deoxy-octulon
 
 # Ketononoses (e.g., Sialic Acids)
 Neu neuramin
-Kdn 2-keto-3-nonon
+Kdn keto-deoxy-nonulon

@@ -123,6 +123,7 @@ else:
         import rosetta.core
         import rosetta.core.graph
         import rosetta.core.chemical
+        import rosetta.core.chemical.rings
         import rosetta.core.chemical.orbitals
         import rosetta.core.scoring
         import rosetta.core.scoring.methods
@@ -544,6 +545,11 @@ def add_extra_options():
     rosetta.protocols.abinitio.AbrelaxApplication.register_options()
     rosetta.protocols.abinitio.IterativeAbrelax.register_options()
     rosetta.protocols.abinitio.register_options_broker()
+
+
+# for backward-compatibility
+def pose_from_pdb(filename):
+    return pose_from_file(filename)
 
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):

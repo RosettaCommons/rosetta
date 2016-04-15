@@ -1,4 +1,4 @@
-HETNAM     Glc X   1  ->4)-alpha-D-Glcp
+HETNAM     Glc X   1  ->4)-alpha-D-Glcp, 2-amino-2-deoxy-
 HETATM    1  C1  Glc X   1      49.255 142.173 100.251  1.00 23.68           C
 HETATM    2  C2  Glc X   1      50.454 142.998 100.739  1.00 23.02           C
 HETATM    3  C3  Glc X   1      51.476 142.122 101.453  1.00 24.03           C
@@ -11,3 +11,4 @@ HETATM    9  O3  Glc X   1      52.506 142.964 101.977  1.00 23.04           O
 HETATM   10  O4  Glc X   1      51.687 140.497 103.168  1.00 22.80           O
 HETATM   11  O5  Glc X   1      48.627 141.541 101.421  1.00 22.88           O
 HETATM   12  O6  Glc X   1      48.175 140.924 104.084  1.00 23.44           O
+END

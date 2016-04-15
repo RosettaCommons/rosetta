@@ -1,5 +1,5 @@
 REMARK   Gala2(Abea3)ManaOMe
-HETNAM     Man X   1  ->2)-alpha-D-Manp
+HETNAM     Man X   1  ->2)-alpha-D-Manp, O-methyl-
 HETNAM     Gal X   2  ->4)-alpha-D-Galp
 HETNAM     Abe Y   1  ->4)-alpha-D-Abep
 LINK         O3  Man X   1                 C1  Abe Y   1     1555   1555  1.5

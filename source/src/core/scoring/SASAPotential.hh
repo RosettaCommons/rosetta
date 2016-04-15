@@ -20,7 +20,6 @@
 #include <core/scoring/power_diagram/PowerDiagram.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 #include <core/scoring/DerivVectorPair.hh>
 
@@ -28,9 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
-//#include <core//.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -38,6 +35,11 @@
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
+
+#if defined(WIN32)  // required, because Windows uses rad1 and rad2 as keywords
+#undef rad1
+#undef rad2
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

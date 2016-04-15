@@ -1,4 +1,4 @@
-HETNAM     Glc A   1  ->4)-beta-D-Glcp
+HETNAM     Glc A   1  ->4)-beta-D-Glcp, 2-acetylamino-2-deoxy-
 HETNAM     Gal A   2  ->4)-beta-D-Galp
 HETNAM     Fuc B   1  ->4)-alpha-L-Fucp
 LINK         O3  Glc A   1                 C1  Fuc B   1     1555   1555  1.5   

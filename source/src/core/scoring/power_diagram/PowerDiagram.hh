@@ -29,6 +29,11 @@
 
 #include <list>
 
+#if defined(WIN32)  // required, because Windows uses rad1 and rad2 as keywords
+#undef rad1
+#undef rad2
+#endif
+
 namespace core {
 namespace scoring {
 namespace power_diagram {
@@ -73,22 +78,22 @@ private:
 class SAnode : public utility::pointer::ReferenceCount {
 
 public:
-	SAnode( PDinterOP & inter, PDsphereCOP & other_atom, Real ct, Real phi ) : inter_(inter), other_atom_(other_atom), cos_theta_(ct), phi_(phi) {}
+	SAnode( PDinterOP & inter, PDsphereCOP & other_atom, core::Real ct, core::Real phi ) : inter_(inter), other_atom_(other_atom), cos_theta_(ct), phi_(phi) {}
 	SAnode( PDinterOP & inter, PDsphereCOP & other_atom ) : inter_(inter), other_atom_(other_atom), cos_theta_(0.0), phi_(0.0) {}
 
 	Vector const & xyz() const { return inter_->xyz(); }
 	PDinterOP const & inter() const { return inter_; }
 	PDsphereCOP const & other_atom() const { return other_atom_; }
-	Real cos_theta() const { return cos_theta_; }
-	Real phi() const { return phi_; }
-	void set_cos_theta( Real ct ) { cos_theta_ = ct; }
-	void set_phi( Real p ) { phi_ = p; }
+	core::Real cos_theta() const { return cos_theta_; }
+	core::Real phi() const { return phi_; }
+	void set_cos_theta( core::Real ct ) { cos_theta_ = ct; }
+	void set_phi( core::Real p ) { phi_ = p; }
 
 private:
 	PDinterOP inter_;
 	PDsphereCOP other_atom_;
-	Real cos_theta_;
-	Real phi_;
+	core::Real cos_theta_;
+	core::Real phi_;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -113,18 +118,18 @@ public:
 	Size & nonconst_atom() { return atom_; }
 	Vector const & xyz() const { return xyz_; }
 	Vector & nonconst_xyz() { return xyz_; }
-	Real const & rad() const { return rad_; }
-	Real & nonconst_rad() { return rad_; }
-	Real const & rad2() const { return rad2_; }
-	Real & nonconst_rad2() { return rad2_; }
+	core::Real const & rad() const { return rad_; }
+	core::Real & nonconst_rad() { return rad_; }
+	core::Real const & rad2() const { return rad2_; }
+	core::Real & nonconst_rad2() { return rad2_; }
 	std::list< PDvertexOP > & vertices(){ return cell_vertices_; }
 	utility::vector1< utility::vector1< SAnode > > & cycles() { return cycles_; }
 
 private:
 	Size res_;
 	Size atom_;
-	Real rad_;
-	Real rad2_;
+	core::Real rad_;
+	core::Real rad2_;
 	Vector xyz_;
 	std::list< PDvertexOP > cell_vertices_;
 	utility::vector1< utility::vector1< SAnode > > cycles_;
@@ -151,8 +156,8 @@ public:
 	Vector & nonconst_xyz() { return xyz_; }
 	Vector const & direction() const { return xyz_; }
 	Vector & nonconst_direction() { return xyz_; }
-	Real power() { return power_; }
-	Real & nonconst_power() { return power_; }
+	core::Real power() { return power_; }
+	core::Real & nonconst_power() { return power_; }
 	utility::vector1< PDvertexOP >  const & partners() const { return partners_; }
 	utility::vector1< PDvertexOP > & nonconst_partners() { return partners_; }
 	utility::vector1< PDsphereOP >  const & generators() const { return generators_; }
@@ -164,7 +169,7 @@ private:
 	bool finite_;
 	bool live_;
 	Vector xyz_;
-	Real power_;
+	core::Real power_;
 	utility::vector1< PDvertexOP > partners_;
 	utility::vector1< PDsphereOP > generators_;
 	std::list< PDvertexOP >::iterator my_itr_;
@@ -252,7 +257,7 @@ public:
 	PDsphereOP sphere_lookup( Size ires, Size iatm  )
 	{ return sphere_lookup_[ ires ][ iatm ]; }
 
-	Real extract_sasa_for_atom( Size ires, Size iatm );
+	core::Real extract_sasa_for_atom( Size ires, Size iatm );
 
 	/// @brief Clear all data from power diagram
 	void clear();
@@ -270,7 +275,7 @@ private: // data
 };
 
 // Utility functions
-Real power_distance( Vector const & pt, PDsphereOP const & sph );
+core::Real power_distance( Vector const & pt, PDsphereOP const & sph );
 
 inline void
 link_vertex_to_generators( PDvertexOP vrt )
@@ -302,7 +307,7 @@ void find_intersections(
 	PDvertexCOP vrt2,
 	Vector const & start_pt,
 	Vector const & dir,
-	Real const max_extent,
+	core::Real const max_extent,
 	std::list< PDinterOP > & intersections
 );
 
@@ -311,7 +316,7 @@ find_intersections(
 	PDsphereCOP patom,
 	Vector const & start_pt,
 	Vector const & dir,
-	Real const max_extent
+	core::Real const max_extent
 );
 
 void
@@ -320,7 +325,7 @@ find_common_intersection_atoms( PDinterOP inter );
 utility::vector1< utility::vector1< SAnode > >
 get_cycles_from_intersections( std::list< PDinterOP > & intersections, PDsphereOP & this_atom );
 
-Real
+core::Real
 get_sasa_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles, PDsphereOP & this_atom );
 
 void
@@ -347,16 +352,7 @@ check_deriv_cycle(
 
 bool share_axis_atoms( PDinterCOP v1, PDsphereCOP a1, PDsphereCOP a2 );
 
-Real get_area_from_cycle( PDsphereOP this_atom, utility::vector1< SAnode > & cycle );
-
-
-
-
-
-
-
-
-
+core::Real get_area_from_cycle( PDsphereOP this_atom, utility::vector1< SAnode > & cycle );
 
 
 ///////////////////////////////////////////////////////////////////
