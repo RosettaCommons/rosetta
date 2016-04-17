@@ -7315,4 +7315,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
 	), #-willmatch
 
+  #The following option group is for internal testing purposes - not to be used for actual protocols
+	Option_Group( 'testing',
+		Option( 'HCF', 'Boolean', desc="Cause Rosetta to exit immediately with an error.", default="false" ),
+	), #-testing
 ) # end options

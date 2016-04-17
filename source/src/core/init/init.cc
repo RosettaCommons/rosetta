@@ -282,9 +282,6 @@
 #define PROCESS_STACK_SIZE 16 * 1024 * 1024 // 16 MB
 #endif
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <cstring>
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -299,9 +296,12 @@ using basic::Warning;
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
 
 // option key includes
 
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/testing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -747,6 +747,11 @@ init_complex_options()
 	// Set option system global
 	OptionCollection::set_show_accessed_options_flag( option[ out::show_accessed_options ].value() );
 	OptionCollection::set_show_unused_options_flag( option[ out::show_unused_options ].value() );
+
+	// Immediate stop if requested by options (used for testing purposes).
+	if( option[ testing::HCF ]() ) {
+		utility_exit_with_message("Do not pass go. Do not collect $200.");
+	}
 }
 
 void
@@ -1187,13 +1192,14 @@ void init(int argc, char * argv [])
 		if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
 
 	}
-// Catch any Rosetta exceptions
-catch( utility::excn::EXCN_Msg_Exception &e){
-	// print the error message to standard error
-	e.show( std::cerr );
-	// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
-	throw;
-}
+	// Catch any Rosetta exceptions
+	catch( utility::excn::EXCN_Msg_Exception &e){
+		// print the error message to standard error
+		e.show( std::cerr );
+		// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
+		throw;
+	}
+
 }
 
 
