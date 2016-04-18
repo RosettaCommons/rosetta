@@ -9,9 +9,6 @@
 # based potentials, an improved disulfide potential, and an analytic
 # evaluation of our Lennard-Jones and EEF1 potentials.
 #
-# This set of defaults was elected at the energy function meeting at the
-# Talaris conference center in Seattle in May 2013.
-#
 # Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
 # set in triplicate, and tested on the Ding & Dokholyan 38 set.  The
 # set of reference energies with the highest sequence recovery (39.4%) was

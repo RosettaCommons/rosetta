@@ -10,7 +10,8 @@
 # evaluation of our Lennard-Jones and EEF1 potentials.
 #
 # This set of defaults was elected at the energy function meeting at the
-# Talaris conference center in Seattle in May 2013.
+# Talaris conference center in Seattle in May 2013. They were demoted
+# from default at the March 2016 WinterRosettaCon, in favor of talaris2014.
 #
 # Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
 # set in triplicate, and tested on the Ding & Dokholyan 38 set.  The

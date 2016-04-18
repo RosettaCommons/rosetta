@@ -6,14 +6,15 @@
 #
 # The benchmarking performed for the O'Meara et al. (2014) hbond paper
 # showed that weakening the hbond weights by 20% improved sequence recovery,
-# rotamer recovery, and decoy discrimination.  This weight set is
-# currently the official gold standard weight set for Rosetta.
+# rotamer recovery, and decoy discrimination.
 #
 # Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
 # set in triplicate, and tested on the Ding & Dokholyan 38 set.  The
 # set of reference energies with the highest sequence recovery (39.8%) was
 # chosen.
 #
+# This _cst version of talaris2014 assigns a weight of 1.0 to constraints, and is otherwise
+# identical to the talaris set. To be used with protocols that use constraints (e.g. enzdes).
 
 METHOD_WEIGHTS ref 0.773742 0.443793 -1.63002 -1.96094 0.61937 0.173326 0.388298 1.0806 -0.358574 0.761128 0.249477 -1.19118 -0.250485 -1.51717 -0.32436 0.165383 0.20134 0.979644 1.23413 0.162496 
 fa_atr 1
@@ -33,3 +34,9 @@ fa_dun 0.7
 p_aa_pp 0.4
 yhh_planarity 0.625
 ref 1
+chainbreak 1.0
+coordinate_constraint 1.0
+atom_pair_constraint 1.0
+angle_constraint 1.0
+dihedral_constraint 1.0
+res_type_constraint 1.0
