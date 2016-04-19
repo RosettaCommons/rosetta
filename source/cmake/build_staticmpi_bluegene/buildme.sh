@@ -4,7 +4,7 @@
 cd ../
 ./make_project.py all
 cd build_staticmpi_bluegene
-export CXX=/bgsys/drivers/ppcfloor/comm/gcc/bin/mpicxx
+export CXX=/soft/compilers/wrappers/gcc/mpicxx
 /soft/buildtools/cmake/current/bin/cmake ./
 make -j 20
 
