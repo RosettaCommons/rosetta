@@ -41,8 +41,8 @@ cd %(workdir)s
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-[ -x %(bin)s/identify_cdr_clusters.%(binext)s ] || exit 1
-%(bin)s/identify_cdr_clusters.%(binext)s %(additional_flags)s -database %(database)s @flags -run:constant_seed -nodelay  2>&1 \
+[ -x %(bin)s/glycan_clash_check.%(binext)s ] || exit 1
+%(bin)s/glycan_clash_check.%(binext)s %(additional_flags)s -database %(database)s @flags -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

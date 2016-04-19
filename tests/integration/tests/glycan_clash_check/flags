@@ -1,6 +1,5 @@
 -s test1.pdb test2.pdb
 -include_sugars
--read_pdb_link_records
 -glycan_branches 645D 641D
 -check_chains A B D
 
