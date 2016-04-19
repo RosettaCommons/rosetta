@@ -1,6 +1,13 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+SET(COMPILER gcc)
+SET(MODE release)
+SET(LINK_RULES static)
+
+INCLUDE(../build/libraries.cmake)
 INCLUDE(../build/build.pre.cmake)
+INCLUDE(../build/static.build.cmake)
+INCLUDE(../build/build.settings.cmake)
 INCLUDE(../build/external.static.cmake)
 
 LINK_DIRECTORIES(
@@ -15,10 +22,6 @@ SET(COMPILE_FLAGS "-O3")
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 " ) 
 
-SET( LIBRARIES
-	ObjexxFCL utility numeric basic
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel
-    )
 FOREACH(LIBRARY ${LIBRARIES})
 	INCLUDE(../build/${LIBRARY}.cmake)
 	ADD_LIBRARY(${LIBRARY} ${LINK_TYPE} ${${LIBRARY}_files})
