@@ -89,8 +89,8 @@ public:  // Standard methods
 		branch_residues_(src.branch_residues_),
 		glycan_glycan_res_atomic_clashes_(src.glycan_glycan_res_atomic_clashes_),
 		glycan_chain_res_atomic_clashes_(src.glycan_chain_res_atomic_clashes_),
-		glycan_glycan_res_bad_atomic_clashes_(src.glycan_glycan_res_bad_atomic_clashes_),
-		glycan_chain_res_bad_atomic_clashes_(src.glycan_chain_res_bad_atomic_clashes_),
+		glycan_glycan_res_soft_atomic_clashes_(src.glycan_glycan_res_soft_atomic_clashes_),
+		glycan_chain_res_soft_atomic_clashes_(src.glycan_chain_res_soft_atomic_clashes_),
 		soft_clash_percent_(src.soft_clash_percent_),
 		ignore_hydrogens_(src.ignore_hydrogens_),
 		ignore_full_res_output_(src.ignore_full_res_output_),
@@ -201,42 +201,42 @@ public:  // Standard Rosetta methods
 			//Initialize data
 			glycan_glycan_res_atomic_clashes_[     branch_start ].clear();
 			glycan_chain_res_atomic_clashes_[      branch_start ].clear();
-			glycan_glycan_res_bad_atomic_clashes_[ branch_start ].clear();
-			glycan_chain_res_bad_atomic_clashes_[  branch_start ].clear();
+			glycan_glycan_res_soft_atomic_clashes_[ branch_start ].clear();
+			glycan_chain_res_soft_atomic_clashes_[  branch_start ].clear();
 			
 			glycan_glycan_res_atomic_clashes_[     branch_start ].resize( pose.total_residue(), 0 );
 			glycan_chain_res_atomic_clashes_[      branch_start ].resize( pose.total_residue(), 0 );
-			glycan_glycan_res_bad_atomic_clashes_[ branch_start ].resize( pose.total_residue(), 0 );
-			glycan_chain_res_bad_atomic_clashes_[  branch_start ].resize( pose.total_residue(), 0 );
+			glycan_glycan_res_soft_atomic_clashes_[ branch_start ].resize( pose.total_residue(), 0 );
+			glycan_chain_res_soft_atomic_clashes_[  branch_start ].resize( pose.total_residue(), 0 );
 			
 			for (core::Size index = 1; index <= it->second.size(); ++index ){
 				
 				core::Size glycan_resnum = it->second[ index ];
 				//TR << "Branch: " << branch_start << " Glycan Res: " << glycan_resnum << std::endl;
-				calculate_atom_clashes("glycan", pose, branch_start, glycan_resnum, glycan_resnums_, glycan_glycan_res_atomic_clashes_, glycan_glycan_res_bad_atomic_clashes_);
+				calculate_atom_clashes("glycan", pose, branch_start, glycan_resnum, glycan_resnums_, glycan_glycan_res_atomic_clashes_, glycan_glycan_res_soft_atomic_clashes_);
 				
 				
-				calculate_atom_clashes("chain", pose, branch_start, glycan_resnum,  chain_resnums_, glycan_chain_res_atomic_clashes_, glycan_chain_res_bad_atomic_clashes_);
+				calculate_atom_clashes("chain", pose, branch_start, glycan_resnum,  chain_resnums_, glycan_chain_res_atomic_clashes_, glycan_chain_res_soft_atomic_clashes_);
 					
 			}
 		}
 		
 		tabulate_individual_data( "glycan", "norm", pose, glycan_glycan_res_atomic_clashes_);
-		tabulate_individual_data( "glycan", "soft", pose, glycan_glycan_res_bad_atomic_clashes_);
+		tabulate_individual_data( "glycan", "soft", pose, glycan_glycan_res_soft_atomic_clashes_);
 			
 		tabulate_individual_data( "chain", "norm", pose, glycan_chain_res_atomic_clashes_);
-		tabulate_individual_data( "chain", "soft", pose, glycan_chain_res_bad_atomic_clashes_);
+		tabulate_individual_data( "chain", "soft", pose, glycan_chain_res_soft_atomic_clashes_);
 			
 		//Sum glycan and chain data.
 		//std::cout << "Summing data " << std::endl;
 		std::map< std::string, utility::vector1< core::Size > > summed_norm;
-		std::map< std::string, utility::vector1< core::Size > > summed_bad;
+		std::map< std::string, utility::vector1< core::Size > > summed_soft;
 		
 		for (core::Size index = 1; index <= branches_.size(); ++index ){
 			std::string branch = branches_[ index ];
 			
 			summed_norm[ branch ].resize( pose.total_residue(), 0);
-			summed_bad[ branch ].resize( pose.total_residue(), 0);
+			summed_soft[ branch ].resize( pose.total_residue(), 0);
 			std::cout << "Summing " << branch << std::endl;
 			for (core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum){
 				
@@ -246,16 +246,16 @@ public:  // Standard Rosetta methods
 				//TR << "Norm: "<< resnum << " "<< glycan_glycan_res_atomic_clashes_[branch][resnum] ;
 				//TR << "Norm: "<< resnum << " "<< glycan_chain_res_atomic_clashes_[branch][resnum];
 				
-				summed_bad[branch][resnum] =  glycan_glycan_res_bad_atomic_clashes_[branch][resnum] +
-											  glycan_chain_res_bad_atomic_clashes_[branch][resnum];
+				summed_soft[branch][resnum] =  glycan_glycan_res_soft_atomic_clashes_[branch][resnum] +
+											  glycan_chain_res_soft_atomic_clashes_[branch][resnum];
 				
 				
-				//TR << "Bad: "<< resnum << " "<< summed_bad[branch][resnum] << std::endl;
+				//TR << "Bad: "<< resnum << " "<< summed_soft[branch][resnum] << std::endl;
 			}
 		}
 		//TR << "Summed " << std::endl;
 		tabulate_individual_data( "combined", "norm", pose, summed_norm);
-		tabulate_individual_data( "combined", "bad", pose, summed_bad);
+		tabulate_individual_data( "combined", "soft", pose, summed_soft);
 		
 		report_data( pose );
 		
@@ -292,7 +292,7 @@ private:  // Private methods
 		return num/lj_n_;
 	}
 	
-	///Return a pair of booleans denoting a clash and a bad clash.  gx is the glycan atom num
+	///Return a pair of booleans denoting a clash and a soft clash.  gx is the glycan atom num
 	std::pair< bool, bool >
 	is_clashing( core::pose::Pose const & pose, core::Size const glycan_resnum, core::Size const other_resnum, core::Size const gx){
 		
@@ -314,9 +314,9 @@ private:  // Private methods
 			core::Real other_vdw_radii = lj_radius_to_zero_e_radius( pose.residue( other_resnum ).atom_type( ox ).lj_radius() );
 			
 			core::Real normal_cutoff = glycan_vdw_radii + other_vdw_radii;
-			core::Real bad_cutoff = normal_cutoff*(1 - soft_clash_percent_ );
-			//std::cout << gx_ox_dis << " " << normal_cutoff << " " << bad_cutoff << std::endl;
-			if ( gx_ox_dis < bad_cutoff ){
+			core::Real soft_cutoff = normal_cutoff*(1 - soft_clash_percent_ );
+			//std::cout << gx_ox_dis << " " << normal_cutoff << " " << soft_cutoff << std::endl;
+			if ( gx_ox_dis < soft_cutoff ){
 				soft_clash = true;
 				clash = true; //Bad Clash implies clash!
 				break;
@@ -326,21 +326,21 @@ private:  // Private methods
 				//TR << std::endl;
 				//TR << pose.residue( glycan_resnum ).atom_name( gx )  <<"  -  "<< pose.residue( other_resnum ).atom_name( ox ) << std::endl;
 				//TR << glycan_vdw_radii <<"  -  "<<other_vdw_radii <<std::endl;
-				//TR << "Clash" << glycan_resnum << " to " << other_resnum<<" "<< gx_ox_dis << " " << normal_cutoff << " " << bad_cutoff << std::endl;
+				//TR << "Clash" << glycan_resnum << " to " << other_resnum<<" "<< gx_ox_dis << " " << normal_cutoff << " " << soft_cutoff << std::endl;
 				
 			}
 		}
 		return std::make_pair( clash, soft_clash );
 	
 	}
-	/// @brief Calculate regular and bad clashes.  Again, this could be made better. Expecially in regard to pre-computing the bad cutoffs, lj_radius at zero, etc.
+	/// @brief Calculate regular and soft clashes.  Again, this could be made better. Expecially in regard to pre-computing the soft cutoffs, lj_radius at zero, etc.
 	///
 	/// @details
 	///     N Clashes: Number of atoms making at least one clash to other resnum
-	///     N Bad Clashes: Number of atoms making at least one bad clash to other resnum.
+	///     N Bad Clashes: Number of atoms making at least one soft clash to other resnum.
 	///
 	void
-	calculate_atom_clashes( std::string const & clash_type, const core::pose::Pose & pose, std::string branch, core::Size const & glycan_resnum, utility::vector1< core::Size > other_resnums, std::map< std::string, utility::vector1< core::Size > > & atom_clashes, std::map< std::string, utility::vector1< core::Size > > & bad_atom_clashes) {
+	calculate_atom_clashes( std::string const & clash_type, const core::pose::Pose & pose, std::string branch, core::Size const & glycan_resnum, utility::vector1< core::Size > other_resnums, std::map< std::string, utility::vector1< core::Size > > & atom_clashes, std::map< std::string, utility::vector1< core::Size > > & soft_atom_clashes) {
 		
 		TR << "calculating atom clashes: " << clash_type << " for branch " << branch << std::endl;
 		for ( core::Size gx = 1; gx <= pose.residue( glycan_resnum ).natoms(); ++gx ) {
@@ -368,7 +368,7 @@ private:  // Private methods
 				if (clashing.first){
 					normal_clash = true;
 				}
-				//If we have found a clash and a bad clash, we are done here.
+				//If we have found a clash and a soft clash, we are done here.
 				if (clashing.second){
 					soft_clash = true;
 					break;
@@ -381,7 +381,7 @@ private:  // Private methods
 				atom_clashes[ branch ][ glycan_resnum ]+=1;
 			}
 			if (soft_clash){
-				bad_atom_clashes[ branch ][ glycan_resnum ]+=1;
+				soft_atom_clashes[ branch ][ glycan_resnum ]+=1;
 			}
 			
 		}
@@ -558,14 +558,14 @@ private:  // Private data
 	
 	/// @brief Glycan to Glycan total number of clashes defined by atom-atom fa_rep radii
 	std::map< std::string, utility::vector1< core::Size > >
-	glycan_glycan_res_bad_atomic_clashes_;
+	glycan_glycan_res_soft_atomic_clashes_;
 	
 	/// @brief Glycan to chain atomic clashes.
 	std::map< std::string, utility::vector1< core::Size > >
-	glycan_chain_res_bad_atomic_clashes_;
+	glycan_chain_res_soft_atomic_clashes_;
 	
 	
-	/// @brief When we calculate atom-atom distances using VDW, clash is badly if distance < (atomI_vdw + atomJ_vdw)*(1 - soft_clash)
+	/// @brief When we calculate atom-atom distances using VDW, clash is softly if distance < (atomI_vdw + atomJ_vdw)*(1 - soft_clash)
 	core::Real soft_clash_percent_;
 	
 	bool ignore_hydrogens_;
