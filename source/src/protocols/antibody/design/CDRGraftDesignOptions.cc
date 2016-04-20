@@ -326,7 +326,7 @@ CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, v
 		boost::to_upper(type);
 		set_cdr_graft_mintype_options(type);
 		return;
-	} else if ( setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS" || setting == "Min_Other" || setting == "MinOther" ) {
+	} else if ( setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS" || setting == "MIN_OTHER" || setting == "MINOTHER" ) {
 		set_cdr_graft_neighbor_mintype_options(lineSP);
 		return;
 	} else if ( setting == "WEIGHT" || setting == "WEIGHTS" ) {
