@@ -75,6 +75,17 @@ AlaScan::scorefxn( core::scoring::ScoreFunctionOP scorefxn )
 	scorefxn_ = scorefxn;
 }
 
+AlaScan::AlaScan():
+	Filter( "AlaScan" ),
+	chain1_( 0 ),
+	chain2_( 1 ),
+	repeats_( 1 ),
+	distance_threshold_( 8.0 ),
+	jump_( 1 ),
+	symmetry_( false ),
+	repack_( true )
+{}
+
 AlaScan::AlaScan( bool const chain1, bool const chain2, core::Size const repeats, core::Real const dist, core::scoring::ScoreFunctionCOP scorefxn, core::Size const jump=1, bool const symmetry=false ) : Filter( "AlaScan" ),
 	chain1_( chain1 ),
 	chain2_( chain2 ),
@@ -105,14 +116,14 @@ AlaScan::repack( bool const repack )
 void
 AlaScan::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	distance_threshold_ = tag->getOption<core::Real>( "interface_distance_cutoff", 8.0 );
-	chain1_ = tag->getOption< bool >( "partner1", 0 );
-	chain2_ = tag->getOption< bool >( "partner2", 1 );
-	jump_ = tag->getOption< Size >( "jump", 1 );
+	distance_threshold_ = tag->getOption<core::Real>( "interface_distance_cutoff", distance_threshold_ );
+	chain1_ = tag->getOption< bool >( "partner1", chain1_ );
+	chain2_ = tag->getOption< bool >( "partner2", chain2_ );
+	jump_ = tag->getOption< Size >( "jump", jump_ );
 	runtime_assert( chain1_ || chain2_ );
-	repeats_ = tag->getOption< core::Size >( "repeats", 1 );
-	symmetry_ = tag->getOption< bool >( "symmetry", 0 );
-	repack( tag->getOption< bool >( "repack", 1 ) );
+	repeats_ = tag->getOption< core::Size >( "repeats", repeats_ );
+	symmetry_ = tag->getOption< bool >( "symmetry", symmetry_ );
+	repack( tag->getOption< bool >( "repack", repack_ ) );
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;

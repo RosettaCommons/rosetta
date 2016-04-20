@@ -36,7 +36,7 @@ namespace simple_filters {
 class AlaScan : public filters::Filter
 {
 public :
-	AlaScan() : filters::Filter( "AlaScan" ) {}
+	AlaScan();
 	AlaScan( bool const chain1, bool const chain2, core::Size const repeats, core::Real const dist, core::scoring::ScoreFunctionCOP scorefxn, core::Size const jump, bool const symmetry );
 	bool apply( core::pose::Pose const & ) const{ return true; }
 	filters::FilterOP clone() const {
