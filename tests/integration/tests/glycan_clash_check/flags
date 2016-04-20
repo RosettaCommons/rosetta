@@ -1,4 +1,4 @@
--s test1.pdb test2.pdb
+-s test1.pdb
 -include_sugars
 -glycan_branches 645D 641D
 -check_chains A B D
