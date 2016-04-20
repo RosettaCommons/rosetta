@@ -170,10 +170,12 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 
 	utility::vector0< TagCOP > const & btags( tag->getTags() );
 	BOOST_FOREACH ( TagCOP const btag, btags ) {
-		if (btag->getName()!="AlignedSegment")
+		if ( btag->getName()!="AlignedSegment" ) {
 			utility_exit_with_message( "RestrictToAlignedSegments subtag not recognized: " + btag->getName() );
-		if ( std::find(segment_names_.begin(), segment_names_.end(), btag->getOption< std::string >( "name" )) != segment_names_.end() )
+		}
+		if ( std::find(segment_names_.begin(), segment_names_.end(), btag->getOption< std::string >( "name" )) != segment_names_.end() ) {
 			utility_exit_with_message("\""+btag->getOption< std::string >( "name" )+"\""+ " is already used as an AlignedSegment name. Use a different name for segment"  );
+		}
 		segment_names_.push_back(btag->getOption< std::string >( "name" ));
 		pdb_names.push_back( btag->getOption< std::string >( "source_pdb" ) );
 		start_res.push_back( btag->getOption< std::string >( "start_res" ) );

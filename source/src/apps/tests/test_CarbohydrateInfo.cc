@@ -87,7 +87,7 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-				O_linked, psicose, neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
+			O_linked, psicose, neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -118,7 +118,7 @@ main( int argc, char *argv[] )
 		cout << "Creating maltotriose from sequence: alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp:" << endl;
 
 		make_pose_from_saccharide_sequence(
-				maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set );
+			maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set );
 		maltotriose.pdb_info()->name( "maltotriose" );
 
 		test_sugar( maltotriose );
@@ -159,14 +159,14 @@ main( int argc, char *argv[] )
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating free 14-mer from sequence: " <<
-				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
-				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
-				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" << endl;
+			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" << endl;
 
 		make_pose_from_saccharide_sequence( free_14_mer,
-				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
-				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
-				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-", *residue_set );
+			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-", *residue_set );
 
 		test_sugar( free_14_mer );
 
@@ -194,9 +194,9 @@ main( int argc, char *argv[] )
 
 		make_pose_from_sequence( N_linked_14_mer, "ANASA", *residue_set );
 		pose::carbohydrates::glycosylate_pose( N_linked_14_mer, 2,
-				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
-				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
-				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" );
+			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" );
 
 		test_sugar( N_linked_14_mer );
 
@@ -251,10 +251,10 @@ main( int argc, char *argv[] )
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating Sialyl-Lewisx from sequence: " <<
-				"->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc:" << endl;
+			"->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc:" << endl;
 
 		make_pose_from_saccharide_sequence(
-				SLex, "->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
+			SLex, "->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
 
 		test_sugar( SLex );
 
@@ -277,7 +277,7 @@ main( int argc, char *argv[] )
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing CAPRI Round 27 Target 57, a crazy, heparin-like hexamer with uronic acids, sulfates, and "
-				"sulfonamidos:" << endl;
+			"sulfonamidos:" << endl;
 
 		pose_from_file( target57, PATH + "target57.pdb", PDB_file );
 

@@ -191,7 +191,7 @@ GlycanRelaxMover::set_cmd_line_defaults(){
 	kt_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_kt]();
 	random_start_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_random_start]();
 	sugar_bb_start_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_sugar_bb_start]();
-	
+
 
 }
 

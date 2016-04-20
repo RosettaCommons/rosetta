@@ -117,7 +117,7 @@ private:
 
 	/// @brief If true, mutates the residue to itself, ie. Ala -> Ala. This fixes some problems with TerCards being attached to residues that shouldn't have them for RotamerLinks.
 	bool mutate_self_;
-	
+
 };
 
 } // moves

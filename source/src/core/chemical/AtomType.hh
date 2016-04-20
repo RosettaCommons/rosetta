@@ -137,9 +137,9 @@ public:
 	///
 	///   E ~ 4eps(sigma1/d)^12 - (sigma1/d)^6 and
 	///      and
-    ///   E ~ eps(sigma2/d)^12 - 2*(sigma2/d)^6
+	///   E ~ eps(sigma2/d)^12 - 2*(sigma2/d)^6
 	///
-    /// where sigma1 and sigma2 represent two different interpretations of the radius. eps represents the depth of the potential well.
+	/// where sigma1 and sigma2 represent two different interpretations of the radius. eps represents the depth of the potential well.
 	/// Sigma1 represents the distance between the two atoms where the Lennard-Jones energy is 0, i.e. where a collision is just forming/resolving.
 	/// Sigma2 represents the distance between the two atoms where the derivative of the Lennard-Jones energy is 0, i.e. the minimum of the well depth.
 	///

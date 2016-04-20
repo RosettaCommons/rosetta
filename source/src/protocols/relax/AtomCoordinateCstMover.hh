@@ -83,6 +83,12 @@ private:
 	core::select::residue_selector::ResidueSubset
 	compute_residue_subset( core::pose::Pose const & pose ) const;
 
+	core::pose::PoseOP
+	get_constraint_target_pose( core::pose::Pose const & pose ) const;
+
+	core::id::SequenceMapping
+	generate_seqmap( core::pose::Pose const & pose, core::pose::Pose const & constraint_target_pose ) const;
+
 private:
 	/// @brief If set, the pose to make the constraints to
 	core::pose::PoseCOP refpose_;

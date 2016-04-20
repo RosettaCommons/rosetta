@@ -190,12 +190,12 @@ void MutateResidue::apply( Pose & pose ) {
 		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
 		utility_exit();
 	}
-	
-	if( mutate_self_ ) {
+
+	if ( mutate_self_ ) {
 		TR << "Setting target residue: " << rosetta_target << " to self (" << pose.residue( rosetta_target ).name3() << ")" << std::endl;
 		set_res_name( pose.residue( rosetta_target ).name3() ); //sets res_name to the residue of target
 	}
-	
+
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Mutating residue " << rosetta_target << " from "
 			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
