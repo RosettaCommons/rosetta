@@ -24,10 +24,9 @@
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.ConstraintGenerator" );
+
 namespace protocols {
 namespace moves {
-
-std::map<std::string,core::scoring::constraints::ConstraintCOPs> ConstraintGenerator::cst_map_;
 
 /// @details Auto-generated virtual destructor
 ConstraintGenerator::~ConstraintGenerator()
@@ -89,8 +88,6 @@ ConstraintGenerator::remove_constraints_from_pose( core::pose::Pose & pose ) con
 
 	if ( remodel_csts.size() == 0 ) return;
 
-	//TR << this->get_name() << " is about to try to remove " << remodel_csts.size() << " constraints." << std::endl;
-
 	if ( ! pose.remove_constraints( remodel_csts, true ) ) {
 		throw EXCN_RemoveCstsFailed();
 	}
@@ -118,12 +115,9 @@ void
 ConstraintGenerator::clear_stored_constraints()
 {
 	if ( id_ == "" ) return;
-	// find id for this class in the map
-	std::map< std::string, core::scoring::constraints::ConstraintCOPs >::iterator cst_it( cst_map_.find( id_ ) );
-	// if the constraints are found, warn the user and erase the old data
-	if ( cst_it != cst_map_.end() ) {
-		TR << "Overwriting constraints for " << this->get_name() << " named " << id_ << std::endl;
-		cst_map_.erase( cst_it );
+
+	if ( ConstraintSetManager::get_instance()->constraints_exist( id_ ) ) {
+		ConstraintSetManager::get_instance()->remove_constraints( id_ );
 	}
 }
 
@@ -134,27 +128,86 @@ ConstraintGenerator::store_constraints( core::scoring::constraints::ConstraintCO
 		TR.Warning << "ID is not set for this " << this->get_name() << " object. Constraints will not be removable by XML." << std::endl;
 		return;
 	}
-	// clear any stored csts
-	clear_stored_constraints();
+	ConstraintSetManager::get_instance()->store_constraints( id_, csts );
 
 	// store the csts
-	TR.Debug << "Storing constraints as " << id_ << std::endl;
-	cst_map_.insert( std::pair< std::string, core::scoring::constraints::ConstraintCOPs >( id_, csts ) );
+	TR.Debug << "Stored constraints as " << id_ << std::endl;
 }
 
-core::scoring::constraints::ConstraintCOPs const
-ConstraintGenerator::lookup_stored_constraints( std::string const & id )
+/// @brief class for looking up stored constraint sets
+ConstraintSetManager::ConstraintSetManager():
+	utility::SingletonBase< ConstraintSetManager >(),
+	cst_map_()
+{}
+
+ConstraintSetManager *
+ConstraintSetManager::create_singleton_instance()
 {
-	if ( id == "" ) {
-		utility_exit_with_message( "ID is not set! The constraint set returned will be empty. Something is being mis-used." );
+	return new ConstraintSetManager;
+}
+
+bool
+ConstraintSetManager::constraints_exist( std::string const & name ) const
+{
+	return ( cst_map_.find( name ) != cst_map_.end() );
+}
+
+core::scoring::constraints::ConstraintCOPs const &
+ConstraintSetManager::retreive_constraints( std::string const & name ) const
+{
+	ConstraintsMap::const_iterator csts = cst_map_.find( name );
+	if ( csts == cst_map_.end() ) {
+		std::stringstream msg;
+		msg << "ConstraintSetManager::retrieve_constraints(): Tried to access a stored constraint set that doesn't exist: '" << name << "'" << std::endl;
+		print_valid_names( msg );
+		utility_exit_with_message( msg.str() );
 	}
-	// find the constraint set in map
-	std::map< std::string, core::scoring::constraints::ConstraintCOPs >::const_iterator cst_it( cst_map_.find( id ) );
-	if ( cst_it == cst_map_.end() ) {
-		utility_exit_with_message( "Tried to remove constraints that aren't stored for ID=" + id );
+	return csts->second;
+}
+
+void
+ConstraintSetManager::remove_constraints( std::string const & name )
+{
+	ConstraintsMap::iterator csts = cst_map_.find( name );
+	if ( csts == cst_map_.end() ) {
+		std::stringstream msg;
+		msg << "ConstraintSetManager:retrieve_constraints(): Tried to remove a stored constraint set that doesn't exist: '" << name << "'" << std::endl;
+		print_valid_names( msg );
+		utility_exit_with_message( msg.str() );
 	}
-	return cst_it->second;
+	cst_map_.erase( csts );
+}
+
+void
+ConstraintSetManager::store_constraints( std::string const & name, core::scoring::constraints::ConstraintCOPs const & csts )
+{
+	cst_map_[ name ] = csts;
+}
+
+void
+ConstraintSetManager::print_valid_names( std::ostream & os ) const
+{
+	os << "Valid constraint set names are: ";
+	for ( ConstraintsMap::const_iterator c=cst_map_.begin(); c!=cst_map_.end(); ++c ) {
+		os << c->first << " ";
+	}
+	os << std::endl;
 }
 
 } //namespace moves
 } //namespace protocols
+
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::moves::ConstraintSetManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template<> std::mutex utility::SingletonBase< ConstraintSetManager >::singleton_mutex_{};
+template<> std::atomic< ConstraintSetManager * > utility::SingletonBase< ConstraintSetManager >::instance_( NULL );
+#else
+template<> ConstraintSetManager * utility::SingletonBase< ConstraintSetManager >::instance_( NULL );
+#endif
+
+} // namespace utility
+

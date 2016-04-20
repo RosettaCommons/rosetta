@@ -127,7 +127,7 @@ RemoveConstraints::apply( core::pose::Pose & pose )
 	core::Size const start_ncsts = pose.constraint_set()->get_all_constraints().size();
 	if ( generator_id_ != "" ) {
 		TR << "Before removing csts from " << generator_->get_name() << ", there were " << start_ncsts << " constraints in the pose." << std::endl;
-		pose.remove_constraints( protocols::moves::ConstraintGenerator::lookup_stored_constraints( generator_id_ ) );
+		pose.remove_constraints( protocols::moves::ConstraintSetManager::get_instance()->retreive_constraints( generator_id_ ) );
 		TR << "There are " << pose.constraint_set()->get_all_constraints().size() << " constraints remaining in the pose." << std::endl;
 	} else {
 		// otherwise, use the pointer

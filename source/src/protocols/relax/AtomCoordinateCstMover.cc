@@ -65,6 +65,7 @@ AtomCoordinateCstMoverCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
+	protocols::moves::ConstraintGenerator(),
 	refpose_(),
 	cst_sd_( 0.5 ),
 	bounded_( false ),
@@ -249,11 +250,11 @@ void
 AtomCoordinateCstMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose
 ) {
-
+	protocols::moves::ConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	cst_sd( tag->getOption< core::Real >( "coord_dev", 0.5 ) );
 	bounded( tag->getOption< bool >( "bounded", false ) );
 	cst_width( tag->getOption< core::Real >( "bound_width", 0 ) );

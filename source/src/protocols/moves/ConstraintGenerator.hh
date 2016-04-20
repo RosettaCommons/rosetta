@@ -32,7 +32,7 @@
 //utility headers
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
 
@@ -86,9 +86,6 @@ public:
 	core::scoring::constraints::ConstraintCOPs const &
 	constraints() const;
 
-	static core::scoring::constraints::ConstraintCOPs const
-	lookup_stored_constraints( std::string const & id );
-
 protected:
 	void
 	clear_stored_constraints();
@@ -99,9 +96,38 @@ protected:
 private:
 	std::string id_;
 	core::scoring::constraints::ConstraintCOPs csts_;
-	static std::map< std::string, core::scoring::constraints::ConstraintCOPs > cst_map_;
 }; //class ConstraintGenerator
 
+/// @brief class for looking up stored constraint sets
+class ConstraintSetManager : public utility::SingletonBase< ConstraintSetManager > {
+public:
+	typedef std::map< std::string, core::scoring::constraints::ConstraintCOPs > ConstraintsMap;
+
+public:
+	ConstraintSetManager();
+
+	static ConstraintSetManager *
+	create_singleton_instance();
+
+	bool
+	constraints_exist( std::string const & name ) const;
+
+	core::scoring::constraints::ConstraintCOPs const &
+	retreive_constraints( std::string const & name ) const;
+
+	void
+	store_constraints( std::string const & name, core::scoring::constraints::ConstraintCOPs const & constraints );
+
+	void
+	remove_constraints( std::string const & name );
+
+private:
+	void
+	print_valid_names( std::ostream & os ) const;
+
+private:
+	ConstraintsMap cst_map_;
+};
 
 class EXCN_RemoveCstsFailed : public utility::excn::EXCN_Base {
 public:
