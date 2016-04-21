@@ -3,6 +3,7 @@
 
 #General
 ALL ALLOW
+DE FIX
 
 ALL WEIGHTS 1.0
 
