@@ -46,6 +46,9 @@
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <utility/vector1.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -83,11 +86,14 @@ cartesian_dfunc(
 
 	//fpd  scale derivatives for symmetry
 	core::Real scale = 1;
-	if ( pose::symmetry::is_symmetric( pose ) ) {
-		using namespace conformation::symmetry;
-		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-		scale = symm_info->score_multiply_factor();
+	if ( pose::symmetry::is_symmetric( pose )) {
+		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+		if ( old_sym_min ) {
+			conformation::symmetry::SymmetricConformation & symm_conf (
+				dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+			conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+			scale = symm_info->score_multiply_factor();
+		}
 	}
 
 	// get derivative of all atom pair potentials

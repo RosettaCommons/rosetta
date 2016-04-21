@@ -75,9 +75,6 @@ CartesianMinimizer::run(
 
 	bool const use_nblist( options.use_nblist() );
 
-	//fpd this works with symm!
-	//runtime_assert( !core::pose::symmetry::is_symmetric( pose ) );
-
 	// it's important that the structure be scored prior to nblist setup
 	Real const start_score( scorefxn( pose ) );
 
