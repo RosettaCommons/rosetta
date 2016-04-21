@@ -57,13 +57,13 @@ public:
 
 	virtual std::string get_name() const;
 
-	/*virtual void parse_my_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const &
-	);*/
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const &
+	);
 
 	void set_initial_guesses (core::Real const &r1_initial, core::Real const &omega1_initial, core::Real const &dz1_initial) {
 		r1_initial_ = r1_initial;

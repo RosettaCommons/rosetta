@@ -300,18 +300,29 @@ void FitSimpleHelix::get_crick_parameters (
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
-/*void
+void
 FitSimpleHelix::parse_my_tag(
-utility::tag::TagCOP tag,
-basic::datacache::DataMap & data_map,
-protocols::filters::Filters_map const &filters,
-protocols::moves::Movers_map const &movers,
-core::pose::Pose const & pose
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data_map,
+	protocols::filters::Filters_map const &filters,
+	protocols::moves::Movers_map const &movers,
+	core::pose::Pose const & pose
 ) {
-
-
-return;
-}*/
+	set_initial_guesses(
+		tag->getOption<core::Real>("r1_initial", 1.0 ),
+		tag->getOption<core::Real>("omega1_initial", 1.0 ),
+		tag->getOption<core::Real>("dz1_initial", 1.0 ) );
+	
+	set_range(
+		tag->getOption<core::Size>("start_index", 0 ),
+		tag->getOption<core::Size>("end_index", 0 ) );
+	
+	set_min_type( tag->getOption<std::string>("min_type", "lbfgs_armijo_nonmonotone" ) );
+	set_min_tolerance( tag->getOption<core::Real>("min_tolerance", 0.00000001 ) );
+	set_reference_atom( tag->getOption<std::string>("reference_atom", "CA" ) );
+	set_reference_residue( tag->getOption<core::Size>("reference_residue", 1 ) );
+	set_residues_per_repeat( tag->getOption<core::Size>("residues_per_repeat", 1 ) );
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
