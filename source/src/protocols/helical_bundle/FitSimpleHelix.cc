@@ -21,6 +21,7 @@
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/random/random.hh>
@@ -303,10 +304,10 @@ void FitSimpleHelix::get_crick_parameters (
 void
 FitSimpleHelix::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & /*data_map*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & //pose
 ) {
 	set_initial_guesses(
 		tag->getOption<core::Real>("r1_initial", 1.0 ),
