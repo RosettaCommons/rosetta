@@ -239,6 +239,7 @@
 #include <protocols/ncbb/oop/OopDockDesignProtocolCreator.hh>
 #include <protocols/ncbb/oop/OopCreatorMoverCreator.hh>
 
+#include <protocols/normalmode/NormalModeRelaxMoverCreator.hh>
 #include <protocols/normalmode/NormalModeMinimizerCreator.hh>
 
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>

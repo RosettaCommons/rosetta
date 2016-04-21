@@ -316,9 +316,12 @@ WorkUnit_NormalMode::run()
 
 	// finally get normal mode instance
 	core::kinematics::MoveMapOP mm = get_movemap( pose, "pack", false );
+	/*
 	NormalModeRelaxMoverOP NM = ( cartnm )?
 		get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, true ) :  // return CNM
 		get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, false );  // return TNM
+	*/
+	NormalModeRelaxMoverOP NM( new NormalModeRelaxMover( sfxn_loc, cartnm, mm, relaxmode, dist ) );
 
 	core::optimization::MinimizerOptionsOP minoption
 		( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone",
@@ -343,7 +346,7 @@ WorkUnit_NormalMode::run()
 			core::Real const scale = scales[i];
 
 			NM->set_extrapolate_scale( scale );
-			NM->apply( pose_tmp );
+			NM->apply_on_pose( pose_tmp );
 
 			// Always store in full atom!
 			if ( pose_tmp.is_centroid() ) {

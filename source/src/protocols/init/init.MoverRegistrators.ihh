@@ -252,6 +252,7 @@ static MoverRegistrator< simple_moves::SimpleThreadingMoverCreator > reg_SimpleT
 
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 
+static MoverRegistrator< normalmode::NormalModeRelaxMoverCreator > reg_NormalModeRelaxMoverCreator;
 static MoverRegistrator< normalmode::NormalModeMinimizerCreator > reg_NormalModeMinimizerCreator;
 
 static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;

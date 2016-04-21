@@ -99,6 +99,7 @@ protected:
 
 private:
 
+	/*
 	inline
 	protocols::normalmode::NormalModeRelaxMoverOP
 	get_NMmover( core::pose::Pose pose,
@@ -116,6 +117,7 @@ private:
 				new protocols::normalmode::TorsionNormalModeMover( pose, sfxn_loc,  mm, "CA", distcut, relaxmode ) );
 		}
 	}
+	*/
 
 };
 

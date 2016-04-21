@@ -7,24 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    protocols/normalmode/NormalModeRelaxMover.fwd.hh
-/// @brief   initialization for NormalMode
-/// @details
-/// @author  Hahnbeom Park
+/// @file   core/protocols/pockets/NormalModeRelaxMoverCreator.hh
 
-#ifndef INCLUDED_protocols_normalmode_NormalModeRelaxMover_fwd_hh
-#define INCLUDED_protocols_normalmode_NormalModeRelaxMover_fwd_hh
+#ifndef INCLUDED_protocols_pockets_NormalModeRelaxMoverCreator_hh
+#define INCLUDED_protocols_pockets_NormalModeRelaxMoverCreator_hh
 
-#include <utility/pointer/owning_ptr.hh>
+// Project Headers
+#include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace normalmode {
 
-class NormalModeRelaxMover;
-typedef utility::pointer::shared_ptr< NormalModeRelaxMover > NormalModeRelaxMoverOP;
-typedef utility::pointer::shared_ptr< NormalModeRelaxMover const > NormalModeRelaxMoverCOP;
+class NormalModeRelaxMoverCreator : public protocols::moves::MoverCreator {
+public:
+  virtual protocols::moves::MoverOP create_mover() const;
+  virtual std::string keyname() const;
+  static std::string mover_name();
+};
 
-} // normalmode
-} // protocols
+
+} //namespace pockets
+} //namespace protocols
 
 #endif

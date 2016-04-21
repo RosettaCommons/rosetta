@@ -163,6 +163,7 @@ NormalMode::solve( pose::Pose const &pose )
 				Size iatm = (j-1)/3+1;
 				Size k = (j-1)%3;
 				eigvec_cart_[i][iatm][k] = U[j][i];
+				//TR << "i/j/k " << i << " " << j << " " << k << " " << eigvec_cart_[i][iatm][k] << std::endl;
 			}
 		}
 	}
@@ -392,7 +393,6 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 			}
 		}
 	}
-
 }
 
 utility::vector1< utility::vector1< Real > >
