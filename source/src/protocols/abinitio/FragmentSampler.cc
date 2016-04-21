@@ -152,6 +152,7 @@ void FragmentSampler::checkpointed_cycle_block(
 
 			recover_low( pose, stage_id );
 			if ( tr.Info.visible() ) current_scorefxn().show( tr.Info, pose );
+			if ( tr.Debug.visible() ) current_scorefxn().show_additional( tr.Debug, pose, true );
 			tr.Info << std::endl;
 			mc().show_counters();
 			total_trials_+=mc().total_trials();

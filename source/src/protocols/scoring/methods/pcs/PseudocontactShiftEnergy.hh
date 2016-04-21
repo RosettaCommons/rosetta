@@ -130,6 +130,9 @@ public:
 		PCS_data const &pcs_d
 	) const;
 
+	void
+	show_additional_info(std::ostream & out, core::pose::Pose & pose, bool verbose=false) const;
+
 	virtual
 	core::Size version() const;
 };

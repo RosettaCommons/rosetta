@@ -664,6 +664,13 @@ ScoreFunction::show_line( std::ostream & out,  pose::Pose const & pose ) const
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void
+ScoreFunction::show_additional( std::ostream & out,  pose::Pose & pose, bool verbose ) const {
+	for ( AllMethods::const_iterator it=all_methods_.begin(),it_end = all_methods_.end(); it != it_end; ++it ) {
+			(*it)->show_additional_info(out, pose, verbose);
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

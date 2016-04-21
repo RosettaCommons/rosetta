@@ -735,6 +735,9 @@ public:
 	void
 	show_line( std::ostream & out,  pose::Pose const & pose ) const;
 
+	void
+	show_additional( std::ostream & out,  pose::Pose & pose, bool verbose=false ) const;
+
 	/// @brief Accumulates the unweighted one body energies of all context
 	/// independent one body energies for  <pose>  Residue  <rsd>  into
 	/// EnergyMap  <emap>

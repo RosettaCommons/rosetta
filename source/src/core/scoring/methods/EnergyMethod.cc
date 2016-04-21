@@ -120,6 +120,8 @@ EnergyMethod::set_score_types( EnergyMethodCreatorOP creator ) {
 	score_types_ = creator->score_types_for_method();
 }
 
+/// @brief show additional information of the energy method
+void EnergyMethod::show_additional_info(std::ostream &, pose::Pose &, bool) const {}
 
 } // methods
 } // scoring

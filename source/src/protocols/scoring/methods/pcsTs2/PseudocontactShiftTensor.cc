@@ -127,7 +127,7 @@ PCS_tensor_Ts2::reset_tensor(core::Real const chi_xx,
 std::ostream &
 operator<<(std::ostream& out, const PCS_tensor_Ts2 &PCS_t){
 
-	out << "The tensor parameters of " << "'" <<PCS_t.label_ << "' are:" << std::endl;
+	out << "The tensor parameters of dataset: " << "'" <<PCS_t.label_ << "' are:" << std::endl;
 	out << "Delta Chi xx: " << PCS_t.chi_xx_ << std::endl;
 	out << "Delta Chi yy: " << PCS_t.chi_yy_ << std::endl;
 	out << "              => Delta Chi zz: " << PCS_t.delta_chi_zz() << std::endl;

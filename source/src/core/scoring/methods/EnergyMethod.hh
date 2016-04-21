@@ -235,6 +235,10 @@ public:
 	virtual
 	core::Size version() const = 0;
 
+	/// @brief show additional information of the energy method
+	virtual
+	void show_additional_info(std::ostream &, pose::Pose & , bool) const;
+
 protected:
 
 	void

@@ -257,6 +257,92 @@ PCS_Energy_Ts1::dump_PCS_info(
 }
 
 
+void
+PCS_Energy_Ts1::show_additional_info(std::ostream & out, core::pose::Pose & pose, bool verbose ) const {
+	core::Size i, j;
+	utility::vector1<PCS_tensor_Ts1> vec_tensor;
+	utility::vector1<core::Real> vec_score;
+	core::Real pcs_score_total;
+	numeric::xyzVector< core::Real > best_coo;
+
+	core::Real pcs_weight (PCS_Energy_parameters_manager_Ts1::get_instance()->get_pcs_weight());
+
+	PCS_data_Ts1 &pcs_d = PCS_data_from_pose(pose);
+	vec_score.resize(pcs_d.get_n_lanthanides());
+
+	for ( i = 1; i <= pcs_d.get_n_lanthanides(); ++i ) {
+			PCS_tensor_Ts1 PCS_t = PCS_tensor_Ts1(0, 0, 0, 0, 0, ((pcs_d.get_pcs_data_per_lanthanides_all())[i]).get_filename());
+			vec_tensor.push_back(PCS_t);
+	}
+
+	//call to calculate the tensors and the score
+	pcs_score_total = calculate_scores_and_tensors_from_pose_and_PCS_data(vec_score, vec_tensor, best_coo, pose, pcs_d);
+
+	// print out tensor before values
+	out << "     * * * * *     PCS tensor information     * * * * *     " << std::endl;
+	out << "Score: " << pcs_score_total << std::endl;
+	out << "Is norm of " << pcs_d.get_n_lanthanides() << " lanthanide(s): ";
+	for ( i = 1; i <= vec_score.size(); ++i ) {
+		out << vec_score[i] << " ";
+	}
+	out << std::endl;
+	out << "Score weighted: " << pcs_weight * pcs_score_total << std::endl;
+	out << "Tensors found:" << std::endl;
+	for ( i = 1; i <= vec_tensor.size(); ++i ) {
+		out << vec_tensor[i] << std::endl;
+	}
+	out << "Lanthanide position: " << "x = " << best_coo.x() << ", "
+			<< "y = " << best_coo.y() << ", "
+			<< "z = " << best_coo.z() << std::endl;
+
+	if (verbose) {
+		// print out calc and exp pcs values for each lanthanide
+
+		out << "     * * * * *     calc vs. exp PCS     * * * * *     " << std::endl;
+		out << "------------------------------------------------------" << std::endl;
+		out << "res_num atom_name PCS_exp PCS_calc PCS_dev PCS_abs_dev" << std::endl;
+		out << "------------------------------------------------------" << std::endl;
+
+		const utility::vector1<core::Real> & X_all(pcs_d.get_X_all());
+		const utility::vector1<core::Real> & Y_all(pcs_d.get_Y_all());
+		const utility::vector1<core::Real> & Z_all(pcs_d.get_Z_all());
+		utility::vector1<core::Real> A(5, 0);
+
+		for ( i = 1 ; i <= pcs_d.get_n_lanthanides(); ++i ) {
+			PCS_data_per_lanthanides_Ts1 const & PCS_d_p_l (pcs_d.get_pcs_data_per_lanthanides_all()[i]);
+			utility::vector1<PCS_line_data_Ts1> const & PCS_d_l_a_s (pcs_d.get_PCS_data_line_all_spin());
+
+			out << "PCS dataset: " << PCS_d_p_l.get_filename() << std::endl;
+
+			core::Real Xxx(vec_tensor[i].chi_xx());
+			core::Real Xxy(vec_tensor[i].chi_xy());
+			core::Real Xxz(vec_tensor[i].chi_xz());
+			core::Real Xyy(vec_tensor[i].chi_yy());
+			core::Real Xyz(vec_tensor[i].chi_yz());
+			const utility::vector1<core::Size> & A_index( PCS_d_p_l.get_A_index());
+			const ObjexxFCL::FArray1D< core::Real > & fstyle_b(PCS_d_p_l.get_fstyle_b());
+
+			for ( j = 1; j <= PCS_d_p_l.get_n_pcs(); ++j ) {
+				core::Real PCS_exp (fstyle_b(j));
+				core::Size idx (A_index[j]);
+				core::Real x (X_all[idx]);
+				core::Real y (Y_all[idx]);
+				core::Real z (Z_all[idx]);
+				core::Size res_num(PCS_d_l_a_s[idx].residue_num());
+				std::string atom_name(PCS_d_l_a_s[idx].atom_name());
+				fill_A_line(A, best_coo.x(), best_coo.y(), best_coo.z(), x, y, z);
+				core::Real PCS_calc(A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz);
+				core::Real PCS_dev (PCS_exp - PCS_calc);
+				core::Real PCS_abs_dev (fabs(PCS_exp - PCS_calc));
+				out << std::right << std::setw(4) << res_num << std::setw(3) << atom_name << std::setw(10) << std::fixed
+						<< std::showpoint << std::setprecision(3) << std::setw(10) << PCS_exp << std::setw(10)
+						<< PCS_calc << std::setw(10) << PCS_dev << std::setw(10) << PCS_abs_dev << std::endl;
+			}
+		}
+	}
+}
+
+
 core::Real
 PCS_Energy_Ts1::calculate_pcs_score(core::pose::Pose & pdb, bool print_to_tracer) const{
 
