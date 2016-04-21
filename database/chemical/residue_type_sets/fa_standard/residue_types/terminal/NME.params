@@ -5,7 +5,7 @@ AA UNK
 
 ATOM  N  Nbb   NH1   -0.47
 ATOM  C   CH3   CT3   -0.27
-ATOM  HN2 HNbb  HN2   0.43
+ATOM  HN2 HNbb  H   0.43
 ATOM  H1  Hapo  HA    0.09
 ATOM  H2  Hapo  HA    0.09
 ATOM  H3  Hapo  HA    0.09

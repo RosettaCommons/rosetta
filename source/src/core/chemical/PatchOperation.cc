@@ -797,6 +797,7 @@ PrependMainchainAtom::apply( ResidueType & rsd ) const
 		}
 		rsd.set_mainchain_atoms( new_mainchain_atoms );
 	}
+	rsd.finalize();
 	return false;
 }
 
@@ -816,6 +817,7 @@ AppendMainchainAtom::apply( ResidueType & rsd ) const
 		new_mainchain_atoms.push_back( rsd.atom_index( atom_name_ ) );
 		rsd.set_mainchain_atoms( new_mainchain_atoms );
 	}
+	rsd.finalize();
 	return false;
 }
 

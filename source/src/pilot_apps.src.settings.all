@@ -60,6 +60,8 @@ sources = {
 		"a3b_hbs_dock_design",
 		"a3b_test",
 		"b3a_distro_kinemage",
+		"beta_nonlocal",
+		"beta_314_vs_a3b",
 		"build_a3b",
 		"cov_hbs",
 		"cov_peptidomimetic_creator",
