@@ -90,6 +90,28 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" )
 	)
 endif()
 
+# "gcc", "release_bluegene"
+# Used exclusively for compilation on the Argonne "Mira" Blue Gene supercomputer.
+# Added by Vikram K. Mulligan, Baker lab (vmullig@uw.edu) on 19 April 2016.
+if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
+	list( APPEND compile
+			-O3
+			-ffast-math
+			-funroll-loops
+			-finline-functions
+			-finline-limit=20000
+			-s
+	)
+	list ( APPEND warn
+			-Wno-unused-variable
+			-Wno-unused-parameter
+			-Wno-type-limits
+	)
+	list( APPEND defines
+			-DNDEBUG
+	)
+endif()
+
 # "gcc, 4.4, release"
 if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4.4(.[0-9])*" )
 	list( REMOVE_ITEM compile
@@ -100,6 +122,32 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" AND ${CMAKE_CXX_CO
 	)
 endif()
 
+###########################################################################
+# Blue Gene XLC compiler ##################################################
+###########################################################################
+
+# "xlc", "release_bluegene"
+# Used exclusively for compilation on the Argonne "Mira" Blue Gene supercomputer.
+# Added by Vikram K. Mulligan, Baker lab (vmullig@uw.edu) on 20 April 2016.
+if( ${COMPILER} STREQUAL "xlc" AND ${MODE} STREQUAL "release_bluegene" )
+        ADD_DEFINITIONS(-DPTR_BOOST)
+        set( cc
+                        #-std=c99
+        )
+        set( cxx
+                        -std=c++98
+        )
+        set( compile
+			-O3
+			-s
+			#-DBOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS
+			#-DBOOST_ERROR_CODE_HEADER_ONLY
+			-DBOOST_SYSTEM_NO_DEPRECATED
+        )
+        list( APPEND defines
+                        -DNDEBUG
+        )
+endif()
 
 ###########################################################################
 # Clang ###################################################################

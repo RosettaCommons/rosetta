@@ -69,20 +69,35 @@ if(NOT DISABLE_SQLITE)
 endif()
 
 # Main library configuration
-
-set(CPPDB_SRC
-	../../external/dbio/cppdb/utils.cpp
-	../../external/dbio/cppdb/mutex.cpp
-	../../external/dbio/cppdb/driver_manager.cpp
-	../../external/dbio/cppdb/conn_manager.cpp
-	../../external/dbio/cppdb/shared_object.cpp
-	../../external/dbio/cppdb/pool.cpp
-	../../external/dbio/cppdb/backend.cpp
-	../../external/dbio/cppdb/frontend.cpp
-	../../external/dbio/cppdb/atomic_counter.cpp
-	../../external/dbio/sqlite3/sqlite3.c 
-	${INTERNAL_SOURCES}
+if( ${MODE} STREQUAL "release_bluegene" )
+	set(CPPDB_SRC
+		../../external/dbio/cppdb/utils.cpp
+		../../external/dbio/cppdb/mutex.cpp
+		../../external/dbio/cppdb/driver_manager.cpp
+		../../external/dbio/cppdb/conn_manager.cpp
+		../../external/dbio/cppdb/shared_object.cpp
+		../../external/dbio/cppdb/pool.cpp
+		../../external/dbio/cppdb/backend.cpp
+		../../external/dbio/cppdb/frontend.cpp
+		../../external/dbio/cppdb/atomic_counter.cpp
+		#../../external/dbio/sqlite3/sqlite3.c 
+		${INTERNAL_SOURCES}
 	)
+else()
+	set(CPPDB_SRC
+		../../external/dbio/cppdb/utils.cpp
+		../../external/dbio/cppdb/mutex.cpp
+		../../external/dbio/cppdb/driver_manager.cpp
+		../../external/dbio/cppdb/conn_manager.cpp
+		../../external/dbio/cppdb/shared_object.cpp
+		../../external/dbio/cppdb/pool.cpp
+		../../external/dbio/cppdb/backend.cpp
+		../../external/dbio/cppdb/frontend.cpp
+		../../external/dbio/cppdb/atomic_counter.cpp
+		../../external/dbio/sqlite3/sqlite3.c 
+		${INTERNAL_SOURCES}
+	)
+endif()
 
 #add_library(cppdb SHARED ${CPPDB_SRC})
 add_library(cppdb-static STATIC ${CPPDB_SRC})
