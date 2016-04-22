@@ -26,7 +26,7 @@ namespace task_operations {
 class AddCDRProfilesOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ddCDRProfilesOperation"; }
+	virtual std::string keyname() const { return "CDRProfilesOperation"; }
 	//core::pack::task::operation::TaskOperationOP clone() const;
 };
 
