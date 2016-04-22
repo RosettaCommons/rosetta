@@ -220,14 +220,14 @@ public:
 		for ( core::Size i = 1; i <=10; ++i ) {
 			mm->set_chi(i, true);
 		}
-		mm->show(std::cout);
+		//mm->show(std::cout);
 
 		TaskFactory tf;
 
 		RestrictToMoveMapChiOperationOP mm_op( new RestrictToMoveMapChiOperation(mm) );
 		tf.push_back(mm_op);
 		PackerTaskOP task = tf.create_task_and_apply_taskoperations(pose);
-		task->show(std::cout);
+		//task->show(std::cout);
 
 		vector1<bool> repacking_residues(pose.total_residue(), false);
 		for ( core::Size i = 1; i <=10; ++i ) {
@@ -242,7 +242,7 @@ public:
 		mm_op->set_cutoff_distance(10.0);
 		tf.push_back(mm_op);
 		task = tf.create_task_and_apply_taskoperations(pose);
-		task->show(std::cout);
+		//task->show(std::cout);
 		test::UTracer UT_MMNEI("protocols/toolbox/task_operations/RestrictToMoveMapChiWNeighbors.u");
 
 		UT_MMNEI << *task << std::endl;

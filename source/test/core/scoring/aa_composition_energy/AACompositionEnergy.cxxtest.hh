@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   test/core/scoring/aa_composition_energy/AACompositionEnergy.cxxtest.hh
-/// @brief  Test suite for core::scoring::aa_composition_energy::AACompositionEnergy.
+/// @brief  Test suite for core::scoring::aa_composition_energy::AACompositionEnergy, an energy term for controlling
+/// sequence composition during design.
 /// @details See also the core::conformation::symmetry::MirrorSymmetricConformation unit tests.  These have
 /// another example of AAComposition being set up from code (with constraints attached to the pose).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -85,7 +86,7 @@ public:
 	/// @details This test checks that we can impose the requirement that a pose contain exactly
 	/// three trans-ACPC residues.
 	void test_energy_eval_exactly_three_transACPC() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/exactly_three_transACPC.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/exactly_three_transACPC.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_three_transACPC()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -175,7 +176,7 @@ public:
 	/// @details This test defines a count group in which a residue is counted if it is a tryptophan OR it is ((charged or aliphatic) and not (negatively charged or argenine or leucine)).
 	/// So the following residue types should be counted: AIKMPVW.
 	void test_energy_eval_complex_boolean_logic() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/complex_booleans.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/complex_booleans.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_complex_boolean_logic()." << std::endl;
 			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -246,7 +247,7 @@ public:
 	/// @details This test checks that we can impose a requirement involving counting residues that have more than one identity.  (We're
 	/// counting the total number of tryptophan and tyrosine residues, and requiring that the count sum to two).
 	void test_energy_eval_exactly_two_trportyr() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/exactly_two_trportyr.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/exactly_two_trportyr.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_two_trportyr()." << std::endl;
 			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -316,7 +317,7 @@ public:
 	/// @details This test checks that we can impose two independent requirements.  (We're counting tryptphans and tyrosines
 	/// separately, and requiring that there be one of each).
 	void test_energy_eval_one_trp_one_tyr() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/one_trp_one_tyr.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/one_trp_one_tyr.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_one_trp_one_tyr()." << std::endl;
 			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -385,7 +386,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage with a .comp file that requires exactly three aliphatic residues that are not proline.
 	///
 	void test_energy_eval_aliphatic_not_pro() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/aliphatic_not_pro.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/aliphatic_not_pro.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_aliphatic_not_pro()." << std::endl;
 			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -453,7 +454,7 @@ public:
 	/// @details This test checks that we can impose the requirement that a pose contain exactly
 	/// one tryptophan using this scoring term.
 	void test_energy_eval_exactly_one_trp() {
-		core_init_with_additional_options("-score:aa_composition_setup_file exactly_one_trp.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file exactly_one_trp.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_one_trp()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -516,7 +517,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain exactly two aromatic residues.
 	void test_energy_eval_two_aromatics() {
-		core_init_with_additional_options("-score:aa_composition_setup_file two_aromatics.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file two_aromatics.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_two_aromatics()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -582,7 +583,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain 10% aromatic residues.
 	void test_energy_eval_ten_percent_aromatic() {
-		core_init_with_additional_options("-score:aa_composition_setup_file ten_percent_aromatic.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file ten_percent_aromatic.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_ten_percent_aromatic()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -648,7 +649,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain 20% proline.
 	void test_energy_eval_twenty_percent_pro() {
-		core_init_with_additional_options("-score:aa_composition_setup_file twenty_percent_pro.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file twenty_percent_pro.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_twenty_percent_pro()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -819,7 +820,7 @@ public:
 	/// @brief Test the tail functions with constant below, linear above.
 	///
 	void test_tailfunctions_const_lin() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_const.comp -unmute core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_const.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 
 		if ( TR.visible() ) {
 			TR << "Starting test_tailfunctions_const_lin()." << std::endl;
@@ -882,7 +883,7 @@ public:
 	/// @brief Test the tail functions with linear below, const above.
 	///
 	void test_tailfunctions_lin_const() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_linear.comp -unmute core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_linear.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 
 		if ( TR.visible() ) {
 			TR << "Starting test_tailfunctions_lin_const()." << std::endl;
@@ -945,7 +946,7 @@ public:
 	/// @brief Test the tail functions with quadratic above and below.
 	///
 	void test_tailfunctions_quadratic() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_quadratic.comp -unmute core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_quadratic.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 
 		if ( TR.visible() ) {
 			TR << "Starting test_tailfunctions_quadratic()." << std::endl;

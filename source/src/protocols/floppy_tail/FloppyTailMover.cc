@@ -165,15 +165,15 @@ FloppyTailMover & FloppyTailMover::operator=( FloppyTailMover const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
 
-	start_         = rhs.start_;
-	stop_          = rhs.stop_;
-	init_for_input_yet_   = rhs.init_for_input_yet_;
+	start_                  = rhs.start_;
+	stop_                   = rhs.stop_;
+	init_for_input_yet_     = rhs.init_for_input_yet_;
 	centroid_scorefunction_ = rhs.centroid_scorefunction_->clone();
 	fullatom_scorefunction_ = rhs.fullatom_scorefunction_->clone();
-	task_factory_      = rhs.task_factory_->clone();
-	movemap_        = rhs.movemap_->clone();
-	movemap_lesstail_    = rhs.movemap_lesstail_->clone();
-	foldtree_        = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) );
+	task_factory_           = rhs.task_factory_->clone();
+	movemap_                = rhs.movemap_->clone();
+	movemap_lesstail_       = rhs.movemap_lesstail_->clone();
+	foldtree_               = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) );
 	fragset3mer_            = core::fragment::ConstantLengthFragSetOP(new core::fragment::ConstantLengthFragSet(*rhs.fragset3mer_));
 
 	return *this;

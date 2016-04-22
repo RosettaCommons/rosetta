@@ -29,6 +29,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR("protocols.helical_bundle.ParamsDataStorageTests.cxxtest");
+
+
 // --------------- Test Class --------------- //
 
 class ParamsDataStorageTests : public CxxTest::TestSuite {
@@ -56,9 +62,9 @@ public:
 		using namespace protocols::helical_bundle;
 		using namespace protocols::helical_bundle::parameters;
 
-		TS_TRACE( "Starting test_params_data_storage unit test." );
-		TS_TRACE( "Written by Vikram K. Mulligan, Baker Laboratory." );
-		TS_TRACE( "If this test should fail, it means that Crick parameter data are not being properly stored in the Conformation object in the Pose that results from the MakeBundle mover." );
+		TR << "Starting test_params_data_storage unit test." << std::endl;
+		TR << "Written by Vikram K. Mulligan, Baker Laboratory." << std::endl;
+		TR << "If this test should fail, it means that Crick parameter data are not being properly stored in the Conformation object in the Pose that results from the MakeBundle mover." << std::endl;
 
 		MakeBundleOP makebundle ( new MakeBundle ); //Create the mover
 
@@ -71,12 +77,12 @@ public:
 		makebundle->add_helix();
 
 		//Set parameters for the two helices:
-		TS_TRACE( "Defining two helices.  (There will be four total, with two-fold symmetry)." );
-		TS_TRACE( "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)" );
+		TR <<  "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
+		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)"  << std::endl;
 		makebundle->helix(1)->set_r0(5.0);
 		makebundle->helix(1)->set_omega0(0.05);
 		makebundle->helix(1)->set_delta_omega0(0.1);
-		TS_TRACE( "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" );
+		TR << "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" << std::endl;
 		makebundle->helix(2)->set_r0(6.5);
 		makebundle->helix(2)->set_omega0(0.03);
 		makebundle->helix(2)->set_delta_omega0(1.5);
@@ -86,9 +92,9 @@ public:
 		makebundle->apply(*testpose_);
 
 		char outbuffer [1024];
-		TS_TRACE( "Reading Crick parameters from the output pose." );
+		TR << "Reading Crick parameters from the output pose." << std::endl;
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
-		TS_TRACE( outbuffer );
+		TR << outbuffer << std::endl;
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( testpose_->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
@@ -97,7 +103,7 @@ public:
 			core::Real delta_omega0_1(h1params->delta_omega0());
 			bool invert_1(h1params->invert_helix());
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
-			TS_TRACE( outbuffer );
+			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
@@ -115,7 +121,7 @@ public:
 
 		//testpose_->dump_pdb("vtemp.pdb"); //DELETE ME
 
-		TS_TRACE( "Finished test_params_data_storage unit test." );
+		TR << "Finished test_params_data_storage unit test." << std::endl;
 
 		return;
 	}
@@ -128,9 +134,9 @@ public:
 		using namespace protocols::helical_bundle;
 		using namespace protocols::helical_bundle::parameters;
 
-		TS_TRACE( "Starting test_params_residue_storage unit test." );
-		TS_TRACE( "Written by Vikram K. Mulligan, Baker Laboratory." );
-		TS_TRACE( "If this test should fail, it means that residue data are not being properly stored in the Conformation object in the Pose that results from the MakeBundle mover." );
+		TR << "Starting test_params_residue_storage unit test." << std::endl;
+		TR << "Written by Vikram K. Mulligan, Baker Laboratory." << std::endl;
+		TR << "If this test should fail, it means that residue data are not being properly stored in the Conformation object in the Pose that results from the MakeBundle mover." << std::endl;
 
 		MakeBundleOP makebundle ( new MakeBundle ); //Create the mover
 
@@ -145,12 +151,12 @@ public:
 		makebundle->add_helix();
 
 		//Set parameters for the two helices:
-		TS_TRACE( "Defining two helices.  (There will be four total, with two-fold symmetry)." );
-		TS_TRACE( "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)" );
+		TR << "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
+		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)" << std::endl;
 		makebundle->helix(1)->set_r0(5.0);
 		makebundle->helix(1)->set_omega0(0.05);
 		makebundle->helix(1)->set_delta_omega0(0.1);
-		TS_TRACE( "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" );
+		TR << "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" << std::endl;
 		makebundle->helix(2)->set_r0(6.5);
 		makebundle->helix(2)->set_omega0(0.03);
 		makebundle->helix(2)->set_delta_omega0(1.5);
@@ -161,9 +167,9 @@ public:
 		makebundle->apply(*testpose_);
 
 		char outbuffer [1024];
-		TS_TRACE( "Reading residue numbers from the output pose Parameters objects." );
+		TR << "Reading residue numbers from the output pose Parameters objects." << std::endl;
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
-		TS_TRACE( outbuffer );
+		TR << outbuffer << std::endl;
 
 		core::Size resind(1);
 
@@ -181,7 +187,7 @@ public:
 				sprintf(outbuffer, "%s %lu", outbuffer2.c_str(), residue_indices[residue_indices.size()]);
 			}
 
-			TS_TRACE(outbuffer);
+			TR <<outbuffer << std::endl;
 
 			core::Size expected_helix_size(10);
 			if ( i==2 || i==4 ) expected_helix_size=12;
@@ -195,7 +201,7 @@ public:
 
 		//testpose_->dump_pdb("vtemp.pdb"); //DELETE ME
 
-		TS_TRACE( "Finished test_params_residue_storage unit test." );
+		TR << "Finished test_params_residue_storage unit test." << std::endl;
 
 		return;
 	}
@@ -208,9 +214,9 @@ public:
 		using namespace protocols::helical_bundle;
 		using namespace protocols::helical_bundle::parameters;
 
-		TS_TRACE( "Starting test_params_data_copying unit test." );
-		TS_TRACE( "Written by Vikram K. Mulligan, Baker Laboratory." );
-		TS_TRACE( "If this test should fail, it means that Crick parameter data are not being properly copied when a pose is copied." );
+		TR << "Starting test_params_data_copying unit test." << std::endl;
+		TR << "Written by Vikram K. Mulligan, Baker Laboratory." << std::endl;
+		TR << "If this test should fail, it means that Crick parameter data are not being properly copied when a pose is copied." << std::endl;
 
 		MakeBundleOP makebundle ( new MakeBundle ); //Create the mover
 
@@ -223,13 +229,13 @@ public:
 		makebundle->add_helix();
 
 		//Set parameters for the two helices:
-		TS_TRACE( "Defining two helices.  (There will be four total, with two-fold symmetry)." );
-		TS_TRACE( "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 z1_offset=0.2 invert=false(default)" );
+		TR << "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
+		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 z1_offset=0.2 invert=false(default)" << std::endl;
 		makebundle->helix(1)->set_r0(5.0);
 		makebundle->helix(1)->set_omega0(0.05);
 		makebundle->helix(1)->set_delta_omega0(0.1);
 		makebundle->helix(1)->set_z1_offset(0.2);
-		TS_TRACE( "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 z0_offset=-0.2 invert=true" );
+		TR << "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 z0_offset=-0.2 invert=true" << std::endl;
 		makebundle->helix(2)->set_r0(6.5);
 		makebundle->helix(2)->set_omega0(0.03);
 		makebundle->helix(2)->set_delta_omega0(1.5);
@@ -240,13 +246,14 @@ public:
 		makebundle->apply(*testpose_);
 
 		//Make a clone of the pose:
-		TS_TRACE( "Attempting to clone the pose." );
+		TR << "Attempting to clone the pose." << std::endl;
 		core::pose::PoseOP poseclone(testpose_->clone());
 
 		char outbuffer [1024];
-		TS_TRACE( "Reading Crick parameters from the cloned pose." );
+		TR << "Reading Crick parameters from the cloned pose." << std::endl;
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", poseclone->conformation().parameters_set(1)->n_parameters());
-		TS_TRACE( outbuffer );
+		TR << outbuffer << std::endl;
+
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( poseclone->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
@@ -257,7 +264,8 @@ public:
 			core::Real z0_off( h1params->z0_offset() );
 			bool invert_1(h1params->invert_helix());
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
-			TS_TRACE( outbuffer );
+			TR << outbuffer << std::endl;
+
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
@@ -278,12 +286,15 @@ public:
 		}
 
 		//Make a copy of the pose:
-		TS_TRACE( "Attempting to copy the pose." );
+		TR << "Attempting to copy the pose." << std::endl;
+
 		core::pose::Pose posecopy(*testpose_);
 
-		TS_TRACE( "Reading Crick parameters from the copied pose." );
+		TR << "Reading Crick parameters from the copied pose." << std::endl;
+
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy.conformation().parameters_set(1)->n_parameters());
-		TS_TRACE( outbuffer );
+		TR << outbuffer << std::endl;
+
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy.conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
@@ -294,7 +305,8 @@ public:
 			core::Real z0_off( h1params->z0_offset() );
 			bool invert_1(h1params->invert_helix());
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
-			TS_TRACE( outbuffer );
+			TR << outbuffer << std::endl;
+
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
@@ -315,13 +327,16 @@ public:
 		}
 
 		//Make a copy of the pose:
-		TS_TRACE( "Attempting to copy the pose using the assignment operator." );
+		TR << "Attempting to copy the pose using the assignment operator." << std::endl;
+
 		core::pose::Pose posecopy2;
 		posecopy2 = *testpose_;
 
-		TS_TRACE( "Reading Crick parameters from the assignment-copied pose." );
+		TR << "Reading Crick parameters from the assignment-copied pose." << std::endl;
+
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy2.conformation().parameters_set(1)->n_parameters());
-		TS_TRACE( outbuffer );
+		TR << outbuffer << std::endl;
+
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy2.conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
@@ -332,7 +347,8 @@ public:
 			core::Real z1_off( h1params->z1_offset() );
 			core::Real z0_off( h1params->z0_offset() );
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
-			TS_TRACE( outbuffer );
+			TR << outbuffer << std::endl;
+
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
@@ -352,7 +368,8 @@ public:
 
 		}
 
-		TS_TRACE( "Finished test_params_data_storage unit test." );
+		TR << "Finished test_params_data_storage unit test." << std::endl;
+
 
 		return;
 	}
