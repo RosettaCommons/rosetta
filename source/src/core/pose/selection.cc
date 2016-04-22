@@ -232,7 +232,7 @@ get_resnum_list(
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
 		for ( utility::vector1<core::Size>::const_iterator i = nums.begin(); i != nums.end(); ++i ) {
 			Size num = *i;
-			runtime_assert( num );
+			runtime_assert_string_msg( num, "Error in core::pose::selection::get_resnum_list(): A residue index could not be parsed." );
 			resid.insert( num );
 		}
 	}//foreach
