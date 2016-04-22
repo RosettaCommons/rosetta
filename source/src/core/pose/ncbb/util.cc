@@ -119,54 +119,74 @@ initialize_hbs (
 	return hbs_seq_positions;
 }
 
-void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size a3b_hbs_pre_position )
-{
-	add_a3b_hbs_constraint( pose, a3b_hbs_pre_position, 1.479871, 0.05 );
-}
-
-void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
-{
+void
+add_generic_hbs_constraint(
+	core::pose::Pose & pose,
+	core::Size hbs_pre_position,
+	core::Real distance,
+	core::Real std,
+	std::string const & cy2name,
+	std::string const & cy1name
+) {
 	using namespace core::id;
 	using namespace core::scoring;
 	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
-
-	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
-	HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
-	CircularHarmonicFuncOP ang_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP ang_func2 (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func2  (new CircularHarmonicFunc( (0-numeric::NumericTraits<float>::pi_over_3()), 0.02 ) );
-
-	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
-	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
-	AtomID aidN  ( pose.residue( hbs_pre_position+2 ).atom_index("N"), hbs_pre_position+2 );
-	AtomID aidCA  ( pose.residue( hbs_pre_position+2 ).atom_index("CA"), hbs_pre_position+2 );
-	AtomID aidVZH( pose.residue( hbs_pre_position ).atom_index("VZH"), hbs_pre_position );
-	AtomID aidVYH( pose.residue( hbs_pre_position+2 ).atom_index("VYH"), hbs_pre_position+2 );
-	AtomID aidCY3( pose.residue( hbs_pre_position ).atom_index("CY3"), hbs_pre_position );
-	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
-
-	ConstraintCOP atompair ( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) );
-	ConstraintCOP atompair2 ( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) );
-	ConstraintCOP atompair3 ( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) );
-	ConstraintCOP angle ( new AngleConstraint( aidCZH, aidCYH, aidCY3, ang_func2 ) );
-	ConstraintCOP angle2 ( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 ) );
-	ConstraintCOP dihedral ( new DihedralConstraint( aidCZH, aidCYH, aidCY3, aidCY2, dih_func ) );
-	ConstraintCOP dihedral2 ( new DihedralConstraint( aidCA, aidN, aidCZH, aidCYH, dih_func2 ) );
-
-
-	pose.add_constraint( atompair );
-	pose.add_constraint( atompair2 );
-	pose.add_constraint( atompair3 );
-	pose.add_constraint( angle );
-	pose.add_constraint( angle2 );
-	pose.add_constraint( dihedral );
-	pose.add_constraint( dihedral2 );
+	
+	Size const pren = hbs_pre_position;
+	Size const postn = hbs_pre_position+2;
+	conformation::Residue const & pre = pose.residue( hbs_pre_position );
+	conformation::Residue const & post = pose.residue( hbs_pre_position+2 );
+	
+	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
+	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
+	CircularHarmonicFuncOP cfunc_120( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP cfunc_60( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP cfunc_109( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi()/180*109.5, 0.02 ) );
+	CircularHarmonicFuncOP cfunc_180( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+	
+	AtomID aidCYH(  pre.atom_index( "CYH" ), pren  );
+	AtomID aidCZH( post.atom_index( "CZH" ), postn );
+	AtomID aidN  ( post.atom_index( "N"   ), postn );
+	AtomID aidVZH(  pre.atom_index( "VZH" ), pren  );
+	AtomID aidVYH( post.atom_index( "VYH" ), postn );
+	AtomID aidCY2(  pre.atom_index( cy2name ), pren  );
+	AtomID aidCY1(  pre.atom_index( cy1name ), pren  );
+	
+	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
+	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
+	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
+	
+	pose.add_constraint( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, cfunc_120 ) ) );
+	pose.add_constraint( ConstraintOP( new AngleConstraint( aidN,   aidCZH, aidCYH, cfunc_109 ) ) );
+	
+	pose.add_constraint( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, cfunc_180 ) ) );
+}
+	
+void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size a3b_hbs_pre_position )
+{
+	add_a3b_hbs_constraint( pose, a3b_hbs_pre_position, 1.479871, 0.05 );
+}
+	
+void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
+{
+	add_generic_hbs_constraint( pose, hbs_pre_position, distance, std, "CY3", "CY2" );
 
 	TR << "added atom pair constraint to a3b hbs with distance: " << distance << " and std: "<< std << std::endl;
 	TR << "and atom pair constraints with the virtual atoms" << std::endl;
-
+}
+	
+void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )
+{
+	add_hbs_constraint( pose, hbs_pre_position, 1.479871, 0.05 );
+}
+	
+void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
+{
+	add_generic_hbs_constraint( pose, hbs_pre_position, distance, std, "CY2", "CY1" );
+		
+	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
+	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 }
 
 void
@@ -275,56 +295,6 @@ void add_triazole_constraint( core::pose::Pose & pose, core::Size i /* triazole_
 
 	TR << "added atom pair constraint to triazole with distance: 1.347 and std 0.05" << std::endl;
 	TR << "and atom pair constraints to the virtual atoms" << std::endl;
-
-}
-
-void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )
-{
-	add_hbs_constraint( pose, hbs_pre_position, 1.479871, 0.05 );
-}
-
-void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
-{
-	using namespace core::id;
-	using namespace core::scoring;
-	using namespace core::scoring::func;
-	using namespace core::scoring::constraints;
-
-	//kdrew: add constraint
-	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
-	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
-	CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP ang_func3( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi()/180*109.5, 0.02 ) );
-	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func2( new CircularHarmonicFunc( 0, 0.02 ) );
-
-	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
-	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
-	AtomID aidN  ( pose.residue( hbs_pre_position+2 ).atom_index("N"), hbs_pre_position+2 );
-	AtomID aidVZH( pose.residue( hbs_pre_position ).atom_index("VZH"), hbs_pre_position );
-	AtomID aidVYH( pose.residue( hbs_pre_position+2 ).atom_index("VYH"), hbs_pre_position+2 );
-	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
-	AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
-
-	ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
-	ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
-	ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
-	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) ) );
-	ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func3 ) ) );
-	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
-	//ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func2 ) ) );
-
-	pose.add_constraint( atompair );
-	pose.add_constraint( atompair2 );
-	pose.add_constraint( atompair3 );
-	pose.add_constraint( angle );
-	pose.add_constraint( angle2 );
-	pose.add_constraint( dihedral );
-	//pose.add_constraint( dihedral2 );
-
-	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
-	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 
 }
 
