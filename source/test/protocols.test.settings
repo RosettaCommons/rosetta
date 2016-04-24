@@ -388,6 +388,7 @@ sources = {
 		"DdgFilter",
 		"DdGScan",
 		"ResidueCountFilter",
+		"RotamerBoltzmannWeight2",
 		"TotalSasaFilter",
 	],
 

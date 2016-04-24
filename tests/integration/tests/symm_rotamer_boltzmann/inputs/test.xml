@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" symmetric=false />
+		<tala_symm weights="talaris2014.wts" symmetric=true />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="cool_residues" resnums="1-10" />
+	</RESIDUE_SELECTORS>
+	<FILTERS>
+		<RotamerBoltzmannWeight2 name="rot_boltz" residue_selector="cool_residues" scorefxn="tala_symm" score_type="MODIFIED_DDG" probability_type="PNEAR" />
+	</FILTERS>
+	<MOVERS>
+		<SetupForSymmetry name="make_symm" definition="inputs/c2.symm" />
+		<FastRelax name="relax" scorefxn="tala_symm" repeats="2" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="make_symm" />
+		<Add mover="relax" />
+		<Add filter="rot_boltz" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="tala_symm" />
+</ROSETTASCRIPTS>

@@ -84,6 +84,8 @@ public:
 	bool repack() const;
 	bool skip_ala_scan() const;
 	void skip_ala_scan( bool const s );
+	void no_modified_ddG( bool const no_ddg );
+	void target_residues( std::string const & target_residues_str );
 	std::string type() const;
 	void type( std::string const & s );
 	bool write2pdb() const;

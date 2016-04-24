@@ -294,6 +294,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	}
 
 	protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator rotboltz_calc( this->scorefxn(), this->temperature(), this->repacking_radius() );
+	rotboltz_calc.set_lazy( true );
 
 	BOOST_FOREACH ( core::Size const hs_res, hotspot_res ) {
 		core::Real const boltz_weight( fast_calc_ ? rotboltz_calc.computeBoltzWeight( unbound_pose, hs_res ) : compute_Boltzmann_weight( unbound_pose, hs_res ) );
@@ -611,6 +612,18 @@ void
 RotamerBoltzmannWeight::type(std::string const & s)
 {
 	type_ = s;
+}
+
+void
+RotamerBoltzmannWeight::no_modified_ddG( bool const no_ddg )
+{
+	no_modified_ddG_ = no_ddg;
+}
+
+void
+RotamerBoltzmannWeight::target_residues( std::string const & target_residues_str )
+{
+	target_residues_ = target_residues_str;
 }
 
 bool

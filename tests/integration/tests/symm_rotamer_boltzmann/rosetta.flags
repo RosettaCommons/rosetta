@@ -1,0 +1,3 @@
+-parser:protocol inputs/test.xml
+-nstruct 1
+-s inputs/trpcage.pdb
