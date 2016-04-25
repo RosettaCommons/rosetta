@@ -245,8 +245,10 @@ void MakeBundle::apply (core::pose::Pose & pose)
 			pose=newpose;
 		} else {
 			if ( TR.Debug.visible() ) TR.Debug << "Appending helical bundle to pose." << std::endl;
-			pose.pdb_info()->detach_from();
-			pose.pdb_info(NULL);
+			if( pose.pdb_info() ) {
+				pose.pdb_info()->detach_from();
+				pose.pdb_info(NULL);
+			}
 			pose.append_pose_by_jump(newpose, 1);
 		}
 	}
