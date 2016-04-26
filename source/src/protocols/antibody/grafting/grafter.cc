@@ -70,26 +70,22 @@ struct PDB_N
 };
 
 
-//PoseOP SimpleGrafter::graft(AntibodySequence const &A, SCS_ResultSet const &scs, string const & prefix) const
 
-
-/// @brief graft cdr-loops using best scs-results and write results into specified output_prefix
-core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet const &scs, string const & prefix, string const & database)
+/// @brief Construct Pose SCS_ResultSet as templates and superimpose 'orientation' template on results. Write results into specified output_prefix.
+core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet const &scs, string const & prefix, string const & suffix, string const & database)
 {
-	if ( !(scs.h1 and scs.h2 and scs.h3 and scs.l1 and scs.l2 and scs.l2 and scs.l3 and scs.frh and scs.frl and scs.orientation) ) throw _AE_grafting_failed_("SimpleGrafter::graft: not all nessesary SCS results is specified!");
-
 	string frh_pdb_name = database + "/antibody_database/pdb" + scs.frh->pdb + "_chothia.pdb";
 	string frl_pdb_name = database + "/antibody_database/pdb" + scs.frl->pdb + "_chothia.pdb";
 	string orientation_pdb_name = database + "/antibody_database/pdb" + scs.orientation->pdb + "_chothia.pdb";
 
-	PoseOP frh = core::import_pose::pose_from_file( frh_pdb_name , core::import_pose::PDB_file);
-	PoseOP frl = core::import_pose::pose_from_file( frl_pdb_name , core::import_pose::PDB_file);
+	PoseOP frh = core::import_pose::pose_from_file( frh_pdb_name, core::import_pose::PDB_file);
+	PoseOP frl = core::import_pose::pose_from_file( frl_pdb_name, core::import_pose::PDB_file);
 
-	frh->dump_pdb(prefix + "frh.pdb");
-	frl->dump_pdb(prefix + "frl.pdb");
+	frh->dump_pdb(prefix + "frh" + suffix + ".pdb");
+	frl->dump_pdb(prefix + "frl" + suffix + ".pdb");
 
 	core::pose::PoseOP orientation = core::import_pose::pose_from_file( orientation_pdb_name , core::import_pose::PDB_file);
-	orientation->dump_pdb(prefix + "orientation.pdb");
+	orientation->dump_pdb(prefix + "orientation" + suffix + ".pdb");
 
 	AntibodyFramework trimmed_heavy_fr = A.heavy_framework();
 	AntibodyFramework trimmed_light_fr = A.light_framework();
@@ -144,7 +140,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 		TR << "Sequence after:  " << TR.Bold << j.color << j.pose->sequence() << TR.Reset << std::endl;
 
-		frh->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment.pdb" );
+		frh->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment" + suffix + ".pdb" );
 
 		PoseOP O = orientation->split_by_chain( find_chain(*orientation, j.chain, "orientation" ) );
 		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover(*O, 1 /*ref_start*/,    std::min(O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
@@ -154,17 +150,28 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 	frh->append_pose_by_jump(*frl, 1);
 	frh->pdb_info()->obsolete(false);
-	//frh->update_pose_chains_from_pdb_chains();
 
-	frh->dump_pdb(prefix + "frh_frl_oriented.pdb");
-
+	frh->dump_pdb(prefix + "frh_frl_oriented" + suffix + ".pdb");
 
 	// for(uint i=1; i<=frh->total_residue(); ++i) {
 	// 	TR << "New pose pdb info for res " << i << ":" << frh->pdb_info()->pose2pdb(i) << " i:" << frh->pdb_info()->icode(i) << std::endl;
 	// }
 
+	return frh;
+}
 
-	PoseOP result(frh);
+
+/// @brief graft cdr-loops using best scs-results and write results into specified output_prefix
+core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet const &scs, string const & prefix, string const & suffix, string const & database)
+{
+	if ( !(scs.h1 and scs.h2 and scs.h3 and scs.l1 and scs.l2 and scs.l2 and scs.l3 and scs.frh and scs.frl and scs.orientation) ) throw _AE_grafting_failed_("SimpleGrafter::graft: not all nessesary SCS results is specified!");
+
+	PoseOP result = construct_antibody(A, scs, prefix, suffix, database);
+
+	AntibodyFramework trimmed_heavy_fr = A.heavy_framework();
+	AntibodyFramework trimmed_light_fr = A.light_framework();
+
+	AntibodyNumbering an( Chothia_Numberer().number(A, trimmed_heavy_fr, trimmed_light_fr) );
 
 	struct {
 		string name; char chain; string pdb;
@@ -215,11 +222,13 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->n_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue in superimposed template! region:") + g.name);
 
 		TR << "Grafting..." << std::endl;
-		protocols::grafting::CCDEndsGraftMoverOP grafter(new protocols::grafting::CCDEndsGraftMover(result_pose_cdr_first, result_pose_cdr_last, *cdr, overlap, overlap, true) );
+		protocols::grafting::CCDEndsGraftMoverOP grafter(new protocols::grafting::CCDEndsGraftMover(result_pose_cdr_first+1, result_pose_cdr_last-1, *cdr, overlap, overlap, true) );
 		grafter->stop_at_closure(true);  grafter->set_cycles(128);
 
 		grafter->apply(*result);
 	}
+
+	result->dump_pdb(prefix + "model" + suffix + ".pdb");
 
 	return result;
 }

@@ -83,6 +83,8 @@ sources = {
 		'regex_based_cdr_detection',
 		'scs_blast',
 		'scs_functor',
+		'scs_subst_mat',
+		'scs_multi_template',
 		'util',
 	],
 	"protocols/antibody/snugdock":[

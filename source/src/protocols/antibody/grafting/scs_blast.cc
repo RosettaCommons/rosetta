@@ -42,8 +42,6 @@ using std::string;
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
 
 
-
-
 /// @brief Create result set from 'row' element of each SCS_ResultsVector vector
 ///        if strict is true then throw if no resuls found otherwise use empty OP
 ///
@@ -172,7 +170,7 @@ SCS_ResultsOP SCS_Base::select(uint n, AntibodySequence const &A)
 
 	TR.Debug << "SCS_Base::select:                              Final results count: " << TR.Red << result_sizes(r) << TR.Reset << std::endl;
 
-	report(r, n);
+	report(r, 1);  // by default report only one template and allow multi-template sub-class to report all templates if any
 
 	return r;
 }
@@ -242,6 +240,24 @@ utility::vector0< std::map<string, string> > parse_plain_text_with_columns(strin
 	return result;
 }
 
+void populate_results_from_db( SCS_Antibody_Database_ResultOP const & result, std::map< string, std::map<string, string> > const & db )
+{
+	result->bio_type      = db.at(result->pdb).at("BioType");
+	result->light_type    = db.at(result->pdb).at("LightType");
+	result->struct_source = db.at(result->pdb).at("StructSource");
+	result->resolution    = std::stod( db.at(result->pdb).at("resolution") );
+
+	// include the sequences of the other SCs in the template PDB.
+	result->h1 = db.at( result->pdb ).at("h1");
+	result->h2 = db.at( result->pdb ).at("h2");
+	result->h3 = db.at( result->pdb ).at("h3");
+	result->frh = db.at( result->pdb ).at("frh");
+
+	result->l1 = db.at( result->pdb ).at("l1");
+	result->l2 = db.at( result->pdb ).at("l2");
+	result->l3 = db.at( result->pdb ).at("l3");
+	result->frl = db.at( result->pdb ).at("frl");
+}
 
 /// @details Parse output of NCBI Blast+
 ///          Expected input:
@@ -254,7 +270,7 @@ utility::vector0< std::map<string, string> > parse_plain_text_with_columns(strin
 ///          h1.fasta	pdb4d9q_chothia.pdb	100.00	10	0	0	1	10	1	10	6e-04	22.7
 ///          ...
 /// @return utility::vector0< std::map<string field, string value> >
-SCS_ResultsVector parse_blastp_output(string file_name, string query, std::map< string, std::map<string, string> > db)
+SCS_ResultsVector parse_blastp_output(string const & file_name, string const & query, std::map< string, std::map<string, string> > const & db)
 {
 	SCS_ResultsVector results;
 
@@ -262,23 +278,28 @@ SCS_ResultsVector parse_blastp_output(string file_name, string query, std::map< 
 
 	for(auto fields : lines ) {
 		// Converting text based results filed to SCS_BlastMetric
-		SCS_BlastResultOP r(new SCS_BlastResult);
+		SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
+
 		r->pdb = fields["subject-id"].substr(3,4);  // pdb2adf_chothia.pdb → 2adf
 
-		r->alignment_length = utility::string2int( fields.at("alignment-length") );
+		r->alignment_length = std::stoi( fields.at("alignment-length") );
 
-		r->identity  = utility::string2Real( fields.at("%-identity") );
-		r->bit_score = utility::string2Real( fields.at("bit-score") );
+		r->identity  = std::stod( fields.at("%-identity") );
+		r->bit_score = std::stod( fields.at("bit-score") );
 
-		r->bio_type      = db.at(r->pdb).at("BioType");
+		populate_results_from_db( r, db );
+
+		/*r->bio_type      = db.at(r->pdb).at("BioType");
 		r->light_type    = db.at(r->pdb).at("LightType");
-		r->struct_source = db.at(r->pdb).at("StructSouce");
+		r->struct_source = db.at(r->pdb).at("StructSource");
 
+		// include the sequences of the other SCs in the template PDB.
 		r->h1 = db[r->pdb].at("h1");  r->h2 = db[r->pdb].at("h2");  r->h3 = db[r->pdb].at("h3");  r->frh = db[r->pdb].at("frh");
 		r->l1 = db[r->pdb].at("l1");  r->l2 = db[r->pdb].at("l2");  r->l3 = db[r->pdb].at("l3");  r->frl = db[r->pdb].at("frl");
 
-		//r->sequence = db[r->pdb][results.sequence];
-		//TR << "PDB:" << r->pdb << std::endl;
+		r->sequence = db[r->pdb][results.sequence];
+		//TR << "PDB:" << r->pdb << std::endl; */
+		//TR << "pdb:" << r->pdb << " l3: " << r->l3 << "  db.l3:" << db.at( r->pdb ).at("l3") << std::endl;
 
 		results.push_back(r);
 	}
@@ -326,10 +347,9 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 	string blast_database( database_path_ + "/blast_database/database" );
 
 	Antibody_SCS_Database & antibody_info_lines( antibody_scs_database() );
+	//TR << antibody_info_lines << std::endl;
 	std::map< string, std::map<string, string> > antibody_info_db;
 	for(auto fields : antibody_info_lines) antibody_info_db[fields["pdb"]] = fields;
-
-	//TR << antibody_info_db;
 
 	for(auto &j : J) {
 
@@ -343,7 +363,6 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 		string db_to_query = blast_database + '.' + db_suffix;
 
 		select_template( j, db_to_query, antibody_info_db );
-
 	}
 
 	return results;
@@ -380,8 +399,8 @@ void SCS_BlastPlus::select_template(
 	// wordsize, e_value, matrix = (2, 0.00001, 'BLOSUM62') if k.count('FR') or k.count('heavy') or k.count('light') else (2, 2000, 'PAM30')
 	//string extra = (j.name.find("fr") < string::npos  or  j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
 	string extra = (j.name.find("fr") < string::npos  or  \
-									j.name.find("orientation") < string::npos or \
-									j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
+					j.name.find("orientation") < string::npos or \
+					j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
 
 	//string command_line ("cd "+working_dir+" && "+blast+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
 	string command_line (blastp_+" -db "+db_to_query+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
@@ -430,7 +449,7 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 
 				r->bio_type      = i->at("BioType");
 				r->light_type    = i->at("LightType");
-				r->struct_source = i->at("StructSouce");
+				r->struct_source = i->at("StructSource");
 
 				r->h1 = i->at("h1");  r->h2 = i->at("h2");  r->h3 = i->at("h3");  r->frh = i->at("frh");
 				r->l1 = i->at("l1");  r->l2 = i->at("l2");  r->l3 = i->at("l3");  r->frl = i->at("frl");

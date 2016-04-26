@@ -20,6 +20,7 @@
 #include <protocols/antibody/grafting/regex_based_cdr_detection.hh>
 #include <protocols/antibody/grafting/chothia_numberer.hh>
 #include <protocols/antibody/grafting/scs_blast.hh>
+#include <protocols/antibody/grafting/scs_multi_template.hh>
 #include <protocols/antibody/grafting/exception.hh>
 #include <protocols/antibody/grafting/scs_functor.hh>
 #include <protocols/antibody/grafting/grafter.hh>
@@ -57,15 +58,17 @@ using core::Size;
 static THREAD_LOCAL basic::Tracer TR("antibody");
 
 // Command-line options relevant only to this application
-OPT_KEY( String, heavy )
-OPT_KEY( String, light )
-OPT_KEY( Integer, n)
+OPT_KEY( String,       heavy )
+OPT_KEY( String,       light )
+OPT_KEY( Integer,      n)
+OPT_KEY( StringVector, multi_template_regions)
 
 void register_options()
 {
 	NEW_OPT( heavy, "Sequence of antibody heavy chain", "" );
 	NEW_OPT( light, "Sequence of antibody light chain", "" );
 	NEW_OPT( n, "Number of templates to generate", 1);
+	NEW_OPT( multi_template_regions, "Specify sequence regions for which multi-template is generated. Avalible regions are: h1, h2, h3, l1, l2, l3, frh, frl, orientation", "orientation");
 }
 
 
@@ -97,8 +100,15 @@ int antibody_main()
 
 	{
 		TR << TR.Red << "Antibody grafting protocol" << TR.Reset << " Running with input:" << std::endl;
+		if( n_templates > 1 ) {
+			TR << TR.Red << "SCS_MultiTemplate protocol enabled" << TR.Reset << " multi-template regions: ";
+			for(auto & s : basic::options::option[basic::options::OptionKeys::multi_template_regions]() ) TR << s << " ";
+			TR << std::endl;
+		}
+
 		TR << TR.Green << "Heavy chain sequence: " << TR.Bold << heavy_chain_sequence << TR.Reset << std::endl;
 		TR << TR.Blue  << "Light chain sequence: " << TR.Bold << light_chain_sequence << TR.Reset << std::endl;
+
 	}
 
 	string const prefix = basic::options::option[basic::options::OptionKeys::antibody::prefix]();
@@ -122,15 +132,17 @@ int antibody_main()
 		// std::cout << "Heavy Numbering: " << an.heavy << std::endl << std::endl;
 		// std::cout << "Light Numbering: " << an.heavy << std::endl << std::endl;
 
-		SCS_BlastPlus scs(report);
-		scs.init_from_options();
+		SCS_BlastPlusOP blast = n_templates == 1 ? std::make_shared<SCS_BlastPlus>(report) : std::make_shared<SCS_BlastPlus>();
+		blast->init_from_options();
 
-		scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
-		scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_alignment_length) );
+		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
+		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_alignment_length) );
 
-		scs.set_sorter( SCS_FunctorCOP(new SCS_BlastComparator_BitScore_Resolution) );
+		blast->set_sorter( SCS_FunctorCOP(new SCS_BlastComparator_BitScore_Resolution) );
 
-		SCS_ResultsOP scs_results { scs.select(n_templates, as) };
+		SCS_BaseOP scs = n_templates == 1 ? blast : SCS_BaseOP(new SCS_MultiTemplate(blast, basic::options::option[basic::options::OptionKeys::multi_template_regions](), report) );
+
+		SCS_ResultsOP scs_results { scs->select(n_templates, as) };
 
 		report->write();
 
@@ -142,7 +154,13 @@ int antibody_main()
 			TR << "SCS frl best template: " << TR.Bold << TR.Green << scs_results->frl[0]->pdb << TR.Reset << std::endl;
 			TR << "SCS Orientation best template: " << TR.Bold << TR.Yellow << scs_results->orientation[0]->pdb << TR.Reset << std::endl;
 
-			graft_cdr_loops(as, scs_results->get_result_set(0), prefix, basic::options::option[basic::options::OptionKeys::antibody::grafting_database]() );
+			for(int i=0; i<n_templates; ++i) {
+				SCS_ResultSet r;
+				try { r = scs_results->get_result_set(i); }
+				catch(std::out_of_range e) { break; }
+
+				graft_cdr_loops(as, r, prefix, '-'+std::to_string(i), basic::options::option[basic::options::OptionKeys::antibody::grafting_database]() );
+			}
 		}
 		else {
 			TR << TR.Red << "Blast+ results for some of the regions are empty!!! Exiting..." << std::endl;

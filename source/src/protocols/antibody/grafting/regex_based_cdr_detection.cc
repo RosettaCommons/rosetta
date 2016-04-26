@@ -54,9 +54,9 @@ void RegEx_based_CDR_Detector::detect(AntibodySequence &A)
 	};
 
 	for(auto &j : J) {
-		string line = "\t" + j.name + ": " + j.sequence;
-		line += line.size() < 7 ? "\t\t\t" : (line.size() < 15 ? "\t\t" : "\t");
-		*this << line << j.cdr << "\n";
+		string line = j.name + ": " + j.sequence;
+		line += line.size() < 8 ? "\t\t\t" : (line.size() < 16 ? "\t\t" : "\t");
+		*this << "\t" + line << j.cdr << "\n";
 		utility::json_spirit::Object cdr;
 
 		cdr.push_back( utility::json_spirit::Pair("sequence", j.sequence) );

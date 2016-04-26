@@ -49,15 +49,19 @@ struct SCS_Result
 	bool padded = false;
 };
 
-
-struct SCS_BlastResult : public SCS_Result
+struct SCS_Antibody_Database_Result : public SCS_Result
 {
-	int alignment_length;
-	core::Real resolution, identity, bit_score;
+	core::Real resolution;
 	std::string bio_type, light_type, struct_source;
 
 	/// sequences of selected template (do not confuse with querry sequences! 'sequence' will hold value corresponding to region results column)
 	std::string /*sequence, */h1, h2, h3, frh, l1, l2, l3, frl;
+};
+
+struct SCS_BlastResult : public SCS_Antibody_Database_Result
+{
+	int alignment_length;
+	core::Real bit_score, identity;
 };
 
 
@@ -119,7 +123,7 @@ public:
 	/// @brief Pad results vectors for each region (if possible) by adding arbitraty but compatible templates so at least n templates for each region is avalible
 	virtual void pad_results(uint n, AntibodySequence const &, SCS_Results &) = 0;
 
-private:
+protected:
 	/// @brief output summary to 'Report'
 	void report(SCS_ResultsOP r, uint n);
 };
@@ -196,7 +200,7 @@ private:
 
 	void select_template( Result & j,
 	                      std::string const & db_to_query, std::map< std::string,
-												std::map< std::string, std::string> > const & ab_db ) const override;
+						  std::map< std::string, std::string> > const & ab_db ) const override;
 };
 
 
@@ -218,6 +222,9 @@ void trim_framework(AntibodySequence const &A, AntibodyFramework &heavy_fr, Anti
 
 /// @brief Calculate frh+frl pair by trimming fr* and removing 'less-preserved' regions
 FRH_FRL calculate_frh_frl(AntibodySequence const &);
+
+void populate_results_from_db( SCS_Antibody_Database_ResultOP const & result,
+                               std::map< std::string, std::map< std::string, std::string > > const & db );
 
 
 } // namespace grafting

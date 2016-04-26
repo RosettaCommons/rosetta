@@ -141,7 +141,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 			if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_alignment_length::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			if( region.query_sequence.size() != (br->*region.result_sequence).size() ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << ": " << region.query_sequence.size() << "!=" << (br->*region.result_sequence).size() << "..." << CSI_Reset << std::endl;
 				region.r.erase( std::next(p).base() );
 			}
 			// else {

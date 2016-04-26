@@ -29,6 +29,9 @@ struct SCS_Result;
 typedef utility::pointer::shared_ptr< SCS_Result > SCS_ResultOP;
 typedef utility::pointer::shared_ptr< SCS_Result const > SCS_ResultCOP;
 
+struct SCS_Antibody_Database_Result;
+typedef utility::pointer::shared_ptr< SCS_Antibody_Database_Result > SCS_Antibody_Database_ResultOP;
+typedef utility::pointer::shared_ptr< SCS_Antibody_Database_Result const > SCS_Antibody_Database_ResultCOP;
 
 struct SCS_BlastResult;
 typedef utility::pointer::shared_ptr< SCS_BlastResult > SCS_BlastResultOP;
@@ -43,6 +46,19 @@ typedef utility::pointer::shared_ptr< SCS_Results const > SCS_ResultsCOP;
 struct SCS_ResultSet;
 typedef utility::pointer::shared_ptr< SCS_ResultSet > SCS_ResultSetOP;
 typedef utility::pointer::shared_ptr< SCS_ResultSet const > SCS_ResultSetCOP;
+
+class SCS_Base;
+typedef utility::pointer::shared_ptr< SCS_Base > SCS_BaseOP;
+typedef utility::pointer::shared_ptr< SCS_Base const > SCS_BaseCOP;
+
+class SCS_LoopOverSCs;
+typedef utility::pointer::shared_ptr< SCS_LoopOverSCs > SCS_LoopOverSCsOP;
+typedef utility::pointer::shared_ptr< SCS_LoopOverSCs const > SCS_LoopOverSCsCOP;
+
+class SCS_BlastPlus;
+typedef utility::pointer::shared_ptr< SCS_BlastPlus > SCS_BlastPlusOP;
+typedef utility::pointer::shared_ptr< SCS_BlastPlus const > SCS_BlastPlusCOP;
+
 
 } // namespace grafting
 } // namespace antibody
