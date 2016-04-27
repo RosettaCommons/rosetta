@@ -172,14 +172,12 @@ RTMin::rtmin(
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
 	//optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
-	std::string minimizer = "lbfgs_armijo_nonmonotone";
+	std::string minimizer = "lbfgs";
 	Size max_iter=200;
 	if ( cartesian_ || nonideal_ ) {
 		if ( !scfxn.ready_for_nonideal_scoring() ) {
 			utility_exit_with_message( "scorefunction not set up for nonideal/Cartesian scoring" );
 		}
-		minimizer = "lbfgs_armijo_atol";
-		//max_iter = 25;         // PTC - this doesn't give Cartesian enough time to converge
 	}
 
 	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );

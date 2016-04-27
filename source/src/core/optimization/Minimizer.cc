@@ -100,6 +100,10 @@ Minimizer::run(
 	} else if ( type == "dfpmin_strong_wolfe_atol" ) {
 		LineMinimizationAlgorithmOP strong_wolfe_line_search( new StrongWolfeLineMinimization( func_, false, phipsi_inout.size() ) );
 		dfpmin_armijo( phipsi, end_func, absolute_converge_test, strong_wolfe_line_search, ITMAX );
+	} else if ( type == "lbfgs" ) {
+		LineMinimizationAlgorithmOP brent_line_search( new BrentLineMinimization( func_, phipsi.size() ) );
+		brent_line_search->silent( options_.silent() );
+		lbfgs( phipsi, end_func, fractional_converge_test, brent_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
 		armijo_line_search->silent( options_.silent() );
