@@ -302,12 +302,37 @@ public:
 	Public accessor functions:
 	*************************/
 
+	/// @brief Look up whether we're using absolute (return false) or fractional (return true) penalty ranges.
+	///
+	inline bool use_fract_ranges( core::Size const index ) const { return use_fract_ranges_[index]; }
+
+	/// @brief Determine whether ANY of the property sets of this helper object use fractional ranges.
+	///
+	bool use_fract_ranges_any() const;
+
+	/// @brief Determine whether ANY of the property sets of this helper object use fractional expected values.
+	///
+	bool use_fract_expected_values_any() const;
+
 	/// @brief Look up the penalty for a property set of internal index property_set_index, given a deviation from
 	/// the desired count given by delta_expected.
 	inline core::Real property_penalty( signed long const delta_expected, core::Size const property_set_index) const {
-		if ( delta_expected < property_deviation_ranges_[property_set_index].first ) return out_of_bounds_func( property_set_index, delta_expected, true ); //property_penalties_[property_set_index][1];
+		if ( delta_expected < property_deviation_ranges_[property_set_index].first ) return out_of_bounds_func( property_set_index, delta_expected, true );
 		if ( delta_expected > property_deviation_ranges_[property_set_index].second ) return out_of_bounds_func( property_set_index, delta_expected, false );
 		return property_penalties_[property_set_index][ delta_expected - property_deviation_ranges_[property_set_index].first + 1 ];
+	}
+
+	/// @brief Look up the penalty for a property set of internal index property_set_index, given a fractional content given by fract.
+	/// @details This version is for fractional property penalties.
+	/// @param[in] delta_fract The measured fractional content of amino acids matching this property set in the pose or pose subset minus the expected.
+	/// @param[in] property_set_index The index of this property set.
+	inline core::Real fract_property_penalty(
+		core::Real const delta_fract,
+		core::Size const property_set_index
+	) const {
+		if ( delta_fract < fract_property_deviation_ranges_[property_set_index].first ) return fract_out_of_bounds_func( property_set_index, delta_fract, true );
+		if ( delta_fract > fract_property_deviation_ranges_[property_set_index].second ) return fract_out_of_bounds_func( property_set_index, delta_fract, false );
+		return interpolate_property_penalties( delta_fract, property_set_index );
 	}
 
 	/// @brief Get the number of sets of properties that we'll be counting.
@@ -354,12 +379,31 @@ private:
 	///
 	void check_data() const;
 
+	/// @brief Calculate a penalty, linearly interpolating between penalty values.
+	/// @details Used only in the case of fractional penalty ranges.
+	/// @param[in] delta_fract The fractional deviation from the expected count (e.g. if expected is 5% and observed is 3%, this is -0.02).
+	/// @param[in] index The index of the property set that we're counting.  Note that, for speed, there is no check that this is in range.
+	inline
+	core::Real
+	interpolate_property_penalties(
+		core::Real const &delta_fract,
+		core::Size const index
+	) const {
+		for ( core::Size i=2, imax=property_penalty_fracts_[index].size(); i<=imax; ++i ) {
+			if ( delta_fract <= property_penalty_fracts_[index][i] ) { //The penalty we want is between the current value and the previous one.
+				core::Real const fract_location( ( delta_fract - property_penalty_fracts_[index][i-1] ) / ( property_penalty_fracts_[index][i] - property_penalty_fracts_[index][i-1] ) ); //Number from 0 to 1 indicating how far across the space between the previous value and the current one we are.
+				return ( fract_location * property_penalties_[index][i] + (1.0-fract_location) * property_penalties_[index][i-1] ); //Linearly interpolate and return a penalty
+			}
+		}
+		throw utility::excn::EXCN_Msg_Exception( "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::interpolate_property_penalties(): No pair of penalties for interpolation could be found!  This shouldn't happen, so consult the developer." );
+		return 0.0; //To make compiler happy, though this line will never be reached.
+	}
+
 	/// @brief Calculate the out-of-bounds behaviour of the penalty function and return the penalty value.
 	/// @details Inputs are:
 	/// @param[in] index The index in the list of properties or residue types that we're counting.
 	/// @param[in] delta_expected The deviation from the expected count.
 	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
-	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
 	inline core::Real out_of_bounds_func(
 		core::Size const index,
 		signed long const delta_expected,
@@ -367,7 +411,7 @@ private:
 	) const {
 		TailFunction tf( tf_unknown );
 		if ( before ) tf=property_tailfunctions_[index].first;
-		else /*if !before*/ tf=property_tailfunctions_[index].second;
+		else tf=property_tailfunctions_[index].second;
 
 		switch(tf) {
 		case tf_constant :
@@ -378,6 +422,38 @@ private:
 			//break; //cppcheck complains about this below a return.
 		case tf_quadratic :
 			return quadratic_out_of_bounds_func( before, index, delta_expected );
+			//break; //cppcheck complains about this below a return.
+		default :
+			utility_exit_with_message( "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::out_of_bounds_func(): Unknown out of bounds function." );
+		}
+
+		return 0.0;
+	}
+
+	/// @brief Calculate the out-of-bounds behaviour of the penalty function and return the penalty value.  This version is for cases with
+	/// fractional desired contents.
+	/// @details Inputs are:
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	/// @param[in] delta_fract The fractional deviation from the expected count (e.g. if expected is 5% and observed is 3%, this is -0.02).
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	inline core::Real fract_out_of_bounds_func(
+		core::Size const index,
+		core::Real const &delta_fract,
+		bool const before
+	) const {
+		TailFunction tf( tf_unknown );
+		if ( before ) tf=property_tailfunctions_[index].first;
+		else tf=property_tailfunctions_[index].second;
+
+		switch(tf) {
+		case tf_constant :
+			return const_out_of_bounds_func(before, index); //Use the same function for the fractional form
+			//break; //cppcheck complains about this below a return.
+		case tf_linear :
+			return linear_fract_out_of_bounds_func( before, index, delta_fract );
+			//break; //cppcheck complains about this below a return.
+		case tf_quadratic :
+			return quadratic_fract_out_of_bounds_func( before, index, delta_fract );
 			//break; //cppcheck complains about this below a return.
 		default :
 			utility_exit_with_message( "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::out_of_bounds_func(): Unknown out of bounds function." );
@@ -403,6 +479,30 @@ private:
 		return 0.0;
 	}
 
+	/// @brief Return a linear value for an out-of-bounds behaviour.  This version is for fractional penalty ranges.
+	/// @details This fits the first two or last two points to a straight line, then extends it.  Inputs are:
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	/// @param[in] delta_fract The fractional deviation from the expected count (e.g. if expected is 5% and observed is 3%, this is -0.02).
+	inline core::Real linear_fract_out_of_bounds_func(
+		bool const before,
+		core::Size const index,
+		core::Real const &delta_fract
+	) const {
+		core::Real m(0.0); //slope
+		core::Real b(0.0); //intercept
+
+		if ( before ) {
+			m = ( property_penalties_[index][2] - property_penalties_[index][1] ) / ( property_penalty_fracts_[index][2] - property_penalty_fracts_[index][1] );
+			b = ( property_penalties_[index][1] - m * fract_property_deviation_ranges_[index].first );
+		} else { //if after
+			m = ( property_penalties_[index][ property_penalties_[index].size() ] - property_penalties_[index][ property_penalties_[index].size() - 1 ] ) / ( property_penalty_fracts_[index][ property_penalties_[index].size() ] - property_penalty_fracts_[index][ property_penalties_[index].size() - 1 ] );
+			b = ( property_penalties_[index][ property_penalties_[index].size() ] - m * fract_property_deviation_ranges_[index].second );
+		}
+		return m*delta_fract+b;
+	}
+
 	/// @brief Return a linear value for an out-of-bounds behaviour.
 	/// @details This fits the first two or last two points to a straight line, then extends it.  Inputs are:
 	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
@@ -425,6 +525,32 @@ private:
 			b = (property_penalties_[index][ property_penalties_[index].size() ] - m * static_cast<core::Real>(property_deviation_ranges_[index].second) );
 		}
 		return m*static_cast<core::Real>(delta_expected)+b;
+	}
+
+	/// @brief Return a quadratic value for an out-of-bounds behaviour.  This version is for fractional penalty ranges.
+	/// @details This fits the first two or the last two values to a parabola centred on the origin, then extends it.  Inputs are:
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	/// @param[in] delta_fract The fractional deviation from the expected count (e.g. if expected is 5% and observed is 3%, this is -0.02).
+	inline core::Real quadratic_fract_out_of_bounds_func(
+		bool const before,
+		core::Size const index,
+		core::Real const &delta_fract
+	) const {
+		core::Real a(0.0); //coefficient of y=ax^2+b
+		core::Real b(0.0); //intercept of y=ax^2+b
+
+		if ( before ) {
+			core::Real const x1sq( pow( property_penalty_fracts_[index][1], 2 ) );
+			a = ( property_penalties_[index][1] - property_penalties_[index][2] ) / ( x1sq - pow( property_penalty_fracts_[index][2], 2 ) );
+			b = (property_penalties_[index][1] - a * x1sq );
+		} else { //if after
+			core::Real const x1sq( pow( property_penalty_fracts_[index][ property_penalties_[index].size() ], 2 ) );
+			a = ( property_penalties_[index][ property_penalties_[index].size() ] - property_penalties_[index][ property_penalties_[index].size() - 1 ] ) / ( x1sq - pow( property_penalty_fracts_[ index ][ property_penalties_[index].size() - 1 ], 2 ) );
+			b = (property_penalties_[index][ property_penalties_[index].size() ] - a * x1sq );
+		}
+		return a*pow( delta_fract, 2 ) + b;
 	}
 
 	/// @brief Return a quadratic value for an out-of-bounds behaviour.
@@ -477,12 +603,30 @@ private:
 	/// the penalty value for a given deviation from the ideal count, by internal index.
 	utility::vector1 < utility::vector1 < core::Real > > property_penalties_;
 
+	/// @brief For each set of property penalties, this is the corresponding fractional abundance.
+	/// @details Outer vector is the property set, by internal index.  Inner vector is the
+	/// fractional abundance corresponding to each penalty value in property_penalties_.  Inner vector
+	/// will be an empty vector if use_fract_ranges_ is false (i.e. only used if fractional ranges are
+	/// used).
+	utility::vector1 < utility::vector1 < core::Real > > property_penalty_fracts_;
+
+	/// @brief For a given property set, should we use absolute ranges (false) or fractional ranges (true)?
+	///
+	utility::vector1 < bool > use_fract_ranges_;
+
 	/// @brief Deviation ranges for each property set.
 	/// @details Outer vector is the property set, by internal index.  Inner vector is pairs
 	/// of deviation ranges (e.g. -10,5 indicating that we are storing penalties for having 10
 	/// residues too few up to 5 residues too many for a given property set).  Deviations outside
-	/// of this range are assigned the value from the end of the range.
+	/// of this range are assigned a value given by the begin function or end function.
 	utility::vector1 < std::pair < signed long, signed long > > property_deviation_ranges_;
+
+	/// @brief Deviation ranges for each property set, expressed as a fraction of total residues.
+	/// @details Outer vector is the property set, by internal index.  Inner vector is pairs
+	/// of deviation ranges (e.g. 0.05,0.09 indicating that we are storing penalties for having 5%
+	/// of a residue type to 9% of a residue type for a given property set).  Deviations outside
+	/// of this range are assigned a value given by the begin function or end function.
+	utility::vector1 < std::pair < core::Real, core::Real > > fract_property_deviation_ranges_;
 
 	/// @brief The behaviours at the end of the user-defined range for each property set.
 	/// @details By default, past the user-defined range, the energy increases quadratically with

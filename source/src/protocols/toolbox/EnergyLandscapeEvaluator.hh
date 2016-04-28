@@ -108,17 +108,17 @@ private:
 /// @brief computes "modified ddG" of score/rms points using the RotamerBoltzmannWeight method
 class ModifiedDdgEvaluator : public EnergyLandscapeEvaluator {
 public:
-	ModifiedDdgEvaluator( ScoreRmsPoints const & ddg_values );
-	virtual ~ModifiedDdgEvaluator();
+ModifiedDdgEvaluator( ScoreRmsPoints const & ddg_values );
+virtual ~ModifiedDdgEvaluator();
 
-	virtual EnergyLandscapeEvaluatorOP
-	clone() const;
+virtual EnergyLandscapeEvaluatorOP
+clone() const;
 
-	virtual core::Real
-	compute( ScoreRmsPoints const & points ) const;
+virtual core::Real
+compute( ScoreRmsPoints const & points ) const;
 
 private:
-	ScoreRmsPoints const ddg_values_;
+ScoreRmsPoints const ddg_values_;
 };
 */
 

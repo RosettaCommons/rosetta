@@ -743,7 +743,7 @@ MMTorsionEnergy::eval_intrares_derivatives(
 				Size const ii_neighb      = rsd.residue_connection_partner( ii_resconn );
 				//TR << " conn is " << ii_resconn << " and neighb is " << ii_neighb << std::endl;
 				if ( ii_neighb == 0 ) continue;
-				
+
 				Size const neighb_resconn = rsd.residue_connection_conn_id( ii_resconn );
 				conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 				chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
@@ -798,10 +798,10 @@ MMTorsionEnergy::eval_intrares_derivatives(
 			for ( Size ii = 1; ii <= connections.size(); ++ii ) {
 				Size const ii_resconn   = connections[ ii ];
 				Size const ii_neighb      = rsd.residue_connection_partner( ii_resconn );
-				
+
 				//TR << " conn is " << ii_resconn << " and neighb is " << ii_neighb << std::endl;
 				if ( ii_neighb == 0 ) continue;
-				
+
 				/// Find the neighbor residue and connection atom
 				Size const neighb_resconn = rsd.residue_connection_conn_id( ii_resconn );
 				conformation::Residue const & neighb_res( pose.residue( ii_neighb ));

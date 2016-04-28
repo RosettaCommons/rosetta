@@ -80,7 +80,7 @@ protected:
 
 	/// @note This function returns an uninitialized filter; this should probably not be used.
 	//protocols::simple_filters::ScoreTypeFilter stf(){
-	//	return stf_;
+	// return stf_;
 	//}
 	void temperature(core::Real temp){
 		temperature_= temp;

@@ -103,19 +103,19 @@ private:
 	inline
 	protocols::normalmode::NormalModeRelaxMoverOP
 	get_NMmover( core::pose::Pose pose,
-		core::scoring::ScoreFunctionCOP sfxn_loc,
-		core::kinematics::MoveMapOP mm,
-		core::Real distcut,
-		std::string relaxmode,
-		bool const cart )
+	core::scoring::ScoreFunctionCOP sfxn_loc,
+	core::kinematics::MoveMapOP mm,
+	core::Real distcut,
+	std::string relaxmode,
+	bool const cart )
 	{
-		if ( cart ) {
-			return protocols::normalmode::NormalModeRelaxMoverOP(
-				new protocols::normalmode::CartesianNormalModeMover( pose, sfxn_loc, mm, "CA", distcut, relaxmode ) );
-		} else {
-			return protocols::normalmode::NormalModeRelaxMoverOP(
-				new protocols::normalmode::TorsionNormalModeMover( pose, sfxn_loc,  mm, "CA", distcut, relaxmode ) );
-		}
+	if ( cart ) {
+	return protocols::normalmode::NormalModeRelaxMoverOP(
+	new protocols::normalmode::CartesianNormalModeMover( pose, sfxn_loc, mm, "CA", distcut, relaxmode ) );
+	} else {
+	return protocols::normalmode::NormalModeRelaxMoverOP(
+	new protocols::normalmode::TorsionNormalModeMover( pose, sfxn_loc,  mm, "CA", distcut, relaxmode ) );
+	}
 	}
 	*/
 

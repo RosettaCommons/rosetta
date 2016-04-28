@@ -132,19 +132,19 @@ add_generic_hbs_constraint(
 	using namespace core::scoring;
 	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
-	
+
 	Size const pren = hbs_pre_position;
 	Size const postn = hbs_pre_position+2;
 	conformation::Residue const & pre = pose.residue( hbs_pre_position );
 	conformation::Residue const & post = pose.residue( hbs_pre_position+2 );
-	
+
 	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
 	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
 	CircularHarmonicFuncOP cfunc_120( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
 	CircularHarmonicFuncOP cfunc_60( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
 	CircularHarmonicFuncOP cfunc_109( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi()/180*109.5, 0.02 ) );
 	CircularHarmonicFuncOP cfunc_180( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	
+
 	AtomID aidCYH(  pre.atom_index( "CYH" ), pren  );
 	AtomID aidCZH( post.atom_index( "CZH" ), postn );
 	AtomID aidN  ( post.atom_index( "N"   ), postn );
@@ -152,22 +152,22 @@ add_generic_hbs_constraint(
 	AtomID aidVYH( post.atom_index( "VYH" ), postn );
 	AtomID aidCY2(  pre.atom_index( cy2name ), pren  );
 	AtomID aidCY1(  pre.atom_index( cy1name ), pren  );
-	
+
 	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
 	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
 	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
-	
+
 	pose.add_constraint( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, cfunc_120 ) ) );
 	pose.add_constraint( ConstraintOP( new AngleConstraint( aidN,   aidCZH, aidCYH, cfunc_109 ) ) );
-	
+
 	pose.add_constraint( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, cfunc_180 ) ) );
 }
-	
+
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size a3b_hbs_pre_position )
 {
 	add_a3b_hbs_constraint( pose, a3b_hbs_pre_position, 1.479871, 0.05 );
 }
-	
+
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
 {
 	add_generic_hbs_constraint( pose, hbs_pre_position, distance, std, "CY3", "CY2" );
@@ -175,16 +175,16 @@ void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_positio
 	TR << "added atom pair constraint to a3b hbs with distance: " << distance << " and std: "<< std << std::endl;
 	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 }
-	
+
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )
 {
 	add_hbs_constraint( pose, hbs_pre_position, 1.479871, 0.05 );
 }
-	
+
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
 {
 	add_generic_hbs_constraint( pose, hbs_pre_position, distance, std, "CY2", "CY1" );
-		
+
 	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
 	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 }

@@ -149,9 +149,10 @@ main( int argc, char* argv[] )
 		pose.append_residue_by_bond( Residue( restype_set->name_map( "B3A" ), true ), true );
 		pose.append_residue_by_bond( Residue( restype_set->name_map( "B3A:MethylatedCtermProteinFull" ), true ), true );
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii )
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			pose.set_torsion( TorsionID( ii, id::BB, 4 ), 180 );
-		
+		}
+
 		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, 1 ) );
 		translate->step_size( 4 );
 		translate->apply( pose );
@@ -159,15 +160,16 @@ main( int argc, char* argv[] )
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( false );
 		mm->set_jump( true );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii )
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			mm->set( TorsionID( ii, id::BB, 4 ), false );
-		
+		}
+
 		protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
-		
+
 		min->apply( pose );
-	
+
 		utility::vector1< ConstraintOP > csts;
-		
+
 		utility::vector1< ConstraintOP > multi;
 		for ( Size ii = 1; ii <= 5; ii += 2 ) {
 			Size jj = 12 - ii;
@@ -175,32 +177,32 @@ main( int argc, char* argv[] )
 				AtomID( pose.residue( ii ).atom_index( "O" ), ii ),
 				AtomID( pose.residue( jj ).atom_index( "H" ), jj ),
 				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.1 ) )
-			) ) );
+				) ) );
 			multi.push_back( ConstraintOP( new AtomPairConstraint(
 				AtomID( pose.residue( ii ).atom_index( "H" ), ii ),
 				AtomID( pose.residue( jj ).atom_index( "O" ), jj ),
 				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.1 ) )
-			) ) );
+				) ) );
 		}
 		csts.push_back( ConstraintOP( new MultiConstraint( multi ) ) );
-		
+
 		for ( Size ii = 1; ii <= 5; ii += 2 ) {
 			Size jj = ii + 6;
 			multi.push_back( ConstraintOP( new AtomPairConstraint(
 				AtomID( pose.residue( ii ).atom_index( "O" ), ii ),
 				AtomID( pose.residue( jj ).atom_index( "H" ), jj ),
 				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.1 ) )
-			) ) );
+				) ) );
 			if ( ii == 5 ) continue;
 			multi.push_back( ConstraintOP( new AtomPairConstraint(
 				AtomID( pose.residue( ii ).atom_index( "H" ), ii ),
 				AtomID( pose.residue( jj+1 ).atom_index( "O" ), jj ),
 				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.1 ) )
-			) ) );
+				) ) );
 		}
 		//pose.add_constraint( any_interchain_hbond );
 		pose.add_constraint( ConstraintOP( new AmbiguousConstraint( csts ) ) );
-		
+
 		pose.dump_pdb( "out.pdb" );
 		for ( Real phi = -170; phi <= 180; phi += 10 ) {
 			for ( Real tht = -170; tht <= 180; tht += 10 ) {
@@ -211,7 +213,7 @@ main( int argc, char* argv[] )
 						pose.set_torsion( TorsionID( ii, id::BB, 2 ), tht );
 						pose.set_torsion( TorsionID( ii, id::BB, 3 ), psi );
 					}
-					
+
 					min->apply( pose );
 					std::stringstream fn;
 					fn << "out_" << phi << "_" << tht << "_" << psi << ".pdb";
@@ -221,59 +223,59 @@ main( int argc, char* argv[] )
 				}
 			}
 		}
-		
+
 		//AmbiguousConstraintOP any_interchain_hbond( new AmbiguousConstraint );
 		/*
-		 pose.add_constraint(
-			ConstraintOP(
-				new AtomPairConstraint(
-					AtomID( pose.residue( 1 ).atom_index( "O" ), 1 ),
-					AtomID( pose.residue( 3 ).atom_index( "H" ), 3 ),
-					core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-		) ) );
-		
 		pose.add_constraint(
-			ConstraintOP(
-				new AtomPairConstraint(
-					AtomID( pose.residue( 3 ).atom_index( "O" ), 3 ),
-					AtomID( pose.residue( 1 ).atom_index( "H" ), 1 ),
-					core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		ConstraintOP(
+		new AtomPairConstraint(
+		AtomID( pose.residue( 1 ).atom_index( "O" ), 1 ),
+		AtomID( pose.residue( 3 ).atom_index( "H" ), 3 ),
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
 		) ) );
-		
-		
-		pose.add_constraint(
-			ConstraintOP(
-				new DihedralConstraint(
-					AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-					AtomID( pose.residue( 3 ).atom_index( "N" ), 3 ),
-					AtomID( pose.residue( 3 ).atom_index( "CO" ), 3 ),
-					AtomID( pose.residue( 3 ).atom_index( "CP2" ), 3 ),
-					core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
-		) ) );
-		pose.add_constraint(
-			ConstraintOP(
-				new DihedralConstraint(
-					AtomID( pose.residue( 3 ).atom_index( "H" ), 3 ),
-					AtomID( pose.residue( 3 ).atom_index( "N" ), 3 ),
-					AtomID( pose.residue( 3 ).atom_index( "CO" ), 3 ),
-					AtomID( pose.residue( 3 ).atom_index( "OP1" ), 3 ),
-					core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
-		) ) );
-		pose.add_constraint(
-							ConstraintOP(
-										 new DihedralConstraint(
-																AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-																AtomID( pose.residue( 3 ).atom_index( "N" ), 3 ),
-																AtomID( pose.residue( 3 ).atom_index( "CO" ), 3 ),
-																AtomID( pose.residue( 3 ).atom_index( "CP2" ), 3 ),
-																core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
-																) ) );
-		*/
-		
-		
-		
 
-		
+		pose.add_constraint(
+		ConstraintOP(
+		new AtomPairConstraint(
+		AtomID( pose.residue( 3 ).atom_index( "O" ), 3 ),
+		AtomID( pose.residue( 1 ).atom_index( "H" ), 1 ),
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		) ) );
+
+
+		pose.add_constraint(
+		ConstraintOP(
+		new DihedralConstraint(
+		AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "N" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "CO" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "CP2" ), 3 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+		) ) );
+		pose.add_constraint(
+		ConstraintOP(
+		new DihedralConstraint(
+		AtomID( pose.residue( 3 ).atom_index( "H" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "N" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "CO" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "OP1" ), 3 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+		) ) );
+		pose.add_constraint(
+		ConstraintOP(
+		new DihedralConstraint(
+		AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "N" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "CO" ), 3 ),
+		AtomID( pose.residue( 3 ).atom_index( "CP2" ), 3 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+		) ) );
+		*/
+
+
+
+
+
 		// Long MC trajectory
 
 

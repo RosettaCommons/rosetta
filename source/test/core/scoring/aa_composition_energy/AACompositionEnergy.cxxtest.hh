@@ -647,6 +647,90 @@ public:
 	}
 
 	/// @brief Test the energy calculation using the trp cage.
+	/// @details This test checks that we can impose the requirement that a pose contain 20% proline, with penalty ranges specified as fractions.
+	void test_energy_eval_twenty_percent_pro_fract_ranges() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/twenty_percent_pro_fract_ranges.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		if ( TR.visible() ) {
+			TR << "Starting AACompositionEnergyTests::test_energy_eval_twenty_percent_pro_fract_ranges()." << std::endl;
+			TR << "Test created 28 Apr. 2016 by Vikram K. Mulligan, Baker laboratory." << std::endl;
+			TR << "This test checks that the aa_composition score term evaluates its energy correctly.  It uses the trp cage, and scores using a setup file that requires that a pose be 20 percent prolines.  This test uses a composition file that specifies ranges as fractions." << std::endl;
+		}
+
+		using namespace core::chemical;
+		ResidueTypeSetCOP standard_residues( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		Pose trpcage( create_trpcage_ideal_pose() );
+		ScoreFunction sfxn;
+		sfxn.set_weight( aa_composition, 0.5 );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TEST\tEXPECTED\tACTUAL" << std::endl;
+		if ( TR.visible() ) TR << "TrpCage:\t" << "0.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 0.0, 1e-6 );
+
+		//Add one more proline:
+		core::conformation::ResidueOP new_rsd1( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("PRO") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage.residue( 2 ), *new_rsd1, trpcage.conformation(), true);
+		trpcage.replace_residue( 2, *new_rsd1, false );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TrpCage+pro:\t" << "10.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 10.0, 1e-6 );
+
+		//Add one more proline:
+		core::conformation::ResidueOP new_rsd2( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("PRO") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage.residue( 3 ), *new_rsd2, trpcage.conformation(), true);
+		trpcage.replace_residue( 3, *new_rsd2, false );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TrpCage+2pro:\t" << "20.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 20.0, 1e-6 );
+
+		//Add one more proline:
+		core::conformation::ResidueOP new_rsd2b( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("PRO") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage.residue( 4 ), *new_rsd2b, trpcage.conformation(), true);
+		trpcage.replace_residue( 4, *new_rsd2b, false );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TrpCage+3pro:\t" << "36.67\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 36.66666666666667, 1e-6 );
+
+		//Create another trp cage and mutate a pro to ala:
+		Pose trpcage2( create_trpcage_ideal_pose() );
+		core::conformation::ResidueOP new_rsd3( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 17 ), *new_rsd3, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 17, *new_rsd3, false );
+
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-pro:\t" << "25.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 25.0, 1e-6 );
+
+		//Mutate the another pro to ala:
+		core::conformation::ResidueOP new_rsd4( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 18 ), *new_rsd4, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 18, *new_rsd4, false );
+
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-2pro:\t" << "50.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 50.0, 1e-6 );
+
+		//Mutate the another pro to ala:
+		core::conformation::ResidueOP new_rsd5( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 19 ), *new_rsd5, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 19, *new_rsd5, false );
+
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-3pro:\t" << "75.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 75.0, 1e-6 );
+
+		if ( TR.visible() ) {
+			TR << "Test AACompositionEnergyTests::test_energy_eval_twenty_percent_pro() complete." << std::endl;
+			TR.flush();
+		}
+		return;
+	}
+
+	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain 20% proline.
 	void test_energy_eval_twenty_percent_pro() {
 		core_init_with_additional_options("-score:aa_composition_setup_file twenty_percent_pro.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
@@ -1001,6 +1085,132 @@ public:
 		if ( TR.visible() ) {
 			TR << "Test test_tailfunctions_quadratic() complete." << std::endl;
 			TR.flush();
+		}
+
+		return;
+	}
+	
+	/// @brief Test linear interpolation of penalties when the FRACT_DELTA_START and FRACT_DELTA_END lines are used.
+	/// @details This version uses linear tailfunctions.
+	void test_interpolation_linear_tails() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/fractdelta.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+
+		if ( TR.visible() ) {
+			TR << "Starting test_interpolation_linear_tails()." << std::endl;
+		}
+
+		// Set up score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_composition, 1 );
+		
+		utility::vector1 < core::Real > expected_results;
+		expected_results.resize(31);
+		expected_results[ 1] = 7.5;
+		expected_results[ 2] = 8.333333333;
+		expected_results[ 3] = 9.166666667;
+		expected_results[ 4] = 10;
+		expected_results[ 5] = 10.83333333;
+		expected_results[ 6] = 11.66666667;
+		expected_results[ 7] = 12.5;
+		expected_results[ 8] = 13.33333333;
+		expected_results[ 9] = 14.16666667;
+		expected_results[10] = 15;
+		expected_results[11] = 12.5;
+		expected_results[12] = 10;
+		expected_results[13] = 7.5;
+		expected_results[14] = 5;
+		expected_results[15] = 2.5;
+		expected_results[16] = 0;
+		expected_results[17] = 0.833333333;
+		expected_results[18] = 1.666666667;
+		expected_results[19] = 2.5;
+		expected_results[20] = 3.333333333;
+		expected_results[21] = 4.166666667;
+		expected_results[22] = 5;
+		expected_results[23] = 6.666666667;
+		expected_results[24] = 8.333333333;
+		expected_results[25] = 10;
+		expected_results[26] = 11.66666667;
+		expected_results[27] = 13.33333333;
+		expected_results[28] = 15;
+		expected_results[29] = 16.66666667;
+		expected_results[30] = 18.33333333;
+		expected_results[31] = 20;
+		
+		TR << "SEQUENCE\tEXPECTED\tACTUAL" << std::endl;
+		for(core::Size i=0; i<=30; ++i) {
+			std::string seq("");
+			for(core::Size j=1; j<=30; ++j) {
+				if(j<=i) seq+="A";
+				else seq+="G";
+			}
+			Pose pose;
+			make_pose_from_sequence( pose, seq, "fa_standard");
+			TR << seq << "\t" << expected_results[i+1] << "\t" << scorefxn(pose) << std::endl;
+			TS_ASSERT_DELTA(scorefxn(pose), expected_results[i+1], 1e-6);	
+		}
+
+		return;
+	}
+
+	/// @brief Test linear interpolation of penalties when the FRACT_DELTA_START and FRACT_DELTA_END lines are used.
+	/// @details This version uses quadratic tailfunctions.
+	void test_interpolation_quadratic_tails() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/fractdelta_quadratic.comp -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+
+		if ( TR.visible() ) {
+			TR << "Starting test_interpolation_quadratic_tails()." << std::endl;
+		}
+
+		// Set up score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_composition, 1 );
+		
+		utility::vector1 < core::Real > expected_results;
+		expected_results.resize(31);
+		expected_results[ 1] = 6.25;
+		expected_results[ 2] = 7.592592593;
+		expected_results[ 3] = 8.842592593;
+		expected_results[ 4] = 10;
+		expected_results[ 5] = 10.83333333;
+		expected_results[ 6] = 11.66666667;
+		expected_results[ 7] = 12.5;
+		expected_results[ 8] = 13.33333333;
+		expected_results[ 9] = 14.16666667;
+		expected_results[10] = 15;
+		expected_results[11] = 12.5;
+		expected_results[12] = 10;
+		expected_results[13] = 7.5;
+		expected_results[14] = 5;
+		expected_results[15] = 2.5;
+		expected_results[16] = 0;
+		expected_results[17] = 0.833333333;
+		expected_results[18] = 1.666666667;
+		expected_results[19] = 2.5;
+		expected_results[20] = 3.333333333;
+		expected_results[21] = 4.166666667;
+		expected_results[22] = 5;
+		expected_results[23] = 6.666666667;
+		expected_results[24] = 8.333333333;
+		expected_results[25] = 10;
+		expected_results[26] = 11.66666667;
+		expected_results[27] = 13.33333333;
+		expected_results[28] = 15;
+		expected_results[29] = 17.31481481;
+		expected_results[30] = 19.81481481;
+		expected_results[31] = 22.5;
+		
+		TR << "SEQUENCE\tEXPECTED\tACTUAL" << std::endl;
+		for(core::Size i=0; i<=30; ++i) {
+			std::string seq("");
+			for(core::Size j=1; j<=30; ++j) {
+				if(j<=i) seq+="A";
+				else seq+="G";
+			}
+			Pose pose;
+			make_pose_from_sequence( pose, seq, "fa_standard");
+			TR << seq << "\t" << expected_results[i+1] << "\t" << scorefxn(pose) << std::endl;
+			TS_ASSERT_DELTA(scorefxn(pose), expected_results[i+1], 1e-6);	
 		}
 
 		return;

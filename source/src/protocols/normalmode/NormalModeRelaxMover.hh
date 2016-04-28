@@ -41,17 +41,17 @@ using namespace core;
 class NormalModeRelaxMover : public protocols::moves::Mover
 {
 public:
-  NormalModeRelaxMover();
+	NormalModeRelaxMover();
 
-  NormalModeRelaxMover( core::scoring::ScoreFunctionCOP sfxn,
-												bool const cartesian );
+	NormalModeRelaxMover( core::scoring::ScoreFunctionCOP sfxn,
+		bool const cartesian );
 
-	NormalModeRelaxMover(	core::scoring::ScoreFunctionCOP sfxn,
-												bool cartesian,
-												core::kinematics::MoveMapCOP mm,
-												std::string const relaxmode,
-												Real const distcut
-												);
+	NormalModeRelaxMover( core::scoring::ScoreFunctionCOP sfxn,
+		bool cartesian,
+		core::kinematics::MoveMapCOP mm,
+		std::string const relaxmode,
+		Real const distcut
+	);
 
 	~NormalModeRelaxMover();
 
@@ -69,12 +69,12 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const { return clone(); };
 
 	virtual
-	void parse_my_tag(	TagCOP tag,
-											basic::datacache::DataMap & data,
-											Filters_map const &,
-											protocols::moves::Movers_map const &,
-											Pose const & pose
-											);
+	void parse_my_tag( TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & pose
+	);
 
 	void set_default();
 
@@ -106,12 +106,12 @@ public:
 	// Mode setup;
 	// user-defined mode setup
 	void set_mode( utility::vector1< Size > const mode_using,
-								 utility::vector1< Real > const mode_scales );
+		utility::vector1< Real > const mode_scales );
 
 	void set_mode( Size const i_mode );
 
 	void set_random_mode( std::string const select_option = "probabilistic",
-												Real const importance_portion = 1.0 );
+		Real const importance_portion = 1.0 );
 
 	void refresh_normalmode() { refresh_normalmode_ = true; }
 
@@ -122,9 +122,9 @@ public:
 	std::string relaxmode() const { return relaxmode_; }
 
 private:
-	void 
+	void
 	gen_coord_constraint( pose::Pose &pose,
-												utility::vector1< Vector > const &excrd ) const;
+		utility::vector1< Vector > const &excrd ) const;
 
 	void set_default_minoption();
 
@@ -135,7 +135,7 @@ private:
 	extrapolate_mode_on_pose( pose::Pose const &pose ) const;
 
 	Real get_RMSD( utility::vector1< Vector > const excrd,
-								 pose::Pose const &pose ) const;
+		pose::Pose const &pose ) const;
 
 
 private:
@@ -170,7 +170,7 @@ private:
 	mutable Real scale_dynamic_;
 
 	// torsion stuffs
-	mutable utility::vector1< Real > dtor_; 
+	mutable utility::vector1< Real > dtor_;
 
 }; // end NormalModeRelaxMover
 

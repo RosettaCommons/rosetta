@@ -141,7 +141,7 @@ AtomCoordinateCstMover::generate_seqmap( core::pose::Pose const & pose, core::po
 	bool const same_sequence = ( pose.sequence() == constraint_target_pose.sequence() );
 
 	if ( same_length && same_sequence ) {
-			return core::id::SequenceMapping::identity( pose.total_residue() );
+		return core::id::SequenceMapping::identity( pose.total_residue() );
 	} else { // !same_sequence || !same_length
 		TR << "Input structure and native differ in ";
 		if ( !same_length ) TR << "length and sequence ";

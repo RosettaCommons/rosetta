@@ -144,7 +144,7 @@ main( int argc, char* argv[] )
 		a3bpose.append_residue_by_bond( Residue( restype_set->name_map( "ALA" ), true ), true );
 		a3bpose.append_residue_by_bond( Residue( restype_set->name_map( "B3L" ), true ), true );
 		a3bpose.append_residue_by_bond( Residue( restype_set->name_map( "ALA:MethylatedCtermProteinFull" ), true ), true );
-		
+
 		for ( Size ii = 1; ii <= a3bpose.total_residue(); ++ii ) {
 			if ( a3bpose.residue_type( ii ).is_beta_aa() ) {
 				a3bpose.conformation().set_torsion( TorsionID( ii, id::BB, 1), -115);
@@ -161,13 +161,13 @@ main( int argc, char* argv[] )
 				a3bpose.conformation().set_torsion( TorsionID( ii, id::CHI, 2),   60);
 			}
 		}
-		
+
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_chi( false );
 		mm->set_bb( true );
 		protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "linmin_iterated", 0.01, true ) );
 		min->apply( a3bpose );
-		
+
 		b314pose.append_residue_by_jump( Residue( restype_set->name_map( "B3A:AcetylatedNtermProteinFull" ), true ), 1 );
 		b314pose.append_residue_by_bond( Residue( restype_set->name_map( "B3L" ), true ), true );
 		b314pose.append_residue_by_bond( Residue( restype_set->name_map( "B3A" ), true ), true );
@@ -181,7 +181,7 @@ main( int argc, char* argv[] )
 		b314pose.append_residue_by_bond( Residue( restype_set->name_map( "B3L" ), true ), true );
 		b314pose.append_residue_by_bond( Residue( restype_set->name_map( "B3A:MethylatedCtermProteinFull" ), true ), true );
 		//-139.9 59.5 -138.7 180.0
-		
+
 		for ( Size ii = 1; ii <= b314pose.total_residue(); ++ii ) {
 			b314pose.conformation().set_torsion( TorsionID( ii, id::BB, 1), -139.9);
 			b314pose.conformation().set_torsion( TorsionID( ii, id::BB, 2),   59.5);

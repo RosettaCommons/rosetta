@@ -14,8 +14,6 @@
 /// terms.  It has also been modified to permit sub-regions of a pose to be scored.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
-
-
 #ifndef INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergy_hh
 #define INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergy_hh
 

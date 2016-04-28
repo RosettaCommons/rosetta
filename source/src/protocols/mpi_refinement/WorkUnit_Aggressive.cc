@@ -318,8 +318,8 @@ WorkUnit_NormalMode::run()
 	core::kinematics::MoveMapOP mm = get_movemap( pose, "pack", false );
 	/*
 	NormalModeRelaxMoverOP NM = ( cartnm )?
-		get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, true ) :  // return CNM
-		get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, false );  // return TNM
+	get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, true ) :  // return CNM
+	get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, false );  // return TNM
 	*/
 	NormalModeRelaxMoverOP NM( new NormalModeRelaxMover( sfxn_loc, cartnm, mm, relaxmode, dist ) );
 

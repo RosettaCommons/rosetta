@@ -192,21 +192,27 @@ AACompositionEnergy::calculate_energy(
 		// Number of residues:
 		core::Size const nres( resvect.size() );
 
+		// Number of unmasked residues for the current helper:
+		core::Size n_res_total(0); //Only computed if fractional counts are used.
+		if ( helper->use_fract_expected_values_any() || helper->use_fract_ranges_any() ) {
+			for ( core::Size j=1, jmax=masks[ihelper].size(); j<=jmax; ++j ) { if ( masks[ihelper][j] ) ++n_res_total; } //Count the number of unmasked residues for the current AACompositionEnergySetup object.
+		}
+
 		// Figure out expected number of residues of each property:
 		utility::vector1 < signed long > expected;
 		expected.resize( helper->n_property_sets(), 0 );
 		for ( core::Size i=1, imax=expected.size(); i<=imax; ++i ) {
 			if ( helper->expected_by_properties_absolute(i) >= 0 ) expected[i] = helper->expected_by_properties_absolute(i);
 			else {
-				core::Size n_res_total(0);
-				for ( core::Size j=1, jmax=masks[ihelper].size(); j<=jmax; ++j ) { if ( masks[ihelper][j] ) ++n_res_total; } //Count the number of unmasked residues for the current AACompositionEnergySetup object.
 				expected[i] = static_cast< signed long >( utility::round( static_cast<double>( n_res_total ) * static_cast<double>( helper->expected_by_properties_fraction(i) ) ) );
 			}
 		}
 
 		// Counts of the residues corresponding to the various property sets that we're counting.  The indicies are property set indices that are internal to the setup_helper object.
 		utility::vector1 < signed long > counts;
-		counts.resize( helper->n_property_sets(), 0 ); //Make sure that we have a counter for each property set that we're counting
+		utility::vector1 < core::Real > fract_counts;
+		counts.resize( helper->n_property_sets(), 0 ); //Make sure that we have a counter for each property set that we're counting.
+		fract_counts.resize( helper->n_property_sets(), 0.0 ); //Make sure that we have a counter for each property set that we're counting.
 
 		// A storage container for the property sets that each residue is in.
 		utility::vector1< core::Size > this_rsd_property_sets;
@@ -224,7 +230,12 @@ AACompositionEnergy::calculate_energy(
 		core::Real accumulator(0.0);
 		for ( core::Size i=1, imax=counts.size(); i<=imax; ++i ) { //Loop through the counts and accumulate the appropriate penalty
 			counts[i] -= expected[i]; // Calculate the DELTA count.
-			accumulator += helper->property_penalty( counts[i], i );
+			if ( helper->use_fract_ranges(i) ) {
+				fract_counts[i] = static_cast<core::Real>(counts[i]) / static_cast<core::Real>(n_res_total);
+				accumulator += helper->fract_property_penalty( fract_counts[i], i );
+			} else {
+				accumulator += helper->property_penalty( counts[i], i );
+			}
 		}
 
 		outer_accumulator += accumulator;

@@ -362,8 +362,8 @@ RotamerBoltzmannWeight2Creator::filter_name()
 
 template< class T >
 IdManager< T >::IdManager():
-	utility::SingletonBase< IdManager< T > >(),
-	used_ids_()
+utility::SingletonBase< IdManager< T > >(),
+used_ids_()
 {}
 
 template< class T >

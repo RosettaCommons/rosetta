@@ -86,7 +86,7 @@ cartesian_dfunc(
 
 	//fpd  scale derivatives for symmetry
 	core::Real scale = 1;
-	if ( pose::symmetry::is_symmetric( pose )) {
+	if ( pose::symmetry::is_symmetric( pose ) ) {
 		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
 		if ( old_sym_min ) {
 			conformation::symmetry::SymmetricConformation & symm_conf (

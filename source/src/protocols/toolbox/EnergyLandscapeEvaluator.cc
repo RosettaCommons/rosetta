@@ -138,8 +138,8 @@ MulliganPNearEvaluator::compute( ScoreRmsPoints const & points ) const
 ////////////////  Modified DDG Evaluator
 
 ModifiedDdgEvaluator::ModifiedDdgEvaluator( ScoreRmsPoints const & ddg_values ):
-	EnergyLandscapeEvaluator(),
-	ddg_values_( ddg_values )
+EnergyLandscapeEvaluator(),
+ddg_values_( ddg_values )
 {}
 
 ModifiedDdgEvaluator::~ModifiedDdgEvaluator()
@@ -148,13 +148,13 @@ ModifiedDdgEvaluator::~ModifiedDdgEvaluator()
 EnergyLandscapeEvaluatorOP
 ModifiedDdgEvaluator::clone() const
 {
-	return EnergyLandscapeEvaluatorOP( new ModifiedDdgEvaluator( *this ) );
+return EnergyLandscapeEvaluatorOP( new ModifiedDdgEvaluator( *this ) );
 }
 
 core::Real
 ModifiedDdgEvaluator::compute( ScoreRmsPoints const & points ) const
 {
-	return 0.0;
+return 0.0;
 }
 */
 

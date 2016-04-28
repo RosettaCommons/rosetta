@@ -122,16 +122,16 @@ setup_pert_foldtree(
 
 // application specific options
 namespace a3b_hbs_creator {
-	// pert options
-	StringOptionKey const hbs_chain ( "a3b_hbs_creator::hbs_chain" );
-	IntegerOptionKey const hbs_final_res ( "a3b_hbs_creator::hbs_final_res" );
-	IntegerOptionKey const hbs_length ( "a3b_hbs_creator::hbs_length" );
-	IntegerOptionKey const hbs_offset( "a3b_hbs_creator::hbs_offset" );
-	IntegerOptionKey const change_resnums( "a3b_hbs_creator::change_resnums" );
-	BooleanOptionKey const bridgehead_gly( "a3b_hbs_creator::bridgehead_gly" );
-	BooleanOptionKey const final_repack( "a3b_hbs_creator::final_repack" );
-	BooleanOptionKey const final_minimize( "a3b_hbs_creator::final_minimize" );
-	BooleanOptionKey const final_mc ( "a3b_hbs_creator::final_mc" );
+// pert options
+StringOptionKey const hbs_chain ( "a3b_hbs_creator::hbs_chain" );
+IntegerOptionKey const hbs_final_res ( "a3b_hbs_creator::hbs_final_res" );
+IntegerOptionKey const hbs_length ( "a3b_hbs_creator::hbs_length" );
+IntegerOptionKey const hbs_offset( "a3b_hbs_creator::hbs_offset" );
+IntegerOptionKey const change_resnums( "a3b_hbs_creator::change_resnums" );
+BooleanOptionKey const bridgehead_gly( "a3b_hbs_creator::bridgehead_gly" );
+BooleanOptionKey const final_repack( "a3b_hbs_creator::final_repack" );
+BooleanOptionKey const final_minimize( "a3b_hbs_creator::final_minimize" );
+BooleanOptionKey const final_mc ( "a3b_hbs_creator::final_mc" );
 }
 
 class A3BHbsCreatorMover : public Mover {
@@ -140,33 +140,33 @@ public:
 
 	//default ctor
 	A3BHbsCreatorMover();
-	
+
 	//default dtor
 	virtual ~A3BHbsCreatorMover(){}
 
 	virtual void apply( core::pose::Pose & pose );
 	void repack( core::pose::Pose & pose );
 	void scan( core::pose::Pose & pose, char const hbs_chn );
-	
+
 	void make_a3b_pose(
 		pose::Pose & pose,
 		pose::Pose & a3bpose );
-	
+
 	void
 	delete_extra_residues(
 		core::pose::Pose & pose );
-	
+
 	void
 	add_hbond_and_omega_constraints_starting_at_seqpos(
 		Pose & pose,
 		Size const seqpos );
-	
+
 	void
 	do_mc(
 		core::pose::Pose & pose );
-	
+
 	virtual std::string get_name() const { return "A3BHbsCreatorMover"; }
-	
+
 private:
 	ScoreFunctionOP score_fxn_;
 	ScoreFunctionOP score_fxn_cart_;
@@ -196,10 +196,10 @@ A3BHbsCreatorMover::A3BHbsCreatorMover():
 	score_fxn_->set_weight_if_zero( atom_pair_constraint, 0.1 );
 	score_fxn_->set_weight_if_zero( dihedral_constraint, 0.1 );
 	score_fxn_->set_weight_if_zero( angle_constraint, 0.1 );
-	
+
 	// soften rep
 	score_fxn_->set_weight_if_zero( fa_rep, score_fxn_->get_weight( fa_rep ) * 0.5 );
-	
+
 	score_fxn_cart_ = score_fxn_->clone();
 	score_fxn_cart_->set_weight( pro_close, 0 );
 	score_fxn_cart_->set_weight( cart_bonded, 1 );
@@ -207,13 +207,14 @@ A3BHbsCreatorMover::A3BHbsCreatorMover():
 
 std::string alpha_to_beta( std::string const & alpha ) {
 	TR << "Converting name for " << alpha << std::endl;
-	
+
 	std::string postfix = alpha;
 	postfix.erase( 0, postfix.find( ":" ) );
-	
+
 	std::string prefix = alpha;
-	if (prefix.find(":") != std::string::npos )
+	if ( prefix.find(":") != std::string::npos ) {
 		prefix.erase( prefix.find(":"), std::string::npos-1 );
+	}
 
 	if ( prefix == "ALA" ) {
 		prefix = "B3A";
@@ -279,7 +280,7 @@ void A3BHbsCreatorMover::repack(
 		operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 		tf->push_back( rtrp );
 	}
-	
+
 	// create a pack rotamers mover
 	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover );
 	packer->task_factory( tf );
@@ -292,25 +293,25 @@ void A3BHbsCreatorMover::do_mc(
 ) {
 	// create a monte carlo object for the full cycle
 	moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn_, 1 ) );
-	
+
 	// create a monte carlo object for the pertubation phase
 	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn_, 1 ) );
-	
+
 	// create a rigid body mover to move the peptide around in the pocket
 	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, 1, 1 ) );
 
 	// get peptide start and end positions
 	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
-	
+
 	// create movemap for peptide
 	kinematics::MoveMapOP pert_alpha_mm( new kinematics::MoveMap() );
 	kinematics::MoveMapOP pert_beta_mm( new kinematics::MoveMap() );
-	
+
 	core::Size hbs_seq_position = 0;
 	core::Size hbs_length = 0;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		
+
 		if ( i >= pep_start+3 && i <= pep_end ) {
 			// movemap settings
 			if ( pose.residue(i).type().is_alpha_aa() ) {
@@ -321,117 +322,117 @@ void A3BHbsCreatorMover::do_mc(
 				pert_alpha_mm->set_bb( i, false );
 			}
 		}
-		
+
 		if ( hbs_seq_position>0 && hbs_seq_position <= i ) {
 			hbs_length++;
 		}
 	}
 	assert(hbs_seq_position != 0);
-	
+
 	// create small and shear movers
 	simple_moves::SmallMoverOP pert_pep_alpha( new simple_moves::SmallMover( pert_alpha_mm, 1, 1 ) );
 	pert_pep_alpha->angle_max( 'H', 2.0 );
 	pert_pep_alpha->angle_max( 'L', 2.0 );
 	pert_pep_alpha->angle_max( 'E', 2.0 );
 	simple_moves::RandomTorsionMoverOP pert_pep_beta( new simple_moves::RandomTorsionMover( pert_beta_mm, 1, 1 ) );
-	
+
 	// create random mover
 	moves::RandomMoverOP pert_pep_random( new moves::RandomMover() );
 	pert_pep_random->add_mover( pert_pep_alpha, .75 );
 	pert_pep_random->add_mover( pert_pep_beta, .25 );
 	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, 10 ) );
-	
+
 	/******************************************************************************
-	 Rotamer Trials Setup
-	 *******************************************************************************/
-	
+	Rotamer Trials Setup
+	*******************************************************************************/
+
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf(new TaskFactory());
 	pert_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	
+
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
 	pert_tf->push_back( pert_rrop );
-	
+
 	operation::RestrictToRepackingOP pert_rtrp( new operation::RestrictToRepacking() );
 	pert_tf->push_back( pert_rtrp );
-	
+
 	// create a rotamer trials mover
 	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( score_fxn_, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
-	
+
 	/*********************************************************
-	 Common Setup
-	 **********************************************************/
-	
+	Common Setup
+	**********************************************************/
+
 	// create a random mover to hold the docking, and peptide pertubation movers
 	moves::RandomMoverOP pert_random( new moves::RandomMover() );
 	pert_random->add_mover( pert_dock_rbpm, 1 );
 	pert_random->add_mover( pert_pep_repeat, 0.5 );
-	
+
 	// create a sequence move to hold random and rotamer trials movers
 	moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 	pert_sequence->add_mover( pert_random );
 	pert_sequence->add_mover( pert_rt );
-	
+
 	// create a TrialMover for the pertubation
 	moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
-	
+
 	/*********************************************************
-	 Design Min Phase
-	 **********************************************************/
+	Design Min Phase
+	**********************************************************/
 	/*********************************************************
-	 Design Setup
-	 **********************************************************/
-	
+	Design Setup
+	**********************************************************/
+
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
 	desn_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	
+
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
 	desn_tf->push_back( desn_rrop );
-	
+
 	// create a pack rotamers mover
 	simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover() );
 	desn_pr->task_factory( desn_tf );
 	desn_pr->score_function( score_fxn_ );
-	
+
 	/*********************************************************
-	 Minimize Setup
-	 **********************************************************/
-	
+	Minimize Setup
+	**********************************************************/
+
 	// create move map for minimization
 	kinematics::MoveMapOP desn_mm( new kinematics::MoveMap() );
 	desn_mm->set_bb( false );
 	desn_mm->set_bb_true_range( pep_start, pep_end );
 	desn_mm->set_chi( true );
 	desn_mm->set_jump( 1, true );
-	
+
 	// create minimization mover
 	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
-	
+
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
 	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
-	
+
 	/*********************************************************
-	 Common Setup
-	 **********************************************************/
-	
+	Common Setup
+	**********************************************************/
+
 	// create a sequence mover to hold pack rotamers and minimization movers
 	moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );
 	desn_sequence->add_mover( desn_pr );
 	desn_sequence->add_mover( desn_ta_min );
-	
+
 	TR << "Main loop..." << std::endl;
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	
+
 	//pose.dump_pdb("pre_main_loop.pdb");
 	for ( Size k = 1; k <= 5; ++k ) {
 		pert_mc->reset(pose);
-		
+
 		// pert loop
 		for ( Size j = 1; j <= 10; ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
@@ -440,7 +441,7 @@ void A3BHbsCreatorMover::do_mc(
 		}
 		pert_mc->recover_low( pose );
 		curr_job->add_string_real_pair( "ENERGY_PERT (pert score) recovered low", (*score_fxn_)(pose) );
-		
+
 		// design
 		TR << "DESIGN: " << k << std::endl;
 		desn_sequence->apply( pose );
@@ -451,9 +452,9 @@ void A3BHbsCreatorMover::do_mc(
 		mc->boltzmann( pose );
 		TR<< "post mc->boltzmann" << std::endl;
 		mc->show_state();
-		
+
 	}//dock_design for loop
-	
+
 	mc->recover_low( pose );
 }
 
@@ -599,10 +600,10 @@ A3BHbsCreatorMover::delete_extra_residues(
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		char chn = pose.pdb_info()->chain(i);
 		//TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
-		
+
 		if ( chn != hbs_chain_ ) continue;
 		core::Size pdb_res_num = pose.pdb_info()->number(i);
-		
+
 		// hbs pre is the smallest number of what we want to preserve
 		if ( pdb_res_num < final_res ) {
 			//TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
@@ -610,7 +611,7 @@ A3BHbsCreatorMover::delete_extra_residues(
 				pose.delete_polymer_residue(i);
 				pdb_res_num = pose.pdb_info()->number(i);
 			}
-			
+
 		} else if ( pdb_res_num > final_res + hbs_length_ ) {
 			TR << "deleting residue " << pdb_res_num << std::endl;
 			while ( chn == hbs_chain_ && i <= pose.total_residue() ) {
@@ -629,17 +630,17 @@ void A3BHbsCreatorMover::make_a3b_pose(
 	pose::PDBInfoCOP old_pdb_info = pose.pdb_info();
 	Size first_hbs_chain_res = 0;
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		
+
 		char chn = pose.pdb_info()->chain(i);
 		//TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
-		
+
 		if ( chn != hbs_chain_ ) continue;
-		if (first_hbs_chain_res == 0 ) first_hbs_chain_res = i;
-		
+		if ( first_hbs_chain_res == 0 ) first_hbs_chain_res = i;
+
 		// replace each HBS residue with an a3b
 		TR << "Recording CA for " << i << std::endl;
 		former_CAs_[ pose.pdb_info()->number(i) ] = pose.residue( i ).atom( "CA" ).xyz();
-		
+
 		if ( (i-first_hbs_chain_res) == 2 && mut_gly_ ) {
 			conformation::Residue ala( restype_set->name_map( "GLY"+pose.residue_type( i ).name().substr(3) ), true );
 			pose.replace_residue( i, ala, true );
@@ -648,10 +649,10 @@ void A3BHbsCreatorMover::make_a3b_pose(
 
 		std::string name = (i-first_hbs_chain_res) % 4 == offset_ ?
 			alpha_to_beta( pose.residue(i).name() ) : pose.residue(i).name();
-		
+
 		Residue r = *new Residue( restype_set->name_map( name ), true );
 		r.set_all_chi(pose.residue(i).chi());
-		
+
 		if ( a3bpose.total_residue() == 0 ) {
 			a3bpose.append_residue_by_jump( r , 1 );
 		} else {
@@ -666,15 +667,15 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 ) {
 	using namespace core::scoring::constraints;
 	AtomID fixed_atom( pose.residue(1).atom_index( "CA" ), 1 );
-	
+
 	pose.add_constraint(
 		ConstraintOP(
-			new AtomPairConstraint(
-				AtomID( pose.residue( seqpos ).atom_index( "OY" ), seqpos ),
-				AtomID( pose.residue( seqpos+3 ).atom_index( "H"  ), seqpos+3 ),
-				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-	) ) );
-	
+		new AtomPairConstraint(
+		AtomID( pose.residue( seqpos ).atom_index( "OY" ), seqpos ),
+		AtomID( pose.residue( seqpos+3 ).atom_index( "H"  ), seqpos+3 ),
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		) ) );
+
 	for ( Size i = seqpos; i <= pose.total_residue(); ++i ) {
 		if ( oldnums_.size() > 0 ) {
 			TR << "Setting chain for " << i << " to " << hbs_chain_ << std::endl;
@@ -684,48 +685,48 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 		if ( i <= pose.total_residue() - 4 ) {
 			pose.add_constraint(
 				ConstraintOP(
-					new AtomPairConstraint(
-						AtomID( pose.residue( i   ).atom_index( "O" ), i ),
-						AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
-						core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-			) ) );
+				new AtomPairConstraint(
+				AtomID( pose.residue( i   ).atom_index( "O" ), i ),
+				AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
+				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+				) ) );
 		}
-		
+
 		std::string i_omg_atom = pose.residue_type( i ).is_beta_aa() ? "CM" : "CA";
 		if ( i < pose.total_residue() ) {
 			pose.add_constraint(
 				ConstraintOP(
-					new DihedralConstraint(
-						AtomID( pose.residue( i ).atom_index( i_omg_atom ), i ),
-						AtomID( pose.residue( i ).atom_index( "C"  ), i ),
-						AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
-					core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
-			) ) );
+				new DihedralConstraint(
+				AtomID( pose.residue( i ).atom_index( i_omg_atom ), i ),
+				AtomID( pose.residue( i ).atom_index( "C"  ), i ),
+				AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
+				core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+				) ) );
 		}
-		
+
 		// No coordinate constraints within the macrocycle, I think.
 		// AMW TODO: specify "helical portion" over which these are defined.
 		/*if ( former_CAs_.find( pose.pdb_info()->number(i) ) != former_CAs_.end()
-			&& i > seqpos+2 ) {
-			
-			pose.add_constraint(
-				ConstraintOP(
-					new CoordinateConstraint(
-						AtomID( pose.residue( i ).atom_index( "CA" ), i ),
-						fixed_atom,
-						former_CAs_[ pose.pdb_info()->number(i) ],
-						core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) )
-				) ) );
+		&& i > seqpos+2 ) {
+
+		pose.add_constraint(
+		ConstraintOP(
+		new CoordinateConstraint(
+		AtomID( pose.residue( i ).atom_index( "CA" ), i ),
+		fixed_atom,
+		former_CAs_[ pose.pdb_info()->number(i) ],
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) )
+		) ) );
 		}*/
 	}
 	pose.add_constraint(
 		ConstraintOP(
-			new AtomPairConstraint(
-				AtomID( pose.residue( pose.total_residue()-4   ).atom_index( "O" ), pose.total_residue()-4 ),
-				AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
-				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-	) ) );
+		new AtomPairConstraint(
+		AtomID( pose.residue( pose.total_residue()-4   ).atom_index( "O" ), pose.total_residue()-4 ),
+		AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		) ) );
 }
 
 void
@@ -735,27 +736,27 @@ A3BHbsCreatorMover::apply(
 	using namespace core::scoring::constraints;
 
 	add_fa_constraints_from_cmdline_to_pose(pose);
-	
+
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	/******************************************\
-	 *  FOLD TREE MANIPULATION                *
+	*  FOLD TREE MANIPULATION                *
 	\******************************************/
 	// shift the jump
 	// account for the position of the offset so we never delete the jump res
 	/*kinematics::FoldTree f = pose.fold_tree();
 	f.slide_jump( 1, 1, pose.pdb_info()->pdb2pose( hbs_chain_, final_res+1+offset ) );
 	pose.fold_tree( f );
-*/
-	
+	*/
+
 	delete_extra_residues( pose );
-	
+
 	TR << "making an a3b peptide" << std::endl;
 
 	// CONVERT TO A3B
 	pose::Pose a3bpose;
 	make_a3b_pose( pose, a3bpose );
-	
+
 	// NOW set dihedrals because you've added all the residues
 	// otherwise you'll fail at setting psi EVERY TIME you doofus
 	for ( Size i = 1; i <= a3bpose.total_residue(); ++i ) {
@@ -771,20 +772,20 @@ A3BHbsCreatorMover::apply(
 			a3bpose.conformation().set_torsion( TorsionID( i, id::BB, 3),  180);
 		}
 	}
-	
+
 	// Mutate any prolines
 	for ( Size i = 1; i <= a3bpose.total_residue(); ++i ) {
 		if ( a3bpose.residue_type( i ).is_beta_aa() ) {
 			if ( a3bpose.residue_type( i ).name3() != "B3P" ) continue; //&& pose.residue_type( i ).name3() != "B3P" ) continue;
-			
+
 			conformation::Residue ala( restype_set->name_map( "B3A"+a3bpose.residue_type( i ).name().substr(3) ), true );
 			a3bpose.replace_residue( i, ala, true );
 			conformation::idealize_position( i, a3bpose.conformation() );
-			
-		//	TR << "Swapped position " << i << " and is now " <<
+
+			// TR << "Swapped position " << i << " and is now " <<
 		} else {
 			if ( a3bpose.residue_type( i ).name3() != "PRO" ) continue; //&& pose.residue_type( i ).name3() != "B3P" ) continue;
-		
+
 			conformation::Residue ala( restype_set->name_map( "ALA"+a3bpose.residue_type( i ).name().substr(3) ), true );
 			a3bpose.replace_residue( i, ala, true );
 			conformation::idealize_position( i, a3bpose.conformation() );
@@ -796,11 +797,11 @@ A3BHbsCreatorMover::apply(
 
 		a3bpose.add_constraint(
 			ConstraintOP(
-				new AtomPairConstraint(
-					AtomID( a3bpose.residue( i   ).atom_index( "O" ), i ),
-					AtomID( a3bpose.residue( i+4 ).atom_index( "H" ), i+4 ),
-					core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-		) ) );
+			new AtomPairConstraint(
+			AtomID( a3bpose.residue( i   ).atom_index( "O" ), i ),
+			AtomID( a3bpose.residue( i+4 ).atom_index( "H" ), i+4 ),
+			core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+			) ) );
 	}
 
 	// presently the final residue in the pose is the terminal residue of the hbs
@@ -812,11 +813,11 @@ A3BHbsCreatorMover::apply(
 	conformation::idealize_position( a3bpose.total_residue(), a3bpose.conformation() );
 	a3bpose.add_constraint(
 		ConstraintOP(
-			new AtomPairConstraint(
-				AtomID( a3bpose.residue( a3bpose.total_residue()-4   ).atom_index( "O" ), a3bpose.total_residue()-4 ),
-				AtomID( a3bpose.residue( a3bpose.total_residue() ).atom_index( "HM" ), a3bpose.total_residue() ),
-				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-	) ) );
+		new AtomPairConstraint(
+		AtomID( a3bpose.residue( a3bpose.total_residue()-4   ).atom_index( "O" ), a3bpose.total_residue()-4 ),
+		AtomID( a3bpose.residue( a3bpose.total_residue() ).atom_index( "HM" ), a3bpose.total_residue() ),
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		) ) );
 
 	// PATCH
 	// If offset is two then we need a special HBS patch for this pattern
@@ -837,28 +838,28 @@ A3BHbsCreatorMover::apply(
 	}
 
 	add_hbond_and_omega_constraints_starting_at_seqpos( a3bpose, 1 );
-	
+
 	std::string cyn = offset_ == 0 ? "CY3" : "CY2";
 	a3bpose.add_constraint(
 		ConstraintOP(
-			new DihedralConstraint(
-				AtomID( a3bpose.residue( 1 ).atom_index( cyn ), 1 ),
-				AtomID( a3bpose.residue( 1 ).atom_index( "CYH"  ), 1 ),
-				AtomID( a3bpose.residue( 3 ).atom_index( "CZH"  ), 3 ),
-				AtomID( a3bpose.residue( 3 ).atom_index( "N"  ), 3 ),
-				core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
-	) ) );
-	
+		new DihedralConstraint(
+		AtomID( a3bpose.residue( 1 ).atom_index( cyn ), 1 ),
+		AtomID( a3bpose.residue( 1 ).atom_index( "CYH"  ), 1 ),
+		AtomID( a3bpose.residue( 3 ).atom_index( "CZH"  ), 3 ),
+		AtomID( a3bpose.residue( 3 ).atom_index( "N"  ), 3 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		) ) );
+
 	a3bpose.add_constraint(
-						   ConstraintOP(
-										new DihedralConstraint(
-															   AtomID( a3bpose.residue( 1 ).atom_index( "H" ), 1 ),
-															   AtomID( a3bpose.residue( 1 ).atom_index( "N"  ), 1 ),
-															   AtomID( a3bpose.residue( 1 ).atom_index( "CY"  ), 1 ),
-															   AtomID( a3bpose.residue( 1 ).atom_index( "OY"  ), 1 ),
-															   core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
-															   ) ) );
-	
+		ConstraintOP(
+		new DihedralConstraint(
+		AtomID( a3bpose.residue( 1 ).atom_index( "H" ), 1 ),
+		AtomID( a3bpose.residue( 1 ).atom_index( "N"  ), 1 ),
+		AtomID( a3bpose.residue( 1 ).atom_index( "CY"  ), 1 ),
+		AtomID( a3bpose.residue( 1 ).atom_index( "OY"  ), 1 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		) ) );
+
 	a3bpose.dump_pdb( "postpseudobonds.pdb");
 
 	// minimize new pose a bit
@@ -877,7 +878,7 @@ A3BHbsCreatorMover::apply(
 		if ( chn != hbs_chain_ ) continue;
 		oldnums_.push_back( pose.pdb_info()->number(i)+option[a3b_hbs_creator::change_resnums].value() );
 	}
-		
+
 	// delete res
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		char chn = pose.pdb_info()->chain(i);
@@ -890,44 +891,44 @@ A3BHbsCreatorMover::apply(
 	Size last_of_first_chain = pose.total_residue();
 	pose::append_pose_to_pose( pose, a3bpose, true );
 	pose::ncbb::initialize_ncbbs( pose );
-	
+
 	// Constraint that we might end up applying in initialize_ncbbs, too
 	pose.add_constraint(
 		ConstraintOP(
-			new DihedralConstraint(
-				AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( cyn ), last_of_first_chain + 1 ),
-				AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "CYH"  ), last_of_first_chain + 1 ),
-				AtomID( pose.residue( last_of_first_chain + 3 ).atom_index( "CZH"  ), last_of_first_chain + 3 ),
-				AtomID( pose.residue( last_of_first_chain + 3 ).atom_index( "N"  ), last_of_first_chain + 3 ),
-				core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
-	) ) );
-	
+		new DihedralConstraint(
+		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( cyn ), last_of_first_chain + 1 ),
+		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "CYH"  ), last_of_first_chain + 1 ),
+		AtomID( pose.residue( last_of_first_chain + 3 ).atom_index( "CZH"  ), last_of_first_chain + 3 ),
+		AtomID( pose.residue( last_of_first_chain + 3 ).atom_index( "N"  ), last_of_first_chain + 3 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		) ) );
+
 	pose.add_constraint(
-						   ConstraintOP(
-										new DihedralConstraint(
-															   AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "H" ), last_of_first_chain + 1 ),
-															   AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "N"  ), last_of_first_chain + 1 ),
-															   AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "CY"  ), last_of_first_chain + 1 ),
-															   AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "OY"  ), last_of_first_chain + 1 ),
-															   core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
-															   ) ) );
-	
+		ConstraintOP(
+		new DihedralConstraint(
+		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "H" ), last_of_first_chain + 1 ),
+		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "N"  ), last_of_first_chain + 1 ),
+		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "CY"  ), last_of_first_chain + 1 ),
+		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "OY"  ), last_of_first_chain + 1 ),
+		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		) ) );
+
 	// Add the same constraints to hbonds
 	add_hbond_and_omega_constraints_starting_at_seqpos( pose, last_of_first_chain+1 );
-	
+
 	AtomID fixed_atom( pose.residue(1).atom_index( "CA" ), 1 );
-		
+
 	for ( Size i = last_of_first_chain+3; i <= pose.total_residue(); ++i ) {
 		if ( former_CAs_.find( pose.pdb_info()->number(i) ) == former_CAs_.end() ) continue;
-		
+
 		pose.add_constraint(
 			ConstraintOP(
-				new CoordinateConstraint(
-					AtomID( pose.residue( i ).atom_index( "CA" ), i ),
-					fixed_atom,
-					former_CAs_[ pose.pdb_info()->number(i) ],
-					core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.25 ) )
-		) ) );
+			new CoordinateConstraint(
+			AtomID( pose.residue( i ).atom_index( "CA" ), i ),
+			fixed_atom,
+			former_CAs_[ pose.pdb_info()->number(i) ],
+			core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.25 ) )
+			) ) );
 	}
 	pose.dump_pdb( "postcombination.pdb");
 
@@ -940,7 +941,7 @@ A3BHbsCreatorMover::apply(
 	littlemm->set_bb( false );
 	littlemm->set_chi( false );
 	littlemm->set_jump( 1, true );
-	
+
 	TR << "Creating littlemin minmover " << std::endl;
 	simple_moves::MinMoverOP littlemin( new protocols::simple_moves::MinMover( littlemm, score_fxn_/*cart_*/, option[ OptionKeys::run::min_type ].value(), 1, true ) );
 	littlemin->cartesian( false );//true );
@@ -953,11 +954,11 @@ A3BHbsCreatorMover::apply(
 
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( pose.pdb_info()->chain(i) != hbs_chain_ ) continue;
-		
+
 		if ( i > last_of_first_chain + 3 ) littlemm->set_bb( i, true );
 	}
 	littlemm->set_chi( true );
-	
+
 	for ( Size ii = 11; ii <= 20; ++ii ) {
 		score_fxn_->set_weight( coordinate_constraint, 0.01 * ii );
 		littlemin->apply( pose );
@@ -977,9 +978,9 @@ A3BHbsCreatorMover::apply(
 	TR << "after repack: " << ( *score_fxn_ )( pose ) << std::endl;
 
 	if ( option[ a3b_hbs_creator::final_mc ].value() ) {
-		
+
 		do_mc( pose );
-		
+
 		/*moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn_, 0.2 ) );
 
@@ -988,12 +989,12 @@ A3BHbsCreatorMover::apply(
 		// core::Size hbs_position = 1;
 
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			if ( pose.pdb_info()->chain(i) != hbs_chain_ ) continue;
-			if ( pose.pdb_info()->number(i) < int(last_of_first_chain + 3) ) continue;
-			
-			TR << "setting small movable resid: "<< i<<std::endl;
-			//kdrew: commenting out because small mover fails randomly
-			pert_pep_mm->set_bb( i, true );
+		if ( pose.pdb_info()->chain(i) != hbs_chain_ ) continue;
+		if ( pose.pdb_info()->number(i) < int(last_of_first_chain + 3) ) continue;
+
+		TR << "setting small movable resid: "<< i<<std::endl;
+		//kdrew: commenting out because small mover fails randomly
+		pert_pep_mm->set_bb( i, true );
 		}
 
 		simple_moves::RandomTorsionMoverOP pert_pep_small( new simple_moves::RandomTorsionMover( pert_pep_mm, 2, 1 ) );
@@ -1041,13 +1042,13 @@ A3BHbsCreatorMover::apply(
 
 			minM->apply( pose );
 		}
-		
+
 		// Ramp rep back up. Had been halved, so add 1/5 of the weight 5x
 		/*Real increment = score_fxn_->get_weight( fa_rep ) * 0.2;
 		for ( Size ii = 1; ii <= 5; ++ii ) {
-			score_fxn_->set_weight( fa_rep, score_fxn_->get_weight( fa_rep ) + increment );
-			
-			minM->apply( pose );
+		score_fxn_->set_weight( fa_rep, score_fxn_->get_weight( fa_rep ) + increment );
+
+		minM->apply( pose );
 		}*/
 	}
 }

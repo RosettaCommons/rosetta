@@ -641,7 +641,7 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
 	ft->reorder( pose.total_residue() );
 	pose.fold_tree( *ft );
-	if(TR.visible()) pose.fold_tree().show( TR );
+	if ( TR.visible() ) pose.fold_tree().show( TR );
 
 	// Updating Chain Record in PDB Info
 	char curr_chain = pose.pdb_info()->chain( pose.total_residue()-1 );

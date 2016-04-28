@@ -355,7 +355,7 @@ PolymerBondedEnergyContainer::is_valid(
 	core::Size nres( pose.n_residue() );
 	//fd This does not work if the scoring subunit is not the first ....
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
-	//	nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 	//}
 	if ( size_ != nres ) return false;
 
@@ -391,9 +391,9 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 ) {
 	//fd This does not work if the scoring subunit is not the first ....
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
-	//	size_ = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	// size_ = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	//} else {
-		size_ = pose.total_residue();
+	size_ = pose.total_residue();
 	//}
 
 	peptide_bonded_pair_indices_.clear();
@@ -401,26 +401,26 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 
 	for ( core::Size ir=1; ir<=size_; ++ir ) { //Loop through all resiudes (asymmetric case) or residues in asymmetric unit (symmetric case).
 		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
-	 	core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
-	 	if ( !other_res ) continue; //These are not connected by normal polymeric connection.
+		core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
+		if ( !other_res ) continue; //These are not connected by normal polymeric connection.
 
-	 	//OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
-	 	debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
-	 	debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
-	 	peptide_bonded_pair_indices_[ir] =  other_res;
-	 	inv_peptide_bonded_pair_indices_[other_res] =  ir;
+		//OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
+		debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
+		debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
+		peptide_bonded_pair_indices_[ir] =  other_res;
+		inv_peptide_bonded_pair_indices_[other_res] =  ir;
 	}
 
 	//fd This does not work if the scoring subunit is not the first ....
 	// for ( core::Size ir=1; ir<=size_; ++ir ) { //Loop through all resiudes (asymmetric case) or residues in asymmetric unit (symmetric case).
-	// 	core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
-	// 	if ( !other_res ) continue; //These are not connected by normal polymeric connection.
+	//  core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
+	//  if ( !other_res ) continue; //These are not connected by normal polymeric connection.
 	//
-	// 	//OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
-	// 	debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
-	// 	debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
-	// 	peptide_bonded_pair_indices_[ir] =  other_res;
-	// 	inv_peptide_bonded_pair_indices_[other_res] =  ir;
+	//  //OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
+	//  debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
+	//  debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
+	//  peptide_bonded_pair_indices_[ir] =  other_res;
+	//  inv_peptide_bonded_pair_indices_[other_res] =  ir;
 	// }
 }
 

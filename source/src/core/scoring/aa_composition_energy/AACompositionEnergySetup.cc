@@ -284,7 +284,10 @@ AACompositionEnergySetup::AACompositionEnergySetup() :
 	expected_by_properties_fraction_(),
 	expected_by_properties_absolute_(),
 	property_penalties_(),
+	property_penalty_fracts_(),
+	use_fract_ranges_(),
 	property_deviation_ranges_(),
+	fract_property_deviation_ranges_(),
 	property_tailfunctions_()
 {}
 
@@ -296,7 +299,10 @@ AACompositionEnergySetup::AACompositionEnergySetup( AACompositionEnergySetup con
 	expected_by_properties_fraction_( src.expected_by_properties_fraction_ ),
 	expected_by_properties_absolute_( src.expected_by_properties_absolute_ ),
 	property_penalties_( src.property_penalties_ ),
+	property_penalty_fracts_( src.property_penalty_fracts_ ),
+	use_fract_ranges_(src.use_fract_ranges_),
 	property_deviation_ranges_( src.property_deviation_ranges_ ),
+	fract_property_deviation_ranges_( src.fract_property_deviation_ranges_ ),
 	property_tailfunctions_( src.property_tailfunctions_ )
 {
 	property_sets_.clear();
@@ -324,7 +330,10 @@ void AACompositionEnergySetup::reset() {
 	expected_by_properties_fraction_.clear();
 	expected_by_properties_absolute_.clear();
 	property_penalties_.clear();
+	property_penalty_fracts_.clear();
+	use_fract_ranges_.clear();
 	property_deviation_ranges_.clear();
+	fract_property_deviation_ranges_.clear();
 	property_tailfunctions_.clear();
 	return;
 }
@@ -401,6 +410,26 @@ TailFunction AACompositionEnergySetup::get_tailfunction_from_name( std::string c
 	return tf_unknown;
 }
 
+/// @brief Determine whether ANY of the property sets of this helper object use fractional ranges.
+///
+bool
+AACompositionEnergySetup::use_fract_ranges_any() const {
+	for ( core::Size i=1, imax=use_fract_ranges_.size(); i<=imax; ++i ) {
+		if ( use_fract_ranges_[i] ) return true;
+	}
+	return false;
+}
+
+/// @brief Determine whether ANY of the property sets of this helper object use fractional expected values.
+///
+bool
+AACompositionEnergySetup::use_fract_expected_values_any() const {
+	for ( core::Size i=1, imax=expected_by_properties_absolute_.size(); i<=imax; ++i ) {
+		if ( expected_by_properties_absolute_[i] < 0 ) return true;
+	}
+	return false;
+}
+
 /// @brief Get a summary of the data stored in this object
 ///
 std::string AACompositionEnergySetup::report() const {
@@ -421,9 +450,29 @@ std::string AACompositionEnergySetup::report() const {
 		}
 	}
 
+	output << "property_penalty_fracts_:" << std::endl;
+	for ( core::Size i=1, imax=property_penalty_fracts_.size(); i<=imax; ++i ) {
+		output << "\t" << i << ":" << "\t";
+		for ( core::Size j=1, jmax=property_penalty_fracts_[i].size(); j<=jmax; ++j ) {
+			output << property_penalty_fracts_[i][j];
+			if ( j<jmax ) output << " ";
+		}
+		output << std::endl;
+	}
+
+	output << "use_fract_ranges_" << std::endl;
+	for ( core::Size i=1, imax=use_fract_ranges_.size(); i<=imax; ++i ) {
+		output << "\t" << (use_fract_ranges_[i] ? "TRUE" : "FALSE") << std::endl;
+	}
+
 	output << "property_deviation_ranges_:" << std::endl;
 	for ( core::Size i=1, imax=property_deviation_ranges_.size(); i<=imax; ++i ) {
 		output << "\t" << i << ":\t" << property_deviation_ranges_[i].first << ", " << property_deviation_ranges_[i].second << std::endl;
+	}
+
+	output << "fract_property_deviation_ranges_:" << std::endl;
+	for ( core::Size i=1, imax=fract_property_deviation_ranges_.size(); i<=imax; ++i ) {
+		output << "\t" << i << ":\t" << fract_property_deviation_ranges_[i].first << ", " << fract_property_deviation_ranges_[i].second << std::endl;
 	}
 
 	output << "expected_by_properties_fraction_ / expected_by_properties_absolute_:" << std::endl;
@@ -480,9 +529,13 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 	bool orpropertiesfound(false);
 	bool deltastartfound(false);
 	bool deltaendfound(false);
+	bool fractdeltastartfound(false);
+	bool fractdeltaendfound(false);
 	bool penaltiesfound(false);
 	bool fractionfound(false);
 	bool absolutefound(false);
+	core::Real fractdeltastart(0.0);
+	core::Real fractdeltaend(0.0);
 	signed long deltastart(0);
 	signed long deltaend(0);
 	TailFunction beforefxn( tf_unknown ); //TailFunction is an enum defined in AACompositionEnergySetup.hh
@@ -570,6 +623,16 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 			}
 			runtime_assert_string_msg( at_least_one, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition():  A \"NOT_PROPERTIES\" line needs at least one property following \"NOT_PROPERTIES\"." );
 			notpropertiesfound=true;
+		} else if ( oneword == "FRACT_DELTA_START" ) {
+			runtime_assert_string_msg( !fractdeltastartfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition():  A \"FRACT_DELTA_START\" line can only be present only once per \"PENALTY_DEFINITION\" block." );
+			curline >> fractdeltastart;
+			runtime_assert_string_msg( !curline.fail(), "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"FRACT_DELTA_START\" line." );
+			fractdeltastartfound=true;
+		} else if ( oneword == "FRACT_DELTA_END" ) {
+			runtime_assert_string_msg( !fractdeltaendfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition():  A \"FRACT_DELTA_END\" line can only be present only once per \"PENALTY_DEFINITION\" block." );
+			curline >> fractdeltaend;
+			runtime_assert_string_msg( !curline.fail(), "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"FRACT_DELTA_END\" line." );
+			fractdeltaendfound=true;
 		} else if ( oneword == "DELTA_START" ) {
 			runtime_assert_string_msg( !deltastartfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition():  A \"DELTA_START\" line can only be present only once per \"PENALTY_DEFINITION\" block." );
 			curline >> deltastart;
@@ -623,7 +686,13 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 		}
 	} //End loop through all lines
 
-	runtime_assert_string_msg( deltastartfound && deltaendfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"DELTA_START\" line and a \"DELTA_END\" line." );
+	if ( deltastartfound || deltaendfound ) {
+		runtime_assert_string_msg( deltastartfound && deltaendfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"DELTA_START\" line and a \"DELTA_END\" line.  Only one of these was found." );
+		runtime_assert_string_msg( !fractdeltastartfound && !fractdeltaendfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): If a \"PENALTY_DEFINITION\" block contains a \"DELTA_START\" line, then it cannot contain a \"FRACT_DELTA_START\" or \"FRACT_DELTA_END\" line." );
+	} else {
+		runtime_assert_string_msg( fractdeltastartfound && fractdeltaendfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"DELTA_START\" line and a \"DELTA_END\" line, or a \"FRACT_DELTA_START\" line and a \"FRACT_DELTA_END\" line." );
+		runtime_assert_string_msg( !deltastartfound && !deltaendfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): If a \"PENALTY_DEFINITION\" block contains a \"DELTA_START\" or \"DELTA_END\" line, then it cannot contain a \"FRACT_DELTA_START\" or \"FRACT_DELTA_END\" line." );
+	}
 	runtime_assert_string_msg( penaltiesfound, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"PENALTIES\" line." );
 	runtime_assert_string_msg( (fractionfound || absolutefound) && !(fractionfound && absolutefound), "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"FRACTION\" line OR an \"ABSOLUTE\" line (but not both)." );
 
@@ -634,9 +703,25 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 
 	//Store everything that we've parsed:
 	property_deviation_ranges_.push_back( std::pair<signed long, signed long>(deltastart, deltaend) );
+	fract_property_deviation_ranges_.push_back( std::pair<core::Real, core::Real>(fractdeltastart, fractdeltaend) );
+	utility::vector1 < core::Real > property_penalty_fract_list;
+	if ( deltastartfound ) { use_fract_ranges_.push_back(false); }
+	else {
+		use_fract_ranges_.push_back(true);
+		core::Real const property_penalty_fract_spacing( (fractdeltaend - fractdeltastart) / ( static_cast< core::Real >( penalties_vector.size() - 1 ) ) );
+		property_penalty_fract_list.resize( penalties_vector.size() );
+		core::Real curval( fractdeltastart );
+		for ( core::Size ii=1, iimax=penalties_vector.size(); ii<=iimax; ++ii ) {
+			if ( ii==iimax ) curval = fractdeltaend; //To correct for small numerical errors
+			property_penalty_fract_list[ii] = curval;
+			curval += property_penalty_fract_spacing;
+		}
+	}
+
 	AACompositionPropertiesSetOP new_property_set( new AACompositionPropertiesSet( types_list, not_types_list, properties_list, or_properties_list, not_properties_list ) ); //Create a new properties set for the properties.
 	property_sets_.push_back( new_property_set );
 	property_penalties_.push_back( penalties_vector );
+	property_penalty_fracts_.push_back( property_penalty_fract_list );
 	expected_by_properties_fraction_.push_back( fraction );
 	expected_by_properties_absolute_.push_back( absolute );
 	property_tailfunctions_.push_back( std::pair< TailFunction, TailFunction >(beforefxn, afterfxn) );
@@ -651,14 +736,23 @@ void AACompositionEnergySetup::check_data() const {
 
 	core::Size const nproperties( property_sets_.size() );
 	runtime_assert_string_msg( property_penalties_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): Penalty data were not found for all property sets." );
+	runtime_assert_string_msg( property_penalty_fracts_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): The property_penalty_fracts_ vector is the incorrect size." );
+	runtime_assert_string_msg( use_fract_ranges_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): The use_fract_ranges_ vector is the incorrect size." );
 	runtime_assert_string_msg( property_deviation_ranges_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): Deviation range data were not found for all property sets." );
+	runtime_assert_string_msg( fract_property_deviation_ranges_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): Fractional deviation range data were not found for all property sets." );
 	runtime_assert_string_msg( expected_by_properties_fraction_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): Expected fraction data were not found for all property sets." );
 	runtime_assert_string_msg( expected_by_properties_absolute_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): Absolute expected number data were not found for all property sets." );
 	runtime_assert_string_msg( property_tailfunctions_.size() == nproperties, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): Tail function data were not found for all property sets." );
 
 	for ( core::Size i=1; i<=nproperties; ++i ) {
-		runtime_assert_string_msg( property_deviation_ranges_[i].first <= property_deviation_ranges_[i].second, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data():  The delta range min must be less than the delta range max for each property set.");
-		runtime_assert_string_msg( static_cast< signed long >( property_penalties_[i].size() ) == property_deviation_ranges_[i].second-property_deviation_ranges_[i].first+1, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data():  Penalties must be provided for every delta in the range from DELTA_START to DELTA_END.  Too many or too few were found.");
+		if ( use_fract_ranges_[i] ) {
+			runtime_assert_string_msg( property_penalty_fracts_[i].size() == property_penalties_[i].size(), "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): The property_penalty_fracts_ vector contains corrupted data." );
+			runtime_assert_string_msg( fract_property_deviation_ranges_[i].first < fract_property_deviation_ranges_[i].second, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data():  The fractional delta range min must be less than the fractional delta range max for each property set.");
+		} else {
+			runtime_assert_string_msg( property_penalty_fracts_[i].size() == 0, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data(): The property_penalty_fracts_ vector contains data where it ought not to contain data." );
+			runtime_assert_string_msg( property_deviation_ranges_[i].first < property_deviation_ranges_[i].second, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data():  The delta range min must be less than the delta range max for each property set.");
+			runtime_assert_string_msg( static_cast< signed long >( property_penalties_[i].size() ) == property_deviation_ranges_[i].second-property_deviation_ranges_[i].first+1, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data():  Penalties must be provided for every delta in the range from DELTA_START to DELTA_END.  Too many or too few were found.");
+		}
 		runtime_assert_string_msg( property_penalties_[i].size() >=2, "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::check_data():  At least two penalty values must be specified.  Too few were found." );
 	}
 

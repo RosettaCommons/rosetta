@@ -749,7 +749,7 @@ init_complex_options()
 	OptionCollection::set_show_unused_options_flag( option[ out::show_unused_options ].value() );
 
 	// Immediate stop if requested by options (used for testing purposes).
-	if( option[ testing::HCF ]() ) {
+	if ( option[ testing::HCF ]() ) {
 		utility_exit_with_message("Do not pass go. Do not collect $200.");
 	}
 }
@@ -1192,13 +1192,13 @@ void init(int argc, char * argv [])
 		if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
 
 	}
-	// Catch any Rosetta exceptions
-	catch( utility::excn::EXCN_Msg_Exception &e){
-		// print the error message to standard error
-		e.show( std::cerr );
-		// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
-		throw;
-	}
+// Catch any Rosetta exceptions
+catch( utility::excn::EXCN_Msg_Exception &e){
+	// print the error message to standard error
+	e.show( std::cerr );
+	// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
+	throw;
+}
 
 }
 

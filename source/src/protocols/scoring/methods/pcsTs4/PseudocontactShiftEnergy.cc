@@ -271,8 +271,8 @@ PCS_Energy_Ts4::show_additional_info(std::ostream & out, core::pose::Pose & pose
 	vec_score.resize(pcs_d.get_n_lanthanides());
 
 	for ( i = 1; i <= pcs_d.get_n_lanthanides(); ++i ) {
-			PCS_tensor_Ts4 PCS_t = PCS_tensor_Ts4(0, 0, 0, 0, 0, ((pcs_d.get_pcs_data_per_lanthanides_all())[i]).get_filename());
-			vec_tensor.push_back(PCS_t);
+		PCS_tensor_Ts4 PCS_t = PCS_tensor_Ts4(0, 0, 0, 0, 0, ((pcs_d.get_pcs_data_per_lanthanides_all())[i]).get_filename());
+		vec_tensor.push_back(PCS_t);
 	}
 
 	//call to calculate the tensors and the score
@@ -292,10 +292,10 @@ PCS_Energy_Ts4::show_additional_info(std::ostream & out, core::pose::Pose & pose
 		out << vec_tensor[i] << std::endl;
 	}
 	out << "Lanthanide position: " << "x = " << best_coo.x() << ", "
-			<< "y = " << best_coo.y() << ", "
-			<< "z = " << best_coo.z() << std::endl;
+		<< "y = " << best_coo.y() << ", "
+		<< "z = " << best_coo.z() << std::endl;
 
-	if (verbose) {
+	if ( verbose ) {
 		// print out calc and exp pcs values for each lanthanide
 
 		out << "     * * * * *     calc vs. exp PCS     * * * * *     " << std::endl;
@@ -335,8 +335,8 @@ PCS_Energy_Ts4::show_additional_info(std::ostream & out, core::pose::Pose & pose
 				core::Real PCS_dev (PCS_exp - PCS_calc);
 				core::Real PCS_abs_dev (fabs(PCS_exp - PCS_calc));
 				out << std::right << std::setw(4) << res_num << std::setw(3) << atom_name << std::setw(10) << std::fixed
-						<< std::showpoint << std::setprecision(3) << std::setw(10) << PCS_exp << std::setw(10)
-						<< PCS_calc << std::setw(10) << PCS_dev << std::setw(10) << PCS_abs_dev << std::endl;
+					<< std::showpoint << std::setprecision(3) << std::setw(10) << PCS_exp << std::setw(10)
+					<< PCS_calc << std::setw(10) << PCS_dev << std::setw(10) << PCS_abs_dev << std::endl;
 			}
 		}
 	}
