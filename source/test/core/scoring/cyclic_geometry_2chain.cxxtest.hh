@@ -56,27 +56,27 @@ public:
 	void remove_disulfides( core::pose::PoseOP pose ) {
 		utility::vector1< std::pair < core::Size, core::Size > > disulfides;
 		core::conformation::disulfide_bonds( pose->conformation(), disulfides );
-		
-		for(core::Size i=1, imax=disulfides.size(); i<=imax; ++i) {
+
+		for ( core::Size i=1, imax=disulfides.size(); i<=imax; ++i ) {
 			core::conformation::break_disulfide( pose->conformation(), disulfides[i].first, disulfides[i].second );
-		}		
+		}
 	}
-	
+
 	/// @brief Given a pose, add disulfides between the first cysteine and the next.
 	///
 	void form_disulfides( core::pose::PoseOP pose) {
 		bool breaknow(false);
-		for(core::Size ir=1, nres=pose->n_residue(); ir<nres; ++ir) { //Loop through all residues except the last
-			if(pose->residue(ir).name3() == "CYS" || pose->residue(ir).name3() == "DCS") {
-				for(core::Size jr=ir+1; jr<=nres; ++jr) { //Loop through rest of residues
-					if(pose->residue(jr).name3() == "CYS" || pose->residue(jr).name3() == "DCS") {
+		for ( core::Size ir=1, nres=pose->n_residue(); ir<nres; ++ir ) { //Loop through all residues except the last
+			if ( pose->residue(ir).name3() == "CYS" || pose->residue(ir).name3() == "DCS" ) {
+				for ( core::Size jr=ir+1; jr<=nres; ++jr ) { //Loop through rest of residues
+					if ( pose->residue(jr).name3() == "CYS" || pose->residue(jr).name3() == "DCS" ) {
 						core::conformation::form_disulfide( pose->conformation(), ir, jr, true, false );
 						breaknow=true;
 						break;
 					}
 				}
 			}
-			if(breaknow) break;
+			if ( breaknow ) break;
 		}
 	}
 
@@ -119,7 +119,7 @@ public:
 				output_pose->set_xyz( curatom, xyztemp );
 			}
 		}
-		
+
 		form_disulfides(output_pose);
 
 		return output_pose;
@@ -169,18 +169,53 @@ public:
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 24 );
 		initial_pose_2chain->conformation().declare_chemical_bond(1, "N", 24, "C");
 		initial_pose_2chain->conformation().declare_chemical_bond(13, "N", 12, "C");
-		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
-		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(13);
-		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(12);
-		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
+		remove_disulfides(initial_pose_2chain);
+		form_disulfides(initial_pose_2chain);
+		for ( core::Size ir=1, irmax=initial_pose_2chain->n_residue(); ir<=irmax; ++ir ) {
+			initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(ir);
+		}
 
 		poses_2chain_.push_back(initial_pose_2chain);
 		mirror_poses_2chain_.push_back( mirror_pose( poses_2chain_[1] ) );
 		for ( core::Size i=1; i<=23; ++i ) {
 			poses_2chain_.push_back( permute( poses_2chain_[i] ) );
 			mirror_poses_2chain_.push_back( mirror_pose( poses_2chain_[i+1] ) );
+
+			poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
+			poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(13);
+			poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(12);
+			poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
+			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
+			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(13);
+			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(12);
+			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
+
 		}
-		mirror_poses_2chain_[11]->dump_pdb("vtemp.pdb"); //DELETE ME
+		/*initial_pose_2chain->dump_pdb("vtemp00.pdb"); //DELETE ME
+		poses_2chain_[1]->dump_pdb("vtemp01.pdb"); //DELETE ME
+		poses_2chain_[2]->dump_pdb("vtemp02.pdb"); //DELETE ME
+		poses_2chain_[3]->dump_pdb("vtemp03.pdb"); //DELETE ME
+		poses_2chain_[4]->dump_pdb("vtemp04.pdb"); //DELETE ME
+		poses_2chain_[5]->dump_pdb("vtemp05.pdb"); //DELETE ME
+		poses_2chain_[6]->dump_pdb("vtemp06.pdb"); //DELETE ME
+		poses_2chain_[7]->dump_pdb("vtemp07.pdb"); //DELETE ME
+		poses_2chain_[8]->dump_pdb("vtemp08.pdb"); //DELETE ME
+		poses_2chain_[9]->dump_pdb("vtemp09.pdb"); //DELETE ME
+		poses_2chain_[10]->dump_pdb("vtemp10.pdb"); //DELETE ME
+		poses_2chain_[11]->dump_pdb("vtemp11.pdb"); //DELETE ME
+		poses_2chain_[12]->dump_pdb("vtemp12.pdb"); //DELETE ME
+		poses_2chain_[13]->dump_pdb("vtemp13.pdb"); //DELETE ME
+		poses_2chain_[14]->dump_pdb("vtemp14.pdb"); //DELETE ME
+		poses_2chain_[15]->dump_pdb("vtemp15.pdb"); //DELETE ME
+		poses_2chain_[16]->dump_pdb("vtemp16.pdb"); //DELETE ME
+		poses_2chain_[17]->dump_pdb("vtemp17.pdb"); //DELETE ME
+		poses_2chain_[18]->dump_pdb("vtemp18.pdb"); //DELETE ME
+		poses_2chain_[19]->dump_pdb("vtemp19.pdb"); //DELETE ME
+		poses_2chain_[20]->dump_pdb("vtemp20.pdb"); //DELETE ME
+		poses_2chain_[21]->dump_pdb("vtemp21.pdb"); //DELETE ME
+		poses_2chain_[22]->dump_pdb("vtemp22.pdb"); //DELETE ME
+		poses_2chain_[23]->dump_pdb("vtemp23.pdb"); //DELETE ME
+		poses_2chain_[24]->dump_pdb("vtemp24.pdb"); //DELETE ME*/
 	}
 
 	void tearDown() {

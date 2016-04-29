@@ -1089,7 +1089,7 @@ public:
 
 		return;
 	}
-	
+
 	/// @brief Test linear interpolation of penalties when the FRACT_DELTA_START and FRACT_DELTA_END lines are used.
 	/// @details This version uses linear tailfunctions.
 	void test_interpolation_linear_tails() {
@@ -1102,7 +1102,7 @@ public:
 		// Set up score function
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( aa_composition, 1 );
-		
+
 		utility::vector1 < core::Real > expected_results;
 		expected_results.resize(31);
 		expected_results[ 1] = 7.5;
@@ -1136,18 +1136,18 @@ public:
 		expected_results[29] = 16.66666667;
 		expected_results[30] = 18.33333333;
 		expected_results[31] = 20;
-		
+
 		TR << "SEQUENCE\tEXPECTED\tACTUAL" << std::endl;
-		for(core::Size i=0; i<=30; ++i) {
+		for ( core::Size i=0; i<=30; ++i ) {
 			std::string seq("");
-			for(core::Size j=1; j<=30; ++j) {
-				if(j<=i) seq+="A";
+			for ( core::Size j=1; j<=30; ++j ) {
+				if ( j<=i ) seq+="A";
 				else seq+="G";
 			}
 			Pose pose;
 			make_pose_from_sequence( pose, seq, "fa_standard");
 			TR << seq << "\t" << expected_results[i+1] << "\t" << scorefxn(pose) << std::endl;
-			TS_ASSERT_DELTA(scorefxn(pose), expected_results[i+1], 1e-6);	
+			TS_ASSERT_DELTA(scorefxn(pose), expected_results[i+1], 1e-6);
 		}
 
 		return;
@@ -1165,7 +1165,7 @@ public:
 		// Set up score function
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( aa_composition, 1 );
-		
+
 		utility::vector1 < core::Real > expected_results;
 		expected_results.resize(31);
 		expected_results[ 1] = 6.25;
@@ -1199,18 +1199,18 @@ public:
 		expected_results[29] = 17.31481481;
 		expected_results[30] = 19.81481481;
 		expected_results[31] = 22.5;
-		
+
 		TR << "SEQUENCE\tEXPECTED\tACTUAL" << std::endl;
-		for(core::Size i=0; i<=30; ++i) {
+		for ( core::Size i=0; i<=30; ++i ) {
 			std::string seq("");
-			for(core::Size j=1; j<=30; ++j) {
-				if(j<=i) seq+="A";
+			for ( core::Size j=1; j<=30; ++j ) {
+				if ( j<=i ) seq+="A";
 				else seq+="G";
 			}
 			Pose pose;
 			make_pose_from_sequence( pose, seq, "fa_standard");
 			TR << seq << "\t" << expected_results[i+1] << "\t" << scorefxn(pose) << std::endl;
-			TS_ASSERT_DELTA(scorefxn(pose), expected_results[i+1], 1e-6);	
+			TS_ASSERT_DELTA(scorefxn(pose), expected_results[i+1], 1e-6);
 		}
 
 		return;
