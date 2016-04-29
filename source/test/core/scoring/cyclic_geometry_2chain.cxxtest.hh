@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @file test/core/scoring/cyclic_geometry.cxxtest.hh
-/// @brief Unit tests for cyclic peptide pose scoring.
+/// @brief Unit tests for cyclic peptide pose scoring with 2 chains in the peptide.
 /// @detials Cyclic permutations should score identically.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -45,9 +45,9 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTests.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTwoChainTests.cxxtest");
 
-class CyclicGeometryTests : public CxxTest::TestSuite {
+class CyclicGeometryTwoChainTests : public CxxTest::TestSuite {
 
 public:
 
@@ -150,27 +150,37 @@ public:
 	void setUp() {
 		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
 
-		// Pull in the cyclic peptide pose (9 residues):
-		core::pose::PoseOP initial_pose( new core::pose::Pose );
-		core::import_pose::pose_from_file( *initial_pose, "core/scoring/cyclic_peptide.pdb" , core::import_pose::PDB_file );
+		// Pull in the two-chain cyclic peptide pose (12 + 12 = 24 residues)
+		core::pose::PoseOP initial_pose_2chain( new core::pose::Pose );
+		core::import_pose::pose_from_file( *initial_pose_2chain, "core/scoring/twochain_cycpep.pdb", core::import_pose::PDB_file );
 
 		// Strip off termini and connect the ends:
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 1 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 1 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::UPPER_TERMINUS_VARIANT, 9 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 9 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 9 );
-		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
-		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
-		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_LOWER, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::UPPER_TERMINUS_VARIANT, 12 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_LOWER, 12 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 12 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::LOWER_TERMINUS_VARIANT, 13 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_LOWER, 13 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 13 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::UPPER_TERMINUS_VARIANT, 24 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_LOWER, 24 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 24 );
+		initial_pose_2chain->conformation().declare_chemical_bond(1, "N", 24, "C");
+		initial_pose_2chain->conformation().declare_chemical_bond(13, "N", 12, "C");
+		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
+		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(13);
+		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(12);
+		initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
 
-		poses_.push_back(initial_pose);
-		mirror_poses_.push_back( mirror_pose( poses_[1] ) );
-		for ( core::Size i=1; i<=8; ++i ) {
-			poses_.push_back( permute( poses_[i] ) );
-			mirror_poses_.push_back( mirror_pose( poses_[i+1] ) );
+		poses_2chain_.push_back(initial_pose_2chain);
+		mirror_poses_2chain_.push_back( mirror_pose( poses_2chain_[1] ) );
+		for ( core::Size i=1; i<=23; ++i ) {
+			poses_2chain_.push_back( permute( poses_2chain_[i] ) );
+			mirror_poses_2chain_.push_back( mirror_pose( poses_2chain_[i+1] ) );
 		}
+		mirror_poses_2chain_[11]->dump_pdb("vtemp.pdb"); //DELETE ME
 	}
 
 	void tearDown() {
@@ -180,19 +190,18 @@ public:
 	///
 	void cyclic_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
 		//Score all of the poses and confirm that they're all equal to the first
-		for ( core::Size i=1; i<=9; ++i ) {
-			(*sfxn)(*poses_[i]);
+		for ( core::Size i=1; i<=24; ++i ) {
+			(*sfxn)(*poses_2chain_[i]);
 			if ( i>1 ) {
-				TR << "\tTesting scoring with circular permutation of " << i - 1 << " residues." << std::endl;
-				TS_ASSERT_DELTA(poses_[1]->energies().total_energy(), poses_[i]->energies().total_energy(), std::abs( std::max(poses_[1]->energies().total_energy(), poses_[i]->energies().total_energy())/10000.0 ) );
+				TR << "\tTesting 2-chain scoring with circular permutation of " << i - 1 << " residues." << std::endl;
+				TS_ASSERT_DELTA(poses_2chain_[1]->energies().total_energy(), poses_2chain_[i]->energies().total_energy(), std::abs( std::max(poses_2chain_[1]->energies().total_energy(), poses_2chain_[i]->energies().total_energy())/10000.0 ) );
 			}
 			//Check mirrored geometry, too:
-			TR << "\tTesting scoring with circular permutation of " << i - 1 << " residues and mirroring." << std::endl;
-			(*sfxn)(*mirror_poses_[i]);
-			TS_ASSERT_DELTA(poses_[1]->energies().total_energy(), mirror_poses_[i]->energies().total_energy(), std::abs( std::max(poses_[1]->energies().total_energy(), mirror_poses_[i]->energies().total_energy())/10000.0 ) );
+			TR << "\tTesting 2-chain scoring with circular permutation of " << i - 1 << " residues and mirroring." << std::endl;
+			(*sfxn)(*mirror_poses_2chain_[i]);
+			TS_ASSERT_DELTA(poses_2chain_[1]->energies().total_energy(), mirror_poses_2chain_[i]->energies().total_energy(), std::abs( std::max(poses_2chain_[1]->energies().total_energy(), mirror_poses_2chain_[i]->energies().total_energy())/10000.0 ) );
 			TR.flush();
 		}
-
 	}
 
 	/// @brief Tests cyclic permutation scoring with the fa_atr scorefunction.
@@ -374,7 +383,8 @@ public:
 	}
 
 private:
-	utility::vector1 < core::pose::PoseOP > poses_;
-	utility::vector1 < core::pose::PoseOP > mirror_poses_;
+	utility::vector1 < core::pose::PoseOP > poses_2chain_;
+	utility::vector1 < core::pose::PoseOP > mirror_poses_2chain_;
+
 
 };

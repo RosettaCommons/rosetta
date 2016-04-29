@@ -22,6 +22,8 @@
 #include <test/core/init_util.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
@@ -44,12 +46,15 @@
 // C++ headers
 #include <iostream>
 
+#include <basic/Tracer.hh>
+
 #ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
+static basic::Tracer TR("core.pose.Pose.cxxtest");
 
 namespace test_pose {
 
@@ -98,6 +103,136 @@ public: //setup
 
 public: // tests
 
+	/// @brief Test whether mainchain torsions are measured correctly
+	/// for single- and multi-chain poses (in the latter case, with covalent
+	/// bonds between the chains).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_Pose_mainchain_torsions() {
+		core::Real const deltathresh_weak(0.06);
+		core::Real const deltathresh_strong(0.0001);
+
+		core::pose::Pose onechainpose;
+		core::pose::Pose multichainpose;
+		core::import_pose::pose_from_file( onechainpose, "core/pose/onechain.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( multichainpose, "core/pose/multichain.pdb", core::import_pose::PDB_file);
+
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::UPPER_TERMINUS_VARIANT, 7 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_LOWER, 7 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_UPPER, 7 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::LOWER_TERMINUS_VARIANT, 8 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_LOWER, 7 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_UPPER, 7 );
+
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::UPPER_TERMINUS_VARIANT, 14 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_LOWER, 14 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_UPPER, 14 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::LOWER_TERMINUS_VARIANT, 15 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_LOWER, 15 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_UPPER, 15 );
+
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::UPPER_TERMINUS_VARIANT, 20 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_LOWER, 20 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_UPPER, 20 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::LOWER_TERMINUS_VARIANT, 21 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_LOWER, 21 );
+		core::pose::remove_variant_type_from_pose_residue( multichainpose, core::chemical::CUTPOINT_UPPER, 21 );
+
+		multichainpose.conformation().declare_chemical_bond(7, "C", 8, "N");
+		multichainpose.conformation().declare_chemical_bond(14, "C", 15, "N");
+		multichainpose.conformation().declare_chemical_bond(20, "C", 21, "N");
+		multichainpose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(7);
+		multichainpose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(8);
+		multichainpose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(14);
+		multichainpose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(15);
+		multichainpose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(20);
+		multichainpose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(21);
+
+		utility::vector1< core::Real > expected_phi;
+		expected_phi.reserve(31);
+		expected_phi.push_back( 0.0 );
+		expected_phi.push_back( -135.0 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( -134.9 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( 38.6 );
+		expected_phi.push_back( 52.9 );
+		expected_phi.push_back( -43.0 );
+		expected_phi.push_back( 1.5 );
+		expected_phi.push_back( -135.0 );
+		expected_phi.push_back( -134.9 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( -122.9 );
+		expected_phi.push_back( -36.1 );
+		expected_phi.push_back( -167.8 );
+		expected_phi.push_back( -96.1 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( -134.9 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( -86.2 );
+		expected_phi.push_back( -77.3 );
+		expected_phi.push_back( -34.6 );
+		expected_phi.push_back( 115.1 );
+		expected_phi.push_back( -83.7 );
+		expected_phi.push_back( -165.6 );
+		expected_phi.push_back( -58.7 );
+		expected_phi.push_back( 107.9 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( -135.0 );
+		expected_phi.push_back( -135.1 );
+		expected_phi.push_back( -134.9 );
+
+		TR << "RES\tPHI_EXP\tPHI_1chain\tPHI_nchain" << std::endl;
+		for ( core::Size ir=1; ir<=31; ++ir ) {
+			TR << ir << "\t" << expected_phi[ir] << "\t" << onechainpose.phi(ir) << "\t" << multichainpose.phi(ir) << std::endl;
+			TS_ASSERT_DELTA(expected_phi[ir], onechainpose.phi(ir), deltathresh_weak);
+			TS_ASSERT_DELTA(expected_phi[ir], multichainpose.phi(ir), deltathresh_weak);
+			TS_ASSERT_DELTA(onechainpose.phi(ir), multichainpose.phi(ir), deltathresh_strong);
+		}
+		TR << std::endl;
+
+		utility::vector1< core::Real > expected_psi;
+		expected_psi.reserve(31);
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 134.9 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 135.0 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 70.2 );
+		expected_psi.push_back( -155.2 );
+		expected_psi.push_back( -33.0 );
+		expected_psi.push_back( -75.2 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 134.9 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( -149.5 );
+		expected_psi.push_back( -39.3 );
+		expected_psi.push_back( -8.4 );
+		expected_psi.push_back( 139.2 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 135.0 );
+		expected_psi.push_back( 135.0 );
+		expected_psi.push_back( 165.8 );
+		expected_psi.push_back( 9.1 );
+		expected_psi.push_back( -38.9 );
+		expected_psi.push_back( 163.3 );
+		expected_psi.push_back( 138.0 );
+		expected_psi.push_back( 156.0 );
+		expected_psi.push_back( 159.5 );
+		expected_psi.push_back(  71.3 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 134.9 );
+		expected_psi.push_back( 135.1 );
+		expected_psi.push_back( 0.0 );
+
+		TR << "RES\tPSI_EXP\tPSI_1chain\tPSI_nchain" << std::endl;
+		for ( core::Size ir=1; ir<=31; ++ir ) {
+			TR << ir << "\t" << expected_psi[ir] << "\t" << onechainpose.psi(ir) << "\t" << multichainpose.psi(ir) << std::endl;
+			TS_ASSERT_DELTA(expected_psi[ir], onechainpose.psi(ir), deltathresh_weak);
+			TS_ASSERT_DELTA(expected_psi[ir], multichainpose.psi(ir), deltathresh_weak);
+			TS_ASSERT_DELTA(onechainpose.psi(ir), multichainpose.psi(ir), deltathresh_strong);
+		}
+		TR << std::endl;
+	}
 
 	/// @brief test Pose observer interface
 	void test_Pose_observer() {
