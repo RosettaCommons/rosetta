@@ -17,7 +17,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/grafting/simple_movers/ReplaceRegionMover.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace grafting {

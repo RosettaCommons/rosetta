@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_grafting_simple_movers_KeepRegionMover_hh
 
 #include <protocols/grafting/simple_movers/KeepRegionMover.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>

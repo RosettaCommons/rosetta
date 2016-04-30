@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

@@ -41,7 +41,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 
 // Core Includes
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/Constraint.hh>
 

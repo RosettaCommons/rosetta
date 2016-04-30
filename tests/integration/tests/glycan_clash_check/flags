@@ -2,5 +2,6 @@
 -include_sugars
 -glycan_branches 645D 641D
 -check_chains A B D
+-run:no_prof_info_in_silentout
 
 
