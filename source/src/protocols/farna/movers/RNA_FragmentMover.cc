@@ -20,6 +20,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -166,23 +167,18 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		}
 
 		// Check for cutpoints that interrupt frame. Wait. why?
-		//  for (Size offset = 1; offset <= frag_size_; offset++ ){
-		//   if ( offset < frag_size_ &&
-		//      pose.fold_tree().is_cutpoint( i + offset - 1) &&
-		//      !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-		//       pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
-		//    frame_ok = false; break;
-		//   }
-		//  }
+		// rhiju, 2016: Putting this back in since fragment library
+		//  actually removes fragments with intervening cutpoints.
+		for (Size offset = 1; offset <= frag_size_; offset++ ){
+			if ( offset < frag_size_ &&
+					 pose.fold_tree().is_cutpoint( i + offset - 1) &&
+					 !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+							pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+		    frame_ok = false; break;
+			}
+		}
 
-		if ( !frame_ok ) continue;  //  for (Size offset = 1; offset <= frag_size_; offset++ ){
-		//   if ( offset < frag_size_ &&
-		//      pose.fold_tree().is_cutpoint( i + offset - 1) &&
-		//      !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-		//       pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
-		//    frame_ok = false; break;
-		//   }
-
+		if ( !frame_ok ) continue;
 
 		num_insertable_residues_++;
 		insert_map_[ num_insertable_residues_ ] = i;
