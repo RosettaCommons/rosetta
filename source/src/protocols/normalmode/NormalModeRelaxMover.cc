@@ -112,10 +112,10 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	core::scoring::ScoreFunctionCOP sfxn,
 	bool const cartesian )
 {
-	kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	mm->set_bb( true );
-	mm->set_chi( true );
-	mm->set_jump( true );
+  kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+  mm->set_bb( true );
+  mm->set_chi( true );
+  mm->set_jump( true );
 
 	NormalModeRelaxMover( sfxn, cartesian, mm, "relax", 10.0 );
 }
@@ -147,7 +147,7 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	cartesian_ = cartesian;
 
 	NM_ = NormalMode( "CA", distcut );
-	if ( !cartesian_ ) NM_.torsion( true );
+	if( !cartesian_ ) NM_.torsion( true );
 
 	mm_ = mm->clone();
 
@@ -169,16 +169,16 @@ NormalModeRelaxMover::set_default()
 	sfxn_cen_ = scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
 }
 
-std::string
+std::string 
 NormalModeRelaxMover::get_name() const {
-	return NormalModeRelaxMoverCreator::mover_name();
+	return NormalModeRelaxMoverCreator::mover_name(); 
 }
 
 void
 NormalModeRelaxMover::apply( pose::Pose &pose )
 {
 
-	if ( !mm_ ) {
+	if( !mm_ ){
 		kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 		mm->set_bb( true );
 		mm->set_chi( true );
@@ -186,7 +186,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 		set_movemap( pose, mm ); // do it this way so that NM_ instance gets its mm initialized
 	}
 
-	if ( centroid_ ) {
+	if( centroid_ ){
 		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	}
@@ -194,17 +194,17 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 	core::Size nstruct = mix_modes_ ? nsample_ : nmodes_*2;
 
 	utility::vector1< Size > modes( nmodes_ );
-	for ( core::Size i = 1; i <= nmodes_; ++i ) modes[i] = i;
+	for( core::Size i = 1; i <= nmodes_; ++i ) modes[i] = i;
 
 	// setup modes first
 	utility::vector1< utility::vector1< Real > > modescales( nstruct );
-	for ( core::Size i_comb = 1; i_comb <= nstruct; ++i_comb ) {
+	for( core::Size i_comb = 1; i_comb <= nstruct; ++i_comb ){
 		utility::vector1< core::Real > scalev( nmodes_, 0.0 );
-		if ( mix_modes_ ) {
-			for ( core::Size i = 1; i <= nmodes_; ++i ) scalev[i] = 2.0*numeric::random::rg().uniform() - 1.0;
+		if( mix_modes_ ){
+			for( core::Size i = 1; i <= nmodes_; ++i ) scalev[i] = 2.0*numeric::random::rg().uniform() - 1.0;
 		} else { // regular; -1 or +1
 			core::Size i_mode = (i_comb+1)/2;
-			if ( i_comb%2 == 0 ) {
+			if( i_comb%2 == 0 ){
 				scalev[i_mode] = 1.0;
 			} else {
 				scalev[i_mode] = -1.0;
@@ -218,11 +218,11 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 	utility::vector1< pose::Pose > poses;
 	core::Size imin( 1 );
 
-	for ( Size i_comb = 1; i_comb <= modescales.size(); ++i_comb ) {
-		set_mode( modes, modescales[i_comb] );
+  for( Size i_comb = 1; i_comb <= modescales.size(); ++i_comb ){
+    set_mode( modes, modescales[i_comb] );
 
 		TR << "Normal mode for mode no " << i_comb;
-		for ( core::Size i = 1; i <= nmodes_; ++i ) TR << " " << F(8,5,mode_scale_[i]);
+		for( core::Size i = 1; i <= nmodes_; ++i ) TR << " " << F(8,5,mode_scale_[i]);
 		TR << std::endl;
 
 		pose::Pose pose_tmp( pose );
@@ -230,7 +230,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 		apply_on_pose( pose_tmp );
 
 		Real score;
-		if ( centroid_ ) {
+		if( centroid_ ){
 			runtime_assert( pose_tmp.is_centroid() );
 			score = sfxn_cen_->score( pose_tmp );
 		} else {
@@ -239,23 +239,23 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 		}
 		TR << "score: " << F(8,3,score) << " (best so far: " << F(8,3,scoremin) << ")" << std::endl;
 
-		if ( score < scoremin ) {
+		if( score < scoremin ){
 			imin = i_comb;
 			scoremin = score;
 		}
 		poses.push_back( pose_tmp );
 	}
 
-	if ( randomselect_ ) {
+	if( randomselect_ ){
 		core::Size ipose = core::Size(numeric::random::rg().uniform()*poses.size()) + 1;
 		pose = poses[ipose];
 	} else {
 		pose = poses[imin];
 	}
 
-	if ( dump_silent_ ) {
+	if( dump_silent_ ){
 		core::io::silent::SilentFileData sfd;
-		for ( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
+		for( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ){
 			core::io::silent::SilentStructOP ss =
 				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 			std::stringstream tag;
@@ -300,7 +300,7 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 // Set randomized mode
 void
 NormalModeRelaxMover::set_random_mode(std::string const select_option,
-	Real const importance_portion )
+																			Real const importance_portion )
 {
 	mode_using_.resize( 0 );
 	mode_scale_.resize( 0 );
@@ -363,7 +363,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 
 	// define local minimization incase it's not differentiable
 	core::scoring::ScoreFunctionOP sfxn_min = sfxn_->clone();
-	core::scoring::ScoreFunctionOP sfxn_cen_min
+	core::scoring::ScoreFunctionOP sfxn_cen_min 
 		= scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
 
 	sfxn_min->set_weight( core::scoring::coordinate_constraint, 1.0 );
@@ -383,7 +383,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 
 	// update only if torsional NM
 	pose::Pose expose;
-	if ( !cartesian_ ) expose = extrapolate_mode_on_pose( pose );
+	if( !cartesian_ ) expose = extrapolate_mode_on_pose( pose );
 	utility::vector1< Vector > excrd = extrapolate_mode_on_crd( pose );
 	gen_coord_constraint( pose, excrd );
 
@@ -396,13 +396,13 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 		relax_prot.set_movemap( mm_ );
 		relax_prot.min_type("lbfgs_armijo_nonmonotone");
 
-		relax_prot.cartesian( cartesian_minimize_ );
+		relax_prot.cartesian( cartesian_minimize_ ); 
 		relax_prot.apply( pose );
 
 	} else if ( relaxmode_.compare("min") == 0 ) {
 		optimization::CartesianMinimizer minimizer;
 
-		if ( !cartesian_ ) pose = expose; // start from perturbed
+		if( !cartesian_ ) pose = expose; // start from perturbed
 
 		core::scoring::ScoreFunctionOP sfxn_loc;
 		// Pick proper scorefunction
@@ -441,24 +441,24 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 // Gen Coordinate Constraint
 void
 NormalModeRelaxMover::gen_coord_constraint( pose::Pose &pose,
-	utility::vector1< Vector > const &excrd ) const
+																						utility::vector1< Vector > const &excrd ) const
 {
 	// make sure there is no other constraint
 	//pose.remove_constraints();
 
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) );
 	for ( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ) {
-		if ( cartesian_ ) {
+		if( cartesian_ ){
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint
-				( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) ) ) );
+			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint
+			( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) ) ) );
 		} else {
 			Size resno( NM().get_atomID()[i_atm].rsd() );
 			Size atmno( NM().get_atomID()[i_atm].atomno() );
 
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint
-				( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
+			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint
+			( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
 				pose.residue(resno).xyz(atmno), fx ) ) ) );
 		}
 	}
@@ -467,7 +467,7 @@ NormalModeRelaxMover::gen_coord_constraint( pose::Pose &pose,
 // Report rmsd to excrd
 Real
 NormalModeRelaxMover::get_RMSD( utility::vector1< Vector > const excrd,
-	pose::Pose const &pose ) const
+																pose::Pose const &pose ) const
 {
 	Real rmsd( 0.0 );
 	for ( Size ica = 1; ica <= excrd.size(); ++ica ) {
@@ -600,16 +600,32 @@ void NormalModeRelaxMover::parse_my_tag(
 	randomselect_ = tag->getOption< bool >( "randomselect", false );
 	relaxmode_    = tag->getOption< std::string >( "relaxmode", "min" );
 	selection_kT_ = tag->getOption< Real >( "selection_kT", 1e6 ); // currently just placeholder
-	cartesian_minimize_ = tag->getOption< bool >( "cartesian_minimize_", false );
-	nsample_     = tag->getOption< Size >( "nsample_", nmodes_*2 );
-	if ( tag->hasOption( "outsilent" ) ) {
+	cartesian_minimize_ = tag->getOption< bool >( "cartesian_minimize", false );
+	nsample_     = tag->getOption< Size >( "nsample", nmodes_*2 );
+
+	bool weighted_k( false );
+	Real k_hbond( 1.0 ), k_long( 1.0 ), k_short( 1.0 );
+	if( tag->hasOption( "k_hbond" ) ){
+		k_hbond = tag->getOption< Real >( "k_hbond" );
+		weighted_k = true;
+	}
+	if( tag->hasOption( "k_short" ) ){
+		k_short = tag->getOption< Real >( "k_short" );
+		weighted_k = true;
+	}
+	if( tag->hasOption( "k_long" ) ){
+		k_long = tag->getOption< Real >( "k_long" );
+		weighted_k = true;
+	}
+
+	if( tag->hasOption( "outsilent" ) ){
 		dump_silent_ = true;
 		outsilent_ = tag->getOption< std::string >( "outsilent" );
 	}
 
-	if ( tag->hasOption( "scorefxn" ) ) {
+	if( tag->hasOption( "scorefxn" ) ){
 		std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn" ) );
-		if ( centroid_ ) {
+		if( centroid_ ){
 			sfxn_cen_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name );
 		} else {
 			sfxn_     = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name );
@@ -617,7 +633,8 @@ void NormalModeRelaxMover::parse_my_tag(
 	}
 
 	NM_ = NormalMode( "CA", 10.0 );
-	if ( !cartesian_ ) NM_.torsion( true );
+	if( !cartesian_ ) NM_.torsion( true );
+	if( weighted_k ) set_harmonic_constants( k_short, k_hbond, k_long );
 
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	bool const chi( tag->getOption< bool >( "chi", true ) ), bb( tag->getOption< bool >( "bb", true ) );
