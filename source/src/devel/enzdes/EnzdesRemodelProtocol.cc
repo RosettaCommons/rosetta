@@ -628,7 +628,7 @@ EnzdesRemodelMover::refine_pose(
 	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
 			rcg_it != rcgs_.end(); ++rcg_it ) {
 
-		(*rcg_it)->add_constraints_to_pose( pose );
+		(*rcg_it)->add_remodel_constraints_to_pose( pose );
 
 	}
 	(*(enz_prot_->reduced_scorefxn()))(pose);
@@ -655,7 +655,7 @@ EnzdesRemodelMover::refine_pose(
 
 	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
 			rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->remove_constraints_from_pose( pose );
+		(*rcg_it)->remove_remodel_constraints_from_pose( pose );
 	}
 
 	//std::cerr << " done removing fa remcsts." << std::endl;
@@ -1259,8 +1259,13 @@ EnzdesRemodelMover::setup_rcgs_from_inverse_rotamers(
 	for ( core::Size i =1; i <= target_inverse_rotamers_.size(); ++i ) {
 		using namespace protocols::forge::constraints;
 		using namespace protocols::forge::remodel;
-		vlb.add_rcg( RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) ) );
-		rcgs_.push_back( protocols::forge::remodel::RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) ) );
+		RemodelConstraintGeneratorOP newrcg( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) );
+		newrcg->set_id( "invrot1" );
+		vlb.add_rcg( newrcg );
+
+		newrcg = RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) );
+		newrcg->set_id( "invrot2" );
+		rcgs_.push_back( newrcg );
 	}
 }
 

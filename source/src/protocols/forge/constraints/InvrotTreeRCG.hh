@@ -75,8 +75,8 @@ public:
 	virtual void
 	apply( core::pose::Pose & pose );
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( core::pose::Pose const & pose );
+	virtual void
+	generate_remodel_constraints( core::pose::Pose const & pose );
 
 	/// @brief sets up the allowed sequence positions for enzdes geometric constraints
 	virtual void

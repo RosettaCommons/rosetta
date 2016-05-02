@@ -30,7 +30,9 @@
 
 //Protocol Headers
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/ConstraintGenerator.hh>
+#include <protocols/constraint_generator/AddConstraints.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.hh>
+#include <protocols/constraint_generator/RemoveConstraints.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
@@ -193,15 +195,17 @@ FastDesign::parse_my_tag(
 
 	max_redesigns_ = tag->getOption< core::Size >( "max_redesigns", max_redesigns_ );
 
-	utility::vector1< std::string > rcgs = utility::string_split( tag->getOption< std::string >( "rcgs", "" ), ',' );
-	for ( core::Size i=1, endi=rcgs.size(); i<=endi; ++i ) {
-		if ( rcgs[i] == "" ) continue;
-		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( rcgs[i], movers );
-		// check to make sure the mover provided is a ConstraintGenerator and if so, add it to the list
-		assert( utility::pointer::dynamic_pointer_cast< protocols::moves::ConstraintGenerator >( mover ) );
-		protocols::moves::ConstraintGeneratorOP newcg =
-			utility::pointer::static_pointer_cast< protocols::moves::ConstraintGenerator >( mover );
-		cgs_.push_back( newcg );
+	utility::vector1< std::string > cgs = utility::string_split( tag->getOption< std::string >( "cgs", "" ), ',' );
+	for ( utility::vector1< std::string >::const_iterator cg=cgs.begin(); cg!=cgs.end(); ++cg ) {
+		if ( cg->empty() ) continue;
+		protocols::constraint_generator::ConstraintGeneratorCOP new_cg = data.get_ptr< protocols::constraint_generator::ConstraintGenerator const >( "CONSTRAINT_GENERATORS", *cg );
+		if ( !new_cg ) {
+			std::stringstream msg;
+			msg << "FastDesign: Could not find a constraint generator named " << *cg << " in the data map.  Ensure it has been defined in an AddConstraints mover before being referenced by FastDesign."
+				<< std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		}
+		cgs_.push_back( new_cg );
 	}
 
 	/*std::string const filters_str( tag->getOption< std::string >( "filters", "," ) );
@@ -459,18 +463,18 @@ FastDesign::set_constraint_weight(
 {
 	runtime_assert( local_scorefxn != 0 );
 	if ( cgs_.size() ) {
-		for ( core::Size i=1, endi=cgs_.size(); i<=endi; ++i ) {
-			try {
-				cgs_[i]->remove_constraints_from_pose( pose );
-			} catch ( protocols::moves::EXCN_RemoveCstsFailed const & e ) {
-				// if removing constraints fails, we don't really care
-				// they are only being removed to clean up before re-adding them below
-			}
-			if ( weight > 0.0001 ) {
-				cgs_[i]->add_constraints_to_pose( pose );
-			}
-			TR << "Changed weight of " << cgs_[i]->get_name() << " to " << weight << std::endl;
+		protocols::constraint_generator::RemoveConstraints rm_csts( cgs_ );
+
+		try {
+			rm_csts.apply( pose );
+		} catch ( protocols::constraint_generator::EXCN_RemoveCstsFailed const & e ) {
+			// if removing constraints fails, we don't really care
+			// they are only being removed to clean up before re-adding them below
 		}
+		if ( weight > 1e-6 ) {
+			protocols::constraint_generator::AddConstraints( cgs_ ).apply( pose );
+		}
+
 	} else {
 		local_scorefxn->set_weight( core::scoring::coordinate_constraint, full_weights[ core::scoring::coordinate_constraint ] * weight );
 		local_scorefxn->set_weight( core::scoring::atom_pair_constraint, full_weights[ core::scoring::atom_pair_constraint ] * weight );

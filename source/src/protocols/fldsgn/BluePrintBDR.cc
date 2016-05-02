@@ -582,16 +582,19 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	if ( constraints_sheet_ > 0.0 ) {
-		SheetConstraintGeneratorOP rcg( new SheetConstraintGenerator );
-		rcg->initialize_from_blueprint( blueprint_ );
-		rcg->set_weight( constraints_sheet_ );
-		//SheetConstraintsRCGOP rcg( new SheetConstraintsRCG( blueprint_, constraints_sheet_ ) );
+		SheetConstraintGeneratorOP cg( new SheetConstraintGenerator );
+		cg->initialize_from_blueprint( blueprint_ );
+		cg->set_weight( constraints_sheet_ );
+		protocols::forge::remodel::GenericRemodelConstraintGeneratorOP rcg(
+			new protocols::forge::remodel::GenericRemodelConstraintGenerator( "bdr", cg ) );
 		vlb_->add_rcg( rcg );
 	}
 
 	if ( constraint_file_ != "" ) {
 		FileConstraintGeneratorOP cst( new FileConstraintGenerator( constraint_file_ ) );
-		vlb_->add_rcg( cst );
+		protocols::forge::remodel::GenericRemodelConstraintGeneratorOP rcg(
+			new protocols::forge::remodel::GenericRemodelConstraintGenerator( "bdr_cstfile", cst ) );
+		vlb_->add_rcg( rcg );
 	}
 
 	// TL: add user-specified RCGS

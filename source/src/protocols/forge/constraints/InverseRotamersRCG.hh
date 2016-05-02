@@ -86,8 +86,8 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( core::pose::Pose const & pose );
+	virtual void
+	generate_remodel_constraints( core::pose::Pose const & pose );
 
 public:
 	// public member functions

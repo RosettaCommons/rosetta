@@ -34,7 +34,6 @@ sources = {
 		"ExtendChain",
 	],
 	"protocols/denovo_design/constraints" : [
-		"CoordinateConstraintGenerator",
 		"FileConstraintGenerator",
 	],
 	"protocols/denovo_design/filters": [

@@ -11,13 +11,14 @@
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
-/// @modified Tom Linsky (tlinsky@uw.edu), Nov 2012
+/// @modified Tom Linsky (tlinsky@uw.edu)
 
 // Unit header
 #include <protocols/fldsgn/SheetConstraintGenerator.hh>
 #include <protocols/fldsgn/SheetConstraintGeneratorCreator.hh>
 
 // Package headers
+#include <protocols/constraint_generator/util.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -60,23 +61,24 @@ namespace fldsgn {
 std::string
 SheetConstraintGeneratorCreator::keyname() const
 {
-	return SheetConstraintGeneratorCreator::mover_name();
+	return SheetConstraintGeneratorCreator::constraint_generator_name();
 }
 
-protocols::moves::MoverOP
-SheetConstraintGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SheetConstraintGenerator() );
+protocols::constraint_generator::ConstraintGeneratorOP
+SheetConstraintGeneratorCreator::create_constraint_generator() const
+{
+	return protocols::constraint_generator::ConstraintGeneratorOP( new SheetConstraintGenerator );
 }
 
 std::string
-SheetConstraintGeneratorCreator::mover_name()
+SheetConstraintGeneratorCreator::constraint_generator_name()
 {
 	return "SheetConstraintGenerator";
 }
 
 /// @brief
 SheetConstraintGenerator::SheetConstraintGenerator():
-	protocols::forge::remodel::RemodelConstraintGenerator(),
+	protocols::constraint_generator::ConstraintGenerator( SheetConstraintGeneratorCreator::constraint_generator_name() ),
 	weight_( 1.0 ),
 	dist_( 5.5 ),
 	dist_tolerance_( 1.0 ),
@@ -95,15 +97,100 @@ SheetConstraintGenerator::SheetConstraintGenerator():
 /// @brief
 SheetConstraintGenerator::~SheetConstraintGenerator() {}
 
-void
-SheetConstraintGenerator::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose )
+protocols::constraint_generator::ConstraintGeneratorOP
+SheetConstraintGenerator::clone() const
 {
-	protocols::forge::remodel::RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	return protocols::constraint_generator::ConstraintGeneratorOP( new SheetConstraintGenerator( *this ) );
+}
 
+/// @brief
+core::scoring::constraints::ConstraintCOPs
+SheetConstraintGenerator::apply( core::pose::Pose const & pose ) const
+{
+	using core::scoring::func::FuncOP;
+
+	// returned data
+	core::scoring::constraints::ConstraintOPs csts;
+
+	// set constraint func
+	FuncOP caca_atom_pair_func = create_caca_atom_pair_func( dist_ );
+	FuncOP cacb_dihedral_func = create_cacb_dihedral_func( 0.0 );
+	FuncOP bb_shift_dihedral_func1 = create_bb_dihedral_func( 0.0 );
+	FuncOP bb_shift_dihedral_func2 = create_bb_dihedral_func( numeric::constants::f::pi );
+	FuncOP bb_angle_func = create_bb_angle_func( numeric::constants::f::pi / 2 );
+
+	std::pair< std::string, std::string > ss_spair = get_secstruct_and_strandpairings( pose );
+	std::string const & secstruct = ss_spair.first;
+	std::string const & spair_str = ss_spair.second;
+
+	TR << "Found SS = " << secstruct << std::endl;
+	TR << "Found strand pairings " << spair_str << std::endl;
+	TR << "Constrains between CA-CA atoms in sheet are applied for the following residues. " << std::endl;
+	TR << "dist=" << dist_ << ", weight_=" << weight_ << ", cacb_dihedral=" << cacb_dihedral_tolerance_ << ", bb_dihedral=" << bb_dihedral_tolerance_ << ", angle=" << angle_tolerance_ << std::endl;
+
+	protocols::fldsgn::topology::SS_Info2_OP ssinfo( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
+	protocols::fldsgn::topology::StrandPairingSet spairset( spair_str, ssinfo );
+	ResiduePairs const respairs = compute_residue_pairs( spairset.strand_pairings() );
+	for ( ResiduePairs::const_iterator pair=respairs.begin(); pair!=respairs.end(); ++pair ) {
+		core::Size const iaa = pair->first;
+		core::Size const jaa = pair->second;
+
+		// Residues probably need to be protein to get 'E' secondary structure.
+		// However, these checks are fast and could prevent issues
+		if ( !pose.residue( iaa ).is_protein() ) continue;
+		if ( !pose.residue( jaa ).is_protein() ) continue;
+
+		// atom definitions
+		core::id::AtomID const atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
+		core::id::AtomID const atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
+		core::id::AtomID const resi_n( pose.residue_type( iaa ).atom_index( "N" ), iaa );
+		core::id::AtomID const resi_c( pose.residue_type( iaa ).atom_index( "C" ), iaa );
+		core::id::AtomID const resi_o( pose.residue_type( iaa ).atom_index( "O" ), iaa );
+		core::id::AtomID const resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
+		core::id::AtomID const resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
+		core::id::AtomID const resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
+
+		// distance
+		if ( constrain_ca_ca_dist_ ) {
+			csts.push_back( create_ca_ca_atom_pair_constraint( atom1, atom2, caca_atom_pair_func ) );
+		}
+
+		// bb_dihedral
+		if ( constrain_bb_dihedral_ ) {
+			csts.push_back( create_bb_dihedral_constraint( pose, iaa, jaa, bb_shift_dihedral_func1, bb_shift_dihedral_func2 ) );
+			csts.push_back( create_bb_dihedral_constraint( pose, jaa, iaa, bb_shift_dihedral_func1, bb_shift_dihedral_func2 ) );
+		}
+
+		// angle
+		if ( constrain_bb_angle_ ) {
+			if ( pair->orientation == 'P' ) {
+				csts.push_back( create_bb_angle_constraint( resi_n, resi_c, resj_c, bb_angle_func ) );
+				csts.push_back( create_bb_angle_constraint( resj_n, resj_c, resi_c, bb_angle_func ) );
+			} else if ( pair->orientation == 'A' ) {
+				csts.push_back( create_bb_angle_constraint( resi_n, resi_c, resj_n, bb_angle_func ) );
+				csts.push_back( create_bb_angle_constraint( resj_n, resj_c, resi_n, bb_angle_func ) );
+			}
+		}
+
+		if ( !pose.residue_type( iaa ).has( "CB" ) || !pose.residue_type( jaa ).has( "CB" ) ) {
+			continue; // don't bother restraining cacb dihedral when there is no "CB" (e.g. gly)
+		}
+
+		if ( constrain_bb_cacb_dihedral_ || basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ) {
+			core::id::AtomID const resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
+			core::id::AtomID const resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
+			csts.push_back( create_bb_cacb_dihedral_constraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) );
+			TR << "Added dihedral constraint between residues " << iaa << " and " << jaa << std::endl;
+		}
+	} // residue pairs
+	return csts;
+} //apply
+
+void
+SheetConstraintGenerator::parse_tag(
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & )
+{
 	// for all of these, the default is to not change what is already  present in the class
 	if ( tag->hasOption( "blueprint" ) ) {
 		initialize_from_blueprint( tag->getOption< std::string >( "blueprint" ) );
@@ -123,25 +210,6 @@ SheetConstraintGenerator::parse_my_tag( TagCOP const tag,
 	set_constrain_bb_dihedral( tag->getOption< bool >( "constrain_bb_dihedral", constrain_bb_dihedral_ ) );
 	set_constrain_bb_angle( tag->getOption< bool >( "constrain_bb_angle", constrain_bb_angle_ ) );
 }
-
-std::string
-SheetConstraintGenerator::get_name() const
-{
-	return SheetConstraintGeneratorCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-SheetConstraintGenerator::fresh_instance() const
-{
-	return protocols::moves::MoverOP( new SheetConstraintGenerator() );
-}
-
-protocols::moves::MoverOP
-SheetConstraintGenerator::clone() const
-{
-	return protocols::moves::MoverOP( new SheetConstraintGenerator( *this ) );
-}
-
 
 /// @brief sets the blueprint file used for determining proper sheet pairing
 /// This function will create the blueprint object for you from the file and use it
@@ -256,7 +324,7 @@ SheetConstraintGenerator::set_constrain_bb_angle( bool const constrain_angle )
 }
 
 std::pair< std::string, std::string >
-SheetConstraintGenerator::get_secstruct_and_strandpairings( Pose const & pose ) const
+SheetConstraintGenerator::get_secstruct_and_strandpairings( core::pose::Pose const & pose ) const
 {
 	std::string secstruct = secstruct_;
 	std::string spairs = spairs_;
@@ -330,7 +398,7 @@ SheetConstraintGenerator::compute_residue_pairs( topology::StrandPairings const 
 core::scoring::func::FuncOP
 SheetConstraintGenerator::weighted_func( core::scoring::func::FuncOP func ) const
 {
-	return core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( weight_, func ) );
+	return protocols::constraint_generator::scalar_weighted( func, weight_ );
 }
 
 core::scoring::func::FuncOP
@@ -421,7 +489,6 @@ SheetConstraintGenerator::create_ca_ca_atom_pair_constraint(
 	return  core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, func ) );
 }
 
-
 core::scoring::constraints::ConstraintOP
 SheetConstraintGenerator::create_bb_angle_constraint(
 	core::id::AtomID const & atom1,
@@ -443,89 +510,6 @@ SheetConstraintGenerator::create_bb_cacb_dihedral_constraint(
 {
 	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( atom1, atom2, atom3, atom4, func ) );
 }
-
-/// @brief
-core::scoring::constraints::ConstraintCOPs
-SheetConstraintGenerator::generate_constraints( Pose const & pose )
-{
-	using core::scoring::func::FuncOP;
-
-	// returned data
-	core::scoring::constraints::ConstraintOPs csts;
-
-	// set constraint func
-	FuncOP caca_atom_pair_func = create_caca_atom_pair_func( dist_ );
-	FuncOP cacb_dihedral_func = create_cacb_dihedral_func( 0.0 );
-	FuncOP bb_shift_dihedral_func1 = create_bb_dihedral_func( 0.0 );
-	FuncOP bb_shift_dihedral_func2 = create_bb_dihedral_func( numeric::constants::f::pi );
-	FuncOP bb_angle_func = create_bb_angle_func( numeric::constants::f::pi / 2 );
-
-	std::pair< std::string, std::string > ss_spair = get_secstruct_and_strandpairings( pose );
-	std::string const & secstruct = ss_spair.first;
-	std::string const & spair_str = ss_spair.second;
-
-	TR << "Found SS = " << secstruct << std::endl;
-	TR << "Found strand pairings " << spair_str << std::endl;
-	TR << "Constrains between CA-CA atoms in sheet are applied for the following residues. " << std::endl;
-	TR << "dist=" << dist_ << ", weight_=" << weight_ << ", cacb_dihedral=" << cacb_dihedral_tolerance_ << ", bb_dihedral=" << bb_dihedral_tolerance_ << ", angle=" << angle_tolerance_ << std::endl;
-
-	protocols::fldsgn::topology::SS_Info2_OP ssinfo( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
-	protocols::fldsgn::topology::StrandPairingSet spairset( spair_str, ssinfo );
-	ResiduePairs const respairs = compute_residue_pairs( spairset.strand_pairings() );
-	for ( ResiduePairs::const_iterator pair=respairs.begin(); pair!=respairs.end(); ++pair ) {
-		core::Size const iaa = pair->first;
-		core::Size const jaa = pair->second;
-
-		// Residues probably need to be protein to get 'E' secondary structure.
-		// However, these checks are fast and could prevent issues
-		if ( !pose.residue( iaa ).is_protein() ) continue;
-		if ( !pose.residue( jaa ).is_protein() ) continue;
-
-		// atom definitions
-		core::id::AtomID const atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
-		core::id::AtomID const atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
-		core::id::AtomID const resi_n( pose.residue_type( iaa ).atom_index( "N" ), iaa );
-		core::id::AtomID const resi_c( pose.residue_type( iaa ).atom_index( "C" ), iaa );
-		core::id::AtomID const resi_o( pose.residue_type( iaa ).atom_index( "O" ), iaa );
-		core::id::AtomID const resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
-		core::id::AtomID const resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
-		core::id::AtomID const resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
-
-		// distance
-		if ( constrain_ca_ca_dist_ ) {
-			csts.push_back( create_ca_ca_atom_pair_constraint( atom1, atom2, caca_atom_pair_func ) );
-		}
-
-		// bb_dihedral
-		if ( constrain_bb_dihedral_ ) {
-			csts.push_back( create_bb_dihedral_constraint( pose, iaa, jaa, bb_shift_dihedral_func1, bb_shift_dihedral_func2 ) );
-			csts.push_back( create_bb_dihedral_constraint( pose, jaa, iaa, bb_shift_dihedral_func1, bb_shift_dihedral_func2 ) );
-		}
-
-		// angle
-		if ( constrain_bb_angle_ ) {
-			if ( pair->orientation == 'P' ) {
-				csts.push_back( create_bb_angle_constraint( resi_n, resi_c, resj_c, bb_angle_func ) );
-				csts.push_back( create_bb_angle_constraint( resj_n, resj_c, resi_c, bb_angle_func ) );
-			} else if ( pair->orientation == 'A' ) {
-				csts.push_back( create_bb_angle_constraint( resi_n, resi_c, resj_n, bb_angle_func ) );
-				csts.push_back( create_bb_angle_constraint( resj_n, resj_c, resi_n, bb_angle_func ) );
-			}
-		}
-
-		if ( !pose.residue_type( iaa ).has( "CB" ) || !pose.residue_type( jaa ).has( "CB" ) ) {
-			continue; // don't bother restraining cacb dihedral when there is no "CB" (e.g. gly)
-		}
-
-		if ( constrain_bb_cacb_dihedral_ || basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ) {
-			core::id::AtomID const resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
-			core::id::AtomID const resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
-			csts.push_back( create_bb_cacb_dihedral_constraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) );
-			TR << "Added dihedral constraint between residues " << iaa << " and " << jaa << std::endl;
-		}
-	} // residue pairs
-	return csts;
-} //generate constraints
 
 } //namespace fldsgn
 } //namespace protocols

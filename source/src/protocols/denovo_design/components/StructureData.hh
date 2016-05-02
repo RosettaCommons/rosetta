@@ -22,7 +22,7 @@
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.fwd.hh>
 #include <protocols/denovo_design/types.hh>
-#include <protocols/moves/ConstraintGenerator.fwd.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -553,11 +553,14 @@ public:
 	/// @brief applies an arbitrary mover to the contained pose -- the mover must NOT change pose length or numbering!
 	void apply_mover( protocols::moves::MoverOP mover );
 
+	/// @brief applies a constraint generator and adds constraints to the pose
+	//void apply_constraint_generator( protocols::constraint_generator::ConstraintGeneratorOP cg );
+
 	/// @brief switches residue type set of the contained pose
 	void switch_residue_type_set( std::string const & typeset );
 
 	/// @brief removes constraints added by the given CG
-	void remove_constraints_from_pose( protocols::moves::ConstraintGeneratorOP cg );
+	//void remove_constraints_from_pose( protocols::constraint_generator::ConstraintGeneratorOP cg );
 
 	/// @brief sets jump with index jumpidx to the given datastructure
 	void set_jump( int const jumpidx, core::kinematics::Jump const & j );

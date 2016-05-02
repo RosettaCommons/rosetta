@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_simple_moves_AddConstraintsToCurrentConformationMover_hh
 #define INCLUDED_protocols_simple_moves_AddConstraintsToCurrentConformationMover_hh
 
-#include <protocols/moves/ConstraintGenerator.hh>
+#include <protocols/moves/Mover.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -25,13 +25,16 @@
 namespace protocols {
 namespace simple_moves {
 
-class AddConstraintsToCurrentConformationMover : public moves::ConstraintGenerator {
+class AddConstraintsToCurrentConformationMover : public moves::Mover {
 
 public:
 	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
 
 	AddConstraintsToCurrentConformationMover();
 	virtual ~AddConstraintsToCurrentConformationMover();
+
+	virtual void
+	apply( Pose & pose );
 
 	virtual core::scoring::constraints::ConstraintCOPs
 	generate_constraints( Pose const & pose );

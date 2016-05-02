@@ -34,7 +34,7 @@ sources = {
                 "InverseRotamersRCG",
                 "InvrotTreeRCG",
                 "NtoCConstraintGenerator",
-                "RemoveConstraints",
+                "RemoveRemodelCsts",
         ],
         "protocols/forge/methods": [
                 "chainbreak_eval",

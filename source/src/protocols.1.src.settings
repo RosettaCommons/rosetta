@@ -14,6 +14,18 @@ sources = {
 		"Checkpoint",
 		"CheckPointer",
 	],
+	"protocols/constraint_generator": [
+		"AddConstraints",
+		"AtomPairConstraintGenerator",
+		"CoordinateConstraintGenerator",
+		"ConstraintGenerator",
+		"ConstraintGeneratorFactory",
+		"ConstraintsManager",
+		"HydrogenBondConstraintGenerator",
+		"RemoveConstraints",
+		"TerminiConstraintGenerator",
+		"util",
+	],
 	"protocols/environment": [
 	        "AutoCutData",
 	        "ClientMover",
@@ -152,7 +164,6 @@ sources = {
 	],
 	"protocols/moves": [
 		"CompositionMover",
-		"ConstraintGenerator",
 		"CyclicMover",
 		"DsspMover",
 		"DualMonteCarlo",

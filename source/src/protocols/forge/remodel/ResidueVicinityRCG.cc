@@ -191,8 +191,8 @@ ResidueVicinityRCG::clone() const
 
 /// @brief for every ResidueVicinityInfo (RVI) that this generator has, an AmbiguousConstraint between the
 /// @brief neighbor atoms of all residues in the remodel region and the RVI are generated.
-core::scoring::constraints::ConstraintCOPs
-ResidueVicinityRCG::generate_constraints(
+void
+ResidueVicinityRCG::generate_remodel_constraints(
 	core::pose::Pose const & pose  )
 {
 	//pose.dump_pdb("remodel_start.pdb"); //debug
@@ -251,7 +251,7 @@ ResidueVicinityRCG::generate_constraints(
 		}
 
 	} //loop over residue vicinity infos
-	return csts;
+	add_constraints( csts );
 } //generate constraints
 
 

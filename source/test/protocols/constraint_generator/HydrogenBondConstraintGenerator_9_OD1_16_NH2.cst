@@ -1,0 +1,13 @@
+AmbiguousConstraint
+MultiConstraint
+AtomPair  OD2    9  NE    16 FLAT_HARMONIC 2.0 0.5 1.5
+Angle  CG     9  OD2    9  NE    16FLAT_HARMONIC 2.09 0.5 0.4
+Angle  OD2    9  NE    16  CD    16FLAT_HARMONIC 1.9 0.5 0.4
+End_MultiConstraint
+MultiConstraint
+AtomPair  OD2    9  NH2   16 FLAT_HARMONIC 2.0 0.5 1.5
+Angle  CG     9  OD2    9  NH2   16FLAT_HARMONIC 2.09 0.5 0.4
+Angle  OD2    9  NH2   16  CZ    16FLAT_HARMONIC 1.9 0.5 0.4
+End_MultiConstraint
+End_AmbiguousConstraint
+

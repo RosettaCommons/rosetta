@@ -21,23 +21,21 @@
 #include <protocols/relax/FastRelax.hh>
 
 // Protocol headers
-//#include <protocols/denovo_design/RestrictWorstRegion.fwd.hh>
-//#include <protocols/flxbb/filters/HighestEnergyRegion.fwd.hh>
-
-// Package headers
+#include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/ConstraintGenerator.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
-//// C++ headers
-#include <string>
-
+// Core headers
 #include <core/io/silent/silent.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+
+// Basic/Utility headers
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <string>
 
 namespace devel {
 namespace denovo_design {
@@ -180,8 +178,7 @@ private:   // other data
 	core::Size regions_to_design_;
 	core::Size run_count_;
 	std::string cached_sequence_;
-	utility::vector1< protocols::moves::ConstraintGeneratorOP > cgs_;
-	//RestrictWorstRegionOP worst_region_mover_;
+	protocols::constraint_generator::ConstraintGeneratorCOPs cgs_;
 };
 
 

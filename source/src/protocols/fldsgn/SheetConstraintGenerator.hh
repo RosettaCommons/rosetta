@@ -11,14 +11,14 @@
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
-/// @modified Tom Linsky (tlinsky@uw.edu), Nov 2012
-
+/// @modified Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_fldsgn_SheetConstraintGenerator_hh
 #define INCLUDED_protocols_fldsgn_SheetConstraintGenerator_hh
 
 // Unit Header
 #include <protocols/fldsgn/SheetConstraintGenerator.fwd.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.hh>
 
 // Package Header
 #include <protocols/fldsgn/topology/StrandPairing.fwd.hh>
@@ -31,9 +31,7 @@
 #include <core/types.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
-
 #include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace fldsgn {
@@ -52,39 +50,28 @@ private:
 };
 typedef utility::vector1< ResiduePair > ResiduePairs;
 
-class SheetConstraintGenerator : public protocols::forge::remodel::RemodelConstraintGenerator {
+class SheetConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
 public:
-
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
 
-
 public:
 	SheetConstraintGenerator();
-
 	virtual ~SheetConstraintGenerator();
 
-	virtual void
-	parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
-
-	virtual std::string
-	get_name() const;
-
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
-
-	virtual protocols::moves::MoverOP
+	virtual protocols::constraint_generator::ConstraintGeneratorOP
 	clone() const;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( Pose const & pose );
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const;
 
+protected:
+	virtual void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
+public:
 	/// @brief sets the secondary structure to be used for constraint generation
 	void set_secstruct( std::string const & ss );
 
@@ -132,7 +119,8 @@ public:
 	void initialize_from_blueprint( std::string const & blueprint_file );
 	void initialize_from_blueprint( protocols::jd2::parser::BluePrintCOP bp );
 
-	std::pair< std::string, std::string > get_secstruct_and_strandpairings( Pose const & pose ) const;
+	std::pair< std::string, std::string >
+	get_secstruct_and_strandpairings( core::pose::Pose const & pose ) const;
 
 	/// @brief computes and returns a vector of residues that are paired in the sheet
 	ResiduePairs
@@ -147,7 +135,8 @@ private:
 	core::scoring::func::FuncOP create_cacb_dihedral_func( core::Real const ideal_dihedral ) const;
 
 	// constraint generation
-	core::scoring::constraints::ConstraintOP create_bb_dihedral_constraint(
+	core::scoring::constraints::ConstraintOP
+	create_bb_dihedral_constraint(
 		core::pose::Pose const & pose,
 		core::Size const res1,
 		core::Size const res2,
@@ -197,6 +186,5 @@ private:
 
 } //namespace fldsgn
 } //namespace protocols
-
 
 #endif // INCLUDED_protocols_fldsgn_SheetConstraintGenerator_HH

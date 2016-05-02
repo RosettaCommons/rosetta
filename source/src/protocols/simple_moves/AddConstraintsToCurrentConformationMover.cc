@@ -15,6 +15,7 @@
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
 
 // protocol headers
+#include <protocols/constraint_generator/util.hh>
 #include <protocols/residue_selectors/TaskSelector.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -72,7 +73,7 @@ using namespace scoring;
 using namespace constraints;
 
 AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover():
-	protocols::moves::ConstraintGenerator(),
+	protocols::moves::Mover( AddConstraintsToCurrentConformationMoverCreator::mover_name() ),
 	use_distance_cst_( false ),
 	CA_only_( true ),
 	bb_only_( false ),
@@ -86,6 +87,12 @@ AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMov
 {}
 
 AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover() {}
+
+void
+AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
+{
+	pose.add_constraints( generate_constraints( pose ) );
+}
 
 core::scoring::constraints::ConstraintCOPs
 AddConstraintsToCurrentConformationMover::generate_constraints( core::pose::Pose const & pose )
@@ -196,16 +203,8 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 {
 	core::scoring::constraints::ConstraintCOPs csts;
 
-	Size nres;
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetryInfoCOP symm_info;
-		core::conformation::symmetry::SymmetricConformation const & SymmConf(
-			dynamic_cast< core::conformation::symmetry::SymmetricConformation const & >( pose.conformation() ) );
-		symm_info = SymmConf.Symmetry_Info();
-		nres = symm_info->num_independent_residues();
-	} else {
-		nres = pose.total_residue();
-	}
+	Size const nres =
+		protocols::constraint_generator::compute_nres_in_asymmetric_unit( pose );
 
 	for ( Size ires=1; ires<=nres; ++ires ) {
 		if ( !subset[ ires ] ) continue;
@@ -260,7 +259,6 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	moves::Movers_map const & movers,
 	Pose const & pose
 ) {
-	moves::ConstraintGenerator::parse_my_tag( tag, datamap, filters, movers, pose );
 	use_distance_cst_ = tag->getOption< bool >( "use_distance_cst", use_distance_cst_ );
 	max_distance_ = tag->getOption< core::Real >( "max_distance", max_distance_ );
 	coord_dev_ = tag->getOption< core::Real >( "coord_dev", coord_dev_ );

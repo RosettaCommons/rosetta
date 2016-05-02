@@ -10,35 +10,28 @@
 /// @file protocols/denovo_design/constraints/FileConstraintGenerator.hh
 ///
 /// @brief
-/// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
-/// @modified Tom Linsky ( tlinsky@uw.edu ), Nov 2012
+/// @author Tom Linsky ( tlinsky@uw.edu ), Nov 2012
 
 #ifndef INCLUDED_protocols_denovo_design_constraints_FileConstraintGenerator_hh
 #define INCLUDED_protocols_denovo_design_constraints_FileConstraintGenerator_hh
 
 // Unit Header
 #include <protocols/denovo_design/constraints/FileConstraintGenerator.fwd.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.hh>
 
 // Package Header
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Proeject Header
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <string>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace denovo_design {
 namespace constraints {
 
-class FileConstraintGenerator : public protocols::forge::remodel::RemodelConstraintGenerator{
-public:
-	typedef core::pose::Pose Pose;
+class FileConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
 
 public:
 	FileConstraintGenerator();
@@ -47,26 +40,19 @@ public:
 
 	virtual ~FileConstraintGenerator();
 
-	void set_cstfile( std::string const & filename );
-
-	virtual void
-	parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
-
-	virtual std::string
-	get_name() const;
-
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
-
-	virtual protocols::moves::MoverOP
+	virtual protocols::constraint_generator::ConstraintGeneratorOP
 	clone() const;
 
 	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( Pose const & pose );
+	apply( core::pose::Pose const & pose ) const;
+
+protected:
+	virtual void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
+public:
+	void
+	set_cstfile( std::string const & filename );
 
 protected:
 	std::string

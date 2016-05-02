@@ -48,6 +48,9 @@
 
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
 
+#include <protocols/constraint_generator/AddConstraintsCreator.hh>
+#include <protocols/constraint_generator/RemoveConstraintsCreator.hh>
+
 #include <protocols/grafting/AnchoredGraftMoverCreator.hh>
 #include <protocols/grafting/CCDEndsGraftMoverCreator.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMoverCreator.hh>
@@ -77,8 +80,6 @@
 #include <protocols/denovo_design/connection/BridgeChainsCreator.hh>
 #include <protocols/denovo_design/connection/ConnectionCreators.hh>
 #include <protocols/denovo_design/connection/ExtendChainCreator.hh>
-#include <protocols/denovo_design/constraints/CoordinateConstraintGeneratorCreator.hh>
-#include <protocols/denovo_design/constraints/FileConstraintGeneratorCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
@@ -115,7 +116,6 @@
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 #include <protocols/fldsgn/CircularPermutationCreator.hh>
 #include <protocols/fldsgn/MatchResiduesMoverCreator.hh>
-#include <protocols/fldsgn/SheetConstraintGeneratorCreator.hh>
 
 #include <protocols/fldsgn/potentials/SetAACompositionPotentialCreator.hh>
 #include <protocols/fldsgn/potentials/SetSecStructEnergiesCreator.hh>
@@ -128,7 +128,7 @@
 #include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/NtoCConstraintGeneratorCreator.hh>
-#include <protocols/forge/constraints/RemoveConstraintsCreator.hh>
+#include <protocols/forge/constraints/RemoveRemodelCstsCreator.hh>
 
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 #include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>

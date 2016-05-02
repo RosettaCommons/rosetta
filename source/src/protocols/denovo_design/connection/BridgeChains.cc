@@ -20,10 +20,12 @@
 #include <protocols/denovo_design/components/Picker.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/constraints/CoordinateConstraintGenerator.hh>
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
+#include <protocols/constraint_generator/CoordinateConstraintGenerator.hh>
+#include <protocols/constraint_generator/AddConstraints.hh>
+#include <protocols/constraint_generator/RemoveConstraints.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
@@ -259,9 +261,10 @@ BridgeChains::build_loop( components::StructureData & perm ) const
 	// setup cutpoints
 	core::Size const cutres = perm.segment( loop_lower(perm) ).cterm_resi();
 
+	// generate coordinate csts
+	protocols::constraint_generator::CoordinateConstraintGeneratorOP coord_cst( new protocols::constraint_generator::CoordinateConstraintGenerator() );
+	coord_cst->set_id( id() + "_constraint_generator" );
 
-	// setup coordinate csts
-	constraints::CoordinateConstraintGeneratorOP coord_cst( new constraints::CoordinateConstraintGenerator() );
 	utility::vector1< core::Size > resids;
 	for ( core::Size i=left; i<loopstart; ++i ) {
 		TR << "Creating cst for residue " << i << std::endl;
@@ -280,7 +283,14 @@ BridgeChains::build_loop( components::StructureData & perm ) const
 	}
 	core::select::residue_selector::ResidueSelectorOP selector(
 		new core::select::residue_selector::ResidueIndexSelector( resid_str.str() ) );
-	coord_cst->set_selector( selector );
+	coord_cst->set_residue_selector( selector );
+	coord_cst->set_sd( 1.0 );
+
+	protocols::constraint_generator::AddConstraints add_coord_csts;
+	add_coord_csts.add_generator( coord_cst );
+
+	protocols::constraint_generator::RemoveConstraints rm_coord_csts;
+	rm_coord_csts.add_generator( coord_cst );
 
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
 	debug_assert( cutres >= left );
@@ -306,12 +316,15 @@ BridgeChains::build_loop( components::StructureData & perm ) const
 		perm.switch_residue_type_set( "centroid" );
 	}
 
-	perm.apply_mover( coord_cst );
+	perm.apply_mover( add_coord_csts );
 	perm.apply_mover( remodel );
 
 	if ( remodel->get_last_move_status() != protocols::moves::MS_SUCCESS ) {
+		TR.Debug << "Remodel failed!" << std::endl;
 		throw EXCN_ConnectionFailed( "during remodel in " + id() );
 	}
+
+	perm.apply_mover( rm_coord_csts );
 
 	// Rebuild fold tree
 	utility::vector1< std::string > roots;

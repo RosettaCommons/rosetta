@@ -19,23 +19,14 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/id/SequenceMapping.hh>
-#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 // Project headers
-#include <core/chemical/ResidueType.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 
 // boost headers
-#include <boost/assign.hpp>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.NtoCConstraintGenerator" );
 
@@ -63,16 +54,18 @@ NtoCConstraintGeneratorCreator::mover_name()
 /// @brief
 NtoCConstraintGenerator::NtoCConstraintGenerator():
 	RemodelConstraintGenerator(),
-	dist_( 11.0 ),
-	coef_( 1.0 )
-{}
+	cg_()
+{
+}
 
 /// @brief
 NtoCConstraintGenerator::NtoCConstraintGenerator( Real const dist, Real const coef ):
 	RemodelConstraintGenerator(),
-	dist_( dist ),
-	coef_( coef )
-{}
+	cg_()
+{
+	cg_.set_weight( coef );
+	cg_.set_max_distance( dist );
+}
 
 /// @brief
 NtoCConstraintGenerator::~NtoCConstraintGenerator() {}
@@ -85,8 +78,8 @@ NtoCConstraintGenerator::parse_my_tag( TagCOP const tag,
 	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
-	set_weight( tag->getOption< core::Real >( "weight", coef_ ) );
-	set_distance( tag->getOption< core::Real >( "dist", dist_ ) );
+	cg_.set_weight( tag->getOption< core::Real >( "weight", cg_.weight() ) );
+	cg_.set_max_distance( tag->getOption< core::Real >( "dist", cg_.max_distance() ) );
 }
 
 std::string
@@ -107,43 +100,28 @@ NtoCConstraintGenerator::clone() const
 	return protocols::moves::MoverOP( new NtoCConstraintGenerator( *this ) );
 }
 
+/*
 /// @brief set weight
 void
 NtoCConstraintGenerator::set_weight( Real const coef )
 {
-	coef_ = coef;
+	cg_.set_weight( coef );
 }
 
 /// @brief set distance of constraint
 void
 NtoCConstraintGenerator::set_distance( Real const dist )
 {
-	dist_ = dist;
+	cg_.set_distance( dist );
 }
+*/
 
 
 /// @brief
-core::scoring::constraints::ConstraintCOPs
-NtoCConstraintGenerator::generate_constraints( Pose const & pose )
+void
+NtoCConstraintGenerator::generate_remodel_constraints( Pose const & pose )
 {
-	using namespace core::scoring::constraints;
-
-	std::string tag( "constraint_between_N_&_C_terminal_Calpha" );
-	Real lb( 0.0 );
-	Real ub( dist_ );
-	Real sd( 1.0 );
-	core::scoring::func::ScalarWeightedFuncOP cstfunc( new core::scoring::func::ScalarWeightedFunc( coef_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
-
-	Size last_residue = protocols::toolbox::match_enzdes_util::get_last_protein_residue( pose );
-	Size first_residue = protocols::toolbox::match_enzdes_util::get_first_protein_residue( pose );
-	TR << "first residue in NtoC generation is:" << first_residue << " and last is:" << last_residue << " out of total=" << pose.total_residue() << std::endl;
-	core::id::AtomID atom1( pose.residue_type( first_residue ).atom_index( "CA" ), first_residue );
-	core::id::AtomID atom2( pose.residue_type( last_residue ).atom_index( "CA" ), last_residue );
-	ConstraintOP const cst( new AtomPairConstraint( atom1, atom2, cstfunc ) );
-
-	TR << "Constraints between N- and C- terminal: " << first_residue << "-" << last_residue << ", dist=" << dist_ << std::endl;
-
-	return boost::assign::list_of( cst );
+	add_constraints( cg_.apply( pose ) );
 } //generate constraints
 
 

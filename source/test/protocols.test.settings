@@ -62,6 +62,13 @@ sources = {
 		"util",
 	],
 
+	"constraint_generator": [
+		"AtomPairConstraintGenerator",
+		"CoordinateConstraintGenerator",
+		"ConstraintGeneratorFactory",
+		"HydrogenBondConstraintGenerator",
+	],
+
 	"contact_map": [
 		"ContactMap",
 	],
@@ -548,6 +555,14 @@ testinputfiles = [
 	"comparative_modeling/1f4pA.pdb",
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",
+	"constraint_generator/CoordinateConstraintGenerator_native_harmonic_default.cst",
+	"constraint_generator/AtomPairConstraintGenerator_input_default.cst",
+	"constraint_generator/AtomPairConstraintGenerator_input_distance.cst",
+	"constraint_generator/AtomPairConstraintGenerator_input_selector.cst",
+	"constraint_generator/AtomPairConstraintGenerator_input_ca_cb.cst",
+	"constraint_generator/AtomPairConstraintGenerator_native_default.cst",
+	"constraint_generator/HydrogenBondConstraintGenerator_default.cst",
+	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
 	"cyclic_peptide_predict/native.pdb",
 	"cyclic_peptide_predict/seq.txt",
 	"denovo_design/disulf_test.pdb",

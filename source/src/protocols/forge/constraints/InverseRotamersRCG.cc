@@ -113,15 +113,15 @@ InverseRotamersRCG::clone() const
 	return protocols::moves::MoverOP( new InverseRotamersRCG( *this ) );
 }
 
-core::scoring::constraints::ConstraintCOPs
-InverseRotamersRCG::generate_constraints( core::pose::Pose const & pose )
+void
+InverseRotamersRCG::generate_remodel_constraints( core::pose::Pose const & pose )
 {
 	//tr << "Generating remodel constraints" << std::endl;
 	//using namespace core::scoring::constraints;
 	//safeguard against bad user input
 	if ( inverse_rotamers_.size() == 0 ) {
 		std::cerr << "WARNING: InverseRotamersRCG is asked to produce constraints but was not given any inverse rotamers. Something's probably wrong somewhere." << std::endl;
-		return core::scoring::constraints::ConstraintCOPs();
+		return;
 	}
 
 	//if no constraint func has been set, we'll create a default one
@@ -147,7 +147,7 @@ InverseRotamersRCG::generate_constraints( core::pose::Pose const & pose )
 	//we can probably delete the inverse rotamers now, to save some memory
 	this->clear_inverse_rotamers();
 	//tr << "done generating remodel constraints!" << std::endl;
-	return csts;
+	add_constraints( csts );
 }
 
 void

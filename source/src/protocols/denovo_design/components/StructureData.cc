@@ -21,9 +21,10 @@
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/moves/Mover.hh>
 
 //Core Headers
 #include <core/chemical/VariantType.hh>
@@ -3452,14 +3453,21 @@ StructureData::apply_mover( protocols::moves::MoverOP mover )
 	apply_mover( *mover );
 }
 
-/// @brief removes constraints added by the given RCG
-void
-StructureData::remove_constraints_from_pose( protocols::moves::ConstraintGeneratorOP cg )
-{
-	debug_assert( pose_ );
-	debug_assert( cg );
-	cg->remove_constraints_from_pose( *pose_ );
-}
+//void
+//StructureData::apply_constraint_generator( protocols::constraint_generator::ConstraintGeneratorOP cg )
+//{
+//	debug_assert( cg );
+//	cg->add_constraints_to_pose( *pose_ );
+//}
+//
+///// @brief removes constraints added by the given RCG
+//void
+//StructureData::remove_constraints_from_pose( protocols::constraint_generator::ConstraintGeneratorOP cg )
+//{
+//	debug_assert( pose_ );
+//	debug_assert( cg );
+//	cg->remove_constraints_from_pose( *pose_ );
+//}
 
 /// @brief creates a new jump and cutpoint to build the given loop object
 int

@@ -16,9 +16,8 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <protocols/forge/constraints/RemoveConstraints.hh>
+#include <protocols/forge/constraints/RemoveRemodelCsts.hh>
 #include <protocols/fldsgn/SheetConstraintGenerator.hh>
-//#include <protocols/fldsgn/HSSTripletRCG.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <core/id/AtomID.hh>
@@ -59,7 +58,8 @@ public:
 
 	core::scoring::ScoreFunctionOP scorefxn;
 	protocols::fldsgn::SheetConstraintGeneratorOP sheet_csts;
-	protocols::forge::constraints::RemoveConstraints rm_csts;
+	protocols::forge::remodel::RemodelConstraintGeneratorOP sheet_cst_rcg;
+	protocols::forge::constraints::RemoveRemodelCsts rm_csts;
 	protocols::fldsgn::SheetConstraintGeneratorOP sheet_csts_badpair;
 	//protocols::fldsgn::HSSTripletRCGOP hss_csts;
 
@@ -73,12 +73,16 @@ public:
 		scorefxn->set_weight( scoring::dihedral_constraint, 1.0);
 
 		sheet_csts = protocols::fldsgn::SheetConstraintGeneratorOP( new protocols::fldsgn::SheetConstraintGenerator() );
+		sheet_csts->set_id( "sheet_csts_unit1" );
 		sheet_csts->initialize_from_blueprint( "protocols/forge/remodel/test.blueprint" );
 
 		sheet_csts_badpair = protocols::fldsgn::SheetConstraintGeneratorOP( new protocols::fldsgn::SheetConstraintGenerator() );
 		sheet_csts_badpair->initialize_from_blueprint( "protocols/forge/remodel/bad_pair.blueprint" );
+		sheet_csts_badpair->set_id( "sheet_csts_unit2" );
 
-		rm_csts.set_generator( sheet_csts );
+		sheet_cst_rcg = protocols::forge::remodel::RemodelConstraintGeneratorOP(
+			new protocols::forge::remodel::GenericRemodelConstraintGenerator( "sheet_csts_unit1_rcg", sheet_csts ) );
+		rm_csts.set_generator( sheet_cst_rcg );
 	}
 
 	// Shared finalization goes here.
@@ -139,7 +143,7 @@ public:
 		sheet_csts->set_angle_tolerance( 0.9 );
 		sheet_csts->set_cacb_dihedral_tolerance( 0.9 );
 		sheet_csts->set_bb_dihedral_tolerance( 0.9 );
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		// check to make sure the proper number of constraints are there
 		TR << "number of constraints after adding is " << testpose.constraint_set()->get_all_constraints().size() << std::endl;
 		// There should be 31 constraints added to the pose
@@ -169,7 +173,7 @@ public:
 		sheet_csts->set_angle_tolerance( 0.35 );
 		sheet_csts->set_cacb_dihedral_tolerance( 0.55 );
 		sheet_csts->set_bb_dihedral_tolerance( 0.52 );
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		// check to make sure the proper number of constraints are there
 		TR << "number of constraints after adding is " << testpose.constraint_set()->get_all_constraints().size() << std::endl;
 		// There should be 31 constraints added to the pose
@@ -187,7 +191,7 @@ public:
 
 		///////////////////////////////////////////////////////////////////////////////
 		// we should be able to remove the constraints.
-		rm_csts.set_generator( sheet_csts );
+		rm_csts.set_generator( sheet_cst_rcg );
 		rm_csts.apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)0 );
 		scorefxn->score( testpose );
@@ -200,7 +204,7 @@ public:
 
 		///////////////////////////////////////////////////////////////////////////////
 		// we should be able to re-add the constraints
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)95 );
 		TR << "AFTER re-adding constraints" << std::endl;
 		scorefxn->score( testpose );
@@ -223,7 +227,7 @@ public:
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 0.0, 1e-4 );
 
 		sheet_csts->set_weight( 5.0 );
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)95 );
 		scorefxn->score( testpose );
 		//scorefxn->show( TR, testpose);  TR.flush();
@@ -243,7 +247,7 @@ public:
 		sheet_csts->set_constrain_bb_cacb_dihedral( false );
 		sheet_csts->set_constrain_bb_dihedral( false );
 		sheet_csts->set_constrain_bb_angle( false );
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)16 );
 		scorefxn->score( testpose );
 		//scorefxn->show( TR, testpose );  TR.flush();
@@ -284,7 +288,7 @@ public:
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 0.0, 1e-4 );
 
 		// now add sheet csts
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)96 );
 		scorefxn->score( testpose );
 		//scorefxn->show( TR, testpose );  TR.flush();
@@ -321,7 +325,7 @@ public:
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 0.0, 1e-4 );
 
 		// now add constraints for sheets that contain a bad strand pairing (register shift off by one)
-		sheet_csts->apply( testpose );
+		sheet_cst_rcg->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)97 );
 
 		// Constraints in centroid mode should still work and be removable, even if they were added in non-centroid mode
@@ -329,8 +333,11 @@ public:
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid_mover( core::chemical::CENTROID );
 		to_centroid_mover.apply( testpose );
 
-		sheet_csts_badpair->apply( testpose );
+		protocols::forge::remodel::RemodelConstraintGeneratorOP bad_rcg(
+			new protocols::forge::remodel::GenericRemodelConstraintGenerator( "unit2_rcg", sheet_csts_badpair ) );
+		bad_rcg->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)186 );
+
 		rm_csts.apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)91 );
 
@@ -343,7 +350,7 @@ public:
 		TS_ASSERT_DELTA( testpose.energies().total_energies()[ core::scoring::dihedral_constraint ], 230.7833, 1e-4 );
 
 		// Remove constraints should be able to switch ids and remove the badpair_constraints
-		rm_csts.set_generator( sheet_csts_badpair );
+		rm_csts.set_generator( bad_rcg );
 		rm_csts.apply( testpose );
 
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)2 );

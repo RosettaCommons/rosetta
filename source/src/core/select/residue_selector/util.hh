@@ -14,9 +14,13 @@
 #ifndef INCLUDED_core_select_residue_selector_util_HH
 #define INCLUDED_core_select_residue_selector_util_HH
 
+// Core headers
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
+#include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
@@ -90,6 +94,20 @@ xsd_type_definition_w_attributes_and_subselectors(
 	core::Size max_occurrence,
 	AttributeList const & attributes
 );
+
+/// @brief returns a residue selector given a tag and datamap
+/// @details Looks for "residue_selector" option in tag
+///          If that option isn't found, returns NULL ptr
+///          If that option is found, calls get_residue_selector()
+core::select::residue_selector::ResidueSelectorCOP
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
+
+/// @brief returns a residue selector given a selector's name and datamap
+/// @details Looks for selector in the datamap
+///          Returns a const ptr to the selector
+/// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
+core::select::residue_selector::ResidueSelectorCOP
+get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
 
 }
 }

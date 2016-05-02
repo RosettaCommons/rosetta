@@ -7,22 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/ConstraintGenerator.hh
+/// @file   protocols/constraint_generator/ConstraintGenerator.hh
 ///
 /// @brief  abstract base class that generates constraints
-/// @author Florian Richter, floric@u.washington.edu, april 2009
+/// @author Tom Linsky (tlinsky at uw dot edu)
 
+#ifndef INCLUDED_protocols_constraint_generator_ConstraintGenerator_fwd_hh
+#define INCLUDED_protocols_constraint_generator_ConstraintGenerator_fwd_hh
 
-#ifndef INCLUDED_protocols_moves_ConstraintGenerator_fwd_hh
-#define INCLUDED_protocols_moves_ConstraintGenerator_fwd_hh
-
-
-// utility headers
+// Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
-namespace moves {
+namespace constraint_generator {
 
 class ConstraintGenerator;
 typedef utility::pointer::shared_ptr< ConstraintGenerator > ConstraintGeneratorOP;
@@ -30,8 +29,10 @@ typedef utility::pointer::shared_ptr< ConstraintGenerator const > ConstraintGene
 typedef utility::pointer::weak_ptr< ConstraintGenerator > ConstraintGeneratorAP;
 typedef utility::pointer::weak_ptr< ConstraintGenerator const > ConstraintGeneratorCAP;
 
-}
-}
+typedef utility::vector1< ConstraintGeneratorOP > ConstraintGeneratorOPs;
+typedef utility::vector1< ConstraintGeneratorCOP > ConstraintGeneratorCOPs;
 
+}
+}
 
 #endif

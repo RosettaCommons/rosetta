@@ -20,6 +20,7 @@
 #include <protocols/forge/constraints/NtoCConstraintGenerator.fwd.hh>
 
 // Package Header
+#include <protocols/constraint_generator/TerminiConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 // Proeject Header
@@ -63,17 +64,17 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( Pose const & pose );
+	virtual void
+	generate_remodel_constraints( Pose const & pose );
 
+	/*
 	void set_weight( Real const coef );
 
 	void set_distance( Real const dist );
+	*/
 
 private:
-
-	Real dist_;
-	Real coef_;
+	protocols::constraint_generator::TerminiConstraintGenerator cg_;
 
 }; //class NtoCConstraintGenerator
 

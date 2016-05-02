@@ -25,7 +25,7 @@
 
 // Package headers
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
-#include <protocols/moves/ConstraintGenerator.fwd.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 
 // Core headers
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -368,7 +368,7 @@ public:
 
 	inline void set_connecting_bond_dist( core::Real const val ) { connecting_bond_dist_ = val; }
 
-	void add_constraint_generator( protocols::moves::ConstraintGeneratorOP );
+	void add_constraint_generator( protocols::constraint_generator::ConstraintGeneratorOP );
 	void clear_constraint_generators();
 
 public:
@@ -444,7 +444,7 @@ protected:
 		core::Size const cut_resi_val ) const;
 
 	/// @brief parses subtag
-	void parse_subtag( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers );
+	void parse_subtag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	void apply_constraints( components::StructureData & sd ) const;
 	void remove_constraints( components::StructureData & sd ) const;
@@ -475,7 +475,7 @@ private:
 	// explicitly disabled pairings
 	std::set< std::pair< std::string, std::string > > disallowed_pairs_;
 	// constraint generators
-	utility::vector1< protocols::moves::ConstraintGeneratorOP > cgs_;
+	utility::vector1< protocols::constraint_generator::ConstraintGeneratorOP > cgs_;
 	// Tells whether or not to construct motifs based on Nobu/Rie/YuRu abego rules
 	bool idealized_abego_;
 	// Tells whether or not to include SS extensions in the loop length, or just build loop residues only (defualt=true)

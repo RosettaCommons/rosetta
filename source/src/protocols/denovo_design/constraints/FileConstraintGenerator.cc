@@ -41,81 +41,58 @@ namespace constraints {
 std::string
 FileConstraintGeneratorCreator::keyname() const
 {
-	return FileConstraintGeneratorCreator::mover_name();
+	return FileConstraintGeneratorCreator::constraint_generator_name();
 }
 
-protocols::moves::MoverOP
-FileConstraintGeneratorCreator::create_mover() const
+protocols::constraint_generator::ConstraintGeneratorOP
+FileConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::moves::MoverOP( new FileConstraintGenerator() );
+	return protocols::constraint_generator::ConstraintGeneratorOP( new FileConstraintGenerator() );
 }
 
 std::string
-FileConstraintGeneratorCreator::mover_name()
+FileConstraintGeneratorCreator::constraint_generator_name()
 {
 	return "FileConstraintGenerator";
 }
 
 /// @brief
 FileConstraintGenerator::FileConstraintGenerator():
-	RemodelConstraintGenerator(),
+	protocols::constraint_generator::ConstraintGenerator( FileConstraintGeneratorCreator::constraint_generator_name() ),
 	filename_( "" )
 {
-	/*using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	if( option[ constraints::cst_file ].user() ){
-	filename_ = option[ constraints::cst_file ].value().at( 1 );
-	}*/
 }
 
 /// @brief
 FileConstraintGenerator::FileConstraintGenerator( std::string const & filename ):
-	RemodelConstraintGenerator(),
+	protocols::constraint_generator::ConstraintGenerator( FileConstraintGeneratorCreator::constraint_generator_name() ),
 	filename_( filename )
-{}
+{
+}
 
 /// @brief
 FileConstraintGenerator::~FileConstraintGenerator() {}
 
-void
-FileConstraintGenerator::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose )
-{
-	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
-	set_cstfile( tag->getOption< std::string >( "filename", filename_ ) );
-}
-
-std::string
-FileConstraintGenerator::get_name() const
-{
-	return FileConstraintGeneratorCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-FileConstraintGenerator::fresh_instance() const
-{
-	return protocols::moves::MoverOP( new FileConstraintGenerator() );
-}
-
-protocols::moves::MoverOP
+protocols::constraint_generator::ConstraintGeneratorOP
 FileConstraintGenerator::clone() const
 {
-	return protocols::moves::MoverOP( new FileConstraintGenerator( *this ) );
+	return protocols::constraint_generator::ConstraintGeneratorOP( new FileConstraintGenerator( *this ) );
 }
 
-/// @brief
 void
-FileConstraintGenerator::set_cstfile( std::string const & filename )
+FileConstraintGenerator::parse_tag(
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & )
 {
-	filename_ = filename;
+	set_cstfile( tag->getOption< std::string >( "filename", filename_ ) );
+	if ( filename_.empty() ) {
+		throw utility::excn::EXCN_RosettaScriptsOption( "FileConstraintGenerator requires the 'filename' option to be set." );
+	}
 }
 
 /// @brief
 core::scoring::constraints::ConstraintCOPs
-FileConstraintGenerator::generate_constraints( Pose const & pose )
+FileConstraintGenerator::apply( core::pose::Pose const & pose ) const
 {
 	if ( filename_ == "" ) {
 		utility_exit_with_message( "FileConstraintGenerator requires that a constraint filename be specified." );
@@ -142,7 +119,14 @@ FileConstraintGenerator::generate_constraints( Pose const & pose )
 	TR.Debug << "generated " << constraints->get_all_constraints().size() << " constraints" << std::endl;
 
 	return constraints->get_all_constraints();
-} //generate constraints
+} // apply
+
+/// @brief
+void
+FileConstraintGenerator::set_cstfile( std::string const & filename )
+{
+	filename_ = filename;
+}
 
 std::string
 FileConstraintGenerator::clean_constraint_string( std::string const & cst_str ) const

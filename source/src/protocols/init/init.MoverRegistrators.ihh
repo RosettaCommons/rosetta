@@ -46,6 +46,9 @@ static MoverRegistrator< canonical_sampling::SilentTrajectoryRecorderCreator > r
 static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
 static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_TrialCountObserverCreator;
 
+static MoverRegistrator< constraint_generator::AddConstraintsCreator > reg_AddConstraintsCreator;
+static MoverRegistrator< constraint_generator::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
+
 static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_LinkageConformerMoverCreator;
 static MoverRegistrator< carbohydrates::GlycanRelaxMoverCreator > reg_GlycanRelaxMoverCreator;
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
@@ -85,8 +88,6 @@ static MoverRegistrator< denovo_design::connection::BridgeChainsCreator > reg_Br
 static MoverRegistrator< denovo_design::connection::StapleChainsCreator > reg_StapleChainsCreator;
 static MoverRegistrator< denovo_design::connection::ExtendChainCreator > reg_ExtendChainCreator;
 static MoverRegistrator< denovo_design::connection::ConnectTerminiWithDisulfideCreator > reg_ConnectTerminiWithDisulfideCreator;
-static MoverRegistrator< denovo_design::constraints::CoordinateConstraintGeneratorCreator > reg_CoordinateConstraintGeneratorCreator;
-static MoverRegistrator< denovo_design::constraints::FileConstraintGeneratorCreator > reg_FileConstraintGeneratorCreator;
 static MoverRegistrator< denovo_design::DisulfidizeMoverCreator > reg_DisulfidizeMoverCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
@@ -141,7 +142,6 @@ static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryR
 static MoverRegistrator< fldsgn::BluePrintBDRCreator > reg_BluePrintBDRCreator;
 static MoverRegistrator< fldsgn::CircularPermutationCreator > reg_CircularPermutationCreator;
 static MoverRegistrator< protocols::fldsgn::MatchResiduesMoverCreator > reg_MatchResiduesMoverCreator;
-static MoverRegistrator< protocols::fldsgn::SheetConstraintGeneratorCreator > reg_SheetConstraintGeneratorCreator;
 
 static MoverRegistrator< fldsgn::potentials::SetAACompositionPotentialCreator > reg_AACompositionPotentialCreator;
 static MoverRegistrator< fldsgn::potentials::SetSecStructEnergiesCreator > reg_SetSecStructEnergiesCreator;
@@ -154,7 +154,7 @@ static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreato
 static MoverRegistrator< forge::constraints::InverseRotamersCstGeneratorCreator > reg_InverseRotamersCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InvrotTreeCstGeneratorCreator > reg_InvrotTreeCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::NtoCConstraintGeneratorCreator > reg_NtoCConstraintGeneratorCreator;
-static MoverRegistrator< forge::constraints::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
+static MoverRegistrator< forge::constraints::RemoveRemodelCstsCreator > reg_RemoveRemodelCstsCreator;
 
 static MoverRegistrator< forge::remodel::ResidueVicinityCstGeneratorCreator > reg_ResidueVicinityCstGeneratorCreator;
 static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverCreator;

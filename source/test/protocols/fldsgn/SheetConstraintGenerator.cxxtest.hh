@@ -185,8 +185,7 @@ public:
 
 		// generate constraints and apply to pose
 		core::Size const csts_per_pair = 6;
-		sheet_rcg.apply( *dummy );
-		core::scoring::constraints::ConstraintCOPs const all_csts = dummy->constraint_set()->get_all_constraints();
+		core::scoring::constraints::ConstraintCOPs const all_csts = sheet_rcg.apply( *dummy );
 		TS_ASSERT_EQUALS( all_csts.size(), csts_per_pair * correct_pairs.size() );
 		TR << "Dummy has " << all_csts.size() << " constraints." << std::endl;
 

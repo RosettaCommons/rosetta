@@ -14,17 +14,17 @@
 #ifndef INCLUDED_protocols_denovo_design_constraints_FileConstraintGeneratorCreator_hh
 #define INCLUDED_protocols_denovo_design_constraints_FileConstraintGeneratorCreator_hh
 
-#include <protocols/moves/MoverCreator.hh>
+#include <protocols/constraint_generator/ConstraintGeneratorCreator.hh>
 
 namespace protocols {
 namespace denovo_design {
 namespace constraints {
 
-class FileConstraintGeneratorCreator : public protocols::moves::MoverCreator {
+class FileConstraintGeneratorCreator : public protocols::constraint_generator::ConstraintGeneratorCreator {
 public:
-	virtual protocols::moves::MoverOP create_mover() const;
+	virtual protocols::constraint_generator::ConstraintGeneratorOP create_constraint_generator() const;
 	virtual std::string keyname() const;
-	static std::string mover_name();
+	static std::string constraint_generator_name();
 };
 
 }

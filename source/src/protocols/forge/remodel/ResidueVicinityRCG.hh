@@ -180,8 +180,8 @@ public:
 
 	virtual ~ResidueVicinityRCG();
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( core::pose::Pose const & pose );
+	virtual void
+	generate_remodel_constraints( core::pose::Pose const & pose );
 
 	virtual void
 	parse_my_tag( TagCOP tag,

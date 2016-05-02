@@ -31,6 +31,10 @@ typedef utility::pointer::shared_ptr< RemodelConstraintGenerator const > Remodel
 typedef utility::pointer::weak_ptr< RemodelConstraintGenerator > RemodelConstraintGeneratorAP;
 typedef utility::pointer::weak_ptr< RemodelConstraintGenerator const > RemodelConstraintGeneratorCAP;
 
+class GenericRemodelConstraintGenerator;
+typedef utility::pointer::shared_ptr< GenericRemodelConstraintGenerator > GenericRemodelConstraintGeneratorOP;
+typedef utility::pointer::shared_ptr< GenericRemodelConstraintGenerator const > GenericRemodelConstraintGeneratorCOP;
+
 }
 }
 }

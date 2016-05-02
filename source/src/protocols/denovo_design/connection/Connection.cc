@@ -24,12 +24,14 @@
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
+#include <protocols/constraint_generator/AddConstraints.hh>
+#include <protocols/constraint_generator/ConstraintGenerator.hh>
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
+#include <protocols/constraint_generator/RemoveConstraints.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/denovo_design/util.hh>
-#include <protocols/forge/constraints/RemoveConstraints.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
-#include <protocols/moves/ConstraintGenerator.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
@@ -190,7 +192,7 @@ Connection::parse_my_tag(
 	EXCN_UnknownSubtag ex( "empty" );
 	for ( std::vector< utility::tag::TagCOP >::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		try {
-			parse_subtag( *subtag, movers );
+			parse_subtag( *subtag, data );
 		} catch( EXCN_UnknownSubtag const & e ) {
 			has_unknown = true;
 			ex = e;
@@ -213,7 +215,7 @@ Connection::clear_constraint_generators()
 }
 
 void
-Connection::add_constraint_generator( protocols::moves::ConstraintGeneratorOP cg )
+Connection::add_constraint_generator( protocols::constraint_generator::ConstraintGeneratorOP cg )
 {
 	cgs_.push_back( cg );
 }
@@ -221,47 +223,36 @@ Connection::add_constraint_generator( protocols::moves::ConstraintGeneratorOP cg
 void
 Connection::apply_constraints( components::StructureData & sd ) const
 {
-	for ( utility::vector1< protocols::moves::ConstraintGeneratorOP >::const_iterator cg=cgs_.begin(); cg!=cgs_.end(); ++cg ) {
-		debug_assert( *cg );
-		sd.apply_mover( **cg );
-	}
+	protocols::constraint_generator::AddConstraints add_csts( cgs_ );
+	sd.apply_mover( add_csts );
 }
 
 void
 Connection::remove_constraints( components::StructureData & sd ) const
 {
-	for ( utility::vector1< protocols::moves::ConstraintGeneratorOP >::const_iterator cg=cgs_.begin(); cg!=cgs_.end(); ++cg ) {
-		debug_assert( *cg );
-		protocols::forge::constraints::RemoveConstraints remover;
-		remover.set_generator( *cg );
-		sd.apply_mover( remover );
-	}
+	protocols::constraint_generator::RemoveConstraints rm_csts( cgs_ );
+	sd.apply_mover( rm_csts );
 }
 
 /// @brief parses subtag
 void
-Connection::parse_subtag( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers )
+Connection::parse_subtag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	if ( tag->getName() == "Add" ) {
-		std::string const cgname = tag->getOption< std::string >( "cg", "" );
-		if ( !cgname.empty() ) {
-			protocols::moves::Movers_map::const_iterator mover_it = movers.find( cgname );
-			if ( mover_it == movers.end() ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": can't find constraint generator named " + cgname + " in the MOVERS section.\n" );
-			}
-			protocols::moves::ConstraintGeneratorOP cg =
-				utility::pointer::dynamic_pointer_cast< protocols::moves::ConstraintGenerator >( mover_it->second->clone() );
+	if ( tag->getName() == "ConstraintGenerators" ) {
+		for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+			protocols::constraint_generator::ConstraintGeneratorOP cg =
+				protocols::constraint_generator::ConstraintGeneratorFactory::get_instance()->new_constraint_generator( (*subtag)->getName(), *subtag, data );
+
 			if ( !cg ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": mover named " + cgname + " is not a constraint generator.\n" );
+				std::stringstream msg;
+				msg << id() << " Connection::parse_subtag(): Failed to create ConstraintGenerator from XML";
+				msg << "tag = " << **subtag << std::endl;
+				throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 			}
 			add_constraint_generator( cg );
-		} else {
-			std::stringstream msg;
-			msg << id() << ": no valid options (e.g. 'cg') found in connection subtag: " << *tag << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 		}
 	} else {
-		static StringList const valid_tags = boost::assign::list_of ("Add");
+		static StringList const valid_tags = boost::assign::list_of ("ConstraintGenerators");
 		std::stringstream msg;
 		msg << id() << ": Ignoring unknown connection subtag: " << tag->getName() << ". "
 			<< "Valid subtags are: " << valid_tags << " This tag may be used when being parsed by the Connection subclass." << std::endl;

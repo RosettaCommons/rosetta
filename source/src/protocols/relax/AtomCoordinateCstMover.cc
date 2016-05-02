@@ -14,6 +14,7 @@
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 
+#include <protocols/constraint_generator/util.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -27,7 +28,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/sequence/util.hh>
-#include <core/pose/util.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
@@ -68,7 +68,7 @@ AtomCoordinateCstMoverCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
-	protocols::moves::ConstraintGenerator(),
+	protocols::moves::Mover( AtomCoordinateCstMoverCreator::mover_name() ),
 	refpose_(),
 	cst_sd_( 0.5 ),
 	bounded_( false ),
@@ -86,6 +86,11 @@ protocols::moves::MoverOP AtomCoordinateCstMover::fresh_instance() const {
 }
 protocols::moves::MoverOP AtomCoordinateCstMover::clone() const {
 	return protocols::moves::MoverOP( new AtomCoordinateCstMover( *this ) );
+}
+
+void
+AtomCoordinateCstMover::apply( core::pose::Pose & pose ) {
+	pose.add_constraints( generate_constraints( pose ) );
 }
 
 void
@@ -134,23 +139,6 @@ AtomCoordinateCstMover::get_constraint_target_pose( core::pose::Pose const & pos
 	}
 }
 
-core::id::SequenceMapping
-AtomCoordinateCstMover::generate_seqmap( core::pose::Pose const & pose, core::pose::Pose const & constraint_target_pose ) const
-{
-	bool const same_length = ( pose.total_residue() == constraint_target_pose.total_residue() );
-	bool const same_sequence = ( pose.sequence() == constraint_target_pose.sequence() );
-
-	if ( same_length && same_sequence ) {
-		return core::id::SequenceMapping::identity( pose.total_residue() );
-	} else { // !same_sequence || !same_length
-		TR << "Input structure and native differ in ";
-		if ( !same_length ) TR << "length and sequence ";
-		else if ( !same_sequence ) TR << "sequence ";
-		TR << "- aligning on PDB identity or sequence." << std::endl;
-		return core::pose::sequence_map_from_pdbinfo( pose, constraint_target_pose );
-	}
-}
-
 core::scoring::constraints::ConstraintCOPs
 AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 {
@@ -160,7 +148,8 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 	// constraint_target_pose needs to be non-const due to possible superimposing below
 	core::pose::PoseOP constraint_target_pose = get_constraint_target_pose( pose );
 	debug_assert( constraint_target_pose );
-	core::id::SequenceMapping seq_map = generate_seqmap( pose, *constraint_target_pose ); // A mapping of pose -> constraint_target_pose numbering
+	core::id::SequenceMapping seq_map =
+		protocols::constraint_generator::generate_seqmap_from_poses( pose, *constraint_target_pose ); // A mapping of pose -> constraint_target_pose numbering
 
 	// Align the native pose to the input pose to avoid rotation/translation based
 	//  errors.
@@ -265,11 +254,10 @@ void
 AtomCoordinateCstMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 ) {
-	protocols::moves::ConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	cst_sd( tag->getOption< core::Real >( "coord_dev", 0.5 ) );
 	bounded( tag->getOption< bool >( "bounded", false ) );
 	cst_width( tag->getOption< core::Real >( "bound_width", 0 ) );

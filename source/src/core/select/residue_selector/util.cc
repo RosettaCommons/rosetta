@@ -11,13 +11,22 @@
 /// @brief  Utility functions for the residue selector classes, primarily, in constructing XML-Schema type definitions
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
+// Unit headers
 #include <core/select/residue_selector/util.hh>
 
+// Core headers
+#include <core/select/residue_selector/ResidueSelector.hh>
+
 // Utility headers
+#include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <sstream>
+
+static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.util" );
 
 namespace core {
 namespace select {
@@ -213,6 +222,34 @@ xsd_type_definition_w_attributes_and_subselectors(
 	// oss << "</xs:complexType>\n";
 	// return oss.str();
 }
+
+ResidueSelectorCOP
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+{
+	std::string const selectorname = tag->getOption< std::string >( "residue_selector", "" );
+	if ( selectorname.empty() ) {
+		return ResidueSelectorCOP();
+	}
+	return get_residue_selector( selectorname, data );
+}
+
+ResidueSelectorCOP
+get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
+{
+	core::select::residue_selector::ResidueSelectorCOP selector;
+	try {
+		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		std::stringstream error_msg;
+		error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";
+		error_msg << e.msg();
+		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+	}
+	debug_assert( selector );
+	TR << "Found residue selector " << selector_name << std::endl;
+	return selector;
+}
+
 
 }
 }

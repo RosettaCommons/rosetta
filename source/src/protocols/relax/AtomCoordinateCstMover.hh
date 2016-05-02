@@ -18,14 +18,15 @@
 #include <protocols/relax/AtomCoordinateCstMover.fwd.hh>
 
 // Package headers
-#include <protocols/moves/ConstraintGenerator.hh>
+#include <protocols/moves/Mover.hh>
 
 // Project headers
 #include <protocols/loops/Loops.fwd.hh>
+#include <core/id/SequenceMapping.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-//#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/types.hh>
 
 // C++ headers
@@ -34,17 +35,17 @@
 namespace protocols {
 namespace relax {
 
-class AtomCoordinateCstMover : public moves::ConstraintGenerator {
+class AtomCoordinateCstMover : public moves::Mover {
 public:
-	typedef moves::ConstraintGenerator parent;
+	typedef moves::Mover parent;
 
 public:
 
 	AtomCoordinateCstMover();
 	~AtomCoordinateCstMover();
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	generate_constraints( core::pose::Pose const & pose );
+	virtual void
+	apply( core::pose::Pose & pose );
 
 	std::string get_name() const { return "AtomCoordinateCstMover"; }
 
@@ -88,6 +89,9 @@ private:
 
 	core::id::SequenceMapping
 	generate_seqmap( core::pose::Pose const & pose, core::pose::Pose const & constraint_target_pose ) const;
+
+	core::scoring::constraints::ConstraintCOPs
+	generate_constraints( core::pose::Pose const & pose );
 
 private:
 	/// @brief If set, the pose to make the constraints to

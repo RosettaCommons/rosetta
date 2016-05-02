@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/forge/constraints/RemoveConstraints.hh
+/// @file protocols/forge/constraints/RemoveRemodelCsts.hh
 ///
 /// @brief
 /// @author Tom Linsky (tlinsky@uw.edu), Nov 2012
 
-#ifndef INCLUDED_protocols_forge_constraints_RemoveConstraints_hh
-#define INCLUDED_protocols_forge_constraints_RemoveConstraints_hh
+#ifndef INCLUDED_protocols_forge_constraints_RemoveRemodelCsts_hh
+#define INCLUDED_protocols_forge_constraints_RemoveRemodelCsts_hh
 
 // Unit Header
-#include <protocols/moves/ConstraintGenerator.fwd.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 // Package Header
 
@@ -33,7 +33,7 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-class RemoveConstraints : public protocols::moves::Mover {
+class RemoveRemodelCsts : public protocols::moves::Mover {
 public:
 
 	typedef core::Size Size;
@@ -42,11 +42,13 @@ public:
 
 public:
 
-	RemoveConstraints();
+	RemoveRemodelCsts();
 
-	RemoveConstraints( protocols::moves::ConstraintGeneratorOP generator );
+	RemoveRemodelCsts( RemoveRemodelCsts const & rval );
 
-	virtual ~RemoveConstraints();
+	RemoveRemodelCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
+
+	virtual ~RemoveRemodelCsts();
 
 	/// @brief this function looks up the constraints created by the object with the given generator and removes them
 	virtual void
@@ -69,12 +71,13 @@ public:
 	clone() const;
 
 	void
-	set_generator( protocols::moves::ConstraintGeneratorOP generator );
+	set_generator( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
 
 private:
-	protocols::moves::ConstraintGeneratorOP generator_;
+	protocols::forge::remodel::RemodelConstraintGeneratorOP generator_;
 	std::string generator_id_;
-}; //class RemoveConstraints
+
+}; //class NtoC_RCG
 
 
 } //namespace constraints
@@ -82,4 +85,4 @@ private:
 } //namespace protocols
 
 
-#endif // INCLUDED_protocols_forge_constraints_RemoveConstraints_hh
+#endif // INCLUDED_protocols_forge_constraints_NtoC_RCG_HH

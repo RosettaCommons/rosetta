@@ -29,6 +29,7 @@
 #include <boost/foreach.hpp>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
@@ -163,35 +164,6 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 	return task_operations;
 }
 
-
-core::select::residue_selector::ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
-{
-	std::string const selectorname = tag->getOption< std::string >( "residue_selector", "" );
-	if ( selectorname.empty() ) {
-		return core::select::residue_selector::ResidueSelectorCOP();
-	}
-	return get_residue_selector( selectorname, data );
-}
-
-core::select::residue_selector::ResidueSelectorCOP
-get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
-{
-	core::select::residue_selector::ResidueSelectorCOP selector;
-	try {
-		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		std::stringstream error_msg;
-		error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";
-		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-	}
-	debug_assert( selector );
-	TR << "Using residue selector " << selector_name << std::endl;
-	return selector;
-}
-
-
 /// @details Utility function to find a scorefunction from
 /// parser-provided data. This is essentially a shameless copy of
 /// Justin's PackRotamersMover::parse_score_function.
@@ -238,6 +210,25 @@ parse_score_function(
 	return data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 }
 
+/// @brief returns a residue selector given a tag and datamap
+/// @details Looks for "residue_selector" option in tag
+///          If that option isn't found, returns NULL ptr
+///          If that option is found, calls get_residue_selector()
+core::select::residue_selector::ResidueSelectorCOP
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+{
+	return core::select::residue_selector::parse_residue_selector( tag, data );
+}
+
+/// @brief returns a residue selector given a selector's name and datamap
+/// @details Looks for selector in the datamap
+///          Returns a const ptr to the selector
+/// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
+core::select::residue_selector::ResidueSelectorCOP
+get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
+{
+	return core::select::residue_selector::get_residue_selector( selector_name, data );
+}
 
 /// @details Utility function to find a scorefunction from
 /// parser-provided data for the option 'scorefxn'.
