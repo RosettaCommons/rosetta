@@ -56,5 +56,14 @@ libraries = [
 subprojects = [
 ]
 defines = [
-		"POSIX_MISTAKE",
+	"POSIX_MISTAKE",
+]
+ccflags = [
+]
+link_flags = [
+]
+#Keep in mind that the CMake build is unable to distinguish C and C++ w/r/t the following flags
+cflags = [
+]
+cxxflags = [
 ]

@@ -89,7 +89,7 @@ def project_callback(project, project_path, project_files):
 		open('build/' + project + '.cmake', 'w').write(output)
 	print 'done.'
 
-def project_external_callback(project, project_path, project_files, defines):
+def project_external_callback(project, project_path, project_files, other_settings):
 	print 'making external project files for project ' + project + ' ...',
 
 	cmake_files = ''
@@ -97,15 +97,33 @@ def project_external_callback(project, project_path, project_files, defines):
 		cmake_files += '\n\t' + string.join([project_path + dir + file for file in files], '\n\t')
 
         cmake_defines = ''
+        cmake_compileflags = ''
+        cmake_linkflags = ''
 
-        if defines :
-            cmake_defines = ';'.join( defines )
+        if 'defines' in other_settings:
+            cmake_defines = ';'.join( other_settings['defines'] )
+
+        compile_flags = []
+        if 'ccflags' in other_settings:
+            compile_flags.extend( other_settings['ccflags'] )
+        #Unfortunately, CMAKE doesn't have language-specific flags settings
+        if 'cflags' in other_settings:
+            compile_flags.extend( other_settings['cflags'] )
+        if 'cxxflags' in other_settings:
+            compile_flags.extend( other_settings['cxxflags'] )
+        if compile_flags:
+            cmake_compileflags = ' '.join( compile_flags )
+
+        if 'link_flags' in other_settings:
+            cmake_linkflags = ';'.join( other_settings['link_flags'] )
 
 	#print 'making project files for ' + project + ' from ' + project_path
 
 	output = ''
 	output += 'SET(' + project + '_files' + cmake_files + '\n)\n'
         output += 'SET(' + project + '_defines ' + cmake_defines + ')\n'
+        output += 'SET(' + project + '_compileflags ' + cmake_compileflags + ')\n'
+        output += 'SET(' + project + '_linkflags ' + cmake_linkflags + ')\n'
 
 	open('build/external_' + project + '.cmake', 'w').write(output)
 	print 'done.'

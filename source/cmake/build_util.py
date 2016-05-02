@@ -160,7 +160,7 @@ def list_external_files(path_to_mini, external_name):
 		dirfiles = sorted(hdrfiles + srcfiles)
 		project_files.append((dir, dirfiles))
 
-	return (path_to_external, project_files, settings_dict.get('defines',[]))
+	return (path_to_external, project_files, settings_dict)
 
 
 def update_libraries_list(projects):
@@ -214,9 +214,9 @@ def external_main(path_to_mini, argv, project_external_callback = None):
 			print 'unknown external project: ' + external
 			sys.exit(-1)
 
-		project_path, project_files, defines = list_external_files(path_to_mini, external)
+		project_path, project_files, other_settings = list_external_files(path_to_mini, external)
                 if project_files:
-		    project_external_callback(external, project_path, project_files, defines)
+		    project_external_callback(external, project_path, project_files, other_settings)
                     buildable_externals.append(external)
 
 	update_externals_list(buildable_externals)

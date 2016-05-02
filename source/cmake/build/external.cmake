@@ -5,7 +5,12 @@ FOREACH(LIBRARY ${EXTERNAL_LIBRARIES})
 	INCLUDE(../build/external_${LIBRARY}.cmake)
 	ADD_LIBRARY(${LIBRARY} ${LINK_TYPE} ${${LIBRARY}_files})
 	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_DEFINITIONS "${${LIBRARY}_defines}")
-	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_FLAGS "-Wno-error -w ") #Turn off warnings for external libraries
+	# Because CMAKE can't actually use CMAKE-formated lists...
+	STRING( REPLACE ";" " " linkflags_string "${${LIBRARY}_linkflags}" )
+	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES LINK_FLAGS "${linkflags_string}")
+	# Because CMAKE can't actually use CMAKE-formated lists...
+	STRING( REPLACE ";" " " compileflags_string "${${LIBRARY}_compileflags}" )
+	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_FLAGS "${compileflags_string} -Wno-error -w") #Also Turn off warnings for external libraries
 	SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} ${LIBRARY})
 ENDFOREACH( LIBRARY )
 

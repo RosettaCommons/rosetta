@@ -337,7 +337,8 @@ by SConscripts.
         "sources", "extras",
         "include_path", "includes",
         "library_path", "libraries",
-        "defines", "testinputfiles"
+        "defines", "testinputfiles",
+        "ccflags","cflags","cxxflags","link_flags",
     ]
 
     def __init__(self, name, settings = None):
