@@ -48,6 +48,8 @@
 
 using namespace core;
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.MembranePositionFromTopologyMover.cxxtest");
+
 /// @brief Test Suite for Membrane Embedding factory
 class MembranePositionFromTopologyMoverTest : public CxxTest::TestSuite {
 
@@ -84,7 +86,7 @@ public:
 	/// @brief Testing initial membrane position move
 	void test_initial_membrane_position_move() {
 
-		TS_TRACE( "Testing rotation & translation move" );
+		TR <<  "Testing rotation & translation move"  << std::endl;
 
 		using namespace protocols::membrane;
 

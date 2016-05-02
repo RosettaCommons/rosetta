@@ -156,7 +156,7 @@ public:
 		if ( first_run ) {
 			TR <<"////"<<  std::endl << inname << std::endl << std::endl;
 			PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-			task->show(std::cout);
+			task->show(TR);
 
 			//Write to a file, which we can manually check, diff, and rename if needed.
 			std::ofstream OUT;

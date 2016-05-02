@@ -31,7 +31,7 @@
 #endif
 
 #include <string>
-
+#include <sstream>
 #include <vector>
 
 #ifndef _WIN32
@@ -112,16 +112,22 @@ exit(
 	int const status
 )
 {
+
 	// Calling all preset exit-callback's
 	for ( std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
 		(*it)();
 	}
 
+	std::ostringstream oss;
+	if ( ! message.empty() ) oss << "\n" << "ERROR: " << message << "\n";
+	oss << "ERROR:: Exit from: " << file << " line: " << line << "\n";
+	std::string failure_message = oss.str();
+	maybe_throw_on_next_assertion_failure( failure_message.c_str() );
+
 	if ( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m\x1b[1m\x1b[31m";  // Reseting the terminal state and setting bold-red color
-	if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
-	std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
+	std::cerr << failure_message << std::flush;
 	if ( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m";
-	print_backtrace();
+	print_backtrace( message.c_str() );
 	std::cerr.flush();
 
 #ifndef BOINC

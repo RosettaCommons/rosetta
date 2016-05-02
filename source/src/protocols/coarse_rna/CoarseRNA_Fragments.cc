@@ -219,7 +219,7 @@ CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ) 
 
 	}
 
-	std::cout << "Picked Fragment Library for sequence " << RNA_string << " " <<
+	TR << "Picked Fragment Library for sequence " << RNA_string << " " <<
 		" and sec. struct " << RNA_secstruct_string << " ... found " <<
 		source_positions->size() << " potential fragments" << std::endl;
 
@@ -248,7 +248,7 @@ CoarseRNA_Fragments::pick_random_fragment(
 	Size const num_frags = source_positions->size();
 
 	if ( num_frags == 0 ) { //trouble.
-		std::cout << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
+		TR << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
 		std::cerr << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}

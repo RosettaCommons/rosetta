@@ -25,11 +25,14 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ Headers
 #include <cstdlib>
 #include <string>
 #include <cmath>
+
+static THREAD_LOCAL basic::Tracer TR("core.conformation.membrane.Span.cxxtest");
 
 using namespace core;
 using namespace core::conformation;
@@ -58,40 +61,40 @@ public: // test functions
 	// create object from PDB
 	void test_is_valid(){
 
-		TS_TRACE("Test whether Span is valid.");
+		TR << "Test whether Span is valid." << std::endl;
 		using namespace core::conformation::membrane;
 
 		// normal span
 		SpanOP span1( new Span( 1, 20 ) );
-		TS_TRACE("...span1...");
+		TR << "...span1..." << std::endl;
 		TS_ASSERT_EQUALS( span1->is_valid(), true );
 
 		// start > end
 		SpanOP span2( new Span( 10, 5 ) );
-		TS_TRACE("...span2...");
+		TR << "...span2..." << std::endl;
 		TS_ASSERT_EQUALS( span2->is_valid(), false );
 
 		// zero end
 		SpanOP span3( new Span( 4, 0 ) );
-		TS_TRACE("...span3...");
+		TR << "...span3..." << std::endl;
 		TS_ASSERT_EQUALS( span3->is_valid(), false );
 
 		// zero start
 		SpanOP span4( new Span( 0, 5 ) );
-		TS_TRACE("...span4...");
+		TR << "...span4..." << std::endl;
 		TS_ASSERT_EQUALS( span4->is_valid(), false );
 
 		// too short, only warning
 		SpanOP span5( new Span( 1, 3 ) );
-		TS_TRACE("...span5...");
+		TR << "...span5..." << std::endl;
 		TS_ASSERT_EQUALS( span5->is_valid(), true );
 
 		// too long, only warning
 		SpanOP span6( new Span( 5, 35 ) );
-		TS_TRACE("...span6...");
+		TR << "...span6..." << std::endl;
 		TS_ASSERT_EQUALS( span6->is_valid(), true );
 
-		TS_TRACE("Finished span validity tests.");
+		TR << "Finished span validity tests." << std::endl;
 	}
 };
 

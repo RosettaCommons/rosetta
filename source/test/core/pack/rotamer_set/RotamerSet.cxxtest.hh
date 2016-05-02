@@ -173,7 +173,7 @@ public:
 		for ( Size i = 1; i <= 20; ++i ) {
 			if ( ( i == 8 ) || ( i == 11 ) ) num_rotamers.push_back( 1 );
 			else {
-				std::cout << rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( i ) ) << " rotamers at position " << i << std::endl;
+				TR << rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( i ) ) << " rotamers at position " << i << std::endl;
 				num_rotamers.push_back( rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( i ) ) );
 			}
 		}

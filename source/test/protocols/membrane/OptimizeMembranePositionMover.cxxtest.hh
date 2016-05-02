@@ -41,6 +41,8 @@
 #include <string>
 #include <cmath>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.OptimizeMembranePositionMover.cxxtest");
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
@@ -83,7 +85,7 @@ public: // test functions
 	// test constructor from jumpnum and angle
 	void test_default_constructor () {
 
-		TS_TRACE("\n\n========== TESTING DEFAULT CONSTUCTOR");
+		TR << "\n\n========== TESTING DEFAULT CONSTUCTOR" << std::endl;
 
 		// compute downstream empedding
 		SpanningTopologyOP topo = pose_.conformation().membrane_info()->spanning_topology();

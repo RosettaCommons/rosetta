@@ -39,7 +39,7 @@
 // C++ Headers
 #include <string>
 #include <cstdlib>
-#include <iostream>
+// #include <iostream> WHOA
 
 namespace protocols {
 namespace membrane {
@@ -80,7 +80,8 @@ public: // constructors
 public: // methods
 
 	// show object
-	virtual void show( std::ostream & out=std::cout ) const;
+	virtual void show() const;
+	virtual void show( std::ostream & out ) const;
 
 	// invert all normals in Embedding object
 	void invert();

@@ -139,6 +139,7 @@ public:
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_right( 20 ), 20 );
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_right( 21 ), 21 );
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_right( 25 ), 25 );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( single_loop_ft_.boundary_right( 41 ) );  // not in tree!
 	}
 
@@ -159,6 +160,7 @@ public:
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_left( 20 ), 15 );
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_left( 21 ), 25 );
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_left( 25 ), 15 );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( single_loop_ft_.boundary_left( 41 ) );  // not in tree!
 	}
 
@@ -451,6 +453,7 @@ public:
 
 		// This next line tests that it crashes (as it should) if you try to insert on a jumping point using this
 		// simple algorithm
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(
 			core::kinematics::remodel_fold_tree_to_account_for_insertion( twochain_tree, 25, 10 ) );
 

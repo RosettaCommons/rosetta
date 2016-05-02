@@ -223,7 +223,7 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	FoldTree ft = pose.fold_tree();
 	ft.reorder( anchors[1] );
 	pose.fold_tree( ft );
-	pose.fold_tree().show( std::cout );
+	pose.fold_tree().show( TR );
 
 }
 

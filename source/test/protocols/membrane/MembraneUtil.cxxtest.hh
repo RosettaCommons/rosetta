@@ -42,6 +42,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <basic/Tracer.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -57,6 +58,7 @@ using namespace core::kinematics;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.MembraneUtil.cxxtest");
 
 /// @brief Unit Test suite for protocols-level membrane util class
 class MembraneUtil : public CxxTest::TestSuite {
@@ -107,7 +109,7 @@ public: // test functions
 	// Test calc helix axis method
 	void test_calc_helix_axis() {
 
-		TS_TRACE( "=========Testing the helix axes are correctly calculated for each span in the test set" );
+		TR <<  "=========Testing the helix axes are correctly calculated for each span in the test set"  << std::endl;
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -142,7 +144,7 @@ public: // test functions
 	/// @brief Calculate angles from single helix pose and two helix pose
 	void test_calc_helix_angles() {
 
-		TS_TRACE( "=========Testing method for calculating the angle between a single helix and the membrane normal in a single helix pose" );
+		TR <<  "=========Testing method for calculating the angle between a single helix and the membrane normal in a single helix pose"  << std::endl;
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -173,7 +175,7 @@ public: // test functions
 	/// @brief Calculate RMSD between reference and new angle
 	void test_angle_rmsd_method() {
 
-		TS_TRACE( "=========Testing method for calcuating the rms between a measured and reference angle value" );
+		TR <<  "=========Testing method for calcuating the rms between a measured and reference angle value"  << std::endl;
 
 		// Test ref = 0, measured = 0
 		Real rms1( calc_angle_rmsd(0, 0) );
@@ -201,7 +203,7 @@ public: // test functions
 	// There are more test cases here, but I'm only including the ones in use for now. Will extend later
 	void test_is_fixed_on_moveable_memb() {
 
-		TS_TRACE( "=========Test is_membrane_fixed method on a moveable membrane" );
+		TR <<  "=========Test is_membrane_fixed method on a moveable membrane"  << std::endl;
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -222,7 +224,7 @@ public: // test functions
 		FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose->conformation().fold_tree() ) );
 		m2_foldtree->reorder( m2_downstream );
 		m2_pose->fold_tree( *m2_foldtree );
-		m2_foldtree->show( std::cout );
+		m2_foldtree->show( TR );
 		TS_ASSERT( !is_membrane_fixed( *m2_pose ) );
 
 		// Set up new foldtree for glpA rooted at the previous downstream residue
@@ -232,14 +234,14 @@ public: // test functions
 		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose->conformation().fold_tree() ) );
 		glpA_foldtree->reorder( glpA_downstream );
 		glpA_pose->fold_tree( *glpA_foldtree );
-		glpA_foldtree->show( std::cout );
+		glpA_foldtree->show( TR );
 		TS_ASSERT( !is_membrane_fixed( *glpA_pose ) );
 
 	}
 
 	void test_is_fixed_on_fixed_memb() {
 
-		TS_TRACE( "=========Test is_fixed method on a fixed membrane" );
+		TR <<  "=========Test is_fixed method on a fixed membrane"  << std::endl;
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -262,7 +264,7 @@ public: // test functions
 
 	void test_is_independently_moveable_on_fixed_memb() {
 
-		TS_TRACE( "=========Test is_independently_moveable on a fixed membrane" );
+		TR <<  "=========Test is_independently_moveable on a fixed membrane"  << std::endl;
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -283,7 +285,7 @@ public: // test functions
 
 	void test_is_independently_moveable_on_independently_moveable_memb() {
 
-		TS_TRACE( "=========Test is_independently_moveable on a moveable membrane" );
+		TR <<  "=========Test is_independently_moveable on a moveable membrane"  << std::endl;
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -304,7 +306,7 @@ public: // test functions
 		FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose->conformation().fold_tree() ) );
 		m2_foldtree->reorder( m2_downstream );
 		m2_pose->fold_tree( *m2_foldtree );
-		m2_foldtree->show( std::cout );
+		m2_foldtree->show( TR );
 		TS_ASSERT( is_membrane_moveable_by_itself( *m2_pose ) );
 
 		// Set up new foldtree for glpA rooted at the previous downstream residue
@@ -314,7 +316,7 @@ public: // test functions
 		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose->conformation().fold_tree() ) );
 		glpA_foldtree->reorder( glpA_downstream );
 		glpA_pose->fold_tree( *glpA_foldtree );
-		glpA_foldtree->show( std::cout );
+		glpA_foldtree->show( TR );
 		TS_ASSERT( is_membrane_moveable_by_itself( *glpA_pose ) );
 
 	}
@@ -322,7 +324,7 @@ public: // test functions
 	/// @brief Calculate membrane backbone rmsd with superposition
 	void test_membrane_bb_rmsd_with_super() {
 
-		TS_TRACE( "=========Calculating membrane backbone rmsd with superposition" );
+		TR <<  "=========Calculating membrane backbone rmsd with superposition"  << std::endl;
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -345,7 +347,7 @@ public: // test functions
 	/// @brief Calculate membrane backbone rmsd with superposition
 	void test_membrane_bb_rmsd_no_super() {
 
-		TS_TRACE( "=========Calculating membrane backbone rmsd without superposition" );
+		TR <<  "=========Calculating membrane backbone rmsd without superposition"  << std::endl;
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -368,7 +370,7 @@ public: // test functions
 	/// @brief Calculate membrane all atom rmsd with superposition
 	void test_membrane_bb_rmsd_with_super_allatom() {
 
-		TS_TRACE( "=========Calculating membrane allatom rmsd with superposition" );
+		TR <<  "=========Calculating membrane allatom rmsd with superposition"  << std::endl;
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -391,7 +393,7 @@ public: // test functions
 	/// @brief Calculate membrane all atom rmsd without superposition
 	void test_membrane_bb_rmsd_no_super_allatom() {
 
-		TS_TRACE( "=========Calculating membrane backbone rmsd without superposition" );
+		TR <<  "=========Calculating membrane backbone rmsd without superposition"  << std::endl;
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -414,13 +416,13 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding1() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 1");
+		TR << "=========Test compute_structure_based_embedding 1" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 1AFO
 		// read in pose and create topology object
-		TS_TRACE("1AFO");
+		TR << "1AFO" << std::endl;
 		Pose pose1;
 		core::import_pose::pose_from_file( pose1, "protocols/membrane/geometry/1AFO_.pdb" , core::import_pose::PDB_file);
 
@@ -444,12 +446,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding2() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 2");
+		TR << "=========Test compute_structure_based_embedding 2" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 1BL8
-		TS_TRACE("1BL8");
+		TR << "1BL8" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose2;
@@ -467,12 +469,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding3() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 3");
+		TR << "=========Test compute_structure_based_embedding 3" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 1QJP - beta-barrel
-		TS_TRACE("1QJP");
+		TR << "1QJP" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose3;
@@ -490,12 +492,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding4() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 4");
+		TR << "=========Test compute_structure_based_embedding 4" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 2BS2
-		TS_TRACE("2BS2");
+		TR << "2BS2" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose4;
@@ -513,12 +515,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding5() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 5");
+		TR << "=========Test compute_structure_based_embedding 5" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 2MPN
-		TS_TRACE("2MPN");
+		TR << "2MPN" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose5;
@@ -536,12 +538,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding6() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 6");
+		TR << "=========Test compute_structure_based_embedding 6" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 2OAR
-		TS_TRACE("2OAR");
+		TR << "2OAR" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose6;
@@ -559,12 +561,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding7() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 7");
+		TR << "=========Test compute_structure_based_embedding 7" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 2UUH
-		TS_TRACE("2UUH");
+		TR << "2UUH" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose7;
@@ -582,12 +584,12 @@ public: // test functions
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding8() {
 
-		TS_TRACE("=========Test compute_structure_based_embedding 8");
+		TR << "=========Test compute_structure_based_embedding 8" << std::endl;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// 3PXO
-		TS_TRACE("3PXO");
+		TR << "3PXO" << std::endl;
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose8;
@@ -605,7 +607,7 @@ public: // test functions
 	// check vector for reasonable size
 	void test_check_vector() {
 
-		TS_TRACE("=========Test check vector");
+		TR << "=========Test check vector" << std::endl;
 
 		// define vectors and object
 		Vector v1(1, 2, 1000);
@@ -623,7 +625,7 @@ public: // test functions
 	// average  embeddings
 	void test_average_embeddings() {
 
-		TS_TRACE("=========Test average embeddings");
+		TR << "=========Test average embeddings" << std::endl;
 
 		// define vectors
 		Vector v1(1, 2, 3);
@@ -655,7 +657,7 @@ public: // test functions
 	// average antiparallel embeddings
 	void test_average_antiparallel_embeddings() {
 
-		TS_TRACE("=========Test average antiparallel embeddings");
+		TR << "=========Test average antiparallel embeddings" << std::endl;
 
 		// define vectors
 		Vector v1(1, 2, 3);
@@ -685,7 +687,7 @@ public: // test functions
 	// split topology by jump
 	void test_split_topology_by_jump() {
 
-		TS_TRACE("=========Test split topology by jump");
+		TR << "=========Test split topology by jump" << std::endl;
 
 		// read in pose and create topology object
 		Pose pose, pose_up, pose_down;
@@ -709,7 +711,7 @@ public: // test functions
 	// split topology by jump
 	void test_split_topology_by_jump_noshift() {
 
-		TS_TRACE("=========Test split topology by jump, no shift");
+		TR << "=========Test split topology by jump, no shift" << std::endl;
 
 		// read in pose and create topology object
 		Pose pose;
@@ -734,7 +736,7 @@ public: // test functions
 	// split topology by chain
 	void test_split_topology_by_chain_noshift() {
 
-		TS_TRACE("=========Test split topology by chain");
+		TR << "=========Test split topology by chain" << std::endl;
 
 		// read in pose and create topology object
 		Pose pose;
@@ -819,7 +821,7 @@ public: // test functions
 	// compute embeddings by chain
 	void test_compute_embeddings_by_chain() {
 
-		TS_TRACE("=========Test compute embeddings by chain");
+		TR << "=========Test compute embeddings by chain" << std::endl;
 
 		// read in pose and create topology object
 		Pose pose;
@@ -892,7 +894,7 @@ public: // test functions
 	// chain center-of-mass
 	void test_chain_com() {
 
-		TS_TRACE("=========Test chain center-of-mass");
+		TR << "=========Test chain center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -930,7 +932,7 @@ public: // test functions
 	// residue closest to chain center-of-mass
 	void test_rsd_closest_chain_com() {
 
-		TS_TRACE("=========Test residue closest to chain center-of-mass");
+		TR << "=========Test residue closest to chain center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -963,7 +965,7 @@ public: // test functions
 	// per chain TM center-of-mass
 	void test_tm_com() {
 
-		TS_TRACE("=========Test per chain transmembrane center-of-mass");
+		TR << "=========Test per chain transmembrane center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1002,7 +1004,7 @@ public: // test functions
 	// residue closest to chain tm center-of-mass
 	void test_rsd_closest_chain_tm_com() {
 
-		TS_TRACE("=========Test residue closest to chain TM center-of-mass");
+		TR << "=========Test residue closest to chain TM center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1035,7 +1037,7 @@ public: // test functions
 	// create membrane foldtree anchor COM
 	void test_create_membrane_foldtree_anchor_com() {
 
-		TS_TRACE("=========Test create membrane foldtree anchor at center-of-mass");
+		TR << "=========Test create membrane foldtree anchor at center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1066,7 +1068,7 @@ public: // test functions
 	// create membrane foldtree anchor TM COM
 	void test_create_membrane_foldtree_anchor_tmcom() {
 
-		TS_TRACE("=========Test create membrane foldtree anchor at TM center-of-mass");
+		TR << "=========Test create membrane foldtree anchor at TM center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1097,7 +1099,7 @@ public: // test functions
 	// pose TM COM
 	void test_pose_tm_COM() {
 
-		TS_TRACE("=========Test pose TM center-of-mass");
+		TR << "=========Test pose TM center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1122,7 +1124,7 @@ public: // test functions
 	// residue closest to pose TM COM
 	void test_rsd_closest_pose_tm_COM() {
 
-		TS_TRACE("=========Test residue closest to pose TM center-of-mass");
+		TR << "=========Test residue closest to pose TM center-of-mass" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1143,7 +1145,7 @@ public: // test functions
 	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
 	void test_create_membrane_foldtree_anchor_pose_tmcom() {
 
-		TS_TRACE("=========Test create membrane foldtree anchor at TM center-of-mass and pose TM COM");
+		TR << "=========Test create membrane foldtree anchor at TM center-of-mass and pose TM COM" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1175,7 +1177,7 @@ public: // test functions
 	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
 	void test_create_membrane_docking_foldtree_from_partners() {
 
-		TS_TRACE("=========Test create membrane docking foldtree from partners");
+		TR << "=========Test create membrane docking foldtree from partners" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1207,7 +1209,7 @@ public: // test functions
 	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
 	void test_create_specific_membrane_foldtree() {
 
-		TS_TRACE("=========Test create specific membrane foldtree from anchors");
+		TR << "=========Test create specific membrane foldtree from anchors" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1251,7 +1253,7 @@ public: // test functions
 	// create_membrane_multi_partner_foldtree_anchor_tmcom
 	void test_create_membrane_multi_partner_foldtree_anchor_tmcom() {
 
-		TS_TRACE("=========Test create membrane multi-partner foldtree");
+		TR << "=========Test create membrane multi-partner foldtree" << std::endl;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;

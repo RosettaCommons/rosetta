@@ -14,6 +14,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <core/init_util.hh>
 
 // Unit header
 #include <numeric/geometry/ring_plane.functions.hh>
@@ -29,10 +30,12 @@
 // Utility header
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <math.h>
 
+static THREAD_LOCAL basic::Tracer TR("numeric.geometry.ring_plane.functions.cxxtest");
 
 class RingPlaneFunctionsTests : public CxxTest::TestSuite {
 public: // Type definitions ///////////////////////////////////////////////////
@@ -42,7 +45,9 @@ public: // Type definitions ///////////////////////////////////////////////////
 public:  // Standard methods //////////////////////////////////////////////////
 	// Initialization
 	void setUp()
-	{}
+	{
+		core_init(); // So that tracers get muted
+	}
 
 	// Destruction
 	void tearDown()
@@ -57,7 +62,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace numeric::geometry;
 		using namespace utility;
 
-		TS_TRACE( "Testing that residual_squared_of_points_to_plane() properly calculates R-squared values." );
+		TR <<  "Testing that residual_squared_of_points_to_plane() properly calculates R-squared values."  << std::endl;
 
 		vector1< Coords > point( 1 ), segment( 2 ), square( 4 );
 		xyzVector< Real > const xy_plane( 0.0, 0.0, 1.0 );
@@ -120,7 +125,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		Real const sin45times2( sin( 45.0 * pi_over_180 ) * 2 );  // = square root of 2
 
 
-		TS_TRACE( "Testing how vector_normal_to_ring_plane_of_best_fit() handles non- and planar rings." );
+		TR <<  "Testing how vector_normal_to_ring_plane_of_best_fit() handles non- and planar rings."  << std::endl;
 
 		vector1< Coords > ring1( 1 ), ring2( 2 ), ring3( 3 ), /*ring4( 4 ), ring5( 5 ),*/ ring6( 6 );
 
@@ -235,7 +240,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		Real const sin60( sin( 60.0 * constants::r::pi_over_180 ) );  // = square root of 3 over 2
 
 
-		TS_TRACE( "Testing how vector_normal_to_ring_plane_of_best_fit() handles non- and planar rings." );
+		TR <<  "Testing how vector_normal_to_ring_plane_of_best_fit() handles non- and planar rings."  << std::endl;
 
 		vector1< Coords > ring1( 1 ), ring2( 2 ), ring3( 3 ), /*ring4( 4 ), ring5( 5 ),*/ ring6( 6 );
 
@@ -289,7 +294,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		Real const sin45times2( sin( 45.0 * pi_over_180 ) * 2 );  // = square root of 2
 
 
-		TS_TRACE( "Testing how vector_normal_to_ring_plane_of_best_fit() handles non-planar rings." );
+		TR <<  "Testing how vector_normal_to_ring_plane_of_best_fit() handles non-planar rings."  << std::endl;
 
 		vector1< Coords > ring6( 6 );
 

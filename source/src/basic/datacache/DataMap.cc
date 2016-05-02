@@ -37,7 +37,17 @@ DataMap::add( std::string const & type, std::string const & name, utility::point
 }
 
 bool
-DataMap::has( std::string const & type, std::string const & name/*=""*/ ) const {
+DataMap::has_type( std::string const & type ) const {
+	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
+
+	it = data_map_.find( type );
+	if ( it == data_map_.end() ) return false;
+
+	return true;
+}
+
+bool
+DataMap::has( std::string const & type, std::string const & name ) const {
 	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
 
 	it = data_map_.find( type );
@@ -51,20 +61,31 @@ DataMap::has( std::string const & type, std::string const & name/*=""*/ ) const 
 
 std::map< std::string, utility::pointer::ReferenceCountOP > &
 DataMap::operator []( std::string const & type ) {
-	if ( !has( type ) ) {
-		// "dummy_entry" serves as a placeholder while the datamap does not contain actual maps of this type.
-		// it is removed if the map is accessed.
-		add( type, "dummy_entry", 0 );
-	}
-
-	std::map< std::string, utility::pointer::ReferenceCountOP > & m( data_map_.find( type )->second );
-	if ( m.size() > 1 ) {
-		std::map< std::string, utility::pointer::ReferenceCountOP >::iterator it;
-		it=m.find( "dummy_entry" );
-		m.erase( it );
-	}
-	return m;
+	return data_map_[ type ];
 }
+
+// Below is the old implementation of the operator [] function.
+// The problem with this implementation is that the addition and then
+// later deletion of the dummy entry to the map invalidates iterators
+// and that's just a cruel prank to play on users of your code.
+// e.g., FavorNativeResiduePreCycle::parse_my_tag iterates across the
+// "scorefxns", but if there are no score functions already in the map, then
+// bad things happen.
+//
+//	if ( !has_type( type ) ) {
+//		// "dummy_entry" serves as a placeholder while the datamap does not contain actual maps of this type.
+//		// it is removed if the map is accessed.
+//		add( type, "dummy_entry", 0 );
+//	}
+//
+//	std::map< std::string, utility::pointer::ReferenceCountOP > & m( data_map_.find( type )->second );
+//	if ( m.size() > 1 ) {
+//		std::map< std::string, utility::pointer::ReferenceCountOP >::iterator it;
+//		it=m.find( "dummy_entry" );
+//		m.erase( it );
+//	}
+//	return m;
+//}
 
 platform::Size
 DataMap::size() const { return data_map_.size(); }

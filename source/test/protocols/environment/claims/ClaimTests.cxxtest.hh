@@ -96,7 +96,7 @@ public:
 
 		for ( core::Size i = 1; i <= prot_pose.total_residue(); ++i ) {
 			if ( i != SEQPOS ) {
-				std::cout << i << std::endl;
+				//std::cout << i << std::endl;
 				if ( i != 1 ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
@@ -148,7 +148,7 @@ public:
 
 		for ( core::Size i = 1; i <= prot_pose.total_residue(); ++i ) {
 			if ( i != SEQPOS1 && i != SEQPOS2 ) {
-				std::cout << i << std::endl;
+				//std::cout << i << std::endl;
 				if ( i != 1 ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
@@ -200,7 +200,7 @@ public:
 
 		for ( core::Size i = 1; i <= prot_pose.total_residue(); ++i ) {
 			if ( i < SEQPOS_START || i > SEQPOS_END ) {
-				std::cout << i << std::endl;
+				//std::cout << i << std::endl;
 				if ( i != 1 ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}

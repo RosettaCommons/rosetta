@@ -152,6 +152,11 @@ MembraneInfo::~MembraneInfo() {}
 
 /// @brief Generate a string representation of information represented by ths MembraneInfo
 void
+MembraneInfo::show() const {
+	show( std::cout );
+}
+
+void
 MembraneInfo::show( std::ostream & output ) const {
 
 	// Show generic membrane info
@@ -163,7 +168,7 @@ MembraneInfo::show( std::ostream & output ) const {
 	output << "Membrane Spanning Topology " << std::endl;
 
 	// SHow spanning topology object
-	spanning_topology_->show();
+	spanning_topology_->show( output );
 }
 
 // Chemical Information about this Membrane

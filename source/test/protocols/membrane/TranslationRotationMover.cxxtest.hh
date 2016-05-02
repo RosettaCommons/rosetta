@@ -50,6 +50,8 @@
 using namespace core;
 using namespace utility;
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.TranslationRotationMover.cxxtest");
+
 /// @brief Test Suite for transformin a pose into membrane coordinates
 class TranslationRotationMoverTest : public CxxTest::TestSuite {
 
@@ -79,9 +81,9 @@ public:
 
 		// get membrane jump
 		memjump_ = pose_->conformation().membrane_info()->membrane_jump();
-		TS_TRACE( "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num()) );
-		TS_TRACE( "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()));
-		pose_->fold_tree().show( std::cout );
+		TR <<  "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num())  << std::endl;
+		TR <<  "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()) << std::endl;
+		pose_->fold_tree().show( TR );
 
 	}
 
@@ -92,7 +94,7 @@ public:
 	/// @brief test translation of membrane pose
 	void test_translation() {
 
-		TS_TRACE( "TESTING TRANSLATION MOVE" );
+		TR <<  "TESTING TRANSLATION MOVE"  << std::endl;
 
 		using namespace core::pose;
 		using namespace protocols::membrane;
@@ -102,9 +104,9 @@ public:
 
 		// Apply Rotation and translation move
 		TranslationMoverOP translate( new TranslationMover( trans, memjump_ ) );
-		TS_TRACE( "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num()) );
-		TS_TRACE( "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()));
-		pose_->fold_tree().show( std::cout );
+		TR <<  "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num())  << std::endl;
+		TR <<  "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()) << std::endl;
+		pose_->fold_tree().show( TR );
 		translate->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after translation
@@ -133,7 +135,7 @@ public:
 	/// @brief test rotation of membrane pose
 	void test_rotation() {
 
-		TS_TRACE( "TESTING ROTATION MOVE" );
+		TR <<  "TESTING ROTATION MOVE"  << std::endl;
 
 		using namespace core::pose;
 		using namespace protocols::membrane;
@@ -145,9 +147,9 @@ public:
 
 		// Apply Rotation and translation move
 		RotationMoverOP rotate( new RotationMover( old_normal, new_normal, rot_center, memjump_ ) );
-		TS_TRACE( "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num()) );
-		TS_TRACE( "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()));
-		pose_->fold_tree().show( std::cout );
+		TR <<  "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num())  << std::endl;
+		TR <<  "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()) << std::endl;
+		pose_->fold_tree().show( TR );
 		rotate->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after translation
@@ -176,7 +178,7 @@ public:
 	/// @brief test rotation and translation of membrane pose
 	void test_rotation_translation() {
 
-		TS_TRACE( "TESTING TRANSLATION AND ROTATION MOVES" );
+		TR <<  "TESTING TRANSLATION AND ROTATION MOVES"  << std::endl;
 
 		using namespace core::pose;
 		using namespace protocols::membrane;
@@ -189,9 +191,9 @@ public:
 
 		// Apply Rotation and translation move
 		TranslationRotationMoverOP rt( new TranslationRotationMover( old_center, old_normal, new_center, new_normal, memjump_ ) );
-		TS_TRACE( "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num()) );
-		TS_TRACE( "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()));
-		pose_->fold_tree().show( std::cout );
+		TR <<  "mem residue: " + to_string(pose_->conformation().membrane_info()->membrane_rsd_num())  << std::endl;
+		TR <<  "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()) << std::endl;
+		pose_->fold_tree().show( TR );
 		rt->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after translation

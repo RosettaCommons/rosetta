@@ -11,7 +11,6 @@
 /// @brief  Programmatic backtrace whenever you want it.
 /// @author Rhiju Das
 
-
 #ifndef INCLUDED_utility_backtrace_hh
 #define INCLUDED_utility_backtrace_hh
 
@@ -36,6 +35,17 @@
 #define MY__has_include( x ) 1
 #endif
 
+
+/// @brief Function for unit testing only -- if an assertion failure is hit, throw an exception
+/// instead of exiting.  Don't let me catch you calling this function from anywhere besides a
+/// unit test.  Punishment will be swift.
+void set_throw_on_next_assertion_failure();
+
+/// @brief Throw an exception if set_throw_on_next_assertion_failure was called since the
+/// last time this function was called.
+bool maybe_throw_on_next_assertion_failure( char const * condition );
+
+
 // C++ headers
 #if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__) && MY__has_include( <cxxabi.h> )
 
@@ -47,6 +57,7 @@
 #include <iostream>
 
 #include <utility/CSI_Sequence.hh>
+
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -109,7 +120,12 @@ demangle( std::string trace ) {
 
 inline
 bool
-print_backtrace() {
+print_backtrace( char const * condition ) {
+
+	// instead of printing a backtrace and letting the assert() function exectue,
+	// (and halt the program) throw an exception.  Look, don't rely on this
+	// functionality in anything besides your unit tests.
+	maybe_throw_on_next_assertion_failure( condition );
 
 	size_t const callstack_size = 128;
 	void* callstack[callstack_size];
@@ -124,7 +140,7 @@ print_backtrace() {
 	return false; // allows use in debug_assert
 }
 
-#define debug_assert(condition) {assert( ( condition ) || print_backtrace() ); }
+#define debug_assert(condition) {assert( ( condition ) || print_backtrace( #condition ) ); }
 
 #else
 // _WIN32, etc.
@@ -132,12 +148,13 @@ print_backtrace() {
 
 inline
 void
-print_backtrace(){
+print_backtrace( char const * /*unnamed*/ ){
 	// no op
 	// if someone cares, should be possible to code up a backtrace for Windows!
+	// function signature needs to match windows and *nix builds.
 }
 
-#define debug_assert(condition) {assert( condition ); }
+#define debug_assert(condition) {assert( condition || maybe_throw_on_next_assertion_failure( #condition ) ); }
 
 #endif
 

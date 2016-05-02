@@ -169,7 +169,7 @@ public:
 	void output_or_test(TaskFactoryCOP tf, core::pose::Pose const & pose, bool first_run, std::string name) {
 		if ( first_run ) {
 			TR <<std::endl << "////"<<  std::endl << name << std::endl << std::endl;
-			tf->create_task_and_apply_taskoperations(pose)->show(std::cout);
+			tf->create_task_and_apply_taskoperations(pose)->show(TR);
 		} else {
 			test::UTracer UT(name);
 			tf->create_task_and_apply_taskoperations(pose)->show(UT);

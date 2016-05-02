@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
+/// @file
 /// @brief  Test suite for SEWING Assembly class
 /// @author Tim Jacobs (TimJacobs2@gmail.com)
 
@@ -49,7 +49,7 @@ using namespace devel::sewing;
 class AssemblyTests : public CxxTest::TestSuite {
 
 public:
-	
+
 	// --------------- Fixtures --------------- //
 
 	// Define a test fixture (some initial state that several tests share)
@@ -63,7 +63,7 @@ public:
 
         //Generate a graph to be used by all the tests
         utility::vector1<BasisPair> alignment_pairs = read_hashing_scores_from_file("devel/sewing/inputs/test.scores");
-        std::cout << "Number of alignment pairs: " << alignment_pairs.size() << std::endl;
+        //std::cout << "Number of alignment pairs: " << alignment_pairs.size() << std::endl;
         std::map<core::Size, Model> models = read_model_file("devel/sewing/inputs/test.models");
         continuous_graph_ = new SewGraph(models, 1);
         //continuous_graph_->add_all_model_edges_from_binary(edges)

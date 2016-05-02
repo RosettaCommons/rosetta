@@ -95,8 +95,11 @@ public: // Constructors & Setup
 	/// @brief Destructor
 	~MembraneInfo();
 
+	/// @brief Generate a string representation of information represented by this MembraneInfo and send it to std::cout
+	virtual void show() const;
+
 	/// @brief Generate a string representation of information represented by ths MembraneInfo
-	virtual void show( std::ostream & output=std::cout ) const;
+	virtual void show( std::ostream & output ) const;
 
 public: // Chemical information about this membrane
 

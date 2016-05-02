@@ -1724,9 +1724,9 @@ void split_topology_by_jump(
 	}
 
 	TR << "topology of upward partner" << std::endl;
-	topo_up.show();
+	topo_up.show( TR );
 	TR << "topology of downward partner" << std::endl;
-	topo_down.show();
+	topo_down.show( TR );
 }// split topology by jump
 
 

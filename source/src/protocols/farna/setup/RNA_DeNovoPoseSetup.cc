@@ -114,7 +114,7 @@ RNA_DeNovoPoseSetup::initialize_for_de_novo_protocol(
 void
 RNA_DeNovoPoseSetup::override_secstruct( core::pose::Pose & pose ){
 	rna_params_.rna_secstruct_ = std::string( pose.total_residue(), 'X' );
-	std::cout << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_ << std::endl;
+	TR << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_ << std::endl;
 	set_rna_secstruct( pose, rna_params_.rna_secstruct_ );
 }
 /////////////////////////////////////////////////////////////////////////////////////
@@ -124,8 +124,8 @@ RNA_DeNovoPoseSetup::append_virtual_anchor( pose::Pose & pose )
 
 	if ( rna_params_.virtual_anchor_attachment_points_.size() == 0 ) return;
 
-	std::cout << "Current last residue is type: " << pose.residue( pose.total_residue() ).name3()  << std::endl;
-	std::cout << pose.annotated_sequence() << std::endl;
+	TR << "Current last residue is type: " << pose.residue( pose.total_residue() ).name3()  << std::endl;
+	TR << pose.annotated_sequence() << std::endl;
 	if ( pose.residue( pose.total_residue() ).name3() == "XXX" ) return; //already did virtual residue attachment.
 
 	// Fix up the pose.
@@ -186,7 +186,7 @@ RNA_DeNovoPoseSetup::initialize_secstruct( core::pose::Pose & pose  )
 		}
 	}
 
-	std::cout << "Setting desired secondary structure to: " << rna_secstruct << std::endl;
+	TR << "Setting desired secondary structure to: " << rna_secstruct << std::endl;
 
 	set_rna_secstruct( pose, rna_secstruct );
 }
@@ -462,7 +462,7 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 			utility::vector1< Size > rigid_body_jumps = get_rigid_body_jumps( pose );
 			runtime_assert( rigid_body_jumps.size() > 0 );
 			Size const anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
-			std::cout << "ROOTING AT RSD" << anchor_rsd << std::endl;
+			TR << "ROOTING AT RSD" << anchor_rsd << std::endl;
 			f.reorder( anchor_rsd ); //reroot so that partner of virtual residue is fixed
 		}
 

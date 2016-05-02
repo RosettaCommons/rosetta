@@ -38,6 +38,8 @@
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
+#include <basic/Tracer.hh>
+
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
@@ -45,6 +47,8 @@
 
 // C++ headers
 #include <set>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.task_operations.RestrictOperations.cxxtest");
 
 // --------------- Test Class --------------- //
 
@@ -220,14 +224,13 @@ public:
 		for ( core::Size i = 1; i <=10; ++i ) {
 			mm->set_chi(i, true);
 		}
-		//mm->show(std::cout);
-
+		mm->show(TR);
 		TaskFactory tf;
 
 		RestrictToMoveMapChiOperationOP mm_op( new RestrictToMoveMapChiOperation(mm) );
 		tf.push_back(mm_op);
 		PackerTaskOP task = tf.create_task_and_apply_taskoperations(pose);
-		//task->show(std::cout);
+		task->show(TR);
 
 		vector1<bool> repacking_residues(pose.total_residue(), false);
 		for ( core::Size i = 1; i <=10; ++i ) {
@@ -242,7 +245,7 @@ public:
 		mm_op->set_cutoff_distance(10.0);
 		tf.push_back(mm_op);
 		task = tf.create_task_and_apply_taskoperations(pose);
-		//task->show(std::cout);
+		task->show(TR);
 		test::UTracer UT_MMNEI("protocols/toolbox/task_operations/RestrictToMoveMapChiWNeighbors.u");
 
 		UT_MMNEI << *task << std::endl;
@@ -257,4 +260,4 @@ public:
 
 	}
 
-};//end class
+};

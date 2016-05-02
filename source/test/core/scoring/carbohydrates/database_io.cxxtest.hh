@@ -24,9 +24,12 @@
 
 // Utility header
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <map>
+
+static THREAD_LOCAL basic::Tracer TR("core.scoring.carbohydrates.database_io.cxxtest");
 
 class CarbohydrateScoringDatabaseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -49,7 +52,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace utility;
 		using namespace core::scoring::carbohydrates;
 
-		TS_TRACE( "Testing read_Gaussian_parameters_from_database_file() method." );
+		TR <<  "Testing read_Gaussian_parameters_from_database_file() method."  << std::endl;
 
 		map< char, vector1< core::Real > > parameters(
 			read_Gaussian_parameters_from_database_file( "core/scoring/carbohydrates/dummy_params.data" ) );

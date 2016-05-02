@@ -47,6 +47,8 @@ using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.TiltMover.cxxtest");
+
 class TiltMoverTest : public CxxTest::TestSuite {
 
 public: // test functions
@@ -82,7 +84,7 @@ public: // test functions
 	// test constructor from jumpnum and angle
 	void test_constructor_from_jumpnum_and_angle () {
 
-		TS_TRACE("\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER AND ANGLE");
+		TR << "\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER AND ANGLE" << std::endl;
 
 		// jump = 1
 		// angle = -43
@@ -94,8 +96,8 @@ public: // test functions
 		SpanningTopologyOP topo_down_( new SpanningTopology() );
 
 		// show foldtree and membrane info
-		pose_.fold_tree().show( std::cout );
-		pose_.conformation().membrane_info()->show();
+		pose_.fold_tree().show( TR );
+		pose_.conformation().membrane_info()->show( TR );
 
 		// split_topology_by_jump_noshift
 		split_topology_by_jump_noshift( pose_, 1, topo, topo_up_, topo_down_ );

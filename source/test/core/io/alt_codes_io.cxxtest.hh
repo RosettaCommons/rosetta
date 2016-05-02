@@ -21,10 +21,12 @@
 
 // Basic header
 #include <basic/database/open.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <utility>
 
+static THREAD_LOCAL basic::Tracer TR("core.io.alt_codes_io.cxxtest");
 
 class AltCodesIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -45,7 +47,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 	{
 		using namespace core::io;
 
-		TS_TRACE( "Testing read_read_alternative_3_letter_codes_from_database_file() method." );
+		TR <<  "Testing read_read_alternative_3_letter_codes_from_database_file() method."  << std::endl;
 
 		AltCodeMap alt_codes( read_alternative_3_letter_codes_from_database_file(
 			basic::database::full_name( "input_output/3-letter_codes/sentence_case.codes" ) ) );

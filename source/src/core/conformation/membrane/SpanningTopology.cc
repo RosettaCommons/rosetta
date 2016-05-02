@@ -149,7 +149,7 @@ void SpanningTopology::fill_from_structure( utility::vector1< core::Real > res_z
 	TR << "Filling membrane spanning topology from structure with thickness " << thickness << std::endl;
 	create_from_structure( res_z_coord, chainID, secstruct, thickness );
 
-	this->show();
+	this->show( TR );
 
 	TR << "WATCH OUT: Writing spanfile out.span!" << std::endl;
 	write_spanfile( "out.span" );
@@ -323,7 +323,7 @@ bool SpanningTopology::is_valid() const {
 		if ( i > 1 &&
 				( topology_[ i-1 ]->start() > topology_[ i ]->start() ||
 				topology_[ i-1 ]->end() > topology_[ i ]->end() ) ) {
-			show();
+			show( TR );
 			return false;
 		}
 	}
@@ -421,7 +421,7 @@ SpanningTopology::create_from_spanfile( std::string spanfile, core::Size nres ){
 		//  utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
 
-	this->show();
+	this->show( TR );
 	return *this;
 } // create from spanfile
 
@@ -552,7 +552,7 @@ SpanningTopology::create_from_structure(
 		utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
 
-	this->show();
+	this->show( TR );
 	return *this;
 
 } // create from structure

@@ -320,8 +320,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		std::cout.precision( 16 );
-		std::cout << "start score: " << sfxn(pose) << std::endl;
+		// std::cout.precision( 16 );
+		// std::cout << "start score: " << sfxn(pose) << std::endl;
 		//Real start_score =
 		sfxn(pose);
 		//TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
@@ -340,18 +340,18 @@ public:
 			NumDerivCheckData const & iidata( deriv_check_result->deriv_check_result( ii ) );
 			TS_ASSERT( iidata.nsteps() >= 1 );
 			for ( Size jj = 1; jj <= iidata.nangles(); ++jj ) {
-				if ( jj % 3 == 1 ) { // new res
-					std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
-				} else {
-					std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
-				}
+				// if ( jj % 3 == 1 ) { // new res
+				// 	std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
+				// } else {
+				// 	std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
+				// }
 
 				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-6 );
 			}
 		}
 
 		//Real end_score = sfxn(pose);
-		std::cout << "end score: " << sfxn(pose) << std::endl;
+		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		//TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
 		pose.dump_pdb( "dunmin1.pdb" );
 
@@ -374,8 +374,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		std::cout.precision( 16 );
-		std::cout << "start score: " << sfxn(pose) << std::endl;
+		// std::cout.precision( 16 );
+		// std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
 		TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
 
@@ -390,8 +390,8 @@ public:
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		std::cout << "end score: " << end_score << std::endl;
-		//TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
+		//std::cout << "end score: " << end_score << std::endl;
+		TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
 		pose.dump_pdb( "dunmintest1.pdb" );
 
 	}

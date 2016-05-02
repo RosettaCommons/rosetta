@@ -24,11 +24,6 @@
 #include <string>
 #include <iostream>
 
-// Can't use tracers because we're in utility
-using std::cout;
-using std::cerr;
-using std::endl;
-
 class DatabaseSessionManagerTests : public CxxTest::TestSuite {
 
 public:
@@ -84,7 +79,7 @@ public:
     	  //cout << id << "\t" << name << endl;
     	}
     } catch(std::exception const &e) {
-      cerr << e.what() << endl;
+      std::cerr << e.what() << std::endl;
       TS_ASSERT(false);
     }
   }

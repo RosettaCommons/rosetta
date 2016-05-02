@@ -106,13 +106,13 @@ public:
 
 	void print_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) {
 		for ( Size bb = 1; bb <= num_bytes; ++bb ) {
-			if ( bb % 2 == 1 ) std::cout << (bb-1) * 8 << ":";
+			if ( bb % 2 == 1 ) TR << (bb-1) * 8 << ":";
 			for ( int index=7; index >= 0; index-- ) {
-				std::cout << ( ( (int)values[ bb ] >> index ) & 1 );
+				TR << ( ( (int)values[ bb ] >> index ) & 1 );
 			}
-			std::cout << " ";
+			TR << " ";
 		}
-		std::cout << std::endl;
+		TR << std::endl;
 	}
 
 	// --------------- Test Cases --------------- //

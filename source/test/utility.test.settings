@@ -87,9 +87,15 @@ sources = {
 
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
-libraries    = [ 
-	"utility", 
+libraries    = [
+	"utility",
 	"ObjexxFCL",
+	"basic", #for Tracer
+	"core.1",
+	"core.2",
+	"core.3",
+	"core.4",
+	"core.5",
 ]
 subprojects  = []
 testinputfiles = [

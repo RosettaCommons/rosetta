@@ -33,11 +33,14 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
 #include <boost/foreach.hpp>
+
+// Utility headers
+#include <utility/backtrace.hh>
+#include <utility/vector1.hh>
 
 #define BFE BOOST_FOREACH
 using namespace protocols::antibody;
@@ -147,8 +150,10 @@ public:
 		AntibodyDatabaseManagerOP manager( new AntibodyDatabaseManager(ab_info, true /* Force use of north paper ab db */) );
 		TS_ASSERT_THROWS_NOTHING(manager->load_cdr_poses(options, pose, false));
 
-		TR << "Checking to make sure an error is thrown when loading bogus options from database " << std::endl;
+		TR << "------------ Checking to make sure an error is thrown when loading bogus options from database ------------- " << std::endl;
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(manager->load_cdr_poses(bogus_options, pose, false));
+		TR << "------------ The preceeding error message was expected. -------------" << std::endl;
 
 
 	}

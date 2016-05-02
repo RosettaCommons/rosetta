@@ -38,6 +38,8 @@
 
 #include <core/types.hh>
 
+#include <basic/Tracer.hh>
+
 // Utility Headers
 #include <utility/vector1.hh>
 
@@ -46,6 +48,8 @@ using namespace core::kinematics;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace protocols::membrane;
+
+static THREAD_LOCAL basic::Tracer TR("core.conformation.membrane.MembraneInfo.cxxtest");
 
 class MembraneInfoTest : public CxxTest::TestSuite {
 
@@ -82,7 +86,7 @@ public: // test functions
 	/// @brief Check conformation invariant passes when membraneInfo object is present
 	void test_conformation_invariant() {
 
-		TS_TRACE("Testing membrane conformation invariants");
+		TR << "Testing membrane conformation invariants" << std::endl;
 		TS_ASSERT( pose_->conformation().is_membrane() );
 
 	}
@@ -90,7 +94,7 @@ public: // test functions
 	/// @brief Check that MembraneInfo contains a reasonable setup
 	void test_reasonable_setup() {
 
-		TS_TRACE( "Testing a reasonable setup in MembraneInfo" );
+		TR <<  "Testing a reasonable setup in MembraneInfo"  << std::endl;
 
 		// Readability - grab object straight from conformation
 		MembraneInfoOP membrane_info = pose_->conformation().membrane_info();
@@ -118,9 +122,9 @@ public: // test functions
 	/// @brief Check that conformation returns valid center & normal position
 	void test_normal_center() {
 
-		TS_TRACE( "Check that conformation returns a reasonable normal and center" );
+		TR <<  "Check that conformation returns a reasonable normal and center"  << std::endl;
 
-		TS_TRACE( pose_->total_residue() );
+		TR <<  pose_->total_residue()  << std::endl;
 
 		Vector center = pose_->conformation().membrane_info()->membrane_center( pose_->conformation() );
 		Vector expected_center( 0, 0, 0 );
@@ -135,7 +139,7 @@ public: // test functions
 	/// @brief Test residue z position method
 	void test_residue_z_position() {
 
-		TS_TRACE( "Check computing relative residue z position in the membrane" );
+		TR <<  "Check computing relative residue z position in the membrane"  << std::endl;
 
 		core::Real expected_z( -22.089 );
 		core::Real z( pose_->conformation().membrane_info()->residue_z_position( pose_->conformation(), 1 ) );
@@ -145,7 +149,7 @@ public: // test functions
 	/// @brief Test atom z position method
 	void test_atom_z_position() {
 
-		TS_TRACE( "Check computing relative atom z position in the membrane" );
+		TR <<  "Check computing relative atom z position in the membrane"  << std::endl;
 
 		core::Real expected_z( -22.089 );
 		core::Real z( pose_->conformation().membrane_info()->atom_z_position( pose_->conformation(),  1, 2 ) );
@@ -155,18 +159,18 @@ public: // test functions
 	/// @brief Check the fold tree has a reasonable setup
 	void test_reasonable_foldtree() {
 
-		TS_TRACE( "Checking that the defualt setup for the membrane fold tree is a reasonable fold tree" );
+		TR <<  "Checking that the defualt setup for the membrane fold tree is a reasonable fold tree"  << std::endl;
 
 		// Grab fold tree from the pose & check
 		FoldTree ft = pose_->fold_tree();
-		ft.show( std::cout );
+		ft.show( TR );
 		TS_ASSERT( pose_->conformation().membrane_info()->check_membrane_fold_tree( ft ) );
 	}
 
 	/// @brief Check the fold tree is unreasonble if membrane rsd is not a jump point
 	void test_unreasonable_foldtree() {
 
-		TS_TRACE( "Checking that foldtree invariant returns false on a fold tree where membrane residue is not the jump point" );
+		TR <<  "Checking that foldtree invariant returns false on a fold tree where membrane residue is not the jump point"  << std::endl;
 
 		// Make new simple tree
 		FoldTreeOP ft( new FoldTree() );

@@ -22,6 +22,7 @@
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -30,6 +31,8 @@
 
 // C++ headers
 #include <string>
+
+static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.ResidueSelectorFactory.cxxtest.hh");
 
 using namespace core::select::residue_selector;
 
@@ -70,8 +73,7 @@ class ResidueSelectorFactoryTests : public CxxTest::TestSuite {
 
 public:
 
-	void setUp() {
-	}
+	void setUp() { core_init(); }
 
 	// @brief make sure that when we register a residue selector, we can later get it back
 	void test_register_one_creator_with_ResidueSelectorFactory() {
@@ -119,7 +121,7 @@ public:
 		utility::tag::XMLSchemaDefinition xsd;
 		ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
 		factory->define_residue_selector_xml_schema( xsd );
-		std::cout << "XSD: " << std::endl;
-		std::cout << xsd.full_definition() << std::endl;
+		TR << "XSD: " << std::endl;
+		TR << xsd.full_definition() << std::endl;
 	}
 };

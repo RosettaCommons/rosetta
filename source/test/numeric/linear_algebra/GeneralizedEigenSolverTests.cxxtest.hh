@@ -20,12 +20,16 @@
 // External headers // {{{1
 #include <Eigen/Dense>
 
+#include <basic/Tracer.hh>
+
 // C++ headers // {{{1
 #include <iostream>
 #include <complex>
 #include <string>
 #include <functional>
 #include <sstream>
+
+static THREAD_LOCAL basic::Tracer TR("numeric.linear_algebra.GeneralizedEigenSolverTests.cxxtest");
 
 // Namespaces // {{{1
 using namespace std;
@@ -311,10 +315,10 @@ public:
 		Eigen::IOFormat scipy(8, 0, ", ", ",\n", "[", "]", "[", "]");
 		string skipl = "\n\n";
 
-		cout << "A = \\" << endl << A.format(scipy) << skipl;
-		cout << "B = \\" << endl << B.format(scipy) << skipl;
-		cout << "l = \\" << endl << solver.eigenvalues().format(scipy) << skipl;
-		cout << "x = \\" << endl << solver.eigenvectors().format(scipy) << skipl;
+		TR << "A = \\" << endl << A.format(scipy) << skipl;
+		TR << "B = \\" << endl << B.format(scipy) << skipl;
+		TR << "l = \\" << endl << solver.eigenvalues().format(scipy) << skipl;
+		TR << "x = \\" << endl << solver.eigenvectors().format(scipy) << skipl;
 	}
 
 	// void check_eigenvalue(  // NxN {{{1

@@ -33,8 +33,12 @@
 
 #include <test/core/init_util.hh>
 
+#include <basic/Tracer.hh>
+
 //C++ headers
 #include <iostream>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.environment.EnvironmentTorsion.cxxtest");
 
 // --------------- Test Class --------------- //
 
@@ -68,7 +72,7 @@ public:
 	}
 
 	void test_empty_environment(){
-		TS_TRACE( "Beginning: test_empty_environment" );
+		TR <<  "Beginning: test_empty_environment"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::environment;
@@ -82,11 +86,11 @@ public:
 		core::pose::Pose done;
 		TS_ASSERT_THROWS_NOTHING( done = env.end( brokered ) );
 
-		TS_TRACE( "End: test_empty_environment" );
+		TR <<  "End: test_empty_environment"  << std::endl;
 	}
 
 	void test_dual_environment(){
-		TS_TRACE( "Beginning: test_dual_environment" );
+		TR <<  "Beginning: test_dual_environment"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::environment;
@@ -132,11 +136,11 @@ public:
 			}
 		}
 
-		TS_TRACE( "End: test_dual_environment" );
+		TR <<  "End: test_dual_environment"  << std::endl;
 	}
 
 	void test_single_phi_moves(){
-		TS_TRACE( "Beginning: test_single_phi_moves" );
+		TR <<  "Beginning: test_single_phi_moves"  << std::endl;
 		using namespace protocols::environment;
 		using namespace core::environment;
 
@@ -214,11 +218,11 @@ public:
 		//Verify other angle changes don't back-propagate to original pose
 		TS_ASSERT_DIFFERS( pose.phi( CLAIMED_RESID ), final_pose.phi( CLAIMED_RESID ) );
 
-		TS_TRACE( "End: test_single_phi_moves" );
+		TR <<  "End: test_single_phi_moves"  << std::endl;
 	}
 
 	void test_torsion_must_can_coexist(){
-		TS_TRACE( "Beginning: test_torsion_must_can_coexist" );
+		TR <<  "Beginning: test_torsion_must_can_coexist"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::environment;
@@ -239,11 +243,11 @@ public:
 		TS_ASSERT_THROWS_NOTHING( can_mover->apply( protected_pose ) );
 		TS_ASSERT_EQUALS( protected_pose.phi( CLAIMED_RESID ), NEW_PHI );
 
-		TS_TRACE( "End: test_torsion_must_can_coexist" );
+		TR <<  "End: test_torsion_must_can_coexist"  << std::endl;
 	}
 
 	void test_torsion_can_exclusive_compatibility(){
-		TS_TRACE( "Beginning: torsion_can_exclusive_compatibility" );
+		TR <<  "Beginning: torsion_can_exclusive_compatibility"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::environment;
@@ -265,11 +269,11 @@ public:
 		TS_ASSERT_THROWS_NOTHING( exclusive_mover->apply( protected_pose ) );
 		TS_ASSERT_EQUALS( protected_pose.phi( CLAIMED_RESID ), NEW_PHI );
 
-		TS_TRACE( "End: torsion_can_exclusive_compatibility" );
+		TR <<  "End: torsion_can_exclusive_compatibility"  << std::endl;
 	}
 
 	void test_torsion_must_exclusive_incompatibility(){
-		TS_TRACE( "Beginning: test_torsion_must_exclusive_incompatibility" );
+		TR <<  "Beginning: test_torsion_must_exclusive_incompatibility"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::environment;
@@ -286,11 +290,11 @@ public:
 		core::pose::Pose protected_pose;
 		TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::EXCN_BadInput );
 
-		TS_TRACE( "End: test_torsion_must_exclusive_incompatibility" );
+		TR <<  "End: test_torsion_must_exclusive_incompatibility"  << std::endl;
 	}
 
 	void test_torsion_init(){
-		TS_TRACE( "Beginning: test_torsion_init" );
+		TR <<  "Beginning: test_torsion_init"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::environment;
@@ -329,7 +333,7 @@ public:
 			TS_ASSERT_EQUALS( protected_pose.phi( CLAIMED_RESID ), NEW_PHI );
 		}
 
-		TS_TRACE( "End: test_torsion_init" );
+		TR <<  "End: test_torsion_init"  << std::endl;
 	}
 
 };

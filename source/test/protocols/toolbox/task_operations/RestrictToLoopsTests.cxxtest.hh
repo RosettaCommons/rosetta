@@ -94,7 +94,7 @@ public:
 		RestrictToLoopsOP restrict_to_loops( new RestrictToLoops );
 		restrict_to_loops->set_restrict_only_design_to_loops(true);
 		restrict_to_loops->set_loops(loops_);
-		std::cout << restrict_to_loops->restrict_only_design_to_loops() << std::endl;
+		//std::cout << restrict_to_loops->restrict_only_design_to_loops() << std::endl;
 		test_task_operation(restrict_to_loops, pose_, "111111111", "011101110");
 	}
 public:

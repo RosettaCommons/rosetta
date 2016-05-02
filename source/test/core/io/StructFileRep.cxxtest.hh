@@ -29,7 +29,9 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+static THREAD_LOCAL basic::Tracer TR("core.io.StructFileRep.cxxtest");
 
 class StructFileRepTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////
@@ -66,7 +68,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::io::pdb;
 		core_init_with_additional_options( "-obey_ENDMDL -constraints_from_link_records -cst_weight 1");
 
-		TS_TRACE( "Testing get_connectivity_annotation_info() method of StructFileRep." );
+		TR <<  "Testing get_connectivity_annotation_info() method of StructFileRep."  << std::endl;
 
 		core::pose::Pose pose;
 

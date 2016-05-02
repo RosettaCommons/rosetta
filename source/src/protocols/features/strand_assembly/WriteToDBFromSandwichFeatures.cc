@@ -2201,7 +2201,7 @@ WriteToDB_topology_candidate (
 
 
 	//TR << "vector_of_long_strand_id_from_sheet_1.size(): " << vector_of_long_strand_id_from_sheet_1.size() << std::endl;
-	std::cout << vector_of_long_strand_id_from_sheet_1.size() << std::endl;
+	//std::cout << vector_of_long_strand_id_from_sheet_1.size() << std::endl;
 
 	if ( (vector_of_long_strand_id.size() != 7) || (vector_of_long_strand_id_from_sheet_1.size() != 3) ) {
 		topology_candidate = "not_known_topology";

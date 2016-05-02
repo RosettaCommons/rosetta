@@ -34,11 +34,11 @@
 // Utility headers
 #include <boost/foreach.hpp>
 #include <numeric/conversions.hh>
+#include <basic/Tracer.hh>
 
 #define foreach BOOST_FOREACH
 
 // Global names {{{1
-using namespace std;
 using namespace core;
 using core::PointPosition;
 using core::pose::Pose;
@@ -56,6 +56,8 @@ using protocols::kinematic_closure::pivot_pickers::LoopPivots;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
 using numeric::conversions::DEGREES;
+
+static THREAD_LOCAL basic::Tracer TR("protocols.kinematic_closure.TestHelpers.cxxtest");
 
 // Forward declarations {{{1
 class ClosureTest;
@@ -139,8 +141,8 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 	Size start_atom = left_pivot - 3;
 	Size stop_atom = right_pivot + 3;
 
-	// Make sure that none of the atoms outside the loop have moved.  In the 
-	// case that no fold tree is being used, a bug in the closure algorithm 
+	// Make sure that none of the atoms outside the loop have moved.  In the
+	// case that no fold tree is being used, a bug in the closure algorithm
 	// will cause atoms outside the designated window to move.
 
 	for (Size index = start_atom; index <= stop_atom; index++) {
@@ -153,8 +155,8 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 		}
 	}
 
-	// Make sure that all of the bond lengths are in a reasonable range.  In 
-	// the case that a fold tree is being used, a bug in the closure algorithm 
+	// Make sure that all of the bond lengths are in a reasonable range.  In
+	// the case that a fold tree is being used, a bug in the closure algorithm
 	// will distort the distance between the two atoms framing the cutpoint.
 
 	AtomID ids[2];
@@ -168,13 +170,13 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 
 		Real bond_length = xyzs[0].distance(xyzs[1]);
 
-		cout << "index = " << index << endl;
-		cout << "ids[0] = " << ids[0] << endl;
-		cout << "ids[1] = " << ids[1] << endl;
-		cout << "xyzs[0] = " << xyzs[0] << endl;
-		cout << "xyzs[1] = " << xyzs[1] << endl;
-		cout << "bond_length = " << bond_length << endl;
-		cout << endl;
+		TR << "index = " << index << endl;
+		TR << "ids[0] = " << ids[0] << endl;
+		TR << "ids[1] = " << ids[1] << endl;
+		TR << "xyzs[0] = " << xyzs[0] << endl;
+		TR << "xyzs[1] = " << xyzs[1] << endl;
+		TR << "bond_length = " << bond_length << endl;
+		TR << endl;
 
 		TS_ASSERT_LESS_THAN(bond_length, 1.6);
 		TS_ASSERT_LESS_THAN(1.2, bond_length);
@@ -217,10 +219,10 @@ void ClosureTest::test_pickers( // {{{1
 		ClosureProblemCOP, SolutionList) const {
 
 	/*
-	// Test to make sure the solution pickers work as expected.  The fact that 
-	// both of the pickers are stochastic is accounted for by making 1000 picks.  
-	// Within a loose range, the expected distributions should be seen. 
-		
+	// Test to make sure the solution pickers work as expected.  The fact that
+	// both of the pickers are stochastic is accounted for by making 1000 picks.
+	// Within a loose range, the expected distributions should be seen.
+
 	ClosureSolutionCOP solution;
 
 	Size iterations = 1000;
@@ -242,7 +244,7 @@ void ClosureTest::test_pickers( // {{{1
 	using protocols::kinematic_closure::pick_balanced_solution;
 
 	// Make 1000 picks with each picker.  Record the results in hash tables.
-	
+
 	for (int i = 1; i <= iterations; i++) {
 		solution = pick_random_solution(solutions);
 		random_picks[solution->get_index()] += 1;
@@ -307,7 +309,7 @@ public:
 		jacobians[4] = 0.0029;
 		jacobians[5] = 0.0061;
 		jacobians[6] = 0.0027;
-	} 
+	}
 };
 
 class NoSolutionsTest : public ClosureTest { // {{{1
@@ -338,7 +340,7 @@ public:
 
 class PoseWithLigandTest : public ClosureTest { // {{{1
 
-// If the fold tree is poorly designed, it can get confused by the ligand.  
+// If the fold tree is poorly designed, it can get confused by the ligand.
 
 public:
 
@@ -347,7 +349,7 @@ public:
 
 		jacobians[1] = 0.0168;
 		jacobians[2] = 0.0172;
-	} 
+	}
 };
 // }}}1
 

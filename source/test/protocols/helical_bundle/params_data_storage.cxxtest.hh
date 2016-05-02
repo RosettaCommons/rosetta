@@ -29,11 +29,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// Basic headers
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("protocols.helical_bundle.ParamsDataStorageTests.cxxtest");
-
+static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.params_data_storage.cxxtest");
 
 // --------------- Test Class --------------- //
 
@@ -122,7 +120,6 @@ public:
 		//testpose_->dump_pdb("vtemp.pdb"); //DELETE ME
 
 		TR << "Finished test_params_data_storage unit test." << std::endl;
-
 		return;
 	}
 
@@ -231,6 +228,7 @@ public:
 		//Set parameters for the two helices:
 		TR << "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
 		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 z1_offset=0.2 invert=false(default)" << std::endl;
+
 		makebundle->helix(1)->set_r0(5.0);
 		makebundle->helix(1)->set_omega0(0.05);
 		makebundle->helix(1)->set_delta_omega0(0.1);
@@ -265,7 +263,6 @@ public:
 			bool invert_1(h1params->invert_helix());
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
-
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
@@ -349,7 +346,6 @@ public:
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
-
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
@@ -369,7 +365,6 @@ public:
 		}
 
 		TR << "Finished test_params_data_storage unit test." << std::endl;
-
 
 		return;
 	}

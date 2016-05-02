@@ -57,6 +57,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
+		set_throw_on_next_assertion_failure();
 		StoredResidueSubsetSelectorOP rs( new StoredResidueSubsetSelector );
 		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm ) );
 
@@ -77,6 +78,7 @@ public:
 		protocols::filters::Filters_map filters;
 
 		StoreResidueSubsetMoverOP rs( new StoreResidueSubsetMover );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm, filters, movers, core::pose::Pose() ) );
 
 		std::stringstream ssgood;
@@ -98,6 +100,7 @@ public:
 
 		// before storing anything, the selector should fail
 		StoredResidueSubsetSelector retrieve_stored( stored_subset_name );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( retrieve_stored.apply( trpcage ) );
 
 		// store subset into pose
@@ -105,6 +108,7 @@ public:
 		store_subset.apply( trpcage );
 
 		// seting twice should fail because overwrite=false
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( store_subset.apply( trpcage ) );
 
 		// now that something is stored, this should work
@@ -122,6 +126,7 @@ public:
 
 		// invalid subset name and this should fail
 		StoredResidueSubsetSelector retrieve_stored_badname( "bad_name" );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( retrieve_stored_badname.apply( trpcage ) );
 
 		// copy the pose and this should still work great
@@ -136,6 +141,7 @@ public:
 
 		// add residues to the pose and this should fail
 		trpcage.append_residue_by_jump( trpcage.residue(2), 1 );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( retrieve_stored.apply( trpcage ) );
 
 	}

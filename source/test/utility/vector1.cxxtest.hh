@@ -18,6 +18,7 @@
 
 // Utility header
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/backtrace.hh>
 
 // C++ headers
 #include <vector>
@@ -138,8 +139,8 @@ class Vector1_Tests : public CxxTest::TestSuite {
 			TS_ASSERT_EQUALS(w, W);
 
 		}
-		
-		
+
+
 		/// @brief  Test assorted utility methods.
 		/// @author Labonte <JWLabonte@jhu.edu>
 		void test_vector1_utility_methods() {
@@ -149,30 +150,29 @@ class Vector1_Tests : public CxxTest::TestSuite {
 			v[ 1 ] = 1; v[ 2 ] = 2; v[ 3 ] = 3;
 			utility::vector1_int w( 3 );
 			w[ 1 ] = 4; w[ 2 ] = 5; w[ 3 ] = 6;
-			
+
 			// Test append().
 			v.append( w );
 			TS_ASSERT_EQUALS( v.size(), 6 );
 			TS_ASSERT_EQUALS( v[ 5 ], 5 );
-			
+
 			// Test contains().
 			TS_ASSERT( v.contains( 4 ) );
 			TS_ASSERT( ! v.contains( 0 ) );
-			
+
 			// Test index_of().
 			TS_ASSERT_EQUALS( v.index_of( 1 ), 1 );
 			TS_ASSERT_EQUALS( v.index_of( 6 ), 6 );
-			TS_TRACE( "An out-of-bounds error message should follow:" );
 			try {
+				set_throw_on_next_assertion_failure();
 				v.index_of( 7 );  // This should force an exit.
 				TS_ASSERT( false );  // Exception was not thrown!
 			} catch ( utility::excn::EXCN_Base const & e) {
-				TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-						"ERROR: vectorL:index_of: element not found\n\n" );
-				TS_TRACE( "The above error message was expected." );
+				std::string expected( "ERROR: vectorL:index_of: element not found\n" );
+				TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 			}
 		}
-		
+
 
 		/// @brief Test of bounds checking
 		/// @note  This test is not used yet!  With the existing testing system,

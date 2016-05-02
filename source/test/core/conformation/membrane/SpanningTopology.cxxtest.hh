@@ -41,6 +41,8 @@
 #include <string>
 #include <cmath>
 
+static THREAD_LOCAL basic::Tracer TR("core.conformation.membrane.SpanningTopology.cxxtest");
+
 using namespace core;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
@@ -69,7 +71,7 @@ public: // test functions
 	// create object from PDB
 	void test_from_pdb1(){
 
-		TS_TRACE("Test constructor from structure for 1AFO");
+		TR << "Test constructor from structure for 1AFO" << std::endl;
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/1AFO_AB.pdb") );
 
@@ -79,7 +81,7 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_from_pdb->span(1)->end(),   33 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(2)->start(), 53 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(2)->end(),   76 );
-		TS_TRACE("Finished testing constructor from structure.");
+		TR << "Finished testing constructor from structure." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +89,7 @@ public: // test functions
 	// create object from PDB
 	void test_from_pdb2(){
 
-		TS_TRACE("Test constructor from structure for 2LEG");
+		TR << "Test constructor from structure for 2LEG" << std::endl;
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/2LEG_B_tr.pdb") );
 
@@ -101,7 +103,7 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_from_pdb->span(3)->end(),   75 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(4)->start(), 118 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(4)->end(),   133 );
-		TS_TRACE("Finished testing constructor from structure.");
+		TR << "Finished testing constructor from structure." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +111,7 @@ public: // test functions
 	// create object from PDB
 	void test_from_pdb3(){
 
-		TS_TRACE("Test constructor from structure for 3MP7");
+		TR << "Test constructor from structure for 3MP7" << std::endl;
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/3MP7__tr.pdb") );
 
@@ -137,7 +139,7 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_from_pdb->span(10)->end(),   361 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(11)->start(), 413 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(11)->end(),   438 );
-		TS_TRACE("Finished testing constructor from structure.");
+		TR << "Finished testing constructor from structure." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ public: // test functions
 	// create object from PDB
 	void test_from_pdb4(){
 
-		TS_TRACE("Test constructor from structure for 3UKM");
+		TR << "Test constructor from structure for 3UKM" << std::endl;
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/3UKM__tr.pdb") );
 
@@ -175,14 +177,14 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_from_pdb->span(11)->end(),   446 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(12)->start(), 467 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(12)->end(),   491 );
-		TS_TRACE("Finished testing constructor from structure.");
+		TR << "Finished testing constructor from structure." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
 	// create object from spanfile
 	void test_from_spanfile(){
-		TS_TRACE("Test constructor from spanfile");
+		TR << "Test constructor from spanfile" << std::endl;
 
 		// create object
 		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
@@ -193,14 +195,14 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_from_spanfile->span(1)->end(),   31 );
 		TS_ASSERT_EQUALS( topo_from_spanfile->span(2)->start(), 55 );
 		TS_ASSERT_EQUALS( topo_from_spanfile->span(2)->end(),   73 );
-		TS_TRACE("Finished testing constructor from spanfile.");
+		TR << "Finished testing constructor from spanfile." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
 	// is residue in membrane?
 	void test_res_in_membrane(){
-		TS_TRACE("Test whether residue is in the membrane");
+		TR << "Test whether residue is in the membrane" << std::endl;
 
 		// create object
 		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
@@ -218,14 +220,14 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_from_spanfile->in_span(73), 1 );
 		TS_ASSERT_EQUALS( topo_from_spanfile->in_span(74), 0 );
 		TS_ASSERT_EQUALS( topo_from_spanfile->in_span(80), 0 );
-		TS_TRACE("Finished whether residue is in the membrane.");
+		TR << "Finished whether residue is in the membrane." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
 	// does span cross the membrane?
 	void test_spanning_membrane(){
-		TS_TRACE("Test whether Span crosses the membrane");
+		TR << "Test whether Span crosses the membrane" << std::endl;
 
 		using namespace core::pose;
 		using namespace core::import_pose;
@@ -266,25 +268,25 @@ public: // test functions
 		SpanOP span8( new Span( 66, 80 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span8 ), 0 );
 
-		TS_TRACE("Finished testing whether span crosses the membrane.");
+		TR << "Finished testing whether span crosses the membrane." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
 	// is the spanning topology valid?
 	void test_is_valid(){
-		TS_TRACE("Testing whether spans are valid");
+		TR << "Testing whether spans are valid" << std::endl;
 		using namespace core::conformation::membrane;
 
 		// test if span too short
 		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-short.span", 80 ) );
 		TS_ASSERT_EQUALS( topo1.is_valid(), true );
-		TS_TRACE("...topo1 done.");
+		TR << "...topo1 done." << std::endl;
 
 		// test if span too long
 		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-long.span", 80 ) );
 		TS_ASSERT_EQUALS( topo2.is_valid(), true );
-		TS_TRACE("...topo2 done.");
+		TR << "...topo2 done." << std::endl;
 
 		// test whether span start > end
 		try {
@@ -293,7 +295,7 @@ public: // test functions
 			std::string expected_error_message = "SpanningTopology invalid: check your span file!";
 			TS_ASSERT( expected_error_message == e.msg() );
 		}
-		TS_TRACE("...topo3 done.");
+		TR << "...topo3 done." << std::endl;
 
 		// test increasing order of spans in topology
 		try {
@@ -302,14 +304,14 @@ public: // test functions
 			std::string expected_error_message = "SpanningTopology invalid: check your span file!";
 			TS_ASSERT( expected_error_message == e.msg() );
 		}
-		TS_TRACE("...topo4 done.");
+		TR << "...topo4 done." << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
 	// concatenate topology
 	void test_concatenate_topology(){
-		TS_TRACE("Testing concatenate topology");
+		TR << "Testing concatenate topology" << std::endl;
 		using namespace core::conformation::membrane;
 
 		// create topology objects

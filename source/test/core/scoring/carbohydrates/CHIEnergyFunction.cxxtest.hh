@@ -26,6 +26,9 @@
 // Project header
 #include <core/types.hh>
 
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("core.scoring.carbohydrates.CHIEnergyFunction.cxxtest");
 
 class CHIEnergyFunctionTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -46,7 +49,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::scoring::carbohydrates;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE( "Testing if the CHI energy functions return the correct energies." );
+		TR <<  "Testing if the CHI energy functions return the correct energies."  << std::endl;
 
 		CHIEnergyFunction const & E( core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction() );
 		core::Angle x;
@@ -94,7 +97,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::scoring::carbohydrates;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE( "Testing if the CHI energy function derivatives return the correct values." );
+		TR <<  "Testing if the CHI energy function derivatives return the correct values."  << std::endl;
 
 		CHIEnergyFunction const & E( core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction() );
 		core::Angle x;
@@ -147,7 +150,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_ASSERT( sugar_bb.sampling_data_setup() );
 		for ( core::Size i = 1; i <= 4; ++i ) {
-			std::cout << "Linkage type: " << i << std::endl;
+			TR << "Linkage type: " << i << std::endl;
 
 
 			LinkageType link_type = static_cast< LinkageType >( i );
@@ -156,7 +159,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 			TS_ASSERT_THROWS_NOTHING( sugar_bb.get_chi_sampling_data( link_type )  );
 			CHIDihedralSamplingData const & sampling_data = sugar_bb.get_chi_sampling_data( link_type );
 
-			std::cout << "PROB Size" << sampling_data.probabilities.size() << std::endl;
+			TR << "PROB Size" << sampling_data.probabilities.size() << std::endl;
 
 
 

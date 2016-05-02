@@ -1350,7 +1350,7 @@ hb_energy_deriv(
 		PyAssert(false, warning); // allows for better error handling from within Python
 		tr.Error << warning << std::endl;
 		tr.Error << "Dxyz " << Dxyz << "  Hxyz " << Hxyz << std::endl;
-		print_backtrace();
+		print_backtrace( warning.c_str() );
 
 #ifndef BOINC
 		bool fail_on_bad_hbond = basic::options::option[ basic::options::OptionKeys::in::file::fail_on_bad_hbond ]();

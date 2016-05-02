@@ -33,6 +33,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <basic/Tracer.hh>
 
 /// Project headers
 #include <core/types.hh>
@@ -62,6 +63,7 @@ trpcage_res2phe_kinemage();
 utility::vector1< std::string >
 trpcage_res2phe_kinemages();
 
+static THREAD_LOCAL basic::Tracer TR("protocols.match.ProteinSCSampler.cxxtest");
 
 class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
@@ -456,7 +458,7 @@ public:
 		std::string correct_kinemage = trpcage_res2phe_kinemage();
 		TS_ASSERT( sout.str() == correct_kinemage );
 		if ( sout.str() != correct_kinemage ) {
-			std::cout << sout.str() << std::endl;
+			TR << sout.str() << std::endl;
 		}
 
 	}
@@ -600,9 +602,9 @@ public:
 
 			TS_ASSERT( correct_rotamer_kins[ ++counter ] == sout2.str() );
 			if ( correct_rotamer_kins[ counter ] != sout2.str() ) {
-				std::cout << "Correct: " << std::endl;
-				std::cout << correct_rotamer_kins[ counter ] << std::endl << "Incorrect:" << std::endl;
-				std::cout << sout2.str() << std::endl;
+				TR << "Correct: " << std::endl;
+				TR << correct_rotamer_kins[ counter ] << std::endl << "Incorrect:" << std::endl;
+				TR << sout2.str() << std::endl;
 			}
 			//sout2.clear();
 			sout2.str("");

@@ -38,11 +38,14 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 using namespace core::kinematics;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace protocols::relax::membrane;
+
+static THREAD_LOCAL basic::Tracer TR("protocols.relax.membrane.MPFastRelaxFoldTree.cxxtest");
 
 class MPFastRelaxFoldTreeTest : public CxxTest::TestSuite {
 
@@ -92,10 +95,10 @@ public: // test functions
 
 		relax_mover_->setup_relax_foldtree( *pose_1c3w_ );
 
-		TS_TRACE( "Check the resulting foldtree for a single chain pose" );
-		pose_1c3w_->fold_tree().show( std::cout );
+		TR << "Check the resulting foldtree for a single chain pose" << std::endl;
+		pose_1c3w_->fold_tree().show( TR );
 
-		TS_TRACE( "Check that the root is the pose COM and the memrbane residue is the downstream jump" );
+		TR << "Check that the root is the pose COM and the memrbane residue is the downstream jump" << std::endl;
 
 		// Check root
 		core::Size expected_root( 86 );
@@ -125,8 +128,8 @@ public: // test functions
 
 		relax_mover_->setup_relax_foldtree( *pose_2mpn_ );
 
-		TS_TRACE( "Check the resulting foldtree for a double chain pose" );
-		pose_2mpn_->fold_tree().show( std::cout );
+		TR << "Check the resulting foldtree for a double chain pose" << std::endl;
+		pose_2mpn_->fold_tree().show( TR );
 
 		// Check root
 		core::Size expected_root( 84 );

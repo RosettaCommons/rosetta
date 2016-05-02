@@ -26,7 +26,9 @@
 
 // Utility header
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+static THREAD_LOCAL basic::Tracer TR("core.pose.annotated_sequence.cxxtest");
 
 class AnnotatedSequenceTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -53,7 +55,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 		vector1< ResidueTypeCOP > residue_types;
 
-		TS_TRACE( "Testing a maltotriose, a simple linear sugar, relying on default settings." );
+		TR <<  "Testing a maltotriose, a simple linear sugar, relying on default settings."  << std::endl;
 		residue_types = residue_types_from_saccharide_sequence(
 			"Glcp-Glcp-Glcp", *residue_set );
 
@@ -63,7 +65,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( residue_types[ 3 ]->name(), "->4)-alpha-D-Glcp:branch_lower_terminus" );
 
 
-		TS_TRACE( "Testing Lewisx, which has one branch and modified sugars." );
+		TR <<  "Testing Lewisx, which has one branch and modified sugars."  << std::endl;
 		residue_types = residue_types_from_saccharide_sequence(
 			"beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
 
@@ -73,7 +75,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( residue_types[ 3 ]->name(), "->4)-alpha-D-Glcp:branch_lower_terminus:->3)-branch:2-AcNH" );
 
 
-		TS_TRACE( "Testing a 14-mer, which has nested branches." );
+		TR <<  "Testing a 14-mer, which has nested branches."  << std::endl;
 		residue_types = residue_types_from_saccharide_sequence(
 			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"

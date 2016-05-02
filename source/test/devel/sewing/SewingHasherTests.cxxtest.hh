@@ -24,6 +24,7 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -39,13 +40,15 @@
 //Devel headers
 #include <devel/init.hh>
 
+static THREAD_LOCAL basic::Tracer TR("devel.sewing.SewingHasherTests.cxxtest");
+
 // --------------- Test Class --------------- //
 using namespace devel::sewing;
 
 class SewingHasherTests : public CxxTest::TestSuite {
 
 public:
-	
+
 	// --------------- Fixtures --------------- //
 
 	// Define a test fixture (some initial state that several tests share)
@@ -103,11 +106,11 @@ public:
 
 		Hasher hasher;
         ScoreResult result = hasher.score_one(model_1, residue_1, model_2, residue_2);
-        
+
         ScoreResult result2 = hasher.score_one(model_3, residue_3, model_2, residue_2);
 
-        std::cout << "Found1 " << result.second.segment_matches.size() << " matching segments" << std::endl;
-        std::cout << "Found2 " << result2.second.segment_matches.size() << " matching segments" << std::endl;
+        TR << "Found1 " << result.second.segment_matches.size() << " matching segments" << std::endl;
+        TR << "Found2 " << result2.second.segment_matches.size() << " matching segments" << std::endl;
         TS_ASSERT_EQUALS(result.second.segment_matches.size(), result2.second.segment_matches.size());
 
     }
@@ -129,7 +132,7 @@ public:
         core::import_pose::pose_from_file( bundle_2_pose, "devel/sewing/inputs/bundle2.pdb" , core::import_pose::PDB_file);
         Model bundle_2_model = create_model_from_pose(bundle_2_pose, segments, 2);
 
-        hasher.insert(bundle_1_model); 
+        hasher.insert(bundle_1_model);
         ScoreResults results = hasher.score(bundle_2_model, 2/*segment matches*/, 10/*min segment score*/, 0/*max clash*/, true/*store atoms*/);
 
         TS_ASSERT_EQUALS( results.size(), 1 );

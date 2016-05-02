@@ -101,7 +101,7 @@ MPFastRelaxMover::show_protocol( core::pose::Pose & pose ) {
 	TR << "Membrane Relax protocol + MEM Optimization" << std::endl;
 	TR << "Relax Type: " << relax_protocol_->get_name() << std::endl;
 	TR << "Movemap: " << std::endl;
-	relax_protocol_->get_movemap()->show();
+	relax_protocol_->get_movemap()->show( TR );
 	TR << "FoldTree: " << pose.fold_tree() << std::endl;
 	TR << "Initial membrane position: " << std::endl;
 	TR << "Membrane Position: " << "center=(" << center.x() << "," << center.y() << "," << center.z() << "); normal=(" << normal.x() << "," << normal.y() << "," << center.z() << ")" << std::endl;
@@ -258,7 +258,7 @@ MPFastRelaxMover::setup_relax_foldtree( core::pose::Pose & pose ) {
 		}
 	}
 
-	ft.show( std::cout );
+	ft.show( TR );
 
 	// Set the root to the residue COM (makes for a moveable membrane)
 	// Will also verify that our foldtree is correct

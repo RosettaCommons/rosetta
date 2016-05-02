@@ -33,8 +33,12 @@
 
 #include <core/types.hh>
 
+#include <basic/Tracer.hh>
+
 // Utility Headers
 #include <utility/vector1.hh>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.AddMembraneMover.cxxtest");
 
 using namespace core;
 using namespace core::kinematics;
@@ -95,31 +99,31 @@ public: // test functions
 		//   (5) Fourth custom setup - find the membrane residue in Pose
 
 		// (1) Setup pose with default setup
-		TS_TRACE( "Setting up membrane pose with default configuration" );
+		TR <<  "Setting up membrane pose with default configuration"  << std::endl;
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
 		add_memb->apply( *pose_ );
 
 		// (2) Setup pose with custom anchor point & topology object
-		TS_TRACE( "Setting up membrane with custom anchor point and topology object" );
+		TR <<  "Setting up membrane with custom anchor point and topology object"  << std::endl;
 		SpanningTopologyOP custom_topo( new SpanningTopology() );
 		custom_topo->fill_from_spanfile( spanfile );
 		AddMembraneMoverOP add_memb2( new AddMembraneMover( custom_topo, 50 ) );
 		add_memb2->apply( *anchored_pose_ );
 
 		// (3) Setup pose with custom membrane position
-		TS_TRACE( "Setting up a pose with a custom membrane position" );
+		TR <<  "Setting up a pose with a custom membrane position"  << std::endl;
 		Vector test_center( 10, 10, 10 );
 		Vector test_normal( 0, 1, 0 ); // Normal along y axis
 		AddMembraneMoverOP add_memb3( new AddMembraneMover( test_center, test_normal, spanfile, 0 ) );
 		add_memb3->apply( *positioned_pose_ );
 
 		// (4) Setup the pose, directly pointing to the new membrane residue
-		TS_TRACE( "Setting up a pose, directly pointed to a new membrane residue already in the pose" );
+		TR <<  "Setting up a pose, directly pointed to a new membrane residue already in the pose"  << std::endl;
 		AddMembraneMoverOP add_memb4( new AddMembraneMover( spanfile_2zup, 334 ) );
 		add_memb4->apply( *specially_positioned_pose1_ );
 
 		// (5) Ask add membrane mover to go on a scavenger hunt for the membrane residue
-		TS_TRACE( "Setting up a membrane pose where you need to search for the membrane residue in the pose already" );
+		TR <<  "Setting up a membrane pose where you need to search for the membrane residue in the pose already"  << std::endl;
 		AddMembraneMoverOP add_memb5( new AddMembraneMover( spanfile_2zup, 334 ) );
 		add_memb5->apply( *specially_positioned_pose2_ );
 	}
@@ -132,7 +136,7 @@ public: // test functions
 	/// @brief Check conformation invariant is true after running this mover
 	void test_conformation_invariant() {
 
-		TS_TRACE("Testing membrane conformation invariants");
+		TR << "Testing membrane conformation invariants" << std::endl;
 		TS_ASSERT( pose_->conformation().is_membrane() );
 
 	}
@@ -140,7 +144,7 @@ public: // test functions
 	/// @brief Check that conformation returns valid center & normal position
 	void test_membrane_rsd_tracking() {
 
-		TS_TRACE( "Check that membrane residue number tracks a residue of type MEM" );
+		TR <<  "Check that membrane residue number tracks a residue of type MEM"  << std::endl;
 
 		// Grab membrane rsd num
 		core::Size resnum = pose_->conformation().membrane_info()->membrane_rsd_num();
@@ -152,7 +156,7 @@ public: // test functions
 	/// @brief Test default membrane position setup
 	void test_default_membrane_position() {
 
-		TS_TRACE( "Test correct setup of the default membrane position: center=origin, normal along z axis" );
+		TR <<  "Test correct setup of the default membrane position: center=origin, normal along z axis"  << std::endl;
 
 		// Grab current center/normal from the pose
 		core::Vector current_center( pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ) );
@@ -170,7 +174,7 @@ public: // test functions
 	/// @brief Double check some initial settings from the full blown inputs
 	void test_initial_spans_setup() {
 
-		TS_TRACE( "Check that add membrane mover has called all of the required inputs" );
+		TR <<  "Check that add membrane mover has called all of the required inputs"  << std::endl;
 
 		// Did I load in a spanning topology?
 		if ( pose_->conformation().membrane_info()->spanning_topology() != 0 ) {
@@ -180,7 +184,7 @@ public: // test functions
 		}
 
 		// Check that I did not include a lipsfile quite yet
-		TS_TRACE( "Check that I have not yet initialized a lipophilicity object yet" );
+		TR <<  "Check that I have not yet initialized a lipophilicity object yet"  << std::endl;
 		TS_ASSERT( !pose_->conformation().membrane_info()->include_lips() );
 	}
 
@@ -188,7 +192,7 @@ public: // test functions
 	/// during initialization
 	void test_membrane_jump_tracking() {
 
-		TS_TRACE( "Check that the jump number tracks a jump containing the membrane residue" );
+		TR <<  "Check that the jump number tracks a jump containing the membrane residue"  << std::endl;
 
 		core::Size jump = pose_->conformation().membrane_info()->membrane_jump();
 		core::Size expected( 1 );
@@ -201,20 +205,20 @@ public: // test functions
 	/// it is the root
 	void test_initial_foldtree() {
 
-		TS_TRACE( "Check that the membrane foldtree is setup contianing a membrane residue at the root of a simple tree" );
+		TR <<  "Check that the membrane foldtree is setup contianing a membrane residue at the root of a simple tree"  << std::endl;
 
 		// Redundant double checking - ensure the membrane residue is the last
 		// residue in the initial pose
 		core::Size mprsd = pose_->conformation().membrane_info()->membrane_rsd_num();
 		core::Size expected_resnum( 223 );
-		TS_TRACE("Check that the memrbane residue is located at the end of the pose");
+		TR << "Check that the memrbane residue is located at the end of the pose" << std::endl;
 		TS_ASSERT_EQUALS( expected_resnum, mprsd );
 		TS_ASSERT_EQUALS( pose_->total_residue(), expected_resnum );
 
 		// Check that the root of the pose is the membrane residue num
 		core::Size expected_root( 223 );
 		core::Size given_root( pose_->fold_tree().root() );
-		TS_TRACE("Check that the root of the foldtree is the membrane residue");
+		TR << "Check that the root of the foldtree is the membrane residue" << std::endl;
 		TS_ASSERT_EQUALS( given_root, expected_root );
 
 		// Check that the membrane residue is connected to the first
@@ -226,9 +230,9 @@ public: // test functions
 		core::Size given_downstream( pose_->fold_tree().downstream_jump_residue( jump ) );
 
 		// Check that the upstream and downstream resnums match
-		TS_TRACE( "Checking upstream (root) residue numbers match in the membrane jump");
+		TR <<  "Checking upstream (root) residue numbers match in the membrane jump" << std::endl;
 		TS_ASSERT_EQUALS( given_upstream, expected_upstream );
-		TS_TRACE( "Checking downstream (pose first residue) residue number matches in the mmebrane jump" );
+		TR <<  "Checking downstream (pose first residue) residue number matches in the mmebrane jump"  << std::endl;
 		TS_ASSERT_EQUALS( given_downstream, expected_downstream );
 
 	}
@@ -237,12 +241,12 @@ public: // test functions
 	/// some abitrary point on the pose
 	void test_anchored_foldtree() {
 
-		TS_TRACE( "Check that the anchored foldtree (custom) has a correct setup to start" );
+		TR <<  "Check that the anchored foldtree (custom) has a correct setup to start"  << std::endl;
 
 		// Check that the root of the pose is the membrane residue num
 		core::Size expected_root( 223 );
 		core::Size given_root( anchored_pose_->fold_tree().root() );
-		TS_TRACE("Check that the root of the foldtree is the membrane residue for anchored foldtree");
+		TR << "Check that the root of the foldtree is the membrane residue for anchored foldtree" << std::endl;
 		TS_ASSERT_EQUALS( given_root, expected_root );
 
 		// Check that the membrane residue is connected to residue 50
@@ -254,16 +258,16 @@ public: // test functions
 		core::Size given_downstream( anchored_pose_->fold_tree().downstream_jump_residue( jump ) );
 
 		// Check that the upstream and downstream resnums match
-		TS_TRACE( "Checking upstream (root) residue numbers match in the membrane jump");
+		TR <<  "Checking upstream (root) residue numbers match in the membrane jump" << std::endl;
 		TS_ASSERT_EQUALS( given_upstream, expected_upstream );
-		TS_TRACE( "Checking downstream (pose first residue) residue number matches in the mmebrane jump" );
+		TR <<  "Checking downstream (pose first residue) residue number matches in the mmebrane jump"  << std::endl;
 		TS_ASSERT_EQUALS( given_downstream, expected_downstream );
 	}
 
 	/// @brief Checking custom setup of initial membrane position
 	void test_user_defined_membrane_position() {
 
-		TS_TRACE( "Test for correct setup of a user defined membrane position" );
+		TR <<  "Test for correct setup of a user defined membrane position"  << std::endl;
 
 		// Grab current center/normal from the pose
 		core::Vector current_center( positioned_pose_->conformation().membrane_info()->membrane_center( positioned_pose_->conformation() ) );
@@ -300,7 +304,7 @@ public: // test functions
 	/// @brief Try loading in a pose with multiple membrane residues - should accept the first one
 	void test_multi_mem_pose1() {
 
-		TS_TRACE( "Testing loading of pose with multiple membrane residues but unspecified position" );
+		TR <<  "Testing loading of pose with multiple membrane residues but unspecified position"  << std::endl;
 
 		using namespace protocols::membrane;
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";
@@ -312,7 +316,7 @@ public: // test functions
 	/// @brief Try loading in a pose with multiple membrane residues but a user specified position
 	void test_multi_mem_pose2() {
 
-		TS_TRACE( "esting loading of pose with multiple membrane residues and a specified position" );
+		TR <<  "Testing loading of pose with multiple membrane residues and a specified position"  << std::endl;
 
 		using namespace protocols::membrane;
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";

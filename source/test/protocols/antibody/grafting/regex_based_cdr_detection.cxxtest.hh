@@ -101,7 +101,7 @@ public:
 		if( utility::json_spirit::read(data_stream, root) ) {
 
 			for(auto &target : root.get_obj()) {
-				std::cout << "Traget:" << target.first << std::endl;
+				TR << "Target:" << target.first << std::endl;
 				Value data { target.second };
 
 				string heavy_chain_sequence { data.get_obj()["heavy_chain_sequence"].get_str() };

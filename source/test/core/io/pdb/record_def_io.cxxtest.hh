@@ -23,11 +23,13 @@
 
 // Basic header
 #include <basic/database/open.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <utility>
 #include <map>
 
+static THREAD_LOCAL basic::Tracer TR("core.io.pdb.record_def_io.cxxtest");
 
 class RecordDefIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -48,7 +50,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 	{
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing read_record_definitions_from_file() method." );
+		TR <<  "Testing read_record_definitions_from_file() method."  << std::endl;
 
 		std::map< std::string, RecordType > record_type_map;
 		record_type_map[ "HEADER" ] = HEADER;

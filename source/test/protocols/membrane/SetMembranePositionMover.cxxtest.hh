@@ -46,6 +46,8 @@
 // C++ Headers
 #include <cstdlib>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.SetMembranePositionMover.cxxtest");
+
 using namespace core;
 
 /// @brief Test Suite for Membrane Embedding factory
@@ -84,7 +86,7 @@ public:
 	/// @brief Testing Consecutive Transformations of the Membrane Center
 	void test_membrane_position_translation() {
 
-		TS_TRACE( "Testing Deterministic Translation of the Membrane Position" );
+		TR <<  "Testing Deterministic Translation of the Membrane Position"  << std::endl;
 
 		using namespace protocols::membrane;
 
@@ -103,7 +105,7 @@ public:
 	/// @brief Testing Consecutive Rotations of the membrane Normal (about fixed center)
 	void test_membrane_position_rotation() {
 
-		TS_TRACE( "Testing Deterministic Rotation of the membrane position" );
+		TR <<  "Testing Deterministic Rotation of the membrane position"  << std::endl;
 
 		using namespace protocols::membrane;
 
@@ -122,7 +124,7 @@ public:
 	/// @brief Testing uniform rotation & translation
 	void test_uniform_rotation_translation() {
 
-		TS_TRACE( "Testing rotation & translation move" );
+		TR <<  "Testing rotation & translation move"  << std::endl;
 
 		using namespace protocols::membrane;
 

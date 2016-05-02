@@ -33,11 +33,14 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
+#include <basic/Tracer.hh>
 
 // Numberic headers
 
 // C++ headers
 #include <string>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.rosetta_scripts.MultiplePoseMover.cxxtest");
 
 ////////////////////////////////////////////////////////////////////////
 // Dummy Mover that generates derivitives of poses from create_trpcage_ideal_pose()
@@ -121,7 +124,7 @@ public:
 	DummyHalfFilter() : Filter(), i_(0) { }
 	bool apply( core::pose::Pose const & ) const {
 		bool r = (bool)((++i_) % 2);
-		std::cout << "DummyHalfFilter at " << i_ << ", returing: " << r << std::endl;
+		TR << "DummyHalfFilter at " << i_ << ", returing: " << r << std::endl;
 		return r;
 	}
 	protocols::filters::FilterOP clone() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
@@ -167,7 +170,7 @@ public:
 		/// Test get_additional_output() from DummyMultipleOutputMover,
 		/// check provided pose sequence (first residue only)
 
-		std::cout << "Testing DummyMultipleOutputMover::get_additional_output()" << std::endl;
+		TR << "Testing DummyMultipleOutputMover::get_additional_output()" << std::endl;
 
 		DummyMultipleOutputMover mover;
 		const char *sequence = mover.get_sequence();
@@ -175,7 +178,7 @@ public:
 		for ( int i = 0; i < 20; ++i ) {
 			core::pose::PoseOP pose = mover.get_additional_output();
 			std::string pose_sequence( pose->sequence() );
-			std::cout << "Pose " << (i+1) << " sequence: " << pose_sequence << std::endl;
+			TR << "Pose " << (i+1) << " sequence: " << pose_sequence << std::endl;
 			TS_ASSERT( pose_sequence[0] == sequence[i]);
 		}
 
@@ -185,7 +188,7 @@ public:
 
 		/// Test parent tag access
 
-		std::cout << "Testing tag parent access" << std::endl;
+		TR << "Testing tag parent access" << std::endl;
 
 		std::string xmlfile =
 			"<ROSETTASCRIPTS>\n"
@@ -261,7 +264,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing IMPORT script tag using:\n" << xmlfile << std::endl;
+		TR << "Testing IMPORT script tag using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -318,7 +321,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing multi-level IMPORT script tag using:\n" << xmlfile << std::endl;
+		TR << "Testing multi-level IMPORT script tag using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -349,7 +352,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing max_input_poses limit using:\n" << xmlfile << std::endl;
+		TR << "Testing max_input_poses limit using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -388,7 +391,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing max_output_poses limit using:\n" << xmlfile << std::endl;
+		TR << "Testing max_output_poses limit using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -438,7 +441,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing SELECT script tag using:\n" << xmlfile << std::endl;
+		TR << "Testing SELECT script tag using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -494,7 +497,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing AndSelector using:\n" << xmlfile << std::endl;
+		TR << "Testing AndSelector using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -555,7 +558,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing OrSelector / AndSelector using:\n" << xmlfile << std::endl;
+		TR << "Testing OrSelector / AndSelector using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -609,7 +612,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing FilterReporter using:\n" << xmlfile << std::endl;
+		TR << "Testing FilterReporter using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -661,7 +664,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing Filter Selector using:\n" << xmlfile << std::endl;
+		TR << "Testing Filter Selector using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -677,7 +680,7 @@ public:
 			// and DummyHalfFilter, which drops every other pose
 			int i = 1;
 			while ( mover->get_additional_output() ) ++i;
-			std::cout << "i = " << i << std::endl;
+			TR << "i = " << i << std::endl;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -714,7 +717,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing invalid IMPORT script tag using:\n" << xmlfile << std::endl;
+		TR << "Testing invalid IMPORT script tag using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -756,7 +759,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing invalid IMPORT script tag with recursion using:\n" << xmlfile << std::endl;
+		TR << "Testing invalid IMPORT script tag with recursion using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -813,7 +816,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing invalid IMPORT script tag using:\n" << xmlfile << std::endl;
+		TR << "Testing invalid IMPORT script tag using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -878,7 +881,7 @@ public:
 		//        applies null mover to 5 poses
 		//        outputs 5 poses
 
-		std::cout << "Testing mover chaining support using:\n" << xmlfile << std::endl;
+		TR << "Testing mover chaining support using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -895,18 +898,18 @@ public:
 			core::pose::PoseOP p;
 			std::set<std::string> sequences;
 
-			std::cout << "Pose " << i << ": " << pose.sequence() << std::endl;
+			TR << "Pose " << i << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
 			while ( ( p = mover->get_additional_output() ) ) {
 				std::string sequence(p->sequence());
 				bool const exists( sequences.find( sequence ) != sequences.end() );
 				if ( exists ) {
-					std::cout << "Error: sequence present twice! => " << sequence << std::endl;
+					TR << "Error: sequence present twice! => " << sequence << std::endl;
 					continue;
 				}
 				++i;
-				std::cout << "Pose " << i << ": " << sequence << std::endl;
+				TR << "Pose " << i << ": " << sequence << std::endl;
 				sequences.insert(sequence);
 			}
 
@@ -972,7 +975,7 @@ public:
 		//         applies null mover to 50 poses
 		//         outputs 50 poses
 
-		std::cout << "Testing mover chaining support with 2 levels of MultiplePoseMover using:\n" << xmlfile << std::endl;
+		TR << "Testing mover chaining support with 2 levels of MultiplePoseMover using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -989,18 +992,18 @@ public:
 			core::pose::PoseOP p;
 			std::set<std::string> sequences;
 
-			std::cout << "Pose " << i << ": " << pose.sequence() << std::endl;
+			TR << "Pose " << i << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
 			while ( ( p = mover->get_additional_output() ) ) {
 				std::string sequence(p->sequence());
 				bool const exists( sequences.find( sequence ) != sequences.end() );
 				if ( exists ) {
-					std::cout << "Error: sequence present twice! => " << sequence << std::endl;
+					TR << "Error: sequence present twice! => " << sequence << std::endl;
 					continue;
 				}
 				++i;
-				std::cout << "Pose " << i << ": " << sequence << std::endl;
+				TR << "Pose " << i << ": " << sequence << std::endl;
 				sequences.insert(sequence);
 			}
 
@@ -1056,7 +1059,7 @@ public:
 		//         applies null mover to 30 poses
 		//         outputs 30 poses
 
-		std::cout << "Testing mover chaining support with 2 x distribute MultiplePoseMover using:\n" << xmlfile << std::endl;
+		TR << "Testing mover chaining support with 2 x distribute MultiplePoseMover using:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -1073,18 +1076,18 @@ public:
 			core::pose::PoseOP p;
 			std::set<std::string> sequences;
 
-			std::cout << "Pose " << i << ": " << pose.sequence() << std::endl;
+			TR << "Pose " << i << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
 			while ( ( p = mover->get_additional_output() ) ) {
 				std::string sequence(p->sequence());
 				bool const exists( sequences.find( sequence ) != sequences.end() );
 				if ( exists ) {
-					std::cout << "Error: sequence present twice! => " << sequence << std::endl;
+					TR << "Error: sequence present twice! => " << sequence << std::endl;
 					continue;
 				}
 				++i;
-				std::cout << "Pose " << i << ": " << sequence << std::endl;
+				TR << "Pose " << i << ": " << sequence << std::endl;
 				sequences.insert(sequence);
 			}
 
@@ -1121,7 +1124,7 @@ public:
 			"  </PROTOCOLS>\n"
 			"</ROSETTASCRIPTS>\n";
 
-		std::cout << "Testing additional output wrapper:\n" << xmlfile << std::endl;
+		TR << "Testing additional output wrapper:\n" << xmlfile << std::endl;
 
 		std::istringstream script_stream( xmlfile );
 		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
@@ -1140,13 +1143,13 @@ public:
 			std::set<std::string> sequences;
 
 			++total_poses;
-			std::cout << "Pose " << total_poses << ": " << pose.sequence() << std::endl;
+			TR << "Pose " << total_poses << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
 			while ( ( p = mover->get_additional_output() ) ) {
 				++total_poses;
 				std::string sequence(p->sequence());
-				std::cout << "Pose " << total_poses << ": " << pose.sequence() << std::endl;
+				TR << "Pose " << total_poses << ": " << pose.sequence() << std::endl;
 
 				bool const exists( sequences.find( sequence ) != sequences.end() );
 				if ( exists ) {

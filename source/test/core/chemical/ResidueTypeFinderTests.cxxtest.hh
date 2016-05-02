@@ -119,12 +119,12 @@ public:
 		rtf.name3( "ALA" );
 		ResidueTypeCOPs residues( rtf.get_possible_base_residue_types() );
 		TS_ASSERT_EQUALS( residues.size(), 1 ); // This is likely to fail now.
-		std::cout << "Redoing " << std::endl;
+		TR << "Redoing " << std::endl;
 		ResidueTypeFinder rtf2( *rts_ );
 		rtf2.name3( "ALA" );
 		ResidueTypeCOPs residues2( rtf2.get_possible_base_residue_types() );
 		TS_ASSERT_EQUALS( residues2.size(), 1 ); // Should be quick, as ALA_pdb is prohibited
-		std::cout << "Redoing done " << std::endl;
+		TR << "Redoing done " << std::endl;
 	}
 
 	void test_get_by_odd_name3() {

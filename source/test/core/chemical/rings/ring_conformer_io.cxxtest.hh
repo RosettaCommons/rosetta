@@ -22,10 +22,12 @@
 
 // Utility header
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <map>
 
+static THREAD_LOCAL basic::Tracer TR("core.chemical.rings.ring_conformer_io.cxxtest");
 
 class RingConformerIOTests : public CxxTest::TestSuite {
 public:
@@ -48,7 +50,7 @@ public:
 		using namespace utility;
 		using namespace core::chemical::rings;
 
-		TS_TRACE( "Testing read_conformers_from_database_file_for_ring_size() method." );
+		TR << "Testing read_conformers_from_database_file_for_ring_size() method."  << std::endl;
 
 		vector1< RingConformer > const conformers(
 			read_conformers_from_database_file_for_ring_size( "core/chemical/rings/dummy_conformers.data", 8 ) );

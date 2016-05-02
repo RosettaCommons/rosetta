@@ -707,7 +707,7 @@ public:
 
 		int count(1);
 		while ( ! iter.at_end() ) {
-			std::cout << "Count: " << count << std::endl;
+			//std::cout << "Count: " << count << std::endl;
 			++iter;
 			++count;
 			//iter.calc_bin_and_pos();

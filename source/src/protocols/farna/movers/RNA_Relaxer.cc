@@ -147,7 +147,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose )
 
 	time_t pdb_end_time = time(NULL);
 
-	scorefxn->show( std::cout, pose );
+	scorefxn->show( TR, pose );
 
 	TR << "RNA relaxer finished in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 

@@ -27,6 +27,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("core.io.PDB_IO.cxxtest");
 
 using namespace core;
 
@@ -109,7 +112,7 @@ public:
 		// This file has a leading fragment of an Arg residue that needs to be ignored.
 		import_pose::pose_from_file(pose, "core/io/1ten.pdb", core::import_pose::PDB_file);
 		TS_ASSERT_EQUALS( pose.total_residue(), 89 );
-		TS_TRACE(pose.annotated_sequence());
+		TR << pose.annotated_sequence() << std::endl;
 		TS_ASSERT_EQUALS( pose.annotated_sequence(),
 			"L[LEU:NtermProteinFull]DAPSQIEVKDVTDTTALITWFKPLAEIDGIELTYGIKDVPGDRTTIDLTEDENQYSIGNLKPDTEYEVSLISRRGDMSSNPAKETFTT[THR:CtermProteinFull]" );
 	}

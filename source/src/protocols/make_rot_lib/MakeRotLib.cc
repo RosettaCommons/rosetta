@@ -31,6 +31,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // numeric headers
 #include <numeric/angle.functions.hh>
@@ -49,6 +50,8 @@
 #include <iomanip>
 #include <cmath>
 
+
+static THREAD_LOCAL basic::Tracer TR("protocols.make_rot_lib.MakeRotLib");
 
 namespace protocols {
 namespace make_rot_lib {
@@ -116,13 +119,13 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 	using namespace chemical;
 	using namespace conformation;
 
-	std::cout << "In min_rotamers()..." << std::flush << std::endl;
+	TR << "In min_rotamers()..." << std::flush << std::endl;
 
 	// iterate over rotamers array
 	Size const nrot( rotamers.size() );
 	for ( Size i = 1; i <= nrot; ++i ) {
 
-		std::cout << "Working on rotamer " << i << " of " << nrot << std::flush << std::endl;
+		TR << "Working on rotamer " << i << " of " << nrot << std::flush << std::endl;
 
 		// get number of chi
 		Size const nchi( rotamers[i].get_num_chi() );
@@ -164,7 +167,7 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 
 		// score the pose
 		//Real debug_ener( (*scrfxn)( pose ) );
-		//std::cout << "DEBUG ENER: " << debug_ener << std::endl;
+		//TR << "DEBUG ENER: " << debug_ener << std::endl;
 
 		// set phi, psi, omg, eps and chi(s)
 		id::TorsionID bb1( 1, id::BB, 1 );
@@ -186,7 +189,7 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 		// score the pose
 		Real orig_ener( (*scrfxn)( pose ) );
 
-		std::cout << "ORIG ENER: " << orig_ener << "\t" << pose.energies().total_energy() << std::endl;
+		TR << "ORIG ENER: " << orig_ener << "\t" << pose.energies().total_energy() << std::endl;
 
 		// minimize the pose
 		kinematics::MoveMapOP mvmp( new kinematics::MoveMap );
@@ -215,7 +218,7 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 
 		// output ending pose
 
-		std::cout << "MIN ENER: " << min_ener << " found in " << iter << " steps" << std::endl;
+		TR << "MIN ENER: " << min_ener << " found in " << iter << " steps" << std::endl;
 
 		EnergyMap em( pose.energies().residue_total_energies(1) );
 		rotamers[i].set_twist( em[ mm_twist ] );
@@ -302,10 +305,10 @@ init_rotamers_centroids
 	std::string patch;
 	if ( is_peptoid ) { // use this patch if we want peptoids
 		patch = ":AcetylatedNtermDimethylatedCtermPeptoidFull";
-		std::cout << "Making a PEPTOID rotamer library..." << std::endl;
+		TR << "Making a PEPTOID rotamer library..." << std::endl;
 	} else { // use this patch if protein
 		patch = ":MethylatedCtermProteinFull:AcetylatedNtermProteinFull";
-		std::cout << "Making a PROTEIN rotamer library..." << std::endl;
+		TR << "Making a PROTEIN rotamer library..." << std::endl;
 	}
 
 	aa_name = base_aa_name + patch;
@@ -528,17 +531,17 @@ avg_cluster_cen_dist(RotVec & rotamers, Size & ncluster)
 
 	//print out how many rots in each cluster
 	for ( Size i=1; i <= ncluster; ++i ) {
-		std::cout << "Cluster: "<< i << " contains "<< num_rots[i] << " of "<< rotamers.size()<< "   or %=" << static_cast<Real>(num_rots[i]) / static_cast<Real>(rotamers.size())  <<std::endl;
+		TR << "Cluster: "<< i << " contains "<< num_rots[i] << " of "<< rotamers.size()<< "   or %=" << static_cast<Real>(num_rots[i]) / static_cast<Real>(rotamers.size())  <<std::endl;
 	}
 
-	std::cout <<"AVG_CLUST_CENT_DST:   " <<std::endl;
+	TR <<"AVG_CLUST_CENT_DST:   " <<std::endl;
 	Real avgdist(0);
 	for ( Size i = 1; i <= ncluster; ++i ) {
-		std::cout  << total_dist[i]/num_rots[i] << "\t";
+		TR  << total_dist[i]/num_rots[i] << "\t";
 		avgdist += (total_dist[i]/num_rots[i]);
 	}
-	std::cout << std::endl;
-	std::cout << "AVG_CENT_DST:"  << "\t";
+	TR << std::endl;
+	TR << "AVG_CENT_DST:"  << "\t";
 	return avgdist / total_dist.size();
 }
 
@@ -601,10 +604,10 @@ get_final_rot_probs( RotVec & final_rotamers)
 	for ( Size i=1; i<=final_rotamers.size(); ++i ) {
 		prob_temp[i] = exp( ( -normalized_ener[i] ) / KbT ) ;
 		total_prob += prob_temp[i];
-		std::cout <<"Cluster:  " << i << "   Probability=" << prob_temp[i] << std::endl;
+		TR <<"Cluster:  " << i << "   Probability=" << prob_temp[i] << std::endl;
 	}
-	std::cout <<"Total Probability= " << total_prob << std::endl;
-	std::cout <<"Kb T value used: " << KbT << std::endl;
+	TR <<"Total Probability= " << total_prob << std::endl;
+	TR <<"Kb T value used: " << KbT << std::endl;
 
 	//normalizes and sets probabilities of final_rotamers
 	for ( Size i=1; i<=final_rotamers.size(); ++i ) {
@@ -658,7 +661,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		}
 		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 		for ( Size j=1; j<= 25; ++j ) {
-			//std::cout << " ----- " << j << " ----- " << std::flush << std::endl;
+			//TR << " ----- " << j << " ----- " << std::flush << std::endl;
 			mnmvr.apply( pose );
 		}
 
@@ -688,19 +691,19 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		Real test_ener ( (*scrfxn)(pose) );
 		Real found_ener (final_rotamers[i].get_energy());
 		if ( test_ener != found_ener ) {
-			std::cout << "--------WARNING---------"<< std::endl;
-			std::cout << "For Final_Rot: " << i << "  Scored E: "<<  test_ener  << "  but Min Rot E: "<< found_ener <<std::endl;
+			TR << "--------WARNING---------"<< std::endl;
+			TR << "For Final_Rot: " << i << "  Scored E: "<<  test_ener  << "  but Min Rot E: "<< found_ener <<std::endl;
 		}
 
 		//set step size of chi
 		Real chi_step (0.1);
 
 		// search around minimized chi's
-		//std::cout <<"pre-for loop" <<std::endl;
+		//TR <<"pre-for loop" <<std::endl;
 		for ( Size j = 1; j <= nchi; ++j ) {
 			Size k(0);
 			Real new_ener (0);
-			//std::cout <<"pre-while loop" <<std::endl;
+			//TR <<"pre-while loop" <<std::endl;
 			while ( new_ener < cut_off_ener && (k * chi_step) <= 30 ) {
 				k=k+1;
 				pose.set_chi( j, 1, numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) + k * chi_step ));
@@ -710,7 +713,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 				// set new_ener to highest energy in either direction
 				new_ener = (plus_ener >= neg_ener ? plus_ener : neg_ener);
 
-				//std::cout << "While Loop run: " << k <<" for chi: "<< j
+				//TR << "While Loop run: " << k <<" for chi: "<< j
 				//<<" for final_rot: " << i <<  "   Current E= " << new_ener << "  Cutoff E=" << cut_off_ener << std::endl;
 			}
 			final_rotamers[i].set_std_dev(k*chi_step, j);

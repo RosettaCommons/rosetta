@@ -29,6 +29,8 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+static THREAD_LOCAL basic::Tracer TR("core.pack.util.cxxtest");
+
 using namespace core;
 using namespace core::pack;
 using namespace core::pose;
@@ -49,7 +51,7 @@ public:
 	/// @brief test simple rotamer recovery
 	void test_rotamer_recovery() {
 
-		TS_TRACE("Testing rotamer recovery");
+		TR << "Testing rotamer recovery" << std::endl;
 
 		// get poses
 		Pose pose, native;
@@ -68,7 +70,7 @@ public:
 	/// @brief test residue rotamer recovery
 	void test_residue_rotamer_recovery() {
 
-		TS_TRACE("Testing residue rotamer recovery");
+		TR << "Testing residue rotamer recovery" << std::endl;
 
 		// get poses
 		Pose pose, native;

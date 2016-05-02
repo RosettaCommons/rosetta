@@ -56,6 +56,12 @@ public:
 		utility::pointer::ReferenceCountOP const op
 	);
 
+	/// @brief Does the data map contain the given type?
+	bool has_type( std::string const & type ) const;
+	/// @brief Does the data map contain an entry with a specific name in the given type?
+	/// @note calling this function without providing a name is just plain wrong and makes no sense
+	/// and I would be changing that right now if Kale hadn't already found out that some code
+	/// relies on this bad behavior back in pull request #187
 	bool has( std::string const & type, std::string const & name="" ) const;
 	template< class Ty > Ty get( std::string const & type, std::string const & name ) const;
 	template< class Ty > utility::pointer::shared_ptr< Ty > get_ptr( std::string const & type, std::string const & name ) const;

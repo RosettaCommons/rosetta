@@ -42,6 +42,8 @@
 #include <string>
 #include <cmath>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.SpinAroundPartnerMover.cxxtest");
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
@@ -84,7 +86,7 @@ public: // test functions
 	// test constructor from jumpnum and angle
 	void test_constructor_from_jumpnum () {
 
-		TS_TRACE("\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER");
+		TR << "\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER" << std::endl;
 
 		// jump = 1
 		// angle = 43

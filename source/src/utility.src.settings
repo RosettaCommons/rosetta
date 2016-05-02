@@ -12,6 +12,7 @@
 sources = {
 	"utility": [
 		"basic_sys_util",
+		"backtrace",
 		"Binary_Util",
 		"CSI_Sequence",
 		"curl",

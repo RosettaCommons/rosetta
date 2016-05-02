@@ -244,7 +244,7 @@ FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key 
 	}
 
 
-	std::cout << "Picked Fragment Library for sequence " << RNA_string << " " <<
+	TR << "Picked Fragment Library for sequence " << RNA_string << " " <<
 		" and sec. struct " << RNA_secstruct_string << " ... found " <<
 		fragment_library_p->get_align_depth() << " potential fragments" << std::endl;
 
@@ -274,7 +274,7 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	Size const num_frags = fragment_library_pointer->get_align_depth();
 
 	if ( num_frags == 0 ) { //trouble.
-		std::cout << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
+		TR << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
 		std::cerr << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
@@ -420,7 +420,7 @@ FullAtomRNA_Fragments::read_vall_torsions( std::string const & filename ){
 
 
 	///////////////////////////////////////////////////////////////
-	std::cout << "Reading in vall_torsions file: " <<  filename << std::endl;
+	TR << "Reading in vall_torsions file: " <<  filename << std::endl;
 
 	//This will check in rosetta_database first.
 	utility::io::izstream vall_in( filename.c_str() );
@@ -492,7 +492,7 @@ FullAtomRNA_Fragments::read_vall_torsions( std::string const & filename ){
 
 	vall_in.close();
 
-	std::cout << "Lines read from vall_torsions file: " << vall_size_ << std::endl;
+	TR << "Lines read from vall_torsions file: " << vall_size_ << std::endl;
 
 	///////////////////////////////////////////////////////////////
 	// Permanent storage.

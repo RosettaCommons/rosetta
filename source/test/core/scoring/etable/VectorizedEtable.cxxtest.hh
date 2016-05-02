@@ -851,11 +851,11 @@ public:
 		}
 		clock_t stop_time2 = clock();
 
-		std::cout << "Vectorized: " << ((double) stop_time1 - start_time1 )/CLOCKS_PER_SEC << " (wall time: " << stop-start << ")";
-		std::cout << " regular: " << ((double) stop_time2 - start_time2 )/CLOCKS_PER_SEC << std::endl;
+		TR << "Vectorized: " << ((double) stop_time1 - start_time1 )/CLOCKS_PER_SEC << " (wall time: " << stop-start << ")";
+		TR << " regular: " << ((double) stop_time2 - start_time2 )/CLOCKS_PER_SEC << std::endl;
 
-		std::cout << " atr: " << ljatr_tot << " rep: " << ljrep_tot << " sol: " << fasol_tot << std::endl;
-		std::cout << " count work 1: " << count_work_1 << " count work 2: " << count_work_2 << std::endl;
+		TR << " atr: " << ljatr_tot << " rep: " << ljrep_tot << " sol: " << fasol_tot << std::endl;
+		TR << " count work 1: " << count_work_1 << " count work 2: " << count_work_2 << std::endl;
 	}
 
 	VReal eval_spline_poly(
@@ -893,10 +893,10 @@ public:
 		VReal c2 = ( 3*b*f - 3*a*e ) / ( 6 * (b-a) );
 		VReal c3 = ( e-f ) / ( 6 * (b-a) );
 
-		std::cout << "c0 " << c0 << std::endl;
-		std::cout << "(  b*d - a*c ) / ( b-a ): " << (  b*d - a*c ) / ( b-a ) << std::endl;
-		std::cout << " b*d/(b-a) " << b*d/(b-a) << std::endl;
-		std::cout << " a*c/(b-a) " << a*c/(b-a) << std::endl;
+		TR << "c0 " << c0 << std::endl;
+		TR << "(  b*d - a*c ) / ( b-a ): " << (  b*d - a*c ) / ( b-a ) << std::endl;
+		TR << " b*d/(b-a) " << b*d/(b-a) << std::endl;
+		TR << " a*c/(b-a) " << a*c/(b-a) << std::endl;
 
 		VReal step = 0.01;
 		for ( VReal x = xlo; x < xhi; x += step ) {
@@ -1027,11 +1027,11 @@ public:
 		}
 		clock_t stop_time2 = clock();
 
-		std::cout << "Square distance vectorized: " << ((double) stop_time1 - start_time1 )/CLOCKS_PER_SEC << " (wall time: " << stop-start << ")";
-		std::cout << " regular: " << ((double) stop_time2 - start_time2 )/CLOCKS_PER_SEC << std::endl;
+		TR << "Square distance vectorized: " << ((double) stop_time1 - start_time1 )/CLOCKS_PER_SEC << " (wall time: " << stop-start << ")";
+		TR << " regular: " << ((double) stop_time2 - start_time2 )/CLOCKS_PER_SEC << std::endl;
 
-		std::cout << " count work 1: " << count_work_1 << " count work 2: " << count_work_2 << std::endl;
-		std::cout << " d2_1: " << d2_1 << " d2_2: " << d2_2 << std::endl;
+		TR << " count work 1: " << count_work_1 << " count work 2: " << count_work_2 << std::endl;
+		TR << " d2_1: " << d2_1 << " d2_2: " << d2_2 << std::endl;
 	}
 
 

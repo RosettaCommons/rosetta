@@ -78,7 +78,6 @@ public:
 		//std::cout << max_c << " ";
 		//std::cout << rate << " ";
 		TS_ASSERT_LESS_THAN(rate, .15);
-		//TS_TRACE("some message");
 	}
 
 	void test_SaveAndRestore() {

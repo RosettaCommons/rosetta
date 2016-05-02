@@ -33,6 +33,9 @@
 #include <boost/foreach.hpp>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("numeric.kinematic_closure.DixonResultantTests.cxxtest");
 
 // C++ headers
 #include <iostream>
@@ -111,9 +114,9 @@ public:
 			 1.00287787509,    0.197060425169,  -0.0826531058538,   -0.366971525496,   -0.102021286235,   -0.147093522617,                 0,                 0,
 			0.197060425169,                 0,   -0.366971525496,                 0,   -0.147093522617,                 0,                 0,                 0;
 
-		// Note that if I forget to transpose these matrices, I still get the right 
-		// eigenvalues, but I get the wrong eigenvectors.  It's very surprising to 
-		// me that I would even get the eigenvalues right.  
+		// Note that if I forget to transpose these matrices, I still get the right
+		// eigenvalues, but I get the wrong eigenvectors.  It's very surprising to
+		// me that I would even get the eigenvalues right.
 		R0.transposeInPlace();
 		R1.transposeInPlace();
 		R2.transposeInPlace();
@@ -158,35 +161,35 @@ public:
 		u2.fill(0);
 		u3.fill(0);
 
-		cout << "------------------------------------------------------------";
-		cout << endl << endl;
+		TR << "------------------------------------------------------------";
+		TR << endl << endl;
 
-		cout << "eigenvectors = \\" << endl;
-		cout << eigenvectors.format(scipy) << endl << endl;
+		TR << "eigenvectors = \\" << endl;
+		TR << eigenvectors.format(scipy) << endl << endl;
 
 		for (int i = 0; i < num_solutions; i++) {
 			if (abs(eigenvectors(1, i)) > 1e-8) {
-				cout << "Using: 1, 2, 5" << endl;
+				TR << "Using: 1, 2, 5" << endl;
 				u1(i) = eigenvectors(2, i) / eigenvectors(1, i);
 				u2(i) = eigenvectors(5, i) / eigenvectors(1, i);
 			}
 			else {
-				cout << "Using: 3, 4, 7" << endl;
+				TR << "Using: 3, 4, 7" << endl;
 				u1(i) = eigenvectors(4, i) / eigenvectors(3, i);
 				u2(i) = eigenvectors(7, i) / eigenvectors(3, i);
 			}
 			u3(i) = eigenvalues(i);
 		}
-		cout << endl;
+		TR << endl;
 
-		cout << "u3 (via eigenvalues) = \\" << endl;
-		cout << u3.format(scipy) << endl << endl;
+		TR << "u3 (via eigenvalues) = \\" << endl;
+		TR << u3.format(scipy) << endl << endl;
 
-		cout << "u2 (via eigenvectors) = \\" << endl;
-		cout << u2.format(scipy) << endl << endl;
+		TR << "u2 (via eigenvectors) = \\" << endl;
+		TR << u2.format(scipy) << endl << endl;
 
-		cout << "u1 (via eigenvectors) = \\" << endl;
-		cout << u1.format(scipy) << endl << endl;
+		TR << "u1 (via eigenvectors) = \\" << endl;
+		TR << u1.format(scipy) << endl << endl;
 
 	}
 	// }}}1
@@ -205,7 +208,7 @@ public:
 			D[i].resize(3, 0);
 		}
 
-		// These inputs give an output that is nearly 180 deg.  This can provoke 
+		// These inputs give an output that is nearly 180 deg.  This can provoke
 		// some numerical instabilities.
 
 		A[1][1] =  1.74673020;   A[1][2] =  0.30151262;   A[1][3] = -0.80048645;
@@ -229,15 +232,15 @@ public:
 
 		dixon_eig(A, B, C, D, order, cos, sin, u, num_solutions);
 
-		cout << "u (accurate) = \\" << endl;
+		TR << "u (accurate) = \\" << endl;
 		printMatrix(u);
-		cout << endl;
+		TR << endl;
 
 		dixon_sturm(A, B, C, D, order, cos, sin, u, num_solutions);
 
-		cout << "u (inaccurate) = \\" << endl;
+		TR << "u (inaccurate) = \\" << endl;
 		printMatrix(u);
-		cout << endl;
+		TR << endl;
 
 	}
 
@@ -275,15 +278,15 @@ public:
 		D[2][1] =  0.00000000;   D[2][2] =  0.00000000;   D[2][3] =  0.00000000;
 		D[3][1] =  0.00000000;   D[3][2] =  0.00000000;   D[3][3] =  0.00000000;
 
-		cout << "A = \\" << endl; printMatrix(A); cout << endl;
-		cout << "B = \\" << endl; printMatrix(B); cout << endl;
-		cout << "C = \\" << endl; printMatrix(C); cout << endl;
-		cout << "D = \\" << endl; printMatrix(D); cout << endl;
+		TR << "A = \\" << endl; printMatrix(A); TR << endl;
+		TR << "B = \\" << endl; printMatrix(B); TR << endl;
+		TR << "C = \\" << endl; printMatrix(C); TR << endl;
+		TR << "D = \\" << endl; printMatrix(D); TR << endl;
 
 		dixon_eig(A, B, C, D, order, cos, sin, u, num_solutions);
 
-		cout << "u = \\" << endl; printMatrix(u); cout << endl;
-	
+		TR << "u = \\" << endl; printMatrix(u); TR << endl;
+
 	}
 	// }}}1
 

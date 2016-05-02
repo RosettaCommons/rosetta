@@ -333,7 +333,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	// Get the full strength constraint back
 	update_denovo_scorefxn_weights( rounds_ );
 	update_pose_constraints( rounds_, pose );
-	if ( options_->verbose() ) working_denovo_scorefxn_->show( std::cout, pose );
+	if ( options_->verbose() ) working_denovo_scorefxn_->show( TR, pose );
 	final_scorefxn_ = working_denovo_scorefxn_;
 
 	lores_pose_ = pose.clone();

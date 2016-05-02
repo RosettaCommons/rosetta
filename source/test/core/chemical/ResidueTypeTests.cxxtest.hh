@@ -520,7 +520,7 @@ public:
 		res5.add_variant_type( SPECIAL_ROT );
 
 		// Check all three varieties of comparisons.
-		TS_TRACE( "Testing variant comparisons using VariantType enums." );
+		TR << "Testing variant comparisons using VariantType enums."  << std::endl;
 
 		TS_ASSERT( variants_match( res1, res2 ) );
 		TS_ASSERT( ! variants_match( res1, res3 ) );
@@ -543,7 +543,7 @@ public:
 		TS_ASSERT( variants_match_with_exceptions( res1, res5, exceptions ) );
 
 		// Check for comparisons when "custom" VariantTypes are involved.
-		TS_TRACE( "Testing variant comparisons using custom VariantTypes." );
+		TR << "Testing variant comparisons using custom VariantTypes."  << std::endl;
 
 		res2.enable_custom_variant_types();
 		TS_ASSERT( variants_match( res1, res2 ) );

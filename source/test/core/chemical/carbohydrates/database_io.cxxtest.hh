@@ -26,9 +26,13 @@
 // Project header
 #include <core/types.hh>
 
+#include <basic/Tracer.hh>
+
+
 // C++ header
 #include <map>
 
+static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.database_io.cxxtest");
 
 class CarbohydrateDatabaseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -50,7 +54,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE( "Testing read_codes_and_roots_from_database_file() method." );
+		TR << "Testing read_codes_and_roots_from_database_file() method."  << std::endl;
 
 		map< string, string > map(
 			read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
@@ -65,7 +69,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE( "Testing read_ring_sizes_and_morphemes_from_database_file() method." );
+		TR << "Testing read_ring_sizes_and_morphemes_from_database_file() method."  << std::endl;
 
 		map< core::Size, pair< char, string > > map( read_ring_sizes_and_morphemes_from_database_file(
 			"core/chemical/carbohydrates/ring_size_to_morphemes.map" ) );
@@ -75,15 +79,14 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( map[ 4 ].second, "ohwow" );
 
 		// Test for bad files.
-		TS_TRACE( "An input error should follow:" );
 		try {
+			set_throw_on_next_assertion_failure();
 			read_ring_sizes_and_morphemes_from_database_file(
 				"core/chemical/carbohydrates/ring_size_to_morphemes.bad_map" );
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
-				"rings cannot have less than 3 atoms!\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected_message( "ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
+				"rings cannot have less than 3 atoms!" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected_message.size() ), expected_message );
 		}
 	}
 
@@ -94,7 +97,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE( "Testing read_nomenclature_table_from_database_file() method." );
+		TR << "Testing read_nomenclature_table_from_database_file() method."  << std::endl;
 
 		SugarModificationsNomenclatureTable table( read_nomenclature_table_from_database_file(
 			"core/chemical/carbohydrates/nomenclature.table" ) );
@@ -109,7 +112,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::id;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE( "Testing read_linkage_conformers_from_database_file() method." );
+		TR << "Testing read_linkage_conformers_from_database_file() method."  << std::endl;
 
 		LinkageConformers linkages( read_linkage_conformers_from_database_file(
 			"core/chemical/carbohydrates/linkage_data_table.tsv" ) );

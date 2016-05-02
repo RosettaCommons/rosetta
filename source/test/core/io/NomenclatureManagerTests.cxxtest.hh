@@ -26,7 +26,7 @@
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
+#include <basic/Tracer.hh>
 
 //read pose stuff
 #include <core/io/StructFileRep.hh>
@@ -38,6 +38,8 @@
 
 // C++ header
 #include <string>
+
+static THREAD_LOCAL basic::Tracer TR("core.io.NomenclatureManagerTests.cxxtest");
 
 // Without the command line (wocl)
 class NomenclatureManagerTestsWOCL : public CxxTest::TestSuite {
@@ -61,7 +63,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace basic::options;
 		using namespace core::io;
 
-		TS_TRACE( "Testing rosetta_names_from_pdb_code() static method with alternative 3-letter codes not provided." );
+		TR <<  "Testing rosetta_names_from_pdb_code() static method with alternative 3-letter codes not provided."  << std::endl;
 
 		pair< string, string > residue_empty(
 			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "" ) );
@@ -130,7 +132,7 @@ public: // Standard methods ///////////////////////////////////////////////////
 		using namespace basic::options;
 		using namespace core::io;
 
-		TS_TRACE( "Testing nomenclature_manager_three_name_conflicts() static method with alternative 3-letter codes provided." );
+		TR <<  "Testing nomenclature_manager_three_name_conflicts() static method with alternative 3-letter codes provided."  << std::endl;
 		//        utility::vector1< string > const codes_files( 1, "gylcam.codes" );
 		//        option[ OptionKeys::in::alternate_3_letter_codes ]( codes_files );
 		//

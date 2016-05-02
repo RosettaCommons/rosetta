@@ -23,7 +23,9 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfoManager.cxxtest");
 
 class CarbohydrateInfoManagerTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////
@@ -45,7 +47,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::chemical::carbohydrates;
 		using namespace core::id;
 
-		TS_TRACE( "Testing access to linkage conformer data..." );
+		TR << "Testing access to linkage conformer data..."  << std::endl;
 
 		TS_ASSERT( CarbohydrateInfoManager::pair_has_linkage_statistics( "->3)-evilsugar", "alpha-evilsugar" ) );
 		TS_ASSERT( CarbohydrateInfoManager::pair_has_linkage_statistics( "->3)-alpha-evilsugar-", "->3)-alpha-evilsugar-" ) );

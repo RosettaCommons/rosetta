@@ -43,12 +43,15 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
 
 //C++ headers
 #include <iostream>
 #include <boost/bind/bind.hpp>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.environment.EnvironmentJump.cxxtest");
 
 // --------------- Test Class --------------- //
 
@@ -90,7 +93,7 @@ public:
 	}
 
 	void test_jump_moves() {
-		TS_TRACE( "Beginning: test_jump_moves" );
+		TR <<  "Beginning: test_jump_moves"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace protocols::environment::claims;
@@ -168,11 +171,11 @@ public:
 			TS_ASSERT_LESS_THAN( rotation_delta, 0.000001 );
 		}
 
-		TS_TRACE( "End: test_jump_moves" );
+		TR <<  "End: test_jump_moves"  << std::endl;
 	}
 
 	void test_autocut_placement( core::pose::Pose & pose ) {
-		TS_TRACE( "Beginning: test_autocuts" );
+		TR <<  "Beginning: test_autocuts"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace protocols::environment::claims;
@@ -205,11 +208,11 @@ public:
 		TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 0 );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 0 );
 
-		TS_TRACE( "End: test_autocuts" );
+		TR <<  "End: test_autocuts"  << std::endl;
 	}
 
 	void test_cut_inheritance() {
-		TS_TRACE( "Beginning: test_cut_inheritance" );
+		TR <<  "Beginning: test_cut_inheritance"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace protocols::environment::claims;
@@ -255,11 +258,11 @@ public:
 
 		TS_ASSERT_EQUALS( final_pose.fold_tree(), pose.fold_tree() );
 
-		TS_TRACE( "End: test_cut_inheritance" );
+		TR <<  "End: test_cut_inheritance"  << std::endl;
 	}
 
 	void test_cache_persistence() {
-		TS_TRACE( "Beginning: test_cache_persistence" );
+		TR <<  "Beginning: test_cache_persistence"  << std::endl;
 
 		using namespace core::pose::datacache;
 		using namespace basic::datacache;
@@ -278,7 +281,7 @@ public:
 
 		TS_ASSERT( final_pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
 
-		TS_TRACE( "End: test_jump_moves" );
+		TR <<  "End: test_jump_moves"  << std::endl;
 	}
 
 	void test_pdb_info_persistence() {

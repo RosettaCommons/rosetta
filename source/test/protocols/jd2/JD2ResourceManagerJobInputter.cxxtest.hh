@@ -35,6 +35,7 @@ class JD2ResourceManagerJobInputterTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
+		core_init();
 	}
 
 	void test_JD2ResourceManagerJobInputter_read_job_w_nstruct_10() {

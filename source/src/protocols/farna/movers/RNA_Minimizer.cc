@@ -176,7 +176,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	pose.constraint_set( save_pose_constraints );
 
 	(*scorefxn_)( pose );
-	scorefxn_->show( std::cout, pose );
+	scorefxn_->show( TR, pose );
 
 	TR << "RNA minimizer finished in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 

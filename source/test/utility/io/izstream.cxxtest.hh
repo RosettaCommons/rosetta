@@ -141,17 +141,17 @@ class IZStreamTests : public CxxTest::TestSuite {
 		std::streampos beginning( stdistream.tellg() );
 		std::string line;
 		std::getline( stdistream, line );
-		std::cout << "line: '" << line << "' is good? " << is.good() << std::endl;
+		//std::cout << "line: '" << line << "' is good? " << is.good() << std::endl;
 		TS_ASSERT( line == "this is a file" );
 		stdistream.seekg( beginning );
 		std::getline( stdistream, line );
-		std::cout << "line, rewound: '" << line << "' is good? " << is.good() << std::endl;
+		//std::cout << "line, rewound: '" << line << "' is good? " << is.good() << std::endl;
 		TS_ASSERT( line == "this is a file" );
 		std::getline( stdistream, line );
-		std::cout << "line2: '" << line << "' is good? " << is.good()  << std::endl;
+		//std::cout << "line2: '" << line << "' is good? " << is.good()  << std::endl;
 		TS_ASSERT( line == "created with utmost care" );
 		std::getline( stdistream, line );
-		std::cout << "line3: '" << line << "' is good? " << is.good() << std::endl;
+		//std::cout << "line3: '" << line << "' is good? " << is.good() << std::endl;
 		TS_ASSERT( line == "to be compacted" );
 	}
 };

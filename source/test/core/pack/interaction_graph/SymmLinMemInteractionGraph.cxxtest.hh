@@ -676,7 +676,7 @@ public:
 		rotsets->build_rotamers( pose, *sfxn, packer_neighbor_graph );
 		rotsets->prepare_sets_for_packing( pose, *sfxn );
 
-		std::cout << "Creating interaction graphs with " << rotsets->nmoltenres() << " nodes" << std::endl;
+		//std::cout << "Creating interaction graphs with " << rotsets->nmoltenres() << " nodes" << std::endl;
 
 		PDInteractionGraphOP regular_ig( new PDInteractionGraph( rotsets->nmoltenres() ) );
 		SymmLinearMemoryInteractionGraphOP symlinmem_ig( new SymmLinearMemoryInteractionGraph( rotsets->nmoltenres() ) );

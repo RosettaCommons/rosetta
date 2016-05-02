@@ -20,9 +20,12 @@
 
 // Utility header
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <string>
+
+static THREAD_LOCAL basic::Tracer TR("core.chemical.rings.RingConformerSet.cxxtest");
 
 class RingConformerSetTests : public CxxTest::TestSuite {
 public:
@@ -55,8 +58,8 @@ public:
 	// Confirm that the proper number of conformers are loaded into 5- and 6-membered ring sets.
 	void test_get_all_nondegenerate_conformers()
 	{
-		TS_TRACE(
-			"Testing get_all_nondegenerate_conformers() method of RingConformerSet for 5- and 6-membered rings." );
+		TR <<
+			"Testing get_all_nondegenerate_conformers() method of RingConformerSet for 5- and 6-membered rings." << std::endl;
 		TS_ASSERT_EQUALS( set5_->get_all_nondegenerate_conformers().size(), 20 );
 		TS_ASSERT_EQUALS( set6_->size(), 38 );
 	}
@@ -69,8 +72,8 @@ public:
 		using namespace core::chemical::rings;
 		using namespace utility;
 
-		TS_TRACE( "Testing get_ideal_conformer_by_name(), get_ideal_conformer_by_CP_parameters(), and "
-			" get_ideal_conformer_from_nus() methods of RingConformerSet for 5- and 6-membered rings." );
+		TR << "Testing get_ideal_conformer_by_name(), get_ideal_conformer_by_CP_parameters(), and "
+			" get_ideal_conformer_from_nus() methods of RingConformerSet for 5- and 6-membered rings." << std::endl;
 
 		// Set up variables.
 		vector1< Real > params5, params6, params_bad;
@@ -154,71 +157,68 @@ public:
 			set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
 
 		// Test for bad input.
-		TS_TRACE( "A not-found error should follow:" );
 		try {
+			set_throw_on_next_assertion_failure();
 			set5_->get_ideal_conformer_by_name( "FOO" );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: No conformer with given name found in this set; exiting.\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected_error_message( "ERROR: No conformer with given name found in this set; exiting.\n" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected_error_message.size() ), expected_error_message );
 		}
 
-		TS_TRACE( "A series of bad-input errors should follow:" );
 		try {
+			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-				"yet a different number was provided; exiting.\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected( "ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.\n" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
 		params_bad.push_back( 0.0 );  // still bad because not enough params for a 6-membered ring
 		try {
+			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-				"yet a different number was provided; exiting.\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected( "ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.\n" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
 		params_bad.push_back( 180.0 );
 		params_bad.push_back( 90.0 );  // still bad because q = 0.0 (planar)
 		try {
+			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: Planar ring conformations are not handled by Rosetta; "
-				"please specify a non-zero q value; exiting.\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected( "ERROR: Planar ring conformations are not handled by Rosetta; "
+				"please specify a non-zero q value; exiting.\n" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
 		params_bad.push_back( 90.0 );  // still bad because too many params
 		try {
+			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-				"yet a different number was provided; exiting.\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected( "ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.\n" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
 
-		TS_TRACE( "A not-found error should follow:" );
 		nus_bad.push_back( 180.0 );  // impossible angle; no such ring would be possible
 		nus_bad.push_back( 180.0 );
 		nus_bad.push_back( 180.0 );
 		nus_bad.push_back( 180.0 );
 		nus_bad.push_back( 180.0 );
 		try {
+			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_from_nus( nus_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: No conformer with given nu angles found in this set; exiting.\n\n" );
-			TS_TRACE( "The above error message was expected." );
+			std::string expected( "ERROR: No conformer with given nu angles found in this set; exiting.\n" );
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
 	}
 
@@ -231,7 +231,7 @@ public:
 		using namespace std;
 		using namespace utility;
 
-		TS_TRACE( "Testing that RingConformer subsets have been populated correctly." );
+		TR << "Testing that RingConformer subsets have been populated correctly."  << std::endl;
 		TS_ASSERT_EQUALS( set5_->get_lowest_energy_conformer().specific_name, "1E" );
 		TS_ASSERT_EQUALS( set6_->get_lowest_energy_conformer().specific_name, "4C1" );
 

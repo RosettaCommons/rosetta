@@ -462,7 +462,7 @@ SymDofMover::apply(Pose & pose) {
 
 		core::pose::symmetry::make_symmetric_pose(pose, symmdata);
 		std::string symname = utility::file_basename(symm_file_);
-		std::cout << symname[0] << " " << symname[2] << " " << symname[5] << std::endl;
+		TR << symname[0] << " " << symname[2] << " " << symname[5] << std::endl;
 		if ( symname[0]=='P' && symname[2]=='_' && symname[5]=='.' ) {
 			TR << "try to setup P6 sym" << std::endl;
 			using namespace core::conformation::symmetry;

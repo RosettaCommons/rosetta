@@ -30,8 +30,12 @@
 
 #include <core/types.hh>
 
+#include <basic/Tracer.hh>
+
 // C++ Headers
 #include <cstdlib>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.benchmark.MakeCanonicalHelixTest.cxxtest");
 
 using namespace core;
 using namespace core::pose;
@@ -49,7 +53,7 @@ public: // test functions
 		// Setup current FASTA sequence
 		std::string sequence( "ALALALALALALALA" );
 
-		TS_TRACE( "Constructing pose from sequence: ALALALALALALALA" );
+		TR <<  "Constructing pose from sequence: ALALALALALALALA"  << std::endl;
 		// Grab the current residue typeset
 		ResidueTypeSetCOP const & residue_set(
 			ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
@@ -58,7 +62,7 @@ public: // test functions
 		make_pose_from_sequence( *pose_, sequence, *residue_set );
 
 		// Make pose into an ideal helix
-		TS_TRACE( "Creating a helical peptide from the 'pose from sequence'" );
+		TR <<  "Creating a helical peptide from the 'pose from sequence'"  << std::endl;
 		using namespace protocols::membrane::benchmark;
 		MakeCanonicalHelixOP helical_pept( new MakeCanonicalHelix() );
 		helical_pept->apply( *pose_ );
@@ -71,7 +75,7 @@ public: // test functions
 
 	void test_default_dihedral_angles() {
 
-		TS_TRACE( "Testing correct setup of ideal peptide from sequence with anticipated dihedral angles" );
+		TR <<  "Testing correct setup of ideal peptide from sequence with anticipated dihedral angles"  << std::endl;
 		for ( core::Size i = 1; i <= pose_->total_residue(); ++i ) {
 
 			TS_ASSERT_EQUALS( pose_->phi( i ), -57.0 );

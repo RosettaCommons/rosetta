@@ -41,6 +41,8 @@
 #include <string>
 #include <cmath>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.geometry.Embedding.cxxtest");
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
@@ -72,7 +74,7 @@ public: // test functions
 	// constructor from topology and radius
 	void test_constructor_from_topo_and_radius() {
 
-		TS_TRACE("Test constructor from topology and radius");
+		TR << "Test constructor from topology and radius" << std::endl;
 
 		SpanningTopologyOP topology( new SpanningTopology() );
 
@@ -84,7 +86,7 @@ public: // test functions
 
 		// create object using constructor
 		EmbeddingOP embed( new Embedding( *topology, radius ) );
-		embed->show();
+		embed->show( TR );
 
 		// create vectors for centers and normal
 		Vector center1( 0, 10, 0); // for spans
@@ -116,7 +118,7 @@ public: // test functions
 	// constructor from topology and pose
 	void test_constructor_from_topo_and_pose() {
 
-		TS_TRACE("Test constructor from topology and pose");
+		TR << "Test constructor from topology and pose" << std::endl;
 
 		// read in pose
 		Pose pose;
@@ -127,7 +129,7 @@ public: // test functions
 
 		// create object using constructor
 		EmbeddingOP embed( new Embedding( *topology, pose ) );
-		embed->show();
+		embed->show( TR );
 
 		// create vectors for centers and normals
 		Vector center1(-1.9835, -3.184, -0.108);  // for spans

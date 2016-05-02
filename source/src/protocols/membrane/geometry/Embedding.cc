@@ -47,6 +47,7 @@
 // C++ Headers
 #include <string>
 #include <cstdlib>
+#include <iostream>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.geometry.Embedding" );
 
@@ -179,6 +180,9 @@ Embedding::~Embedding(){}
 ///////////////
 
 // show object
+void Embedding::show() const {
+	show( std::cout );
+}
 void Embedding::show( std::ostream & out ) const {
 
 	out << "Span Embedding: " << std::endl;

@@ -117,7 +117,7 @@ public:
 
 		pose = create_1ten_pdb_pose();
 		pose.dump_pdb( "1ten_from_total_sasa_filter.pdb" );
-		std::cout << "Nresidues: " << pose.total_residue() << std::endl;
+		//std::cout << "Nresidues: " << pose.total_residue() << std::endl;
 
 		protocols::simple_filters::TotalSasaFilter test(0, /*hydrophobic=*/ true, /*polar=*/ false );
 

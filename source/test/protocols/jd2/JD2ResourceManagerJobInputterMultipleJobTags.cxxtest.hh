@@ -34,6 +34,7 @@ class JD2ResourceManagerJobInputterMultipleJobTagsTests : public CxxTest::TestSu
 public:
 
 	void setUp() {
+		core_init();
 	}
 
 	std::string input_v1(){

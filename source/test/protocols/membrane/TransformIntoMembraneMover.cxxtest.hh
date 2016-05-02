@@ -45,6 +45,8 @@
 // C++ Headers
 #include <cstdlib>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.TransformIntoMembraneMover.cxxtest");
+
 using namespace core;
 using namespace core::conformation::membrane;
 using namespace protocols::membrane::geometry;
@@ -94,7 +96,7 @@ public:
 	/// @brief test transform into default membrane
 	void test_transform_into_default_membrane() {
 
-		TS_TRACE( "=======Testing transform into membrane mover on default membrane coordinates" );
+		TR <<  "=======Testing transform into membrane mover on default membrane coordinates"  << std::endl;
 
 		using namespace protocols::membrane;
 
@@ -135,7 +137,7 @@ public:
 	// test constructor from embedding
 	void test_constructor_from_embedding() {
 
-		TS_TRACE( "=======Testing transform into membrane mover from defined embedding" );
+		TR <<  "=======Testing transform into membrane mover from defined embedding"  << std::endl;
 
 		using namespace protocols::membrane;
 
@@ -176,7 +178,7 @@ public:
 	/// @brief test transform into user-defined membrane
 	void test_transform_into_userdefined_membrane() {
 
-		TS_TRACE( "=======Testing transform into membrane mover on user provided membrane coordinates" );
+		TR <<  "=======Testing transform into membrane mover on user provided membrane coordinates"  << std::endl;
 
 		using namespace protocols::membrane;
 
@@ -212,7 +214,7 @@ public:
 	// test constructor form embedding and user-defined membrane
 	void test_constructor_from_embedding_and_membrane() {
 
-		TS_TRACE( "=======Testing transform into membrane mover from embedding and defined membrane" );
+		TR <<  "=======Testing transform into membrane mover from embedding and defined membrane"  << std::endl;
 
 		using namespace protocols::membrane;
 
@@ -254,7 +256,7 @@ public:
 	/// membrane normal axis is 0 (the "definition" of correct transformation)
 	void test_helix_to_normal_angle() {
 
-		TS_TRACE( "=======Testing helix to normal angle" );
+		TR <<  "=======Testing helix to normal angle"  << std::endl;
 
 		// Apply transformation to the protein
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );

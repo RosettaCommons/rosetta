@@ -27,7 +27,9 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
+static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo.cxxtest");
 
 class CarbohydrateInfoTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////
@@ -69,7 +71,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that CarbohydrateInfo.short_name_ is assigned correctly.
 	void test_Pose_chain_sequence_w_polysaccharide()
 	{
-		TS_TRACE( "Testing chain_sequence() method of Pose with polysaccharide chains." );
+		TR << "Testing chain_sequence() method of Pose with polysaccharide chains."  << std::endl;
 		TS_ASSERT_EQUALS( maltotriose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp" );
 		TS_ASSERT_EQUALS( isomaltose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->6)-D-Glcp" );
 		//TS_ASSERT_EQUALS( lactose_.chain_sequence( 1 ), "beta-D-Galp-(1->4)-D-Glcp" );
@@ -79,7 +81,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that backbone torsion angles are assigned correctly.
 	void test_Pose_phi_psi_omega_w_polysaccharide()
 	{
-		TS_TRACE( "Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
+		TR << "Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains." << std::endl;
 		TS_ASSERT_DELTA( maltotriose_.phi( 1 ), 0.000, 0.02 );
 
 		TS_ASSERT_DELTA( isomaltose_.phi( 2 ), 44.3268, 0.02 );
@@ -124,7 +126,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that side-chain torsion angles are assigned correctly.
 	void test_Pose_chi_w_polysaccharide()
 	{
-		TS_TRACE( "Testing chi() method of Pose with polysaccharide chains." );
+		TR << "Testing chi() method of Pose with polysaccharide chains."  << std::endl;
 		//TS_ASSERT_DELTA( maltotriose_.chi( 1, 2 ), 0.000, 0.02 );
 		TS_ASSERT_DELTA( maltotriose_.chi( 2, 2 ), -179.959, 0.02 );
 		TS_ASSERT_DELTA( maltotriose_.chi( 3, 2 ), 175.924, 0.02 );
@@ -139,7 +141,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core;
 		using namespace conformation;
 
-		TS_TRACE( "Testing branch_point() method of CarbohydrateInfo." );
+		TR << "Testing branch_point() method of CarbohydrateInfo."  << std::endl;
 		Residue const & res2( branched_fragment_.residue( 2 ) );
 		TS_ASSERT_EQUALS( res2.carbohydrate_info()->branch_point( 1 ), 6 );
 	}

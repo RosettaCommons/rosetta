@@ -37,6 +37,9 @@
 #include <utility/SimulateMPI.hh>
 #include <utility/mpi_util.hh>
 #include <utility/excn/Exceptions.hh>
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("devel.mmt_msd.MMTReceiver.cxxtest");
 
 // --------------- Test Class --------------- //
 
@@ -225,7 +228,7 @@ public:
 		utility::SimulateMPI::set_mpi_rank( 0 );
 		ts_assert_mpi_buffer_has_integer( 1, "test_MMTReceiver_handshake::handshake acknowledgement", devel::mmt_msd::handshake_acknowledged );
 		ts_assert_mpi_buffer_has_integer( 1, "test_MMTReceiver_handshake::handshake max capacity", 1 );
-		std::cout << "test_MMTReceiver_handshake complete" << std::endl;
+		TR << "test_MMTReceiver_handshake complete" << std::endl;
 	}
 
 	void dont_test_MMTReceiver_end_to_end() {
@@ -313,7 +316,7 @@ public:
 		TS_ASSERT_EQUALS( A_pose.residue(1).aa(), core::chemical::aa_ala );
 		TS_ASSERT_EQUALS( A_pose.residue(2).aa(), core::chemical::aa_gln );
 
-		std::cout << "test_MMTReceiver_end_to_end complete" << std::endl;
+		TR << "test_MMTReceiver_end_to_end complete" << std::endl;
 
 	}
 

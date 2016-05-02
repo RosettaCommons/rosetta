@@ -39,6 +39,7 @@
 
 // Utility header
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/string_util.hh>
 
 // C++ header
 #include <iostream>
@@ -53,6 +54,8 @@ using protocols::loops::Loop;
 using core::kinematics::MoveMap;
 using core::kinematics::MoveMapOP;
 using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
+
+static THREAD_LOCAL basic::Tracer TR( "test.protocols.loops.closers.CCDLoopClosureMover.cxxtest" );
 
 class TestCCDLoopClosureMover : public CxxTest::TestSuite {
 
@@ -202,21 +205,34 @@ public:
 		CCDLoopClosureMover mover;
 
 		// Test the two getters than throw key error exceptions.
+		TR << "------------ A 'secstruct not valid' error message should follow -------------" << std::endl;
 		try {
+			set_throw_on_next_assertion_failure();
 			mover.max_per_move_torsion_delta_per_residue( 'w' );
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ), "ERROR: CCDLoopClosureMover::max_per_move_delta_per_residue( char secstruct ): "
-				"secstruct must be 'H', 'E', or 'L'. 'w' is not valid.\n\n" );
+			// ok -- let's break the error message into two lines.
+ 			std::string msg = e.msg();
+			std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
+			TS_ASSERT_EQUALS( msg_lines.size(), 3 );
+			TS_ASSERT_EQUALS( msg_lines[1], "ERROR: CCDLoopClosureMover::max_per_move_delta_per_residue( char secstruct ): "
+				"secstruct must be 'H', 'E', or 'L'. 'w' is not valid." );
 		}
+		TR << "------------ The previous error message was expected -------------" << std::endl;
 
+		TR << "------------ A 'secstruct not valid' error message should follow -------------" << std::endl;
 		try {
+			set_throw_on_next_assertion_failure();
 			mover.max_total_torsion_delta_per_residue( '!' );
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ), "ERROR: CCDLoopClosureMover::max_total_delta_per_residue( char secstruct ): "
-				"secstruct must be 'H', 'E', or 'L'. '!' is not valid.\n\n" );
+ 			std::string msg = e.msg();
+			std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
+			TS_ASSERT_EQUALS( msg_lines.size(), 3 );
+			TS_ASSERT_EQUALS( msg_lines[1], "ERROR: CCDLoopClosureMover::max_total_delta_per_residue( char secstruct ): "
+				"secstruct must be 'H', 'E', or 'L'. '!' is not valid." );
 		}
+		TR << "------------ The previous error message was expected -------------" << std::endl;
 
 // Test that a pose without cut points added will throw the user a message about that.
 // make sure we don't move omega
@@ -231,13 +247,16 @@ public:
 		set_single_loop_fold_tree( pose, loop );
 		mover.movemap( mm );
 		mover.loop( loop );
+		TR << "------------ A 'Residue is not a cutpoint variant' error message should follow -------------" << std::endl;
 		try {
+			set_throw_on_next_assertion_failure();
 			mover.apply( pose );
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_BadInput const & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "CCDLoopClosureMover::get_anchors( core::conformation::Residue const & residue ): "
 				"Residue is not a cutpoint variant! You must add cutpoint variants before applying this Mover." );
 		}
+		TR << "------------ The previous error message was expected -------------" << std::endl;
 
 // TODO: index_pair_in_range() is private, so I'm not sure how to test that one.... ~Labonte
 	}

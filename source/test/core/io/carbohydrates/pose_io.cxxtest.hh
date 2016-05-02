@@ -19,6 +19,9 @@
 // Unit header
 #include <core/io/carbohydrates/pose_io.hh>
 
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("core.io.carbohydrates.pose_io.cxxtest");
 
 class CarbohydratePoseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -40,7 +43,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core;
 		using namespace io::carbohydrates;
 
-		TS_TRACE( "Testing sugar_modifications_from_suffix() method." );
+		TR << "Testing sugar_modifications_from_suffix() method." << std::endl;
 
 		utility::vector1< std::pair< core::uint, std::string > > modifications;
 
@@ -117,14 +120,20 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( modifications[ 1 ].second, "CMe" );
 
 		// Now test for some expected errors.
-		TS_TRACE( "Six (6) error messages about commas should follow." );
+		TR <<  " -------------- Six (6) error messages about commas should follow. ------------- "  << std::endl;
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( "going,ndo" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( "Oxford," ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( ",Y" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( "1,Y" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( "X,9" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( "11" ) );
-		TS_TRACE( "Six (6) error messages should have just been output." );
+		TR <<  "--------------- Six (6) error messages should have just been output. --------------"  << std::endl;
 	}
 
 	// TODO: Add tests for GWS input and output!

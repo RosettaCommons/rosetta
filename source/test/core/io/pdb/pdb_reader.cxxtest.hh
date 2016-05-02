@@ -27,10 +27,12 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <map>
 
+static THREAD_LOCAL basic::Tracer TR("core.io.pdb.pdb_reader.cxxtest");
 
 class PDBReaderTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -54,7 +56,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_chain_sequence_record_in_sfr() method." );
+		TR <<  "Testing store_chain_sequence_record_in_sfr() method."  << std::endl;
 
 		// These example lines are taken almost directly from the given examples at
 		// http://http://www.wwpdb.org/documentation/file-format-content/format33/sect3.html
@@ -137,7 +139,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_mod_res_record_in_sfr() method." );
+		TR <<  "Testing store_mod_res_record_in_sfr() method."  << std::endl;
 
 		// These example lines are taken almost directly from the given examples at
 		// http://http://www.wwpdb.org/documentation/file-format-content/format33/sect3.html
@@ -179,7 +181,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_heterogen_name_record_in_sfr() method." );
+		TR << "Testing store_heterogen_name_record_in_sfr() method." << std::endl;
 
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
@@ -227,8 +229,8 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( names_map[ "Krp" ], "X  13Z Kryptonite, which will kill Superman -- Bwahaha!" );
 
 
-		TS_TRACE( "Testing (indirectly) store_base_residue_type_name_in_sfr method, "
-			"which is called from within store_heterogen_name_record_in_sfr()...");
+		TR << "Testing (indirectly) store_base_residue_type_name_in_sfr method, "
+			"which is called from within store_heterogen_name_record_in_sfr()..." << std::endl;;
 
 		map< string, pair< string, string > > base_names( sfr.residue_type_base_names() );
 
@@ -257,7 +259,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_heterogen_synonym_record_in_sfr() method." );
+		TR <<  "Testing store_heterogen_synonym_record_in_sfr() method."  << std::endl;
 
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
@@ -300,7 +302,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_formula_record_in_sfr() method." );
+		TR <<  "Testing store_formula_record_in_sfr() method."  << std::endl;
 
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
@@ -347,7 +349,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_ssbond_record_in_sfr() method." );
+		TR <<  "Testing store_ssbond_record_in_sfr() method."  << std::endl;
 
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect6.html
@@ -403,7 +405,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_link_recordin_sfr() method." );
+		TR <<  "Testing store_link_recordin_sfr() method."  << std::endl;
 
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect6.html
@@ -464,7 +466,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_cis_peptide_record_in_sfr() method." );
+		TR <<  "Testing store_cis_peptide_record_in_sfr() method."  << std::endl;
 
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect6.html
@@ -516,7 +518,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::io;
 		using namespace core::io::pdb;
 
-		TS_TRACE( "Testing store_unknown_records_in_sfr() method." );
+		TR <<  "Testing store_unknown_records_in_sfr() method."  << std::endl;
 
 		string const sample_pdb_lines(
 			"ATOM   8914  OXT GLY G 472     -31.771  31.214 -89.955  1.00  0.00           O  \n"

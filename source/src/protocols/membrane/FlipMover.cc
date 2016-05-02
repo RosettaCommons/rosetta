@@ -233,7 +233,7 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 	foldtree.reorder( mem_rsd );
 	pose.fold_tree( foldtree );
 	TR << "foldtree reordered" << std::endl;
-	pose.fold_tree().show(std::cout);
+	pose.fold_tree().show(TR);
 
 	TR << "upstream jump res: " << foldtree.upstream_jump_residue( jump_num_ ) << std::endl;
 	TR << "downstream jump res: " << foldtree.downstream_jump_residue( jump_num_ ) << std::endl;

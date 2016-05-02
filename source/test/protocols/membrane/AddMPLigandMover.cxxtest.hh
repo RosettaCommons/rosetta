@@ -37,8 +37,12 @@
 
 #include <core/types.hh>
 
+#include <basic/Tracer.hh>
+
 // Utility Headers
 #include <utility/vector1.hh>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.AddMPLigandMover.cxxtest");
 
 using namespace core;
 using namespace core::kinematics;
@@ -88,7 +92,7 @@ public: // test functions
 	/// @brief Check the protein is still a membrane protein after this mvoer runs
 	void test_membrane_invariant() {
 
-		TS_TRACE("Testing membrane conformation invariants");
+		TR << "Testing membrane conformation invariants" << std::endl;
 		TS_ASSERT( pose_with_ligand_->conformation().is_membrane() );
 
 	}
@@ -96,12 +100,12 @@ public: // test functions
 	/// @brief Check the protein is still a membrane protein after this mover runs
 	void test_membrane_plus_ligand_foldtree() {
 
-		TS_TRACE( "Check correct setup of the membrane foldtree including the ligand" );
+		TR <<  "Check correct setup of the membrane foldtree including the ligand"  << std::endl;
 
 		// Check that the root of the pose is still the TM COM
 		core::Size expected_root( 124 );
 		core::Size given_root( pose_with_ligand_->fold_tree().root() );
-		TS_TRACE("Check that the root of the foldtree is the protein center of mass");
+		TR << "Check that the root of the foldtree is the protein center of mass" << std::endl;
 		TS_ASSERT_EQUALS( given_root, expected_root );
 
 		// Check that the membrane residue is connected to the protein TM COM
@@ -112,9 +116,9 @@ public: // test functions
 		core::Size given_mp_dwnstm( pose_with_ligand_->fold_tree().downstream_jump_residue( jump ) );
 
 		// Check that the upstream and downstream resnums match for the membrane jump
-		TS_TRACE( "Checking upstream (root) residue numbers match in the membrane jump");
+		TR <<  "Checking upstream (root) residue numbers match in the membrane jump" << std::endl;
 		TS_ASSERT_EQUALS( given_mp_upstm, expected_mp_upstm );
-		TS_TRACE( "Checking downstream (pose first residue) residue number matches in the membrane jump" );
+		TR <<  "Checking downstream (pose first residue) residue number matches in the membrane jump"  << std::endl;
 		TS_ASSERT_EQUALS( given_mp_dwnstm, expected_mp_dwnstm );
 
 		// Check that the membrane residue is connected to the protein center of mass
@@ -125,9 +129,9 @@ public: // test functions
 		core::Size given_ligand_dwnstm( pose_with_ligand_->fold_tree().downstream_jump_residue( ligand_jump ) );
 
 		// Check that the upstream and downstream resnums match for the ligand jump
-		TS_TRACE( "Checking upstream (ligand closest rsd) residue numbers match in the ligand jump");
+		TR <<  "Checking upstream (ligand closest rsd) residue numbers match in the ligand jump" << std::endl;
 		TS_ASSERT_EQUALS( expected_ligand_upstm, given_ligand_upstm );
-		TS_TRACE( "Checking downstream (ligand) residue number matches in the ligand jump" );
+		TR <<  "Checking downstream (ligand) residue number matches in the ligand jump"  << std::endl;
 		TS_ASSERT_EQUALS( expected_ligand_dwnstm, given_ligand_dwnstm );
 	}
 

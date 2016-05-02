@@ -230,8 +230,8 @@ public:
 		disabled_cdrs[ l2 ] =true;
 
 		TaskFactoryOP tf_on = creator.generate_tf_seq_design(pose, false /* disable non-designing cdrs */);
-		std::cout << "TF NO DISABLE DESIGN: " << std::endl;
-		tf_on->create_task_and_apply_taskoperations(pose)->show(std::cout);
+		//std::cout << "TF NO DISABLE DESIGN: " << std::endl;
+		tf_on->create_task_and_apply_taskoperations(pose);//->show(std::cout);
 
 
 		tf = creator.generate_tf_seq_design(pose, true /* disable non-designing cdrs */);

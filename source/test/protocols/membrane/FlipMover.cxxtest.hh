@@ -41,6 +41,8 @@
 #include <string>
 #include <cmath>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.FlipMover.cxxtest");
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
@@ -83,7 +85,7 @@ public: // test functions
 	// test default constructor
 	void test_default_constructor () {
 
-		TS_TRACE("\n\n========== TESTING DEFAULT CONSTRUCTOR");
+		TR << "\n\n========== TESTING DEFAULT CONSTRUCTOR" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, -4.816, -4.520);
@@ -108,7 +110,7 @@ public: // test functions
 	// test constructor from jumpnum
 	void test_constructor_from_jumpnum () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, -4.816, -4.520);
@@ -133,7 +135,7 @@ public: // test functions
 	// test constructor from jumpnum for membrane jump
 	void test_constructor_from_jumpnum_mem () {
 
-		TS_TRACE("\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER FOR MEMBRANE JUMP");
+		TR << "\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER FOR MEMBRANE JUMP" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, 4.609, 3.761);
@@ -158,7 +160,7 @@ public: // test functions
 	// test constructor from jumpnum and axis
 	void test_constructor_from_jumpnum_and_axis () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND AXIS");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND AXIS" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, -4.816, -4.520);
@@ -184,7 +186,7 @@ public: // test functions
 	// test constructor from jumpnum and axis, mem jump
 	void test_constructor_from_jumpnum_and_axis_mem () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND AXIS FOR MEMBRANE JUMP");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND AXIS FOR MEMBRANE JUMP" << std::endl;
 
 		// define vectors
 		Vector res1(17.621, -4.816, 3.760);
@@ -210,7 +212,7 @@ public: // test functions
 	// test constructor from jumpnum and angle
 	void test_constructor_from_jumpnum_and_angle () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND ANGLE");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND ANGLE" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, -4.816, -4.520);
@@ -235,7 +237,7 @@ public: // test functions
 	// test constructor from jumpnum and angle
 	void test_constructor_from_jumpnum_and_angle_mem () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND ANGLE FOR MEMBRANE JUMP");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER AND ANGLE FOR MEMBRANE JUMP" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, -0.508, -6.640);
@@ -260,7 +262,7 @@ public: // test functions
 	// test constructor from jumpnum, axis and angle
 	void test_constructor_from_jumpnum_axis_angle () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER, AXIS AND ANGLE");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER, AXIS AND ANGLE" << std::endl;
 
 		// define vectors
 		Vector res1(-17.655, -4.816, -4.520);
@@ -285,7 +287,7 @@ public: // test functions
 	// test constructor from jumpnum, axis and angle
 	void test_constructor_from_jumpnum_axis_angle_mem () {
 
-		TS_TRACE("\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER, AXIS AND ANGLE FOR MEMBRANE JUMP");
+		TR << "\n\n========== TESTING CONSTRUCTOR FROM JUMP NUMBER, AXIS AND ANGLE FOR MEMBRANE JUMP" << std::endl;
 
 		// define vectors
 		Vector res1(-15.417, -4.816, 9.165);

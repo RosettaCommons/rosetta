@@ -249,7 +249,7 @@ figure_out_secstruct( pose::Pose & pose ){
 		secstruct += secstruct1;
 	}
 
-	std::cout << "SECSTRUCT: " << secstruct << std::endl;
+	TR << "SECSTRUCT: " << secstruct << std::endl;
 
 	set_rna_secstruct( pose, secstruct );
 
@@ -277,7 +277,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 	ScoreFunctionOP scorefxn( new ScoreFunction );
 	scorefxn->set_weight( rna_base_pair, 1.0 );
 	(*scorefxn)( pose );
-	scorefxn->show( std::cout, pose );
+	scorefxn->show( TR, pose );
 
 	bool const idealize_frag( false );
 	protocols::idealize::IdealizeMover idealizer;
@@ -452,8 +452,7 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 			if ( rsd.is_RNA()==false ) { //Consistency check!
 				std::cout << "residue # " << res_num << " should be a RNA nucleotide" << std::endl;
 				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
-			};
-
+			}
 
 		}
 	}
@@ -475,9 +474,9 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 
 	if ( sign1 * sign2 > 0 ) return;
 
-	std::cout << "*************************************************************" << std::endl;
-	std::cout << " Warning ... flipping OP2 <--> OP1 to match mini convention  " << std::endl;
-	std::cout << "*************************************************************" << std::endl;
+	TR << "*************************************************************" << std::endl;
+	TR << " Warning ... flipping OP2 <--> OP1 to match mini convention  " << std::endl;
+	TR << "*************************************************************" << std::endl;
 
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
@@ -610,7 +609,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 			//   }
 		}
 
-		std::cout << rsd_i.name1() << I(3,i) << "--" << rsd_j.name1() << I(3,j) << "  WC:" << WC_base_pair << "  score: " << F(10,6,it->first) << std::endl;
+		TR << rsd_i.name1() << I(3,i) << "--" << rsd_j.name1() << I(3,j) << "  WC:" << WC_base_pair << "  score: " << F(10,6,it->first) << std::endl;
 
 		if ( WC_base_pair ) {
 			forms_canonical_base_pair( i ) = true;
@@ -777,7 +776,7 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 	if ( !pose.residue_type( n ).has( " S  " ) ) return;
 	if ( !pose.residue_type( n ).is_RNA() ) return;
 
-	std::cout << "Adding CHAINBREAK constraints to " << n << " " << n+1 << std::endl;
+	TR << "Adding CHAINBREAK constraints to " << n << " " << n+1 << std::endl;
 
 	static Real const S_P_distance_min( 3 );
 	static Real const S_P_distance_max( 4 );
@@ -1062,8 +1061,8 @@ print_internal_coords( core::pose::Pose const & pose ) {
 
 		conformation::Residue const & rsd( pose.residue( i ) ) ;
 
-		std::cout << "----------------------------------------------------------------------" << std::endl;
-		std::cout << "RESIDUE: " << rsd.name3() << " " << rsd.seqpos() << std::endl;
+		TR << "----------------------------------------------------------------------" << std::endl;
+		TR << "RESIDUE: " << rsd.name3() << " " << rsd.seqpos() << std::endl;
 
 		for ( Size j = 1; j <= rsd.natoms(); j++ ) {
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
@@ -1079,27 +1078,27 @@ print_internal_coords( core::pose::Pose const & pose ) {
 				core::kinematics::tree::AtomCOP jump_stub_atom3( current_atom->stub_atom3() );
 
 				// Now try to reproduce this jump based on coordinates of atoms.
-				std::cout <<   "JUMP! " <<
+				TR <<   "JUMP! " <<
 					//     A( 5, rsd.atom_name( j )) << " " <<
 					"STUB ==> " <<
 					"FROM " << input_stub_atom1->id().rsd() << " " <<
 					pose.residue( (input_stub_atom1->id()).rsd() ).atom_name( (input_stub_atom1->id()).atomno() ) << "  " <<
 					pose.residue( (input_stub_atom2->id()).rsd() ).atom_name( (input_stub_atom2->id()).atomno() ) << "  " <<
 					pose.residue( (input_stub_atom3->id()).rsd() ).atom_name( (input_stub_atom3->id()).atomno() );
-				std::cout << "TO " << current_atom->id().rsd() << " " <<
+				TR << "TO " << current_atom->id().rsd() << " " <<
 					pose.residue( (jump_stub_atom1->id()).rsd() ).atom_name( (jump_stub_atom1->id()).atomno() ) << "  " <<
 					pose.residue( (jump_stub_atom2->id()).rsd() ).atom_name( (jump_stub_atom2->id()).atomno() ) << "  " <<
 					pose.residue( (jump_stub_atom3->id()).rsd() ).atom_name( (jump_stub_atom3->id()).atomno() ) << std::endl;
-				std::cout << " MY JUMP: " << current_atom->jump() << std::endl;
+				TR << " MY JUMP: " << current_atom->jump() << std::endl;
 
 				kinematics::Stub const input_stub( input_stub_atom1->xyz(), input_stub_atom1->xyz(), input_stub_atom2->xyz(), input_stub_atom3->xyz());
 				kinematics::Stub const jump_stub ( jump_stub_atom1->xyz(), jump_stub_atom1->xyz(), jump_stub_atom2->xyz(), jump_stub_atom3->xyz());
 
-				std::cout << " MY JUMP: " <<  kinematics::Jump( input_stub, jump_stub ) << std::endl;
+				TR << " MY JUMP: " <<  kinematics::Jump( input_stub, jump_stub ) << std::endl;
 
 
 			} else {
-				std::cout << "ICOOR_INTERNAL  " <<
+				TR << "ICOOR_INTERNAL  " <<
 					ObjexxFCL::format::A( 5, rsd.atom_name( j )) << " " <<
 					ObjexxFCL::format::F(11,6, degrees( pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
 					ObjexxFCL::format::F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
@@ -1309,7 +1308,7 @@ classify_base_pairs_lores( pose::Pose const & pose_input )
 	Pose pose = pose_input; // need a non-const copy to apply scorefunction
 	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
 	(*lores_scorefxn)( pose );
-	lores_scorefxn->show( std::cout, pose );
+	lores_scorefxn->show( TR, pose );
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
@@ -1400,7 +1399,7 @@ print_hbonds( pose::Pose & pose ){
 		Size const acc_res_num = hbond.acc_res();
 		Size const acc_atm = hbond.acc_atm();
 
-		std::cout << "HBOND: " << pose.residue( don_res_num ).name1() << don_res_num <<
+		TR << "HBOND: " << pose.residue( don_res_num ).name1() << don_res_num <<
 			" " << pose.residue( don_res_num ).atom_name( don_hatm ) << " --- " <<
 			pose.residue( acc_res_num).name1() << acc_res_num << " " << pose.residue( acc_res_num ).atom_name( acc_atm ) << " ==> " << hbond.energy()
 			<< std::endl;

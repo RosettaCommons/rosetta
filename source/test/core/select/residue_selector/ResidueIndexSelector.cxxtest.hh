@@ -100,7 +100,7 @@ public:
 			acceptTrue.insert( trpcage.pdb_info()->pdb2pose('A', 3) );
 			acceptTrue.insert( trpcage.pdb_info()->pdb2pose('A', 4) );
 			for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
-				if ( subset[ii] ) std::cerr << ii << "\n";
+				//if ( subset[ii] ) std::cerr << ii << "\n";
 				TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) )
 					}
 					}

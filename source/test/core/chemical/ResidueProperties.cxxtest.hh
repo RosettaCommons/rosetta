@@ -28,10 +28,12 @@
 
 // Utility header
 #include <utility/excn/EXCN_Base.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <map>
 
+static THREAD_LOCAL basic::Tracer TR("core.chemical.ResidueProperties.cxxtest");
 
 using namespace core::chemical;
 using namespace utility::excn;
@@ -61,21 +63,32 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 
 public:  // Tests /////////////////////////////////////////////////////////////
+
+	void exception_message_matches( utility::excn::EXCN_Base const & e, std::string const & expected_output )
+	{
+		std::string msg = e.msg();
+		std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
+		TS_ASSERT_EQUALS( msg_lines.size(), 3 );
+		TS_ASSERT_EQUALS( msg_lines[1], expected_output );
+	}
+
 	// Confirm that property-related methods function properly.
 	void test_properties()
 	{
-		TS_TRACE( "Testing property-related methods of ResidueProperties." );
+		TR << "Testing property-related methods of ResidueProperties."  << std::endl;
 		TS_ASSERT( ! test_properties_->has_property( LIPID ) );
 		TS_ASSERT( ! test_properties_->has_property( "LIPID" ) );
 		TS_ASSERT( ! test_properties_->has_property( "FAT" ) );
 
 		test_properties_->set_property( LIPID, true );
-		TS_ASSERT_THROWS_EQUALS(
-			test_properties_->set_property( "FAT", true ),
-			EXCN_Base const & e,
-			e.msg().substr( e.msg().find( "ERROR: " ) ),
-			"ERROR: Rosetta does not recognize the property: FAT; "
-			"has it been added to general_properties.list?\n\n" );
+		set_throw_on_next_assertion_failure();
+		try {
+			test_properties_->set_property( "FAT", true );
+		} catch ( EXCN_Base const & e )  {
+			exception_message_matches( e,
+				"ERROR: Rosetta does not recognize the property: FAT; "
+				"has it been added to general_properties.list?" );
+		}
 
 		TS_ASSERT( test_properties_->has_property( LIPID ) );
 		TS_ASSERT( test_properties_->has_property( "LIPID") );
@@ -93,28 +106,35 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that variant-related methods function properly.
 	void test_variant_types()
 	{
-		TS_TRACE( "Testing variant-related methods of ResidueProperties." );
+		TR << "Testing variant-related methods of ResidueProperties."  << std::endl;
 		TS_ASSERT( ! test_properties_->is_variant_type( SC_FRAGMENT ) );
 		TS_ASSERT( ! test_properties_->is_variant_type( "SC_FRAGMENT" ) );
 		TS_ASSERT( ! test_properties_->is_variant_type( "BIZARRO" ) );
 
 		test_properties_->set_variant_type( SC_FRAGMENT, true );
-		TS_ASSERT_THROWS_EQUALS(
-			test_properties_->set_variant_type( "BIZARRO", true ),
-			EXCN_Base const & e,
-			e.msg().substr( e.msg().find( "ERROR: " ) ),
-			"ERROR: Rosetta does not recognize the variant: BIZARRO; "
-			"has it been added to variant_types.list?\n\n" );
+
+		set_throw_on_next_assertion_failure();
+		try {
+			test_properties_->set_variant_type( "BIZARRO", true );
+		} catch ( EXCN_Base const & e )  {
+			exception_message_matches( e,
+				"ERROR: Rosetta does not recognize the variant: BIZARRO; "
+				"has it been added to variant_types.list?" );
+		}
+
 		test_properties_->enable_custom_variant_types();
 		TS_ASSERT( test_properties_->has_custom_variant_types() );
 		test_properties_->set_variant_type( "WHACKY", true );
 		test_properties_->set_variant_type( "BIZARRO", true );
 		test_properties_->set_variant_type( "WHACKY", false );
-		TS_ASSERT_THROWS_EQUALS(
-			test_properties_->set_variant_type( "GNARLY", false ),
-			EXCN_Base const & e,
-			e.msg().substr( e.msg().find( "ERROR: " ) ),
-			"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue\n\n" );
+
+		set_throw_on_next_assertion_failure();
+		try {
+			test_properties_->set_variant_type( "GNARLY", false );
+		} catch ( EXCN_Base const & e )  {
+			exception_message_matches( e,
+			"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue" );
+		}
 
 		TS_ASSERT( test_properties_->is_variant_type( SC_FRAGMENT ) );
 		TS_ASSERT( test_properties_->is_variant_type( "SC_FRAGMENT" ) );

@@ -18,8 +18,13 @@
 #include <utility/graph/ring_detection.hh>
 
 #include <core/types.hh>
+#include <test/core/init_util.hh>
+
+#include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+static THREAD_LOCAL basic::Tracer TR("utility.graph.ring_detection.cxxtest.hh");
 
 // Use this for simple integer VD of verticies.
 typedef boost::adjacency_list< boost::listS, boost::vecS, boost::undirectedS > Graph;
@@ -31,7 +36,7 @@ namespace {
 class RingDetectionTests : public CxxTest::TestSuite {
 public:
 
-	void setUp() {}
+	void setUp() { core_init(); }
 
 	void tearDown() {}
 
@@ -138,7 +143,7 @@ public:
 	}
 
 	void test_benzene_annotation() {
-		std::cout << "Test benzene2" << std::endl;
+		TR << "Test benzene2" << std::endl;
 		Graph g(12);
 		ED e1, e2, e3, e4, e5, e6, h1, h2, h3, h4, h5, h6;
 		bool flag;
@@ -174,7 +179,7 @@ public:
 
 	void test_stem_annotation() {
 		//Attempt to test not labeling stem as a ring. DFS should start with vertex 0
-		std::cout << "Test stem2" << std::endl;
+		TR << "Test stem2" << std::endl;
 		Graph g(8);
 		ED e1, e2, e3, e4, e5, e6, e7, e8;
 		bool flag;

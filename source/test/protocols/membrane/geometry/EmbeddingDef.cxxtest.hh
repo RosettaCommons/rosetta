@@ -38,6 +38,8 @@
 #include <string>
 #include <cmath>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.membrane.geometry.EmbeddingDef.cxxtest");
+
 using namespace core;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
@@ -67,7 +69,7 @@ public: // test functions
 	// default constructor
 	void test_default_constructor() {
 
-		TS_TRACE("Test default constructor");
+		TR << "Test default constructor" << std::endl;
 
 		// define vectors and object
 		Vector center( 0, 0, 0 );
@@ -82,7 +84,7 @@ public: // test functions
 	// standard constructor
 	void test_standard_constructor() {
 
-		TS_TRACE("Test constructor from center and normal");
+		TR << "Test constructor from center and normal" << std::endl;
 
 		// define vectors and object
 		Vector center(5, 4, 3);
@@ -97,7 +99,7 @@ public: // test functions
 	// from span
 	void test_from_span() {
 
-		TS_TRACE("Test from_span function");
+		TR << "Test from_span function" << std::endl;
 
 		// read in pose
 		core::pose::Pose pose;
@@ -125,7 +127,7 @@ public: // test functions
 	// translate by
 	void test_translate_by() {
 
-		TS_TRACE("Test translate function");
+		TR << "Test translate function" << std::endl;
 
 		// define vectors and object
 		Vector center(5, 4, 3);
@@ -149,7 +151,7 @@ public: // test functions
 	// equals
 	void test_equals() {
 
-		TS_TRACE("Test equals function");
+		TR << "Test equals function" << std::endl;
 
 		// define vectors and object
 		Vector center(5, 4, 3);

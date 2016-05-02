@@ -81,7 +81,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		using namespace core::pose::carbohydrates;
 
-		TS_TRACE( "Testing find_seqpos_of_saccharides_parent_residue() function." );
+		TR <<  "Testing find_seqpos_of_saccharides_parent_residue() function."  << std::endl;
 
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( Lex_.residue( 1 ) ), 0 );  // 1st has no parent.
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( Lex_.residue( 2 ) ), 1 );
@@ -96,7 +96,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::conformation;
 		using namespace core::pose::carbohydrates;
 
-		TS_TRACE( "Testing get_glycosidic_bond_residues() function." );
+		TR <<  "Testing get_glycosidic_bond_residues() function."  << std::endl;
 
 		string first_residue;
 		pair< ResidueCOP, ResidueCOP > residues;
@@ -121,7 +121,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		using namespace core::pose::carbohydrates;
 
-		TS_TRACE( "Testing get_linkage_position_of_saccharide_residue() function." );
+		TR <<  "Testing get_linkage_position_of_saccharide_residue() function."  << std::endl;
 
 		TS_ASSERT_EQUALS( get_linkage_position_of_saccharide_residue( Lex_, 1 ), 0 );
 		TS_ASSERT_EQUALS( get_linkage_position_of_saccharide_residue( Lex_, 2 ), 4 );
@@ -134,7 +134,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::chemical::carbohydrates;
 		using namespace core::pose::carbohydrates;
 
-		TS_TRACE( "Testing get_reference_atoms() function." );
+		TR <<  "Testing get_reference_atoms() function."  << std::endl;
 
 		utility::vector1< AtomID > atoms;
 
@@ -188,7 +188,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::id;
 		using namespace core::pose::carbohydrates;
 
-		TS_TRACE( "Testing functions that query if the given TorsionID is of a glycosidic torsion." );
+		TR <<  "Testing functions that query if the given TorsionID is of a glycosidic torsion."  << std::endl;
 
 		// Are they phis?
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
@@ -348,7 +348,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::id;
 		using namespace core::pose::carbohydrates;
 
-		std::cout << "Testing exocyclic linkage detection " << std::endl;
+		TR << "Testing exocyclic linkage detection " << std::endl;
 		//Can be improved to test branches as well.
 		TS_ASSERT( has_exocyclic_glycosidic_linkage( exo_test_, 3 ) );
 		TS_ASSERT( ! has_exocyclic_glycosidic_linkage( exo_test_, 2 ) );
@@ -365,7 +365,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
 
-		std::cout << "MAN9 res: " << man9_op_->total_residue() << std::endl;
+		TR << "MAN9 res: " << man9_op_->total_residue() << std::endl;
 		TS_ASSERT(man9_op_->total_residue() == 11);
 
 		Size tip_9[] = {9, 8};
@@ -381,9 +381,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		utility::vector1< Size > branch_tip_11_test = get_resnums_in_leaf(*man9_op_, 11 /* tip */, 3 /* stop at */);
 		utility::vector1< Size > branch_tip_6_test = get_resnums_in_leaf(*man9_op_, 6 /* tip */, 3 /* stop at */);
 
-		std::cout << "Tip 9: " << utility::to_string (branch_tip_9_test) << std::endl;
-		std::cout << "Tip 11: " << utility::to_string (branch_tip_11_test) << std::endl;
-		std::cout << "Tip 6: " << utility::to_string (branch_tip_6_test) << std::endl;
+		TR << "Tip 9: " << utility::to_string (branch_tip_9_test) << std::endl;
+		TR << "Tip 11: " << utility::to_string (branch_tip_11_test) << std::endl;
+		TR << "Tip 6: " << utility::to_string (branch_tip_6_test) << std::endl;
 
 		TS_ASSERT_EQUALS( get_resnums_in_leaf(*man9_op_, 9 /* tip */, 3 /* stop at */), branch_tip_9);
 		TS_ASSERT_EQUALS( get_resnums_in_leaf(*man9_op_, 11 /* tip */, 3 /* stop at */), branch_tip_11);
@@ -400,15 +400,15 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
 
-		std::cout << "Testing glycan branch" << std::endl;
+		TR << "Testing glycan branch" << std::endl;
 		TS_ASSERT(man9_op_->total_residue() == 11);
 
 		//Test getting all residues and tips from specific positions.
 		std::pair< vector1< Size >, vector1< Size > > res_and_tips;
 
 		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 3);
-		std::cout << "Tips up of 3: " << res_and_tips.second << std::endl;
-		std::cout << "Resn up of 3: " << res_and_tips.first << std::endl;
+		TR << "Tips up of 3: " << res_and_tips.second << std::endl;
+		TR << "Resn up of 3: " << res_and_tips.first << std::endl;
 		Size tips3[] = {6, 9, 11};
 		Size res3[] = {4, 7, 5, 6, 8, 10, 9, 11};
 		utility::vector1< Size > tips3_v (tips3, tips3 + sizeof(tips3) / sizeof(Size) );
@@ -417,8 +417,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( res3_v, res_and_tips.first);
 
 		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 7);
-		std::cout << "Tips up of 7: " << res_and_tips.second << std::endl;
-		std::cout << "Resn up of 7: " << res_and_tips.first << std::endl;
+		TR << "Tips up of 7: " << res_and_tips.second << std::endl;
+		TR << "Resn up of 7: " << res_and_tips.first << std::endl;
 		Size tips7[] = {9, 11};
 		Size res7[] = {8, 10, 9, 11};
 		utility::vector1< Size > tips7_v (tips7, tips7 + sizeof(tips7) / sizeof(Size) );
@@ -427,8 +427,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( res7_v, res_and_tips.first);
 
 		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 8);
-		std::cout << "Tips up of 8: " << res_and_tips.second << std::endl;
-		std::cout << "Resn up of 8: " << res_and_tips.first << std::endl;
+		TR << "Tips up of 8: " << res_and_tips.second << std::endl;
+		TR << "Resn up of 8: " << res_and_tips.first << std::endl;
 		Size tips8[] = {9};
 		Size res8[] = {9};
 		utility::vector1< Size > tips8_v (tips8, tips8 + sizeof(tips8) / sizeof(Size) );
@@ -437,8 +437,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( res8_v, res_and_tips.first);
 
 		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 4);
-		std::cout << "Tips up of 4: " << res_and_tips.second << std::endl;
-		std::cout << "Resn up of 4: " << res_and_tips.first << std::endl;
+		TR << "Tips up of 4: " << res_and_tips.second << std::endl;
+		TR << "Resn up of 4: " << res_and_tips.first << std::endl;
 		Size tips4[] = {6};
 		Size res4[] = {5, 6};
 		utility::vector1< Size > tips4_v (tips4, tips4 + sizeof(tips4) / sizeof(Size) );
@@ -447,8 +447,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( res4_v, res_and_tips.first);
 
 		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 2);
-		std::cout << "Tips up of 2: " << res_and_tips.second << std::endl;
-		std::cout << "Resn up of 2: " << res_and_tips.first << std::endl;
+		TR << "Tips up of 2: " << res_and_tips.second << std::endl;
+		TR << "Resn up of 2: " << res_and_tips.first << std::endl;
 		Size tips2[] = {6, 9, 11};
 		Size res2[] = {3, 4, 7, 5, 6, 8, 10, 9, 11};
 		utility::vector1< Size > tips2_v (tips2, tips2 + sizeof(tips2) / sizeof(Size) );
@@ -487,52 +487,52 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::pose::carbohydrates;
 
 		man9_op_->dump_pdb("man9_pose.pdb");
-		std::cout << "testing glycan trimming!" << std::endl;
+		TR << "testing glycan trimming!" << std::endl;
 		// Test actual trimming of glycan.
 
-		std::cout << std::endl << "Deleting from 8" << std::endl;
+		TR << std::endl << "Deleting from 8" << std::endl;
 		core::pose::PoseOP man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 8); //Deletes 9
 		TS_ASSERT_EQUALS(man9_copy->total_residue(), 10);
 		man9_copy->dump_pdb("man9_trim_at_8.pdb");
 
-		std::cout << std::endl << "Deleting from 10" << std::endl;
+		TR << std::endl << "Deleting from 10" << std::endl;
 		man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 10); //Deletes 11
 		TS_ASSERT_EQUALS(man9_copy->total_residue(), 10);
 		man9_copy->dump_pdb("man9_trim_at_10.pdb");
 
-		std::cout << std::endl << "Deleting from 4" << std::endl;
+		TR << std::endl << "Deleting from 4" << std::endl;
 		man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 4); //Deletes 6,5
 		TS_ASSERT_EQUALS(man9_copy->total_residue(), 9);
 		man9_copy->dump_pdb("man9_trim_at_4.pdb");
 
-		std::cout << std::endl << "Deleting from 7" << std::endl;
+		TR << std::endl << "Deleting from 7" << std::endl;
 		man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 7); //Deletes 9,8,11,10
 		TS_ASSERT_EQUALS(man9_copy->total_residue(), 7);
 		man9_copy->dump_pdb("man9_trim_at_7.pdb");
 
-		std::cout << std::endl << "Deleting from 3" << std::endl;
+		TR << std::endl << "Deleting from 3" << std::endl;
 		man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 3); //Deletes 9,8,11,10,6,5,4
 		TS_ASSERT_EQUALS(man9_copy->total_residue(), 3);
 		man9_copy->dump_pdb("man9_trim_at_3.pdb");
 
-		std::cout << std::endl << "Deleting from 2" << std::endl;
+		TR << std::endl << "Deleting from 2" << std::endl;
 		man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 2); ///Deletes 9,8,11,10,6,5,4,3
 		TS_ASSERT_EQUALS(man9_copy->total_residue(), 2);
 		man9_copy->dump_pdb("man9_trim_at_2.pdb");
 
-		std::cout << std::endl << "Deleting from 1" << std::endl;
+		TR << std::endl << "Deleting from 1" << std::endl;
 		man9_copy = man9_op_->clone();
 		TS_ASSERT(man9_copy->total_residue() ==11);
 		delete_carbohydrate_branch( *man9_copy, 1); ///Deletes 9,8,11,10,6,5,4,3, 2

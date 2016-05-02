@@ -46,8 +46,11 @@ class ZipStreamTests : public CxxTest::TestSuite {
 	/// @brief General tests
 	void test_zipstream_general() {
 
+		TS_ASSERT( true );// otherwise, this would be empty -- which it is, now
+
+		// APL Disable this test because 1) it's noisy, and 2) it doesn't test to make sure anything happens.
 		// print test output to standard output stream (via our wrapper)
-		output_( utility::io::oc::cout );
+		// output_( utility::io::oc::cout );
 
 		// print test output to a zipped file
 		// Leave out this test since there's no way to check its correctness as all it does

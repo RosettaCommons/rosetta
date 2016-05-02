@@ -35,11 +35,15 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
 
+#include <basic/Tracer.hh>
+
 #include <utility/tag/Tag.hh>
 // #include <utility/pointer/ReferenceCount.hh>
 
 //C++ headers
 #include <iostream>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.abinitio.abscript.RigidChunkTest.cxxtest");
 
 using namespace core;
 using namespace protocols::environment;
@@ -86,7 +90,7 @@ public:
 	}
 
 	void test_chunk() {
-		TS_TRACE( "Starting test_chunk" );
+		TR <<  "Starting test_chunk"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::select::residue_selector;
@@ -147,7 +151,7 @@ public:
 	}
 
 	void test_two_chunk() {
-		TS_TRACE( "Starting test_two_chunk" );
+		TR <<  "Starting test_two_chunk"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::select::residue_selector;
@@ -236,7 +240,7 @@ public:
 	}
 
 	void test_apply_to_template() {
-		TS_TRACE( "Starting test_apply_to_template" );
+		TR <<  "Starting test_apply_to_template"  << std::endl;
 
 		using namespace protocols;
 		using namespace protocols::environment;
@@ -306,7 +310,7 @@ public:
 	}
 
 	void test_two_part_chunk() {
-		TS_TRACE( "Starting test_two_part_chunk" );
+		TR <<  "Starting test_two_part_chunk"  << std::endl;
 
 		using namespace protocols::environment;
 		using namespace core::select::residue_selector;
@@ -380,7 +384,7 @@ public:
 		numeric::xyzVector< core::Length > sim_vect = ppose.residue( BEGIN_CHUNK_1 ).xyz( 1 ) - ppose.residue( BEGIN_CHUNK_2 ).xyz( 1 );
 		numeric::xyzVector< core::Length > templ_vect = rigid_chunk->templ().residue( templ_pos_1 ).xyz( 1 ) - rigid_chunk->templ().residue( templ_pos_2 ).xyz( 1 );
 
-		std::cout << sim_vect.length() << "," << templ_vect.length() << std::endl;
+		TR << sim_vect.length() << "," << templ_vect.length() << std::endl;
 		TS_ASSERT_DELTA( sim_vect.length(), templ_vect.length(), TOLERANCE );
 
 		// Compute the above for a different pair of points, this guarantees similarity within a coordinate transform.
