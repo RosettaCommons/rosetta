@@ -82,7 +82,8 @@ RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	skip_ala_scan_( false ),
 	skip_report_( false ),
 	fast_calc_(false),
-	no_modified_ddG_(false)
+	no_modified_ddG_(false),
+	write2pdb_( false )
 {
 	threshold_probabilities_per_residue_.assign( core::chemical::num_canonical_aas, 1 );
 }
