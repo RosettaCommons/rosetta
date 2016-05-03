@@ -43,7 +43,7 @@ patches/branching/sidechain_carboxyl_conjugation.txt
 ### termini
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
-#patches/carbohydrates/Me_glycoside.txt
+patches/carbohydrates/Me_glycoside.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
@@ -61,8 +61,8 @@ patches/carbohydrates/3-methylation.txt
 patches/carbohydrates/N-acetyl-2-amination.txt
 patches/carbohydrates/N-R-3'-hydroxybutyryl-3-amination.txt
 patches/carbohydrates/5-acetylation.txt
-#patches/carbohydrates/2-sulfation.txt
-#patches/carbohydrates/6-sulfation.txt
-#patches/carbohydrates/2-sulfamidation.txt
+patches/carbohydrates/2-sulfation.txt
+patches/carbohydrates/6-sulfation.txt
+patches/carbohydrates/2-sulfamidation.txt
 patches/carbohydrates/omega-oxidation.txt
 patches/carbohydrates/4-reduction.txt

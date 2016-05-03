@@ -1,7 +1,7 @@
-NAME ->4)-alpha-L-Rhap     # ->4-alpha-L-rhamnopyranosyl[->4)-alpha-L-6-deoxymannopyranosyl]
+NAME ->4)-alpha-L-Rhap     # ->4-alpha-L-rhamnopyranosyl [->4)-alpha-L-6-deoxymannopyranosyl]
 IO_STRING Rha Z            # Note lower case!
 TYPE POLYMER
-VARIANT C6_DEOXY_SUGAR	   # Rhamnose is a common Mannose variant.
+VARIANT C6_DEOXY_SUGAR     # Rhamnose is a common Mannose variant.
 AA UNK 
 
 # Main-chain atoms:

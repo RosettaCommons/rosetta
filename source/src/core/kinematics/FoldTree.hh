@@ -205,12 +205,13 @@ public:
 	///     FoldTree.jump_edge
 	///     FoldTree.nres
 	///     FoldTree.num_jump
-	void
-	add_edge( Edge const & new_edge );
+	void add_edge( Edge const & new_edge );
 
 	/// @brief Prepend the edge  <new_edge>. Useful alternative to add_edge for setting root.
-	void
-	prepend_edge( Edge const & new_edge );
+	void prepend_edge( Edge const & new_edge );
+
+	/// @brief  Find and replace an Edge in the FoldTree.
+	void replace_edge( Edge const & old_edge, Edge const & replacement_edge  );
 
 	/// @brief Deletes the edge  <edge>  in the FoldTree by iterator
 	void delete_edge( iterator edge );
@@ -527,6 +528,10 @@ public:
 	/// @brief Returns all edges that build a residue directly off of  <seqpos>
 	utility::vector1< Edge >
 	get_outgoing_edges( int const seqpos ) const;
+
+	/// @brief Return all jump Edges from the FoldTree
+	utility::vector1< Edge >
+	get_jump_edges() const;
 
 	/// @brief Returns all chemical edges from fold tree
 	utility::vector1< Edge >

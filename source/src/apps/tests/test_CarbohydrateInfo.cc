@@ -87,7 +87,7 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-			O_linked, psicose, neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
+				O_linked, psicose, neuraminate, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -284,14 +284,12 @@ main( int argc, char *argv[] )
 		test_sugar( target57 );
 
 
-		/*// FIXME
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing a sample methyl glycoside:" << endl;
 
 		pose_from_file( Me_glycoside, PATH + "Me_glycoside.pdb", PDB_file );
 
 		test_sugar( Me_glycoside );
-		*/
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;

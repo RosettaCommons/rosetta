@@ -21,6 +21,7 @@
 #include <protocols/docking/util.hh>
 
 // Project headers
+#include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
@@ -79,8 +80,7 @@ void setup_edges_for_partner(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & partner,
 	core::Size const center_of_mass_residue,
-	core::kinematics::FoldTree & ft
-)
+	core::kinematics::FoldTree & ft )
 {
 	using utility::vector1;
 	using core::Size;
@@ -92,6 +92,7 @@ void setup_edges_for_partner(
 	// create an `Edge` for each contiguous stretch of residues in the partner
 	bool prev_residue_is_in_partner( false );
 	Size edge_start( 0 );
+	Size partner_start( 0 );
 
 	for ( Size i = partner.l(); i <= partner.u(); ++i ) {
 		bool const residue_is_in_partner( partner[ i ] );
@@ -111,8 +112,9 @@ void setup_edges_for_partner(
 
 			edge_start = i;
 		} else if ( residue_is_in_partner && ! edge_start ) {
-			// first occurence of 'true' - set `edge_start` to this position
+			// first occurrence of 'true' - set `edge_start` to this position
 			edge_start = i;
+			partner_start = i;
 		}
 
 		prev_residue_is_in_partner = residue_is_in_partner;
@@ -131,7 +133,9 @@ void setup_edges_for_partner(
 	}
 
 	// adjust the FoldTree to have no edges that span the CoM residue.
-	ft.split_existing_edge_at_residue( center_of_mass_residue );
+	if ( partner_start != center_of_mass_residue ) {
+		ft.split_existing_edge_at_residue( center_of_mass_residue );
+	}
 }
 
 /// @details Creates a Jump connecting the center of mass residues in the FoldTree that is passed through.
@@ -225,6 +229,7 @@ setup_foldtree(
 /// If one partner spans multiple chains, the chains will be connected by a Jump.
 /// The docking Jump is always set to be Jump number 1.
 /// WARNING: This function clears the incoming FoldTree.
+/// CHEMICAL Edges are then restored.
 /// @return The appropriate FoldTree is configured and accessible by the caller of this function.
 /// @return The movable_jumps vector contains the number of the jump across the interface.
 void
@@ -237,6 +242,7 @@ setup_foldtree(
 	using std::endl;
 	using utility::vector1;
 	using core::Size;
+	using core::kinematics::Edge;
 	using core::pose::residue_center_of_mass;
 
 	assert( pose.total_residue() );
@@ -254,6 +260,9 @@ setup_foldtree(
 		TR.Debug << "jump2: " << jump_pos2 << endl;
 	}
 
+	// Save CHEMICAL Edges so that branch connections are not destroyed.
+	vector1< Edge > const & chemical_edges( pose.fold_tree().get_chemical_edges() );
+
 	ft.clear();
 	movable_jumps.clear();
 
@@ -262,7 +271,34 @@ setup_foldtree(
 	setup_edges_for_partner( pose, partner2, jump_pos2, ft );
 	movable_jumps.push_back( setup_dock_jump( jump_pos1, jump_pos2, ft, true ) );
 
+	ft.delete_self_edges();  // "self-edges" can happen in cases with branches.
 	ft.reorder( 1 );
+
+	// Now add back any CHEMICAL Edges, which will have been converted to JUMPs.
+	for ( vector1< Edge >::const_iterator chemical_edge( chemical_edges.begin() ),
+			after_last_chemical_edge( chemical_edges.end() );
+			chemical_edge != after_last_chemical_edge; ++chemical_edge ) {
+		vector1< Edge > const jump_edges( ft.get_jump_edges() );
+		for ( std::vector< Edge >::const_iterator jump_edge( jump_edges.begin() ),
+				after_last_jump_edge( jump_edges.end() );
+				jump_edge != after_last_jump_edge; ++jump_edge ) {
+			if ( jump_edge->stop() == chemical_edge->stop() ) {
+				ft.replace_edge( *jump_edge, *chemical_edge );
+				break;
+			}
+		}
+	}
+	if ( chemical_edges.size() ) {
+		ft.renumber_jumps();  // ...since some were replaced.
+		core::uint const current_movable_jump_label( ft.edge_label( jump_pos1, jump_pos2 ) );
+		if ( current_movable_jump_label != 1 ) {
+			// Fix if this is now the case because of renumbering.
+			Edge const & current_first_jump( ft.jump_edge( 1 ) );
+			ft.update_edge_label( current_first_jump.start(), current_first_jump.stop(), 1, current_movable_jump_label );
+			ft.update_edge_label( jump_pos1, jump_pos2, current_movable_jump_label, 1 );
+		}
+	}
+
 	assert( ft.check_fold_tree() );
 }
 

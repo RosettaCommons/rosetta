@@ -179,7 +179,6 @@ public:  // Standard Rosetta methods
 		determine_docking_partners( pose );
 
 		string const partners( upstream_chains_ + "_" + downstream_chains_ );
-		// TODO: Modify C++ so that chemical edges are not removed.
 		vector1< int > movable_jumps( 1, JUMP_NUM );
 		setup_foldtree( pose, partners, movable_jumps );
 
@@ -225,17 +224,17 @@ public:  // Standard Rosetta methods
 		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
 
 		randomizerA_ = RigidBodyRandomizeMoverOP(
-			new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
+				new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
 		randomizerB_ = RigidBodyRandomizeMoverOP(
-			new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
+				new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
 
 
 		cout << "Randomizing ligand conformation..." << endl;
 		for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
 			pose.set_phi( residue, numeric::random::rg().uniform() * 360 );
 			pose.set_psi( residue, numeric::random::rg().uniform() * 360 );
-			pose.set_ring_conformation( 1,
-				residue, pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
+			//pose.set_ring_conformation( residue, 1,
+					//pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
 		}
 
 
@@ -244,8 +243,8 @@ public:  // Standard Rosetta methods
 		if ( idealize_rings_ ) {
 			cout << " Idealizing rings..." << endl;
 			for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
-				pose.set_ring_conformation( 1,
-					residue, pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
+				pose.set_ring_conformation( residue, 1,
+						pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
 			}
 		}
 
@@ -312,7 +311,7 @@ public:  // Standard Rosetta methods
 	void
 	set_ref_pose_from_filename( std::string const & filename )
 	{
-		ref_pose_ = import_pose::pose_from_file( filename , core::import_pose::PDB_file);
+		ref_pose_ = import_pose::pose_from_file( filename, core::import_pose::PDB_file );
 	}
 
 
@@ -323,8 +322,8 @@ private:  // Private methods
 	{
 		using namespace basic::options;
 
-		idealize_rings_ = option[ OptionKeys::rings::idealize_rings ].user();
-		lock_rings_ = option[ OptionKeys::rings::lock_rings ].user();
+		idealize_rings_ = option[ OptionKeys::rings::idealize_rings ].active();
+		lock_rings_ = option[ OptionKeys::rings::lock_rings ].active();
 	}
 
 
@@ -335,10 +334,6 @@ private:  // Private methods
 		using namespace simple_moves;
 
 		type( "DockGlycansProtocol" );
-
-		//sf_ = get_score_function();
-		vector1< string > const patches( 1, "docking" );
-		sf_ = scoring::ScoreFunctionFactory::create_score_function( "talaris2013", patches );
 
 		Hbond_mult_ = 1.0;
 		elec_mult_ = 1.0;
@@ -476,6 +471,10 @@ private:  // Private methods
 	{
 		using namespace scoring;
 
+		//sf_ = get_score_function();
+		vector1< string > const patches( 1, "docking" );
+		sf_ = ScoreFunctionFactory::create_score_function( "talaris2014", patches );
+
 		sf_->set_weight( sugar_bb, 1.0 );
 		sf_->set_weight( atom_pair_constraint, 1.0 );
 
@@ -497,8 +496,8 @@ private:  // Private methods
 	// the fraction complete.
 	void
 	ramp_score_weight( core::scoring::ScoreType const method,
-		core::Real const target,
-		core::Real const fraction_completion )
+			core::Real const target,
+			core::Real const fraction_completion )
 	{
 		Real factor;
 		Real const current_weight( sf_->get_weight( method ) );
@@ -520,8 +519,8 @@ private:  // Private methods
 	// Record a collection of decoy metrics.
 	void
 	record_pose_metrics( core::pose::Pose const & pose,
-		protocols::jd2::Job & job,
-		utility::vector1< int > const jumps )
+			protocols::jd2::Job & job,
+			utility::vector1< int > const jumps )
 	{
 		using namespace scoring;
 		using namespace docking;
@@ -621,7 +620,7 @@ main( int argc, char *argv[] )
 		DockGlycansProtocolOP protocol( new DockGlycansProtocol );
 
 		// Set user options.
-		if ( option[ in::file::native ].user() ) {
+		if ( option[ in::file::native ].active() ) {
 			protocol->set_ref_pose_from_filename( option[ in::file::native ] );
 		}
 

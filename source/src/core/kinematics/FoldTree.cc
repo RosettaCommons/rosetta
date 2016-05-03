@@ -345,7 +345,7 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 	}
 	debug_assert( new_seqpos );
 
-	/// NO MODIFICATIONS TO THE TOPOLOGY OR ORDER OF THE TREE UP TO THIS POINT (except for delete_self_edges at start) ///
+	// NO MODIFICATIONS TO THE TOPOLOGY OR ORDER OF THE TREE UP TO THIS POINT (except for delete_self_edges at start) ///
 	Size const old_num_jump( num_jump() );
 	if ( deleted_jump_number && deleted_jump_number != old_num_jump ) {
 		// have to relabel
@@ -356,17 +356,17 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 		new_topology = true;
 	}
 
-	/// now remap the edges that contain seqpos
+	// now remap the edges that contain seqpos
 	for ( iterator it = begin(), ite = end(); it != ite; ++it ) {
 		if ( it->stop() == seqpos ) it->stop() = new_seqpos;
 		else if ( it->start() == seqpos ) it->start() = new_seqpos;
 	}
 	new_topology = true;
 
-	/// delete the edges with start == stop after removing seqpos
+	// delete the edges with start == stop after removing seqpos
 	delete_self_edges();
 
-	/// now adjust the sequence numbering of all edges to reflect deletion of seqpos
+	// now adjust the sequence numbering of all edges to reflect deletion of seqpos
 	id::SequenceMapping old2new( id::SequenceMapping::identity( old_nres ) );
 	old2new.delete_target_residue( seqpos );
 
@@ -444,11 +444,11 @@ FoldTree::delete_seqpos_simple( int const seqpos )
 
 	Size const old_nres( nres() );
 
-	/// always a good idea for safety
+	// always a good idea for safety
 	delete_self_edges();
 
-	/// first remap the edge (if it exists) that contains seqpos as a vertex
-	/// do this before renumbering everything
+	// first remap the edge (if it exists) that contains seqpos as a vertex
+	// do this before renumbering everything
 	for ( iterator it = begin(), ite = end(); it != ite; ++it ) {
 		debug_assert( it->start() != seqpos );
 		if ( it->stop() == seqpos ) {
@@ -459,16 +459,16 @@ FoldTree::delete_seqpos_simple( int const seqpos )
 		}
 	}
 
-	/// now adjust the sequence numbering of all edges to reflect deletion of seqpos
+	// now adjust the sequence numbering of all edges to reflect deletion of seqpos
 	id::SequenceMapping old2new( id::SequenceMapping::identity( old_nres ) );
 	old2new.delete_target_residue( seqpos );debug_assert( !old2new[ seqpos ] );
 
 	apply_sequence_mapping( old2new );
 
-	/// they may have been introduced
+	// they may have been introduced
 	delete_self_edges();
 
-	/// sanity
+	// sanity
 	debug_assert( check_fold_tree() );
 
 	TR.Trace << "delete_seqpos_simple: after " << seqpos << ' ' << *this << std::endl;
@@ -847,6 +847,29 @@ FoldTree::prepend_edge(
 {
 	new_topology = true; // book-keeping
 	edge_list_.insert( edge_list_.begin(), new_edge );
+}
+
+
+/// @details  This function is used primarily to restore CHEMICAL Edges that
+/// have been replaced by JUMPs after other FoldTree manipulations.
+/// @author   Labonte <JWLabonte@jhu.edu>
+void
+FoldTree::replace_edge( Edge const & old_edge, Edge const & replacement_edge  )
+{
+	new_topology = true;
+	bool found( false );
+	for ( FoldTree::iterator edge( edge_list_.begin() ), after_last_edge( edge_list_.end() );
+			edge != after_last_edge; ++edge ) {
+		if ( *edge == old_edge ) {
+			*edge = replacement_edge;
+			found = true;
+			break;
+		}
+	}
+	if ( ! found ) {
+		TR.Fatal << "FoldTree::replace_edge(...): edge not in tree." << std::endl;
+		utility_exit();
+	}
 }
 
 
@@ -1655,7 +1678,7 @@ FoldTree::cutpoints() const
 /// - -1 means separating == PEPTIDE
 /// - 0 means cut
 ///
-/// we assume that the only possible change in edge labelling that we
+/// we assume that the only possible change in edge labeling that we
 /// need to make is from a -2 to a -1
 /// ie, the -1's are still correct
 /// also, there shouldn't be any 0's before this is called
@@ -1667,7 +1690,7 @@ FoldTree::update_edge_labels()
 	debug_assert( Edge::PEPTIDE != -2 );
 	for ( iterator it = edge_list_.begin(), it_end = edge_list_.end();
 			it != it_end; ++it ) {
-		if ( it->label() == -2 ) { // labelled as not separating
+		if ( it->label() == -2 ) { // labeled as not separating
 			it->label() = 0;
 			if ( ! connected() ) {
 				it->label() = Edge::PEPTIDE; // now it's separating
@@ -2234,9 +2257,26 @@ FoldTree::get_outgoing_edges( int const seqpos ) const
 	return outgoing;
 }
 
+
+/// @author  Labonte <JWLabonte@jhu.edu>
+utility::vector1< Edge >
+FoldTree::get_jump_edges( ) const
+{
+	check_order();
+	utility::vector1< Edge > edges;
+	for ( const_iterator it = begin(), it_end = end(); it != it_end; ++it ) {
+		if ( it->is_jump() ) {
+			edges.push_back( *it );
+		}
+	}
+	return edges;
+}
+
+/// @author  Morgan Nance
 utility::vector1< Edge >
 FoldTree::get_chemical_edges( ) const
 {
+	check_order();
 	utility::vector1< Edge > edges;
 	for ( const_iterator it = begin(), it_end = end(); it != it_end; ++it ) {
 		if ( it->is_chemical_bond() ) {
@@ -2503,7 +2543,8 @@ FoldTree::check_fold_tree() const
 {
 	if ( edge_list_.size() <= 0 ) return false;
 	static FArray1D_bool seen;
-	if ( new_topology ) update_nres(); // largest vertex
+	check_topology();
+	//if ( new_topology ) update_nres(); // largest vertex
 	if ( int( seen.size1() ) != nres_ ) seen.dimension( nres_ );
 
 	seen = false;

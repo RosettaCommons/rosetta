@@ -133,7 +133,7 @@ patches/AcetylatedPeptoidNterm.txt
 ### termini
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
-#patches/carbohydrates/Me_glycoside.txt
+patches/carbohydrates/Me_glycoside.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt

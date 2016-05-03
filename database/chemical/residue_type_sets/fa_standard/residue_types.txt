@@ -455,7 +455,6 @@ residue_types/carbohydrates/to3-alpha-L-Fucp.params
 residue_types/carbohydrates/to4-alpha-L-Fucp.params
 residue_types/carbohydrates/to4-alpha-D-Abep.params
 residue_types/carbohydrates/to4-alpha-Daup.params
-#residue_types/carbohydrates/to4-vanc.params  # When this becomes to4-alpha-Daup.params, it should live here, since Dau is a dideoxygalactosamine.
 #### Mannoses
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params

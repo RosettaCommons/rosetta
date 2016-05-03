@@ -268,7 +268,11 @@ public:
 
 	void test_add_prepend_and_delete_edge_methods()
 	{
-		TS_ASSERT( true );
+		FoldTree ft( two_chain_ft_ );
+		Edge const old_edge( 1, 21, 1 ), new_edge( 10, 21, "X", "Z" );
+		ft.replace_edge( old_edge, new_edge );
+
+		TS_ASSERT_EQUALS( ft.to_string(), branching_ft_.to_string() );
 	}
 
 	void test_delete_segment()

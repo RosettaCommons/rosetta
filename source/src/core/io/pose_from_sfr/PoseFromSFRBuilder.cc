@@ -1071,7 +1071,7 @@ chemical::ResidueTypeCOP
 PoseFromSFRBuilder::get_rsd_type(
 	std::string const & rosetta_residue_name3,
 	Size seqpos,
-	utility::vector1< std::string > const &  branch_points_on_this_residue,
+	utility::vector1< std::string > const & branch_points_on_this_residue,
 	std::string const & resid,
 	bool const is_lower_terminus,
 	bool const is_upper_terminus,
@@ -1103,10 +1103,12 @@ PoseFromSFRBuilder::get_rsd_type(
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *residue_type_set_ ).name3( rosetta_residue_name3 ).get_representative_type();
 	if ( rsd_type->is_polymer() ) {
 		if ( is_lower_terminus ) {
-			required_variants_in_sets.push_back( make_vector1( LOWER_TERMINUS_VARIANT, LOWERTERM_TRUNC_VARIANT ) );
+			required_variants_in_sets.push_back(
+					make_vector1( LOWER_TERMINUS_VARIANT, LOWERTERM_TRUNC_VARIANT, METHYL_GLYCOSIDE ) );
 		} else {
 			disallow_variants.push_back( LOWER_TERMINUS_VARIANT );
 			disallow_variants.push_back( LOWERTERM_TRUNC_VARIANT );
+			disallow_variants.push_back( METHYL_GLYCOSIDE );
 		}
 		if ( is_upper_terminus ) {
 			required_variants_in_sets.push_back( make_vector1( UPPER_TERMINUS_VARIANT, UPPERTERM_TRUNC_VARIANT ) );

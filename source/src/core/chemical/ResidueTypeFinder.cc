@@ -107,6 +107,8 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	// Get all possible basic residues that might match
 	ResidueTypeCOPs rsd_types = get_possible_base_residue_types( false /* include_custom*/ );
 
+	TR.Debug << "Found " << rsd_types.size() << " base ResidueTypes." << std::endl;
+
 	// Go down the binary tree of patches.
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/ );
 	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
@@ -118,6 +120,8 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 
 	// add in any custom residues.
 	rsd_types.append( get_possible_custom_residue_types() );
+
+	TR.Debug << "Patched up to " << rsd_types.size() << " ResidueTypes." << std::endl;
 
 	// Filter for rsd_types that strictly obey requirements
 	rsd_types = apply_filters_after_patches( rsd_types, allow_extra_variants );
@@ -229,13 +233,21 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	bool const allow_extra_variants  /* = false */ ) const
 {
 	rsd_types = filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
+	//TR.Trace << " ...filtering by name3: " << rsd_types.size() << std::endl;
 	rsd_types = filter_by_interchangeability_group( rsd_types, false /* keep_if_base_type_generates_interchangeability */ );
+	//TR.Trace << " ...filtering by interchangeability group: " << rsd_types.size() << std::endl;
 	rsd_types = filter_disallow_variants( rsd_types );
+	//TR.Trace << " ...filtering by disallowed variants: " << rsd_types.size() << std::endl;
 	rsd_types = filter_all_variants_matched( rsd_types, allow_extra_variants );
-	rsd_types = filter_all_properties(  rsd_types );
-	rsd_types = filter_disallow_properties(  rsd_types );
+	//TR.Trace << " ...filtering by all matched variants: " << rsd_types.size() << std::endl;
+	rsd_types = filter_all_properties( rsd_types );
+	//TR.Trace << " ...filtering by all properties: " << rsd_types.size() << std::endl;
+	rsd_types = filter_disallow_properties( rsd_types );
+	//TR.Trace << " ...filtering by disallowed properties: " << rsd_types.size() << std::endl;
 	rsd_types = filter_all_patch_names( rsd_types );
+	//TR.Trace << " ...filtering by all patch names: " << rsd_types.size() << std::endl;
 	rsd_types = filter_special_cases( rsd_types );
+	//TR.Trace << " ...filtering by special cases: " << rsd_types.size() << std::endl;
 
 	return rsd_types;
 }
