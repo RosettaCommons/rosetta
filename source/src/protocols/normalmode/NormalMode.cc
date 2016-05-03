@@ -321,8 +321,9 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 		Size i_ss( 0 );
 		char prvSS = 'X';
 		for ( Size ires = 1; ires <= pose_tmp.total_residue(); ++ires ) {
-			char const &SS_i = pose_tmp.secstruct( ires );
+			if( !pose_tmp.residue( ires ).is_protein() || !pose_tmp.residue( ires ).has( " CA " ) ) continue;
 
+			char const &SS_i = pose_tmp.secstruct( ires );
 			Vector const &Ncrd = pose_tmp.residue( ires ).xyz( " N  " );
 
 			//std::cout << "ires/SS: " << ires << " " <<  SS_i << std::endl;
