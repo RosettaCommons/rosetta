@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
 namespace pack {
@@ -41,11 +41,10 @@ class ResFilterCreator : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Instantiate a new ResFilter
-	virtual
-	ResFilterOP
-	create_res_filter() const = 0;
-
+	virtual ResFilterOP create_res_filter() const = 0;
 	virtual std::string keyname() const = 0;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
+
 };
 
 }

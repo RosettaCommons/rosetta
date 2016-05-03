@@ -27,6 +27,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 // C++ Headers
@@ -38,6 +40,25 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.Restrict
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+RestrictByCalculatorsOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation );
+}
+
+void RestrictByCalculatorsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictByCalculatorsOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictByCalculatorsOperationCreator::keyname() const
+{
+	return RestrictByCalculatorsOperation::keyname();
+}
 
 RestrictByCalculatorsOperation::RestrictByCalculatorsOperation() {}
 
@@ -53,12 +74,6 @@ RestrictByCalculatorsOperation::RestrictByCalculatorsOperation(utility::vector1<
 }
 
 RestrictByCalculatorsOperation::~RestrictByCalculatorsOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictByCalculatorsOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation );
-}
 
 /// @details be warned if you use clone that you'll not get new calculators
 core::pack::task::operation::TaskOperationOP RestrictByCalculatorsOperation::clone() const
@@ -78,6 +93,12 @@ RestrictByCalculatorsOperation::apply( core::pose::Pose const & pose, core::pack
 
 	task.restrict_to_residues(repack);
 	return;
+}
+
+// AMW: No parse_tag, so nothing to add...
+void RestrictByCalculatorsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 } //namespace protocols

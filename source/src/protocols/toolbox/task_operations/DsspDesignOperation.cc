@@ -37,6 +37,9 @@
 #include <boost/foreach.hpp>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -51,6 +54,7 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 DsspDesignOperation::DsspDesignOperation()
 {
@@ -64,12 +68,6 @@ DsspDesignOperation::DsspDesignOperation( DsspDesignOperation const & rval ): pa
 }
 
 DsspDesignOperation::~DsspDesignOperation() {}
-
-TaskOperationOP
-DsspDesignOperationCreator::create_task_operation() const
-{
-	return TaskOperationOP( new DsspDesignOperation );
-}
 
 TaskOperationOP
 DsspDesignOperation::clone() const
@@ -283,6 +281,62 @@ DsspDesignOperation::parse_tag( TagCOP tag , DataMap & )
 			set_restrictions_exclude( sse, aas );
 		}
 	}
+}
+
+std::string dsspdo_subelement_ct_name( std::string const & name ) {
+	return "dsspdo_subelement_" + name + "Type";
+}
+
+std::string dsspdo_group_name() { return "dsspdo_subelement"; }
+
+void DsspDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// attributes for the subelements -- all the subelements have the same attributes
+	AttributeList dsspdo_subtag_attributes;
+	dsspdo_subtag_attributes.push_back( XMLSchemaAttribute( "aa", xs_string ) );
+	dsspdo_subtag_attributes.push_back( XMLSchemaAttribute( "append", xs_string ) );
+	dsspdo_subtag_attributes.push_back( XMLSchemaAttribute( "exclude", xs_string ) );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & dsspdo_subelement_ct_name );
+	subelements.add_simple_subelement( "Loop",         dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "Strand",       dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "Helix",        dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "HelixStart",   dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "HelixCapping", dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "Nterm",        dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "Cterm",        dsspdo_subtag_attributes );
+	subelements.add_simple_subelement( "all",          dsspdo_subtag_attributes );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "name", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string ) );
+
+	XMLComplexTypeSchemaGenerator complex_type_generator;
+	complex_type_generator
+		.element_name( keyname() )
+		.complex_type_naming_func( & complex_type_name_for_task_op )
+		.add_attributes( attributes )
+		.set_subelements_repeatable( subelements, & dsspdo_group_name )
+		.write_complex_type_to_schema( xsd );
+}
+
+TaskOperationOP
+DsspDesignOperationCreator::create_task_operation() const
+{
+	return TaskOperationOP( new DsspDesignOperation );
+}
+
+void DsspDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DsspDesignOperation::provide_xml_schema( xsd );
+}
+
+std::string DsspDesignOperationCreator::keyname() const
+{
+	return DsspDesignOperation::keyname();
 }
 
 } //namespace protocols

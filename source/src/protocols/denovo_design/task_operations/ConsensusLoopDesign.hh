@@ -33,6 +33,7 @@
 // utility Headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace denovo_design {
@@ -90,6 +91,9 @@ public:
 	void parse_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void read_db();
 

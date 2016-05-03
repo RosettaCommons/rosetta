@@ -59,6 +59,13 @@ public:
 	~FixbbJobQueen() {}
 
 	virtual
+	std::string
+	job_definition_xsd() const {
+		//XMLSchemaComplexType job_
+		return "";
+	}
+
+	virtual
 	protocols::jd3::JobOP
 	mature_larval_job( protocols::jd3::LarvalJobCOP job ) {
 		using namespace protocols::jd3;
@@ -104,7 +111,6 @@ public:
 	}
 
 	virtual bool more_jobs_remain() { return false; }
-	virtual std::string job_definition_xsd() const { return ""; }
 
 };
 

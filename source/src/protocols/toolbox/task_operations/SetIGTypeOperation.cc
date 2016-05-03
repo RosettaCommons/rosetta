@@ -21,11 +21,16 @@
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 SetIGTypeOperation::SetIGTypeOperation():
 	lin_mem_(false),
@@ -54,9 +59,30 @@ void SetIGTypeOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::
 	double_lazy_ = tag->getOption< bool >("double_lazy_ig", false);
 }
 
+void SetIGTypeOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "lin_mem_ig", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "lazy_ig", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "double_lazy_ig", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 core::pack::task::operation::TaskOperationOP SetIGTypeOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SetIGTypeOperation );
+}
+
+void SetIGTypeOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetIGTypeOperation::provide_xml_schema( xsd );
+}
+
+std::string SetIGTypeOperationCreator::keyname() const
+{
+	return SetIGTypeOperation::keyname();
 }
 
 } //task_operations

@@ -352,7 +352,7 @@ class CppFunction:
             known_bad_defaults = ['(((utility::tag::Tag*)operator new(', 'utility::vector0<int, std::allocator<int>', 'MATCH_YR', 'std::cout', 'typename ', 'std::make_pair [with ',
                 'core::chemical::ChemicalManager::residue_type_set(const std::string&)(((const std::string&)(& core::chemical::FA_STANDARD',
                 'core::scoring::hbonds::DUMMY_DERIVS', 'core::fragment::BBTorsionSRFD', 'std::ios_base::in', 'protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE',
-              'protocols::stepwise::sampling::rna::local_count_data', 'numeric::xyzVector<T>',
+                'protocols::stepwise::sampling::rna::local_count_data', 'numeric::xyzVector<T>', 'xsminmax_unspecified',
             ]
             for bd in known_bad_defaults:
                 if x.default.startswith(bd): return _r
@@ -428,6 +428,7 @@ class CppFunction:
             #print self.name, a.T()
             if a.T().find('___XQWERTY___') >= 0: return False
             if a.T().find('::std::pair<boost::unordered_detail::hash_iterator_equivalent_keys<std::allocator<std::pair<') >= 0: return False
+            if a.T().find('::boost::function<') >= 0: return False
 
         #if self.pure_virtual or (not self.public): return False
         if (not self.public): return False

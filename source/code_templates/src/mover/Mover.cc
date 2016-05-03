@@ -55,12 +55,6 @@ protocols::moves::MoverOP
 	return protocols::moves::MoverOP( new --class--( *this ) );
 }
 
-/*
---class-- & --class--operator=( --class-- const & src){
-	return --class--( src );
-}
-*/
-
 
 moves::MoverOP
 --class--::fresh_instance() const
@@ -70,6 +64,11 @@ moves::MoverOP
 
 std::string
 --class--::get_name() const {
+	return --class--::class_name();
+}
+
+std::string
+--class--::class_name() {
 	return "--class--";
 }
 
@@ -101,12 +100,7 @@ protocols::moves::MoverOP
 
 std::string
 --class--Creator::keyname() const {
-	return --class--Creator::mover_name();
-}
-
-std::string
---class--Creator::mover_name(){
-	return "--class--";
+	return --class--::class_name();
 }
 
 --end_namespace--

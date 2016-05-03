@@ -25,6 +25,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace antibody {
@@ -86,9 +87,11 @@ public:
 	void
 	set_disable_packing_and_design(bool disable_packing_and_design);
 
-
 	void
 	set_defaults();
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	AntibodyInfoCOP ab_info_;

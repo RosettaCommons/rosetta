@@ -17,6 +17,7 @@
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegments.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -44,13 +45,18 @@
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <string>
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <utility/vector0.hh>
+
+// Boost headers
 #include <boost/foreach.hpp>
 
+// C++ headers
+#include <string>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.task_operations.SeqprofConsensusOperation" );
 
@@ -58,12 +64,24 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 core::pack::task::operation::TaskOperationOP
 SeqprofConsensusOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SeqprofConsensusOperation );
 }
 
+void SeqprofConsensusOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SeqprofConsensusOperation::provide_xml_schema( xsd );
+}
+
+std::string SeqprofConsensusOperationCreator::keyname() const
+{
+	return SeqprofConsensusOperation::keyname();
+}
 
 /// @brief default constructor
 SeqprofConsensusOperation::SeqprofConsensusOperation():
@@ -375,6 +393,53 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	debug( tag->getOption< bool >( "debug", false ) );
 }
 
+void SeqprofConsensusOperation::provide_xml_schema( XMLSchemaDefinition & xsd )
+{
+	XMLComplexTypeSchemaGeneratorOP complex_type_gen = create_complex_type_generator( xsd );
+	complex_type_gen->write_complex_type_to_schema( xsd );
+}
+
+/// @details Provide the complete, but changable, XML Schema for the base class so that
+/// derived classes may ammend it (by changing the element name, and possibly adding
+/// attributes)
+XMLComplexTypeSchemaGeneratorOP
+SeqprofConsensusOperation::create_complex_type_generator( XMLSchemaDefinition & xsd )
+{
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	// We need the schema to exist for both the ProteinInterfaceDesignOperation and the RestrictToAlignedSegmentsOperation
+	ProteinInterfaceDesignOperation::provide_xml_schema( xsd );
+	RestrictToAlignedSegmentsOperation::provide_xml_schema( xsd );
+
+	XMLComplexTypeSchemaGeneratorOP ct_generator( new XMLComplexTypeSchemaGenerator );
+	XMLSchemaSimpleSubelementList subelements;
+	boost::function< std::string ( std::string const & ) > taskop_naming_func( & core::pack::task::operation::complex_type_name_for_task_op );
+	subelements.add_already_defined_subelement( ProteinInterfaceDesignOperation::keyname(),    taskop_naming_func );
+	subelements.add_already_defined_subelement( RestrictToAlignedSegmentsOperation::keyname(), taskop_naming_func );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "restrict_to_repacking", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "convert_scores_to_probabilities", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "filename", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "min_aa_probability", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "keep_native", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "chain_num", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "probability_larger_than_current", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "ignore_pose_profile_length_mismatch", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "debug", xs_boolean, "false" ) );
+
+	attributes.push_back( XMLSchemaAttribute( "conservation_cutoff_aligned_segments", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "conservation_cutoff_protein_interface_design", xs_decimal ) );
+
+	ct_generator->element_name( keyname() )
+		.complex_type_naming_func( taskop_naming_func )
+		.set_subelements_single_appearance_optional( subelements )
+		.add_attributes( attributes );
+
+	return ct_generator;
+
+}
+
 core::sequence::SequenceProfileCOP
 SeqprofConsensusOperation::seqprof() const
 {
@@ -393,12 +458,6 @@ SeqprofConsensusOperation::set_seqprof( core::sequence::SequenceProfileOP seqpro
 	}
 }
 
-core::pack::task::operation::TaskOperationOP
-RestrictConservedLowDdgOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictConservedLowDdgOperation );
-}
-
 void
 SeqprofConsensusOperation::restrict_to_aligned_segments( RestrictToAlignedSegmentsOperationOP rtas ){ restrict_to_aligned_segments_ = rtas; }
 
@@ -411,6 +470,22 @@ SeqprofConsensusOperation::protein_interface_design() const{ return protein_inte
 void
 SeqprofConsensusOperation::protein_interface_design( ProteinInterfaceDesignOperationOP pido ){
 	protein_interface_design_ = pido;
+}
+
+core::pack::task::operation::TaskOperationOP
+RestrictConservedLowDdgOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictConservedLowDdgOperation );
+}
+
+void RestrictConservedLowDdgOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictConservedLowDdgOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictConservedLowDdgOperationCreator::keyname() const
+{
+	return RestrictConservedLowDdgOperation::keyname();
 }
 
 RestrictConservedLowDdgOperation::RestrictConservedLowDdgOperation()
@@ -447,6 +522,23 @@ RestrictConservedLowDdgOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( tag->hasOption("conservation_cutoff") ) conservation_cutoff_ = tag->getOption< Real >("conservation_cutoff" );
 	if ( tag->hasOption("ddG_cutoff") ) ddG_cutoff_ = tag->getOption< Real >("ddG_cutoff" );
 	if ( tag->hasOption("verbose") ) verbose_ = tag->getOption< bool >("verbose" );
+}
+
+void RestrictConservedLowDdgOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	// calls Parent::parse_tag, so supports all those attributes and subtags; start
+	// with parent's complex type, reset the name, and add more attributes.
+	XMLComplexTypeSchemaGeneratorOP complex_type_gen = create_complex_type_generator( xsd );
+	complex_type_gen->element_name( keyname() );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "ddG_filename", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "conservation_cutoff", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "ddG_cutoff", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean ) );
+	complex_type_gen->add_attributes( attributes )
+		.write_complex_type_to_schema( xsd );
 }
 
 void

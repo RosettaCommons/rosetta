@@ -22,6 +22,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace core {
@@ -34,48 +35,39 @@ namespace operation {
 ///  Pose is up-to-date
 class NoRepackDisulfides : public core::pack::task::operation::TaskOperation {
 
-
 private: // typedefs
-
 
 	typedef core::pack::task::operation::TaskOperation Super;
 
-
 public: // typedefs
-
 
 	typedef core::pack::task::PackerTask PackerTask;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef core::pose::Pose Pose;
 
-
 public: // construct/destruct
-
 
 	/// @brief default constructor
 	NoRepackDisulfides();
 
-
 	/// @brief copy constructor
 	NoRepackDisulfides( NoRepackDisulfides const & rval );
-
 
 	/// @brief default destructor
 	virtual ~NoRepackDisulfides();
 
-
 public: // virtual constructors
-
 
 	/// @brief clone this object
 	virtual TaskOperationOP clone() const;
 
-
 public: // methods
-
 
 	/// @brief apply operations to PackerTask
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname();
 
 };
 

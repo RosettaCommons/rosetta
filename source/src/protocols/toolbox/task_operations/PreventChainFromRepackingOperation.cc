@@ -26,6 +26,8 @@
 #include <utility/exit.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
 
@@ -42,6 +44,23 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+PreventChainFromRepackingOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new PreventChainFromRepackingOperation );
+}
+
+void PreventChainFromRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PreventChainFromRepackingOperation::provide_xml_schema( xsd );
+}
+
+std::string PreventChainFromRepackingOperationCreator::keyname() const
+{
+	return PreventChainFromRepackingOperation::keyname();
+}
 
 PreventChainFromRepackingOperation::PreventChainFromRepackingOperation() {}
 
@@ -51,12 +70,6 @@ PreventChainFromRepackingOperation::PreventChainFromRepackingOperation( core::Si
 }
 
 PreventChainFromRepackingOperation::~PreventChainFromRepackingOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-PreventChainFromRepackingOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new PreventChainFromRepackingOperation );
-}
 
 core::pack::task::operation::TaskOperationOP PreventChainFromRepackingOperation::clone() const
 {
@@ -98,6 +111,17 @@ void
 PreventChainFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
+}
+
+void PreventChainFromRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace protocols

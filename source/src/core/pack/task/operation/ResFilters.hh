@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <string>
 #include <set>
@@ -44,6 +45,8 @@ public:
 
 	virtual void parse_tag( TagCOP );
 
+	static utility::tag::XMLComplexTypeSchemaGeneratorOP define_composition_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 protected:
 	utility::vector1<ResFilterCOP> sub_filters_;
 	void parse_sub_filters_tag( TagCOP );
@@ -58,6 +61,9 @@ public:
 	AnyResFilter(utility::vector1<ResFilterCOP> const &);
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class AllResFilter : public ResFilterComposition
@@ -69,6 +75,9 @@ public:
 	AllResFilter(utility::vector1<ResFilterCOP> const &);
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class NoResFilter : public ResFilterComposition
@@ -80,6 +89,9 @@ public:
 	NoResFilter(utility::vector1<ResFilterCOP> const &);
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 // @brief Convenience filter to filter by residue type (polar, apolar, aromatic, charged)
@@ -94,6 +106,9 @@ public:
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	bool polar_, apolar_, aromatic_, charged_;
@@ -112,6 +127,11 @@ public:
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagCOP );
 	virtual std::string const & property() const { return property_; }
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes();
+
 private:
 	std::string property_;
 };
@@ -124,6 +144,10 @@ public:
 	ResidueLacksProperty( std::string const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class ResiduePDBInfoHasLabel : public ResFilter {
@@ -136,6 +160,11 @@ public:
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagCOP );
 	virtual std::string const & property() const { return property_; }
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes();
+
 private:
 	std::string property_;
 };
@@ -148,6 +177,10 @@ public:
 	ResiduePDBInfoLacksLabel( std::string const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class ResidueName3Is : public ResFilter {
@@ -160,6 +193,11 @@ public:
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes();
+
 private:
 	std::set<std::string> name3_set;
 };
@@ -173,6 +211,10 @@ public:
 	ResidueName3Isnt( std::set<std::string> const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class ResidueIndexIs : public ResFilter {
@@ -188,6 +230,10 @@ public:
 	virtual void parse_tag( TagCOP );
 	virtual utility::vector1< Size > const & indices() const;
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< Size > indices_;
 };
@@ -202,6 +248,10 @@ public:
 	ResidueIndexIsnt( utility::vector1< Size > const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class ResiduePDBIndexIs : public ResFilter {
@@ -224,6 +274,10 @@ public:
 	virtual void parse_tag( TagCOP );
 	virtual utility::vector1< ChainPos > const & indices() const;
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< ChainPos > indices_;
 };
@@ -238,6 +292,10 @@ public:
 	ResiduePDBIndexIsnt( utility::vector1< ChainPos > const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class ChainIs : public ResFilter {
@@ -250,6 +308,11 @@ public:
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagCOP );
 	virtual char const & chain() const { return chain_; }
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	char chain_;
 };
@@ -262,6 +325,10 @@ public:
 	ChainIsnt( char const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 } //namespace operation

@@ -29,6 +29,7 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 // c++ headers
@@ -80,6 +81,17 @@ public:
 	void newTaskOperations( TaskOperationOPs &, basic::datacache::DataMap & datamap, TagCOP ) const;
 	/// @brief fills vector with new TaskOperations from xml-like tag file
 	void newTaskOperations( TaskOperationOPs &, basic::datacache::DataMap & datamap, std::string const & ) const;
+
+
+	/// @brief The %TaskOperationFactory is the point of entry for the definition of the XML Schemas
+	/// for every TaskOperation that may be instantiated from a file. It is  responsible for defining
+	/// an xs:group named "task_operation" listing each of the task-operation-complex types that
+	/// may be initialized using the %TaskOperationFactory and to iterate across each of the
+	/// TaskOperationCreator s it contains asking them for the XML schema of the TaskOperation they
+	/// are responsible for creating.
+	void define_task_op_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	static std::string task_operation_xml_schema_group_name();
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

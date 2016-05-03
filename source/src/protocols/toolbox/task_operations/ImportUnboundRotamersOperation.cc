@@ -28,6 +28,8 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 #ifdef WIN32
 #include <core/graph/Graph.hh>
@@ -37,12 +39,24 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-core::pack::task::operation::TaskOperationOP
+TaskOperationOP
 ImportUnboundRotamersOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ImportUnboundRotamersOperation );
+	return TaskOperationOP( new ImportUnboundRotamersOperation );
+}
+
+void ImportUnboundRotamersOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ImportUnboundRotamersOperation::provide_xml_schema( xsd );
+}
+
+std::string ImportUnboundRotamersOperationCreator::keyname() const
+{
+	return ImportUnboundRotamersOperation::keyname();
 }
 
 /// @brief default constructor
@@ -54,9 +68,9 @@ ImportUnboundRotamersOperation::ImportUnboundRotamersOperation():
 ImportUnboundRotamersOperation::~ImportUnboundRotamersOperation(){}
 
 /// @brief clone
-core::pack::task::operation::TaskOperationOP
+TaskOperationOP
 ImportUnboundRotamersOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new ImportUnboundRotamersOperation( *this ) );
+	return TaskOperationOP( new ImportUnboundRotamersOperation( *this ) );
 }
 
 //mjo commenting out 'pose' because it is unused and causes a warning
@@ -73,6 +87,11 @@ ImportUnboundRotamersOperation::apply( Pose const & /*pose*/, PackerTask & task 
 void
 ImportUnboundRotamersOperation::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
+}
+
+void ImportUnboundRotamersOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 } // TaskOperations

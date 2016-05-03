@@ -53,6 +53,8 @@
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/pointer/access_ptr.hh>
 
 // option key includes
@@ -70,6 +72,9 @@
 
 namespace protocols {
 namespace enzdes {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesTaskOperations" );
 
@@ -166,16 +171,47 @@ SetCatalyticResPackBehavior::parse_tag( TagCOP tag , DataMap & )
 
 }
 
+void SetCatalyticResPackBehavior::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "fix_catalytic_aa", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "behavior_non_catalytic", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 core::pack::task::operation::TaskOperationOP
 SetCatalyticResPackBehaviorCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SetCatalyticResPackBehavior );
 }
 
+void SetCatalyticResPackBehaviorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetCatalyticResPackBehavior::provide_xml_schema( xsd );
+}
+
+std::string SetCatalyticResPackBehaviorCreator::keyname() const
+{
+	return SetCatalyticResPackBehavior::keyname();
+}
+
+
 core::pack::task::operation::TaskOperationOP
 DetectProteinLigandInterfaceOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new DetectProteinLigandInterface );
+}
+
+void DetectProteinLigandInterfaceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DetectProteinLigandInterface::provide_xml_schema( xsd );
+}
+
+std::string DetectProteinLigandInterfaceOperationCreator::keyname() const
+{
+	return DetectProteinLigandInterface::keyname();
 }
 
 core::pack::task::operation::TaskOperationOP
@@ -184,10 +220,30 @@ ProteinLigandInterfaceUpweighterOperationCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new ProteinLigandInterfaceUpweighter );
 }
 
+void ProteinLigandInterfaceUpweighterOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinLigandInterfaceUpweighter::provide_xml_schema( xsd );
+}
+
+std::string ProteinLigandInterfaceUpweighterOperationCreator::keyname() const
+{
+	return ProteinLigandInterfaceUpweighter::keyname();
+}
+
 core::pack::task::operation::TaskOperationOP
 AddLigandMotifRotamersOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new AddLigandMotifRotamers );
+}
+
+void AddLigandMotifRotamersOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddLigandMotifRotamers::provide_xml_schema( xsd );
+}
+
+std::string AddLigandMotifRotamersOperationCreator::keyname() const
+{
+	return AddLigandMotifRotamers::keyname();
 }
 
 DetectProteinLigandInterface::DetectProteinLigandInterface():
@@ -254,6 +310,28 @@ DetectProteinLigandInterface::parse_tag( TagCOP tag , DataMap & )
 		cstid_list_ = tag->getOption< std::string >( "target_cstids", "" );
 	}
 
+}
+
+void DetectProteinLigandInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "repack_only", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "cut1", xs_decimal, "6.0 " ) );
+	attributes.push_back( XMLSchemaAttribute( "cut2", xs_decimal, "8.0 " ) );
+	attributes.push_back( XMLSchemaAttribute( "cut3", xs_decimal, "10.0 " ) );
+	attributes.push_back( XMLSchemaAttribute( "cut4", xs_decimal, "12.0 " ) );
+	attributes.push_back( XMLSchemaAttribute( "arg_sweep_cutoff", xs_decimal, "3.7 " ) );
+	attributes.push_back( XMLSchemaAttribute( "design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "resfile", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_to_cys", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "segment_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "catres_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "arg_sweep_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "catres_only_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "target_cstids", xs_string, "" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 /// @brief Change a packer task in some way.  The input pose is the one to which the input
@@ -714,6 +792,16 @@ ProteinLigandInterfaceUpweighter::parse_tag( TagCOP tag , DataMap & )
 	if ( tag->hasOption("catres_interface_weight") ) catres_packer_weight_ = tag->getOption< core::Real >( "catres_interface_weight", 1.0 );
 }
 
+void ProteinLigandInterfaceUpweighter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "interface_weight", xs_decimal, "1.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "catres_interface_weight", xs_decimal, "1.0" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 /// @brief Change a packer task in some way.  The input pose is the one to which the input
 /// task will be later applied.
 void ProteinLigandInterfaceUpweighter::apply(
@@ -757,6 +845,16 @@ AddRigidBodyLigandConfsCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new AddRigidBodyLigandConfs );
 }
 
+void AddRigidBodyLigandConfsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddRigidBodyLigandConfs::provide_xml_schema( xsd );
+}
+
+std::string AddRigidBodyLigandConfsCreator::keyname() const
+{
+	return AddRigidBodyLigandConfs::keyname();
+}
+
 AddRigidBodyLigandConfs::AddRigidBodyLigandConfs(){}
 
 AddRigidBodyLigandConfs::~AddRigidBodyLigandConfs(){}
@@ -774,6 +872,11 @@ AddRigidBodyLigandConfs::clone() const
 void
 AddRigidBodyLigandConfs::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
+}
+
+void AddRigidBodyLigandConfs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 void
@@ -837,6 +940,11 @@ AddLigandMotifRotamers::parse_tag( TagCOP /*tag*/ , DataMap & )
 	-motif_filename Pruned_NoCCC.motifs
 	*/
 	//Those are some options I could add, but it's not really necessary--most users will pass those options on the command line.  I will eventually make them parseable tags. -mdsmith
+}
+
+void AddLigandMotifRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 void

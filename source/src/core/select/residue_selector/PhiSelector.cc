@@ -137,7 +137,7 @@ PhiSelector::class_name() {
 /// @brief Provide XSD information, allowing automatic evaluation of bad XML.
 ///
 void
-PhiSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+PhiSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "select_positive_phi", xs_boolean, "true" ) );
@@ -158,10 +158,10 @@ PhiSelectorCreator::keyname() const {
 /// @brief Provide XSD information, allowing automatic evaluation of bad XML.
 ///
 void
-PhiSelectorCreator::provide_selector_xsd(
+PhiSelectorCreator::provide_xml_schema(
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	PhiSelector::provide_selector_xsd( xsd );
+	PhiSelector::provide_xml_schema( xsd );
 }
 
 

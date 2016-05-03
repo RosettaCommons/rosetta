@@ -22,6 +22,9 @@
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+
 // C++ headers
 #include <sstream>
 
@@ -38,6 +41,43 @@ first_difference( std::string const & s1, std::string const & s2 ) {
 	}
 	return std::min( s1.size(), s2.size() );
 }
+
+/// @brief Dummy class used to test the XMLSchemaDefinition class
+class ResSelectCT : public XMLSchemaTopLevelElement {
+public:
+	ResSelectCT() : name_( "ResidueSelectorType" ) {}
+	virtual std::string const & element_name() const { return name_; }
+	virtual void write_definition( int indentation, std::ostream & os ) const {
+		for ( int ii = 1; ii <= indentation; ++ii ) os << " ";
+		os <<
+			"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
+			" <xs:group ref=\"ResidueSelector\"/>\n"
+			"</xs:complexType>\n";
+	}
+private:
+	std::string name_;
+};
+
+/// @brief Dummy class for testing the XMLSchemaDefinition class
+class ResSelectGrp : public XMLSchemaTopLevelElement {
+public:
+	ResSelectGrp() : name_( "ResidueSelector" ) {}
+	virtual std::string const & element_name() const { return name_; }
+	virtual void write_definition( int indentation, std::ostream & os ) const {
+		for ( int ii = 1; ii <= indentation; ++ii ) os << " ";
+		os << "<xs:group name=\"ResidueSelector\">\n"
+			" <xs:choice>\n"
+			"  <xs:element name=\"AndResidueSelector\" type=\"AndResidueSelectorType\"/>\n"
+			"  <xs:element name=\"OrResidueSelector\" type=\"OrResidueSelectorType\"/>\n"
+			"  <xs:element name=\"NotResidueSelector\" type=\"NotResidueSelectorType\"/>\n"
+			"  <xs:element name=\"ChainResidueSelector\" type=\"ChainResidueSelectorType\"/>\n"
+			"  <xs:element name=\"NeighborhoodResidueSelector\" type=\"NeighborhoodResidueSelectorType\"/>\n"
+			" </xs:choice>\n"
+			"</xs:group>\n";
+	}
+private:
+	std::string name_;
+};
 
 class XMLSchemaGenerationTests : public CxxTest::TestSuite
 {
@@ -170,12 +210,21 @@ public:
 		TS_ASSERT_EQUALS( restriction_type_name( xsr_whitespace ), "xs:whitespace" );
 	}
 
+	void test_xml_complex_type_no_children_no_attributes() {
+		XMLSchemaComplexType ct;
+		ct.name( "to_RestrictToRepackingType" );
+		std::ostringstream oss;
+		ct.write_definition( 0, oss );
+		TS_ASSERT_EQUALS( oss.str(), "<xs:complexType name=\"to_RestrictToRepackingType\" mixed=\"true\">\n</xs:complexType>\n" );
+	}
+
 	void test_xml_complex_type_sequence1() {
 		XMLSchemaComplexType ct;
 		ct.name( "seq_of_one" );
-		ct.type( xsctt_sequence );
+		XMLSchemaModelGroupOP seq( new XMLSchemaModelGroup( xsmgt_sequence ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
+		seq->append_particle( elem1 );
+		ct.set_model_group( seq );
 		std::string definition = "<xs:complexType name=\"seq_of_one\" mixed=\"true\">\n <xs:sequence>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n </xs:sequence>\n</xs:complexType>\n";
 		std::ostringstream oss;
@@ -186,11 +235,11 @@ public:
 	void test_xml_complex_type_sequence2() {
 		XMLSchemaComplexType ct;
 		ct.name( "seq_of_two" );
-		ct.type( xsctt_sequence );
+		XMLSchemaModelGroupOP seq( new XMLSchemaModelGroup( xsmgt_sequence ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		ct.add_subelement( elem2 );
+		seq->append_particle( elem1 ).append_particle( elem2 );
+		ct.set_model_group( seq );
 		std::string definition = "<xs:complexType name=\"seq_of_two\" mixed=\"true\">\n <xs:sequence>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n  <xs:element name=\"elem2\" type=\"xs:integer\"/>\n"
 			" </xs:sequence>\n</xs:complexType>\n";
@@ -202,13 +251,13 @@ public:
 	void test_xml_complex_type_sequence_w_attributes() {
 		XMLSchemaComplexType ct;
 		ct.name( "seq_of_two" );
-		ct.type( xsctt_sequence );
+		XMLSchemaModelGroupOP seq( new XMLSchemaModelGroup( xsmgt_sequence ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		ct.add_subelement( elem2 );
+		seq->append_particle( elem1 ).append_particle( elem2 );
+		ct.set_model_group( seq );
 		ct.add_attribute( XMLSchemaAttribute( "attr1", xs_string, "1" )); // default value constructor
-		ct.add_attribute( XMLSchemaAttribute( "attr2", xs_boolean, true )); // is_required constructor
+		ct.add_attribute( XMLSchemaAttribute::required_attribute( "attr2", xs_boolean )); // is_required constructor
 
 		std::string definition = "<xs:complexType name=\"seq_of_two\" mixed=\"true\">\n <xs:sequence>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n  <xs:element name=\"elem2\" type=\"xs:integer\"/>\n"
@@ -224,9 +273,8 @@ public:
 	void test_xml_complex_type_empty_w_attributes() {
 		XMLSchemaComplexType ct;
 		ct.name( "empty_w_two_attrs" );
-		ct.type( xsctt_empty );
 		ct.add_attribute( XMLSchemaAttribute( "attr1", xs_string, "1" )); // default value constructor
-		ct.add_attribute( XMLSchemaAttribute( "attr2", xs_boolean, true )); // is_required constructor
+		ct.add_attribute( XMLSchemaAttribute::required_attribute( "attr2", xs_boolean )); // is_required constructor
 
 		std::string definition = "<xs:complexType name=\"empty_w_two_attrs\" mixed=\"true\">\n"
 			" <xs:attribute name=\"attr1\" type=\"xs:string\" default=\"1\"/>\n"
@@ -241,9 +289,10 @@ public:
 	void test_xml_complex_type_empty_but_seq_w_attributes() {
 		XMLSchemaComplexType ct;
 		ct.name( "empty_w_two_attrs" );
-		ct.type( xsctt_sequence );
+		XMLSchemaModelGroupOP seq( new XMLSchemaModelGroup( xsmgt_sequence ));
+		ct.set_model_group( seq );
 		ct.add_attribute( XMLSchemaAttribute( "attr1", xs_string, "1" )); // default value constructor
-		ct.add_attribute( XMLSchemaAttribute( "attr2", xs_boolean, true )); // is_required constructor
+		ct.add_attribute( XMLSchemaAttribute::required_attribute( "attr2", xs_boolean )); // is_required constructor
 
 		std::string definition = "<xs:complexType name=\"empty_w_two_attrs\" mixed=\"true\">\n"
 			" <xs:attribute name=\"attr1\" type=\"xs:string\" default=\"1\"/>\n"
@@ -257,11 +306,12 @@ public:
 	// choice
 	void test_xml_complex_type_choice1() {
 		XMLSchemaComplexType ct;
-		ct.name( "seq_of_one" );
-		ct.type( xsctt_choice );
+		ct.name( "choice_of_one" );
+		XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
-		std::string definition = "<xs:complexType name=\"seq_of_one\" mixed=\"true\">\n <xs:choice>\n"
+		choice->append_particle( elem1 );
+		ct.set_model_group( choice );
+		std::string definition = "<xs:complexType name=\"choice_of_one\" mixed=\"true\">\n <xs:choice>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n </xs:choice>\n</xs:complexType>\n";
 		std::ostringstream oss;
 		ct.write_definition( 0, oss );
@@ -270,13 +320,13 @@ public:
 
 	void test_xml_complex_type_choice2() {
 		XMLSchemaComplexType ct;
-		ct.name( "seq_of_two" );
-		ct.type( xsctt_choice );
+		ct.name( "choice_of_two" );
+		XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		ct.add_subelement( elem2 );
-		std::string definition = "<xs:complexType name=\"seq_of_two\" mixed=\"true\">\n <xs:choice>\n"
+		choice->append_particle( elem1 ).append_particle( elem2 );
+		ct.set_model_group( choice );
+		std::string definition = "<xs:complexType name=\"choice_of_two\" mixed=\"true\">\n <xs:choice>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n  <xs:element name=\"elem2\" type=\"xs:integer\"/>\n"
 			" </xs:choice>\n</xs:complexType>\n";
 		std::ostringstream oss;
@@ -286,16 +336,16 @@ public:
 
 	void test_xml_complex_type_choice_w_attributes() {
 		XMLSchemaComplexType ct;
-		ct.name( "seq_of_two" );
-		ct.type( xsctt_choice );
+		ct.name( "choice_of_two" );
+		XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		ct.add_subelement( elem2 );
+		choice->append_particle( elem1 ).append_particle( elem2 );
+		ct.set_model_group( choice );
 		ct.add_attribute( XMLSchemaAttribute( "attr1", xs_string, "1" )); // default value constructor
-		ct.add_attribute( XMLSchemaAttribute( "attr2", xs_boolean, true )); // is_required constructor
+		ct.add_attribute( XMLSchemaAttribute::required_attribute( "attr2", xs_boolean )); // is_required constructor
 
-		std::string definition = "<xs:complexType name=\"seq_of_two\" mixed=\"true\">\n <xs:choice>\n"
+		std::string definition = "<xs:complexType name=\"choice_of_two\" mixed=\"true\">\n <xs:choice>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n  <xs:element name=\"elem2\" type=\"xs:integer\"/>\n"
 			" </xs:choice>\n"
 			" <xs:attribute name=\"attr1\" type=\"xs:string\" default=\"1\"/>\n"
@@ -309,11 +359,13 @@ public:
 	// all
 	void test_xml_complex_type_all1() {
 		XMLSchemaComplexType ct;
-		ct.name( "seq_of_one" );
-		ct.type( xsctt_all );
+		ct.name( "all_of_one" );
+		XMLSchemaModelGroupOP all( new XMLSchemaModelGroup( xsmgt_all ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
-		std::string definition = "<xs:complexType name=\"seq_of_one\" mixed=\"true\">\n <xs:all>\n"
+		all->append_particle( elem1 );
+		ct.set_model_group( all );
+
+		std::string definition = "<xs:complexType name=\"all_of_one\" mixed=\"true\">\n <xs:all>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n </xs:all>\n</xs:complexType>\n";
 		std::ostringstream oss;
 		ct.write_definition( 0, oss );
@@ -323,11 +375,12 @@ public:
 	void test_xml_complex_type_all2() {
 		XMLSchemaComplexType ct;
 		ct.name( "seq_of_two" );
-		ct.type( xsctt_all );
+		XMLSchemaModelGroupOP all( new XMLSchemaModelGroup( xsmgt_all ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		ct.add_subelement( elem2 );
+		all->append_particle( elem1 ).append_particle( elem2 );
+		ct.set_model_group( all );
+
 		std::string definition = "<xs:complexType name=\"seq_of_two\" mixed=\"true\">\n <xs:all>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n  <xs:element name=\"elem2\" type=\"xs:integer\"/>\n"
 			" </xs:all>\n</xs:complexType>\n";
@@ -339,13 +392,13 @@ public:
 	void test_xml_complex_type_all_w_attributes() {
 		XMLSchemaComplexType ct;
 		ct.name( "seq_of_two" );
-		ct.type( xsctt_all );
+		XMLSchemaModelGroupOP all( new XMLSchemaModelGroup( xsmgt_all ));
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		ct.add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		ct.add_subelement( elem2 );
+		all->append_particle( elem1 ).append_particle( elem2 );
+		ct.set_model_group( all );
 		ct.add_attribute( XMLSchemaAttribute( "attr1", xs_string, "1" )); // default value constructor
-		ct.add_attribute( XMLSchemaAttribute( "attr2", xs_boolean, true )); // is_required constructor
+		ct.add_attribute( XMLSchemaAttribute::required_attribute( "attr2", xs_boolean )); // is_required constructor
 
 		std::string definition = "<xs:complexType name=\"seq_of_two\" mixed=\"true\">\n <xs:all>\n"
 			"  <xs:element name=\"elem1\" type=\"xs:string\"/>\n  <xs:element name=\"elem2\" type=\"xs:integer\"/>\n"
@@ -360,16 +413,14 @@ public:
 
 
 	void test_complex_type_group_sequence() {
-		XMLSchemaComplexTypeOP seqtype( new XMLSchemaComplexType );
-		seqtype->type( xsctt_sequence );
+		XMLSchemaModelGroupOP seqtype( new XMLSchemaModelGroup( xsmgt_sequence ) );
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		seqtype->add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		seqtype->add_subelement( elem2 );
+		seqtype->append_particle( elem1 ).append_particle( elem2 );
 
-		XMLSchemaComplexType grouptype;
-		grouptype.name( "group_seq" );
-		grouptype.subtype( seqtype );
+		XMLSchemaModelGroup grouptype( xsmgt_group );
+		grouptype.group_name( "group_seq" );
+		grouptype.append_particle( seqtype );
 
 		std::ostringstream oss;
 		grouptype.write_definition( 0, oss );
@@ -381,16 +432,14 @@ public:
 	}
 
 	void test_complex_type_group_choice() {
-		XMLSchemaComplexTypeOP seqtype( new XMLSchemaComplexType );
-		seqtype->type( xsctt_choice );
+		XMLSchemaModelGroupOP seqtype( new XMLSchemaModelGroup( xsmgt_choice ) );
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		seqtype->add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		seqtype->add_subelement( elem2 );
+		seqtype->append_particle( elem1 ).append_particle( elem2 );
 
-		XMLSchemaComplexType grouptype;
-		grouptype.name( "group_seq" );
-		grouptype.subtype( seqtype );
+		XMLSchemaModelGroup grouptype( xsmgt_group );
+		grouptype.group_name( "group_seq" );
+		grouptype.append_particle( seqtype );
 
 		std::ostringstream oss;
 		grouptype.write_definition( 0, oss );
@@ -402,16 +451,14 @@ public:
 	}
 
 	void test_complex_type_group_all() {
-		XMLSchemaComplexTypeOP seqtype( new XMLSchemaComplexType );
-		seqtype->type( xsctt_all );
+		XMLSchemaModelGroupOP seqtype( new XMLSchemaModelGroup( xsmgt_all ) );
 		XMLSchemaElementOP elem1( new XMLSchemaElement ); elem1->name( "elem1" ); elem1->type_name( xs_string );
-		seqtype->add_subelement( elem1 );
 		XMLSchemaElementOP elem2( new XMLSchemaElement ); elem2->name( "elem2" ); elem2->type_name( xs_integer );
-		seqtype->add_subelement( elem2 );
+		seqtype->append_particle( elem1 ).append_particle( elem2 );
 
-		XMLSchemaComplexType grouptype;
-		grouptype.name( "group_seq" );
-		grouptype.subtype( seqtype );
+		XMLSchemaModelGroup grouptype( xsmgt_group );
+		grouptype.group_name( "group_seq" );
+		grouptype.append_particle( seqtype );
 
 		std::ostringstream oss;
 		grouptype.write_definition( 0, oss );
@@ -445,7 +492,7 @@ public:
 	}
 
 	void test_xml_element_group_reference() {
-		XMLSchemaElement selectors;
+		XMLSchemaModelGroup selectors;
 		selectors.group_name( "residue_selector" );
 		std::ostringstream oss;
 		selectors.write_definition( 2, oss );
@@ -455,7 +502,7 @@ public:
 
 
 	void test_xml_element_group_reference_w_occurs() {
-		XMLSchemaElement selectors;
+		XMLSchemaModelGroup selectors;
 		selectors.group_name( "residue_selector" );
 		selectors.min_occurs( 2 );
 		selectors.max_occurs( xsminmax_unbounded );
@@ -469,51 +516,54 @@ public:
 		XMLSchemaElement and_selector;
 		and_selector.name( "AndSelector" );
 
-		XMLSchemaElementOP selectors( new XMLSchemaElement );
+		XMLSchemaModelGroupOP selectors( new XMLSchemaModelGroup );
 		selectors->group_name( "residue_selector" );
 		selectors->min_occurs( 2 );
 		selectors->max_occurs( xsminmax_unbounded );
 
 		XMLSchemaComplexTypeOP and_type( new XMLSchemaComplexType );
-		and_type->type( xsctt_choice );
-		and_type->add_subelement( selectors );
+		and_type->set_model_group( selectors );
 		and_type->add_attribute( XMLSchemaAttribute( "some_attribute", xs_string ));
 
 		and_selector.element_type_def( and_type );
 
 		std::ostringstream oss;
 		and_selector.write_definition( 0, oss );
-		std::string definition = "<xs:element name=\"AndSelector\">\n <xs:complexType mixed=\"true\">\n  <xs:choice>\n"
-			"   <xs:group ref=\"residue_selector\" minOccurs=\"2\" maxOccurs=\"unbounded\"/>\n"
-			"  </xs:choice>\n  <xs:attribute name=\"some_attribute\" type=\"xs:string\"/>\n"
+		std::string definition = "<xs:element name=\"AndSelector\">\n <xs:complexType mixed=\"true\">\n"
+			"  <xs:group ref=\"residue_selector\" minOccurs=\"2\" maxOccurs=\"unbounded\"/>\n"
+			"  <xs:attribute name=\"some_attribute\" type=\"xs:string\"/>\n"
 			" </xs:complexType>\n</xs:element>\n";
 
 		TS_ASSERT_EQUALS( definition, oss.str() );
 	}
 
-	void test_xml_schema_element_w_restriction_type() {
-		XMLSchemaElement element;
-		element.name( "residues" );
-		XMLSchemaRestrictionOP cs_intlist( new XMLSchemaRestriction );
-		cs_intlist->base_type( xs_string );
-		cs_intlist->add_restriction( xsr_pattern, "[0-9]+(,[0-9]+)*" );
-		element.restriction_type_def( cs_intlist );
-
-		std::ostringstream oss;
-		element.write_definition( 0, oss );
-
-		std::string definition = "<xs:element name=\"residues\">\n <xs:simpleType>\n  <xs:restriction base=\"xs:string\">\n"
-			"   <xs:pattern value=\"[0-9]+(,[0-9]+)*\"/>\n"
-			"  </xs:restriction>\n </xs:simpleType>\n</xs:element>\n";
-
-		TS_ASSERT_EQUALS( definition, oss.str() );
-	}
+	//void dont_test_xml_schema_element_w_restriction_type() {
+	//	XMLSchemaElement element;
+	//	element.name( "residues" );
+	//	XMLSchemaRestrictionOP cs_intlist( new XMLSchemaRestriction );
+	//	cs_intlist->base_type( xs_string );
+	//	cs_intlist->add_restriction( xsr_pattern, "[0-9]+(,[0-9]+)*" );
+	//	element.restriction_type_def( cs_intlist );
+	//
+	//	std::ostringstream oss;
+	//	element.write_definition( 0, oss );
+	//
+	//	std::string definition = "<xs:element name=\"residues\">\n <xs:simpleType>\n  <xs:restriction base=\"xs:string\">\n"
+	//		"   <xs:pattern value=\"[0-9]+(,[0-9]+)*\"/>\n"
+	//		"  </xs:restriction>\n </xs:simpleType>\n</xs:element>\n";
+	//
+	//	TS_ASSERT_EQUALS( definition, oss.str() );
+	//}
 
 	void test_xml_schema_definition_detect_name_collision() {
 		XMLSchemaDefinition xsd;
-		xsd.add_top_level_element( "RosettaScripts", "<xs:element name=\"RosettaScripts\" type=\"xs:string\"/>\n" );
+		XMLSchemaElement rs_str; rs_str.name( "RosettaScripts" ); rs_str.type_name( "xs:string" );
+		XMLSchemaElement rs_int; rs_int.name( "RosettaScripts" ); rs_int.type_name( "xs:integer" );
+		xsd.add_top_level_element( rs_str );
+		//xsd.add_top_level_element( "RosettaScripts", "<xs:element name=\"RosettaScripts\" type=\"xs:string\"/>\n" );
 		try {
-			xsd.add_top_level_element( "RosettaScripts", "<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n" );
+			xsd.add_top_level_element( rs_int );
+			//xsd.add_top_level_element( "RosettaScripts", "<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n" );
 			TS_ASSERT( false ); // we should not have reached this point
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "Name collision in creation of XML Schema definition: top level element with name \"RosettaScripts\" already has been defined.\n"
@@ -524,8 +574,20 @@ public:
 
 	void test_xml_schema_definition_detect_name_mismatch() {
 		XMLSchemaDefinition xsd;
+		class imposter : public XMLSchemaTopLevelElement {
+		public:
+			imposter() : name_( "imposter" ) {}
+			virtual std::string const & element_name() const { return name_; }
+			virtual void write_definition( int indentation, std::ostream & os ) const {
+				for ( int ii = 1; ii <= indentation; ++ii ) os << " ";
+				os << "<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n" << std::endl;
+			}
+		private:
+			std::string name_;
+		} imp;
+
 		try {
-			xsd.add_top_level_element( "imposter", "<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n" );
+			xsd.add_top_level_element( imp );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "top level tag with presumed name \"imposter\" has an actual name of \"RosettaScripts\"" );
 		}
@@ -533,8 +595,19 @@ public:
 
 	void test_xml_schema_definition_detect_missing_name() {
 		XMLSchemaDefinition xsd;
+		class imposter : public XMLSchemaTopLevelElement {
+		public:
+			imposter() : name_( "RosettaScripts" ) {}
+			virtual std::string const & element_name() const { return name_; }
+			virtual void write_definition( int indentation, std::ostream & os ) const {
+				for ( int ii = 1; ii <= indentation; ++ii ) os << " ";
+				os << "<xs:element type=\"xs:integer\"/>\n" << std::endl;
+			}
+		private:
+			std::string name_;
+		} imp;
 		try {
-			xsd.add_top_level_element( "RosettaScripts", "<xs:element type=\"xs:integer\"/>\n" );
+			xsd.add_top_level_element( imp );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "top level tag \"RosettaScripts\" does not have a name attribute (a.k.a. option)." );
 		}
@@ -543,25 +616,11 @@ public:
 	void test_xml_schema_definition_write_xsd() {
 		XMLSchemaDefinition xsd;
 
-		xsd.add_top_level_element(
-			"ResidueSelectorType",
-			"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
-			" <xs:group ref=\"ResidueSelector\"/>\n"
-			"</xs:complexType>\n"
-		);
+		ResSelectCT res_selector_ct;
+		xsd.add_top_level_element( res_selector_ct );
 
-		xsd.add_top_level_element(
-			"ResidueSelector",
-			"<xs:group name=\"ResidueSelector\">\n"
-			" <xs:choice>\n"
-			"  <xs:element name=\"AndResidueSelector\" type=\"AndResidueSelectorType\"/>\n"
-			"  <xs:element name=\"OrResidueSelector\" type=\"OrResidueSelectorType\"/>\n"
-			"  <xs:element name=\"NotResidueSelector\" type=\"NotResidueSelectorType\"/>\n"
-			"  <xs:element name=\"ChainResidueSelector\" type=\"ChainResidueSelectorType\"/>\n"
-			"  <xs:element name=\"NeighborhoodResidueSelector\" type=\"NeighborhoodResidueSelectorType\"/>\n"
-			" </xs:choice>\n"
-			"</xs:group>\n"
-		);
+		ResSelectGrp res_selector_grp;
+		xsd.add_top_level_element( res_selector_grp );
 
 		std::string xsd_expected_output =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -593,33 +652,16 @@ public:
 	void test_xml_schema_definition_write_xsd_w_identical_duplicate() {
 		XMLSchemaDefinition xsd;
 
-		xsd.add_top_level_element(
-			"ResidueSelectorType",
-			"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
-			" <xs:group ref=\"ResidueSelector\"/>\n"
-			"</xs:complexType>\n"
-		);
+		ResSelectCT res_selector_ct;
+		xsd.add_top_level_element( res_selector_ct );
 
-		xsd.add_top_level_element(
-			"ResidueSelector",
-			"<xs:group name=\"ResidueSelector\">\n"
-			" <xs:choice>\n"
-			"  <xs:element name=\"AndResidueSelector\" type=\"AndResidueSelectorType\"/>\n"
-			"  <xs:element name=\"OrResidueSelector\" type=\"OrResidueSelectorType\"/>\n"
-			"  <xs:element name=\"NotResidueSelector\" type=\"NotResidueSelectorType\"/>\n"
-			"  <xs:element name=\"ChainResidueSelector\" type=\"ChainResidueSelectorType\"/>\n"
-			"  <xs:element name=\"NeighborhoodResidueSelector\" type=\"NeighborhoodResidueSelectorType\"/>\n"
-			" </xs:choice>\n"
-			"</xs:group>\n"
-		);
+		ResSelectGrp res_selector_grp;
+		xsd.add_top_level_element( res_selector_grp );
 
-		// now for the duplicated element
-		xsd.add_top_level_element(
-			"ResidueSelectorType",
-			"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
-			" <xs:group ref=\"ResidueSelector\"/>\n"
-			"</xs:complexType>\n"
-		);
+		// now for the duplicated element.  This addition should not throw
+		// an exception because the definition should match perfectly.
+		ResSelectCT res_selector_ct2;
+		xsd.add_top_level_element( res_selector_ct2 );
 
 		std::string xsd_expected_output =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -651,35 +693,32 @@ public:
 	void test_xml_schema_definition_write_xsd_w_nonidentical_duplicate() {
 		XMLSchemaDefinition xsd;
 
-		xsd.add_top_level_element(
-			"ResidueSelectorType",
-			"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
-			" <xs:group ref=\"ResidueSelector\"/>\n"
-			"</xs:complexType>\n"
-		);
+		ResSelectCT res_selector_ct;
+		xsd.add_top_level_element( res_selector_ct );
 
-		xsd.add_top_level_element(
-			"ResidueSelector",
-			"<xs:group name=\"ResidueSelector\">\n"
-			" <xs:choice>\n"
-			"  <xs:element name=\"AndResidueSelector\" type=\"AndResidueSelectorType\"/>\n"
-			"  <xs:element name=\"OrResidueSelector\" type=\"OrResidueSelectorType\"/>\n"
-			"  <xs:element name=\"NotResidueSelector\" type=\"NotResidueSelectorType\"/>\n"
-			"  <xs:element name=\"ChainResidueSelector\" type=\"ChainResidueSelectorType\"/>\n"
-			"  <xs:element name=\"NeighborhoodResidueSelector\" type=\"NeighborhoodResidueSelectorType\"/>\n"
-			" </xs:choice>\n"
-			"</xs:group>\n"
-		);
+		ResSelectGrp res_selector_grp;
+		xsd.add_top_level_element( res_selector_grp );
+
+
 
 		try {
+			class ResSelectCT2 : public XMLSchemaTopLevelElement {
+			public:
+				ResSelectCT2() : name_( "ResidueSelectorType" ) {}
+				virtual std::string const & element_name() const { return name_; }
+				virtual void write_definition( int indentation, std::ostream & os ) const {
+					for ( int ii = 1; ii <= indentation; ++ii ) os << " ";
+					os <<
+						"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
+						" <xs:group ref=\"TResidueSelector\"/>\n" // typo! TResidueSelector instead of ResidueSelector
+						"</xs:complexType>\n";
+				}
+			private:
+				std::string name_;
+			} res_select_ct2;
 
 			// now for the duplicated element
-			xsd.add_top_level_element(
-				"ResidueSelectorType",
-				"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
-				" <xs:group ref=\"TResidueSelector\"/>\n"
-				"</xs:complexType>\n"
-			);
+			xsd.add_top_level_element( res_select_ct2 );
 			TS_ASSERT( false ); // this should not be reached
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_message = "Name collision in creation of XML Schema definition: top level element with "
@@ -706,5 +745,251 @@ public:
 		}
 	}
 
+	static std::string dummy_ct_naming_func( std::string const & name ) { return "test_" + name + "Type"; }
+	static std::string dummy_ct_naming_func2( std::string const & name ) { return "test2_" + name + "Type"; }
+	static std::string dummy_group_name_func() { return "test_group"; }
+
+	void test_xml_complex_type_schema_generator_simple_ct() {
+		XMLComplexTypeSchemaGenerator ctgen;
+		ctgen.element_name( "Simple" );
+		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		AttributeList attributes;
+		attributes.push_back( XMLSchemaAttribute( "name", xs_string ));
+		attributes.push_back( XMLSchemaAttribute( "chains", xs_string ));
+		ctgen.add_attributes( attributes );
+
+		XMLSchemaDefinition xsd;
+		ctgen.write_complex_type_to_schema( xsd );
+
+		//std::cout << "test_xml_complex_type_schema_generator_simple_ct:\n" << xsd.full_definition() << std::endl;
+		std::string gold =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n"
+			"\n"
+			"<xs:complexType name=\"test_SimpleType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"chains\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"</xs:schema>\n";
+		TS_ASSERT_EQUALS( gold, xsd.full_definition() );
+	}
+
+	void test_xml_complex_type_schema_generator_subelement_ctref() {
+		XMLComplexTypeSchemaGenerator ctgen;
+		ctgen.element_name( "Testing123" );
+		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+
+		XMLSchemaSimpleSubelementList subelements;
+		subelements.add_already_defined_subelement( "Helix", boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		subelements.add_already_defined_subelement( "Sheet", boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		ctgen.set_subelements_single_appearance_required( subelements );
+
+		XMLSchemaDefinition xsd;
+		ctgen.write_complex_type_to_schema( xsd );
+
+		//std::cout << "test_xml_complex_type_schema_generator_simple_ct:\n" << xsd.full_definition() << std::endl;
+		std::string gold =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n"
+			"\n"
+			"<xs:complexType name=\"test_Testing123Type\" mixed=\"true\">\n"
+			" <xs:all>\n"
+			"  <xs:element name=\"Helix\" type=\"test_HelixType\"/>\n"
+			"  <xs:element name=\"Sheet\" type=\"test_SheetType\"/>\n"
+			" </xs:all>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"</xs:schema>\n";
+		TS_ASSERT_EQUALS( gold, xsd.full_definition() );
+	}
+
+
+	void test_xml_complex_type_schema_generator_group_ct() {
+		XMLComplexTypeSchemaGenerator ctgen;
+		ctgen.element_name( "Group" );
+		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+
+		AttributeList attributes;
+		attributes.push_back( XMLSchemaAttribute( "name", xs_string ));
+		attributes.push_back( XMLSchemaAttribute( "chains", xs_string ));
+		ctgen.add_attributes( attributes );
+
+		AttributeList subelement_attributes;
+		subelement_attributes.push_back( XMLSchemaAttribute( "aa", xs_string ));
+		subelement_attributes.push_back( XMLSchemaAttribute( "appends", xs_string ));
+		subelement_attributes.push_back( XMLSchemaAttribute( "removes", xs_string ));
+
+		XMLSchemaSimpleSubelementList subelements;
+		subelements.add_simple_subelement( "Helix", subelement_attributes );
+		subelements.add_simple_subelement( "Strand", subelement_attributes );
+		subelements.add_simple_subelement( "HelixNTerm", subelement_attributes );
+		subelements.add_simple_subelement( "HelixCTerm", subelement_attributes );
+		subelements.add_simple_subelement( "Loop", subelement_attributes );
+		subelements.add_simple_subelement( "all", subelement_attributes );
+		subelements.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func2, _1 ));
+
+		ctgen.set_subelements_repeatable( subelements, boost::bind( XMLSchemaGenerationTests::dummy_group_name_func ));
+
+		XMLSchemaDefinition xsd;
+		ctgen.write_complex_type_to_schema( xsd );
+
+		//std::cout << "test_xml_complex_type_schema_generator_group_ct:\n" << xsd.full_definition() << std::endl;
+		std::string gold =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n"
+			"\n"
+			"<xs:complexType name=\"test2_HelixType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"<xs:complexType name=\"test2_StrandType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"<xs:complexType name=\"test2_HelixNTermType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"<xs:complexType name=\"test2_HelixCTermType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"<xs:complexType name=\"test2_LoopType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"<xs:complexType name=\"test2_allType\" mixed=\"true\">\n"
+			" <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"<xs:group name=\"test_group\">\n"
+			" <xs:choice>\n"
+			"  <xs:element name=\"Helix\" type=\"test2_HelixType\"/>\n"
+			"  <xs:element name=\"Strand\" type=\"test2_StrandType\"/>\n"
+			"  <xs:element name=\"HelixNTerm\" type=\"test2_HelixNTermType\"/>\n"
+			"  <xs:element name=\"HelixCTerm\" type=\"test2_HelixCTermType\"/>\n"
+			"  <xs:element name=\"Loop\" type=\"test2_LoopType\"/>\n"
+			"  <xs:element name=\"all\" type=\"test2_allType\"/>\n"
+			" </xs:choice>\n"
+			"</xs:group>\n"
+			"\n"
+			"<xs:complexType name=\"test_GroupType\" mixed=\"true\">\n"
+			" <xs:group ref=\"test_group\" minOccurs=\"1\" maxOccurs=\"unbounded\"/>\n"
+			" <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"chains\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"</xs:schema>\n";
+		TS_ASSERT_EQUALS( gold, xsd.full_definition() );
+
+	}
+
+	void test_xml_complex_type_schema_generator_group_ct_no_inner_naming_func() {
+		XMLComplexTypeSchemaGenerator ctgen;
+		ctgen.element_name( "Group" );
+		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+
+		AttributeList attributes;
+		attributes.push_back( XMLSchemaAttribute( "name", xs_string ));
+		attributes.push_back( XMLSchemaAttribute( "chains", xs_string ));
+		ctgen.add_attributes( attributes );
+
+		AttributeList subelement_attributes;
+		subelement_attributes.push_back( XMLSchemaAttribute( "aa", xs_string ));
+		subelement_attributes.push_back( XMLSchemaAttribute( "appends", xs_string ));
+		subelement_attributes.push_back( XMLSchemaAttribute( "removes", xs_string ));
+
+		XMLSchemaSimpleSubelementList subelements;
+		subelements.add_simple_subelement( "Helix", subelement_attributes );
+		subelements.add_simple_subelement( "Strand", subelement_attributes );
+		subelements.add_simple_subelement( "HelixNTerm", subelement_attributes );
+		subelements.add_simple_subelement( "HelixCTerm", subelement_attributes );
+		subelements.add_simple_subelement( "Loop", subelement_attributes );
+		subelements.add_simple_subelement( "all", subelement_attributes );
+		// do not set a naming function for the subelements
+		// subelements.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func2, _1 ));
+
+		ctgen.set_subelements_repeatable( subelements, boost::bind( XMLSchemaGenerationTests::dummy_group_name_func ));
+
+		XMLSchemaDefinition xsd;
+		ctgen.write_complex_type_to_schema( xsd );
+
+		//std::cout << "test_xml_complex_type_schema_generator_group_ct:\n" << xsd.full_definition() << std::endl;
+
+		std::string gold =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n"
+			"\n"
+			"<xs:group name=\"test_group\">\n"
+			" <xs:choice>\n"
+			"  <xs:element name=\"Helix\">\n"
+			"   <xs:complexType mixed=\"true\">\n"
+			"    <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"   </xs:complexType>\n"
+			"  </xs:element>\n"
+			"  <xs:element name=\"Strand\">\n"
+			"   <xs:complexType mixed=\"true\">\n"
+			"    <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"   </xs:complexType>\n"
+			"  </xs:element>\n"
+			"  <xs:element name=\"HelixNTerm\">\n"
+			"   <xs:complexType mixed=\"true\">\n"
+			"    <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"   </xs:complexType>\n"
+			"  </xs:element>\n"
+			"  <xs:element name=\"HelixCTerm\">\n"
+			"   <xs:complexType mixed=\"true\">\n"
+			"    <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"   </xs:complexType>\n"
+			"  </xs:element>\n"
+			"  <xs:element name=\"Loop\">\n"
+			"   <xs:complexType mixed=\"true\">\n"
+			"    <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"   </xs:complexType>\n"
+			"  </xs:element>\n"
+			"  <xs:element name=\"all\">\n"
+			"   <xs:complexType mixed=\"true\">\n"
+			"    <xs:attribute name=\"aa\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"appends\" type=\"xs:string\"/>\n"
+			"    <xs:attribute name=\"removes\" type=\"xs:string\"/>\n"
+			"   </xs:complexType>\n"
+			"  </xs:element>\n"
+			" </xs:choice>\n"
+			"</xs:group>\n"
+			"\n"
+			"<xs:complexType name=\"test_GroupType\" mixed=\"true\">\n"
+			" <xs:group ref=\"test_group\" minOccurs=\"1\" maxOccurs=\"unbounded\"/>\n"
+			" <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			" <xs:attribute name=\"chains\" type=\"xs:string\"/>\n"
+			"</xs:complexType>\n"
+			"\n"
+			"</xs:schema>\n";
+
+		TS_ASSERT_EQUALS( gold, xsd.full_definition() );
+
+	}
 
 };

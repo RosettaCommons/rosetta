@@ -23,7 +23,8 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
 #include <string>
@@ -61,8 +62,22 @@ public:
 	void add_creator( ResFilterCreatorOP );
 	bool has_type( std::string const & ) const;
 
-	/// @brief return new ResFilter by key lookup in filter_map_ (new ResFilter parses Tag if provided)
-	ResFilterOP newResFilter( std::string const &, TagCOP = utility::tag::TagCOP( utility::tag::TagOP( new utility::tag::Tag() ) ) ) const;
+	/// @brief return new ResFilter by key lookup in filter_map_; new ResFilter does not parse an input Tag
+	ResFilterOP newResFilter( std::string const & ) const;
+
+	/// @brief return new ResFilter by key lookup in filter_map_ new ResFilter parses Tag if provided
+	ResFilterOP newResFilter( std::string const &, TagCOP tag ) const;
+
+	/// @brief The %ResFilterFactory is the point of entry for the definition of the XML Schemas
+	/// for every ResFilter that may be instantiated from a file.  It is  responsible for defining
+	/// an xs:group named "res_filter" listing each of the residue-filter-complex types that
+	/// may be initialized using the %ResFilterFactory and to iterate across each of the
+	/// ResFilterCreator it contains asking them for the XML schema of the ResFilter they
+	/// are responsible for creating.
+	void define_res_filter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	/// @brief The name given to the XML schema group of all ResFilter s.
+	static std::string res_filter_xml_schema_group_name();
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

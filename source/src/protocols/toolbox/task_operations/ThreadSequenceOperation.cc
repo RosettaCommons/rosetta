@@ -25,6 +25,8 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <utility/vector0.hh>
 
@@ -38,7 +40,24 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
+
+core::pack::task::operation::TaskOperationOP
+ThreadSequenceOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new ThreadSequenceOperation );
+}
+
+void ThreadSequenceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ThreadSequenceOperation::provide_xml_schema( xsd );
+}
+
+std::string ThreadSequenceOperationCreator::keyname() const
+{
+	return ThreadSequenceOperation::keyname();
+}
 
 ThreadSequenceOperation::ThreadSequenceOperation() : parent()
 {
@@ -51,12 +70,6 @@ ThreadSequenceOperation::ThreadSequenceOperation( std::string const seq ) : pare
 }
 
 ThreadSequenceOperation::~ThreadSequenceOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-ThreadSequenceOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new ThreadSequenceOperation );
-}
 
 core::pack::task::operation::TaskOperationOP ThreadSequenceOperation::clone() const
 {
@@ -124,6 +137,19 @@ ThreadSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 	start_res( tag->getOption< core::Size >( "start_res", 1 ) );
 	allow_design_around( tag->getOption< bool >( "allow_design_around", true ) );
 	TR<<"Threading with sequence: "<<target_sequence()<<" starting at residue #"<<start_res()<<" allow design around "<<allow_design_around()<<std::endl;
+}
+
+void ThreadSequenceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "target_sequence", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "start_res", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "allow_design_around", xs_boolean, "true" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace protocols

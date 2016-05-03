@@ -17,6 +17,8 @@
 // Package headers
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 
+// Utility headers
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 --namespace--
 
@@ -26,7 +28,7 @@ public:
 	virtual core::select::residue_selector::ResidueSelectorOP create_residue_selector() const;
 
 	virtual std::string keyname() const;
-	
+
 	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
 };
 

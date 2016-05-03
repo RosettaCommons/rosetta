@@ -36,6 +36,8 @@
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
@@ -53,7 +55,23 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 
+core::pack::task::operation::TaskOperationOP
+RestrictResiduesToRepackingOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictResiduesToRepackingOperation );
+}
+
+void RestrictResiduesToRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictResiduesToRepackingOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictResiduesToRepackingOperationCreator::keyname() const
+{
+	return RestrictResiduesToRepackingOperation::keyname();
+}
 
 RestrictResiduesToRepackingOperation::RestrictResiduesToRepackingOperation(): parent() {
 	residues_.clear();
@@ -66,12 +84,6 @@ RestrictResiduesToRepackingOperation::RestrictResiduesToRepackingOperation( util
 }
 
 RestrictResiduesToRepackingOperation::~RestrictResiduesToRepackingOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictResiduesToRepackingOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictResiduesToRepackingOperation );
-}
 
 core::pack::task::operation::TaskOperationOP RestrictResiduesToRepackingOperation::clone() const
 {
@@ -141,6 +153,16 @@ RestrictResiduesToRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 			residues_.push_back( res );
 		}
 	}
+}
+
+void RestrictResiduesToRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "reference_pdb_id", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "residues", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace protocols

@@ -33,6 +33,7 @@ class DisableZnCoordinationResiduesTaskOpCreator : public core::pack::task::oper
 {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 	virtual std::string keyname() const;
 
 };

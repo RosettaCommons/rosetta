@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
 
@@ -30,6 +31,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -168,6 +170,18 @@ std::string PrimarySequenceNeighborhoodSelector::class_name() {
 	return "PrimarySequenceNeighborhood";
 }
 
+void PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	activate_common_simple_type( xsd, "non_negative_integer" );
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "lower", "non_negative_integer" ));
+	attributes.push_back( XMLSchemaAttribute( "upper", "non_negative_integer" ));
+	attributes.push_back( XMLSchemaAttribute( "selector", xs_string ));
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
+}
+
+
 ResidueSelectorOP
 PrimarySequenceNeighborhoodSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new PrimarySequenceNeighborhoodSelector );
@@ -179,9 +193,9 @@ PrimarySequenceNeighborhoodSelectorCreator::keyname() const {
 }
 
 void
-PrimarySequenceNeighborhoodSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const
+PrimarySequenceNeighborhoodSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	//hopefully it's OK to do nothing here -- I'm not sure what this is for
+	PrimarySequenceNeighborhoodSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

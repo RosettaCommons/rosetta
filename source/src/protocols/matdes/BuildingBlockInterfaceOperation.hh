@@ -22,6 +22,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -54,6 +55,8 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	void parse_tag( TagCOP tag , DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "BuildingBlockInterface"; }
 
 private:
 

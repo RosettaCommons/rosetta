@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -44,6 +45,8 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "SelectBySASA"; }
 
 	void parse_tag( TagCOP tag , DataMap & );
 

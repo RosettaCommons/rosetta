@@ -79,7 +79,7 @@ public:
 	/// @brief Get the class name.
 	///
 	static std::string class_name();
-	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/// @brief Set the layers that this selector will choose.
 	///

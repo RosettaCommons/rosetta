@@ -24,6 +24,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -37,6 +39,9 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 
 LimitAromaChi2_RotamerSetOperation::LimitAromaChi2_RotamerSetOperation() :
@@ -117,6 +122,16 @@ LimitAromaChi2OperationCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation );
 }
 
+void LimitAromaChi2OperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LimitAromaChi2Operation::provide_xml_schema( xsd );
+}
+
+std::string LimitAromaChi2OperationCreator::keyname() const
+{
+	return LimitAromaChi2Operation::keyname();
+}
+
 /// @brief defauot constructor
 LimitAromaChi2Operation::LimitAromaChi2Operation():
 	TaskOperation(),
@@ -151,6 +166,18 @@ LimitAromaChi2Operation::parse_tag( TagCOP tag , DataMap & )
 	chi2min( tag->getOption< Real >( "chi2min", 70.0 ) );
 	include_trp( tag->getOption< bool >( "include_trp", 0 ) );
 }
+
+void LimitAromaChi2Operation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "chi2max", xs_decimal, "110.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "chi2min", xs_decimal, "70.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "include_trp", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } // TaskOperations
 } // toolbox

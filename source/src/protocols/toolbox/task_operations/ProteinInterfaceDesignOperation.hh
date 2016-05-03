@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -58,6 +59,8 @@ public:
 	core::Size jump() const;
 
 	virtual ~ProteinInterfaceDesignOperation();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "ProteinInterfaceDesign"; }
 
 	virtual TaskOperationOP clone() const;
 

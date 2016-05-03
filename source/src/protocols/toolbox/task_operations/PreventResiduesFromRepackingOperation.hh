@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -61,6 +62,8 @@ public:
 
 	std::string reference_pdb_id() const{ return reference_pdb_id_; }
 	void reference_pdb_id( std::string const & s ){ reference_pdb_id_ = s; }
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "PreventResiduesFromRepacking"; }
 
 private:
 	std::string unparsed_residues_;

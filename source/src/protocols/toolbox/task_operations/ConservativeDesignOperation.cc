@@ -24,13 +24,32 @@
 
 #include <basic/options/keys/task_operations.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.ConservativeDesignOperation" );
 
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 using utility::vector1;
+
+/* AMW: Creator not defined
+void ConservativeDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+ConservativeDesignOperation::provide_xml_schema( xsd );
+}
+
+void ConservativeDesignOperationCreator::keyname() const
+{
+return ConservativeDesignOperation::keyname();
+}
+*/
 
 ConservativeDesignOperation::ConservativeDesignOperation() : core::pack::task::operation::TaskOperation(){
 	set_defaults();
@@ -222,6 +241,12 @@ ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::ta
 		}
 		//task.show_residue_task(std::cout, i);
 	}
+}
+
+// AMW: There is no parse_tag!
+void ConservativeDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 

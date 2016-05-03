@@ -24,6 +24,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -37,6 +39,7 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace utility::tag;
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation():
 	TaskOperation(),
@@ -163,10 +166,35 @@ DisableAntibodyRegionOperation::apply(const core::pose::Pose& pose, core::pack::
 
 }
 
+std::string DisableAntibodyRegionOperation::keyname() { return "DisableAntibodyRegionOperation"; }
+
+void DisableAntibodyRegionOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "region", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "disable_packing_and_design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+
 core::pack::task::operation::TaskOperationOP
 DisableAntibodyRegionOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new DisableAntibodyRegionOperation );
+}
+
+void DisableAntibodyRegionOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DisableAntibodyRegionOperation::provide_xml_schema( xsd );
+}
+
+std::string DisableAntibodyRegionOperationCreator::keyname() const
+{
+	return DisableAntibodyRegionOperation::keyname();
 }
 
 } //task_operations

@@ -30,130 +30,151 @@ namespace operation {
 class RestrictYSDesignCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictYSDesign"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class PreventRepackingCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "PreventRepacking"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class PreserveCBetaCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "PreserveCBeta"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class AppendRotamerSetCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "AppendRotamerSet"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class AppendResidueRotamerSetCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "AppendResidueRotamerSet"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class AppendRotamerCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "AppendRotamer"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class SetRotamerCouplingsCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "SetRotamerCouplings"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class SetRotamerLinksCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "SetRotamerLinks"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 
 class ReadResfileCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ReadResfile"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ReadResfileAndObeyLengthEventsCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ReadResfileAndObeyLengthEvents"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 
 class IncludeCurrentCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "IncludeCurrent"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 
 class InitializeExtraRotsFromCommandlineCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "InitializeExtraRotsFromCommandline"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class InitializeFromCommandlineCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "InitializeFromCommandline"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ExtraRotamersGenericCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ExtraRotamersGeneric"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class RotamerExplosionCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RotamerExplosionCreator"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class RestrictAbsentCanonicalAASCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictAbsentCanonicalAAS"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class RestrictResidueToRepackingCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictResidueToRepacking"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class RestrictToRepackingCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictToRepacking"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class DisallowIfNonnativeCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "DisallowIfNonnative"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ExtraRotamersCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ExtraRotamers"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ExtraChiCutoffCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const { return "ExtraChiCutoff"; }
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace operation

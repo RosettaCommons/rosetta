@@ -23,11 +23,14 @@
 
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 
 // C++ headers
 #include <iostream>
@@ -96,6 +99,34 @@ ResLvlTaskOperationFactory::newRLTO( std::string const & type ) const
 		utility_exit_with_message( type + " is not known to the ResLvlTaskOperationFactory. Was its ResLvlTaskOperationCreator class registered at initialization?" );
 		return NULL;
 	}
+}
+
+/// @details By convention, the named assigned to each of the complexTypes for ResLvlTaskOperations should be
+/// what is returned by the function "complex_type_name_for_res_lvl_task_op" (declared in
+/// core/pack/task/operation/task_op_schemas.hh) when given the argument returned by that ResLvlTaskOperation's
+/// ResLvlTaskOperationCreator's keyname() function. So long as the writing of XML schema for your ResLvlTaskOperation
+/// is accomplished by calling the functions in core/select/res_lvl_task_operations/task_op_schemas.hh, then
+/// this should happen automatically.
+void ResLvlTaskOperationFactory::define_res_lvl_task_op_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			rltoc_map_,
+			res_lvl_task_op_xml_schema_group_name(),
+			& complex_type_name_for_res_lvl_task_op,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ResLvlTaskOperations from ResLvlTaskOperationFactory; offending class"
+			" must call core::pack::task::operation::complex_type_name_for_res_lvl_task_op when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+
+
+}
+
+std::string ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name()
+{
+	return "res_lvl_task_op";
 }
 
 } //namespace operation

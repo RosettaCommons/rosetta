@@ -29,6 +29,8 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
 
@@ -42,6 +44,25 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.Restrict
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+RestrictInterGroupVectorOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation );
+}
+
+void RestrictInterGroupVectorOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictInterGroupVectorOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictInterGroupVectorOperationCreator::keyname() const
+{
+	return RestrictInterGroupVectorOperation::keyname();
+}
 
 /// @brief default constructor
 RestrictInterGroupVectorOperation::RestrictInterGroupVectorOperation():
@@ -87,16 +108,8 @@ RestrictInterGroupVectorOperation:: RestrictInterGroupVectorOperation(
 	pair_vector_.push_back(one_group);
 }
 
-
 /// @brief destructor
 RestrictInterGroupVectorOperation::~RestrictInterGroupVectorOperation() {}
-
-
-core::pack::task::operation::TaskOperationOP
-RestrictInterGroupVectorOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation );
-}
 
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictInterGroupVectorOperation::clone() const
@@ -161,6 +174,11 @@ RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::p
 // {
 // }//parse_tag
 
+// parse tag not defined
+void RestrictInterGroupVectorOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
 
 }//task_operations
 }//toolbox

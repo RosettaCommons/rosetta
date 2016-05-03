@@ -32,7 +32,7 @@ class ClashBasedRepackShellSelectorCreator : public core::select::residue_select
 public:
 	virtual select::residue_selector::ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 } //namespace residue_selector

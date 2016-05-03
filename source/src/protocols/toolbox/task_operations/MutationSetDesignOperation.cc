@@ -20,6 +20,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.task_operations.MutationSetDesignOperation");
 
@@ -28,7 +30,20 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using utility::vector1;
+
+/* AMW: no Creator
+void MutationSetDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+MutationSetDesignOperation::provide_xml_schema( xsd );
+}
+
+std::string MutationSetDesignOperationCreator::keyname() const
+{
+return MutationSetDesignOperation::keyname();
+}
+*/
 
 MutationSetDesignOperation::~MutationSetDesignOperation(){}
 
@@ -223,8 +238,12 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas(pose_allowed_aminos[ i ]);
 		}
 	}
+}
 
-
+// No parse_tag
+void MutationSetDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 

@@ -15,6 +15,8 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreators.hh>
 
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <core/pack/task/PackerTask.hh>
 
 #include <core/chemical/AA.hh>
@@ -22,7 +24,9 @@
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -41,11 +45,6 @@ static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.ResLvlTaskOperat
 RestrictToRepackingRLT::~RestrictToRepackingRLT() {}
 
 ResLvlTaskOperationOP
-RestrictToRepackingRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new RestrictToRepackingRLT );
-}
-
-ResLvlTaskOperationOP
 RestrictToRepackingRLT::clone() const { return ResLvlTaskOperationOP( new RestrictToRepackingRLT( *this ) ); }
 
 void RestrictToRepackingRLT::apply( ResidueLevelTask & rlt ) const
@@ -53,16 +52,30 @@ void RestrictToRepackingRLT::apply( ResidueLevelTask & rlt ) const
 	rlt.restrict_to_repacking();
 }
 
+std::string RestrictToRepackingRLT::keyname() { return "RestrictToRepackingRLT"; }
+
+void RestrictToRepackingRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_lvl_task_op_schema_empty( xsd, keyname() );
+}
+
+ResLvlTaskOperationOP
+RestrictToRepackingRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new RestrictToRepackingRLT );
+}
+
+std::string RestrictToRepackingRLTCreator::keyname() const { return RestrictToRepackingRLT::keyname(); }
+
+void RestrictToRepackingRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	RestrictToRepackingRLT::provide_xml_schema( xsd );
+}
+
+
 RestrictAbsentCanonicalAASRLT::RestrictAbsentCanonicalAASRLT()
 : canonical_aas_to_keep_( chemical::num_canonical_aas, false )
 {}
 
 RestrictAbsentCanonicalAASRLT::~RestrictAbsentCanonicalAASRLT() {}
 
-ResLvlTaskOperationOP
-RestrictAbsentCanonicalAASRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT );
-}
 
 ResLvlTaskOperationOP
 RestrictAbsentCanonicalAASRLT::clone() const { return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT( *this ) ); }
@@ -102,6 +115,25 @@ void RestrictAbsentCanonicalAASRLT::parse_tag( TagCOP tag )
 	else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
 }
 
+std::string RestrictAbsentCanonicalAASRLT::keyname() { return "RestrictAbsentCanonicalAASRLT"; }
+
+void RestrictAbsentCanonicalAASRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "aas", utility::tag::xs_string ));
+	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+void RestrictAbsentCanonicalAASRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	RestrictAbsentCanonicalAASRLT::provide_xml_schema( xsd );
+}
+
+std::string RestrictAbsentCanonicalAASRLTCreator::keyname() const { return RestrictAbsentCanonicalAASRLT::keyname(); }
+
+ResLvlTaskOperationOP
+RestrictAbsentCanonicalAASRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT );
+}
+
 //BEGIN DisallowIfNonnativeRLTRLT
 DisallowIfNonnativeRLT::DisallowIfNonnativeRLT():
 	disallowed_aas_ ( chemical::num_canonical_aas, false ),
@@ -113,11 +145,6 @@ DisallowIfNonnativeRLT::DisallowIfNonnativeRLT( utility::vector1< bool > disallo
 {}
 
 DisallowIfNonnativeRLT::~DisallowIfNonnativeRLT(){}
-
-ResLvlTaskOperationOP
-DisallowIfNonnativeRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new DisallowIfNonnativeRLT );
-}
 
 ResLvlTaskOperationOP DisallowIfNonnativeRLT::clone() const
 {
@@ -174,13 +201,27 @@ void DisallowIfNonnativeRLT::parse_tag( TagCOP tag )
 	} else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
 }
 
-//Begin PreventRepackingRLT
-PreventRepackingRLT::~PreventRepackingRLT() {}
+std::string DisallowIfNonnativeRLT::keyname() { return "DisallowIfNonnativeRLT"; }
+
+void DisallowIfNonnativeRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "disallow_aas", utility::tag::xs_string ));
+	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
 
 ResLvlTaskOperationOP
-PreventRepackingRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new PreventRepackingRLT );
+DisallowIfNonnativeRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new DisallowIfNonnativeRLT );
 }
+
+std::string DisallowIfNonnativeRLTCreator::keyname() const { return DisallowIfNonnativeRLT::keyname(); }
+
+void DisallowIfNonnativeRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	DisallowIfNonnativeRLT::provide_xml_schema( xsd );
+}
+
+//Begin PreventRepackingRLT
+PreventRepackingRLT::~PreventRepackingRLT() {}
 
 ResLvlTaskOperationOP
 PreventRepackingRLT::clone() const { return ResLvlTaskOperationOP( new PreventRepackingRLT( *this ) ); }
@@ -188,6 +229,23 @@ PreventRepackingRLT::clone() const { return ResLvlTaskOperationOP( new PreventRe
 void PreventRepackingRLT::apply( ResidueLevelTask & rlt ) const
 {
 	rlt.prevent_repacking();
+}
+
+std::string PreventRepackingRLT::keyname() { return "PreventRepackingRLT"; }
+
+void PreventRepackingRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_lvl_task_op_schema_empty( xsd, keyname());
+}
+
+ResLvlTaskOperationOP
+PreventRepackingRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new PreventRepackingRLT );
+}
+
+std::string PreventRepackingRLTCreator::keyname() const { return PreventRepackingRLT::keyname(); }
+
+void PreventRepackingRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	PreventRepackingRLT::provide_xml_schema( xsd );
 }
 
 AddBehaviorRLT::AddBehaviorRLT() : parent() {}
@@ -198,11 +256,6 @@ AddBehaviorRLT::AddBehaviorRLT( std::string const & behavior )
 {}
 
 AddBehaviorRLT::~AddBehaviorRLT() {}
-
-ResLvlTaskOperationOP
-AddBehaviorRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new AddBehaviorRLT );
-}
 
 ResLvlTaskOperationOP
 AddBehaviorRLT::clone() const { return ResLvlTaskOperationOP( new AddBehaviorRLT( *this ) ); }
@@ -220,9 +273,23 @@ void AddBehaviorRLT::parse_tag( TagCOP tag )
 	else utility_exit_with_message("AddBehaviorRLT tag needs to define option \"behavior\".");
 }
 
+std::string AddBehaviorRLT::keyname() { return "AddBehaviorRLT"; }
+
+void AddBehaviorRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "behavior", utility::tag::xs_string ));
+	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 ResLvlTaskOperationOP
-IncludeCurrentRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new IncludeCurrentRLT );
+AddBehaviorRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new AddBehaviorRLT );
+}
+
+std::string AddBehaviorRLTCreator::keyname() const { return AddBehaviorRLT::keyname(); }
+
+void AddBehaviorRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	AddBehaviorRLT::provide_xml_schema( xsd );
 }
 
 IncludeCurrentRLT::IncludeCurrentRLT() {}
@@ -237,9 +304,21 @@ void IncludeCurrentRLT::apply( ResidueLevelTask & rlt ) const
 	rlt.or_include_current( true );
 }
 
+std::string IncludeCurrentRLT::keyname() { return "IncludeCurrentRLT"; }
+
+void IncludeCurrentRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_lvl_task_op_schema_empty( xsd, keyname() );
+}
+
 ResLvlTaskOperationOP
-PreserveCBetaRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new PreserveCBetaRLT );
+IncludeCurrentRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new IncludeCurrentRLT );
+}
+
+std::string IncludeCurrentRLTCreator::keyname() const { return IncludeCurrentRLT::keyname(); }
+
+void IncludeCurrentRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	IncludeCurrentRLT::provide_xml_schema( xsd );
 }
 
 PreserveCBetaRLT::PreserveCBetaRLT() {}
@@ -253,9 +332,21 @@ void PreserveCBetaRLT::apply( ResidueLevelTask & rlt ) const
 	rlt.or_preserve_c_beta( true );
 }
 
+std::string PreserveCBetaRLT::keyname() { return "PreserveCBetaRLT"; }
+
+void PreserveCBetaRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_lvl_task_op_schema_empty( xsd, keyname() );
+}
+
 ResLvlTaskOperationOP
-ExtraChiCutoffRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new ExtraChiCutoffRLT );
+PreserveCBetaRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new PreserveCBetaRLT );
+}
+
+std::string PreserveCBetaRLTCreator::keyname() const { return PreserveCBetaRLT::keyname(); }
+
+void PreserveCBetaRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	PreserveCBetaRLT::provide_xml_schema( xsd );
 }
 
 ExtraChiCutoffRLT::ExtraChiCutoffRLT() :
@@ -277,10 +368,25 @@ void ExtraChiCutoffRLT::parse_tag( TagCOP tag )
 	extrachi_cutoff_ = tag->getOption< core::Size >( "extrachi_cutoff", EXTRACHI_CUTOFF_LIMIT );
 }
 
+std::string ExtraChiCutoffRLT::keyname() { return "ExtraChiCutoffRLT"; }
+
+void ExtraChiCutoffRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "extrachi_cutoff", "non_negative_integer", utility::to_string( EXTRACHI_CUTOFF_LIMIT ) ));
+	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
 
 ResLvlTaskOperationOP
-ExtraRotamersGenericRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new ExtraRotamersGenericRLT );
+ExtraChiCutoffRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new ExtraChiCutoffRLT );
+}
+
+std::string ExtraChiCutoffRLTCreator::keyname() const { return ExtraChiCutoffRLT::keyname(); }
+
+void ExtraChiCutoffRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ExtraChiCutoffRLT::provide_xml_schema( xsd );
 }
 
 ExtraRotamersGenericRLT::ExtraRotamersGenericRLT() {}
@@ -357,6 +463,24 @@ ExtraRotamerSamplingData const &
 ExtraRotamersGenericRLT::sampling_data() const
 {
 	return sampling_data_;
+}
+
+std::string ExtraRotamersGenericRLT::keyname() { return "ExtraRotamersGenericRLT"; }
+
+void ExtraRotamersGenericRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes = rotamer_sampling_data_xml_schema_attributes( xsd );
+	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+ResLvlTaskOperationOP
+ExtraRotamersGenericRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new ExtraRotamersGenericRLT );
+}
+
+std::string ExtraRotamersGenericRLTCreator::keyname() const { return ExtraRotamersGenericRLT::keyname(); }
+
+void ExtraRotamersGenericRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ExtraRotamersGenericRLT::provide_xml_schema( xsd );
 }
 
 

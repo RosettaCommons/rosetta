@@ -26,6 +26,7 @@
 // project headers
 #include <protocols/ss_prediction/SS_predictor.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -63,6 +64,9 @@ public:
 
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "SSPrediction"; }
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignBySecondaryStructureOperation"; }
 
 public:
 	void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );

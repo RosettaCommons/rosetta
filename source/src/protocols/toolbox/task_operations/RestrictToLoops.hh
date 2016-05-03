@@ -27,6 +27,7 @@
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -61,6 +62,9 @@ public:
 	void parse_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static void provide_attributes( utility::tag::AttributeList & attributes );
+	static std::string keyname() { return "RestrictToLoops"; }
 
 protected:
 

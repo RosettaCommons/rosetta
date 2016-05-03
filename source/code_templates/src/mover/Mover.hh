@@ -52,6 +52,8 @@ public:
 	std::string
 	get_name() const;
 
+	static std::string class_name();
+
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
 		utility::tag::TagCOP tag,

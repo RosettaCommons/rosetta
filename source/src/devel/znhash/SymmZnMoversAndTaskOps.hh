@@ -39,6 +39,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 //#include <utility/fixedsizearray1.hh>
 
 // Numeric headers
@@ -317,6 +318,8 @@ public:
 	) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DisableZnCoordinationResiduesTaskOp"; }
 
 private:
 	utility::vector1< Size > resids_to_fix_;

@@ -32,6 +32,7 @@
 #include <set>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -66,6 +67,8 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictToNeighborhood"; }
 
 	//getters
 	/// @brief this nontrivially checks the underlying calculator

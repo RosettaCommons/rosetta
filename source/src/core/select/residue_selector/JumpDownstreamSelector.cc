@@ -115,10 +115,10 @@ std::string JumpDownstreamSelector::class_name() {
 }
 
 void
-JumpDownstreamSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+JumpDownstreamSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "jump", xs_integer, true ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "jump", xs_integer ));
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 
@@ -133,8 +133,8 @@ JumpDownstreamSelectorCreator::keyname() const {
 }
 
 void
-JumpDownstreamSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	JumpDownstreamSelector::provide_selector_xsd( xsd );
+JumpDownstreamSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	JumpDownstreamSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

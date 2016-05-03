@@ -27,6 +27,7 @@
 #include <core/types.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace toolbox {
@@ -84,6 +85,9 @@ public:
 	virtual
 	void
 	apply( Pose const & pose, PackerTask & task ) const;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictToMoveMapChiOperation"; }
 
 
 private:

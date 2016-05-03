@@ -32,6 +32,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -88,6 +89,8 @@ public:
 	/// @brief exclude allowed residues for some SSE
 	void set_restrictions_exclude( std::string const & sse, std::string const & aas );
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DsspDesign"; }
 
 private:
 

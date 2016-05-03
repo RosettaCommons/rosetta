@@ -17,6 +17,9 @@
 #include <core/pack/task/operation/NoRepackDisulfidesCreator.hh>
 
 // package headers
+#include <core/pack/task/operation/task_op_schemas.hh>
+
+// project headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
@@ -27,6 +30,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 // C++ headers
@@ -56,11 +60,6 @@ NoRepackDisulfides::NoRepackDisulfides( NoRepackDisulfides const & rval ) :
 
 /// @brief default destructor
 NoRepackDisulfides::~NoRepackDisulfides() {}
-
-TaskOperationOP NoRepackDisulfidesCreator::create_task_operation() const
-{
-	return TaskOperationOP( new NoRepackDisulfides );
-}
 
 /// @brief clone this object
 NoRepackDisulfides::TaskOperationOP NoRepackDisulfides::clone() const {
@@ -113,6 +112,23 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 
 }
 
+
+std::string NoRepackDisulfides::keyname() { return "NoRepackDisulfides"; }
+
+void NoRepackDisulfides::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP NoRepackDisulfidesCreator::create_task_operation() const
+{
+	return TaskOperationOP( new NoRepackDisulfides );
+}
+
+std::string NoRepackDisulfidesCreator::keyname() const { return NoRepackDisulfides::keyname(); }
+
+void NoRepackDisulfidesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	NoRepackDisulfides::provide_xml_schema( xsd );
+}
 
 } // namespace operation
 } // namespace task

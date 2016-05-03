@@ -35,6 +35,8 @@
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 //Auto Headers
 #include <core/chemical/ResidueConnection.hh>
@@ -52,6 +54,25 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+RestrictIdentitiesOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesOperation );
+}
+
+void RestrictIdentitiesOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictIdentitiesOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictIdentitiesOperationCreator::keyname() const
+{
+	return RestrictIdentitiesOperation::keyname();
+}
+
 // @brief default constructor
 RestrictIdentitiesOperation::RestrictIdentitiesOperation() {}
 
@@ -63,12 +84,6 @@ RestrictIdentitiesOperation::RestrictIdentitiesOperation( utility::vector1 < std
 
 // @brief destructor
 RestrictIdentitiesOperation::~RestrictIdentitiesOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictIdentitiesOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesOperation );
-}
 
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesOperation::clone() const
@@ -133,6 +148,18 @@ RestrictIdentitiesOperation::parse_tag( TagCOP tag , DataMap & )
 		}
 		TR.Debug << std::endl;
 	}
+}
+
+void RestrictIdentitiesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	// See, I think this has to be there. But it still checks for a non-empty.
+	// AMW TODO check
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "identities", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "prevent_repacking", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace protocols

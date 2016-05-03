@@ -39,7 +39,7 @@ public:
 
 	/// @brief Define the structure of the XML file for a the ResidueSelector that this
 	/// %ResidueSelectorCreator instantiates using the XML Schema language.
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const = 0;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const = 0;
 };
 
 

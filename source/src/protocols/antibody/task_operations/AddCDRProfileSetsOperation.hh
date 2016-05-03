@@ -26,6 +26,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <map>
 
 namespace protocols {
@@ -70,6 +71,9 @@ public:
 	parse_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & );
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "AddCDRProfileSetsOperation"; }
 
 
 	///////////////////////
@@ -162,7 +166,6 @@ private:
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 
 };
-
 
 } //task_operations
 } //antibody

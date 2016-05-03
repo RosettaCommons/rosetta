@@ -20,6 +20,7 @@
 
 // project headers
 #include <core/pack/task/operation/TaskOperationCreator.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace devel {
 namespace denovo_design {
@@ -29,30 +30,35 @@ class HighestEnergyRegionOperationCreator : public core::pack::task::operation::
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class DesignByResidueCentralityOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class DesignRandomRegionOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class DesignCatalyticResiduesOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class DesignByCavityProximityOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 }

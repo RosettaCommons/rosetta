@@ -45,6 +45,8 @@ using utility::string_split;
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 using namespace ObjexxFCL::format;
@@ -62,6 +64,7 @@ using namespace operation;
 using namespace pose;
 using namespace scoring;
 using namespace constraints;
+using namespace utility::tag;
 
 using basic::t_info;
 using basic::t_debug;
@@ -71,6 +74,16 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.dna.RestrictDesignToProteinDNAI
 TaskOperationOP RestrictDesignToProteinDNAInterfaceCreator::create_task_operation() const
 {
 	return TaskOperationOP( new RestrictDesignToProteinDNAInterface );
+}
+
+void RestrictDesignToProteinDNAInterfaceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictDesignToProteinDNAInterface::provide_xml_schema( xsd );
+}
+
+std::string RestrictDesignToProteinDNAInterfaceCreator::keyname() const
+{
+	return RestrictDesignToProteinDNAInterface::keyname();
 }
 
 RestrictDesignToProteinDNAInterface::RestrictDesignToProteinDNAInterface()
@@ -156,6 +169,20 @@ RestrictDesignToProteinDNAInterface::parse_tag( TagCOP tag , DataMap & )
 	if ( tag->hasOption("forget_chains_and_interface") ) {
 		forget_chains_and_interface_ = tag->getOption< bool >("forget_chains_and_interface");
 	}
+}
+
+void RestrictDesignToProteinDNAInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "dna_defs", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "base_only", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "z_cutoff", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "close_threshold", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "contact_threshold", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "forget_chains_and_interface", xs_boolean ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 /// @brief determines the DNA interface residues and informs a PackerTask of their appropriate packing behavior

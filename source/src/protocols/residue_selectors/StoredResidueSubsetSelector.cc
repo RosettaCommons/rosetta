@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/select/residue_selector/CachedResidueSubset.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Basic Headers
 #include <basic/datacache/BasicDataCache.hh>
@@ -29,6 +30,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 
@@ -50,9 +52,9 @@ StoredResidueSubsetSelectorCreator::keyname() const
 }
 
 void
-StoredResidueSubsetSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const
+StoredResidueSubsetSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	StoredResidueSubsetSelector::provide_selector_xsd( xsd );
+	StoredResidueSubsetSelector::provide_xml_schema( xsd );
 }
 
 StoredResidueSubsetSelector::StoredResidueSubsetSelector() :
@@ -129,8 +131,12 @@ StoredResidueSubsetSelector::parse_my_tag(
 }
 
 void
-StoredResidueSubsetSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & )
+StoredResidueSubsetSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "subset_name", xs_string ));
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 
 std::string

@@ -27,7 +27,8 @@ namespace operation {
 class OperateOnCertainResiduesCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "OperateOnCertainResidues"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace operation

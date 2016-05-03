@@ -34,6 +34,9 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
@@ -45,11 +48,25 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 core::pack::task::operation::TaskOperationOP
 SelectBySASAOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SelectBySASAOperation );
 }
+
+void SelectBySASAOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SelectBySASAOperation::provide_xml_schema( xsd );
+}
+
+std::string SelectBySASAOperationCreator::keyname() const
+{
+	return SelectBySASAOperation::keyname();
+}
+
 
 SelectBySASAOperation::SelectBySASAOperation( std::string mode, std::string state, core::Real probe_radius, core::Real core_asa, core::Real surface_asa, std::string jump_nums, std::string sym_dof_names, bool core, bool boundary, bool surface, bool verbose ):
 	mode_(mode),
@@ -261,6 +278,28 @@ SelectBySASAOperation::parse_tag( TagCOP tag , DataMap & )
 	surface_ = tag->getOption< bool >("surface", 0 );
 	verbose_ = tag->getOption< bool >("verbose", 0 );
 }
+
+void SelectBySASAOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "int_cslist" );
+	
+	attributes.push_back( XMLSchemaAttribute( "mode", xs_string, "sc" ) );
+	attributes.push_back( XMLSchemaAttribute( "state", xs_string, "monomer" ) );
+	attributes.push_back( XMLSchemaAttribute( "probe_radius", xs_decimal, "2.2" ) );
+	attributes.push_back( XMLSchemaAttribute( "core_asa", xs_decimal, "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "surface_asa", xs_decimal, "30" ) );
+	attributes.push_back( XMLSchemaAttribute( "jumps", "int_cslist", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "sym_dof_names", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "core", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "boundary", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "surface", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace task_operations
 } //namespace toolbox

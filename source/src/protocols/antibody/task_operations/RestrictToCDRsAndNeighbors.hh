@@ -26,6 +26,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace antibody {
@@ -78,6 +79,8 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	//////////////////////////
 
@@ -133,9 +136,6 @@ private:
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
 };
-
-
-
 
 } //task_operations
 } //antibody

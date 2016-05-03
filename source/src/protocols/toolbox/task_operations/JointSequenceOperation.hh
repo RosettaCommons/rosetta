@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -94,6 +95,9 @@ public:
 
 	/// @brief Add the sequence from the given fasta filename to the set of allowed aas
 	void add_native_fasta( std::string fasta_file );
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "JointSequence"; }
 
 private:
 

@@ -113,10 +113,10 @@ std::string ResiduePDBInfoHasLabelSelector::class_name() {
 }
 
 void
-ResiduePDBInfoHasLabelSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+ResiduePDBInfoHasLabelSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "property", xs_string, true /*required*/ ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "property", xs_string ));
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 
@@ -131,8 +131,8 @@ ResiduePDBInfoHasLabelSelectorCreator::keyname() const {
 }
 
 void
-ResiduePDBInfoHasLabelSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	ResiduePDBInfoHasLabelSelector::provide_selector_xsd( xsd );
+ResiduePDBInfoHasLabelSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResiduePDBInfoHasLabelSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

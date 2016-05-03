@@ -23,6 +23,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 #include <set>
 #include <string>
@@ -54,6 +55,8 @@ public:
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 
 	virtual void parse_tag( TagCOP tag , DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "SetCatalyticResPackBehavior"; }
 
 	void
 	set_fix_catalytic_aa( bool setting ){
@@ -94,6 +97,8 @@ public:
 	virtual void apply( Pose const & pose, PackerTask & task) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DetectProteinLigandInterface"; }
 
 	void
 	find_design_interface(
@@ -192,6 +197,8 @@ public:
 	virtual void apply( Pose const & pose, PackerTask & task) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "ProteinLigandInterfaceUpweighter"; }
 
 	static void register_options();
 
@@ -220,6 +227,8 @@ public:
 	virtual TaskOperationOP clone() const;
 
 	void parse_tag( TagCOP tag , DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "AddRigidBodyLigandConfs"; }
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.
@@ -250,6 +259,8 @@ public:
 	static void register_options();
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "AddLigandMotifRotamers"; }
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.

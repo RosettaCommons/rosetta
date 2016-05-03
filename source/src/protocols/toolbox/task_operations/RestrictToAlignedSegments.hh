@@ -31,6 +31,7 @@
 #include <set>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace toolbox {
@@ -53,6 +54,9 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname();
 
 	utility::vector1< core::Size > start_res() const{ return start_res_; }
 	void start_res( utility::vector1< core::Size > const s ){ start_res_ = s; }

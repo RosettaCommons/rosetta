@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -58,6 +59,8 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignAround"; }
 
 	void repack_shell( core::Real const repack_shell) {
 		repack_shell_ = repack_shell;
@@ -72,6 +75,7 @@ public:
 	void resnums_allow_design( bool const a ){ resnums_allow_design_ = a; }
 	bool resnums_allow_design() const{ return resnums_allow_design_; }
 	std::set< core::Size > get_designable_residues() const{ return resid_; };
+
 private:
 	core::Real design_shell_, repack_shell_; //dflt 8 and 8
 	bool allow_design_; //dflt true

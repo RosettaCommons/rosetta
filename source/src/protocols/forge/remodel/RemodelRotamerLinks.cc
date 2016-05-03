@@ -21,6 +21,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // option key includes
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -39,6 +41,7 @@ using namespace pack;
 using namespace rotamer_set;
 using namespace task;
 using namespace operation;
+using namespace utility::tag;
 
 using basic::t_info;
 using basic::t_debug;
@@ -48,6 +51,16 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelRotamerLin
 TaskOperationOP RemodelRotamerLinksCreator::create_task_operation() const
 {
 	return TaskOperationOP( new RemodelRotamerLinks );
+}
+
+void RemodelRotamerLinksCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RemodelRotamerLinks::provide_xml_schema( xsd );
+}
+
+std::string RemodelRotamerLinksCreator::keyname() const
+{
+	return RemodelRotamerLinks::keyname();
 }
 
 RemodelRotamerLinks::~RemodelRotamerLinks() {}
@@ -63,6 +76,11 @@ RemodelRotamerLinks::RemodelRotamerLinks()
 void
 RemodelRotamerLinks::parse_tag( TagCOP /*tag*/ , DataMap & )
 {}
+
+void RemodelRotamerLinks::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
 
 void
 RemodelRotamerLinks::apply(

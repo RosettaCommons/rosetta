@@ -35,6 +35,7 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -80,8 +81,8 @@ public:
 		RotamerSet & rotamer_set
 	);
 
-public:
 
+public:
 
 	/// @brief max chi2 for picking rotamers of YFH
 	void chi2max( Real const r )
@@ -196,6 +197,8 @@ public:
 
 
 	void parse_tag( TagCOP tag , DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "LimitAromaChi2"; }
 
 
 private: // data

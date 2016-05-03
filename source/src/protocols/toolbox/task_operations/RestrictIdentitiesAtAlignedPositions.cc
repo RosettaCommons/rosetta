@@ -31,6 +31,9 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
@@ -48,7 +51,24 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
+
+core::pack::task::operation::TaskOperationOP
+RestrictIdentitiesAtAlignedPositionsOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesAtAlignedPositionsOperation );
+}
+
+void RestrictIdentitiesAtAlignedPositionsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictIdentitiesAtAlignedPositionsOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictIdentitiesAtAlignedPositionsOperationCreator::keyname() const
+{
+	return RestrictIdentitiesAtAlignedPositionsOperation::keyname();
+}
 
 RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositionsOperation() :
 	RestrictOperationsBase(),
@@ -63,12 +83,6 @@ RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositi
 }
 
 RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPositionsOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictIdentitiesAtAlignedPositionsOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesAtAlignedPositionsOperation );
-}
 
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesAtAlignedPositionsOperation::clone() const
 {
@@ -143,6 +157,24 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagCOP tag , DataMap &
 	restrict_identities( tag->hasOption( "keep_aas" ) );
 	TR<<std::endl;
 }
+
+void RestrictIdentitiesAtAlignedPositionsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+	activate_common_simple_type( xsd, "int_cslist" );
+
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "source_pdb", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", "int_cslist" ) );
+	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_only_target_residues", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "prevent_repacking", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "keep_aas", xs_string, "ACDEFGHIKLMNPQRSTVWY" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace protocols
 } //namespace toolbox

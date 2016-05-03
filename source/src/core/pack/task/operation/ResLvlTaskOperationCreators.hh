@@ -30,55 +30,64 @@ namespace operation {
 class RestrictToRepackingRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "RestrictToRepackingRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class RestrictAbsentCanonicalAASRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "RestrictAbsentCanonicalAASRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class DisallowIfNonnativeRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "DisallowIfNonnativeRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class PreventRepackingRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "PreventRepackingRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class AddBehaviorRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "AddBehaviorRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class IncludeCurrentRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "IncludeCurrentRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class PreserveCBetaRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "PreserveCBetaRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ExtraChiCutoffRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "ExtraChiCutoffRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ExtraRotamersGenericRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const { return "ExtraRotamersGenericRLT"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace operation

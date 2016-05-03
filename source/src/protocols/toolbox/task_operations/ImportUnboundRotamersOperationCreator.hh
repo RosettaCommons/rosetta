@@ -22,7 +22,8 @@ namespace task_operations {
 class ImportUnboundRotamersOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ImportUnboundRotamers"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace protocols

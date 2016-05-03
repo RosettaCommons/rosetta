@@ -32,8 +32,6 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-typedef std::list< utility::tag::XMLSchemaAttribute > AttributeList;
-
 /// @brief Used to name the xs:complexType for a residue selector that is
 /// created with the "rs_type" tag-name.  Does so by prepending "rs_" and
 /// appending "Type" to the "rs_type".  E.g., "rs_AndType" would be the
@@ -42,16 +40,6 @@ typedef std::list< utility::tag::XMLSchemaAttribute > AttributeList;
 std::string
 complex_type_name_for_residue_selector( std::string const & rs_type );
 
-/// @brief Add a type to the XML Schema Definition that might be used
-/// in several places.  Available options are:
-/// 1) int_cslist -- a comma-separated list of integers
-/// This should be moved to src/utility/tag
-void
-common_simple_types(
-	utility::tag::XMLSchemaDefinition & xsd,
-	std::string const & desired_type
-);
-
 /// @brief Define the XML schema definition for a ResidueSelector that
 /// contains no other ResidueSelectors but may contain some number of
 /// attributes (aka options).
@@ -59,40 +47,39 @@ void
 xsd_type_definition_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
-	AttributeList const & attributes
+	utility::tag::AttributeList const & attributes
 );
 
 /// @brief Define the XML schema definition for a ResidueSelector that
 /// contains a single ResidueSelector in its set of sub-elements
 /// (aka sub-tags) and may contain some number of attributes (aka options).
 void
-xsd_type_definition_w_attributes_and_subselector(
+xsd_type_definition_w_attributes_and_optional_subselector(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
-	AttributeList const & attributes
+	utility::tag::AttributeList const & attributes
 );
 
 /// @brief Define the XML schema definition for a ResidueSelector that
 /// contains more than one ResidueSelector in its set of sub-elements
 /// (aka sub-tags) and may contain some number of attributes (aka options).
 void
-xsd_type_definition_w_attributes_and_subselectors(
+xsd_type_definition_w_attributes_and_optional_subselectors(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
-	core::Size min_occurrence,
-	AttributeList const & attributes
+	utility::tag::AttributeList const & attributes
 );
 
 /// @brief Define the XML schema definition for a ResidueSelector that
 /// contains more than one ResidueSelector in its set of sub-elements
 /// (aka sub-tags) and may contain some number of attributes (aka options).
 void
-xsd_type_definition_w_attributes_and_subselectors(
+xsd_type_definition_w_attributes_and_optional_subselectors(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
 	core::Size min_occurrence,
 	core::Size max_occurrence,
-	AttributeList const & attributes
+	utility::tag::AttributeList const & attributes
 );
 
 /// @brief returns a residue selector given a tag and datamap

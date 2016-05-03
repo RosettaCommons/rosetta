@@ -28,6 +28,8 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <boost/foreach.hpp>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
 #include <utility/vector1.hh>
@@ -42,6 +44,7 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 SelectResiduesWithinChainOperation::SelectResiduesWithinChainOperation() :
 	chain_( 1 ),
@@ -58,6 +61,16 @@ core::pack::task::operation::TaskOperationOP
 SelectResiduesWithinChainOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SelectResiduesWithinChainOperation );
+}
+
+void SelectResiduesWithinChainOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SelectResiduesWithinChainOperation::provide_xml_schema( xsd );
+}
+
+std::string SelectResiduesWithinChainOperationCreator::keyname() const
+{
+	return SelectResiduesWithinChainOperation::keyname();
 }
 
 core::pack::task::operation::TaskOperationOP SelectResiduesWithinChainOperation::clone() const
@@ -136,6 +149,23 @@ SelectResiduesWithinChainOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 	TR<<std::endl;
 }
+
+void SelectResiduesWithinChainOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+	activate_common_simple_type( xsd, "int_cslist" );
+
+	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "resid", "int_cslist" ) );
+	attributes.push_back( XMLSchemaAttribute( "allow_design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "allow_repacking", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "modify_unselected_residues", xs_boolean, "true" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace protocols
 } //namespace toolbox

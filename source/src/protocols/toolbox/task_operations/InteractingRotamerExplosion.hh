@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -51,6 +52,8 @@ public:
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
 	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 	virtual void parse_tag( TagCOP tag, DataMap & datamap );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "InteractingRotamerExplosion"; }
 
 private:
 	std::string string_target_seqpos_; // this can only be parsed at apply time, when the pose is available;

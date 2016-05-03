@@ -27,6 +27,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <string>
@@ -144,6 +145,14 @@ public:
 			TS_ASSERT_EQUALS( it->second.find( "S" ), std::string::npos );
 			TS_ASSERT_EQUALS( it->second.find( "T" ), std::string::npos );
 		}
+	}
+
+	// it'd be nice to test if the XML Schema itself is valid.
+	void dont_test_dssp_design_operation_xsd() {
+		using namespace utility::tag;
+		XMLSchemaDefinition xsd;
+		DsspDesignOperation::provide_xml_schema( xsd );
+		std::cout << "DsspDesignOperation XSD:\n" << xsd.full_definition() << std::endl;
 	}
 
 };

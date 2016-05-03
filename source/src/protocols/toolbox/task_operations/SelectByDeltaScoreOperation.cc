@@ -41,6 +41,9 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
@@ -53,10 +56,23 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 core::pack::task::operation::TaskOperationOP
 SelectByDeltaScoreOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SelectByDeltaScoreOperation );
+}
+
+void SelectByDeltaScoreOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SelectByDeltaScoreOperation::provide_xml_schema( xsd );
+}
+
+std::string SelectByDeltaScoreOperationCreator::keyname() const
+{
+	return SelectByDeltaScoreOperation::keyname();
 }
 
 /// @brief default constructor
@@ -215,6 +231,25 @@ SelectByDeltaScoreOperation::parse_tag( TagCOP tag , DataMap & data)
 		reference_pose_ = core::import_pose::pose_from_file( reference_pdb_filename , core::import_pose::PDB_file);
 	}
 }
+
+void SelectByDeltaScoreOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	// APL Actually -- parse_score_function needs a sister function that returns the attributes it reads.
+	// TO DO!
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "score_fxn", xs_string ) );
+
+	attributes.push_back( XMLSchemaAttribute( "score_type", xs_string, "total_score" ) );
+	attributes.push_back( XMLSchemaAttribute( "threshold", xs_decimal, "100" ) );
+	attributes.push_back( XMLSchemaAttribute( "lower", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "individual_hbonds", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "reference_name", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "reference_pdb", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace task_operations
 } //namespace toolbox

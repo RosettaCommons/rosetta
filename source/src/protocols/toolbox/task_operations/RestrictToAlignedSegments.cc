@@ -42,6 +42,8 @@
 #include <set>
 
 #include <utility/vector0.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 using basic::Error;
@@ -54,6 +56,23 @@ namespace task_operations {
 
 using namespace core::pack::task::operation;
 using namespace std;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+RestrictToAlignedSegmentsOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictToAlignedSegmentsOperation );
+}
+
+void RestrictToAlignedSegmentsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToAlignedSegmentsOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictToAlignedSegmentsOperationCreator::keyname() const
+{
+	return RestrictToAlignedSegmentsOperation::keyname();
+}
 
 RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 {
@@ -66,12 +85,6 @@ RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 }
 
 RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictToAlignedSegmentsOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictToAlignedSegmentsOperation );
-}
 
 core::pack::task::operation::TaskOperationOP RestrictToAlignedSegmentsOperation::clone() const
 {
@@ -196,6 +209,45 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 6.0 ));
 }
+
+std::string RestrictToAlignedSegmentsOperation::keyname() { return "RestrictToAlignedSegments"; }
+
+std::string rtas_subelement_ct_naming_function( std::string const & name ) { return "rtas_subelement_" + name + "Type"; }
+std::string rtas_subelement_group() { return "rtas_group"; }
+
+void RestrictToAlignedSegmentsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	XMLSchemaSimpleSubelementList subelements;
+	AttributeList seg_attributes;
+	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "name", xs_string ) );
+	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "source_pdb", xs_string ) );
+	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "start_res", xs_string ) );
+	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "stop_res", xs_string ) );
+	subelements
+		.complex_type_naming_func( & rtas_subelement_ct_naming_function )
+		.add_simple_subelement( "AlignedSegment", seg_attributes );
+
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( optional_name_attribute() );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "source_pdb", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "start_res", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "stop_res", xs_string ) );
+
+	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_shell", xs_decimal, "6.0" ) );
+
+	XMLComplexTypeSchemaGenerator ct_gen;
+	ct_gen.element_name( keyname() )
+		.complex_type_naming_func( & complex_type_name_for_task_op )
+		.add_attributes( attributes )
+		.set_subelements_repeatable( subelements, & rtas_subelement_group )
+		.write_complex_type_to_schema( xsd );
+
+}
+
 
 } //namespace task_operations
 } // namespace toolbox

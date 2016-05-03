@@ -34,6 +34,8 @@
 #include <core/graph/UpperEdgeGraph.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictNonSurfaceToRepackingOperation" );
@@ -43,11 +45,22 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 // Creator method
 core::pack::task::operation::TaskOperationOP
 RestrictNonSurfaceToRepackingOperationCreator::create_task_operation() const {
 	return core::pack::task::operation::TaskOperationOP( new RestrictNonSurfaceToRepackingOperation );
+}
+
+void RestrictNonSurfaceToRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictNonSurfaceToRepackingOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictNonSurfaceToRepackingOperationCreator::keyname() const
+{
+	return RestrictNonSurfaceToRepackingOperation::keyname();
 }
 
 // default constructor
@@ -127,6 +140,14 @@ void RestrictNonSurfaceToRepackingOperation::parse_tag( utility::tag::TagCOP tag
 	surface_exposed_nb_cutoff_ = tag->getOption< core::Size >( "surface_exposed_nb_count_cutoff" );
 }
 
+void RestrictNonSurfaceToRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "surface_exposed_nb_count_cutoff", "non_negative_integer" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
 
 } //namespace protocols
 } //namespace toolbox

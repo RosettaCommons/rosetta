@@ -19,6 +19,7 @@
 
 // package headers
 #include <core/pack/task/operation/OptH.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // package headers
 #include <core/chemical/AA.hh>
@@ -50,11 +51,6 @@ OptCysHG::OptCysHG( OptCysHG const & rval ) :
 /// @brief default destructor
 OptCysHG::~OptCysHG() {}
 
-TaskOperationOP OptCysHGCreator::create_task_operation() const
-{
-	return TaskOperationOP( new OptCysHG );
-}
-
 /// @brief clone this object
 OptCysHG::TaskOperationOP OptCysHG::clone() const {
 	return OptCysHG::TaskOperationOP( new OptCysHG( *this ) );
@@ -76,6 +72,24 @@ void OptCysHG::apply( Pose const & pose, PackerTask & task ) const {
 	}
 
 	optH.apply( pose, task );
+}
+
+
+std::string OptCysHG::keyname() { return "OptCysHG"; }
+
+void OptCysHG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP OptCysHGCreator::create_task_operation() const
+{
+	return TaskOperationOP( new OptCysHG );
+}
+
+std::string OptCysHGCreator::keyname() const { return OptCysHG::keyname(); }
+
+void OptCysHGCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	OptCysHG::provide_xml_schema( xsd );
 }
 
 

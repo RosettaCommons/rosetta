@@ -36,6 +36,8 @@
 #include <string>
 #include <ObjexxFCL/format.hh>
 #include <utility/vector0.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.RestrictNativeResiduesOperation" );
@@ -44,10 +46,23 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 core::pack::task::operation::TaskOperationOP
 RestrictNativeResiduesOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictNativeResiduesOperation );
+}
+
+void RestrictNativeResiduesOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictNativeResiduesOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictNativeResiduesOperationCreator::keyname() const
+{
+	return RestrictNativeResiduesOperation::keyname();
 }
 
 /// @brief default constructor
@@ -62,6 +77,7 @@ RestrictNativeResiduesOperation::RestrictNativeResiduesOperation():
 
 /// @brief destructor
 RestrictNativeResiduesOperation::~RestrictNativeResiduesOperation() {}
+
 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
@@ -224,6 +240,19 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 
 	invert_ = tag->getOption< bool >( "invert", invert_ );
 
+}
+
+void RestrictNativeResiduesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "prevent_repacking", xs_boolean, "false" ) );
+	// This is required if a command line option isn't set AMW TODO
+	attributes.push_back( XMLSchemaAttribute( "pdbname", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "invert", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } // TaskOperations

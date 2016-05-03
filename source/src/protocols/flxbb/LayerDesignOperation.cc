@@ -60,6 +60,8 @@
 #include <protocols/flxbb/utility.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/vector1.hh>
 #include <string>
 #include <algorithm>
@@ -83,8 +85,13 @@ using basic::Warning;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
+
+// AMW: Note--there's no Creator for CombinedTaskOperation
+// So I'm not doing anything with it yet.
 
 namespace protocols {
 namespace flxbb {
@@ -92,10 +99,20 @@ namespace flxbb {
 utility::vector1< std::string > const LayerDesignOperation::SS_TYPES =
 boost::assign::list_of ("all")("Helix")("HelixCapping")("HelixStart")("Loop")("Strand");
 
-core::pack::task::operation::TaskOperationOP
+TaskOperationOP
 LayerDesignOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new LayerDesignOperation );
+	return TaskOperationOP( new LayerDesignOperation );
+}
+
+void LayerDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LayerDesignOperation::provide_xml_schema( xsd );
+}
+
+std::string LayerDesignOperationCreator::keyname() const
+{
+	return LayerDesignOperation::keyname();
 }
 
 CombinedTaskOperation::CombinedTaskOperation( VecTaskOP  ops ):
@@ -1053,6 +1070,58 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			TR << std::endl;
 		}
 	}
+}
+
+// AMW: Add a common_simple_type for an underscore separated string list?
+// TO DO: Fix this after we've changed the format of LayerDesign
+void LayerDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "use_original_non_designed_layer", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "layers", xs_string, "core_boundary_surface_Nterm_Cterm" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_non_design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "ignore_pikaa_natro", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_sidechain_neighbors", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_midpoint", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_denominator", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_exponent", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_exponent", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "pore_radius", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "core", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "surface", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "core_E", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "core_L", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "core_H", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "surface_E", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "surface_L", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "surface_H", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "make_rasmol_script", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "use_symmetry", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "restrict_restypes", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "make_pymol_script", xs_boolean, "false" ) );
+
+	/*
+	std::list< XMLSchemaComplexTypeOP > layer_secstruct_cts;
+	BOOST_FOREACH( std::string const & sstype, SS_TYPES ) {
+		XMLSchemaComplexTypeOP layer_secstruct_type( new XMLSchemaComplexType );
+		layer_secstruct_type->name( sstype + "Type" );
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "copy_layer", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "aa", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "append", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_append", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "exclude", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_exclude", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "operation", xs_string ));
+		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "specification", xs_string ));
+		layer_secstruct_cts.push_back( layer_secstruct_type );
+	}*/
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 void

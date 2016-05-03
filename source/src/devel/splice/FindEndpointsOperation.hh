@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/scoring/dssp/Dssp.fwd.hh>
 
 // Utility Headers
@@ -47,7 +48,8 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
-
+	static std::string keyname() { return "FindEndpoints"; }
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	core::Size Cterm_offset() const{ return Cterm_offset_; }
 	void Cterm_offset( core::Size const c ){ Cterm_offset_ = c; }

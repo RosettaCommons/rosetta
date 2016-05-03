@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet;
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -20,6 +21,7 @@
 #include <protocols/sewing/sampling/AssemblyConstraintsMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Package Headers
 #include <protocols/sewing/util/io.hh>
@@ -28,7 +30,6 @@ namespace protocols {
 namespace sewing  {
 
 //////////////ReadNativeRotamersFile/////////////////
-
 
 class ReadNativeRotamersFile : public core::pack::task::operation::TaskOperation
 {
@@ -62,6 +63,9 @@ public:
 		TagCOP, DataMap &
 	);
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "ReadNativeRotamersFile"; }
+
 private:
 	NativeRotamersMap nat_ro_map_;
 };
@@ -88,7 +92,11 @@ public:
 		core::pose::Pose const &,
 		core::pack::task::PackerTask &
 	) const;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname();
 };
+
 
 //////////////AssemblyConstraintsMover/////////////////
 

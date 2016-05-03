@@ -44,6 +44,9 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/exit.hh>
 
 // C++ Headers
@@ -53,6 +56,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.SelectB
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 using namespace core;
 using namespace basic;
@@ -65,6 +71,16 @@ core::pack::task::operation::TaskOperationOP
 SelectByDensityFitOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new SelectByDensityFitOperation );
+}
+
+void SelectByDensityFitOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SelectByDensityFitOperation::provide_xml_schema( xsd );
+}
+
+std::string SelectByDensityFitOperationCreator::keyname() const
+{
+	return SelectByDensityFitOperation::keyname();
 }
 
 SelectByDensityFitOperation::SelectByDensityFitOperation( core::Real threshold, bool invert ):
@@ -119,6 +135,16 @@ SelectByDensityFitOperation::parse_tag( TagCOP tag, DataMap & )
 {
 	threshold_ = tag->getOption<core::Real>("threshold", 0.72);
 	invert_ = tag->getOption<bool>("invert", 0);
+}
+
+void SelectByDensityFitOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "threshold", xs_decimal, "0.72" ) );
+	attributes.push_back( XMLSchemaAttribute( "invert", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 

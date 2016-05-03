@@ -35,14 +35,11 @@
 /// @brief --brief--
 class --class-- : public core::select::residue_selector::ResidueSelector {
 public:
-	// derived from base class
 
 	/// @brief Constructor.
-	///
 	--class--();
 
 	/// @brief Destructor.
-	///
 	virtual ~--class--();
 
 	/// @brief Clone operator.
@@ -63,18 +60,15 @@ public:
 	);
 
 	/// @brief Get the mover class name.
-	///
 	virtual
 	std::string
 	get_name() const;
 
 	/// @brief Get the mover class name.
-	///
 	static std::string class_name();
 
-	/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
-	///
-	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
+	/// @brief Provide XSD information, enabling mechanical validation of input XML.
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

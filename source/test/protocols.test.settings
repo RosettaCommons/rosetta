@@ -83,16 +83,16 @@ sources = {
 		"SetupDockingFoldTree",
 	],
 
-        "environment" : [
-                 "CoMTrack",
-                 "EnvironmentJump",
-                 "EnvironmentTorsion",
-                 "ProtectedConf",
-        ],
+	"environment" : [
+		 "CoMTrack",
+		 "EnvironmentJump",
+		 "EnvironmentTorsion",
+		 "ProtectedConf",
+	],
 
-        "environment/claims" : [
-                 "ClaimTests",
-        ],
+	"environment/claims" : [
+		 "ClaimTests",
+	],
 
 	"enzdes" : [
 		"HBondCalculatorsTest",
@@ -102,10 +102,10 @@ sources = {
 		"ResfileAutoRemap",
 	],
 
-        "farna" : [
-            "FARNA_OptimizerTest",
-            "RNA_DeNovoProtocolTest",
-        ],
+	"farna" : [
+		"FARNA_OptimizerTest",
+		"RNA_DeNovoProtocolTest",
+	],
 
 	"features" : [
 		"BetaTurnDetectionFeatures",
@@ -193,20 +193,23 @@ sources = {
 		"hotspot_hashing",
 	],
 
-        "hybridization" : [
-            "TMalign",
-        ],
+	"hybridization" : [
+		"TMalign",
+	],
 	"jd2" : [
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",
 		"JD2ResourceManagerJobInputterSimplifiedInput",
 		"JD2ResourceManagerJobInputterMultipleJobTags",
-                "JobOutputter",
-                "MultiThreadedJobDistributor",
+		"JobOutputter",
+		"MultiThreadedJobDistributor",
 	],
 
 	"jd2/parser" : [
 		"BluePrint",
+	],
+	"jd3" : [
+		"validate_w_xsd",
 	],
 	#"jd3/pose_inputters" : [
 	#	"PDBPoseInputter",
@@ -220,9 +223,9 @@ sources = {
 		"JumpSetup",
 	],
 
-    #"kinematic_closure" : [
-    #    "ClosureTests",
-    #],
+	#"kinematic_closure" : [
+	#    "ClosureTests",
+	#],
 
 	"drug_design": [
 		"orphan_restypes",
@@ -252,10 +255,10 @@ sources = {
 		"CCDLoopClosureMover",
 	],
 
-    "loop_modeling" : [
-        "LoopModelerTests",
-        "RepackingRefinerTests",
-    ],
+	"loop_modeling" : [
+		"LoopModelerTests",
+		"RepackingRefinerTests",
+	],
 
 	"make_rot_lib" : [
 		"MakeRotLib",
@@ -291,12 +294,12 @@ sources = {
 		"TiltMover",
 		"TransformIntoMembraneMover",
 		"TranslationRotationMover",
-    ],
-    "membrane/benchmark" : [
-    	"MakeCanonicalHelixTest",
-    ],
-    "membrane/geometry" : [
-        "EmbeddingDef",
+	],
+	"membrane/benchmark" : [
+		"MakeCanonicalHelixTest",
+	],
+	"membrane/geometry" : [
+		"EmbeddingDef",
 		"Embedding",
 	],
 	"membrane/symmetry" : [
@@ -355,9 +358,9 @@ sources = {
 		"AtomCoordinateCstMover",
 	],
 
-    "relax/membrane" : [
-        "MPFastRelaxFoldTree",
-    ],
+	"relax/membrane" : [
+		"MPFastRelaxFoldTree",
+	],
 
 	"residue_selectors" : [
 		"StoredResidueSubsetSelector",
@@ -367,7 +370,7 @@ sources = {
 	"rigid" : [
 		"RigidBodyMover",
 		"RotateJumpAxisMover",
-                "UniformRigidBody",
+		"UniformRigidBody",
 	],
 
 	"rosetta_scripts" : [
@@ -387,9 +390,9 @@ sources = {
 		"Interface",
 	],
 
-        "sewing" : [
-                "SewingHasherTests",
-        ],
+	"sewing" : [
+		"SewingHasherTests",
+	],
 
 	"simple_filters" : [
 		"DdgFilter",
@@ -421,25 +424,25 @@ sources = {
 		"Sparta",
 	],
 
-        "stepwise/modeler" : [
-                "StepWiseMinimizerTest",
-        ],
+	"stepwise/modeler" : [
+		"StepWiseMinimizerTest",
+	],
 
-        "stepwise/modeler/align" : [
-                "StepWisePoseAlignerTest",
-        ],
+	"stepwise/modeler/align" : [
+		"StepWisePoseAlignerTest",
+	],
 
-        "stepwise/modeler/rna" : [
-            "stepwise_modeler_rna_util_test",
-        ],
+	"stepwise/modeler/rna" : [
+		"stepwise_modeler_rna_util_test",
+	],
 
-        "stepwise/monte_carlo" : [
-                "StepWiseMonteCarloTest",
-        ],
+	"stepwise/monte_carlo" : [
+		"StepWiseMonteCarloTest",
+	],
 
-        "stepwise/monte_carlo/mover" : [
-                "StepWiseMoveSelectorTest",
-        ],
+	"stepwise/monte_carlo/mover" : [
+		"StepWiseMoveSelectorTest",
+	],
 
 	"surface_docking" : [
 		"SurfaceVectorLoader",
@@ -470,34 +473,34 @@ sources = {
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = [ "devel",
-"protocols.7",
-"protocols.6",
-"protocols_e.5",
-"protocols_d.5",
-"protocols_c.5",
-"protocols_b.5",
-"protocols_a.5",
-"protocols_h.4",
-"protocols_g.4",
-"protocols_f.4",
-"protocols_e.4",
-"protocols_d.4",
-"protocols_c.4",
-"protocols_b.4",
-"protocols_a.4",
-"protocols.3",
-"protocols_b.2",
-"protocols_a.2",
-"protocols.1",
-"core.5",
-"core.4",
-"core.3",
-"core.2",
-"core.1",
-"basic",
-"numeric",
-"utility",
-"ObjexxFCL",
+	"protocols.7",
+	"protocols.6",
+	"protocols_e.5",
+	"protocols_d.5",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols_h.4",
+	"protocols_g.4",
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols_b.2",
+	"protocols_a.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
 ]
 subprojects  = []
 testinputfiles = [
@@ -516,8 +519,8 @@ testinputfiles = [
 	"abinitio/score2_pcs_only.wts_patch",
 	"abinitio/score5_pcs_only.wts_patch",
 	"abinitio/score3_pcs_only.wts_patch",
-        "abinitio/abscript/one_frag3_per_pos",
-        "abinitio/abscript/ubq_frag.pdb",
+	"abinitio/abscript/one_frag3_per_pos",
+	"abinitio/abscript/ubq_frag.pdb",
 	"analysis/2hle_remixed.pdb",
 	"analysis/test_peptiderive.xml",
 	"analysis/PeptideDeriverFilter.u",
@@ -591,12 +594,12 @@ testinputfiles = [
 	"enzdes/mcfi_test.cst",
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
-        "farna/farna_rebuild.fasta",
-        "farna/farna_rebuild.params",
-        "farna/bps_test.params",
-        "farna/srl_fixed_START1_1q9a_RNA.pdb",
+	"farna/farna_rebuild.fasta",
+	"farna/farna_rebuild.params",
+	"farna/bps_test.params",
+	"farna/srl_fixed_START1_1q9a_RNA.pdb",
 	"features/2J88.pdb",
-        "features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
+	"features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
 	"fldsgn/filters/test_sheet.pdb",
 	"forge/remodel/bad_pair.blueprint",
 	"forge/remodel/test.blueprint",
@@ -606,9 +609,10 @@ testinputfiles = [
 	"frag_picker/1a32A-H1.9mers",
 	"grafting/2j88_NoL1.pdb",
 	"grafting/2j88_L1_overhang3_rotated.pdb",
-        "grafting/2aabL_L1.pdb",
+	"grafting/2aabL_L1.pdb",
 	"hotspot_hashing/3ve0_IJ.pdb",
 	"jd2/parser/test.bbskel",
+	"jd3/example_bad.xml",
 	"jobdist/PlainSilentFileJobDistributor_test.out",
 	"jumping/jump_test.pdb",
 	"jumping/gb3_secondary_structure.dat",
@@ -617,10 +621,10 @@ testinputfiles = [
 	"jumping/gold_distance_jump2.dat",
 	"jumping/test_in.pdb",
 	"jumping/jumps.def",
-    "kinematic_closure/inputs/1ubq.pdb",
-    "kinematic_closure/inputs/1srp.pdb",
-    "kinematic_closure/inputs/1exm.pdb",
-    "kinematic_closure/inputs/3cla.pdb",
+	"kinematic_closure/inputs/1ubq.pdb",
+	"kinematic_closure/inputs/1srp.pdb",
+	"kinematic_closure/inputs/1exm.pdb",
+	"kinematic_closure/inputs/3cla.pdb",
 	"ligand_docking/7cpa.params",
 	"ligand_docking/7cpa_7cpa_native.pdb",
 	"ligand_docking/7cpa_confs.pdb",
@@ -629,8 +633,8 @@ testinputfiles = [
 	"ligand_docking/ligand_pos.pdb",
 	"loops/2GB3.pdb",
 	"loops/4DZM.pdb",
-    "loop_modeling/inputs/2pia.pdb",
-    "loop_modeling/inputs/2pia.loop",
+	"loop_modeling/inputs/2pia.pdb",
+	"loop_modeling/inputs/2pia.loop",
 	"make_rot_lib/all_dist_rotamers.txt",
 	"make_rot_lib/calc_centroids.txt",
 	"make_rot_lib/cluster_rotamers.txt",
@@ -707,14 +711,14 @@ testinputfiles = [
 	"membrane/geometry/2UUH__tr.span",
 	"membrane/geometry/3PXO_.pdb",
 	"membrane/geometry/3PXO__tr.span",
-    "membrane/1afo_in.pdb",
-    "membrane/1afo_decoy.pdb",
-    "membrane/1afo_tr.span",
-    "membrane/2zup_model.pdb",
-    "membrane/2zup_model.span",
-    "membrane/symmetry/1afo_tr.span",
-    "membrane/symmetry/1afo_tr_input.pdb",
-    "membrane/symmetry/1afo_tr.c2.symm",
+	"membrane/1afo_in.pdb",
+	"membrane/1afo_decoy.pdb",
+	"membrane/1afo_tr.span",
+	"membrane/2zup_model.pdb",
+	"membrane/2zup_model.span",
+	"membrane/symmetry/1afo_tr.span",
+	"membrane/symmetry/1afo_tr_input.pdb",
+	"membrane/symmetry/1afo_tr.c2.symm",
 	"nonlocal/2GB3.pdb",
 	"nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",
@@ -733,8 +737,8 @@ testinputfiles = [
 	"relax/AtomCoordinateCstMover_input_harmonic_sidechain.cst",
 	"relax/AtomCoordinateCstMover_native_harmonic_sidechain.cst",
 	"relax/AtomCoordinateCstMover_integration_native.cst",
-        "relax/membrane/2mpn_tr.span",
-        "relax/membrane/2mpn_tr_native.pdb",
+	"relax/membrane/2mpn_tr.span",
+	"relax/membrane/2mpn_tr_native.pdb",
 	"rigid/RigidBodyMover.pdb",
 	"rigid/RigidBodyPerturbMover_no_int.pdb",
 	"rigid/RigidBodyPerturbMover_int.pdb",
@@ -749,7 +753,7 @@ testinputfiles = [
 	"rigid/RotateJumpAxisMover_underspecified_jump.pdb",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
-        "sewing/inputs/1ten_m8.db3",
+	"sewing/inputs/1ten_m8.db3",
 	"simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/design.resfile",
 	"simple_moves/design2.resfile",
@@ -764,16 +768,16 @@ testinputfiles = [
 	"sparta/solution_0022372568.ir_solution.pdb",
 	"sparta/SAM-T08-server_TS3.pdb",
 	"sparta/17280_trim.tab",
-        "stepwise/modeler/align/1_scaff_subset_stepwise_input_seq_1.pdb",
-        "stepwise/modeler/align/2_scaff_subset_stepwise_input_seq_1.pdb",
-        "stepwise/modeler/align/scaff_subset_stepwise_input_seq_1.pdb",
-        "stepwise/modeler/align/scaff_subset_stepwise_input_seq_1_mutated_to_DNA.pdb",
-        "stepwise/modeler/align/seq_with_AAmismatch.fasta",
-        "stepwise/monte_carlo/mover/up_to_ua_handle_t_loop_3l0u_RNA.pdb",
-        "stepwise/monte_carlo/mover/t_loop.fasta",
+	"stepwise/modeler/align/1_scaff_subset_stepwise_input_seq_1.pdb",
+	"stepwise/modeler/align/2_scaff_subset_stepwise_input_seq_1.pdb",
+	"stepwise/modeler/align/scaff_subset_stepwise_input_seq_1.pdb",
+	"stepwise/modeler/align/scaff_subset_stepwise_input_seq_1_mutated_to_DNA.pdb",
+	"stepwise/modeler/align/seq_with_AAmismatch.fasta",
+	"stepwise/monte_carlo/mover/up_to_ua_handle_t_loop_3l0u_RNA.pdb",
+	"stepwise/monte_carlo/mover/t_loop.fasta",
 	"toolbox/task_operations/ConservativeDesignOperation_defaults.u",
 	"toolbox/task_operations/ConservativeDesignOperation_no_native.u",
-        "toolbox/task_operations/ConservativeDesignOperation_blosum62.u",
+	"toolbox/task_operations/ConservativeDesignOperation_blosum62.u",
 	"toolbox/task_operations/dssp_in.pdb",
 	"toolbox/task_operations/dssp_in.blueprint",
 	"toolbox/task_operations/DsspDesignOperation.u",

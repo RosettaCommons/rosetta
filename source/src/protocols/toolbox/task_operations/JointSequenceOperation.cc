@@ -37,6 +37,8 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/vector1.hh>
 #include <string>
 
@@ -49,10 +51,23 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-core::pack::task::operation::TaskOperationOP
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+TaskOperationOP
 JointSequenceOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new JointSequenceOperation );
+	return TaskOperationOP( new JointSequenceOperation );
+}
+
+void JointSequenceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	JointSequenceOperation::provide_xml_schema( xsd );
+}
+
+std::string JointSequenceOperationCreator::keyname() const
+{
+	return JointSequenceOperation::keyname();
 }
 
 /// @brief default constructor
@@ -70,9 +85,9 @@ JointSequenceOperation::JointSequenceOperation():
 JointSequenceOperation::~JointSequenceOperation() {}
 
 /// @brief clone
-core::pack::task::operation::TaskOperationOP
+TaskOperationOP
 JointSequenceOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new JointSequenceOperation( *this ) );
+	return TaskOperationOP( new JointSequenceOperation( *this ) );
 }
 
 /// @brief all AA that have a higher probability in the seqprofile
@@ -191,9 +206,28 @@ JointSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 		} else {
 			utility_exit_with_message("Native FASTA file not specified on command line.");
 		}
-
 	}
+}
 
+void JointSequenceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "use_current", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_natro", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_chain", "non_negative_integer", "0" ) );
+	// AMW: This relies on the presence of a command-line option.
+	attributes.push_back( XMLSchemaAttribute( "use_native", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_starting_as_native", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "filename", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "native", xs_string ) );
+	// AMW: This relies on the presence of a command-line option.
+	attributes.push_back( XMLSchemaAttribute( "use_fasta", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 /// @brief Add the sequence from the given filename to the set of allowed aas.

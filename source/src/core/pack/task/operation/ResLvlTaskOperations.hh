@@ -42,6 +42,9 @@ public:
 	virtual ~RestrictToRepackingRLT();
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class RestrictAbsentCanonicalAASRLT : public ResLvlTaskOperation
@@ -57,6 +60,10 @@ public:
 	void aas_to_keep( utility::vector1< bool > const & );
 	void aas_to_keep( std::string const & );
 	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< bool > canonical_aas_to_keep_;
 };
@@ -78,6 +85,9 @@ public:
 	void disallow_aas( std::string const & aa_string );
 	virtual void parse_tag( TagCOP );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< bool > invert_vector( utility::vector1< bool > disallowed_aas);
 	utility::vector1< bool > disallowed_aas_;
@@ -92,6 +102,9 @@ public:
 	virtual ~PreventRepackingRLT();
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class AddBehaviorRLT : public ResLvlTaskOperation
@@ -105,6 +118,10 @@ public:
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
 	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string behavior_;
 };
@@ -118,6 +135,9 @@ public:
 	virtual ~IncludeCurrentRLT();
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class PreserveCBetaRLT : public ResLvlTaskOperation
@@ -129,6 +149,9 @@ public:
 	virtual ~PreserveCBetaRLT();
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class ExtraChiCutoffRLT : public ResLvlTaskOperation
@@ -141,6 +164,10 @@ public:
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
 	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size extrachi_cutoff_;
 };
@@ -176,6 +203,9 @@ public:
 	void extrachi_cutoff( Size value );
 
 	ExtraRotamerSamplingData const & sampling_data() const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	ExtraRotamerSamplingData sampling_data_;

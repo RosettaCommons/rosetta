@@ -21,6 +21,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
@@ -29,6 +30,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -75,11 +77,6 @@ OperateOnResidueSubset::operator = ( OperateOnResidueSubset const & src )
 }
 
 OperateOnResidueSubset::~OperateOnResidueSubset() {}
-
-TaskOperationOP OperateOnResidueSubsetCreator::create_task_operation() const
-{
-	return TaskOperationOP( new OperateOnResidueSubset );
-}
 
 TaskOperationOP OperateOnResidueSubset::clone() const
 {
@@ -180,6 +177,42 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 
 	op_ = rltop;
 	residue_selector_ = selector;
+}
+
+
+std::string OperateOnResidueSubset::keyname() { return "OperateOnResidueSubset"; }
+
+/// @details The XSD says that the residue selector must appear before the RLTO.
+void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	using namespace core::select::residue_selector;
+
+	ResidueSelectorFactory::get_instance()->define_residue_selector_xml_schema( xsd );
+	ResLvlTaskOperationFactory::get_instance()->define_res_lvl_task_op_xml_schema( xsd );
+
+	using namespace utility::tag;
+	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaSimpleSubelementList subelements;
+	// the ResidueSelector subelement is not required; it can be provided by name through the datamap; thus
+	// the min_occurs for this subelement is set to 0
+	subelements.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name, 0 /*min_occurs*/ );
+	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
+	ct_gen.element_name( keyname() )
+		.complex_type_naming_func( & complex_type_name_for_task_op )
+		.set_subelements_single_appearance_required_and_ordered( subelements )
+		.add_attribute( optional_name_attribute() )
+		.write_complex_type_to_schema( xsd );
+}
+
+TaskOperationOP OperateOnResidueSubsetCreator::create_task_operation() const
+{
+	return TaskOperationOP( new OperateOnResidueSubset );
+}
+
+std::string OperateOnResidueSubsetCreator::keyname() const { return OperateOnResidueSubset::keyname(); }
+
+void OperateOnResidueSubsetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	OperateOnResidueSubset::provide_xml_schema( xsd );
 }
 
 } //namespace operation

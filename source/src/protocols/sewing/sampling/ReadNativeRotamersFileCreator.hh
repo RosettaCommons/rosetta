@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet;
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -26,9 +27,9 @@ public:
 	core::pack::task::operation::TaskOperationOP
 	create_task_operation() const;
 
-	virtual
-	std::string keyname()
-	const { return "ReadNativeRotamersFile"; }
+	virtual std::string keyname() const;
+
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 

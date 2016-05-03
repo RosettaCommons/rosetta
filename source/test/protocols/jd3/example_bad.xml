@@ -1,0 +1,9 @@
+<ROSETTA_SCRIPTS>
+ <RESIDUE_SELECTORS>
+  <And name="and_selector">
+   <Chain chains="A,B"/>
+   <Neighborhood resnums="1,2,3," distance="10.0"/>
+  </And>
+  <JumpDownstream name="ds_jump_2" jump="2"/>
+ </RESIDUE_SELECTORS>
+</ROSETTA_SCRIPTS>

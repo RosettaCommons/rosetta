@@ -18,12 +18,15 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using core::kinematics::MoveMapCOP;
 using core::pose::Pose;
 using core::pack::task::PackerTask;
@@ -66,7 +69,15 @@ set_design(tag->getOption< bool > "design", false));
 set_include_neighbors(tag->getOption< bool > "include_neighbors", false));
 
 protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false);
-}*/
+}
+
+*/
+
+// AMW: no parse_tag or Creator.
+void RestrictToMoveMapChiOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
 
 RestrictToMoveMapChiOperation::RestrictToMoveMapChiOperation(const RestrictToMoveMapChiOperation& src):
 	core::pack::task::operation::TaskOperation(src)
@@ -80,6 +91,12 @@ RestrictToMoveMapChiOperation::clone() const {
 }
 
 RestrictToMoveMapChiOperation::~RestrictToMoveMapChiOperation(){}
+
+/* AMW: No Creator (had been commented out to save PyRosetta build)
+void RestrictToMoveMapChiOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+RestrictToMoveMapChiOperation::provide_xml_schema( xsd );
+}*/
 
 void
 RestrictToMoveMapChiOperation::set_movemap(core::kinematics::MoveMapCOP movemap) {

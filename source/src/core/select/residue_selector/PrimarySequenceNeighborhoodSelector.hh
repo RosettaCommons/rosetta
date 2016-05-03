@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -66,6 +67,8 @@ public:
 	void set_lower_residues( core::Size const nres );
 	void set_upper_residues( core::Size const nres );
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP const selector );
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private: // data members
 	core::Size lower_residues_;

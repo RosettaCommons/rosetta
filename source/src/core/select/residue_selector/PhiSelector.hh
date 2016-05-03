@@ -74,7 +74,7 @@ public:
 
 	/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
 	///
-	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/// @brief Are we selecting the residues in the positive phi region?
 	/// @details Default true.

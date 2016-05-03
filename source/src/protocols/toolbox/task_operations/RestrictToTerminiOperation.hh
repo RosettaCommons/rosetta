@@ -32,6 +32,7 @@
 #include <set>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -62,6 +63,8 @@ public:
 
 	void
 	parse_tag( utility::tag::TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictToTermini"; }
 
 private:
 	core::Size chain_;

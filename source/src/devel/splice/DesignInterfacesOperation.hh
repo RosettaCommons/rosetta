@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -56,6 +57,8 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static std::string keyname() { return "DesignInterfacesOperation"; }
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void repack_shell( core::Real const repack_shell) {
 		repack_shell_ = repack_shell;

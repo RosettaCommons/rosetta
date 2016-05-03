@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace toolbox {
@@ -44,6 +45,8 @@ public:
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "SetIGType"; }
 
 private:
 

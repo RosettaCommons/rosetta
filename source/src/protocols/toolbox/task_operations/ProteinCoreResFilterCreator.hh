@@ -22,7 +22,8 @@ namespace task_operations {
 class ProteinCoreFilterCreator : public core::pack::task::operation::ResFilterCreator {
 public:
 	virtual core::pack::task::operation::ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ProteinCore"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace protocols

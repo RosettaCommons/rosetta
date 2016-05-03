@@ -28,6 +28,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -44,6 +46,7 @@ using namespace protocols::toolbox::task_operations;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::antibody::design;
+using namespace utility::tag;
 
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation():
 	TaskOperation(),
@@ -156,6 +159,29 @@ AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache
 	}
 
 }
+
+void AddCDRProfileSetsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "nonnegative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "cdrs", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "limit_only_to_length", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "force_north_paper_db", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_light_chain_type", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_outliers", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "add_to_current", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "include_native_restype", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "picking_rounds", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "cutoff", "non_negative_integer", "10" ) );
+	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+
 
 void
 AddCDRProfileSetsOperation::set_cdr_only(CDRNameEnum cdr) {
@@ -300,6 +326,14 @@ AddCDRProfileSetsOperationCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new AddCDRProfileSetsOperation );
 }
 
+void AddCDRProfileSetsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddCDRProfileSetsOperation::provide_xml_schema( xsd );
+}
+
+std::string AddCDRProfileSetsOperationCreator::keyname() const {
+	return AddCDRProfileSetsOperation::keyname();
+}
 
 } //task_operations
 } //antibody

@@ -18,6 +18,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <core/types.hh>
 
@@ -42,6 +43,8 @@ public:
 	void set_movable_jumps( utility::vector1_int const & movable_jumps );
 	void add_movable_jump( int const additional_jump );
 	utility::vector1_int const & movable_jumps() const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "InterfaceTaskOperation"; }
 
 private:
 	utility::vector1_int movable_jumps_;

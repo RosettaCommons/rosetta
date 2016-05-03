@@ -15,10 +15,11 @@
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
 
-// Project headers
+// Package headers
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
@@ -27,6 +28,7 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaValidation.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
@@ -34,6 +36,7 @@
 
 static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.ResidueSelectorFactory.cxxtest.hh");
 
+using namespace utility::tag;
 using namespace core::select::residue_selector;
 
 class DummyResidueSelector : public ResidueSelector {
@@ -65,7 +68,9 @@ public:
 	virtual
 	std::string keyname() const { return "DummyResidueSelector"; }
 
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const {}
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+		core::select::residue_selector::xsd_type_definition_w_attributes( xsd, keyname(), utility::tag::AttributeList() );
+	}
 };
 
 
@@ -87,6 +92,30 @@ public:
 		TS_ASSERT( dselector ); // make sure we got back the right residue selector kind
 	}
 
+	void test_all_residue_selectors_define_valid_xsds() {
+		XMLSchemaDefinition xsd;
+		ResidueSelectorFactory::get_instance()->define_residue_selector_xml_schema( xsd );
+
+		XMLSchemaModelGroupOP rosetta_scripts_seq( new XMLSchemaModelGroup( xsmgt_sequence ));
+
+		XMLSchemaComplexTypeOP rosetta_scripts_type( new XMLSchemaComplexType );
+		rosetta_scripts_type->set_model_group( rosetta_scripts_seq );
+
+		XMLSchemaElementOP rosetta_scripts_element( new XMLSchemaElement );
+		rosetta_scripts_element->name( "ROSETTASCRIPTS" );
+		rosetta_scripts_element->element_type_def( rosetta_scripts_type );
+
+		xsd.add_top_level_element( *rosetta_scripts_element );
+
+		//std::cout << "xsd for residue selector:\n" << xsd.full_definition() << std::endl;
+		XMLValidationOutput output = test_if_schema_is_valid( xsd.full_definition() );
+		TS_ASSERT( output.valid() );
+		if ( ! output.valid() ) {
+			std::cout << output.error_messages() << std::endl;
+		}
+	}
+
+
 	/// @brief make sure that if a ResidueSelector with the name of an already-registered
 	/// ResidueSelector gets registered with the factory, that the factory throws an exception
 	void test_register_one_creator_twice_with_ResidueSelectorFactory() {
@@ -103,7 +132,8 @@ public:
 
 	}
 
-	// @brief make sure that when we register a residue selector, we can later get it back
+	// @brief Make sure that the factory will throw a meaningful error when asked for a
+	// residue selector that has not been defined.
 	void test_throw_on_unregistered_selector_name_ResidueSelectorFactory() {
 		try {
 			ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
@@ -120,7 +150,13 @@ public:
 	void test_output_residue_selector_xsds() {
 		utility::tag::XMLSchemaDefinition xsd;
 		ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
-		factory->define_residue_selector_xml_schema( xsd );
+		try {
+			// make sure the RSF doesn't find errors with the xml schema it produces
+			factory->define_residue_selector_xml_schema( xsd );
+			TS_ASSERT( true );
+		} catch ( ... ) {
+			TS_ASSERT( false );
+		}
 		TR << "XSD: " << std::endl;
 		TR << xsd.full_definition() << std::endl;
 	}

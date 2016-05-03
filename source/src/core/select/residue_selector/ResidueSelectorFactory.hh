@@ -51,10 +51,12 @@ public:
 	/// @brief The %ResidueSelectorFactory is the point of entry for the definition of the XML Schemas
 	/// for every ResidueSelector that may be instantiated from a file.  It is  responsible for defining
 	/// an xs:group named "residue_selector" listing each of the residue-selector-complex types that may
-	/// be initialized using the ResidueSelectorFactory and to iterate across each of the
+	/// be initialized using the %ResidueSelectorFactory and to iterate across each of the
 	/// ResidueSelectorCreators it contains asking them for the XML schema of the ResidueSelector they
 	/// are responsible for creating.
 	void define_residue_selector_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	static std::string residue_selector_xml_schema_group_name();
 
 private:
 	static ResidueSelectorFactory * instance_;

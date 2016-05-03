@@ -17,10 +17,13 @@
 
 #include <protocols/forge/remodel/RemodelRotamerLinks.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace forge {
 namespace remodel {
+
+using namespace utility::tag;
 
 class RemodelRotamerLinks : public core::pack::task::operation::TaskOperation
 {
@@ -36,6 +39,8 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RemodelRotamerLinks"; }
 
 };
 

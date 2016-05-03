@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <core/types.hh>
 
@@ -65,6 +66,10 @@ public:
 
 	void start_res( core::Size const s ){ start_res_ = s ; }
 	core::Size start_res() const{ return start_res_;}
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "AlignedThread"; }
+
 private:
 	std::string alignment_file_; //dflt ""
 	std::string query_name_; //dflt "" ; the name of the sequence to thread on -s structure

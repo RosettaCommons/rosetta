@@ -31,6 +31,9 @@
 #include <utility/tag/Tag.hh>
 #endif
 
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 
 namespace protocols {
 namespace dna {
@@ -54,6 +57,16 @@ TaskOperationOP WatsonCrickRotamerCouplingsCreator::create_task_operation() cons
 	return TaskOperationOP( new WatsonCrickRotamerCouplings );
 }
 
+void WatsonCrickRotamerCouplingsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	WatsonCrickRotamerCouplings::provide_xml_schema( xsd );
+}
+
+std::string WatsonCrickRotamerCouplingsCreator::keyname() const
+{
+	return WatsonCrickRotamerCouplings::keyname();
+}
+
 WatsonCrickRotamerCouplings::~WatsonCrickRotamerCouplings() {}
 
 TaskOperationOP WatsonCrickRotamerCouplings::clone() const
@@ -64,6 +77,11 @@ TaskOperationOP WatsonCrickRotamerCouplings::clone() const
 void
 WatsonCrickRotamerCouplings::parse_tag( TagCOP /*tag*/ , DataMap & )
 {}
+
+void WatsonCrickRotamerCouplings::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
 
 void
 WatsonCrickRotamerCouplings::apply(

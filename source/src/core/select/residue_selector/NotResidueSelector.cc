@@ -141,11 +141,11 @@ std::string NotResidueSelector::class_name() {
 }
 
 void
-NotResidueSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+NotResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "selector", xs_string ));
-	xsd_type_definition_w_attributes_and_subselector( xsd, class_name(), attributes );
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
 }
 
 
@@ -160,8 +160,8 @@ NotResidueSelectorCreator::keyname() const {
 }
 
 void
-NotResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	NotResidueSelector::provide_selector_xsd( xsd );
+NotResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	NotResidueSelector::provide_xml_schema( xsd );
 }
 
 

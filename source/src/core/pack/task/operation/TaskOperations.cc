@@ -14,6 +14,7 @@
 // Unit Headers
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperationCreators.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // Project Headers
 #include <core/id/SequenceMapping.hh>
@@ -40,6 +41,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // basic headers
 #include <basic/resource_manager/ResourceManager.hh>
@@ -59,17 +61,14 @@ namespace operation {
 using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
+
 static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.TaskOperations", t_info );
+
 using namespace utility::tag;
 
 /// BEGIN RestrictToRepacking
 
 RestrictToRepacking::~RestrictToRepacking() {}
-
-TaskOperationOP RestrictToRepackingCreator::create_task_operation() const
-{
-	return TaskOperationOP( new RestrictToRepacking );
-}
 
 TaskOperationOP RestrictToRepacking::clone() const
 {
@@ -86,13 +85,29 @@ void
 RestrictToRepacking::parse_tag( TagCOP, DataMap & )
 {}
 
+std::string RestrictToRepacking::keyname() { return "RestrictToRepacking"; }
+
+void RestrictToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP RestrictToRepackingCreator::create_task_operation() const
+{
+	return TaskOperationOP( new RestrictToRepacking );
+}
+
+void RestrictToRepackingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToRepacking::provide_xml_schema( xsd );
+}
+
+std::string RestrictToRepackingCreator::keyname() const {
+	return RestrictToRepacking::keyname();
+}
+
 /// BEGIN RestrictResidueToRepacking
 RestrictResidueToRepacking::~RestrictResidueToRepacking() {}
-
-TaskOperationOP RestrictResidueToRepackingCreator::create_task_operation() const
-{
-	return TaskOperationOP( new RestrictResidueToRepacking );
-}
 
 TaskOperationOP RestrictResidueToRepacking::clone() const
 {
@@ -122,6 +137,32 @@ RestrictResidueToRepacking::parse_tag( TagCOP tag , DataMap & )
 	include_residue( tag->getOption< core::Size >( "resnum", 0 ) );
 }
 
+std::string RestrictResidueToRepacking::keyname() { return "RestrictResidueToRepacking"; }
+
+void RestrictResidueToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "resnum", "non_negative_integer", "0" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP RestrictResidueToRepackingCreator::create_task_operation() const
+{
+	return TaskOperationOP( new RestrictResidueToRepacking );
+}
+
+std::string RestrictResidueToRepackingCreator::keyname() const {
+	return RestrictResidueToRepacking::keyname();
+}
+
+void RestrictResidueToRepackingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	return RestrictResidueToRepacking::provide_xml_schema( xsd );
+}
+
+
 /// BEGIN RestrictAbsentCanonicalAAS
 RestrictAbsentCanonicalAAS::RestrictAbsentCanonicalAAS()
 : parent(),
@@ -140,10 +181,6 @@ RestrictAbsentCanonicalAAS::RestrictAbsentCanonicalAAS( core::Size resid, utilit
 
 RestrictAbsentCanonicalAAS::~RestrictAbsentCanonicalAAS(){}
 
-TaskOperationOP RestrictAbsentCanonicalAASCreator::create_task_operation() const
-{
-	return TaskOperationOP( new RestrictAbsentCanonicalAAS );
-}
 
 TaskOperationOP RestrictAbsentCanonicalAAS::clone() const
 {
@@ -204,6 +241,33 @@ RestrictAbsentCanonicalAAS::parse_tag( TagCOP tag , DataMap & )
 	keep_aas( tag->getOption< std::string >( "keep_aas" ) );
 }
 
+std::string RestrictAbsentCanonicalAAS::keyname() { return "RestrictAbsentCanonicalAAS"; }
+
+void RestrictAbsentCanonicalAAS::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "resnum", "non_negative_integer", "0" ));
+	attributes.push_back( XMLSchemaAttribute( "keep_aas", utility::tag::xs_string ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+
+}
+
+TaskOperationOP RestrictAbsentCanonicalAASCreator::create_task_operation() const
+{
+	return TaskOperationOP( new RestrictAbsentCanonicalAAS );
+}
+
+std::string RestrictAbsentCanonicalAASCreator::keyname() const {
+	return RestrictAbsentCanonicalAAS::keyname();
+}
+
+void RestrictAbsentCanonicalAASCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictAbsentCanonicalAAS::provide_xml_schema( xsd );
+}
+
+
 
 //BEGIN DisallowIfNonnative
 DisallowIfNonnative::DisallowIfNonnative():
@@ -223,11 +287,6 @@ DisallowIfNonnative::DisallowIfNonnative( utility::vector1< bool > disallowed_aa
 {}
 
 DisallowIfNonnative::~DisallowIfNonnative(){}
-
-TaskOperationOP DisallowIfNonnativeCreator::create_task_operation() const
-{
-	return TaskOperationOP( new DisallowIfNonnative );
-}
 
 TaskOperationOP DisallowIfNonnative::clone() const
 {
@@ -305,6 +364,33 @@ void DisallowIfNonnative::parse_tag( TagCOP tag , DataMap & )
 	disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
 }
 
+std::string DisallowIfNonnative::keyname() { return "DisallowIfNonnative"; }
+
+void DisallowIfNonnative::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "resnum", "non_negative_integer", "0" ));
+	attributes.push_back( XMLSchemaAttribute( "disallow_aas", utility::tag::xs_string ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+
+}
+
+TaskOperationOP DisallowIfNonnativeCreator::create_task_operation() const
+{
+	return TaskOperationOP( new DisallowIfNonnative );
+}
+
+std::string DisallowIfNonnativeCreator::keyname() const {
+	return DisallowIfNonnative::keyname();
+}
+
+void DisallowIfNonnativeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DisallowIfNonnative::provide_xml_schema( xsd );
+}
+
+
 //BEGIN RotamerExplosion
 RotamerExplosion::RotamerExplosion(){}
 
@@ -315,11 +401,6 @@ RotamerExplosion::RotamerExplosion( core::Size const resid, ExtraRotSample const
 {}
 
 RotamerExplosion::~RotamerExplosion() {}
-
-TaskOperationOP RotamerExplosionCreator::create_task_operation() const
-{
-	return TaskOperationOP( new RotamerExplosion );
-}
 
 TaskOperationOP RotamerExplosion::clone() const
 {
@@ -363,15 +444,35 @@ RotamerExplosion::sample_level( ExtraRotSample const s )
 	sample_level_ = s;
 }
 
+std::string RotamerExplosion::keyname() { return "RotamerExplosionCreator"; }
+
+void RotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnum", "non_negative_integer" ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "chi",    "non_negative_integer" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+
+}
+
+TaskOperationOP RotamerExplosionCreator::create_task_operation() const
+{
+	return TaskOperationOP( new RotamerExplosion );
+}
+
+std::string RotamerExplosionCreator::keyname() const { return RotamerExplosion::keyname(); }
+
+void RotamerExplosionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerExplosion::provide_xml_schema( xsd );
+}
+
+
 
 /// BEGIN InitializeFromCommandline
 
 InitializeFromCommandline::~InitializeFromCommandline() {}
-
-TaskOperationOP InitializeFromCommandlineCreator::create_task_operation() const
-{
-	return TaskOperationOP( new InitializeFromCommandline );
-}
 
 TaskOperationOP InitializeFromCommandline::clone() const
 {
@@ -389,14 +490,30 @@ InitializeFromCommandline::parse_tag( TagCOP, DataMap & )
 {
 }
 
+std::string InitializeFromCommandline::keyname() { return "InitializeFromCommandline"; }
+
+void InitializeFromCommandline::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP InitializeFromCommandlineCreator::create_task_operation() const
+{
+	return TaskOperationOP( new InitializeFromCommandline );
+}
+
+std::string InitializeFromCommandlineCreator::keyname() const {
+	return InitializeFromCommandline::keyname();
+}
+
+void InitializeFromCommandlineCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InitializeFromCommandline::provide_xml_schema( xsd );
+}
+
 /// BEGIN InitializeFromCommandline
 
 InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
-
-TaskOperationOP InitializeExtraRotsFromCommandlineCreator::create_task_operation() const
-{
-	return TaskOperationOP( new InitializeExtraRotsFromCommandline );
-}
 
 TaskOperationOP InitializeExtraRotsFromCommandline::clone() const
 {
@@ -409,15 +526,32 @@ InitializeExtraRotsFromCommandline::apply( pose::Pose const &, PackerTask & task
 	task.initialize_extra_rotamer_flags_from_command_line();
 }
 
+std::string InitializeExtraRotsFromCommandline::keyname() { return "InitializeExtraRotsFromCommandline"; }
+
+void InitializeExtraRotsFromCommandline::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP InitializeExtraRotsFromCommandlineCreator::create_task_operation() const
+{
+	return TaskOperationOP( new InitializeExtraRotsFromCommandline );
+}
+
+std::string InitializeExtraRotsFromCommandlineCreator::keyname() const {
+	return InitializeExtraRotsFromCommandline::keyname();
+}
+
+
+void InitializeExtraRotsFromCommandlineCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InitializeExtraRotsFromCommandline::provide_xml_schema( xsd );
+}
+
 
 /// BEGIN IncludeCurrent
 
 IncludeCurrent::~IncludeCurrent() {}
 
-TaskOperationOP IncludeCurrentCreator::create_task_operation() const
-{
-	return TaskOperationOP( new IncludeCurrent );
-}
 
 TaskOperationOP IncludeCurrent::clone() const
 {
@@ -428,6 +562,26 @@ void
 IncludeCurrent::apply( pose::Pose const &, PackerTask & task ) const
 {
 	task.or_include_current(true);
+}
+
+std::string IncludeCurrent::keyname() { return "IncludeCurrent"; }
+
+void IncludeCurrent::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP IncludeCurrentCreator::create_task_operation() const
+{
+	return TaskOperationOP( new IncludeCurrent );
+}
+
+std::string IncludeCurrentCreator::keyname() const {
+	return IncludeCurrent::keyname();
+}
+
+void IncludeCurrentCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IncludeCurrent::provide_xml_schema( xsd );
 }
 
 /// BEGIN ExtraRotamersGeneric
@@ -458,10 +612,6 @@ ExtraRotamersGeneric::ExtraRotamersGeneric() :
 
 ExtraRotamersGeneric::~ExtraRotamersGeneric() {}
 
-TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
-{
-	return TaskOperationOP( new ExtraRotamersGeneric );
-}
 
 TaskOperationOP ExtraRotamersGeneric::clone() const
 {
@@ -544,6 +694,27 @@ ExtraRotamersGeneric::sampling_data() const
 	return sampling_data_;
 }
 
+std::string ExtraRotamersGeneric::keyname() { return "ExtraRotamersGeneric"; }
+
+void ExtraRotamersGeneric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	AttributeList attributes = rotamer_sampling_data_xml_schema_attributes( xsd );
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
+{
+	return TaskOperationOP( new ExtraRotamersGeneric );
+}
+
+std::string ExtraRotamersGenericCreator::keyname() const {
+	return ExtraRotamersGeneric::keyname();
+}
+
+void ExtraRotamersGenericCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExtraRotamersGeneric::provide_xml_schema( xsd );
+}
+
 void parse_rotamer_sampling_data(
 	utility::tag::TagCOP tag,
 	ExtraRotamerSamplingData & sampling_data
@@ -569,6 +740,46 @@ void parse_rotamer_sampling_data(
 	sampling_data.exdna_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("exdna_sample_level", NO_EXTRA_CHI_SAMPLES));
 
 	sampling_data.extrachi_cutoff_ = tag->getOption<Size>("extrachi_cutoff", EXTRACHI_CUTOFF_LIMIT);
+}
+
+void
+define_extra_rotamers_sampling_level_restriction( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction exchi_sample_level = integer_range_restriction( "exchi_sample_level", NO_EXTRA_CHI_SAMPLES, EX_SIX_QUARTER_STEP_STDDEVS ) ;
+	xsd.add_top_level_element( exchi_sample_level );
+}
+
+AttributeList
+rotamer_sampling_data_xml_schema_attributes( XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	utility::tag::activate_common_simple_type( xsd, "zero_or_one" );
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+	define_extra_rotamers_sampling_level_restriction( xsd );
+
+	AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex3", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex4", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro_exposed", "zero_or_one", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro_exposed", "zero_or_one", "0" ));
+
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex3_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex4_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro_exposed_sample_level", "exchi_sample_level", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro_exposed_sample_level", "exchi_sample_level", "0" ));
+
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "extrachi_cutoff", "non_negative_integer", utility::to_string( EXTRACHI_CUTOFF_LIMIT )));
+
+	return attributes;
 }
 
 void set_rotamer_sampling_data_for_RLT(
@@ -621,10 +832,6 @@ ReadResfile::ReadResfile( std::string const & filename ) :
 
 ReadResfile::~ReadResfile() {}
 
-TaskOperationOP ReadResfileCreator::create_task_operation() const
-{
-	return TaskOperationOP( new ReadResfile );
-}
 
 TaskOperationOP ReadResfile::clone() const
 {
@@ -744,6 +951,33 @@ ReadResfile::cache_resfile() {
 	return;
 }
 
+std::string ReadResfile::keyname() { return "ReadResfile"; }
+
+utility::tag::AttributeList
+ReadResfile::xml_schema_attributes() {
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "filename", "xs:string" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "selector", "xs:string" ));
+	return attributes;
+}
+
+void ReadResfile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes = xml_schema_attributes();
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP ReadResfileCreator::create_task_operation() const
+{
+	return TaskOperationOP( new ReadResfile );
+}
+
+std::string ReadResfileCreator::keyname() const { return ReadResfile::keyname(); }
+
+void ReadResfileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReadResfile::provide_xml_schema( xsd );
+}
+
 
 /// BEGIN ReadResfileAndObeyLengthEvents
 ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents() :
@@ -757,11 +991,6 @@ ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents( std::string cons
 {}
 
 ReadResfileAndObeyLengthEvents::~ReadResfileAndObeyLengthEvents(){}
-
-TaskOperationOP ReadResfileAndObeyLengthEventsCreator::create_task_operation() const
-{
-	return TaskOperationOP( new ReadResfileAndObeyLengthEvents );
-}
 
 TaskOperationOP ReadResfileAndObeyLengthEvents::clone() const
 {
@@ -853,6 +1082,27 @@ ReadResfileAndObeyLengthEvents::resfile_commands(
 		contents.commands_for_residue( resfile_seqpos ) : contents.default_commands() );
 }
 
+std::string ReadResfileAndObeyLengthEvents::keyname() { return "ReadResfileAndObeyLengthEvents"; }
+
+void ReadResfileAndObeyLengthEvents::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes = parent::xml_schema_attributes();
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "default_commands_for_inserts", "xs:boolean", "1" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP ReadResfileAndObeyLengthEventsCreator::create_task_operation() const
+{
+	return TaskOperationOP( new ReadResfileAndObeyLengthEvents );
+}
+
+std::string ReadResfileAndObeyLengthEventsCreator::keyname() const {
+	return ReadResfileAndObeyLengthEvents::keyname();
+}
+
+void ReadResfileAndObeyLengthEventsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReadResfileAndObeyLengthEvents::provide_xml_schema( xsd );
+}
 
 /// BEGIN SetRotamerCouplings
 
@@ -875,11 +1125,6 @@ SetRotamerCouplings::operator = ( SetRotamerCouplings const & rhs )
 	return *this;
 }
 
-TaskOperationOP SetRotamerCouplingsCreator::create_task_operation() const
-{
-	return TaskOperationOP( new SetRotamerCouplings );
-}
-
 TaskOperationOP SetRotamerCouplings::clone() const
 {
 	return TaskOperationOP( new SetRotamerCouplings( *this ) );
@@ -895,6 +1140,27 @@ void
 SetRotamerCouplings::set_couplings( rotamer_set::RotamerCouplingsOP couplings )
 {
 	rotamer_couplings_ = couplings;
+}
+
+std::string SetRotamerCouplings::keyname() { return "SetRotamerCouplings"; }
+
+void SetRotamerCouplings::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP SetRotamerCouplingsCreator::create_task_operation() const
+{
+	return TaskOperationOP( new SetRotamerCouplings );
+}
+
+std::string SetRotamerCouplingsCreator::keyname() const {
+	return SetRotamerCouplings::keyname();
+}
+
+
+void SetRotamerCouplingsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetRotamerCouplings::provide_xml_schema( xsd );
 }
 
 /// BEGIN SetRotamerLinks
@@ -918,11 +1184,6 @@ SetRotamerLinks::operator = ( SetRotamerLinks const & rhs )
 	return *this;
 }
 
-TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
-{
-	return TaskOperationOP( new SetRotamerLinks );
-}
-
 TaskOperationOP SetRotamerLinks::clone() const
 {
 	return TaskOperationOP( new SetRotamerLinks( *this ) );
@@ -938,6 +1199,26 @@ void
 SetRotamerLinks::set_links( rotamer_set::RotamerLinksOP links )
 {
 	rotamer_links_ = links;
+}
+
+std::string SetRotamerLinks::keyname() { return "SetRotamerLinks"; }
+
+void SetRotamerLinks::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
+{
+	return TaskOperationOP( new SetRotamerLinks );
+}
+
+std::string SetRotamerLinksCreator::keyname() const {
+	return SetRotamerLinks::keyname();
+}
+
+void SetRotamerLinksCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetRotamerLinks::provide_xml_schema( xsd );
 }
 
 /// BEGIN AppendRotamer
@@ -956,11 +1237,6 @@ AppendRotamer::AppendRotamer( rotamer_set::RotamerOperationOP rotamer_operation 
 AppendRotamer::AppendRotamer( AppendRotamer const & src )
 : parent(), rotamer_operation_( src.rotamer_operation_ )
 {}
-
-TaskOperationOP AppendRotamerCreator::create_task_operation() const
-{
-	return TaskOperationOP( new AppendRotamer );
-}
 
 TaskOperationOP AppendRotamer::clone() const
 {
@@ -981,6 +1257,25 @@ AppendRotamer::set_rotamer_operation(
 	rotamer_operation_ = rotamer_operation;
 }
 
+std::string AppendRotamer::keyname() { return "AppendRotamer"; }
+
+void AppendRotamer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP AppendRotamerCreator::create_task_operation() const
+{
+	return TaskOperationOP( new AppendRotamer );
+}
+
+std::string AppendRotamerCreator::keyname() const {
+	return AppendRotamer::keyname();
+}
+
+void AppendRotamerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AppendRotamer::provide_xml_schema( xsd );
+}
 
 /// BEGIN AppendRotamerSet
 
@@ -999,11 +1294,6 @@ AppendRotamerSet::AppendRotamerSet( AppendRotamerSet const & src )
 : parent(), rotamer_set_operation_( src.rotamer_set_operation_ )
 {}
 
-TaskOperationOP AppendRotamerSetCreator::create_task_operation() const
-{
-	return TaskOperationOP( new AppendRotamerSet );
-}
-
 TaskOperationOP AppendRotamerSet::clone() const
 {
 	return TaskOperationOP( new AppendRotamerSet( *this ) );
@@ -1021,6 +1311,26 @@ AppendRotamerSet::set_rotamer_set_operation(
 )
 {
 	rotamer_set_operation_ = rotamer_set_operation;
+}
+
+std::string AppendRotamerSet::keyname() { return "AppendRotamerSet"; }
+
+void AppendRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP AppendRotamerSetCreator::create_task_operation() const
+{
+	return TaskOperationOP( new AppendRotamerSet );
+}
+
+std::string AppendRotamerSetCreator::keyname() const {
+	return AppendRotamerSet::keyname();
+}
+
+void AppendRotamerSetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AppendRotamerSet::provide_xml_schema( xsd );
 }
 
 
@@ -1047,11 +1357,6 @@ AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const 
 	rotamer_set_operation_( src.rotamer_set_operation_ )
 {}
 
-TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
-{
-	return TaskOperationOP( new AppendResidueRotamerSet );
-}
-
 TaskOperationOP AppendResidueRotamerSet::clone() const
 {
 	return TaskOperationOP( new AppendResidueRotamerSet( *this ) );
@@ -1075,15 +1380,30 @@ AppendResidueRotamerSet::set_rotamer_set_operation( rotamer_set::RotamerSetOpera
 	rotamer_set_operation_ = rotamer_set_operation;
 }
 
+std::string AppendResidueRotamerSet::keyname() { return "AppendResidueRotamerSet"; }
+
+void AppendResidueRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
+{
+	return TaskOperationOP( new AppendResidueRotamerSet );
+}
+
+std::string AppendResidueRotamerSetCreator::keyname() const {
+	return AppendResidueRotamerSet::keyname();
+}
+
+void AppendResidueRotamerSetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AppendResidueRotamerSet::provide_xml_schema( xsd );
+}
+
 
 /// BEGIN PreserveCBeta
 
 PreserveCBeta::~PreserveCBeta() {}
-
-TaskOperationOP PreserveCBetaCreator::create_task_operation() const
-{
-	return TaskOperationOP( new PreserveCBeta );
-}
 
 TaskOperationOP PreserveCBeta::clone() const
 {
@@ -1096,13 +1416,28 @@ PreserveCBeta::apply( pose::Pose const &, PackerTask & task ) const
 	task.or_preserve_c_beta( true );
 }
 
+std::string PreserveCBeta::keyname() { return "PreserveCBeta"; }
+
+void PreserveCBeta::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP PreserveCBetaCreator::create_task_operation() const
+{
+	return TaskOperationOP( new PreserveCBeta );
+}
+
+std::string PreserveCBetaCreator::keyname() const {
+	return PreserveCBeta::keyname();
+}
+
+void PreserveCBetaCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PreserveCBeta::provide_xml_schema( xsd );
+}
+
 /// BEGIN PreventRepacking
 PreventRepacking::~PreventRepacking() {}
-
-TaskOperationOP PreventRepackingCreator::create_task_operation() const
-{
-	return TaskOperationOP( new PreventRepacking );
-}
 
 TaskOperationOP PreventRepacking::clone() const
 {
@@ -1135,6 +1470,26 @@ PreventRepacking::parse_tag( TagCOP tag , DataMap & )
 	residue_selection_ = tag->getOption<std::string>("resnum","0");
 }
 
+std::string PreventRepacking::keyname() { return "PreventRepacking"; }
+
+void PreventRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "resnum", "xs:string", "0" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP PreventRepackingCreator::create_task_operation() const
+{
+	return TaskOperationOP( new PreventRepacking );
+}
+
+std::string
+PreventRepackingCreator::keyname() const { return PreventRepacking::keyname(); }
+
+void PreventRepackingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PreventRepacking::provide_xml_schema( xsd );
+}
 
 // BEGIN RestrictYSDesign
 RestrictYSDesign::~RestrictYSDesign() {}
@@ -1158,11 +1513,6 @@ RestrictYSDesign::apply( pose::Pose const &, PackerTask & task ) const {
 	}
 }
 
-TaskOperationOP RestrictYSDesignCreator::create_task_operation() const
-{
-	return TaskOperationOP( new RestrictYSDesign );
-}
-
 TaskOperationOP RestrictYSDesign::clone() const {
 	return TaskOperationOP( new RestrictYSDesign( *this ) );
 }
@@ -1173,6 +1523,24 @@ RestrictYSDesign::include_resid( core::Size const resid ) { YSresids_.push_back(
 void
 RestrictYSDesign::include_gly( bool const gly ) { gly_switch_ = gly; }
 
+
+std::string RestrictYSDesign::keyname() { return "RestrictYSDesign"; }
+
+void RestrictYSDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP RestrictYSDesignCreator::create_task_operation() const
+{
+	return TaskOperationOP( new RestrictYSDesign );
+}
+
+std::string RestrictYSDesignCreator::keyname() const { return RestrictYSDesign::keyname(); }
+
+void RestrictYSDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictYSDesign::provide_xml_schema( xsd );
+}
 
 //////////////////////////////////////////////////////
 // This class could easily be expanded to handle sample_level, etc.
@@ -1191,11 +1559,6 @@ ExtraRotamers::ExtraRotamers( core::Size const resid, core::Size const chi, core
 {}
 
 ExtraRotamers::~ExtraRotamers() {}
-
-TaskOperationOP ExtraRotamersCreator::create_task_operation() const
-{
-	return TaskOperationOP( new ExtraRotamers );
-}
 
 TaskOperationOP ExtraRotamers::clone() const
 {
@@ -1248,6 +1611,37 @@ void ExtraRotamers::parse_tag( TagCOP tag , DataMap & )
 	}
 }
 
+std::string ExtraRotamers::keyname() { return "ExtraRotamers"; }
+
+void ExtraRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	define_extra_rotamers_sampling_level_restriction( xsd );
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	XMLSchemaRestriction one_to_four = utility::tag::integer_range_restriction( "one_to_four", 1, 4 );
+	xsd.add_top_level_element( one_to_four );
+
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "resid", "non_negative_integer", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "chi", "one_to_four" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "level", "exchi_sample_level", "0" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP ExtraRotamersCreator::create_task_operation() const
+{
+	return TaskOperationOP( new ExtraRotamers );
+}
+
+std::string ExtraRotamersCreator::keyname() const {
+	return ExtraRotamers::keyname();
+}
+
+void ExtraRotamersCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExtraRotamers::provide_xml_schema( xsd );
+}
+
+
 //////////////////////////////////////////////////////
 // This class could easily be expanded ...
 // Someone has probably already written this, and should replace this
@@ -1260,11 +1654,6 @@ ExtraChiCutoff::ExtraChiCutoff( core::Size const resid, core::Size const extrach
 {}
 
 ExtraChiCutoff::~ExtraChiCutoff() {}
-
-TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
-{
-	return TaskOperationOP( new ExtraChiCutoff );
-}
 
 TaskOperationOP ExtraChiCutoff::clone() const
 {
@@ -1299,6 +1688,30 @@ void ExtraChiCutoff::parse_tag( TagCOP tag , DataMap & )
 	extrachi_cutoff_ = tag->getOption< core::Size >("extrachi_cutoff");
 }
 
+std::string ExtraChiCutoff::keyname() { return "ExtraChiCutoff"; }
+
+void ExtraChiCutoff::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
+
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "resid", "non_negative_integer", "0" ));
+	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "extrachi_cutoff", "non_negative_integer" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
+{
+	return TaskOperationOP( new ExtraChiCutoff );
+}
+
+/*std::string ExtraChiCutoffCreator::keyname() const {
+return ExtraChiCutoff::keyname();
+}*/
+
+void ExtraChiCutoffCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExtraChiCutoff::provide_xml_schema( xsd );
+}
 
 } //namespace operation
 } //namespace task

@@ -19,6 +19,7 @@
 #include <utility/vector1.hh>
 
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -37,6 +38,8 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "WatsonCrickRotamerCouplings"; }
 };
 
 } // namespace dna

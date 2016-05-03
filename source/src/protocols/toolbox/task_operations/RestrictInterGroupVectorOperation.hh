@@ -27,6 +27,7 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <set>
@@ -69,6 +70,8 @@ public:
 
 	/// @brief make clone
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictInterGroupVectorOperation"; }
 
 public:
 	/// @brief parse_tag

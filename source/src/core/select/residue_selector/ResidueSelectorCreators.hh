@@ -29,119 +29,119 @@ class AndResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class BinSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class ChainSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class InterGroupInterfaceByVectorSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class LayerSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class NotResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class ResidueIndexSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class ResidueNameSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class NeighborhoodResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class NumNeighborsSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class OrResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class PhiSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class JumpUpstreamSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class JumpDownstreamSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class SecondaryStructureSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class TrueResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 class ResiduePDBInfoHasLabelSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
-	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 } //namespace residue_selector

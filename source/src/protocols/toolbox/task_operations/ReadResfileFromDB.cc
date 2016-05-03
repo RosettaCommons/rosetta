@@ -29,6 +29,8 @@
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++
 #include <string>
@@ -41,6 +43,9 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 using basic::database::get_db_session;
 using basic::database::check_statement_sanity;
@@ -59,6 +64,20 @@ using std::string;
 using std::stringstream;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
+
+TaskOperationOP ReadResfileFromDBCreator::create_task_operation() const {
+	return TaskOperationOP( new ReadResfileFromDB );
+}
+
+void ReadResfileFromDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReadResfileFromDB::provide_xml_schema( xsd );
+}
+
+std::string ReadResfileFromDBCreator::keyname() const
+{
+	return ReadResfileFromDB::keyname();
+}
 
 ReadResfileFromDB::ReadResfileFromDB() :
 	parent(),
@@ -80,10 +99,6 @@ ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & src) : TaskOperat
 {}
 
 ReadResfileFromDB::~ReadResfileFromDB() {}
-
-TaskOperationOP ReadResfileFromDBCreator::create_task_operation() const {
-	return TaskOperationOP( new ReadResfileFromDB );
-}
 
 TaskOperationOP ReadResfileFromDB::clone() const {
 	return TaskOperationOP( new ReadResfileFromDB( *this ) );
@@ -174,8 +189,19 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & )
 	} else {
 		db_session_ = basic::database::parse_database_connection(tag);
 	}
-
 }
+
+void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "database_table", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "table", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "resource_description", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace task_operations
 } //namespace toolbox

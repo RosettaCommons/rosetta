@@ -14,6 +14,8 @@
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 namespace protocols {
@@ -21,8 +23,22 @@ namespace toolbox {
 namespace task_operations {
 
 //using namespace core;
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 InterfaceTaskOperation::~InterfaceTaskOperation(){}
+
+/* AMW No creator exists, perhaps because base class.
+void InterfaceTaskOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+InterfaceTaskOperation::provide_xml_schema( xsd );
+}
+
+std::string InterfaceTaskOperationCreator::keyname() const
+{
+return InterfaceTaskOperation::keyname();
+}
+*/
 
 InterfaceTaskOperation::InterfaceTaskOperation() : parent()
 {
@@ -47,6 +63,11 @@ void InterfaceTaskOperation::set_movable_jumps( utility::vector1_int const & mov
 utility::vector1_int const &
 InterfaceTaskOperation::movable_jumps() const{
 	return movable_jumps_;
+}
+
+void InterfaceTaskOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
 }
 
 }

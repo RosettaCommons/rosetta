@@ -115,10 +115,10 @@ std::string JumpUpstreamSelector::class_name() {
 }
 
 void
-JumpUpstreamSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+JumpUpstreamSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "jump", xs_integer, true ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "jump", xs_integer ));
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 
@@ -134,8 +134,8 @@ JumpUpstreamSelectorCreator::keyname() const {
 }
 
 void
-JumpUpstreamSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	JumpUpstreamSelector::provide_selector_xsd( xsd );
+JumpUpstreamSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	JumpUpstreamSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

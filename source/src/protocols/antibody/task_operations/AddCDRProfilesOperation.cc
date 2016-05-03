@@ -29,6 +29,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/string_util.hh>
 
 #include <basic/options/option.hh>
@@ -47,6 +49,7 @@ using namespace protocols::antibody::clusters;
 using namespace protocols::toolbox::task_operations;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace utility::tag;
 
 AddCDRProfilesOperation::AddCDRProfilesOperation():
 	TaskOperation(),
@@ -170,12 +173,36 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
 
 	}
+
 	if ( tag->hasOption("cdr_definition") && tag->getOption<std::string>("cdr_definition") != "North" ) {
 		TR <<"This operation only works with the North CDR definition." <<std::endl;
 	}
+}
 
+std::string AddCDRProfilesOperation::keyname() { return "AddCDRProfilesOperation"; }
 
+void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
 
+	activate_common_simple_type( xsd, "nonnegative_integer" );
+
+	// Check if this is the real default with Jared: all I know is that the functional default is "six trues"
+	// for cdrs_.
+	attributes.push_back( XMLSchemaAttribute( "cdrs", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "fallback_strategy", xs_string, "seq_design_conservative" ) );
+	attributes.push_back( XMLSchemaAttribute( "add_to_current", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "include_native_restype", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "picking_rounds", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "force_north_paper_db", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "use_outliers", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "stats_cutoff", "non_negative_integer", "10" ) );
+	attributes.push_back( XMLSchemaAttribute( "sample_zero_probs_at", xs_decimal, "0.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "cons_design_data_source", xs_string, "blosum62" ) );
+	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 void
@@ -498,6 +525,15 @@ core::pack::task::operation::TaskOperationOP
 AddCDRProfilesOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new AddCDRProfilesOperation );
+}
+
+void AddCDRProfilesOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddCDRProfilesOperation::provide_xml_schema( xsd );
+}
+
+std::string AddCDRProfilesOperationCreator::keyname() const {
+	return AddCDRProfilesOperation::keyname();
 }
 
 } //task_operations

@@ -26,6 +26,7 @@
 
 #include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -68,6 +69,8 @@ public:
 	bool forget_chains_and_interface() const { return forget_chains_and_interface_; }
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictDesignToProteinDNAInterface"; }
 
 private:
 	// reference pose: sometimes the input pose is not actually 'native,' and it is useful to make the Task aware of an alternative 'native' pose (such as for reverting mutations that did not occur in a local context)

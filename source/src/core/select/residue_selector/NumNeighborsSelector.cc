@@ -128,7 +128,7 @@ std::string NumNeighborsSelector::class_name() {
 }
 
 void
-NumNeighborsSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+NumNeighborsSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "count_water",     xs_boolean, "false" )); // note false in quotes denotes a default value
@@ -156,8 +156,8 @@ NumNeighborsSelectorCreator::keyname() const {
 }
 
 void
-NumNeighborsSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	NumNeighborsSelector::provide_selector_xsd( xsd );
+NumNeighborsSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	NumNeighborsSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

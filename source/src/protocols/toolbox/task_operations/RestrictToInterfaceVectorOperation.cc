@@ -33,6 +33,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
@@ -47,6 +49,25 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.Restrict
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+RestrictToInterfaceVectorOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation );
+}
+
+void RestrictToInterfaceVectorOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToInterfaceVectorOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictToInterfaceVectorOperationCreator::keyname() const
+{
+	return RestrictToInterfaceVectorOperation::keyname();
+}
 
 /// @details, empty contructor for parser
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
@@ -128,12 +149,6 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 
 //class member functions
 RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictToInterfaceVectorOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation );
-}
 
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation::clone() const
@@ -319,6 +334,26 @@ RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 	vector_dist_cutoff( tag->getOption< core::Real >( "vector_dist_cutoff", 9.0 ) );
 
 }
+
+void RestrictToInterfaceVectorOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "int_cslist" );
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "chain1_num", "int_cslist" ) );
+	attributes.push_back( XMLSchemaAttribute( "chain2_num", "int_cslist" ) );
+	attributes.push_back( XMLSchemaAttribute( "jump", "int_cslist" ) );
+
+	attributes.push_back( XMLSchemaAttribute( "CB_dist_cutoff", xs_decimal, "10.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "nearby_atom_cutoff", xs_decimal, "5.5" ) );
+	attributes.push_back( XMLSchemaAttribute( "vector_angle_cutoff", xs_decimal, "75.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "vector_dist_cutoff", xs_decimal, "9.0" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace protocols
 } //namespace toolbox

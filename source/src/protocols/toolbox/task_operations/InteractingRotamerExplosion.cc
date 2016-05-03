@@ -33,6 +33,9 @@
 #include <utility/vector1.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 //#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 //#include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
@@ -48,6 +51,7 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 InteractingRotamerExplosion::InteractingRotamerExplosion() :
 	string_target_seqpos_(""),
@@ -112,10 +116,35 @@ InteractingRotamerExplosion::parse_tag( TagCOP tag , DataMap & )
 	exclude_radius_ =  tag->getOption< core::Real >( "exclude_radius", 20.0 );
 }
 
+void InteractingRotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "target_seqpos", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "score_cutoff", xs_decimal, "-0.5" ) );
+	attributes.push_back( XMLSchemaAttribute( "ex_level", "non_negative_integer", "4" ) );
+	attributes.push_back( XMLSchemaAttribute( "debug", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "exclude_radius", xs_decimal, "20.0" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 core::pack::task::operation::TaskOperationOP
 InteractingRotamerExplosionCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new InteractingRotamerExplosion );
+}
+
+void InteractingRotamerExplosionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InteractingRotamerExplosion::provide_xml_schema( xsd );
+}
+
+std::string InteractingRotamerExplosionCreator::keyname() const
+{
+	return InteractingRotamerExplosion::keyname();
 }
 
 } //namespace protocols

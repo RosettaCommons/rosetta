@@ -24,6 +24,10 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
 
 namespace core {
 namespace select {
@@ -82,34 +86,23 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 /// this should happen automatically.
 void ResidueSelectorFactory::define_residue_selector_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	using namespace utility::tag;
-
-	XMLSchemaComplexType rs_group_type;
-	std::string residue_selector_group_name( "residue_selector" );
-	rs_group_type.name( residue_selector_group_name );
-	XMLSchemaComplexTypeOP rs_group( new XMLSchemaComplexType );
-	rs_group->type( xsctt_choice );
-	for ( std::map< std::string, ResidueSelectorCreatorOP >::const_iterator
-			iter = creator_map_.begin(), iter_end = creator_map_.end();
-			iter != iter_end; ++iter ) {
-		XMLSchemaElementOP rs_element( new XMLSchemaElement );
-		rs_element->name( iter->first );
-		rs_element->type_name( complex_type_name_for_residue_selector( iter->first ));
-		rs_group->add_subelement( rs_element );
-	}
-	rs_group_type.subtype( rs_group );
-
-	std::ostringstream oss;
-	rs_group_type.write_definition( 0, oss );
-	xsd.add_top_level_element( residue_selector_group_name, oss.str() );
-
-	// Now iterate across all ResidueSelectors in the map, and have each one write their definition to the XSD
-	for ( std::map< std::string, ResidueSelectorCreatorOP >::const_iterator
-			iter = creator_map_.begin(), iter_end = creator_map_.end();
-			iter != iter_end; ++iter ) {
-		iter->second->provide_selector_xsd( xsd );
+	try {
+		utility::tag::define_xml_schema_group(
+			creator_map_,
+			residue_selector_xml_schema_group_name(),
+			& complex_type_name_for_residue_selector,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ResidueSelectors from ResidueSelectorFactory; offending class"
+			" must call core::select::residue_selector::complex_type_name_for_residue_selector when defining"
+			" its XML Schema\n" + e.msg() );
 	}
 
+}
+
+std::string ResidueSelectorFactory::residue_selector_xml_schema_group_name()
+{
+	return "residue_selector";
 }
 
 

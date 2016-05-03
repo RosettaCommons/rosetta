@@ -25,6 +25,7 @@
 #include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <map>
@@ -57,6 +58,17 @@ public:
 
 	/// @brief return new ResLvlTaskOperation by key lookup in rlto_map_ (new ResLvlTaskOperation parses Tag if provided)
 	ResLvlTaskOperationOP newRLTO( std::string const & ) const;
+
+	/// @brief The %ResLvlTaskOperationFactory is the point of entry for the definition of the XML Schemas
+	/// for every ResLvlTaskOperation that may be instantiated from a file.  It is  responsible for defining
+	/// an xs:group named "res_lvl_task_op" listing each of the residue-level-task-operation-complex
+	/// types that may be initialized using the %ResLvlTaskOperationFactory and to iterate across each of the
+	/// ResLvlTaskOperationCreator it contains asking them for the XML schema of the ResLvlTaskOperation they
+	/// are responsible for creating.
+	void define_res_lvl_task_op_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	/// @brief The name given to the XML schema group of all ResLvlTaskOperation s.
+	static std::string res_lvl_task_op_xml_schema_group_name();
 
 private:
 

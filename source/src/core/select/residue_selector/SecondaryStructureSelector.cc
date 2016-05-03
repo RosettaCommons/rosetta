@@ -214,13 +214,13 @@ SecondaryStructureSelector::class_name()
 }
 
 void
-SecondaryStructureSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+SecondaryStructureSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "overlap",                xs_integer ));
 	attributes.push_back( XMLSchemaAttribute( "include_terminal_loops", xs_boolean ));
 	attributes.push_back( XMLSchemaAttribute( "pose_secstruct",         xs_string ));
-	attributes.push_back( XMLSchemaAttribute( "ss",                     xs_string, true ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "ss", xs_string ));
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 
@@ -323,8 +323,8 @@ SecondaryStructureSelectorCreator::keyname() const
 }
 
 void
-SecondaryStructureSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	SecondaryStructureSelector::provide_selector_xsd( xsd );
+SecondaryStructureSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	SecondaryStructureSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

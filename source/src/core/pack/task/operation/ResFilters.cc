@@ -14,7 +14,11 @@
 // Unit Headers
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResFilterCreators.hh>
+
+// Package headers
 #include <core/pack/task/operation/ResFilterFactory.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
@@ -77,6 +81,21 @@ void ResFilterComposition::parse_sub_filters_tag(TagCOP tag)
 	}
 }
 
+utility::tag::XMLComplexTypeSchemaGeneratorOP
+ResFilterComposition::define_composition_schema( utility::tag::XMLSchemaDefinition & )
+{
+	using namespace utility::tag;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & ResFilterFactory::res_filter_xml_schema_group_name );
+
+	XMLComplexTypeSchemaGeneratorOP ct_gen( new XMLComplexTypeSchemaGenerator );
+	ct_gen
+		->complex_type_naming_func( & complex_type_name_for_res_filter )
+		.set_subelements_repeatable( subelements, & ResFilterFactory::res_filter_xml_schema_group_name );
+
+	return ct_gen;
+}
+
 AnyResFilter::AnyResFilter() :
 	parent()
 {}
@@ -98,9 +117,23 @@ bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 	return false;
 }
 
+std::string AnyResFilter::keyname() { return "AnyResFilter"; }
+
+void AnyResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::XMLComplexTypeSchemaGeneratorOP ct_gen = define_composition_schema( xsd );
+	ct_gen->element_name( keyname() );
+	ct_gen->write_complex_type_to_schema( xsd );
+}
+
 ResFilterOP AnyResFilterCreator::create_res_filter() const
 {
 	return ResFilterOP( new AnyResFilter() );
+}
+
+std::string AnyResFilterCreator::keyname() const { return AnyResFilter::keyname(); }
+
+void AnyResFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	AnyResFilter::provide_xml_schema( xsd );
 }
 
 AllResFilter::AllResFilter() :
@@ -124,9 +157,23 @@ bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 	return true;
 }
 
+std::string AllResFilter::keyname() { return "AllResFilter"; }
+
+void AllResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {using namespace utility::tag;
+	utility::tag::XMLComplexTypeSchemaGeneratorOP ct_gen = define_composition_schema( xsd );
+	ct_gen->element_name( keyname() );
+	ct_gen->write_complex_type_to_schema( xsd );
+}
+
 ResFilterOP AllResFilterCreator::create_res_filter() const
 {
 	return ResFilterOP( new AllResFilter() );
+}
+
+std::string AllResFilterCreator::keyname() const { return AllResFilter::keyname(); }
+
+void AllResFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	AllResFilter::provide_xml_schema( xsd );
 }
 
 NoResFilter::NoResFilter() :
@@ -150,9 +197,23 @@ bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 	return true;
 }
 
+std::string NoResFilter::keyname() { return "NoResFilter"; }
+
+void NoResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::XMLComplexTypeSchemaGeneratorOP ct_gen = define_composition_schema( xsd );
+	ct_gen->element_name( keyname() );
+	ct_gen->write_complex_type_to_schema( xsd );
+}
+
 ResFilterOP NoResFilterCreator::create_res_filter() const
 {
 	return ResFilterOP( new NoResFilter() );
+}
+
+std::string NoResFilterCreator::keyname() const { return NoResFilter::keyname(); }
+
+void NoResFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	NoResFilter::provide_xml_schema( xsd );
 }
 
 ResidueTypeFilter::ResidueTypeFilter() :
@@ -186,10 +247,33 @@ void ResidueTypeFilter::parse_tag( TagCOP tag )
 	if ( tag->hasOption("charged") ) charged_ = tag->getOption<bool>("charged");
 }
 
+std::string ResidueTypeFilter::keyname() { return "ResidueType"; }
+
+void ResidueTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	activate_common_simple_type( xsd, "zero_or_one" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "polar", "zero_or_one" ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "apolar", "zero_or_one" ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "aromatic", "zero_or_one" ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "charged", "zero_or_one" ));
+
+	res_filter_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 ResFilterOP ResidueTypeFilterCreator::create_res_filter() const
 {
 	return ResFilterOP( new ResidueTypeFilter() );
 }
+
+std::string ResidueTypeFilterCreator::keyname() const { return ResidueTypeFilter::keyname(); }
+
+void ResidueTypeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueTypeFilter::provide_xml_schema( xsd );
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueHasProperty
@@ -208,16 +292,38 @@ bool ResidueHasProperty::operator() ( Pose const & pose, Size index ) const
 	return pose.residue_type(index).has_property( property_ );
 }
 
-ResFilterOP
-ResidueHasPropertyCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueHasProperty );
-}
-
 ResFilterOP ResidueHasProperty::clone() const { return ResFilterOP( new ResidueHasProperty( *this ) ); }
 
 void ResidueHasProperty::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
+}
+
+std::string ResidueHasProperty::keyname() { return "ResidueHasProperty"; }
+
+void ResidueHasProperty::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes() );
+}
+
+utility::tag::AttributeList
+ResidueHasProperty::get_xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string ));
+	return attributes;
+}
+
+
+ResFilterOP
+ResidueHasPropertyCreator::create_res_filter() const {
+	return ResFilterOP( new ResidueHasProperty );
+}
+
+std::string ResidueHasPropertyCreator::keyname() const { return ResidueHasProperty::keyname(); }
+
+void ResidueHasPropertyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueHasProperty::provide_xml_schema( xsd );
 }
 
 // begin ResidueLacksProperty
@@ -234,12 +340,25 @@ bool ResidueLacksProperty::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
+ResFilterOP ResidueLacksProperty::clone() const { return ResFilterOP( new ResidueLacksProperty( *this ) ); }
+
+std::string ResidueLacksProperty::keyname() { return "ResidueLacksProperty"; }
+
+void ResidueLacksProperty::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes() );
+}
+
 ResFilterOP
 ResidueLacksPropertyCreator::create_res_filter() const {
 	return ResFilterOP( new ResidueLacksProperty );
 }
 
-ResFilterOP ResidueLacksProperty::clone() const { return ResFilterOP( new ResidueLacksProperty( *this ) ); }
+std::string ResidueLacksPropertyCreator::keyname() const { return ResidueLacksProperty::keyname(); }
+
+void ResidueLacksPropertyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueLacksProperty::provide_xml_schema( xsd );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //begin ResiduePDBInfoHasLabel
@@ -258,17 +377,39 @@ bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
 	return pose.pdb_info()->res_haslabel( index, property_ );
 }
 
-ResFilterOP
-ResiduePDBInfoHasLabelCreator::create_res_filter() const {
-	return ResFilterOP( new ResiduePDBInfoHasLabel );
-}
-
 ResFilterOP ResiduePDBInfoHasLabel::clone() const { return ResFilterOP( new ResiduePDBInfoHasLabel( *this ) ); }
 
 void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
+
+std::string ResiduePDBInfoHasLabel::keyname() { return "ResiduePDBInfoHasLabel"; }
+
+void ResiduePDBInfoHasLabel::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes() );
+}
+
+utility::tag::AttributeList
+ResiduePDBInfoHasLabel::get_xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string ));
+	return attributes;
+}
+
+
+ResFilterOP
+ResiduePDBInfoHasLabelCreator::create_res_filter() const {
+	return ResFilterOP( new ResiduePDBInfoHasLabel );
+}
+
+std::string ResiduePDBInfoHasLabelCreator::keyname() const { return ResiduePDBInfoHasLabel::keyname(); }
+
+void ResiduePDBInfoHasLabelCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResiduePDBInfoHasLabel::provide_xml_schema( xsd );
+}
+
 //end ResiduePDBInfoHasLabel
 
 //begin ResiduePDBInfoLacksLabel
@@ -285,12 +426,25 @@ bool ResiduePDBInfoLacksLabel::operator() ( Pose const & pose, Size index ) cons
 	return ( ! parent::operator()( pose, index ) );
 }
 
+ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return ResFilterOP( new ResiduePDBInfoLacksLabel( *this ) ); }
+
+std::string ResiduePDBInfoLacksLabel::keyname() { return "ResiduePDBInfoLacksLabel"; }
+
+void ResiduePDBInfoLacksLabel::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes() );
+}
+
 ResFilterOP
 ResiduePDBInfoLacksLabelCreator::create_res_filter() const {
 	return ResFilterOP( new ResiduePDBInfoLacksLabel );
 }
 
-ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return ResFilterOP( new ResiduePDBInfoLacksLabel( *this ) ); }
+std::string ResiduePDBInfoLacksLabelCreator::keyname() const { return ResiduePDBInfoLacksLabel::keyname(); }
+
+void ResiduePDBInfoLacksLabelCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResiduePDBInfoLacksLabel::provide_xml_schema( xsd );
+}
+
 //end ResiduePDBInfoLacksLabel
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,12 +471,6 @@ bool ResidueName3Is::operator() ( Pose const & pose, Size index ) const
 	runtime_assert( index > 0 && index <= pose.total_residue() );
 	return name3_set.count(pose.residue_type(index).name3()) != 0;
 }
-
-ResFilterOP
-ResidueName3IsCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueName3Is );
-}
-
 ResFilterOP ResidueName3Is::clone() const { return ResFilterOP( new ResidueName3Is( *this ) ); }
 
 void ResidueName3Is::parse_tag( TagCOP tag )
@@ -331,6 +479,33 @@ void ResidueName3Is::parse_tag( TagCOP tag )
 		utility::vector1<std::string> names = utility::string_split(tag->getOption<std::string>("name3"), ',');
 		name3_set.insert(names.begin(), names.end());
 	}
+}
+
+
+std::string ResidueName3Is::keyname() { return "ResidueName3Is"; }
+
+void ResidueName3Is::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes() );
+}
+
+utility::tag::AttributeList
+ResidueName3Is::get_xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "name3", utility::tag::xs_string ));
+	return attributes;
+}
+
+
+ResFilterOP
+ResidueName3IsCreator::create_res_filter() const {
+	return ResFilterOP( new ResidueName3Is );
+}
+
+std::string ResidueName3IsCreator::keyname() const { return ResidueName3Is::keyname(); }
+
+void ResidueName3IsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueName3Is::provide_xml_schema( xsd );
 }
 
 // begin ResidueName3Isnt
@@ -351,12 +526,24 @@ bool ResidueName3Isnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
+ResFilterOP ResidueName3Isnt::clone() const { return ResFilterOP( new ResidueName3Isnt( *this ) ); }
+
+std::string ResidueName3Isnt::keyname() { return "ResidueName3Isnt"; }
+
+void ResidueName3Isnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes() );
+}
+
 ResFilterOP
 ResidueName3IsntCreator::create_res_filter() const {
 	return ResFilterOP( new ResidueName3Isnt );
 }
 
-ResFilterOP ResidueName3Isnt::clone() const { return ResFilterOP( new ResidueName3Isnt( *this ) ); }
+std::string ResidueName3IsntCreator::keyname() const { return ResidueName3Isnt::keyname(); }
+
+void ResidueName3IsntCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueName3Isnt::provide_xml_schema( xsd );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueIndexIs
@@ -382,11 +569,6 @@ bool ResidueIndexIs::operator() ( Pose const & pose, Size index ) const
 {
 	runtime_assert( index > 0 && index <= pose.total_residue() );
 	return std::find( indices_.begin(), indices_.end(), index ) != indices_.end();
-}
-
-ResFilterOP
-ResidueIndexIsCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueIndexIs );
 }
 
 ResFilterOP ResidueIndexIs::clone() const { return ResFilterOP( new ResidueIndexIs( *this ) ); }
@@ -415,6 +597,38 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 
 }
 
+std::string ResidueIndexIs::keyname() { return "ResidueIndexIs"; }
+
+void ResidueIndexIs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes( xsd ) );
+}
+
+utility::tag::AttributeList
+ResidueIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+{
+	utility::tag::activate_common_simple_type( xsd, "int_cslist" );
+
+	utility::tag::AttributeList attributes;
+	attributes.push_back( utility::tag::XMLSchemaAttribute( "indices", "int_cslist" ));
+	return attributes;
+}
+
+//	static utility::tag::AttributeList get_xml_schema_attributes();
+
+
+
+ResFilterOP
+ResidueIndexIsCreator::create_res_filter() const {
+	return ResFilterOP( new ResidueIndexIs );
+}
+
+std::string ResidueIndexIsCreator::keyname() const { return ResidueIndexIs::keyname(); }
+
+void ResidueIndexIsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueIndexIs::provide_xml_schema( xsd );
+}
+
+
 // begin ResidueIndexIsnt
 ResidueIndexIsnt::ResidueIndexIsnt()
 : parent()
@@ -433,12 +647,24 @@ bool ResidueIndexIsnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
+ResFilterOP ResidueIndexIsnt::clone() const { return ResFilterOP( new ResidueIndexIsnt( *this ) ); }
+
+std::string ResidueIndexIsnt::keyname() { return "ResidueIndexIsnt"; }
+
+void ResidueIndexIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes( xsd ) );
+}
+
 ResFilterOP
 ResidueIndexIsntCreator::create_res_filter() const {
 	return ResFilterOP( new ResidueIndexIsnt );
 }
 
-ResFilterOP ResidueIndexIsnt::clone() const { return ResFilterOP( new ResidueIndexIsnt( *this ) ); }
+std::string ResidueIndexIsntCreator::keyname() const { return ResidueIndexIsnt::keyname(); }
+
+void ResidueIndexIsntCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResidueIndexIsnt::provide_xml_schema( xsd );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ResiduePDBIndexIs
@@ -470,10 +696,6 @@ bool ResiduePDBIndexIs::operator() ( Pose const & pose, Size index ) const
 	return std::find( indices_.begin(), indices_.end(), cp ) != indices_.end();
 }
 
-ResFilterOP
-ResiduePDBIndexIsCreator::create_res_filter() const {
-	return ResFilterOP( new ResiduePDBIndexIs );
-}
 
 ResFilterOP ResiduePDBIndexIs::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
 
@@ -507,6 +729,41 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 
 }
 
+std::string ResiduePDBIndexIs::keyname() { return "ResiduePDBIndexIs"; }
+
+void ResiduePDBIndexIs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(),get_xml_schema_attributes( xsd ) );
+}
+
+utility::tag::AttributeList
+ResiduePDBIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction pdb_index_cslist;
+	pdb_index_cslist.name( "period_separated_pdb_index_cslist" );
+	pdb_index_cslist.base_type( xs_string );
+	pdb_index_cslist.add_restriction( xsr_pattern, "[a-zA-Z]\\.-?[0-9]+(,[a-zA-Z]\\.-?[0-9]+)*" );
+
+	xsd.add_top_level_element( pdb_index_cslist );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "indices", "period_separated_pdb_index_cslist" ));
+	return attributes;
+}
+
+
+ResFilterOP
+ResiduePDBIndexIsCreator::create_res_filter() const {
+	return ResFilterOP( new ResiduePDBIndexIs );
+}
+
+std::string ResiduePDBIndexIsCreator::keyname() const { return ResiduePDBIndexIs::keyname(); }
+
+void ResiduePDBIndexIsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResiduePDBIndexIs::provide_xml_schema( xsd );
+}
+
 // ResiduePDBIndexIsnt
 ResiduePDBIndexIsnt::ResiduePDBIndexIsnt()
 : parent()
@@ -525,12 +782,24 @@ bool ResiduePDBIndexIsnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
+ResFilterOP ResiduePDBIndexIsnt::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
+
+std::string ResiduePDBIndexIsnt::keyname() { return "ResiduePDBIndexIsnt"; }
+
+void ResiduePDBIndexIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes( xsd ) );
+}
+
 ResFilterOP
 ResiduePDBIndexIsntCreator::create_res_filter() const {
 	return ResFilterOP( new ResiduePDBIndexIsnt );
 }
 
-ResFilterOP ResiduePDBIndexIsnt::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
+std::string ResiduePDBIndexIsntCreator::keyname() const { return ResiduePDBIndexIsnt::keyname(); }
+
+void ResiduePDBIndexIsntCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ResiduePDBIndexIsnt::provide_xml_schema( xsd );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ChainIs
@@ -552,16 +821,45 @@ bool ChainIs::operator() ( Pose const & pose, Size index ) const
 	return( (pose.pdb_info()->chain(index) == chain_) ? true : false );
 }
 
-ResFilterOP
-ChainIsCreator::create_res_filter() const {
-	return ResFilterOP( new ChainIs );
-}
-
 ResFilterOP ChainIs::clone() const { return ResFilterOP( new ChainIs( *this ) ); }
 
 void ChainIs::parse_tag( TagCOP tag )
 {
 	chain_ = tag->getOption<char>("chain", 'A');
+}
+
+std::string ChainIs::keyname() { return "ChainIs"; }
+
+void ChainIs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes( xsd ) );
+}
+
+utility::tag::AttributeList
+ChainIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction chain_character;
+	chain_character.name( "chain_character" );
+	chain_character.base_type( xs_string );
+	chain_character.add_restriction( xsr_pattern, "[a-zA-Z]" );
+
+	xsd.add_top_level_element( chain_character );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "property", "chain_character" ));
+	return attributes;
+}
+
+
+ResFilterOP
+ChainIsCreator::create_res_filter() const {
+	return ResFilterOP( new ChainIs );
+}
+
+std::string ChainIsCreator::keyname() const { return ChainIs::keyname(); }
+
+void ChainIsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ChainIs::provide_xml_schema( xsd );
 }
 
 // ChainIsnt
@@ -578,12 +876,24 @@ bool ChainIsnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
+ResFilterOP ChainIsnt::clone() const { return ResFilterOP( new ChainIsnt( *this ) ); }
+
+std::string ChainIsnt::keyname() { return "ChainIsnt"; }
+
+void ChainIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes( xsd ) );
+}
+
 ResFilterOP
 ChainIsntCreator::create_res_filter() const {
 	return ResFilterOP( new ChainIsnt );
 }
 
-ResFilterOP ChainIsnt::clone() const { return ResFilterOP( new ChainIsnt( *this ) ); }
+std::string ChainIsntCreator::keyname() const { return ChainIsnt::keyname(); }
+
+void ChainIsntCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ChainIsnt::provide_xml_schema( xsd );
+}
 
 } //namespace operation
 } //namespace task

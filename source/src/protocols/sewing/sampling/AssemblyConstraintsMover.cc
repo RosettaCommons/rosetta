@@ -40,6 +40,8 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -50,14 +52,28 @@ static basic::Tracer TR( "protocols.sewing.AssemblyConstraintsMover" );
 ///////////// ReadNativeRotamersFile TaskOperation  Functions   ////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 ReadNativeRotamersFile::ReadNativeRotamersFile() : parent()
 {}
 
 ReadNativeRotamersFile::~ReadNativeRotamersFile() {}
 
-core::pack::task::operation::TaskOperationOP
+TaskOperationOP
 ReadNativeRotamersFileCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new ReadNativeRotamersFile );
+	return TaskOperationOP( new ReadNativeRotamersFile );
+}
+
+std::string
+ReadNativeRotamersFileCreator::keyname() const
+{
+	return ReadNativeRotamersFile::keyname();
+}
+
+void ReadNativeRotamersFileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReadNativeRotamersFile::provide_xml_schema( xsd );
 }
 
 core::pack::task::operation::TaskOperationOP
@@ -114,6 +130,14 @@ ReadNativeRotamersFile::parse_tag( TagCOP tag , DataMap & )
 	}
 }
 
+// AMW: surely this is a good time to make something required...
+void ReadNativeRotamersFile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "filename", xs_string ) );
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// ReadRepeatNativeRotamersFile TaskOperation  Functions   /////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -124,10 +148,6 @@ ReadRepeatNativeRotamersFile::ReadRepeatNativeRotamersFile() :
 
 ReadRepeatNativeRotamersFile::~ReadRepeatNativeRotamersFile() {}
 
-core::pack::task::operation::TaskOperationOP
-ReadRepeatNativeRotamersFileCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new ReadRepeatNativeRotamersFile );
-}
 
 core::pack::task::operation::TaskOperationOP
 ReadRepeatNativeRotamersFile::clone() const {
@@ -175,6 +195,26 @@ ReadRepeatNativeRotamersFile::apply(
 		new core::pack::task::operation::SetRotamerLinks() );
 	rotamer_links->set_links(links);
 	rotamer_links->apply(pose, task);
+}
+
+std::string ReadRepeatNativeRotamersFile::keyname() { return "ReadRepeatNativeRotamersFile"; }
+
+void ReadRepeatNativeRotamersFile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+core::pack::task::operation::TaskOperationOP
+ReadRepeatNativeRotamersFileCreator::create_task_operation() const {
+	return core::pack::task::operation::TaskOperationOP( new ReadRepeatNativeRotamersFile );
+}
+
+std::string ReadRepeatNativeRotamersFileCreator::keyname() const
+{ return ReadRepeatNativeRotamersFile::keyname(); }
+
+void ReadRepeatNativeRotamersFileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReadRepeatNativeRotamersFile::provide_xml_schema( xsd );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

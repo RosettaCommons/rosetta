@@ -28,6 +28,9 @@
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
@@ -49,7 +52,24 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
+
+core::pack::task::operation::TaskOperationOP
+DesignAroundOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new DesignAroundOperation );
+}
+
+void DesignAroundOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DesignAroundOperation::provide_xml_schema( xsd );
+}
+
+std::string DesignAroundOperationCreator::keyname() const
+{
+	return DesignAroundOperation::keyname();
+}
 
 DesignAroundOperation::DesignAroundOperation() :
 	design_shell_( 8.0 ),
@@ -62,12 +82,6 @@ DesignAroundOperation::DesignAroundOperation() :
 }
 
 DesignAroundOperation::~DesignAroundOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-DesignAroundOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new DesignAroundOperation );
-}
 
 core::pack::task::operation::TaskOperationOP DesignAroundOperation::clone() const
 {
@@ -160,6 +174,19 @@ DesignAroundOperation::parse_tag( TagCOP tag , DataMap & )
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 8.0 ));
 	runtime_assert( design_shell() <= repack_shell() );
 	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;
+}
+
+void DesignAroundOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "design_shell", xs_decimal, "8.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "allow_design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "resnums_allow_design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_shell", xs_decimal, "8.0" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace protocols

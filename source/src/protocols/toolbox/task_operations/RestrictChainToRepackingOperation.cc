@@ -26,6 +26,8 @@
 #include <utility/exit.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
 
@@ -52,12 +54,6 @@ RestrictChainToRepackingOperation::RestrictChainToRepackingOperation( core::Size
 }
 
 RestrictChainToRepackingOperation::~RestrictChainToRepackingOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictChainToRepackingOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictChainToRepackingOperation );
-}
 
 core::pack::task::operation::TaskOperationOP RestrictChainToRepackingOperation::clone() const
 {
@@ -100,6 +96,27 @@ RestrictChainToRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 }
+
+std::string RestrictChainToRepackingOperation::keyname() { return "RestrictChainToRepacking"; }
+
+void RestrictChainToRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+core::pack::task::operation::TaskOperationOP
+RestrictChainToRepackingOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictChainToRepackingOperation );
+}
+
+std::string RestrictChainToRepackingOperationCreator::keyname() const { return RestrictChainToRepackingOperation::keyname(); }
+
+void RestrictChainToRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictChainToRepackingOperation::provide_xml_schema( xsd );
+}
+
 
 } //namespace protocols
 } //namespace toolbox

@@ -11,16 +11,22 @@
 /// @brief
 /// @author ashworth
 
+// Unit headers
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/ResFilterCreator.hh>
 
-
-#include <utility/exit.hh> // runtime_assert, utility_exit_with_message
-
+// Package headers
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/operation/ResFilter.hh>
+
+// Utility headers
+#include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -87,11 +93,18 @@ bool ResFilterFactory::has_type( std::string const & type ) const
 	return ( filter_creator_map_.find( type ) != filter_creator_map_.end() );
 }
 
-/// @brief return new ResFilter by key lookup in filter_creator_map_ (new ResFilter parses Tag if provided)
+ResFilterOP
+ResFilterFactory::newResFilter(
+	std::string const & type
+) const
+{
+	return newResFilter( type, TagCOP( TagOP( new Tag )));
+}
+
 ResFilterOP
 ResFilterFactory::newResFilter(
 	std::string const & type,
-	TagCOP tag /* = boost::shared_ptr< Tag >() */
+	TagCOP tag
 ) const
 {
 	ResFilterCreatorMap::const_iterator iter( filter_creator_map_.find( type ) );
@@ -104,6 +117,32 @@ ResFilterFactory::newResFilter(
 		utility_exit_with_message( type + " is not known to the ResFilterFactory. Was its ResFilterCreator class registered at initialization?" );
 		return NULL;
 	}
+}
+
+/// @details By convention, the named assigned to each of the complexTypes for ResFilter s should be
+/// what is returned by the function "complex_type_name_for_res_lvl_task_op" (declared in
+/// core/pack/task/operation/task_op_schemas.hh) when given the argument returned by that ResFilter's
+/// ResFilterCreator's keyname() function. So long as the writing of XML schema for your ResFilter
+/// is accomplished by calling the functions in core/select/res_lvl_task_operations/task_op_schemas.hh, then
+/// this should happen automatically.
+void ResFilterFactory::define_res_filter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			filter_creator_map_,
+			res_filter_xml_schema_group_name(),
+			& complex_type_name_for_res_filter,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ResFilters from ResFilterFactory; offending class"
+			" must call core::pack::task::operation::complex_type_name_for_res_filter when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+std::string ResFilterFactory::res_filter_xml_schema_group_name()
+{
+	return "res_filter";
 }
 
 } //namespace operation

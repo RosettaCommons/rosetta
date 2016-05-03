@@ -24,6 +24,7 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <string>
@@ -46,6 +47,8 @@ public:
 
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 	void parse_tag( TagCOP tag , DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "SelectByDeltaScore"; }
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );

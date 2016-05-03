@@ -31,6 +31,8 @@
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // boost headers
 #include <boost/assign.hpp>
@@ -43,16 +45,24 @@ namespace protocols {
 namespace denovo_design {
 namespace task_operations {
 
-core::pack::task::operation::TaskOperationOP
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+TaskOperationOP
 ConsensusLoopDesignOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ConsensusLoopDesignOperation );
+	return TaskOperationOP( new ConsensusLoopDesignOperation );
+}
+
+void ConsensusLoopDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConsensusLoopDesignOperation::provide_xml_schema( xsd );
 }
 
 std::string
 ConsensusLoopDesignOperationCreator::keyname() const
 {
-	return "ConsensusLoopDesign";
+	return ConsensusLoopDesignOperation::keyname();
 }
 
 // default constructor
@@ -119,6 +129,19 @@ ConsensusLoopDesignOperation::parse_tag(
 	if ( tag->hasOption( "include_adjacent_residues" ) ) {
 		set_include_adjacent_residues( tag->getOption< bool >( "include_adjacent_residues" ) );
 	}
+}
+
+std::string ConsensusLoopDesignOperation::keyname() { return "ConsensusLoopDesign"; }
+
+void ConsensusLoopDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "residue_selector", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "include_adjacent_residues", xs_boolean ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 void

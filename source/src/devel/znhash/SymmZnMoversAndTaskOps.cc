@@ -105,6 +105,8 @@
 #include <basic/MetricValue.hh>
 
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // option keys
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -128,6 +130,9 @@
 
 namespace devel {
 namespace znhash {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 /// @details Auto-generated virtual destructor
 FindZnCoordinatingResidues::~FindZnCoordinatingResidues() {}
@@ -1031,13 +1036,20 @@ void InsertZincCoordinationRemarkLines::parse_my_tag(
 
 core::pack::task::operation::TaskOperationOP
 DisableZnCoordinationResiduesTaskOpCreator::create_task_operation() const
-{ return core::pack::task::operation::TaskOperationOP( new DisableZnCoordinationResiduesTaskOp );}
+{
+	return core::pack::task::operation::TaskOperationOP( new DisableZnCoordinationResiduesTaskOp );
+}
+
+void DisableZnCoordinationResiduesTaskOpCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	DisableZnCoordinationResiduesTaskOp::provide_xml_schema( xsd );
+}
 
 std::string DisableZnCoordinationResiduesTaskOpCreator::keyname() const
 {
-	return "DisableZnCoordinationResiduesTaskOp";
+	return DisableZnCoordinationResiduesTaskOp::keyname();
 }
-
 ////////////////////////////////////////////////////////////////////
 
 DisableZnCoordinationResiduesTaskOp::DisableZnCoordinationResiduesTaskOp() {}
@@ -1102,6 +1114,11 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 
 void DisableZnCoordinationResiduesTaskOp::parse_tag( TagCOP, DataMap & )
 {
+}
+
+void
+DisableZnCoordinationResiduesTaskOp::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

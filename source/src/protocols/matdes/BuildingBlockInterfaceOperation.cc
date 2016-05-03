@@ -35,6 +35,8 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/vector1.hh>
 
 
@@ -43,12 +45,24 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.BuildingBlockInterfaceOp
 namespace protocols {
 namespace matdes {
 
-core::pack::task::operation::TaskOperationOP
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+TaskOperationOP
 BuildingBlockInterfaceOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new BuildingBlockInterfaceOperation );
+	return TaskOperationOP( new BuildingBlockInterfaceOperation );
 }
 
+void BuildingBlockInterfaceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BuildingBlockInterfaceOperation::provide_xml_schema( xsd );
+}
+
+std::string BuildingBlockInterfaceOperationCreator::keyname() const
+{
+	return BuildingBlockInterfaceOperation::keyname();
+}
 
 BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */, bool filter_intrabb, bool intrabb_only, bool multicomponent ):
 	nsub_bblock_(nsub_bblock),
@@ -227,6 +241,24 @@ BuildingBlockInterfaceOperation::parse_tag( TagCOP tag , DataMap & )
 	filter_intrabb_ = tag->getOption< bool >("filter_intrabb", 1);
 	intrabb_only_ = tag->getOption< bool >("intrabb_only", 0);
 	multicomponent_ = tag->getOption< bool >("multicomp", 0);
+}
+
+void BuildingBlockInterfaceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "nsub_bblock", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "sym_dof_names", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "contact_dist", xs_decimal, "10.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "bblock_dist", xs_decimal, "5.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "fa_rep_cut", xs_decimal, "3.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "filter_intrabb", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "intrabb_only", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "multicomp", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 

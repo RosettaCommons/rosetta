@@ -103,6 +103,7 @@ sources = {
 	"utility/tag": [
 		"Tag",
 		"XMLSchemaGeneration",
+		"XMLSchemaValidation",
 	],
 	"utility/thread": [
 		"ReadWriteMutex",

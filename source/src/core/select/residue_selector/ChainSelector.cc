@@ -118,7 +118,7 @@ std::string ChainSelector::class_name() {
 }
 
 void
-ChainSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+ChainSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 
 	// first define the chain_cslist restriction -- this could be moved elsewhere
@@ -126,12 +126,9 @@ ChainSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
 	chain_cslist.name( "chain_cslist" );
 	chain_cslist.base_type( xs_string );
 	chain_cslist.add_restriction( xsr_pattern, "[A-Z](,[A-Z])*" );
+	xsd.add_top_level_element( chain_cslist);
 
-	std::ostringstream oss;
-	chain_cslist.write_definition( 0, oss );
-	xsd.add_top_level_element( "chain_cslist", oss.str() );
-
-	AttributeList attributes;
+	utility::tag::AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "chains", "chain_cslist" ) );
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
@@ -191,8 +188,8 @@ ChainSelectorCreator::keyname() const {
 }
 
 void
-ChainSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	ChainSelector::provide_selector_xsd( xsd );
+ChainSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ChainSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

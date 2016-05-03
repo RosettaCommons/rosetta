@@ -15,6 +15,9 @@
 #include <core/select/residue_selector/ResidueNameSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
+// package headers
+#include <core/select/residue_selector/util.hh>
+
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
 
@@ -24,6 +27,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -160,6 +164,16 @@ std::string ResidueNameSelector::class_name() {
 	return "ResidueName";
 }
 
+void
+ResidueNameSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "residue_name3", xs_string ));
+	attributes.push_back( XMLSchemaAttribute( "residue_names", xs_string ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
 ResidueSelectorOP
 ResidueNameSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new ResidueNameSelector );
@@ -170,9 +184,9 @@ ResidueNameSelectorCreator::keyname() const {
 	return ResidueNameSelector::class_name();
 }
 
-void ResidueNameSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const
+void ResidueNameSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	// TO DO!
+	ResidueNameSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

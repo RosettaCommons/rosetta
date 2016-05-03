@@ -22,7 +22,8 @@ namespace task_operations {
 class ModifyAnnealerCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ModifyAnnealer"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace protocols

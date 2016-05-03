@@ -54,5 +54,6 @@ projects = {
 		"cppdb",  # Must come before sqlite3 for static build
 		"sqlite3",
 		"cifparse",
+		"libxml2",
 	]
 }

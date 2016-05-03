@@ -31,6 +31,8 @@
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/tag/Tag.hh>
 
 
@@ -41,6 +43,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.Restrict
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 using utility::vector1;
 using core::Size;
@@ -54,6 +59,17 @@ TaskOperationOP
 RestrictToTerminiOperationCreator::create_task_operation() const {
 	return TaskOperationOP( new RestrictToTerminiOperation );
 }
+
+void RestrictToTerminiOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToTerminiOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictToTerminiOperationCreator::keyname() const
+{
+	return RestrictToTerminiOperation::keyname();
+}
+
 ///////////////// End Creator ////////////
 
 
@@ -77,7 +93,6 @@ RestrictToTerminiOperation::RestrictToTerminiOperation(RestrictToTerminiOperatio
 	repack_n_terminus_(src.repack_n_terminus_),
 	repack_c_terminus_(src.repack_c_terminus_)
 {}
-
 
 RestrictToTerminiOperation::~RestrictToTerminiOperation() {}
 
@@ -128,8 +143,21 @@ RestrictToTerminiOperation::parse_tag( TagCOP tag , DataMap & )
 	chain_ = tag->getOption<Size>("chain", 1);
 	repack_n_terminus_ = tag->getOption<bool>("repack_n_terminus", true);
 	repack_c_terminus_ = tag->getOption<bool>("repack_c_terminus", true);
-
 }
+
+void RestrictToTerminiOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_n_terminus", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_c_terminus", xs_boolean, "true" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace
 } //namespace

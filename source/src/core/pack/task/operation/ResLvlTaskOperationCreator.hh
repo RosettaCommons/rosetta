@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
 namespace pack {
@@ -48,6 +48,8 @@ public:
 	create_res_level_task_operation() const = 0;
 
 	virtual std::string keyname() const = 0;
+
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 };
 
 }

@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
+
 namespace protocols {
 namespace toolbox {
 namespace task_operations {

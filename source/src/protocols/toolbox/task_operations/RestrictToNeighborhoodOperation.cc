@@ -29,6 +29,9 @@
 #include <utility/vector1_bool.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/excn/Exceptions.hh>
 
 // C++ Headers
@@ -41,6 +44,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.Restrict
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation() {}
 
@@ -190,11 +196,28 @@ void  RestrictToNeighborhoodOperation::set_neighborhood_parameters( SizeSet cons
 	make_calculator(central_residues);
 }
 
+// AMW: no parse_tag.
+void RestrictToNeighborhoodOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
 core::pack::task::operation::TaskOperationOP
 RestrictToNeighborhoodOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictToNeighborhoodOperation );
 }
+
+void RestrictToNeighborhoodOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToNeighborhoodOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictToNeighborhoodOperationCreator::keyname() const
+{
+	return RestrictToNeighborhoodOperation::keyname();
+}
+
 
 } //namespace protocols
 } //namespace toolbox

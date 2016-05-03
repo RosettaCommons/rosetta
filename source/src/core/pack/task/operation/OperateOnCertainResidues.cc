@@ -15,18 +15,22 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
 
-
-#include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
+// Package headers
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 #include <core/pack/task/operation/ResFilter.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
+// Project headers
+#include <core/pose/Pose.hh>
+#include <core/pack/task/PackerTask.hh>
 
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -74,11 +78,6 @@ OperateOnCertainResidues::operator = ( OperateOnCertainResidues const & src )
 }
 
 OperateOnCertainResidues::~OperateOnCertainResidues() {}
-
-TaskOperationOP OperateOnCertainResiduesCreator::create_task_operation() const
-{
-	return TaskOperationOP( new OperateOnCertainResidues );
-}
 
 TaskOperationOP OperateOnCertainResidues::clone() const
 {
@@ -158,6 +157,39 @@ void OperateOnCertainResidues::parse_tag( TagCOP tag , DataMap & )
 		utility_exit_with_message( type + " is not known to the factories passed to OperateOnCertainResidues." );
 	}
 }
+
+std::string OperateOnCertainResidues::keyname() { return "OperateOnCertainResidues"; }
+
+	// TO DO: Use XMLComplexTypeSchemaGenerator
+void OperateOnCertainResidues::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	ResLvlTaskOperationFactory::get_instance()->define_res_lvl_task_op_xml_schema( xsd );
+	ResFilterFactory::get_instance()->define_res_filter_xml_schema( xsd );
+
+	using namespace utility::tag;
+	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & ResFilterFactory::res_filter_xml_schema_group_name );
+	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
+	ct_gen.element_name( keyname() )
+		.complex_type_naming_func( & complex_type_name_for_task_op )
+		.set_subelements_single_appearance_required_and_ordered( subelements )
+		.add_attribute( optional_name_attribute() )
+		.write_complex_type_to_schema( xsd );
+}
+
+TaskOperationOP OperateOnCertainResiduesCreator::create_task_operation() const
+{
+	return TaskOperationOP( new OperateOnCertainResidues );
+}
+
+std::string OperateOnCertainResiduesCreator::keyname() const { return OperateOnCertainResidues::keyname(); }
+
+void OperateOnCertainResiduesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	OperateOnCertainResidues::provide_xml_schema( xsd );
+}
+
+
 
 } //namespace operation
 } //namespace task

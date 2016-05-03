@@ -16,6 +16,8 @@
 #include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighborsCreator.hh>
 
 // Package headers
+#include <protocols/toolbox/task_operations/RestrictToLoops.hh>
+
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loops.tmpl.hh>
 #include <protocols/loops/loops_main.hh>
@@ -30,11 +32,15 @@
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 using core::Size;
 using core::Real;
@@ -99,6 +105,20 @@ void RestrictToLoopsAndNeighbors::parse_tag(TagCOP tag, DataMap & data)
 
 }
 
+void RestrictToLoopsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	// From parent.
+	RestrictToLoops::provide_attributes( attributes );
+	
+	attributes.push_back( XMLSchemaAttribute( "include_neighbors", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "design_neighbors", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "cutoff_dist", xs_decimal ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 void RestrictToLoopsAndNeighbors::apply( Pose const & pose, PackerTask & task ) const
 {
 	apply_helper(pose, task, include_neighbors(), cutoff_distance(), design_neighbors());
@@ -155,6 +175,16 @@ void RestrictToLoopsAndNeighbors::set_cutoff_distance( core::Real cutoff_distanc
 TaskOperationOP RestrictToLoopsAndNeighborsCreator::create_task_operation() const
 {
 	return TaskOperationOP( new RestrictToLoopsAndNeighbors );
+}
+
+void RestrictToLoopsAndNeighborsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToLoopsAndNeighbors::provide_xml_schema( xsd );
+}
+
+std::string RestrictToLoopsAndNeighborsCreator::keyname() const
+{
+	return RestrictToLoopsAndNeighbors::keyname();
 }
 
 } //namespace task_operations

@@ -52,7 +52,11 @@ public:
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 
+	/// @brief Return the name used to construct this TaskOperation from an XML file
+	static std::string keyname();
 
+	/// @brief Describe the format of XML file used to initialize this TaskOperation
+	static void provide_xml_schema( XMLSchemaDefinition & xsd );
 
 private:
 

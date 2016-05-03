@@ -29,6 +29,8 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ headers
 #include <string>
@@ -36,6 +38,9 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 using namespace std;
 using namespace core;
@@ -49,6 +54,16 @@ using basic::datacache::DataMap;
 
 TaskOperationOP RestrictToLoopsCreator::create_task_operation() const {
 	return TaskOperationOP( new RestrictToLoops );
+}
+
+void RestrictToLoopsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToLoops::provide_xml_schema( xsd );
+}
+
+std::string RestrictToLoopsCreator::keyname() const
+{
+	return RestrictToLoops::keyname();
 }
 
 RestrictToLoops::RestrictToLoops() : parent() {
@@ -88,6 +103,24 @@ void RestrictToLoops::parse_tag( TagCOP tag, DataMap & ) {
 		set_loops_from_file(
 			tag->getOption<string>( "loops_file" ));
 	}
+}
+
+void RestrictToLoops::provide_xml_schema( XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	provide_attributes( attributes );
+	//attributes.push_back( XMLSchemaAttribute( "design", xs_boolean ) );
+	//attributes.push_back( XMLSchemaAttribute( "restrict_only_design_to_loops", xs_boolean ) );
+	//attributes.push_back( XMLSchemaAttribute( "loops_file", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+void RestrictToLoops::provide_attributes( AttributeList & attributes ) {
+	attributes.push_back( XMLSchemaAttribute( "design", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "restrict_only_design_to_loops", xs_boolean ) );
+	attributes.push_back( XMLSchemaAttribute( "loops_file", xs_string ) );
 }
 
 void RestrictToLoops::init() {

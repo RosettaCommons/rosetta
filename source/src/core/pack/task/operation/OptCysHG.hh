@@ -24,6 +24,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 namespace core {
@@ -36,48 +37,39 @@ namespace operation {
 ///  clashes caused by swapping of CYD->CYS after calling Conformation::detect_disulfides()
 class OptCysHG : public core::pack::task::operation::TaskOperation {
 
-
 private: // typedefs
-
 
 	typedef core::pack::task::operation::TaskOperation Super;
 
-
 public: // typedefs
-
 
 	typedef core::pack::task::PackerTask PackerTask;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef core::pose::Pose Pose;
 
-
 public: // construct/destruct
-
 
 	/// @brief default constructor
 	OptCysHG();
 
-
 	/// @brief copy constructor
 	OptCysHG( OptCysHG const & rval );
-
 
 	/// @brief default destructor
 	virtual ~OptCysHG();
 
-
 public: // virtual constructors
-
 
 	/// @brief clone this object
 	virtual TaskOperationOP clone() const;
 
-
 public: // methods
-
 
 	/// @brief apply operations to PackerTask
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 };
 

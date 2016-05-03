@@ -1,3 +1,4 @@
+
 # -*- Mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
 #
 # Project settings for core rosetta tests.
@@ -190,7 +191,10 @@ sources = {
 		"fix_his_tautomer",
 		"Resfile_Silent",
 		"operation/TaskOperations",
+		"operation/TaskOperationFactory",
 		"operation/OperateOnResidueSubset",
+		"operation/ResFilterFactory",
+		"operation/ResLvlTaskOperationFactory",
 	],
 	"pack/scmin" : [
 		"AtomTreeCollection",

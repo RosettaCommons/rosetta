@@ -47,6 +47,8 @@
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <boost/functional/hash.hpp>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 using basic::Error;
@@ -57,17 +59,30 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-// @brief default constructor
-RetrieveStoredTaskOperation::RetrieveStoredTaskOperation() {}
-
-// @brief destructor
-RetrieveStoredTaskOperation::~RetrieveStoredTaskOperation() {}
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 core::pack::task::operation::TaskOperationOP
 RetrieveStoredTaskOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RetrieveStoredTaskOperation );
 }
+
+void RetrieveStoredTaskOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RetrieveStoredTaskOperation::provide_xml_schema( xsd );
+}
+
+std::string RetrieveStoredTaskOperationCreator::keyname() const
+{
+	return RetrieveStoredTaskOperation::keyname();
+}
+
+// @brief default constructor
+RetrieveStoredTaskOperation::RetrieveStoredTaskOperation() {}
+
+// @brief destructor
+RetrieveStoredTaskOperation::~RetrieveStoredTaskOperation() {}
 
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RetrieveStoredTaskOperation::clone() const
@@ -97,6 +112,16 @@ RetrieveStoredTaskOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	task_name_ = tag->getOption< std::string >( "task_name" ) ;
 }
+
+void RetrieveStoredTaskOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "task_name", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace task_operations
 } //namespace toolbox

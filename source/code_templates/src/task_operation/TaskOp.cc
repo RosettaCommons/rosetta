@@ -63,11 +63,35 @@ void
 
 }
 
+std::string
+--class--::keyname() {
+	return "--class--";
+}
+
+void
+--class--::provide_xml_schema( XMLSchemaDefinition & xsd )
+{
+}
+
 core::pack::task::operation::TaskOperationOP
 --class--Creator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new --class-- );
 }
+
+std::string
+--class--Creator::keyname() const
+{
+	return --class--::keyname();
+}
+
+void
+--class--Creator::provide_xml_schema( XMLSchemaDefinition & xsd )
+{
+	--class--::provide_xml_schema( xsd );
+}
+
+
 
 
 

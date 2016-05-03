@@ -81,7 +81,7 @@ public:
 
 	/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
 	///
-	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/// @brief Set the name of the bin that the residues that we will select must be in.
 	///

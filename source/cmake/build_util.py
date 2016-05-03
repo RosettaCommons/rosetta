@@ -4,6 +4,7 @@ import os, stat, shutil, sys, os.path
 # This script (build_util.py) is in rosetta_source/cmake/, and want rosetta_source/projects.settings
 PROJECTS_SETTINGS = {}
 execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings") ,PROJECTS_SETTINGS)
+print PROJECTS_SETTINGS["projects"]["external"]
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 KNOWN_TESTS =PROJECTS_SETTINGS["projects"]["test"]
 KNOWN_EXTERNAL =PROJECTS_SETTINGS["projects"]["external"]
@@ -209,7 +210,7 @@ def external_main(path_to_mini, argv, project_external_callback = None):
 
         buildable_externals = []
 	for external in externals:
-
+                print "Examining external", external
 		if external not in KNOWN_EXTERNAL:
 			print 'unknown external project: ' + external
 			sys.exit(-1)

@@ -252,13 +252,13 @@ std::string NeighborhoodResidueSelector::class_name() {
 }
 
 void
-NeighborhoodResidueSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "selector", xs_string        ));
 	attributes.push_back( XMLSchemaAttribute( "resnums",  "int_cslist"     ));
-	attributes.push_back( XMLSchemaAttribute( "distance", xs_decimal, true ));
-	xsd_type_definition_w_attributes_and_subselector( xsd, class_name(), attributes );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "distance", xs_decimal ));
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
 }
 
 
@@ -273,8 +273,8 @@ NeighborhoodResidueSelectorCreator::keyname() const {
 }
 
 void
-NeighborhoodResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	NeighborhoodResidueSelector::provide_selector_xsd( xsd );
+NeighborhoodResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	NeighborhoodResidueSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

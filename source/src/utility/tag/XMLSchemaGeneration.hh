@@ -33,7 +33,8 @@
 /// At least the way that they are used in rosetta, element types
 /// almost universally fall into the XML Schema category of "complex types."
 /// Complex types can contain "attributes" (e.g. the "name" and "scorefxn"
-/// attributes, ) and they can also contain sub-elements.  Attributes
+/// attributes, ) and they can also contain sub-elements organized
+/// into blocks of "model groups" (sequence, choice, all & group).  Attributes
 /// (aka "options" in Rosetta speak) are usually described by simple types,
 /// and XML Schema defines many of them by default, (e.g. "string" and "integer"
 /// types); they can also be described by "restrictions" to existing types, e.g.
@@ -44,7 +45,9 @@
 ///
 /// \verbatim
 /// XMLSchemaElement --> XMLSchemaComplexType --> XMLSchemaAttribute --> XMLSchemaType --> Primative Type
-///                 \--> XMLSchemaType       \--> XMLSchemaElement                    \--> Restriction --> Primative Type
+///                 \--> XMLSchemaType       \--> XMLSchemaModelGroup                  \--> Restriction --> Primative Type
+///                                                         \----> XMLSchemaElement
+///                                                          \---> XMLSchemaModelGroup
 /// \endverbatic
 ///
 /// The chunk of XMLSchema that would describe the MinMover element above would
@@ -106,8 +109,11 @@
 // Unit headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
-// Utility Headers
+// Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+
+// Boost headers
+#include <boost/function.hpp>
 
 // C++ headers
 #include <list>
@@ -139,6 +145,17 @@ private:
 	std::string custom_type_name_;
 };
 
+/// @brief The %XMLSchemaTopLevelElement class signifies a class that could be written out
+/// as an XML element, with possible sub-elemets, in an XML schema. When generating a
+/// schema, the developer will hand an instance of a class derived from an %XMLSchemaTopLevelElement
+/// to an XMLSchemaDefinition object.
+class XMLSchemaTopLevelElement : public utility::pointer::ReferenceCount
+{
+public:
+	virtual std::string const & element_name() const = 0;
+	virtual void write_definition( int indentation, std::ostream & os ) const = 0;
+};
+
 /// @brief class %XMLSchemaAttribute represents what we refer to in Rosetta as an
 /// option for a tag.  An attribute would reside inside of a tag, such as "scorefxn"
 /// in this tag (this XML Element): <MinMover name="min" scorefxn="talaris2014"/>
@@ -154,19 +171,21 @@ private:
 ///
 /// Once all of the details of an XMLAttribute have been set, it will write its definition
 /// to an output stream in its write_definition method.
-class XMLSchemaAttribute : public utility::pointer::ReferenceCount {
+class XMLSchemaAttribute : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaAttribute();
-	XMLSchemaAttribute( std::string const & name, XMLSchemaType type, bool is_required=false );
+	XMLSchemaAttribute( std::string const & name, XMLSchemaType type );
 	XMLSchemaAttribute( std::string const & name, XMLSchemaType type, std::string const & default_value );
-	XMLSchemaAttribute( std::string const & name, XMLSchemaType type, char const * default_value );
-	void name( std::string const & setting );
-	void type( XMLSchemaType setting );
-	void default_value( std::string const & setting );
-	void is_required( bool setting );
+	static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type );
+
+	XMLSchemaAttribute & name( std::string const & setting );
+	XMLSchemaAttribute & type( XMLSchemaType setting );
+	XMLSchemaAttribute & default_value( std::string const & setting );
+	XMLSchemaAttribute & is_required( bool setting );
 
 	XMLSchemaType const & type() const;
-	void write_definition( int indentation, std::ostream & os ) const;
+	virtual std::string const & element_name() const;
+	virtual void write_definition( int indentation, std::ostream & os ) const;
 
 private:
 	std::string name_;
@@ -197,19 +216,76 @@ private:
 /// </xs:simpleType>
 /// \endverbatim
 
-class XMLSchemaRestriction : public utility::pointer::ReferenceCount {
+class XMLSchemaRestriction : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaRestriction();
 	void name( std::string const & setting );
 	void base_type( XMLSchemaType setting );
 	void add_restriction( XMLSchemaRestrictionType type, std::string const & value );
 
-	void write_definition( int indentation, std::ostream & os ) const;
+	virtual std::string const & element_name() const;
+	virtual void write_definition( int indentation, std::ostream & os ) const;
 
 private:
 	std::string name_;
 	XMLSchemaType base_type_;
 	std::list< std::pair< XMLSchemaRestrictionType, std::string > > restrictions_;
+};
+
+/// @brief This abstract class is meant to represent either an XMLSChemaElement
+/// or an XMLSchemaModelGroup so that the interchangable set of these objects
+/// in a ModelGroup can be represented.  I may be misusing the term "particle"
+/// in the way that it is meant within XML Schema -- so the mapping of this term
+/// to the term used in XML Schema is probably imperfect.
+class XMLSchemaParticle : public XMLSchemaTopLevelElement {
+public:
+	XMLSchemaParticle();
+	virtual ~XMLSchemaParticle();
+
+	XMLSchemaParticle & min_occurs( int setting );
+	XMLSchemaParticle & max_occurs( int setting );
+
+	int min_occurs() const;
+	int max_occurs() const;
+
+private:
+	int min_occurs_;
+	int max_occurs_;
+
+};
+
+/// @brief The ModelGroup covers four XML Schema model groups: xs:sequence,
+/// xs:choice, xs:all, and xs:group.  A ModelGroup may contain any number of
+/// XMLSchemaParticles, interchanging between XMLElements and XMLModelGroups,
+/// BUT there are some fairly heavy restrictions on the xs:all model group,
+/// marginally enforced by this class and by XMLSchemaComplexType.
+/// This class is not exactly a top-level element, in that only xs:group is
+/// allowed to appear at the top level, but it is definitely worthwhile for
+/// this class to implement the write_definition funciton.
+class XMLSchemaModelGroup : public  XMLSchemaParticle {
+public:
+	XMLSchemaModelGroup();
+	virtual ~XMLSchemaModelGroup();
+	XMLSchemaModelGroup( XMLSchemaModelGroupType type );
+	XMLSchemaModelGroup( XMLSchemaModelGroupType type, std::list< XMLSchemaParticleCOP > const & particles );
+	XMLSchemaModelGroup( std::string const & group_name );
+
+	XMLSchemaModelGroup & type( XMLSchemaModelGroupType type );
+	XMLSchemaModelGroup & append_particle( XMLSchemaParticleCOP particle );
+	XMLSchemaModelGroup & append_particles( std::list< XMLSchemaParticleCOP > const & particles );
+	XMLSchemaModelGroup & group_name( std::string const & name );
+
+	virtual std::string const & element_name() const;
+	virtual void write_definition( int indentation, std::ostream & os ) const;
+
+private:
+	void validate_content() const;
+	bool is_group_holding_all() const;
+
+private:
+	XMLSchemaModelGroupType type_;
+	std::list< XMLSchemaParticleCOP > particles_;
+	std::string group_name_; // if this is an xs:group, what is the name for it? Any group with no particles is treated as a group reference
 };
 
 /// @brief class %XMLSchemaComplexType represents the definition of the type for an element -- that is,
@@ -247,36 +323,28 @@ private:
 /// In the case of a "group" complex type, the complex type needs to contain a subtype.  E.g. the group
 /// complex-type defined by ResidueSelectorFactory holds a choice complex-type.
 ///
-/// Complex types may contain subelements; these subelements can be added through the add_subelement method.
+/// Complex types may contain subelements; these subelements can be added through a model group
+/// (e.g. "xs:all") that itself contains elements and possibly other model groups.
 ///
 /// Complex types may contain attributes; these attributes can be added through the add_attribute method.
 ///
 /// Complex types may be repeated, e.g., in the sequence or group cases.  You may specify the minimum
 /// and maximum number of times the complex type is to appaer.
-class XMLSchemaComplexType : public utility::pointer::ReferenceCount {
+class XMLSchemaComplexType : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaComplexType();
-	void name( std::string const & setting );
-	void type( XMLSchemaComplexTypeType setting );
-	void reference_type( std::string const & setting ); // used if this is simply a reference to an existing type
-	void subtype( XMLSchemaComplexTypeOP setting ); // used iff type_ is xsctt_group and reference_type_ is the empty string.
-	void add_subelement( XMLSchemaElementOP  subelement );
-	void add_attribute( XMLSchemaAttribute attribute );
-	void min_occurs( int setting );
-	void max_occurs( int setting );
+	XMLSchemaComplexType & name( std::string const & setting );
+	XMLSchemaComplexType & set_model_group( XMLSchemaModelGroupCOP model_group );
+	XMLSchemaComplexType & add_attribute( XMLSchemaAttribute attribute );
+	XMLSchemaComplexType & add_attributes( AttributeList const & attributes );
 
-	void write_definition( int indentation, std::ostream & os ) const;
+	virtual std::string const & element_name() const;
+	virtual void write_definition( int indentation, std::ostream & os ) const;
 
 private:
 	std::string name_;
-	XMLSchemaComplexTypeType type_;
-	std::string reference_type_; // used if this is simply a reference to an existing type
-	XMLSchemaComplexTypeOP subtype_; // used iff type_ is xsctt_group and reference_type_ is the empty string.
-	std::list< XMLSchemaElementOP > subelements_;
+	XMLSchemaModelGroupCOP model_group_; // 0 if this is an empty complex type
 	std::list< XMLSchemaAttribute > attributes_;
-	int min_occurs_;
-	int max_occurs_;
-	bool suppress_complex_type_output_;
 };
 
 
@@ -284,9 +352,9 @@ private:
 /// the And element which contains a sub-element: <And><Chain id="A"/></And>.  An element can be defined with an
 /// unnamed complex type in-line, or it can say that its type is that of a complex type defined elsewhere.
 /// (In XML naming a tag is a single block beginning with "<" and ending with ">", so both "<And>" and "</And>"
-/// are tags.  The block between the opening and closing tags is called an element.  The utility::tag::Tag class
-/// represents a complete Element, and not simply the opening or closing tag of an element.  This could easily
-/// be confusing.
+/// are tags. The block between the opening and closing tags is called an element.  The utility::tag::Tag class
+/// represents a complete Element, and not simply the opening or closing tag of an element.  This is certainly
+/// confusing.
 ///
 /// @details An element may either have its type definition given inline (i.e. as a sub-tag / sub-element of the
 /// element declaration) as either a complex type or a restriction -- or it may have its type definition given by
@@ -300,79 +368,30 @@ private:
 /// attributes (aka options) inside of tags.  The elements in Rosetta either are "empty" or they contain
 /// sub-elements: both of these are classified as complex types in XML Schema.
 ///
-/// Elements which refer to existing complex types take two forms:
-/// references where the type is listed by name right in the element tag
-/// (e.g. <xs:element name="MinMover" type="MinMoverType/>
-/// and elements whose type is actually a group and that are embedded in a complexType.
-/// This second form is how recursive type definitions can be implemented in XML Schema.
-/// For example (see the code snipet below), the "And" residue selector can take a list of
-/// of ResidueSelectors that it will use as sub-selectors, including additional And selectors.
-/// The way this is implemented in XML Schema is to define a group that lists every one of the
-/// residue selector types, and then to say that the AndType is a "choice" complex type,
-/// and the choice of elements is really one element that it may choose two or more times.
-/// The critical thing to note here is that the sub-element beneath AndType's choice block isn't
-/// an xs:element, but rather, an xs:group.
-///
-/// \verbatim
-/// <xs:group name="residue_selector">
-///  <xs:choice>
-///   <xs:element name="And" type="AndType"/>
-///   <xs:element name="Chain" type="ChainType"/>
-///   <xs:element name="ClashBasedRepackShell" type="ClashBasedRepackShellType"/>
-///   <xs:element name="DummyResidueSelector" type="DummyResidueSelectorType"/>
-///   <xs:element name="Index" type="IndexType"/>
-///   <xs:element name="InterfaceByVector" type="InterfaceByVectorType"/>
-///   <xs:element name="JumpDownstream" type="JumpDownstreamType"/>
-///   <xs:element name="JumpUpstream" type="JumpUpstreamType"/>
-///   <xs:element name="Neighborhood" type="NeighborhoodType"/>
-///   <xs:element name="Not" type="NotType"/>
-///   <xs:element name="NumNeighbors" type="NumNeighborsType"/>
-///   <xs:element name="Or" type="OrType"/>
-///   <xs:element name="ResidueName" type="ResidueNameType"/>
-///  </xs:choice>
-/// </xs:group>
-///
-/// <xs:complexType name="AndType" mixed="true">
-///  <xs:choice>
-///   <xs:group ref="residue_selector" minOccurs="2" maxOccurs="unbounded"/>
-///  </xs:choice>
-///  <xs:attribute name="name" type="xs:string"/>
-/// </xs:complexType>
-/// \endverbatim
-///
-/// So the way this is implemented is that first an %XMLSchemaElement is created, and the "group_name"
-/// method is set to "residue_selector".  This element's min_occurs is set to 2 and its max_occurs
-/// is set to xsminmax_unbounded.  Then the XMLSchemaComplexType for "AndType" is set to be an
-/// xsctt_choice, and its add_element method is called with the previosly created %XMLSchemaElement.
-/// Again, the weirdness here is that the XMLSchemaElement does not report itself in the .xsd as an
-/// "xs:element" but rather as an "xs:group".
-///
 /// Elements may appear multiple times, and the number of times they must/may appear are controlled
 /// by the min_occurs and max_occurs functions.  If you are setting no limit on max_occurs, use the
 /// "xsminmax_unbounded" value of the XMLSchemaMinOccursMaxOccurs enumeration.
-class XMLSchemaElement : public utility::pointer::ReferenceCount {
+class XMLSchemaElement : public XMLSchemaParticle {
 public:
 	XMLSchemaElement();
-	void name( std::string const & setting );
-	void type_name( XMLSchemaType setting );
-	void group_name( std::string const & setting );
-	void element_type_def( XMLSchemaComplexTypeOP setting );
-	void restriction_type_def( XMLSchemaRestrictionOP setting );
-	void min_occurs( int setting );
-	void max_occurs( int setting );
+	XMLSchemaElement & name( std::string const & setting );
+	XMLSchemaElement & set_abstract();
+	XMLSchemaElement & substitution_group( std::string const & setting );
+	XMLSchemaElement & type_name( XMLSchemaType setting );
+	XMLSchemaElement & reference_name( std::string const & setting );
+	XMLSchemaElement & element_type_def( XMLSchemaComplexTypeOP setting );
+	//XMLSchemaElement & restriction_type_def( XMLSchemaRestrictionOP setting );
 
-	void write_definition( int indentation, std::ostream & os ) const;
+	virtual std::string const & element_name() const;
+	virtual void write_definition( int indentation, std::ostream & os ) const;
 
 private:
 
-	std::string name_;
 	XMLSchemaElementCategory category_;
+	std::string name_;
 	XMLSchemaType type_name_;                     // used if category_ is xs_element_is_type_reference
-	std::string ref_name_;                        // used if category_ is xs_element_is_group_reference
 	XMLSchemaComplexTypeOP complex_type_;         // used if category_ is xs_element_is_complex_type_w_definition
-	XMLSchemaRestrictionOP restriction_type_def_; // used if category_ is xs_element_is_restriction_w_definition
-	int min_occurs_;
-	int max_occurs_;
+	std::string substitution_group_;
 };
 
 /// @brief The %XMLSchemaDefinition class's purpose is to collect all of the elements that go into an XML Schema,
@@ -390,7 +409,7 @@ class XMLSchemaDefinition : public utility::pointer::ReferenceCount
 public:
 	XMLSchemaDefinition();
 	virtual ~XMLSchemaDefinition();
-	void add_top_level_element( std::string const & element_name, std::string const & definition );
+	void add_top_level_element( XMLSchemaTopLevelElement const & element );
 	bool has_top_level_element( std::string const & element_name ) const;
 	std::string full_definition() const;
 
@@ -402,12 +421,344 @@ private:
 };
 
 
+/// @brief The XMLSchemaSimpleSubelementList class defines an interface that can be used by those wishing
+/// to define a complexType that contains sub-elements. The structure of the XML Schema for the sub-elements
+/// will determined by how this list is given to the XMLComplexTypeSchemaGenerator.
+/// "simple" subelements are those which themselves contain no subelements (but may contain attributes).
+/// Also allowed are subelements that refer to previously-defined complexTypes or those that refer to
+/// previously defined xs:groups.
+class XMLSchemaSimpleSubelementList : public utility::pointer::ReferenceCount
+{
+public:
+	// A function that returns the name for an object given the name of another related object
+	// e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
+	// for a task operation by modifying the name of that task operation.
+	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+
+	// A function that returns the name for a particular object, e.g.
+	// ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
+	// for the xs:group listing all of the ResidueSelectors accessible through
+	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
+	typedef boost::function< std::string () >                      NameFunction;
+
+public:
+	XMLSchemaSimpleSubelementList();
+	~XMLSchemaSimpleSubelementList();
+	XMLSchemaSimpleSubelementList( XMLSchemaSimpleSubelementList const & src );
+	XMLSchemaSimpleSubelementList & operator = ( XMLSchemaSimpleSubelementList const & rhs );
+
+public:
+
+	// Functions that the users should interact with
+
+	/// @brief the naming function is required if this subelement list is going to be repetable
+	XMLSchemaSimpleSubelementList & complex_type_naming_func( DerivedNameFunction const & naming_function );
+
+	/// @brief Add a new subelement to the growing list of subelements, defined by its name and a (possibly empty) list of attributes
+	/// This subelement may not itself contain other subelements, however.  The name for the complexType of this element will be
+	/// derived from the function given in complex_type_naming_func, if provided, and otherwise, the complexType for this element
+	/// will be listed within the element declaration and will be unnamed.
+	XMLSchemaSimpleSubelementList & add_simple_subelement( std::string const & name, AttributeList const &  );
+
+	/// @brief Add a new subelement to the growing list of subelements, but where the minimum and maximum number of
+	/// occurrences for this subelement has been set; note: usually, the min and max are set by the
+	/// XMLComplexTypeSchemaGenerator, and so tension could arise between the generator and your settings.
+	/// Consider this an advanced function.
+	XMLSchemaSimpleSubelementList & add_simple_subelement(
+		std::string const & name,
+		AttributeList const &,
+		int min_occurs,
+		int max_occurs = xsminmax_unspecified
+	 );
+
+	/// @brief Add a new subelement to the growing list of subelements, but one whose definition has been provided elsewhere
+	/// and where the name of the complexType for this subelement is derived from the subelement's name using the
+	/// provided function.  (Why pass a function to define the name for the complex type instead of just passing the
+	/// result of the function? Because such an interface would also let you bypass a function entirely and let you pass
+	/// in a raw string, and that would lead to brittle code. If we should want to change the complexType naming rule
+	/// for a particular class of elements in the schema, we want to be able to change only a single function and
+	/// have that change ripple outwards through all the parts of the schema that interacted with those elements.)
+	XMLSchemaSimpleSubelementList & add_already_defined_subelement(
+		std::string const & name,
+		DerivedNameFunction const & ct_naming_function
+	);
+
+	/// @brief Add a new subelement to the growing list of subelements, but where the minimum and maximum number of
+	/// occurrences for this subelement has been set; note: usually, the min and max are set by the
+	/// XMLComplexTypeSchemaGenerator, and so tension could arise between the generator and your settings.
+	/// Consider this an advanced function.
+	XMLSchemaSimpleSubelementList & add_already_defined_subelement(
+		std::string const & name,
+		DerivedNameFunction const & ct_naming_function,
+		int min_occurs,
+		int max_occurs = xsminmax_unspecified
+	);
+
+	/// @brief Add a new subelement to the growing list of subelements which refers to an already existing group
+	/// whose name is given by the input function.
+	XMLSchemaSimpleSubelementList & add_group_subelement(
+		NameFunction const & group_name_function
+	);
+
+	/// @brief Add a new subelement to the growing list of subelements, but where the minimum and maximum number of
+	/// occurrences for this subelement has been set; note: usually, the min and max are set by the
+	/// XMLComplexTypeSchemaGenerator, and so tension could arise between the generator and your settings.
+	/// Consider this an advanced function.
+	XMLSchemaSimpleSubelementList & add_group_subelement(
+		NameFunction const & group_name_function,
+		int min_occurs,
+		int max_occurs = xsminmax_unspecified
+	);
+
+public:
+
+	// Functions interacted with by the XMLComplexTypeSchemaGenerator only
+
+	struct ElementSummary {
+		enum { ct_simple, ct_ref, ct_group } element_type;
+		std::string element_name;
+		std::string ct_name;
+		AttributeList attributes;
+		bool min_or_max_occurs_set;
+		int min_occurs;
+		int max_occurs;
+	};
+
+	bool simple_element_naming_func_has_been_set() const;
+	std::string complex_typename_for_element( std::string const & element_name ) const;
+	DerivedNameFunction naming_func() const;
+	std::list< ElementSummary > const & element_list() const;
+
+private:
+	DerivedNameFunction ct_naming_func_for_simple_subelements_;
+	std::list< ElementSummary > elements_;
+
+};
+
+//class XMLSchemaAdvancedSubelementList : public utility::pointer::ReferenceCount
+//{
+//public:
+//	// A function that returns the name for an object given the name of another related object
+//	// e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
+//	// for a task operation by modifying the name of that task operation.
+//	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+//
+//	// A function that returns the name for a particular object, e.g.
+//	// ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
+//	// for the xs:group listing all of the ResidueSelectors accessible through
+//	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
+//	typedef boost::function< std::string () >                      NameFunction;
+//
+//public:
+//	XMLSchemaAdvancedSubelementList();
+//	~XMLSchemaAdvancedSubelementList();
+//	XMLSchemaAdvancedSubelementList( XMLSchemaAdvancedSubelementList const & src );
+//	XMLSchemaAdvancedSubelementList & operator = ( XMLSchemaAdvancedSubelementList const & rhs );
+//
+//public:
+//
+//	// Functions that the users should interact with
+//
+//	/// @brief the naming function is required if this subelement list is going to be repetable
+//	XMLSchemaAdvancedSubelementList & complex_type_naming_func( DerivedNameFunction const & naming_function );
+//
+//	/// @brief Add a new subelement to the growing list of subelements, defined by its name and a (possibly empty) list of attributes
+//	/// This subelement may not itself contain other subelements, however.  The name for the complexType of this element will be
+//	/// derived from the function given in complex_type_naming_func, if provided, and otherwise, the complexType for this element
+//	/// will be listed within the element declaration and will be unnamed.
+//	XMLSchemaAdvancedSubelementList & add_subelement( std::string const & name, AttributeList const &, SubelementProperties );
+//
+//	/// @brief Add a new subelement to the growing list of subelements, but one whose definition has been provided elsewhere
+//	/// and where the name of the complexType for this subelement is derived from the subelement's name using the
+//	/// provided function.  (Why pass a function to define the name for the complex type instead of just passing the
+//	/// result of the function? Because such an interface would also let you bypass a function entirely and let you pass
+//	/// in a raw string, and that would lead to brittle code. If we should want to change the complexType naming rule
+//	/// for a particular class of elements in the schema, we want to be able to change only a single function and
+//	/// have that change ripple outwards through all the parts of the schema that interacted with those elements.)
+//	XMLSchemaAdvancedSubelementList & add_already_defined_subelement(
+//		std::string const & name,
+//		DerivedNameFunction const & ct_naming_function
+//	);
+//
+//	/// @brief Add a new subelement to the growing list of subelements which refers to an already existing group
+//	/// whose name is given by the input function.
+//	XMLSchemaAdvancedSubelementList & add_group_subelement(
+//		NameFunction const & group_name_function
+//	);
+//
+//public:
+//
+//	// Functions interacted with by the XMLComplexTypeSchemaGenerator only
+//
+//	struct ElementSummary {
+//		enum { ct_simple, ct_ref, ct_group } element_type;
+//		std::string element_name;
+//		std::string ct_name;
+//		AttributeList attributes;
+//	};
+//
+//	bool simple_element_naming_func_has_been_set() const;
+//	std::string complex_typename_for_element( std::string const & element_name ) const;
+//	DerivedNameFunction naming_func() const;
+//	std::list< ElementSummary > const & element_list() const;
+//
+//private:
+//	DerivedNameFunction ct_naming_func_for_simple_subelements_;
+//	std::list< ElementSummary > elements_;
+//
+//
+//};
+
+
+/// @brief The %XMLComplexTypeSchemaGenerator is used to define the schema for a complex type
+/// as they typically occurr in Rosetta.
+///
+/// @details There are four main categories of complexTypes that regularly appear in Rosetta's
+/// XML Schemas:
+/// 1) complexTypes that contain only attributes, but no subelements
+///
+/// 2) complexTypes that contain subelements that can repeat and that need not appear at all
+///    e.g.
+///    <DsspDesignOperation blueprint="somefile">
+///      <Strand aa="ACDEFGH"/>
+///      <Helix aa="ACDEFG"/>
+///      <all append="IKLMNP"/>
+///      <Helix exclude="P"/>
+///    </DsspDesignOperation>
+///
+///    (Perhaps a repreat presence of "Helix" could be avoided, but the way DDO works currently,
+///    repeat appearances are perfectly legal and sensical.).
+///
+/// 3) complexTypes that contain subelements that can can appear zero or one times, where
+///    the subelements are allowed to appear in any order, and
+///
+/// 4) complexTypes that contain subelements that must appear once, where the subelements are
+///    allowed to appear in any order
+///
+/// Clearly XML Schema can support more kinds of elements than the four that are supported by
+/// this class, but these are the ones that seem to appear the most frequently. All
+/// functionality provided by this class can also be accomplished using the XMLSchemaComplexType
+/// and XMLSchemaElement classes, but would require a deeper understanding of XML Schema. The
+/// niche that this class fills is to make it easy for developers to provide XSDs for these
+/// most-common case. Adding additional functionality to this class comes at the expense of
+/// making it less clear how the class should be used.  Write me if you feel that there
+/// categories that should be added.
+class XMLComplexTypeSchemaGenerator : public utility::pointer::ReferenceCount
+{
+public:
+	// A function that returns the name for an object given the name of another related object
+	// e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
+	// for a task operation by modifying the name of that task operation.
+	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+
+	// A function that returns the name for a particular object, e.g.
+	// ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
+	// for the xs:group listing all of the ResidueSelectors accessible through
+	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
+	typedef boost::function< std::string () >                      NameFunction;
+
+
+public:
+	XMLComplexTypeSchemaGenerator();
+	~XMLComplexTypeSchemaGenerator();
+	XMLComplexTypeSchemaGenerator(	XMLComplexTypeSchemaGenerator const & src );
+	XMLComplexTypeSchemaGenerator & operator = ( 	XMLComplexTypeSchemaGenerator const & rhs );
+
+	XMLComplexTypeSchemaGenerator & element_name( std::string const & );
+	XMLComplexTypeSchemaGenerator & complex_type_naming_func( DerivedNameFunction const & naming_function );
+	XMLComplexTypeSchemaGenerator & add_attribute( XMLSchemaAttribute const & attribute );
+	// @brief Add a required "name" attribute of type "xs_string." Note that most name attributes are optional
+	XMLComplexTypeSchemaGenerator & add_required_name_attribute();
+	// @brief Add an optional "name" attribute of type "xs_string." Note that most name attributes are optional
+	XMLComplexTypeSchemaGenerator & add_optional_name_attribute();
+	XMLComplexTypeSchemaGenerator & add_attributes( AttributeList const & attributes );
+
+	/// @brief set subelements as repeatable (and optional); setting the sub-elements replaces any sub-elements that were previously set.
+	/// These repeatable subelements are allowed to appear in any order from the point of view of the XML Schema, which is
+	/// not to say that the order in which they appear cannot matter to the code reading these subelements.  The group_name
+	/// string must be unique to Rosetta's XSD; it is needed in order to define an xs:group and then refer to that group within
+	/// this xs:complexType.
+	XMLComplexTypeSchemaGenerator & set_subelements_repeatable(
+		XMLSchemaSimpleSubelementList const & subelements,
+		NameFunction const & group_name_function,
+		int min_occurs = 1,
+		int max_occurs = xsminmax_unbounded
+	);
+
+	/// @brief set subelements as single-appearance (and required); setting the sub-elements replaces any sub-elements that were previously set.
+	/// These single-appearance subelements are allowed to appear in any order from the point of view of the XML Schema, which is
+	/// not to say that the order in which they appear cannot matter to the code reading these subelements.
+	/// Due to limitations of XML Schema, if you have a "group" subelement, then it must appear alone; it may not appear with
+	/// any other group subelements, and it may not appear with other "regular" subelements.
+	XMLComplexTypeSchemaGenerator & set_subelements_single_appearance_required( XMLSchemaSimpleSubelementList const & subelements );
+
+	/// @brief set subelements as single-appearance (and optional); setting the sub-elements replaces any sub-elements that were previously set.
+	/// These single-appearance subelements are allowed to appear in any order from the point of view of the XML Schema, which is
+	/// not to say that the order in which they appear cannot matter to the code reading these subelements.
+	XMLComplexTypeSchemaGenerator & set_subelements_single_appearance_optional( XMLSchemaSimpleSubelementList const & subelements );
+
+
+	/// @brief set subelements as single-appearance (and required) with a specified order;
+	/// setting the sub-elements replaces any sub-elements that were previously set.
+	XMLComplexTypeSchemaGenerator & set_subelements_single_appearance_required_and_ordered(
+		XMLSchemaSimpleSubelementList const & subelements
+	);
+
+
+	void write_complex_type_to_schema( XMLSchemaDefinition & xsd );
+
+
+private:
+	class XMLComplexTypeSchemaGeneratorImpl * pimpl_;
+
+};
+
 void indent_w_spaces( int indentation, std::ostream & os );
 std::string restriction_type_name( XMLSchemaRestrictionType type );
 std::ostream & operator << ( std::ostream & os, XMLSchemaRestrictionType type );
-std::string xs_complex_type_type_name( XMLSchemaComplexTypeType xsctt );
-std::ostream & operator << ( std::ostream & os, XMLSchemaComplexTypeType type );
+std::string xs_model_group_name( XMLSchemaModelGroupType xsmgt );
+std::ostream & operator << ( std::ostream & os, XMLSchemaModelGroupType type );
 
+/// @brief Add a type to the XML Schema Definition that might be used
+/// in several places.  Available options are:
+/// 1) int_cslist -- a comma-separated list of integers
+/// 2) "non_negative_integer" -- i.e. a Size, except, smaller than 2 billion
+/// 3) "zero_or_one" -- i.e. the way Rosetta reads boolean values
+void
+activate_common_simple_type(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & desired_type
+);
+
+/// @brief Convenience function for defining an inclusive range restriction
+XMLSchemaRestriction
+integer_range_restriction( std::string const & name, int lower_inclusive, int upper_inclusive );
+
+/// @brief This function creates an attribute named "name" of type xs_string that is required;
+/// naming is not always required -- it is not even mostly required.
+XMLSchemaAttribute
+required_name_attribute();
+
+/// @brief This function creates an attribute named "name" of type xs_string that is optional;
+/// naming is not always required -- it is not even mostly required.
+XMLSchemaAttribute
+optional_name_attribute();
+
+/// @brief append an attribute of "name" with type "xs:string" along with the other attributes
+/// in the input attribute list to the input complex type.
+void
+append_name_and_attributes_to_complex_type(
+	AttributeList const & attributes,
+	XMLSchemaComplexType & type_definition
+);
+
+/// @brief append a required attribute of "name" with type "xs:string" along with the
+/// other attributes in the input attribute list to the input complex type.
+void
+append_required_name_and_attributes_to_complex_type(
+	AttributeList const & attributes,
+	XMLSchemaComplexType & type_definition
+);
 
 }
 }

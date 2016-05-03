@@ -65,7 +65,7 @@ public:
 	get_name() const;
 
 	static std::string class_name();
-	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 #ifdef    SERIALIZATION
 public:

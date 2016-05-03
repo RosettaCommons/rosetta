@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -52,6 +53,8 @@ public:
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "ConservativeDesignOperation"; }
 
 public:
 

@@ -29,6 +29,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 
@@ -67,6 +68,9 @@ public:
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictToLoopsAndNeighbors"; }
 
 	bool include_neighbors() const;
 	void set_include_neighbors( bool include_neighbors );

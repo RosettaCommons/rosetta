@@ -20,6 +20,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -34,6 +35,10 @@ public:
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual core::pack::task::operation::ResFilterOP clone() const {return (core::pack::task::operation::ResFilterOP( new ProteinCore( *this) ));}
 	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real distance_threshold_; // dflt 8.0A; sphere around the residue
 	core::Size neighbor_cutoff_; // dflt 10; how many residues in the sequence around the target residue to ignore in computing neighbours

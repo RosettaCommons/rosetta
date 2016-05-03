@@ -29,6 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 namespace core {
@@ -54,11 +55,8 @@ public:
 	virtual TaskOperationOP clone() const;
 
 	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-	/// Does NOT Work! DO NOT USE parse_tag here
-	virtual void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );
 	//void symmetric_task( core::pose::Pose const & pose, task::PackerTask & task ) const;
 	void set_native_task( core::pack::task::PackerTaskOP native_task);
-
 
 private:
 	core::pack::task::PackerTaskOP native_task_;

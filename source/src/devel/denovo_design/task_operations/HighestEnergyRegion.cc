@@ -27,8 +27,8 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <basic/datacache/DataMap.hh>
@@ -39,16 +39,34 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 
 // utility headers
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
+#include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.task_operations.HighestEnergyRegion" );
 
 namespace devel {
 namespace denovo_design {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+/// @brief utility function that compares two resid-probability pairs and returns true of the probability of the first is greater than probability of the second
+bool compare_prob_energy( std::pair< core::Size, core::Real > const & p1,
+	std::pair< core::Size, core::Real > const & p2 ) {
+	return ( p1.second > p2.second );
+}
+
+/// @brief same as teh function above, only for packstat
+bool compare_pack_energy( std::pair< core::Size, core::Real > const & p1,
+	std::pair< core::Size, core::Real > const & p2 ) {
+	return ( p1.second <= p2.second );
+}
+
 
 // default constructor
 HighestEnergyRegionOperation::HighestEnergyRegionOperation()
@@ -81,18 +99,6 @@ HighestEnergyRegionOperation::~HighestEnergyRegionOperation()
 core::pack::task::operation::TaskOperationOP
 HighestEnergyRegionOperation::clone() const {
 	return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation( *this ) );
-}
-
-/// @brief utility function that compares two resid-probability pairs and returns true of the probability of the first is greater than probability of the second
-bool compare_prob_energy( std::pair< core::Size, core::Real > const & p1,
-	std::pair< core::Size, core::Real > const & p2 ) {
-	return ( p1.second > p2.second );
-}
-
-/// @brief same as teh function above, only for packstat
-bool compare_pack_energy( std::pair< core::Size, core::Real > const & p1,
-	std::pair< core::Size, core::Real > const & p2 ) {
-	return ( p1.second <= p2.second );
 }
 
 /// @brief apply
@@ -138,6 +144,24 @@ HighestEnergyRegionOperation::parse_tag( utility::tag::TagCOP tag, basic::dataca
 	scorefxn_->set_weight( core::scoring::dihedral_constraint, 1.0 );
 	scorefxn_->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 	scorefxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );*/
+}
+
+void
+HighestEnergyRegionOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_w_attributes( xsd, keyname(), schema_attributes(xsd) );
+}
+
+utility::tag::AttributeList
+HighestEnergyRegionOperation::schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+	// AMW TODO: defaults are the values of member variables...
+	attributes.push_back( XMLSchemaAttribute( "region_shell", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "regions_to_design", "non_negative_integer" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_non_selected", "non_negative_integer" ) );
+	return attributes;
 }
 
 /// @brief Gets a list of residues to design, but uses cached result if present
@@ -225,16 +249,6 @@ HighestEnergyRegionOperation::set_scorefxn( core::scoring::ScoreFunctionOP score
 	scorefxn_ = scorefxn->clone();
 }
 
-core::pack::task::operation::TaskOperationOP
-HighestEnergyRegionOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation );
-}
-
-std::string
-HighestEnergyRegionOperationCreator::keyname() const {
-	return "HighestEnergyRegion";
-}
-
 /// @brief tells this task operation whether it should use the cache when it is applied (and not determine residues to design again)
 void
 HighestEnergyRegionOperation::set_use_cache( bool const use_cache ) {
@@ -318,6 +332,21 @@ HighestEnergyRegionOperation::repack_non_selected() const
 	return repack_non_selected_;
 }
 
+core::pack::task::operation::TaskOperationOP
+HighestEnergyRegionOperationCreator::create_task_operation() const {
+	return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation );
+}
+
+void
+HighestEnergyRegionOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	HighestEnergyRegionOperation::provide_xml_schema( xsd );
+}
+
+std::string
+HighestEnergyRegionOperationCreator::keyname() const {
+	return HighestEnergyRegionOperation::keyname();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// DesignByPackStat
 ////////////////////////////////////////////////////////////////////////////////
@@ -392,9 +421,22 @@ DesignRandomRegionOperationCreator::create_task_operation() const {
 	return core::pack::task::operation::TaskOperationOP( new DesignRandomRegionOperation );
 }
 
+void DesignRandomRegionOperationCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	DesignRandomRegionOperation::provide_xml_schema( xsd );
+}
+
+
 std::string
 DesignRandomRegionOperationCreator::keyname() const {
-	return "DesignRandomRegion";
+	return DesignRandomRegionOperation::keyname();
+}
+
+// AMW: no parse_tag, relies on parent's version
+void
+DesignRandomRegionOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
 }
 
 /// @brief default constructor
@@ -450,9 +492,21 @@ DesignByResidueCentralityOperationCreator::create_task_operation() const {
 	return core::pack::task::operation::TaskOperationOP( new DesignByResidueCentralityOperation );
 }
 
+void DesignByResidueCentralityOperationCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	DesignByResidueCentralityOperation::provide_xml_schema( xsd );
+}
+
 std::string
 DesignByResidueCentralityOperationCreator::keyname() const {
-	return "DesignByResidueCentrality";
+	return DesignByResidueCentralityOperation::keyname();
+}
+
+// No parse_tag
+void
+DesignByResidueCentralityOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
 }
 
 /// @brief default constructor
@@ -515,9 +569,21 @@ DesignCatalyticResiduesOperationCreator::create_task_operation() const {
 	return core::pack::task::operation::TaskOperationOP( new DesignCatalyticResiduesOperation );
 }
 
+void DesignCatalyticResiduesOperationCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	DesignCatalyticResiduesOperation::provide_xml_schema( xsd );
+}
+
 std::string
 DesignCatalyticResiduesOperationCreator::keyname() const {
-	return "DesignCatalyticResidues";
+	return DesignCatalyticResiduesOperation::keyname();
+}
+
+
+void
+DesignCatalyticResiduesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
 }
 
 /// @brief default constructor
@@ -569,9 +635,20 @@ DesignByCavityProximityOperationCreator::create_task_operation() const {
 	return core::pack::task::operation::TaskOperationOP( new DesignByCavityProximityOperation );
 }
 
+void DesignByCavityProximityOperationCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	DesignByCavityProximityOperation::provide_xml_schema( xsd );
+}
+
 std::string
 DesignByCavityProximityOperationCreator::keyname() const {
-	return "DesignByCavityProximity";
+	return DesignByCavityProximityOperation::keyname();
+}
+
+void
+DesignByCavityProximityOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
 }
 
 /// @brief default constructor

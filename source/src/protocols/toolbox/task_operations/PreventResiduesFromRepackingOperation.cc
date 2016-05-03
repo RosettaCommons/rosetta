@@ -29,6 +29,8 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
 
@@ -50,6 +52,23 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+PreventResiduesFromRepackingOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new PreventResiduesFromRepackingOperation );
+}
+
+void PreventResiduesFromRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PreventResiduesFromRepackingOperation::provide_xml_schema( xsd );
+}
+
+std::string PreventResiduesFromRepackingOperationCreator::keyname() const
+{
+	return PreventResiduesFromRepackingOperation::keyname();
+}
 
 PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation() {}
 
@@ -59,12 +78,6 @@ PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation( ut
 }
 
 PreventResiduesFromRepackingOperation::~PreventResiduesFromRepackingOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-PreventResiduesFromRepackingOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new PreventResiduesFromRepackingOperation );
-}
 
 core::pack::task::operation::TaskOperationOP PreventResiduesFromRepackingOperation::clone() const
 {
@@ -113,7 +126,7 @@ PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 		TR<<"No residues specified to prevent repacking. I'm doing nothing"<<std::endl;
 		return;
 	}
-	unparsed_residues_ = tag->getOption< std::string >( "residues" ) ;
+	unparsed_residues_ = tag->getOption< std::string >( "residues", "" ) ;
 	if ( unparsed_residues_ != "" ) {
 
 		core::pose::Pose reference_pose;
@@ -135,6 +148,18 @@ PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 		}
 	}
 }
+
+void PreventResiduesFromRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "reference_pdb_id", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "residues", xs_string, "" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations

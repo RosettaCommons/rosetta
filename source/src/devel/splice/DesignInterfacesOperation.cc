@@ -29,6 +29,8 @@
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
@@ -58,6 +60,7 @@ namespace devel {
 namespace splice {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
 
 DesignInterfacesOperation::DesignInterfacesOperation() :
@@ -74,6 +77,22 @@ core::pack::task::operation::TaskOperationOP
 DesignInterfacesOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new DesignInterfacesOperation );
+}
+
+void DesignInterfacesOperationCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	DesignInterfacesOperation::provide_xml_schema( xsd );
+}
+
+std::string DesignInterfacesOperationCreator::keyname() const {
+	return DesignInterfacesOperation::keyname();
+}
+
+void DesignInterfacesOperation::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) {
+	task_op_schema_empty( xsd, keyname() );
 }
 
 core::pack::task::operation::TaskOperationOP DesignInterfacesOperation::clone() const

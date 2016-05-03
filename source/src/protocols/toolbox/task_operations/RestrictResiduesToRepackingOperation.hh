@@ -27,6 +27,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -56,6 +57,8 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictResiduesToRepacking"; }
 
 	virtual void parse_tag( TagCOP, DataMap & );
 

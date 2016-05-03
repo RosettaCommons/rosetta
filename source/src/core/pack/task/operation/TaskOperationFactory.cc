@@ -19,16 +19,19 @@
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 #include <core/pack/task/operation/ResFilterCreator.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
+// Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/vector1.hh>
-
 #include <utility/vector0.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
@@ -190,6 +193,25 @@ TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacac
 	TR << tag << std::endl;
 	newTaskOperations( tops, datamap, tag );
 }
+
+void TaskOperationFactory::define_task_op_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			task_operation_creator_map_,
+			task_operation_xml_schema_group_name(),
+			& complex_type_name_for_task_op,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for TaskOperations from TaskOperationFactory\n" + e.msg() );
+	}
+
+}
+
+std::string TaskOperationFactory::task_operation_xml_schema_group_name() {
+	return "task_operation";
+}
+
 
 } //namespace operation
 } //namespace task

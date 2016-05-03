@@ -20,9 +20,9 @@
 #include <basic/datacache/DataMap.hh>
 
 // Package headers
-#include <core/pose/selection.hh>
-#include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh> // for xml schema utility functions
+#include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -74,34 +74,28 @@ ResidueSubset
 /// @details Parse RosettaScripts tags and set up this mover.
 void
 --class--::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap & /*datamap*/
-) {
-	//TODO -- write your XML-parsing function here.
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap)
+{
+
 
 }
 
-/// @brief Get the mover class name.
-///
-std::string --class--::get_name() const {
+std::string --class--::get_name() const
+{
 	return --class--::class_name();
 }
 
-/// @brief Get the mover class name.
-///
-std::string --class--::class_name() {
+std::string --class--::class_name()
+{
 	return "--class--";
 }
 
-/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
-///
-void
---class--::provide_selector_xsd( utility::tag::XMLSchemaDefinition & /*xsd*/ ) {
-	using namespace utility::tag;
-	//TODO -- add XSD information here.
+void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
 }
 
-core::select::residue_selector::ResidueSelectorOP
+ResidueSelectorOP
 --class--Creator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (

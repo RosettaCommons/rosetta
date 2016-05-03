@@ -34,6 +34,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -61,6 +62,8 @@ public:
 
 	virtual void parse_tag( TagCOP, DataMap & );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 /// @brief RestrictResidueToRepacking
@@ -82,6 +85,9 @@ public:
 	void clear();
 
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	utility::vector1< core::Size > residues_to_restrict_to_repacking_;
@@ -115,7 +121,12 @@ public:
 	void keep_aas( utility::vector1< bool > keep_aas );
 
 	virtual void parse_tag( TagCOP, DataMap & );
+
 	void include_residue( core::Size const resid );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size resid_;
 	utility::vector1< bool > keep_aas_;
@@ -149,6 +160,9 @@ public:
 	void restrict_to_residue( utility::vector1< core::Size > const & residues);
 	virtual void parse_tag( TagCOP, DataMap & );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< bool > invert_vector( utility::vector1< bool > disallowed_aas);
 	utility::vector1< core::Size > residue_selection_;
@@ -168,9 +182,14 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
+
 	void resid( core::Size const r );
 	void chi( core::Size const c );
 	void sample_level( ExtraRotSample const s );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size resid_, chi_;
 	ExtraRotSample sample_level_;
@@ -191,6 +210,9 @@ public:
 	apply( pose::Pose const &, PackerTask & ) const;
 
 	virtual void parse_tag( TagCOP, DataMap & ); //parses nothing
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 class InitializeExtraRotsFromCommandline : public TaskOperation
@@ -207,6 +229,9 @@ public:
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class IncludeCurrent : public TaskOperation
@@ -222,6 +247,9 @@ public:
 	virtual
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 };
 
@@ -287,14 +315,23 @@ public:
 
 	ExtraRotamerSamplingData const & sampling_data() const;
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	ExtraRotamerSamplingData sampling_data_;
 };
 
+/// @brief Initialize rotamer sampling data based on the options (attributes) in an input Tag.
 void parse_rotamer_sampling_data(
 	utility::tag::TagCOP tag,
 	ExtraRotamerSamplingData & sampling_data
 );
+
+/// @brief Return the list of XML schema attributes that are read by the parse_rotamer_sampling_data
+/// function.
+utility::tag::AttributeList
+rotamer_sampling_data_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
 
 void set_rotamer_sampling_data_for_RLT(
 	ExtraRotamerSamplingData const & sampling_data,
@@ -329,6 +366,10 @@ public:
 	/// @brief Read in the resfile and store it, so that it
 	/// doesn't have to be read over and over again at apply time.
 	void cache_resfile();
+
+	static std::string keyname();
+	static utility::tag::AttributeList xml_schema_attributes();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 
@@ -380,6 +421,9 @@ public:
 		ResfileContents const & contents,
 		PackerTask const & ptask ) const;
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	bool apply_default_commands_to_inserts_;
 
@@ -405,6 +449,9 @@ public:
 
 	void
 	set_couplings( rotamer_set::RotamerCouplingsOP couplings );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
 private:
@@ -432,6 +479,8 @@ public:
 	void
 	set_links( rotamer_set::RotamerLinksOP links );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	rotamer_set::RotamerLinksCOP rotamer_links_;
@@ -452,6 +501,8 @@ public:
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
 	void set_rotamer_operation( rotamer_set::RotamerOperationOP rotamer_operation );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	rotamer_set::RotamerOperationOP rotamer_operation_;
@@ -473,6 +524,9 @@ public:
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
 	void set_rotamer_set_operation( rotamer_set::RotamerSetOperationOP rotamer_operation );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	rotamer_set::RotamerSetOperationOP rotamer_set_operation_;
 };
@@ -493,6 +547,9 @@ public:
 	void set_resnum( core::Size resnum );
 	void set_rotamer_set_operation( rotamer_set::RotamerSetOperationOP rotamer_operation );
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size resnum_;
 	rotamer_set::RotamerSetOperationOP rotamer_set_operation_;
@@ -512,6 +569,8 @@ public:
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 
@@ -534,6 +593,9 @@ public:
 	void clear();
 
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	utility::vector1< core::Size > residues_to_prevent_;
@@ -559,6 +621,9 @@ public:
 	void include_gly( bool const gly );
 	// void clear();  // Not defined, commenting out to make Python binding compile
 
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< core::Size > YSresids_;
 	bool gly_switch_;
@@ -576,6 +641,9 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 private:
 	core::Size resid_, chi_, level_;
 };
@@ -592,6 +660,9 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 private:
 	core::Size resid_, extrachi_cutoff_;
 };

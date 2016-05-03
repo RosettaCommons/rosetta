@@ -21,11 +21,16 @@
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 //initialize to default packer settings
 ModifyAnnealer::ModifyAnnealer():
@@ -58,9 +63,30 @@ void ModifyAnnealer::parse_tag( utility::tag::TagCOP tag, basic::datacache::Data
 	low_temp_ = tag->getOption< core::Real >("low_temp", 0.3);
 }
 
+void ModifyAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "disallow_quench", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "high_temp", xs_decimal, "100.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "low_temp", xs_decimal, "0.3" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 core::pack::task::operation::TaskOperationOP ModifyAnnealerCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new ModifyAnnealer );
+}
+
+void ModifyAnnealerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ModifyAnnealer::provide_xml_schema( xsd );
+}
+
+std::string ModifyAnnealerCreator::keyname() const
+{
+	return ModifyAnnealer::keyname();
 }
 
 } //task_operations

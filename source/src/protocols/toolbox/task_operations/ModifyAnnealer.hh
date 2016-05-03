@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -47,6 +48,8 @@ public:
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "ModifyAnnealer"; }
 
 private:
 

@@ -27,6 +27,7 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 using namespace core::pack::task;
 
@@ -63,6 +64,8 @@ public:
 
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictNativeResidues"; }
 
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose( core::pose::PoseCOP reference_pose );

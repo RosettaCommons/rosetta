@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -76,6 +77,8 @@ public:
 
 	/// @brief sets the comma-separated string of 3-character residue names to be selected
 	void set_residue_name3( std::string const & res_name3_str );
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private: // data members
 	std::string res_name_str_;

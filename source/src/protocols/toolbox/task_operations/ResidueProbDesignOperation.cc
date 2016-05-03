@@ -20,6 +20,8 @@
 #include <core/chemical/AA.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/random/random.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
@@ -27,6 +29,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueP
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 using namespace core::chemical;
 using core::pack::task::PackerTask;
@@ -36,6 +41,20 @@ using core::Real;
 using utility::vector1;
 typedef std::map< core::chemical::AA, Real > AAProbabilities; //Map of an amino acid and it's probability.
 typedef std::map< Size, AAProbabilities > PerResidueAAProbSet; //Amino acid probabilities for a particular residue number.
+
+/* AMW: prior to my intervention, this Creator was commented in the hh
+file to fix the PyRosetta build (undefined)
+void ResidueProbDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+ResidueProbDesignOperation::provide_xml_schema( xsd );
+}
+
+std::string ResidueProbDesignOperationCreator::keyname() const
+{
+return ResidueProbDesignOperation::keyname();
+}
+*/
+
 
 ResidueProbDesignOperation::ResidueProbDesignOperation() : core::pack::task::operation::TaskOperation()
 {
@@ -255,6 +274,11 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 	}
 }
 
+// AMW: No parse_tag...
+void ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
 
 } //task_operations
 } //toolbox

@@ -32,6 +32,7 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 #include <map>
@@ -73,6 +74,9 @@ public:
 
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::XMLComplexTypeSchemaGeneratorOP create_complex_type_generator( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "SeqprofConsensus"; }
 
 	core::sequence::SequenceProfileCOP
 	seqprof() const;
@@ -151,6 +155,8 @@ public:
 	virtual TaskOperationOP clone() const;
 
 	void parse_tag( TagCOP tag , DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictConservedLowDdg"; }
 
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 

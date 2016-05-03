@@ -23,6 +23,7 @@
 // project headers
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
@@ -34,6 +35,7 @@
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
 
@@ -41,6 +43,9 @@ namespace devel {
 namespace denovo_design {
 namespace task_operations {
 // helper functions
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Looks for unknown amino acids in the pose and returns their indices
@@ -311,6 +316,24 @@ DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagCOP tag, basic:
 	// now that we have a command, we can create the psipred interface object
 	psipred_interface_ = core::io::external::PsiPredInterfaceOP( new core::io::external::PsiPredInterface( cmd ) );
 	prevent_bad_point_mutants_ = tag->getOption< bool >( "prevent_bad_point_mutations", prevent_bad_point_mutants_ );
+}
+
+void
+DesignBySecondaryStructureOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "region_shell", xs_decimal ) );
+	attributes.push_back( XMLSchemaAttribute( "regions_to_design", "non_negative_integer" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_non_selected", "non_negative_integer" ) );
+
+	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "prevent_bad_point_mutations", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "cmd", xs_boolean ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 void

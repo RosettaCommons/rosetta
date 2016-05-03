@@ -253,11 +253,11 @@ std::string ClashBasedRepackShellSelector::class_name() {
 }
 
 void
-ClashBasedRepackShellSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+ClashBasedRepackShellSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	using namespace select::residue_selector;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "bump_overlap_factor", "real", "0.5" )); // default value specified in XSD
+	attributes.push_back( XMLSchemaAttribute( "bump_overlap_factor", xs_decimal, "0.5" )); // default value specified in XSD
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 
@@ -283,8 +283,8 @@ ClashBasedRepackShellSelectorCreator::keyname() const {
 }
 
 void
-ClashBasedRepackShellSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	ClashBasedRepackShellSelector::provide_selector_xsd( xsd );
+ClashBasedRepackShellSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ClashBasedRepackShellSelector::provide_xml_schema( xsd );
 }
 
 

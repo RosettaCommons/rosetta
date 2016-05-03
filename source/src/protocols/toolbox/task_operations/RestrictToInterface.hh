@@ -28,6 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/tools/make_vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -74,6 +75,8 @@ public:
 	virtual TaskOperationOP clone() const;
 
 	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DockingNoRepack1"; }
 
 private:
 	int rb_jump_;
@@ -95,6 +98,8 @@ public:
 	virtual TaskOperationOP clone() const;
 
 	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DockingNoRepack2"; }
 
 private:
 	int rb_jump_;
@@ -153,6 +158,8 @@ public:
 
 	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictToInterface"; }
 
 private:
 	//utility::vector1_int rb_jump_;

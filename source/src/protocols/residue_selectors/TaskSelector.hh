@@ -61,7 +61,7 @@ public:
 	std::string
 	get_name() const;
 
-	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 
 	static std::string class_name();
 

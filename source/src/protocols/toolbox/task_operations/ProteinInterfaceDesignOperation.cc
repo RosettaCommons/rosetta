@@ -27,6 +27,9 @@
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -48,6 +51,23 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+core::pack::task::operation::TaskOperationOP
+ProteinInterfaceDesignOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation );
+}
+
+void ProteinInterfaceDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinInterfaceDesignOperation::provide_xml_schema( xsd );
+}
+
+std::string ProteinInterfaceDesignOperationCreator::keyname() const
+{
+	return ProteinInterfaceDesignOperation::keyname();
+}
 
 ProteinInterfaceDesignOperation::ProteinInterfaceDesignOperation() :
 	repack_chain1_( 1 ),
@@ -63,12 +83,6 @@ ProteinInterfaceDesignOperation::ProteinInterfaceDesignOperation() :
 {}
 
 ProteinInterfaceDesignOperation::~ProteinInterfaceDesignOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-ProteinInterfaceDesignOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation );
-}
 
 core::pack::task::operation::TaskOperationOP ProteinInterfaceDesignOperation::clone() const
 {
@@ -218,6 +232,27 @@ ProteinInterfaceDesignOperation::parse_tag( TagCOP tag , DataMap & )
 	modify_before_jump( tag->getOption< bool >( "modify_before_jump", 1 ) );
 	modify_after_jump(  tag->getOption< bool >( "modify_after_jump",  1 ) );
 }
+
+void ProteinInterfaceDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "repack_chain1", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "repack_chain2", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_chain1", "non_negative_integer", "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_chain2", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "allow_all_aas", "non_negative_integer", "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_all_aas", "non_negative_integer", "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "jump", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "interface_distance_cutoff", xs_decimal, "8.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "modify_before_jump", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "modify_after_jump", xs_boolean, "true" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 } //namespace protocols
 } //namespace toolbox

@@ -15,8 +15,11 @@
 #ifndef INCLUDED_utility_tag_XMLSchemaGeneration_FWD_HH
 #define INCLUDED_utility_tag_XMLSchemaGeneration_FWD_HH
 
-// Utility Headers
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
+
+// C++ headers
+#include <list>
 
 namespace utility {
 namespace tag {
@@ -29,6 +32,8 @@ class XMLSchemaAttribute;
 typedef utility::pointer::shared_ptr< XMLSchemaAttribute > XMLSchemaAttributeOP;
 typedef utility::pointer::shared_ptr< XMLSchemaAttribute const > XMLSchemaAttributeCOP;
 
+typedef std::list< utility::tag::XMLSchemaAttribute > AttributeList;
+
 class XMLSchemaElement;
 typedef utility::pointer::shared_ptr< XMLSchemaElement > XMLSchemaElementOP;
 typedef utility::pointer::shared_ptr< XMLSchemaElement const > XMLSchemaElementCOP;
@@ -36,6 +41,14 @@ typedef utility::pointer::shared_ptr< XMLSchemaElement const > XMLSchemaElementC
 class XMLSchemaRestriction;
 typedef utility::pointer::shared_ptr< XMLSchemaRestriction > XMLSchemaRestrictionOP;
 typedef utility::pointer::shared_ptr< XMLSchemaRestriction const > XMLSchemaRestrictionCOP;
+
+class XMLSchemaParticle;
+typedef utility::pointer::shared_ptr< XMLSchemaParticle > XMLSchemaParticleOP;
+typedef utility::pointer::shared_ptr< XMLSchemaParticle const > XMLSchemaParticleCOP;
+
+class XMLSchemaModelGroup;
+typedef utility::pointer::shared_ptr< XMLSchemaModelGroup > XMLSchemaModelGroupOP;
+typedef utility::pointer::shared_ptr< XMLSchemaModelGroup const > XMLSchemaModelGroupCOP;
 
 class XMLSchemaComplexType;
 typedef utility::pointer::shared_ptr< XMLSchemaComplexType > XMLSchemaComplexTypeOP;
@@ -48,6 +61,15 @@ typedef utility::pointer::shared_ptr< XMLSchemaElementType const > XMLSchemaElem
 class XMLSchemaDefinition;
 typedef utility::pointer::shared_ptr< XMLSchemaDefinition > XMLSchemaDefinitionOP;
 typedef utility::pointer::shared_ptr< XMLSchemaDefinition const > XMLSchemaDefinitionCOP;
+
+class XMLSchemaSimpleSubelementList;
+typedef utility::pointer::shared_ptr< XMLSchemaSimpleSubelementList > XMLSchemaSimpleSubelementListOP;
+typedef utility::pointer::shared_ptr< XMLSchemaSimpleSubelementList const > XMLSchemaSimpleSubelementListCOP;
+
+class XMLComplexTypeSchemaGenerator;
+typedef utility::pointer::shared_ptr< XMLComplexTypeSchemaGenerator > XMLComplexTypeSchemaGeneratorOP;
+typedef utility::pointer::shared_ptr< XMLComplexTypeSchemaGenerator const > XMLComplexTypeSchemaGeneratorCOP;
+
 
 enum XMLSchemaDataType {
 	xs_string,
@@ -79,20 +101,18 @@ enum XMLSchemaRestrictionType {
 	xsr_whitespace
 };
 
-enum XMLSchemaComplexTypeType {
-	xsctt_empty,
-	xsctt_sequence,
-	xsctt_all,
-	xsctt_choice,
-	xsctt_group
+enum XMLSchemaModelGroupType {
+	xsmgt_sequence,
+	xsmgt_all,
+	xsmgt_choice,
+	xsmgt_group
 };
 
 enum XMLSchemaElementCategory {
 	xs_element_is_type_reference,
-	xs_element_is_group_reference,
-	xs_element_is_restriction_w_definition,
-	xs_element_is_simple_type_w_definition,
-	xs_element_is_complex_type_w_definition
+	xs_element_is_abstract,
+	xs_element_is_complex_type_w_definition,
+	xs_element_is_element_reference
 };
 
 }

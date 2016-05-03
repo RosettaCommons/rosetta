@@ -52,6 +52,7 @@
 
 //utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <string>
@@ -232,6 +233,8 @@ public:
 public:
 
 	void parse_tag( TagCOP tag, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "LayerDesign"; }
 
 	void parse_layer_tag( TagCOP layer_tag, DataMap & datamap );
 

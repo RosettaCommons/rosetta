@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Utility Headers
 
@@ -50,6 +51,9 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictByCalculators"; }
 
 private:
 

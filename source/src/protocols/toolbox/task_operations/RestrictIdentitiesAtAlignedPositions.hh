@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
@@ -52,6 +53,8 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	virtual void parse_tag( TagCOP, DataMap & );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictIdentitiesAtAlignedPositions"; }
 
 	utility::vector1< core::Size > res_ids() const{ return res_ids_; }
 	void res_ids( utility::vector1< core::Size > const s ){ res_ids_ = s; }

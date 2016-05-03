@@ -27,10 +27,13 @@
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <utility/tag/Tag.fwd.hh>
 
-// Utility Headers
-#include <core/types.hh>
+// Utility headers
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+
+#include <iosfwd>
 
 namespace devel {
 namespace denovo_design {
@@ -66,6 +69,10 @@ public:
 public:
 	void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map );
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "HighestEnergyRegionOperation"; }
 
 	/// @brief tells this task operation whether it should use the cache when it is applied
 	void set_use_cache( bool const use_cache );
@@ -155,6 +162,10 @@ public:
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "PackStat"; }
 
+	// AMW: doesn't have a Creator yet.
+	//static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	//static std::string keyname() { return "DesignByPackStatOperation"; }
+
 private:
 };
 
@@ -176,6 +187,9 @@ public:
 
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "RandomRegion"; }
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignRandomRegionOperation"; }
 
 private:
 };
@@ -199,6 +213,9 @@ public:
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "ResidueCentrality"; }
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignByResidueCentralityOperation"; }
+
 private:
 };
 
@@ -221,6 +238,9 @@ public:
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "CatalyticResidues"; }
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignCatalyticResiduesOperation"; }
+
 private:
 };
 
@@ -242,6 +262,8 @@ public:
 
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "CavityProximity"; }
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

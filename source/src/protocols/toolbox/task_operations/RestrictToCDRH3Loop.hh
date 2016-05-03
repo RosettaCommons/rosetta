@@ -24,6 +24,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -50,6 +51,8 @@ public:
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictToCDRH3Loop"; }
 
 private:
 	bool residue_is_in_h3_loop( core::pose::Pose const & pose, Size residue_number ) const;

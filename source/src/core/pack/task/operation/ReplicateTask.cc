@@ -15,7 +15,6 @@
 /// @author stranges
 
 #include <core/pack/task/operation/ReplicateTask.hh>
-#include <core/pack/task/operation/ReplicateTaskCreator.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -56,11 +55,6 @@ task::operation::TaskOperationOP ReplicateTask::clone() const
 	return task::operation::TaskOperationOP( new ReplicateTask( *this ) );
 }
 
-task::operation::TaskOperationOP ReplicateTaskCreator::create_task_operation() const
-{
-	return task::operation::TaskOperationOP( new ReplicateTask );
-}
-
 void
 ReplicateTask::apply(
 	pose::Pose const & pose,
@@ -89,13 +83,6 @@ ReplicateTask::apply(
 void
 ReplicateTask::set_native_task( core::pack::task::PackerTaskOP native_task){
 	native_task_ = native_task;
-}
-
-/// @brief does not work within parser framework so exit if try to use.
-void
-ReplicateTask::parse_tag( TagCOP, DataMap & )
-{
-	utility_exit_with_message_status( "No parse_tag for ReplicateTask.  Exiting...\n", 1 );
 }
 
 //private:

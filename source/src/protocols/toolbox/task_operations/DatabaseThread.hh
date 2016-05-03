@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -71,6 +72,8 @@ public:
 	void target_sequence( std::string const seq ) {target_sequence_ = seq; };//setter
 	std::string target_sequence() const {return target_sequence_; };//getter
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DatabaseThread"; }
 
 private:
 	std::string target_sequence_;

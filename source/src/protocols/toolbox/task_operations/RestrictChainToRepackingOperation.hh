@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -43,17 +44,20 @@ public:
 
 	RestrictChainToRepackingOperation();
 	RestrictChainToRepackingOperation( core::Size const chain );
-	void chain( core::Size const chain );
-	core::Size chain() const;
 	virtual ~RestrictChainToRepackingOperation();
-
 	virtual TaskOperationOP clone() const;
 
 	virtual
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
+	void chain( core::Size const chain );
+	core::Size chain() const;
+
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::Size chain_;

@@ -27,6 +27,8 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <utility/vector0.hh>
 
@@ -40,6 +42,7 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
 
 AlignedThreadOperation::AlignedThreadOperation() :
@@ -56,6 +59,16 @@ core::pack::task::operation::TaskOperationOP
 AlignedThreadOperationCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new AlignedThreadOperation );
+}
+
+void AlignedThreadOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AlignedThreadOperation::provide_xml_schema( xsd );
+}
+
+std::string AlignedThreadOperationCreator::keyname() const
+{
+	return AlignedThreadOperation::keyname();
 }
 
 core::pack::task::operation::TaskOperationOP AlignedThreadOperation::clone() const
@@ -131,6 +144,20 @@ AlignedThreadOperation::parse_tag( TagCOP tag , DataMap & )
 	start_res( tag->getOption< core::Size >( "start_res", 1 ) );
 
 	TR<<"Aligned thread with options: alignment_file: "<<alignment_file()<<" query_name: "<<query_name()<<" start_res: "<<start_res()<<std::endl;
+}
+
+void AlignedThreadOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "alignment_file", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "query_name", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "template_name", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "start_res", "non_negative_integer", "1" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace protocols

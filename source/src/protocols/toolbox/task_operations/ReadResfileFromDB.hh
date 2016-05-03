@@ -25,6 +25,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <utility/vector1.hh>
@@ -55,6 +56,7 @@ public:
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void db_session(utility::sql_database::sessionOP db_session);
 
@@ -62,6 +64,7 @@ public:
 	std::string const & database_table() const;
 
 	virtual void parse_tag(utility::tag::TagCOP, DataMap &);
+	static std::string keyname() { return "ReadResfileFromDB"; }
 
 private:
 	std::string database_table_;

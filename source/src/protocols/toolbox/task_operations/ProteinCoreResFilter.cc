@@ -16,6 +16,8 @@
 #include <protocols/toolbox/task_operations/ProteinCoreResFilterCreator.hh>
 #include <protocols/simple_filters/NonSequentialNeighborsFilter.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -31,6 +33,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ProteinC
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 ProteinCore::ProteinCore() :
 	ResFilter(),
@@ -66,11 +71,37 @@ ProteinCore::operator() ( core::pose::Pose const & pose, core::Size index ) cons
 	return( neighbor_count >= neighbor_count_cutoff_ );
 }
 
+std::string ProteinCore::keyname() { return "ProteinCore"; }
+
+void ProteinCore::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "distance_threshold", xs_decimal, "8.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "neighbor_cutoff", "non_negative_integer", "10" ) );
+	attributes.push_back( XMLSchemaAttribute( "bound", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "jump", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "neighbor_count_cutoff", "non_negative_integer", "6" ) );
+
+	res_filter_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 core::pack::task::operation::ResFilterOP
 ProteinCoreFilterCreator::create_res_filter() const{
 	return core::pack::task::operation::ResFilterOP( new ProteinCore );
 }
 
+std::string ProteinCoreFilterCreator::keyname() const
+{
+	return ProteinCore::keyname();
+}
+
+void ProteinCoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinCore::provide_xml_schema( xsd );
+}
 
 } //namespace protocols
 } //namespace toolbox

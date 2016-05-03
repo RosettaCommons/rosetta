@@ -21,11 +21,14 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <numeric/xyzVector.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <boost/foreach.hpp>
 
@@ -39,7 +42,25 @@ namespace devel {
 namespace splice {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
+
 using namespace std;
+
+core::pack::task::operation::TaskOperationOP
+FindEndpointsOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation );
+}
+
+void FindEndpointsOperationCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	FindEndpointsOperation::provide_xml_schema( xsd );
+}
+
+std::string FindEndpointsOperationCreator::keyname() const {
+	return FindEndpointsOperation::keyname();
+}
 
 FindEndpointsOperation::FindEndpointsOperation() :
 	Cterm_offset_( 0 ),
@@ -54,12 +75,6 @@ FindEndpointsOperation::FindEndpointsOperation() :
 }
 
 FindEndpointsOperation::~FindEndpointsOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-FindEndpointsOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation );
-}
 
 core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() const
 {
@@ -208,6 +223,26 @@ FindEndpointsOperation::parse_tag( TagCOP tag , DataMap & )
 	sequence_separation( tag->getOption< core::Size >( "sequence_separation", 15 ) );
 
 	TR<<"Cterm_offset: "<<Cterm_offset()<<" Nterm_offset: "<<Nterm_offset()<<" even: "<<even()<<" odd: "<<odd()<<" neighbors: "<<neighbors()<<" distance_cutoff: "<<distance_cutoff()<<" point_inside: "<<point_inside()<<" sequence_separation: "<<sequence_separation()<<std::endl;
+}
+
+void
+FindEndpointsOperation::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) {
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "Cterm_offset", "non_negative_integer", "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "Nterm_offset", "non_negative_integer", "0" ) );
+	attributes.push_back( XMLSchemaAttribute( "even", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "odd", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "neighbors", "non_negative_integer", "6" ) );
+	attributes.push_back( XMLSchemaAttribute( "distance_cutoff", xs_decimal, "18.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "point_inside", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "sequence_separation", "non_negative_integer", "15" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace splice

@@ -39,7 +39,7 @@ def is_dir_banned(directory):
 
 def get_rosetta_include_directories():
     ''' return list of include directories for compilation '''
-    r = 'src external external/include external/boost_1_55_0 external/dbio external/dbio/sqlite3'.split()
+    r = 'src external external/include external/boost_1_55_0 external/dbio external/dbio/sqlite3 external/libxml2/include'.split()
     r.append('src/platform/'+Platform)
     return r
 

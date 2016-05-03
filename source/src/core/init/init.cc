@@ -256,7 +256,6 @@
 #include <core/pack/task/operation/ResLvlTaskOperationCreators.hh>
 #include <core/pack/task/operation/ResFilterRegistrator.hh>
 #include <core/pack/task/operation/ResFilterCreators.hh>
-#include <core/pack/task/operation/ReplicateTaskCreator.hh>
 // (end for registering TaskOperations, ResLvlTaskOperations, and ResFilters)
 
 // ResidueSelectors
@@ -628,7 +627,6 @@ static TaskOperationRegistrator< RestrictToRepackingCreator > RestrictToRepackin
 static TaskOperationRegistrator< OperateOnCertainResiduesCreator > OperateOnCertainResiduesCreator_registrator;
 static TaskOperationRegistrator< OperateOnResidueSubsetCreator > OperateOnResidueSubsetCreator_registrator;
 static TaskOperationRegistrator< NoRepackDisulfidesCreator > NoRepackDisulfidesCreator_registrator;
-static TaskOperationRegistrator< ReplicateTaskCreator > ReplicateTaskCreator_registrator;
 static TaskOperationRegistrator< OptCysHGCreator > OptCysHGCreator_registrator;
 static TaskOperationRegistrator< OptHCreator > OptHCreator_registrator;
 // register ResLvlTaskOperationCreators

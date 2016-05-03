@@ -30,6 +30,8 @@
 
 #include <utility/vector0.hh>
 #include <utility/options/IntegerVectorOption.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 namespace protocols {
@@ -38,6 +40,8 @@ namespace task_operations {
 
 using namespace core;
 using namespace scoring;
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 //RestrictTaskForDocking::RestrictTaskForDocking()
 // : parent(),
@@ -103,6 +107,17 @@ core::pack::task::operation::TaskOperationOP DockingNoRepack1::clone() const
 	return core::pack::task::operation::TaskOperationOP( new DockingNoRepack1( *this ) );
 }
 
+void DockingNoRepack1::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+/* AMW: No Creator
+void DockingNoRepack1Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+DockingNoRepack1::provide_xml_schema( xsd );
+} */
+
 void
 DockingNoRepack1::apply(
 	core::pose::Pose const & pose,
@@ -125,6 +140,17 @@ DockingNoRepack2::DockingNoRepack2( int rb_jump_in )
 {}
 
 DockingNoRepack2::~DockingNoRepack2(){}
+
+void DockingNoRepack2::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+/* AMW: No Creator
+void DockingNoRepack2Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+DockingNoRepack2::provide_xml_schema( xsd );
+}*/
 
 core::pack::task::operation::TaskOperationOP DockingNoRepack2::clone() const
 {
@@ -160,6 +186,16 @@ RestrictToInterface::RestrictToInterface(utility::vector1<bool> loop_residues):
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictToInterface );
+}
+
+void RestrictToInterfaceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToInterface::provide_xml_schema( xsd );
+}
+
+std::string RestrictToInterfaceCreator::keyname() const
+{
+	return RestrictToInterface::keyname();
 }
 
 core::pack::task::operation::TaskOperationOP RestrictToInterface::clone() const
@@ -242,6 +278,19 @@ RestrictToInterface::parse_tag( TagCOP tag , DataMap & )
 	add_movable_jump( ( tag->getOption< core::Size >( "jump", 1 ) ) );
 	distance_ = tag->getOption< core::Real >( "distance", 8 )  ;
 }
+
+void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "jump", "non_negative_integer", "1" ) );
+	attributes.push_back( XMLSchemaAttribute( "distance", xs_decimal, "8" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 
 }
 }

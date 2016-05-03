@@ -24,7 +24,7 @@ if os.path.exists( subscript ):
           variant_dir = "./", duplicate = False) # Variant dir already set by calling script
 
 elif os.path.exists( subsettings ):
-  # Load the settings from the Rosetta-like settings file 
+  # Load the settings from the Rosetta-like settings file
   requested = Settings.load(subsettings)
   use_this = True
   if 'only_with_extras' in requested:
@@ -44,7 +44,7 @@ elif os.path.exists( subsettings ):
 
   # Sources.  Currently we assume they are all C++.  If this ever changes
   # we will need to differentiate language types in the .src.settings files.
-  if use_this: 
+  if use_this:
    for package, modules in requested.sources.items():
     for module in modules:
         # CUDA files have extension '.cu'
@@ -173,4 +173,3 @@ elif os.path.exists( subsettings ):
   for package in map(str, BUILD_TARGETS) :
     if package.startswith(project):
         Alias(package, "#build/external/" + build.platform + "/" + package)
-

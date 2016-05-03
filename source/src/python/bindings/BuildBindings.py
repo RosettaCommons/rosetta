@@ -1232,7 +1232,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
                 command_line = get_windows_compile_command_line(source=s, output=obj,
                                                                 include='. ../external ../external/include ../external/boost_1_55_0 ../external/dbio '
-                                                                        '../external/dbio/sqlite3 platform/windows/PyRosetta',
+                                                                        '../external/dbio/sqlite3 ../external/libxml2/include platform/windows/PyRosetta',
                                                                 define='WIN32 SQLITE_DISABLE_LFS SQLITE_OMIT_LOAD_EXTENSION SQLITE_THREADSAFE=0 CPPDB_EXPORTS'
                                                                        ' CPPDB_DISABLE_SHARED_OBJECT_LOADING CPPDB_DISABLE_THREAD_SAFETY CPPDB_WITH_SQLITE3'
                                                                        ' CPPDB_LIBRARY_PREFIX=\\"lib\\" CPPDB_LIBRARY_SUFFIX=\\".dylib\\" CPPDB_SOVERSION=\\"0\\" '
@@ -1277,7 +1277,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
                #os.path.isfile(hh)  and os.path.getmtime(obj) < os.path.getmtime(hh)  or  \
                #os.path.isfile(fwd) and os.path.getmtime(obj) < os.path.getmtime(fwd):
 
-                command_line = get_windows_compile_command_line(source=s, output=obj, include='. ../external ../external/include ../external/boost_1_55_0 ../external/dbio platform/windows/PyRosetta')
+                command_line = get_windows_compile_command_line(source=s, output=obj, include='. ../external ../external/include ../external/boost_1_55_0 ../external/dbio ../external/libxml2/include platform/windows/PyRosetta')
 
                 _SC_.execute('Compiling {0}'.format(s), command_line, return_= 'tuple' if Options.continue_ else False, print_output=True)
 
@@ -1466,7 +1466,7 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < source_modification_date:
                 command_line = get_windows_compile_command_line(source=source, output=obj,
-                                                                include='. ../external  ../external/include ../external/boost_1_55_0/ ../external/dbio platform/windows/PyRosetta ' \
+                                                                include='. ../external  ../external/include ../external/boost_1_55_0/ ../external/dbio ../external/libxml2/include platform/windows/PyRosetta ' \
                                                                 + ' '.join(Options.I),
                                                                 define='WIN_PYROSETTA_PASS_2 BOOST_PYTHON_MAX_ARITY=32')
 
@@ -1776,7 +1776,7 @@ class ModuleBuilder:
 
             def generate():
                 # --gccxml-cxxflags "--sysroot=$HOME/prefix/macports.yosemite"
-                if execute('Generating XML representation...', '{gccxml} {gccxml_options} {source} -fxml={xml} {defines} -I. -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS {includes} ' \
+                if execute('Generating XML representation...', '{gccxml} {gccxml_options} {source} -fxml={xml} {defines} -I. -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -I../external/libxml2/include -DBOOST_NO_INITIALIZER_LISTS {includes} ' \
                            .format(gccxml=Options.gccxml, gccxml_options=self.gccxml_options, source=self.all_at_once_source_cpp, xml=self.all_at_once_xml, defines=self.cpp_defines, includes=self.include_paths), Options.continue_ ): return
 
                 namespaces_to_wrap = ['::'+self.path.replace('/', '::')+'::']
@@ -1847,7 +1847,7 @@ class ModuleBuilder:
                 #all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
 
                 # -fPIC
-                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
+                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -I../external/libxml2/include %(include_paths)s "
                 comiler_dict = dict(add_option=self.add_option, fname=all_at_once_N_cpp, obj_name=all_at_once_N_obj, include_paths=self.include_paths, compiler=Options.compiler, cpp_defines=self.cpp_defines)
 
                 #failed = False
@@ -2159,7 +2159,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         # we need  -DBOOST_NO_INITIALIZER_LISTS or gccxml choke on protocols/genetic_algorithm/GeneticAlgorithm.hh
         # GCCXML version
         # -DPYROSETTA
-        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), Options.continue_): continue
+        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -I../external/libxml2/include -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), Options.continue_): continue
 
         namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
         # Temporary injecting Mover in to protocols level
@@ -2188,7 +2188,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         if not Options.one_lib_file:
             if execute("Compiling...", # -fPIC
                 "%(compiler)s %(fname)s -o %(obj_name)s -c \
-                 %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio \
+                 %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -I../external/libxml2/include \
                  %(include_paths)s " % dict(add_option=add_option, fname=fname, obj_name=obj_name, include_paths=include_paths, compiler=Options.compiler, cpp_defines=cpp_defines),
                  Options.continue_):
                 pass
@@ -2234,7 +2234,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         if xml_recompile or (not Options.update):
             if os.path.isfile(all_at_once_lib): os.remove(all_at_once_lib)
 
-            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), Options.continue_ ):
+            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -I../external/libxml2/include -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), Options.continue_ ):
                 return new_headers
 
             namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
@@ -2268,7 +2268,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                 all_at_once_N_obj = all_at_once_obj+'%s.o' % i
 
                 # -fPIC
-                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
+                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio -I../external/libxml2/include %(include_paths)s "
                 comiler_dict = dict(add_option=add_option, fname=all_at_once_N_cpp, obj_name=all_at_once_N_obj, include_paths=include_paths, compiler=Options.compiler, cpp_defines=cpp_defines)
 
                 failed = False

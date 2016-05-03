@@ -154,7 +154,7 @@ LayerSelector::class_name() {
 }
 
 void
-LayerSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+LayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "select_core",                    xs_boolean, "false" ));
@@ -316,8 +316,8 @@ LayerSelectorCreator::keyname() const {
 }
 
 void
-LayerSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	LayerSelector::provide_selector_xsd( xsd );
+LayerSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	LayerSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

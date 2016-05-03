@@ -15,9 +15,8 @@
 #include <protocols/residue_selectors/TaskSelector.hh>
 #include <protocols/residue_selectors/TaskSelectorCreator.hh>
 
-// Protocol Headers
-
 // Core headers
+#include <core/select/residue_selector/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
@@ -28,6 +27,7 @@
 // Utility Headers
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -50,9 +50,9 @@ TaskSelectorCreator::keyname() const
 }
 
 void
-TaskSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const
+TaskSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	TaskSelector::provide_selector_xsd( xsd );
+	TaskSelector::provide_xml_schema( xsd );
 }
 
 TaskSelector::TaskSelector() :
@@ -146,17 +146,22 @@ TaskSelector::parse_my_tag(
 	set_select_fixed( tag->getOption< bool >( "fixed", select_fixed_ ) );
 }
 
+// APL TO DO!
 void
-TaskSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & )
+TaskSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	/*
+
 	using namespace utility::tag;
-	common_simple_types( xsd, "int_cslist" );
 
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "resnums", "int_cslist", true ) );
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
-	*/
+	attributes.push_back( XMLSchemaAttribute( "task_operations", xs_string ));
+	attributes.push_back( XMLSchemaAttribute( "designable", xs_boolean ));
+	attributes.push_back( XMLSchemaAttribute( "packable", xs_boolean ));
+	attributes.push_back( XMLSchemaAttribute( "repackable", xs_boolean ));
+	attributes.push_back( XMLSchemaAttribute( "fixed", xs_boolean ));
+
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+
 }
 
 void

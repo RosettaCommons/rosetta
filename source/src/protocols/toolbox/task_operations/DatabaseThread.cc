@@ -29,6 +29,9 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <numeric/random/random.hh>
@@ -45,7 +48,24 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
+
+core::pack::task::operation::TaskOperationOP
+DatabaseThreadCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new DatabaseThread );
+}
+
+void DatabaseThreadCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DatabaseThread::provide_xml_schema( xsd );
+}
+
+std::string DatabaseThreadCreator::keyname() const
+{
+	return DatabaseThread::keyname();
+}
 
 DatabaseThread::DatabaseThread() : parent(),
 	target_sequence_(""),
@@ -60,12 +80,6 @@ DatabaseThread::DatabaseThread() : parent(),
 }
 
 DatabaseThread::~DatabaseThread() {}
-
-core::pack::task::operation::TaskOperationOP
-DatabaseThreadCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new DatabaseThread );
-}
 
 core::pack::task::operation::TaskOperationOP DatabaseThread::clone() const
 {
@@ -183,6 +197,28 @@ DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 	designable(utility::string_split(tag->getOption<std::string>("design_residues",""),',',core::Size()));
 	leave_as_is(utility::string_split(tag->getOption<std::string>("keep_original_identity",""),',',core::Size()));
 }
+
+// AMW: Comma separated string list... candidate for common_simple_types?
+void DatabaseThread::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "non_negative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "target_sequence", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "template_file", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "database", xs_string, "" ) );
+
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "start_res", "non_negative_integer" ) );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "end_res", "non_negative_integer" ) );
+	attributes.push_back( XMLSchemaAttribute( "allow_design_around", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_residues", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute( "keep_original_identity", xs_string, "" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations

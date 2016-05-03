@@ -26,6 +26,7 @@ set(CPPDB_SOVERSION 0)
 include_directories(SYSTEM ../../external/dbio/sqlite3)
 include_directories(SYSTEM ../../external/dbio)
 include_directories(SYSTEM ../../external)
+include_directories(SYSTEM ../../external/libxml2/include)
 
 option(DISABLE_SQLITE	"Link sqlite3 backend into the libcppdb" OFF)
 
@@ -81,6 +82,57 @@ set(CPPDB_SRC
 
       add_library(cppdb SHARED ${CPPDB_SRC})
 
+# set(LIBXML2_SRC
+# 	../../external/libxml2/buf.c
+# 	../../external/libxml2/c14n.c
+# 	../../external/libxml2/catalog.c
+# 	../../external/libxml2/chvalid.c
+# 	../../external/libxml2/debugXML.c
+# 	../../external/libxml2/dict.c
+# 	../../external/libxml2/DOCBparser.c
+# 	../../external/libxml2/encoding.c
+# 	../../external/libxml2/entities.c
+# 	../../external/libxml2/error.c
+# 	../../external/libxml2/globals.c
+# 	../../external/libxml2/hash.c
+# 	../../external/libxml2/HTMLparser.c
+# 	../../external/libxml2/HTMLtree.c
+# 	../../external/libxml2/legacy.c
+# 	../../external/libxml2/list.c
+# 	../../external/libxml2/nanoftp.c
+# 	../../external/libxml2/nanohttp.c
+# 	../../external/libxml2/parser.c
+# 	../../external/libxml2/parserInternals.c
+# 	../../external/libxml2/pattern.c
+# 	../../external/libxml2/relaxng.c
+# 	../../external/libxml2/SAX2.c
+# 	../../external/libxml2/SAX.c
+# 	../../external/libxml2/schematron.c
+# 	../../external/libxml2/threads.c
+# 	../../external/libxml2/tree.c
+# 	../../external/libxml2/uri.c
+# 	../../external/libxml2/valid.c
+# 	../../external/libxml2/xinclude.c
+# 	../../external/libxml2/xlink.c
+# 	../../external/libxml2/xmlIO.c
+# 	../../external/libxml2/xmlmemory.c
+# 	../../external/libxml2/xmlmodule.c
+# 	../../external/libxml2/xmlreader.c
+# 	../../external/libxml2/xmlregexp.c
+# 	../../external/libxml2/xmlsave.c
+# 	../../external/libxml2/xmlschemas.c
+# 	../../external/libxml2/xmlschemastypes.c
+# 	../../external/libxml2/xmlstring.c
+# 	../../external/libxml2/xmlunicode.c
+# 	../../external/libxml2/xmlwriter.c
+# 	../../external/libxml2/xpath.c
+# 	../../external/libxml2/xpointer.c
+# 	../../external/libxml2/xzlib.c
+# 	)
+# 
+# 	add_library( libxml2 SHARED ${LIBXML2_SRC} )
+
+
 # "gcc, 4.9"
 if( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4[.]9[.]([0-9])*" )
   # Fix cppdb linking error in recent versions of g++
@@ -97,8 +149,10 @@ endif()
 
 foreach(LIB ${INTERNAL_LIBRARIES})
 	target_link_libraries(cppdb ${LIB})
+	#target_link_libraries(libxml2 ${LIB})
 endforeach()
 
 SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} cppdb)
+#SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} libxml2)
 
 

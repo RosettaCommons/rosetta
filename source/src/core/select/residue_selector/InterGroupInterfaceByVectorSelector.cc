@@ -273,7 +273,7 @@ std::string InterGroupInterfaceByVectorSelector::class_name() {
 }
 
 void
-InterGroupInterfaceByVectorSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+InterGroupInterfaceByVectorSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes.push_back( XMLSchemaAttribute( "cb_dist_cut",      xs_decimal, "11.0" ));
@@ -282,7 +282,7 @@ InterGroupInterfaceByVectorSelector::provide_selector_xsd( utility::tag::XMLSche
 	attributes.push_back( XMLSchemaAttribute( "vector_dist_cut",  xs_decimal, "9.0"  ));
 	attributes.push_back( XMLSchemaAttribute( "grp1_selector",    xs_string  ));
 	attributes.push_back( XMLSchemaAttribute( "grp2_selector",    xs_string  ));
-	xsd_type_definition_w_attributes_and_subselectors( xsd, class_name(), 0, 2, attributes );
+	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), 0, 2, attributes );
 }
 
 
@@ -323,8 +323,8 @@ InterGroupInterfaceByVectorSelectorCreator::keyname() const {
 }
 
 void
-InterGroupInterfaceByVectorSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	InterGroupInterfaceByVectorSelector::provide_selector_xsd( xsd );
+InterGroupInterfaceByVectorSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	InterGroupInterfaceByVectorSelector::provide_xml_schema( xsd );
 }
 
 

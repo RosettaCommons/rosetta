@@ -27,6 +27,8 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 
 using basic::Error;
@@ -38,18 +40,29 @@ namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
+using namespace utility::tag;
 using namespace std;
-
-LinkResidues::LinkResidues() {
-}
-
-LinkResidues::~LinkResidues() {}
 
 core::pack::task::operation::TaskOperationOP
 LinkResiduesCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new LinkResidues );
 }
+
+void LinkResiduesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LinkResidues::provide_xml_schema( xsd );
+}
+
+std::string LinkResiduesCreator::keyname() const
+{
+	return LinkResidues::keyname();
+}
+
+LinkResidues::LinkResidues() {
+}
+
+LinkResidues::~LinkResidues() {}
 
 core::pack::task::operation::TaskOperationOP LinkResidues::clone() const
 {
@@ -73,11 +86,11 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 	}
 	//add the groups in. Each group contains multiple sets of residues.
 	for ( Size ii=1; ii<=allGroups_.size(); ++ii ) {
-		vector1< string> const grp_s( utility::string_split( allGroups_[ii] , ',' ) );
-		vector1< vector1 <Size> > grp_i;
+		vector1< string > const grp_s( utility::string_split( allGroups_[ii] , ',' ) );
+		vector1< vector1< Size > > grp_i;
 		//get residues in number format into grp_res
 		for ( Size kk=1; kk<=grp_s.size(); ++kk ) {
-			vector1<Size> set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
+			vector1< Size > set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
 			grp_i.push_back(set_i);
 		}
 		//check that all sets in the group have the same number of residues
@@ -132,6 +145,26 @@ LinkResidues::parse_tag( TagCOP tag , DataMap & )
 			allGroups_.push_back( grp_i );
 		}
 	}
+}
+
+std::string linkres_subelement_ctname( std::string const & name ) { return "linkres_" + name + "Type"; }
+std::string linkres_subelement_group() { return "linkres_link_group"; }
+
+void LinkResidues::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & linkres_subelement_ctname );
+	AttributeList subattributes; subattributes.push_back( XMLSchemaAttribute::required_attribute( "group", xs_string ));
+	subelements.add_simple_subelement( "LinkGroup", subattributes );
+	subelements.add_simple_subelement( "linkgroup", subattributes );
+
+	XMLComplexTypeSchemaGenerator ct_gen;
+	ct_gen
+		.element_name( keyname() )
+		.complex_type_naming_func( & complex_type_name_for_task_op )
+		.add_attribute( optional_name_attribute() )
+		.set_subelements_repeatable( subelements, & linkres_subelement_group )
+		.write_complex_type_to_schema( xsd );
 }
 
 } //namespace protocols

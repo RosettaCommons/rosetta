@@ -30,97 +30,113 @@ namespace operation {
 class AnyResFilterCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "AnyResFilter"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class AllResFilterCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "AllResFilter"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class NoResFilterCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "NoResFilter"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueTypeFilterCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueType"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueHasPropertyCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueHasProperty"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueLacksPropertyCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueLacksProperty"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResiduePDBInfoHasLabelCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResiduePDBInfoHasLabel"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResiduePDBInfoLacksLabelCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResiduePDBInfoLacksLabel"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueName3IsCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueName3Is"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueName3IsntCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueName3Isnt"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueIndexIsCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueIndexIs"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResidueIndexIsntCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResidueIndexIsnt"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResiduePDBIndexIsCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResiduePDBIndexIs"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ResiduePDBIndexIsntCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ResiduePDBIndexIsnt"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ChainIsCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ChainIs"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 class ChainIsntCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;
-	virtual std::string keyname() const { return "ChainIsnt"; }
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 

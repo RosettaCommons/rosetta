@@ -22,6 +22,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <map>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 //#include <core/pose/PDBInfo.hh>
 
 
@@ -61,6 +62,8 @@ public:
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "ResidueProbDesignOperation"; }
 
 
 public:

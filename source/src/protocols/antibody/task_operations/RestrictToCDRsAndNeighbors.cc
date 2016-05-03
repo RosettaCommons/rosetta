@@ -28,6 +28,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -42,6 +44,7 @@ using namespace core::pack::task::operation;
 using namespace protocols::loops;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace utility::tag;
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors():
 	TaskOperation(),
@@ -161,6 +164,28 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 
 }
 
+std::string RestrictToCDRsAndNeighbors::keyname() { return "RestrictToCDRsAndNeighbors"; }
+
+void RestrictToCDRsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	activate_common_simple_type( xsd, "nonnegative_integer" );
+
+	attributes.push_back( XMLSchemaAttribute( "cdrs", xs_string ) );
+
+	attributes.push_back( XMLSchemaAttribute( "neighbor_dis", xs_decimal, "6.0" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_cdrs", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_antigen", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "design_framework", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "stem_size", "non_negative_integer", "0" ) );
+
+	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
+	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
 void
 RestrictToCDRsAndNeighbors::set_cdrs(const utility::vector1<bool>& cdrs) {
 	cdrs_ = cdrs;
@@ -249,6 +274,16 @@ core::pack::task::operation::TaskOperationOP
 RestrictToCDRsAndNeighborsCreator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictToCDRsAndNeighbors );
+}
+
+void RestrictToCDRsAndNeighborsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToCDRsAndNeighbors::provide_xml_schema( xsd );
+}
+
+std::string RestrictToCDRsAndNeighborsCreator::keyname() const
+{
+	return RestrictToCDRsAndNeighbors::keyname();
 }
 
 } //task_operations

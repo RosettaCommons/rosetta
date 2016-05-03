@@ -82,7 +82,7 @@ std::string TrueResidueSelector::class_name() {
 }
 
 void
-TrueResidueSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+TrueResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
@@ -99,8 +99,8 @@ TrueResidueSelectorCreator::keyname() const {
 }
 
 void
-TrueResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	TrueResidueSelector::provide_selector_xsd( xsd );
+TrueResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	TrueResidueSelector::provide_xml_schema( xsd );
 }
 
 } //namespace residue_selector

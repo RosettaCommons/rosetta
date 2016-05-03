@@ -17,7 +17,9 @@
 
 // project headers
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 
+// utility headers
 #include <utility/vector1.hh>
 
 
@@ -50,11 +52,6 @@ OptH::OptH( OptH const & rval ) :
 
 /// @brief default destructor
 OptH::~OptH() {}
-
-TaskOperationOP OptHCreator::create_task_operation() const
-{
-	return TaskOperationOP( new OptH );
-}
 
 /// @brief clone this object
 OptH::TaskOperationOP OptH::clone() const {
@@ -107,6 +104,23 @@ void OptH::flip_HNQ( bool const flag ) {
 /// @brief use multicool annealer? (default false)
 void OptH::use_multicool_annealer( bool const flag ) {
 	use_multicool_annealer_ = flag;
+}
+
+std::string OptH::keyname() { return "OptH"; }
+
+void OptH::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	task_op_schema_empty( xsd, keyname() );
+}
+
+TaskOperationOP OptHCreator::create_task_operation() const
+{
+	return TaskOperationOP( new OptH );
+}
+
+std::string OptHCreator::keyname() const { return OptH::keyname(); }
+
+void OptHCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	OptH::provide_xml_schema( xsd );
 }
 
 

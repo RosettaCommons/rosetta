@@ -29,6 +29,9 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
+
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -39,12 +42,24 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-core::pack::task::operation::TaskOperationOP
+using namespace core::pack::task::operation;
+using namespace utility::tag;
+
+TaskOperationOP
 CrystalContactsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new CrystalContactsOperation );
+	return TaskOperationOP( new CrystalContactsOperation );
 }
 
+void CrystalContactsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CrystalContactsOperation::provide_xml_schema( xsd );
+}
+
+std::string CrystalContactsOperationCreator::keyname() const
+{
+	return CrystalContactsOperation::keyname();
+}
 
 CrystalContactsOperation::CrystalContactsOperation( core::Real all_gap, core::Real polar_gap, core::Real max_buried_sasa, bool invert, bool nbr_radius_to_nbr_radius, bool nbr_radius_to_atoms, bool atoms_to_atoms ):
 	all_gap_(all_gap),     // add this to all calculated distances
@@ -58,9 +73,9 @@ CrystalContactsOperation::CrystalContactsOperation( core::Real all_gap, core::Re
 
 CrystalContactsOperation::~CrystalContactsOperation() {}
 
-core::pack::task::operation::TaskOperationOP CrystalContactsOperation::clone() const
+TaskOperationOP CrystalContactsOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new CrystalContactsOperation( *this ) );
+	return TaskOperationOP( new CrystalContactsOperation( *this ) );
 }
 
 void
@@ -172,8 +187,6 @@ CrystalContactsOperation::is_crystal_contact( core::conformation::Residue const 
 	return is_contact;
 }
 
-
-
 void
 CrystalContactsOperation::parse_tag( TagCOP tag, DataMap & )
 {
@@ -185,6 +198,22 @@ CrystalContactsOperation::parse_tag( TagCOP tag, DataMap & )
 	nbr_radius_to_nbr_radius_ = tag->getOption<bool>("nbr_radius_to_nbr_radius", 0);
 	nbr_radius_to_atoms_ = tag->getOption<bool>("nbr_radius_to_atoms", 1);
 	atoms_to_atoms_ = tag->getOption<bool>("atoms_to_atoms", 0);
+}
+
+void CrystalContactsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes.push_back( XMLSchemaAttribute( "all_gap", xs_decimal, "0.5" ) );
+	attributes.push_back( XMLSchemaAttribute( "polar_gap", xs_decimal, "2.5" ) );
+	attributes.push_back( XMLSchemaAttribute( "max_buried_sasa", xs_decimal, "0.01" ) );
+	attributes.push_back( XMLSchemaAttribute( "invert", xs_boolean, "false" ) );
+
+	attributes.push_back( XMLSchemaAttribute( "nbr_radius_to_nbr_radius", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute( "nbr_radius_to_atoms", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute( "atoms_to_atoms", xs_boolean, "false" ) );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 } //namespace task_operations

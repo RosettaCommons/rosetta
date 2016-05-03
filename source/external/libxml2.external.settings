@@ -1,0 +1,101 @@
+# -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+	"libxml2": [
+	        "buf.c",
+	        "c14n.c",
+	        "catalog.c",
+	        "chvalid.c",
+	        "debugXML.c",
+	        "dict.c",
+	        "DOCBparser.c",
+	        "encoding.c",
+	        "entities.c",
+	        "error.c",
+	        "globals.c",
+	        "hash.c",
+	        "HTMLparser.c",
+	        "HTMLtree.c",
+	        "legacy.c",
+	        "list.c",
+	        "nanoftp.c",
+	        "nanohttp.c",
+	        "parser.c",
+	        "parserInternals.c",
+	        "pattern.c",
+	        "relaxng.c",
+	        #"runsuite.c",
+	        #"runtest.c",
+	        #"runxmlconf.c",
+	        "SAX2.c",
+	        "SAX.c",
+	        "schematron.c",
+	        #"testapi.c",
+	        #"testAutomata.c",
+	        #"testC14N.c",
+	        #"testchar.c",
+	        #"testdict.c",
+	        #"testdso.c",
+	        #"testHTML.c",
+	        #"testlimits.c",
+	        #"testModule.c",
+	        #"testReader.c",
+	        #"testrecurse.c",
+	        #"testRegexp.c",
+	        #"testRelax.c",
+	        #"testSAX.c",
+	        #"testSchemas.c",
+	        #"testThreads.c",
+	        #"testThreadsWin32.c",
+	        #"testURI.c",
+	        #"testXPath.c",
+	        "threads.c",
+	        "tree.c",
+	        "trio.c",
+	        "trionan.c",
+	        "triostr.c",
+	        "uri.c",
+	        "valid.c",
+	        "xinclude.c",
+	        "xlink.c",
+	        #"xmlcatalog.c",
+	        "xmlIO.c",
+	        #"xmllint.c",
+	        "xmlmemory.c",
+	        "xmlmodule.c",
+	        "xmlreader.c",
+	        "xmlregexp.c",
+	        "xmlsave.c",
+	        "xmlschemas.c",
+	        "xmlschemastypes.c",
+	        "xmlstring.c",
+	        "xmlunicode.c",
+	        "xmlwriter.c",
+	        "xpath.c",
+	        "xpointer.c",
+	        "xzlib.c",
+	],
+}
+
+#"-Wl,--no-as-needed "
+#flags = [
+
+include_path = [
+]
+library_path = [
+]
+libraries = [
+    "dl"
+]
+subprojects = [
+]
+defines = [
+    "TRIO_HAVE_CONFIG_H"
+]

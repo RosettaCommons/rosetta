@@ -30,6 +30,7 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ Headers
 
@@ -72,6 +73,9 @@ public:
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter
 	virtual void parse_tag( TagCOP, DataMap & );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	ResidueIndices residue_indices_;

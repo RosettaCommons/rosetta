@@ -27,6 +27,7 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 // C++ Headers
@@ -50,6 +51,8 @@ public:
 	void surface_exposed_nb_cutoff( core::Size const nb_count );
 	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 	virtual void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dm );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "RestrictNonSurfaceToRepacking"; }
 
 private:
 	core::Size surface_exposed_nb_cutoff_; // 16, by default

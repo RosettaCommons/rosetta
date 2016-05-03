@@ -176,6 +176,7 @@ sources = {
 		"TaskOperation",
 		"TaskOperationFactory",
 		"TaskOperations",
+		"task_op_schemas",
 	],
 	"core/pack/task/residue_selector" : [
 		"ClashBasedRepackShellSelector",

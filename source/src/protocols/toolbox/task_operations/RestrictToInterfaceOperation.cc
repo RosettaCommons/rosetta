@@ -25,6 +25,8 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 
@@ -41,6 +43,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.Restrict
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+using namespace core::pack::task::operation;
+using namespace utility::tag;
 
 /// @details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
 RestrictToInterfaceOperation::RestrictToInterfaceOperation( std::string const & calculator )
@@ -81,12 +86,6 @@ void RestrictToInterfaceOperation::make_name( core::Size upper_chain, core::Size
 
 RestrictToInterfaceOperation::~RestrictToInterfaceOperation() {}
 
-core::pack::task::operation::TaskOperationOP
-RestrictToInterfaceOperationCreator::create_task_operation() const
-{
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation );
-}
-
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceOperation::clone() const
 {
@@ -102,6 +101,27 @@ RestrictToInterfaceOperation::apply( core::pose::Pose const & pose, core::pack::
 	run_calculator(pose, calculator_name_, "interface_residues", repack);
 
 	task.restrict_to_residues(repack);
+}
+
+void RestrictToInterfaceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	task_op_schema_empty( xsd, keyname() );
+}
+
+core::pack::task::operation::TaskOperationOP
+RestrictToInterfaceOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation );
+}
+
+void RestrictToInterfaceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToInterfaceOperation::provide_xml_schema( xsd );
+}
+
+std::string RestrictToInterfaceOperationCreator::keyname() const
+{
+	return RestrictToInterfaceOperation::keyname();
 }
 
 } //namespace protocols
