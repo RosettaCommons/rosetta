@@ -1527,338 +1527,346 @@ int main( int argc, char * argv [] ) {
 	using namespace basic::options::OptionKeys::cluster;
 	using namespace std;
 
-	printf("Starting bettercluster.cc\nFile created 6 May 2013 by Vikram K. Mulligan\n"); fflush(stdout);
+	try {
 
-	register_options();
-	devel::init(argc, argv);
-	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::get_score_function();
-	if(option[v_cst_file].user()) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
-		if(sfxn->get_weight(atom_pair_constraint) < 1.0e-6) sfxn->set_weight(atom_pair_constraint, 1.0);
-		if(sfxn->get_weight(angle_constraint) < 1.0e-6) sfxn->set_weight(angle_constraint, 1.0);
-		if(sfxn->get_weight(dihedral_constraint) < 1.0e-6) sfxn->set_weight(dihedral_constraint, 1.0);
-	}
+		printf("Starting bettercluster.cc\nFile created 6 May 2013 by Vikram K. Mulligan\n"); fflush(stdout);
 
-	//Parse the clustering mode:
-	string clusterby = option[v_clusterby]();
-	core::Size clustermode =0;
-	if (clusterby=="bb_cartesian") {
-		clustermode = 1;
-		printf("Clustering by Cartesian coordinates of backbone atoms.\n");
-	} else if (clusterby=="bb_dihedral") {
-		clustermode = 2;
-		printf("Clustering by backbone dihedral angles.\n");
-	} else {
-		printf("Error!  \"%s\" is an invalid input for the -v_clusterby flag.  Use the --help flag to list accepted inputs.  Crashing.\n", clusterby.c_str());
-		fflush(stdout); exit(1);
-	}
-
-	//Check whether the v_mutate_to_ala flag has been set:
-	if(option[v_mutate_to_ala]())
-		printf("The -v_mutate_to_ala flag was set.  Input structures will be mutated to a chain of (alpha-D-, alpha-L-, or beta-3-) alanines (with the exception of cysteine residues).\n");
-
-	//Check that the user hasn't specified the same chain multiple times in -v_ignorechain:
-	if(option[v_ignorechain]().size()>1) {
-		for(core::Size i=2; i<=option[v_ignorechain]().size(); ++i) {
-			for(core::Size j=1; j<=i; ++j) {
-				if(option[v_ignorechain]()[i]==option[v_ignorechain]()[j]) {
-					printf("Error!  The same chain must not be specified multiple times with the -v_ignorechain flag.  Crashing gracelessly.\n");
-					fflush(stdout); exit(1);
-				}
-			}
+		register_options();
+		devel::init(argc, argv);
+		core::scoring::ScoreFunctionOP sfxn;
+		sfxn = core::scoring::get_score_function();
+		if(option[v_cst_file].user()) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
+			if(sfxn->get_weight(atom_pair_constraint) < 1.0e-6) sfxn->set_weight(atom_pair_constraint, 1.0);
+			if(sfxn->get_weight(angle_constraint) < 1.0e-6) sfxn->set_weight(angle_constraint, 1.0);
+			if(sfxn->get_weight(dihedral_constraint) < 1.0e-6) sfxn->set_weight(dihedral_constraint, 1.0);
 		}
-	}
 
-	//Check that the user hasn't specified the same residue multiple times in -v_ignoreresidue:
-	if(option[v_ignoreresidue]().size()>1) {
-		for(core::Size i=2; i<=option[v_ignoreresidue]().size(); i++) {
-			for(core::Size j=1; j<i; j++) {
-				if(option[v_ignoreresidue]()[i] == option[v_ignoreresidue]()[j]) {
-					printf("Error!  The same residue must not be specified multiple times with the -v_ignoreresidue flag.  Crashing.\n");
-					fflush(stdout); exit(1);
-				}
-			}
-		}
-	}
-
-	//Check whether the v_homooligomer_swap flag has been set:
-	if(option[v_homooligomer_swap]()) {
-		if(clusterby!="bb_cartesian") {
-			printf("Error!  Multi-chain structures can currently only be scored with the \"-v_clusterby bb_cartesian\" flag!  Crashing.\n");
-			fflush(stdout); exit(1);
-		}
-		if(option[v_cyclic]()) {
-			printf("Error!  The -v_homooligomer_swap flag is not currently compatible with the -v_cyclic flag!  Crashing.\n");
-			fflush(stdout); exit(1);
-		}
-		printf("The -v_homooligomer_swap flag was specified.  When calculating RMSD values, all permutations of chains will be considered in the alignment.\n");
-	}
-
-	//Parse the clustering radius:
-	const core::Real R_cluster = option[v_clusterradius]();
-	if (R_cluster < 1.0e-12) {
-		printf("Error!  The clustering radius must be greater than zero.  Crashing.\n");
-		fflush(stdout); exit(1);
-	} else {
-		string unitsstring;
-		if(clustermode==1) unitsstring = "Angstroms";
-		else if (clustermode==2) unitsstring = "degrees";
-		printf("Using a cluster radius of %.2f %s.\n", R_cluster, unitsstring.c_str());
-	}
-
-	//Parse v_kbt:
-	const core::Real kbt = option[v_kbt]();
-	if(kbt<1.0e-12) {
-		printf("Error!  The value of k_B*T specified with the -v_kbt flag must be greater than zero.  Crashing.\n");
-		fflush(stdout); exit(1);
-	} else {
-		if(option[v_weightbyenergy]()) {
-			printf("Weighting structures by energy when calculating cluster centers.  Setting k_B*T=%.2f\n", kbt);
-		}
-	}
-
-	//Alter the scoring function for v_cyclic:
-	if(option[v_cyclic]()) {
-		printf("Setting constraint weights for a peptide bond between the N- and C-termini (-v_cyclic flag).\n");
-		sfxn->set_weight(atom_pair_constraint, 1.0);
-		sfxn->set_weight(dihedral_constraint, 1.0);
-		sfxn->set_weight(angle_constraint, 1.0);
-	}
-
-	//Checks releated to v_cluster_cyclic_permutations:
-	if(option[v_cluster_cyclic_permutations]()) {
-		if(!option[v_cyclic]()) {
-			printf("Error!  The -v_cluster_cyclic_permutations flag cannot be used without the -v_cyclic flag.  Crashing gracelessly.\n");
-			fflush(stdout); exit(1);
-		}
-		printf("Cyclic permutations will be tried when aligning structures during clustering (-v_cluster_cyclic_permutations flag).\n");
-	}
-
-	//Checking v_limit_clusters value:
-	if(option[v_limit_clusters]() < 0 ) {
-		printf("Error!  The -v_limit_clusters flag must be set to 0 or greater.  Crashing with no grace whastoever.\n");
-		fflush(stdout); exit(1);
-	}
-
-	//Parse the user-specified list of additional atoms to use in the RMSD calculation:
-	utility::vector1<core::id::NamedAtomID> extra_atom_list;
-	parse_extra_atom_list(extra_atom_list); //Does nothing if no list provided.
-
-	fflush(stdout);
-	
-	protocols::relax::FastRelax frlx(sfxn, option[v_relaxrounds]());
-
-	//printf("ping1\n"); fflush(stdout); //DELETE ME
-	//core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	//printf("ping2\n"); fflush(stdout); //DELETE ME
-	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
-	core::Size count = 0;
-	core::Real lowestE = 0; //Lowest energy encountered so far.
-	core::Size lowestE_index = 0; //The number of the pose with the lowest energy encountered.
-	utility::vector1 <core::Real> poseenergies; //Vector of energies of the poses.
-	utility::vector1 < utility::vector1 <core::Real> > posedata; //Vector of vectors to store the data that will be used for clustering.
-	utility::vector1 < FArray2D < core::Real > > alignmentdata; //Vector of array of x,y,z coordinates of atoms to be used for alignment in Cartesian clustering.
-	utility::vector1 < core::Size > cluster_assignments; //List of which cluster each structure is assigned to.
-	utility::vector1 < core::Size > cluster_offsets; //List of offsets for cyclic permutations when clustering (measured in number of amino acid positions we've offset by).
-	utility::vector1 < core::Size > cluster_oligomer_permutations; //List of permutations of oligomers if the user has specified the option to do that.
-
-	printf("Scoring energies of all input structures.\n"); fflush(stdout);
-	core::pose::Pose firstpose;
-	bool firstpose_hasbeta = false; //Are there beta-amino acids in the first input pose?
-
-	while( input.has_another_pose() ) { //For every input structure
-		count++;
-
-		if (count % 100 == 0) {printf("."); fflush(stdout); }
-		cluster_assignments.push_back(0); //Initially, every structure is assigned to cluster 0 (unassigned).
-		if(option[v_cluster_cyclic_permutations]()) cluster_offsets.push_back(0); //Initially, we assume that each structure may be aligned without any cyclic permutation, so these are all zero.
-		if(option[v_homooligomer_swap]()) cluster_oligomer_permutations.push_back(1); //Initially, we assume the first permutation of homooligomer subunits for each structure.
-
-		core::pose::Pose pose; //Create the pose
-		input.fill_pose( pose ); //Import it
-
-		if(pose.num_jump() > 0 && clusterby == "bb_dihedral") {
-			printf("Error!  Backbone dihedral clustering is not currently compatible with multi-chain PDB files.  Crashing.\n"); //TODO -- make this compatible!
+		//Parse the clustering mode:
+		string clusterby = option[v_clusterby]();
+		core::Size clustermode =0;
+		if (clusterby=="bb_cartesian") {
+			clustermode = 1;
+			printf("Clustering by Cartesian coordinates of backbone atoms.\n");
+		} else if (clusterby=="bb_dihedral") {
+			clustermode = 2;
+			printf("Clustering by backbone dihedral angles.\n");
+		} else {
+			printf("Error!  \"%s\" is an invalid input for the -v_clusterby flag.  Use the --help flag to list accepted inputs.  Crashing.\n", clusterby.c_str());
 			fflush(stdout); exit(1);
 		}
 
-		if(pose.num_jump() > 0 && option[v_homooligomer_swap]()) {
-			const std::string chain1seq = pose.chain_sequence(1);
-			for(core::Size i=2, imax=pose.num_jump()+1; i<=imax; i++) {
-				if (pose.chain_sequence(i) != chain1seq) {
-					printf("Error!  When using the v_homooligomer_swap option, the lengths and sequences of all chains in the input structures must be identical.  Crashing.\n");
-					fflush(stdout); exit(1);
-				}
-			}
-		}
+		//Check whether the v_mutate_to_ala flag has been set:
+		if(option[v_mutate_to_ala]())
+			printf("The -v_mutate_to_ala flag was set.  Input structures will be mutated to a chain of (alpha-D-, alpha-L-, or beta-3-) alanines (with the exception of cysteine residues).\n");
 
-		if(option[v_cyclic]()) {
-			addcyclicconstraints(pose); //If this is a cyclic peptide, add constraints for the terminal peptide bond:
-			if(option[v_cluster_cyclic_permutations]() && clustermode==1 && option[v_CB]()) {
-				for(core::Size ir=1; ir<=pose.n_residue(); ir++) {
-					if(!pose.residue(ir).has("CB")) { //Error if we don't have the same set of atoms on which to cluster in each residue.
-						printf("Error!  When using Cartesian clustering and clustering cyclic permutations, all residues in the input structures must have the same number of atoms to be used in the alignment.  If beta carbons are included, the sequence cannot contain glycine.\nCrashing.\n");
+		//Check that the user hasn't specified the same chain multiple times in -v_ignorechain:
+		if(option[v_ignorechain]().size()>1) {
+			for(core::Size i=2; i<=option[v_ignorechain]().size(); ++i) {
+				for(core::Size j=1; j<=i; ++j) {
+					if(option[v_ignorechain]()[i]==option[v_ignorechain]()[j]) {
+						printf("Error!  The same chain must not be specified multiple times with the -v_ignorechain flag.  Crashing gracelessly.\n");
 						fflush(stdout); exit(1);
 					}
 				}
 			}
 		}
 
-		add_user_constraints(pose); //This checks for a user-specified CST file, and does nothing if there isn't one.  (Adds constraints if there is one.)
+		//Check that the user hasn't specified the same residue multiple times in -v_ignoreresidue:
+		if(option[v_ignoreresidue]().size()>1) {
+			for(core::Size i=2; i<=option[v_ignoreresidue]().size(); i++) {
+				for(core::Size j=1; j<i; j++) {
+					if(option[v_ignoreresidue]()[i] == option[v_ignoreresidue]()[j]) {
+						printf("Error!  The same residue must not be specified multiple times with the -v_ignoreresidue flag.  Crashing.\n");
+						fflush(stdout); exit(1);
+					}
+				}
+			}
+		}
 
-		if(option[v_prerelax]()) {
+		//Check whether the v_homooligomer_swap flag has been set:
+		if(option[v_homooligomer_swap]()) {
+			if(clusterby!="bb_cartesian") {
+				printf("Error!  Multi-chain structures can currently only be scored with the \"-v_clusterby bb_cartesian\" flag!  Crashing.\n");
+				fflush(stdout); exit(1);
+			}
+			if(option[v_cyclic]()) {
+				printf("Error!  The -v_homooligomer_swap flag is not currently compatible with the -v_cyclic flag!  Crashing.\n");
+				fflush(stdout); exit(1);
+			}
+			printf("The -v_homooligomer_swap flag was specified.  When calculating RMSD values, all permutations of chains will be considered in the alignment.\n");
+		}
+
+		//Parse the clustering radius:
+		const core::Real R_cluster = option[v_clusterradius]();
+		if (R_cluster < 1.0e-12) {
+			printf("Error!  The clustering radius must be greater than zero.  Crashing.\n");
+			fflush(stdout); exit(1);
+		} else {
+			string unitsstring;
+			if(clustermode==1) unitsstring = "Angstroms";
+			else if (clustermode==2) unitsstring = "degrees";
+			printf("Using a cluster radius of %.2f %s.\n", R_cluster, unitsstring.c_str());
+		}
+
+		//Parse v_kbt:
+		const core::Real kbt = option[v_kbt]();
+		if(kbt<1.0e-12) {
+			printf("Error!  The value of k_B*T specified with the -v_kbt flag must be greater than zero.  Crashing.\n");
+			fflush(stdout); exit(1);
+		} else {
+			if(option[v_weightbyenergy]()) {
+				printf("Weighting structures by energy when calculating cluster centers.  Setting k_B*T=%.2f\n", kbt);
+			}
+		}
+
+		//Alter the scoring function for v_cyclic:
+		if(option[v_cyclic]()) {
+			printf("Setting constraint weights for a peptide bond between the N- and C-termini (-v_cyclic flag).\n");
+			sfxn->set_weight(atom_pair_constraint, 1.0);
+			sfxn->set_weight(dihedral_constraint, 1.0);
+			sfxn->set_weight(angle_constraint, 1.0);
+		}
+
+		//Checks releated to v_cluster_cyclic_permutations:
+		if(option[v_cluster_cyclic_permutations]()) {
+			if(!option[v_cyclic]()) {
+				printf("Error!  The -v_cluster_cyclic_permutations flag cannot be used without the -v_cyclic flag.  Crashing gracelessly.\n");
+				fflush(stdout); exit(1);
+			}
+			printf("Cyclic permutations will be tried when aligning structures during clustering (-v_cluster_cyclic_permutations flag).\n");
+		}
+
+		//Checking v_limit_clusters value:
+		if(option[v_limit_clusters]() < 0 ) {
+			printf("Error!  The -v_limit_clusters flag must be set to 0 or greater.  Crashing with no grace whastoever.\n");
+			fflush(stdout); exit(1);
+		}
+
+		//Parse the user-specified list of additional atoms to use in the RMSD calculation:
+		utility::vector1<core::id::NamedAtomID> extra_atom_list;
+		parse_extra_atom_list(extra_atom_list); //Does nothing if no list provided.
+
+		fflush(stdout);
+	
+		protocols::relax::FastRelax frlx(sfxn, option[v_relaxrounds]());
+
+		//printf("ping1\n"); fflush(stdout); //DELETE ME
+		//core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		//printf("ping2\n"); fflush(stdout); //DELETE ME
+		core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
+		core::Size count = 0;
+		core::Real lowestE = 0; //Lowest energy encountered so far.
+		core::Size lowestE_index = 0; //The number of the pose with the lowest energy encountered.
+		utility::vector1 <core::Real> poseenergies; //Vector of energies of the poses.
+		utility::vector1 < utility::vector1 <core::Real> > posedata; //Vector of vectors to store the data that will be used for clustering.
+		utility::vector1 < FArray2D < core::Real > > alignmentdata; //Vector of array of x,y,z coordinates of atoms to be used for alignment in Cartesian clustering.
+		utility::vector1 < core::Size > cluster_assignments; //List of which cluster each structure is assigned to.
+		utility::vector1 < core::Size > cluster_offsets; //List of offsets for cyclic permutations when clustering (measured in number of amino acid positions we've offset by).
+		utility::vector1 < core::Size > cluster_oligomer_permutations; //List of permutations of oligomers if the user has specified the option to do that.
+
+		printf("Scoring energies of all input structures.\n"); fflush(stdout);
+		core::pose::Pose firstpose;
+		bool firstpose_hasbeta = false; //Are there beta-amino acids in the first input pose?
+
+		while( input.has_another_pose() ) { //For every input structure
+			count++;
+
+			if (count % 100 == 0) {printf("."); fflush(stdout); }
+			cluster_assignments.push_back(0); //Initially, every structure is assigned to cluster 0 (unassigned).
+			if(option[v_cluster_cyclic_permutations]()) cluster_offsets.push_back(0); //Initially, we assume that each structure may be aligned without any cyclic permutation, so these are all zero.
+			if(option[v_homooligomer_swap]()) cluster_oligomer_permutations.push_back(1); //Initially, we assume the first permutation of homooligomer subunits for each structure.
+
+			core::pose::Pose pose; //Create the pose
+			input.fill_pose( pose ); //Import it
+
+			if(pose.num_jump() > 0 && clusterby == "bb_dihedral") {
+				printf("Error!  Backbone dihedral clustering is not currently compatible with multi-chain PDB files.  Crashing.\n"); //TODO -- make this compatible!
+				fflush(stdout); exit(1);
+			}
+
+			if(pose.num_jump() > 0 && option[v_homooligomer_swap]()) {
+				const std::string chain1seq = pose.chain_sequence(1);
+				for(core::Size i=2, imax=pose.num_jump()+1; i<=imax; i++) {
+					if (pose.chain_sequence(i) != chain1seq) {
+						printf("Error!  When using the v_homooligomer_swap option, the lengths and sequences of all chains in the input structures must be identical.  Crashing.\n");
+						fflush(stdout); exit(1);
+					}
+				}
+			}
+
+			if(option[v_cyclic]()) {
+				addcyclicconstraints(pose); //If this is a cyclic peptide, add constraints for the terminal peptide bond:
+				if(option[v_cluster_cyclic_permutations]() && clustermode==1 && option[v_CB]()) {
+					for(core::Size ir=1; ir<=pose.n_residue(); ir++) {
+						if(!pose.residue(ir).has("CB")) { //Error if we don't have the same set of atoms on which to cluster in each residue.
+							printf("Error!  When using Cartesian clustering and clustering cyclic permutations, all residues in the input structures must have the same number of atoms to be used in the alignment.  If beta carbons are included, the sequence cannot contain glycine.\nCrashing.\n");
+							fflush(stdout); exit(1);
+						}
+					}
+				}
+			}
+
+			add_user_constraints(pose); //This checks for a user-specified CST file, and does nothing if there isn't one.  (Adds constraints if there is one.)
+
+			if(option[v_prerelax]()) {
+				make_disulfides(pose); //Add user-specified disulfide bonds.
+				frlx.apply(pose); //Relax the pose if the user has specified that it be relaxed.
+			}
+
+			if(option[v_mutate_to_ala]()) mutate_to_ala(pose); //Mutate the pose to a chain of alanines if necesssary.
+
 			make_disulfides(pose); //Add user-specified disulfide bonds.
-			frlx.apply(pose); //Relax the pose if the user has specified that it be relaxed.
-		}
 
-		if(option[v_mutate_to_ala]()) mutate_to_ala(pose); //Mutate the pose to a chain of alanines if necesssary.
-
-		make_disulfides(pose); //Add user-specified disulfide bonds.
-
-		(*sfxn)(pose); //Score the input pose
-		if(count==1) {
-			firstpose=pose; //Store the first pose.
-			firstpose_hasbeta = contains_beta(firstpose); //Check whether this pose contains beta-amino acids.
-		}
-		else if (firstpose_hasbeta && !betas_match(firstpose, pose)) { //If this is not the first pose AND the first pose had beta-amino acids, check that this pose has beta-amino acids at the same positions.
-			printf("Error!  If input structures contain beta-amino acids, they must have the same number of beta-amino acid residues, and at the same positions.\nCrashing!\n");
-			fflush(stdout);
-			exit(1);
-		}
-		poseenergies.push_back(pose.energies().total_energy()); //Store the pose energy
-
-		//Store the pose data that will be used for clustering:
-		storeposedata(pose, posedata, alignmentdata, clustermode, extra_atom_list);
-
-		if(count==1 || pose.energies().total_energy() < lowestE) {
-			lowestE=pose.energies().total_energy();
-			lowestE_index = count;
-		}
-	}
-
-	printf("\nClustering, starting with lowest-energy structure as the center of the first cluster.\n"); fflush(stdout);
-	core::Size unclustered_count = count; //The number of structures that remain to be clustered
-	core::Size cluster_count=0; //The number of clusters created
-	utility::vector1 < utility::vector1 <core::Real> > clustcenter_list; //Vector of vectors to store the data for the cluster centres
-	utility::vector1 < utility::vector1 <core::Size> > clusterlist_sortedbyenergy; //A vector storing lists of the states assigned to each cluster, sorted by energy.
-
-	while(unclustered_count > 0) {
-		//Make a new cluster
-		cluster_count++;
-
-		//The cumulative weighting of the points considered so far
-		//core::Real weighting_accumulator = option[v_weightbyenergy]() ? exp(-lowestE/option[v_kbt]()) : 1.0;
-		//core::Real currentweighting = 0.0;
-
-		//Assign the lowest energy structure to the next cluster
-		cluster_assignments[lowestE_index] = cluster_count;
-		utility::vector1 <core::Size> cluster_sortedbyenergy;
-		cluster_sortedbyenergy.push_back(lowestE_index);
-		printf ("Started cluster %lu and added structure %lu to it.\n", cluster_count, lowestE_index);
-		unclustered_count--;
-		utility::vector1 <core::Real> clustcenter = posedata[lowestE_index]; //Set the center of the current cluster
-
-		//Make a list of unassigned candidate structures:
-		utility::vector1 <core::Size> candidatelist;
-		for(core::Size istruct=1; istruct<=count; istruct++) {
-			if(cluster_assignments[istruct]==0) candidatelist.push_back(istruct);
-		}
-		printf("\tMade list of %lu unassigned structures.\n", candidatelist.size()); fflush(stdout);
-
-		//Assign members of the candidate list to the current cluster if they fall within R_cluster of the cluster center.
-		core::Real currentdist=0.0;
-		core::Size currentcyclicoffset=0; //Only used for calculating cyclic permutations
-		core::Size current_oligomer_permutation=0; //Only used for calculating permutations when swapping around homodimers.
-		for(core::Size istruct=1; istruct<=candidatelist.size(); istruct++) {
-
-			currentdist=calc_dist(clustcenter, posedata[candidatelist[istruct]], clustermode, alignmentdata[lowestE_index], alignmentdata[candidatelist[istruct]], firstpose.n_residue(), firstpose, currentcyclicoffset, current_oligomer_permutation);	
-
-			if (currentdist < R_cluster) {
-				printf("\tAdding structure %lu (%.6f from the cluster center).\n", candidatelist[istruct], currentdist); fflush(stdout);
-				cluster_assignments[candidatelist[istruct]]=cluster_count;
-				cluster_sortedbyenergy.push_back(candidatelist[istruct]);
-				if(option[v_cluster_cyclic_permutations]()) cluster_offsets[candidatelist[istruct]]=currentcyclicoffset;
-				if(option[v_homooligomer_swap]()) cluster_oligomer_permutations[candidatelist[istruct]]=current_oligomer_permutation;
+			(*sfxn)(pose); //Score the input pose
+			if(count==1) {
+				firstpose=pose; //Store the first pose.
+				firstpose_hasbeta = contains_beta(firstpose); //Check whether this pose contains beta-amino acids.
 			}
-		} //for loop through all candidates
+			else if (firstpose_hasbeta && !betas_match(firstpose, pose)) { //If this is not the first pose AND the first pose had beta-amino acids, check that this pose has beta-amino acids at the same positions.
+				printf("Error!  If input structures contain beta-amino acids, they must have the same number of beta-amino acid residues, and at the same positions.\nCrashing!\n");
+				fflush(stdout);
+				exit(1);
+			}
+			poseenergies.push_back(pose.energies().total_energy()); //Store the pose energy
 
-		sortclusterlist(cluster_sortedbyenergy, poseenergies); //Sort the list of states in this cluster by energy
-		clusterlist_sortedbyenergy.push_back(cluster_sortedbyenergy); //Add the list of states in this cluster to the list of states in each cluster
-		utility::vector1 < utility::vector1 < core::Real > > pca_vector_list; //A place to store the PCA vectors
-		utility::vector1 < core::Real > coeff_list; //A place to store coefficients (amplitudes) for each PCA vector 
-		if(!option[v_skip_PCA]()) {
-			shift_center_and_PCA(clustcenter, pca_vector_list, coeff_list, lowestE_index, posedata, poseenergies,
-				cluster_sortedbyenergy, cluster_count, clustermode, firstpose, cluster_offsets,
-				cluster_oligomer_permutations, extra_atom_list);
-			output_PCA(pca_vector_list, coeff_list, cluster_count);
-			clustcenter_list.push_back(clustcenter); //Store the current cluster center
-		}
+			//Store the pose data that will be used for clustering:
+			storeposedata(pose, posedata, alignmentdata, clustermode, extra_atom_list);
 
-		bool juststartedsearch=true;
-		for(core::Size i=1; i<=poseenergies.size(); i++) {
-			if(cluster_assignments[i]!=0) continue; //Continue if this structure has been assigned
-			if(juststartedsearch || poseenergies[i]<lowestE) { //If this is the first unassigned encountered OR the lowest energy unassigned encountered so far
-				juststartedsearch=false;
-				lowestE=poseenergies[i];
-				lowestE_index=i;
+			if(count==1 || pose.energies().total_energy() < lowestE) {
+				lowestE=pose.energies().total_energy();
+				lowestE_index = count;
 			}
 		}
 
-		if (juststartedsearch) break; //If this is still true, there were no unassigned structures.
-	}
+		printf("\nClustering, starting with lowest-energy structure as the center of the first cluster.\n"); fflush(stdout);
+		core::Size unclustered_count = count; //The number of structures that remain to be clustered
+		core::Size cluster_count=0; //The number of clusters created
+		utility::vector1 < utility::vector1 <core::Real> > clustcenter_list; //Vector of vectors to store the data for the cluster centres
+		utility::vector1 < utility::vector1 <core::Size> > clusterlist_sortedbyenergy; //A vector storing lists of the states assigned to each cluster, sorted by energy.
 
-	//Outputs:
-	printf("Cluster\tStructure\tFile_out\n");
+		while(unclustered_count > 0) {
+			//Make a new cluster
+			cluster_count++;
 
-	for (core::Size i=1; i<=clusterlist_sortedbyenergy.size(); i++) {
-		if(option[v_limit_clusters]()!=0 && i > static_cast<core::Size>( option[v_limit_clusters]() ) ) {
-			printf("Maximum number of clusters for output reached.\n");
-			break;
-		}
-		core::pose::Pose pose1;
-		for(core::Size j=1; j<=clusterlist_sortedbyenergy[i].size(); j++) {
-			core::pose::Pose temppose;
-			if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) {
-				pose_from_posedata (firstpose, temppose, clustermode, posedata[ clusterlist_sortedbyenergy[i][j] ]);
-				if(j>1 && option[v_homooligomer_swap]()) swapchains( temppose, cluster_oligomer_permutations[clusterlist_sortedbyenergy[i][j]] ); //Swap chains around.
-				if(j==1) pose1=temppose;
-				else align_with_offset(temppose, pose1, (option[v_cluster_cyclic_permutations]() ? cluster_offsets[ clusterlist_sortedbyenergy[i][j] ] : 0), extra_atom_list );
+			//The cumulative weighting of the points considered so far
+			//core::Real weighting_accumulator = option[v_weightbyenergy]() ? exp(-lowestE/option[v_kbt]()) : 1.0;
+			//core::Real currentweighting = 0.0;
+
+			//Assign the lowest energy structure to the next cluster
+			cluster_assignments[lowestE_index] = cluster_count;
+			utility::vector1 <core::Size> cluster_sortedbyenergy;
+			cluster_sortedbyenergy.push_back(lowestE_index);
+			printf ("Started cluster %lu and added structure %lu to it.\n", cluster_count, lowestE_index);
+			unclustered_count--;
+			utility::vector1 <core::Real> clustcenter = posedata[lowestE_index]; //Set the center of the current cluster
+
+			//Make a list of unassigned candidate structures:
+			utility::vector1 <core::Size> candidatelist;
+			for(core::Size istruct=1; istruct<=count; istruct++) {
+				if(cluster_assignments[istruct]==0) candidatelist.push_back(istruct);
 			}
-			char outfile[128];
-			if(option[v_silentoutput]()) {
-				char curstructtag[128];
-				sprintf(curstructtag, "c.%lu.%lu", i, j);
-				io::silent::SilentFileData outsilentfiledata;
-				io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
-				outsilentstruct->fill_struct(temppose, curstructtag);
-				if(j==1) {
-					sprintf(outfile, "clusters_firstmember.out");
-					outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
+			printf("\tMade list of %lu unassigned structures.\n", candidatelist.size()); fflush(stdout);
+
+			//Assign members of the candidate list to the current cluster if they fall within R_cluster of the cluster center.
+			core::Real currentdist=0.0;
+			core::Size currentcyclicoffset=0; //Only used for calculating cyclic permutations
+			core::Size current_oligomer_permutation=0; //Only used for calculating permutations when swapping around homodimers.
+			for(core::Size istruct=1; istruct<=candidatelist.size(); istruct++) {
+
+				currentdist=calc_dist(clustcenter, posedata[candidatelist[istruct]], clustermode, alignmentdata[lowestE_index], alignmentdata[candidatelist[istruct]], firstpose.n_residue(), firstpose, currentcyclicoffset, current_oligomer_permutation);	
+
+				if (currentdist < R_cluster) {
+					printf("\tAdding structure %lu (%.6f from the cluster center).\n", candidatelist[istruct], currentdist); fflush(stdout);
+					cluster_assignments[candidatelist[istruct]]=cluster_count;
+					cluster_sortedbyenergy.push_back(candidatelist[istruct]);
+					if(option[v_cluster_cyclic_permutations]()) cluster_offsets[candidatelist[istruct]]=currentcyclicoffset;
+					if(option[v_homooligomer_swap]()) cluster_oligomer_permutations[candidatelist[istruct]]=current_oligomer_permutation;
 				}
+			} //for loop through all candidates
+
+			sortclusterlist(cluster_sortedbyenergy, poseenergies); //Sort the list of states in this cluster by energy
+			clusterlist_sortedbyenergy.push_back(cluster_sortedbyenergy); //Add the list of states in this cluster to the list of states in each cluster
+			utility::vector1 < utility::vector1 < core::Real > > pca_vector_list; //A place to store the PCA vectors
+			utility::vector1 < core::Real > coeff_list; //A place to store coefficients (amplitudes) for each PCA vector 
+			if(!option[v_skip_PCA]()) {
+				shift_center_and_PCA(clustcenter, pca_vector_list, coeff_list, lowestE_index, posedata, poseenergies,
+					cluster_sortedbyenergy, cluster_count, clustermode, firstpose, cluster_offsets,
+					cluster_oligomer_permutations, extra_atom_list);
+				output_PCA(pca_vector_list, coeff_list, cluster_count);
+				clustcenter_list.push_back(clustcenter); //Store the current cluster center
+			}
+
+			bool juststartedsearch=true;
+			for(core::Size i=1; i<=poseenergies.size(); i++) {
+				if(cluster_assignments[i]!=0) continue; //Continue if this structure has been assigned
+				if(juststartedsearch || poseenergies[i]<lowestE) { //If this is the first unassigned encountered OR the lowest energy unassigned encountered so far
+					juststartedsearch=false;
+					lowestE=poseenergies[i];
+					lowestE_index=i;
+				}
+			}
+
+			if (juststartedsearch) break; //If this is still true, there were no unassigned structures.
+		}
+
+		//Outputs:
+		printf("Cluster\tStructure\tFile_out\n");
+
+		for (core::Size i=1; i<=clusterlist_sortedbyenergy.size(); i++) {
+			if(option[v_limit_clusters]()!=0 && i > static_cast<core::Size>( option[v_limit_clusters]() ) ) {
+				printf("Maximum number of clusters for output reached.\n");
+				break;
+			}
+			core::pose::Pose pose1;
+			for(core::Size j=1; j<=clusterlist_sortedbyenergy[i].size(); j++) {
+				core::pose::Pose temppose;
 				if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) {
-					if(option[v_limit_structures_per_cluster]()==0) sprintf(outfile, "clusters_allmembers.out");
-					else sprintf(outfile, "clusters_first_%lu_members.out", static_cast<core::Size>(option[v_limit_structures_per_cluster]()) );
-					outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
+					pose_from_posedata (firstpose, temppose, clustermode, posedata[ clusterlist_sortedbyenergy[i][j] ]);
+					if(j>1 && option[v_homooligomer_swap]()) swapchains( temppose, cluster_oligomer_permutations[clusterlist_sortedbyenergy[i][j]] ); //Swap chains around.
+					if(j==1) pose1=temppose;
+					else align_with_offset(temppose, pose1, (option[v_cluster_cyclic_permutations]() ? cluster_offsets[ clusterlist_sortedbyenergy[i][j] ] : 0), extra_atom_list );
 				}
-				sprintf(outfile, "c.%lu.%lu", i, j);											
-			} else {
-				sprintf(outfile, "c.%lu.%lu.pdb", i, j);
-				if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) temppose.dump_pdb(outfile);
+				char outfile[128];
+				if(option[v_silentoutput]()) {
+					char curstructtag[128];
+					sprintf(curstructtag, "c.%lu.%lu", i, j);
+					io::silent::SilentFileData outsilentfiledata;
+					io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
+					outsilentstruct->fill_struct(temppose, curstructtag);
+					if(j==1) {
+						sprintf(outfile, "clusters_firstmember.out");
+						outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
+					}
+					if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) {
+						if(option[v_limit_structures_per_cluster]()==0) sprintf(outfile, "clusters_allmembers.out");
+						else sprintf(outfile, "clusters_first_%lu_members.out", static_cast<core::Size>(option[v_limit_structures_per_cluster]()) );
+						outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
+					}
+					sprintf(outfile, "c.%lu.%lu", i, j);											
+				} else {
+					sprintf(outfile, "c.%lu.%lu.pdb", i, j);
+					if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) temppose.dump_pdb(outfile);
+				}
+				printf("%lu\t%lu\t%s\n", i, clusterlist_sortedbyenergy[i][j], outfile);
 			}
-			printf("%lu\t%lu\t%s\n", i, clusterlist_sortedbyenergy[i][j], outfile);
 		}
+
+		/*printf("\nWriting cluster centers.\n"); fflush(stdout);
+		for(core::Size i=1; i<=clustcenter_list.size(); i++) {
+			core::pose::Pose cenpose;
+			pose_from_posedata(firstpose, cenpose, clustermode, clustcenter_list[i]);
+			char outfile[64];
+			sprintf(outfile, "center_%lu.pdb", i);
+			cenpose.dump_pdb(outfile);
+		}*/
+
+		printf("\n*****JOB COMPLETED*****\n"); fflush(stdout);
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception : " << std::endl;
+		excn.show( std::cerr );
+		return -1;
 	}
 
-	/*printf("\nWriting cluster centers.\n"); fflush(stdout);
-	for(core::Size i=1; i<=clustcenter_list.size(); i++) {
-		core::pose::Pose cenpose;
-		pose_from_posedata(firstpose, cenpose, clustermode, clustcenter_list[i]);
-		char outfile[64];
-		sprintf(outfile, "center_%lu.pdb", i);
-		cenpose.dump_pdb(outfile);
-	}*/
-
-	printf("\n*****JOB COMPLETED*****\n"); fflush(stdout);
 	return 0;
 }
 
