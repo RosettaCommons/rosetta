@@ -133,7 +133,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 			test_properties_->set_variant_type( "GNARLY", false );
 		} catch ( EXCN_Base const & e )  {
 			exception_message_matches( e,
-			"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue" );
+				"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue" );
 		}
 
 		TS_ASSERT( test_properties_->is_variant_type( SC_FRAGMENT ) );

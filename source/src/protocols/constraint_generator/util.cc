@@ -83,7 +83,7 @@ generate_seqmap_from_poses(
 	bool const same_sequence = ( pose1.sequence() == pose2.sequence() );
 
 	if ( same_length && same_sequence ) {
-			return core::id::SequenceMapping::identity( pose1.total_residue() );
+		return core::id::SequenceMapping::identity( pose1.total_residue() );
 	} else { // !same_sequence || !same_length
 		TR << "Input structure and native differ in ";
 		if ( !same_length ) TR << "length and sequence ";

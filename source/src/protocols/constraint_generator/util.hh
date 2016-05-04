@@ -50,5 +50,5 @@ compute_nres_in_asymmetric_unit( core::pose::Pose const & pose );
 } //constraint_generator
 
 
-#endif	//protocols/constraint_generator_util_hh
+#endif //protocols/constraint_generator_util_hh
 

@@ -27,6 +27,7 @@ set(CPPDB_SOVERSION 0)
 include_directories(SYSTEM ../../external/dbio/sqlite3)
 include_directories(SYSTEM ../../external/dbio)
 include_directories(SYSTEM ../../external)
+include_directories(SYSTEM ../../external/libxml2/include)
 
 option(DISABLE_SQLITE	"Link sqlite3 backend into the libcppdb" OFF)
 

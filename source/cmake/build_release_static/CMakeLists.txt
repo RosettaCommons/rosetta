@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+SET(MODE release)
 INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/external.static.cmake)
 

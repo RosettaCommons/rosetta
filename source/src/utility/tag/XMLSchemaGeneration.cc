@@ -275,22 +275,22 @@ void XMLSchemaModelGroup::write_definition( int indentation, std::ostream & os )
 
 	indent_w_spaces( indentation, os );
 	switch ( type_ ) {
-		case xsmgt_sequence :
-		case xsmgt_choice :
-		case xsmgt_all :
-			os << "<" << type_;
-			break;
-		case xsmgt_group :
-			os << "<" << type_;
-			if ( group_name_ != "" ) {
-				if ( particles_.empty() ) {
-					os << " ref=\"";
-				} else {
-					os << " name=\"";
-				}
-				os << group_name_ << "\"";
+	case xsmgt_sequence :
+	case xsmgt_choice :
+	case xsmgt_all :
+		os << "<" << type_;
+		break;
+	case xsmgt_group :
+		os << "<" << type_;
+		if ( group_name_ != "" ) {
+			if ( particles_.empty() ) {
+				os << " ref=\"";
+			} else {
+				os << " name=\"";
 			}
-			break;
+			os << group_name_ << "\"";
+		}
+		break;
 	}
 
 	if ( ! is_group_holding_all() ) { write_min_occurs_max_occurs_if_necessary( min_occurs(), max_occurs(), os ); }
@@ -675,7 +675,7 @@ XMLSchemaSimpleSubelementList::element_list() const
 
 //class XMLSchemaSimpleSubelementList::XMLComplexTypeSchemaGeneratorImpl
 //{
-//	XMLComplexTypeSchemaGeneratorImpl();
+// XMLComplexTypeSchemaGeneratorImpl();
 //
 //};
 
@@ -989,57 +989,57 @@ XMLSchemaParticleOP XMLComplexTypeSchemaGeneratorImpl::create_subelement(
 	switch ( summary.element_type ) {
 	case XMLSchemaSimpleSubelementList::ElementSummary::ct_simple :
 		{
-			XMLSchemaElementOP element( new XMLSchemaElement );
-			if ( subelements_.simple_element_naming_func_has_been_set() ) {
+		XMLSchemaElementOP element( new XMLSchemaElement );
+		if ( subelements_.simple_element_naming_func_has_been_set() ) {
 
-				// write the complex type to the schema
-				XMLComplexTypeSchemaGenerator ctgen;
-				ctgen
-					.element_name( summary.element_name )
-					.complex_type_naming_func( subelements_.naming_func() )
-					.add_attributes( summary.attributes );
-				ctgen.write_complex_type_to_schema( xsd );
+			// write the complex type to the schema
+			XMLComplexTypeSchemaGenerator ctgen;
+			ctgen
+				.element_name( summary.element_name )
+				.complex_type_naming_func( subelements_.naming_func() )
+				.add_attributes( summary.attributes );
+			ctgen.write_complex_type_to_schema( xsd );
 
-				// initialize the element to refer to the new type
-				element->name( summary.element_name );
-				element->type_name( subelements_.naming_func()( summary.element_name ));
-			} else {
-				// if no naming function has been provided, then the type for this element must be provided inline
-				XMLSchemaComplexTypeOP ct( new XMLSchemaComplexType );
-				ct->add_attributes( summary.attributes );
-				element->element_type_def( ct );
-				element->name( summary.element_name );
-			}
-			if ( summary.min_or_max_occurs_set ) {
-				if ( summary.min_occurs != xsminmax_unspecified ) { element->min_occurs( summary.min_occurs ); }
-				if ( summary.max_occurs != xsminmax_unspecified ) { element->max_occurs( summary.max_occurs ); }
-			}
-			return element;
+			// initialize the element to refer to the new type
+			element->name( summary.element_name );
+			element->type_name( subelements_.naming_func()( summary.element_name ));
+		} else {
+			// if no naming function has been provided, then the type for this element must be provided inline
+			XMLSchemaComplexTypeOP ct( new XMLSchemaComplexType );
+			ct->add_attributes( summary.attributes );
+			element->element_type_def( ct );
+			element->name( summary.element_name );
 		}
+		if ( summary.min_or_max_occurs_set ) {
+			if ( summary.min_occurs != xsminmax_unspecified ) { element->min_occurs( summary.min_occurs ); }
+			if ( summary.max_occurs != xsminmax_unspecified ) { element->max_occurs( summary.max_occurs ); }
+		}
+		return element;
+	}
 		break;
 	case XMLSchemaSimpleSubelementList::ElementSummary::ct_ref :
 		{
-			XMLSchemaElementOP element( new XMLSchemaElement );
+		XMLSchemaElementOP element( new XMLSchemaElement );
 
-			element->name( summary.element_name );
-			element->type_name( summary.ct_name );
-			if ( summary.min_or_max_occurs_set ) {
-				if ( summary.min_occurs != xsminmax_unspecified ) { element->min_occurs( summary.min_occurs ); }
-				if ( summary.max_occurs != xsminmax_unspecified ) { element->max_occurs( summary.max_occurs ); }
-			}
-			return element;
+		element->name( summary.element_name );
+		element->type_name( summary.ct_name );
+		if ( summary.min_or_max_occurs_set ) {
+			if ( summary.min_occurs != xsminmax_unspecified ) { element->min_occurs( summary.min_occurs ); }
+			if ( summary.max_occurs != xsminmax_unspecified ) { element->max_occurs( summary.max_occurs ); }
 		}
+		return element;
+	}
 		break;
 	case XMLSchemaSimpleSubelementList::ElementSummary::ct_group :
 		{
-			XMLSchemaModelGroupOP group( new XMLSchemaModelGroup );
-			group->group_name( summary.ct_name );
-			if ( summary.min_or_max_occurs_set ) {
-				if ( summary.min_occurs != xsminmax_unspecified ) { group->min_occurs( summary.min_occurs ); }
-				if ( summary.max_occurs != xsminmax_unspecified ) { group->max_occurs( summary.max_occurs ); }
-			}
-			return group;
+		XMLSchemaModelGroupOP group( new XMLSchemaModelGroup );
+		group->group_name( summary.ct_name );
+		if ( summary.min_or_max_occurs_set ) {
+			if ( summary.min_occurs != xsminmax_unspecified ) { group->min_occurs( summary.min_occurs ); }
+			if ( summary.max_occurs != xsminmax_unspecified ) { group->max_occurs( summary.max_occurs ); }
 		}
+		return group;
+	}
 		break;
 	}
 	return XMLSchemaModelGroupOP(); // appease compiler
@@ -1047,8 +1047,8 @@ XMLSchemaParticleOP XMLComplexTypeSchemaGeneratorImpl::create_subelement(
 
 XMLComplexTypeSchemaGenerator::XMLComplexTypeSchemaGenerator() : pimpl_( new XMLComplexTypeSchemaGeneratorImpl ) {}
 XMLComplexTypeSchemaGenerator::~XMLComplexTypeSchemaGenerator() { delete pimpl_; }
-XMLComplexTypeSchemaGenerator::XMLComplexTypeSchemaGenerator(	XMLComplexTypeSchemaGenerator const & src ) :
-	 pimpl_( new XMLComplexTypeSchemaGeneratorImpl( *src.pimpl_ ))
+XMLComplexTypeSchemaGenerator::XMLComplexTypeSchemaGenerator( XMLComplexTypeSchemaGenerator const & src ) :
+	pimpl_( new XMLComplexTypeSchemaGeneratorImpl( *src.pimpl_ ))
 {
 }
 
@@ -1062,8 +1062,8 @@ XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::operator= ( XMLCo
 
 XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::element_name( std::string const & name )
 {
-	 pimpl_->element_name( name );
-	 return *this;
+	pimpl_->element_name( name );
+	return *this;
 }
 
 XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::complex_type_naming_func(
@@ -1164,7 +1164,7 @@ XMLComplexTypeSchemaGenerator::set_subelements_single_appearance_required_and_or
 void
 XMLComplexTypeSchemaGenerator::write_complex_type_to_schema( XMLSchemaDefinition & xsd )
 {
-	 pimpl_->write_complex_type_to_schema( xsd );
+	pimpl_->write_complex_type_to_schema( xsd );
 }
 
 void

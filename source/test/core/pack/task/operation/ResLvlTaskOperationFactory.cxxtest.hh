@@ -117,8 +117,8 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_message =
 				"Could not generate an XML Schema for ResLvlTaskOperations from ResLvlTaskOperationFactory; offending class"
-	      " must call core::pack::task::operation::complex_type_name_for_res_lvl_task_op when defining"
-	      " its XML Schema\ndefine_xml_schema_group: failed to detect a complex type of name \"" +
+				" must call core::pack::task::operation::complex_type_name_for_res_lvl_task_op when defining"
+				" its XML Schema\ndefine_xml_schema_group: failed to detect a complex type of name \"" +
 				complex_type_name_for_res_lvl_task_op( "DummyResLvlTaskOperation2" ) + "\" for \"DummyResLvlTaskOperation2\"\n";
 
 			TS_ASSERT_EQUALS( e.msg(), expected_message );

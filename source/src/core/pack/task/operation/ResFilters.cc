@@ -613,7 +613,7 @@ ResidueIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & x
 	return attributes;
 }
 
-//	static utility::tag::AttributeList get_xml_schema_attributes();
+// static utility::tag::AttributeList get_xml_schema_attributes();
 
 
 

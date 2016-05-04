@@ -75,6 +75,7 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
     ${CMAKE_CURRENT_SOURCE_DIR}/libcifparse.a  
+    ${CMAKE_CURRENT_SOURCE_DIR}/liblibxml2.a  
     -lz) 
 ### libc must be linked dynamically if using static ompi libs
 #SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
@@ -115,7 +116,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 #SET_TARGET_PROPERTIES(design_cycpeptide_MPI.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-#ADD_DEPENDENCIES(design_cycpeptide_MPI.mpi.linuxgccrelease cifparse ObjexxFCL utility numeric
+#ADD_DEPENDENCIES(design_cycpeptide_MPI.mpi.linuxgccrelease cifparse libxml2 ObjexxFCL utility numeric
 #basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
 #protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 #protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
@@ -129,7 +130,7 @@ SET_TARGET_PROPERTIES(rosetta_scripts.mpi.linuxgccrelease PROPERTIES COMPILE_FLA
 SET_TARGET_PROPERTIES(rosetta_scripts.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(rosetta_scripts.mpi.linuxgccrelease ObjexxFCL cifparse utility numeric
+ADD_DEPENDENCIES(rosetta_scripts.mpi.linuxgccrelease ObjexxFCL cifparse libxml2 utility numeric
 basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4

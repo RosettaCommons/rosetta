@@ -224,9 +224,9 @@ public:  // Standard Rosetta methods
 		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
 
 		randomizerA_ = RigidBodyRandomizeMoverOP(
-				new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
+			new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
 		randomizerB_ = RigidBodyRandomizeMoverOP(
-				new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
+			new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
 
 
 		cout << "Randomizing ligand conformation..." << endl;
@@ -234,7 +234,7 @@ public:  // Standard Rosetta methods
 			pose.set_phi( residue, numeric::random::rg().uniform() * 360 );
 			pose.set_psi( residue, numeric::random::rg().uniform() * 360 );
 			//pose.set_ring_conformation( residue, 1,
-					//pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
+			//pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
 		}
 
 
@@ -244,7 +244,7 @@ public:  // Standard Rosetta methods
 			cout << " Idealizing rings..." << endl;
 			for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
 				pose.set_ring_conformation( residue, 1,
-						pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
+					pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
 			}
 		}
 
@@ -496,8 +496,8 @@ private:  // Private methods
 	// the fraction complete.
 	void
 	ramp_score_weight( core::scoring::ScoreType const method,
-			core::Real const target,
-			core::Real const fraction_completion )
+		core::Real const target,
+		core::Real const fraction_completion )
 	{
 		Real factor;
 		Real const current_weight( sf_->get_weight( method ) );
@@ -519,8 +519,8 @@ private:  // Private methods
 	// Record a collection of decoy metrics.
 	void
 	record_pose_metrics( core::pose::Pose const & pose,
-			protocols::jd2::Job & job,
-			utility::vector1< int > const jumps )
+		protocols::jd2::Job & job,
+		utility::vector1< int > const jumps )
 	{
 		using namespace scoring;
 		using namespace docking;

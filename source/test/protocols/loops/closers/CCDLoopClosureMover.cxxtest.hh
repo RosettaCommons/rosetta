@@ -212,7 +212,7 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			// ok -- let's break the error message into two lines.
- 			std::string msg = e.msg();
+			std::string msg = e.msg();
 			std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
 			TS_ASSERT_EQUALS( msg_lines.size(), 3 );
 			TS_ASSERT_EQUALS( msg_lines[1], "ERROR: CCDLoopClosureMover::max_per_move_delta_per_residue( char secstruct ): "
@@ -226,7 +226,7 @@ public:
 			mover.max_total_torsion_delta_per_residue( '!' );
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
- 			std::string msg = e.msg();
+			std::string msg = e.msg();
 			std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
 			TS_ASSERT_EQUALS( msg_lines.size(), 3 );
 			TS_ASSERT_EQUALS( msg_lines[1], "ERROR: CCDLoopClosureMover::max_total_delta_per_residue( char secstruct ): "
@@ -234,8 +234,8 @@ public:
 		}
 		TR << "------------ The previous error message was expected -------------" << std::endl;
 
-// Test that a pose without cut points added will throw the user a message about that.
-// make sure we don't move omega
+		// Test that a pose without cut points added will throw the user a message about that.
+		// make sure we don't move omega
 		MoveMapOP mm( new MoveMap );
 		mm->set_bb( true );
 		for ( core::uint i = 1; i < pose.total_residue(); ++i ) {
@@ -258,7 +258,7 @@ public:
 		}
 		TR << "------------ The previous error message was expected -------------" << std::endl;
 
-// TODO: index_pair_in_range() is private, so I'm not sure how to test that one.... ~Labonte
+		// TODO: index_pair_in_range() is private, so I'm not sure how to test that one.... ~Labonte
 	}
 };
 

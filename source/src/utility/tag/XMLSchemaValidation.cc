@@ -48,27 +48,27 @@ std::string element_type_name(
 )
 {
 	switch ( element_type ) {
-		case XML_ELEMENT_NODE: return "XML_ELEMENT_NODE";
-		case XML_ATTRIBUTE_NODE: return "XML_ATTRIBUTE_NODE";
-		case XML_TEXT_NODE: return "XML_TEXT_NODE";
-		case XML_CDATA_SECTION_NODE: return "XML_CDATA_SECTION_NODE";
-		case XML_ENTITY_REF_NODE: return "XML_ENTITY_REF_NODE";
-		case XML_ENTITY_NODE: return "XML_ENTITY_NODE";
-		case XML_PI_NODE: return "XML_PI_NODE";
-		case XML_COMMENT_NODE: return "XML_COMMENT_NODE";
-		case XML_DOCUMENT_NODE: return "XML_DOCUMENT_NODE";
-		case XML_DOCUMENT_TYPE_NODE: return "XML_DOCUMENT_TYPE_NODE";
-		case XML_DOCUMENT_FRAG_NODE: return "XML_DOCUMENT_FRAG_NODE";
-		case XML_NOTATION_NODE: return "XML_NOTATION_NODE";
-		case XML_HTML_DOCUMENT_NODE: return "XML_HTML_DOCUMENT_NODE";
-		case XML_DTD_NODE: return "XML_DTD_NODE";
-		case XML_ELEMENT_DECL: return "XML_ELEMENT_DECL";
-		case XML_ATTRIBUTE_DECL: return "XML_ATTRIBUTE_DECL";
-		case XML_ENTITY_DECL: return "XML_ENTITY_DECL";
-		case XML_NAMESPACE_DECL: return "XML_NAMESPACE_DECL";
-		case XML_XINCLUDE_START: return "XML_XINCLUDE_START";
-		case XML_XINCLUDE_END: return "XML_XINCLUDE_END";
-		case XML_DOCB_DOCUMENT_NODE: return "XML_DOCB_DOCUMENT_NODE";
+	case XML_ELEMENT_NODE : return "XML_ELEMENT_NODE";
+	case XML_ATTRIBUTE_NODE : return "XML_ATTRIBUTE_NODE";
+	case XML_TEXT_NODE : return "XML_TEXT_NODE";
+	case XML_CDATA_SECTION_NODE : return "XML_CDATA_SECTION_NODE";
+	case XML_ENTITY_REF_NODE : return "XML_ENTITY_REF_NODE";
+	case XML_ENTITY_NODE : return "XML_ENTITY_NODE";
+	case XML_PI_NODE : return "XML_PI_NODE";
+	case XML_COMMENT_NODE : return "XML_COMMENT_NODE";
+	case XML_DOCUMENT_NODE : return "XML_DOCUMENT_NODE";
+	case XML_DOCUMENT_TYPE_NODE : return "XML_DOCUMENT_TYPE_NODE";
+	case XML_DOCUMENT_FRAG_NODE : return "XML_DOCUMENT_FRAG_NODE";
+	case XML_NOTATION_NODE : return "XML_NOTATION_NODE";
+	case XML_HTML_DOCUMENT_NODE : return "XML_HTML_DOCUMENT_NODE";
+	case XML_DTD_NODE : return "XML_DTD_NODE";
+	case XML_ELEMENT_DECL : return "XML_ELEMENT_DECL";
+	case XML_ATTRIBUTE_DECL : return "XML_ATTRIBUTE_DECL";
+	case XML_ENTITY_DECL : return "XML_ENTITY_DECL";
+	case XML_NAMESPACE_DECL : return "XML_NAMESPACE_DECL";
+	case XML_XINCLUDE_START : return "XML_XINCLUDE_START";
+	case XML_XINCLUDE_END : return "XML_XINCLUDE_END";
+	case XML_DOCB_DOCUMENT_NODE : return "XML_DOCB_DOCUMENT_NODE";
 	}
 	return "(Unrecognized XML element type!)";
 }
@@ -247,7 +247,7 @@ recurse_through_tree(
 {
 	if ( node == 0 ) return 0;
 	handler.push_node( node );
-	int error =	xmlSchemaValidateOneElement( ctxt, node );
+	int error = xmlSchemaValidateOneElement( ctxt, node );
 	xmlNodePtr child = xmlFirstElementChild( node );
 	while ( child ) {
 		int error_in_child = recurse_through_tree( ctxt, child, handler );

@@ -1107,18 +1107,18 @@ void LayerDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	/*
 	std::list< XMLSchemaComplexTypeOP > layer_secstruct_cts;
 	BOOST_FOREACH( std::string const & sstype, SS_TYPES ) {
-		XMLSchemaComplexTypeOP layer_secstruct_type( new XMLSchemaComplexType );
-		layer_secstruct_type->name( sstype + "Type" );
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "copy_layer", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "aa", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "append", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_append", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "exclude", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_exclude", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "operation", xs_string ));
-		layer_secstruct_type->add_attribute( XMLSchemaAttribute( "specification", xs_string ));
-		layer_secstruct_cts.push_back( layer_secstruct_type );
+	XMLSchemaComplexTypeOP layer_secstruct_type( new XMLSchemaComplexType );
+	layer_secstruct_type->name( sstype + "Type" );
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "copy_layer", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "aa", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "append", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_append", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "exclude", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_exclude", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "operation", xs_string ));
+	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "specification", xs_string ));
+	layer_secstruct_cts.push_back( layer_secstruct_type );
 	}*/
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );

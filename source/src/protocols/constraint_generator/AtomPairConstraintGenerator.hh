@@ -39,13 +39,13 @@ namespace constraint_generator {
 class AtomPairConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
 public:
 	struct MappedAtom {
-		public:
-			MappedAtom( core::Size const pose_atomno, core::Size const ref_atomno ):
-				pose_atom( pose_atomno ), ref_atom( ref_atomno ) {}
-			core::Size pose_atom;
-			core::Size ref_atom;
-		private:
-			MappedAtom();
+	public:
+		MappedAtom( core::Size const pose_atomno, core::Size const ref_atomno ):
+			pose_atom( pose_atomno ), ref_atom( ref_atomno ) {}
+		core::Size pose_atom;
+		core::Size ref_atom;
+	private:
+		MappedAtom();
 	};
 	typedef utility::vector1< MappedAtom > MappedAtoms;
 

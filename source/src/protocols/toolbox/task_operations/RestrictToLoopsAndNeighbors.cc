@@ -111,7 +111,7 @@ void RestrictToLoopsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDef
 
 	// From parent.
 	RestrictToLoops::provide_attributes( attributes );
-	
+
 	attributes.push_back( XMLSchemaAttribute( "include_neighbors", xs_boolean ) );
 	attributes.push_back( XMLSchemaAttribute( "design_neighbors", xs_boolean ) );
 	attributes.push_back( XMLSchemaAttribute( "cutoff_dist", xs_decimal ) );

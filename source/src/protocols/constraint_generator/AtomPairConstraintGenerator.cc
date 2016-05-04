@@ -211,13 +211,13 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 
 void
 AtomPairConstraintGenerator::add_constraints(
-		core::scoring::constraints::ConstraintCOPs & csts,
-		core::Size const pose_resid1,
-		core::Size const pose_resid2,
-		core::conformation::Residue const & ref_ires,
-		core::conformation::Residue const & ref_jres,
-		MappedAtoms const & iatoms,
-		MappedAtoms const & jatoms ) const
+	core::scoring::constraints::ConstraintCOPs & csts,
+	core::Size const pose_resid1,
+	core::Size const pose_resid2,
+	core::conformation::Residue const & ref_ires,
+	core::conformation::Residue const & ref_jres,
+	MappedAtoms const & iatoms,
+	MappedAtoms const & jatoms ) const
 {
 	for ( MappedAtoms::const_iterator iatom=iatoms.begin(); iatom!=iatoms.end(); ++iatom ) {
 		for ( MappedAtoms::const_iterator jatom=jatoms.begin(); jatom!=jatoms.end(); ++jatom ) {
@@ -229,7 +229,7 @@ AtomPairConstraintGenerator::add_constraints(
 			core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, sd_ ) );
 			core::scoring::func::FuncOP weighted_func = scalar_weighted( sog_func, weight_ );
 			core::scoring::constraints::ConstraintCOP newcst(
-					new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, weighted_func ) );
+				new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, weighted_func ) );
 			csts.push_back( newcst );
 			TR.Debug << "atom_pair_constraint generated for residue " << pose_atom1 << " and " << pose_atom2 << ", distance=" << dist << " with weight " << weight_ << std::endl;
 		}
@@ -243,7 +243,7 @@ AtomPairConstraintGenerator::create_sequence_mapping( core::pose::Pose const & p
 	bool const same_sequence = ( pose.sequence() == ref_pose.sequence() );
 
 	if ( same_length && same_sequence ) {
-			return core::id::SequenceMapping::identity( pose.total_residue() );
+		return core::id::SequenceMapping::identity( pose.total_residue() );
 	} else { // !same_sequence || !same_length
 		TR << "Input structure and native differ in ";
 		if ( !same_length ) TR << "length and sequence ";

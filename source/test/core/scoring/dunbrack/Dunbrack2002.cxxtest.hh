@@ -341,9 +341,9 @@ public:
 			TS_ASSERT( iidata.nsteps() >= 1 );
 			for ( Size jj = 1; jj <= iidata.nangles(); ++jj ) {
 				// if ( jj % 3 == 1 ) { // new res
-				// 	std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
+				//  std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
 				// } else {
-				// 	std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
+				//  std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
 				// }
 
 				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-6 );

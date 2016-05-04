@@ -469,7 +469,7 @@ public:
 		AttributeList const &,
 		int min_occurs,
 		int max_occurs = xsminmax_unspecified
-	 );
+	);
 
 	/// @brief Add a new subelement to the growing list of subelements, but one whose definition has been provided elsewhere
 	/// and where the name of the complexType for this subelement is derived from the subelement's name using the
@@ -538,73 +538,73 @@ private:
 //class XMLSchemaAdvancedSubelementList : public utility::pointer::ReferenceCount
 //{
 //public:
-//	// A function that returns the name for an object given the name of another related object
-//	// e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
-//	// for a task operation by modifying the name of that task operation.
-//	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+// // A function that returns the name for an object given the name of another related object
+// // e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
+// // for a task operation by modifying the name of that task operation.
+// typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
 //
-//	// A function that returns the name for a particular object, e.g.
-//	// ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
-//	// for the xs:group listing all of the ResidueSelectors accessible through
-//	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
-//	typedef boost::function< std::string () >                      NameFunction;
-//
-//public:
-//	XMLSchemaAdvancedSubelementList();
-//	~XMLSchemaAdvancedSubelementList();
-//	XMLSchemaAdvancedSubelementList( XMLSchemaAdvancedSubelementList const & src );
-//	XMLSchemaAdvancedSubelementList & operator = ( XMLSchemaAdvancedSubelementList const & rhs );
+// // A function that returns the name for a particular object, e.g.
+// // ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
+// // for the xs:group listing all of the ResidueSelectors accessible through
+// // the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
+// typedef boost::function< std::string () >                      NameFunction;
 //
 //public:
-//
-//	// Functions that the users should interact with
-//
-//	/// @brief the naming function is required if this subelement list is going to be repetable
-//	XMLSchemaAdvancedSubelementList & complex_type_naming_func( DerivedNameFunction const & naming_function );
-//
-//	/// @brief Add a new subelement to the growing list of subelements, defined by its name and a (possibly empty) list of attributes
-//	/// This subelement may not itself contain other subelements, however.  The name for the complexType of this element will be
-//	/// derived from the function given in complex_type_naming_func, if provided, and otherwise, the complexType for this element
-//	/// will be listed within the element declaration and will be unnamed.
-//	XMLSchemaAdvancedSubelementList & add_subelement( std::string const & name, AttributeList const &, SubelementProperties );
-//
-//	/// @brief Add a new subelement to the growing list of subelements, but one whose definition has been provided elsewhere
-//	/// and where the name of the complexType for this subelement is derived from the subelement's name using the
-//	/// provided function.  (Why pass a function to define the name for the complex type instead of just passing the
-//	/// result of the function? Because such an interface would also let you bypass a function entirely and let you pass
-//	/// in a raw string, and that would lead to brittle code. If we should want to change the complexType naming rule
-//	/// for a particular class of elements in the schema, we want to be able to change only a single function and
-//	/// have that change ripple outwards through all the parts of the schema that interacted with those elements.)
-//	XMLSchemaAdvancedSubelementList & add_already_defined_subelement(
-//		std::string const & name,
-//		DerivedNameFunction const & ct_naming_function
-//	);
-//
-//	/// @brief Add a new subelement to the growing list of subelements which refers to an already existing group
-//	/// whose name is given by the input function.
-//	XMLSchemaAdvancedSubelementList & add_group_subelement(
-//		NameFunction const & group_name_function
-//	);
+// XMLSchemaAdvancedSubelementList();
+// ~XMLSchemaAdvancedSubelementList();
+// XMLSchemaAdvancedSubelementList( XMLSchemaAdvancedSubelementList const & src );
+// XMLSchemaAdvancedSubelementList & operator = ( XMLSchemaAdvancedSubelementList const & rhs );
 //
 //public:
 //
-//	// Functions interacted with by the XMLComplexTypeSchemaGenerator only
+// // Functions that the users should interact with
 //
-//	struct ElementSummary {
-//		enum { ct_simple, ct_ref, ct_group } element_type;
-//		std::string element_name;
-//		std::string ct_name;
-//		AttributeList attributes;
-//	};
+// /// @brief the naming function is required if this subelement list is going to be repetable
+// XMLSchemaAdvancedSubelementList & complex_type_naming_func( DerivedNameFunction const & naming_function );
 //
-//	bool simple_element_naming_func_has_been_set() const;
-//	std::string complex_typename_for_element( std::string const & element_name ) const;
-//	DerivedNameFunction naming_func() const;
-//	std::list< ElementSummary > const & element_list() const;
+// /// @brief Add a new subelement to the growing list of subelements, defined by its name and a (possibly empty) list of attributes
+// /// This subelement may not itself contain other subelements, however.  The name for the complexType of this element will be
+// /// derived from the function given in complex_type_naming_func, if provided, and otherwise, the complexType for this element
+// /// will be listed within the element declaration and will be unnamed.
+// XMLSchemaAdvancedSubelementList & add_subelement( std::string const & name, AttributeList const &, SubelementProperties );
+//
+// /// @brief Add a new subelement to the growing list of subelements, but one whose definition has been provided elsewhere
+// /// and where the name of the complexType for this subelement is derived from the subelement's name using the
+// /// provided function.  (Why pass a function to define the name for the complex type instead of just passing the
+// /// result of the function? Because such an interface would also let you bypass a function entirely and let you pass
+// /// in a raw string, and that would lead to brittle code. If we should want to change the complexType naming rule
+// /// for a particular class of elements in the schema, we want to be able to change only a single function and
+// /// have that change ripple outwards through all the parts of the schema that interacted with those elements.)
+// XMLSchemaAdvancedSubelementList & add_already_defined_subelement(
+//  std::string const & name,
+//  DerivedNameFunction const & ct_naming_function
+// );
+//
+// /// @brief Add a new subelement to the growing list of subelements which refers to an already existing group
+// /// whose name is given by the input function.
+// XMLSchemaAdvancedSubelementList & add_group_subelement(
+//  NameFunction const & group_name_function
+// );
+//
+//public:
+//
+// // Functions interacted with by the XMLComplexTypeSchemaGenerator only
+//
+// struct ElementSummary {
+//  enum { ct_simple, ct_ref, ct_group } element_type;
+//  std::string element_name;
+//  std::string ct_name;
+//  AttributeList attributes;
+// };
+//
+// bool simple_element_naming_func_has_been_set() const;
+// std::string complex_typename_for_element( std::string const & element_name ) const;
+// DerivedNameFunction naming_func() const;
+// std::list< ElementSummary > const & element_list() const;
 //
 //private:
-//	DerivedNameFunction ct_naming_func_for_simple_subelements_;
-//	std::list< ElementSummary > elements_;
+// DerivedNameFunction ct_naming_func_for_simple_subelements_;
+// std::list< ElementSummary > elements_;
 //
 //
 //};
@@ -661,8 +661,8 @@ public:
 public:
 	XMLComplexTypeSchemaGenerator();
 	~XMLComplexTypeSchemaGenerator();
-	XMLComplexTypeSchemaGenerator(	XMLComplexTypeSchemaGenerator const & src );
-	XMLComplexTypeSchemaGenerator & operator = ( 	XMLComplexTypeSchemaGenerator const & rhs );
+	XMLComplexTypeSchemaGenerator( XMLComplexTypeSchemaGenerator const & src );
+	XMLComplexTypeSchemaGenerator & operator = (  XMLComplexTypeSchemaGenerator const & rhs );
 
 	XMLComplexTypeSchemaGenerator & element_name( std::string const & );
 	XMLComplexTypeSchemaGenerator & complex_type_naming_func( DerivedNameFunction const & naming_function );

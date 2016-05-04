@@ -110,7 +110,7 @@ public:
 	void test_throw_on_unregistered_generator_name_ConstraintGeneratorFactory() {
 		basic::datacache::DataMap dm;
 		TS_ASSERT_THROWS( ConstraintGeneratorFactory::get_instance()->new_constraint_generator( "DummyConstraintGenerator2", 0, dm ),
-				utility::excn::EXCN_Msg_Exception );
+			utility::excn::EXCN_Msg_Exception );
 	}
 
 };

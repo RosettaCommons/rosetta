@@ -19,15 +19,15 @@ static bool throw_the_next_time_an_assertion_failure_is_hit( false );
 
 void set_throw_on_next_assertion_failure()
 {
-  throw_the_next_time_an_assertion_failure_is_hit = true;
+	throw_the_next_time_an_assertion_failure_is_hit = true;
 }
 
 bool maybe_throw_on_next_assertion_failure( char const * condition )
 {
-  if ( throw_the_next_time_an_assertion_failure_is_hit ) {
-    throw_the_next_time_an_assertion_failure_is_hit = false;
-    throw utility::excn::EXCN_Msg_Exception( std::string( "assertion failure hit:" ) + condition );
-  }
-  return false;
+	if ( throw_the_next_time_an_assertion_failure_is_hit ) {
+		throw_the_next_time_an_assertion_failure_is_hit = false;
+		throw utility::excn::EXCN_Msg_Exception( std::string( "assertion failure hit:" ) + condition );
+	}
+	return false;
 }
 

@@ -284,7 +284,7 @@ void SelectBySASAOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attributes;
 
 	activate_common_simple_type( xsd, "int_cslist" );
-	
+
 	attributes.push_back( XMLSchemaAttribute( "mode", xs_string, "sc" ) );
 	attributes.push_back( XMLSchemaAttribute( "state", xs_string, "monomer" ) );
 	attributes.push_back( XMLSchemaAttribute( "probe_radius", xs_decimal, "2.2" ) );

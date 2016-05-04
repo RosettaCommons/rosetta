@@ -1104,7 +1104,7 @@ PoseFromSFRBuilder::get_rsd_type(
 	if ( rsd_type->is_polymer() ) {
 		if ( is_lower_terminus ) {
 			required_variants_in_sets.push_back(
-					make_vector1( LOWER_TERMINUS_VARIANT, LOWERTERM_TRUNC_VARIANT, METHYL_GLYCOSIDE ) );
+				make_vector1( LOWER_TERMINUS_VARIANT, LOWERTERM_TRUNC_VARIANT, METHYL_GLYCOSIDE ) );
 		} else {
 			disallow_variants.push_back( LOWER_TERMINUS_VARIANT );
 			disallow_variants.push_back( LOWERTERM_TRUNC_VARIANT );

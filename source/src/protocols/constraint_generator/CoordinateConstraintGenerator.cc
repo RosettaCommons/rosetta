@@ -106,7 +106,7 @@ CoordinateConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datac
 	if ( selector ) set_residue_selector( selector );
 
 	if ( !selector_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "CoordinateConstraintGenerator::parse_tag(): Error obtaining ResidueSelector from tag\n" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "CoordinateConstraintGenerator::parse_tag(): Error obtaining ResidueSelector from tag\n" );
 	}
 }
 
@@ -259,7 +259,7 @@ compute_ref_atom(
 	std::string const & atomname = pose_rsd.atom_name( atom );
 	if ( ! ref_rsd.has( atomname ) ) {
 		TR.Debug << "Skip generating coordinate constraints for atom " << atomname << " of residue " << pose_rsd.seqpos() << " (" << pose_rsd.name() <<
-					") - not found in residue " << ref_rsd.seqpos() << " (" << ref_rsd.name() << ") of reference structure." << std::endl;
+			") - not found in residue " << ref_rsd.seqpos() << " (" << ref_rsd.name() << ") of reference structure." << std::endl;
 		return 0;
 	}
 	return ref_rsd.atom_index( atomname );
@@ -267,10 +267,10 @@ compute_ref_atom(
 
 void
 CoordinateConstraintGenerator::create_residue_constraints(
-		core::scoring::constraints::ConstraintCOPs & csts,
-		core::id::AtomID const & root_atomid,
-		core::conformation::Residue const & pose_rsd,
-		core::conformation::Residue const & ref_rsd ) const
+	core::scoring::constraints::ConstraintCOPs & csts,
+	core::id::AtomID const & root_atomid,
+	core::conformation::Residue const & pose_rsd,
+	core::conformation::Residue const & ref_rsd ) const
 {
 	core::Size last_atom = pose_rsd.last_backbone_atom();
 	//core::Size last_targ_atom = ref_rsd.last_backbone_atom();
@@ -282,9 +282,9 @@ CoordinateConstraintGenerator::create_residue_constraints(
 
 	/*
 	if ( last_atom != last_targ_atom ) {
-		TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (sidechain_?"heavy":"backbone") << " atoms: ref. "
-			<< ref_rsd.name() << " (res " << ref_rsd.seqpos() << ") versus  " << pose_rsd.name() << " (res " << pose_rsd.seqpos() << "). - skipping." << std::endl;
-		return;
+	TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (sidechain_?"heavy":"backbone") << " atoms: ref. "
+	<< ref_rsd.name() << " (res " << ref_rsd.seqpos() << ") versus  " << pose_rsd.name() << " (res " << pose_rsd.seqpos() << "). - skipping." << std::endl;
+	return;
 	}
 	*/
 
@@ -304,12 +304,12 @@ CoordinateConstraintGenerator::create_residue_constraints(
 		// Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
 		if ( ambiguous_hnq_ && sidechain_ &&
 				( (pose_rsd.aa() == core::chemical::aa_asn && ref_rsd.aa() == core::chemical::aa_asn &&
-					 ( pose_rsd.atom_name( atom ) == " OD1" || pose_rsd.atom_name( atom ) == " ND2" )) ||
-					(pose_rsd.aa() == core::chemical::aa_gln && ref_rsd.aa() == core::chemical::aa_gln &&
-					 ( pose_rsd.atom_name( atom ) == " OE1" || pose_rsd.atom_name( atom ) == " NE2" )) ||
-					(pose_rsd.aa() == core::chemical::aa_his && ref_rsd.aa() == core::chemical::aa_his &&
-					 (pose_rsd.atom_name( atom ) == " ND1" || pose_rsd.atom_name( atom ) == " NE2" ||
-						pose_rsd.atom_name( atom ) == " CD2" || pose_rsd.atom_name( atom ) == " CE1")) ) ) {
+				( pose_rsd.atom_name( atom ) == " OD1" || pose_rsd.atom_name( atom ) == " ND2" )) ||
+				(pose_rsd.aa() == core::chemical::aa_gln && ref_rsd.aa() == core::chemical::aa_gln &&
+				( pose_rsd.atom_name( atom ) == " OE1" || pose_rsd.atom_name( atom ) == " NE2" )) ||
+				(pose_rsd.aa() == core::chemical::aa_his && ref_rsd.aa() == core::chemical::aa_his &&
+				(pose_rsd.atom_name( atom ) == " ND1" || pose_rsd.atom_name( atom ) == " NE2" ||
+				pose_rsd.atom_name( atom ) == " CD2" || pose_rsd.atom_name( atom ) == " CE1")) ) ) {
 			csts.push_back( create_ambiguous_constraint( pose_atomid, ref_rsd, root_atomid, compute_hnq_atoms( pose_rsd, atom ) ) );
 		} else {
 			csts.push_back( create_coordinate_constraint( pose_atomid, ref_atomid, root_atomid, ref_rsd ) );

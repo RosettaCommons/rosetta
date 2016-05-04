@@ -105,14 +105,14 @@ NtoCConstraintGenerator::clone() const
 void
 NtoCConstraintGenerator::set_weight( Real const coef )
 {
-	cg_.set_weight( coef );
+cg_.set_weight( coef );
 }
 
 /// @brief set distance of constraint
 void
 NtoCConstraintGenerator::set_distance( Real const dist )
 {
-	cg_.set_distance( dist );
+cg_.set_distance( dist );
 }
 */
 

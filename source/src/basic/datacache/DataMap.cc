@@ -72,19 +72,19 @@ DataMap::operator []( std::string const & type ) {
 // "scorefxns", but if there are no score functions already in the map, then
 // bad things happen.
 //
-//	if ( !has_type( type ) ) {
-//		// "dummy_entry" serves as a placeholder while the datamap does not contain actual maps of this type.
-//		// it is removed if the map is accessed.
-//		add( type, "dummy_entry", 0 );
-//	}
+// if ( !has_type( type ) ) {
+//  // "dummy_entry" serves as a placeholder while the datamap does not contain actual maps of this type.
+//  // it is removed if the map is accessed.
+//  add( type, "dummy_entry", 0 );
+// }
 //
-//	std::map< std::string, utility::pointer::ReferenceCountOP > & m( data_map_.find( type )->second );
-//	if ( m.size() > 1 ) {
-//		std::map< std::string, utility::pointer::ReferenceCountOP >::iterator it;
-//		it=m.find( "dummy_entry" );
-//		m.erase( it );
-//	}
-//	return m;
+// std::map< std::string, utility::pointer::ReferenceCountOP > & m( data_map_.find( type )->second );
+// if ( m.size() > 1 ) {
+//  std::map< std::string, utility::pointer::ReferenceCountOP >::iterator it;
+//  it=m.find( "dummy_entry" );
+//  m.erase( it );
+// }
+// return m;
 //}
 
 platform::Size
