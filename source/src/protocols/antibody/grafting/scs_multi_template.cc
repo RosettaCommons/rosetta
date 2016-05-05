@@ -48,7 +48,7 @@ SCS_ResultsOP SCS_MultiTemplate::select(uint n, AntibodySequence const &A)
 
 	struct {
 		string name;
-		SCS_ResultsVector SCS_Results::*region;
+		SCS_ResultVector SCS_Results::*region;
 	} J[] {
 		{"h1", &SCS_Results::h1}, {"h2", &SCS_Results::h2}, {"h3", &SCS_Results::h3},
 		{"l1", &SCS_Results::l1}, {"l2", &SCS_Results::l2}, {"l3", &SCS_Results::l3},
@@ -57,7 +57,7 @@ SCS_ResultsOP SCS_MultiTemplate::select(uint n, AntibodySequence const &A)
 
 	for(auto &j : J) {
 		for(uint i=0; i<n; ++i) {
-			SCS_ResultsVector &r = (*S).*j.region;
+			SCS_ResultVector &r = (*S).*j.region;
 
 			SCS_ResultOP item;
 			if( std::find(regions_.begin(), regions_.end(), j.name) != regions_.end() ) {

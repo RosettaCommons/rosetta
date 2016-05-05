@@ -137,6 +137,12 @@ int antibody_main()
 
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_alignment_length) );
+		// JRJ Filters
+		//scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_identity) );
+		//scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_template_resolution) );
+		//scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_outlier) );
+		//scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_template_bfactor) );
+		//scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_OCD) );
 
 		blast->set_sorter( SCS_FunctorCOP(new SCS_BlastComparator_BitScore_Resolution) );
 

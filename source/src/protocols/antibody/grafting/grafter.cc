@@ -171,6 +171,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	AntibodyFramework trimmed_heavy_fr = A.heavy_framework();
 	AntibodyFramework trimmed_light_fr = A.light_framework();
 
+	trim_framework(A, trimmed_heavy_fr, trimmed_light_fr);
+
 	AntibodyNumbering an( Chothia_Numberer().number(A, trimmed_heavy_fr, trimmed_light_fr) );
 
 	struct {
@@ -222,6 +224,12 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->n_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue in superimposed template! region:") + g.name);
 
 		TR << "Grafting..." << std::endl;
+
+		// Reasons for +1/-1: Jared's code uses an "insert pose into pose" mover written by Steven Lewis where the "start"
+		// residue is the residue before the insertion region, and the "end" residue is the residue after the insertion region;
+		// he continues this convention through his code. Since we're inserting a whole CDR, this puts the required start/end
+		// values one residue outside of the loop on either end. Since we define our start/end points as the first/last residues
+		// of the loop, we have to subtract/add one to match up with the terminology.
 		protocols::grafting::CCDEndsGraftMoverOP grafter(new protocols::grafting::CCDEndsGraftMover(result_pose_cdr_first+1, result_pose_cdr_last-1, *cdr, overlap, overlap, true) );
 		grafter->stop_at_closure(true);  grafter->set_cycles(128);
 

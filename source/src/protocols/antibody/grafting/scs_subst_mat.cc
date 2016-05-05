@@ -57,10 +57,10 @@ void SCS_SubstitutionMatrix::init_from_options()
 }
 
 
-SCS_ResultsVector populate_results_vector( std::map< string, std::map<string, core::Real> > const & result_map,
+SCS_ResultVector populate_results_vector( std::map< string, std::map<string, core::Real> > const & result_map,
                                            std::map< string, std::map<string, string> > const & db )
 {
-	SCS_ResultsVector results;
+	SCS_ResultVector results;
 
 	for(auto result : result_map ) {
 		// Converting text based results filed to SCS_BlastMetric

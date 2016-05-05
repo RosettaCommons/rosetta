@@ -12,6 +12,30 @@
 /// @author Sergey Lyskov
 
 
+/// @details (Brian/Sergey correct me if I'm wrong) - JRJ
+/// SCS_Result is a general struct containing a vector of PDBs. These PDBs could come from anywhere.
+///
+/// SCS_BlastResult is a special case where these PDBs come from a BLAST+ alignment,
+/// The SCS_BlastResult struct inherits from SCS_Result, so it also contains further information
+/// about the aligned template, not the query -- i.e. the sequence similar to the one you are looking for.
+///
+/// SCS_ResultVector contains a vector of SCS_Result structs such as SCS_BlastResult.
+/// It does not contain a list of SCS_Results!
+///
+/// SCS_Results contains alignment results for each antibody region.
+/// Each alignment result is itself an SCS_ResultVector.
+///
+/// SCS_ResultSet is a slice of the n-th alignment of each region.
+///
+/// SCS_Base is base class containing a vector of filters and a sorter.
+/// It has adders/setters for the filters/sorter.
+/// More importantly, it has two functions: select / raw_select which take a query sequence.
+/// The raw_select function should be overwritten for the specific alignment method. (see SCS_BlastPlus)
+/// The select function calls raw_select then filters and sorts (if these have been applied).
+///
+/// SCS_BlastPlus is where the actual BLASTing occurs!
+/// It overwrites raw_select to use BLAST+.
+
 #ifndef INCLUDED_protocols_antibody_grafting_scs_blast_hh
 #define INCLUDED_protocols_antibody_grafting_scs_blast_hh
 
@@ -54,7 +78,7 @@ struct SCS_Antibody_Database_Result : public SCS_Result
 	core::Real resolution;
 	std::string bio_type, light_type, struct_source;
 
-	/// sequences of selected template (do not confuse with querry sequences! 'sequence' will hold value corresponding to region results column)
+	/// sequences of selected template (do not confuse with query sequences! 'sequence' will hold value corresponding to region results column)
 	std::string /*sequence, */h1, h2, h3, frh, l1, l2, l3, frl;
 };
 
@@ -66,7 +90,7 @@ struct SCS_BlastResult : public SCS_Antibody_Database_Result
 
 
 
-struct SCS_ResultsVector : public utility::vector0< SCS_ResultOP >
+struct SCS_ResultVector : public utility::vector0< SCS_ResultOP >
 {
 	//std::string name, sequence;  // query info: name of the region and it sequence
 };
@@ -76,12 +100,12 @@ struct SCS_Results
 {
 	//AntibodySequence const antibody_sequence; // our initial query for reference
 
-	SCS_ResultsVector h1, h2, h3, l1, l2, l3, frh, frl, orientation;
+	SCS_ResultVector h1, h2, h3, l1, l2, l3, frh, frl, orientation;
 
 	SCS_Results& operator=(SCS_Results&&) = default;
 
 
-	/// @brief Create result set from 'row' element of each SCS_ResultsVector vector
+	/// @brief Create result set from 'row' element of each SCS_ResultVector vector
 	///        if strict is true the throw if no resuls found otherwise use empty OP
 	///
 	/// @throw std::out_of_range if for some of the row is not present and strict==true
@@ -158,7 +182,7 @@ public:
 	// string database_path(void) const { return database_; }
 
 protected:
-	struct Result { std::string name, sequence; SCS_ResultsVector &results; };
+	struct Result { std::string name, sequence; SCS_ResultVector &results; };
 
 	virtual void select_template(Result & j,
 								 std::string const & db_to_query,

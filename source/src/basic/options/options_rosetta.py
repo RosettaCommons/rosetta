@@ -3772,6 +3772,32 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 default = 'false'
                 ),
 		), #design
+        Option_Group( 'grafting',
+            Option('exclude_homologs', 'Boolean',
+                    desc = 'Filter BLAST matches by sequence identity? (false by default)',
+                    default = 'false'
+                    ),
+            Option('exclude_homologs_cdr_cutoff', 'Real',
+                    desc = 'Sequence identity cutoff for complementarity determining regions (80 percent is default).',
+                    default = '80.0',
+                    ),
+            Option('exclude_homologs_fr_cutoff', 'Real',
+                    desc = 'Sequence identity cutoff for framework regions (80 percent is default).',
+                    default = '80.0'
+                    ),
+            Option('multi_template_graft', 'Boolean',
+                    desc = 'Enable multi-template grafting? Default is false.',
+                    default = 'false'
+                    ),
+            Option('ocd_cutoff', 'Real',
+                    desc = 'Orientational coordinate distance cutoff for templates. Introduces diversity when using multi-template grafting (1 is default).',
+                    default = '1.0'
+                    ),
+            Option('n_multi_templates', 'Integer',
+                    desc = 'Number of multiple templates to use during grafting. Default is 10.',
+                    default = '10'
+                    ),
+        ), #grafting
 	), # antibody
 
 	## Options for specific task operations - outside global packing options.

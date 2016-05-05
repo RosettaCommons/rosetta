@@ -27,23 +27,22 @@
 
 #endif // CXX11
 
+#include <utility/vector0.hh>
+#include <map>
+
 
 namespace protocols {
 namespace antibody {
 namespace grafting {
+	
+using std::string;
 
 /// Check if regex library is functional
 bool antibody_grafting_usable();
 
-
 } // grafting
 } // antibody
 } // protocols
-
-#endif // __ANTIBODY_GRAFTING__
-
-
-
 
 #ifdef __ANTIBODY_GRAFTING__
 
@@ -51,8 +50,14 @@ namespace protocols {
 namespace antibody {
 namespace grafting {
 
+/// @brief helper function to parse plain text for BLAST result and filter data
+utility::vector0< std::map<std::string, std::string> > parse_plain_text_with_columns(std::string file_name, std::string legend_prefix="# ", char legend_separator=' ', std::string data_prefix="", char data_separator=' ');
+	
+	
 } // grafting
 } // antibody
 } // protocols
+
+#endif // __ANTIBODY_GRAFTING__
 
 #endif // INCLUDED_protocols_antibody_grafting_util_hh

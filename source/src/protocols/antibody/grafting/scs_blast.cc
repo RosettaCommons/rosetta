@@ -19,6 +19,7 @@
 #include <protocols/antibody/grafting/exception.hh>
 #include <protocols/antibody/grafting/chothia_numberer.hh>
 #include <protocols/antibody/grafting/scs_functor.hh>
+#include <protocols/antibody/grafting/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/execute.hh>
@@ -27,7 +28,7 @@
 #include <basic/options/option.hh>
 
 #include <utility/string_util.hh>
-//#include <utility/stream_util.hh>
+#include <utility/stream_util.hh>
 
 #include <algorithm>
 #include <fstream>
@@ -42,7 +43,8 @@ using std::string;
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
 
 
-/// @brief Create result set from 'row' element of each SCS_ResultsVector vector
+
+/// @brief Create result set from 'row' element of each SCS_ResultVector vector
 ///        if strict is true then throw if no resuls found otherwise use empty OP
 ///
 /// @throw std::out_of_range if for some of the row is not present and strict==true
@@ -82,9 +84,9 @@ void SCS_Base::set_sorter(SCS_FunctorCOP sorter)
 	sorter_ = sorter;
 }
 
-struct ResultsItem {
+struct ResultItem {
 	string name;
-	SCS_ResultsVector & result;
+	SCS_ResultVector & result;
 };
 
 
@@ -124,7 +126,7 @@ void SCS_Base::report(SCS_ResultsOP r, uint n)
 	// json report
 	struct {
 		string name;
-		SCS_ResultsVector SCS_Results::*region;
+		SCS_ResultVector SCS_Results::*region;
 	} J[] {
 		{"h1", &SCS_Results::h1}, {"h2", &SCS_Results::h2}, {"h3", &SCS_Results::h3},
 		{"l1", &SCS_Results::l1}, {"l2", &SCS_Results::l2}, {"l3", &SCS_Results::l3},
@@ -186,60 +188,6 @@ void SCS_LoopOverSCs::init_from_options()
 }
 
 
-/// @details Parse plain text file with following format, Replace some of the charactes in legend
-/// <legend-prefix> field-1 field-2 field-3 ...
-/// f11 f12 f13 ...
-/// f21 f22 f23 ...
-/// @return utility::vector0< std::map<string field, string value> >
-/// @trows _AE_scs_failed_ on unexpeceted formating
-utility::vector0< std::map<string, string> > parse_plain_text_with_columns(string file_name, string legend_prefix="# ", char legend_separator=' ', string data_prefix="", char data_separator=' ')
-{
-	utility::vector0< std::map<string, string> > result;
-	utility::vector0<string> legend;
-
-	std::ifstream f(file_name);
-
-	string line;
-	while( std::getline(f, line) ) {
-		if( utility::startswith(line, legend_prefix) ) {
-			if( legend_separator == ' ') legend = utility::split_whitespace( line.substr( legend_prefix.size() ) );
-			else legend = utility::string_split( line.substr( legend_prefix.size() ), legend_separator);
-
-			for(auto & l : legend) {
-				l = utility::strip(l, ' ');
-				l = utility::replace_in(l, ". ", ".");
-				l = utility::replace_in(l, " ", "-");
-			}
-
-			TR.Trace << "Found legend: " << line << std::endl << "Legend: " << legend << std::endl;
-		}
-		else {
-			if( utility::startswith(line, data_prefix) ) {
-				if( !legend.size() ) throw _AE_scs_failed_("File: " + file_name + " is missing legend!");
-				else {
-					//TR.Trace << "Got line:" << line << std::endl;
-
-					utility::vector0< string > parts;
-
-					//auto parts( utility::string_split(line, '\t') );
-					if( data_separator == ' ') parts = utility::split_whitespace(line);
-					else parts = utility::string_split(line, data_separator);
-
-					//TR.Trace << "Line parts.size: " << parts.size() << " legend size:" << legend.size() << std::endl;
-
-					if( parts.size() == legend.size() ) {
-						std::map<string, string> fields;  int i=0;
-						for(auto e : parts) fields[ legend[i++] ] = e;
-						result.push_back(fields);
-					} else throw _AE_scs_failed_("Number of fileds does not match legend!\nFile: "+file_name+"\nLine: "+line);
-				}
-			}
-		}
-	}
-
-	return result;
-}
-
 void populate_results_from_db( SCS_Antibody_Database_ResultOP const & result, std::map< string, std::map<string, string> > const & db )
 {
 	result->bio_type      = db.at(result->pdb).at("BioType");
@@ -270,9 +218,10 @@ void populate_results_from_db( SCS_Antibody_Database_ResultOP const & result, st
 ///          h1.fasta	pdb4d9q_chothia.pdb	100.00	10	0	0	1	10	1	10	6e-04	22.7
 ///          ...
 /// @return utility::vector0< std::map<string field, string value> >
-SCS_ResultsVector parse_blastp_output(string const & file_name, string const & query, std::map< string, std::map<string, string> > const & db)
+
+SCS_ResultVector parse_blastp_output(string const & file_name, string const & query, std::map< string, std::map<string, string> > const & db)
 {
-	SCS_ResultsVector results;
+	SCS_ResultVector results;
 
 	auto lines( parse_plain_text_with_columns(file_name, "# Fields: ", ',', query, '\t') );
 
@@ -328,7 +277,7 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 	string heavy_orientation = fr.frh1 + A.h1_sequence() + fr.frh2 + A.h2_sequence() + fr.frh3 + A.h3_sequence() + fr.frh4;
 	string light_orientation = fr.frl1 + A.l1_sequence() + fr.frl2 + A.l2_sequence() + fr.frl3 + A.l3_sequence() + fr.frl4;
 
-	string orientation = heavy_orientation + light_orientation; // Note: this is in reverse order if compared to Python code!!!
+	string orientation = light_orientation + heavy_orientation; // Note: must be in this order
 
 	TR.Trace << "frh:" << frh << std::endl;
 	TR.Trace << "frl:" << frl << std::endl;
@@ -337,6 +286,7 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 
 	SCS_ResultsOP results(new SCS_Results);
 	//results->antibody_sequence = A;
+
 
 	Result J[] {
 		{"frh", frh, results->frh}, {"h1", A.h1_sequence(), results->h1}, {"h2", A.h2_sequence(), results->h2}, {"h3", A.h3_sequence(), results->h3},
@@ -426,7 +376,7 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 	string heavy_orientation = fr.frh1 + A.h1_sequence() + fr.frh2 + A.h2_sequence() + fr.frh3 + A.h3_sequence() + fr.frh4;
 	string light_orientation = fr.frl1 + A.l1_sequence() + fr.frl2 + A.l2_sequence() + fr.frl3 + A.l3_sequence() + fr.frl4;
 
-	string orientation = heavy_orientation + light_orientation; // Note: this is in reverse order if compared to Python code!!!
+	string orientation = light_orientation + heavy_orientation; // Note: must be in this order
 
 	Result J[] {
 		{"frh", frh, results.frh}, {"h1", A.h1_sequence(), results.h1}, {"h2", A.h2_sequence(), results.h2}, {"h3", A.h3_sequence(), results.h3},

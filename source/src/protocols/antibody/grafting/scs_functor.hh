@@ -76,13 +76,64 @@ public:
 	void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
 };
 
-
 class SCS_BlastFilter_by_alignment_length : public SCS_Functor
 {
- public:
+public:
 	void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
 };
 
+class SCS_BlastFilter_by_template_resolution : public SCS_Functor
+{
+public:
+	SCS_BlastFilter_by_template_resolution();
+  void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+	core::Real get_resolution_cutoff() const;
+	void set_resolution_cutoff(core::Real cutoff);
+private:
+	core::Real resolution_cutoff_;
+};
+    
+class SCS_BlastFilter_by_sequence_identity : public SCS_Functor
+{
+public:
+	SCS_BlastFilter_by_sequence_identity();
+  void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+	void init_from_options();
+	core::Real get_sid_cutoff_cdr() const;
+	core::Real get_sid_cutoff_fr() const;
+	void set_sid_cutoff_cdr(core::Real cutoff);
+	void set_sid_cutoff_fr(core::Real cutoff);
+private:
+	core::Real sid_cutoff_cdr_;
+	core::Real sid_cutoff_fr_;
+};
+
+class SCS_BlastFilter_by_outlier : public SCS_Functor
+{
+public:
+  void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+};
+
+class SCS_BlastFilter_by_template_bfactor : public SCS_Functor
+{
+public:
+	void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+};
+
+class SCS_BlastFilter_by_OCD : public SCS_Functor
+{
+public:
+	SCS_BlastFilter_by_OCD();
+	void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+	void init_from_options();
+	core::Size get_n_orientational_templates() const;
+	core::Real get_ocd_cutoff() const;
+	void set_n_orientational_templates(core::Size n);
+	void set_ocd_cutoff(core::Real cutoff);
+private:
+	core::Size n_orientational_templates_;
+	core::Real ocd_cutoff_;
+};
 
 /// @details filter helper function: generate string with results sizes
 std::string result_sizes(SCS_ResultsOP r, int width=4);

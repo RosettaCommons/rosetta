@@ -59,6 +59,7 @@ namespace grafting {
 /// Insert is held fixed in cartesian space after superposition of any overhang residues by default.
 ///
 /// ****Nter_loop_start-----> | Piece | <----Nter_loop_end****
+/// (Note that Nter_loop_start and Nter_loop_end points to redidue BEFORE loop and AFTER loop)
 /// Default flexibility on Nter and Cter is only two residues (--> part of diagram).
 /// Will delete any residues between start and end of the scaffold, and any overhang residues from the insert.
 ///
@@ -127,5 +128,3 @@ private:
 }// namespace protocols
 
 #endif  // INCLUDED_protocols_grafting_CCDEndsGraftMover_HH
-
-
