@@ -795,6 +795,7 @@ sources = {
 		"OrResidueSelector",
 		"PhiSelector",
 		"PrimarySequenceNeighborhoodSelector",
+		"RandomResidueSelector",
 		"ResidueIndexSelector",
 		"ResidueNameSelector",
 		"ResiduePDBInfoHasLabelSelector",
