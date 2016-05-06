@@ -69,7 +69,8 @@ CoordinateConstraintGenerator::CoordinateConstraintGenerator():
 	sd_( 0.5 ),
 	ca_only_( false ),
 	sidechain_( false ),
-	ambiguous_hnq_( false )
+	ambiguous_hnq_( false ),
+	align_reference_( false )
 {
 }
 
@@ -100,6 +101,7 @@ CoordinateConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datac
 	set_ambiguous_hnq( tag->getOption< bool >( "ambiguous_hnq", ambiguous_hnq_ ) );
 	set_bounded( tag->getOption< bool >( "bounded", bounded_ ) );
 	set_bounded_width( tag->getOption< core::Real >( "bounded_width", bounded_width_ ) );
+	align_reference_ = tag->getOption< bool >( "align_reference", align_reference_ );
 
 	core::select::residue_selector::ResidueSelectorCOP selector =
 		core::select::residue_selector::parse_residue_selector( tag, data );
@@ -117,6 +119,7 @@ CoordinateConstraintGenerator::apply( core::pose::Pose const & pose ) const
 
 	// get sequence map
 	core::id::SequenceMapping const seq_map = generate_seqmap( pose );
+	TR.Debug << "Generated sequence map: " << seq_map << std::endl;
 
 	// get reference pose
 	core::pose::PoseOP reference_pose = prepare_constraint_target_pose( pose, seq_map );
@@ -197,17 +200,17 @@ CoordinateConstraintGenerator::set_bounded_width( core::Real const bound_width )
 }
 
 std::pair< std::string, std::string >
-compute_hnq_atoms( core::conformation::Residue const & pose_rsd, core::Size const atom )
+compute_hnq_atoms( core::conformation::Residue const & pose_rsd, std::string const & atom_name )
 {
 	if ( pose_rsd.aa() == core::chemical::aa_asn ) {
 		return std::make_pair( " OD1", " ND2" );
 	} else if ( pose_rsd.aa() == core::chemical::aa_gln ) {
 		return std::make_pair( " OE1", " NE2" );
 	} else if ( pose_rsd.aa() == core::chemical::aa_his &&
-			(pose_rsd.atom_name( atom ) == " ND1" || pose_rsd.atom_name( atom ) == " CD2") ) {
+			(atom_name == " ND1" || atom_name == " CD2") ) {
 		return std::make_pair( " ND1", " CD2" );
 	} else if ( pose_rsd.aa() == core::chemical::aa_his &&
-			(pose_rsd.atom_name( atom ) == " NE2" || pose_rsd.atom_name( atom ) == " CE1") ) {
+			(atom_name == " NE2" || atom_name == " CE1") ) {
 		return std::make_pair( " NE2", " CE1" );
 	} else {
 		utility_exit_with_message("Logic error in AtomCoordinateConstraints");
@@ -252,11 +255,10 @@ CoordinateConstraintGenerator::create_ambiguous_constraint(
 
 core::Size
 compute_ref_atom(
-	core::Size const atom,
+	std::string const & atomname,
 	core::conformation::Residue const & pose_rsd,
 	core::conformation::Residue const & ref_rsd )
 {
-	std::string const & atomname = pose_rsd.atom_name( atom );
 	if ( ! ref_rsd.has( atomname ) ) {
 		TR.Debug << "Skip generating coordinate constraints for atom " << atomname << " of residue " << pose_rsd.seqpos() << " (" << pose_rsd.name() <<
 			") - not found in residue " << ref_rsd.seqpos() << " (" << ref_rsd.name() << ") of reference structure." << std::endl;
@@ -273,29 +275,20 @@ CoordinateConstraintGenerator::create_residue_constraints(
 	core::conformation::Residue const & ref_rsd ) const
 {
 	core::Size last_atom = pose_rsd.last_backbone_atom();
-	//core::Size last_targ_atom = ref_rsd.last_backbone_atom();
 
 	if ( sidechain_ ) {
 		last_atom = pose_rsd.nheavyatoms();
-		//last_targ_atom = ref_rsd.nheavyatoms();
 	}
-
-	/*
-	if ( last_atom != last_targ_atom ) {
-	TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (sidechain_?"heavy":"backbone") << " atoms: ref. "
-	<< ref_rsd.name() << " (res " << ref_rsd.seqpos() << ") versus  " << pose_rsd.name() << " (res " << pose_rsd.seqpos() << "). - skipping." << std::endl;
-	return;
-	}
-	*/
 
 	for ( core::Size atom=1; atom<=last_atom; ++atom ) {
-		TR.Debug << "Considering constraining atom " << pose_rsd.atom_name( atom ) << " residue " << pose_rsd.seqpos() << std::endl;
+		std::string const & atom_name = pose_rsd.atom_name( atom );
+		TR.Debug << "Considering constraining atom " << atom_name << " residue " << pose_rsd.seqpos() << std::endl;
 
 		// skip ahead if we only want CA
-		if ( ca_only_ && ( pose_rsd.atom_name( atom ).find( "CA" ) == std::string::npos ) ) continue;
-		TR.Debug << "Going to constrain atom " << pose_rsd.atom_name( atom ) << " residue " << pose_rsd.seqpos() << std::endl;
+		if ( ca_only_ && ( atom_name.find( "CA" ) == std::string::npos ) ) continue;
+		TR.Debug << "Going to constrain atom " << atom_name << " residue " << pose_rsd.seqpos() << std::endl;
 
-		core::Size const ref_atom = compute_ref_atom( atom, pose_rsd, ref_rsd );
+		core::Size const ref_atom = compute_ref_atom( atom_name, pose_rsd, ref_rsd );
 		if ( ref_atom == 0 ) continue;
 
 		core::id::AtomID const ref_atomid( ref_atom, ref_rsd.seqpos() );
@@ -304,13 +297,13 @@ CoordinateConstraintGenerator::create_residue_constraints(
 		// Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
 		if ( ambiguous_hnq_ && sidechain_ &&
 				( (pose_rsd.aa() == core::chemical::aa_asn && ref_rsd.aa() == core::chemical::aa_asn &&
-				( pose_rsd.atom_name( atom ) == " OD1" || pose_rsd.atom_name( atom ) == " ND2" )) ||
+				( atom_name == " OD1" || atom_name == " ND2" ) ) ||
 				(pose_rsd.aa() == core::chemical::aa_gln && ref_rsd.aa() == core::chemical::aa_gln &&
-				( pose_rsd.atom_name( atom ) == " OE1" || pose_rsd.atom_name( atom ) == " NE2" )) ||
+				( atom_name == " OE1" || atom_name == " NE2" )) ||
 				(pose_rsd.aa() == core::chemical::aa_his && ref_rsd.aa() == core::chemical::aa_his &&
-				(pose_rsd.atom_name( atom ) == " ND1" || pose_rsd.atom_name( atom ) == " NE2" ||
-				pose_rsd.atom_name( atom ) == " CD2" || pose_rsd.atom_name( atom ) == " CE1")) ) ) {
-			csts.push_back( create_ambiguous_constraint( pose_atomid, ref_rsd, root_atomid, compute_hnq_atoms( pose_rsd, atom ) ) );
+				(atom_name == " ND1" || atom_name == " NE2" ||
+				atom_name == " CD2" || atom_name == " CE1") ) ) ) {
+			csts.push_back( create_ambiguous_constraint( pose_atomid, ref_rsd, root_atomid, compute_hnq_atoms( pose_rsd, atom_name ) ) );
 		} else {
 			csts.push_back( create_coordinate_constraint( pose_atomid, ref_atomid, root_atomid, ref_rsd ) );
 		}
@@ -346,7 +339,7 @@ CoordinateConstraintGenerator::prepare_constraint_target_pose(
 	// If a ref pose is given, and pose doens't have a virtual root,
 	// align the native pose to the input pose to avoid rotation/translation based
 	//  errors.
-	if ( refpose_ && !has_virtual_root ) {
+	if ( refpose_ && ( align_reference_ || !has_virtual_root ) ) {
 		align_reference_pose( *constraint_target_pose, input, seq_map );
 	}
 

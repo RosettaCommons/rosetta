@@ -130,6 +130,7 @@ private:
 	bool ca_only_;
 	bool sidechain_;
 	bool ambiguous_hnq_;
+	bool align_reference_;
 };
 
 } //protocols
