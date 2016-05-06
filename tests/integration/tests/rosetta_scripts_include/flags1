@@ -1,0 +1,11 @@
+-parser:protocol inputs/test1.xml
+-in:file:s inputs/S_0002.pdb
+-nstruct 1
+#-mute all
+#-unmute core.select.util.SelectResiduesByLayer core.selector.residue_selector.LayerSelector core.pack.pack_rotamers core.pack.interaction_graph.interaction_graph_factory protocols.helical_bundle.BundleGridSampler
+-inout:write_all_connect_info
+-inout:connect_info_cutoff 0.0
+##### these are general flags
+-out:levels core.select.residue_selector.PhiSelector:500
+-score:weights talaris2014.wts
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

@@ -1,0 +1,4 @@
+    <RESIDUE_SELECTORS>
+        <Phi name="posPhi" select_positive_phi=true ignore_unconnected_upper=false/>
+        <Phi name="negPhi" select_positive_phi=false ignore_unconnected_upper=false />
+    </RESIDUE_SELECTORS>

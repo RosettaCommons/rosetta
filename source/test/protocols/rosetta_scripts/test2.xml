@@ -1,0 +1,27 @@
+<ROSETTASCRIPTS>
+#This test tests multiple inclusions.
+    <SCOREFXNS>
+<xi:include href="protocols/rosetta_scripts/include1.xml" />
+    </SCOREFXNS>
+<xi:include href="protocols/rosetta_scripts/include2.xml" / >
+    <TASKOPERATIONS>
+          <ReadResfile name="l_res" filename="inputs/l_res.txt" selector="negPhi"/>
+          <ReadResfile name="d_res" filename="inputs/d_res.txt" selector="posPhi"/>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        
+        <DeclareBond name=terminal_bond2 res1=24 res2=1 atom1=C atom2=N add_termini=false />
+        <DeclareBond name=terminal_bond1 res1=12 res2=13 atom1=C atom2=N add_termini=false />
+        
+        <!--required torsions to keep things in place. make sure you have them set for both ends-->
+        
+        <PackRotamersMover name="packer" scorefxn=tala_comp task_operations=l_res,d_res />
+
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+<xi:include href="protocols/rosetta_scripts/include3.xml" parser="XML" />
+    <OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

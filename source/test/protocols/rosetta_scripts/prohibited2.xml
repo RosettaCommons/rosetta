@@ -1,0 +1,6 @@
+    <PROTOCOLS>
+        <Add mover=terminal_bond1/>
+        <Add mover=terminal_bond2/>
+        <Add mover=packer/>
+	<xi:include href="protocols/rosetta_scripts/prohibited1.xml" /> #This is a circular dependency which should trigger an error!
+    </PROTOCOLS>

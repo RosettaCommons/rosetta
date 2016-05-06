@@ -52,6 +52,22 @@ public:
 	RosettaScriptsParser();
 	virtual ~RosettaScriptsParser();
 
+	/// @brief Actually read in the XML file.  Called recursively to read in XML files that
+	/// this XML file includes.  At the end of this operation, fin contains the contents
+	/// of the XML file, with all xi:includes replaced with the contents of included XML
+	/// files.  Files are opened and closed here.
+	/// @details Note that filenames_encountered is passed by copy rather than by reference
+	/// DELIBERATELY.  This is so that it remains a list of parent files, so that only
+	/// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
+	/// detected.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void
+	read_in_and_recursively_replace_includes(
+		std::string const &filename,
+		std::stringstream &fin,
+		utility::vector1 < std::string > filenames_encountered
+	) const;
+
 	/// @brief Open the file given by xml_fname and construct a mover representing
 	/// the script contained in that file. If new_input is true, run the APPLY_TO_POSE
 	/// block on the input mover.  If both new_input and guarantee_new_mover are false,
@@ -133,18 +149,26 @@ private:
 		std::stringstream & out
 	);
 
-	int
-	process_includes(
-		utility::tag::TagCOP root_tag,
-		int & processed_includes
-	);
+	/// @brief Is the current tag one with a slash at the end?
+	/// @details Starting from endpos, crawl backward until we hit a
+	/// '/' or a non-whitespace character.  Return true if and only
+	/// if it's a slash, false otherwise.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool
+	has_slash_at_end(
+		std::string const &str,
+		core::Size const endpos
+	) const;
 
-	void
-	process_include_xml(
-		utility::tag::TagCOP tag,
-		utility::vector0 < utility::tag::TagOP > & tags_from_includes,
-		int & processed_includes
-	);
+	/// @brief Is the current tag one with something that will be replaced by variable replacement?
+	/// @details Starting from endpos, crawl backward until we hit a '<' or '%'.  Return 'false' if
+	/// the former is preceded by a percent sign and 'true' if we hit the latter.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool
+	has_double_percent_signs(
+		std::string const &str,
+		core::Size const endpos
+	) const;
 
 }; // Parser
 

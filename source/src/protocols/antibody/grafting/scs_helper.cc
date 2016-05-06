@@ -56,7 +56,7 @@ namespace utility {
 namespace protocols {
 namespace antibody {
 namespace grafting {
-	
+
 // Public methods ////////////////////////////////////////////////////////////
 // Return bfactor map
 std::map< std::string, std::map<std::string, bool> >
@@ -88,7 +88,7 @@ SCS_Helper::SCS_Helper()
   OCD_data_ = parse_OCD_data();
   outlier_data_ = parse_outlier_data();
 }
-	
+
 // Singleton-creation function for use with utility::thread::threadsafe_singleton
 SCS_Helper *
 SCS_Helper::create_singleton_instance()
@@ -96,7 +96,7 @@ SCS_Helper::create_singleton_instance()
 	return new SCS_Helper;
 }
 
-	
+
 /// @details Parse bfactor data (true implies b-factor criterion is not met)
 ///          Expected input:
 //						# ab	 l1    l2    l3    h1    h2    h3    // NEEDS TO BE ADDED TO FILE
@@ -112,28 +112,28 @@ std::map< std::string, std::map<std::string, bool> >
 SCS_Helper::parse_bfactor_data()
 {
 	std::map< std::string, std::map<std::string, bool> > results;
-	
+
 	std::string dir = "protocol_data/antibody/";
 	std::string filename = "list_bfactor50";
 	std::string path = basic::database::find_database_path(dir, filename);
-	
+
 	// should be a vector zero of string to string maps
 	auto lines( parse_plain_text_with_columns( path ) );
-	
+
 	// loop over pdb id and cdrs
 	for(auto fields : lines ) {
 		// Converting text based results to map
 		std::map<std::string, bool> cdr_bfactors;
-		
+
 		std::string cdrs[] = { "l1", "l2", "l3", "h1", "h2", "h3" }; // is it ok to just use a list like this?
 		for (auto cdr: cdrs) {
 			assert( fields.at(cdr) == "True" | fields.at(cdr) == "False");
 			cdr_bfactors[cdr] = fields.at(cdr) == "True";
 		}
-		
+
 		results[fields.at("ab")] = cdr_bfactors;
 	}
-	
+
 	return results;
 }
 
@@ -152,19 +152,19 @@ std::map< std::string, std::map<std::string, core::Real> >
 SCS_Helper::parse_OCD_data()
 {
   std::map< std::string, std::map<std::string, core::Real> > results;
-	
+
 	std::string dir = "protocol_data/antibody/";
 	std::string filename = "comparisons.txt";
 	std::string path = basic::database::find_database_path(dir, filename);
-	
+
   // should be a vector zero of string to string maps
   auto lines( parse_plain_text_with_columns( path ) );
-  
+
   // loop over pdb id and cdrs
   for(auto fields : lines ) {
     // Converting text based results to map
     std::map<std::string, core::Real> OCDs;
-    
+
     for (auto pairs : fields) {
       std::string key = pairs.first; // get column name
 			if (key.compare("pdb_code")!=0) { // skip first column
@@ -174,10 +174,10 @@ SCS_Helper::parse_OCD_data()
 
     results[fields.at("pdb_code").substr(3,4)] = OCDs;
   }
-  
+
   return results;
 }
-  
+
 /// @details Parse outlier data
 ///          Expected input:
 //            # pdb cdr outlier // NEEDS TO BE ADDED TO FILE
@@ -198,26 +198,26 @@ SCS_Helper::parse_outlier_data()
 	// e.g. 12e8_FRL
   std::map< std::string, std::map<std::string, bool> > results;
 	string temp_cdr;
-	
+
 	// can we find the file?
 	std::string dir = "protocol_data/antibody/";
 	std::string filename = "outlier_list";
 	std::string path = basic::database::find_database_path(dir, filename);
-	
+
   // should be a vector zero of string to string maps
 	// utility::vector0< std::map<string, string> >
   auto lines( parse_plain_text_with_columns( path ) );
-	
+
 	// set last stored pdb id, used for storing data later
 	std::string last_pdb = lines[0]["pdb"];
 	std::map<std::string, bool> outliers;
-	
+
   // loop over lines (pdb id and cdrs)
   for(auto fields : lines ) {
 		// store all regions for a single pdb in a single map
 		// then store that single map to results map
 		std::string current_pdb = fields["pdb"];
-		
+
 		if( current_pdb.compare(last_pdb)!=0 ) {
 			// we've stored all outliers for all regions for a single pdb
 			// map PDB - CDR - outlier
@@ -225,15 +225,15 @@ SCS_Helper::parse_outlier_data()
 			outliers.clear(); // re-initialize map for next pdb
 			last_pdb = current_pdb;
 		}
-		
+
 		// check for true/false value in outlier field
 		assert( fields["outlier"] == "true" | fields["outlier"] == "false");
-		
+
 		// compare outlier field, store true if true, else false
 		outliers[fields["cdr"]] = fields["outlier"] == "true";
-		
+
   }
-  
+
   return results;
 }
 

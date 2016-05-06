@@ -1,0 +1,6 @@
+    <PROTOCOLS>
+        <Add mover=terminal_bond1/>
+        <Add mover=terminal_bond2/>
+        <Add mover=packer/>
+	<xi:include href="protocols/rosetta_scripts/include2.xml" /> #This is a repeated include which should NOT trigger an error!
+    </PROTOCOLS>

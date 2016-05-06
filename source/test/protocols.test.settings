@@ -376,6 +376,7 @@ sources = {
 
 	"rosetta_scripts" : [
 		"MultiplePoseMover",
+        "RosettaScriptsParser",
 	],
 
 	"rotamer_recovery" : [
@@ -752,6 +753,15 @@ testinputfiles = [
 	"rigid/RotateJumpAxisMover_range.pdb",
 	"rigid/RotateJumpAxisMover_single.pdb",
 	"rigid/RotateJumpAxisMover_underspecified_jump.pdb",
+	"rosetta_scripts/include1.xml",
+	"rosetta_scripts/include2.xml",
+	"rosetta_scripts/include3.xml",
+	"rosetta_scripts/permitted1.xml",
+	"rosetta_scripts/permitted2.xml",
+	"rosetta_scripts/prohibited1.xml",
+	"rosetta_scripts/prohibited2.xml",
+	"rosetta_scripts/test1.xml",
+	"rosetta_scripts/test2.xml",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
 	"sewing/inputs/1ten_m8.db3",

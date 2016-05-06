@@ -322,7 +322,7 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 	// If some jobs have failed, we throw an exception here
 	// The result in most applications will be a non-zero exit code
 	// In the MPI case, number_failed_jobs_ will stay zero because MPI overrides job_failed()
-	if ( option[OptionKeys::jd2::failed_job_exception] && (number_failed_jobs_ > 0) ) {
+	if ( option[OptionKeys::jd2::failed_job_exception]() && (number_failed_jobs_ > 0) ) {
 		throw( utility::excn::EXCN_JD2Failure(
 			utility::to_string(number_failed_jobs_) + " jobs failed; check output for error messages"
 			));
