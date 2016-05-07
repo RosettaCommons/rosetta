@@ -912,7 +912,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 				}
 				if ( candidate_templates.size() ) {
 					utility::vector1< core::Size >::iterator it;
-					std::random_shuffle ( candidate_templates.begin(), candidate_templates.end() );
+					numeric::random::random_permutation( candidate_templates, numeric::random::rg() );
 					for ( it=candidate_templates.begin(); it!=candidate_templates.end(); ++it ) {
 						core::Size template_resi = map_pdb_info_number( *template_poses_[*it], resi_pdb );
 						core::Size template_resj = map_pdb_info_number( *template_poses_[*it], resj_pdb );

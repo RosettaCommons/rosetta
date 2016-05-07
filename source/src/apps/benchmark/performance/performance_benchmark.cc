@@ -313,7 +313,7 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 	std::vector<PerformanceBenchmark *> all( allBenchmarks() ); // A *copy*
 	// Use the C++ random number generator to get randomization
 	// even when we use -constant_seed
-	std::random_shuffle(all.begin(),all.end());
+	std::random_shuffle(all.begin(),all.end()); //DO NOT REPLACE. THE std::random_shuffle() CALL IS USED DELIBERATELY HERE.  THERE IS A REASON FOR VIOLATING ROSETTA CONVENTIONS IN THIS CASE.
 
 	std::vector< double > prev_results( all.size(), 0 );
 	//for ( Size j = 0; j < 3; ++j ) {

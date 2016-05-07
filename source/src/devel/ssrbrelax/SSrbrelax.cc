@@ -53,6 +53,7 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/xyzVector.hh>
+#include <numeric/random/random_permutation.hh>
 
 // External library headers
 #include <utility/exit.hh>
@@ -207,7 +208,7 @@ namespace ssrbrelax {
 				dof_vec.push_back( i );
 			}
 		}
-		std::random_shuffle( dof_vec.begin(), dof_vec.end() ); //shuffle the dof vector
+		numeric::random::random_permutation( dof_vec, numeric::random::rg() ); //Shuffle the dof vector.
 
 		while( dof_vec.size() > 0 ){
 			int size( dof_vec.size() );

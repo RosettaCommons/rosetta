@@ -231,7 +231,6 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 	if ( basic::options::option[basic::options::OptionKeys::in::file::shuffle_screening_jobs]() ) {
 		jobs.shuffle();
-		//std::random_shuffle(jobs.begin(),jobs.end());
 	}
 }
 

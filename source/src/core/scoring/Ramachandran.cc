@@ -587,9 +587,9 @@ Ramachandran::eval_rama_score_residue(
 		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
 		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
 
-		if (rama > 0.0) {
+		if ( rama > 0.0 ) {
 			int rama_power = basic::options::option[ basic::options::OptionKeys::score::rama_power ];
-			if (rama_power != 1) {
+			if ( rama_power != 1 ) {
 				// r = (r + 1) ** p - 1
 				drama_dphi = rama_power * pow(rama + 1.0, rama_power - 1) * drama_dphi;
 				drama_dpsi = rama_power * pow(rama + 1.0, rama_power - 1) * drama_dpsi;

@@ -235,7 +235,6 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		if ( lib_structs.size() == 0 ) continue;
 
 		// choose up to "skim_size" of them
-		//std::random_shuffle( lib_structs.begin(), lib_structs.end());
 		numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
 		std::vector< core::io::silent::SilentStructOP > select_lib_structs;

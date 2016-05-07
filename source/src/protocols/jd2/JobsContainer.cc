@@ -31,6 +31,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/basic_sys_util.hh>
+#include <numeric/random/random_permutation.hh>
 
 // C++ headers
 #include <string>
@@ -194,7 +195,7 @@ void JobsContainer::shuffle() {
 	for ( std::map<core::Size,JobOP>::iterator it=joblist_.begin(); it!=joblist_.end(); ++it ) {
 		keys.push_back( it->first );
 	}
-	std::random_shuffle( keys.begin(), keys.end() );
+	numeric::random::random_permutation( keys, numeric::random::rg() );
 	std::map<core::Size, JobOP> newjoblist_;
 	core::Size j=1;
 	for ( std::map<core::Size,JobOP>::iterator it=joblist_.begin(); it!=joblist_.end(); ++it ) {
