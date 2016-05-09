@@ -26,6 +26,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
+#include <numeric/random/random_permutation.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -75,7 +76,7 @@ ResidueSubset
 RandomResidueSelector::apply( core::pose::Pose const & pose ) const
 {
 	ResidueVector residue_set( selector_->apply( pose ) );
-	std::random_shuffle( residue_set.begin(), residue_set.end() );
+	numeric::random::random_permutation( residue_set, numeric::random::rg() );
 	return subset_from_randomized_vector( pose, residue_set );
 }
 
