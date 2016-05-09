@@ -96,8 +96,14 @@ Ramachandran::Ramachandran() :
 	extra_cdf_(),
 	cdf_by_torsion_bin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
-	phi_psi_bins_above_thold_( n_aa_ )
+	phi_psi_bins_above_thold_( n_aa_ ),
+	use_rama_power_(false),
+	rama_power_(1.0)
 {
+	if( basic::options::option[ basic::options::OptionKeys::score::rama_power ].user() ) {
+		set_use_rama_power(true);
+		set_rama_power( basic::options::option[ basic::options::OptionKeys::score::rama_power ]() );
+	}
 	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable] ) {
 		read_rama(
@@ -587,14 +593,12 @@ Ramachandran::eval_rama_score_residue(
 		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
 		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
 
-		if ( rama > 0.0 ) {
-			int rama_power = basic::options::option[ basic::options::OptionKeys::score::rama_power ];
-			if ( rama_power != 1 ) {
-				// r = (r + 1) ** p - 1
-				drama_dphi = rama_power * pow(rama + 1.0, rama_power - 1) * drama_dphi;
-				drama_dpsi = rama_power * pow(rama + 1.0, rama_power - 1) * drama_dpsi;
-				rama = pow(rama + 1.0, rama_power) - 1.0;
-			}
+		if ( rama > 0.0 && use_rama_power() ) {
+			//core::Real rama_power = basic::options::option[ basic::options::OptionKeys::score::rama_power ];
+			// r = (r + 1) ** p - 1
+			drama_dphi = rama_power() * pow(rama + 1.0, rama_power() - 1.0) * drama_dphi;
+			drama_dpsi = rama_power() * pow(rama + 1.0, rama_power() - 1.0) * drama_dpsi;
+			rama = pow(rama + 1.0, rama_power()) - 1.0;
 		}
 
 		return;

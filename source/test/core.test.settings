@@ -232,6 +232,7 @@ sources = {
 		"EnvPairPotential",
 		"OmegaTether",
 		"Ramachandran",
+		"Ramachandran_power",
 		"Ramachandran2B",
 		"rms_util",
 		"sasa",

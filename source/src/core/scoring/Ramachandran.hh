@@ -276,6 +276,24 @@ public:
 		Real & psi
 	);
 
+	/// @brief Get whether we're using the rama_power option, which scales rama values over 0.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
+	inline bool use_rama_power() const { return use_rama_power_; }
+
+	/// @brief Set whether we're using the rama_power option, which scales rama values over 0.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
+	inline void set_use_rama_power( bool const setting ) { use_rama_power_=setting; }
+
+	/// @brief Get rama_power value.
+	/// @details If used, rama values over 0 are raised to the Nth power.  Unused by default.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
+	inline core::Real const & rama_power() const { return rama_power_; }
+
+	/// @brief Set rama_power value.
+	/// @details If used, rama values over 0 are raised to the Nth power.  Unused by default.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
+	inline void set_rama_power( core::Real const &setting ) { rama_power_ = setting; }
+
 private:
 
 	void read_rama(
@@ -442,6 +460,16 @@ private: // data
 
 	// The phi/psi bin indexes with probability greater than the rama_sampling_thold_ value for each amino acid.
 	utility::vector1< utility::vector1< Size > > phi_psi_bins_above_thold_;
+
+	/// @brief Are we using the rama_power option?
+	/// @details Defaults to false.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
+	bool use_rama_power_;
+
+	/// @brief User-specified rama_power value.
+	/// @details Unused by default.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
+	core::Real rama_power_;
 
 };
 
