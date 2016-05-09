@@ -13,7 +13,7 @@
 
 Example: 
  
-    ./generate_templates.py --type general_class --class_name TestTemplates --brief "testing templates" --namespace protocols testing
+    ./generate_templates.py --type general_class --class_name TestTemplates --brief "a class for testing templates" --namespace protocols testing
 
 
  This will generate hh, cc, fwd.hh, and Creator templates within src/protocols/testing configured for the TestTemplates name and inheriting from ref count.
@@ -24,7 +24,7 @@ Example:
 
  Example: 
     
-    ./generate_unit_test_templates.py --class_name TemplateTests --brief "testing templates" --outdirs protocols templates
+    ./generate_unit_test_templates.py --class_name TemplateTests --brief "a unit test for testing templates" --outdirs protocols templates
   
  This will generate the unit test hh file in src/test/protocols/templates with the UnitTest class being TemplateTests.
 
@@ -34,7 +34,7 @@ Example:
 
  Example without opts: 
  
-    ./generate_app_template_JD2.py --pilot --user_name jadolfbr --app_name test_templates --class_name TemplateTest --brief "test templates"
+    ./generate_app_template_JD2.py --pilot --user_name jadolfbr --app_name test_templates --class_name TemplateTest --brief "an app for testing templates"
 
 
  _A more complicated example is giving a list of relevant options for JD2 through --app_options and optionally specificying new LOCAL options._
@@ -44,7 +44,7 @@ Example:
  Example with relavent and local opts: 
  
      ./generate_app_template_JD2.py --pilot --user_name jadolfbr --app_name test_templates
-      --class_name TemplateTest --brief "test templates" --app_options group1::bool1 group2::bool2 group1::group2::int1
+      --class_name TemplateTest --brief "An app for testing templates" --app_options group1::bool1 group2::bool2 group1::group2::int1
       --boolean_opt group1::bool1 group2::bool2 --integer_opt group1::group2::int1
 
 
