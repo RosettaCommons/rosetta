@@ -36,16 +36,54 @@
 #include <utility/excn/EXCN_Base.hh>
 #include <basic/Tracer.hh>
 
-// C++ headers
+// Tracer
+static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.rosetta_scripts" );
 
+// FUNCTION PROTOTYPES
 void* my_main( void *);
 
+/// @brief Prints out an empty template RosettaScript to the tracer.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void print_template_script();
+
+// FUNCTION DECLARATIONS
 void*
 my_main( void *)
 {
 	protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it. That means that this can only be used with parser=true
 	protocols::jd2::JobDistributor::get_instance()->go(mover);
 	return 0 ;
+}
+
+/// @brief Prints out an empty template RosettaScript to the tracer.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+print_template_script() {
+	TR << "The -\"parser:print_template_script\" option was specified.  The app will print a template script and then exit." << std::endl;
+	TR << "RosettaScripts script template:\n"
+	   << "\n"
+	   << "<ROSETTASCRIPTS>\n"
+	   << "\t<SCOREFXNS>\n"
+	   << "\t</SCOREFXNS>\n"
+	   << "\t<RESIDUE_SELECTORS>\n"
+	   << "\t</RESIDUE_SELECTORS>\n"
+	   << "\t<TASKOPERATIONS>\n"
+	   << "\t</TASKOPERATIONS>\n"
+	   << "\t<FILTERS>\n"
+	   << "\t</FILTERS>\n"
+	   << "\t<MOVERS>\n"
+	   << "\t</MOVERS>\n"
+	   << "\t<APPLY_TO_POSE>\n"
+	   << "\t</APPLY_TO_POSE>\n"
+	   << "\t<PROTOCOLS>\n"
+	   << "\t</PROTOCOLS>\n"
+	   << "\t<OUTPUT />\n"
+	   << "</ROSETTASCRIPTS>\n\n";
+	TR << "At any point in a script, you can include text from another file using <xi:include href=\"filename.xml\" />." << std::endl;
+	TR << "Variable substituion is possible from the commandline using the -\"parser:script_vars varname=value\" flag.  Any string of the pattern \"%%varname%%\" will be replaced with \"value\" in the script." << std::endl;
+	TR << std::endl;
+	TR << "The rosetta_scripts application will now exit." << std::endl;
+	TR.flush();
 }
 
 /// @details dock_design_scripting provides an xml-based scripting capability
@@ -61,29 +99,33 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
+		
+		if( option[ parser::print_template_script ]() ) { //Just print a template script and exit.
+			print_template_script();
+		} else { // If we're not printing a template script and exiting.
+			bool const view( option[ parser::view ] );
+			protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
+			//That means that this can only be used with parser=true
+			option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
+			if ( !option[ jd2::ntrials ].user() ) {
+				// when using rosetta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
+				// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
+				option[ jd2::ntrials ].value( 1 );
+			}
 
-		bool const view( option[ parser::view ] );
-		protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
-		//That means that this can only be used with parser=true
-		option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
-		if ( !option[ jd2::ntrials ].user() ) {
-			// when using rosteta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
-			// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
-			option[ jd2::ntrials ].value( 1 );
-		}
-
-		if ( view ) {
-			protocols::viewer::viewer_main( my_main );
-		} else {
+			if ( view ) {
+				protocols::viewer::viewer_main( my_main );
+			} else {
 #ifdef BOINC
-			protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
+				protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
 #else
 #ifdef USEMPI
-			protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );
+				protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );
 #else
-			protocols::jd2::JobDistributor::get_instance()->go( mover );
+				protocols::jd2::JobDistributor::get_instance()->go( mover );
 #endif
 #endif
+			}
 		}
 	} catch( utility::excn::EXCN_Base& excn ) {
 		basic::Error()
