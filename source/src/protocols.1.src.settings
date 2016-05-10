@@ -21,7 +21,6 @@ sources = {
 		"ConstraintGenerator",
 		"ConstraintGeneratorFactory",
 		"ConstraintsManager",
-		"DihedralConstraintGenerator",
 		"HydrogenBondConstraintGenerator",
 		"RemoveConstraints",
 		"TerminiConstraintGenerator",
