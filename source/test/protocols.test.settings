@@ -567,6 +567,8 @@ testinputfiles = [
 	"constraint_generator/AtomPairConstraintGenerator_input_selector.cst",
 	"constraint_generator/AtomPairConstraintGenerator_input_ca_cb.cst",
 	"constraint_generator/AtomPairConstraintGenerator_native_default.cst",
+	"constraint_generator/HydrogenBondConstraintGenerator_complicated.cst",
+	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_default.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
 	"cyclic_peptide_predict/native.pdb",

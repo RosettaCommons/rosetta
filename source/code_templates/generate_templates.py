@@ -262,7 +262,7 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
     Template Generator specifically for general rosetta classes and files (movers, task_ops, etc.)
     """
     def __init__(self, template_type_name = template_types[0]):
-        self.types = [os.path.basename(d) for d in glob.glob(os.path.join(template_type_name,"*")) if os.path.isdir(d)]
+        self.types = sorted( [os.path.basename(d) for d in glob.glob(os.path.join(template_type_name,"*")) if os.path.isdir(d)] )
         print "Found template types: "+repr(self.types)
 
         parser = ArgumentParser(description="This class is used to generate Rosetta templates for use in any IDE. "

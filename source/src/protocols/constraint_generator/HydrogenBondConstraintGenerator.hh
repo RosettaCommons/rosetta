@@ -27,13 +27,72 @@
 #include <core/scoring/func/Func.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 
 // Numeric headers
 
 // C++ headers
+#include <map>
+#include <set>
+#include <list>
 
 namespace protocols {
 namespace constraint_generator {
+
+class HydrogenBondingAtom : public utility::pointer::ReferenceCount {
+
+public:
+	typedef std::list< core::Real > Dihedrals;
+
+	HydrogenBondingAtom(
+		std::string const & atom1,
+		std::string const & atom2,
+		std::string const & atom3,
+		core::Real const ideal_distance,
+		core::Real const ideal_angle,
+		Dihedrals const & ideal_dihedrals );
+
+	std::string const & hb_atom() const { return atom_; }
+	std::string const & atom2() const { return atom2_; }
+	std::string const & atom3() const { return atom3_; }
+
+	core::Real distance() const { return distance_; }
+	core::Real angle() const { return angle_; }
+	Dihedrals const & dihedrals() const { return dihedrals_; }
+
+private:
+	HydrogenBondingAtom();
+
+private:
+	std::string atom_;
+	std::string atom2_;
+	std::string atom3_;
+	core::Real distance_;
+	core::Real angle_;
+	Dihedrals dihedrals_;
+};
+
+typedef std::list< HydrogenBondingAtom > HydrogenBondingAtoms;
+
+/// @brief Database to lookup atoms for hydrogen bonding
+class HydrogenBondInfo : public utility::SingletonBase< HydrogenBondInfo > {
+
+public:
+	typedef std::map< std::string, HydrogenBondingAtoms > AtomNameMap;
+
+	HydrogenBondInfo();
+
+	HydrogenBondingAtoms const & atoms( std::string const & rsd_name ) const;
+
+	static HydrogenBondInfo * create_singleton_instance();
+
+	HydrogenBondingAtoms &
+	create_residue( std::string const & rsd_name );
+
+private:
+	AtomNameMap atoms_;
+	static HydrogenBondingAtoms const empty_;
+};
 
 /// @brief This constraint generator generates constraints for favoring formation of hydrogen bonds
 class HydrogenBondConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
@@ -62,13 +121,13 @@ public:
 	set_atoms1( std::string const & atoms_str );
 
 	void
-	set_atoms1( utility::vector1< std::string > const & atoms );
+	set_atoms1( std::set< std::string > const & atoms );
 
 	void
 	set_atoms2( std::string const & atoms_str );
 
 	void
-	set_atoms2( utility::vector1< std::string > const & atoms );
+	set_atoms2( std::set< std::string > const & atoms );
 
 	void
 	set_atom_pair_func( std::string const & func_def );
@@ -88,6 +147,15 @@ public:
 	void
 	set_angle2_func( core::scoring::func::FuncOP angle_func );
 
+	void
+	set_bounded( bool const bounded );
+
+	void
+	set_atom_pair_sd( core::Real const sd );
+
+	void
+	set_angle_sd( core::Real const sd );
+
 private:
 
 	core::scoring::constraints::ConstraintOP
@@ -99,29 +167,48 @@ private:
 	create_residue_constraint(
 		core::conformation::Residue const & rsd1,
 		core::conformation::Residue const & rsd2,
-		utility::vector1< core::Size > const & atoms1,
-		utility::vector1< core::Size > const & atoms2 ) const;
+		HydrogenBondingAtoms const & atoms1,
+		HydrogenBondingAtoms const & atoms2 ) const;
 
 	core::scoring::constraints::ConstraintOP
 	create_residue_constraint(
 		core::id::AtomID const & atomid1,
 		core::id::AtomID const & parent_atomid1,
+		core::id::AtomID const & parent2_atomid1,
 		core::id::AtomID const & atomid2,
-		core::id::AtomID const & parent_atomid2 ) const;
+		core::id::AtomID const & parent_atomid2,
+		core::id::AtomID const & parent2_atomid2,
+		HydrogenBondingAtom const & a1,
+		HydrogenBondingAtom const & a2 ) const;
 
-	utility::vector1< core::Size >
+	HydrogenBondingAtoms
 	choose_atoms(
 		core::conformation::Residue const & rsd,
-		utility::vector1< std::string > const & atoms ) const;
+		std::set< std::string > const & allowed_atoms ) const;
+
+	core::scoring::func::FuncOP
+	atom_pair_func( HydrogenBondingAtom const & a1,	HydrogenBondingAtom const & a2 ) const;
+
+	core::scoring::func::FuncOP
+	angle1_func( HydrogenBondingAtom const & a1 ) const;
+
+	core::scoring::func::FuncOP
+	angle2_func( HydrogenBondingAtom const & a2 ) const;
+
+	core::scoring::func::FuncOP
+	dihedral_func( core::Real const dihedral_value ) const;
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector1_;
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
-	utility::vector1< std::string > atoms1_;
-	utility::vector1< std::string > atoms2_;
+	std::set< std::string > atoms1_;
+	std::set< std::string > atoms2_;
 	core::scoring::func::FuncOP atom_pair_func_;
 	core::scoring::func::FuncOP angle1_func_;
 	core::scoring::func::FuncOP angle2_func_;
+	bool bounded_;
+	core::Real atom_pair_sd_;
+	core::Real angle_sd_;
 
 }; // HydrogenBondConstraintGenerator
 

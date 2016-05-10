@@ -23,6 +23,7 @@
 
 // Core headers
 #include <core/conformation/Residue.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -72,6 +73,7 @@ public:
 		hb_gen.set_atom_pair_func( FuncOP( new FlatHarmonicFunc( 2.0, 0.5, 1.5 ) ) );
 		hb_gen.set_angle1_func( FuncOP( new FlatHarmonicFunc( 2.09, 0.5, 0.4 ) ) );
 		hb_gen.set_angle2_func( "FLAT_HARMONIC 1.90 0.5 0.4" );
+		hb_gen.set_bounded( true );
 		TS_ASSERT_EQUALS( hb_gen.class_name(), "HydrogenBondConstraintGenerator" );
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
@@ -121,6 +123,7 @@ public:
 		hb_gen.set_angle2_func( FuncOP( new FlatHarmonicFunc( 1.90, 0.5, 0.4 ) ) );
 		hb_gen.set_atoms1( "OD2" );
 		hb_gen.set_atoms2( "NE,NH2" );
+		hb_gen.set_bounded( true );
 		TS_ASSERT_EQUALS( hb_gen.class_name(), "HydrogenBondConstraintGenerator" );
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
@@ -138,6 +141,60 @@ public:
 
 		test::UTracer UT( "protocols/constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst" );
 		cst_set.show_definition( UT, trpcage );
+	}
+
+	void test_complicated()
+	{
+		core::pose::Pose pose;
+		core::io::pdb::build_pose_from_pdb_as_is( pose,
+			"protocols/constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz" );
+
+		core::select::residue_selector::ResidueSelectorCOP nuc( new core::select::residue_selector::ResidueIndexSelector( "18" ) );
+		core::select::residue_selector::ResidueSelectorCOP his( new core::select::residue_selector::ResidueIndexSelector( "49" ) );
+		core::select::residue_selector::ResidueSelectorCOP nuc_support( new core::select::residue_selector::ResidueIndexSelector( "53" ) );
+		core::select::residue_selector::ResidueSelectorCOP acid( new core::select::residue_selector::ResidueIndexSelector( "27" ) );
+		core::select::residue_selector::ResidueSelectorCOP acid_support( new core::select::residue_selector::ResidueIndexSelector( "45" ) );
+
+		HydrogenBondConstraintGenerator hb_gen1;
+		hb_gen1.set_id( "ap_generator_nuc_his" );
+		hb_gen1.set_residue_selector1( nuc );
+		hb_gen1.set_residue_selector2( his );
+		hb_gen1.set_atoms2( "NE2" );
+		hb_gen1.set_atom_pair_sd( 0.2 );
+		hb_gen1.set_angle_sd( 0.2 );
+
+		HydrogenBondConstraintGenerator hb_gen2;
+		hb_gen2.set_id( "ap_generator_nuc_support" );
+		hb_gen2.set_residue_selector1( nuc );
+		hb_gen2.set_residue_selector2( nuc_support );
+
+		HydrogenBondConstraintGenerator hb_gen3;
+		hb_gen3.set_id( "ap_generator_his_acid" );
+		hb_gen3.set_residue_selector1( his );
+		hb_gen3.set_residue_selector2( acid );
+		hb_gen3.set_atoms1( "ND1" );
+		hb_gen3.set_atoms2( "OE1,OD1" );
+		hb_gen3.set_atom_pair_sd( 0.2 );
+		hb_gen3.set_angle_sd( 0.2 );
+
+		HydrogenBondConstraintGenerator hb_gen4;
+		hb_gen4.set_id( "ap_generator_acid_support" );
+		hb_gen4.set_residue_selector1( acid );
+		hb_gen4.set_residue_selector2( acid_support );
+		hb_gen4.set_atoms1( "OE2,OD2" );
+		hb_gen4.set_atom_pair_sd( 0.2 );
+		hb_gen4.set_angle_sd( 0.2 );
+
+		ConstraintSet cst_set;
+		cst_set.add_constraints( hb_gen1.apply( pose ) );
+		cst_set.add_constraints( hb_gen2.apply( pose ) );
+		cst_set.add_constraints( hb_gen3.apply( pose ) );
+		cst_set.add_constraints( hb_gen4.apply( pose ) );
+
+		test::UTracer UT( "protocols/constraint_generator/HydrogenBondConstraintGenerator_complicated.cst" );
+		cst_set.show_definition( UT, pose );
+		cst_set.show_definition( TR.Debug, pose );
+
 	}
 
 };

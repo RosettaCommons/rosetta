@@ -1,0 +1,31 @@
+MultiConstraint
+AtomPair  OG    18  NE2   49 HARMONIC 2.8 0.2
+Angle  CB    18  OG    18  NE2   49 CIRCULARHARMONIC 1.91114 0.2
+Angle  OG    18  NE2   49  CE1   49 CIRCULARHARMONIC 2.0944 0.2
+Dihedral  OG    18  NE2   49  CE1   49  ND1   49 CIRCULARHARMONIC 3.14159 0.2
+End_MultiConstraint
+MultiConstraint
+AtomPair  OG    18  OG    53 HARMONIC 2.8 0.5
+Angle  CB    18  OG    18  OG    53 CIRCULARHARMONIC 1.91114 0.5
+Angle  OG    18  OG    53  CB    53 CIRCULARHARMONIC 1.91114 0.5
+End_MultiConstraint
+MultiConstraint
+AtomPair  OE2   27  OG    45 HARMONIC 2.8 0.2
+Angle  CD    27  OE2   27  OG    45 CIRCULARHARMONIC 2.0944 0.2
+Angle  OE2   27  OG    45  CB    45 CIRCULARHARMONIC 1.91114 0.2
+AmbiguousConstraint
+Dihedral  OE1   27  CD    27  OE2   27  OG    45 CIRCULARHARMONIC 0 0.2
+Dihedral  OE1   27  CD    27  OE2   27  OG    45 CIRCULARHARMONIC 3.14159 0.2
+End_AmbiguousConstraint
+End_MultiConstraint
+MultiConstraint
+AtomPair  ND1   49  OE1   27 HARMONIC 2.8 0.2
+Angle  CE1   49  ND1   49  OE1   27 CIRCULARHARMONIC 2.0944 0.2
+Angle  ND1   49  OE1   27  CD    27 CIRCULARHARMONIC 2.0944 0.2
+Dihedral  NE2   49  CE1   49  ND1   49  OE1   27 CIRCULARHARMONIC 3.14159 0.2
+AmbiguousConstraint
+Dihedral  ND1   49  OE1   27  CD    27  OE2   27 CIRCULARHARMONIC 0 0.2
+Dihedral  ND1   49  OE1   27  CD    27  OE2   27 CIRCULARHARMONIC 3.14159 0.2
+End_AmbiguousConstraint
+End_MultiConstraint
+

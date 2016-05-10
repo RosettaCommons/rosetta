@@ -106,7 +106,7 @@ bool AngleConstraint::same_type_as_me( Constraint const & other ) const
 }
 
 void AngleConstraint::show( std::ostream & out ) const {
-	out << "Angle";
+	out << type();
 	for ( Size i = 1; i <= natoms(); ++i ) {
 		AtomID const & id = atom(i);
 		out << ' ' << id.rsd() << ' ' << id.atomno();
@@ -121,7 +121,8 @@ void AngleConstraint::show_def( std::ostream& out, pose::Pose const& pose ) cons
 		AtomID const & id = atom(i);
 		out << ' ' <<  atom_id_to_named_atom_id( id, pose );
 	}
-	func_->show_definition( out );
+	out << ' ';
+	func_->show_definition(out);
 }
 
 /////////////////////////////////////////////////////////////////////////////
