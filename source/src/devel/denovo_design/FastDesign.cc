@@ -497,6 +497,7 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 			(option[ OptionKeys::corrections::beta_nov15 ]() || option[ OptionKeys::corrections::beta_nov15_cart ] ) ) {
 
 		// hard-coded reference weights for now...
+		TR << "Calling correction for beta_nov15..." << std::endl;
 		filelines.push_back( "repeat 4"                                );
 		filelines.push_back( "reference 0.3     3.0     -2.2     -2.7     5.0     -0.2    0.5     5.2     -0.5     4.5     5.0     -1.8     -0.3     -1.5     0.0     -0.8     1.0     4.0     9.5     3.5" );
 		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );

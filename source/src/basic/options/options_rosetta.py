@@ -2147,6 +2147,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'rama_map_sym_average_L_flat_stringent', 'File', default = 'scoring/score_functions/rama/flat/sym_all_rama_str.dat', desc="Ramachandran map that's the average of all canonical L amino acids, flattened to give equal probability to the allowed region, with the allowed region selected with high stringency, and symmetrized.  Lazily loaded; for sampling only." ),
 			Option( 'rama_map_sym_gly_flat_stringent', 'File', default = 'scoring/score_functions/rama/flat/sym_G_rama_str.dat', desc="Ramachandran map for glycine, flattened to give equal probability to the allowed region, with the allowed region selected with high stringency, and symmetrized.  Lazily loaded; for sampling only." ),
 			Option( 'rama_map_sym_pro_flat_stringent', 'File', default = 'scoring/score_functions/rama/flat/sym_P_rama_str.dat', desc="Ramachandran map for proline, flattened to give equal probability to the allowed region, with the allowed region selected with high stringency, and symmetrized.  Lazily loaded; for sampling only." ),
+			Option( 'rama_prepro_steep', 'Boolean', desc="Use steep rama_prepro library", default="false" ),
+			Option( 'rama_prepro_nobidentate', 'Boolean', desc="Use rama_prepro library derived by excluding bidentate Hbonding loop residues", default="false" ),
 			Option( 'cenrot',   'Boolean', desc="Use the Centroid Rotamer Model.", default="false" ),
 			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the the 2002 library.", default="true"  ),
 			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),

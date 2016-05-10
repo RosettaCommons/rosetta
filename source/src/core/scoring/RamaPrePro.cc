@@ -117,13 +117,21 @@ RamaPrePro::read_rpp_tables( ) {
 		data[i].dimension(36,36);
 	}
 
+	std::string allmap, prepromap, suffix("");
+	bool const use_steep( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_steep ]() );
+	bool const nobidentate( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_nobidentate ]() );
+	if( nobidentate ) suffix = ".rb";
+	if( use_steep ) suffix += ".100_2_0_20";
+	allmap = "scoring/score_functions/rama/fd/all.ramaProb" + suffix;
+	prepromap = "scoring/score_functions/rama/fd/prepro.ramaProb" + suffix;
+
 	///fpd hardcode for now
-	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/all.ramaProb", data, symmetrize_gly);
+	read_rama_map_file_shapovalov(allmap, data, symmetrize_gly);
 	for ( int i=1; i<=20; ++i ) {
 		setup_interpolation( data[i], rama_splines_[i], (i == static_cast<int>( core::chemical::aa_gly ) && symmetrize_gly) ? 5.0 : 0.0  ); //VKM: To symmetrize the gly tables, I need a five degree offset.  Question: should everything be offset by five degrees?
 	}
 
-	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/prepro.ramaProb", data, symmetrize_gly);
+	read_rama_map_file_shapovalov(prepromap, data, symmetrize_gly);
 	for ( int i=1; i<=20; ++i ) {
 		setup_interpolation( data[i], rama_pp_splines_[i], (i == static_cast<int>( core::chemical::aa_gly ) && symmetrize_gly) ? 5.0 : 0.0  ); //VKM: To symmetrize the gly tables, I need a five degree offset.  Question: should everything be offset by five degrees?
 	}
