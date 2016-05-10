@@ -19,6 +19,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace jd2 {
@@ -29,6 +30,7 @@ class ScoreFunctionLoaderCreator : public DataLoaderCreator
 public:
 	virtual DataLoaderOP create_loader() const;
 	virtual std::string keyname() const;
+	virtual DerivedNameFunction schema_ct_naming_function() const;
 };
 
 class TaskOperationLoaderCreator : public DataLoaderCreator
@@ -36,6 +38,7 @@ class TaskOperationLoaderCreator : public DataLoaderCreator
 public:
 	virtual DataLoaderOP create_loader() const;
 	virtual std::string keyname() const;
+	virtual DerivedNameFunction schema_ct_naming_function() const;
 };
 
 class FragSetLoaderCreator : public DataLoaderCreator

@@ -204,14 +204,15 @@ void CrystalContactsOperation::provide_xml_schema( utility::tag::XMLSchemaDefini
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "all_gap", xs_decimal, "0.5" ) );
-	attributes.push_back( XMLSchemaAttribute( "polar_gap", xs_decimal, "2.5" ) );
-	attributes.push_back( XMLSchemaAttribute( "max_buried_sasa", xs_decimal, "0.01" ) );
-	attributes.push_back( XMLSchemaAttribute( "invert", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "all_gap", xs_decimal, "0.5" )
+		+ XMLSchemaAttribute::attribute_w_default(  "polar_gap", xs_decimal, "2.5" )
+		+ XMLSchemaAttribute::attribute_w_default(  "max_buried_sasa", xs_decimal, "0.01" )
+		+ XMLSchemaAttribute::attribute_w_default(  "invert", xs_boolean, "false" )
 
-	attributes.push_back( XMLSchemaAttribute( "nbr_radius_to_nbr_radius", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "nbr_radius_to_atoms", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "atoms_to_atoms", xs_boolean, "false" ) );
+		+ XMLSchemaAttribute::attribute_w_default(  "nbr_radius_to_nbr_radius", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "nbr_radius_to_atoms", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "atoms_to_atoms", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

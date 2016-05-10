@@ -83,6 +83,7 @@
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ headers
 #include <string>

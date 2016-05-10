@@ -90,6 +90,12 @@
 #include <protocols/init/init.WriteableCacheableDataCreators.ihh>
 #include <protocols/init/init.WriteableCacheableDataRegistrators.ihh>
 
+#include <protocols/init/init.PoseInputterCreators.ihh>
+#include <protocols/init/init.PoseInputterRegistrators.ihh>
+
+#include <protocols/init/init.PoseOutputterCreators.ihh>
+#include <protocols/init/init.PoseOutputterRegistrators.ihh>
+
 #include <protocols/init/init.ConstraintGeneratorCreators.ihh>
 #include <protocols/init/init.ConstraintGeneratorRegistrators.ihh>
 

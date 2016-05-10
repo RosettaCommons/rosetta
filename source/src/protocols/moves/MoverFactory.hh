@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
+#include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -31,8 +32,6 @@
 // c++ headers
 #include <map>
 #include <set>
-#include <utility/vector1.hh>
-
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

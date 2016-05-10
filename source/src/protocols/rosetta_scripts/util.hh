@@ -31,8 +31,10 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+
 // Utillity Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
@@ -59,6 +61,19 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*con
 core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const & task_list, basic::datacache::DataMap const & data );
 
+/// @brief Appends the attributes read by parse_task_operations
+void
+attributes_for_parse_task_operations( utility::tag::AttributeList & attributes );
+
+/// @brief Appends the attributes read by get_task_operations which behaves just
+/// like parse_task_operations (but doesn't rely on it for some unknowable reason)
+void
+attributes_for_get_task_operations( utility::tag::AttributeList & attributes );
+
+/// @brief Appends the attributes read by parse_task_operations when handed a TaskFactory
+void
+attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes );
+
 /// @brief returns a residue selector given a tag and datamap
 /// @details Looks for "residue_selector" option in tag
 ///          If that option isn't found, returns NULL ptr
@@ -72,6 +87,10 @@ parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap cons
 /// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
 core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
+
+/// @brief Appends the attributes read by parse_residue_selector
+//void
+//attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
 ///through the given option. Default to 'talaris2013' by default.
@@ -105,6 +124,15 @@ std::string
 get_score_function_name(
 	utility::tag::TagCOP tag);
 
+
+/// @brief Appends the attributes read by parse_score_function
+void
+attributes_for_parse_score_function( utility::tag::AttributeList & attributes );
+
+/// @brief Appends the attributes read by parse_score_function w/ name argument
+void
+attributes_for_parse_score_function( utility::tag::AttributeList & attributes, std::string const & sfxn_option_name );
+
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol
 /// Will look for tag in in_tag variable
@@ -133,6 +161,27 @@ parse_movemap(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMapOP mm,
 	bool const reset_movemap = true /* should we turn everything to true at start?*/);
+
+/// @brief Adds a subelement to an input subelement list describing a MoveMap subtag
+/// that will be used by the parse_movemap function that does not take a DataMap parameter.
+void
+append_subelement_for_parse_movemap(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements
+);
+
+/// @brief Adds a subelement to an input subelement list describing a MoveMap subtag
+/// that will be used by the parse_movemap function that takes a DataMap parameter.
+void
+append_subelement_for_parse_movemap_w_datamap(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements
+);
+
+/// @brief Edits the complex type for an object that parses a MoveMap subtag and that
+/// is read through the overloaded parse_movemap which takes a DataMap parameter.
+//void
+//append_subelement_for_parse_movemap( utility::tag::XMLSchemaSimpleSubelementList & subelements );
 
 /// @brief Parses in_tag, adding any MoveMaps specified in branches with names to the datamap for use after.
 /// Skips any mm names that are already loaded.

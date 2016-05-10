@@ -172,10 +172,11 @@ void DisableAntibodyRegionOperation::provide_xml_schema( utility::tag::XMLSchema
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "region", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "disable_packing_and_design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute( "region", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "disable_packing_and_design", xs_boolean, "true" )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string )
+		+ XMLSchemaAttribute( "numbering_scheme", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

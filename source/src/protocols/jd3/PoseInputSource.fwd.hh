@@ -25,21 +25,6 @@
 namespace protocols {
 namespace jd3 {
 
-/// @brief Enum that allows the user to direct the kind of PoseInputter to use
-/// to initialize a pose.
-enum PoseInputKind {
-	pik_unknown,
-	pik_pdb_file,
-	pik_silent_file
-};
-
-enum PoseInputSourceOrigin {
-	piso_unknown,
-	piso_command_line,
-	piso_job_definition_file
-};
-
-
 class PoseInputSource;
 
 typedef utility::pointer::shared_ptr< PoseInputSource > PoseInputSourceOP;

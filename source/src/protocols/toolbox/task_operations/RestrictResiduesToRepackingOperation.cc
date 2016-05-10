@@ -159,8 +159,9 @@ void RestrictResiduesToRepackingOperation::provide_xml_schema( utility::tag::XML
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "reference_pdb_id", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "residues", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "reference_pdb_id", xs_string, "" )
+		+ XMLSchemaAttribute( "residues", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

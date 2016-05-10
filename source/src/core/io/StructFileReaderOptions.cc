@@ -28,7 +28,17 @@
 namespace core {
 namespace io {
 
-StructFileReaderOptions::StructFileReaderOptions() { init_from_options(); }
+StructFileReaderOptions::StructFileReaderOptions() :
+	StructFileRepOptions()
+{
+	init_from_options( basic::options::option );
+}
+
+StructFileReaderOptions::StructFileReaderOptions( utility::options::OptionCollection const & options ) :
+	StructFileRepOptions( options )
+{
+	init_from_options( options );
+}
 
 StructFileReaderOptions::~StructFileReaderOptions() {}
 
@@ -56,15 +66,28 @@ void StructFileReaderOptions::set_obey_ENDMDL( bool setting ) { obey_ENDMDL_ = s
 void StructFileReaderOptions::set_read_pdb_header( bool setting ) { read_pdb_header_ = setting; }
 void StructFileReaderOptions::set_glycam_pdb_format( bool setting ) { glycam_pdb_format_ = setting; }
 
-void StructFileReaderOptions::init_from_options()
+void
+StructFileReaderOptions::list_options_read( utility::options::OptionKeyList & read_options )
+{
+	using namespace basic::options::OptionKeys;
+	StructFileRepOptions::list_options_read( read_options );
+	read_options
+		+ in::file::new_chain_order
+		+ in::file::obey_ENDMDL
+		+ run::preserve_header
+		+ carbohydrates::glycam_pdb_format;
+}
+
+
+void StructFileReaderOptions::init_from_options( utility::options::OptionCollection const & options )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	set_new_chain_order( option[ in::file::new_chain_order ]() );
-	set_obey_ENDMDL( option[ in::file::obey_ENDMDL ].value() );
-	set_read_pdb_header( option[ run::preserve_header ]() );
-	set_glycam_pdb_format( option[ carbohydrates::glycam_pdb_format ]() );
+	set_new_chain_order( options[ in::file::new_chain_order ]() );
+	set_obey_ENDMDL( options[ in::file::obey_ENDMDL ].value() );
+	set_read_pdb_header( options[ run::preserve_header ]() );
+	set_glycam_pdb_format( options[ carbohydrates::glycam_pdb_format ]() );
 }
 
 } // namespace io

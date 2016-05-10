@@ -180,11 +180,12 @@ void DesignAroundOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "design_shell", xs_decimal, "8.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "allow_design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "resnums_allow_design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_shell", xs_decimal, "8.0" ) );
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "resnums", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_shell", xs_decimal, "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_design", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "resnums_allow_design", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_shell", xs_decimal, "8.0" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

@@ -20,35 +20,58 @@
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/PoseInputter.hh>
+#include <protocols/jd3/pose_inputters/PoseInputter.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
+#include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
 
 /// @brief This is the simplest implementation of PoseInputter, which reads from -s/-l and PDB files.
-class PDBPoseInputter : public protocols::jd3::PoseInputter
+class PDBPoseInputter : public PoseInputter
 {
 public:
 
 	PDBPoseInputter();
 	virtual ~PDBPoseInputter();
 
+	virtual bool job_available_on_command_line() const;
+
 	/// @brief Constructs a list of PoseInputSource objects reading from the
 	/// -s or -l command line flags. This stores the names of the PDBs that
 	/// are to be read in, and it initializes the input tags based on the pdb
 	/// names, stripping the path and the extension from the file name.
-	PoseInputSources initialize_pose_input_sources();
+	virtual PoseInputSources pose_input_sources_from_command_line() const;
+
+	virtual PoseInputSources pose_input_sources_from_tag( utility::tag::TagCOP ) const;
 
 	/// @brief Takes a PoseInputSource object previously initialized in the
 	/// call to initialize_pose_input_sources()
-	core::pose::PoseOP pose_from_input_source( PoseInputSource const & );
+	virtual
+	core::pose::PoseOP
+	pose_from_input_source(
+		PoseInputSource const &,
+		utility::options::OptionCollection const &
+	) const;
+
+	/// @brief returns the name for the element that will be used in a job-definition
+	/// file for a structure originating from a .pdb file: "PDB"
+	static std::string keyname();
+
+	/// @brief returns the schema for the PDB element used in a job-definition file
+	/// including all options that govern how a PDB is loaded.
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static void list_options_read( utility::options::OptionKeyList & read_options );
+
 
 }; // PDBPoseInputter
 

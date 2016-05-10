@@ -160,14 +160,14 @@ void OperateOnCertainResidues::parse_tag( TagCOP tag , DataMap & )
 
 std::string OperateOnCertainResidues::keyname() { return "OperateOnCertainResidues"; }
 
-// TO DO: Use XMLComplexTypeSchemaGenerator
+
 void OperateOnCertainResidues::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	ResLvlTaskOperationFactory::get_instance()->define_res_lvl_task_op_xml_schema( xsd );
 	ResFilterFactory::get_instance()->define_res_filter_xml_schema( xsd );
 
 	using namespace utility::tag;
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & ResFilterFactory::res_filter_xml_schema_group_name );
 	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );

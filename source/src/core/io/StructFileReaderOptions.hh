@@ -33,7 +33,10 @@ namespace io {
 class StructFileReaderOptions : public StructFileRepOptions
 {
 public:
+	/// @brief Constructor that takes default values from the global OptionCollection object, basic::options::option.
 	StructFileReaderOptions();
+	/// @brief Constructor that takes default values from a provided OptionCollection object
+	StructFileReaderOptions( utility::options::OptionCollection const & options );
 
 	virtual ~StructFileReaderOptions();
 
@@ -55,9 +58,15 @@ public:
 	void set_read_pdb_header( bool setting );
 	void set_glycam_pdb_format( bool setting );
 
+	/// @brief Declare the list of options that are read in the process of reading a PDB (or SDF) and converting
+	/// it into a Pose.
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
+
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
-	void init_from_options();
+	void init_from_options( utility::options::OptionCollection const & options );
 
 private:
 	bool new_chain_order_;

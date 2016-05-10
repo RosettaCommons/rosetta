@@ -32,6 +32,8 @@
 namespace basic {
 namespace resource_manager {
 
+JobOptions::JobOptions() : track_insertion_order_( false ) {}
+
 /// @details Auto-generated virtual destructor
 JobOptions::~JobOptions() {}
 
@@ -56,6 +58,8 @@ using std::map;
 using std::string;
 using std::endl;
 using std::setw;
+
+using namespace utility::options;
 
 /// @brief simple enough function that calls the bit-shift operator in the input stream; why bother?
 /// For the sake of writing out boolean values as "true" or "false"
@@ -197,6 +201,7 @@ JobOptions::add_option(
 	BooleanOptionKey key,
 	bool val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( BOOLEAN_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -227,6 +232,7 @@ JobOptions::add_option(
 	BooleanVectorOptionKey key,
 	vector1< bool > const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( BOOLEAN_VECTOR_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -257,6 +263,7 @@ JobOptions::add_option(
 	FileOptionKey key,
 	FileName const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( FILE_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -287,6 +294,7 @@ JobOptions::add_option(
 	FileVectorOptionKey key,
 	vector1< FileName > const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( FILE_VECTOR_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -319,6 +327,7 @@ JobOptions::add_option(
 	IntegerOptionKey key,
 	int val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( INTEGER_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -350,6 +359,7 @@ JobOptions::add_option(
 	IntegerVectorOptionKey key,
 	vector1< int > const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( INTEGER_VECTOR_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -380,6 +390,7 @@ JobOptions::add_option(
 	PathOptionKey key,
 	PathName const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( PATH_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -410,6 +421,7 @@ JobOptions::add_option(
 	PathVectorOptionKey key,
 	vector1< PathName > const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( PATH_VECTOR_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -440,6 +452,7 @@ JobOptions::add_option(
 	RealOptionKey key,
 	Real val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( REAL_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -470,6 +483,7 @@ JobOptions::add_option(
 	RealVectorOptionKey key,
 	vector1< Real > const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( REAL_VECTOR_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -501,6 +515,7 @@ JobOptions::add_option(
 	StringOptionKey key,
 	string val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( STRING_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -532,6 +547,7 @@ JobOptions::add_option(
 	StringVectorOptionKey key,
 	vector1< string > const & val
 ) {
+	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( STRING_VECTOR_OPTION, key.id() ));
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -572,6 +588,18 @@ JobOptions::operator == ( JobOptions const & rhs ) const {
 		string_options_ == rhs.string_options_ &&
 		string_vector_options_ == rhs.string_vector_options_;
 }
+
+void JobOptions::track_insertion_order( bool setting )
+{
+	track_insertion_order_ = setting;
+}
+
+std::list< std::pair< utility::options::OptionTypes, std::string > > const &
+JobOptions::insertion_order() const
+{
+	return insertion_order_;
+}
+
 
 // Type resolution functions to make the above 12 functions much easier to write / maintain
 // These functions basically map an input type to an output type for the sake of passing

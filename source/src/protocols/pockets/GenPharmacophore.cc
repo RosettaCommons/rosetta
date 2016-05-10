@@ -100,7 +100,11 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>
+
+// Boost headers
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
 
 using namespace core;
 using namespace std;

@@ -316,50 +316,11 @@ replace_in( std::string & s, const char from, const char *to )
 std::string
 replace_in( std::string const & source, std::string const & from, std::string const & to );
 
-
-
-
 /// @brief String accepted as a true value?
-bool inline
-is_true_string( std::string const & value_str )
-{
-	return (
-		( value_str == "true" ) ||
-		( value_str == "True" ) ||
-		( value_str == "TRUE" ) ||
-		( value_str == "t" ) ||
-		( value_str == "T" ) ||
-		( value_str == "1" ) ||
-		( value_str == "on" ) ||
-		( value_str == "On" ) ||
-		( value_str == "ON" ) ||
-		( value_str == "y" ) ||
-		( value_str == "Y" ) ||
-		( value_str == "yes" ) ||
-		( value_str == "Yes" ) ||
-		( value_str == "YES" ) );
-}
+bool is_true_string( std::string const & value_str );
 
 /// @brief String accepted as a false value?
-bool inline
-is_false_string( std::string const & value_str )
-{
-	return (
-		( value_str == "false" ) ||
-		( value_str == "False" ) ||
-		( value_str == "FALSE" ) ||
-		( value_str == "f" ) ||
-		( value_str == "F" ) ||
-		( value_str == "0" ) ||
-		( value_str == "off" ) ||
-		( value_str == "Off" ) ||
-		( value_str == "OFF" ) ||
-		( value_str == "n" ) ||
-		( value_str == "N" ) ||
-		( value_str == "no" ) ||
-		( value_str == "No" ) ||
-		( value_str == "NO" ) );
-}
+bool is_false_string( std::string const & value_str );
 
 /// @brief Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 std::string

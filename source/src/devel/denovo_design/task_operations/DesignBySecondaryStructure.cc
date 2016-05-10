@@ -323,15 +323,14 @@ DesignBySecondaryStructureOperation::provide_xml_schema( utility::tag::XMLSchema
 
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
+	attributes
+		+ XMLSchemaAttribute( "region_shell", xs_decimal )
+		+ XMLSchemaAttribute( "regions_to_design", xsct_non_negative_integer )
+		+ XMLSchemaAttribute( "repack_non_selected", xsct_non_negative_integer )
 
-	attributes.push_back( XMLSchemaAttribute( "region_shell", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "regions_to_design", "non_negative_integer" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_non_selected", "non_negative_integer" ) );
-
-	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "prevent_bad_point_mutations", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "cmd", xs_boolean ) );
+		+ XMLSchemaAttribute::attribute_w_default(  "blueprint", xs_string, "" )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_bad_point_mutations", xs_string, "" )
+		+ XMLSchemaAttribute( "cmd", xs_boolean );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

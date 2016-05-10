@@ -7,28 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/PoseOutputter.hh
+/// @file   protocols/jd3/pose_outputters/PoseOutputter.hh
 /// @brief  Definition of the %PoseOutputter class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_protocols_jd3_PoseOutputter_HH
-#define INCLUDED_protocols_jd3_PoseOutputter_HH
+#ifndef INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH
+#define INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH
 
 //unit headers
-#include <protocols/jd3/PoseOutputter.fwd.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 
 //package headers
 #include <protocols/jd3/LarvalJob.fwd.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace jd3 {
+namespace pose_outputters {
 
 /// @brief The %PoseOutputter
 class PoseOutputter : utility::pointer::ReferenceCount
@@ -39,17 +45,39 @@ public:
 	virtual ~PoseOutputter();
 
 	virtual
+	bool
+	outputter_specified_by_command_line() const = 0;
+
+	/// @brief Determine the inner-larval job's "job_tag" from the <Output> tag / per-job options
+	virtual
+	void determine_job_tag(
+		utility::tag::TagCOP output_tag,
+		utility::options::OptionCollection const & job_options,
+		InnerLarvalJob & job
+	) const = 0;
+
+	virtual
 	bool job_has_already_completed( LarvalJob const & job ) const = 0;
 
 	virtual
 	void mark_job_as_having_started( LarvalJob const & job ) const = 0;
 
 	virtual
-	void write_output_pose( LarvalJob const & job, core::pose::Pose const & pose ) = 0;
+	void write_output_pose(
+		LarvalJob const & job,
+		utility::options::OptionCollection const & options,
+		core::pose::Pose const & pose
+	) = 0;
+
+	/// @brief Return the stiring used by the PoseOutputterCreator for this class
+	virtual
+	std::string
+	class_key() const = 0;
 
 }; // PoseInputter
 
+} // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_PoseOutputter_HH
+#endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH

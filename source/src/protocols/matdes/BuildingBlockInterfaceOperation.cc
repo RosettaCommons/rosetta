@@ -247,16 +247,15 @@ void BuildingBlockInterfaceOperation::provide_xml_schema( utility::tag::XMLSchem
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "nsub_bblock", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "sym_dof_names", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "contact_dist", xs_decimal, "10.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "bblock_dist", xs_decimal, "5.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "fa_rep_cut", xs_decimal, "3.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "filter_intrabb", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "intrabb_only", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "multicomp", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "nsub_bblock", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "" )
+		+ XMLSchemaAttribute::attribute_w_default(  "contact_dist", xs_decimal, "10.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "bblock_dist", xs_decimal, "5.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "fa_rep_cut", xs_decimal, "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "filter_intrabb", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "intrabb_only", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "multicomp", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

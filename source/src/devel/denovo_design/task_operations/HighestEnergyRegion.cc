@@ -148,19 +148,17 @@ HighestEnergyRegionOperation::parse_tag( utility::tag::TagCOP tag, basic::dataca
 
 void
 HighestEnergyRegionOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_w_attributes( xsd, keyname(), schema_attributes(xsd) );
+	task_op_schema_w_attributes( xsd, keyname(), schema_attributes() );
 }
 
 utility::tag::AttributeList
-HighestEnergyRegionOperation::schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+HighestEnergyRegionOperation::schema_attributes()
 {
 	AttributeList attributes;
-
-	activate_common_simple_type( xsd, "non_negative_integer" );
-	// AMW TODO: defaults are the values of member variables...
-	attributes.push_back( XMLSchemaAttribute( "region_shell", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "regions_to_design", "non_negative_integer" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_non_selected", "non_negative_integer" ) );
+	attributes
+		+ XMLSchemaAttribute( "region_shell", xs_decimal )
+		+ XMLSchemaAttribute( "regions_to_design", xsct_non_negative_integer )
+		+ XMLSchemaAttribute( "repack_non_selected", xsct_non_negative_integer );
 	return attributes;
 }
 
@@ -436,7 +434,7 @@ DesignRandomRegionOperationCreator::keyname() const {
 // AMW: no parse_tag, relies on parent's version
 void
 DesignRandomRegionOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes()  );
 }
 
 /// @brief default constructor
@@ -506,7 +504,7 @@ DesignByResidueCentralityOperationCreator::keyname() const {
 // No parse_tag
 void
 DesignByResidueCentralityOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes()  );
 }
 
 /// @brief default constructor
@@ -583,7 +581,7 @@ DesignCatalyticResiduesOperationCreator::keyname() const {
 
 void
 DesignCatalyticResiduesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes()  );
 }
 
 /// @brief default constructor
@@ -648,7 +646,7 @@ DesignByCavityProximityOperationCreator::keyname() const {
 
 void
 DesignByCavityProximityOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes(xsd)  );
+	task_op_schema_w_attributes( xsd, keyname(), HighestEnergyRegionOperation::schema_attributes()  );
 }
 
 /// @brief default constructor

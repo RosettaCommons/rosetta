@@ -15,6 +15,7 @@
 #ifndef INCLUDED_utility_options_OptionCollection_fwd_hh
 #define INCLUDED_utility_options_OptionCollection_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
 namespace options {
@@ -22,6 +23,29 @@ namespace options {
 
 // Forward
 class OptionCollection;
+
+typedef utility::pointer::shared_ptr< OptionCollection > OptionCollectionOP;
+typedef utility::pointer::shared_ptr< OptionCollection const > OptionCollectionCOP;
+
+/// @brief Option types enumeration
+enum OptionTypes {
+	UNKNOWN_OPTION,
+	BOOLEAN_OPTION,
+	INTEGER_OPTION,
+	REAL_OPTION,
+	STRING_OPTION,
+	FILE_OPTION,
+	PATH_OPTION,
+	ANY_OPTION,
+	BOOLEAN_VECTOR_OPTION,
+	INTEGER_VECTOR_OPTION,
+	REAL_VECTOR_OPTION,
+	RESIDUE_CHAIN_VECTOR_OPTION,
+	STRING_VECTOR_OPTION,
+	FILE_VECTOR_OPTION,
+	PATH_VECTOR_OPTION,
+	ANY_VECTOR_OPTION
+};
 
 
 } // namespace options

@@ -7,20 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/PoseInputter.cc
-/// @brief  Implementation of the %PoseInputter class
+/// @file   src/protocols/init/init.JobInputterCreators.ihh
+/// @brief  Creator #includes for PoseInputters for init
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
+//PoseInputterCreator #includes
 
-//unit headers
-#include <protocols/jd3/PoseInputter.hh>
-
-namespace protocols {
-namespace jd3 {
-
-PoseInputter::PoseInputter() {}
-PoseInputter::~PoseInputter() {}
-
-} // namespace jd3
-} // namespace protocols
-
+#include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
+#include <protocols/jd3/pose_inputters/PDBPoseInputterCreator.hh>

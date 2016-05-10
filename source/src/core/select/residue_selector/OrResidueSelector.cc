@@ -171,7 +171,7 @@ std::string OrResidueSelector::class_name() {
 void
 OrResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "selectors", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute( "selectors", utility::tag::xs_string );
 	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), attributes );
 }
 

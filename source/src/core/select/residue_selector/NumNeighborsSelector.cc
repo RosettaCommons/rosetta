@@ -131,9 +131,10 @@ void
 NumNeighborsSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "count_water",     xs_boolean, "false" )); // note false in quotes denotes a default value
-	attributes.push_back( XMLSchemaAttribute( "threshold",       xs_integer, "17"    ));
-	attributes.push_back( XMLSchemaAttribute( "distance_cutoff", xs_decimal, "10.0"  ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "count_water",     xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "threshold",       xs_integer, "17"    )
+		+ XMLSchemaAttribute::attribute_w_default(  "distance_cutoff", xs_decimal, "10.0"  );
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

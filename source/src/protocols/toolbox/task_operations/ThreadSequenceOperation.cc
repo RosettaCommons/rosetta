@@ -143,11 +143,10 @@ void ThreadSequenceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "target_sequence", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "start_res", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "allow_design_around", xs_boolean, "true" ) );
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "target_sequence", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "start_res", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_design_around", xs_boolean, "true" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

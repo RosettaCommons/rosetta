@@ -29,6 +29,14 @@
 #include <map>
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <atomic>
+#include <mutex>
+#endif
+#endif
+
 namespace core {
 namespace select {
 namespace residue_selector {
@@ -46,6 +54,10 @@ public:
 		basic::datacache::DataMap & datamap
 	) const;
 
+	/// @brief Should the Factory throw an exception or call utility::exit when it encounters the
+	/// second of two ResidueSelctorCreators with the same keyname?  It's default behavior is to
+	/// call utility::exit, but this method allows you to set it so that it will throw an
+	/// exception instead (which is unit testable).
 	void set_throw_on_double_registration();
 
 	/// @brief The %ResidueSelectorFactory is the point of entry for the definition of the XML Schemas
@@ -59,8 +71,36 @@ public:
 	static std::string residue_selector_xml_schema_group_name();
 
 private:
-	static ResidueSelectorFactory * instance_;
 	ResidueSelectorFactory();
+
+	// Unimplemented -- uncopyable
+	ResidueSelectorFactory( ResidueSelectorFactory const & );
+	ResidueSelectorFactory const & operator = ( ResidueSelectorFactory const & );
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ResidueSelectorFactory * create_singleton_instance();
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ResidueSelectorFactory * > instance_;
+#else
+	static ResidueSelectorFactory * instance_;
+#endif
 
 private:
 	std::map< std::string, ResidueSelectorCreatorOP > creator_map_;

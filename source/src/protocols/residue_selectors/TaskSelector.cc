@@ -154,11 +154,12 @@ TaskSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "task_operations", xs_string ));
-	attributes.push_back( XMLSchemaAttribute( "designable", xs_boolean ));
-	attributes.push_back( XMLSchemaAttribute( "packable", xs_boolean ));
-	attributes.push_back( XMLSchemaAttribute( "repackable", xs_boolean ));
-	attributes.push_back( XMLSchemaAttribute( "fixed", xs_boolean ));
+	attributes
+		+ XMLSchemaAttribute( "task_operations", xs_string )
+		+ XMLSchemaAttribute( "designable", xs_boolean )
+		+ XMLSchemaAttribute( "packable", xs_boolean )
+		+ XMLSchemaAttribute( "repackable", xs_boolean )
+		+ XMLSchemaAttribute( "fixed", xs_boolean );
 
 	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 

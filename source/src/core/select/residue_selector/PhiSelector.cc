@@ -140,8 +140,9 @@ void
 PhiSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "select_positive_phi", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "ignore_unconnected_upper", xs_boolean, "true" ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xs_boolean, "true" );
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

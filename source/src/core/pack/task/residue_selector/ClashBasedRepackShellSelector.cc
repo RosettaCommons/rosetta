@@ -257,7 +257,7 @@ ClashBasedRepackShellSelector::provide_xml_schema( utility::tag::XMLSchemaDefini
 	using namespace utility::tag;
 	using namespace select::residue_selector;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "bump_overlap_factor", xs_decimal, "0.5" )); // default value specified in XSD
+	attributes + XMLSchemaAttribute::attribute_w_default(  "bump_overlap_factor", xs_decimal, "0.5" ); // default value specified in XSD
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

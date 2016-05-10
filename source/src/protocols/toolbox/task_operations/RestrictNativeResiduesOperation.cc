@@ -246,11 +246,13 @@ void RestrictNativeResiduesOperation::provide_xml_schema( utility::tag::XMLSchem
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "prevent_repacking", xs_boolean, "false" ) );
-	// This is required if a command line option isn't set AMW TODO
-	attributes.push_back( XMLSchemaAttribute( "pdbname", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "invert", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xs_boolean, "false" )
+
+		// This is required if a command line option isn't set AMW TODO
+		+ XMLSchemaAttribute( "pdbname", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "invert", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

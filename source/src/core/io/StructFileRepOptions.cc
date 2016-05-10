@@ -26,6 +26,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh> // to be used in the near future
 #include <utility/string_util.hh>
 
 // Tracer instance for this file
@@ -34,7 +35,14 @@ static THREAD_LOCAL basic::Tracer TR( "core.io.StructFileRepOptions" );
 namespace core {
 namespace io {
 
-StructFileRepOptions::StructFileRepOptions() { init_from_options(); }
+StructFileRepOptions::StructFileRepOptions() {
+	init_from_options( basic::options::option );
+}
+
+StructFileRepOptions::StructFileRepOptions( utility::options::OptionCollection const & options )
+{
+	init_from_options( options );
+}
 
 StructFileRepOptions::~StructFileRepOptions() {}
 
@@ -250,57 +258,128 @@ void StructFileRepOptions::set_residues_for_atom_name_remapping(utility::vector1
 void StructFileRepOptions::set_show_all_fixes( bool setting ) { show_all_fixes_ = setting; }
 void StructFileRepOptions::set_constraints_from_link_records( bool setting ) { constraints_from_link_records_ = setting; }
 
-void StructFileRepOptions::init_from_options()
+/// @details List all of the options (by option key) that are read in the init_from_options function.
+void
+StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_options )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	set_check_if_residues_are_Ntermini( option[ in::Ntermini ].value());
-	set_check_if_residues_are_Ctermini( option[ in::Ctermini ].value());
-	set_skip_connect_info( option[ inout::skip_connect_info ].value());
-	set_connect_info_cutoff( option[ inout::connect_info_cutoff ].value());
-	set_exit_if_missing_heavy_atoms( option[ run::exit_if_missing_heavy_atoms ].value());
-	set_fold_tree_io( option[ inout::fold_tree_io ]() );
+	read_options
+		+ in::Ntermini
+		+ in::Ctermini
+		+ inout::skip_connect_info
+		+ inout::connect_info_cutoff
+		+ run::exit_if_missing_heavy_atoms
+		+ inout::fold_tree_io
+		+ in::include_sugars
+		+ in::ignore_unrecognized_res
+		+ in::ignore_waters
+		+ run::ignore_zero_occupancy
+		+ pH::keep_input_protonation_state
+		+ run::preserve_header
+		+ in::preserve_crystinfo
+		+ in::missing_density_to_jump
+		+ out::file::no_chainend_ter
+		+ out::file::no_output_cen
+		+ mp::output::normalize_to_thk
+		+ out::file::output_torsions
+		+ out::file::output_virtual
+		+ out::file::output_virtual_zero_occ
+		+ out::file::pdb_comments
+		+ out::file::pdb_parents
+		+ out::file::per_chain_renumbering
+		+ run::randomize_missing_coords
+		+ in::remember_unrecognized_res
+		+ in::remember_unrecognized_water
+		+ out::file::renumber_pdb
+		+ out::file::suppress_zero_occ_pdb_output
+		+ out::file::use_pdb_format_HETNAM_records
+		+ out::file::write_pdb_link_records
+		+ in::file::treat_residues_in_these_chains_as_separate_chemical_entities
+		+ in::file::remap_pdb_atom_names_for
+		+ out::file::write_pdb_parametric_info
+		+ inout::write_all_connect_info
+		+ in::show_all_fixes
+		+ in::constraints_from_link_records;
 
-	set_ignore_sugars( ! option[ in::include_sugars ]() );
+}
+
+/// @details The StructFileRepOptions object can be defined as a ResourceOption
+/// and read in by the ResourceManager and stored as a resource for use in Pose
+/// initialization.  The attributes (aka options) listed here are those read in
+/// the parse_my_tag method.
+void
+StructFileRepOptions::provide_xml_schema( utility::tag::XMLSchemaDefinition &  )
+{
+	// TO DO!
+}
+
+
+/// @details Note that if you should add a new option to this function, that you should
+/// 1. add a data member to the class (of course!)
+/// 2. add an accessor for that data member (of course!)
+/// 3. add a mutator for that data member such that it can be set programmatically
+/// 4. add the option key to the OptionKeyList in list_options_read
+/// 5. add a read to the (XML) Tag object in the parse_my_tag funciton
+/// 6. list the XML attribute (aka "Tag option") that you read from in parse_my_tag to the provide_xml_schema function.
+///
+/// The usability of Rosetta is improved by continued vigilence of its developers to
+/// provide a well documented and accessible code, and the process of reading in structures
+/// is vital to Rosetta. Do your part and follow in the careful efforts of those who
+/// came before you.
+void StructFileRepOptions::init_from_options( utility::options::OptionCollection const & options )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	set_check_if_residues_are_Ntermini( options[ in::Ntermini ].value());
+	set_check_if_residues_are_Ctermini( options[ in::Ctermini ].value());
+	set_skip_connect_info( options[ inout::skip_connect_info ].value());
+	set_connect_info_cutoff( options[ inout::connect_info_cutoff ].value());
+	set_exit_if_missing_heavy_atoms( options[ run::exit_if_missing_heavy_atoms ].value());
+	set_fold_tree_io( options[ inout::fold_tree_io ]() );
+
+	set_ignore_sugars( ! options[ in::include_sugars ]() );
 	// Following rigamarole is to maintain backwards compatibility with old Rosetta which did
 	//  not read in HOH. Most modes that did not want HOH used the flag "-ignore_unrecognized_res",
 	//  and this was understood to also ignore HOH (see description in options_rosetta.py!).
 	// Now allow user to -ignore_unrecognized_res but to also restore HOH through "-ignore_waters false".
 	set_ignore_waters( false );
-	set_ignore_unrecognized_res( option[ in::ignore_unrecognized_res ]()); // this can change ignore_waters
-	if ( option[ in::ignore_waters ].user() ) set_ignore_waters( option[ in::ignore_waters ]()); // overrides ignore_waters
+	set_ignore_unrecognized_res( options[ in::ignore_unrecognized_res ]()); // this can change ignore_waters
+	if ( options[ in::ignore_waters ].user() ) set_ignore_waters( options[ in::ignore_waters ]()); // overrides ignore_waters
 
-	set_ignore_zero_occupancy( option[ run::ignore_zero_occupancy ]());
-	set_keep_input_protonation_state( option[ pH::keep_input_protonation_state ]());
-	set_preserve_header( option[ run::preserve_header ].value());
-	set_preserve_crystinfo( option[ in::preserve_crystinfo ]() );
-	set_missing_dens_as_jump( option[ in::missing_density_to_jump ]() );
-	set_no_chainend_ter( option[ OptionKeys::out::file::no_chainend_ter ]() );
-	set_no_output_cen( option[ OptionKeys::out::file::no_output_cen ]() );
-	set_normalize_to_thk( option[ OptionKeys::mp::output::normalize_to_thk ]() );
-	set_output_torsions( option[ OptionKeys::out::file::output_torsions ]() );
-	set_output_virtual( option[ OptionKeys::out::file::output_virtual ]() );
-	set_output_virtual_zero_occ( option[ OptionKeys::out::file::output_virtual_zero_occ ]() );
-	set_pdb_comments( option[ OptionKeys::out::file::pdb_comments ].value() );
-	set_pdb_parents( option[ OptionKeys::out::file::pdb_parents ].value() );
-	set_per_chain_renumbering( option[ OptionKeys::out::file::per_chain_renumbering ].value() );
-	set_randomize_missing_coords( option[ run::randomize_missing_coords ]());
-	set_remember_unrecognized_res( option[ in::remember_unrecognized_res ]());
-	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]() );
-	set_renumber_pdb( option[ OptionKeys::out::file::renumber_pdb ].value() );
-	set_suppress_zero_occ_pdb_output( option[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() );
-	set_use_pdb_format_HETNAM_records( option[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
-	set_write_pdb_link_records( option[ out::file::write_pdb_link_records ]() );
-	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
-	if ( option[ in::file::remap_pdb_atom_names_for ].active() ) {
-		set_residues_for_atom_name_remapping( option[ in::file::remap_pdb_atom_names_for ] );
+	set_ignore_zero_occupancy( options[ run::ignore_zero_occupancy ]());
+	set_keep_input_protonation_state( options[ pH::keep_input_protonation_state ]());
+	set_preserve_header( options[ run::preserve_header ].value());
+	set_preserve_crystinfo( options[ in::preserve_crystinfo ]() );
+	set_missing_dens_as_jump( options[ in::missing_density_to_jump ]() );
+	set_no_chainend_ter( options[ OptionKeys::out::file::no_chainend_ter ]() );
+	set_no_output_cen( options[ OptionKeys::out::file::no_output_cen ]() );
+	set_normalize_to_thk( options[ OptionKeys::mp::output::normalize_to_thk ]() );
+	set_output_torsions( options[ OptionKeys::out::file::output_torsions ]() );
+	set_output_virtual( options[ OptionKeys::out::file::output_virtual ]() );
+	set_output_virtual_zero_occ( options[ OptionKeys::out::file::output_virtual_zero_occ ]() );
+	set_pdb_comments( options[ OptionKeys::out::file::pdb_comments ].value() );
+	set_pdb_parents( options[ OptionKeys::out::file::pdb_parents ].value() );
+	set_per_chain_renumbering( options[ OptionKeys::out::file::per_chain_renumbering ].value() );
+	set_randomize_missing_coords( options[ run::randomize_missing_coords ]());
+	set_remember_unrecognized_res( options[ in::remember_unrecognized_res ]());
+	set_remember_unrecognized_water( options[ in::remember_unrecognized_water ]() );
+	set_renumber_pdb( options[ OptionKeys::out::file::renumber_pdb ].value() );
+	set_suppress_zero_occ_pdb_output( options[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() );
+	set_use_pdb_format_HETNAM_records( options[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
+	set_write_pdb_link_records( options[ out::file::write_pdb_link_records ]() );
+	set_chains_whose_residues_are_separate_chemical_entities( options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
+	if ( options[ in::file::remap_pdb_atom_names_for ].active() ) {
+		set_residues_for_atom_name_remapping( options[ in::file::remap_pdb_atom_names_for ] );
 	}
-	set_write_pdb_parametric_info( option[out::file::write_pdb_parametric_info]() );
-	set_write_all_connect_info( option[inout::write_all_connect_info]() );
-	set_show_all_fixes( option[ in::show_all_fixes ]() );
-	set_constraints_from_link_records( option[ in::constraints_from_link_records ]() );
+	set_write_pdb_parametric_info( options[out::file::write_pdb_parametric_info]() );
+	set_write_all_connect_info( options[inout::write_all_connect_info]() );
+	set_show_all_fixes( options[ in::show_all_fixes ]() );
+	set_constraints_from_link_records( options[ in::constraints_from_link_records ]() );
 }
+
 
 } // namespace io
 } // namespace core

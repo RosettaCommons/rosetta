@@ -108,19 +108,15 @@ void RestrictToLoops::parse_tag( TagCOP tag, DataMap & ) {
 void RestrictToLoops::provide_xml_schema( XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-
 	provide_attributes( attributes );
-	//attributes.push_back( XMLSchemaAttribute( "design", xs_boolean ) );
-	//attributes.push_back( XMLSchemaAttribute( "restrict_only_design_to_loops", xs_boolean ) );
-	//attributes.push_back( XMLSchemaAttribute( "loops_file", xs_string ) );
-
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 void RestrictToLoops::provide_attributes( AttributeList & attributes ) {
-	attributes.push_back( XMLSchemaAttribute( "design", xs_boolean ) );
-	attributes.push_back( XMLSchemaAttribute( "restrict_only_design_to_loops", xs_boolean ) );
-	attributes.push_back( XMLSchemaAttribute( "loops_file", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute( "design", xs_boolean )
+		+ XMLSchemaAttribute( "restrict_only_design_to_loops", xs_boolean )
+		+ XMLSchemaAttribute( "loops_file", xs_string );
 }
 
 void RestrictToLoops::init() {

@@ -116,11 +116,7 @@ PreventChainFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 void PreventChainFromRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
-
+	attributes + XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 

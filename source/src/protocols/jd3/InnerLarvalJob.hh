@@ -77,11 +77,11 @@ public:
 	bool
 	operator != (InnerLarvalJob const & other ) const;
 
-	/// @brief returns true if this is the same as other;
-	/// does not call other.same()
+	/// @brief returns true if this is the same type as other;
+	/// does not call other.same_type()
 	virtual
 	bool
-	same( InnerLarvalJob const & other ) const;
+	same_type( InnerLarvalJob const & other ) const;
 
 	virtual
 	void
@@ -92,13 +92,13 @@ public:
 	operator<< ( std::ostream & out, const InnerLarvalJob & inner_job );
 
 	/// @brief Set the single PoseInputSource for this job
-	void input_source( PoseInputSource const & setting );
+	void input_source( PoseInputSourceCOP setting );
 
 	/// @brief Clear the vector of PoseInputSources
 	void clear_input_sources();
 
 	/// @brief Append a PoseInputSource to the vector of them
-	void append_input_source( PoseInputSource const & setting );
+	void append_input_source( PoseInputSourceCOP setting );
 
 	/// @brief Return the input tag -- a string that describes the input structure, but that
 	/// is in no way a complete description of the job.  The job_tag instead should be looked
@@ -118,14 +118,17 @@ public:
 	/// @brief Set the job tag.  If not set, then the input tag will be returned.
 	void job_tag( std::string const & setting );
 
+	/// @brief Return the outputter class; i.e. the key used by the PoseOutputterFactory
+	std::string outputter() const;
+
+	/// @brief Set the outputter class for this job; i.e. the key used by the PoseOutputterFactory
+	void outputter( std::string const & setting );
+
 	/// @brief The number of job replicates to be performed for this %InnerLarvalJob.
 	core::Size nstruct_max() const;
 
 	/// @brief Read access to the ConstDataMap that the %InnerLarvalJob holds.
 	basic::datacache::ConstDataMap const & const_data_map() const;
-
-	/// @brief Read access to the (constant) job options object that the %InnerLarvalJob holds.
-	basic::resource_manager::JobOptions const & job_options() const;
 
 	/// @brief Return the number of pose input sources for this job.
 	core::Size n_input_sources() const;
@@ -150,10 +153,6 @@ public:
 	/// themselves should not be shared.
 	basic::datacache::ConstDataMap & const_data_map();
 
-	/// @brief Set the JobOptions object held by the %InnerLarvalJob -- two %InnerLarvalJobs may point to
-	/// the same JobOptions object.
-	void job_options( basic::resource_manager::JobOptionsCOP setting );
-
 private:
 
 	/// @brief construct a string from the input_sources_
@@ -163,8 +162,9 @@ private:
 
 	std::string input_tag_;
 	std::string job_tag_;
+	std::string outputter_;
 
-	utility::vector1< PoseInputSourceOP > input_sources_;
+	utility::vector1< PoseInputSourceCOP > input_sources_;
 
 	core::Size nstruct_;
 	bool bad_;
@@ -173,12 +173,6 @@ private:
 	/// piece of data, modification to one of the %InnerLarvalJobs objects cannot disrupt the other %InnerLarvalJob.
 	/// Arbitrary data can be cached here by the JobQueen as she initializes the %InnerLarvalJobs.
 	basic::datacache::ConstDataMapOP const_data_cache_;
-
-	/// @brief The JobOptions object represents all job-variable command-line options that have
-	/// been set for this %InnerLarvalJob.  Two jobs can safely share a JobOptions object because they
-	/// store JobOptionCOPs. It is the responsibility of whomever initializes the JobOptions
-	/// object to not modify the JobOptions object after it has been set in an %InnerLarvalJob.
-	basic::resource_manager::JobOptionsCOP job_options_;
 
 }; // InnerLarvalJob
 

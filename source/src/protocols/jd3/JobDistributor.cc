@@ -58,7 +58,7 @@ JobDistributor::go( JobQueenOP queen ) {
 	// }
 
 	do {
-		jobs_for_current_round_ = determine_jobs_for_next_round();
+		store_jobs_for_current_round( determine_jobs_for_next_round() );
 		while ( more_jobs_in_current_round() ) {
 
 			// select the next job to run
@@ -92,6 +92,15 @@ void JobDistributor::set_job_queen( JobQueenOP job_queen )
 {
 	job_queen_ = job_queen;
 }
+
+/// @brief Store the list of jobs to be run in the current round
+void JobDistributor::store_jobs_for_current_round( LarvalJobs const & job_list )
+{
+	jobs_for_current_round_.clear();
+	jobs_for_current_round_.resize( job_list.size() );
+	std::copy( job_list.begin(), job_list.end(), jobs_for_current_round_.begin() );
+}
+
 
 /// @brief Access to the JobQueen object for derived JobDistributors
 JobQueen &

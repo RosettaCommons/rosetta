@@ -45,7 +45,7 @@ public:
 
 	virtual void parse_tag( TagCOP );
 
-	static utility::tag::XMLComplexTypeSchemaGeneratorOP define_composition_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP define_composition_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 protected:
 	utility::vector1<ResFilterCOP> sub_filters_;
@@ -232,7 +232,7 @@ public:
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	static utility::tag::AttributeList get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList get_xml_schema_attributes();
 
 private:
 	utility::vector1< Size > indices_;

@@ -14,9 +14,13 @@
 #ifndef INCLUDED_basic_options_util_hh
 #define INCLUDED_basic_options_util_hh
 
-// Package headers
+// C++ headers
 #include <iosfwd>              // for string
+
+// utility headers
 #include <utility/vector1.hh>  // for vector1
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 
 namespace basic {
 namespace options {
@@ -26,9 +30,24 @@ namespace options {
 std::string
 start_file();
 
-
 utility::vector1< std::string >
 start_files();
+
+/// @brief Add a base-class OptionKey to an OptionCollection by trying to perform a dynamic
+/// cast to each of the available option types until the correct derived class is found.
+void
+add_anonymous_option(
+	utility::options::OptionCollection & options,
+	utility::options::OptionKey const & key
+);
+
+/// @brief Create an OptionCollection that knows about only the subset of option keys
+/// listed in the input OptionsKeys list. Load this new OptionCollection with the values
+/// and the defaults that are stored in the global option collection.
+utility::options::OptionCollectionOP
+read_subset_of_global_option_collection(
+	utility::options::OptionKeyList const & opt_keys
+);
 
 } // namespace options
 } // namespace basic

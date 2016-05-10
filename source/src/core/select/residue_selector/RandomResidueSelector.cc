@@ -143,8 +143,7 @@ RandomResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	activate_common_simple_type( xsd, "non_negative_integer" );
-	attributes.push_back( XMLSchemaAttribute( "num_residues", "non_negative_integer" ) );
+	attributes.push_back( XMLSchemaAttribute( "num_residues", xsct_non_negative_integer ) );
 	attributes.push_back( XMLSchemaAttribute( "selector", xs_string ) );
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
 }

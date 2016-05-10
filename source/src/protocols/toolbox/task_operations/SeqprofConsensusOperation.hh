@@ -75,7 +75,7 @@ public:
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	static utility::tag::XMLComplexTypeSchemaGeneratorOP create_complex_type_generator( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP create_complex_type_generator( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SeqprofConsensus"; }
 
 	core::sequence::SequenceProfileCOP

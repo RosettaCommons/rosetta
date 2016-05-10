@@ -25,20 +25,20 @@
 #include <core/scoring/etable/EtableOptions.hh>
 #include <basic/Tracer.hh>
 
-// Utility headers
-#include <utility/tag/Tag.hh>
-
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
-
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <basic/datacache/DataMap.hh>
+
+// Utility headers
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+
+// Boost Headers
+#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace jd2 {
@@ -65,7 +65,10 @@ void ScoreFunctionLoader::load_data(
 		using namespace core::scoring::symmetry;
 
 		ScoreFunctionOP in_scorefxn;
-		std::string const scorefxn_name( scorefxn_tag->getName() );
+		std::string scorefxn_name( scorefxn_tag->getName() );
+		if ( scorefxn_name == "ScoreFunction" ) {
+			scorefxn_name = scorefxn_tag->getOption< std::string >( "name" );
+		}
 		std::string const default_sfxn_weights(
 			basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ?
 			"pre_talaris_2013_standard.wts" : "talaris2013" );
@@ -212,12 +215,89 @@ void ScoreFunctionLoader::load_data(
 	TR.flush();
 }
 
+std::string score_function_subtag_complex_type_namer( std::string const & element_name ) { return "sfxn_" + element_name + "_type"; }
+std::string score_function_subtag_group() { return "sfxn_subtag"; }
+std::string score_function_tag_group() { return "sfxn_tag"; }
+
+std::string
+ScoreFunctionLoader::loader_name() { return "SCOREFXNS"; }
+
+std::string
+ScoreFunctionLoader::score_function_loader_ct_namer( std::string const & element_name )
+{
+	return "sfxn_loader_" + element_name + "_type";
+}
+
+void
+ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// "Reweight" tag
+	AttributeList reweight_attributes;
+	reweight_attributes
+		+ XMLSchemaAttribute::required_attribute( "scoretype", xs_string )
+		+ XMLSchemaAttribute( "weight", xs_decimal );
+
+	// "Set" tag
+	AttributeList set_attributes;
+	core::scoring::hbonds::HBondOptions::append_schema_attributes( set_attributes );
+	core::scoring::etable::EtableOptions::append_schema_attributes( set_attributes );
+	set_attributes
+		+ XMLSchemaAttribute( "aa_composition_setup_file", xs_string )
+		+ XMLSchemaAttribute( "softrep_etable", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "fa_elec_min_dis", xs_decimal )
+		+ XMLSchemaAttribute( "fa_elec_max_dis", xs_decimal )
+		+ XMLSchemaAttribute( "fa_elec_dielectric", xs_decimal )
+		+ XMLSchemaAttribute( "fa_elec_no_dis_dep_die", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "exclude_protein_protein_fa_elec", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "exclude_DNA_DNA", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "pb_bound_tag", xs_string )
+		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string )
+		+ XMLSchemaAttribute( "scale_sc_dens", xs_decimal )
+		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_decimal );
+
+	// ScoreFunction complex type
+	AttributeList scorefunction_ct_attributes;
+	scorefunction_ct_attributes
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string )
+		+ XMLSchemaAttribute( "weights", xs_string )
+		+ XMLSchemaAttribute( "patch", xs_string )
+		+ XMLSchemaAttribute( "symmetric", xsct_rosetta_bool );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "Reweight", reweight_attributes )
+		.add_simple_subelement( "Set", set_attributes );
+	XMLSchemaComplexTypeGenerator scorefunction_ct_gen;
+	scorefunction_ct_gen
+		.element_name( "ScoreFunction" )
+		.complex_type_naming_func( & score_function_loader_ct_namer )
+		.add_attributes( scorefunction_ct_attributes )
+		.set_subelements_repeatable( subelements )
+		.write_complex_type_to_schema( xsd );
+
+	// SCOREFXNS complex type
+	XMLSchemaSimpleSubelementList loader_subelements;
+	loader_subelements.add_already_defined_subelement( "ScoreFunction", & score_function_loader_ct_namer );
+	XMLSchemaComplexTypeGenerator loader_ct_gen;
+	loader_ct_gen
+		.element_name( loader_name() )
+		.complex_type_naming_func( & score_function_loader_ct_namer )
+		.set_subelements_repeatable( loader_subelements )
+		.write_complex_type_to_schema( xsd );
+}
+
 DataLoaderOP
 ScoreFunctionLoaderCreator::create_loader() const { return DataLoaderOP( new ScoreFunctionLoader ); }
 
 std::string
-ScoreFunctionLoaderCreator::keyname() const { return "SCOREFXNS"; }
+ScoreFunctionLoaderCreator::keyname() const { return ScoreFunctionLoader::loader_name(); }
 
+ScoreFunctionLoaderCreator::DerivedNameFunction
+ScoreFunctionLoaderCreator::schema_ct_naming_function() const
+{
+	return & ScoreFunctionLoader::score_function_loader_ct_namer;
+}
 
 } //namespace parser
 } //namespace jd2

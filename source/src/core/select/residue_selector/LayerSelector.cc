@@ -157,19 +157,20 @@ void
 LayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "select_core",                    xs_boolean, "false" ));
-	attributes.push_back( XMLSchemaAttribute( "select_boundary",                xs_boolean, "false" ));
-	attributes.push_back( XMLSchemaAttribute( "select_surface",                 xs_boolean, "false" ));
-	attributes.push_back( XMLSchemaAttribute( "cache_selection",                xs_boolean, "false" ));
-	attributes.push_back( XMLSchemaAttribute( "use_sidechain_neighbors",        xs_boolean, "true" ));
-	attributes.push_back( XMLSchemaAttribute( "ball_radius",                    xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_denominator",        xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_exponent",     xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_exponent",      xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "core_cutoff",                    xs_decimal ));
-	attributes.push_back( XMLSchemaAttribute( "surface_cutoff",                 xs_decimal ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default( "select_core",                    xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "select_boundary",                xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "select_surface",                 xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "cache_selection",                xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_sidechain_neighbors",        xs_boolean, "true" )
+		+ XMLSchemaAttribute( "ball_radius",                    xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_denominator",        xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent",     xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_exponent",      xs_decimal )
+		+ XMLSchemaAttribute( "core_cutoff",                    xs_decimal )
+		+ XMLSchemaAttribute( "surface_cutoff",                 xs_decimal );
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

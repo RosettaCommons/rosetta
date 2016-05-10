@@ -38,6 +38,7 @@
 #include <iostream>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
 
@@ -278,6 +279,38 @@ HBondOptions::parse_my_tag(
 	if ( tag->hasOption( "hbonds:mphbond" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:mphbond" ) );
 	}
+}
+
+void
+HBondOptions::append_schema_attributes( utility::tag::AttributeList & attributes )
+{
+	using namespace utility::tag;
+	attributes
+		+ XMLSchemaAttribute( "exclude_DNA_DNA_hbond", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "use_hb_env_dep_DNA", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "use_hb_env_dep", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "smooth_hb_env_dep", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "decompose_bb_hb_into_pair_energies", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:exclude_DNA_DNA_hbond", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:use_hb_env_dep_DNA", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:put_intra_into_total", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:exclude_self_hbonds", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:use_hb_env_dep", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:smooth_hb_env_dep", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:decompose_bb_hb_into_pair_energies", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:exclude_intra_res_protein", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:exclude_intra_res_RNA", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:put_intra_into_total", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:bb_donor_acceptor_check", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:params_database_tag", xs_string )
+		+ XMLSchemaAttribute( "hbonds:use_sp2_chi_penalty", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:sp2_BAH180_rise", xs_decimal )
+		+ XMLSchemaAttribute( "hbonds:sp2_outer_width", xs_decimal )
+		+ XMLSchemaAttribute( "hbonds:measure_sp3acc_BAH_from_hvy", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:fade_energy", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:Mbhbond", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds:mphbond", xsct_rosetta_bool );
+
 }
 
 

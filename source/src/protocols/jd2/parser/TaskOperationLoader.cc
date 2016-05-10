@@ -22,6 +22,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -65,13 +66,44 @@ void TaskOperationLoader::load_data(
 		TR << "Defined TaskOperation named \"" << name << "\" of type " << type << std::endl;
 	}
 	TR.flush();
+
 }
+
+std::string TaskOperationLoader::loader_name() { return "TASKOPERATIONS"; }
+
+std::string TaskOperationLoader::task_op_loader_ct_namer( std::string const & element_name )
+{
+	return "task_op_loader_" + element_name + "_type";
+}
+
+void TaskOperationLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	using namespace core::pack::task::operation;
+
+	TaskOperationFactory::get_instance()->define_task_op_xml_schema( xsd );
+
+	XMLSchemaSimpleSubelementList task_op_subelements;
+	task_op_subelements.add_group_subelement( & TaskOperationFactory::task_operation_xml_schema_group_name );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( loader_name() )
+		.complex_type_naming_func( task_op_loader_ct_namer )
+		.set_subelements_repeatable( task_op_subelements )
+		.write_complex_type_to_schema( xsd );
+}
+
 
 DataLoaderOP
 TaskOperationLoaderCreator::create_loader() const { return DataLoaderOP( new TaskOperationLoader ); }
 
 std::string
-TaskOperationLoaderCreator::keyname() const { return "TASKOPERATIONS"; }
+TaskOperationLoaderCreator::keyname() const { return TaskOperationLoader::loader_name(); }
+
+TaskOperationLoaderCreator::DerivedNameFunction
+TaskOperationLoaderCreator::schema_ct_naming_function() const
+{
+	return & TaskOperationLoader::task_op_loader_ct_namer;
+}
 
 
 } //namespace parser

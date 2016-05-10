@@ -34,7 +34,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -208,6 +208,8 @@ public:
 	bool deriv_check() const;
 	bool omega() const{ return omega_; }
 	void omega( bool const b ){ omega_ = b; }
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 protected:
 	/// @brief for use with RosettaScripts current method of using

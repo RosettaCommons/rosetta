@@ -24,6 +24,8 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 #ifdef SERIALIZATION
@@ -180,6 +182,15 @@ EtableOptions::parse_my_tag(
 	if ( tag->hasOption( "lj_hbond_hdis" ) ) {
 		lj_hbond_hdis = tag->getOption<core::Real>( "lj_hbond_hdis" );
 	}
+}
+
+void
+EtableOptions::append_schema_attributes( utility::tag::AttributeList & attributes )
+{
+	using namespace utility::tag;
+	attributes
+		+ XMLSchemaAttribute( "lj_hbond_OH_donor_dis", xs_decimal )
+		+ XMLSchemaAttribute( "lj_hbond_hdis", xs_decimal );
 }
 
 } // etable

@@ -56,6 +56,7 @@
 #include <utility/down_cast.hh>
 #include <utility/keys/SmallKeyVector.hh>
 #include <utility/exit.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <list>
@@ -67,7 +68,7 @@ namespace options {
 
 
 /// @brief Program options collection
-class OptionCollection
+class OptionCollection : public utility::pointer::ReferenceCount
 {
 
 
@@ -75,26 +76,6 @@ private: // Types
 
 
 	typedef  std::list< std::string >  ValueStrings;
-
-	/// @brief Option types enumeration
-	enum OptionTypes {
-		UNKNOWN_OPTION,
-		BOOLEAN_OPTION,
-		INTEGER_OPTION,
-		REAL_OPTION,
-		STRING_OPTION,
-		FILE_OPTION,
-		PATH_OPTION,
-		ANY_OPTION,
-		BOOLEAN_VECTOR_OPTION,
-		INTEGER_VECTOR_OPTION,
-		REAL_VECTOR_OPTION,
-		RESIDUE_CHAIN_VECTOR_OPTION,
-		STRING_VECTOR_OPTION,
-		FILE_VECTOR_OPTION,
-		PATH_VECTOR_OPTION,
-		ANY_VECTOR_OPTION
-	};
 
 	// Note: These waste a small amount of space for the sake of constant-time option lookup
 	typedef  utility::keys::SmallKeyVector< BooleanOptionKey, BooleanOption >  Booleans;

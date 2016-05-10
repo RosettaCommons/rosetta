@@ -25,6 +25,8 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKey.hh>
 
 #include <basic/Tracer.hh>
 
@@ -151,6 +153,68 @@ start_files()
 	return filenames;
 }
 
+void
+add_anonymous_option(
+	utility::options::OptionCollection & options,
+	utility::options::OptionKey const & key
+)
+{
+	using namespace utility::options;
+	if ( dynamic_cast< BooleanOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< BooleanOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< BooleanVectorOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< BooleanVectorOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< StringOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< StringOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< StringVectorOptionKey const * > ( &key ) ) {
+		options.add(dynamic_cast< StringVectorOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< PathOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< PathOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< PathVectorOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< PathVectorOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< FileOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< FileOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< FileVectorOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< FileVectorOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< RealOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< RealOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< RealVectorOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< RealVectorOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< IntegerOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< IntegerOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< IntegerVectorOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< IntegerVectorOptionKey const & > ( key ), "" );
+	} else if ( dynamic_cast< ResidueChainVectorOptionKey const * > ( &key ) ) {
+		options.add( dynamic_cast< ResidueChainVectorOptionKey const & > ( key ), "" );
+	} else {
+		throw utility::excn::EXCN_Msg_Exception( "Failed to add an anonymous option to an option collection: " + key.id() );
+	}
+}
+
+
+utility::options::OptionCollectionOP
+read_subset_of_global_option_collection(
+	utility::options::OptionKeyList const & opt_keys
+)
+{
+	using namespace utility::options;
+
+	OptionCollectionOP opts( new OptionCollection );
+
+	// first add all of the options to the OptionCollection
+	for ( OptionKeyList::const_iterator iter = opt_keys.begin(); iter != opt_keys.end(); ++iter ) {
+		OptionKey const & opt( (*iter)() );
+		add_anonymous_option( *opts, opt );
+	}
+
+	// second, take the default values from the global option collection
+	for ( OptionKeyList::const_iterator iter = opt_keys.begin(); iter != opt_keys.end(); ++iter ) {
+		OptionKey const & opt( (*iter)() );
+		debug_assert( option.has( opt ) );
+		(*opts)[ opt ].copy_from( option[ opt ] );
+	}
+	return opts;
+}
 
 } // namespace options
 } // namespace basic

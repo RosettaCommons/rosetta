@@ -25,6 +25,30 @@
 namespace utility {
 namespace tag {
 
+std::string name_for_common_type( XMLSchemaCommonType common_type )
+{
+	switch ( common_type ) {
+	case xsct_int_cslist : return "int_cslist";
+	case xsct_int_wsslist : return "int_wsslist";
+	case xsct_real_cslist : return "real_cslist";
+	case xsct_real_wsslist : return "real_wsslist";
+	case xsct_non_negative_integer : return "non_negative_integer";
+	case xsct_rosetta_bool : return "rosetta_bool";
+	case xsct_bool_wsslist : return "bool_wsslist";
+	case xsct_none :
+		throw utility::excn::EXCN_Msg_Exception( "Error in requesting name for xsct_none;" );
+		break;
+	}
+	return "Error in requesting name for common type";
+}
+
+std::ostream & operator << ( std::ostream & os, XMLSchemaCommonType common_type )
+{
+	os << name_for_common_type( common_type );
+	return os;
+}
+
+
 void indent_w_spaces( int indentation, std::ostream & os ) {
 	for ( int ii = 1; ii <= indentation; ++ii ) { os << " "; }
 }
@@ -44,25 +68,35 @@ void write_min_occurs_max_occurs_if_necessary( int min_occurs, int max_occurs, s
 }
 
 XMLSchemaType::XMLSchemaType() :
-	type_( xs_string )
+	type_( xs_string ),
+	common_type_( xsct_none )
 {}
 
 XMLSchemaType::XMLSchemaType( XMLSchemaDataType setting ) :
-	type_( setting )
+	type_( setting ),
+	common_type_( xsct_none )
+{}
+
+XMLSchemaType::XMLSchemaType( XMLSchemaCommonType setting ) :
+	type_( xs_common ),
+	common_type_( setting )
 {}
 
 XMLSchemaType::XMLSchemaType( std::string const & custom_type ) :
 	type_( xs_custom ),
+	common_type_( xsct_none ),
 	custom_type_name_( custom_type )
 {}
 
 XMLSchemaType::XMLSchemaType( char const * custom_type ) :
 	type_( xs_custom ),
+	common_type_( xsct_none ),
 	custom_type_name_( custom_type )
 {}
 
-void XMLSchemaType::type( XMLSchemaDataType setting ) { type_ = setting; }
-void XMLSchemaType::custom_type_name( std::string const & setting ) { type_ = xs_custom; custom_type_name_ = setting; }
+void XMLSchemaType::type( XMLSchemaDataType setting ) { type_ = setting; common_type_ = xsct_none; }
+void XMLSchemaType::common_type( XMLSchemaCommonType setting ) { type_ = xs_common; common_type_ = setting; }
+void XMLSchemaType::custom_type_name( std::string const & setting ) { type_ = xs_custom; common_type_ = xsct_none; custom_type_name_ = setting; }
 
 std::string XMLSchemaType::type_name() const {
 	switch ( type_ ) {
@@ -72,11 +106,14 @@ std::string XMLSchemaType::type_name() const {
 	case xs_boolean : return "xs:boolean"; break;
 	case xs_date : return "xs:date"; break;
 	case xs_time : return "xs:time"; break;
+	case xs_common : return name_for_common_type( common_type_ ); break;
 	case xs_custom : return custom_type_name_;
 	}
 	return "error!"; // appease compiler
 }
 
+XMLSchemaDataType XMLSchemaType::type() const { return type_; }
+XMLSchemaCommonType XMLSchemaType::common_type() const { return common_type_; }
 
 XMLSchemaAttribute::XMLSchemaAttribute() :
 	is_required_( false )
@@ -91,21 +128,63 @@ XMLSchemaAttribute::XMLSchemaAttribute(
 	is_required_( false )
 {}
 
-XMLSchemaAttribute::XMLSchemaAttribute(
-	std::string const & name,
-	XMLSchemaType type,
-	std::string const & default_value
-) :
-	name_( name ),
-	type_( type ),
-	default_value_( default_value ),
-	is_required_( false )
-{}
+// XMLSchemaAttribute::XMLSchemaAttribute(
+//  std::string const & name,
+//  XMLSchemaType type,
+//  std::string const & default_value
+// ) :
+//  name_( name ),
+//  type_( type ),
+//  default_value_( default_value ),
+//  is_required_( false )
+// {}
 
-XMLSchemaAttribute XMLSchemaAttribute::required_attribute( std::string const & name, XMLSchemaType type )
+XMLSchemaAttribute XMLSchemaAttribute::required_attribute(
+	std::string const & name,
+	XMLSchemaType type
+)
 {
 	XMLSchemaAttribute attribute( name, type );
 	attribute.is_required_ = true;
+	return attribute;
+}
+
+XMLSchemaAttribute
+XMLSchemaAttribute::required_attribute(
+	std::string const & name,
+	XMLSchemaType type,
+	std::string const & description
+)
+{
+	XMLSchemaAttribute attribute( name, type );
+	attribute.is_required( true ).description( description );
+	return attribute;
+}
+
+
+XMLSchemaAttribute
+XMLSchemaAttribute::attribute_w_default(
+	std::string const & name,
+	XMLSchemaType type,
+	std::string const & default_value
+)
+{
+	XMLSchemaAttribute attribute( name, type );
+	attribute.default_value( default_value );
+	return attribute;
+}
+
+
+XMLSchemaAttribute
+XMLSchemaAttribute::attribute_w_default(
+	std::string const & name,
+	XMLSchemaType type,
+	std::string const & default_value,
+	std::string const & description
+)
+{
+	XMLSchemaAttribute attribute( name, type );
+	attribute.default_value( default_value ).description( description );
 	return attribute;
 }
 
@@ -113,6 +192,7 @@ XMLSchemaAttribute & XMLSchemaAttribute::name( std::string const & setting ) { n
 XMLSchemaAttribute & XMLSchemaAttribute::type( XMLSchemaType setting ) { type_ = setting; return *this; }
 XMLSchemaAttribute & XMLSchemaAttribute::is_required( bool setting ) { is_required_ = setting; return *this; }
 XMLSchemaAttribute & XMLSchemaAttribute::default_value( std::string const & setting ) { default_value_ = setting; return *this; }
+XMLSchemaAttribute & XMLSchemaAttribute::description( std::string const & setting ) { description_ = setting; return *this; }
 
 XMLSchemaType const &
 XMLSchemaAttribute::type() const { return type_; }
@@ -128,7 +208,96 @@ void XMLSchemaAttribute::write_definition( int indentation, std::ostream & os ) 
 	os << "\"";
 	if ( default_value_ != "" ) os << " default=\"" << default_value_ << "\"";
 	if ( is_required_ ) os << " use=\"required\"";
+	if ( description_ != "" ) os << " desc=\"" << description_ << "\"";
 	os << "/>\n";
+}
+
+std::string real_regex_pattern() {
+	return "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?";
+}
+
+/// @brief the set of all strings recognized as booleans according to Rosetta (in utility/string_util.cc)
+std::string rosetta_bool_string() {
+	return "true|True|TRUE|t|1|on|On|ON|y|Y|yes|Yes|YES|false|False|FALSE|f|F|0|off|Off|OFF|n|N|no|No|NO";
+}
+
+void
+activate_common_simple_type(
+	utility::tag::XMLSchemaDefinition & xsd,
+	XMLSchemaCommonType common_type
+)
+{
+	if ( common_type == xsct_int_cslist ) {
+		XMLSchemaRestriction int_cslist;
+		int_cslist.name( name_for_common_type( common_type ));
+		int_cslist.base_type( xs_string );
+		int_cslist.add_restriction( xsr_pattern, "[-+]?[0-9]+(,[-+]?[0-9]+)*" );
+
+		xsd.add_top_level_element( int_cslist );
+	} else  if ( common_type == xsct_int_wsslist ) {
+		XMLSchemaRestriction int_wsslist;
+		int_wsslist.name( name_for_common_type( common_type ));
+		int_wsslist.base_type( xs_string );
+		int_wsslist.add_restriction( xsr_pattern, "[-+]?[0-9]+(\\s+[-+]?[0-9]+)*" );
+
+		xsd.add_top_level_element( int_wsslist );
+	} else if ( common_type == xsct_real_cslist ) {
+		XMLSchemaRestriction real_cslist;
+		real_cslist.name( name_for_common_type( common_type ));
+		real_cslist.base_type( xs_string );
+		//real_cslist.add_restriction( xsr_pattern, "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(,[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)" );
+		real_cslist.add_restriction( xsr_pattern, real_regex_pattern() + "(," + real_regex_pattern() + ")" );
+		xsd.add_top_level_element( real_cslist );
+	} else if ( common_type == xsct_real_wsslist ) {
+		XMLSchemaRestriction real_wsslist;
+		real_wsslist.name( name_for_common_type( common_type ));
+		real_wsslist.base_type( xs_string );
+		real_wsslist.add_restriction( xsr_pattern, real_regex_pattern() + "(\\s+" + real_regex_pattern() + ")" );
+		xsd.add_top_level_element( real_wsslist );
+	} else if ( common_type == xsct_bool_wsslist ) {
+		XMLSchemaRestriction bool_wsslist;
+		bool_wsslist.name( name_for_common_type( common_type ));
+		bool_wsslist.base_type( xs_string );
+		bool_wsslist.add_restriction( xsr_pattern, rosetta_bool_string() + "(\\s+" + rosetta_bool_string() + ")" );
+		xsd.add_top_level_element( bool_wsslist );
+	} else if ( common_type == xsct_non_negative_integer ) {
+		XMLSchemaRestriction nonneg_int;
+		nonneg_int.name( name_for_common_type( common_type ));
+		nonneg_int.base_type( xs_integer );
+		nonneg_int.add_restriction( xsr_minInclusive, "0" );
+		xsd.add_top_level_element( nonneg_int );
+	} else if ( common_type == xsct_rosetta_bool ) {
+		XMLSchemaRestriction boolean;
+		boolean.name( name_for_common_type( common_type ));
+		boolean.base_type( xs_string );
+		boolean.add_restriction( xsr_pattern, rosetta_bool_string() );
+		xsd.add_top_level_element( boolean );
+	}
+
+	/* else if ( common_type == xsct_zero_or_one ) {
+	XMLSchemaRestriction zero_or_one;
+	zero_or_one.name( name_for_common_type( common_type ));
+	zero_or_one.base_type( xs_integer );
+	zero_or_one.add_restriction( xsr_minInclusive, "0" );
+	zero_or_one.add_restriction( xsr_maxInclusive, "1" );
+	xsd.add_top_level_element( zero_or_one );
+	}*/
+
+}
+
+
+void XMLSchemaAttribute::prepare_for_output( XMLSchemaDefinition & xsd ) const
+{
+	if ( type_.common_type() != xsct_none ) {
+		activate_common_simple_type( xsd, type_.common_type() );
+	}
+}
+
+AttributeList &
+operator + ( AttributeList & attributes, XMLSchemaAttribute const & attribute_to_append )
+{
+	attributes.push_back( attribute_to_append );
+	return attributes;
 }
 
 
@@ -189,6 +358,13 @@ void XMLSchemaRestriction::write_definition( int indentation, std::ostream & os 
 	os << "</xs:restriction>\n";
 	indent_w_spaces( indentation, os );
 	os << "</xs:simpleType>\n";
+}
+
+void XMLSchemaRestriction::prepare_for_output( XMLSchemaDefinition & xsd ) const
+{
+	if ( base_type_.common_type() != xsct_none ) {
+		activate_common_simple_type( xsd, base_type_.common_type() );
+	}
 }
 
 XMLSchemaParticle::XMLSchemaParticle() : min_occurs_( xsminmax_unspecified ), max_occurs_( xsminmax_unspecified ) {}
@@ -311,6 +487,14 @@ void XMLSchemaModelGroup::write_definition( int indentation, std::ostream & os )
 	os << "</" << type_ << ">\n";
 }
 
+void XMLSchemaModelGroup::prepare_for_output( XMLSchemaDefinition & xsd ) const
+{
+	for ( std::list< XMLSchemaParticleCOP >::const_iterator iter = particles_.begin(); iter != particles_.end(); ++iter ) {
+		(*iter)->prepare_for_output( xsd );
+	}
+}
+
+
 void
 XMLSchemaModelGroup::validate_content() const
 {
@@ -417,6 +601,17 @@ void XMLSchemaComplexType::write_definition( int indentation, std::ostream & os 
 	os << "</xs:complexType>\n";
 }
 
+void XMLSchemaComplexType::prepare_for_output( XMLSchemaDefinition & xsd ) const
+{
+	if ( model_group_ ) {
+		model_group_->prepare_for_output( xsd );
+	}
+	for ( std::list< XMLSchemaAttribute >::const_iterator iter = attributes_.begin(); iter != attributes_.end(); ++iter ) {
+		iter->prepare_for_output( xsd );
+	}
+
+}
+
 ///////////////////////////////////////////// XMLSchemaElement ///////////////////////////////////////////////////
 
 XMLSchemaElement::XMLSchemaElement() : category_( xs_element_is_type_reference ) {}
@@ -462,6 +657,12 @@ void XMLSchemaElement::write_definition( int indentation, std::ostream & os ) co
 	}
 }
 
+void XMLSchemaElement::prepare_for_output( XMLSchemaDefinition & xsd ) const
+{
+	if ( type_name_.common_type() != xsct_none ) { activate_common_simple_type( xsd, type_name_.common_type() ); }
+	if ( complex_type_ ) complex_type_->prepare_for_output( xsd );
+}
+
 
 //////////////////////////////// XMLSchemaDefinition /////////////////////////////////////////////
 
@@ -471,6 +672,9 @@ XMLSchemaDefinition::~XMLSchemaDefinition() {}
 
 void XMLSchemaDefinition::add_top_level_element( XMLSchemaTopLevelElement const & element )
 {
+	// handle the common simple types by recursing through the input element.
+	element.prepare_for_output( *this );
+
 	std::ostringstream oss;
 	element.write_definition( 0, oss );
 	std::string definition = oss.str();
@@ -673,22 +877,21 @@ XMLSchemaSimpleSubelementList::element_list() const
 	return elements_;
 }
 
-//class XMLSchemaSimpleSubelementList::XMLComplexTypeSchemaGeneratorImpl
-//{
-// XMLComplexTypeSchemaGeneratorImpl();
-//
-//};
 
-class XMLComplexTypeSchemaGeneratorImpl : public utility::pointer::ReferenceCount
+class XMLSchemaComplexTypeGeneratorImpl : public utility::pointer::ReferenceCount
 {
 public:
 	typedef boost::function< std::string ( std::string const & ) >     DerivedNameFunction;
 	typedef boost::function< std::string () >                          NameFunction;
 	typedef std::list< XMLSchemaSimpleSubelementList::ElementSummary > ElementSummaries;
 
+	enum SetOfSubelementsBehavior { ss_repeatable, ss_optional, ss_required, ss_pick_one_opt, ss_pick_one_req };
+
+	typedef std::list< std::pair< XMLSchemaSimpleSubelementList, SetOfSubelementsBehavior > > SubelementSets;
+
 public:
-	XMLComplexTypeSchemaGeneratorImpl();
-	~XMLComplexTypeSchemaGeneratorImpl();
+	XMLSchemaComplexTypeGeneratorImpl();
+	~XMLSchemaComplexTypeGeneratorImpl();
 
 	void element_name( std::string const & );
 	void complex_type_naming_func( DerivedNameFunction const & naming_function );
@@ -702,10 +905,12 @@ public:
 	/// this xs:complexType.
 	void set_subelements_repeatable(
 		XMLSchemaSimpleSubelementList const & subelements,
-		NameFunction const & group_name_function,
 		int min_occurs,
 		int max_occurs
 	);
+
+	void set_subelements_pick_one_required( XMLSchemaSimpleSubelementList const & subelements );
+	void set_subelements_pick_one_optional( XMLSchemaSimpleSubelementList const & subelements );
 
 	/// @brief set subelements as single-appearance (and required); setting the sub-elements replaces any sub-elements that were previously set.
 	/// These single-appearance subelements are allowed to appear in any order from the point of view of the XML Schema, which is
@@ -722,55 +927,102 @@ public:
 		XMLSchemaSimpleSubelementList const & subelements
 	);
 
+	/// @brief Add a subelement list to a growing set of ordered subelements, where elements in
+	/// this set are labeled as being repeatable.
+	/// This function corresponds to case 8 in the list of behaviors above.
+	void add_ordered_subelement_set_as_repeatable(
+		XMLSchemaSimpleSubelementList const & subelements
+	);
+
+	/// @brief Add a subelement list to a growing set of ordered subelements, where elements in
+	/// this set are labeled as being optional.  There should be only a single element in the
+	/// input subelement list.
+	/// This function corresponds to case 8 in the list of behaviors above.
+	void add_ordered_subelement_set_as_optional(
+		XMLSchemaSimpleSubelementList const & subelements
+	);
+
+	/// @brief Add a subelement list to a growing set of ordered subelements, where elements in
+	/// this set are labeled as being requried.  There should be only a single element in the
+	/// input subelement list.
+	/// This function corresponds to case 8 in the list of behaviors above.
+	void add_ordered_subelement_set_as_required(
+		XMLSchemaSimpleSubelementList const & subelements
+	);
+
+	/// @brief Add a subelement list to a growing set of ordered subelements, where elements in
+	/// this set are labeled as "pick one or none".  There should be more than one element in the
+	/// input subelement list.
+	/// This function corresponds to case 8 in the list of behaviors above.
+	void add_ordered_subelement_set_as_pick_one_optional(
+		XMLSchemaSimpleSubelementList const & subelements
+	);
+
+	/// @brief Add a subelement list to a growing set of ordered subelements, where elements in
+	/// this set are labeled as "pick exactly one".  There should be more than one element in the
+	/// input subelement list.
+	/// This function corresponds to case 8 in the list of behaviors above.
+	void add_ordered_subelement_set_as_pick_one_required(
+		XMLSchemaSimpleSubelementList const & subelements
+	);
+
+	CTGenSubelementBehavior subelement_behavior() const;
+
 	void write_complex_type_to_schema( XMLSchemaDefinition & xsd );
 
 private:
 
 	bool only_one_subelement_and_that_subelement_is_a_ct_group() const;
-	void prepare_subelement_group( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
+	bool only_one_subelement_and_that_subelement_is_a_ct_group( XMLSchemaSimpleSubelementList const & subelements ) const;
+	void prepare_subelement_repeatable( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
+	void prepare_subelement_choice_req( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
+	void prepare_subelement_choice_opt( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
 	void prepare_subelement_single_instance_required( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
 	void prepare_subelement_single_instance_optional( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
 	void prepare_subelement_single_instance_required_ordered( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
-
+	void prepare_sequence_of_subelement_sets( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type );
 	XMLSchemaParticleOP create_subelement( XMLSchemaSimpleSubelementList::ElementSummary const & summary, XMLSchemaDefinition & xsd );
 
 private:
 
-	enum { se_none, se_repeatable, se_single_req, se_single_opt, se_single_req_ordered } subelement_behavior_;
+	CTGenSubelementBehavior subelement_behavior_;
 	std::string element_name_;
 	DerivedNameFunction complex_type_naming_function_;
+
 	XMLSchemaSimpleSubelementList subelements_;
+	SubelementSets subelement_sets_;
+
 	AttributeList attributes_;
-	std::string group_name_;
-	int group_min_occurs_;
-	int group_max_occurs_;
+	int repeatable_min_occurs_;
+	int repeatable_max_occurs_;
 };
 
-XMLComplexTypeSchemaGeneratorImpl::XMLComplexTypeSchemaGeneratorImpl() :
+XMLSchemaComplexTypeGeneratorImpl::XMLSchemaComplexTypeGeneratorImpl() :
 	subelement_behavior_( se_none ),
-	group_min_occurs_( 0 ),
-	group_max_occurs_( xsminmax_unbounded )
+	repeatable_min_occurs_( 0 ),
+	repeatable_max_occurs_( xsminmax_unbounded )
 {}
 
-XMLComplexTypeSchemaGeneratorImpl::~XMLComplexTypeSchemaGeneratorImpl() {}
 
-void XMLComplexTypeSchemaGeneratorImpl::element_name( std::string const & element_name ) {
+XMLSchemaComplexTypeGeneratorImpl::~XMLSchemaComplexTypeGeneratorImpl() {}
+
+void XMLSchemaComplexTypeGeneratorImpl::element_name( std::string const & element_name ) {
 	element_name_ = element_name;
 }
 
-void XMLComplexTypeSchemaGeneratorImpl::complex_type_naming_func(
+void XMLSchemaComplexTypeGeneratorImpl::complex_type_naming_func(
 	DerivedNameFunction const & naming_function
 )
 {
 	complex_type_naming_function_ = naming_function;
 }
 
-void XMLComplexTypeSchemaGeneratorImpl::add_attribute( XMLSchemaAttribute const & attribute )
+void XMLSchemaComplexTypeGeneratorImpl::add_attribute( XMLSchemaAttribute const & attribute )
 {
 	attributes_.push_back( attribute );
 }
 
-void XMLComplexTypeSchemaGeneratorImpl::add_attributes( AttributeList const & attributes )
+void XMLSchemaComplexTypeGeneratorImpl::add_attributes( AttributeList const & attributes )
 {
 	for ( AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter ) {
 		attributes_.push_back( *iter );
@@ -778,22 +1030,38 @@ void XMLComplexTypeSchemaGeneratorImpl::add_attributes( AttributeList const & at
 }
 
 void
-XMLComplexTypeSchemaGeneratorImpl::set_subelements_repeatable(
+XMLSchemaComplexTypeGeneratorImpl::set_subelements_repeatable(
 	XMLSchemaSimpleSubelementList const & subelements,
-	NameFunction const & group_name_function,
 	int min_occurs,
 	int max_occurs
 )
 {
 	subelement_behavior_ = se_repeatable;
 	subelements_ = subelements;
-	group_name_ = group_name_function();
-	group_min_occurs_ = min_occurs;
-	group_max_occurs_ = max_occurs;
+	repeatable_min_occurs_ = min_occurs;
+	repeatable_max_occurs_ = max_occurs;
+	subelement_sets_.clear();
 }
 
 void
-XMLComplexTypeSchemaGeneratorImpl::set_subelements_single_appearance_required( XMLSchemaSimpleSubelementList const & subelements )
+XMLSchemaComplexTypeGeneratorImpl::set_subelements_pick_one_required( XMLSchemaSimpleSubelementList const & subelements )
+{
+	subelement_behavior_ = se_choice_req;
+	subelements_ = subelements;
+	subelement_sets_.clear();
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::set_subelements_pick_one_optional( XMLSchemaSimpleSubelementList const & subelements )
+{
+	subelement_behavior_ = se_choice_opt;
+	subelements_ = subelements;
+	subelement_sets_.clear();
+}
+
+
+void
+XMLSchemaComplexTypeGeneratorImpl::set_subelements_single_appearance_required( XMLSchemaSimpleSubelementList const & subelements )
 {
 	if ( subelements.element_list().size() > 1 ) {
 		ElementSummaries const & elements( subelements_.element_list() );
@@ -808,10 +1076,11 @@ XMLComplexTypeSchemaGeneratorImpl::set_subelements_single_appearance_required( X
 
 	subelement_behavior_ = se_single_req;
 	subelements_ = subelements;
+	subelement_sets_.clear();
 }
 
 void
-XMLComplexTypeSchemaGeneratorImpl::set_subelements_single_appearance_optional( XMLSchemaSimpleSubelementList const & subelements )
+XMLSchemaComplexTypeGeneratorImpl::set_subelements_single_appearance_optional( XMLSchemaSimpleSubelementList const & subelements )
 {
 	if ( subelements.element_list().size() > 1 ) {
 		ElementSummaries const & elements( subelements_.element_list() );
@@ -826,20 +1095,82 @@ XMLComplexTypeSchemaGeneratorImpl::set_subelements_single_appearance_optional( X
 
 	subelement_behavior_ = se_single_opt;
 	subelements_ = subelements;
+	subelement_sets_.clear();
 }
 
 void
-XMLComplexTypeSchemaGeneratorImpl::set_subelements_single_appearance_required_and_ordered(
+XMLSchemaComplexTypeGeneratorImpl::set_subelements_single_appearance_required_and_ordered(
 	XMLSchemaSimpleSubelementList const & subelements
 )
 {
 	subelement_behavior_ = se_single_req_ordered;
 	subelements_ = subelements;
+	subelement_sets_.clear();
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_repeatable(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	subelement_behavior_ = se_ordered_sets;
+	subelement_sets_.push_back( std::make_pair( subelements, ss_repeatable ));
 }
 
 
 void
-XMLComplexTypeSchemaGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefinition & xsd )
+XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_optional(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	subelement_behavior_ = se_ordered_sets;
+	if ( subelements.element_list().size() != 1 ) {
+		throw utility::excn::EXCN_Msg_Exception(
+			"When calling XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_optional, "
+			" the input subelement list should contain only a single subelement." );
+	}
+	subelement_sets_.push_back( std::make_pair( subelements, ss_optional ));
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_required(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	subelement_behavior_ = se_ordered_sets;
+	if ( subelements.element_list().size() != 1 ) {
+		throw utility::excn::EXCN_Msg_Exception(
+			"When calling XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_required, "
+			" the input subelement list should contain only a single subelement." );
+	}
+	subelement_sets_.push_back( std::make_pair( subelements, ss_required ));
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_pick_one_optional(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	subelement_behavior_ = se_ordered_sets;
+	subelement_sets_.push_back( std::make_pair( subelements, ss_pick_one_opt ));
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_pick_one_required(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	subelement_behavior_ = se_ordered_sets;
+	subelement_sets_.push_back( std::make_pair( subelements, ss_pick_one_req ));
+}
+
+CTGenSubelementBehavior XMLSchemaComplexTypeGeneratorImpl::subelement_behavior() const
+{
+	return subelement_behavior_;
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefinition & xsd )
 {
 	debug_assert( element_name_ != "" );
 	debug_assert( complex_type_naming_function_ );
@@ -851,7 +1182,13 @@ XMLComplexTypeSchemaGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefini
 	case se_none :
 		break;
 	case se_repeatable :
-		prepare_subelement_group( xsd, complex_type );
+		prepare_subelement_repeatable( xsd, complex_type );
+		break;
+	case se_choice_req :
+		prepare_subelement_choice_req( xsd, complex_type );
+		break;
+	case se_choice_opt :
+		prepare_subelement_choice_opt( xsd, complex_type );
 		break;
 	case se_single_req :
 		prepare_subelement_single_instance_required( xsd, complex_type );
@@ -862,6 +1199,9 @@ XMLComplexTypeSchemaGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefini
 	case se_single_req_ordered :
 		prepare_subelement_single_instance_required_ordered( xsd, complex_type );
 		break;
+	case se_ordered_sets :
+		prepare_sequence_of_subelement_sets( xsd, complex_type );
+		break;
 	}
 
 	complex_type.add_attributes( attributes_ );
@@ -869,9 +1209,17 @@ XMLComplexTypeSchemaGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefini
 }
 
 bool
-XMLComplexTypeSchemaGeneratorImpl::only_one_subelement_and_that_subelement_is_a_ct_group() const
+XMLSchemaComplexTypeGeneratorImpl::only_one_subelement_and_that_subelement_is_a_ct_group() const
 {
-	ElementSummaries const & elements( subelements_.element_list() );
+	return only_one_subelement_and_that_subelement_is_a_ct_group( subelements_ );
+}
+
+bool
+XMLSchemaComplexTypeGeneratorImpl::only_one_subelement_and_that_subelement_is_a_ct_group(
+	XMLSchemaSimpleSubelementList const & subelements
+) const
+{
+	ElementSummaries const & elements( subelements.element_list() );
 
 	bool one_subelement_that_is_ct_group = false;
 	if ( elements.size() == 1 ) {
@@ -883,44 +1231,80 @@ XMLComplexTypeSchemaGeneratorImpl::only_one_subelement_and_that_subelement_is_a_
 	return one_subelement_that_is_ct_group;
 }
 
-void XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_group( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type )
+void XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_repeatable( XMLSchemaDefinition & xsd, XMLSchemaComplexType & complex_type )
 {
 	ElementSummaries const & elements( subelements_.element_list() );
 
 	if ( only_one_subelement_and_that_subelement_is_a_ct_group() ) {
-		XMLSchemaModelGroupOP group( new XMLSchemaModelGroup( group_name_ ));
-		group->min_occurs( group_min_occurs_ ).max_occurs( xsminmax_unbounded );
+		XMLSchemaModelGroupOP group( new XMLSchemaModelGroup( elements.begin()->ct_name ));
+		group->min_occurs( repeatable_min_occurs_ ).max_occurs( repeatable_max_occurs_ );
 		complex_type.set_model_group( group );
 	} else {
-		// prepare the xs:group, creating complex types for each of the elements that it
-		// contains and adding an element to an xs:choice model group that will reside
-		// beneath the xs:group.
-		XMLSchemaModelGroupOP xs_group_type( new XMLSchemaModelGroup( xsmgt_group ) );
+
 		XMLSchemaModelGroupOP xs_choice_type( new XMLSchemaModelGroup( xsmgt_choice ) );
 
 		for ( ElementSummaries::const_iterator iter = elements.begin(); iter != elements.end(); ++iter ) {
 			if ( iter->min_or_max_occurs_set ) {
 				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + iter->element_name + " was initilized with "
-					"either min_occurs or max_occurs set, but then handed to the XMLComplexTypeSchemaGenerator through the "
+					"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 					"set_sublements_repeatable function, which will override the min/max occurence settings." );
 			}
 			XMLSchemaParticleOP elem = create_subelement( *iter, xsd );
 			xs_choice_type->append_particle( elem );
 		}
-		xs_group_type->append_particle( xs_choice_type ).group_name( group_name_ );
-		xsd.add_top_level_element( *xs_group_type );
-
-		// ok -- now initialize the group reference that will be the subelement
-		// of the xs:complexType
-		XMLSchemaModelGroupOP ct_subelement_group( new XMLSchemaModelGroup( xsmgt_group ) );
-		ct_subelement_group->group_name( group_name_ ).min_occurs( group_min_occurs_ ).max_occurs( xsminmax_unbounded );
+		xs_choice_type->min_occurs( repeatable_min_occurs_ ).max_occurs( repeatable_max_occurs_ );
 
 		// finalize the xs:complexType
-		complex_type.set_model_group( ct_subelement_group );
+		complex_type.set_model_group( xs_choice_type );
 	}
 }
 
-void XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_required(
+void
+XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_choice_req(
+	XMLSchemaDefinition & xsd,
+	XMLSchemaComplexType & complex_type
+)
+{
+	ElementSummaries const & elements( subelements_.element_list() );
+
+	XMLSchemaModelGroupOP model_group( new XMLSchemaModelGroup );
+	model_group->type( xsmgt_choice );
+	for ( ElementSummaries::const_iterator iter = elements.begin(); iter != elements.end(); ++iter ) {
+		if ( iter->min_or_max_occurs_set ) {
+			throw utility::excn::EXCN_Msg_Exception( "Subelement named " + iter->element_name + " was initilized with "
+				"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+				"set_sublements_pick_one function, which will override the min/max occurence settings." );
+		}
+		XMLSchemaParticleOP elem = create_subelement( *iter, xsd );
+		model_group->append_particle( elem );
+	}
+	complex_type.set_model_group( model_group );
+}
+
+void
+XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_choice_opt(
+	XMLSchemaDefinition & xsd,
+	XMLSchemaComplexType & complex_type
+)
+{
+	ElementSummaries const & elements( subelements_.element_list() );
+
+	XMLSchemaModelGroupOP model_group( new XMLSchemaModelGroup );
+	model_group->type( xsmgt_choice );
+	for ( ElementSummaries::const_iterator iter = elements.begin(); iter != elements.end(); ++iter ) {
+		if ( iter->min_or_max_occurs_set ) {
+			throw utility::excn::EXCN_Msg_Exception( "Subelement named " + iter->element_name + " was initilized with "
+				"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+				"set_sublements_pick_one_optional function, which will override the min/max occurence settings." );
+		}
+		XMLSchemaParticleOP elem = create_subelement( *iter, xsd );
+		model_group->append_particle( elem );
+	}
+	complex_type.set_model_group( model_group );
+}
+
+
+void XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_single_instance_required(
 	XMLSchemaDefinition & xsd,
 	XMLSchemaComplexType & complex_type
 )
@@ -942,7 +1326,7 @@ void XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_requi
 }
 
 
-void XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_optional(
+void XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_single_instance_optional(
 	XMLSchemaDefinition & xsd,
 	XMLSchemaComplexType & complex_type
 )
@@ -958,7 +1342,24 @@ void XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_optio
 
 	for ( ElementSummaries::const_iterator iter = elements.begin(); iter != elements.end(); ++iter ) {
 		XMLSchemaParticleOP elem = create_subelement( *iter, xsd );
-		elem->min_occurs( 0 ).max_occurs( 1 );
+		if ( iter->min_or_max_occurs_set ) {
+			// Error checking. You are allowed to specify a min_occurs of 1 to say that a particular element is required
+			// among a list of otherwise optional elements.
+			if ( iter->max_occurs != 1 && iter->max_occurs != xsminmax_unspecified ) {
+				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + iter->element_name + " was initilized with "
+					"max_occurs set to " + utility::to_string( iter->max_occurs )  + ", but then handed to the "
+					"XMLSchemaComplexTypeGenerator through the set_sublements_single_instance_optional function, "
+					"which only allows a max occurence setting of 1." );
+			}
+			if ( iter->min_occurs > 1 || iter->min_occurs == xsminmax_unbounded ) {
+				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + iter->element_name + " was initilized with "
+					"min_occurs set to " + utility::to_string( iter->max_occurs )  + ", but then handed to the "
+					"XMLSchemaComplexTypeGenerator through the set_sublements_single_instance_optional function, "
+					"which only allows at most a single occurrence." );
+			}
+		} else {
+			elem->min_occurs( 0 ).max_occurs( 1 );
+		}
 		model_group->append_particle( elem );
 	}
 	complex_type.set_model_group( model_group );
@@ -966,7 +1367,7 @@ void XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_optio
 
 
 void
-XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_required_ordered(
+XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_single_instance_required_ordered(
 	XMLSchemaDefinition & xsd,
 	XMLSchemaComplexType & complex_type
 )
@@ -981,7 +1382,143 @@ XMLComplexTypeSchemaGeneratorImpl::prepare_subelement_single_instance_required_o
 	complex_type.set_model_group( seq );
 }
 
-XMLSchemaParticleOP XMLComplexTypeSchemaGeneratorImpl::create_subelement(
+void
+XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
+	XMLSchemaDefinition & xsd,
+	XMLSchemaComplexType & complex_type
+)
+{
+	XMLSchemaModelGroupOP seq( new XMLSchemaModelGroup( xsmgt_sequence ));
+	std::set< std::string > all_element_names;
+	for ( SubelementSets::const_iterator iter = subelement_sets_.begin(); iter != subelement_sets_.end(); ++iter ) {
+		ElementSummaries const & elements( iter->first.element_list() );
+		switch ( iter->second ) {
+		case ss_repeatable :
+			if ( only_one_subelement_and_that_subelement_is_a_ct_group( iter->first ) ) {
+				XMLSchemaModelGroupOP group( new XMLSchemaModelGroup( elements.begin()->ct_name ));
+				group->min_occurs( 0 ).max_occurs( xsminmax_unbounded );
+				seq->append_particle( group );
+			} else {
+				XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
+				for ( ElementSummaries::const_iterator elem_iter = elements.begin(); elem_iter != elements.end(); ++elem_iter ) {
+					if ( elem_iter->min_or_max_occurs_set ) {
+						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem_iter->element_name + " was initilized with "
+							"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+							"add_ordered_sublement_set_as_repeatable function, which will override the min/max occurence settings." );
+					}
+					if ( all_element_names.count( elem_iter->element_name ) != 0 ) {
+						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem_iter->element_name + " appears more than"
+							" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
+							" was added through the add_ordered_sublement_set_as_repeatable function" );
+					}
+					if ( elem_iter->element_type != XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) all_element_names.insert( elem_iter->element_name );
+					XMLSchemaParticleOP elem = create_subelement( *elem_iter, xsd );
+					choice->append_particle( elem );
+				}
+				choice->min_occurs( 0 ).max_occurs( xsminmax_unbounded );
+				seq->append_particle( choice );
+			}
+			break;
+		case ss_optional :
+			{
+
+			assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_optional
+			XMLSchemaSimpleSubelementList::ElementSummary elem1 = *elements.begin();
+			if ( elem1.min_or_max_occurs_set ) {
+				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " was initilized with "
+					"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+					"add_ordered_sublement_set_as_optional function, which will override the min/max occurence settings." );
+			}
+			if ( all_element_names.count( elem1.element_name ) != 0 ) {
+				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " appears more than"
+					" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
+					" was added through the add_ordered_sublement_set_as_optional function" );
+			}
+			if ( elem1.element_type != XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) all_element_names.insert( elem1.element_name );
+			XMLSchemaParticleOP elem = create_subelement( elem1, xsd );
+			elem->min_occurs( 0 ).max_occurs( 1 );
+			seq->append_particle( elem );
+		}
+
+			break;
+		case ss_required :
+			{
+			assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_required
+			XMLSchemaSimpleSubelementList::ElementSummary elem1 = *elements.begin();
+			if ( elem1.min_or_max_occurs_set ) {
+				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " was initilized with "
+					"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+					"add_ordered_sublement_set_as_required function, which will override the min/max occurence settings." );
+			}
+			if ( all_element_names.count( elem1.element_name ) != 0 ) {
+				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " appears more than"
+					" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
+					" was added through the add_ordered_sublement_set_as_required function" );
+			}
+			if ( elem1.element_type != XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) all_element_names.insert( elem1.element_name );
+			XMLSchemaParticleOP elem = create_subelement( elem1, xsd );
+			elem->min_occurs( 1 ).max_occurs( 1 );
+			seq->append_particle( elem );
+		}
+			break;
+		case ss_pick_one_opt :
+			if ( only_one_subelement_and_that_subelement_is_a_ct_group( iter->first ) ) {
+				XMLSchemaModelGroupOP group( new XMLSchemaModelGroup( elements.begin()->ct_name ));
+				group->min_occurs( 0 ).max_occurs( 1 );
+				seq->append_particle( group );
+			} else {
+				XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
+				for ( ElementSummaries::const_iterator elem_iter = elements.begin(); elem_iter != elements.end(); ++elem_iter ) {
+					if ( elem_iter->min_or_max_occurs_set ) {
+						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem_iter->element_name + " was initilized with "
+							"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+							"add_ordered_sublement_set_as_pick_one_or_none function, which will override the min/max occurence settings." );
+					}
+					if ( all_element_names.count( elem_iter->element_name ) != 0 ) {
+						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem_iter->element_name + " appears more than"
+							" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
+							" was added through the add_ordered_sublement_set_as_pick_one_or_none function" );
+					}
+					if ( elem_iter->element_type != XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) all_element_names.insert( elem_iter->element_name );
+					XMLSchemaParticleOP elem = create_subelement( *elem_iter, xsd );
+					choice->append_particle( elem );
+				}
+				choice->min_occurs( 0 ).max_occurs( 1 );
+				seq->append_particle( choice );
+			}
+			break;
+		case ss_pick_one_req :
+			if ( only_one_subelement_and_that_subelement_is_a_ct_group( iter->first ) ) {
+				XMLSchemaModelGroupOP group( new XMLSchemaModelGroup( elements.begin()->ct_name ));
+				group->min_occurs( 1 ).max_occurs( 1 );
+				seq->append_particle( group );
+			} else {
+				XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
+				for ( ElementSummaries::const_iterator elem_iter = elements.begin(); elem_iter != elements.end(); ++elem_iter ) {
+					if ( elem_iter->min_or_max_occurs_set ) {
+						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem_iter->element_name + " was initilized with "
+							"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
+							"add_ordered_sublement_set_as_pick_one function, which will override the min/max occurence settings." );
+					}
+					if ( all_element_names.count( elem_iter->element_name ) != 0 ) {
+						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem_iter->element_name + " appears more than"
+							" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
+							" was added through the add_ordered_sublement_set_as_pick_one function" );
+					}
+					if ( elem_iter->element_type != XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) all_element_names.insert( elem_iter->element_name );
+					XMLSchemaParticleOP elem = create_subelement( *elem_iter, xsd );
+					choice->append_particle( elem );
+				}
+				choice->min_occurs( 1 ).max_occurs( 1 );
+				seq->append_particle( choice );
+			}
+			break;
+		}
+	}
+	complex_type.set_model_group( seq );
+}
+
+XMLSchemaParticleOP XMLSchemaComplexTypeGeneratorImpl::create_subelement(
 	XMLSchemaSimpleSubelementList::ElementSummary const & summary,
 	XMLSchemaDefinition & xsd
 )
@@ -993,7 +1530,7 @@ XMLSchemaParticleOP XMLComplexTypeSchemaGeneratorImpl::create_subelement(
 		if ( subelements_.simple_element_naming_func_has_been_set() ) {
 
 			// write the complex type to the schema
-			XMLComplexTypeSchemaGenerator ctgen;
+			XMLSchemaComplexTypeGenerator ctgen;
 			ctgen
 				.element_name( summary.element_name )
 				.complex_type_naming_func( subelements_.naming_func() )
@@ -1012,7 +1549,6 @@ XMLSchemaParticleOP XMLComplexTypeSchemaGeneratorImpl::create_subelement(
 		}
 		if ( summary.min_or_max_occurs_set ) {
 			if ( summary.min_occurs != xsminmax_unspecified ) { element->min_occurs( summary.min_occurs ); }
-			if ( summary.max_occurs != xsminmax_unspecified ) { element->max_occurs( summary.max_occurs ); }
 		}
 		return element;
 	}
@@ -1045,14 +1581,14 @@ XMLSchemaParticleOP XMLComplexTypeSchemaGeneratorImpl::create_subelement(
 	return XMLSchemaModelGroupOP(); // appease compiler
 }
 
-XMLComplexTypeSchemaGenerator::XMLComplexTypeSchemaGenerator() : pimpl_( new XMLComplexTypeSchemaGeneratorImpl ) {}
-XMLComplexTypeSchemaGenerator::~XMLComplexTypeSchemaGenerator() { delete pimpl_; }
-XMLComplexTypeSchemaGenerator::XMLComplexTypeSchemaGenerator( XMLComplexTypeSchemaGenerator const & src ) :
-	pimpl_( new XMLComplexTypeSchemaGeneratorImpl( *src.pimpl_ ))
+XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator() : pimpl_( new XMLSchemaComplexTypeGeneratorImpl ) {}
+XMLSchemaComplexTypeGenerator::~XMLSchemaComplexTypeGenerator() { delete pimpl_; }
+XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src ) :
+	pimpl_( new XMLSchemaComplexTypeGeneratorImpl( *src.pimpl_ ))
 {
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::operator= ( XMLComplexTypeSchemaGenerator const & rhs )
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::operator= ( XMLSchemaComplexTypeGenerator const & rhs )
 {
 	if ( this != & rhs ) {
 		*pimpl_ = *rhs.pimpl_;
@@ -1060,13 +1596,13 @@ XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::operator= ( XMLCo
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::element_name( std::string const & name )
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::element_name( std::string const & name )
 {
 	pimpl_->element_name( name );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::complex_type_naming_func(
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::complex_type_naming_func(
 	DerivedNameFunction const & naming_function
 )
 {
@@ -1074,39 +1610,53 @@ XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::complex_type_nami
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::add_attribute( XMLSchemaAttribute const & attribute )
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_attribute( XMLSchemaAttribute const & attribute )
 {
 	pimpl_->add_attribute( attribute );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::add_required_name_attribute() {
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_required_name_attribute() {
 	pimpl_->add_attribute( required_name_attribute() );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::add_optional_name_attribute() {
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_optional_name_attribute() {
 	pimpl_->add_attribute( optional_name_attribute() );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator & XMLComplexTypeSchemaGenerator::add_attributes( AttributeList const & attributes )
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_attributes( AttributeList const & attributes )
 {
 	pimpl_->add_attributes( attributes );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator &
-XMLComplexTypeSchemaGenerator::set_subelements_repeatable(
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::set_subelements_repeatable(
 	XMLSchemaSimpleSubelementList const & subelements,
-	NameFunction const & group_name_function,
 	int min_occurs,
 	int max_occurs
 )
 {
-	pimpl_->set_subelements_repeatable( subelements, group_name_function, min_occurs, max_occurs );
+	pimpl_->set_subelements_repeatable( subelements, min_occurs, max_occurs );
 	return *this;
 }
+
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::set_subelements_pick_one( XMLSchemaSimpleSubelementList const & subelements )
+{
+	pimpl_->set_subelements_pick_one_required( subelements );
+	return *this;
+}
+
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::set_subelements_pick_one_or_none( XMLSchemaSimpleSubelementList const & subelements )
+{
+	pimpl_->set_subelements_pick_one_optional( subelements );
+	return *this;
+}
+
 
 /// @details Why can you not have two or more "group" subelements that are required and whose order is unspecified?
 /// Because the folks writing the XML Schema specification decided it would be too difficult for parsers to
@@ -1137,22 +1687,22 @@ XMLComplexTypeSchemaGenerator::set_subelements_repeatable(
 /// The reason you can get away with having exactly one group subelement in a "single appearance required"
 /// call, is because instead of generating an <xs:all> block, the code instead generates an <xs:choice> block.
 /// Of course order does not matter when there is only a single subelement.
-XMLComplexTypeSchemaGenerator &
-XMLComplexTypeSchemaGenerator::set_subelements_single_appearance_required( XMLSchemaSimpleSubelementList const & subelements )
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::set_subelements_single_appearance_required( XMLSchemaSimpleSubelementList const & subelements )
 {
 	pimpl_->set_subelements_single_appearance_required( subelements );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator &
-XMLComplexTypeSchemaGenerator::set_subelements_single_appearance_optional( XMLSchemaSimpleSubelementList const & subelements )
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::set_subelements_single_appearance_optional( XMLSchemaSimpleSubelementList const & subelements )
 {
 	pimpl_->set_subelements_single_appearance_optional( subelements );
 	return *this;
 }
 
-XMLComplexTypeSchemaGenerator &
-XMLComplexTypeSchemaGenerator::set_subelements_single_appearance_required_and_ordered(
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::set_subelements_single_appearance_required_and_ordered(
 	XMLSchemaSimpleSubelementList const & subelements
 )
 {
@@ -1161,45 +1711,66 @@ XMLComplexTypeSchemaGenerator::set_subelements_single_appearance_required_and_or
 }
 
 
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_ordered_subelement_set_as_repeatable(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	pimpl_->add_ordered_subelement_set_as_repeatable( subelements );
+	return *this;
+}
+
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_ordered_subelement_set_as_optional(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	pimpl_->add_ordered_subelement_set_as_optional( subelements );
+	return *this;
+}
+
+
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_ordered_subelement_set_as_required(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	pimpl_->add_ordered_subelement_set_as_required( subelements );
+	return *this;
+}
+
+
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_ordered_subelement_set_as_pick_one_or_none(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	pimpl_->add_ordered_subelement_set_as_pick_one_optional( subelements );
+	return *this;
+}
+
+
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_ordered_subelement_set_as_pick_one(
+	XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	pimpl_->add_ordered_subelement_set_as_pick_one_required( subelements );
+	return *this;
+}
+
+
 void
-XMLComplexTypeSchemaGenerator::write_complex_type_to_schema( XMLSchemaDefinition & xsd )
+XMLSchemaComplexTypeGenerator::write_complex_type_to_schema( XMLSchemaDefinition & xsd )
 {
 	pimpl_->write_complex_type_to_schema( xsd );
 }
 
-void
-activate_common_simple_type(
-	XMLSchemaDefinition & xsd,
-	std::string const & desired_type
-) {
-	if ( desired_type == "int_cslist" ) {
-		// std::ostringstream oss;
-		// oss << "<xs:simpleType name=\"int_cslist\">\n";
-		// oss << " <xs:restriction base=\"xs:string\">\n";
-		// oss << "  <xs:pattern values=\"[0-9]+(,[0-9]+)*\"/>\n";
-		// oss << " </xs:restriction>\n";
-		// oss << "</xs:simpleType>\n";
-		XMLSchemaRestriction int_cslist;
-		int_cslist.name( "int_cslist" );
-		int_cslist.base_type( xs_string );
-		int_cslist.add_restriction( xsr_pattern, "[0-9]+(,[0-9]+)*" );
-
-		xsd.add_top_level_element( int_cslist );
-	} else if ( desired_type == "non_negative_integer" ) {
-		XMLSchemaRestriction nonneg_int;
-		nonneg_int.name( "non_negative_integer" );
-		nonneg_int.base_type( xs_integer );
-		nonneg_int.add_restriction( xsr_minInclusive, "0" );
-		xsd.add_top_level_element( nonneg_int );
-	} else if ( desired_type == "zero_or_one" ) {
-		XMLSchemaRestriction zero_or_one;
-		zero_or_one.name( "zero_or_one" );
-		zero_or_one.base_type( xs_integer );
-		zero_or_one.add_restriction( xsr_minInclusive, "0" );
-		zero_or_one.add_restriction( xsr_maxInclusive, "1" );
-		xsd.add_top_level_element( zero_or_one );
-	}
+CTGenSubelementBehavior XMLSchemaComplexTypeGenerator::subelement_behavior() const
+{
+	return pimpl_->subelement_behavior();
 }
+
 
 XMLSchemaRestriction
 integer_range_restriction( std::string const & name, int lower, int upper )

@@ -338,18 +338,15 @@ RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 void RestrictToInterfaceVectorOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "chain1_num", xsct_int_cslist )
+		+ XMLSchemaAttribute( "chain2_num", xsct_int_cslist )
+		+ XMLSchemaAttribute( "jump",       xsct_int_cslist )
 
-	activate_common_simple_type( xsd, "int_cslist" );
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "chain1_num", "int_cslist" ) );
-	attributes.push_back( XMLSchemaAttribute( "chain2_num", "int_cslist" ) );
-	attributes.push_back( XMLSchemaAttribute( "jump", "int_cslist" ) );
-
-	attributes.push_back( XMLSchemaAttribute( "CB_dist_cutoff", xs_decimal, "10.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "nearby_atom_cutoff", xs_decimal, "5.5" ) );
-	attributes.push_back( XMLSchemaAttribute( "vector_angle_cutoff", xs_decimal, "75.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "vector_dist_cutoff", xs_decimal, "9.0" ) );
+		+ XMLSchemaAttribute::attribute_w_default(  "CB_dist_cutoff", xs_decimal, "10.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "nearby_atom_cutoff", xs_decimal, "5.5" )
+		+ XMLSchemaAttribute::attribute_w_default(  "vector_angle_cutoff", xs_decimal, "75.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "vector_dist_cutoff", xs_decimal, "9.0" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

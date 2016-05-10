@@ -63,9 +63,10 @@ void SetIGTypeOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "lin_mem_ig", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "lazy_ig", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "double_lazy_ig", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "lin_mem_ig", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "lazy_ig", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "double_lazy_ig", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

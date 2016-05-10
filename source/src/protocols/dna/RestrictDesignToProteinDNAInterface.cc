@@ -175,12 +175,13 @@ void RestrictDesignToProteinDNAInterface::provide_xml_schema( utility::tag::XMLS
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "dna_defs", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "base_only", xs_boolean ) );
-	attributes.push_back( XMLSchemaAttribute( "z_cutoff", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "close_threshold", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "contact_threshold", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "forget_chains_and_interface", xs_boolean ) );
+	attributes
+		+ XMLSchemaAttribute( "dna_defs", xs_string )
+		+ XMLSchemaAttribute( "base_only", xs_boolean )
+		+ XMLSchemaAttribute( "z_cutoff", xs_decimal )
+		+ XMLSchemaAttribute( "close_threshold", xs_decimal )
+		+ XMLSchemaAttribute( "contact_threshold", xs_decimal )
+		+ XMLSchemaAttribute( "forget_chains_and_interface", xs_boolean );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

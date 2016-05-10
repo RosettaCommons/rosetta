@@ -236,16 +236,15 @@ void SelectByDeltaScoreOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 {
 	AttributeList attributes;
 
-	// APL Actually -- parse_score_function needs a sister function that returns the attributes it reads.
-	// TO DO!
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "score_fxn", xs_string ) );
+	rosetta_scripts::attributes_for_parse_score_function( attributes );
 
-	attributes.push_back( XMLSchemaAttribute( "score_type", xs_string, "total_score" ) );
-	attributes.push_back( XMLSchemaAttribute( "threshold", xs_decimal, "100" ) );
-	attributes.push_back( XMLSchemaAttribute( "lower", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "individual_hbonds", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "reference_name", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "reference_pdb", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "score_type", xs_string, "total_score" )
+		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xs_decimal, "100" )
+		+ XMLSchemaAttribute::attribute_w_default(  "lower", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "individual_hbonds", xs_boolean, "false" )
+		+ XMLSchemaAttribute( "reference_name", xs_string )
+		+ XMLSchemaAttribute( "reference_pdb", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

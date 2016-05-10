@@ -276,12 +276,13 @@ void
 InterGroupInterfaceByVectorSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "cb_dist_cut",      xs_decimal, "11.0" ));
-	attributes.push_back( XMLSchemaAttribute( "nearby_atom_cut",  xs_decimal, "5.5"  ));
-	attributes.push_back( XMLSchemaAttribute( "vector_angle_cut", xs_decimal, "75.0" ));
-	attributes.push_back( XMLSchemaAttribute( "vector_dist_cut",  xs_decimal, "9.0"  ));
-	attributes.push_back( XMLSchemaAttribute( "grp1_selector",    xs_string  ));
-	attributes.push_back( XMLSchemaAttribute( "grp2_selector",    xs_string  ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default( "cb_dist_cut",      xs_decimal, "11.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "nearby_atom_cut",  xs_decimal, "5.5"  )
+		+ XMLSchemaAttribute::attribute_w_default( "vector_angle_cut", xs_decimal, "75.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "vector_dist_cut",  xs_decimal, "9.0"  )
+		+ XMLSchemaAttribute( "grp1_selector",    xs_string  )
+		+ XMLSchemaAttribute( "grp2_selector",    xs_string  );
 	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), 0, 2, attributes );
 }
 

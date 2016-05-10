@@ -120,10 +120,8 @@ std::string ResidueIndexSelector::class_name() {
 void
 ResidueIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
-	activate_common_simple_type( xsd, "int_cslist" );
-
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", "int_cslist" ));
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist ));
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

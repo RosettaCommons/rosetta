@@ -213,37 +213,35 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 std::string RestrictToAlignedSegmentsOperation::keyname() { return "RestrictToAlignedSegments"; }
 
 std::string rtas_subelement_ct_naming_function( std::string const & name ) { return "rtas_subelement_" + name + "Type"; }
-std::string rtas_subelement_group() { return "rtas_group"; }
 
 void RestrictToAlignedSegmentsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	XMLSchemaSimpleSubelementList subelements;
-	AttributeList seg_attributes;
-	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "name", xs_string ) );
-	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "source_pdb", xs_string ) );
-	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "start_res", xs_string ) );
-	seg_attributes.push_back( XMLSchemaAttribute::required_attribute( "stop_res", xs_string ) );
+	AttributeList aligned_seg_attributes;
+	aligned_seg_attributes
+		+ required_name_attribute()
+		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "start_res", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "stop_res", xs_string );
 	subelements
 		.complex_type_naming_func( & rtas_subelement_ct_naming_function )
-		.add_simple_subelement( "AlignedSegment", seg_attributes );
+		.add_simple_subelement( "AlignedSegment", aligned_seg_attributes );
 
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
+	attributes
+		+ optional_name_attribute()
+		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "start_res", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "stop_res", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_shell", xs_decimal, "6.0" );
 
-	attributes.push_back( optional_name_attribute() );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "source_pdb", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "start_res", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "stop_res", xs_string ) );
-
-	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_shell", xs_decimal, "6.0" ) );
-
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( keyname() )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.add_attributes( attributes )
-		.set_subelements_repeatable( subelements, & rtas_subelement_group )
+		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );
 
 }

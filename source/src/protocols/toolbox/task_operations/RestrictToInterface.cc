@@ -283,10 +283,9 @@ void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "jump", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "distance", xs_decimal, "8" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "distance", xs_decimal, "8" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

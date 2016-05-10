@@ -191,7 +191,7 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	ResLvlTaskOperationFactory::get_instance()->define_res_lvl_task_op_xml_schema( xsd );
 
 	using namespace utility::tag;
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	XMLSchemaSimpleSubelementList subelements;
 	// the ResidueSelector subelement is not required; it can be provided by name through the datamap; thus
 	// the min_occurs for this subelement is set to 0

@@ -7,25 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/PoseOutputter.fwd.hh
-/// @brief  Declaration of the %PoseOutputter class
+/// @file   protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh
+/// @brief  Forward declaration of the %PoseInputterCreator class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_PoseOutputter_FWD_HH
-#define INCLUDED_protocols_jd3_PoseOutputter_FWD_HH
+
+#ifndef INCLUDED_protocols_jd3_pose_inputters_PoseInputterCreator_FWD_HH
+#define INCLUDED_protocols_jd3_pose_inputters_PoseInputterCreator_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
+// C++ headers
+#include <string>
+
 namespace protocols {
 namespace jd3 {
+namespace pose_inputters {
 
-class PoseOutputter;
+class PoseInputterCreator;
 
-typedef utility::pointer::shared_ptr< PoseOutputter > PoseOutputterOP;
-typedef utility::pointer::shared_ptr< PoseOutputter const > PoseOutputterCOP;
+typedef utility::pointer::shared_ptr< PoseInputterCreator > PoseInputterCreatorOP;
+typedef utility::pointer::shared_ptr< PoseInputterCreator const > PoseInputterCreatorCOP;
 
+} // namespace pose_inputters
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_PoseOutputter_FWD_HH
+#endif //INCLUDED_protocols_jd3_pose_inputters_PoseInputter_HH

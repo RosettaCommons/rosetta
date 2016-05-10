@@ -295,9 +295,10 @@ void DsspDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 	// attributes for the subelements -- all the subelements have the same attributes
 	AttributeList dsspdo_subtag_attributes;
-	dsspdo_subtag_attributes.push_back( XMLSchemaAttribute( "aa", xs_string ) );
-	dsspdo_subtag_attributes.push_back( XMLSchemaAttribute( "append", xs_string ) );
-	dsspdo_subtag_attributes.push_back( XMLSchemaAttribute( "exclude", xs_string ) );
+	dsspdo_subtag_attributes
+		+ XMLSchemaAttribute( "aa", xs_string )
+		+ XMLSchemaAttribute( "append", xs_string )
+		+ XMLSchemaAttribute( "exclude", xs_string );
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.complex_type_naming_func( & dsspdo_subelement_ct_name );
@@ -311,15 +312,16 @@ void DsspDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	subelements.add_simple_subelement( "all",          dsspdo_subtag_attributes );
 
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "name", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute( "name", xs_string )
+		+ XMLSchemaAttribute( "blueprint", xs_string );
 
-	XMLComplexTypeSchemaGenerator complex_type_generator;
+	XMLSchemaComplexTypeGenerator complex_type_generator;
 	complex_type_generator
 		.element_name( keyname() )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.add_attributes( attributes )
-		.set_subelements_repeatable( subelements, & dsspdo_group_name )
+		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );
 }
 

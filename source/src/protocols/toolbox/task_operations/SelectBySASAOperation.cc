@@ -283,19 +283,18 @@ void SelectBySASAOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "int_cslist" );
-
-	attributes.push_back( XMLSchemaAttribute( "mode", xs_string, "sc" ) );
-	attributes.push_back( XMLSchemaAttribute( "state", xs_string, "monomer" ) );
-	attributes.push_back( XMLSchemaAttribute( "probe_radius", xs_decimal, "2.2" ) );
-	attributes.push_back( XMLSchemaAttribute( "core_asa", xs_decimal, "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "surface_asa", xs_decimal, "30" ) );
-	attributes.push_back( XMLSchemaAttribute( "jumps", "int_cslist", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "sym_dof_names", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "core", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "boundary", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "surface", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "mode", xs_string, "sc" )
+		+ XMLSchemaAttribute::attribute_w_default(  "state", xs_string, "monomer" )
+		+ XMLSchemaAttribute::attribute_w_default(  "probe_radius", xs_decimal, "2.2" )
+		+ XMLSchemaAttribute::attribute_w_default(  "core_asa", xs_decimal, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "surface_asa", xs_decimal, "30" )
+		+ XMLSchemaAttribute::attribute_w_default(  "jumps", xsct_int_cslist, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "" )
+		+ XMLSchemaAttribute::attribute_w_default(  "core", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "boundary", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "surface", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

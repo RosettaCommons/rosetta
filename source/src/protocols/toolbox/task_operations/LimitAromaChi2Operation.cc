@@ -171,9 +171,10 @@ void LimitAromaChi2Operation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "chi2max", xs_decimal, "110.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "chi2min", xs_decimal, "70.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "include_trp", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "chi2max", xs_decimal, "110.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "chi2min", xs_decimal, "70.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "include_trp", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

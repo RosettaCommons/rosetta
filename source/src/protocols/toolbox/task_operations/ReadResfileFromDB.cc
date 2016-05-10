@@ -195,9 +195,10 @@ void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "database_table", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "table", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "resource_description", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute( "database_table", xs_string )
+		+ XMLSchemaAttribute( "table", xs_string )
+		+ XMLSchemaAttribute( "resource_description", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

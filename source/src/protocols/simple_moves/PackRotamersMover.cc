@@ -17,6 +17,7 @@
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/moves/util.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -28,18 +29,20 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <basic/options/option.hh>
-#include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/options/OptionCollection.hh>
 #include <utility/tag/Tag.hh>
-
-// option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+// basic headers
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+
 
 
 namespace protocols {
@@ -79,21 +82,39 @@ PackRotamersMover::PackRotamersMover() :
 	protocols::moves::Mover("PackRotamersMover"),
 	scorefxn_(/* 0 */),
 	task_(/* 0 */),
-	nloop_( option[ OptionKeys::packing::ndruns ].value() ),
+	nloop_( 1 ), // temporary -- overwritten by the value on the command line
 	task_factory_(/* 0 */),
 	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
 	ig_(/* 0 */)
-{}
+{
+	initialize_from_options( basic::options::option );
+}
+
+PackRotamersMover::PackRotamersMover(
+	utility::options::OptionCollection const & options
+) :
+	protocols::moves::Mover("PackRotamersMover"),
+	scorefxn_(/* 0 */),
+	task_(/* 0 */),
+	nloop_( 1 ), // temporary -- overwritten by the value on the command line
+	task_factory_(/* 0 */),
+	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	ig_(/* 0 */)
+{
+	initialize_from_options( options );
+}
 
 PackRotamersMover::PackRotamersMover( std::string const & type_name ) :
 	protocols::moves::Mover( type_name ),
 	scorefxn_(/* 0 */),
 	task_(/* 0 */),
-	nloop_( option[ OptionKeys::packing::ndruns ].value() ),
+	nloop_( 1 ), // temporary -- overwritten by the value on the command line
 	task_factory_(/* 0 */),
 	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
 	ig_(/* 0 */)
-{}
+{
+	initialize_from_options( basic::options::option );
+}
 
 // constructors with arguments
 PackRotamersMover::PackRotamersMover(
@@ -328,6 +349,28 @@ PackerTaskCOP PackRotamersMover::task() const { return task_; }
 TaskFactoryCOP PackRotamersMover::task_factory() const { return task_factory_; }
 rotamer_set::RotamerSetsCOP PackRotamersMover::rotamer_sets() const { return rotamer_sets_; }
 interaction_graph::AnnealableGraphBaseCOP PackRotamersMover::ig() const { return ig_; }
+
+void PackRotamersMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+
+	attributes + XMLSchemaAttribute::attribute_w_default(  "nloop", xsct_non_negative_integer, "1" );
+	rosetta_scripts::attributes_for_parse_score_function( attributes );
+	rosetta_scripts::attributes_for_parse_task_operations( attributes );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.element_name( PackRotamersMoverCreator::mover_name() )
+		.add_attributes( attributes )
+		.write_complex_type_to_schema( xsd );
+}
+
+void
+PackRotamersMover::initialize_from_options( utility::options::OptionCollection const & options )
+{
+	nloop( options[ basic::options::OptionKeys::packing::ndruns ] );
+}
 
 std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover)
 {

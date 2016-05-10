@@ -7,19 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/PoseOutputter.cc
-/// @brief  Definition of the %PoseOutputter class's methods
+/// @file   protocols/jd3/pose_outputters/PoseOutputterFactory.fwd.hh
+/// @brief  PoseOutputterFactory class that holds the list of classes able to create Poses from inputs
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-//unit headers
-#include <protocols/jd3/PoseOutputter.hh>
+#ifndef INCLUDED_protocols_jd3_pose_outputters_PoseOutputterFactory_FWD_HH
+#define INCLUDED_protocols_jd3_pose_outputters_PoseOutputterFactory_FWD_HH
 
 namespace protocols {
 namespace jd3 {
+namespace pose_outputters {
 
-PoseOutputter::PoseOutputter() {}
-PoseOutputter::~PoseOutputter() {}
+class PoseOutputterFactory;
 
-
+} // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputterFactory_FWD_HH

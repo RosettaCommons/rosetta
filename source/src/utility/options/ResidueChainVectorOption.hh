@@ -84,8 +84,12 @@ public: // Creation
 	{}
 
 
-public: // Properties
+public: // copying
 
+	virtual
+	void copy_from( Option const & other );
+
+public: // Properties
 
 	/// @brief Is a string readable as this option's value type?
 	inline

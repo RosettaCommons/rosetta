@@ -100,7 +100,7 @@ Ramachandran::Ramachandran() :
 	use_rama_power_(false),
 	rama_power_(1.0)
 {
-	if( basic::options::option[ basic::options::OptionKeys::score::rama_power ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::rama_power ].user() ) {
 		set_use_rama_power(true);
 		set_rama_power( basic::options::option[ basic::options::OptionKeys::score::rama_power ]() );
 	}

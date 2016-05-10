@@ -24,18 +24,20 @@
 #include <core/types.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
-//#ifdef __clang__
-//#endif
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+
+// Utility headers
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {
@@ -60,10 +62,13 @@ public:
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 
 public:
-	/// @brief default constructor
+	/// @brief default constructor; reads the nloop_ value from the global options system.
 	PackRotamersMover();
 
-	/// @brief constructor with typename
+	/// @brief constructor that reads from the (possibly local) options collection object
+	PackRotamersMover( utility::options::OptionCollection const & options );
+
+	/// @brief constructor with typename; reads the nloop_ value from the global options system.
 	PackRotamersMover( std::string const & );
 
 	/// @brief Constructs a PackRotamersMover with PackerTask  <task>
@@ -196,6 +201,8 @@ public:
 	RotamerSetsCOP rotamer_sets() const;
 	AnnealableGraphBaseCOP ig() const;
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 protected:
 	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 	virtual void setup( Pose & pose );
@@ -206,6 +213,9 @@ protected:
 		utility::vector0< int > rot_to_pack = utility::vector0< int >()
 	) const;
 	virtual void note_packertask_settings( Pose const & );
+
+private:
+	void initialize_from_options( utility::options::OptionCollection const & options );
 
 private:
 	// pointers to data that are passed in

@@ -39,6 +39,8 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/keys/VariantKey.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -141,10 +143,8 @@ std::string RestrictResidueToRepacking::keyname() { return "RestrictResidueToRep
 
 void RestrictResidueToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
-
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "resnum", "non_negative_integer", "0" ));
+	attributes + XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "0" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -244,13 +244,11 @@ RestrictAbsentCanonicalAAS::parse_tag( TagCOP tag , DataMap & )
 std::string RestrictAbsentCanonicalAAS::keyname() { return "RestrictAbsentCanonicalAAS"; }
 
 void RestrictAbsentCanonicalAAS::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
-
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "resnum", "non_negative_integer", "0" ));
-	attributes.push_back( XMLSchemaAttribute( "keep_aas", utility::tag::xs_string ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute( "keep_aas", utility::tag::xs_string );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
-
 }
 
 TaskOperationOP RestrictAbsentCanonicalAASCreator::create_task_operation() const
@@ -367,13 +365,11 @@ void DisallowIfNonnative::parse_tag( TagCOP tag , DataMap & )
 std::string DisallowIfNonnative::keyname() { return "DisallowIfNonnative"; }
 
 void DisallowIfNonnative::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
-
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "resnum", "non_negative_integer", "0" ));
-	attributes.push_back( XMLSchemaAttribute( "disallow_aas", utility::tag::xs_string ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute( "disallow_aas", xs_string );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
-
 }
 
 TaskOperationOP DisallowIfNonnativeCreator::create_task_operation() const
@@ -447,11 +443,10 @@ RotamerExplosion::sample_level( ExtraRotSample const s )
 std::string RotamerExplosion::keyname() { return "RotamerExplosionCreator"; }
 
 void RotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
-
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnum", "non_negative_integer" ));
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "chi",    "non_negative_integer" ));
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "resnum", xsct_non_negative_integer )
+		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_non_negative_integer );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 
 }
@@ -511,7 +506,79 @@ void InitializeFromCommandlineCreator::provide_xml_schema( utility::tag::XMLSche
 	InitializeFromCommandline::provide_xml_schema( xsd );
 }
 
-/// BEGIN InitializeFromCommandline
+/// BEGIN InitializeFromOptionCollection
+
+InitializeFromOptionCollection::InitializeFromOptionCollection()
+{}
+
+InitializeFromOptionCollection::InitializeFromOptionCollection( utility::options::OptionCollectionCOP options )
+{
+	options_ = options;
+}
+
+InitializeFromOptionCollection::InitializeFromOptionCollection(
+	InitializeFromOptionCollection const & src
+) :
+	options_( src.options_ )
+{}
+
+InitializeFromOptionCollection::~InitializeFromOptionCollection() {}
+
+TaskOperationOP InitializeFromOptionCollection::clone() const
+{
+	return TaskOperationOP( new InitializeFromOptionCollection( *this ) );
+}
+
+void
+InitializeFromOptionCollection::apply( pose::Pose const &, PackerTask & task ) const
+{
+	runtime_assert( options_ );
+	task.initialize_from_options( *options_ );
+}
+
+void
+InitializeFromOptionCollection::parse_tag( TagCOP tag, DataMap & datamap )
+{
+	runtime_assert( datamap.has( "options"));
+	std::string which_options = tag->getOption< std::string >( "option_collection", "job_options" );
+	if ( ! datamap.has( "options", which_options ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Failed to find options named \"" + which_options + "\" in the InitializeFromOptionCollection task operation" );
+	}
+	options_ = datamap.get_ptr< utility::options::OptionCollection const >( "options", which_options );
+}
+
+void
+InitializeFromOptionCollection::options( utility::options::OptionCollectionCOP options )
+{
+	options_ = options;
+}
+
+
+std::string InitializeFromOptionCollection::keyname() { return "InitializeFromOptionCollection"; }
+
+void InitializeFromOptionCollection::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes + XMLSchemaAttribute::attribute_w_default(  "option_collection", xs_string, "job_options" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP InitializeFromOptionCollectionCreator::create_task_operation() const
+{
+	return TaskOperationOP( new InitializeFromOptionCollection );
+}
+
+std::string InitializeFromOptionCollectionCreator::keyname() const {
+	return InitializeFromOptionCollection::keyname();
+}
+
+void InitializeFromOptionCollectionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InitializeFromOptionCollection::provide_xml_schema( xsd );
+}
+
+/// BEGIN InitializeExtraRotsFromCommandline
 
 InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
 
@@ -754,30 +821,29 @@ AttributeList
 rotamer_sampling_data_xml_schema_attributes( XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	utility::tag::activate_common_simple_type( xsd, "zero_or_one" );
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
 	define_extra_rotamers_sampling_level_restriction( xsd );
 
 	AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex3", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex4", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro_exposed", "zero_or_one", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro_exposed", "zero_or_one", "0" ));
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex3", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex4", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed", xsct_rosetta_bool, "0" )
 
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex3_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex4_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex1aro_exposed_sample_level", "exchi_sample_level", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "ex2aro_exposed_sample_level", "exchi_sample_level", "0" ));
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex3_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex4_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed_sample_level", "exchi_sample_level", "0" )
 
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "extrachi_cutoff", "non_negative_integer", utility::to_string( EXTRACHI_CUTOFF_LIMIT )));
+		+ XMLSchemaAttribute::attribute_w_default(  "extrachi_cutoff", xsct_non_negative_integer, utility::to_string( EXTRACHI_CUTOFF_LIMIT ));
 
 	return attributes;
 }
@@ -818,6 +884,20 @@ ReadResfile::ReadResfile() :
 	residue_selector_()
 {
 	cache_resfile();
+}
+
+ReadResfile::ReadResfile( utility::options::OptionCollection const & options ) :
+	parent(),
+	resfile_filename_(""),
+	file_was_read_(false),
+	resfile_cache_(""),
+	residue_selector_()
+{
+	if ( options[ basic::options::OptionKeys::packing::resfile ].user() ) {
+		filename( options[ basic::options::OptionKeys::packing::resfile ]()[1] );
+	} else {
+		cache_resfile();
+	}
 }
 
 ReadResfile::ReadResfile( std::string const & filename ) :
@@ -956,14 +1036,20 @@ std::string ReadResfile::keyname() { return "ReadResfile"; }
 utility::tag::AttributeList
 ReadResfile::xml_schema_attributes() {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "filename", "xs:string" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "selector", "xs:string" ));
+	attributes
+		+ utility::tag::XMLSchemaAttribute( "filename", "xs:string" )
+		+ utility::tag::XMLSchemaAttribute( "selector", "xs:string" );
 	return attributes;
 }
 
 void ReadResfile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes = xml_schema_attributes();
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+void ReadResfile::list_options_read( utility::options::OptionKeyList & options )
+{
+	options + basic::options::OptionKeys::packing::resfile;
 }
 
 TaskOperationOP ReadResfileCreator::create_task_operation() const
@@ -1086,7 +1172,7 @@ std::string ReadResfileAndObeyLengthEvents::keyname() { return "ReadResfileAndOb
 
 void ReadResfileAndObeyLengthEvents::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes = parent::xml_schema_attributes();
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "default_commands_for_inserts", "xs:boolean", "1" ));
+	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "default_commands_for_inserts", "xs:boolean", "1" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -1474,7 +1560,7 @@ std::string PreventRepacking::keyname() { return "PreventRepacking"; }
 
 void PreventRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "resnum", "xs:string", "0" ));
+	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "resnum", "xs:string", "0" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -1615,15 +1701,15 @@ std::string ExtraRotamers::keyname() { return "ExtraRotamers"; }
 
 void ExtraRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	define_extra_rotamers_sampling_level_restriction( xsd );
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
 
 	XMLSchemaRestriction one_to_four = utility::tag::integer_range_restriction( "one_to_four", 1, 4 );
 	xsd.add_top_level_element( one_to_four );
 
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "resid", "non_negative_integer", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "chi", "one_to_four" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "level", "exchi_sample_level", "0" ));
+	attributes
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "resid", xsct_non_negative_integer, "0" )
+		+ utility::tag::XMLSchemaAttribute::required_attribute( "chi", "one_to_four" )
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "level", "exchi_sample_level", "0" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -1690,12 +1776,12 @@ void ExtraChiCutoff::parse_tag( TagCOP tag , DataMap & )
 
 std::string ExtraChiCutoff::keyname() { return "ExtraChiCutoff"; }
 
-void ExtraChiCutoff::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
-
+void ExtraChiCutoff::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "resid", "non_negative_integer", "0" ));
-	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "extrachi_cutoff", "non_negative_integer" ));
+	attributes
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "resid", xsct_non_negative_integer, "0" )
+		+ utility::tag::XMLSchemaAttribute::required_attribute( "extrachi_cutoff", xsct_non_negative_integer );
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 

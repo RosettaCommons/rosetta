@@ -155,6 +155,18 @@ protected: // Assignment
 		return *this;
 	}
 
+public: // copying
+
+	/// @brief Copy operation
+	virtual
+	void copy_from( Option const & other ) {
+		debug_assert( (dynamic_cast< ScalarOption_T_< K, T > const * > ( &other )) );
+
+		ScalarOption_T_< K, T > const & scalar_opt_other =
+			static_cast< ScalarOption_T_< K, T > const & > ( other );
+
+		*this = scalar_opt_other; // rely on assignment operator
+	}
 
 public: // Conversion
 
@@ -340,7 +352,6 @@ public: // Methods
 		}
 		return *this;
 	}
-
 
 	/// @brief Value assignment
 	inline
@@ -798,6 +809,17 @@ public: // Properties
 		}
 	}
 
+	inline
+	std::string
+	raw_default_string() const
+	{
+		if ( default_state_ == DEFAULT ) {
+			return value_string_of( default_value_ );
+		} else { // Default inactive
+			return std::string();
+		}
+	}
+
 
 	/// @brief Value string representation
 	inline
@@ -811,6 +833,12 @@ public: // Properties
 		}
 	}
 
+	inline
+	std::string
+	raw_value_string() const
+	{
+		return value_string();
+	}
 
 	/// @brief =Value string representation
 	inline

@@ -115,6 +115,13 @@ public: // Methods
 	ScalarOption &
 	cl_value( std::string const & value_str ) = 0;
 
+	/// @brief Value assignemt from a command line string but without
+	/// a ScalarOption & return type.
+	virtual
+	void
+	set_cl_value( std::string const & value_str ) {
+		cl_value( value_str );
+	}
 
 }; // ScalarOption
 

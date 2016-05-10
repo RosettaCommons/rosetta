@@ -69,6 +69,10 @@ public:
 	/// @brief read access to the inner-job
 	InnerLarvalJobCOP inner_job() const;
 
+	/// @brief write access to the inner-job; this should be reserved for the JobQueen only
+	/// as she edits the inner job during its construction
+	InnerLarvalJobOP nonconst_inner_job() const;
+
 	/// @brief The input tag (a short string, generally), is used to specify the input structure,
 	/// but is not a complete description of the LarvalJob, and certainly not the identifier with which
 	/// to identify output structures.
@@ -101,7 +105,7 @@ private:
 
 	/// @brief a pointer to the "heavy" InnerLarvalJob which maintains the data in common with all of the
 	/// LarvalJobs (that themselves differ only in their nstruct index).
-	InnerLarvalJobCOP inner_job_;
+	InnerLarvalJobOP inner_job_;
 
 	/// @brief which nstruct is this?
 	core::Size const nstruct_index_;

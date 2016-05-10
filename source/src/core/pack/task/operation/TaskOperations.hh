@@ -33,6 +33,8 @@
 #include <core/types.hh>
 
 // Utility Headers
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -215,6 +217,36 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
+/// @brief retrieves an OptionCollection from the DataMap.
+class InitializeFromOptionCollection : public TaskOperation
+{
+public:
+	typedef TaskOperation parent;
+
+public:
+	InitializeFromOptionCollection();
+	InitializeFromOptionCollection( utility::options::OptionCollectionCOP options );
+	InitializeFromOptionCollection( InitializeFromOptionCollection const & );
+	virtual ~InitializeFromOptionCollection();
+
+	virtual TaskOperationOP clone() const;
+
+	virtual
+	void
+	apply( pose::Pose const &, PackerTask & ) const;
+
+	virtual void parse_tag( TagCOP, DataMap & );
+
+	void options( utility::options::OptionCollectionCOP options );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+private:
+	utility::options::OptionCollectionCOP options_;
+
+};
+
 class InitializeExtraRotsFromCommandline : public TaskOperation
 {
 public:
@@ -345,6 +377,7 @@ public:
 
 public:
 	ReadResfile();
+	ReadResfile( utility::options::OptionCollection const & options );
 	ReadResfile( std::string const & );
 	virtual ~ReadResfile();
 
@@ -370,6 +403,7 @@ public:
 	static std::string keyname();
 	static utility::tag::AttributeList xml_schema_attributes();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static void list_options_read( utility::options::OptionKeyList & options );
 
 private:
 

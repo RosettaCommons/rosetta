@@ -148,12 +148,10 @@ RestrictToTerminiOperation::parse_tag( TagCOP tag , DataMap & )
 void RestrictToTerminiOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_n_terminus", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_c_terminus", xs_boolean, "true" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_n_terminus", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_c_terminus", xs_boolean, "true" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

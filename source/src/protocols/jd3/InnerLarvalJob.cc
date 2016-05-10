@@ -40,16 +40,14 @@ InnerLarvalJob::InnerLarvalJob() :
 	input_sources_(),
 	nstruct_( 1 ),
 	bad_( false ),
-	const_data_cache_( new basic::datacache::ConstDataMap ),
-	job_options_( new basic::resource_manager::JobOptions )
+	const_data_cache_( new basic::datacache::ConstDataMap )
 {}
 
 InnerLarvalJob::InnerLarvalJob( core::Size nstruct ) :
 	input_sources_(),
 	nstruct_( nstruct ),
 	bad_( false ),
-	const_data_cache_( new basic::datacache::ConstDataMap ),
-	job_options_( new basic::resource_manager::JobOptions )
+	const_data_cache_( new basic::datacache::ConstDataMap )
 {}
 
 InnerLarvalJob::~InnerLarvalJob() {}
@@ -84,13 +82,14 @@ InnerLarvalJob::operator == ( InnerLarvalJob const & other ) const
 {
 	return input_tag_ == other.input_tag_ &&
 		job_tag_ == other.job_tag_ &&
+		outputter_ == other.outputter_ &&
 		nstruct_ == other.nstruct_ &&
 		// bad_ == other.bad_ ? No. Two jobs can be equal even if one has been marked bad and the other not yet marked
 		sources_same( other ) &&
 		*const_data_cache_ == *other.const_data_cache_ &&
-		pointer_equals( job_options_, other.job_options_ ) &&
-		same( other ) && // make sure the dynamic type of other is equivalent to that of this
-		other.same( *this ); // make sure the dynamic type of this is equivalent to other
+		// pointer_equals( job_options_, other.job_options_ ) &&
+		same_type( other ) && // make sure the dynamic type of other is equivalent to that of this
+		other.same_type( *this ); // make sure the dynamic type of this is equivalent to other
 }
 
 bool
@@ -104,7 +103,7 @@ InnerLarvalJob::operator != (InnerLarvalJob const & other ) const
 /// @note classes derived from InnerLarvalJob must perform dynamic casts
 /// to ensure the other InnerLarvalJob has the same type as them
 bool
-InnerLarvalJob::same( InnerLarvalJob const & ) const
+InnerLarvalJob::same_type( InnerLarvalJob const & ) const
 {
 	return true;
 }
@@ -122,10 +121,10 @@ operator<< ( std::ostream & out, const InnerLarvalJob & inner_job )
 	return out;
 }
 
-void InnerLarvalJob::input_source( PoseInputSource const & setting )
+void InnerLarvalJob::input_source( PoseInputSourceCOP setting )
 {
 	input_sources_.clear();
-	input_sources_.push_back( PoseInputSourceOP( new PoseInputSource( setting ) ));
+	input_sources_.push_back( setting );
 }
 
 void
@@ -135,9 +134,9 @@ InnerLarvalJob::clear_input_sources()
 }
 
 void
-InnerLarvalJob::append_input_source( PoseInputSource const & setting )
+InnerLarvalJob::append_input_source( PoseInputSourceCOP setting )
 {
-	input_sources_.push_back( PoseInputSourceOP( new PoseInputSource( setting )));
+	input_sources_.push_back( setting );
 }
 
 std::string
@@ -168,6 +167,16 @@ void InnerLarvalJob::job_tag( std::string const & setting )
 	job_tag_ = setting;
 }
 
+std::string InnerLarvalJob::outputter() const
+{
+	return outputter_;
+}
+
+void InnerLarvalJob::outputter( std::string const & setting )
+{
+	outputter_ = setting;
+}
+
 core::Size InnerLarvalJob::nstruct_max() const
 {
 	return nstruct_;
@@ -179,11 +188,11 @@ InnerLarvalJob::const_data_map() const
 	return *const_data_cache_;
 }
 
-basic::resource_manager::JobOptions const &
-InnerLarvalJob::job_options() const
-{
-	return *job_options_;
-}
+// basic::resource_manager::JobOptions const &
+// InnerLarvalJob::job_options() const
+// {
+//  return *job_options_;
+// }
 
 core::Size InnerLarvalJob::n_input_sources() const
 {
@@ -228,12 +237,12 @@ InnerLarvalJob::const_data_map()
 	return *const_data_cache_;
 }
 
-/// @brief Set the JobOptions object held by the %InnerLarvalJob -- two %InnerLarvalJobs may point to
-/// the same JobOptions object.
-void InnerLarvalJob::job_options( basic::resource_manager::JobOptionsCOP setting )
-{
-	job_options_ = setting;
-}
+// @brief Set the JobOptions object held by the %InnerLarvalJob -- two %InnerLarvalJobs may point to
+// the same JobOptions object.
+//void InnerLarvalJob::job_options( basic::resource_manager::JobOptionsCOP setting )
+//{
+// job_options_ = setting;
+//}
 
 /// @brief construct a string from the input_sources_
 std::string

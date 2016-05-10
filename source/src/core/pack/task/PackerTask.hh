@@ -37,12 +37,10 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 
 // STL Headers
-
 #include <iosfwd>
-
-#include <utility/vector1.hh>
 
 #ifdef PYROSETTA
 	#include <core/id/SequenceMapping.hh>
@@ -158,6 +156,17 @@ public:
 
 	virtual PackerTask &
 	initialize_extra_rotamer_flags_from_command_line() = 0;
+
+	virtual
+	PackerTask &
+	initialize_from_options( utility::options::OptionCollection const & options ) = 0;
+
+	virtual PackerTask &
+	initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options ) = 0;
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
 
 	virtual
 	PackerTask &

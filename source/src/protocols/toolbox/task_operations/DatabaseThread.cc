@@ -203,17 +203,16 @@ void DatabaseThread::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "target_sequence", xs_string, "" )
+		+ XMLSchemaAttribute::required_attribute( "template_file", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "database", xs_string, "" )
 
-	attributes.push_back( XMLSchemaAttribute( "target_sequence", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "template_file", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "database", xs_string, "" ) );
-
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "start_res", "non_negative_integer" ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "end_res", "non_negative_integer" ) );
-	attributes.push_back( XMLSchemaAttribute( "allow_design_around", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_residues", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "keep_original_identity", xs_string, "" ) );
+		+ XMLSchemaAttribute::required_attribute( "start_res", xsct_non_negative_integer )
+		+ XMLSchemaAttribute::required_attribute( "end_res", xsct_non_negative_integer )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_design_around", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_residues", xs_string, "" )
+		+ XMLSchemaAttribute::attribute_w_default(  "keep_original_identity", xs_string, "" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

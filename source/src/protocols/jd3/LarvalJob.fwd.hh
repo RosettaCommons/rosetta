@@ -15,8 +15,10 @@
 #define INCLUDED_protocols_jd3_LarvalJob_FWD_HH
 
 //utility headers
-#include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
+
+// C++ headers
+#include <list>
 
 namespace protocols {
 namespace jd3 {
@@ -26,7 +28,7 @@ class LarvalJob;
 typedef utility::pointer::shared_ptr< LarvalJob > LarvalJobOP;
 typedef utility::pointer::shared_ptr< LarvalJob const > LarvalJobCOP;
 
-typedef utility::vector1< LarvalJobOP > LarvalJobs;
+typedef std::list< LarvalJobOP > LarvalJobs;
 
 } // namespace jd3
 } // namespace protocols

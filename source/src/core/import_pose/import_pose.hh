@@ -95,6 +95,25 @@ pose::PoseOP pose_from_file(
 	FileType type = Unknown_file
 );
 
+/// @brief Returns a PoseOP object from the Pose created from input
+/// PDB  <filename>, taking a set of custom ImportPoseOptions parameters.
+/// @note: in PyRosetta, this will return a Pose object
+///
+/// example(s):
+///     pose = pose_from_file("YFP.pdb")
+/// See also:
+///     Pose
+///     PDBInfo
+///     make_pose_from_sequence
+///     pose_from_rcsb
+///     pose_from_sequence
+pose::PoseOP
+pose_from_file(
+	std::string const & filename,
+	ImportPoseOptions const & options,
+	bool read_fold_tree,
+	FileType type
+);
 /// @brief Returns a PoseOP object from the Pose created by reading the input
 /// PDB  <filename>, this constructor allows for a non-default ResidueTypeSet
 /// <residue_set>

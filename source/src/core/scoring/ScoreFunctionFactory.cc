@@ -21,16 +21,17 @@
 
 #include <core/chemical/AA.hh>
 
-
+// Basic headers
 #include <basic/options/option.hh>
-
 #include <basic/Tracer.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/CSI_Sequence.fwd.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKey.hh>
 
 // option key includes
-
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
@@ -47,25 +48,41 @@ namespace core {
 namespace scoring {
 
 ScoreFunctionOP
-ScoreFunctionFactory::create_score_function( std::string weights_tag )
+ScoreFunctionFactory::create_score_function( std::string const & weights_tag )
+{
+	return create_score_function( basic::options::option, weights_tag );
+}
+
+ScoreFunctionOP
+ScoreFunctionFactory::create_score_function( utility::options::OptionCollection const & options, std::string const & weights_tag )
 {
 	utility::vector1< std::string > patch_tags;
-	return create_score_function( weights_tag, patch_tags );
+	return create_score_function( options, weights_tag, patch_tags );
 }
 
 
 ScoreFunctionOP
-ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::vector1< std::string > patch_tags ) {
-	using basic::options::option;
+ScoreFunctionFactory::create_score_function( std::string const & weights_tag, utility::vector1< std::string > const & patch_tags ) {
+	return create_score_function( basic::options::option, weights_tag, patch_tags );
+}
+
+ScoreFunctionOP
+ScoreFunctionFactory::create_score_function(
+	utility::options::OptionCollection const & options,
+	std::string const & weights_tag_in,
+	utility::vector1< std::string > const & patch_tags_in
+) {
 	using namespace basic::options::OptionKeys;
+	std::string weights_tag( weights_tag_in );
+	utility::vector1< std::string > patch_tags( patch_tags_in ); // copy the input patches; we're going to modify them
 
 	// create a new scorefunction
 	ScoreFunctionOP scorefxn;
-	if ( basic::options::option[ basic::options::OptionKeys::score::min_score_score ].user() ) {
-		scorefxn = ScoreFunctionOP( new MinScoreScoreFunction( basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() ) );
-	} else if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
+	if ( options[ score::min_score_score ].user() ) {
+		scorefxn = ScoreFunctionOP( new MinScoreScoreFunction( options[ score::min_score_score ]() ) );
+	} else if ( options[ score::docking_interface_score ]() ) {
 		scorefxn = ScoreFunctionOP( new DockingScoreFunction );
-	} else if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+	} else if ( options[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
 		scorefxn = ScoreFunctionOP( new SymmetricScoreFunction );
 	} else {
 		scorefxn = ScoreFunctionOP( new ScoreFunction );
@@ -76,7 +93,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	// 2) the score12 patch, and
 	// 3) the flag "score12prime"
 	if ( weights_tag == PRE_TALARIS_2013_STANDARD_WTS &&
-			basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
+			options[ corrections::score::score12prime ] ) {
 		bool sc12patch = false;
 		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
 			if ( patch_tags[ ii ] == SCORE12_PATCH ) {
@@ -100,7 +117,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	}
 
 	// allow user to change weights via options system
-	apply_user_defined_reweighting_( scorefxn );
+	apply_user_defined_reweighting_( options, scorefxn );
 
 	scorefxn->name( weights_tag );
 	return scorefxn;
@@ -108,27 +125,52 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 
 
 ScoreFunctionOP
-ScoreFunctionFactory::create_score_function( std::string weights_tag, std::string const & patch_tag )
+ScoreFunctionFactory::create_score_function( std::string const & weights_tag, std::string const & patch_tag )
 {
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-
-	utility::vector1< std::string > patch_tags;
-	patch_tags.push_back( patch_tag );
-	return create_score_function( weights_tag, patch_tags );
+	return create_score_function( basic::options::option, weights_tag, patch_tag );
 }
 
-void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::ScoreFunctionOP scorefxn ) {
+ScoreFunctionOP
+ScoreFunctionFactory::create_score_function(
+	utility::options::OptionCollection const & options,
+	std::string const & weights_tag,
+	std::string const & patch_tag )
+{
+	utility::vector1< std::string > patch_tags;
+	patch_tags.push_back( patch_tag );
+	return create_score_function( options, weights_tag, patch_tags );
+}
+
+/// @brief A documentation function which reports the set of options read by the create_score_function variants
+void
+ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts )
+{
+	using namespace basic::options::OptionKeys;
+
+	opts
+		+ score::min_score_score
+		+ score::docking_interface_score
+		+ basic::options::OptionKeys::symmetry::symmetry_definition
+		+ corrections::score::score12prime
+		+ score::set_weights
+		+ abinitio::rg_reweight
+		+ score::ref_offset
+		+ score::ref_offsets;
+}
+
+void ScoreFunctionFactory::apply_user_defined_reweighting_(
+	utility::options::OptionCollection const & options,
+	core::scoring::ScoreFunctionOP scorefxn
+) {
 	// do some reweighting here. This code could be much more simple if the options system could
 	// produce a std::pair< std::string, core::Real >. For now these are separate options for
 	// the different reweights.
-	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
 	/// new mechanism: set multiple weights using string vector option
-	if ( option[ score::set_weights ].user() ) {
+	if ( options[ score::set_weights ].user() ) {
 		std::string const errmsg("proper format for -set_weights is a list of paired strings, e.g: '-set_weights fa_atr 0.6 -fa_rep 0.55 -fa_sol 0.9' ");
-		utility::vector1< std::string > const settings( option[ score::set_weights ]() );
+		utility::vector1< std::string > const settings( options[ score::set_weights ]() );
 		if ( settings.size()%2 != 0 ) utility_exit_with_message( errmsg );
 		for ( Size i=0; i< settings.size()/2; ++i ) {
 			if ( !ObjexxFCL::is_float( settings[ 2*i+2 ] ) ) utility_exit_with_message( errmsg );
@@ -139,11 +181,11 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 		}
 	}
 
-	if ( option[ abinitio::rg_reweight ].user() ) {
-		scorefxn->set_weight( rg, scorefxn->get_weight( rg ) * option[ abinitio::rg_reweight ]() );
+	if ( options[ abinitio::rg_reweight ].user() ) {
+		scorefxn->set_weight( rg, scorefxn->get_weight( rg ) * options[ abinitio::rg_reweight ]() );
 	}
 	// offset reference energies using user options, for example: -score:ref_offsets TRP 0.9 HIS 0.3
-	if ( !option[ score::ref_offsets ].user() && !option[ score::ref_offset ].user() ) return;
+	if ( !options[ score::ref_offsets ].user() && !options[ score::ref_offset ].user() ) return;
 
 	// get the ref weights from the EnergyMethodOptions object
 	methods::EnergyMethodOptions energy_method_options(scorefxn->energy_method_options());
@@ -152,15 +194,15 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 	} else {
 		utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
 
-		if ( option[ score::ref_offset ].user() ) {
-			Real const offset = option[ score::ref_offset ]();
+		if ( options[ score::ref_offset ].user() ) {
+			Real const offset = options[ score::ref_offset ]();
 			for ( Size n = 1; n <= ref_weights.size(); n++ ) {
 				ref_weights[ n ] += offset;
 			}
 		} else {
-			runtime_assert(  option[ score::ref_offsets ].user() );
+			runtime_assert(  options[ score::ref_offsets ].user() );
 			// get the offsets vector and make sure it contains pairs
-			utility::vector1<std::string> const & ref_offsets( option[ score::ref_offsets ]() );
+			utility::vector1<std::string> const & ref_offsets( options[ score::ref_offsets ]() );
 			if ( ref_offsets.size() % 2 != 0 ) {
 				utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
 			}
@@ -219,16 +261,27 @@ std::string const DOCK_LOW_PATCH( "docking_cen" );
 std::string const SCORE4_SMOOTH_CART( "score4_smooth_cart" );
 
 
-core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* default true */ ) {
-	using basic::options::option;
+core::scoring::ScoreFunctionOP
+get_score_function( bool const is_fullatom /* default true */ )
+{
+	return get_score_function( basic::options::option, is_fullatom );
+}
+
+
+core::scoring::ScoreFunctionOP
+get_score_function(
+	utility::options::OptionCollection const & options,
+	bool const is_fullatom
+)
+{
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	if ( options[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
-	std::string weight_set = option[ score::weights ];
-	utility::vector1< std::string > patch_tags = option[ score::patch ]();
+	std::string weight_set = options[ score::weights ];
+	utility::vector1< std::string > patch_tags = options[ score::patch ]();
 
-	if ( !option[ score::weights ].user() && !is_fullatom ) {
+	if ( !options[ score::weights ].user() && !is_fullatom ) {
 		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
 		weight_set = CENTROID_WTS;
 	} else {
@@ -237,25 +290,25 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 		// on the command line.
 
 		//tr << "get_score_function1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
-		//tr << "option[ score::weights ].user() ? " << option[ score::weights ].user() << std::endl;
-		//tr << "option[ score::patch ].user() ? " << option[ score::patch ].user() << std::endl;
+		//tr << "options[ score::weights ].user() ? " << options[ score::weights ].user() << std::endl;
+		//tr << "options[ score::patch ].user() ? " << options[ score::patch ].user() << std::endl;
 
-		if ( ( weight_set == "pre_talaris_2013_standard.wts" && !option[ score::weights ].user() ) &&
-				( !option[ score::patch ].user() ) ) {
+		if ( ( weight_set == "pre_talaris_2013_standard.wts" && !options[ score::weights ].user() ) &&
+				( !options[ score::patch ].user() ) ) {
 			patch_tags.push_back( "score12" );
 			//tr << "pushing back score12 patch" << std::endl;
-			if ( basic::options::option[basic::options::OptionKeys::corrections::correct] ) {
+			if ( options[corrections::correct] ) {
 				//tr << "setting weight set to score12_w_corrections" << std::endl;
 				weight_set = "score12_w_corrections";
 				patch_tags.clear();
-			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::hbond_sp2_correction ] ) {
+			} else if ( options[ corrections::hbond_sp2_correction ] ) {
 				patch_tags.clear();
-				if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun10 ] ) {
+				if ( options[ corrections::score::dun10 ] ) {
 					weight_set = "sp2_correction";
 				} else {
 					weight_set = "sp2_correction_dun02";
 				}
-			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
+			} else if ( options[ corrections::score::score12prime ] ) {
 				weight_set = "score12prime";
 				patch_tags.clear();
 			}
@@ -286,7 +339,7 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 	// for metalloproteins), and this is the best place to ensure that it happens consistently.
 
 	//Turn on constraints if the user has used the auto_setup_metals flag.  Constraints are added automatically on PDB import.
-	if ( option[in::auto_setup_metals].user() ) {
+	if ( options[in::auto_setup_metals].user() ) {
 		if ( scorefxn->get_weight(metalbinding_constraint) < 1.0e-10 ) {
 			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no metalbinding_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(metalbinding_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
@@ -296,7 +349,7 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 	}
 
 	// Turn on carbohydrate energy method weights if the user has supplied the -include_sugars flag.
-	if ( option[ in::include_sugars ].user() ) {
+	if ( options[ in::include_sugars ].user() ) {
 		if ( tr.Info.visible() ) {
 			tr.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
 				"Setting sugar_bb weight to 1.0 by default." << std::endl;
@@ -307,14 +360,49 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 	return scorefxn;
 }
 
+void
+list_read_options_in_get_score_function( utility::options::OptionKeyList & opts ) {
+	using namespace basic::options::OptionKeys;
+
+	opts
+		+ score::empty
+		+ score::weights
+		+ score::patch
+		+ corrections::correct
+		+ corrections::hbond_sp2_correction
+		+ corrections::score::dun10
+		+ corrections::score::score12prime
+		+ in::auto_setup_metals
+		//+ in::metals_distance_constraint_multiplier
+		//+ in::metals_angle_constraint_multiplier
+		+ in::include_sugars;
+}
+
 core::scoring::ScoreFunctionOP get_score_function_legacy(
 	std::string pre_talaris_2013_weight_set,
 	std::string pre_talaris_2013_patch_file
-) {
-	if ( basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {
-		return ScoreFunctionFactory::create_score_function( pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
+)
+{
+	return get_score_function_legacy( basic::options::option, pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
+}
+core::scoring::ScoreFunctionOP get_score_function_legacy(
+	utility::options::OptionCollection const & options,
+	std::string pre_talaris_2013_weight_set,
+	std::string pre_talaris_2013_patch_file
+)
+{
+	if ( options[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {
+		return ScoreFunctionFactory::create_score_function( options, pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
 	}
-	return get_score_function();
+	return get_score_function( options );
+}
+
+/// @brief A documentation function which reports the set of options read by get_score_function_legacy.
+void
+list_read_options_in_get_score_function_legacy( utility::options::OptionKeyList & opts )
+{
+	ScoreFunctionFactory::list_read_options( opts );
+	opts + basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior;
 }
 
 std::string

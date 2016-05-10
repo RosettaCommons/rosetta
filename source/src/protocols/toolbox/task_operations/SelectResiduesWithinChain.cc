@@ -154,14 +154,12 @@ void SelectResiduesWithinChainOperation::provide_xml_schema( utility::tag::XMLSc
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-	activate_common_simple_type( xsd, "int_cslist" );
-
-	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "resid", "int_cslist" ) );
-	attributes.push_back( XMLSchemaAttribute( "allow_design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "allow_repacking", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "modify_unselected_residues", xs_boolean, "true" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute( "resid", xsct_int_cslist )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_design", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_repacking", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "modify_unselected_residues", xs_boolean, "true" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

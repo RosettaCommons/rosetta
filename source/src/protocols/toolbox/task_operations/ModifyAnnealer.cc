@@ -67,9 +67,10 @@ void ModifyAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "disallow_quench", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "high_temp", xs_decimal, "100.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "low_temp", xs_decimal, "0.3" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "disallow_quench", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "high_temp", xs_decimal, "100.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "low_temp", xs_decimal, "0.3" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

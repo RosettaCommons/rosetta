@@ -61,3 +61,4 @@ get_commit_id.sh
 _performance_
 *~
 run_membrane_utests.py
+*.bak

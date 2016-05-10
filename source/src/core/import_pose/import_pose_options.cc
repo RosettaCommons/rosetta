@@ -58,7 +58,11 @@ ImportPoseOptionsCreator::options_type() const {
 }
 
 
-ImportPoseOptions::ImportPoseOptions() { init_from_options(); }
+ImportPoseOptions::ImportPoseOptions() { init_from_options( basic::options::option ); }
+
+ImportPoseOptions::ImportPoseOptions( utility::options::OptionCollection const & options ) :
+	StructFileReaderOptions( options )
+{ init_from_options( options ); }
 
 ImportPoseOptions::~ImportPoseOptions() {}
 
@@ -114,36 +118,59 @@ void ImportPoseOptions::set_metal_bond_angle_constraint_multiplier(core::Real in
 void ImportPoseOptions::set_residue_type_set( std::string const & residue_type_set ) { residue_type_set_ = residue_type_set; }
 
 
-void ImportPoseOptions::init_from_options()
+void ImportPoseOptions::init_from_options( utility::options::OptionCollection const & options )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	set_centroid( option[ in::file::centroid_input ]()
-		|| option[ in::file::centroid ]()
-		|| ( option[ in::file::fullatom ].user() && !option[ in::file::fullatom ]())
-		|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "centroid" ));
+	set_centroid( options[ in::file::centroid_input ]()
+		|| options[ in::file::centroid ]()
+		|| ( options[ in::file::fullatom ].user() && !options[ in::file::fullatom ]())
+		|| ( options[ in::file::residue_type_set ].user() && options[ in::file::residue_type_set ]() == "centroid" ));
 
 	// sanity check
 	if ( centroid() &&
-			( option[ in::file::fullatom ]()
-			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" )) ) {
+			( options[ in::file::fullatom ]()
+			|| ( options[ in::file::residue_type_set ].user() && options[ in::file::residue_type_set ]() == "fa_standard" )) ) {
 		tr.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
 		set_centroid( false );
 	}
-	set_fold_tree_io( option[ inout::fold_tree_io ].user());
-	set_membrane( option[ in::membrane ].user() );
-	set_no_optH( option[ packing::no_optH ]());
-	set_pack_missing_sidechains( option[ packing::pack_missing_sidechains ].value());
+	set_fold_tree_io( options[ inout::fold_tree_io ].user());
+	set_membrane( options[ in::membrane ].user() );
+	set_no_optH( options[ packing::no_optH ]());
+	set_pack_missing_sidechains( options[ packing::pack_missing_sidechains ].value());
 	set_read_fold_tree( false ); // no option for this parameter - it can only be set to true if you call pose_from_pdd.
-	set_skip_set_reasonable_fold_tree( option[ run::skip_set_reasonable_fold_tree ].value());
+	set_skip_set_reasonable_fold_tree( options[ run::skip_set_reasonable_fold_tree ].value());
 
-	set_set_up_metal_bonds( option[in::auto_setup_metals].user() );
-	set_metal_bond_LJ_multiplier( option[in::metals_detection_LJ_multiplier]() );
-	set_metal_bond_dist_constraint_multiplier( option[in::metals_distance_constraint_multiplier]() );
-	set_metal_bond_angle_constraint_multiplier( option[in::metals_angle_constraint_multiplier]() );
+	set_set_up_metal_bonds( options[in::auto_setup_metals].user() );
+	set_metal_bond_LJ_multiplier( options[in::metals_detection_LJ_multiplier]() );
+	set_metal_bond_dist_constraint_multiplier( options[in::metals_distance_constraint_multiplier]() );
+	set_metal_bond_angle_constraint_multiplier( options[in::metals_angle_constraint_multiplier]() );
 
-	set_residue_type_set( option[ in::file::residue_type_set ]());
+	set_residue_type_set( options[ in::file::residue_type_set ]());
+}
+
+void ImportPoseOptions::list_options_read( utility::options::OptionKeyList & read_options )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	StructFileReaderOptions::list_options_read( read_options );
+	read_options
+		+ in::file::centroid_input
+		+ in::file::centroid
+		+ in::file::fullatom
+		+ in::file::residue_type_set
+		+ inout::fold_tree_io
+		+ in::membrane
+		+ packing::no_optH
+		+ packing::pack_missing_sidechains
+		+ run::skip_set_reasonable_fold_tree
+		+ in::auto_setup_metals
+		+ in::metals_detection_LJ_multiplier
+		+ in::metals_distance_constraint_multiplier
+		+ in::metals_angle_constraint_multiplier;
+
 }
 
 } // namespace import_pose

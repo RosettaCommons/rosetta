@@ -81,17 +81,17 @@ void ResFilterComposition::parse_sub_filters_tag(TagCOP tag)
 	}
 }
 
-utility::tag::XMLComplexTypeSchemaGeneratorOP
+utility::tag::XMLSchemaComplexTypeGeneratorOP
 ResFilterComposition::define_composition_schema( utility::tag::XMLSchemaDefinition & )
 {
 	using namespace utility::tag;
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & ResFilterFactory::res_filter_xml_schema_group_name );
 
-	XMLComplexTypeSchemaGeneratorOP ct_gen( new XMLComplexTypeSchemaGenerator );
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
 	ct_gen
 		->complex_type_naming_func( & complex_type_name_for_res_filter )
-		.set_subelements_repeatable( subelements, & ResFilterFactory::res_filter_xml_schema_group_name );
+		.set_subelements_repeatable( subelements );
 
 	return ct_gen;
 }
@@ -120,7 +120,7 @@ bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 std::string AnyResFilter::keyname() { return "AnyResFilter"; }
 
 void AnyResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::XMLComplexTypeSchemaGeneratorOP ct_gen = define_composition_schema( xsd );
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
 	ct_gen->element_name( keyname() );
 	ct_gen->write_complex_type_to_schema( xsd );
 }
@@ -160,7 +160,7 @@ bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 std::string AllResFilter::keyname() { return "AllResFilter"; }
 
 void AllResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {using namespace utility::tag;
-	utility::tag::XMLComplexTypeSchemaGeneratorOP ct_gen = define_composition_schema( xsd );
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
 	ct_gen->element_name( keyname() );
 	ct_gen->write_complex_type_to_schema( xsd );
 }
@@ -200,7 +200,7 @@ bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 std::string NoResFilter::keyname() { return "NoResFilter"; }
 
 void NoResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::XMLComplexTypeSchemaGeneratorOP ct_gen = define_composition_schema( xsd );
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
 	ct_gen->element_name( keyname() );
 	ct_gen->write_complex_type_to_schema( xsd );
 }
@@ -251,13 +251,13 @@ std::string ResidueTypeFilter::keyname() { return "ResidueType"; }
 
 void ResidueTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
-	activate_common_simple_type( xsd, "zero_or_one" );
 
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "polar", "zero_or_one" ));
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "apolar", "zero_or_one" ));
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "aromatic", "zero_or_one" ));
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "charged", "zero_or_one" ));
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "polar",    xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "apolar",   xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "aromatic", xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "charged",  xsct_rosetta_bool );
 
 	res_filter_schema_w_attributes( xsd, keyname(), attributes );
 }
@@ -310,7 +310,7 @@ utility::tag::AttributeList
 ResidueHasProperty::get_xml_schema_attributes()
 {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string );
 	return attributes;
 }
 
@@ -394,7 +394,7 @@ utility::tag::AttributeList
 ResiduePDBInfoHasLabel::get_xml_schema_attributes()
 {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string );
 	return attributes;
 }
 
@@ -492,7 +492,7 @@ utility::tag::AttributeList
 ResidueName3Is::get_xml_schema_attributes()
 {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "name3", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute( "name3", utility::tag::xs_string );
 	return attributes;
 }
 
@@ -600,16 +600,15 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 std::string ResidueIndexIs::keyname() { return "ResidueIndexIs"; }
 
 void ResidueIndexIs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes( xsd ) );
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes() );
 }
 
 utility::tag::AttributeList
-ResidueIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+ResidueIndexIs::get_xml_schema_attributes()
 {
-	utility::tag::activate_common_simple_type( xsd, "int_cslist" );
-
-	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "indices", "int_cslist" ));
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes + XMLSchemaAttribute( "indices", xsct_int_cslist );
 	return attributes;
 }
 
@@ -652,7 +651,7 @@ ResFilterOP ResidueIndexIsnt::clone() const { return ResFilterOP( new ResidueInd
 std::string ResidueIndexIsnt::keyname() { return "ResidueIndexIsnt"; }
 
 void ResidueIndexIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes( xsd ) );
+	res_filter_schema_w_attributes( xsd, keyname(), parent::get_xml_schema_attributes() );
 }
 
 ResFilterOP
@@ -748,7 +747,7 @@ ResiduePDBIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition 
 	xsd.add_top_level_element( pdb_index_cslist );
 
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "indices", "period_separated_pdb_index_cslist" ));
+	attributes + XMLSchemaAttribute( "indices", "period_separated_pdb_index_cslist" );
 	return attributes;
 }
 
@@ -846,7 +845,7 @@ ChainIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
 	xsd.add_top_level_element( chain_character );
 
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "property", "chain_character" ));
+	attributes + XMLSchemaAttribute::required_attribute( "property", "chain_character" );
 	return attributes;
 }
 

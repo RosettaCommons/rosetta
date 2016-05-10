@@ -20,49 +20,48 @@
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace jd3 {
 
 /// @brief The %PoseInputSource is a small class for holding data about
-/// the starting Pose for a Job and where it comes from (either from the
-/// the command line, or from data provided in the job definition file).
-/// The "input_tag" is a string description of the input source and will
+/// the starting Pose for a Job and where it comes from (i.e. which
+/// of the PoseInputters claims responsibility for creating a Pose for this
+/// instance). The "input_tag" is a string description of the input source and will
 /// be used as the "job_tag" to control output -- the input tag should not
 /// include the file extension.  It is perfectly reasonable for complex
 /// PoseInputters to subclass from PoseInputSource to tuck more complex
 /// data in the PoseInputSource, though, the string-string map ought to
 /// provide considerable flexibility in storing data without deriving
 /// new subclasses.
-class PoseInputSource
+class PoseInputSource : public utility::pointer::ReferenceCount
 {
 public:
 	typedef std::map< std::string, std::string > StringStringMap;
 
 public:
 	PoseInputSource();
-	PoseInputSource( PoseInputSourceOrigin origin );
+	PoseInputSource( std::string const & origin );
 	virtual ~PoseInputSource();
 
 	bool operator == ( PoseInputSource const & rhs ) const;
 	bool operator != ( PoseInputSource const & rhs ) const;
 
 	std::string const & input_tag() const;
-	PoseInputKind input_kind() const;
 	StringStringMap const & string_string_map() const;
-	PoseInputSourceOrigin origin() const;
+	std::string const & origin() const;
 
 	void input_tag( std::string const & setting );
-	void input_kind( PoseInputKind setting );
 	void store_string_pair( std::string const & key, std::string const & value );
-	void origin( PoseInputSourceOrigin setting );
+	void origin( std::string const & setting );
 
 private:
-	PoseInputKind input_kind_;
-	PoseInputSourceOrigin origin_;
+	std::string origin_;
 	std::string input_tag_;
 	StringStringMap string_string_map_;
 

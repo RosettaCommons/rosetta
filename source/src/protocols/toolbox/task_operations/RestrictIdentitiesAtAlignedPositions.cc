@@ -162,15 +162,13 @@ void RestrictIdentitiesAtAlignedPositionsOperation::provide_xml_schema( utility:
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-	activate_common_simple_type( xsd, "int_cslist" );
-
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "source_pdb", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", "int_cslist" ) );
-	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_only_target_residues", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "prevent_repacking", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "keep_aas", xs_string, "ACDEFGHIKLMNPQRSTVWY" ) );
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_only_target_residues", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "keep_aas", xs_string, "ACDEFGHIKLMNPQRSTVWY" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

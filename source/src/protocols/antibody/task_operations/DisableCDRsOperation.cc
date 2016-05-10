@@ -211,10 +211,11 @@ void DisableCDRsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "cdrs", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "disable_packing_and_design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute( "cdrs", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "disable_packing_and_design", xs_boolean, "true" )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string )
+		+ XMLSchemaAttribute( "numbering_scheme", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

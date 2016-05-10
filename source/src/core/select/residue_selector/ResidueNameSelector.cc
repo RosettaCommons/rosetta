@@ -169,8 +169,9 @@ ResidueNameSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "residue_name3", xs_string ));
-	attributes.push_back( XMLSchemaAttribute( "residue_names", xs_string ));
+	attributes
+		+ XMLSchemaAttribute( "residue_name3", xs_string )
+		+ XMLSchemaAttribute( "residue_names", xs_string );
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

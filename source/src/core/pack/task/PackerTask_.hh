@@ -36,12 +36,11 @@
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility Headers
+#include <utility/vector1.hh>
 
 // STL Headers
-
 #include <iosfwd>
 #include <iostream>
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION
@@ -211,6 +210,13 @@ public:
 	/// @brief read only the command line options for extra rotamer building;
 	virtual PackerTask &
 	initialize_extra_rotamer_flags_from_command_line();
+
+	virtual
+	PackerTask &
+	initialize_from_options( utility::options::OptionCollection const & options );
+
+	virtual PackerTask &
+	initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options );
 
 	/// @brief turn off packing for residues passed false; can't turn on packing
 	virtual

@@ -59,17 +59,25 @@ public:
 	JobQueen();
 	virtual ~JobQueen();
 
-	/// @brief Mature the input larval job into a full fledged job that will be run
-	/// within this process (i.e. on this CPU), and so can hold pointers to
-	/// data that may persist inside the ResourceManager or may even be used by
-	/// another process running in this thread.  To pull that off, the Job object
-	/// must share no non-bitwise-const data with any other Job object.  That means
-	/// if the Job were to contain a Pose and a Mover (as the StandardJob does), then
-	/// so each Mover should be freshly constructed, and if the Pose had been copied
-	/// from an existing Pose, must use the Pose's "deep_copy" method (since Pose's
-	/// sometimes share non-constant data between them, e.g. the AtomTree observer
-	/// system, and the *sigh* constraints ).
-	virtual JobOP mature_larval_job( LarvalJobCOP job ) = 0;
+	/// @brief All JobQueens must describe their job input XML format in the form of an XSD
+	/// (XML Schema Definition), and they must validate their job input files against their XSDs.
+	/// If the JobDistributor is awakened with the flag "jd3::output_job_xsd <output file>" on the
+	/// command line, then the JobDistributor will write out the XSD to the output file.
+	virtual std::string job_definition_xsd() const = 0;
+
+	/// @brief JobQueens may optionally define an XSD for their resource definition file
+	/// which is fed to their resource manager (if they control one). If the JobDistributor
+	/// is awakened with the flag "jd3::output_resource_xsd <output file>" on the command
+	/// line, and if the derived JobQueen defines an XSD for resources she uses, then the
+	/// JobDistributor will write out the resource definition XSD to the output file.
+	/// The derived queen may return an empty string to indicate that no resources are
+	/// definable for the resource manager.
+	virtual std::string resource_definition_xsd() const = 0;
+
+	/// @brief This function determines what jobs exist.  This function neither knows nor
+	/// cares what jobs are already complete on disk/memory - it just figures out what
+	/// ones should exist given the input.
+	virtual LarvalJobs determine_job_list() = 0;
 
 	/// @biref The JobQueen must be able to determine if a particular job has already
 	/// completed (or alternatively, has already been started by another process), and
@@ -81,6 +89,18 @@ public:
 	/// being run by asking the JobQueen to create a temporary file marking that
 	/// fact on the file system.
 	virtual void mark_job_as_having_begun( LarvalJobCOP job ) = 0;
+
+	/// @brief Mature the input larval job into a full fledged job that will be run
+	/// within this process (i.e. on this CPU), and so can hold pointers to
+	/// data that may persist inside the ResourceManager or may even be used by
+	/// another process running in this thread.  To pull that off, the Job object
+	/// must share no non-bitwise-const data with any other Job object.  That means
+	/// if the Job were to contain a Pose and a Mover (as the StandardJob does), then
+	/// so each Mover should be freshly constructed, and if the Pose had been copied
+	/// from an existing Pose, must use the Pose's "deep_copy" method (since Pose's
+	/// sometimes share non-constant data between them, e.g. the AtomTree observer
+	/// system, and the *sigh* constraints ).
+	virtual JobOP mature_larval_job( LarvalJobCOP job ) = 0;
 
 	/// @brief The JobDistributor will call this function to inform the JobQueen that
 	/// a job has "completed" -- in the sense that it will not be run in the future.
@@ -95,11 +115,6 @@ public:
 	/// from structures instead of forcing that computation into accessory scripts.
 	virtual void completed_job_result( LarvalJobCOP job, JobResultOP result ) = 0;
 
-	/// @brief This function determines what jobs exist.  This function neither knows nor
-	/// cares what jobs are already complete on disk/memory - it just figures out what
-	/// ones should exist given the input.
-	virtual LarvalJobs determine_job_list() = 0;
-
 	/// @brief The %JobQueen may indicate to the JobDistributor that multiple rounds of structure
 	/// generation are desired by returning "true" to this function call (this function can constitutively
 	/// return "false" and the first round will still always be executed).  After returning "true",
@@ -107,12 +122,6 @@ public:
 	/// method.  After the first round, only the %JobQueens which were given the JobResult data
 	/// (one %JobQueen per Job batch) will be asked for a second job list.
 	virtual bool more_jobs_remain() = 0;
-
-	/// @brief All JobQueens should, for the sake of documentation, describe their job input
-	/// XML format in the form of an XSD (XML Schema Definition). If the JobDistributor is awakened
-	/// with the flag "jd3::output_xsd <output file>" on the command line, then if this function
-	/// returns a non-empty string, the JobDistributor will write out the XSD to the command line.
-	virtual std::string job_definition_xsd() const = 0;
 
 }; // JobQueen
 

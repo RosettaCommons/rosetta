@@ -144,7 +144,7 @@ void
 NotResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "selector", xs_string ));
+	attributes + XMLSchemaAttribute( "selector", xs_string );
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
 }
 

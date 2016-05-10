@@ -66,18 +66,19 @@ class XMLSchemaSimpleSubelementList;
 typedef utility::pointer::shared_ptr< XMLSchemaSimpleSubelementList > XMLSchemaSimpleSubelementListOP;
 typedef utility::pointer::shared_ptr< XMLSchemaSimpleSubelementList const > XMLSchemaSimpleSubelementListCOP;
 
-class XMLComplexTypeSchemaGenerator;
-typedef utility::pointer::shared_ptr< XMLComplexTypeSchemaGenerator > XMLComplexTypeSchemaGeneratorOP;
-typedef utility::pointer::shared_ptr< XMLComplexTypeSchemaGenerator const > XMLComplexTypeSchemaGeneratorCOP;
+class XMLSchemaComplexTypeGenerator;
+typedef utility::pointer::shared_ptr< XMLSchemaComplexTypeGenerator > XMLSchemaComplexTypeGeneratorOP;
+typedef utility::pointer::shared_ptr< XMLSchemaComplexTypeGenerator const > XMLSchemaComplexTypeGeneratorCOP;
 
 
 enum XMLSchemaDataType {
 	xs_string,
 	xs_decimal,
 	xs_integer,
-	xs_boolean,
+	xs_boolean, // You probably do not want to use this, but instead want "xsct_rosetta_bool"
 	xs_date,
 	xs_time,
+	xs_common, // for use with the XMLSchemaCommonType
 	xs_custom
 };
 
@@ -113,6 +114,17 @@ enum XMLSchemaElementCategory {
 	xs_element_is_abstract,
 	xs_element_is_complex_type_w_definition,
 	xs_element_is_element_reference
+};
+
+enum CTGenSubelementBehavior {
+	se_none,
+	se_repeatable,
+	se_choice_req,
+	se_choice_opt,
+	se_single_req,
+	se_single_opt,
+	se_single_req_ordered,
+	se_ordered_sets
 };
 
 }

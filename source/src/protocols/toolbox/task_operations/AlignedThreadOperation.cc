@@ -150,12 +150,11 @@ void AlignedThreadOperation::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "alignment_file", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "query_name", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "template_name", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "start_res", "non_negative_integer", "1" ) );
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "alignment_file", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "query_name", xs_string )
+		+ XMLSchemaAttribute::required_attribute( "template_name", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "start_res", xsct_non_negative_integer, "1" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

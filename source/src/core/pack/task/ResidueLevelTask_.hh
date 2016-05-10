@@ -25,6 +25,7 @@
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
+
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -33,12 +34,11 @@
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility Headers
+#include <utility/vector1.hh>
 
 // STL Headers
-
 #include <iosfwd>
 #include <iostream>
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION
@@ -80,6 +80,10 @@ public:
 	/// @brief Initialize only the extra rotamer building flags from the command line;
 	/// invoked by intialize_from_command_line();
 	virtual void initialize_extra_rotamer_flags_from_command_line();
+
+	virtual void initialize_from_options( utility::options::OptionCollection const & options );
+	virtual void initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options );
+
 
 	/// @brief include the pre-existing rotamer while packing
 	virtual void or_include_current( bool include_current );

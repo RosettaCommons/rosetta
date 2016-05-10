@@ -93,6 +93,7 @@ sources = {
 	"import_pose" : [
 		"3-letter_code_ambiguity_resolution",
 		"component_reading",
+		"ImportPoseOptions",
 		"PoseFromPDBResourceLoader",
 		"PoseFromFile",
 	],
@@ -108,6 +109,8 @@ sources = {
 		"NomenclatureManagerTests",
 		"PDB_IO",
 		"StructFileRep",
+		"StructFileRepOptions",
+		"StructFileReaderOptions",
 		"mmcif_IO",
 	],
 	"io/atom_tree_diffs": [

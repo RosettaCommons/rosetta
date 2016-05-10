@@ -213,19 +213,18 @@ void JointSequenceOperation::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "use_current", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "use_natro", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "chain", "non_negative_integer", "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "use_chain", "non_negative_integer", "0" ) );
-	// AMW: This relies on the presence of a command-line option.
-	attributes.push_back( XMLSchemaAttribute( "use_native", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "use_starting_as_native", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "filename", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "native", xs_string ) );
-	// AMW: This relies on the presence of a command-line option.
-	attributes.push_back( XMLSchemaAttribute( "use_fasta", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "use_current", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_natro", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_chain", xsct_non_negative_integer, "0" )
+		// AMW: This relies on the presence of a command-line option.
+		+ XMLSchemaAttribute::attribute_w_default(  "use_native", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_starting_as_native", xs_boolean, "false" )
+		+ XMLSchemaAttribute( "filename", xs_string )
+		+ XMLSchemaAttribute( "native", xs_string )
+		// AMW: This relies on the presence of a command-line option.
+		+ XMLSchemaAttribute::attribute_w_default(  "use_fasta", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

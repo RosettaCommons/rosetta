@@ -141,8 +141,9 @@ void SelectByDensityFitOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "threshold", xs_decimal, "0.72" ) );
-	attributes.push_back( XMLSchemaAttribute( "invert", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xs_decimal, "0.72" )
+		+ XMLSchemaAttribute::attribute_w_default(  "invert", xs_boolean, "false" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

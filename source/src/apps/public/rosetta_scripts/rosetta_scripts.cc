@@ -61,24 +61,24 @@ void
 print_template_script() {
 	TR << "The -\"parser:print_template_script\" option was specified.  The app will print a template script and then exit." << std::endl;
 	TR << "RosettaScripts script template:\n"
-	   << "\n"
-	   << "<ROSETTASCRIPTS>\n"
-	   << "\t<SCOREFXNS>\n"
-	   << "\t</SCOREFXNS>\n"
-	   << "\t<RESIDUE_SELECTORS>\n"
-	   << "\t</RESIDUE_SELECTORS>\n"
-	   << "\t<TASKOPERATIONS>\n"
-	   << "\t</TASKOPERATIONS>\n"
-	   << "\t<FILTERS>\n"
-	   << "\t</FILTERS>\n"
-	   << "\t<MOVERS>\n"
-	   << "\t</MOVERS>\n"
-	   << "\t<APPLY_TO_POSE>\n"
-	   << "\t</APPLY_TO_POSE>\n"
-	   << "\t<PROTOCOLS>\n"
-	   << "\t</PROTOCOLS>\n"
-	   << "\t<OUTPUT />\n"
-	   << "</ROSETTASCRIPTS>\n\n";
+		<< "\n"
+		<< "<ROSETTASCRIPTS>\n"
+		<< "\t<SCOREFXNS>\n"
+		<< "\t</SCOREFXNS>\n"
+		<< "\t<RESIDUE_SELECTORS>\n"
+		<< "\t</RESIDUE_SELECTORS>\n"
+		<< "\t<TASKOPERATIONS>\n"
+		<< "\t</TASKOPERATIONS>\n"
+		<< "\t<FILTERS>\n"
+		<< "\t</FILTERS>\n"
+		<< "\t<MOVERS>\n"
+		<< "\t</MOVERS>\n"
+		<< "\t<APPLY_TO_POSE>\n"
+		<< "\t</APPLY_TO_POSE>\n"
+		<< "\t<PROTOCOLS>\n"
+		<< "\t</PROTOCOLS>\n"
+		<< "\t<OUTPUT />\n"
+		<< "</ROSETTASCRIPTS>\n\n";
 	TR << "At any point in a script, you can include text from another file using <xi:include href=\"filename.xml\" />." << std::endl;
 	TR << "Variable substituion is possible from the commandline using the -\"parser:script_vars varname=value\" flag.  Any string of the pattern \"%%varname%%\" will be replaced with \"value\" in the script." << std::endl;
 	TR << std::endl;
@@ -99,8 +99,8 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		
-		if( option[ parser::print_template_script ]() ) { //Just print a template script and exit.
+
+		if ( option[ parser::print_template_script ]() ) { //Just print a template script and exit.
 			print_template_script();
 		} else { // If we're not printing a template script and exiting.
 			bool const view( option[ parser::view ] );

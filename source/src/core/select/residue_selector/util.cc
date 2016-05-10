@@ -60,7 +60,7 @@ xsd_type_definition_w_attributes(
 	utility::tag::AttributeList const & attributes
 )
 {
-	utility::tag::XMLComplexTypeSchemaGenerator ct_gen;
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
 		.add_attributes( attributes )
@@ -79,7 +79,7 @@ xsd_type_definition_w_attributes_and_optional_subselector(
 	XMLSchemaSimpleSubelementList subelement;
 	subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
 
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
 		.add_attributes( attributes )
@@ -99,12 +99,12 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 	XMLSchemaSimpleSubelementList subelement;
 	subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
 
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
-		.set_subelements_repeatable( subelement, &ResidueSelectorFactory::residue_selector_xml_schema_group_name )
+		.set_subelements_repeatable( subelement )
 		.write_complex_type_to_schema( xsd );
 }
 
@@ -121,12 +121,12 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 	XMLSchemaSimpleSubelementList subelement;
 	subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
 
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
-		.set_subelements_repeatable( subelement, &ResidueSelectorFactory::residue_selector_xml_schema_group_name, min_occurrence, max_occurrence )
+		.set_subelements_repeatable( subelement, min_occurrence, max_occurrence )
 		.write_complex_type_to_schema( xsd );
 
 }

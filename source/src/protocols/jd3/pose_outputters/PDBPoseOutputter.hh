@@ -19,7 +19,7 @@
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.fwd.hh>
 
 //package headers
-#include <protocols/jd3/PoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 
 //project headers
@@ -37,6 +37,17 @@ public:
 	PDBPoseOutputter();
 	virtual ~PDBPoseOutputter();
 
+	bool
+	outputter_specified_by_command_line() const;
+
+	virtual
+	void
+	determine_job_tag(
+		utility::tag::TagCOP output_tag,
+		utility::options::OptionCollection const & job_options,
+		InnerLarvalJob & job
+	) const;
+
 	virtual
 	bool job_has_already_completed( LarvalJob const & job ) const;
 
@@ -44,12 +55,33 @@ public:
 	void mark_job_as_having_started( LarvalJob const & job ) const;
 
 	virtual
-	void write_output_pose( LarvalJob const & job, core::pose::Pose const & pose );
+	void write_output_pose(
+		LarvalJob const & job,
+		utility::options::OptionCollection const & job_options,
+		core::pose::Pose const & pose
+	);
+
+	/// @brief Return the stiring used by the PDBPoseOutputterCreator for this class
+	virtual
+	std::string
+	class_key() const;
 
 	std::string
 	output_pdb_name( LarvalJob const & job ) const;
 
-}; // PoseInputter
+	static
+	std::string
+	keyname();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
+
+};
 
 } // namespace pose_outputters
 } // namespace jd3

@@ -17,7 +17,9 @@
 // Package Headers
 #include <protocols/jd2/parser/DataLoader.hh>
 
+// utility headers
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -38,6 +40,10 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const;
+
+	static std::string loader_name();
+	static std::string task_op_loader_ct_namer( std::string const & element_name );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 };
 

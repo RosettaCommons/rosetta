@@ -1078,31 +1078,32 @@ void LayerDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "use_original_non_designed_layer", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "layers", xs_string, "core_boundary_surface_Nterm_Cterm" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_non_design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "ignore_pikaa_natro", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "use_sidechain_neighbors", xs_boolean ) );
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_midpoint", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_denominator", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_exponent", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_exponent", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "pore_radius", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "core", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "surface", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "core_E", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "core_L", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "core_H", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "surface_E", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "surface_L", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "surface_H", xs_decimal ) );
-	attributes.push_back( XMLSchemaAttribute( "make_rasmol_script", xs_boolean ) );
-	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "use_symmetry", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "verbose", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "restrict_restypes", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "make_pymol_script", xs_boolean, "false" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "use_original_non_designed_layer", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "layers", xs_string, "core_boundary_surface_Nterm_Cterm" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_non_design", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ignore_pikaa_natro", xs_boolean, "false" )
+		+ XMLSchemaAttribute( "use_sidechain_neighbors", xs_boolean )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint", xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_denominator", xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent", xs_decimal )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_exponent", xs_decimal )
+		+ XMLSchemaAttribute( "pore_radius", xs_decimal )
+		+ XMLSchemaAttribute( "core", xs_decimal )
+		+ XMLSchemaAttribute( "surface", xs_decimal )
+		+ XMLSchemaAttribute( "core_E", xs_decimal )
+		+ XMLSchemaAttribute( "core_L", xs_decimal )
+		+ XMLSchemaAttribute( "core_H", xs_decimal )
+		+ XMLSchemaAttribute( "surface_E", xs_decimal )
+		+ XMLSchemaAttribute( "surface_L", xs_decimal )
+		+ XMLSchemaAttribute( "surface_H", xs_decimal )
+		+ XMLSchemaAttribute( "make_rasmol_script", xs_boolean )
+		+ XMLSchemaAttribute( "blueprint", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_symmetry", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "restrict_restypes", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "make_pymol_script", xs_boolean, "false" );
 
 	/*
 	std::list< XMLSchemaComplexTypeOP > layer_secstruct_cts;

@@ -236,19 +236,17 @@ ProteinInterfaceDesignOperation::parse_tag( TagCOP tag , DataMap & )
 void ProteinInterfaceDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "repack_chain1", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "repack_chain2", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_chain1", "non_negative_integer", "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_chain2", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "allow_all_aas", "non_negative_integer", "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_all_aas", "non_negative_integer", "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "jump", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "interface_distance_cutoff", xs_decimal, "8.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "modify_before_jump", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "modify_after_jump", xs_boolean, "true" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_chain1", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_chain2", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_chain1", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_chain2", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_all_aas", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_all_aas", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "interface_distance_cutoff", xs_decimal, "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "modify_before_jump", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "modify_after_jump", xs_boolean, "true" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

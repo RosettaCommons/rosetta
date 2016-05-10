@@ -58,6 +58,14 @@ LarvalJob::inner_job() const {
 	return inner_job_;
 }
 
+/// @brief write access to the inner-job; this should be reserved for the JobQueen only
+/// as she edits the inner job during its construction
+InnerLarvalJobOP
+LarvalJob::nonconst_inner_job() const
+{
+	return inner_job_;
+}
+
 /// @brief The input tag (a short string, generally), is used to specify the input structure,
 /// but is not a complete description of the LarvalJob, and certainly not the identifier with which
 /// to identify output structures.

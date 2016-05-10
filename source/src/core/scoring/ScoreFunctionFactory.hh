@@ -18,6 +18,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 #include <string>
 
 #ifdef WIN32 //VC++ needs full class declaration
@@ -32,7 +34,7 @@
 namespace core {
 namespace scoring {
 
-/// @brief a collection of functions making a single score_function
+/// @brief A collection of functions for making a single score_function
 class ScoreFunctionFactory
 {
 public:
@@ -50,7 +52,11 @@ public:
 	///     ScoreType
 	static
 	ScoreFunctionOP
-	create_score_function( std::string weights_tag );
+	create_score_function( std::string const & weights_tag );
+
+	static
+	ScoreFunctionOP
+	create_score_function( utility::options::OptionCollection const & options, std::string const & weights_tag );
 
 	/// @brief Returns a ScoreFunction from the database weights file  <weights_tag>
 	/// with the patch <patch_tag>
@@ -63,19 +69,33 @@ public:
 	///     ScoreType
 	static
 	ScoreFunctionOP
-	create_score_function( std::string weights_tag, std::string const & patch_tag );
+	create_score_function( std::string const & weights_tag, std::string const & patch_tag );
+
+	static
+	ScoreFunctionOP
+	create_score_function( utility::options::OptionCollection const & options, std::string const & weights_tag, std::string const & patch_tag );
 
 	/// @brief Returns a ScoreFunction from the database weights file  <weights_tag>  with patches in <patch_tags>
 	static
 	ScoreFunctionOP
-	create_score_function( std::string weights_tag, utility::vector1< std::string > patch_tags );
+	create_score_function( std::string const & weights_tag, utility::vector1< std::string > const & patch_tags );
+
+
+	static
+	ScoreFunctionOP
+	create_score_function( utility::options::OptionCollection const & options, std::string const & weights_tag, utility::vector1< std::string > const & patch_tags );
+
+	/// @brief A documentation function which reports the set of options read by the create_score_function variants
+	static
+	void
+	list_read_options( utility::options::OptionKeyList & opts );
 
 private:
 
 	/// @brief Applies user defined re-weighting from the options system. Reweights are applied as a
 	/// factor of the original, so -rg_reweight 0.5 would result in half of the previously defined
 	/// rg weight.
-	static void apply_user_defined_reweighting_( core::scoring::ScoreFunctionOP scorefxn );
+	static void apply_user_defined_reweighting_( utility::options::OptionCollection const & options, core::scoring::ScoreFunctionOP scorefxn );
 
 	static void load_weights_file( std::string weights_tag, ScoreFunctionOP scorefxn );
 
@@ -104,11 +124,19 @@ extern std::string const DOCK_LOW_PATCH;
 extern std::string const SCORE4_SMOOTH_CART;
 
 
-/// @brief A helper function which returns a scoring function owning pointer according to the
+/// @brief A helper function which returns a scoring function held in an owning pointer according to the
 /// user's command line parameters -score:weights and -score:patch
 /// By default it returns weights=talaris2013 for fullatom,
 /// and weights=cen_std and patch="" for centroid
 core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom = true );
+
+/// @brief A helper function which creates a scoring function held in an owning pointer reading
+/// from the input OptionCollection
+core::scoring::ScoreFunctionOP get_score_function( utility::options::OptionCollection const & options, bool const is_fullatom = true );
+
+/// @brief A documentation function which reports the set of options read by get_score_function.
+void
+list_read_options_in_get_score_function( utility::options::OptionKeyList & opts );
 
 /// @brief A helper function that either returns a ScoreFunctionOP created by get_score_function() or
 /// the one specified by the protocol which is activated by the -restore_pre_talaris_2013_behavior
@@ -119,6 +147,18 @@ core::scoring::ScoreFunctionOP get_score_function_legacy(
 	std::string pre_talaris_2013_weight_set,
 	std::string pre_talaris_2013_patch_file = ""
 );
+
+
+core::scoring::ScoreFunctionOP get_score_function_legacy(
+	utility::options::OptionCollection const & options,
+	std::string pre_talaris_2013_weight_set,
+	std::string pre_talaris_2013_patch_file = ""
+);
+
+
+/// @brief A documentation function which reports the set of options read by get_score_function_legacy.
+void
+list_read_options_in_get_score_function_legacy( utility::options::OptionKeyList & opts );
 
 /// @brief use the logic of get_score_function to get the name.
 /// The  name format is <weights_tag>[_<patch_tag> ... ]

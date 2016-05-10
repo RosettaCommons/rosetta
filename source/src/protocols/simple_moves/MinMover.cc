@@ -33,6 +33,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/moves/util.hh>
 
 // Basic headers
 #include <basic/prof.hh>
@@ -41,6 +42,7 @@
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -353,7 +355,7 @@ void MinMover::parse_opts(
 	max_iter( tag->getOption< int >( "max_iter", 200 ) );
 	min_type( tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" ) );
 	tolerance( tag->getOption< core::Real >( "tolerance", 0.01 ) );
-	cartesian( tag->getOption< core::Real >( "cartesian", false ) );
+	cartesian( tag->getOption< bool >( "cartesian", false ) );
 
 	//fpd  if cartesian or nonideal default to lbfgs minimization otherwise the runtime is horrible
 	if ( cartesian() && !tag->hasOption("type") ) {
@@ -453,6 +455,41 @@ std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 	mover.show(os);
 	return os;
 }
+
+void MinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "jump",      xs_string )
+		+ XMLSchemaAttribute( "max_iter",  xs_integer )
+		+ XMLSchemaAttribute( "type",      xs_string )
+		+ XMLSchemaAttribute( "tolerance", xs_decimal )
+		+ XMLSchemaAttribute( "cartesian", xsct_rosetta_bool );
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "chi", xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "bb",  xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "omega",      xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "bondangle",  xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "bondlength", xsct_rosetta_bool );
+	attributes
+		+ XMLSchemaAttribute( "bb_task_operations", xs_string )
+		+ XMLSchemaAttribute( "chi_task_operations", xs_string )
+		+ XMLSchemaAttribute( "bondangle_task_operations", xs_string )
+		+ XMLSchemaAttribute( "bondlength_task_operations", xs_string );
+
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen
+		.element_name( MinMoverCreator::mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.add_attributes( attributes )
+		.add_optional_name_attribute()
+		.set_subelements_single_appearance_optional( subelements )
+		.write_complex_type_to_schema( xsd );
+}
+
 
 }  // simple_moves
 }  // protocols

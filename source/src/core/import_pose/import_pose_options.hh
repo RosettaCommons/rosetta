@@ -35,7 +35,10 @@ namespace import_pose {
 class ImportPoseOptions : public io::StructFileReaderOptions
 {
 public:
+	/// @brief Constructor that takes default values from the global OptionCollection object, basic::options::option.
 	ImportPoseOptions();
+	/// @brief Constructor that takes default values from a provided OptionCollection object
+	ImportPoseOptions( utility::options::OptionCollection const & options );
 
 	virtual ~ImportPoseOptions();
 
@@ -74,9 +77,11 @@ public:
 	void set_metal_bond_dist_constraint_multiplier(core::Real invalue );
 	void set_metal_bond_angle_constraint_multiplier(core::Real invalue );
 
+	static void list_options_read( utility::options::OptionKeyList & read_options );
+
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
-	void init_from_options();
+	void init_from_options( utility::options::OptionCollection const & options );
 
 private:
 	bool centroid_;

@@ -16,8 +16,11 @@
 
 
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -58,6 +61,10 @@ public:
 
 	void
 	parse_my_tag( utility::tag::TagCOP tag );
+
+	static
+	void
+	append_schema_attributes( utility::tag::AttributeList & attributes );
 
 public:
 

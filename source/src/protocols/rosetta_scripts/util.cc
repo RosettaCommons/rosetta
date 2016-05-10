@@ -45,6 +45,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
@@ -164,6 +165,57 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 	return task_operations;
 }
 
+/// @brief Appends the attributes read by parse_task_operations
+void
+attributes_for_parse_task_operations( utility::tag::AttributeList & attributes )
+{
+	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string );
+}
+
+void
+attributes_for_get_task_operations( utility::tag::AttributeList & attributes )
+{
+	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string );
+}
+
+/// @brief Appends the attributes read by parse_task_operations when handed a TaskFactory
+void
+attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes )
+{
+	attributes
+		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string )
+		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string );
+}
+
+
+//core::select::residue_selector::ResidueSelectorCOP
+//parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+//{
+// std::string const selectorname = tag->getOption< std::string >( "residue_selector", "" );
+// if ( selectorname.empty() ) {
+//  return core::select::residue_selector::ResidueSelectorCOP();
+// }
+// return get_residue_selector( selectorname, data );
+//}
+//
+//core::select::residue_selector::ResidueSelectorCOP
+//get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
+//{
+// core::select::residue_selector::ResidueSelectorCOP selector;
+// try {
+//  selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+// } catch ( utility::excn::EXCN_Msg_Exception & e ) {
+//  std::stringstream error_msg;
+//  error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";
+//  error_msg << e.msg();
+//  throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+// }
+// debug_assert( selector );
+// TR << "Using residue selector " << selector_name << std::endl;
+// return selector;
+//}
+
+
 /// @details Utility function to find a scorefunction from
 /// parser-provided data. This is essentially a shameless copy of
 /// Justin's PackRotamersMover::parse_score_function.
@@ -254,6 +306,20 @@ get_score_function_name(
 	utility::tag::TagCOP tag
 ) {
 	return get_score_function_name(tag, "scorefxn");
+}
+
+/// @brief Appends the attributes read by parse_score_function
+void
+attributes_for_parse_score_function( utility::tag::AttributeList & attributes )
+{
+	attributes + utility::tag::XMLSchemaAttribute( "scorefxn", utility::tag::xs_string );
+}
+
+/// @brief Appends the attributes read by parse_score_function w/ name argument
+void
+attributes_for_parse_score_function( utility::tag::AttributeList & attributes, std::string const & sfxn_option_name )
+{
+	attributes + utility::tag::XMLSchemaAttribute( sfxn_option_name, utility::tag::xs_string );
 }
 
 
@@ -424,6 +490,89 @@ parse_movemap(
 	parse_movemap_tag( *tag_it, mm );
 	foreach_movemap_tag( *tag_it, pose, mm );
 }
+
+std::string move_map_tag_namer( std::string const & subelement_name ) { return "move_map_" + subelement_name + "_type"; }
+std::string unnamed_move_map_ct_namer( std::string const & ) { return "unnamed_move_map_type"; }
+std::string optionally_named_move_map_ct_namer( std::string const & ) { return "optionally_named_move_map_type"; }
+
+void
+common_movemap_complext_type_def( utility::tag::XMLSchemaComplexTypeGenerator & ct_gen )
+{
+	using namespace utility::tag;
+	XMLSchemaSimpleSubelementList movemap_subelements;
+	AttributeList jump_attributes;
+	jump_attributes
+		+ XMLSchemaAttribute::required_attribute( "number",  xsct_non_negative_integer )
+		+ XMLSchemaAttribute::required_attribute( "setting", xsct_rosetta_bool );
+	movemap_subelements.add_simple_subelement( "Jump", jump_attributes );
+
+	AttributeList chain_attributes;
+	chain_attributes
+		+ XMLSchemaAttribute::required_attribute( "number", xsct_non_negative_integer )
+		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "bb",     xsct_rosetta_bool );
+	movemap_subelements.add_simple_subelement( "Chain", chain_attributes );
+
+	AttributeList span_attributes;
+	span_attributes
+		+ XMLSchemaAttribute::required_attribute( "begin",     xsct_non_negative_integer )
+		+ XMLSchemaAttribute::required_attribute( "end",       xsct_non_negative_integer )
+		+ XMLSchemaAttribute::required_attribute( "chi",       xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "bb",        xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "bondangle", xsct_rosetta_bool )
+		+ XMLSchemaAttribute::required_attribute( "bondlenth", xsct_rosetta_bool );
+	movemap_subelements.add_simple_subelement( "Span", span_attributes );
+	movemap_subelements.complex_type_naming_func( & move_map_tag_namer );
+
+
+	AttributeList movemap_tag_attributes;
+	movemap_tag_attributes
+		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool );
+
+	ct_gen.element_name( "MoveMap" )
+		.add_attributes( movemap_tag_attributes )
+		.set_subelements_repeatable( movemap_subelements );
+
+}
+
+/// @brief Edits the complex type for an object that parses a MoveMap subtag
+/// and which calls parse_movemap (without passing a DataMap parameter)
+void
+append_subelement_for_parse_movemap(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements
+)
+{
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGenerator unnamed_move_map;
+	common_movemap_complext_type_def( unnamed_move_map );
+	unnamed_move_map
+		.complex_type_naming_func( & unnamed_move_map_ct_namer )
+		.write_complex_type_to_schema( xsd );
+
+	subelements.add_already_defined_subelement( "MoveMap", & unnamed_move_map_ct_namer );
+}
+
+
+void
+append_subelement_for_parse_movemap_w_datamap(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements
+)
+{
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGenerator named_move_map;
+	common_movemap_complext_type_def( named_move_map );
+	named_move_map
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & optionally_named_move_map_ct_namer )
+		.write_complex_type_to_schema( xsd );
+
+	subelements.add_already_defined_subelement( "MoveMap", & optionally_named_move_map_ct_namer );
+}
+
 
 void
 add_movemaps_to_datamap(

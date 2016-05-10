@@ -255,9 +255,9 @@ void
 NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "selector", xs_string        ));
-	attributes.push_back( XMLSchemaAttribute( "resnums",  "int_cslist"     ));
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "distance", xs_decimal ));
+	attributes + XMLSchemaAttribute( "selector", xs_string        )
+		+ XMLSchemaAttribute( "resnums",  "int_cslist"     )
+		+ XMLSchemaAttribute::required_attribute( "distance", xs_decimal );
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
 }
 

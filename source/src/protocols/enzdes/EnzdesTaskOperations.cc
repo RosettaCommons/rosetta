@@ -175,8 +175,9 @@ void SetCatalyticResPackBehavior::provide_xml_schema( utility::tag::XMLSchemaDef
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "fix_catalytic_aa", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "behavior_non_catalytic", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "fix_catalytic_aa", xs_boolean, "true" )
+		+ XMLSchemaAttribute( "behavior_non_catalytic", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
@@ -316,20 +317,20 @@ void DetectProteinLigandInterface::provide_xml_schema( utility::tag::XMLSchemaDe
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "repack_only", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "cut1", xs_decimal, "6.0 " ) );
-	attributes.push_back( XMLSchemaAttribute( "cut2", xs_decimal, "8.0 " ) );
-	attributes.push_back( XMLSchemaAttribute( "cut3", xs_decimal, "10.0 " ) );
-	attributes.push_back( XMLSchemaAttribute( "cut4", xs_decimal, "12.0 " ) );
-	attributes.push_back( XMLSchemaAttribute( "arg_sweep_cutoff", xs_decimal, "3.7 " ) );
-	attributes.push_back( XMLSchemaAttribute( "design", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "resfile", xs_string, "" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_to_cys", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "segment_interface", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "catres_interface", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "arg_sweep_interface", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "catres_only_interface", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "target_cstids", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "repack_only", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "cut1", xs_decimal, "6.0 " ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "cut2", xs_decimal, "8.0 " ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "cut3", xs_decimal, "10.0 " ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "cut4", xs_decimal, "12.0 " ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "arg_sweep_cutoff", xs_decimal, "3.7 " ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "design", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "resfile", xs_string, "" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "design_to_cys", xs_boolean, "false" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "segment_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "catres_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "arg_sweep_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "catres_only_interface", xs_boolean, "true" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "target_cstids", xs_string, "" ) );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
@@ -796,8 +797,8 @@ void ProteinLigandInterfaceUpweighter::provide_xml_schema( utility::tag::XMLSche
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "interface_weight", xs_decimal, "1.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "catres_interface_weight", xs_decimal, "1.0" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "interface_weight", xs_decimal, "1.0" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "catres_interface_weight", xs_decimal, "1.0" ) );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

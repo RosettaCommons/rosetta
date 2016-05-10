@@ -185,22 +185,21 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "nonnegative_integer" );
-
 	// Check if this is the real default with Jared: all I know is that the functional default is "six trues"
 	// for cdrs_.
-	attributes.push_back( XMLSchemaAttribute( "cdrs", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "fallback_strategy", xs_string, "seq_design_conservative" ) );
-	attributes.push_back( XMLSchemaAttribute( "add_to_current", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "include_native_restype", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "picking_rounds", "non_negative_integer", "1" ) );
-	attributes.push_back( XMLSchemaAttribute( "force_north_paper_db", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "use_outliers", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "stats_cutoff", "non_negative_integer", "10" ) );
-	attributes.push_back( XMLSchemaAttribute( "sample_zero_probs_at", xs_decimal, "0.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "cons_design_data_source", xs_string, "blosum62" ) );
-	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
+	attributes
+		+ XMLSchemaAttribute( "cdrs", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "fallback_strategy", xs_string, "seq_design_conservative" )
+		+ XMLSchemaAttribute::attribute_w_default(  "add_to_current", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "include_native_restype", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "picking_rounds", xsct_non_negative_integer, "1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "force_north_paper_db", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_outliers", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "stats_cutoff", xsct_non_negative_integer, "10" )
+		+ XMLSchemaAttribute::attribute_w_default(  "sample_zero_probs_at", xs_decimal, "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "cons_design_data_source", xs_string, "blosum62" )
+		+ XMLSchemaAttribute( "numbering_scheme", xs_string )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

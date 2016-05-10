@@ -71,7 +71,7 @@ main( int argc, char * argv [] )
 
 		option.add( minimize_sidechains, "Do minimization of side chains after rotamer packing").def(false);
 		option.add( min_pack, "Pack and minimize sidechains simultaneously").def(false);
-		option.add( off_rotamer_pack, "Pack using a continuous sidechains rotamer library").def(false);
+		option.add( off_rotamer_pack, "Pack using a continuous sidechain rotamer library").def(false);
 
 		devel::init(argc, argv);
 

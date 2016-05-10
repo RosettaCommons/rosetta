@@ -7,26 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/PoseInputter.fwd.hh
-/// @brief  Forward declaration of the %PoseInputter class
+/// @file   protocols/jd3/pose_outputters/PoseOutputter.cc
+/// @brief  Definition of the %PoseOutputter class's methods
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-
-#ifndef INCLUDED_protocols_jd3_PoseInputter_FWD_HH
-#define INCLUDED_protocols_jd3_PoseInputter_FWD_HH
-
-// Utility headers
-#include <utility/pointer/owning_ptr.hh>
+//unit headers
+#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 
 namespace protocols {
 namespace jd3 {
+namespace pose_outputters {
 
-class PoseInputter;
+PoseOutputter::PoseOutputter() {}
+PoseOutputter::~PoseOutputter() {}
 
-typedef utility::pointer::shared_ptr< PoseInputter > PoseInputterOP;
-typedef utility::pointer::shared_ptr< PoseInputter const > PoseInputterCOP;
-
+} // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
-
-#endif //INCLUDED_protocols_jd3_PoseInputter_FWD_HH

@@ -71,7 +71,7 @@ public:
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map );
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	static utility::tag::AttributeList schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
+	static utility::tag::AttributeList schema_attributes();
 	static std::string keyname() { return "HighestEnergyRegionOperation"; }
 
 	/// @brief tells this task operation whether it should use the cache when it is applied

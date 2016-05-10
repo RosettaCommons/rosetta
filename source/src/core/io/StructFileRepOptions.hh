@@ -22,8 +22,14 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <utility/vector1.hh>
 #include <basic/resource_manager/ResourceOptions.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -35,7 +41,10 @@ namespace io {
 class StructFileRepOptions : public basic::resource_manager::ResourceOptions
 {
 public:
+	/// @brief Constructor that takes default values from the global OptionCollection object, basic::options::option.
 	StructFileRepOptions();
+	/// @brief Constructor that takes default values from a provided OptionCollection object
+	StructFileRepOptions( utility::options::OptionCollection const & options );
 
 	virtual ~StructFileRepOptions();
 
@@ -122,9 +131,20 @@ public:
 	void set_show_all_fixes( bool setting );
 	void set_constraints_from_link_records( bool setting );
 
+	/// @brief Declare the list of options that are read in the process of reading a PDB (or SDF) and converting
+	/// it into a Pose.
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
+
+	/// @brief Describe the XML Schema for this ResourceOption object
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
-	void init_from_options();
+	void init_from_options( utility::options::OptionCollection const & options );
 
 private:
 	std::string check_if_residues_are_Ntermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to

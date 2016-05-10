@@ -115,11 +115,11 @@ MoverFactory::newMover( std::string const & mover_type )
 		// fresh_instance prevents propagation of pre-initialized prototypes, which may be safer(?)
 		return iter->second->create_mover();
 	} else {
-		TR<<"Available movers: ";
+		TR << "Available movers: ";
 		for ( MoverMap::const_iterator mover_it = mover_creator_map_.begin(); mover_it != mover_creator_map_.end(); ++mover_it ) {
-			TR<<mover_it->first<<", ";
+			TR << mover_it->first << ", ";
 		}
-		TR<<std::endl;
+		TR << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return NULL;
 	}

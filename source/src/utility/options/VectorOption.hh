@@ -115,6 +115,15 @@ public: // Methods
 	VectorOption &
 	cl_value( std::string const & value_str ) = 0;
 
+	/// @brief Value assignemt from a command line string but without
+	/// a VectorOption & return type. This will separate arguments into
+	/// blocks grouped by quotes, and then separate the non-quote-delimited
+	/// arguments by whitespace
+	virtual
+	void
+	set_cl_value( std::string const & value_str ) {
+		cl_value( value_str );
+	}
 
 	/// @brief Fixed number of values required assignment
 	virtual

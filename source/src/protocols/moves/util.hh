@@ -13,33 +13,42 @@
 #ifndef INCLUDED_PROTOCOLS_MOVES_UTIL_HH
 #define INCLUDED_PROTOCOLS_MOVES_UTIL_HH
 
-// Utility headers
-#include <utility/tag/Tag.fwd.hh>
-
 // Project headers
-
-// Package headers
-
 #include <core/types.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+
+// Utility headers
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <string>
 
 namespace protocols {
 namespace moves {
 
 /// @brief Searches <movers> for the named mover, returning it if it exists,
 /// otherwise halts execution with an error message.
-protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
+protocols::moves::MoverOP
+find_mover_or_die(
+	const std::string& mover_name,
 	utility::tag::TagCOP tag,
-	const protocols::moves::Movers_map& movers);
+	const protocols::moves::Movers_map& movers
+);
 
 /// @brief Searches <filters> for the named filter, returning it if it exists,
 /// otherwise halts execution with an error message.
-protocols::filters::FilterOP find_filter_or_die(const std::string& filter_name,
+protocols::filters::FilterOP
+find_filter_or_die(
+	const std::string& filter_name,
 	utility::tag::TagCOP tag,
-	const protocols::filters::Filters_map& filters);
+	const protocols::filters::Filters_map& filters
+);
+
+std::string
+complex_type_name_for_mover( std::string const & mover_name );
+
 
 }  // namespace moves
 }  // namespace protocols

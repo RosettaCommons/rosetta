@@ -43,17 +43,18 @@
 #include <ObjexxFCL/format.hh>
 
 //Utility Headers
+#include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
+
+// basic headers
 #include <basic/Tracer.hh>
 
+// c++ headers
 #include <iostream>
 
 // option key includes
-
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
@@ -234,101 +235,146 @@ ResidueLevelTask_::extrachi_sample_level(
 void
 ResidueLevelTask_::initialize_from_command_line()
 {
+	initialize_from_options( basic::options::option );
+}
+
+void ResidueLevelTask_::initialize_from_options( utility::options::OptionCollection const & options )
+{
 	using namespace basic::options;
 	using namespace OptionKeys::packing;
 
-	initialize_extra_rotamer_flags_from_command_line();
+	initialize_extra_rotamer_flags_from_options( options );
 
-	if ( option[ use_input_sc ] ) or_include_current( true );
-	if ( option[ OptionKeys::packing::preserve_c_beta ].user() ) or_preserve_c_beta( true );
-	if ( option[ OptionKeys::packing::prevent_repacking ].value() ) prevent_repacking();
+	if ( options[ use_input_sc ] ) or_include_current( true );
+	if ( options[ OptionKeys::packing::preserve_c_beta ].user() ) or_preserve_c_beta( true );
+	if ( options[ OptionKeys::packing::prevent_repacking ].value() ) prevent_repacking();
 
 }
 
 void
 ResidueLevelTask_::initialize_extra_rotamer_flags_from_command_line()
 {
+	initialize_extra_rotamer_flags_from_options( basic::options::option );
+}
+
+void
+ResidueLevelTask_::initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options )
+{
 	using namespace basic::options;
 	using namespace OptionKeys::packing;
 
-	if ( option[ ex1::ex1 ].user() ) { or_ex1( option[ ex1::ex1 ].value() ); }
-	if ( option[ ex2::ex2 ].user() ) { or_ex2( option[ ex2::ex2 ].value() ); }
-	if ( option[ ex3::ex3 ].user() ) { or_ex3( option[ ex3::ex3 ].value() ); }
-	if ( option[ ex4::ex4 ].user() ) { or_ex4( option[ ex4::ex4 ].value() ); }
+	if ( options[ ex1::ex1 ].user() ) { or_ex1( options[ ex1::ex1 ].value() ); }
+	if ( options[ ex2::ex2 ].user() ) { or_ex2( options[ ex2::ex2 ].value() ); }
+	if ( options[ ex3::ex3 ].user() ) { or_ex3( options[ ex3::ex3 ].value() ); }
+	if ( options[ ex4::ex4 ].user() ) { or_ex4( options[ ex4::ex4 ].value() ); }
 
-	if ( option[ ex1aro::ex1aro ].user() ) {
-		or_ex1aro( option[ ex1aro::ex1aro ].value() );
+	if ( options[ ex1aro::ex1aro ].user() ) {
+		or_ex1aro( options[ ex1aro::ex1aro ].value() );
 	}
 
-	if ( option[ ex2aro::ex2aro ].user() ) {
-		or_ex2aro( option[ ex2aro::ex2aro ].value() );
+	if ( options[ ex2aro::ex2aro ].user() ) {
+		or_ex2aro( options[ ex2aro::ex2aro ].value() );
 	}
 
-	if ( option[ ex1aro_exposed::ex1aro_exposed ].user() ) {
-		or_ex1aro_exposed( option[ ex1aro_exposed::ex1aro_exposed ].value() );
+	if ( options[ ex1aro_exposed::ex1aro_exposed ].user() ) {
+		or_ex1aro_exposed( options[ ex1aro_exposed::ex1aro_exposed ].value() );
 	}
 
-	if ( option[ ex2aro_exposed::ex2aro_exposed ].user() ) {
-		or_ex2aro_exposed( option[ ex2aro_exposed::ex2aro_exposed ].value() );
+	if ( options[ ex2aro_exposed::ex2aro_exposed ].user() ) {
+		or_ex2aro_exposed( options[ ex2aro_exposed::ex2aro_exposed ].value() );
 	}
 
-	if ( option[ ex1::level ].user() ) {
-		or_ex1_sample_level( static_cast<ExtraRotSample>( option[ ex1::level ].value() ));
+	if ( options[ ex1::level ].user() ) {
+		or_ex1_sample_level( static_cast<ExtraRotSample>( options[ ex1::level ].value() ));
 	}
 
-	if ( option[ ex2::level ].user() ) {
-		or_ex2_sample_level( static_cast<ExtraRotSample>( option[ ex2::level ].value() ));
+	if ( options[ ex2::level ].user() ) {
+		or_ex2_sample_level( static_cast<ExtraRotSample>( options[ ex2::level ].value() ));
 	}
 
-	if ( option[ ex3::level ].user() ) {
-		or_ex3_sample_level( static_cast<ExtraRotSample>( option[ ex3::level ].value() ));
+	if ( options[ ex3::level ].user() ) {
+		or_ex3_sample_level( static_cast<ExtraRotSample>( options[ ex3::level ].value() ));
 	}
 
-	if ( option[ ex4::level ].user() ) {
-		or_ex4_sample_level( static_cast<ExtraRotSample>( option[ ex4::level ].value() ));
+	if ( options[ ex4::level ].user() ) {
+		or_ex4_sample_level( static_cast<ExtraRotSample>( options[ ex4::level ].value() ));
 	}
 
-	if ( option[ ex1aro::level ].user() ) {
-		or_ex1aro_sample_level( static_cast<ExtraRotSample>( option[ ex1aro::level ].value() ));
+	if ( options[ ex1aro::level ].user() ) {
+		or_ex1aro_sample_level( static_cast<ExtraRotSample>( options[ ex1aro::level ].value() ));
 	}
 
-	if ( option[ ex2aro::level ].user() ) {
-		or_ex2aro_sample_level( static_cast<ExtraRotSample>( option[ ex2aro::level ].value() ));
+	if ( options[ ex2aro::level ].user() ) {
+		or_ex2aro_sample_level( static_cast<ExtraRotSample>( options[ ex2aro::level ].value() ));
 	}
 
-	if ( option[ ex1aro_exposed::level ].user() ) {
-		or_ex1aro_exposed_sample_level( static_cast<ExtraRotSample>( option[ ex1aro_exposed::level ].value() ));
+	if ( options[ ex1aro_exposed::level ].user() ) {
+		or_ex1aro_exposed_sample_level( static_cast<ExtraRotSample>( options[ ex1aro_exposed::level ].value() ));
 	}
 
-	if ( option[ ex2aro_exposed::level ].user() ) {
-		or_ex2aro_exposed_sample_level( static_cast<ExtraRotSample>( option[ ex2aro_exposed::level ].value() ));
+	if ( options[ ex2aro_exposed::level ].user() ) {
+		or_ex2aro_exposed_sample_level( static_cast<ExtraRotSample>( options[ ex2aro_exposed::level ].value() ));
 	}
 
-	if ( option[ ex1::operate ].user() ) { or_operate_on_ex1( option[ ex1::operate ]() ); }
-	if ( option[ ex2::operate ].user() ) { or_operate_on_ex2( option[ ex2::operate ]() ); }
-	if ( option[ ex3::operate ].user() ) { or_operate_on_ex3( option[ ex3::operate ]() ); }
-	if ( option[ ex4::operate ].user() ) { or_operate_on_ex4( option[ ex4::operate ]() ); }
+	if ( options[ ex1::operate ].user() ) { or_operate_on_ex1( options[ ex1::operate ]() ); }
+	if ( options[ ex2::operate ].user() ) { or_operate_on_ex2( options[ ex2::operate ]() ); }
+	if ( options[ ex3::operate ].user() ) { or_operate_on_ex3( options[ ex3::operate ]() ); }
+	if ( options[ ex4::operate ].user() ) { or_operate_on_ex4( options[ ex4::operate ]() ); }
 
 	// options to control dna rotamer building
-	if ( option[ exdna::exdna ].user() && option[ exdna::level ].user() ) {
-		if ( option[ exdna::exdna ].value() && option[ exdna::level ].value() ) {
-			or_exdna_sample_level( static_cast<ExtraRotSample>( option[ exdna::level ].value() ) );
+	if ( options[ exdna::exdna ].user() && options[ exdna::level ].user() ) {
+		if ( options[ exdna::exdna ].value() && options[ exdna::level ].value() ) {
+			or_exdna_sample_level( static_cast<ExtraRotSample>( options[ exdna::level ].value() ) );
 		}
-	} else if ( option[ exdna::exdna ].user() && !option[ exdna::level ].user() ) {
-		if ( option[ exdna::exdna ].value() ) {
+	} else if ( options[ exdna::exdna ].user() && !options[ exdna::level ].user() ) {
+		if ( options[ exdna::exdna ].value() ) {
 			or_exdna_sample_level( EX_ONE_STDDEV );
 		}
-	} else if ( !option[ exdna::exdna ].user() && option[ exdna::level ].user() ) {
-		if ( option[ exdna::level ].value() ) {
-			or_exdna_sample_level( static_cast<ExtraRotSample>( option[ exdna::level ].value() ) );
+	} else if ( !options[ exdna::exdna ].user() && options[ exdna::level ].user() ) {
+		if ( options[ exdna::level ].value() ) {
+			or_exdna_sample_level( static_cast<ExtraRotSample>( options[ exdna::level ].value() ) );
 		}
 	}
 
 	// extra chi cutoff
-	if ( option[ OptionKeys::packing::extrachi_cutoff ].user() ) {
-		and_extrachi_cutoff( option[ OptionKeys::packing::extrachi_cutoff ] );
+	if ( options[ OptionKeys::packing::extrachi_cutoff ].user() ) {
+		and_extrachi_cutoff( options[ OptionKeys::packing::extrachi_cutoff ] );
 	}
 }
+
+void
+ResidueLevelTask::list_options_read( utility::options::OptionKeyList & read_options )
+{
+	using namespace basic::options::OptionKeys;
+	read_options
+		+ packing::use_input_sc
+		+ packing::preserve_c_beta
+		+ packing::prevent_repacking
+		+ packing::ex1::ex1
+		+ packing::ex2::ex2
+		+ packing::ex3::ex3
+		+ packing::ex4::ex4
+		+ packing::ex1aro::ex1aro
+		+ packing::ex2aro::ex2aro
+		+ packing::ex1aro_exposed::ex1aro_exposed
+		+ packing::ex2aro_exposed::ex2aro_exposed
+		+ packing::ex1::level
+		+ packing::ex2::level
+		+ packing::ex3::level
+		+ packing::ex4::level
+		+ packing::ex1aro::level
+		+ packing::ex2aro::level
+		+ packing::ex1aro_exposed::level
+		+ packing::ex2aro_exposed::level
+		+ packing::ex1::operate
+		+ packing::ex2::operate
+		+ packing::ex3::operate
+		+ packing::ex4::operate
+		+ packing::exdna::exdna
+		+ packing::exdna::level
+		+ packing::extrachi_cutoff;
+}
+
 
 void ResidueLevelTask_::or_include_current( bool include_current )
 {

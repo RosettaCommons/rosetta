@@ -350,9 +350,9 @@ class CppFunction:
             # GCC gives non-working default arg here, so what we do is just bind without default... - probably could be fixed later
             # in future we can just locate enums in all parsed code but for now lets not guess...
             known_bad_defaults = ['(((utility::tag::Tag*)operator new(', 'utility::vector0<int, std::allocator<int>', 'MATCH_YR', 'std::cout', 'typename ', 'std::make_pair [with ',
-                'core::chemical::ChemicalManager::residue_type_set(const std::string&)(((const std::string&)(& core::chemical::FA_STANDARD',
-                'core::scoring::hbonds::DUMMY_DERIVS', 'core::fragment::BBTorsionSRFD', 'std::ios_base::in', 'protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE',
-                'protocols::stepwise::sampling::rna::local_count_data', 'numeric::xyzVector<T>', 'xsminmax_unspecified',
+                                  'core::chemical::ChemicalManager::residue_type_set(const std::string&)(((const std::string&)(& core::chemical::FA_STANDARD',
+                                  'core::scoring::hbonds::DUMMY_DERIVS', 'core::fragment::BBTorsionSRFD', 'std::ios_base::in', 'protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE',
+                                  'protocols::stepwise::sampling::rna::local_count_data', 'numeric::xyzVector<T>', 'xsminmax_unspecified', 'xsminmax_unbounded',
             ]
             for bd in known_bad_defaults:
                 if x.default.startswith(bd): return _r

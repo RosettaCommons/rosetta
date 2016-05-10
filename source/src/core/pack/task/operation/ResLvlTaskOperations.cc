@@ -119,7 +119,7 @@ std::string RestrictAbsentCanonicalAASRLT::keyname() { return "RestrictAbsentCan
 
 void RestrictAbsentCanonicalAASRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "aas", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute( "aas", utility::tag::xs_string );
 	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -205,7 +205,7 @@ std::string DisallowIfNonnativeRLT::keyname() { return "DisallowIfNonnativeRLT";
 
 void DisallowIfNonnativeRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "disallow_aas", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute( "disallow_aas", utility::tag::xs_string );
 	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -277,7 +277,7 @@ std::string AddBehaviorRLT::keyname() { return "AddBehaviorRLT"; }
 
 void AddBehaviorRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute::required_attribute( "behavior", utility::tag::xs_string ));
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute( "behavior", utility::tag::xs_string );
 	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
@@ -371,10 +371,9 @@ void ExtraChiCutoffRLT::parse_tag( TagCOP tag )
 std::string ExtraChiCutoffRLT::keyname() { return "ExtraChiCutoffRLT"; }
 
 void ExtraChiCutoffRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	utility::tag::activate_common_simple_type( xsd, "non_negative_integer" );
-
-	utility::tag::AttributeList attributes;
-	attributes.push_back( utility::tag::XMLSchemaAttribute( "extrachi_cutoff", "non_negative_integer", utility::to_string( EXTRACHI_CUTOFF_LIMIT ) ));
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes + XMLSchemaAttribute::attribute_w_default( "extrachi_cutoff", xsct_non_negative_integer, utility::to_string( EXTRACHI_CUTOFF_LIMIT ) );
 	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 

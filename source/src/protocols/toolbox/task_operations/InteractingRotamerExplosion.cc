@@ -120,13 +120,12 @@ void InteractingRotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDef
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "target_seqpos", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "score_cutoff", xs_decimal, "-0.5" ) );
-	attributes.push_back( XMLSchemaAttribute( "ex_level", "non_negative_integer", "4" ) );
-	attributes.push_back( XMLSchemaAttribute( "debug", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "exclude_radius", xs_decimal, "20.0" ) );
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "target_seqpos", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(  "score_cutoff", xs_decimal, "-0.5" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex_level", xsct_non_negative_integer, "4" )
+		+ XMLSchemaAttribute::attribute_w_default(  "debug", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "exclude_radius", xs_decimal, "20.0" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

@@ -200,6 +200,19 @@ pose::PoseOP pose_from_file( std::string const & filename, bool read_fold_tree, 
 	return pose;
 }
 
+pose::PoseOP
+pose_from_file(
+	std::string const & filename,
+	ImportPoseOptions const & options,
+	bool read_fold_tree,
+	FileType type
+)
+{
+	pose::PoseOP pose( new pose::Pose() );
+	pose_from_file( *pose, filename, options, read_fold_tree, type);
+	return pose;
+}
+
 
 pose::PoseOP pose_from_file(chemical::ResidueTypeSet const & residue_set, std::string const & filename,  bool read_fold_tree, FileType type)
 {

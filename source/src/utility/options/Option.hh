@@ -116,6 +116,11 @@ protected: // Assignment
 
 public: // Methods
 
+	/// @brief Copy operation -- requires that other match the type of this.
+	virtual
+	void
+	copy_from( Option const & other ) = 0;
+
 
 	/// @brief Activate
 	virtual
@@ -363,18 +368,30 @@ public: // Properties
 	std::string
 	default_string() const = 0;
 
+	/// @brief Default value string representation
+	virtual
+	std::string
+	raw_default_string() const = 0;
 
 	/// @brief Value string representation
 	virtual
 	std::string
 	value_string() const = 0;
 
+	/// @brief Value string representation
+	virtual
+	std::string
+	raw_value_string() const = 0;
 
 	/// @brief =Value string representation
 	virtual
 	std::string
 	equals_string() const = 0;
 
+	/// @brief The base class deserves a setter.  Why would it not have one?
+	virtual
+	void
+	set_cl_value( std::string const & value_str ) = 0;
 
 	/// @brief Set access property to true.
 	void been_accessed() const { been_accessed_ = true; }

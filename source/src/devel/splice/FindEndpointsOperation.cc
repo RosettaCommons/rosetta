@@ -231,16 +231,15 @@ FindEndpointsOperation::provide_xml_schema(
 ) {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "non_negative_integer" );
-
-	attributes.push_back( XMLSchemaAttribute( "Cterm_offset", "non_negative_integer", "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "Nterm_offset", "non_negative_integer", "0" ) );
-	attributes.push_back( XMLSchemaAttribute( "even", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "odd", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "neighbors", "non_negative_integer", "6" ) );
-	attributes.push_back( XMLSchemaAttribute( "distance_cutoff", xs_decimal, "18.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "point_inside", xs_boolean, "true" ) );
-	attributes.push_back( XMLSchemaAttribute( "sequence_separation", "non_negative_integer", "15" ) );
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "Cterm_offset", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "Nterm_offset", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "even", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "odd", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "neighbors", xsct_non_negative_integer, "6" )
+		+ XMLSchemaAttribute::attribute_w_default(  "distance_cutoff", xs_decimal, "18.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "point_inside", xs_boolean, "true" )
+		+ XMLSchemaAttribute::attribute_w_default(  "sequence_separation", xsct_non_negative_integer, "15" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

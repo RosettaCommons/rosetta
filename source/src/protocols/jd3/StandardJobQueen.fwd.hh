@@ -21,9 +21,13 @@ namespace protocols {
 namespace jd3 {
 
 class StandardJobQueen;
+class PreliminaryLarvalJob;
 
 typedef utility::pointer::shared_ptr< StandardJobQueen > StandardJobQueenOP;
 typedef utility::pointer::shared_ptr< StandardJobQueen const > StandardJobQueenCOP;
+
+typedef utility::pointer::shared_ptr< PreliminaryLarvalJob > PreliminaryLarvalJobOP;
+typedef utility::pointer::shared_ptr< PreliminaryLarvalJob const > PreliminaryLarvalJobCOP;
 
 } // namespace jd3
 } // namespace protocols

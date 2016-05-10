@@ -137,9 +137,10 @@ void ConsensusLoopDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDe
 {
 	AttributeList attributes;
 
-	attributes.push_back( XMLSchemaAttribute( "blueprint", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "residue_selector", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "include_adjacent_residues", xs_boolean ) );
+	attributes
+		+ XMLSchemaAttribute( "blueprint", xs_string )
+		+ XMLSchemaAttribute( "residue_selector", xs_string )
+		+ XMLSchemaAttribute( "include_adjacent_residues", xs_boolean );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

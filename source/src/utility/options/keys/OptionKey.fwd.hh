@@ -15,14 +15,16 @@
 #ifndef INCLUDED_utility_options_keys_OptionKey_fwd_hh
 #define INCLUDED_utility_options_keys_OptionKey_fwd_hh
 
+#include <list>
+#include <utility/keys/VariantKey.fwd.hh>
 
 namespace utility {
 namespace options {
 
-
 // Forward
 class OptionKey;
 
+typedef std::list< keys::VariantKey< OptionKey > > OptionKeyList;
 
 } // namespace options
 } // namespace utility

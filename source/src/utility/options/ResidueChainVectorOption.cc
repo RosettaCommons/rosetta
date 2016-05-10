@@ -22,6 +22,18 @@
 namespace utility {
 namespace options {
 
+void
+ResidueChainVectorOption::copy_from( Option const & other )
+{
+	debug_assert( dynamic_cast< ResidueChainVectorOption const * > ( & other ));
+
+	ResidueChainVectorOption const & rcvect_opt_other =
+		dynamic_cast< ResidueChainVectorOption const & > ( other );
+
+	Super::operator = ( rcvect_opt_other ); // rely on parent's assignment operator
+	value_strings_ = rcvect_opt_other.value_strings_;
+}
+
 // @brief Specialized function that converts tags like A:1-4 B:1-3 into a pair of  [1 2 3 4 1 2 3], [A A A A B B B]
 
 VectorOption_T_< ResidueChainVectorOptionKey, int > &

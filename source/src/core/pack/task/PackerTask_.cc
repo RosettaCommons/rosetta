@@ -525,11 +525,21 @@ Size PackerTask_::double_lazy_ig_memlimit() const
 PackerTask &
 PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 {
+	return initialize_extra_rotamer_flags_from_options( basic::options::option );
+}
+
+/// @brief read only the command line options for extra rotamer building;
+PackerTask &
+PackerTask_::initialize_extra_rotamer_flags_from_options(
+	utility::options::OptionCollection const & options
+)
+{
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
-		residue_tasks_[ ii ].initialize_extra_rotamer_flags_from_command_line();
+		residue_tasks_[ ii ].initialize_extra_rotamer_flags_from_options( options );
 	}
 	return *this;
 }
+
 
 void PackerTask_::or_multi_cool_annealer( bool setting )
 {
@@ -640,32 +650,38 @@ PackerTask_::show_all_residue_tasks() const {
 PackerTask &
 PackerTask_::initialize_from_command_line()
 {
-	using namespace basic::options;
+	return initialize_from_options( basic::options::option );
+}
+
+PackerTask &
+PackerTask_::initialize_from_options( utility::options::OptionCollection const & options )
+{
+	//using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	T << "Packer task: initialize from command line() " << std::endl;
 
-	if ( option[ packing::linmem_ig ].user() && ! optimize_H_ ) {
+	if ( options[ packing::linmem_ig ].user() && ! optimize_H_ ) {
 		or_linmem_ig( true );
-		decrease_linmem_ig_history_size( option[ packing::linmem_ig ] );
+		decrease_linmem_ig_history_size( options[ packing::linmem_ig ] );
 	}
-	if ( option[ packing::lazy_ig ] && ! optimize_H_ ) {
+	if ( options[ packing::lazy_ig ] && ! optimize_H_ ) {
 		or_lazy_ig( true );
 	}
-	if ( option[ packing::double_lazy_ig ] && ! optimize_H_ ) {
+	if ( options[ packing::double_lazy_ig ] && ! optimize_H_ ) {
 		or_double_lazy_ig( true );
 	}
-	if ( option[ packing::multi_cool_annealer ].user()  ) {
+	if ( options[ packing::multi_cool_annealer ].user()  ) {
 		or_multi_cool_annealer( true );
-		increase_multi_cool_annealer_history_size( option[ packing::multi_cool_annealer ] );
+		increase_multi_cool_annealer_history_size( options[ packing::multi_cool_annealer ] );
 	}
 
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
-		residue_tasks_[ ii ].initialize_from_command_line();
+		residue_tasks_[ ii ].initialize_from_options( options );
 	}
 
-	if ( option[ packing::fix_his_tautomer ].user() ) {
-		utility::vector1< int > positions_to_fix( option[ packing::fix_his_tautomer ] );
+	if ( options[ packing::fix_his_tautomer ].user() ) {
+		utility::vector1< int > positions_to_fix( options[ packing::fix_his_tautomer ] );
 		if ( positions_to_fix.size() == 1 && positions_to_fix[ 1 ] == 0 ) {
 			utility::vector1< Size > empty;
 			or_fix_his_tautomer( empty, true );
@@ -691,15 +707,33 @@ PackerTask_::initialize_from_command_line()
 		}
 	}
 
-	if ( option[ packing::repack_only ].value() ) {
+	if ( options[ packing::repack_only ].value() ) {
 		restrict_to_repacking();
 	}
 
-	and_max_rotbump_energy( option[ packing::max_rotbump_energy ] );
+	and_max_rotbump_energy( options[ packing::max_rotbump_energy ] );
 
 	update_n_to_be_packed();
 	return *this;
 }
+
+
+void
+PackerTask::list_options_read( utility::options::OptionKeyList & read_options )
+{
+	using namespace basic::options::OptionKeys;
+	read_options
+		+ packing::linmem_ig
+		+ packing::lazy_ig
+		+ packing::double_lazy_ig
+		+ packing::multi_cool_annealer
+		+ packing::fix_his_tautomer
+		+ packing::repack_only
+		+ packing::max_rotbump_energy;
+
+	ResidueLevelTask::list_options_read( read_options );
+}
+
 
 /// @details vector boolean is based on residue position, disables packing at false positions
 ///does nothing to true positions.  Cannot turn on packing.

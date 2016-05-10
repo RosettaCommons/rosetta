@@ -186,9 +186,9 @@ void
 BinSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "bin_params_file", xs_string, "ABEGO" ) );
-	attributes.push_back( XMLSchemaAttribute( "bin", xs_string, "" ));
-	attributes.push_back( XMLSchemaAttribute( "select_only_alpha_aas", xs_boolean, "true" ));
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "bin_params_file", xs_string, "ABEGO" ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "bin", xs_string, "" ));
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "select_only_alpha_aas", xs_boolean, "true" ));
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

@@ -19,7 +19,7 @@
 
 #include <core/types.hh>
 
-
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -29,14 +29,23 @@
 
 #include <core/pack/task/ResfileReader.hh>
 
-#include <string>
-#include <sstream> //stringstreams can convert integers into strings type-safely for comparisons en masse
-
-//Auto Headers
-#include <core/chemical/ResidueType.hh>
-#include <utility/vector1.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh> // for a handful of options that should be read
+#include <basic/options/keys/in.OptionKeys.gen.hh> // for a handful of options that should not be read
 #include <basic/options/option.hh>
+#include <basic/options/util.hh>
+
+// Utility Headers
+#include <utility/vector1.hh>
+#include <utility/backtrace.hh>
+#include <utility/keys/VariantKey.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKey.hh>
+
+// C++ headers
+#include <string>
+#include <sstream>
+
 
 
 // --------------- Test Class --------------- //
@@ -48,6 +57,8 @@ private:
 	core::pack::task::PackerTaskOP task;
 
 public:
+
+	typedef utility::keys::VariantKey< utility::options::OptionKey > VariantOptionKey;
 
 
 	// --------------- Fixtures --------------- //
@@ -261,6 +272,108 @@ public:
 			TS_ASSERT( ! task->design_residue( ii ) );
 			TS_ASSERT( ! task->being_designed( ii ) );
 		}
+	}
+
+	void test_PackerTask_initialize_from_options_and_list_options_read_are_in_sync()
+	{
+
+		utility::options::OptionKeyList packer_task_options;
+		core::pack::task::PackerTask::list_options_read( packer_task_options );
+		// cursory check of some of the options known to be read by the ImportPoseOptions
+		TS_ASSERT_EQUALS( std::count( packer_task_options.begin(), packer_task_options.end(), VariantOptionKey( basic::options::OptionKeys::packing::linmem_ig )), 1 );
+		TS_ASSERT_EQUALS( std::count( packer_task_options.begin(), packer_task_options.end(), VariantOptionKey( basic::options::OptionKeys::packing::fix_his_tautomer )), 1 );
+		TS_ASSERT_EQUALS( std::count( packer_task_options.begin(), packer_task_options.end(), VariantOptionKey( basic::options::OptionKeys::packing::max_rotbump_energy )), 1 );
+
+		// cursory check that not all options are in here, because that would be weird
+		TS_ASSERT_EQUALS( std::count( packer_task_options.begin(), packer_task_options.end(), VariantOptionKey( basic::options::OptionKeys::in::file::s )), 0 );
+
+		utility::options::OptionCollectionCOP packer_task_option_collection =
+			basic::options::read_subset_of_global_option_collection( packer_task_options );
+
+		// Now, try to create an ImportPoseOptions from the local option collection
+		try {
+			set_throw_on_next_assertion_failure(); // just in case
+			task->initialize_from_options( *packer_task_option_collection );
+		} catch ( ... ) {
+			TS_ASSERT( false ); // we screwed the pooch
+		}
+	}
+
+	void test_PackerTask_init_from_options_actually_reads_option_collection()
+	{
+
+		utility::options::OptionKeyList packer_task_options;
+		core::pack::task::PackerTask::list_options_read( packer_task_options );
+
+		// Now drop one of the options from the list, one which always gets read, and make sure that
+		// when we call the initialize_from_options function, that an assertion failure occurs
+		packer_task_options.remove( VariantOptionKey( basic::options::OptionKeys::packing::fix_his_tautomer ));
+
+		utility::options::OptionCollectionCOP packer_task_option_collection =
+			basic::options::read_subset_of_global_option_collection( packer_task_options );
+
+		// Now, try to create an ImportPoseOptions from the local option collection
+		try {
+			set_throw_on_next_assertion_failure();
+			task->initialize_from_options( *packer_task_option_collection );
+			TS_ASSERT( false ); // we screwed the pooch
+		} catch ( ... ) {
+			// good -- if we don't list an option that we're going to read, then
+			// an exception will be thrown / an assertion failure will get triggered
+			TS_ASSERT( true );
+		}
+
+	}
+
+	void test_ResidueLevelTask_initialize_from_options_and_list_options_read_are_in_sync()
+	{
+
+		utility::options::OptionKeyList res_lvl_task_options;
+		core::pack::task::ResidueLevelTask::list_options_read( res_lvl_task_options );
+		// cursory check of some of the options known to be read by the ImportPoseOptions
+		TS_ASSERT_EQUALS( std::count( res_lvl_task_options.begin(), res_lvl_task_options.end(), VariantOptionKey( basic::options::OptionKeys::packing::ex1::ex1 )), 1 );
+		TS_ASSERT_EQUALS( std::count( res_lvl_task_options.begin(), res_lvl_task_options.end(), VariantOptionKey( basic::options::OptionKeys::packing::use_input_sc )), 1 );
+		TS_ASSERT_EQUALS( std::count( res_lvl_task_options.begin(), res_lvl_task_options.end(), VariantOptionKey( basic::options::OptionKeys::packing::extrachi_cutoff )), 1 );
+
+		// cursory check that not all options are in here, because that would be weird
+		TS_ASSERT_EQUALS( std::count( res_lvl_task_options.begin(), res_lvl_task_options.end(), VariantOptionKey( basic::options::OptionKeys::in::file::s )), 0 );
+
+		utility::options::OptionCollectionCOP res_lvl_task_option_collection =
+			basic::options::read_subset_of_global_option_collection( res_lvl_task_options );
+
+		// Now, try to create an ImportPoseOptions from the local option collection
+		try {
+			set_throw_on_next_assertion_failure(); // just in case
+			task->nonconst_residue_task( 5 ).initialize_from_options( *res_lvl_task_option_collection );
+		} catch ( ... ) {
+			TS_ASSERT( false ); // we screwed the pooch
+		}
+	}
+
+	void test_ResidueLevelTask_init_from_options_actually_reads_option_collection()
+	{
+
+		utility::options::OptionKeyList res_lvl_task_options;
+		core::pack::task::PackerTask::list_options_read( res_lvl_task_options );
+
+		// Now drop one of the options from the list, one which always gets read, and make sure that
+		// when we call the initialize_from_options function, that an assertion failure occurs
+		res_lvl_task_options.remove( VariantOptionKey( basic::options::OptionKeys::packing::ex1::ex1 ));
+
+		utility::options::OptionCollectionCOP res_lvl_task_option_collection =
+			basic::options::read_subset_of_global_option_collection( res_lvl_task_options );
+
+		// Now, try to create an ImportPoseOptions from the local option collection
+		try {
+			set_throw_on_next_assertion_failure();
+			task->nonconst_residue_task( 5 ).initialize_from_options( *res_lvl_task_option_collection );
+			TS_ASSERT( false ); // we screwed the pooch
+		} catch ( ... ) {
+			// good -- if we don't list an option that we're going to read, then
+			// an exception will be thrown / an assertion failure will get triggered
+			TS_ASSERT( true );
+		}
+
 	}
 
 };//end class

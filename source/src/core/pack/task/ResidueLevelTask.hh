@@ -35,12 +35,12 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 
 // STL Headers
-
 #include <iosfwd>
 
-#include <utility/vector1.hh>
 
 #ifdef PYROSETTA
 	#include <core/id/SequenceMapping.hh>
@@ -74,8 +74,14 @@ public:
 	) const = 0;
 
 	virtual void initialize_from_command_line() = 0;
-
 	virtual void initialize_extra_rotamer_flags_from_command_line() = 0;
+
+	virtual void initialize_from_options( utility::options::OptionCollection const & options ) = 0;
+	virtual void initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options ) = 0;
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
 
 	virtual void or_include_current( bool include_current ) = 0;
 	virtual bool include_current() const = 0;

@@ -25,6 +25,7 @@
 #include <utility/options/VectorOption.hh>
 #include <utility/Bound.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
@@ -168,6 +169,20 @@ protected: // Assignment
 			value_ = option.value_;
 		}
 		return *this;
+	}
+
+public: // copying
+
+	/// @brief Copy operation
+	virtual
+	void copy_from( Option const & other ) {
+
+		debug_assert( dynamic_cast< VectorOption_T_ const * > ( & other ));
+
+		VectorOption_T_ const & vect_opt_other =
+			static_cast< VectorOption_T_ const & > ( other );
+
+		*this = vect_opt_other; // rely on assignment operator
 	}
 
 
@@ -1032,6 +1047,30 @@ public: // Properties
 		}
 	}
 
+	/// @brief Same as default_string, but without the "[" and "]"s wrapping the value list
+	inline
+	std::string
+	raw_default_string() const
+	{
+		if ( ( default_state_ == DEFAULT ) && ( ! default_value_.empty() ) ) {
+			//using ObjexxFCL::has_any_of;
+			std::ostringstream stream;
+			stream_setup( stream );
+			for ( ConstIterator i = default_value_.begin(), e = default_value_.end(); i != e; ++i ) {
+				if ( i != default_value_.begin() ) { stream << ' '; }
+				std::string const s( value_string_of( *i ) );
+				if ( has_any_of_characters( s, " \"" ) ) { // Quote-wrap the string
+					stream << '"' << s << '"';
+				} else {
+					stream << s;
+				}
+			}
+			return stream.str();
+		} else { // Default inactive or empty
+			return std::string();
+		}
+	}
+
 
 	/// @brief Value string representation
 	inline
@@ -1043,7 +1082,7 @@ public: // Properties
 			std::ostringstream stream;
 			stream_setup( stream );
 			for ( ConstIterator i = value_.begin(), e = value_.end(); i != e; ++i ) {
-				stream << ' ';
+				if ( i != value_.begin() ) stream << ' ';
 				std::string const s( value_string_of( *i ) );
 				if ( has_any_of_characters( s, " \"" ) ) { // Quote-wrap the string
 					stream << '"' << s << '"';
@@ -1055,6 +1094,12 @@ public: // Properties
 		} else { // Value inactive or empty
 			return std::string();
 		}
+	}
+
+	inline
+	std::string
+	raw_value_string() const {
+		return value_string();
 	}
 
 
@@ -1271,13 +1316,17 @@ protected: // Methods
 	Value
 	value_of( std::string const & value_str ) const = 0;
 
-	/// @brief Value of a string
+	/// @brief Value of a string that contains a white-space separated list of values
 	virtual
 	Values
 	values_of( std::string const & value_str ) const
 	{
 		Values vs;
-		vs.push_back( value_of( value_str ) );
+		utility::vector1< std::string > ws_sep_values = split( value_str );
+		vs.reserve( ws_sep_values.size() );
+		for ( platform::Size ii = 1; ii <= ws_sep_values.size(); ++ii ) {
+			vs.push_back( value_of( ws_sep_values[ ii ] ) );
+		}
 		return vs;
 	}
 

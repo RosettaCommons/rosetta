@@ -158,12 +158,12 @@ void LinkResidues::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	subelements.add_simple_subelement( "LinkGroup", subattributes );
 	subelements.add_simple_subelement( "linkgroup", subattributes );
 
-	XMLComplexTypeSchemaGenerator ct_gen;
+	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen
 		.element_name( keyname() )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.add_attribute( optional_name_attribute() )
-		.set_subelements_repeatable( subelements, & linkres_subelement_group )
+		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );
 }
 

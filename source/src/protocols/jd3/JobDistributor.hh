@@ -37,6 +37,9 @@ namespace jd3 {
 
 class JobDistributor : public utility::pointer::ReferenceCount {
 public:
+	typedef utility::vector1< LarvalJobOP > LarvalJobVector;
+
+public:
 
 	JobDistributor();
 	virtual ~JobDistributor();
@@ -102,7 +105,7 @@ private:
 
 	JobQueenOP job_queen_;
 
-	LarvalJobs jobs_for_current_round_;
+	LarvalJobVector jobs_for_current_round_;
 	core::Size njobs_for_round_;
 	core::Size next_job_index_;
 

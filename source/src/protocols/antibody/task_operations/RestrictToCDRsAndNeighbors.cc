@@ -170,18 +170,17 @@ void RestrictToCDRsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDefi
 {
 	AttributeList attributes;
 
-	activate_common_simple_type( xsd, "nonnegative_integer" );
+	attributes
+		+ XMLSchemaAttribute( "cdrs", xs_string )
 
-	attributes.push_back( XMLSchemaAttribute( "cdrs", xs_string ) );
+		+ XMLSchemaAttribute::attribute_w_default(  "neighbor_dis", xs_decimal, "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_cdrs", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_antigen", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_framework", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "stem_size", xsct_non_negative_integer, "0" )
 
-	attributes.push_back( XMLSchemaAttribute( "neighbor_dis", xs_decimal, "6.0" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_cdrs", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_antigen", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "design_framework", xs_boolean, "false" ) );
-	attributes.push_back( XMLSchemaAttribute( "stem_size", "non_negative_integer", "0" ) );
-
-	attributes.push_back( XMLSchemaAttribute( "cdr_definition", xs_string ) );
-	attributes.push_back( XMLSchemaAttribute( "numbering_scheme", xs_string ) );
+		+ XMLSchemaAttribute( "cdr_definition", xs_string )
+		+ XMLSchemaAttribute( "numbering_scheme", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

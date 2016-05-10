@@ -127,7 +127,9 @@ OptionCollection::check_specs() const
 	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option: Check it
-			if ( ! option( key ).legal_specs_report() ) error = true;
+			if ( ! option( key ).legal_specs_report() ) {
+				error = true;
+			}
 		}
 	}
 

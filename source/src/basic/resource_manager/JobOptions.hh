@@ -16,6 +16,7 @@
 // Unit Headers
 #include <basic/resource_manager/JobOptions.fwd.hh>
 
+#include <utility/options/OptionCollection.fwd.hh> // for the OptionTypes enum
 #include <utility/options/keys/BooleanOptionKey.hh>
 #include <utility/options/keys/BooleanVectorOptionKey.hh>
 #include <utility/options/keys/FileOptionKey.hh>
@@ -40,6 +41,7 @@
 
 //C++ Headers
 #include <iosfwd>
+#include <list>
 #include <map>
 
 namespace basic {
@@ -52,6 +54,9 @@ namespace resource_manager {
 class JobOptions : public utility::pointer::ReferenceCount {
 
 public: // management methods
+
+	JobOptions();
+
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~JobOptions();
 
@@ -311,6 +316,11 @@ public: // accessor methods
 
 	bool operator == ( JobOptions const & rhs ) const;
 
+	void track_insertion_order( bool setting );
+
+	std::list< std::pair< utility::options::OptionTypes, std::string > > const &
+	insertion_order() const;
+
 private:
 
 	std::map< utility::options::BooleanOptionKey, bool > const &
@@ -362,7 +372,14 @@ private:
 	map_for_key( utility::options::StringOptionKey const & );
 	std::map< utility::options::StringVectorOptionKey, utility::vector1< std::string > > &
 	map_for_key( utility::options::StringVectorOptionKey const & );
+
 private:
+	bool track_insertion_order_;
+
+	// keep track of the order in which options are added to the JobOptions object
+	// so that it can be used to document the options used by a system or application.
+	std::list< std::pair< utility::options::OptionTypes, std::string > > insertion_order_;
+
 	std::map< utility::options::BooleanOptionKey, bool >
 		boolean_options_;
 	std::map< utility::options::BooleanVectorOptionKey, utility::vector1< bool > >

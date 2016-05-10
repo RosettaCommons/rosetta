@@ -16,12 +16,16 @@
 
 // Package headers
 #include <protocols/jd2/parser/DataLoader.fwd.hh>
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <core/types.hh>
+// C++ headers
 #include <string>
+
+// Boost headers -- temp -- move to base class
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace jd2 {
@@ -30,6 +34,9 @@ namespace parser {
 /// @brief A class for creating new instances of DataLoaders for use in the XML Parser
 class DataLoaderCreator : public utility::pointer::ReferenceCount
 {
+public:
+	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+
 public:
 	DataLoaderCreator();
 	virtual ~DataLoaderCreator();
