@@ -126,7 +126,9 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		if ( startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
-
+		
+		boost::to_upper(line); //Capitalize entire line.
+		
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
 
 		check_line_len(lineSP, 2);
@@ -134,10 +136,8 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 
 		//Everything besides comments needs to have a CDR or ALL associated with it.
 		std::string cdr_type = lineSP[1];
-		boost::to_upper(cdr_type);
-
 		std::string mode = lineSP[2];
-		boost::to_upper(mode);
+
 
 		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4) )  {
 			parse_cdr_option(mode, lineSP);
@@ -190,7 +190,6 @@ CDRSetOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& l
 	if ( mode == "CDR_SET" || mode == "CDRS" || mode == "GRAFT_SET" || mode == "CDRSET" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
-		boost::to_upper(adjective);
 		parse_cdr_set_option(adjective, lineSP);
 	}
 }
@@ -209,14 +208,12 @@ CDRSetOptionsParser::parse_cdr_set_option(std::string const setting, vector1<str
 
 	if ( lineSP.size() == 3 ) {
 		std::string option = lineSP[3];
-		boost::to_upper(option);
 		set_cdr_set_general_option(option);
 		return;
 	}
 
 	check_line_len(lineSP, 4);
 	std::string type = lineSP[4];
-	boost::to_upper(type);
 
 	if ( setting == "INCLUDEONLY" ) {
 
@@ -243,7 +240,6 @@ CDRSetOptionsParser::parse_cdr_set_option(std::string const setting, vector1<str
 			setting == "LARGE_CLUSTERS_ONLY" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
-		boost::to_upper(option);
 
 		if ( option == "FALSE" || option == "NO" || option == "NONE" ) {
 			cdr_options_->cluster_sampling_cutoff(0);
@@ -275,7 +271,6 @@ CDRSetOptionsParser::set_cdr_set_include_options(std::string const type, vector1
 	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
 
 		std::string item = lineSP[i];
-		boost::to_upper(item);
 
 		if ( type == "CLUSTERS" || type == "CLUSTER" ) {
 			TR << item<<std::endl;
@@ -322,7 +317,6 @@ CDRSetOptionsParser::set_cdr_set_exclude_options(const std::string type, vector1
 	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
 
 		std::string item = lineSP[i];
-		boost::to_upper(item);
 
 		if ( type == "CLUSTERS" || type == "CLUSTER" ) {
 			cdr_options_->exclude_clusters_add(cluster_manager_->cdr_cluster_string_to_enum(item));

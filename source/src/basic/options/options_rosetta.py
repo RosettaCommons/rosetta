@@ -3528,6 +3528,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Display constraints file for use with camelid H3 modeler',
 			default='false'
 			),
+
 		### Only used for antibody design at the moment ###
 		############# CDR Dihedral Constraints ############
 		Option('use_mean_cluster_cst_data', 'Boolean',
@@ -3543,29 +3544,33 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default='10'
 			),
 
-
-                     Option('prefix', 'String', desc="File name prefix for antibody grafting outout", default='grafting.'),
-
-                     Option('grafting_database', 'String',
-			    desc='Path to the Antibody Grafting Database from Rosetta tools repository. Should be point to tools/antibody',
-			    default='../../tools/antibody'
-		     ),
-
-                     Option('blastp', 'String', desc="Path to NCBI-Blast+ executable", default='blastp'),
-
-
-        Option('general_dihedral_cst_phi_sd', 'Real',
-            desc = 'Standard deviation to use for phi while using general dihedral circular harmonic constraints',
-            default='16.0'
-            ),
-        Option('general_dihedral_cst_psi_sd', 'Real',
-            desc = 'Standard deviation to use for psi while using general dihedral circular harmonic constraints',
-            default = '16.0'
-            ),
-        Option('allow_omega_mismatches_for_north_clusters', 'Boolean',
-            desc = "Skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.",
-            default = 'false'),
+        	Option('general_dihedral_cst_phi_sd', 'Real',
+            		desc = 'Standard deviation to use for phi while using general dihedral circular harmonic constraints',
+            		default='16.0'
+            		),
+        	Option('general_dihedral_cst_psi_sd', 'Real',
+            		desc = 'Standard deviation to use for psi while using general dihedral circular harmonic constraints',
+            		default = '16.0'
+            		),
+        	Option('allow_omega_mismatches_for_north_clusters', 'Boolean',
+            		desc = "Skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.",
+            		default = 'false'),
         
+
+
+ 		##### New Antibody Refactoring (Removal of Antibody.py ) Options.
+
+                Option('prefix', 'String', desc="File name prefix for antibody grafting outout", default='grafting.'),
+
+                Option('grafting_database', 'String',
+			desc='Path to the Antibody Grafting Database from Rosetta tools repository. Should be point to tools/antibody',
+			default='../../tools/antibody'
+			),
+
+                Option('blastp', 'String', desc="Path to NCBI-Blast+ executable", default='blastp'),
+
+
+
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------
 		Option_Group( 'design',
@@ -3600,7 +3605,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			###### Protocol Steps
 			Option('design_protocol', 'String',
 				desc='Set the main protocol to use.  Note that deterministic is currently only available for the grafting of one CDR.',
-				default='gen_mc',
+				default='even_cluster_mc',
 				legal = ['gen_mc', 'even_cluster_mc', 'even_length_cluster_mc', 'deterministic_graft']
 				),
 			Option('run_snugdock', 'Boolean',
@@ -3627,23 +3632,25 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default = 'false',
 				desc = "Enable use of epitope constraints to add SiteConstraints between the epitope and paratope.  Note that paratope constraints are always used.  Note that these site constraints are only used during docking unless -global_atom_pair_cst_scoring is set."
 				),
-            ###### Constraint Control
-            Option('dihedral_cst_weight', 'Real',
-                default = '.3',
-                desc = 'Weight to use for CDR CircularHarmonic cluster-based or general constraints that are automatically added to each structure and updated after each graft. Set to zero if you dont want to use these constraints. Note that they are not used for the backrub mintype. Overrides weight/patch settings.'
-                ),
-            Option('atom_pair_cst_weight', 'Real',
-                default = '0.01',
-                desc = 'Weight to use for Epitope/Paratope SiteConstraints.  Paratope Side contraints are always used.  Set to zero to completely abbrogate these constraints. Overrides weight/patch settings.'
-                ),
-            Option('global_dihedral_cst_scoring', 'Boolean',
-                default = 'false',
-                desc = 'Use the dihedral cst score throughout the protocol, including final scoring of the poses instead of just during minimization step'
-                ),
-            Option('global_atom_pair_cst_scoring', 'Boolean',
-                default = 'false',
-                desc = 'Use the atom pair cst score throughout the protocol, including final scoring of the poses instead of just during docking. Typically, the scoreterm is set to zero for scorefxns other than docking to decrease bias via loop lengths, relax, etc.  It may indeed help to target a particular epitope quicker during monte carlo design if epitope constraints are in use, as well for filtering final models on score towards a particular epitope if docking.'
-                ),
+
+            		###### Constraint Control
+            		Option('dihedral_cst_weight', 'Real',
+                		default = '.3',
+                		desc = 'Weight to use for CDR CircularHarmonic cluster-based or general constraints that are automatically added to each structure and updated after each graft. Set to zero if you dont want to use these constraints. Note that they are not used for the backrub mintype. Overrides weight/patch settings.'
+                		),
+            		Option('atom_pair_cst_weight', 'Real',
+                		default = '0.01',
+                		desc = 'Weight to use for Epitope/Paratope SiteConstraints.  Paratope Side contraints are always used.  Set to zero to completely abbrogate these constraints. Overrides weight/patch settings.'
+                		),
+            		Option('global_dihedral_cst_scoring', 'Boolean',
+                		default = 'false',
+                		desc = 'Use the dihedral cst score throughout the protocol, including final scoring of the poses instead of just during minimization step'
+                		),
+            		Option('global_atom_pair_cst_scoring', 'Boolean',
+                		default = 'false',
+                		desc = 'Use the atom pair cst score throughout the protocol, including final scoring of the poses instead of just during docking. Typically, the scoreterm is set to zero for scorefxns other than docking to decrease bias via loop lengths, relax, etc.  It may indeed help to target a particular epitope quicker during monte carlo design if epitope constraints are in use, as well for filtering final models on score towards a particular epitope if docking.'
+                		),
+
 			###### Optimization Step
 			Option('do_dock', 'Boolean',
 				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.  If sequence design is enabled, will design regions/CDRs set during the high-res dock. Recommended to ',
@@ -3657,19 +3664,24 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc='Do Dock -> Min -> Dock instead of Dock->Min where you would otherwise want 2 cycles. Must already be passing do_dock',
 				default='false'
 				),
+
 			###### Protocol Rounds
 			Option('outer_cycle_rounds', 'Integer',
-				desc='Rounds for outer loop of the protocol (not for deterministic_graft ).  Each round chooses a CDR and designs',
-				default='150'
+				desc='Rounds for outer loop of the protocol (not for deterministic_graft ).  Each round chooses a CDR and designs. One run of 100 cycles with relax takes about 12 hours.\
+				  If you decrease this number, you will decrease your run time significantly, but your final decoys will be higher energy.  Make sure to increase the total number of output \
+				  structures (nstruct) if you use lower than this number.  Typically about 500 - 1000 nstruct is more than sufficient.  Full DeNovo design will require significantly more rounds \
+				  and nstruct.  If you are docking, runs take about 30 percent longer.',
+				default='100'
 				),
-            Option('inner_cycle_rounds', 'Integer',
-                desc='Number of times to run the inner minimization protocol after each graft.  Higher (2-3) rounds recommended for pack/min/backrub mintypes or if including dock in the protocol.',
-                default = '1'
-                ),
+            		Option('inner_cycle_rounds', 'Integer',
+                		desc='Number of times to run the inner minimization protocol after each graft.  Higher (2-3) rounds recommended for pack/min/backrub mintypes or if including dock in the protocol.',
+                		default = '1'
+                		),
 			Option('dock_cycle_rounds', 'Integer',
 				desc='Number of rounds for any docking.  If you are seeing badly docked structures, increase this value.',
 				default='1'
 				),
+
 			##### Distance Detection
 			Option('interface_dis', 'Real',
 				desc='Interface distance cutoff.  Used for repacking of interface, epitope detection, etc.',
@@ -3679,32 +3691,35 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc='Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.',
 				default='6.0'
 				),
+
 			###### Outlier Control
 			Option('use_outliers', 'Boolean',
 				desc='Include outlier data for GraftDesign, profile-based sequence design stats, and cluster-based dihedral constraints.  Outliers are defined as having a dihedral distance of > 40 degrees and an RMSD of >1.5 A to the cluster center.  Use to increase sampling of small or rare clusters.',
 				default='false'
 				),
-      Option('use_H3_graft_outliers', 'Boolean',
-         desc='Include outliers when grafting H3.  H3 does not cluster well, so most structures have high dihedral distance and RMSD to the cluster center.  Due to this, cluster-based dihedral constraints for H3 are not used.  Sequence profiles can be used for clusters, but not usually.',
-         default = 'true'
-         ),
+      			Option('use_H3_graft_outliers', 'Boolean',
+         			desc='Include outliers when grafting H3.  H3 does not cluster well, so most structures have high dihedral distance and RMSD to the cluster center.  Due to this, cluster-based dihedral constraints for H3 are not used.  Sequence profiles can be used for clusters, but not usually.',
+         			default = 'true'
+         			),
 			Option('use_only_H3_kinked', 'Boolean',
 				desc = 'Remove any non-kinked CDRs from the CDRSet if grafting H3.  For now, the match is based on the ramachandran area of the last two residues of the H3. Kinked in this case is defined as having AB or DB regions at the end.  Will be improved for detection.',
 				default = 'false'
 				),
-      ###### Regional Sequence Design
-      Option('design_antigen', 'Boolean',
-        desc='Design antigen residues during sequence design.  Intelligently.  Typically, only the neighbor antigen residues of designing cdrs or interfaces will be co-designed.  Useful for specific applications.',
-        default = 'false'
-        ),
-      Option('design_framework', 'Boolean',
-        desc='Design framework residues during sequence design.  Typically done with only neighbor residues of designing CDRs or during interface minimization.',
-        default = 'false'
-        ),
-      Option('conservative_framework_design', 'Boolean',
-        desc='If designing Framework positions, use conservative mutations instead of all of them.',
-        default='true'
-        ),
+
+      			###### Regional Sequence Design
+      			Option('design_antigen', 'Boolean',
+        			desc='Design antigen residues during sequence design.  Intelligently.  Typically, only the neighbor antigen residues of designing cdrs or interfaces will be co-designed.  Useful for specific applications.',
+        			default = 'false'
+        			),
+      			Option('design_framework', 'Boolean',
+        			desc='Design framework residues during sequence design.  Typically done with only neighbor residues of designing CDRs or during interface minimization.',
+        			default = 'false'
+        			),
+      			Option('conservative_framework_design', 'Boolean',
+        			desc='If designing Framework positions, use conservative mutations instead of all of them.',
+        			default='true'
+        			),
+
 			###### Seq Design Control
 			Option('design_H3_stem', 'Boolean',
 				default='false',
@@ -3718,11 +3733,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default='0',
 				desc='Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions. '
 				),
-            Option('force_mutate_framework_for_cluster', 'Boolean',
-                default = 'true',
-                desc = "Force framework mutations that maintain certain clusters. Currently L1-11-1 vs L1-11-2.  See North cluster paper for these dependencies, or checkout rosetta/database/sampling/antibodies/design/cluster_framework_mutations.txt",
-                ),
-			      ## Profile Stats
+            		Option('force_mutate_framework_for_cluster', 'Boolean',
+                		default = 'true',
+                		desc = "Force framework mutations that maintain certain clusters. Currently L1-11-1 vs L1-11-2.  See North cluster paper for these dependencies, or checkout rosetta/database/sampling/antibodies/design/cluster_framework_mutations.txt",
+                	),
+
+			## Profile Stats
 			Option('seq_design_stats_cutoff', 'Integer',
 				default='10',
 				desc='Value for probabilistic -> conservative sequence design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur. More data = better predictability.'
@@ -3732,24 +3748,26 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default='1',
 				desc='If designing using profiles, this is the number of times the profile is sampled each time packing done.  Increase this number to increase variability of designs - especially if not using relax as the mintype.'
 				),
+
 			##### Fine Control
 			Option('use_light_chain_type','Boolean',
 				default='true',
 				desc='Use the light chain type, lambda or kappa IF given via option -antibody:light_chain.  This limits any aspect of the design protocol to use only data and cdrs for the given antibody type.  It (will) also add lambda vs kappa optimization steps such as L4 optimization.  Extremely useful for denovo design as lambda/kappa mixing can result in lower stability and non-expression of designs.  Failed mixed designs would then require manual framework mutations, framework switching, or other optimizations for succes.  Use PyIgClassify (see docs) to identify your framework as lambda or kappa.  Switch this to false or do not pass the -light_chain option to increase sampling with a greater risk of failed designs.'
 				),
-      Option('idealize_graft_cdrs', 'Boolean',
-        desc='Idealize the CDR before grafting.  May help or hinder.  Still testing.',
-        default = 'false'
-        ),
-        Option('add_backrub_pivots', 'StringVector',
-        desc = 'Additional backrub pivot residues if running backrub as the MinType. PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A.  Can also specify ranges: 1A-10:A.  Note no spaces in the range.',
-        ),
-        Option('inner_kt', 'Real',
-            desc = "KT used in the inner min monte carlo after each graft.",
-            default = '2.0'),
-        Option('outer_kt', 'Real',
-            desc = 'KT used for the outer graft Monte Carlo.  Each graft step will use this value',
-            default = '1.0'),
+      			Option('idealize_graft_cdrs', 'Boolean',
+        			desc='Idealize the CDR before grafting.  May help or hinder.  Still testing.',
+        			default = 'false'
+        			),
+        		Option('add_backrub_pivots', 'StringVector',
+        			desc = 'Additional backrub pivot residues if running backrub as the MinType. PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A.  Can also specify ranges: 1A-10:A.  Note no spaces in the range.',
+        			),
+        		Option('inner_kt', 'Real',
+            			desc = "KT used in the inner min monte carlo after each graft.",
+            			default = '2.0'),
+        		Option('outer_kt', 'Real',
+            			desc = 'KT used for the outer graft Monte Carlo.  Each graft step will use this value',
+            			default = '1.0'),
+
 			###### Benchmarking
 			Option('random_start', 'Boolean',
 				desc = 'Start graft design (currently) with a new set of CDRs from the CDRSets as to not bias the run with native CDRs.',
@@ -3763,19 +3781,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc = 'Cartesian minimization seems to be causing numerous bugs since the Lukis AST pointer rewrite.  These only happen on the cluster and it is very difficult to reproduce them. Until this is fixed, we can skip the cartesian adaptation where cartesian minimization would run when the graft could not close properly.  Exceptions are wrapped so that when it does fail we skip the graft. Set this to false to disable its use',
 				default = 'false'
 				),
-       Option('remove_antigen', 'Boolean',
-        desc = 'Remove the antigen from the pose before doing any design on it',
-        default = 'false'
-        ),
-			 Option('add_graft_log_to_pdb', 'Boolean',
+       			Option('remove_antigen', 'Boolean',
+        			desc = 'Remove the antigen from the pose before doing any design on it',
+        			default = 'false'
+        		),
+			Option('add_graft_log_to_pdb', 'Boolean',
 				desc = 'Add the full graft log to the output pose.  Must also pass -pdb_comments option.',
-				default = 'false'
-				),
-            Option('mutate_framework_for_cluster', 'Boolean',
-                desc = 'Mutate the framework to maintain certain clusters post-graft.',
-                default = 'false'
-                ),
+				default = 'true'
+			),
+            		Option('mutate_framework_for_cluster', 'Boolean',
+                		desc = 'Mutate the framework to maintain certain clusters post-graft.',
+                		default = 'false'
+                	),
 		), #design
+
+        
+
         Option_Group( 'grafting',
             Option('exclude_homologs', 'Boolean',
                     desc = 'Filter BLAST matches by sequence identity? (false by default)',

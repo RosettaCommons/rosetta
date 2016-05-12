@@ -265,6 +265,7 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
         self.types = sorted( [os.path.basename(d) for d in glob.glob(os.path.join(template_type_name,"*")) if os.path.isdir(d)] )
         print "Found template types: "+repr(self.types)
 
+
         parser = ArgumentParser(description="This class is used to generate Rosetta templates for use in any IDE. "
                                             "See the README for more detailed instructions.  ")
 

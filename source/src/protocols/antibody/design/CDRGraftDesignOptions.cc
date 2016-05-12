@@ -223,17 +223,17 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		if ( startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
-
+		
+		boost::to_upper(line); //Capitalize everything.
+		
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
 		check_line_len(lineSP, 2);
 		//TR << utility::to_string(lineSP) << std::endl;
 
 		//Everything besides comments needs to have a CDR or ALL associated with it.
 		std::string cdr_type = lineSP[1];
-		boost::to_upper(cdr_type);
-
 		std::string mode = lineSP[2];
-		boost::to_upper(mode);
+
 
 		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4) ) {
 			parse_cdr_option(mode, lineSP);
@@ -287,13 +287,12 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 			mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP" || mode == "MIN" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
-		boost::to_upper(adjective);
+		
 		parse_cdr_graft_option(adjective, lineSP);
 	} else if ( lineSP.size() == 2 ) {
 		parse_cdr_general_option(lineSP);
 	} else if ( lineSP.size() == 3 ) {
 		std::string setting = lineSP[ 2 ];
-		boost::to_upper( setting );
 		if ( setting == "WEIGHT" || setting == "WEIGHTS" ) {
 			check_line_len(lineSP, 3);
 			cdr_options_->weight(utility::string2Real(lineSP[3]));
@@ -317,13 +316,11 @@ CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, v
 
 	if ( lineSP.size() == 3 ) {
 		std::string option = lineSP[3];
-		boost::to_upper(option);
 		set_cdr_graft_general_option(option);
 		return;
 	} else if ( setting == "MINTYPE" || setting == "MIN" ) {
 		check_line_len(lineSP, 4);
 		std::string type = lineSP[4];
-		boost::to_upper(type);
 		set_cdr_graft_mintype_options(type);
 		return;
 	} else if ( setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS" || setting == "MIN_OTHER" || setting == "MINOTHER" ) {
@@ -396,7 +393,6 @@ CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vec
 
 	for ( core::Size i = 4; i <= lineSP.size(); ++i ) {
 		std::string cdr_type = lineSP[i];
-		boost::to_upper(cdr_type);
 		if ( ! ab_manager_->cdr_name_is_present(cdr_type) ) {
 			utility_exit_with_message("Unrecognized CDR type - "+cdr_type);
 		}

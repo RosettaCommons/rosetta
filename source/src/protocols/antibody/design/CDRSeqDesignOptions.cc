@@ -214,16 +214,14 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 			continue;
 		}
 
-
+		boost::to_upper(line); //Capitalize entire line.
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
+		
 		check_line_len(lineSP, 2);
 		//TR << utility::to_string(lineSP) <<std::endl;
 		//Everything besides comments needs to have a CDR or ALL associated with it.
 		std::string cdr_type = lineSP[1];
-		boost::to_upper(cdr_type);
-
 		std::string mode = lineSP[2];
-		boost::to_upper(mode);
 
 		if ( cdr_type == "ALL" && !(cdr == l4 || cdr == h4) ) {
 			parse_cdr_option(mode, lineSP);
@@ -270,7 +268,6 @@ CDRSeqDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<stri
 	if ( mode == "DESIGN" || mode == "SEQDESIGN" || mode == "SEQ_DESIGN" || mode == "SEQUENCEDESIGN" || mode == "SEQUENCE_DESIGN" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
-		boost::to_upper(adjective);
 		parse_cdr_design_option(adjective, lineSP);
 	} else {
 		parse_cdr_general_option(lineSP);
@@ -309,12 +306,10 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 	} else if ( name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY" || name == "PRIMARY" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
-		boost::to_upper(option);
 		set_cdr_design_primary_option(option);
 	} else if ( name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY" || name == "FALLBACK" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
-		boost::to_upper(option);
 		set_cdr_design_fallback_option(option);
 	} else {
 		utility_exit_with_message("Could not parse ab design instruction.  Unknown option: "+name);
