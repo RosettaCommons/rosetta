@@ -507,6 +507,7 @@ CoarseRNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 
 	if ( pose.constraint_set()->has_constraints() ) {
 		denovo_scorefxn_->set_weight( atom_pair_constraint, 1.0 );
+		denovo_scorefxn_->set_weight( base_pair_constraint, 1.0 );
 		constraint_set_ = pose.constraint_set()->clone();
 	}
 

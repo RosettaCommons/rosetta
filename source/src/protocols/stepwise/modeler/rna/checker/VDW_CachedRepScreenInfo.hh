@@ -19,8 +19,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_Grid.fwd.hh>
+#include <core/pose/rna/VDW_RepScreenInfo.hh>
+#include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <utility/vector1.hh>
@@ -59,23 +59,22 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const;
 
-	utility::vector1< VDW_RepScreenInfo > &
+        void
+        read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenInfo & VDW_rep_screen_info ) const; 
+    
+        void
+        read_in_VDW_rep_screen_pose_from_command_line() const;
+
+	utility::vector1< core::pose::rna::VDW_RepScreenInfo > &
 	VDW_rep_screen_info_list() const;
 
-	VDW_GridCOP
+	core::pose::rna::VDW_GridCOP
 	VDW_screen_bin() const;
-
-	void
-	read_in_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_rep_screen_info ) const;
-
-	void
-	read_in_VDW_rep_screen_pose_from_command_line() const;
-
 
 private:
 
-	mutable utility::vector1< VDW_RepScreenInfo > VDW_rep_screen_info_list_;
-	VDW_GridCOP VDW_screen_bin_;
+	mutable utility::vector1< core::pose::rna::VDW_RepScreenInfo > VDW_rep_screen_info_list_;
+	core::pose::rna::VDW_GridCOP VDW_screen_bin_;
 
 #ifdef    SERIALIZATION
 public:

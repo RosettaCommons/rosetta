@@ -185,8 +185,9 @@ GatherPosesMover::get_distance_measure(
 	} else {
 		// no residues excluded from the native.
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
-				core::pose::symmetry::is_symmetric( pose1 ) ) return scoring::CA_rmsd_symmetric( pose1, pose2 );
-		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
+					core::pose::symmetry::is_symmetric( pose1 ) ) return scoring::CA_rmsd_symmetric( pose1, pose2 );
+		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() && pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd_nosuper( pose1, pose2 );
+        if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
 		if ( pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_all_atom_ ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_protein_backbone_ ) return scoring::rmsd_with_super( pose1, pose2, scoring::is_protein_backbone );
@@ -761,11 +762,24 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 	using io::silent::SilentStructOP;
 
 	int i,j;
-	io::silent::SilentStructOP ss;
-	io::silent::SilentFileData sfd;
+	io::silent::SilentStructOP ss, ss_center;
+	io::silent::SilentFileData sfd, sfd_center;
 
 	ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
+
+	if ( option[ OptionKeys::cluster::write_centers ].user() ) {
+		ss_center = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		std::string silent_file_center_ = "centers_" + silent_file_;
+		for ( i=0; i<(int)clusterlist.size(); ++i ) {
+			std::string tag = "center_" + string_of( i );
+			utility::replace_in( tag, '/', "_" );
+			Pose pose;
+			pose = poselist[ clusterlist[i].get_cluster_center() ];
+			ss_center->fill_struct( pose, tag );
+			sfd_center.write_silent_struct( *ss_center, silent_file_center_ );
+		}
+	}
 
 	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		//std::vector< int > new_cluster;
@@ -788,6 +802,11 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 			}
 
 			ss->fill_struct( pose, tag );
+
+			if ( option[ OptionKeys::cluster::write_centers ].user() && i<10 ) { // this could be its own option
+				std::string separate_file_name = "c" + string_of( i ) + "_" + silent_file_;
+				sfd.write_silent_struct( *ss, separate_file_name );
+			}
 
 			sfd.write_silent_struct( *ss, silent_file_ );
 

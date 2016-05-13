@@ -364,12 +364,12 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n, core::s
 	using namespace core::scoring;
 	using namespace core::optimization;
 
-	if ( !scorefxn_->has_nonzero_weight( core::scoring::atom_pair_constraint ) ) {
-		TR << TR.Magenta << "Scorefunction does not have atom_pair_constraint on -- setting weight to 5.0." << TR.Reset << std::endl;
-		scorefxn_->set_weight( core::scoring::atom_pair_constraint, 5.0 );
+	if ( !scorefxn_->has_nonzero_weight( core::scoring::base_pair_constraint ) ) {
+		TR << TR.Magenta << "Scorefunction does not have base_pair_constraint on -- setting weight to 5.0." << TR.Reset << std::endl;
+		scorefxn_->set_weight( core::scoring::base_pair_constraint, 5.0 );
 	}
 
-	Real const cst_weight = scorefxn->get_weight( atom_pair_constraint );
+	Real const cst_weight = scorefxn->get_weight( base_pair_constraint );
 	//runtime_assert( cst_weight != 0 );
 
 	kinematics::MoveMap mm;
@@ -390,10 +390,10 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n, core::s
 
 	minimizer_->run( pose, mm, *scorefxn, *minimizer_options_ );
 
-	scorefxn->set_weight( atom_pair_constraint, 0.0 );
+	scorefxn->set_weight( base_pair_constraint, 0.0 );
 	minimizer_->run( pose, mm, *scorefxn, *minimizer_options_ );
 
-	scorefxn->set_weight( atom_pair_constraint, cst_weight );
+	scorefxn->set_weight( base_pair_constraint, cst_weight );
 	(*scorefxn)( pose );
 
 

@@ -33,6 +33,7 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/chemical/AA.hh>
 
 // Project headers
@@ -1010,7 +1011,186 @@ apply_suite_torsion_info( core::pose::Pose & pose,
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+Real
+get_op2_op1_sign( pose::Pose const & pose ) {
 
+	Real sign= 0;
+	bool found_valid_sign=false;
+
+	for ( Size i = 2; i <= pose.total_residue(); i++ ) {
+
+		conformation::Residue const & rsd( pose.residue(i)  );
+		if ( !rsd.is_RNA() ) continue;
+
+		sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
+
+		found_valid_sign=true;
+
+		break;
+	}
+
+	if ( found_valid_sign==false ) utility_exit_with_message("found_valid_sign==false");
+
+	return sign;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+//This version used to be called get_op2_op1_sign_parin()
+Real
+get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
+
+	if ( res_num > pose.total_residue() ) utility_exit_with_message("res_num > pose.total_residue()");
+
+	conformation::Residue const & rsd( pose.residue(res_num)  );
+
+	//SML PHENIX conference cleanup
+	if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ) {
+		if ( !rsd.is_RNA() ) return 0.0;
+	} else {
+		if ( rsd.is_RNA()==false ) utility_exit_with_message("rsd.is_RNA()==false!");
+	}
+
+	Real const sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
+
+	return sign;
+}
+
+////////////////////////////////////////////////////////////////
+void
+make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
+{
+
+	using namespace ObjexxFCL;
+
+	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
+
+		if ( !pose.residue( res_num ).is_RNA() ) continue;
+
+		pose::Pose mini_pose; //Could move this part outside of the for loop
+		make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set());
+		Real const sign2 = get_op2_op1_sign( mini_pose);
+
+		Real sign1 = get_op2_op1_sign( pose,  res_num);
+
+		if ( sign1 * sign2 < 0 ) {
+
+			//std::cout << " Flipping OP2 <--> OP1 " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
+
+			conformation::Residue const & rsd( pose.residue(res_num) );
+
+			if ( rsd.is_RNA()==false ) { //Consistency check!
+				std::cout << "residue # " << res_num << " should be a RNA nucleotide!" << std::endl;
+				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
+			};
+
+			Vector const temp1 = rsd.xyz( " OP2" );
+			Vector const temp2 = rsd.xyz( " OP1" );
+			pose.set_xyz( id::AtomID( rsd.atom_index( " OP2" ), res_num ), temp2 );
+			pose.set_xyz( id::AtomID( rsd.atom_index( " OP1" ), res_num ), temp1 );
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
+	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( !pose.residue( i ).is_RNA() ) continue;
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Took these functions out of the class so that they are accessible in the VDWGridEnergy for scoring
+// without actually needing to construct an RNA_VDW_BinChecker object
+Atom_Bin
+get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos, numeric::xyzVector< core::Real > const & ref_xyz, 
+	core::Real const atom_bin_size, int const bin_offset ) {
+
+	numeric::xyzVector< core::Real > const atom_pos_ref_frame = atom_pos - ref_xyz;
+	
+	Atom_Bin atom_bin;
+	atom_bin.x = int( atom_pos_ref_frame[0]/atom_bin_size );
+	atom_bin.y = int( atom_pos_ref_frame[1]/atom_bin_size );
+	atom_bin.z = int( atom_pos_ref_frame[2]/atom_bin_size );
+	
+	
+	if ( atom_pos_ref_frame[0] < 0 ) atom_bin.x--;
+	if ( atom_pos_ref_frame[1] < 0 ) atom_bin.y--;
+	if ( atom_pos_ref_frame[2] < 0 ) atom_bin.z--;
+	
+	//////////////////////////////////////////////////////////
+	atom_bin.x += bin_offset; //Want min bin to be at one.
+	atom_bin.y += bin_offset; //Want min bin to be at one.
+	atom_bin.z += bin_offset; //Want min bin to be at one.
+	
+	
+	//////////////////////////////////////////////////////////
+	return atom_bin;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+is_atom_bin_in_range( Atom_Bin const & atom_pos_bin, int const bin_max ) {
+
+	if ( atom_pos_bin.x < 1 || ( atom_pos_bin.x > ( bin_max*2 ) ) ||
+		atom_pos_bin.y < 1 || ( atom_pos_bin.y > ( bin_max*2 ) ) ||
+		atom_pos_bin.z < 1 || ( atom_pos_bin.z > ( bin_max*2 ) ) ){
+
+		 return false;
+
+	} else {
+		 return true;
+	}
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AMW: cppcheck wants you to pass delimiters by reference, but don't try--it'll cause more problems than it's worth
+utility::vector1< std::string >
+tokenize( std::string const str, std::string delimiters ){
+	using namespace std;
+
+	utility::vector1< std::string > tokens;
+
+	// Skip delimiters at beginning.
+	string::size_type lastPos = str.find_first_not_of( delimiters, 0 );
+	// Find first "non-delimiter".
+	string::size_type pos     = str.find_first_of( delimiters, lastPos );
+
+	while ( string::npos != pos || string::npos != lastPos ) {
+		// Found a token, add it to the vector.
+		tokens.push_back( str.substr( lastPos, pos - lastPos ) );
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of( delimiters, pos );
+		// Find next "non-delimiter"
+		pos = str.find_first_of( delimiters, lastPos );
+	}
+	return tokens;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+core::Size
+string_to_int( std::string const & input_string ){
+
+	Size int_of_string; //misnomer
+	std::stringstream ss ( std::stringstream::in | std::stringstream::out );
+
+	ss << input_string;
+
+	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss << input_string | string ( " + input_string + " )" );
+
+	ss >> int_of_string;
+
+	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss >> int_of_string | string ( " + input_string + " )" );
+
+	return int_of_string;
+}
+
+	
 } //ns rna
 } //ns pose
 } //ns core

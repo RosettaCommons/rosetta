@@ -101,6 +101,7 @@
 
 namespace protocols {
 namespace init {
+
 void init( int argc, char * argv [] )
 {
 	core::init::init( argc, argv );

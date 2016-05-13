@@ -7,21 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.hh
+/// @file core/pose/rna/VDW_RepScreenInfo.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo_HH
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo_HH
+#ifndef INCLUDED_core_pose_rna_VDW_RepScreenInfo_HH
+#define INCLUDED_core_pose_rna_VDW_RepScreenInfo_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.fwd.hh>
+#include <core/pose/rna/VDW_RepScreenInfo.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <string>
+#include <core/id/AtomID_Map.hh>
 
 
 #ifdef    SERIALIZATION
@@ -29,11 +30,9 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace core {
+namespace pose {
 namespace rna {
-namespace checker {
 
 class VDW_RepScreenInfo: public utility::pointer::ReferenceCount{
 
@@ -56,6 +55,7 @@ public:
 	std::string pose_name;
 	bool in_root_partition;
 	core::Size import_ID;
+	core::id::AtomID_Map< core::id::AtomID > align_working_to_vdw_atom_id_map;
 
 #ifdef    SERIALIZATION
 public:
@@ -67,14 +67,12 @@ public:
 
 
 
-} //checker
 } //rna
-} //modeler
-} //stepwise
-} //protocols
+} //pose
+} //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo )
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_VDW_RepScreenInfo )
 #endif // SERIALIZATION
 
 

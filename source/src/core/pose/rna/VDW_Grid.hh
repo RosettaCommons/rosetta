@@ -7,19 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_Grid.hh
+/// @file core/pose/rna/VDW_Grid.hh
 /// @brief
 /// @details
 /// @author Caleb Geniesse, geniesse@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_Grid_HH
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_Grid_HH
+#ifndef INCLUDED_core_pose_rna_VDW_Grid_HH
+#define INCLUDED_core_pose_rna_VDW_Grid_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_Grid.fwd.hh>
+#include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
+#include <numeric/xyzVector.hh>
 
 
 #ifdef    SERIALIZATION
@@ -27,11 +28,9 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace core {
+namespace pose {
 namespace rna {
-namespace checker {
 
 
 struct Atom_Bin {
@@ -78,10 +77,38 @@ public:
 	bool
 	is_occupied() const;
 
+	void
+	set_bin_max( int const & value ) const;
+	
+	int
+	get_bin_max() const;
+	
+	void
+	set_atom_bin_size( core::Real const & value ) const;
+	
+	core::Real
+	get_atom_bin_size() const;
+	
+	void
+	set_bin_offset( int const & value ) const;
+	
+	int
+	get_bin_offset() const;
+	
+	void
+	set_ref_xyz( numeric::xyzVector< core::Real > const & value ) const;
+	
+	numeric::xyzVector< core::Real >
+	get_ref_xyz() const;
+
 private:
 
 	mutable utility::vector1< utility::vector1< utility::vector1< bool > > > bins_;
 	mutable bool is_occupied_;
+	mutable int bin_max_;
+	mutable core::Real atom_bin_size_;
+	mutable int bin_offset_;
+	mutable numeric::xyzVector< core::Real > ref_xyz_;
 
 #ifdef    SERIALIZATION
 public:
@@ -92,14 +119,12 @@ public:
 };
 
 
-} //checker
 } //rna
-} //modeler
-} //stepwise
-} //protocols
+} //pose
+} //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_Grid )
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_VDW_Grid )
 #endif // SERIALIZATION
 
 

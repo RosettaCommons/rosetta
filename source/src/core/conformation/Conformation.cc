@@ -3593,10 +3593,15 @@ Conformation::backbone_torsion_angle_atoms(
 				id1.atomno() = cyclic_partner_mainchain[
 					cyclic_partner_mainchain.size() ]; // last mainchain atom in last residue in chain
 			} else if ( fold_tree_->is_cutpoint( seqpos - 1 ) && // seems like this should be a bug if seqpos==1
+			// These extra conditions cause issues in rna_denovo
+			// Added the hack rsd.is_RNA() for now to solve this
+			// Eventually the thing to do would be to have terminal RNA variants
+			// And use these when a "cutpoint_open" is specified in rna_denovo
 					( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ||
 					rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ||
 					rsd.has_variant_type( chemical::N_ACETYLATION ) ||
-					rsd.has_variant_type( chemical::FIVE_PRIME_PHOSPHATE )
+					rsd.has_variant_type( chemical::FIVE_PRIME_PHOSPHATE ) ||
+					rsd.is_RNA()
 					)
 					) {
 				if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
@@ -3676,10 +3681,16 @@ Conformation::backbone_torsion_angle_atoms(
 				// It's exceptionally ugly, and I'm trying to isolate it as much as possible to keep it from being invoked
 				// accidentally (as it seems to be).
 			} else if (  fold_tree_->is_cutpoint( seqpos ) &&
+					// These extra conditions cause issues in rna_denovo
+					// Added the hack rsd.is_RNA() for now to solve this
+					// Eventually the thing to do would be to have terminal RNA variants
+					// And use these when a "cutpoint_open" is specified in rna_denovo
+					// rather than a cutpoint without any variants
 					( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ||
 					rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ||
 					rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ||
-					rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE )
+					rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) || 
+					rsd.is_RNA()
 					) &&
 					! ( seqpos == residues_.size() && rsd.has_upper_connect() &&
 					! rsd.connection_incomplete( rsd.type().upper_connect_id() )

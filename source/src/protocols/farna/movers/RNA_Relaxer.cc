@@ -124,6 +124,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose )
 
 	if ( pose.constraint_set()->has_constraints() ) {
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
+		scorefxn->set_weight( base_pair_constraint, 1.0 );
 		scorefxn->set_weight( angle_constraint, 1.0 );
 	}
 
@@ -204,6 +205,7 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 	static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
 	if ( pose.constraint_set()->has_constraints() ) {
 		lores_scorefxn->set_weight( atom_pair_constraint, 1.0 );
+		lores_scorefxn->set_weight( base_pair_constraint, 1.0 );
 		lores_scorefxn->set_weight( angle_constraint, 1.0 );
 	}
 

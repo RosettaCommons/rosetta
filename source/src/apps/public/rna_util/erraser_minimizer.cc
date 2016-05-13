@@ -668,7 +668,7 @@ pdb_minimizer() {
 	std::string pdb_name;
 	if ( option[ in::file::native ].user() ) {
 		import_pose::pose_from_file ( pose, *rsd_set, option[in::file::native]() );
-		protocols::farna::make_phosphate_nomenclature_matches_mini(pose);
+		core::pose::rna::make_phosphate_nomenclature_matches_mini(pose);
 		pdb_name = option[in::file::native]();
 	} else {
 		utility_exit_with_message("User must specify -native option!");

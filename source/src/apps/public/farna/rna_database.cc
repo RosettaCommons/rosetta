@@ -116,7 +116,7 @@ create_rna_vall_torsions_test( ){
 		pose::Pose pose;
 		core::import_pose::pose_from_file( pose, *rsd_set, infiles[n] , core::import_pose::PDB_file);
 		/////////////////////////////////////////
-		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
+		core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
 
 		protocols::farna::create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
@@ -293,7 +293,7 @@ create_bp_jump_database_test( ){
 
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
-	make_phosphate_nomenclature_matches_mini( pose );
+	core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 
 	// core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 

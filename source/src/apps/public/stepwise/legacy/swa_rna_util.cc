@@ -486,12 +486,12 @@ align_pdbs(){
 
 	for ( Size n = 1; n <= alignment_res_string_pair_list.size(); n++ ) {
 
-		utility::vector1< std::string > const alignment_res_string_pair = tokenize( alignment_res_string_pair_list[n], "-" );
+		utility::vector1< std::string > const alignment_res_string_pair = core::pose::rna::tokenize( alignment_res_string_pair_list[n], "-" );
 		if ( alignment_res_string_pair.size() != 2 ) {
 			utility_exit_with_message( "alignment_res_string_pair.size() != 2, alignment_res_string_pair_list[n] = " + alignment_res_string_pair_list[n] );
 		}
 
-		alignment_res_pair_list.push_back( std::make_pair( string_to_int( alignment_res_string_pair[1] ), string_to_int( alignment_res_string_pair[2] ) ) );
+		alignment_res_pair_list.push_back( std::make_pair( core::pose::rna::string_to_int( alignment_res_string_pair[1] ), core::pose::rna::string_to_int( alignment_res_string_pair[2] ) ) );
 
 		//PREVIOUSLY:
 		//static_pdb_align_res.push_back(string_to_int(alignment_res_pair[1]));
@@ -623,12 +623,12 @@ calculate_pairwise_RMSD(){
 
 	for ( Size n = 1; n <= alignment_res_string_pair_list.size(); n++ ) {
 
-		utility::vector1< std::string > const alignment_res_string_pair = tokenize( alignment_res_string_pair_list[n], "-" );
+		utility::vector1< std::string > const alignment_res_string_pair = core::pose::rna::tokenize( alignment_res_string_pair_list[n], "-" );
 		if ( alignment_res_string_pair.size() != 2 ) {
 			utility_exit_with_message( "alignment_res_string_pair.size() != 2, alignment_res_string_pair_list[n] = " + alignment_res_string_pair_list[n] );
 		}
 
-		alignment_res_pair_list.push_back( std::make_pair( string_to_int( alignment_res_string_pair[1] ), string_to_int( alignment_res_string_pair[2] ) )  );
+		alignment_res_pair_list.push_back( std::make_pair( core::pose::rna::string_to_int( alignment_res_string_pair[1] ), core::pose::rna::string_to_int( alignment_res_string_pair[2] ) )  );
 	}
 
 
@@ -645,11 +645,11 @@ calculate_pairwise_RMSD(){
 
 	for ( Size n = 1; n <= rmsd_res_string_pair_list.size(); n++ ) {
 
-		utility::vector1< std::string > const rmsd_res_string_pair = tokenize( rmsd_res_string_pair_list[n], "-" );
+		utility::vector1< std::string > const rmsd_res_string_pair = core::pose::rna::tokenize( rmsd_res_string_pair_list[n], "-" );
 		if ( rmsd_res_string_pair.size() != 2 ) {
 			utility_exit_with_message( "rmsd_res_string_pair.size() != 2, rmsd_res_string_pair_list[n] = " + rmsd_res_string_pair_list[n] );
 		}
-		rmsd_res_pair_list.push_back( std::make_pair( string_to_int( rmsd_res_string_pair[1] ), string_to_int( rmsd_res_string_pair[2] ) ) );
+		rmsd_res_pair_list.push_back( std::make_pair( core::pose::rna::string_to_int( rmsd_res_string_pair[1] ), core::pose::rna::string_to_int( rmsd_res_string_pair[2] ) ) );
 
 	}
 
@@ -836,8 +836,8 @@ mutate_residues_wrapper()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
-	protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file, core::import_pose::PDB_file );
+	core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 
 	// pose::Pose start_pose= pose; //Hard copy
 	// dump_pdb( start_pose, "start.pdb");
@@ -1366,17 +1366,17 @@ pdb_to_silent_file(){
 
 		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
-		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
+		core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 
 		utility::vector1< Size > act_virtual_res_list;
 
 		if ( virtual_res_list.size() > 0 ) {
 			act_virtual_res_list = virtual_res_list;
 		} else if ( option[ list_of_virtual_res].user() ) {
-			utility::vector1< std::string > virtual_res_string_list = tokenize( list_of_pose_virtual_res[n], "-" );
+			utility::vector1< std::string > virtual_res_string_list = core::pose::rna::tokenize( list_of_pose_virtual_res[n], "-" );
 
 			for ( Size ii = 1; ii <= virtual_res_string_list.size(); ii++ ) {
-				Size const virtual_seq_num = string_to_int( virtual_res_string_list[ii] );
+				Size const virtual_seq_num = core::pose::rna::string_to_int( virtual_res_string_list[ii] );
 				if ( virtual_seq_num == 0 ) continue;
 				act_virtual_res_list.push_back( virtual_seq_num );
 			}

@@ -22,6 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
@@ -338,7 +339,7 @@ InputStreamWithResidueInfo::cleanup_pose( pose::Pose & import_pose ) const {
 
 	using namespace chemical;
 
-	protocols::farna::make_phosphate_nomenclature_matches_mini( import_pose );
+	core::pose::rna::make_phosphate_nomenclature_matches_mini( import_pose );
 
 	// No virtual anything!
 	utility::vector1< core::chemical::VariantType > remove_variants;

@@ -7,24 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.cc
+/// @file core/pose/rna/VDW_RepScreenInfo.cc
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.hh>
+#include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/Pose.hh>
 #include <string>
 
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_RepScreenInfo" );
+static basic::Tracer TR( "core.pose.rna.VDW_RepScreenInfo" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
+#include <core/id/AtomID_Map.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Cereal headers
@@ -32,18 +33,17 @@ static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_RepScreenIn
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace core {
+namespace pose {
 namespace rna {
-namespace checker {
 
 //Constructor
 VDW_RepScreenInfo::VDW_RepScreenInfo():
 	input_string( "" ),
 	pose_name( "" ),
 	in_root_partition( false ),
-	import_ID( 0 )
+	import_ID( 0 ),
+	align_working_to_vdw_atom_id_map( )
 {
 	VDW_align_res.clear();
 	working_align_res.clear();
@@ -61,7 +61,8 @@ VDW_RepScreenInfo::VDW_RepScreenInfo( VDW_RepScreenInfo const & src ):
 	input_string( src.input_string ),
 	pose_name( src.pose_name ),
 	in_root_partition( src.in_root_partition ),
-	import_ID( src.import_ID )
+	import_ID( src.import_ID ),
+	align_working_to_vdw_atom_id_map( src.align_working_to_vdw_atom_id_map )
 {
 
 }
@@ -73,18 +74,16 @@ VDW_RepScreenInfo::VDW_RepScreenInfo( VDW_RepScreenInfo const & src ):
 VDW_RepScreenInfo::~VDW_RepScreenInfo()
 {}
 
-} //checker
 } //rna
-} //modeler
-} //stepwise
-} //protocols
+} //pose
+} //core
 
 #ifdef    SERIALIZATION
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo::save( Archive & arc ) const {
+core::pose::rna::VDW_RepScreenInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( VDW_align_res ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( working_align_res ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( full_align_res ) ); // utility::vector1<core::Size>
@@ -94,12 +93,13 @@ protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo::save( Archive & a
 	arc( CEREAL_NVP( pose_name ) ); // std::string
 	arc( CEREAL_NVP( in_root_partition ) ); // _Bool
 	arc( CEREAL_NVP( import_ID ) ); // core::Size
+	arc( CEREAL_NVP( align_working_to_vdw_atom_id_map ) ); // core::id::AtomID_Map<core::id::AtomID>
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo::load( Archive & arc ) {
+core::pose::rna::VDW_RepScreenInfo::load( Archive & arc ) {
 	arc( VDW_align_res ); // utility::vector1<core::Size>
 	arc( working_align_res ); // utility::vector1<core::Size>
 	arc( full_align_res ); // utility::vector1<core::Size>
@@ -109,10 +109,11 @@ protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo::load( Archive & a
 	arc( pose_name ); // std::string
 	arc( in_root_partition ); // _Bool
 	arc( import_ID ); // core::Size
+	arc( align_working_to_vdw_atom_id_map ); // core::id::AtomID_Map<core::id::AtomID>
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo );
-CEREAL_REGISTER_TYPE( protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::VDW_RepScreenInfo );
+CEREAL_REGISTER_TYPE( core::pose::rna::VDW_RepScreenInfo )
 
-CEREAL_REGISTER_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo )
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_VDW_RepScreenInfo )
 #endif // SERIALIZATION

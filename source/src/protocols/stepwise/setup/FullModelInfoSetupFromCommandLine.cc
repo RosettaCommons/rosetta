@@ -194,7 +194,7 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 	}
 
 	fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
-	modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( *input_poses[1] );
+	protocols::stepwise::modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( *input_poses[1] );
 	return input_poses[1];
 }
 

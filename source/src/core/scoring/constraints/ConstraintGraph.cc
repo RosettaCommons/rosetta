@@ -55,6 +55,7 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, Size first_node_ind, Size 
 	bond_geometry_energy_( 0.0 ),
 	rna_bond_geometry_energy_( 0.0 ),
 	atom_pair_constraint_energy_( 0.0 ),
+	base_pair_constraint_energy_( 0.0 ),
 	coordinate_constraint_energy_( 0.0 ),
 	angle_constraint_energy_( 0.0 ),
 	dihedral_constraint_energy_( 0.0 ),
@@ -72,6 +73,7 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, ConstraintEdge const & exa
 	bond_geometry_energy_( example_edge.bond_geometry_energy_ ),
 	rna_bond_geometry_energy_( example_edge.rna_bond_geometry_energy_ ),
 	atom_pair_constraint_energy_( example_edge.atom_pair_constraint_energy_ ),
+	base_pair_constraint_energy_( example_edge.base_pair_constraint_energy_ ),
 	coordinate_constraint_energy_( example_edge.coordinate_constraint_energy_ ),
 	angle_constraint_energy_( example_edge.angle_constraint_energy_ ),
 	dihedral_constraint_energy_( example_edge.dihedral_constraint_energy_ ),
@@ -90,6 +92,7 @@ ConstraintEdge::copy_from( graph::Edge const * source )
 	bond_geometry_energy_ = cst_source->bond_geometry_energy_;
 	rna_bond_geometry_energy_ = cst_source->rna_bond_geometry_energy_;
 	atom_pair_constraint_energy_ = cst_source->atom_pair_constraint_energy_;
+	base_pair_constraint_energy_ = cst_source->base_pair_constraint_energy_;
 	coordinate_constraint_energy_ = cst_source->coordinate_constraint_energy_;
 	angle_constraint_energy_ = cst_source->angle_constraint_energy_;
 	dihedral_constraint_energy_ = cst_source->dihedral_constraint_energy_;
@@ -129,6 +132,12 @@ void
 ConstraintEdge::atom_pair_constraint_energy( Energy setting )
 {
 	atom_pair_constraint_energy_ = setting;
+}
+
+void
+ConstraintEdge::base_pair_constraint_energy( Energy setting )
+{
+	base_pair_constraint_energy_ = setting;
 }
 
 void
@@ -190,6 +199,12 @@ Energy
 ConstraintEdge::atom_pair_constraint_energy() const
 {
 	return atom_pair_constraint_energy_;
+}
+
+Energy
+ConstraintEdge::base_pair_constraint_energy() const
+{
+	return base_pair_constraint_energy_;
 }
 
 Energy

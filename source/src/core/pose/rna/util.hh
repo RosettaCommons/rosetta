@@ -22,6 +22,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/types.hh>
 #include <utility/vector1.fwd.hh>
+#include <core/pose/rna/VDW_Grid.hh>
 
 using namespace core::chemical::rna;
 
@@ -144,6 +145,31 @@ get_residue_base_state( core::pose::Pose const & pose, Size const seq_num );
 PuckerState
 get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num );
 
+Real
+get_op2_op1_sign( pose::Pose const & pose );
+
+Real
+get_op2_op1_sign( pose::Pose const & pose , Size res_num);
+
+void
+make_phosphate_nomenclature_matches_mini( pose::Pose & pose);
+
+void
+add_virtual_O2Prime_hydrogen( pose::Pose & pose );
+
+Atom_Bin
+get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos, numeric::xyzVector< core::Real > const & ref_xyz,
+	core::Real const atom_bin_size, int const bin_offset );
+
+bool
+is_atom_bin_in_range( Atom_Bin const & atom_pos_bin, int const bin_max );
+
+utility::vector1< std::string >
+tokenize( std::string const str, std::string delimiters );
+
+core::Size
+string_to_int( std::string const & input_string );
+
 /// @brief 'suite' backbone torsion -- useful in setting up cutpoint with OVL1, OVL2, OVU atoms
 utility::vector1< std::pair< id::TorsionID, Real > >
 get_suite_torsion_info( core::pose::Pose const & pose, Size const i );
@@ -152,7 +178,6 @@ get_suite_torsion_info( core::pose::Pose const & pose, Size const i );
 void
 apply_suite_torsion_info( core::pose::Pose & pose,
 	utility::vector1< std::pair< id::TorsionID, Real > > const & suite_torsion_info );
-
 
 } //ns rna
 } //ns pose

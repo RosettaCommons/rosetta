@@ -221,6 +221,8 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "custom_atom_pair" ] = custom_atom_pair;
 	name2score_type_[ "atom_pair_constraint" ] = atom_pair_constraint;
+	name2score_type_[ "base_pair_constraint" ] = base_pair_constraint;
+	name2score_type_[ "coarse_chainbreak_constraint" ] = coarse_chainbreak_constraint;
 	name2score_type_[ "dunbrack_constraint" ] = dunbrack_constraint;
 	name2score_type_[ "angle_constraint" ] = angle_constraint;
 	name2score_type_[ "dihedral_constraint" ] = dihedral_constraint;
@@ -483,6 +485,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "elec_dens_whole_structure_ca" ] = elec_dens_whole_structure_ca;
 	name2score_type_[ "elec_dens_whole_structure_allatom" ] = elec_dens_whole_structure_allatom;
 	name2score_type_[ "elec_dens_atomwise" ] = elec_dens_atomwise;
+	name2score_type_[ "grid_vdw" ] = grid_vdw;
 	name2score_type_[ "xtal_ml" ] = xtal_ml;
 	name2score_type_[ "xtal_rwork" ] = xtal_rwork;
 	name2score_type_[ "xtal_rfree" ] = xtal_rfree;

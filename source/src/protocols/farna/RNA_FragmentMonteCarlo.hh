@@ -30,6 +30,10 @@
 #include <protocols/farna/movers/RNA_Relaxer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -75,6 +79,9 @@ public:
 
 	void
 	set_hires_scorefxn( core::scoring::ScoreFunctionCOP setting ){ hires_scorefxn_ = setting; }
+
+	void
+	set_vdw_grid( protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP setting ){ vdw_grid_ = setting; }
 
 	void
 	set_out_file_tag( std::string const & setting ){ out_file_tag_ = setting; }
@@ -211,6 +218,8 @@ private:
 	core::scoring::ScoreFunctionCOP chem_shift_scorefxn_;
 	core::scoring::ScoreFunctionCOP final_scorefxn_;
 	core::scoring::ScoreFunctionOP working_denovo_scorefxn_;
+
+	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_grid_;
 
 	// Parameters that change during run:
 	protocols::moves::MonteCarloOP monte_carlo_;

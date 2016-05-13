@@ -19,7 +19,6 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/farna/util.hh>
@@ -44,6 +43,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/TorsionID.hh>
@@ -194,7 +194,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		utility_exit_with_message( "working_native_pose->sequence() !=  working_sequence" );
 	}
 
-	protocols::farna::make_phosphate_nomenclature_matches_mini( ( *working_native_pose ) );
+	core::pose::rna::make_phosphate_nomenclature_matches_mini( ( *working_native_pose ) );
 
 	utility::vector1< core::Size > act_working_alignment;
 	act_working_alignment.clear();
@@ -289,8 +289,8 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 
 		//  if(verbose) TR.Debug << " The following pose will be imported :" << pose_name << std::endl;
 		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
-		import_pose::pose_from_file( import_pose, *rsd_set, pose_name , core::import_pose::PDB_file);
-		protocols::farna::make_phosphate_nomenclature_matches_mini( import_pose );
+		import_pose::pose_from_file( import_pose, *rsd_set, pose_name, core::import_pose::PDB_file );
+		core::pose::rna::make_phosphate_nomenclature_matches_mini( import_pose );
 	} else {
 		import_pose_from_silent_file( import_pose, silent_files_in_[ i ], input_tags_[i] );
 	}
@@ -1034,8 +1034,8 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_PoseSetup::setup_vdw_cached_rep_screen_info( pose::Pose & pose ) const {
-	using namespace checker;
-	fill_vdw_cached_rep_screen_info_from_command_line( pose );
+	//using namespace checker;
+	protocols::stepwise::modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( pose );
 }
 
 

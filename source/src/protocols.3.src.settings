@@ -501,6 +501,9 @@ sources = {
 		"TensorsOptimizerFix",
 		"TensorsOptimizerSvd",
 	],
+#	"protocols/scoring/methods/rna": [
+#		"VDWGridEnergy",
+#	],
 	"protocols/scoring/methods/saxs": [
 		"PDDFEnergy",
 	],

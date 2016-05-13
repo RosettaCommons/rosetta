@@ -63,6 +63,7 @@ public:
 	void bond_geometry_energy( Energy );
 	void rna_bond_geometry_energy( Energy );
 	void atom_pair_constraint_energy( Energy );
+	void base_pair_constraint_energy( Energy );
 	void coordinate_constraint_energy( Energy );
 	void angle_constraint_energy( Energy );
 	void dihedral_constraint_energy( Energy );
@@ -75,6 +76,7 @@ public:
 	Energy bond_geometry_energy() const;
 	Energy rna_bond_geometry_energy() const;
 	Energy atom_pair_constraint_energy() const;
+	Energy base_pair_constraint_energy() const;
 	Energy coordinate_constraint_energy() const;
 	Energy angle_constraint_energy() const;
 	Energy dihedral_constraint_energy() const;
@@ -91,6 +93,7 @@ private:
 	Energy bond_geometry_energy_;
 	Energy rna_bond_geometry_energy_;
 	Energy atom_pair_constraint_energy_;
+	Energy base_pair_constraint_energy_;
 	Energy coordinate_constraint_energy_;
 	Energy angle_constraint_energy_;
 	Energy dihedral_constraint_energy_;

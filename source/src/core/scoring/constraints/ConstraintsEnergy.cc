@@ -54,6 +54,8 @@ ScoreTypes
 ConstraintsEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( atom_pair_constraint );
+	sts.push_back( base_pair_constraint );
+	sts.push_back( coarse_chainbreak_constraint );
 	sts.push_back( angle_constraint );
 	sts.push_back( dihedral_constraint );
 	sts.push_back( constant_constraint );

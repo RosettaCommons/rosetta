@@ -328,6 +328,8 @@ enum ScoreType {
 	dslfc_RT,
 
 	atom_pair_constraint,
+	base_pair_constraint,
+	coarse_chainbreak_constraint,
 	constant_constraint,
 	coordinate_constraint,
 	angle_constraint,
@@ -549,6 +551,8 @@ enum ScoreType {
 	elec_dens_whole_structure_ca,
 	elec_dens_whole_structure_allatom,
 	elec_dens_atomwise,
+
+	grid_vdw,
 
 	// crystallographic ML target
 	xtal_ml,

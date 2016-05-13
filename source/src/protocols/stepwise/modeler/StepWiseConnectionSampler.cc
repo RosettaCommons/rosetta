@@ -460,7 +460,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	screening_pose_ = pose.clone();
 	if ( options_->o2prime_legacy_mode() || options_->virtualize_packable_moieties_in_screening_pose() ) {
-		add_virtual_O2Prime_hydrogen( *screening_pose_ );
+		core::pose::rna::add_virtual_O2Prime_hydrogen( *screening_pose_ );
 	}
 	if ( options_->virtualize_packable_moieties_in_screening_pose() ) phosphate::remove_terminal_phosphates( *screening_pose_ );
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {

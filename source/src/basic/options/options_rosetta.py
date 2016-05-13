@@ -4045,6 +4045,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'K_save_headers', "Boolean", desc='Save headers in silent file', default = 'false'),
 		Option( 'score_diff_cut','Real',desc='score difference cut for RNA and SWA clustering', default = '1000000.0' ),
 		Option( 'auto_tune', 'Boolean', desc='autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer', default='false' ),
+		Option( 'write_centers', 'Boolean', desc='Write out a silent file with the cluster centers', default='false' ),
 	),
 
 	Option_Group( 'cm', # comparative modeling
@@ -6601,6 +6602,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'bps_moves', 'Boolean', desc= "Base pair step moves",default= 'false' ),
 		   Option( 'disallow_bps_at_extra_min_res', 'Boolean', desc= "Disallow base pair step moves inside input domains, even extra_min_res",default= 'false' ),
 		   Option( 'allow_fragment_moves_in_bps', 'Boolean', desc= "Allow fragment/jump moves in regions claimed by base pair steps",default= 'false' ),
+		   Option( 'VDW_rep_screen_include_sidechains', 'Boolean', desc= "Include side chains in the VDW rep screen, use with -VDW_rep_screen_info",default= 'true' ),
+		   Option( 'gradual_constraints', 'Boolean', desc= "Gradually turn on the atom_pair_constraints and coordinate_constraints?",default= 'true' ),
+		   Option( 'grid_vdw_weight', 'Real', desc= "Weight for the grid vdw score term",default= '1.0' ),
 
 		   Option_Group('db',
           Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),

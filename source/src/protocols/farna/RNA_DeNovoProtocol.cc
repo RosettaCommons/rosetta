@@ -30,6 +30,8 @@
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/util.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -67,6 +69,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 // External library headers
 
@@ -139,6 +142,13 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	///////////////////////////////////////////////////////////////////////////
 	if ( options_->dump_pdb() ) pose.dump_pdb( "init.pdb" );
 
+	// Set up the cached vdw rep screen info in the pose
+	// requires further setup later (once user input fragments have been inserted in the pose)
+	if ( options_->filter_vdw() ) {
+		protocols::stepwise::modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( pose );
+		vdw_grid_ = protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP( new protocols::stepwise::modeler::rna::checker::RNA_VDW_BinChecker( pose ) );
+	}
+
 	// RNA score function (both low-res and high-res).
 	initialize_scorefxn( pose );
 
@@ -155,6 +165,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
+	// This copy of the pose does not have its grid_vdw stuff set up
+	// But it will be set up in RNA_FragmentMonteCarlo before any sampling happens
 
 	///////////////////////////////////////////////////////////////////////////
 	// Main Loop.
@@ -187,6 +199,10 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
 		rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
 		rna_fragment_monte_carlo_->set_refine_pose( refine_pose );
+		// Set the vdw grid here
+		if ( options_->filter_vdw() ) {
+			rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
+		}
 		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_setup( rna_de_novo_pose_setup ); // only used for resetting fold-tree & cutpoints on each try.
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
 
@@ -265,6 +281,10 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna_chem_map_lores_weight ]() );
 	}
 
+	if ( options_->filter_vdw() ) {
+		denovo_scorefxn_->set_weight( core::scoring::grid_vdw, options_->grid_vdw_weight() );
+	}
+
 	// initial_denovo_scorefxn_ = denovo_scorefxn_->clone();
 	if ( options_->chainbreak_weight() > -1.0 ) denovo_scorefxn_->set_weight( chainbreak, options_->chainbreak_weight() );
 	if ( options_->linear_chainbreak_weight() > -1.0 ) denovo_scorefxn_->set_weight( linear_chainbreak, options_->linear_chainbreak_weight() );
@@ -285,8 +305,8 @@ RNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 	if ( pose.constraint_set()->has_constraints() ) {
 		denovo_scorefxn_->set_weight( atom_pair_constraint, 1.0 );
 		denovo_scorefxn_->set_weight( coordinate_constraint, 1.0 ); // now useable in RNA denovo!
+		denovo_scorefxn_->set_weight( base_pair_constraint, 1.0 );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

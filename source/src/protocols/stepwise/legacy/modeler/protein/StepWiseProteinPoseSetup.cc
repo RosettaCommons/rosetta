@@ -1191,7 +1191,7 @@ StepWiseProteinPoseSetup::get_working_pose( pose::Pose const & pose, pose::Pose 
 	assert( working_pose.sequence() == working_parameters_->working_sequence() );
 
 	// RNA thing.
-	protocols::farna::make_phosphate_nomenclature_matches_mini( working_pose );
+	core::pose::rna::make_phosphate_nomenclature_matches_mini( working_pose );
 
 
 	//also carry over disulfides?

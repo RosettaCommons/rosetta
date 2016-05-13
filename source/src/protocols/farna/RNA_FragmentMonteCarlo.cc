@@ -48,6 +48,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+
 static basic::Tracer TR( "protocols.farna.RNA_FragmentMonteCarlo" );
 
 using namespace core;
@@ -186,11 +189,17 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 ////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
+
 	initialize( pose );
 
 	pose::Pose start_pose = pose;
 
+	// The pose gets scored when this object is set up: if using grid_vdw, will see a warning that the term was not computed
+	// because the alignment info is not yet set up here (although won't see the warning the first time this function is called, b/c
+	// the vdw_bin will be empty as well, also causing the score term to not be computed, but without a warning
+	// However, this warning is not an issue
 	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, options_->temperature() ) );
+
 	setup_monte_carlo_cycles( pose );
 
 	Size max_tries( 1 );
@@ -218,6 +227,17 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			do_close_loops_ = true;
 		} else {
 			do_close_loops_ = false;
+		}
+	
+		// Set up the VDW filter here
+		// Could probably set this all up in a way that doesn't require 
+		// setting this up every time that this apply function is called
+		// But would require changes to the RNA_VDW_BinChecker object first
+		if ( options_->filter_vdw() ) {
+			TR << "Setting up the VDW grid from the input pose" << std::endl;
+			utility::vector1< std::string > All_VDW_rep_screen_info = basic::options::option[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info];
+			vdw_grid_->FARFAR_setup_using_user_input_VDW_pose( All_VDW_rep_screen_info, pose, options_->vdw_rep_screen_include_sidechains() );
+			TR << "Finished setting up the VDW grid from the input pose" << std::endl;
 		}
 
 		if ( !refine_pose_ ) do_random_moves( pose );
@@ -303,6 +323,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		}
 		pose = monte_carlo_->lowest_score_pose();
 
+
 		if ( options_->close_loops() ) rna_loop_closer_->apply( pose, rna_base_pair_handler_->connections() );
 
 		// A bunch of filters
@@ -333,7 +354,10 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	// Get the full strength constraint back
 	update_denovo_scorefxn_weights( rounds_ );
 	update_pose_constraints( rounds_, pose );
-	if ( options_->verbose() ) working_denovo_scorefxn_->show( TR, pose );
+	if ( options_->verbose() ) {
+		working_denovo_scorefxn_->show( TR, pose );
+		TR << std::endl;
+	}
 	final_scorefxn_ = working_denovo_scorefxn_;
 
 	lores_pose_ = pose.clone();
@@ -522,6 +546,7 @@ RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
 	Real const chainbreak_final_weight            = denovo_scorefxn_->get_weight( chainbreak );
 	Real const atom_pair_constraint_final_weight  = denovo_scorefxn_->get_weight( atom_pair_constraint );
 	Real const coordinate_constraint_final_weight = denovo_scorefxn_->get_weight( coordinate_constraint );
+	Real const base_pair_constraint_final_weight  = denovo_scorefxn_->get_weight( base_pair_constraint );
 	Real const rna_chem_map_lores_final_weight    = denovo_scorefxn_->get_weight( rna_chem_map_lores );
 
 	//Keep score function coarse for early rounds.
@@ -531,8 +556,12 @@ RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
 	working_denovo_scorefxn_->set_weight( rna_base_axis,      suppress*rna_base_axis_final_weight  );
 	working_denovo_scorefxn_->set_weight( rna_base_stagger,   suppress*rna_base_stagger_final_weight  );
 	if ( options_->titrate_stack_bonus() ) working_denovo_scorefxn_->set_weight( rna_base_stack_axis,suppress*rna_base_stack_axis_final_weight  );
-	working_denovo_scorefxn_->set_weight( atom_pair_constraint,  suppress*atom_pair_constraint_final_weight  );
-	working_denovo_scorefxn_->set_weight( coordinate_constraint,  suppress*coordinate_constraint_final_weight  );
+
+	if ( options_->gradual_constraints() ) {
+		working_denovo_scorefxn_->set_weight( atom_pair_constraint,  suppress*atom_pair_constraint_final_weight  );
+		working_denovo_scorefxn_->set_weight( coordinate_constraint,  suppress*coordinate_constraint_final_weight  );
+	}
+	working_denovo_scorefxn_->set_weight( base_pair_constraint, suppress*base_pair_constraint_final_weight );
 	working_denovo_scorefxn_->set_weight( rna_chem_map_lores,   suppress*rna_chem_map_lores_final_weight  );
 
 	// keep chainbreak extra low for early rounds... seems to be important for rigid body modeler.

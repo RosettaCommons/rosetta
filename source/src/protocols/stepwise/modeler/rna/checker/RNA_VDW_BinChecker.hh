@@ -21,9 +21,6 @@
 
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_Grid.hh>
 
 
 
@@ -31,6 +28,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/pose/rna/VDW_RepScreenInfo.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
+#include <core/pose/rna/VDW_Grid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -69,6 +69,10 @@ public:
 	void
 	FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose );
 
+		void
+		FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose,
+                                                                                                bool const include_side_chains );
+
 
 	void
 	setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters );
@@ -91,7 +95,7 @@ public:
 		numeric::xyzVector< core::Real > const & reference_xyz,
 		bool const verbose = false );
 	void
-	create_VDW_screen_bin( utility::vector1< VDW_RepScreenInfo > const & VDW_rep_screen_info_list,
+	create_VDW_screen_bin( utility::vector1< core::pose::rna::VDW_RepScreenInfo > const & VDW_rep_screen_info_list,
 		numeric::xyzVector< core::Real > const & reference_xyz,
 		bool const verbose );
 
@@ -141,16 +145,28 @@ public:
 	void
 	set_output_pdb( bool const setting ){ output_pdb_ = setting; }
 
+	void
+	align_working_pose( core::pose::Pose & working_pose ) const;
+
+	void
+	setup_working_alignment( core::pose::Pose & working_pose );
+
+	utility::vector1< core::Size > 
+	get_VDW_align_res();
+
+	void
+	set_num_clash_atom_cutoff( core::Size const setting ){ num_clash_atom_cutoff_ = setting; }
+
 private:
 
 	void
 	check_VDW_screen_bin_is_setup() const;
 
-	bool
-	is_atom_bin_in_range( Atom_Bin const & atom_pos_bin ) const;
+//	bool
+//	is_atom_bin_in_range( Atom_Bin const & atom_pos_bin ) const;
 
 	bool
-	check_atom_bin_in_range( Atom_Bin const & atom_pos_bin );
+	check_atom_bin_in_range( core::pose::rna::Atom_Bin const & atom_pos_bin );
 
 	core::Vector
 	get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res/*,bool const verbose = false*/ );
@@ -158,14 +174,14 @@ private:
 	core::Vector
 	get_reference_xyz_average( core::pose::Pose const & pose );
 
+//	Atom_Bin
+//	get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos ) const;
+
 	void
 	set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz );
 
-	Atom_Bin
-	get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos ) const;
-
 	numeric::xyzVector< core::Real >
-	get_atom_pos( Atom_Bin const & atom_bin ) const;
+	get_atom_pos( core::pose::rna::Atom_Bin const & atom_bin ) const;
 
 	void
 	output_atom_bin( std::string const filename ) const;
@@ -189,27 +205,32 @@ private:
 		utility::vector1< core::Size > const & working_align_res,
 		std::map< core::Size, core::Size > & full_to_sub ) const;
 
+	void
+	align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen_pose,
+		core::pose::Pose const & working_pose,
+		utility::vector1< core::Size > const & VDW_rep_screen_align_res,
+		utility::vector1< core::Size > const & working_align_res,
+		bool const verbose );
+
 
 	void
 	align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen_pose,
 		core::pose::Pose const & working_pose,
 		utility::vector1< core::Size > const & VDW_rep_screen_align_res,
 		utility::vector1< core::Size > const & working_align_res,
-		bool const verbose ) const;
+		bool const verbose,
+		bool const setup_working_align );
 
 	void
-	read_in_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_rep_screen_info ) const;
-
+	read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenInfo & VDW_rep_screen_info ) const;
 
 	void
-	create_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_rep_screen_info, //This function update this class!
+	create_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenInfo & VDW_rep_screen_info, //This function update this class!
 		core::pose::Pose const & working_pose,
 		std::map< core::Size, core::Size > & full_to_sub,
-		bool const verbose ) const;
-
+		bool const verbose ) ;
 
 private:
-
 
 	core::Real max_distance_;
 	core::Real atom_bin_size_;
@@ -217,14 +238,14 @@ private:
 	int const bin_min_;
 	int const bin_max_;
 	int const bin_offset_;
-	core::Size const num_clash_atom_cutoff_;
+	core::Size num_clash_atom_cutoff_;
 	bool const write_to_file_;
 	bool is_reference_xyz_setup_;
 	bool is_VDW_screen_bin_setup_;
 	bool user_inputted_VDW_screen_pose_;
 
-	VDW_GridCOP VDW_screen_bin_;
-	utility::vector1< Atom_Bin > occupied_xyz_bins_;
+	core::pose::rna::VDW_GridCOP VDW_screen_bin_;
+	utility::vector1< core::pose::rna::Atom_Bin > occupied_xyz_bins_;
 	numeric::xyzVector< core::Real > reference_xyz_;
 
 	core::Real VDW_rep_alignment_RMSD_CUTOFF_;
@@ -234,16 +255,18 @@ private:
 	bool VDW_rep_screen_with_physical_pose_verbose_;
 	core::Real physical_pose_clash_dist_cutoff_;
 
-	utility::vector1< std::string > VDW_rep_ignore_matching_res_;
-	bool use_VDW_rep_pose_for_screening_;
-
-	utility::vector1< VDW_RepScreenInfo > VDW_rep_screen_info_list_;
-
 	bool output_pdb_;
+	bool align_pose_;
+	bool include_side_chains_;
+	bool vdw_align_res_set_;
+	utility::vector1< Size > vdw_align_res_;
+	core::id::AtomID_Map < core::id::AtomID > stored_align_working_atom_id_map_;
 	bool optimize_memory_usage_;
 	bool optimize_speed_;
 	bool verbose_;
-
+	utility::vector1< std::string > VDW_rep_ignore_matching_res_;
+	bool use_VDW_rep_pose_for_screening_;
+	utility::vector1< core::pose::rna::VDW_RepScreenInfo > VDW_rep_screen_info_list_;
 
 };
 

@@ -11,3 +11,4 @@ rna_repulsive           1.0
 rna_data_backbone       1.0
 linear_chainbreak       5.0
 atom_pair_constraint    1.0
+base_pair_constraint    1.0

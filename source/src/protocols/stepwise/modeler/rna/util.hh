@@ -151,9 +151,6 @@ remove_file( std::string const & file_name );
 //output_rotamer( utility::vector1 < Real > & rotamer );
 
 void
-add_virtual_O2Prime_hydrogen( pose::Pose & pose );
-
-void
 check_instantiated_O2Prime_hydrogen( core::pose::Pose const & pose );
 
 bool

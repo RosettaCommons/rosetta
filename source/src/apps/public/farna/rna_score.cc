@@ -84,6 +84,7 @@ OPT_KEY( StringVector, original_input )
 OPT_KEY( Boolean, virtualize_free )
 OPT_KEY( Boolean, color_by_score )
 OPT_KEY( Boolean, soft_rep )
+OPT_KEY( Boolean, rmsd_nosuper )
 
 // Move this out to protocols/toolbox/ before checkin.
 //
@@ -347,9 +348,15 @@ rna_score_test()
 		std::string tag = tag_from_pose( pose );
 		BinarySilentStruct s( pose, tag );
 
-		if ( native_exists ) {
-			//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
-			Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+		if ( native_exists ){
+			Real rmsd;
+			if ( option[ rmsd_nosuper ]() ) {
+				rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
+			} else {
+				//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
+				rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+				//Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+			}
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "new_rms", rmsd );
 
@@ -431,6 +438,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( params_file, "Input file for pairings", "" );
 		NEW_OPT( color_by_score, "color PDB by score (currently handles fa_atr & fa_rep)", false );
 		NEW_OPT( soft_rep, "use soft_rep params for color_by_score", false ); // how about for actual scoring?
+		NEW_OPT( rmsd_nosuper, "Calculate rmsd without superposition first", false);
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

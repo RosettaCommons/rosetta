@@ -48,6 +48,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
@@ -247,6 +248,9 @@ main( int argc, char * argv [] )
 		// setup
 		////////////////////////////////////////////////////////////////////////////
 		core::init::init(argc, argv);
+
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping.
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" ); // for proteins for vdw screen
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

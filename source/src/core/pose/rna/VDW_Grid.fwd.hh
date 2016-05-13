@@ -7,31 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.fwd.hh
+/// @file core/pose/rna/VDW_Grid.fwd.hh
 /// @brief
 /// @details
-/// @author Rhiju Das, rhiju@stanford.edu
+/// @author Caleb Geniesse, geniesse@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo_FWD_HH
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo_FWD_HH
+#ifndef INCLUDED_core_pose_rna_VDW_Grid_FWD_HH
+#define INCLUDED_core_pose_rna_VDW_Grid_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace core {
+namespace pose {
 namespace rna {
-namespace checker {
 
-class VDW_RepScreenInfo;
-typedef utility::pointer::shared_ptr< VDW_RepScreenInfo > VDW_RepScreenInfoOP;
-typedef utility::pointer::shared_ptr< VDW_RepScreenInfo const > VDW_RepScreenInfoCOP;
+struct Atom_Bin;
 
-} //checker
+class VDW_Grid;
+typedef utility::pointer::shared_ptr< VDW_Grid > VDW_GridOP;
+typedef utility::pointer::shared_ptr< VDW_Grid const > VDW_GridCOP;
+
 } //rna
-} //modeler
-} //stepwise
-} //protocols
+} //pose
+} //core
 
 #endif

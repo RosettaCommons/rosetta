@@ -606,8 +606,8 @@ setup_simple_full_length_rna_working_parameters(){
 	PoseOP native_pose_OP;
 	if ( option[ in::file::native ].user() ) {
 		native_pose_OP = PoseOP( new Pose );
-		import_pose::pose_from_file( *native_pose_OP, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
-		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose_OP );
+		import_pose::pose_from_file( *native_pose_OP, *rsd_set, option[ in::file::native ](), core::import_pose::PDB_file );
+		core::pose::rna::make_phosphate_nomenclature_matches_mini( *native_pose_OP );
 
 		utility::vector1< core::Size > const native_virtual_res_list = option[ OptionKeys::stepwise::rna::native_virtual_res]();
 
@@ -873,7 +873,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		TR.Debug << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		TR.Debug << "native_pose->annotated_sequence( true ): " << native_pose->annotated_sequence( true ) << std::endl;
-		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose );
+		core::pose::rna::make_phosphate_nomenclature_matches_mini( *native_pose );
 	}
 
 

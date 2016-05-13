@@ -382,51 +382,51 @@ create_rna_vall_torsions( pose::Pose & pose,
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
-Real
-get_op2_op1_sign( pose::Pose const & pose ) {
-
-	Real sign= 0;
-	bool found_valid_sign=false;
-
-	for ( Size i = 2; i <= pose.total_residue(); i++ ) {
-
-		conformation::Residue const & rsd( pose.residue(i)  );
-		if ( !rsd.is_RNA() ) continue;
-
-		sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
-
-		found_valid_sign=true;
-
-		break;
-	}
-
-	if ( found_valid_sign==false ) utility_exit_with_message("found_valid_sign==false");
-
-	return sign;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-//This version used to be called get_op2_op1_sign_parin()
-Real
-get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
-
-	if ( res_num > pose.total_residue() ) utility_exit_with_message("res_num > pose.total_residue()");
-
-	conformation::Residue const & rsd( pose.residue(res_num)  );
-
-	//SML PHENIX conference cleanup
-	if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ) {
-		if ( !rsd.is_RNA() ) return 0.0;
-	} else {
-		if ( rsd.is_RNA()==false ) utility_exit_with_message("rsd.is_RNA()==false!");
-	}
-
-	Real const sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
-
-	return sign;
-}
-
+////////////////////////////////////////////////////////////////////////////////////////
+//Real
+//get_op2_op1_sign( pose::Pose const & pose ) {
+//
+//	Real sign= 0;
+//	bool found_valid_sign=false;
+//
+//	for ( Size i = 2; i <= pose.total_residue(); i++ ) {
+//
+//		conformation::Residue const & rsd( pose.residue(i)  );
+//		if ( !rsd.is_RNA() ) continue;
+//
+//		sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
+//
+//		found_valid_sign=true;
+//
+//		break;
+//	}
+//
+//	if ( found_valid_sign==false ) utility_exit_with_message("found_valid_sign==false");
+//
+//	return sign;
+//}
+//
+////////////////////////////////////////////////////////////////////////////////////////
+////This version used to be called get_op2_op1_sign_parin()
+//Real
+//get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
+//
+//	if ( res_num > pose.total_residue() ) utility_exit_with_message("res_num > pose.total_residue()");
+//
+//	conformation::Residue const & rsd( pose.residue(res_num)  );
+//
+//	//SML PHENIX conference cleanup
+//	if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ) {
+//		if ( !rsd.is_RNA() ) return 0.0;
+//	} else {
+//		if ( rsd.is_RNA()==false ) utility_exit_with_message("rsd.is_RNA()==false!");
+//	}
+//
+//	Real const sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
+//
+//	return sign;
+//}
+//
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -436,11 +436,11 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 
 	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
 
-		Real sign1 = get_op2_op1_sign( pose,  res_num);
+		Real sign1 = core::pose::rna::get_op2_op1_sign( pose,  res_num);
 
 		pose::Pose mini_pose; //Could move this part outside the for loop
 		make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
-		Real const sign2 = get_op2_op1_sign( mini_pose);
+		Real const sign2 = core::pose::rna::get_op2_op1_sign( mini_pose);
 
 		if ( sign1 * sign2 < 0 ) {
 
@@ -466,11 +466,11 @@ void
 ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 {
 	runtime_assert( pose.total_residue() > 1 );
-	Real sign1 = get_op2_op1_sign( pose );
+	Real sign1 = core::pose::rna::get_op2_op1_sign( pose );
 
 	pose::Pose mini_pose;
 	make_pose_from_sequence( mini_pose, "aa", pose.residue(1).residue_type_set() );
-	Real sign2 = get_op2_op1_sign( mini_pose );
+	Real sign2 = core::pose::rna::get_op2_op1_sign( mini_pose );
 
 	if ( sign1 * sign2 > 0 ) return;
 
@@ -494,42 +494,42 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 
 }
 
-////////////////////////////////////////////////////////////////
-void
-make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
-{
-
-
-	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
-
-		if ( !pose.residue( res_num ).is_RNA() ) continue;
-
-		pose::Pose mini_pose; //Could move this part outside of the for loop
-		make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set());
-		Real const sign2 = get_op2_op1_sign( mini_pose);
-
-		Real sign1 = get_op2_op1_sign( pose,  res_num);
-
-		if ( sign1 * sign2 < 0 ) {
-
-			//std::cout << " Flipping OP2 <--> OP1 " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
-
-			conformation::Residue const & rsd( pose.residue(res_num) );
-
-			if ( rsd.is_RNA()==false ) { //Consistency check!
-				std::cout << "residue # " << res_num << " should be a RNA nucleotide!" << std::endl;
-				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
-			};
-
-			Vector const temp1 = rsd.xyz( " OP2" );
-			Vector const temp2 = rsd.xyz( " OP1" );
-			pose.set_xyz( id::AtomID( rsd.atom_index( " OP2" ), res_num ), temp2 );
-			pose.set_xyz( id::AtomID( rsd.atom_index( " OP1" ), res_num ), temp1 );
-		}
-	}
-}
-
-
+//////////////////////////////////////////////////////////////////
+//void
+//make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
+//{
+//
+//
+//	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
+//
+//		if ( !pose.residue( res_num ).is_RNA() ) continue;
+//
+//		pose::Pose mini_pose; //Could move this part outside of the for loop
+//		make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set());
+//		Real const sign2 = get_op2_op1_sign( mini_pose);
+//
+//		Real sign1 = get_op2_op1_sign( pose,  res_num);
+//
+//		if ( sign1 * sign2 < 0 ) {
+//
+//			//std::cout << " Flipping OP2 <--> OP1 " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
+//
+//			conformation::Residue const & rsd( pose.residue(res_num) );
+//
+//			if ( rsd.is_RNA()==false ) { //Consistency check!
+//				std::cout << "residue # " << res_num << " should be a RNA nucleotide!" << std::endl;
+//				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
+//			};
+//
+//			Vector const temp1 = rsd.xyz( " OP2" );
+//			Vector const temp2 = rsd.xyz( " OP1" );
+//			pose.set_xyz( id::AtomID( rsd.atom_index( " OP2" ), res_num ), temp2 );
+//			pose.set_xyz( id::AtomID( rsd.atom_index( " OP1" ), res_num ), temp1 );
+//		}
+//	}
+//}
+//
+//
 ///////////////////////////////////////////////////////////////////////////////
 void
 export_packer_results(  utility::vector1< std::pair< Real, std::string > > & results,
@@ -672,7 +672,7 @@ setup_base_pair_constraints(
 			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 				id::AtomID(atom1,i),
 				id::AtomID(atom2,j),
-				C1prime_distance_func ) ) ) );
+				C1prime_distance_func, core::scoring::base_pair_constraint ) ) ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
 			get_watson_crick_base_pair_atoms( pose.residue(i), pose.residue(j), atom_ids1, atom_ids2 );
@@ -690,7 +690,7 @@ setup_base_pair_constraints(
 				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					distance_func ) ) ) );
+					distance_func, core::scoring::base_pair_constraint ) ) ) );
 			}
 
 		} else { //coarse-grained RNA
@@ -714,7 +714,7 @@ setup_base_pair_constraints(
 				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					coarse_SUG_distance_func ) ) ) );
+					coarse_SUG_distance_func, core::scoring::base_pair_constraint ) ) ) );
 			}
 
 			static Real const coarse_WC_CEN_distance( 5.5 );
@@ -735,7 +735,7 @@ setup_base_pair_constraints(
 				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					coarse_CEN_distance_func ) ) ) );
+					coarse_CEN_distance_func, core::scoring::base_pair_constraint ) ) ) );
 			}
 
 			static Real const coarse_WC_X_distance( 3.5 );
@@ -755,7 +755,7 @@ setup_base_pair_constraints(
 				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					coarse_X_distance_func ) ) ) );
+					coarse_X_distance_func, core::scoring::base_pair_constraint ) ) ) );
 			}
 		}
 	}
@@ -818,24 +818,24 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 	Size const & atom_P2 = pose.residue( n+1 ).atom_index( " P  " );
 
 	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
-		id::AtomID(atom_S1, n),
-		id::AtomID(atom_P2, n+1),
-		S_P_distance_func ) ) ) );
+																							id::AtomID(atom_S1, n),
+																							id::AtomID(atom_P2, n+1),
+																									S_P_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
 
 	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
-		id::AtomID(atom_S1, n),
-		id::AtomID(atom_P2, n+1),
-		S_P_harmonic_func ) ) ) );
+																							id::AtomID(atom_S1, n),
+																							id::AtomID(atom_P2, n+1),
+																									S_P_harmonic_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
 
 	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
-		id::AtomID(atom_P1, n),
-		id::AtomID(atom_P2, n+1),
-		P_P_distance_func ) ) ) );
+																							id::AtomID(atom_P1, n),
+																							id::AtomID(atom_P2, n+1),
+																							P_P_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
 
 	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
-		id::AtomID(atom_S1, n),
-		id::AtomID(atom_S2, n+1),
-		S_S_distance_func ) ) ) );
+																							id::AtomID(atom_S1, n),
+																							id::AtomID(atom_S2, n+1),
+																							S_S_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
 
 }
 

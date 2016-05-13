@@ -112,6 +112,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 	if ( pose.constraint_set()->has_constraints() ) {
 		if ( !scorefxn_->has_nonzero_weight( atom_pair_constraint ) )  scorefxn_->set_weight( atom_pair_constraint, 1.0 );
+		if ( !scorefxn_->has_nonzero_weight( base_pair_constraint ) )  scorefxn_->set_weight( base_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
 	if ( options_ == 0 ) options_ = RNA_MinimizerOptionsOP( new RNA_MinimizerOptions );

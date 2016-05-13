@@ -7,16 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_Grid.fwd.hh
-/// @brief
-/// @details
-/// @author Caleb Geniesse, geniesse@stanford.edu
+/// @file   protocols/stepwise/modeler/rna/checker/VDWGridEnergy.fwd.hh
+/// @brief  grid_vdw energy method forward declaration
+/// @author Kalli Kappel
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_Grid_FWD_HH
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_Grid_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergy_fwd_hh
+#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergy_fwd_hh
 
-#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -24,16 +22,13 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-struct Atom_Bin;
+class VDWGridEnergy;
 
-class VDW_Grid;
-typedef utility::pointer::shared_ptr< VDW_Grid > VDW_GridOP;
-typedef utility::pointer::shared_ptr< VDW_Grid const > VDW_GridCOP;
-
-} //checker
 } //rna
-} //modeler
-} //stepwise
+} //rna
+} //methods
+} //scoring
 } //protocols
 
-#endif
+
+#endif // INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergy_FWD_HH

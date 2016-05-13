@@ -65,6 +65,10 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
 	filter_chain_closure_halfway_( true ),
 	staged_constraints_( false ),
+	filter_vdw_( false ),
+	vdw_rep_screen_include_sidechains_( false ),
+	gradual_constraints_( true ),
+	grid_vdw_weight_( 1.0 ),
 	simple_rmsd_cutoff_relax_( false ),
 	refine_from_silent_( false ),
 	refine_pose_( false ),
@@ -134,6 +138,13 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_allow_consecutive_bulges( option[ rna::farna::allow_consecutive_bulges ]() ) ;
 	set_allowed_bulge_res( option[ rna::farna::allowed_bulge_res ]() ) ;
 
+	if ( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) {
+		set_filter_vdw( true );
+		set_vdw_rep_screen_include_sidechains( option[ rna::farna::VDW_rep_screen_include_sidechains ]() );
+	}
+	set_gradual_constraints( option[ rna::farna::gradual_constraints ]() );
+	set_grid_vdw_weight( option[ rna::farna::grid_vdw_weight ]() );
+	
 	set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
 
 	set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );

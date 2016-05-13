@@ -159,6 +159,8 @@ sources = {
 		"RNA_SuiteName",
 		"leontis_westhof_util",
 		"util",
+		"VDW_Grid",
+		"VDW_RepScreenInfo",
 	],
 	"core/pose/symmetry": [
 		"util",
@@ -722,6 +724,7 @@ sources = {
 		"RNA_VDW_Energy",
 		"RNA_FullAtomVDW_BasePhosphate",
 		"StackElecEnergy",
+#		"VDWGridEnergy",
 	],
 	"core/scoring/rna/chemical_shift" : [
 		"RNA_CS_Parameters",

@@ -108,7 +108,7 @@ FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pos
 	set_full_model_info( new_pose, new_full_model_info );
 	update_pose_objects_from_full_model_info( new_pose ); // for output pdb or silent file -- residue numbering.
 
-	modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( new_pose, pose );
+	protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( new_pose, pose );
 
 	pose = new_pose; // switch focus to new pose.
 }

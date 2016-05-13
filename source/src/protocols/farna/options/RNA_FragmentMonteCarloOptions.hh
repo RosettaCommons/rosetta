@@ -131,6 +131,18 @@ public:
 	void set_allowed_bulge_res( utility::vector1< core::Size > const & setting ){ allowed_bulge_res_ = setting; };
 	utility::vector1< core::Size > const & allowed_bulge_res() const { return  allowed_bulge_res_; };
 
+	void set_filter_vdw( bool const setting ){ filter_vdw_ = setting; }
+	bool filter_vdw() const { return filter_vdw_; }
+
+	void set_vdw_rep_screen_include_sidechains( bool const setting ){ vdw_rep_screen_include_sidechains_ = setting; }
+	bool vdw_rep_screen_include_sidechains() const { return vdw_rep_screen_include_sidechains_; }
+
+	void set_gradual_constraints( bool const setting ){ gradual_constraints_ = setting; }
+	bool gradual_constraints() const { return gradual_constraints_; }
+
+	void set_grid_vdw_weight( core::Real const & setting ){ grid_vdw_weight_ = setting; }
+	core::Real grid_vdw_weight() const { return grid_vdw_weight_; }
+
 	void set_monte_carlo_cycles( core::Size const setting ){ monte_carlo_cycles_ = setting; }
 	core::Size monte_carlo_cycles() const { return monte_carlo_cycles_; }
 
@@ -226,6 +238,11 @@ private:
 	bool staged_constraints_;
 
 	utility::vector1< core::Size > allowed_bulge_res_;
+
+	bool filter_vdw_;
+	bool vdw_rep_screen_include_sidechains_;
+	bool gradual_constraints_;
+	core::Real grid_vdw_weight_;
 
 	bool simple_rmsd_cutoff_relax_;
 

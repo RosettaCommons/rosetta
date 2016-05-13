@@ -69,20 +69,11 @@ create_rna_vall_torsions( core::pose::Pose & pose,
 	std::string const & outfile,
 	utility::vector1 <core::Size> const & exclude_res_list );
 
-core::Real
-get_op2_op1_sign( core::pose::Pose const & pose );
-
-core::Real
-get_op2_op1_sign( core::pose::Pose const & pose , core::Size res_num);
-
 void
 assert_phosphate_nomenclature_matches_mini( core::pose::Pose const & pose);
 
 void
 ensure_phosphate_nomenclature_matches_mini( core::pose::Pose & pose );
-
-void
-make_phosphate_nomenclature_matches_mini( core::pose::Pose & pose );
 
 void
 export_packer_results(

@@ -274,15 +274,8 @@ core::Size
 string_to_int( std::string const & input_string ){
 
 	Size int_of_string; //misnomer
-	std::stringstream ss ( std::stringstream::in | std::stringstream::out );
 
-	ss << input_string;
-
-	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss << input_string | string ( " + input_string + " )" );
-
-	ss >> int_of_string;
-
-	if ( ss.fail() ) utility_exit_with_message( "In string_to_real(): ss.fail() for ss >> int_of_string | string ( " + input_string + " )" );
+	int_of_string = core::pose::rna::string_to_int( input_string );
 
 	return int_of_string;
 }
@@ -310,23 +303,11 @@ string_to_real( std::string const & input_string ){
 // AMW: cppcheck wants you to pass delimiters by reference, but don't try--it'll cause more problems than it's worth
 utility::vector1< std::string >
 tokenize( std::string const str, std::string delimiters ){
-	using namespace std;
 
 	utility::vector1< std::string > tokens;
 
-	// Skip delimiters at beginning.
-	string::size_type lastPos = str.find_first_not_of( delimiters, 0 );
-	// Find first "non-delimiter".
-	string::size_type pos     = str.find_first_of( delimiters, lastPos );
-
-	while ( string::npos != pos || string::npos != lastPos ) {
-		// Found a token, add it to the vector.
-		tokens.push_back( str.substr( lastPos, pos - lastPos ) );
-		// Skip delimiters.  Note the "not_of"
-		lastPos = str.find_first_not_of( delimiters, pos );
-		// Find next "non-delimiter"
-		pos = str.find_first_of( delimiters, lastPos );
-	}
+	tokens = core::pose::rna::tokenize( str, delimiters );
+	
 	return tokens;
 }
 
@@ -629,15 +610,6 @@ output_rotamer( utility::vector1 < Real > & rotamer ){
 	TR << std::setw( spacing ) << rotamer[13] << " ";
 	TR << std::endl;
 
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( !pose.residue( i ).is_RNA() ) continue;
-		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

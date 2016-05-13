@@ -309,7 +309,6 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 bool
 RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
@@ -319,7 +318,10 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 		bool const OK = chunk_set.check_fold_tree_OK( pose );
 		if ( !OK ) {
 			std::cout << "Problem with pose fold tree -- not enough jumps to handle the number of chains in chunk set " << k << std::endl;
-			utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
+			std::cout << "////////////////////////////////////////////////////////////////////" << std::endl;
+			std::cout << "WARNING!!! Ignoring this fold tree problem and continuing!!!" << std::endl;
+			std::cout << "////////////////////////////////////////////////////////////////////" << std::endl;
+			//utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 		}
 	}
 

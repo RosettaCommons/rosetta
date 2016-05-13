@@ -23,6 +23,11 @@
 #include <protocols/farna/options/RNA_DeNovoProtocolOptions.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 
@@ -111,6 +116,7 @@ private:
 private:
 
 	RNA_DeNovoProtocolOptionsCOP options_;
+	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_grid_;
 
 	std::string lores_silent_file_;
 
