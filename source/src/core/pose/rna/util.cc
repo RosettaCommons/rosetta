@@ -1149,9 +1149,8 @@ is_atom_bin_in_range( Atom_Bin const & atom_pos_bin, int const bin_max ) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// AMW: cppcheck wants you to pass delimiters by reference, but don't try--it'll cause more problems than it's worth
 utility::vector1< std::string >
-tokenize( std::string const str, std::string delimiters ){
+tokenize( std::string const & str, std::string const & delimiters ){
 	using namespace std;
 
 	utility::vector1< std::string > tokens;
