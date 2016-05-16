@@ -882,6 +882,7 @@ ReadResfile::ReadResfile() :
 	file_was_read_(false),
 	resfile_cache_(""),
 	residue_selector_()
+	//TODO -- UPDATE THIS WHEN NEW PRIVATE MEMBER VARIABLES ARE ADDED
 {
 	cache_resfile();
 }
@@ -906,9 +907,27 @@ ReadResfile::ReadResfile( std::string const & filename ) :
 	file_was_read_(false),
 	resfile_cache_(""),
 	residue_selector_()
+	//TODO -- UPDATE THIS WHEN NEW PRIVATE MEMBER VARIABLES ARE ADDED
 {
 	cache_resfile(); //Read in the file.
 }
+
+/// @brief Copy constructor.
+/// @details Needed if a ResidueSelector is used.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+ReadResfile::ReadResfile( ReadResfile const &src ) :
+	parent(),
+	resfile_filename_( src.resfile_filename_ ),
+	file_was_read_( src.file_was_read_ ),
+	resfile_cache_( src.resfile_cache_ ),
+	residue_selector_() //Copied (cloned) below
+	//TODO -- UPDATE THIS WHEN NEW PRIVATE MEMBER VARIABLES ARE ADDED
+{
+	if ( src.residue_selector_ ) {
+		residue_selector_ = src.residue_selector_->clone(); //Clone the residue selector(s) of the source.
+	}
+}
+
 
 ReadResfile::~ReadResfile() {}
 
@@ -944,6 +963,23 @@ ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 
 	return;
 }
+
+/// @brief Set the residue selector.
+/// @details The input selector is cloned and the clone is stored.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ReadResfile::set_residue_selector(
+	core::select::residue_selector::ResidueSelectorCOP selector_in
+) {
+	runtime_assert_string_msg( selector_in, "Error in core::pack::task::operation::ReadResfile::set_residue_selector(): A null pointer was passed to this function.  This shouldn't happen.  Consult a developer." );
+	residue_selector_ = selector_in->clone();
+}
+
+/// @brief Get the residue selector, if one exists.  (Const-access owning pointer).
+/// @details Returns NULL pointer if one does not.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::select::residue_selector::ResidueSelectorCOP
+ReadResfile::residue_selector() const { return residue_selector_; }
 
 /// @brief Assign the filename from the ResourceManager, if a resfile has been assigned for the
 /// current job, and fall back on the options system, if a resfile has not been assigned.
@@ -986,11 +1022,12 @@ ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
 		try {
-			residue_selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			set_residue_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_message );
 		}
+		debug_assert(residue_selector_);
 	}
 
 	// Read in the resfile and store it:

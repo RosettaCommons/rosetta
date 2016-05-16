@@ -11,6 +11,7 @@
 /// @brief The FastDesign Protocol
 /// @details
 /// @author Tom Linsky
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added support for D-amino acids.
 
 
 #ifndef INCLUDED_devel_denovo_design_FastDesign_hh

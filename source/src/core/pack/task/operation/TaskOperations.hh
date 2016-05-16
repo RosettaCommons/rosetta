@@ -379,6 +379,12 @@ public:
 	ReadResfile();
 	ReadResfile( utility::options::OptionCollection const & options );
 	ReadResfile( std::string const & );
+
+	/// @brief Copy constructor.
+	/// @details Needed if a ResidueSelector is used.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	ReadResfile( ReadResfile const &src );
+
 	virtual ~ReadResfile();
 
 	virtual TaskOperationOP clone() const;
@@ -386,6 +392,16 @@ public:
 	virtual
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
+
+	/// @brief Set the residue selector.
+	/// @details The input selector is cloned and the clone is stored.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+
+	/// @brief Get the residue selector, if one exists.  (Const-access owning pointer).
+	/// @details Returns NULL pointer if one does not.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::select::residue_selector::ResidueSelectorCOP residue_selector( ) const;
 
 	void filename( std::string const & filename );
 

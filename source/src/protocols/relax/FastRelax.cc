@@ -563,7 +563,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 
 	// TL: This needs to be here because parse_my_tag uses the pose at parsetime
-	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() ); //Didn't we already set this in parse_my_tag?
+	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() );
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");
@@ -694,7 +694,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		return;
 	}
 
-	// Deal with disulphides - i have no idea what this does, ask Rob VErnon, he put this here.
+	// Deal with disulphides - i have no idea what this does, ask Rob Vernon, he put this here.
 	apply_disulfides(pose);
 
 	int total_count=0;

@@ -11,7 +11,7 @@
 /// @brief The FastDesign
 /// @details
 /// @author Tom Linsky
-
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added support for D-amino acids.
 
 //Unit Headers
 #include <devel/denovo_design/FastDesign.hh>
@@ -328,14 +328,30 @@ void FastDesign::apply( core::pose::Pose & pose ){
 		TR << "Clearing designable residues...";
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 			if ( pose.residue( i ).is_protein() && clear_task->being_designed(i) ) {
-				// skip glycine, proline
-				if ( pose.residue( i ).name1() != 'G' || pose.residue( i ).name1() != 'P' ) {
-					TR << i << "...";
-					// mutate to alanine
-					protocols::simple_moves::MutateResidue mut_res( i, 'A' );
-					mut_res.apply( pose );
-				} else {
-					TR << "<" << i << ">...";
+				if ( pose.residue(i).type().is_alpha_aa() ) {
+					if ( pose.residue( i ).type().is_l_aa() ) { //Note that glycine is skipped, since it's not an L-amino acid.
+						// skip proline
+						if ( pose.residue( i ).type().aa() != core::chemical::aa_pro ) {
+							TR << i << "...";
+							// mutate to alanine
+							protocols::simple_moves::MutateResidue mut_res( i, core::chemical::aa_ala );
+							mut_res.apply( pose );
+						} else {
+							TR << "<" << i << ">...";
+						}
+					} else if ( pose.residue( i ).type().is_d_aa() ) {
+						// skip D-proline
+						if ( pose.residue( i ).type().aa() != core::chemical::aa_dpr ) {
+							TR << i << "...";
+							// mutate to D-alanine
+							protocols::simple_moves::MutateResidue mut_res( i, core::chemical::aa_dal );
+							mut_res.apply( pose );
+						} else {
+							TR << "<" << i << ">...";
+						}
+					} else { //Achiral case
+						TR << "<" << i << ">...";
+					}
 				}
 			}
 		}
