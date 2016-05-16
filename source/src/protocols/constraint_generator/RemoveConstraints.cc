@@ -19,6 +19,7 @@
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 #include <protocols/constraint_generator/ConstraintsManager.hh>
+#include <protocols/constraint_generator/util.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -57,21 +58,11 @@ RemoveConstraints::parse_my_tag(
 	core::pose::Pose const & )
 {
 	std::string const generators_str = tag->getOption< std::string >( "constraint_generators", "" );
-	if ( generators_str.empty() ) {
+	ConstraintGeneratorCOPs generators = parse_constraint_generators( tag, data );
+	if ( generators.empty() ) {
 		std::stringstream msg;
 		msg << "RemoveConstraints: You must specify 'constraint_generators' -- a comma-separated list of names of constraint generators defined in an AddConstraints mover." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
-	}
-	utility::vector1< std::string > const generator_strs = utility::string_split( generators_str, ',' );
-	for ( utility::vector1< std::string >::const_iterator cg=generator_strs.begin(); cg!=generator_strs.end(); ++cg ) {
-		ConstraintGeneratorCOP new_cg = data.get_ptr< ConstraintGenerator const >( "ConstraintGenerators", *cg );
-		if ( !new_cg ) {
-			std::stringstream msg;
-			msg << "RemoveConstraints: Could not find a constraint generator named " << *cg <<
-				" in the datamap.  Make sure it is defined in an AddConstraints mover before RemoveConstraints is defined." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
-		}
-		add_generator( new_cg );
 	}
 }
 

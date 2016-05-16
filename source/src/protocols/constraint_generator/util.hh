@@ -15,10 +15,18 @@
 #ifndef INCLUDED_protocols_constraint_generator_util_hh
 #define INCLUDED_protocols_constraint_generator_util_hh
 
+// Protocol headers
+#include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
+
+// Core headers
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/types.hh>
+
+// Basic/Utility headers
+#include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -45,6 +53,11 @@ generate_seqmap_from_poses(
 /// returns nubmer of symmetry-independent residues
 core::Size
 compute_nres_in_asymmetric_unit( core::pose::Pose const & pose );
+
+/// @brief parses constraint generators from a tag
+/// returns vector of ConstraintGeneratorCOPs
+ConstraintGeneratorCOPs
+parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
 
 } //protocols
 } //constraint_generator

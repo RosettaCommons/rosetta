@@ -15,6 +15,9 @@
 // Unit headers
 #include <protocols/constraint_generator/util.hh>
 
+// Protocol headers
+#include <protocols/constraint_generator/ConstraintGenerator.hh>
+
 // Core headers
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -28,8 +31,10 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <utility/tag/Tag.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.util" );
 
@@ -107,6 +112,27 @@ compute_nres_in_asymmetric_unit( core::pose::Pose const & pose )
 	} else {
 		return pose.total_residue();
 	}
+}
+
+/// @brief parses constraint generators from a tag
+/// returns vector of ConstraintGeneratorCOPs
+ConstraintGeneratorCOPs
+parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+{
+	ConstraintGeneratorCOPs cgs;
+	std::string const generators_str = tag->getOption< std::string >( "constraint_generators", "" );
+	utility::vector1< std::string > const generator_strs = utility::string_split( generators_str, ',' );
+	for ( utility::vector1< std::string >::const_iterator cg=generator_strs.begin(); cg!=generator_strs.end(); ++cg ) {
+		ConstraintGeneratorCOP new_cg = data.get_ptr< ConstraintGenerator const >( "ConstraintGenerators", *cg );
+		if ( !new_cg ) {
+			std::stringstream msg;
+			msg << "RemoveConstraints: Could not find a constraint generator named " << *cg <<
+				" in the datamap.  Make sure it is defined in an AddConstraints mover before RemoveConstraints is defined." << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		}
+		cgs.push_back( new_cg );
+	}
+	return cgs;
 }
 
 } //protocols

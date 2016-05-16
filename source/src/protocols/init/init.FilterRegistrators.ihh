@@ -111,6 +111,7 @@ static FilterRegistrator< protocols::simple_filters::AtomicDistanceFilterCreator
 static FilterRegistrator< protocols::simple_filters::AveragePathLengthFilterCreator > reg_AveragePathLengthFilterCreator;
 static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ConstraintScoreFilterCreator > reg_ConstraintScoreFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DeltaFilterCreator > reg_DeltaFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DisulfideEntropyFilterCreator > reg_DisulfideEntropyFilterCreator;

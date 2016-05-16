@@ -96,6 +96,7 @@
 #include <protocols/simple_filters/AveragePathLengthFilterCreator.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
 #include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
+#include <protocols/simple_filters/ConstraintScoreFilterCreator.hh>
 #include <protocols/simple_filters/DdgFilterCreator.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilterCreator.hh>
