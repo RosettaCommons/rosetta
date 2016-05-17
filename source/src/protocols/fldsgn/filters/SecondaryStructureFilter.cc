@@ -180,51 +180,60 @@ SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
 	protocols::fldsgn::topology::StrandPairings pairs( spairs.strand_pairings() );
 
 	// initialize map that says which residues are paired
-	std::map< core::Size, utility::vector1< bool > > paired_residues;
-	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
-		paired_residues[pairs[strand]->s1()] = utility::vector1< bool >( pairs[strand]->size1(), false );
+	typedef std::map< core::Size, utility::vector1< bool > > PairedResiduesMap;
+	PairedResiduesMap paired_residues;
+
+	for ( topology::StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
+		debug_assert( *pair );
+		PairedResiduesMap::iterator pr = paired_residues.find( (*pair)->s1() );
+		if ( pr == paired_residues.end() ) {
+			paired_residues.insert( std::make_pair( (*pair)->s1(), utility::vector1< bool >( (*pair)->size1(), false ) ) );
+		} else {
+			if ( pr->second.size() < (*pair)->size1() ) {
+				pr->second.assign( (*pair)->size1(), false );
+			}
+		}
+
+		pr = paired_residues.find( (*pair)->s2() );
+		if ( pr == paired_residues.end() ) {
+			paired_residues.insert( std::make_pair( (*pair)->s2(), utility::vector1< bool >( (*pair)->size2(), false ) ) );
+		} else {
+			if ( pr->second.size() < (*pair)->size2() ) {
+				pr->second.assign( (*pair)->size2(), false );
+			}
+		}
+	}
+
+	for ( PairedResiduesMap::const_iterator pres=paired_residues.begin(); pres!=paired_residues.end(); ++pres ) {
+		tr << " Strand is " << pres->first << " pairings " << pres->second << std::endl;
 	}
 
 	// determine paired residues
-	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
-		core::Size const s1( pairs[strand]->s1() );
-		core::Size const s2( pairs[strand]->s2() );
-		int const shift( pairs[strand]->rgstr_shift() );
-		core::Size const len1( pairs[strand]->size1() );
-		core::Size const len2( pairs[strand]->size2() );
-		for ( core::Size res=1; res<=len1; ++res ) {
-			core::Size const res2( res-shift );
-			if ( res2 >= 1 && res2 <= len2 ) {
-				paired_residues[s1][res] = true;
-				paired_residues[s2][res2] = true;
+	for ( topology::StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
+		for ( core::Size s1_resid=1; s1_resid<=(*pair)->size1(); ++s1_resid ) {
+			core::Size const s2_resid = s1_resid - (*pair)->rgstr_shift();
+			if ( s2_resid < 1 ) continue;
+			if ( s2_resid > (*pair)->size2() ) continue;
+			paired_residues[ (*pair)->s1() ][ s1_resid ] = true;
+			paired_residues[ (*pair)->s2() ][ s2_resid ] = true;
+		}
+	}
+
+	// parse the created map looking for unpaired residues
+	for ( PairedResiduesMap::const_iterator pres=paired_residues.begin(); pres!=paired_residues.end(); ++pres ) {
+		core::Size res = 1;
+		for ( utility::vector1< bool >::const_iterator r=pres->second.begin(); r!=pres->second.end(); ++r, ++res ) {
+			if ( ! *r ) {
+				tr << "unpaired " << pres->first << " : " << res << std::endl;
+				// pairs has begin and end only on paired residues...
+				core::Size const pose_res( ss_info->strand( pres->first )->begin() + res - 1 );
+				runtime_assert( pose_res <= ss.size() );
+				tr << "pose residue is " << pose_res << std::endl;
+				ss[pose_res-1] = 'h';
 			}
 		}
 	}
 
-	// determine unpaired residues and alter them in the string
-	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
-		core::Size const s1( pairs[strand]->s1() );
-		core::Size const s2( pairs[strand]->s2() );
-		for ( core::Size res=1; res<=paired_residues[s1].size(); ++res ) {
-			if ( !paired_residues[s1][res] ) {
-				tr << "unpaired " << s1 << " : " << res << std::endl;
-				// pairs has begin and end only on paired residues...
-				core::Size const pose_res( ss_info->strand(s1)->begin() + res - 1 );
-				runtime_assert( pose_res <= ss.size() );
-				tr << "pose residue is " << pose_res << std::endl;
-				ss[pose_res-1] = 'h';
-			}
-		}
-		for ( core::Size res=1; res<=paired_residues[s2].size(); ++res ) {
-			if ( !paired_residues[s2][res] ) {
-				tr << "unpaired " << s2 << " : " << res << std::endl;
-				core::Size const pose_res( ss_info->strand(s2)->begin() + res - 1 );
-				runtime_assert( pose_res <= ss.size() );
-				tr << "pose residue is " << pose_res << std::endl;
-				ss[pose_res-1] = 'h';
-			}
-		}
-	}
 	filtered_ss_ = ss;
 }
 

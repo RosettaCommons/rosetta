@@ -116,6 +116,7 @@
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 #include <protocols/fldsgn/CircularPermutationCreator.hh>
 #include <protocols/fldsgn/MatchResiduesMoverCreator.hh>
+#include <protocols/fldsgn/SheetRemodelConstraintGeneratorCreator.hh>
 
 #include <protocols/fldsgn/potentials/SetAACompositionPotentialCreator.hh>
 #include <protocols/fldsgn/potentials/SetSecStructEnergiesCreator.hh>

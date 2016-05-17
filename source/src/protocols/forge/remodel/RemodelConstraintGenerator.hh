@@ -54,7 +54,8 @@ public: // typedefs
 	virtual
 	void apply( core::pose::Pose & pose );
 
-	void parse_my_tag(
+	virtual void
+	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,

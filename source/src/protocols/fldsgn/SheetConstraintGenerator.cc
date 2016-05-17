@@ -383,13 +383,13 @@ SheetConstraintGenerator::compute_residue_pairs( topology::StrandPairings const 
 	for ( topology::StrandPairings::const_iterator sp=spairs.begin(); sp!=spairs.end(); ++sp ) {
 		TR << "Pair " << **sp << " from " << (*sp)->begin1() << " to " << (*sp)->end1() << " has bulge? " << (*sp)->has_bulge() << std::endl;
 		for ( core::Size resid=(*sp)->begin1(); resid<=(*sp)->end1(); ++resid ) {
-			TR << "Residue " << resid << std::endl;
 			if ( (*sp)->is_bulge( resid ) ) {
-				TR << "Skipping because it is a bulge" << std::endl;
+				TR << "Skipping residue " << resid << " because it is a bulge" << std::endl;
 				continue;
 			}
 			core::Size const paired_resid = (*sp)->residue_pair( resid );
 			res_pairs.push_back( ResiduePair( resid, paired_resid, (*sp)->orient() ) );
+			TR.Debug << "Added paired residues " << resid << " <--> " << paired_resid << std::endl;
 		}
 	}
 	return res_pairs;

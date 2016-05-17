@@ -7,24 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/fldsgn/SheetConstraintGenerator.fwd.hh
-///
-/// @brief
+/// @file   protocols/fldsgn/SheetRemodelConstraintGeneratorCreator.hh
+/// @brief  MoverCreator for the SheetRemodelConstraintGenerator
 /// @author Tom Linsky (tlinsky at uw dot edu)
-#ifndef INCLUDED_protocols_fldsgn_SheetConstraintGenerator_fwd_hh
-#define INCLUDED_protocols_fldsgn_SheetConstraintGenerator_fwd_hh
+#ifndef INCLUDED_protocols_fldsgn_SheetRemodelConstraintGeneratorCreator_hh
+#define INCLUDED_protocols_fldsgn_SheetRemodelConstraintGeneratorCreator_hh
 
-#include <utility/pointer/owning_ptr.hh>
+// Package Headers
+#include <protocols/moves/MoverCreator.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+
+// c++ headers
+#include <string>
 
 namespace protocols {
 namespace fldsgn {
 
-class SheetConstraintGenerator;
-typedef utility::pointer::shared_ptr< SheetConstraintGenerator > SheetConstraintGeneratorOP;
-typedef utility::pointer::shared_ptr< SheetConstraintGenerator const > SheetConstraintGeneratorCOP;
+class SheetRemodelConstraintGeneratorCreator : public protocols::moves::MoverCreator
+{
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+};
+
 
 } //namespace fldsgn
 } //namespace protocols
 
-
-#endif // INCLUDED_protocols_forge_remodel_SheetConstraintGenerator_fwd_hh
+#endif

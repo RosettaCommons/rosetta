@@ -266,7 +266,11 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 Size
 StrandPairing::size1() const
 {
-	return end1_ - begin1_ + 1;
+	if ( end1_ >= begin1_ ) {
+		return end1_ - begin1_ + 1;
+	} else {
+		return begin1_ - end1_ + 1;
+	}
 }
 
 
@@ -274,7 +278,11 @@ StrandPairing::size1() const
 Size
 StrandPairing::size2() const
 {
-	return end2_ - begin2_ + 1;
+	if ( end2_ >= begin2_ ) {
+		return end2_ - begin2_ + 1;
+	} else {
+		return begin2_ - end2_ + 1;
+	}
 }
 
 
@@ -351,7 +359,7 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1<
 		return;
 	}
 	TR << "strand1=" << s1_ << "(" << ss_info->strand( s1_ )->begin() << "," << ss_info->strand( s1_ )->end() << ") " << std::endl;
-	TR << "strand2=" << s2_ << "(" << ss_info->strand( s1_ )->begin() << "," << ss_info->strand( s2_ )->end() << ") " << std::endl;
+	TR << "strand2=" << s2_ << "(" << ss_info->strand( s2_ )->begin() << "," << ss_info->strand( s2_ )->end() << ") " << std::endl;
 	TR << "abego=" <<  abego<< std::endl;
 	bulges1_ = compute_bulges( ss_info->strand( s1_ )->begin(), ss_info->strand( s1_ )->end(), abego );
 	bulges2_ = compute_bulges( ss_info->strand( s2_ )->begin(), ss_info->strand( s2_ )->end(), abego );
@@ -452,7 +460,7 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1<
 		++s1_pair_start;
 		s2_pair_start += inc;
 	}
-
+	TR.Debug << "Done elongating. Size1=" << size1() << " Size2=" << size2() << std::endl;
 }
 
 

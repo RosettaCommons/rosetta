@@ -52,6 +52,7 @@ sources = {
 		"CircularPermutation",
 		"NcontactsCalculator",
 		"SheetConstraintGenerator",
+		"SheetRemodelConstraintGenerator",
 		"MatchResidues",
 		"MatchResiduesMover",
 	],
