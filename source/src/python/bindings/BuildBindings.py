@@ -630,11 +630,11 @@ _SC_ = SubCall()
 
 
 def get_compiler_defines():
-    d = 'PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA UNUSUAL_ALLOCATOR_DECLARATION'.split()  # PTR_STD
+    d = 'PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA PYROSETTA3 UNUSUAL_ALLOCATOR_DECLARATION'.split()  # PTR_STD
     if Options.numpy_support: d.append('PYROSETTA_NUMPY')  # PYROSETTA_NO_NUMPY ← defines/variables with no negation in the name produce much more readable code
     d.append( 'DEBUG' if Options.debug else 'NDEBUG')
 
-    if Platform == "windows": d += 'BOOST_NO_MT WIN_PYROSETTA'.split()
+    if Platform == "windows": d += 'BOOST_NO_MT WIN_PYROSETTA PYROSETTA_GCCXML_PASS'.split()
 
     sign = ' /D'if Platform == "windows" else ' -D'
 
@@ -1645,7 +1645,7 @@ class ModuleBuilder:
         else: self.cpp_defines += ' -I../src/platform/linux'
 
         #self.gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
-        self.gccxml_options = ''  # -std=c++98 -DPYROSETTA_GCCXML_PASS -D__GCCXML__=040200
+        self.gccxml_options = '-DPYROSETTA_GCCXML_PASS -DPYROSETTA3 '  # -std=c++98 -DPYROSETTA_GCCXML_PASS -D__GCCXML__=040200
         if Options.gccxml_compiler: self.gccxml_options += '--gccxml-compiler ' + Options.gccxml_compiler
         elif Platform == 'macos':
             if platform.release()[:2] == '13': self.gccxml_options += '--gccxml-compiler gcc'  #  --gccxml-cxxflags "-stdlib=libstdc++"

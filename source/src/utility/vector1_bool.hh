@@ -106,6 +106,9 @@ public: // Methods: imports
 	using super::size;
 	using super::swap;
 
+	#ifdef CXX11
+		using super::shrink_to_fit;
+	#endif
 
 public: // Creation
 

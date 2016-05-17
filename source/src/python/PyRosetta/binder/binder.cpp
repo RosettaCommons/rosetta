@@ -1,3 +1,16 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   binder/binder.cpp
+/// @brief  Main
+/// @author Sergey Lyskov
+
 #include <binder.hpp>
 
 // Declares clang::SyntaxOnlyAction.
@@ -62,6 +75,8 @@ cl::list<std::string> O_skip("skip", cl::desc("Namespace to skip, could be speci
 cl::opt<std::string> O_config("config", cl::desc("Specify config file from which bindings setting will be read"), cl::init(""), cl::cat(BinderToolCategory));
 
 cl::opt<bool> O_annotate_includes("annotate-includes", cl::desc("Annotate each includes in generated code with type name that trigger it inclusion"), cl::init(false), cl::cat(BinderToolCategory));
+
+cl::opt<bool> O_single_file("single-file", cl::desc("Concatenate all binder output into single file with name: root-module-name + '.cpp'. Use this for a small projects and for testing."), cl::init(false), cl::cat(BinderToolCategory));
 
 
 class ClassVisitor : public RecursiveASTVisitor<ClassVisitor>
@@ -265,7 +280,7 @@ int main(int argc, const char **argv)
 	ClangTool tool(op.getCompilations(), op.getSourcePathList());
 
 	//outs() << "Root module: " << O_root_module << "\n";
-	//for(auto &s : O_bind) outs() << "Binding: " << s << "\n";
+	//for(auto &s : O_bind) outs() << "Binding: '" << s << "'\n";
 
 	return tool.run(newFrontendActionFactory<BinderFrontendAction>().get());
 }

@@ -1,0 +1,75 @@
+// File: T10_inheritance.cpp
+#include <T10.inheritance.hpp> // A
+#include <T10.inheritance.hpp> // A::A
+#include <T10.inheritance.hpp> // B
+#include <T10.inheritance.hpp> // B::B
+#include <T10.inheritance.hpp> // Base
+#include <T10.inheritance.hpp> // Base::foo
+#include <T10.inheritance.hpp> // Base::maybe
+#include <T10.inheritance.hpp> // Delete
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+#endif
+
+void bind_T10_inheritance(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	{ // Base file:T10.inheritance.hpp line:20
+		pybind11::class_<Base, std::shared_ptr<Base>> cl(M(""), "Base");
+		cl.def(pybind11::init<>());
+		cl.def("foo", (void (Base::*)()) &Base::foo, "doc");
+		cl.def("maybe", (void (Base::*)()) &Base::maybe, "doc");
+	}
+	{ // Delete file:T10.inheritance.hpp line:30
+		pybind11::class_<Delete, std::shared_ptr<Delete>> cl(M(""), "Delete", pybind11::base<Base>());
+	}
+	{ // A file:T10.inheritance.hpp line:38
+		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A");
+		cl.def(pybind11::init<>());
+		cl.def(pybind11::init<const class A &>());
+	}
+	{ // B file:T10.inheritance.hpp line:41
+		pybind11::class_<B, std::shared_ptr<B>> cl(M(""), "B");
+		cl.def(pybind11::init<>());
+		cl.def(pybind11::init<const class B &>());
+	}
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T10_inheritance(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T10_inheritance) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T10_inheritance", "T10_inheritance module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T10_inheritance(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.sources
+// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.cpp
+// T10_inheritance.cpp

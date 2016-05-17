@@ -27,6 +27,18 @@ using std::string;
 
 namespace binder {
 
+/// Split string in two by ether space or tab character
+std::pair<string, string> split_in_two(string const &s, string const & error_string)
+{
+	size_t space = s.find(' ');
+	size_t tab = s.find('\t');
+
+	size_t split = std::min(space, tab);
+
+	if( split == string::npos ) throw std::runtime_error(error_string);
+	else return std::make_pair( s.substr(0, split), s.substr(split+1) );
+}
+
 
 Config &Config::get()
 {
@@ -40,9 +52,11 @@ Config &Config::get()
 /// Read config setting from file
 void Config::read(string const &file_name)
 {
-	string const _namespace_{"namespace"};
-	string const _function_{"function"};
-	string const _class_{"class"};
+	string const _namespace_ {"namespace"};
+	string const _function_  {"function"};
+	string const _class_     {"class"};
+	string const _include_   {"include"};
+	string const _binder_    {"binder"};
 
 	std::ifstream f(file_name);
 	string line;
@@ -58,21 +72,34 @@ void Config::read(string const &file_name)
 					bool bind = line[0] == '+' ? true : false;
 					string token = line.substr(1, space-1);
 					string name = line.substr(space+1);
-					name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
+					string name_without_spaces = name;
+					name_without_spaces.erase(std::remove(name_without_spaces.begin(), name_without_spaces.end(), ' '), name_without_spaces.end());
 
 					//outs() << token << " " << name << "\n";
 
 					if( token == _namespace_ ) {
 
-						if(bind) namespaces_to_bind.push_back(name); else namespaces_to_skip.push_back(name);
+						if(bind) namespaces_to_bind.push_back(name_without_spaces); else namespaces_to_skip.push_back(name_without_spaces);
 
 					} else if( token == _class_ ) {
 
-						if(bind) classes_to_bind.push_back(name); else classes_to_skip.push_back(name);
+						if(bind) classes_to_bind.push_back(name_without_spaces); else classes_to_skip.push_back(name_without_spaces);
 
 					} else if( token == _function_ ) {
 
-						if(bind) functions_to_bind.push_back(name); else functions_to_skip.push_back(name);
+						if(bind) functions_to_bind.push_back(name_without_spaces); else functions_to_skip.push_back(name_without_spaces);
+
+					} else if( token == _include_ ) {
+
+						if(bind) includes_to_add.push_back(name_without_spaces);
+						else includes_to_skip.push_back(name_without_spaces);
+
+					} else if( token == _binder_ ) {
+
+						if(bind) {
+							auto binder_function = split_in_two(name, "Invalid line for binder specification! Must be: name_of_type + <space or tab> + name_of_binder. Got: " + line);
+							binders_[binder_function.first] = binder_function.second;
+						}
 
 					} else throw std::runtime_error("Invalid token in config file! Each token must be ether: namespace, class or function! For example: '+function aaa::bb::my_function'. Token: '" + token + "' Line: '" + line + '\'');
 				}
@@ -89,6 +116,7 @@ bool Config::is_namespace_binding_requested(string const &namespace_) const
 	string to_bind, to_skip;
 
 	for(auto &n : namespaces_to_bind) {
+		if( n.size() == 0 ) to_bind_flag=true;
 		if( begins_with(namespace_, n) ) {
 			if( n.size() > to_bind.size() ) { to_bind = n; to_bind_flag=true; }
 		}
@@ -193,6 +221,26 @@ bool Config::is_class_skipping_requested(string const &class__) const
 	}
 
 	return false;
+}
+
+
+bool Config::is_include_skipping_requested(string const &include) const
+{
+	// auto skip = std::find(includes_to_skip.begin(), includes_to_skip.end(), include);
+	// if( skip != includes_to_skip.end() ) return true;
+	// else return false;
+	for(auto & i : includes_to_skip)
+		if( begins_with(include, i) ) return true;
+
+	return false;
+}
+
+
+string Config::includes_code() const
+{
+	string c;
+	for(auto & i: includes_to_add) c += "#include " + i + "\n";
+	return c.size() ? c+'\n' : c;
 }
 
 

@@ -31,12 +31,11 @@ template < class Ty >
 class DataMapObj : public utility::pointer::ReferenceCount {
 public:
 	Ty obj;
-};
 
 #ifdef PYROSETTA
-//template class DataMapObj<bool>;
-class DataMapObj_bool : public DataMapObj<bool> {};
+	~DataMapObj() {}
 #endif
+};
 
 } // datacache
 } // basic

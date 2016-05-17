@@ -320,9 +320,7 @@ public:
 	void findPSP(core::Size thr, core::Real max);
 	void findSPS(core::Size thr, core::Real max);
 
-	void mark (core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar=false, bool targetResi=false);
 	void mark (core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar=false, int targetResi=0);
-	void mark (core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar=false, bool targetResi=false);
 	void mark (core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar=false, int targetResi=0);
 
 	void clearSmallPockets(core::Size minsize);

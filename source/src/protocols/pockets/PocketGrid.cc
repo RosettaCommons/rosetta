@@ -1300,24 +1300,11 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size thr3, co
 
 }
 
-
-void PocketGrid::mark(core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar, bool targetResi){
-	int target=0;
-	if ( targetResi ) target=1;
-	mark(center(1),center(2),center(3), vdWd, buffer, polar, target);
-}
-
-void PocketGrid::mark(core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar, int targetResi){
+void PocketGrid::mark(core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar, int targetResi) {
 	mark(center(1),center(2),center(3), vdWd, buffer, polar, targetResi);
 }
 
-void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar, bool targetResi){
-	int target=0;
-	if ( targetResi ) target=1;
-	mark(x,y,z,vdWd, buffer, polar, target);
-}
-
-void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar, int targetResi){
+void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar, int targetResi) {
 	x-=xcorn_;
 	y-=ycorn_;
 	z-=zcorn_;

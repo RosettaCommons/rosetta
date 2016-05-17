@@ -71,8 +71,10 @@ std::string template_argument_to_string(clang::TemplateArgument const &);
 
 
 /// calcualte line in source file for NamedDecl
-std::string line_number(clang::NamedDecl *decl);
+std::string line_number(clang::NamedDecl const *decl);
 
+// generate string represetiong class name that could be used in python
+std::string mangle_type_name(std::string const &name, bool mark_template=true);
 
 
 } // namespace binder

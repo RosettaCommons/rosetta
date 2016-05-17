@@ -1,0 +1,114 @@
+#	Created by:	Discovery Studio
+#	Creation time:	Tue Jan 22 15:09:17 Eastern Standard Time 2013
+
+@<TRIPOS>MOLECULE
+D-Gly
+   12    11     1 0 0
+PROTEIN
+USER_CHARGES
+
+
+@<TRIPOS>ATOM
+      1 C1           -9.835000    2.954000    0.022000 C.2      1 UNK0       0.1504
+      2 C2           -9.275000    1.711000   -0.605000 C.3      1 UNK0       0.1321
+      3 C3          -10.317000    0.583000   -0.502000 C.3      1 UNK0       0.0759
+      4 O1          -10.854000    3.474000   -0.445000 O.2      1 UNK0      -0.3003
+      5 O2           -9.022000    1.955000   -1.989000 O.3      1 UNK0      -0.3832
+      6 O3           -9.798000   -0.600000   -1.112000 O.3      1 UNK0      -0.3932
+      7 H1           -9.343000    3.397000    0.887000 H        1 UNK0       0.1073
+      8 H2           -8.347000    1.415000   -0.094000 H        1 UNK0       0.0705
+      9 H31         -10.535000    0.385000    0.548000 H        1 UNK0       0.0596
+     10 H32         -11.231000    0.885000   -1.013000 H        1 UNK0       0.0596
+     11 HO2          -9.866000    2.214000   -2.437000 H        1 UNK0       0.2112
+     12 HO3          -9.601000   -0.421000   -2.065000 H        1 UNK0       0.2102
+@<TRIPOS>BOND
+     1    1    7 1
+     2    1    4 2
+     3    1    2 1
+     4    2    3 1
+     5    2    8 1
+     6    2    5 1
+     7    3   10 1
+     8    3    6 1
+     9    3    9 1
+    10    5   11 1
+    11    6   12 1
+@<TRIPOS>SUBSTRUCTURE
+1 UNK0 1 RESIDUE 1 _ UNK
+@<TRIPOS>SET
+GROUP:Hetatm STATIC ATOMS <user>
+12 1 2 3 4 5 6 7 8 9 10 11 12
+@<SCITEGIC>MOL_PROPERTY
+__PDBRemarks__
+SciTegic.value.StringValue
+
+
+@<SCITEGIC>MOL_PROPERTY
+__PDBSeqres__
+SciTegic.value.StringValue
+
+
+@<SCITEGIC>ATOM_PROPERTY
+Formal Charge
+SciTegic.value.StringValue
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 0
+8 0
+9 0
+10 0
+11 0
+12 0
+
+@<SCITEGIC>ATOM_PROPERTY
+pdb_tempFactor
+SciTegic.value.DoubleValue
+1 0.00
+2 0.00
+3 0.00
+4 0.00
+5 0.00
+6 0.00
+7 0.00
+8 0.00
+9 0.00
+10 0.00
+11 0.00
+12 0.00
+
+@<SCITEGIC>ATOM_PROPERTY
+pdb_occupancy
+SciTegic.value.DoubleValue
+1 1.00
+2 1.00
+3 1.00
+4 1.00
+5 1.00
+6 1.00
+7 1.00
+8 1.00
+9 1.00
+10 1.00
+11 1.00
+12 1.00
+
+@<SCITEGIC>ATOM_PROPERTY
+pdb_heteroAtom
+SciTegic.value.BooleanValue
+1 true
+2 true
+3 true
+4 true
+5 true
+6 true
+7 true
+8 true
+9 true
+10 true
+11 true
+12 true
+

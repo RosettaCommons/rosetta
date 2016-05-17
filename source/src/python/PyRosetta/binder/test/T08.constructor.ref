@@ -1,0 +1,88 @@
+// File: T08_constructor.cpp
+#include <T08.constructor.hpp> // BaseA
+#include <T08.constructor.hpp> // BaseB
+#include <T08.constructor.hpp> // BaseB::BaseB
+#include <T08.constructor.hpp> // BaseC
+#include <T08.constructor.hpp> // BaseC::BaseC
+#include <T08.constructor.hpp> // BaseD
+#include <T08.constructor.hpp> // BaseD::BaseD
+#include <T08.constructor.hpp> // DerivedA
+#include <T08.constructor.hpp> // DerivedB
+#include <T08.constructor.hpp> // DerivedC
+#include <T08.constructor.hpp> // DerivedD
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+#endif
+
+void bind_T08_constructor(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	{ // BaseA file:T08.constructor.hpp line:17
+		pybind11::class_<BaseA, std::shared_ptr<BaseA>> cl(M(""), "BaseA");
+		cl.def(pybind11::init<>());
+	}
+	{ // DerivedA file:T08.constructor.hpp line:18
+		pybind11::class_<DerivedA, std::shared_ptr<DerivedA>> cl(M(""), "DerivedA", pybind11::base<BaseA>());
+		cl.def(pybind11::init<>());
+	}
+	{ // BaseB file:T08.constructor.hpp line:21
+		pybind11::class_<BaseB, std::shared_ptr<BaseB>> cl(M(""), "BaseB");
+		cl.def(pybind11::init<int>());
+	}
+	{ // DerivedB file:T08.constructor.hpp line:26
+		pybind11::class_<DerivedB, std::shared_ptr<DerivedB>> cl(M(""), "DerivedB", pybind11::base<BaseB>());
+	}
+	{ // BaseC file:T08.constructor.hpp line:29
+		pybind11::class_<BaseC, std::shared_ptr<BaseC>> cl(M(""), "BaseC");
+		cl.def(pybind11::init<int>());
+	}
+	{ // DerivedC file:T08.constructor.hpp line:36
+		pybind11::class_<DerivedC, std::shared_ptr<DerivedC>> cl(M(""), "DerivedC", pybind11::base<BaseC>());
+	}
+	{ // BaseD file:T08.constructor.hpp line:39
+		pybind11::class_<BaseD, std::shared_ptr<BaseD>> cl(M(""), "BaseD");
+		cl.def(pybind11::init<int>());
+	}
+	{ // DerivedD file:T08.constructor.hpp line:45
+		pybind11::class_<DerivedD, std::shared_ptr<DerivedD>> cl(M(""), "DerivedD", pybind11::base<BaseD>());
+	}
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T08_constructor(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T08_constructor) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T08_constructor", "T08_constructor module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T08_constructor(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T08_constructor.sources
+// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T08_constructor.cpp
+// T08_constructor.cpp

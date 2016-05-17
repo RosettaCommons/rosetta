@@ -1,0 +1,98 @@
+// File: T07_class.cpp
+#include <T07.class.hpp> // Access
+#include <T07.class.hpp> // Access::foo
+#include <T07.class.hpp> // Access::foo_public
+#include <T07.class.hpp> // Arrays
+#include <T07.class.hpp> // Enums
+#include <T07.class.hpp> // Floating_point
+#include <T07.class.hpp> // Integral
+#include <T07.class.hpp> // Pointers_and_References
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+#endif
+
+void bind_T07_class(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	{ // Integral file:T07.class.hpp line:17
+		pybind11::class_<Integral, std::shared_ptr<Integral>> cl(M(""), "Integral");
+		cl.def(pybind11::init<>());
+		cl.def_readwrite("i", &Integral::i);
+		cl.def_readwrite("ui", &Integral::ui);
+		cl.def_readwrite("l", &Integral::l);
+		cl.def_readwrite("ul", &Integral::ul);
+	}
+	{ // Floating_point file:T07.class.hpp line:25
+		pybind11::class_<Floating_point, std::shared_ptr<Floating_point>> cl(M(""), "Floating_point");
+		cl.def(pybind11::init<>());
+		cl.def_readwrite("f", &Floating_point::f);
+		cl.def_readwrite("d", &Floating_point::d);
+		cl.def_readwrite("ld", &Floating_point::ld);
+	}
+	{ // Arrays file:T07.class.hpp line:32
+		pybind11::class_<Arrays, std::shared_ptr<Arrays>> cl(M(""), "Arrays");
+		cl.def(pybind11::init<>());
+	}
+	{ // Pointers_and_References file:T07.class.hpp line:40
+		pybind11::class_<Pointers_and_References, std::shared_ptr<Pointers_and_References>> cl(M(""), "Pointers_and_References");
+	}
+	{ // Enums file:T07.class.hpp line:51
+		pybind11::class_<Enums, std::shared_ptr<Enums>> cl(M(""), "Enums");
+		cl.def(pybind11::init<>());
+		pybind11::enum_<Enums::E1>(cl, "E1")
+			.value("E1V", Enums::E1::E1V)
+			.export_values();
+
+		pybind11::enum_<Enums::E2>(cl, "E2")
+			.value("E2V", Enums::E2::E2V);
+
+		pybind11::enum_<Enums::E3>(cl, "E3");
+
+	}
+	{ // Access file:T07.class.hpp line:66
+		pybind11::class_<Access, std::shared_ptr<Access>> cl(M(""), "Access");
+		cl.def(pybind11::init<>());
+		cl.def_readwrite("i", &Access::i);
+		cl.def("foo_public", (void (Access::*)()) &Access::foo_public, "doc");
+		cl.def_static("foo", (float (*)(double)) &Access::foo, "doc", pybind11::arg(""));
+	}
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T07_class(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T07_class) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T07_class", "T07_class module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T07_class(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T07_class.sources
+// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T07_class.cpp
+// T07_class.cpp

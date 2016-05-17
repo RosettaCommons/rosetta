@@ -1,0 +1,79 @@
+// File: T01_enum.cpp
+#include <T01.enum.hpp> // A
+#include <T01.enum.hpp> // E1
+#include <T01.enum.hpp> // E2
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+#endif
+
+void bind_T01_enum(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	// E1 file:T01.enum.hpp line:17
+	pybind11::enum_<E1>(M(""), "E1")
+		.value("E1_V0", E1::E1_V0)
+		.value("E1_V1", E1::E1_V1)
+		.export_values();
+
+;
+
+	// E2 file:T01.enum.hpp line:19
+	pybind11::enum_<E2>(M(""), "E2")
+		.value("E2_V0", E2::E2_V0)
+		.value("E2_V1", E2::E2_V1);
+
+;
+
+	{ // A file:T01.enum.hpp line:21
+		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A");
+		cl.def(pybind11::init<>());
+		pybind11::enum_<A::AE1>(cl, "AE1")
+			.value("AE1_V0", A::AE1::AE1_V0)
+			.value("AE1_V1", A::AE1::AE1_V1)
+			.export_values();
+
+		pybind11::enum_<A::AE2>(cl, "AE2")
+			.value("AE2_V0", A::AE2::AE2_V0)
+			.value("AE2_V1", A::AE2::AE2_V1);
+
+	}
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T01_enum(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T01_enum) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T01_enum", "T01_enum module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T01_enum(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.sources
+// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.cpp
+// T01_enum.cpp

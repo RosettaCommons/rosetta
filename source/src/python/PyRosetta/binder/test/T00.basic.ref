@@ -1,0 +1,83 @@
+// File: T00_basic.cpp
+#include <T00.basic.hpp> // foo
+#include <T00.basic.hpp> // foo_double
+#include <T00.basic.hpp> // foo_float
+#include <T00.basic.hpp> // foo_int
+#include <T00.basic.hpp> // foo_void_p
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+#endif
+
+void bind_T00_basic(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	// foo() file:T00.basic.hpp line:26
+	M("").def("foo", (void (*)()) &foo, "doc");
+
+	// foo_int(int) file:T00.basic.hpp line:28
+	M("").def("foo_int", (int (*)(int)) &foo_int, "doc", pybind11::arg(""));
+
+	// foo_int(int &) file:T00.basic.hpp line:29
+	M("").def("foo_int", (int (*)(int &)) &foo_int, "doc", pybind11::arg(""));
+
+	// foo_float(float) file:T00.basic.hpp line:32
+	M("").def("foo_float", (float (*)(float)) &foo_float, "doc", pybind11::arg(""));
+
+	// foo_float(float &) file:T00.basic.hpp line:33
+	M("").def("foo_float", (float (*)(float &)) &foo_float, "doc", pybind11::arg(""));
+
+	// foo_double(double) file:T00.basic.hpp line:36
+	M("").def("foo_double", (double (*)(double)) &foo_double, "doc", pybind11::arg(""));
+
+	// foo_double(double &) file:T00.basic.hpp line:37
+	M("").def("foo_double", (double (*)(double &)) &foo_double, "doc", pybind11::arg(""));
+
+	// foo_void_p(void *) file:T00.basic.hpp line:42
+	M("").def("foo_void_p", (void * (*)(void *)) &foo_void_p, "doc", pybind11::arg(""));
+
+	// foo_void_p(void *const &) file:T00.basic.hpp line:43
+	M("").def("foo_void_p", (void * (*)(void *const &)) &foo_void_p, "doc", pybind11::arg(""));
+
+	// foo_void_p(void *&) file:T00.basic.hpp line:44
+	M("").def("foo_void_p", (void * (*)(void *&)) &foo_void_p, "doc", pybind11::arg(""));
+
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T00_basic(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T00_basic) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T00_basic", "T00_basic module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T00_basic(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T00_basic.sources
+// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T00_basic.cpp
+// T00_basic.cpp

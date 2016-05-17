@@ -38,15 +38,33 @@ using namespace fmt::literals;
 
 namespace binder {
 
-
-// Generate function argument list separate by comma: int, bool, std::sting
+// Generate function argument list separate by comma: int, bool, std::string
 string function_arguments(clang::FunctionDecl const *record)
 {
 	string r;
 
 	for(uint i=0; i<record->getNumParams(); ++i) {
 		r += record->getParamDecl(i)->getOriginalType().getCanonicalType().getAsString();
-		if( i != record->getNumParams()-1 ) r += ", ";
+		if( i+1 != record->getNumParams() ) r += ", ";
+	}
+
+	fix_boolean_types(r);
+
+	return r;
+}
+
+
+// Generate function argument list separate by comma
+// name_arguments - if arguments should be named: a1, a2, ...
+// n - number of arguments to generate. If n > num_of_function_parameters - generate only list with num_of_function_parameters
+std::string function_arguments_for_lambda(clang::FunctionDecl const *record, uint n)
+{
+	string r;
+
+	for(uint i=0; i<record->getNumParams()  and  i<n; ++i) {
+		QualType qt = record->getParamDecl(i)->getOriginalType().getCanonicalType();
+		r += qt.getAsString() + ' ' + (!qt->isReferenceType()  and  !qt->isPointerType()? "&" : "") + "a" + std::to_string(i);
+		if( i+1 != record->getNumParams()  and  i+1 != n ) r += ", ";
 	}
 
 	fix_boolean_types(r);
@@ -78,6 +96,12 @@ string template_specialization(FunctionDecl const *F)
 	return templ;
 }
 
+
+// generate string represetiong class name that could be used in python
+string python_function_name(FunctionDecl const *F)
+{
+	return mangle_type_name( F->getNameAsString() + template_specialization(F) );
+}
 
 // Generate function pointer type string for given function: void (*)(int, doule)_ or  void (ClassName::*)(int, doule)_ for memeber function
 string function_pointer_type(FunctionDecl const *F)
@@ -146,38 +170,9 @@ bool is_binding_requested(FunctionDecl const *F, Config const &config)
 }
 
 
-// /// check if user requested binding for the given declaration
-// bool is_binding_requested(FunctionDecl const *F, Config const &config)
-// {
-// 	bool bind = config.is_function_binding_requested( F->getQualifiedNameAsString() )  or  config.is_namespace_binding_requested( namespace_from_named_decl(F) );
-// 	if(bind) {
-// 		bind &= !binder::is_skipping_requested(F->getReturnType().getDesugaredType(F->getASTContext()), config);
-// 		for(uint i=0; i<F->getNumParams(); ++i) {
-// 			QualType qt = F->getParamDecl(i)->getOriginalType();
-// 			bind &= !binder::is_skipping_requested( qt.getDesugaredType(F->getASTContext()), config);
-// 		}
-// 		if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
-// 			if( TemplateArgumentList const *tal = F->getTemplateSpecializationArgs() ) {
-// 				for(uint i=0; i < tal->size(); ++i) {
-// 					TemplateArgument const &ta( tal->get(i) );
-// 					if( ta.getKind() == TemplateArgument::Type ) {
-// 						bind &= !binder::is_skipping_requested( ta.getAsType(), config);
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return bind;
-// }
-
-
 /// check if user requested skipping for the given declaration
 bool is_skipping_requested(FunctionDecl const *F, Config const &config)
 {
-	// {
-	// 	string name = F->getQualifiedNameAsString();
-	// 	if( begins_with(name, "utility::vector1<core::fragment::picking_old::vall::scores::VallFragmentScore") ) outs() << "____  " << name << "\n";
-	// }
 	string name = F->getQualifiedNameAsString();
 	bool skip = config.is_function_skipping_requested(name) or config.is_function_skipping_requested( function_qualified_name(F) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(F) );
 
@@ -200,86 +195,108 @@ bool is_skipping_requested(FunctionDecl const *F, Config const &config)
 	return skip;
 }
 
-// /// check if user requested skipping for the given declaration
-// bool is_skipping_requested(FunctionDecl const *F, Config const &config)
-// {
-// 	bool skip = config.is_function_skipping_requested( F->getQualifiedNameAsString() ) or config.is_class_skipping_requested( function_qualified_name(F) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(F) );
-// 	if(!skip) {
-// 		skip |= binder::is_skipping_requested(F->getReturnType().getDesugaredType(F->getASTContext()), config);
-// 		for(uint i=0; i<F->getNumParams(); ++i) {
-// 			QualType qt = F->getParamDecl(i)->getOriginalType();
-// 			skip |= binder::is_skipping_requested( qt.getDesugaredType(F->getASTContext()), config);
-// 		}
-// 		if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
-// 			if( TemplateArgumentList const *tal = F->getTemplateSpecializationArgs() ) {
-// 				for(uint i=0; i < tal->size(); ++i) {
-// 					TemplateArgument const &ta( tal->get(i) );
-// 					if( ta.getKind() == TemplateArgument::Type ) {
-// 						skip |= binder::is_skipping_requested( ta.getAsType(), config);
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return skip;
-// }
-
 
 // Generate binding for given function: .def("foo", (std::string (aaaa::A::*)(int) ) &aaaa::A::foo, "doc")
-string bind_function(FunctionDecl *F, Context &context)
+string bind_function(FunctionDecl *F, uint args_to_bind, bool request_bindings_f, Context &context)
 {
-	string function_name { F->getNameAsString() };
+	string function_name = python_function_name(F);
 	string function_qualified_name { F->getQualifiedNameAsString() };
 
 	CXXMethodDecl * m = dyn_cast<CXXMethodDecl>(F);
 	string maybe_static = m and m->isStatic() ? "_static" : "";
 
-	string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
 
-	request_bindings(F->getReturnType(), context);
+	string function;
+	if( args_to_bind == F->getNumParams() ) {
+		function = "({}) &{}{}"_format(function_pointer_type(F), function_qualified_name, template_specialization(F));
+	}
+	else {
+		string args; for(uint i=0; i<args_to_bind; ++i) args += "a" + std::to_string(i) + ( i+1 == args_to_bind ? "" : ", " );
+		string return_type = F->getReturnType().getCanonicalType().getAsString();  fix_boolean_types(return_type);
 
-	for(auto p = F->param_begin(); p != F->param_end(); ++p) {
-
-		string default_argument;
-		if( !(*p)->hasUninstantiatedDefaultArg() ) default_argument = expresion_to_string( (*p)->getDefaultArg() );
-
-		bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
-
-		string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
-
-		bool good_default = default_argument.find("std::cout") == std::string::npos  and  default_argument.find("std::cerr") == std::string::npos;
-
-		if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg()  and  !is_function_call  and  good_default  and  false) {
-			r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type, string( (*p)->getName() ), default_argument, replace(default_argument, "\"", "\\\"") );
+		if( m and !m->isStatic() ) {
+			string object = class_qualified_name( m->getParent() ) + (m->isConst() ? " const" : "") + " &o" + ( args_to_bind ? ", " : "" );
+			function = "[]({}{}) -> {} {{ return o.{}({}); }}"_format(object, function_arguments_for_lambda(F, args_to_bind), return_type, F->getNameAsString(), args);
 		}
-		else r += ", pybind11::arg(\"{}\")"_format( string( (*p)->getName() ) );
-
-		//add_relevant_include(*p, includes);
-
-		//outs() << (*p)->getDefaultArg()->getAsString();
-		//(*p)->dump();
-		// if( (*p)->hasDefaultArg() ) {
-		// 	outs() << "  CXXDefaultArgExpr: " << (*p)->getName() << " = " << expresion_to_string( (*p)->getDefaultArg() ) << "\n";
-
-		// 	//SourceRange s = (*p)->getDefaultArgRange();
-		// 	//s.getBegin().dump( F->getASTContext().getSourceManager() );
-
-
-		// 	//if( auto e = dyn_cast<clang::CXXDefaultArgExpr>( (*p)->getDefaultArg() ) ) {
-		// 		//e->dump();
-		// 	// }
-
-		// 	// Expr::EvalResult result;
-		// 	// if( (*p)->getDefaultArg()->EvaluateAsRValue(result, F->getASTContext() ) ) {
-		// 	// 	outs() << "  Default for: " << (*p)->getName() << " = " << result.Val.getAsString(F->getASTContext(), (*p)->getOriginalType() ) << "\n";
-		// 	// }
-		// }
-		request_bindings((*p)->getOriginalType(), context);
+		else {
+			function = "[]({}) -> {} {{ return {}({}); }}"_format(function_arguments_for_lambda(F, args_to_bind), return_type, function_qualified_name, args);
+		}
 	}
 
-	r += ')';
+	//string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
+	string r = R"(.def{}("{}", {}, "doc")"_format(maybe_static, function_name, function);
+
+	if(request_bindings_f) request_bindings(F->getReturnType(), context);
+
+	for(uint i=0; i<F->getNumParams()  and  i < args_to_bind; ++i) {
+		r += ", pybind11::arg(\"{}\")"_format( string( F->getParamDecl(i)->getName() ) );
+
+		if(request_bindings_f) request_bindings( F->getParamDecl(i)->getOriginalType(), context);
+	}
+
+	// for(auto p = F->param_begin(); p != F->param_end(); ++p) {
+	// 	string default_argument;
+	// 	if( !(*p)->hasUninstantiatedDefaultArg() ) default_argument = expresion_to_string( (*p)->getDefaultArg() );
+	// 	bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
+	// 	string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
+	// 	bool good_default = default_argument.find("std::cout") == std::string::npos  and  default_argument.find("std::cerr") == std::string::npos;
+	// 	if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg()  and  !is_function_call  and  good_default  and  false) {
+	// 		r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type, string( (*p)->getName() ), default_argument, replace(default_argument, "\"", "\\\"") );
+	// 	}
+	// 	else r += ", pybind11::arg(\"{}\")"_format( string( (*p)->getName() ) );
+	// 	if(request_bindings_f) request_bindings((*p)->getOriginalType(), context);
+	// }
+
+	r += ");";
 
 	return r;
+}
+
+// Generate binding for given function. If function have default arguments generate set of bindings by creating separate bindings for each argument with default.
+string bind_function(string const & module, FunctionDecl *F, Context &context)
+{
+	string code;
+
+	uint args_to_bind = 0;
+	for(; args_to_bind < F->getNumParams(); ++args_to_bind) {
+		if( F->getParamDecl(args_to_bind)->hasDefaultArg() ) break;
+	}
+
+	for(; args_to_bind <= F->getNumParams(); ++args_to_bind) code += module + bind_function(F, args_to_bind, args_to_bind == F->getNumParams(), context) + '\n';
+
+	return code;
+	// string function_name = python_function_name(F);
+	// string function_qualified_name { F->getQualifiedNameAsString() };
+
+	// CXXMethodDecl * m = dyn_cast<CXXMethodDecl>(F);
+	// string maybe_static = m and m->isStatic() ? "_static" : "";
+
+	// string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
+
+	// request_bindings(F->getReturnType(), context);
+
+	// for(auto p = F->param_begin(); p != F->param_end(); ++p) {
+
+	// 	string default_argument;
+	// 	if( !(*p)->hasUninstantiatedDefaultArg() ) default_argument = expresion_to_string( (*p)->getDefaultArg() );
+
+	// 	bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
+
+	// 	string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
+
+	// 	bool good_default = default_argument.find("std::cout") == std::string::npos  and  default_argument.find("std::cerr") == std::string::npos;
+
+	// 	if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg()  and  !is_function_call  and  good_default  and  false) {
+	// 		r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type, string( (*p)->getName() ), default_argument, replace(default_argument, "\"", "\\\"") );
+	// 	}
+	// 	else r += ", pybind11::arg(\"{}\")"_format( string( (*p)->getName() ) );
+
+	// 	request_bindings((*p)->getOriginalType(), context);
+	// }
+
+	// r += ')';
+
+	// return r;
 }
 
 
@@ -294,32 +311,6 @@ void add_relevant_includes(FunctionDecl const *F, std::vector<std::string> &incl
 
 	for(auto & t : get_type_dependencies(F) ) binder::add_relevant_includes(t, includes, stack, level);
 }
-
-
-/// extract include needed for this generator and add it to includes vector
-// void add_relevant_includes(FunctionDecl const *F, std::vector<std::string> &includes, std::set<NamedDecl const *> &stack /*, bool for_template_arg_only*/)
-// {
-// 	if( stack.count(F) ) return;
-// 	else stack.insert(F);
-// 	add_relevant_include_for_decl(F, includes);
-// 	//if( !for_template_arg_only ) {
-// 	binder::add_relevant_includes(F->getReturnType().getDesugaredType(F->getASTContext()), includes, stack);
-// 	for(uint i=0; i<F->getNumParams(); ++i) {
-// 		QualType qt = F->getParamDecl(i)->getOriginalType();
-// 		//binder::add_relevant_includes(qt, includes);
-// 		binder::add_relevant_includes( qt.getDesugaredType(F->getASTContext()), includes, stack);
-// 	}
-// 	if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
-// 		if( TemplateArgumentList const *tal = F->getTemplateSpecializationArgs() ) {
-// 			for(uint i=0; i < tal->size(); ++i) {
-// 				TemplateArgument const &ta( tal->get(i) );
-// 				if( ta.getKind() == TemplateArgument::Type ) {
-// 					binder::add_relevant_includes( ta.getAsType(), includes, stack);
-// 				}
-// 			}
-// 		}
-// 	}
-// }
 
 
 /// Generate string id that uniquly identify C++ binding object. For functions this is function prototype and for classes forward declaration.
@@ -342,8 +333,8 @@ bool is_bindable(FunctionDecl const *F)
 	r &= is_bindable(rt);
 
 	for(auto p = F->param_begin(); p != F->param_end(); ++p) r &= is_bindable( (*p)->getOriginalType() );
-
 	//outs() << "is_bindable: " << F->getQualifiedNameAsString() << " " << r << "\n";
+
 	return r;
 }
 
@@ -377,12 +368,12 @@ void FunctionBinder::bind(Context &context)
 
 	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(F) );
 	string const include = relevant_include(F);
-	string const namespace_ = namespace_from_named_decl(F);
+	//string const namespace_ = namespace_from_named_decl(F);
 
-	code()  = "\t{ // " + F->getQualifiedNameAsString() + "(" + function_arguments(F) + ") file:" + include.substr(1, include.size()-2) + " line:" + line_number(F) + "\n";
-	if( namespace_.size() ) code() += "\t\tusing namespace " + namespace_ + ";\n";
-	code() += "\t\t"+ module_variable_name + bind_function(F, context) + ";\n";
-	code() += "\t}\n\n";
+	code()  = "\t// " + F->getQualifiedNameAsString() + "(" + function_arguments(F) + ") file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(F) + "\n";
+	//if( namespace_.size() ) code() += "\t\tusing namespace " + namespace_ + ";\n";
+	code() += bind_function("\t"+ module_variable_name, F, context);
+	code() += "\n";
 }
 
 } // namespace binder

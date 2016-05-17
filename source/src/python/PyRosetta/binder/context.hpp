@@ -127,7 +127,23 @@ public:
 	//void request_bindings(std::vector<string> const & namespaces);
 	// is binding requested
 
+	/// check if given CXXRecordDecl is already binded and if not add forward declaration for it.
+	//void maybe_add_forward_declaration(clang::CXXRecordDecl const *);
+
 private:
+
+	/// bind all objects residing in namespaces and it dependency
+	void bind(Config const &config);
+
+	std::set<string> create_all_nested_namespaces();
+
+		/// check if forward declaration for CXXRecordDecl needed
+	bool is_forward_needed(clang::CXXRecordDecl const *);
+
+	/// add given class to 'aleady binded' set
+	void add_to_binded(clang::CXXRecordDecl const *);
+
+
 
 	/// array of all binderes from translation unit
 	std::vector<BinderOP> binders;
@@ -135,19 +151,20 @@ private:
 	/// types → binder
 	std::unordered_map<string, BinderOP> types;
 
+	/// set of items unique id's to keep track of whats binders being added
 	std::set<string> ids;
+
+	/// set of items unique id's to keep track of whats binded and not
+	std::set<string> binded;
+
+	// set of classes for which forward declaration is needed
+	//std::set<clang::CXXRecordDecl const *> forward;
 
 	// binder.id() → binder
 	//std::unordered_map<string, Binders> binders_map;
 
 	//std::unordered_map<string, Binders> modules;
 	//std::unordered_map<string, BinderOP> system_binders;
-
-
-	/// bind all objects residing in namespaces and it dependency
-	void bind(Config const &config);
-
-	std::set<string> create_all_nested_namespaces();
 
 	/// create vector of all namespaces and sort it
 	//std::vector<string> sorted_namespaces();

@@ -136,6 +136,9 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		make_pair("<bits/stl_deque.h>",    "<deque>"),
 		make_pair("<bits/stl_queue.h>",    "<queue>"),
 		make_pair("<bits/stl_multimap.h>", "<map>"),
+		make_pair("<bits/sched.h>",        "<unistd.h>"),
+		make_pair("<bits/pthreadtypes.h>", "<pthread.h>"),
+		make_pair("<bits/gthr-default.h>", "<pthread.h>"),
 	};
 
 
@@ -144,9 +147,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 	for(auto & p : name_map) {
 		if( begins_with(name, p.first) ) {
 			includes.push_back(p.second);
-			//#ifndef NDEBUG
 			if(O_annotate_includes) includes.back() += " // " + name;
-			//#endif
 			return;
 		}
 	}
@@ -158,27 +159,10 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		if( include == i.first ) { include = i.second; break; }
 	}
 
-	//if( ( namespace_from_named_decl(decl) == "std" or namespace_from_named_decl(decl) == "__gnu_cxx" )
-	//	and  begins_with(include, "<bits/") ) return;
-	//if( begins_with(name, "std::")  and  begins_with(include, "<bits/") ) return;
-
 	if( include.size() ) {
-		//#ifndef NDEBUG
 		if(O_annotate_includes) include += " // " + name;
-		//#endif
 		includes.push_back(include);
 	}
-	// else {
-	// 	for(;;) {
-	// 		if(DeclContext const * d = decl->getDeclContext() ) {
-	// 			if( auto r = dyn_cast<CXXRecordDecl>(d) ) {
-	// 				outs() << "include from decl context for: " << decl->getQualifiedNameAsString() << "\n";
-	// 				add_relevant_includes(r, includes, stack);
-	// 			}
-	// 		}
-	// 		else break;
-	// 	}
-	// }
 }
 
 
@@ -235,15 +219,6 @@ bool is_bindable(QualType const &qt)
 		}
 	}
 
-
-	// if( auto rt = dyn_cast<RecordType>( qt.getTypePtr() ) ) {
-	// 	if( auto cxxr = dyn_cast<CXXRecordDecl>( rt->getDecl() ) ) r &= is_bindable(cxxr);
-	// }
-
-	//outs() << " isIncompleteArrayType(): " << qt->isIncompleteArrayType() << " r:" << r << "\n";
-	//qt->dump();
-
-	//outs() << "Qt " << qt.getAsString() << " -> " << r /*<< " isInstantiationDependentType: " << qt->isInstantiationDependentType() */ << "\n";
 	return r;
 }
 
@@ -252,11 +227,23 @@ bool is_bindable(QualType const &qt)
 /// extract type info from QualType if any and bind relative type
 void request_bindings(clang::QualType const &qt, Context &context)
 {
+	//outs() << "request_bindings(clang::QualType,...): " << qt.getAsString() << "\n";
 	if( TagDecl *td = qt->getAsTagDecl() ) {
 		//if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
-		if( td->isCompleteDefinition() ) context.request_bindings( typename_from_type_decl(td) );
+
+		if( td->isCompleteDefinition()  or  dyn_cast<ClassTemplateSpecializationDecl>(td) ) context.request_bindings( typename_from_type_decl(td) );
+		//if( td->isCompleteDefinition() ) context.request_bindings( typename_from_type_decl(td) );
+
 		//else outs() << "void bind(clang::QualType, Context &): isCompleteDefinition is false for: "<< qt.getAsString() << "\n";
 		//context.request_bindings( typename_from_type_decl(td) );
+	}
+
+	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) {
+		request_bindings( pt->getPointeeType()/*.getCanonicalType()*/, context );
+	}
+
+	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) {
+		request_bindings( rt->getPointeeType()/*.getCanonicalType()*/, context );
 	}
 }
 
@@ -268,14 +255,15 @@ bool is_python_builtin(NamedDecl const *C)
 	string name = C->getQualifiedNameAsString();
 	//if( begins_with(name, "class ") ) name = name.substr(6); // len("class ")
 
-	std::vector<string> known_builtin = {"std::pair", "std::tuple", "std::basic_string", "std::allocator", "std::initializer_list", "std::shared_ptr", "std::weak_ptr",
-										 "std::iterator", "std::reverse_iterator",
-										 "std::_Rb_tree_iterator", "std::_Rb_tree_const_iterator", "__gnu_cxx::__normal_iterator",
- 										 "std::_List_iterator", "std::_List_const_iterator",
+	static std::vector<string> const known_builtin = {"std::basic_string", "std::allocator", "std::initializer_list", "std::shared_ptr", "std::weak_ptr", "std::enable_shared_from_this",
+													  "std::pair", "std::tuple",
+													  "std::_Rb_tree_iterator", "std::_Rb_tree_const_iterator", "__gnu_cxx::__normal_iterator",
+													  "std::_List_iterator", "std::_List_const_iterator",
 
-										 "std::less",  // lead to an error in include detection code, probably could be fixed
+													  "std::less",  // lead to an error in include detection code, probably could be fixed
 
-										 //"std::vector", "std::map", "std::list", "std::set",
+													  //"std::iterator", "std::reverse_iterator",
+													  //"std::vector", "std::map", "std::list", "std::set",
 
  	};
 
@@ -285,50 +273,5 @@ bool is_python_builtin(NamedDecl const *C)
 
 	return false;
 }
-
-/*
-
-/// check if user requested binding for the given QualType
-bool f_is_binding_requested::cxx_record_decl(clang::CXXRecordDecl const *C)
-{
-	bool bind = config.is_namespace_binding_requested( namespace_from_named_decl(C) );
-
-	for(auto & t : get_type_dependencies(C) ) bind |= apply(t);
-
-	return bind;
-}
-
-
-
-/// check if user requested skipping for the given QualType
-bool f_is_skipping_requested::cxx_record_decl(clang::CXXRecordDecl const *C)
-{
-	bool skip = config.is_class_skipping_requested( C->getQualifiedNameAsString() ) or config.is_class_skipping_requested( class_qualified_name(C) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(C) );
-
-	for(auto & t : get_type_dependencies(C) ) skip |= apply(t);
-
-	return skip;
-}
-
-  void f_add_relevant_includes::cxx_record_decl(clang::CXXRecordDecl const *C)
-{
-	if( stack.count(C) ) return; else stack.insert(C);
-
-	add_relevant_include_for_decl(C, includes);
-
-	for(auto & t : get_type_dependencies(C) ) apply(t);
-
-	for(auto & d : get_decl_dependencies(C) ) add_relevant_include_for_decl(d, includes);
-}
-
-void f_add_relevant_includes::enum_decl(clang::EnumDecl const *E)
-{
-	add_relevant_include_for_decl(E, includes);
-}
-
-*/
-
-
-
 
 } // namespace binder

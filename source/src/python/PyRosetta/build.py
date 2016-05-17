@@ -13,7 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import os, sys, argparse, platform, subprocess
+import os, sys, argparse, platform, subprocess, imp, shutil, distutils.dir_util
 
 from collections import OrderedDict
 
@@ -24,6 +24,7 @@ elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "unknown"
 PlatformBits = platform.architecture()[0][:2]
 
+_pybind11_version_ = 'master' #'06f56ee1e90861d6af1882202baf02e31646510a'
 
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
@@ -37,9 +38,14 @@ def is_dir_banned(directory):
     return False
 
 
+def get_rosetta_system_include_directories():
+    ''' return list of include directories for compilation '''
+    r = 'external external/include external/boost_1_55_0 external/dbio external/dbio/sqlite3 external/libxml2/include'.split()
+    return r
+
 def get_rosetta_include_directories():
     ''' return list of include directories for compilation '''
-    r = 'src external external/include external/boost_1_55_0 external/dbio external/dbio/sqlite3 external/libxml2/include'.split()
+    r = 'src'.split()
     r.append('src/platform/'+Platform)
     return r
 
@@ -50,7 +56,7 @@ def get_defines():
 
 
 
-def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True):
+def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
     print(message);  print(command_line)
     while True:
 
@@ -60,7 +66,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
         output = output.decode('utf-8') + errors.decode('utf-8')
         exit_code = p.returncode
 
-        print(output)
+        if exit_code  or  not silent: print(output)
 
         if exit_code and until_successes: pass  # Thats right - redability COUNT!
         else: break
@@ -95,6 +101,69 @@ def get_compiler_family():
     return 'unknown'
 
 
+def install_llvm_tool(name, source_location, prefix, debug, clean=True):
+    ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
+        Return absolute path to executable on success and terminate with error on failure
+    '''
+    release = 'release_38'
+    prefix += '/llvm-3.8'
+
+    git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
+
+    if not os.path.isdir(prefix): os.makedirs(prefix)
+
+    if not os.path.isdir(prefix+'/llvm'): execute('Clonning llvm...', 'cd {} && git clone http://llvm.org/git/llvm.git llvm'.format(prefix) )
+    execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix}/llvm && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+    if not os.path.isdir(prefix+'/llvm/tools/clang'): execute('Clonning clang...', 'cd {}/llvm/tools && git clone http://llvm.org/git/clang.git clang'.format(prefix) )
+    execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/llvm/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+    if not os.path.isdir(prefix+'/llvm/tools/clang/tools/extra'): execute('Clonning clang...', 'cd {}/llvm/tools/clang/tools && git clone http://llvm.org/git/clang-tools-extra.git extra'.format(prefix) )
+    execute('Checking out Clang-tools revision: {}...'.format(release), 'cd {prefix}/llvm/tools/clang/tools/extra && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+    tool_link_path = '{prefix}/llvm/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
+    if os.path.islink(tool_link_path): os.unlink(tool_link_path)
+    os.symlink(source_location, tool_link_path)
+
+    cmake_lists = prefix + '/llvm/tools/clang/tools/extra/CMakeLists.txt'
+    tool_build_line = 'add_subdirectory({})'.format(name)
+
+    for line in open(cmake_lists):
+        if line == tool_build_line: break
+    else:
+        with open(cmake_lists, 'w') as f: f.write( open(cmake_lists).read() + tool_build_line + '\n' )
+
+    build_dir = prefix+'/llvm/build_' + release + ('.debug' if debug else '.release')
+    if not os.path.isdir(build_dir): os.makedirs(build_dir)
+    execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -G Ninja -DCMAKE_BUILD_TYPE={build_type} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON .. && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release'), silent=True)
+    print()
+    # build_dir = prefix+'/llvm/build-ninja-' + release
+    # if not os.path.isdir(build_dir): os.makedirs(build_dir)
+    # execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE={build_type} .. -G Ninja && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release')) )
+
+    executable = build_dir + '/bin/' + name
+    if not os.path.isfile(executable): print("\nEncounter error while running install_llvm_tool: Build is complete but executable {} is not there!!!".format(executable) ); sys.exit(1)
+
+    return executable
+
+
+def install_pybind11(prefix, clean=True):
+    ''' Download and install PyBind11 library at given prefix. Install version specified by _pybind11_version_ sha1
+    '''
+    git_checkout = '( git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
+
+    if not os.path.isdir(prefix): os.makedirs(prefix)
+    package_dir = prefix + '/pybind11'
+
+    if not os.path.isdir(package_dir): execute('Clonning pybind11...', 'cd {} && git clone https://github.com/RosettaCommons/pybind11.git'.format(prefix) )
+    execute('Checking out PyBind11 revision: {}...'.format(_pybind11_version_), 'cd {package_dir} && ( {git_checkout} )'.format(package_dir=package_dir, git_checkout=git_checkout), silent=True)
+    print()
+
+    include = package_dir + '/include/pybind11/pybind11.h'
+    if not os.path.isfile(include): print("\nEncounter error while running install_pybind11: Install is complete but include file {} is not there!!!".format(include) ); sys.exit(1)
+
+    return package_dir + '/include'
+
 
 def get_binding_build_root(rosetta_source_path, source=False, build=False):
     ''' Calculate bindings build path using current platform and compilation settings and create dir if it is not there yet '''
@@ -109,8 +178,8 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
     p = os.path.join(p, 'debug' if Options.debug  else 'release')
     #p = os.path.abspath( os.path.join(p, '_build_' if Options.monolith else 'rosetta') )
 
-    source_p = p+'/source'
-    build_p  = p+'/build'
+    source_p = p + '/source'
+    build_p  = p + '/build'
 
     if not os.path.isdir(source_p): os.makedirs(source_p)
     if not os.path.isdir(build_p) : os.makedirs(build_p)
@@ -119,6 +188,17 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
     if build:  return build_p
 
     return p
+
+
+
+def copy_supplemental_files(rosetta_source_path):
+    prefix = get_binding_build_root(rosetta_source_path, build=True)
+    source = rosetta_source_path + '/src/python/PyRosetta/src'
+
+    distutils.dir_util.copy_tree(source, prefix, update=False)
+
+    if Platform not in ['windows', 'cygwin'] and (not os.path.islink(prefix + '/database')): os.symlink('../../../../../../../database', prefix + '/database')  # creating link to Rosetta database dir
+
 
 
 
@@ -222,7 +302,8 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
     libs = generate_rosetta_cmake_files(rosetta_source_path, prefix) + generate_rosetta_external_cmake_files(rosetta_source_path, prefix)
 
     rosetta_cmake =  ''.join( ['include({}.cmake)\n'.format(l) for l in libs] )
-    rosetta_cmake += '\ninclude_directories({})\n\n'.format(' '.join(get_rosetta_include_directories()+[Options.pybind11] ) )
+    rosetta_cmake += '\ninclude_directories(SYSTEM {})\n\n'.format( ' '.join(get_rosetta_system_include_directories()+[Options.pybind11] ) )
+    rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join(get_rosetta_include_directories() ) )
     rosetta_cmake += 'add_definitions({})\n'.format(' '.join([ '-D'+d for d in get_defines()] ) )
 
     cmake = open('template.cmake').read()
@@ -232,33 +313,6 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
     cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
 
     update_source_file(prefix + 'CMakeLists.txt', cmake)
-
-    #test = prefix + 'test.cpp'
-    #with open(test, 'w') as f: f.write('#include <utility/exit.hh>\nint main(void) { utility_exit_with_message("Wow..."); return 0; }\n')
-    # with open(prefix + 'CMakeLists.txt', 'w') as f:
-    #     f.write('cmake_minimum_required(VERSION 2.8)\n\nproject(rosetta)\n\n')
-
-    #     libs = generate_rosetta_cmake_files(rosetta_source_path, prefix)
-
-    #     for i in libs: f.write('include({}.cmake)\n'.format(i))
-
-    #     for d in get_rosetta_include_directories(): f.write( 'include_directories({})\n'.format(d) )
-
-    #     for d in get_defines(): f.write( 'add_definitions(-D{})\n'.format(d) )
-
-    #     f.write('set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")\n')
-
-    #     #f.write( 'add_executable(test {})\n'.format(test) )
-    #     #f.write( 'target_link_libraries(test {})\n'.format(' '.join(libs) ) )
-
-    #     f.write( 'target_link_libraries(test {})\n'.format(' '.join(libs) ) )
-    #     #extra_sources
-
-
-    # extra_objs = [  # additioanal source for external libs
-    #     'dbio/cppdb/atomic_counter.cpp', "dbio/cppdb/conn_manager.cpp", "dbio/cppdb/driver_manager.cpp", "dbio/cppdb/frontend.cpp",
-    #     "dbio/cppdb/backend.cpp", "dbio/cppdb/mutex.cpp", "dbio/cppdb/pool.cpp", "dbio/cppdb/shared_object.cpp", "dbio/cppdb/sqlite3_backend.cpp",
-    #     "dbio/cppdb/utils.cpp", 'dbio/sqlite3/sqlite3.c', ]
 
 
 def generate_bindings(rosetta_source_path):
@@ -287,8 +341,7 @@ def generate_bindings(rosetta_source_path):
                                 #print(header)
                                 fh.write( '#include <{}>\n'.format(header) )
 
-
-    includes = ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
+    includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
 
     execute('Generating bindings...', 'cd {prefix} && {} --config {config} --annotate-includes --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) )
@@ -307,7 +360,7 @@ def  build_generated_bindings(rosetta_source_path):
 
     execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} ../source'.format(config, prefix=prefix))
 
-    execute('Building...', 'cd {prefix} && ninja'.format(prefix=prefix))
+    execute('Building...', 'cd {prefix} && ninja -j{jobs}'.format(prefix=prefix, jobs=Options.jobs))
 
 
 
@@ -316,11 +369,15 @@ def main(args):
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('-j', '--jobs', default=1, type=int, help="Number of processors to use on when building. (default: use all avaliable memory)")
+
     parser.add_argument("--debug", action="store_true", help="Build bindings in debug mode")
 
     parser.add_argument('--compiler', default='gcc', help='Compiler to use, defualt is gcc on Linux and clang on Mac')
 
-    parser.add_argument('--binder', default='binder', help='Path to Binder tool')
+    parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
+
+    parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
 
     parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
 
@@ -336,6 +393,14 @@ def main(args):
     binding_build_root = get_binding_build_root(rosetta_source_path)
 
     if Options.print_build_root: print(binding_build_root, end=''); sys.exit(0)
+
+    if not Options.binder: Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder', rosetta_source_path + '/build/prefix', Options.binder_debug)
+
+    if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
+
+    copy_supplemental_files(rosetta_source_path)
+
+    execute('Updating version, options and residue-type-enum files...', 'cd {} && ./version.py && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(rosetta_source_path) )
 
     generate_bindings(rosetta_source_path)
 

@@ -13,8 +13,10 @@
 
 
 #include <context.hpp>
+#include <binder.hpp>
 
 #include <type.hpp>
+#include <class.hpp>
 #include <util.hpp>
 #include <fmt/format.h>
 
@@ -78,12 +80,20 @@ void Context::add(BinderOP &b)
 	ids.insert( b->id() );
 
 	if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
+}
 
 
-	//string ns = namespace_from_named_decl( b->named_decl() );
-	//modules[ns].push_back(b);
+/// check if forward declaration for CXXRecordDecl needed
+bool Context::is_forward_needed(clang::CXXRecordDecl const *C)
+{
+	return !binded.count( class_qualified_name(C) );
+}
 
-	//outs() << "Adding to: " << ns << "\n";
+
+/// add given class to 'aleady binded' set
+void Context::add_to_binded(CXXRecordDecl const *C)
+{
+	binded.insert( class_qualified_name(C) );
 }
 
 
@@ -104,30 +114,18 @@ std::set<string> Context::create_all_nested_namespaces()
 	}
 
 	std::set<string> s( namespaces.begin(), namespaces.end() );
-	//namespaces.assign( s.begin(), s.end() );
-
-	//std::sort( std::begin(namespaces), std::end(namespaces) );
 
 	return s;
 }
-
-// /// create vector of all namespaces and sort it
-// vector<string> Context::sorted_namespaces()
-// {
-// 	vector<string> n;
-// 	for(auto & p : modules) n.push_back(p.first);
-
-// 	std::sort( std::begin(n), std::end(n) );
-
-// 	return n;
-// }
 
 
 // generate code for include directives and cleanup the includes vector
 string generate_include_directives(vector<string> &includes)
 {
 	string r;
-	for(auto &i : std::set<string>(includes.begin(), includes.end() ) ) r += "#include " + i + '\n';
+	for(auto &i : std::set<string>(includes.begin(), includes.end() ) )
+		if( !Config::get().is_include_skipping_requested(i) ) r += "#include " + i + '\n';
+
 	includes.resize(0);
 	return r;
 }
@@ -186,7 +184,7 @@ string file_name_prefix_for_binder(BinderOP &b)
 
 	string include = relevant_include(decl);
 
-	if( include.size() <= 2 ) throw std::runtime_error( "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!");
+	if( include.size() <= 2 ) { include = "<unknown/unknown.hh>";  errs() << "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!\n"; } //throw std::runtime_error( "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!");
 	include = include.substr(1, include.size()-2);
 
 	//outs() << "qn:" << decl->getQualifiedNameAsString() << " namespace_from_named_decl(decl):" << namespace_from_named_decl(decl) << "\n";
@@ -227,7 +225,7 @@ PYBIND11_PLUGIN({1}) {{
 }}
 )_";
 
-const char * module_header = "\n#include <pybind11/pybind11.h>\n//#include <pybind11/stl.h>\n\nPYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n";
+const char * module_header = "\n#include <pybind11/pybind11.h>\n\n{}#ifndef BINDER_PYBIND11_TYPE_CASTER\n\t#define BINDER_PYBIND11_TYPE_CASTER\n\tPYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n#endif\n\n";
 
 const char * module_function_suffix = "(std::function< pybind11::module &(std::string const &namespace_) > &M)";
 
@@ -239,6 +237,10 @@ void Context::generate(Config const &config)
 	vector<string> binding_function_names;
 
 	std::map<string, int> file_names;
+
+	string file_name = config.prefix + config.root_module + ".cpp";
+	std::ofstream root_module_file_handle(file_name);
+	sources.push_back(file_name);
 
 	outs() << "Writing code...\n";
 	for(uint i=0; i<binders.size(); ++i) {
@@ -261,14 +263,26 @@ void Context::generate(Config const &config)
 
 			for(; code.size()<config.maximum_file_length  and  i<binders.size()  and  namespace_==namespace_from_named_decl( binders[i]->named_decl() ); ++i) {
 				//outs() << "Binding: " << string(*binders[i]) << "\n";
+				if( ClassBinder * CB = dynamic_cast<ClassBinder*>( binders[i].get() ) ) {
+					std::vector<clang::CXXRecordDecl const *> const dependencies =CB->dependencies();
+					for(auto & c : dependencies ) {
+						if( is_forward_needed(c) ) {
+							code += bind_forward_declaration(c, *this);
+							add_to_binded(c);
+							outs() << "Adding forward binding for " << class_qualified_name(c) << "\n";
+						}
+					}
+					add_to_binded( dynamic_cast<CXXRecordDecl*>( CB->named_decl() ) );
+				}
 				code += binders[i]->code();
 				binders[i]->add_relevant_includes(includes, stack);
 			}
 			if( i < binders.size() ) --i;
 
-			code = generate_include_directives(includes) + module_header + "void " + function_name + module_function_suffix + "\n{\n" + code + "}\n";
+			code = generate_include_directives(includes) + format(module_header, config.includes_code())+ "void " + function_name + module_function_suffix + "\n{\n" + code + "}\n";
 
-			update_source_file(config.prefix, file_name, code);
+			if( O_single_file ) root_module_file_handle << "// File: " << file_name << '\n' << code << "\n\n";
+			else update_source_file(config.prefix, file_name, code);
 		}
 	}
 	outs() << "Writing code... Done!\n";
@@ -288,51 +302,15 @@ void Context::generate(Config const &config)
 	std::stringstream s;
 	s << format(main_module_header, binding_function_decls, config.root_module, namespace_pairs, binding_function_calls);
 
+	root_module_file_handle << s.str();
 
-	//s << "#include <pybind11/pybind11.h>\nPYBIND11_PLUGIN(example) {\n\tpybind11::module m(\"example\", \"example module\");\n";
-
-	// string module_var_defs, module_function_defs, module_function_calls;
-
-	// for(auto & n : namespaces) {
-	// 	if( n.size() ) {
-	// 		module_var_defs += "\tpybind11::module {} = {}.def_submodule(\"{}\", \"Bindings for {} namespace\");\n"_format( module_variable(n), module_variable( base_namespace(n) ), last_namespace(n), n);
-	// 	}
-
-	// 	module_function_defs += module_binder_function(n, true) + ";\n";
-	// 	module_function_calls += module_binder_function(n, false, "", module_variable(n)) + ";\n";
-	// }
-
-	//s << format(main_module_header, module_function_defs, root_module, _root_module_variable_name_, root_module, root_module + " module");
-
-	// s << module_var_defs << "\n" << module_function_calls;
-	// s << "\treturn m.ptr();\n}\n";
-
-	// //for(auto & p : modules) outs() << "Ns: " << p.first << "\n";
-
-	// // vector<BinderOP> & binders( modules[""] );
-	// // //for(auto &b : binders) s << indent(b("m"), "\t");
-	// // for(auto &b : binders) s << (*b)("m", "\t");
-	// // s << "\treturn m.ptr();\n}\n";
-
-	// for(auto &ns : modules) {
-	// 	vector<string> files = bind_namespaces(ns.first, maximum_file_length);
-
-	// 	//for(auto &f : files) s << f;
-	// 	for(uint i=0; i<files.size(); ++i) {
-	// 		string file_name = prefix + ( ns.first.size() ? replace(ns.first, "::", "-") : root_module ) + "-" + std::to_string(i) + ".cpp";
-
-	// 		std::ofstream(file_name) << files[i];
-	// 		sources.push_back(file_name);
-	// 	}
-	// }
-
-	//errs() << s.str() << "\n";
-	string file_name = config.prefix + config.root_module + ".cpp";
-	std::ofstream(file_name) << s.str();
-	sources.push_back(file_name);
-
-	std::ofstream f(config.prefix + config.root_module + ".sources");
-	for(auto &s : sources) f << s << "\n";
+	if( O_single_file ) {
+		root_module_file_handle << "\n// Source list file: " << config.prefix + config.root_module + ".sources\n";
+		for(auto &s : sources) root_module_file_handle << "// "<< s << "\n";
+	} else {
+		std::ofstream f(config.prefix + config.root_module + ".sources");
+		for(auto &s : sources) f << s << "\n";
+	}
 }
 
 } // namespace binder

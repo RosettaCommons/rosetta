@@ -36,6 +36,10 @@
 #include <utility/OrderedTuple.fwd.hh>
 #include <utility/vector1_bool.hh>
 
+#ifdef PYROSETTA
+#include <protocols/match/Matcher.hh>
+#endif
+
 
 namespace protocols {
 namespace match {

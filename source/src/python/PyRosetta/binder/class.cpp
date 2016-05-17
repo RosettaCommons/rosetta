@@ -64,6 +64,14 @@ string class_name(CXXRecordDecl const *C)
 }
 
 
+// generate string represetiong class name that could be used in python
+string python_class_name(CXXRecordDecl const *C)
+{
+	string name = class_name(C);
+	return mangle_type_name(name);
+}
+
+
 // generate qualified class name that could be used in bindings code indcluding template specialization if any
 string class_qualified_name(CXXRecordDecl const *C)
 {
@@ -87,46 +95,9 @@ vector<QualType> get_type_dependencies(CXXRecordDecl const *C /*, bool include_m
 }
 
 
-// generate vector<NamedDecl const *> with all declarations related to class
-// vector<NamedDecl const *> get_decl_dependencies(CXXRecordDecl const *C)
-// {
-// 	vector<NamedDecl const *> r;
-
-// 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
-
-// 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
-// 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Template ) {
-// 				r.push_back( t->getTemplateArgs()[i].getAsTemplate().getAsTemplateDecl()->getTemplatedDecl() );
-// 			}
-// 		}
-// 	}
-
-// 	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-// 		if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
-// 			r.push_back(*m);
-// 		}
-// 	}
-
-// 	return r;
-// }
-
-
 // Return true if class have direct or inderect std::enable_shared_from_this as base class
 bool is_inherited_from_enable_shared_from_this(CXXRecordDecl const *C)
 {
-	// non recursive 1-level deep version
-	// if( C->isCompleteDefinition() ) {
-	// 	for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
-	// 		//if( b->getAccessSpecifier() == AS_public)
-	// 		if( auto r = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
-	// 			CXXRecordDecl *rd = cast<CXXRecordDecl>(r->getDecl());
-	// 		if( rd  and  rd->getQualifiedNameAsString() == "std::enable_shared_from_this") return true;
-	// 		}
-	// 	}
-	// }
-	// return false;
-
-	// recursive version, but it appears that we only need to loop up for direct bases only so using simplified version above for now
 	//outs() << "is_inherited_from_enable_shared_from_this: " << C->getQualifiedNameAsString() << " " << C->isCompleteDefinition() << "\n";
 	if( C->getQualifiedNameAsString() == "std::enable_shared_from_this" ) return true;
 	if( C->isCompleteDefinition() ) {
@@ -140,12 +111,6 @@ bool is_inherited_from_enable_shared_from_this(CXXRecordDecl const *C)
 	}
 	return false;
 }
-
-
-/// generate list of class/enum names on which this CXXRecordDecl depend to get binded ommiting build-in types
-// vector<string> calculate_dependency(CXXRecordDecl *C)
-// {
-// }
 
 
 bool is_field_assignable(FieldDecl const *f)
@@ -200,61 +165,34 @@ bool is_bindable(clang::CXXRecordDecl const *C)
 	// 	if( C->getAccess() == AS_protected  or  C->getAccess() == AS_private ) return false;
 	// }
 
+	if( qualified_name == "(anonymous)" ) return false;
 	if( C->isDependentType() ) return false;
-	if( !C->isCompleteDefinition()  and  !dyn_cast<ClassTemplateSpecializationDecl>(C) ) return false;
 	if( C->getAccess() == AS_protected  or  C->getAccess() == AS_private ) return false;
 
+	if( !C->isCompleteDefinition() ) {
+		if( auto ts = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
+			if( ts->getPointOfInstantiation()/* SourceLocation */.isInvalid()  and  not is_python_builtin(C) ) {
+				//outs() << "is_bindable( " << class_qualified_name(C) << " ): no point of instantiation  found, skipping...\n";
+				return false;
+			}
 
-	//r &= C->isCompleteDefinition() /* and C->getDefinition() */  /*and  C->hasDefinition()*/;
+
+			//errs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() << "  -  " << const_cast<ClassTemplateSpecializationDecl*>(ts)->getMostRecentDecl()->isCompleteDefinition() << "\n";
+		}
+		else return false;
+	}
 
 	//outs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() << template_specialization(C) << " " << r << "\n";
 
 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
 		//C->dump();
 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
-			// if( template_specialization(C) == "<1,utility::options::OptionCollection::OptionTypes,std::allocator<utility::options::OptionCollection::OptionTypes>>" ) {
-			// 	if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
-			// 		Type const *tp = t->getTemplateArgs()[i].getAsType().getTypePtrOrNull();
-			// 		if(tp) tp->dump();
-			// 		if( TagDecl *td = tp->getAsTagDecl() ) {
-			// 			if( td->getAccess() != AS_public ) {
-			// 				outs() << "Access NOT public!\n";
-			// 			//outs() << "Private template TYPE arg: " << td->getNameAsString() << "\n";
-			// 				return false;
-			// 			}
-			// 		} else {
-			// 			outs() << "Access public!\n";
-			// 		}
-			// 	}
-			// 	//t->getTemplateArgs()[i].dump( outs() );
-			// }
 
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
 				if( !is_bindable( t->getTemplateArgs()[i].getAsType() ) ) return false;
-				// Type const *tp = t->getTemplateArgs()[i].getAsType().getTypePtrOrNull();
-				// if( TagDecl *td = tp->getAsTagDecl() ) {
-				// 	if( td->getAccess() == AS_protected  or  td->getAccess() == AS_private  ) {
-				// 		//outs() << "Private template TYPE arg: " << td->getNameAsString() << "\n";
-				// 		return false;
-				// 	}
-				// }
-
-
-				// if( tp  and  (tp->isRecordType() or tp->isEnumeralType())  and  !tp->isBuiltinType()  and  !begins_wtih(template_argument_to_string(t->getTemplateArgs()[i]), "std::") ) {
-				// 	TagDecl *td = tp->getAsTagDecl();
-
-				// 	//if(td)
-				// 	if(FieldDecl *fd = dyn_cast<FieldDecl>(td) ) {
-				// 		outs() << "FieldDecl!!! " << fd-> getNameAsString() << "\n";
-				// 		if( fd->getAccess() != AS_public ) return false;
-				// 		//if( f->getAccess() == AS_public  and  is_bindable(f) ) c+= '\t' + bind_data_member(f, class_qualified_name(C)) + '\n';
-				// 	}
-				// 	//CXXRecordDecl *rd =	tp->getAsCXXRecordDecl();
-				// }
 			}
 
 			//if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Integral ) return true;
-
 
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Declaration )  {
 				if( ValueDecl *v = t->getTemplateArgs()[i].getAsDecl() ) {
@@ -267,17 +205,6 @@ bool is_bindable(clang::CXXRecordDecl const *C)
 
 		}
 	}
-	// todo: bindging for abstract classes
-	//if(r) r &= !C->isAbstract();  // need an 'if' here or clang assert got triggered on classed with incomplete definitions
-
-	// if(r) {
-	// 	outs() << C->getQualifiedNameAsString() << " isCXXClassMember:" << C->isCXXClassMember() << " isCompleteDefinition:" << C->isCompleteDefinition() //<< " isBeingDefined:" << C->isBeingDefined()
-	// 		   << " isDependentType:" << C->isDependentType() << " isCXXInstanceMember:" << C->isCXXInstanceMember() << " isExternallyVisible:" << C->isExternallyVisible()
-	// 		   << " getNumTemplateParameterLists:" << C->getNumTemplateParameterLists()  << " isa<ClassTemplateSpecializationDecl>:" << isa<ClassTemplateSpecializationDecl>(C) << "\n";
-	// 	C->dump();
-	// 	//auto l = C->getTemplateParameterList();
-	// 	//for(auto p = l.begin(); p!=l.end(); ++p) outs() << (*p)->getNameAsString() << "\n";
-	// }
 
 	return r;
 }
@@ -289,27 +216,6 @@ bool is_binding_requested(clang::CXXRecordDecl const *C, Config const &config)
 	bool bind = config.is_class_binding_requested( C->getQualifiedNameAsString() ) or config.is_class_binding_requested( class_qualified_name(C) ) or config.is_namespace_binding_requested( namespace_from_named_decl(C) );
 	for(auto & t : get_type_dependencies(C) ) bind &= !is_skipping_requested(t, config);
 	return bind;
-
-	// crashing on boost boost::mpl::is_na
-	// bool bind = config.is_namespace_binding_requested( namespace_from_named_decl(C) );
-	// for(auto & t : get_type_dependencies(C) ) bind |= is_binding_requested(t, config);
-	// return bind;
-
-	// bool bind = config.is_namespace_binding_requested( namespace_from_named_decl(C) );
-	// //outs() << "Skipping: " << b.named_decl()->getQualifiedNameAsString() << "\n";
-	// if(bind) {
-	// 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
-	// 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
-	// 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
-	// 				Type const *tp = t->getTemplateArgs()[i].getAsType().getTypePtrOrNull();
-	// 				if( tp  and  (tp->isRecordType() or tp->isEnumeralType()) and  !tp->isBuiltinType() ) {
-	// 					if(CXXRecordDecl *rd = tp->getAsCXXRecordDecl() ) bind &= is_binding_requested(rd, config);
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// return bind;
 }
 
 // check if user requested skipping for the given declaration
@@ -320,23 +226,6 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config)
 	for(auto & t : get_type_dependencies(C) ) skip |= is_skipping_requested(t, config);
 
 	return skip;
-
-	// bool skip = config.is_class_skipping_requested( C->getQualifiedNameAsString() ) or config.is_class_skipping_requested( class_qualified_name(C) ) or config.is_namespace_skipping_requested( namespace_from_named_decl(C) );
-	// if(!skip) {
-	// 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
-	// 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
-	// 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
-	// 				skip |= is_skipping_requested(t->getTemplateArgs()[i].getAsType(), config);
-	// 				// Type const *tp = t->getTemplateArgs()[i].getAsType().getTypePtrOrNull();
-	// 				// if( tp  and  (tp->isRecordType() or tp->isEnumeralType()) and  !tp->isBuiltinType() ) {
-	// 				// 	if(CXXRecordDecl *rd = tp->getAsCXXRecordDecl() ) skip |= is_skipping_requested(rd, config);
-	// 				// }
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// //outs() << "is_skipping_requested: " << C->getQualifiedNameAsString() << " - " << skip << "\n";
-	// return skip;
 }
 
 
@@ -357,13 +246,6 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, vector<string> &includ
 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
 				add_relevant_includes( t->getTemplateArgs()[i].getAsType().getDesugaredType(C->getASTContext()) , includes, stack, level+1);
-
-				// Type const *tp = t->getTemplateArgs()[i].getAsType().getTypePtrOrNull();
-				// if( tp  and  (tp->isRecordType() or tp->isEnumeralType()) and  !tp->isBuiltinType() ) {
-				// 	CXXRecordDecl *rd = tp->getAsCXXRecordDecl();
-				// 	//TagDecl *td = tp->getAsTagDecl();
-				// 	add_relevant_includes(rd, includes);
-				// }
 			}
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Template ) {
 				add_relevant_include_for_decl( t->getTemplateArgs()[i].getAsTemplate().getAsTemplateDecl()->getTemplatedDecl(), includes);
@@ -387,12 +269,27 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, vector<string> &includ
 			}
 		}
 	}
-	// if( C->isCXXInstanceMember() ) {
-	// 	if( auto r = dyn_cast<CXXRecordDecl>(C->getDeclContext()) ) add_relevant_includes(r, includes, stack);
-	// 	if( auto e = dyn_cast<EnumDecl>(C->getDeclContext()) ) add_relevant_includes(e, includes, stack);
-	// }
 }
 
+/// Check if all bases have public default constructors
+bool is_default_default_constructor_available(CXXRecordDecl const *C)
+{
+	for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
+		if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
+			if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+				if( !R->hasDefaultConstructor() ) return false;
+				for(auto t = R->ctor_begin(); t != R->ctor_end(); ++t) {
+					if( t->isDefaultConstructor() ) {
+						if( t->getAccess() == AS_private  or   !t->isUserProvided() ) return false;
+					}
+				}
+				if( !is_default_default_constructor_available(R) ) return false;
+			}
+		}
+	}
+
+	return true;
+}
 
 /// Generate string id that uniquly identify C++ binding object. For functions this is function prototype and for classes forward declaration.
 string ClassBinder::id() const
@@ -411,38 +308,6 @@ bool ClassBinder::bindable() const
 /// check if user requested binding for the given declaration
 void  ClassBinder::request_bindings_and_skipping(Config const &config)
 {
-	// for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-	// 	if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
-	// 		if( is_skipping_requested(*m, config) ) members_to_skip.insert(*m);
-	// 	}
-	// }
-
-	// //if( C->isCompleteDefinition()  or  dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
-	// //if( CXXRecordDecl const *CD = C->getDefinition() ) {
-	// if( C->hasDefinition() ) {
-	// 	//outs() << "request_bindings_and_skipping for class: " << /*C->getQualifiedNameAsString()*/ class_qualified_name(C) << "... \n";
-	// 	if( /*ClassTemplateSpecializationDecl const *tsp =*/ dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // for template classes explicitly bind data members and member functions from public base classes
-	// 		//if( ClassTemplateDecl const * ctd = tsp->getSpecializedTemplate() ) {
-	// 		//	if( ctd->isThisDeclarationADefinition() ) {
-	// 		for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
-	// 			if( b->getAccessSpecifier() == AS_public ) {
-	// 				if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
-	// 					if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
-	// 						if( is_bindable(R)  ) {
-	// 							for(auto m = R->method_begin(); m != R->method_end(); ++m) {
-	// 								if( m->getAccess() == AS_public  and  is_bindable(*m)  /*and  !isa<CXXConstructorDecl>(*m)*/  and   !isa<CXXDestructorDecl>(*m) ) {
-	// 									if( is_skipping_requested(*m, config) ) members_to_skip.insert(*m);
-	// 								}
-	// 							}
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	//outs() << "request_bindings_and_skipping for class: " << C->getQualifiedNameAsString() << "... OK\n";
-	// }
-
 	if( is_skipping_requested(C, config) ) Binder::request_skipping();
 	else if( is_binding_requested(C, config) ) Binder::request_bindings();
 }
@@ -459,7 +324,7 @@ string binding_public_data_members(CXXRecordDecl const *C)
 	string c;
 	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
 		if(FieldDecl *f = dyn_cast<FieldDecl>(*d) ) {
-			if( f->getAccess() == AS_public  and  is_bindable(f) ) c+= "\tcl" + bind_data_member(f, class_qualified_name(C)) + ";\n";
+			if( f->getAccess() == AS_public  and  is_bindable(f) ) c += "\tcl" + bind_data_member(f, class_qualified_name(C)) + ";\n";
 		}
 	}
 	return c;
@@ -474,36 +339,46 @@ string binding_public_member_functions(CXXRecordDecl const *C, /*std::set<clang:
 			and  !is_skipping_requested(*m, Config::get())
 			and  !isa<CXXConstructorDecl>(*m)  and   !isa<CXXDestructorDecl>(*m) ) {
 			//(*m)->dump();
-			c += "\tcl" + bind_function(*m, context) + ";\n";
+			c += bind_function("\tcl", *m, context);
 		}
 	}
 
 	return c;
 }
 
-
-/// generate binding code for this object and all its dependencies
-void ClassBinder::bind(Context &context)
+string binding_template_bases(CXXRecordDecl const *C, Context &context)
 {
-	if( is_binded() ) return;
+	// TODO: add somekind of redundancy detection here
 
-	assert( bindable() && "Attempt to bind non-bindable CXXRecord!");
+	string c;
 
-	string const indentation="\t";
-	string const module_variable_name =  context.module_variable_name( namespace_from_named_decl(C) );
+	if( dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // for template classes explicitly bind data members and member functions from public base classes
+		for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
+			if( b->getAccessSpecifier() == AS_public) {
+				if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
+					if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+						c += binding_public_data_members(R);
+						c += binding_public_member_functions(R, /*members_to_skip,*/ context);
+						c += binding_template_bases(R, context);
+					}
+				}
+			}
+		}
+	}
 
+	return c;
+}
+
+/// Create forward-binding for given class which consist of only class type without any member, function or constructors
+string bind_forward_declaration(CXXRecordDecl const *C, Context &context)
+{
 	string const qualified_name{ class_qualified_name(C) };
+	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(C) );
+	//string const decl_namespace = namespace_from_named_decl(C);
+
 	string const include = relevant_include(C);
 
-	string c = "{ // " + qualified_name + " file:" + include.substr(1, include.size()-2) + " line:" + line_number(C) + "\n";
-	c += "\tusing namespace " + namespace_from_named_decl(C) + ";\n\t";
-
-	// class_<A>(module_a, "A") or class_<A, std::shared_ptr<A>>(module_a, "A")
-	//string maybe_holder_type;
-	// if( is_inherited_from_enable_shared_from_this(C) ) maybe_holder_type = ", std::shared_ptr<{}>"_format(qualified_name);
-	// else if( CXXDestructorDecl * d = C->getDestructor() ) {
-	// 	if( d->getAccess() != AS_public ) maybe_holder_type = ", " + qualified_name + '*';
-	// }
+	string c = "\t// Forward declaration for: " + qualified_name + " file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(C) + "\n";
 
 	string maybe_holder_type =  ", std::shared_ptr<{}>"_format(qualified_name);
 	if( is_inherited_from_enable_shared_from_this(C) ) maybe_holder_type = ", std::shared_ptr<{}>"_format(qualified_name);
@@ -511,19 +386,111 @@ void ClassBinder::bind(Context &context)
 		if( d->getAccess() != AS_public ) maybe_holder_type = ", " + qualified_name + '*';
 	}
 
-	c += R"(pybind11::class_<{}{}> cl({}, "{}");)"_format(qualified_name, maybe_holder_type, module_variable_name, class_name(C)) + '\n';
+	c += '\t' + R"(pybind11::class_<{}{}>({}, "{}");)"_format(qualified_name, maybe_holder_type, module_variable_name, python_class_name(C)) + "\n\n";
+
+	return c;
+}
+
+/// check if any of the base classes is wrappable and if generate a string describing them: , pybind11::base<BaseClass>()
+string ClassBinder::maybe_base_classes(Context &context)
+{
+	string r;
+
+	static std::vector<string> const skip_list = {"std::enable_shared_from_this", "std::string", "std::basic_string", "std::pair", "std::tuple"};
+
+	for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
+		if( b->getAccessSpecifier() == AS_public) {
+			if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
+				if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+					auto e = std::find(skip_list.begin(), skip_list.end(), R->getQualifiedNameAsString());
+
+					if( e == skip_list.end()  and  is_bindable(R)  and  !is_skipping_requested(R, Config::get()) ) {
+						r = ", pybind11::base<{}>()"_format( class_qualified_name(R) );
+						binder::request_bindings(b->getType().getCanonicalType(), context);
+						dependencies_.push_back(R);
+						break; // right now pybind11 support only one base class
+					}
+				}
+			}
+		}
+	}
+	return r;
+}
+
+/// generate binding code for this object by using external user-provided binder
+void ClassBinder::bind_with(string const &binder, Context &context)
+{
+	string const qualified_name{ class_qualified_name(C) };
+	string const include = relevant_include(C);
+
+	string c = "// " + qualified_name + " file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(C) + "\n";
+
+	string const module_variable_name =  context.module_variable_name( namespace_from_named_decl(C) );
+
+	c += binder + template_specialization(C) + '(' + module_variable_name;
+
+	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
+		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
+
+			string templ = mangle_type_name( template_argument_to_string(t->getTemplateArgs()[i]), true);
+			fix_boolean_types(templ);
+			c += ", \"" + templ + '"';
+		}
+	}
+
+	c += ");\n\n";
+
+	code() = indent(c, "\t");
+}
+
+/// generate binding code for this object and all its dependencies
+void ClassBinder::bind(Context &context)
+{
+	if( is_binded() ) return;
+
+	string const qualified_name_without_template = C->getQualifiedNameAsString();
+	std::map<string, string> const &external_binders = Config::get().binders();
+	if( external_binders.count(qualified_name_without_template) ) {
+		bind_with( external_binders.at(qualified_name_without_template), context );
+		return;
+	}
+
+	assert( bindable() && "Attempt to bind non-bindable CXXRecord!");
+
+	string const qualified_name{ class_qualified_name(C) };
+	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(C) );
+	//string const decl_namespace = namespace_from_named_decl(C);
+
+	string const include = relevant_include(C);
+
+	string c = "{ // " + qualified_name + " file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(C) + "\n";
+	//if( decl_namespace.size() ) c += "\tusing namespace " + decl_namespace + ";\n";
+
+	string maybe_holder_type =  ", std::shared_ptr<{}>"_format(qualified_name);
+	if( is_inherited_from_enable_shared_from_this(C) ) maybe_holder_type = ", std::shared_ptr<{}>"_format(qualified_name);
+	else if( CXXDestructorDecl * d = C->getDestructor() ) {
+		if( d->getAccess() != AS_public ) maybe_holder_type = ", " + qualified_name + '*';
+	}
+
+	c += '\t' + R"(pybind11::class_<{}{}> cl({}, "{}"{});)"_format(qualified_name, maybe_holder_type, module_variable_name, python_class_name(C), maybe_base_classes(context)) + '\n';
 
 	if( !C->isAbstract() ) {
-		if( C->ctor_begin() == C->ctor_end() ) {  // No constructors defined, adding default constructor
-			c+= "\tcl.def(pybind11::init<>());\n\n";
-		}
-		else {
-			bool added=false;
-			for(auto t = C->ctor_begin(); t != C->ctor_end(); ++t) {
-				if( t->getAccess() == AS_public  and  !t->isMoveConstructor()  and  is_bindable(*t) ) { added=true;  c+= "\tcl.def(pybind11::init<{}>());\n"_format( function_arguments(*t) ); }
+		//c += "// hasDefaultConstructor:{}\n"_format(C->hasDefaultConstructor() );
+		bool default_constructor_processed = false;
+
+		string constructors;
+		for(auto t = C->ctor_begin(); t != C->ctor_end(); ++t) {
+			if( t->getAccess() == AS_public  and  !t->isMoveConstructor()  and  is_bindable(*t)  /*and  t->doesThisDeclarationHaveABody()*/ ) {
+				constructors += "\tcl.def(pybind11::init<{}>());\n"_format( function_arguments(*t) );
+
 			}
-			if(added) c += '\n';
+			if( t->isDefaultConstructor() ) default_constructor_processed = true;
 		}
+
+		if( /*C->ctor_begin() == C->ctor_end()  and*/  C->hasDefaultConstructor()  and  !default_constructor_processed  and  is_default_default_constructor_available(C) /*and  !C->needsImplicitDefaultConstructor() and !C->hasNonTrivialDefaultConstructor()*/ ) {  // No constructors defined, adding default constructor
+			c += "\tcl.def(pybind11::init<>());\n";  // making sure that default is appering first
+		}
+		c += constructors;
 	}
 
 	// binding public enums
@@ -539,24 +506,13 @@ void ClassBinder::bind(Context &context)
 	c += binding_public_data_members(C);
 	c += binding_public_member_functions(C, /*members_to_skip,*/ context);
 
-	if( dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // for template classes explicitly bind data members and member functions from public base classes
-		for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
-			if( b->getAccessSpecifier() == AS_public) {
-				if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
-					if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
-							c += binding_public_data_members(R);
-							c += binding_public_member_functions(R, /*members_to_skip,*/ context);
-					}
-				}
-			}
-		}
-	}
+	c += binding_template_bases(C, context);
 
 	//outs() << "typename_from_type_decl: " << typename_from_type_decl(C) << "\n";
 
-	c += "}\n\n";
+	c += "}\n";
 
-	code() = indent(c, indentation);
+	code() = indent(c, "\t");
 }
 
 

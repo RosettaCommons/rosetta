@@ -51,6 +51,10 @@
 #include <cereal/cereal.hpp>
 #endif // SERIALIZATION
 
+#ifdef PYROSETTA
+#include <core/id/AtomID_Map.hh>
+#endif
+
 namespace core {
 namespace id {
 

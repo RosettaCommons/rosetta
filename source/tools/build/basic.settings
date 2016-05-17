@@ -229,7 +229,7 @@ settings = {
         "overrides" : {
             "flags" : {
                 "cc" : [ "std=c99" ],
-                "cxx" : [ 
+                "cxx" : [
                     "std=c++98",
                     "ffor-scope",
                 ],
@@ -667,6 +667,7 @@ settings = {
             "defines" : [
                 "NDEBUG",
                 "PYROSETTA",
+                "PYROSETTA3",
                 'BOOST_THREAD_DONT_USE_CHRONO',
             ],
         },
@@ -713,6 +714,7 @@ settings = {
             },
             "defines" : [
                 "PYROSETTA",
+                "PYROSETTA3",
                 'BOOST_THREAD_DONT_USE_CHRONO'
             ],
         },
@@ -1350,7 +1352,7 @@ settings = {
                 "cc" : [ "std=c99" ],
                 "warn" : [
                     "Wall",
-                    # When we ICC on the test server, we should probably turn on warnings-as-errors 
+                    # When we ICC on the test server, we should probably turn on warnings-as-errors
 		    "w2", # More verbose warnings
                     "Wp64",
 		    # Disable Specific warinings
@@ -2028,7 +2030,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "O3" ],
-                "mode" : [ 
+                "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
 		],

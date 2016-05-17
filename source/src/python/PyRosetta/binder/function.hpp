@@ -26,6 +26,11 @@ namespace binder {
 // Generate function argument list separate by comma
 std::string function_arguments(clang::FunctionDecl const *record);
 
+// Generate function argument list separate by comma
+// name_arguments - if arguments should be named: a1, a2, ...
+// n - number of arguments to generate. If n > num_of_function_parameters - generate only list with num_of_function_parameters
+std::string function_arguments_for_lambda(clang::FunctionDecl const *record, uint n);
+
 
 // Generate function pointer type string for given function. Example void (*)(int, doule)_ or  void (ClassName::*)(int, doule)_ for memeber function
 std::string function_pointer_type(clang::FunctionDecl const *record);
@@ -43,7 +48,8 @@ bool is_skipping_requested(clang::FunctionDecl const *F, Config const &config);
 
 
 // Generate binding for given function: .def("foo", (std::string (aaaa::A::*)(int) ) &aaaa::A::foo, "doc")
-std::string bind_function(clang::FunctionDecl *F, Context &);
+// If function have default arguments generate set of bindings by creating separate bindings for each argument with default.
+std::string bind_function(std::string const & module, clang::FunctionDecl *F, Context &);
 
 
 /// extract include needed for this generator and add it to includes vector

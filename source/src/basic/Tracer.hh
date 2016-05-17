@@ -419,7 +419,7 @@ public:
 	std::string buf() { return buf_; }
 	void buf(std::string b) { buf_ = b; }
 
-	virtual void output_callback(std::string) = 0;
+	virtual void output_callback(std::string) {};
 
 protected:
 	/// @brief overload member function.
@@ -429,8 +429,38 @@ private:
 	std::string buf_;
 };
 
+} // namespace basic
 
-#ifdef NDEBUG
+
+
+#ifdef NDEBUG  // faster version of Tracer IO for Release version
+
+#ifdef CXX11
+
+#include <utility/stream_util.hh>
+
+namespace basic {
+
+template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+Tracer & operator <<( Tracer & TR, T const & entry ) {
+	std::ostream &t(TR);
+    if( TR.visible() ) { t << entry; }
+    return TR;
+}
+
+template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
+	std::ostream &t(TR);
+    if( TR.visible() ) { t << entry; }
+    return TR;
+}
+
+} // namespace basic
+
+#else // CXX11
+
+namespace basic {
+
 template <class T>
 Tracer & operator <<( Tracer & TR, T const & entry ) {
 	std::ostream &t(TR);
@@ -438,16 +468,18 @@ Tracer & operator <<( Tracer & TR, T const & entry ) {
     return TR;
 }
 
-
 template <class T>
 Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
 	std::ostream &t(TR);
     if( TR.visible() ) { t << entry; }
     return TR;
 }
-#endif
-
 
 } // namespace basic
+
+#endif // CXX11
+
+#endif // NDEBUG
+
 
 #endif // INCLUDED_basic_tracer_hh

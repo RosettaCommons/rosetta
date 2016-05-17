@@ -2,24 +2,17 @@
 #define self_test_01_hpp
 
 // #include <string>
-#include <vector>
-#include <map>
-#include <iostream>
+//#include <vector>
+//#include <map>
+//#include <iostream>
 #include <memory>
 // #include <complex>
-#include <utility>
+//#include <utility>
 //#include <iostream>
 
 #include <self_test.incl.hpp>
 
 namespace aa {
-
-// class AA {
-// public:
-// 	int n;
-// 	float f;
-// 	double d;
-// };
 
 // typedef int aa_INT;
 
@@ -47,7 +40,38 @@ namespace aa {
 enum E1 {E1A, E1B};
 
 
+
 namespace utility {
+
+class B
+{
+public:
+	//B(int) {}
+	virtual ~B() {}
+};
+
+class A : public B
+{
+public:
+
+	void foo(std::shared_ptr<A>);
+	void foo_a_v(A);
+	void foo_a_r(A&);
+	void foo_a_p(A*);
+};
+
+class C
+{
+private:
+	C() {}
+};
+
+class D : public C
+{};
+
+
+//class PyTracer :  public otstream {};
+
 
 // void foo_p(std::pair<int, int> &) {}
 // void foo_cp(std::pair<int, int> const &) {}
@@ -73,45 +97,69 @@ namespace utility {
 //void foo_t(property<enum aaaa::EA, int> &) {}
 
 
+//void f_instantiated_by_use_in_function(A<int> ) {}
+//void f_instantiated_by_use_in_function(A<double> ) {}
+//void f_instantiated_by_use_in_function(A<float> &) {}
+//void f_instantiated_by_use_in_function(A<double> *) {}
 
 
-template <typename T>
-class A
-{
-public:
-	void foo_a_1() {}
-	void foo_a_2() {}
 
-	int a;
-};
+// template <typename T>
+// class A
+// {
+// public:
+// 	void foo_a_1() {}
+// 	void foo_a_2() {}
+// 	int a;
+// };
+// template <typename T>
+// class B : public A<T>
+// {
+// public:
+// 	void foo_b_1() {}
+// 	void foo_b_2() {}
+// 	int b;
+// };
+// template <typename T>
+// class C : private B<T>
+// {
+// public:
+// 	using B<T>::foo_b_1;
+// 	using B<T>::foo_b_2;
+// 	void foo_c_1() {}
+// 	void foo_c_2() {}
+// 	int c;
+// };
+// void a(B<int>, B<float>, C<double> ) {}
+//void foo(std::vector<int> &) {}
+//void foo(std::vector< std::vector<int> > &) {}
+//void foo(aa::AA &) {}
+
+// class Q {};
+
+// template <typename T>
+// class V;
 
 
-template <typename T>
-class B : public A<T>
-{
-public:
-	void foo_b_1() {}
-	void foo_b_2() {}
+// template <typename T>
+// class V
+// {
+// public:
+// 	V & add_back( T const & t ) { return *this; }
+// };
 
-	int b;
-};
 
-class Ac
-{
-public:
-	//void foo() {}
+// extern template class V<int>;
 
-	//virtual bool f(int) = 0;
-
-};
+// void foo(V<int> &) {}
+//void foo(V<Q*> ) {}
 
 //void foo( std::pair<Ac,Ac> ) {}
-void foo( std::pair<std::shared_ptr<Ac>,std::shared_ptr<Ac> > ) {}
+//void foo( std::pair<std::shared_ptr<Ac>,std::shared_ptr<Ac> > ) {}
 
 //template <> class A<int>;
 //template <> class A<float>;
 
-//void a(B<int>, B<float>) {}
 
 //void foo(std::vector<int>) {}
 //void foo(std::map<int, int>) {}

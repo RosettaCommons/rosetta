@@ -200,7 +200,7 @@ JumpRotamerSidechainMover::compute_rotdensities(
 	//Real max_old_rot_prob(0);
 
 	utility::vector1< Real > rot_probs;
-	Real normalize;
+	Real normalize=0;
 	bool is_tempered( std::abs( temperature() - 1.0 ) > 0.01 );
 	if ( is_tempered ) {
 		compute_tempered_rotamer_probabilities( rotamers, temperature(), rot_probs, normalize );

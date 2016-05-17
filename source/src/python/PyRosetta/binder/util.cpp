@@ -77,7 +77,7 @@ string indent(string const &code, string const &indentation)
 	auto lines = split(code);
 	string r;
 
-	for(auto & l : lines) r += indentation + l + '\n';
+	for(auto & l : lines) r += l.size() ? indentation + l + '\n' : l + '\n';
 
 	return r;
 }
@@ -189,12 +189,31 @@ string template_argument_to_string(clang::TemplateArgument const &t)
 
 
 // calcualte line in source file for NamedDecl
-string line_number(NamedDecl *decl)
+string line_number(NamedDecl const *decl)
 {
 	ASTContext & ast_context( decl->getASTContext() );
 	SourceManager & sm( ast_context.getSourceManager() );
 
 	return std::to_string( sm.getSpellingLineNumber(decl->getLocation() ) );
+}
+
+
+// generate string represetiong class name that could be used in python
+string mangle_type_name(string const &name, bool mark_template)
+{
+	string r;
+	bool mangle = true;
+	bool template_ = false;
+
+	for(auto & c : name) {
+		if(c!=' '  and  c!='<'  and  c!='>'  and  c!=','  and  c!=':') { r.push_back(c); mangle=false; }
+		else if(!mangle) { mangle = true; r.push_back('_'); }
+
+		if( c=='<'  or  c=='>'  or  c==',') template_ = true;
+	}
+
+	if(template_ and mark_template) r.push_back('t');
+	return r;
 }
 
 } // namespace binder

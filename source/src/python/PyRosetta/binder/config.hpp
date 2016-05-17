@@ -17,6 +17,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 namespace binder {
 
@@ -29,6 +30,9 @@ class Config
 	Config(string const &root_module_, std::vector<string> namespaces_to_bind_, std::vector<string> namespaces_to_skip_, string const &prefix_, uint maximum_file_length_) :
 		root_module(root_module_), namespaces_to_bind(namespaces_to_bind_), namespaces_to_skip(namespaces_to_skip_), prefix(prefix_), maximum_file_length(maximum_file_length_) {}
 
+private:
+	std::map<string, string> binders_;
+
 public:
 	static Config &get();
 
@@ -38,12 +42,14 @@ public:
 	string root_module;
 
 	std::vector<string> namespaces_to_bind, classes_to_bind, functions_to_bind,
-						namespaces_to_skip, classes_to_skip, functions_to_skip;
+						namespaces_to_skip, classes_to_skip, functions_to_skip,
+						includes_to_add, includes_to_skip;
+
+	std::map<string, string> const &binders() const { return binders_; }
 
 	string prefix;
 
 	uint maximum_file_length;
-
 
 	/// check if user requested binding for given declaration
 	bool is_namespace_binding_requested(string const &namespace_) const;
@@ -54,6 +60,10 @@ public:
 
 	bool is_class_binding_requested(string const &class_) const;
 	bool is_class_skipping_requested(string const &class_) const;
+
+	bool is_include_skipping_requested(string const &include) const;
+
+	string includes_code() const;
 };
 
 

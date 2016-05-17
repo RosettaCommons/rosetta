@@ -1,0 +1,11 @@
+#ifndef _INCLUDED_T30_include_incl_01_hpp_
+#define _INCLUDED_T30_include_incl_01_hpp_
+
+namespace aaaa
+{
+
+class A {};
+
+}
+
+#endif // _INCLUDED_T30_include_incl_01_hpp_

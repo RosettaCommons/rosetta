@@ -4,7 +4,7 @@
 /html/
 /external/dbio/mysql/**
 /external/dbio/postgreSQL/**
-/src/devel/svn_version.cc
+/src/utility/version.hh
 /src/pilot_apps.src.settings
 /src/*.my
 /src/apps/benchmark/_performance_
