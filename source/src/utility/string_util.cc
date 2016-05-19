@@ -92,6 +92,8 @@ std::vector< std::string > split_by_newlines( std::string const & s )
 
 std::string join(utility::vector1<std::string> const & s, std::string const & connector){
 	std::ostringstream os;
+	// TL: if s is empty, we can't dereference s.begin()
+	if ( s.empty() ) return "";
 	utility::vector1<std::string>::const_iterator begin= s.begin();
 	os << *begin++;
 	for ( ; begin != s.end(); ++begin ) {
@@ -102,6 +104,8 @@ std::string join(utility::vector1<std::string> const & s, std::string const & co
 
 std::string join(std::vector<std::string> const & s, std::string const & connector){
 	std::ostringstream os;
+	// TL: if s is empty, we can't dereference s.begin()
+	if ( s.empty() ) return "";
 	utility::vector1<std::string>::const_iterator begin= s.begin();
 	os << *begin++;
 	for ( ; begin != s.end(); ++begin ) {
