@@ -59,7 +59,7 @@ Hasher::score_one(
 	SewResidue const & m1_basis,
 	Model const & m2,
 	SewResidue const & m2_basis,
-	core::Size box_length
+	core::Size box_length // Doonam introduced this argument to allow user to used customized box_length
 ){
 	Model transformed_m1 = transform_model(m1, m1_basis);
 	Model transformed_m2 = transform_model(m2, m2_basis);
@@ -70,7 +70,7 @@ Hasher::score_one(
 
 	if ( box_length == 3 ) {
 		score_basis(alignment_scores, transformed_m1, m1_basis, true);
-	} else if ( box_length == 5 ) {
+	} else if ( box_length == 5 ) { // Doonam introduced this box_length == 5 case
 		score_basis_125(alignment_scores, transformed_m1, m1_basis, true);
 	} else {
 		TR << "box_length should be either 3 or 5!!" << std::endl;
@@ -134,7 +134,7 @@ Hasher::score(
 	core::Size min_segment_score,
 	core::Size max_clash_score,
 	bool store_atoms,
-	core::Size box_length
+	core::Size box_length // Doonam introduced this argument to allow user to used customized box_length
 ) const {
 	TR << "[First score function in Hasher.cc]" << std::endl;
 
@@ -160,7 +160,7 @@ Hasher::score(
 	core::Size max_clash_score,
 	std::set<core::Size> const & score_segments, //all_segments with all segment_ids
 	bool store_atoms,
-	core::Size box_length
+	core::Size box_length // Doonam introduced this argument to allow user to used customized box_length
 ) const {
 	TR << "[Second score function in Hasher.cc]" << std::endl;
 
@@ -296,6 +296,8 @@ Hasher::score_basis(
 	}//model iterator
 }//score_basis
 
+
+//Doonam added this score_basis_125 fn, to allow 125 boxes instead of typical 25 boxes
 void
 Hasher::score_basis_125(
 	ScoreResults & alignment_scores,
@@ -367,6 +369,8 @@ Hasher::trim_scores(
 	TR << "Hasher::trim_scores" << std::endl;
 	using namespace core;
 	using namespace basic::options;
+
+	// Doonam introduced this disregard_num_segment_matches option for development purpose
 	if ( ! option[OptionKeys::sewing::disregard_num_segment_matches].user() ) {
 		option[OptionKeys::sewing::disregard_num_segment_matches].value( 0 );
 	}
@@ -590,6 +594,7 @@ Hasher::neighborhood_lookup(
 ///the query key. This should prevent issues of close matches being missed due to being
 ///across bin boundaries.
 //utility::vector1<HashValue>
+// Doonam introduced this neighborhood_lookup_125 fn to deal with 125 box length case
 void
 Hasher::neighborhood_lookup_125(
 	HashKey const & key,
