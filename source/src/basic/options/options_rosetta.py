@@ -2046,7 +2046,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #		Option( 'CA_tether', 'Real', default='2.0', desc='default CA tether for harmonic constraints'),
 		##Option( 'p_cst', 'Real', default='0.1', desc='probability of res-res constraint'),
 		Option( 'exit_on_bad_read', 'Boolean', default = 'true', desc='exit if error is encountered reading constraints' ),
-								Option( 'cst_file', 'StringVector', desc='constraints filename(s) (for proteins, applied in centroid mode; when multiple files are given a *random* one will be picked).' ),
+		Option( 'cst_file', 'StringVector', desc='constraints filename(s) (for proteins, applied in centroid mode; when multiple files are given a *random* one will be picked).' ),
 		Option( 'cst_weight', 'Real', default = '1.0'),
 		Option( 'max_cst_dist', 'Real', default = '12.0' ),
 		Option( 'cst_fa_file', 'StringVector', desc='constraints filename(s) for fullatom. When multiple files are given a *random* one will be picked.' ),

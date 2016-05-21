@@ -1705,6 +1705,9 @@ public:
 	void
 	update_sequence_numbering( utility::vector1< Size > const & old2new );
 
+	/// @brief Calculate the set of nu dihedrals from the xyz coordinates and store them.
+	void update_nus();
+
 
 	/////////////
 	// properties
@@ -2162,10 +2165,6 @@ private:
 	void
 	assign_orbitals();
 
-	/// @brief Determine the set of nu dihedrals and store them; invoked from
-	/// within the constrors.
-	void
-	assign_nus();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data

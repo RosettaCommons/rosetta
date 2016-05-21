@@ -68,6 +68,10 @@ ADD_BOND CGN3 3HG3
 ADD_BOND OHB3 HOB3
 
 REDEFINE_CHI 3  C2   C3   N3   CN3
+CLEAR_CHI_ROTAMERS  3  # Old chi3 was defined off of a hydrogen, but now it's defined off a carbon, so they need to shift 180 degrees from what they were before so that an anti H is still anti.
+ADD_CHI_ROTAMER 3    0 0
+ADD_CHI_ROTAMER 3  120 0
+ADD_CHI_ROTAMER 3 -120 0
 
 # Since the saccharide ResidueType we are patching can have any number of side
 # chains, we want to add the new torsion introduced by the patch to the end of

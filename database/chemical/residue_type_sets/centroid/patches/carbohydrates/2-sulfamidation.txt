@@ -45,6 +45,10 @@ ADD_BOND  S2  2OS2
 ADD_BOND  S2  3OS2
 
 REDEFINE_CHI 2  C1   C2   N2   S2
+CLEAR_CHI_ROTAMERS  2  # Old chi2 was defined off of a hydrogen, but now it's defined off a carbon, so they need to shift 180 degrees from what they were before so that an anti H is still anti.
+ADD_CHI_ROTAMER 2    0 0
+ADD_CHI_ROTAMER 2  120 0
+ADD_CHI_ROTAMER 2 -120 0
 
 # Since the saccharide ResidueType we are patching can have any number of side
 # chains, we want to add the new torsion introduced by the patch to the end of

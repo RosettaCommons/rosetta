@@ -49,6 +49,7 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 #include <core/chemical/types.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -578,7 +579,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 		ResidueType const & ii_rsd_type( *residue_types_[ ii ] );
 		TR.Trace << "ResidueType " << ii << ": " << ii_rsd_type.name() << std::endl;
-		ResidueOP ii_rsd( ResidueFactory::create_residue( *residue_types_[ ii ] ));
+		ResidueOP ii_rsd( ResidueFactory::create_residue( ii_rsd_type ) );
 		for ( StructFileRep::ResidueCoords::const_iterator iter = rinfos_[ ii ].xyz().begin(), iter_end = rinfos_[ ii ].xyz().end();
 				iter != iter_end; ++iter ) {
 
@@ -588,7 +589,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				// at position (0,0,0).
 				// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
 				// pdbs which usually start at 0,0,0. However the magnitude of this offset is so small
-				// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
+				// that the output pdbs should still match input pdbs. hopefully. yes. ahem.
 				// RM: I'm not sure what the problem with having coordinates exactly at the origin is.
 				// RM: If we do have a problem with that, it seems it should be fixed there and not here.
 				// RM: (As you could imagine theoretically hitting (0,0,0) during minimization or packing.)
@@ -671,6 +672,24 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 					TR.Trace << ii_rsd_type.name() << " " << ii << " is appended to chain" << rinfos_[ ii ].chainID() << std::endl;
 					pose.append_residue_by_bond( *ii_rsd );
 				}
+			}
+		}
+
+		// Report on residues with suspiciously bad atom coordinates.
+		// (For now, this section just reports on bad rings, but other things could be added here to help users know
+		// when an input PDB is probably bad.)
+		Size const n_rings( ii_rsd_type.n_rings() );
+		if ( n_rings ) {
+			ii_rsd->update_nus();
+		}
+		for ( core::uint i( 1 ); i <= n_rings; ++i ) {
+			if ( ii_rsd->ring_conformer( i ) != ii_rsd_type.ring_conformer_set( i )->get_lowest_energy_conformer() ) {
+				TR.Warning << ii_rsd_type.name3() << ii << " has an unfavorable ring conformation; ";
+				TR.Warning << "the coordinates for this input structure may have been poorly assigned. ";
+				TR.Warning << "Hydrogen placement will likewise potentially be poor." << std::endl;
+				TR.Debug << "  Measured: " << ii_rsd->ring_conformer( i ).specific_name << "  Expected: ";
+				TR.Debug << ii_rsd_type.ring_conformer_set( i )->get_lowest_energy_conformer().specific_name << std::endl;
+
 			}
 		}
 

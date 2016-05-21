@@ -66,8 +66,7 @@ public:
 	std::string type() const;
 
 	/// @brief read in constraint defiinition
-	void
-	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	void read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory );
 
 	void show( std::ostream& out) const;
 

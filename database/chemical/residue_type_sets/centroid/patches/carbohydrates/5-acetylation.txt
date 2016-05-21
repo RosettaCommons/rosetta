@@ -49,6 +49,10 @@ ADD_BOND CAN5 2HC5
 ADD_BOND CAN5 3HC5
 
 REDEFINE_CHI 5  C4   C5   N5   CN5
+CLEAR_CHI_ROTAMERS  5  # Old chi5 was defined off of a hydrogen, but now it's defined off a carbon, so they need to shift 180 degrees from what they were before so that an anti H is still anti.
+ADD_CHI_ROTAMER 5    0 0
+ADD_CHI_ROTAMER 5  120 0
+ADD_CHI_ROTAMER 5 -120 0
 
 # Since the saccharide ResidueType we are patching can have any number of side
 # chains, we want to add the new torsion introduced by the patch to the end of

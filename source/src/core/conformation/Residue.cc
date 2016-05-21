@@ -110,7 +110,7 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 			rsd_type_.atom(i).mm_atom_type_index() ) );
 	}
 
-	assign_nus();
+	update_nus();
 	assign_orbitals();
 
 }
@@ -138,7 +138,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 			rsd_type_.atom(i).mm_atom_type_index() ) );
 	}
 
-	assign_nus();
+	update_nus();
 	assign_orbitals();
 
 }
@@ -211,7 +211,7 @@ Residue::Residue(
 		chi_[ chino ] = current_chi;
 	}
 
-	assign_nus();
+	update_nus();
 	assign_orbitals();
 
 }
@@ -395,7 +395,7 @@ Residue::carbohydrate_info() const
 }
 
 
-// Return the current RingConformer of this residue.
+// Return the current RingConformer of this residue's nth ring.
 chemical::rings::RingConformer const &
 Residue::ring_conformer( core::uint const ring_num ) const
 {
@@ -1194,6 +1194,23 @@ Residue::update_sequence_numbering( utility::vector1< Size > const & old2new )
 	determine_nonstandard_polymer_status();
 }
 
+void
+Residue::update_nus() {
+	Size const n_nus( rsd_type_.n_nus() );
+	for ( uint i( 1 ); i <= n_nus; ++i ) {
+		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
+
+		// Calculate the current nu angle from the coordinates.
+		Angle const current_nu( numeric::dihedral_degrees(
+				atom( nu_atoms[ 1 ] ).xyz(),
+				atom( nu_atoms[ 2 ] ).xyz(),
+				atom( nu_atoms[ 3 ] ).xyz(),
+				atom( nu_atoms[ 4 ] ).xyz() ) );
+
+		nus_[ i ] = current_nu;
+	}
+}
+
 
 // Distance between a potential residue connection match and the position of the expected atom
 Distance
@@ -1742,22 +1759,6 @@ void Residue::assign_orbitals() {
 	}
 }
 
-void Residue::assign_nus() {
-	// Assign nus.
-	Size const n_nus( rsd_type_.n_nus() );
-	for ( uint i( 1 ); i <= n_nus; ++i ) {
-		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
-
-		// Calculate the current nu angle from the coordinates.
-		Angle const current_nu( numeric::dihedral_degrees(
-			atom( nu_atoms[ 1 ] ).xyz(),
-			atom( nu_atoms[ 2 ] ).xyz(),
-			atom( nu_atoms[ 3 ] ).xyz(),
-			atom( nu_atoms[ 4 ] ).xyz() ) );
-
-		nus_[ i ] = current_nu;
-	}
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 //ja
@@ -1769,4 +1770,3 @@ std::ostream & operator << ( std::ostream & os, Residue const & res )
 
 } // conformation
 } // core
-

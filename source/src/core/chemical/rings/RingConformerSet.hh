@@ -134,6 +134,13 @@ private:
 };  // class RingConformerSet
 
 
+/// @details  Two conformers are equivalent if their CP parameters are the same.
+bool operator==( RingConformer const & ring1, RingConformer const & ring2 );
+
+/// @details  Two conformers are not equivalent if their CP parameters are not the same.
+bool operator!=( RingConformer const & ring1, RingConformer const & ring2 );
+
+
 // Insertion operators (overloaded so that RingConformer and RingConformerSet can be "printed" in PyRosetta).
 std::ostream & operator<<( std::ostream & output, RingConformer const & object_to_output );
 

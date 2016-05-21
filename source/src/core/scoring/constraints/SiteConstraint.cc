@@ -99,13 +99,14 @@ SiteConstraint::read_def(
 	TR.Debug << "ConstraintIO::read_site_cst" << std::endl;
 	Size res;
 	std::string tempres;
-	std::string name;
+	std::string atm_name;
 	std::string chain;
 	std::string func_type;
-	data >> name >> tempres >> chain >> func_type;
+	data >> atm_name >> tempres >> chain >> func_type;
 
 	ConstraintIO::parse_residue( pose, tempres, res );
-	TR.Info << "read: " << name << " " << res << " " << "constrain to chain: " << chain << " func: " << func_type << std::endl;
+	TR.Info << "read: " << atm_name << " " << res << " " << "constrain to chain: " << chain <<
+			" func: " << func_type << std::endl;
 
 
 	func::FuncOP aFunc = func_factory.new_func( func_type );
@@ -114,12 +115,12 @@ SiteConstraint::read_def(
 	if ( TR.Debug.visible() ) {
 		aFunc->show_definition( TR.Debug ); TR.Debug<<std::endl;
 	}
-	setup_csts( res, name, chain, pose, aFunc );
+	setup_csts( res, atm_name, chain, pose, aFunc );
 
 	if ( data.good() ) {
 		//chu skip the rest of line since this is a single line defintion.
 		while ( data.good() && (data.get() != '\n') ) {}
-		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
+		if ( !data.good() ) { data.setstate( std::ios_base::eofbit ); }
 	}
 
 	if ( TR.Debug.visible() ) {
@@ -132,7 +133,7 @@ SiteConstraint::read_def(
 void
 SiteConstraint::setup_csts(
 	Size res,
-	std::string name,
+	std::string atm_name,
 	std::string chain,
 	core::pose::Pose const & pose,
 	func::FuncOP const & func
@@ -147,20 +148,20 @@ SiteConstraint::setup_csts(
 	for ( Size j = start_res ; j < end_res ; ++j ) {
 		residues[j] = true;
 	}
-	setup_csts(res, name, residues, pose, func);
+	setup_csts(res, atm_name, residues, pose, func);
 
 } // setup_csts
 
 void
 SiteConstraint::setup_csts(
 	Size res,
-	std::string name,
+	std::string atm_name,
 	utility::vector1<bool> const & residues,
 	core::pose::Pose const & pose,
 	func::FuncOP const & func
 ) {
-	debug_assert(pose.total_residue() == residues.size());
-	id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
+	debug_assert( pose.total_residue() == residues.size() );
+	id::AtomID target_atom( pose.residue_type( res ).atom_index( atm_name ), res );
 
 	for ( Size i = 1 ; i < pose.total_residue() ; ++i ) {
 

@@ -256,9 +256,9 @@ RingConformationMover::set_commandline_options()
 {
 	using namespace basic::options;
 
-	locked_ = option[ OptionKeys::rings::lock_rings ].user();
+	locked_ = option[ OptionKeys::rings::lock_rings ];
 
-	sample_all_conformers_ = option[ OptionKeys::rings::sample_high_energy_conformers ].user();
+	sample_all_conformers_ = option[ OptionKeys::rings::sample_high_energy_conformers ];
 }
 
 // Initialize data members from arguments.

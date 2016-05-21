@@ -155,6 +155,7 @@ patches/carbohydrates/2-sulfation.txt
 patches/carbohydrates/6-sulfation.txt
 patches/carbohydrates/2-sulfamidation.txt
 patches/carbohydrates/omega-oxidation.txt
+patches/carbohydrates/2-reduction.txt
 patches/carbohydrates/4-reduction.txt
 
 ## alternative backbones
