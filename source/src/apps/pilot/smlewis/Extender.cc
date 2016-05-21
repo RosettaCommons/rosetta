@@ -112,7 +112,7 @@ int main( int argc, char* argv[] )
 		utility_exit_with_message("Whaaaat?");
 	}
 
-	core::chemical::ResidueTypeSetCAP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+	core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 
 	core::Size const ext_length(extension.size());
 	for(core::Size i(0); i<ext_length; ++i){
