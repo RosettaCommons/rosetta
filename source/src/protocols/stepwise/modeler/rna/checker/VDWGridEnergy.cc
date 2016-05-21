@@ -18,9 +18,9 @@
 // It requires VDW_CachedRepScreenInfo which currently also lives in this directory
 // Ideally VDW_CachedRepScreenInfo would be moved to core/pose/rna (or somewhere in core)
 // but it depends on import_pose which lives in core.5
-// Eventually VDW_CachedRepScreenInfo should probably be refactored so that it does not depend on 
+// Eventually VDW_CachedRepScreenInfo should probably be refactored so that it does not depend on
 // import_pose
-// The other option would be to have this energy method live in protocols/scoring, but this lives 
+// The other option would be to have this energy method live in protocols/scoring, but this lives
 // in protocols.3, so VDW_CachedRepScreenInfo would have to move somewhere below that
 
 // Unit headers
@@ -112,7 +112,7 @@ VDWGridEnergy::finalize_total_energy(
 
 	utility::vector1< VDW_RepScreenInfo > vdw_rep_screen_info;
 	vdw_rep_screen_info = vdw_info.VDW_rep_screen_info_list();
-	
+
 	VDW_GridCOP vdw_screen_bin;
 	vdw_screen_bin = vdw_info.VDW_screen_bin();
 
@@ -131,26 +131,26 @@ VDWGridEnergy::finalize_total_energy(
 		// Otherwise risk getting a lot of garbage
 		return;
 	} else { // There is an alignment map stored in the pose: use it!
-		atom_id_map = vdw_rep_screen_info[1].align_working_to_vdw_atom_id_map;	
+		atom_id_map = vdw_rep_screen_info[1].align_working_to_vdw_atom_id_map;
 		core::scoring::superimpose_pose( pose, *(vdw_rep_screen_info[1].VDW_pose), atom_id_map );
 	}
 
-	// Count up the number of the clashes the aligned pose (nonconst_pose) has with the grid 
+	// Count up the number of the clashes the aligned pose (nonconst_pose) has with the grid
 	numeric::xyzVector< core::Real > ref_xyz = vdw_screen_bin->get_ref_xyz(); // This will be 0 if it wasn't explicitly set
 	// Loop through all the residues in the pose
 	for ( Size nres = 1; nres <= pose.total_residue(); ++nres ) {
 		core::conformation::Residue const & rsd = pose.residue( nres );
 		// Loop through all the atoms in the residue
 		for ( Size i = 1; i <= rsd.natoms(); ++i ) {
-			if ( rsd.is_virtual( i )) continue;
+			if ( rsd.is_virtual( i ) ) continue;
 			Atom_Bin const atom_pos_bin = get_atom_bin( rsd.xyz( i ), ref_xyz, vdw_screen_bin->get_atom_bin_size(), vdw_screen_bin->get_bin_offset() );
-	
+
 			// Check that the atom falls inside the grid
 			if ( is_atom_bin_in_range( atom_pos_bin, vdw_screen_bin->get_bin_max() ) == false ) {
 				continue;
 			}
-	
-			if ( vdw_screen_bin->get_xyz_bin( atom_pos_bin ) ){
+
+			if ( vdw_screen_bin->get_xyz_bin( atom_pos_bin ) ) {
 				// There was a clash, add score penalty
 				emap[ core::scoring::grid_vdw ] += clash_penalty_;
 			}
@@ -169,7 +169,7 @@ VDWGridEnergy::indicate_required_context_graphs(
 core::Size
 VDWGridEnergy::version() const
 {
-	return 1; 
+	return 1;
 }
 
 

@@ -126,9 +126,9 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		if ( startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
-		
+
 		boost::to_upper(line); //Capitalize entire line.
-		
+
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
 
 		check_line_len(lineSP, 2);

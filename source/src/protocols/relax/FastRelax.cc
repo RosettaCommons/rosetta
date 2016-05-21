@@ -366,7 +366,7 @@ FastRelax::parse_my_tag(
 
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file("");
-	if( tag->hasOption("relaxscript") ){
+	if ( tag->hasOption("relaxscript") ) {
 		script_file = tag->getOption< std::string >("relaxscript");
 		script_file_specified_ = true;
 	}

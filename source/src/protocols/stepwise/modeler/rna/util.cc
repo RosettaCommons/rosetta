@@ -307,7 +307,7 @@ tokenize( std::string const str, std::string delimiters ){
 	utility::vector1< std::string > tokens;
 
 	tokens = core::pose::rna::tokenize( str, delimiters );
-	
+
 	return tokens;
 }
 

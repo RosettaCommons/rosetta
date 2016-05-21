@@ -64,9 +64,9 @@ public:
 	virtual
 	void
 	finalize_total_energy(
-	   core::pose::Pose &,
-		 core::scoring::ScoreFunction const &,
-		 core::scoring::EnergyMap & emap
+		core::pose::Pose &,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief VDWGridEnergy is context independent; indicates that no

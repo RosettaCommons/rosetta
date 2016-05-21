@@ -223,9 +223,9 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		if ( startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
-		
+
 		boost::to_upper(line); //Capitalize everything.
-		
+
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
 		check_line_len(lineSP, 2);
 		//TR << utility::to_string(lineSP) << std::endl;
@@ -287,7 +287,7 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 			mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP" || mode == "MIN" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
-		
+
 		parse_cdr_graft_option(adjective, lineSP);
 	} else if ( lineSP.size() == 2 ) {
 		parse_cdr_general_option(lineSP);

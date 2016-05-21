@@ -1106,27 +1106,27 @@ add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
 // Took these functions out of the class so that they are accessible in the VDWGridEnergy for scoring
 // without actually needing to construct an RNA_VDW_BinChecker object
 Atom_Bin
-get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos, numeric::xyzVector< core::Real > const & ref_xyz, 
+get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos, numeric::xyzVector< core::Real > const & ref_xyz,
 	core::Real const atom_bin_size, int const bin_offset ) {
 
 	numeric::xyzVector< core::Real > const atom_pos_ref_frame = atom_pos - ref_xyz;
-	
+
 	Atom_Bin atom_bin;
 	atom_bin.x = int( atom_pos_ref_frame[0]/atom_bin_size );
 	atom_bin.y = int( atom_pos_ref_frame[1]/atom_bin_size );
 	atom_bin.z = int( atom_pos_ref_frame[2]/atom_bin_size );
-	
-	
+
+
 	if ( atom_pos_ref_frame[0] < 0 ) atom_bin.x--;
 	if ( atom_pos_ref_frame[1] < 0 ) atom_bin.y--;
 	if ( atom_pos_ref_frame[2] < 0 ) atom_bin.z--;
-	
+
 	//////////////////////////////////////////////////////////
 	atom_bin.x += bin_offset; //Want min bin to be at one.
 	atom_bin.y += bin_offset; //Want min bin to be at one.
 	atom_bin.z += bin_offset; //Want min bin to be at one.
-	
-	
+
+
 	//////////////////////////////////////////////////////////
 	return atom_bin;
 }
@@ -1136,13 +1136,13 @@ bool
 is_atom_bin_in_range( Atom_Bin const & atom_pos_bin, int const bin_max ) {
 
 	if ( atom_pos_bin.x < 1 || ( atom_pos_bin.x > ( bin_max*2 ) ) ||
-		atom_pos_bin.y < 1 || ( atom_pos_bin.y > ( bin_max*2 ) ) ||
-		atom_pos_bin.z < 1 || ( atom_pos_bin.z > ( bin_max*2 ) ) ){
+			atom_pos_bin.y < 1 || ( atom_pos_bin.y > ( bin_max*2 ) ) ||
+			atom_pos_bin.z < 1 || ( atom_pos_bin.z > ( bin_max*2 ) ) ) {
 
-		 return false;
+		return false;
 
 	} else {
-		 return true;
+		return true;
 	}
 
 }
@@ -1189,7 +1189,7 @@ string_to_int( std::string const & input_string ){
 	return int_of_string;
 }
 
-	
+
 } //ns rna
 } //ns pose
 } //ns core

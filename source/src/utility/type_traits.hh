@@ -30,7 +30,7 @@ namespace utility {
 namespace has_insertion_operator_implementation {
 enum class False {};
 struct any_type {
-    template<typename T> any_type(T const&);
+	template<typename T> any_type(T const&);
 };
 False operator<<(std::ostream const&, any_type const&);
 }
@@ -49,7 +49,7 @@ struct has_insertion_operator_s {
 // template<typename T>
 // struct has_insertion_operator_s
 // {
-// 	static const bool value = boost::has_left_shift<std::ostream &, T const &>::value;
+//  static const bool value = boost::has_left_shift<std::ostream &, T const &>::value;
 // };
 
 

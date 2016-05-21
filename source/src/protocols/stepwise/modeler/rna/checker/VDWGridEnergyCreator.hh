@@ -34,7 +34,7 @@ public:
 	/// @brief Instantiate a new VDWGridEnergy
 	virtual
 	core::scoring::methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		core::scoring::methods::EnergyMethodOptions const &
 	) const;
 

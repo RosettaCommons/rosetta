@@ -187,7 +187,7 @@ private:
 		std::set< std::string > const & allowed_atoms ) const;
 
 	core::scoring::func::FuncOP
-	atom_pair_func( HydrogenBondingAtom const & a1,	HydrogenBondingAtom const & a2 ) const;
+	atom_pair_func( HydrogenBondingAtom const & a1, HydrogenBondingAtom const & a2 ) const;
 
 	core::scoring::func::FuncOP
 	angle1_func( HydrogenBondingAtom const & a1 ) const;

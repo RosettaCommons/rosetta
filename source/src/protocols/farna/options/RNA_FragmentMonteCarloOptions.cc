@@ -144,7 +144,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	}
 	set_gradual_constraints( option[ rna::farna::gradual_constraints ]() );
 	set_grid_vdw_weight( option[ rna::farna::grid_vdw_weight ]() );
-	
+
 	set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
 
 	set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );

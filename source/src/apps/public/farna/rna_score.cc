@@ -348,7 +348,7 @@ rna_score_test()
 		std::string tag = tag_from_pose( pose );
 		BinarySilentStruct s( pose, tag );
 
-		if ( native_exists ){
+		if ( native_exists ) {
 			Real rmsd;
 			if ( option[ rmsd_nosuper ]() ) {
 				rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );

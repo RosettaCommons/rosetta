@@ -65,7 +65,7 @@ VDW_Grid::~VDW_Grid()
 {}
 
 
-void 
+void
 VDW_Grid::setup( int const & bin_max ) const
 {
 	bin_max_ = bin_max;
@@ -161,28 +161,28 @@ VDW_Grid::get_atom_bin_size() const {
 	return atom_bin_size_;
 }
 
-void 
+void
 VDW_Grid::set_bin_offset( int const & value ) const {
-	bin_offset_ = value;	
+	bin_offset_ = value;
 }
 
-int 
+int
 VDW_Grid::get_bin_offset() const {
 	return bin_offset_;
 }
 
-void 
+void
 VDW_Grid::set_ref_xyz( numeric::xyzVector< core::Real > const & value ) const {
 	ref_xyz_ = value;
 }
 
-numeric::xyzVector< core::Real > 
+numeric::xyzVector< core::Real >
 VDW_Grid::get_ref_xyz() const {
 	return ref_xyz_;
 }
 
 
-} //rna 
+} //rna
 } //pose
 } //core
 

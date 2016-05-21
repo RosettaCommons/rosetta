@@ -1193,10 +1193,10 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 			Edge edge( old_edge ); //makes sure everything in Edge gets copied !!!
 			if ( linked( edge.start() ) && !linked( edge.stop() ) ) {
 				new_edge_list_.push_back( edge );
-				if (!edge.is_polymer()) {
+				if ( !edge.is_polymer() ) {
 					linked( edge.stop() ) = true;
 				} else {
-					for (core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i) linked( i ) = true;
+					for ( core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i ) linked( i ) = true;
 				}
 				new_member = true;
 			} else if ( linked( edge.stop() ) && !linked( edge.start() ) ) {
@@ -1206,10 +1206,10 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 				edge.start_atom() = old_edge.stop_atom();
 				edge.stop_atom() = old_edge.start_atom();
 				new_edge_list_.push_back( edge );
-				if (!edge.is_polymer()) {
+				if ( !edge.is_polymer() ) {
 					linked( edge.stop() ) = true;
 				} else {
-					for (core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i) linked( i ) = true;
+					for ( core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i ) linked( i ) = true;
 				}
 				new_member = true;
 			}
@@ -1222,15 +1222,15 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 			TR.Error << "old_edge_list.size() " << edge_list_.size() << "  new_edge_list.size()" << new_edge_list_.size() << std::endl;
 			TR.Error << *this << std::endl;
 
-		//	 TR.Error << "show old edge list " << std::endl;
-		//	 for( FoldTree::const_iterator it(edge_list_.begin()), end(edge_list_.end()); it!=end; ++it){
-		//	  TR.Error << *it << std::endl;
-		//	 }
+			//  TR.Error << "show old edge list " << std::endl;
+			//  for( FoldTree::const_iterator it(edge_list_.begin()), end(edge_list_.end()); it!=end; ++it){
+			//   TR.Error << *it << std::endl;
+			//  }
 
-		//	 TR.Error << "show new edge list " << std::endl;
-		//	 for( FoldTree::const_iterator it(new_edge_list_.begin()), end(new_edge_list_.end()); it!=end; ++it){
-		//	  TR.Error << *it << std::endl;
-		//	 }
+			//  TR.Error << "show new edge list " << std::endl;
+			//  for( FoldTree::const_iterator it(new_edge_list_.begin()), end(new_edge_list_.end()); it!=end; ++it){
+			//   TR.Error << *it << std::endl;
+			//  }
 		}
 
 		return false;

@@ -69,9 +69,9 @@ public:
 	void
 	FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose );
 
-		void
-		FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose,
-                                                                                                bool const include_side_chains );
+	void
+	FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose,
+		bool const include_side_chains );
 
 
 	void
@@ -151,7 +151,7 @@ public:
 	void
 	setup_working_alignment( core::pose::Pose & working_pose );
 
-	utility::vector1< core::Size > 
+	utility::vector1< core::Size >
 	get_VDW_align_res();
 
 	void
@@ -162,8 +162,8 @@ private:
 	void
 	check_VDW_screen_bin_is_setup() const;
 
-//	bool
-//	is_atom_bin_in_range( Atom_Bin const & atom_pos_bin ) const;
+	// bool
+	// is_atom_bin_in_range( Atom_Bin const & atom_pos_bin ) const;
 
 	bool
 	check_atom_bin_in_range( core::pose::rna::Atom_Bin const & atom_pos_bin );
@@ -174,8 +174,8 @@ private:
 	core::Vector
 	get_reference_xyz_average( core::pose::Pose const & pose );
 
-//	Atom_Bin
-//	get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos ) const;
+	// Atom_Bin
+	// get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos ) const;
 
 	void
 	set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz );

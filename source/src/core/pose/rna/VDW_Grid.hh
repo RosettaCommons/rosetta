@@ -79,25 +79,25 @@ public:
 
 	void
 	set_bin_max( int const & value ) const;
-	
+
 	int
 	get_bin_max() const;
-	
+
 	void
 	set_atom_bin_size( core::Real const & value ) const;
-	
+
 	core::Real
 	get_atom_bin_size() const;
-	
+
 	void
 	set_bin_offset( int const & value ) const;
-	
+
 	int
 	get_bin_offset() const;
-	
+
 	void
 	set_ref_xyz( numeric::xyzVector< core::Real > const & value ) const;
-	
+
 	numeric::xyzVector< core::Real >
 	get_ref_xyz() const;
 

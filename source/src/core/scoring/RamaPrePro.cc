@@ -120,8 +120,8 @@ RamaPrePro::read_rpp_tables( ) {
 	std::string allmap, prepromap, suffix("");
 	bool const use_steep( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_steep ]() );
 	bool const nobidentate( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_nobidentate ]() );
-	if( nobidentate ) suffix = ".rb";
-	if( use_steep ) suffix += ".100_2_0_20";
+	if ( nobidentate ) suffix = ".rb";
+	if ( use_steep ) suffix += ".100_2_0_20";
 	allmap = "scoring/score_functions/rama/fd/all.ramaProb" + suffix;
 	prepromap = "scoring/score_functions/rama/fd/prepro.ramaProb" + suffix;
 

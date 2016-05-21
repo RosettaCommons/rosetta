@@ -348,30 +348,30 @@ public:
 
 	// its_nX_ is no longer a member... looks liks this functon is now deprecated - commenting out to fix PyRosetta build
 	// void fluff(utility::pointer::shared_ptr<CartGrid<T> > input, utility::pointer::shared_ptr<CartGrid<T> > original, int amount=6) {
-	// 	int istart, iend, jstart, jend, kstart, kend;
-	// 	for ( int i=0; i < input->its_nX_; i++ ) {
-	// 		for ( int j=0; j < input->its_nY_; j++ ) {
-	// 			for ( int k=0; k < input->its_nZ_; k++ ) {
-	// 				if ( input->getValue(i,j,k) != 0 ) {
-	// 					istart = std::max(0, (i-amount));
-	// 					iend   = std::min(input->its_nX_, (i+amount));
-	// 					jstart = std::max(0, (j-amount));
-	// 					jend   = std::min(input->its_nY_, (j+amount));
-	// 					kstart = std::max(0, (k-amount));
-	// 					kend   = std::min(input->its_nZ_, (k+amount));
-	// 					for ( int ii=istart; ii < iend; ii++ ) {
-	// 						for ( int jj=jstart; jj < jend; jj++ ) {
-	// 							for ( int kk=kstart; kk < kend; kk++ ) {
-	// 								if ( original->getValue(ii,jj,kk) != 0 ) {
-	// 									this->setValue(ii,jj,kk,1);
-	// 								}
-	// 							}
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
+	//  int istart, iend, jstart, jend, kstart, kend;
+	//  for ( int i=0; i < input->its_nX_; i++ ) {
+	//   for ( int j=0; j < input->its_nY_; j++ ) {
+	//    for ( int k=0; k < input->its_nZ_; k++ ) {
+	//     if ( input->getValue(i,j,k) != 0 ) {
+	//      istart = std::max(0, (i-amount));
+	//      iend   = std::min(input->its_nX_, (i+amount));
+	//      jstart = std::max(0, (j-amount));
+	//      jend   = std::min(input->its_nY_, (j+amount));
+	//      kstart = std::max(0, (k-amount));
+	//      kend   = std::min(input->its_nZ_, (k+amount));
+	//      for ( int ii=istart; ii < iend; ii++ ) {
+	//       for ( int jj=jstart; jj < jend; jj++ ) {
+	//        for ( int kk=kstart; kk < kend; kk++ ) {
+	//         if ( original->getValue(ii,jj,kk) != 0 ) {
+	//          this->setValue(ii,jj,kk,1);
+	//         }
+	//        }
+	//       }
+	//      }
+	//     }
+	//    }
+	//   }
+	//  }
 	// }
 
 	void read(std::string const & filename) {
@@ -560,86 +560,86 @@ public:
 
 	// its_nX_ is no longer a member... looks liks this functon is now deprecated - commenting out to fix PyRosetta build
 	// void split(int nsplits, int igrid, core::Real pad, utility::pointer::shared_ptr<CartGrid<T> > grid) {
-	// 	int tsplits = nsplits*nsplits*nsplits;
-	// 	if ( igrid < 0 || igrid >= tsplits ) {
-	// 		utility_exit_with_message("accessing split out of bounds");
-	// 	}
+	//  int tsplits = nsplits*nsplits*nsplits;
+	//  if ( igrid < 0 || igrid >= tsplits ) {
+	//   utility_exit_with_message("accessing split out of bounds");
+	//  }
 
-	// 	int split_x = int(core::Real(this->nX_)/core::Real(nsplits)) + 1;
-	// 	int split_y = int(core::Real(this->nY_)/core::Real(nsplits)) + 1;
-	// 	int split_z = int(core::Real(this->nZ_)/core::Real(nsplits)) + 1;
+	//  int split_x = int(core::Real(this->nX_)/core::Real(nsplits)) + 1;
+	//  int split_y = int(core::Real(this->nY_)/core::Real(nsplits)) + 1;
+	//  int split_z = int(core::Real(this->nZ_)/core::Real(nsplits)) + 1;
 
-	// 	int iz = int(igrid / (nsplits*nsplits));
-	// 	int rem = igrid - (iz*nsplits*nsplits);
-	// 	int iy = int(rem/nsplits);
-	// 	int ix = rem - (iy*nsplits);
+	//  int iz = int(igrid / (nsplits*nsplits));
+	//  int rem = igrid - (iz*nsplits*nsplits);
+	//  int iy = int(rem/nsplits);
+	//  int ix = rem - (iy*nsplits);
 
-	// 	int padx = int((pad/lX_)-0.1);
-	// 	int pady = int((pad/lY_)-0.1);
-	// 	int padz = int((pad/lZ_)-0.1);
+	//  int padx = int((pad/lX_)-0.1);
+	//  int pady = int((pad/lY_)-0.1);
+	//  int padz = int((pad/lZ_)-0.1);
 
-	// 	int leftx = padx;
-	// 	int rightx = padx;
-	// 	int lefty = pady;
-	// 	int righty = pady;
-	// 	int leftz = padz;
-	// 	int rightz = padz;
+	//  int leftx = padx;
+	//  int rightx = padx;
+	//  int lefty = pady;
+	//  int righty = pady;
+	//  int leftz = padz;
+	//  int rightz = padz;
 
-	// 	if ( ix == 0 ) {
-	// 		leftx = 0;
-	// 	}
-	// 	if ( iy == 0 ) {
-	// 		lefty = 0;
-	// 	}
-	// 	if ( iz == 0 ) {
-	// 		leftz = 0;
-	// 	}
+	//  if ( ix == 0 ) {
+	//   leftx = 0;
+	//  }
+	//  if ( iy == 0 ) {
+	//   lefty = 0;
+	//  }
+	//  if ( iz == 0 ) {
+	//   leftz = 0;
+	//  }
 
-	// 	if ( ix == nsplits-1 ) {
-	// 		rightx = 0;
-	// 	}
-	// 	if ( iy == nsplits-1 ) {
-	// 		righty = 0;
-	// 	}
-	// 	if ( iz == nsplits-1 ) {
-	// 		rightz = 0;
-	// 	}
+	//  if ( ix == nsplits-1 ) {
+	//   rightx = 0;
+	//  }
+	//  if ( iy == nsplits-1 ) {
+	//   righty = 0;
+	//  }
+	//  if ( iz == nsplits-1 ) {
+	//   rightz = 0;
+	//  }
 
-	// 	grid->its_nX_ = split_x+leftx+rightx;
-	// 	grid->its_nY_ = split_y+lefty+righty;
-	// 	grid->its_nZ_ = split_z+leftz+rightz;
+	//  grid->its_nX_ = split_x+leftx+rightx;
+	//  grid->its_nY_ = split_y+lefty+righty;
+	//  grid->its_nZ_ = split_z+leftz+rightz;
 
-	// 	core::Real bx = this->its_bX + ix*split_x*(this->lX_) - padx*(this->lX_);
-	// 	core::Real by = this->its_bY + iy*split_y*(this->lY_) - pady*(this->lY_);
-	// 	core::Real bz = this->its_bZ + iz*split_z*(this->lZ_) - padz*(this->lZ_);
+	//  core::Real bx = this->its_bX + ix*split_x*(this->lX_) - padx*(this->lX_);
+	//  core::Real by = this->its_bY + iy*split_y*(this->lY_) - pady*(this->lY_);
+	//  core::Real bz = this->its_bZ + iz*split_z*(this->lZ_) - padz*(this->lZ_);
 
-	// 	grid->its_bX_ = std::max(this->bX_, bx);
-	// 	grid->its_bY_ = std::max(this->bY_, by);
-	// 	grid->its_bZ_ = std::max(this->bZ_, bz);
+	//  grid->its_bX_ = std::max(this->bX_, bx);
+	//  grid->its_bY_ = std::max(this->bY_, by);
+	//  grid->its_bZ_ = std::max(this->bZ_, bz);
 
-	// 	grid->its_lX_ = this->lX_;
-	// 	grid->its_lY_ = this->lY_;
-	// 	grid->its_lZ_ = this->lZ_;
+	//  grid->its_lX_ = this->lX_;
+	//  grid->its_lY_ = this->lY_;
+	//  grid->its_lZ_ = this->lZ_;
 
 
-	// 	// copy over grid data
-	// 	grid->setDimensions(grid->its_nX_,grid->its_nY_,grid->its_nZ_,grid->its_lX_,grid->its_lY_,grid->its_lZ_);
-	// 	grid->setupZones();
-	// 	grid->zero();
+	//  // copy over grid data
+	//  grid->setDimensions(grid->its_nX_,grid->its_nY_,grid->its_nZ_,grid->its_lX_,grid->its_lY_,grid->its_lZ_);
+	//  grid->setupZones();
+	//  grid->zero();
 
-	// 	int xstart = std::max(0,ix*split_x-padx);
-	// 	int ystart = std::max(0,iy*split_y-pady);
-	// 	int zstart = std::max(0,iz*split_z-padz);
+	//  int xstart = std::max(0,ix*split_x-padx);
+	//  int ystart = std::max(0,iy*split_y-pady);
+	//  int zstart = std::max(0,iz*split_z-padz);
 
-	// 	for ( int i=0; i < grid->its_nX_; i++ ) {
-	// 		for ( int j=0; j < grid->its_nY_; j++ ) {
-	// 			for ( int k=0; k < grid->its_nZ_; k++ ) {
-	// 				int value = this->getValue(xstart+i,ystart+j,zstart+k);
-	// 				if ( value == -1 ) value = 0;
-	// 				grid->setValue(i,j,k,value);
-	// 			}
-	// 		}
-	// 	}
+	//  for ( int i=0; i < grid->its_nX_; i++ ) {
+	//   for ( int j=0; j < grid->its_nY_; j++ ) {
+	//    for ( int k=0; k < grid->its_nZ_; k++ ) {
+	//     int value = this->getValue(xstart+i,ystart+j,zstart+k);
+	//     if ( value == -1 ) value = 0;
+	//     grid->setValue(i,j,k,value);
+	//    }
+	//   }
+	//  }
 	// }
 
 	core::Vector getBase() const

@@ -228,9 +228,9 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		} else {
 			do_close_loops_ = false;
 		}
-	
+
 		// Set up the VDW filter here
-		// Could probably set this all up in a way that doesn't require 
+		// Could probably set this all up in a way that doesn't require
 		// setting this up every time that this apply function is called
 		// But would require changes to the RNA_VDW_BinChecker object first
 		if ( options_->filter_vdw() ) {

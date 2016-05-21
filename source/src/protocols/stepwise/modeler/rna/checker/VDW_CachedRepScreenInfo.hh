@@ -59,11 +59,11 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const;
 
-        void
-        read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenInfo & VDW_rep_screen_info ) const; 
-    
-        void
-        read_in_VDW_rep_screen_pose_from_command_line() const;
+	void
+	read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenInfo & VDW_rep_screen_info ) const;
+
+	void
+	read_in_VDW_rep_screen_pose_from_command_line() const;
 
 	utility::vector1< core::pose::rna::VDW_RepScreenInfo > &
 	VDW_rep_screen_info_list() const;

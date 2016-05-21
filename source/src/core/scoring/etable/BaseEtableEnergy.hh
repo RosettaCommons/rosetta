@@ -1063,7 +1063,7 @@ private:
 
 
 #if defined(PYROSETTA) && !defined(PYROSETTA3) && !defined(DPYROSETTA_GCCXML_PASS)
-	#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
+#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 #endif
 
 #endif // INCLUDED_core_scoring_EtableEnergy_HH

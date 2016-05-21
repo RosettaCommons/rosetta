@@ -139,17 +139,17 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_command_line() const
 
 	bool align_res_specified = false;
 	if ( All_VDW_rep_screen_pose_info.size() > 1 ) {
-	        std::string str = All_VDW_rep_screen_pose_info[2];
-	        align_res_specified = ( str.find(".pdb", str.size()-4) == std::string::npos );
+		std::string str = All_VDW_rep_screen_pose_info[2];
+		align_res_specified = ( str.find(".pdb", str.size()-4) == std::string::npos );
 	}
-	
-	for ( Size n = 1; n <= All_VDW_rep_screen_pose_info.size(); n++ ){
+
+	for ( Size n = 1; n <= All_VDW_rep_screen_pose_info.size(); n++ ) {
 
 		if ( All_VDW_rep_screen_pose_info[n].find(".pdb", All_VDW_rep_screen_pose_info[n].size()-4) == std::string::npos ) continue; // must have '.pdb'
-		
+
 		core::pose::rna::VDW_RepScreenInfo VDW_rep_screen_info = core::pose::rna::VDW_RepScreenInfo();
 		VDW_rep_screen_info.pose_name = All_VDW_rep_screen_pose_info[n];
-	 	read_in_VDW_rep_screen_pose( VDW_rep_screen_info );			
+		read_in_VDW_rep_screen_pose( VDW_rep_screen_info );
 
 		// Need to set the VDW_align_res and the working_align_res
 
@@ -165,8 +165,8 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_command_line() const
 				VDW_rep_screen_info.working_align_res.push_back( core::pose::rna::string_to_int( working_align_res_string[i] ) );
 			}
 		}
-		
-		VDW_rep_screen_info_list_.push_back( VDW_rep_screen_info );	
+
+		VDW_rep_screen_info_list_.push_back( VDW_rep_screen_info );
 	}
 }
 

@@ -216,7 +216,7 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 
 		boost::to_upper(line); //Capitalize entire line.
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
-		
+
 		check_line_len(lineSP, 2);
 		//TR << utility::to_string(lineSP) <<std::endl;
 		//Everything besides comments needs to have a CDR or ALL associated with it.

@@ -279,21 +279,21 @@ HydrogenBondConstraintGenerator::apply( core::pose::Pose const & pose ) const
 /*
 HydrogenBondingAtoms
 HydrogenBondConstraintGenerator::compute_valid_atoms(
-	core::conformation::Residue const & rsd,
-	std::set< std::string > const & allowed_atoms ) const
+core::conformation::Residue const & rsd,
+std::set< std::string > const & allowed_atoms ) const
 {
-	if ( allowed_atoms.empty() ) {
-		core::chemical::AtomIndices const & sc_atoms = rsd.type().all_sc_atoms();
-		for ( core::chemical::AtomIndices::const_iterator at=sc_atoms.begin(); at!=sc_atoms.end(); ++at ) {
-			if ( ( rsd.type().atom_type( *at ).element() == "O" ) ||
-					( rsd.type().atom_type( *at ).element() == "N" ) ||
-					( rsd.type().atom_type( *at ).element() == "S" ) ) {
+if ( allowed_atoms.empty() ) {
+core::chemical::AtomIndices const & sc_atoms = rsd.type().all_sc_atoms();
+for ( core::chemical::AtomIndices::const_iterator at=sc_atoms.begin(); at!=sc_atoms.end(); ++at ) {
+if ( ( rsd.type().atom_type( *at ).element() == "O" ) ||
+( rsd.type().atom_type( *at ).element() == "N" ) ||
+( rsd.type().atom_type( *at ).element() == "S" ) ) {
 
-				}
-		}
-		return atom_idxs;
-	}
-	return existing_atoms( rsd, allowed_atoms );
+}
+}
+return atom_idxs;
+}
+return existing_atoms( rsd, allowed_atoms );
 }
 */
 
@@ -579,10 +579,10 @@ HydrogenBondInfo::atoms( std::string const & rsd_name ) const
 } // namespace protocols
 
 namespace utility {
-	using namespace protocols::constraint_generator;
+using namespace protocols::constraint_generator;
 #if defined MULTI_THREADED && defined CXX11
-	template<> std::mutex SingletonBase< HydrogenBondInfo >::singleton_mutex_{};
-	template<> std::atomic< HydrogenBondInfo * > SingletonBase< HydrogenBondInfo >::instance_( NULL );
+template<> std::mutex SingletonBase< HydrogenBondInfo >::singleton_mutex_{};
+template<> std::atomic< HydrogenBondInfo * > SingletonBase< HydrogenBondInfo >::instance_( NULL );
 #else
 	template<> HydrogenBondInfo * SingletonBase< HydrogenBondInfo >::instance_ = NULL;
 #endif

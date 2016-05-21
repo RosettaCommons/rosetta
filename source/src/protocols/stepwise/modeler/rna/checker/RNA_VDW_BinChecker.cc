@@ -98,29 +98,29 @@ namespace checker {
 
 //constructor that is initialized with pose!
 RNA_VDW_BinChecker::RNA_VDW_BinChecker( core::pose::Pose const & pose ):
-       max_distance_( 70.0 ),  //For telomerase TERT
-       //max_distance_( 55.0 ), //Nov 7, Nov_1_2r8s_TLR was barely out of range. atom_pos_bin.z= 1003
-       atom_bin_size_( 0.1 ),
-       bin_min_( int(  -max_distance_/atom_bin_size_ ) ),
-       bin_max_( int( max_distance_/atom_bin_size_ ) ),  //used to be (max_distance_/atom_bin_size_)-1, change on Nov 7, 2010
-       bin_offset_( std::abs( bin_min_ ) + 1 ),
-       num_clash_atom_cutoff_( 3 ), //num of clash required to be considered a clash
-       write_to_file_( false ), //for debugging
-       is_reference_xyz_setup_( false ),
-       is_VDW_screen_bin_setup_( false ),
-       user_inputted_VDW_screen_pose_( false ),
-       VDW_rep_alignment_RMSD_CUTOFF_( 0.001 ),
-       tolerate_off_range_atom_bin_( true ), //Use to be false before Dec 15, 2010
-       num_atom_pos_bin_out_of_range_message_outputted_( 0 ),
-       VDW_rep_screen_with_physical_pose_verbose_( true ),
-       physical_pose_clash_dist_cutoff_( 1.2 ),
-       output_pdb_( false ),
-       align_pose_( true ),
-       include_side_chains_( true ),
-       vdw_align_res_set_( false ),
-       optimize_speed_( 1 ), // Could implement as options, similar to VDW_rep_optimize_memory_usage
-       verbose_( TR.Debug.visible() ), 
-       use_VDW_rep_pose_for_screening_( false ) //Use actual VDW_checker_pose instead of bin for screening. This mode is slow but more robust. Feb 20, 2011
+	max_distance_( 70.0 ),  //For telomerase TERT
+	//max_distance_( 55.0 ), //Nov 7, Nov_1_2r8s_TLR was barely out of range. atom_pos_bin.z= 1003
+	atom_bin_size_( 0.1 ),
+	bin_min_( int(  -max_distance_/atom_bin_size_ ) ),
+	bin_max_( int( max_distance_/atom_bin_size_ ) ),  //used to be (max_distance_/atom_bin_size_)-1, change on Nov 7, 2010
+	bin_offset_( std::abs( bin_min_ ) + 1 ),
+	num_clash_atom_cutoff_( 3 ), //num of clash required to be considered a clash
+	write_to_file_( false ), //for debugging
+	is_reference_xyz_setup_( false ),
+	is_VDW_screen_bin_setup_( false ),
+	user_inputted_VDW_screen_pose_( false ),
+	VDW_rep_alignment_RMSD_CUTOFF_( 0.001 ),
+	tolerate_off_range_atom_bin_( true ), //Use to be false before Dec 15, 2010
+	num_atom_pos_bin_out_of_range_message_outputted_( 0 ),
+	VDW_rep_screen_with_physical_pose_verbose_( true ),
+	physical_pose_clash_dist_cutoff_( 1.2 ),
+	output_pdb_( false ),
+	align_pose_( true ),
+	include_side_chains_( true ),
+	vdw_align_res_set_( false ),
+	optimize_speed_( 1 ), // Could implement as options, similar to VDW_rep_optimize_memory_usage
+	verbose_( TR.Debug.visible() ),
+	use_VDW_rep_pose_for_screening_( false ) //Use actual VDW_checker_pose instead of bin for screening. This mode is slow but more robust. Feb 20, 2011
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::stepwise::rna;
@@ -161,10 +161,10 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker():
 	use_VDW_rep_pose_for_screening_( false ) //Use actual VDW_checker_pose instead of bin for screening. This mode is slow but more robust. Feb 20, 2011
 {
 	using namespace basic::options;
- 	using namespace basic::options::OptionKeys::stepwise::rna;
+	using namespace basic::options::OptionKeys::stepwise::rna;
 	using namespace core::pose::rna;
 	optimize_memory_usage_ = option[ VDW_rep_optimize_memory_usage ]();
-	
+
 	VDW_screen_bin_ = VDW_GridOP( new VDW_Grid() );
 
 	//March 23,2011:
@@ -179,38 +179,38 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker():
 	//2. CRAP FOR PREPEND, the PHOSPHATE IS NOT VIRTUALIZED since ignore_res_list is EMPTY!!
 	//3. This mean that main problem is with the APPEND with building nucleotide (1st step and at chain_closure)
 
- //Play it safe, use num_clash_atom_cutoff_(3):
- // ....with num_clash_atom cutoff equals 1...actually got full_atom_rep_count:43540/43622  bin_rep: 55456/682546
- // ....with num_clash_atom cutoff equals 3...actually got full_atom_rep_count:43622/43622  bin_rep: 73868/682546
+	//Play it safe, use num_clash_atom_cutoff_(3):
+	// ....with num_clash_atom cutoff equals 1...actually got full_atom_rep_count:43540/43622  bin_rep: 55456/682546
+	// ....with num_clash_atom cutoff equals 3...actually got full_atom_rep_count:43622/43622  bin_rep: 73868/682546
 
 
- }
+}
 
- //////////////////////Note////////////////////////////
- //for max_distance=50.0, atom_bin_size=0.1
- //-->bin_min=-500, bin_max=500, bin_offset=501
- //x_pos 														-49.95   -0.05   0.05   49.95
- //x_pos/atom_bin_size	     						-499       0      0   	499
- //if(x_pos<0) -1											-500				-1			 0			499
- //+bin_offset												   1			 500    501   1000
+//////////////////////Note////////////////////////////
+//for max_distance=50.0, atom_bin_size=0.1
+//-->bin_min=-500, bin_max=500, bin_offset=501
+//x_pos               -49.95   -0.05   0.05   49.95
+//x_pos/atom_bin_size            -499       0      0    499
+//if(x_pos<0) -1           -500    -1    0   499
+//+bin_offset               1    500    501   1000
 
- //////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
 
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //destructor
 RNA_VDW_BinChecker::~RNA_VDW_BinChecker()
 {
 	// do not reset bins in optimize_speed_ mode, only fill once
-       if ( !optimize_speed_ && VDW_screen_bin_->size() > 0 ) {
-       	if ( optimize_memory_usage_ ) {
-       		// set all bins to false
-       		VDW_screen_bin_->reset();
-       	} else {
-       		// set only occupied bins to false ... much faster
-       		VDW_screen_bin_->reset( occupied_xyz_bins_ );
-       	} 
-       }
+	if ( !optimize_speed_ && VDW_screen_bin_->size() > 0 ) {
+		if ( optimize_memory_usage_ ) {
+			// set all bins to false
+			VDW_screen_bin_->reset();
+		} else {
+			// set only occupied bins to false ... much faster
+			VDW_screen_bin_->reset( occupied_xyz_bins_ );
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -478,10 +478,10 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void 
+void
 RNA_VDW_BinChecker::align_working_pose( core::pose::Pose & working_pose ) const {
 	core::pose::rna::VDW_RepScreenInfo VDW_rep_screen_info = VDW_rep_screen_info_list_[1];
-//	align_VDW_rep_screen_pose( working_pose, VDW_rep_screen_info.VDW_pose, VDW_rep_screen_info.working_align_res, VDW_rep_screen_info.VDW_align_res, false);
+	// align_VDW_rep_screen_pose( working_pose, VDW_rep_screen_info.VDW_pose, VDW_rep_screen_info.working_align_res, VDW_rep_screen_info.VDW_align_res, false);
 	core::scoring::superimpose_pose( working_pose, *VDW_rep_screen_info.VDW_pose, stored_align_working_atom_id_map_ );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -565,7 +565,7 @@ RNA_VDW_BinChecker::align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen
 
 	if ( setup_working_align ) {
 		stored_align_working_atom_id_map_ = alignment_atom_id_map;
-		// Add the stored_align_working_atom_id_map to the cached pose info 
+		// Add the stored_align_working_atom_id_map to the cached pose info
 		// VDW_rep_screen_pose is actually just the moving pose: in this if block, it is actually the working_pose
 	}
 
@@ -578,13 +578,13 @@ RNA_VDW_BinChecker::align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen
 
 		if ( verbose ) TR << "after superimpose_pose" << std::endl;
 
-		if ( output_pdb_ ){
+		if ( output_pdb_ ) {
 			working_pose.dump_pdb( "VDW_rep_screen_bin_AFTER_ALIGN_working_pose.pdb" );
 			VDW_rep_screen_pose.dump_pdb( "VDW_rep_screen_bin_AFTER_ALIGN_VDW_rep_screen_pose.pdb" );
 		}
 		//////////////////////////////////Check that VDW_rep_screen pose is perfectly aligned to working_pose...////////////////////////////////
 
-		for ( Size n = 1; n <= working_align_res.size(); n++ ){
+		for ( Size n = 1; n <= working_align_res.size(); n++ ) {
 
 			Size const res_num_1 = VDW_rep_screen_align_res[n]; //moving_pose
 			Size const res_num_2 = working_align_res[n]; //static_pose
@@ -600,22 +600,22 @@ RNA_VDW_BinChecker::align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen
 
 			if ( atom_count == 0 ) rmsd = 99.99; //This is different from suite_rmsd function..!!
 
-			if ( verbose ){
+			if ( verbose ) {
 				TR << "rmsd = " << rmsd  << " Angstrom between res " << res_num_1 << " of VDW_rep_screen_align_res and res " << res_num_2 << " of working_pose" << std::endl;
 			}
 
 
-			if ( rmsd > VDW_rep_alignment_RMSD_CUTOFF_ ){ //change on Sept 26, 2010..problem arise when use this in non-long-loop mode...
+			if ( rmsd > VDW_rep_alignment_RMSD_CUTOFF_ ) { //change on Sept 26, 2010..problem arise when use this in non-long-loop mode...
 				TR.Debug << "rmsd = " << rmsd  << " > ( " << VDW_rep_alignment_RMSD_CUTOFF_ << " ) Angstrom between res " << res_num_1 << " of VDW_rep_screen_align_res and res " << res_num_2 << " of working_pose" << std::endl;
 				utility_exit_with_message( "rmsd > VDW_rep_alignment_RMSD_CUTOFF!" );
 			}
 
 			if ( verbose ) output_title_text( "Exit RNA_VDW_BinChecker::align_VDW_rep_screen_pose()", TR );
 
-		 	if ( rmsd > VDW_rep_alignment_RMSD_CUTOFF_ ){ //change on Sept 26, 2010..problem arise when use this in non-long-loop mode...
-				 TR.Debug << "rmsd = " << rmsd  << " > ( " << VDW_rep_alignment_RMSD_CUTOFF_ << " ) Angstrom between res " << res_num_1 << " of VDW_rep_screen_align_res and res " << res_num_2 << " of working_pose" << std::endl;
-			 	utility_exit_with_message( "rmsd > VDW_rep_alignment_RMSD_CUTOFF!" );
-		 	}
+			if ( rmsd > VDW_rep_alignment_RMSD_CUTOFF_ ) { //change on Sept 26, 2010..problem arise when use this in non-long-loop mode...
+				TR.Debug << "rmsd = " << rmsd  << " > ( " << VDW_rep_alignment_RMSD_CUTOFF_ << " ) Angstrom between res " << res_num_1 << " of VDW_rep_screen_align_res and res " << res_num_2 << " of working_pose" << std::endl;
+				utility_exit_with_message( "rmsd > VDW_rep_alignment_RMSD_CUTOFF!" );
+			}
 		}
 	}
 
@@ -691,17 +691,18 @@ RNA_VDW_BinChecker::create_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenIn
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< core::Size > 
+utility::vector1< core::Size >
 RNA_VDW_BinChecker::get_VDW_align_res(){
-	if ( align_pose_ && !vdw_align_res_set_)
+	if ( align_pose_ && !vdw_align_res_set_ ) {
 		utility_exit_with_message("The VDW align residues have not been set yet!");
+	}
 	return vdw_align_res_;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info,
-                                                        				core::pose::Pose const & const_working_pose,
-											bool const include_side_chains ){
+	core::pose::Pose const & const_working_pose,
+	bool const include_side_chains ){
 	include_side_chains_ = include_side_chains;
 	FARFAR_setup_using_user_input_VDW_pose( All_VDW_rep_screen_pose_info, const_working_pose );
 }
@@ -717,18 +718,17 @@ RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose( utility::vector1< st
 	bool const verbose = verbose_; //true;
 
 	output_title_text( "Enter RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose", TR.Debug );
-	
+
 	// If only one argument was provided and it is a PDB, then no alignment will be done
 	if ( ( All_VDW_rep_screen_pose_info.size() == 1 ) && (All_VDW_rep_screen_pose_info[1].find(".pdb") != std::string::npos) ) {
 		align_pose_ = false; //The default was true
-	}
-	else if ( ( All_VDW_rep_screen_pose_info.size() % 3 ) != 0 ){
+	} else if ( ( All_VDW_rep_screen_pose_info.size() % 3 ) != 0 ) {
 		utility_exit_with_message( "( All_VDW_rep_screen_pose_info.size() % 3 ) != 0. Example: VWC_rep_screen_pose.pdb 6-44( align_res of VWD_rep_screen_pose ) 1-33( align_res of working_pose )" );
 	}
 
-	 VDW_rep_screen_info_list_.clear();
+	VDW_rep_screen_info_list_.clear();
 
-	 Size import_ID = 0;
+	Size import_ID = 0;
 
 	///////////////////////////////////////////////////////////////////////////
 	for ( Size n = 1; n <= All_VDW_rep_screen_pose_info.size(); n += 3 ) {
@@ -750,18 +750,18 @@ RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose( utility::vector1< st
 			utility::vector1< std::string > const VDW_rep_screen_align_res_string = tokenize( All_VDW_rep_screen_pose_info[n + 1], "-" );
 			utility::vector1< std::string > const full_align_res_string = tokenize( All_VDW_rep_screen_pose_info[n + 2], "-" );
 
-			for ( Size ii = 1; ii <= VDW_rep_screen_align_res_string.size(); ii++ ){
+			for ( Size ii = 1; ii <= VDW_rep_screen_align_res_string.size(); ii++ ) {
 				VDW_rep_screen_info.VDW_align_res.push_back( string_to_int( VDW_rep_screen_align_res_string[ii] ) );
 			}
 
-			for ( Size ii = 1; ii <= full_align_res_string.size(); ii++ ){
+			for ( Size ii = 1; ii <= full_align_res_string.size(); ii++ ) {
 				VDW_rep_screen_info.full_align_res.push_back( string_to_int( full_align_res_string[ii] ) );
 			}
 
 			if ( VDW_rep_screen_info.VDW_align_res.size() == 0 ) utility_exit_with_message( "VDW_align_ress.size() == 0" );
 			if ( VDW_rep_screen_info.full_align_res.size() == 0 ) utility_exit_with_message( "full_align_res.size() == 0!" );
 
-			if ( VDW_rep_screen_info.VDW_align_res.size() != VDW_rep_screen_info.full_align_res.size() ){
+			if ( VDW_rep_screen_info.VDW_align_res.size() != VDW_rep_screen_info.full_align_res.size() ) {
 				utility_exit_with_message( "Size of VDW_align_res ( " + string_of( VDW_rep_screen_info.VDW_align_res.size() ) + " ) != working_align_res ( " + string_of( VDW_rep_screen_info.working_align_res.size() ) + " )" );
 			}
 			//Assume the FARFAR working_pose is the full_length pose.
@@ -797,7 +797,7 @@ RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose( utility::vector1< st
 	//*****This only creates the bin from the first pose in the VDW_rep_screen_info_list_*****//
 
 	VDW_rep_screen_info_list_[1].in_root_partition = true; // Would need to fix this if there is a case where there is actually more
-								// than one pose that needs to be included in the bin
+	// than one pose that needs to be included in the bin
 	//Center the grid on the center of mass of the VDW_rep_screen_pose
 	numeric::xyzVector< core::Real > const reference_xyz = get_center_of_mass( *VDW_rep_screen_info_list_[1].VDW_pose );
 	//TR << "The reference xyz for the VDW grid has been set to: " << reference_xyz << std::endl;
@@ -1336,9 +1336,9 @@ RNA_VDW_BinChecker::create_VDW_screen_bin( utility::vector1< core::pose::Pose > 
 		//Check the size
 		Size occupied_bin_count = 0;
 		Size total_bin_count = 0;
-		for ( int x_bin = 1; x_bin <= bin_max_*2; x_bin++ ){
-			for ( int y_bin = 1; y_bin <= bin_max_*2; y_bin++ ){
-				for ( int z_bin = 1; z_bin <= bin_max_*2; z_bin++ ){
+		for ( int x_bin = 1; x_bin <= bin_max_*2; x_bin++ ) {
+			for ( int y_bin = 1; y_bin <= bin_max_*2; y_bin++ ) {
+				for ( int z_bin = 1; z_bin <= bin_max_*2; z_bin++ ) {
 					if ( VDW_screen_bin_->get_bin( x_bin, y_bin, z_bin ) ) occupied_bin_count++;
 					total_bin_count++;
 				}
@@ -1413,7 +1413,7 @@ RNA_VDW_BinChecker::VDW_rep_screen( core::pose::Pose const & screening_pose, cor
 	for ( Size at = 1; at <= moving_rsd.natoms(); at++ ) {
 
 		//Virtual atom screen
-		if ( moving_rsd.is_virtual( at )) continue;
+		if ( moving_rsd.is_virtual( at ) ) continue;
 
 		core::pose::rna::Atom_Bin const atom_pos_bin = core::pose::rna::get_atom_bin( moving_rsd.xyz( at ), reference_xyz_, atom_bin_size_, bin_offset_ );
 
@@ -1521,15 +1521,15 @@ RNA_VDW_BinChecker::check_VDW_screen_bin_is_setup() const {
 //RNA_VDW_BinChecker::is_atom_bin_in_range( core::pose::rna::Atom_Bin const & atom_pos_bin ) const {
 //
 //
-//	if ( atom_pos_bin.x < 1 || ( atom_pos_bin.x > ( bin_max_*2 ) ) ||
-//		 atom_pos_bin.y < 1 || ( atom_pos_bin.y > ( bin_max_*2 ) ) ||
+// if ( atom_pos_bin.x < 1 || ( atom_pos_bin.x > ( bin_max_*2 ) ) ||
+//   atom_pos_bin.y < 1 || ( atom_pos_bin.y > ( bin_max_*2 ) ) ||
 // atom_pos_bin.z < 1 || ( atom_pos_bin.z > ( bin_max_*2 ) ) ){
 //
-//		 return false;
+//   return false;
 //
-//	} else{
-//		 return true;
-//	}
+// } else{
+//   return true;
+// }
 //
 //}
 //
@@ -1633,7 +1633,7 @@ RNA_VDW_BinChecker::get_reference_xyz_average( core::pose::Pose const & pose ){
 void
 RNA_VDW_BinChecker::set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz ){
 
-//	if ( is_reference_xyz_setup_ == true ) utility_exit_with_message( "is_reference_xyz is already setup!" );
+	// if ( is_reference_xyz_setup_ == true ) utility_exit_with_message( "is_reference_xyz is already setup!" );
 	if ( is_reference_xyz_setup_ == true ) TR.Debug << "is_reference_xyz is already setup!" << std::endl;
 
 	reference_xyz_ = reference_xyz;
@@ -1647,29 +1647,29 @@ RNA_VDW_BinChecker::set_reference_xyz( numeric::xyzVector< core::Real > const & 
 //core::pose::rna::Atom_Bin
 //RNA_VDW_BinChecker::get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos ) const{
 //
-//	runtime_assert ( is_reference_xyz_setup_ );
+// runtime_assert ( is_reference_xyz_setup_ );
 //
 //
-//	numeric::xyzVector< core::Real > const atom_pos_ref_frame = atom_pos - reference_xyz_;
+// numeric::xyzVector< core::Real > const atom_pos_ref_frame = atom_pos - reference_xyz_;
 //
-//	core::pose::rna::Atom_Bin atom_bin;
-//	atom_bin.x = int( atom_pos_ref_frame[0]/atom_bin_size_ );
-//	atom_bin.y = int( atom_pos_ref_frame[1]/atom_bin_size_ );
-//	atom_bin.z = int( atom_pos_ref_frame[2]/atom_bin_size_ );
-//
-//
-//	if ( atom_pos_ref_frame[0] < 0 ) atom_bin.x--;
-//	if ( atom_pos_ref_frame[1] < 0 ) atom_bin.y--;
-//	if ( atom_pos_ref_frame[2] < 0 ) atom_bin.z--;
-//
-//	//////////////////////////////////////////////////////////
-//	atom_bin.x += bin_offset_; //Want min bin to be at one.
-//	atom_bin.y += bin_offset_; //Want min bin to be at one.
-//	atom_bin.z += bin_offset_; //Want min bin to be at one.
+// core::pose::rna::Atom_Bin atom_bin;
+// atom_bin.x = int( atom_pos_ref_frame[0]/atom_bin_size_ );
+// atom_bin.y = int( atom_pos_ref_frame[1]/atom_bin_size_ );
+// atom_bin.z = int( atom_pos_ref_frame[2]/atom_bin_size_ );
 //
 //
-//	//////////////////////////////////////////////////////////
-//	return atom_bin;
+// if ( atom_pos_ref_frame[0] < 0 ) atom_bin.x--;
+// if ( atom_pos_ref_frame[1] < 0 ) atom_bin.y--;
+// if ( atom_pos_ref_frame[2] < 0 ) atom_bin.z--;
+//
+// //////////////////////////////////////////////////////////
+// atom_bin.x += bin_offset_; //Want min bin to be at one.
+// atom_bin.y += bin_offset_; //Want min bin to be at one.
+// atom_bin.z += bin_offset_; //Want min bin to be at one.
+//
+//
+// //////////////////////////////////////////////////////////
+// return atom_bin;
 //}
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1721,7 +1721,7 @@ RNA_VDW_BinChecker::output_atom_bin( std::string const filename ) const{
 	outfile.close();
 }
 
-	
+
 } //checker
 } //rna
 } //modeler
