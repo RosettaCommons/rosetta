@@ -18,11 +18,19 @@
 
 // GeneralizedKIC headers:
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
+#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.hh>
+#include <protocols/cyclic_peptide_predict/util.hh>
 
 // Other Rosetta libraries:
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+
+#include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide_predict.simple_cycpep_predict.cxxtest.hh");
 
 
 // --------------- Test Class --------------- //
@@ -42,12 +50,326 @@ public:
 	void tearDown() {
 	}
 
-	/// @brief This is shte simplest test in the world: run the protocol and see if it crashes.
+	/// @brief This is the simplest test in the world: run the protocol and see if it crashes.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void test_simple_cycpep_predict() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_simple_cycpep_predict()." << std::endl;
+		TR << "This simply runs the SimpleCycpepPredictApplication and checks for crashes." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication the_app;
 		the_app.run();
 	}
 
+	/// @brief Test the sort algorithm used by the MPI version to sort job results by energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_quicksort() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_quicksort()." << std::endl;
+		TR << "This tests the quicksort algorithm used by the MPI version of the app." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
+
+		using namespace protocols::cyclic_peptide_predict;
+
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist;
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 1) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -14.87, 2.72, 3) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -5.12, 3.11, 5) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,   2.16, 4.52, 2) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -13.99, 1.83, 0) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6, -18.54, 0.07, 5) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -16.12, 1.32, 2) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8, -13.43, 0.32, 4) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9, -10.63, 0.86, 3) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -8.12, 1.96, 2) ) );
+
+		TR << "Before sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
+			summarylist[i]->show(TR); TR.flush();
+		}
+		TR << std::endl;
+
+		sort_jobsummaries_list( summarylist, SORT_BY_ENERGIES );
+
+		TR << "After sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
+			summarylist[i]->show(TR);  TR.flush();
+			if ( i>1 ) TS_ASSERT( summarylist[i]->pose_energy() >= summarylist[i-1]->pose_energy() );
+		}
+		TR << std::endl;
+
+	}
+
+	/// @brief Test the sort algorithm used by the MPI version to sort job results by rmsd.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_quicksort_rmsd() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_quicksort()." << std::endl;
+		TR << "This tests the quicksort algorithm used by the MPI version of the app, sorting by rmsd." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
+
+		using namespace protocols::cyclic_peptide_predict;
+
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist;
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 1) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -14.87, 2.72, 4) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -5.12, 3.11, 3) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,   2.16, 4.52, 1) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -13.99, 1.83, 7) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6, -18.54, 0.07, 5) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -16.12, 1.32, 6) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8, -13.43, 0.32, 6) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9, -10.63, 0.86, 4) ) );
+		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -8.12, 1.96, 3) ) );
+
+		TR << "Before sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
+			summarylist[i]->show(TR); TR.flush();
+		}
+		TR << std::endl;
+
+		sort_jobsummaries_list( summarylist, SORT_BY_RMSD );
+
+		TR << "After sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
+			summarylist[i]->show(TR);  TR.flush();
+			if ( i>1 ) TS_ASSERT( summarylist[i]->rmsd() >= summarylist[i-1]->rmsd() );
+		}
+		TR << std::endl;
+
+	}
+
+	/// @brief Test the sort algorithm used by the MPI version to sort job results by energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_mergesort() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_mergesort()." << std::endl;
+		TR << "This tests the merge sort algorithm used by the MPI version of the app." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
+
+		using namespace protocols::cyclic_peptide_predict;
+
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 7) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 2.72, 5) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -7.93, 3.11, 3) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -6.33, 4.52, 1) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5,  -5.99, 1.83, 2) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 0.07, 3) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7,  -2.12, 1.32, 8) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 0.32, 3) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   1.63, 0.86, 1) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,   2.12, 1.96, 3) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 11,   2.13, 1.53, 2) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 12,   2.15, 1.54, 1) ) );
+
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  1, -14.74, 7.23, 6) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  2, -13.86, 3.78, 7) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  3, -13.32, 4.51, 3) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  4, -10.28, 0.52, 5) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  5,  -9.97, 1.83, 2) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  6,  -8.11, 6.17, 6) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  7,  -6.10, 8.35, 2) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  8,  -3.09, 2.35, 1) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  9,  -0.06, 9.86, 2) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5, 10,   2.88, 4.46, 1) ) );
+
+		TR << "List 1 before sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+			summarylist1[i]->show(TR); TR.flush();
+		}
+		TR << std::endl;
+
+		TR << "List 2 before sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist2.size(); i<=imax; ++i ) {
+			summarylist2[i]->show(TR); TR.flush();
+		}
+		TR << std::endl;
+
+		mergesort_jobsummaries_list( summarylist1, summarylist2, SORT_BY_ENERGIES );
+
+		TR << "After sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+			summarylist1[i]->show(TR);  TR.flush();
+			if ( i>1 ) TS_ASSERT( summarylist1[i]->pose_energy() >= summarylist1[i-1]->pose_energy() );
+		}
+		TR << std::endl;
+
+		TS_ASSERT_EQUALS( summarylist1.size(), 22);
+
+	}
+
+	/// @brief Test the sort algorithm used by the MPI version to sort job results by energy.
+	/// @details This version tests the edge cases of empty lists.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_mergesort_edgecases() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_mergesort()." << std::endl;
+		TR << "This tests the merge sort algorithm used by the MPI version of the app.  This test tests the edge cases of empty lists." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
+
+		using namespace protocols::cyclic_peptide_predict;
+
+		{ //2nd list empty
+			TR << "Trying with second list empty..." << std::endl;
+			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 6) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 2.72, 7) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -7.93, 3.11, 4) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -6.33, 4.52, 7) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5,  -5.99, 1.83, 5) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 0.07, 3) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7,  -2.12, 1.32, 5) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 0.32, 2) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   1.63, 0.86, 1) ) );
+			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,   2.12, 1.96, 3) ) );
+
+			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
+
+			TR << "List 1 before sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+				summarylist1[i]->show(TR); TR.flush();
+			}
+			TR << std::endl;
+
+			TR << "List 2 before sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist2.size(); i<=imax; ++i ) {
+				summarylist2[i]->show(TR); TR.flush();
+			}
+			TR << std::endl;
+
+			mergesort_jobsummaries_list( summarylist1, summarylist2, SORT_BY_ENERGIES );
+
+			TR << "After sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+				summarylist1[i]->show(TR);  TR.flush();
+				if ( i>1 ) TS_ASSERT( summarylist1[i]->pose_energy() >= summarylist1[i-1]->pose_energy() );
+			}
+			TR << std::endl;
+			TS_ASSERT_EQUALS(summarylist1.size(), 10);
+		}
+
+		{ //1st list empty
+			TR << "Trying with first list empty..." << std::endl;
+			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 8) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 2.72, 5) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -7.93, 3.11, 7) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -6.33, 4.52, 2) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5,  -5.99, 1.83, 3) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 0.07, 2) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7,  -2.12, 1.32, 1) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 0.32, 3) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   1.63, 0.86, 1) ) );
+			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,   2.12, 1.96, 1) ) );
+
+			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
+
+			TR << "List 1 before sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+				summarylist1[i]->show(TR); TR.flush();
+			}
+			TR << std::endl;
+
+			TR << "List 2 before sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist2.size(); i<=imax; ++i ) {
+				summarylist2[i]->show(TR); TR.flush();
+			}
+			TR << std::endl;
+
+			mergesort_jobsummaries_list( summarylist1, summarylist2, SORT_BY_ENERGIES );
+
+			TR << "After sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+				summarylist1[i]->show(TR);  TR.flush();
+				if ( i>1 ) TS_ASSERT( summarylist1[i]->pose_energy() >= summarylist1[i-1]->pose_energy() );
+			}
+			TR << std::endl;
+			TS_ASSERT_EQUALS(summarylist1.size(), 10);
+		}
+
+		{ //Both lists empty
+			TR << "Trying with both lists empty..." << std::endl;
+			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
+			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
+
+			TR << "List 1 before sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+				summarylist1[i]->show(TR); TR.flush();
+			}
+			TR << std::endl;
+
+			TR << "List 2 before sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist2.size(); i<=imax; ++i ) {
+				summarylist2[i]->show(TR); TR.flush();
+			}
+			TR << std::endl;
+
+			mergesort_jobsummaries_list( summarylist1, summarylist2, SORT_BY_ENERGIES );
+
+			TR << "After sort:" << std::endl;
+			for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+				summarylist1[i]->show(TR);  TR.flush();
+				if ( i>1 ) TS_ASSERT( summarylist1[i]->pose_energy() >= summarylist1[i-1]->pose_energy() );
+			}
+			TR << std::endl;
+			TS_ASSERT_EQUALS(summarylist1.size(), 0);
+		}
+
+	}
+
+
+	/// @brief Test the sort algorithm used by the MPI version to sort job results by rmsd.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_mergesort_rmsd() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_mergesort_rmsd()." << std::endl;
+		TR << "This tests the merge sort algorithm used by the MPI version of the app.  This one tests sorting by RMSD." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
+
+		using namespace protocols::cyclic_peptide_predict;
+
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1,  -2.12, 0.23, 1) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 0.72, 4) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,   7.93, 0.83, 1) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -2.33, 1.52, 2) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -12.99, 1.83, 5) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 2.07, 1) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -12.31, 2.32, 5) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 2.35, 1) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   3.63, 3.86, 3) ) );
+		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -5.12, 4.96, 2) ) );
+
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  1, -14.74, 0.21, 6) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  2,  -3.86, 0.78, 2) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  3, -13.32, 0.91, 6) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  4,  -0.28, 1.42, 1) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  5, -19.97, 1.90, 5) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  6,  -8.11, 2.17, 1) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  7, -12.10, 2.33, 5) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  8,  -3.09, 2.37, 3) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  9,  -0.06, 2.86, 1) ) );
+		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5, 10,   2.88, 3.46, 2) ) );
+
+
+		TR << "List 1 before sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+			summarylist1[i]->show(TR); TR.flush();
+		}
+		TR << std::endl;
+
+		TR << "List 2 before sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist2.size(); i<=imax; ++i ) {
+			summarylist2[i]->show(TR); TR.flush();
+		}
+		TR << std::endl;
+
+		mergesort_jobsummaries_list( summarylist1, summarylist2, SORT_BY_RMSD );
+
+		TR << "After sort:" << std::endl;
+		for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
+			summarylist1[i]->show(TR);  TR.flush();
+			if ( i>1 ) TS_ASSERT( summarylist1[i]->rmsd() >= summarylist1[i-1]->rmsd() );
+		}
+		TR << std::endl;
+
+	}
 
 }; //class GeneralizedKIC_Tests

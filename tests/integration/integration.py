@@ -320,6 +320,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         for dir_, _, files in os.walk( path.join(outdir, test) ):
             for f in files:
                 if f == 'command.sh': continue
+                if f == 'command.mpi.sh': continue
                 fname = dir_ + '/' + f
                 data = file(fname).read()
                 if rosetta_dir in data:

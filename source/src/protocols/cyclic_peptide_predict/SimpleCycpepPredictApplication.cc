@@ -21,6 +21,7 @@
 
 // Unit Headers
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
+#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.hh>
 
 // Package Headers
 #include <basic/options/option.hh>
@@ -123,6 +124,13 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals             );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation );
+#ifdef USEMPI //Options that are only needed in the MPI version:
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_sort_by                          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_choose_highest                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_output_fraction                  );
+#endif
 	return;
 }
 
@@ -134,10 +142,17 @@ namespace cyclic_peptide_predict {
 /// @brief Constructor
 ///
 SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
+	my_rank_(0),
+	suppress_checkpoints_(false),
 	silent_out_(false),
+	silentlist_out_(false),
+	silentlist_(NULL),
+	summarylist_(NULL),
+	native_pose_(),
 	out_filename_("S_"),
 	out_scorefilename_("default.sc"),
 	sequence_file_(""),
+	sequence_string_(""),
 	genkic_closure_attempts_(1),
 	genkic_min_solution_count_(1),
 	cyclic_permutations_(true),
@@ -175,10 +190,17 @@ SimpleCycpepPredictApplication::~SimpleCycpepPredictApplication() {}
 /// @brief Explicit copy constructor.
 ///
 SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPredictApplication const &src ) :
+	my_rank_(src.my_rank_),
+	suppress_checkpoints_(src.suppress_checkpoints_),
 	silent_out_(src.silent_out_),
+	silentlist_out_(src.silentlist_out_),
+	silentlist_(src.silentlist_),
+	summarylist_(src.summarylist_),
+	native_pose_(src.native_pose_),
 	out_filename_(src.out_filename_),
 	out_scorefilename_(src.out_scorefilename_),
 	sequence_file_(src.sequence_file_),
+	sequence_string_(src.sequence_string_),
 	genkic_closure_attempts_(src.genkic_closure_attempts_),
 	genkic_min_solution_count_(src.genkic_min_solution_count_),
 	cyclic_permutations_(src.cyclic_permutations_),
@@ -296,6 +318,70 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	return;
 } //initialize_from_options()
 
+/// @brief Allows external code to provide a native, so that the SimpleCycpepPredictApplication doesn't have to read
+/// directly from disk.
+void
+SimpleCycpepPredictApplication::set_native(
+	core::pose::PoseCOP native
+) {
+	runtime_assert(native); //Can't be NULL.
+	native_exists_=true;
+	native_pose_ = native;
+}
+
+/// @brief Allows external code to provide a sequence, so that the SimpleCycpepPredictApplication doesn't have to read
+/// directly from disk.
+void
+SimpleCycpepPredictApplication::set_sequence(
+	std::string const &seq
+) {
+	runtime_assert( seq != "" ); //Can't be empty string.
+	sequence_string_ = seq;
+}
+
+/// @brief Allows external code to specify that output should be appended to a list of SilentStructureOPs, so that the
+/// SimpleCycpepPredictApplication doesn't have to write directly to disk.
+void
+SimpleCycpepPredictApplication::set_silentstructure_outputlist(
+	utility::vector1 < core::io::silent::SilentStructOP > * silentlist,
+	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * summarylist
+) {
+	runtime_assert( silentlist && summarylist );
+	silentlist_ = silentlist;
+	summarylist_ = summarylist;
+	silentlist_out_ = true;
+	silent_out_ = false;
+}
+
+/// @brief Allows external code to suppress checkpointing, to prevent direct file I/O from disk.
+/// @details Useful on Blue Gene.
+void
+SimpleCycpepPredictApplication::set_suppress_checkpoints(
+	bool const suppress_checkpoints
+) {
+	suppress_checkpoints_ = suppress_checkpoints;
+}
+
+/// @brief If called by MPI code, the rank of the current process can be stored here.
+/// @details Used for output of job summaries.
+void
+SimpleCycpepPredictApplication::set_my_rank(
+	int const rank_in
+) {
+	my_rank_ = rank_in;
+}
+
+/// @brief Allows external code to override the number of structures that this should generate (otherwise
+/// set by options system.
+void
+SimpleCycpepPredictApplication::set_nstruct(
+	core::Size const nstruct_in
+) {
+	runtime_assert( nstruct_in > 0 );
+	nstruct_ = nstruct_in;
+}
+
+
 /// @brief Actually run the application.
 /// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
 void
@@ -324,9 +410,13 @@ SimpleCycpepPredictApplication::run() const {
 	//Get the native sequence that we will compare to.
 	core::pose::PoseOP native_pose;
 	if ( native_exists_ ) {
-		native_pose=core::pose::PoseOP(new core::pose::Pose);
-		TR << "Importing native structure from " << native_filename_ << "." << std::endl;
-		import_and_set_up_native ( native_filename_, native_pose, resnames.size() );
+		if ( native_pose_ ) {
+			native_pose=native_pose_->clone();
+		} else {
+			native_pose=core::pose::PoseOP(new core::pose::Pose);
+			TR << "Importing native structure from " << native_filename_ << "." << std::endl;
+			import_and_set_up_native ( native_filename_, native_pose, resnames.size() );
+		}
 #ifdef BOINC_GRAPHICS
 		// set native for graphics
 		boinc::Boinc::set_graphics_native_pose( *native_pose );
@@ -472,10 +562,8 @@ SimpleCycpepPredictApplication::run() const {
 		else { TR << "--"; }
 		TR << "\t" << pose->energies().total_energy() << "\t" << -1.0*final_hbonds << std::endl;
 
-		if ( silent_out_ ) {
-			core::io::silent::SilentFileDataOP silent_file (new io::silent::SilentFileData );
-			silent_file->set_filename( out_filename_ );
-			core::io::silent::SilentStructOP ss( io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() );
+		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
+			core::io::silent::SilentStructOP ss( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
 			char tag[512];
 			sprintf(tag, "result_%04lu", static_cast<unsigned long>(irepeat) );
 			ss->fill_struct( *pose, std::string(tag) );
@@ -487,7 +575,16 @@ SimpleCycpepPredictApplication::run() const {
 			protocols::boinc::Boinc::update_graphics_last_accepted( *pose, pose->energies().total_energy() );
 			protocols::boinc::Boinc::update_graphics_low_energy( *pose, pose->energies().total_energy() );
 #endif
-			silent_file->write_silent_struct( *ss, out_filename_ );
+			if ( silent_out_ ) {
+				core::io::silent::SilentFileDataOP silent_file (new io::silent::SilentFileData );
+				silent_file->set_filename( out_filename_ );
+				silent_file->write_silent_struct( *ss, out_filename_ );
+			}
+			if ( silentlist_out_ ) {
+				silentlist_->push_back(ss);
+				core::Size curjob( summarylist_->size() + 1 );
+				summarylist_->push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), -1.0*final_hbonds ) ) );
+			}
 		} else { //if pdb output
 			char outstring[512];
 			sprintf(outstring, "%s%04lu.pdb", out_filename_.c_str(), static_cast<unsigned long>(irepeat) );
@@ -639,22 +736,27 @@ SimpleCycpepPredictApplication::read_sequence (
 	using namespace utility::io;
 	resnames.clear();
 
-	izstream infile;
-	infile.open( seqfile );
-	runtime_assert_string_msg( infile.good(), "Error in read_sequence() in app simple_cycpep_predict:  Unable to open sequence file for read!" );
-
-	std::string curline(""); //Buffer for current line.
 	utility::vector1< std::string > lines; //Storing all lines
+	if ( sequence_string_ == "" ) {
+		izstream infile;
+		infile.open( seqfile );
+		runtime_assert_string_msg( infile.good(), "Error in read_sequence() in app simple_cycpep_predict:  Unable to open sequence file for read!" );
 
-	//Read the file:
-	while ( getline(infile, curline) ) {
-		if ( curline.size() < 1 ) continue; //Ignore blank lines.
-		lines.push_back( curline );
+		std::string curline(""); //Buffer for current line.
+
+		//Read the file:
+		while ( getline(infile, curline) ) {
+			if ( curline.size() < 1 ) continue; //Ignore blank lines.
+			lines.push_back( curline );
+		}
+		infile.close();
+	} else {
+		lines.push_back( sequence_string_ );
 	}
-	infile.close();
 
 	//Parse the lines:
 	for ( core::Size i=1, imax=lines.size(); i<=imax; ++i ) { //Loop through all lines
+		if ( TR.Debug.visible() ) TR.Debug << "Parsing \"" << lines[i] << "\"." << std::endl;
 		std::istringstream curline(lines[i]);
 		std::string oneword("");
 		while ( !curline.eof() ) {
@@ -1203,13 +1305,15 @@ void
 SimpleCycpepPredictApplication::new_checkpoint_file() const {
 	using namespace utility::io;
 
-	ozstream outfile;
-	outfile.open( checkpoint_filename_ );
-	runtime_assert(outfile.good());
-	outfile << checkpoint_job_identifier_ << std::endl;
-	outfile << "LAST\t0\tSUCCESS\t0" << std::endl;
-	outfile.flush();
-	outfile.close();
+	if ( !suppress_checkpoints_ ) {
+		ozstream outfile;
+		outfile.open( checkpoint_filename_ );
+		runtime_assert(outfile.good());
+		outfile << checkpoint_job_identifier_ << std::endl;
+		outfile << "LAST\t0\tSUCCESS\t0" << std::endl;
+		outfile.flush();
+		outfile.close();
+	}
 
 	erase_random_seed_info();
 	store_random_seed_info();
@@ -1238,7 +1342,7 @@ SimpleCycpepPredictApplication::initialize_checkpointing(
 	using namespace utility::io;
 
 	//If we're not using checkpointing, return 0,0:
-	if ( checkpoint_job_identifier_ == "" ) {
+	if ( checkpoint_job_identifier_ == "" || suppress_checkpoints_ ) {
 		lastjob=0;
 		successes=0;
 		return;
@@ -1301,7 +1405,7 @@ SimpleCycpepPredictApplication::checkpoint(
 	using namespace utility::io;
 
 	//Do nothing if we're not using checkpointing:
-	if ( checkpoint_job_identifier_ == "" ) {
+	if ( checkpoint_job_identifier_ == "" || suppress_checkpoints_ ) {
 		return;
 	}
 
@@ -1329,7 +1433,7 @@ SimpleCycpepPredictApplication::end_checkpointing() const {
 	using namespace utility::io;
 
 	//Do nothing if we're not using checkpointing:
-	if ( checkpoint_job_identifier_ == "" ) {
+	if ( checkpoint_job_identifier_ == "" || suppress_checkpoints_ ) {
 		return;
 	}
 	runtime_assert( remove( checkpoint_filename_.c_str() ) == 0 );
@@ -1357,6 +1461,7 @@ void SimpleCycpepPredictApplication::get_random_seed_info() const {
 /// @brief Store the state of the random generator from a previous run.
 ///
 void SimpleCycpepPredictApplication::store_random_seed_info() const {
+	if ( suppress_checkpoints_ ) return; //Do nothing if we're not checkpointing
 #ifdef BOINC
 	boinc_begin_critical_section();
 #endif
@@ -1372,6 +1477,7 @@ void SimpleCycpepPredictApplication::store_random_seed_info() const {
 /// @brief Erase the stored state of the random generator from a previous run.
 ///
 void SimpleCycpepPredictApplication::erase_random_seed_info() const {
+	if ( suppress_checkpoints_ ) return; //Do nothing if we're not checkpointing
 	if ( utility::file::file_exists(rand_checkpoint_file_) ) {
 		utility::file::file_delete(rand_checkpoint_file_);
 	}

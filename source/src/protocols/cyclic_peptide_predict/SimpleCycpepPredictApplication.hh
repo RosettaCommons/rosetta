@@ -18,6 +18,7 @@
 
 // Unit Headers
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.fwd.hh>
+#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,6 +29,7 @@
 #include <protocols/filters/BasicFilters.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -68,6 +70,30 @@ public:
 	/// @brief Initialize the application.
 	/// @details Initializes using the option system.
 	void initialize_from_options();
+
+	/// @brief Allows external code to provide a native, so that the SimpleCycpepPredictApplication doesn't have to read
+	/// directly from disk.
+	void set_native( core::pose::PoseCOP native );
+
+	/// @brief Allows external code to provide a sequence, so that the SimpleCycpepPredictApplication doesn't have to read
+	/// directly from disk.
+	void set_sequence( std::string const &seq );
+
+	/// @brief Allows external code to specify that output should be appended to a list of SilentStructureOPs, so that the
+	/// SimpleCycpepPredictApplication doesn't have to write directly to disk.
+	void set_silentstructure_outputlist( utility::vector1 < core::io::silent::SilentStructOP > * silentlist, utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * summarylist );
+
+	/// @brief Allows external code to suppress checkpointing, to prevent direct file I/O from disk.
+	/// @details Useful on Blue Gene.
+	void set_suppress_checkpoints( bool const suppress_checkpoints);
+
+	/// @brief If called by MPI code, the rank of the current process can be stored here.
+	/// @details Used for output of job summaries.
+	void set_my_rank( int const rank_in );
+
+	/// @brief Allows external code to override the number of structures that this should generate (otherwise
+	/// set by options system.
+	void set_nstruct( core::Size const nstruct_in );
 
 	/// @brief Actually run the application.
 	/// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -305,9 +331,33 @@ private:
 	/// -------- When you add new data to this class, ----
 	/// -------- you must update the copy constructor ----
 
+	/// @brief If this is called by MPI code, this can store the rank of the current process.  Zero otherwise.
+	///
+	int my_rank_;
+
+	/// @brief Allows external code to suppress checkpointing, so that the SimpleCycpepPredictApplication doesn't write directly to disk.
+	///
+	bool suppress_checkpoints_;
+
 	/// @brief Should this application produce silent file output?
 	///
 	bool silent_out_;
+
+	/// @brief Should this application produce silent structure OP output, appending to a list?
+	///
+	bool silentlist_out_;
+
+	/// @brief If silentlist_out_ is used, this is the list to append SilentStructurOPs to.
+	/// @details Note that this is a non-const pointer to a vector.
+	utility::vector1 < core::io::silent::SilentStructOP > * silentlist_;
+
+	/// @brief If silentlist_out_ is used, this is the list of job summaries to which summaries should be appended.
+	/// @details Note that this is a non-const pointer to a vector.
+	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * summarylist_;
+
+	/// @brief A native pose, provided by external code.
+	/// @details If provided, this prevents the app from reading from the filesystem in the run() function.
+	core::pose::PoseCOP native_pose_;
 
 	/// @brief The prefix for the output filename.
 	/// @details Defaults to "S_".
@@ -320,6 +370,10 @@ private:
 	/// @brief Filename for the text file containing the sequence of the peptide.
 	/// @details Must be provided with the -cyclic_peptide:sequence_file flag.
 	std::string sequence_file_;
+
+	/// @brief The string that would be read from a sequence file.
+	/// @details If provided by external code, prevents filesystem read in run() function.
+	std::string sequence_string_;
 
 	/// @brief The number of attempts that will be made by the generalized kinematic closure machinery.
 	/// @details Defaults to 1.

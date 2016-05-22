@@ -1,0 +1,14 @@
+-nstruct 4
+-out:file:silent out.silent
+-MPI_batchsize_by_level 3 2
+-MPI_processes_by_level 1 1 1
+-in:file:native inputs/7res_t1c.13.95_0001_d3A.pdb
+-cyclic_peptide:MPI_output_fraction 0.5
+-cyclic_peptide:MPI_choose_highest false
+-cyclic_peptide:MPI_sort_by energy
+-cyclic_peptide:min_genkic_hbonds 1
+-cyclic_peptide:min_final_hbonds 1
+-cyclic_peptide:sequence_file inputs/seq.txt
+-mute all
+-unmute protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary
+-out:levels protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI:500 protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication:500

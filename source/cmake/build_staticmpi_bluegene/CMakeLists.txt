@@ -123,6 +123,21 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 #protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
 #protocols.6 protocols.7 devel)
 
+### simple_cycpep_predict
+ADD_EXECUTABLE(simple_cycpep_predict.mpi.linuxgccrelease
+../../src/apps/public/cyclic_peptide/simple_cycpep_predict.cc)
+TARGET_LINK_LIBRARIES(simple_cycpep_predict.mpi.linuxgccrelease "${LINK_ALL_LIBS}" )
+SET_TARGET_PROPERTIES(simple_cycpep_predict.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+SET_TARGET_PROPERTIES(simple_cycpep_predict.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+# Dependencies are set so that binaries are created after rosetta libraries
+# are built
+ADD_DEPENDENCIES(simple_cycpep_predict.mpi.linuxgccrelease ObjexxFCL cifparse libxml2 utility numeric
+basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
+protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
+protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
+protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
+protocols.6 protocols.7 devel)
+
 ### rosetta_scripts
 ADD_EXECUTABLE(rosetta_scripts.mpi.linuxgccrelease ../../src/apps/public/rosetta_scripts/rosetta_scripts.cc)
 TARGET_LINK_LIBRARIES(rosetta_scripts.mpi.linuxgccrelease "${LINK_ALL_LIBS}" )

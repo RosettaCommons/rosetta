@@ -101,6 +101,9 @@ sources = {
 	],
 	"protocols/cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
+		"SimpleCycpepPredictApplication_MPI",
+		"SimpleCycpepPredictApplication_MPI_JobResultsSummary",
+		"util",
 	],
 	"protocols/enzdes": [
 		"AddorRemoveCsts",
