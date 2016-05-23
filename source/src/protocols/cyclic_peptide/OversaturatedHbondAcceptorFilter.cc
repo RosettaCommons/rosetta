@@ -129,9 +129,9 @@ OversaturatedHbondAcceptorFilter::report(
 ) const {
 	core::Size const oversaturated_atoms( compute(pose) );
 	os << "The OversaturatedHbondAcceptorFilter reports that " << oversaturated_atoms
-		<< " in the pose are receiving more than the allowed number of hydrogen bonds.  Since the cutoff is "
+		<< " hydrogen bond acceptors in the pose are receiving more than the allowed number of hydrogen bonds.  Since the cutoff is "
 		<< max_allowed_oversaturated() << ", the filter "
-		<< (oversaturated_atoms <= max_allowed_oversaturated() ? "fails." : "passes.");
+		<< (oversaturated_atoms > max_allowed_oversaturated() ? "fails." : "passes.");
 }
 
 /// @brief Parse XML tag (to use this Mover in RosettaScripts).

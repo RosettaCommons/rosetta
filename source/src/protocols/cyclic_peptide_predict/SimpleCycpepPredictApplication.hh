@@ -476,6 +476,15 @@ private:
 	///
 	core::Real user_set_dihedral_perturbation_;
 
+	/// @brief Should we filter out solutions that have more than the allowed number of hydrogen bonds
+	/// to an acceptor?
+	/// @details Default true.
+	bool filter_oversaturated_hbond_acceptors_;
+
+	/// @brief The energy above which we no longer count a hydrogen bond to an acceptor for the filter.
+	/// @details Default -0.1.
+	core::Real oversaturated_hbond_cutoff_energy_;
+
 
 };
 

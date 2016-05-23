@@ -53,6 +53,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/filters/BasicFilters.hh>
+#include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilter.hh>
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -124,6 +125,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals             );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff         );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -176,7 +179,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	disulf_energy_cutoff_prerelax_(15.0),
 	disulf_energy_cutoff_postrelax_(0.5),
 	user_set_alpha_dihedrals_(),
-	user_set_dihedral_perturbation_(0.0)
+	user_set_dihedral_perturbation_(0.0),
+	filter_oversaturated_hbond_acceptors_(true),
+	oversaturated_hbond_cutoff_energy_(-0.1)
 {
 	initialize_from_options();
 }
@@ -224,7 +229,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	disulf_energy_cutoff_prerelax_(src.disulf_energy_cutoff_prerelax_),
 	disulf_energy_cutoff_postrelax_(src.disulf_energy_cutoff_postrelax_),
 	user_set_alpha_dihedrals_(src.user_set_alpha_dihedrals_),
-	user_set_dihedral_perturbation_(src.user_set_dihedral_perturbation_)
+	user_set_dihedral_perturbation_(src.user_set_dihedral_perturbation_),
+	filter_oversaturated_hbond_acceptors_(src.filter_oversaturated_hbond_acceptors_),
+	oversaturated_hbond_cutoff_energy_(src.oversaturated_hbond_cutoff_energy_)
 	//TODO -- copy variables here.
 {}
 
@@ -314,6 +321,9 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		}
 	}
 	user_set_dihedral_perturbation_ = option[basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation]();
+
+	filter_oversaturated_hbond_acceptors_ = option[basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors]();
+	oversaturated_hbond_cutoff_energy_ = option[basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff]();
 
 	return;
 } //initialize_from_options()
@@ -1027,6 +1037,12 @@ SimpleCycpepPredictApplication::genkic_close(
 	protocols::rosetta_scripts::ParsedProtocolOP pp( new protocols::rosetta_scripts::ParsedProtocol );
 	pp->add_mover_filter_pair( NULL, "Total_Hbonds", total_hbond );
 
+	if ( filter_oversaturated_hbond_acceptors_ ) {
+		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat1( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
+		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
+		pp->add_mover_filter_pair( NULL, "Oversaturated_Hbond_Acceptors", oversat1 );
+	}
+
 	core::Size disulf_count(0);
 	//If we're considering disulfides, add the TryDisulfPermutations mover and a filter to the ParsedProtocol:
 	if ( try_all_disulfides_ ) {
@@ -1045,7 +1061,13 @@ SimpleCycpepPredictApplication::genkic_close(
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
 		protocols::simple_filters::ScoreTypeFilterOP disulf_filter2( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
-		pp->add_mover_filter_pair( NULL, "Post-relax disulfide filter", disulf_filter2 );
+		pp->add_mover_filter_pair( NULL, "Postrelax_disulfide_filter", disulf_filter2 );
+	}
+
+	if ( filter_oversaturated_hbond_acceptors_ ) {
+		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat2( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
+		oversat2->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
+		pp->add_mover_filter_pair( NULL, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
 	}
 
 	//Create the mover and set options:

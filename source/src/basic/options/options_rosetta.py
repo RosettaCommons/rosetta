@@ -4288,6 +4288,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'MPI_sort_by', 'String', desc="The MPI version of the simple_cycpep_predict app has the option of writing out the top N% of solutions.  This determines the sort metric.", legal=[ 'energy', 'rmsd', 'hbonds' ], default='energy'  ),
 		Option( 'MPI_choose_highest', 'Boolean', desc="When outputing the top N% of solutions, should I choose the ones with the higest score for the metric chosen (energy, rmsd, hbonds, etc.) or lowest?  Default false (chose lowest).", default='false'  ),
 		Option( 'MPI_output_fraction', 'Real', desc="The fraction of total structures that will be written out.  This is used in conjunction with 'MPI_sort_by' to output the top N% of job outputs.  For example, '-MPI_output_fraction 0.05 -MPI_sort_by rmsd' means that the 5% of structures with the lowest RMSD values will be written out.", default='1.0'),
+		Option( 'filter_oversaturated_hbond_acceptors', 'Boolean', desc="If true, sampled conformations with more than the allowed number of hydrogen bonds to an acceptor are discarded.  True by default.", default='true' ),
+		Option( 'hbond_acceptor_energy_cutoff', 'Real', desc="The hydrogen bond energy above which we do not count a hydrogen bond.  Default -0.1.", default='-0.1' ),
 	), # -cyclic_peptide
 
 	Option_Group('dc',
