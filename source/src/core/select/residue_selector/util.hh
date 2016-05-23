@@ -83,11 +83,12 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 );
 
 /// @brief returns a residue selector given a tag and datamap
-/// @details Looks for "residue_selector" option in tag
+/// @details Looks for "residue_selector" (or whatever option_name is set to)
+///  option in tag.
 ///          If that option isn't found, returns NULL ptr
 ///          If that option is found, calls get_residue_selector()
 core::select::residue_selector::ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const &option_name="residue_selector" );
 
 /// @brief returns a residue selector given a selector's name and datamap
 /// @details Looks for selector in the datamap

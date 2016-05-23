@@ -698,7 +698,7 @@ identify_intra_res_hbonds(
 	bool const exclude_sc  /* exclude if acc=sc and don=sc */
 )
 {
-	runtime_assert( calculate_intra_res_hbonds( rsd, hbond_set.hbond_options() ) );
+	runtime_assert_string_msg( calculate_intra_res_hbonds( rsd, hbond_set.hbond_options() ), "Error in core::scoring::hbonds::identify_intra_res_hbonds(): This function was called, but the energy options are set to exclude intra-residue hydrogen bonds." );
 
 	// <f1,f2> -- derivative vectors
 	HBondDerivs derivs;

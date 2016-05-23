@@ -74,6 +74,10 @@ sources = {
 		"ContactMap",
 	],
 
+	"cyclic_peptide" : [
+		"OversaturatedHbondAcceptorFilterTests",
+	],
+
 	"cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_betanov15",
@@ -571,6 +575,7 @@ testinputfiles = [
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_default.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
+	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",
 	"cyclic_peptide_predict/native.pdb",
 	"cyclic_peptide_predict/seq.txt",
 	"denovo_design/disulf_test.pdb",

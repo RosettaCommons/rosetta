@@ -78,8 +78,12 @@ attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & at
 /// @details Looks for "residue_selector" option in tag
 ///          If that option isn't found, returns NULL ptr
 ///          If that option is found, calls get_residue_selector()
+/// @note The default option is "residue_selector".  However, this function can be used to
+/// get selectors with other option names if another string is passed for the third parameter.
+/// This is useful in cases with multiple selectors (e.g. "first_selector", "second_selector",
+/// etc.).
 core::select::residue_selector::ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name = "residue_selector" );
 
 /// @brief returns a residue selector given a selector's name and datamap
 /// @details Looks for selector in the datamap

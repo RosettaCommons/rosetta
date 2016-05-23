@@ -1,0 +1,9 @@
+-jd2:failed_job_exception false
+-parser:protocol inputs/test.xml
+-in:file:s inputs/oversaturated_bb_bb_bb.pdb
+-nstruct 1
+-mute all
+-unmute protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter protocols.rosetta_scripts.ParsedProtocol
+-out:levels protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter:500
+##### these are general flags
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

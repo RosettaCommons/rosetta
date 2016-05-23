@@ -53,7 +53,6 @@
 // C++ headers
 #include <map>
 
-#include <core/scoring/hbonds/HBondOptions.hh>
 #include <utility/vector0.hh>
 #include <boost/lexical_cast.hpp>
 

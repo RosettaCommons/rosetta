@@ -267,9 +267,9 @@ parse_score_function(
 ///          If that option isn't found, returns NULL ptr
 ///          If that option is found, calls get_residue_selector()
 core::select::residue_selector::ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name )
 {
-	return core::select::residue_selector::parse_residue_selector( tag, data );
+	return core::select::residue_selector::parse_residue_selector( tag, data, option_name );
 }
 
 /// @brief returns a residue selector given a selector's name and datamap

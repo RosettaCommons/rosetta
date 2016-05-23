@@ -132,9 +132,9 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 }
 
 ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const &option_name )
 {
-	std::string const selectorname = tag->getOption< std::string >( "residue_selector", "" );
+	std::string const selectorname = tag->getOption< std::string >( option_name, "" );
 	if ( selectorname.empty() ) {
 		return ResidueSelectorCOP();
 	}

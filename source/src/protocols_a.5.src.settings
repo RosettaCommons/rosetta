@@ -15,6 +15,7 @@ sources = {
 		"CreateDistanceConstraint",
 		"CreateTorsionConstraint",
         	"DeclareBond",
+		"OversaturatedHbondAcceptorFilter",
         	"PeptideStubMover",
 		"TryDisulfPermutations",
 	],
