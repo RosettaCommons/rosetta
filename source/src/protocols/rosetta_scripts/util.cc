@@ -224,7 +224,7 @@ parse_score_function(
 	utility::tag::TagCOP tag,
 	std::string const & option_name,
 	basic::datacache::DataMap const & data,
-	std::string const & dflt_key/*="score12"*/ )
+	std::string const & dflt_key/*="commandline"*/ )
 {
 	std::string const scorefxn_key( tag->getOption<std::string>(option_name, dflt_key) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
@@ -288,7 +288,7 @@ core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
-	std::string const & dflt_key/*="score12"*/ )
+	std::string const & dflt_key/*="commandline"*/ )
 {
 	return parse_score_function(tag, "scorefxn", data, dflt_key);
 }
@@ -298,7 +298,7 @@ get_score_function_name(
 	utility::tag::TagCOP tag,
 	std::string const & option_name
 ) {
-	return tag->getOption<std::string>(option_name, "score12");
+	return tag->getOption<std::string>(option_name, "commandline");
 }
 
 std::string

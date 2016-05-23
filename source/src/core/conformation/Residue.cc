@@ -1202,10 +1202,10 @@ Residue::update_nus() {
 
 		// Calculate the current nu angle from the coordinates.
 		Angle const current_nu( numeric::dihedral_degrees(
-				atom( nu_atoms[ 1 ] ).xyz(),
-				atom( nu_atoms[ 2 ] ).xyz(),
-				atom( nu_atoms[ 3 ] ).xyz(),
-				atom( nu_atoms[ 4 ] ).xyz() ) );
+			atom( nu_atoms[ 1 ] ).xyz(),
+			atom( nu_atoms[ 2 ] ).xyz(),
+			atom( nu_atoms[ 3 ] ).xyz(),
+			atom( nu_atoms[ 4 ] ).xyz() ) );
 
 		nus_[ i ] = current_nu;
 	}

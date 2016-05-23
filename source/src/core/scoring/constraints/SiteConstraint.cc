@@ -106,7 +106,7 @@ SiteConstraint::read_def(
 
 	ConstraintIO::parse_residue( pose, tempres, res );
 	TR.Info << "read: " << atm_name << " " << res << " " << "constrain to chain: " << chain <<
-			" func: " << func_type << std::endl;
+		" func: " << func_type << std::endl;
 
 
 	func::FuncOP aFunc = func_factory.new_func( func_type );

@@ -125,11 +125,15 @@ inline void prime_Movers( Movers_map & movers ) {
 /// @brief setup data map with *some* of the the RosettaScript defaults
 
 inline void prime_Data( basic::datacache::DataMap & data ) {
-	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::get_score_function();
-	core::scoring::ScoreFunctionOP talaris2013 = core::scoring::get_score_function();
+	using namespace core::scoring;
+	core::scoring::ScoreFunctionOP commandline_sfxn = get_score_function();
+	core::scoring::ScoreFunctionOP talaris2013 = ScoreFunctionFactory::create_score_function(TALARIS_2013);
+	core::scoring::ScoreFunctionOP talaris2014 = ScoreFunctionFactory::create_score_function(TALARIS_2014);
 
 	data.add( "scorefxns", "commandline", commandline_sfxn );
 	data.add( "scorefxns", "talaris2013", talaris2013 );
+	data.add( "scorefxns", "talaris2014", talaris2014 );
+
 }
 
 /// @brief A simple filter for helping to test nested classes

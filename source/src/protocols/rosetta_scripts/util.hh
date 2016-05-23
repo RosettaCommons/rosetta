@@ -93,21 +93,21 @@ get_residue_selector( std::string const & selector_name, basic::datacache::DataM
 //attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
-///through the given option. Default to 'talaris2013' by default.
+/// through the given option. Defaults to 'commandline'.
 core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagCOP tag,
 	std::string const & option_name,
 	basic::datacache::DataMap const & data,
-	std::string const & dflt_key="talaris2013" );
+	std::string const & dflt_key="commandline" );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
-///through the option 'scorefxn='. Default to 'talaris2013' by default.
+///through the option 'scorefxn='. Defaults to 'commandline'.
 core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
-	std::string const & dflt_key="talaris2013" );
+	std::string const & dflt_key="commandline" );
 
 /// @brief Look up the name of assigned score function to the given
 ///option. Use this to prevent hard coding default score functions into

@@ -198,14 +198,14 @@ public:  // Standard Rosetta methods
 		// Measure distance from CoM to each terminus.
 		Distance search_radius( 0 );
 		for ( core::uint i( first_ligand_residue_ ); i <= n_residues; ++i ) {
-			Residue const & ligand_res( pose.residue( i ) );
-			if ( ligand_res.is_terminus() ) {
-				core::uint const terminal_atomnum( ligand_res.nbr_atom() );
-				Distance const distance( ( ligand_res.xyz( terminal_atomnum ) - starting_position ).norm() );
-				if ( distance > search_radius ) {
-					search_radius = distance;
-				}
-			}
+		Residue const & ligand_res( pose.residue( i ) );
+		if ( ligand_res.is_terminus() ) {
+		core::uint const terminal_atomnum( ligand_res.nbr_atom() );
+		Distance const distance( ( ligand_res.xyz( terminal_atomnum ) - starting_position ).norm() );
+		if ( distance > search_radius ) {
+		search_radius = distance;
+		}
+		}
 		}*/
 
 		// Set up site constraints.
@@ -233,9 +233,9 @@ public:  // Standard Rosetta methods
 		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
 
 		randomizerA_ = RigidBodyRandomizeMoverOP(
-				new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
+			new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
 		//randomizerB_ = RigidBodyRandomizeMoverOP(
-		//		new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
+		//  new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
 
 		cout << "Randomizing ligand conformation..." << endl;
 		for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
@@ -294,10 +294,10 @@ public:  // Standard Rosetta methods
 
 			/*numeric::xyzVector< Distance > const current_position( CoM_res.xyz( CoM_atomnum ) );
 			if ( ( current_position - starting_position ).norm() > search_radius ) {
-				cout << "   Rejecting pose on cycle " << cycle << ": ligand has left search radius." << endl;
-				pose = saved_pose;
-				--cycle;
-				continue;
+			cout << "   Rejecting pose on cycle " << cycle << ": ligand has left search radius." << endl;
+			pose = saved_pose;
+			--cycle;
+			continue;
 			}*/
 
 			// Metropolis criterion.
@@ -392,7 +392,7 @@ private:  // Private methods
 		tf->push_back( operation::RestrictToRepackingOP( new operation::RestrictToRepacking ) );
 		tf->push_back( operation::IncludeCurrentOP( new operation::IncludeCurrent ) );
 		tf->push_back( toolbox::task_operations::RestrictToInterfaceOP(
-				new toolbox::task_operations::RestrictToInterface( JUMP_NUM ) ) );
+			new toolbox::task_operations::RestrictToInterface( JUMP_NUM ) ) );
 		packer_ = PackRotamersMoverOP( new PackRotamersMover( sf_ ) );
 		packer_->task_factory( tf );
 
