@@ -29,10 +29,12 @@ namespace constraint_generator {
 class ConstraintGeneratorCreator : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Instantiate a particular ConstraintGenerator
-	virtual ConstraintGeneratorOP create_constraint_generator() const = 0;
+	virtual ConstraintGeneratorOP
+	create_constraint_generator() const = 0;
 
 	/// @brief Return a string that will be used to instantiate the particular ConstraintGenerator
-	virtual std::string keyname() const = 0;
+	virtual std::string
+	keyname() const = 0;
 
 };
 

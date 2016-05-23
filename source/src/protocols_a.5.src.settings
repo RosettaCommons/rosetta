@@ -19,7 +19,7 @@ sources = {
         	"PeptideStubMover",
 		"TryDisulfPermutations",
 	],
-		"protocols/denovo_design" : [
+	"protocols/denovo_design" : [
 		"util",
 	],
 	"protocols/denovo_design/components" : [

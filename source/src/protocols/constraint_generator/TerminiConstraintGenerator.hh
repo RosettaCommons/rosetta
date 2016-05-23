@@ -12,7 +12,6 @@
 /// @brief Generates distance constraints between the upper and lower termini
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-
 #ifndef INCLUDED_protocols_constraint_generator_TerminiConstraintGenerator_hh
 #define INCLUDED_protocols_constraint_generator_TerminiConstraintGenerator_hh
 
@@ -37,6 +36,9 @@ public:
 	TerminiConstraintGenerator();
 
 	virtual ~TerminiConstraintGenerator();
+
+	static std::string
+	class_name() { return "TerminiConstraintGenerator"; }
 
 	ConstraintGeneratorOP
 	clone() const;

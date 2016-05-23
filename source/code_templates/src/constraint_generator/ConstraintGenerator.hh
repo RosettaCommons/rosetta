@@ -12,7 +12,6 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
-
 #ifndef INCLUDED_--path_underscore--_--class--_hh
 #define INCLUDED_--path_underscore--_--class--_hh
 
@@ -36,6 +35,9 @@ public:
 	--class--();
 
 	virtual ~--class--();
+
+	static std::string
+	class_name();
 
 	protocols::constraint_generator::ConstraintGeneratorOP
 	clone() const;

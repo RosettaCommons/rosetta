@@ -12,14 +12,11 @@
 /// @brief Generates distance constraints between the upper and lower termini
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-
 #ifndef INCLUDED_protocols_constraint_generator_TerminiConstraintGenerator_fwd_hh
 #define INCLUDED_protocols_constraint_generator_TerminiConstraintGenerator_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
-
 
 // Forward
 namespace protocols {
@@ -30,15 +27,8 @@ class TerminiConstraintGenerator;
 typedef utility::pointer::shared_ptr< TerminiConstraintGenerator > TerminiConstraintGeneratorOP;
 typedef utility::pointer::shared_ptr< TerminiConstraintGenerator const > TerminiConstraintGeneratorCOP;
 
-
-
 } //protocols
 } //constraint_generator
 
 
 #endif //INCLUDED_protocols_constraint_generator_TerminiConstraintGenerator_fwd_hh
-
-
-
-
-

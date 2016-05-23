@@ -24,7 +24,6 @@ class HydrogenBondConstraintGeneratorCreator : public protocols::constraint_gene
 public:
 	virtual protocols::constraint_generator::ConstraintGeneratorOP create_constraint_generator() const;
 	virtual std::string keyname() const;
-	static std::string constraint_generator_name();
 
 };
 

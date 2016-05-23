@@ -16,6 +16,7 @@
 #include <--path--/--class--.hh>
 #include <--path--/--class--Creator.hh>
 
+// Basic/Utility headers
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
@@ -31,17 +32,11 @@ protocols::constraint_generator::ConstraintGeneratorOP
 std::string
 --class--Creator::keyname() const
 {
-	return --class--Creator::constraint_generator_name();
-}
-
-std::string
---class--Creator::constraint_generator_name()
-{
-	return "--class--";
+	return --class--::class_name();
 }
 
 --class--::--class--():
-	protocols::constraint_generator::ConstraintGenerator( --class--Creator::constraint_generator_name() )
+	protocols::constraint_generator::ConstraintGenerator( --class--::class_name() )
 {
 }
 
@@ -52,6 +47,12 @@ protocols::constraint_generator::ConstraintGeneratorOP
 --class--::clone() const
 {
 	return protocols::constraint_generator::ConstraintGeneratorOP( new --class--( *this ) );
+}
+
+std::string
+--class--::class_name()
+{
+	return "--class--";
 }
 
 void
@@ -66,9 +67,4 @@ core::scoring::constraints::ConstraintCOPs
 }
 
 --end_namespace--
-
-
-
-
-
 

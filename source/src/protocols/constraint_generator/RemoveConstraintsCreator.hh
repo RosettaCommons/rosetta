@@ -22,15 +22,12 @@ namespace protocols {
 namespace constraint_generator {
 
 class RemoveConstraintsCreator : public protocols::moves::MoverCreator {
-
 public:
+	virtual protocols::moves::MoverOP
+	create_mover() const;
 
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
-	static std::string mover_name();
-
-
-
+	virtual std::string
+	keyname() const;
 };
 
 } //protocols

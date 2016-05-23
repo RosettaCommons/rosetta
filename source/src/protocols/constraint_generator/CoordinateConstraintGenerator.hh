@@ -40,8 +40,10 @@ namespace constraint_generator {
 class CoordinateConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
 public:
 	CoordinateConstraintGenerator();
-
 	virtual ~CoordinateConstraintGenerator();
+
+	static std::string
+	class_name() { return "CoordinateConstraintGenerator"; }
 
 	ConstraintGeneratorOP
 	clone() const;

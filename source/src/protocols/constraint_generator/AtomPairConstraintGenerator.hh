@@ -54,6 +54,9 @@ public:
 
 	virtual ~AtomPairConstraintGenerator();
 
+	static std::string
+	class_name() { return "AtomPairConstraintGenerator"; }
+
 	protocols::constraint_generator::ConstraintGeneratorOP
 	clone() const;
 

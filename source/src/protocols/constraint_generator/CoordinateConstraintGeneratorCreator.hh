@@ -32,8 +32,6 @@ public:
 	virtual std::string
 	keyname() const;
 
-	static std::string
-	constraint_generator_name();
 };
 
 } //protocols

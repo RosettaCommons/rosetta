@@ -97,10 +97,17 @@ private:
 /// @brief This constraint generator generates constraints for favoring formation of hydrogen bonds
 class HydrogenBondConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
 public:
+	typedef std::set< std::string > AtomNameSet;
+
+public:
 	HydrogenBondConstraintGenerator();
 	virtual ~HydrogenBondConstraintGenerator();
 
-	virtual protocols::constraint_generator::ConstraintGeneratorOP clone() const;
+	static std::string
+	class_name() { return "HydrogenBondConstraintGenerator"; }
+
+	virtual protocols::constraint_generator::ConstraintGeneratorOP
+	clone() const;
 
 	virtual void
 	parse_tag(
@@ -121,13 +128,13 @@ public:
 	set_atoms1( std::string const & atoms_str );
 
 	void
-	set_atoms1( std::set< std::string > const & atoms );
+	set_atoms1( AtomNameSet const & atoms );
 
 	void
 	set_atoms2( std::string const & atoms_str );
 
 	void
-	set_atoms2( std::set< std::string > const & atoms );
+	set_atoms2( AtomNameSet const & atoms );
 
 	void
 	set_atom_pair_func( std::string const & func_def );
@@ -184,7 +191,12 @@ private:
 	HydrogenBondingAtoms
 	choose_atoms(
 		core::conformation::Residue const & rsd,
-		std::set< std::string > const & allowed_atoms ) const;
+		AtomNameSet const & allowed_atoms ) const;
+
+	void
+	compute_valid_atoms(
+		HydrogenBondingAtoms & valid_atoms,
+		core::conformation::Residue const & rsd ) const;
 
 	core::scoring::func::FuncOP
 	atom_pair_func( HydrogenBondingAtom const & a1, HydrogenBondingAtom const & a2 ) const;
@@ -201,8 +213,8 @@ private:
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector1_;
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
-	std::set< std::string > atoms1_;
-	std::set< std::string > atoms2_;
+	AtomNameSet atoms1_;
+	AtomNameSet atoms2_;
 	core::scoring::func::FuncOP atom_pair_func_;
 	core::scoring::func::FuncOP angle1_func_;
 	core::scoring::func::FuncOP angle2_func_;

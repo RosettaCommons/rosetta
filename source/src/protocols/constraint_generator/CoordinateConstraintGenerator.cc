@@ -51,17 +51,11 @@ CoordinateConstraintGeneratorCreator::create_constraint_generator() const
 std::string
 CoordinateConstraintGeneratorCreator::keyname() const
 {
-	return CoordinateConstraintGeneratorCreator::constraint_generator_name();
-}
-
-std::string
-CoordinateConstraintGeneratorCreator::constraint_generator_name()
-{
-	return "CoordinateConstraintGenerator";
+	return CoordinateConstraintGenerator::class_name();
 }
 
 CoordinateConstraintGenerator::CoordinateConstraintGenerator():
-	protocols::constraint_generator::ConstraintGenerator( CoordinateConstraintGeneratorCreator::constraint_generator_name() ),
+	protocols::constraint_generator::ConstraintGenerator( CoordinateConstraintGenerator::class_name() ),
 	selector_( new core::select::residue_selector::TrueResidueSelector ),
 	refpose_(),
 	bounded_( false ),

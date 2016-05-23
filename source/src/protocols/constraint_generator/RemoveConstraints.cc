@@ -36,18 +36,20 @@ namespace protocols {
 namespace constraint_generator {
 
 RemoveConstraints::RemoveConstraints():
-	protocols::moves::Mover( RemoveConstraintsCreator::mover_name() ),
+	protocols::moves::Mover( RemoveConstraints::class_name() ),
 	generators_()
 {
 }
 
 RemoveConstraints::RemoveConstraints( ConstraintGeneratorCOPs const & generators ):
-	protocols::moves::Mover( RemoveConstraintsCreator::mover_name() ),
+	protocols::moves::Mover( RemoveConstraints::class_name() ),
 	generators_( generators )
 {
 }
 
-RemoveConstraints::~RemoveConstraints(){}
+RemoveConstraints::~RemoveConstraints()
+{
+}
 
 void
 RemoveConstraints::parse_my_tag(
@@ -119,13 +121,7 @@ RemoveConstraintsCreator::create_mover() const
 std::string
 RemoveConstraintsCreator::keyname() const
 {
-	return RemoveConstraintsCreator::mover_name();
-}
-
-std::string
-RemoveConstraintsCreator::mover_name()
-{
-	return "RemoveConstraints";
+	return RemoveConstraints::class_name();
 }
 
 } //protocols

@@ -37,12 +37,14 @@ namespace constraint_generator {
 class RemoveConstraints : public protocols::moves::Mover {
 
 public:
-
 	RemoveConstraints();
 	RemoveConstraints( ConstraintGeneratorCOPs const & generators );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~RemoveConstraints();
+
+	static std::string
+	class_name() { return "RemoveConstraints"; }
 
 	virtual void
 	apply( core::pose::Pose & pose );

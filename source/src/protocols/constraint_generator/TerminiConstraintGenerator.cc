@@ -46,17 +46,11 @@ TerminiConstraintGeneratorCreator::create_constraint_generator() const
 std::string
 TerminiConstraintGeneratorCreator::keyname() const
 {
-	return TerminiConstraintGeneratorCreator::constraint_generator_name();
-}
-
-std::string
-TerminiConstraintGeneratorCreator::constraint_generator_name()
-{
-	return "TerminiConstraintGenerator";
+	return TerminiConstraintGenerator::class_name();
 }
 
 TerminiConstraintGenerator::TerminiConstraintGenerator():
-	protocols::constraint_generator::ConstraintGenerator( TerminiConstraintGeneratorCreator::constraint_generator_name() ),
+	protocols::constraint_generator::ConstraintGenerator( TerminiConstraintGenerator::class_name() ),
 	min_distance_( 0.0 ),
 	max_distance_( 11.0 ),
 	sd_( 1.0 ),

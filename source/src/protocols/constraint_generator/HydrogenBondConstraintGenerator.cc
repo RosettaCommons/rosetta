@@ -61,17 +61,11 @@ HydrogenBondConstraintGeneratorCreator::create_constraint_generator() const
 std::string
 HydrogenBondConstraintGeneratorCreator::keyname() const
 {
-	return HydrogenBondConstraintGeneratorCreator::constraint_generator_name() ;
-}
-
-std::string
-HydrogenBondConstraintGeneratorCreator::constraint_generator_name()
-{
-	return "HydrogenBondConstraintGenerator";
+	return HydrogenBondConstraintGenerator::class_name();
 }
 
 HydrogenBondConstraintGenerator::HydrogenBondConstraintGenerator():
-	protocols::constraint_generator::ConstraintGenerator( HydrogenBondConstraintGeneratorCreator::constraint_generator_name() ),
+	protocols::constraint_generator::ConstraintGenerator( HydrogenBondConstraintGenerator::class_name() ),
 	selector1_( new core::select::residue_selector::TrueResidueSelector ),
 	selector2_( new core::select::residue_selector::TrueResidueSelector ),
 	atoms1_(),
@@ -146,12 +140,16 @@ HydrogenBondConstraintGenerator::set_residue_selector2( core::select::residue_se
 void
 HydrogenBondConstraintGenerator::set_atoms1( std::string const & atoms_str )
 {
-	utility::vector1< std::string > const atom_strs = utility::string_split( atoms_str, ',' );
-	set_atoms1( std::set< std::string >( atom_strs.begin(), atom_strs.end() ) );
+	if ( atoms_str.empty() ) {
+		set_atoms2( AtomNameSet() );
+	} else {
+		utility::vector1< std::string > const atom_strs = utility::string_split( atoms_str, ',' );
+		set_atoms1( AtomNameSet( atom_strs.begin(), atom_strs.end() ) );
+	}
 }
 
 void
-HydrogenBondConstraintGenerator::set_atoms1( std::set< std::string > const & atoms )
+HydrogenBondConstraintGenerator::set_atoms1( AtomNameSet const & atoms )
 {
 	atoms1_ = atoms;
 }
@@ -159,12 +157,16 @@ HydrogenBondConstraintGenerator::set_atoms1( std::set< std::string > const & ato
 void
 HydrogenBondConstraintGenerator::set_atoms2( std::string const & atoms_str )
 {
-	utility::vector1< std::string > const atom_strs = utility::string_split( atoms_str, ',' );
-	set_atoms2( std::set< std::string >( atom_strs.begin(), atom_strs.end() ) );
+	if ( atoms_str.empty() ) {
+		set_atoms2( AtomNameSet() );
+	} else {
+		utility::vector1< std::string > const atom_strs = utility::string_split( atoms_str, ',' );
+		set_atoms2( AtomNameSet( atom_strs.begin(), atom_strs.end() ) );
+	}
 }
 
 void
-HydrogenBondConstraintGenerator::set_atoms2( std::set< std::string > const & atoms )
+HydrogenBondConstraintGenerator::set_atoms2( AtomNameSet const & atoms )
 {
 	atoms2_ = atoms;
 }
@@ -276,39 +278,41 @@ HydrogenBondConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	return csts;
 }
 
-/*
-HydrogenBondingAtoms
-HydrogenBondConstraintGenerator::compute_valid_atoms(
-core::conformation::Residue const & rsd,
-std::set< std::string > const & allowed_atoms ) const
+bool
+can_hydrogen_bond( std::string const & element_string )
 {
-if ( allowed_atoms.empty() ) {
-core::chemical::AtomIndices const & sc_atoms = rsd.type().all_sc_atoms();
-for ( core::chemical::AtomIndices::const_iterator at=sc_atoms.begin(); at!=sc_atoms.end(); ++at ) {
-if ( ( rsd.type().atom_type( *at ).element() == "O" ) ||
-( rsd.type().atom_type( *at ).element() == "N" ) ||
-( rsd.type().atom_type( *at ).element() == "S" ) ) {
+	if ( element_string == "O" ) return true;
+	if ( element_string == "N" ) return true;
+	if ( element_string == "S" ) return true;
+	return false;
+}
 
+void
+HydrogenBondConstraintGenerator::compute_valid_atoms(
+	HydrogenBondingAtoms & ,
+	core::conformation::Residue const & rsd ) const
+{
+	core::chemical::AtomIndices const & sc_atoms = rsd.type().all_sc_atoms();
+	for ( core::chemical::AtomIndices::const_iterator at=sc_atoms.begin(); at!=sc_atoms.end(); ++at ) {
+		if ( ! can_hydrogen_bond( rsd.type().atom_type( *at ).element() ) ) {
+			continue;
+		}
+	}
 }
-}
-return atom_idxs;
-}
-return existing_atoms( rsd, allowed_atoms );
-}
-*/
 
 HydrogenBondingAtoms
 HydrogenBondConstraintGenerator::choose_atoms(
 	core::conformation::Residue const & rsd,
-	std::set< std::string > const & allowed_atoms ) const
+	AtomNameSet const & allowed_atoms ) const
 {
-	HydrogenBondingAtoms const hb_atoms = HydrogenBondInfo::get_instance()->atoms( rsd.name() );
+	HydrogenBondingAtoms const hb_atoms = HydrogenBondInfo::get_instance()->atoms( rsd.name3() );
 	HydrogenBondingAtoms valid_atoms;
 
 	if ( hb_atoms.empty() ) {
-		// TODO: if no atoms are found for this residue, look through the residue type and try to find some
-		TR.Warning << "No hydrogen bonding atoms found in residue " << rsd.name()
-			<< rsd.seqpos() << " - not generating any constraints for this residue." << std::endl;
+		compute_valid_atoms( valid_atoms, rsd );
+		TR.Warning << "No hydrogen bonding atoms found in residue " << rsd.name3()
+			<< rsd.seqpos() << " - not generating any constraints for this residue."
+			<< " Full residue name is " << rsd.name3() << std::endl;
 	} else {
 		// if atoms are found for this residue, look for existing ones in the allowed set
 		for ( HydrogenBondingAtoms::const_iterator a=hb_atoms.begin(); a!=hb_atoms.end(); ++a ) {
@@ -329,7 +333,12 @@ HydrogenBondConstraintGenerator::choose_atoms(
 			}
 			// skip if allowed_atoms has things, but doesn't have this atom
 			if ( ( !allowed_atoms.empty() ) && ( allowed_atoms.find( a->hb_atom() ) == allowed_atoms.end() ) ) {
-				TR.Debug << "Skipping HBond atom " << a->hb_atom() << " because it is not in the set of allowed atoms" << std::endl;
+				TR.Debug << "Skipping HBond atom " << a->hb_atom() << " because it is not in the set of allowed atoms" << std::endl
+					<< "Allowed atoms = [";
+				for ( AtomNameSet::const_iterator a=allowed_atoms.begin(); a!=allowed_atoms.end(); ++a ) {
+					TR.Debug << " " << *a;
+				}
+				TR.Debug << " ], empty=" << allowed_atoms.empty() << std::endl;
 				continue;
 			}
 			valid_atoms.push_back( *a );

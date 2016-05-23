@@ -12,7 +12,6 @@
 /// @brief  abstract base class that generates constraints
 /// @author Tom Linsky (tlinsky at uw dot edu)
 
-
 #ifndef INCLUDED_protocols_constraint_generator_ConstraintGenerator_hh
 #define INCLUDED_protocols_constraint_generator_ConstraintGenerator_hh
 

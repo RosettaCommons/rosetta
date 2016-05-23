@@ -12,14 +12,11 @@
 /// @brief Generates coodinate constraints
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-
 #ifndef INCLUDED_protocols_constraint_generator_CoordinateConstraintGenerator_fwd_hh
 #define INCLUDED_protocols_constraint_generator_CoordinateConstraintGenerator_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
-
 
 // Forward
 namespace protocols {
@@ -30,15 +27,7 @@ class CoordinateConstraintGenerator;
 typedef utility::pointer::shared_ptr< CoordinateConstraintGenerator > CoordinateConstraintGeneratorOP;
 typedef utility::pointer::shared_ptr< CoordinateConstraintGenerator const > CoordinateConstraintGeneratorCOP;
 
-
-
 } //protocols
 } //constraint_generator
 
-
 #endif //INCLUDED_protocols_constraint_generator_CoordinateConstraintGenerator_fwd_hh
-
-
-
-
-

@@ -46,17 +46,11 @@ AtomPairConstraintGeneratorCreator::create_constraint_generator() const
 std::string
 AtomPairConstraintGeneratorCreator::keyname() const
 {
-	return AtomPairConstraintGeneratorCreator::constraint_generator_name();
-}
-
-std::string
-AtomPairConstraintGeneratorCreator::constraint_generator_name()
-{
-	return "AtomPairConstraintGenerator";
+	return AtomPairConstraintGenerator::class_name();
 }
 
 AtomPairConstraintGenerator::AtomPairConstraintGenerator():
-	protocols::constraint_generator::ConstraintGenerator( AtomPairConstraintGeneratorCreator::constraint_generator_name() ),
+	protocols::constraint_generator::ConstraintGenerator( AtomPairConstraintGenerator::class_name() ),
 	selector_( new core::select::residue_selector::TrueResidueSelector ),
 	reference_pose_(),
 	sd_( 0.5 ),
