@@ -342,6 +342,7 @@ sources = {
 		"RNA_FA_ElecEnergy",
 		"GroupElec",
 		"FA_GrpElecEnergy",
+		"util",
 	],
 	"core/scoring/electron_density": [
 		"ElecDensAllAtomCenEnergy",

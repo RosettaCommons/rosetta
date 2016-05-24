@@ -9,8 +9,9 @@
 
 /// @file   core/scoring/methods/FA_ElecEnergy.hh
 /// @brief  Electrostatic energy with a distance-dependant dielectric
-/// @author Phil Bradley, modifed by James Gleixner
-
+/// @author Phil Bradley
+/// @author Modifed by James Gleixner
+/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) -- added data caching.
 
 #ifndef INCLUDED_core_scoring_elec_FA_ElecEnergy_hh
 #define INCLUDED_core_scoring_elec_FA_ElecEnergy_hh
@@ -32,6 +33,7 @@
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/elec/CPRepMapType.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -392,7 +394,7 @@ public:
 
 	//fpd countpair representatives: read tables from DB
 	void
-	read_cp_tables_from_db(std::string filename);
+	get_cp_tables();
 
 	//fpd countpair representatives: read tables from DB
 	core::Size
@@ -487,7 +489,7 @@ private:
 	//fpd: countpair representative atoms
 	bool use_cp_rep_, flip_cp_rep_;
 	mutable std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > cp_rep_map_;
-	std::map< std::string, std::map<std::string,std::string> > cp_rep_map_byname_;
+	CPRepMapTypeCOP cp_rep_map_byname_;
 
 
 	//mutable Real elec_weight_; // used during trie-vs-trie algorithm

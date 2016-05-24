@@ -49,6 +49,9 @@
 #include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
+
+#include <core/scoring/elec/CPRepMapType.fwd.hh>
+
 #include <core/scoring/UnfoldedStatePotential.fwd.hh>
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.fwd.hh>
@@ -288,6 +291,11 @@ public:
 	etable::EtableCAP
 	etable( std::string const & etable_id ) const;
 
+	/// @brief Get an owning pointer to data used by the FA_ElecEnergy in beta_nov15 mode.
+	/// @details If the data have not been loaded, this loads the data (lazy loading).  NOT THREADSAFE.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::scoring::elec::CPRepMapTypeCOP get_cp_rep_map_byname() const;
+
 private:
 
 	static ScoringManager * create_singleton_instance();
@@ -369,7 +377,12 @@ private:
 	//XRW_E_T1
 	mutable std::map< std::string, etable::MembEtableOP > memb_etables_; //pba
 
+	/// @brief Cached data used by FA_ElecEnergy with beta_nov15.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	mutable core::scoring::elec::CPRepMapTypeOP cp_rep_map_byname_;
+
 	utility::vector1< methods::EnergyMethodCreatorOP > method_creator_map_;
+
 
 };
 } // namespace core

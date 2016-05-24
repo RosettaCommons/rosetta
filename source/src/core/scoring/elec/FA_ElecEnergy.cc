@@ -11,8 +11,8 @@
 /// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
-/// modified by James Gleixner and Liz Kellogg
-
+/// @author Modified by James Gleixner and Liz Kellogg
+/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) -- added data caching.
 
 // Unit headers
 #include <core/scoring/elec/FA_ElecEnergy.hh>
@@ -32,6 +32,7 @@
 #include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ResidueNeighborList.hh>
+#include <core/scoring/ScoringManager.hh>
 
 #include <core/scoring/hbonds/HBondSet.hh>
 
@@ -177,46 +178,13 @@ FA_ElecEnergy::initialize() {
 	use_cp_rep_ = option[ score::elec_representative_cp ]() || option[ score::elec_representative_cp_flip ]();
 	flip_cp_rep_ = option[ score::elec_representative_cp_flip ]();
 	if ( use_cp_rep_ ) {
-		read_cp_tables_from_db("scoring/score_functions/elec_cp_reps.dat");
+		get_cp_tables(); //Lazily loaded once and only once.
 	}
 }
 
 void
-FA_ElecEnergy::read_cp_tables_from_db(std::string filename) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	// search in the local directory first
-	utility::io::izstream  iunit;
-	iunit.open( filename );
-
-	if ( !iunit.good() ) {
-		iunit.close();
-		if ( !basic::database::open( iunit, filename ) ) {
-			std::stringstream err_msg;
-			err_msg << "Unable to open fa_elec countpair groups '" << filename << "'.";
-			utility_exit_with_message(err_msg.str());
-		}
-	}
-
-	std::string line;
-	std::string name3, atom1, atom2;
-	while ( iunit ) {
-		getline( iunit, line );
-		if ( line[0] == '#' ) continue;
-
-		std::istringstream linestream(line);
-
-		linestream >> name3 >> atom1 >> atom2;  // format is NAME REPRESENTATIVE_ATOM TARGET_ATOM
-
-		if ( flip_cp_rep_ ) {
-			cp_rep_map_byname_[name3].insert(std::make_pair( atom1, atom2 )) ;
-		} else {
-			cp_rep_map_byname_[name3].insert(std::make_pair( atom2, atom1 )) ;
-		}
-	}
-
-	TR << "Read " << cp_rep_map_byname_.size() << " countpair representative atoms" << std::endl;
+FA_ElecEnergy::get_cp_tables() {
+	cp_rep_map_byname_ = core::scoring::ScoringManager::get_instance()->get_cp_rep_map_byname();
 }
 
 core::Size
@@ -234,9 +202,9 @@ FA_ElecEnergy::get_countpair_representative_atom(
 		// make parameters
 		std::map<core::Size,core::Size> rsd_map;
 
-		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_rep_map_byname_.find( restype.name3() );
+		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_rep_map_byname_->find( restype.name3() );
 
-		if ( name_iter == cp_rep_map_byname_.end() ) {
+		if ( name_iter == cp_rep_map_byname_->end() ) {
 			TR.Trace << "Warning!  Unable to find countpair representatives for restype " << restype.name3() << std::endl;
 		} else {
 			std::map<std::string,std::string> const & atms = name_iter->second;

@@ -64,6 +64,7 @@
 #include <core/scoring/dna/DNA_EnvPairPotential.hh>
 #include <core/scoring/dna/DNA_DihedralPotential.hh>
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
+#include <core/scoring/elec/util.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -180,6 +181,10 @@ ScoringManager::ScoringManager() :
 	NV_lookup_table_(/* 0 */),
 	orbitals_lookup_table_( /* 0 */ ),
 	DDP_lookup_table_(/* 0 */),
+	etables_by_string_(),
+	etables_by_options_(),
+	memb_etables_(),
+	cp_rep_map_byname_(),
 	method_creator_map_( n_score_types, 0 )
 {}
 
@@ -1050,6 +1055,18 @@ ScoringManager::etable( std::string const & etable_id ) const
 	etable::EtableOptions default_options;
 	default_options.etable_type = etable_id;
 	return etable( default_options );
+}
+
+/// @brief Get an owning pointer to data used by the FA_ElecEnergy in beta_nov15 mode.
+/// @details If the data have not been loaded, this loads the data (lazy loading).  NOT THREADSAFE.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::scoring::elec::CPRepMapTypeCOP
+ScoringManager::get_cp_rep_map_byname() const {
+	if ( !cp_rep_map_byname_ ) {
+		cp_rep_map_byname_ = core::scoring::elec::read_cp_tables_from_db( "scoring/score_functions/elec_cp_reps.dat" );
+	}
+	debug_assert( cp_rep_map_byname_ );
+	return cp_rep_map_byname_;
 }
 
 
