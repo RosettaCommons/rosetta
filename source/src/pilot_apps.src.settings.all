@@ -378,7 +378,6 @@ sources = {
 
 	# J ######################################################################
  	"pilot/jadolfbr/cluster_utilities" : [
-		"identify_cdr_clusters", # /* Jared Adolf-Bryfogle, In CC file, Demo Location /*
 		#"relax_cdrs", # /* Jared Adolf-Bryfogle, In CC file, Demo Location. /*
 	],
 	"pilot/jadolfbr/antibody_design" : [

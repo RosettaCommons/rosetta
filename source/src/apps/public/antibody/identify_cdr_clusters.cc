@@ -41,7 +41,12 @@ using namespace protocols::antibody::clusters;
 
 //Documentation:  This application identifies the CDR cluster in an antibody, renumbered with North_AHO (Used by North clusters).  Works with one PDB.  Prints to screen
 //  Use: Renumber antibody using [http://dunbrack.fccc.edu/IgClassify/].  Outputs info, and appends it to a new PDB that it will write.
-//  Reference: North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.
+//  Reference: 
+//    PyIgClassify: a database of antibody CDR structural classifications Jared Adolf-Bryfogle; Qifang Xu; Benjamin North; Andreas Lehmann; Roland L. Dunbrack Jr Nucleic Acids Research 2014; doi: 10.1093/nar/gku1106
+//    North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.
+//  Docs: 
+//    https://www.rosettacommons.org/docs/wiki/application_documentation/antibody/CDR-Cluster-Identification
+//
 class IdentifyCDRClusters : public protocols::moves::Mover{
 public:
 	IdentifyCDRClusters(){};
@@ -57,16 +62,12 @@ public:
 	void
 	apply(core::pose::Pose & pose){
 
-		//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-		// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  "
-		//                                "Please visit http://dunbrack2.fccc.edu/PyIgClassify/ for renumbering");
-		//}
 
 		AntibodyInfoOP ab_info( new AntibodyInfo(pose, North) );
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);
 
-
+		std::cout << std::endl;
 		for ( core::Size i = 1; i<= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			CDRClusterCOP result = ab_info->get_CDR_cluster(cdr_name);
@@ -75,9 +76,7 @@ public:
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
 			check_fix_aho_cdr_numbering(ab_info, cdr_name, pose);
 		}
-		std::cout << "Info added to any echo PDB" << std::endl;
-		//std::string reference = "REF: North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.";
-		//protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(reference);
+		std::cout << std::endl <<"Info added to any echo PDB" << std::endl << std::endl;
 	}
 };
 
@@ -87,7 +86,12 @@ int main(int argc, char* argv[])
 		devel::init(argc, argv);
 
 		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new IdentifyCDRClusters ));
-		std::cout<< "Please reference North, B., A. Lehmann, and R.L. Dunbrack, Jr., A new clustering of antibody CDR loop conformations. JMB, 2011. 406(2): p. 228-56."<<std::endl;
+		std::cout<< std::endl << std::endl << "App Author: Jared Adolf-Bryfogle; PI: Roland Dunbrack " << std::endl<< std::endl;
+		std::cout<< " CDR Classification done using the same methodology as PyIgClassify." << std::endl<<std::endl;
+		std::cout<< " Please cite RosettaAntibody and the following:" << std::endl;
+		std::cout<< "     Adolf-Bryfogle J, Xu Q, North B, Lehmann A, Dunbrack RL. PyIgClassify: a database of antibody CDR structural classifications. Nucleic Acids Res 2015; 43:D432-D438. " << std::endl;
+		std::cout<< "     North B, Lehmann A, Dunbrack RL. A new clustering of antibody CDR loop conformations. J Mol Biol 2011; 406:228-256." << std::endl <<std::endl;
+
 	} catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception"<<std::endl;
 		excn.show(std::cerr);

@@ -77,6 +77,7 @@ sources = {
 		"antibody_graft",
 		"antibody_H3",
 		"antibody_CR_paratope",
+		"identify_cdr_clusters",
 		"snugdock",
 	],
 	"public/boinc": [
