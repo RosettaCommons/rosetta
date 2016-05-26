@@ -40,9 +40,12 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -128,6 +131,8 @@ void AntibodyModelerProtocol::set_default() {
 	use_csts_ = false;
 	constrain_vlvh_qq_ = false;
 	constrain_cter_ = false;
+	auto_constraint_ = false;
+	all_atom_mode_constraint_ = true; // by default, preserve the old behavior. in the future, this should default to false
 	packonly_after_graft_=false;
 
 	cst_weight_ = 0.0;
@@ -158,6 +163,8 @@ void AntibodyModelerProtocol::register_options() {
 	option.add_relevant( OptionKeys::constraints::cst_file );
 	option.add_relevant( OptionKeys::antibody::constrain_vlvh_qq );
 	option.add_relevant( OptionKeys::antibody::constrain_cter );
+	option.add_relevant( OptionKeys::antibody::auto_generate_kink_constraint );
+	option.add_relevant( OptionKeys::antibody::all_atom_mode_kink_constraint );
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::antibody::refine_h3 );
 	option.add_relevant( OptionKeys::antibody::h3_filter );
@@ -215,6 +222,12 @@ void AntibodyModelerProtocol::init_from_options() {
 	}
 	if ( option[ OptionKeys::antibody::constrain_cter ].user() ) {
 		set_constrain_cter( option[ OptionKeys::antibody::constrain_cter ]() );
+	}
+	if ( option[ OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
+		set_auto_constraint( option[ OptionKeys::antibody::auto_generate_kink_constraint ]() );
+	}
+	if ( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ].user() ) {
+		set_all_atom_mode_kink_constraint( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
 	}
 	if ( option[ OptionKeys::antibody::constrain_vlvh_qq ].user() ) {
 		set_constrain_vlvh_qq( option[ OptionKeys::antibody::constrain_vlvh_qq ]() );
@@ -291,7 +304,15 @@ AntibodyModelerProtocol::setup_objects() {
 	loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
 	loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
 	if ( constrain_cter_ ) {
-		loop_scorefxn_highres_->set_weight(scoring::dihedral_constraint, cst_weight_);
+		if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0; // This makes sense becuase this cst is generated on-the-fly. Yeah yeah it's ugly.
+		// Always enable constraints in low-resolution mode (i.e. when the sampling is aggressive enough for it to matter)
+		loop_scorefxn_centroid_->set_weight( scoring::dihedral_constraint, cst_weight_ );
+		loop_scorefxn_centroid_->set_weight( scoring::angle_constraint, cst_weight_ );
+		
+		if ( all_atom_mode_constraint_ ) {
+			loop_scorefxn_highres_->set_weight( scoring::dihedral_constraint, cst_weight_ );
+			loop_scorefxn_highres_->set_weight( scoring::angle_constraint, cst_weight_ );
+		}
 	}
 }
 
@@ -336,6 +357,7 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 
 	//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 	//TR<<*my_task2<<std::endl; exit(-1);
+	
 }
 
 
@@ -384,8 +406,47 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		// call ConstraintSetMover
 		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
 		if (  cst_weight_ != 0.0  ) {
-			cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
-			cdr_constraint_->apply( pose );
+			if ( ! auto_constraint_ ) {
+				cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
+				cdr_constraint_->apply( pose );
+			} else {
+				// Create constraints on-the-fly here.
+				
+				// All of this stuff, and the work that is being done in finalize_setup() for that matter, only needs to happen
+				// once per input. I don't trust the 'fresh_instance' and related settings in the other antibody movers well
+				// enough to actually rely on that, so I'm going to do this every apply for now.
+				
+				// Get relevant residue numbers
+				Size kink_begin = ab_info_->kink_begin( pose );
+
+				// Constraints operate on AtomIDs:
+				Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
+				AtomID const atom_100x( CA, kink_begin );
+				AtomID const atom_101( CA, kink_begin + 1 );
+				AtomID const atom_102( CA, kink_begin + 2 );
+				AtomID const atom_103( CA, kink_begin + 3 );
+
+				// Yeah, yeah this is turrible. I'm trying to get stuff done over here, ok?
+				// Eventually this will read from a database file
+				// Generate functions
+				Real alpha_x0 = 0.678; // radians
+				Real alpha_sd = 0.41; // radians
+				Real alpha_tol = 0.205; // radians
+				func::FlatHarmonicFuncOP alpha_func( new func::FlatHarmonicFunc( alpha_x0, alpha_sd, alpha_tol ) );
+
+				Real tau_x0 = 1.761; // radians
+				Real tau_sd = 0.194; // radians
+				Real tau_tol = 0.0972; // radians
+				func::FlatHarmonicFuncOP tau_func( new func::FlatHarmonicFunc( tau_x0, tau_sd, tau_tol ) );
+
+				// Instantiate constraints
+				ConstraintOP tau_cst( new AngleConstraint( atom_100x, atom_101, atom_102, tau_func ) );
+				ConstraintOP alpha_cst( new DihedralConstraint( atom_100x, atom_101, atom_102, atom_103, alpha_func ) );
+
+				// Cache to pose
+				pose.add_constraint( tau_cst );
+				pose.add_constraint( alpha_cst );
+			}
 		}
 
 		ModelCDRH3OP model_cdrh3( new ModelCDRH3( ab_info_, loop_scorefxn_centroid_) );
@@ -417,7 +478,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
-	if (  cst_weight_ != 0.0  ) {
+	if (  cst_weight_ != 0.0 && ! auto_constraint_ ) {
 		cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
 		cdr_constraint_->apply( pose );
 	}
@@ -496,11 +557,13 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	// the specific constraint terms for output in the log file
 	Real atom_pair_constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
 	Real dihedral_constraint_score = pose.energies().total_energies()[ core::scoring::dihedral_constraint ];
+	Real angle_constraint_score = pose.energies().total_energies()[ core::scoring::angle_constraint ];
 	Real total_score = pose.energies().total_energies()[ core::scoring::total_score ];
-	Real unconstrained_score = total_score - atom_pair_constraint_score - dihedral_constraint_score;
+	Real unconstrained_score = total_score - atom_pair_constraint_score - dihedral_constraint_score - angle_constraint_score;
 
 	TR << " \t\tatom_pair_constraint_score = " << atom_pair_constraint_score << std::endl;
 	TR << "      dihedral_constraint_score = " << dihedral_constraint_score << std::endl;
+	TR << "         angle_constraint_score = " << angle_constraint_score << std::endl;
 	TR << "                    total_score = " << total_score << std::endl;
 	TR << "            unconstrained_score = " << unconstrained_score << std::endl;
 

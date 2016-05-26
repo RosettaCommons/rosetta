@@ -62,7 +62,7 @@ public:
 	// ------------- Helper Functions ------------- //
 	void perform_relevant_assertions( core::pack::task::PackerTaskOP const & task, core::Size residue_number )
 	{
-		if ( residue_number >= pose.pdb_info()->pdb2pose( 'H', 107 ) && residue_number <= pose.pdb_info()->pdb2pose( 'H', 138 ) ) {
+		if ( residue_number >= pose.pdb_info()->pdb2pose( 'H', 95 ) && residue_number <= pose.pdb_info()->pdb2pose( 'H', 102 ) ) {
 			TS_ASSERT_EQUALS( task->residue_task(residue_number).being_packed(), true );
 		} else {
 			TS_ASSERT_EQUALS( task->residue_task(residue_number).being_packed(), false );

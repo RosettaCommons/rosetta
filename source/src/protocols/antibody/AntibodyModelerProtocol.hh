@@ -107,6 +107,12 @@ public:
 	void set_constrain_cter(bool const setting) {
 		constrain_cter_ = setting;
 	}
+	void set_auto_constraint(bool const setting) {
+		auto_constraint_ = setting;
+	}
+	void set_all_atom_mode_kink_constraint(bool const setting) {
+		all_atom_mode_constraint_ = setting;
+	}
 	void set_constrain_vlvh_qq(bool const setting) {
 		constrain_vlvh_qq_ = setting;
 	}
@@ -155,6 +161,8 @@ private:
 	bool idealize_h3_stems_before_modeling_;
 	bool use_csts_;
 	bool constrain_vlvh_qq_, constrain_cter_;
+	bool auto_constraint_;
+	bool all_atom_mode_constraint_;
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

@@ -3512,6 +3512,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='The option to turn on/off the VL-VH QQ H-bond in docking scoring function',
 			default='false'
 			),
+		Option( 'auto_generate_kink_constraint', 'Boolean',
+			desc='Generate the kink constraint on-the-fly',
+			default='false'
+			),
+		Option( 'all_atom_mode_kink_constraint', 'Boolean',
+			desc='Enable the kink constraint in the all-atom phase of the simulation',
+			default='false'
+			),
 		Option( 'snug_loops', 'Boolean',
 			desc='Allow CDR loop backbone flexibility during minimization',
 			default='false'

@@ -60,9 +60,9 @@ private:
 private:
 
 
-	// These definitions correspond to the AHo numbering scheme.  This could be expanded to other numbering schemes in the future
-	static Size const pdb_numbered_h3_loop_start = 107;
-	static Size const pdb_numbered_h3_loop_end = 138;
+	// These definitions correspond to the Chothia numbering scheme.  This could be expanded to other numbering schemes in the future
+	static Size const pdb_numbered_h3_loop_start = 95; // 107;
+	static Size const pdb_numbered_h3_loop_end = 102;  // 138;
 	static char const heavy_chain = 'H';
 
 };

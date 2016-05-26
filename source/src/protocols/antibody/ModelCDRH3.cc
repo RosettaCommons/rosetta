@@ -135,7 +135,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	using namespace protocols::moves;
 
 	/// FIXME: JQX: very redudent here, just get one loops object
-	Size framework_loop_begin( ab_info_->get_CDR_loop(h3).start() );
+	Size framework_loop_begin( ab_info_->get_CDR_loop(h3).start() - 2 ); // use the AHo loop defs without mucking up the code everywhere.
 	Size framework_loop_end  ( ab_info_->get_CDR_loop(h3).stop()  );
 	Size cutpoint = ab_info_->get_CDR_loop(h3).cut() ; // keep the cutpoint unchanged
 	Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
