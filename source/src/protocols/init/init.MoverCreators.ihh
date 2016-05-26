@@ -81,6 +81,7 @@
 #include <protocols/denovo_design/connection/ConnectionCreators.hh>
 #include <protocols/denovo_design/connection/ExtendChainCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
+#include <protocols/denovo_design/movers/FastDesignCreator.hh>
 
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
 

@@ -31,7 +31,6 @@
 #include <devel/denovo_design/BuildSheetCreator.hh>
 #include <devel/denovo_design/ConnectJumpsCreator.hh>
 #include <devel/denovo_design/DumpStatsSSCreator.hh>
-#include <devel/denovo_design/FastDesignCreator.hh>
 #include <devel/denovo_design/RestrictRegionCreator.hh>
 #include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
 #include <devel/domain_insertion/InsertionSiteTestMoverCreator.hh>
@@ -93,7 +92,6 @@ namespace devel {
 static protocols::moves::MoverRegistrator< denovo_design::BuildSheetCreator > reg_BuildSheetCreator;
 static protocols::moves::MoverRegistrator< denovo_design::ConnectJumpsCreator > reg_ConnectJumpsCreator;
 static protocols::moves::MoverRegistrator< denovo_design::DumpStatsSSCreator > reg_DumpStatsSSCreator;
-static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
 static protocols::moves::MoverRegistrator< denovo_design::RestrictRegionCreator > reg_RestrictRegionCreator;
 static protocols::moves::MoverRegistrator< denovo_design::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
 protocols::moves::MoverRegistrator< domain_insertion::FusePosesNtoCMoverCreator > reg_FusePosesNtoCMoverCreator;

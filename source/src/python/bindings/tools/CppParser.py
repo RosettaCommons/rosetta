@@ -1482,9 +1482,9 @@ _import_order_ = {
     'core/pack' : ['rotamers'],
     'core/scoring': ['annealing', 'trie', 'methods', 'func', 'constraints', 'hbonds'],
 
-    'protocols': ['moves', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
+    'protocols': [ 'moves', 'constraint_generator', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
                   'simple_moves', 'ligand_docking', 'rigid', 'toolbox', 'forge', 'loop_modeling', 'loops', 'wum', 'rosetta_scripts',
-                  'simple_filters'],
+                  'simple_filters', 'relax', 'denovo_design'],
     'protocols/forge' : ['remodel'],
     'protocols/match' : ['upstream'],
     'protocols/stepwise' : ['screener', 'modeler'],

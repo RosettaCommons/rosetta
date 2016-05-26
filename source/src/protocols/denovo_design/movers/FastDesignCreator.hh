@@ -7,31 +7,35 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/FastDesign.hh
+/// @file src/protocols/denovo_design/movers/FastDesignCreator.hh
 /// @brief The FastDesign Protocol, adapted from src/protocols/relax/FastRelax
 /// @details
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_devel_denovo_design_FastDesignCreator_hh
-#define INCLUDED_devel_denovo_design_FastDesignCreator_hh
+#ifndef INCLUDED_protocols_denovo_design_movers_FastDesignCreator_hh
+#define INCLUDED_protocols_denovo_design_movers_FastDesignCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
+namespace movers {
 
 class FastDesignCreator : public protocols::moves::MoverCreator
 {
 public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
-	static  std::string mover_name();
+	virtual protocols::moves::MoverOP
+	create_mover() const;
+
+	virtual std::string
+	keyname() const;
+
 };
 
 }
 }
-
+}
 
 #endif

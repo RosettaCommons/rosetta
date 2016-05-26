@@ -89,6 +89,7 @@ static MoverRegistrator< denovo_design::connection::StapleChainsCreator > reg_St
 static MoverRegistrator< denovo_design::connection::ExtendChainCreator > reg_ExtendChainCreator;
 static MoverRegistrator< denovo_design::connection::ConnectTerminiWithDisulfideCreator > reg_ConnectTerminiWithDisulfideCreator;
 static MoverRegistrator< denovo_design::DisulfidizeMoverCreator > reg_DisulfidizeMoverCreator;
+static MoverRegistrator< denovo_design::movers::FastDesignCreator > reg_FastDesignCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 

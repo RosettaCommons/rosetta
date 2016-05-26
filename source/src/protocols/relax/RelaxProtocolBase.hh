@@ -61,6 +61,7 @@ public:
 	void set_default_movemap();
 
 	// Public accessors
+	core::kinematics::MoveMapCOP get_movemap() const { return movemap_; }
 	core::kinematics::MoveMapOP get_movemap() { return movemap_; }
 	const core::scoring::ScoreFunctionCOP get_scorefxn() const { return scorefxn_; }
 	core::pack::task::TaskFactoryOP const & get_task_factory() const { return task_factory_; }

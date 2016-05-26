@@ -54,7 +54,6 @@ sources = {
 		"BuildSheet",
 		"ConnectJumps",
 		"DumpStatsSS",
-		"FastDesign",
 		"GenericSimulatedAnnealer",
 		"ParametricSheet",
 		"RestrictRegion",
