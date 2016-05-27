@@ -151,9 +151,9 @@ def compare(test, results, files_path, previous_results, previous_files_path):
     #cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='execution_time',       legend='execution_time',       color='#66f'),
     #                                                               dict(y='max_memory_allocated', legend='max_memory_allocated', color='#6f6') ] ) ]
 
-    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='execution_time',       legend='execution_time/revision',       color='#66f') ] ),
-                       dict(type='sub_test:revision_value', data=[ dict(y='max_memory_allocated', legend='max_memory_allocated/revision', color='#6f6') ] ),
-                       dict(type='sub_test:value_value', data=[ dict(array='memory_usage', x='time', y='memory', legend='memory/time', color='#c33') ] ) ]
+    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='execution_time',       legend='execution_time(s)/revision',       color='#66f') ] ),
+                       dict(type='sub_test:revision_value', data=[ dict(y='max_memory_allocated', legend='max_memory_allocated(MiB)/revision', color='#6f6') ] ),
+                       dict(type='sub_test:value_value', data=[ dict(array='memory_usage', x='time', y='memory', legend='memory(MiB)/time(s)', color='#c33') ] ) ]
 
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: cr}
