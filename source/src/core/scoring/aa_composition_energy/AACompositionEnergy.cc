@@ -231,7 +231,7 @@ AACompositionEnergy::calculate_energy(
 		for ( core::Size i=1, imax=counts.size(); i<=imax; ++i ) { //Loop through the counts and accumulate the appropriate penalty
 			counts[i] -= expected[i]; // Calculate the DELTA count.
 			if ( helper->use_fract_ranges(i) ) {
-				fract_counts[i] = static_cast<core::Real>(counts[i]) / static_cast<core::Real>(n_res_total);
+				fract_counts[i] = ( n_res_total > 0 ? static_cast<core::Real>(counts[i]) / static_cast<core::Real>(n_res_total) : 0 );
 				accumulator += helper->fract_property_penalty( fract_counts[i], i );
 			} else {
 				accumulator += helper->property_penalty( counts[i], i );
