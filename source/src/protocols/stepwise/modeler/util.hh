@@ -299,6 +299,14 @@ get_unique_connection_res( core::pose::Pose const & pose, utility::vector1< Size
 void
 map_constraints_from_original_pose( core::pose::Pose const & original_pose, core::pose::Pose & pose );
 
+bool
+stepwise_addable_pose_residue( Size const n /*in pose numbering*/,
+																 pose::Pose const & pose );
+
+bool
+stepwise_addable_residue( Size const n /*in full model numbering*/,
+														std::map< Size, std::string > const & non_standard_residue_map );
+
 } //modeler
 } //stepwise
 } //protocols

@@ -350,6 +350,20 @@ public: // Properties
 		default_value_ = default_value_a;
 	}
 
+	/// @brief Set default value
+	inline
+	bool
+	all_default()
+	{
+		for ( Size i = 1, ie = res_map_.size(); i <= ie; ++i ) {
+			AtomMap & atom_map( res_map_[ i ] );
+			for ( Size j = 1, je = atom_map.size(); j <= je; ++j ) { // std::fill_n could do this too
+				if ( atom_map[ j ] != default_value_ ) return false;
+			}
+		}
+		return true;
+	}
+
 
 	/// @brief Is an element with this AtomID present?
 	inline

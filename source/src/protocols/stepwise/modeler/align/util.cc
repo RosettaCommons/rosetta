@@ -133,6 +133,7 @@ superimpose_pose_legacy(
 	std::map< Size, Size > const & res_map )
 {
 	id::AtomID_Map< id::AtomID > atom_ID_map = create_alignment_id_map_legacy( mod_pose, ref_pose, res_map );
+	if ( atom_ID_map.all_default() ) return 0.0;
 	return scoring::superimpose_pose( mod_pose, ref_pose, atom_ID_map );
 }
 

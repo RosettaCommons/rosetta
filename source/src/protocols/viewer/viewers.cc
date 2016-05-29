@@ -760,6 +760,7 @@ std::map<std::string, Vector>  get_sidechain_color_rhiju() {
 	sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
 	sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
 	sidechain_color_rhiju[ " MG" ] = Vector( 0.0, 1.0, 0.0); //bright green
+	sidechain_color_rhiju[ "HOH" ] = Vector( 1.0, 0.0, 0.0); //bright green
 
 	return sidechain_color_rhiju;
 }
@@ -810,8 +811,12 @@ Vector get_atom_color(
 		return Vector( 1.0, 1.0, 1.0);
 
 	case RHIJU_COLOR :
-		if ( residues[r]->is_virtual(i) || residues[r]->is_repulsive(i) ) {
-			return Vector( 1.0, 1.0, 1.0 );
+		if ( residues[r]->is_virtual(i) || residues[r]->is_repulsive(i)) {
+			if ( residues[r]->has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
+				return Vector( 0.2, 0.2, 0.2 );
+			} else {
+				return Vector( 1.0, 1.0, 1.0 );
+			}
 		} else if ( residues[r]->atom_is_backbone(i)  ) {
 			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, false /*mute_color*/);
 			return Vector(red, green, blue);

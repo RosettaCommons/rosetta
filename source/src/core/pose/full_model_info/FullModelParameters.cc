@@ -136,6 +136,7 @@ FullModelParameters::FullModelParameters( FullModelParameters const & src ) :
 	full_sequence_( src.full_sequence_ ),
 	conventional_numbering_( src.conventional_numbering_ ),
 	conventional_chains_( src.conventional_chains_ ),
+	non_standard_residue_map_( src.non_standard_residue_map_ ),
 	cst_string_( src.cst_string_ ),
 	cst_set_( src.cst_set_ ),
 	full_model_pose_for_constraints_( src.full_model_pose_for_constraints_ ),

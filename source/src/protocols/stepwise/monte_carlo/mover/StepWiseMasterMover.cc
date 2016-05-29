@@ -371,7 +371,11 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 	utility::vector1< Size > const & working_res = const_full_model_info( full_model_pose ).working_res();
 	utility::vector1< Size > const & res_list    = const_full_model_info( full_model_pose ).res_list();
 	utility::vector1< Size > const & bulge_res   = const_full_model_info( full_model_pose ).rna_bulge_res();
-	for ( Size n = 1; n <= working_res.size(); n++ ) runtime_assert( res_list.has_value( working_res[ n ] ) || bulge_res.has_value( working_res[ n ] ) );
+	for ( Size n = 1; n <= working_res.size(); n++ ) {
+		if ( !stepwise_addable_residue( working_res[ n ],
+																			const_full_model_info( start_pose ).full_model_parameters()->non_standard_residue_map() ) ) continue;
+		runtime_assert( res_list.has_value( working_res[ n ] ) || bulge_res.has_value( working_res[ n ] ) );
+	}
 
 }
 

@@ -83,6 +83,7 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 
 	utility::vector1< Size > interface_res;
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( !stepwise_addable_pose_residue( i, pose ) ) continue;
 		if ( at_interface[i] ) interface_res.push_back( i );
 	}
 
@@ -124,14 +125,14 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 	for ( Size n = 1; n <= moving_partition_res.size(); n++ ) {
 
 		Size const i = moving_partition_res[ n ];
-		if ( pose.residue_type(i).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
+		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 		for ( graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
 			Size const j( (*iter)->get_other_ind( i ) );
-			if ( pose.residue_type(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
+			if ( pose.residue_type( j ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 			// only looking for pairs of residues *across* moving interface! One in moving_partition, one outside.
 			if ( moving_partition_res.has_value( j ) ) continue;

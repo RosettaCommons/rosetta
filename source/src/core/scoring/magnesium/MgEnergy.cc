@@ -225,7 +225,9 @@ MgEnergy::eval_intrares_energy(
 	EnergyMap & emap
 ) const {
 	if ( rsd.name3() == " MG" ) emap[ mg_ref  ] += mg_ref_score_;
-	if ( rsd.name3() == "HOH" ) emap[ hoh_ref ] += hoh_ref_score_;
+	if ( rsd.aa() == core::chemical::aa_h2o ) {
+		if ( !rsd.has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) emap[ hoh_ref ] += hoh_ref_score_;
+	}
 }
 
 ////////////////////////////////////////////////////
@@ -373,6 +375,9 @@ MgEnergy::eval_mg_interaction(
 	// Note: treated as a product -- not quite consistent with derivation from log-stats.
 	// [ could instead add as sum, and then do fading on potential near boundaries, as in hbonds. ]
 	Real const mg_lig_score = dist_score * acc_angle_form_factor * v_angle_form_factor_faded;
+
+	//		TR << "MG_LIG_SCORE: from " <<  rsd2.seqpos()  << " to "
+	//			 << rsd1.seqpos()  << " " << rsd1.name3() << " " << rsd1.atom_name( atomno1 ) << " ==> " << mg_lig_score << "   (dist) " << dist_score << "   (acc_angle) " << acc_angle_form_factor << "  (v_angle) " << v_angle_form_factor_faded << std::endl;
 
 	emap[ mg ]     += mg_lig_score;
 	emap[ mg_lig ] += mg_lig_score;

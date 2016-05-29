@@ -670,6 +670,7 @@ StepWiseMoveSelector::get_docking_split_move_elements( pose::Pose const & pose,
 		Size const reference_res = pose.fold_tree().upstream_jump_residue( n );
 		Size const moving_res_full =  res_list[ moving_res ];
 		Size const reference_res_full = res_list[ reference_res ];
+		if ( !stepwise_addable_pose_residue( moving_res, pose ) ) continue;
 		runtime_assert( dock_domain_map[ moving_res_full ] > 0 );
 		runtime_assert( dock_domain_map[ reference_res_full ] > 0 );
 		if ( dock_domain_map[ moving_res_full ] == dock_domain_map[ reference_res_full ] ) continue;
@@ -933,8 +934,7 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 	for ( Size i = 1; i <= nres; i++ ) {
 		Size const i_full = res_list[ i ] ;
 		Size const dock_domain_i = dock_domain_map[ i_full ];
-
-		if ( !working_res.has_value( i_full ) ) continue;
+		if ( !is_addable_res( i_full, pose ) ) continue;
 		for ( Size j_full = 1; j_full <= full_model_info.size(); j_full++ ) {
 			if ( res_list.has_value( j_full ) ) continue; // must be docked to different pose.
 
@@ -1098,8 +1098,11 @@ StepWiseMoveSelector::get_docking_delete_move_elements( pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseMoveSelector::is_addable_res( Size const n, pose::Pose const & pose ) const {
-	utility::vector1< Size > const working_res = const_full_model_info( pose ).working_res();
-	utility::vector1< Size > const bulge_res   = const_full_model_info( pose ).rna_bulge_res();
+
+	// don't allow Mg(2+) or HOH yet -- must be an easier way to figure out ligand or not.
+	if ( !stepwise_addable_residue( n, const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map() ) ) return false;
+	utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
+	utility::vector1< Size > const & bulge_res   = const_full_model_info( pose ).rna_bulge_res();
 	return ( working_res.has_value( n ) && !bulge_res.has_value( n ) );
 }
 

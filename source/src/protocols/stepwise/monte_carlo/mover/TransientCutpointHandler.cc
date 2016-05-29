@@ -42,14 +42,18 @@ namespace mover {
 TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
 	sample_suite_  ( sample_res - 1 ), //sampled nucleoside
 	cutpoint_suite_( sample_res ), // suite at which to make cutpoint
-	move_jump_points_away_( false )
+	move_jump_points_away_( false ),
+	jump_start_( 0 ),
+	jump_end_( 0 )
 {}
 
 //Constructor
 TransientCutpointHandler::TransientCutpointHandler( Size const sample_suite, Size const cutpoint_suite ):
 	sample_suite_( sample_suite ), //sampled nucleoside
 	cutpoint_suite_( cutpoint_suite ), // suite at which to make cutpoint
-	move_jump_points_away_( false )
+	move_jump_points_away_( false ),
+	jump_start_( 0 ),
+	jump_end_( 0 )
 {}
 
 //Destructor
@@ -64,8 +68,6 @@ TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
 
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
 	utility::vector1< std::pair< id::TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, cutpoint_suite_ );
-
-	fold_tree_save_ = pose.fold_tree();
 
 	// create reasonable fold tree
 	prepare_fold_tree_for_erraser( pose );
@@ -89,23 +91,23 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 	utility::vector1< Size > sample_res_list = minimize_res_;
 
 	// figure out jump points that bracket the cut.
-	Size jump_start( sample_suite_    );
-	Size jump_end( cutpoint_suite_ + 1);
+	jump_start_ = sample_suite_;
+	jump_end_   = cutpoint_suite_ + 1;
 
 	if ( move_jump_points_away_ ) {
-		while ( jump_start > 1 && minimize_res_.has_value( jump_start ) && !f.is_cutpoint( jump_start - 1 ) )          jump_start--;
-		while ( jump_end < pose.total_residue() && minimize_res_.has_value( jump_end ) && !f.is_cutpoint( jump_end ) ) jump_end++;
+		while ( jump_start_ > 1 && minimize_res_.has_value( jump_start_ ) && !f.is_cutpoint( jump_start_ - 1 ) )          jump_start_--;
+		while ( jump_end_ < pose.total_residue() && minimize_res_.has_value( jump_end_ ) && !f.is_cutpoint( jump_end_ ) ) jump_end_++;
 	}
 
 	Size const cutpoint = cutpoint_suite_;
-	f.new_jump( jump_start, jump_end, cutpoint );
+	f.new_jump( jump_start_, jump_end_, cutpoint );
 
-	Size const which_jump = f.jump_nr( jump_start, jump_end );
+	Size const which_jump = f.jump_nr( jump_start_, jump_end_ );
 	f.set_jump_atoms( which_jump,
-		jump_start,
-		default_jump_atom( pose.residue( jump_start ) ),
-		jump_end,
-		default_jump_atom( pose.residue( jump_end   ) ) );
+		jump_start_,
+		default_jump_atom( pose.residue( jump_start_ ) ),
+		jump_end_,
+		default_jump_atom( pose.residue( jump_end_   ) ) );
 
 	pose.fold_tree( f );
 
@@ -125,7 +127,9 @@ TransientCutpointHandler::take_out_cutpoints( core::pose::Pose & viewer_pose ){
 	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
 
 	// return to simple fold tree
-	pose.fold_tree( fold_tree_save_ );
+	core::kinematics::FoldTree f( pose.fold_tree() );
+	f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
+	pose.fold_tree( f );
 
 	viewer_pose = pose;
 }

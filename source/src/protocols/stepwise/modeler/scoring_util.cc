@@ -85,6 +85,13 @@ initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 		}
 	}
 	if ( options->turn_off_rna_chem_map_during_optimize() )  sample_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
+	if ( sample_scorefxn->has_nonzero_weight( mg_lig ) ) {
+		Real const mg_lig_weight( sample_scorefxn->get_weight( mg_lig ) );
+		sample_scorefxn->set_weight( mg_lig, 0.0 );
+		sample_scorefxn->set_weight( mg_sol, 0.0 );
+		sample_scorefxn->set_weight( rna_mg_point, mg_lig_weight );
+		sample_scorefxn->set_weight( rna_mg_point, mg_lig_weight );
+	}
 
 	return sample_scorefxn;
 }

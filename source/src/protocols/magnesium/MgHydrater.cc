@@ -22,6 +22,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <numeric/UniformRotationSampler.hh>
 #include <numeric/EulerAngles.hh>
@@ -43,6 +46,7 @@ MgHydrater::MgHydrater():
 	excise_mini_pose_( true ),
 	use_fast_frame_heuristic_( true ),
 	mg_water_hydrogen_packer_( new MgWaterHydrogenPacker ),
+	use_virtual_waters_as_placeholders_( false ),
 	verbose_( false )
 {
 	mg_water_hydrogen_packer_->set_excise_mini_pose( false );
@@ -54,6 +58,7 @@ MgHydrater::MgHydrater( utility::vector1< Size > const & mg_res_list ):
 	excise_mini_pose_( true ),
 	use_fast_frame_heuristic_( true ),
 	mg_water_hydrogen_packer_( new MgWaterHydrogenPacker ),
+	use_virtual_waters_as_placeholders_( false ),
 	verbose_( false )
 {
 	mg_water_hydrogen_packer_->set_excise_mini_pose( false );
@@ -66,6 +71,8 @@ MgHydrater::~MgHydrater()
 ///////////////////////////////////////////
 void
 MgHydrater::apply( pose::Pose & pose ) {
+
+	if ( use_virtual_waters_as_placeholders_ ) setup_virtual_waters_around_magnesiums( pose );
 
 	// find all the magnesiums in here.
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
@@ -88,23 +95,33 @@ MgHydrater::hydrate_magnesium( pose::Pose & pose, Size const i ) {
 		Pose pose_full = pose;
 		Size const mg_res_in_full( i );
 		vector1< Size > slice_res = pdbslice( pose, mg_res_in_full );
-
 		Size const mg_res_in_mini    = slice_res.index( mg_res_in_full );
+		fix_fold_tree_in_excised_pose_for_mg_bound_waters( pose, mg_res_in_mini, pose_full, slice_res );
 		Size const nres_original( pose.total_residue() );
 		hydrate_magnesium_in_pose( pose, mg_res_in_mini );
 
-		for ( Size ii = 1; ii <= pose_full.residue( mg_res_in_full ).natoms(); ii++ ) {
-			pose_full.set_xyz( AtomID( ii, mg_res_in_full ), pose.xyz( AtomID( ii, mg_res_in_mini ) ) );
+		if ( use_virtual_waters_as_placeholders_ ) { // swap out mg & waters into full pose
+			for ( Size ii = 1; ii <= pose.total_residue(); ii++ ) {
+				if ( ii == mg_res_in_mini || pose.residue_type( ii ).aa() == core::chemical::aa_h2o ) {
+					pose_full.replace_residue( slice_res[ ii ], *pose.residue( ii ).clone(), false );
+				}
+			}
+		} else {  // new waters were introduced
+			for ( Size ii = 1; ii <= pose_full.residue( mg_res_in_full ).natoms(); ii++ ) {
+				pose_full.set_xyz( AtomID( ii, mg_res_in_full ), pose.xyz( AtomID( ii, mg_res_in_mini ) ) );
+			}
+			for ( Size n = nres_original + 1; n <= pose.total_residue(); n++ ) {
+				append_mg_bound_water( pose_full, pose.residue( n ), i );
+			}
+			update_numbers_in_pdb_info( pose_full );
 		}
-		for ( Size n = nres_original + 1; n <= pose.total_residue(); n++ ) {
-			pose_full.append_residue_by_jump( pose.residue( n ), i );
-		}
-		update_numbers_in_pdb_info( pose_full );
 
 		pose = pose_full;
 	} else {
 		hydrate_magnesium_in_pose( pose, i );
 	}
+
+	update_full_model_info_with_new_waters( pose, use_virtual_waters_as_placeholders_ /* expect_no_new_waters */ );
 }
 
 
@@ -113,6 +130,7 @@ void
 MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 	bool force_full_shell /* = true */ ) {
 
+	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
 	using namespace core::pose;
@@ -126,13 +144,14 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 	Residue const & rsd_i = pose.residue( i );
 	runtime_assert( rsd_i.name3() == " MG" );
 	Vector xyz_mg = rsd_i.xyz( "MG  " );
-	TR << "Setting up Mg(2+) " << i << " which has PDB number: " << pose.pdb_info()->number( i ) << std::endl;
+	if ( verbose_ ) TR << "Setting up Mg(2+) " << i << " which has PDB number: " << pose.pdb_info()->number( i ) << std::endl;
 
 	vector1< AtomID > nbr_atom_ids;
 	Distance NBR_CUTOFF( 6.0 ); // 2.1 Mg-HOH, 4.0 HOH-other atom.
 	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
 		if ( i == j ) continue; // no need to count Mg as a nbr.
 		Residue const & rsd_j = pose.residue( j );
+		if ( rsd_j.aa() == aa_h2o ) continue; // don't count waters (we're going to move them around)
 		for ( Size jj = 1; jj <= rsd_j.nheavyatoms(); jj++ ) {
 			if ( ( rsd_j.xyz( jj ) - xyz_mg ).length() < NBR_CUTOFF ) {
 				nbr_atom_ids.push_back( AtomID( jj, j ) );
@@ -198,15 +217,14 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 		for ( core::Size ctr=1; ctr<=rotation_matrices.size() ; ++ctr ) {
 			pose = pose_orig;
 			Matrix const & R = rotation_matrices[ ctr ];
-			bool full_shell = hydrate_magnesium_with_orbital_frame( pose, i, nbr_atom_ids, R, force_full_shell_in_pass );
+			Size num_waters( 0 );
+			bool const full_shell = hydrate_magnesium_with_orbital_frame( pose, i, nbr_atom_ids, R, force_full_shell_in_pass, num_waters );
 			if ( ( pass == 1) && !full_shell ) continue;
 			core::Real score = ( *scorefxn )( pose );
 			if ( verbose_ ) {
 				TR << "checked: " << I( 4, ctr) << " out of " << I( 4, rotation_matrices.size()) <<
-					"; adding " << pose.total_residue() - pose_orig.total_residue() << " waters gives: " << F(8,3,score) << std::endl;
+					"; instantiating " << num_waters << " waters gives: " << F(8,3,score) << std::endl;
 			}
-			//  scorefxn->show( pose );
-			//    pose.dump_pdb( "CHECK_" + ObjexxFCL::lead_zero_string_of( ctr, 3 ) + ".pdb" );
 			if ( (score < best_score) || !init ) {
 				best_score = score;
 				best_pose = pose;
@@ -218,16 +236,59 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 	}
 
 	pose = best_pose;
+
 }
 
+///////////////////////////////////////////
+void
+MgHydrater::update_full_model_info_with_new_waters( pose::Pose & pose,
+																										bool const expect_no_new_waters /* = false */ ) {
+	using namespace core::pose::full_model_info;
+
+	if ( !full_model_info_defined( pose ) ) return;
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > res_list = full_model_info.res_list(); // will be updated
+	runtime_assert( pose.total_residue() >= res_list.size() );
+	Size const num_new_waters( pose.total_residue() - res_list.size() );
+	if ( expect_no_new_waters ) runtime_assert( num_new_waters == 0 );
+	if ( num_new_waters == 0 ) return;
+	for ( Size n = pose.total_residue() - num_new_waters + 1; n <= pose.total_residue(); n++ ) {
+		runtime_assert( pose.residue( n ).name3() == "HOH" ); // check any new residues are indeed waters.
+	}
+
+	// now check for any water 'slots' in full_model_info
+	FullModelParameters const & full_model_parameters = *full_model_info.full_model_parameters();
+	std::string const & full_sequence = full_model_parameters.full_sequence();
+	std::map< Size, std::string > const & non_standard_residue_map = full_model_parameters.non_standard_residue_map();
+
+	utility::vector1< Size > water_res;
+	for ( Size n = 1; n <= full_model_parameters.size(); n++ ) {
+		if ( full_sequence[ n - 1 ] != 'w' ) continue;
+		std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( n );
+		if ( it == non_standard_residue_map.end() ) continue;
+		if ( it->second != "HOH" ) continue;
+		if ( res_list.has_value( n ) ) continue;
+		water_res.push_back( n );
+	}
+
+	runtime_assert( water_res.size() >= num_new_waters );
+	for ( Size n = 1; n <= num_new_waters; n++ ) 	res_list.push_back( water_res[ n ] );
+
+	FullModelInfoOP full_model_info_new( full_model_info.clone_info() );
+	full_model_info_new->set_res_list( res_list );
+	set_full_model_info( pose, full_model_info_new );
+	check_full_model_info_OK( pose );
+}
 
 ///////////////////////////////////////////
 bool
 MgHydrater::hydrate_magnesium_with_orbital_frame( pose::Pose & pose,
-	Size const i,
-	vector1< core::id::AtomID > const & nbr_atom_ids,
-	numeric::xyzMatrix< core::Real > const & R,
-	bool force_full_shell /*= true*/ ) const {
+																									Size const i,
+																									vector1< core::id::AtomID > const & nbr_atom_ids,
+																									numeric::xyzMatrix< core::Real > const & R,
+																									bool force_full_shell,
+																									Size & num_waters ) const {
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::chemical;
@@ -256,6 +317,7 @@ MgHydrater::hydrate_magnesium_with_orbital_frame( pose::Pose & pose,
 	}
 
 	Size const nres_orig = pose.total_residue();
+	bool full_shell( true );
 	for ( Size n = 1; n <= 6; n++ ) {
 		// place water if no clash.
 		Vector const xyz_water = xyz_mg + MG_HOH_DISTANCE * vec[ n ];
@@ -279,16 +341,23 @@ MgHydrater::hydrate_magnesium_with_orbital_frame( pose::Pose & pose,
 				//     TR << "found clash of water " << n << " with  " << pose.pdb_info()->number( nbr_atom_id.rsd() ) << " " << pose.residue( nbr_atom_id.rsd() ).atom_name( nbr_atom_id.atomno() ) << " dist " << ( pose.xyz( nbr_atom_id ) - xyz_water ).length()   << " other_possible_ligand " << other_possible_ligand << std::endl;
 			}
 		}
+
+		bool const replace_residue( use_virtual_waters_as_placeholders_ );
 		if ( do_instantiate_water ) {
-			instantiate_water_at_octahedral_vertex( pose, i, n );
-			water_res.push_back( pose.total_residue() );
+			Size instantiated_water_res = instantiate_water_at_octahedral_vertex( pose, i, n, MG_HOH_DISTANCE, replace_residue );
+			water_res.push_back( instantiated_water_res );
 		} else {
-			if ( !other_possible_ligand && force_full_shell ) return false;
+			if ( use_virtual_waters_as_placeholders_ ) instantiate_water_at_octahedral_vertex( pose, i, n, MG_HOH_DISTANCE, replace_residue, true /*virtual_water*/ );
+			if ( !other_possible_ligand && force_full_shell ) {
+				full_shell = false;
+			}
 		}
 	}
+	num_waters = water_res.size();
+	if ( force_full_shell && !full_shell ) return false;
 
 	if ( nres_orig == 1 ) return true;
-	for ( Size k = 1; k <= water_res.size(); k++ ) {
+	for ( Size k = 1; k <= num_waters; k++ ) {
 		mg_water_hydrogen_packer_->apply( pose, std::make_pair( i, water_res[ k ] ) );
 	}
 	return true;
@@ -303,6 +372,105 @@ MgHydrater::set_frame( Vector const & orig, Vector const & xyz1, Vector const & 
 	y = cross( z, x );
 	return Matrix::cols( x, y, z );
 }
+
+////////////////////////////////////////////////////////////////
+void
+fix_water_jump( pose::Pose & pose, Size const & parent_res, Size const & water_res )
+{
+	using namespace core::kinematics;
+	FoldTree f( pose.fold_tree() );
+	Size const jump_number = f.get_jump_that_builds_residue( water_res );
+	f.slide_jump( jump_number, parent_res, water_res );
+	pose.fold_tree( f );
+	if ( pose.residue_type( parent_res ).name3() == " MG" ) {
+		update_jump_atoms_for_mg_bound_water( pose, water_res );
+	}
+}
+
+////////////////////////////////////////////////////////////////
+// In Mg-hydration code with virtual waters, the fold-tree helps
+// flag the six waters that go with each Magnesium. No other waters
+// should be daughters of that magnesium.
+void
+MgHydrater::fix_fold_tree_in_excised_pose_for_mg_bound_waters(
+			 pose::Pose & pose, Size const mg_res,
+			 pose::Pose const & pose_full,
+			 utility::vector1< Size > const & slice_res ) const
+{
+	using namespace core::kinematics;
+	FoldTree f( pose.fold_tree() );
+	Size const mg_res_in_full = slice_res[ mg_res ];
+
+	// slide jumps for water daughters in full fold tree to be daughters in the excised pose
+	utility::vector1< core::Size > bound_waters_in_full_pose = find_bound_waters_that_are_daughters_in_fold_tree( pose_full, mg_res_in_full );
+	for ( Size n = 1; n <= bound_waters_in_full_pose.size(); n++ ) {
+		Size const & water_res_in_full = bound_waters_in_full_pose[ n ];
+		Size const water_res_in_mini = slice_res.index( water_res_in_full );
+		fix_water_jump( pose, mg_res, water_res_in_mini );
+	}
+
+	// and make sure there are no *additional* daughters...
+	utility::vector1< core::Size > bound_waters_in_mini_pose = find_bound_waters_that_are_daughters_in_fold_tree( pose, mg_res );
+	Size other_res( 0 );
+	for ( Size n = 1; n <= bound_waters_in_mini_pose.size(); n++ ) {
+		Size const & water_res_in_mini = bound_waters_in_mini_pose[ n ];
+		Size const water_res_in_full = slice_res[ water_res_in_mini ];
+		if ( bound_waters_in_full_pose.has_value( water_res_in_full ) ) continue;
+		if ( other_res == 0 ) { // need to attach water to some other residue
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+				if ( n != mg_res && !bound_waters_in_mini_pose.has_value( n ) ) {
+					other_res = n; break;
+				}
+			}
+		}
+		runtime_assert( other_res != 0 );
+		fix_water_jump( pose, other_res, water_res_in_mini );
+	}
+}
+
+
+///////////////////////////////////////////////////////
+void
+MgHydrater::setup_virtual_waters_around_magnesiums( pose::Pose & pose )
+{
+	vector1< Size > const all_mg_res = get_mg_res( pose );
+
+	// first check -- all Mg(2+) might actually be OK.
+	bool all_magnesiums_have_six_waters( true );
+	for ( Size n = 1; n <= all_mg_res.size(); n++ ) {
+		if ( find_bound_waters_that_are_daughters_in_fold_tree( pose, all_mg_res[ n ] ).size() < 6 ) {
+			all_magnesiums_have_six_waters = false; break;
+		}
+	}
+	if ( all_magnesiums_have_six_waters ) return;
+	TR << "Defining Mg(2+) water map " << std::endl;
+
+	std::map< Size, vector1< Size > > mg_water_map = define_mg_water_map( pose );
+
+	// get mg-water pairs, properly assigned.
+	for ( Size n = 1; n <= all_mg_res.size(); n++ ) {
+		// now go through each mg(2+), and fix up fold tree for waters bound to it already.
+		Size const mg_res = all_mg_res[ n ];
+		vector1< Size > water_ligands = mg_water_map[ mg_res ];
+		for ( Size n = 1; n <= water_ligands.size(); n++ ) {
+			Size const water_res = water_ligands[ n ];
+			if ( pose.fold_tree().get_parent_residue( water_res ) != int( mg_res ) ) {
+				fix_water_jump( pose, mg_res, water_res );
+			}
+		}
+
+		// then add additional virtual waters to round out to 6 waters per magnesium
+		// for each Mg(2+), append virtual waters as placeholders to get the number up to 6.
+		for ( Size n = water_ligands.size() + 1; n <= 6; n++ ) {
+			instantiate_water_at_octahedral_vertex( pose, mg_res, n,
+																							MG_HOH_DISTANCE, false /*replace_residue*/, true /*virtual water*/ );
+		}
+	}
+
+	update_full_model_info_with_new_waters( pose );
+}
+
+
 
 } //magnesium
 } //protocols

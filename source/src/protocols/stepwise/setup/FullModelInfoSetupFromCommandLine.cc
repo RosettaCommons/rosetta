@@ -43,6 +43,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/magnesium.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
@@ -244,10 +245,12 @@ fill_full_model_info_from_command_line( pose::Pose & pose, vector1< PoseOP > & o
 
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////
 vector1< Size >
-get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
-	vector1< char > const & conventional_chains,
-	vector1< int  > const & conventional_numbering ) {
+get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
+															vector1< char > const & conventional_chains,
+															vector1< int  > const & conventional_numbering ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1< Size > cutpoints;
@@ -272,7 +275,36 @@ get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 			}
 		}
 	}
+
 	std::sort( cutpoints.begin(), cutpoints.end() );
+	return cutpoints;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// Kind of a hack. Would be better to somehow figure out if residue is not polymeric --
+//  perhaps try to instantiate with ResidueTypeSet?
+void
+get_extra_cutpoints_from_names(	Size const nres,
+																vector1< Size > & cutpoints,
+																std::map< Size, std::string > const & non_standard_residue_map )
+{
+	for ( Size n = 1; n <= nres; n++ ) {
+		if ( cutpoints.has_value( n ) ) continue;
+		if ( !modeler::stepwise_addable_residue( n, non_standard_residue_map ) ) {
+			cutpoints.push_back( n );
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+vector1< Size >
+get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
+							 std::map< Size, std::string > const & non_standard_residue_map,
+							 vector1< char > const & conventional_chains,
+							 vector1< int  > const & conventional_numbering ) {
+	vector1< Size > cutpoints = get_cutpoints_from_numbering( fasta_sequences, conventional_chains, conventional_numbering );
+	get_extra_cutpoints_from_names( conventional_numbering.size(), cutpoints, non_standard_residue_map );
 	return cutpoints;
 }
 
@@ -305,7 +337,6 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 			found_info = true;
 		}
 		if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
-
 
 		if ( !found_info || resnum.size() != fasta_sequences[n]->sequence().size() /*happens with stray numbers*/ ) {
 			resnum.clear();
@@ -368,6 +399,57 @@ parse_out_non_standard_residues( std::string & sequence ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+// Need a 'water bank' to hold up to 6 waters for each Mg(2+) during stepwise modeling
+//  with water hydration. Some of these waters will get virtualized, but its important
+//  that number of residues stays constant.
+//
+// Following is based on an assumption that the *only* waters to be modeled in stepwise
+//  would be ones associated with Mg(2+)... obviously that is not very general.
+//
+// It might be smarter to look inside the PDBs (esp. any native PDBs) to count
+//   waters associated with each Mg(2+), one by one, and supplement water bank to
+//   ensure 6 waters per Mg(2+).
+void
+setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_residue_map,
+																 vector1< core::sequence::SequenceOP > & fasta_sequences ) {
+	using namespace core::sequence;
+
+	// how many magnesiums are there? how many waters are there?
+	Size offset( 0 ), num_magnesiums( 0 ), num_waters( 0 );
+	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
+		std::string sequence = fasta_sequences[n]->sequence();
+		for ( Size i = 1; i <= sequence.size(); i++ ) {
+			if ( sequence[ i - 1 ] == 'Z' ) {
+				std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( offset+i );
+				if ( it != non_standard_residue_map.end() && it->second == "MG") 	num_magnesiums++;
+			} else if ( sequence[ i - 1 ] == 'w' ) {
+				std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( offset+i );
+				if ( it != non_standard_residue_map.end() && it->second == "HOH" ) 	num_waters++;
+			}
+		}
+		offset += sequence.size();
+	}
+
+	runtime_assert( num_waters <= 6 * num_magnesiums ); // currently do not model any non-Mg(2+) waters.
+
+	// are there at least six waters for each magnesium? if not, let's put them in.
+	// Use chain 'w' semi-arbitrarily, and numbering from 1001 onward. -- this could be a disaster.
+	std::string sequence;
+	std::stringstream id;
+	Size extra_water_number( 1000 );
+	for ( Size n = num_waters; n <= 6 * num_magnesiums; n++ ) {
+		sequence += 'w';
+		offset++; // number of residues.
+		extra_water_number++; // 1001, 1002, ...
+		non_standard_residue_map[ offset ] = "HOH";
+		id << " w:" << extra_water_number;
+	}
+
+	fasta_sequences.push_back( SequenceOP( new Sequence( sequence, id.str() ) ) );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
@@ -382,7 +464,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
 	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
-
+	if ( option[ magnesium::hydrate ]() ) setup_water_bank_for_magnesiums( non_standard_residue_map, fasta_sequences );
 	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
 
 	FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
@@ -392,7 +474,8 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->set_conventional_numbering( conventional_numbering );
 	full_model_parameters->set_conventional_chains( conventional_chains );
 	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
-	vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, conventional_chains, conventional_numbering );
+	vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
+																																conventional_chains, conventional_numbering );
 
 	if ( option[ full_model::cutpoint_open ].user() ) {
 		cutpoint_open_in_full_model =
@@ -444,7 +527,6 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	if ( sample_res.size() == 0 )  sample_res  = figure_out_sample_res( input_domain_map, working_res );
 	if ( working_res.size() == 0 ) working_res = figure_out_working_res( input_domain_map, sample_res );
 	vector1< Size > fixed_domain_map = figure_out_fixed_domain_map( input_domain_map, extra_minimize_res ); //remove extra_minimize_res.
-
 
 	setup_fold_trees( pose_pointers, cutpoint_open_in_full_model /* can update */, fixed_domain_map /* can update */,
 		cutpoint_closed, extra_minimize_res, extra_minimize_jump_res,

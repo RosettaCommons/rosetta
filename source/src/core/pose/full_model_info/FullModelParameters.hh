@@ -101,6 +101,7 @@ public:
 	slice( utility::vector1< Size > const & slice_res ) const;
 
 	std::string const & full_sequence() const { return full_sequence_;}
+	std::map< Size, std::string > const & non_standard_residue_map() const { return non_standard_residue_map_; }
 
 	utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}
 	utility::vector1< char > const & conventional_chains() const { return conventional_chains_;}

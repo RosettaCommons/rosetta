@@ -686,7 +686,7 @@ merge_two_poses( pose::Pose & pose,
 			rsd = remove_variant_type_from_residue( *rsd, chemical::N_ACETYLATION, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
 			after_cutpoint = false; // we're merging after all.
 		}
-		if ( n == 1 || !after_cutpoint ) {
+		if ( rsd->is_polymer() && ( n == 1 || !after_cutpoint ) ) {
 			pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
 		} else {
 			pose.append_residue_by_jump( *rsd, pose.total_residue() );
@@ -853,7 +853,7 @@ slice( pose::Pose & sliced_out_pose,
 		bool const jump_to_next = check_jump_to_next_residue_in_chain( pose, j, slice_res );
 		if ( jump_to_next ) num_jumps_to_next++;
 
-		if ( n == 1 || ( !after_cutpoint && slice_res.has_value( j - 1 ) ) ) {
+		if ( rsd->is_polymer() && ( n == 1 || ( !after_cutpoint && slice_res.has_value( j - 1 ) ) ) ) {
 			sliced_out_pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
 		} else {
 			sliced_out_pose.append_residue_by_jump( *rsd, sliced_out_pose.total_residue() );
@@ -1927,7 +1927,9 @@ virtualize_side_chains( pose::Pose & pose ) {
 utility::vector1< Size >
 get_all_residues( pose::Pose const & pose ){
 	utility::vector1< Size > all_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) all_res.push_back( n );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		all_res.push_back( n );
+	}
 	return all_res;
 }
 
@@ -1937,8 +1939,14 @@ find_downstream_connection_res( pose::Pose const & pose,
 	utility::vector1< Size > const & moving_partition_res ){
 	Size downstream_connection_res( 0 );
 	for ( Size n = 1; n <= moving_partition_res.size(); n++ ) {
-		Size const parent_res = pose.fold_tree().get_parent_residue( moving_partition_res[n] );
+		if ( pose.residue_type( moving_partition_res[ n ] ).aa() == core::chemical::aa_h2o ) continue; // hack -- no waters
+		Size const parent_res = pose.fold_tree().get_parent_residue( moving_partition_res[ n ] );
 		if ( parent_res > 0 && !moving_partition_res.has_value( parent_res ) ) {
+			if ( downstream_connection_res > 0 ) {
+				TR << pose.annotated_sequence() << std::endl;
+				TR << pose.fold_tree() << std::endl;
+				TR << "downstream_connection_res already filled: " << downstream_connection_res << "  new downstream_connection_res " << moving_partition_res[n] << " goes with parent_res " << parent_res << std::endl;
+			}
 			runtime_assert( downstream_connection_res == 0 );
 			downstream_connection_res = moving_partition_res[n];
 		}
@@ -1971,6 +1979,25 @@ map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose
 	id::SequenceMappingOP sequence_map( new id::SequenceMapping );
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) sequence_map->push_back( n );
 	pose.constraint_set( original_pose.constraint_set()->remapped_clone( original_pose, pose, sequence_map ) );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// don't allow Mg(2+) or HOH yet -- must be an easier way to figure out ligand or not.
+bool
+stepwise_addable_pose_residue( Size const n /*in pose numbering*/, pose::Pose const & pose ) {
+	runtime_assert( full_model_info_defined( pose ) );
+	vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+	return stepwise_addable_residue( res_list[ n ],
+																		 const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map() );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+stepwise_addable_residue( Size const n /* in full model numbering*/, std::map< Size, std::string > const & non_standard_residue_map )
+{
+	std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( n );
+	if ( it != non_standard_residue_map.end() && ( it->second == "HOH" || it->second == "MG" ) ) return false;
+	return true;
 }
 
 

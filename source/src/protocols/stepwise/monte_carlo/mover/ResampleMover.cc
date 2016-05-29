@@ -174,7 +174,7 @@ ResampleMover::apply( pose::Pose & pose,
 		stepwise_modeler_->apply( pose );
 	} else {
 		runtime_assert( options_->allow_internal_local_moves() );
-		TR << "Going to set up TRANSIENT_CUTPOINT_HANDLER with " << remodel_suite << " " << cutpoint_suite << std::endl;
+		TR << "Going to set up TRANSIENT_CUTPOINT_HANDLER with remodel_suite " << remodel_suite << " cutpoint_suite " << cutpoint_suite << std::endl;
 		TransientCutpointHandler cutpoint_handler( remodel_suite, cutpoint_suite );
 		if ( ! minimize_single_res_ ) cutpoint_handler.set_minimize_res( moving_res );
 

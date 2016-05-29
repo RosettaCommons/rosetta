@@ -61,7 +61,7 @@ private:
 
 	utility::vector1< core::Size > fixed_res_;
 	utility::vector1< core::Size > minimize_res_;
-	core::kinematics::FoldTree fold_tree_save_;
+	core::Size jump_start_, jump_end_;
 
 };
 

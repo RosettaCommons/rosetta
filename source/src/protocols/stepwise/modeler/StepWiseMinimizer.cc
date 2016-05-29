@@ -30,6 +30,7 @@
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file, for RNA
 #include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/magnesium/util.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -211,10 +212,22 @@ StepWiseMinimizer::setup_scorefxns( pose::Pose const & pose ) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+// quick hack -- testing water movement around Mg(2+)
+void
+freeze_waters( core::pose::Pose const & pose, core::kinematics::MoveMap & mm )
+{
+	utility::vector1< Size> const water_res = magnesium::get_water_res( pose );
+	for ( Size n = 1; n <= water_res.size(); n++ ) {
+		mm.set_jump( pose.fold_tree().get_jump_that_builds_residue( water_res[ n ] ), false );
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 void
 StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 	rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
 	if ( options_->vary_polar_hydrogen_geometry() ) polar_hydrogens::pack_polar_hydrogens( pose, allow_virtual_o2prime_hydrogens_ );
+	if ( options_->hydrate_magnesiums() ) magnesium::hydrate_magnesiums( pose, true, options_->test_all_mg_hydration_frames() ); // this might be better as part of MasterPacker, in connection sampler.
 
 	core::scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 	kinematics::MoveMap mm_save = mm;
@@ -260,6 +273,7 @@ StepWiseMinimizer::get_move_map_and_atom_level_domain_map( core::kinematics::Mov
 	bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
 	atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // can come in handy later...
 	movemap::figure_out_stepwise_movemap( mm, atom_level_domain_map_, pose, working_minimize_res_, move_takeoff_torsions );
+	if ( !options_->minimize_waters() ) freeze_waters( pose, mm );
 	output_movemap( mm, pose, TR.Debug );
 }
 
@@ -404,6 +418,7 @@ StepWiseMinimizer::figure_out_working_minimize_res( core::pose::Pose const & pos
 	utility::vector1< core::Size > const working_extra_minimize_res( full_model_info.full_to_sub( full_model_info.extra_minimize_res() ) );
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( pose.residue_type( n ).name3() == "HOH" ) continue; // allowing waters to vary in different poses (Mg hydration)
 		if ( !working_fixed_res_.has_value( n ) ||
 				working_extra_minimize_res.has_value( n ) ) {
 			working_minimize_res.push_back( n );

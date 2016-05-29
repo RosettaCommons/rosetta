@@ -52,6 +52,9 @@ public:
 	void set_excise_mini_pose( bool const & setting ){ excise_mini_pose_ = setting; }
 	bool excise_mini_pose() const { return excise_mini_pose_; }
 
+	void set_use_virtual_waters_as_placeholders( bool const & setting ){ use_virtual_waters_as_placeholders_ = setting; }
+	bool use_virtual_waters_as_placeholders() const { return use_virtual_waters_as_placeholders_; }
+
 	void set_verbose( bool const & setting ){ verbose_ = setting; }
 	bool verbose() const { return verbose_; }
 
@@ -69,10 +72,25 @@ private:
 
 	bool
 	hydrate_magnesium_with_orbital_frame( core::pose::Pose & pose,
-		core::Size const i,
-		utility::vector1< core::id::AtomID > const & nbr_atom_ids,
-		numeric::xyzMatrix< core::Real > const & R,
-		bool force_full_shell = true ) const;
+																				core::Size const i,
+																				utility::vector1< core::id::AtomID > const & nbr_atom_ids,
+																				numeric::xyzMatrix< core::Real > const & R,
+																				bool force_full_shell,
+																				core::Size & num_waters ) const;
+
+	void
+	update_full_model_info_with_new_waters( core::pose::Pose & pose,
+																					bool const expect_no_new_waters = false );
+
+	void
+	fix_fold_tree_in_excised_pose_for_mg_bound_waters(
+																										core::pose::Pose & pose, core::Size const mg_res,
+																										core::pose::Pose const & pose_full,
+																										utility::vector1< core::Size > const & slice_res ) const;
+
+	void
+	setup_virtual_waters_around_magnesiums( core::pose::Pose & pose );
+
 private:
 
 	utility::vector1< core::Size > mg_res_list_;
@@ -80,6 +98,7 @@ private:
 	bool use_fast_frame_heuristic_;
 	numeric::UniformRotationSamplerCOP urs_;
 	MgWaterHydrogenPackerOP mg_water_hydrogen_packer_;
+	bool use_virtual_waters_as_placeholders_;
 	bool verbose_;
 };
 

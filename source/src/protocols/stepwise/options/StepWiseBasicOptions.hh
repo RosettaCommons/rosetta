@@ -117,6 +117,15 @@ public:
 	void set_verbose_sampler( bool const & setting ){ verbose_sampler_ = setting; }
 	bool verbose_sampler() const{ return verbose_sampler_; }
 
+	void set_minimize_waters( bool const & setting ){ minimize_waters_ = setting; }
+	bool minimize_waters() const{ return minimize_waters_; }
+
+	void set_hydrate_magnesiums( bool const & setting ){ hydrate_magnesiums_ = setting; }
+	bool hydrate_magnesiums() const{ return hydrate_magnesiums_; }
+
+	void set_test_all_mg_hydration_frames( bool const & setting ){ test_all_mg_hydration_frames_ = setting; }
+	bool test_all_mg_hydration_frames() const{ return test_all_mg_hydration_frames_; }
+
 protected:
 
 	void
@@ -148,6 +157,9 @@ private:
 	bool lores_;
 	bool verbose_sampler_;
 	std::string sampler_silent_file_;
+	bool minimize_waters_;
+	bool hydrate_magnesiums_;
+	bool test_all_mg_hydration_frames_;
 
 };
 

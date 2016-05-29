@@ -19,6 +19,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
+#include <basic/options/keys/magnesium.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -70,6 +71,9 @@ StepWiseBasicOptions::initialize_variables(){
 	use_packer_instead_of_rotamer_trials_ = false;
 	lores_ = false;
 	verbose_sampler_ = false;
+	minimize_waters_ = false;
+  hydrate_magnesiums_ = false;
+	test_all_mg_hydration_frames_ = false;
 }
 
 /// @brief clone the options
@@ -101,6 +105,9 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	output_cluster_size_ = option[ basic::options::OptionKeys::stepwise::output_cluster_size ]();
 	lores_ = option[ basic::options::OptionKeys::stepwise::lores ]();
 	verbose_sampler_ = option[ basic::options::OptionKeys::stepwise::verbose_sampler ]();
+	minimize_waters_ = option[ basic::options::OptionKeys::stepwise::minimize_waters ]();
+	hydrate_magnesiums_ = option[ basic::options::OptionKeys::magnesium::hydrate ]();
+	test_all_mg_hydration_frames_ = option[ magnesium::all_hydration_frames ]();
 }
 
 

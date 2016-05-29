@@ -41,6 +41,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
 
 using namespace core;
 using namespace basic::options;
@@ -50,6 +51,8 @@ using utility::vector1;
 
 
 static THREAD_LOCAL basic::Tracer TR( "mg_modeler" );
+
+OPT_KEY( Boolean, use_virtual_waters )
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -117,6 +120,7 @@ mg_modeler_test()
 			remove_mg_bound_waters( pose, pdb_to_pose( pose,  pdb_mg_res ), option[ magnesium::leave_other_waters ] ); // remove any mg-bound waters
 			MgHydrater mg_hydrater( pdb_to_pose( pose, pdb_mg_res ) );
 			mg_hydrater.set_use_fast_frame_heuristic( !option[ magnesium::all_hydration_frames ]() );
+			mg_hydrater.set_use_virtual_waters_as_placeholders( option[ use_virtual_waters ]() );
 			mg_hydrater.set_verbose( true );
 			mg_hydrater.apply( pose );
 			tag = "hydrate";
@@ -218,6 +222,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( magnesium::montecarlo::cycles );
 		option.add_relevant( magnesium::montecarlo::dump );
 		option.add_relevant( magnesium::montecarlo::add_delete_frequency );
+
+		NEW_OPT( use_virtual_waters, "in hydrate, use virtual waters as placeholders", false);
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

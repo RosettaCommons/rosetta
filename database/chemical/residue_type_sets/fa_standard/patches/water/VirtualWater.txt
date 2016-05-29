@@ -1,0 +1,16 @@
+## this patch turns all water atoms ito virtual atoms
+## useful if you want the residues in the pose as placeholders...
+NAME VirtualWater
+TYPES    VIRTUAL_RESIDUE_VARIANT
+
+BEGIN_SELECTOR
+AA HOH
+END_SELECTOR
+
+BEGIN_CASE ### general case ###
+
+SET_ATOM_TYPE  O    VIRT
+SET_ATOM_TYPE  H1   VIRT
+SET_ATOM_TYPE  H2   VIRT
+
+END_CASE

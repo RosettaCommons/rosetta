@@ -150,6 +150,12 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > swa_move_string_vect
 			attachments_.push_back( Attachment( attachment_res, attachment_type ) );
 		}
 	}
+
+	if ( move_type_ == RESAMPLE_INTERNAL_LOCAL ) {
+		runtime_assert( attachments_.size() == 2 );
+		runtime_assert( attachments_[ 1 ].attachment_type() == BOND_TO_PREVIOUS );
+		runtime_assert( attachments_[ 2 ].attachment_type() == BOND_TO_NEXT );
+	}
 }
 
 

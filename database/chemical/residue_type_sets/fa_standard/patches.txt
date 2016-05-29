@@ -171,5 +171,7 @@ patches/oop_post.txt
 patches/triazolamerN.txt
 patches/triazolamerC.txt
 
+patches/water/VirtualWater.txt
+
 ## repulsive backbone
 patches/ReplsBB.txt

@@ -68,9 +68,10 @@
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/util.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
-#include <protocols/toolbox/rigid_body/util.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
+#include <protocols/magnesium/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -430,6 +431,13 @@ StepWiseConnectionSampler::initialize_pose( pose::Pose & pose  ){
 
 	bool ready_for_more = presample_virtual_sugars( pose ); //defines alternatives for residues at chainbreaks with a virtual sugar.
 	if ( !ready_for_more ) return false;
+
+	// connection_sampler cannot handle waters - but might be better to handle this by virtualizing in screening pose,
+	//  and then allowing StepWisePacker to do Mg(2+) hydration -- currently that's happening later in StepWiseMinimizer.
+	//	magnesium::remove_mg_bound_waters( pose, magnesium::get_mg_res( pose ), false /*leave other waters*/ );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( pose.residue_type( n ).aa() == core::chemical::aa_h2o ) add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RESIDUE_VARIANT, n );
+	}
 
 	// note that constraint addition must happen after all variant changes (or the atom numbering will be off).
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) rna::add_harmonic_chain_break_constraint( pose, rna_cutpoints_closed_[ n ] );
