@@ -71,7 +71,7 @@ public:
 			for ( Real phi=phi_min; phi <= phi_max; phi = phi + sample_step_size ) {
 				for ( Real psi=psi_min; psi <= psi_max; psi = psi + sample_step_size ) {
 
-					Real rama, drama_dphi, drama_dpsi;
+					Real rama(0), drama_dphi(0), drama_dpsi(0);
 					rama_term.eval_rama_score_residue(
 						true, false,
 						static_cast<AA>(aa), phi, psi, rama, drama_dphi, drama_dpsi);

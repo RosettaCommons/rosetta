@@ -149,8 +149,14 @@ Ramachandran::Ramachandran(
 	extra_cdf_(),
 	cdf_by_torsion_bin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
-	phi_psi_bins_above_thold_( n_aa_ )
+	phi_psi_bins_above_thold_( n_aa_ ),
+	use_rama_power_(false),
+	rama_power_(1.0)
 {
+	if ( basic::options::option[ basic::options::OptionKeys::score::rama_power ].user() ) {
+		set_use_rama_power(true);
+		set_rama_power( basic::options::option[ basic::options::OptionKeys::score::rama_power ]() );
+	}
 	read_rama(rama_map_filename, use_bicubic_interpolation);
 }
 
