@@ -145,6 +145,7 @@ static FilterRegistrator< protocols::simple_filters::ReportFilterCreator > reg_R
 static FilterRegistrator< protocols::simple_filters::RepeatParameterFilterCreator > reg_RepeatParameterFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueCountFilterCreator > reg_ResidueCountFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueDistanceFilterCreator > reg_ResidueDistanceFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ResidueDepthFilterCreator > reg_ResidueDepthFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueIEFilterCreator > reg_ResidueIEFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResiduesInInterfaceFilterCreator > reg_ResiduesInInterfaceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueSetChainEnergyFilterCreator > reg_ResidueSetChainEnergyFilterCreator;

@@ -576,6 +576,7 @@ sources = {
 		"ReportFilter",
 		"ResidueBurialFilter",
 		"ResidueCountFilter",
+		"ResidueDepthFilter",
 		"ResidueDistanceFilter",
 		"ResidueIEFilter",
 		"ResiduesInInterfaceFilter",

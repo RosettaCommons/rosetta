@@ -131,6 +131,7 @@
 #include <protocols/simple_filters/ResidueBurialFilterCreator.hh>
 #include <protocols/simple_filters/ResidueCountFilterCreator.hh>
 #include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
+#include <protocols/simple_filters/ResidueDepthFilterCreator.hh>
 #include <protocols/simple_filters/ResidueIEFilterCreator.hh>
 #include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
