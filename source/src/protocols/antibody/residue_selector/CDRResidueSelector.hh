@@ -7,15 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   --path--/--class--.hh
-/// @brief  --brief--
-/// @author --name-- (--email--)
+/// @file   protocols/antibody/residue_selector/CDRResidueSelector.hh
+/// @brief  Select CDR residues.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_--path_underscore--_--class--_HH
-#define INCLUDED_--path_underscore--_--class--_HH
+#ifndef INCLUDED_protocols_antibody_residue_selector_CDRResidueSelector_HH
+#define INCLUDED_protocols_antibody_residue_selector_CDRResidueSelector_HH
 
 // Unit headers
-#include <--path--/--class--.fwd.hh>
+#include <protocols/antibody/residue_selector/CDRResidueSelector.fwd.hh>
+#include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 
 // Package headers
 #include <core/types.hh>
@@ -30,23 +32,45 @@
 // C++ headers
 #include <set>
 
---namespace--
+namespace protocols {
+namespace antibody {
+namespace residue_selector {
 
-/// @brief --brief--
-class --class-- : public core::select::residue_selector::ResidueSelector {
+/// @brief Select CDR residues.
+class CDRResidueSelector : public core::select::residue_selector::ResidueSelector {
 public:
 
 	/// @brief Constructor.
-	--class--();
-
-    /// @brief Copy Constructor.  Use if you have non-basic private variables (classes, OPs, etc.)
-	--class--(--class-- const & src);
+	CDRResidueSelector();
+	
+	/// @brief Constructor giving AntibodyInfo
+	CDRResidueSelector(AntibodyInfoCOP ab_info);
+	
+	/// @brief Constructor Specifying CDRs
+	CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< CDRNameEnum > cdrs );
+	
+	/// @brief Constructor Specifying CDRs
+	CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< bool > cdrs );
+	
+	///@brief Copy Constructor
+	CDRResidueSelector( CDRResidueSelector const & src);
+	
 public:
 
+	void
+	set_cdrs( utility::vector1< bool > cdrs );
+	
+	void
+	set_cdrs( utility::vector1< CDRNameEnum > cdrs );
+	
+	void
+	set_ab_info(AntibodyInfoCOP ab_info);
+	
+public:
 
 	/// @brief Destructor.
 	virtual
-	~--class--();
+	~CDRResidueSelector();
 
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
@@ -74,7 +98,8 @@ public:
 	get_name() const;
 
 	/// @brief Get the mover class name.
-	static std::string
+	static
+	std::string
 	class_name();
 
 	/// @brief Provide XSD information, enabling mechanical validation of input XML.
@@ -83,11 +108,23 @@ public:
 
 private:
 
+	void
+	set_defaults();
+	
 
+private:
+	
+	AntibodyInfoCOP ab_info_;
+	utility::vector1< bool > cdrs_;
+	AntibodyNumberingSchemeEnum numbering_scheme_;
+	CDRDefinitionEnum cdr_definition_;
+	
 };
 
 
---end_namespace--
+} //protocols
+} //antibody
+} //residue_selector
 
 
-#endif //INCLUDED--path--_--class--_hh
+#endif //INCLUDEDprotocols/antibody/residue_selector_CDRResidueSelector_hh

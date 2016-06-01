@@ -10,6 +10,7 @@
 /// @file   core/select/residue_selector/NeighborhoodResidueSelector.hh
 /// @brief  The NeighborhoodResidueSelector selects residues in a given proximity of set focus residues
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - 10 A neighbor graph, simplification, ResidueSubset as focus, clean up, etc.
 
 // Unit headers
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
@@ -21,6 +22,7 @@
 // Package headers
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/util.hh>
 
 // Project headers
 #include <core/pose/selection.hh>
@@ -49,13 +51,39 @@ namespace select {
 namespace residue_selector {
 
 NeighborhoodResidueSelector::NeighborhoodResidueSelector():
-	focus_(),
-	focus_str_(""),
-	distance_(10.0),
-	focus_selector_(),
-	focus_set_(false),
-	use_focus_selector_(false)
-{}
+	ResidueSelector(),
+	focus_selector_(/* NULL */)
+{
+	set_defaults();
+}
+
+
+
+
+
+NeighborhoodResidueSelector::NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance, bool include_focus ):
+	ResidueSelector(),
+	focus_selector_(/* NULL */)
+{
+	set_defaults();
+	set_focus(focus);
+	set_distance(distance);
+	set_include_focus_in_subset( include_focus );
+}
+
+NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSubset const & focus, Real distance, bool include_focus ):
+	ResidueSelector(),
+	focus_selector_(/* NULL */)
+{
+	set_defaults();
+	set_focus( focus );
+	set_distance( distance );
+	set_include_focus_in_subset( include_focus );
+
+}
+
+
+
 
 /// @brief Copy constructor
 ///
@@ -64,50 +92,69 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector( NeighborhoodResidueSel
 	focus_str_( src.focus_str_ ),
 	distance_( src.distance_ ),
 	focus_selector_( src.focus_selector_ ),
-	focus_set_( src.focus_set_ ),
-	use_focus_selector_( src.use_focus_selector_ )
+	include_focus_in_subset_(src.include_focus_in_subset_)
 {}
+
+NeighborhoodResidueSelector::~NeighborhoodResidueSelector() {}
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP NeighborhoodResidueSelector::clone() const { return ResidueSelectorOP( new NeighborhoodResidueSelector(*this) ); }
 
-NeighborhoodResidueSelector::NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance )
-{
-	set_focus(focus);
-	set_distance(distance);
+void
+NeighborhoodResidueSelector::set_defaults() {
+	distance_ = 10.0;
+	include_focus_in_subset_ = true;
+	focus_str_ = "";
+
 }
 
 
-NeighborhoodResidueSelector::~NeighborhoodResidueSelector() {}
-
-ResidueSubset
-NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
+void
+NeighborhoodResidueSelector::set_focus( std::set<Size> const &focus )
 {
-	debug_assert( focus_set_ );
+	clear_focus();
+	focus_ = focus;
+}
 
-	ResidueSubset subset( pose.total_residue(), false );
-	std::set< Size > focus_tmp;
+void
+NeighborhoodResidueSelector::set_focus( utility::vector1< bool > const & focus)
+{
+	clear_focus();
+	for (core::Size i = 1; i <= focus.size(); ++i){
+		if (focus[ i ]) focus_.insert( i );
+	}
+	
+}
 
-	// set subset to focus.
-	get_focus(pose, subset, focus_tmp);
+void
+NeighborhoodResidueSelector::set_focus( std::string const &focus_str )
+{
+	clear_focus();
+	focus_str_ = focus_str;
+}
 
-	Real const dst_squared = distance_ * distance_;
-	// go through each residue of the pose and check if it's near anything in the focus set
-	for ( Size ii = 1; ii < subset.size() ; ++ii ) {
-		if ( subset[ ii ] ) continue;
-		conformation::Residue const & r1( pose.residue( ii ) );
-		for ( std::set< Size >::const_iterator it = focus_tmp.begin();
-				it != focus_tmp.end(); ++it ) {
-			conformation::Residue const & r2( pose.residue( *it ) );
-			Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
-			if ( d_sq <= dst_squared ) {
-				subset[ ii ] = true;
-			}
-		} // focus set
-	} // subset
+void NeighborhoodResidueSelector::set_focus_selector( ResidueSelectorCOP rs )
+{
+	focus_selector_ = rs;
+}
 
-	return subset;
+void
+NeighborhoodResidueSelector::set_distance( Real distance )
+{
+	distance_ = distance;
+}
+
+void
+NeighborhoodResidueSelector::set_include_focus_in_subset(bool include_focus){
+	include_focus_in_subset_ = include_focus;
+}
+
+void
+NeighborhoodResidueSelector::clear_focus(){
+	focus_str_ = "";
+	focus_.clear();
+	focus_selector_ = NULL;
 }
 
 void
@@ -116,69 +163,26 @@ NeighborhoodResidueSelector::parse_my_tag(
 	basic::datacache::DataMap & datamap)
 {
 	if ( tag->hasOption("selector") ) {
-		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
-		}
-		if ( tag->size() > 1 ) { // 1 if no subtags exist
-			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector can only have one ResidueSelector loaded!\n" );
-		}
+
 		// grab the ResidueSelector from the selector option
 		// and then grab each of the indicated residue selectors from the datamap.
 		std::string selector_str;
-		try {
-			selector_str = tag->getOption< std::string >( "selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::stringstream error_msg;
-			error_msg << "Failed to access option 'selector' from NeighborhoodResidueSelector::parse_my_tag.\n";
-			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-		}
+		selector_str = tag->getOption< std::string >( "selector" );
 
-		try {
-			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
-			set_focus_selector( selector );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::stringstream error_msg;
-			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from NeighborhoodResidueSelector::parse_my_tag.\n";
-			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-		}
-	} else if ( tag->size() > 1 ) { // get focus selector from tag
-		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
-		}
 
-		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
-		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
-		}
-		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-			tags.front()->getName(),
-			tags.front(),
-			datamap
-		);
-		set_focus_selector( rs );
+		ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+		set_focus_selector( selector );
 
-	} else { // do not get focus from ResidueSelectors but load resnums string instead
-		try {
-			set_focus ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::stringstream err_msg;
-			err_msg << "Failed to access option 'resnums' from NeighborhoodResidueSelector::parse_my_tag.\n";
-			err_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
-		}
+	}
+	else if (tag->hasOption("resnums")) {
+		set_focus ( tag->getOption< std::string >( "resnums" ) );
+	}
+	else {
+		throw utility::excn::EXCN_Msg_Exception("You must provide either resnums OR selector to give the focus residues.");
 	}
 
-	// finally grab distance
-	try {
-		set_distance( tag->getOption< Real >( "distance", 10.0 ) );
-	}  catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		std::stringstream error_msg;
-		error_msg << "Failed to access option 'distance' from NeighborhoodResidueSelector::parse_my_tag.\n";
-		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-	}
+	set_distance( tag->getOption< Real >( "distance", distance_ ) );
+	set_include_focus_in_subset( tag->getOption< bool >( "include_focus_in_subset", include_focus_in_subset_));
 
 }
 
@@ -186,61 +190,89 @@ void
 NeighborhoodResidueSelector::get_focus(
 	core::pose::Pose const & pose,
 	ResidueSubset & subset,
-	std::set< Size > & focus
+	ResidueSubset & focus
 ) const
 {
-	if ( focus_selector_ && use_focus_selector_ ) {
-		subset = focus_selector_->apply( pose );
-
-		for ( Size ii = 1; ii <= subset.size(); ++ii ) {
-			if ( subset[ ii ] ) {
-				focus.insert( ii );
-			}
+	debug_assert(pose.total_residue() == subset.size());
+	debug_assert(pose.total_residue() == focus.size());
+	
+	bool focus_set = false;
+	if ( focus_selector_ ) {
+		focus = focus_selector_->apply( pose );
+		focus_set = true;
+	}
+	else if (focus_.size() > 0){
+		for ( std::set< Size >::const_iterator it = focus_.begin();
+			it != focus_.end(); ++it ) {
+			
+			focus[ *it ] = true;
+			focus_set = true;
+			
 		}
-	} else { // grab from set and string
+	}
+	else {
+		
 		std::set< Size > const res_vec( get_resnum_list( focus_str_, pose ) );
-		focus.insert( focus_.begin(), focus_.end() );
-		focus.insert( res_vec.begin(), res_vec.end() );
-		for ( std::set< Size >::const_iterator it = focus.begin();
-				it != focus.end(); ++it ) {
-			if ( *it == 0 || *it > subset.size() ) {
-				std::stringstream err_msg;
-				err_msg << "Residue " << *it << " not found in pose!\n";
-				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
-			}
-			subset[ *it ] = true; // may want to use a tmp subset so we don't wind up with a half-set subset
+		for ( std::set< Size >::const_iterator it = res_vec.begin();
+			it != res_vec.end(); ++it ) {
+			
+			focus[ *it ] = true;
+			focus_set = true;
 		}
+	}
+	
+	if (include_focus_in_subset_){
+		subset = focus;
+		
+	}
+	if (! focus_set){
+		throw utility::excn::EXCN_Msg_Exception("Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
 	}
 }
 
-void
-NeighborhoodResidueSelector::set_focus( std::set<Size> const &focus )
+ResidueSubset
+NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	focus_ = focus;
-	focus_set_ = true;
-	use_focus_selector_ = false;
+
+
+	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset focus_subset( pose.total_residue(), false);
+
+	// set subset to focus if option is true.  Parse focus from string, or obtain from residue selector.
+	get_focus(pose, subset, focus_subset);
+	
+	debug_assert( focus_subset.size() > 0 );
+	
+	utility::vector1< Size > focus_residues = get_residues_from_subset(focus_subset);
+	if ( distance_ > 10.0){
+		Real const dst_squared = distance_ * distance_;
+		// go through each residue of the pose and check if it's near anything in the focus set
+		for ( Size ii = 1; ii < pose.total_residue() ; ++ii ) {
+			if ( subset[ ii ] ) continue;
+			conformation::Residue const & r1( pose.residue( ii ) );
+			
+			for ( core::Size focus_res = 1; focus_res <= focus_residues.size(); ++focus_res ) {
+				conformation::Residue const & r2( pose.residue( focus_res ) );
+				Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
+				if ( d_sq <= dst_squared ) {
+					subset[ ii ] = true;
+				}
+			} // focus set
+		} // subset
+	}
+	else{
+		if (include_focus_in_subset_){
+			fill_neighbor_residues( pose, subset, distance_);
+		}
+		else{
+			subset = get_neighbor_residues(pose, focus_subset, distance_);
+		}
+	}
+	
+	return subset;
 }
 
-void
-NeighborhoodResidueSelector::set_focus( std::string const &focus_str )
-{
-	focus_str_ = focus_str;
-	focus_set_ = true;
-	use_focus_selector_ = false;
-}
 
-void NeighborhoodResidueSelector::set_focus_selector( ResidueSelectorCOP rs )
-{
-	focus_selector_ = rs;
-	focus_set_ = true;
-	use_focus_selector_ = true;
-}
-
-void
-NeighborhoodResidueSelector::set_distance( Real distance )
-{
-	distance_ = distance;
-}
 
 
 std::string NeighborhoodResidueSelector::get_name() const {
@@ -291,9 +323,8 @@ core::select::residue_selector::NeighborhoodResidueSelector::save( Archive & arc
 	arc( CEREAL_NVP( focus_ ) ); // std::set<Size>
 	arc( CEREAL_NVP( focus_str_ ) ); // std::string
 	arc( CEREAL_NVP( distance_ ) ); // Real
+	arc( CEREAL_NVP( include_focus_in_subset_ ) ); //bool
 	arc( CEREAL_NVP( focus_selector_ ) ); // ResidueSelectorCOP
-	arc( CEREAL_NVP( focus_set_ ) ); // _Bool
-	arc( CEREAL_NVP( use_focus_selector_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -306,9 +337,8 @@ core::select::residue_selector::NeighborhoodResidueSelector::load( Archive & arc
 	arc( distance_ ); // Real
 	std::shared_ptr< core::select::residue_selector::ResidueSelector > local_focus_selector;
 	arc( local_focus_selector ); // ResidueSelectorCOP
+	arc( include_focus_in_subset_ ); //bool
 	focus_selector_ = local_focus_selector; // copy the non-const pointer(s) into the const pointer(s)
-	arc( focus_set_ ); // _Bool
-	arc( use_focus_selector_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::NeighborhoodResidueSelector );

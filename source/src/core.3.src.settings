@@ -784,11 +784,15 @@ sources = {
 		"VDW_Energy",
 		"VDWTrie",
 	],
+	"core/select":[
+		"util",
+	],
 	"core/select/residue_selector": [
 		"AndResidueSelector",
 		"BinSelector",
 		"CachedResidueSubset",
 		"ChainSelector",
+		"GlycanResidueSelector",
 		"InterGroupInterfaceByVectorSelector",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",

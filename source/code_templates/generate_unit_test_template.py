@@ -83,6 +83,11 @@ class GenerateUnitTestTemplate(GenerateRosettaTemplates):
                 blocks.append(block)
             return "\n".join(blocks)
 
+    def print_dev_help(self):
+        print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
+                      self.get_option("class_name", fail_on_none=False)+".cxxtest.hh\n"
+
+
 if __name__ == "__main__":
     generate_files = GenerateUnitTestTemplate()
     generate_files.apply()

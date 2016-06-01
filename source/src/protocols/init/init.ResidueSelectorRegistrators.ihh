@@ -17,6 +17,9 @@
 namespace protocols {
 using core::select::residue_selector::ResidueSelectorRegistrator;
 
+static ResidueSelectorRegistrator< protocols::antibody::residue_selector::AntibodyRegionSelectorCreator > reg_AntibodyRegionSelectorCreator;
+static ResidueSelectorRegistrator< protocols::antibody::residue_selector::CDRResidueSelectorCreator > reg_CDRResidueSelectorCreator;
+
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 

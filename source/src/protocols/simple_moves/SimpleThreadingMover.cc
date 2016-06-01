@@ -23,9 +23,11 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/AA.hh>
+#include <core/select/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/loops/loops_main.hh>
+
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
@@ -36,7 +38,7 @@ static THREAD_LOCAL basic::Tracer TR("SimpleThreadingMover");
 
 namespace protocols {
 namespace simple_moves {
-
+	using namespace core::select;
 
 SimpleThreadingMover::SimpleThreadingMover():
 	protocols::moves::Mover("SimpleThreadingMover")
@@ -242,7 +244,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	if ( pack_neighbors_ ) {
 		utility::vector1< bool > mutant_resnums_and_neighbors = mutant_resnums;
 
-		protocols::loops::get_neighbor_residues(pose, mutant_resnums_and_neighbors, neighbor_dis_);
+		core::select::fill_neighbor_residues(pose, mutant_resnums_and_neighbors, neighbor_dis_);
 		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
 			if ( ! mutant_resnums_and_neighbors[ resnum ] ) {
 				turn_off_packing.include_residue( resnum );

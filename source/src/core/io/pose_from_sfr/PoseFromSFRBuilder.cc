@@ -250,7 +250,7 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 					||  ( link.resSeq1 == link.resSeq2 + 1 && link.name1 == " N  " && link.name2 == " C  " ) ) {
 				// We have a normal polymeric connection written as a LINK.
 				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCAA." << std::endl;
-			} else if ( link.resName1 == "CYS" && link.resName2 == "CYS" && link.name1 == "SG" && link.name2 == "SG" ) {
+			} else if ( link.resName1 == "CYS" && link.resName2 == "CYS" && utility::strip(link.name1) == "SG" && utility::strip(link.name2) == "SG" ) {
 				// We have an SSBOND redundantly specified as a LINK.
 				TR.Debug << "Omitting LINK record that gives a SECOND specification of a disulfide bond." << std::endl;
 			} else {

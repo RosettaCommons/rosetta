@@ -11,6 +11,7 @@
 /// @brief  Class, much like the OperateOnResidueSubset task operation, to apply a particular
 ///         residue-level task operation on the residues identified by a ResidueSelector.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - Generalized for any vector1< bool >, flip_subset.
 
 // Unit Headers
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
@@ -48,16 +49,28 @@ static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.OperateOnResidue
 OperateOnResidueSubset::OperateOnResidueSubset()
 : parent(),
 	op_(/* 0 */),
-	residue_selector_(/* 0 */)
+	residue_selector_(/* 0 */),
+	flip_subset_(false)
 {}
 
 OperateOnResidueSubset::OperateOnResidueSubset(
 	ResLvlTaskOperationCOP rlto,
-	core::select::residue_selector::ResidueSelectorCOP selector
+	core::select::residue_selector::ResidueSelectorCOP selector,
+	bool flip_subset
 )
 : parent(),
 	op_( rlto ),
-	residue_selector_( selector )
+	residue_selector_( selector ),
+	flip_subset_(flip_subset)
+{}
+
+OperateOnResidueSubset::OperateOnResidueSubset(
+	ResLvlTaskOperationCOP rlto,
+	utility::vector1< bool > const & subset
+)
+: parent(),
+	op_( rlto ),
+	user_provided_subset_( subset )
 {}
 
 OperateOnResidueSubset::OperateOnResidueSubset( OperateOnResidueSubset const & src )
@@ -72,6 +85,8 @@ OperateOnResidueSubset::operator = ( OperateOnResidueSubset const & src )
 	if ( this != & src ) {
 		op_ = src.op_;
 		residue_selector_ = src.residue_selector_;
+		user_provided_subset_ = src.user_provided_subset_;
+		flip_subset_ = src.flip_subset_;
 	}
 	return *this;
 }
@@ -89,8 +104,21 @@ OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 	Size const nres( pose.total_residue() );
 	runtime_assert( nres == ptask.total_residue() );
 
-	core::select::residue_selector::ResidueSubset subset = residue_selector_->apply( pose );
+	core::select::residue_selector::ResidueSubset subset;
+	
+	if (user_provided_subset_.size() > 0){
+		subset = user_provided_subset_;
+	}
+	else{
+		subset = residue_selector_->apply( pose );
+	}
 
+
+	// Take the opposite of what the selection has chosen.
+	if ( flip_subset_ ){
+		subset.flip();
+	}
+	
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( subset[ ii ] ) op_->apply( ptask.nonconst_residue_task( ii ) );
 	}
@@ -101,10 +129,19 @@ void OperateOnResidueSubset::op( ResLvlTaskOperationCOP op_in )
 	op_ = op_in;
 }
 
+void OperateOnResidueSubset::flip_subset( bool flip_subset ){
+	flip_subset_ = flip_subset;
+}
+
 void OperateOnResidueSubset::selector( core::select::residue_selector::ResidueSelectorCOP rs_in )
 {
 	residue_selector_ = rs_in;
 }
+
+void OperateOnResidueSubset::subset(utility::vector1<bool> const & subset_residues){
+	user_provided_subset_ = subset_residues;
+}
+
 
 /// @brief tag parsing for factory construction of this class and its children
 /*!

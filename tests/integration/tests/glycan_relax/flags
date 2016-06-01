@@ -1,3 +1,6 @@
+#s input/pareto_4ZMJ_BG505_unlig_bg18_0006_V1_NGK_V1-extended_1615_man5_137G_133G_0002.pdb
+-s input/pareto_original.pdb
+#-s input/9_mer_linear_glycan_test.pdb
 
 -include_sugars
 -write_pdb_link_records

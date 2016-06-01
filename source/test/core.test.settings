@@ -441,6 +441,7 @@ sources = {
 	"select/residue_selector" : [
 		"AndResidueSelector",
 		"BinSelector",
+		"GlycanResidueSelectorTest",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",
 		"ResidueIndexSelector",
@@ -514,6 +515,7 @@ testinputfiles = [
 	"chemical/carbohydrates/codes_to_roots.map",
 	"chemical/carbohydrates/GlcN.pdb",
 	"chemical/carbohydrates/glycosylated_peptide.pdb",
+	"chemical/carbohydrates/gp120_2glycans_man5.pdb",
 	"chemical/carbohydrates/isomaltose.pdb",
 	"chemical/carbohydrates/lactose.pdb",
 	"chemical/carbohydrates/Lex.pdb",

@@ -139,6 +139,8 @@ extract_continuous_chunks(core::pose::Pose const & pose,
 ///
 /// @param Stringent cutoffs are: 1.5, 15, 15
 ///
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+///
 std::pair<bool, core::Size>
 has_severe_pep_bond_geom_issues(
 	core::pose::Pose const & pose,
@@ -159,6 +161,8 @@ has_severe_pep_bond_geom_issues(
 ///  deviation is +/- from the min/max values of the CDL.
 ///
 /// @param Stringent cutoffs are: 1.5, 15, 15
+///
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 ///
 std::pair<bool, core::Size>
 has_severe_pep_bond_geom_issues(

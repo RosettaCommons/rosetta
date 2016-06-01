@@ -20,6 +20,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/select/util.hh>
 #include <core/conformation/util.hh> //idealize
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -39,8 +40,9 @@ static THREAD_LOCAL basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer"
 
 namespace protocols {
 namespace antibody {
-using namespace core;
 
+using namespace core;
+using namespace core::select;
 
 GraftedStemOptimizer::GraftedStemOptimizer( CDRNameEnum const & cdr_name,
 	AntibodyInfoOP antibody_info) : Mover( "GraftedStemOptimizer" ) {
@@ -347,7 +349,7 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 	}
 
 	if ( include_nb_sc ) {
-		loops::get_tenA_neighbor_residues(pose, sc_is_flexible);
+		get_tenA_neighbor_residues(pose, sc_is_flexible);
 	}
 	// a function in the loops namespace to calculate the neighbors.
 	// for the "true" values in "sc_is_flexible", the function will find
@@ -389,7 +391,7 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 	}
 
 	if ( include_nb_sc ) {
-		loops::get_tenA_neighbor_residues(pose, sc_is_packable);
+		get_tenA_neighbor_residues(pose, sc_is_packable);
 	}
 
 	using namespace protocols::toolbox::task_operations;

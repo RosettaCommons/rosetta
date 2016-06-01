@@ -25,11 +25,13 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -48,9 +50,9 @@ namespace carbohydrates {
 ///    -> .17 +/- 15 degrees
 ///    -> .086 +/- 45 degrees
 ///    -> .044 +/- 90 degrees
-///  .10 MinMover
+///  .05 MinMover
+///  .05 PackRotamersMover
 ///
-///  ?.10 PackRotamersMover for neighbor sidechains if set?
 class GlycanRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -60,7 +62,7 @@ public:
 	//@brief constructor with arguments
 	GlycanRelaxMover( core::kinematics::MoveMapCOP mm,
 		core::scoring::ScoreFunctionCOP scorefxn,
-		core::Size rounds = 50);
+		core::Size rounds = 75);
 
 	// copy constructor
 	GlycanRelaxMover( GlycanRelaxMover const & src );
@@ -74,10 +76,15 @@ public:
 public:
 
 
-
+	///@brief Set the Movemap
 	void
 	set_movemap(core::kinematics::MoveMapCOP movemap);
-
+	
+	///@brief Set the TaskFactory to control side-chain packing of surrounding amino acids and the OH groups of the glycans.
+	void
+	set_taskfactory(core::pack::task::TaskFactoryCOP tf);
+	
+	///@brief Set the ScoreFunction
 	void
 	set_scorefunction( core::scoring::ScoreFunctionCOP scorefxn);
 
@@ -134,18 +141,26 @@ private:
 		core::kinematics::MoveMapOP mm,
 		core::scoring::ScoreFunctionOP score,
 		core::Size round);
-
+	
+	void
+	setup_default_task_factory(utility::vector1< bool > const & glycan_residues );
+	
 private:
 
 	core::kinematics::MoveMapOP full_movemap_;
 	core::kinematics::MoveMapOP glycan_movemap_;
-
+	
+	core::pack::task::TaskFactoryCOP tf_;
+	
 	moves::MonteCarloOP mc_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 
 	LinkageConformerMoverOP linkage_mover_;
 	moves::RandomMoverOP weighted_random_mover_;
+	
 	simple_moves::MinMoverOP min_mover_;
+	simple_moves::PackRotamersMoverOP packer_;
+	
 	core::Size rounds_;
 	core::Real kt_;
 
@@ -164,7 +179,7 @@ private:
 	bool use_branches_;
 
 	utility::vector1< std::string > parsed_positions_;
-	utility::vector1< core::Size > positions_;
+	core::Real pack_distance_;
 
 
 };

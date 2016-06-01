@@ -42,6 +42,9 @@ sources = {
 		"AntibodyDesignOptions",
 		"AntibodySeqDesign",
 	],
+	"antibody/residue_selector":[
+		"AntibodyResidueSelectorsTest",
+	],
 	"antibody/grafting":[
 		"regex_based_cdr_detection",
 		"scs_functor_filtering",

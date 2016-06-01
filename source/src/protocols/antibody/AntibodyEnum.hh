@@ -103,7 +103,8 @@ enum AntibodyRegionEnum {
 	cdr_region,
 	framework_region,
 	AntibodyRegionEnum_start = antigen_region,
-	AntibodyRegionEnum_total = framework_region
+	AntibodyRegionEnum_total = framework_region,
+	unknown_ab_region
 };
 
 ///Main enumerator for AntibodyNumbering.

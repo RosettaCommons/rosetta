@@ -9,8 +9,9 @@
 
 /// @file   core/pack/task/operation/OperateOnResidueSubset.hh
 /// @brief  Class, much like the OperateOnCertainResidues task operation, to apply a particular
-///         residue-level task operation on the residues identified by a ResidueSelector.
+///         residue-level task operation on the residues identified by a ResidueSelector (Or a pre-selected set of residues).
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - Generalized for any vector1< bool >, flip_subset.
 
 #ifndef INCLUDED_core_pack_task_operation_OperateOnResidueSubset_hh
 #define INCLUDED_core_pack_task_operation_OperateOnResidueSubset_hh
@@ -42,6 +43,8 @@ namespace pack {
 namespace task {
 namespace operation {
 
+/// @brief  Class, much like the OperateOnCertainResidues task operation, to apply a particular
+///         residue-level task operation on the residues identified by a ResidueSelector (Or a pre-selected subset).
 class OperateOnResidueSubset : public TaskOperation
 {
 public:
@@ -51,7 +54,9 @@ public:
 
 public:
 	OperateOnResidueSubset();
-	OperateOnResidueSubset( ResLvlTaskOperationCOP, core::select::residue_selector::ResidueSelectorCOP );
+	OperateOnResidueSubset( ResLvlTaskOperationCOP, core::select::residue_selector::ResidueSelectorCOP, bool flip_subset = false );
+	OperateOnResidueSubset( ResLvlTaskOperationCOP, utility::vector1< bool > const & subset);
+	
 	OperateOnResidueSubset( OperateOnResidueSubset const & );
 	OperateOnResidueSubset & operator = ( OperateOnResidueSubset const & );
 	virtual ~OperateOnResidueSubset();
@@ -59,10 +64,21 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( Pose const &, PackerTask & ) const;
 
+public:
+
 	/// @brief sets the ResLvlTaskOperation that will be applied to residues
 	void op( ResLvlTaskOperationCOP );
+	
 	/// @brief sets the ResidueSelector that will be used to determine which residues to apply the RLTOP to
 	void selector( core::select::residue_selector::ResidueSelectorCOP );
+	
+	/// @brief sets a specific subset that will be operated on instead of a selector itself.
+	void subset( utility::vector1< bool > const & subset_residues);
+	
+	/// @brief Flip the subset on apply.  False becomes True, True becomes False.  Easier to interact with certain RLTOP.
+	void flip_subset( bool flip);
+	
+public:
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter
 	virtual void parse_tag( TagCOP, DataMap & );
@@ -73,6 +89,8 @@ public:
 private:
 	ResLvlTaskOperationCOP op_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
+	utility::vector1< bool > user_provided_subset_;
+	bool flip_subset_;
 
 };
 

@@ -279,7 +279,7 @@ public:
 
 
 	}
-	void test_graft_tf_generation() {
+	void test_graft_tf_generation1() {
 		AntibodySeqDesignTFCreator creator =  AntibodySeqDesignTFCreator(ab_info, design_options, true);
 		creator.set_design_H3_stem(false);
 		TaskFactoryOP tf( new TaskFactory() );
@@ -296,7 +296,22 @@ public:
 		tf = creator.generate_tf_seq_design_graft_design(pose, l1, l1_neighbors);
 		assert_region_design_is_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, antigen_region);
 
+
+	}
+	void test_graft_tf_generation2() {
+		AntibodySeqDesignTFCreator creator =  AntibodySeqDesignTFCreator(ab_info, design_options, true);
+		creator.set_design_H3_stem(false);
+		TaskFactoryOP tf( new TaskFactory() );
+
+		TR << "--TF used for graft design" << std::endl;
+		utility::vector1<bool> l1_neighbors(8, false);
+		l1_neighbors[ l3 ] = true;
+		l1_neighbors[ l2 ] = true;
+		l1_neighbors[ h3 ] = true;
+
 		creator.design_framework(false);
+		creator.design_antigen(false);
+
 		tf = creator.generate_tf_seq_design_graft_design(pose, l1, l1_neighbors);
 
 		utility::vector1<bool> disabled_cdrs(8, false);
@@ -306,7 +321,7 @@ public:
 		//H1 is set to design in design_options.
 
 		assert_cdr_design_disabled(pose, tf->create_task_and_apply_taskoperations(pose), ab_info, disabled_cdrs);
-		output_or_test(tf, pose, first_run, "AntibodySeqDesign_graft_tf", inpath, first_run_outpath);
+		//output_or_test(tf, pose, first_run, "AntibodySeqDesign_graft_tf", inpath, first_run_outpath);
 
 	}
 	void test_utility_functions() {

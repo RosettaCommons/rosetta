@@ -1,7 +1,7 @@
 -s pareto_4JAN_CH103_GP120_renum_0001.pdb 
 -out:prefix multiple_ 
 -parser:protocol model_glycans_simple.xml 
--parser:script_vars positions=463G,460G glycosylation=man3,man5,man9
+-parser:script_vars positions=463G,460G glycosylation=man5
 -include_sugars
 -write_pdb_link_records
 -glycan_relax_rounds 25

@@ -167,13 +167,26 @@ class GenerateRosettaTemplates(object):
                       self.get_option("class_name", fail_on_none=False)+"*"
 
 
-            if self.options.type == "residue_selector" and self.options.namespace == residue_selector_namespace:
-                print "\nA Creator class should be declared in core::select::residue_selector::ResidueSelectorCreators.hh"
+            if self.options.type == "residue_selector":
 
-            if self.options.type == "mover":
+                if self.options.namespace == residue_selector_namespace:
+                    print "\nA Creator class should be declared in "+self.get_base_outdir()+"/"+ \
+                        "core/select/residue_selector/ResidueSelectorCreators.hh"
+
+                if self.options.namespace[0] == "core":
+                    print "\nRegister in (core.5): \n"+\
+                            "   "+self.get_base_outdir()+"/"+"core/init/init.cc"
+                else:
+                    print "\nRegister in (protocols.7):\n" \
+                            "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorCreators.ihh\n" \
+                            "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorRegistrators.ihh\n"
+
+
+
+            elif self.options.type == "mover":
                 print "\nMover Creator should be registered in (protocols.7) \n" \
-                      "   protocols/init/init.MoverRegistrators.ihh and \n" \
-                      "   protocols/init/init.MoverCreators.ihh\n"
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverRegistrators.ihh and \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverCreators.ihh\n"
 
 
 

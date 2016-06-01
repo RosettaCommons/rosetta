@@ -11,6 +11,8 @@
 /// @brief  The NeighborhoodResidueSelector selects residues in a given proximity of set focus residues.
 ///  Clears the Passed ResidueSubset.
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - 10 A neighbor graph, simplification, ResidueSubset as focus, clean up, etc.
+
 
 #ifndef INCLUDED_core_select_residue_selector_NeighborhoodResidueSelector_HH
 #define INCLUDED_core_select_residue_selector_NeighborhoodResidueSelector_HH
@@ -42,10 +44,9 @@ namespace residue_selector {
 
 /// @brief The NeighborhoodResidueSelector selects residues neighboring a defined set of residues
 /// (the focus). The focus residue set can be obtained from another ResidueSelector, from a
-/// std::set of residue positions or from a string specifying residue positions.
+/// set of positions.  Focus is included in subset by default.  Use include_focus_in_subset to change this!
 ///
-/// Note: ResidueSubset includes focus residues, also does not use
-///  interaction graph to calculate neighbors.
+/// Note:  Uses the 10 A neighbor graph by default.  If neighbor distance is great than this, we use slow-style double for loop.
 ///
 class NeighborhoodResidueSelector : public ResidueSelector {
 public:
@@ -60,11 +61,44 @@ public:
 	/// @details Copy this object and return an owning pointer to the new object.
 	virtual ResidueSelectorOP clone() const;
 
-	NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance );
+	NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance, bool include_focus_in_subset = true );
+	NeighborhoodResidueSelector( utility::vector1< bool > const & focus, Real distance, bool include_focus_in_subset = true);
+	
 	virtual ~NeighborhoodResidueSelector();
 
+public:
+	
+	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
+	void
+	set_focus( std::set<Size> const &focus );
+	
+	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
+	void
+	set_focus( std::string const & focus_str );
+	
+	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
+	void
+	set_focus( utility::vector1< bool > const & focus);
+	
+	/// @brief Set a Residue Selector for the focus
+	void
+	set_focus_selector( ResidueSelectorCOP rs );
+	
+	/// @brief Set the distance we will be measuring to get neighbors
+	void
+	set_distance( Real distance );
+	
+	///@brief Setting to include the fucus in the resulting subset or not. Default is TRUE
+	void
+	set_include_focus_in_subset( bool include_focus);
+	
+public:
+	
+	
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
-	virtual void parse_my_tag(
+	
+	virtual void
+	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
 	);
@@ -73,23 +107,28 @@ public:
 	std::string
 	get_name() const;
 
-	static std::string class_name();
-	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string
+	class_name();
+	
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-	//unit-specific
-	/**
-	* @brief adds a ResidueSelector
-	*/
-	void set_focus( std::set<Size> const &focus );
-	void set_focus( std::string const & focus_str );
-	void set_focus_selector( ResidueSelectorCOP rs );
-	void set_distance( Real distance );
 
-private: //functions
-	void get_focus( core::pose::Pose const &, ResidueSubset &, std::set< Size > &) const;
+	
+private:
 
-private: // data members
+	void
+	get_focus( core::pose::Pose const &, ResidueSubset &, utility::vector1< bool > &) const;
+
+	void
+	set_defaults();
+	
+	void
+	clear_focus();
+	
+private:
+
 	// data in focus and focus_string will be stitched together.
 	// focus_str_ can only be parsed when pose is available (PDB mappings)
 	// think of either-or behavior also between set and string
@@ -99,12 +138,9 @@ private: // data members
 
 	// focus residues may be selected directly be another ResidueSelector
 	ResidueSelectorCOP focus_selector_;
-
-	// has any focus been set
-	bool focus_set_;
-
-	// is the focus selector the last source of focus that has been set
-	bool use_focus_selector_;
+	
+	bool include_focus_in_subset_;
+	
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

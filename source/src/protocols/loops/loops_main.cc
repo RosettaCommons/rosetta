@@ -45,6 +45,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/TenANeighborGraph.hh>
+#include <core/select/util.hh>
 #include <core/types.hh>
 
 // Basic headers
@@ -72,6 +73,7 @@
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
+using namespace core::select;
 
 namespace protocols {
 namespace loops {
@@ -767,44 +769,6 @@ ccd_close_loops(
 }
 
 
-void get_neighbor_residues(
-	core::pose::Pose const & pose,
-	utility::vector1< bool > & residue_positions,
-	core::Real neighbor_dis
-)
-{
-	utility::vector1< bool > selection = residue_positions;
-	get_tenA_neighbor_residues(pose, residue_positions);
-	filter_neighbors_by_distance(pose, selection, residue_positions, neighbor_dis);
-
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @details use TenANeighborGraph. As input, residue_positions[i] is true for residues to be counted.
-/// As output, residue_position[i] is true for all neighbor residues including orginal input residues.
-/// The function is used to find all neighboring residues of the loop residues in case they need to be
-/// repacked or minimized in fullatom refinement.
-void get_tenA_neighbor_residues(
-	pose::Pose const & pose,
-	utility::vector1<bool> & residue_positions
-)
-{
-	//make a local copy first because we will change content in residue_positions
-	utility::vector1<bool> local_residue_positions = residue_positions;
-	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-	for ( Size i=1; i <= local_residue_positions.size(); ++i ) {
-		if ( ! local_residue_positions[i] ) continue;
-		core::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
-		for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
-				it != current_node->const_edge_list_end(); ++it ) {
-			Size pos = (*it)->get_other_ind(i);
-			if ( pose.residue(pos).type().is_disulfide_bonded() ) {
-				residue_positions[ pos ] = false;
-			} else {
-				residue_positions[ pos ] = true;
-			}
-		}
-	}
-}
 /////////////////////////////////////////////////////////////////////////////
 /// @details use 10A CB distance cutoff as neighboring residue defintion. The function
 ///is used for conveniently setting up sidechain movable residues in loop modeling.
@@ -829,13 +793,26 @@ void select_loop_residues(
 		}
 	}
 
-	if ( include_neighbors ) get_tenA_neighbor_residues( pose, map );
+	if ( include_neighbors ) {
+		fill_tenA_neighbor_residues( pose, map );
+		for (core::Size i = 1; i <= map.size(); ++i){
+			if (map[ i ] && pose.residue( i ).type().is_disulfide_bonded()){
+				map[ i ] = false;
+			}
+		}
+		
+
+		
+	
+	}
 	// if the neighbor_dist is less than 10A, filter the 10A neighbors to that distance
 	if ( neighbor_dist < 10.0 ) {
 		filter_loop_neighbors_by_distance( pose, map, loops, neighbor_dist );
 	}
+	
 	return;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details use 10A CB distance cutoff as neighboring residue defintion. The function
@@ -905,38 +882,9 @@ void filter_loop_neighbors_by_distance(
 		}
 	}
 	filter_neighbors_by_distance(pose, loop_selection, map, dist_cutoff);
-
 }
 
-void filter_neighbors_by_distance(
-	core::pose::Pose const & pose,
-	utility::vector1<bool> & selection,
-	utility::vector1<bool> & selection_and_neighbors,
-	core::Real & dist_cutoff
-)
-{
 
-	for ( Size i = 1; i <= selection_and_neighbors.size(); ++i ) {
-		if ( selection_and_neighbors[ i ] == false ) continue;
-
-		selection_and_neighbors[ i ] = false; //Get ready to change this.
-		for ( Size x = 1; x <= selection.size(); ++x ) {
-			if ( ! selection[x] ) continue;
-
-			// Get the atom vectors for loop and scaffold CB, or CA if GLY
-			numeric::xyzVector< Real > neighbor_vec;
-			numeric::xyzVector< Real > select_vec;
-			neighbor_vec = pose.residue( i ).xyz( pose.residue( i ).nbr_atom() );
-			select_vec = pose.residue( x ).xyz( pose.residue( x ).nbr_atom() );
-			// only keep as neighbor if dist within cutoff
-			Real dist = neighbor_vec.distance( select_vec );
-			if ( dist <= dist_cutoff ) {
-				selection_and_neighbors[ i ] = true;
-			}
-		}
-	}
-
-}
 ///////////////////////////////////////////////////////////////////////////////////////////
 // if the pose sequence extends beyond the sequence from the mapping, this will extend the mapping
 // semi-special-case-HACK, logic needs clarifying

@@ -663,6 +663,7 @@ static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSel
 static ResidueSelectorRegistrator< BinSelectorCreator > reg_BinSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
 static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
+static ResidueSelectorRegistrator< GlycanResidueSelectorCreator > reg_GlycanResidueSelectorCreator;
 static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;
 static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
 static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;

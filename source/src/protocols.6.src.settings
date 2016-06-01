@@ -88,6 +88,10 @@ sources = {
 		'scs_multi_template',
 		'util',
 	],
+	"protocols/antibody/residue_selector":[
+		'CDRResidueSelector',
+		'AntibodyRegionSelector',
+	],
 	"protocols/antibody/snugdock":[
 		"SnugDock",
 		"SnugDockProtocol",

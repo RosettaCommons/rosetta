@@ -7,15 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   --path--/--class--.hh
-/// @brief  --brief--
-/// @author --name-- (--email--)
+/// @file   protocols/antibody/residue_selector/AntibodyRegionSelector.hh
+/// @brief  A simple selector to select residues of particular antibody regions.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_--path_underscore--_--class--_HH
-#define INCLUDED_--path_underscore--_--class--_HH
+#ifndef INCLUDED_protocols_antibody_residue_selector_AntibodyRegionSelector_HH
+#define INCLUDED_protocols_antibody_residue_selector_AntibodyRegionSelector_HH
 
 // Unit headers
-#include <--path--/--class--.fwd.hh>
+#include <protocols/antibody/residue_selector/AntibodyRegionSelector.fwd.hh>
+#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyEnum.hh>
 
 // Package headers
 #include <core/types.hh>
@@ -30,23 +32,40 @@
 // C++ headers
 #include <set>
 
---namespace--
+namespace protocols {
+namespace antibody {
+namespace residue_selector {
 
-/// @brief --brief--
-class --class-- : public core::select::residue_selector::ResidueSelector {
+/// @brief A simple selector to select residues of particular antibody regions.
+class AntibodyRegionSelector : public core::select::residue_selector::ResidueSelector {
 public:
 
 	/// @brief Constructor.
-	--class--();
-
-    /// @brief Copy Constructor.  Use if you have non-basic private variables (classes, OPs, etc.)
-	--class--(--class-- const & src);
+	AntibodyRegionSelector();
+	
+	/// @brief Constructor Passing AntibodyInfo
+	AntibodyRegionSelector( AntibodyInfoCOP ab_info );
+	
+	/// @brief Constructor giving the AntibodyRegion to select on.
+	AntibodyRegionSelector( AntibodyInfoCOP ab_info, AntibodyRegionEnum region );
+	
+	/// @brief Copy Constructor
+	AntibodyRegionSelector( AntibodyRegionSelector const & src);
+	
 public:
 
+	void
+	set_region( AntibodyRegionEnum region );
+	
+	void
+	set_ab_info( AntibodyInfoCOP ab_info);
+	
+	
+public:
 
 	/// @brief Destructor.
 	virtual
-	~--class--();
+	~AntibodyRegionSelector();
 
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
@@ -82,12 +101,25 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
+	
+	void
+	set_defaults();
+	
+private:
 
+	AntibodyInfoCOP ab_info_;
+	AntibodyRegionEnum region_;
 
+	///Needed for default and RS constructor.
+	AntibodyNumberingSchemeEnum numbering_scheme_;
+	CDRDefinitionEnum cdr_definition_;
+	
 };
 
 
---end_namespace--
+} //protocols
+} //antibody
+} //residue_selector
 
 
-#endif //INCLUDED--path--_--class--_hh
+#endif //INCLUDEDprotocols/antibody/residue_selector_AntibodyRegionSelector_hh

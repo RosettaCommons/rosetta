@@ -41,13 +41,25 @@ using namespace core::select::residue_selector;
 
 /// @brief Constructor.
 ///
---class--::--class--() //:
-	//TODO -- initialize all vars here.
-{}
+--class--::--class--():
+    ResidueSelector()
+{
+
+
+
+}
 
 /// @brief Destructor.
 ///
 --class--::~--class--() {}
+
+
+--class--::--class--( --class-- const & src ):
+	TaskOperation(src)
+
+{
+
+}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -60,14 +72,29 @@ core::select::residue_selector::ResidueSelectorOP
 	);
 }
 
-/// @brief "Apply" function.
-/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
-/// indicating whether each residue is selected ("true") or not ("false").
-ResidueSubset
---class--::apply(
-	core::pose::Pose const & //pose
-) const {
-	//TODO -- write your apply function here.
+ResidueSelectorOP
+--class--Creator::create_residue_selector() const {
+	return core::select::residue_selector::ResidueSelectorOP(
+		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
+			--class--OP( new --class-- )
+		)
+	);
+}
+
+
+std::string --class--::get_name() const
+{
+	return --class--::class_name();
+}
+
+std::string --class--::class_name()
+{
+	return "--class--";
+}
+
+std::string
+--class--Creator::keyname() const {
+	return --class--::class_name();
 }
 
 /// @brief XML parse.
@@ -81,41 +108,37 @@ void
 
 }
 
-std::string --class--::get_name() const
-{
-	return --class--::class_name();
-}
-
-std::string --class--::class_name()
-{
-	return "--class--";
-}
-
 void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-}
+    //Syntax Example:
+	//using namespace utility::tag;
+	//AttributeList attributes;
+	//attributes
+	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xs_boolean, "true" )
+	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xs_boolean, "true" );
+	//xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 
-ResidueSelectorOP
---class--Creator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP(
-		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-			--class--OP( new --class-- )
-		)
-	);
-}
-
-std::string
---class--Creator::keyname() const {
-	return --class--::class_name();
 }
 
 /// @brief Provide XSD information, allowing automatic evaluation of bad XML.
 ///
 void
---class--Creator::provide_selector_xsd(
+--class--Creator::provide_xml_schema(
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	--class--::provide_selector_xsd( xsd );
+	--class--::provide_xml_schema( xsd );
+}
+
+
+
+/// @brief "Apply" function.
+/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
+/// indicating whether each residue is selected ("true") or not ("false").
+ResidueSubset
+--class--::apply(
+	core::pose::Pose const & //pose
+) const {
+
 }
 
 

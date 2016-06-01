@@ -38,6 +38,9 @@
 namespace protocols {
 namespace simple_moves {
 
+///@brief JAB - This mover has NO documentation.  If you know what this mover does and how it works, please put the info HERE!
+///@details Noted on 5/16/16
+///
 class CoupledMover : public protocols::moves::Mover {
 
 public:
