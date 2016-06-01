@@ -308,7 +308,7 @@ AntibodyModelerProtocol::setup_objects() {
 		// Always enable constraints in low-resolution mode (i.e. when the sampling is aggressive enough for it to matter)
 		loop_scorefxn_centroid_->set_weight( scoring::dihedral_constraint, cst_weight_ );
 		loop_scorefxn_centroid_->set_weight( scoring::angle_constraint, cst_weight_ );
-		
+
 		if ( all_atom_mode_constraint_ ) {
 			loop_scorefxn_highres_->set_weight( scoring::dihedral_constraint, cst_weight_ );
 			loop_scorefxn_highres_->set_weight( scoring::angle_constraint, cst_weight_ );
@@ -357,7 +357,7 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 
 	//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 	//TR<<*my_task2<<std::endl; exit(-1);
-	
+
 }
 
 
@@ -411,11 +411,11 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 				cdr_constraint_->apply( pose );
 			} else {
 				// Create constraints on-the-fly here.
-				
+
 				// All of this stuff, and the work that is being done in finalize_setup() for that matter, only needs to happen
 				// once per input. I don't trust the 'fresh_instance' and related settings in the other antibody movers well
 				// enough to actually rely on that, so I'm going to do this every apply for now.
-				
+
 				// Get relevant residue numbers
 				Size kink_begin = ab_info_->kink_begin( pose );
 

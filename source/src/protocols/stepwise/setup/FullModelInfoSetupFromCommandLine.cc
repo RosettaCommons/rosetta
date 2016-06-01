@@ -249,8 +249,8 @@ fill_full_model_info_from_command_line( pose::Pose & pose, vector1< PoseOP > & o
 ///////////////////////////////////////////////////////////////////////////////////////
 vector1< Size >
 get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
-															vector1< char > const & conventional_chains,
-															vector1< int  > const & conventional_numbering ) {
+	vector1< char > const & conventional_chains,
+	vector1< int  > const & conventional_numbering ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1< Size > cutpoints;
@@ -285,9 +285,9 @@ get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fas
 // Kind of a hack. Would be better to somehow figure out if residue is not polymeric --
 //  perhaps try to instantiate with ResidueTypeSet?
 void
-get_extra_cutpoints_from_names(	Size const nres,
-																vector1< Size > & cutpoints,
-																std::map< Size, std::string > const & non_standard_residue_map )
+get_extra_cutpoints_from_names( Size const nres,
+	vector1< Size > & cutpoints,
+	std::map< Size, std::string > const & non_standard_residue_map )
 {
 	for ( Size n = 1; n <= nres; n++ ) {
 		if ( cutpoints.has_value( n ) ) continue;
@@ -300,9 +300,9 @@ get_extra_cutpoints_from_names(	Size const nres,
 ///////////////////////////////////////////////////////////////////////////////////////
 vector1< Size >
 get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
-							 std::map< Size, std::string > const & non_standard_residue_map,
-							 vector1< char > const & conventional_chains,
-							 vector1< int  > const & conventional_numbering ) {
+	std::map< Size, std::string > const & non_standard_residue_map,
+	vector1< char > const & conventional_chains,
+	vector1< int  > const & conventional_numbering ) {
 	vector1< Size > cutpoints = get_cutpoints_from_numbering( fasta_sequences, conventional_chains, conventional_numbering );
 	get_extra_cutpoints_from_names( conventional_numbering.size(), cutpoints, non_standard_residue_map );
 	return cutpoints;
@@ -411,7 +411,7 @@ parse_out_non_standard_residues( std::string & sequence ) {
 //   ensure 6 waters per Mg(2+).
 void
 setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_residue_map,
-																 vector1< core::sequence::SequenceOP > & fasta_sequences ) {
+	vector1< core::sequence::SequenceOP > & fasta_sequences ) {
 	using namespace core::sequence;
 
 	// how many magnesiums are there? how many waters are there?
@@ -421,10 +421,10 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 		for ( Size i = 1; i <= sequence.size(); i++ ) {
 			if ( sequence[ i - 1 ] == 'Z' ) {
 				std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( offset+i );
-				if ( it != non_standard_residue_map.end() && it->second == "MG") 	num_magnesiums++;
+				if ( it != non_standard_residue_map.end() && it->second == "MG" )  num_magnesiums++;
 			} else if ( sequence[ i - 1 ] == 'w' ) {
 				std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( offset+i );
-				if ( it != non_standard_residue_map.end() && it->second == "HOH" ) 	num_waters++;
+				if ( it != non_standard_residue_map.end() && it->second == "HOH" )  num_waters++;
 			}
 		}
 		offset += sequence.size();
@@ -475,7 +475,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->set_conventional_chains( conventional_chains );
 	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 	vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
-																																conventional_chains, conventional_numbering );
+		conventional_chains, conventional_numbering );
 
 	if ( option[ full_model::cutpoint_open ].user() ) {
 		cutpoint_open_in_full_model =

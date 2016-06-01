@@ -1,0 +1,5 @@
+# This is a test file for setting up design of cyclic peptides.
+DEFAULT ALA GLY DARG
+1 NORLEU ALA ASP GLU ARG LYS
+3 PHE VAL DMET DILE DLEU LEU # DTYR DTRP
+#4 PHE VAL DMET DILE ASP GLU ARG LYS

@@ -35,8 +35,8 @@ fixup_magnesiums( core::pose::Pose & pose );
 
 void
 hydrate_magnesiums( core::pose::Pose & pose,
-										bool use_virtual_waters_as_placeholders = true,
-										bool test_all_mg_hydration_frames = false );
+	bool use_virtual_waters_as_placeholders = true,
+	bool test_all_mg_hydration_frames = false );
 
 core::scoring::ScoreFunctionOP
 get_mg_scorefxn();
@@ -63,36 +63,36 @@ define_mg_water_map( core::pose::Pose const & pose );
 
 utility::vector1< std::pair< core::Size, core::Size > >
 get_mg_water_pairs( core::pose::Pose const & pose,
-										bool const exclude_virtual_waters = true ) ;
+	bool const exclude_virtual_waters = true ) ;
 
 utility::vector1< std::pair< core::Size, core::Size > >
 get_mg_water_pairs( core::pose::Pose const & pose,
-										utility::vector1< core::Size > const & mg_res,
-										bool const exclude_virtual_waters = true ) ;
+	utility::vector1< core::Size > const & mg_res,
+	bool const exclude_virtual_waters = true ) ;
 
 utility::vector1< core::id::AtomID >
 get_mg_ligands( core::pose::Pose const & pose, core::Size const i,
-								bool const filter_for_acceptors = true,
-								bool const exclude_virtual_waters = true );
+	bool const filter_for_acceptors = true,
+	bool const exclude_virtual_waters = true );
 
 utility::vector1< core::id::AtomID >
 filter_acceptor_ligands( core::pose::Pose const & pose, utility::vector1< core::id::AtomID > const & ligands );
 
 core::Size
 instantiate_water_at_octahedral_vertex( core::pose::Pose & pose,
-																				core::Size const mg_res,
-																				core::Size const n /* 1 ... 6*/,
-																				core::Distance const hoh_distance = MG_HOH_DISTANCE,
-																				bool const replace_residue  = false,
-																				bool const virtual_water  = false );
+	core::Size const mg_res,
+	core::Size const n /* 1 ... 6*/,
+	core::Distance const hoh_distance = MG_HOH_DISTANCE,
+	bool const replace_residue  = false,
+	bool const virtual_water  = false );
 
 void
 update_jump_atoms_for_mg_bound_water( core::pose::Pose & pose, core::Size const n );
 
 core::Size
 append_mg_bound_water(  core::pose::Pose & pose,
-												core::conformation::Residue const & rsd,
-												core::Size const mg_res );
+	core::conformation::Residue const & rsd,
+	core::Size const mg_res );
 
 utility::vector1< core::Size >
 find_bound_waters_that_are_daughters_in_fold_tree( core::pose::Pose const & pose, core::Size const mg_res );

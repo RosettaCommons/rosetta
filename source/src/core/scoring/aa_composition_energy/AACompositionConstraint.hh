@@ -78,6 +78,11 @@ public: //Functions that actually do stuff:
 	/// @brief Initialize the AACompositionEnergySetup object from a file.
 	void initialize_from_file( std::string const &filename );
 
+	/// @brief Initialize the AACompositionEnergySetup object from the contents of a file.
+	/// @details Allows external code to initialize a constriant object without having the
+	/// object read directly from disk.
+	void initialize_from_file_contents( std::string const &filecontents );
+
 private:
 	// Member variables
 

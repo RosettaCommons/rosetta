@@ -81,6 +81,8 @@ sources = {
 	"cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_betanov15",
+		"SimpleCycpepPredictApplication_design",
+		"SimpleCycpepPredictApplication_design_betanov15",
 	],
 
 	"docking" : [
@@ -576,8 +578,11 @@ testinputfiles = [
 	"constraint_generator/HydrogenBondConstraintGenerator_default.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
 	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",
+	"cyclic_peptide_predict/allowed_residues.txt",
+	"cyclic_peptide_predict/design_setup_test.txt",
 	"cyclic_peptide_predict/native.pdb",
 	"cyclic_peptide_predict/seq.txt",
+	"cyclic_peptide_predict/seq_gly.txt",
 	"denovo_design/disulf_test.pdb",
 	"denovo_design/test_pdbcomp.pdb",
 	"denovo_design/test_sd.xml",

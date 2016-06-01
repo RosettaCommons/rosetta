@@ -434,7 +434,7 @@ StepWiseConnectionSampler::initialize_pose( pose::Pose & pose  ){
 
 	// connection_sampler cannot handle waters - but might be better to handle this by virtualizing in screening pose,
 	//  and then allowing StepWisePacker to do Mg(2+) hydration -- currently that's happening later in StepWiseMinimizer.
-	//	magnesium::remove_mg_bound_waters( pose, magnesium::get_mg_res( pose ), false /*leave other waters*/ );
+	// magnesium::remove_mg_bound_waters( pose, magnesium::get_mg_res( pose ), false /*leave other waters*/ );
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pose.residue_type( n ).aa() == core::chemical::aa_h2o ) add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RESIDUE_VARIANT, n );
 	}

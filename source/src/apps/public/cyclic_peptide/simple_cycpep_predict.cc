@@ -249,7 +249,7 @@ main( int argc, char * argv [] )
 		}
 
 #ifdef USEMPI
-		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename );
+		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename );
 #else
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication this_app;
 #endif

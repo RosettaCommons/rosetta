@@ -18,15 +18,16 @@
 #include <protocols/cyclic_peptide_predict/util.hh>
 
 // Package Headers
-#include <basic/options/option.hh>
 #include <core/types.hh>
 
-// option key includes
-
-//numeric headers
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/database/open.hh>
+#include <basic/options/option.hh>
 
 // Utility headers
-#include <basic/Tracer.hh>
+#include <utility/io/izstream.hh>
+#include <utility/string_util.hh>
 
 // C++ headers
 #include <stdio.h>
@@ -154,6 +155,130 @@ void mergesort_jobsummaries_list (
 
 	debug_assert( original_index == origlist_size + 1);
 	debug_assert( additional_index == additional_size + 1);
+}
+
+/// @brief Given a filename, read and parse the file, returning a list of canonical residues allowed at each position
+/// and a list of noncanonicals allowed at each position.
+/// @details This does the actual file read.  It is NOT THREADSAFE.  The file format is a series of lines with the pattern:
+/// residue_index residuetype_1_fullname residuetype_2_fullname residuetype_3_fullname ...
+/// Anything after a pound sign should be ignored.  A line with DEFAULT in place of the resiude index should be interpreted
+/// as providing default values, which should be stored as map key 0.
+/// @param[in] filename The file name from which we'll read.
+/// @param[out] allowed_canonicals_by_position A map of [position->vector of strings of full names] listing the allowed canonical
+/// residue types at each position.  Reset and populated by this function.  Key 0 indicates default settings applied anywhere
+/// that lacks a map key.
+/// @param[out] allowed_noncanonicals_by_position A map of [position->vector of strings of full names] listing the allowed noncanonical
+/// residue types at each position.  Reset and populated by this function.  Key 0 indicates default settings applied anywhere
+/// that lacks a map key.
+void
+read_peptide_design_file(
+	std::string const &filename,
+	std::map < core::Size, utility::vector1 < std::string > > &allowed_canonicals_by_position,
+	std::map < core::Size, utility::vector1 < std::string > > &allowed_noncanonicals_by_position
+) {
+	//Clear these maps:
+	allowed_canonicals_by_position.clear();
+	allowed_noncanonicals_by_position.clear();
+
+	//Open the input file:
+	utility::io::izstream infile;
+	infile.open(filename);
+	runtime_assert_string_msg( infile.good(), "Error in protocols::cyclic_peptide_predict::read_peptide_design_file():  Unable to open the specified file (\"" + filename + "\") for read!" );
+
+	TR << "Opened " << filename << " for read." << std::endl;
+
+	std::string curline(""); //Buffer for current line.
+	std::string curline2("");  //Second buffer.
+
+	//Read the file:
+	while ( getline(infile, curline) ) {
+		if ( curline.size() < 1 ) continue; //Ignore blank lines.
+
+		//Terminate line at comment (pound) symbol, and trim terminal whitespace:
+		std::string::size_type pound = curline.find('#', 0);
+		if ( pound != std::string::npos ) {
+			curline2 = curline.substr(0, pound);
+		} else {
+			curline2 = curline;
+		}
+		utility::trim( curline2, " \n\t" );
+
+		if ( curline2.size() < 1 ) continue; //Ignore lines with nothing but comments and/or whitespace.
+
+		std::istringstream curline3( curline2 );
+
+		//I'll recycle the curline buffer for parsing the line.
+		//First, get the residue index.
+		curline3 >> curline;
+		core::Size curres(0);
+		if ( curline != "DEFAULT" ) {
+			std::istringstream curline4( curline );
+			curline4 >> curres;
+			runtime_assert_string_msg( !curline4.fail() && !curline4.bad(), "Error in protocols::cyclic_peptide_predict::read_peptide_design_file():  Unable to parse \"" + curline + "\" as a residue index." );
+		}
+
+		runtime_assert_string_msg( allowed_canonicals_by_position.count(curres) == 0 && allowed_noncanonicals_by_position.count(curres) == 0,
+			"Error in protocols::cyclic_peptide_predict::read_peptide_design_file(): Residue " + curline + " has already been defined." );
+
+		utility::vector1 < std::string > canonicals;
+		utility::vector1 < std::string > noncanonicals;
+
+		while ( !curline3.eof() ) {
+			curline3 >> curline;
+			if ( is_canonical(curline) ) {
+				canonicals.push_back(curline);
+			} else {
+				noncanonicals.push_back(curline);
+			}
+		}
+
+		allowed_canonicals_by_position[curres] = canonicals;
+		allowed_noncanonicals_by_position[curres] = noncanonicals;
+	} //while getline
+
+	infile.close();
+
+	TR << "Read " << filename << " and closed file." << std::endl;
+}
+
+/// @brief Given a residue name, return true if this is one of the 20
+/// canonical amino acids, false otherwise.
+bool
+is_canonical(
+	std::string const &resname
+) {
+	if ( resname == "ALA" || resname == "CYS" || resname == "ASP" || resname == "GLU" || resname == "PHE" || resname == "GLY" ||
+			resname == "HIS" || resname == "HIS_D" || resname == "ILE" || resname == "LYS" || resname == "LEU" || resname == "MET" ||
+			resname == "ASN" || resname == "PRO"   || resname == "GLN" || resname == "ARG" || resname == "SER" || resname == "THR" ||
+			resname == "VAL" || resname == "TRP"   || resname == "TYR" ) {
+		return true;
+	}
+	return false;
+}
+
+/// @brief Given an ASCII file name, read the contents into a string.  If from_database is true, the read is from the database.
+/// @param[out] output_string The string that will be filled with the file contents.  Overwritten by this operation.
+/// @param[in] filename The name of the file to read.  If from_database is true, this is a relative database path.
+/// @param[in] from_database If true, the file is assumed to be in the database.  If false, the path is relative the execution
+/// directory, or is absolute.
+void
+read_file_into_string(
+	std::string &output_string,
+	std::string const &filename,
+	bool const from_database
+) {
+	using namespace utility::io;
+
+	izstream infile;
+	if ( from_database ) {
+		basic::database::open( infile, filename );
+	} else {
+		infile.open( filename );
+	}
+	runtime_assert_string_msg( infile.good(), "Error in protocols::cyclic_peptide_predict::read_file_into_string():  Unable to open file " + filename + " for read!" );
+	output_string.clear();
+	utility::slurp( infile, output_string);
+	infile.close();
 }
 
 } //cyclic_peptide_predict

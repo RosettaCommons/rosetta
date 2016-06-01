@@ -22,28 +22,34 @@
 // Unit Headers
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.hh>
+#include <protocols/cyclic_peptide_predict/util.hh>
 
 // Package Headers
 #include <basic/options/option.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/select/residue_selector/PhiSelector.hh>
+#include <core/select/residue_selector/BinSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
-#include <numeric/conversions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-#include <numeric/random/random.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-#include <numeric/constants.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -53,14 +59,18 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/filters/BasicFilters.hh>
+#include <protocols/aa_composition/AddCompositionConstraintMover.hh>
+#include <protocols/aa_composition/ClearCompositionConstraintsMover.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilter.hh>
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
 #include <protocols/relax/FastRelax.hh>
+#include <protocols/denovo_design/movers/FastDesign.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/string_util.hh>
 
 //Constraints
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -85,8 +95,12 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //numeric headers
+#include <numeric/conversions.hh>
+#include <numeric/random/random.hh>
+#include <numeric/constants.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -127,12 +141,22 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff         );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::design_peptide                       );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position         );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::prohibit_D_at_negative_phi           );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::prohibit_L_at_positive_phi           );
+	option.add_relevant( basic::options::OptionKeys::score::aa_composition_setup_file                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file                     );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_sort_by                          );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_choose_highest                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_choose_highest                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_output_fraction                  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time                  );
 #endif
 	return;
 }
@@ -143,9 +167,13 @@ namespace cyclic_peptide_predict {
 
 
 /// @brief Constructor
-///
-SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
+/// @details If allow_file_read is true, initialization triggers reads
+/// from the filesystem.
+SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
+	bool const allow_file_read
+) :
 	my_rank_(0),
+	scorefxn_(),
 	suppress_checkpoints_(false),
 	silent_out_(false),
 	silentlist_out_(false),
@@ -181,7 +209,25 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	user_set_alpha_dihedrals_(),
 	user_set_dihedral_perturbation_(0.0),
 	filter_oversaturated_hbond_acceptors_(true),
-	oversaturated_hbond_cutoff_energy_(-0.1)
+	oversaturated_hbond_cutoff_energy_(-0.1),
+	design_peptide_(false),
+	design_filename_(""),
+	prevent_design_file_read_( !allow_file_read ),
+	allowed_canonicals_by_position_(),
+	allowed_noncanonicals_by_position_(),
+	prohibit_D_at_negative_phi_(true),
+	prohibit_L_at_positive_phi_(true),
+	use_aa_comp_(false),
+	L_alpha_comp_file_exists_(false),
+	D_alpha_comp_file_exists_(false),
+	L_beta_comp_file_exists_(false),
+	D_beta_comp_file_exists_(false),
+	comp_file_contents_L_alpha_(""),
+	comp_file_contents_D_alpha_(""),
+	comp_file_contents_L_beta_(""),
+	comp_file_contents_D_beta_(""),
+	abba_bins_("")
+	//TODO -- initialize variables here.
 {
 	initialize_from_options();
 }
@@ -196,6 +242,7 @@ SimpleCycpepPredictApplication::~SimpleCycpepPredictApplication() {}
 ///
 SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPredictApplication const &src ) :
 	my_rank_(src.my_rank_),
+	scorefxn_(), //Cloned below
 	suppress_checkpoints_(src.suppress_checkpoints_),
 	silent_out_(src.silent_out_),
 	silentlist_out_(src.silentlist_out_),
@@ -231,9 +278,28 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	user_set_alpha_dihedrals_(src.user_set_alpha_dihedrals_),
 	user_set_dihedral_perturbation_(src.user_set_dihedral_perturbation_),
 	filter_oversaturated_hbond_acceptors_(src.filter_oversaturated_hbond_acceptors_),
-	oversaturated_hbond_cutoff_energy_(src.oversaturated_hbond_cutoff_energy_)
+	oversaturated_hbond_cutoff_energy_(src.oversaturated_hbond_cutoff_energy_),
+	design_peptide_(src.design_peptide_),
+	design_filename_(src.design_filename_),
+	prevent_design_file_read_(src.prevent_design_file_read_),
+	allowed_canonicals_by_position_(src.allowed_canonicals_by_position_),
+	allowed_noncanonicals_by_position_(src.allowed_noncanonicals_by_position_),
+	prohibit_D_at_negative_phi_(src.prohibit_D_at_negative_phi_),
+	prohibit_L_at_positive_phi_(src.prohibit_L_at_positive_phi_),
+	use_aa_comp_(src.use_aa_comp_),
+	L_alpha_comp_file_exists_(src.L_alpha_comp_file_exists_),
+	D_alpha_comp_file_exists_(src.D_alpha_comp_file_exists_),
+	L_beta_comp_file_exists_(src.L_beta_comp_file_exists_),
+	D_beta_comp_file_exists_(src.D_beta_comp_file_exists_),
+	comp_file_contents_L_alpha_(src.comp_file_contents_L_alpha_),
+	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
+	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
+	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
+	abba_bins_(src.abba_bins_)
 	//TODO -- copy variables here.
-{}
+{
+	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
+}
 
 /// @brief Initialize the application.
 /// @details Initializes using the option system.
@@ -242,6 +308,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace utility::io;
+
 	//Initial checks:
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::sequence_file].user(), "Error in simple_cycpep_predict app: the user MUST provide a sequence file using the \"-cyclic_peptide:sequence_file\" flag." );
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts]() >= 0, "Error in simple_cycpep_predict app: the number of GeneralizedKIC closure attempts (\"-cyclic_peptide:genkic_closure_attempts\" flag) cannot be negative.  (Note also that setting this to zero is risky, since GenKIC will continue to seek solutions until the minimum number of solutions is reached.)" );
@@ -268,6 +336,35 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	try_all_disulfides_ = option[basic::options::OptionKeys::cyclic_peptide::require_disulfides].user();
 	disulf_energy_cutoff_prerelax_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_prerelax]() );
 	disulf_energy_cutoff_postrelax_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax]() );
+
+	//Get the scorefunction:
+	if ( !prevent_design_file_read_ ) scorefxn_ = core::scoring::get_score_function(); //Reads from file.  Don't use in MPI mode.
+
+	//Read in the comp files, if any (in non-MPI mode):
+	if ( !prevent_design_file_read_ ) {
+		if ( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) {
+			read_file_into_string( comp_file_contents_L_alpha_, option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file](), false );
+			L_alpha_comp_file_exists_=true;
+			TR << "Loaded " << option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file]() << "." << std::endl;
+		}
+		if ( option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file].user() ) {
+			read_file_into_string( comp_file_contents_D_alpha_, option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file](), false );
+			D_alpha_comp_file_exists_=true;
+			TR << "Loaded " << option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file]() << "." << std::endl;
+		}
+		if ( option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file].user() ) {
+			read_file_into_string( comp_file_contents_L_beta_, option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file](), false );
+			L_beta_comp_file_exists_=true;
+			TR << "Loaded " << option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file]() << "." << std::endl;
+		}
+		if ( option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file].user() ) {
+			read_file_into_string( comp_file_contents_D_beta_, option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file](), false );
+			D_beta_comp_file_exists_=true;
+			TR << "Loaded " << option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file]() << "." << std::endl;
+		}
+		read_file_into_string( abba_bins_, "protocol_data/generalizedKIC/bin_params/ABBA.bin_params", true );
+		TR << "Loaded ABBA.bin_params." << std::endl;
+	}
 
 	//Get the native, if it exists:
 	if ( option[in::file::native].user() ) {
@@ -325,8 +422,49 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	filter_oversaturated_hbond_acceptors_ = option[basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors]();
 	oversaturated_hbond_cutoff_energy_ = option[basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff]();
 
+	//Options related to design:
+	design_peptide_ = option[basic::options::OptionKeys::cyclic_peptide::design_peptide]();
+	if ( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position].user() ) {
+		design_filename_ = option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position]();
+	} else {
+		prevent_design_file_read_ = true;
+	}
+	prohibit_D_at_negative_phi_ = option[basic::options::OptionKeys::cyclic_peptide::prohibit_D_at_negative_phi]();
+	prohibit_L_at_positive_phi_ = option[basic::options::OptionKeys::cyclic_peptide::prohibit_L_at_positive_phi]();
+
+	//Read design options from file:
+	if ( !prevent_design_file_read_ ) {
+		read_peptide_design_file( design_filename_, allowed_canonicals_by_position_, allowed_noncanonicals_by_position_ );
+		prevent_design_file_read_ = true; //Prevents re-read if reinitialized.
+	}
+
+	// If we're designing and the user has specified a comp file, turn on aa_composition for design steps.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::design_peptide]() &&
+			( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ||
+			option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file].user() ||
+			option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file].user() ||
+			option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file].user() ||
+			option[basic::options::OptionKeys::score::aa_composition_setup_file].user()
+			)
+			) {
+		TR << "One or more .comp files have been provided.  The app will turn on the aa_composition score term during design steps." << std::endl;
+		use_aa_comp_ = true;
+	}
+
 	return;
 } //initialize_from_options()
+
+/// @brief Sets the default scorefunction to use.
+/// @details The scorefunction is cloned.  The high-hbond version is constructed
+/// from this one.  If necessary, the aa_composition score term will be turned on
+/// in that one; it needn't be turned on in this one.
+void
+SimpleCycpepPredictApplication::set_scorefxn(
+	core::scoring::ScoreFunctionCOP sfxn_in
+) {
+	debug_assert( sfxn_in );
+	scorefxn_ = sfxn_in->clone();
+}
 
 /// @brief Allows external code to provide a native, so that the SimpleCycpepPredictApplication doesn't have to read
 /// directly from disk.
@@ -347,6 +485,17 @@ SimpleCycpepPredictApplication::set_sequence(
 ) {
 	runtime_assert( seq != "" ); //Can't be empty string.
 	sequence_string_ = seq;
+}
+
+/// @brief Allows external code to set the allowed residues by position, so that this needn't be read directly
+/// from disk.
+void
+SimpleCycpepPredictApplication::set_allowed_residues_by_position (
+	std::map< core::Size, utility::vector1< std::string > > const &allowed_canonicals,
+	std::map< core::Size, utility::vector1< std::string > > const &allowed_noncanonicals
+) {
+	allowed_canonicals_by_position_ = allowed_canonicals;
+	allowed_noncanonicals_by_position_ = allowed_noncanonicals;
 }
 
 /// @brief Allows external code to specify that output should be appended to a list of SilentStructureOPs, so that the
@@ -391,6 +540,55 @@ SimpleCycpepPredictApplication::set_nstruct(
 	nstruct_ = nstruct_in;
 }
 
+/// @brief Allows external code to set the file contents for the L-alpha aa_composition file.
+///
+void
+SimpleCycpepPredictApplication::set_L_alpha_compfile_contents(
+	std::string const &contents_in
+) {
+	comp_file_contents_L_alpha_ = contents_in;
+	L_alpha_comp_file_exists_=true;
+}
+
+/// @brief Allows external code to set the file contents for the D-alpha aa_composition file.
+///
+void
+SimpleCycpepPredictApplication::set_D_alpha_compfile_contents(
+	std::string const &contents_in
+) {
+	comp_file_contents_D_alpha_ = contents_in;
+	D_alpha_comp_file_exists_=true;
+}
+
+/// @brief Allows external code to set the file contents for the L-beta aa_composition file.
+///
+void
+SimpleCycpepPredictApplication::set_L_beta_compfile_contents(
+	std::string const &contents_in
+) {
+	comp_file_contents_L_beta_ = contents_in;
+	L_beta_comp_file_exists_=true;
+}
+
+/// @brief Allows external code to set the file contents for the D-beta aa_composition file.
+///
+void
+SimpleCycpepPredictApplication::set_D_beta_compfile_contents(
+	std::string const &contents_in
+) {
+	comp_file_contents_D_beta_ = contents_in;
+	D_beta_comp_file_exists_=true;
+}
+
+/// @brief Allows external code to set the ABBA bin parameters without having to read the
+/// bin params file directly from disk.
+void
+SimpleCycpepPredictApplication::set_abba_bins_binfile_contents(
+	std::string const &contents_in
+) {
+	abba_bins_ = contents_in;
+}
+
 
 /// @brief Actually run the application.
 /// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -398,14 +596,17 @@ void
 SimpleCycpepPredictApplication::run() const {
 
 	//Get the scorefunction:
-	core::scoring::ScoreFunctionOP sfxn_default( core::scoring::get_score_function() );
+	debug_assert( scorefxn_ );
+	core::scoring::ScoreFunctionOP sfxn_default( scorefxn_ );
 	//Create a scorefunction variant with upweighted backbone hbond terms:
 	core::scoring::ScoreFunctionOP sfxn_highhbond( sfxn_default->clone() );
 	sfxn_highhbond->set_weight( core::scoring::hbond_lr_bb, high_hbond_weight_multiplier_ * sfxn_default->get_weight(core::scoring::hbond_lr_bb) ); //Upweight the long-range backbone hbonds
 	sfxn_highhbond->set_weight( core::scoring::hbond_sr_bb, high_hbond_weight_multiplier_ * sfxn_default->get_weight(core::scoring::hbond_sr_bb) ); //Upweight the short-range backbone hbonds
+	//Turn on aa_composition in this scorefunction if we're doing design and .comp files have been provided.
+	if ( sfxn_highhbond->get_weight( core::scoring::aa_composition ) == 0.0 ) { sfxn_highhbond->set_weight( core::scoring::aa_composition, 1.0 ); }
 	//Create variants of the above two scorefunctions with constraint weights turned on:
-	core::scoring::ScoreFunctionOP sfxn_default_cst( sfxn_default->clone() );
-	core::scoring::ScoreFunctionOP sfxn_highhbond_cst( sfxn_highhbond->clone() );
+	core::scoring::ScoreFunctionOP sfxn_default_cst( sfxn_default->clone() ); //Will NOT have aa_compostion turned on.
+	core::scoring::ScoreFunctionOP sfxn_highhbond_cst( sfxn_highhbond->clone() ); //Will have aa_composition turned on if we're doing design and .comp files are provided.
 	if ( sfxn_default->get_weight( core::scoring::atom_pair_constraint ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::atom_pair_constraint, 1.0); }
 	if ( sfxn_default->get_weight( core::scoring::angle_constraint ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::angle_constraint, 1.0); }
 	if ( sfxn_default->get_weight( core::scoring::dihedral_constraint ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::dihedral_constraint, 1.0); }
@@ -486,7 +687,7 @@ SimpleCycpepPredictApplication::run() const {
 #endif
 
 		//Do the kinematic closure:
-		bool const success( genkic_close(pose, sfxn_highhbond_cst, total_hbond, cyclic_offset) );
+		bool const success( genkic_close(pose, sfxn_highhbond_cst, sfxn_default, total_hbond, cyclic_offset) );
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -575,7 +776,11 @@ SimpleCycpepPredictApplication::run() const {
 		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
 			core::io::silent::SilentStructOP ss( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
 			char tag[512];
-			sprintf(tag, "result_%04lu", static_cast<unsigned long>(irepeat) );
+			if ( my_rank_ > 0 ) {
+				sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat) );
+			} else {
+				sprintf(tag, "result_%04lu", static_cast<unsigned long>(irepeat) );
+			}
 			ss->fill_struct( *pose, std::string(tag) );
 			if ( native_pose ) ss->add_energy( "RMSD", native_rmsd ); //Add the RMSD to the energy to be written out in the silent file.
 			ss->add_energy( "HBOND_COUNT", -1.0*final_hbonds ); //Add the hbond count to be written out in the silent file.
@@ -751,6 +956,8 @@ SimpleCycpepPredictApplication::read_sequence (
 		izstream infile;
 		infile.open( seqfile );
 		runtime_assert_string_msg( infile.good(), "Error in read_sequence() in app simple_cycpep_predict:  Unable to open sequence file for read!" );
+
+		TR << "Opened " << seqfile << " for read." << std::endl;
 
 		std::string curline(""); //Buffer for current line.
 
@@ -1009,6 +1216,7 @@ bool
 SimpleCycpepPredictApplication::genkic_close(
 	core::pose::PoseOP pose,
 	core::scoring::ScoreFunctionOP sfxn_highhbond,
+	core::scoring::ScoreFunctionCOP sfxn_default,
 	protocols::filters::CombinedFilterOP total_hbond,
 	core::Size const cyclic_offset
 ) const {
@@ -1037,8 +1245,10 @@ SimpleCycpepPredictApplication::genkic_close(
 	protocols::rosetta_scripts::ParsedProtocolOP pp( new protocols::rosetta_scripts::ParsedProtocol );
 	pp->add_mover_filter_pair( NULL, "Total_Hbonds", total_hbond );
 
+	//Filter out poses with oversaturated hydrogen bond acceptors.
 	if ( filter_oversaturated_hbond_acceptors_ ) {
 		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat1( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
+		oversat1->set_scorefxn( sfxn_default );
 		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
 		pp->add_mover_filter_pair( NULL, "Oversaturated_Hbond_Acceptors", oversat1 );
 	}
@@ -1055,8 +1265,54 @@ SimpleCycpepPredictApplication::genkic_close(
 	}
 
 	//Add the FastRelax with high hbond weight to the pre-selection parsed protocol.
-	protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
-	pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", NULL );
+	if ( design_peptide_ ) {
+		if ( L_alpha_comp_file_exists_ ) {
+			protocols::aa_composition::AddCompositionConstraintMoverOP L_alpha_cst( new protocols::aa_composition::AddCompositionConstraintMover );
+			core::select::residue_selector::BinSelectorOP select_L_alpha( new core::select::residue_selector::BinSelector );
+			select_L_alpha->set_bin_name("A");
+			select_L_alpha->initialize_from_file_contents_and_check( abba_bins_ );
+			L_alpha_cst->create_constraint_from_file_contents( comp_file_contents_L_alpha_ );
+			L_alpha_cst->add_residue_selector( select_L_alpha );
+			pp->add_mover_filter_pair( L_alpha_cst, "Add_L_Alpha_AACompositionConstraints", NULL );
+		}
+		if ( D_alpha_comp_file_exists_ ) {
+			protocols::aa_composition::AddCompositionConstraintMoverOP D_alpha_cst( new protocols::aa_composition::AddCompositionConstraintMover );
+			core::select::residue_selector::BinSelectorOP select_D_alpha( new core::select::residue_selector::BinSelector );
+			select_D_alpha->set_bin_name("Aprime");
+			select_D_alpha->initialize_from_file_contents_and_check( abba_bins_ );
+			D_alpha_cst->create_constraint_from_file_contents( comp_file_contents_D_alpha_ );
+			D_alpha_cst->add_residue_selector( select_D_alpha );
+			pp->add_mover_filter_pair( D_alpha_cst, "Add_D_Alpha_AACompositionConstraints", NULL );
+		}
+		if ( L_beta_comp_file_exists_ ) {
+			protocols::aa_composition::AddCompositionConstraintMoverOP L_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
+			core::select::residue_selector::BinSelectorOP select_L_beta( new core::select::residue_selector::BinSelector );
+			select_L_beta->set_bin_name("B");
+			select_L_beta->initialize_from_file_contents_and_check( abba_bins_ );
+			L_beta_cst->create_constraint_from_file_contents( comp_file_contents_L_beta_ );
+			L_beta_cst->add_residue_selector( select_L_beta );
+			pp->add_mover_filter_pair( L_beta_cst, "Add_L_Beta_AACompositionConstraints", NULL );
+		}
+		if ( D_beta_comp_file_exists_ ) {
+			protocols::aa_composition::AddCompositionConstraintMoverOP D_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
+			core::select::residue_selector::BinSelectorOP select_D_beta( new core::select::residue_selector::BinSelector );
+			select_D_beta->set_bin_name("Bprime");
+			select_D_beta->initialize_from_file_contents_and_check( abba_bins_ );
+			D_beta_cst->create_constraint_from_file_contents( comp_file_contents_D_beta_ );
+			D_beta_cst->add_residue_selector( select_D_beta );
+			pp->add_mover_filter_pair( D_beta_cst, "Add_D_Beta_AACompositionConstraints", NULL );
+		}
+
+		protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
+		set_up_design_taskoperations( fdes, cyclic_offset, pose->n_residue() );
+		pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", NULL );
+
+		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( new protocols::aa_composition::ClearCompositionConstraintsMover );
+		pp->add_mover_filter_pair( clear_aacomp_cst, "Clear_AACompositionConstraints", NULL );
+	} else {
+		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
+		pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", NULL );
+	}
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
@@ -1066,6 +1322,7 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	if ( filter_oversaturated_hbond_acceptors_ ) {
 		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat2( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
+		oversat2->set_scorefxn( sfxn_default );
 		oversat2->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
 		pp->add_mover_filter_pair( NULL, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
 	}
@@ -1174,6 +1431,127 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	return genkic->last_run_successful();
 }
+
+/// @brief Set up the TaskOperations that conrol the design process, given user inputs.
+/// @details Default behaviour is designing all positions with L-canonicals and their
+/// D-equivalents EXCEPT cys and met (and gly), unless the user overrides this.
+void
+SimpleCycpepPredictApplication::set_up_design_taskoperations(
+	protocols::denovo_design::movers::FastDesignOP fdes,
+	core::Size const cyclic_offset,
+	core::Size const nres
+) const {
+	fdes->set_up_default_task_factory();
+
+	std::stringstream L_resfile("");
+	std::stringstream L_empty_resfile("");
+	std::stringstream D_resfile("");
+	L_resfile << "start" << std::endl;
+	L_empty_resfile << "start" << std::endl;
+	D_resfile << "start" << std::endl;
+
+	for ( core::Size i=1; i<=nres; ++i ) {
+		signed long int orig_res( static_cast<signed long int>(i) - static_cast<signed long int>( cyclic_offset ) - 1 );
+		if ( orig_res < 1 ) orig_res += nres;
+		debug_assert( orig_res >= 1 && orig_res <= static_cast<signed long int>(nres) ); //Should be true.
+		L_empty_resfile << orig_res << " A EMPTY" << std::endl;
+		if ( allowed_canonicals_by_position_.count( static_cast<core::Size>(orig_res) ) == 1 ) {
+			if ( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ).size() > 0 ) {
+				L_resfile << orig_res << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
+			} else {
+				L_resfile << orig_res << " A EMPTY" << std::endl;
+			}
+		} else if ( allowed_canonicals_by_position_.count( 0 ) == 1 ) {
+			if ( allowed_canonicals_by_position_ .at( 0 ).size() > 0 ) {
+				L_resfile << orig_res << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( 0 ) ) << std::endl;
+			} else {
+				L_resfile << orig_res << " A EMPTY" << std::endl;
+			}
+		} else {
+			L_resfile << orig_res << " A PIKAA ADEFHIKLNPQRSTVWY" << std::endl;
+		}
+		if ( allowed_noncanonicals_by_position_.count( static_cast<core::Size>(orig_res) ) == 1 ) {
+			if ( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ).size() > 0 ) {
+				D_resfile << orig_res << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
+			}
+		} else if ( allowed_noncanonicals_by_position_.count( 0 ) == 1 ) {
+			if ( allowed_noncanonicals_by_position_.at( 0 ).size() > 0 ) {
+				D_resfile << orig_res << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( 0 ) ) << std::endl;
+			}
+		} else {
+			D_resfile << orig_res << " A NC DAL NC DAS NC DGU NC DPH NC DHI NC DIL NC DLY NC DLE NC DAN NC DPR NC DGN NC DAR NC DSE NC DTH NC DVA NC DTR NC DTY" << std::endl;
+		}
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "L-resfile:\n" << L_resfile.str() << std::endl;
+		TR.Debug << "L-empty resfile:\n" << L_empty_resfile.str() << std::endl;
+		TR.Debug << "D-resfile:\n" << D_resfile.str() << std::endl;
+	}
+
+	core::pack::task::operation::ReadResfileOP L_resfile_taskop( new core::pack::task::operation::ReadResfile );
+	core::pack::task::operation::ReadResfileOP L_empty_resfile_taskop( new core::pack::task::operation::ReadResfile );
+	core::pack::task::operation::ReadResfileOP D_resfile_taskop( new core::pack::task::operation::ReadResfile );
+
+	L_resfile_taskop->set_cached_resfile( L_resfile.str() );
+	D_resfile_taskop->set_cached_resfile( D_resfile.str() );
+	if ( prohibit_L_at_positive_phi_ ) {
+		core::select::residue_selector::PhiSelectorOP neg_phi_selector( new core::select::residue_selector::PhiSelector );
+		neg_phi_selector->set_select_positive_phi(false);
+		L_resfile_taskop->set_residue_selector( neg_phi_selector );
+
+		L_empty_resfile_taskop->set_cached_resfile( L_empty_resfile.str() );
+		core::select::residue_selector::NotResidueSelectorOP notselector( new core::select::residue_selector::NotResidueSelector );
+		notselector->set_residue_selector( neg_phi_selector );
+		L_empty_resfile_taskop->set_residue_selector( notselector );
+	}
+	if ( prohibit_D_at_negative_phi_ ) {
+		core::select::residue_selector::PhiSelectorOP pos_phi_selector( new core::select::residue_selector::PhiSelector );
+		pos_phi_selector->set_select_positive_phi(true);
+		D_resfile_taskop->set_residue_selector( pos_phi_selector );
+	}
+
+	fdes->get_task_factory()->push_back( L_resfile_taskop );
+	if ( prohibit_L_at_positive_phi_ ) fdes->get_task_factory()->push_back( L_empty_resfile_taskop );
+	fdes->get_task_factory()->push_back( D_resfile_taskop );
+}
+
+/// @brief Given a vector of full residue names of canonical residues, give me a concatenated list of one-letter codes.
+/// @details Does no checking for duplicates.
+std::string
+SimpleCycpepPredictApplication::get_oneletter_codes(
+	utility::vector1< std::string > const &fullnames
+) const {
+	std::stringstream outstr;
+	for ( core::Size i=1, imax=fullnames.size(); i<=imax; ++i ) {
+		if ( fullnames[i] == "HIS_D" ) {
+			outstr << "H";
+		} else { //We can use the fact that the full name and the three-letter code are the same for canonicals:
+			outstr << core::chemical::oneletter_code_from_aa( core::chemical::aa_from_name( fullnames[i] ) );
+		}
+	}
+
+	return outstr.str();
+}
+
+/// @brief Given a vector of full residue names, give me a string of the form "NC <3-letter code> NC <3-letter code> NC <3-letter code> ..."
+/// @details Does no checking for duplicates.  Will fail gracelessly with invalid names.
+std::string
+SimpleCycpepPredictApplication::get_nc_threeletter_codes(
+	utility::vector1< std::string> const &fullnames
+) const {
+	using namespace core::chemical;
+	std::stringstream outstr;
+	ResidueTypeSetCOP restype_set( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	for ( core::Size i=1, imax=fullnames.size(); i<=imax; ++i ) {
+		ResidueTypeCOP curtype( ResidueTypeFinder( *restype_set ).residue_base_name( fullnames[i] ).get_representative_type() );
+		runtime_assert_string_msg( curtype, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_nc_threeletter_codes(): The name " + fullnames[i] + " corresponds to no known residue type." );
+		outstr << "NC " << curtype->name3();
+		if ( i < imax ) outstr << " ";
+	}
+	return outstr.str();
+}
+
 
 /// @brief Given a pose, store a list of the disulfides in the pose.
 /// @details Clears the old_disulfides list and repopulates it.

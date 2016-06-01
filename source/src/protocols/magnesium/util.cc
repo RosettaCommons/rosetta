@@ -63,11 +63,11 @@ fixup_magnesiums( pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////
 void
 hydrate_magnesiums( pose::Pose & pose,
-										bool use_virtual_waters_as_placeholders /* = true */,
-										bool test_all_mg_hydration_frames /* = true */ ) {
+	bool use_virtual_waters_as_placeholders /* = true */,
+	bool test_all_mg_hydration_frames /* = true */ ) {
 	utility::vector1< Size > const mg_res = get_mg_res( pose );
 	if ( mg_res.size() == 0 ) return;
-  if (!use_virtual_waters_as_placeholders) remove_mg_bound_waters( pose, mg_res, false /*leave_other_waters*/ );
+	if ( !use_virtual_waters_as_placeholders ) remove_mg_bound_waters( pose, mg_res, false /*leave_other_waters*/ );
 	MgHydrater mg_hydrater( mg_res );
 	mg_hydrater.set_use_fast_frame_heuristic( !test_all_mg_hydration_frames );
 	mg_hydrater.set_use_virtual_waters_as_placeholders( use_virtual_waters_as_placeholders );
@@ -247,7 +247,7 @@ filter_water_ligands( pose::Pose const & pose, utility::vector1< std::pair< Size
 	for ( Size n = 1; n <= ligands.size(); n++ ) {
 		AtomID const & ligand = ligands[ n ].second;
 		if ( pose.residue( ligand.rsd() ).name3() == "HOH" &&
-				 pose.residue( ligand.rsd() ).atom_name( ligand.atomno() ) == " O  " ) {
+				pose.residue( ligand.rsd() ).atom_name( ligand.atomno() ) == " O  " ) {
 			water_ligands.push_back( ligands[ n ] );
 		}
 	}
@@ -284,7 +284,7 @@ define_mg_water_map( pose::Pose const & pose )
 	for ( std::map< Size, Size >::const_iterator it = water_to_magnesium.begin(); it != water_to_magnesium.end(); it++ ) {
 		if ( it->second == 0 ) {
 			utility_exit_with_message( "Problem -- did not assign water " + I( 3, it->first )
-																 + " to a magnesium because the magnesiums have full shells" );
+				+ " to a magnesium because the magnesiums have full shells" );
 		}
 	}
 	return mg_water_map;
@@ -293,9 +293,9 @@ define_mg_water_map( pose::Pose const & pose )
 ///////////////////////////////////////////////////////////////////////////////
 utility::vector1< std::pair< Size, core::id::AtomID > >
 get_mg_ligands( pose::Pose const & pose, utility::vector1< Size > const mg_res,
-								bool const filter_for_acceptors /* true */,
-								bool const exclude_virtual_waters /* true */,
-								bool const just_waters = false )
+	bool const filter_for_acceptors /* true */,
+	bool const exclude_virtual_waters /* true */,
+	bool const just_waters = false )
 {
 	using namespace core::conformation;
 	using namespace core::id;
@@ -315,7 +315,7 @@ get_mg_ligands( pose::Pose const & pose, utility::vector1< Size > const mg_res,
 			for ( Size jj = 1; jj <= rsd_j.nheavyatoms(); jj++ ) {
 
 				if ( rsd_j.is_virtual( jj ) &&
-						 ( exclude_virtual_waters || rsd_j.aa() != core::chemical::aa_h2o ) ) continue;
+						( exclude_virtual_waters || rsd_j.aa() != core::chemical::aa_h2o ) ) continue;
 
 				Vector const & xyz_jj = rsd_j.xyz( jj );
 				core::Real distance = (xyz_jj - xyz_mg).length();
@@ -345,11 +345,11 @@ get_mg_ligands( pose::Pose const & pose, utility::vector1< Size > const mg_res,
 ///////////////////////////////////////////////////////////////////////////////
 utility::vector1< core::id::AtomID >
 get_mg_ligands( pose::Pose const & pose, Size const i,
-								bool const filter_for_acceptors /* true */,
-								bool const exclude_virtual_waters /* true */ )
+	bool const filter_for_acceptors /* true */,
+	bool const exclude_virtual_waters /* true */ )
 {
 	vector1< std::pair< Size, core::id::AtomID > > mg_and_ligands = get_mg_ligands( pose, utility::tools::make_vector1( i ),
-																																									filter_for_acceptors, exclude_virtual_waters );
+		filter_for_acceptors, exclude_virtual_waters );
 	utility::vector1< core::id::AtomID > ligands;
 	for ( Size n = 1; n <= mg_and_ligands.size(); n++ ) ligands.push_back( mg_and_ligands[ n ].second );
 	return ligands;
@@ -358,18 +358,18 @@ get_mg_ligands( pose::Pose const & pose, Size const i,
 ///////////////////////////////////////////
 utility::vector1< std::pair< Size, Size > >
 get_mg_water_pairs( pose::Pose const & pose,
-										bool const exclude_virtual_waters /* = true */ ) {
+	bool const exclude_virtual_waters /* = true */ ) {
 	return get_mg_water_pairs( pose, get_mg_res( pose ), exclude_virtual_waters );
 }
 
 ///////////////////////////////////////////
 utility::vector1< std::pair< Size, Size > >
 get_mg_water_pairs( pose::Pose const & pose,
-										vector1< Size > const & mg_res,
-										bool const exclude_virtual_waters /* = true */ ) {
+	vector1< Size > const & mg_res,
+	bool const exclude_virtual_waters /* = true */ ) {
 
 	vector1< std::pair< Size, id::AtomID > > const ligands = get_mg_ligands( pose, mg_res, false /*filter_for_acceptors*/,
-																																			 exclude_virtual_waters, true /*just_waters*/ );
+		exclude_virtual_waters, true /*just_waters*/ );
 	utility::vector1< std::pair< Size, Size > > mg_water_pairs;
 
 	for ( Size n = 1; n <= ligands.size(); n++ ) {
@@ -400,7 +400,7 @@ get_bound_water_res( pose::Pose const & pose, Size const mg_res, Size const n /*
 	runtime_assert( n >= 1);
 	runtime_assert( n <= 6);
 	vector1< Size > water_res = find_bound_waters_that_are_daughters_in_fold_tree( pose, mg_res );
-	if ( water_res.size() != 6 ){
+	if ( water_res.size() != 6 ) {
 		TR << TR.Red << pose.annotated_sequence() << std::endl;
 		TR << TR.Red << pose.fold_tree() << std::endl;
 		TR << TR.Red << "Problem: " << mg_res << " has " << water_res.size() << " waters, not 6." << std::endl;
@@ -412,11 +412,11 @@ get_bound_water_res( pose::Pose const & pose, Size const mg_res, Size const n /*
 //////////////////////////////////////////////////////////
 core::Size
 instantiate_water_at_octahedral_vertex( pose::Pose & pose,
-																				Size const mg_res,
-																				Size const n /* 1 ... 6*/,
-																				Distance const hoh_distance /*= 2.1 */,
-																				bool const replace_residue /* = false */,
-																				bool const virtual_water /* = false */ ) {
+	Size const mg_res,
+	Size const n /* 1 ... 6*/,
+	Distance const hoh_distance /*= 2.1 */,
+	bool const replace_residue /* = false */,
+	bool const virtual_water /* = false */ ) {
 	using namespace core::conformation;
 	runtime_assert( n >= 1 && n <= 6 );
 	Vector const & xyz_mg( pose.residue( mg_res ).xyz( 1 ) );
@@ -472,8 +472,8 @@ update_jump_atoms_for_mg_bound_water( core::pose::Pose & pose, core::Size const 
 ///////////////////////////////////////////////////////////////////////////////
 Size
 append_mg_bound_water(  core::pose::Pose & pose,
-												core::conformation::Residue const & rsd,
-												core::Size const mg_res )
+	core::conformation::Residue const & rsd,
+	core::Size const mg_res )
 {
 	pose.append_residue_by_jump( rsd, mg_res );
 	update_jump_atoms_for_mg_bound_water( pose, pose.total_residue() );

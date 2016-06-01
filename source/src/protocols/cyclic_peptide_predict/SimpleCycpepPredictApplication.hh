@@ -26,6 +26,7 @@
 
 // Project Headers
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
+#include <protocols/denovo_design/movers/FastDesign.fwd.hh>
 #include <protocols/filters/BasicFilters.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
@@ -37,6 +38,7 @@
 
 // C++ headers
 #include <stdio.h>
+#include <map>
 
 #define SimpleCycpepPredictApplication_PEPBOND_LENGTH 1.328685
 #define SimpleCycpepPredictApplication_PEPBOND_C_ANGLE 2.02807246864
@@ -52,8 +54,9 @@ class SimpleCycpepPredictApplication : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Constructor
-	///
-	SimpleCycpepPredictApplication();
+	/// @details If allow_file_read is true, initialization triggers reads
+	/// from the filesystem.
+	SimpleCycpepPredictApplication( bool const allow_file_read = true );
 
 	/// @brief Explicit virtual destructor.
 	///
@@ -71,6 +74,12 @@ public:
 	/// @details Initializes using the option system.
 	void initialize_from_options();
 
+	/// @brief Sets the default scorefunction to use.
+	/// @details The scorefunction is cloned.  The high-hbond version is constructed
+	/// from this one.  If necessary, the aa_composition score term will be turned on
+	/// in that one; it needn't be turned on in this one.
+	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in );
+
 	/// @brief Allows external code to provide a native, so that the SimpleCycpepPredictApplication doesn't have to read
 	/// directly from disk.
 	void set_native( core::pose::PoseCOP native );
@@ -78,6 +87,10 @@ public:
 	/// @brief Allows external code to provide a sequence, so that the SimpleCycpepPredictApplication doesn't have to read
 	/// directly from disk.
 	void set_sequence( std::string const &seq );
+
+	/// @brief Allows external code to set the allowed residues by position, so that this needn't be read directly
+	/// from disk.
+	void set_allowed_residues_by_position( std::map< core::Size, utility::vector1< std::string > > const &allowed_canonicals, std::map< core::Size, utility::vector1< std::string > > const &allowed_noncanonicals );
 
 	/// @brief Allows external code to specify that output should be appended to a list of SilentStructureOPs, so that the
 	/// SimpleCycpepPredictApplication doesn't have to write directly to disk.
@@ -94,6 +107,26 @@ public:
 	/// @brief Allows external code to override the number of structures that this should generate (otherwise
 	/// set by options system.
 	void set_nstruct( core::Size const nstruct_in );
+
+	/// @brief Allows external code to set the file contents for the L-alpha aa_composition file.
+	///
+	void set_L_alpha_compfile_contents( std::string const &contents_in );
+
+	/// @brief Allows external code to set the file contents for the D-alpha aa_composition file.
+	///
+	void set_D_alpha_compfile_contents( std::string const &contents_in );
+
+	/// @brief Allows external code to set the file contents for the L-beta aa_composition file.
+	///
+	void set_L_beta_compfile_contents( std::string const &contents_in );
+
+	/// @brief Allows external code to set the file contents for the D-beta aa_composition file.
+	///
+	void set_D_beta_compfile_contents( std::string const &contents_in );
+
+	/// @brief Allows external code to set the ABBA bin parameters without having to read the
+	/// bin params file directly from disk.
+	void set_abba_bins_binfile_contents( std::string const &contents_in );
 
 	/// @brief Actually run the application.
 	/// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -185,9 +218,23 @@ private:
 	genkic_close(
 		core::pose::PoseOP pose,
 		core::scoring::ScoreFunctionOP sfxn_highhbond,
+		core::scoring::ScoreFunctionCOP sfxn_default,
 		protocols::filters::CombinedFilterOP total_hbond,
 		core::Size const cyclic_offset
 	) const;
+
+	/// @brief Set up the TaskOperations that conrol the design process, given user inputs.
+	/// @details Default behaviour is designing all positions with L-canonicals and their
+	/// D-equivalents EXCEPT cys and met (and gly), unless the user overrides this.
+	void set_up_design_taskoperations( protocols::denovo_design::movers::FastDesignOP fdes, core::Size const cyclic_offset, core::Size const nres ) const;
+
+	/// @brief Given a vector of full residue names of canonical residues, give me a concatenated list of one-letter codes.
+	/// @details Does no checking for duplicates.
+	std::string get_oneletter_codes( utility::vector1< std::string > const &fullnames ) const;
+
+	/// @brief Given a vector of full residue names, give me a string of the form "NC <3-letter code> NC <3-letter code> NC <3-letter code> ..."
+	/// @details Does no checking for duplicates.  Will fail gracelessly with invalid names.
+	std::string get_nc_threeletter_codes( utility::vector1< std::string> const &fullnames ) const;
 
 	/// @brief Given a pose, store a list of the disulfides in the pose.
 	/// @details Clears the old_disulfides list and repopulates it.
@@ -334,6 +381,10 @@ private:
 	/// @brief If this is called by MPI code, this can store the rank of the current process.  Zero otherwise.
 	///
 	int my_rank_;
+
+	/// @brief The default ScoreFunction to use.  The high h-bond version is constructed from this.
+	///
+	core::scoring::ScoreFunctionOP scorefxn_;
 
 	/// @brief Allows external code to suppress checkpointing, so that the SimpleCycpepPredictApplication doesn't write directly to disk.
 	///
@@ -485,6 +536,77 @@ private:
 	/// @details Default -0.1.
 	core::Real oversaturated_hbond_cutoff_energy_;
 
+	/// @brief Should we design the peptide after sampling the conformation, or just relax it?
+	/// @details Default "false" (relax only; no design).
+	bool design_peptide_;
+
+	/// @brief If we're designing, this is the filename for the file that tells us what residues are
+	/// allowed at what postion.
+	/// @details If left blank, no file is read.
+	std::string design_filename_;
+
+	/// @brief Used to prevent this process from directly reading the input file if it has been read by
+	/// another process and the information has been transmitted to this process.
+	/// @details Default false; set to true by set_allowed_residues_by_position().
+	bool prevent_design_file_read_;
+
+	/// @brief Allowed canonical residues at each position.
+	/// @details Only used for design.  Map key "0" is used for default settings applied to
+	/// any position not explicitly specified.
+	std::map < core::Size, utility::vector1 < std::string > > allowed_canonicals_by_position_;
+
+	/// @brief Allowed noncanonical residues at each position.
+	/// @details Only used for design.  Map key "0" is used for default settings applied to
+	/// any position not explicitly specified.
+	std::map < core::Size, utility::vector1 < std::string > > allowed_noncanonicals_by_position_;
+
+	/// @brief Should D-residues be prohibited at positions with negative phi values?
+	/// @details Default true.
+	bool prohibit_D_at_negative_phi_;
+
+	/// @brief Should L-residues be prohibited at positions with positive phi values?
+	/// @details Default true.
+	bool prohibit_L_at_positive_phi_;
+
+	/// @brief Should we use the aa_composition score term in design?
+	/// @details Default false.
+	bool use_aa_comp_;
+
+	/// @brief Has an aa_composition setup file ben provided for residues in the L-alpha helix region of
+	/// Ramachadran space?
+	bool L_alpha_comp_file_exists_;
+
+	/// @brief Has an aa_composition setup file ben provided for residues in the D-alpha helix region of
+	/// Ramachadran space?
+	bool D_alpha_comp_file_exists_;
+
+	/// @brief Has an aa_composition setup file ben provided for residues in the L-beta strand region of
+	/// Ramachadran space?
+	bool L_beta_comp_file_exists_;
+
+	/// @brief Has an aa_composition setup file ben provided for residues in the D-beta strand region of
+	/// Ramachadran space?
+	bool D_beta_comp_file_exists_;
+
+	/// @brief Storage for the composition constraint setup for the L-alpha helix region of Ramachandran space.
+	/// @details Cached to prevent repeated read from disk.
+	std::string comp_file_contents_L_alpha_;
+
+	/// @brief Storage for the composition constraint setup for the D-alpha helix region of Ramachandran space.
+	/// @details Cached to prevent repeated read from disk.
+	std::string comp_file_contents_D_alpha_;
+
+	/// @brief Storage for the composition constraint setup for the L-beta strand region of Ramachandran space.
+	/// @details Cached to prevent repeated read from disk.
+	std::string comp_file_contents_L_beta_;
+
+	/// @brief Storage for the composition constraint setup for the D-beta strand region of Ramachandran space.
+	/// @details Cached to prevent repeated read from disk.
+	std::string comp_file_contents_D_beta_;
+
+	/// @brief Storage for a bin definition file.
+	/// @details Cached to prevent repeated read from disk.
+	std::string abba_bins_;
 
 };
 
