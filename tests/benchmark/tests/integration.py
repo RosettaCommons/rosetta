@@ -18,7 +18,7 @@ import json
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-ignore_files = 'command.sh observers'.split()
+ignore_files = 'command.sh command.mpi.sh observers'.split()
 
 #tests = ['i']
 
