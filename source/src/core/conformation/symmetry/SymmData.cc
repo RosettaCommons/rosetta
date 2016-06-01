@@ -343,7 +343,7 @@ SymmData::set_anchor_residue( string anchor )
 }
 
 void
-SymmData::set_score_multiply_subunit( vector1< Size > & score_multiply_subunit_vector )
+SymmData::set_score_multiply_subunit( vector1< Real > & score_multiply_subunit_vector )
 {
 	score_multiply_subunit_ = score_multiply_subunit_vector;
 }
@@ -1109,16 +1109,16 @@ SymmData::read_symmetry_data_from_stream(
 	}
 	root_ = root;
 
-	vector1< Size > score_multiply_subunit_vector;
+	vector1< Real > score_multiply_subunit_vector;
 
 	// Initialize the first subunit with a factor corresponding to the number of
 	// subunits. The rest of the values are set to 0
 	for ( Size i = 1; i<= subunits_; ++i ) {
-		score_multiply_subunit_vector.push_back(0);
+		score_multiply_subunit_vector.push_back(0.0);
 	}
 	// VRTs have a multiplier of 1
 	for ( Size i = subunits_ + 1; i<= subunits_ + virtual_coordinates_.size(); ++i ) {
-		score_multiply_subunit_vector.push_back(1);
+		score_multiply_subunit_vector.push_back(1.0);
 	}
 
 	if ( score_multiply_subunit_string.size() == 0 ) {
@@ -1136,10 +1136,10 @@ SymmData::read_symmetry_data_from_stream(
 		utility::trim(split_2[i], " ");
 
 		vector1< string> split_3 = utility::string_split( split_2[i], '*' );
-		Size factor=1;
+		Real factor=1;
 		string virtual_residues = split_3[1];
 		if ( split_3.size() > 1 ) {
-			factor = utility::string2int( split_3[1] );
+			factor = utility::string2Real( split_3[1] );
 			virtual_residues = split_3[2];
 		}
 		utility::trim( virtual_residues, "()" );

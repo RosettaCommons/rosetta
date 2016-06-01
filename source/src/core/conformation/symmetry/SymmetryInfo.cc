@@ -364,7 +364,7 @@ SymmetryInfo::~SymmetryInfo() {}
 void
 SymmetryInfo::init_defaults() {
 	use_symmetry_ = false;
-	score_multiply_factor_ = 1;
+	score_multiply_factor_ = 1.0;
 	last_indep_residue_ = 0;
 	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
 	contiguous_monomers_ = true;
@@ -421,7 +421,7 @@ SymmetryInfo::SymmetryInfo(
 	Size const N,
 	std::map< Size, SymDof > dofs,
 	Size const score_subunit,
-	utility::vector1< Size > score_multiply_subunit,
+	utility::vector1< Real > score_multiply_subunit,
 	SymSlideInfo slide_info,
 	Size const num_interfaces,
 	std::string const & type
@@ -448,7 +448,7 @@ SymmetryInfo::initialize(
 	Size const num_virtual,
 	std::map< Size, SymDof > dofs,
 	Size const score_subunit,
-	utility::vector1< Size > score_multiply_subunit,
+	utility::vector1< Real > score_multiply_subunit,
 	SymSlideInfo slide_info,
 	Size const num_interfaces,
 	std::string const & type
@@ -612,7 +612,7 @@ SymmetryInfo::initialize(
 	std::map< Size, WtedClones > jump_clones,
 	std::map< Size, SymDof > dofs,
 	Size const score_subunit,
-	utility::vector1< Size > score_multiply_subunit,
+	utility::vector1< Real > score_multiply_subunit,
 	SymSlideInfo slide_info,
 	Size const num_interfaces,
 	std::string const & type
@@ -1539,7 +1539,7 @@ SymmetryInfo::interface_number( Size const res1, Size const res2 ) const
 }
 
 void
-SymmetryInfo::set_score_multiply_from_subunit_factors( utility::vector1< Size > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits )
+SymmetryInfo::set_score_multiply_from_subunit_factors( utility::vector1< Real > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits )
 {
 	score_multiply_.clear();
 	for ( Size i = 1; i<= n_subunits; ++i ) {

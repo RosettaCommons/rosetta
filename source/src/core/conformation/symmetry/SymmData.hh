@@ -223,7 +223,7 @@ public:
 	);
 
 	void
-	set_score_multiply_subunit( utility::vector1< Size > & score_multiply_vector );
+	set_score_multiply_subunit( utility::vector1< Real > & score_multiply_vector );
 
 	void
 	set_slide_info( SymSlideInfo slide_info );

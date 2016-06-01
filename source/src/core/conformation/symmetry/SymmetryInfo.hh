@@ -78,7 +78,7 @@ public:
 		Size const N,
 		std::map< Size, SymDof > dofs,
 		Size const score_subunit,
-		utility::vector1< Size > score_multiply,
+		utility::vector1< Real > score_multiply,
 		SymSlideInfo slide_info,
 		Size const num_interfaces = 1,
 		std::string const & type = "simple"
@@ -96,7 +96,7 @@ public:
 		Size const num_virtual,
 		std::map< Size, SymDof > dofs,
 		Size const score_subunit,
-		utility::vector1< Size > score_multiply,
+		utility::vector1< Real > score_multiply,
 		SymSlideInfo slide_info,
 		Size const num_interfaces = 1,
 		std::string const & type = "simple"
@@ -111,7 +111,7 @@ public:
 		std::map< Size, WtedClones > jump_clones,
 		std::map< Size, SymDof > dofs,
 		Size const score_subunit,
-		utility::vector1< Size > score_multiply,
+		utility::vector1< Real > score_multiply,
 		SymSlideInfo slide_info,
 		Size const num_interfaces = 1,
 		std::string const & type = "simple"
@@ -214,7 +214,7 @@ public:
 	Real score_multiply( Size const res1, Size const res2 ) const;
 	Real deriv_multiply( Size const res1, Size const res2 ) const;
 	void set_score_multiply_from_subunit_factors(
-		utility::vector1< Size > const & score_multiply_vector_subunit,
+		utility::vector1< Real > const & score_multiply_vector_subunit,
 		Size const nres_subunit,
 		Size const n_subunits );
 	void set_score_multiply( Size const res, Size const factor );
@@ -305,14 +305,14 @@ private:
 	Size interfaces_;
 
 	// score multiplication factors
-	utility::vector1< Size > score_multiply_;
+	utility::vector1< Real > score_multiply_;
 
 	// intra/inter subunit reweighing factors
 	Real reweight_symm_interactions_;
 
 	// total number of subunits in the entire symm complex (not just those in the model)
 	// read in the 'E =' line in the symm definition file
-	core::Size score_multiply_factor_;
+	Real score_multiply_factor_;
 
 	// store the allowed dofs
 	std::map< Size, SymDof > dofs_;
