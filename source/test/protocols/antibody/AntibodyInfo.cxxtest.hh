@@ -46,10 +46,13 @@ class AntibodyInfoTests : public CxxTest::TestSuite {
 	core::pose::Pose ab_pose_aho; //Full PDB
 	core::pose::Pose ab_pose_chothia;
 	core::pose::Pose ab_pose_aho_antigen;
+	core::pose::Pose ab_pose_aho_camelid;
+
 	AntibodyInfoOP ab_info_north_aho;
 	AntibodyInfoOP ab_info_chothia;
 	AntibodyInfoOP ab_info_aroop;
 	AntibodyInfoOP ab_info_aho_antigen;
+	AntibodyInfoOP ab_info_aho_camelid;
 
 	std::map< core::Size,  std::map< core::Size,  vector1< core::Size > > > numbering;//[scheme][start/end][cdr][pose number].  Used to test numbering and transforms.
 	typedef std::map<CDRDefinitionEnum, std::pair< core::pose::Pose, AntibodyInfoOP> >  AbInfos;
@@ -63,6 +66,7 @@ public:
 		core::import_pose::pose_from_file(ab_pose_aho, "protocols/antibody/1bln_AB_aho.pdb", core::import_pose::PDB_file);
 		core::import_pose::pose_from_file(ab_pose_chothia, "protocols/antibody/1bln_AB_chothia.pdb", core::import_pose::PDB_file);
 		core::import_pose::pose_from_file(ab_pose_aho_antigen, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file);
+
 		ab_info_north_aho = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho, AHO_Scheme, North));
 		ab_info_chothia = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Chothia));
 		ab_info_aroop = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Aroop) );
@@ -226,6 +230,12 @@ void test_info_functions(){
 			TS_ASSERT_EQUALS(antigen_region, ab_info_aho_antigen->get_region_of_residue( ab_pose_aho_antigen, res ) );
 		}
 	}
+}
+void test_camelid(){
+	core::import_pose::pose_from_file(ab_pose_aho_camelid, "protocols/antibody/4LGS_AHO.pdb", core::import_pose::PDB_file);
+	ab_info_aho_camelid = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho_camelid, AHO_Scheme, North));
+	TS_ASSERT_EQUALS(ab_info_aho_camelid->is_camelid(), true);
+	TS_ASSERT_EQUALS(ab_info_aho_camelid->get_total_num_CDRs(), 3);
 }
 void test_kink_functions(){
 	// Aroop
