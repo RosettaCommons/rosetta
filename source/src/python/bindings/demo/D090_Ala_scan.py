@@ -81,6 +81,7 @@ import optparse    # for sorting options
 # the Interface object is required by this script
 from rosetta.protocols.scoring import Interface
 from rosetta import *
+from toolbox import mutate_residue
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

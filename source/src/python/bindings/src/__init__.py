@@ -496,7 +496,6 @@ def Set(list_in):
     return s
 
 
-# New methods.
 def generate_nonstandard_residue_set(params_list):
     """
     Generates a ResidueTypeSet from a list of .params filenames.

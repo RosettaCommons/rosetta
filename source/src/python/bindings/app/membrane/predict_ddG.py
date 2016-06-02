@@ -32,6 +32,7 @@ from rosetta import aa_from_oneletter_code
 from rosetta import PackRotamersMover
 from rosetta.core.pose import PDBInfo
 from rosetta.core.chemical import VariantType
+from toolbox import mutate_residue
 
 ###############################################################################
 

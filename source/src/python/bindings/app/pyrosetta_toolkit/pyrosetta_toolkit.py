@@ -84,10 +84,10 @@ class main_window:
       self.output_textbox.configure(yscrollcommand = self.output_scrollbar.set)
       self.output_scrollbar.configure(command = self.output_textbox.yview)
       
-      self.old_stdout = sys.stdout
+      #self.old_stdout = sys.stdout
       
-      self.output_class.terminal_output.trace_variable('w', self.output_tracer)
-      self.output_class.terminal_output.set(0)
+      #self.output_class.terminal_output.trace_variable('w', self.output_tracer)
+      #self.output_class.terminal_output.set(0)
       
       self.input_class.options_manager.print_current_options()
       
@@ -278,8 +278,9 @@ class MainTracer(rosetta.basic.PyTracer):
         rosetta.basic.PyTracer.__init__(self)
         self.textbox = textbox
    def output_callback(self, s):
-      s = " "+s
-      self.textbox.insert(END, s)
+      pass
+      #s = " "+s
+      #self.textbox.insert(END, s)
       #print s
    
       
@@ -288,8 +289,8 @@ class MainTracer(rosetta.basic.PyTracer):
 if __name__ == '__main__':
    rosetta.init()
    main_window_class = main_window()
-   main_window_class.TR = MainTracer(main_window_class.output_textbox)
-   rosetta.basic.Tracer.set_ios_hook(main_window_class.TR, rosetta.basic.Tracer.get_all_channels_string(), False)
+   #main_window_class.TR = MainTracer(main_window_class.output_textbox)
+   #rosetta.basic.Tracer.set_ios_hook(main_window_class.TR, rosetta.basic.Tracer.get_all_channels_string(), False)
    #rosetta.init(extra_options="-mute all")
    
    main_window_class.run()
