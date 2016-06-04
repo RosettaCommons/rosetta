@@ -66,18 +66,11 @@ public:
 	/// @brief default constructor
 	FastDesign();
 
-	/// @brief Constructor with some options
-	///
-	FastDesign( core::scoring::ScoreFunctionOP scorefxn_in, core::Size standard_repeats = 0 );
-
 	/// @brief virtual constructor to allow derivation
 	virtual ~FastDesign();
 
 	static std::string
 	class_name();
-
-	/// @brief Create the default task factory.  Must be called before design can occur.
-	void set_up_default_task_factory();
 
 	/// @brief Parses the FastDesignTags
 	virtual void

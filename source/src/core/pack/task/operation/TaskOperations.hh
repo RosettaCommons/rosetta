@@ -378,7 +378,7 @@ public:
 public:
 	ReadResfile();
 	ReadResfile( utility::options::OptionCollection const & options );
-	ReadResfile( std::string const &filename );
+	ReadResfile( std::string const & );
 
 	/// @brief Copy constructor.
 	/// @details Needed if a ResidueSelector is used.
@@ -415,11 +415,6 @@ public:
 	/// @brief Read in the resfile and store it, so that it
 	/// doesn't have to be read over and over again at apply time.
 	void cache_resfile();
-
-	/// @brief Allows code to provide resfile contents, so that this TaskOperation doesn't directly have to
-	/// handle file i/o.  Handly on large systems (e.g. Blue Gene), where one might only want the
-	/// master process to read a file.
-	void set_cached_resfile( std::string const &file_contents );
 
 	static std::string keyname();
 	static utility::tag::AttributeList xml_schema_attributes();

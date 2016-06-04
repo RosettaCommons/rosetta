@@ -30,7 +30,7 @@
 #include <numeric/xyzVector.hh>
 
 #ifdef WIN32
-#include <utility/tag/Tag.hh>
+	#include <utility/tag/Tag.hh>
 #endif
 
 #include <utility/vector1.hh>
@@ -79,13 +79,13 @@ private:
 class ResidueDepthCalculator
 {
 public:
-	ResidueDepthCalculator(){}
-	ResidueDepthCalculator( core::pose::Pose const &pose );
-	~ResidueDepthCalculator();
+  ResidueDepthCalculator(){}
+  ResidueDepthCalculator( core::pose::Pose const &pose );
+  ~ResidueDepthCalculator();
 
-	// this is main
-	utility::vector1< core::Real >
-	estimate_sidechain_depth( core::pose::Pose const &pose ) const;
+  // this is main
+  utility::vector1< core::Real > 
+  estimate_sidechain_depth( core::pose::Pose const &pose ) const;
 
 	// setters
 	void report_crd( bool const value ){ report_crd_ = value; }
@@ -94,87 +94,86 @@ public:
 	void set_dcut2( core::Real const value ){ dcut2_ = value; }
 
 	// helpers
-	core::Real get_scdepth_avrg( core::Size const ires ) const
-	{ if ( ires > sc_depth_avrg_.size() ) return -1.0;
-		return sc_depth_avrg_[ires]; }
+  core::Real get_scdepth_avrg( core::Size const ires ) const 
+	{ if( ires > sc_depth_avrg_.size() ) return -1.0; return sc_depth_avrg_[ires]; }
 
 	Size nres() const { return nres_; };
-	utility::vector1< core::Real > get_scdepth_avrg() const { return sc_depth_avrg_; }
-	utility::vector1< core::Real > get_scdepth_sdev() const { return sc_depth_sdev_; }
-	utility::vector1< core::Real > get_scdepth_fvar() const { return sc_depth_fvar_; }
+  utility::vector1< core::Real > get_scdepth_avrg() const { return sc_depth_avrg_; }
+  utility::vector1< core::Real > get_scdepth_sdev() const { return sc_depth_sdev_; }
+  utility::vector1< core::Real > get_scdepth_fvar() const { return sc_depth_fvar_; }
 
 private:
 
-	void
-	initialize( core::pose::Pose const &pose );
+  void
+  initialize( core::pose::Pose const &pose );
+ 
+  utility::vector1< Vector > 
+  read_unit_waterbox( Vector &boxwidth) const;
 
-	utility::vector1< Vector >
-	read_unit_waterbox( Vector &boxwidth) const;
-
-	void
-	get_pose_crd_and_index( core::pose::Pose const &pose,
-		utility::vector1< Vector > &protein_crd,
-		utility::vector1< core::Size > &coarse_index,
-		utility::vector1< core::Size > &res_id
-	) const;
+  void
+  get_pose_crd_and_index( core::pose::Pose const &pose,
+													utility::vector1< Vector > &protein_crd,
+													utility::vector1< core::Size > &coarse_index,
+													utility::vector1< core::Size > &res_id
+													) const;
 
 	utility::vector1< Vector >
 	get_coarse_crd( utility::vector1< Vector > const &protein_crd,
-		utility::vector1< core::Size > const &coarse_index
-	) const;
+									utility::vector1< core::Size > const &coarse_index
+									) const;
 
 	void
-	duplicate_waterbox( utility::vector1< Vector > const &unit_waterbox_crd,
-		Vector const boxwidth,
-		Vector const mincrds, Vector const maxcrds ) const;
-	Vector
-	bring_to_origin( utility::vector1< Vector > &protein_crd,
-		Vector &maxcrds,
-		Vector &mincrds
-	) const;
-	void
-	append_unitbox( utility::vector1< Vector > const &unitbox,
-		utility::vector1< Vector > &waterbox_dupl,
-		Vector const boxwidth,
-		int const i, int const j, int const k ) const;
+  duplicate_waterbox( utility::vector1< Vector > const &unit_waterbox_crd,
+											Vector const boxwidth, 
+											Vector const mincrds, Vector const maxcrds ) const;
+  Vector
+  bring_to_origin( utility::vector1< Vector > &protein_crd, 
+									 Vector &maxcrds,
+									 Vector &mincrds
+									 ) const;
+  void
+  append_unitbox( utility::vector1< Vector > const &unitbox,
+		  utility::vector1< Vector > &waterbox_dupl,
+		  Vector const boxwidth,
+		  int const i, int const j, int const k ) const;
 
-	void
-	pert_protein( utility::vector1< Vector > &protein_crd ) const;
+  void
+  pert_protein( utility::vector1< Vector > &protein_crd ) const;
 
-	utility::vector1< Vector >
-	quat2U( Vector const & quat3, core::Real const &quatw ) const;
+  utility::vector1< Vector > 
+  quat2U( Vector const & quat3, core::Real const &quatw ) const;
+  
+  utility::vector1< bool >
+  get_exclusion_index( utility::vector1< Vector > const & protein_crd,
+											 utility::vector1< Vector > const & protein_coarse_crd ) const;
+  
+  utility::vector1< core::Real > 
+  get_scdepth( utility::vector1< bool > const &excluded_wat,
+							 utility::vector1< Vector > const & protein_crd,
+							 utility::vector1< core::Size > const & res_id
+							 ) const;
 
-	utility::vector1< bool >
-	get_exclusion_index( utility::vector1< Vector > const & protein_crd,
-		utility::vector1< Vector > const & protein_coarse_crd ) const;
-
-	utility::vector1< core::Real >
-	get_scdepth( utility::vector1< bool > const &excluded_wat,
-		utility::vector1< Vector > const & protein_crd,
-		utility::vector1< core::Size > const & res_id
-	) const;
-
-	bool
-	stack_and_getaverage(
-		utility::vector1< utility::vector1< core::Real > > &sc_depth_stack,
-		utility::vector1< core::Real > const &sc_depth,
-		core::Size const niter
-	) const;
+  bool
+  stack_and_getaverage(
+											 utility::vector1< utility::vector1< core::Real > > &sc_depth_stack,
+											 utility::vector1< core::Real > const &sc_depth,
+											 core::Size const niter
+											 ) const; 
 
 private:
 
-	core::Size niter_;
-	core::Size nres_;
+  core::Size niter_;
+  core::Size nres_;
 	std::string waterbox_file_;
 	Real dcut1_, dcut2_;
 
 	bool use_bb_, use_sc_;
 	bool report_crd_;
 
-	mutable utility::vector1< Vector > waterbox_;
-	mutable utility::vector1< core::Real > sc_depth_avrg_;
-	mutable utility::vector1< core::Real > sc_depth_sdev_;
-	mutable utility::vector1< core::Real > sc_depth_fvar_;
+  mutable utility::vector1< Vector > waterbox_;
+  mutable utility::vector1< core::Real > sc_depth_avrg_;
+  mutable utility::vector1< core::Real > sc_depth_sdev_;
+  mutable utility::vector1< core::Real > sc_depth_fvar_;
 
 }; // ResidueDepthCalculator
 
@@ -201,33 +200,33 @@ public:
 	// this is the main
 	core::Real get_SDE_score( core::pose::Pose const &pose );
 
-	// wrapper for residue depth calculation
+// wrapper for residue depth calculation
 	utility::vector1< core::Real >
 	get_residue_depth( core::pose::Pose const &pose ) const;
 
-	void
-	parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+	void 
+	parse_my_tag( utility::tag::TagCOP tag, 
+								basic::datacache::DataMap &, 
+								filters::Filters_map const &, 
+								protocols::moves::Movers_map const &, 
+								core::pose::Pose const & );
 
 	// setters
 	void set_report_crd( bool const value ){ RDC_.report_crd( value ); }
 	void set_niter( core::Size const value ){ RDC_.niter( value ); }
 
 	// helpers
-	utility::vector1< core::Real > get_scdepth_avrg() const { return RDC_.get_scdepth_avrg(); }
-	utility::vector1< core::Real > get_scdepth_sdev() const { return RDC_.get_scdepth_sdev(); }
-	utility::vector1< core::Real > get_scdepth_fvar() const { return RDC_.get_scdepth_fvar(); }
+  utility::vector1< core::Real > get_scdepth_avrg() const { return RDC_.get_scdepth_avrg(); }
+  utility::vector1< core::Real > get_scdepth_sdev() const { return RDC_.get_scdepth_sdev(); }
+  utility::vector1< core::Real > get_scdepth_fvar() const { return RDC_.get_scdepth_fvar(); }
 
 
 private:
 
 	/*
 	bool
-	mycomp( const std::pair< core::Real, core::Size >& lhs,
-	const std::pair< core::Real, core::Size >& rhs )
+	mycomp( const std::pair< core::Real, core::Size >& lhs, 
+					const std::pair< core::Real, core::Size >& rhs )
 	{ return lhs.first < rhs.first; }
 	*/
 
@@ -241,41 +240,41 @@ private:
 	utility::vector1< core::Size >
 	get_n8( core::pose::Pose const &pose ) const;
 
-	utility::vector1< core::Size >
-	search_close_frags( utility::vector1< Vector > const &frag_crd,
-		core::Size const n8,
-		core::Size const npick
-	) const;
+	utility::vector1< core::Size > 
+	search_close_frags( utility::vector1< Vector > const &frag_crd, 
+										 core::Size const n8,
+										 core::Size const npick
+										 ) const;
 
 	core::Real
 	get_residue_similarity( core::conformation::Residue const& rsd,
-		utility::vector1< Vector > const &frag_crd,
-		core::Size const n8,
-		utility::vector1< ResidueDepthDataCOP > const context_rdd,
-		utility::vector1< core::Size > const &close_ids,
-		core::Size const n ) const;
+													utility::vector1< Vector > const &frag_crd,
+													core::Size const n8,
+													utility::vector1< ResidueDepthDataCOP > const context_rdd,
+													utility::vector1< core::Size > const &close_ids,
+													core::Size const n ) const;
 
 	core::Real
 	get_simscore( core::chemical::AA const aa1,
-		core::chemical::AA const aa2 ) const;
+								core::chemical::AA const aa2 ) const;
 
-	core::Real
+	core::Real 
 	compare_by_superposition( utility::vector1< ResidueDepthDataCOP > const & context_rdd,
-		utility::vector1< Vector > const & frag_crd,
-		utility::vector1< ResidueDepthDataCOP > const & context_rdd_ref,
-		utility::vector1< Vector > const & frag_crd_ref
-	) const;
+														utility::vector1< Vector > const & frag_crd,
+														utility::vector1< ResidueDepthDataCOP > const & context_rdd_ref,
+														utility::vector1< Vector > const & frag_crd_ref
+														) const;
 
 	utility::vector1< ResidueDepthDataCOP >
-	make_context( core::pose::Pose const &pose,
-		core::Size const ires ) const;
+	make_context( core::pose::Pose const &pose, 
+								core::Size const ires ) const;
 
 	utility::vector1< ResidueDepthDataCOP >
 	make_context_ref( core::Size const ipdb,
-		core::Size const ires ) const;
+										core::Size const ires ) const;
 	void
 	fill_neighs( ResidueDepthData &rdd,
-		utility::vector1< ResidueDepthData > const & pdb_rdds ) const;
+							 utility::vector1< ResidueDepthData > const & pdb_rdds ) const;
 
 private:
 	std::string dbfile_, GUIP_matrix_file_;
@@ -290,7 +289,7 @@ private:
 	utility::vector1< utility::vector1< ResidueDepthDataCOP > > db_;
 	utility::vector1< std::string > pdbid_;
 
-	// index by 12-res
+	// index by 12-res 
 	std::map< core::Size, utility::vector1<ResidueDepthFrag> > frag_db_;
 
 	utility::vector1< utility::vector1< core::Real > > GUIP_matrix_;

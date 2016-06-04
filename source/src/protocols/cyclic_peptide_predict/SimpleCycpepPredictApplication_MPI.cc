@@ -45,8 +45,6 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 #include <utility/numbers.hh>
@@ -78,7 +76,6 @@ namespace cyclic_peptide_predict {
 SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI() :
 	MPI_rank_(0),
 	MPI_n_procs_(0),
-	scorefxn_(),
 	hierarchy_level_(0),
 	total_hierarchy_levels_(0),
 	procs_per_hierarchy_level_(),
@@ -90,29 +87,15 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI() :
 	sort_type_(SORT_BY_ENERGIES),
 	select_highest_(false),
 	output_fraction_(1.0),
-	output_filename_(""),
-	allowed_canonicals_(),
-	allowed_noncanonicals_(),
-	L_alpha_comp_file_exists_(false),
-	D_alpha_comp_file_exists_(false),
-	L_beta_comp_file_exists_(false),
-	D_beta_comp_file_exists_(false),
-	comp_file_contents_L_alpha_(""),
-	comp_file_contents_D_alpha_(""),
-	comp_file_contents_L_beta_(""),
-	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	output_filename_("")
 	//TODO -- Initialize vars here.
-{
-	scorefxn_ = core::scoring::get_score_function(); //Reads from file.
-}
+{}
 
 /// @brief Constructor with options
 ///
 SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	int const MPI_rank,
 	int const MPI_n_procs,
-	core::scoring::ScoreFunctionCOP sfxn_in,
 	core::Size total_hierarchy_levels,
 	utility::vector1 < core::Size > const & procs_per_hierarchy_level,
 	utility::vector1< core::Size > const &batchsize_per_level,
@@ -123,7 +106,6 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 ) :
 	MPI_rank_( MPI_rank ),
 	MPI_n_procs_( MPI_n_procs ),
-	scorefxn_(), //Cloned below.
 	hierarchy_level_( 0 ),
 	total_hierarchy_levels_( total_hierarchy_levels ),
 	procs_per_hierarchy_level_(),
@@ -135,20 +117,8 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	sort_type_(SORT_BY_ENERGIES),
 	select_highest_(select_highest),
 	output_fraction_(1.0),
-	output_filename_( output_filename ),
-	allowed_canonicals_(),
-	allowed_noncanonicals_(),
-	L_alpha_comp_file_exists_(false),
-	D_alpha_comp_file_exists_(false),
-	L_beta_comp_file_exists_(false),
-	D_beta_comp_file_exists_(false),
-	comp_file_contents_L_alpha_(""),
-	comp_file_contents_D_alpha_(""),
-	comp_file_contents_L_beta_(""),
-	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	output_filename_( output_filename )
 {
-	if(sfxn_in) scorefxn_ = sfxn_in->clone();
 	set_sort_type( sort_type );
 	set_output_fraction( output_fraction );
 	set_procs_per_hierarchy_level( procs_per_hierarchy_level );
@@ -169,7 +139,6 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 ) :
 	MPI_rank_( src.MPI_rank_ ),
 	MPI_n_procs_( src.MPI_n_procs_ ),
-	scorefxn_(), //Cloned below
 	hierarchy_level_( 0 ),
 	total_hierarchy_levels_( src.total_hierarchy_levels_ ),
 	procs_per_hierarchy_level_(), //Assigned below
@@ -181,24 +150,12 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	sort_type_(src.sort_type_),
 	select_highest_(src.select_highest_),
 	output_fraction_(src.output_fraction_),
-	output_filename_(src.output_filename_),
-	allowed_canonicals_(src.allowed_canonicals_),
-	allowed_noncanonicals_(src.allowed_noncanonicals_),
-	L_alpha_comp_file_exists_(src.L_alpha_comp_file_exists_),
-	D_alpha_comp_file_exists_(src.D_alpha_comp_file_exists_),
-	L_beta_comp_file_exists_(src.L_beta_comp_file_exists_),
-	D_beta_comp_file_exists_(src.D_beta_comp_file_exists_),
-	comp_file_contents_L_alpha_(src.comp_file_contents_L_alpha_),
-	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
-	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
-	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
-	abba_bins_(src.abba_bins_)
+	output_filename_(src.output_filename_)
 	//TODO -- copy variables here.
 {
 	set_procs_per_hierarchy_level( src.procs_per_hierarchy_level_ );
 	assign_level_children_and_parent();
 	if(src.native_) native_ = src.native_->clone();	
-	if(src.scorefxn_) scorefxn_ = src.scorefxn_->clone();
 
 	runtime_assert( hierarchy_level_ == src.hierarchy_level_ );
 	runtime_assert( my_children_ == src.my_children_ );
@@ -213,19 +170,13 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 /// in the communications hierarchy are just involved in sending out jobs and pulling in results.
 void
 SimpleCycpepPredictApplication_MPI::run() {
-	debug_assert(scorefxn_); //Must be assigned before running.
 
 	get_sequence(); //Emperor reads sequence from disk and broadcasts it to everyone else.
 	get_native(); //Emperor reads native pose from disk and broadcasts it to everyone else.
-	get_design_settings(); //If we're doing design, emperor reads design settings from disk and broadcasts them to everyone else.
-
-	if(TR.Debug.visible()) TR.Debug << "Proc " << MPI_rank_ << " reports that it is configured and ready to start." << std::endl;
 
 	if( i_am_emperor() ) {
 		run_emperor();
 	} else if ( i_am_slave() ) {
-		//core::Size k(5); //DELETE ME -- for GDB debugging in MPI mode.
-		//while(k!=4) {  } //DELETE ME -- for GDB debugging in MPI mode.
 		run_slave();
 	} else {
 		run_intermediate_master();
@@ -278,17 +229,6 @@ SimpleCycpepPredictApplication_MPI::set_output_fraction(
 }
 
 /// ------------- Methods ----------------------------
-
-/// @brief Check the current time and determine whether it's past the timeout time.
-///
-bool
-SimpleCycpepPredictApplication_MPI::halting_condition(
-	clock_t const start_time,
-	core::Size const timeout
-) const {
-	return ( static_cast< core::Real >( clock() - start_time ) / static_cast<core::Real>( CLOCKS_PER_SEC ) > static_cast<core::Real>(timeout) );
-}
-
 
 /// @brief Set the number of processes at each level of the communications hierarchy.
 /// @details The total_hierarchy_levels, MPI_rank, and MPI_n_procs variables must be set first.  This does
@@ -490,135 +430,6 @@ SimpleCycpepPredictApplication_MPI::get_native() {
 	}
 }
 
-/// @brief Get the allowed amino acids at each position, if we're designing.
-/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
-/// it figures out which behaviour it should be performing.
-void
-SimpleCycpepPredictApplication_MPI::get_design_settings() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	if( !option[basic::options::OptionKeys::cyclic_peptide::design_peptide]() ) return; //Do nothing if we're not designing.
-
-	if( i_am_emperor() ) {
-		//The emperor reads from disk and broadcasts to everyone else.
-		if( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position].user() ) {
-			read_peptide_design_file( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position](), allowed_canonicals_, allowed_noncanonicals_ );
-		}
-		read_file_into_string( abba_bins_, "protocol_data/generalizedKIC/bin_params/ABBA.bin_params", true /*from database*/);
-		if(TR.Debug.visible()) TR.Debug << "Emperor read protocol_data/generalizedKIC/bin_params/ABBA.bin_params from disk." << std::endl;
-		if( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) {
-			read_file_into_string( comp_file_contents_L_alpha_, option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file](), false /*not from database*/);
-			L_alpha_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file]() << " from disk." << std::endl;
-		}
-		if( option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file].user() ) {
-			read_file_into_string( comp_file_contents_D_alpha_, option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file](), false /*not from database*/);
-			D_alpha_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file]() << " from disk." << std::endl;
-		}
-		if( option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file].user() ) {
-			read_file_into_string( comp_file_contents_L_beta_, option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file](), false /*not from database*/);
-			L_beta_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file]() << " from disk." << std::endl;
-		}
-		if( option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file].user() ) {
-			read_file_into_string( comp_file_contents_D_beta_, option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file](), false /*not from database*/);
-			D_beta_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file]() << " from disk." << std::endl;
-		}
-	}
-
-	//Everyone participates in the broadcast (sending and/or receiving):
-	if( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position].user() ) {
-		broadcast_res_list( allowed_canonicals_ );
-		broadcast_res_list( allowed_noncanonicals_ );
-	}
-	broadcast_string_from_emperor( comp_file_contents_L_alpha_ );
-	broadcast_string_from_emperor( comp_file_contents_D_alpha_ );
-	broadcast_string_from_emperor( comp_file_contents_L_beta_ );
-	broadcast_string_from_emperor( comp_file_contents_D_beta_ );
-	broadcast_string_from_emperor( abba_bins_ );
-
-	if( !i_am_emperor() ) {
-		if( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) L_alpha_comp_file_exists_=true;
-		if( option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file].user() ) D_alpha_comp_file_exists_=true;
-		if( option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file].user() ) L_beta_comp_file_exists_=true;
-		if( option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file].user() ) D_beta_comp_file_exists_=true;
-	}
-
-	if(TR.Debug.visible() ) {
-		if( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position].user() ) {
-			TR.Debug << "\nProc " << MPI_rank_ << " allowed canonicals:\n";
-			for(std::map<core::Size, utility::vector1 < std::string > >::const_iterator it=allowed_canonicals_.begin(); it!=allowed_canonicals_.end(); ++it) {
-				TR.Debug << "Proc" << MPI_rank_ << "\t" << it->first << "\t" << it->second.size() << "\t";
-				for(core::Size i=1, imax=it->second.size(); i<=imax; ++i) { TR.Debug << it->second[i]; if( i<imax ) TR.Debug << ","; }
-				TR.Debug << "\n";
-			}
-			TR.Debug << "\nProc " << MPI_rank_ << " allowed noncanonicals:\n";
-			for(std::map<core::Size, utility::vector1 < std::string > >::const_iterator it=allowed_noncanonicals_.begin(); it!=allowed_noncanonicals_.end(); ++it) {
-				TR.Debug << "Proc" << MPI_rank_ << "\t" << it->first << "\t" << it->second.size() << "\t";
-				for(core::Size i=1, imax=it->second.size(); i<=imax; ++i) { TR.Debug << it->second[i]; if( i<imax ) TR.Debug << ","; }
-				TR.Debug << "\n";
-			}
-		}
-		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_L_alpha_ (" << ( L_alpha_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_L_alpha_ << "\n";
-		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_D_alpha_ (" << ( D_alpha_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_D_alpha_ << "\n";
-		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_L_beta_ (" << ( L_beta_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_L_beta_ << "\n";
-		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_D_beta_ (" << ( D_beta_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_D_beta_ << "\n";
-		//TR.Debug << "\nProc " << MPI_rank_ << " abba_bins_:\n" << abba_bins_ << "\n";
-		TR.Debug << std::endl;
-		TR.Debug.flush();
-	}
-}
-
-/// @brief Given a map of indicies to lists of residue names, broadcast it to all MPI ranks.
-/// @note This necessarily uses new and delete for the data sent via MPI_Bcast.
-void
-SimpleCycpepPredictApplication_MPI::broadcast_res_list(
-	std::map< core::Size, utility::vector1 < std::string > > &res_list
-) const {
-
-	if( i_am_emperor() ) { //The emperor converts the map into a string and sends it.
-		std::stringstream reslist_string;
-		bool first_map_entry(true);
-		for (std::map<core::Size, utility::vector1 < std::string > >::const_iterator it=res_list.begin(); it!=res_list.end(); ++it) {
-			if(first_map_entry) { first_map_entry=false; }
-			else { reslist_string << " "; }
-			reslist_string << it->first << " " << it->second.size() << " ";
-			for(core::Size i=1, imax=it->second.size(); i<=imax; ++i) {
-				reslist_string << it->second[i];
-				if( i < imax ) reslist_string << " ";
-			}
-		}
-		std::string reslist_str( reslist_string.str() );
-		broadcast_string_from_emperor( reslist_str );
-		if(TR.Debug.visible()) TR.Debug << "Reslist string broadcast from emperor:\n" << reslist_str << std::endl;
-
-	} else {  //Everyone else receives the string and converts it into a map.
-		res_list.clear();
-		std::string conversion_string( "" );
-		broadcast_string_from_emperor( conversion_string );		
-		if(TR.Debug.visible()) TR.Debug << "Reslist string received by proc " << MPI_rank_ << ":\n" << conversion_string << std::endl;
-		std::stringstream received_string( conversion_string );
-
-		while( !received_string.eof() ) {
-			core::Size index, entries;
-			received_string >> index >> entries;
-			res_list[index].reserve(entries);
-			if(TR.Debug.visible()) TR.Debug << "Parsing " << entries << " entries." << std::endl;
-			for(core::Size i=1; i<=entries; ++i ) {
-				std::string curname;
-				received_string >> curname;
-				res_list[index].push_back(curname);
-				if(TR.Debug.visible()) TR.Debug << "Added " << curname << "." << std::endl;
-			}
-		}
-		if(TR.Debug.visible()) TR.Debug << "Finished splitting reslist on proc " << MPI_rank_ << "." << std::endl;
-	}
-}
-
-
 /// @brief The emperor sends a message to everyone letting them know it's time to start.
 /// @details Following the go signal, slaves send requests for jobs upward.
 void
@@ -650,20 +461,6 @@ SimpleCycpepPredictApplication_MPI::wait_for_request(
 	requesting_node = status.MPI_SOURCE;
 	message = static_cast<SIMPLE_CYCPEP_PREDICT_MPI_COMMUNICATION_TYPE>(buf);
 }
-
-/// @brief Send a signal to stop job distribution to a set of intermediate masters.
-///
-void
-SimpleCycpepPredictApplication_MPI::send_halt_signal(
-	utility::vector1 < int > const &ranks_to_target
-) const {
-	int buf(0);
-	for(core::Size i=1, imax=ranks_to_target.size(); i<=imax; ++i) {
-		MPI_Send( &buf, 1, MPI_INT, ranks_to_target[i], static_cast<int>(HALT_SIGNAL), MPI_COMM_WORLD );
-		if(TR.Debug.visible()) TR.Debug << "Proc " << MPI_rank_ << " sent halt signal to proc " << ranks_to_target[i] << "." << std::endl;
-	}
-}
-
 
 /// @brief Any node can send some sort of request to a specific node in the hierarchy (parent or child).
 /// @details Sends messags with tag GENERAL_REQUEST.
@@ -779,31 +576,6 @@ SimpleCycpepPredictApplication_MPI::receive_pose_batch_as_string(
 	results_string += received_string;
 	delete[] charvect;
 }
-
-/// @brief Receive the number of jobs attempted by all of the nodes below a child node, and add this to the total.
-///
-void
-SimpleCycpepPredictApplication_MPI::receive_jobs_attempted_count(
-	core::Size &total_jobs_attempted,
-	int const originating_node
-) const {
-	MPI_Status status;
-	unsigned long sizebuf(0);
-	MPI_Recv( &sizebuf, 1, MPI_UNSIGNED_LONG, originating_node, static_cast<int>(JOBS_ATTEMPTED_COUNT_UPWARD), MPI_COMM_WORLD, &status );
-	total_jobs_attempted += static_cast<core::Size>(sizebuf);
-}
-
-/// @brief Send the number of jobs attempted by this nodes or all of the nodes below this node.
-///
-void
-SimpleCycpepPredictApplication_MPI::send_jobs_attempted_count(
-	core::Size const total_jobs_attempted,
-	int const target_node
-) const {
-	unsigned long sizebuf( static_cast<unsigned long>(total_jobs_attempted) );
-	MPI_Send( &sizebuf, 1, MPI_UNSIGNED_LONG, target_node, static_cast<int>(JOBS_ATTEMPTED_COUNT_UPWARD), MPI_COMM_WORLD);
-}
-
 
 /// @brief Recieve a sorted list of job summaries, and merge them with an existing sorted list to make a combined sorted list.
 /// @details To be used in conjunction with send_job_summaries().  Sending and receiving procs must send messages to synchronize, first.
@@ -973,32 +745,6 @@ SimpleCycpepPredictApplication_MPI::receive_pose_requests_from_above(
 	receive_and_sort_job_summaries( summary_shortlist, my_parent_, false /*No need to list all the nodes that we pass through this time*/ );
 }
 
-/// @brief Given a string on the emperor node, send it to all nodes.
-/// @details The "mystring" string is the input on the emperor node, and the output on all other nodes.
-void
-SimpleCycpepPredictApplication_MPI::broadcast_string_from_emperor(
-	std::string &mystring
-) const {
-	if( i_am_emperor() ) {
-		//if(TR.Debug.visible()) TR.Debug << "Broadcasting the following string from the emperor:\n" << mystring << std::endl;
-		unsigned long charsize( mystring.size() + 1 );
-		char * bcastchar( new char[charsize] ); // Plus one for null terminator.
-		for(core::Size i=0; i < static_cast<core::Size>(charsize); ++i) bcastchar[i] = mystring.c_str()[i]; //Copy the string to the char array for broadcast.
-		MPI_Bcast( &charsize, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD ); //Broadcast the length of the string.
-		MPI_Bcast( bcastchar, charsize, MPI_CHAR, 0, MPI_COMM_WORLD ); //Broadcast the string.
-		delete[] bcastchar;
-		//if(TR.Debug.visible()) TR.Debug << "String broadcast from emperor complete." << std::endl;
-	} else {
-		unsigned long charsize(0);
-		MPI_Bcast( &charsize, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD ); //Receive the length of the string.
-		char * bcastchar( new char[charsize] );
-		MPI_Bcast( bcastchar, charsize, MPI_CHAR, 0, MPI_COMM_WORLD ); //Receive the string.
-		mystring.clear();
-		mystring = bcastchar;
-		delete[] bcastchar;
-	}
-}
-
 
 /// ------------- Emperor Methods --------------------
 
@@ -1017,23 +763,17 @@ SimpleCycpepPredictApplication_MPI::run_emperor() const {
 	using namespace basic::options::OptionKeys;
 
 	core::Size const nstruct( option[out::nstruct].user() ? option[out::nstruct]() : 1 ); //Number of structures to generate
-
-	bool const halt_after_timeout( option[basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time].user() ); //Should we stop distributing jobs after a certain amount of time has elapsed?
-	core::Size const timeout( halt_after_timeout ? option[basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time]() : 0 );
-	bool halt_signal_fired(false);
-	bool halt_signal_sent_downward(false);
-
 	core::Size structures_remaining_to_send( nstruct );
 
 	core::Size n_children_done(0);
 	core::Size n_summaries_received(0);
+	//core::Size n_poses_received(0); //TODO Uncomment me.
 	core::Size const n_children( my_children_.size() );
-	core::Size total_jobs_attempted_by_children(0);
-	core::Size children_reporting_job_counts(0);
+
+	bool children_done_and_summaries_received( false ); //All the children are done and all their summaries have been received
 
 	utility::vector1< SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > results_summary_from_below;
 
-	clock_t start_time( clock() ); //The start of the run, for timing information.
 	go_signal(); //Send signal to everyone that it's time to start.
 
 	do {
@@ -1042,25 +782,17 @@ SimpleCycpepPredictApplication_MPI::run_emperor() const {
 
 		wait_for_request( requesting_node, message_from_below );
 		switch( message_from_below ) {
-			case 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
-				receive_jobs_attempted_count( total_jobs_attempted_by_children, requesting_node );
-				++children_reporting_job_counts;
-			break;		
 			case REQUEST_NEW_JOBS_BATCH_UPWARD:
-				if( halt_after_timeout && halting_condition(start_time, timeout) ) {
-					halt_signal_fired = true;
-					structures_remaining_to_send = 0;
-				}
 				send_new_jobs_downward( requesting_node, structures_remaining_to_send, batchsize_ );
-				if( halt_signal_fired && !halt_signal_sent_downward && hierarchy_level_ < total_hierarchy_levels_ - 1 ) {
-					send_halt_signal( my_children_ );
-					halt_signal_sent_downward = true;
-				}
 				break;
 			case OFFER_NEW_JOBRESULTSSUMMARY_BATCH_UPWARD:
 				receive_and_sort_job_summaries( results_summary_from_below, requesting_node, true);
 				++n_summaries_received;
 				if(TR.Debug.visible()) TR.Debug << "Empreror node (" << MPI_rank_ << ") has received " << n_summaries_received << " set(s) of job summaries, representing " << results_summary_from_below.size() << " job(s), the last from node " << requesting_node << "." << std::endl;
+				if( n_summaries_received == n_children && n_children_done == n_children ) {
+					children_done_and_summaries_received = true;
+					if(TR.Debug.visible()) TR.Debug << "Empreror node (" << MPI_rank_ << ") has received completion signals and job summaries from all children." << std::endl;
+				}
 				break;
 			case GIVE_COMPLETION_SIGNAL_UPWARD:
 				++n_children_done;
@@ -1070,9 +802,8 @@ SimpleCycpepPredictApplication_MPI::run_emperor() const {
 				//TODO
 				break;
 		}
-	} while( n_summaries_received < n_children || n_children_done < n_children || children_reporting_job_counts < n_children );  //Keep looping until all children have reported that they're done and have sent summaries.
 
-	if(TR.Debug.visible()) TR.Debug << "Empreror node (" << MPI_rank_ << ") has received completion signals, job attempt counts, and job summaries from all children." << std::endl;
+	} while( !children_done_and_summaries_received );  //Keep looping until all children have reported that they're done and have sent summaries.
 
 	emperor_write_summaries_to_tracer( results_summary_from_below );
 
@@ -1107,16 +838,6 @@ SimpleCycpepPredictApplication_MPI::run_emperor() const {
 
 	if(TR.Debug.visible()) TR.Debug << "Emperor (proc " << MPI_rank_ << ") reached end of run_emperor() function." << std::endl;	
 	stop_signal(); //Wait for signal to everyone that it's time to stop.
-	clock_t end_time( clock() );
-
-	if(TR_summary.visible()) {
-		TR_summary << "The simple_cycpep_predict application completed " << total_jobs_attempted_by_children << " of " << nstruct
-			<< " jobs in " << static_cast< core::Real >( end_time - start_time ) / static_cast<core::Real>( CLOCKS_PER_SEC )
-			<< " seconds.  " << results_summary_from_below.size() << " jobs returned structures, the top "
-			<< summary_shortlist.size() << " of which were written to disk." << std::endl;
-		TR_summary.flush();
-	}
-
 } //run_emperor()
 
 /// @brief Convert a silent struct into a character string and broadcast it to all nodes.
@@ -1253,13 +974,10 @@ SimpleCycpepPredictApplication_MPI::run_intermediate_master() const {
 
 	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > jobsummaries; //Job summaries received from children.  Sorted list.
 
-	bool halt_signal_received(false);
 	core::Size const n_children( my_children_.size() ); //How many children do I have?
 	core::Size n_children_done(0), n_summaries_received(0) /*, n_posesets_received(0)*/; //How many of my children have reported that they've finished all of their jobs?  How many have sent me summaries of what they've done?  How many have sent me their poses?
 
 	core::Size n_jobs(0); //Jobs that I'm holding, waiting to assign to lower-level nodes.
-	core::Size total_jobs_attempted_by_children(0); //How many jobs have my children attempted?
-	core::Size children_reporting_job_counts(0); //How many children have reported job counts
 
 	do {
 		int requesting_node(0);
@@ -1267,26 +985,8 @@ SimpleCycpepPredictApplication_MPI::run_intermediate_master() const {
 		wait_for_request( requesting_node, message_from_above_or_below );
 
 		switch( message_from_above_or_below ) {
-			case 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
-				receive_jobs_attempted_count( total_jobs_attempted_by_children, requesting_node );
-				++children_reporting_job_counts;
-				if( children_reporting_job_counts == n_children ) {
-					//Offer the total number of jobs attempted upward:
-					send_request( my_parent_, OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD);
-					send_jobs_attempted_count( total_jobs_attempted_by_children,	my_parent_);	
-					if(TR.Debug.visible()) TR.Debug << "Intermediate master process " << MPI_rank_ << " reported to its parent that its children attempted " << total_jobs_attempted_by_children << " jobs." << std::endl;
-				}
-			break;
-			case HALT_SIGNAL:
-				if(TR.Debug.visible()) TR.Debug << "Proc " << MPI_rank_ << " received halt signal from proc " << requesting_node << "." << std::endl;
-				halt_signal_received = true;
-				n_jobs = 0; //Clear all my jobs; don't send any more downwards.
-				if( hierarchy_level_ < total_hierarchy_levels_ - 1 ) {
-					send_halt_signal( my_children_ );
-				}
-			break;
 			case REQUEST_NEW_JOBS_BATCH_UPWARD:
-				if( n_jobs < batchsize_ && !halt_signal_received ) {
+				if( n_jobs < batchsize_ ) {
 					send_request( my_parent_, REQUEST_NEW_JOBS_BATCH_UPWARD );
 					receive_njobs_from_above( n_jobs );
 				}
@@ -1325,7 +1025,7 @@ SimpleCycpepPredictApplication_MPI::run_intermediate_master() const {
 				//TODO
 				break;
 		}
-	} while( n_children_done < n_children || n_summaries_received < n_children || children_reporting_job_counts < n_children );
+	} while( n_children_done < n_children || n_summaries_received < n_children /*&& n_posesets_received < n_children*/ /*Fix this last -- I want to transmit batches of poses to emperor as I receive them to save memory, but I might have many levels below me */);
 
 	//Transmit requests for full poses down the hierarchy:
 	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > requested_jobs;
@@ -1396,7 +1096,6 @@ void
 SimpleCycpepPredictApplication_MPI::run_slave() const {
 	go_signal(); //Wait for signal to everyone that it's time to start.
 
-	core::Size total_jobs_attempted(0);
 	core::Size njobs_from_above(0);
 	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > jobsummaries;
 	utility::vector1 < core::io::silent::SilentStructOP > all_output; //All of the output poses, in silent structure format..
@@ -1406,7 +1105,6 @@ SimpleCycpepPredictApplication_MPI::run_slave() const {
 		receive_njobs_from_above( njobs_from_above );
 		if (TR.Debug.visible()) TR.Debug << "Slave process " << MPI_rank_ << " was assigned " << njobs_from_above << " job(s)." << std::endl;
 		if( njobs_from_above != 0 ) {
-			total_jobs_attempted += njobs_from_above;
 			slave_carry_out_njobs( njobs_from_above, jobsummaries, all_output );
 		} else {
 			break;
@@ -1419,11 +1117,6 @@ SimpleCycpepPredictApplication_MPI::run_slave() const {
 	sort_jobsummaries_list( jobsummaries, sort_type_ ); //Slaves sort the job summaries lists, so that merge sorts can be used at all steps by above layers.
 	send_job_summaries( jobsummaries, my_parent_ );
 	if(TR.Debug.visible()) TR.Debug << "Slave process " << MPI_rank_ << " sent job summaries for " << jobsummaries.size() << " job(s) to node " << my_parent_ << "." << std::endl;
-
-	//Offer the total number of jobs attempted upward:
-	send_request( my_parent_, OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD);
-	send_jobs_attempted_count( total_jobs_attempted,	my_parent_);
-	if(TR.Debug.visible()) TR.Debug << "Slave process " << MPI_rank_ << " reported to its parent that it attempted " << total_jobs_attempted << " jobs." << std::endl;
 
 	//Receive requests for full poses from up the hierarchy:
 	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > requested_jobs;
@@ -1460,20 +1153,13 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs(
 	}
 
 	//Create and initialize the predictor:
-	SimpleCycpepPredictApplicationOP predict_app( new SimpleCycpepPredictApplication(false /*prevent file read*/) );
+	SimpleCycpepPredictApplicationOP predict_app( new SimpleCycpepPredictApplication );
 	if(native_) predict_app->set_native( native_ );
-	predict_app->set_scorefxn( scorefxn_ );
 	predict_app->set_nstruct( njobs_from_above );
 	predict_app->set_sequence( sequence_ );
 	predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
 	predict_app->set_suppress_checkpoints( true );
 	predict_app->set_my_rank( MPI_rank_ );
-	predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
-	if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
-	if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
-	if( L_beta_comp_file_exists_ ) predict_app->set_L_beta_compfile_contents( comp_file_contents_L_beta_ );
-	if( D_beta_comp_file_exists_ ) predict_app->set_D_beta_compfile_contents( comp_file_contents_D_beta_ );
-	predict_app->set_abba_bins_binfile_contents( abba_bins_);
 
 	predict_app->run();
 

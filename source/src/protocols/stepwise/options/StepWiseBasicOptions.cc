@@ -72,7 +72,7 @@ StepWiseBasicOptions::initialize_variables(){
 	lores_ = false;
 	verbose_sampler_ = false;
 	minimize_waters_ = false;
-	hydrate_magnesiums_ = false;
+  hydrate_magnesiums_ = false;
 	test_all_mg_hydration_frames_ = false;
 }
 

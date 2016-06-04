@@ -41,7 +41,6 @@
 
 // C++ headers
 #include <stdio.h>
-#include <time.h>
 
 namespace protocols {
 namespace cyclic_peptide_predict {
@@ -50,20 +49,17 @@ enum SIMPLE_CYCPEP_PREDICT_MPI_COMMUNICATION_TYPE {
 	NULL_MESSAGE = 1,
 	REQUEST_NEW_JOBS_BATCH_UPWARD,
 	OFFER_NEW_JOBRESULTSSUMMARY_BATCH_UPWARD,
-	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD,
 	OFFER_NEW_POSE_BATCH_UPWARD,
 	SILENT_STRUCT_TRANSMISSION,
 	GIVE_COMPLETION_SIGNAL_UPWARD,
 	OFFER_NEW_JOBS_BATCH_DOWNWARD,
-	REQUEST_NEW_POSE_BATCH_DOWNWARD,
-	HALT_SIGNAL
+	REQUEST_NEW_POSE_BATCH_DOWNWARD
 };
 
 enum SIMPLE_CYCPEP_PREDICT_MPI_TAG_TYPE {
 	GENERAL_REQUEST=1,
 	NEW_JOBS_DOWNWARD,
-	RESULTS_SUMMARY_UPWARD,
-	JOBS_ATTEMPTED_COUNT_UPWARD
+	RESULTS_SUMMARY_UPWARD
 };
 
 /// @brief Application-level code for simple_cycpep_predict application, MPI version.
@@ -80,7 +76,6 @@ public:
 	SimpleCycpepPredictApplication_MPI(
 		int const MPI_rank,
 		int const MPI_n_procs,
-		core::scoring::ScoreFunctionCOP sfxn_in,
 		core::Size const total_hierarchy_levels,
 		utility::vector1 < core::Size > const & procs_per_hierarchy_level,
 		utility::vector1 < core::Size > const &batchsize_per_level,
@@ -123,10 +118,6 @@ public:
 
 private:
 	/// ------------- Methods ----------------------------
-	
-	/// @brief Check the current time and determine whether it's past the timeout time.
-	///
-	bool halting_condition( clock_t const start_time, core::Size const timeout ) const;
 
 	/// @brief Set the number of processes at each level of the communications hierarchy.
 	/// @details The total_hierarchy_levels, MPI_rank, and MPI_n_procs variables must be set first.  This does
@@ -156,15 +147,6 @@ private:
 	/// @details The emperor reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	void get_native();
-
-	/// @brief Get the allowed amino acids at each position, if we're designing.
-	/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
-	/// it figures out which behaviour it should be performing.
-	void get_design_settings();
-	
-	/// @brief Given a map of indicies to lists of residue names, broadcast it to all MPI ranks.
-	/// @note This necessarily uses new and delete for the data sent via MPI_Bcast.
-	void broadcast_res_list( std::map< core::Size, utility::vector1 < std::string > > &res_list) const;
 	
 	/// @brief The emperor sends a message to everyone letting them know it's time to start.
 	/// @details Following the go signal, slaves send requests for jobs upward.
@@ -179,10 +161,6 @@ private:
 	/// @param[out] requesting_node The node from which the request came.
 	/// @param[out] message The type of request received.
 	void wait_for_request( int &requesting_node, SIMPLE_CYCPEP_PREDICT_MPI_COMMUNICATION_TYPE &message ) const;
-
-	/// @brief Send a signal to stop job distribution to a set of intermediate masters.
-	///
-	void send_halt_signal( utility::vector1 < int > const &ranks_to_target ) const;
 	
 	/// @brief Any node can send some sort of request to a specific node in the hierarchy (parent or child).
 	/// @details Sends messags with tag GENERAL_REQUEST.
@@ -217,14 +195,6 @@ private:
 	/// @details Appends received information to results_string.
 	void receive_pose_batch_as_string( int const originating_node, std::string &results_string ) const;
 	
-	/// @brief Receive the number of jobs attempted by all of the nodes below a child node, and add this to the total.
-	///
-	void receive_jobs_attempted_count( core::Size &total_jobs_attempted,	int const originating_node ) const;
-
-	/// @brief Send the number of jobs attempted by this nodes or all of the nodes below this node.
-	///
-	void send_jobs_attempted_count( core::Size const total_jobs_attempted,	int const target_node) const;	
-
 	/// @brief Recieve a sorted list of job summaries, and merge them with an existing sorted list to make a combined sorted list.
 	/// @details To be used in conjunction with send_job_summaries().  Sending and receiving procs must send messages to synchronize, first.
 	/// @param[in,out] original_summary_list The current list of job summaries on this node, sorted.  A new list will be appended and sorted into this one.  The result is a sorted list.
@@ -246,10 +216,6 @@ private:
 	/// @brief Recieve a short list of job summaries from above.
 	/// @param[out] summary_shortlist The job summaries list, cleared and populated by this function.
 	void receive_pose_requests_from_above( utility::vector1< SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > &summary_shortlist ) const;
-	
-	/// @brief Given a string on the emperor node, send it to all nodes.
-	/// @details The "mystring" string is the input on the emperor node, and the output on all other nodes.
-	void broadcast_string_from_emperor( std::string &mystring ) const;
 
 	/// ------------- Emperor Methods --------------------
 	
@@ -333,12 +299,6 @@ private:
 	///
 	int MPI_n_procs_;
 	
-	/// @brief The default scorefunction to use.
-	/// @details The high-hbond version is constructed from this one. 
-	/// If necessary, the aa_composition score term will be turned on
-	/// in that one; it needn't be turned on in this one.
-	core::scoring::ScoreFunctionOP scorefxn_;
-	
 	/// @brief The level in the communications hierarchy of this process.
 	/// @details One-based: the emperor is level 1, and the slaves are level total_hierarchy_levels_.
 	core::Size hierarchy_level_;
@@ -388,50 +348,6 @@ private:
 	/// @brief Filename for silent output.
 	///
 	std::string output_filename_;
-
-	/// @brief Allowed canonical residues at each position.
-	/// @details Map key 0 stores default settings applied to all positions not specified.	
-	std::map< core::Size, utility::vector1 < std::string > > allowed_canonicals_;
-
-	/// @brief Allowed noncanonical residues at each position.
-	/// @details Map key 0 stores default settings applied to all positions not specified.	
-	std::map< core::Size, utility::vector1 < std::string > > allowed_noncanonicals_;
-
-	/// @brief Has an aa_composition setup file ben provided for residues in the L-alpha helix region of
-	/// Ramachadran space?
-	bool L_alpha_comp_file_exists_;
-
-	/// @brief Has an aa_composition setup file ben provided for residues in the D-alpha helix region of
-	/// Ramachadran space?
-	bool D_alpha_comp_file_exists_;
-
-	/// @brief Has an aa_composition setup file ben provided for residues in the L-beta strand region of
-	/// Ramachadran space?
-	bool L_beta_comp_file_exists_;
-
-	/// @brief Has an aa_composition setup file ben provided for residues in the D-beta strand region of
-	/// Ramachadran space?
-	bool D_beta_comp_file_exists_;
-
-	/// @brief Storage for the composition constraint setup for the L-alpha helix region of Ramachandran space.
-	/// @details Cached to prevent repeated read from disk.
-	std::string comp_file_contents_L_alpha_;
-
-	/// @brief Storage for the composition constraint setup for the D-alpha helix region of Ramachandran space.
-	/// @details Cached to prevent repeated read from disk.
-	std::string comp_file_contents_D_alpha_;
-	
-	/// @brief Storage for the composition constraint setup for the L-beta strand region of Ramachandran space.
-	/// @details Cached to prevent repeated read from disk.
-	std::string comp_file_contents_L_beta_;
-
-	/// @brief Storage for the composition constraint setup for the D-beta strand region of Ramachandran space.
-	/// @details Cached to prevent repeated read from disk.
-	std::string comp_file_contents_D_beta_;
-	
-	/// @brief Storage for a bin definition file.
-	/// @details Cached to prevent repeated read from disk.
-	std::string abba_bins_;
 	
 };
 

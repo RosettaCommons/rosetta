@@ -154,22 +154,6 @@ AddCompositionConstraintMover::create_constraint_from_file( std::string const &f
 	return;
 }
 
-/// @brief Create the AACompositionConstraint object from the data from a .comp file.
-/// @details Allows external code to create the constraint object without having it read directly from disk.
-void
-AddCompositionConstraintMover::create_constraint_from_file_contents(
-	std::string const &filecontents
-) {
-	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddCompositionConstraintMover::create_constraint_from_filecontents():  The constraint object already has been created!" );
-	constraint_ = core::scoring::aa_composition_energy::AACompositionConstraintOP( new core::scoring::aa_composition_energy::AACompositionConstraint() );
-	constraint_->initialize_from_file_contents( filecontents );
-	if ( TR.visible() ) {
-		TR << "Initialized AACompositionConstraint object from file contents:\n" << filecontents << std::endl;
-		TR.flush();
-	}
-	return;
-}
-
 /// @brief Add a ResidueSelector to the constraint to use as a mask.
 /// @details The constraint must already have been created with the create_constraint_from_file() function before this function is called.
 void

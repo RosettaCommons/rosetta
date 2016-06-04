@@ -72,21 +72,21 @@ private:
 
 	bool
 	hydrate_magnesium_with_orbital_frame( core::pose::Pose & pose,
-		core::Size const i,
-		utility::vector1< core::id::AtomID > const & nbr_atom_ids,
-		numeric::xyzMatrix< core::Real > const & R,
-		bool force_full_shell,
-		core::Size & num_waters ) const;
+																				core::Size const i,
+																				utility::vector1< core::id::AtomID > const & nbr_atom_ids,
+																				numeric::xyzMatrix< core::Real > const & R,
+																				bool force_full_shell,
+																				core::Size & num_waters ) const;
 
 	void
 	update_full_model_info_with_new_waters( core::pose::Pose & pose,
-		bool const expect_no_new_waters = false );
+																					bool const expect_no_new_waters = false );
 
 	void
 	fix_fold_tree_in_excised_pose_for_mg_bound_waters(
-		core::pose::Pose & pose, core::Size const mg_res,
-		core::pose::Pose const & pose_full,
-		utility::vector1< core::Size > const & slice_res ) const;
+																										core::pose::Pose & pose, core::Size const mg_res,
+																										core::pose::Pose const & pose_full,
+																										utility::vector1< core::Size > const & slice_res ) const;
 
 	void
 	setup_virtual_waters_around_magnesiums( core::pose::Pose & pose );

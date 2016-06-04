@@ -79,10 +79,6 @@ public:
 	///
 	void create_constraint_from_file( std::string const &filename );
 
-	/// @brief Create the AACompositionConstraint object from the data from a .comp file.
-	/// @details Allows external code to create the constraint object without having it read directly from disk.
-	void create_constraint_from_file_contents( std::string const &filecontents );
-
 	/// @brief Add a ResidueSelector to the constraint to use as a mask.
 	/// @details The constraint must already have been created with the create_constraint_from_file() function before this function is called.
 	void add_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );

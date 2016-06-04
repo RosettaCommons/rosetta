@@ -242,7 +242,7 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 ///////////////////////////////////////////
 void
 MgHydrater::update_full_model_info_with_new_waters( pose::Pose & pose,
-	bool const expect_no_new_waters /* = false */ ) {
+																										bool const expect_no_new_waters /* = false */ ) {
 	using namespace core::pose::full_model_info;
 
 	if ( !full_model_info_defined( pose ) ) return;
@@ -273,7 +273,7 @@ MgHydrater::update_full_model_info_with_new_waters( pose::Pose & pose,
 	}
 
 	runtime_assert( water_res.size() >= num_new_waters );
-	for ( Size n = 1; n <= num_new_waters; n++ )  res_list.push_back( water_res[ n ] );
+	for ( Size n = 1; n <= num_new_waters; n++ ) 	res_list.push_back( water_res[ n ] );
 
 	FullModelInfoOP full_model_info_new( full_model_info.clone_info() );
 	full_model_info_new->set_res_list( res_list );
@@ -284,11 +284,11 @@ MgHydrater::update_full_model_info_with_new_waters( pose::Pose & pose,
 ///////////////////////////////////////////
 bool
 MgHydrater::hydrate_magnesium_with_orbital_frame( pose::Pose & pose,
-	Size const i,
-	vector1< core::id::AtomID > const & nbr_atom_ids,
-	numeric::xyzMatrix< core::Real > const & R,
-	bool force_full_shell,
-	Size & num_waters ) const {
+																									Size const i,
+																									vector1< core::id::AtomID > const & nbr_atom_ids,
+																									numeric::xyzMatrix< core::Real > const & R,
+																									bool force_full_shell,
+																									Size & num_waters ) const {
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::chemical;
@@ -393,9 +393,9 @@ fix_water_jump( pose::Pose & pose, Size const & parent_res, Size const & water_r
 // should be daughters of that magnesium.
 void
 MgHydrater::fix_fold_tree_in_excised_pose_for_mg_bound_waters(
-	pose::Pose & pose, Size const mg_res,
-	pose::Pose const & pose_full,
-	utility::vector1< Size > const & slice_res ) const
+			 pose::Pose & pose, Size const mg_res,
+			 pose::Pose const & pose_full,
+			 utility::vector1< Size > const & slice_res ) const
 {
 	using namespace core::kinematics;
 	FoldTree f( pose.fold_tree() );
@@ -463,7 +463,7 @@ MgHydrater::setup_virtual_waters_around_magnesiums( pose::Pose & pose )
 		// for each Mg(2+), append virtual waters as placeholders to get the number up to 6.
 		for ( Size n = water_ligands.size() + 1; n <= 6; n++ ) {
 			instantiate_water_at_octahedral_vertex( pose, mg_res, n,
-				MG_HOH_DISTANCE, false /*replace_residue*/, true /*virtual water*/ );
+																							MG_HOH_DISTANCE, false /*replace_residue*/, true /*virtual water*/ );
 		}
 	}
 

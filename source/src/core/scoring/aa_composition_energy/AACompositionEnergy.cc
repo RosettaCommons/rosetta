@@ -23,7 +23,6 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
@@ -82,8 +81,11 @@ AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodO
 	setup_helpers_for_packing_(),
 	setup_helper_masks_for_packing_()
 {
-	//The following reads from disk the first time only, and caches the data in memory:
-	setup_helpers_ = core::scoring::ScoringManager::get_instance()->get_cloned_aa_comp_setup_helpers( options );
+	core::Size const n_setup_helpers( options.aa_composition_setup_file_count() );
+	for ( core::Size i=1; i<=n_setup_helpers; ++i ) {
+		setup_helpers_.push_back( AACompositionEnergySetupOP( new AACompositionEnergySetup ) );
+		setup_helpers_[i]->initialize_from_file( options.aa_composition_setup_file(i) );
+	}
 	if ( TR.Debug.visible() ) report();
 }
 

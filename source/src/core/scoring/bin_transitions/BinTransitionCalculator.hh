@@ -64,10 +64,6 @@ public: //Public functions -- calculators and initializers:
 	///
 	void load_bin_params( std::string const &filename );
 
-	/// @brief Loads all bin params from a string representing file contents.
-	/// @details Provided as an alternative to direct load from disk.
-	void load_bin_params_from_file_contents( std::string const &filecontents);
-
 	/// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
 	/// and the index of the bin within that object.
 	/// @details data_index and bin_index are outputs.  Both are set to 0 if the search fails.  Everything
@@ -234,10 +230,6 @@ public: //Public functions -- getters:
 public: //Public functions -- setters:
 
 private: //Private functions:
-
-	/// @brief Given a file split into lines, parse the lines and set up this object.
-	///
-	void parse_lines( utility::vector1< std::string> const &lines );
 
 	/// @brief Given a bin, generate phi and psi values from within the bin, biased by the sub-bin cumulative probability distribution function.
 	/// @details bin_index, iplus1, and data_index are inputs, mainchain_torsions vector is cleared and set by this function (i.e. it's output).

@@ -1988,7 +1988,7 @@ stepwise_addable_pose_residue( Size const n /*in pose numbering*/, pose::Pose co
 	runtime_assert( full_model_info_defined( pose ) );
 	vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 	return stepwise_addable_residue( res_list[ n ],
-		const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map() );
+																		 const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

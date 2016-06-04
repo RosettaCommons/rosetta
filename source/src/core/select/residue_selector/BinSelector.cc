@@ -146,46 +146,15 @@ void
 BinSelector::initialize_and_check() {
 	if ( initialized() || bin_transition_calculator_->bin_params_loaded() ) {
 		utility_exit_with_message(
-			"Error in core::select::residue_selector::BinSelector::initialize_and_check(): The bin params file was already loaded!  This operation cannot be repeated.");
+			"Error in core::select::residue_selector::BinSelector::apply(): The bin params file was already loaded!  This operation cannot be repeated.");
 	}
 	bin_transition_calculator_->load_bin_params( bin_params_file_name() );
 
 	runtime_assert_string_msg( bin_transition_calculator_->bin_definition_exists( bin_name() ),
-		"Error in core::select::residue_selector::BinSelector::initialize_and_check(): The bin params file defines no bin named " + bin_name() + "." );
+		"Error in core::select::residue_selector::BinSelector::apply(): The bin params file defines no bin named " + bin_name() + "." );
 
 	if ( TR.visible() ) {
 		TR << "Loaded bin parameters file \"" << bin_params_file_name() << "\" and set bin to select to \"" << bin_name() << "\".";
-		if ( select_only_alpha_aas() ) {
-			TR << "  Only selecting alpha-amino acids." << std::endl;
-		} else {
-			TR << "  Selecting all polymeric types in the specified bin." << std::endl;
-		}
-	}
-
-	//Set that we've initialized this BinSelector.
-	initialized_=true;
-
-	return;
-}
-
-/// @brief Load the bin params file baed on a file contents string (instead of loading directly
-/// from disk) and check that settings are consistent.
-/// @details Must be called as an alternative to initialize_and_check() before apply() function.
-void
-BinSelector::initialize_from_file_contents_and_check (
-	std::string const &filecontents
-) {
-	if ( initialized() || bin_transition_calculator_->bin_params_loaded() ) {
-		utility_exit_with_message(
-			"Error in core::select::residue_selector::BinSelector::initialize_from_file_contents_and_check(): The bin params file was already loaded!  This operation cannot be repeated.");
-	}
-	bin_transition_calculator_->load_bin_params_from_file_contents( filecontents );
-
-	runtime_assert_string_msg( bin_transition_calculator_->bin_definition_exists( bin_name() ),
-		"Error in core::select::residue_selector::BinSelector::initialize_from_file_contents_and_check(): The bin params file defines no bin named " + bin_name() + "." );
-
-	if ( TR.visible() ) {
-		TR << "Loaded bin parameters from file contents and set bin to select to \"" << bin_name() << "\".";
 		if ( select_only_alpha_aas() ) {
 			TR << "  Only selecting alpha-amino acids." << std::endl;
 		} else {

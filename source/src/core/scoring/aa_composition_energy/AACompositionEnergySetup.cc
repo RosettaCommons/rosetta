@@ -383,39 +383,6 @@ void AACompositionEnergySetup::initialize_from_file( std::string const &filename
 	return;
 }
 
-/// @brief Initialize from a string in the format of a .comp file.
-/// @details Allows external code to initialize object without having it read
-/// directly from disk.
-void
-AACompositionEnergySetup::initialize_from_file_contents(
-	std::string const &filecontents
-) {
-	reset();
-
-	std::istringstream filestream(filecontents);
-
-	std::string curline(""); //Buffer for current line.
-	utility::vector1< std::string > lines; //Storing all lines
-
-	//Split the string into lines:
-	while ( getline(filestream, curline) ) {
-		if ( curline.size() < 1 ) continue; //Ignore blank lines.
-		//Find and process comments:
-		std::string::size_type pound = curline.find('#', 0);
-		if ( pound == std::string::npos ) {
-			lines.push_back( ObjexxFCL::strip( curline, " \t\n" ) );
-		} else {
-			curline = curline.substr(0,pound);
-			lines.push_back( ObjexxFCL::strip( curline, " \t\n" ) );
-		}
-	}
-
-	if ( TR.Debug.visible() ) TR.Debug << "Initial processing of file contents string complete.  Parsing penalty definitions." << std::endl;
-	parse_penalty_definitions( lines );
-
-	check_data();
-}
-
 /// @brief Get tail function name from enum.
 ///
 std::string AACompositionEnergySetup::get_tailfunction_name( TailFunction const tf ) const

@@ -41,10 +41,10 @@ using namespace protocols::antibody::clusters;
 
 //Documentation:  This application identifies the CDR cluster in an antibody, renumbered with North_AHO (Used by North clusters).  Works with one PDB.  Prints to screen
 //  Use: Renumber antibody using [http://dunbrack.fccc.edu/IgClassify/].  Outputs info, and appends it to a new PDB that it will write.
-//  Reference:
+//  Reference: 
 //    PyIgClassify: a database of antibody CDR structural classifications Jared Adolf-Bryfogle; Qifang Xu; Benjamin North; Andreas Lehmann; Roland L. Dunbrack Jr Nucleic Acids Research 2014; doi: 10.1093/nar/gku1106
 //    North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.
-//  Docs:
+//  Docs: 
 //    https://www.rosettacommons.org/docs/wiki/application_documentation/antibody/CDR-Cluster-Identification
 //
 class IdentifyCDRClusters : public protocols::moves::Mover{

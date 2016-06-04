@@ -110,16 +110,6 @@ AACompositionConstraint::initialize_from_file( std::string const &filename ) {
 	return;
 }
 
-/// @brief Initialize the AACompositionEnergySetup object from the contents of a file.
-/// @details Allows external code to initialize a constriant object without having the
-/// object read directly from disk.
-void
-AACompositionConstraint::initialize_from_file_contents( std::string const &filecontents ) {
-	runtime_assert( aa_comp_setup_ ); //The pointer should point at an actual object.
-	aa_comp_setup_->initialize_from_file_contents( filecontents );
-	return;
-}
-
 
 } // aa_composition_energy
 } // scoring

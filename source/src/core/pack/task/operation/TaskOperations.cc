@@ -884,7 +884,7 @@ ReadResfile::ReadResfile() :
 	residue_selector_()
 	//TODO -- UPDATE THIS WHEN NEW PRIVATE MEMBER VARIABLES ARE ADDED
 {
-	//cache_resfile();
+	cache_resfile();
 }
 
 ReadResfile::ReadResfile( utility::options::OptionCollection const & options ) :
@@ -1067,18 +1067,6 @@ ReadResfile::cache_resfile() {
 	file_was_read_ = true;
 	return;
 }
-
-/// @brief Allows code to provide resfile contents, so that this TaskOperation doesn't directly have to
-/// handle file i/o.  Handly on large systems (e.g. Blue Gene), where one might only want the
-/// master process to read a file.
-void
-ReadResfile::set_cached_resfile(
-	std::string const &file_contents
-) {
-	resfile_cache_ = file_contents;
-	file_was_read_ = true;
-}
-
 
 std::string ReadResfile::keyname() { return "ReadResfile"; }
 

@@ -42,8 +42,6 @@
 #include <core/scoring/VdWTinkerPotential.fwd.hh>
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 
-#include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
-
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
 
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
@@ -298,11 +296,6 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	core::scoring::elec::CPRepMapTypeCOP get_cp_rep_map_byname() const;
 
-	/// @brief Get a vector of owning pointers to data used by the AACompositionEnergy score term.
-	/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).  NOT THREADSAFE.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	utility::vector1< core::scoring::aa_composition_energy::AACompositionEnergySetupOP > get_cloned_aa_comp_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
-
 private:
 
 	static ScoringManager * create_singleton_instance();
@@ -387,9 +380,6 @@ private:
 	/// @brief Cached data used by FA_ElecEnergy with beta_nov15.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	mutable core::scoring::elec::CPRepMapTypeOP cp_rep_map_byname_;
-
-	/// @brief Cached data used by the AACompositionEnergy.
-	mutable utility::vector1< core::scoring::aa_composition_energy::AACompositionEnergySetupOP > aa_composition_setup_helpers_;
 
 	utility::vector1< methods::EnergyMethodCreatorOP > method_creator_map_;
 
