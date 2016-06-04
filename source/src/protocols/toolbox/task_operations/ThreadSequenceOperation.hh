@@ -43,13 +43,13 @@ public:
 	typedef RestrictOperationsBase parent;
 
 	ThreadSequenceOperation();
-	ThreadSequenceOperation( std::string const seq );
+	ThreadSequenceOperation( std::string const & seq );
 
 	virtual ~ThreadSequenceOperation();
 
 	virtual TaskOperationOP clone() const;
 
-	virtual void target_sequence( std::string const seq );
+	virtual void target_sequence( std::string const & seq );
 	virtual std::string target_sequence() const;
 
 	virtual

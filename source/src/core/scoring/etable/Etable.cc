@@ -87,7 +87,7 @@ using namespace basic::options::OptionKeys;
 Etable::Etable(
 	chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
 	EtableOptions const & options,
-	std::string const alternate_parameter_set // = ""
+	std::string const & alternate_parameter_set // = ""
 ) :
 	// from atop_props_in:
 	atom_set_                 ( atom_set_in ),
@@ -225,7 +225,7 @@ Etable::calculate_nblist_distance_thresholds(
 void
 Etable::read_alternate_parameter_set(
 	chemical::AtomTypeSetCAP atom_set_in_ap,
-	std::string const alternate_parameter_set
+	std::string const & alternate_parameter_set
 )
 {
 	if ( ! alternate_parameter_set.size() )  return;
@@ -1241,7 +1241,7 @@ Etable::output_etable(
 void
 Etable::input_etable(
 	ObjexxFCL::FArray3D<Real> & etable,
-	const std::string label,
+	std::string const & label,
 	std::istream & in
 ) {
 	using namespace std;

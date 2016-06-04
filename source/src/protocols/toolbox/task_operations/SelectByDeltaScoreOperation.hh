@@ -55,7 +55,7 @@ public:
 	core::scoring::ScoreType score_type() const;
 	void score_type( core::scoring::ScoreType const st );
 	std::string score_type_name() const;
-	void score_type_name( std::string const name );
+	void score_type_name( std::string const & name );
 	core::Real threshold() const;
 	void threshold( core::Real const threshold );
 	bool lower() const;

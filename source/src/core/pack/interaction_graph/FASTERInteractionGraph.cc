@@ -607,7 +607,6 @@ void FASTERNode::tell_neighbors_to_prep_for_relaxation()
 
 	core::PackerEnergy top10[ num_to_relax ];
 	int which10[ num_to_relax ];
-	core::PackerEnergy bottom_of_top10;
 	for ( int ii = 0; ii < num_to_relax; ++ii ) {
 		top10[ ii ] = 0;
 		which10[ ii ] = 0;
@@ -616,6 +615,7 @@ void FASTERNode::tell_neighbors_to_prep_for_relaxation()
 	//decide which neighbors to relax
 	if ( get_num_incident_edges() > num_to_relax ) {
 		int whichBottom;
+		core::PackerEnergy bottom_of_top10;
 		for ( int ii = 1; ii <= num_to_relax; ++ii ) {
 			top10[ ii - 1 ] = std::abs(perturbed_two_body_energies_[ ii ]);
 			which10[ ii - 1] = ii;

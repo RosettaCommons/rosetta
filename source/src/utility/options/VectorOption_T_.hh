@@ -938,9 +938,7 @@ public: // Properties
 
 	/// @brief Has Any Character of a std::string?
 	/// non ambiguous vesrion for Python binding
-	inline bool has_any_of_characters(std::string const str_, std::string const s ) const
-	// AMW: cppcheck wants references.
-	//I believe we cannot use references here due to the Python binding aspect
+	inline bool has_any_of_characters(std::string const & str_, std::string const & s ) const
 	{
 		size_type const s_len( s.length() );
 		for ( size_type i = 0; i < str_.size(); ++i ) {

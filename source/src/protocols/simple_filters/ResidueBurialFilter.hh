@@ -45,7 +45,7 @@ public:
 	void residue_fraction_buried( core::Real const r ){ residue_fraction_buried_ = r; }
 
 	std::string residue() const { return residue_; }
-	void residue( std::string const s ){ residue_ = s; }
+	void residue( std::string const & s ){ residue_ = s; }
 
 	core::Size neighbors() const{ return neighbors_; }
 	void neighbors( core::Size const n ){ neighbors_ = n; }

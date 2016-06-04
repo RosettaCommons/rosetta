@@ -534,7 +534,7 @@ FullatomCustomPairDistanceEnergy::version() const
 }
 /// NOTE: distance functions should be input in square-distance bins.
 
-DistanceFunc::DistanceFunc( std::string const name ) {
+DistanceFunc::DistanceFunc( std::string const & name ) {
 	utility::io::izstream scores_stream;
 	basic::database::open( scores_stream, "scoring/score_functions/custom_pair_distance/" + name);
 	scores_hist_ = numeric::interpolation::HistogramCOP<Real,Real>::Type( numeric::interpolation::HistogramOP<Real, Real>::Type( new numeric::interpolation::Histogram<Real,Real>( scores_stream() ) ) );

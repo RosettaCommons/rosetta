@@ -34,13 +34,9 @@ namespace rotamer_set {
 namespace symmetry {
 
 RotamerSetOP
-SymmetricRotamerSetFactory::create_rotamer_set( conformation::Residue const & res )
+SymmetricRotamerSetFactory::create_rotamer_set( conformation::Residue const & /*res*/ )
 {
-	if ( res.is_protein() ) { // This check will be removed when we get rotamers for NAs and Ligands online
-		return RotamerSetOP( new SymmetricRotamerSet_() );
-	} else {
-		return RotamerSetOP( new SymmetricRotamerSet_() );
-	}
+	return RotamerSetOP( new SymmetricRotamerSet_() );
 }
 
 }

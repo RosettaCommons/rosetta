@@ -153,14 +153,14 @@ private:
 	// get_fa_stack_score( Distance const dist, Real const cos_kappa ) const;
 
 	Real
-	get_fa_stack_score( Vector const r_vec, Matrix const M_i,
+	get_fa_stack_score( Vector const & r_vec, Matrix const & M_i,
 		Real const prefactor,
 		Distance const stack_cutoff, Distance const dist_cutoff) const;
 
 	Vector
 	get_fa_stack_deriv(
-		Vector const r_vec,
-		Matrix const M_i,
+		Vector const & r_vec,
+		Matrix const & M_i,
 		Real const prefactor,
 		Distance const stack_cutoff,
 		Distance const dist_cutoff ) const;

@@ -53,7 +53,7 @@ Scheduler::prepare_search_stage( core::Size const mpi_rank )
 // Add new schedules if
 void
 Scheduler::prepare_enrich_stage( protocols::wum::SilentStructStore const &decoys,
-	std::string const scorename )
+	std::string const & scorename )
 {
 	//std::string roundtype( "enrich" );
 
@@ -155,7 +155,7 @@ Scheduler::proceed(){
 }
 
 void
-Scheduler::read_cmd( std::string const cmdfile,
+Scheduler::read_cmd( std::string const & cmdfile,
 	core::Size const mpi_rank,
 	core::Size const stage_to_run )
 {
@@ -407,7 +407,7 @@ Scheduler::get_params( core::Size const imethod ) const
 }
 
 void
-Scheduler::add_fresh_param( std::string const name ){
+Scheduler::add_fresh_param( std::string const & name ){
 	MethodParams param;
 	param.name = name;
 	param.movertype = "";
@@ -428,7 +428,7 @@ Scheduler::add_fresh_param( std::string const name ){
 
 utility::vector1< core::Size >
 Scheduler::pick_enrich_methods( protocols::wum::SilentStructStore const &decoys,
-	std::string const scorename ) const
+	std::string const & scorename ) const
 {
 	// First, get scores based on method_col info
 	std::map< core::Size, utility::vector1< core::Real > > scores;

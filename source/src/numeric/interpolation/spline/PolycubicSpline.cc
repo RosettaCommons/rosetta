@@ -46,12 +46,12 @@ inline double pow(Size x, Size y)
 //! train PolycubicSpline
 void PolycubicSpline::train
 (
-	const utility::vector1< BorderFlag > BORDER,//[3],
-	const utility::vector1< double > START,//[3],
-	const utility::vector1< double > DELTA,//[3],
-	const MathNTensor< Real > &RESULTS,
-	const utility::vector1< bool > LINCONT,//[3],
-	const utility::vector1< std::pair< Real, Real > > FIRSTBE//[3]
+	const utility::vector1< BorderFlag > & BORDER,//[3],
+	const utility::vector1< double > & START,//[3],
+	const utility::vector1< double > & DELTA,//[3],
+	const MathNTensor< Real > & RESULTS,
+	const utility::vector1< bool > & LINCONT,//[3],
+	const utility::vector1< std::pair< Real, Real > > & FIRSTBE//[3]
 )
 {
 	// this does not work for the base bicubic case

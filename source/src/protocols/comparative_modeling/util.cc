@@ -469,9 +469,9 @@ void rebuild_loops_until_closed(
 void steal_ligands(
 	core::pose::Pose & dest_pose,
 	core::pose::Pose const & source_pose_in,
-	core::id::NamedAtomID const anchor_atom_dest,
-	core::id::NamedAtomID const anchor_atom_source,
-	utility::vector1< core::id::NamedAtomID > const ligand_indices
+	core::id::NamedAtomID const & anchor_atom_dest,
+	core::id::NamedAtomID const & anchor_atom_source,
+	utility::vector1< core::id::NamedAtomID > const & ligand_indices
 ) {
 	using core::Size;
 	using utility::vector1;

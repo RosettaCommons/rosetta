@@ -62,7 +62,7 @@ private:
 	get_random_o2prime_residue( core::pose::Pose & pose );
 
 	Size
-	get_random_o2prime_residue_near_moving_residue( core::pose::Pose & pose, utility::vector1< Size > const moving_res_list );
+	get_random_o2prime_residue_near_moving_residue( core::pose::Pose & pose, utility::vector1< Size > const & moving_res_list );
 
 private:
 

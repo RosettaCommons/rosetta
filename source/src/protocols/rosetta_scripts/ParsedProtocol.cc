@@ -645,7 +645,7 @@ ParsedProtocol::apply_probability() {
 }
 
 void
-ParsedProtocol::apply_probability( utility::vector1< core::Real > a ){
+ParsedProtocol::apply_probability( utility::vector1< core::Real > const & a ){
 	apply_probability_ = a;
 	runtime_assert( apply_probability_.size() == movers_.size() );
 	core::Real sum( 0 );

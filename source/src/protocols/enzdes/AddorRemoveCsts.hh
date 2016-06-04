@@ -80,7 +80,7 @@ protected:
 
 	toolbox::match_enzdes_util::EnzConstraintIOOP
 	get_EnzConstraintIO_for_cstfile(
-		std::string const cstfile
+		std::string const & cstfile
 	);
 
 private:

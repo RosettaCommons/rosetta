@@ -56,7 +56,7 @@ public:
 	void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply. attempt_read_from_checkpoint should be true for MC trials > 1, but false otherwise
 	core::Real threshold() const{ return threshold_; }
 	void threshold( core::Real const t ){ threshold_ = t; }
-	void baseline_checkpointing_filename( std::string const s ){ baseline_checkpointing_filename_ = s; }
+	void baseline_checkpointing_filename( std::string const & s ) { baseline_checkpointing_filename_ = s; }
 	std::string baseline_checkpointing_filename() const{ return baseline_checkpointing_filename_; }
 private:
 	protocols::filters::FilterOP filter_; /// dflt NULL

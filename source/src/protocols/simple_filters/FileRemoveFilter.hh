@@ -47,7 +47,7 @@ public:
 	virtual ~FileRemoveFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	utility::vector1< std::string > file_names() const;
-	void file_names( utility::vector1< std::string > const f );
+	void file_names( utility::vector1< std::string > const & f );
 	bool delete_content_only() const{ return delete_content_only_; }
 	void delete_content_only( bool const b ){ delete_content_only_ = b; }
 private:

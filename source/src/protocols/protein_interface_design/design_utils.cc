@@ -98,7 +98,7 @@ sum_total_residue_energy( pose::Pose const & pose, core::Size const resid )
 }
 
 void
-ReportSequenceDifferences::calculate( pose::Pose const  & pose1_in, pose::Pose const & pose2_in )
+ReportSequenceDifferences::calculate( pose::Pose const & pose1_in, pose::Pose const & pose2_in )
 {
 	using namespace core::scoring;
 
@@ -282,7 +282,7 @@ FavorNativeResidue::FavorNativeResidue( core::pose::Pose & pose, core::Real cons
 }
 
 ////////////////////////////
-FavorNativeResidue::FavorNativeResidue( core::pose::Pose & pose, utility::vector1<core::Real> const native_residue_bonus )
+FavorNativeResidue::FavorNativeResidue( core::pose::Pose & pose, utility::vector1<core::Real> const & native_residue_bonus )
 {
 	core::Size const nres( pose.total_residue() );
 	for ( core::Size i = 1; i <= nres; ++i ) {
@@ -317,7 +317,7 @@ FavorNonNativeResidue::FavorNonNativeResidue( Pose & pose, core::Real const non_
 }
 
 ////////////////////////////
-FavorNonNativeResidue::FavorNonNativeResidue( Pose & pose, utility::vector1<core::Real> const non_native_residue_bonus )
+FavorNonNativeResidue::FavorNonNativeResidue( Pose & pose, utility::vector1<core::Real> const & non_native_residue_bonus )
 {
 	core::Size const nres( pose.total_residue() );
 	for ( core::Size i = 1; i <= nres; ++i ) {
@@ -349,11 +349,11 @@ void
 MinimizeInterface(
 	pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP scorefxn,
-	utility::vector1< bool > const min_bb,
-	utility::vector1< bool > const min_sc,
-	utility::vector1< bool > const min_rb,
+	utility::vector1< bool > const & min_bb,
+	utility::vector1< bool > const & min_sc,
+	utility::vector1< bool > const & min_rb,
 	bool const optimize_foldtree,
-	utility::vector1< core::Size > const target_residues,
+	utility::vector1< core::Size > const & target_residues,
 	bool const simultaneous_minimization/* = false */ )
 {
 	using namespace optimization;
@@ -472,9 +472,9 @@ void
 SymMinimizeInterface(
 	pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP scorefxn,
-	utility::vector1< bool > const min_bb,
-	utility::vector1< bool > const min_sc,
-	utility::vector1< bool > const min_rb,
+	utility::vector1< bool > const & min_bb,
+	utility::vector1< bool > const & min_sc,
+	utility::vector1< bool > const & min_rb,
 	//bool const optimize_foldtree,
 	//utility::vector1< core::Size > const target_residues,
 	bool const simultaneous_minimization/* = false */ )
@@ -628,8 +628,8 @@ hbonded(
 }
 
 std::list< core::Size >
-hbonded_atom (
-	Pose const & in_pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,
+hbonded_atom(
+	Pose const & in_pose, core::Size const target_residue, std::string const & target_atom, std::set< core::Size > const & binders,
 	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb, core::scoring::ScoreFunctionOP sfxn )
 {
 

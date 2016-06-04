@@ -632,9 +632,9 @@ void
 RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	RotamerLibraryScratchSpace & scratch,
 	Size const packed_rotno,
-	utility::fixedsizearray1< Size, N > const bb_bin,
-	utility::fixedsizearray1< Size, N > const bb_bin_next,
-	utility::fixedsizearray1< Real, N > const bb_alpha,
+	utility::fixedsizearray1< Size, N > const & bb_bin,
+	utility::fixedsizearray1< Size, N > const & bb_bin_next,
+	utility::fixedsizearray1< Real, N > const & bb_alpha,
 	PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 ) const
 {
@@ -1039,9 +1039,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::build_rotamers(
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::verify_bb_bins(
-	utility::fixedsizearray1< Real, N > bbs,
-	utility::fixedsizearray1< Size, N > const bb_bin,
-	utility::fixedsizearray1< Size, N > const bb_bin_next
+	utility::fixedsizearray1< Real, N > const & bbs,
+	utility::fixedsizearray1< Size, N > const & bb_bin,
+	utility::fixedsizearray1< Size, N > const & bb_bin_next
 ) const
 {
 	for ( Size ii = 1; ii <= N; ++ii ) {

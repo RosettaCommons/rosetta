@@ -230,7 +230,7 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	core::pose::Pose const & pose_in,
 	bool bWriteScoreOnly,
 	int copy_count,
-	std::string const suffix
+	std::string const & suffix
 ) {
 	PROF_START( basic::JD2_SILENT_OUTPUTTER );
 	core::io::silent::SilentFileData sfd;

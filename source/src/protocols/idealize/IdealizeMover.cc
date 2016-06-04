@@ -320,7 +320,7 @@ IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 }
 
 void
-IdealizeMover::ignore_residues_in_csts( utility::vector1< core::Size > const i ){
+IdealizeMover::ignore_residues_in_csts( utility::vector1< core::Size > const & i ) {
 	ignore_residues_in_csts_ = i;
 }
 

@@ -126,8 +126,8 @@ private:
 	FlexPepDockingFlagsCOP flags_;
 
 	// helper method to check if two given residues are within "threashold" of each other
-	bool isInContact ( core::conformation::Residue const res1,
-		core::conformation::Residue const res2,
+	bool isInContact ( core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
 		core::Real threashold ) const;
 
 

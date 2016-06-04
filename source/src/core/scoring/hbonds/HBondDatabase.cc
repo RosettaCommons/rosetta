@@ -784,7 +784,7 @@ HBondDatabase::initialize_acc_strength() {
 
 FadeIntervalCOP
 HBondDatabase::HBFadeInterval_from_name(
-	string const name
+	string const & name
 ) const {
 	map< const string, FadeIntervalCOP >::const_iterator it(HBFadeInterval_lookup_by_name_.find(name));
 	if ( it == HBFadeInterval_lookup_by_name_.end() ) {
@@ -893,7 +893,7 @@ HBondDatabase::cosAHD_fade_lookup(
 
 Polynomial_1dCOP
 HBondDatabase::HBPoly1D_from_name(
-	string const name
+	string const & name
 ) const {
 	map< const string, Polynomial_1dCOP >::const_iterator it(HBPoly1D_lookup_by_name_.find(name));
 	if ( it == HBPoly1D_lookup_by_name_.end() ) {

@@ -43,11 +43,11 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
 	core::Real compute( core::pose::Pose const & pose ) const;
 
-	std::string comment_name() const{ return comment_name_; }
-	void comment_name( std::string const s ){ comment_name_ = s; }
+	std::string comment_name() const { return comment_name_; }
+	void comment_name( std::string const & s ) { comment_name_ = s; }
 
-	std::string comment_value() const{ return comment_value_; }
-	void comment_value( std::string const s ){ comment_value_ = s; }
+	std::string comment_value() const { return comment_value_; }
+	void comment_value( std::string const & s ) { comment_value_ = s; }
 
 	bool comment_exists() const { return comment_exists_; }
 	void comment_exists( bool const c ){ comment_exists_ = c; }

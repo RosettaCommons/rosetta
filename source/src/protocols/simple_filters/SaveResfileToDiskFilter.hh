@@ -65,13 +65,13 @@ public:// constructor/destructor
 
 	// @brief constructor with arguments
 	SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory,
-		utility::vector1<core::Size> selected_resis,
-		bool designable_only,
-		std::string resfile_name,
-		std::string resfile_suffix,
-		std::string resfile_prefix,
-		std::string resfile_general_property,
-		std::string selected_resis_property
+		utility::vector1<core::Size> const & selected_resis,
+		bool const designable_only,
+		std::string const & resfile_name,
+		std::string const & resfile_suffix,
+		std::string const & resfile_prefix,
+		std::string const & resfile_general_property,
+		std::string const & selected_resis_property
 	);
 
 	// @brief copy constructor
@@ -100,11 +100,11 @@ public:// setters
 	void selected_resis( utility::vector1<core::Size> const r );
 	void designable_only( bool const d );
 	void renumber_pdb( bool const r );
-	void resfile_name( std::string const n );
-	void resfile_suffix( std::string const s );
-	void resfile_prefix( std::string const p );
-	void resfile_general_property( std::string const g );
-	void selected_resis_property( std::string const g );
+	void resfile_name( std::string const & n );
+	void resfile_suffix( std::string const & s );
+	void resfile_prefix( std::string const & p );
+	void resfile_general_property( std::string const & g );
+	void selected_resis_property( std::string const & g );
 
 public:// getters
 	core::pack::task::TaskFactoryOP task_factory() const;

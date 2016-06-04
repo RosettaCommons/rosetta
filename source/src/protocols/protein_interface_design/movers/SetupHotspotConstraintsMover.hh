@@ -42,7 +42,7 @@ public:
 		core::Real const & bump_cutoff,
 		bool const apply_ambiguous_constraints,
 		bool const colonyE,
-		std::string const stub_energy_fxn
+		std::string const & stub_energy_fxn
 	);
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;

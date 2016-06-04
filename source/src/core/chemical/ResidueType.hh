@@ -1099,7 +1099,7 @@ public:
 	/// Note that the atom must exist in the residue type (the function checks for this at runtime).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void
-	add_metalbinding_atom( std::string const atom_name );
+	add_metalbinding_atom( std::string const & atom_name );
 
 	/// @brief Remove an atom from the list of atoms that can potentially form a bond to a metal ion
 	/// (used in patching when it kills the valence that is thus used)

@@ -132,7 +132,7 @@ RNA_O2PrimeMover::get_random_o2prime_residue( pose::Pose & pose ){
 //////////////////////////////////////////////////////////////////////////////////////
 // This could be made smarter -- could go over nucleoside *and* suite.
 Size
-RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const moving_res_list ){
+RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const & moving_res_list ){
 
 	// should be better -- actually look at o2prime's that might be engaged in interactions with moving nucleoside
 

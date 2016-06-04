@@ -328,16 +328,12 @@ bool GeneralizedKICfilter::apply (
 	switch(filtertype_) {
 	case loop_bump_check :
 		return apply_loop_bump_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
-		break;
 	case atom_pair_distance :
 		return apply_atom_pair_distance( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
-		break;
 	case backbone_bin :
 		return apply_backbone_bin( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
-		break;
 	case alpha_aa_rama_check :
 		return apply_alpha_aa_rama_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths );
-		break;
 	default :
 		break;
 	}

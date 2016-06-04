@@ -100,7 +100,7 @@ FileRemoveFilter::file_names() const{
 }
 
 void
-FileRemoveFilter::file_names( utility::vector1< std::string > const f ){
+FileRemoveFilter::file_names( utility::vector1< std::string > const & f ){
 	file_names_ = f;
 }
 

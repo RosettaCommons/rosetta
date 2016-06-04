@@ -165,7 +165,7 @@ SecondaryStructureFilter::parse_my_tag(
 
 /// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
 void
-SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
+SecondaryStructureFilter::set_blueprint( std::string const & blueprint_file )
 {
 	using protocols::jd2::parser::BluePrint;
 	BluePrint blue( blueprint_file );

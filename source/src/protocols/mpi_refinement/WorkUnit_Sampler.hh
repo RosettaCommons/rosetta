@@ -43,18 +43,18 @@ protected:
 
 	core::kinematics::MoveMapOP
 	get_movemap( core::pose::Pose const &pose,
-		std::string const mode,
+		std::string const & mode,
 		bool const nonideal ) const;
 
 	void
 	store_to_decoys( core::io::silent::SilentStructCOP start_struct,
-		core::pose::Pose const pose,
-		std::string const additional_tag = "" );
+		core::pose::Pose const & pose,
+		std::string const & additional_tag = "" );
 
 	void
 	store_to_decoys( core::io::silent::SilentStructCOP start_struct,
 		core::io::silent::SilentStructOP ss,
-		std::string const additional_tag = "" );
+		std::string const & additional_tag = "" );
 
 	void
 	repack( core::pose::Pose &pose,
@@ -62,7 +62,7 @@ protected:
 
 	void
 	ramp_minpack_loop2( core::pose::Pose &pose,
-		utility::vector1< core::Size > const loopres,
+		utility::vector1< core::Size > const & loopres,
 		core::scoring::ScoreFunctionCOP sfxn,
 		bool const nonideal = true,
 		bool const ramp = true,
@@ -78,7 +78,7 @@ protected:
 
 
 	core::scoring::ScoreFunctionOP
-	get_energy( std::string const sfxn_name,
+	get_energy( std::string const & sfxn_name,
 		bool const softpack = false,
 		core::Real const weight_coord_cst = 0.0 ) const;
 

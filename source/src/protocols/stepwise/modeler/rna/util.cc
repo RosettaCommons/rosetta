@@ -300,9 +300,8 @@ string_to_real( std::string const & input_string ){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// AMW: cppcheck wants you to pass delimiters by reference, but don't try--it'll cause more problems than it's worth
 utility::vector1< std::string >
-tokenize( std::string const str, std::string delimiters ){
+tokenize( std::string const & str, std::string const & delimiters ){
 
 	utility::vector1< std::string > tokens;
 

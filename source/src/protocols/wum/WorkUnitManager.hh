@@ -99,13 +99,12 @@ private:
 // as above but uses a disk-swap to prevent overflows
 class WorkUnitQueue_Swapped: public WorkUnitQueue {
 public:
-	WorkUnitQueue_Swapped( WorkUnitManager *wum, const std::string swap_file, core::Size memory_limit ):
+	WorkUnitQueue_Swapped( WorkUnitManager *wum, const std::string & swap_file, core::Size memory_limit ):
 		WorkUnitQueue(),
 		swap_file_( swap_file ),
 		memory_limit_( memory_limit ),
 		wum_( wum )
 	{
-
 	}
 
 	virtual ~WorkUnitQueue_Swapped(){};

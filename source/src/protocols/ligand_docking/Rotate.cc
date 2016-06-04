@@ -68,17 +68,17 @@ RotateCreator::mover_name()
 
 Ligand_info::Ligand_info():residues(), atr(0), rep(0), jump(){}
 
-Ligand_info::Ligand_info(core::conformation::ResidueCOPs const residues, int atr, int rep):
+Ligand_info::Ligand_info(core::conformation::ResidueCOPs const & residues, int atr, int rep):
 	residues(residues), atr(atr), rep(rep), jump(){}
 
-Ligand_info::Ligand_info(core::conformation::ResidueCOPs const residues, std::pair<int,int> scores, core::kinematics::Jump jump):
+Ligand_info::Ligand_info(core::conformation::ResidueCOPs const & residues, std::pair<int,int> scores, core::kinematics::Jump jump):
 	residues(residues), atr(scores.first), rep(scores.second), jump(jump){}
 
 
-bool Ligand_info::operator<(Ligand_info const ligand_info) const{
+bool Ligand_info::operator<(Ligand_info const & ligand_info) const{
 	return ( rep < ligand_info.rep || (rep == ligand_info.rep && atr < ligand_info.atr ) );
 }
-bool Ligand_info::operator<(std::pair<int,int> const scores) const{
+bool Ligand_info::operator<(std::pair<int,int> const & scores) const{
 	return rep < scores.second || (rep == scores.second && atr < scores.first);
 }
 core::conformation::ResidueCOPs
@@ -271,7 +271,7 @@ Rotate::create_random_rotations(
 Ligand_info Rotate::create_random_rotation(
 	utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 	protocols::rigid::RigidBodyMoverOP const mover,
-	core::Vector const center,
+	core::Vector const & center,
 	core::Size const begin,
 	core::Size const end,
 	core::pose::Pose & local_pose
@@ -332,7 +332,7 @@ void apply_rotate(
 }
 
 bool check_score(
-	Ligand_info const ligand,
+	Ligand_info const & ligand,
 	core::Size const heavy_atom_number
 ){
 	int const rep_threshold=0;
@@ -341,7 +341,7 @@ bool check_score(
 }
 
 bool check_RMSD(
-	Ligand_info const ligand,
+	Ligand_info const & ligand,
 	core::Size const heavy_atom_number,
 	utility::vector1< Ligand_info> const & ligands
 ){

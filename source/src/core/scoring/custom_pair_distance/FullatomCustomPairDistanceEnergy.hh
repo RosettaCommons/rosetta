@@ -266,7 +266,7 @@ private:
 class DistanceFunc : public func::Func
 {
 public:
-	DistanceFunc( std::string const name );
+	DistanceFunc( std::string const & name );
 	virtual ~DistanceFunc();
 	func::FuncOP clone() const;
 	virtual bool operator == ( func::Func const & rhs ) const;

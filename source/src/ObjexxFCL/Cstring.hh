@@ -334,12 +334,12 @@ public: // Predicate
 
 	/// @brief Has Any Character of a cstring?
 	bool
-	has_any_of( c_cstring const s ) const;
+	has_any_of( c_cstring const & s ) const;
 
 
 	/// @brief Has Any Character of a std::string?
 	bool
-	has_any_of( std::string const s ) const;
+	has_any_of( std::string const & s ) const;
 
 
 	/// @brief Has a Character?

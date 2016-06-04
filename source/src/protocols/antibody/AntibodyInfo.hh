@@ -105,7 +105,7 @@ public:
 	get_CDR_name(CDRNameEnum const cdr_name) const;
 
 	CDRNameEnum
-	get_CDR_name_enum(std::string const cdr_name) const;
+	get_CDR_name_enum(std::string const & cdr_name) const;
 
 	char
 	get_CDR_chain(CDRNameEnum const cdr_name) const {
@@ -332,7 +332,7 @@ public:
 	get_cluster_name(clusters::CDRClusterEnum const cluster) const;
 
 	clusters::CDRClusterEnum
-	get_cluster_enum(std::string const cluster) const;
+	get_cluster_enum(std::string const & cluster) const;
 
 	CDRNameEnum
 	get_cdr_enum_for_cluster(clusters::CDRClusterEnum const cluster) const;

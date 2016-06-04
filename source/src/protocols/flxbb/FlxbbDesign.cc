@@ -160,7 +160,7 @@ FlxbbDesign::FlxbbDesign(
 	ScoreFunctionOP const sfxnd,
 	ScoreFunctionOP const sfxnr,
 	Size const ncycle,
-	String const layer_mode,
+	String const & layer_mode,
 	bool const use_origseq_for_not_dsgned_layer,
 	bool const no_relax
 ) :

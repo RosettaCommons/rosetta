@@ -46,7 +46,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 CavityBall::CavityBall( int const id, int const sphere,
-	numeric::xyzVector<PackstatReal> const xyz, PackstatReal const r ) :
+	numeric::xyzVector<PackstatReal> const & xyz, PackstatReal const r ) :
 	id_(id),
 	sphere_(sphere),
 	cluster_(id),

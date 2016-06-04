@@ -569,7 +569,6 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.Mbhbond_ == b.Mbhbond_ ) && //pba
 		( a.mphbond_ == b.mphbond_ ) &&
 		( a.hbond_energy_shift_ == b.hbond_energy_shift_ ) &&
-		( a.hbond_energy_shift_ == b.hbond_energy_shift_) &&
 		( a.length_dependent_srbb_ == b.length_dependent_srbb_) &&
 		( a.ldsrbb_low_scale_ == b.ldsrbb_low_scale_) &&
 		( a.ldsrbb_high_scale_ == b.ldsrbb_high_scale_) &&

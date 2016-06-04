@@ -52,7 +52,7 @@ public:
 	LigandDockProtocol();
 
 	LigandDockProtocol(
-		std::string const protocol,
+		std::string const & protocol,
 		bool const minimize_ligand,
 		bool const minimize_backbone,
 		bool const tether_ligand,

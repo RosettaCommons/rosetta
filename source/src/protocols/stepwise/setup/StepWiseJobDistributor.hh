@@ -30,7 +30,7 @@ class StepWiseJobDistributor: public protocols::moves::Mover {
 public:
 
 	StepWiseJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-		std::string const silent_file,
+		std::string const & silent_file,
 		core::Size const nstruct ):
 		stepwise_monte_carlo_( stepwise_monte_carlo ),
 		silent_file_( silent_file ),

@@ -130,7 +130,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Size const task_scaling,
 	MoverOP const & mover,
 	Real const temperature,
-	String const sample_type,
+	String const & sample_type,
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
@@ -169,7 +169,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	MoverOP const & mover,
 	TaskFactoryOP factory_in,
 	Real const temperature,
-	String const sample_type,
+	String const & sample_type,
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
@@ -317,7 +317,7 @@ GenericMonteCarloMover::set_mover( MoverOP mover )
 /// Pose is evaluated by FilterOP which can do report_sm() or ScoreFunctionOP during MC trials
 /// You can choose either way FilterOP or ScoreFunction.
 void
-GenericMonteCarloMover::add_filter( FilterOP filter, bool const adaptive, Real const temp, String const sample_type, bool rank_by)
+GenericMonteCarloMover::add_filter( FilterOP filter, bool const adaptive, Real const temp, String const & sample_type, bool rank_by)
 {
 	filters_.push_back( filter );
 	if ( rank_by ) {

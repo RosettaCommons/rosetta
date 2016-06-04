@@ -50,15 +50,15 @@ STMStoredTask::STMStoredTask(const STMStoredTask & rval) :
 { }
 
 // @brief setter
-void STMStoredTask::set_task( core::pack::task::PackerTaskOP task, std::string task_name ) {
+void STMStoredTask::set_task( core::pack::task::PackerTaskOP task, std::string const & task_name ) {
 	tasks_[ task_name ] = task;
 }
 
 // @brief getter
-core::pack::task::PackerTaskOP STMStoredTask::get_task( const std::string task_name ) const { return tasks_.find( task_name )->second; }
+core::pack::task::PackerTaskOP STMStoredTask::get_task( const std::string & task_name ) const { return tasks_.find( task_name )->second; }
 
 // @brief check to see if the task you're interested in is in the object
-bool STMStoredTask::has_task( const std::string task_name ) const { return ( tasks_.find( task_name ) != tasks_.end() ); }
+bool STMStoredTask::has_task( const std::string & task_name ) const { return ( tasks_.find( task_name ) != tasks_.end() ); }
 
 basic::datacache::CacheableDataOP
 STMStoredTask::clone() const {

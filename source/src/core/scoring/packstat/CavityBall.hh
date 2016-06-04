@@ -38,7 +38,7 @@ namespace packstat {
 class CavityBall {
 public:
 
-	CavityBall( int const id, int const sphere, XYZ const xyz, PackstatReal const r );
+	CavityBall( int const id, int const sphere, XYZ const & xyz, PackstatReal const r );
 
 	std::string const hetero_atom_line( int hetresnum = 1, int chain = 0, core::Real radsub = 0.0 ) const ;
 	// bool cmp( CavityBall * a, CavityBall * b );

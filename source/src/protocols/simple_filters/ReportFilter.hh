@@ -48,7 +48,7 @@ public:
 	virtual ~ReportFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-	void report_string( std::string const s );
+	void report_string( std::string const & s );
 	std::string report_string() const;
 
 	void filter( protocols::filters::FilterOP f ){ filter_ = f; }
@@ -56,7 +56,7 @@ public:
 	std::string report_filter_name() const{ return report_filter_name_; }
 	core::Real filter_val() const{ return filter_val_; }
 	std::string checkpointing_file() const{ return checkpointing_file_; }
-	void checkpointing_file( std::string const s ){ checkpointing_file_ = s ;}
+	void checkpointing_file( std::string const & s ){ checkpointing_file_ = s ;}
 private:
 	void checkpoint_read() const; // read from a checkpoint
 	void checkpoint_write() const; // write from a checkpoint

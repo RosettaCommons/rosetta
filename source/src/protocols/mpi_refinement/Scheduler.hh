@@ -56,7 +56,7 @@ public:
 
 	void
 	prepare_enrich_stage( protocols::wum::SilentStructStore const &decoys,
-		std::string const scorename );
+		std::string const & scorename );
 
 	void proceed(); // Proceed iter/round
 
@@ -117,16 +117,16 @@ private:
 
 	void set_default();
 
-	void add_fresh_param( std::string const name );
+	void add_fresh_param( std::string const & name );
 
 	void
-	read_cmd( std::string const cmdfile,
+	read_cmd( std::string const & cmdfile,
 		core::Size const mpi_rank,
 		core::Size const stage_to_run = 1 );
 
 	utility::vector1< core::Size >
 	pick_enrich_methods( protocols::wum::SilentStructStore const &decoys,
-		std::string const scorename ) const;
+		std::string const & scorename ) const;
 
 private:
 

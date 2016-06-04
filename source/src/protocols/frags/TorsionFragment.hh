@@ -299,7 +299,7 @@ public:
 
 	// initialize fragment data from a classic Rosetta fragment library
 	bool
-	read_file( std::string const name, Size const frag_size, Size const nbb );
+	read_file( std::string const & name, Size const frag_size, Size const nbb );
 
 	// extract a fragment library with smaller fragment size from the one with larger lize
 	bool

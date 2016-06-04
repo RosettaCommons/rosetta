@@ -62,7 +62,7 @@ InterfaceSasaFilter::InterfaceSasaFilter() :
 	jump(1);
 }
 
-InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold, std::string sym_dof_names ) :
+InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold, std::string const & sym_dof_names ) :
 	Filter( "Sasa" ),
 	lower_threshold_( lower_threshold ),
 	upper_threshold_(upper_threshold),
@@ -202,26 +202,26 @@ InterfaceSasaFilter::add_jump( core::Size const jump )
 	jumps_.push_back(jump);
 }
 
-void InterfaceSasaFilter::jumps( utility::vector1<core::Size> const jumps )
+void InterfaceSasaFilter::jumps( utility::vector1<core::Size> const & jumps )
 {
 	jumps_ = jumps;
 }
 
 void
-InterfaceSasaFilter::sym_dof_names( std::string const sym_dof_names )
+InterfaceSasaFilter::sym_dof_names( std::string const & sym_dof_names )
 {
 	sym_dof_names_ = utility::string_split(sym_dof_names, ',');
 	jumps_.resize(0);
 }
 
 void
-InterfaceSasaFilter::add_sym_dof_name( std::string const sym_dof_name )
+InterfaceSasaFilter::add_sym_dof_name( std::string const & sym_dof_name )
 {
 	sym_dof_names_.push_back(sym_dof_name);
 }
 
 void
-InterfaceSasaFilter::sym_dof_names( utility::vector1<std::string> const sym_dof_names )
+InterfaceSasaFilter::sym_dof_names( utility::vector1<std::string> const & sym_dof_names )
 {
 	sym_dof_names_ = sym_dof_names;
 }

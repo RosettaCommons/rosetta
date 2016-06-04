@@ -143,7 +143,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 }//end parse my tag
 
 core::kinematics::FoldTreeOP
-SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_in, std::string connect_to_in/*=""*/, std::string connect_from_in/*=""*/ )
+SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_in, std::string const & connect_to_in/*=""*/, std::string const & connect_from_in/*=""*/ )
 {
 	core::kinematics::FoldTreeOP fold_tree( new core::kinematics::FoldTree );
 

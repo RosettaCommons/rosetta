@@ -42,7 +42,7 @@ public:
 		Pose const &
 	);
 
-	void loop_str( std::string const str );
+	void loop_str( std::string const & str );
 
 	std::string loop_str() const;
 

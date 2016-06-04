@@ -329,7 +329,7 @@ Loops::add_overlap_loop( Loops loops ) {
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-Loops::add_overlap_loop( const Loop loop ) {
+Loops::add_overlap_loop( Loop const & loop ) {
 
 	//    if ( loop.cut() >=loop.start()-1 && loop.cut() <= loop.stop() && loop.start() < loop.stop() ) {
 	Size temp_start = loop.start();

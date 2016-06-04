@@ -191,8 +191,8 @@ InterfaceFeatures::report_all_interface_features(
 	utility::vector1<bool> const & relevant_residues,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const interface,
-	std::string const db_interface)
+	std::string const & interface,
+	std::string const & db_interface)
 {
 	TR << "reporting features for: "<< interface << std::endl;
 	//Check to make sure interface/chain definition is solid.
@@ -299,7 +299,7 @@ InterfaceFeatures::get_all_string_combos(std::string& interface, std::string cur
 }
 
 bool
-InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::string const interface) const {
+InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::string const & interface) const {
 	utility::vector1<std::string> interfaceSP = utility::string_split(interface, '_');
 	std::string chains = interfaceSP[1]+interfaceSP[2];
 
@@ -360,8 +360,8 @@ InterfaceFeatures::report_interface_residue_features(
 	const utility::vector1<bool>& relevant_residues,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const chains_side1,
-	std::string const chains_side2) const
+	std::string const & chains_side1,
+	std::string const & chains_side2) const
 {
 	std::map<protocols::analysis::InterfaceRegion, std::string> regions;
 	regions[side1] = "side1";
@@ -451,8 +451,8 @@ InterfaceFeatures::report_interface_features(
 	const core::pose::Pose& pose,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const chains_side1,
-	std::string const chains_side2) const
+	std::string const & chains_side1,
+	std::string const & chains_side2) const
 {
 	using namespace protocols::analysis;
 
@@ -596,10 +596,10 @@ InterfaceFeatures::report_interface_side_features(
 	core::pose::Pose const &,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	const std::string chains_side1,
-	const std::string chains_side2,
+	const std::string & chains_side1,
+	const std::string & chains_side2,
 	protocols::analysis::InterfaceRegion const region,
-	std::string region_string) const
+	std::string const & region_string) const
 {
 
 	std::string stmt_string = "INSERT INTO interface_sides ("
@@ -744,9 +744,9 @@ void
 InterfaceFeatures::write_interface_residue_data_row_to_db(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	const std::string chains_side1,
-	const std::string chains_side2,
-	const std::string side,
+	const std::string & chains_side1,
+	const std::string & chains_side2,
+	const std::string & side,
 	core::Size const resnum,
 	protocols::analysis::PerResidueInterfaceData const & interface_data) const
 {

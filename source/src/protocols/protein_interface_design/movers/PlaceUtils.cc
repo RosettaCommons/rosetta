@@ -116,7 +116,7 @@ test_res_res_aln( core::conformation::Residue const & res1, core::conformation::
 }
 
 core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::conformation::Residue const rsd_i, core::scoring::func::HarmonicFuncOP coord_cst_func, core::id::AtomID const anchor_atom )
+add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::conformation::Residue const & rsd_i, core::scoring::func::HarmonicFuncOP coord_cst_func, core::id::AtomID const & anchor_atom )
 {
 	using namespace core::scoring::constraints;
 
@@ -219,7 +219,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::co
 /// a given coordinate. Useful in finding the nearest residue on the host chain to
 /// a coordinate constraint
 core::Size
-find_nearest_residue_to_coord( pose::Pose const & pose, numeric::xyzVector< core::Real > coord, core::Size const host_chain )
+find_nearest_residue_to_coord( pose::Pose const & pose, numeric::xyzVector< core::Real > const & coord, core::Size const host_chain )
 {
 	core::Real min_dist( 1000000.0 );
 	core::Size nearest_res( 0 );
@@ -237,7 +237,7 @@ find_nearest_residue_to_coord( pose::Pose const & pose, numeric::xyzVector< core
 }
 
 std::string
-nearest_atom_for_constraint( core::conformation::Residue const residue )
+nearest_atom_for_constraint( core::conformation::Residue const & residue )
 {
 	using namespace core::chemical;
 	AA const aa = residue.aa();
@@ -270,7 +270,7 @@ nearest_atom_for_constraint( core::conformation::Residue const residue )
 }
 
 core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func )
+add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const & source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func )
 {
 	using namespace core::scoring::constraints;
 

@@ -64,7 +64,7 @@ static basic::Tracer TR("WorkUnit_Sampler");
 /////// Parent
 core::kinematics::MoveMapOP
 WorkUnit_Sampler::get_movemap( core::pose::Pose const &pose,
-	std::string const mode,
+	std::string const & mode,
 	bool const nonideal ) const
 {
 	using namespace basic::options;
@@ -99,8 +99,8 @@ WorkUnit_Sampler::init_from_cmd( const core::Size ){}
 
 void
 WorkUnit_Sampler::store_to_decoys( core::io::silent::SilentStructCOP start_struct,
-	core::pose::Pose const pose,
-	std::string const additional_tag ){
+	core::pose::Pose const & pose,
+	std::string const & additional_tag ){
 	// exported them into silentstruct
 	core::io::silent::SilentStructOP ss =
 		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
@@ -113,7 +113,7 @@ WorkUnit_Sampler::store_to_decoys( core::io::silent::SilentStructCOP start_struc
 void
 WorkUnit_Sampler::store_to_decoys( core::io::silent::SilentStructCOP start_struct,
 	core::io::silent::SilentStructOP ss,
-	std::string const additional_tag )
+	std::string const & additional_tag )
 {
 	ss->add_energy( "samplemethod", start_struct->get_energy("samplemethod") );
 	ss->set_decoy_tag( start_struct->decoy_tag() + additional_tag );
@@ -133,14 +133,13 @@ WorkUnit_Sampler::repack( core::pose::Pose &pose,
 // local loophash doesn't care about ideal geometry
 void
 WorkUnit_Sampler::ramp_minpack_loop2( core::pose::Pose &pose,
-	utility::vector1< core::Size > const loopres,
+	utility::vector1< core::Size > const & loopres,
 	core::scoring::ScoreFunctionCOP sfxn,
 	bool const nonideal,
 	bool const ramp,
 	bool const efficient,
 	core::Real dist_cut
-)
-{
+) {
 	// Expand loopres into its neighbors
 	utility::vector1< core::Size > touched_residue = get_touched_res( pose, loopres );
 
@@ -245,7 +244,7 @@ WorkUnit_Sampler::superimpose_to_ref( core::pose::Pose const &pose_ref,
 }
 
 core::scoring::ScoreFunctionOP
-WorkUnit_Sampler::get_energy( std::string const sfxn_name,
+WorkUnit_Sampler::get_energy( std::string const & sfxn_name,
 	bool const softpack,
 	core::Real const weight_coord_cst ) const
 {

@@ -103,7 +103,7 @@ public:
 	const_iterator end() const;
 	virtual void set_resid( core::Size const resid );
 	void invert( bool const inv );
-	void set_reset_filters( utility::vector1<FilterOP> const reset_filters );
+	void set_reset_filters( utility::vector1<FilterOP> const & reset_filters );
 	void reset_filters();
 	void clear_reset_filters();
 
@@ -136,7 +136,7 @@ public:
 	void report( std::ostream &, core::pose::Pose const & ) const;
 	core::Real report_sm( core::pose::Pose const & ) const;
 	core::Real compute( core::pose::Pose const & ) const;
-	void set_reset_filters( utility::vector1<FilterOP> const reset_filters );
+	void set_reset_filters( utility::vector1<FilterOP> const & reset_filters );
 	void reset_filters();
 	void clear_reset_filters();
 

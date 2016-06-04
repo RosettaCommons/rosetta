@@ -99,7 +99,7 @@ get_overlap(
 		//cj    If atom a completely engulfs atom b, consider a to have
 		//cj    no overlap due to atom b.
 		olp = 1;
-	} else if ( rb+dist <= ra ) {
+	} else if ( ra+dist <= rb ) {
 		//cj    If atom a is completely engulfed by atom b, then turn it
 		//cj    completely off (i.e. d2 = 99).
 		olp = 100;
@@ -409,17 +409,17 @@ PackstatReal compute_sasa_generic( utility::vector1< T > & S, PackstatReal probe
 
 	// compute sasas
 	PackstatReal total = 0.0;
-	PackstatReal fraction,total_sa,expose;
 	for ( std::size_t is = 1; is <= Nspheres; ++is ) {
 		PackstatReal const irad = S[is].radius;
 		int ctr = 0;
 		for ( std::size_t bb = 1, l = atom_sasa_masks.index(bb,is); (int)bb <= nbytes; ++bb, ++l ) {
 			ctr += bit_count[atom_sasa_masks[ l ]];
 		}
-		fraction = static_cast< PackstatReal >( ctr ) / maskbits;
+		PackstatReal fraction = static_cast< PackstatReal >( ctr ) / maskbits;
+		PackstatReal total_sa;
 		if ( csa ) total_sa = 4.0 * numeric::constants::d::pi * ( irad * irad ); // 4*pi*r**2 -- this is M.S.A, not SASA
 		else      total_sa = 4.0 * numeric::constants::d::pi * ( (irad+probe) * (irad+probe) ); // 4*pi*r**2 -- this is M.S.A, not SASA
-		expose = ( 1.0f - fraction ) * total_sa;
+		PackstatReal expose = ( 1.0f - fraction ) * total_sa;
 		S[is].sasa = expose;
 		total += expose;
 	} // is

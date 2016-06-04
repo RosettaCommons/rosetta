@@ -359,7 +359,7 @@ public:
 
 	PeptideDeriverReportFormat get_report_format() const { return report_format_; }
 	void set_report_format(PeptideDeriverReportFormat const value) { report_format_ = value; }
-	static PeptideDeriverReportFormat parse_report_format_string(std::string const value);
+	static PeptideDeriverReportFormat parse_report_format_string(std::string const & value);
 
 	bool get_is_skip_zero_isc() const { return is_skip_zero_isc_; }
 	void set_is_skip_zero_isc(bool const value) { is_skip_zero_isc_ = value; }

@@ -53,7 +53,7 @@ public:
 	void negate( bool const b ){ negate_ = b; }
 	bool negate() const{ return negate_; }
 	utility::vector1< std::string > relative_pose_names() { return relative_pose_names_; }
-	void relative_pose_names( utility::vector1< std::string > const s ){ relative_pose_names_ = s; }
+	void relative_pose_names( utility::vector1< std::string > const & s ) { relative_pose_names_ = s; }
 	bool multi_relative() const { return multi_relative_; }
 	void multi_relative( bool const m ){ multi_relative_ = m; }
 	void modify_relative_filters_pdb_names();

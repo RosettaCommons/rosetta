@@ -204,7 +204,7 @@ private:
 	void
 	output_centroid_silent_struct(
 		core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
-		std::string const silent_file, std::string const & tag );
+		std::string const & silent_file, std::string const & tag );
 
 	void
 	convert_to_centroid( core::pose::Pose & pose );

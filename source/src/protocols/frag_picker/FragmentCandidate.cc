@@ -243,7 +243,7 @@ void FragmentCandidate::print_fragment_seq(std::ostream& out) {
 }
 
 /// @brief Prints fragment to silent struct
-void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, const std::string sequence, const std::string silent_file_name, const std::string tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms) {
+void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, const std::string & sequence, const std::string & silent_file_name, const std::string & tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms) {
 
 	using namespace ObjexxFCL;
 	using namespace basic::options;

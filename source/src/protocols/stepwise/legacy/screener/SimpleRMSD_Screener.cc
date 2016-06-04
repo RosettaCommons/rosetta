@@ -29,7 +29,7 @@ namespace screener {
 
 //Constructor
 SimpleRMSD_Screener::SimpleRMSD_Screener( pose::Pose const & pose,
-	utility::vector1< Size > const calc_rms_res,
+	utility::vector1< Size > const & calc_rms_res,
 	core::pose::PoseCOP native_pose,
 	Real const rmsd_cutoff,
 	bool const force_align ):

@@ -251,7 +251,7 @@ CompoundFilter::invert( bool const inv )
 }
 
 void
-CompoundFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters )
+CompoundFilter::set_reset_filters( utility::vector1<FilterOP> const & reset_filters )
 {
 	reset_filters_ = reset_filters;
 }
@@ -383,7 +383,7 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 }
 
 void
-CombinedFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters )
+CombinedFilter::set_reset_filters( utility::vector1<FilterOP> const & reset_filters )
 {
 	reset_filters_ = reset_filters;
 }

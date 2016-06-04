@@ -57,15 +57,15 @@ public:
 	static std::string keyname() { return "RestrictIdentitiesAtAlignedPositions"; }
 
 	utility::vector1< core::Size > res_ids() const{ return res_ids_; }
-	void res_ids( utility::vector1< core::Size > const s ){ res_ids_ = s; }
-	void source_pose( std::string const s );
+	void res_ids( utility::vector1< core::Size > const & s ){ res_ids_ = s; }
+	void source_pose( std::string const & s );
 	void chain( core::Size const c ){ chain_ = c; }
 	core::Size chain() const{ return chain_; }
 	void design_only_target_residues( bool const b ){ design_only_target_residues_ = b; }
 	bool design_only_target_residues() const{ return design_only_target_residues_; }
 	bool prevent_repacking() const{ return prevent_repacking_; }
 	void prevent_repacking( bool const b ){ prevent_repacking_ = b; }
-	void keep_aas( std::string const s ){ keep_aas_ = s; }
+	void keep_aas( std::string const & s ){ keep_aas_ = s; }
 	std::string keep_aas() const{ return keep_aas_; }
 	void restrict_identities( bool const b ){ restrict_identities_ = b; }
 	bool restrict_identities() const { return restrict_identities_; }

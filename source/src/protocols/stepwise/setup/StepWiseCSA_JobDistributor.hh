@@ -30,7 +30,7 @@ class StepWiseCSA_JobDistributor: public StepWiseJobDistributor {
 public:
 
 	StepWiseCSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-		std::string const silent_file,
+		std::string const & silent_file,
 		core::Size const nstruct,
 		core::Size const csa_bank_size,
 		core::Real const csa_rmsd,
@@ -65,7 +65,7 @@ private:
 	read_in_silent_file();
 
 	void
-	write_out_silent_file( std::string const silent_file = "" );
+	write_out_silent_file( std::string const & silent_file = "" );
 
 	void
 	write_out_round_silent_file();

@@ -44,7 +44,7 @@ public:
 		core::scoring::ScoreFunctionCOP scorefxn );
 
 	//constructor
-	PhosphateMover( PhosphateMove const phosphate_move,
+	PhosphateMover( PhosphateMove const & phosphate_move,
 		core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
@@ -91,7 +91,7 @@ private:
 	check_phosphate_contacts_donor( pose::Pose & pose ) const;
 
 	bool
-	pass_clash_check( std::string const atom_name,
+	pass_clash_check( std::string const & atom_name,
 		Size const n,
 		pose::Pose & pose );
 

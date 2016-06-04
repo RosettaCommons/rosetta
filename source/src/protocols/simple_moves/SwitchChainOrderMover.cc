@@ -198,7 +198,7 @@ SwitchChainOrderMover::parse_my_tag(
 }
 
 void
-SwitchChainOrderMover::chain_order( std::string const co ){
+SwitchChainOrderMover::chain_order( std::string const & co ){
 	utility::vector1<core::Size> new_chain_ids;
 	BOOST_FOREACH ( char const chaini, co ) {
 		core::Size const chain( chaini - '0' );

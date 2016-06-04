@@ -818,27 +818,27 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	return compute_dipscore_nls( pose, tensorDa, tensorR );
 }
 
-Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa) {
+Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pose, utility::vector1<Real> const & tensorDa) {
 	// empty vector so this legacy function is linked to the One True Function
 	utility::vector1<Real> tensorR;
 	return compute_dipscore_nls( pose, tensorDa, tensorR );
 }
 
-Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose, utility::vector1<Real> const tensorR) {
+Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose, utility::vector1<Real> const & tensorR) {
 	// empty vector so this legacy function is linked to the One True Function
 	utility::vector1<Real> tensorDa;
 	return compute_dipscore_nls( pose, tensorDa, tensorR );
 }
 
-Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR) {
+Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const & tensorDa, utility::vector1<Real> const & tensorR) {
 	return compute_dipscore_nls( pose, tensorDa, tensorR );
 }
 
 
 Real ResidualDipolarCoupling::compute_dipscore_nls(
 	core::pose::Pose const& pose,
-	utility::vector1<Real> const tensorDa,
-	utility::vector1<Real> const tensorR
+	utility::vector1<Real> const & tensorDa,
+	utility::vector1<Real> const & tensorR
 ) {
 
 	// Really explicitly separate the four cases

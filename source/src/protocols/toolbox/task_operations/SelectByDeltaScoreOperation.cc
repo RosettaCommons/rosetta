@@ -99,7 +99,7 @@ core::scoring::ScoreType SelectByDeltaScoreOperation::score_type() const{ return
 void SelectByDeltaScoreOperation::score_type( core::scoring::ScoreType const score_type ){ score_type_ = score_type; }
 
 std::string SelectByDeltaScoreOperation::score_type_name() const{ return score_type_name_; }
-void SelectByDeltaScoreOperation::score_type_name( std::string score_type_name ){ score_type_name_ = score_type_name; }
+void SelectByDeltaScoreOperation::score_type_name( std::string const & score_type_name ){ score_type_name_ = score_type_name; }
 
 core::Real SelectByDeltaScoreOperation::threshold() const{ return threshold_; }
 void SelectByDeltaScoreOperation::threshold( core::Real threshold ) { threshold_ = threshold; }

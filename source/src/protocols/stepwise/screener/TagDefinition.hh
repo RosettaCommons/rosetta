@@ -37,7 +37,7 @@ public:
 		bool const sampler_include_torsion_value_in_tag_ = false,
 		Size const moving_res = 0,
 		Size const reference_res = 0,
-		std::string const extra_tag = "" );
+		std::string const & extra_tag = "" );
 
 	//destructor
 	~TagDefinition();
@@ -56,7 +56,7 @@ public:
 	type() const { return TAG_DEFINITION; }
 
 	void
-	append_to_tag( std::string const value ){ tag_ += value; }
+	append_to_tag( std::string const & value ){ tag_ += value; }
 
 private:
 

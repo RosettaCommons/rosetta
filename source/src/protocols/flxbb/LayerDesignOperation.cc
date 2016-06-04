@@ -272,14 +272,14 @@ LayerDesignOperation::design_layer( bool const dsgn_core, bool const dsgn_bounda
 
 /// @brief accessible surface for evaluating residues are in surface or not
 void
-LayerDesignOperation::sasa_surface( Real const r, String const ss )
+LayerDesignOperation::sasa_surface( Real const r, String const & ss )
 {
 	srbl_->sasa_surface( r, ss );
 }
 
 /// @brief accessible surface for evaluating residues are in core or not
 void
-LayerDesignOperation::sasa_core( Real const r, String const ss )
+LayerDesignOperation::sasa_core( Real const r, String const & ss )
 {
 	srbl_->sasa_core( r, ss );
 }

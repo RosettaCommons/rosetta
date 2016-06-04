@@ -91,7 +91,7 @@ HBond::HBond(
 	bool const ares_is_dna,
 	bool const aatm_is_backbone,
 	Size const ares,
-	HBEvalTuple const hbe_tuple,
+	HBEvalTuple const & hbe_tuple,
 	Real const energy_in, // unweighted
 	Real const weight_in,
 	HBondDerivs const & derivs_in

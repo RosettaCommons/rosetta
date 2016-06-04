@@ -270,7 +270,7 @@ RNA_ChemicalShiftPotential::get_alpha(const std::string &key) const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 chemical::AA
-get_res_aa_from_BASE_name( std::string BASE_name, std::string const & text_line )
+get_res_aa_from_BASE_name( std::string const & BASE_name, std::string const & text_line )
 {
 	chemical::AA res_aa = chemical::aa_unk;
 
@@ -477,7 +477,7 @@ RNA_ChemicalShiftPotential::get_total_exp_chemical_shift_data_points() const
 /////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< std::string >
-RNA_ChemicalShiftPotential::string_list( std::string const string_one ) const
+RNA_ChemicalShiftPotential::string_list( std::string const & string_one ) const
 {
 	utility::vector1< std::string > string_list;
 	string_list.push_back( string_one );
@@ -487,7 +487,7 @@ RNA_ChemicalShiftPotential::string_list( std::string const string_one ) const
 /////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< std::string >
-RNA_ChemicalShiftPotential::string_list( std::string const string_one, const std::string string_two ) const
+RNA_ChemicalShiftPotential::string_list( std::string const & string_one, const std::string & string_two ) const
 {
 	utility::vector1< std::string > string_list;
 
@@ -629,7 +629,7 @@ RNA_ChemicalShiftPotential::atom_has_exp_chemical_shift_data( core::conformation
 
 /////////////////////////////////////////////////////////////////////////////
 utility::vector1 < ChemicalShiftData > const &
-RNA_ChemicalShiftPotential::get_matching_CS_data_entry( Size const seq_num, std::string const in_atom_name ) const
+RNA_ChemicalShiftPotential::get_matching_CS_data_entry( Size const seq_num, std::string const & in_atom_name ) const
 {
 	using namespace ObjexxFCL;
 	Size num_matching_CS_data = 0;
@@ -656,8 +656,8 @@ RNA_ChemicalShiftPotential::get_matching_CS_data_entry( Size const seq_num, std:
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string exp_CS_data_filename,
-	utility::vector1 < Size > include_res_list,
+RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string const & exp_CS_data_filename,
+	utility::vector1< Size > & include_res_list,
 	utility::vector1< utility::vector1< std::string > > const & proton_entry_list )
 {
 	using namespace ObjexxFCL;

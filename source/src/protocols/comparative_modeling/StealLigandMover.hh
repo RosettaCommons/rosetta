@@ -34,9 +34,9 @@ class StealLigandMover : public protocols::moves::Mover {
 public:
 	StealLigandMover(
 		core::pose::Pose const & source,
-		core::id::NamedAtomID const anchor_atom_dest,
-		core::id::NamedAtomID const anchor_atom_source,
-		utility::vector1< core::id::NamedAtomID > const ligand_indices
+		core::id::NamedAtomID const & anchor_atom_dest,
+		core::id::NamedAtomID const & anchor_atom_source,
+		utility::vector1< core::id::NamedAtomID > const & ligand_indices
 	);
 
 	virtual void apply( core::pose::Pose & pose );

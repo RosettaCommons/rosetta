@@ -43,12 +43,12 @@ class SigmoidWeightedCenList : public basic::datacache::CacheableData {
 public:
 	SigmoidWeightedCenList(): calculated_(false) {};
 	SigmoidWeightedCenList( SigmoidWeightedCenList const & src ) :
-		CacheableData() {
-		fcen6_ = src.fcen6_;
-		fcen10_ = src.fcen10_;
-		fcen12_ = src.fcen12_;
-		calculated_ = src.calculated_;
-	}
+		CacheableData(),
+		fcen6_( src.fcen6_ ),
+		fcen10_( src.fcen10_ ),
+		fcen12_( src.fcen12_ ),
+		calculated_( src.calculated_ )
+	{}
 
 	basic::datacache::CacheableDataOP clone() const {
 		return basic::datacache::CacheableDataOP( new SigmoidWeightedCenList( *this ) );
@@ -229,7 +229,7 @@ private:
 		SigmoidWeightedCenList< numeric::xyzVector<Real> > & dcenlist,
 		Size const res1,
 		Size const res2,
-		numeric::xyzVector<Real> const cendist
+		numeric::xyzVector<Real> const & cendist
 	) const;
 
 	//fpd no need for this function anymore; functions are all defined (and well behaved) over all x

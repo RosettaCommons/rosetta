@@ -478,7 +478,7 @@ private:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
-		BBDepNRChiSample< Real > const interpolated_sample,
+		BBDepNRChiSample< Real > const & interpolated_sample,
 		rotamers::RotamerVector & rotamers
 	) const;
 
@@ -509,15 +509,15 @@ private:
 	interpolate_bbdep_nrchi_sample(
 		Size const packed_rotno,
 		Size const nrchi_bin,
-		utility::fixedsizearray1< Size, N > const bb_bin,
-		utility::fixedsizearray1< Size, N > const bb_bin_next,
-		utility::fixedsizearray1< Real, N > const bb_alpha
+		utility::fixedsizearray1< Size, N > const & bb_bin,
+		utility::fixedsizearray1< Size, N > const & bb_bin_next,
+		utility::fixedsizearray1< Real, N > const & bb_alpha
 	) const;
 
 	BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
 		utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > const & nrchi_sample,
-		utility::fixedsizearray1< Real, N > const bb_alpha
+		utility::fixedsizearray1< Real, N > const & bb_alpha
 	) const;
 
 

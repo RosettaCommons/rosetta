@@ -603,7 +603,7 @@ PDBInfo::set_resinfo(
 void
 PDBInfo::add_reslabel(
 	Size const res,
-	std::string const label
+	std::string const & label
 )
 {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );

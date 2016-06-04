@@ -64,7 +64,7 @@ public:
 
 	void clear_score() { score_.clear(); }
 
-	void print ( MonteCarloOP mc, std::string const type );
+	void print( MonteCarloOP mc, std::string const & type );
 
 	core::Real acceptance_rate() const { return (core::Real)accepted_/(accepted_+rejected_+1e-100); }
 

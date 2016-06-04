@@ -66,7 +66,7 @@ public:
 
 	void set_do_add_delete( bool const setting ){ do_add_delete_ = setting; }
 
-	void set_silent_file( std::string const setting ){ silent_file_ = setting; }
+	void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 
 private:
 

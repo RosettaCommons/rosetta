@@ -45,7 +45,7 @@ public:
 
 public:
 
-	ModifyStoredRBConfs( std::string const name );
+	ModifyStoredRBConfs( std::string const & name );
 	~ModifyStoredRBConfs();
 
 	virtual

@@ -56,7 +56,7 @@ using namespace basic::options::OptionKeys;
 MembEtable::MembEtable(
 	chemical::AtomTypeSetCAP atom_set_in_ap,
 	EtableOptions const & options,
-	std::string const alternate_parameter_set
+	std::string const & alternate_parameter_set
 ) : Etable( atom_set_in_ap, options, alternate_parameter_set ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 ),
@@ -588,7 +588,7 @@ MembEtable::output_etable(
 void
 MembEtable::input_etable(
 	ObjexxFCL::FArray3D<Real> & etable,
-	const std::string label,
+	const std::string & label,
 	std::istream & in
 ) {
 	using namespace std;

@@ -115,7 +115,7 @@ public:
 	apply( pose::Pose const &, PackerTask & ) const;
 
 	/// @brief a human-readible string-based mutator
-	void keep_aas( std::string const keep_aas );
+	void keep_aas( std::string const & keep_aas );
 
 	/// @brief direct vector1-basd mutator.  If an amino acid is not present (false) in the boolean vector,
 	/// then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical

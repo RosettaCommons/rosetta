@@ -440,7 +440,7 @@ void Tracer::calculate_visibility(
 /// Strict:  strict==true - channels compared verbatim.
 /// Regular: strict==false - comparing with hierarchy in mind,
 ///                          ie: ch='basic.pose' v[0]='basic' --> will yield true.
-bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, bool strict)
+bool Tracer::in(utility::vector1<std::string> const & v, std::string const & ch, bool strict)
 {
 	for ( size_t i=1; i<=v.size(); i++ ) {
 		if ( v[i] == ch ) return true;
@@ -467,7 +467,7 @@ void Tracer::safe_output(std::string const & message ) {
 }
 
 /// Same as before but return integer value for matched channel or closest match (we asume that 'v' in levels format, ie like: <channel name>:level )
-bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std::string const ch, bool strict, int &res)
+bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std::string const & ch, bool strict, int &res)
 {
 	unsigned int len = 0;
 	bool math = false;

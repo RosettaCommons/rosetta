@@ -57,9 +57,9 @@ public:
 	void relax_mover( protocols::moves::MoverOP const mover );
 	core::pose::PoseOP pose() const;
 	void pose( core::pose::PoseOP p );
-	void pdb_name( std::string const pdb_name ); // sets pose( ) function above with the pdb parameter
+	void pdb_name( std::string const & pdb_name ); // sets pose( ) function above with the pdb parameter
 	std::string dump_pose_fname() const;
-	void dump_pose_fname( std::string const s );
+	void dump_pose_fname( std::string const & s );
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP const s );
@@ -76,15 +76,15 @@ public:
 	void unbound( bool const b ){ unbound_ = b; }
 	bool copy_stretch() const{ return copy_stretch_; }
 	void copy_stretch( bool const b ){ copy_stretch_ = b; }
-	void symmetry_definition( std::string const s );
+	void symmetry_definition( std::string const & s );
 	std::string symmetry_definition() const;
 	std::string filter_name() const;
-	void filter_name( std::string const s );
+	void filter_name( std::string const & s );
 	void rtmin( bool const b);
 	bool rtmin() const;
 
 	utility::vector1< std::string > copy_comments() const{ return copy_comments_; }
-	void copy_comments( utility::vector1< std::string > const s ){ copy_comments_ = s; }
+	void copy_comments( utility::vector1< std::string > const & s ){ copy_comments_ = s; }
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.

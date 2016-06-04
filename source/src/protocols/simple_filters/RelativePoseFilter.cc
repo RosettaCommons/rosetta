@@ -95,7 +95,7 @@ RelativePoseFilter::dump_pose_fname() const{
 }
 
 void
-RelativePoseFilter::dump_pose_fname( std::string const s ){
+RelativePoseFilter::dump_pose_fname( std::string const & s ){
 	dump_pose_fname_ = s;
 }
 
@@ -262,7 +262,7 @@ RelativePoseFilter::report( std::ostream & out, core::pose::Pose const & ) const
 }
 
 void
-RelativePoseFilter::pdb_name( std::string const pdb_name ){
+RelativePoseFilter::pdb_name( std::string const & pdb_name ){
 	pose( core::import_pose::pose_from_file( pdb_name, false, core::import_pose::PDB_file /*read foldtree*/ ) );
 }
 
@@ -423,7 +423,7 @@ RelativePoseFilter::baseline_val( core::Real const b ){
 }
 
 void
-RelativePoseFilter::symmetry_definition( std::string const s ){
+RelativePoseFilter::symmetry_definition( std::string const & s ){
 	symmetry_definition_ = s;
 }
 
@@ -433,7 +433,7 @@ RelativePoseFilter::symmetry_definition() const{
 }
 
 void
-RelativePoseFilter::filter_name( std::string const s ){
+RelativePoseFilter::filter_name( std::string const & s ){
 	filter_name_ = s;
 }
 

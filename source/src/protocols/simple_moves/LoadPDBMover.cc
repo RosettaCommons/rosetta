@@ -97,7 +97,7 @@ LoadPDBMover::parse_my_tag(
 }
 
 void
-LoadPDBMover::filename( std::string const s ){
+LoadPDBMover::filename( std::string const & s ){
 	filename_ = s;
 }
 

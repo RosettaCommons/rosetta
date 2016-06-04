@@ -37,7 +37,7 @@ public:
 
 	//constructor
 	VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-		utility::vector1< std::string > const sample_virtual_sugar_string_list);
+		utility::vector1< std::string > const & sample_virtual_sugar_string_list);
 
 	//destructor
 	~VirtualSugarSamplerFromStringList();

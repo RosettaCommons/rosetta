@@ -184,7 +184,7 @@ AddOrRemoveMatchCsts::get_const_EnzConstraintIO_for_cstfile( std::string cstfile
 
 toolbox::match_enzdes_util::EnzConstraintIOOP
 AddOrRemoveMatchCsts::get_EnzConstraintIO_for_cstfile(
-	std::string const cstfile )
+	std::string const & cstfile )
 {
 	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP >::iterator cstio_it = cstfile_map_.find( cstfile );
 

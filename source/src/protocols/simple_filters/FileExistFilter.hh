@@ -47,7 +47,7 @@ public:
 	virtual ~FileExistFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-	void filename( std::string const f );
+	void filename( std::string const & f );
 	std::string filename() const;
 	bool ignore_zero_byte() const{ return ignore_zero_byte_; }
 	void ignore_zero_byte( bool const i ){ ignore_zero_byte_ = i; }

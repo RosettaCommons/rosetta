@@ -249,7 +249,7 @@ protected:
 	int AssignAtomRadius(Atom &atom);
 	int WildcardMatch(char const *query, char const *pattern, int const l);
 	int ReadScRadii();
-	void AddDot(int const molecule, int const type, Vec3 const coor, ScValue const area, Vec3 const pcen, Atom const &atom);
+	void AddDot(int const molecule, int const type, Vec3 const & coor, ScValue const area, Vec3 const & pcen, Atom const &atom);
 
 	struct {
 		ScValue radmax;
@@ -278,7 +278,7 @@ private:
 	int FindNeighbordsAndBuriedAtoms(Atom& atom);
 	int FindNeighborsForAtom(Atom& atom1);
 
-	int GenerateToroidalSurface(Atom& atom1, Atom& atom2, Vec3 const uij, Vec3 const tij, ScValue rij, int between);
+	int GenerateToroidalSurface(Atom& atom1, Atom& atom2, Vec3 const & uij, Vec3 const & tij, ScValue rij, int between);
 	int GenerateConvexSurface(Atom const & atom1);
 	int GenerateConcaveSurface();
 
@@ -287,7 +287,7 @@ private:
 	int ThirdLoop(Atom &pAtom1, Atom &pAtom, Vec3 const &uij, Vec3 const &tij, ScValue const rij);
 	int CheckAtomCollision2(Vec3 const &pijk, Atom const &atom1, Atom const &atom2, std::vector<Atom*> const &atoms);
 	int CheckPointCollision(Vec3 const &pcen, std::vector<Atom*> const &atoms);
-	int CheckProbeCollision(Vec3 const &point, std::vector<const PROBE*> const nears, ScValue const r2);
+	int CheckProbeCollision(Vec3 const &point, std::vector<const PROBE*> const & nears, ScValue const r2);
 
 
 	// Elementary functions

@@ -49,16 +49,16 @@ add_coordinate_constraints( core::pose::Pose & pose, core::Size const host_chain
 */
 
 core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func );
+add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const & source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func );
 
 void
 generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory );
 
-std::string nearest_atom_for_constraint( core::conformation::Residue const residue );
+std::string nearest_atom_for_constraint( core::conformation::Residue const & residue );
 
 /// @brief find the nearest residue to a coordinate
 core::Size
-find_nearest_residue_to_coord( core::pose::Pose const & pose, numeric::xyzVector< core::Real > const coord, core::Size const host_chain );
+find_nearest_residue_to_coord( core::pose::Pose const & pose, numeric::xyzVector< core::Real > const & coord, core::Size const host_chain );
 
 /// @brief a utility function for parsing stubset information from a tag
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >

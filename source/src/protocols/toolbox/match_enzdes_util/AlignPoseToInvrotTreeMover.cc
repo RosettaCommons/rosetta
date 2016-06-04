@@ -236,7 +236,7 @@ AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
 core::conformation::ResidueCOP
 AlignPoseToInvrotTreeMover::switch_residue_type_set(
 	core::conformation::ResidueCOP residue,
-	std::string const desired_restype_set_name
+	std::string const & desired_restype_set_name
 ) const{
 
 	if ( desired_restype_set_name != residue->residue_type_set()->name() ) {

@@ -84,7 +84,7 @@ public:
 
 		void increment() {
 
-			bookmark_++;
+			++bookmark_;
 
 			if ( state_ == FIRST && bookmark_ == parent_->first_.end() ) {
 				bookmark_ = parent_->second_.begin();

@@ -106,13 +106,13 @@ public:
 	void set_jumpAtoms( utility::vector1< std::string > const & jump_atoms );
 
 	/// @brief set single jumpAtom one at a time
-	void set_jumpAtoms( core::Size i, std::string const atom_name );
+	void set_jumpAtoms( core::Size i, std::string const & atom_name );
 
 	/// @brief set all three cstAtoms at once
 	void set_cstAtoms( utility::vector1< std::string > const & cst_atoms );
 
 	/// @brief set all single cstAtom one at a time
-	void set_cstAtoms( core::Size i, std::string const atom_name );
+	void set_cstAtoms( core::Size i, std::string const & atom_name );
 
 private:
 	/// @brief internal data -- residue type

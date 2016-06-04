@@ -61,7 +61,7 @@ public:
 	core::Real compute_Boltzmann_weight( core::pose::Pose const & pose, core::Size const resi ) const;
 	void rb_jump( core::Size const jump );
 	core::Size rb_jump() const;
-	void sym_dof_names( std::string const dof_names );
+	void sym_dof_names( std::string const & dof_names );
 	std::string sym_dof_names() const;
 	void repacking_radius( core::Real const rad );
 	core::Real repacking_radius() const;
@@ -91,7 +91,7 @@ public:
 	bool write2pdb() const;
 	void write2pdb( bool const write );
 	core::Real compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const;
-	void write_to_pdb( core::Size const residue, std::string const residue_name, core::Real const boltzmann_weight ) const;
+	void write_to_pdb( core::Size const residue, std::string const & residue_name, core::Real const boltzmann_weight ) const;
 private:
 	core::Real compute_boltz_probability() const;
 private:

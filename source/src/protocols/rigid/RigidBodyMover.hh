@@ -84,7 +84,7 @@ public:
 	virtual ~RigidBodyMover();
 
 	/// @brief Manual override of rotation center.
-	void rot_center( core::Vector const rot_center_in ) { rot_center_ = rot_center_in; }
+	void rot_center( core::Vector const & rot_center_in ) { rot_center_ = rot_center_in; }
 
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	virtual std::string get_name() const;
@@ -187,7 +187,7 @@ public:
 	core::Angle get_rot_mag() const;
 
 	/// @brief Manual override of rotation center.
-	void rot_center( core::Vector const /*rot_center_in*/ ); // recreate unless freeze is specified.
+	void rot_center( core::Vector const & /*rot_center_in*/ ); // recreate unless freeze is specified.
 
 protected:
 	// perturbation magnitudes (rotational and translational)
@@ -341,7 +341,7 @@ public:
 	~RigidBodySpinMover();
 
 	void spin_axis( core::Vector spin_axis_in );
-	void rot_center( core::Vector const rot_center_in );
+	void rot_center( core::Vector const & rot_center_in );
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -468,7 +468,7 @@ public:
 	);
 
 	// constructor with arguments that specify the trans axis
-	RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in=1, bool vary_stepsize=false );
+	RigidBodyTransMover( core::Vector const & trans_axis, int const rb_jump_in=1, bool vary_stepsize=false );
 
 
 	virtual ~RigidBodyTransMover();

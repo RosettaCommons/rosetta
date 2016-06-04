@@ -90,14 +90,14 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.rna.RNA_DataReader" );
 
 using namespace core;
 
-RNA_DataReader::RNA_DataReader( std::string const rna_data_file )
+RNA_DataReader::RNA_DataReader( std::string const & rna_data_file )
 {
 	initialize( rna_data_file );
 }
 
 //////////////////////////////////////////////////////////////////
 void
-RNA_DataReader::initialize( std::string const rna_data_file )
+RNA_DataReader::initialize( std::string const & rna_data_file )
 {
 
 	rna_data_info_with_conventional_numbering_ = core::scoring::rna::data::RNA_DataInfoOP( new RNA_DataInfo );
@@ -186,7 +186,7 @@ RNA_DataReader::read_data_from_rdat( std::string const & filename ){
 void
 RNA_DataReader::get_reactivity_from_rdat( core::io::rna::RDAT const & rdat,
 	core::scoring::rna::data::RNA_ReactivityType const & type,
-	std::string const modifier_name ) {
+	std::string const & modifier_name ) {
 	Size idx( 0 );
 	if ( get_tag( rdat.annotations(), "modifier" ) == modifier_name ) {
 		idx = 1;

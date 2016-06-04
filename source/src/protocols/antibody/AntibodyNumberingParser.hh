@@ -58,10 +58,10 @@ public:
 private:
 
 	void
-	read_cdr_definition_file(std::string const file_path, AntibodyNumbering & numbering);
+	read_cdr_definition_file(std::string const & file_path, AntibodyNumbering & numbering);
 
 	void
-	read_numbering_scheme_file(std::string const file_path, AntibodyNumbering & numbering);
+	read_numbering_scheme_file(std::string const & file_path, AntibodyNumbering & numbering);
 
 
 	/// @brief Reads lines defining start/end of each CDR and the relative transforms to the numbering schemes defined by the TRANSFORM line.
@@ -82,7 +82,7 @@ private:
 
 	/// @brief Check to make sure the path to the numbering scheme file is good.
 	void
-	check_path(std::string const numbering_file_path) const;
+	check_path(std::string const & numbering_file_path) const;
 
 	AntibodyNumberingSchemeEnum
 	get_numbering_scheme_used_for_cdr_definition(CDRDefinitionEnum) const;

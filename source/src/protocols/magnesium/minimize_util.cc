@@ -45,7 +45,7 @@ namespace magnesium {
 ////////////////////////////////////////////////////////////////////////////////
 void
 minimize_magnesium_and_hydration_shell( pose::Pose & pose,
-	utility::vector1< Size > const mg_res,
+	utility::vector1< Size > const & mg_res,
 	core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
 	core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
 	MgMinimizer mg_minimizer;
@@ -59,7 +59,7 @@ minimize_magnesium_and_hydration_shell( pose::Pose & pose,
 void
 minimize_magnesium_and_hydration_shell( pose::Pose & pose /*for viewing*/,
 	utility::vector1< pose::PoseOP > & pose_list,
-	utility::vector1< Size > const mg_res,
+	utility::vector1< Size > const & mg_res,
 	core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
 	core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
 	MgMinimizer mg_minimizer;

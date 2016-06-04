@@ -101,8 +101,8 @@ private:
 	core::Size nmer_length_;
 	core::Size nmer_cterm_;
 
-	void read_nmer_table( std::string const ref_fname );
-	void read_nmer_table_list( std::string const ref_list_fname );
+	void read_nmer_table( std::string const & ref_fname );
+	void read_nmer_table_list( std::string const & ref_list_fname );
 	void read_nmer_tables_from_options();
 	virtual
 	core::Size version() const;

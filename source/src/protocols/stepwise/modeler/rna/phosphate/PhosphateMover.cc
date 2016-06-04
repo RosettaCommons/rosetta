@@ -52,7 +52,7 @@ PhosphateMover::PhosphateMover( Size const sample_res,
 }
 
 //Constructor
-PhosphateMover::PhosphateMover( PhosphateMove const phosphate_move,
+PhosphateMover::PhosphateMover( PhosphateMove const & phosphate_move,
 	scoring::ScoreFunctionCOP scorefxn ):
 	phosphate_move_( phosphate_move ),
 	scorefxn_( scorefxn )
@@ -287,7 +287,7 @@ PhosphateMover::screen_three_prime_phosphate( pose::Pose & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-PhosphateMover::pass_clash_check( std::string const atom_name,
+PhosphateMover::pass_clash_check( std::string const & atom_name,
 	Size const n,
 	pose::Pose & pose ){
 

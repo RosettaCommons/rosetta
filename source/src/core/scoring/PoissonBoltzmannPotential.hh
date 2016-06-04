@@ -76,7 +76,7 @@ public:
 		return upper_bound_;
 	}
 
-	bool out_of_bounds(numeric::xyzVector< core::Real > const cartX) const {
+	bool out_of_bounds( numeric::xyzVector< core::Real > const & cartX ) const {
 		for ( core::Size i=0; i<3; ++i ) {
 			if ( cartX[i] < lower_bound()[i] ) return true;
 			if ( cartX[i] > upper_bound()[i] ) return true;

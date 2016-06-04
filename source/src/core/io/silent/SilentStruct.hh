@@ -193,7 +193,7 @@ public:
 
 	/// @brief returns true if this SilentStruct has an energy for the given
 	/// scorename, returns false otherwise.
-	bool has_energy( std::string const scorename ) const;
+	bool has_energy( std::string const & scorename ) const;
 
 	/// @brief Returns the energy associated with the given scorename if this
 	/// SilentStruct has an energy for that scorename. Otherwise returns 0.
@@ -228,11 +228,11 @@ public:
 
 	/// @brief add a score of a given name and value to this SilentStruct.
 	/// Takes an optional weight that defaults to 1.0.
-	void add_energy( std::string scorename, Real value, Real weight = 1.0 );
+	void add_energy( std::string const & scorename, Real value, Real weight = 1.0 );
 
 	/// @brief add a non-floating point score of a given name and value to this
 	/// SilentStruct.
-	void add_string_value( std::string scorename, std::string const & value );
+	void add_string_value( std::string const & scorename, std::string const & value );
 
 	/// @brief Copy the score information in the given SilentStruct into
 	/// this SilentStruct.
@@ -304,10 +304,10 @@ public:
 	bool has_parent_remark( std::string const & name ) const;
 
 	//By Parin Sripakdeevong (sripakpa@stanford.edu).
-	void add_parent_remark( std::string const name, std::string const value );
+	void add_parent_remark( std::string const & name, std::string const & value );
 
 	//By Parin Sripakdeevong (sripakpa@stanford.edu).
-	void get_parent_remark_from_line( std::string const line );
+	void get_parent_remark_from_line( std::string const & line );
 
 	void set_residue_numbers( utility::vector1< Size > const & residue_numbers ){ residue_numbers_ = residue_numbers;}
 	void set_chains( utility::vector1< char > const & chains ){ chains_ = chains;}

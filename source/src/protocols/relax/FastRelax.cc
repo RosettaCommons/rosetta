@@ -994,7 +994,7 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 }
 
 // Override the stored script with the default script for batchrelax
-void FastRelax::set_script_from_lines( std::vector< std::string > const filelines )
+void FastRelax::set_script_from_lines( std::vector< std::string > const & filelines )
 {
 	std::string line;
 

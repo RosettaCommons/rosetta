@@ -51,7 +51,7 @@ public:
 
 private:
 	void
-	initialize_from_directory( std::string const dir_name );
+	initialize_from_directory( std::string const & dir_name );
 
 private:
 

@@ -29,7 +29,7 @@ TagDefinition::TagDefinition( pose::Pose & pose,
 	StepWiseScreenerOP first_sampler,
 	bool const sampler_include_torsion_value_in_tag,
 	Size const moving_res, Size const reference_res,
-	std::string const extra_tag /* = ""*/  ):
+	std::string const & extra_tag /* = ""*/  ):
 	pose_( pose ),
 	first_sampler_( first_sampler ),
 	sampler_include_torsion_value_in_tag_( sampler_include_torsion_value_in_tag ),

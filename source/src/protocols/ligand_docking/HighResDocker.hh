@@ -107,7 +107,7 @@ private:
 	core::pack::task::PackerTaskOP
 	make_packer_task_from_vector(
 		core::pose::Pose const & pose,
-		ligand_options::Interface const allow_repack
+		ligand_options::Interface const & allow_repack
 	) const;
 
 	utility::vector1<protocols::moves::MoverOP>

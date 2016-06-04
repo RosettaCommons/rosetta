@@ -44,11 +44,11 @@ public:
 
 	ChemicalShiftData( core::Size const in_seq_num,
 		chemical::AA const in_res_aa,
-		std::string const in_atom_name,
+		std::string const & in_atom_name,
 		core::Size const in_realatomdata_index,
 		core::Real const in_exp_shift,
 		core::Real const in_ref_shift,
-		std::string const in_data_line,
+		std::string const & in_data_line,
 		core::Real const in_accuracy_weight):
 		seq_num( in_seq_num ),
 		res_aa( in_res_aa ),
@@ -103,18 +103,18 @@ private:
 	atom_has_exp_chemical_shift_data( core::conformation::Residue const & rsd, Size const atomno ) const;
 
 	utility::vector1 < ChemicalShiftData > const &
-	get_matching_CS_data_entry( Size const seq_num, std::string const in_atom_name ) const;
+	get_matching_CS_data_entry( Size const seq_num, std::string const & in_atom_name ) const;
 
 	utility::vector1< std::string >
-	string_list( std::string const string_one ) const;
+	string_list( std::string const & string_one ) const;
 
 	utility::vector1< std::string >
-	string_list( std::string const string_one, std::string const string_two ) const;
+	string_list( std::string const & string_one, std::string const & string_two ) const;
 
 
 	void
-	import_exp_chemical_shift_data( std::string exp_CS_data_filename,
-		utility::vector1 < core::Size > include_res_list,
+	import_exp_chemical_shift_data( std::string const & exp_CS_data_filename,
+		utility::vector1 < core::Size > & include_res_list,
 		utility::vector1 < utility::vector1< std::string > > const & proton_entry_list );
 
 	void

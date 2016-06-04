@@ -133,7 +133,7 @@ private:
 		SigmoidWeightedCenList< numeric::xyzVector<Real> > & dcenlist,
 		Size const res1,
 		Size const res2,
-		numeric::xyzVector<Real> const cenvec
+		numeric::xyzVector<Real> const & cenvec
 	) const;
 
 private:

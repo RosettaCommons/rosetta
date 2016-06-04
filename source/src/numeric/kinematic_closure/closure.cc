@@ -107,7 +107,6 @@ void triaxialCoefficients(
 	bool& feasible_triangle) {
 
 	utility::vector1<Real> ctheta (4), calpha (4), salpha (4), cxi (3), sxi (3), ceta (4), seta (4), cdelta (3), sdelta (3), caceta (4), caseta (4), saceta (4), saseta (4), capeta (4), sapeta (4), cameta (4), sameta (4);
-	Real am, ap, cdsx, sdsx, b, bm, bp, d, dp, dm;
 	utility::vector1<utility::vector1<Real> > L, M, N;
 	utility::vector1<utility::vector1<utility::vector1<Real> > > p (4);
 
@@ -166,16 +165,16 @@ void triaxialCoefficients(
 			sameta[i] = saceta[i] - caseta[i];
 		}
 		for ( int i=2; i<=4; i++ ) {
-			am    = cxi[i-1]*cameta[i] + ctheta[i];
-			ap    = cxi[i-1]*capeta[i] + ctheta[i];
-			cdsx  = cdelta[i-1]*sxi[i-1];
-			sdsx  = 2*sdelta[i-1]*sxi[i-1];
-			b     = 4*cdsx*seta[i];
-			bm    = cdsx*sameta[i];
-			bp    = cdsx*sapeta[i];
-			d     = sdsx*seta[i];
-			dp    = sdsx*sapeta[i];
-			dm    = sdsx*sameta[i];
+			Real am    = cxi[i-1]*cameta[i] + ctheta[i];
+			Real ap    = cxi[i-1]*capeta[i] + ctheta[i];
+			Real cdsx  = cdelta[i-1]*sxi[i-1];
+			Real sdsx  = 2*sdelta[i-1]*sxi[i-1];
+			Real b     = 4*cdsx*seta[i];
+			Real bm    = cdsx*sameta[i];
+			Real bp    = cdsx*sapeta[i];
+			Real d     = sdsx*seta[i];
+			Real dp    = sdsx*sapeta[i];
+			Real dm    = sdsx*sameta[i];
 			p[i][3][3]= -am -bm;
 			p[i][3][2]=     -d;
 			p[i][3][1]= -ap -bp;
@@ -315,7 +314,7 @@ Real torsion(
 	const utility::vector1<Real>& c,
 	const utility::vector1<Real>& d) {
 
-	Real f, y, z, chi;
+	Real y, z, chi;
 	utility::vector1<Real> r (3), sc1 (3), sc2 (3), sc3 (3), cs12, cs31;
 	utility::vector1<utility::vector1<Real> > s (3);
 	for ( int i=1; i<=3; i++ ) {
@@ -343,7 +342,7 @@ Real torsion(
 		s[i][2] = cs31[i];
 	}
 	for ( int i=2; i<=3; i++ ) {
-		f = std::sqrt( pow(s[1][i],2) + pow(s[2][i],2) + pow(s[3][i],2));
+		Real f = std::sqrt( pow(s[1][i],2) + pow(s[2][i],2) + pow(s[3][i],2));
 		s[1][i] /= f;
 		s[2][i] /= f;
 		s[3][i] /= f;

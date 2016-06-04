@@ -33,26 +33,19 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
 
-
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-
 #include <core/pose/Pose.hh>
-
 #include <core/scoring/dssp/Dssp.hh> //getting SS from frag files
-
 #include <core/scoring/ScoreFunction.hh>
-
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-
 
 //create option keys for loop movers
 
@@ -60,7 +53,6 @@
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
-
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -118,12 +110,12 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine() :
 //full member variables defined in constructor
 
 LoopMoverFromCommandLine::LoopMoverFromCommandLine(
-	std::string const protocol,
+	std::string const & protocol,
 	bool const perturb,
 	bool const refine,
 	core::scoring::ScoreFunctionOP & hires_score,
 	core::scoring::ScoreFunctionOP & lores_score,
-	std::string const loop_file_name,
+	std::string const & loop_file_name,
 	protocols::loops::LoopsCOP loops
 ) :
 	simple_moves::DesignRepackMover ( LoopMoverFromCommandLineCreator::mover_name()),

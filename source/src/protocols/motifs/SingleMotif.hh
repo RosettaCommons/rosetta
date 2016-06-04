@@ -38,14 +38,14 @@ public:
 	// This is a 'by hand' way to associate a jump with the coordinate system-forming
 	// atoms.
 	SingleMotif(
-		std::string const resname1,
-		std::string const res1_atom1,
-		std::string const res1_atom2,
-		std::string const res1_atom3,
-		std::string const resname2,
-		std::string const res2_atom1,
-		std::string const res2_atom2,
-		std::string const res2_atom3,
+		std::string const & resname1,
+		std::string const & res1_atom1,
+		std::string const & res1_atom2,
+		std::string const & res1_atom3,
+		std::string const & resname2,
+		std::string const & res2_atom1,
+		std::string const & res2_atom2,
+		std::string const & res2_atom3,
 		core::kinematics::Jump const & orientation
 	);
 
@@ -54,25 +54,25 @@ public:
 		core::pose::Pose const & pose,
 		Size const pdb_residue_position_1,
 		char const pdb_chain_id1,
-		std::string const res1_atom1,
-		std::string const res1_atom2,
-		std::string const res1_atom3,
+		std::string const & res1_atom1,
+		std::string const & res1_atom2,
+		std::string const & res1_atom3,
 		Size const pdb_residue_position_2,
 		char const pdb_chain_id2,
-		std::string const res2_atom1,
-		std::string const res2_atom2,
-		std::string const res2_atom3
+		std::string const & res2_atom1,
+		std::string const & res2_atom2,
+		std::string const & res2_atom3
 	);
 
 	// This constructor takes a jump, used for ligand motifs
 	SingleMotif(
-		std::string const resname1,
-		std::string const res1_atom1,
-		std::string const res1_atom2,
-		std::string const res1_atom3,
-		std::string const res2_atom1,
-		std::string const res2_atom2,
-		std::string const res2_atom3,
+		std::string const & resname1,
+		std::string const & res1_atom1,
+		std::string const & res1_atom2,
+		std::string const & res1_atom3,
+		std::string const & res2_atom1,
+		std::string const & res2_atom2,
+		std::string const & res2_atom3,
 		core::kinematics::Jump const & orientation
 	);
 
@@ -80,13 +80,13 @@ public:
 	SingleMotif(
 		core::pose::Pose const & pose,
 		Size const pdb_residue_position_1,
-		std::string const res1_atom1,
-		std::string const res1_atom2,
-		std::string const res1_atom3,
+		std::string const & res1_atom1,
+		std::string const & res1_atom2,
+		std::string const & res1_atom3,
 		Size const pdb_residue_position_2,
-		std::string const res2_atom1,
-		std::string const res2_atom2,
-		std::string const res2_atom3
+		std::string const & res2_atom1,
+		std::string const & res2_atom2,
+		std::string const & res2_atom3
 	);
 
 	// This constructor forms a motif using preset atom types from a static map

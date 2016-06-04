@@ -116,7 +116,7 @@ public:
 	StepWiseMove( MoveElement const & move_element,
 		Attachments const & attachments,
 		MoveType const & move_type,
-		std::string const submotif_tag );
+		std::string const & submotif_tag );
 
 	StepWiseMove( MoveElement const & move_element,
 		Attachment const & attachment,

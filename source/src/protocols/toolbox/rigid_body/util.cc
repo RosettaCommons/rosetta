@@ -286,7 +286,7 @@ get_euler_angles( Real & alpha, Real & beta, Real & gamma, Matrix M1, Matrix M2,
 
 ///////////////////////////////////////////////////////////////////////
 void
-translate( pose::Pose & pose, Vector const shift,
+translate( pose::Pose & pose, Vector const & shift,
 	pose::Pose const & ref_pose,
 	utility::vector1< Size > const & moving_res ){
 
@@ -306,7 +306,7 @@ translate( pose::Pose & pose, Vector const shift,
 
 ///////////////////////////////////////////////////////////////////////
 void
-rotate( pose::Pose & pose, Matrix const M,
+rotate( pose::Pose & pose, Matrix const & M,
 	pose::Pose const & ref_pose,
 	utility::vector1< Size > const & moving_res,
 	Vector const & centroid ){
@@ -325,7 +325,7 @@ rotate( pose::Pose & pose, Matrix const M,
 
 //////////////////////////////////////////////////////////////////
 void
-rotate( pose::Pose & pose, Matrix const M,
+rotate( pose::Pose & pose, Matrix const & M,
 	pose::Pose const & ref_pose,
 	utility::vector1< Size > const & moving_res ){
 
@@ -348,7 +348,7 @@ get_base_centroid_and_rotation_matrix( pose::Pose const & pose, Size const i, Ve
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i, utility::vector1< Size > const moving_res, bool const do_not_rotate  ){
+translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i, utility::vector1< Size > const & moving_res, bool const do_not_rotate  ){
 
 	Vector centroid;
 	Matrix M;

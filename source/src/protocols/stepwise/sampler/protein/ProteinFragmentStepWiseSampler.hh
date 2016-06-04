@@ -32,7 +32,7 @@ class ProteinFragmentStepWiseSampler: public protocols::stepwise::sampler::StepW
 public:
 
 	//constructor
-	ProteinFragmentStepWiseSampler( std::string const frag_file,
+	ProteinFragmentStepWiseSampler( std::string const & frag_file,
 		utility::vector1< core::Size > const & slice_res,
 		utility::vector1< core::Size > const & moving_residues  );
 
@@ -57,7 +57,7 @@ public:
 private:
 
 	void
-	initialize( std::string const frag_file,
+	initialize( std::string const & frag_file,
 		utility::vector1< core::Size > const & slice_res,
 		utility::vector1< core::Size > const & moving_residues  );
 

@@ -68,10 +68,10 @@ public:
 
 	/// @brief quickly read a list of tags from a silent-input file. Only checks lines beginning
 	/// with SCORE: strings.
-	utility::vector1< std::string > read_tags_fast( std::string const filename ) const;
+	utility::vector1< std::string > read_tags_fast( std::string const & filename ) const;
 
 	/// @brief write all RawStruct objects in the structure_map_ to the given filename.
-	void write_all( const std::string filename, std::map < std::string, core::Real > const & score_map );
+	void write_all( std::string const & filename, std::map < std::string, core::Real > const & score_map );
 
 protected:
 	// mapping from tags to structure data pointers
@@ -91,9 +91,9 @@ public:
 		iterator() {}
 
 		/// @brief Constructor, given an iterator into the StructureMap.
-		iterator( StructureMap::iterator s_iter ) {
-			it_ = s_iter;
-		}
+		iterator( StructureMap::iterator s_iter ) :
+			it_( s_iter )
+		{}
 
 		~iterator() {}
 
@@ -111,7 +111,7 @@ public:
 		}
 
 		iterator& operator++() {
-			it_++;
+			++it_;
 			return (*this);
 		}
 
@@ -135,9 +135,9 @@ public:
 		const_iterator() {}
 
 		/// @brief Constructor, given an iterator into the StructureMap.
-		const_iterator( StructureMap::const_iterator s_iter ) {
-			it_ = s_iter;
-		}
+		const_iterator( StructureMap::const_iterator s_iter ):
+			it_( s_iter )
+		{ }
 
 		~const_iterator() {}
 
@@ -155,7 +155,7 @@ public:
 		}
 
 		const_iterator& operator++() {
-			it_++;
+			++it_;
 			return (*this);
 		}
 

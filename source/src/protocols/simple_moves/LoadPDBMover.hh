@@ -48,7 +48,7 @@ public:
 		core::pose::Pose const & pose );
 
 	std::string filename() const;
-	void filename( std::string const f );
+	void filename( std::string const & f );
 
 	bool append() const { return append_; };
 	void append( bool setting ){ append_ = setting; }

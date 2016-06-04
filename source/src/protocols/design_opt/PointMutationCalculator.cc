@@ -204,7 +204,7 @@ PointMutationCalculator::dump_pdb() const{
 }
 
 void
-PointMutationCalculator::sample_types( vector1< std::string > const sample_types ){
+PointMutationCalculator::sample_types( vector1< std::string > const & sample_types ){
 	sample_types_ = sample_types;
 }
 

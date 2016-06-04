@@ -42,7 +42,7 @@ public:
 	virtual moves::MoverOP clone() const;
 	virtual moves::MoverOP fresh_instance() const;
 
-	void chain_order( std::string const co );
+	void chain_order( std::string const & co );
 	std::string chain_order() const;
 
 	virtual void parse_my_tag(

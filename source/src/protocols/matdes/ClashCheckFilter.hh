@@ -59,7 +59,7 @@ public:// constructor/destructor
 	ClashCheckFilter();
 
 	// @brief constructor with arguments
-	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const s, core::Size const n, core::Size const t, bool const v, bool const w );
+	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const & s, core::Size const n, core::Size const t, bool const v, bool const w );
 
 	// @brief copy constructor
 	ClashCheckFilter( ClashCheckFilter const & rval );
@@ -86,7 +86,7 @@ public:// setters
 
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void clash_dist( core::Real const c );
-	void sym_dof_names( std::string const s );
+	void sym_dof_names( std::string const & s );
 	void nsub_bblock( core::Size const n );
 	void threshold( core::Size const t );
 	void verbose( bool const v );
@@ -122,8 +122,8 @@ public:// virtual main operation
 	/// @brief calc oligomeric AverageDegree
 	core::Size compute( core::pose::Pose const & pose, bool const & v, bool const & w ) const;
 
-	void write_to_pdb( core::pose::Pose const & pose, std::string const residue_name, core::Size const residue, std::string const atom_name ) const;
-	void write_pymol_string_to_pdb( std::string const pymol_selection ) const;
+	void write_to_pdb( core::pose::Pose const & pose, std::string const & residue_name, core::Size const residue, std::string const & atom_name ) const;
+	void write_pymol_string_to_pdb( std::string const & pymol_selection ) const;
 
 private:
 

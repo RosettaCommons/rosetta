@@ -200,7 +200,7 @@ RestrictAbsentCanonicalAAS::apply( pose::Pose const &, PackerTask & task ) const
 }
 
 void
-RestrictAbsentCanonicalAAS::keep_aas( std::string const keep )
+RestrictAbsentCanonicalAAS::keep_aas( std::string const & keep )
 {
 	using namespace chemical;
 	runtime_assert( keep_aas_.size() == num_canonical_aas );

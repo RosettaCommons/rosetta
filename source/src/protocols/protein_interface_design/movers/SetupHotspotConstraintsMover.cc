@@ -86,7 +86,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	core::Real const & bump_cutoff,
 	bool const apply_ambiguous_constraints,
 	bool const colonyE,
-	std::string const stub_energy_fxn
+	std::string const & stub_energy_fxn
 ) :
 	protocols::moves::Mover( "SetupHotspotConstraintMover" ),
 	chain_to_design_(chain_to_design),

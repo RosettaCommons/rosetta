@@ -408,9 +408,9 @@ public:
 		iterator() {}
 
 		/// @brief Constructor, given an iterator into the Structure_Map.
-		iterator( Structure_Map::iterator s_iter ) {
-			it_ = s_iter;
-		}
+		iterator( Structure_Map::iterator s_iter ) :
+			it_( s_iter)
+		{}
 
 		~iterator() {}
 
@@ -428,12 +428,12 @@ public:
 		}
 
 		iterator& operator++() {
-			it_++;
+			++it_;
 			return (*this);
 		}
 
 		iterator& operator--() {
-			it_--;
+			--it_;
 			return (*this);
 		}
 
@@ -462,9 +462,9 @@ public:
 		const_iterator() {}
 
 		/// @brief Constructor, given an iterator into the Structure_Map.
-		const_iterator( Structure_Map::const_iterator s_iter ) {
-			it_ = s_iter;
-		}
+		const_iterator( Structure_Map::const_iterator s_iter ) :
+			it_( s_iter )
+		{}
 
 		~const_iterator() {}
 
@@ -482,12 +482,12 @@ public:
 		}
 
 		const_iterator& operator++() {
-			it_++;
+			++it_;
 			return (*this);
 		}
 
 		const_iterator& operator--() {
-			it_--;
+			--it_;
 			return (*this);
 		}
 

@@ -76,7 +76,7 @@ public:
 	void set_out_path( std::string const & setting ){ out_path_ = setting; }
 	std::string out_path() const{ return out_path_; }
 
-	void set_move( mover::StepWiseMove const setting ){ move_ = setting; }
+	void set_move( mover::StepWiseMove const & setting ){ move_ = setting; }
 	mover::StepWiseMove move() const { return move_; }
 
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting );
@@ -94,12 +94,12 @@ private:
 	void do_main_loop( core::pose::Pose & pose );
 
 	void
-	output_movie( core::pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file );
+	output_movie( core::pose::Pose const & pose, Size const k, std::string const & tag, std::string const & movie_file );
 
 	Real
 	display_progress( core::pose::Pose & pose, Size const cycle_num );
 
-	Real show_scores( core::pose::Pose & pose, std::string const tag );
+	Real show_scores( core::pose::Pose & pose, std::string const & tag );
 
 	void
 	anneal_missing( protocols::moves::MonteCarloOP monte_carlo );

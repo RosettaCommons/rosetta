@@ -112,7 +112,7 @@ public:
 
 private: // member functions
 	void
-	place_stub( core::pose::Pose & pose, core::conformation::Residue const res_stub, core::Size const res_num );
+	place_stub( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Size const res_num );
 
 	void stub_based_atom_tree( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Real const cst_sdev );
 

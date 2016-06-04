@@ -307,7 +307,7 @@ RigidBodyPerturbMover::get_rot_mag() const {
 }
 
 void
-RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
+RigidBodyPerturbMover::rot_center( core::Vector const & /*rot_center_in*/ )
 {
 	utility_exit_with_message("Rotation point is automatically determined ONLY");
 }
@@ -610,7 +610,7 @@ RigidBodySpinMover::spin_axis ( core::Vector spin_axis_in )
 }
 
 void
-RigidBodySpinMover::rot_center ( core::Vector const rot_center_in )
+RigidBodySpinMover::rot_center ( core::Vector const & rot_center_in )
 {
 	rot_center_ = rot_center_in;
 	update_spin_axis_ = false;
@@ -931,7 +931,7 @@ RigidBodyTransMover::RigidBodyTransMover(
 	vary_stepsize_ = vary_stepsize;
 }
 
-RigidBodyTransMover::RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in, bool vary_stepsize  ) :
+RigidBodyTransMover::RigidBodyTransMover( core::Vector const & trans_axis, int const rb_jump_in, bool vary_stepsize  ) :
 	RigidBodyMover( rb_jump_in ), trans_axis_(trans_axis)
 {
 	moves::Mover::type( "RigidBodyTrans" );

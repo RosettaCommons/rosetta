@@ -284,7 +284,7 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 
 /// @brief
 int
-Sheet::which_side( Vector const vec ) const
+Sheet::which_side( Vector const & vec ) const
 {
 	Real dot = sheet_plane_.dot( vec - sheet_center_ );
 	if ( dot > 0 ) {

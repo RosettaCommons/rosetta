@@ -772,7 +772,7 @@ dump_comment_pdb(
 bool
 hasPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name )
+	std::string const & name )
 {
 	using basic::datacache::CacheableStringFloatMap;
 	using basic::datacache::CacheableStringFloatMapCOP;
@@ -793,7 +793,7 @@ hasPoseExtraScore(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name,
+	std::string const & name,
 	core::Real & value
 )
 {
@@ -822,7 +822,7 @@ bool getPoseExtraScore(
 Real
 getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name ) {
+	std::string const & name ) {
 	Real value;
 	runtime_assert( getPoseExtraScore( pose, name, value ) );
 	return value;
@@ -830,7 +830,7 @@ getPoseExtraScore(
 
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name,
+	std::string const & name,
 	std::string & value
 )
 {
@@ -858,7 +858,7 @@ bool getPoseExtraScore(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setPoseExtraScore(
 	core::pose::Pose & pose,
-	std::string name,
+	std::string const & name,
 	core::Real value
 )
 {
@@ -885,8 +885,8 @@ void setPoseExtraScore(
 
 void setPoseExtraScore(
 	core::pose::Pose & pose,
-	std::string const name,
-	std::string value
+	std::string const & name,
+	std::string const & value
 )
 {
 	using basic::datacache::CacheableStringMap;

@@ -389,7 +389,7 @@ void MinimizeBackbone::restrain_protein_Calpha(
 }
 
 std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
-	ligand_options::Interface const interface,
+	ligand_options::Interface const & interface,
 	core::pose::Pose const & pose
 ) const {
 	std::map<core::Size, core::Size> jumpToAttach;
@@ -435,7 +435,7 @@ core::Size find_peptide_attach_pt (
 
 core::Size find_attach_pt(
 	core::Size const jump_id,
-	ligand_options::Interface const interface,
+	ligand_options::Interface const & interface,
 	core::pose::Pose const & pose
 ){
 	core::Size attach_pt = 1; // for now, attach ligand to residue 1

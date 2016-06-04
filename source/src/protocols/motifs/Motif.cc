@@ -57,14 +57,14 @@ namespace motifs {
 static THREAD_LOCAL basic::Tracer mt( "protocols.motifs.Motif", basic::t_info );
 
 Motif::Motif(
-	std::string const resname1,
-	std::string const res1_atom1,
-	std::string const res1_atom2,
-	std::string const res1_atom3,
-	std::string const resname2,
-	std::string const res2_atom1,
-	std::string const res2_atom2,
-	std::string const res2_atom3,
+	std::string const & resname1,
+	std::string const & res1_atom1,
+	std::string const & res1_atom2,
+	std::string const & res1_atom3,
+	std::string const & resname2,
+	std::string const & res2_atom1,
+	std::string const & res2_atom2,
+	std::string const & res2_atom3,
 	core::kinematics::Jump const & orientation
 ) : restype_name1_( protocols::dna::dna_full_name3( resname1 ) ),
 	res1_atom1_name_( res1_atom1 ),
@@ -94,14 +94,14 @@ Motif::Motif(
 	core::pose::Pose const & pose,
 	Size const residue_position_1,
 	char const chain1,
-	std::string const res1_atom1_name,
-	std::string const res1_atom2_name,
-	std::string const res1_atom3_name,
+	std::string const & res1_atom1_name,
+	std::string const & res1_atom2_name,
+	std::string const & res1_atom3_name,
 	Size const residue_position_2,
 	char const chain2,
-	std::string const res2_atom1_name,
-	std::string const res2_atom2_name,
-	std::string const res2_atom3_name
+	std::string const & res2_atom1_name,
+	std::string const & res2_atom2_name,
+	std::string const & res2_atom3_name
 ) : restype_name1_( protocols::dna::dna_full_name3( pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).name3() ) ),
 	res1_atom1_name_( res1_atom1_name ),
 	res1_atom2_name_( res1_atom2_name ),
@@ -137,13 +137,13 @@ Motif::Motif(
 Motif::Motif(
 	core::pose::Pose const & pose,
 	Size const residue_position_1,
-	std::string const res1_atom1_name,
-	std::string const res1_atom2_name,
-	std::string const res1_atom3_name,
+	std::string const & res1_atom1_name,
+	std::string const & res1_atom2_name,
+	std::string const & res1_atom3_name,
 	Size const residue_position_2,
-	std::string const res2_atom1_name,
-	std::string const res2_atom2_name,
-	std::string const res2_atom3_name
+	std::string const & res2_atom1_name,
+	std::string const & res2_atom2_name,
+	std::string const & res2_atom3_name
 ) : restype_name1_( protocols::dna::dna_full_name3( pose.residue( residue_position_1 ).name3() ) ),
 	res1_atom1_name_( res1_atom1_name ),
 	res1_atom2_name_( res1_atom2_name ),
@@ -181,7 +181,7 @@ Motif::Motif(
 Motif::Motif(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2,
-	utility::vector1< Size >  const res2_atoms
+	utility::vector1< Size > const & res2_atoms
 ):
 	has_remark_( false ),
 	has_path_( false )
@@ -231,13 +231,13 @@ Motif::Motif(
 
 // Search constructor for reading out the motifs from the motif file for ligands
 Motif::Motif(
-	std::string const resname1,
-	std::string const res1_atom1,
-	std::string const res1_atom2,
-	std::string const res1_atom3,
-	std::string const res2_atom1,
-	std::string const res2_atom2,
-	std::string const res2_atom3,
+	std::string const & resname1,
+	std::string const & res1_atom1,
+	std::string const & res1_atom2,
+	std::string const & res1_atom3,
+	std::string const & res2_atom1,
+	std::string const & res2_atom2,
+	std::string const & res2_atom3,
 	core::kinematics::Jump const & orientation
 ):
 	has_remark_( false ),
@@ -777,7 +777,7 @@ Motif::place_atom(
 	core::conformation::Residue & mobile,
 	core::conformation::Atom & atm,
 	bool one_three,
-	std::string const atomtype
+	std::string const & atomtype
 ) const
 {
 	// PUT IN WARNING, ONLY CALL THIS FUNCTION WITH TRUE
@@ -1026,7 +1026,7 @@ Motif::place_atom_(
 	bool forward,
 	core::conformation::Atom & atm,
 	bool one_three,
-	std::string const atomtype
+	std::string const & atomtype
 ) const
 {
 	core::kinematics::Stub end_stub;

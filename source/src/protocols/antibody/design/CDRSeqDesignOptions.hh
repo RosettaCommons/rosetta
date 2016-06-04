@@ -131,23 +131,22 @@ private:
 	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
 
 	void
-	parse_cdr_option(std::string const mode, utility::vector1<std::string> & lineSP);
+	parse_cdr_option(std::string const & mode, utility::vector1<std::string> & lineSP);
 
 	void
-	parse_cdr_design_option(std::string const adjective, utility::vector1< std::string> & lineSP) ;
+	parse_cdr_design_option(std::string const & adjective, utility::vector1< std::string> & lineSP) ;
 
 	void
 	parse_cdr_general_option(utility::vector1<std::string> & lineSP) ;
 
 	void
-	set_cdr_design_primary_option(std::string const option);
+	set_cdr_design_primary_option(std::string const & option);
 
 	void
-	set_cdr_design_fallback_option(std::string const option);
+	set_cdr_design_fallback_option(std::string const & option);
 
 private:
-
-
+	
 	std::string instructions_path_;
 	AntibodyEnumManagerCOP ab_manager_;
 	AntibodyDesignEnumManagerCOP design_enum_manager_;

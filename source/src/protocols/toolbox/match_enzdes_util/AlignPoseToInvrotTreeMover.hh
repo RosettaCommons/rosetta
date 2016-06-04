@@ -92,7 +92,7 @@ public:
 	core::conformation::ResidueCOP
 	switch_residue_type_set(
 		core::conformation::ResidueCOP residue,
-		std::string const desired_restype_set_name
+		std::string const & desired_restype_set_name
 	) const;
 
 private:

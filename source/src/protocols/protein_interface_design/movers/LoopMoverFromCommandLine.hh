@@ -39,12 +39,12 @@ class LoopMoverFromCommandLine : public protocols::simple_moves::DesignRepackMov
 public:
 	LoopMoverFromCommandLine();
 	LoopMoverFromCommandLine(
-		std::string const protocol,
+		std::string const & protocol,
 		bool const perturb,
 		bool const refine,
 		core::scoring::ScoreFunctionOP & hires_score,
 		core::scoring::ScoreFunctionOP & lores_score,
-		std::string const loop_file_name,
+		std::string const & loop_file_name,
 		protocols::loops::LoopsCOP loops
 	);
 	// various setters and getters
@@ -52,14 +52,14 @@ public:
 	void perturb( bool const setting ) { perturb_ = setting; }
 	bool refine() const { return refine_; }
 	void refine( bool const setting ) { refine_ = setting; }
-	void refine( std::string const setting ){ string_refine_ = setting; }
+	void refine( std::string const & setting ) { string_refine_ = setting; }
 	//  void string_refine( std::string const setting ){ string_refine_ = setting;}
 	std::string string_refine() const{ return string_refine_; }
-	void intermedrelax( std::string const setting ){ intermedrelax_ = setting;}
+	void intermedrelax( std::string const & setting ) { intermedrelax_ = setting;}
 	std::string intermedrelax() const{ return intermedrelax_; }
-	void relax( std::string const setting ){ relax_ = setting; }
+	void relax( std::string const & setting ) { relax_ = setting; }
 	std::string relax() const{ return relax_; }
-	void remodel( std::string const setting ){ remodel_ = setting; }
+	void remodel( std::string const & setting ) { remodel_ = setting; }
 	std::string remodel() const{ return remodel_; }
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopMoverFromCommandLine ); }

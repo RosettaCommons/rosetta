@@ -59,9 +59,9 @@ public:
 	static std::string keyname();
 
 	utility::vector1< core::Size > start_res() const{ return start_res_; }
-	void start_res( utility::vector1< core::Size > const s ){ start_res_ = s; }
+	void start_res( utility::vector1< core::Size > const & s ){ start_res_ = s; }
 	utility::vector1< core::Size > stop_res() const{ return stop_res_; }
-	void stop_res( utility::vector1< core::Size > const s ){ stop_res_ = s; }
+	void stop_res( utility::vector1< core::Size > const & s ){ stop_res_ = s; }
 	core::Size chain()const {return chain_;}
 	void chain( core::Size const c ){ chain_ = c; }
 

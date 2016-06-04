@@ -46,7 +46,7 @@ namespace setup {
 
 //Constructor
 StepWiseMonteCarloJobDistributor::StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-	std::string const silent_file,
+	std::string const & silent_file,
 	core::Size const nstruct ):
 	StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
 	count_( 1 ),

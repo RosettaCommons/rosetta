@@ -140,7 +140,7 @@ TaskAwareScoreTypeFilter::individual_hbonds( bool individual_hbonds ){
 }
 
 void
-TaskAwareScoreTypeFilter::mode( std::string const mode ) {
+TaskAwareScoreTypeFilter::mode( std::string const & mode ) {
 	if ( !((mode == "average") || (mode == "total") || (mode == "individual")) ) {
 		utility_exit_with_message( "InputError: The specified mode for the TaskAwareScoreTypeFilter does not match either average, total, or individual." );
 	}
@@ -150,11 +150,11 @@ TaskAwareScoreTypeFilter::mode( std::string const mode ) {
 bool TaskAwareScoreTypeFilter::unbound() const { return unbound_; }
 void TaskAwareScoreTypeFilter::unbound( bool const unbound ) { unbound_ = unbound; }
 std::string TaskAwareScoreTypeFilter::sym_dof_names() const { return sym_dof_names_; }
-void TaskAwareScoreTypeFilter::sym_dof_names( std::string const sym_dofs ) { sym_dof_names_ = sym_dofs; }
+void TaskAwareScoreTypeFilter::sym_dof_names( std::string const & sym_dofs ) { sym_dof_names_ = sym_dofs; }
 core::Size TaskAwareScoreTypeFilter::jump() const { return jump_; }
 void TaskAwareScoreTypeFilter::jump( core::Size const jump ) { jump_ = jump; }
 std::string TaskAwareScoreTypeFilter::score_type_name() const { return score_type_name_; }
-void TaskAwareScoreTypeFilter::score_type_name( std::string const name ) { score_type_name_ = name; }
+void TaskAwareScoreTypeFilter::score_type_name( std::string const & name ) { score_type_name_ = name; }
 
 bool
 TaskAwareScoreTypeFilter::apply(core::pose::Pose const & pose ) const
@@ -310,7 +310,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 	}
 }
 
-void TaskAwareScoreTypeFilter::write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const residue_name, core::Real const score ) const
+void TaskAwareScoreTypeFilter::write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const & residue_name, core::Real const score ) const
 {
 
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());

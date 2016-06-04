@@ -256,7 +256,7 @@ GoapEnergy::read_Goap_parameters()
 }
 
 void
-GoapEnergy::read_angle_definitions( std::string const connection_file )
+GoapEnergy::read_angle_definitions( std::string const & connection_file )
 {
 	Size i1;
 
@@ -366,8 +366,8 @@ GoapEnergy::read_angle_definitions( std::string const connection_file )
 }
 
 void
-GoapEnergy::read_potential_values( std::string const distance_file,
-	std::string const angle_file )
+GoapEnergy::read_potential_values( std::string const & distance_file,
+	std::string const & angle_file )
 {
 
 	TR << "Reading energy table." << std::endl;
@@ -580,12 +580,12 @@ Real
 GoapEnergy::get_angle_score( Real const dist,
 	Size const atype1,
 	Size const atype2,
-	Vector const xn1,
-	Vector const xd1,
-	Vector const xn2,
-	Vector const xd2,
-	Vector const xyz1,
-	Vector const xyz2
+	Vector const & xn1,
+	Vector const & xd1,
+	Vector const & xn2,
+	Vector const & xd2,
+	Vector const & xyz1,
+	Vector const & xyz2
 ) const
 {
 	Real score( 0.0 );
@@ -650,8 +650,8 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
 	conformation::Residue const &rsd1,
 	GoapRsdTypeCOP rsdtype,
 	Size const atm1,
-	Vector &xn,
-	Vector &xd
+	Vector & xn,
+	Vector & xd
 ) const
 {
 

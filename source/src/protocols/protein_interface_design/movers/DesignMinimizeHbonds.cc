@@ -75,7 +75,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds() :
 
 DesignMinimizeHbonds::DesignMinimizeHbonds(
 	ScoreFunctionCOP scorefxn_repack, ScoreFunctionCOP scorefxn_minimize,
-	utility::vector1< core::Size > const target_residues,
+	utility::vector1< core::Size > const & target_residues,
 	bool const donors,
 	bool const acceptors,
 	bool const bb_hbond,

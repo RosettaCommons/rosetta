@@ -54,14 +54,14 @@ public:
 	core::Real lower() const{ return lower_; }
 	void lower( core::Real const l ) { lower_ = l; }
 	core::Real upper() const{ return upper_; }
-	void upper( core::Real const u ){ upper_ = u; }
+	void upper( core::Real const u ) { upper_ = u; }
 	core::Size resnum() const{ return resnum_; }
-	void resnum( core::Size const r ){ resnum_ = r; }
-	void torsion( std::string const t ){ torsion_ = t; }
-	std::string torsion() const{ return torsion_; }
+	void resnum( core::Size const r ) { resnum_ = r; }
+	void torsion( std::string const & t ) { torsion_ = t; }
+	std::string torsion() const { return torsion_; }
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
-	void task_factory_set( bool const b ){ task_factory_set_ = b; }
+	void task_factory_set( bool const b ) { task_factory_set_ = b; }
 	bool task_factory_set() const { return task_factory_set_; }
 private:
 

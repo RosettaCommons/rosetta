@@ -40,11 +40,11 @@ public:
 	virtual basic::datacache::CacheableDataOP fresh_instance() const;
 
 	// setter
-	void set_task( core::pack::task::PackerTaskOP const task, std::string const task_name );
+	void set_task( core::pack::task::PackerTaskOP const task, std::string const & task_name );
 
 	// getters
-	core::pack::task::PackerTaskOP get_task( std::string task_name ) const;
-	bool has_task( std::string const task_name ) const;
+	core::pack::task::PackerTaskOP get_task( std::string const & task_name ) const;
+	bool has_task( std::string const & task_name ) const;
 
 private:
 	std::map< std::string, core::pack::task::PackerTaskOP > tasks_;

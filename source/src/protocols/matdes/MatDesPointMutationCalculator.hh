@@ -117,7 +117,7 @@ public:
 	bool dump_pdb() const;
 	void dump_pdb( bool const dump_pdb );
 	utility::vector1< std::string > sample_types() const;
-	void sample_types( utility::vector1< std::string > const sample_types );
+	void sample_types( utility::vector1< std::string > const & sample_types );
 	void rtmin( bool const r );
 	bool rtmin() const;
 	void parallel( bool const r );

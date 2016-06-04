@@ -788,7 +788,7 @@ public: // single residue mutators
 	void
 	add_reslabel(
 		Size const res,
-		std::string const label
+		std::string const & label
 	);
 
 	/// @brief clean all the label(s) associated to a pose resid.
@@ -804,7 +804,7 @@ public: // single residue mutators
 	bool
 	res_haslabel(
 		Size const res,
-		std::string const target_label
+		std::string const & target_label
 	) const
 	{
 		return ( std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), target_label ) != residue_rec_[res].label.end() );

@@ -872,8 +872,8 @@ int MolecularSurfaceCalculator::CheckPointCollision(
 int MolecularSurfaceCalculator::GenerateToroidalSurface(
 	Atom &atom1,
 	Atom &atom2,
-	Vec3 const uij,
-	Vec3 const tij,
+	Vec3 const & uij,
+	Vec3 const & tij,
 	ScValue rij,
 	int between)
 {
@@ -1125,7 +1125,7 @@ int MolecularSurfaceCalculator::GenerateConcaveSurface()
 // Check a point against a set of probes for collision within radius^2
 int MolecularSurfaceCalculator::CheckProbeCollision(
 	Vec3 const &point,
-	std::vector<PROBE const *> const nears,
+	std::vector<PROBE const *> const & nears,
 	ScValue const r2)
 {
 	for ( std::vector<const PROBE*>::const_iterator _near_ = nears.begin();
@@ -1142,9 +1142,9 @@ int MolecularSurfaceCalculator::CheckProbeCollision(
 void MolecularSurfaceCalculator::AddDot(
 	int const molecule,
 	int const type,
-	Vec3 const coor,
+	Vec3 const & coor,
 	ScValue const area,
-	Vec3 const pcen,
+	Vec3 const & pcen,
 	Atom const &atom)
 {
 	DOT dot = { coor, Vec3(), area, 0, type, &atom };

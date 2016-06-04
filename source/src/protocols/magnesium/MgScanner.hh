@@ -88,7 +88,7 @@ private:
 
 	core::Real
 	get_score( core::pose::Pose & pose,
-		core::Vector const mg_position,
+		core::Vector const & mg_position,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		bool const hydrate_magnesium = false,
 		bool const keep_waters = false,

@@ -100,7 +100,7 @@ positions_in_secstruct( core::pose::Pose const & pose ){
 }
 
 utility::vector1< core::pose::PoseOP >
-load_poses( utility::vector1< std::string > const filenames ){
+load_poses( utility::vector1< std::string > const & filenames ){
 	utility::vector1< core::pose::PoseOP > poses;
 	poses.clear();
 	TR<<"Loading "<<filenames.size()<<" poses from disk: ";
@@ -258,7 +258,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-StemFinder::add_filename( std::string const s ){
+StemFinder::add_filename( std::string const & s ) {
 	filenames_.push_back( s );
 }
 

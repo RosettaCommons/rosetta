@@ -344,7 +344,7 @@ private:
 	(
 		const Graph &graph,
 		const std::size_t &vertex,
-		const std::vector< size_t> CAN_VISIT = std::vector< size_t>()
+		const std::vector< size_t> & CAN_VISIT = std::vector< size_t>()
 	) {
 		size_t shortest_branch( std::numeric_limits< size_t>::max());
 

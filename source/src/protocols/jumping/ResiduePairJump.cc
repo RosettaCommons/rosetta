@@ -85,7 +85,7 @@ ResiduePairJumpSingle::set_jumpAtoms(
 void
 ResiduePairJumpSingle::set_jumpAtoms(
 	core::Size i,
-	std::string const atom_name
+	std::string const & atom_name
 )
 {
 	jumpAtoms_.resize(i,"");
@@ -103,7 +103,7 @@ ResiduePairJumpSingle::set_cstAtoms(
 void
 ResiduePairJumpSingle::set_cstAtoms(
 	core::Size i,
-	std::string const atom_name
+	std::string const & atom_name
 )
 {
 	cstAtoms_.resize(i,"");

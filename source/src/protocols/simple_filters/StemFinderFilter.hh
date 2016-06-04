@@ -52,7 +52,7 @@ public:
 	void rmsd( core::Real const c ){ rmsd_ = c ;}
 
 	utility::vector1< std::string > filenames() const{ return filenames_; }
-	void add_filename( std::string const s );
+	void add_filename( std::string const & s );
 
 	bool stems_on_sse() const{ return stems_on_sse_; }
 	void stems_on_sse( bool const b ){ stems_on_sse_ = b; }
@@ -81,7 +81,7 @@ std::string dssp( core::pose::Pose const & pose );
 utility::vector1< core::Size > positions_in_secstruct( core::pose::Pose const & pose );
 
 /// @brief load PDBs into a vector
-utility::vector1< core::pose::PoseOP > load_poses( utility::vector1< std::string > const filenames );
+utility::vector1< core::pose::PoseOP > load_poses( utility::vector1< std::string > const & filenames );
 
 /// @brief find the minimal atom-atom distance between two residues
 core::Real

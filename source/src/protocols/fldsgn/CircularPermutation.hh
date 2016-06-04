@@ -120,7 +120,7 @@ public: // helper functions
 
 
 	/// @brief
-	Size which_chain( Size const s, Pose const pose ) const;
+	Size which_chain( Size const s, Pose const & pose ) const;
 
 	/// @brief
 	void split_chains( Pose & pose, utility::vector1< Size > const & pos );

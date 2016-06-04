@@ -90,7 +90,7 @@ utility::vector1< core::Real >
 FilterScanFilter::delta_filter_thresholds() const{ return delta_filter_thresholds_; }
 
 void
-FilterScanFilter::delta_filter_thresholds( utility::vector1< core::Real > const v ){ delta_filter_thresholds_ = v;}
+FilterScanFilter::delta_filter_thresholds( utility::vector1< core::Real > const & v ){ delta_filter_thresholds_ = v;}
 
 bool
 FilterScanFilter::delta() const{
@@ -167,7 +167,7 @@ FilterScanFilter::resfile_general_property() const{
 }
 
 void
-FilterScanFilter::resfile_general_property( std::string const resfile_general_property ){
+FilterScanFilter::resfile_general_property( std::string const & resfile_general_property ){
 	resfile_general_property_ = resfile_general_property;
 }
 
@@ -182,12 +182,12 @@ FilterScanFilter::score_log_file() const{
 }
 
 void
-FilterScanFilter::resfile_name( std::string const resfile_name ){
+FilterScanFilter::resfile_name( std::string const & resfile_name ){
 	resfile_name_ = resfile_name;
 }
 
 void
-FilterScanFilter::score_log_file( std::string const score_log_file ){
+FilterScanFilter::score_log_file( std::string const & score_log_file ){
 	score_log_file_ = score_log_file;
 }
 
@@ -263,7 +263,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 }
 
 utility::vector1< protocols::simple_filters::DeltaFilterOP > FilterScanFilter::delta_filters() const { return delta_filters_; }
-void FilterScanFilter::delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d ){ delta_filters_ = d; }
+void FilterScanFilter::delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const & d ){ delta_filters_ = d; }
 
 bool
 FilterScanFilter::apply(core::pose::Pose const & p ) const

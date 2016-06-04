@@ -115,12 +115,14 @@ void NMerRefEnergy::read_nmer_tables_from_options() {
 
 //read energy table list
 //entries from all lists just get added to the same map
-void NMerRefEnergy::read_nmer_table_list( std::string ref_list_fname ) {
+void NMerRefEnergy::read_nmer_table_list( std::string const & ref_list_fname ) {
 	TR << "reading NMerRefEnergy list from " << ref_list_fname << std::endl;
-	if ( !utility::file::file_exists( ref_list_fname ) ) {
-		ref_list_fname = basic::database::full_name( ref_list_fname, false );
+	utility::io::izstream in_stream;
+	if ( utility::file::file_exists( ref_list_fname ) ) {
+		in_stream.open( ref_list_fname );
+	} else {
+		in_stream.open( basic::database::full_name( ref_list_fname, false ) );
 	}
-	utility::io::izstream in_stream( ref_list_fname );
 	if ( !in_stream.good() ) {
 		utility_exit_with_message( "[ERROR] opening NMerRefEnergy list file at " + ref_list_fname );
 	}
@@ -134,15 +136,18 @@ void NMerRefEnergy::read_nmer_table_list( std::string ref_list_fname ) {
 	}
 }
 
-void NMerRefEnergy::read_nmer_table( std::string ref_fname ) {
+void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 
 	TR << "checking for NMerRefEnergy scores" << std::endl;
 
-	if ( !utility::file::file_exists( ref_fname ) ) {
-		ref_fname = basic::database::full_name( ref_fname, false );
+	utility::io::izstream in_stream;
+	if ( utility::file::file_exists( ref_fname ) ) {
+		in_stream.open( ref_fname );
+	} else {
+		in_stream.open( basic::database::full_name( ref_fname, false ) );
 	}
 	TR << "reading NMerRefEnergy scores from " << ref_fname << std::endl;
-	utility::io::izstream in_stream( ref_fname );
+	
 	if ( !in_stream.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening NMerRefEnergy file at " + ref_fname );
 	}

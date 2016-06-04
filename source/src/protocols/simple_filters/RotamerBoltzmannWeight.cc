@@ -160,7 +160,7 @@ RotamerBoltzmannWeight::rb_jump() const
 }
 
 void
-RotamerBoltzmannWeight::sym_dof_names( std::string const dof_names )
+RotamerBoltzmannWeight::sym_dof_names( std::string const & dof_names )
 {
 	sym_dof_names_ = dof_names;
 }
@@ -533,7 +533,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 /// @brief Output per-residue Boltzmann weights to the output pdb file if desired
-void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string const residue_name, core::Real const boltzmann_weight ) const
+void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string const & residue_name, core::Real const boltzmann_weight ) const
 {
 
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());

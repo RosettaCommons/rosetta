@@ -214,8 +214,7 @@ core::Size GeneralizedKICselector::apply (
 		break;
 	default :
 		TR.Warning << "Warning!  No selector specified for GeneralizedKICselector::apply.  The loop pose could not be selected!  No solution chosen!" << std::endl;
-		return false;
-		break;
+		return 0;
 	}
 
 	if ( chosen_solution==0 ) {

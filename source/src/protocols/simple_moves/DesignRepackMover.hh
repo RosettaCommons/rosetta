@@ -43,13 +43,13 @@ class DesignRepackMover : public protocols::moves::Mover
 {
 public:
 	DesignRepackMover();
-	DesignRepackMover( std::string const name );
+	DesignRepackMover( std::string const & name );
 	void setup_packer_and_movemap( core::pose::Pose const & pose );
 	protocols::moves::MoverOP clone() const = 0; // this is a pure virtual class that cannot be instantiated
 	protocols::moves::MoverOP fresh_instance() const = 0;
 	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	// managing minimization options
-	void min_rb( utility::vector1< bool > const min_rb ) { min_rb_ = min_rb; min_rb_set_ = true;}
+	void min_rb( utility::vector1< bool > const & min_rb ) { min_rb_ = min_rb; min_rb_set_ = true;}
 	/// @brief in most cases, there would only be one rb dof making it useful to have a non-vector accessor to min_rb_. However, if the pose has multiple jumps, setting min_rb_ in this way might cause trouble in other parts of the code.
 	void min_rb( bool const min_rb ) { min_rb_.clear(); min_rb_.push_back( min_rb ); min_rb_set_ = true; }
 	utility::vector1< bool > const & min_rb() const { runtime_assert( min_rb_set() ); return min_rb_; }
@@ -65,9 +65,9 @@ public:
 	/// @brief a dummy apply so that instantiation of this baseclass would be possible.
 	virtual void apply( core::pose::Pose & ) {}
 	virtual std::string get_name() const;
-	void prevent_repacking( utility::vector1< core::Size > const p ) { prevent_repacking_ = p; }
+	void prevent_repacking( utility::vector1< core::Size > const &  p ) { prevent_repacking_ = p; }
 	utility::vector1< core::Size > const & prevent_repacking() const { return( prevent_repacking_ ); }
-	void restrict_to_repacking( utility::vector1< core::Size > const p ) { restrict_to_repacking_ = p; }
+	void restrict_to_repacking( utility::vector1< core::Size > const & p ) { restrict_to_repacking_ = p; }
 	utility::vector1< core::Size > const & restrict_to_repacking() const { return( restrict_to_repacking_ ); }
 	void design( bool const des ) { design_partner1_ = des; design_partner2_ = des; }
 	bool design() const { return( design_partner1_ || design_partner2_ ); }

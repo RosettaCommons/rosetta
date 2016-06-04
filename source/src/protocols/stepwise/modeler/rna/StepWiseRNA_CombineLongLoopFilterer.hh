@@ -113,7 +113,7 @@ public:
 	filter();
 
 	void
-	set_output_filename( std::string const setting ){ output_filename_ = setting; }
+	set_output_filename( std::string const & setting ){ output_filename_ = setting; }
 
 	//void
 	//set_score_diff_cut(core::Real const setting){score_diff_cut_=setting;}

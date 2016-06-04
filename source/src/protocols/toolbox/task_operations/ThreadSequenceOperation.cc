@@ -64,7 +64,7 @@ ThreadSequenceOperation::ThreadSequenceOperation() : parent()
 	target_sequence( "" ); start_res( 1 ); allow_design_around( true );
 }
 
-ThreadSequenceOperation::ThreadSequenceOperation( std::string const seq ) : parent()
+ThreadSequenceOperation::ThreadSequenceOperation( std::string const & seq ) : parent()
 {
 	target_sequence( seq );
 }
@@ -109,7 +109,7 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 }
 
 void
-ThreadSequenceOperation::target_sequence( std::string const seq )
+ThreadSequenceOperation::target_sequence( std::string const & seq )
 {
 	target_sequence_ = seq;
 }

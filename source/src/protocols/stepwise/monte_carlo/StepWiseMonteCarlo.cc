@@ -204,7 +204,7 @@ StepWiseMonteCarlo::initialize_for_movie( pose::Pose const & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseMonteCarlo::output_movie( pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file ){
+StepWiseMonteCarlo::output_movie( pose::Pose const & pose, Size const k, std::string const & tag, std::string const & movie_file ){
 	if ( !options_->make_movie() ) return;
 	Pose pose_copy = pose;
 	setPoseExtraScore(pose_copy, "frame", k);
@@ -233,7 +233,7 @@ StepWiseMonteCarlo::display_progress( pose::Pose & pose, Size const cycle_num ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
 StepWiseMonteCarlo::show_scores( core::pose::Pose & pose,
-	std::string const tag ){
+	std::string const & tag ){
 	if ( options_->verbose_scores() ) {
 		TR << tag << " " << ( *scorefxn_ )( pose ) << std::endl;
 		scorefxn_->show( TR, pose );

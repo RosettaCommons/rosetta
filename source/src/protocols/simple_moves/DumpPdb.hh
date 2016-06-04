@@ -33,7 +33,7 @@ class DumpPdb : public protocols::moves::Mover
 {
 public:
 	DumpPdb();
-	DumpPdb( std::string const fname );
+	DumpPdb( std::string const & fname );
 	virtual ~DumpPdb();
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;

@@ -410,7 +410,6 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 	switch (pose.conformation().num_chains() ) {
 	case 0 :
 		throw excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
-		break;
 	case 1 :
 		//if pose has only "1" chain, it is a nanobody
 		if ( H_found ) {
@@ -1407,7 +1406,7 @@ AntibodyInfo::get_CDR_name(CDRNameEnum const cdr_name) const {
 }
 
 CDRNameEnum
-AntibodyInfo::get_CDR_name_enum(std::string const cdr_name) const {
+AntibodyInfo::get_CDR_name_enum(std::string const & cdr_name) const {
 	return enum_manager_->cdr_name_string_to_enum(cdr_name);
 }
 
@@ -1436,7 +1435,7 @@ AntibodyInfo::get_cluster_name(CDRClusterEnum const cluster) const {
 }
 
 CDRClusterEnum
-AntibodyInfo::get_cluster_enum(const std::string cluster) const {
+AntibodyInfo::get_cluster_enum(std::string const & cluster) const {
 	return cdr_cluster_manager_->cdr_cluster_string_to_enum(cluster);
 }
 

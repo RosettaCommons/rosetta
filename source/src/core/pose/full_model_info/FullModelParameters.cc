@@ -71,7 +71,7 @@ FullModelParameters::FullModelParameters():
 }
 
 //Constructor
-FullModelParameters::FullModelParameters( std::string const full_sequence ):
+FullModelParameters::FullModelParameters( std::string const & full_sequence ):
 	full_sequence_( full_sequence )
 {
 	initialize_parameters( *this );
@@ -82,7 +82,7 @@ FullModelParameters::FullModelParameters( std::string const full_sequence ):
 }
 
 //Constructorx
-FullModelParameters::FullModelParameters( std::string const full_sequence,
+FullModelParameters::FullModelParameters( std::string const & full_sequence,
 	utility::vector1< Size > const & cutpoint_open_in_full_model,
 	utility::vector1< Size > const & res_numbers_in_pose ):
 	full_sequence_( full_sequence )
@@ -593,7 +593,7 @@ operator!=(
 //  however... otherwise we need to instantiate a pose, and we don't always
 //  know what the residue type set is.
 void
-FullModelParameters::read_cst_file( std::string const cst_file ) {
+FullModelParameters::read_cst_file( std::string const & cst_file ) {
 	cst_string_ = "";
 	full_model_pose_for_constraints_ = 0;
 	cst_set_ = 0;
@@ -648,7 +648,7 @@ FullModelParameters::full_model_pose_for_constraints() const {
 
 ////////////////////////////////////////////////////
 void
-FullModelParameters::read_disulfides( std::string const disulfide_file ) {
+FullModelParameters::read_disulfides( std::string const & disulfide_file ) {
 
 	if ( disulfide_file.size() == 0 ) return;
 	utility::vector1< Size > disulfide_res_list;

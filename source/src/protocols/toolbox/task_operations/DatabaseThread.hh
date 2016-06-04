@@ -56,7 +56,7 @@ public:
 
 	//setters and getters for functions in parse my tag:
 	std::string template_file() const{ return template_file_; } //getter for the template file name
-	void template_file( std::string const s ){ template_file_ = s; } // setter for the template file name
+	void template_file( std::string const & s ){ template_file_ = s; } // setter for the template file name
 	core::Size start_res() const {return start_res_;};
 	void start_res( core::Size const s ) { start_res_ = s; };
 	core::Size end_res() const { return end_res_; }; //getter
@@ -64,12 +64,12 @@ public:
 	bool allow_design_around() const{ return allow_design_around_;}
 	void allow_design_around( bool const b ){ allow_design_around_ = b ; }
 	std::string database_fname() const{ return database_fname_; };//getter
-	void database_fname( std::string const d ){ database_fname_ = d; };//setter
+	void database_fname( std::string const & d ){ database_fname_ = d; };//setter
 	utility::vector1<core::Size> designable() const {return designable_; };//getter
-	void designable(utility::vector1<core::Size> const vector) {designable_=vector; };//setter
+	void designable(utility::vector1<core::Size> const & vector) {designable_=vector; };//setter
 	utility::vector1<core::Size> leave_as_is() const {return leave_as_is_; };//getter
-	void leave_as_is(utility::vector1<core::Size> const vector) {leave_as_is_=vector; };//setter
-	void target_sequence( std::string const seq ) {target_sequence_ = seq; };//setter
+	void leave_as_is(utility::vector1<core::Size> const & vector) {leave_as_is_=vector; };//setter
+	void target_sequence( std::string const & seq ) {target_sequence_ = seq; };//setter
 	std::string target_sequence() const {return target_sequence_; };//getter
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

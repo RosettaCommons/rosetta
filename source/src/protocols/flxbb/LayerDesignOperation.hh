@@ -184,10 +184,10 @@ public:
 	void design_layer( bool const dsgn_core, bool const dsgn_boundary, bool const dsgn_surface );
 
 	/// @brief accessible surface for evaluating residues are in surface or not
-	void sasa_surface( Real const r, String const ss="" );
+	void sasa_surface( Real const r, String const & ss="" );
 
 	/// @brief accessible surface for evaluating residues are in core or not
-	void sasa_core( Real const r, String const ss="" );
+	void sasa_core( Real const r, String const & ss="" );
 
 	/// @brief set pore radius for colculating asa
 	void pore_radius( Real ps );

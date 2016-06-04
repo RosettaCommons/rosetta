@@ -41,7 +41,7 @@ public:
 public:
 	DesignMinimizeHbonds();
 	DesignMinimizeHbonds( ScoreFunctionCOP scorefxn_repack, ScoreFunctionCOP scorefxn_minimize,
-		utility::vector1< core::Size > const target_residues, bool const donors, bool const acceptors,
+		utility::vector1< core::Size > const & target_residues, bool const donors, bool const acceptors,
 		bool const bb_hbond, bool const sc_hbond, core::Real const hbond_energy_threshold,
 		core::Real interface_distance_cutoff=8.0,
 		bool const repack_partner1=true, bool const repack_partner2=false, bool const repack_non_ala = true );

@@ -91,7 +91,7 @@ public:
 		Size const task_scaling,
 		MoverOP const & mover,
 		Real const temperature = 0.0,
-		String const sample_type = "low",
+		String const & sample_type = "low",
 		bool const drift = true
 	);
 
@@ -114,7 +114,7 @@ public:
 		MoverOP const & mover,
 		TaskFactoryOP factory_in,
 		Real const temperature = 0.0,
-		String const sample_type = "low",
+		String const & sample_type = "low",
 		bool const drift = true
 	);
 
@@ -276,7 +276,7 @@ public: // mutators
 		Movers_map const &
 	);
 
-	void add_filter( FilterOP filter, bool const adaptive, Real const temp, String const sample_type, bool rank_by=false);
+	void add_filter( FilterOP filter, bool const adaptive, Real const temp, String const & sample_type, bool rank_by=false);
 
 	void stopping_condition( protocols::filters::FilterOP filter );
 	protocols::filters::FilterOP stopping_condition() const;
@@ -331,7 +331,7 @@ protected:
 	generate_random() const;
 
 	std::string progress_file() const{ return progress_file_; }
-	void progress_file( std::string const s ){ progress_file_ = s; }
+	void progress_file( std::string const & s ){ progress_file_ = s; }
 
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP

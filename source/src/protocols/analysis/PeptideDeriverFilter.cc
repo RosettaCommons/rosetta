@@ -621,7 +621,7 @@ PeptideDeriverFilter::apply(
 
 PeptideDeriverReportFormat
 PeptideDeriverFilter::parse_report_format_string(
-	std::string const value) {
+	std::string const & value) {
 	if ( value == "markdown" ) {
 		return PRF_MARKDOWN;
 	}

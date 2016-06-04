@@ -40,7 +40,7 @@ class LoopRemodel : public simple_moves::DesignRepackMover
 public:
 	LoopRemodel();
 	LoopRemodel(
-		std::string const protocol,
+		std::string const & protocol,
 		core::Size const loop_start,
 		core::Size const loop_end,
 		core::Size const cycles,
@@ -81,7 +81,7 @@ private:
 	core::fragment::FragSetOP frag3_;
 	core::fragment::FragSetOP frag9_;
 
-	bool pick_loop_frags( protocols::loops::LoopsCOP loops, std::string const full_seqeuence, std::string const full_ss );
+	bool pick_loop_frags( protocols::loops::LoopsCOP loops, std::string const & full_seqeuence, std::string const & full_ss );
 };
 
 } // movers

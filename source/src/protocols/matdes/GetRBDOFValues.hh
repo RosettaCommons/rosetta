@@ -93,7 +93,7 @@ public:// accessor
 public:// setters
 
 	void jump_id( core::Size const jump );
-	void sym_dof_name( std::string const dof_name );
+	void sym_dof_name( std::string const & dof_name );
 	void verbose( bool const verb );
 	void axis( char const ax );
 	void radial_disp( bool const disp );

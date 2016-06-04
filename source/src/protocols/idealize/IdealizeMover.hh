@@ -115,7 +115,7 @@ public:
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	utility::vector1< core::Size > ignore_residues_in_csts() const;
-	void ignore_residues_in_csts( utility::vector1< core::Size > const i );
+	void ignore_residues_in_csts( utility::vector1< core::Size > const & i );
 	void impose_constraints( bool const i ){ impose_constraints_ = i; }
 	bool impose_constraints() const{ return( impose_constraints_ ); }
 	bool constraints_only() const{ return constraints_only_; }

@@ -56,13 +56,13 @@ public:
 	virtual void parse_tag( TagCOP, DataMap & );
 
 	std::string alignment_file() const{ return alignment_file_; }
-	void alignment_file( std::string const s ){ alignment_file_ = s; }
+	void alignment_file( std::string const & s ){ alignment_file_ = s; }
 
 	std::string query_name() const{ return query_name_; }
-	void query_name( std::string const s ){ query_name_ = s; }
+	void query_name( std::string const & s ){ query_name_ = s; }
 
 	std::string template_name() const{ return template_name_; }
-	void template_name( std::string const s ){ template_name_ = s; }
+	void template_name( std::string const & s ){ template_name_ = s; }
 
 	void start_res( core::Size const s ){ start_res_ = s ; }
 	core::Size start_res() const{ return start_res_;}

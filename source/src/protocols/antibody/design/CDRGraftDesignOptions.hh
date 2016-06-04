@@ -179,25 +179,25 @@ private:
 	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
 
 	void
-	parse_cdr_option(std::string const mode, utility::vector1<std::string> & lineSP);
+	parse_cdr_option(std::string const & mode, utility::vector1<std::string> & lineSP);
 
 
 	void
-	parse_cdr_graft_option(std::string const adjective, utility::vector1<std::string> & lineSP) ;
+	parse_cdr_graft_option(std::string const & adjective, utility::vector1<std::string> & lineSP) ;
 
 	void
 	parse_cdr_general_option(utility::vector1<std::string> & lineSP) ;
 
 
 	void
-	set_cdr_graft_mintype_options(std::string const mintype);
+	set_cdr_graft_mintype_options(std::string const & mintype);
 
 	void
 	set_cdr_graft_neighbor_mintype_options(utility::vector1<std::string> & lineSP);
 
 
 	void
-	set_cdr_graft_general_option(std::string const option);
+	set_cdr_graft_general_option(std::string const & option);
 
 
 

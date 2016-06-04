@@ -92,7 +92,7 @@ public:
 	Hotspots retrieve( std::string const & residue_name3 );
 
 	/// @brief gets a stub from the stub_set_. A version returning an OP is private
-	Hotspots::const_iterator get_stub( std::string const residue_name3, core::Real const score ) const;
+	Hotspots::const_iterator get_stub( std::string const & residue_name3, core::Real const score ) const;
 	// @brief build a new stubset containing stubs with a given residue name3 and score cutoff
 	HotspotStubSetOP subset( std::string const & residue_name3, core::Real const scorecut );
 	/// @brief build a new stubset containing stubs that pass a score cutoff
@@ -111,15 +111,15 @@ public:
 	bool remove_stub( HotspotStubCOP stub );
 
 	/// @brief add to stubset by reading from a file
-	void read_data( std::string const filename );
+	void read_data( std::string const & filename );
 	// unfortunately, this won't compile on Windows with the BOINC libraries. Ask
 	// tex for more information.
 	//void read( std::string const filename );
 
 	/// @brief fill the stub set with n_stubs by Rosetta residue name
-	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const residue_name3, Size const n_stubs );
+	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const & residue_name3, Size const n_stubs );
 	/// @brief only keep stubs within a certain distance of a residue on the target pose.
-	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const residue_name3, Size const n_stubs );
+	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, Size const n_stubs );
 
 	/// @brief rescore all stubs in this set based on current flags (eg - sc_only() )
 	HotspotStubSetOP rescore( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn );
@@ -153,11 +153,11 @@ public:
 	/// @brief how many total stubs are in the set (all residues)?
 	core::Size size() const;
 	/// @brief how many stubs are in the set by residue?
-	core::Size size( std::string const resname );
+	core::Size size( std::string const & resname );
 
 	/// @brief returns a random stub either from the entire set or based on residue name
 	HotspotStubOP random_stub();
-	HotspotStubOP random_stub( std::string const resname );
+	HotspotStubOP random_stub( std::string const & resname );
 
 	/// @brief Sets up constraints using a given partner (auto choose packer task and fixed reference atom)
 	void add_hotspot_constraints_to_pose(

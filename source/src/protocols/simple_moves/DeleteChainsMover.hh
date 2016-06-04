@@ -44,19 +44,13 @@ public:
 	DeleteChainsMover();
 
 	/// @brief Constructor with chain
-	DeleteChainsMover( utility::vector1< core::Size > const chains );
+	DeleteChainsMover( utility::vector1< core::Size > const & chains );
 
 	/// @brief Constructor with chain
-	DeleteChainsMover( std::string const chains, core::pose::Pose const & pose );
-
-
-
-
+	DeleteChainsMover( std::string const & chains, core::pose::Pose const & pose );
 
 	virtual void
 	apply( core::pose::Pose & pose );
-
-
 
 	//////////////// Accessors + Mutators //////////////////////////////////////
 
@@ -64,11 +58,11 @@ public:
 
 	/// @brief Set the chain
 	void
-	set_chains( utility::vector1< core::Size > const chains );
+	set_chains( utility::vector1< core::Size > const & chains );
 
 	/// @brief Set the chain
 	void
-	set_chains( std::string const chains, core::pose::Pose const & pose );
+	set_chains( std::string const & chains, core::pose::Pose const & pose );
 
 	/// @brief Get the chain
 	utility::vector1< core::Size >

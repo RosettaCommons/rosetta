@@ -579,9 +579,9 @@ public:
 				if ( second_node_num_states_for_aa == 0 ) continue;
 
 				int aa_neighbor_offset = aa_offsets_( jj, ii );
-				bool this_submatrix_worth_keeping = false;
 				if ( aa_neighbor_offset != -1 ) {
 					int submatrix_index = 1;
+					bool this_submatrix_worth_keeping = false;
 					for ( int kk = 1; kk <= first_node_num_states_for_aa; ++kk ) {
 						for ( int ll = 1; ll <= second_node_num_states_for_aa; ++ll ) {
 							int index = aa_neighbor_offset + submatrix_index;

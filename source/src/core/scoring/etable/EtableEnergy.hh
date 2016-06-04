@@ -1100,13 +1100,11 @@ TableLookupEvaluator::eval_dE_dR_over_r(
 		// [ l2 ] == (disbin+1,attype2,attype1)
 
 		/// BEGIN DERIVATIVE INTERPOLATION
-		Real deriv = 0.0;
-
 		int const l1 = dljatr_.index( disbin, atom1.type(), atom2.type()),
 			l2 = l1 + 1;
 
 		Real e1 = dljatr_[ l1 ];
-		deriv = weights[ st_atr() ] * ( e1 + frac * ( dljatr_[ l2 ] - e1 ) );
+		Real deriv = weights[ st_atr() ] * ( e1 + frac * ( dljatr_[ l2 ] - e1 ) );
 
 		e1 = dljrep_[ l1 ];
 		deriv += weights[ st_rep() ] * ( e1 + frac * ( dljrep_[ l2 ] - e1 ) );

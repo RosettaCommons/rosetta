@@ -48,7 +48,7 @@ public:
 	MembEtable(
 		chemical::AtomTypeSetCAP atom_set_in,
 		EtableOptions const & options,
-		std::string const alternate_parameter_set = ""
+		std::string const & alternate_parameter_set = ""
 	);
 
 	MembEtable( MembEtable const & src );
@@ -187,7 +187,7 @@ public: // Interfaces for convenient IO
 	void
 	input_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
-		const std::string label,
+		std::string const & label,
 		std::istream & in
 	);
 

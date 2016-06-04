@@ -43,7 +43,7 @@ AntibodyNumberingParser::AntibodyNumberingParser(AntibodyEnumManagerCOP enum_man
 AntibodyNumberingParser::~AntibodyNumberingParser(){}
 
 void
-AntibodyNumberingParser::check_path(std::string const numbering_file_path) const {
+AntibodyNumberingParser::check_path(std::string const & numbering_file_path) const {
 	using namespace std;
 	ifstream check( numbering_file_path.c_str(), ifstream::in);
 	if ( check.good() ) { return;}
@@ -77,7 +77,7 @@ AntibodyNumberingParser::get_antibody_numbering(AntibodyNumberingSchemeEnum cons
 }
 
 void
-AntibodyNumberingParser::read_numbering_scheme_file(const std::string file_path, AntibodyNumbering& numbering) {
+AntibodyNumberingParser::read_numbering_scheme_file(const std::string & file_path, AntibodyNumbering& numbering) {
 	check_path(file_path);
 	std::ifstream numbering_file(file_path.c_str());
 	PyAssert((numbering_file.is_open()), "Unable to open scheme transform file.");
@@ -201,7 +201,7 @@ AntibodyNumberingParser::get_equivalent_landmark(AntibodyNumbering & numbering, 
 
 
 void
-AntibodyNumberingParser::read_cdr_definition_file(const std::string file_path, AntibodyNumbering& numbering) {
+AntibodyNumberingParser::read_cdr_definition_file(const std::string & file_path, AntibodyNumbering& numbering) {
 	//Initializeour vector2d
 
 	check_path(file_path);

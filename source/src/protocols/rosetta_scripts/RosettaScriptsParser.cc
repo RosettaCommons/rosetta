@@ -212,7 +212,7 @@ RosettaScriptsParser::generate_mover_from_pose(
 	Pose & pose,
 	MoverOP & in_mover,
 	bool new_input,
-	std::string const xml_fname,
+	std::string const & xml_fname,
 	bool guarantee_new_mover
 )
 {

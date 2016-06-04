@@ -1300,7 +1300,7 @@ ResidueType::add_orbital(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 ResidueType::add_metalbinding_atom (
-	std::string const atom_name
+	std::string const & atom_name
 ) {
 	if ( !has(atom_name) ) {
 		std::string message = "Error in adding metal-binding atom to residue type " + name3() + ". Atom " + atom_name + " was not found.";

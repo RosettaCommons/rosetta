@@ -147,7 +147,7 @@ MgScanner::scan_magnesiums( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////
 Real
 MgScanner::get_score( pose::Pose & pose,
-	Vector const mg_position,
+	Vector const & mg_position,
 	scoring::ScoreFunctionCOP scorefxn,
 	bool const hydrate_magnesium /* = false */,
 	bool const keep_waters /* = false */,

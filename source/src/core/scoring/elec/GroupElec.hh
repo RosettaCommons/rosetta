@@ -85,7 +85,7 @@ public:
 private:
 
 	void
-	build_groupinfo( std::string const group_file,
+	build_groupinfo( std::string const & group_file,
 		bool const extra = false );
 
 	ResElecGroup const &

@@ -183,7 +183,7 @@ DesignTask::dump_packertask( std::ostream & os )
 
 
 void
-DesignTask::add_task_operations( utility::vector1< TaskOperationOP > const tops )
+DesignTask::add_task_operations( utility::vector1< TaskOperationOP > const & tops )
 {
 	for ( utility::vector1< TaskOperationOP >::const_iterator it=tops.begin(); it!=tops.end(); ++it ) {
 		add_task_operation( *it );

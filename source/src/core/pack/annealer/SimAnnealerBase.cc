@@ -209,12 +209,11 @@ void SimAnnealerBase::setup_temperature( const int & nn )
 void SimAnnealerBase::setup_temperature(const FArray1D< core::PackerEnergy > & loopenergy,int nn)
 {
 	bool calc_rot_freq = get_calc_rot_freq();
-	core::PackerEnergy avgloopE = 0.0f;
 	if ( ( nn == get_outeriterations() )&&(!calc_rot_freq) && !disallow_quench_ ) {
 		set_to_quench();
 		temperature_ = lowtemp_;
 	} else if ( jump_ > 3 ) {
-		avgloopE = (loopenergy( nn - 4 ) + loopenergy( nn -3 ) + loopenergy( nn - 2 ))/3.0;
+		core::PackerEnergy avgloopE = (loopenergy( nn - 4 ) + loopenergy( nn -3 ) + loopenergy( nn - 2 ))/3.0;
 		//std::cout << "avgloopE: " << avgloopE << " vs " << loopenergy( nn - 1) << std::endl;
 		if ( ( loopenergy( nn - 1) - avgloopE ) > -1.0 ) {
 			//std::cout << "High temp!" << std::endl;
@@ -308,10 +307,6 @@ bool SimAnnealerBase::pass_metropolis( core::PackerEnergy previous_energy, core:
 		else return false;
 	}
 
-	core::PackerEnergy lnprob = 0.0f;
-	core::PackerEnergy beta = 1.0/temperature_;
-	core::PackerEnergy probability = 0.0f;
-
 	/// call this every time, for better numerical stability. Otherwise delta_energies ~ 0 can lead to
 	/// instability in the number of calls to the random number generator
 
@@ -320,14 +315,15 @@ bool SimAnnealerBase::pass_metropolis( core::PackerEnergy previous_energy, core:
 	if ( delta_energy < 0 ) {
 		return true;
 	} else { //evaluate prob of substitution
-		lnprob = beta * delta_energy;
+		core::PackerEnergy beta = 1.0/temperature_;
+		core::PackerEnergy lnprob = beta * delta_energy;
 		if ( previous_energy > 1.0 ) { // this is specific to FixbbSimAnnealer
 			//if both previous energy and new energy are poor
 			//increase the probability of accept
 			lnprob /= previous_energy;
 		}
 		if ( lnprob < 10.0 ) {
-			probability = std::exp(-lnprob);
+			core::PackerEnergy probability = std::exp(-lnprob);
 			if ( probability > rg_uniform ) return true;
 		}
 	}

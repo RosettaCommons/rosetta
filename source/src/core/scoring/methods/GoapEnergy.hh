@@ -56,7 +56,7 @@ public:
 
 	// Set
 	void set_atmid( Size const i, Size const j ){ atmid_[i] = j; }
-	void add_atmname_using( std::string const str ){ atmname_using_.push_back( str ); }
+	void add_atmname_using( std::string const & str ){ atmname_using_.push_back( str ); }
 	void set_root_atom( Size const i, Size const j ){ root_atom_[i] = j; }
 	void set_branch_atom( Size const i, Size const j ){ branch_atom_[i] = j; }
 	void set_angle_atom( Size const i, Size const j ){ angle_atom_[i] = j; }
@@ -199,11 +199,11 @@ private:
 	read_Goap_parameters();
 
 	void
-	read_angle_definitions( std::string const connection_file );
+	read_angle_definitions( std::string const & connection_file );
 
 	void
-	read_potential_values( std::string const distance_file,
-		std::string const angle_file );
+	read_potential_values( std::string const & distance_file,
+		std::string const & angle_file );
 
 
 	bool
@@ -219,12 +219,12 @@ private:
 	get_angle_score( Real const dist,
 		Size const atype1,
 		Size const atype2,
-		Vector const xn1,
-		Vector const xd1,
-		Vector const xn2,
-		Vector const xd2,
-		Vector const xyz1,
-		Vector const xyz2
+		Vector const & xn1,
+		Vector const & xd1,
+		Vector const & xn2,
+		Vector const & xd2,
+		Vector const & xyz1,
+		Vector const & xyz2
 	) const;
 
 	Real
@@ -237,7 +237,7 @@ private:
 	inline Size distbin( Real const dis ){ return distbin_map_[ (Size)(dis*2) ]; }
 
 	inline Real
-	calc_cosineang( Vector const v1, Vector const v2 ) const
+	calc_cosineang( Vector const & v1, Vector const & v2 ) const
 	{
 		Real cosang = v1.dot(v2);
 		cosang /= std::sqrt( v1.dot(v1) * v2.dot(v2) );
@@ -246,9 +246,9 @@ private:
 	}
 
 	inline Real
-	calc_phi(Vector const v1,
-		Vector const v2,
-		Vector const v3) const
+	calc_phi(Vector const & v1,
+		Vector const & v2,
+		Vector const & v3) const
 	{
 		Real const rad2deg( 57.296 );
 

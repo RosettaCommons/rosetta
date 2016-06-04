@@ -437,7 +437,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 
 LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() {}
 
-EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string const cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_( cstid ), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
+EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_( cstid ), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
 
 	using namespace core::scoring;
 
@@ -957,7 +957,7 @@ EnzdesScorefileFilter::examine_pose(
 
 
 void
-EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const filename )
+EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const & filename )
 {
 
 	std::map< std::string, std::map< std::string, ValueEvaluator > >::iterator map_it( evaluator_map_.find( filename ) );

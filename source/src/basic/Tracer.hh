@@ -289,14 +289,14 @@ private: /// Functions
 	/// @brief return true if channel is inside vector, some logic apply.
 	static
 	bool
-	in( utility::vector1<std::string> const &, std::string const channel, bool strict );
+	in( utility::vector1<std::string> const &, std::string const & channel, bool strict );
 
 	/// @brief calculate channel priority with hierarchy in mind.
 	static
 	bool
 	calculate_tracer_level(
 		utility::vector1<std::string> const & v,
-		std::string const ch,
+		std::string const & ch,
 		bool strict,
 		int &res
 	);

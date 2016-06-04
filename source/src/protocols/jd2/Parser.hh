@@ -101,7 +101,7 @@ public:
 		Pose & pose,
 		MoverOP & mover,
 		bool new_input,
-		std::string const xml_file,
+		std::string const & xml_file,
 		bool guarantee_new_mover = false
 	) = 0;
 

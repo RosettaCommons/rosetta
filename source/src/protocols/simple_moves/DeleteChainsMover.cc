@@ -37,14 +37,14 @@ DeleteChainsMover::DeleteChainsMover()
 	set_defaults();
 }
 
-DeleteChainsMover::DeleteChainsMover( std::string const chains, core::pose::Pose const & pose)
+DeleteChainsMover::DeleteChainsMover( std::string const & chains, core::pose::Pose const & pose)
 : moves::Mover("DeleteChainsMover")
 {
 	set_chains( chains, pose );
 	set_defaults();
 }
 
-DeleteChainsMover::DeleteChainsMover( utility::vector1< core::Size > const chains )
+DeleteChainsMover::DeleteChainsMover( utility::vector1< core::Size > const & chains )
 : moves::Mover("DeleteChainsMover")
 {
 	set_chains( chains );
@@ -58,7 +58,7 @@ DeleteChainsMover::set_defaults(){
 }
 
 void
-DeleteChainsMover::set_chains( std::string const chains, core::pose::Pose const & pose ){
+DeleteChainsMover::set_chains( std::string const & chains, core::pose::Pose const & pose ){
 	chains_.clear();
 	for ( core::Size i = 0; i < chains.length(); ++i ) {
 		char chain = chains[ i ];
@@ -68,7 +68,7 @@ DeleteChainsMover::set_chains( std::string const chains, core::pose::Pose const 
 }
 
 void
-DeleteChainsMover::set_chains( utility::vector1< core::Size > const chains ){
+DeleteChainsMover::set_chains( utility::vector1< core::Size > const & chains ){
 	chains_ = chains;
 }
 

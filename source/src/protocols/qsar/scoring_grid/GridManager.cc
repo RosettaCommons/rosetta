@@ -166,7 +166,7 @@ void GridManager::make_new_grid(utility::tag::TagCOP tag)
 
 }
 
-void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
+void GridManager::insert_grid(std::string const & name, GridBaseOP const grid)
 {
 	grid_map_[name] = grid;
 }

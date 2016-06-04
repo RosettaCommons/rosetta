@@ -42,7 +42,7 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
 
-	void fname( std::string const f ){ fname_ = f; }
+	void fname( std::string const & f ){ fname_ = f; }
 	std::string fname() const{ return fname_; }
 
 	void new_chain( bool const n ){ new_chain_ = n; }

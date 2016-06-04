@@ -101,7 +101,7 @@ void
 hbond_compute_energy(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple hbt,   // used internally & by geometric solvation
+	HBEvalTuple const & hbt,   // used internally & by geometric solvation
 	Real const AHdis, // acceptor proton distance
 	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K.
 	Real const xH,      // cos(180-phi), where phi is defined by Tanja K.
@@ -122,7 +122,7 @@ void
 hb_energy_deriv_u(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple const hbt, // hbond evaluation tuple
+	HBEvalTuple const & hbt, // hbond evaluation tuple
 	Vector const & Hxyz, // proton
 	Vector const & Dxyz, // donor -- only needed for derivative evaluation
 	Vector const & HDunit, // proton-to-donor unit vector
@@ -141,7 +141,7 @@ void
 hb_energy_deriv_u2(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple const hbt, // hbond evaluation type
+	HBEvalTuple const & hbt, // hbond evaluation type
 	HBDerivType const deriv_type,
 	Vector const & Hxyz, // proton
 	Vector const & Dxyz, // donor
@@ -160,7 +160,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple const hbt, // hbond evaluation type
+	HBEvalTuple const & hbt, // hbond evaluation type
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor
@@ -175,7 +175,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple const hbt, // hbond evaluation type
+	HBEvalTuple const & hbt, // hbond evaluation type
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor

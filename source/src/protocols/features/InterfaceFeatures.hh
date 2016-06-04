@@ -131,8 +131,8 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const interface,
-		std::string const db_interface);
+		std::string const & interface,
+		std::string const & db_interface);
 
 	/// @brief Add interfaces table data to table
 	virtual void
@@ -140,8 +140,8 @@ public:
 		core::pose::Pose const & pose,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const chains_side1,
-		std::string const chains_side2) const;
+		std::string const & chains_side1,
+		std::string const & chains_side2) const;
 
 	/// @brief Add interface_sides table data to table
 	virtual void
@@ -149,10 +149,10 @@ public:
 		core::pose::Pose const & pose,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const chains_side1,
-		std::string const chains_side2,
+		std::string const & chains_side1,
+		std::string const & chains_side2,
 		protocols::analysis::InterfaceRegion const region,
-		std::string const region_string) const;
+		std::string const & region_string) const;
 
 	/// @brief Add interface_residues data to table
 	virtual void
@@ -161,8 +161,8 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const chains_side1,
-		std::string const chains_side2) const;
+		std::string const & chains_side1,
+		std::string const & chains_side2) const;
 
 	/// @brief Gets all possible interface combinations of a given pose.
 	void
@@ -174,9 +174,9 @@ private:
 	write_interface_residue_data_row_to_db(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const chains_side1,
-		std::string const chains_side2,
-		std::string const side,
+		std::string const & chains_side1,
+		std::string const & chains_side2,
+		std::string const & side,
 		core::Size const resnum,
 		protocols::analysis::PerResidueInterfaceData const & interface_data) const;
 
@@ -200,7 +200,7 @@ protected:
 	interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const;
 
 	bool
-	chains_exist_in_pose(core::pose::Pose const & pose, std::string const interface) const;
+	chains_exist_in_pose(core::pose::Pose const & pose, std::string const & interface) const;
 
 	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 	core::scoring::ScoreFunctionCOP scorefxn_;

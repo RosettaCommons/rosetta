@@ -132,7 +132,7 @@ Real
 string_to_real( std::string const & input_string );
 
 utility::vector1< std::string >
-tokenize( std::string const str, std::string delimiters );
+tokenize( std::string const & str, std::string const & delimiters );
 
 bool
 is_virtual_base( conformation::Residue const & rsd );

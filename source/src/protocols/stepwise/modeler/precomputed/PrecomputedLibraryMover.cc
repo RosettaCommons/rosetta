@@ -81,7 +81,7 @@ PrecomputedLibraryMover::~PrecomputedLibraryMover()
 {}
 
 void
-PrecomputedLibraryMover::initialize_from_directory( std::string const dir_name ){
+PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name ){
 	utility::vector1< std::string > filenames;
 	utility::file::list_dir( dir_name, filenames );
 	for ( Size n = 1; n <= filenames.size(); n++ ) {

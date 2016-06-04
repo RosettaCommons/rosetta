@@ -51,11 +51,10 @@ namespace checkpoint {
 
 class FileBuffer {
 public:
-	FileBuffer( const std::string filename, bool gzipped = false ):
+	FileBuffer( const std::string & filename, bool gzipped = false ):
 		filename_( filename ),
 		gzipped_( gzipped )
 	{
-
 	}
 
 

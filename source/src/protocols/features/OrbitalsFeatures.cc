@@ -614,7 +614,7 @@ OrbitalsFeatures::set_OrbH_features_data(
 	Size const Aindex,
 	Size const Hindex,
 	Size const Orbindex,
-	xyzVector<Real> const Orbxyz,
+	xyzVector<Real> const & Orbxyz,
 	Size & resNum2,
 	string & orbName1,
 	string & htype2,

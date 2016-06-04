@@ -88,7 +88,7 @@ FileExistFilter::compute(
 	return( end - begin > 0 );
 }
 
-void FileExistFilter::filename( std::string const f )
+void FileExistFilter::filename( std::string const & f )
 {
 	filename_ = f;
 }

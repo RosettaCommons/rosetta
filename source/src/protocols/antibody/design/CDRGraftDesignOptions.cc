@@ -278,7 +278,7 @@ CDRGraftDesignOptionsParser::check_path() {
 }
 
 void
-CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
+CDRGraftDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<string>& lineSP) {
 
 	///Since we are now including SeqDesign and GraftDesign as part of the overall protocol,
 	/// it does not make sense to include MIN as part of GraftDesign, since it is overall part of the protocol.
@@ -310,7 +310,7 @@ CDRGraftDesignOptionsParser::check_line_len(const vector1<string> & lineSP, cons
 }
 
 void
-CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, vector1<string>& lineSP) {
+CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const & setting, vector1<string>& lineSP) {
 
 	//Here we match.  This is rather ugly, as I don't have much C++ expereince in this.  Python however...
 
@@ -336,7 +336,7 @@ CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, v
 }
 
 void
-CDRGraftDesignOptionsParser::set_cdr_graft_general_option(std::string const option) {
+CDRGraftDesignOptionsParser::set_cdr_graft_general_option(std::string const & option) {
 
 	if ( option == "FIX" ) {
 		cdr_options_->design(false);
@@ -354,7 +354,7 @@ CDRGraftDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) 
 }
 
 void
-CDRGraftDesignOptionsParser::set_cdr_graft_mintype_options(std::string const mintype) {
+CDRGraftDesignOptionsParser::set_cdr_graft_mintype_options(std::string const & mintype) {
 
 	///If we ever have a design enum manager, add these to it to make this simpler.
 	if ( mintype == "REPACK" || mintype == "PACK" ) {

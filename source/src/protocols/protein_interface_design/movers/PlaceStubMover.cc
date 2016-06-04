@@ -200,7 +200,7 @@ PlaceStubMover::clone() const {
 
 /// @details utility function that places a stub at an acceptor position and cleans up the pose
 void
-PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue const res_stub, core::Size const res_num )
+PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Size const res_num )
 {
 	runtime_assert( res_num <= pose.total_residue() );
 	core::Size const chain_begin( pose.conformation().chain_begin( host_chain_ ) );

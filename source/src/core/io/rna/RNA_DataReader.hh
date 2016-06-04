@@ -42,10 +42,10 @@ public:
 	virtual ~RNA_DataReader();
 
 	//constructor
-	RNA_DataReader( std::string const rna_data_file );
+	RNA_DataReader( std::string const & rna_data_file );
 
 	void
-	initialize( std::string const rna_data_file );
+	initialize( std::string const & rna_data_file );
 
 	void
 	fill_rna_data_info( core::pose::Pose & pose );
@@ -72,7 +72,7 @@ private:
 	void
 	get_reactivity_from_rdat( core::io::rna::RDAT const & rdat,
 		core::scoring::rna::data::RNA_ReactivityType const & type,
-		std::string const modifier_name );
+		std::string const & modifier_name );
 	void
 	read_data_from_rdat( std::string const & filename );
 

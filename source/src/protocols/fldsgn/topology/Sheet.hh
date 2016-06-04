@@ -111,7 +111,7 @@ public:
 
 	/// @brief
 	int
-	which_side( Vector const vec ) const;
+	which_side( Vector const & vec ) const;
 
 	/// @brief calc surface areas only with beta-sheet
 	utility::vector1< Real >

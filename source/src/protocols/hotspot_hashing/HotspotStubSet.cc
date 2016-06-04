@@ -514,7 +514,7 @@ HotspotStubSet::find_neighboring_stubs( HotspotStubCOP stub ) const {
 }
 
 HotspotStubSet::Hotspots::const_iterator
-HotspotStubSet::get_stub( std::string const residue_name3, core::Real const score ) const
+HotspotStubSet::get_stub( std::string const & residue_name3, core::Real const score ) const
 {
 	Hs_map::const_iterator hs_it( stub_set_.find( residue_name3 ) );
 	return( hs_it->second.find( score ) );
@@ -565,7 +565,7 @@ void HotspotStubSet::add_stub_( HotspotStubCOP stub ) {
 	handshake_stub_sets();
 }
 
-void HotspotStubSet::read_data( std::string const filename ) {
+void HotspotStubSet::read_data( std::string const & filename ) {
 	// keep PDB header to preserve REMARKs
 	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
 
@@ -673,7 +673,7 @@ void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::Sco
 }
 
 // convenience fillers
-void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const residue_name3, Size const n_stubs )
+void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, Size const n_stubs )
 {
 	if ( ( target <= pose.total_residue() ) &&  ( distance > 0 ) ) {
 		target_resnum_ = target;
@@ -688,7 +688,7 @@ void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFu
 }
 
 // MAIN FILLING MACHINERY HERE
-void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const residue_name3, Size const n_stubs )
+void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const & residue_name3, Size const n_stubs )
 {
 
 	// set up scorefxn's. DISABLE environment-dependent H-bonds
@@ -931,7 +931,7 @@ core::Size HotspotStubSet::size() const
 }
 
 /// @brief how many stubs are in the set by residue?
-core::Size HotspotStubSet::size( std::string const resname )
+core::Size HotspotStubSet::size( std::string const & resname )
 {
 	core::Size n_stubs(0);
 	if ( resname != "ALL" ) {
@@ -985,7 +985,7 @@ HotspotStubSet::random_stub()
 }
 
 HotspotStubOP
-HotspotStubSet::random_stub( std::string const resname )
+HotspotStubSet::random_stub( std::string const & resname )
 {
 	std::multimap<core::Real,HotspotStubOP > stubs = retrieve( resname );
 	core::Size const subset_size( stubs.size() );

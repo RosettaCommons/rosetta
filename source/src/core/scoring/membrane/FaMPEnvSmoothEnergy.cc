@@ -356,26 +356,26 @@ FaMPEnvSmoothEnergy::representative_atom_name( chemical::AA const aa ) const
 	static std::string const sdelta_string( "SD"  );
 
 	switch ( aa ) {
-	case ( chemical::aa_ala ) : return cbeta_string;  break;
-	case ( chemical::aa_cys ) : return sgamma_string; break;
-	case ( chemical::aa_asp ) : return cgamma_string; break;
-	case ( chemical::aa_glu ) : return cdelta_string; break;
-	case ( chemical::aa_phe ) : return czeta_string;  break;
-	case ( chemical::aa_gly ) : return calpha_string; break;
-	case ( chemical::aa_his ) : return ceps_1_string; break;
-	case ( chemical::aa_ile ) : return cdel_1_string; break;
-	case ( chemical::aa_lys ) : return cdelta_string; break;
-	case ( chemical::aa_leu ) : return cgamma_string; break;
-	case ( chemical::aa_met ) : return sdelta_string; break;
-	case ( chemical::aa_asn ) : return cgamma_string; break;
-	case ( chemical::aa_pro ) : return cgamma_string; break;
-	case ( chemical::aa_gln ) : return cdelta_string; break;
-	case ( chemical::aa_arg ) : return czeta_string;  break;
-	case ( chemical::aa_ser ) : return cbeta_string;  break;
-	case ( chemical::aa_thr ) : return cbeta_string;  break;
-	case ( chemical::aa_val ) : return cbeta_string;  break;
-	case ( chemical::aa_trp ) : return ceps_2_string; break;
-	case ( chemical::aa_tyr ) : return czeta_string;  break;
+	case ( chemical::aa_ala ) : return cbeta_string;
+	case ( chemical::aa_cys ) : return sgamma_string;
+	case ( chemical::aa_asp ) : return cgamma_string;
+	case ( chemical::aa_glu ) : return cdelta_string;
+	case ( chemical::aa_phe ) : return czeta_string;
+	case ( chemical::aa_gly ) : return calpha_string;
+	case ( chemical::aa_his ) : return ceps_1_string;
+	case ( chemical::aa_ile ) : return cdel_1_string;
+	case ( chemical::aa_lys ) : return cdelta_string;
+	case ( chemical::aa_leu ) : return cgamma_string;
+	case ( chemical::aa_met ) : return sdelta_string;
+	case ( chemical::aa_asn ) : return cgamma_string;
+	case ( chemical::aa_pro ) : return cgamma_string;
+	case ( chemical::aa_gln ) : return cdelta_string;
+	case ( chemical::aa_arg ) : return czeta_string;
+	case ( chemical::aa_ser ) : return cbeta_string;
+	case ( chemical::aa_thr ) : return cbeta_string;
+	case ( chemical::aa_val ) : return cbeta_string;
+	case ( chemical::aa_trp ) : return ceps_2_string;
+	case ( chemical::aa_tyr ) : return czeta_string;
 	default :
 		utility_exit_with_message( "ERROR: Failed to find amino acid " + chemical::name_from_aa( aa ) + " in EnvSmooth::representative_atom_name" );
 		break;

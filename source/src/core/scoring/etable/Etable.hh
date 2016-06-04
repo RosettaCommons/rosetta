@@ -194,7 +194,7 @@ public:
 	Etable(
 		chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
 		EtableOptions const & options,
-		std::string const alternate_parameter_set = ""
+		std::string const & alternate_parameter_set = ""
 	);
 
 	// Const Access methods for constants
@@ -566,7 +566,7 @@ private:
 	void
 	read_alternate_parameter_set(
 		chemical::AtomTypeSetCAP atom_set_in,
-		std::string const alternate_parameter_set
+		std::string const & alternate_parameter_set
 	);
 	void calculate_hydrogen_atom_reach();
 	void initialize_carbontypes_to_linearize_fasol();
@@ -676,7 +676,7 @@ public: // Interfaces for convenient IO
 	void
 	input_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
-		const std::string label,
+		std::string const & label,
 		std::istream & in
 	);
 

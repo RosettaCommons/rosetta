@@ -79,7 +79,7 @@ public:
 		core::pose::Pose & pose,
 		protocols::moves::MoverOP & mover,
 		bool new_input,
-		std::string const xml_fname,
+		std::string const & xml_fname,
 		bool guarantee_new_mover = false
 	);
 

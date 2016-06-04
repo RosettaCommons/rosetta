@@ -86,7 +86,7 @@ EnzRepackMinimize::EnzRepackMinimize() :
 	n_cycles_( 1 )
 {}
 
-EnzRepackMinimize::EnzRepackMinimize(std::string const name) :
+EnzRepackMinimize::EnzRepackMinimize(std::string const & name) :
 	protocols::moves::Mover ( name ),
 	cst_opt_( false ),
 	design_( false ), repack_( false ), fix_catalytic_( false ),

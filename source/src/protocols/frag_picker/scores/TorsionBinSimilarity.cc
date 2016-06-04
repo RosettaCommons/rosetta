@@ -117,11 +117,11 @@ core::Size
 TorsionBinSimilarity::bin_index_( char const bin_name ) const
 {
 	switch( bin_name ) {
-	case 'A' : return 1; break;
-	case 'B' : return 2; break;
-	case 'E' : return 3; break;
-	case 'G' : return 4; break;
-	case 'O' : return 5; break;
+	case 'A' : return 1;
+	case 'B' : return 2;
+	case 'E' : return 3;
+	case 'G' : return 4;
+	case 'O' : return 5;
 	default :
 		std::string const msg( "Error: don't recognize bin" + std::string(1, bin_name) );
 		utility_exit_with_message(msg);

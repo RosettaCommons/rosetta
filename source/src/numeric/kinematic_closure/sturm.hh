@@ -61,7 +61,7 @@ void initialize_sturm(double *tol_secant, int *max_iter_sturm, int *max_iter_sec
 inline
 double hyper_tan(double a, double x)
 {
-	double exp_x1, exp_x2, ax;
+	double ax;
 
 	ax = a*x;
 	if ( ax > 100.0 ) {
@@ -69,8 +69,8 @@ double hyper_tan(double a, double x)
 	} else if ( ax < -100.0 ) {
 		return(-1.0);
 	} else {
-		exp_x1 = exp(ax);
-		exp_x2 = exp(-ax);
+		double exp_x1 = exp(ax);
+		double exp_x2 = exp(-ax);
 		return (exp_x1 - exp_x2)/(exp_x1 + exp_x2);
 	}
 }
@@ -269,7 +269,7 @@ inline
 int numchanges(int np, poly* sseq, double a)
 {
 	int  changes;
-	double f, lf;
+	double lf;
 	poly *s;
 
 	changes = 0;
@@ -277,7 +277,7 @@ int numchanges(int np, poly* sseq, double a)
 	lf = evalpoly(sseq[0].ord, sseq[0].coef, a);
 
 	for ( s = sseq + 1; s <= sseq + np; s++ ) {
-		f = evalpoly(s->ord, s->coef, a);
+		double f = evalpoly(s->ord, s->coef, a);
 		if ( lf == 0.0 || lf * f < 0 ) {
 			changes++;
 		}
@@ -300,7 +300,7 @@ inline
 int modrf(int ord, double *coef, double a, double b, double *val)
 {
 	int its;
-	double fa, fb, x, fx, lfx;
+	double fa, fb, fx, lfx;
 	double *fp, *scoef, *ecoef;
 	fx=0; // avoid uninitialized variable warning
 
@@ -337,7 +337,7 @@ int modrf(int ord, double *coef, double a, double b, double *val)
 	lfx = fa;
 
 	for ( its = 0; its < MAX_ITER_SECANT; its++ ) {
-		x = (fb * a - fa * b) / (fb - fa);
+		double x = (fb * a - fa * b) / (fb - fa);
 
 		// constrain that x stays in the bounds
 		if ( x < a || x > b ) {
@@ -395,9 +395,9 @@ inline
 void sbisect(int np, poly* sseq, double min, double max, int atmin, int atmax, double* roots)
 {
 	double mid=0.0;
-	int  n1 = 0, n2 = 0, its, atmid, nroot;
+	int  n1 = 0, its, atmid;
 
-	if ( (nroot = atmin - atmax) == 1 ) {
+	if ( atmin - atmax == 1 ) {
 
 		/*
 		* first try a less expensive technique.
@@ -450,7 +450,7 @@ void sbisect(int np, poly* sseq, double min, double max, int atmin, int atmax, d
 		mid = (min + max) / 2;
 		atmid = numchanges(np, sseq, mid);
 		n1 = atmin - atmid;
-		n2 = atmid - atmax;
+		int n2 = atmid - atmax;
 
 		// DJM: this rarely occuring "artifact" causes crashing bugs so we take what we've got rather than proceed
 		if ( n1 < 0 ) {

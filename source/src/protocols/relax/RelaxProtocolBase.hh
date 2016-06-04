@@ -128,7 +128,7 @@ protected:
 	void initialize_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap & movemap );
 	void set_up_constraints( core::pose::Pose &pose,  core::kinematics::MoveMap & local_movemap );
 	void output_debug_structure( core::pose::Pose & pose, std::string prefix );
-	void add_cst_files( std::string const cstfile){ cst_files_.push_back( cstfile ); }
+	void add_cst_files( std::string const & cstfile ) { cst_files_.push_back( cstfile ); }
 
 
 private:

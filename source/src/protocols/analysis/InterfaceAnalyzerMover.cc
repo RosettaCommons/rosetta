@@ -1612,7 +1612,7 @@ void InterfaceAnalyzerMover::add_score_info_to_pose( core::pose::Pose & pose ){
 }
 
 /// @details prints tracer output of pymol selction of interface residues, also builds a pymol selection that can be used from a file.
-void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const interface_set )
+void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const & interface_set )
 {
 	//make output
 	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );

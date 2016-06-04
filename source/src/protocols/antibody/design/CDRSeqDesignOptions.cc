@@ -263,7 +263,7 @@ CDRSeqDesignOptionsParser::check_path() {
 }
 
 void
-CDRSeqDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
+CDRSeqDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<string>& lineSP) {
 
 	if ( mode == "DESIGN" || mode == "SEQDESIGN" || mode == "SEQ_DESIGN" || mode == "SEQUENCEDESIGN" || mode == "SEQUENCE_DESIGN" ) {
 		check_line_len(lineSP, 3);
@@ -295,7 +295,7 @@ CDRSeqDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) {
 }
 
 void
-CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vector1< string> & lineSP){
+CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const & name, vector1< string> & lineSP){
 
 	using namespace utility;
 
@@ -317,7 +317,7 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 }
 
 void
-CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const option) {
+CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const & option) {
 
 	SeqDesignStrategyEnum strategy = design_enum_manager_->seq_design_strategy_string_to_enum( option );
 	if ( (cdr_options_->cdr() == l4 || cdr_options_->cdr() == h4) && ( strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined )  ) {
@@ -330,7 +330,7 @@ CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const optio
 }
 
 void
-CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(const std::string option) {
+CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(const std::string & option) {
 
 	SeqDesignStrategyEnum strategy= design_enum_manager_->seq_design_strategy_string_to_enum( option );
 	if ( strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined ) {

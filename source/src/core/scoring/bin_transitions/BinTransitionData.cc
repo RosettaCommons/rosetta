@@ -542,43 +542,30 @@ bool BinTransitionData::has_property( BT_PROPERTIES const property, core::confor
 	switch(property){
 	case BT_PROTEIN :
 		return rsd.type().is_protein();
-		break;
 	case BT_L_AA :
 		return rsd.type().is_l_aa();
-		break;
 	case BT_D_AA :
 		return rsd.type().is_d_aa();
-		break;
 	case BT_ALPHA_AA :
 		return rsd.type().is_alpha_aa();
-		break;
 	case BT_BETA_AA :
 		return rsd.type().is_beta_aa();
-		break;
 	case BT_POLAR :
 		return rsd.type().is_polar();
-		break;
 	case BT_METALBINDING :
 		return rsd.type().is_metalbinding();
-		break;
 	case BT_CHARGED :
 		return rsd.type().is_charged();
-		break;
 	case BT_AROMATIC :
 		return rsd.type().is_aromatic();
-		break;
 	case BT_DISULFIDE_BONDED :
 		return rsd.type().is_disulfide_bonded();
-		break;
 	case BT_SIDECHAIN_THIOL :
 		return rsd.type().is_sidechain_thiol();
-		break;
 	case BT_CYCLIC :
 		return rsd.type().is_cyclic();
-		break;
 	default :
 		utility_exit_with_message("Unknown property passed to BinTransitionData::has_property()!  Failing!\n");
-		break;
 	}
 	return false; //Should never reach this point.
 } //has_property

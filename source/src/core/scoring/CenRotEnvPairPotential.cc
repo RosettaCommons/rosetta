@@ -515,7 +515,7 @@ CenRotEnvPairPotential::fill_smooth_dcenlist(
 	SigmoidWeightedCenList< numeric::xyzVector<Real> > & dcenlist,
 	Size const res1,
 	Size const,
-	numeric::xyzVector<Real> const cenvec  // vector between centroids
+	numeric::xyzVector<Real> const & cenvec  // vector between centroids
 ) const {
 	Real x = cenvec.length();
 	numeric::xyzVector<Real> gradx = cenvec/x;

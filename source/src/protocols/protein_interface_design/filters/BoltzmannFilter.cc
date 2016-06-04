@@ -106,7 +106,7 @@ BoltzmannFilter::add_negative_filter( protocols::filters::FilterOP f ){
 }
 
 void
-BoltzmannFilter::anchors( utility::vector1< core::Real > const anchors ){
+BoltzmannFilter::anchors( utility::vector1< core::Real > const & anchors ){
 	anchors_ = anchors;
 }
 

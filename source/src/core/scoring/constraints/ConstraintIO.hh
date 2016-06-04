@@ -99,7 +99,7 @@ public:
 
 	static void parse_residue(
 		pose::Pose const& pose,
-		std::string const residue_string,
+		std::string const & residue_string,
 		Size & residue_num
 	);
 

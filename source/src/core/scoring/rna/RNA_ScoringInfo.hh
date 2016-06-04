@@ -121,13 +121,13 @@ public:
 	rna_data_info() const { return rna_data_info_; }
 
 	void
-	set_mg_calculation_annotated_sequence( std::string const sequence ){ mg_calculation_annotated_sequence_ = sequence; }
+	set_mg_calculation_annotated_sequence( std::string const & sequence ){ mg_calculation_annotated_sequence_ = sequence; }
 
 	std::string
 	mg_calculation_annotated_sequence() const { return mg_calculation_annotated_sequence_; }
 
 	void
-	set_vdw_calculation_annotated_sequence( std::string const sequence ){ vdw_calculation_annotated_sequence_ = sequence; }
+	set_vdw_calculation_annotated_sequence( std::string const & sequence ){ vdw_calculation_annotated_sequence_ = sequence; }
 
 	std::string
 	vdw_calculation_annotated_sequence() const { return vdw_calculation_annotated_sequence_; }

@@ -60,9 +60,9 @@ private:
 	void initialize();
 
 
-	bool recover_checkpoint( const std::string tag, core::pose::Pose& pose );
+	bool recover_checkpoint( const std::string & tag, core::pose::Pose& pose );
 
-	void write_checkpoint( const std::string tag, const std::string data );
+	void write_checkpoint( const std::string & tag, const std::string & data );
 
 	void read_checkpoint_file();
 

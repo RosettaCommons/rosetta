@@ -52,7 +52,7 @@ public:
 		core::pose::Pose const & );
 	void add_positive_filter( protocols::filters::FilterOP f );
 	void add_negative_filter( protocols::filters::FilterOP f );
-	void anchors( utility::vector1< core::Real > const anchors );
+	void anchors( utility::vector1< core::Real > const & anchors );
 	utility::vector1< core::Real > anchors() const;
 	utility::vector1< protocols::filters::FilterOP > get_positive_filters() const;
 	utility::vector1< protocols::filters::FilterOP > get_negative_filters() const;

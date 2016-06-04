@@ -29,9 +29,9 @@ class WeightedFragmentTrialMover : public protocols::moves::Mover
 {
 public:
 	WeightedFragmentTrialMover(
-		utility::vector1< core::fragment::FragSetOP > const frag_libs,
-		utility::vector1< core::Real > const residue_weights,
-		utility::vector1< core::Size > const anchor_residues=utility::vector1< core::Size >(0),
+		utility::vector1< core::fragment::FragSetOP > const & frag_libs,
+		utility::vector1< core::Real > const & residue_weights,
+		utility::vector1< core::Size > const & anchor_residues=utility::vector1< core::Size >(0),
 		core::Size const nr_frags = 0
 	);
 	void update_sampler_weights( utility::vector1< core::Real > const residue_weights );

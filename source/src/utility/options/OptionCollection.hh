@@ -1470,12 +1470,10 @@ public: // Indexers
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
-			break;
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
-			break;
 		}
 
 		option->check_restricted_access(true);
@@ -1541,7 +1539,6 @@ public: // Indexers
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
-			break;
 		default :
 			runtime_assert( false ); // Shouldn't get here
 			option = &(*booleans_.begin()); // Keep compiler happy
@@ -2012,12 +2009,10 @@ public: // Indexers
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
-			break;
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
-			break;
 		}
 
 		option->check_restricted_access(check_restricted_access);
@@ -2083,7 +2078,6 @@ public: // Indexers
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
-			break;
 		default :
 			runtime_assert( false ); // Shouldn't get here
 			option = &(*booleans_.begin()); // Keep compiler happy

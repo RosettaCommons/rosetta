@@ -156,7 +156,7 @@ public:
 public:
 	EnzScoreFilter() : Filter( "EnzScore" ) {}
 
-	EnzScoreFilter(  core::Size const resnum, std::string const cstid, core::scoring::ScoreFunctionOP scorefxn,
+	EnzScoreFilter(  core::Size const resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn,
 		core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE
 	);
 
@@ -330,7 +330,7 @@ public:
 private:
 
 	void
-	initialize_value_evaluators_from_file( std::string const filename );
+	initialize_value_evaluators_from_file( std::string const & filename );
 
 	void
 	compute_metrics_for_residue_subset(

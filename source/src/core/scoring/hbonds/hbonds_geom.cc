@@ -799,7 +799,7 @@ void
 hbond_compute_energy(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple hbt,  // the tuple representing the evaluation information for this hbond
+	HBEvalTuple const & hbt,  // the tuple representing the evaluation information for this hbond
 	Real const AHdis, // acceptor proton distance
 	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K.
 	Real const xH,    // cos(180-phi), where phi is defined by Tanja K.
@@ -1012,7 +1012,7 @@ void
 hb_energy_deriv_u(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	hbonds::HBEvalTuple const hbt, // hb evalation tuple
+	hbonds::HBEvalTuple const & hbt, // hb evalation tuple
 	Vector const & Hxyz, // proton coords
 	Vector const & Dxyz, // Donor coords -- needed for derivative calculations
 	Vector const & HDunit, // unit vector toward donor
@@ -1038,7 +1038,7 @@ void
 hb_energy_deriv_u2(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	hbonds::HBEvalTuple const hbt, // hb evalation tuple
+	hbonds::HBEvalTuple const & hbt, // hb evalation tuple
 	HBDerivType const deriv_type,
 	Vector const & Hxyz, // proton coords
 	Vector const & Dxyz, // Donor coords
@@ -1295,7 +1295,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple const hbt, // hbond evaluation tuple -- determines what scoring function to use
+	HBEvalTuple const & hbt, // hbond evaluation tuple -- determines what scoring function to use
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor
@@ -1313,7 +1313,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalTuple const hbt, // hbond evaluation type -- determines what scoring function to use
+	HBEvalTuple const & hbt, // hbond evaluation type -- determines what scoring function to use
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor

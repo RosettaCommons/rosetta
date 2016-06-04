@@ -242,7 +242,7 @@ MatDesPointMutationCalculator::dump_pdb() const{
 }
 
 void
-MatDesPointMutationCalculator::sample_types( vector1< std::string > const sample_types ){
+MatDesPointMutationCalculator::sample_types( vector1< std::string > const & sample_types ){
 	sample_types_ = sample_types;
 }
 

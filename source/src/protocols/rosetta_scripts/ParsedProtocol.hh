@@ -119,7 +119,7 @@ public:
 	const_iterator begin() const;
 	iterator end();
 	const_iterator end() const;
-	void apply_probability( utility::vector1< core::Real > const a );
+	void apply_probability( utility::vector1< core::Real > const & a );
 	utility::vector1< core::Real > apply_probability();
 	core::Size size() { return movers_.size(); }
 	core::Size last_attempted_mover_idx() { return last_attempted_mover_idx_; }

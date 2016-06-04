@@ -160,7 +160,7 @@ public:
 	void print_fragment_seq(std::ostream& out);
 
 	/// @brief Prints fragment to silent struct
-	void output_silent(core::io::silent::SilentFileData & sfd, const std::string sequence, const std::string silent_file_name, const std::string tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms);
+	void output_silent(core::io::silent::SilentFileData & sfd, const std::string & sequence, const std::string & silent_file_name, const std::string & tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms);
 
 	inline void set_pool_name(std::string pool_name) {
 		if ( pool_name_!=NULL ) delete pool_name_;

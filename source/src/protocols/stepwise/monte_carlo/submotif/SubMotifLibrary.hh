@@ -49,7 +49,7 @@ public:
 
 	pose::PoseOP
 	create_new_submotif( SequenceMapping const & sequence_mapping,
-		PoseTag const submotif_tag,
+		PoseTag const & submotif_tag,
 		pose::Pose const & pose,
 		bool const & seed = false ) const;
 
@@ -62,7 +62,7 @@ private:
 	initialize();
 
 	void
-	initialize_from_directory( std::string const dir_name );
+	initialize_from_directory( std::string const & dir_name );
 
 	void
 	initialize_from_jump_library();
@@ -83,7 +83,7 @@ private:
 
 	void
 	get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
-		SequenceMapping const matching_residues /* working mapping */,
+		SequenceMapping const & matching_residues /* working mapping */,
 		std::string const & submotif_sequence,
 		utility::vector1< Size > const & submotif_cutpoints,
 		std::string const & pose_sequence,

@@ -109,7 +109,7 @@ protected:
 		core::pose::Pose const & pose,
 		bool bWriteScoreOnly,
 		int copy_count = -1, /* if 0 or positive attach as postfix to job-tag ONLY used in other_pose output*/
-		std::string const suffix = "" /* appended to tag */
+		std::string const & suffix = "" /* appended to tag */
 	);
 
 private: // methods

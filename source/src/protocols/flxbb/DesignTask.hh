@@ -124,7 +124,7 @@ public: // mutators
 	void set_resfile( String const & resfile );
 
 	/// @brief add task operations
-	void add_task_operations( utility::vector1< TaskOperationOP > const top );
+	void add_task_operations( utility::vector1< TaskOperationOP > const & top );
 
 	/// @brief add task operation
 	void add_task_operation( TaskOperationOP const top );

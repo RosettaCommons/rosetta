@@ -58,7 +58,7 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter():
 {}
 
 // @brief constructor with arguments
-SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> r, bool d, std::string n, std::string s, std::string p, std::string g, std::string srp ):
+SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> const & r, bool const d, std::string const & n, std::string const & s, std::string const & p, std::string const & g, std::string const &  srp ):
 	task_factory_( task_factory ),
 	selected_resis_( r ),
 	designable_only_( d ),
@@ -113,11 +113,11 @@ void SaveResfileToDiskFilter::task_factory( core::pack::task::TaskFactoryOP task
 void SaveResfileToDiskFilter::selected_resis( utility::vector1<core::Size> const r ) { selected_resis_ = r; }
 void SaveResfileToDiskFilter::designable_only( bool const d ) { designable_only_ = d; }
 void SaveResfileToDiskFilter::renumber_pdb( bool const p ) { renumber_pdb_ = p; }
-void SaveResfileToDiskFilter::resfile_name( std::string const n ) { resfile_name_ = n; }
-void SaveResfileToDiskFilter::resfile_suffix( std::string const s ) { resfile_suffix_ = s; }
-void SaveResfileToDiskFilter::resfile_prefix( std::string const p ) { resfile_prefix_ = p; }
-void SaveResfileToDiskFilter::resfile_general_property( std::string const g ) { resfile_general_property_ = g; }
-void SaveResfileToDiskFilter::selected_resis_property( std::string const srp ) { selected_resis_property_ = srp; }
+void SaveResfileToDiskFilter::resfile_name( std::string const & n ) { resfile_name_ = n; }
+void SaveResfileToDiskFilter::resfile_suffix( std::string const & s ) { resfile_suffix_ = s; }
+void SaveResfileToDiskFilter::resfile_prefix( std::string const & p ) { resfile_prefix_ = p; }
+void SaveResfileToDiskFilter::resfile_general_property( std::string const & g ) { resfile_general_property_ = g; }
+void SaveResfileToDiskFilter::selected_resis_property( std::string const & srp ) { selected_resis_property_ = srp; }
 
 /// @brief Applies the TaskOperations specified in the xml, and then selects either
 // the repackable or designable residues depending on what the user specifies

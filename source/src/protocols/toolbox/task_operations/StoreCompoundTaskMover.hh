@@ -63,10 +63,10 @@ public:
 	const_factory_iterator factory_begin() const;
 	factory_iterator factory_end();
 	const_factory_iterator factory_end() const;
-	void task_name( std::string const tn );
-	void mode( std::string const md );
-	void true_behavior( std::string const tb );
-	void false_behavior( std::string const fb );
+	void task_name( std::string const & tn );
+	void mode( std::string const & md );
+	void true_behavior( std::string const & tb );
+	void false_behavior( std::string const & fb );
 	void invert( bool const inv );
 	void verbose( bool const verb );
 	void overwrite( bool const ow );

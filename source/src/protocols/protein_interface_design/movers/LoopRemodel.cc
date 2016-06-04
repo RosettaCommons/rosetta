@@ -122,7 +122,7 @@ LoopRemodel::LoopRemodel() :
 {}
 
 LoopRemodel::LoopRemodel(
-	std::string const protocol,
+	std::string const & protocol,
 	core::Size const loop_start,
 	core::Size const loop_end,
 	core::Size const cycles,
@@ -370,7 +370,7 @@ LoopRemodel::get_name() const {
 // true if all fragments picked.
 // false if something went wrong
 bool
-LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string const full_sequence, std::string const full_ss )
+LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string const & full_sequence, std::string const & full_ss )
 {
 	using namespace core;
 	using namespace core::fragment;

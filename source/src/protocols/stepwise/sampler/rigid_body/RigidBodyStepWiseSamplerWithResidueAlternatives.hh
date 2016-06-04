@@ -83,7 +83,7 @@ public:
 	fast_forward_to_next_residue( Size const i );
 
 	Vector
-	get_xyz( Size const seqpos, std::string const atom_name  );
+	get_xyz( Size const seqpos, std::string const & atom_name  );
 
 	conformation::ResidueCOP
 	get_residue( Size const seqpos );

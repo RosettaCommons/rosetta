@@ -52,7 +52,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-void MoverStatistics::print ( MonteCarloOP mc, std::string const type )
+void MoverStatistics::print( MonteCarloOP mc, std::string const & type )
 {
 	//clear_score();
 	//return;

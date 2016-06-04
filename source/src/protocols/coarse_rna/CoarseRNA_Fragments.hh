@@ -94,8 +94,8 @@ private:
 
 	Size
 	pick_random_fragment(
-		std::string const RNA_string,
-		std::string const RNA_secstruct_string,
+		std::string const & RNA_string,
+		std::string const & RNA_secstruct_string,
 		Size const type /* = MATCH_YR */) const;
 
 	Size

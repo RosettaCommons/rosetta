@@ -53,8 +53,8 @@ public:
 	/// Undefined, commenting out to fix PyRosetta build  core::Real compute( core::pose::Pose const & pose ) const;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	void resfile_name( std::string const resfile_name);
-	void score_log_file( std::string const score_log_file);
+	void resfile_name( std::string const & resfile_name);
+	void score_log_file( std::string const & score_log_file);
 	std::string resfile_name() const;
 	std::string score_log_file() const;
 	protocols::filters::FilterOP triage_filter() const;
@@ -63,7 +63,7 @@ public:
 	protocols::filters::FilterOP filter() const;
 	void filter( protocols::filters::FilterOP filter );
 	std::string resfile_general_property() const;
-	void resfile_general_property( std::string const );
+	void resfile_general_property( std::string const & );
 	void relax_mover( protocols::moves::MoverOP  mover );
 	protocols::moves::MoverOP relax_mover() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
@@ -87,15 +87,15 @@ public:
 	void rtmin( bool const r ){ rtmin_ = r; }
 	void single_substitution( core::pose::Pose & pose, core::Size const resi, core::chemical::AA const target_aa ) const;
 	utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters() const;
-	void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d );
+	void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const & d );
 
 	std::string dump_pdb_name() const{ return dump_pdb_name_; }
-	void dump_pdb_name( std::string const s ){ dump_pdb_name_ = s; }
+	void dump_pdb_name( std::string const & s ){ dump_pdb_name_ = s; }
 	bool keep_native() const{ return keep_native_; }
 	void keep_native( bool const k ){ keep_native_ = k; }
 
 	utility::vector1< core::Real > delta_filter_thresholds() const;
-	void delta_filter_thresholds( utility::vector1< core::Real > const );
+	void delta_filter_thresholds( utility::vector1< core::Real > const & );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what

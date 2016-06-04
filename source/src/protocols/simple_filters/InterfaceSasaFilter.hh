@@ -31,7 +31,7 @@ class InterfaceSasaFilter : public filters::Filter
 {
 public:
 	InterfaceSasaFilter();
-	InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0, std::string const sym_dof_names="" );
+	InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0, std::string const & sym_dof_names="" );
 
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -43,11 +43,11 @@ public:
 	virtual ~InterfaceSasaFilter();
 	void jump( core::Size const jump );
 	void add_jump( core::Size const jump );
-	void jumps( utility::vector1<core::Size> const jumps );
+	void jumps( utility::vector1<core::Size> const & jumps );
 
-	void sym_dof_names( std::string const sym_dof_names );
-	void sym_dof_names( utility::vector1<std::string> const sym_dof_names );
-	void add_sym_dof_name( std::string const sym_dof_name );
+	void sym_dof_names( std::string const & sym_dof_names );
+	void sym_dof_names( utility::vector1<std::string> const & sym_dof_names );
+	void add_sym_dof_name( std::string const & sym_dof_name );
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 

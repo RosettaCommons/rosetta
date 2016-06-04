@@ -39,10 +39,10 @@ public:
 public:
 	ReportPSSMDifferences( ) {};
 
-	ReportPSSMDifferences( ReportPSSMDifferences const & init ) { // copy constructor
-		res_name1_ = init.res_name1_;
-		pssm_data_ = init.pssm_data_;
-	};
+	ReportPSSMDifferences( ReportPSSMDifferences const & init ) : // copy constructor
+		res_name1_( init.res_name1_ ),
+		pssm_data_( init.pssm_data_ )
+	{}
 	core::Real calculate( Pose const & pose1, Pose const & pose2, core::pack::task::PackerTaskCOP const & task );
 
 	std::map< Size, std::string > const & res_name1() const { return res_name1_; }

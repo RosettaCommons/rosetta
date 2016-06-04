@@ -99,7 +99,7 @@ public:
 
 	/// @brief find polynomial function given name
 	FadeIntervalCOP
-	HBFadeInterval_from_name( std::string const name ) const;
+	HBFadeInterval_from_name( std::string const & name ) const;
 
 	/// @brief find fading function for hbgd_AHdist sort
 	FadeIntervalCOP
@@ -119,7 +119,7 @@ public:
 
 	/// @brief find polynomial function given name
 	Polynomial_1dCOP
-	HBPoly1D_from_name( std::string const name ) const;
+	HBPoly1D_from_name( std::string const & name ) const;
 
 	/// @brief find polynomial to hbgd_AHdist dimension
 	Polynomial_1dCOP

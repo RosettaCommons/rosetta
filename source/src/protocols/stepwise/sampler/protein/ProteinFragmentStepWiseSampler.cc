@@ -38,7 +38,7 @@ namespace sampler {
 namespace protein {
 
 //Constructor
-ProteinFragmentStepWiseSampler::ProteinFragmentStepWiseSampler( std::string const frag_file,
+ProteinFragmentStepWiseSampler::ProteinFragmentStepWiseSampler( std::string const & frag_file,
 	utility::vector1< core::Size > const & slice_res,
 	utility::vector1< core::Size > const & moving_residues  )
 {
@@ -64,7 +64,7 @@ ProteinFragmentStepWiseSampler::size() const { return frame_->nr_frags(); }
 
 /////////////////////////////////////////////////////////////////////////
 void
-ProteinFragmentStepWiseSampler::initialize( std::string const frag_file,
+ProteinFragmentStepWiseSampler::initialize( std::string const & frag_file,
 	utility::vector1< core::Size > const & slice_res,
 	utility::vector1< core::Size > const & moving_residues  ) {
 

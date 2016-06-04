@@ -65,7 +65,7 @@ public:// constructor/destructor
 	OligomericAverageDegreeFilter();
 
 	// @brief constructor with arguments
-	OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string dof_names, bool mcomp );
+	OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string const & dof_names, bool mcomp );
 
 	// @brief copy constructor
 	OligomericAverageDegreeFilter( OligomericAverageDegreeFilter const & rval );
@@ -95,7 +95,7 @@ public:// setters
 	void distance_threshold( core::Real const d );
 	void jump_set( bool const jump_set );
 	void jump_id( core::Size const jump );
-	void sym_dof_names( std::string const dof_names );
+	void sym_dof_names( std::string const & dof_names );
 	void write2pdb( bool const write );
 	void verbose( bool const verb );
 	void multicomp( bool const multicomp );
@@ -130,7 +130,7 @@ public:// virtual main operation
 
 	/// @brief calc oligomeric AverageDegree
 	core::Real compute( core::pose::Pose const & pose, bool const & verbose, bool const & write ) const;
-	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const residue_name, core::Size const neighbors ) const;
+	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const & residue_name, core::Size const neighbors ) const;
 
 
 private:

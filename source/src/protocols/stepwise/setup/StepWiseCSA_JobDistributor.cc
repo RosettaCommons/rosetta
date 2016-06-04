@@ -77,7 +77,7 @@ namespace setup {
 
 //Constructor
 StepWiseCSA_JobDistributor::StepWiseCSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-	std::string const silent_file,
+	std::string const & silent_file,
 	core::Size const nstruct,
 	core::Size const csa_bank_size,
 	core::Real const csa_rmsd,
@@ -250,7 +250,7 @@ StepWiseCSA_JobDistributor::read_in_silent_file(){
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::write_out_silent_file( std::string const silent_file_in ){
+StepWiseCSA_JobDistributor::write_out_silent_file( std::string const & silent_file_in ){
 	std::string const silent_file = silent_file_in.size() == 0 ?  silent_file_ : silent_file_in;
 	runtime_assert( sfd_ != 0 );
 	runtime_assert( sfd_->structure_list().size() > 0 );

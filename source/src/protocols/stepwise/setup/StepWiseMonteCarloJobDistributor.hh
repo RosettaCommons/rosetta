@@ -31,7 +31,7 @@ public:
 
 	//constructor
 	StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-		std::string const silent_file,
+		std::string const & silent_file,
 		core::Size const nstruct );
 
 	//destructor

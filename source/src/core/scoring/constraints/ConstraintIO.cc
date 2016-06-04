@@ -607,23 +607,8 @@ ConstraintIO::write_constraints( std::string const& filename, ConstraintSet cons
 	write_constraints( dump_cst, cst_set, pose );
 }
 
-
-//ConstraintForestOP
-//ConstraintIO::read_constraint_forest( std::string const & fname, pose::Pose & pose ) {
-// utility::io::izstream data( fname.c_str() );
-// tr.Info << "read ConstraintForest from " << fname << std::endl;
-// if ( !data ) {
-//  utility_exit_with_message( "[ERROR] Unable to open ConstraintForest file: "+fname );
-// }
-//
-// ConstraintForestOP cf = new ConstraintForest();
-// cf->read_forest(data, pose);
-// return cf;
-//}
-
-
 void
-ConstraintIO::parse_residue( pose::Pose const& pose, std::string const residue_string, Size & residue_num )
+ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue_string, Size & residue_num )
 {
 	std::stringstream data;
 	char chain;

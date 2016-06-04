@@ -95,7 +95,7 @@ private:
 	);
 
 	std::map<core::Size, core::Size> find_attach_pts(
-		const ligand_options::Interface interface,
+		const ligand_options::Interface & interface,
 		core::pose::Pose const & pose
 	) const;
 
@@ -125,7 +125,7 @@ void reorder_with_first_non_mobile_as_root(
 
 core::Size find_attach_pt(
 	core::Size const jump_id,
-	ligand_options::Interface const interface,
+	ligand_options::Interface const & interface,
 	core::pose::Pose const & pose
 );
 

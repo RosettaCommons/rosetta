@@ -291,7 +291,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 core::pack::task::PackerTaskOP
 HighResDocker::make_packer_task_from_vector(
 	core::pose::Pose const & pose,
-	ligand_options::Interface const allow_repack
+	ligand_options::Interface const & allow_repack
 ) const{
 	static bool pose_already_packed= false;
 	core::pack::task::PackerTaskOP pack_task = core::pack::task::TaskFactory::create_packer_task(pose);

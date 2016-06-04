@@ -155,7 +155,7 @@ std::string protocols::jd2::PDBJobOutputter::output_name( JobCOP job ){
 }
 
 std::string
-protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const suffix )
+protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const & suffix )
 {
 	return output_name(job) + std::string(suffix.empty() ? "" : "_") + suffix + extension_;
 }

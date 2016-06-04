@@ -69,7 +69,7 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter():
 
 
 // @brief constructor with arguments
-OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string dof_names, bool mcomp ):
+OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string const & dof_names, bool mcomp ):
 	task_factory_( task_factory ),
 	threshold_( t ),
 	distance_threshold_( d ),
@@ -121,7 +121,7 @@ void OligomericAverageDegreeFilter::threshold( core::Real const t ) { threshold_
 void OligomericAverageDegreeFilter::distance_threshold( core::Real const d ) { distance_threshold_ = d; }
 void OligomericAverageDegreeFilter::jump_set( bool const jump_set ) { jump_set_ = jump_set; }
 void OligomericAverageDegreeFilter::jump_id( core::Size const jump ) { jump_id_ = jump; }
-void OligomericAverageDegreeFilter::sym_dof_names( std::string const dof_names ) { sym_dof_names_ = dof_names; }
+void OligomericAverageDegreeFilter::sym_dof_names( std::string const & dof_names ) { sym_dof_names_ = dof_names; }
 void OligomericAverageDegreeFilter::write2pdb( bool const write ) { write2pdb_ = write; }
 void OligomericAverageDegreeFilter::verbose( bool const verb ) { verbose_ = verb; }
 void OligomericAverageDegreeFilter::multicomp( bool const mcomp ) { multicomp_ = mcomp; }
@@ -211,7 +211,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 	return( (core::Real) count_neighbors / count_residues );
 } // compute
 
-void OligomericAverageDegreeFilter::write_to_pdb( Pose const & pose, core::Size const residue, std::string const residue_name, core::Size const neighbors ) const
+void OligomericAverageDegreeFilter::write_to_pdb( Pose const & pose, core::Size const residue, std::string const & residue_name, core::Size const neighbors ) const
 {
 
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());

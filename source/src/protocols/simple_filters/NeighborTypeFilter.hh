@@ -32,7 +32,7 @@ class NeighborTypeFilter : public filters::Filter
 {
 public:
 	NeighborTypeFilter() : filters::Filter( "NeighborType" ){};
-	NeighborTypeFilter( core::Size const target_residue, utility::vector1< bool > const residue_types, core::Real const distance_threshold ) :
+	NeighborTypeFilter( core::Size const target_residue, utility::vector1< bool > const & residue_types, core::Real const distance_threshold ) :
 		filters::Filter( "NeighborType" ) {
 		target_residue_ = target_residue; residue_types_ = residue_types; distance_threshold_ = distance_threshold;
 	}

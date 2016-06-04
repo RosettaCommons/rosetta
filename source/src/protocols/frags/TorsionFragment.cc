@@ -143,7 +143,7 @@ SingleResidueTorsionFragmentLibrary::copy_fragments( SingleResidueTorsionFragmen
 ///
 bool
 TorsionFragmentLibrary::read_file(
-	std::string const filename,
+	std::string const & filename,
 	Size const frag_size,
 	Size const nbb
 )

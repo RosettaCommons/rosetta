@@ -178,7 +178,7 @@ private:
 
 	utility::vector0< core::Size >
 	score_fun( core::Real const d,
-		utility::vector0< core::Vector > const vt,
+		utility::vector0< core::Vector > const & vt,
 		TMscoreStore &score ) const;
 
 

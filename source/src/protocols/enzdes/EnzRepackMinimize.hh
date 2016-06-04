@@ -44,7 +44,7 @@ class EnzRepackMinimize : public protocols::moves::Mover
 {
 public:
 	EnzRepackMinimize();
-	EnzRepackMinimize( std::string const name );
+	EnzRepackMinimize( std::string const & name );
 	virtual ~EnzRepackMinimize();
 
 	/// @brief turns on constraint score terms in case the pose

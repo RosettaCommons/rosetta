@@ -73,7 +73,7 @@ ClashCheckFilter::ClashCheckFilter():
 {}
 
 // @brief constructor with arguments
-ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const s, core::Size const n, core::Size const t, bool const v, bool const w ):
+ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const & s, core::Size const n, core::Size const t, bool const v, bool const w ):
 	task_factory_( task_factory ),
 	clash_dist_( c ),
 	sym_dof_names_( s ),
@@ -120,7 +120,7 @@ bool ClashCheckFilter::write() const { return write_; }
 // @brief setters
 void ClashCheckFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 void ClashCheckFilter::clash_dist( core::Real const c ) { clash_dist_ = c; }
-void ClashCheckFilter::sym_dof_names( std::string const s ) { sym_dof_names_ = s; }
+void ClashCheckFilter::sym_dof_names( std::string const & s ) { sym_dof_names_ = s; }
 void ClashCheckFilter::nsub_bblock( core::Size const n ) { nsub_bblock_ = n; }
 void ClashCheckFilter::threshold( core::Size const t ) { threshold_ = t; }
 void ClashCheckFilter::verbose( bool const v ) { verbose_ = v; }
@@ -218,7 +218,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 	return( clashing_pos.size() );
 } // compute
 
-void ClashCheckFilter::write_to_pdb( core::pose::Pose const & pose, std::string const residue_name, core::Size const residue, std::string const atom_name ) const
+void ClashCheckFilter::write_to_pdb( core::pose::Pose const & pose, std::string const & residue_name, core::Size const residue, std::string const & atom_name ) const
 {
 
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -232,7 +232,7 @@ void ClashCheckFilter::write_to_pdb( core::pose::Pose const & pose, std::string 
 	job->add_string(unsat_pols_string);
 }
 
-void ClashCheckFilter::write_pymol_string_to_pdb( std::string const pymol_selection ) const
+void ClashCheckFilter::write_pymol_string_to_pdb( std::string const & pymol_selection ) const
 {
 
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());

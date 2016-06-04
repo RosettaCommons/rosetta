@@ -63,20 +63,20 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void score_type( core::scoring::ScoreType const st );
 	std::string score_type_name() const;
-	void score_type_name( std::string const name );
+	void score_type_name( std::string const & name );
 	void threshold( core::Real const thresh );
 	void bb_bb( bool const bb );
 	bool unbound() const;
 	void unbound( bool const unbound );
 	std::string sym_dof_names() const;
-	void sym_dof_names( std::string const sym_dofs );
+	void sym_dof_names( std::string const & sym_dofs );
 	core::Size jump() const;
 	void jump( core::Size const jump );
 	std::string mode() const;
-	void mode( std::string const mode );
+	void mode( std::string const & mode );
 	void write2pdb( bool const write );
 	bool write2pdb() const;
-	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const residue_name, core::Real const score ) const;
+	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const & residue_name, core::Real const score ) const;
 	bool individual_hbonds() const;
 	void individual_hbonds( bool const individual_hbonds );
 private:

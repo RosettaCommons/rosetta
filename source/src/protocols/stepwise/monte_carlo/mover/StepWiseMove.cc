@@ -49,7 +49,7 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	utility::vector1< Attachment > const & attachments,
 	MoveType const & move_type,
-	std::string const submotif_tag ):
+	std::string const & submotif_tag ):
 	utility::pointer::ReferenceCount(),
 	move_element_( move_element ),
 	attachments_( attachments ),

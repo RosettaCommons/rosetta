@@ -115,7 +115,7 @@ bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::Frame
 	return success;
 }
 
-void ResTypeFragmentMover::swap_residue_types( pose::Pose &pose, std::string const sequence, Size const startSeqPos ) const {
+void ResTypeFragmentMover::swap_residue_types( pose::Pose &pose, std::string const & sequence, Size const startSeqPos ) const {
 	using namespace chemical;
 	for ( Size ii=0; ii<sequence.size(); ++ii ) {
 		char aa = sequence[ii];

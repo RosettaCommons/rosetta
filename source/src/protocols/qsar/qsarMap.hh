@@ -81,10 +81,10 @@ public:
 	void clear();
 
 	/// @brief return a point in the map from the point name
-	qsarPointOP get_point(std::string const point_name);
+	qsarPointOP get_point(std::string const & point_name);
 
 	/// @brief return a point in the map from the atom_id and qsarType
-	qsarPointOP get_point(core::Size const atom_id, std::string const type);
+	qsarPointOP get_point(core::Size const atom_id, std::string const & type);
 
 	/// @brief return the residue associated with the qsarMap
 	core::conformation::ResidueOP get_residue();
@@ -93,7 +93,7 @@ public:
 	utility::vector1<qsarPointOP> find_points_for_atom(core::Size const atom_id);
 
 	/// @brief return a vector of all points associated with a given qsarType;
-	utility::vector1<qsarPointOP> find_points_of_type(std::string const type);
+	utility::vector1<qsarPointOP> find_points_of_type(std::string const & type);
 
 
 private:

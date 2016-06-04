@@ -92,7 +92,7 @@ SubMotifLibrary::initialize(){
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-SubMotifLibrary::initialize_from_directory( std::string const directory ){
+SubMotifLibrary::initialize_from_directory( std::string const & directory ){
 	utility::vector1< std::string > filenames;
 
 	utility::io::izstream data( ( directory+"/submotifs.txt" ).c_str() );
@@ -295,7 +295,7 @@ SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
-	SequenceMapping const matching_residues /* working mapping */,
+	SequenceMapping const & matching_residues /* working mapping */,
 	std::string const & submotif_full_sequence,
 	utility::vector1< Size > const & submotif_cutpoints,
 	std::string const & pose_full_sequence,
@@ -379,7 +379,7 @@ SubMotifLibrary::output_tags() const {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 pose::PoseOP
 SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
-	PoseTag const submotif_tag,
+	PoseTag const & submotif_tag,
 	pose::Pose const & pose,
 	bool const & seed /*= false*/ ) const {
 

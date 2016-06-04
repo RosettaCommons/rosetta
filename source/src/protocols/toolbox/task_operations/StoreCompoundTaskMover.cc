@@ -71,10 +71,10 @@ StoreCompoundTaskMover::const_factory_iterator StoreCompoundTaskMover::factory_e
 void StoreCompoundTaskMover::invert( bool const inv ) { invert_ = inv; }
 void StoreCompoundTaskMover::verbose( bool const verb ) { verbose_ = verb; }
 void StoreCompoundTaskMover::overwrite( bool const ow ) { overwrite_ = ow; }
-void StoreCompoundTaskMover::task_name( std::string const tn ) { task_name_ = tn; }
-void StoreCompoundTaskMover::mode( std::string const md ) { mode_ = md; }
-void StoreCompoundTaskMover::true_behavior( std::string const tb ) { true_behavior_ = tb; }
-void StoreCompoundTaskMover::false_behavior( std::string const fb ) { false_behavior_ = fb; }
+void StoreCompoundTaskMover::task_name( std::string const & tn ) { task_name_ = tn; }
+void StoreCompoundTaskMover::mode( std::string const & md ) { mode_ = md; }
+void StoreCompoundTaskMover::true_behavior( std::string const & tb ) { true_behavior_ = tb; }
+void StoreCompoundTaskMover::false_behavior( std::string const & fb ) { false_behavior_ = fb; }
 
 void
 StoreCompoundTaskMover::CompoundPackableTask( core::pose::Pose const & pose, core::Size & total_residue, core::pack::task::PackerTaskOP & task)

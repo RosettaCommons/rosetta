@@ -51,11 +51,11 @@ public :
 	virtual ~RelativeSegmentFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	std::string source_pose() const { return source_pose_; }
-	void source_pose( std::string const s ){ source_pose_ = s; }
-	core::Size start_res() const{ return start_res_; }
-	void start_res( core::Size const s ){ start_res_ = s;}
-	core::Size stop_res() const{ return stop_res_; }
-	void stop_res( core::Size const s ){ stop_res_ = s; }
+	void source_pose( std::string const & s ) { source_pose_ = s; }
+	core::Size start_res() const { return start_res_; }
+	void start_res( core::Size const s ) { start_res_ = s;}
+	core::Size stop_res() const { return stop_res_; }
+	void stop_res( core::Size const s ) { stop_res_ = s; }
 private:
 	std::string source_pose_;
 	core::Size start_res_, stop_res_;

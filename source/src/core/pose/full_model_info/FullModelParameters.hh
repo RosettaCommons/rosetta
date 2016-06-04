@@ -75,9 +75,9 @@ public:
 	//constructor
 	FullModelParameters();
 
-	FullModelParameters( std::string const full_sequence );
+	FullModelParameters( std::string const & full_sequence );
 
-	FullModelParameters( std::string const full_sequence,
+	FullModelParameters( std::string const & full_sequence,
 		utility::vector1< Size > const & cutpoint_open_in_full_model,
 		utility::vector1< Size > const & res_numbers_in_pose );
 
@@ -178,7 +178,7 @@ public:
 	Size size() const { return full_sequence_.size(); }
 
 	void
-	read_cst_file( std::string const cst_file );
+	read_cst_file( std::string const & cst_file );
 
 	scoring::constraints::ConstraintSetCOP cst_set() const;
 
@@ -197,7 +197,7 @@ public:
 	FullModelParametersCOP parent_full_model_parameters() const { return parent_full_model_parameters_; }
 
 	void
-	read_disulfides( std::string const disulfide_file );
+	read_disulfides( std::string const & disulfide_file );
 
 private:
 

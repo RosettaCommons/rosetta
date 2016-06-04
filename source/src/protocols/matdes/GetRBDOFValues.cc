@@ -122,7 +122,7 @@ bool GetRBDOFValues::get_init_value() const { return get_init_value_; }
 
 // @brief setters
 void GetRBDOFValues::jump_id( core::Size const jump ) { jump_id_ = jump; }
-void GetRBDOFValues::sym_dof_name( std::string const dof_name ) { sym_dof_name_ = dof_name; }
+void GetRBDOFValues::sym_dof_name( std::string const & dof_name ) { sym_dof_name_ = dof_name; }
 void GetRBDOFValues::verbose( bool const verb ) { verbose_ = verb; }
 void GetRBDOFValues::axis( char const ax ) { axis_ = ax; }
 void GetRBDOFValues::radial_disp( bool const disp ) { radial_disp_ = disp; }

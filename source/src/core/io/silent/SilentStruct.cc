@@ -235,7 +235,7 @@ void SilentStruct::finish_pose(
 }
 
 bool
-SilentStruct::read_sequence( std::string const& line ) {
+SilentStruct::read_sequence( std::string const & line ) {
 	tr.Debug << "reading sequence from " << line << std::endl;
 	std::istringstream line_stream( line );
 
@@ -252,7 +252,7 @@ SilentStruct::read_sequence( std::string const& line ) {
 	return true;
 }
 
-void SilentStruct::read_score_headers( std::string const& line, utility::vector1< std::string >& energy_names, SilentFileData& container ) {
+void SilentStruct::read_score_headers( std::string const & line, utility::vector1< std::string > & energy_names, SilentFileData & container ) {
 	// second line is a list of score names
 	std::istringstream score_line_stream( line );
 	tr.Debug << "reading score names from " << line << std::endl;
@@ -389,7 +389,7 @@ void SilentStruct::sort_silent_scores( ){
 	std::sort( silent_energies_.begin(), silent_energies_.end(), SilentEnergy_sort_by_name);
 }
 
-bool SilentStruct::has_energy( std::string const scorename ) const {
+bool SilentStruct::has_energy( std::string const & scorename ) const {
 	for ( utility::vector1< SilentEnergy >::const_iterator
 			it = silent_energies_.begin(), end = silent_energies_.end();
 			it != end; ++it
@@ -402,7 +402,7 @@ bool SilentStruct::has_energy( std::string const scorename ) const {
 }
 
 void
-SilentStruct::add_energy( std::string scorename, Real value, Real weight ) {
+SilentStruct::add_energy( std::string const & scorename, Real value, Real weight ) {
 	// check if we already have a SilentEnergy with this scorename
 	bool replace( false );
 	typedef utility::vector1< SilentEnergy >::iterator iter;
@@ -425,7 +425,7 @@ SilentStruct::add_energy( std::string scorename, Real value, Real weight ) {
 
 void
 SilentStruct::add_string_value(
-	std::string scorename, std::string const & value
+	std::string const & scorename, std::string const & value
 ) {
 	// check if we already have a SilentEnergy with this scorename
 	bool replace( false );
@@ -977,7 +977,7 @@ bool SilentStruct::has_parent_remark( std::string const & name ) const {
 ///////////////////////////////////////////////////////////////////////////
 
 void
-SilentStruct::add_parent_remark( std::string const name, std::string const value ){
+SilentStruct::add_parent_remark( std::string const & name, std::string const & value ){
 
 	// if(parent_remarks_map_.count(name)>0) utility_exit_with_message( "The key (" + name +") already exist in the parent_remarks_map_!");
 
@@ -991,7 +991,7 @@ SilentStruct::add_parent_remark( std::string const name, std::string const value
 ///////////////////////////////////////////////////////////////////////////
 
 void
-SilentStruct::get_parent_remark_from_line( std::string const line ){
+SilentStruct::get_parent_remark_from_line( std::string const & line ){
 
 	std::istringstream line_stream( line );
 

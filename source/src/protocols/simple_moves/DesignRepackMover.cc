@@ -88,7 +88,7 @@ DesignRepackMover::DesignRepackMover() : protocols::moves::Mover( "DesignRepackM
 	restrict_to_repacking_.clear();
 }
 
-DesignRepackMover::DesignRepackMover( std::string const name ) : protocols::moves::Mover( name ), repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
+DesignRepackMover::DesignRepackMover( std::string const & name ) : protocols::moves::Mover( name ), repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
 {
 	allowed_aas_.resize( core::chemical::num_canonical_aas, true );
 }

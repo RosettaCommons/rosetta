@@ -58,10 +58,10 @@ struct Ligand_info{
 	int rep;
 	core::kinematics::Jump jump;
 	Ligand_info();
-	Ligand_info(core::conformation::ResidueCOPs const residues, int atr, int rep);
-	Ligand_info(core::conformation::ResidueCOPs const residues, std::pair<int,int> scores, core::kinematics::Jump jump);
-	bool operator<(Ligand_info const ligand_info) const;
-	bool operator<(std::pair<int,int> const scores) const;
+	Ligand_info(core::conformation::ResidueCOPs const & residues, int atr, int rep);
+	Ligand_info(core::conformation::ResidueCOPs const & residues, std::pair<int,int> scores, core::kinematics::Jump jump);
+	bool operator<(Ligand_info const & ligand_info) const;
+	bool operator<(std::pair<int,int> const & scores) const;
 	core::conformation::ResidueCOPs const & get_residues() const;
 };
 
@@ -111,7 +111,7 @@ private:
 	Ligand_info create_random_rotation(
 		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 		protocols::rigid::RigidBodyMoverOP const mover,
-		core::Vector const center,
+		core::Vector const & center,
 		core::Size const begin,
 		core::Size const end,
 		core::pose::Pose & local_pose
@@ -130,12 +130,12 @@ private:
 /// Convenience Functions for use with Rotate
 
 bool check_score(
-	Ligand_info const ligand,
+	Ligand_info const & ligand,
 	core::Size const heavy_atom_number
 );
 
 bool check_RMSD(
-	Ligand_info const ligand,
+	Ligand_info const & ligand,
 	core::Size const heavy_atom_number,
 	utility::vector1< Ligand_info> const & ligands
 );

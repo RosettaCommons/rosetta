@@ -125,7 +125,7 @@ CircularPermutation::new_terminal_pos() const
 
 /// @brief total number of cycles
 CircularPermutation::Size
-CircularPermutation::which_chain( Size const pos, Pose const pose ) const
+CircularPermutation::which_chain( Size const pos, Pose const & pose ) const
 {
 	for ( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
 

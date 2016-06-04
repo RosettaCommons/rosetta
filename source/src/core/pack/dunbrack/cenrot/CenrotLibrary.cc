@@ -128,7 +128,6 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 
 	chemical::AA aan = chemical::aa_unk;
 	std::string nextaa;
-	std::string thisaa;
 	libstream >> nextaa;
 
 	Size count_libraries_read( 0 );

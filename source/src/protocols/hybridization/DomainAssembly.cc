@@ -200,23 +200,23 @@ gap_distance(Size Seq_gap)
 
 	switch (Seq_gap) {
 	case 0 :
-		return gap_torr_0; break;
+		return gap_torr_0;
 	case 1 :
-		return gap_torr_1; break;
+		return gap_torr_1;
 	case 2 :
-		return gap_torr_2; break;
+		return gap_torr_2;
 	case 3 :
-		return gap_torr_3; break;
+		return gap_torr_3;
 	case 4 :
-		return gap_torr_4; break;
+		return gap_torr_4;
 	case 5 :
-		return gap_torr_5; break;
+		return gap_torr_5;
 	case 6 :
-		return gap_torr_6; break;
+		return gap_torr_6;
 	case 7 :
-		return gap_torr_7; break;
+		return gap_torr_7;
 	case 8 :
-		return gap_torr_8; break;
+		return gap_torr_8;
 	default :
 		return 9999.;
 	}

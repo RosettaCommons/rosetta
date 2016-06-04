@@ -59,7 +59,7 @@ protected:
 
 	// frame and fragment of choice, returns false if no good fragment is found
 	virtual bool apply_frames( core::pose::Pose &pose, core::fragment::FrameList const& frames ) const ;
-	void swap_residue_types( core::pose::Pose &pose, std::string const sequence, core::Size const startSeqPos ) const ;
+	void swap_residue_types( core::pose::Pose &pose, std::string const & sequence, core::Size const startSeqPos ) const ;
 };
 
 } //simple_moves

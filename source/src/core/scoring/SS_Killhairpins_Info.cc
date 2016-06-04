@@ -63,10 +63,9 @@ static THREAD_LOCAL basic::Tracer trKillHairpinsIO( "core.score.SS_Killhairpins_
 Hairpin::Hairpin()
 {}
 
-Hairpin::Hairpin( core::Size s1_1, core::Size s1_2, core::Size s2_1, core::Size s2_2)
-{
-	range_pair_ = std::make_pair( std::make_pair( s1_1, s1_2 ), std::make_pair( s2_1, s2_2 ) );
-}
+Hairpin::Hairpin( core::Size s1_1, core::Size s1_2, core::Size s2_1, core::Size s2_2) :
+	range_pair_( std::make_pair( std::make_pair( s1_1, s1_2 ), std::make_pair( s2_1, s2_2 ) ) )
+{}
 
 Hairpin::~Hairpin()
 {}

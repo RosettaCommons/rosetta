@@ -24,12 +24,11 @@ namespace scoring_grid {
 /// @brief a very light representation of an atom that is just a charge and a cartesian space position
 struct ChargeAtom
 {
-	ChargeAtom(core::Vector const &  in_xyz, core::Real const & in_charge, core::Size const & nc)
+	ChargeAtom(core::Vector const & in_xyz, core::Real const & in_charge, core::Size const & nc):
+		xyz( in_xyz )
 	{
-		xyz = in_xyz;
 		charge = in_charge;
 		neighbor_count = nc;
-
 	}
 
 	ChargeAtom()

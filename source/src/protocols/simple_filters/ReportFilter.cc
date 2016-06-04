@@ -134,7 +134,7 @@ ReportFilter::compute(
 	return( filter()->report_sm( pose ) );
 }
 
-void ReportFilter::report_string( std::string const f )
+void ReportFilter::report_string( std::string const & f )
 {
 	report_string_->obj = f;
 }

@@ -111,10 +111,10 @@ public:
 
 	/// fit rdc using RDC data
 	core::Real compute_dipscore_nls(core::pose::Pose const& pose);
-	core::Real compute_dipscore_nlsDa(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa);
-	core::Real compute_dipscore_nlsR(core::pose::Pose const& pose, utility::vector1<Real> const tensorR);
-	core::Real compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR);
-	core::Real compute_dipscore_nls(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR);
+	core::Real compute_dipscore_nlsDa(core::pose::Pose const& pose, utility::vector1<Real> const & tensorDa);
+	core::Real compute_dipscore_nlsR(core::pose::Pose const& pose, utility::vector1<Real> const & tensorR);
+	core::Real compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const & tensorDa, utility::vector1<Real> const & tensorR);
+	core::Real compute_dipscore_nls(core::pose::Pose const& pose, utility::vector1<Real> const & tensorDa, utility::vector1<Real> const & tensorR);
 
 	//wRDC (like wRMSD .. iter i + 1 tensor weights are ~exp(  - dev^2/sigma ))
 	Real iterate_tensor_weights(core::pose::Pose const& pose,

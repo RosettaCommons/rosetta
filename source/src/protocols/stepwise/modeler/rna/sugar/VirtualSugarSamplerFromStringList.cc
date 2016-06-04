@@ -42,7 +42,7 @@ namespace sugar {
 
 //Constructor
 VirtualSugarSamplerFromStringList::VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-	utility::vector1< std::string > const sample_virtual_sugar_string_list):
+	utility::vector1< std::string > const & sample_virtual_sugar_string_list):
 	working_parameters_( working_parameters ),
 	sample_virtual_sugar_string_list_( sample_virtual_sugar_string_list ),
 	silent_file_out_( "default.out" ),

@@ -44,7 +44,7 @@ public:
 	RepackMinimize(
 		ScoreFunctionCOP scorefxn_repack,
 		ScoreFunctionCOP scorefxn_minimize,
-		utility::vector1< core::Size > const target_residues,
+		utility::vector1< core::Size > const & target_residues,
 		bool const repack_partner1=false,
 		bool const repack_partner2=true,
 		core::Real const interface_distance_cutoff=8.0,

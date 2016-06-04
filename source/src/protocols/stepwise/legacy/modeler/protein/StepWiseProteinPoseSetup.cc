@@ -748,7 +748,7 @@ StepWiseProteinPoseSetup::fix_phi_psi_offsets( pose::Pose & pose ) const{
 ///////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinPoseSetup::copy_rna_chi( pose::Pose & pose,
-	pose::Pose const import_pose,
+	pose::Pose const & import_pose,
 	utility::vector1< core::Size > const & input_res,
 	utility::vector1< core::Size > const & slice_res ){
 
@@ -1701,20 +1701,20 @@ StepWiseProteinPoseSetup::set_rsd_set( core::chemical::ResidueTypeSetCAP & rsd_s
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinPoseSetup::set_cst_file( std::string const cst_file ){
+StepWiseProteinPoseSetup::set_cst_file( std::string const & cst_file ){
 	cst_file_ = cst_file;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinPoseSetup::set_disulfide_file( std::string const disulfide_file ){
+StepWiseProteinPoseSetup::set_disulfide_file( std::string const & disulfide_file ){
 	disulfide_file_ = disulfide_file;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinPoseSetup::set_align_file( std::string const align_file ){
+StepWiseProteinPoseSetup::set_align_file( std::string const & align_file ){
 	align_file_ = align_file;
 }
 
@@ -1751,7 +1751,7 @@ StepWiseProteinPoseSetup::ready_to_align() const{
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinPoseSetup::set_secstruct( std::string const secstruct ){
+StepWiseProteinPoseSetup::set_secstruct( std::string const & secstruct ){
 	secstruct_ = secstruct;
 }
 

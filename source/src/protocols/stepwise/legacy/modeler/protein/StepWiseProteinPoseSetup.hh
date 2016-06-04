@@ -105,13 +105,13 @@ public:
 	set_rsd_set( core::chemical::ResidueTypeSetCAP & rsd_set );
 
 	void
-	set_cst_file( std::string const cst_file );
+	set_cst_file( std::string const & cst_file );
 
 	void
-	set_disulfide_file( std::string const disulfide_file );
+	set_disulfide_file( std::string const & disulfide_file );
 
 	void
-	set_align_file( std::string const align_file );
+	set_align_file( std::string const & align_file );
 
 	void
 	set_add_peptide_plane_variants( bool const & setting );
@@ -135,7 +135,7 @@ public:
 	set_add_virt_res( bool const setting );
 
 	void
-	set_secstruct( std::string const secstruct );
+	set_secstruct( std::string const & secstruct );
 
 
 private:
@@ -258,7 +258,7 @@ private:
 
 	void
 	copy_rna_chi( core::pose::Pose & pose,
-		core::pose::Pose const import_pose,
+		core::pose::Pose const & import_pose,
 		utility::vector1< core::Size > const & input_res,
 		utility::vector1< core::Size > const & slice_res );
 

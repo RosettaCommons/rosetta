@@ -85,7 +85,7 @@ FoldTreeFromLoops::parse_my_tag(
 	loops_ = loops_definers::load_loop_definitions(tag, data, pose);
 }
 
-void FoldTreeFromLoops::loop_str( std::string const str )
+void FoldTreeFromLoops::loop_str( std::string const & str )
 {
 	loop_str_ = str;
 }

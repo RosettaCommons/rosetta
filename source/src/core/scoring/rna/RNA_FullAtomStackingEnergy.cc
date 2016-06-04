@@ -492,8 +492,8 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 //This function is called by residue_pair_energy_one_way
 Real
 RNA_FullAtomStackingEnergy::get_fa_stack_score(
-	Vector const r_vec,
-	Matrix const M_i,
+	Vector const & r_vec,
+	Matrix const & M_i,
 	Real const prefactor,
 	Distance const stack_cutoff,
 	Distance const dist_cutoff
@@ -529,8 +529,8 @@ RNA_FullAtomStackingEnergy::get_fa_stack_score(
 //This function is called by eval_atom_derivative
 Vector
 RNA_FullAtomStackingEnergy::get_fa_stack_deriv(
-	Vector const r_vec,
-	Matrix const M_i,
+	Vector const & r_vec,
+	Matrix const & M_i,
 	Real const prefactor,
 	Distance const stack_cutoff,
 	Distance const dist_cutoff

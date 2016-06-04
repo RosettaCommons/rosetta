@@ -230,8 +230,8 @@ CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ) 
 ///////////////////////////////////////////////////////////////////////////////////////
 Size
 CoarseRNA_Fragments::pick_random_fragment(
-	std::string const RNA_string,
-	std::string const RNA_secstruct_string,
+	std::string const & RNA_string,
+	std::string const & RNA_secstruct_string,
 	Size const type ) const
 {
 

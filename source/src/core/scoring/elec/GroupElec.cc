@@ -145,7 +145,7 @@ GroupElec::get_group( core::chemical::ResidueType const &rsdtype ) const
 }
 
 void
-GroupElec::build_groupinfo( std::string const group_file,
+GroupElec::build_groupinfo( std::string const & group_file,
 	bool const extra )
 {
 	using namespace basic::options;

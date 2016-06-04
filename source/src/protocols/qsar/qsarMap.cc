@@ -149,7 +149,7 @@ void qsarMap::clear()
 	atom_map_.clear();
 }
 
-qsarPointOP qsarMap::get_point(std::string const point_name)
+qsarPointOP qsarMap::get_point(std::string const & point_name)
 {
 	std::map<std::string,qsarPointOP>::iterator point(qsar_map_.find(point_name));
 	if ( point == qsar_map_.end() ) {
@@ -159,7 +159,7 @@ qsarPointOP qsarMap::get_point(std::string const point_name)
 	}
 }
 
-qsarPointOP qsarMap::get_point(core::Size const atom_id, std::string const type)
+qsarPointOP qsarMap::get_point(core::Size const atom_id, std::string const & type)
 {
 	std::multimap<core::Size, qsarPointOP>::iterator lower_bound(atom_map_.lower_bound(atom_id));
 	std::multimap<core::Size, qsarPointOP>::iterator upper_bound(atom_map_.upper_bound(atom_id));
@@ -197,7 +197,7 @@ utility::vector1<qsarPointOP> qsarMap::find_points_for_atom(core::Size const ato
 }
 
 
-utility::vector1<qsarPointOP> qsarMap::find_points_of_type(std::string const type)
+utility::vector1<qsarPointOP> qsarMap::find_points_of_type(std::string const & type)
 {
 	utility::vector1<qsarPointOP> points;
 

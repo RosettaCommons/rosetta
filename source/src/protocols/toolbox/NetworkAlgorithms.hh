@@ -113,7 +113,7 @@ Contains( std::list< NodeOP > const & nodes, NodeCOP node );
 class Node : public utility::pointer::ReferenceCount
 {
 public:
-	Node( std::string const id, core::Size const resi)
+	Node( std::string const & id, core::Size const resi)
 	: resi(resi), id(id),
 		distanceFromStart(9999),
 		in_list( false )

@@ -68,7 +68,7 @@ public:
 	/// @brief make a new grid from grid tag, and insert it into the grid manager
 	void make_new_grid(utility::tag::TagCOP tag);
 	/// @brief insert a grid pointer into the grid manager
-	void insert_grid(std::string const name,GridBaseOP const grid);
+	void insert_grid(std::string const & name,GridBaseOP const grid);
 	/// @brief set the qsar_map
 	void set_qsar_map(qsarMapOP qsar_map);
 	/// @brief is a qsar map attached to the grid manager?

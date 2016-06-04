@@ -36,9 +36,9 @@ public:
 
 	void
 	set( core::Size const res1,
-		std::string const atom1,
+		std::string const & atom1,
 		core::Size const res2,
-		std::string const atom2,
+		std::string const & atom2,
 		bool const add_termini,
 		bool const run_kic = false,
 		core::Size const kic_res1 = 0,

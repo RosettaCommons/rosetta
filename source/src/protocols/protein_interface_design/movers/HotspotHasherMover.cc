@@ -66,14 +66,14 @@ HotspotHasherMoverCreator::mover_name()
 
 HotspotHasherMover::HotspotHasherMover() : protocols::moves::Mover( HotspotHasherMoverCreator::mover_name() ) { }
 HotspotHasherMover::HotspotHasherMover(
-	std::vector<std::string> const resnames,
+	std::vector<std::string> const & resnames,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size const n_stubs,
 	core::Size const target_resnum,
 	protocols::filters::FilterOP hotspot_filter,
 	core::Real const target_distance,
-	std::string const hashin_fname,
-	std::string const hashout_fname
+	std::string const & hashin_fname,
+	std::string const & hashout_fname
 ) :
 	protocols::moves::Mover( HotspotHasherMoverCreator::mover_name() ),
 	scorefxn_(scorefxn),

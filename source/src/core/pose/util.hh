@@ -140,22 +140,22 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 // ARBITRARY_FLOAT_DATA
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name,
+	std::string const & name,
 	core::Real & value
 );
 
 Real getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name );
+	std::string const & name );
 
 bool
 hasPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name );
+	std::string const & name );
 
 void setPoseExtraScore(
 	core::pose::Pose & pose,
-	std::string const name,
+	std::string const & name,
 	core::Real value
 );
 
@@ -171,14 +171,14 @@ void clearPoseExtraScores(
 // ARBITRARY_STRING_DATA
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const name,
+	std::string const & name,
 	std::string & value
 );
 
 void setPoseExtraScore(
 	core::pose::Pose & pose,
-	std::string name,
-	std::string const value
+	std::string const & name,
+	std::string const & value
 );
 
 /// @brief Adds a VRT res to the end of the pose at the center of mass.

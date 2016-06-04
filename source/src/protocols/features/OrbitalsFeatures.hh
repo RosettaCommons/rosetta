@@ -105,7 +105,7 @@ public:
 		core::Size const Aindex,
 		core::Size const Hindex,
 		core::Size const Orbindex,
-		numeric::xyzVector<core::Real> const Orbxyz,
+		numeric::xyzVector<core::Real> const & Orbxyz,
 		core::Size & resNum2,
 		std::string & orbName1,
 		std::string & htype2,

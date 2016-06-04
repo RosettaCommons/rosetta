@@ -486,7 +486,7 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 
 DockingSlideIntoContact::DockingSlideIntoContact(
 	core::Size const rb_jump,
-	core::Vector const slide_axis
+	core::Vector const & slide_axis
 ): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis)
 {
 	using namespace core::scoring;
@@ -665,7 +665,7 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Siz
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 
-FaDockingSlideIntoContact::FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis): Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(slide_axis)
+FaDockingSlideIntoContact::FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis): Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(slide_axis)
 {
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );

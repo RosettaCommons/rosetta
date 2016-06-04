@@ -144,7 +144,7 @@ public:
 
 	void
 	add_overlap_loop(
-		const Loop loop
+		const Loop & loop
 	);
 
 	void

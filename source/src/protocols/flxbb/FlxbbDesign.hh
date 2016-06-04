@@ -92,7 +92,7 @@ public: // constructor/destructor
 		ScoreFunctionOP const sfxnd,
 		ScoreFunctionOP const sfxnr,
 		Size const ncycle = 3,
-		String const layer_mode = "",
+		String const & layer_mode = "",
 		bool const use_origseq_for_not_dsgned_layer = true,
 		bool const no_relax = false );
 

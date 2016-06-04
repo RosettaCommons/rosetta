@@ -183,7 +183,7 @@ CDRSetOptionsParser::check_path() {
 }
 
 void
-CDRSetOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
+CDRSetOptionsParser::parse_cdr_option(std::string const & mode, vector1<string>& lineSP) {
 
 
 
@@ -202,7 +202,7 @@ CDRSetOptionsParser::check_line_len(const vector1<string> & lineSP, const core::
 }
 
 void
-CDRSetOptionsParser::parse_cdr_set_option(std::string const setting, vector1<string>& lineSP) {
+CDRSetOptionsParser::parse_cdr_set_option(std::string const & setting, vector1<string>& lineSP) {
 
 	//Here we match.  This is rather ugly, as I don't have much C++ expereince in this.  Python however...
 
@@ -250,7 +250,7 @@ CDRSetOptionsParser::parse_cdr_set_option(std::string const setting, vector1<str
 }
 
 void
-CDRSetOptionsParser::set_cdr_set_general_option(std::string const option) {
+CDRSetOptionsParser::set_cdr_set_general_option(std::string const & option) {
 
 	if ( option == "LOAD" ) {
 		cdr_options_->load(true);
@@ -265,7 +265,7 @@ CDRSetOptionsParser::set_cdr_set_general_option(std::string const option) {
 }
 
 void
-CDRSetOptionsParser::set_cdr_set_include_options(std::string const type, vector1<string>& lineSP) {
+CDRSetOptionsParser::set_cdr_set_include_options(std::string const & type, vector1< string > & lineSP) {
 
 	this->clear_cdr_set_include_options(type);
 	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
@@ -293,7 +293,7 @@ CDRSetOptionsParser::set_cdr_set_include_options(std::string const type, vector1
 }
 
 void
-CDRSetOptionsParser::clear_cdr_set_include_options(const std::string type) {
+CDRSetOptionsParser::clear_cdr_set_include_options( std::string const & type ) {
 
 	if ( type == "CLUSTERS" || type == "CLUSTER" ) {
 		cdr_options_->include_only_clusters_clear();
@@ -311,7 +311,7 @@ CDRSetOptionsParser::clear_cdr_set_include_options(const std::string type) {
 }
 
 void
-CDRSetOptionsParser::set_cdr_set_exclude_options(const std::string type, vector1<string> & lineSP){
+CDRSetOptionsParser::set_cdr_set_exclude_options( std::string const & type, vector1<string> & lineSP){
 
 	this->clear_cdr_set_exclude_options(type);
 	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
@@ -339,7 +339,7 @@ CDRSetOptionsParser::set_cdr_set_exclude_options(const std::string type, vector1
 }
 
 void
-CDRSetOptionsParser::clear_cdr_set_exclude_options(const std::string type) {
+CDRSetOptionsParser::clear_cdr_set_exclude_options( std::string const & type ) {
 
 	if ( type == "CLUSTERS" || type == "CLUSTER" ) {
 		cdr_options_->exclude_clusters_clear();

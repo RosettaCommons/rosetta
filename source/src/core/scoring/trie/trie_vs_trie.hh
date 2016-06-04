@@ -207,9 +207,10 @@ trie_vs_trie(
 					}
 				}
 
-				Real weight(1.0); core::PackerEnergy e(0.0); Size path_dist(0);
+				Real weight(1.0); Size path_dist(0);
 				if ( parent_heavy_wi_hcut_stack[s_heavy_depth_stack[s_curr_stack_top] ] &&
 						count_pair( r.cp_data(), s.cp_data(), weight, path_dist) ) {
+					core::PackerEnergy e(0.0);
 					if ( s.is_hydrogen() ) {
 						e = score_function.hydrogenatom_hydrogenatom_energy(r.atom(), s.atom(), path_dist );
 						energy_stack[ s_curr_stack_top ] += weight * e;

@@ -527,7 +527,7 @@ private:
 	void
 	calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose, const utility::vector1<core::Real> & separated_sasa);
 
-	void print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const interface_set );
+	void print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const & interface_set );
 	void print_pymol_selection_of_hbond_unsat( core::pose::Pose & pose, utility::vector1< core::id::AtomID > delta_unsat_hbond_atid_vector );
 	void print_pymol_selection_of_packing( core::pose::Pose const & pose, utility::vector1< core::Real > & interface_pack_scores );
 

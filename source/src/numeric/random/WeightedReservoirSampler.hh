@@ -48,7 +48,7 @@ public:
 	}
 
 	/// @brief Returns true if this item's weight is less than <o>'s weight
-	bool operator<(const WeightedReservoirItem<T> o) const {
+	bool operator<(const WeightedReservoirItem<T> & o) const {
 		return weight() < o.weight();
 	}
 

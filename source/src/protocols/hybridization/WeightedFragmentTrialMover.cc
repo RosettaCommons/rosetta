@@ -24,9 +24,9 @@ namespace protocols {
 namespace hybridization {
 
 WeightedFragmentTrialMover::WeightedFragmentTrialMover(
-	utility::vector1< core::fragment::FragSetOP > const frag_libs,
-	utility::vector1< core::Real > const residue_weights,
-	utility::vector1< core::Size > const anchor_residues,
+	utility::vector1< core::fragment::FragSetOP > const & frag_libs,
+	utility::vector1< core::Real > const & residue_weights,
+	utility::vector1< core::Size > const & anchor_residues,
 	core::Size const nr_frags)
 {
 	moves::Mover::type( "WeightedFragmentTrialMover" );

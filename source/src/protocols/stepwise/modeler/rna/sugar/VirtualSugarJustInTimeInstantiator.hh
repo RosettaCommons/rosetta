@@ -97,7 +97,7 @@ private:
 	sampled_sugar_index( Size const i );
 
 	bool
-	do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const name );
+	do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const & name );
 
 	bool
 	setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling );

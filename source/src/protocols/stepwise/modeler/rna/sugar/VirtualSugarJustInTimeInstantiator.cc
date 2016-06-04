@@ -182,7 +182,7 @@ VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Pose & viewer_
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const name ){
+VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const & name ){
 
 	VirtualSugarSampler virtual_sugar_sampler( working_parameters_, sugar_modeling );
 	virtual_sugar_sampler.set_tag( name );

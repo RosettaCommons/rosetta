@@ -104,7 +104,7 @@ RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue( Size const seqpos 
 
 // used by ChainClosableScreener.
 Vector
-RigidBodyStepWiseSamplerWithResidueAlternatives::get_xyz( Size const seqpos, std::string const atom_name  ){
+RigidBodyStepWiseSamplerWithResidueAlternatives::get_xyz( Size const seqpos, std::string const & atom_name  ){
 	// transformed_residues[ seqpos ] = get_residue_at_origin( seqpos ).clone();
 	Vector xyz = get_residue_at_origin( seqpos ).xyz( atom_name );
 	rigid_body_rotamer_->apply( xyz, seqpos ); // will apply rotation if in moving partition.

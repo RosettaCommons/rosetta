@@ -32,7 +32,7 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-utility::vector1< std::string > RawFileData::read_tags_fast( std::string const filename ) const {
+utility::vector1< std::string > RawFileData::read_tags_fast( std::string const & filename ) const {
 	utility::vector1< std::string > tags_in_file;
 	utility::io::izstream data( filename.c_str() );
 	if ( !data ) {
@@ -60,7 +60,7 @@ utility::vector1< std::string > RawFileData::read_tags_fast( std::string const f
 } // read_tags_fast
 
 void RawFileData::write_all(
-	const std::string filename,
+	std::string const & filename,
 	std::map < std::string, core::Real > const & score_map
 ) {
 	bool print_header( true );

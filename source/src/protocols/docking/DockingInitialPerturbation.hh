@@ -162,7 +162,7 @@ public:
 	// constructor with arguments
 	DockingSlideIntoContact( core::Size const rb_jump );
 
-	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis );
+	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
 	//destructor
 	~DockingSlideIntoContact();
@@ -197,7 +197,7 @@ public:
 	FaDockingSlideIntoContact();
 	FaDockingSlideIntoContact( core::Size const rb_jump);
 	FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps);
-	FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis );
+	FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
 	//destructor
 	~FaDockingSlideIntoContact();

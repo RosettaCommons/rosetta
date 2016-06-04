@@ -47,13 +47,13 @@ public:
 	{
 		scorefxn_ = scorefxn;
 	}
-	ReportSequenceDifferences( ReportSequenceDifferences const & init ) { // copy constructor
-		res_energy1_ = init.res_energy1_;
-		res_energy2_ = init.res_energy2_;
-		res_name1_ = init.res_name1_;
-		res_name2_ = init.res_name2_;
-		scorefxn_ = init.scorefxn_->clone();
-	}
+	ReportSequenceDifferences( ReportSequenceDifferences const & init ) : // copy constructor
+		res_energy1_( init.res_energy1_ ),
+		res_energy2_( init.res_energy2_ ),
+		res_name1_( init.res_name1_ ),
+		res_name2_( init.res_name2_ ),
+		scorefxn_( init.scorefxn_->clone() )
+	{}
 	void calculate( Pose const & pose1, Pose const & pose2 );
 	std::map< Size, Real> const * get_res_energy( Size const num ) const {
 		runtime_assert(num==1 || num==2);
@@ -111,7 +111,7 @@ public:
 	typedef core::Real Real;
 public:
 	FavorNativeResidue( Pose & pose, Real const native_residue_bonus );
-	FavorNativeResidue( Pose & pose, utility::vector1< Real > const native_residue_bonus );
+	FavorNativeResidue( Pose & pose, utility::vector1< Real > const & native_residue_bonus );
 	virtual ~FavorNativeResidue(){};
 private:
 	void add_residue_constraints( Pose & pose ) const;
@@ -129,7 +129,7 @@ public:
 	typedef core::Real Real;
 public:
 	FavorNonNativeResidue( Pose & pose, Real const native_residue_bonus );
-	FavorNonNativeResidue( Pose & pose, utility::vector1< Real > const native_residue_bonus );
+	FavorNonNativeResidue( Pose & pose, utility::vector1< Real > const & native_residue_bonus );
 	virtual ~FavorNonNativeResidue(){};
 private:
 	void add_residue_constraints( Pose & pose ) const;
@@ -140,9 +140,9 @@ private:
 /// @brief utility function for minimizing sidechain in rigid-body dof, the interface sc, and bb in the entire protein.
 // The fold_tree for minimization will be set from the centre of target_residues to the closest residue on the partner.
 // The packertask is used to decide which residues to minimize (those that are not set to prevent_repacking)
-void MinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, utility::vector1< bool > const min_bb, utility::vector1< bool > const min_sc, utility::vector1< bool > const min_rb, bool const optimize_foldtree, utility::vector1< core::Size > const target_residues, bool const simultaneous_minimization = false );
+void MinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, utility::vector1< bool > const & min_bb, utility::vector1< bool > const & min_sc, utility::vector1< bool > const & min_rb, bool const optimize_foldtree, utility::vector1< core::Size > const & target_residues, bool const simultaneous_minimization = false );
 
-void SymMinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, utility::vector1< bool > const min_bb, utility::vector1< bool > const min_sc, utility::vector1< bool > const min_rb, /*bool const optimize_foldtree, utility::vector1< core::Size > const target_residues*/ bool const simultaneous_minimization = false );
+void SymMinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, utility::vector1< bool > const & min_bb, utility::vector1< bool > const & min_sc, utility::vector1< bool > const & min_rb, /*bool const optimize_foldtree, utility::vector1< core::Size > const target_residues*/ bool const simultaneous_minimization = false );
 
 /// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
 // residue
@@ -153,7 +153,7 @@ hbonded( core::pose::Pose const & pose, core::Size const target_residue, std::se
 /// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
 // residue and atom
 std::list< core::Size >
-hbonded_atom( core::pose::Pose const & pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,
+hbonded_atom( core::pose::Pose const & pose, core::Size const target_residue, std::string const & target_atom, std::set< core::Size > const & binders,
 	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false, core::scoring::ScoreFunctionOP sfxn = NULL );
 
 } // protein_interface_design

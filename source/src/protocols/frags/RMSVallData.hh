@@ -286,8 +286,7 @@ public:
 			}
 
 			// score == rms (?)
-			float rms_out=999.0;
-			rms_out = numeric::model_quality::rms_wrapper( frag_size, tgt_pos, tmpl_pos);
+			float rms_out = numeric::model_quality::rms_wrapper( frag_size, tgt_pos, tmpl_pos);
 
 			// make things (a bit) randomized
 			rms_out += randomness * numeric::random::uniform();
