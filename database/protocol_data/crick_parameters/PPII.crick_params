@@ -1,0 +1,15 @@
+#generated in Apr 19 2016 by Parisa Hosseinzadeh, Baker lab
+#-mainchain_torsions -75 145 180 -omega1_guess -2.09 
+#-r1_guess 1 -dz1_guess 3.05 -repeats 9 -residue_type PRO
+
+r1	1.067332717970
+r1	1.284656117278
+r1	0.317412946374
+omega1	-2.098570388493
+z1	3.081011530843
+delta_omega1	0.760807626825
+delta_omega1	0.000000000000
+delta_omega1	0.197732025463
+delta_z1	-1.150724037340
+delta_z1	0.000000000000
+delta_z1	1.169741003884

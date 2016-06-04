@@ -1,0 +1,14 @@
+# Parameters for a normal 3-10 helix generated in Apr 19 2016 by Parisa Hosseinzadeh, Baker lab
+# Phi/psi/omega = -48, -27, 180.0
+# This was generated using the fit_helixparams app
+r1	1.058834896482
+r1	1.865547218035
+r1	1.224160407119
+omega1	2.102895432262
+z1	1.990872865001
+delta_omega1	-0.432184190009
+delta_omega1	0.000000000000
+delta_omega1	0.463665282760
+delta_z1	-1.053506180921
+delta_z1	0.000000000000
+delta_z1	1.193833689529
