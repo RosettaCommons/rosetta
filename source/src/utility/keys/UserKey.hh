@@ -389,14 +389,10 @@ public: // Comparison
 
 	/// @brief UserKeys are sequential?
 	/// @note  Index-based ordering
+	template< typename UO, typename US, typename UC >
 	friend
-	inline
 	bool
-	sequential( UserKey const & a, UserKey const & b )
-	{
-		return ( a.index_ + 1 == b.index_ );
-	}
-
+	sequential( UserKey< UO, US, UC > const & a, UserKey< UO, US, UC > const & b );
 
 #if !(defined _MSC_VER)||(defined __INTEL_COMPILER) // Not Visual C++: Normal case
 protected: // Conversion
@@ -535,7 +531,10 @@ operator >( UserKey< O, S, C > const & a, UserKey< O, S, C > const & b );
 /// @brief UserKeys are sequential?
 template< typename O, typename S, typename C >
 bool
-sequential( UserKey< O, S, C > const & a, UserKey< O, S, C > const & b );
+sequential( UserKey< O, S, C > const & a, UserKey< O, S, C > const & b )
+{
+	return ( a.index_ + 1 == b.index_ );
+}
 
 
 } // namespace keys

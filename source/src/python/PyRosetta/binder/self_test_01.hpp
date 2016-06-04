@@ -5,12 +5,14 @@
 //#include <vector>
 //#include <map>
 //#include <iostream>
-#include <memory>
 // #include <complex>
 //#include <utility>
-//#include <iostream>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 #include <self_test.incl.hpp>
+//#include <iostream>
 
 namespace aa {
 
@@ -43,31 +45,150 @@ enum E1 {E1A, E1B};
 
 namespace utility {
 
-class B
-{
+template <class T>
+class T1 {};
+
+template <class T>
+class T2{};
+
+template class T2<int>;
+
+//T1<T2<int>> fttttttttttttttttt (T1<T2<int>>) { return T1<T2<int>>(); }
+
+
+class El {
 public:
-	//B(int) {}
-	virtual ~B() {}
+	El() {}
+	El(int) {}
 };
 
-class A : public B
-{
-public:
+// class B
+// {
+// public:
+//     //B() = delete;
+//     //B(B const &) = delete;
+//     //B(int, float) {}
 
-	void foo(std::shared_ptr<A>);
-	void foo_a_v(A);
-	void foo_a_r(A&);
-	void foo_a_p(A*);
-};
+// 	virtual ~B() {}
 
-class C
-{
-private:
-	C() {}
-};
+// 	//virtual T1<T2<int>> fttttttttttttttttt (T1<T2<int>>) { return T1<T2<int>>(); }
+// 	//virtual T1<int> fttttttttttttttttt_() { return T1<int>(); }
 
-class D : public C
-{};
+// 	virtual std::vector<int> fttttttttttttttttt() { return std::vector<int>(); }
+
+// 	virtual void f() const { std::cout << "C++ B::f()" << std::endl; }
+
+// 	virtual int foo() { std::cout << "C++ B::foo()" << std::endl; return 0; }
+
+// 	virtual void foo_i(int i) { std::cout << "C++ B::foo_i(" << i << ")" << std::endl; }
+
+
+// 	virtual void f1(void) = 0;
+// 	virtual int f2(int) = 0;
+// 	virtual float f3(float, int, double) = 0;
+// 	virtual float f_pure(float, int, double, El&) = 0;
+
+// 	void nv() {}
+
+// 	int b;
+// };
+
+// class A : public B
+// {
+// public:
+
+// 	void foo(std::shared_ptr<A>) {}
+// 	void foo(std::shared_ptr<A>) const {}
+// 	//void foo_a_v(A) {}
+// 	void foo_a_r(A&) {}
+// 	void foo_a_p(A*) {}
+
+// 	//virtual void f() const { std::cout << "A++ B::f()" << std::endl; }
+
+// 	void f1(void) { std::cout << "C++ A::f1" << std::endl; }
+// 	int f2(int) { std::cout << "C++ A::f2" << std::endl; return 0; }
+// 	float f3(float, int, double) { std::cout << "C++ A::f3" << std::endl; return 0; }
+// 	float f_pure(float, int, double, El&) { std::cout << "C++ A::f_pure" << std::endl; return 0.0; };
+// };
+
+// void test_f(A &a)      { a.f(); }
+// void test_f1(B &b)     { b.f1(); }
+// void test_f2(B &b)     { b.f2(1); }
+// int  test_foo(B &b)    { return b.foo(); }
+// void test_foo_i(B &b, int i)  { b.foo_i(i); }
+
+// void test_f3(B &b_, float a, int b, double c) { b_.f3(a, b, c); }
+
+// void test_f_pure(B &b_, float a, int b, double c, El& e) { std::cout << b_.f_pure(a, b, c, e) << std::endl; }
+
+
+
+static El _EL_;
+
+// struct A
+// {
+// 	A() { std::cout << "A::A()" << std::endl; }
+// 	A(int, int const a=1, float b=0, El e=El(), double c=1, int x=0) { std::cout << "A::A(" << a << b << c << ')'<< std::endl;}
+
+// 	void foo(El &t=_EL_, El *r=nullptr, El const &t1=_EL_, El const *r1=nullptr, int const a=1, float b=0, El e=El(), double c=1, int x=0) { std::cout << "A::A(" << a << b << c << ')'<< std::endl;}
+
+
+// 	//virtual int operator()() { return 42; };
+// 	// virtual int operator()(int i) { return i+1; };
+// 	// virtual int operator()(int i, int j) { return i+j+1; };
+
+// 	virtual void f() { std::cout << "A.f()" << std::endl; };
+// 	//virtual void ff() = 0;
+
+// 	void fs(std::string const &) {}
+// };
+
+// void call_f(A&a) { a.f(); }
+
+// void case_1() { std::cout << "Using {1} constructor!" << std::endl; }
+// void case_2() { std::cout << "Using {2} constructor!" << std::endl; }
+
+
+using Vector = std::vector<bool>; // lead to compilation error!
+
+auto foo(Vector &v, int i) ->decltype(v[i]) { return v[i]; }
+
+
+
+
+// struct B : public A {
+// 	virtual void f() { std::cout << "B.f()" << std::endl; };
+// };
+// struct B2 : public B {
+// 	virtual void f() { std::cout << "B2.f()" << std::endl; };
+// };
+// struct B3 : public B2 {
+// 	virtual void f() { std::cout << "B3.f()" << std::endl; };
+// };
+
+// std::shared_ptr<A> test_a(std::shared_ptr<A> a) {
+// 	a->f();
+// 	return a;
+// }
+
+// class C
+// {
+// public:
+// 	int d(int a=0, float b=1, double c=3, El e=El(), int l=10) { return 1; }
+
+// 	virtual int operator()(int) = 0;
+// 	virtual int operator==(int) = 0;
+// 	virtual void f() { std::cout << "C::f()" << std::endl; };
+// 	std::string quote2(std::string const & s) { return quote_string(s); }
+// protected:
+// 	virtual std::string quote_string(std::string const & s) = 0;
+// };
+// int test_c(C& c, int a)
+// {
+// 	c.f();
+// 	std::cout << "C::quote2('a'):" << c.quote2("a") << std::endl;
+// 	return c(a);
+// }
 
 
 //class PyTracer :  public otstream {};

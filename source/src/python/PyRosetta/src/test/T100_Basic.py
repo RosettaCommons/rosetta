@@ -9,9 +9,10 @@
 
 from __future__ import print_function
 
-from rosetta import *
+import pyrosetta
+from pyrosetta import *
 
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 
@@ -21,7 +22,7 @@ print('Creating Pose object...')
 pose = Pose()
 
 print('Pose from PDB...')
-pose = core.import_pose.pose_from_file("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 
 # TODO: rename pose_from_file or make_pose_from_sequence to be parallel
 

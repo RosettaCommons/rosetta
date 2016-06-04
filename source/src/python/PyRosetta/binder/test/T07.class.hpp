@@ -83,4 +83,10 @@ private:
 };
 
 
+struct ConstOverload
+{
+	void foo(int) {}
+	void foo(int) const {}
+};
+
 #endif // _INCLUDED_T07_class_hpp_

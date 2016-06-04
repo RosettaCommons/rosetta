@@ -69,7 +69,7 @@ public:
 	void set_store_silents( bool const value ){ store_silents_ = value; }
 
 	// Structures / history
-	std::vector< io::silent::SilentStructOP >
+	std::vector< core::io::silent::SilentStructOP >
 	return_silent() const { return sampled_structures_; }
 
 	void clear_combine_history() { combine_history_.resize( 0 ); }
@@ -105,7 +105,7 @@ private:
 
 	// structure storage
 	std::vector< std::vector< Size > > combine_history_;
-	std::vector< io::silent::SilentStructOP > sampled_structures_;
+	std::vector< core::io::silent::SilentStructOP > sampled_structures_;
 
 };
 

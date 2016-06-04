@@ -17,6 +17,8 @@ void bind_T02_function(std::function< pybind11::module &(std::string const &name
 {
 	{ // A file:T02.function.hpp line:19
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A");
+		pybind11::handle cl_type = cl;
+
 		cl.def(pybind11::init<>());
 	}
 	// foo(bool) file:T02.function.hpp line:21

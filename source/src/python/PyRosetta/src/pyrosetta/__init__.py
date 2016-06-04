@@ -24,6 +24,12 @@ logger = logging.getLogger("rosetta")
 import pyrosetta.logging_support as logging_support
 
 # PyRosetta-3 comapatability
+from rosetta.core.pose import make_pose_from_sequence, Pose
+from rosetta.core.import_pose import pose_from_file
+from rosetta.core.io.pdb import dump_pdb
+from rosetta.core.id import AtomID
+
+create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
 
 rosetta.utility.vector1_string = rosetta.utility.vector1_std_basic_string_char_t
 

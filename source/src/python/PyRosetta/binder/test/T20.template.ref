@@ -20,8 +20,10 @@ void bind_T20_template(std::function< pybind11::module &(std::string const &name
 	// foo() file:T20.template.hpp line:18
 	M("").def("foo_double_t", (void (*)()) &foo<double>, "doc");
 
-	{ // A<int> file:T20.template.hpp line:25
+	{ // A file:T20.template.hpp line:25
 		pybind11::class_<A<int>, std::shared_ptr<A<int>>> cl(M(""), "A_int_t");
+		pybind11::handle cl_type = cl;
+
 		cl.def(pybind11::init<>());
 		cl.def_readwrite("t_value", &A<int>::t_value);
 		cl.def("foo", (void (A<int>::*)(int &)) &A<int>::foo, "doc", pybind11::arg(""));

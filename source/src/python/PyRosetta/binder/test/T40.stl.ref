@@ -1,4 +1,5 @@
 // File: std/stl_vector.cpp
+#include <initializer_list> // std::initializer_list
 #include <memory> // std::allocator
 #include <memory> // std::allocator<int>::allocator
 #include <vector> // std::vector
@@ -30,14 +31,15 @@
 
 void bind_std_stl_vector(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	// std::vector<int,std::allocator<int>> file:bits/stl_vector.h line:210
-	binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_int_t");
+// std::vector file:bits/stl_vector.h line:210
+binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_int_t");
 
 }
 
 
 // File: T40_stl.cpp
 #include <T40.stl.hpp> // foo
+#include <initializer_list> // std::initializer_list
 #include <memory> // std::allocator
 #include <memory> // std::allocator<int>::allocator
 #include <vector> // std::vector

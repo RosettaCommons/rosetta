@@ -762,15 +762,15 @@ private:
 class NaryExpression : public Expression
 {
 public:
-	NaryExpression();
-	NaryExpression( utility::vector1< ExpressionCOP > const & expressions );
+	// undefinded NaryExpression();
+	// undefinded NaryExpression( utility::vector1< ExpressionCOP > const & expressions );
 
 	//void set_expressions( utility::vector1< ExpressionCOP > const & expressions );
 	//Size size() const;
 	//ExpressionCOP get_expression( Size id ) const;
 
 private:
-	Size nargs_;
+	//Size nargs_;
 	utility::vector1< ExpressionCOP > expressions_;
 };
 
@@ -1164,4 +1164,3 @@ parse_string_to_boolean_expression( std::string const & input_string );
 }
 
 #endif
-

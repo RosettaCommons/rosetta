@@ -65,7 +65,7 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config);
 
 
 // extract include needed for declaration and add it to includes
-void add_relevant_includes(clang::CXXRecordDecl const *C, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level);
+void add_relevant_includes(clang::CXXRecordDecl const *C, IncludeSet &includes, int level);
 
 
 /// Create forward-binding for given class which consist of only class type without any member, function or constructors
@@ -90,7 +90,7 @@ public:
 	virtual void request_bindings_and_skipping(Config const &) override;
 
 	/// extract include needed for this generator and add it to includes vector
-	void add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const override;
+	void add_relevant_includes(IncludeSet &includes) const override;
 
 	/// generate binding code for this object by using external user-provided binder
 	void bind_with(string const &binder, Context &);
@@ -100,14 +100,26 @@ public:
 
 	std::vector<clang::CXXRecordDecl const *> const &dependencies() { return dependencies_; }
 
+
+	string const & prefix_code() { return prefix_code_; }
+
 private:
 	clang::CXXRecordDecl *C;
+
+	std::string prefix_code_;
+	std::vector<clang::CXXMethodDecl const *> prefix_includes;
+	//std::set<clang::NamedDecl const *> prefix_includes_stack;
+
+	//bool call_back_is_abstract = false; // true if call-back structure is still abstract entity
 
 	// vector of classes in which current class depend to be binded (usually base classes)
 	std::vector<clang::CXXRecordDecl const *> dependencies_;
 
 	/// check if any of the base classes is wrappable and if generate a string describing them: , pybind11::base<BaseClass>()
 	std::string maybe_base_classes(Context &context);
+
+	void generate_prefix_code();
+
 
 	// set of members which user asked to exclude from bindings
 	//std::set<clang::NamedDecl const *> members_to_skip;

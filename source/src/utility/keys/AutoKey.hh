@@ -387,13 +387,10 @@ public: // Comparison
 
 	/// @brief AutoKeys are sequential?
 	/// @note  Index-based ordering
+	template< typename UO, typename US, typename UC >
 	friend
-	inline
 	bool
-	sequential( AutoKey const & a, AutoKey const & b )
-	{
-		return ( a.index_ + 1 == b.index_ );
-	}
+	sequential( AutoKey<UO, US, UC> const & a, AutoKey<UO, US, UC> const & b );
 
 
 public: // Static functions
@@ -570,7 +567,10 @@ operator >( AutoKey< O, S, C > const & a, AutoKey< O, S, C > const & b );
 /// @brief AutoKeys are sequential?
 template< typename O, typename S, typename C >
 bool
-sequential( AutoKey< O, S, C > const & a, AutoKey< O, S, C > const & b );
+sequential( AutoKey< O, S, C > const & a, AutoKey< O, S, C > const & b )
+{
+	return ( a.index_ + 1 == b.index_ );
+}
 
 
 } // namespace keys

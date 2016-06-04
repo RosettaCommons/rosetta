@@ -26,6 +26,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.io.hh>
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.hh>

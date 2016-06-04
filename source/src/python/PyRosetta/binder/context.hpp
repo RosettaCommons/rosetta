@@ -30,12 +30,28 @@ namespace binder {
 
 class Context;
 
-/// structure to hold include information and set of NamedDecl objects that was already queried
-// struct Includes
-// {
-// 	std::set<std::string> &includes;
-// 	std::set<clang::NamedDecl const *> stack;
-// };
+// structure to hold include set information and set of NamedDecl objects that was already queried for includes
+class IncludeSet
+{
+	std::vector<std::string> includes_;
+
+	//std::set<clang::NamedDecl const *> stack;
+	std::map<clang::NamedDecl const *, int> stack_;
+
+public:
+	// add include to the set
+	void add_include(std::string const &i) { includes_.push_back(i); }
+
+
+	// check if declaration is already in stack with level at lease as 'level' or lower and add it if it is not - return true if declaration was added
+	bool add_decl(clang::NamedDecl const *, int level);
+
+	std::vector<std::string> const &includes() const { return includes_; }
+
+	// remove all includes and clear up the stack
+	void clear();
+};
+
 
 /// Bindings Generator - represent object that can generate binding info for function, class, enum or data variable
 class Binder
@@ -67,7 +83,7 @@ public:
 	virtual void request_bindings_and_skipping(Config const &) = 0;
 
 	/// extract include needed for this generator and add it to includes vector
-	virtual void add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const = 0;
+	virtual void add_relevant_includes(IncludeSet &) const = 0;
 
 	/// generate binding code for this object and all its dependencies
 	virtual void bind(Context &) = 0;

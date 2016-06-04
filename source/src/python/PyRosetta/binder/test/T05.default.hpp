@@ -23,9 +23,11 @@ A _static_a_;
 
 struct B
 {
+	B(int const a=9, float b=8, A& a2=_static_a_, A* a3=nullptr, int i=0) {}
+
 	void foo(A a1=A(), A& a2=_static_a_, A* a3=nullptr, int i=0) {}
 
-	double foo_member(int i=1, float f=2.0f, double d=4.16) { return i + f + d; }
+	double foo_member(int const i=1, float f=2.0f, double d=4.16) { return i + f + d; }
 
 	double foo_member_const(int i=1, float f=2.0f, double d=4.16) const { return i + f + d; }
 

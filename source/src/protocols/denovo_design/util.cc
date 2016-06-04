@@ -853,13 +853,14 @@ operator<<( std::ostream & os, std::map< std::string, core::Real > const & map )
 	return os;
 }
 
+// dupicate, please use one defined in numeric/xyzVector.io.hh
 /// @brief outputs a vector
-std::ostream &
-operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec )
-{
-	os << "{ " << vec.x() << ", " << vec.y() << ", " << vec.z() << " }";
-	return os;
-}
+// std::ostream &
+// operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec )
+// {
+// 	os << "{ " << vec.x() << ", " << vec.y() << ", " << vec.z() << " }";
+// 	return os;
+// }
 
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< char, core::Size > const & map )

@@ -52,13 +52,13 @@ class SingleFragmentMover : public protocols::moves::Mover {
 	typedef core::kinematics::FoldTreeOP FoldTreeOP;
 	typedef core::kinematics::MoveMapOP MoveMapOP;
 	typedef core::pose::Pose Pose;
-	typedef protocols::moves::Mover Mover;
-	typedef protocols::moves::MoverOP MoverOP;
 
 	typedef boost::unordered_map<Size, Frame> FrameMap;
 	typedef utility::vector1<Chunk> Chunks;
 
 public:
+	typedef protocols::moves::Mover Mover;
+	typedef protocols::moves::MoverOP MoverOP;
 	/// @brief No-argument constructor required by RosettaScripts. The caller is
 	/// responsible for initializing the instance
 	SingleFragmentMover();

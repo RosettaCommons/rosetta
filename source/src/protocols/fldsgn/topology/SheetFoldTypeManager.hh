@@ -16,9 +16,6 @@
 #ifndef INCLUDED_protocols_fldsgn_topology_SheetFoldTypeManager_hh
 #define INCLUDED_protocols_fldsgn_topology_SheetFoldTypeManager_hh
 
-// project headers
-
-// utility headers
 
 // C++ headers
 #include <iostream>
@@ -26,13 +23,16 @@
 
 #include <utility/vector1_bool.hh>
 
-
 namespace protocols {
 namespace fldsgn {
 namespace topology {
 
 /// @brief List of topologies determined by strand pairings
+#ifdef CXX11
+enum SheetFoldType : char {
+#else
 enum SheetFoldType {
+#endif
 
 	// 2strands
 	BABx1 = 1,  // beta-aplpha-beta motif

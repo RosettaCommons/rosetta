@@ -29,7 +29,16 @@ std::string function_arguments(clang::FunctionDecl const *record);
 // Generate function argument list separate by comma
 // name_arguments - if arguments should be named: a1, a2, ...
 // n - number of arguments to generate. If n > num_of_function_parameters - generate only list with num_of_function_parameters
-std::string function_arguments_for_lambda(clang::FunctionDecl const *record, uint n);
+std::pair<std::string, std::string> function_arguments_for_lambda(clang::FunctionDecl const *record, uint n);
+
+
+// Generate function argument list with types separate by comma and with only arguments names
+// name_arguments - if arguments should be named: a1, a2, ...
+std::pair<std::string, std::string> function_arguments_for_py_overload(clang::FunctionDecl const *record);
+
+
+// generate string represetiong class name that could be used in python
+std::string python_function_name(clang::FunctionDecl const *F);
 
 
 // Generate function pointer type string for given function. Example void (*)(int, doule)_ or  void (ClassName::*)(int, doule)_ for memeber function
@@ -49,11 +58,11 @@ bool is_skipping_requested(clang::FunctionDecl const *F, Config const &config);
 
 // Generate binding for given function: .def("foo", (std::string (aaaa::A::*)(int) ) &aaaa::A::foo, "doc")
 // If function have default arguments generate set of bindings by creating separate bindings for each argument with default.
-std::string bind_function(std::string const & module, clang::FunctionDecl *F, Context &);
+std::string bind_function(std::string const & module, clang::FunctionDecl const *F, Context &);
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(clang::FunctionDecl const *F, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level/*, bool for_template_arg_only=false*/);
+void add_relevant_includes(clang::FunctionDecl const *F, IncludeSet &includes, int level/*, bool for_template_arg_only=false*/);
 
 
 /// check if generator can create binding
@@ -79,7 +88,7 @@ public:
 	void request_bindings_and_skipping(Config const &) override;
 
 	/// extract include needed for this generator and add it to includes vector
-	void add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const override;
+	void add_relevant_includes(IncludeSet &includes) const override;
 
 	/// generate binding code for this object and all its dependencies
 	void bind(Context &) override;

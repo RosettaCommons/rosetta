@@ -363,15 +363,10 @@ public: // Methods
 
 
 	/// @brief swap( SmallKeyVector, SmallKeyVector )
+	template< typename UK, typename UT >
 	friend
-	inline
 	void
-	swap( SmallKeyVector & a, SmallKeyVector & b )
-	{
-		a.v_.swap( b.v_ );
-		a.m_.swap( b.m_ );
-		std::swap( a.u_, b.u_ );
-	}
+	swap( SmallKeyVector<UK, UT> & a, SmallKeyVector<UK, UT> & b );
 
 
 	/// @brief Clear the vector
@@ -732,7 +727,12 @@ private: // Fields
 /// @brief swap( SmallKeyVector, SmallKeyVector )
 template< typename K, typename T >
 void
-swap( SmallKeyVector< K, T > & a, SmallKeyVector< K, T > & b );
+swap( SmallKeyVector< K, T > & a, SmallKeyVector< K, T > & b )
+{
+	a.v_.swap( b.v_ );
+	a.m_.swap( b.m_ );
+	std::swap( a.u_, b.u_ );
+}
 
 
 /// @brief SmallKeyVector == SmallKeyVector

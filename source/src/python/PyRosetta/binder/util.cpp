@@ -14,6 +14,7 @@
 #include <util.hpp>
 
 #include <enum.hpp>
+#include <type.hpp>
 #include <class.hpp>
 
 #include <clang/AST/ASTContext.h>
@@ -52,15 +53,21 @@ vector<string> split(string const &buffer, string const & separator)
 
 
 /// Replace all occurrences of string
-string replace(string const &s, string const & from, string const &to)
+void replace(string &r, string const & from, string const &to)
 {
-	string r{s};
 	size_t i = r.size();
 	while( ( i = r.rfind(from, i) ) != string::npos) {
 		r.replace(i, from.size(), to);
 		if(i) --i; else break;
 	}
+}
 
+
+/// Replace all occurrences of string and return result as new string
+string replace_(string const &s, string const & from, string const &to)
+{
+	string r{s};
+	replace(r, from, to);
 	return r;
 }
 
@@ -70,6 +77,15 @@ bool begins_with(std::string const &source, std::string const &prefix)
 {
 	return !source.compare(0, prefix.size(), prefix);
 }
+
+
+/// check if string ends with given prefix
+bool ends_with(std::string const &source, std::string const &prefix)
+{
+	if( prefix.size() > source.size() ) return false;
+	return !source.compare(source.size() - prefix.size(), prefix.size(), prefix);
+}
+
 
 
 string indent(string const &code, string const &indentation)
@@ -120,7 +136,7 @@ string namespace_from_named_decl(NamedDecl const *decl)
 /// generate unique string representation of type represented by given declaration
 string typename_from_type_decl(TypeDecl *decl)
 {
-	return decl->getTypeForDecl()->getCanonicalTypeInternal()/*getCanonicalType()*/.getAsString();
+	return standard_name( decl->getTypeForDecl()->getCanonicalTypeInternal()/*getCanonicalType()*/.getAsString() );
 	//CanQualType 	getCanonicalTypeUnqualified () const
 }
 
@@ -214,6 +230,14 @@ string mangle_type_name(string const &name, bool mark_template)
 
 	if(template_ and mark_template) r.push_back('t');
 	return r;
+}
+
+
+// generate C++ comment line for given declartion along with file path and line number: // core::scoring::vdwaals::VDWAtom file:core/scoring/vdwaals/VDWTrie.hh line:43
+string generate_comment_for_declaration(clang::NamedDecl const *decl)
+{
+	string const include = relevant_include(decl);
+	return "// " + standard_name( decl->getQualifiedNameAsString() ) + " file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(decl) + "\n";
 }
 
 } // namespace binder

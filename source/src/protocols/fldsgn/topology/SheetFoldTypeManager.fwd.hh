@@ -20,11 +20,14 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
+#ifdef CXX11
+enum SheetFoldType : char;
+#else
+enum SheetFoldType;
+#endif
 
-	enum SheetFoldType;
-	typedef utility::vector1< SheetFoldType > SheetFoldTypes;
-	class SheetFoldTypeManager;
-
+typedef utility::vector1< SheetFoldType > SheetFoldTypes;
+class SheetFoldTypeManager;
 
 } // namespace topology
 } // namespace fldsgn

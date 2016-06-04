@@ -1,0 +1,107 @@
+// File: T09_overload.cpp
+#include <T09.overload.hpp> // A1
+#include <T09.overload.hpp> // A1::A1
+#include <T09.overload.hpp> // A2
+#include <T09.overload.hpp> // A2::A2
+#include <T09.overload.hpp> // A2::f
+#include <T09.overload.hpp> // A3
+#include <T09.overload.hpp> // A3::A3
+#include <T09.overload.hpp> // A3::f
+#include <T09.overload.hpp> // A4
+#include <T09.overload.hpp> // A4::A4
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+#endif
+
+// A2 file:T09.overload.hpp line:21
+struct PyCallBack_A2 : public A2 {
+	using A2::A2;
+
+	using _binder_base_ = A2;
+
+	void f() override { PYBIND11_OVERLOAD_NAME(void, _binder_base_, "f", A2::f); }
+};
+
+// A3 file:T09.overload.hpp line:28
+struct PyCallBack_A3 : public A3 {
+	using A3::A3;
+
+	using _binder_base_ = A3;
+
+	void f() override { PYBIND11_OVERLOAD_PURE_NAME(void, _binder_base_, "f", A3::f); }
+};
+
+void bind_T09_overload(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	{ // A1 file:T09.overload.hpp line:16
+		pybind11::class_<A1, std::shared_ptr<A1>> cl(M(""), "A1");
+		pybind11::handle cl_type = cl;
+
+		cl.def("__init__", [](A1 *self_) { new (self_) A1(); }, "doc");
+		cl.def(pybind11::init<int>(), pybind11::arg("a"));
+
+	}
+	{ // A2 file:T09.overload.hpp line:21
+		pybind11::class_<A2, std::shared_ptr<A2>, PyCallBack_A2> cl(M(""), "A2");
+		pybind11::handle cl_type = cl;
+
+		cl.def("__init__", [cl_type](pybind11::handle self_) { if (self_.get_type() == cl_type) new (self_.cast<A2 *>()) A2(); else new (self_.cast<PyCallBack_A2 *>()) PyCallBack_A2(); }, "doc");
+		cl.def(pybind11::init<int>(), pybind11::arg("a"));
+
+		cl.def("f", (void (A2::*)()) &A2::f, "doc");
+	}
+	{ // A3 file:T09.overload.hpp line:28
+		pybind11::class_<A3, std::shared_ptr<A3>, PyCallBack_A3> cl(M(""), "A3");
+		pybind11::handle cl_type = cl;
+
+		cl.def("__init__", [](PyCallBack_A3 *self_) { new (self_) PyCallBack_A3(); }, "doc");
+		cl.def(pybind11::init<int>(), pybind11::arg("a"));
+
+		cl.def("f", (void (A3::*)()) &A3::f, "doc");
+	}
+	{ // A4 file:T09.overload.hpp line:34
+		pybind11::class_<A4, std::shared_ptr<A4>> cl(M(""), "A4");
+		pybind11::handle cl_type = cl;
+
+	}
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T09_overload(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T09_overload) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T09_overload", "T09_overload module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T09_overload(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T09_overload.sources
+// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T09_overload.cpp
+// T09_overload.cpp

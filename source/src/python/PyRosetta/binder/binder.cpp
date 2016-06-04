@@ -82,8 +82,9 @@ cl::opt<bool> O_single_file("single-file", cl::desc("Concatenate all binder outp
 class ClassVisitor : public RecursiveASTVisitor<ClassVisitor>
 {
 public:
-    explicit ClassVisitor(DeclContext *dc) : decl_context(dc) {}
+    explicit ClassVisitor(DeclContext *dc) /*: decl_context(dc)*/ {}
 
+	virtual ~ClassVisitor() {}
 
 	virtual bool VisitEnumDecl(EnumDecl *record) {
 		errs() << "ClassVisitor EnumDecl: " << record->getQualifiedNameAsString() << "\n";
@@ -92,7 +93,7 @@ public:
 	}
 
 private:
-    DeclContext *decl_context;
+    //DeclContext *decl_context;
 };
 
 string wrap_CXXRecordDecl(CXXRecordDecl *R)
@@ -130,6 +131,8 @@ public:
 
 		if( O_config.size() ) config.read(O_config);
 	}
+
+	virtual ~BinderVisitor() {}
 
 	bool shouldVisitTemplateInstantiations () const { return true; }
 

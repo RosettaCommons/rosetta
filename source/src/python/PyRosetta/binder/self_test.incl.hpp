@@ -16,8 +16,8 @@ typedef EA QWE;
 
 
 
-// class A
-// {};
+class A
+{};
 
 // template <class T>
 // class AT

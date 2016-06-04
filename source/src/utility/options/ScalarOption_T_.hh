@@ -504,7 +504,7 @@ public: // Methods
 	legal_check( Value const & value_a ) const
 	{
 		if ( ! legal_value( value_a ) ) {
-			mpi_safe_std_err("ERROR: Illegal value specified for option -"+id()+" : "+value_string_string_of(value_a));
+			mpi_safe_std_err("ERROR: Illegal value specified for option -"+id()+" : "+value_string_of(value_a));
 			std::exit( EXIT_FAILURE );
 		}
 	}

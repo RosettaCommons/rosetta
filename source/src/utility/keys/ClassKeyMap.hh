@@ -281,14 +281,10 @@ public: // Methods
 
 
 	/// @brief swap( ClassKeyMap, ClassKeyMap )
+	template< typename UK, typename UT, typename UC >
 	friend
-	inline
 	void
-	swap( ClassKeyMap & a, ClassKeyMap & b )
-	{
-		a.v_.swap( b.v_ );
-	}
-
+	swap( ClassKeyMap< UK, UT, UC > & a, ClassKeyMap< UK, UT, UC > & b );
 
 	/// @brief Clear the vector
 	inline
@@ -701,7 +697,10 @@ private: // Fields
 /// @brief swap( ClassKeyMap, ClassKeyMap )
 template< typename K, typename T, typename C >
 void
-swap( ClassKeyMap< K, T, C > & a, ClassKeyMap< K, T, C > & b );
+swap( ClassKeyMap< K, T, C > & a, ClassKeyMap< K, T, C > & b )
+{
+	a.v_.swap( b.v_ );
+}
 
 
 /// @brief ClassKeyMap == ClassKeyMap

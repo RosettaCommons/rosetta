@@ -153,7 +153,7 @@ private:
 
 class EdgeStandScore : public RigidScore {
 public:
-	EdgeStandScore();
+	//EdgeStandScore();
 	virtual ~EdgeStandScore(){}
 	// Undefined, commenting out to fix PyRosetta build  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
@@ -162,7 +162,7 @@ private:
 
 class HelixScore : public RigidScore {
 public:
-	HelixScore();
+	//HelixScore();
 	virtual ~HelixScore(){}
 	// Undefined, commenting out to fix PyRosetta build  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
@@ -170,7 +170,7 @@ private:
 
 class BuriedPolarScore : public RigidScore {
 public:
-	BuriedPolarScore(); // c'tor should store the buriend unsat polar coords
+	//BuriedPolarScore(); // c'tor should store the buriend unsat polar coords
 	virtual ~BuriedPolarScore(){}
 	// Undefined, commenting out to fix PyRosetta build
 	// core::Real score( Xforms const & x1, Xforms const & x2 ) const;

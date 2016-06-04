@@ -27,8 +27,10 @@
 
 using namespace llvm;
 using namespace clang;
+
 using std::string;
 using std::vector;
+using std::make_pair;
 
 
 namespace binder {
@@ -99,9 +101,8 @@ string relevant_include(NamedDecl const *decl)
 
 
 // extract include path needed for declaration itself (without template dependency if any), do nothing if include could not be found (ie for build-in's)
-void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includes/*, std::set<clang::NamedDecl const *> &stack*/)
+void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*, std::set<clang::NamedDecl const *> &stack*/)
 {
-	using std::make_pair;
 	static vector< std::pair<string, string> > const name_map = {
 		make_pair("std::allocator",        "<memory>"),
 		make_pair("std::basic_string",     "<string>"),
@@ -116,6 +117,11 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		make_pair("std::vector",           "<vector>"),
 
 		make_pair("__gnu_cxx::__normal_iterator", "<iterator>"),
+
+		make_pair("std::__1::basic_string<char,std::__1::char_traits<char>,std::__1::allocator<char>>", "<string>"),
+		make_pair("std::__1::basic_streambuf<char,std::__1::char_traits<char>>",                        "<streambuf>"),
+		make_pair("std::__1::basic_istream<char,std::__1::char_traits<char>>",                          "<istream>"),
+		make_pair("std::__1::basic_iostream<char,std::__1::char_traits<char>>",                         "<ostream>"),
 	};
 
 	static vector< std::pair<string, string> > const include_map = {
@@ -141,17 +147,15 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 		make_pair("<bits/gthr-default.h>", "<pthread.h>"),
 	};
 
-
 	string name = decl->getQualifiedNameAsString();
 
 	for(auto & p : name_map) {
 		if( begins_with(name, p.first) ) {
-			includes.push_back(p.second);
-			if(O_annotate_includes) includes.back() += " // " + name;
+			if(O_annotate_includes) includes.add_include( p.second + " // " + name );
+			else includes.add_include(p.second);
 			return;
 		}
 	}
-
 
 	string include = relevant_include(decl);
 
@@ -161,20 +165,20 @@ void add_relevant_include_for_decl(NamedDecl const *decl, vector<string> &includ
 
 	if( include.size() ) {
 		if(O_annotate_includes) include += " // " + name;
-		includes.push_back(include);
+		includes.add_include(include);
 	}
 }
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(QualType const &qt, /*const ASTContext &context,*/ std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int level)
+void add_relevant_includes(QualType const &qt, /*const ASTContext &context,*/ IncludeSet &includes, int level)
 {
 	//QualType qt = qt.getDesugaredType(context);
 	//outs() << "add_relevant_includes(qt): " << qt.getAsString() << "\n";
-	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) add_relevant_includes(pt->getPointeeType(), includes, stack, level);
-	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) add_relevant_includes(rt->getPointeeType(), includes, stack, level);
-	if( CXXRecordDecl *r = qt->getAsCXXRecordDecl() ) add_relevant_includes(r, includes, stack, level);
-	if( EnumDecl *e = dyn_cast_or_null<EnumDecl>( qt->getAsTagDecl() ) ) add_relevant_includes(e, includes, stack, level);
+	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) add_relevant_includes(pt->getPointeeType(), includes, level);
+	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) add_relevant_includes(rt->getPointeeType(), includes, level);
+	if( CXXRecordDecl *r = qt->getAsCXXRecordDecl() ) add_relevant_includes(r, includes, level);
+	if( EnumDecl *e = dyn_cast_or_null<EnumDecl>( qt->getAsTagDecl() ) ) add_relevant_includes(e, includes, level);
 }
 
 
@@ -227,24 +231,42 @@ bool is_bindable(QualType const &qt)
 /// extract type info from QualType if any and bind relative type
 void request_bindings(clang::QualType const &qt, Context &context)
 {
-	//outs() << "request_bindings(clang::QualType,...): " << qt.getAsString() << "\n";
-	if( TagDecl *td = qt->getAsTagDecl() ) {
-		//if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
+	if( /*is_bindable(qt)  and*/  !is_skipping_requested(qt, Config::get()) ) {
+		//outs() << "request_bindings(clang::QualType,...): " << qt.getAsString() << "\n";
+		if( TagDecl *td = qt->getAsTagDecl() ) {
+			//if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
 
-		if( td->isCompleteDefinition()  or  dyn_cast<ClassTemplateSpecializationDecl>(td) ) context.request_bindings( typename_from_type_decl(td) );
-		//if( td->isCompleteDefinition() ) context.request_bindings( typename_from_type_decl(td) );
+			if( td->isCompleteDefinition()  or  dyn_cast<ClassTemplateSpecializationDecl>(td) ) context.request_bindings( typename_from_type_decl(td) );
+			//if( td->isCompleteDefinition() ) context.request_bindings( typename_from_type_decl(td) );
 
-		//else outs() << "void bind(clang::QualType, Context &): isCompleteDefinition is false for: "<< qt.getAsString() << "\n";
-		//context.request_bindings( typename_from_type_decl(td) );
+			//else outs() << "void bind(clang::QualType, Context &): isCompleteDefinition is false for: "<< qt.getAsString() << "\n";
+			//context.request_bindings( typename_from_type_decl(td) );
+		}
+
+		if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) {
+			request_bindings( pt->getPointeeType()/*.getCanonicalType()*/, context );
+		}
+
+		if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) {
+			request_bindings( rt->getPointeeType()/*.getCanonicalType()*/, context );
+		}
 	}
+}
 
-	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) {
-		request_bindings( pt->getPointeeType()/*.getCanonicalType()*/, context );
-	}
 
-	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) {
-		request_bindings( rt->getPointeeType()/*.getCanonicalType()*/, context );
-	}
+// transform give type name to standard form
+string standard_name(string const &type)
+{
+	static vector< std::pair<string, string> > const name_map = {
+		make_pair("std::basic_string<char>", "std::string"),
+
+		make_pair("std::__1::", "std::"), // Mac libc++ put all STD objects into std::__1::
+	};
+
+	string r(type);
+	for(auto & p : name_map) replace(r, p.first, p.second);
+
+	return r;
 }
 
 
@@ -252,13 +274,23 @@ void request_bindings(clang::QualType const &qt, Context &context)
 bool is_python_builtin(NamedDecl const *C)
 {
 	//outs() << "Considering: " << C->getQualifiedNameAsString() << "\n";
-	string name = C->getQualifiedNameAsString();
+	string name = standard_name( C->getQualifiedNameAsString() );
 	//if( begins_with(name, "class ") ) name = name.substr(6); // len("class ")
 
-	static std::vector<string> const known_builtin = {"std::basic_string", "std::allocator", "std::initializer_list", "std::shared_ptr", "std::weak_ptr", "std::enable_shared_from_this",
+	static std::vector<string> const known_builtin = {"std::basic_string", "std::allocator", "std::initializer_list",
+													  "std::__1::basic_string",
+
+													  "std::shared_ptr", "std::weak_ptr", "std::enable_shared_from_this",
+													  //"std::__1::shared_ptr", "std::__1::weak_ptr", "std::__1::allocator",
+
 													  "std::pair", "std::tuple",
+													  //"std::__1::pair", "std::__1::tuple",
+
 													  "std::_Rb_tree_iterator", "std::_Rb_tree_const_iterator", "__gnu_cxx::__normal_iterator",
 													  "std::_List_iterator", "std::_List_const_iterator",
+
+													  "std::__wrap_iter",
+													  //"std::__1::__wrap_iter",
 
 													  "std::less",  // lead to an error in include detection code, probably could be fixed
 

@@ -178,8 +178,9 @@ std::ostream & operator<<( std::ostream & os, std::map< std::pair< std::string, 
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Real > const & map );
 
+// dupicate, please use one defined in numeric/xyzVector.io.hh
 /// @brief outputs a vector
-std::ostream & operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec );
+// std::ostream & operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec );
 
 } // std
 #endif

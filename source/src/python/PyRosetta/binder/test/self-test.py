@@ -69,7 +69,7 @@ def run_test(test_path, build_dir):
     execute('{} Running test...'.format(test), command_line);
 
     command_line = 'cd {build_dir} && clang++ -O3 -shared -std=c++11 -I {pybind11} -I/usr/include/python2.7 -I./.. -I./../.. {root_module}.cpp -o {root_module}.so -fPIC'.format(pybind11=Options.pybind11, root_module=root_module, build_dir=build_dir)
-    execute('{} Comiling binding results...'.format(test), command_line);
+    execute('{} Compiling binding results...'.format(test), command_line);
 
     command_line = "cd {build_dir} && python -c 'import {root_module}'".format(root_module=root_module, build_dir=build_dir)
     execute('{} Testing imports...'.format(test), command_line);

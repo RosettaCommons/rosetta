@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 # -*- coding: utf-8 -*-
 # :noTabs=true: :collapseFolds=10:
 
@@ -12,6 +12,8 @@
 ## @brief  Build PyRosetta
 ## @author Sergey Lyskov
 
+# https://cmake.org/files/v3.5/cmake-3.5.2.tar.gz
+# /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 
 import os, sys, argparse, platform, subprocess, imp, shutil, distutils.dir_util
 
@@ -52,8 +54,10 @@ def get_rosetta_include_directories():
 
 def get_defines():
     ''' return list of #defines '''
-    return 'PYROSETTA BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS CXX11 PTR_STD'.split() + ([] if Options.debug else ['NDEBUG'])
-
+    defines = 'PYROSETTA BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS CXX11 PTR_STD'
+    if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
+    if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
+    return defines.split()
 
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
@@ -133,7 +137,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
     else:
         with open(cmake_lists, 'w') as f: f.write( open(cmake_lists).read() + tool_build_line + '\n' )
 
-    build_dir = prefix+'/llvm/build_' + release + ('.debug' if debug else '.release')
+    build_dir = prefix+'/llvm/build_' + release + '.' + Platform + ('.debug' if debug else '.release')
     if not os.path.isdir(build_dir): os.makedirs(build_dir)
     execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -G Ninja -DCMAKE_BUILD_TYPE={build_type} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON .. && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release'), silent=True)
     print()
@@ -175,8 +179,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
 
     #p = os.path.join(p, 'monolith' if True else 'namespace' )
 
-    p = os.path.join(p, 'debug' if Options.debug  else 'release')
-    #p = os.path.abspath( os.path.join(p, '_build_' if Options.monolith else 'rosetta') )
+    p = os.path.join(p, Options.type.lower())
 
     source_p = p + '/source'
     build_p  = p + '/build'
@@ -234,8 +237,10 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
             defines[lib_name] = ' '.join( G['defines'] )
 
     for l in libs:
-        t  = 'add_library({}\n{})\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s for s in libs[l]] ))
-        t += '\ntarget_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
+        t  = 'add_library({} OBJECT\n{})\n\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s for s in libs[l]] ))
+        t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(l)
+        if defines[l]: t += 'target_compile_options({} PRIVATE {})\n'.format(l, ' '.join( ['-D'+d for d in defines[l].split()] ) )   #  target_compile_definitions
+        #t += 'target_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
         update_source_file(prefix + l + '.cmake', t)
 
     return list( libs.keys() )
@@ -284,8 +289,9 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
 
         sources.sort()
 
-        t  = 'add_library({}\n{})\n'.format(lib, '\n'.join( [ rosetta_source_path + '/src/' + s for s in sources] ))
-        t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
+        t  = 'add_library({} OBJECT\n{})\n\n'.format(lib, '\n'.join( [ rosetta_source_path + '/src/' + s for s in sources] ))
+        t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(lib)
+        #t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
         update_source_file(prefix + lib + '.cmake', t)
 
         libs.append(lib)
@@ -306,11 +312,11 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
     rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join(get_rosetta_include_directories() ) )
     rosetta_cmake += 'add_definitions({})\n'.format(' '.join([ '-D'+d for d in get_defines()] ) )
 
-    cmake = open('template.cmake').read()
+    cmake = open('cmake.template').read()
 
     cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
-    cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources))
-    cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
+    cmake = cmake.replace( '#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
+    cmake = cmake.replace('#%__Rosetta_libraries__%#', '')  # cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
 
     update_source_file(prefix + 'CMakeLists.txt', cmake)
 
@@ -344,7 +350,9 @@ def generate_bindings(rosetta_source_path):
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
 
-    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --annotate-includes --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) )
+    if Platform == 'macos': includes = '-isystem/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1' + includes
+
+    execute('Generating bindings...', 'cd {prefix} && {} --annotate-includes --config {config} --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) ) # --annotate-includes -stdlib=libc++ -x c++
 
     sources = open(prefix+'rosetta.sources').read().split()
 
@@ -355,8 +363,11 @@ def  build_generated_bindings(rosetta_source_path):
     ''' Build generate bindings '''
     prefix = get_binding_build_root(rosetta_source_path, build=True) + '/'
 
-    config = '-DCMAKE_BUILD_TYPE={}'.format('Debug' if Options.debug else 'Release')
-    config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+    config = '-DCMAKE_BUILD_TYPE={}'.format(Options.type)
+
+    if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+
+    # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
 
     execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} ../source'.format(config, prefix=prefix))
 
@@ -371,7 +382,9 @@ def main(args):
 
     parser.add_argument('-j', '--jobs', default=1, type=int, help="Number of processors to use on when building. (default: use all avaliable memory)")
 
-    parser.add_argument("--debug", action="store_true", help="Build bindings in debug mode")
+    #parser.add_argument("--debug", action="store_true", help="Build bindings in debug mode")
+
+    parser.add_argument("--type", default='Release', choices=['Release', 'Debug', 'MinSizeRel', 'RelWithDebInfo'], help="Specify build type")
 
     parser.add_argument('--compiler', default='gcc', help='Compiler to use, defualt is gcc on Linux and clang on Mac')
 
@@ -393,6 +406,8 @@ def main(args):
     binding_build_root = get_binding_build_root(rosetta_source_path)
 
     if Options.print_build_root: print(binding_build_root, end=''); sys.exit(0)
+
+    print('Creating PyRosetta in "{}" mode in: {}'.format(Options.type, binding_build_root))
 
     if not Options.binder: Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder', rosetta_source_path + '/build/prefix', Options.binder_debug)
 

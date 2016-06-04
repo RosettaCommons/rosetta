@@ -16,7 +16,7 @@
 #define _INCLUDED_rosetta_binders_hpp_
 
 #include <pybind11/operators.h>
-#include <pybind11/stl_binders.h>
+#include <pybind11/stl_bind.h>
 
 #include <utility/vectorL.hh>
 #include <utility/vector0.hh>
@@ -25,10 +25,60 @@
 #include <type_traits>
 #include <sstream>
 
+#include <set>
+#include <map>
 
-// Adding Rosetta-specific cases to has_equal_operator_s template specialization
-namespace pybind11 { namespace detail {
+namespace rosetta_binders {
 
+
+// template <typename T, class Allocator>
+// void vector_binder(pybind11::module &m, char const *name, char const * /*allocator name*/) {
+// 	pybind11::vector_binder<T, Allocator, std::shared_ptr< std::vector<T, Allocator> > >(m, name);
+// }
+
+
+template<typename T>
+constexpr auto has_equal_operator(int) -> decltype(std::declval<T>() == std::declval<T>(), std::declval<T>() != std::declval<T>(), bool()) { return true; }
+template<typename T>
+constexpr bool has_equal_operator(...) { return false; }
+
+template<typename T, typename SFINAE = void>
+struct has_equal_operator_s {
+	static const bool value = false;
+};
+template<typename T>
+struct has_equal_operator_s<T>
+{
+	static const bool value = has_equal_operator<T>(0);
+};
+template <typename A>
+struct has_equal_operator_s< std::vector<A> >
+{
+	static const bool value = has_equal_operator_s<A>::value;
+};
+// template <typename A>
+// struct has_equal_operator_s< std::deque<A> >
+// {
+// 	static const bool value = has_equal_operator_s<A>::value;
+// };
+template <typename A>
+struct has_equal_operator_s< std::set<A> >
+{
+	static const bool value = has_equal_operator_s<A>::value;
+};
+template <typename A, typename B>
+struct has_equal_operator_s< std::pair<A,B> >
+{
+	static const bool value = has_equal_operator_s<A>::value and has_equal_operator_s<B>::value;
+};
+template <typename A, typename B>
+struct has_equal_operator_s< std::map<A,B> >
+{
+	static const bool value = has_equal_operator_s<A>::value and has_equal_operator_s<B>::value;
+};
+
+
+// Rosetta specific types
 template <typename A>
 struct has_equal_operator_s< utility::vector0<A> >
 {
@@ -40,23 +90,51 @@ struct has_equal_operator_s< utility::vector1<A> >
 	static const bool value = has_equal_operator_s<A>::value;
 };
 
-} }
 
 
-namespace rosetta_binders {
-
-
-template <typename T, class Allocator>
-void vector_binder(pybind11::module &m, char const *name, char const * /*allocator name*/) {
-	pybind11::vector_binder<T, Allocator, std::shared_ptr< std::vector<T, Allocator> > >(m, name);
+namespace has_insertion_operator_implementation {
+enum class False {};
+struct any_type {
+    template<typename T> any_type(T const&);
+};
+False operator<<(std::ostream const&, any_type const&);
 }
+template<typename T>
+constexpr bool has_insertion_operator() {
+	using namespace has_insertion_operator_implementation;
+	return std::is_same< decltype(std::declval<std::ostream&>() << std::declval<T>()), std::ostream & >::value;
+}
+template<typename T>
+struct has_insertion_operator_s {
+	static const bool value = has_insertion_operator<T>();
+};
+
+
+// template <typename T, typename Iterator, typename... Extra> pybind11::iterator make_iterator(Iterator first, Iterator last, Extra&&... extra) {
+//     typedef pybind11::detail::iterator_state<Iterator> state;
+//     if (!pybind11::detail::get_type_info(typeid(state))) {
+//         pybind11::class_<state>(pybind11::handle(), "")
+//             .def("__iter__", [](state &s) -> state& { return s; })
+//             .def("__next__", [](state &s) -> T {
+//                 if (s.it == s.end)
+//                     throw pybind11::stop_iteration();
+//                 return *s.it++;
+//             }, pybind11::return_value_policy::reference_internal, std::forward<Extra>(extra)...);
+//     }
+//     return (pybind11::iterator) pybind11::cast(state { first, last });
+// }
+// template <typename T, typename Type, typename... Extra> pybind11::iterator make_iterator(Type &value, Extra&&... extra) {
+//     return make_iterator<T>(std::begin(value), std::end(value), extra...);
+// }
+
 
 
 template<typename Vector, platform::SSize L, typename T, typename Allocator>
 class utility_vector_binder
 {
 	using SizeType = typename Vector::size_type;
-
+	using SSizeType = typename Vector::ssize_type;
+    using ItType   = typename Vector::iterator;
 	using Class_ = pybind11::class_<Vector, std::shared_ptr< Vector > >;
 
 
@@ -71,18 +149,6 @@ class utility_vector_binder
 	void maybe_default_constructible(Class_ &cl) {
 		cl.def(pybind11::init<SizeType>());
 		cl.def("resize", (void (Vector::*)(SizeType count)) &Vector::resize, "changes the number of elements stored");
-
-		/// Slicing protocol
-		cl.def("__getitem__", [](Vector const &v, pybind11::slice slice) -> Vector * {
-				pybind11::ssize_t start, stop, step, slicelength;
-				if(!slice.compute(v.size(), &start, &stop, &step, &slicelength))
-					throw pybind11::error_already_set();
-				Vector *seq = new Vector(slicelength);
-				for (int i=0; i<slicelength; ++i) {
-					(*seq)[i] = v[start]; start += step;
-				}
-				return seq;
-			});
 	}
 	template<typename U = T, typename std::enable_if< !std::is_default_constructible<U>::value >::type * = nullptr>
 	void maybe_default_constructible(Class_ &) {}
@@ -96,7 +162,7 @@ class utility_vector_binder
 	void maybe_copy_constructible(Class_ &) {}
 
 
-	template<typename U = T, typename std::enable_if< pybind11::detail::has_equal_operator_s<U>::value >::type * = nullptr>
+	template<typename U = T, typename std::enable_if< has_equal_operator_s<U>::value >::type * = nullptr>
 	void maybe_has_equal_operator(Class_ &cl) {
 	    cl.def(pybind11::self == pybind11::self);
 	    cl.def(pybind11::self != pybind11::self);
@@ -111,11 +177,11 @@ class utility_vector_binder
 
 		cl.def("__contains__", [](Vector const &v, T const &t) { return std::find(v.begin(), v.end(), t) != v.end(); }, "return true if item in the container");
 	}
-	template<typename U = T, typename std::enable_if< !pybind11::detail::has_equal_operator_s<U>::value >::type * = nullptr>
+	template<typename U = T, typename std::enable_if< !has_equal_operator_s<U>::value >::type * = nullptr>
 	void maybe_has_equal_operator(Class_ &) {}
 
 
-	template<typename U = T, typename std::enable_if< pybind11::detail::has_insertion_operator_s<U>::value >::type * = nullptr>
+	template<typename U = T, typename std::enable_if< has_insertion_operator_s<U>::value >::type * = nullptr>
 	void maybe_has_insertion_operator(std::string const &name, Class_ &cl) {
 		cl.def("__repr__", [name](Vector &v) {
 				std::ostringstream s;
@@ -129,7 +195,7 @@ class utility_vector_binder
 			});
 
 	}
-	template<typename U = T, typename std::enable_if< !pybind11::detail::has_insertion_operator_s<U>::value >::type * = nullptr>
+	template<typename U = T, typename std::enable_if< !has_insertion_operator_s<U>::value >::type * = nullptr>
 	void maybe_has_insertion_operator(std::string const &, Class_ &) {}
 
 
@@ -144,11 +210,11 @@ public:
 		maybe_copy_constructible(cl);
 
 		// Element access
-		cl.def("front", [](Vector &v) {
+		cl.def("front", [](Vector &v) -> T {
 				if(v.size()) return v.front();
 				else throw pybind11::index_error();
 			}, "access the first element");
-		cl.def("back", [](Vector &v) {
+		cl.def("back", [](Vector &v) -> T {
 				if(v.size()) return v.back();
 				else throw pybind11::index_error();
 			}, "access the last element ");
@@ -165,7 +231,7 @@ public:
 
 		// Modifiers, Python style
 		cl.def("append", (void (Vector::*)(const T&)) &Vector::push_back, "adds an element to the end");
-		cl.def("insert", [](Vector &v, SizeType i, const T&t) {v.insert(v.begin()+i, t);}, "insert an item at a given position");
+		//cl.def("insert", [](Vector &v, SizeType i, const T&t) {v.insert(v.begin()+i, t);}, "insert an item at a given position");
 		cl.def("extend", [](Vector &v, Vector &src) { v.reserve( v.size() + src.size() ); v.insert(v.end(), src.begin(), src.end()); }, "extend the list by appending all the items in the given vector");
 		cl.def("pop", [](Vector &v) {
 				if(v.size()) {
@@ -190,38 +256,48 @@ public:
 
 
 		// Python friendly bindings
-		#ifdef PYTHON_ABI_VERSION // Python 3+
-			cl.def("__bool__",    [](Vector &v) -> bool { return v.size() != 0; }); // checks whether the container has any elements in it
-		#else
-			cl.def("__nonzero__", [](Vector &v) -> bool { return v.size() != 0; }); // checks whether the container has any elements in it
-		#endif
+		// #ifdef PYTHON_ABI_VERSION // Python 3+
+		// 	cl.def("__bool__",    [](Vector &v) -> bool { return v.size() != 0; }); // checks whether the container has any elements in it
+		// #else
+		// 	cl.def("__nonzero__", [](Vector &v) -> bool { return v.size() != 0; }); // checks whether the container has any elements in it
+		// #endif
 
-		cl.def("__getitem__", [](Vector const &v, SizeType i) {
-				if(i >= v.size()) throw pybind11::index_error();
+		cl.def("__bool__", [](const Vector &v) -> bool {
+				return !v.empty();
+			},
+			"Check whether the list is nonempty");
+
+
+		cl.def("__getitem__", [](Vector const &v, SSizeType i) -> T {
+				if( v.empty()  or i > v.u()  or  i < v.l() ) throw pybind11::index_error();
 				return v[i];
 			});
 
-		cl.def("__setitem__", [](Vector &v, SizeType i, T const & t) {
-				if(i >= v.size()) throw pybind11::index_error();
+		cl.def("__setitem__", [](Vector &v, SSizeType i, T const & t) {
+				if( v.empty()  or  i > v.u()  or  i < v.l() ) throw pybind11::index_error();
 				v[i] = t;
 			});
 
 		cl.def("__len__", &Vector::size);
+		//cl.def("__len__", [](Vector const &v) { return v.size(); } ); // workaround for ld: warning: direct access in ... means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
 
-		cl.def("__iter__", [](Vector &v) { return pybind11::make_iterator(v.begin(), v.end()); },
-			   pybind11::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */);
+		cl.def("__iter__", [](Vector &v) {
+				return pybind11::make_iterator<ItType, T>(v.begin(), v.end());
+			},
+			pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
+			);
 
 		/// Slicing protocol
-		cl.def("__setitem__", [](Vector &v, pybind11::slice slice,  Vector const &value) {
-				pybind11::ssize_t start, stop, step, slicelength;
-				if(!slice.compute(v.size(), &start, &stop, &step, &slicelength))
-					throw pybind11::error_already_set();
-				if((size_t) slicelength != value.size())
-					throw std::runtime_error("Left and right hand size of slice assignment have different sizes!");
-				for(int i=0; i<slicelength; ++i) {
-					v[start] = value[i]; start += step;
-				}
-			});
+		// cl.def("__setitem__", [](Vector &v, pybind11::slice slice,  Vector const &value) {
+		// 		pybind11::ssize_t start, stop, step, slicelength;
+		// 		if(!slice.compute(v.size(), &start, &stop, &step, &slicelength))
+		// 			throw pybind11::error_already_set();
+		// 		if((size_t) slicelength != value.size())
+		// 			throw std::runtime_error("Left and right hand size of slice assignment have different sizes!");
+		// 		for(int i=0; i<slicelength; ++i) {
+		// 			v[start] = value[i]; start += step;
+		// 		}
+		// 	});
 
 		cl.def("l", (SizeType (Vector::*)() const) &Vector::l, "lower index");
 		cl.def("u", (SizeType (Vector::*)() const) &Vector::u, "upper index");

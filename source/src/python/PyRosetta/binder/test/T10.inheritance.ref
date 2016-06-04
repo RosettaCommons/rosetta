@@ -19,22 +19,32 @@ void bind_T10_inheritance(std::function< pybind11::module &(std::string const &n
 {
 	{ // Base file:T10.inheritance.hpp line:20
 		pybind11::class_<Base, std::shared_ptr<Base>> cl(M(""), "Base");
+		pybind11::handle cl_type = cl;
+
 		cl.def(pybind11::init<>());
 		cl.def("foo", (void (Base::*)()) &Base::foo, "doc");
 		cl.def("maybe", (void (Base::*)()) &Base::maybe, "doc");
 	}
 	{ // Delete file:T10.inheritance.hpp line:30
 		pybind11::class_<Delete, std::shared_ptr<Delete>> cl(M(""), "Delete", pybind11::base<Base>());
+		pybind11::handle cl_type = cl;
+
 	}
 	{ // A file:T10.inheritance.hpp line:38
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A");
+		pybind11::handle cl_type = cl;
+
 		cl.def(pybind11::init<>());
-		cl.def(pybind11::init<const class A &>());
+		cl.def(pybind11::init<const class A &>(), pybind11::arg(""));
+
 	}
 	{ // B file:T10.inheritance.hpp line:41
 		pybind11::class_<B, std::shared_ptr<B>> cl(M(""), "B");
+		pybind11::handle cl_type = cl;
+
 		cl.def(pybind11::init<>());
-		cl.def(pybind11::init<const class B &>());
+		cl.def(pybind11::init<const class B &>(), pybind11::arg(""));
+
 	}
 }
 

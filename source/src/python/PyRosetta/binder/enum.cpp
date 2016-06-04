@@ -33,9 +33,10 @@ namespace binder {
 
 
 /// extract include needed for this generator and add it to includes vector
-void add_relevant_includes(clang::EnumDecl const *E, std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack, int /*level*/)
+void add_relevant_includes(clang::EnumDecl const *E, IncludeSet &includes, int level)
 {
-	if( stack.count(E) ) return; else stack.insert(E);
+	//if( stack.count(E) ) return; else stack.insert(E);
+	if( !includes.add_decl(E, level) ) return;
 	add_relevant_include_for_decl(E, includes);
 }
 
@@ -81,9 +82,9 @@ void EnumBinder::request_bindings_and_skipping(Config const &config)
 
 
 /// extract include needed for this generator and add it to includes vector
-void EnumBinder::add_relevant_includes(std::vector<std::string> &includes, std::set<clang::NamedDecl const *> &stack) const
+void EnumBinder::add_relevant_includes(IncludeSet &includes) const
 {
-	binder::add_relevant_includes(E, includes, stack, 0);
+	binder::add_relevant_includes(E, includes, 0);
 }
 
 /// generate binding code for this object and all its dependencies
@@ -92,9 +93,8 @@ void EnumBinder::bind(Context &context)
 	if( is_binded() ) return;
 
 	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(E) );
-	string const include = relevant_include(E);
 
-	code()  = "\t// " + E->getQualifiedNameAsString() + " file:" + include.substr(1, include.size()-2) + " line:" + line_number(E) + "\n";
+	code()  = "\t" + generate_comment_for_declaration(E);
 	code() += bind_enum(module_variable_name, E) + ";\n\n";
 }
 

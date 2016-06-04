@@ -31,6 +31,7 @@ using namespace clang;
 using std::string;
 using std::vector;
 using std::unordered_map;
+using std::make_pair;
 
 using namespace fmt::literals;
 using fmt::format;
@@ -38,6 +39,29 @@ using fmt::format;
 namespace binder {
 
 //const std::string _module_variable_name_{"M"};
+
+
+
+// check if declaration is already in stack with level at lease as 'level' or lower and add it if it is not - return true if declaration was added
+bool IncludeSet::add_decl(clang::NamedDecl const *D, int level)
+{
+	// auto r = stack_.insert( make_pair(D, level) );
+	// if( !r.second  and  (*r.first).second <= level ) return false;
+
+	if( stack_.count(D)  and  stack_[D] <= level ) return false;
+
+	stack_[D] = level;
+	return true;
+}
+
+
+// remove all includes and clear up the stack
+void IncludeSet::clear()
+{
+	includes_.clear();
+	stack_.clear();
+}
+
 
 /// return true if object declared in system header
 bool Binder::is_in_system_header()
@@ -86,7 +110,7 @@ void Context::add(BinderOP &b)
 /// check if forward declaration for CXXRecordDecl needed
 bool Context::is_forward_needed(clang::CXXRecordDecl const *C)
 {
-	return !binded.count( class_qualified_name(C) );
+	return !binded.count( class_qualified_name(C) )  and  !is_python_builtin(C);
 }
 
 
@@ -120,13 +144,13 @@ std::set<string> Context::create_all_nested_namespaces()
 
 
 // generate code for include directives and cleanup the includes vector
-string generate_include_directives(vector<string> &includes)
+string generate_include_directives(IncludeSet const &include_set)
 {
 	string r;
-	for(auto &i : std::set<string>(includes.begin(), includes.end() ) )
+	for(auto &i : std::set<string>(include_set.includes().begin(), include_set.includes().end() ) )
 		if( !Config::get().is_include_skipping_requested(i) ) r += "#include " + i + '\n';
 
-	includes.resize(0);
+	//includes.resize(0);
 	return r;
 }
 
@@ -141,7 +165,8 @@ std::string Context::module_variable_name(std::string const& namespace_)
 void Context::request_bindings(std::string const &type)
 {
 	if( types.count(type)  and  !types[type]->is_binded()  and  types[type]->bindable()  and  !types[type]->skipping_requested()  and  !is_python_builtin( types[type]->named_decl() ) ) {
-		//outs() << "Context::bind: requesting bindings for: " << type << "...\n";
+		//if( begins_with(type, "std::__1::basic_ostream") ) outs() << "Context::bind: requesting bindings for: " << type << "...\n";
+		//if( begins_with(type, "std::basic_ostream") ) outs() << "Context::bind: requesting bindings for: " << type << "...\n";
 		types[type]->request_bindings();
 	}
 	//else outs() << "Context::bind: Could not find generator for type:" << type << "\n";
@@ -184,14 +209,16 @@ string file_name_prefix_for_binder(BinderOP &b)
 
 	string include = relevant_include(decl);
 
-	if( include.size() <= 2 ) { include = "<unknown/unknown.hh>";  errs() << "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!\n"; } //throw std::runtime_error( "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!");
+	if( include.size() <= 2 ) { include = "<unknown/unknown.hh>";  outs() << "Warning: file_name_for_decl could not determent file name for decl: " + string(*b) + ", result is too short!\n"; } //throw std::runtime_error( "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!");
 	include = include.substr(1, include.size()-2);
 
 	//outs() << "qn:" << decl->getQualifiedNameAsString() << " namespace_from_named_decl(decl):" << namespace_from_named_decl(decl) << "\n";
 
-	if( namespace_from_named_decl(decl) == "std" ) include = "std/" +  ( begins_with(include, "bits/") ? include.substr(5) : include );
+	if( namespace_from_named_decl(decl) == "std"  or  begins_with(namespace_from_named_decl(decl), "std::" ) ) include = "std/" +  ( begins_with(include, "bits/") ? include.substr(5) : include );
 
-	return replace( replace( replace( replace(include, ".hh", ""), ".hpp", ""), ".h", ""), ".", "_");
+	//return replace( replace( replace( replace(include, ".hh", ""), ".hpp", ""), ".h", ""), ".", "_");
+	replace(include, ".hh", ""); replace(include, ".hpp", ""); replace(include, ".h", ""); replace(include, ".", "_");
+	return include;
 }
 
 
@@ -249,22 +276,24 @@ void Context::generate(Config const &config)
 			string file_name = np + ( file_names[np] ? "_"+std::to_string(file_names[np]) : "" );
 			++file_names[np];
 
-			string function_name = "bind_" + replace(file_name, "/", "_");
+			string function_name = "bind_" + replace_(file_name, "/", "_");
 			file_name += ".cpp"; //".b.cpp";
 
 			sources.push_back(file_name);
 			binding_function_names.push_back(function_name);
 			//outs() << string(*binders[i]) << " → " << file_name << "\n";
 
-			string code;
+			string code, prefix_code;
 			string namespace_ = namespace_from_named_decl( binders[i]->named_decl() );
-			vector<string> includes;
-			std::set<NamedDecl const *> stack;
+
+			//vector<string> includes;
+			//std::set<NamedDecl const *> stack;
+			IncludeSet includes;
 
 			for(; code.size()<config.maximum_file_length  and  i<binders.size()  and  namespace_==namespace_from_named_decl( binders[i]->named_decl() ); ++i) {
 				//outs() << "Binding: " << string(*binders[i]) << "\n";
 				if( ClassBinder * CB = dynamic_cast<ClassBinder*>( binders[i].get() ) ) {
-					std::vector<clang::CXXRecordDecl const *> const dependencies =CB->dependencies();
+					std::vector<clang::CXXRecordDecl const *> const dependencies = CB->dependencies();
 					for(auto & c : dependencies ) {
 						if( is_forward_needed(c) ) {
 							code += bind_forward_declaration(c, *this);
@@ -273,13 +302,15 @@ void Context::generate(Config const &config)
 						}
 					}
 					add_to_binded( dynamic_cast<CXXRecordDecl*>( CB->named_decl() ) );
+
+					prefix_code += CB->prefix_code();
 				}
 				code += binders[i]->code();
-				binders[i]->add_relevant_includes(includes, stack);
+				binders[i]->add_relevant_includes(includes);
 			}
 			if( i < binders.size() ) --i;
 
-			code = generate_include_directives(includes) + format(module_header, config.includes_code())+ "void " + function_name + module_function_suffix + "\n{\n" + code + "}\n";
+			code = generate_include_directives(includes) + format(module_header, config.includes_code()) + prefix_code + "void " + function_name + module_function_suffix + "\n{\n" + code + "}\n";
 
 			if( O_single_file ) root_module_file_handle << "// File: " << file_name << '\n' << code << "\n\n";
 			else update_source_file(config.prefix, file_name, code);

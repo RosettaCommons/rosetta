@@ -374,13 +374,10 @@ public: // Methods
 
 
 	/// @brief swap( ClassKeyVector, ClassKeyVector )
+	template< typename UK, typename UT, typename UC >
 	friend
-	inline
 	void
-	swap( ClassKeyVector & a, ClassKeyVector & b )
-	{
-		a.v_.swap( b.v_ );
-	}
+	swap( ClassKeyVector< UK, UT, UC > & a, ClassKeyVector< UK, UT, UC > & b );
 
 
 	/// @brief Clear the vector
@@ -836,7 +833,10 @@ private: // Fields
 /// @brief swap( ClassKeyVector, ClassKeyVector )
 template< typename K, typename T, typename C >
 void
-swap( ClassKeyVector< K, T, C > & a, ClassKeyVector< K, T, C > & b );
+swap( ClassKeyVector< K, T, C > & a, ClassKeyVector< K, T, C > & b )
+{
+	a.v_.swap( b.v_ );
+}
 
 
 /// @brief ClassKeyVector == ClassKeyVector
