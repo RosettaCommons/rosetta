@@ -125,7 +125,7 @@ public:
 		utility::vector1< bool > region_residues;
 		utility::vector1< bool > correct_region_residues;
 
-		for (core::Size i = 1; i <=3; ++i){
+		for ( core::Size i = 1; i <=3; ++i ) {
 
 			AntibodyRegionEnum region = static_cast<AntibodyRegionEnum>( i );
 			correct_region_residues = get_region_residues( region );
@@ -140,10 +140,10 @@ public:
 	utility::vector1<bool> get_cdr_residues(utility::vector1< bool > const & cdrs){
 
 		utility::vector1<bool> residues(pose_.total_residue(), false);
-		for (core::Size i = 1; i <= 8; ++i){
+		for ( core::Size i = 1; i <= 8; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-			if (cdrs[ i ]){
-				for (core::Size resnum = ab_info_->get_CDR_start(cdr, pose_); resnum <= ab_info_->get_CDR_end(cdr, pose_); ++resnum){
+			if ( cdrs[ i ] ) {
+				for ( core::Size resnum = ab_info_->get_CDR_start(cdr, pose_); resnum <= ab_info_->get_CDR_end(cdr, pose_); ++resnum ) {
 					//TR << resnum << std::endl;
 					//TR.flush();
 					residues[ resnum ] = true;
@@ -159,8 +159,8 @@ public:
 	utility::vector1<bool> get_region_residues(AntibodyRegionEnum region){
 
 		utility::vector1< bool > region_residues(pose_.total_residue(), false);
-		for (core::Size i = 1; i <= pose_.total_residue(); ++i){
-			if (region == ab_info_->get_region_of_residue(pose_, i)){
+		for ( core::Size i = 1; i <= pose_.total_residue(); ++i ) {
+			if ( region == ab_info_->get_region_of_residue(pose_, i) ) {
 				region_residues[ i ] = true;
 			}
 		}

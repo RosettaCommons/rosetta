@@ -194,7 +194,7 @@ void select_loop_residues(
 
 /// @brief mark loop residues and its neighbors as necessary for one loop.
 /// @details
-///  Uses 10A neighbor graph for neighbors 
+///  Uses 10A neighbor graph for neighbors
 ///  THEN takes distance from selection to neighbors to trim neighbors.
 ///  Excludes disulfide residues.
 utility::vector1<bool> select_loop_residues(

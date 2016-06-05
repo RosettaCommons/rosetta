@@ -32,12 +32,12 @@
 
 static THREAD_LOCAL basic::Tracer TR("GlycanResidueSelectorTest");
 
-	using namespace core::select;
-	using namespace core::select::residue_selector;
-	using core::Size;
+using namespace core::select;
+using namespace core::select::residue_selector;
+using core::Size;
 
 class GlycanResidueSelectorTest : public CxxTest::TestSuite {
-	
+
 
 
 public:
@@ -55,11 +55,11 @@ public:
 		///Vectors to test against
 		utility::vector1< bool > correct_glycan_residues(pose_.total_residue(), false);
 		utility::vector1< bool > correct_single_branch_residues(pose_.total_residue(), false);
-		for (core::Size i = 585; i <= 598; ++i){
+		for ( core::Size i = 585; i <= 598; ++i ) {
 			correct_glycan_residues[ i ] = true;
 		}
 
-		for (core::Size i = 592; i <= 598; ++i){
+		for ( core::Size i = 592; i <= 598; ++i ) {
 			correct_single_branch_residues[ i ] = true;
 		}
 

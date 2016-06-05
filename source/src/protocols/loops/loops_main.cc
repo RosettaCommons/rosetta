@@ -795,21 +795,21 @@ void select_loop_residues(
 
 	if ( include_neighbors ) {
 		fill_tenA_neighbor_residues( pose, map );
-		for (core::Size i = 1; i <= map.size(); ++i){
-			if (map[ i ] && pose.residue( i ).type().is_disulfide_bonded()){
+		for ( core::Size i = 1; i <= map.size(); ++i ) {
+			if ( map[ i ] && pose.residue( i ).type().is_disulfide_bonded() ) {
 				map[ i ] = false;
 			}
 		}
-		
 
-		
-	
+
+
+
 	}
 	// if the neighbor_dist is less than 10A, filter the 10A neighbors to that distance
 	if ( neighbor_dist < 10.0 ) {
 		filter_loop_neighbors_by_distance( pose, map, loops, neighbor_dist );
 	}
-	
+
 	return;
 }
 

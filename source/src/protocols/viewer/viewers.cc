@@ -811,7 +811,7 @@ Vector get_atom_color(
 		return Vector( 1.0, 1.0, 1.0);
 
 	case RHIJU_COLOR :
-		if ( residues[r]->is_virtual(i) || residues[r]->is_repulsive(i)) {
+		if ( residues[r]->is_virtual(i) || residues[r]->is_repulsive(i) ) {
 			if ( residues[r]->has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
 				return Vector( 0.2, 0.2, 0.2 );
 			} else {

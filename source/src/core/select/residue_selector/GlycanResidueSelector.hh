@@ -43,11 +43,11 @@ public:
 
 	/// @brief Constructor.
 	GlycanResidueSelector();
-	
+
 	/// @brief Constructor to select tree residues from branch roots.
 	///   See set_branch_residues for more
 	GlycanResidueSelector( utility::vector1< bool > root_residues );
-	
+
 	/// @brief Set the residue(s) to select from.  These can be the branch points of the glycans or
 	///  carbohydrate residues from which to select the downstream branch from.
 	///
@@ -56,8 +56,8 @@ public:
 	///  Note that the Subset will not include the Root residue, since many times it will be the ASN root.
 	void
 	set_select_from_branch_residues( utility::vector1< bool > root_residues );
-	
-	
+
+
 	/// @brief Destructor.
 	virtual ~GlycanResidueSelector();
 
@@ -90,7 +90,7 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	
+
 	utility::vector1< bool > root_residues_;
 	utility::vector1< std::string > parsed_positions_;
 	std::string ref_pose_name_;

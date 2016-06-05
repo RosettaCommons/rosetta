@@ -376,8 +376,8 @@ MgEnergy::eval_mg_interaction(
 	// [ could instead add as sum, and then do fading on potential near boundaries, as in hbonds. ]
 	Real const mg_lig_score = dist_score * acc_angle_form_factor * v_angle_form_factor_faded;
 
-	//		TR << "MG_LIG_SCORE: from " <<  rsd2.seqpos()  << " to "
-	//			 << rsd1.seqpos()  << " " << rsd1.name3() << " " << rsd1.atom_name( atomno1 ) << " ==> " << mg_lig_score << "   (dist) " << dist_score << "   (acc_angle) " << acc_angle_form_factor << "  (v_angle) " << v_angle_form_factor_faded << std::endl;
+	//  TR << "MG_LIG_SCORE: from " <<  rsd2.seqpos()  << " to "
+	//    << rsd1.seqpos()  << " " << rsd1.name3() << " " << rsd1.atom_name( atomno1 ) << " ==> " << mg_lig_score << "   (dist) " << dist_score << "   (acc_angle) " << acc_angle_form_factor << "  (v_angle) " << v_angle_form_factor_faded << std::endl;
 
 	emap[ mg ]     += mg_lig_score;
 	emap[ mg_lig ] += mg_lig_score;

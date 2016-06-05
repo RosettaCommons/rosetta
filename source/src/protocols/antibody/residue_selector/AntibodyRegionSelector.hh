@@ -42,25 +42,25 @@ public:
 
 	/// @brief Constructor.
 	AntibodyRegionSelector();
-	
+
 	/// @brief Constructor Passing AntibodyInfo
 	AntibodyRegionSelector( AntibodyInfoCOP ab_info );
-	
+
 	/// @brief Constructor giving the AntibodyRegion to select on.
 	AntibodyRegionSelector( AntibodyInfoCOP ab_info, AntibodyRegionEnum region );
-	
+
 	/// @brief Copy Constructor
 	AntibodyRegionSelector( AntibodyRegionSelector const & src);
-	
+
 public:
 
 	void
 	set_region( AntibodyRegionEnum region );
-	
+
 	void
 	set_ab_info( AntibodyInfoCOP ab_info);
-	
-	
+
+
 public:
 
 	/// @brief Destructor.
@@ -101,10 +101,10 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	
+
 	void
 	set_defaults();
-	
+
 private:
 
 	AntibodyInfoCOP ab_info_;
@@ -113,7 +113,7 @@ private:
 	///Needed for default and RS constructor.
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
-	
+
 };
 
 

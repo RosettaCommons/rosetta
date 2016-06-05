@@ -94,5 +94,5 @@ fill_tenA_neighbor_residues(
 } //select
 
 
-#endif	//core/select_util_hh
+#endif //core/select_util_hh
 

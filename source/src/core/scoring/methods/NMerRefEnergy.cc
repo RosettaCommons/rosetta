@@ -147,7 +147,7 @@ void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 		in_stream.open( basic::database::full_name( ref_fname, false ) );
 	}
 	TR << "reading NMerRefEnergy scores from " << ref_fname << std::endl;
-	
+
 	if ( !in_stream.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening NMerRefEnergy file at " + ref_fname );
 	}

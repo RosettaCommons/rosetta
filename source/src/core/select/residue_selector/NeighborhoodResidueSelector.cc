@@ -121,10 +121,10 @@ void
 NeighborhoodResidueSelector::set_focus( utility::vector1< bool > const & focus)
 {
 	clear_focus();
-	for (core::Size i = 1; i <= focus.size(); ++i){
-		if (focus[ i ]) focus_.insert( i );
+	for ( core::Size i = 1; i <= focus.size(); ++i ) {
+		if ( focus[ i ] ) focus_.insert( i );
 	}
-	
+
 }
 
 void
@@ -173,11 +173,9 @@ NeighborhoodResidueSelector::parse_my_tag(
 		ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 		set_focus_selector( selector );
 
-	}
-	else if (tag->hasOption("resnums")) {
+	} else if ( tag->hasOption("resnums") ) {
 		set_focus ( tag->getOption< std::string >( "resnums" ) );
-	}
-	else {
+	} else {
 		throw utility::excn::EXCN_Msg_Exception("You must provide either resnums OR selector to give the focus residues.");
 	}
 
@@ -195,37 +193,35 @@ NeighborhoodResidueSelector::get_focus(
 {
 	debug_assert(pose.total_residue() == subset.size());
 	debug_assert(pose.total_residue() == focus.size());
-	
+
 	bool focus_set = false;
 	if ( focus_selector_ ) {
 		focus = focus_selector_->apply( pose );
 		focus_set = true;
-	}
-	else if (focus_.size() > 0){
+	} else if ( focus_.size() > 0 ) {
 		for ( std::set< Size >::const_iterator it = focus_.begin();
-			it != focus_.end(); ++it ) {
-			
+				it != focus_.end(); ++it ) {
+
 			focus[ *it ] = true;
 			focus_set = true;
-			
+
 		}
-	}
-	else {
-		
+	} else {
+
 		std::set< Size > const res_vec( get_resnum_list( focus_str_, pose ) );
 		for ( std::set< Size >::const_iterator it = res_vec.begin();
-			it != res_vec.end(); ++it ) {
-			
+				it != res_vec.end(); ++it ) {
+
 			focus[ *it ] = true;
 			focus_set = true;
 		}
 	}
-	
-	if (include_focus_in_subset_){
+
+	if ( include_focus_in_subset_ ) {
 		subset = focus;
-		
+
 	}
-	if (! focus_set){
+	if ( ! focus_set ) {
 		throw utility::excn::EXCN_Msg_Exception("Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
 	}
 }
@@ -240,17 +236,17 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	// set subset to focus if option is true.  Parse focus from string, or obtain from residue selector.
 	get_focus(pose, subset, focus_subset);
-	
+
 	debug_assert( focus_subset.size() > 0 );
-	
+
 	utility::vector1< Size > focus_residues = get_residues_from_subset(focus_subset);
-	if ( distance_ > 10.0){
+	if ( distance_ > 10.0 ) {
 		Real const dst_squared = distance_ * distance_;
 		// go through each residue of the pose and check if it's near anything in the focus set
 		for ( Size ii = 1; ii < pose.total_residue() ; ++ii ) {
 			if ( subset[ ii ] ) continue;
 			conformation::Residue const & r1( pose.residue( ii ) );
-			
+
 			for ( core::Size focus_res = 1; focus_res <= focus_residues.size(); ++focus_res ) {
 				conformation::Residue const & r2( pose.residue( focus_res ) );
 				Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
@@ -259,16 +255,14 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 				}
 			} // focus set
 		} // subset
-	}
-	else{
-		if (include_focus_in_subset_){
+	} else {
+		if ( include_focus_in_subset_ ) {
 			fill_neighbor_residues( pose, subset, distance_);
-		}
-		else{
+		} else {
 			subset = get_neighbor_residues(pose, focus_subset, distance_);
 		}
 	}
-	
+
 	return subset;
 }
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/AntibodyRegionSelector.hh
-/// @brief  A simple selector to select residues of particular antibody regions. 
+/// @brief  A simple selector to select residues of particular antibody regions.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Unit headers
@@ -48,7 +48,7 @@ using namespace basic::options;
 /// @brief Constructor.
 ///
 AntibodyRegionSelector::AntibodyRegionSelector():
-    ResidueSelector(),
+	ResidueSelector(),
 	ab_info_(/* NULL */)
 {
 
@@ -109,7 +109,7 @@ core::select::residue_selector::ResidueSelectorOP
 AntibodyRegionSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-			AntibodyRegionSelectorOP( new AntibodyRegionSelector(*this) )
+		AntibodyRegionSelectorOP( new AntibodyRegionSelector(*this) )
 		)
 	);
 }
@@ -171,7 +171,7 @@ ResidueSelectorOP
 AntibodyRegionSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-			AntibodyRegionSelectorOP( new AntibodyRegionSelector )
+		AntibodyRegionSelectorOP( new AntibodyRegionSelector )
 		)
 	);
 }
@@ -209,12 +209,12 @@ AntibodyRegionSelector::apply(
 	core::pose::Pose const & pose
 ) const {
 
-	if (region_ == unknown_ab_region){
+	if ( region_ == unknown_ab_region ) {
 		utility_exit_with_message("AntibodyRegionSelector: Please set the region to select a region.");
 	}
-	
+
 	utility::vector1< bool > subset( pose.total_residue(), false);
-	
+
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
 	if ( ! ab_info_ ) {

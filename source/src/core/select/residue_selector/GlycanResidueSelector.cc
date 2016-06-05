@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/GlycanResidueSelector.hh
-/// @brief  A ResidueSelector for carbohydrates and individual carbohydrate trees. 
+/// @brief  A ResidueSelector for carbohydrates and individual carbohydrate trees.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Unit headers
@@ -53,7 +53,7 @@ GlycanResidueSelector::GlycanResidueSelector():
 	ResidueSelector(),
 	ref_pose_name_("")
 {
-	
+
 }
 
 GlycanResidueSelector::GlycanResidueSelector( utility::vector1< bool > root_residues ):
@@ -69,7 +69,7 @@ GlycanResidueSelector::~GlycanResidueSelector() {}
 
 void
 GlycanResidueSelector::set_select_from_branch_residues(utility::vector1<bool> root_residues){
-	
+
 	root_residues_ = root_residues;
 
 }
@@ -81,7 +81,7 @@ core::select::residue_selector::ResidueSelectorOP
 GlycanResidueSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-			GlycanResidueSelectorOP( new GlycanResidueSelector(*this) )
+		GlycanResidueSelectorOP( new GlycanResidueSelector(*this) )
 		)
 	);
 }
@@ -99,9 +99,9 @@ GlycanResidueSelector::parse_my_tag(
 	} else if ( tag->hasOption("branches") ) {
 		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("branches"), ",'`~+*&|;. ");
 	}
-	
+
 	ref_pose_name_ = tag->getOption< std::string >( "ref_pose_name", ref_pose_name_ );
-	
+
 }
 
 std::string GlycanResidueSelector::get_name() const
@@ -123,17 +123,17 @@ void GlycanResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute(  "branch",      xs_string )
 		+ XMLSchemaAttribute(  "branches",    xs_string )
 		+ XMLSchemaAttribute(  "ref_pose_name", xs_string );
-	
+
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
-	
-	
+
+
 }
 
 ResidueSelectorOP
 GlycanResidueSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-			GlycanResidueSelectorOP( new GlycanResidueSelector )
+		GlycanResidueSelectorOP( new GlycanResidueSelector )
 		)
 	);
 }
@@ -160,52 +160,51 @@ ResidueSubset
 GlycanResidueSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-	
+
 	utility::vector1< bool > root_residues = root_residues_;
-	
+
 	utility::vector1< bool > subset (pose.total_residue(), false);
-	if (parsed_positions_.size() > 0){
+	if ( parsed_positions_.size() > 0 ) {
 		root_residues.resize(pose.total_residue(), false);
 		for ( core::Size i = 1; i <= parsed_positions_.size(); ++ i ) {
 			core::Size resnum = core::pose::parse_resnum( parsed_positions_[ i ], pose);
 			root_residues[ resnum ] = true;
 		}
 	}
-	
-	if (root_residues_.size() > 0){
+
+	if ( root_residues_.size() > 0 ) {
 		for ( core::Size i = 1; i <= root_residues_.size(); ++ i ) {
-		
-			if (! root_residues[ i ] ) continue;
-			
+
+			if ( ! root_residues[ i ] ) continue;
+
 			core::Size resnum = i;
-			
+
 			if ( ref_pose_name_ != "" ) {
 				resnum = pose.corresponding_residue_in_current( resnum, ref_pose_name_ );
 			}
-			
+
 			std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > > res_and_tips;
 
 			res_and_tips = get_carbohydrate_residues_upstream( pose, resnum );
 			utility::vector1< core::Size > branching_residues = res_and_tips.first;
 			//branching_residues.push_back( resnum ); This selects the root and includes it.  Probably not what we want, especially if we select on
-			
+
 			for ( core::Size x = 1; x <= branching_residues.size(); ++x ) {
 				core::Size branching_resnum = branching_residues[ x ];
 				subset[ branching_resnum ] = true;
-			
+
 			}
 		}
-	}
-	else{
-		for (core::Size i = 1; i <= pose.total_residue(); ++i){
-			if (pose.residue( i ).is_carbohydrate()){
+	} else {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( pose.residue( i ).is_carbohydrate() ) {
 				subset[ i ] = true;
 			}
 		}
 	}
-	
+
 	return subset;
-	
+
 }
 
 

@@ -36,8 +36,8 @@ namespace select {
 utility::vector1< Size >
 get_residues_from_subset( utility::vector1< bool > subset, bool select){
 	utility::vector1< Size > residues;
-	for (core::Size i = 1; i <= subset.size(); ++i){
-		if (subset[i] == select){
+	for ( core::Size i = 1; i <= subset.size(); ++i ) {
+		if ( subset[i] == select ) {
 			residues.push_back( i );
 		}
 	}
@@ -54,16 +54,15 @@ get_neighbor_residues(
 )
 {
 	utility::vector1< bool > selection_and_neighbors = residue_positions;
-	
-	if (neighbor_dis <= 10.0){
+
+	if ( neighbor_dis <= 10.0 ) {
 		fill_neighbor_residues(pose, selection_and_neighbors);
 		return selection_and_neighbors;
-	}
-	else {
+	} else {
 		utility_exit_with_message("get_neighbor_residues only currently works for neighbor distances of 10A or less!  Please use NeighborhoodResidueSelector instead");
 	}
 
-	
+
 }
 
 
@@ -75,7 +74,7 @@ fill_neighbor_residues(
 )
 {
 	utility::vector1< bool > selection = residue_positions;
-	
+
 	fill_tenA_neighbor_residues(pose, residue_positions);
 	filter_neighbors_by_distance(pose, selection, residue_positions, neighbor_dis);
 }
@@ -124,7 +123,7 @@ filter_neighbors_by_distance(
 			}
 		}
 	}
-	
+
 
 }
 

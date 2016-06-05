@@ -146,7 +146,7 @@ private:
 	set_cdr_design_fallback_option(std::string const & option);
 
 private:
-	
+
 	std::string instructions_path_;
 	AntibodyEnumManagerCOP ab_manager_;
 	AntibodyDesignEnumManagerCOP design_enum_manager_;

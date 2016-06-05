@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/CDRResidueSelector.hh
-/// @brief  Select CDR residues. 
+/// @brief  Select CDR residues.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Unit headers
@@ -58,7 +58,7 @@ using namespace core::select::residue_selector;
 /// @brief Constructor.
 ///
 CDRResidueSelector::CDRResidueSelector():
-    ResidueSelector(),
+	ResidueSelector(),
 	ab_info_(/* NULL */)
 {
 	set_defaults();
@@ -72,7 +72,7 @@ CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info ):
 }
 
 CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< CDRNameEnum > cdrs ):
-    ResidueSelector(),
+	ResidueSelector(),
 	ab_info_(ab_info)
 {
 	set_defaults();
@@ -80,7 +80,7 @@ CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector
 }
 
 CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< bool > cdrs ):
-    ResidueSelector(),
+	ResidueSelector(),
 	ab_info_(ab_info)
 {
 	set_defaults();
@@ -112,7 +112,7 @@ core::select::residue_selector::ResidueSelectorOP
 CDRResidueSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-			CDRResidueSelectorOP( new CDRResidueSelector(*this) )
+		CDRResidueSelectorOP( new CDRResidueSelector(*this) )
 		)
 	);
 }
@@ -128,7 +128,7 @@ void
 CDRResidueSelector::set_cdrs( utility::vector1< CDRNameEnum > cdrs ){
 	cdrs_.clear();
 	cdrs_.resize(8, false);
-	for (core::Size i = 1; i < cdrs.size(); ++i){
+	for ( core::Size i = 1; i < cdrs.size(); ++i ) {
 		cdrs_[ cdrs[ i ] ] = true;
 	}
 }
@@ -167,7 +167,7 @@ CDRResidueSelector::parse_my_tag(
 		TR << "Setting CDRs from settings" << std::endl;
 		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs", true /* include_cdr4*/);
 	}
-	
+
 	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
 		AntibodyEnumManager manager = AntibodyEnumManager();
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
@@ -205,7 +205,7 @@ ResidueSelectorOP
 CDRResidueSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-			CDRResidueSelectorOP( new CDRResidueSelector )
+		CDRResidueSelectorOP( new CDRResidueSelector )
 		)
 	);
 }
@@ -233,9 +233,9 @@ ResidueSubset
 CDRResidueSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-	
+
 	utility::vector1< bool > subset(pose.total_residue(), false);
-	
+
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
 	if ( ! ab_info_ ) {
@@ -261,11 +261,11 @@ CDRResidueSelector::apply(
 			subset[ resnum ] = true;
 		}
 	}
-	
-	
+
+
 	return subset;
-	
-	
+
+
 }
 
 

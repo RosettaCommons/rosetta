@@ -1366,11 +1366,11 @@ AntibodyInfo::setup_CDR_cluster(const pose::Pose& pose, CDRNameEnum cdr, bool at
 		cdr_cluster_set_->clear( cdr );
 		cdr_cluster_set_->identify_and_set_cdr_cluster( pose, cdr );
 	} else {
-        // here!
-        std::stringstream err;
-        err << "CDRs not found for: " << pose.pdb_info()->name();
-        throw utility::excn::EXCN_Msg_Exception(err.str());
-        // old code results in NULL pointer when CDRs are not found by regex?
+		// here!
+		std::stringstream err;
+		err << "CDRs not found for: " << pose.pdb_info()->name();
+		throw utility::excn::EXCN_Msg_Exception(err.str());
+		// old code results in NULL pointer when CDRs are not found by regex?
 		//cdr_cluster_set_->set_cluster_data(cdr, NULL);
 	}
 }

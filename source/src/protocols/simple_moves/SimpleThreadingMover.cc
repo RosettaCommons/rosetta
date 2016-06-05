@@ -38,7 +38,7 @@ static THREAD_LOCAL basic::Tracer TR("SimpleThreadingMover");
 
 namespace protocols {
 namespace simple_moves {
-	using namespace core::select;
+using namespace core::select;
 
 SimpleThreadingMover::SimpleThreadingMover():
 	protocols::moves::Mover("SimpleThreadingMover")

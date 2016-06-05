@@ -172,12 +172,12 @@ GlycanRelaxMover::parse_my_tag(
 
 	random_start_ = tag->getOption< bool >( "random_start", random_start_);
 	sugar_bb_start_ = tag->getOption< bool >("sugar_bb_start", sugar_bb_start_);
-	
-	if (tag->hasOption("task_operations") ){
+
+	if ( tag->hasOption("task_operations") ) {
 		TaskFactoryOP tf( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 		set_taskfactory( tf );
 	}
-	
+
 	pack_distance_ = tag->getOption< core::Real >("pack_distance", pack_distance_);
 
 }
@@ -261,26 +261,25 @@ GlycanRelaxMover::set_taskfactory(core::pack::task::TaskFactoryCOP tf){
 void
 GlycanRelaxMover::setup_default_task_factory(utility::vector1< bool > const & glycan_positions ){
 	using namespace core::pack::task::operation;
-	
-	
+
+
 	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
 	tf->push_back(InitializeFromCommandlineOP( new InitializeFromCommandline));
-	
+
 	//If a resfile is provided, we just use that and get out.
-	if (option[ OptionKeys::packing::resfile ].user() ){
+	if ( option[ OptionKeys::packing::resfile ].user() ) {
 		tf->push_back( ReadResfileOP( new ReadResfile()) );
-	}
-	else {
-	
+	} else {
+
 		//Select all the NON-glycan and neighbors and then turn them off.
 		NeighborhoodResidueSelectorOP neighbor_selector = NeighborhoodResidueSelectorOP( new NeighborhoodResidueSelector(glycan_positions, pack_distance_, true /* include focus */));
 		PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT());
-		
+
 		OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, neighbor_selector, true /* flip */));
 		tf->push_back( subset_op );
 		tf->push_back( RestrictToRepackingOP( new RestrictToRepacking()));
 	}
-	
+
 	set_taskfactory(tf);
 }
 
@@ -314,9 +313,9 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	TR << "initializing objects " << std::endl;
 	total_glycan_residues_ = 0;
-	
+
 	utility::vector1< bool > glycan_positions( pose.total_residue(), false);
-	
+
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -440,14 +439,14 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 			if ( random_start_ ) {
 				random_sampler->set_torsion_type( torsion_id);
 				random_sampler->set_torsion_to_pose(pose, i);
-				
+
 			} else if ( sugar_bb_start_ ) {
 
 				//Continue if we don't have sugar bb data.  Its ok.
 				try {
 					random_sugar_sampler->set_torsion_type( torsion_id );
 					random_sugar_sampler->set_torsion_to_pose(pose, i);
-					
+
 				} catch ( utility::excn::EXCN_Base& excn ) {
 					continue;
 				}
@@ -513,16 +512,16 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	weighted_random_mover_->add_mover( glycan_small_mover, 0.17142857142857143 );
 	weighted_random_mover_->add_mover( glycan_medium_mover, 0.08571428571428572 );
 	weighted_random_mover_->add_mover( glycan_large_mover, 0.04285714285714286 );
-	
-	if (! tf_ ){
+
+	if ( ! tf_ ) {
 		setup_default_task_factory(glycan_positions);
 	}
-	
+
 	//Setup pack rotamers mover, add it.
 	packer_ = PackRotamersMoverOP( new PackRotamersMover() );
 	packer_->score_function(scorefxn_);
 	packer_->task_factory(tf_);
-	
+
 	weighted_random_mover_->add_mover( packer_, .05);
 
 }
@@ -593,15 +592,15 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 	TR << "energy final: "<< energy << std::endl;
 
 	if ( final_min_ ) {
-	
-		
+
+
 		min_mover_->apply( pose );
 		packer_->apply( pose );
 		min_mover_->apply( pose );
 		packer_->apply( pose);
 		min_mover_->apply( pose );
-		
-		
+
+
 		energy = scorefxn_->score( pose );
 		TR << "energy final post min: "<< energy << std::endl;
 	}
@@ -611,12 +610,12 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 
 	std::string out = "FINAL END "+to_string( scorefxn_->score(pose) );
 	accept_log_.push_back(out);
-	
+
 	//Add Accept log to pose, have it written:
 	for ( core::Size i = 1; i <= accept_log_.size(); ++i ) {
 		core::pose::add_comment(pose, "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
 	}
-	
+
 	mc_->show_counters();
 
 }

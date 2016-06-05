@@ -27,6 +27,7 @@
 //Core Headers
 #include <core/chemical/util.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -161,11 +162,20 @@ void construct_poly_ala_pose(
 			else if ( keep_chirality && pose.residue(i).type().is_d_aa() ) d_positions.push_back(i);
 		}
 		if ( !keep_disulf && ( pose.residue(i).type().is_disulfide_bonded() ) ) {
+			core::Size const bonded_partner( core::conformation::get_disulf_partner( pose.conformation(), i ) );
+			core::conformation::break_disulfide( pose.conformation(), i, bonded_partner );
 			if ( pose.residue(i).type().is_l_aa() || !keep_chirality ) {
 				protocols::simple_moves::MutateResidue mut( i, "ALA" );
 				mut.apply( pose );
 			} else {
 				protocols::simple_moves::MutateResidue mut( i, "DALA" );
+				mut.apply( pose );
+			}
+			if ( pose.residue(bonded_partner).type().is_l_aa() || !keep_chirality ) {
+				protocols::simple_moves::MutateResidue mut( bonded_partner, "ALA" );
+				mut.apply( pose );
+			} else {
+				protocols::simple_moves::MutateResidue mut( bonded_partner, "DALA" );
 				mut.apply( pose );
 			}
 		}
@@ -858,8 +868,8 @@ operator<<( std::ostream & os, std::map< std::string, core::Real > const & map )
 // std::ostream &
 // operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec )
 // {
-// 	os << "{ " << vec.x() << ", " << vec.y() << ", " << vec.z() << " }";
-// 	return os;
+//  os << "{ " << vec.x() << ", " << vec.y() << ", " << vec.z() << " }";
+//  return os;
 // }
 
 /// @brief outputs a map

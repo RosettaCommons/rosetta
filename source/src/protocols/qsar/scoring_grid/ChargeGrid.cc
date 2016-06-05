@@ -242,27 +242,27 @@ core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, c
 core::Real ChargeGrid::nominal_depth(core::Size const & n_atoms) const
 {
 	switch(n_atoms)
-	{
-		case 7 :
-			return(0.4);
-		case 8 :
-			return(0.9);
-		case 9 :
-			return(1.4);
-		case 10 :
-			return(1.9);
-		case 11 :
-			return(2.6);
-		default :
-			if ( n_atoms <= 6 ) {
-				return(0.0);
-			} else if ( n_atoms >= 12 ) {
-				return(4.0);
-			} else {
-				utility_exit_with_message("This should never have happened");
+			{
+			case 7 :
+				return(0.4);
+			case 8 :
+				return(0.9);
+			case 9 :
+				return(1.4);
+			case 10 :
+				return(1.9);
+			case 11 :
+				return(2.6);
+			default :
+				if ( n_atoms <= 6 ) {
+					return(0.0);
+				} else if ( n_atoms >= 12 ) {
+					return(4.0);
+				} else {
+					utility_exit_with_message("This should never have happened");
+				}
+				break;
 			}
-			break;
-	}
 	return(-1.0); //Something has gone rather wrong
 }
 

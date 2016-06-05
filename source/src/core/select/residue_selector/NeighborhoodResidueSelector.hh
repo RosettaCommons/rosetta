@@ -63,40 +63,40 @@ public:
 
 	NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance, bool include_focus_in_subset = true );
 	NeighborhoodResidueSelector( utility::vector1< bool > const & focus, Real distance, bool include_focus_in_subset = true);
-	
+
 	virtual ~NeighborhoodResidueSelector();
 
 public:
-	
+
 	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
 	void
 	set_focus( std::set<Size> const &focus );
-	
+
 	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
 	void
 	set_focus( std::string const & focus_str );
-	
+
 	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
 	void
 	set_focus( utility::vector1< bool > const & focus);
-	
+
 	/// @brief Set a Residue Selector for the focus
 	void
 	set_focus_selector( ResidueSelectorCOP rs );
-	
+
 	/// @brief Set the distance we will be measuring to get neighbors
 	void
 	set_distance( Real distance );
-	
+
 	///@brief Setting to include the fucus in the resulting subset or not. Default is TRUE
 	void
 	set_include_focus_in_subset( bool include_focus);
-	
+
 public:
-	
-	
+
+
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
-	
+
 	virtual void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -109,13 +109,13 @@ public:
 
 	static std::string
 	class_name();
-	
+
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
 
-	
+
 private:
 
 	void
@@ -123,10 +123,10 @@ private:
 
 	void
 	set_defaults();
-	
+
 	void
 	clear_focus();
-	
+
 private:
 
 	// data in focus and focus_string will be stitched together.
@@ -138,9 +138,9 @@ private:
 
 	// focus residues may be selected directly be another ResidueSelector
 	ResidueSelectorCOP focus_selector_;
-	
+
 	bool include_focus_in_subset_;
-	
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

@@ -79,11 +79,11 @@ public:
 	///@brief Set the Movemap
 	void
 	set_movemap(core::kinematics::MoveMapCOP movemap);
-	
+
 	///@brief Set the TaskFactory to control side-chain packing of surrounding amino acids and the OH groups of the glycans.
 	void
 	set_taskfactory(core::pack::task::TaskFactoryCOP tf);
-	
+
 	///@brief Set the ScoreFunction
 	void
 	set_scorefunction( core::scoring::ScoreFunctionCOP scorefxn);
@@ -141,26 +141,26 @@ private:
 		core::kinematics::MoveMapOP mm,
 		core::scoring::ScoreFunctionOP score,
 		core::Size round);
-	
+
 	void
 	setup_default_task_factory(utility::vector1< bool > const & glycan_residues );
-	
+
 private:
 
 	core::kinematics::MoveMapOP full_movemap_;
 	core::kinematics::MoveMapOP glycan_movemap_;
-	
+
 	core::pack::task::TaskFactoryCOP tf_;
-	
+
 	moves::MonteCarloOP mc_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 
 	LinkageConformerMoverOP linkage_mover_;
 	moves::RandomMoverOP weighted_random_mover_;
-	
+
 	simple_moves::MinMoverOP min_mover_;
 	simple_moves::PackRotamersMoverOP packer_;
-	
+
 	core::Size rounds_;
 	core::Real kt_;
 

@@ -105,20 +105,19 @@ OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 	runtime_assert( nres == ptask.total_residue() );
 
 	core::select::residue_selector::ResidueSubset subset;
-	
-	if (user_provided_subset_.size() > 0){
+
+	if ( user_provided_subset_.size() > 0 ) {
 		subset = user_provided_subset_;
-	}
-	else{
+	} else {
 		subset = residue_selector_->apply( pose );
 	}
 
 
 	// Take the opposite of what the selection has chosen.
-	if ( flip_subset_ ){
+	if ( flip_subset_ ) {
 		subset.flip();
 	}
-	
+
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( subset[ ii ] ) op_->apply( ptask.nonconst_residue_task( ii ) );
 	}

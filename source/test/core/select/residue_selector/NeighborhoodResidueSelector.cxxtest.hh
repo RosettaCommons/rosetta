@@ -122,7 +122,7 @@ public:
 	// desired behavior is that the most recent call to set_focus or set_focus_selector
 	// determines which source of focus residues is used
 	void test_NeighborhoodResidueSelector_use_last_provided_source_of_focus() {
-		
+
 		std::set< core::Size > focus_set;
 		focus_set.insert(2);
 		focus_set.insert(3);

@@ -42,30 +42,30 @@ public:
 
 	/// @brief Constructor.
 	CDRResidueSelector();
-	
+
 	/// @brief Constructor giving AntibodyInfo
 	CDRResidueSelector(AntibodyInfoCOP ab_info);
-	
+
 	/// @brief Constructor Specifying CDRs
 	CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< CDRNameEnum > cdrs );
-	
+
 	/// @brief Constructor Specifying CDRs
 	CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< bool > cdrs );
-	
+
 	///@brief Copy Constructor
 	CDRResidueSelector( CDRResidueSelector const & src);
-	
+
 public:
 
 	void
 	set_cdrs( utility::vector1< bool > cdrs );
-	
+
 	void
 	set_cdrs( utility::vector1< CDRNameEnum > cdrs );
-	
+
 	void
 	set_ab_info(AntibodyInfoCOP ab_info);
-	
+
 public:
 
 	/// @brief Destructor.
@@ -110,15 +110,15 @@ private:
 
 	void
 	set_defaults();
-	
+
 
 private:
-	
+
 	AntibodyInfoCOP ab_info_;
 	utility::vector1< bool > cdrs_;
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
-	
+
 };
 
 
