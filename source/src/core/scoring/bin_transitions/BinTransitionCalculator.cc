@@ -74,7 +74,6 @@ void BinTransitionCalculator::load_bin_params( std::string const &filename ) {
 
 	//Check that this object has not already been initialized.
 	runtime_assert_string_msg( !bin_params_loaded(), "In core::scoring::bin_transitions::BinTransitionCalculator::load_bin_params(): A bin params file was already loaded by this object!  BinTransitionCalculator objects are intended to be single-use (as far as bin params are concerned)." );
-	bin_params_loaded_=true;
 
 	//Format the filename:
 	bin_params_file_ = filename;
@@ -110,34 +109,50 @@ void BinTransitionCalculator::load_bin_params( std::string const &filename ) {
 
 	runtime_assert_string_msg( lines.size() > 0, "In core::scoring::bin_transitions::BinTransitionCalculator::load_bin_params(): loaded no lines from the specified bin_params file!" );
 
-	//Dump out the lines to parse:
-	if ( TR.Debug.visible() ) { //CONVERT TO DEBUG MODE LATER!
-		TR.Debug << std::endl << "Lines to parse:" << std::endl;
-		for ( core::Size i=1, imax=lines.size(); i<=imax; ++i ) TR.Debug << lines[i] << std::endl;
-		TR.Debug << std::endl;
-	}
-
-	//Parse the lines in chunks, where each chunk is between a pair of lines that read "BEGIN" and "END":
-	core::Size firstline(0), lastline(0);
-	while ( has_another_matrix(lines, firstline, lastline) ) {
-		BinTransitionDataOP curdata( add_bin_transition_data() );
-		parse_mainchain_torsions( lines, firstline, lastline, curdata ); //Get the number of mainchain torsions in the ith and i+1st residues for the probability matrix defined in this block.
-		initialize_matrix( lines, firstline, lastline, curdata ); //Get the dimensions of the probability matrix, and initialize the storage space in memory (in the BinTransitionData object).
-		set_up_bins( lines, firstline, lastline, curdata); //Get the angle ranges for each bin (ith and i+1st residue), as well as the bin names.
-		populate_matrix( lines, firstline, lastline, curdata ); //Actually read in the transition probabilities and populate the transition matrix.
-		store_properties( lines, firstline, lastline, curdata ); //Store the properties associated with this transition matrix, for the ith and i+1st residues.
-		store_residue_identities( lines, firstline, lastline, curdata); //Store the allowed residue identities for the ith and i+1st residues.
-		curdata->finalize(); //Do the final post-load calculations.
-	}
-
-	if ( TR.Debug.visible() ) TR.Debug << summarize_stored_data( true );
+	parse_lines( lines );
 
 	if ( TR.visible() ) {
 		TR << "Finished read of " << bin_params_file_ << "." << std::endl;
 		TR.flush();
 	}
-	return;
+
+	bin_params_loaded_=true;
 } //load_bin_params()
+
+/// @brief Loads all bin params from a string representing file contents.
+/// @details Provided as an alternative to direct load from disk.
+void
+BinTransitionCalculator::load_bin_params_from_file_contents (
+	std::string const &filecontents
+) {
+	//Check that this object has not already been initialized.
+	runtime_assert_string_msg( !bin_params_loaded(), "In core::scoring::bin_transitions::BinTransitionCalculator::load_bin_params_from_file_contents(): A bin params file was already loaded by this object!  BinTransitionCalculator objects are intended to be single-use (as far as bin params are concerned)." );
+
+	//Split input into lines:
+	std::istringstream infile(filecontents);
+	std::string curline;
+	utility::vector1< std::string > lines;
+	while ( getline(infile, curline) ) {
+		if ( TR.Debug.visible() ) TR.Debug << curline << std::endl;
+		if ( curline.size() < 1 ) continue; //Ignore blank lines.
+		//Find and process comments:
+		std::string::size_type pound = curline.find('#', 0);
+		if ( pound == std::string::npos ) {
+			lines.push_back( curline );
+		} else {
+			lines.push_back(curline.substr(0, pound));
+		}
+	}
+
+	parse_lines( lines );
+
+	if ( TR.visible() ) {
+		TR << "Finished loading bin parameters from file." << std::endl;
+		TR.flush();
+	}
+
+	bin_params_loaded_ = true;
+}
 
 /// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
 /// and the index of the bin within that object.
@@ -686,6 +701,35 @@ BinTransitionCalculator::bin_definition_exists(
 		if ( bin_transition_data_[i]->bin_exists( name ) ) return true;
 	}
 	return false;
+}
+
+/// @brief Given a file split into lines, parse the lines and set up this object.
+///
+void
+BinTransitionCalculator::parse_lines(
+	utility::vector1< std::string> const &lines
+) {
+	//Dump out the lines to parse:
+	if ( TR.Debug.visible() ) { //CONVERT TO DEBUG MODE LATER!
+		TR.Debug << std::endl << "Lines to parse:" << std::endl;
+		for ( core::Size i=1, imax=lines.size(); i<=imax; ++i ) TR.Debug << lines[i] << std::endl;
+		TR.Debug << std::endl;
+	}
+
+	//Parse the lines in chunks, where each chunk is between a pair of lines that read "BEGIN" and "END":
+	core::Size firstline(0), lastline(0);
+	while ( has_another_matrix(lines, firstline, lastline) ) {
+		BinTransitionDataOP curdata( add_bin_transition_data() );
+		parse_mainchain_torsions( lines, firstline, lastline, curdata ); //Get the number of mainchain torsions in the ith and i+1st residues for the probability matrix defined in this block.
+		initialize_matrix( lines, firstline, lastline, curdata ); //Get the dimensions of the probability matrix, and initialize the storage space in memory (in the BinTransitionData object).
+		set_up_bins( lines, firstline, lastline, curdata); //Get the angle ranges for each bin (ith and i+1st residue), as well as the bin names.
+		populate_matrix( lines, firstline, lastline, curdata ); //Actually read in the transition probabilities and populate the transition matrix.
+		store_properties( lines, firstline, lastline, curdata ); //Store the properties associated with this transition matrix, for the ith and i+1st residues.
+		store_residue_identities( lines, firstline, lastline, curdata); //Store the allowed residue identities for the ith and i+1st residues.
+		curdata->finalize(); //Do the final post-load calculations.
+	}
+
+	if ( TR.Debug.visible() ) TR.Debug << summarize_stored_data( true );
 }
 
 /// @brief Given a bin, generate phi and psi values from within the bin, biased by the sub-bin cumulative probability distribution function.

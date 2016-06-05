@@ -111,6 +111,11 @@ public:
 	/// @details Must be called before apply() function.
 	void initialize_and_check();
 
+	/// @brief Load the bin params file baed on a file contents string (instead of loading directly
+	/// from disk) and check that settings are consistent.
+	/// @details Must be called as an alternative to initialize_and_check() before apply() function.
+	void initialize_from_file_contents_and_check( std::string const &filecontents );
+
 
 private: //Private functions
 

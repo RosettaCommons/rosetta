@@ -95,6 +95,21 @@ FastDesign::FastDesign():
 	//read_script_file( "", default_repeats_ );
 }
 
+/// @brief Constructor with some options
+///
+FastDesign::FastDesign(
+	core::scoring::ScoreFunctionOP scorefxn_in,
+	core::Size standard_repeats
+) :
+	FastRelax( scorefxn_in, standard_repeats ),
+	clear_designable_residues_(false),
+	run_count_(0),
+	cgs_()
+{
+	set_enable_design( true );
+}
+
+
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
 FastDesign::~FastDesign()
@@ -126,6 +141,13 @@ FastDesign::clone() const
 	return protocols::moves::MoverOP( new FastDesign(*this) );
 }
 
+/// @brief Create the default task factory.  Must be called before design can occur.
+void
+FastDesign::set_up_default_task_factory() {
+	set_task_factory( create_default_task_factory() );
+}
+
+
 void
 FastDesign::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -136,7 +158,7 @@ FastDesign::parse_my_tag(
 {
 	// make sure we create a task factory before parsing FastRelax::parse_my_tag
 	// otherwise no design will occur
-	set_task_factory( create_default_task_factory() );
+	set_up_default_task_factory();
 	FastRelax::parse_my_tag( tag, data, filters, movers, pose );
 
 	clear_designable_residues_ = tag->getOption< bool >( "clear_designable_residues", clear_designable_residues_ );

@@ -282,6 +282,12 @@ public:
 	///
 	void initialize_from_file( std::string const &filename );
 
+	/// @brief Initialize from a string in the format of a .comp file.
+	/// @details Allows external code to initialize object without having it read
+	/// directly from disk.
+	void initialize_from_file_contents( std::string const &filecontents );
+
+
 public:
 
 	/***********************

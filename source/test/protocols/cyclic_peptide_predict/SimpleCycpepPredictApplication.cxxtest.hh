@@ -372,4 +372,51 @@ public:
 
 	}
 
+	/// @brief Test the read-in of files defining what residues we can and can't design with.
+	/// @details This is not scorefunction-dependent, so I am not adding this to the beta_nov15 tests.
+	void test_designfile_read() {
+		TR << "Running SimpleCycpepPredictApplicationTests::test_designfile_read()." << std::endl;
+		TR << "This tests the read-in of files specifying what residues can be used at what positions." << std::endl;
+		TR << "For questions, contact Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
+
+		std::map < core::Size, utility::vector1 < std::string > > allowed_canonicals;
+		std::map < core::Size, utility::vector1 < std::string > > allowed_noncanonicals;
+
+		protocols::cyclic_peptide_predict::read_peptide_design_file( "protocols/cyclic_peptide_predict/design_setup_test.txt", allowed_canonicals, allowed_noncanonicals );
+
+		//Check that we've got entries for the correct things:
+		for ( core::Size i=0, imax=25; i<=imax; ++i ) {
+			if ( i == 0 || i == 1 || i == 3 ) {
+				TS_ASSERT_EQUALS( allowed_canonicals.count(i), 1 );
+			} else {
+				TS_ASSERT_EQUALS( allowed_canonicals.count(i), 0 );
+			}
+		}
+
+		//Check that we've got the correct number of entries:
+		TS_ASSERT_EQUALS( allowed_canonicals.at(0).size(), 2 );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(1).size(), 5 );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(3).size(), 3 );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(0).size(), 1 );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(1).size(), 1 );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(3).size(), 3 );
+
+		//Check that we've got the correct entries:
+		TS_ASSERT_EQUALS( allowed_canonicals.at(0)[1], "ALA"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(0)[2], "GLY"  );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(0)[1], "DARG"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(1)[1], "ALA"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(1)[2], "ASP"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(1)[3], "GLU"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(1)[4], "ARG"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(1)[5], "LYS"  );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(1)[1], "NORLEU"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(3)[1], "PHE"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(3)[2], "VAL"  );
+		TS_ASSERT_EQUALS( allowed_canonicals.at(3)[3], "LEU"  );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(3)[1], "DMET"  );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(3)[2], "DILE"  );
+		TS_ASSERT_EQUALS( allowed_noncanonicals.at(3)[3], "DLEU"  );
+	}
+
 }; //class GeneralizedKIC_Tests

@@ -1068,6 +1068,18 @@ ReadResfile::cache_resfile() {
 	return;
 }
 
+/// @brief Allows code to provide resfile contents, so that this TaskOperation doesn't directly have to
+/// handle file i/o.  Handly on large systems (e.g. Blue Gene), where one might only want the
+/// master process to read a file.
+void
+ReadResfile::set_cached_resfile(
+	std::string const &file_contents
+) {
+	resfile_cache_ = file_contents;
+	file_was_read_ = true;
+}
+
+
 std::string ReadResfile::keyname() { return "ReadResfile"; }
 
 utility::tag::AttributeList
