@@ -197,7 +197,9 @@ HeaderInformation::store_deposition_date(string const & depDate) {
 		TR.Warning << "Unrecognized month in HEADER deposition date " + depDate << mon << std::endl;
 	}
 
-	dep_year_ = boost::lexical_cast<Size>(depDate.substr(7,4));
+	//dep_year_ = boost::lexical_cast<Size>(depDate.substr(7,4));
+	//fd let's not crash with an invalid header line
+	dep_year_ = atoi(depDate.substr(7,4).c_str());
 }
 
 

@@ -20,6 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
@@ -41,6 +42,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 #include <core/kinematics/Jump.hh>
+#include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -82,6 +84,9 @@ OPT_1GRP_KEY(Boolean, denstools, cutonly)
 
 using core::scoring::electron_density::poseCoords;
 using core::scoring::electron_density::poseCoord;
+
+
+static THREAD_LOCAL basic::Tracer TR( "density_tools" );
 
 // map atom names to elements
 //   loosely based on openbabel logic
@@ -229,12 +234,12 @@ densityTools()
 	truncate_hires = 1.0/truncate_hires;
 
 	//  fft
-	std::cout << "Stage 1: FFT rho_obs" << std::endl;
+	TR.Trace << "Stage 1: FFT rho_obs" << std::endl;
 	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), FrhoO);
 	core::scoring::electron_density::getDensityMap().getIntensities(FrhoO, nresobins, lowres, hires, mapI, bin_squared);
 
 	// load model, mask density
-	std::cout << "Stage 2: model processing" << std::endl;
+	TR.Trace << "Stage 2: model processing" << std::endl;
 	bool userpose = (option[ in::file::s ].user());
 
 	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
@@ -252,7 +257,7 @@ densityTools()
 
 		core::scoring::electron_density::getDensityMap().scaleIntensities( trunc, lowres, hires, bin_squared );
 		core::scoring::electron_density::getDensityMap().writeMRC( "map_trunc.mrc" );
-		std::cout << "Wrote truncated map" << std::endl;
+		TR.Trace << "Wrote truncated map" << std::endl;
 		return;
 	}
 
@@ -263,7 +268,7 @@ densityTools()
 		pdbfile = basic::options::start_file();
 		readPDBcoords( pdbfile, pose );
 
-		std::cout << "       : calc rho_c" << std::endl;
+		TR.Trace << "       : calc rho_c" << std::endl;
 		core::scoring::electron_density::getDensityMap().calcRhoC( pose, mask_resolution, rhoC, rhoMask );
 	}
 
@@ -301,12 +306,12 @@ densityTools()
 
 	// collect masked map statistics
 	if ( userpose ) {
-		std::cout << "       : FFT" << std::endl;
+		TR.Trace << "       : FFT" << std::endl;
 		numeric::fourier::fft3(rhoC, FrhoC);
 		numeric::fourier::fft3(rhoMask, FrhoMask);
 
 		// apply mask
-		std::cout << "       : mask map" << std::endl;
+		TR.Trace << "       : mask map" << std::endl;
 		rhoOmask = rhoMask;
 		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
 			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().get_data()[i];
@@ -314,7 +319,7 @@ densityTools()
 		numeric::fourier::fft3(rhoOmask, FrhoOmask);
 
 		// intensities
-		std::cout << "       : get intensities" << std::endl;
+		TR.Trace << "       : get intensities" << std::endl;
 		core::scoring::electron_density::getDensityMap().getIntensities(FrhoC, nresobins, lowres, hires, modelI, bin_squared);
 		core::scoring::electron_density::getDensityMap().getIntensities(FrhoMask, nresobins, lowres, hires, maskI, bin_squared);
 		core::scoring::electron_density::getDensityMap().getIntensities(FrhoOmask, nresobins, lowres, hires, maskedmapI, bin_squared);
@@ -322,19 +327,19 @@ densityTools()
 
 
 	// map vs map stats
-	std::cout << "Stage 3: map vs map" << std::endl;
+	TR.Trace << "Stage 3: map vs map" << std::endl;
 	core::scoring::electron_density::ElectronDensity mapAlt;
 	bool usermap = option[ edensity::alt_mapfile ].user();
 	if ( usermap ) {
 		std::string mapfile = option[ edensity::alt_mapfile ];
 		core::Real mapreso = option[ edensity::mapreso ]();
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
-		std::cout << "       : load alt_map + FFT" << std::endl;
+		TR.Trace << "       : load alt_map + FFT" << std::endl;
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
 		numeric::fourier::fft3(mapAlt.get_data(), FrhoO2);
 
 		if ( userpose ) {
-			std::cout << "       : mask alt_map" << std::endl;
+			TR.Trace << "       : mask alt_map" << std::endl;
 			rhoO2mask = rhoMask;
 			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
 				rhoO2mask[i] *= mapAlt.get_data()[i];
@@ -343,7 +348,7 @@ densityTools()
 		}
 
 		// unmasked
-		std::cout << "       : get FSCs" << std::endl;
+		TR.Trace << "       : get FSCs" << std::endl;
 		core::scoring::electron_density::getDensityMap().getFSC(FrhoO, FrhoO2, nresobins, lowres, hires, mapmapFSC, bin_squared);
 
 		// masked
@@ -355,10 +360,10 @@ densityTools()
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
 	Real modelMapFSCsum=0, maskedModelMapFSCsum=0, RSCC=0;
 
-	std::cout << "Stage 4: model vs map" << std::endl;
+	TR.Trace << "Stage 4: model vs map" << std::endl;
 	if ( userpose ) {
 		if ( perres ) {
-			std::cout << "       : per-res" << std::endl;
+			TR.Trace << "       : per-res" << std::endl;
 			core::chemical::ResidueTypeSetCAP rsd_set;
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 			core::import_pose::pose_from_file( fullpose, pdbfile , core::import_pose::PDB_file);
@@ -382,11 +387,11 @@ densityTools()
 			}
 		}
 
-		std::cout << "       : FSCs" << std::endl;
+		TR.Trace << "       : FSCs" << std::endl;
 		core::scoring::electron_density::getDensityMap().getFSC(FrhoO, FrhoC, nresobins, lowres, hires, modelmapFSC, bin_squared);
 		core::scoring::electron_density::getDensityMap().getFSC(FrhoOmask, FrhoC, nresobins, lowres, hires, maskedModelMapFSC, bin_squared);
 
-		std::cout << "       : RSCC" << std::endl;
+		TR.Trace << "       : RSCC" << std::endl;
 		RSCC = core::scoring::electron_density::getDensityMap().getRSCC( rhoC, rhoMask );
 
 		// sum FSC over reso bins
@@ -400,25 +405,25 @@ densityTools()
 
 	// verbose
 	if ( option[ denstools::verbose ]() ) {
-		std::cerr << "res count";
-		if ( mapI.size() ) std::cerr << " I_map";
-		if ( maskedmapI.size() ) std::cerr << " I_map_masked";
-		if ( modelI.size() ) std::cerr << " I_model" ;
-		if ( maskI.size() ) std::cerr << " I_mask" ;
-		if ( mapmapFSC.size() )  std::cerr << " FSC_mapmap";
-		if ( modelmapFSC.size() )  std::cerr << " FSC_modelmap";
-		if ( maskedModelMapFSC.size() )  std::cerr << " FSC_maskedmodelmap";
-		std::cerr << std::endl;
+		TR << "res count";
+		if ( mapI.size() ) TR << " I_map";
+		if ( maskedmapI.size() ) TR << " I_map_masked";
+		if ( modelI.size() ) TR << " I_model" ;
+		if ( maskI.size() ) TR << " I_mask" ;
+		if ( mapmapFSC.size() )  TR << " FSC_mapmap";
+		if ( modelmapFSC.size() )  TR << " FSC_modelmap";
+		if ( maskedModelMapFSC.size() )  TR << " FSC_maskedmodelmap";
+		TR << std::endl;
 		for ( Size i=1; i<=resobins.size(); ++i ) {
-			std::cerr << resobins[i] << " " << resobin_counts[i];
-			if ( mapI.size() ) std::cerr << " " << mapI[i];
-			if ( maskedmapI.size() ) std::cerr << " " << maskedmapI[i];
-			if ( modelI.size() ) std::cerr << " " << modelI[i];
-			if ( maskI.size() ) std::cerr << " " << maskI[i];
-			if ( mapmapFSC.size() )  std::cerr << " " << mapmapFSC[i];
-			if ( modelmapFSC.size() )  std::cerr << " " << modelmapFSC[i];
-			if ( maskedModelMapFSC.size() )  std::cerr << " " << maskedModelMapFSC[i];
-			std::cerr << std::endl;
+			TR << resobins[i] << " " << resobin_counts[i];
+			if ( mapI.size() ) TR << " " << mapI[i];
+			if ( maskedmapI.size() ) TR << " " << maskedmapI[i];
+			if ( modelI.size() ) TR << " " << modelI[i];
+			if ( maskI.size() ) TR << " " << maskI[i];
+			if ( mapmapFSC.size() )  TR << " " << mapmapFSC[i];
+			if ( modelmapFSC.size() )  TR << " " << modelmapFSC[i];
+			if ( maskedModelMapFSC.size() )  TR << " " << maskedModelMapFSC[i];
+			TR << std::endl;
 		}
 	}
 
@@ -436,14 +441,20 @@ densityTools()
 
 	if ( userpose && option[ denstools::perres ]() ) {
 		for ( core::uint r = 1; r <= perResCC.size(); ++r ) {
-			std::cerr << "PERRESCC residue " << r << " " << perResCC[r] << std::endl;
+			if ( fullpose.pdb_info()) {
+				core::pose::PDBInfoOP pdbinfo = fullpose.pdb_info();
+				TR << "PERRESCC residue " << fullpose.residue(r).name3() << " " << pdbinfo->chain(r) << " " << pdbinfo->number(r) << pdbinfo->icode(r)
+					<< " " << perResCC[r] << std::endl;
+			} else {
+				TR << "PERRESCC residue " << r << " " << perResCC[r] << std::endl;
+			}
 		}
 	}
 
 	// compact
 	if ( userpose ) {
-		std::cerr << pdbfile << "RSCC/FSC/FSCmask: " << RSCC << " " << modelMapFSCsum << " " << maskedModelMapFSCsum;
-		std::cerr << std::endl;
+		TR << pdbfile << " RSCC/FSC/FSCmask: " << RSCC << " " << modelMapFSCsum << " " << maskedModelMapFSCsum;
+		TR << std::endl;
 	}
 }
 
@@ -477,7 +488,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		TR.Trace << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 	return 0;
