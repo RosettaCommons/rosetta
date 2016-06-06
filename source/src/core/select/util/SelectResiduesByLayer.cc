@@ -371,9 +371,11 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 		output.open( "srb.ras" ,std::ios::out );
 	}
 
-	TR << " pore_radius : " <<  pore_radius_ << std::endl;
-	TR << " core ( E, L, H ): " << burial_[ 'E' ] << ' ' << burial_[ 'L' ] << ' ' << burial_[ 'H' ] << std::endl;
-	TR << " surface (E, L, H ): " << surface_[ 'E' ] << ' ' << surface_[ 'L' ] << ' ' << surface_[ 'H' ] << std::endl;
+	if( TR.Debug.visible() ) {
+		TR.Debug << " pore_radius : " <<  pore_radius_ << std::endl;
+		TR.Debug << " core ( E, L, H ): " << burial_[ 'E' ] << ' ' << burial_[ 'L' ] << ' ' << burial_[ 'H' ] << std::endl;
+		TR.Debug << " surface (E, L, H ): " << surface_[ 'E' ] << ' ' << surface_[ 'L' ] << ' ' << surface_[ 'H' ] << std::endl;
+	}
 
 	if ( use_sidechain_neighbors_ ) {
 		rsd_sasa_ = calc_sc_neighbors( pose );
