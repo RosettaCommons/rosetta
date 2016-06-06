@@ -15,6 +15,7 @@
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
+/// @author Jeliazko Jeliazkov ( jeliazkov@jhu.edu )
 
 // Unit headers
 #include <protocols/antibody/snugdock/SnugDockProtocol.hh>
@@ -32,6 +33,11 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+
+// constraints
+#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/func/FlatHarmonicFunc.hh>
 
 
 // Basic headers
@@ -104,13 +110,58 @@ void SnugDockProtocol::register_options() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void SnugDockProtocol::apply( Pose & pose ) {
+	
+	using namespace core::scoring::constraints;
+	
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 
 	if ( ! antibody_info_ ) setup_objects( pose );
+	
+	/// apply low-res auto-generated constraints here
 
 	show( TR );
 	TR << "Setting the input structure's FoldTree for Antibody-Antigen docking." << std::endl;
 	pose.fold_tree( antibody_info_->get_FoldTree_LH_A( pose ) );
+	
+	// set constraints, stolen from AntibodyModelerProtocol (code duplication is bad, but I'm in a rush... sorry!)
+	if ( has_auto_generate_kink_constraint() ) {
+		// Create constraints on-the-fly here.
+		
+		// All of this stuff, and the work that is being done in finalize_setup() for that matter, only needs to happen
+		// once per input. I don't trust the 'fresh_instance' and related settings in the other antibody movers well
+		// enough to actually rely on that, so I'm going to do this every apply for now.
+		
+		// Get relevant residue numbers
+		Size kink_begin = antibody_info_->kink_begin( pose );
+		
+		// Constraints operate on AtomIDs:
+		Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
+		id::AtomID const atom_100x( CA, kink_begin );
+		id::AtomID const atom_101( CA, kink_begin + 1 );
+		id::AtomID const atom_102( CA, kink_begin + 2 );
+		id::AtomID const atom_103( CA, kink_begin + 3 );
+		
+		// Yeah, yeah this is turrible. I'm trying to get stuff done over here, ok?
+		// Eventually this will read from a database file
+		// Generate functions
+		Real alpha_x0 = 0.678; // radians
+		Real alpha_sd = 0.41; // radians
+		Real alpha_tol = 0.205; // radians
+		scoring::func::FlatHarmonicFuncOP alpha_func( new scoring::func::FlatHarmonicFunc( alpha_x0, alpha_sd, alpha_tol ) );
+		
+		Real tau_x0 = 1.761; // radians
+		Real tau_sd = 0.194; // radians
+		Real tau_tol = 0.0972; // radians
+		scoring::func::FlatHarmonicFuncOP tau_func( new scoring::func::FlatHarmonicFunc( tau_x0, tau_sd, tau_tol ) );
+		
+		// Instantiate constraints
+		ConstraintOP tau_cst( new AngleConstraint( atom_100x, atom_101, atom_102, tau_func ) );
+		ConstraintOP alpha_cst( new DihedralConstraint( atom_100x, atom_101, atom_102, atom_103, alpha_func ) );
+		
+		// Cache to pose
+		pose.add_constraint( tau_cst );
+		pose.add_constraint( alpha_cst );
+	}
 
 	TR << "Beginning application of " + docking()->get_name() + "." << std::endl;
 	docking()->apply( pose );
@@ -129,6 +180,8 @@ void SnugDockProtocol::setup_objects( Pose const & pose ) {
 
 	SnugDockOP high_resolution_phase( new SnugDock );
 	high_resolution_phase->set_antibody_info( antibody_info_ );
+	// pass on kink constraint to high-res docking mover
+	if ( has_high_res_kink_constraint() ) { high_resolution_phase->set_high_res_kink_constraint( true ); }
 	docking()->set_docking_highres_mover( high_resolution_phase );
 
 }
@@ -148,6 +201,13 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	low_res_loop_refinement_scorefxn->set_weight( scoring::chainbreak, 1.0 );
 	low_res_loop_refinement_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );
 	low_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
+	
+	// update low-res sfxn with kink constraint, unlike H3 modeling, constriants are not enable in low-res by default
+	// also weights are hard coded, so this should be refactored later
+	if ( has_auto_generate_kink_constraint() ) {
+		low_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
+		low_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
+	}
 
 	low_res_refine_cdr_h2_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
 		antibody_info_,
@@ -188,6 +248,17 @@ void SnugDockProtocol::init() {
 		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
 	} else {
 		h3_filter_tolerance_ = 20;
+	}
+	
+	if ( option[ basic::options::OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
+		set_auto_constraint( option[ basic::options::OptionKeys::antibody::auto_generate_kink_constraint ]() );
+	} else {
+		set_auto_constraint( false ); // default
+	}
+	if ( option[ basic::options::OptionKeys::antibody::all_atom_mode_kink_constraint ].user() ) {
+		set_high_res_kink_constraint( option[ basic::options::OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
+	} else {
+		set_high_res_kink_constraint( false ); //default
 	}
 }
 

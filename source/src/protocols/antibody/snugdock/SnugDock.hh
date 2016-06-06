@@ -81,6 +81,10 @@ public:
 	Size number_of_high_resolution_cycles() const;
 	void number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles );
 	void set_antibody_info( AntibodyInfoOP antibody_info );
+	
+	// Accessors for auto kink-constraint options
+	void set_high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
+	bool has_high_res_kink_constraint() const { return high_res_kink_constraint_; }
 
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, SnugDock const & snugdock );
@@ -104,6 +108,9 @@ private: // data
 	bool h3_filter_;
 	bool debug_;
 	Size h3_filter_tolerance_;
+	
+	// kink constraint
+	bool high_res_kink_constraint_;
 
 private:
 	Size number_of_high_resolution_cycles_;
