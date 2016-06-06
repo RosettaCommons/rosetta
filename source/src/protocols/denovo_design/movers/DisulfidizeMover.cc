@@ -12,7 +12,7 @@
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu) -- Adapting code from remodelmover into a mover
 /// @author Gabe Rocklin (grocklin@uw.edu) -- Disulfide code
-/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Generalizing for D-cysteine
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Generalizing for D-cysteine, plus various bugfixes.
 
 //Unit Headers
 #include <protocols/denovo_design/movers/DisulfidizeMover.hh>
@@ -448,6 +448,8 @@ DisulfidizeMover::mutate_disulfides_to_ala(
 	if ( TR.visible() ) TR << "Mutating current disulfides to ALA" << std::endl;
 	// mutate current disulfides to alanine if we aren't keeping or including them
 	for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
+
+		core::conformation::break_disulfide( pose.conformation(), ds->first, ds->second ); //First, break the existing disulfide
 
 		if ( !pose.residue(ds->first).type().is_d_aa() ) {
 			protocols::simple_moves::MutateResidue mut( ds->first, "ALA" );
