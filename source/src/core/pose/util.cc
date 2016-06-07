@@ -32,9 +32,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/PatchOperation.hh>
+#include <core/chemical/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
@@ -2089,11 +2089,7 @@ setup_dof_to_torsion_map( pose::Pose const & pose, id::DOF_ID_Map< id::TorsionID
 ///////////////////////////////////////////////////////////////////////////////
 // Convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
-setup_dof_mask_from_move_map(
-	kinematics::MoveMap const & mm,
-	pose::Pose const & pose,
-	id::DOF_ID_Mask & dof_mask
-)
+setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const & pose, id::DOF_ID_Mask & dof_mask )
 {
 	using namespace id;
 
@@ -2117,31 +2113,26 @@ setup_dof_mask_from_move_map(
 
 		conformation::Residue const & rsd( pose.residue( i ) );
 
-		// first the backbone torsion angles
-		Size const n_bb_torsions( rsd.mainchain_atoms().size() );
+		// first the main-chain torsion angles
+		Size const n_mainchain_torsions( rsd.mainchain_atoms().size() );
 
-		// Note: In many (most?) cases, a ResidueType with a ring will have overlap between its internal ring torsions
-		// and its main-chain torsions as defined by the AtomTree.  In such cases, the ring atoms may or may not be
-		// considered part of the backbone.  For example, in the case of carbohydrates, phi, psi, and omega are to be
-		// considered backbone torsions, but the other main-chain torsions should be ignored.  If one wants to modify
-		// those other mainchain torsions, they should be treated as nu angles.  This block of code is specific to
-		// carbohydrates, but if any other ResidueTypes have strict definitions of backbone vs ring angles, similar code
-		// could be added here to "subtract out" main chain torsions already covered by nu torsions. ~Labonte
-		Size n_cyclic_main_chain_torsions = 0;  // By default, a residue is acyclic.
-		if ( rsd.is_carbohydrate() ) {
-			if ( rsd.carbohydrate_info()->is_acyclic() ) {
-				n_cyclic_main_chain_torsions = 0;
-			} else if ( rsd.carbohydrate_info()->has_exocyclic_linkage_to_child_mainchain() ) {
-				n_cyclic_main_chain_torsions = n_bb_torsions - 3;  // minus PHI, PSI, & OMEGA, the actual BB torsions
-			} else /* doesn't have an omega angle */ {
-				n_cyclic_main_chain_torsions = n_bb_torsions - 2;  // minus PHI & PSI, the actual BB torsions
-			}
-		}
+		// Note: the BB setting in the MoveMap is a partial misnomer.  It really refers to main-chain torsions.  Other
+		// backbone atoms may necessarily move (such as the carbonyl O of a peptide backbone carbonyl), but only
+		// torsions that are part of the main chain in the AtomTree will be sampled.
+		// In many (most?) cases, a ResidueType with a ring will have overlap between its internal ring torsions
+		// and its main-chain torsions as defined by the AtomTree.  In such cases, while the ring atoms are part of the
+		// backbone, only some of the atoms are part of the main chain.  Changing these main-chain torsions without
+		// also adapting the other backbone ring atoms to form a new ring conformer will "rip open" the ring.  Thus,
+		// for the purposes of the BB setting of the MoveMap, only those main-chain torsions that are not also internal
+		// ring torsions will be moved.  For example, in the case of carbohydrates, phi, psi, and omega are to be
+		// considered main-chain torsions, as the bonds corresponding to them are exocyclic, but the other main-chain
+		// torsions should be ignored by the MoveMap BB setting.  If one wants to modify those other mainchain torsions,
+		// they should be treated as nu angles and the setting for NU in the MoveMap should be used instead. ~Labonte
 
-		for ( uint j( 1 ); j<= n_bb_torsions; ++j ) {
+		for ( uint j( 1 ); j<= n_mainchain_torsions; ++j ) {
 			TorsionID const torsion( i, BB, j );
 			bool mm_setting;
-			if ( j <= n_cyclic_main_chain_torsions ) {
+			if ( is_mainchain_torsion_also_ring_torsion( rsd.type(), j ) ) {
 				mm_setting = false;  // Do not move "backbone" torsions that are part of a ring.
 			} else {
 				mm_setting = mm.get( torsion );

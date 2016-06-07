@@ -24,6 +24,7 @@
 
 // Project Headers
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -630,7 +631,8 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 	using id::TorsionID;
 
 	// Cycle through each movable torsion at the current residue position.
-	Size n_mainchain_torsions( pose.residue( seqpos ).mainchain_atoms().size() );
+	core::conformation::Residue const & res( pose.residue( seqpos ) );
+	Size const n_mainchain_torsions( res.mainchain_atoms().size() );
 	for ( core::uint torsion_num = 1; torsion_num <= n_mainchain_torsions; ++torsion_num ) {
 
 		if ( TR.Debug.visible() ) {
@@ -640,6 +642,7 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 
 		TorsionID const torsion_id( seqpos, BB, torsion_num );
 		if ( ! movemap_->get( torsion_id ) ) { continue; }
+		if ( is_mainchain_torsion_also_ring_torsion( res.type(), torsion_num ) ) { continue; }
 		if ( seqpos == loop_.cut() && torsion_num == n_mainchain_torsions ) { continue; }  // TODO: Do we need this?
 
 		Angle alpha = calculate_ccd_angle( pose, seqpos, torsion_num, direction );

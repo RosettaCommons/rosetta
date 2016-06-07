@@ -29,6 +29,7 @@ sources = {
 		"ResidueGraphTypesTests",
 		"residue_support",
 		"residue_io",
+		"util",
 	],
 	"chemical/carbohydrates" : [
 		"CarbohydrateInfo",

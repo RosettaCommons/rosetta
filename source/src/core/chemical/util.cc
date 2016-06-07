@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/chemical/util.cc
-/// @brief Utilities for modifying and utilizing Residues and other core::chemical classes.
+/// @brief Utilities for modifying and utilizing ResidueTypes and other core::chemical classes.
 
 // Unit headers
 #include <core/chemical/util.hh>
@@ -548,6 +548,33 @@ heavy_atom_names_match( ResidueType const & first, ResidueType const & second ) 
 	// first can't have any names that second doesn't - at least without
 	// second having one that first doesn't (assuming unique names)
 	return true;
+}
+
+
+// Are these main-chain torsions also ring torsions?
+bool
+is_mainchain_torsion_also_ring_torsion( ResidueType const & res_type, uint torsion_index )
+{
+	using namespace std;
+	using namespace utility;
+
+	if ( res_type.is_cyclic() ) {
+		vector1< uint > const mainchain_atom_indices( res_type.mainchain_atoms() );
+		if ( torsion_index < mainchain_atom_indices.size() ) {
+			pair< uint, uint > const mainchain_bond_atom_indices(
+					mainchain_atom_indices[ torsion_index ], mainchain_atom_indices[ torsion_index + 1 ] );
+			Size const n_ring_torsions( res_type.n_nus() );
+			for ( uint i( 1 ); i <= n_ring_torsions; ++i ) {
+				vector1< uint> const ring_torsion_definition( res_type.nu_atoms()[ i ] );
+				pair< uint, uint > const nu_bond_atom_indices(
+						ring_torsion_definition[ 2 ], ring_torsion_definition[ 3 ] );
+				if ( mainchain_bond_atom_indices == nu_bond_atom_indices ) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 }  // namespace chemical
