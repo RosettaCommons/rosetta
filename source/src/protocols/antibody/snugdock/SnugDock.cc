@@ -129,7 +129,7 @@ void SnugDock::apply( Pose & pose ) {
 	show( TR );
 
 	if ( ! high_resolution_step_ ) setup_objects( pose );
-	
+
 	/// Apply high-res auto-generated constraints to pose here.
 
 	/// minimize the CDRs before move to full-atom SnugDock cycle. Remove clashes which may dissociate L-H
@@ -228,7 +228,7 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	high_res_loop_refinement_scorefxn->set_weight( scoring::chainbreak, 1.0 );
 	high_res_loop_refinement_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );
 	high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
-	
+
 	// update high-res sfxn with kink constraint, passed on from SnugDockProtocol
 	if ( has_high_res_kink_constraint() ) {
 		high_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );

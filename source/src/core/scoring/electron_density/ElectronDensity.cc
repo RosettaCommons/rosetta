@@ -1040,7 +1040,7 @@ ElectronDensity::getFSC(
 	for ( Size i=1; i<=nbuckets; ++i ) {
 		denom1[i] = sqrt(denom1[i]);
 		denom2[i] = sqrt(denom2[i]);
-		if (denom1[i]*denom2[i] == 0) {
+		if ( denom1[i]*denom2[i] == 0 ) {
 			FSC[i] = 0.0;
 		} else {
 			FSC[i] = num[i] / (denom1[i]*denom2[i]);

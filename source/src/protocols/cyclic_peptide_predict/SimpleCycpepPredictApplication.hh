@@ -608,6 +608,10 @@ private:
 	/// @details Cached to prevent repeated read from disk.
 	std::string abba_bins_;
 
+	/// @brief Prevent counting of hydrogen bonds to adjacent residues?
+	/// @details Default true.
+	bool do_not_count_adjacent_res_hbonds_;
+
 };
 
 } //cyclic_peptide

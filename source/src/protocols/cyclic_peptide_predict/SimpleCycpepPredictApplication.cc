@@ -41,6 +41,7 @@
 #include <core/select/residue_selector/PhiSelector.hh>
 #include <core/select/residue_selector/BinSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/excn/Exceptions.hh>
@@ -150,6 +151,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file                    );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::do_not_count_adjacent_res_hbonds     );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -226,7 +228,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	comp_file_contents_D_alpha_(""),
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	abba_bins_(""),
+	do_not_count_adjacent_res_hbonds_(true)
 	//TODO -- initialize variables here.
 {
 	initialize_from_options();
@@ -295,7 +298,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
 	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
 	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
-	abba_bins_(src.abba_bins_)
+	abba_bins_(src.abba_bins_),
+	do_not_count_adjacent_res_hbonds_(src.do_not_count_adjacent_res_hbonds_)
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -450,6 +454,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		TR << "One or more .comp files have been provided.  The app will turn on the aa_composition score term during design steps." << std::endl;
 		use_aa_comp_ = true;
 	}
+
+	do_not_count_adjacent_res_hbonds_ = option[basic::options::OptionKeys::cyclic_peptide::do_not_count_adjacent_res_hbonds]();
 
 	return;
 } //initialize_from_options()
@@ -1204,6 +1210,24 @@ SimpleCycpepPredictApplication::set_up_hbond_filter(
 		hbondfilt->set_energy_cutoff( hbond_energy_cutoff_ );
 		hbondfilt->set_partners(0);
 		hbondfilt->set_scorefxn( sfxn );
+
+		//Add ResidueSelectors to ensure that hydrogen bonds with adjacent residues are not counted.
+		if ( do_not_count_adjacent_res_hbonds_ ) {
+			std::stringstream indices_string("");
+			core::Size const avoid1( i - 1 > 0 ? i - 1 : nres );
+			core::Size const avoid2( i + 1 <= nres ? i + 1 : 1 );
+			bool first(true);
+			for ( core::Size j=1; j<=nres; ++j ) {
+				if ( j == i || j == avoid1 || j == avoid2 ) continue; //Skip the current residue and its adjacent residues.
+				if ( first ) { first=false; }
+				else { indices_string << ","; }
+				indices_string << j;
+			}
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			index_selector->set_index( indices_string.str() );
+			hbondfilt->set_selector( index_selector );
+		}
+
 		total_hbond->add_filter( hbondfilt, -0.5, false );
 	}
 	return;

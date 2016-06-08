@@ -62,14 +62,14 @@ public: // boiler plate / virtuals
 
 	/// @brief Associates relevant options with the SnugDockProtocol class
 	static void register_options();
-	
+
 	// Accessors for auto kink-constraint options
 	void set_auto_constraint( bool const setting ) { auto_generate_kink_constraint_ = setting; }
 	void set_high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
-	
+
 	bool has_auto_generate_kink_constraint() const { return auto_generate_kink_constraint_; }
 	bool has_high_res_kink_constraint() const { return high_res_kink_constraint_; }
-	
+
 
 public:
 	void show( std::ostream & out=std::cout ) const;
@@ -97,7 +97,7 @@ private: // data
 	// H3 filter options
 	bool h3_filter_;
 	Size h3_filter_tolerance_;
-	
+
 	// auto kink-constraint options
 	bool auto_generate_kink_constraint_;
 	bool high_res_kink_constraint_;

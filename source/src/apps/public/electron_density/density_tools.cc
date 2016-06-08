@@ -441,7 +441,7 @@ densityTools()
 
 	if ( userpose && option[ denstools::perres ]() ) {
 		for ( core::uint r = 1; r <= perResCC.size(); ++r ) {
-			if ( fullpose.pdb_info()) {
+			if ( fullpose.pdb_info() ) {
 				core::pose::PDBInfoOP pdbinfo = fullpose.pdb_info();
 				TR << "PERRESCC residue " << fullpose.residue(r).name3() << " " << pdbinfo->chain(r) << " " << pdbinfo->number(r) << pdbinfo->icode(r)
 					<< " " << perResCC[r] << std::endl;

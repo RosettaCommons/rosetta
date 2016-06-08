@@ -562,12 +562,12 @@ is_mainchain_torsion_also_ring_torsion( ResidueType const & res_type, uint torsi
 		vector1< uint > const mainchain_atom_indices( res_type.mainchain_atoms() );
 		if ( torsion_index < mainchain_atom_indices.size() ) {
 			pair< uint, uint > const mainchain_bond_atom_indices(
-					mainchain_atom_indices[ torsion_index ], mainchain_atom_indices[ torsion_index + 1 ] );
+				mainchain_atom_indices[ torsion_index ], mainchain_atom_indices[ torsion_index + 1 ] );
 			Size const n_ring_torsions( res_type.n_nus() );
 			for ( uint i( 1 ); i <= n_ring_torsions; ++i ) {
 				vector1< uint> const ring_torsion_definition( res_type.nu_atoms()[ i ] );
 				pair< uint, uint > const nu_bond_atom_indices(
-						ring_torsion_definition[ 2 ], ring_torsion_definition[ 3 ] );
+					ring_torsion_definition[ 2 ], ring_torsion_definition[ 3 ] );
 				if ( mainchain_bond_atom_indices == nu_bond_atom_indices ) {
 					return true;
 				}
