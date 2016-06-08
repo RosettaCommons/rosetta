@@ -46,7 +46,7 @@ public:
 	void setUp() {
 		// shared initialization goes here
 		// need options for a specific filter...
-		core_init_with_additional_options( "-antibody:grafting:exclude_homologs true -antibody:grafting:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:grafting:multi_template_graft true -antibody:grafting:n_multi_templates 3 -antibody:grafting:ocd_cutoff 5" );
+		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 5" );
 		// sets sid on and cutoff to 80%
 		// sets sid cutoff to 60% for FR
 	} //setUp
@@ -314,11 +314,11 @@ public:
 		dummy_br->h1 = "GYTFTNYVMN"; // 90% id
 		dummy_br->h2 = "WINTYTGEPVYADDFKE";
 		dummy_br->h3 = "DYYGSTYPFFAMDY";
-		dummy_br->frh = "VQLEQSGPELKKPGETVKISCKASWVKQAPGKGLKWMGRFAFSLETSASAAYLQINNLKNEDTATYFCARWGQGTTVTVSS";
+		dummy_br->frh = "ELKKPGETVKISCKASWVKQKWMGRFAFSLETSASAAYLQINNLKNEDTATYFCARWGQGTTV";
 		dummy_br->l1 = "RASSSVSTSYLH";
 		dummy_br->l2 = "STSNLAS";
 		dummy_br->l3 = "QQYSGYPYT";
-		dummy_br->frl = "NVLTQSPAIMSASPGEKVTMTCWYNNKSGASPKLWIYGVPARFSGSGSGTSYSLTISSVEAEDAATYYCFGGGTKLEIK";
+		dummy_br->frl = "IMSASPGEKVTMTCWYQQKLWIYGVPARFSGSGYSLTISSVEAEDAATYYCFGGGTKL";
 		dummy_br->pdb = "dummy";
 		dummy_br->alignment_length = 92;
 		dummy_br->bit_score = 0.3;
@@ -329,11 +329,11 @@ public:
 		good_br->h1 = "VYTFTNYVMN"; // filtered on 80% id
 		good_br->h2 = "HGTNVCSF"; // filtered on length (i.e. id =0)
 		good_br->h3 = "DYYGSTYY"; // filtered on length
-		good_br->frh = "ADPDNCTFVLRKTVETGLNDTRISYVKNVGRRPVNYWWWFAFSLETSDCPGIQILQMVPRDMNLDGDGVYTVVLERDAPHH"; // filtered on id--must 60% or less identical
+		good_br->frh = "DNMMRFGGGTSTCKASFFVLLTRPSYSYSLETSASVVFIQINNLKNEDTATYFCARWGQGTTV"; // filtered on id--must 60% or less identical
 		good_br->l1 = "KDHNVTTTR"; // filtered on length
 		good_br->l2 = "LPTNLAS"; // filtered on id
 		good_br->l3 = "WINRARIIT"; // filtered on id
-		good_br->frl = string(58,'X'); //filtered on length
+		good_br->frl = "IMTVCDFRDWAAPTFFNNRMFLIVGPARFSGSGYSLTISCLRAEDAATYYCFGGGTKL";
 		good_br->pdb = "good";
 		good_br->alignment_length = 96;
 		good_br->bit_score = 0.001;

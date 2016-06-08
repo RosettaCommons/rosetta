@@ -61,8 +61,8 @@ SCS_ResultSet SCS_Results::get_result_set(uint row, bool strict)
 	r.h3 = h3.size() > row ? h3[row] : SCS_ResultOP();
 
 	r.l1 = l1.size() > row ? l1[row] : SCS_ResultOP();
-	r.l2 = l1.size() > row ? l1[row] : SCS_ResultOP();
-	r.l3 = l1.size() > row ? l1[row] : SCS_ResultOP();
+	r.l2 = l2.size() > row ? l2[row] : SCS_ResultOP();
+	r.l3 = l3.size() > row ? l3[row] : SCS_ResultOP();
 
 	r.frh = frh.size() > row ? frh[row] : SCS_ResultOP();
 	r.frl = frl.size() > row ? frl[row] : SCS_ResultOP();
@@ -386,7 +386,7 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 
 	for(auto &j : J) {
 		for(auto i = antibody_info_lines.begin(); j.results.size() < N  and  i != antibody_info_lines.end(); ++i) {
-			if( j.sequence.size() == i->at(j.name).size() ) {
+			if( j.name == "orientation" || j.sequence.size() == i->at(j.name).size() ) {
 				SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
 
 				r->padded = true;

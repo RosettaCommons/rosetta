@@ -79,6 +79,8 @@ sources = {
 		"antibody_CR_paratope",
 		"identify_cdr_clusters",
 		"snugdock",
+		"packing_angle",
+		"identify_cdr_clusters",
 	],
 	"public/boinc": [
 		"minirosetta",

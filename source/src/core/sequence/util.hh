@@ -10,6 +10,7 @@
 /// @file src/core/sequence/sequtil.hh
 /// @brief small bundle of utilities for dealing with sequences
 /// @author James Thompson
+/// @author Sergey Lyskov
 
 #ifndef INCLUDED_core_sequence_util_hh
 #define INCLUDED_core_sequence_util_hh
@@ -57,6 +58,10 @@ read_alignment_file(
 utility::vector1< SequenceOP > read_fasta_file( std::string const & filename );
 utility::vector1< std::string > read_fasta_file_str( std::string const & filename );
 std::string read_fasta_file_return_str( std::string const & filename );
+
+///  @brief read sequence from particular section of fasta file (comment starting with '> section'), terminate with failure if section not found
+///         Note: section detection string is case insensitive
+std::string read_fasta_file_section(std::string const & filename, std::string const &section);
 
 /// @brief Return a string of concatenated SequenceCOP sequences
 std::string get_concatenated_sequence( utility::vector1< SequenceCOP > const & fasta_sequences );

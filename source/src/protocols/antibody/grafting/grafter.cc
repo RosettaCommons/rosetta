@@ -16,8 +16,9 @@
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/antibody/grafting/grafter.hh>
-
 #include <protocols/antibody/grafting/exception.hh>
+#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyEnum.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -140,11 +141,16 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 
 		TR << "Sequence after:  " << TR.Bold << j.color << j.pose->sequence() << TR.Reset << std::endl;
 
-		frh->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment" + suffix + ".pdb" );
+		j.pose->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment" + suffix + ".pdb" );
 
 		PoseOP O = orientation->split_by_chain( find_chain(*orientation, j.chain, "orientation" ) );
-		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover(*O, 1 /*ref_start*/,    std::min(O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
-																						     1 /*target_start*/, std::min(O->n_residue(), j.pose->n_residue() ) /*target_end*/, true /*CA_only*/) );
+		
+		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover( *O,
+																																										  1 /*ref_start*/,
+																																										  std::min( O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
+																																										  1 /*target_start*/,
+																																										  std::min(O->n_residue(), j.pose->n_residue() ) /*target_end*/,
+																																										  true /*CA_only*/) );
 		imposer->apply(*j.pose);
 	}
 
@@ -184,7 +190,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	};
 
 	for(auto &g : G) {
-		TR << "Attaching CDR loop: " << TR.Bold << g.name << std::endl;
+		
+		TR << "Attaching CDR loop: " << TR.Bold << g.name << ", from pdb: " << g.pdb << std::endl;
 
 		string pdb_name = database + "/antibody_database/pdb" + g.pdb + "_chothia.pdb";
 		core::pose::PoseOP cdr = core::import_pose::pose_from_file(pdb_name, core::import_pose::PDB_file);
@@ -234,6 +241,32 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		grafter->stop_at_closure(true);  grafter->set_cycles(128);
 
 		grafter->apply(*result);
+	}
+
+	// prior to dumping, restore proper sequence to CDRs as grafter copies over both structure and sequence from the template
+	AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo(*result) );
+	
+	struct{
+		string cdr_name; Size cdr_start; Size cdr_end; string cdr_seq;
+	} H[] {
+		{ "h1", ab_info->get_CDR_start(h1, *result), ab_info->get_CDR_end(h1, *result),  A.h1_sequence() },
+		{ "h2", ab_info->get_CDR_start(h2, *result), ab_info->get_CDR_end(h2, *result),  A.h2_sequence() },
+		{ "h3", ab_info->get_CDR_start(h3, *result), ab_info->get_CDR_end(h3, *result),  A.h3_sequence() },
+		{ "l1", ab_info->get_CDR_start(l1, *result), ab_info->get_CDR_end(l1, *result),  A.l1_sequence() },
+		{ "l2", ab_info->get_CDR_start(l2, *result), ab_info->get_CDR_end(l2, *result),  A.l2_sequence() },
+		{ "l3", ab_info->get_CDR_start(l3, *result), ab_info->get_CDR_end(l3, *result),  A.l3_sequence() },
+	};
+	
+	for (auto &h : H) {
+		// check for matching lengths of cdr and cdr sequence
+		// everything should be kosher since we're using the chothia definition throughout (AFAIK)
+		if ( h.cdr_seq.size() != h.cdr_end - h.cdr_start + 1 ) throw _AE_grafting_failed_( string("Could revert sequence to query after grafting cdr ") + h.cdr_name + ". Length mismatch between CDR in grafted model (" + utility::to_string(h.cdr_end - h.cdr_start + 1) +  ") and query sequence (" + utility::to_string(h.cdr_seq.size()) + ").");
+
+		
+		for(Size i = h.cdr_start; i < h.cdr_end + 1; ++i) {
+			protocols::simple_moves::MutateResidue( i, h.cdr_seq[i-h.cdr_start] ).apply( *result );
+		}
+		
 	}
 
 	result->dump_pdb(prefix + "model" + suffix + ".pdb");

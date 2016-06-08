@@ -380,13 +380,13 @@ void SCS_BlastFilter_by_sequence_identity::init_from_options() {
 
 	using namespace basic::options;
 
-	set_sid_cutoff_cdr( 0.0 ); // default if flag is not given
-	set_sid_cutoff_fr( 0.0 ); // default if flag is not given
+	set_sid_cutoff_cdr( 100.0 ); // default if flag is not given, i.e. do not filter
+	set_sid_cutoff_fr( 100.0 ); // default if flag is not given, i.e. do not filter
 
-	if ( option[ basic::options::OptionKeys::antibody::grafting::exclude_homologs ] ) {
+	if ( option[ basic::options::OptionKeys::antibody::exclude_homologs ] ) {
 		// note the default for the above flag is false and the below flags is 80.0 %
-		set_sid_cutoff_cdr( option[ basic::options::OptionKeys::antibody::grafting::exclude_homologs_cdr_cutoff]() );
-		set_sid_cutoff_fr( option[ basic::options::OptionKeys::antibody::grafting::exclude_homologs_fr_cutoff]() );
+		set_sid_cutoff_cdr( option[ basic::options::OptionKeys::antibody::exclude_homologs_cdr_cutoff]() );
+		set_sid_cutoff_fr( option[ basic::options::OptionKeys::antibody::exclude_homologs_fr_cutoff]() );
 	}
 
 }
@@ -428,16 +428,24 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
       // }
     }
   }
+	
+	// Get FRH, FRL, orientation from input sequence
+	FRH_FRL query_fr( calculate_frh_frl(A) );
+	
+	string query_frh = query_fr.frh1 + query_fr.frh2 + query_fr.frh3 + query_fr.frh4;
+	string query_frl = query_fr.frl1 + query_fr.frl2 + query_fr.frl3 + query_fr.frl4;
+	
+	//string query_heavy_orientation = query_fr.frh1 + A.h1_sequence() + query_fr.frh2 + A.h2_sequence() + query_fr.frh3 + A.h3_sequence() + query_fr.frh4;
+	//string query_light_orientation = query_fr.frl1 + A.l1_sequence() + query_fr.frl2 + A.l2_sequence() + query_fr.frl3 + A.l3_sequence() + query_fr.frl4;
+	
+	//string query_orientation = query_light_orientation + query_heavy_orientation; // Note: must be in this order
 
 	// Filter heavy framework region by sequence identity
-	// is this the proper definition of FRH?
   for(auto p = results->frh.rbegin(); p != results->frh.rend(); ++p) {
     SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
     if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_sequence_identity::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
-    AntibodyFramework const& HFRW = A.heavy_framework();
-
-		sid_ratio = sid_checker( HFRW.fr1 + HFRW.fr2 + HFRW.fr3 + HFRW.fr4, br->frh);
+		sid_ratio = sid_checker( query_frh, br->frh);
     if( sid_ratio > get_sid_cutoff_fr() ) {
         TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset << std::endl;
       results->frh.erase( std::next(p).base() );
@@ -445,21 +453,21 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
   }
 
 	// Filter light framework region by sequence identity
-	// is this the proper definition of FRL?
   for(auto p = results->frl.rbegin(); p != results->frl.rend(); ++p) {
     SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
     if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
-
-		AntibodyFramework const& LFRW = A.light_framework();
-
-    sid_ratio = sid_checker( LFRW.fr1 + LFRW.fr2 + LFRW.fr3 + LFRW.fr4, br->frl);
+		
+		sid_ratio = sid_checker( query_frl, br->frl);
     if( sid_ratio > get_sid_cutoff_fr() ) {
         TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset << std::endl;
       results->frl.erase( std::next(p).base() );
     }
   }
 
+	// Filter orientation by sequence identity?
+	// How? Cannot reassemble orientation sequence from result.
   TR.Debug << "SCS_BlastFilter_by_sequence_identity: Results count after filtering   " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+
 }
 
   //    def filter_by_outlier(k, results, cdr_query, cdr_info):
@@ -635,17 +643,13 @@ void SCS_BlastFilter_by_OCD::set_ocd_cutoff(core::Real cutoff) {
 }
 
 void SCS_BlastFilter_by_OCD::init_from_options(){
-
-	set_n_orientational_templates( 1 ); // i.e. flag must be set for these to update
-	set_ocd_cutoff( 0.0 );
-
+	
 	using namespace basic::options;
+	
+	// note the defaults are 10 and 0.5 respectively
+	set_n_orientational_templates( option[ basic::options::OptionKeys::antibody::n_multi_templates ]() );
+	set_ocd_cutoff( option[ basic::options::OptionKeys::antibody::ocd_cutoff ]() );
 
-	if ( option[ basic::options::OptionKeys::antibody::grafting::multi_template_graft ] ) {
-		// note the default for the above flag is false and the below defaults are same as init values
-		set_n_orientational_templates( option[ basic::options::OptionKeys::antibody::grafting::n_multi_templates ]() );
-		set_ocd_cutoff( option[ basic::options::OptionKeys::antibody::grafting::ocd_cutoff ]() );
-	}
 }
 
 ///@details Filter by OCD will remove all templates of lower bit score that are within X.X OCD of the "current" template.
@@ -685,6 +689,7 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 			if ( ocd_map.at(top_br->pdb).at(br->pdb) < get_ocd_cutoff() ) {
 				TR.Trace << CSI_Red << "SCS_BlastFilter_by_OCD: Filtering " << br->pdb << " with OCD: " << ocd_map.at(top_br->pdb).at(br->pdb) << CSI_Reset << std::endl;
 				r.erase( r.begin()+i );
+				--i; //check index position again after removing template
 			}
 			else {
 				TR.Trace << CSI_Red << "SCS_BlastFilter_by_OCD: Not filtering " << br->pdb << " with OCD: " << ocd_map.at(top_br->pdb).at(br->pdb) << CSI_Reset << std::endl;
@@ -693,7 +698,7 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 			// check to make sure we're not out of templates, break if we are
 			// this gets trigged once number of results is equal to number of templates
 			if ( i==r.size() ) {
-				if ( i==get_n_orientational_templates() ) break; // in the case we do have enough
+				if ( i+1>=get_n_orientational_templates() ) break; // in the case we do have enough
 				TR << TR.Red << "SCS_BlastFilter_by_OCD: Warning: there may not be enough distinct light_heavy orientations! Some may be used repeatedly!" << std::endl;
 				break;
 			}

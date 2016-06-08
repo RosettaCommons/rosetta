@@ -100,7 +100,7 @@ void RefineOneCDRLoop::init( ) {
 
 void RefineOneCDRLoop::set_default() {
 	flank_size_     = 2;
-	H3_filter_      = true;
+	H3_filter_      = false;
 	flank_relax_    = true;
 	high_cst_       = 100.0;
 	num_filter_tries_ = 20;

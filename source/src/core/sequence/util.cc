@@ -10,6 +10,7 @@
 /// @file src/core/sequence/util.cc
 /// @brief small bundle of utilities for dealing with sequences
 /// @author James Thompson
+/// @author Sergey Lyskov
 
 // Unit header
 #include <core/sequence/util.hh>
@@ -178,6 +179,26 @@ std::string read_fasta_file_return_str( std::string const & filename ) {
 	for ( Size n = 1; n <= sequences.size(); n++ ) full_sequence += sequences[ n ];
 	return full_sequence;
 } // read_fasta_file
+
+
+///  @brief read sequence from particular section of fasta file (comment starting with '> section'), terminate with failure if section not found
+///         Note: section detection string is case insensitive
+std::string read_fasta_file_section(std::string const & filename, std::string const & section_)
+{
+	string section(section_);
+	std::transform(section.begin(), section.end(), section.begin(), ::tolower);
+
+	vector1< SequenceOP > S = read_fasta_file(filename);
+
+	for(Size i=1; i<=S.size(); ++i) {
+		string id = S[i]->id();
+		std::transform(id.begin(), id.end(), id.begin(), ::tolower);
+		if( utility::startswith(id, section) ) return S[i]->sequence();
+	}
+
+	utility_exit_with_message( "Error can't find section '" + section + "' in fasta file " + filename + "!" );
+	return "";
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// @brief Return a string of concatenated SequenceCOP sequences

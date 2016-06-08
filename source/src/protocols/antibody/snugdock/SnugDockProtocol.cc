@@ -238,11 +238,11 @@ void SnugDockProtocol::init() {
 	} else {
 		loop_refinement_method_ = "refine_kic";
 	}
-	/// Allow h3_filter to be turned off to speed up loop modeling
+	/// Allow h3_filter to be turned on at cost of extra loop modeling
 	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
 		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
 	} else {
-		h3_filter_ = true;
+		h3_filter_ = false;
 	}
 	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
 		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;

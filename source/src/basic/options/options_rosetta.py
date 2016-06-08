@@ -3424,6 +3424,18 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Choose specified template for CDR H3 grafting',
 			default='h3.pdb'
 			),
+        Option('light_heavy_template', 'String',
+            desc='Choose specified template for VL-VH orientation',
+            default=''
+            ),
+        Option('frl_template', 'String',
+            desc='Choose specified template for light chain framework',
+            default=''
+            ),
+        Option('frh_template', 'String',
+            desc='Choose specified template for heavy chain framework',
+            default=''
+            ),
 		Option( 'h3_no_stem_graft', 'Boolean',
 			desc='Graft CDR H3 from template, use stem to superimpose, but do not copy the stem',
 			default='false'
@@ -3552,32 +3564,49 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default='10'
 			),
 
-        	Option('general_dihedral_cst_phi_sd', 'Real',
-            		desc = 'Standard deviation to use for phi while using general dihedral circular harmonic constraints',
-            		default='16.0'
-            		),
-        	Option('general_dihedral_cst_psi_sd', 'Real',
-            		desc = 'Standard deviation to use for psi while using general dihedral circular harmonic constraints',
-            		default = '16.0'
-            		),
-        	Option('allow_omega_mismatches_for_north_clusters', 'Boolean',
-            		desc = "Skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.",
-            		default = 'false'),
-        
+        Option('general_dihedral_cst_phi_sd', 'Real',
+            desc = 'Standard deviation to use for phi while using general dihedral circular harmonic constraints',
+            default='16.0'
+            ),
+        Option('general_dihedral_cst_psi_sd', 'Real',
+            desc = 'Standard deviation to use for psi while using general dihedral circular harmonic constraints',
+            default = '16.0'
+            ),
+        Option('allow_omega_mismatches_for_north_clusters', 'Boolean',
+            desc = "Skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.",
+            default = 'false'),
 
+        ### Antibody homology modeling options ###
+        Option('prefix', 'String', desc="Base/dir name prefix for antibody grafting output, split on /. By default this is grafting/.", default='grafting/'),
 
- 		##### New Antibody Refactoring (Removal of Antibody.py ) Options.
+        Option('grafting_database', 'String',
+            desc='Path to the Antibody Grafting Database from Rosetta tools repository. By default this option is empty and grafting_database is looked at ../../tools/antibody and then $ROSETTA/tools/antibody',
+			default=''
+		     ),
 
-                Option('prefix', 'String', desc="File name prefix for antibody grafting outout", default='grafting.'),
+        Option('blastp', 'String',
+            desc="Path to NCBI-Blast+ executable", default='blastp'),
 
-                Option('grafting_database', 'String',
-			desc='Path to the Antibody Grafting Database from Rosetta tools repository. Should be point to tools/antibody',
-			default='../../tools/antibody'
-			),
-
-                Option('blastp', 'String', desc="Path to NCBI-Blast+ executable", default='blastp'),
-
-
+        Option('exclude_homologs', 'Boolean',
+            desc = 'Filter BLAST matches by sequence identity? (false by default)',
+            default = 'false'
+            ),
+        Option('exclude_homologs_cdr_cutoff', 'Real',
+            desc = 'Sequence identity cutoff for complementarity determining regions (80 percent is default).',
+            default = '80.0',
+            ),
+        Option('exclude_homologs_fr_cutoff', 'Real',
+            desc = 'Sequence identity cutoff for framework regions (80 percent is default).',
+            default = '80.0'
+            ),
+        Option('ocd_cutoff', 'Real',
+            desc = 'Orientational coordinate distance cutoff for templates. Introduces diversity when using multi-template grafting (0.5 is default).',
+            default = '0.5'
+            ),
+        Option('n_multi_templates', 'Integer',
+            desc = 'Number of multiple templates to use during grafting. Default is 10.',
+            default = '10'
+            ),
 
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------
@@ -3802,35 +3831,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 		default = 'false'
                 	),
 		), #design
-
-        
-
-        Option_Group( 'grafting',
-            Option('exclude_homologs', 'Boolean',
-                    desc = 'Filter BLAST matches by sequence identity? (false by default)',
-                    default = 'false'
-                    ),
-            Option('exclude_homologs_cdr_cutoff', 'Real',
-                    desc = 'Sequence identity cutoff for complementarity determining regions (80 percent is default).',
-                    default = '80.0',
-                    ),
-            Option('exclude_homologs_fr_cutoff', 'Real',
-                    desc = 'Sequence identity cutoff for framework regions (80 percent is default).',
-                    default = '80.0'
-                    ),
-            Option('multi_template_graft', 'Boolean',
-                    desc = 'Enable multi-template grafting? Default is false.',
-                    default = 'false'
-                    ),
-            Option('ocd_cutoff', 'Real',
-                    desc = 'Orientational coordinate distance cutoff for templates. Introduces diversity when using multi-template grafting (1 is default).',
-                    default = '1.0'
-                    ),
-            Option('n_multi_templates', 'Integer',
-                    desc = 'Number of multiple templates to use during grafting. Default is 10.',
-                    default = '10'
-                    ),
-        ), #grafting
 	), # antibody
 
 	## Options for specific task operations - outside global packing options.
