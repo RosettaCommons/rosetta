@@ -154,7 +154,7 @@ public: // Creation
 	/// @brief Size constructor
 	inline
 	explicit
-	vector0( size_type const num ) :
+	vector0( size_type num ) :
 		super( num )
 	{}
 

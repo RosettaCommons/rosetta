@@ -83,6 +83,8 @@ public:
 	PCS_data_per_lanthanides_Ts4(std::string, core::Real const weight, utility::vector1< PCS_line_data_Ts4 > & PCS_d_l_a);
 
 public:
+	// Default constructor is private, except for serialization - see below
+
 	~PCS_data_per_lanthanides_Ts4();
 
 	PCS_data_per_lanthanides_Ts4(PCS_data_per_lanthanides_Ts4 const &other);
@@ -148,6 +150,9 @@ public:
 public:
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );
+#else
+private:
+	PCS_data_per_lanthanides_Ts4(); // Non-serialization construction should use parameterized versions.
 #endif // SERIALIZATION
 
 };

@@ -602,7 +602,7 @@ PDBInfo::set_resinfo(
 /// @param[in] label  string that is the "label"
 void
 PDBInfo::add_reslabel(
-	Size const res,
+	Size res,
 	std::string const & label
 )
 {

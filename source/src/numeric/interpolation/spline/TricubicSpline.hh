@@ -50,7 +50,12 @@ public:
 	//////////////////////////////////
 
 	/// construct generic BicubicSpline
-	TricubicSpline(){}
+	TricubicSpline():
+		border_(), // Zero initialize C-style arrays
+		start_(),
+		delta_(),
+		LinCont_()
+	{}
 
 	/// copy constructor
 	TricubicSpline* Clone() const

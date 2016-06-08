@@ -75,7 +75,7 @@ public:
 	bool valid_anchors() const
 	{
 		return
-			(peptide_anchors.size() > 0 &&
+			( !peptide_anchors.empty() &&
 			peptide_anchors.size() == peptide_cuts.size() + 1 &&
 			(receptor_anchor_pos != -1 || pep_fold_only) );
 	}

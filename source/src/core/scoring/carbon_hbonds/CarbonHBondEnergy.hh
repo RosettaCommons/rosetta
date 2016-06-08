@@ -267,12 +267,13 @@ private:
 	) const;
 
 
+	/* // unused
 	bool
 	atom_is_apolar_h( conformation::Residue const & rsd, Size const atm ) const;
 
 	bool
 	atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
-
+	*/
 
 private:
 

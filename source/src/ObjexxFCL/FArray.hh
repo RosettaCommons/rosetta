@@ -322,7 +322,7 @@ protected: // Assignment
 
 	/// @brief Copy Assignment
 	inline
-	void
+	FArray &
 	operator =( FArray const & a )
 	{
 		proxy_const_assert( not_const_proxy() );
@@ -331,6 +331,7 @@ protected: // Assignment
 		for ( size_type i = 0; i < size_; ++i ) {
 			array_[ i ] = a[ i ];
 		}
+		return *this;
 	}
 
 

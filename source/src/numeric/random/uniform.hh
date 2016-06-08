@@ -62,7 +62,9 @@ class standard_RG : public uniform_RG
 {
 public:
 
-	inline standard_RG() {}
+	inline standard_RG():
+		seed_(0) // Clear, for consistent starting state
+	{}
 
 	inline virtual ~standard_RG() {}
 

@@ -52,13 +52,11 @@ public:
 		std::string query_sequence, Size longest_vall_chunk
 	) :
 		CachingScoringMethod(
-		priority, lowest_acceptable_value, use_lowest, "ProfileScoreDistWeight"
-		) {
-
-		query_profile_ = query_profile;
-		query_ss_ = query_ss_prediction;
-		query_sequence_ = query_sequence;
-
+		priority, lowest_acceptable_value, use_lowest, "ProfileScoreDistWeight" ),
+		query_sequence_(query_sequence),
+		query_profile_(query_profile),
+		query_ss_(query_ss_prediction)
+	{
 		for ( Size i = 1; i <= query_profile->length(); ++i ) {
 			utility::vector1<Real> row(longest_vall_chunk);
 			scores_.push_back(row);

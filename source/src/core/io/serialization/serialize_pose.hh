@@ -54,6 +54,8 @@ struct BUFFER
 		return 1;
 	}
 private:
+	BUFFER(); // Must initialize with size.
+
 	char *buf_;
 	size_t start_,end_,size_;
 	bool ownbuf_;

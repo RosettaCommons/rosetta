@@ -27,13 +27,12 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-VirtualCoordinate::VirtualCoordinate( VirtualCoordinate const & src )
-{
-	axis_x_ = src.axis_x_;
-	axis_y_ = src.axis_y_;
-	axis_origin_ = src.axis_origin_;
-	mirror_Z_ = src.mirror_Z_;
-}
+VirtualCoordinate::VirtualCoordinate( VirtualCoordinate const & src ):
+	axis_x_(src.axis_x_),
+	axis_y_(src.axis_y_),
+	axis_origin_(src.axis_origin_),
+	mirror_Z_(src.mirror_Z_)
+{}
 
 VirtualCoordinate::VirtualCoordinate():
 	axis_x_(),
@@ -47,26 +46,24 @@ VirtualCoordinate::VirtualCoordinate(
 	numeric::xyzVector< core::Real> axis_x,
 	numeric::xyzVector< core::Real> axis_y,
 	numeric::xyzVector< core::Real> axis_origin
-)
-{
-	axis_x_ = axis_x;
-	axis_y_ = axis_y;
-	axis_origin_ = axis_origin;
-	mirror_Z_ = false;
-}
+):
+	axis_x_(axis_x),
+	axis_y_(axis_y),
+	axis_origin_(axis_origin),
+	mirror_Z_(false)
+{}
 
 VirtualCoordinate::VirtualCoordinate(
 	numeric::xyzVector< core::Real> axis_x,
 	numeric::xyzVector< core::Real> axis_y,
 	numeric::xyzVector< core::Real> axis_origin,
 	bool mirror_z
-)
-{
-	axis_x_ = axis_x;
-	axis_y_ = axis_y;
-	axis_origin_ = axis_origin;
-	mirror_Z_ = mirror_z;
-}
+):
+	axis_x_(axis_x),
+	axis_y_(axis_y),
+	axis_origin_(axis_origin),
+	mirror_Z_(mirror_z)
+{}
 
 VirtualCoordinate &
 VirtualCoordinate::operator=( VirtualCoordinate const & src ) {

@@ -56,11 +56,13 @@ public:
 	inline Size prev() const { return prev_; }
 
 private:
+	/* // Unused
 	void clear() {
 		in_list_ = false;
 		prev_ = 0;
 		next_ = 0;
 	}
+	*/
 
 public:
 	friend class in_place_list< T >;

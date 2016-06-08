@@ -41,7 +41,7 @@ namespace datacache {
 /// @param[in] n_types The number of slots for this ObserverCache.
 /// @param[in] pose The Pose that will be watched by the Observers in this cache.
 ObserverCache::ObserverCache(
-	Size const n_slots,
+	Size n_slots,
 	Pose & pose
 ) :
 	Super( n_slots ),
@@ -84,7 +84,7 @@ void ObserverCache::clear() {
 
 
 /// @brief clear the observer in a selected slot
-void ObserverCache::clear( Size const slot ) {
+void ObserverCache::clear( Size slot ) {
 	detach( slot ); // safety
 	Super::clear( slot );
 }
@@ -97,7 +97,7 @@ void ObserverCache::clear( Size const slot ) {
 /// @remarks this function exists to ensure the base class version is
 ///  overridden
 void ObserverCache::set(
-	Size const slot,
+	Size slot,
 	CacheableObserverOP observer
 )
 {
@@ -110,9 +110,9 @@ void ObserverCache::set(
 /// @param[in] observer The Observer to clone() and store.
 /// @param[in] auto_attach Attach the observer to the Pose?
 void ObserverCache::set(
-	Size const slot,
+	Size slot,
 	CacheableObserverOP observer,
-	bool const auto_attach
+	bool auto_attach
 )
 {
 	detach( slot ); // safety
@@ -132,7 +132,7 @@ void ObserverCache::set(
 /// @brief is the observer in the slot attached to the Pose?
 /// @return true if attached, false if not attached or no observer
 ///  exists in the slot
-bool ObserverCache::is_attached( Size const slot ) const {
+bool ObserverCache::is_attached( Size slot ) const {
 	if ( has( slot ) ) {
 		return data()[ slot ]->is_attached();
 	}
@@ -158,7 +158,7 @@ void ObserverCache::detach() {
 
 /// @brief attach an observer in a particular slot to the Pose
 /// @param[in] slot Attach the observer in this slot.
-void ObserverCache::attach( Size const slot ) {
+void ObserverCache::attach( Size slot ) {
 	if ( has( slot ) ) {
 		data()[ slot ]->attach_to( *pose_ );
 		attached_[ slot ] = true;
@@ -168,7 +168,7 @@ void ObserverCache::attach( Size const slot ) {
 
 /// @brief detach an observer in a particular slot to the Pose
 /// @param[in] slot Detach the observer in this slot.
-void ObserverCache::detach( Size const slot ) {
+void ObserverCache::detach( Size slot ) {
 	if ( has( slot ) ) {
 		data()[ slot ]->detach_from();
 		attached_[ slot ] = false;

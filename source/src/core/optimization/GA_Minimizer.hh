@@ -32,7 +32,11 @@ class EItem
 {
 public:
 	EItem() {};
-	EItem(const Multivec &vn) { v=vn; };
+	EItem(const Multivec &vn):
+		v( vn ),
+		tag( 'X' ),
+		r( 0.0 )
+	{}
 
 	Multivec v;  ///< item value
 	char tag;  ///< tag for debug. (m-mutation, c-crossover, ...etc)
@@ -48,6 +52,7 @@ class GA_Minimizer
 public:
 	GA_Minimizer(Multifunc & func_in, MinimizerOptions const & options):
 		func_( func_in ),
+		allowed_time_( 0 ), // Does this make sense?
 		add_original_(true),
 		mutation_probability_( options.ga_mutation_probability() ),
 		minimize_tolerance_( options.minimize_tolerance() )

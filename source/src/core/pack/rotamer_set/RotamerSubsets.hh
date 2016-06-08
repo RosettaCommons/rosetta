@@ -140,8 +140,9 @@ public:
 	show( std::ostream & out ) const;
 
 private:
+	/* // unused
 	void update_offset_data();
-
+	*/
 
 protected:
 

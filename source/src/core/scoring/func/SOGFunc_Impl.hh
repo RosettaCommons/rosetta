@@ -50,17 +50,21 @@ public:
 	) :
 		means_  ( means   ),
 		sdevs_  ( sdevs   ),
-		weights_( weights )
+		weights_( weights ),
+		smooth_( false )
 	{
 		upper_bound(10);
 	}
 
-	SOGFunc_Impl() {
+	SOGFunc_Impl():
+		smooth_( false )
+	{
 		means_.push_back  ( 0.0 );
 		sdevs_.push_back  ( 1.0 );
 		weights_.push_back( 1.0 );
 		upper_bound(10);
 	}
+
 	virtual ~SOGFunc_Impl();
 
 	/// @brief Returns the value of this SOGFunc_Impl evaluated at distance x.

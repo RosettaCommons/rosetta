@@ -93,6 +93,10 @@ private:
 class ConformationKinWriter : public utility::pointer::ReferenceCount
 {
 public:
+
+	ConformationKinWriter():
+		write_virtual_atoms_(false)
+	{}
 	virtual ~ConformationKinWriter();
 
 	/// @brief Write out the coordinates for an entire conformation; this includes

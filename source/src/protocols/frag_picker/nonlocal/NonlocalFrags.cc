@@ -178,7 +178,7 @@ void NonlocalFrags::initialize() {
 	read_checkpoint_file();
 }
 
-bool NonlocalFrags::recover_checkpoint( const std::string & tag, pose::Pose& pose ) {
+bool NonlocalFrags::recover_checkpoint( std::string const & tag, pose::Pose& pose ) {
 	std::map<std::string, std::string>::iterator it;
 	it=checkpoints_map_.find(tag);
 	if ( it != checkpoints_map_.end() ) {
@@ -190,7 +190,7 @@ bool NonlocalFrags::recover_checkpoint( const std::string & tag, pose::Pose& pos
 	return false;
 }
 
-void NonlocalFrags::write_checkpoint( const std::string & tag, const std::string & data ) {
+void NonlocalFrags::write_checkpoint( std::string const & tag, std::string const & data ) {
 	std::ofstream checkpoint( checkpointfile_.c_str(), std::ios_base::app );
 	if ( !checkpoint.good() ) {
 		TR.Debug << "Warning: cannot open checkpoint file for writing!" << std::endl;

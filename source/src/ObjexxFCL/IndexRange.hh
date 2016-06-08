@@ -132,12 +132,13 @@ protected: // Assignment
 
 	/// @brief Copy Assignment
 	inline
-	void
+	IndexRange &
 	operator =( IndexRange const & I )
 	{
 		l_ = I.l_;
 		u_ = I.u_;
 		size_ = I.size_;
+		return *this;
 	}
 
 

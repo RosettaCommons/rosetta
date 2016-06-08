@@ -82,16 +82,17 @@ public:
 	void
 	update_my_A_matrix_for_cstyle(utility::vector1< utility::vector1<core::Real> > & A_all);
 
-	PcsDataLanthanide(); //construct
+	PcsDataLanthanide(std::string, core::Real const weight, utility::vector1< PcsInputLine > & pcs_i_l, core::Size start, core::Size end, core::Real individual_scale);
+private:
+	PcsDataLanthanide(); //Must construct with parameters
 
+public:
 	~PcsDataLanthanide(); //destruct
 
 	PcsDataLanthanide(PcsDataLanthanide const &other); //copy
 
 	PcsDataLanthanide &
 	operator=( PcsDataLanthanide const & other ); //=
-
-	PcsDataLanthanide(std::string, core::Real const weight, utility::vector1< PcsInputLine > & pcs_i_l, core::Size start, core::Size end, core::Real individual_scale);
 
 	/// @brief Set a value of the A_index_ vector
 	void

@@ -627,6 +627,8 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 	return true;
 }
 
+/* //Unused
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Stupid helper function
 // These should probably live inside conformation::Residue.
@@ -656,7 +658,7 @@ CarbonHBondEnergy::atom_is_acceptor( conformation::Residue const & rsd, Size con
 	}
 	return false;
 }
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 /*void

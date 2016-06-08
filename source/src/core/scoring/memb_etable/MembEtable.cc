@@ -588,7 +588,7 @@ MembEtable::output_etable(
 void
 MembEtable::input_etable(
 	ObjexxFCL::FArray3D<Real> & etable,
-	const std::string & label,
+	std::string const & label,
 	std::istream & in
 ) {
 	using namespace std;

@@ -495,6 +495,11 @@ public:
 class EX : public ResfileCommand
 {
 public:
+	EX():
+		aro_specified_( false ), // Does this make sense?
+		which_chi_( 0 ) // Does this make sense?
+	{}
+
 	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EX ); }
 
 	virtual

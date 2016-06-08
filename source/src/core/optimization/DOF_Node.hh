@@ -205,13 +205,14 @@ private:
 	TorsionID torsion_id_;
 	bool dependent_; // only used/set/checked in symmetric minimization
 
+public:
+
 	friend
 	inline
 	bool
 	operator< ( DOF_Node const & t1, DOF_Node const & t2 ) {
 		return ( t1.depth() > t2.depth() ); // check that this gives correct sort
 	}
-
 
 }; // DOF_Node
 

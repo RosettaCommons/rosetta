@@ -210,14 +210,13 @@ trie_vs_trie(
 				Real weight(1.0); Size path_dist(0);
 				if ( parent_heavy_wi_hcut_stack[s_heavy_depth_stack[s_curr_stack_top] ] &&
 						count_pair( r.cp_data(), s.cp_data(), weight, path_dist) ) {
-					core::PackerEnergy e(0.0);
 					if ( s.is_hydrogen() ) {
-						e = score_function.hydrogenatom_hydrogenatom_energy(r.atom(), s.atom(), path_dist );
+						core::PackerEnergy e = score_function.hydrogenatom_hydrogenatom_energy(r.atom(), s.atom(), path_dist );
 						energy_stack[ s_curr_stack_top ] += weight * e;
 						//std::cout << "h/h atom pair energy: " << ii << " & " << jj << " = " << weight * e << "( unweighted: " << e <<  ") estack: " << energy_stack[ s_curr_stack_top ] << std::endl;
 
 					} else {
-						e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom(), path_dist );
+						core::PackerEnergy e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom(), path_dist );
 						energy_stack[ s_curr_stack_top ] += weight * e;
 						//std::cout << "h/hv atom pair energy: " << ii << " & " << jj << " = " << weight * e << "( unweighted: " << e << ") estack: " << energy_stack[ s_curr_stack_top ] << std::endl;
 					}
@@ -279,12 +278,11 @@ trie_vs_trie(
 					++s_heavy_depth_stack[s_curr_stack_top];
 
 					DistanceSquared d2(0.0);
-					core::PackerEnergy e = 0;
 					Real weight = 1;
 					Size path_dist(0);
 
 					if ( count_pair( r.cp_data(), s.cp_data(), weight, path_dist) ) {
-						e = score_function.heavyatom_heavyatom_energy(r.atom(), s.atom(), d2, path_dist);
+						core::PackerEnergy e = score_function.heavyatom_heavyatom_energy(r.atom(), s.atom(), d2, path_dist);
 						//std::cout << "hv/hv atom pair energy: " << ii << " & " << jj << " = " << weight * e << "( unweighted: " << e << ") estack: " << energy_stack[ s_curr_stack_top ] << std::endl;
 						energy_stack[s_curr_stack_top] += weight * e;
 					} else {

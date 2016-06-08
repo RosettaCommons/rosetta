@@ -74,9 +74,12 @@ public:
 	//////////////////////////////////
 
 	/// construct generic BicubicSpline
-	BicubicSpline()
-	{
-	}
+	BicubicSpline():
+		border_(), // Zero initialize C-style arrays
+		start_(),
+		delta_(),
+		LinCont_()
+	{}
 
 	/// copy constructor
 	BicubicSpline* Clone() const

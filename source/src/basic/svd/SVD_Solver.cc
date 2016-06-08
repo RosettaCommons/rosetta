@@ -158,31 +158,20 @@ SVD_Solver::operator=(SVD_Solver const & other){
 	return *this;
 }
 
-SVD_Solver:: SVD_Solver(SVD_Solver const & other)//:
-// M_(other.M_), N_(other.N_)
-{
-
-	M_ = other.M_;
-	N_ = other.N_;
-
-	cstyle_b_ = other.cstyle_b_;
-	cstyle_A_decomp_ = other.cstyle_A_decomp_;
-	cstyle_v_ = other.cstyle_v_;
-	cstyle_x_ = other.cstyle_x_;
-	cstyle_w_ = other.cstyle_w_;
-	cstyle_tmp_ = other.cstyle_tmp_;
-
-	b_is_set_ = other.b_is_set_;
-	A_is_set_ = other.A_is_set_;
-	A_is_decomp_ = other.A_is_decomp_;
-	x_is_solved_ = other.x_is_solved_;
-}
-
-SVD_Solver::SVD_Solver()//:
-// M_(0), N_(0)
-{
-	utility_exit_with_message( "You shouldn't call the empty constructor for SVD_Solver class" );
-}
+SVD_Solver:: SVD_Solver(SVD_Solver const & other):
+	cstyle_b_(other.cstyle_b_),
+	cstyle_A_decomp_(other.cstyle_A_decomp_),
+	cstyle_v_(other.cstyle_v_),
+	cstyle_x_(other.cstyle_x_),
+	cstyle_w_(other.cstyle_w_),
+	cstyle_tmp_(other.cstyle_tmp_),
+	M_(other.M_),
+	N_(other.N_),
+	b_is_set_(other.b_is_set_),
+	A_is_set_(other.A_is_set_),
+	A_is_decomp_(other.A_is_decomp_),
+	x_is_solved_(other.x_is_solved_)
+{}
 
 ///////////////////////////////////////////////
 /// @brief M is the size of vector b (experimental data); N is the size of the vector to optimize M >= N

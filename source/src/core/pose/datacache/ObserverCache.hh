@@ -69,7 +69,7 @@ public: // construct/destruct
 	/// @param[in] n_types The number of slots for this ObserverCache.
 	/// @param[in] pose The Pose that will be watched by the Observers in this cache.
 	ObserverCache(
-		Size const n_slots,
+		Size n_slots,
 		Pose & pose
 	);
 
@@ -101,7 +101,7 @@ public: // methods
 
 
 	/// @brief clear the observer in a selected slot
-	void clear( Size const slot );
+	void clear( Size slot );
 
 
 	/// @brief store a copy of the observer in the given slot and attach it to
@@ -111,7 +111,7 @@ public: // methods
 	/// @remarks this function exists to ensure the base class version is
 	///  overridden
 	void set(
-		Size const slot,
+		Size slot,
 		CacheableObserverOP observer
 	);
 
@@ -121,9 +121,9 @@ public: // methods
 	/// @param[in] observer The Observer to clone() and store.
 	/// @param[in] auto_attach Attach the observer to the Pose?
 	void set(
-		Size const slot,
+		Size slot,
 		CacheableObserverOP observer,
-		bool const auto_attach
+		bool auto_attach
 	);
 
 
@@ -133,7 +133,7 @@ public: // observer interface
 	/// @brief is the observer in the slot attached to the Pose?
 	/// @return true if attached, false if not attached or no observer
 	///  exists in the slot
-	bool is_attached( Size const slot ) const;
+	bool is_attached( Size slot ) const;
 
 	/// @brief attach all stored observers to the Pose
 	void attach();
@@ -145,12 +145,12 @@ public: // observer interface
 
 	/// @brief attach an observer in a particular slot to the Pose
 	/// @param[in] slot Attach the observer in this slot.
-	void attach( Size const slot );
+	void attach( Size slot );
 
 
 	/// @brief detach an observer in a particular slot to the Pose
 	/// @param[in] slot Detach the observer in this slot.
-	void detach( Size const slot );
+	void detach( Size slot );
 
 
 private: // data

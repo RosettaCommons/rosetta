@@ -324,11 +324,15 @@ class mt19937_RG : public uniform_RG
 {
 public:
 
-	mt19937_RG() : uniform_RG()
+	mt19937_RG() :
+		uniform_RG(),
+		iseed_(0), // Clear, for consistent starting state
+		sformat_idx(0), // Clear for consistent starting state
+		is_sformat_initialized(0)
 	{
 		psformat64 = &sformat[0].d[0];
-		is_sformat_initialized = 0;
 	}
+
 	virtual ~mt19937_RG() {}
 
 	/// @brief Set seed and state

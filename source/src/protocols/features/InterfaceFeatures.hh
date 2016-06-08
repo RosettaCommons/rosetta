@@ -87,7 +87,7 @@ public:
 	/// Note that here, you can also give A_C   and a new pose would be created with only A and C so that this interface can be tested.
 	/// Note also that multiple pose interfaces can be set.
 	virtual void
-	set_interface_chains(vector1< std::string > interfaces);
+	set_interface_chains(vector1< std::string > const & interfaces);
 
 	/// @brief Pack the interface before separation? Default is false.
 	void
@@ -151,7 +151,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string const & chains_side1,
 		std::string const & chains_side2,
-		protocols::analysis::InterfaceRegion const region,
+		protocols::analysis::InterfaceRegion region,
 		std::string const & region_string) const;
 
 	/// @brief Add interface_residues data to table

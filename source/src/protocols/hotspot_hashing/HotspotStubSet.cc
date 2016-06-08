@@ -540,7 +540,7 @@ HotspotStubSet::remove_stub( HotspotStubCOP stub ){
 
 /// @details removes a set of stubs from the stub_set_
 void
-HotspotStubSet::remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const stubs ) {
+HotspotStubSet::remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const & stubs ) {
 	for ( std::set< std::pair< std::string, core::Real > >::const_iterator stub_it=stubs.begin(); stub_it!=stubs.end(); ++stub_it ) {
 		Hs_map::iterator hs_it( stub_set_.find( stub_it->first ) );
 		hs_it->second.erase( get_stub( stub_it->first, stub_it->second )->first );

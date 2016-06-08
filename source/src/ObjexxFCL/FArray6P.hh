@@ -1399,7 +1399,7 @@ private: // Functions
 		if ( source_ ) source_->insert_observer( *this );
 	}
 
-
+	/* // Unused private
 	/// @brief Remove as Observer of the IndexRanges and Source Array
 	inline
 	void
@@ -1412,7 +1412,7 @@ private: // Functions
 		I5_.remove_observer( *this );
 		I6_.remove_observer( *this );
 		if ( source_ ) source_->remove_observer( *this );
-	}
+	}*/
 
 
 private: // Data

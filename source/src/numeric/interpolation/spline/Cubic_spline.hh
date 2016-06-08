@@ -78,7 +78,9 @@ public:
 	//////////////////////////////////
 
 	//! @brief construct generic CubicSpline
-	CubicSpline()
+	CubicSpline():
+		start_(0.0),
+		delta_(0.0)
 	{
 	}
 

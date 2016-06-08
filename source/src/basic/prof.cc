@@ -47,10 +47,10 @@ void show_time( basic::Tracer& tr, std::string const& msg ) {
 	struct tm * timeinfo;
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	std::string date( asctime( timeinfo ) );
-	boost::trim(date);
-	tr.Error << "TIME_STAMP: " << date << " " << msg << std::endl;
-	if ( show_time_on_cerr ) std::cerr << tr.channel() << ": TIME_STAMP: " << date << " " << msg << std::endl;
+	char formatted_time[51];
+	std::strftime( formatted_time, 50, "%c", timeinfo ); // Will null terminate
+	tr.Error << "TIME_STAMP: " << formatted_time << " " << msg << std::endl;
+	if ( show_time_on_cerr ) std::cerr << tr.channel() << ": TIME_STAMP: " << formatted_time << " " << msg << std::endl;
 }
 
 void setup_tag2string() {

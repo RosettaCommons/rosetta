@@ -355,7 +355,7 @@ RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::
 void
 RNA_DeNovoProtocol::output_silent_struct(
 	core::io::silent::SilentStruct & s, core::io::silent::SilentFileData & silent_file_data,
-	std::string const & silent_file, pose::Pose & pose, std::string const out_file_tag,
+	std::string const & silent_file, pose::Pose & pose, std::string const & out_file_tag,
 	bool const score_only /* = false */ ) const
 {
 

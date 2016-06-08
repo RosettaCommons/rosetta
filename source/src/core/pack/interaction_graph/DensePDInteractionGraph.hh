@@ -339,19 +339,19 @@ protected:
 	inline
 	DensePDNode* get_dpd_node(int index) const
 	{
-		return (DensePDNode*) get_node( index );
+		return static_cast< DensePDNode* >( get_node( index ) );
 	}
 
 	inline
 	DensePDEdge const * get_dpd_edge( int node1, int node2 ) const
 	{
-		return (DensePDEdge const *) find_edge( node1, node2 );
+		return static_cast< DensePDEdge const * >( find_edge( node1, node2 ) );
 	}
 
 	inline
 	DensePDEdge * get_dpd_edge( int node1, int node2 )
 	{
-		return (DensePDEdge *) find_edge( node1, node2 );
+		return static_cast< DensePDEdge * > ( find_edge( node1, node2 ) );
 	}
 
 private:

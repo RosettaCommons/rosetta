@@ -59,7 +59,7 @@ CDRSetOptionsParser::CDRSetOptionsParser():
 CDRSetOptionsParser::~CDRSetOptionsParser() {}
 
 utility::vector1<CDRSetOptionsOP>
-CDRSetOptionsParser::parse_default_and_user_options(std::string filename) {
+CDRSetOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -69,7 +69,7 @@ CDRSetOptionsParser::parse_default_and_user_options(std::string filename) {
 }
 
 CDRSetOptionsOP
-CDRSetOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string filename) {
+CDRSetOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename) {
 
 	cdr_options_ = CDRSetOptionsOP( new CDRSetOptions(cdr) );
 	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
@@ -82,7 +82,7 @@ CDRSetOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string
 }
 
 utility::vector1<CDRSetOptionsOP>
-CDRSetOptionsParser::parse_options(std::string filename) {
+CDRSetOptionsParser::parse_options(std::string const & filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -92,7 +92,7 @@ CDRSetOptionsParser::parse_options(std::string filename) {
 }
 
 CDRSetOptionsOP
-CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
+CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string const & path) {
 
 	using namespace utility;
 	using namespace std;
@@ -183,7 +183,7 @@ CDRSetOptionsParser::check_path() {
 }
 
 void
-CDRSetOptionsParser::parse_cdr_option(std::string const & mode, vector1<string>& lineSP) {
+CDRSetOptionsParser::parse_cdr_option(std::string const & mode, vector1<string> const & lineSP) {
 
 
 
@@ -202,7 +202,7 @@ CDRSetOptionsParser::check_line_len(const vector1<string> & lineSP, const core::
 }
 
 void
-CDRSetOptionsParser::parse_cdr_set_option(std::string const & setting, vector1<string>& lineSP) {
+CDRSetOptionsParser::parse_cdr_set_option(std::string const & setting, vector1<string> const & lineSP) {
 
 	//Here we match.  This is rather ugly, as I don't have much C++ expereince in this.  Python however...
 
@@ -265,7 +265,7 @@ CDRSetOptionsParser::set_cdr_set_general_option(std::string const & option) {
 }
 
 void
-CDRSetOptionsParser::set_cdr_set_include_options(std::string const & type, vector1< string > & lineSP) {
+CDRSetOptionsParser::set_cdr_set_include_options(std::string const & type, vector1<string> const & lineSP) {
 
 	this->clear_cdr_set_include_options(type);
 	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
@@ -311,7 +311,7 @@ CDRSetOptionsParser::clear_cdr_set_include_options( std::string const & type ) {
 }
 
 void
-CDRSetOptionsParser::set_cdr_set_exclude_options( std::string const & type, vector1<string> & lineSP){
+CDRSetOptionsParser::set_cdr_set_exclude_options(std::string const & type, vector1<string> const & lineSP){
 
 	this->clear_cdr_set_exclude_options(type);
 	for ( core::Size i=5; i<=lineSP.size(); ++i ) {

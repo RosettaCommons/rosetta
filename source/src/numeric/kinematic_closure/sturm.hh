@@ -61,9 +61,7 @@ void initialize_sturm(double *tol_secant, int *max_iter_sturm, int *max_iter_sec
 inline
 double hyper_tan(double a, double x)
 {
-	double ax;
-
-	ax = a*x;
+	double ax = a*x;
 	if ( ax > 100.0 ) {
 		return(1.0);
 	} else if ( ax < -100.0 ) {
@@ -268,13 +266,11 @@ double evalpoly (int ord, double* coef, double x)
 inline
 int numchanges(int np, poly* sseq, double a)
 {
-	int  changes;
-	double lf;
 	poly *s;
 
-	changes = 0;
+	int changes = 0;
 
-	lf = evalpoly(sseq[0].ord, sseq[0].coef, a);
+	double lf = evalpoly(sseq[0].ord, sseq[0].coef, a);
 
 	for ( s = sseq + 1; s <= sseq + np; s++ ) {
 		double f = evalpoly(s->ord, s->coef, a);
@@ -299,10 +295,8 @@ int numchanges(int np, poly* sseq, double a)
 inline
 int modrf(int ord, double *coef, double a, double b, double *val)
 {
-	int its;
-	double fa, fb, fx, lfx;
+	double fa, fb;
 	double *fp, *scoef, *ecoef;
-	fx=0; // avoid uninitialized variable warning
 
 	scoef = coef;
 	ecoef = &coef[ord];
@@ -334,16 +328,16 @@ int modrf(int ord, double *coef, double a, double b, double *val)
 	}
 	*/
 
-	lfx = fa;
+	double lfx = fa;
 
-	for ( its = 0; its < MAX_ITER_SECANT; its++ ) {
+	for ( int its = 0; its < MAX_ITER_SECANT; its++ ) {
 		double x = (fb * a - fa * b) / (fb - fa);
 
 		// constrain that x stays in the bounds
 		if ( x < a || x > b ) {
 			x = 0.5 * (a+b);
 		}
-		fx = *ecoef;
+		double fx = *ecoef;
 		for ( fp = ecoef - 1; fp >= scoef; fp-- ) {
 			fx = x * fx + *fp;
 		}
@@ -395,9 +389,9 @@ inline
 void sbisect(int np, poly* sseq, double min, double max, int atmin, int atmax, double* roots)
 {
 	double mid=0.0;
-	int  n1 = 0, its, atmid;
+	int  its, atmid;
 
-	if ( atmin - atmax == 1 ) {
+	if ( (atmin - atmax) == 1 ) {
 
 		/*
 		* first try a less expensive technique.
@@ -449,7 +443,7 @@ void sbisect(int np, poly* sseq, double min, double max, int atmin, int atmax, d
 	for ( its = 0; its < MAXIT; its++ ) {
 		mid = (min + max) / 2;
 		atmid = numchanges(np, sseq, mid);
-		n1 = atmin - atmid;
+		int n1 = atmin - atmid;
 		int n2 = atmid - atmax;
 
 		// DJM: this rarely occuring "artifact" causes crashing bugs so we take what we've got rather than proceed
@@ -480,7 +474,7 @@ void sbisect(int np, poly* sseq, double min, double max, int atmin, int atmax, d
 
 	if ( its == MAXIT ) {
 		//std::cout << "Maximum bisection iterations reached in sturm. Returning mid value for remaining solutions." << std::endl;
-		for ( n1 = atmax; n1 < atmin; n1++ ) {
+		for ( int n1 = atmax; n1 < atmin; n1++ ) {
 			//roots[index+(n1 - atmax)] = static_cast<Real> ( mid );
 			roots[n1 - atmax] = mid;
 		}

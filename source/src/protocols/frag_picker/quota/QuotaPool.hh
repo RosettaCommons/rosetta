@@ -40,10 +40,10 @@ public:
 	/// @brief Creates a pool of a given size and name
 	/// @param name - name assigned to this pool. This in general may be any string that
 	/// later allows one control pool's behavior from a flag file
-	QuotaPool(std::string pool_name,Real quota_fraction) {
-		pool_name_ = pool_name;
-		quota_fraction_ = quota_fraction;
-	}
+	QuotaPool(std::string const & pool_name, Real quota_fraction):
+		pool_name_(pool_name),
+		quota_fraction_(quota_fraction)
+	{}
 
 	virtual ~QuotaPool() {};
 

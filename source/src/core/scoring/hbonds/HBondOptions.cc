@@ -163,7 +163,7 @@ HBondOptions::HBondOptions( HBondOptions const & src ):
 HBondOptions::~HBondOptions(){}
 
 /// copy operator
-HBondOptions const &
+HBondOptions &
 HBondOptions::operator=( HBondOptions const & src )
 {
 	exclude_DNA_DNA_ = src.exclude_DNA_DNA_;

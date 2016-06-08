@@ -126,13 +126,12 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 	//std::cout << basic::database::full_name("rotamer/centroid_rotlibs") << std::endl;
 	ResidueTypeSetCAP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
 
-	chemical::AA aan = chemical::aa_unk;
 	std::string nextaa;
 	libstream >> nextaa;
 
 	Size count_libraries_read( 0 );
 	while ( nextaa != "" ) {
-		aan = chemical::aa_from_name( nextaa );
+		chemical::AA aan = chemical::aa_from_name( nextaa );
 		SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
 		/// read the rotlib for current aa and save the name of the next one
 		nextaa = newlib->read_from_file( libstream, true );

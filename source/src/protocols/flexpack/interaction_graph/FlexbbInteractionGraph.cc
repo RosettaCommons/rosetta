@@ -588,6 +588,7 @@ FlexbbInteractionGraph::FlexbbInteractionGraph(int num_nodes) :
 	num_total_bb_( 0 ),
 	flexseg_for_moltenres_( num_nodes, 0 ),
 	enforce_bb_contiguity_( true ),
+	last_sub_attempted_backbone_move_(false),
 	last_considered_backbone_sub_valid_( true ),
 	last_considered_backbone_sub_unresolved_( false ),
 	last_considered_fixedbb_sub_unresolved_( false ),

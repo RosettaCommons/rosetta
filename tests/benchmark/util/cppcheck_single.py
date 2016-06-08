@@ -24,7 +24,7 @@ CACHE_DIRECTORY = '../build/cppcheck/src/' # from the source/src/ directory
 TESTS_TO_RUN = "warning,style,performance" # "warning,style,performance,portability" -- error is always on
 
 IGNORED_DIRS = ['./devel','./apps/pilot', './python', './protocols/sparta']
-IGNORED_FILES = []
+IGNORED_FILES = ['./utility/libsvm/Svm.cc']
 
 def parse_defines( compile_type ):
     extras = compile_type.split('-')
@@ -92,6 +92,7 @@ def process_file( filename, compile_type ):
     define_options = parse_defines( compile_type )
     commandline = "cppcheck --suppressions cppcheck_suppressions.txt {defines} --enable={tests} {filename}".format(defines=define_options,tests=tests_to_run,filename=filename )
 
+    print '\t', commandline
     res, output = commands.getstatusoutput( commandline )
 
     if res:

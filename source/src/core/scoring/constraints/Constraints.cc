@@ -45,7 +45,8 @@ namespace constraints {
 /// @details Auto-generated virtual destructor
 Constraints::~Constraints() {}
 
-Constraints::Constraints()
+Constraints::Constraints():
+	constraints_() // make cppcheck happy
 {}
 
 Constraints::Constraints( Constraints const & other ) :

@@ -34,7 +34,11 @@ SimulateMPIMessage::SimulateMPIMessage() :
 	index_( 0 ),
 	src_( 0 ),
 	dst_( 0 ),
-	processed_( false )
+	processed_( false ),
+	msg_type_(smpi_integer),
+	char_msg_(' '),
+	integer_msg_(0),
+	double_msg_(0.0)
 {}
 
 void SimulateMPIMessage::src( platform::Size source ) { src_ = source; }

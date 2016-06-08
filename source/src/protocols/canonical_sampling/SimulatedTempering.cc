@@ -106,15 +106,17 @@ SimulatedTempering::SimulatedTempering() {
 }
 
 SimulatedTempering::SimulatedTempering( SimulatedTempering const & other ) :
-	protocols::canonical_sampling::TemperingBase(other)
-{
-	self_transition_ = other.self_transition_;
-	score_offset_ = other.score_offset_;
-	weights_ = other.weights_ ;
-	counts_ = other.counts_ ;
-	weighted_counts_ = other.weighted_counts_ ;
+	protocols::canonical_sampling::TemperingBase(other),
+	score_offset_(other.score_offset_),
+	self_transition_(other.self_transition_),
+	temperature_jumps_(other.temperature_jumps_),
+	reweight_stride_(other.reweight_stride_),
+	weights_(other.weights_ ),
+	counts_(other.counts_ ),
+	weighted_counts_(other.weighted_counts_),
+	total_count_(other.total_count_)
+{}
 
-}
 
 /// @brief callback executed before any Monte Carlo trials
 /// use to fill count_ with 0
@@ -255,6 +257,7 @@ SimulatedTempering::parse_my_tag(
 /// handling of options including command-line
 void SimulatedTempering::set_defaults() {
 	self_transition_ = 0.0;
+	temperature_jumps_ = false;
 	score_offset_ = 40;
 }
 

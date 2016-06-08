@@ -106,6 +106,7 @@ HamiltonianExchangeCreator::mover_name() {
 
 HamiltonianExchange::HamiltonianExchange() :
 	exchange_grid_dimension_( 1 ),
+	successfully_initialized_( false ),
 	bias_energy_( /* NULL */ )
 {
 	set_defaults();

@@ -91,7 +91,7 @@ AntibodyFeatures::set_ab_info(AntibodyInfoOP ab_info){
 }
 
 void
-AntibodyFeatures::set_interface_chains(utility::vector1<std::string> intermediate_interfaces){
+AntibodyFeatures::set_interface_chains(utility::vector1<std::string> const & intermediate_interfaces){
 	intermediate_interfaces_ = intermediate_interfaces;
 }
 

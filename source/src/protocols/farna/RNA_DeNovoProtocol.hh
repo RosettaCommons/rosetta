@@ -95,7 +95,7 @@ private:
 		core::io::silent::SilentFileData & silent_file_data,
 		std::string const & silent_file,
 		core::pose::Pose & pose,
-		std::string const out_file_tag,
+		std::string const & out_file_tag,
 		bool const score_only = false ) const;
 
 	void

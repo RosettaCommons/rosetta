@@ -51,8 +51,10 @@ public:
 	read_potential(std::string const & fn);
 
 private:
+	/* // Unused
 	core::Size res_index ( std::string const & res_name ) const;
 	core::Size atom_index( std::string const & atom_name ) const;
+	*/
 
 	bool potential_is_loaded_;
 

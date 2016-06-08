@@ -31,8 +31,8 @@ namespace utility {
 inline void swap4_aligned(void *v, long ndata) {
 	int *data = (int *) v;
 	long i;
-	int *N;
 	for ( i=0; i<ndata; i++ ) {
+		int *N;
 		N = data + i;
 		*N=(((*N>>24)&0xff) | ((*N&0xff)<<24) | ((*N>>8)&0xff00) | ((*N&0xff00)<<8));
 	}

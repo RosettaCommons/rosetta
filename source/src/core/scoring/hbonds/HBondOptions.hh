@@ -65,7 +65,7 @@ public:
 	HBondOptions( HBondOptions const & src );
 
 	/// copy operator
-	HBondOptions const &
+	HBondOptions &
 	operator=( HBondOptions const & src );
 
 	/// @brief set hbond options from key value options in a Tag

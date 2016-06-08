@@ -119,12 +119,14 @@ private:
 		return true;
 	}
 
+	/* // Commented out for cppcheck
 	/// @brief Are atoms i and j bonded to each other on Restype1?
 	inline
 	bool
 	bonded(Size i, Size j) {
 		return restype_.path_distance(i,j) == 1;
 	}
+	*/
 
 	/// @brief Are atoms i and j bonded to each other on Restype2?
 	inline

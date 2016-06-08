@@ -108,7 +108,7 @@ FrameIterator OrderedFragSet::nonconst_end() {
 }
 
 bool OrderedFragSet::empty() const {
-	return frames_.size()==0;
+	return frames_.empty();
 }
 
 

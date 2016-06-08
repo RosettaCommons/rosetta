@@ -276,7 +276,7 @@ public: // Comparison
 
 private: // Conversion
 
-
+	/* // Unused
 	/// @brief Index value conversion
 	/// @note  A pure virtual version of this slows down key lookup operations
 	///        because it prevents inlining for derived key types
@@ -286,7 +286,7 @@ private: // Conversion
 		debug_assert( key_p_ );
 		return key_p_->index();
 	}
-
+	*/
 
 private: // Fields
 

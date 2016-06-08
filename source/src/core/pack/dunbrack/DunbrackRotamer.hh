@@ -508,10 +508,10 @@ polycubic_interpolation(
 template < Size N >//, class P >
 void
 interpolate_polylinear_by_value(
-	utility::fixedsizearray1< double, ( 1 << N ) > const vals,
+	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
 	utility::fixedsizearray1< double, N > const & bbd,
 	utility::fixedsizearray1< double, N > const & binrange,
-	bool const angles,
+	bool angles,
 	double & val,
 	utility::fixedsizearray1< double, N > & dval_dbb
 ) {

@@ -1144,7 +1144,7 @@ private: // Functions
 		if ( source_ ) source_->insert_observer( *this );
 	}
 
-
+	/* // Unused private member
 	/// @brief Remove as Observer of the IndexRanges and Source Array
 	inline
 	void
@@ -1155,6 +1155,7 @@ private: // Functions
 		I3_.remove_observer( *this );
 		if ( source_ ) source_->remove_observer( *this );
 	}
+	*/
 
 
 private: // Data

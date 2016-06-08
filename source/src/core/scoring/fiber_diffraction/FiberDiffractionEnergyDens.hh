@@ -51,12 +51,14 @@ public:
 
 	FiberDiffractionEnergyDens();
 	FiberDiffractionEnergyDens( FiberDiffractionEnergyDens const & src ) :
-		parent(src) {
-		chi2_ = src.chi2_;
-		scale_factor_ = src.scale_factor_;
-		dchi2_d = src.dchi2_d;
-		dchi2_d_cross_R = src.dchi2_d_cross_R;
-	}
+		parent(src),
+		I( src.I ),
+		dchi2_d(src.dchi2_d),
+		dchi2_d_cross_R(src.dchi2_d_cross_R),
+		chi2_(src.chi2_),
+		scale_factor_(src.scale_factor_),
+		rho_cylindrical_( src.rho_cylindrical_ )
+	{}
 
 	virtual methods::EnergyMethodOP clone() const;
 

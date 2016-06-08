@@ -68,12 +68,6 @@ static THREAD_LOCAL basic::Tracer TR_pcs_d_Ts3( "protocols.scoring.methods.pcsTs
 PCS_data_per_lanthanides_Ts3::~PCS_data_per_lanthanides_Ts3(){
 }
 
-PCS_data_per_lanthanides_Ts3::PCS_data_per_lanthanides_Ts3():
-	filename_(""), weight_(0)
-{
-	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_per_lanthanides_Ts3 class" );
-}
-
 PCS_data_per_lanthanides_Ts3::PCS_data_per_lanthanides_Ts3(PCS_data_per_lanthanides_Ts3 const &other):
 	filename_(other.filename_), svd_s_(other.svd_s_),  weight_(other.weight_)
 {

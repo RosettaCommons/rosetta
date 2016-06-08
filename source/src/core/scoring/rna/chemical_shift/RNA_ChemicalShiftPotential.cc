@@ -487,7 +487,7 @@ RNA_ChemicalShiftPotential::string_list( std::string const & string_one ) const
 /////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< std::string >
-RNA_ChemicalShiftPotential::string_list( std::string const & string_one, const std::string & string_two ) const
+RNA_ChemicalShiftPotential::string_list( std::string const & string_one, std::string const & string_two ) const
 {
 	utility::vector1< std::string > string_list;
 
@@ -1684,7 +1684,7 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift(
 }
 
 void
-RNA_ChemicalShiftPotential::load_larmord_parameters( std::string  const filename )
+RNA_ChemicalShiftPotential::load_larmord_parameters( std::string  const & filename )
 {
 	utility::io::izstream stream;
 	stream.open( filename );
@@ -1700,7 +1700,7 @@ RNA_ChemicalShiftPotential::load_larmord_parameters( std::string  const filename
 }
 
 void
-RNA_ChemicalShiftPotential::load_larmord_weights( std::string  const filename )
+RNA_ChemicalShiftPotential::load_larmord_weights( std::string  const & filename )
 {
 	utility::io::izstream stream;
 	stream.open( filename );
@@ -1714,7 +1714,7 @@ RNA_ChemicalShiftPotential::load_larmord_weights( std::string  const filename )
 }
 
 void
-RNA_ChemicalShiftPotential::load_larmord_reference_shifts( std::string  const filename )
+RNA_ChemicalShiftPotential::load_larmord_reference_shifts( std::string  const & filename )
 {
 	utility::io::izstream stream;
 	stream.open( filename );
@@ -1728,7 +1728,7 @@ RNA_ChemicalShiftPotential::load_larmord_reference_shifts( std::string  const fi
 }
 
 void
-RNA_ChemicalShiftPotential::load_larmord_neighbor_atoms( std::string  const filename )
+RNA_ChemicalShiftPotential::load_larmord_neighbor_atoms( std::string  const & filename )
 {
 	utility::io::izstream stream;
 	stream.open( filename );

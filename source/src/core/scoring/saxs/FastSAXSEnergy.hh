@@ -47,11 +47,13 @@ public:
 
 
 	FastSAXSEnergy( FastSAXSEnergy const & src ) :
-		parent(src) {
-		chi2 = src.chi2;
-		dchi2_dca = src.dchi2_dca;
-		dchi2_dsc = src.dchi2_dsc;
-	}
+		parent(src),
+		dchi2_dca(src.dchi2_dca),
+		dchi2_dsc(src.dchi2_dsc),
+		chi2(src.chi2),
+		c(src.c),
+		r_chi2(src.r_chi2)
+	{}
 
 	virtual methods::EnergyMethodOP clone() const;
 

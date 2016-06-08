@@ -91,6 +91,7 @@ RotamerSubsets::RotamerSubsets(
 
 RotamerSubsets::~RotamerSubsets() {}
 
+/* // Unused
 void
 RotamerSubsets::update_offset_data()
 {
@@ -116,7 +117,7 @@ RotamerSubsets::update_offset_data()
 		}
 	}
 }
-
+*/
 
 uint RotamerSubsets::nrotamers() const { return nrotamers_;}
 uint RotamerSubsets::nrotamers_for_moltenres( uint mresid ) const

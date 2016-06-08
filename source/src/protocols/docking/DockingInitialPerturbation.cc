@@ -938,7 +938,7 @@ void SlideIntoContact::show(std::ostream & output) const {
 }
 
 /// @brief set slide axis in Mover
-void SlideIntoContact::slide_axis( core::Vector slide_axis ) {
+void SlideIntoContact::slide_axis( core::Vector const & slide_axis ) {
 	slide_axis_ = slide_axis;
 }
 
@@ -1013,7 +1013,7 @@ void SlideIntoContact::init_from_cmd() {
 
 } // init from cmd
 
-void move_apart( core::pose::Pose & pose, int jump, core::Vector axis ) {
+void move_apart( core::pose::Pose & pose, int jump, core::Vector const & axis ) {
 
 	using namespace protocols::rigid;
 	using namespace protocols::membrane;

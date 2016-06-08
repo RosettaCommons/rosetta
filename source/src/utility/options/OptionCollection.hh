@@ -1541,8 +1541,7 @@ public: // Indexers
 			return *booleans_.begin(); // Keep compiler happy
 		default :
 			runtime_assert( false ); // Shouldn't get here
-			option = &(*booleans_.begin()); // Keep compiler happy
-			break;
+			return *booleans_.begin(); // Keep compiler happy
 		}
 		option->check_restricted_access(true);
 		return *option;
@@ -2080,8 +2079,7 @@ public: // Indexers
 			return *booleans_.begin(); // Keep compiler happy
 		default :
 			runtime_assert( false ); // Shouldn't get here
-			option = &(*booleans_.begin()); // Keep compiler happy
-			break;
+			return *booleans_.begin(); // Keep compiler happy
 		}
 		option->check_restricted_access(check_restricted_access);
 		return *option;
@@ -2320,8 +2318,8 @@ public: // Static functions
 	std::string
 	wrapped(
 		std::string const & s, // String to wrap
-		std::string::size_type const indent = 10, // Width to indent continuation lines
-		std::string::size_type const width = 80, // Column width to wrap at [80]
+		std::string::size_type indent = 10, // Width to indent continuation lines
+		std::string::size_type width = 80, // Column width to wrap at [80]
 		std::string const & header_for_extra_lines = ""
 	);
 

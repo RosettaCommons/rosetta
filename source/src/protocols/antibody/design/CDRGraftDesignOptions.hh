@@ -155,20 +155,20 @@ public:
 	virtual ~CDRGraftDesignOptionsParser();
 
 	CDRGraftDesignOptionsOP
-	parse_options(CDRNameEnum cdr, std::string filename);
+	parse_options(CDRNameEnum cdr, std::string const & filename);
 
 	/// @brief Parse default_instructions (mainly used for AbDesign) then parse user file
 	CDRGraftDesignOptionsOP
-	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
+	parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename);
 
 
 	//ALL CDRs
 
 	utility::vector1<CDRGraftDesignOptionsOP>
-	parse_options(std::string filename);
+	parse_options(std::string const & filename);
 
 	utility::vector1<CDRGraftDesignOptionsOP>
-	parse_default_and_user_options(std::string filename);
+	parse_default_and_user_options(std::string const & filename);
 
 private:
 	/// @brief Tries to find the path in either database, relative, or absolute, sets it.
@@ -179,21 +179,21 @@ private:
 	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
 
 	void
-	parse_cdr_option(std::string const & mode, utility::vector1<std::string> & lineSP);
+	parse_cdr_option(std::string const & mode, utility::vector1<std::string> const & lineSP);
 
 
 	void
-	parse_cdr_graft_option(std::string const & adjective, utility::vector1<std::string> & lineSP) ;
+	parse_cdr_graft_option(std::string const & adjective, utility::vector1<std::string> const & lineSP) ;
 
 	void
-	parse_cdr_general_option(utility::vector1<std::string> & lineSP) ;
+	parse_cdr_general_option(utility::vector1<std::string> const & lineSP) ;
 
 
 	void
 	set_cdr_graft_mintype_options(std::string const & mintype);
 
 	void
-	set_cdr_graft_neighbor_mintype_options(utility::vector1<std::string> & lineSP);
+	set_cdr_graft_neighbor_mintype_options(utility::vector1<std::string> const & lineSP);
 
 
 	void

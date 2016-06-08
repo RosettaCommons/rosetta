@@ -137,7 +137,7 @@ public:
 	/// @brief Set intermediate interface chains: Example: L_A, H_A, L_H, LH_A (A stands for antigen)
 	/// @brief Any other chains, use InterfaceFeatures.
 	void
-	set_interface_chains(utility::vector1< std::string > intermediate_interfaces);
+	set_interface_chains(utility::vector1< std::string > const & intermediate_interfaces);
 
 private:
 

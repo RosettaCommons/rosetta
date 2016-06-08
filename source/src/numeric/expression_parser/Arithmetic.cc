@@ -226,7 +226,7 @@ void TokenSet::append( TokenCOP token )
 
 bool
 TokenSet::empty() const {
-	return tokens_.size() == 0 || curr_pos_ == tokens_.end();
+	return tokens_.empty() || curr_pos_ == tokens_.end();
 }
 
 TokenCOP

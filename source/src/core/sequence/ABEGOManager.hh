@@ -105,6 +105,7 @@ public:
 
 	/// @brief default constructor
 	ABEGO() :
+		name_( 'X' ),
 		phi_min_( 0.0 ),
 		phi_max_( 0.0 ),
 		psi_min_( 0.0 ),

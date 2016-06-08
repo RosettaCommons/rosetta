@@ -402,7 +402,7 @@ void PossibleAtomTypesForAtom::SetToType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 				end(m_AtomTypesByDecreasingStability.end()); itr != end; ++itr ) {
 			TR.Warning << " " << (*itr)->get_name();
 		}
-		if ( m_AtomTypesByDecreasingStability.size() == 0 ) {
+		if ( m_AtomTypesByDecreasingStability.empty() ) {
 			TR.Warning << " (None) ";
 		}
 		TR.Warning << std::endl;

@@ -508,9 +508,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bi
 template < Size T, Size N >
 void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_nrchi_values(
-	utility::fixedsizearray1< Size, N > bb_bin,
-	utility::fixedsizearray1< Size, N > bb_bin_next,
-	utility::fixedsizearray1< Real, N > bb_alpha,
+	utility::fixedsizearray1< Size, N > const & bb_bin,
+	utility::fixedsizearray1< Size, N > const & bb_bin_next,
+	utility::fixedsizearray1< Real, N > const & bb_alpha,
 	Size packed_rotno,
 	utility::vector1< Real > & interpolated_nrchi_distribution
 ) const {
@@ -2015,8 +2015,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_bbdep_nrchi_bin(
 template < Size T, Size N >
 BBDepNRChiSample< Real >
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_bbdep_nrchi_sample(
-	Size const packed_rotno,
-	Size const nrchi_bin,
+	Size packed_rotno,
+	Size nrchi_bin,
 	utility::fixedsizearray1< Size, N > const & bb_bin,
 	utility::fixedsizearray1< Size, N > const & bb_bin_next,
 	utility::fixedsizearray1< Real, N > const & bb_alpha

@@ -72,7 +72,7 @@ public: // operators
 
 	/// @brief access a specific VallSection within this section, 1-based indexing
 	inline
-	VallSection const & operator[]( Size const idx ) const {
+	VallSection const & operator[]( Size idx ) const {
 		return sections()[ idx ];
 	}
 
@@ -129,7 +129,7 @@ public: // memory
 	/// @brief ensure storage currently allocated for VallSections is at least the
 	///  given size
 	inline
-	void reserve( Size const n ) {
+	void reserve( Size n ) {
 		sections().reserve( n );
 	}
 

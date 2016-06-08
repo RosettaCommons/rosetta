@@ -66,7 +66,9 @@ Polynomial_1d::Polynomial_1d(
 Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
 	utility::pointer::ReferenceCount( src ),
 	polynomial_name_(src.polynomial_name_),
-	xmin_(src.xmin_), xmax_(src.xmax_), root1_(src.root1_), root2_(src.root2_),
+	xmin_(src.xmin_), xmax_(src.xmax_),
+	min_val_(src.min_val_), max_val_(src.max_val_),
+	root1_(src.root1_), root2_(src.root2_),
 	degree_(src.degree_),
 	coefficients_(src.coefficients_)
 {

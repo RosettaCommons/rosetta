@@ -230,7 +230,7 @@ assign_abase_derivs(
 	HBondOptions const & hbondoptions,
 	conformation::Residue const & acc_rsd,
 	Size acc_atom,
-	HBEvalTuple const hbe_type,
+	HBEvalTuple const & hbe_type,
 	DerivVectorPair const & abase_deriv,
 	Real weighted_energy,
 	utility::vector1< DerivVectorPair > & acc_atom_derivs

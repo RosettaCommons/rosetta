@@ -1,43 +1,4 @@
-[basic/MemTracer.cc:70]: (portability) scanf without field width limits can crash with huge input data on some versions of libc.
-[basic/prof.cc:50]: (style) Obsolete function 'asctime' called. It is recommended to use the function 'strftime' instead.
-[basic/svd/SVD_Solver.cc:166]: (performance) Variable 'cstyle_b_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/svd/SVD_Solver.cc:167]: (performance) Variable 'cstyle_A_decomp_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/svd/SVD_Solver.cc:168]: (performance) Variable 'cstyle_v_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/svd/SVD_Solver.cc:169]: (performance) Variable 'cstyle_x_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/svd/SVD_Solver.cc:170]: (performance) Variable 'cstyle_w_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/svd/SVD_Solver.cc:171]: (performance) Variable 'cstyle_tmp_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/svd/SVD_Solver.cc:179]: (warning) Member variable 'SVD_Solver::A_is_decomp_' is not initialized in the constructor.
-[basic/svd/SVD_Solver.cc:179]: (warning) Member variable 'SVD_Solver::A_is_set_' is not initialized in the constructor.
-[basic/svd/SVD_Solver.cc:179]: (warning) Member variable 'SVD_Solver::b_is_set_' is not initialized in the constructor.
-[basic/svd/SVD_Solver.cc:179]: (warning) Member variable 'SVD_Solver::x_is_solved_' is not initialized in the constructor.
-[basic/Tracer.cc:437]: (performance) Function parameter 'ch' should be passed by reference.
-[basic/Tracer.cc:464]: (performance) Function parameter 'ch' should be passed by reference.
-[basic/Tracer.hh:281]: (performance) Function parameter 'channel' should be passed by reference.
-[basic/Tracer.hh:288]: (performance) Function parameter 'ch' should be passed by reference.
-[core/chemical/atomtype_support.cc:177] -> [core/chemical/atomtype_support.cc:175]: (style) Found duplicate branches for 'if' and 'else'.
-[core/chemical/automorphism.hh:125]: (style) Unused private function: 'AutomorphismIterator::bonded'
-[core/chemical/gasteiger/GasteigerAtomTyper.cc:405]: (performance) Possible inefficient checking for 'm_AtomTypesByDecreasingStability' emptiness.
-[core/chemical/ResidueType.cc:1290]: (performance) Function parameter 'atom_name' should be passed by reference.
-[core/chemical/ResidueType.hh:1091]: (performance) Function parameter 'atom_name' should be passed by reference.
-[core/conformation/ResidueKinWriter.hh:93]: (style) The class 'ConformationKinWriter' does not have a constructor.
-[core/conformation/symmetry/SymmData.cc:1217]: (performance) Possible inefficient checking for 'virtual_coordinates_' emptiness.
-[core/conformation/symmetry/SymmData.cc:937]: (performance) Possible inefficient checking for 'virt_id_to_subunit_chain_' emptiness.
-[core/conformation/symmetry/VirtualCoordinate.cc:32]: (performance) Variable 'axis_x_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/conformation/symmetry/VirtualCoordinate.cc:33]: (performance) Variable 'axis_y_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/conformation/symmetry/VirtualCoordinate.cc:34]: (performance) Variable 'axis_origin_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/conformation/symmetry/VirtualCoordinate.cc:48]: (performance) Variable 'axis_x_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/conformation/symmetry/VirtualCoordinate.cc:49]: (performance) Variable 'axis_y_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/conformation/symmetry/VirtualCoordinate.cc:50]: (performance) Variable 'axis_origin_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/fragment/FragData.hh:184]: (warning) Member variable 'FragData::valid_' is not initialized in the constructor.
-[core/fragment/FragID.hh:50]: (style) 'FragID::operator=' should return 'FragID &'.
 [core/fragment/FragID_Iterator.cc:88]: (warning) Member variable 'FragID_Iterator::my_frag_id_' is not assigned a value in 'FragID_Iterator::operator='.
-[core/fragment/FrameIterator.hh:108]: (style) 'FrameIterator::operator=' should return 'FrameIterator &'.
-[core/fragment/FrameIterator.hh:75]: (style) 'ConstFrameIterator::operator=' should return 'ConstFrameIterator &'.
-[core/fragment/OrderedFragSet.cc:111]: (performance) Possible inefficient checking for 'frames_' emptiness.
-[core/fragment/picking_old/vall/VallLibrary.hh:132]: (performance) Function parameter 'n' should be passed by reference.
-[core/fragment/picking_old/vall/VallLibrary.hh:75]: (performance) Function parameter 'idx' should be passed by reference.
-[core/graph/Graph.hh:167]: (style) 'EdgeListIterator::operator=' should return 'EdgeListIterator &'.
-[core/graph/Graph.hh:257]: (style) 'EdgeListConstIterator::operator=' should return 'EdgeListConstIterator &'.
 [core/graph/UpperEdgeGraph.hh:110]: (style) Unused private function: 'UEVertex::set_index_and_owner'
 [core/graph/UpperEdgeGraph.hh:216]: (style) Unused private function: 'UEVertex::add_edge'
 [core/graph/UpperEdgeGraph.hh:226]: (style) Unused private function: 'UEVertex::add_edge'
@@ -46,82 +7,24 @@
 [core/graph/UpperEdgeGraph.hh:247]: (style) Unused private function: 'UEVertex::note_lower_edge_added'
 [core/graph/UpperEdgeGraph.hh:508]: (style) Unused private function: 'UpperEdgeGraph::get_vertex_ptr'
 [core/graph/UpperEdgeGraph.hh:511]: (style) Unused private function: 'UpperEdgeGraph::note_edge_deleted'
-[core/id/NamedAtomID_Map.hh:373]: (performance) Function parameter 'atom' should be passed by reference.
-[core/id/NamedAtomID_Map.hh:386]: (performance) Function parameter 'atom' should be passed by reference.
-[core/import_pose/pose_stream/LazySilentFilePoseInputStream.hh:43]: (performance) Variable 'filenames_' is assigned in constructor body. Consider performing initialization in initialization list.
 [core/init/score_function_corrections.cc:448] -> [core/init/score_function_corrections.cc:445]: (style) Found duplicate branches for 'if' and 'else'.
 [core/init/score_function_corrections.cc:467] -> [core/init/score_function_corrections.cc:464]: (style) Found duplicate branches for 'if' and 'else'.
-[core/io/pdb/Field.cc:73]: (performance) Possible inefficient checking for 'records' emptiness.
-[core/io/pdb/NomenclatureManager.cc:119]: (performance) Possible inefficient checking for 'alt_codes_' emptiness.
-[core/io/raw_data/RawFileData.cc:35]: (performance) Function parameter 'filename' should be passed by reference.
-[core/io/raw_data/RawFileData.cc:63]: (performance) Function parameter 'filename' should be passed by reference.
-[core/io/raw_data/RawFileData.hh:114]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[core/io/raw_data/RawFileData.hh:139]: (performance) Variable 'it_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/io/raw_data/RawFileData.hh:158]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[core/io/raw_data/RawFileData.hh:71]: (performance) Function parameter 'filename' should be passed by reference.
-[core/io/raw_data/RawFileData.hh:74]: (performance) Function parameter 'filename' should be passed by reference.
-[core/io/raw_data/RawFileData.hh:95]: (performance) Variable 'it_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/io/rna/RNA_DataReader.hh:45]: (performance) Function parameter 'rna_data_file' should be passed by reference.
-[core/io/rna/RNA_DataReader.hh:48]: (performance) Function parameter 'rna_data_file' should be passed by reference.
-[core/io/rna/RNA_DataReader.hh:75]: (performance) Function parameter 'modifier_name' should be passed by reference.
 [core/io/serialization/serialize_pose.hh:31]: (style) 'struct BUFFER' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
-[core/io/silent/SilentFileData.hh:412]: (performance) Variable 'it_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/io/silent/SilentFileData.hh:431]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[core/io/silent/SilentFileData.hh:436]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[core/io/silent/SilentFileData.hh:466]: (performance) Variable 'it_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/io/silent/SilentFileData.hh:485]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[core/io/silent/SilentFileData.hh:490]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[core/io/silent/SilentStruct.hh:196]: (performance) Function parameter 'scorename' should be passed by reference.
-[core/io/silent/SilentStruct.hh:307]: (performance) Function parameter 'name' should be passed by reference.
-[core/io/silent/SilentStruct.hh:307]: (performance) Function parameter 'value' should be passed by reference.
-[core/io/silent/SilentStruct.hh:310]: (performance) Function parameter 'line' should be passed by reference.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::cutpoint_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::cutpoint_map_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::edge_count' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::is_cutpoint_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::is_jump_point_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::jump_edge_count' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::jump_edge_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::jump_point_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::min_edge_count' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::new_order' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::nres_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::num_cutpoint_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:106]: (warning) Member variable 'FoldTree::num_jump_' is not assigned a value in 'FoldTree::operator='.
-[core/kinematics/FoldTree.hh:81]: (warning) Member variable 'FoldTree::min_edge_count' is not initialized in the constructor.
-[core/kinematics/FoldTree.hh:81]: (warning) Member variable 'FoldTree::new_order' is not initialized in the constructor.
-[core/kinematics/FoldTree.hh:81]: (warning) Member variable 'FoldTree::num_cutpoint_' is not initialized in the constructor.
-[core/kinematics/ResidueCoordinateChangeList.hh:49]: (style) 'ResidueCoordinateChangeList::operator=' should return 'ResidueCoordinateChangeList &'.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::cutpoint_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::cutpoint_map_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::edge_count' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::is_cutpoint_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::is_jump_point_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::jump_edge_count' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::jump_edge_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::jump_point_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::min_edge_count' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::new_order' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::nres_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::num_cutpoint_' is not assigned a value in 'FoldTree::operator='.
+[core/kinematics/FoldTree.hh:112]: (warning) Member variable 'FoldTree::num_jump_' is not assigned a value in 'FoldTree::operator='.
 [core/kinematics/tree/Atom_.hh:94]: (warning) Member variable 'Atom_::raw_parent_' is not assigned a value in 'Atom_::operator='.
-[core/optimization/DOF_Node.hh:157]: (warning) Member variable 'DOF_Node::dependent_' is not initialized in the constructor.
-[core/optimization/DOF_Node.hh:201]: (style) Unused private function: 'DOF_Node::operator<'
-[core/optimization/GA_Minimizer.hh:35]: (performance) Variable 'v' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/optimization/GA_Minimizer.hh:35]: (warning) Member variable 'EItem::r' is not initialized in the constructor.
-[core/optimization/GA_Minimizer.hh:35]: (warning) Member variable 'EItem::tag' is not initialized in the constructor.
-[core/optimization/GA_Minimizer.hh:49]: (warning) Member variable 'GA_Minimizer::allowed_time_' is not initialized in the constructor.
-[core/optimization/LineMinimizer.hh:193] -> [core/optimization/LineMinimizer.hh:134]: (warning) The class 'StrongWolfeLineMinimization' defines member variable with name '_nonmonotone' also defined in its parent class 'LineMinimizationAlgorithm'.
-[core/optimization/Multifunc.hh:69]: (style) 'Multifunc::operator=' should return 'Multifunc &'.
-[core/pack/annealer/SimAnnealerBase.cc:212]: (style) The scope of the variable 'avgloopE' can be reduced.
-[core/pack/annealer/SimAnnealerBase.cc:311]: (style) The scope of the variable 'lnprob' can be reduced.
-[core/pack/annealer/SimAnnealerBase.cc:313]: (style) The scope of the variable 'probability' can be reduced.
-[core/pack/dunbrack/cenrot/CenrotLibrary.cc:129]: (style) The scope of the variable 'aan' can be reduced.
-[core/pack/dunbrack/cenrot/CenrotLibrary.cc:131]: (style) Unused variable: thisaa
-[core/pack/dunbrack/DunbrackRotamer.hh:524]: (performance) Function parameter 'bbd' should be passed by reference.
-[core/pack/dunbrack/DunbrackRotamer.hh:525]: (performance) Function parameter 'binrange' should be passed by reference.
-[core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh:287]: (performance) Function parameter 'bb_bin' should be passed by reference.
-[core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh:288]: (performance) Function parameter 'bb_bin_next' should be passed by reference.
-[core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh:289]: (performance) Function parameter 'bb_alpha' should be passed by reference.
-[core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh:385]: (performance) Function parameter 'bb_bin' should be passed by reference.
-[core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh:386]: (performance) Function parameter 'bb_bin_next' should be passed by reference.
-[core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh:481]: (performance) Function parameter 'interpolated_sample' should be passed by reference.
-[core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh:512]: (performance) Function parameter 'bb_bin' should be passed by reference.
-[core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh:513]: (performance) Function parameter 'bb_bin_next' should be passed by reference.
-[core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh:514]: (performance) Function parameter 'bb_alpha' should be passed by reference.
-[core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh:520]: (performance) Function parameter 'bb_alpha' should be passed by reference.
-[core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh:582]: (style) The scope of the variable 'this_submatrix_worth_keeping' can be reduced.
-[core/pack/interaction_graph/DensePDInteractionGraph.hh:342]: (style) C-style pointer casting
-[core/pack/interaction_graph/DensePDInteractionGraph.hh:348]: (style) C-style pointer casting
-[core/pack/interaction_graph/DensePDInteractionGraph.hh:354]: (style) C-style pointer casting
+[core/optimization/LineMinimizer.hh:197] -> [core/optimization/LineMinimizer.hh:134]: (warning) The class 'StrongWolfeLineMinimization' defines member variable with name '_nonmonotone' also defined in its parent class 'LineMinimizationAlgorithm'.
 [core/pack/interaction_graph/DoubleDensePDInteractionGraph.cc:374]: (warning) Member variable 'DoubleDensePDEdge::curr_state_energy_' is not initialized in the constructor.
 [core/pack/interaction_graph/DoubleDensePDInteractionGraph.cc:51]: (warning) Member variable 'DoubleDensePDNode::alternate_state_' is not initialized in the constructor.
 [core/pack/interaction_graph/DoubleDensePDInteractionGraph.cc:51]: (warning) Member variable 'DoubleDensePDNode::alternate_state_one_body_energy_' is not initialized in the constructor.
@@ -146,7 +49,6 @@
 [core/pack/interaction_graph/FASTERInteractionGraph.cc:53]: (warning) Member variable 'FASTERNode::alternate_state_total_energy_' is not initialized in the constructor.
 [core/pack/interaction_graph/FASTERInteractionGraph.cc:53]: (warning) Member variable 'FASTERNode::current_state_' is not initialized in the constructor.
 [core/pack/interaction_graph/FASTERInteractionGraph.cc:53]: (warning) Member variable 'FASTERNode::curr_state_one_body_energy_' is not initialized in the constructor.
-[core/pack/interaction_graph/FASTERInteractionGraph.cc:610]: (style) The scope of the variable 'bottom_of_top10' can be reduced.
 [core/pack/interaction_graph/FASTERInteractionGraph.hh:295]: (style) C-style pointer casting
 [core/pack/interaction_graph/FASTERInteractionGraph.hh:301]: (style) C-style pointer casting
 [core/pack/interaction_graph/FixedBBInteractionGraph.cc:107]: (style) C-style pointer casting
@@ -179,688 +81,70 @@
 [core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.cc:42]: (style) C-style pointer casting
 [core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.cc:67]: (style) C-style pointer casting
 [core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.cc:90]: (style) C-style pointer casting
-[core/pack/interaction_graph/RotamerDots.hh:149]: (style) 'RotamerDots::operator=' should return 'RotamerDots &'.
-[core/pack/interaction_graph/RotamerDots.hh:343]: (style) 'RotamerDotsCache::operator=' should return 'RotamerDotsCache &'.
-[core/pack/interaction_graph/RotamerDots.hh:374]: (style) 'InvRotamerDots::operator=' should return 'InvRotamerDots &'.
-[core/pack/interaction_graph/RotamerDots.hh:73]: (style) 'DotSphere::operator=' should return 'DotSphere &'.
 [core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.cc:867]: (style) C-style pointer casting
 [core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.cc:881]: (style) C-style pointer casting
 [core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.cc:893]: (style) C-style pointer casting
-[core/pack/rotamer_set/RotamerSetFactory.cc:50] -> [core/pack/rotamer_set/RotamerSetFactory.cc:48]: (style) Found duplicate branches for 'if' and 'else'.
-[core/pack/rotamer_set/RotamerSetFactory.cc:61] -> [core/pack/rotamer_set/RotamerSetFactory.cc:59]: (style) Found duplicate branches for 'if' and 'else'.
-[core/pack/rotamer_set/RotamerSubsets.hh:134]: (style) Unused private function: 'RotamerSubsets::update_offset_data'
-[core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.cc:41] -> [core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.cc:39]: (style) Found duplicate branches for 'if' and 'else'.
-[core/pack/rotamer_set/WaterAnchorInfo.hh:37]: (style) The class 'WaterAnchorInfo' does not have a constructor.
-[core/pack/scmin/AtomTreeCollection.hh:61]: (style) 'ResidueAtomTreeCollectionMomento::operator=' should return 'ResidueAtomTreeCollectionMomento &'.
 [core/pack/scmin/CartSCMinMinimizerMap.hh:187] -> [core/pack/scmin/SCMinMinimizerMap.hh:199]: (warning) The class 'CartSCMinMinimizerMap' defines member variable with name 'domain_map_' also defined in its parent class 'SCMinMinimizerMap'.
-[core/pack/scmin/SidechainStateAssignment.hh:38]: (style) 'SidechainStateAssignment::operator=' should return 'SidechainStateAssignment &'.
-[core/pack/task/operation/TaskOperations.hh:110]: (performance) Function parameter 'keep_aas' should be passed by reference.
-[core/pack/task/operation/TaskOperations.hh:398]: (style) 'SetRotamerCouplings::operator=' should return 'SetRotamerCouplings &'.
-[core/pack/task/operation/TaskOperations.hh:424]: (style) 'SetRotamerLinks::operator=' should return 'SetRotamerLinks &'.
-[core/pack/task/ResfileReader.hh:495]: (style) The class 'EX' does not have a constructor.
-[core/pack/task/TaskFactory.hh:58]: (style) 'TaskFactory::operator=' should return 'TaskFactory &'.
-[core/pose/CrystInfo.hh:33]: (performance) Variable 'spacegroup_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/pose/datacache/ObserverCache.hh:104]: (performance) Function parameter 'slot' should be passed by reference.
-[core/pose/datacache/ObserverCache.hh:114]: (performance) Function parameter 'slot' should be passed by reference.
-[core/pose/datacache/ObserverCache.hh:124]: (performance) Function parameter 'slot' should be passed by reference.
-[core/pose/datacache/ObserverCache.hh:136]: (performance) Function parameter 'slot' should be passed by reference.
-[core/pose/datacache/ObserverCache.hh:148]: (performance) Function parameter 'slot' should be passed by reference.
-[core/pose/datacache/ObserverCache.hh:153]: (performance) Function parameter 'slot' should be passed by reference.
-[core/pose/datacache/ObserverCache.hh:72]: (performance) Function parameter 'n_slots' should be passed by reference.
-[core/pose/full_model_info/FullModelParameters.hh:176]: (performance) Function parameter 'cst_file' should be passed by reference.
-[core/pose/full_model_info/FullModelParameters.hh:189]: (performance) Function parameter 'disulfide_file' should be passed by reference.
-[core/pose/full_model_info/FullModelParameters.hh:78]: (performance) Function parameter 'full_sequence' should be passed by reference.
-[core/pose/full_model_info/FullModelParameters.hh:80]: (performance) Function parameter 'full_sequence' should be passed by reference.
-[core/pose/PDBInfo.hh:789]: (performance) Function parameter 'label' should be passed by reference.
-[core/pose/PDBInfo.hh:805]: (performance) Function parameter 'target_label' should be passed by reference.
-[core/pose/util.hh:143]: (performance) Function parameter 'name' should be passed by reference.
-[core/pose/util.hh:149]: (performance) Function parameter 'name' should be passed by reference.
-[core/pose/util.hh:154]: (performance) Function parameter 'name' should be passed by reference.
-[core/pose/util.hh:158]: (performance) Function parameter 'name' should be passed by reference.
-[core/pose/util.hh:174]: (performance) Function parameter 'name' should be passed by reference.
-[core/pose/util.hh:181]: (performance) Function parameter 'value' should be passed by reference.
-[core/scoring/bin_transitions/BinTransitionData.cc:545]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:548]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:551]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:554]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:557]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:560]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:563]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:566]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:569]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:572]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:575]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/bin_transitions/BinTransitionData.cc:578]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/carbon_hbonds/CarbonHBondEnergy.hh:271]: (style) Unused private function: 'CarbonHBondEnergy::atom_is_apolar_h'
-[core/scoring/carbon_hbonds/CarbonHBondEnergy.hh:274]: (style) Unused private function: 'CarbonHBondEnergy::atom_is_acceptor'
-[core/scoring/CenRotEnvPairPotential.hh:136]: (performance) Function parameter 'cenvec' should be passed by reference.
-[core/scoring/constraints/ConstraintIO.hh:102]: (performance) Function parameter 'residue_string' should be passed by reference.
-[core/scoring/constraints/Constraints.cc:51]: (warning) Member variable 'Constraints::constraints_' is not initialized in the constructor.
-[core/scoring/constraints/Constraints.cc:75]: (warning) Member variable 'Constraints::constraints_' is not assigned a value in 'Constraints::operator='.
-[core/scoring/constraints/Constraints.hh:73]: (style) 'Constraints::operator=' should return 'Constraints &'.
+[core/scoring/constraints/Constraints.cc:52]: (warning) Member variable 'Constraints::constraints_' is not initialized in the constructor.
+[core/scoring/constraints/Constraints.cc:76]: (warning) Member variable 'Constraints::constraints_' is not assigned a value in 'Constraints::operator='.
 [core/scoring/ContextGraph.cc:41]: (style) 'operator=' should return reference to 'this' instance.
-[core/scoring/cryst/XtalMLEnergy.hh:57]: (performance) Variable 'dml_dx' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/custom_pair_distance/FullatomCustomPairDistanceEnergy.cc:536]: (performance) Function parameter 'name' should be passed by reference.
 [core/scoring/elec/ElecAtom.hh:101]: (style) Comparison of a function returning boolean value using relational (<, >, <= or >=) operator.
-[core/scoring/elec/GroupElec.hh:88]: (performance) Function parameter 'group_file' should be passed by reference.
-[core/scoring/electron_density/SplineInterp.cc:133]: (style) The scope of the variable 'iz' can be reduced.
-[core/scoring/electron_density/SplineInterp.cc:133]: (style) The scope of the variable 'z2n' can be reduced.
-[core/scoring/Energies.hh:126]: (style) 'Energies::operator=' should return 'Energies &'.
-[core/scoring/EnergyGraph.hh:189]: (style) 'EnergyGraph::operator=' should return 'EnergyGraph &'.
-[core/scoring/EnergyMap.hh:61]: (style) 'EMapVector::operator=' should return 'EMapVector &'.
-[core/scoring/etable/Etable.cc:1246]: (performance) Function parameter 'label' should be passed by reference.
-[core/scoring/etable/Etable.cc:230]: (performance) Function parameter 'alternate_parameter_set' should be passed by reference.
-[core/scoring/etable/Etable.cc:90]: (performance) Function parameter 'alternate_parameter_set' should be passed by reference.
-[core/scoring/etable/EtableEnergy.hh:1103] -> [core/scoring/etable/EtableEnergy.hh:1109]: (performance) Variable 'deriv' is reassigned a value before the old one has been used.
-[core/scoring/etable/Etable.hh:197]: (performance) Function parameter 'alternate_parameter_set' should be passed by reference.
-[core/scoring/etable/Etable.hh:469]: (performance) Function parameter 'alternate_parameter_set' should be passed by reference.
-[core/scoring/etable/Etable.hh:577]: (performance) Function parameter 'label' should be passed by reference.
-[core/scoring/etable/EtableOptions.hh:41]: (style) 'EtableOptions::operator=' should return 'EtableOptions &'.
-[core/scoring/fiber_diffraction/FiberDiffractionEnergyDens.hh:53]: (warning) Member variable 'FiberDiffractionEnergyDens::I' is not initialized in the constructor.
-[core/scoring/fiber_diffraction/FiberDiffractionEnergyDens.hh:53]: (warning) Member variable 'FiberDiffractionEnergyDens::rho_cylindrical_' is not initialized in the constructor.
-[core/scoring/fiber_diffraction/FiberDiffractionEnergy.hh:50]: (warning) Member variable 'FiberDiffractionEnergy::I' is not initialized in the constructor.
-[core/scoring/fiber_diffraction/FiberDiffractionEnergy.hh:54]: (performance) Variable 'dchi2_d' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/fiber_diffraction/FiberDiffractionEnergy.hh:55]: (performance) Variable 'dchi2_d_cross_R' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/func/SOGFunc_Impl.hh:46]: (warning) Member variable 'SOGFunc_Impl::smooth_' is not initialized in the constructor.
-[core/scoring/func/SOGFunc_Impl.hh:58]: (warning) Member variable 'SOGFunc_Impl::smooth_' is not initialized in the constructor.
-[core/scoring/hbonds/HBEvalTuple.hh:66]: (style) 'HBEvalTuple::operator=' should return 'HBEvalTuple &'.
 [core/scoring/hbonds/HBondDatabase.cc:108]: (performance) Variable 'params_database_tag_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/hbonds/HBondDatabase.hh:102]: (performance) Function parameter 'name' should be passed by reference.
-[core/scoring/hbonds/HBondDatabase.hh:122]: (performance) Function parameter 'name' should be passed by reference.
-[core/scoring/hbonds/HBondOptions.cc:541] -> [core/scoring/hbonds/HBondOptions.cc:541]: (style) Same expression on both sides of '&&'.
-[core/scoring/hbonds/HBondOptions.hh:67]: (style) 'HBondOptions::operator=' should return 'HBondOptions &'.
-[core/scoring/hbonds/HBondSet.hh:79]: (performance) Function parameter 'hbe_tuple' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.cc:105] -> [core/scoring/hbonds/hbonds_geom.cc:100]: (style) Found duplicate branches for 'if' and 'else'.
-[core/scoring/hbonds/hbonds_geom.cc:1070]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.cc:1088]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.cc:1289]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.cc:270] -> [core/scoring/hbonds/hbonds_geom.cc:265]: (style) Found duplicate branches for 'if' and 'else'.
-[core/scoring/hbonds/hbonds_geom.cc:787]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.cc:813]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.hh:301]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.hh:320]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.hh:339]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.hh:354]: (performance) Function parameter 'hbt' should be passed by reference.
-[core/scoring/hbonds/hbonds_geom.hh:409]: (performance) Function parameter 'hbe_type' should be passed by reference.
-[core/scoring/LREnergyContainer.hh:34]: (style) 'ResidueNeighborIterator::operator=' should return 'ResidueNeighborIterator &'.
-[core/scoring/LREnergyContainer.hh:61]: (style) 'ResidueNeighborConstIterator::operator=' should return 'ResidueNeighborConstIterator &'.
-[core/scoring/memb_etable/MembEtable.cc:600]: (performance) Function parameter 'label' should be passed by reference.
-[core/scoring/memb_etable/MembEtable.cc:65]: (performance) Function parameter 'alternate_parameter_set' should be passed by reference.
-[core/scoring/memb_etable/MembEtable.hh:240]: (performance) Function parameter 'label' should be passed by reference.
-[core/scoring/memb_etable/MembEtable.hh:61]: (performance) Function parameter 'alternate_parameter_set' should be passed by reference.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:362]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:363]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:364]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:365]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:366]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:367]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:368]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:369]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:370]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:371]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:372]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:373]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:374]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:375]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:376]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:377]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:378]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:379]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:380]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/membrane/FaMPEnvSmoothEnergy.cc:381]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/dfire/DFIRE_Potential.hh:54]: (style) Unused private function: 'DFIRE_Potential::res_index'
-[core/scoring/methods/dfire/DFIRE_Potential.hh:55]: (style) Unused private function: 'DFIRE_Potential::atom_index'
-[core/scoring/methods/EnergyMethodOptions.hh:76]: (style) 'EnergyMethodOptions::operator=' should return 'EnergyMethodOptions &'.
-[core/scoring/methods/EnvSmoothEnergy.cc:407]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:408]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:409]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:410]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:411]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:412]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:413]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:414]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:415]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:416]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:417]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:418]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:419]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:420]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:421]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:422]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:423]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:424]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:425]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/EnvSmoothEnergy.cc:426]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/GoapEnergy.hh:202]: (performance) Function parameter 'connection_file' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:205]: (performance) Function parameter 'distance_file' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:206]: (performance) Function parameter 'angle_file' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:222]: (performance) Function parameter 'xn1' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:223]: (performance) Function parameter 'xd1' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:224]: (performance) Function parameter 'xn2' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:225]: (performance) Function parameter 'xd2' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:226]: (performance) Function parameter 'xyz1' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:227]: (performance) Function parameter 'xyz2' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:240]: (performance) Function parameter 'v1' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:240]: (performance) Function parameter 'v2' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:249]: (performance) Function parameter 'v1' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:250]: (performance) Function parameter 'v2' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:251]: (performance) Function parameter 'v3' should be passed by reference.
-[core/scoring/methods/GoapEnergy.hh:59]: (performance) Function parameter 'str' should be passed by reference.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:343]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:344]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:345]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:346]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:347]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:348]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:349]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:350]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:351]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:352]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:353]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:354]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:355]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:356]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:357]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:358]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:359]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:360]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:361]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/MembraneEnvSmoothEnergy.cc:362]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/methods/NMerRefEnergy.hh:104]: (performance) Function parameter 'ref_fname' should be passed by reference.
-[core/scoring/methods/NMerRefEnergy.hh:105]: (performance) Function parameter 'ref_list_fname' should be passed by reference.
-[core/scoring/MinimizationData.hh:101]: (style) 'ResPairMinimizationData::operator=' should return 'ResPairMinimizationData &'.
-[core/scoring/MinimizationData.hh:75]: (style) 'ResSingleMinimizationData::operator=' should return 'ResSingleMinimizationData &'.
-[core/scoring/MinimizationGraph.cc:699]: (warning) Member variable 'MinimizationGraph::fixed_energies_' is not initialized in the constructor.
-[core/scoring/MinimizationGraph.hh:376]: (style) 'MinimizationGraph::operator=' should return 'MinimizationGraph &'.
-[core/scoring/motif/motif_hash_stuff.cc:2238]: (style) C-style pointer casting
-[core/scoring/packstat/CavityBall.cc:48]: (warning) Member variable 'CavityBall::evdw' is not initialized in the constructor.
-[core/scoring/packstat/CavityBall.cc:49]: (performance) Function parameter 'xyz' should be passed by reference.
-[core/scoring/packstat/CavityBall.hh:41]: (performance) Function parameter 'xyz' should be passed by reference.
-[core/scoring/packstat/compute_sasa.hh:102] -> [core/scoring/packstat/compute_sasa.hh:98]: (style) Duplicate conditions in 'if' and related 'else if'.
-[core/scoring/packstat/compute_sasa.hh:412]: (style) The scope of the variable 'expose' can be reduced.
-[core/scoring/packstat/compute_sasa.hh:412]: (style) The scope of the variable 'fraction' can be reduced.
-[core/scoring/packstat/compute_sasa.hh:85]: (style) The scope of the variable 'costh' can be reduced.
-[core/scoring/packstat/types.hh:52]: (warning) Member variable 'Sphere::sasa' is not initialized in the constructor.
-[core/scoring/packstat/types.hh:53]: (warning) Member variable 'Sphere::sasa' is not initialized in the constructor.
+[core/scoring/hbonds/hbonds_geom.cc:333] -> [core/scoring/hbonds/hbonds_geom.cc:328]: (style) Found duplicate branches for 'if' and 'else'.
+[core/scoring/hbonds/hbonds_geom.cc:498] -> [core/scoring/hbonds/hbonds_geom.cc:493]: (style) Found duplicate branches for 'if' and 'else'.
+[core/scoring/MinimizationGraph.cc:690]: (warning) Member variable 'MinimizationGraph::fixed_energies_' is not initialized in the constructor.
+[core/scoring/motif/motif_hash_stuff.cc:2140]: (style) C-style pointer casting
 [core/scoring/PairEPotential.hh:58]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[core/scoring/PoissonBoltzmannPotential.hh:79]: (performance) Function parameter 'cartX' should be passed by reference.
-[core/scoring/ResidualDipolarCoupling.hh:114]: (performance) Function parameter 'tensorDa' should be passed by reference.
-[core/scoring/ResidualDipolarCoupling.hh:115]: (performance) Function parameter 'tensorR' should be passed by reference.
-[core/scoring/ResidualDipolarCoupling.hh:116]: (performance) Function parameter 'tensorDa' should be passed by reference.
-[core/scoring/ResidualDipolarCoupling.hh:116]: (performance) Function parameter 'tensorR' should be passed by reference.
-[core/scoring/ResidualDipolarCoupling.hh:117]: (performance) Function parameter 'tensorDa' should be passed by reference.
-[core/scoring/ResidualDipolarCoupling.hh:117]: (performance) Function parameter 'tensorR' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:106]: (performance) Function parameter 'in_atom_name' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:109]: (performance) Function parameter 'string_one' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:112]: (performance) Function parameter 'string_one' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:112]: (performance) Function parameter 'string_two' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:193]: (performance) Function parameter 'filename' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:196]: (performance) Function parameter 'filename' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:199]: (performance) Function parameter 'filename' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:202]: (performance) Function parameter 'filename' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:47]: (performance) Function parameter 'in_atom_name' should be passed by reference.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh:51]: (performance) Function parameter 'in_data_line' should be passed by reference.
-[core/scoring/rna/RNA_FilteredBaseBaseInfo.cc:87]: (performance) Variable 'filtered_base_pair_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_FilteredBaseBaseInfo.cc:88]: (performance) Variable 'filtered_base_axis_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_FilteredBaseBaseInfo.cc:89]: (performance) Variable 'filtered_base_stagger_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_FilteredBaseBaseInfo.cc:90]: (performance) Variable 'filtered_base_stack_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_FilteredBaseBaseInfo.cc:91]: (performance) Variable 'filtered_base_stack_axis_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_FullAtomStackingEnergy.hh:156]: (performance) Function parameter 'M_i' should be passed by reference.
-[core/scoring/rna/RNA_FullAtomStackingEnergy.hh:156]: (performance) Function parameter 'r_vec' should be passed by reference.
-[core/scoring/rna/RNA_FullAtomStackingEnergy.hh:162]: (performance) Function parameter 'r_vec' should be passed by reference.
-[core/scoring/rna/RNA_FullAtomStackingEnergy.hh:163]: (performance) Function parameter 'M_i' should be passed by reference.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:60]: (performance) Variable 'base_pair_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:61]: (performance) Variable 'base_axis_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:62]: (performance) Variable 'base_stagger_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:63]: (performance) Variable 'base_stack_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:64]: (performance) Variable 'base_stack_axis_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:65]: (performance) Variable 'base_geometry_orientation_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_RawBaseBaseInfo.cc:66]: (performance) Variable 'base_geometry_height_array_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/rna/RNA_ScoringInfo.hh:124]: (performance) Function parameter 'sequence' should be passed by reference.
-[core/scoring/rna/RNA_ScoringInfo.hh:130]: (performance) Function parameter 'sequence' should be passed by reference.
-[core/scoring/saxs/FastSAXSEnergy.hh:49]: (warning) Member variable 'FastSAXSEnergy::r_chi2' is not initialized in the constructor.
-[core/scoring/saxs/FastSAXSEnergy.hh:52]: (performance) Variable 'dchi2_dca' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/saxs/FastSAXSEnergy.hh:53]: (performance) Variable 'dchi2_dsc' is assigned in constructor body. Consider performing initialization in initialization list.
 [core/scoring/saxs/FormFactor.cc:35]: (warning) Member variable 'FormFactor::glob_flag_' is not initialized in the constructor.
-[core/scoring/saxs/FormFactor.cc:37]: (performance) Variable 'name_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/sc/MolecularSurfaceCalculator.hh:252]: (performance) Function parameter 'coor' should be passed by reference.
-[core/scoring/sc/MolecularSurfaceCalculator.hh:252]: (performance) Function parameter 'pcen' should be passed by reference.
-[core/scoring/sc/MolecularSurfaceCalculator.hh:281]: (performance) Function parameter 'tij' should be passed by reference.
-[core/scoring/sc/MolecularSurfaceCalculator.hh:281]: (performance) Function parameter 'uij' should be passed by reference.
-[core/scoring/sc/MolecularSurfaceCalculator.hh:290]: (performance) Function parameter 'nears' should be passed by reference.
-[core/scoring/SmoothEnvPairPotential.hh:232]: (performance) Function parameter 'cendist' should be passed by reference.
-[core/scoring/SmoothEnvPairPotential.hh:47]: (performance) Variable 'fcen6_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/SmoothEnvPairPotential.hh:48]: (performance) Variable 'fcen10_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/SmoothEnvPairPotential.hh:49]: (performance) Variable 'fcen12_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/SS_Info.fwd.hh:25] -> [protocols/fldsgn/topology/SS_Info2.fwd.hh:46]: (style) The struct 'Strands' forward declaration is unnecessary. Type struct is already declared earlier.
-[core/scoring/SS_Info.fwd.hh:26] -> [protocols/fldsgn/topology/SS_Info2.fwd.hh:45]: (style) The struct 'Helices' forward declaration is unnecessary. Type struct is already declared earlier.
-[core/scoring/SS_Info.hh:161]: (style) 'Strands::operator=' should return 'Strands &'.
-[core/scoring/SS_Info.hh:229]: (style) 'Helices::operator=' should return 'Helices &'.
-[core/scoring/SS_Killhairpins_Info.cc:68]: (performance) Variable 'range_pair_' is assigned in constructor body. Consider performing initialization in initialization list.
-[core/scoring/SS_Killhairpins_Info.hh:67]: (style) 'Hairpin::operator=' should return 'Hairpin &'.
-[core/scoring/SS_Killhairpins_Info.hh:97]: (style) 'Hairpins::operator=' should return 'Hairpins &'.
+[core/scoring/saxs/FormFactor.cc:39]: (performance) Variable 'name_' is assigned in constructor body. Consider performing initialization in initialization list.
 [core/scoring/TenANeighborGraph.cc:170]: (style) 'operator=' should return reference to 'this' instance.
-[core/scoring/TMscore.cc:217]: (performance) Function parameter 'vt' should be passed by reference.
-[core/scoring/trie/trie_vs_trie.hh:210]: (style) The scope of the variable 'e' can be reduced.
-[core/scoring/trie/trie_vs_trie.hh:281]: (style) The scope of the variable 'e' can be reduced.
-[core/scoring/TwelveANeighborGraph.cc:123]: (style) 'operator=' should return reference to 'this' instance.
-[core/sequence/ABEGOManager.hh:107]: (warning) Member variable 'ABEGO::name_' is not initialized in the constructor.
+[core/scoring/TwelveANeighborGraph.cc:122]: (style) 'operator=' should return reference to 'this' instance.
 [core/sequence/DP_Matrix.hh:67]: (warning) Member variable 'Cell::coords_' is not assigned a value in 'Cell::operator='.
 [core/sequence/DP_Matrix.hh:67]: (warning) Member variable 'Cell::type_' is not assigned a value in 'Cell::operator='.
-[numeric/expression_parser/Arithmetic.cc:229]: (performance) Possible inefficient checking for 'tokens_' emptiness.
-[numeric/fourier/kiss_fft_state.cc:60]: (warning) Member variable 'kiss_fft_state::factors_' is not initialized in the constructor.
-[numeric/geometry/hashing/xyzStripeHashWithMeta.hh:66]: (warning) Member variable 'xyzStripeHashWithMeta::natom_' is not initialized in the constructor.
-[numeric/geometry/hashing/xyzStripeHashWithMeta.hh:66]: (warning) Member variable 'xyzStripeHashWithMeta::xdim_' is not initialized in the constructor.
-[numeric/geometry/hashing/xyzStripeHashWithMeta.hh:66]: (warning) Member variable 'xyzStripeHashWithMeta::ydim_' is not initialized in the constructor.
-[numeric/geometry/hashing/xyzStripeHashWithMeta.hh:66]: (warning) Member variable 'xyzStripeHashWithMeta::zdim_' is not initialized in the constructor.
-[numeric/interpolation/spline/Bicubic_spline.hh:77]: (warning) Member variable 'BicubicSpline::delta_' is not initialized in the constructor.
-[numeric/interpolation/spline/Bicubic_spline.hh:77]: (warning) Member variable 'BicubicSpline::LinCont_' is not initialized in the constructor.
-[numeric/interpolation/spline/Bicubic_spline.hh:77]: (warning) Member variable 'BicubicSpline::start_' is not initialized in the constructor.
-[numeric/interpolation/spline/Cubic_spline.hh:81]: (warning) Member variable 'CubicSpline::delta_' is not initialized in the constructor.
-[numeric/interpolation/spline/Cubic_spline.hh:81]: (warning) Member variable 'CubicSpline::start_' is not initialized in the constructor.
-[numeric/interpolation/spline/PolycubicSpline.cc:49]: (performance) Function parameter 'BORDER' should be passed by reference.
-[numeric/interpolation/spline/PolycubicSpline.cc:50]: (performance) Function parameter 'START' should be passed by reference.
-[numeric/interpolation/spline/PolycubicSpline.cc:51]: (performance) Function parameter 'DELTA' should be passed by reference.
-[numeric/interpolation/spline/PolycubicSpline.cc:53]: (performance) Function parameter 'LINCONT' should be passed by reference.
-[numeric/interpolation/spline/PolycubicSpline.cc:54]: (performance) Function parameter 'FIRSTBE' should be passed by reference.
-[numeric/interpolation/spline/TricubicSpline.hh:53]: (warning) Member variable 'TricubicSpline::delta_' is not initialized in the constructor.
-[numeric/interpolation/spline/TricubicSpline.hh:53]: (warning) Member variable 'TricubicSpline::LinCont_' is not initialized in the constructor.
-[numeric/interpolation/spline/TricubicSpline.hh:53]: (warning) Member variable 'TricubicSpline::start_' is not initialized in the constructor.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'am' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'ap' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'b' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'bm' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'bp' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'cdsx' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'd' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'dm' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'dp' can be reduced.
-[numeric/kinematic_closure/closure.cc:110]: (style) The scope of the variable 'sdsx' can be reduced.
-[numeric/kinematic_closure/closure.cc:318]: (style) The scope of the variable 'f' can be reduced.
-[numeric/kinematic_closure/sturm.hh:272]: (style) The scope of the variable 'f' can be reduced.
-[numeric/kinematic_closure/sturm.hh:303]: (style) The scope of the variable 'x' can be reduced.
-[numeric/kinematic_closure/sturm.hh:398]: (style) The scope of the variable 'n2' can be reduced.
-[numeric/kinematic_closure/sturm.hh:400]: (style) Variable 'nroot' is assigned a value that is never used.
-[numeric/kinematic_closure/sturm.hh:64]: (style) The scope of the variable 'exp_x1' can be reduced.
-[numeric/kinematic_closure/sturm.hh:64]: (style) The scope of the variable 'exp_x2' can be reduced.
 [numeric/MathMatrix.hh:50]: (style) 'class MathMatrix' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
 [numeric/MathVector.hh:54]: (style) 'class MathVector' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
-[numeric/polynomial.cc:66]: (warning) Member variable 'Polynomial_1d::max_val_' is not initialized in the constructor.
-[numeric/polynomial.cc:66]: (warning) Member variable 'Polynomial_1d::min_val_' is not initialized in the constructor.
-[numeric/random/mt19937.hh:327]: (warning) Member variable 'mt19937_RG::iseed_' is not initialized in the constructor.
-[numeric/random/mt19937.hh:327]: (warning) Member variable 'mt19937_RG::sformat_idx' is not initialized in the constructor.
-[numeric/random/uniform.hh:65]: (warning) Member variable 'standard_RG::seed_' is not initialized in the constructor.
-[numeric/random/WeightedReservoirSampler.hh:51]: (performance) Function parameter 'o' should be passed by reference.
-[numeric/util.hh:48] -> [numeric/util.hh:48]: (style) Same expression on both sides of '!='.
-[ObjexxFCL/byte.hh:255]: (performance) Function parameter 'n' should be passed by reference.
-[ObjexxFCL/byte.hh:273]: (performance) Function parameter 'n' should be passed by reference.
-[ObjexxFCL/Cstring.cc:64]: (performance) Function parameter 's' should be passed by reference.
-[ObjexxFCL/FArray1D.hh:953]: (style) Unused private function: 'FArray1D::remove_as_observer'
-[ObjexxFCL/FArray1P.hh:988]: (style) Unused private function: 'FArray1P::remove_as_observer'
-[ObjexxFCL/FArray2D.hh:999]: (style) Unused private function: 'FArray2D::remove_as_observer'
-[ObjexxFCL/FArray2P.hh:1076]: (style) Unused private function: 'FArray2P::remove_as_observer'
-[ObjexxFCL/FArray3D.hh:1000]: (style) Unused private function: 'FArray3D::remove_as_observer'
-[ObjexxFCL/FArray3P.hh:1151]: (style) Unused private function: 'FArray3P::remove_as_observer'
-[ObjexxFCL/FArray4D.hh:1054]: (style) Unused private function: 'FArray4D::remove_as_observer'
-[ObjexxFCL/FArray4P.hh:1236]: (style) Unused private function: 'FArray4P::remove_as_observer'
-[ObjexxFCL/FArray5D.hh:1108]: (style) Unused private function: 'FArray5D::remove_as_observer'
-[ObjexxFCL/FArray5P.hh:1321]: (style) Unused private function: 'FArray5P::remove_as_observer'
-[ObjexxFCL/FArray6D.hh:1162]: (style) Unused private function: 'FArray6D::remove_as_observer'
-[ObjexxFCL/FArray6P.hh:1406]: (style) Unused private function: 'FArray6P::remove_as_observer'
-[ObjexxFCL/FArray.hh:325]: (style) 'FArray::operator=' should return 'FArray &'.
-[ObjexxFCL/IndexRange.hh:135]: (style) 'IndexRange::operator=' should return 'IndexRange &'.
-[ObjexxFCL/KeyFArray1D.hh:957]: (style) Unused private function: 'KeyFArray1D::remove_as_observer'
-[ObjexxFCL/KeyFArray2D.hh:1002]: (style) Unused private function: 'KeyFArray2D::remove_as_observer'
-[ObjexxFCL/KeyFArray3D.hh:1004]: (style) Unused private function: 'KeyFArray3D::remove_as_observer'
-[ObjexxFCL/KeyFArray4D.hh:1058]: (style) Unused private function: 'KeyFArray4D::remove_as_observer'
-[ObjexxFCL/KeyFArray5D.hh:1112]: (style) Unused private function: 'KeyFArray5D::remove_as_observer'
-[ObjexxFCL/KeyFArray6D.hh:1166]: (style) Unused private function: 'KeyFArray6D::remove_as_observer'
 [ObjexxFCL/ObserverMulti.hh:73]: (warning) Member variable 'ObserverMulti::observers_p_' is not assigned a value in 'ObserverMulti::operator='.
 [ObjexxFCL/ObserverSingle.hh:70]: (warning) Member variable 'ObserverSingle::observer_p_' is not assigned a value in 'ObserverSingle::operator='.
-[ObjexxFCL/string.functions.cc:355]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:367]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:379]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:391]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:415]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:446]: (performance) Function parameter 'pos' should be passed by reference.
-[ObjexxFCL/string.functions.cc:714]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:727]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:740]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:753]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.cc:776]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:267]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:272]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:277]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:282]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:292]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:302]: (performance) Function parameter 'pos' should be passed by reference.
-[ObjexxFCL/string.functions.hh:311]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:394]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:399]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:404]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:409]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/string.functions.hh:419]: (performance) Function parameter 'len' should be passed by reference.
-[ObjexxFCL/ubyte.hh:255]: (performance) Function parameter 'n' should be passed by reference.
-[ObjexxFCL/ubyte.hh:273]: (performance) Function parameter 'n' should be passed by reference.
-[protocols/abinitio/StrandConstraints.hh:56]: (style) The class 'AlternativePairings' does not have a constructor.
-[protocols/analysis/InterfaceAnalyzerMover.hh:530]: (performance) Function parameter 'interface_set' should be passed by reference.
-[protocols/analysis/PeptideDeriverFilter.hh:350]: (performance) Function parameter 'value' should be passed by reference.
-[protocols/antibody/AntibodyInfo.cc:413]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/antibody/AntibodyInfo.hh:108]: (performance) Function parameter 'cdr_name' should be passed by reference.
-[protocols/antibody/AntibodyInfo.hh:334]: (performance) Function parameter 'cluster' should be passed by reference.
-[protocols/antibody/AntibodyNumberingParser.cc:38]: (performance) Variable 'numbering_database_directory_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/antibody/AntibodyNumberingParser.cc:39]: (performance) Variable 'scheme_file_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/antibody/AntibodyNumberingParser.cc:40]: (performance) Variable 'cdr_definition_file_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/antibody/AntibodyNumberingParser.cc:46]: (performance) Function parameter 'numbering_file_path' should be passed by reference.
-[protocols/antibody/AntibodyNumberingParser.hh:61]: (performance) Function parameter 'file_path' should be passed by reference.
-[protocols/antibody/AntibodyNumberingParser.hh:64]: (performance) Function parameter 'file_path' should be passed by reference.
-[protocols/antibody/AntibodyNumberingParser.hh:85]: (performance) Function parameter 'numbering_file_path' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.cc:246]: (performance) Function parameter 'option' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:75]: (performance) Function parameter 'mode' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:78]: (performance) Function parameter 'adjective' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:81]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:84]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:87]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:90]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/antibody/database/CDRSetOptionsParser.hh:93]: (performance) Function parameter 'mintype' should be passed by reference.
-[protocols/antibody/design/CDRGraftDesignOptions.cc:334]: (performance) Function parameter 'option' should be passed by reference.
-[protocols/antibody/design/CDRGraftDesignOptions.cc:352]: (performance) Function parameter 'mintype' should be passed by reference.
 [protocols/antibody/design/CDRGraftDesignOptions.cc:50]: (warning) Member variable 'CDRGraftDesignOptions::cdr_' is not initialized in the constructor.
-[protocols/antibody/design/CDRGraftDesignOptions.hh:182]: (performance) Function parameter 'mode' should be passed by reference.
-[protocols/antibody/design/CDRGraftDesignOptions.hh:186]: (performance) Function parameter 'adjective' should be passed by reference.
-[protocols/antibody/design/CDRGraftDesignOptions.hh:193]: (performance) Function parameter 'mintype' should be passed by reference.
-[protocols/antibody/design/CDRGraftDesignOptions.hh:200]: (performance) Function parameter 'option' should be passed by reference.
-[protocols/antibody/design/CDRSeqDesignOptions.hh:134]: (performance) Function parameter 'mode' should be passed by reference.
-[protocols/antibody/design/CDRSeqDesignOptions.hh:137]: (performance) Function parameter 'adjective' should be passed by reference.
-[protocols/antibody/design/CDRSeqDesignOptions.hh:143]: (performance) Function parameter 'option' should be passed by reference.
-[protocols/antibody/design/CDRSeqDesignOptions.hh:146]: (performance) Function parameter 'option' should be passed by reference.
-[protocols/canonical_sampling/HamiltonianExchange.cc:107]: (warning) Member variable 'HamiltonianExchange::successfully_initialized_' is not initialized in the constructor.
 [protocols/canonical_sampling/ParallelTempering.cc:118]: (warning) Member variable 'ParallelTempering::rank_' is not initialized in the constructor.
-[protocols/canonical_sampling/SimulatedTempering.cc:104]: (warning) Member variable 'SimulatedTempering::temperature_jumps_' is not initialized in the constructor.
-[protocols/canonical_sampling/SimulatedTempering.cc:108]: (warning) Member variable 'SimulatedTempering::temperature_jumps_' is not initialized in the constructor.
 [protocols/canonical_sampling/TemperingBase.cc:101]: (warning) Member variable 'TemperingBase::stats_line_output_' is not initialized in the constructor.
 [protocols/canonical_sampling/TemperingBase.cc:101]: (warning) Member variable 'TemperingBase::stats_silent_output_' is not initialized in the constructor.
-[protocols/checkpoint/CheckPointer.hh:54]: (performance) Function parameter 'filename' should be passed by reference.
-[protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh:53]: (performance) Function parameter 'silent_file' should be passed by reference.
-[protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh:78]: (performance) Function parameter 'jump_library_file' should be passed by reference.
-[protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh:83]: (performance) Function parameter 'file' should be passed by reference.
-[protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh:88]: (performance) Function parameter 'file' should be passed by reference.
-[protocols/coarse_rna/CoarseRNA_Fragments.hh:97]: (performance) Function parameter 'RNA_string' should be passed by reference.
-[protocols/coarse_rna/CoarseRNA_Fragments.hh:98]: (performance) Function parameter 'RNA_secstruct_string' should be passed by reference.
-[protocols/comparative_modeling/LoopRelaxMover.hh:89]: (style) 'LoopRelaxMover::operator=' should return 'LoopRelaxMover &'.
-[protocols/comparative_modeling/StealLigandMover.cc:29]: (performance) Function parameter 'anchor_atom_dest' should be passed by reference.
-[protocols/comparative_modeling/StealLigandMover.cc:30]: (performance) Function parameter 'anchor_atom_source' should be passed by reference.
-[protocols/comparative_modeling/StealLigandMover.cc:31]: (performance) Function parameter 'ligand_indices' should be passed by reference.
-[protocols/comparative_modeling/util.hh:100]: (performance) Function parameter 'anchor_atom_source' should be passed by reference.
-[protocols/comparative_modeling/util.hh:101]: (performance) Function parameter 'ligand_indices' should be passed by reference.
-[protocols/comparative_modeling/util.hh:99]: (performance) Function parameter 'anchor_atom_dest' should be passed by reference.
-[protocols/cyclic_peptide/DeclareBond.hh:39]: (performance) Function parameter 'atom1' should be passed by reference.
-[protocols/cyclic_peptide/DeclareBond.hh:41]: (performance) Function parameter 'atom2' should be passed by reference.
-[protocols/design_opt/PointMutationCalculator.hh:106]: (performance) Function parameter 'sample_types' should be passed by reference.
-[protocols/docking/DockFilters.cc:48]: (warning) Member variable 'DockingLowResFilter::use_constraints_' is not initialized in the constructor.
 [protocols/docking/DockingHighRes.cc:112]: (warning) Member variable 'DockingHighRes::ignore_default_task_' is not initialized in the constructor.
 [protocols/docking/DockingHighRes.cc:118]: (performance) Variable 'partners_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/docking/DockingInitialPerturbation.hh:165]: (performance) Function parameter 'slide_axis' should be passed by reference.
-[protocols/docking/DockingInitialPerturbation.hh:200]: (performance) Function parameter 'slide_axis' should be passed by reference.
-[protocols/enzdes/AddorRemoveCsts.cc:109]: (performance) Possible inefficient checking for 'cstfile_map_' emptiness.
-[protocols/enzdes/AddorRemoveCsts.cc:183]: (performance) Function parameter 'cstfile' should be passed by reference.
-[protocols/enzdes/AddorRemoveCsts.hh:83]: (performance) Function parameter 'cstfile' should be passed by reference.
 [protocols/enzdes/EnzFilters.hh:114]: (warning) Member variable 'LigInterfaceEnergyFilter::include_cstE_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:157]: (warning) Member variable 'EnzScoreFilter::is_cstE_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:157]: (warning) Member variable 'EnzScoreFilter::whole_pose_' is not initialized in the constructor.
-[protocols/enzdes/EnzFilters.hh:159]: (performance) Function parameter 'cstid' should be passed by reference.
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::calc_dE_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::calc_rms_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::rms_all_rpked_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::use_cstids_' is not initialized in the constructor.
-[protocols/enzdes/EnzFilters.hh:333]: (performance) Function parameter 'filename' should be passed by reference.
-[protocols/enzdes/EnzRepackMinimize.hh:47]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh:48]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/farna/RNA_DeNovoProtocol.hh:89]: (performance) Function parameter 'out_file_tag' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:134]: (performance) Function parameter 'interface' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:135]: (performance) Function parameter 'db_interface' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:143]: (performance) Function parameter 'chains_side1' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:144]: (performance) Function parameter 'chains_side2' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:152]: (performance) Function parameter 'chains_side1' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:153]: (performance) Function parameter 'chains_side2' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:155]: (performance) Function parameter 'region_string' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:164]: (performance) Function parameter 'chains_side1' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:165]: (performance) Function parameter 'chains_side2' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:177]: (performance) Function parameter 'chains_side1' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:178]: (performance) Function parameter 'chains_side2' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:179]: (performance) Function parameter 'side' should be passed by reference.
-[protocols/features/InterfaceFeatures.hh:203]: (performance) Function parameter 'interface' should be passed by reference.
-[protocols/features/OrbitalsFeatures.hh:108]: (performance) Function parameter 'Orbxyz' should be passed by reference.
-[protocols/filters/BasicFilters.hh:106]: (performance) Function parameter 'reset_filters' should be passed by reference.
-[protocols/filters/BasicFilters.hh:139]: (performance) Function parameter 'reset_filters' should be passed by reference.
-[protocols/fldsgn/CircularPermutation.hh:123]: (performance) Function parameter 'pose' should be passed by reference.
-[protocols/fldsgn/filters/SecondaryStructureFilter.hh:102]: (performance) Function parameter 'blueprint_file' should be passed by reference.
 [protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.cc:63]: (warning) Member variable 'NatbiasHelicesSheetPotential::hh_scores_' is not initialized in the constructor.
 [protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.cc:63]: (warning) Member variable 'NatbiasHelicesSheetPotential::hs_scores_' is not initialized in the constructor.
 [protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.cc:66]: (warning) Member variable 'NatbiasHelixPairPotential::hh_scores_' is not initialized in the constructor.
 [protocols/fldsgn/topology/HSSTriplet.cc:54]: (warning) Member variable 'HSSTriplet::geometry_is_initialized_' is not initialized in the constructor.
 [protocols/fldsgn/topology/HSSTriplet.cc:54]: (warning) Member variable 'HSSTriplet::left_handed_' is not initialized in the constructor.
-[protocols/fldsgn/topology/Sheet.hh:114]: (performance) Function parameter 'vec' should be passed by reference.
-[protocols/flexpack/interaction_graph/FlexbbInteractionGraph.cc:580]: (warning) Member variable 'FlexbbInteractionGraph::last_sub_attempted_backbone_move_' is not initialized in the constructor.
-[protocols/flexpep_docking/FlexPepDockingFlags.hh:78]: (performance) Possible inefficient checking for 'peptide_anchors' emptiness.
-[protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh:129]: (performance) Function parameter 'res1' should be passed by reference.
-[protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh:130]: (performance) Function parameter 'res2' should be passed by reference.
 [protocols/flxbb/DesignTask.cc:81]: (warning) Member variable 'DesignTask::task_operations_' is not initialized in the constructor.
-[protocols/flxbb/DesignTask.hh:127]: (performance) Function parameter 'top' should be passed by reference.
-[protocols/flxbb/FlxbbDesign.hh:95]: (performance) Function parameter 'layer_mode' should be passed by reference.
-[protocols/flxbb/LayerDesignOperation.hh:184]: (performance) Function parameter 'ss' should be passed by reference.
-[protocols/flxbb/LayerDesignOperation.hh:187]: (performance) Function parameter 'ss' should be passed by reference.
-[protocols/frag_picker/FragmentCandidate.hh:163]: (performance) Function parameter 'sequence' should be passed by reference.
-[protocols/frag_picker/FragmentCandidate.hh:163]: (performance) Function parameter 'silent_file_name' should be passed by reference.
-[protocols/frag_picker/FragmentCandidate.hh:163]: (performance) Function parameter 'tag' should be passed by reference.
-[protocols/frag_picker/nonlocal/NonlocalFrags.hh:63]: (performance) Function parameter 'tag' should be passed by reference.
-[protocols/frag_picker/nonlocal/NonlocalFrags.hh:65]: (performance) Function parameter 'data' should be passed by reference.
-[protocols/frag_picker/nonlocal/NonlocalFrags.hh:65]: (performance) Function parameter 'tag' should be passed by reference.
-[protocols/frag_picker/quota/QuotaPool.hh:44]: (performance) Variable 'pool_name_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/frag_picker/scores/FragmentScoringMethod.hh:42]: (performance) Variable 'name_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:127]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:128]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:129]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:130]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:131]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:132]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/LAMBEGO_Similarity.cc:133]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/ProfileScoreDistWeight.hh:60]: (performance) Variable 'query_sequence_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/frag_picker/scores/TorsionBinSimilarity.cc:120]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/TorsionBinSimilarity.cc:121]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/TorsionBinSimilarity.cc:122]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/TorsionBinSimilarity.cc:123]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frag_picker/scores/TorsionBinSimilarity.cc:124]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/frags/RMSVallData.hh:289] -> [protocols/frags/RMSVallData.hh:290]: (performance) Variable 'rms_out' is reassigned a value before the old one has been used.
-[protocols/frags/TorsionFragment.hh:302]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.cc:331]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.cc:334]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.cc:337]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.cc:340]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:215]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
 [protocols/genetic_algorithm/Entity.cc:186]: (warning) Member variable 'Entity::fitness_valid_' is not assigned a value in 'Entity::operator='.
-[protocols/genetic_algorithm/Entity.hh:132]: (style) 'Entity::operator=' should return 'Entity &'.
-[protocols/genetic_algorithm/Entity.hh:64]: (style) 'EntityElement::operator=' should return 'EntityElement &'.
-[protocols/hotspot_hashing/HotspotStubSet.hh:114]: (performance) Function parameter 'filename' should be passed by reference.
-[protocols/hotspot_hashing/HotspotStubSet.hh:120]: (performance) Function parameter 'residue_name3' should be passed by reference.
-[protocols/hotspot_hashing/HotspotStubSet.hh:122]: (performance) Function parameter 'residue_name3' should be passed by reference.
-[protocols/hotspot_hashing/HotspotStubSet.hh:156]: (performance) Function parameter 'resname' should be passed by reference.
-[protocols/hotspot_hashing/HotspotStubSet.hh:160]: (performance) Function parameter 'resname' should be passed by reference.
-[protocols/hotspot_hashing/HotspotStubSet.hh:95]: (performance) Function parameter 'residue_name3' should be passed by reference.
-[protocols/hybridization/DomainAssembly.cc:203]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:205]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:207]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:209]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:211]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:213]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:215]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:217]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/DomainAssembly.cc:219]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/hybridization/WeightedFragmentSmoothTrialMover.cc:32]: (performance) Function parameter 'frag_libs' should be passed by reference.
-[protocols/hybridization/WeightedFragmentSmoothTrialMover.cc:33]: (performance) Function parameter 'residue_weights' should be passed by reference.
-[protocols/hybridization/WeightedFragmentSmoothTrialMover.cc:34]: (performance) Function parameter 'anchor_residues' should be passed by reference.
 [protocols/hybridization/WeightedFragmentSmoothTrialMover.cc:46]: (performance) Function parameter 'residue_weights' should be passed by reference.
-[protocols/hybridization/WeightedFragmentTrialMover.cc:27]: (performance) Function parameter 'frag_libs' should be passed by reference.
-[protocols/hybridization/WeightedFragmentTrialMover.cc:28]: (performance) Function parameter 'residue_weights' should be passed by reference.
-[protocols/hybridization/WeightedFragmentTrialMover.cc:29]: (performance) Function parameter 'anchor_residues' should be passed by reference.
 [protocols/hybridization/WeightedFragmentTrialMover.cc:40]: (performance) Function parameter 'residue_weights' should be passed by reference.
-[protocols/idealize/IdealizeMover.hh:118]: (performance) Function parameter 'i' should be passed by reference.
 [protocols/jd2/archive/ArchiveManager.cc:339]: (style) The scope of the variable 'flag' can be reduced.
 [protocols/jd2/archive/ArchiveManager.cc:407]: (performance) Possible inefficient checking for 'jobs_completed_' emptiness.
 [protocols/jd2/archive/ArchiveManager.cc:468]: (performance) Possible inefficient checking for 'jobs_completed_' emptiness.
 [protocols/jd2/archive/ArchiveManager.cc:613]: (performance) Possible inefficient checking for 'jobs_completed_' emptiness.
 [protocols/jd2/archive/ArchiveManager.hh:299] -> [protocols/jd2/archive/ArchiveManager.hh:233]: (warning) The class 'ArchiveManager' defines member variable with name 'options_registered_' also defined in its parent class 'BaseArchiveManager'.
 [protocols/jd2/MSDJobDistributor.hh:31]: (style) The class 'MSDJobDistributor' does not have a constructor.
-[protocols/jd2/Parser.hh:104]: (performance) Function parameter 'xml_file' should be passed by reference.
-[protocols/jd2/PDBJobOutputter.hh:77]: (performance) Function parameter 'suffix' should be passed by reference.
-[protocols/jd2/SilentFileJobOutputter.hh:112]: (performance) Function parameter 'suffix' should be passed by reference.
-[protocols/jumping/ResiduePairJump.hh:109]: (performance) Function parameter 'atom_name' should be passed by reference.
-[protocols/jumping/ResiduePairJump.hh:115]: (performance) Function parameter 'atom_name' should be passed by reference.
-[protocols/kinematic_closure/internal.hh:87]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[protocols/ligand_docking/HighResDocker.hh:110]: (performance) Function parameter 'allow_repack' should be passed by reference.
 [protocols/ligand_docking/LigandDockProtocol.cc:354]: (style) C-style pointer casting
 [protocols/ligand_docking/LigandDockProtocol.cc:355]: (style) C-style pointer casting
-[protocols/ligand_docking/LigandDockProtocol.hh:55]: (performance) Function parameter 'protocol' should be passed by reference.
-[protocols/ligand_docking/ligand_options/interface_distance_functions.cc:31]: (performance) Function parameter 'potential_interface_vector' should be passed by reference.
-[protocols/ligand_docking/ligand_options/interface_distance_functions.cc:46]: (performance) Function parameter 'potential_interface_vector' should be passed by reference.
 [protocols/ligand_docking/ligand_options/Interface.hh:49]: (warning) Member variable 'InterfaceInfo::chain' is not initialized in the constructor.
 [protocols/ligand_docking/ligand_options/Interface.hh:50]: (warning) Member variable 'InterfaceInfo::chain' is not initialized in the constructor.
-[protocols/ligand_docking/MinimizeBackbone.hh:128]: (performance) Function parameter 'interface' should be passed by reference.
-[protocols/ligand_docking/MinimizeBackbone.hh:98]: (performance) Function parameter 'interface' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:114]: (performance) Function parameter 'center' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:133]: (performance) Function parameter 'ligand' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:138]: (performance) Function parameter 'ligand' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:61]: (performance) Function parameter 'residues' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:62]: (performance) Function parameter 'residues' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:63]: (performance) Function parameter 'ligand_info' should be passed by reference.
-[protocols/ligand_docking/Rotate.hh:64]: (performance) Function parameter 'scores' should be passed by reference.
 [protocols/loophash/BackboneDB.hh:72]: (performance) Variable 'phi_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/loophash/BackboneDB.hh:73]: (performance) Variable 'psi_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/loophash/BackboneDB.hh:74]: (performance) Variable 'omega_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/loophash/LoopHashMap.hh:93]: (style) 'LoopHashMap::operator=' should return 'LoopHashMap &'.
-[protocols/loops/FoldTreeFromLoopsWrapper.hh:45]: (performance) Function parameter 'str' should be passed by reference.
-[protocols/loops/LoopsFileIO.hh:154]: (style) 'GuardedLoopsFromFile::operator=' should return 'GuardedLoopsFromFile &'.
-[protocols/loops/Loops.hh:147]: (performance) Function parameter 'loop' should be passed by reference.
-[protocols/magnesium/MgScanner.hh:91]: (performance) Function parameter 'mg_position' should be passed by reference.
-[protocols/magnesium/minimize_util.hh:30]: (performance) Function parameter 'mg_res' should be passed by reference.
-[protocols/magnesium/minimize_util.hh:37]: (performance) Function parameter 'mg_res' should be passed by reference.
-[protocols/match/BumpGrid.hh:214]: (style) 'BumpGrid::operator=' should return 'BumpGrid &'.
-[protocols/match/downstream/ActiveSiteGrid.hh:54]: (style) 'ActiveSiteGrid::operator=' should return 'ActiveSiteGrid &'.
 [protocols/match/downstream/DownstreamAlgorithm.hh:60]: (style) 'DownstreamAlgorithm::operator=' should return 'DownstreamAlgorithm &'.
-[protocols/match/MatcherTask.hh:57]: (style) 'MatcherTask::operator=' should return 'MatcherTask &'.
 [protocols/match/output/MatchConsolidator.hh:86]: (style) Unused private function: 'MatchConsolidator::end_processing_of_regular_match_groups'
 [protocols/match/output/MatchConsolidator.hh:87]: (style) Unused private function: 'MatchConsolidator::end_processing_of_match_dspos1_groups'
-[protocols/match/upstream/ProteinUpstreamBuilder.hh:237]: (style) 'BuildSet::operator=' should return 'BuildSet &'.
-[protocols/matdes/ClashCheckFilter.hh:125]: (performance) Function parameter 'atom_name' should be passed by reference.
-[protocols/matdes/ClashCheckFilter.hh:125]: (performance) Function parameter 'residue_name' should be passed by reference.
-[protocols/matdes/ClashCheckFilter.hh:126]: (performance) Function parameter 'pymol_selection' should be passed by reference.
-[protocols/matdes/ClashCheckFilter.hh:62]: (performance) Function parameter 's' should be passed by reference.
-[protocols/matdes/ClashCheckFilter.hh:89]: (performance) Function parameter 's' should be passed by reference.
-[protocols/matdes/GetRBDOFValues.hh:96]: (performance) Function parameter 'dof_name' should be passed by reference.
 [protocols/matdes/InterfacePackingFilter.hh:67]: (performance) Function parameter 's' should be passed by reference.
-[protocols/matdes/MatDesPointMutationCalculator.hh:120]: (performance) Function parameter 'sample_types' should be passed by reference.
-[protocols/matdes/OligomericAverageDegreeFilter.hh:133]: (performance) Function parameter 'residue_name' should be passed by reference.
-[protocols/matdes/OligomericAverageDegreeFilter.hh:98]: (performance) Function parameter 'dof_names' should be passed by reference.
-[protocols/motifs/LigandMotifSearch.hh:71]: (style) 'LigandMotifSearch::operator=' should return 'LigandMotifSearch &'.
-[protocols/motifs/Motif.hh:103]: (performance) Function parameter 'res2_atoms' should be passed by reference.
-[protocols/motifs/Motif.hh:108]: (performance) Function parameter 'resname1' should be passed by reference.
-[protocols/motifs/Motif.hh:109]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:110]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:111]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:112]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:113]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:114]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:194]: (performance) Function parameter 'atomtype' should be passed by reference.
-[protocols/motifs/Motif.hh:212]: (performance) Function parameter 'atomtype' should be passed by reference.
-[protocols/motifs/Motif.hh:54]: (performance) Function parameter 'resname1' should be passed by reference.
-[protocols/motifs/Motif.hh:55]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:56]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:57]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:58]: (performance) Function parameter 'resname2' should be passed by reference.
-[protocols/motifs/Motif.hh:59]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:60]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:61]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:70]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:71]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:72]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:75]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:76]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:77]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:84]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:85]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:86]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/Motif.hh:88]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/Motif.hh:89]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/Motif.hh:90]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/MotifSearch.hh:72]: (style) 'MotifSearch::operator=' should return 'MotifSearch &'.
-[protocols/motifs/SingleMotif.cc:126]: (performance) Function parameter 'resname1' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:127]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:128]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:129]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:130]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:131]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:132]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:36]: (performance) Function parameter 'resname1' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:37]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:38]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:39]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:40]: (performance) Function parameter 'resname2' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:41]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:42]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:43]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:62]: (performance) Function parameter 'res1_atom1_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:63]: (performance) Function parameter 'res1_atom2_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:64]: (performance) Function parameter 'res1_atom3_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:67]: (performance) Function parameter 'res2_atom1_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:68]: (performance) Function parameter 'res2_atom2_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:69]: (performance) Function parameter 'res2_atom3_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:88]: (performance) Function parameter 'res1_atom1_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:89]: (performance) Function parameter 'res1_atom2_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:90]: (performance) Function parameter 'res1_atom3_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:92]: (performance) Function parameter 'res2_atom1_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:93]: (performance) Function parameter 'res2_atom2_name' should be passed by reference.
-[protocols/motifs/SingleMotif.cc:94]: (performance) Function parameter 'res2_atom3_name' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:41]: (performance) Function parameter 'resname1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:42]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:43]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:44]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:45]: (performance) Function parameter 'resname2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:46]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:47]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:48]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:57]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:58]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:59]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:62]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:63]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:64]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:69]: (performance) Function parameter 'resname1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:70]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:71]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:72]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:73]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:74]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:75]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:83]: (performance) Function parameter 'res1_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:84]: (performance) Function parameter 'res1_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:85]: (performance) Function parameter 'res1_atom3' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:87]: (performance) Function parameter 'res2_atom1' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:88]: (performance) Function parameter 'res2_atom2' should be passed by reference.
-[protocols/motifs/SingleMotif.hh:89]: (performance) Function parameter 'res2_atom3' should be passed by reference.
-[protocols/moves/MoverStatistics.cc:55]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/moves/MoverStatistics.hh:67]: (performance) Function parameter 'type' should be passed by reference.
 [protocols/moves/RampingMover.cc:173]: (style) C-style pointer casting
-[protocols/mpi_refinement/Scheduler.hh:120]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/mpi_refinement/Scheduler.hh:123]: (performance) Function parameter 'cmdfile' should be passed by reference.
-[protocols/mpi_refinement/Scheduler.hh:129]: (performance) Function parameter 'scorename' should be passed by reference.
-[protocols/mpi_refinement/Scheduler.hh:59]: (performance) Function parameter 'scorename' should be passed by reference.
-[protocols/mpi_refinement/WorkUnit_Sampler.hh:46]: (performance) Function parameter 'mode' should be passed by reference.
-[protocols/mpi_refinement/WorkUnit_Sampler.hh:51]: (performance) Function parameter 'pose' should be passed by reference.
-[protocols/mpi_refinement/WorkUnit_Sampler.hh:52]: (performance) Function parameter 'additional_tag' should be passed by reference.
-[protocols/mpi_refinement/WorkUnit_Sampler.hh:57]: (performance) Function parameter 'additional_tag' should be passed by reference.
-[protocols/mpi_refinement/WorkUnit_Sampler.hh:65]: (performance) Function parameter 'loopres' should be passed by reference.
-[protocols/mpi_refinement/WorkUnit_Sampler.hh:81]: (performance) Function parameter 'sfxn_name' should be passed by reference.
-[protocols/noesy_assign/CrossPeak.cc:482]: (warning) Redundant assignment of 'eliminated_' to itself.
 [protocols/noesy_assign/CrossPeakInfo.hh:53]: (warning) Member variable 'CrossPeakInfo::exp_hash_' is not initialized in the constructor.
 [protocols/noesy_assign/PeakAssignmentResidueMap.cc:223]: (performance) Possible inefficient checking for 'symmetric_candidates_inv' emptiness.
 [protocols/noesy_assign/PeakAssignmentResidueMap.cc:239]: (performance) Possible inefficient checking for 'symmetric_candidates' emptiness.
@@ -868,90 +152,21 @@
 [protocols/noesy_assign/PeakFileFormat.cc:76]: (warning) Member variable 'PeakFileFormat::write_atom_names_' is not initialized in the constructor.
 [protocols/optimize_weights/IterativeOptEDriver.cc:3932]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
 [protocols/optimize_weights/OptEData.cc:1222]: (warning) Member variable 'PNatRotOptEPositionData::n_wells_' is not initialized in the constructor.
-[protocols/pack_daemon/EntityCorrespondence.hh:46]: (style) 'EntityCorrespondence::operator=' should return 'EntityCorrespondence &'.
-[protocols/protein_interface_design/design_utils.hh:114]: (performance) Function parameter 'native_residue_bonus' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:132]: (performance) Function parameter 'native_residue_bonus' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:146]: (performance) Function parameter 'min_bb' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:146]: (performance) Function parameter 'min_rb' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:146]: (performance) Function parameter 'min_sc' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:146]: (performance) Function parameter 'target_residues' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:148]: (performance) Function parameter 'min_bb' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:148]: (performance) Function parameter 'min_rb' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:148]: (performance) Function parameter 'min_sc' should be passed by reference.
-[protocols/protein_interface_design/design_utils.hh:51]: (performance) Variable 'res_energy1_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/protein_interface_design/design_utils.hh:52]: (performance) Variable 'res_energy2_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/protein_interface_design/design_utils.hh:53]: (performance) Variable 'res_name1_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/protein_interface_design/design_utils.hh:54]: (performance) Variable 'res_name2_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/protein_interface_design/filters/BoltzmannFilter.cc:109]: (performance) Function parameter 'anchors' should be passed by reference.
-[protocols/protein_interface_design/filters/FilterScan.hh:56]: (performance) Function parameter 'resfile_name' should be passed by reference.
-[protocols/protein_interface_design/filters/FilterScan.hh:57]: (performance) Function parameter 'score_log_file' should be passed by reference.
-[protocols/protein_interface_design/filters/FilterScan.hh:90]: (performance) Function parameter 'd' should be passed by reference.
-[protocols/protein_interface_design/filters/FilterScan.hh:93]: (performance) Function parameter 's' should be passed by reference.
 [protocols/protein_interface_design/filters/HbondsToAtomFilter.hh:53]: (warning) Member variable 'HbondsToAtomFilter::backbone_' is not initialized in the constructor.
 [protocols/protein_interface_design/filters/HbondsToAtomFilter.hh:53]: (warning) Member variable 'HbondsToAtomFilter::bb_bb_' is not initialized in the constructor.
 [protocols/protein_interface_design/filters/HbondsToAtomFilter.hh:53]: (warning) Member variable 'HbondsToAtomFilter::sidechain_' is not initialized in the constructor.
 [protocols/protein_interface_design/filters/HbondsToAtomFilter.hh:54]: (warning) Member variable 'HbondsToAtomFilter::bb_bb_' is not initialized in the constructor.
-[protocols/protein_interface_design/filters/RelativeSegmentFilter.hh:54]: (performance) Function parameter 's' should be passed by reference.
-[protocols/protein_interface_design/filters/TorsionFilter.hh:60]: (performance) Function parameter 't' should be passed by reference.
-[protocols/protein_interface_design/movers/AddChainBreak.hh:41]: (performance) Function parameter 'r' should be passed by reference.
 [protocols/protein_interface_design/movers/BackrubDDMover.hh:61] -> [protocols/simple_moves/DesignRepackMover.hh:101]: (warning) The class 'BackrubDDMover' defines member variable with name 'interface_distance_cutoff_' also defined in its parent class 'DesignRepackMover'.
 [protocols/protein_interface_design/movers/BuildAlaPose.hh:47] -> [protocols/simple_moves/DesignRepackMover.hh:101]: (warning) The class 'BuildAlaPose' defines member variable with name 'interface_distance_cutoff_' also defined in its parent class 'DesignRepackMover'.
-[protocols/protein_interface_design/movers/DesignMinimizeHbonds.hh:44]: (performance) Function parameter 'target_residues' should be passed by reference.
 [protocols/protein_interface_design/movers/DesignMinimizeHbonds.hh:62] -> [protocols/simple_moves/DesignRepackMover.hh:101]: (warning) The class 'DesignMinimizeHbonds' defines member variable with name 'interface_distance_cutoff_' also defined in its parent class 'DesignRepackMover'.
-[protocols/protein_interface_design/movers/HotspotHasherMover.hh:34]: (performance) Function parameter 'resnames' should be passed by reference.
-[protocols/protein_interface_design/movers/HotspotHasherMover.hh:40]: (performance) Function parameter 'hashin_fname' should be passed by reference.
-[protocols/protein_interface_design/movers/HotspotHasherMover.hh:41]: (performance) Function parameter 'hashout_fname' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopMoverFromCommandLine.hh:42]: (performance) Function parameter 'protocol' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopMoverFromCommandLine.hh:47]: (performance) Function parameter 'loop_file_name' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopMoverFromCommandLine.hh:55]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopMoverFromCommandLine.hh:58]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopMoverFromCommandLine.hh:60]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopMoverFromCommandLine.hh:62]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopRemodel.hh:43]: (performance) Function parameter 'protocol' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopRemodel.hh:84]: (performance) Function parameter 'full_seqeuence' should be passed by reference.
-[protocols/protein_interface_design/movers/LoopRemodel.hh:84]: (performance) Function parameter 'full_ss' should be passed by reference.
-[protocols/protein_interface_design/movers/PlaceStubMover.hh:115]: (performance) Function parameter 'res_stub' should be passed by reference.
-[protocols/protein_interface_design/movers/PlaceUtils.hh:52]: (performance) Function parameter 'source' should be passed by reference.
-[protocols/protein_interface_design/movers/PlaceUtils.hh:57]: (performance) Function parameter 'residue' should be passed by reference.
-[protocols/protein_interface_design/movers/PlaceUtils.hh:61]: (performance) Function parameter 'coord' should be passed by reference.
-[protocols/protein_interface_design/movers/RepackMinimize.hh:47]: (performance) Function parameter 'target_residues' should be passed by reference.
-[protocols/protein_interface_design/movers/SetAtomTree.hh:45]: (performance) Function parameter 'connect_to' should be passed by reference.
-[protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.hh:45]: (performance) Function parameter 'stub_energy_fxn' should be passed by reference.
-[protocols/protein_interface_design/movers/TaskAwareCsts.hh:43]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/protein_interface_design/movers/TaskAwareCsts.hh:46]: (performance) Function parameter 'c' should be passed by reference.
-[protocols/protein_interface_design/movers/VLB.hh:39]: (style) 'VLB::operator=' should return 'VLB &'.
-[protocols/protein_interface_design/read_patchdock.hh:59]: (performance) Function parameter 's' should be passed by reference.
-[protocols/protein_interface_design/ReportPSSMDifference.hh:43]: (performance) Variable 'res_name1_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/protein_interface_design/ReportPSSMDifference.hh:44]: (performance) Variable 'pssm_data_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/qsar/qsarMap.cc:152]: (performance) Function parameter 'point_name' should be passed by reference.
-[protocols/qsar/qsarMap.cc:162]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/qsar/qsarMap.cc:200]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/qsar/qsarMap.hh:84]: (performance) Function parameter 'point_name' should be passed by reference.
-[protocols/qsar/qsarMap.hh:87]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/qsar/qsarMap.hh:96]: (performance) Function parameter 'type' should be passed by reference.
-[protocols/qsar/scoring_grid/ChargeGrid.cc:248]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/qsar/scoring_grid/ChargeGrid.cc:251]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/qsar/scoring_grid/ChargeGrid.cc:254]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/qsar/scoring_grid/ChargeGrid.cc:257]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/qsar/scoring_grid/ChargeGrid.cc:260]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/qsar/scoring_grid/ChargeGrid.hh:29]: (performance) Variable 'xyz' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/qsar/scoring_grid/GridManager.hh:71]: (performance) Function parameter 'name' should be passed by reference.
 [protocols/relax/FastRelax.hh:48]: (performance) Variable 'command' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/relax/FastRelax.hh:99]: (performance) Function parameter 'filelines' should be passed by reference.
-[protocols/relax/RelaxProtocolBase.hh:130]: (performance) Function parameter 'cstfile' should be passed by reference.
-[protocols/rigid/RigidBodyMover.hh:344]: (performance) Function parameter 'rot_center_in' should be passed by reference.
-[protocols/rigid/RigidBodyMover.hh:471]: (performance) Function parameter 'trans_axis' should be passed by reference.
-[protocols/rigid/RigidBodyMover.hh:87]: (performance) Function parameter 'rot_center_in' should be passed by reference.
-[protocols/rosetta_scripts/ParsedProtocol.hh:122]: (performance) Function parameter 'a' should be passed by reference.
-[protocols/rosetta_scripts/RosettaScriptsParser.cc:458]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[protocols/rosetta_scripts/RosettaScriptsParser.hh:66]: (performance) Function parameter 'xml_fname' should be passed by reference.
 [protocols/rotamer_recovery/RotamerRecovery.cc:81]: (warning) Member variable 'RotamerRecovery::ignore_unrecognized_res_' is not initialized in the constructor.
 [protocols/scoring/InterfaceInfo.cc:57]: (performance) Variable 'interface_list_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcs2/PcsDataCenterManager.cc:82]: (performance) Variable 'PCS_data_all_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:80]: (performance) Variable 'A_index_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:82]: (performance) Variable 'cstyle_A_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:84]: (performance) Variable 'cstyle_b_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:85]: (performance) Variable 'cstyle_b_individual_scale_' is assigned in constructor body. Consider performing initialization in initialization list.
+[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:74]: (performance) Variable 'A_index_' is assigned in constructor body. Consider performing initialization in initialization list.
+[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:76]: (performance) Variable 'cstyle_A_' is assigned in constructor body. Consider performing initialization in initialization list.
+[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:78]: (performance) Variable 'cstyle_b_' is assigned in constructor body. Consider performing initialization in initialization list.
+[protocols/scoring/methods/pcs2/PcsDataLanthanide.cc:79]: (performance) Variable 'cstyle_b_individual_scale_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcs2/PcsEnergyParameter.cc:85]: (performance) Variable 'vec_filename_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcs2/PcsEnergyParameter.cc:86]: (performance) Variable 'vec_individual_weight_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcs2/PcsEnergyParameter.cc:90]: (performance) Function parameter 'vec_filename' should be passed by reference.
@@ -973,11 +188,11 @@
 [protocols/scoring/methods/pcs/GridSearchIterator.hh:67]: (performance) Function parameter 'coo1' should be passed by reference.
 [protocols/scoring/methods/pcs/GridSearchIterator.hh:68]: (performance) Function parameter 'coo2' should be passed by reference.
 [protocols/scoring/methods/pcs/PseudocontactShiftData.hh:170]: (performance) Function parameter 'exclude_residues' should be passed by reference.
-[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:194]: (performance) Function parameter 'vec_exclude' should be passed by reference.
-[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:214]: (performance) Function parameter 'vec_filename' should be passed by reference.
-[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:215]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
-[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:223]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
-[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:224]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
+[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:197]: (performance) Function parameter 'vec_exclude' should be passed by reference.
+[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:217]: (performance) Function parameter 'vec_filename' should be passed by reference.
+[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:218]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
+[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:226]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
+[protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh:227]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
 [protocols/scoring/methods/pcs/PseudocontactShiftInput.cc:115]: (performance) Variable 'PCS_data_line_all_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcs/PseudocontactShiftInput.cc:135]: (performance) Variable 'PCS_filename_and_data_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcs/PseudocontactShiftInput.hh:74]: (performance) Function parameter 'atom_name' should be passed by reference.
@@ -991,11 +206,11 @@
 [protocols/scoring/methods/pcsTs1/GridSearchIterator.hh:67]: (performance) Function parameter 'coo1' should be passed by reference.
 [protocols/scoring/methods/pcsTs1/GridSearchIterator.hh:68]: (performance) Function parameter 'coo2' should be passed by reference.
 [protocols/scoring/methods/pcsTs1/PseudocontactShiftData.hh:162]: (performance) Function parameter 'exclude_residues' should be passed by reference.
-[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:162]: (performance) Function parameter 'vec_exclude' should be passed by reference.
-[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:182]: (performance) Function parameter 'vec_filename' should be passed by reference.
-[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:183]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
-[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:191]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
-[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:192]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
+[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:165]: (performance) Function parameter 'vec_exclude' should be passed by reference.
+[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:185]: (performance) Function parameter 'vec_filename' should be passed by reference.
+[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:186]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
+[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:194]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
+[protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergy.hh:195]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
 [protocols/scoring/methods/pcsTs1/PseudocontactShiftInput.cc:105]: (performance) Variable 'PCS_filename_and_data_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs1/PseudocontactShiftInput.cc:85]: (performance) Variable 'PCS_data_line_all_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs1/PseudocontactShiftInput.hh:77]: (performance) Function parameter 'atom_name' should be passed by reference.
@@ -1009,11 +224,11 @@
 [protocols/scoring/methods/pcsTs2/GridSearchIterator.hh:67]: (performance) Function parameter 'coo1' should be passed by reference.
 [protocols/scoring/methods/pcsTs2/GridSearchIterator.hh:68]: (performance) Function parameter 'coo2' should be passed by reference.
 [protocols/scoring/methods/pcsTs2/PseudocontactShiftData.hh:162]: (performance) Function parameter 'exclude_residues' should be passed by reference.
-[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:162]: (performance) Function parameter 'vec_exclude' should be passed by reference.
-[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:182]: (performance) Function parameter 'vec_filename' should be passed by reference.
-[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:183]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
-[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:191]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
-[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:192]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
+[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:165]: (performance) Function parameter 'vec_exclude' should be passed by reference.
+[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:185]: (performance) Function parameter 'vec_filename' should be passed by reference.
+[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:186]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
+[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:194]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
+[protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh:195]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
 [protocols/scoring/methods/pcsTs2/PseudocontactShiftInput.cc:105]: (performance) Variable 'PCS_filename_and_data_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs2/PseudocontactShiftInput.cc:85]: (performance) Variable 'PCS_data_line_all_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs2/PseudocontactShiftInput.hh:77]: (performance) Function parameter 'atom_name' should be passed by reference.
@@ -1026,12 +241,12 @@
 [protocols/scoring/methods/pcsTs3/GridSearchIterator.cc:58]: (warning) Member variable 'GridSearchIterator_Ts3::next_to_return_' is not initialized in the constructor.
 [protocols/scoring/methods/pcsTs3/GridSearchIterator.hh:67]: (performance) Function parameter 'coo1' should be passed by reference.
 [protocols/scoring/methods/pcsTs3/GridSearchIterator.hh:68]: (performance) Function parameter 'coo2' should be passed by reference.
-[protocols/scoring/methods/pcsTs3/PseudocontactShiftData.hh:162]: (performance) Function parameter 'exclude_residues' should be passed by reference.
-[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:162]: (performance) Function parameter 'vec_exclude' should be passed by reference.
-[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:182]: (performance) Function parameter 'vec_filename' should be passed by reference.
-[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:183]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
-[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:191]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
-[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:192]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
+[protocols/scoring/methods/pcsTs3/PseudocontactShiftData.hh:169]: (performance) Function parameter 'exclude_residues' should be passed by reference.
+[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:165]: (performance) Function parameter 'vec_exclude' should be passed by reference.
+[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:185]: (performance) Function parameter 'vec_filename' should be passed by reference.
+[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:186]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
+[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:194]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
+[protocols/scoring/methods/pcsTs3/PseudocontactShiftEnergy.hh:195]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
 [protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.cc:105]: (performance) Variable 'PCS_filename_and_data_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.cc:85]: (performance) Variable 'PCS_data_line_all_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.hh:77]: (performance) Function parameter 'atom_name' should be passed by reference.
@@ -1044,12 +259,12 @@
 [protocols/scoring/methods/pcsTs4/GridSearchIterator.cc:58]: (warning) Member variable 'GridSearchIterator_Ts4::next_to_return_' is not initialized in the constructor.
 [protocols/scoring/methods/pcsTs4/GridSearchIterator.hh:67]: (performance) Function parameter 'coo1' should be passed by reference.
 [protocols/scoring/methods/pcsTs4/GridSearchIterator.hh:68]: (performance) Function parameter 'coo2' should be passed by reference.
-[protocols/scoring/methods/pcsTs4/PseudocontactShiftData.hh:173]: (performance) Function parameter 'exclude_residues' should be passed by reference.
-[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:162]: (performance) Function parameter 'vec_exclude' should be passed by reference.
-[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:182]: (performance) Function parameter 'vec_filename' should be passed by reference.
-[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:183]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
-[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:191]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
-[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:192]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
+[protocols/scoring/methods/pcsTs4/PseudocontactShiftData.hh:178]: (performance) Function parameter 'exclude_residues' should be passed by reference.
+[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:165]: (performance) Function parameter 'vec_exclude' should be passed by reference.
+[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:185]: (performance) Function parameter 'vec_filename' should be passed by reference.
+[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:186]: (performance) Function parameter 'vec_individual_weight' should be passed by reference.
+[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:194]: (performance) Function parameter 'grid_atom_name_1' should be passed by reference.
+[protocols/scoring/methods/pcsTs4/PseudocontactShiftEnergy.hh:195]: (performance) Function parameter 'grid_atom_name_2' should be passed by reference.
 [protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.cc:114]: (performance) Variable 'PCS_filename_and_data_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.cc:94]: (performance) Variable 'PCS_data_line_all_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.hh:77]: (performance) Function parameter 'atom_name' should be passed by reference.
@@ -1062,163 +277,25 @@
 [protocols/simple_filters/EnergyPerResidueFilter.hh:32]: (warning) Member variable 'EnergyPerResidueFilter::select_resnums_' is not initialized in the constructor.
 [protocols/simple_filters/EnergyPerResidueFilter.hh:32]: (warning) Member variable 'EnergyPerResidueFilter::whole_interface_' is not initialized in the constructor.
 [protocols/simple_filters/EnergyPerResidueFilter.hh:32]: (warning) Member variable 'EnergyPerResidueFilter::whole_protein_' is not initialized in the constructor.
-[protocols/simple_filters/FileExistFilter.cc:91]: (performance) Function parameter 'f' should be passed by reference.
-[protocols/simple_filters/FileRemoveFilter.cc:103]: (performance) Function parameter 'f' should be passed by reference.
-[protocols/simple_filters/InterfaceSasaFilter.hh:34]: (performance) Function parameter 'sym_dof_names' should be passed by reference.
-[protocols/simple_filters/InterfaceSasaFilter.hh:46]: (performance) Function parameter 'jumps' should be passed by reference.
-[protocols/simple_filters/InterfaceSasaFilter.hh:48]: (performance) Function parameter 'sym_dof_names' should be passed by reference.
-[protocols/simple_filters/InterfaceSasaFilter.hh:49]: (performance) Function parameter 'sym_dof_names' should be passed by reference.
-[protocols/simple_filters/InterfaceSasaFilter.hh:50]: (performance) Function parameter 'sym_dof_name' should be passed by reference.
-[protocols/simple_filters/NeighborTypeFilter.hh:35]: (performance) Function parameter 'residue_types' should be passed by reference.
 [protocols/simple_filters/NeighborTypeFilter.hh:37]: (performance) Variable 'residue_types_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/simple_filters/OperatorFilter.hh:56]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/PoseCommentFilter.hh:47]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/PoseCommentFilter.hh:50]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/RelativePoseFilter.hh:60]: (performance) Function parameter 'pdb_name' should be passed by reference.
-[protocols/simple_filters/RelativePoseFilter.hh:62]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/RelativePoseFilter.hh:79]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/RelativePoseFilter.hh:82]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/RelativePoseFilter.hh:87]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/ReportFilter.cc:137]: (performance) Function parameter 'f' should be passed by reference.
-[protocols/simple_filters/ReportFilter.hh:59]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/ResidueBurialFilter.hh:48]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/RotamerBoltzmannWeight.hh:64]: (performance) Function parameter 'dof_names' should be passed by reference.
-[protocols/simple_filters/RotamerBoltzmannWeight.hh:92]: (performance) Function parameter 'residue_name' should be passed by reference.
 [protocols/simple_filters/SaveResfileToDiskFilter.hh:100]: (performance) Function parameter 'r' should be passed by reference.
-[protocols/simple_filters/SaveResfileToDiskFilter.hh:103]: (performance) Function parameter 'n' should be passed by reference.
-[protocols/simple_filters/SaveResfileToDiskFilter.hh:104]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/SaveResfileToDiskFilter.hh:105]: (performance) Function parameter 'p' should be passed by reference.
-[protocols/simple_filters/SaveResfileToDiskFilter.hh:106]: (performance) Function parameter 'g' should be passed by reference.
-[protocols/simple_filters/SaveResfileToDiskFilter.hh:107]: (performance) Function parameter 'g' should be passed by reference.
 [protocols/simple_filters/SheetFilter.hh:48]: (warning) Member variable 'SheetFilter::handedness_score_' is not initialized in the constructor.
 [protocols/simple_filters/SheetFilter.hh:48]: (warning) Member variable 'SheetFilter::initialized_' is not initialized in the constructor.
-[protocols/simple_filters/SigmoidFilter.hh:59]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/StemFinderFilter.hh:55]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_filters/StemFinderFilter.hh:84]: (performance) Function parameter 'filenames' should be passed by reference.
-[protocols/simple_filters/TaskAwareScoreTypeFilter.hh:66]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/simple_filters/TaskAwareScoreTypeFilter.hh:72]: (performance) Function parameter 'sym_dofs' should be passed by reference.
-[protocols/simple_filters/TaskAwareScoreTypeFilter.hh:76]: (performance) Function parameter 'mode' should be passed by reference.
-[protocols/simple_filters/TaskAwareScoreTypeFilter.hh:79]: (performance) Function parameter 'residue_name' should be passed by reference.
-[protocols/simple_moves/AddChainMover.hh:45]: (performance) Function parameter 'f' should be passed by reference.
 [protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.cc:65]: (warning) Member variable 'AsymFoldandDockRbTrialMover::mc_filter_' is not initialized in the constructor.
 [protocols/simple_moves/BBConRotMover.hh:108] -> [protocols/simple_moves/BBGaussianMover.hh:181]: (warning) The class 'BBConRotMover' defines member variable with name 'dphi' also defined in its parent class 'BBGaussianMover'.
 [protocols/simple_moves/BBConRotMover.hh:110] -> [protocols/simple_moves/BBGaussianMover.hh:182]: (warning) The class 'BBConRotMover' defines member variable with name 'factorA_' also defined in its parent class 'BBGaussianMover'.
 [protocols/simple_moves/BBConRotMover.hh:111] -> [protocols/simple_moves/BBGaussianMover.hh:183]: (warning) The class 'BBConRotMover' defines member variable with name 'factorB_' also defined in its parent class 'BBGaussianMover'.
-[protocols/simple_moves/DeleteChainsMover.hh:47]: (performance) Function parameter 'chains' should be passed by reference.
-[protocols/simple_moves/DeleteChainsMover.hh:50]: (performance) Function parameter 'chains' should be passed by reference.
-[protocols/simple_moves/DeleteChainsMover.hh:67]: (performance) Function parameter 'chains' should be passed by reference.
-[protocols/simple_moves/DeleteChainsMover.hh:71]: (performance) Function parameter 'chains' should be passed by reference.
-[protocols/simple_moves/DesignRepackMover.hh:46]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/simple_moves/DesignRepackMover.hh:52]: (performance) Function parameter 'min_rb' should be passed by reference.
-[protocols/simple_moves/DesignRepackMover.hh:68]: (performance) Function parameter 'p' should be passed by reference.
-[protocols/simple_moves/DesignRepackMover.hh:70]: (performance) Function parameter 'p' should be passed by reference.
-[protocols/simple_moves/DumpPdb.hh:36]: (performance) Function parameter 'fname' should be passed by reference.
-[protocols/simple_moves/GenericMonteCarloMover.hh:117]: (performance) Function parameter 'sample_type' should be passed by reference.
-[protocols/simple_moves/GenericMonteCarloMover.hh:279]: (performance) Function parameter 'sample_type' should be passed by reference.
-[protocols/simple_moves/GenericMonteCarloMover.hh:334]: (performance) Function parameter 's' should be passed by reference.
-[protocols/simple_moves/GenericMonteCarloMover.hh:94]: (performance) Function parameter 'sample_type' should be passed by reference.
-[protocols/simple_moves/LoadPDBMover.hh:51]: (performance) Function parameter 'f' should be passed by reference.
-[protocols/simple_moves/MembraneTopology.hh:68]: (performance) Function parameter 's' should be passed by reference.
 [protocols/simple_moves/ReportEffectivePKA.hh:38]: (performance) Variable 'resname_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/simple_moves/ResTypeFragmentMover.hh:60]: (performance) Function parameter 'sequence' should be passed by reference.
-[protocols/simple_moves/SwitchChainOrderMover.hh:45]: (performance) Function parameter 'co' should be passed by reference.
 [protocols/simple_moves/TailsScoreMover.hh:38]: (warning) Member variable 'TailsScoreMover::m_done_all' is not initialized in the constructor.
 [protocols/simple_moves/TailsScoreMover.hh:38]: (warning) Member variable 'TailsScoreMover::m_number_of_hill_points' is not initialized in the constructor.
 [protocols/simple_moves/TailsScoreMover.hh:43]: (warning) Member variable 'TailsScoreMover::m_done_all' is not initialized in the constructor.
 [protocols/simple_moves/TailsScoreMover.hh:43]: (warning) Member variable 'TailsScoreMover::m_number_of_hill_points' is not initialized in the constructor.
-[protocols/simple_moves/TaskAwareMinMover.cc:71]: (warning) Member variable 'TaskAwareMinMover::jump_' is not initialized in the constructor.
-[protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh:108]: (performance) Function parameter 'cst_file' should be passed by reference.
-[protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh:111]: (performance) Function parameter 'disulfide_file' should be passed by reference.
-[protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh:114]: (performance) Function parameter 'align_file' should be passed by reference.
-[protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh:138]: (performance) Function parameter 'secstruct' should be passed by reference.
-[protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh:261]: (performance) Function parameter 'import_pose' should be passed by reference.
-[protocols/stepwise/legacy/screener/SimpleRMSD_Screener.hh:38]: (performance) Function parameter 'calc_rms_res' should be passed by reference.
-[protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh:54]: (performance) Function parameter 'dir_name' should be passed by reference.
-[protocols/stepwise/modeler/protein/MainChainTorsionSet.hh:41]: (style) 'MainChainTorsionSet::operator=' should return 'MainChainTorsionSet &'.
-[protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh:207]: (performance) Function parameter 'silent_file' should be passed by reference.
-[protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh:47]: (performance) Function parameter 'phosphate_move' should be passed by reference.
-[protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh:94]: (performance) Function parameter 'atom_name' should be passed by reference.
-[protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh:116]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.hh:100]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.hh:40]: (performance) Function parameter 'sample_virtual_sugar_string_list' should be passed by reference.
-[protocols/stepwise/modeler/rna/util.hh:135]: (performance) Function parameter 'str' should be passed by reference.
-[protocols/stepwise/monte_carlo/mover/StepWiseMove.hh:117]: (performance) Function parameter 'submotif_tag' should be passed by reference.
-[protocols/stepwise/monte_carlo/rna/RNA_AddDeleteMonteCarlo.hh:69]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.hh:65]: (performance) Function parameter 'moving_res_list' should be passed by reference.
-[protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh:100]: (performance) Function parameter 'tag' should be passed by reference.
-[protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh:79]: (performance) Function parameter 'setting' should be passed by reference.
-[protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh:95]: (performance) Function parameter 'tag' should be passed by reference.
-[protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh:52]: (performance) Function parameter 'submotif_tag' should be passed by reference.
-[protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh:65]: (performance) Function parameter 'dir_name' should be passed by reference.
-[protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh:86]: (performance) Function parameter 'matching_residues' should be passed by reference.
-[protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.cc:41]: (performance) Function parameter 'frag_file' should be passed by reference.
-[protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.cc:67]: (performance) Function parameter 'frag_file' should be passed by reference.
-[protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.hh:35]: (performance) Function parameter 'frag_file' should be passed by reference.
-[protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.hh:60]: (performance) Function parameter 'frag_file' should be passed by reference.
-[protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh:86]: (performance) Function parameter 'atom_name' should be passed by reference.
-[protocols/stepwise/screener/TagDefinition.hh:40]: (performance) Function parameter 'extra_tag' should be passed by reference.
-[protocols/stepwise/screener/TagDefinition.hh:59]: (performance) Function parameter 'value' should be passed by reference.
-[protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh:33]: (performance) Function parameter 'silent_file' should be passed by reference.
-[protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh:68]: (performance) Function parameter 'silent_file' should be passed by reference.
-[protocols/stepwise/setup/StepWiseJobDistributor.hh:33]: (performance) Function parameter 'silent_file' should be passed by reference.
-[protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.hh:34]: (performance) Function parameter 'silent_file' should be passed by reference.
-[protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh:95]: (performance) Function parameter 'desired_restype_set_name' should be passed by reference.
-[protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh:159]: (style) 'ExternalGeomSampler::operator=' should return 'ExternalGeomSampler &'.
-[protocols/toolbox/NetworkAlgorithms.hh:116]: (performance) Function parameter 'id' should be passed by reference.
-[protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh:49]: (style) 'MetricValueGetter::operator=' should return 'MetricValueGetter &'.
-[protocols/toolbox/rigid_body/util.hh:108]: (performance) Function parameter 'shift' should be passed by reference.
-[protocols/toolbox/rigid_body/util.hh:113]: (performance) Function parameter 'M' should be passed by reference.
-[protocols/toolbox/rigid_body/util.hh:119]: (performance) Function parameter 'M' should be passed by reference.
-[protocols/toolbox/rigid_body/util.hh:127]: (performance) Function parameter 'moving_res' should be passed by reference.
-[protocols/toolbox/task_operations/AlignedThreadOperation.hh:58]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/AlignedThreadOperation.hh:61]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/AlignedThreadOperation.hh:64]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/DatabaseThread.hh:58]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/DatabaseThread.hh:66]: (performance) Function parameter 'd' should be passed by reference.
-[protocols/toolbox/task_operations/DatabaseThread.hh:68]: (performance) Function parameter 'vector' should be passed by reference.
-[protocols/toolbox/task_operations/DatabaseThread.hh:70]: (performance) Function parameter 'vector' should be passed by reference.
-[protocols/toolbox/task_operations/DatabaseThread.hh:71]: (performance) Function parameter 'seq' should be passed by reference.
-[protocols/toolbox/task_operations/RestrictIdentitiesAtAlignedPositions.hh:57]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/RestrictIdentitiesAtAlignedPositions.hh:58]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/RestrictIdentitiesAtAlignedPositions.hh:65]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/RestrictToAlignedSegments.hh:58]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/RestrictToAlignedSegments.hh:60]: (performance) Function parameter 's' should be passed by reference.
-[protocols/toolbox/task_operations/SelectByDeltaScoreOperation.hh:55]: (performance) Function parameter 'name' should be passed by reference.
-[protocols/toolbox/task_operations/STMStoredTask.hh:43]: (performance) Function parameter 'task_name' should be passed by reference.
-[protocols/toolbox/task_operations/STMStoredTask.hh:47]: (performance) Function parameter 'task_name' should be passed by reference.
-[protocols/toolbox/task_operations/StoreCompoundTaskMover.hh:66]: (performance) Function parameter 'tn' should be passed by reference.
-[protocols/toolbox/task_operations/StoreCompoundTaskMover.hh:67]: (performance) Function parameter 'md' should be passed by reference.
-[protocols/toolbox/task_operations/StoreCompoundTaskMover.hh:68]: (performance) Function parameter 'tb' should be passed by reference.
-[protocols/toolbox/task_operations/StoreCompoundTaskMover.hh:69]: (performance) Function parameter 'fb' should be passed by reference.
-[protocols/toolbox/task_operations/ThreadSequenceOperation.hh:46]: (performance) Function parameter 'seq' should be passed by reference.
-[protocols/toolbox/task_operations/ThreadSequenceOperation.hh:52]: (performance) Function parameter 'seq' should be passed by reference.
 [protocols/topology_broker/SequenceNumberResolver.cc:47]: (performance) Variable 'offset_map_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/topology_broker/SequenceNumberResolver.cc:48]: (performance) Variable 'offset_map_reversed_' is assigned in constructor body. Consider performing initialization in initialization list.
-[protocols/topology_broker/TopologyBroker.hh:115]: (style) 'TopologyBroker::operator=' should return 'TopologyBroker &'.
 [protocols/viewer/triangleIterator.hh:30]: (style) 'class triangleIterator' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
-[protocols/viewer/viewers.hh:216]: (performance) Function parameter 'name_in' should be passed by reference.
 [protocols/viewer/viewers.hh:96]: (performance) Function parameter 'empty_string' should be passed by reference.
 [protocols/wum/WorkUnitBase.cc:80]: (style) C-style pointer casting
-[protocols/wum/WorkUnitManager.hh:102]: (performance) Function parameter 'swap_file' should be passed by reference.
-[protocols/wum/WorkUnitManager.hh:124]: (style) Unused private function: 'WorkUnitQueue_Swapped::set_swap_file'
-[utility/Binary_Util.hh:34]: (style) The scope of the variable 'N' can be reduced.
-[utility/graph/RingDetection.hh:342]: (performance) Function parameter 'CAN_VISIT' should be passed by reference.
-[utility/in_place_list.hh:59]: (style) Unused private function: 'list_element::clear'
-[utility/keys/SmallKeyVector.hh:118]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:127]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:201]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:239]: (performance) Function parameter 'pos' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:251]: (performance) Function parameter 'pos' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:252]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:265]: (performance) Function parameter 'pos' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:286]: (performance) Function parameter 'pos' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:296]: (performance) Function parameter 'beg' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:297]: (performance) Function parameter 'end' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:317]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:327]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/SmallKeyVector.hh:338]: (performance) Function parameter 'num' should be passed by reference.
-[utility/keys/VariantKey.hh:284]: (style) Unused private function: 'VariantKey::operatorK::Index'
-[utility/keys/VariantKey.hh:284]: (style) Unused private function: 'VariantKey::operatortypenameK::Index'
+[protocols/wum/WorkUnitManager.hh:123]: (style) Unused private function: 'WorkUnitQueue_Swapped::set_swap_file'
 [utility/libsvm/Svm.cc:2022]: (style) C-style pointer casting
 [utility/libsvm/Svm.cc:2114]: (style) C-style pointer casting
 [utility/libsvm/Svm.cc:2716]: (style) C-style pointer casting
@@ -1250,29 +327,3 @@
 [utility/libsvm/Svm.cc:384]: (warning) Member variable 'Solver::y' is not initialized in the constructor.
 [utility/libsvm/Svm.cc:96]: (style) C-style pointer casting
 [utility/libsvm/Svm.cc:973]: (warning) Member variable 'Solver_NU::si' is not initialized in the constructor.
-[utility/options/OptionCollection.cc:1507]: (performance) Function parameter 'indent' should be passed by reference.
-[utility/options/OptionCollection.cc:1508]: (performance) Function parameter 'width' should be passed by reference.
-[utility/options/OptionCollection.hh:1492]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[utility/options/OptionCollection.hh:1497]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[utility/options/OptionCollection.hh:1563]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[utility/options/OptionCollection.hh:2034]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[utility/options/OptionCollection.hh:2039]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[utility/options/OptionCollection.hh:2105]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
-[utility/options/OptionCollection.hh:2337]: (performance) Function parameter 'indent' should be passed by reference.
-[utility/options/OptionCollection.hh:2338]: (performance) Function parameter 'width' should be passed by reference.
-[utility/options/ScalarOption_T_.hh:723]: (performance) Function parameter 's' should be passed by reference.
-[utility/options/ScalarOption_T_.hh:723]: (performance) Function parameter 'str_' should be passed by reference.
-[utility/options/VectorOption_T_.hh:926]: (performance) Function parameter 's' should be passed by reference.
-[utility/options/VectorOption_T_.hh:926]: (performance) Function parameter 'str_' should be passed by reference.
-[utility/SimulateMPI.cc:33]: (warning) Member variable 'SimulateMPIMessage::char_msg_' is not initialized in the constructor.
-[utility/SimulateMPI.cc:33]: (warning) Member variable 'SimulateMPIMessage::double_msg_' is not initialized in the constructor.
-[utility/SimulateMPI.cc:33]: (warning) Member variable 'SimulateMPIMessage::integer_msg_' is not initialized in the constructor.
-[utility/SimulateMPI.cc:33]: (warning) Member variable 'SimulateMPIMessage::msg_type_' is not initialized in the constructor.
-[utility/stream_util.hh:56]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[utility/stream_util.hh:73]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[utility/vector0_bool.hh:157]: (performance) Function parameter 'num' should be passed by reference.
-[utility/vector0.hh:160]: (performance) Function parameter 'num' should be passed by reference.
-[utility/vector0.hh:168]: (performance) Function parameter 'num' should be passed by reference.
-[utility/vector1_bool.hh:156]: (performance) Function parameter 'num' should be passed by reference.
-[utility/vector1.hh:161]: (performance) Function parameter 'num' should be passed by reference.
-[utility/vector1.hh:169]: (performance) Function parameter 'num' should be passed by reference.

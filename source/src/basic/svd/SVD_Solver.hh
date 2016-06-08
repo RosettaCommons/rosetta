@@ -77,8 +77,7 @@ private:
 	bool x_is_solved_;
 
 public:
-
-	SVD_Solver(); //construct
+	// Default constructor is private, except for serialization - see below
 
 	~SVD_Solver(); //destruct
 
@@ -149,8 +148,12 @@ private:
 
 #ifdef    SERIALIZATION
 public:
+	SVD_Solver() {}
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );
+#else
+private:
+	SVD_Solver(); // For non-serialization purposes, must initialize with M & N
 #endif // SERIALIZATION
 
 };

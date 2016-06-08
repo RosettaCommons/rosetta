@@ -352,7 +352,7 @@ rstrip_whitespace( std::string & s )
 
 /// @brief Pad a string to a Specified Length
 std::string &
-pad( std::string & s, std::string::size_type const len )
+pad( std::string & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Pad
@@ -364,7 +364,7 @@ pad( std::string & s, std::string::size_type const len )
 
 /// @brief Left-Pad a string to a Specified Length
 std::string &
-lpad( std::string & s, std::string::size_type const len )
+lpad( std::string & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Left-pad
@@ -376,7 +376,7 @@ lpad( std::string & s, std::string::size_type const len )
 
 /// @brief Right-Pad a string to a Specified Length
 std::string &
-rpad( std::string & s, std::string::size_type const len )
+rpad( std::string & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Pad
@@ -388,7 +388,7 @@ rpad( std::string & s, std::string::size_type const len )
 
 /// @brief Size a string to a Specified Length
 std::string &
-size( std::string & s, std::string::size_type const len )
+size( std::string & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Pad
@@ -412,7 +412,7 @@ center( std::string & s )
 
 /// @brief Center a string with a Specified Length
 std::string &
-center( std::string & s, std::string::size_type const len )
+center( std::string & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Pad
@@ -443,7 +443,7 @@ unique( std::string & s )
 
 /// @brief Overlay a string With Another string, Expanding Size as Needed
 std::string &
-overlay( std::string & s, std::string const & t, std::string::size_type const pos )
+overlay( std::string & s, std::string const & t, std::string::size_type pos )
 {
 	std::string::size_type const t_len( t.length() );
 	std::string::size_type const l_len( pos + t_len ); // Lower bound on new string length
@@ -711,7 +711,7 @@ rstripped_whitespace( std::string const & s )
 
 /// @brief Padded to a Specified Length Copy of a string
 std::string
-padded( std::string const & s, std::string::size_type const len )
+padded( std::string const & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Padded
@@ -724,7 +724,7 @@ padded( std::string const & s, std::string::size_type const len )
 
 /// @brief Left-Padded to a Specified Length Copy of a string
 std::string
-lpadded( std::string const & s, std::string::size_type const len )
+lpadded( std::string const & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Left-padded
@@ -737,7 +737,7 @@ lpadded( std::string const & s, std::string::size_type const len )
 
 /// @brief Right-Padded to a Specified Length Copy of a string
 std::string
-rpadded( std::string const & s, std::string::size_type const len )
+rpadded( std::string const & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Padded
@@ -750,7 +750,7 @@ rpadded( std::string const & s, std::string::size_type const len )
 
 /// @brief Sized to a Specified Length Copy of a string
 std::string
-sized( std::string const & s, std::string::size_type const len )
+sized( std::string const & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Padded
@@ -773,7 +773,7 @@ centered( std::string const & s )
 
 /// @brief Centered in a string of Specified Length Copy of a string
 std::string
-centered( std::string const & s, std::string::size_type const len )
+centered( std::string const & s, std::string::size_type len )
 {
 	string::size_type const s_len( s.length() );
 	if ( s_len < len ) { // Padded

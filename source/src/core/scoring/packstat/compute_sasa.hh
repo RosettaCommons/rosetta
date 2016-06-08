@@ -82,10 +82,8 @@ get_overlap(
 	int & olp
 )
 {
-	PackstatReal epsilon,costh;
-
 	//cj    min distance cutoff
-	epsilon = 0.01;
+	PackstatReal epsilon = 0.01;
 
 	if ( dist < epsilon ) {
 		//cj    atoms too close, causes round off error
@@ -109,7 +107,7 @@ get_overlap(
 		//cj    imposes on atom a.  "ra" is the radius of atom a, and "rb" is
 		//cj    the radius of atom b.  "sqrtd" is the actual distance between
 		//cj    the a and b centers, while "dist" is the square of this distance.
-		costh = (ra*ra+dist*dist-rb*rb)/(2*ra*dist);
+		PackstatReal costh = (ra*ra+dist*dist-rb*rb)/(2*ra*dist);
 		olp = static_cast< int >((1.0f-costh)*50)+1;
 		if ( olp > 100 ) {
 			olp = 100;

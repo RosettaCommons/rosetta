@@ -81,8 +81,11 @@ public:
 	FoldTree():
 		ReferenceCount(),
 		new_topology (true), // new_topology == true ==> new_order == true
+		new_order(true),
 		nres_(0),
-		num_jump_(0)
+		num_jump_(0),
+		num_cutpoint_(0),
+		min_edge_count(0)
 	{}
 
 	/// @brief Constructs a simple FoldTree
@@ -93,8 +96,11 @@ public:
 	FoldTree( int const nres_in ):
 		ReferenceCount(),
 		new_topology (true), // new_topology == true ==> new_order == true
+		new_order(true),
 		nres_(0),
-		num_jump_(0)
+		num_jump_(0),
+		num_cutpoint_(0),
+		min_edge_count(0)
 	{
 		simple_tree( nres_in );
 	}

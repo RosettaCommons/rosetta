@@ -57,10 +57,11 @@ void kf_factor(int n,int * facbuf) {
 /////////////////////////
 /// 1D c->c fft
 /////////////////////////
-kiss_fft_state::kiss_fft_state() {
-	nfft_ = 0;
-	inverse_ = 0;
-}
+kiss_fft_state::kiss_fft_state():
+	nfft_ (0),
+	inverse_(0),
+	factors_() // Zero-initialize C-style array
+{}
 
 kiss_fft_state::kiss_fft_state(int n, int inv) {
 	// This used to just call resize, but has a conditional

@@ -995,7 +995,7 @@ private: // Functions
 #endif // OBJEXXFCL_FARRAY_SIZE_REPORT
 	}
 
-
+	/* // unused private
 	/// @brief Remove as Observer of the IndexRanges
 	inline
 	void
@@ -1003,7 +1003,7 @@ private: // Functions
 	{
 		I1_.remove_observer( *this );
 		I2_.remove_observer( *this );
-	}
+	}*/
 
 
 #ifdef OBJEXXFCL_FARRAY_SIZE_REPORT

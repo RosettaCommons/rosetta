@@ -103,7 +103,7 @@ InterfaceFeatures::set_compute_packstat(const bool compute_packstat) {
 }
 
 void
-InterfaceFeatures::set_interface_chains(vector1<std::string> interfaces){
+InterfaceFeatures::set_interface_chains(vector1<std::string> const & interfaces){
 	interfaces_ = interfaces;
 }
 
@@ -596,9 +596,9 @@ InterfaceFeatures::report_interface_side_features(
 	core::pose::Pose const &,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	const std::string & chains_side1,
-	const std::string & chains_side2,
-	protocols::analysis::InterfaceRegion const region,
+	std::string const & chains_side1,
+	std::string const & chains_side2,
+	protocols::analysis::InterfaceRegion region,
 	std::string const & region_string) const
 {
 
@@ -744,9 +744,9 @@ void
 InterfaceFeatures::write_interface_residue_data_row_to_db(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	const std::string & chains_side1,
-	const std::string & chains_side2,
-	const std::string & side,
+	std::string const & chains_side1,
+	std::string const & chains_side2,
+	std::string const & side,
 	core::Size const resnum,
 	protocols::analysis::PerResidueInterfaceData const & interface_data) const
 {

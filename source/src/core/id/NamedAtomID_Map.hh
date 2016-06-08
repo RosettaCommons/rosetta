@@ -370,7 +370,7 @@ public: // Indexers
 	/// @brief NamedAtomID_Map( i_res, i_atom ) const
 	inline
 	ConstReference
-	operator ()( Size const i_res, std::string const & atom ) const
+	operator ()( Size i_res, std::string const & atom ) const
 	{
 		if ( res_map_[ i_res ].count( atom ) ) {
 			return res_map_[ i_res ].find( atom )->second;
@@ -383,7 +383,7 @@ public: // Indexers
 	/// @brief NamedAtomID_Map( i_res, i_atom )
 	inline
 	Reference
-	operator ()( Size const i_res, std::string const & atom )
+	operator ()( Size i_res, std::string const & atom )
 	{
 		//Hack until I find out the root cause of this from file_data.cc
 		if ( i_res > res_map_.size() ) {

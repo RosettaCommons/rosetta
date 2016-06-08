@@ -117,22 +117,6 @@ CDRSeqDesignOptions::clone() const {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// PARSER ///////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +132,7 @@ CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
 CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() {}
 
 utility::vector1<CDRSeqDesignOptionsOP>
-CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string filename) {
+CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
@@ -158,7 +142,7 @@ CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string filename) 
 }
 
 CDRSeqDesignOptionsOP
-CDRSeqDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string filename) {
+CDRSeqDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename) {
 
 	cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(cdr) );
 	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
@@ -171,7 +155,7 @@ CDRSeqDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::
 }
 
 utility::vector1<CDRSeqDesignOptionsOP>
-CDRSeqDesignOptionsParser::parse_options(std::string filename) {
+CDRSeqDesignOptionsParser::parse_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
@@ -181,7 +165,7 @@ CDRSeqDesignOptionsParser::parse_options(std::string filename) {
 }
 
 CDRSeqDesignOptionsOP
-CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
+CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string const & path) {
 
 	using namespace utility;
 	using namespace std;
@@ -263,7 +247,7 @@ CDRSeqDesignOptionsParser::check_path() {
 }
 
 void
-CDRSeqDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<string>& lineSP) {
+CDRSeqDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<string> const & lineSP) {
 
 	if ( mode == "DESIGN" || mode == "SEQDESIGN" || mode == "SEQ_DESIGN" || mode == "SEQUENCEDESIGN" || mode == "SEQUENCE_DESIGN" ) {
 		check_line_len(lineSP, 3);
@@ -276,14 +260,14 @@ CDRSeqDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<st
 }
 
 void
-CDRSeqDesignOptionsParser::check_line_len(const vector1<string> & lineSP, const core::Size len_check) const {
+CDRSeqDesignOptionsParser::check_line_len(vector1<string> const & lineSP, core::Size len_check) const {
 	if ( lineSP.size() < len_check ) {
 		utility_exit_with_message("Could not parse design instructions. Line not long enough: "+utility::to_string(len_check)+" "+utility::to_string(lineSP));
 	}
 }
 
 void
-CDRSeqDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) {
+CDRSeqDesignOptionsParser::parse_cdr_general_option(vector1<string> const & lineSP) {
 
 	check_line_len(lineSP, 2);
 	std::string setting = lineSP[2];
@@ -295,7 +279,7 @@ CDRSeqDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) {
 }
 
 void
-CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const & name, vector1< string> & lineSP){
+CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const & name, vector1< string> const & lineSP){
 
 	using namespace utility;
 
@@ -330,7 +314,7 @@ CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const & opt
 }
 
 void
-CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(const std::string & option) {
+CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(std::string const & option) {
 
 	SeqDesignStrategyEnum strategy= design_enum_manager_->seq_design_strategy_string_to_enum( option );
 	if ( strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined ) {

@@ -181,7 +181,12 @@ public:
 	}
 
 protected: // make private
-	FragData( Size nr_res ) : data_( nr_res ) {};
+	FragData( Size nr_res ):
+		data_( nr_res ),
+		valid_(false), // Does this make sense?
+		score_(0) // Does this make sense?
+	{}
+
 	SRFD_List data_;
 
 private:

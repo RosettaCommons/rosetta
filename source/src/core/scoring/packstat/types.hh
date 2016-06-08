@@ -49,8 +49,23 @@ typedef XYZs::const_iterator XYZCIter;
 
 
 struct Sphere {
-	Sphere( XYZ xyz_in, PackstatReal rad_in, core::Size _id = 0 ) : xyz(xyz_in),radius(rad_in),id(_id),aid(1,_id) {}
-	Sphere( XYZ xyz_in, PackstatReal rad_in, core::id::AtomID _aid ) : xyz(xyz_in),radius(rad_in),id(0),aid(_aid) {}
+
+	Sphere( XYZ xyz_in, PackstatReal rad_in, core::Size _id = 0 ) :
+		xyz(xyz_in),
+		radius(rad_in),
+		sasa(0),
+		id(_id),
+		aid(1,_id)
+	{}
+
+	Sphere( XYZ xyz_in, PackstatReal rad_in, core::id::AtomID _aid ) :
+		xyz(xyz_in),
+		radius(rad_in),
+		sasa(0),
+		id(0),
+		aid(_aid)
+	{}
+
 	XYZ xyz;
 	PackstatReal radius,sasa;
 	core::Size id;

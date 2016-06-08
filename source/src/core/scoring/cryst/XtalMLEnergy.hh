@@ -52,10 +52,10 @@ public:
 
 
 	XtalMLEnergy( XtalMLEnergy const & src ) :
-		parent(src) {
-		ml = src.ml;
-		dml_dx = src.dml_dx;
-	}
+		parent(src),
+		dml_dx(src.dml_dx),
+		ml(src.ml)
+	{}
 
 	virtual methods::EnergyMethodOP clone() const;
 

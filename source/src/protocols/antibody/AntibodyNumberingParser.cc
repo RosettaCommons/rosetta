@@ -33,12 +33,12 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyNumberingParse
 using namespace boost;
 using utility::vector1;
 
-AntibodyNumberingParser::AntibodyNumberingParser(AntibodyEnumManagerCOP enum_manager){
-	enum_manager_ = enum_manager;
-	numbering_database_directory_="sampling/antibodies/numbering_schemes";
-	scheme_file_ = "numbering_scheme_definitions.txt";
-	cdr_definition_file_ = "cdr_definitions.txt";
-}
+AntibodyNumberingParser::AntibodyNumberingParser(AntibodyEnumManagerCOP enum_manager):
+	enum_manager_(enum_manager),
+	numbering_database_directory_("sampling/antibodies/numbering_schemes"),
+	scheme_file_("numbering_scheme_definitions.txt"),
+	cdr_definition_file_("cdr_definitions.txt")
+{}
 
 AntibodyNumberingParser::~AntibodyNumberingParser(){}
 
@@ -77,7 +77,7 @@ AntibodyNumberingParser::get_antibody_numbering(AntibodyNumberingSchemeEnum cons
 }
 
 void
-AntibodyNumberingParser::read_numbering_scheme_file(const std::string & file_path, AntibodyNumbering& numbering) {
+AntibodyNumberingParser::read_numbering_scheme_file(std::string const & file_path, AntibodyNumbering& numbering) {
 	check_path(file_path);
 	std::ifstream numbering_file(file_path.c_str());
 	PyAssert((numbering_file.is_open()), "Unable to open scheme transform file.");
@@ -201,7 +201,7 @@ AntibodyNumberingParser::get_equivalent_landmark(AntibodyNumbering & numbering, 
 
 
 void
-AntibodyNumberingParser::read_cdr_definition_file(const std::string & file_path, AntibodyNumbering& numbering) {
+AntibodyNumberingParser::read_cdr_definition_file(std::string const & file_path, AntibodyNumbering& numbering) {
 	//Initializeour vector2d
 
 	check_path(file_path);

@@ -43,6 +43,8 @@ RotamerSetFactory::~RotamerSetFactory() {}
 RotamerSetOP
 RotamerSetFactory::create_rotamer_set( conformation::Residue const & /*res*/ )
 {
+
+	// RM: Basing this on the commandline setting seems bad - what if we're setting symmetry from within RosettaScripts or the like?
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
 		return RotamerSetOP( new symmetry::SymmetricRotamerSet_() );
 	}

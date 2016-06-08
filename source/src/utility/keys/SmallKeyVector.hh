@@ -115,7 +115,7 @@ public: // Creation
 	/// @brief Size constructor
 	inline
 	explicit
-	SmallKeyVector( Size const num ) :
+	SmallKeyVector( Size num ) :
 		v_( num ),
 		u_( 0 )
 	{}
@@ -124,7 +124,7 @@ public: // Creation
 	/// @brief Uniform value constructor
 	inline
 	SmallKeyVector(
-		Size const num,
+		Size num,
 		Value const & value
 	) :
 		v_( num, value ),
@@ -198,7 +198,7 @@ public: // Assignment
 	inline
 	void
 	assign(
-		Size const num,
+		Size num,
 		Value const & value
 	)
 	{
@@ -236,7 +236,7 @@ public: // Methods
 	inline
 	Iterator
 	insert(
-		Iterator const pos,
+		Iterator const & pos,
 		Value const & value
 	)
 	{
@@ -248,8 +248,8 @@ public: // Methods
 	inline
 	void
 	insert(
-		Iterator const pos,
-		Size const num,
+		Iterator const & pos,
+		Size num,
 		Value const & value
 	)
 	{
@@ -262,9 +262,9 @@ public: // Methods
 	inline
 	void
 	insert(
-		Iterator const pos,
-		InputIterator const beg,
-		InputIterator const end
+		Iterator const & pos,
+		InputIterator const & beg,
+		InputIterator const & end
 	)
 	{
 		v_.insert( pos, beg, end );
@@ -283,7 +283,7 @@ public: // Methods
 	/// @brief Erase an element at an iterator position
 	inline
 	Iterator
-	erase( Iterator const pos )
+	erase( Iterator const & pos )
 	{
 		return v_.erase( pos );
 	}
@@ -293,8 +293,8 @@ public: // Methods
 	inline
 	Iterator
 	erase(
-		Iterator const beg,
-		Iterator const end
+		Iterator const & beg,
+		Iterator const & end
 	)
 	{
 		return v_.erase( beg, end );
@@ -314,7 +314,7 @@ public: // Methods
 	/// @brief Resize: Default construct new elements
 	inline
 	void
-	resize( Size const num )
+	resize( Size num )
 	{
 		v_.resize( num );
 	}
@@ -324,7 +324,7 @@ public: // Methods
 	inline
 	void
 	resize(
-		Size const num,
+		Size num,
 		Value const & value
 	)
 	{
@@ -335,7 +335,7 @@ public: // Methods
 	/// @brief Reserve space for a given number of elements
 	inline
 	void
-	reserve( Size const num )
+	reserve( Size num )
 	{
 		v_.reserve( num );
 	}

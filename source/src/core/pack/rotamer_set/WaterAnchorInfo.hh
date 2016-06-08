@@ -36,6 +36,12 @@ namespace rotamer_set {
 
 class WaterAnchorInfo : public utility::pointer::ReferenceCount {
 public:
+	WaterAnchorInfo():
+		anchor_residue_(0), // Does this make sense?
+		aa_( core::chemical::aa_unk ),
+		nstep_(0) // Does this make sense?
+	{}
+
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~WaterAnchorInfo();
 	typedef chemical::AA AA;

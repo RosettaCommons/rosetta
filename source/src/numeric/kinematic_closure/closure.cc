@@ -314,7 +314,6 @@ Real torsion(
 	const utility::vector1<Real>& c,
 	const utility::vector1<Real>& d) {
 
-	Real y, z, chi;
 	utility::vector1<Real> r (3), sc1 (3), sc2 (3), sc3 (3), cs12, cs31;
 	utility::vector1<utility::vector1<Real> > s (3);
 	for ( int i=1; i<=3; i++ ) {
@@ -348,10 +347,10 @@ Real torsion(
 		s[3][i] /= f;
 	}
 
-	y = r[1]*s[1][2] + r[2]*s[2][2] + r[3]*s[3][2];
-	z = r[1]*s[1][3] + r[2]*s[2][3] + r[3]*s[3][3];
+	Real y = r[1]*s[1][2] + r[2]*s[2][2] + r[3]*s[3][2];
+	Real z = r[1]*s[1][3] + r[2]*s[2][3] + r[3]*s[3][3];
 
-	chi = atan2(z,y);
+	Real chi = atan2(z,y);
 	return wrap_2pi(chi);
 }
 

@@ -612,7 +612,7 @@ void
 RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	conformation::Residue const & rsd,
 	RotamerLibraryScratchSpace & scratch,
-	Size const packed_rotno,
+	Size packed_rotno,
 	PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 ) const
 {
@@ -631,7 +631,7 @@ template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	RotamerLibraryScratchSpace & scratch,
-	Size const packed_rotno,
+	Size packed_rotno,
 	utility::fixedsizearray1< Size, N > const & bb_bin,
 	utility::fixedsizearray1< Size, N > const & bb_bin_next,
 	utility::fixedsizearray1< Real, N > const & bb_alpha,

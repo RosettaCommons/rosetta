@@ -787,7 +787,7 @@ public: // single residue mutators
 	/// @param[in] label  string that is the "label"
 	void
 	add_reslabel(
-		Size const res,
+		Size res,
 		std::string const & label
 	);
 
@@ -803,7 +803,7 @@ public: // single residue mutators
 	/// @param[in] target_label string to look for inside the labes associated to the residue
 	bool
 	res_haslabel(
-		Size const res,
+		Size res,
 		std::string const & target_label
 	) const
 	{

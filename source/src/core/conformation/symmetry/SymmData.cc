@@ -925,7 +925,7 @@ SymmData::read_symmetry_data_from_stream(
 
 	// postprocess multi-component related stuff // sheffler
 	// count num subs per component, correct raw virt_id_to_subunit_num_
-	if ( virt_id_to_subunit_chain_.size() > 0 ) {
+	if ( ! virt_id_to_subunit_chain_.empty() ) {
 		vector1<char> chains(subchains.begin(),subchains.end());
 		if ( chains.size() <= 1 ) utility_exit_with_message("processing multicomponent symmetry, but only one chain!");
 		std::sort(chains.begin(),chains.end());
@@ -1190,7 +1190,7 @@ SymmData::read_symmetry_data_from_stream(
 void
 SymmData::sanity_check()
 {
-	if ( virtual_coordinates_.size() < 1 ) {
+	if ( virtual_coordinates_.empty() ) {
 		utility_exit_with_message( "[ERROR] No virtual atoms specified..." );
 	}
 	if ( subunits_ < 1 ) {

@@ -162,7 +162,7 @@ public: // Creation
 	/// @brief Size constructor
 	inline
 	explicit
-	vector1( size_type const num ) :
+	vector1( size_type num ) :
 		super( num )
 	{}
 
@@ -170,7 +170,7 @@ public: // Creation
 	/// @brief Uniform value constructor
 	inline
 	vector1(
-		size_type const num,
+		size_type num,
 		value_type const & value,
 		allocator_type const & alloc = allocator_type()
 	) :

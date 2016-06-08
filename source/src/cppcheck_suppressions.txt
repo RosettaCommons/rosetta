@@ -19,3 +19,6 @@
 
 // This is a check that's error prone, and has been removed from more recent versions of cppcheck.
 unnecessaryForwardDeclaration
+
+// In this file we use self comparison for the NaN check. (Note we can remove this with std::isnan() with C++11)
+duplicateExpression:numeric/util.hh

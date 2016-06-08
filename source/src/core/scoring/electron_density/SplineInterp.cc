@@ -130,7 +130,7 @@ static double InitialCausalCoefficient (
 	double Tolerance, // admissible relative error
 	bool Mirrored     // mirror boundary?
 ) {
-	double Sum, zn, iz, z2n;
+	double Sum, zn;
 	long n, Horizon;
 
 	// this initialization corresponds to mirror boundaries
@@ -173,8 +173,8 @@ static double InitialCausalCoefficient (
 		} else {
 			// full loop
 			zn = z;
-			iz = 1.0 / z;
-			z2n = std::pow(z, (double)(DataLength - 1));
+			double iz = 1.0 / z;
+			double z2n = std::pow(z, (double)(DataLength - 1));
 			Sum = c[0] + z2n * c[DataLength - 1];
 			z2n *= z2n * iz;
 			for ( n = 1L; n <= DataLength - 2; n++ ) {

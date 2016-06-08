@@ -37,7 +37,7 @@ DFIRE_Potential::~DFIRE_Potential() {}
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.DFIRE_Potential" );
 
-static Size const INVALID(999);
+//static Size const INVALID(999);
 
 DFIRE_Potential::DFIRE_Potential()
 : potential_is_loaded_(false)
@@ -113,6 +113,7 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 } // read_potential
 
 
+/* // unused
 core::Size DFIRE_Potential::res_index(
 	std::string const & input
 ) const {
@@ -153,6 +154,7 @@ core::Size DFIRE_Potential::atom_index(
 
 	return INVALID;
 }
+*/
 
 core::Real
 DFIRE_Potential::eval_dfire_pair_energy(

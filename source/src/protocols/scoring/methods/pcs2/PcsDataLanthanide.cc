@@ -64,12 +64,6 @@ static THREAD_LOCAL basic::Tracer TR_PcsDataLanthanide( "protocols.scoring.metho
 PcsDataLanthanide::~PcsDataLanthanide(){
 }
 
-PcsDataLanthanide::PcsDataLanthanide():
-	filename_(""), weight_(0)
-{
-	utility_exit_with_message( "You shouldn't call the empty constructor for PcsDataLanthanide class" );
-}
-
 PcsDataLanthanide::PcsDataLanthanide(PcsDataLanthanide const &other):
 	filename_(other.filename_),  weight_(other.weight_), svd_s_(other.svd_s_)
 {

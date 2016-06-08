@@ -159,7 +159,7 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser():
 CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() {}
 
 utility::vector1<CDRGraftDesignOptionsOP>
-CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string filename) {
+CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
@@ -169,7 +169,7 @@ CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string filename
 }
 
 CDRGraftDesignOptionsOP
-CDRGraftDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string filename) {
+CDRGraftDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename) {
 
 	cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(cdr) );
 	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
@@ -182,7 +182,7 @@ CDRGraftDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std
 }
 
 utility::vector1<CDRGraftDesignOptionsOP>
-CDRGraftDesignOptionsParser::parse_options(std::string filename) {
+CDRGraftDesignOptionsParser::parse_options(std::string const & filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
@@ -192,7 +192,7 @@ CDRGraftDesignOptionsParser::parse_options(std::string filename) {
 }
 
 CDRGraftDesignOptionsOP
-CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
+CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string const & path) {
 
 	using namespace utility;
 	using namespace std;
@@ -278,7 +278,7 @@ CDRGraftDesignOptionsParser::check_path() {
 }
 
 void
-CDRGraftDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<string>& lineSP) {
+CDRGraftDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<string> const & lineSP) {
 
 	///Since we are now including SeqDesign and GraftDesign as part of the overall protocol,
 	/// it does not make sense to include MIN as part of GraftDesign, since it is overall part of the protocol.
@@ -303,14 +303,14 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const & mode, vector1<
 
 
 void
-CDRGraftDesignOptionsParser::check_line_len(const vector1<string> & lineSP, const core::Size len_check) const {
+CDRGraftDesignOptionsParser::check_line_len(vector1<string> const & lineSP, core::Size len_check) const {
 	if ( lineSP.size() < len_check ) {
 		utility_exit_with_message("Could not parse design instructions. Line not long enough: "+utility::to_string(len_check)+" "+utility::to_string(lineSP));
 	}
 }
 
 void
-CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const & setting, vector1<string>& lineSP) {
+CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const & setting, vector1<string> const & lineSP) {
 
 	//Here we match.  This is rather ugly, as I don't have much C++ expereince in this.  Python however...
 
@@ -346,7 +346,7 @@ CDRGraftDesignOptionsParser::set_cdr_graft_general_option(std::string const & op
 }
 
 void
-CDRGraftDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) {
+CDRGraftDesignOptionsParser::parse_cdr_general_option(vector1<string> const & lineSP) {
 
 	check_line_len(lineSP, 2);
 	std::string setting = lineSP[2];
@@ -386,7 +386,7 @@ CDRGraftDesignOptionsParser::set_cdr_graft_mintype_options(std::string const & m
 }
 
 void
-CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vector1<std::string>& lineSP){
+CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vector1<std::string> const & lineSP){
 
 	///Clear neighbor min settings so overwrites do not get weird.
 	cdr_options_->neighbor_min_clear();

@@ -54,6 +54,7 @@ CavityBall::CavityBall( int const id, int const sphere,
 	radius_(r),
 	area(0.0),
 	vol(0.0),
+	evdw(0.0),
 	exposed_radius(0.0f),
 	anb(-12345)
 {}

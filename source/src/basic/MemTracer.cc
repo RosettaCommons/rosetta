@@ -67,7 +67,9 @@ void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 		unsigned text;//       text (code)
 		unsigned lib;//        library
 		unsigned data;//       data/stack
-		if (fscanf(pf, "%u %u %u %u %u %u", &size, &resident, &share, &text, &lib, &data ) == EOF){
+		// Width limits added to appease cppcheck:
+		// 25 charachters should be sufficient for any number able to fit in an unsigned
+		if (fscanf(pf, "%25u %25u %25u %25u %25u %25u", &size, &resident, &share, &text, &lib, &data ) == EOF){
 			mem_report << "WARNING! End of file reached without assignments from fscanf!";
 		}
 		using namespace ObjexxFCL::format;

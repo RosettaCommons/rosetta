@@ -252,7 +252,7 @@ public: // Bitwise Logical
 	/// @brief ubyte >> ubyte
 	inline
 	ubyte
-	operator >>( ubyte const n ) const
+	operator >>( ubyte const & n ) const
 	{
 		return ubyte( b_ >> static_cast< unsigned short int >( n ) );
 	}
@@ -270,7 +270,7 @@ public: // Bitwise Logical
 	/// @brief ubyte << ubyte
 	inline
 	ubyte
-	operator <<( ubyte const n ) const
+	operator <<( ubyte const & n ) const
 	{
 		return ubyte( b_ << static_cast< unsigned short int >( n ) );
 	}

@@ -39,10 +39,10 @@ class LazySilentFilePoseInputStream : public PoseInputStream {
 	typedef utility::file::FileName FileName;
 
 public:
-	LazySilentFilePoseInputStream( utility::vector1< FileName > fns ) {
-		filenames_        = fns;
-		current_filename_ = filenames_.begin();
-
+	LazySilentFilePoseInputStream( utility::vector1< FileName > fns ):
+		filenames_( fns ),
+		current_filename_( filenames_.begin() )
+	{
 		sfd_.read_file( *current_filename_ );
 		current_struct_   = sfd_.begin();
 	}

@@ -190,16 +190,16 @@ public:
 	finalize_total_energy( pose::Pose const & pose, EnergyMap & totals ) const;
 
 	void
-	load_larmord_parameters( std::string  const filename );
+	load_larmord_parameters( std::string  const & filename );
 
 	void
-	load_larmord_weights ( std::string  const filename );
+	load_larmord_weights ( std::string  const & filename );
 
 	void
-	load_larmord_reference_shifts ( std::string  const filename );
+	load_larmord_reference_shifts ( std::string  const & filename );
 
 	void
-	load_larmord_neighbor_atoms ( std::string  const filename );
+	load_larmord_neighbor_atoms ( std::string  const & filename );
 
 	bool
 	get_neighbor_atom( std::string const & key ) const;

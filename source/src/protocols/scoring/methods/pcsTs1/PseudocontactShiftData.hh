@@ -77,7 +77,7 @@ public:
 	PCS_data_per_lanthanides_Ts1(std::string, core::Real const weight, utility::vector1< PCS_line_data_Ts1 > & PCS_d_l_a);
 
 private:
-	PCS_data_per_lanthanides_Ts1();
+	PCS_data_per_lanthanides_Ts1(); // Must construct with initializer
 
 public:
 	~PCS_data_per_lanthanides_Ts1();

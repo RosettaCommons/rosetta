@@ -105,7 +105,7 @@ public:
 	/// @brief finds neighbors to stub based on distance between atoms.
 	std::set< std::pair< std::string, core::Real > > find_neighboring_stubs( HotspotStubCOP stub ) const;
 	/// @brief removes neighbors of stub based on repulsive energy between the pair of residues
-	void remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const );
+	void remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const & );
 	void remove_random_stubs_from_set( int const num_to_remove );
 	/// @brief removes a single stub. Reports false if stub is not found
 	bool remove_stub( HotspotStubCOP stub );

@@ -1573,8 +1573,8 @@ OptionCollection::merged(
 std::string
 OptionCollection::wrapped(
 	std::string const & s, // String to wrap
-	std::string::size_type const indent, // Width to indent continuation lines
-	std::string::size_type const width, // Column width to wrap at [80]
+	std::string::size_type indent, // Width to indent continuation lines
+	std::string::size_type width, // Column width to wrap at [80]
 	std::string const & header_for_extra_lines // put this before each new line (default is empty)
 )
 {

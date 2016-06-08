@@ -45,7 +45,9 @@ namespace docking {
 
 ///////////////// Low-Res Filter /////////////////
 
-DockingLowResFilter::DockingLowResFilter() : Filter()
+DockingLowResFilter::DockingLowResFilter() :
+	Filter(),
+	use_constraints_(false)
 {
 	using namespace protocols::simple_filters;
 	using namespace core::scoring;

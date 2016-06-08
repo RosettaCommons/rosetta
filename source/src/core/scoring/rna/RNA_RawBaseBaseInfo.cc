@@ -55,17 +55,16 @@ namespace rna {
 
 /// @details Copy constructors must copy all data, not just some...
 RNA_RawBaseBaseInfo::RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src ) :
-	CacheableData()
-{
-	base_pair_array_ = src.base_pair_array_;
-	base_axis_array_ = src.base_axis_array_;
-	base_stagger_array_ = src.base_stagger_array_;
-	base_stack_array_ = src.base_stack_array_;
-	base_stack_axis_array_ = src.base_stack_axis_array_;
-	base_geometry_orientation_array_ = src.base_geometry_orientation_array_;
-	base_geometry_height_array_ = src.base_geometry_height_array_;
-	calculated_ = src.calculated_;
-}
+	CacheableData(),
+	base_pair_array_(src.base_pair_array_),
+	base_axis_array_(src.base_axis_array_),
+	base_stagger_array_(src.base_stagger_array_),
+	base_stack_array_(src.base_stack_array_),
+	base_stack_axis_array_(src.base_stack_axis_array_),
+	base_geometry_orientation_array_(src.base_geometry_orientation_array_),
+	base_geometry_height_array_(src.base_geometry_height_array_),
+	calculated_(src.calculated_)
+{}
 
 void
 RNA_RawBaseBaseInfo::resize( Size const & total_residue )

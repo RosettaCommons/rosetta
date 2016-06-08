@@ -107,37 +107,37 @@ public:
 	virtual ~CDRSeqDesignOptionsParser();
 
 	CDRSeqDesignOptionsOP
-	parse_options(CDRNameEnum cdr, std::string filename);
+	parse_options(CDRNameEnum cdr, std::string const & filename);
 
 	/// @brief Parse default_instructions (mainly used for AbDesign) then parse user file
 	CDRSeqDesignOptionsOP
-	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
+	parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename);
 
 
 
 	///ALL CDRs
 
 	utility::vector1<CDRSeqDesignOptionsOP>
-	parse_options(std::string filename);
+	parse_options(std::string const & filename);
 
 	utility::vector1<CDRSeqDesignOptionsOP>
-	parse_default_and_user_options(std::string filename);
+	parse_default_and_user_options(std::string const & filename);
 
 private:
 	void
 	check_path();
 
 	void
-	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
+	check_line_len(utility::vector1<std::string> const & lineSP, core::Size len_check) const;
 
 	void
-	parse_cdr_option(std::string const & mode, utility::vector1<std::string> & lineSP);
+	parse_cdr_option(std::string const & mode, utility::vector1<std::string> const & lineSP);
 
 	void
-	parse_cdr_design_option(std::string const & adjective, utility::vector1< std::string> & lineSP) ;
+	parse_cdr_design_option(std::string const & adjective, utility::vector1< std::string> const & lineSP) ;
 
 	void
-	parse_cdr_general_option(utility::vector1<std::string> & lineSP) ;
+	parse_cdr_general_option(utility::vector1<std::string> const & lineSP) ;
 
 	void
 	set_cdr_design_primary_option(std::string const & option);

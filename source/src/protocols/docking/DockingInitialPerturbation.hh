@@ -243,7 +243,7 @@ public:
 	virtual void show(std::ostream & output=std::cout) const;
 
 	// setters
-	void slide_axis( core::Vector slide_axis );
+	void slide_axis( core::Vector const & slide_axis );
 	void vary_stepsize( bool yesno );
 	void stepsize( core::Real stepsize );
 	void move_apart_first( bool yesno );
@@ -296,7 +296,7 @@ private: // member variables
 };  // class SlideIntoContact
 
 
-void move_apart( core::pose::Pose & pose, int jump, core::Vector axis );
+void move_apart( core::pose::Pose & pose, int jump, core::Vector const & axis );
 
 void move_together( core::pose::Pose & pose, int jump, core::scoring::ScoreFunctionOP sfxn );
 

@@ -79,24 +79,25 @@ RNA_FilteredBaseBaseInfo::RNA_FilteredBaseBaseInfo():
 /// @details Copy constructors must copy all data, not just some...
 RNA_FilteredBaseBaseInfo::RNA_FilteredBaseBaseInfo( RNA_FilteredBaseBaseInfo const & src ) :
 	CacheableData(),
+	filtered_base_pair_array_(src.filtered_base_pair_array_),
+	filtered_base_axis_array_(src.filtered_base_axis_array_),
+	filtered_base_stagger_array_(src.filtered_base_stagger_array_),
+	filtered_base_stack_array_(src.filtered_base_stack_array_),
+	filtered_base_stack_axis_array_(src.filtered_base_stack_axis_array_),
+	scored_base_pair_list_(src.scored_base_pair_list_),
+	scored_base_stack_list_(src.scored_base_stack_list_),
+	total_base_pair_score_(src.total_base_pair_score_),
+	total_base_axis_score_(src.total_base_axis_score_),
+	total_base_stagger_score_(src.total_base_stagger_score_),
+	total_base_stack_score_(src.total_base_stack_score_),
+	total_base_stack_axis_score_(src.total_base_stack_axis_score_),
 	scale_axis_stagger_( src.scale_axis_stagger_ ),
 	basepair_axis_stagger_scaling_( src.basepair_axis_stagger_scaling_ ),
 	basestack_axis_scaling_( src.basestack_axis_scaling_ ),
-	include_neighbor_base_stacks_( src.include_neighbor_base_stacks_ )
-{
-	filtered_base_pair_array_ = src.filtered_base_pair_array_;
-	filtered_base_axis_array_ = src.filtered_base_axis_array_;
-	filtered_base_stagger_array_ = src.filtered_base_stagger_array_;
-	filtered_base_stack_array_ = src.filtered_base_stack_array_;
-	filtered_base_stack_axis_array_ = src.filtered_base_stack_axis_array_;
-	total_base_pair_score_ = src.total_base_pair_score_;
-	total_base_axis_score_ = src.total_base_axis_score_;
-	total_base_stagger_score_ = src.total_base_stagger_score_;
-	total_base_stack_score_ = src.total_base_stack_score_;
-	total_base_stack_axis_score_ = src.total_base_stack_axis_score_;
-	calculated_ = src.calculated_;
-	rna_verbose_ = src.rna_verbose_;
-}
+	include_neighbor_base_stacks_( src.include_neighbor_base_stacks_ ),
+	calculated_(src.calculated_),
+	rna_verbose_(src.rna_verbose_)
+{}
 
 void
 RNA_FilteredBaseBaseInfo::resize( Size const & total_residue )

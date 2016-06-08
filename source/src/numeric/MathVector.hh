@@ -86,19 +86,19 @@ public:
 
 	/// @brief construct from length and pointer to data
 	MathVector< T>( const Size SIZE, const T *DATA) :
-	size_( SIZE),
-	data_( new T[ SIZE])
+		size_( SIZE),
+		data_( new T[ SIZE])
 	{
 		std::copy( DATA, DATA + SIZE, data_);
 	}
 
 	/// @brief copy constructor
 	/// @param VECTOR copy the given Vector
-	MathVector< T>( const MathVector< T> &VECTOR) :
-	size_( VECTOR.size_),
-	data_( new T[ size_])
+	MathVector< T >( MathVector< T> const & VECTOR):
+		size_( VECTOR.size_ ),
+		data_( new T[ size_] )
 	{
-		std::copy( VECTOR.data_, VECTOR.data_ + size_, data_);
+		std::copy( VECTOR.data_, VECTOR.data_ + size_, data_ );
 	}
 
 
