@@ -111,6 +111,9 @@ public:
 	void dualspace( bool val );
 	bool dualspace();
 
+	/// @brief Return the number of repeats
+	core::Size default_repeats() const { return default_repeats_; }
+
 	/// @brief virtual constructor to allow derivation
 	virtual ~FastRelax();
 
