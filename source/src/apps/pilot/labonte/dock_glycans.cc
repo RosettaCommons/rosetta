@@ -233,7 +233,7 @@ public:  // Standard Rosetta methods
 		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
 
 		randomizerA_ = RigidBodyRandomizeMoverOP(
-			new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
+			 new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
 		//randomizerB_ = RigidBodyRandomizeMoverOP(
 		//  new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
 
@@ -242,7 +242,7 @@ public:  // Standard Rosetta methods
 			pose.set_phi( residue, numeric::random::rg().uniform() * 360 );
 			pose.set_psi( residue, numeric::random::rg().uniform() * 360 );
 			//pose.set_ring_conformation( residue, 1,
-			//pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
+			//		pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
 		}
 
 
@@ -252,7 +252,7 @@ public:  // Standard Rosetta methods
 			cout << " Idealizing rings..." << endl;
 			for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
 				pose.set_ring_conformation( residue, 1,
-					pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
+						pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
 			}
 		}
 

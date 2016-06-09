@@ -2181,6 +2181,10 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 		// finally, any branch connection torsions
 		Size const n_branch_torsions( rsd.n_non_polymeric_residue_connections() );
 		for ( uint j( 1 ); j <= n_branch_torsions; ++j ) {
+			if ( j == 1 && rsd.is_branch_lower_terminus() ) { continue; }  // Only an "outgoing" connection matters.
+			// Note: If one has multiple incoming connections on some crazy residue, she or he is still going to get a
+			// warning triggered below, but it won't hurt anything, and I can't think of another way to silence such a
+			// warning at the moment. ~Labonte
 			TorsionID const torsion( i, BRANCH, j );
 			bool const mm_setting = mm.get( torsion );
 			if ( mm_setting == PHI_default ) { continue; }
