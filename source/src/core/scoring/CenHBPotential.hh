@@ -90,6 +90,13 @@ public:
 	// derivative wrt dist,angle,angle
 	Vector dfunc( Size seqsep, Real d, Real xd, Real xh  ) const;
 
+	// Softer version
+	Real func_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv ) const;
+
+	void dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv,
+									 utility::vector1< Vector > &df_dABNC_1,
+									 utility::vector1< Vector > &df_dABNC_2 ) const;
+
 	// cutoff
 	Real cutoff( Size seqsep ) const { return (seqsep<=4 ? cutoff_sr_:cutoff_lr_); }
 
@@ -112,6 +119,46 @@ private:
 			AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))));
 			return (AX*BX);
 		}
+	}
+
+	inline Real fade( Real x, Real x0, Real s, bool inverse ) const {
+		using numeric::constants::f::pi;
+		Real y( 0.0 );
+		if( inverse ){
+			if( x < x0 ){
+				y = 1.0;
+			} else if ( x > x0+s ){
+				y = 0.0;
+			}	else {
+				y = 0.5*cos(-pi*(x-x0)/s)+0.5;
+			}
+		} else {
+			if( x > x0 ){
+				y = 1.0;
+			} else if (x < x0-s){
+				y = 0.0;
+			} else {
+				y = 0.5*cos(pi*(x-x0)/s)+0.5;
+			}
+		}
+		return y;
+	}
+
+	inline Real dfade( Real x, Real x0, Real s, bool inverse ) const {
+		using numeric::constants::f::pi;
+		Real dydx( 0.0 );
+		if( inverse ){
+			if( x > x0 && x < x0+s) {
+				//y = 0.5*cos(-pi*(x-x0)/s)+0.5;
+				dydx = 0.5*sin(-pi*(x-x0)/s)*pi/s;
+			}
+		} else {
+			if( x < x0 && x > x0-s ){
+				//y = 0.5*cos(pi*(x-x0)/s)+0.5;
+				dydx = -0.5*sin(pi*(x-x0)/s)*pi/s;
+			}
+		}
+		return dydx;
 	}
 
 private:

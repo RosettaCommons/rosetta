@@ -42,7 +42,6 @@ Real CenHBPotential::func( Size seqsep, Real d, Real xd, Real xh ) const {
 	return y;
 }
 
-
 Vector CenHBPotential::dfunc( Size seqsep, Real d, Real xd, Real xh ) const {
 	using numeric::constants::f::pi;
 
@@ -116,6 +115,153 @@ CenHBPotential::CenHBPotential() {
 	}
 }
 
+// implementation of soft version
+Real 
+CenHBPotential::func_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv ) const 
+{
+	using numeric::constants::f::pi;
+
+	Real f, fa, fb, fd, fdv1, fdv2, dota, dotb, dotdv1, dotdv2, d;
+	Real const dv0( sin(pi/12.0) ), dvs( sin(pi/6.0) );
+
+	d = dv.length();
+	fd = fade( d, 6.0, 3.0, true ); // 1 at < 6.0, fade until 9.0 Ang
+
+	// normalize
+	dv.normalize();
+	a1.normalize();
+	a2.normalize();
+	b1.normalize();
+	b2.normalize();
+
+	dota = a1.dot( a2 );
+	dotb = b1.dot( b2 );
+	dotdv1 = dv.dot( a1 );
+	dotdv2 = dv.dot( b1 );
+
+	fa  = fade(       dota,    0.75,    0.75, false  ); // 1 at < 30', fade until 90'
+	fb  = fade(  dotb*dotb,    0.75,    0.50, false ); // 1 at > 150 or < -150', fade until 120/-120'
+	fdv1 = fade(dotdv1*dotdv1, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~120'
+	fdv2 = fade(dotdv2*dotdv2, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~120'
+	f = -fd*fa*fb*fdv1*fdv2;
+	return f;
+}
+
+void
+CenHBPotential::dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv,
+														utility::vector1< Vector > &df_dABNC_1,
+														utility::vector1< Vector > &df_dABNC_2
+														) const 
+{
+	using numeric::constants::f::pi;
+
+	//utility::vector1< Vector > df_dABNC_1( 4, Vector(0.0) ); // in order of A1, B1, N1, C1
+	//utility::vector1< Vector > df_dABNC_2( 4, Vector(0.0) ); // in order of A2, B2, N2, C2
+
+	Real f, fa, fb, fd, fdv1, fdv2;
+	Real dota, dotb, dotdv1, dotdv2, d, a1norm, a2norm, b1norm, b2norm;
+	Real dfd_dd, dfa_ddota, dfb_ddotb, dfdv1_ddotdv1, dfdv2_ddotdv2;
+	Real const dv0( sin(pi/12.0) ), dvs( sin(pi/6.0) );
+
+	d = dv.length();
+	a1norm = a1.length();
+	a2norm = a2.length();
+	b1norm = b1.length();
+	b2norm = b2.length();
+
+	// normalize
+	dv /= d;
+	a1 /= a1norm;
+	a2 /= a2norm;
+	b1 /= b1norm;
+	b2 /= b2norm;
+
+	dota = a1.dot( a2 );
+	dotb = b1.dot( b2 );
+	dotdv1 = dv.dot( a1 );
+	dotdv2 = dv.dot( b1 );
+
+	fd = fade( d, 6.0, 3.0, true ); // 1 at < 6.0, fade until 9.0 Ang
+	fa  = fade(       dota,    0.75,    0.75, false  ); // 1 at < 30', fade until 90'
+	fb  = fade(  dotb*dotb,    0.75,    0.50, false ); // 1 at > 150 or < -150', fade until 120/-120'
+	fdv1 = fade(dotdv1*dotdv1, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~120'
+	fdv2 = fade(dotdv2*dotdv2, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~	dfd_dd     = dfade( d, 6.0, 3.0, true ); // 1 at < 6.0, fade until 9.0 Ang
+
+	f = -fd*fa*fb*fdv1*fdv2;
+
+	if( f > -1e-6 ) return;
+
+	dfd_dd     = dfade( d, 6.0, 3.0, true );
+	dfa_ddota  = dfade(       dota,    0.75,    0.75, false  );
+	dfb_ddotb  = dfade(  dotb*dotb,    0.75,    0.50, false ); 
+	dfdv1_ddotdv1 = dfade(dotdv1*dotdv1, dv0*dv0, dvs*dvs-dv0*dv0, true );
+	dfdv2_ddotdv2 = dfade(dotdv2*dotdv2, dv0*dv0, dvs*dvs-dv0*dv0, true );
+
+	dfb_ddotb     *= 2*dotb;
+	dfdv1_ddotdv1 *= 2*dotdv1;
+	dfdv2_ddotdv2 *= 2*dotdv2;
+
+	Vector dd_dA1 = -dv; // normalized
+	Vector dd_dA2 = -dd_dA1;
+
+	Vector ddota_dA1 = (-a2 + dota*a1)/a1norm;
+	Vector ddota_dA2 = (-a1 + dota*a2)/a2norm;
+	//Vector ddota_dB1 = -ddota_dA1;
+	//Vector ddota_dB2 = -ddota_dB2;
+
+	Vector ddotb_dN1 = (-b2 + dotb*b1)/b1norm;
+	Vector ddotb_dN2 = (-b1 + dotb*b2)/b2norm;
+	//Vector ddotb_dC1 = -ddotb_dN1;
+	//Vector ddotb_dC2 = -ddotb_dN2;
+
+	//dv1 = dv_dot_a1
+	Vector ddotdv1_dA2 = (a1 - dotdv1*a1)/d;
+	Vector ddotdv1_dB1 = (dv - dotdv1*dv)/a1norm;
+	//Vector ddotdv1_dA1 = -ddotdv1_dA2 - ddotdv1_dB1;
+
+	// dv2 = dv_dot_b1
+	Vector ddotdv2_dN1 = (-dv + dotdv2*b1)/b1norm;
+	Vector ddotdv2_dA1 = (-b1 + dotdv2*dv)/d;
+	//Vector ddotdv2_dC1 = -ddotdv2_dN1;
+	//Vector ddotdv2_dA2 = -ddotdv2_dA1;
+
+	// contribution from f(d): A1, A2
+	if( fd > 1e-6 ){
+		df_dABNC_1[1] += f/fd * dfd_dd*dd_dA1;
+		df_dABNC_2[1] += f/fd * dfd_dd*dd_dA2;
+	}
+
+	// contribution from f(dota): A1, A2, B1, B2
+	if( fa > 1e-6 ){
+		df_dABNC_1[1] += f/fa * dfa_ddota*ddota_dA1;
+		df_dABNC_2[1] += f/fa * dfa_ddota*ddota_dA2;
+		df_dABNC_1[2] -= f/fa * dfa_ddota*ddota_dA1;
+		df_dABNC_2[2] -= f/fa * dfa_ddota*ddota_dA2;
+	}
+
+	// contribution from f(dotb): N1, C1, N2, C2
+	if( fb > 1e-6 ){
+		df_dABNC_1[3] += f/fb * dfb_ddotb*ddotb_dN1;
+		df_dABNC_2[3] += f/fb * dfb_ddotb*ddotb_dN2;
+		df_dABNC_1[4] -= f/fb * dfb_ddotb*ddotb_dN1;
+		df_dABNC_2[4] -= f/fb * dfb_ddotb*ddotb_dN2;
+	}
+
+	// contribution from f(dv1): A1, B1, A2
+	if( fdv1 > 1e-6 ){
+		df_dABNC_1[2] += f/fdv1 * dfdv1_ddotdv1*ddotdv1_dB1;
+		df_dABNC_2[1] += f/fdv1 * dfdv1_ddotdv1*ddotdv1_dA2;
+		df_dABNC_1[1] -= f/fdv1 * dfdv1_ddotdv1*(ddotdv1_dB1 + ddotdv1_dA2);
+	}
+
+	// contribution from f(dv2): A1, A2, N1, C1
+	if( fdv2 > 1e-6 ){
+		df_dABNC_1[1] += f/fdv2 * dfdv2_ddotdv2*ddotdv2_dA1;
+		df_dABNC_2[1] -= f/fdv2 * dfdv2_ddotdv2*ddotdv2_dA1;
+		df_dABNC_1[3] += f/fdv2 * dfdv2_ddotdv2*ddotdv2_dN1;
+		df_dABNC_1[4] -= f/fdv2 * dfdv2_ddotdv2*ddotdv2_dN1;
+	}
+}
 
 }
 }

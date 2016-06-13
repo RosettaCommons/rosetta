@@ -29,6 +29,9 @@
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/numeric.functions.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -59,8 +62,16 @@ CenHBEnergyCreator::score_types_for_method() const {
 /// @details  C-TOR with method options object
 CenHBEnergy::CenHBEnergy( ):
 	parent( methods::EnergyMethodCreatorOP( new CenHBEnergyCreator ) ),
-	potential_( ScoringManager::get_instance()->get_CenHBPotential( ) ) { }
+	potential_( ScoringManager::get_instance()->get_CenHBPotential( ) ),
+	soft_( false )
+{ 
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
 
+	if( option[ corrections::score::hb_cen_soft ].user() ){
+		soft_ = option[ corrections::score::hb_cen_soft ]();
+	}
+}
 
 /// clone
 EnergyMethodOP
@@ -71,7 +82,9 @@ CenHBEnergy::clone() const {
 /// @details  copy c-tor
 CenHBEnergy::CenHBEnergy( CenHBEnergy const & src ):
 	parent( src ),
-	potential_( src.potential_ ) { }
+	potential_( src.potential_ ),
+	soft_( src.soft_ )
+{ }
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -101,45 +114,65 @@ CenHBEnergy::residue_pair_energy(
 ) const {
 	Real score(0.0);
 
+	//std::cout << "enter soft, " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
+
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
 
 	// is there a way to get these coords without string comparisons?
 	Vector bbH, bbO, bbC, bbN;
 	Real r, xd, xh;
 
-	if ( rsd1.aa() != core::chemical::aa_pro ) {
-		bbH = rsd1.atom( rsd1.atom_index("H") ).xyz();
-		bbO = rsd2.atom( rsd2.atom_index("O") ).xyz();
-
-		r =  bbH.distance( bbO );
-		if ( r <= potential_.cutoff( seqsep ) ) {
-			bbN = rsd1.atom( rsd1.atom_index("N") ).xyz();
-			bbC = rsd2.atom( rsd2.atom_index("C") ).xyz();
-			xd = numeric::angle_degrees( bbN,bbH,bbO );
-			xh = numeric::angle_degrees( bbH,bbO,bbC );
-
-			//std::cerr << " r,xd,xh = " << r << ","  << 180-xd << ","  << 180-xh << " -- " << potential_.func( seqsep, r,180-xd,180-xh ) << std::endl;
-			score += potential_.func( seqsep, r,180-xd,180-xh );
+	if( soft_ ){
+		if( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
+				(rsd2.aa() != core::chemical::aa_gly && rsd2.aa() != core::chemical::aa_pro ) &&
+				seqsep > 7 ){
+			Vector a1 = rsd1.atom( rsd1.atom_index("CEN") ).xyz() - rsd1.atom( rsd1.atom_index("CA") ).xyz();
+			Vector a2 = rsd2.atom( rsd2.atom_index("CEN") ).xyz() - rsd2.atom( rsd2.atom_index("CA") ).xyz();
+			Vector b1 = rsd1.atom( rsd1.atom_index("C") ).xyz()   - rsd1.atom( rsd1.atom_index("N") ).xyz();
+			Vector b2 = rsd2.atom( rsd2.atom_index("C") ).xyz()   - rsd2.atom( rsd2.atom_index("N") ).xyz();
+			Vector dv  = rsd2.atom( rsd2.atom_index("CA") ).xyz()  - rsd1.atom( rsd1.atom_index("CA") ).xyz();
+			//printf( "%3d %3d %6.2f %6.2f %6.2f %6.2f %6.2f\n", int(rsd1.seqpos()), int(rsd2.seqpos()),
+			//				a1.length(), a2.length(), b1.length(), b2.length(), dv.length() );
+			score = potential_.func_soft( a1, a2, b1, b2, dv );
 		}
-	}
 
-	if ( rsd2.aa() != core::chemical::aa_pro ) {
-		bbH = rsd2.atom( rsd2.atom_index("H") ).xyz();
-		bbO = rsd1.atom( rsd1.atom_index("O") ).xyz();
+	} else {
 
-		r =  bbH.distance( bbO );//, xd, xh;
-		if ( r <= potential_.cutoff( seqsep ) ) {
-			bbN = rsd2.atom( rsd2.atom_index("N") ).xyz();
-			bbC = rsd1.atom( rsd1.atom_index("C") ).xyz();
-			xd = numeric::angle_degrees( bbN,bbH,bbO );
-			xh = numeric::angle_degrees( bbH,bbO,bbC );
+		if ( rsd1.aa() != core::chemical::aa_pro ) {
+			bbH = rsd1.atom( rsd1.atom_index("H") ).xyz();
+			bbO = rsd2.atom( rsd2.atom_index("O") ).xyz();
 
-			score += potential_.func( seqsep, r,180-xd,180-xh );
-			//std::cerr << " r,xd,xh = " << r << ","  << 180-xd << ","  << 180-xh << " -- " << potential_.func( seqsep, r,180-xd,180-xh ) << std::endl;
+			r =  bbH.distance( bbO );
+			if ( r <= potential_.cutoff( seqsep ) ) {
+				bbN = rsd1.atom( rsd1.atom_index("N") ).xyz();
+				bbC = rsd2.atom( rsd2.atom_index("C") ).xyz();
+				xd = numeric::angle_degrees( bbN,bbH,bbO );
+				xh = numeric::angle_degrees( bbH,bbO,bbC );
+				//std::cerr << " r,xd,xh = " << r << ","  << 180-xd << ","  << 180-xh << " -- " << potential_.func( seqsep, r,180-xd,180-xh ) << std::endl;
+				score += potential_.func( seqsep, r,180-xd,180-xh );
+			}
+		}
+
+		if ( rsd2.aa() != core::chemical::aa_pro ) {
+			bbH = rsd2.atom( rsd2.atom_index("H") ).xyz();
+			bbO = rsd1.atom( rsd1.atom_index("O") ).xyz();
+
+			r =  bbH.distance( bbO );//, xd, xh;
+			if ( r <= potential_.cutoff( seqsep ) ) {
+				bbN = rsd2.atom( rsd2.atom_index("N") ).xyz();
+				bbC = rsd1.atom( rsd1.atom_index("C") ).xyz();
+				xd = numeric::angle_degrees( bbN,bbH,bbO );
+				xh = numeric::angle_degrees( bbH,bbO,bbC );
+
+				score += potential_.func( seqsep, r,180-xd,180-xh );
+				//std::cerr << " r,xd,xh = " << r << ","  << 180-xd << ","  << 180-xh << " -- " << potential_.func( seqsep, r,180-xd,180-xh ) << std::endl;
+			}
 		}
 	}
 
 	emap[ cen_hb ] += score;
+
+	//std::cout << " soft done! " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 }
 
 
@@ -163,6 +196,12 @@ CenHBEnergy::eval_residue_pair_derivatives(
 	Real r, xd, xh;
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
 	Real weight = weights[ cen_hb ];
+
+	if( soft_ ){
+		eval_residue_pair_derivatives_soft( rsd1, rsd2, weights, 
+																				r1_atom_derivs, r2_atom_derivs );
+		return;
+	}
 
 	if ( rsd1.aa() != core::chemical::aa_pro ) {
 		idxH = rsd1.atom_index("H"); bbH = rsd1.atom( idxH ).xyz();
@@ -268,7 +307,6 @@ CenHBEnergy::eval_residue_pair_derivatives(
 	}
 }
 
-
 /// @brief CenHBEnergy distance cutoff
 Distance
 CenHBEnergy::atomic_interaction_cutoff() const {
@@ -283,6 +321,76 @@ core::Size
 CenHBEnergy::version() const {
 	return 1; // Initial versioning
 }
+
+void
+CenHBEnergy::eval_residue_pair_derivatives_soft(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const {
+
+
+	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
+	Real weight = weights[ cen_hb ];
+
+	if( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
+			(rsd2.aa() != core::chemical::aa_gly && rsd2.aa() != core::chemical::aa_pro ) &&
+			seqsep > 7 ){
+		Size idxN2 = rsd1.atom_index("N"); 
+		Size idxC1 = rsd1.atom_index("C");
+		Size idxA1 = rsd1.atom_index("CA");
+		Size idxB1 = rsd1.atom_index("CEN");
+		Size idxN1 = rsd2.atom_index("N");
+		Size idxC2 = rsd2.atom_index("C");
+		Size idxA2 = rsd2.atom_index("CA");
+		Size idxB2 = rsd2.atom_index("CEN");
+
+		Vector const &crdA1 = rsd1.atom( idxA1 ).xyz();
+		Vector const &crdB1 = rsd1.atom( idxB1 ).xyz();
+		Vector const &crdN1 = rsd1.atom( idxN1 ).xyz();
+		Vector const &crdC1 = rsd1.atom( idxC1 ).xyz();
+		Vector const &crdA2 = rsd2.atom( idxA2 ).xyz();
+		Vector const &crdB2 = rsd2.atom( idxB2 ).xyz();
+		Vector const &crdN2 = rsd2.atom( idxN2 ).xyz();
+		Vector const &crdC2 = rsd2.atom( idxC2 ).xyz();
+
+		Vector a1 = crdB1 - crdA1; //rsd1.atom( idxB1 ).xyz() - rsd1.atom( idxA1 ).xyz();
+		Vector a2 = crdB2 - crdA2; //rsd2.atom( idxB2 ).xyz() - rsd2.atom( idxA2 ).xyz();
+		Vector b1 = crdC1 - crdN1; //rsd1.atom( idxC1 ).xyz() - rsd1.atom( idxN1 ).xyz();
+		Vector b2 = crdC2 - crdN2; //rsd2.atom( idxC2 ).xyz() - rsd2.atom( idxN2 ).xyz();
+		Vector dv = crdA2 - crdA1; //rsd2.atom( idxA2 ).xyz() - rsd1.atom( idxA1 ).xyz();
+
+		utility::vector1< Vector > df_dABNC_1( 4, Vector(0.0) ); // in order of A1, B1, N1, C1
+		utility::vector1< Vector > df_dABNC_2( 4, Vector(0.0) ); // in order of A2, B2, N2, C2
+
+		potential_.dfunc_soft( a1, a2, b1, b2, dv, df_dABNC_1, df_dABNC_2 );
+
+		for( Size i = 1; i <= 4; ++i ) df_dABNC_1[i] *= weight;
+		for( Size i = 1; i <= 4; ++i ) df_dABNC_2[i] *= weight;
+
+		r1_atom_derivs[ idxA1 ].f2() += df_dABNC_1[1];
+		r1_atom_derivs[ idxB1 ].f2() += df_dABNC_1[2];
+		r1_atom_derivs[ idxN1 ].f2() += df_dABNC_1[3];
+		r1_atom_derivs[ idxC1 ].f2() += df_dABNC_1[4];
+		r2_atom_derivs[ idxA2 ].f2() += df_dABNC_2[1];
+		r2_atom_derivs[ idxB2 ].f2() += df_dABNC_2[2];
+		r2_atom_derivs[ idxN2 ].f2() += df_dABNC_2[3];
+		r2_atom_derivs[ idxC2 ].f2() += df_dABNC_2[4];
+
+		r1_atom_derivs[ idxA1 ].f1() += crdA1.cross( -df_dABNC_1[1] + crdA1 );
+		r1_atom_derivs[ idxB1 ].f1() += crdB1.cross( -df_dABNC_1[2] + crdB1 );
+		r1_atom_derivs[ idxN1 ].f1() += crdN1.cross( -df_dABNC_1[3] + crdN1 );
+		r1_atom_derivs[ idxC1 ].f1() += crdC1.cross( -df_dABNC_1[4] + crdC1 );
+		r2_atom_derivs[ idxA2 ].f1() += crdA2.cross( -df_dABNC_2[1] + crdA2 );
+		r2_atom_derivs[ idxB2 ].f1() += crdB2.cross( -df_dABNC_2[2] + crdB2 );
+		r2_atom_derivs[ idxN2 ].f1() += crdN2.cross( -df_dABNC_2[3] + crdN2 );
+		r2_atom_derivs[ idxC2 ].f1() += crdC2.cross( -df_dABNC_2[4] + crdC2 );
+	}
+
+}
+
 
 
 }

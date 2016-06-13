@@ -2164,6 +2164,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'hb_sp2_chipen', 'Boolean', desc="Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%", default="true" ),
 			Option( 'hbond_measure_sp3acc_BAH_from_hvy', 'Boolean', desc="If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen", default="true" ),
 			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="true"),
+			Option( 'hb_cen_soft', 'Boolean', desc="Use softer version of cen_hb term", default="false"),
 			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
 			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
 			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shannon entropy correction to rotamer energy: E = -logP + S", default="false" ),

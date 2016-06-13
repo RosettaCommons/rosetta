@@ -113,12 +113,22 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
+	void
+	eval_residue_pair_derivatives_soft(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const;
+
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////
 
 private:
 	CenHBPotential const & potential_;
+	bool soft_;
 
 	virtual core::Size version() const;
 };
