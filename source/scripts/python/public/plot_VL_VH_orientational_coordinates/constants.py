@@ -49,18 +49,20 @@ else:
 
 # color codes for models (What template do they come from?)
 color_dict = {}
-color_dict['0'] = "black"
-color_dict['1'] = "grey"
-color_dict['2'] = "blue"
-color_dict['3'] = "cyan"
-color_dict['4'] = "green"
-color_dict['5'] = "yellow"
-color_dict['6'] = "orange"
-color_dict['7'] = "red"
-color_dict['8'] = "magenta"
-color_dict['9'] = "purple"
+color_dict['0'] = (141, 211, 199)
+color_dict['1'] = (255, 255, 179)
+color_dict['2'] = (190, 186, 218)
+color_dict['3'] = (251, 128, 114)
+color_dict['4'] = (128, 177, 211)
+color_dict['5'] = (253, 180, 98)
+color_dict['6'] = (179, 222, 105)
+color_dict['7'] = (252, 205, 229)
+color_dict['8'] = (187, 187, 187)
+color_dict['9'] = (187, 128, 189)
 
-
+for i in color_dict.keys():
+    r, g, b = color_dict[i]
+    color_dict[i] = (r / 255., g / 255., b / 255.)
 
 # xlim for plots
 x_lower = { LOA: 85, HOA: 87, PA: -70, D: 13}

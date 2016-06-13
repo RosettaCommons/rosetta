@@ -14,9 +14,9 @@
 """ Script for plotting model LHOCs on PDB-derived distribution.
 
 Input:
-    - grafted (relaxed) models from antibody app
-    - models after H3 refinement (antibody_H3 app)
     - score file output from antibody_H3 app
+    - grafted (relaxed) models from antibody.cc app
+    - models after H3 refinement (antibody_H3 app)
 
 Output:
     - plot of VL--VH interdomain distance in PDF format
@@ -25,11 +25,11 @@ Output:
     - plot of VL--VH packing angle in PDF format
 
 Example Usage:
-  $ python plot_LHOC.py
-     -l ../plot_LHOC/infiles.txt
-     -l:temp ../plot_LHOC/templates.txt
-     -l:names ../plot_LHOC/names.txt
-     -out ~/H3-modeling_kink/LHOC/
+  $ python plot_LHOC.py \
+        -h3_fasc H3_modeling_scores.fasc \
+        -graft_dir ./grafting/ \
+        -output_dir ./lhoc_analysis \
+        -output_name ab_01
 
 """
 import matplotlib.pyplot as plt
@@ -54,6 +54,7 @@ def parse_args():
             -h3_fasc H3_modeling_scores.fasc
             -graft_dir ./grafting/
             -output_dir ./lhoc_analysis
+            -output_name ab_01
     """
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -69,7 +70,7 @@ def parse_args():
     graft_group.add_argument('-graft_dir_list') # previously -l:temp
 
     outname_group = parser.add_mutually_exclusive_group()
-    outname_group.add_argument('-output_name', default='default') # previously -s:names
+    outname_group.add_argument('-output_name', default='your antibody') # previously -s:names
     outname_group.add_argument('-output_name_list') # previously -l:names
 
     parser.add_argument('-angles_sc') # previously -angle

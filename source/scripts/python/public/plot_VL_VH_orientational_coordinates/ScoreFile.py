@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.mlab as mlab
 from constants import *
 import os
+import networkx as nx
 from TemplateScoreFiles import TemplateScoreFiles
 
 
@@ -103,8 +104,9 @@ class ScoreFile(object):
         fig = plt.gcf()
         ax = plt.gca()
         fig.set_size_inches(10, 6)
-        histogram = plt.hist(all_scores, bins=100, normed=True, histtype='stepfilled', linewidth=0.0, label='all decoys', color='0.6') # JJ
-        PDB_hist = plt.hist(self.PDB_angles[coordinate], bins=100, normed=True, histtype='step',linewidth=1.0, label='PDB data', color='black') # JJ
+        PDB_hist = plt.hist(self.PDB_angles[coordinate], bins=100, normed=True, histtype='stepfilled',linewidth=0.0, label='PDB data', color='0.5', alpha=0.5) # JJ
+        histogram = plt.hist(all_scores, bins=100, normed=True, histtype='step', linewidth=1.0, label='all decoys', color='black') # JJ
+
         #PDB_hist = plt.hist(self.PDB_angles[coordinate], bins=100, normed=True, histtype='stepfilled', linewidth=0.0, label='PDB data', color='0.60')
         #histogram = plt.hist(all_scores, bins=100, normed=True, histtype='step', linewidth=2.0, label='all decoys', color='red')
         y, x, _ = PDB_hist
@@ -118,10 +120,10 @@ class ScoreFile(object):
             color = color_dict[decoy.template_no]
             x_val = decoy.get_coordinate(coordinate)
             label= decoy.get_coordinate(name)
-            dist = np.abs(xx - x_val)
+            dist = np.abs(x - x_val)
             i = np.where(dist == dist.min())
-            plt.plot(x_val, yy[i], color=color, marker = 'd', label='%s: %s' %(label, x_val))
-            plt.annotate(label, xy=(x_val, yy[i]),xytext=(-4,70), textcoords='offset points', rotation='vertical', size = 'small', fontweight='medium')
+            plt.plot(x_val, y[i], color=color, marker = 'd', label='%s: %s' %(label, x_val))
+            plt.annotate(label, xy=(x_val, y[i]),xytext=(-4,70), textcoords='offset points', rotation='vertical', size = 'small', fontweight='medium')
 
         # templates
         if  len(tempfiles) != 0:
@@ -151,7 +153,7 @@ class ScoreFile(object):
                         'VL_VH_distance':'Interdomain Distance',
                      }  # Nick's new coord names
         #plt.title('%s \n%s' %(coordinate, self.infiles[self.counter]), fontsize=15)
-        plt.title('%s %s' %(coord_dict[coordinate], self.name[:4]), fontsize=15)
+        plt.title('%s of %s' %(coord_dict[coordinate], self.name.rstrip('_')), fontsize=15)
         # plt.title('%s \n/path/to/example/plot' %coordinate, fontsize=15)
         plt.xlabel(coord_dict[coordinate] + ' ' + unit, fontsize=14)
         plt.ylabel("relative frequency", fontsize = 14)

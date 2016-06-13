@@ -64,6 +64,7 @@ SnugDock::SnugDock() :
 	h3_filter_( false ),
 	debug_( false ),
 	h3_filter_tolerance_( 20 ),
+	high_res_kink_constraint_( false ),
 	number_of_high_resolution_cycles_( 50 )
 {
 	init();
