@@ -16,6 +16,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
@@ -1008,6 +1009,8 @@ etable::EtableCAP
 ScoringManager::etable( etable::EtableOptions const & options_in ) const
 {
 	using namespace etable;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	std::map< EtableOptions, EtableOP >::const_iterator it = etables_by_options_.find( options_in );
 
@@ -1019,8 +1022,14 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
 			EtableOptions options_local( options_in );
 			options_local.lj_switch_dis2sigma = 0.91;
-			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+			if( option[corrections::beta_nov15 ]() || option[ corrections::beta_nov15_cart ]()){ 
+				// hacky route for beta energy function
+				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+				options_local, "SOFTBETANOV15" ) );
+			} else { // default
+				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 				options_local, "SOFT" ) );
+			}
 		} else if ( table_id == FA_STANDARD_MULTIPOLE ) {
 			// multipole etable: change to lj_switch_dis2sigma to make harder repulsion.
 			// Necessary to stop oppositely charged atoms from approaching each other.

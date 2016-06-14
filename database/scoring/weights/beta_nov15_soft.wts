@@ -4,7 +4,7 @@
 #   This is "soft" version of beta_nov15, equivalent to "soft_rep" to score12, which will be useful when designing at less accurate conditions.
 #
 ETABLE FA_STANDARD_SOFT
-METHOD_WEIGHTS ref 1.00   3.50   -2.0  -2.50   2.80   0.00   0.35   3.50  -0.60   3.00   2.20  -1.50  -1.00  -1.45  -0.00  -0.40   1.30    3.20  4.00   1.50
+METHOD_WEIGHTS ref 1.34294 3.56185 -2.00840 -2.18603 0.98755 0.74261 -0.09128 2.38347 -0.38872 1.82107 1.87044 -1.32607 -0.30000 -1.50242 -0.28714 0.39411 0.76066 2.59486 1.78282 0.66325 
 fa_atr 1.0
 fa_rep 1.0
 fa_sol 1.0
