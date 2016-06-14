@@ -318,7 +318,6 @@ sources = {
 		#"SecondaryMatcher", # /* Florian Richter, this application will be removed when the real matcher comes online, probably around july 2009*/
 	],
 	"pilot/frank" : [
-		"torsional_potential_corrections", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"mirrorsymm_test", # /* Frank Dimaio,Documentation Location,Demo Location */

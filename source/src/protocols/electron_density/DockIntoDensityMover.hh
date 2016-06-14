@@ -165,7 +165,7 @@ class DockIntoDensityMover : public protocols::moves::Mover {
 public:
 	DockIntoDensityMover() :
 		topNtrans_(5000), topNfilter_(1000), topNfinal_(50), delR_(2),
-		dens_wt_(20.0), cluster_radius_(2.0),fragDens_(0.7), B_(16), nRsteps_(0), gridStep_(2),
+		dens_wt_(20.0), cluster_radius_(2.0),fragDens_(0.7), mindist_(3), B_(16), nRsteps_(0), gridStep_(2),
 		center_on_middle_ca_(false), points_defined_(false), cluster_oversample_(2), max_rot_per_trans_(3),
 		do_refine_(true), min_backbone_(true), ncyc_(1), normscores_(false), passthrough_(false), native_com_(0,0,0) {}
 
@@ -180,6 +180,7 @@ public:
 	}
 	void setGridStep( core::Size gridStep ) { gridStep_=gridStep; }
 	void setDoRefine( bool do_refine ) { do_refine_=do_refine; }
+	void setMinDist( core::Real mindist ) { mindist_=mindist; }
 	void setMinBackbone( bool min_backbone ) { min_backbone_=min_backbone; }
 	void setNCyc( core::Size ncyc ) { ncyc_=ncyc; }
 	void setOutputSilent( std::string silent_out ) { silent_ = silent_out; }
@@ -284,7 +285,7 @@ private:
 	core::Size topNfinal_;
 
 	// params of search
-	core::Real delR_, dens_wt_, cluster_radius_, fragDens_;
+	core::Real delR_, dens_wt_, cluster_radius_, fragDens_, mindist_;
 	core::Size B_;
 	core::Size nRsteps_,gridStep_;
 	bool center_on_middle_ca_, points_defined_;

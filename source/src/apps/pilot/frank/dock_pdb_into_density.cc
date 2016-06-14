@@ -85,6 +85,7 @@ OPT_KEY( Integer, bw )
 OPT_KEY( Integer, n_to_search )
 OPT_KEY( Integer, n_filtered )
 OPT_KEY( Integer, n_output )
+OPT_KEY( Integer, searchsep )
 OPT_KEY( Integer, movestep )
 OPT_KEY( Integer, ncyc )
 OPT_KEY( Real, clust_radius )
@@ -100,11 +101,12 @@ try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	NEW_OPT( bw, "spharm bandwidth", 16 );
-	NEW_OPT( n_to_search, "how many translations to search", 1000 );
+	NEW_OPT( bw, "spharm bandwidth", 32 );
+	NEW_OPT( n_to_search, "how many translations to search", 100 );
+	NEW_OPT( searchsep, "min distance between search points", 3 );
 	NEW_OPT( n_filtered,  "how many solutions to take to refinement", 100 );
 	NEW_OPT( n_output, "how many solutions to output", 10 );
-	NEW_OPT( movestep, "grid spacing over which to search", 2 );
+	NEW_OPT( movestep, "grid spacing over which to search", 1 );
 	NEW_OPT( ncyc, "Min cycles", 1 );
 	NEW_OPT( clust_radius, "Cluster radius", 3.0 );
 	NEW_OPT( frag_dens, "Fragment density", 0.9 );
@@ -120,11 +122,13 @@ try {
 	dock->setB( option[ bw ] );
 	dock->setTopN( option[ n_to_search ] , option[ n_filtered ] , option[ n_output ] );
 	dock->setGridStep( option[ movestep ] );
+	dock->setMinDist( option[ searchsep ] );
 	dock->setNCyc(option[ ncyc ]());
 	dock->setClusterRadius(option[ clust_radius ]());
 	dock->setFragDens(option[ frag_dens ]());
 	dock->setMinBackbone(option[ min_bb ]());
 	dock->setDoRefine(option[ min ]());
+	dock->setMaxRotPerTrans( 10 );
 
 	if( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );

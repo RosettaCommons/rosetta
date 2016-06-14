@@ -49,6 +49,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
@@ -94,6 +97,18 @@ namespace electron_density {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
 
+struct
+ScoredPoint {
+	core::Real score;
+	numeric::xyzVector< core::Real > pos;
+};
+
+struct
+ScoredPointCmptr {
+	bool operator()(ScoredPoint a, ScoredPoint b) {
+            return a.score > b.score;
+	}
+};
 // non-superposed RMS
 core::Real
 get_rms(core::pose::PoseOP r1, core::pose::PoseOP r2) {
@@ -331,22 +346,45 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	numeric::fourier::ifft3(Frot, rot);
 
 	// sort points ... TO DO(?) replace coarse grid with greedy selection
-	std::priority_queue<core::Real> topN;
+	utility::vector1<ScoredPoint> allpts;
 	for ( int z=1; z<=(int)densdata.u3(); z+=gridStep_ ) {
 		for ( int y=1; y<=(int)densdata.u2(); y+=gridStep_ ) {
 			for ( int x=1; x<=(int)densdata.u1(); x+=gridStep_ ) {
-				if ( topN.size() < topNtrans_ ) {
-					topN.push( -rot(x,y,z) );
-				} else if ( rot(x,y,z) > -topN.top() ) {
-					topN.pop();
-					topN.push( -rot(x,y,z) );
-				}
-
+				ScoredPoint i_xyz;
+				i_xyz.score = rot(x,y,z);
+				i_xyz.pos = numeric::xyzVector< core::Real >(x,y,z);
+				allpts.push_back( i_xyz );
 			}
 		}
 	}
-	core::Real scorecut = -topN.top();
-	TR << "score cut: " << scorecut << " " << topN.size() << " " << topNtrans_ << std::endl;
+
+	// sort
+	std::sort( allpts.begin(), allpts.end(), ScoredPointCmptr() );
+
+	utility::vector1< numeric::xyzVector<core::Real> > points_cart;
+	core::Real scorecut, minDistNative=1e30;
+	for (core::Size i=1; i<=allpts.size() && points_to_search_.size() < topNtrans_; ++i) {
+		numeric::xyzVector< core::Real > const & x_idx = allpts[i].pos;
+		numeric::xyzVector< core::Real > x_cart;
+		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+
+		bool keep=true;
+		for (core::Size j=1; j<=points_cart.size() && keep; ++j) {
+			core::Real d2 = (x_cart-points_cart[j]).length_squared();
+			if (d2<=mindist_*mindist_) keep=false;
+		}
+		if (!keep) continue;
+
+		if ( native_ ) {
+			core::Real distNative = (x_cart-native_com_).length_squared();
+			minDistNative = std::min( minDistNative, distNative );
+		}
+
+		scorecut = allpts[i].score;
+		points_cart.push_back( x_cart );
+		points_to_search_.push_back( x_idx );
+	}
+	TR << "score cut: " << scorecut << " " << points_to_search_.size() << " " << topNtrans_ << std::endl;
 
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
 		core::scoring::electron_density::ElectronDensity mapdmp = core::scoring::electron_density::getDensityMap();
@@ -354,27 +392,6 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 		mapdmp.writeMRC( "filter.mrc" );
 	}
 
-	// finally, add grid points
-	core::Real minDistNative = 1e4;
-
-	for ( int z=1; z<=(int)densdata.u3(); z+=gridStep_ ) {
-		for ( int y=1; y<=(int)densdata.u2(); y+=gridStep_ ) {
-			for ( int x=1; x<=(int)densdata.u1(); x+=gridStep_ ) {
-				if ( rot(x,y,z)>=scorecut ) {
-					numeric::xyzVector< core::Real > x_idx( x,y,z );
-
-					if ( native_ ) {
-						numeric::xyzVector< core::Real > x_cart;
-						core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-						core::Real distNative = (x_cart-native_com_).length_squared();
-						minDistNative = std::min( minDistNative, distNative );
-					}
-
-					points_to_search_.push_back( x_idx );
-				}
-			}
-		}
-	}
 	if ( native_ ) TR << "Closest point to native: " << std::sqrt(minDistNative) << std::endl;
 }
 
@@ -994,7 +1011,22 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 			silent_stream.add_energy( "rms", rms );
 			silent_file_data.write_silent_struct( silent_stream, silent_ );
 		} else {
-			// TO DO: remark lines
+			// tag
+			core::io::RemarkInfo remark;
+			std::ostringstream oss;
+
+			if (posecopy->pdb_info()) {
+				oss << "RANK = " << results_refine.size()+1;
+
+				remark.num = 1; remark.value = oss.str();
+				posecopy->pdb_info()->remarks().push_back( remark );
+
+				oss.str(""); oss.clear();
+				oss << "SCORE = " << sol_i.score_;
+				remark.num = 1; remark.value = oss.str();
+				posecopy->pdb_info()->remarks().push_back( remark );
+			}
+
 			std::string outname = base_name+"_"+ObjexxFCL::right_string_of( results_refine.size()+1, 6, '0' )+".pdb";
 			posecopy->dump_pdb( outname );
 		}

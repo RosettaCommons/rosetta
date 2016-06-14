@@ -10,12 +10,10 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/CrystInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>
 
@@ -24,6 +22,8 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/cryst/spacegroup.hh>
+#include <protocols/cryst/refinable_lattice.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -81,7 +81,7 @@ using namespace basic::options::OptionKeys;
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
 
-static THREAD_LOCAL basic::Tracer TR( "cryst.gen" );
+static basic::Tracer TR("cryst.gen");
 
 ////////////////////////////////////////////////
 // helper functions
@@ -127,7 +127,7 @@ inline bool transforms_equiv_mod1(
 		std::fabs( S1.yx() - S2.yx() ) +  std::fabs( S1.yy() - S2.yy() ) +  std::fabs( S1.yz() - S2.yz() ) +
 		std::fabs( S1.zx() - S2.zx() ) +  std::fabs( S1.zy() - S2.zy() ) +  std::fabs( S1.zz() - S2.zz() ) +
 		std::fabs( min_mod( T1[0] - T2[0] , 1.0)) +
-		std::fabs( min_mod( T1[1] - T2[1] , 1.0))  +
+		std::fabs( min_mod( T1[1] - T2[1] , 1.0)) +
 		std::fabs( min_mod( T1[2] - T2[2] , 1.0));
 	return (err <= 1e-6);
 }
@@ -165,6 +165,7 @@ disp_symmop( core::kinematics::RT const &rt ) {
 		<<S.zx()<<","<<S.zy()<<","<<S.zz()<<"]  T=["
 		<<T[0]<<","<<T[1]<<","<<T[2]<<"]" << std::endl;
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -238,123 +239,22 @@ public:
 		axes.push_back(axis_in);
 	}
 
+	pointGroupHit(
+			std::string name_in,
+			numeric::xyzVector<Real> origin_in,
+			utility::vector1< numeric::xyzVector<Real> > axes_in
+	) {
+		name_=name_in;
+		origin=origin_in;
+		axes = axes_in;
+	}
+
 
 	pointGroupHit(
 			pointGroupHit pg1,
 			pointGroupHit pg2,
 			utility::vector1<core::kinematics::RT> const &rts
-	) {
-		numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
-		name_="";
-
-		pointGroupHit const &hit_i = (pg1.name() == "C2") ? pg1 : pg2;
-		pointGroupHit const &hit_j = (pg1.name() == "C2") ? pg2 : pg1;
-
-		numeric::xyzMatrix<Real> Si = rts[hit_i.symmops[1]].get_rotation();
-		numeric::xyzVector<Real> Ti = rts[hit_i.symmops[1]].get_translation()
-			+ numeric::xyzVector<Real>(hit_i.lattice_shifts[1][0],
-									   hit_i.lattice_shifts[1][1],
-									   hit_i.lattice_shifts[1][2]) ;
-		numeric::xyzMatrix<Real> Sj = rts[hit_j.symmops[1]].get_rotation();
-		numeric::xyzVector<Real> Tj = rts[hit_j.symmops[1]].get_translation()
-			+ numeric::xyzVector<Real>(hit_j.lattice_shifts[1][0],
-									   hit_j.lattice_shifts[1][1],
-									   hit_j.lattice_shifts[1][2]) ;
-
-		// Dn detection
-		if (hit_i.name() == "C2") {
-
-			// check if they are perpindicular
-			Real dotprod = hit_i.axes[1].dot(hit_j.axes[1] );
-			if ( std::fabs(dotprod) <=1e-4) {
-				// translation check 2
-				numeric::xyzMatrix<Real> ST = Sj*Si;
-				numeric::xyzVector<Real> TT = Tj + Sj*Ti;
-				numeric::xyzVector<Real> TR = TT;
-				int order = hit_j.order();
-				for (int i=2; i<=order; ++i) {
-					ST = Sj*ST;
-					TT = Tj+Sj*TT;
-					TR = TR+TT;
-				}
-				TR = TR/((Real)order);
-
-				numeric::xyzVector<Real> transaxis = hit_j.origin -  TR;
-				if (transaxis.length() > 1e-4)
-					transaxis.normalize();
-
-				if (transforms_equiv(Sj*Si, Tj + Sj*Ti, Si*numeric::inverse(Sj), Ti - Si*Tj)) {
-					origin = (TR+hit_j.origin)/2.0;
-					axes.push_back(hit_i.axes[1]);
-					axes.push_back(hit_j.axes[1]);
-					symmops.push_back(hit_i.symmops[1]);
-					symmops.push_back(hit_j.symmops[1]);
-					lattice_shifts.push_back(hit_i.lattice_shifts[1]);
-					lattice_shifts.push_back(hit_j.lattice_shifts[1]);
-
-					if (expand(rts))
-						name_ = "D"+hit_j.name_.substr(1,1);
-				}
-			}
-		}
-		if (hit_i.name() == "C2" && hit_j.name() == "C3") {
-
-			Real b = hit_i.axes[1].dot(hit_j.axes[1] );
-			if ( std::fabs(b) > 1-1e-4) return;
-			Real angle = RAD2DEG*acos( b );
-
-			numeric::xyzVector<Real> w0=hit_i.origin-hit_j.origin;
-			Real d=dot(hit_j.axes[1],w0);
-			Real e=dot(hit_i.axes[1],w0);
-			numeric::xyzVector<Real> x = (hit_i.origin-hit_j.origin)+((b*e-d)*hit_i.axes[1]-(e-b*d)*hit_j.axes[1])/(1-b*b);
-			Real offset = x.length();
-			Real sc=(b*e-d)/(1-b*b);
-
-			origin=hit_i.origin+hit_i.axes[1]*sc;
-
-			if (offset>1e-4) return;  // do symmaxes intersect?
-
-			numeric::xyzVector<Real> next3fold = axis_angle(hit_i.axes[1], 180*DEG2RAD )*hit_j.axes[1];
-			core::Size targetct=1;
-			if (std::fabs( angle - 109.47122/2.0) <= 1e-3) {
-				name_ = "T";targetct=12;
-
-				// rotate by 120 around axis 1
-				numeric::xyzMatrix<Real> axisgen = axis_angle( hit_j.axes[1], 120*DEG2RAD );
-				axes.push_back(hit_j.axes[1]);
-				axes.push_back(next3fold);
-				axes.push_back(axisgen*hit_j.axes[1]);
-				axes.push_back(axisgen*axisgen*next3fold);
-			} else if (std::fabs(angle - 70.528779/2.0) <= 1e-3) {
-				name_ = "O";targetct=24;
-
-				// rot 90 about axis 1
-				numeric::xyzMatrix<Real> axisgen = axis_angle( hit_j.axes[1], 120*DEG2RAD );
-				axes.push_back(hit_j.axes[1]);
-				axes.push_back(next3fold);
-				axes.push_back(-hit_j.axes[1]);
-				axes.push_back(-next3fold);
-				axes.push_back(axisgen*hit_j.axes[1]);
-				axes.push_back(-(axisgen*next3fold));
-				axes.push_back(axisgen*axisgen*hit_j.axes[1]);
-				axes.push_back(-(axisgen*axisgen*next3fold));
-			} else {
-				return;
-			}
-
-			symmops.push_back(hit_i.symmops[1]);
-			symmops.push_back(hit_j.symmops[1]);
-			lattice_shifts.push_back(hit_i.lattice_shifts[1]);
-			lattice_shifts.push_back(hit_j.lattice_shifts[1]);
-
-			if (!expand(rts)) return;
-			if (symmops.size()!=targetct) {
-				//std::cerr << "fail at " << name_ << " got " << symmops.size() << std::endl;
-				name_="";
-				return;
-			}
-		}
-	}
+	);
 
 	void
 	add_symmop( int symm, numeric::xyzVector<int> ls) {
@@ -367,7 +267,7 @@ public:
 		bool done=false;
 		int rounds=0;
 		int nsymmops0=symmops.size();
-		while(!done && ++rounds<10) {
+		while(!done && ++rounds<16) {
 			done=true;
 			int nsymmops=symmops.size();
 			for (int i=1; i<=nsymmops; ++i) {
@@ -411,36 +311,82 @@ public:
 								);
 								lattice_shifts.push_back(ls);
 								found = true;
-								done=false;
+								done = false;
 							}
 						}
 
 						if (!found) {
-							std::cerr << "with " << name_ << std::endl;
+							std::cerr << "IN " << name_ << std::endl;
 							utility_exit_with_message("error in expand (symmop not found)");
 						}
 					}
 				}
 			}
 		}
-		if (!done) {
-			return false;
+
+		return done;
+	}
+
+	void
+	show(std::ostream & oss) const {
+		oss << "  SYMMOP " << name_ << ": nsymm=" << symmops.size();
+		oss << " origin=[" << origin[0] << "," << origin[1] << "," << origin[2] << "] ";
+		for (int i=1; i<=std::min((int)axes.size(),2); ++i) {
+			oss << "axis_" << i << "=[" << axes[i][0] << "," << axes[i][1] << "," << axes[i][2] << "] ";
 		}
-		return true;
+		//for (int i=1; i<=std::min((int)lattice_shifts.size(),3); ++i) {
+		//	oss << "lattice_shifts_" << i << "=[" << lattice_shifts[i][0] << "," << lattice_shifts[i][1] << "," << lattice_shifts[i][2] << "] ";
+		//}
+		oss << "symmops=" << symmops[1] ;
+		for (int i=2; i<=(int)symmops.size(); ++i) {
+			oss << "," << symmops[i];
+		}
+		oss << std::endl;
 	}
 
 	void
 	show() const {
-		std::cerr << "  SYMMOP " << name_ << ": nsymm=" << symmops.size();
-		std::cerr << " origin=[" << origin[0] << "," << origin[1] << "," << origin[2] << "] ";
-		for (int i=1; i<=std::min((int)axes.size(),3); ++i) {
-			std::cerr << "axis_" << i << "=[" << axes[i][0] << "," << axes[i][1] << "," << axes[i][2] << "] ";
+		show(std::cerr);
+	}
+
+	pointGroupHit
+	transform( utility::vector1<core::kinematics::RT> const &rts, core::kinematics::RT const &rt ) {
+		std::string name_new = name_;
+		numeric::xyzVector<Real> origin_new = rt.get_rotation()*origin + rt.get_translation();
+		utility::vector1< numeric::xyzVector<Real> > axes_new = axes;
+
+		for (int i=1; i<=(int)axes.size(); ++i) {
+			axes_new[i] = rt.get_rotation()*axes[i];
 		}
-		std::cerr << "symmops=" << symmops[1] ;
-		for (int i=2; i<=(int)symmops.size(); ++i) {
-			std::cerr << "," << symmops[i];
+
+		pointGroupHit tX(name_new, origin_new, axes_new);
+
+		for (int i=1; i<=(int)symmops.size(); ++i) {
+			numeric::xyzMatrix<Real> const &Si=
+				rt.get_rotation()*rts[symmops[i]].get_rotation();
+			numeric::xyzVector<Real> Ti =
+				rt.get_rotation() * rts[symmops[i]].get_translation()
+				+ rt.get_translation()
+				+ numeric::xyzVector<Real>(lattice_shifts[i][0],
+										   lattice_shifts[i][1],
+										   lattice_shifts[i][2]) ;
+
+			bool found=false;
+			for (int k=1;k<=(int)rts.size() && !found; ++k) {
+				if (transforms_equiv_mod1(Si, Ti, rts[k].get_rotation(), rts[k].get_translation()) ) {
+					tX.symmops.push_back(k);
+					numeric::xyzVector<int> ls(
+						(int)std::floor( Ti[0]-rts[k].get_translation()[0]+0.5 ),
+						(int)std::floor( Ti[1]-rts[k].get_translation()[1]+0.5 ),
+						(int)std::floor( Ti[2]-rts[k].get_translation()[2]+0.5 )
+					);
+					tX.lattice_shifts.push_back(ls);
+					found=true;
+				}
+			}
 		}
-		std::cerr << std::endl;
+		runtime_assert( tX.symmops.size() == symmops.size() );
+		return tX;
 	}
 
 	int intersects( pointGroupHit const & pg ) const {
@@ -473,20 +419,39 @@ public:
 		return (is_subset_of(pg) && pg.is_subset_of(*this));
 	}
 
+	bool is_subset_of_ignore_shift( pointGroupHit const & pg ) const {
+		int nsymmops0=symmops.size();
+		int nsymmops1=pg.symmops.size();
+		for (int i=1; i<=nsymmops0; ++i) {
+			bool contained_in = false;
+			for (int j=1; j<=nsymmops1 && !contained_in; ++j) {
+				contained_in = (symmops[i] == pg.symmops[j]);
+			}
+			if (!contained_in) return false;
+		}
+		return true;
+	}
+
+	bool equals_ignore_shift( pointGroupHit const & pg ) const {
+		return (this->is_subset_of_ignore_shift(pg) && pg.is_subset_of_ignore_shift(*this));
+	}
+
 	bool isC() const { return (name_.substr(0,1)=="C"); }
 	bool isD() const { return (name_.substr(0,1)=="D"); }
 	bool isT() const { return (name_.substr(0,1)=="T"); }
 	bool isO() const { return (name_.substr(0,1)=="O"); }
-	int order() const { if (isC()||isD()) return (atoi( name_.substr(1,1).c_str() )); else return 0; }
+	int order() const {
+		return (symmops.size());
+	}
 
 	std::string name() const { return name_; }
 
 	Real
 	score() {
 		Real score=0;
-		for (int i=1; i<=(int)lattice_shifts.size(); ++i) {
-			score += std::abs(lattice_shifts[i][0])+std::abs(lattice_shifts[i][1])+std::abs(lattice_shifts[i][2]);
-		}
+		//for (int i=1; i<=(int)lattice_shifts.size(); ++i) {
+		//	score += abs(lattice_shifts[i][0])+abs(lattice_shifts[i][1])+abs(lattice_shifts[i][2]);
+		//}
 		score += std::fabs(origin[0]) + std::fabs(origin[1]) + std::fabs(origin[2]);
 		return score;
 	}
@@ -510,11 +475,244 @@ struct latticeHit {
 	Real shift;
 };
 
+pointGroupHit::pointGroupHit(
+		pointGroupHit pg1,
+		pointGroupHit pg2,
+		utility::vector1<core::kinematics::RT> const &rts
+) {
+	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
+	name_="";
+
+	pointGroupHit const &hit_i = (pg1.name() == "C2") ? pg1 : pg2;
+	pointGroupHit const &hit_j = (pg1.name() == "C2") ? pg2 : pg1;
+
+	numeric::xyzMatrix<Real> Si = rts[hit_i.symmops[1]].get_rotation();
+	numeric::xyzVector<Real> Ti = rts[hit_i.symmops[1]].get_translation()
+		+ numeric::xyzVector<Real>(hit_i.lattice_shifts[1][0],
+								   hit_i.lattice_shifts[1][1],
+								   hit_i.lattice_shifts[1][2]) ;
+	numeric::xyzMatrix<Real> Sj = rts[hit_j.symmops[1]].get_rotation();
+	numeric::xyzVector<Real> Tj = rts[hit_j.symmops[1]].get_translation()
+		+ numeric::xyzVector<Real>(hit_j.lattice_shifts[1][0],
+								   hit_j.lattice_shifts[1][1],
+								   hit_j.lattice_shifts[1][2]) ;
+
+	// Dn detection
+	if (hit_i.name() == "C2") {
+		// check if they are perpindicular
+		Real dotprod = hit_i.axes[1].dot(hit_j.axes[1] );
+		if ( std::fabs(dotprod) <=1e-4) {
+			// translation check 2
+			numeric::xyzMatrix<Real> ST = Sj*Si;
+			numeric::xyzVector<Real> TT = Tj + Sj*Ti;
+			numeric::xyzVector<Real> TR = TT;
+			int order = hit_j.order();
+			for (int i=2; i<=order; ++i) {
+				ST = Sj*ST;
+				TT = Tj+Sj*TT;
+				TR = TR+TT;
+			}
+			TR = TR/((Real)order);
+
+			// symmetry check
+			if (transforms_equiv(Sj*Si, Tj + Sj*Ti, Si*numeric::inverse(Sj), Ti - Si*numeric::inverse(Sj)*Tj)) {
+
+				origin = (TR+hit_j.origin)/2.0;
+				axes.push_back(hit_j.axes[1]);
+				axes.push_back(hit_i.axes[1]);
+
+				// last symmop is always identity, make sure this is not added twice
+				for (int i=1; i<=(int)hit_j.symmops.size()-1; ++i) symmops.push_back(hit_j.symmops[i]);
+				for (int i=1; i<=(int)hit_i.symmops.size(); ++i) symmops.push_back(hit_i.symmops[i]);
+				for (int i=1; i<=(int)hit_j.lattice_shifts.size()-1; ++i) lattice_shifts.push_back(hit_j.lattice_shifts[i]);
+				for (int i=1; i<=(int)hit_i.lattice_shifts.size(); ++i) lattice_shifts.push_back(hit_i.lattice_shifts[i]);
+
+				expand( rts );
+				if ((int)symmops.size() != 2*hit_j.order() ) {
+					hit_i.show();
+					hit_j.show();
+					show();
+					utility_exit_with_message("error in expand (wrong # of symmops)");
+				}
+				name_ = "D"+hit_j.name_.substr(1,1);
+			}
+		}
+	}
+	if (hit_i.name() == "C2" && hit_j.name() == "C3") {
+		Real b = hit_i.axes[1].dot(hit_j.axes[1] );
+		if ( std::fabs(b) > 1-1e-4) return;
+		Real angle = RAD2DEG*acos( b );
+
+		numeric::xyzVector<Real> w0=hit_i.origin-hit_j.origin;
+		Real d=dot(hit_j.axes[1],w0);
+		Real e=dot(hit_i.axes[1],w0);
+		numeric::xyzVector<Real> x = (hit_i.origin-hit_j.origin)+((b*e-d)*hit_i.axes[1]-(e-b*d)*hit_j.axes[1])/(1-b*b);
+		Real offset = x.length();
+		Real sc=(b*e-d)/(1-b*b);
+
+		if (offset>1e-4) return;  // do symmaxes intersect?
+
+		numeric::xyzVector<Real> next3fold = axis_angle(hit_i.axes[1], 180*DEG2RAD )*hit_j.axes[1];
+		core::Size targetct=1;
+		if (std::fabs( angle - 109.47122/2.0) <= 1e-3) {
+			name_ = "T";targetct=12;
+
+			// rotate by 120 around axis 1
+			numeric::xyzMatrix<Real> axisgen = axis_angle( hit_j.axes[1], 120*DEG2RAD );
+			axes.push_back(hit_j.axes[1]);
+			axes.push_back(next3fold);
+			axes.push_back(axisgen*hit_j.axes[1]);
+			axes.push_back(axisgen*axisgen*next3fold);
+		} else if (std::fabs(angle - 70.528779/2.0) <= 1e-3) {
+			name_ = "O";targetct=24;
+
+			// rot 90 about axis 1
+			numeric::xyzMatrix<Real> axisgen = axis_angle( hit_j.axes[1], 120*DEG2RAD );
+			axes.push_back(hit_j.axes[1]);
+			axes.push_back(next3fold);
+			axes.push_back(-hit_j.axes[1]);
+			axes.push_back(-next3fold);
+			axes.push_back(axisgen*hit_j.axes[1]);
+			axes.push_back(-(axisgen*next3fold));
+			axes.push_back(axisgen*axisgen*hit_j.axes[1]);
+			axes.push_back(-(axisgen*axisgen*next3fold));
+		} else {
+			return;
+		}
+
+		origin=hit_i.origin+hit_i.axes[1]*sc;
+
+		for (int i=1; i<=(int)hit_j.symmops.size()-1; ++i) symmops.push_back(hit_j.symmops[i]);
+		for (int i=1; i<=(int)hit_i.symmops.size(); ++i) symmops.push_back(hit_i.symmops[i]);
+		for (int i=1; i<=(int)hit_j.lattice_shifts.size()-1; ++i) lattice_shifts.push_back(hit_j.lattice_shifts[i]);
+		for (int i=1; i<=(int)hit_i.lattice_shifts.size(); ++i) lattice_shifts.push_back(hit_i.lattice_shifts[i]);
+
+		expand(rts);
+		if (symmops.size()!=targetct) {
+			std::cerr << "FAIL at " << name_ << " got " << symmops.size() << std::endl;
+			name_="";
+			return;
+		}
+	}
+}
+
+
+void
+dedup( utility::vector1< pointGroupHit > &hits ) {
+	utility::vector1< pointGroupHit > hits_dedup;
+
+	//  [i] exacts
+//  	int nhits = (int)hits.size();
+//  	for (int i=1; i<=nhits; ++i) {
+//  		bool dup=false;
+// 		int bestJ=0;
+//  		for (int j=1; j<=(int)hits_dedup.size() && !dup; ++j) {
+// 			numeric::xyzVector<core::Real> offset = (hits[i].origin - hits_dedup[j].origin);
+// 			for (int k=0; k<3; ++k) {
+// 				offset[k] = std::fmod( offset[k], 1.0);
+// 				if (offset[k] > 0.5) offset[k]-=1.0;
+// 				if (offset[k] < -0.5) offset[k]+=1.0;
+// 			}
+//
+// 			// remove exact matches
+// 			if (hits[i].name_ != hits_dedup[j].name_) continue;
+//  			if ( offset.length() > 1e-4 ) {
+// 				continue;
+// 			}
+//
+// 			if (hits[i].isC() && std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e-4) continue;
+// 			if (hits[i].name_ == "D2") {
+// 				bool off11 = (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e-4);
+// 				bool off12 = (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[2] ) ) < 1-1e-4);
+// 				bool off21 = (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[1] ) ) < 1-1e-4);
+// 				bool off22 = (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[2] ) ) < 1-1e-4);
+// 				if ( (off11&&off22) || (off12&&off21) ) continue;
+// 			} else if (hits[i].isD()) {
+// 				// Dn, n>=3
+// 				if (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[2] ) ) < 1-1e-4) continue;
+// 				Real angle=RAD2DEG*acos( std::max(-1.0,std::min(1.0,hits[i].axes[1].dot(hits_dedup[j].axes[1] ))) );
+// 				int order = hits[i].order()/2;
+// 				Real delangle = std::fabs( min_mod( angle, 180.0/(order) ) );
+// 				if ( delangle>1e-4 ) continue;
+// 			} else if (hits[i].isT() || hits[i].isO()) {
+// 				bool match=false;
+// 				for (int k=1; k<=(int)hits[i].axes.size() && !match; ++k) {
+// 					if (std::fabs (hits[i].axes[k].dot(hits_dedup[j].axes[1] ) ) > 1-1e-4) match=true;
+// 				}
+// 				if (!match) continue;
+// 			}
+// 			bestJ=j;
+// 			dup=true;
+// 		}
+//
+// 		if (!dup) {
+// 			hits_dedup.push_back(hits[i]);
+// 		} else {
+// 			if (hits_dedup[bestJ].score() > hits[i].score())
+// 				hits_dedup[bestJ] = hits[i];
+// 		}
+//
+// 	}
+//
+// 	hits = hits_dedup;
+// 	hits_dedup.clear();
+
+	// remove duplicates
+  	int nhits = (int)hits.size();
+	for (int i=1; i<=nhits; ++i) {
+		bool uniq = true;
+		int j;
+ 		for (j=1; j<=(int)hits_dedup.size() && uniq; ++j) {
+			if ( (hits[i].origin - hits_dedup[j].origin).length() < 1e-4 && hits[i].equals_ignore_shift( hits_dedup[j] )) {
+				uniq=false;
+			}
+
+		}
+ 		if (uniq) {
+ 			hits_dedup.push_back(hits[i]);
+ 		} else {
+ 			if (hits_dedup[j-1].score() > hits[i].score())
+ 				hits_dedup[j-1] = hits[i];
+ 		}
+	}
+
+	hits = hits_dedup;
+	hits_dedup.clear();
+
+	// [ii] subsets
+ 	nhits = (int)hits.size();
+ 	for (int i=1; i<=nhits; ++i) {
+		bool uniq = true;
+	 	for (int j=1; j<=nhits && uniq; ++j) {
+			if (i==j) continue;
+			if (hits[i].isC() && hits[j].isC() && hits[i].order() < hits[j].order() && hits[i].is_subset_of( hits[j] )) uniq=false;
+			if (hits[i].isD() && hits[j].isD() && hits[i].order() < hits[j].order() && hits[i].is_subset_of( hits[j] )) uniq=false;
+			if (hits[i].isT() && hits[j].isO() && hits[i].is_subset_of( hits[j] )) uniq=false;
+		}
+		if (uniq) hits_dedup.push_back(hits[i]);
+	}
+	hits = hits_dedup;
+}
+
+void
+remove_drift( utility::vector1< pointGroupHit > &hits ) {
+	utility::vector1< pointGroupHit > hits_dedup;
+ 	int nhits = (int)hits.size();
+ 	for (int i=1; i<=nhits; ++i) {
+		if (
+				hits[i].origin[0] <= 1 || hits[i].origin[0] > -1 ||
+				hits[i].origin[1] <= 1 || hits[i].origin[1] > -1 ||
+				hits[i].origin[2] <= 1 || hits[i].origin[2] > -1 ) {
+			hits_dedup.push_back (hits[i]);
+		}
+	}
+	hits = hits_dedup;
+}
 
 // get point symmetries from symmops
 utility::vector1< pointGroupHit >
 get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyzMatrix<core::Real> skewM ) {
-	utility::vector1< pointGroupHit > hits, hits_dedup;
+	utility::vector1< pointGroupHit > hits;
 	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 	int nxforms = (int)rts.size();
 
@@ -527,6 +725,11 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 			numeric::xyzMatrix<Real> const &Si=rts[i].get_rotation();
 			numeric::xyzVector<Real> lattice_shift = numeric::xyzVector<Real>(x,y,z);
 			numeric::xyzVector<Real> Ti = rts[i].get_translation() + lattice_shift;
+
+			// ???
+			if (Ti[0] > 1 || Ti[0] < -1) continue;
+			if (Ti[1] > 1 || Ti[1] < -1) continue;
+			if (Ti[2] > 1 || Ti[2] < -1) continue;
 
 			if (transforms_equiv(Si,identity)) continue;
 
@@ -587,81 +790,30 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 		}
 	}
 
+	// remove drift
+	remove_drift(hits);
+	dedup(hits);
+
 	// detect higher order
-	int nhits = (int)hits.size();
-	for (int i=1; i<=nhits; ++i) {
-		for (int j=i+1; j<=nhits; ++j) {
-			pointGroupHit const &hit_i = hits[i];
-			pointGroupHit const &hit_j = hits[j];
-
-			if (hit_i.intersects(hit_j) > 1) continue;
-
-			pointGroupHit hit_ij(hit_i, hit_j, rts);
-			if (hit_ij.name() != "") {
-				hits.push_back( hit_ij );
-			}
-		}
-	}
-
-
-	// remove duplicates
-	//  [i] exacts
- 	nhits = (int)hits.size();
+ 	int nhits = (int)hits.size();
  	for (int i=1; i<=nhits; ++i) {
- 		bool dup=false;
-		int j;
- 		for (j=1; j<=(int)hits_dedup.size() && !dup; ++j) {
-			// remove exact matches
-			if (hits[i].name_ != hits_dedup[j].name_) continue;
- 			if ( (hits[i].origin - hits_dedup[j].origin).length() > 1e-4 ) continue;
+ 		for (int j=i+1; j<=nhits; ++j) {
+ 			pointGroupHit const &hit_i = hits[i];
+ 			pointGroupHit const &hit_j = hits[j];
 
-			if (hits[i].isC() && std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e4) continue;
-			if (hits[i].name_ == "D2") {
-				bool off11 = (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e4);
-				bool off12 = (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[2] ) ) < 1-1e4);
-				bool off21 = (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[1] ) ) < 1-1e4);
-				bool off22 = (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[2] ) ) < 1-1e4);
-				if ( (off11&&off22) || (off12&&off21) ) continue;
-			} else if (hits[i].isD()) {
-				// Dn, n>=3
-				if (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e4) continue;
-				Real angle=RAD2DEG*acos(hits[i].axes[2].dot(hits_dedup[j].axes[2] ));
-				int order = hits[i].order();
-				if ( pos_mod( angle, 180.0/(order) )<1e-4 ) continue;
-			} else if (hits[i].isT() || hits[i].isO()) {
-				bool match=false;
-				for (int k=1; k<=(int)hits[i].axes.size() && !match; ++k) {
-					if (std::fabs (hits[i].axes[k].dot(hits_dedup[j].axes[1] ) ) < 1-1e4) match=true;
-				}
-				if (match) continue;
-			}
-			dup=true;
-		}
+ 			if (hit_i.intersects(hit_j) > 1) continue;
 
-		if (!dup) {
-			hits_dedup.push_back(hits[i]);
-		} else {
-			if (hits_dedup[j-1].score() > hits[i].score())
-				hits_dedup[j-1] = hits[i];
-		}
+ 			pointGroupHit hit_ij(hit_i, hit_j, rts);
+ 			if (hit_ij.name() != "") {
+ 				hits.push_back( hit_ij );
+ 			}
+ 		}
+ 	}
 
-	}
+	remove_drift(hits);
+	dedup(hits);
 
-	hits = hits_dedup;
-	hits_dedup.clear();
-
- 	nhits = (int)hits.size();
- 	for (int i=1; i<=nhits; ++i) {
-		bool uniq = true;
-	 	for (int j=1; j<=nhits && uniq; ++j) {
-			if (i==j) continue;
-			if (hits[i].isC() && hits[j].isC() && hits[i].order() < hits[j].order() && hits[i].is_subset_of( hits[j] )) uniq=false;
-			if (hits[i].isD() && hits[j].isD() && hits[i].order() < hits[j].order() && hits[i].is_subset_of( hits[j] )) uniq=false;
-			if (hits[i].isT() && hits[j].isO() && hits[i].is_subset_of( hits[j] )) uniq=false;
-		}
-		if (uniq) hits_dedup.push_back(hits[i]);
-	}
-	return hits_dedup;
+	return hits;
 }
 
 
@@ -670,7 +822,7 @@ check_if_forms_lattice(
 		utility::vector1<core::kinematics::RT> const &rts,
 		utility::vector1<core::kinematics::RT> const &rts_all,
 		bool verbose=false ) {
-	int EXPAND_ROUNDS=12;
+	int EXPAND_ROUNDS=16;
 	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 
 	// don't include duplicate symmops!
@@ -680,13 +832,15 @@ check_if_forms_lattice(
 	if (verbose) {
 		std::cerr << "-----" << std::endl;
 		for (int i=1; i<=(int)rts_exp.size(); ++i) {
-			numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
+			//numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
 			disp_symmop(rts_exp[i]);
 		}
 	}
 
-	for (int rd=1; rd<=EXPAND_ROUNDS; ++rd) {
+	bool done = false;
+	for (int rd=1; rd<=EXPAND_ROUNDS && !done; ++rd) {
 		int nxforms = (int)rts_exp.size();
+		done = true;
 		for (int i=1; i<=nxforms; ++i) {
 			for (int j=1; j<=nxformsOrig; ++j) {
 				numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
@@ -706,8 +860,10 @@ check_if_forms_lattice(
 						break;
 					}
 				}
-				if (unique_xform)
+				if (unique_xform) {
+					done = false;
 					rts_exp.push_back( core::kinematics::RT( Sij, Tij ) );
+				}
 			}
 		}
 	}
@@ -715,7 +871,7 @@ check_if_forms_lattice(
 	if (verbose) {
 		std::cerr << "-----" << std::endl;
 		for (int i=1; i<=(int)rts_exp.size(); ++i) {
-			numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
+			//numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
 			disp_symmop(rts_exp[i]);
 		}
 	}
@@ -768,8 +924,25 @@ try {
 	// all spacegroups
 	utility::vector1<std::string> spacegroups;
 
-
 	if (argc<2) {
+		std::cerr << "USAGE: " << argv[0] << " (pt|gen1|gen2) [spacegroup]*" << std::endl;
+	}
+
+	std::string mode( argv[1] );
+
+	if (mode!="pt" && mode!="gen1" && mode!="gen2") {
+		std::cerr << "USAGE: " << argv[0] << " (pt|gen1|gen2) [spacegroup]*" << std::endl;
+	}
+
+	bool user_spacegroups=false;
+	if (argc>2) {
+		for (int i=2; i<argc; ++i) {
+			char chk=argv[i][0];
+			if (chk=='P' || chk == 'F' || chk=='I' || chk=='H' || chk=='C') user_spacegroups = true;
+		}
+	}
+
+	if (!user_spacegroups) {
 		spacegroups.push_back("P1");     spacegroups.push_back("P2");      spacegroups.push_back("P21");
 		spacegroups.push_back("C2");     spacegroups.push_back("P23");     spacegroups.push_back("F23");
 		spacegroups.push_back("I23");    spacegroups.push_back("P213");    spacegroups.push_back("I213");
@@ -793,14 +966,29 @@ try {
 		spacegroups.push_back("P6122");   spacegroups.push_back("P6522");  spacegroups.push_back("P6222");
 		spacegroups.push_back("P6422");   spacegroups.push_back("P6322");
 	} else {
-		for (int i=1; i<argc; ++i)
-			spacegroups.push_back(std::string(argv[i]));
+		for (int i=2; i<argc; ++i) {
+			char chk=argv[i][0];
+			if (chk=='P' || chk == 'F' || chk=='I' || chk=='H' || chk=='C')
+				spacegroups.push_back(std::string(argv[i]));
+		}
 	}
 
+	int i_job=1, j_job=1;
+	if (argc > 2 && isdigit(argv[argc-1][0])) {
+		i_job = atoi( argv[argc-2] );
+		j_job = atoi( argv[argc-1] );
+	}
+
+	if (i_job == 0 || j_job==0) {
+		std::cerr << "ERROR" << std::endl;
+		exit(1);
+	}
+
+	int counter=0;
  	for (int sx=1; sx<=(int) spacegroups.size(); ++sx) {
 		std::string name=spacegroups[sx];
 
-		std::cerr << "**** " <<  spacegroups[sx] << " ****" << std::endl;
+		//std::cerr << "**** " <<  spacegroups[sx] << " ****" << std::endl;
 
 		numeric::xyzMatrix<core::Real> skewM=numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 		if((name=="P3")||(name=="P31")||(name=="P32")||(name=="H3")||(name=="P312")||(name=="P321")||
@@ -809,103 +997,230 @@ try {
 			(name=="P6122")||(name=="P6522")||(name=="P6222")||(name=="P6422")||(name=="P6322"))
 			skewM = numeric::xyzMatrix<core::Real>::rows( 1,-0.5,0, 0,0.866025403784439,0, 0,0,1);
 
-		utility::vector1<core::kinematics::RT> rts;
-		utility::vector1<numeric::xyzVector<core::Real> > cenops;
-		get_symmops( spacegroups[sx], rts, cenops );
+		protocols::cryst::Spacegroup sg;
+		sg.set_spacegroup( spacegroups[sx] );
+		utility::vector1<core::kinematics::RT> rts = sg.symmops();
 		utility::vector1< pointGroupHit > pgs = get_point_groups( rts, skewM );
 
-		for (int i=1; i<=(int)pgs.size(); ++i) {
-			pointGroupHit hit_i = pgs[i];
-			hit_i.show();
+		if (mode == "pt") {
+			for (int i=1; i<=(int)pgs.size(); ++i) {
+				pointGroupHit hit_i = pgs[i];
+				std::cerr << spacegroups[sx] << " ";
+				hit_i.show(std::cerr);
+			}
+		} else {
+			std::cerr << "Found " << pgs.size() << " point groups" << std::endl;
 		}
 
-		// sample all pairs of point groups
-		utility::vector1< latticeHit > finalHits;
-		for (int i=1; i<=(int)pgs.size(); ++i) {
-			for (int j=i+1; j<=(int)pgs.size(); ++j) {
-				pointGroupHit hit_i = pgs[i];
-				pointGroupHit hit_j = pgs[j];
+		if (mode == "gen2") {
+			// sample all pairs of point groups
+			utility::vector1< latticeHit > finalHits;
+			for (int i=1; i<=(int)pgs.size(); ++i) {
+				counter++;
+				if ( (counter % j_job) != (i_job % j_job) ) continue;
 
-				// add RTs
-				utility::vector1<core::kinematics::RT> rts_symm;
+				for (int j=i+1; j<=(int)pgs.size(); ++j) {
+					pointGroupHit hit_i = pgs[i];
+					pointGroupHit hit_j = pgs[j];
 
-				for (int k=1; k<=(int) hit_i.symmops.size(); ++k) {
-					rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmops[k]].get_rotation(),
-							rts[hit_i.symmops[k]].get_translation() +
-							numeric::xyzVector<Real> ( hit_i.lattice_shifts[k][0],  hit_i.lattice_shifts[k][1],  hit_i.lattice_shifts[k][2] ) ));
-				}
-				for (int k=1; k<=(int) hit_j.symmops.size(); ++k) {
-					rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmops[k]].get_rotation(),
-							rts[hit_j.symmops[k]].get_translation() +
-							numeric::xyzVector<Real> ( hit_j.lattice_shifts[k][0],  hit_j.lattice_shifts[k][1],  hit_j.lattice_shifts[k][2] ) ));
-				}
+					// add RTs
+					utility::vector1<core::kinematics::RT> rts_symm;
 
-
-				bool is_lattice = check_if_forms_lattice( rts_symm, rts, (i==19 && j==60) );   // check if we are fully connected
-
-				if (is_lattice) {
-					numeric::xyzVector<core::Real> Iaxis=hit_i.axes[1], Jaxis=hit_j.axes[1];
-
-					if (hit_i.name() == "D2")
-						Iaxis = hit_i.axes[1].cross( hit_i.axes[2] );
-					if (hit_j.name() == "D2")
-						Jaxis = hit_j.axes[1].cross( hit_j.axes[2] );
-
-					Real angle = RAD2DEG * acos( std::max( std::min( Iaxis.dot( Jaxis ), 1.0 ), -1.0) );
-					angle = std::min( 180-angle, angle );
-					Real offset=0, shift=0;
-
-					if (angle <= 1e-6) {
-						offset = ((hit_j.origin-hit_i.origin) - (hit_j.origin-hit_i.origin).dot( Iaxis )* Iaxis).length();
-						shift = (hit_j.origin-hit_i.origin).dot( Iaxis );
-					} else {
-						offset = std::fabs (
-							(hit_j.origin-hit_i.origin).dot( hit_i.axes[1].cross( hit_j.axes[1] ) ) / hit_i.axes[1].cross( hit_j.axes[1] ).length() );
+					for (int k=1; k<=(int) hit_i.symmops.size(); ++k) {
+						rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmops[k]].get_rotation(),
+								rts[hit_i.symmops[k]].get_translation() +
+								numeric::xyzVector<Real> ( hit_i.lattice_shifts[k][0],  hit_i.lattice_shifts[k][1],  hit_i.lattice_shifts[k][2] ) ));
+					}
+					for (int k=1; k<=(int) hit_j.symmops.size(); ++k) {
+						rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmops[k]].get_rotation(),
+								rts[hit_j.symmops[k]].get_translation() +
+								numeric::xyzVector<Real> ( hit_j.lattice_shifts[k][0],  hit_j.lattice_shifts[k][1],  hit_j.lattice_shifts[k][2] ) ));
 					}
 
-					bool dup = false;
-					for (int q = 1; q<= (int)finalHits.size() && !dup; ++q) {
-						if (
-							( (finalHits[q].hit1.name() == hit_i.name() && finalHits[q].hit2.name() == hit_j.name()) ||
-							  (finalHits[q].hit2.name() == hit_i.name() && finalHits[q].hit1.name() == hit_j.name()) ) &&
-							std::fabs( angle - finalHits[q].angle ) < 1e-6
-						) {
-							if ((offset==0 && finalHits[q].offset == 0)
-								 || (offset!=0 && finalHits[q].offset != 0)) {
-								dup = true;
-								if (offset<finalHits[q].offset)
-									finalHits[q] = latticeHit( hit_i, hit_j, angle, offset, shift );
+					bool is_lattice = check_if_forms_lattice( rts_symm, rts );   // check if we are fully connected
+
+					if (is_lattice) {
+						numeric::xyzVector<core::Real> Iaxis=hit_i.axes[1], Jaxis=hit_j.axes[1];
+
+						// special case for D2 where axes are "equivalent"
+						// assign an "order" to axes
+						if (hit_i.name() == "D2") {
+							if (hit_i.axes[2][2] > hit_i.axes[1][2] || (hit_i.axes[2][2] == hit_i.axes[1][2] && hit_i.axes[2][1] > hit_i.axes[1][1]) ||
+							     (hit_i.axes[2][2] == hit_i.axes[1][2] && hit_i.axes[2][1] == hit_i.axes[1][1] && hit_i.axes[2][0] > hit_i.axes[1][0]) ) {
+								Iaxis=hit_i.axes[2];
 							}
 						}
-					}
-					if (!dup) {
-						finalHits.push_back( latticeHit( hit_i, hit_j, angle, offset, shift ));
+						if (hit_j.name() == "D2") {
+							if (hit_j.axes[2][2] > hit_j.axes[1][2] || (hit_j.axes[2][2] == hit_j.axes[1][2] && hit_j.axes[2][1] > hit_j.axes[1][1]) ||
+							     (hit_j.axes[2][2] == hit_j.axes[1][2] && hit_j.axes[2][1] == hit_j.axes[1][1] && hit_j.axes[2][0] > hit_j.axes[1][0]) ) {
+								Jaxis=hit_j.axes[2];
+							}
+						}
+
+						Real angle = RAD2DEG * acos( std::max( std::min( Iaxis.dot( Jaxis ), 1.0 ), -1.0) );
+						angle = std::min( 180-angle, angle );
+						Real offset=0, shift=0;
+
+						if (angle <= 1e-6) {
+							offset = ((hit_j.origin-hit_i.origin) - (hit_j.origin-hit_i.origin).dot( Iaxis )* Iaxis).length();
+							shift = (hit_j.origin-hit_i.origin).dot( Iaxis );
+						} else {
+							offset = std::fabs (
+								(hit_j.origin-hit_i.origin).dot( Iaxis.cross( Jaxis ) ) / Iaxis.cross( Jaxis ).length() );
+						}
+
+						bool dup = false;
+						for (int q = 1; q<= (int)finalHits.size() && !dup; ++q) {
+							if (
+								( (finalHits[q].hit1.name() == hit_i.name() && finalHits[q].hit2.name() == hit_j.name()) ||
+								  (finalHits[q].hit2.name() == hit_i.name() && finalHits[q].hit1.name() == hit_j.name()) ) &&
+								std::fabs( angle - finalHits[q].angle ) < 1e-6
+							) {
+								if ((offset==0 && finalHits[q].offset == 0)
+									 || (offset!=0 && finalHits[q].offset != 0)) {
+									dup = true;
+									if (offset<finalHits[q].offset)
+										finalHits[q] = latticeHit( hit_i, hit_j, angle, offset, shift );
+								}
+							}
+						}
+						if (!dup) {
+							finalHits.push_back( latticeHit( hit_i, hit_j, angle, offset, shift ));
+						}
 					}
 				}
 			}
+
+			for (int i=1; i<=(int)finalHits.size(); ++i) {
+				latticeHit lh = finalHits[i];
+
+				// one line
+				std::cerr << name << " " << lh.hit1.name() << " " << lh.hit2.name() << " " << lh.angle << " " << lh.offset << " ";
+				if (lh.angle == 0)
+					std::cerr << lh.shift << " ";
+				else
+					std::cerr << "0 ";
+							//
+				std::cerr << lh.hit1.axes[1][0] <<","<< lh.hit1.axes[1][1] <<","<< lh.hit1.axes[1][2] << " ";
+				if (lh.hit1.name().substr(0,1) == "D")
+					std::cerr << lh.hit1.axes[2][0] <<","<< lh.hit1.axes[2][1] <<","<< lh.hit1.axes[2][2] << " ";
+				else
+					std::cerr << "- ";
+				std::cerr << lh.hit1.origin[0] <<","<< lh.hit1.origin[1] <<","<< lh.hit1.origin[2] <<" ";
+							//
+				std::cerr << lh.hit2.axes[1][0] <<","<< lh.hit2.axes[1][1] <<","<< lh.hit2.axes[1][2] << " ";
+				if (lh.hit2.name().substr(0,1) == "D")
+					std::cerr << lh.hit2.axes[2][0] <<","<< lh.hit2.axes[2][1] <<","<< lh.hit2.axes[2][2] << " ";
+				else
+					std::cerr << "- ";
+				std::cerr << lh.hit2.origin[0] <<","<< lh.hit2.origin[1] <<","<< lh.hit2.origin[2] <<" " << std::endl;
+							//
+
+				//std::cerr << std::endl;
+				//lh.hit1.show(std::cerr);
+				//lh.hit2.show(std::cerr);
+			}
+		 } else if (mode=="gen1") {
+			// sample all of point groups
+			utility::vector1< latticeHit > finalHits;
+			for (int i=1; i<=(int)pgs.size(); ++i) {
+				counter++;
+				if ( (counter % j_job) != (i_job % j_job) ) continue;
+
+				pointGroupHit hit_i = pgs[i];
+
+				// loop over all symmops _not_ in the point group
+				for (int j=1; j<=(int)rts.size(); ++j) {
+					bool counted=false;
+					for (int k=1; k<=(int)hit_i.symmops.size() && !counted;++k) {
+						if (hit_i.symmops[k] == j && hit_i.lattice_shifts[k].length()<1e-4) counted=true;
+					}
+					if (counted) continue;
+
+					pointGroupHit hit_j = hit_i.transform( rts, rts[j] );
+
+					// add RTs
+					utility::vector1<core::kinematics::RT> rts_symm;
+
+					for (int k=1; k<=(int) hit_i.symmops.size(); ++k) {
+						rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmops[k]].get_rotation(),
+								rts[hit_i.symmops[k]].get_translation() +
+								numeric::xyzVector<Real> ( hit_i.lattice_shifts[k][0],  hit_i.lattice_shifts[k][1],  hit_i.lattice_shifts[k][2] ) ));
+					}
+					for (int k=1; k<=(int) hit_j.symmops.size(); ++k) {
+						rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmops[k]].get_rotation(),
+								rts[hit_j.symmops[k]].get_translation() +
+								numeric::xyzVector<Real> ( hit_j.lattice_shifts[k][0],  hit_j.lattice_shifts[k][1],  hit_j.lattice_shifts[k][2] ) ));
+					}
+
+					bool is_lattice = check_if_forms_lattice( rts_symm, rts, false );   // check if we are fully connected
+
+					if (is_lattice) {
+						numeric::xyzVector<core::Real> Iaxis=hit_i.axes[1], Jaxis=hit_j.axes[1];
+
+						Real angle = RAD2DEG * acos( std::max( std::min( Iaxis.dot( Jaxis ), 1.0 ), -1.0) );
+						angle = std::min( 180-angle, angle );
+						Real offset=0, shift=0;
+
+						if (angle <= 1e-6) {
+							offset = ((hit_j.origin-hit_i.origin) - (hit_j.origin-hit_i.origin).dot( Iaxis )* Iaxis).length();
+							shift = (hit_j.origin-hit_i.origin).dot( Iaxis );
+						} else {
+							offset = std::fabs (
+								(hit_j.origin-hit_i.origin).dot( hit_i.axes[1].cross( hit_j.axes[1] ) ) / hit_i.axes[1].cross( hit_j.axes[1] ).length() );
+						}
+
+						bool dup = false;
+						for (int q = 1; q<= (int)finalHits.size() && !dup; ++q) {
+							if (
+								( (finalHits[q].hit1.name() == hit_i.name() && finalHits[q].hit2.name() == hit_j.name()) ||
+								  (finalHits[q].hit2.name() == hit_i.name() && finalHits[q].hit1.name() == hit_j.name()) ) &&
+								std::fabs( angle - finalHits[q].angle ) < 1e-6
+							) {
+								if ((offset==0 && finalHits[q].offset == 0)
+									 || (offset!=0 && finalHits[q].offset != 0)) {
+									dup = true;
+									if (offset<finalHits[q].offset)
+										finalHits[q] = latticeHit( hit_i, hit_j, angle, offset, shift );
+								}
+							}
+						}
+						if (!dup) {
+							finalHits.push_back( latticeHit( hit_i, hit_j, angle, offset, shift ));
+						}
+					}
+				}
+			}
+			for (int i=1; i<=(int)finalHits.size(); ++i) {
+				latticeHit lh = finalHits[i];
+
+				// one line
+				std::cerr << name << " " << lh.hit1.name() << " " << lh.hit2.name() << " " << lh.angle << " " << lh.offset << " ";
+				if (lh.angle == 0)
+					std::cerr << lh.shift << " ";
+				else
+					std::cerr << "0 ";
+							//
+				std::cerr << lh.hit1.axes[1][0] <<","<< lh.hit1.axes[1][1] <<","<< lh.hit1.axes[1][2] << " ";
+				if (lh.hit1.name().substr(0,1) == "D")
+					std::cerr << lh.hit1.axes[2][0] <<","<< lh.hit1.axes[2][1] <<","<< lh.hit1.axes[2][2] << " ";
+				else
+					std::cerr << "- ";
+				std::cerr << lh.hit1.origin[0] <<","<< lh.hit1.origin[1] <<","<< lh.hit1.origin[2] <<" ";
+							//
+				std::cerr << lh.hit2.axes[1][0] <<","<< lh.hit2.axes[1][1] <<","<< lh.hit2.axes[1][2] << " ";
+				if (lh.hit2.name().substr(0,1) == "D")
+					std::cerr << lh.hit2.axes[2][0] <<","<< lh.hit2.axes[2][1] <<","<< lh.hit2.axes[2][2] << " ";
+				else
+					std::cerr << "- ";
+				std::cerr << lh.hit2.origin[0] <<","<< lh.hit2.origin[1] <<","<< lh.hit2.origin[2] <<" " << std::endl;
+							//
+
+				//std::cerr << std::endl;
+				//lh.hit1.show(std::cerr);
+				//lh.hit2.show(std::cerr);
+			}
 		}
-
-		for (int i=1; i<=(int)finalHits.size(); ++i) {
-			latticeHit lh = finalHits[i];
-			std::cerr << lh.hit1.name() << " and " << lh.hit2.name() << " at angle = " << lh.angle << " offset = " << lh.offset;
-			if (lh.angle == 0) std::cerr << " shift = " << lh.shift;
-			std::cerr << std::endl;
-			std::cerr <<  "     " <<  lh.hit1.name() << " axis=[" << lh.hit1.axes[1][0] <<","<< lh.hit1.axes[1][1] <<","<< lh.hit1.axes[1][2]
-				<< "] ";
-			if (lh.hit1.name().substr(0,1) == "D")
-				std::cerr << " axis2=[" << lh.hit1.axes[1][0] <<","<< lh.hit1.axes[2][1] <<","<< lh.hit1.axes[2][2] << "] ";
-			std::cerr << " origin=["<< lh.hit1.origin[0] <<","<< lh.hit1.origin[1] <<","<< lh.hit1.origin[2] <<"]" << std::endl;
-
-			std::cerr <<  "     " <<  lh.hit2.name() << " axis=[" << lh.hit2.axes[1][0] <<","<< lh.hit2.axes[1][1] <<","<< lh.hit2.axes[2][2]
-				<< "] ";
-			if (lh.hit2.name().substr(0,1) == "D")
-				std::cerr << " axis2=[" << lh.hit2.axes[2][0] <<","<< lh.hit2.axes[2][1] <<","<< lh.hit2.axes[2][2] << "] ";
-			std::cerr << " origin=["<< lh.hit2.origin[0] <<","<< lh.hit2.origin[1] <<","<< lh.hit2.origin[2] <<"]" << std::endl;
-
-		}
-
-		//for (int ss=1; ss<=(int)rts_symm.size(); ++ss)
-		//	disp_symmop( rts_symm[ss] );
 	}
 
 
@@ -915,901 +1230,4 @@ try {
 	return 0;
 }
 
-///
-void get_symmops(
-		std::string name_,
-		utility::vector1<core::kinematics::RT> &rt_out,
-		utility::vector1<numeric::xyzVector<core::Real> > &cenop) {
-	if ( name_ == "P1" ) {
-		rt_out.resize(1);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	if ( name_ == "P121" || name_ == "P2") {
-		rt_out.resize(2);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "P1211" || name_ == "P21" ) {
-		rt_out.resize(2);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0.5,0) );
-	}
-	else if ( name_ == "C121" || name_ == "C2" ) {
-		rt_out.resize(2);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0) );
-	}
-	else if ( name_ == "P4" ) {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "P41" ) {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.75) );
-	}
-	else if ( name_ == "P42" ) {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-	}
-	else if ( name_ == "P43" ) {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.75) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.25) );
-	}
-	else if ( name_ == "I4" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if ( name_ == "I41" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0.5,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0,0.75) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
- 	}
-	else if ( name_ == "P422" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "P4212" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "P4122" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.75) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.75) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.25) );
-	}
-	else if ( name_ == "P41212" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.75) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.75) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.25) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-	}
-	else if ( name_ == "P4222" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-	}
-	else if ( name_ == "P42212" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "P4322" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.75) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.25) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.25) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.75) );
-	}
-	else if ( name_ == "P43212" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.75) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.25) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.25) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.75) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0.5) );
-	}
-	else if ( name_ == "I422" ) {
-		rt_out.resize(16);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=8; ++ii) {
-			rt_out[8+ii] = rt_out[ii];
-			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if ( name_ == "I4122" ) {
-		rt_out.resize(16);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0.5,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0.5,0,0.75) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0.5,0.25) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0,0.75) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=8; ++ii) {
-			rt_out[8+ii] = rt_out[ii];
-			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if ( name_ == "P23" ) {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "F23" ) {
-		rt_out.resize(48);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.0,0.5,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.0,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.0));
-		for (int ii=1; ii<=12; ++ii) {
-			rt_out[12+ii] = rt_out[ii];
-			rt_out[24+ii] = rt_out[ii];
-			rt_out[36+ii] = rt_out[ii];
-			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
-			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
-			rt_out[36+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
-		}
-	}
-	else if ( name_ == "I23" ) {
-		rt_out.resize(24);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=12; ++ii) {
-			rt_out[12+ii] = rt_out[ii];
-			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if ( name_ == "P213" ) {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-	}
-	else if ( name_ == "I213" ) {
-		rt_out.resize(24);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0.5,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0.5,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=12; ++ii) {
-			rt_out[12+ii] = rt_out[ii];
-			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if ( name_ == "P432" ) {
-		rt_out.resize(24);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if ( name_ == "P4232" ) {
-		rt_out.resize(24);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0.5) );
-	}
-	else if ( name_ == "F432" ) {
-		rt_out.resize(96);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.0,0.5,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.0,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.0));
-		for (int ii=1; ii<=24; ++ii) {
-			rt_out[24+ii] = rt_out[ii];
-			rt_out[48+ii] = rt_out[ii];
-			rt_out[72+ii] = rt_out[ii];
-			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
-			rt_out[48+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
-			rt_out[72+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
-		}
-	}
-	else if ( name_ == "F4132" ) {
-		rt_out.resize(96);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0.75,0.75,0.25) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.0,0.5,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.0,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.0));
-		for (int ii=1; ii<=24; ++ii) {
-			rt_out[24+ii] = rt_out[ii];
-			rt_out[48+ii] = rt_out[ii];
-			rt_out[72+ii] = rt_out[ii];
-			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
-			rt_out[48+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
-			rt_out[72+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
-		}
-	}
-	else if ( name_ == "I432" ) {
-		rt_out.resize(48);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=24; ++ii) {
-			rt_out[24+ii] = rt_out[ii];
-			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if ( name_ == "P4332" ) {
-		rt_out.resize(24);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.75,0.75,0.25) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0.75,0.75,0.25) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0.75,0.75,0.25) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-	}
-	else if ( name_ == "P4132" ) {
-		rt_out.resize(24);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.25,0.75,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.25,0.25,0.75) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.75,0.25,0.25) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.75,0.75,0.75) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0.25,0.75,0.25) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0.25,0.25,0.75) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0.75,0.25,0.25) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0.75,0.75,0.75) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.75,0.25,0.25) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.75,0.75,0.75) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0.25,0.25,0.75) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0.25,0.75,0.25) );
-	}
-	else if ( name_ == "I4132" ) {
-		rt_out.resize(48);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.25,0.75,0.25) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0.25,0.25,0.75) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , numeric::xyzVector<Real>(0.25,0.75,0.25) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , numeric::xyzVector<Real>(0.25,0.25,0.75) );
-		rt_out[13] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[14] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , numeric::xyzVector<Real>(0.25,0.75,0.75) );
-		rt_out[15] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0.5,0,0) );
-		rt_out[16] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[17] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[18] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[19] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.75,0.25,0.25) );
-		rt_out[20] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		rt_out[21] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , numeric::xyzVector<Real>(0.25,0.25,0.25) );
-		rt_out[22] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[23] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , numeric::xyzVector<Real>(0.75,0.75,0.25) );
-		rt_out[24] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , numeric::xyzVector<Real>(0.75,0.25,0.75) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=24; ++ii) {
-			rt_out[24+ii] = rt_out[ii];
-			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if (name_ == "P3") {
-		rt_out.resize(3);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P31") {
-		rt_out.resize(3);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-	}
-	else if (name_ == "P32") {
-		rt_out.resize(3);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-	}
-	else if (name_ == "H3") {
-		rt_out.resize(9);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.666666666666667,0.333333333333333,0.333333333333333));
-		cenop.push_back(numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667));
-		for (int ii=1; ii<=3; ++ii) {
-			rt_out[3+ii] = rt_out[ii];
-			rt_out[3+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.666666666666667,0.333333333333333,0.333333333333333) );
-			rt_out[6+ii] = rt_out[ii];
-			rt_out[6+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667) );
-		}
-	}
-	else if (name_ == "P312") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P321") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P3112") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-	}
-	else if (name_ == "P3121") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-	}
-	else if (name_ == "P3212") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-	}
-	else if (name_ == "P3221") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-	}
-	else if (name_ == "H32") {
-		rt_out.resize(18);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.666666666666667,0.333333333333333,0.333333333333333));
-		cenop.push_back(numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667));
-		for (int ii=1; ii<=6; ++ii) {
-			rt_out[6+ii] = rt_out[ii];
-			rt_out[6+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.666666666666667,0.333333333333333,0.333333333333333) );
-			rt_out[12+ii] = rt_out[ii];
-			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667) );
-		}
-	}
-	else if (name_ == "P6") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P61") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.166666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.833333333333333) );
-	}
-	else if (name_ == "P65") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.833333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.166666666666667) );
-	}
-	else if (name_ == "P62") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-	}
-	else if (name_ == "P64") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-	}
-	else if (name_ == "P63") {
-		rt_out.resize(6);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-	}
-	else if (name_ == "P622") {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P6122") {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.166666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.833333333333333) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.833333333333333) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.166666666666667) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-	}
-	else if (name_ == "P6522") {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.833333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.166666666666667) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.166666666666667) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.833333333333333) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-	}
-	else if (name_ == "P6222") {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-	}
-	else if (name_ == "P6422") {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.333333333333333) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.666666666666667) );
-	}
-	else if (name_ == "P6322") {
-		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P222") {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-	}
-	else if (name_ == "P2221") {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-	}
-	else if (name_ == "P21212") {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-	}
-	else if (name_ == "P212121") {
-		rt_out.resize(4);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0.5,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0.5,0.5,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-	}
-	else if (name_ == "C2221") {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
-		}
-	}
-	else if (name_ == "C222") {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
-		}
-	}
-	else if (name_ == "F222") {
-		rt_out.resize(16);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0,0.5,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0,0.5));
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[8+ii] = rt_out[ii];
-			rt_out[12+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
-			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
-			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
-		}
-	}
-	else if (name_ == "I222") {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-	else if (name_ == "I212121") {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<Real>(0,0.5,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0.5) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0.5,0.5) );
-		// cenops
-		cenop.push_back(numeric::xyzVector<Real>(0.5,0.5,0.5));
-		for (int ii=1; ii<=4; ++ii) {
-			rt_out[4+ii] = rt_out[ii];
-			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
-		}
-	}
-}
+

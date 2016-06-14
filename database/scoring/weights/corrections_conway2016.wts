@@ -1,0 +1,28 @@
+# The scorefile (and corresponding rotamer library correction) is described in Conway and DiMaio, Protein Science 2016.
+# NOTE! This scorefile should be used with the flag -dun10_dir rotamer/corrections_conway2016
+#
+METHOD_WEIGHTS ref 0.773742 0.443793 -1.63002 -1.96094 0.61937 0.173326 0.388298 1.0806 -0.358574 0.761128 0.249477 -1.19118 -0.250485 -1.51717 -0.32436 0.165383 0.20134 0.979644 1.23413 0.162496
+fa_atr 1
+fa_rep 0.55
+fa_sol 0.9375
+fa_intra_rep 0.005
+fa_elec 0.875
+pro_close 1.25
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_fa13 1.25
+rama 0.25
+omega 0.625
+p_aa_pp 0.4
+yhh_planarity 0.625
+ref 1
+fa_intra_rep_xover4 0.55
+fa_intra_atr_xover4 1
+fa_intra_sol_xover4 0.9375
+fa_dun 0
+fa_dun_rot 0.7
+fa_dun_semi 0.7
+fa_dun_dev 0.375
+INCLUDE_INTRA_RES_PROTEIN

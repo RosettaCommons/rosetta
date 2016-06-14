@@ -266,6 +266,7 @@ sources = {
 	],
 	"public/weight_optimization": [
 		"optE_parallel",
+		"torsional_potential_corrections",
 	],
 }
 include_path = [
