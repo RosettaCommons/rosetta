@@ -1459,23 +1459,29 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs(
 		TR.Debug << "Starting " << njobs_from_above << " job(s) on slave node " << MPI_rank_ << "." << std::endl;
 	}
 
-	//Create and initialize the predictor:
-	SimpleCycpepPredictApplicationOP predict_app( new SimpleCycpepPredictApplication(false /*prevent file read*/) );
-	if(native_) predict_app->set_native( native_ );
-	predict_app->set_scorefxn( scorefxn_ );
-	predict_app->set_nstruct( njobs_from_above );
-	predict_app->set_sequence( sequence_ );
-	predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
-	predict_app->set_suppress_checkpoints( true );
-	predict_app->set_my_rank( MPI_rank_ );
-	predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
-	if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
-	if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
-	if( L_beta_comp_file_exists_ ) predict_app->set_L_beta_compfile_contents( comp_file_contents_L_beta_ );
-	if( D_beta_comp_file_exists_ ) predict_app->set_D_beta_compfile_contents( comp_file_contents_D_beta_ );
-	predict_app->set_abba_bins_binfile_contents( abba_bins_);
+	try {
+		//Create and initialize the predictor:
+		SimpleCycpepPredictApplicationOP predict_app( new SimpleCycpepPredictApplication(false /*prevent file read*/) );
+		if(native_) predict_app->set_native( native_ );
+		predict_app->set_scorefxn( scorefxn_ );
+		predict_app->set_nstruct( njobs_from_above );
+		predict_app->set_sequence( sequence_ );
+		predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
+		predict_app->set_suppress_checkpoints( true );
+		predict_app->set_my_rank( MPI_rank_ );
+		predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
+		if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
+		if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
+		if( L_beta_comp_file_exists_ ) predict_app->set_L_beta_compfile_contents( comp_file_contents_L_beta_ );
+		if( D_beta_comp_file_exists_ ) predict_app->set_D_beta_compfile_contents( comp_file_contents_D_beta_ );
+		predict_app->set_abba_bins_binfile_contents( abba_bins_);
 
-	predict_app->run();
+		predict_app->run();
+	} catch ( utility::excn::EXCN_Base &excn ) {
+		TR.Error << "Exception in SimpleCycpepPredictApplication caught:" << std::endl;
+		excn.show( TR.Error );
+		TR.Error.flush();
+	}
 
 	njobs_from_above=0;
 } //slave_carry_out_njobs()
