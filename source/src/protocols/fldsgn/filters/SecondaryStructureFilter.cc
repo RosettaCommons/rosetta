@@ -55,7 +55,8 @@ SecondaryStructureFilter::SecondaryStructureFilter():
 	Filter( "SecondaryStructure" ),
 	filtered_ss_( "" ),
 	use_abego_( false ),
-	use_pose_secstruct_( false )
+	use_pose_secstruct_( false ),
+	threshold_( 1.0 )
 {}
 
 
@@ -64,17 +65,8 @@ SecondaryStructureFilter::SecondaryStructureFilter( String const & ss ):
 	Filter( "SecondaryStructure" ),
 	filtered_ss_( ss ),
 	use_abego_( false ),
-	use_pose_secstruct_( false )
-{}
-
-// @brief copy constructor
-SecondaryStructureFilter::SecondaryStructureFilter( SecondaryStructureFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	filtered_ss_( rval.filtered_ss_ ),
-	filtered_abego_( rval.filtered_abego_ ),
-	use_abego_( rval.use_abego_ ),
-	use_pose_secstruct_( rval.use_pose_secstruct_ )
+	use_pose_secstruct_( false ),
+	threshold_( 1.0 )
 {}
 
 // @brief set filtered secondary structure
@@ -102,15 +94,9 @@ void SecondaryStructureFilter::set_use_pose_secstruct( bool const use_ss )
 // In this case, the test is whether the give pose is the topology we want.
 bool SecondaryStructureFilter::apply( Pose const & pose ) const
 {
-	// count protein residues
-	core::Size protein_residues( pose.total_residue() );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-		if ( ! pose.residue( i ).is_protein() ) {
-			--protein_residues;
-		}
-	}
-
-	return ( compute( pose ) >= protein_residues );
+	core::Real const score = report_sm( pose );
+	tr.Debug << "Score is " << score << " threshold " << threshold_ << std::endl;
+	return ( score >= threshold_ );
 } // apply_filter
 
 /// @brief parse xml
@@ -161,6 +147,8 @@ SecondaryStructureFilter::parse_my_tag(
 	if ( tag->hasOption( "use_pose_secstruct" ) ) {
 		set_use_pose_secstruct( tag->getOption< bool >( "use_pose_secstruct" ) );
 	}
+
+	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 }
 
 /// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
@@ -319,7 +307,15 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 core::Real
 SecondaryStructureFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	return core::Real( compute( pose ) ) / core::Real( pose.total_residue()  );
+	// count protein residues
+	core::Size protein_residues( pose.total_residue() );
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( ! pose.residue( i ).is_protein() ) {
+			--protein_residues;
+		}
+	}
+
+	return core::Real( compute( pose ) ) / core::Real( protein_residues );
 }
 
 protocols::filters::FilterOP

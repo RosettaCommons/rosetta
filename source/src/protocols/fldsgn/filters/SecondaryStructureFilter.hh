@@ -64,9 +64,6 @@ public:// constructor/destructor
 	// @brief constructor with arguments
 	SecondaryStructureFilter( String const & ss );
 
-	// @brief copy constructor
-	SecondaryStructureFilter( SecondaryStructureFilter const & rval );
-
 	virtual ~SecondaryStructureFilter(){}
 
 
@@ -127,6 +124,8 @@ private:
 	bool use_abego_;
 
 	bool use_pose_secstruct_;
+
+	core::Real threshold_;
 };
 
 } // filters
