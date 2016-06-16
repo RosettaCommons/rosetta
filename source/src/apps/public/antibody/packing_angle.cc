@@ -46,54 +46,54 @@ public:
 	// destructor
 	virtual ~PackingAngle(){};
 
-virtual void apply( core::pose::Pose & pose_in )
-{
-	TR << "Applying Packing Angle Calculator" << std::endl;
+	virtual void apply( core::pose::Pose & pose_in )
+	{
+		TR << "Applying Packing Angle Calculator" << std::endl;
 
-	using namespace core;
-	using namespace protocols;
-	using namespace core::pose;
-	using namespace protocols::moves;
-	using namespace protocols::antibody;
+		using namespace core;
+		using namespace protocols;
+		using namespace core::pose;
+		using namespace protocols::moves;
+		using namespace protocols::antibody;
 
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+		protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-	antibody::AntibodyInfoCOP ab_info_ = antibody::AntibodyInfoCOP ( new AntibodyInfo( pose_in ) );
-	PoseCOP new_pose = PoseOP( new Pose( pose_in ) );
+		antibody::AntibodyInfoCOP ab_info_ = antibody::AntibodyInfoCOP ( new AntibodyInfo( pose_in ) );
+		PoseCOP new_pose = PoseOP( new Pose( pose_in ) );
 
-	vector1< Real > orientation_coords_ = vl_vh_orientation_coords( *new_pose , *ab_info_ );
+		vector1< Real > orientation_coords_ = vl_vh_orientation_coords( *new_pose , *ab_info_ );
 
-	job->add_string_real_pair( "VL_VH_distance", orientation_coords_[1] );
-	job->add_string_real_pair( "VL_VH_opening_angle", orientation_coords_[2] );
-	job->add_string_real_pair( "VL_VH_opposite_opening_angle", orientation_coords_[3] );
-	job->add_string_real_pair( "VL_VH_packing_angle", orientation_coords_[4] );
-	job->add_string_real_pair( "H1_length", ab_info_->get_CDR_length( h1 ) );
-	job->add_string_real_pair( "H2_length", ab_info_->get_CDR_length( h2 ) );
-	job->add_string_real_pair( "H3_length", ab_info_->get_CDR_length( h3 ) );
-	job->add_string_real_pair( "L1_length", ab_info_->get_CDR_length( l1 ) );
-	job->add_string_real_pair( "L2_length", ab_info_->get_CDR_length( l2 ) );
-	job->add_string_real_pair( "L3_length", ab_info_->get_CDR_length( l3 ) );
+		job->add_string_real_pair( "VL_VH_distance", orientation_coords_[1] );
+		job->add_string_real_pair( "VL_VH_opening_angle", orientation_coords_[2] );
+		job->add_string_real_pair( "VL_VH_opposite_opening_angle", orientation_coords_[3] );
+		job->add_string_real_pair( "VL_VH_packing_angle", orientation_coords_[4] );
+		job->add_string_real_pair( "H1_length", ab_info_->get_CDR_length( h1 ) );
+		job->add_string_real_pair( "H2_length", ab_info_->get_CDR_length( h2 ) );
+		job->add_string_real_pair( "H3_length", ab_info_->get_CDR_length( h3 ) );
+		job->add_string_real_pair( "L1_length", ab_info_->get_CDR_length( l1 ) );
+		job->add_string_real_pair( "L2_length", ab_info_->get_CDR_length( l2 ) );
+		job->add_string_real_pair( "L3_length", ab_info_->get_CDR_length( l3 ) );
 
-	TR << "Finished applying Packing Angle Calculator" << std::endl;
+		TR << "Finished applying Packing Angle Calculator" << std::endl;
 
-	return;
-} // PackingAngle::apply()
+		return;
+	} // PackingAngle::apply()
 
-std::string get_name() const { return "PackingAngle"; }
+	std::string get_name() const { return "PackingAngle"; }
 
-  virtual
-  protocols::moves::MoverOP
-  fresh_instance() const {
-	  return protocols::moves::MoverOP( new PackingAngle() );
-  }
+	virtual
+	protocols::moves::MoverOP
+	fresh_instance() const {
+		return protocols::moves::MoverOP( new PackingAngle() );
+	}
 
-  virtual
-  bool
-  reinitialize_for_each_job() const { return false; }
+	virtual
+	bool
+	reinitialize_for_each_job() const { return false; }
 
-  virtual
-  bool
-  reinitialize_for_new_input() const { return false; }
+	virtual
+	bool
+	reinitialize_for_new_input() const { return false; }
 
 private:
 
@@ -106,7 +106,7 @@ typedef utility::pointer::shared_ptr< PackingAngle > PackingAngleOP;
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
 		protocols::jd2::register_options();
 
@@ -116,9 +116,9 @@ main( int argc, char * argv [] )
 		PackingAngleOP packing_angle = PackingAngleOP( new PackingAngle );
 		protocols::jd2::JobDistributor::get_instance()->go( packing_angle );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

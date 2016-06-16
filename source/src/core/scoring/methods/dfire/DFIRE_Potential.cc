@@ -115,44 +115,44 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 
 /* // unused
 core::Size DFIRE_Potential::res_index(
-	std::string const & input
+std::string const & input
 ) const {
-	std::string res_name(input);
-	boost::algorithm::trim(res_name);
-	if      ( res_name == "ASP" ) return  1;
-	else if ( res_name == "PRO" ) return  2;
-	else if ( res_name == "LYS" ) return  3;
-	else if ( res_name == "ILE" ) return  4;
-	else if ( res_name == "TRP" ) return  5;
-	else if ( res_name == "CYS" ) return  6;
-	else if ( res_name == "GLY" ) return  7;
-	else if ( res_name == "PHE" ) return  8;
-	else if ( res_name == "GLN" ) return  9;
-	else if ( res_name == "SER" ) return 10;
-	else if ( res_name == "ASN" ) return 11;
-	else if ( res_name == "LEU" ) return 12;
-	else if ( res_name == "VAL" ) return 13;
-	else if ( res_name == "TYR" ) return 14;
-	else if ( res_name == "GLU" ) return 15;
-	else if ( res_name == "ARG" ) return 16;
-	else if ( res_name == "THR" ) return 17;
-	else if ( res_name == "ALA" ) return 18;
-	else if ( res_name == "MET" ) return 19;
-	else if ( res_name == "HIS" ) return 20;
+std::string res_name(input);
+boost::algorithm::trim(res_name);
+if      ( res_name == "ASP" ) return  1;
+else if ( res_name == "PRO" ) return  2;
+else if ( res_name == "LYS" ) return  3;
+else if ( res_name == "ILE" ) return  4;
+else if ( res_name == "TRP" ) return  5;
+else if ( res_name == "CYS" ) return  6;
+else if ( res_name == "GLY" ) return  7;
+else if ( res_name == "PHE" ) return  8;
+else if ( res_name == "GLN" ) return  9;
+else if ( res_name == "SER" ) return 10;
+else if ( res_name == "ASN" ) return 11;
+else if ( res_name == "LEU" ) return 12;
+else if ( res_name == "VAL" ) return 13;
+else if ( res_name == "TYR" ) return 14;
+else if ( res_name == "GLU" ) return 15;
+else if ( res_name == "ARG" ) return 16;
+else if ( res_name == "THR" ) return 17;
+else if ( res_name == "ALA" ) return 18;
+else if ( res_name == "MET" ) return 19;
+else if ( res_name == "HIS" ) return 20;
 
-	return INVALID;
+return INVALID;
 }
 
 core::Size DFIRE_Potential::atom_index(
-	std::string const & atom_name
+std::string const & atom_name
 ) const {
-	if      ( atom_name ==  "N" ) return 1;
-	else if ( atom_name == "CA" ) return 2;
-	else if ( atom_name ==  "C" ) return 3;
-	else if ( atom_name ==  "O" ) return 4;
-	else if ( atom_name == "CB" ) return 5;
+if      ( atom_name ==  "N" ) return 1;
+else if ( atom_name == "CA" ) return 2;
+else if ( atom_name ==  "C" ) return 3;
+else if ( atom_name ==  "O" ) return 4;
+else if ( atom_name == "CB" ) return 5;
 
-	return INVALID;
+return INVALID;
 }
 */
 

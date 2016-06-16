@@ -428,16 +428,16 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
       // }
     }
   }
-	
+
 	// Get FRH, FRL, orientation from input sequence
 	FRH_FRL query_fr( calculate_frh_frl(A) );
-	
+
 	string query_frh = query_fr.frh1 + query_fr.frh2 + query_fr.frh3 + query_fr.frh4;
 	string query_frl = query_fr.frl1 + query_fr.frl2 + query_fr.frl3 + query_fr.frl4;
-	
+
 	//string query_heavy_orientation = query_fr.frh1 + A.h1_sequence() + query_fr.frh2 + A.h2_sequence() + query_fr.frh3 + A.h3_sequence() + query_fr.frh4;
 	//string query_light_orientation = query_fr.frl1 + A.l1_sequence() + query_fr.frl2 + A.l2_sequence() + query_fr.frl3 + A.l3_sequence() + query_fr.frl4;
-	
+
 	//string query_orientation = query_light_orientation + query_heavy_orientation; // Note: must be in this order
 
 	// Filter heavy framework region by sequence identity
@@ -456,7 +456,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
   for(auto p = results->frl.rbegin(); p != results->frl.rend(); ++p) {
     SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
     if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
-		
+
 		sid_ratio = sid_checker( query_frl, br->frl);
     if( sid_ratio > get_sid_cutoff_fr() ) {
         TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset << std::endl;
@@ -643,9 +643,9 @@ void SCS_BlastFilter_by_OCD::set_ocd_cutoff(core::Real cutoff) {
 }
 
 void SCS_BlastFilter_by_OCD::init_from_options(){
-	
+
 	using namespace basic::options;
-	
+
 	// note the defaults are 10 and 0.5 respectively
 	set_n_orientational_templates( option[ basic::options::OptionKeys::antibody::n_multi_templates ]() );
 	set_ocd_cutoff( option[ basic::options::OptionKeys::antibody::ocd_cutoff ]() );

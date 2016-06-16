@@ -190,10 +190,10 @@ std::string read_fasta_file_section(std::string const & filename, std::string co
 
 	vector1< SequenceOP > S = read_fasta_file(filename);
 
-	for(Size i=1; i<=S.size(); ++i) {
+	for ( Size i=1; i<=S.size(); ++i ) {
 		string id = S[i]->id();
 		std::transform(id.begin(), id.end(), id.begin(), ::tolower);
-		if( utility::startswith(id, section) ) return S[i]->sequence();
+		if ( utility::startswith(id, section) ) return S[i]->sequence();
 	}
 
 	utility_exit_with_message( "Error can't find section '" + section + "' in fasta file " + filename + "!" );

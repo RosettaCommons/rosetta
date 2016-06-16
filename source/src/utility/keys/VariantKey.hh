@@ -283,8 +283,8 @@ private: // Conversion
 	inline
 	operator Index() const
 	{
-		debug_assert( key_p_ );
-		return key_p_->index();
+	debug_assert( key_p_ );
+	return key_p_->index();
 	}
 	*/
 

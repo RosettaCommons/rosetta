@@ -74,11 +74,11 @@ public:
 			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->normalized_distance_in_degrees());
 			std::cout << output << std::endl;
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
-			
+
 			std::string cdr_str = ab_info->get_cluster_name(result->cluster()).substr(0,2);
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(cdr_str+"_cluster",ab_info->get_cluster_name(result->cluster()));
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(cdr_str+"_distance",utility::to_string(result->normalized_distance_in_degrees()));
-			
+
 			check_fix_aho_cdr_numbering(ab_info, cdr_name, pose);
 		}
 		std::cout << std::endl <<"Info added to any echo PDB" << std::endl << std::endl;

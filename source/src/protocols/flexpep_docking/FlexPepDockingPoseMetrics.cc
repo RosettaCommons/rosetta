@@ -142,7 +142,7 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 		}
 		// Calculate phi psi RMSd only for the positions that actually have these properties defined
 		core::chemical::ResidueType residue_type = pose1.conformation().residue_type(i);
-		if (!residue_type.is_protein() && !residue_type.is_peptoid() && !residue_type.is_carbohydrate()) {
+		if ( !residue_type.is_protein() && !residue_type.is_peptoid() && !residue_type.is_carbohydrate() ) {
 			continue;
 		}
 		core::Size natoms_res ( pose1.residue(i).natoms() );

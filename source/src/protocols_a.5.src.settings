@@ -18,6 +18,7 @@ sources = {
 		"OversaturatedHbondAcceptorFilter",
         	"PeptideStubMover",
 		"TryDisulfPermutations",
+                "FlipChiralityMover",
 	],
 	"protocols/denovo_design" : [
 		"util",

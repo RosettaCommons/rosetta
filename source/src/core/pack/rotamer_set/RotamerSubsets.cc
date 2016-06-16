@@ -95,27 +95,27 @@ RotamerSubsets::~RotamerSubsets() {}
 void
 RotamerSubsets::update_offset_data()
 {
-	// count rotamers
-	nrotamers_ = 0;
-	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
-		nrotamers_for_moltenres_[ ii ] = set_of_rotamer_sets_[ii]->num_rotamers();
-		nrotamers_ += set_of_rotamer_sets_[ii]->num_rotamers();
-		if ( ii > 1 ) { nrotamer_offsets_[ ii ] = nrotamer_offsets_[ii - 1] + set_of_rotamer_sets_[ii - 1]->num_rotamers(); }
-		else { nrotamer_offsets_[ ii ] = 0; }
-	}
+// count rotamers
+nrotamers_ = 0;
+for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
+nrotamers_for_moltenres_[ ii ] = set_of_rotamer_sets_[ii]->num_rotamers();
+nrotamers_ += set_of_rotamer_sets_[ii]->num_rotamers();
+if ( ii > 1 ) { nrotamer_offsets_[ ii ] = nrotamer_offsets_[ii - 1] + set_of_rotamer_sets_[ii - 1]->num_rotamers(); }
+else { nrotamer_offsets_[ ii ] = 0; }
+}
 
-	moltenres_for_rotamer_.resize( nrotamers_ );
-	uint count_rots_for_moltenres = 1;
-	uint count_moltenres = 1;
-	for ( uint ii = 1; ii <= nrotamers_; ++ii ) {
-		moltenres_for_rotamer_[ ii ] = count_moltenres;
-		if ( count_rots_for_moltenres == nrotamers_for_moltenres_[ count_moltenres ] ) {
-			count_rots_for_moltenres = 1;
-			++count_moltenres;
-		} else {
-			++count_rots_for_moltenres;
-		}
-	}
+moltenres_for_rotamer_.resize( nrotamers_ );
+uint count_rots_for_moltenres = 1;
+uint count_moltenres = 1;
+for ( uint ii = 1; ii <= nrotamers_; ++ii ) {
+moltenres_for_rotamer_[ ii ] = count_moltenres;
+if ( count_rots_for_moltenres == nrotamers_for_moltenres_[ count_moltenres ] ) {
+count_rots_for_moltenres = 1;
+++count_moltenres;
+} else {
+++count_rots_for_moltenres;
+}
+}
 }
 */
 

@@ -58,9 +58,9 @@ public:
 private:
 	/* // Unused
 	void clear() {
-		in_list_ = false;
-		prev_ = 0;
-		next_ = 0;
+	in_list_ = false;
+	prev_ = 0;
+	next_ = 0;
 	}
 	*/
 

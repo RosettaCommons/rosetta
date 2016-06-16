@@ -124,7 +124,7 @@ private:
 	inline
 	bool
 	bonded(Size i, Size j) {
-		return restype_.path_distance(i,j) == 1;
+	return restype_.path_distance(i,j) == 1;
 	}
 	*/
 

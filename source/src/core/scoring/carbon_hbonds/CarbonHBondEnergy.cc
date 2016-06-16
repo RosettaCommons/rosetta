@@ -636,13 +636,13 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 bool
 CarbonHBondEnergy::atom_is_apolar_h( conformation::Residue const & rsd, Size const atm ) const
 {
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = rsd.Hpos_apolar().begin(),
-			hnume = rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
-		if ( don_h_atm == atm ) return true;
-	}
-	return false;
+for ( chemical::AtomIndices::const_iterator
+hnum  = rsd.Hpos_apolar().begin(),
+hnume = rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
+Size const don_h_atm( *hnum );
+if ( don_h_atm == atm ) return true;
+}
+return false;
 }
 //////////////////////////////////////////////////////////////////////////////
 // Stupid helper function
@@ -650,13 +650,13 @@ CarbonHBondEnergy::atom_is_apolar_h( conformation::Residue const & rsd, Size con
 bool
 CarbonHBondEnergy::atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const
 {
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd.accpt_pos().begin(),
-			anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atm( *anum );
-		if ( acc_atm == atm ) return true;
-	}
-	return false;
+for ( chemical::AtomIndices::const_iterator
+anum  = rsd.accpt_pos().begin(),
+anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+Size const acc_atm( *anum );
+if ( acc_atm == atm ) return true;
+}
+return false;
 }
 */
 

@@ -144,7 +144,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 		j.pose->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment" + suffix + ".pdb" );
 
 		PoseOP O = orientation->split_by_chain( find_chain(*orientation, j.chain, "orientation" ) );
-		
+
 		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover( *O,
 																																										  1 /*ref_start*/,
 																																										  std::min( O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
@@ -190,7 +190,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	};
 
 	for(auto &g : G) {
-		
+
 		TR << "Attaching CDR loop: " << TR.Bold << g.name << ", from pdb: " << g.pdb << std::endl;
 
 		string pdb_name = database + "/antibody_database/pdb" + g.pdb + "_chothia.pdb";
@@ -245,7 +245,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 	// prior to dumping, restore proper sequence to CDRs as grafter copies over both structure and sequence from the template
 	AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo(*result) );
-	
+
 	struct{
 		string cdr_name; Size cdr_start; Size cdr_end; string cdr_seq;
 	} H[] {
@@ -256,17 +256,17 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		{ "l2", ab_info->get_CDR_start(l2, *result), ab_info->get_CDR_end(l2, *result),  A.l2_sequence() },
 		{ "l3", ab_info->get_CDR_start(l3, *result), ab_info->get_CDR_end(l3, *result),  A.l3_sequence() },
 	};
-	
+
 	for (auto &h : H) {
 		// check for matching lengths of cdr and cdr sequence
 		// everything should be kosher since we're using the chothia definition throughout (AFAIK)
 		if ( h.cdr_seq.size() != h.cdr_end - h.cdr_start + 1 ) throw _AE_grafting_failed_( string("Could revert sequence to query after grafting cdr ") + h.cdr_name + ". Length mismatch between CDR in grafted model (" + utility::to_string(h.cdr_end - h.cdr_start + 1) +  ") and query sequence (" + utility::to_string(h.cdr_seq.size()) + ").");
 
-		
+
 		for(Size i = h.cdr_start; i < h.cdr_end + 1; ++i) {
 			protocols::simple_moves::MutateResidue( i, h.cdr_seq[i-h.cdr_start] ).apply( *result );
 		}
-		
+
 	}
 
 	result->dump_pdb(prefix + "model" + suffix + ".pdb");

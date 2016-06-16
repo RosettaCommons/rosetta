@@ -1,0 +1,19 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+	<FlipChiralityMover name="mirror" centerx=30 centery=2 centerz=-3 normalx=1 normaly=0 normalz=1/>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+	<Add mover=mirror/> #remember to de-activate one of the above
+    </PROTOCOLS>
+    <OUTPUT />
+</ROSETTASCRIPTS>

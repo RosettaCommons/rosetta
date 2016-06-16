@@ -90,38 +90,38 @@ void register_options()
 void relax_model(core::pose::PoseOP &pose)
 {
 	using namespace basic::options;
-	
+
 	// manually set options for user, if not set (probs not the way to do this, but BDW said it should be ok for now...)
 	if ( !option[ OptionKeys::relax::constrain_relax_to_start_coords ].user() ) {
 		option[ OptionKeys::relax::constrain_relax_to_start_coords ].value(true);
 	}
-	
+
 	if ( !option[ OptionKeys::relax::coord_constrain_sidechains ].user() ) {
 		option[ OptionKeys::relax::coord_constrain_sidechains ].value(true);
 	}
-	
+
 	if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
 		option[ OptionKeys::relax::ramp_constraints ].value(false);
 	}
-	
+
 	if ( !option[ OptionKeys::packing::ex1::ex1 ].user() ) {
 		option[ OptionKeys::packing::ex1::ex1 ].value(true);
 	}
-	
+
 	if ( !option[ OptionKeys::packing::ex2::ex2 ].user() ) {
 		option[ OptionKeys::packing::ex2::ex2 ].value(true);
 	}
-	
+
 	if ( !option[ OptionKeys::packing::use_input_sc ].user() ) {
 		option[ OptionKeys::packing::use_input_sc ].value(true);
 	}
-	
+
 	if ( !option[ OptionKeys::out::file::scorefile ].user() ) {
 		option[ OptionKeys::out::file::scorefile ].value("score-relax.sf");
 	}
-	
+
 	protocols::relax::RelaxProtocolBaseOP protocol = protocols::relax::generate_relax_from_cmd();
-	
+
 	//relax
 	protocol->apply( *pose );
 }
@@ -171,10 +171,10 @@ int antibody_main()
 	}
 
 	string const prefix = basic::options::option[basic::options::OptionKeys::antibody::prefix]();
-	
+
 	// strip directory from prefix, then make it recursively
 	string const prefix_path = prefix.substr( 0, prefix.find_last_of( "/\\" ) ); // NOT OS AGNOSTIC?
-	
+
 	if (!utility::file::is_directory( prefix_path ) ) {
 		utility::file::create_directory_recursive( prefix_path );
 	}
@@ -230,9 +230,9 @@ int antibody_main()
 				SCS_ResultSet r;
 				try { r = scs_results->get_result_set(i); }
 				catch(std::out_of_range e) { break; }
-				
+
 				string const suffix = '-'+std::to_string(i);
-				
+
 				// override scs_resultset->resultop->pdb if user specifies a template
 				// needs to check for identical length, but how?
 				// all only for manual specification if single template grafting
@@ -248,7 +248,7 @@ int antibody_main()
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified L3 CDR!" << TR.Reset << std::endl;
 					r.l3->pdb = basic::options::option[ basic::options::OptionKeys::antibody::l3_template ].value().substr( 0, 4 );
 				}
-				
+
 				if ( basic::options::option[ basic::options::OptionKeys::antibody::h1_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified H1 CDR!" << TR.Reset << std::endl;
 					r.h1->pdb = basic::options::option[ basic::options::OptionKeys::antibody::h1_template ].value().substr( 0, 4 );
@@ -261,7 +261,7 @@ int antibody_main()
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified H3 CDR!" << TR.Reset << std::endl;
 					r.h3->pdb = basic::options::option[ basic::options::OptionKeys::antibody::h3_template ].value().substr( 0, 4 );
 				}
-				
+
 				if ( basic::options::option[ basic::options::OptionKeys::antibody::frl_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified light FR!" << TR.Reset << std::endl;
 					r.frl->pdb = basic::options::option[ basic::options::OptionKeys::antibody::frl_template ].value().substr( 0, 4 );
@@ -270,7 +270,7 @@ int antibody_main()
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified heavy FR!" << TR.Reset << std::endl;
 					r.frh->pdb = basic::options::option[ basic::options::OptionKeys::antibody::frh_template ].value().substr( 0, 4 );
 				}
-				
+
 				if ( basic::options::option[ basic::options::OptionKeys::antibody::light_heavy_template ].user() and
 						 n_templates == 1 ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified light-heavy orientation!" << TR.Reset << std::endl;

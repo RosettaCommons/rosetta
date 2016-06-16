@@ -41,34 +41,34 @@ main( int argc, char * argv [] )
 
 		// initialize core
 		devel::init(argc, argv);
-		
+
 		// set some default options (hacked since accessors don't exist)
 		// manually set options for user, if not set (probs not the way to do this, but BDW said it should be ok for now...)
-		
+
 		if ( !option[ OptionKeys::packing::ex1::ex1 ].user() ) {
 			option[ OptionKeys::packing::ex1::ex1 ].value(true);
 		}
-		
+
 		if ( !option[ OptionKeys::packing::ex2aro::ex2aro ].user() ) {
 			option[ OptionKeys::packing::ex2aro::ex2aro ].value(true);
 		}
-		
+
 		if ( !option[ OptionKeys::packing::use_input_sc ].user() ) {
 			option[ OptionKeys::packing::use_input_sc ].value(true);
 		}
-		
+
 		if ( !option[ OptionKeys::packing::use_input_sc ].user() ) {
 			option[ OptionKeys::packing::use_input_sc ].value(true);
 		}
-		
+
 		if ( !option[ OptionKeys::loops::refine_outer_cycles ].user() ) {
 			option[ OptionKeys::loops::refine_outer_cycles ].value(2);
 		}
-		
+
 		if ( !option[ OptionKeys::loops::max_inner_cycles ].user() ) {
 			option[ OptionKeys::loops::max_inner_cycles ].value(20);
 		}
-		
+
 		if ( !option[ OptionKeys::out::file::scorefile ].user() ) {
 			option[ OptionKeys::out::file::scorefile ].value("score-snugdock.sf");
 		}
