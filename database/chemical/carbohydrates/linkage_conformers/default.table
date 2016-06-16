@@ -20,7 +20,7 @@
 # residue has no effect on the values.
 
 # For peptide-glycan N-linkages, psi is equivalent to ASN's chi3 (the peptide
-# bond, omega1 is equivalent to its chi2, and omega2 to chi1.
+# bond, omega1 is equivalent to its chi2 + 180 degrees, and omega2 to chi1.
 
 # IF ADDING NEW ROWS, please sort them such that higher population conformers
 # come first.
@@ -29,7 +29,7 @@
 # the higher-numbered residued, which is attached to the lower-numbered
 # residue.  This ordering from right to left matches IUPAC ordering of chains.
 
-# non-reducing-end_res	reducing-end_res	population	phi_stdev	psi_mean	psi_stdev	omega_mean	omega_stdev	omega2_mean	omega2_stdev
+# non-reducing-end_res	reducing-end_res	population	phi_mean	phi_stdev	psi_mean	psi_stdev	omega_mean	omega_stdev	omega2_mean	omega2_stdev
 
 alpha-L-Fucp	->3)-D-GlcpNAc	0.90	-71.9	8.0	-98.7	7.1
 alpha-L-Fucp	->6)-D-GlcpNAc	0.81	-75.7	13.7	204.9	24.0	63.4	12.3
@@ -65,8 +65,8 @@ alpha-Neup5Ac	->6)-D-Galp	0.14	294.5	0.0	122.2	0.0	30.1	0.0
 beta-D-Xylp	->2)-D-Manp	1.00	-91.5	6.6	-105.8	3.9
 
 
-# '04 values (g+, t, ga-, gb-, respectively)
-beta-D-GlcpNAc	ASN	0.18	253.7	21.5	358.5	13.9	371.1	31.6	63.6	8.9
-beta-D-GlcpNAc	ASN	0.50	261.0	21.3	357.3	12.3	357.6	43.0	191.6	14.4
-beta-D-GlcpNAc	ASN	0.24	268.0	20.3	353.1	12.2	332.9	23.9	290.6	12.7
-beta-D-GlcpNAc	ASN	0.09	267.5	23.9	358.1	11.5	435.0	28.8	302.3	11.5
+# '04 values (t, ga-, g+, gb-, respectively)
+beta-D-GlcpNAc	ASN	0.50	261.0	21.3	177.3	12.3	357.6	43.0	191.6	14.4
+beta-D-GlcpNAc	ASN	0.24	268.0	20.3	173.1	12.2	332.9	23.9	290.6	12.7
+beta-D-GlcpNAc	ASN	0.18	253.7	21.5	178.5	13.9	371.1	31.6	63.6	8.9
+beta-D-GlcpNAc	ASN	0.09	267.5	23.9	178.1	11.5	435.0	28.8	302.3	11.5
