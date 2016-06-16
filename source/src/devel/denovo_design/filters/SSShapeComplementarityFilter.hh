@@ -26,16 +26,16 @@
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
+// Core headers
 #include <core/kinematics/MoveMap.fwd.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-//// C++ headers
+// C++ headers
 #include <string>
 
 #include <core/io/silent/silent.fwd.hh>
@@ -51,9 +51,6 @@ public:
 
 	/// @brief Initialize SSShapeComplementarityFilter
 	SSShapeComplementarityFilter();
-
-	/// @brief copy constructor
-	SSShapeComplementarityFilter( SSShapeComplementarityFilter const & rval );
 
 	/// @brief virtual constructor to allow derivation
 	virtual ~SSShapeComplementarityFilter();
@@ -88,6 +85,9 @@ public:
 	///
 	core::Real rejection_thresh() const {return rejection_thresh_;}
 
+	void
+	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
+
 private:   // private functions
 	/// @brief sets up the underlying filter to work based on a helix
 	void
@@ -104,6 +104,12 @@ private:   // private functions
 		protocols::fldsgn::topology::SS_Info2 const & ss_info,
 		protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const;
 
+	core::Real
+	compute_from_selector( core::pose::Pose const & pose ) const;
+
+	core::Real
+	compute_from_ss_info( core::pose::Pose const & pose ) const;
+
 	/// @brief Runs the SC calculator to obtain an SC score and an interaction area. Returns a result in the format core::scoring::sc::RESULTS.  Assumes the SC calculator has been initialized and has the correct residues added.
 	core::scoring::sc::RESULTS const &
 	get_sc_and_area() const;
@@ -115,14 +121,15 @@ private:   // options
 	bool calc_loops_;
 	/// @brief should we calculate SC from each helix to the rest of the protein?
 	bool calc_helices_;
-
 	/// @brief Threshold below which structures are rejected.  Default 0.0 (no filtration).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	core::Real rejection_thresh_;
+	/// @brief If set, this will be used as the secondary structure for the pose, instead of DSSP
+	std::string secstruct_;
 
 private:   // other data
-	/// @brief the blueprint file that contains secondary structure definitions
-	protocols::jd2::parser::BluePrintCOP blueprint_;
+	/// @brief residue selector
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	/// @brief the shape complementarity calculator
 	core::scoring::sc::ShapeComplementarityCalculatorOP scc_;
 

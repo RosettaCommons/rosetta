@@ -18,16 +18,19 @@
 #include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 
 // Protocol Headers
-
-// Project Headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
+
+// Core Headers
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueVector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
@@ -38,19 +41,6 @@
 // ObjexxFCL Headers
 
 //C++ Headers
-
-
-#ifdef GL_GRAPHICS
-#include <protocols/viewer/viewers.hh>
-#endif
-
-#if defined(WIN32) || defined(__CYGWIN__)
-#include <ctime>
-#endif
-
-#ifdef BOINC_GRAPHICS
-#include <protocols/boinc/boinc.hh>
-#endif
 
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.SSShapeComplementarityFilter" );
@@ -87,19 +77,9 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter() :
 	calc_loops_( true ),
 	calc_helices_( true ),
 	rejection_thresh_(0),
-	blueprint_( /* NULL */ ),
+	secstruct_( "" ),
+	selector_(),
 	scc_( core::scoring::sc::ShapeComplementarityCalculatorOP( new core::scoring::sc::ShapeComplementarityCalculator() ) )
-{
-}
-
-SSShapeComplementarityFilter::SSShapeComplementarityFilter( SSShapeComplementarityFilter const & rval ) :
-	Filter( rval ),
-	verbose_( rval.verbose_ ),
-	calc_loops_( rval.calc_loops_ ),
-	calc_helices_( rval.calc_helices_ ),
-	rejection_thresh_(rval.rejection_thresh_),
-	blueprint_( rval.blueprint_ ),
-	scc_( rval.scc_ )
 {
 }
 
@@ -107,7 +87,6 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter( SSShapeComplementari
 //// nothing needs to be cleaned. C++ will take care of that for us.
 SSShapeComplementarityFilter::~SSShapeComplementarityFilter()
 {}
-
 
 /// Return a copy of ourselves
 protocols::filters::FilterOP
@@ -125,18 +104,28 @@ SSShapeComplementarityFilter::fresh_instance() const
 void
 SSShapeComplementarityFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
+	if ( tag->hasOption( "blueprint" ) && tag->hasOption( "secstruct" ) ) {
+		std::stringstream msg;
+		msg << "SSShapeComplementarityFilter: You cannot specify both blueprint and secstruct options" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
-		blueprint_ = protocols::jd2::parser::BluePrintCOP( protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( bp_filename ) ) );
-		if ( ! blueprint_ ) {
-			utility_exit_with_message( "Error reading blueprint file." );
-		}
+		protocols::jd2::parser::BluePrint bp( bp_filename );
+		secstruct_ = bp.secstruct();
 	}
+
+	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
+
+	core::select::residue_selector::ResidueSelectorCOP selector =
+		core::select::residue_selector::parse_residue_selector( tag, data );
+	if ( selector ) set_residue_selector( *selector );
 
 	verbose_ = tag->getOption< bool >( "verbose", verbose_ );
 	calc_loops_ = tag->getOption< bool >( "loops", calc_loops_ );
@@ -171,28 +160,82 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 		TR.Error << "Failed to initialize ShapeComplementarityCalculator!" << std::endl;
 		return -1;
 	}
-	scc_->Reset();
 
-	protocols::fldsgn::topology::SS_Info2_OP ss_info;
-	if ( blueprint_ ) {
-		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, blueprint_->secstruct() ) );
+	if ( !selector_ ) {
+		return compute_from_ss_info( pose );
 	} else {
-		core::scoring::dssp::Dssp dssp( pose );
-		std::string const & dssp_ss( dssp.get_dssp_secstruct() );
+		return compute_from_selector( pose );
+	}
+}
 
-		// only count protein residues
-		std::string secstruct( "" );
-		for ( core::Size i=1; i<=dssp_ss.size(); ++i ) {
-			if ( pose.residue( i ).is_protein() ) {
-				secstruct += dssp_ss[i-1];
-			}
+void
+SSShapeComplementarityFilter::set_residue_selector( core::select::residue_selector::ResidueSelector const & selector )
+{
+	selector_ = selector.clone();
+}
+
+/// @brief computes sc score for selectoed residues vs the rest of the pose
+///        Residue selector MUST be set to call this
+core::Real
+SSShapeComplementarityFilter::compute_from_selector( core::pose::Pose const & pose ) const
+{
+	debug_assert( selector_ );
+	using core::select::residue_selector::ResidueSubset;
+	using core::select::residue_selector::ResidueVector;
+	ResidueSubset const subset = selector_->apply( pose );
+
+	// setup calculator
+	scc_->Reset();
+	core::Size resid = 1;
+	ResidueVector residues;
+	for ( ResidueSubset::const_iterator s=subset.begin(); s!=subset.end(); ++s, ++resid ) {
+		if ( *s ) {
+			scc_->AddResidue( 0, pose.residue( resid ) );
+			residues.push_back( resid );
+		} else {
+			scc_->AddResidue( 1, pose.residue( resid ) );
 		}
+	}
 
-		// AMW: cppcheck noticed that secstruct wasn't being used. I think it should be used here!
-		// Note that this would be compatible with the SS_Info2 constructor's interpretation of the dssp string
-		// i.e. that it should skip non protein residues, and only be THAT long.
-		//ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() ) );
-		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
+	TR << "Running SC calculator for residues " << residues << std::endl;
+
+	if ( residues.size() == 0 ) {
+		TR << "No residues selected, returning 0.0" << std::endl;
+		return 0.0;
+	}
+
+	core::scoring::sc::RESULTS const & r( get_sc_and_area() );
+	if ( r.valid == 1 ) {
+		core::Real const sum = ( r.sc * r.area );
+		core::Real const total_area = r.area;
+		core::Real score;
+		if ( total_area == 0.0 ) score = 0.0;
+		else score = sum / total_area;
+		TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << "; num_res="
+			<< residues.size() << "; score=" << score << std::endl;
+		return score;
+	} else {
+		std::stringstream msg;
+		msg << "SSShapeComplementarityFilter::compute_from_selector(): Error running SC Calculator! Residues :";
+		for ( ResidueVector::const_iterator r=residues.begin(); r!=residues.end(); ++r ) {
+			if ( r != residues.begin() ) msg << ", ";
+			msg << pose.residue( *r ).name() << *r;
+		}
+		msg << std::endl;
+		utility_exit_with_message( msg.str() );
+		return 0.0;
+	}
+}
+
+core::Real
+SSShapeComplementarityFilter::compute_from_ss_info( core::pose::Pose const & pose ) const
+{
+	protocols::fldsgn::topology::SS_Info2_OP ss_info;
+	if ( secstruct_.empty() ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() ) );
+	} else {
+		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, secstruct_ ) );
 	}
 
 	// we will average out the shape complementarity from HSS triplets and Helix-Helix pairings

@@ -34,16 +34,14 @@ namespace residue_selector {
 
 class ResidueVector : public utility::vector1< core::Size > {
 public:
-	/// @brief Constructor.
-	///
+	/// @brief Default constructor
+	ResidueVector();
+
+	/// @brief Constructor from ResidueSubset.
 	ResidueVector( ResidueSubset const & subset );
 
 	/// @brief Destructor.
-	///
 	virtual ~ResidueVector();
-
-private:
-	ResidueVector();
 
 };
 

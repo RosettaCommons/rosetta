@@ -23,6 +23,10 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
+ResidueVector::ResidueVector():
+	utility::vector1< core::Size >()
+{}
+
 ResidueVector::ResidueVector( ResidueSubset const & subset ):
 	utility::vector1< core::Size >()
 {
