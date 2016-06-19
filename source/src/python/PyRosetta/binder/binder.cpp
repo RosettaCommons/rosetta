@@ -65,7 +65,7 @@ using std::string;
 cl::opt<std::string> O_root_module("root-module", cl::desc("Name of root module"), /*cl::init("example"),*/ cl::cat(BinderToolCategory));
 //cl::opt<std::string> O_root_module("root-module", cl::desc("Name of root module"), cl::Required, cl::cat(BinderToolCategory));
 
-cl::opt<int> O_max_file_size("max-file-size", cl::desc("Specify maximum length of generated source files"), cl::init(1024*4), cl::cat(BinderToolCategory));
+cl::opt<int> O_max_file_size("max-file-size", cl::desc("Specify maximum length of generated source files"), cl::init(1024*16), cl::cat(BinderToolCategory));
 
 cl::opt<std::string> O_prefix("prefix", cl::desc("Output prefix for all generated files. Might contain directories."), cl::init(""), cl::cat(BinderToolCategory));
 

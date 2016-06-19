@@ -39,7 +39,7 @@ private:
 	std::string s_;
 };
 
-std::ostream & operator << ( std::ostream & os, Value const & v) { os << "Value('" << v.s() << "') "; return os; }
+inline std::ostream & operator << ( std::ostream & os, Value const & v) { os << "Value('" << v.s() << "') "; return os; }
 
 typedef utility::pointer::shared_ptr< Value > ValueOP;
 typedef utility::pointer::shared_ptr< Value const > ValueCOP;
@@ -65,8 +65,8 @@ typedef utility::pointer::shared_ptr< Base > BaseOP;
 typedef utility::pointer::shared_ptr< Base const > BaseCOP;
 
 
-void foo_all(Base &b, int i, Value &v, std::string s)     { b.foo_int(i);   b.foo_value(v);   b.foo_string(s); }
-void foo_all_sp(BaseOP b, int i, Value &v, std::string s) { b->foo_int(i);  b->foo_value(v);  b->foo_string(s); }
+inline void foo_all(Base &b, int i, Value &v, std::string s)     { b.foo_int(i);   b.foo_value(v);   b.foo_string(s); }
+inline void foo_all_sp(BaseOP b, int i, Value &v, std::string s) { b->foo_int(i);  b->foo_value(v);  b->foo_string(s); }
 
 
 } } // namespace py namespace utility

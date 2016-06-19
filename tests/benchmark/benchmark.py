@@ -32,6 +32,7 @@ else:                                Platform['os'] = 'unknown'
 #Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
 Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 
+Platform['python'] = sys.executable
 
 def print_(x): print x
 
@@ -47,10 +48,13 @@ def main(args):
     )
 
     parser.add_argument('-m', '--memory',
-      default=0, type=float,
+      default=0, type=int,
       help="Amount of memory to use (default: use 2Gb per job",
     )
 
+    parser.add_argument('--compiler', default=Platform['compiler'], help="Compiler to use")
+
+    parser.add_argument('--python', default=Platform['python'], help="Python interpreter to use")
 
     parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
 
@@ -75,8 +79,10 @@ def main(args):
     #Platform['options'] = json.loads( Options.options ) if Options.options else {}
 
     if Options.memory: memory = Options.memory
-    elif Platform['os'] == 'linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
-    elif Platform['os'] == 'mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[1]) / 1024 / 1024 / 1024
+    elif Platform['os'] == 'linux': memory = int(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
+    elif Platform['os'] == 'mac':   memory = int(commands.getoutput('sysctl -a | grep hw.memsize').split()[1]) / 1024 / 1024 / 1024
+
+    Platform['compiler'] = Options.compiler
 
     if os.path.isfile('benchmark.ini'):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )

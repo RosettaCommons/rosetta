@@ -62,6 +62,8 @@ class MinimalFragSetIterator_ : public FrameIteratorWorker_ {
 	typedef std::map< Size, FrameList > FrameMap;
 	typedef FrameMap::const_iterator OuterIterator;
 	typedef FrameList::const_iterator InnerIterator;
+
+	MinimalFragSetIterator_ & operator = (MinimalFragSetIterator_ const&);
 protected:
 	MinimalFragSetIterator_( OuterIterator it, OuterIterator eit ) : outer_( it ), outer_end_( eit ) {
 		if ( outer_ != outer_end_ ) {

@@ -65,7 +65,7 @@ StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 	//utility::pointer::ReferenceCount(),
 	Mover(src)
 {
-	chain_map = std::map< std::string const, std::string const >( src.chain_map );
+	chain_map = std::map< std::string, std::string>( src.chain_map );
 	relevant_chains_fname = src.relevant_chains_fname;
 	initialized = src.initialized;
 }
@@ -97,7 +97,7 @@ StructureRestrictor::parse_my_tag(
 void
 StructureRestrictor::setup_relevant_chains(
 	string const & relevant_chains_fname,
-	map<string const, string const> & chain_map
+	map<string, string> & chain_map
 ){
 	if ( relevant_chains_fname.length() == 0 ) {
 		TR_SR.Error << " Cannot open relevant_chains_file '"<< relevant_chains_fname << "'" << endl;
@@ -117,7 +117,7 @@ StructureRestrictor::setup_relevant_chains(
 	while ( getline( relevant_chains_file, line ) ) {
 		string tab("\t");
 		split(tokens, line, is_any_of(tab) );
-		chain_map.insert(std::pair<string const, string const>(tokens[0], tokens[1]));
+		chain_map.insert(std::pair<string, string>(tokens[0], tokens[1]));
 	}
 	initialized = true;
 }
@@ -147,7 +147,7 @@ StructureRestrictor::apply( Pose& pose ){
 
 
 	string const & name = pose_name(pose);
-	map<string const, string const>::iterator i(chain_map.find(name));
+	map<string, string>::iterator i(chain_map.find(name));
 	if ( i == chain_map.end() ) {
 		TR_SR << "No chain information found for structure " << name << "." << endl;
 		return;

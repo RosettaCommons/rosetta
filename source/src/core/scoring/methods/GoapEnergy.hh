@@ -180,8 +180,8 @@ public:
 	bool continuous() const { return continuous_; }
 	bool eval_res( Size const resno ) const { return eval_res_[resno]; }
 
-	Size distbin_map( Size const i ) const {
-		std::map< Size const, Size >::const_iterator it;
+	Size distbin_map( Size i ) const {
+		std::map< Size, Size >::const_iterator it;
 		it = distbin_map_.find(i);
 		if ( it == distbin_map_.end() ) {
 			return 0;
@@ -280,7 +280,7 @@ private:
 	ObjexxFCL::FArray3D< Real > distance_table_; // 167, 167, 20
 	ObjexxFCL::FArray5D< int > angle_table_; // 167, 167, 20, 12, 5: store as integer by mulitplying 1e4
 
-	std::map< Size const, Size > distbin_map_;
+	std::map< Size, Size > distbin_map_;
 
 	Size N_ATMTYPES;
 	Size N_DISTANCE_BINS;

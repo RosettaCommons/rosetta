@@ -33,14 +33,26 @@ void foo_r(float &)  {}
 void foo_r(double &) {}
 void foo_r(A &)      {}
 void foo_r(std::shared_ptr<A> &) {}
+void foo_r_not_binded(std::pair<int, int> &) {}
 
-void foo_not_binded(bool *)   {}
-void foo_not_binded(int *)    {}
-void foo_not_binded(long *)   {}
-void foo_not_binded(float *)  {}
-void foo_not_binded(double *) {}
+void foo_cr(bool const &)   {}
+void foo_cr(int const &)    {}
+void foo_cr(long const &)   {}
+void foo_cr(float const &)  {}
+void foo_cr(double const &) {}
+void foo_cr(A const &)      {}
+void foo_cr(std::shared_ptr<A> const &) {}
+void foo_cr2(std::shared_ptr<A const> const &) {}
+void foo_cr(std::pair<int, int> const &) {}
+
+void foo_p(bool *)   {}
+void foo_p(int *)    {}
+void foo_p(long *)   {}
+void foo_p(float *)  {}
+void foo_p(double *) {}
 void foo_p(A *)               {}
 void foo_p(std::shared_ptr<A> *) {}
+void foo_p_not_binded(std::pair<int, int> *) {}
 
 
 #endif // _INCLUDED_T02_function_hpp_

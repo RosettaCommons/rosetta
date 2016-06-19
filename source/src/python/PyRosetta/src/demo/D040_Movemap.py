@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -60,6 +62,7 @@ The method movemap:
 import optparse    # for option sorting
 
 from rosetta import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -112,10 +115,10 @@ def movemap(pose, PDB_out = False):
     # turn "off" all backbone torsion angles
     pose_move_map.set_bb(False)    # reset to backbone False
     # turn "on" a range of residue backbone torsion angles
-    pose_move_map.set_bb_true_range(pose.total_residue() / 4,
-        pose.total_residue() * 3 / 4)
+    pose_move_map.set_bb_true_range(int(pose.total_residue() / 4),
+                                    int(pose.total_residue() * 3 / 4) )
     # create the MinMover
-    minmover = MinMover()
+    minmover = protocols.simple_moves.MinMover()
     minmover.score_function(scorefxn)
     minmover.movemap(pose_move_map)
 
@@ -125,7 +128,7 @@ def movemap(pose, PDB_out = False):
     # apply minimization
     scorefxn(test_pose)    # to prevent verbose output on the next line
 
-    pymover = PyMOL_Mover()
+    pymover = PyMolMover()
     #### uncomment the line below and "comment-out" the two lines below to
     ####    export the structures into different PyMOL states of the same object
     #pymover.keep_history = True    # enables viewing across states
@@ -134,13 +137,13 @@ def movemap(pose, PDB_out = False):
     ####    PyMOL_Mover to produce new objects
     test_pose.pdb_info().name('original')
     pymover.apply(test_pose)
-    print '\nPre minimization score:', scorefxn(test_pose)
+    print( '\nPre minimization score:', scorefxn(test_pose) )
 
     minmover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('minimized.pdb')
 
-    print 'Post minimization score:', scorefxn(test_pose)
+    print( 'Post minimization score:', scorefxn(test_pose) )
     #### comment-out the line below
     test_pose.pdb_info().name('minimized')
     pymover.apply(test_pose)

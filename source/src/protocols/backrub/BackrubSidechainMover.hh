@@ -33,6 +33,10 @@
 #include <utility/vector0.hh>
 #include <numeric/MultiDimensionalHistogram.fwd.hh>
 
+#ifdef PYROSETTA
+#include <numeric/MultiDimensionalHistogram.hh>
+#endif
+
 
 namespace protocols {
 namespace backrub {

@@ -35,6 +35,11 @@
 
 #include <utility/OrderedTuple.fwd.hh>
 
+#ifdef PYROSETTA
+#include <utility/OrderedTuple.hh>
+#include <numeric/xyzVector.hh>
+#endif
+
 
 namespace protocols {
 namespace match {

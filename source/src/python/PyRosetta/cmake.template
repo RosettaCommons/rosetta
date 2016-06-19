@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(rosetta)
 
 # Add a CMake parameter for choosing a desired Python version
-set(PYROSETTA_PYTHON_VERSION "" CACHE STRING "Python version to use for compiling the example library")
+set(PYROSETTA_PYTHON_VERSION "" CACHE STRING "Python version to use for compiling the PyRosetta library")
 
 include(CheckCXXCompilerFlag)
 
@@ -17,14 +17,15 @@ endif()
 string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
 # Try to autodetect Python (can be overridden manually if needed)
-set(Python_ADDITIONAL_VERSIONS 3.4 3.5 3.6 3.7)
 if (NOT ${PYROSETTA_PYTHON_VERSION} STREQUAL "")
   find_package(PythonLibs ${PYROSETTA_PYTHON_VERSION} EXACT)
   if (NOT PythonLibs_FOUND)
-    find_package(PythonLibs ${PYROSETTA_PYTHON_VERSION} REQUIRED)
+     MESSAGE( FATAL_ERROR "Could not find requested Python version EXACT: " ${PYROSETTA_PYTHON_VERSION} " terminating...")
+     find_package(PythonLibs ${PYROSETTA_PYTHON_VERSION} REQUIRED)
   endif()
 else()
-  find_package(PythonLibs REQUIRED)
+    set(Python_ADDITIONAL_VERSIONS 3.4 3.5 3.6 3.7 2.7)
+    find_package(PythonLibs REQUIRED)
 endif()
 
 # Uncomment the following line if you will also require a matching Python interpreter

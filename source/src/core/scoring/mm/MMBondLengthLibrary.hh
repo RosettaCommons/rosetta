@@ -28,6 +28,9 @@
 
 #include <utility/keys/Key2Tuple.fwd.hh>
 
+#ifdef PYROSETTA
+#include <utility/keys/Key2Tuple.hh>
+#endif
 
 namespace core {
 namespace scoring {

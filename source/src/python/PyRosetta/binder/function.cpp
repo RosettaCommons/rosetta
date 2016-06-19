@@ -40,9 +40,21 @@ using namespace fmt::literals;
 namespace binder {
 
 static std::map<string, string > const cpp_python_operator_map {
+	{"operator+", "__add__"},
+	{"operator-", "__sub__"},
+
+	// {"operator+=", "__iadd__"},
+	// {"operator-=", "__isub__"},
+	{"operator*=", "__imul__"},
+	{"operator/=", "__idiv__"},
+
 	{"operator()", "__call__"},
 	{"operator==", "__eq__"},
 	{"operator!=", "__ne__"},
+	{"operator[]", "__getitem__"},
+	{"operator=",  "assign"},
+	{"operator++", "plus_plus"},
+	{"operator--", "minus_minus"},
 };
 
 // Generate function argument list separate by comma: int, bool, std::string
@@ -258,8 +270,10 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 		}
 	}
 
+	string maybe_return_policy = F->getReturnType()->isLValueReferenceType() ? ", pybind11::return_value_policy::reference": "";
+
 	//string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
-	string r = R"(.def{}("{}", {}, "doc")"_format(maybe_static, function_name, function);
+	string r = R"(.def{}("{}", {}, "doc"{})"_format(maybe_static, function_name, function, maybe_return_policy);
 
 	if(request_bindings_f) request_bindings(F->getReturnType().getCanonicalType(), context);
 
@@ -359,7 +373,8 @@ string FunctionBinder::id() const
 /// check if generator can create binding
 bool is_bindable(FunctionDecl const *F)
 {
-	bool r = true;
+	//bool r = true;
+	bool r = !F->isDeleted();
 
 	if( F->isOverloadedOperator() ) {
 		//outs() << "Operator: " << F->getNameAsString() << '\n';
@@ -372,7 +387,7 @@ bool is_bindable(FunctionDecl const *F)
 
 	r &= is_bindable(rt);
 
-	for(auto p = F->param_begin(); p != F->param_end(); ++p) r &= is_bindable( (*p)->getOriginalType() );
+	for(auto p = F->param_begin(); p != F->param_end(); ++p) r &= is_bindable( (*p)->getOriginalType().getCanonicalType() );
 	//outs() << "is_bindable: " << F->getQualifiedNameAsString() << " " << r << "\n";
 
 	return r;

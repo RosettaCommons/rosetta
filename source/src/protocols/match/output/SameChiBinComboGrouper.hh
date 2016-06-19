@@ -24,11 +24,13 @@
 #include <protocols/match/Hit.fwd.hh>
 
 // Utility headers
+#include <utility/OrderedTuple.fwd.hh>
 
-// C++ headers
 #include <map>
 
-#include <utility/OrderedTuple.fwd.hh>
+#ifdef PYROSETTA
+#include <utility/OrderedTuple.hh>
+#endif
 
 
 namespace protocols {

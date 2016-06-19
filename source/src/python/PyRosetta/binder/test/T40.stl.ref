@@ -1,16 +1,27 @@
 // File: std/stl_vector.cpp
 #include <initializer_list> // std::initializer_list
+#include <iterator> // __gnu_cxx::__normal_iterator
 #include <memory> // std::allocator
 #include <memory> // std::allocator<int>::allocator
+#include <memory> // std::allocator<int>::operator=
 #include <vector> // std::vector
 #include <vector> // std::vector<int, std::allocator<int> >::assign
 #include <vector> // std::vector<int, std::allocator<int> >::at
 #include <vector> // std::vector<int, std::allocator<int> >::back
+#include <vector> // std::vector<int, std::allocator<int> >::begin
 #include <vector> // std::vector<int, std::allocator<int> >::capacity
+#include <vector> // std::vector<int, std::allocator<int> >::cbegin
+#include <vector> // std::vector<int, std::allocator<int> >::cend
 #include <vector> // std::vector<int, std::allocator<int> >::clear
+#include <vector> // std::vector<int, std::allocator<int> >::data
 #include <vector> // std::vector<int, std::allocator<int> >::empty
+#include <vector> // std::vector<int, std::allocator<int> >::end
+#include <vector> // std::vector<int, std::allocator<int> >::erase
 #include <vector> // std::vector<int, std::allocator<int> >::front
+#include <vector> // std::vector<int, std::allocator<int> >::insert
 #include <vector> // std::vector<int, std::allocator<int> >::max_size
+#include <vector> // std::vector<int, std::allocator<int> >::operator=
+#include <vector> // std::vector<int, std::allocator<int> >::operator[]
 #include <vector> // std::vector<int, std::allocator<int> >::pop_back
 #include <vector> // std::vector<int, std::allocator<int> >::push_back
 #include <vector> // std::vector<int, std::allocator<int> >::reserve
@@ -31,7 +42,7 @@
 
 void bind_std_stl_vector(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-// std::vector file:bits/stl_vector.h line:210
+	// std::vector file:bits/stl_vector.h line:210
 binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_int_t");
 
 }
@@ -40,17 +51,28 @@ binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_i
 // File: T40_stl.cpp
 #include <T40.stl.hpp> // foo
 #include <initializer_list> // std::initializer_list
+#include <iterator> // __gnu_cxx::__normal_iterator
 #include <memory> // std::allocator
 #include <memory> // std::allocator<int>::allocator
+#include <memory> // std::allocator<int>::operator=
 #include <vector> // std::vector
 #include <vector> // std::vector<int, std::allocator<int> >::assign
 #include <vector> // std::vector<int, std::allocator<int> >::at
 #include <vector> // std::vector<int, std::allocator<int> >::back
+#include <vector> // std::vector<int, std::allocator<int> >::begin
 #include <vector> // std::vector<int, std::allocator<int> >::capacity
+#include <vector> // std::vector<int, std::allocator<int> >::cbegin
+#include <vector> // std::vector<int, std::allocator<int> >::cend
 #include <vector> // std::vector<int, std::allocator<int> >::clear
+#include <vector> // std::vector<int, std::allocator<int> >::data
 #include <vector> // std::vector<int, std::allocator<int> >::empty
+#include <vector> // std::vector<int, std::allocator<int> >::end
+#include <vector> // std::vector<int, std::allocator<int> >::erase
 #include <vector> // std::vector<int, std::allocator<int> >::front
+#include <vector> // std::vector<int, std::allocator<int> >::insert
 #include <vector> // std::vector<int, std::allocator<int> >::max_size
+#include <vector> // std::vector<int, std::allocator<int> >::operator=
+#include <vector> // std::vector<int, std::allocator<int> >::operator[]
 #include <vector> // std::vector<int, std::allocator<int> >::pop_back
 #include <vector> // std::vector<int, std::allocator<int> >::push_back
 #include <vector> // std::vector<int, std::allocator<int> >::reserve

@@ -31,7 +31,7 @@ class Config
 		root_module(root_module_), namespaces_to_bind(namespaces_to_bind_), namespaces_to_skip(namespaces_to_skip_), prefix(prefix_), maximum_file_length(maximum_file_length_) {}
 
 private:
-	std::map<string, string> binders_;
+	std::map<string, string> binders_, add_on_binders_;
 
 public:
 	static Config &get();
@@ -46,6 +46,7 @@ public:
 						includes_to_add, includes_to_skip;
 
 	std::map<string, string> const &binders() const { return binders_; }
+	std::map<string, string> const &add_on_binders() const { return add_on_binders_; }
 
 	string prefix;
 

@@ -45,6 +45,7 @@ namespace scoring {
 
 class DenseNeighborIterator : public ResidueNeighborIterator
 {
+	DenseNeighborIterator & operator = (DenseNeighborIterator const & src );
 public:
 	virtual ~DenseNeighborIterator();
 
@@ -98,6 +99,7 @@ private:
 
 class DenseNeighborConstIterator : public ResidueNeighborConstIterator
 {
+	DenseNeighborConstIterator & operator = (DenseNeighborConstIterator const & src );
 public:
 	virtual ~DenseNeighborConstIterator();
 

@@ -32,6 +32,9 @@
 #include <core/id/AtomID.fwd.hh>
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+#include <core/id/AtomID.hh>
+#endif
 
 namespace protocols {
 namespace match {

@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -53,7 +55,7 @@ The method pose_structure:
 import optparse    # for option sorting
 
 from rosetta import *
-from rosetta.PyMolLink import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -87,22 +89,22 @@ def pose_structure(pose, display_residues = []):
             unique_chains.append(c)
 
     # start outputting information to screen
-    print '\n' + '='*80
-    print 'Loaded from' , pdb_info.name()
-    print nres , 'residues'
-    print len(unique_chains), 'chain(s) ('+ str(unique_chains)[1:-1] + ')'
-    print 'Sequence:\n' + sequence
+    print('\n' + '='*80)
+    print('Loaded from' , pdb_info.name())
+    print(nres , 'residues')
+    print(len(unique_chains), 'chain(s) ('+ str(unique_chains)[1:-1] + ')')
+    print('Sequence:\n' + sequence)
 
     # this object is contained in PyRosetta v2.0 and above
     # 5. obtain the pose's secondary structure as predicted by PyRosetta's
     #    built-in DSSP algorithm
-    DSSP = DsspMover()
+    DSSP = protocols.moves.DsspMover()
     DSSP.apply(pose)    # populates the pose's Pose.secstruct
     ss = pose.secstruct()
-    print 'Secondary Structure:\n' + ss
-    print '\t' + str(100. * ss.count('H') / len(ss))[:4] + '% Helical'
-    print '\t' + str(100. * ss.count('E') / len(ss))[:4] + '% Sheet'
-    print '\t' + str(100. * ss.count('L') / len(ss))[:4] + '% Loop'
+    print( 'Secondary Structure:\n' + ss )
+    print( '\t' + str(100. * ss.count('H') / len(ss))[:4] + '% Helical' )
+    print( '\t' + str(100. * ss.count('E') / len(ss))[:4] + '% Sheet' )
+    print( '\t' + str(100. * ss.count('L') / len(ss))[:4] + '% Loop' )
 
     # 6. obtain the phi, psi, and omega torsion angles
     phis = [pose.phi(i) for i in range(1, nres + 1)]
@@ -110,28 +112,28 @@ def pose_structure(pose, display_residues = []):
     omegas = [pose.omega(i) for i in range(1, nres + 1)]
 
     # this object is contained in PyRosetta v2.0 and above
-    # create a PyMOL_Mover for exporting structures directly to PyMOL
-    pymover = PyMOL_Mover()
+    # create a PyMolMover for exporting structures directly to PyMOL
+    pymover = PyMolMover()
     pymover.apply(pose)    # export the structure to PyMOL (optional)
 
     # 7. output information on the requested residues
     # use a simple dictionary to make output nicer
     ss_dict = {'L':'Loop', 'H':'Helix', 'E':'Strand'}
     for i in display_residues:
-        print '='*80
-        print 'Pose numbered Residue', i
-        print 'PDB numbered Residue', PDB_nums[i-1]
-        print 'Single Letter:', sequence[i-1]
-        print 'Chain:', chains[i-1]
-        print 'Secondary Structure:', ss_dict[ss[i-1]]
-        print 'Phi:', phis[i-1]
-        print 'Psi:', psis[i-1]
-        print 'Omega:', omegas[i-1]
+        print( '='*80 )
+        print( 'Pose numbered Residue', i )
+        print( 'PDB numbered Residue', PDB_nums[i-1] )
+        print( 'Single Letter:', sequence[i-1] )
+        print( 'Chain:', chains[i-1] )
+        print( 'Secondary Structure:', ss_dict[ss[i-1]] )
+        print( 'Phi:', phis[i-1] )
+        print( 'Psi:', psis[i-1] )
+        print( 'Omega:', omegas[i-1] )
         # extract the chis
         chis = [pose.chi(j + 1, i) for j in range(pose.residue(i).nchi() )]
         for chi_no in range(len(chis)):
-            print 'Chi ' + str(chi_no + 1) + ':', chis[chi_no]
-    print '='*80
+            print( 'Chi ' + str(chi_no + 1) + ':', chis[chi_no] )
+    print( '='*80 )
 
 ################################################################################
 # INTERPRETING RESULTS
@@ -181,10 +183,10 @@ pose_from_file(pose, pdb_filename)
 # default to the median residue number
 residues = options.residues
 if not options.residues:
-    residues = [pose.total_residue()/2]
+    residues = [int(pose.total_residue()/2)]
 elif options.residues == 'all':
     # accept the word 'all' in place of a residue list
-    residues = range(1 ,pose.total_residue() + 1)
+    residues = range(1, pose.total_residue() + 1)
 else:
     # please provide the residues of interest as, delimited
     residues = [int(r) for r in options.residues.split(',')]

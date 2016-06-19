@@ -61,6 +61,8 @@ class OrderedFragSetIterator_ : public FrameIteratorWorker_ {
 	typedef std::map< Size, FrameList > FrameMap;
 	typedef FrameMap::const_iterator OuterIterator;
 	typedef FrameList::const_iterator InnerIterator;
+
+	OrderedFragSetIterator_ & operator = (OrderedFragSetIterator_ const&);
 protected:
 	OrderedFragSetIterator_( OuterIterator it, OuterIterator eit ) : outer_( it ), outer_end_( eit ) {
 		if ( outer_ != outer_end_ ) {

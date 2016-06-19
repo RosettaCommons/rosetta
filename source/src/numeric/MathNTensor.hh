@@ -126,7 +126,7 @@ public:
 		for ( Size i = 1; i <= n_dimensions_.size(); ++i ) {
 			size_ *= n_dimensions_[ i ];
 		}
-		data_( new T[ size_ ] );
+		data_ = new T[ size_ ];
 		for ( Size ii = 0; ii < size_; ++ii ) { data_[ ii ] = data[ ii ]; }
 		n_xs_ = n_dimensions_.size();
 	}
@@ -252,4 +252,3 @@ private:
 
 
 #endif
-

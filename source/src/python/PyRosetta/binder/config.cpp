@@ -52,11 +52,12 @@ Config &Config::get()
 /// Read config setting from file
 void Config::read(string const &file_name)
 {
-	string const _namespace_ {"namespace"};
-	string const _function_  {"function"};
-	string const _class_     {"class"};
-	string const _include_   {"include"};
-	string const _binder_    {"binder"};
+	string const _namespace_     {"namespace"};
+	string const _function_      {"function"};
+	string const _class_         {"class"};
+	string const _include_       {"include"};
+	string const _binder_        {"binder"};
+	string const _add_on_binder_ {"add_on_binder"};
 
 	std::ifstream f(file_name);
 	string line;
@@ -99,6 +100,13 @@ void Config::read(string const &file_name)
 						if(bind) {
 							auto binder_function = split_in_two(name, "Invalid line for binder specification! Must be: name_of_type + <space or tab> + name_of_binder. Got: " + line);
 							binders_[binder_function.first] = binder_function.second;
+						}
+
+					} else if( token == _add_on_binder_ ) {
+
+						if(bind) {
+							auto binder_function = split_in_two(name, "Invalid line for add_on_binder specification! Must be: name_of_type + <space or tab> + name_of_binder. Got: " + line);
+							add_on_binders_[binder_function.first] = binder_function.second;
 						}
 
 					} else throw std::runtime_error("Invalid token in config file! Each token must be ether: namespace, class or function! For example: '+function aaa::bb::my_function'. Token: '" + token + "' Line: '" + line + '\'');
@@ -242,6 +250,5 @@ string Config::includes_code() const
 	for(auto & i: includes_to_add) c += "#include " + i + "\n";
 	return c.size() ? c+'\n' : c;
 }
-
 
 } // namespace binder

@@ -133,7 +133,7 @@ private:
 	bool is_random_;
 	utility::vector1< MethodParams > params_;
 	utility::vector1< core::Size > methods_picked_;
-	std::map< core::Size const, std::string > methodname_;
+	std::map< core::Size, std::string > methodname_;
 	core::Size isch_;
 	core::Size niter_;
 	core::Size iter_;

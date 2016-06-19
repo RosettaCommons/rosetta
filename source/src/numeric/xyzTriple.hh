@@ -2149,6 +2149,7 @@ not_equal_length( xyzTriple< T > const & a, xyzTriple< T > const & b );
 
 /// @brief Dot product
 template <typename U>
+inline
 U
 dot( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2158,6 +2159,7 @@ dot( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Dot product
 template <typename U>
+inline
 U
 dot_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2167,6 +2169,7 @@ dot_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Inner product ( == dot product )
 template <typename U>
+inline
 U
 inner_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2175,6 +2178,7 @@ inner_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Equal length?
 template <typename U>
+inline
 bool
 equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2184,6 +2188,7 @@ equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Cross product
 template <typename U>
+inline
 xyzTriple<U>
 cross( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2197,6 +2202,7 @@ cross( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Cross product
 template <typename U>
+inline
 xyzTriple<U>
 cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2210,6 +2216,7 @@ cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Cross product: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 cross( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c )
 {
@@ -2221,6 +2228,7 @@ cross( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c )
 
 /// @brief Cross product: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c )
 {
@@ -2232,6 +2240,7 @@ cross_product( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & c 
 
 /// @brief Midpoint of 2 xyzTriples
 template <typename U>
+inline
 xyzTriple<U>
 midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2245,6 +2254,7 @@ midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Midpoint of 2 xyzTriples: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m )
 {
@@ -2256,6 +2266,7 @@ midpoint( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m )
 
 /// @brief Center of 2 xyzTriples
 template <typename U>
+inline
 xyzTriple<U>
 center( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2269,6 +2280,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Center of 2 xyzTriples: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m )
 {
@@ -2280,6 +2292,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & m )
 
 /// @brief Center of 3 xyzTriples
 template <typename U>
+inline
 xyzTriple<U>
 center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 {
@@ -2294,6 +2307,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 
 /// @brief Center of 3 xyzTriples: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> & m )
 {
@@ -2306,6 +2320,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, 
 
 /// @brief Center of 4 xyzTriples
 template <typename U>
+inline
 xyzTriple<U>
 center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> const & d )
 {
@@ -2319,6 +2334,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, 
 
 /// @brief Center of 4 xyzTriples: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, xyzTriple<U> const & d, xyzTriple<U> & m )
 {
@@ -2330,6 +2346,7 @@ center( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c, 
 
 /// @brief Angle between two vectors (in radians on [ 0, pi ])
 template <typename U>
+inline
 U
 angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2342,6 +2359,7 @@ angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
 /// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 ///        in other words, the positive angle about b from a to c
 template <typename U>
+inline
 U
 angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 {
@@ -2351,6 +2369,7 @@ angle_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c
 
 /// @brief Cosine of angle between two vectors
 template <typename U>
+inline
 U
 cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2363,6 +2382,7 @@ cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
 /// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 ///        in other words, the positive angle about b from a to c.
 template <typename U>
+inline
 U
 cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 {
@@ -2372,6 +2392,7 @@ cos_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 
 /// @brief Sine of angle between two vectors
 template <typename U>
+inline
 U
 sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2383,6 +2404,7 @@ sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b )
 /// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 ///        in other words, the positive angle about b from a to c
 template <typename U>
+inline
 U
 sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 {
@@ -2391,6 +2413,7 @@ sin_of( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> const & c )
 
 /// @brief Distance squared
 template <typename U>
+inline
 U
 distance_squared( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2399,6 +2422,7 @@ distance_squared( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Not equal length?
 template <typename U>
+inline
 bool
 not_equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2407,6 +2431,7 @@ not_equal_length( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Add: xyzTriple + xyzTriple
 template <typename U>
+inline
 void
 add( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r )
 {
@@ -2418,6 +2443,7 @@ add( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r )
 
 /// @brief Add: xyzTriple + Value
 template <typename U>
+inline
 void
 add( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 {
@@ -2429,6 +2455,7 @@ add( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 
 /// @brief Add: Value + xyzTriple
 template <typename U>
+inline
 void
 add( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
 {
@@ -2440,6 +2467,7 @@ add( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
 
 /// @brief Subtract: xyzTriple - xyzTriple
 template <typename U>
+inline
 void
 subtract( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r )
 {
@@ -2451,6 +2479,7 @@ subtract( xyzTriple<U> const & a, xyzTriple<U> const & b, xyzTriple<U> & r )
 
 /// @brief Subtract: xyzTriple - Value
 template <typename U>
+inline
 void
 subtract( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 {
@@ -2462,6 +2491,7 @@ subtract( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 
 /// @brief Subtract: Value - xyzTriple
 template <typename U>
+inline
 void
 subtract( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
 {
@@ -2473,6 +2503,7 @@ subtract( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
 
 /// @brief Multiply: xyzTriple * Value
 template <typename U>
+inline
 void
 multiply( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 {
@@ -2484,6 +2515,7 @@ multiply( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 
 /// @brief Multiply: Value * xyzTriple
 template <typename U>
+inline
 void
 multiply( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
 {
@@ -2495,6 +2527,7 @@ multiply( U const & t, xyzTriple<U> const & v, xyzTriple<U> & r )
 
 /// @brief Divide: xyzTriple / Value
 template <typename U>
+inline
 void
 divide( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 {
@@ -2507,6 +2540,7 @@ divide( xyzTriple<U> const & v, U const & t, xyzTriple<U> & r )
 
 /// @brief xyzTriple with min coordinates of two xyzTriples
 template <typename U>
+inline
 xyzTriple<U>
 min( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2520,6 +2554,7 @@ min( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief xyzTriple with max coordinates of two xyzTriples
 template <typename U>
+inline
 xyzTriple<U>
 max( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {
@@ -2532,6 +2567,7 @@ max( xyzTriple<U> const & a, xyzTriple<U> const & b )
 
 /// @brief Distance
 template <typename U>
+inline
 U
 distance( xyzTriple<U> const & a, xyzTriple<U> const & b )
 {

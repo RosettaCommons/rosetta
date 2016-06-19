@@ -8,8 +8,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file   tests/PyRosetta.py
-## @brief  PyRosetta binding self tests
+## @file   tests/release.py
+## @brief  Rosetta and PyRosetta release scripts
 ## @author Sergey Lyskov
 
 import os, os.path, json, commands, shutil, tarfile
@@ -17,7 +17,7 @@ import os, os.path, json, commands, shutil, tarfile
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.0'
 
 _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 1

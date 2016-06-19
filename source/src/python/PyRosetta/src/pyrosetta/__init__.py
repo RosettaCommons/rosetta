@@ -24,14 +24,21 @@ logger = logging.getLogger("rosetta")
 import pyrosetta.logging_support as logging_support
 
 # PyRosetta-3 comapatability
+# WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
 from rosetta.core.pose import make_pose_from_sequence, Pose
+from rosetta.core.kinematics import FoldTree, MoveMap
 from rosetta.core.import_pose import pose_from_file
 from rosetta.core.io.pdb import dump_pdb
 from rosetta.core.id import AtomID
+from rosetta.core.scoring import ScoreFunction
+
+from rosetta.protocols.moves import PyMolMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
+from rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
+from rosetta.protocols.loops import get_fa_scorefxn
 
 create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
 
-rosetta.utility.vector1_string = rosetta.utility.vector1_std_basic_string_char_t
+rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
 
 
 ###############################################################################
@@ -97,7 +104,8 @@ def rosetta_database_from_env():
         candidate_paths.append(database_name)
 
         #Package directory database
-        if '__file__' in vars(): candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
+        #if '__file__' in vars(): candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
+        candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
 
         #Home directory database
         if 'HOME' in os.environ: candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
@@ -208,7 +216,6 @@ def _Pose_residue_iterator(obj):
 # Vector compatibility: Adding 'extend' to all utility.vector* functions
 def _vector_extend_func(vec, othervec):
     for i in othervec: vec.append(i)
-
 for k, vectype in rosetta.utility.__dict__.items():
     if k.startswith("vector1_") or k.startswith("vector0_") or k.startswith("vectorL_"): vectype.extend = _vector_extend_func
 
@@ -299,10 +306,10 @@ def generate_nonstandard_residue_set(params_list):
 
 
 def standard_task_factory():
-        tf = TaskFactory()
-        tf.push_back(InitializeFromCommandline())
-        #tf.push_back(IncludeCurrent())
-        tf.push_back(NoRepackDisulfides())
+        tf = rosetta.core.pack.task.TaskFactory()
+        tf.push_back(rosetta.core.pack.task.operation.InitializeFromCommandline())
+        #tf.push_back(rosetta.core.pack.task.operation.IncludeCurrent())
+        tf.push_back(rosetta.core.pack.task.operation.NoRepackDisulfides())
         return tf
 
 
@@ -409,7 +416,7 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, \
 
     # Calculates rmsd if native pose is defined.
     if native_pose:
-        rmsd = CA_rmsd(native_pose, pose)
+        rmsd = rosetta.core.scoring.CA_rmsd(native_pose, pose)
         output_line = output_line + " rmsd: " + str(round(rmsd, 2))
 
     with open(scorefilepath, 'a') as f:

@@ -29,16 +29,13 @@ class vector_binder
 
 
 public:
-	vector_binder(pybind11::module &m, std::string const &name_, std::string const & /*allocator name*/)
+	vector_binder(pybind11::module &m, std::string const &name, std::string const & /*allocator name*/)
 	{
 		using Vector = std::vector<T, Allocator>;
 		using holder_type = std::shared_ptr<std::vector<T, Allocator>>;
 		using Class_ = pybind11::class_<Vector, holder_type>;
 
-		static std::string name; // workaround for char* capturing in lambda capture in bind_vector
-		name = name_;
-
-		Class_ cl = pybind11::bind_vector<T, Allocator, holder_type>(m, name.c_str());
+		Class_ cl = pybind11::bind_vector<T, Allocator, holder_type>(m, "vector_"+name);
 
 		//cl.def(pybind11::init<size_type>());
 		//cl.def("resize", (void (Vector::*) (size_type count)) & Vector::resize, "changes the number of elements stored");
@@ -48,8 +45,8 @@ public:
 		cl.def("reserve",       &Vector::reserve,       "reserves storage");
 		cl.def("capacity",      &Vector::capacity,      "returns the number of elements that can be held in currently allocated storage");
 		cl.def("shrink_to_fit", &Vector::shrink_to_fit, "reduces memory usage by freeing unused memory");
-		cl.def("clear", &Vector::clear, "clears the contents");
-		cl.def("swap",   &Vector::swap, "swaps the contents");
+		cl.def("clear",         &Vector::clear, "clears the contents");
+		cl.def("swap",          &Vector::swap, "swaps the contents");
 
 		// cl.def("front", [](Vector &v) {
 		// 		if (v.size()) return v.front();
@@ -62,6 +59,20 @@ public:
 	}
 };
 
+
+template <typename Key, typename T, typename Compare, class Allocator>
+class map_binder
+{
+public:
+	map_binder(pybind11::module &m, std::string const &key_name, std::string const &value_name, std::string const & /*compare name*/, std::string const & /*allocator name*/)
+	{
+		using Map = std::map<Key, T, Compare, Allocator>;
+		using holder_type = std::shared_ptr< std::map<Key, T, Compare, Allocator> >;
+		using Class_ = pybind11::class_<Map, holder_type>;
+
+		Class_ cl = pybind11::bind_map<Key, T, Compare, Allocator, holder_type>(m, "map_"+key_name + '_' + value_name);
+	}
+};
 
 } // namespace binder
 

@@ -442,6 +442,26 @@ public: // Methods
 		a.z_ = -z_;
 	}
 
+	// #ifdef PYROSETTA
+	// 	/// @brief *this + xyzVector, mostly for PyRosetta
+	// 	inline
+	// 	xyzVector<T>
+	// 	operator +( xyzVector<T> const & rhs) const
+	// 	{
+	// 		xyzVector<T> r = *this + rhs;
+	// 		return r;
+	// 	}
+
+	// 	/// @brief *this - xyzVector, mostly for PyRosetta
+	// 	inline
+	// 	xyzVector<T>
+	// 	operator -( xyzVector<T> const & rhs) const
+	// 	{
+	// 		xyzVector<T> r = *this - rhs;
+	// 		return r;
+	// 	}
+	// #else
+	//#endif
 
 	/// @brief xyzVector + xyzVector
 	friend
@@ -452,6 +472,14 @@ public: // Methods
 		return xyzVector( a.x_ + b.x_, a.y_ + b.y_, a.z_ + b.z_ );
 	}
 
+	/// @brief xyzVector - xyzVector
+	friend
+	inline
+	xyzVector
+	operator -( xyzVector const & a, xyzVector const & b )
+	{
+		return xyzVector( a.x_ - b.x_, a.y_ - b.y_, a.z_ - b.z_ );
+	}
 
 	/// @brief xyzVector + Value
 	friend
@@ -470,16 +498,6 @@ public: // Methods
 	operator +( Value const & t, xyzVector const & v )
 	{
 		return xyzVector( t + v.x_, t + v.y_, t + v.z_ );
-	}
-
-
-	/// @brief xyzVector - xyzVector
-	friend
-	inline
-	xyzVector
-	operator -( xyzVector const & a, xyzVector const & b )
-	{
-		return xyzVector( a.x_ - b.x_, a.y_ - b.y_, a.z_ - b.z_ );
 	}
 
 
@@ -2235,6 +2253,7 @@ not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 
 /// @brief Subtract: xyzVector - xyzVector
 template <typename U>
+inline
 void
 subtract( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r )
 {
@@ -2246,6 +2265,7 @@ subtract( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r )
 
 /// @brief Subtract: xyzVector - Value
 template <typename U>
+inline
 void
 subtract( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 {
@@ -2257,6 +2277,7 @@ subtract( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 
 /// @brief Subtract: Value - xyzVector
 template <typename U>
+inline
 void
 subtract( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
 {
@@ -2268,6 +2289,7 @@ subtract( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
 
 /// @brief Multiply: xyzVector * Value
 template <typename U>
+inline
 void
 multiply( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 {
@@ -2279,6 +2301,7 @@ multiply( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 
 /// @brief Multiply: Value * xyzVector
 template <typename U>
+inline
 void
 multiply( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
 {
@@ -2290,6 +2313,7 @@ multiply( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
 
 /// @brief Dot product
 template< typename T >
+inline
 T
 dot_product( xyzVector<T> const & a, xyzVector<T> const & b )
 {
@@ -2299,6 +2323,7 @@ dot_product( xyzVector<T> const & a, xyzVector<T> const & b )
 // AMW: for md code
 // TODO: figure out what this is in fundamental vector operations
 template< typename T >
+inline
 xyzVector<T>
 update_operation( xyzVector<T> const & a, xyzVector<T> const & b )
 {
@@ -2324,6 +2349,7 @@ update_operation( xyzVector<T> const & a, xyzVector<T> const & b )
 // AMW: for md code
 // TODO: figure out what this is in fundamental vector operations
 template< typename T >
+inline
 xyzVector<T>
 update_5way_operation(
 	xyzVector<T> const & a,
@@ -2371,6 +2397,7 @@ update_5way_operation(
 
 /// @brief Angle between two vectors (in radians on [ 0, pi ])
 template <typename U>
+inline
 U
 angle_of( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2383,6 +2410,7 @@ angle_of( xyzVector<U> const & a, xyzVector<U> const & b )
 /// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 ///        in other words, the positive angle about b from a to c
 template <typename U>
+inline
 U
 angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 {
@@ -2392,6 +2420,7 @@ angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c
 
 /// @brief Cosine of angle between two vectors
 template <typename U>
+inline
 U
 cos_of( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2404,6 +2433,7 @@ cos_of( xyzVector<U> const & a, xyzVector<U> const & b )
 /// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 ///        in other words, the positive angle about b from a to c.
 template <typename U>
+inline
 U
 cos_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 {
@@ -2413,6 +2443,7 @@ cos_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 
 /// @brief Sine of angle between two vectors
 template <typename U>
+inline
 U
 sin_of( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2424,6 +2455,7 @@ sin_of( xyzVector<U> const & a, xyzVector<U> const & b )
 /// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
 ///        in other words, the positive angle about b from a to c
 template <typename U>
+inline
 U
 sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 {
@@ -2433,6 +2465,7 @@ sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 
 /// @brief xyzVector with min coordinates of two xyzVectors
 template <typename U>
+inline
 xyzVector<U>
 min( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2446,6 +2479,7 @@ min( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief xyzVector with max coordinates of two xyzVectors
 template <typename U>
+inline
 xyzVector<U>
 max( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2458,6 +2492,7 @@ max( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Cross product
 template <typename U>
+inline
 xyzVector<U>
 cross( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2471,6 +2506,7 @@ cross( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Cross product
 template <typename U>
+inline
 xyzVector<U>
 cross_product( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2484,6 +2520,7 @@ cross_product( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Cross product: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 cross( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c )
 {
@@ -2495,6 +2532,7 @@ cross( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c )
 
 /// @brief Cross product: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 cross_product( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c )
 {
@@ -2506,6 +2544,7 @@ cross_product( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & c 
 
 /// @brief Midpoint of 2 xyzVectors
 template <typename U>
+inline
 xyzVector<U>
 midpoint( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2519,6 +2558,7 @@ midpoint( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Midpoint of 2 xyzVectors: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 midpoint( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m )
 {
@@ -2530,6 +2570,7 @@ midpoint( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m )
 
 /// @brief Center of 2 xyzVectors
 template <typename U>
+inline
 xyzVector<U>
 center( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2543,6 +2584,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Center of 2 xyzVectors: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m )
 {
@@ -2554,6 +2596,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & m )
 
 /// @brief Center of 3 xyzVectors
 template <typename U>
+inline
 xyzVector<U>
 center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 {
@@ -2568,6 +2611,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
 
 /// @brief Center of 3 xyzVectors: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> & m )
 {
@@ -2580,6 +2624,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, 
 
 /// @brief Center of 4 xyzVectors
 template <typename U>
+inline
 xyzVector<U>
 center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d )
 {
@@ -2593,6 +2638,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, 
 
 /// @brief Center of 4 xyzVectors: Return via argument (slightly faster)
 template <typename U>
+inline
 void
 center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d, xyzVector<U> & m )
 {
@@ -2604,6 +2650,7 @@ center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, 
 
 /// @brief Add: xyzVector + xyzVector
 template <typename U>
+inline
 void
 add( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r )
 {
@@ -2615,6 +2662,7 @@ add( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> & r )
 
 /// @brief Add: xyzVector + Value
 template <typename U>
+inline
 void
 add( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 {
@@ -2626,6 +2674,7 @@ add( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 
 /// @brief Add: Value + xyzVector
 template <typename U>
+inline
 void
 add( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
 {
@@ -2637,6 +2686,7 @@ add( U const & t, xyzVector<U> const & v, xyzVector<U> & r )
 
 /// @brief Equal length?
 template <typename U>
+inline
 bool
 equal_length( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2645,6 +2695,7 @@ equal_length( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Not equal length?
 template <typename U>
+inline
 bool
 not_equal_length( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2653,6 +2704,7 @@ not_equal_length( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Dot product
 template <typename U>
+inline
 U
 dot( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2661,6 +2713,7 @@ dot( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Inner product ( == dot product )
 template <typename U>
+inline
 U
 inner_product( xyzVector<U> const & a, xyzVector<U> const & b )
 {
@@ -2669,6 +2722,7 @@ inner_product( xyzVector<U> const & a, xyzVector<U> const & b )
 
 /// @brief Divide: xyzVector / Value
 template <typename U>
+inline
 void
 divide( xyzVector<U> const & v, U const & t, xyzVector<U> & r )
 {

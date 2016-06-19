@@ -30,11 +30,13 @@
 #include <core/types.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-// C++headers
-#include <list>
-
 #include <utility/vector1.hh>
 
+#include <list>
+
+#ifdef PYROSETTA
+#include <protocols/forge/build/Interval.hh>
+#endif
 
 namespace protocols {
 namespace forge {

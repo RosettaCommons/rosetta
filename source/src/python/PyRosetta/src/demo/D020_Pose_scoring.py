@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -62,7 +64,7 @@ The method pose_scoring:
 import optparse    # for option sorting
 
 from rosetta import *
-from rosetta.PyMolLink import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -78,8 +80,8 @@ def pose_scoring(pose, display_residues = []):
 
     """
     # this object is contained in PyRosetta v2.0 and above
-    # create a PyMOL_Mover for exporting structures directly to PyMOL
-    pymover = PyMOL_Mover()
+    # create a PyMolMover for exporting structures directly to PyMOL
+    pymover = PyMolMover()
 
     # 1. score the pose using the default full-atom (fa) ScoreFunction
     # a ScoreFunction is essentially a list of weights indicating which
@@ -99,7 +101,7 @@ def pose_scoring(pose, display_residues = []):
 
     # c. this method sets the weights based on 'talaris2013.wts' and then
     #    corrects them based on 'docking.wts_patch'
-    ws_patch_scorefxn = create_score_function_ws_patch('talaris2013', 'docking')
+    ws_patch_scorefxn = create_score_function('talaris2013', 'docking')  # create_score_function_ws_patch('talaris2013', 'docking')
 
     # d. this method returns a ScoreFunction with its weights set by loading
     #    weights from 'talaris2013' followed by an adjustment by setting
@@ -109,34 +111,34 @@ def pose_scoring(pose, display_residues = []):
 
     # e. here an empty ScoreFunction is created and the weights are set manually
     scorefxn = ScoreFunction()
-    scorefxn.set_weight(fa_atr, 0.800)    # full-atom attractive score
-    scorefxn.set_weight(fa_rep, 0.440)    # full-atom repulsive score
-    scorefxn.set_weight(fa_sol, 0.750)    # full-atom solvation score
-    scorefxn.set_weight(fa_intra_rep, 0.004)    # f.a. intraresidue rep. score
-    scorefxn.set_weight(fa_elec, 0.700)    # full-atom electronic score
-    scorefxn.set_weight(pro_close, 1.000)    # proline closure
-    scorefxn.set_weight(hbond_sr_bb, 1.170)    # short-range hbonding
-    scorefxn.set_weight(hbond_lr_bb, 1.170)    # long-range hbonding
-    scorefxn.set_weight(hbond_bb_sc, 1.170)    # backbone-sidechain hbonding
-    scorefxn.set_weight(hbond_sc, 1.100)    # sidechain-sidechain hbonding
-    scorefxn.set_weight(dslf_fa13, 1.000)    # disulfide full-atom score
-    scorefxn.set_weight(rama, 0.200)    # ramachandran score
-    scorefxn.set_weight(omega, 0.500)    # omega torsion score
-    scorefxn.set_weight(fa_dun, 0.560)    # fullatom Dunbrack rotamer score
-    scorefxn.set_weight(p_aa_pp, 0.320)
-    scorefxn.set_weight(ref, 1.000)    # reference identity score
+    scorefxn.set_weight(core.scoring.fa_atr, 0.800)    # full-atom attractive score
+    scorefxn.set_weight(core.scoring.fa_rep, 0.440)    # full-atom repulsive score
+    scorefxn.set_weight(core.scoring.fa_sol, 0.750)    # full-atom solvation score
+    scorefxn.set_weight(core.scoring.fa_intra_rep, 0.004)    # f.a. intraresidue rep. score
+    scorefxn.set_weight(core.scoring.fa_elec, 0.700)    # full-atom electronic score
+    scorefxn.set_weight(core.scoring.pro_close, 1.000)    # proline closure
+    scorefxn.set_weight(core.scoring.hbond_sr_bb, 1.170)    # short-range hbonding
+    scorefxn.set_weight(core.scoring.hbond_lr_bb, 1.170)    # long-range hbonding
+    scorefxn.set_weight(core.scoring.hbond_bb_sc, 1.170)    # backbone-sidechain hbonding
+    scorefxn.set_weight(core.scoring.hbond_sc, 1.100)    # sidechain-sidechain hbonding
+    scorefxn.set_weight(core.scoring.dslf_fa13, 1.000)    # disulfide full-atom score
+    scorefxn.set_weight(core.scoring.rama, 0.200)    # ramachandran score
+    scorefxn.set_weight(core.scoring.omega, 0.500)    # omega torsion score
+    scorefxn.set_weight(core.scoring.fa_dun, 0.560)    # fullatom Dunbrack rotamer score
+    scorefxn.set_weight(core.scoring.p_aa_pp, 0.320)
+    scorefxn.set_weight(core.scoring.ref, 1.000)    # reference identity score
 
     # ScoreFunction a, b, and e above have the same weights and thus return
     #    the same score for an input pose.  Likewise, c and d should return the
     #    same scores.
     # 2. output the ScoreFunction evaluations
     #ws_patch_scorefxn(pose)    # to prevent verbose output on the next line
-    print '='*80
-    print 'ScoreFunction a:', fa_scorefxn(pose)
-    print 'ScoreFunction b:', full_scorefxn(pose)
-    print 'ScoreFunction c:', ws_patch_scorefxn(pose)
-    print 'ScoreFunction d:', patch_scorefxn(pose)
-    print 'ScoreFunction e:', scorefxn(pose)
+    print( '='*80 )
+    print( 'ScoreFunction a:', fa_scorefxn(pose) )
+    print( 'ScoreFunction b:', full_scorefxn(pose) )
+    print( 'ScoreFunction c:', ws_patch_scorefxn(pose) )
+    print( 'ScoreFunction d:', patch_scorefxn(pose) )
+    print( 'ScoreFunction e:', scorefxn(pose) )
     pose_score = scorefxn(pose)
 
     # 3. obtain the pose Energies object and all the residue total scores
@@ -145,9 +147,9 @@ def pose_scoring(pose, display_residues = []):
         for i in range(1, pose.total_residue() + 1)]
 
     # 4. obtain the non-zero weights of the ScoreFunction, active ScoreTypes
-    weights = [ScoreType(s)
-        for s in range(1, end_of_score_type_enumeration + 1)
-        if scorefxn.weights()[ScoreType(s)]]
+    weights = [core.scoring.ScoreType(s)
+        for s in range(1, int(core.scoring.end_of_score_type_enumeration) + 1)
+        if scorefxn.weights()[core.scoring.ScoreType(s)]]
     # 5. obtain all the pose energies using the weights list
     # Energies.residue_total_energies returns an EMapVector of the unweighted
     #    score values, here they are multiplied by their weights
@@ -161,8 +163,8 @@ def pose_scoring(pose, display_residues = []):
     # Unfortunately, hydrogen bonding scores are NOT stored in the structure
     #    returned by Energies.residue_total_energies
     # 6. hydrogen bonding information must be extracted separately
-    pose_hbonds = rosetta.core.scoring.hbonds.HBondSet()
-    rosetta.core.scoring.hbonds.fill_hbond_set( pose , False , pose_hbonds )
+    pose_hbonds = core.scoring.hbonds.HBondSet()
+    core.scoring.hbonds.fill_hbond_set( pose , False , pose_hbonds )
 
     # 7. create a dictionary with the pose residue numbers as keys and the
     #    residue hydrogen bonding information as values
@@ -193,18 +195,18 @@ def pose_scoring(pose, display_residues = []):
     #    the Residue.nbr_atom coordinates to save time, this nbr_atom is the
     #    Residue atom closest to the Residue's center of geometry
     RadG = ScoreFunction()
-    RadG.set_weight(rg , 1)
+    RadG.set_weight(core.scoring.rg , 1)
     pose_radg = RadG(pose)
 
     # 9. output the pose information
 	# the information is not expressed sequentially as it is produced because
 	#    several PyRosetta objects and methods output intermediate information
 	#    to screen, this would produce and unattractive output
-    print '='*80
-    print 'Loaded from' , pose.pdb_info().name()
-    print pose.total_residue() , 'residues'
-    print 'Radius of Gyration ~' , pose_radg
-    print 'Total Rosetta Score:' , pose_score
+    print( '='*80 )
+    print( 'Loaded from' , pose.pdb_info().name() )
+    print( pose.total_residue() , 'residues' )
+    print( 'Radius of Gyration ~' , pose_radg )
+    print( 'Total Rosetta Score:' , pose_score )
     scorefxn.show(pose)
     # this object is contained in PyRosetta v2.0 and above
     pymover.apply(pose)
@@ -212,19 +214,19 @@ def pose_scoring(pose, display_residues = []):
 
     # 10. output information on the requested residues
     for i in display_residues:
-        print '='*80
-        print 'Pose numbered Residue' , i
-        print 'Total Residue Score:' , residue_energies[i-1]
-        print 'Score Breakdown:\n' + '-'*45
+        print( '='*80 )
+        print( 'Pose numbered Residue' , i )
+        print( 'Total Residue Score:' , residue_energies[i-1] )
+        print( 'Score Breakdown:\n' + '-'*45 )
         # loop over the weights, extract the scores from the matrix
         for w in range(len(weights)):
-            print '\t' + name_from_score_type(weights[w]).ljust(20) + ':\t' ,\
-                residue_weighted_energies_matrix[w][i-1]
-        print '-'*45
+            print( '\t' + core.scoring.name_from_score_type(weights[w]).ljust(20) + ':\t' ,\
+                residue_weighted_energies_matrix[w][i-1] )
+        print( '-'*45 )
         # print the hydrogen bond information
-        print 'Hydrogen bonds involving Residue ' + str(i) + ':'
-        print hbond_dictionary[i][:-1]
-    print '='*80
+        print( 'Hydrogen bonds involving Residue ' + str(i) + ':' )
+        print( hbond_dictionary[i][:-1] )
+    print( '='*80 )
 
 ################################################################################
 # INTERPRETING RESULTS
@@ -274,7 +276,7 @@ pose_from_file(pose, pdb_filename)
 # default to the median residue number
 residues = options.residues
 if not options.residues:
-    residues = [pose.total_residue()/2]
+    residues = [int(pose.total_residue()/2)]
 elif options.residues == 'all':
     # accept the word 'all' in place of a residue list
     residues = range(1, pose.total_residue() + 1)

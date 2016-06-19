@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -66,6 +68,7 @@ import optparse    # for option sorting
 import rosetta.core.pack.task    # for using resfiles
 
 from rosetta import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -84,7 +87,7 @@ def packer_task(pose, PDB_out = False):
     test_pose.assign(pose)
 
     # this object is contained in PyRosetta v2.0 and above
-    pymover = PyMOL_Mover()
+    pymover = PyMolMover()
 
     # create a standard ScoreFunction
     scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
@@ -113,21 +116,21 @@ def packer_task(pose, PDB_out = False):
     #        lowest scoring conformation
     pose_packer.restrict_to_repacking()    # turns off design
     pose_packer.or_include_current(True)    # considers original conformation
-    print pose_packer
+    print( pose_packer )
 
     # packing and design can be performed by a PackRotamersMover, it requires
     #    a ScoreFunction, for optimizing the sidechains and a PackerTask,
     #    setting the packing and design options
-    packmover = PackRotamersMover(scorefxn, pose_packer)
+    packmover = protocols.simple_moves.PackRotamersMover(scorefxn, pose_packer)
 
     scorefxn(pose)    # to prevent verbose output on the next line
-    print '\nPre packing score:', scorefxn(test_pose)
-    test_pose.pdb_info().name('original')    # for PyMOL_Mover
+    print( '\nPre packing score:', scorefxn(test_pose) )
+    test_pose.pdb_info().name('original')    # for PyMolMover
     pymover.apply(test_pose)
 
     packmover.apply(test_pose)
-    print 'Post packing score:',  scorefxn(test_pose)
-    test_pose.pdb_info().name('packed')    # for PyMOL_Mover
+    print( 'Post packing score:',  scorefxn(test_pose) )
+    test_pose.pdb_info().name('packed')    # for PyMolMover
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('packed.pdb')
@@ -152,7 +155,7 @@ def packer_task(pose, PDB_out = False):
     # manually setting deign options is tedious, the methods below are handy
     #    for creating resfiles
     # mutate the "middle" residues
-    center = test_pose.total_residue() / 2
+    center = test_pose.total_residue() // 2
     specific_design = {}
     for i in range(center - 2, center + 3):
         specific_design[i] = 'ALLAA'
@@ -163,25 +166,25 @@ def packer_task(pose, PDB_out = False):
     # setup the design PackerTask, use the generated resfile
     pose_design = standard_packer_task(test_pose)
     rosetta.core.pack.task.parse_resfile(test_pose, pose_design, 'sample_resfile' )
-    print pose_design
+    print( pose_design )
 
     # prepare a new structure
     test_pose.assign(pose)
 
     # perform design
-    designmover = PackRotamersMover(scorefxn, pose_design)
-    print '\nDesign with all proteogenic amino acids at (pose numbered)\
-        residues', center - 2, 'to', center + 2
-    print 'Pre-design score:', scorefxn(test_pose)
-    print 'Pre-design sequence: ...' + \
-        test_pose.sequence()[center - 5:center + 4] + '...'
+    designmover = protocols.simple_moves.PackRotamersMover(scorefxn, pose_design)
+    print( '\nDesign with all proteogenic amino acids at (pose numbered)\
+        residues', center - 2, 'to', center + 2 )
+    print( 'Pre-design score:', scorefxn(test_pose) )
+    print( 'Pre-design sequence: ...' + \
+        test_pose.sequence()[center - 5:center + 4] + '...' )
 
 
     designmover.apply(test_pose)    # perform design
-    print '\nPost-design score:', scorefxn(test_pose)
-    print 'Post-design sequence: ...' + \
-        test_pose.sequence()[center - 5:center + 4] + '...'
-    test_pose.pdb_info().name( 'designed' )    # for PyMOL_Mover
+    print( '\nPost-design score:', scorefxn(test_pose) )
+    print( 'Post-design sequence: ...' + \
+        test_pose.sequence()[center - 5:center + 4] + '...' )
+    test_pose.pdb_info().name( 'designed' )    # for PyMolMover
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('designed.pdb')

@@ -67,7 +67,7 @@ public:
 	void
 	setup_relevant_chains(
 		std::string const & relevant_chains_fname,
-		std::map<std::string const, std::string const> & chain_map
+		std::map<std::string, std::string> & chain_map
 	);
 
 	// this is a hack because poses do not have canonical names!
@@ -76,7 +76,7 @@ public:
 	void apply( Pose& pose );
 
 private:
-	std::map<std::string const, std::string const> chain_map;
+	std::map<std::string, std::string> chain_map;
 	std::string relevant_chains_fname;
 	bool initialized;
 };

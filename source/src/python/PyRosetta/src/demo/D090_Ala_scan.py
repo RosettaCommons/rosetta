@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -67,7 +69,7 @@ The method sample_refinement:
         -for defining the Interface
         -for determining "ddG"
 4.  creates an Interface object defining the protein-protein interface
-5.  creates a PyMOL_Mover for exporting structures to PyMOL
+5.  creates a PyMolMover for exporting structures to PyMOL
 6.  perform scanning by:
         a. looping over the pose residues, if it is an Interface residue, call
             interface_ddG which returns the "interaction energy"
@@ -81,6 +83,7 @@ import optparse    # for sorting options
 # the Interface object is required by this script
 from rosetta.protocols.scoring import Interface
 from rosetta import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -121,7 +124,7 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
     # 2. setup the docking FoldTree and other related parameters
     dock_jump = 1
     movable_jumps = Vector1([dock_jump])
-    setup_foldtree(pose, partners, movable_jumps)
+    protocols.docking.setup_foldtree(pose, partners, movable_jumps)
 
     # 3. create ScoreFuncions for the Interface and "ddG" calculations
     # the pose's Energies objects MUST be updated for the Interface object to
@@ -131,19 +134,19 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
 
     # setup a "ddG" ScoreFunction, custom weights
     ddG_scorefxn = ScoreFunction()
-    ddG_scorefxn.set_weight(fa_atr, 0.44)
-    ddG_scorefxn.set_weight(fa_rep, 0.07)
-    ddG_scorefxn.set_weight(fa_sol, 1.0)
-    ddG_scorefxn.set_weight(hbond_bb_sc, 0.5)
-    ddG_scorefxn.set_weight(hbond_sc, 1.0)
+    ddG_scorefxn.set_weight(core.scoring.fa_atr, 0.44)
+    ddG_scorefxn.set_weight(core.scoring.fa_rep, 0.07)
+    ddG_scorefxn.set_weight(core.scoring.fa_sol, 1.0)
+    ddG_scorefxn.set_weight(core.scoring.hbond_bb_sc, 0.5)
+    ddG_scorefxn.set_weight(core.scoring.hbond_sc, 1.0)
 
     # 4. create an Interface object for the pose
     interface = Interface(dock_jump)
     interface.distance(interface_cutoff)
     interface.calculate(pose)
 
-    # 5. create a PyMOL_Mover for sending output to PyMOL (optional)
-    pymover = PyMOL_Mover()
+    # 5. create a PyMolMover for sending output to PyMOL (optional)
+    pymover = PyMolMover()
     pymover.keep_history(True)    # for multiple trajectories
     pymover.apply(pose)
     pymover.send_energy(pose)
@@ -172,17 +175,17 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
                     movable_jumps, ddG_scorefxn, interface_cutoff, filename )
 
         # output results
-        print '='*80
-        print 'Trial', str( trial + 1 )
-        print 'Mutants (PDB numbered)\t\"ddG\" (interaction dependent score change)'
-        residues = ddG_mutants.keys()
+        print( '='*80 )
+        print( 'Trial', str( trial + 1 ) )
+        print( 'Mutants (PDB numbered)\t\"ddG\" (interaction dependent score change)' )
+        residues = list( ddG_mutants.keys() )  # list(...) conversion is for python3 compatbility
         residues.sort()    # easier to read
         display = [pose.sequence()[i - 1] +
             str(pose.pdb_info().number(i)) + mutant_aa + '\t' +
             str(ddG_mutants[i]) + '\n'
             for i in residues]
-        print ''.join(display)[:-1]
-        print '='*80
+        print( ''.join(display)[:-1] )
+        print( '='*80 )
 
         # write to file
         f = open(trial_output + '_' + str(trial + 1) + '.txt' , 'w' )
@@ -191,10 +194,10 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
 
     #### alternate output using scanning_analysis (see below), only display
     ####    mutations with "deviant" score changes
-    print 'Likely Hotspot Residues'
+    print( 'Likely Hotspot Residues' )
     for hotspot in scanning_analysis(trial_output):
-        print hotspot
-    print '='*80
+        print( hotspot )
+    print( '='*80 )
 
 """
 1.  creates a copy of the pose
@@ -259,7 +262,7 @@ def interface_ddG( pose, mutant_position, mutant_aa, movable_jumps, scorefxn = '
     mutant.pdb_info().name( pose.sequence()[mutant_position -1] +
         str( pose.pdb_info().number(mutant_position)) +
         mutant.sequence()[mutant_position - 1])
-    pymover = PyMOL_Mover()
+    pymover = PyMolMover()
     scorefxn(mutant)
     pymover.apply(mutant)
     pymover.send_energy(mutant)
@@ -316,7 +319,7 @@ def mutate_residue(pose, mutant_position, mutant_aa,
     # aa_from_oneletter returns the integer representation of an amino acid
     #    from its one letter code
     # convert mutant_aa to its integer representation
-    mutant_aa = aa_from_oneletter_code(mutant_aa)
+    mutant_aa = core.chemical.aa_from_oneletter_code(mutant_aa)
 
     # mutation is performed by using a PackerTask with only the mutant
     #    amino acid available during design
@@ -326,7 +329,7 @@ def mutate_residue(pose, mutant_position, mutant_aa,
         # in Python, logical expression are evaluated with priority, thus the
         #    line below appends to aa_bool the truth (True or False) of the
         #    statement i == mutant_aa
-        aa_bool.append( i == mutant_aa )
+        aa_bool.append( i == int(mutant_aa) )
 
     # modify the mutating residue's assignment in the PackerTask using the
     #    Vector1 of booleans across the proteogenic amino acids
@@ -343,7 +346,7 @@ def mutate_residue(pose, mutant_position, mutant_aa,
             task.nonconst_residue_task(i).prevent_repacking()
 
     # apply the mutation and pack nearby residues
-    packer = PackRotamersMover(pack_scorefxn, task)
+    packer = protocols.simple_moves.PackRotamersMover(pack_scorefxn, task)
     packer.apply(test_pose)
 
     return test_pose
@@ -364,12 +367,12 @@ def calc_binding_energy(pose, scorefxn, center, cutoff = 8.0):
     #    preventing them from adding noise to the score difference
     # this method of setting up a PackerTask is different from packer_task.py
     tf = standard_task_factory()    # create a TaskFactory
-    tf.push_back(RestrictToRepacking())    # restrict it to repacking
+    tf.push_back(core.pack.task.operation.RestrictToRepacking())    # restrict it to repacking
 
     # this object contains repacking options, instead of turning the residues
     #    "On" or "Off" directly, this will create an object for these options
     #    and assign it to the TaskFactory
-    prevent_repacking = PreventRepacking()
+    prevent_repacking = core.pack.task.operation.PreventRepacking()
 
     # the "center" (nbr_atom) of the mutant residue, for distance calculation
     center = test_pose.residue(center).nbr_atom_xyz()
@@ -384,13 +387,13 @@ def calc_binding_energy(pose, scorefxn, center, cutoff = 8.0):
     tf.push_back(prevent_repacking)
 
     # setup a PackRotamersMover
-    packer = PackRotamersMover(scorefxn)
+    packer = protocols.simple_moves.PackRotamersMover(scorefxn)
     packer.task_factory(tf)
 
     #### create a Mover for performing translation
     #### RigidBodyTransMover is SUPPOSED to translate docking partners of a
     ####    pose based on an axis and magnitude
-    #### test it using the PyMOL_Mover, it does not perform a simple translation
+    #### test it using the PyMolMover, it does not perform a simple translation
     ####    I also observed a "Hbond Tripped" error when packing after applying
     ####    the Mover, it appears to store inf and NaN values into hbonds
     #transmover = RigidBodyTransMover()
@@ -413,7 +416,7 @@ def calc_binding_energy(pose, scorefxn, center, cutoff = 8.0):
 
     # here are two methods for applying a translation onto a pose structure
     # both require an xyzVector
-    xyz = rosetta.numeric.xyzVector_double()    # a Vector for coordinates
+    xyz = rosetta.numeric.xyzVector_double_t()    # a Vector for coordinates
     xyz.x = 500.0    # arbitrary separation magnitude, in the x direction
     xyz.y = 0.0    #...I didn't have this and it defaulted to 1e251...?
     xyz.z = 0.0    #...btw thats like 1e225 light years,

@@ -34,12 +34,11 @@
 namespace protocols {
 namespace jd2 {
 
-class MultiThreadingJob : public protocols::jd2::Job {
+class MultiThreadingJob : public protocols::jd2::Job
+{
+	MultiThreadingJob(InnerMultiThreadingJobOP inner_job, core::Size nstruct_index);
+
 public:
-	//MultiThreadingJob(
-	// InnerMultiThreadingJobOP inner_job,
-	// core::Size nstruct_index
-	//);
 
 	InnerMultiThreadingJobOP multi_threading_inner_job();
 

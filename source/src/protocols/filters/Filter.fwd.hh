@@ -41,7 +41,7 @@ typedef utility::pointer::shared_ptr< FilterCollection const >  FilterCollection
 typedef utility::vector1< FilterOP > FilterOPs;
 typedef utility::vector1< FilterCOP > FilterCOPs;
 
-typedef std::map< std::string const, FilterOP > Filters_map;
+typedef std::map<std::string, FilterOP> Filters_map;
 
 } // namespace protocols
 } // namespace filters

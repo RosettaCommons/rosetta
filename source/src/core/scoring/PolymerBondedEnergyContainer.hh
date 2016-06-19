@@ -46,6 +46,8 @@ namespace scoring {
 
 class PolymerBondedNeighborIterator : public ResidueNeighborIterator
 {
+	PolymerBondedNeighborIterator & operator = (PolymerBondedNeighborIterator const & src );
+
 public:
 	virtual ~PolymerBondedNeighborIterator();
 
@@ -94,6 +96,7 @@ private:
 
 class PolymerBondedNeighborConstIterator : public ResidueNeighborConstIterator
 {
+	PolymerBondedNeighborConstIterator & operator = (PolymerBondedNeighborConstIterator const & src );
 public:
 	virtual ~PolymerBondedNeighborConstIterator();
 

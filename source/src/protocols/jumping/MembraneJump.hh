@@ -50,6 +50,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef PYROSETTA
+#include <core/scoring/dssp/PairingsList.hh>
+#endif
+
+
 namespace protocols {
 namespace jumping {
 

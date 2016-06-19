@@ -38,6 +38,9 @@ namespace fragment {
 class FrameListIterator_ : public FrameIteratorWorker_ {
 	friend class FrameList;
 	friend class FragID_Iterator;
+
+	FrameListIterator_ & operator = (FrameListIterator_ const&);
+
 protected:
 	FrameListIterator_( FrameList::iterator it ) : it_( it ) {};
 

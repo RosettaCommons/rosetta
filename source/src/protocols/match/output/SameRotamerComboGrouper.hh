@@ -29,6 +29,9 @@
 
 #include <utility/OrderedTuple.fwd.hh>
 
+#ifdef PYROSETTA
+#include <utility/OrderedTuple.hh>
+#endif
 
 namespace protocols {
 namespace match {

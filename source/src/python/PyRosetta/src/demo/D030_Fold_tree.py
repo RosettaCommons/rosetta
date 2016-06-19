@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -61,6 +63,7 @@ The method pose_parallel_objects:
 import optparse    # for option sorting
 
 from rosetta import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -103,7 +106,7 @@ def fold_tree(PDB_out = False):
     test_pose = pose_from_sequence('ACDEFGHIKLMNPQRSTVWY'*3)
 
     # 2. setup the jump points, where a jump is anchored, and the cutpoint
-    cutpoint = test_pose.total_residue() / 2    # integer division, no decimal
+    cutpoint = int( test_pose.total_residue() / 2 )   # integer division, no decimal
     low_jump_point = cutpoint - 10
     high_jump_point = cutpoint + 10
 
@@ -121,7 +124,7 @@ def fold_tree(PDB_out = False):
     pose_fold_tree.simple_tree(test_pose.total_residue())
 
     pose_fold_tree.new_jump(low_jump_point, high_jump_point, cutpoint)
-    print '\nThe first FoldTree is proper:', pose_fold_tree.check_fold_tree()
+    print( '\nThe first FoldTree is proper:', pose_fold_tree.check_fold_tree() )
 
     # b. using FoldTree.add_edge
     # a more difficult method for creating a FoldTree is simply to create it
@@ -133,7 +136,7 @@ def fold_tree(PDB_out = False):
     pose_fold_tree.add_edge(low_jump_point, high_jump_point, 1)
     pose_fold_tree.add_edge(high_jump_point, test_pose.total_residue(), -1)
     pose_fold_tree.add_edge(high_jump_point, cutpoint + 1, -1)
-    print 'The second FoldTree is proper:', pose_fold_tree.check_fold_tree()
+    print( 'The second FoldTree is proper:', pose_fold_tree.check_fold_tree() )
 
     # demonstrate FoldTree's effect on structure
     # 4. linearize it
@@ -150,7 +153,7 @@ def fold_tree(PDB_out = False):
     test_pose.fold_tree(pose_fold_tree)
 
     # this object is contained in PyRosetta v2.0 and above (optional)
-    pymover = PyMOL_Mover()
+    pymover = PyMolMover()
 
     # 5. change and display the new structures
     # a. export "linearized" structure
@@ -158,7 +161,7 @@ def fold_tree(PDB_out = False):
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('linearized.pdb')
-    print '\nlinearized structure output'
+    print( '\nlinearized structure output' )
 
     # b. make an early change
     test_pose.set_phi(low_jump_point - 10, 50)
@@ -166,7 +169,7 @@ def fold_tree(PDB_out = False):
     pymover.apply(test_pose)    # all downstream residues move
     if PDB_out:
         test_pose.dump_pdb('pre_jump.pdb')
-    print 'pre jump perturbed structure output'
+    print( 'pre jump perturbed structure output' )
 
     # c. make a change in the first edge created by the jump
     test_pose.set_phi(low_jump_point + 5, 50)
@@ -174,7 +177,7 @@ def fold_tree(PDB_out = False):
     pymover.apply(test_pose)    # residues up to the cutpoint change
     if PDB_out:
         test_pose.dump_pdb('early_in_jump.pdb')
-    print 'first internal jump edge perturbed structure output'
+    print( 'first internal jump edge perturbed structure output' )
 
     # d. make a change in the second edge created by the jump
     test_pose.set_phi(high_jump_point - 5, 50)
@@ -182,7 +185,7 @@ def fold_tree(PDB_out = False):
     pymover.apply(test_pose)    # residues down to the cutpoint change
     if PDB_out:
         test_pose.dump_pdb('late_in_jump.pdb')
-    print 'second internal jump edge perturbed structure output'
+    print( 'second internal jump edge perturbed structure output' )
 
     # e. make a late change
     test_pose.set_phi(high_jump_point + 10, 50)
@@ -190,7 +193,7 @@ def fold_tree(PDB_out = False):
     pymover.apply(test_pose)    # all residues downstream move
     if PDB_out:
         test_pose.dump_pdb('post_jump.pdb')
-    print 'post jump perturbed structure output'
+    print( 'post jump perturbed structure output' )
 
 ################################################################################
 # INTERPRETING RESULTS

@@ -53,6 +53,11 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
+#ifdef PYROSETTA
+#include <core/id/AtomID.hh>
+#endif
+
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {

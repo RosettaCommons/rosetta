@@ -22,6 +22,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <numeric/xyzVector.hh>
+
 #include <type_traits>
 #include <sstream>
 
@@ -38,7 +40,9 @@ namespace rosetta_binders {
 
 
 template<typename T>
-constexpr auto has_equal_operator(int) -> decltype(std::declval<T>() == std::declval<T>(), std::declval<T>() != std::declval<T>(), bool()) { return true; }
+//constexpr auto has_equal_operator(int) -> decltype(std::declval<T>() == std::declval<T>(), std::declval<T>() != std::declval<T>(), bool()) { return true; }
+constexpr auto has_equal_operator(int) -> decltype(std::is_same<std::true_type, decltype(std::declval<T>() == std::declval<T>())>::value  and
+												   std::is_same<std::true_type, decltype(std::declval<T>() != std::declval<T>())>::value) { return true; }
 template<typename T>
 constexpr bool has_equal_operator(...) { return false; }
 
@@ -185,10 +189,12 @@ class utility_vector_binder
 	void maybe_has_insertion_operator(std::string const &name, Class_ &cl) {
 		cl.def("__repr__", [name](Vector &v) {
 				std::ostringstream s;
-				s << name << '[';
-				for(SizeType i=v.l(); i<=v.u(); ++i) {
-					s << v[i];
-					if(i != v.u()) s << ", ";
+				s << "vector" << L << '_' << name << '[';
+				if( v.size() ) {
+					for(SizeType i=v.l(); i<=v.u(); ++i) {
+						s << v[i];
+						if(i != v.u()) s << ", ";
+					}
 				}
 				s << ']';
  				return s.str();
@@ -230,7 +236,7 @@ public:
 		cl.def("clear", &Vector::clear, "clears the contents");
 
 		// Modifiers, Python style
-		cl.def("append", (void (Vector::*)(const T&)) &Vector::push_back, "adds an element to the end");
+		cl.def("append", [](Vector &v, const T &value) { v.push_back(value); }, "adds an element to the end");
 		//cl.def("insert", [](Vector &v, SizeType i, const T&t) {v.insert(v.begin()+i, t);}, "insert an item at a given position");
 		cl.def("extend", [](Vector &v, Vector &src) { v.reserve( v.size() + src.size() ); v.insert(v.end(), src.begin(), src.end()); }, "extend the list by appending all the items in the given vector");
 		cl.def("pop", [](Vector &v) {
@@ -243,14 +249,14 @@ public:
 			}, "remove and return last item");
 
 		cl.def("pop", [](Vector &v, SizeType i) {
-				if(i >= v.size()) throw pybind11::index_error();
+				if( v.empty()  or i > v.u()  or  i < v.l() ) throw pybind11::index_error();
 				T t = v[i];
 				v.erase(v.begin() + i);
 				return t;
 			}, "remove and return item at index");
 
 		cl.def("erase", [](Vector &v, SizeType i) {
-				if(i >= v.size()) throw pybind11::index_error();
+				if( v.empty()  or i > v.u()  or  i < v.l() ) throw pybind11::index_error();
 				v.erase(v.begin() + i);
 			}, "erases element at index");
 
@@ -278,8 +284,7 @@ public:
 				v[i] = t;
 			});
 
-		cl.def("__len__", &Vector::size);
-		//cl.def("__len__", [](Vector const &v) { return v.size(); } ); // workaround for ld: warning: direct access in ... means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+		cl.def("__len__", [](Vector const &v) { return v.size(); } ); // workaround for ld: warning: direct access in ... means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
 
 		cl.def("__iter__", [](Vector &v) {
 				return pybind11::make_iterator<ItType, T>(v.begin(), v.end());
@@ -319,6 +324,29 @@ public:
 template<platform::SSize L, typename T, typename A> using vectorL_binder = utility_vector_binder<utility::vectorL<L, T, A>, L, T, A>;
 template< typename T, typename A > using vector0_binder = utility_vector_binder<utility::vector0<T, A>, 0, T, A>;
 template< typename T, typename A > using vector1_binder = utility_vector_binder<utility::vector1<T, A>, 1, T, A>;
+
+
+template< typename T >
+void xyzVector_add_on_binder(pybind11::class_<numeric::xyzVector<T>, std::shared_ptr< numeric::xyzVector<T> > > &cl) {
+	using Vector = numeric::xyzVector<T>;
+	cl.def_property("x", (T const & (Vector::*)() const) &Vector::x, (void (numeric::xyzVector<T>::*)(const T &)) &Vector::x);
+	cl.def_property("y", (T const & (Vector::*)() const) &Vector::y, (void (numeric::xyzVector<T>::*)(const T &)) &Vector::y);
+	cl.def_property("z", (T const & (Vector::*)() const) &Vector::z, (void (numeric::xyzVector<T>::*)(const T &)) &Vector::z);
+
+	cl.def(pybind11::self +  pybind11::self);
+	cl.def(pybind11::self -  pybind11::self);
+	cl.def(pybind11::self += pybind11::self);
+	cl.def(pybind11::self -= pybind11::self);
+
+	cl.def(pybind11::self +  T());
+	cl.def(pybind11::self -  T());
+    cl.def(pybind11::self *= T());
+    cl.def(pybind11::self /= T());
+}
+
+
+
+
 
 
 //using Vector = utility::vectorL<L, T, Allocator>;

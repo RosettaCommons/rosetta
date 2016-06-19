@@ -41,6 +41,7 @@ namespace scoring {
 
 class OneToAllNeighborIterator : public ResidueNeighborIterator
 {
+	OneToAllNeighborIterator & operator = (OneToAllNeighborIterator const & src );
 public:
 	virtual ~OneToAllNeighborIterator();
 
@@ -95,6 +96,7 @@ private:
 
 class OneToAllNeighborConstIterator : public ResidueNeighborConstIterator
 {
+	OneToAllNeighborConstIterator & operator = (OneToAllNeighborConstIterator const & src );
 public:
 	virtual ~OneToAllNeighborConstIterator();
 

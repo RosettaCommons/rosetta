@@ -33,6 +33,11 @@
 #include <map>
 #include <string>
 
+#ifdef PYROSETTA
+#include <core/id/AtomID.hh>
+#endif
+
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

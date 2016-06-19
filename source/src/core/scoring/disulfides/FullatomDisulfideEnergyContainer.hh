@@ -44,6 +44,7 @@ namespace scoring {
 namespace disulfides {
 
 class DisulfResNeighbIterator : public ResidueNeighborIterator {
+	DisulfResNeighbIterator & operator = (DisulfResNeighbIterator const & );
 public:
 
 	DisulfResNeighbIterator(
@@ -86,6 +87,7 @@ private:
 };
 
 class DisulfResNeighbConstIterator : public ResidueNeighborConstIterator {
+	DisulfResNeighbConstIterator & operator = (DisulfResNeighbConstIterator const & );
 public:
 	DisulfResNeighbConstIterator(
 		FullatomDisulfideEnergyContainer const * owner,

@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -119,6 +121,7 @@ from math import pow    # for decrementing kT during simulated annealing
 from rosetta.protocols.loops.loop_closure.ccd import *
 from rosetta.protocols.loops.loop_mover.refine import *
 from rosetta import *
+from pyrosetta import *
 init(extra_options = "-constant_seed")
 # normally, init() works fine
 # for this sample script, we want to ease comparison by making sure all random
@@ -170,10 +173,10 @@ def sample_single_loop_modeling(pdb_filename,
     # 3. create the Loop object
     #    (note: Loop objects merely specify residues, they contain no
     #         conformation data)
-    my_loop = Loop(loop_begin, loop_end, loop_cutpoint)
+    my_loop = protocols.loops.Loop(loop_begin, loop_end, loop_cutpoint)
     #### if using multiple loops, add additional Loop objects
     # 4. use the Loop to set the pose FoldTree
-    set_single_loop_fold_tree(p, my_loop)
+    protocols.loops.set_single_loop_fold_tree(p, my_loop)
     #### alternate FoldTree setup, if you uncomment the lines below,
     ####    comment-out the set_single_loop_foldtree line above (line 189)
     #### -create an empty FoldTree
@@ -191,7 +194,7 @@ def sample_single_loop_modeling(pdb_filename,
     ####    endpoints and requires a third argument, the FoldTree to setup
 
     # 5. sets the cut-point residues as cut-point variants
-    add_single_cutpoint_variant(p, my_loop)
+    protocols.loops.add_single_cutpoint_variant(p, my_loop)
 
     # 6. create the MoveMap, allow the loop region backbone and
     #    all chi torsions to be free
@@ -202,17 +205,17 @@ def sample_single_loop_modeling(pdb_filename,
     # 7. setup the fragment Mover
     # this "try--except" is used to catch improper fragment files
     try:
-        fragset = ConstantLengthFragSet(frag_length, frag_filename)
+        fragset = core.fragment.ConstantLengthFragSet(frag_length, frag_filename)
         #### the ConstantLengthFragSet is overloaded, this same
         ####    ConstantLengthFragSet can be obtained with different syntax
         # to obtain custom fragments, see Generating Fragment Files below
     except:
         raise IOError('Make sure frag_length matches the fragments in\n\
             frag_file and that frag_file is valid')
-    fragment_mover = ClassicFragmentMover(fragset, movemap)
+    fragment_mover = protocols.simple_moves.ClassicFragmentMover(fragset, movemap)
 
     # 8. create a Mover for loop modeling using CCD (low resolution)
-    ccd_closure = CCDLoopClosureMover(my_loop, movemap)
+    ccd_closure = protocols.loops.loop_closure.ccd.CCDLoopClosureMover(my_loop, movemap)
 
     # 9. create ScoreFunctions
     # for centroid, use the default centroid ScoreFunction with chainbreak on
@@ -222,20 +225,20 @@ def sample_single_loop_modeling(pdb_filename,
     #    with a chainbreak score to investigate its impact, the score is 0.0
     #    except when a bond is broken
     # this penalizes failures caused by CCD failing to close the loop
-    scorefxn_low.set_weight(chainbreak, 1)
+    scorefxn_low.set_weight(core.scoring.chainbreak, 1)
     # for fullatom, used for packing and scoring final output
     scorefxn_high = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 
     # 10. setup sidechain packing Mover
-    task_pack = TaskFactory.create_packer_task(starting_p)
+    task_pack = core.pack.task.TaskFactory.create_packer_task(starting_p)
     task_pack.restrict_to_repacking()    # prevents design, packing only
     task_pack.or_include_current(True)    # considers original sidechains
-    pack = PackRotamersMover(scorefxn_high, task_pack)
+    pack = protocols.simple_moves.PackRotamersMover(scorefxn_high, task_pack)
 
     # 11. setup the high resolution refinement
     # by creating a Loops object,
     #    (note: Loops is basically a list of Loop objects),
-    sample_loops = Loops()
+    sample_loops = protocols.loops.Loops()
     # giving it the loop to remodel,
     sample_loops.add_loop(my_loop)
     # and creating a fullatom CCD Mover (high resolution)
@@ -269,7 +272,7 @@ def sample_single_loop_modeling(pdb_filename,
     #    a ReturnSidechainMover saves a pose's sidechains (in this case
     #    staring_pose) and when applied, inserts these conformations
     #    into the input pose
-    recover_sidechains = ReturnSidechainMover(starting_p)
+    recover_sidechains = protocols.simple_moves.ReturnSidechainMover(starting_p)
 
     # 13. create a reference copy of the pose in centroid
     # the first stage of each trajectory is in centroid
@@ -282,8 +285,8 @@ def sample_single_loop_modeling(pdb_filename,
     gamma = pow((final_temp_low/init_temp_low),
         (1.0/(outer_cycles_low*inner_cycles_low)))
 
-    # 15. create a PyMOL_Mover for exporting structures to PyMOL
-    pymov = PyMOL_Mover()
+    # 15. create a PyMolMover for exporting structures to PyMOL
+    pymov = PyMolMover()
     # uncomment the line below to load structures into successive states
     #pymov.keep_history(True)
     scorefxn_high(starting_p)    # for exporting the scores
@@ -353,7 +356,7 @@ def sample_single_loop_modeling(pdb_filename,
         ####
 
         # the LoopMover_Refine_CCD makes A LOT of moves, DO NOT expect to
-        #    see useful results if you use the PyMOL_Mover keep_history option, the large
+        #    see useful results if you use the PyMolMover keep_history option, the large
         #    number of intermediates will slow processing to a halt
 
         # d. convert the best structure (lowest scoring) into fullatom by:
@@ -377,7 +380,7 @@ def sample_single_loop_modeling(pdb_filename,
         # f. output the decoy (pose result from this trajectory)
         #    include the loop RMSD (Lrsmd)
         # -output a PDB file using the PyJobDistributor
-        lrms = loop_rmsd(p, starting_p, sample_loops, True)
+        lrms = protocols.loops.loop_rmsd(p, starting_p, sample_loops, True)
         jd.additional_decoy_info = ' Lrmsd: ' + str(lrms)
         jd.output_decoy(p)
         # -export the structure to PyMOL
@@ -402,7 +405,7 @@ The CCD method CAN produce physically unrealistic results (rarely). As such,
 individual inspection of the conformation (such viewing in PyMOL) should
 accompany the interpretation of results.
 
-The PyMOL_Mover sends intermediate and final structures for each trajectory to
+The PyMolMover sends intermediate and final structures for each trajectory to
 PyMOL. The original input structure and the final fullatom structure
 (named <job_output>_(job#)_fa) for each trajectory (colored by per-residue
 score) are displayed for comparison of the loop conformation. For each
@@ -505,7 +508,7 @@ loop_end = int(options.loop_end)
 if options.loop_cutpoint:
     loop_cutpoint = int(options.loop_cutpoint)
 else:
-    loop_cutpoint = (loop_begin + loop_end) / 2
+    loop_cutpoint = (loop_begin + loop_end) // 2
 # fragment  options
 frag_filename = options.frag_filename
 frag_length = int(options.frag_length)

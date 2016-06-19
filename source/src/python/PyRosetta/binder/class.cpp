@@ -281,25 +281,63 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, IncludeSet &includes, 
 }
 
 
-/// Check if all bases have public default constructors
-bool is_default_default_constructor_available(CXXRecordDecl const *C)
+/// DEPRECATED Check if all bases have public default constructors
+// bool is_default_default_constructor_available(CXXRecordDecl const *C)
+// {
+// 	for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
+// 		if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
+// 			if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+
+// 				if( !R->hasDefaultConstructor() ) return false;
+
+// 				bool default_constructor_processed = false;
+
+// 				for(auto t = R->ctor_begin(); t != R->ctor_end(); ++t) {
+// 					if( t->isDefaultConstructor() ) {
+// 						if( t->getAccess() == AS_private  or   !t->isUserProvided()  or  t->isDeleted() ) return false;
+// 					}
+// 					default_constructor_processed = true;
+// 				}
+
+// 				if( R->ctor_begin() != R->ctor_end()   and   !default_constructor_processed ) return false;
+
+// 				if( !is_default_default_constructor_available(R) ) return false;
+// 			}
+// 		}
+// 	}
+
+// 	return true;
+// }
+
+// Check if all bases have public default constructors
+bool base_default_default_constructor_available(CXXRecordDecl const *C)
 {
 	for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
 		if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
 			if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
+
 				if( !R->hasDefaultConstructor() ) return false;
+
+				//bool default_constructor_processed = false;
+
 				for(auto t = R->ctor_begin(); t != R->ctor_end(); ++t) {
 					if( t->isDefaultConstructor() ) {
-						if( t->getAccess() == AS_private  or   !t->isUserProvided() ) return false;
+						if( t->getAccess() == AS_private  /*or  !t->isUserProvided()*/  or  t->isDeleted() ) return false;
 					}
+					//default_constructor_processed = true;
 				}
-				if( !is_default_default_constructor_available(R) ) return false;
+
+				// if( R->ctor_begin() != R->ctor_end()   and   !default_constructor_processed ) return false;
+
+				if( !base_default_default_constructor_available(R) ) return false;
 			}
 		}
 	}
 
 	return true;
 }
+
+
 
 /// Generate string id that uniquly identify C++ binding object. For functions this is function prototype and for classes forward declaration.
 string ClassBinder::id() const
@@ -584,7 +622,7 @@ string ClassBinder::maybe_base_classes(Context &context)
 /// generate binding code for this object by using external user-provided binder
 void ClassBinder::bind_with(string const &binder, Context &context)
 {
-	string c = generate_comment_for_declaration(C);
+	string c = '\t' + generate_comment_for_declaration(C);
 
 	string const module_variable_name =  context.module_variable_name( namespace_from_named_decl(C) );
 
@@ -724,9 +762,20 @@ void ClassBinder::bind(Context &context)
 			if( t->isDefaultConstructor() ) default_constructor_processed = true;
 		}
 		//or callback_structure_constructible
-		if( /*C->ctor_begin() == C->ctor_end()  and*/  C->hasDefaultConstructor()  and  !default_constructor_processed
-			and  is_default_default_constructor_available(C) /*and  !C->needsImplicitDefaultConstructor() and !C->hasNonTrivialDefaultConstructor()*/ ) {  // No constructors defined, adding default constructor
-			c += "\tcl.def(pybind11::init<>());\n";  // making sure that default is appering first
+		//c += "\t// hasDefaultConstructor={} needsImplicitDefaultConstructor={} base_default_default_constructor_available={}\n"_format(C->hasDefaultConstructor(), C->needsImplicitDefaultConstructor(), base_default_default_constructor_available(C));
+
+		if( !default_constructor_processed  and  C->needsImplicitDefaultConstructor()  and  base_default_default_constructor_available(C)
+			// ( C->ctor_begin() == C->ctor_end() and  is_default_default_constructor_available(C)  and  !default_constructor_processed)
+			// or (C->hasDefaultConstructor()  and  !default_constructor_processed )
+
+			// if( C->hasDefaultConstructor()  or ( !default_constructor_processed and  is_default_default_constructor_available(C)) /*and  !C->needsImplicitDefaultConstructor() and !C->hasNonTrivialDefaultConstructor()*/
+
+			/*and  !C->needsImplicitDefaultConstructor() and !C->hasNonTrivialDefaultConstructor()*/
+			) {  // No constructors defined, adding default constructor
+
+			//c += "\tcl.def(pybind11::init<>());\n";  // making sure that default is appering first
+			c += "\tcl.def(pybind11::init<>());";  // making sure that default is appering first
+
 		}
 		c += constructors;
 	}
@@ -747,6 +796,9 @@ void ClassBinder::bind(Context &context)
 	c += binding_template_bases(C, callback_structure,  callback_structure_constructible, context);
 
 	//outs() << "typename_from_type_decl: " << typename_from_type_decl(C) << "\n";
+
+	std::map<string, string> const &external_add_on_binders = Config::get().add_on_binders();
+	if( external_add_on_binders.count(qualified_name_without_template) ) c += "\n\t{}(cl);\n"_format(external_add_on_binders.at(qualified_name_without_template));
 
 	c += "}\n";
 

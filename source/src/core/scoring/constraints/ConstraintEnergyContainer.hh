@@ -38,6 +38,7 @@ namespace scoring {
 namespace constraints {
 
 class CstResNeighbIterator : public ResidueNeighborIterator {
+	CstResNeighbIterator & operator = (CstResNeighbIterator const & );
 public:
 	typedef graph::Node::EdgeListIter EdgeListIter;
 
@@ -77,6 +78,7 @@ private:
 };
 
 class CstResNeighbConstIterator : public ResidueNeighborConstIterator {
+	CstResNeighbConstIterator & operator = (CstResNeighbConstIterator const & );
 public:
 	typedef graph::Node::EdgeListConstIter EdgeListConstIter;
 

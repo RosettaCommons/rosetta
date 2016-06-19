@@ -32,6 +32,11 @@
 #include <utility/keys/Key2Tuple.fwd.hh>
 #include <utility/keys/Key3Tuple.fwd.hh>
 
+#ifdef PYROSETTA
+#include <utility/keys/Key2Tuple.hh>
+#include <utility/keys/Key3Tuple.hh>
+#endif
+
 
 namespace core {
 namespace scoring {

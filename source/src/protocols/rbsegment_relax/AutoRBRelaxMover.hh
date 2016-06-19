@@ -22,6 +22,11 @@
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+#include <protocols/rbsegment_relax/RBSegment.hh>
+#endif
+
+
 namespace protocols {
 namespace rbsegment_relax {
 

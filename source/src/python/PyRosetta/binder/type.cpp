@@ -84,7 +84,7 @@ string relevant_include(NamedDecl const *decl)
 	if( include.isValid() ) {
 		char const *data = sm.getCharacterData(include);
 
-		if( strlen(data) > 2 ) {  // should be at least 3 chars: open/close symbol + file name
+		if( strlen(data) > 2  and  (*data == '"' or  *data == '<') ) {  // should be at least 3 chars: open/close symbol + file name
 			char terminator = *data == '"' ? '"' : '>';
 
 			include_string.push_back(*data); ++data;
@@ -192,10 +192,14 @@ bool is_bindable(QualType const &qt)
 	r &= !qt->isFunctionPointerType()  and  !qt->isRValueReferenceType()  and  !qt->isInstantiationDependentType()  and  !qt->isArrayType();  //and  !qt->isConstantArrayType()  and  !qt->isIncompleteArrayType()  and  !qt->isVariableArrayType()  and  !qt->isDependentSizedArrayType()
 
 	if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) {
-		if( pt->getPointeeType()->isPointerType() ) return false;  // refuse to bind 'value**...' types
-		if( pt->getPointeeType()->isArithmeticType() ) return false;  // refuse to bind 'int*, doublle*...' types
-		if( pt->getPointeeType()->isArrayType() or pt->getPointeeType()->isConstantArrayType() ) return false;  // refuse to bind 'T* v[]...' types
+		QualType pqt = pt->getPointeeType();
 
+		if( pqt->isPointerType() ) return false;  // refuse to bind 'value**...' types
+		//if( pqt->isArithmeticType() ) return false;  // refuse to bind 'int*, doublle*...' types
+		if( pqt->isArrayType() or pqt->isConstantArrayType() ) return false;  // refuse to bind 'T* v[]...' types
+
+		string pqt_name = pqt.getAsString();
+		if( begins_with(pqt_name, "struct std::pair")  or  begins_with(pqt_name, "struct std::tuple") ) return false;  // but we allow bindings for 'const std::tuple' and 'const std::pair'
 		//qt->dump();
 		r &= is_bindable( pt->getPointeeType()/*.getCanonicalType()*/ );
 	}
@@ -205,8 +209,8 @@ bool is_bindable(QualType const &qt)
 		//outs() << "#### " << pqt.getAsString() << "\n";
 
 		// special handling for std::pair&  and  std::tuple&  whitch pybind11 can't pass by refference
-		string pqt_name = pqt.getAsString();
-		if( begins_with(pqt_name, "std::pair")  or  begins_with(pqt_name, "std::tuple") ) return false;  // but we allow bindings for 'const std::tuple' and 'const std::pair'
+		string pqt_name = standard_name( pqt.getAsString() );
+		if( begins_with(pqt_name, "struct std::pair")  or  begins_with(pqt_name, "struct std::tuple") ) return false;  // but we allow bindings for 'const std::tuple' and 'const std::pair'
 
 		//rt->dump();
 		//outs() << "Ref " << qt.getAsString() << " -> " << is_bindable( rt->getPointeeType().getCanonicalType() ) << "\n";
@@ -258,9 +262,8 @@ void request_bindings(clang::QualType const &qt, Context &context)
 string standard_name(string const &type)
 {
 	static vector< std::pair<string, string> > const name_map = {
+		make_pair("std::__1::", "std::"), // Mac libc++ put all STD objects into std::__1::  // WARNING: order is important here: we want to first replace std::__1:: so later we can change basic_string into string
 		make_pair("std::basic_string<char>", "std::string"),
-
-		make_pair("std::__1::", "std::"), // Mac libc++ put all STD objects into std::__1::
 	};
 
 	string r(type);

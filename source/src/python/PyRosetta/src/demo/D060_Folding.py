@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -91,6 +93,8 @@ cysteine residues which are close to each other in the decoy structure.
 import optparse    # for sorting options
 
 from rosetta import *
+from pyrosetta import *
+
 init(extra_options = "-constant_seed")
 # normally, init() works fine
 # for this sample script, we want to ease comparison by making sure all random
@@ -170,26 +174,26 @@ def sample_folding(sequence,
     # for the long fragments file
     # this "try--except" is used to catch improper fragment files
     try:
-        fragset_long = ConstantLengthFragSet( long_frag_length , long_frag_filename )
+        fragset_long = core.fragment.ConstantLengthFragSet( long_frag_length , long_frag_filename )
         #### the ConstantLengthFragSet is overloaded, this same
         ####    ConstantLengthFragSet can be obtained with different syntax
         # to obtain custom fragments, see Generating Fragment Files below
     except:
         raise IOError('Make sure long_frag_length matches the fragments in\n\
             long_frag_file and that long_frag_file is valid')
-    long_frag_mover = ClassicFragmentMover(fragset_long, movemap)
+    long_frag_mover = protocols.simple_moves.ClassicFragmentMover(fragset_long, movemap)
     # and for the short fragments file
     # this "try--except" is used to catch improper fragment files
     try:
-        fragset_short = ConstantLengthFragSet(short_frag_length, short_frag_filename)
+        fragset_short = core.fragment.ConstantLengthFragSet(short_frag_length, short_frag_filename)
     except:
         raise IOError('Make sure short_frag_length matches the fragments in\n\
             short_frag_file and that short_frag_file is valid')
-    short_frag_mover = ClassicFragmentMover(fragset_short, movemap)
+    short_frag_mover = protocols.simple_moves.ClassicFragmentMover(fragset_short, movemap)
 
     # 8. setup RepeatMovers for the ClassicFragmentMovers
-    insert_long_frag = RepeatMover(long_frag_mover, long_inserts)
-    insert_short_frag = RepeatMover(short_frag_mover, short_inserts)
+    insert_long_frag = protocols.moves.RepeatMover(long_frag_mover, long_inserts)
+    insert_short_frag = protocols.moves.RepeatMover(short_frag_mover, short_inserts)
 
     # 9. create a PyMOL_Observer for exporting structures to PyMOL (optional)
     # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for
@@ -219,7 +223,7 @@ def sample_folding(sequence,
     # -setup a TrialMover
     #    a. create a SequenceMover of the fragment insertions
     #### add any other moves you desire
-    folding_mover = SequenceMover()
+    folding_mover = protocols.moves.SequenceMover()
     folding_mover.add_mover(insert_long_frag)
     folding_mover.add_mover(insert_short_frag)
     #    b. create a MonteCarlo object to define success/failure
@@ -231,7 +235,7 @@ def sample_folding(sequence,
     #### for each trajectory, try cycles number of applications
 
     # -create the RepeatMover
-    folding = RepeatMover(trial, cycles)
+    folding = protocols.moves.RepeatMover(trial, cycles)
 
     # 12. create a (Py)JobDistributor
     jd = PyJobDistributor(job_output, jobs, scorefxn_high)
@@ -291,12 +295,12 @@ def sample_folding(sequence,
         #scorefxn_high( test_pose )
 
     # 15. output the score evaluations
-    print '===== Centroid Scores ====='
-    print 'Original Score\t:\t', scores[0]
+    print( '===== Centroid Scores =====' )
+    print( 'Original Score\t:\t', scores[0] )
     for i in range(1, len(scores)):    # print out the job scores
         # the "[:14].ljust(14)" is to force the text alignment
-        print (job_output + '_' + str( i ))[:14].ljust(14) +\
-            '\t:\t', scores[i]
+        print( (job_output + '_' + str( i ))[:14].ljust(14) +\
+            '\t:\t', scores[i] )
 
     return scores    # for other protocols
 
@@ -318,16 +322,16 @@ def guess_disulfides(pose, cutoff = 6.0):
             partners[i] = (cys[first], second)
             i += 1
     # try each disulfide, if it lowers the score, print it to screen
-    print '='*80
-    print 'Potential Disulfides:'
+    print( '='*80 )
+    print( 'Potential Disulfides:' )
     for pair in partners:
         # for a fullatom cysteine in PyRosetta, the 6th atom is sulfur
         separation = (pose.residue(pair[0]).xyz(6) -
             pose.residue(pair[1]).xyz(6)).norm
         if separation < cutoff:
-            print 'between (pose numbered) residue' , pair[0] , 'and' ,\
-                pair[1] , '|' , separation , 'Angstrom separation'
-    print '='*80
+            print( 'between (pose numbered) residue' , pair[0] , 'and' ,\
+                pair[1] , '|' , separation , 'Angstrom separation' )
+    print( '='*80 )
     # to manipulate disulfide bonds, use:
     # formation:    form_disulfide(pose.conformation(), 6, 16)
     # cleavage:     change_cys_state(6, 'CYS', pose.conformation() )
@@ -470,13 +474,12 @@ cycles = int(options.cycles)
 jobs = int(options.jobs)
 job_output = options.job_output
 
-''' Disabled until Abinitio error is fixed
+# ''' Disabled until Abinitio error is fixed
 sample_folding(sequence,
     long_frag_filename, long_frag_length,
     short_frag_filename, short_frag_length,
     kT, long_inserts, short_inserts, cycles,
     jobs, job_output)
-'''
 
 ################################################################################
 # ALTERNATE SCENARIOS

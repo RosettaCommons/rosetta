@@ -1,10 +1,14 @@
 // File: T02_function.cpp
 #include <T02.function.hpp> // A
 #include <T02.function.hpp> // foo
+#include <T02.function.hpp> // foo_cr
+#include <T02.function.hpp> // foo_cr2
 #include <T02.function.hpp> // foo_p
 #include <T02.function.hpp> // foo_r
 #include <memory> // std::shared_ptr
+#include <memory> // std::shared_ptr<A>::operator=
 #include <memory> // std::shared_ptr<A>::shared_ptr
+#include <utility> // std::pair
 
 #include <pybind11/pybind11.h>
 
@@ -63,10 +67,52 @@ void bind_T02_function(std::function< pybind11::module &(std::string const &name
 	// foo_r(class std::shared_ptr<class A> &) file:T02.function.hpp line:35
 	M("").def("foo_r", (void (*)(class std::shared_ptr<class A> &)) &foo_r, "doc", pybind11::arg(""));
 
-	// foo_p(class A *) file:T02.function.hpp line:42
+	// foo_cr(const bool &) file:T02.function.hpp line:38
+	M("").def("foo_cr", (void (*)(const bool &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr(const int &) file:T02.function.hpp line:39
+	M("").def("foo_cr", (void (*)(const int &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr(const long &) file:T02.function.hpp line:40
+	M("").def("foo_cr", (void (*)(const long &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr(const float &) file:T02.function.hpp line:41
+	M("").def("foo_cr", (void (*)(const float &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr(const double &) file:T02.function.hpp line:42
+	M("").def("foo_cr", (void (*)(const double &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr(const class A &) file:T02.function.hpp line:43
+	M("").def("foo_cr", (void (*)(const class A &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr(const class std::shared_ptr<class A> &) file:T02.function.hpp line:44
+	M("").def("foo_cr", (void (*)(const class std::shared_ptr<class A> &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_cr2(const class std::shared_ptr<const class A> &) file:T02.function.hpp line:45
+	M("").def("foo_cr2", (void (*)(const class std::shared_ptr<const class A> &)) &foo_cr2, "doc", pybind11::arg(""));
+
+	// foo_cr(const struct std::pair<int, int> &) file:T02.function.hpp line:46
+	M("").def("foo_cr", (void (*)(const struct std::pair<int, int> &)) &foo_cr, "doc", pybind11::arg(""));
+
+	// foo_p(bool *) file:T02.function.hpp line:48
+	M("").def("foo_p", (void (*)(bool *)) &foo_p, "doc", pybind11::arg(""));
+
+	// foo_p(int *) file:T02.function.hpp line:49
+	M("").def("foo_p", (void (*)(int *)) &foo_p, "doc", pybind11::arg(""));
+
+	// foo_p(long *) file:T02.function.hpp line:50
+	M("").def("foo_p", (void (*)(long *)) &foo_p, "doc", pybind11::arg(""));
+
+	// foo_p(float *) file:T02.function.hpp line:51
+	M("").def("foo_p", (void (*)(float *)) &foo_p, "doc", pybind11::arg(""));
+
+	// foo_p(double *) file:T02.function.hpp line:52
+	M("").def("foo_p", (void (*)(double *)) &foo_p, "doc", pybind11::arg(""));
+
+	// foo_p(class A *) file:T02.function.hpp line:53
 	M("").def("foo_p", (void (*)(class A *)) &foo_p, "doc", pybind11::arg(""));
 
-	// foo_p(class std::shared_ptr<class A> *) file:T02.function.hpp line:43
+	// foo_p(class std::shared_ptr<class A> *) file:T02.function.hpp line:54
 	M("").def("foo_p", (void (*)(class std::shared_ptr<class A> *)) &foo_p, "doc", pybind11::arg(""));
 
 }

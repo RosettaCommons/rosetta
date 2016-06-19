@@ -38,6 +38,7 @@
 
 #ifdef PYROSETTA
 #include <protocols/match/Matcher.hh>
+#include <utility/OrderedTuple.hh>
 #endif
 
 

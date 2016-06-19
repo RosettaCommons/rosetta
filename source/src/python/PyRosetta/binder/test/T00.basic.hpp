@@ -27,15 +27,15 @@ void foo() {}
 
 int foo_int(int)   { return 0; }
 int foo_int(int &) { return 0; }
-int foo_int_not_binded(int *) { return 0; }
+int foo_int(int *) { return 0; }
 
 float foo_float(float)   { return 0; }
 float foo_float(float &) { return 0; }
-float foo_float_not_binded(float *) { return 0; }
+float foo_float(float *) { return 0; }
 
 double foo_double(double)   { return 0; }
 double foo_double(double &) { return 0; }
-double foo_double_not_binded(double *) { return 0; }
+double foo_double(double *) { return 0; }
 
 using VoidP = void *;
 

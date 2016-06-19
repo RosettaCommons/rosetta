@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <deque>
 
 #include <self_test.incl.hpp>
 //#include <iostream>
@@ -55,12 +56,48 @@ template class T2<int>;
 
 //T1<T2<int>> fttttttttttttttttt (T1<T2<int>>) { return T1<T2<int>>(); }
 
+struct B
+{
+	int counter = 0;
 
-class El {
-public:
-	El() {}
-	El(int) {}
+	B& inc() { ++counter; return *this; }
 };
+
+
+struct any_type {
+ 	//any_type() = delete;
+    template<typename T> any_type(T const&);
+};
+
+
+template<typename T>
+struct BT {
+	BT(int) {}
+};
+
+class any_type2 : public BT<int> {
+};
+
+
+struct Base
+{
+	virtual ~Base() {}
+
+	virtual void clone() const = 0;
+};
+
+
+struct Derived : public Base
+{
+	void clone() {}
+};
+
+
+// class El {
+// public:
+// 	El() {}
+// 	El(int) {}
+// };
 
 // class B
 // {
@@ -123,7 +160,46 @@ public:
 
 
 
-static El _EL_;
+// static El _EL_;
+
+// struct Virt
+// {
+// 	virtual ~Virt() {}
+
+// 	virtual void foo() = 0;
+
+// 	virtual Virt & operator = ( Virt const & ) = 0;
+// };
+
+
+// struct Virt2 : public Virt
+// {
+// 	virtual void foo() {}
+
+// 	virtual Virt & operator = ( Virt const & ) { return *this; }
+
+// };
+
+
+// struct A {
+// 	A() : a(), b(), s() { std::cout << "A::A()" << std::endl; }
+
+// 	int a;
+// 	double b;
+// 	std::string s;
+// };
+
+// class V {
+// public:
+// 	V(unsigned long *, unsigned long **) {}
+
+// 	virtual void f(A &) { std::cout << "V::f!" << std::endl; }
+// };
+
+
+// //void foo(std::deque<unsigned long>) {}
+// void foo1(std::pair<double, double> *) {}
+// void foo2(std::pair<double, double> &) {}
 
 // struct A
 // {
@@ -149,9 +225,8 @@ static El _EL_;
 // void case_2() { std::cout << "Using {2} constructor!" << std::endl; }
 
 
-using Vector = std::vector<bool>; // lead to compilation error!
-
-auto foo(Vector &v, int i) ->decltype(v[i]) { return v[i]; }
+// using Vector = std::vector<bool>; // lead to compilation error!
+// auto foo(Vector &v, int i) ->decltype(v[i]) { return v[i]; }
 
 
 

@@ -157,6 +157,24 @@ def build_rosetta(rosetta_dir, platform, jobs, mode='release', verbose=False, de
 
 
 
+def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verbose=False, debug=False):
+    ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line, pyrosetta_path) '''
+
+    #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
+
+    command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}'.format(rosetta_dir=rosetta_dir, python=platform['python'], jobs=jobs, compiler=platform['compiler'], mode=mode)
+
+    pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output')
+
+    if debug:
+        res, output = 0, '__init__.py:build_pyrosetta: debug is enabled, skipping build...\n'
+    else:
+        res, output = execute('Building PyRosetta {}...'.format(mode), command_line, return_='tuple')
+
+    return res, output, command_line, pyrosetta_path
+
+
+
 def install_llvm_tool(name, source_location, config, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and raise BenchmarkError exception on failure (do not catch this! if you really need 'normal' exit from this function on failure - refactor it instead)

@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -85,6 +87,8 @@ The method sample_refinement:
 import optparse    # for sorting options
 
 from rosetta import *
+from pyrosetta import *
+
 init(extra_options = "-constant_seed")
 # normally, init() works fine
 # for this sample script, we want to ease comparison by making sure all random
@@ -148,7 +152,7 @@ def sample_refinement(pdb_filename,
     #    change based on the Metropolis Criteria using the "rama" ScoreType and
     #    the parameter kT
     # set the maximum angle to backbone_angle_max, apply it smallmoves times
-    smallmover = SmallMover(movemap, kT, smallmoves)
+    smallmover = protocols.simple_moves.SmallMover(movemap, kT, smallmoves)
     # angle_max is secondary structure dependent, however secondary structure
     #    has not been evaulated in this protocol, thus they are all set
     #    to the same value0
@@ -164,7 +168,7 @@ def sample_refinement(pdb_filename,
     #    are instead a random (free in the MoveMap) residue's phi and the
     #    preceding residue's psi, this reduces the downstream structural change
     # set the maximum angle to backbone_angle_max, apply it shearmoves times
-    shearmover = ShearMover(movemap, kT, shearmoves)
+    shearmover = protocols.simple_moves.ShearMover(movemap, kT, shearmoves)
     # same angle_max restictions as SmallMover
     shearmover.angle_max(backbone_angle_max)
     #### use the overloaded version of the SmallMover.angle_max method if you
@@ -174,7 +178,7 @@ def sample_refinement(pdb_filename,
     #shearmover.angle_max('L', backbone_angle_max)
 
     # 7. create a MinMover, for backbone torsion minimization
-    minmover = MinMover()
+    minmover = protocols.simple_moves.MinMover()
     minmover.movemap(movemap)
     minmover.score_function(scorefxn)
 
@@ -184,19 +188,19 @@ def sample_refinement(pdb_filename,
     to_pack = standard_packer_task(starting_pose)
     to_pack.restrict_to_repacking()    # prevents design, packing only
     to_pack.or_include_current(True)    # considers the original sidechains
-    packmover = PackRotamersMover(scorefxn, to_pack)
+    packmover = protocols.simple_moves.PackRotamersMover(scorefxn, to_pack)
 
     #### assess the new structure
-    # 9. create a PyMOL_Mover
-    pymover = PyMOL_Mover()
+    # 9. create a PyMolMover
+    pymover = PyMolMover()
     # uncomment the line below to load structures into successive states
     #pymover.keep_history(True)
-    #### the PyMOL_Mover slows down the protocol SIGNIFICANTLY but provides
+    #### the PyMolMover slows down the protocol SIGNIFICANTLY but provides
     ####    very informative displays
-    #### the keep_history flag (when True) tells the PyMOL_Mover to store new
+    #### the keep_history flag (when True) tells the PyMolMover to store new
     ####    structures into successive states, for a single trajectory, this
     ####    allows you to see intermediate changes (depending on where the
-    ####    PyMOL_Mover is applied), when using a JobDistributor or otherwise
+    ####    PyMolMover is applied), when using a JobDistributor or otherwise
     ####    displaying multiple trajectories with a single protocol, the output
     ####    can get confusing to interpret, by changing the pose's PDBInfo.name
     ####    the structure will load into a new PyMOL state
@@ -217,7 +221,7 @@ def sample_refinement(pdb_filename,
     combined_mover.add_mover(shearmover)
     combined_mover.add_mover(minmover)
     combined_mover.add_mover(packmover)
-    #### explore the protocol using the PyMOL_Mover, try viewing structures
+    #### explore the protocol using the PyMolMover, try viewing structures
     ####    before they are accepted or rejected
     combined_mover.add_mover(pymover)
     #    b. create a MonteCarlo object to define success/failure
@@ -225,7 +229,7 @@ def sample_refinement(pdb_filename,
     # c. create the TrialMover
     trial = TrialMover(combined_mover, mc)
 
-    #### explore the protocol using the PyMOL_Mover, try viewing structures
+    #### explore the protocol using the PyMolMover, try viewing structures
     ####    after acceptance/rejection, comment-out the lines below
     #original_trial = TrialMover(combined_mover, mc)
     #trial = SequenceMover()
@@ -254,7 +258,7 @@ def sample_refinement(pdb_filename,
         # a. set necessary variables for the new trajectory
         # -reload the starting pose
         pose.assign(starting_pose)
-        # -change the pose's PDBInfo.name, for the PyMOL_Mover
+        # -change the pose's PDBInfo.name, for the PyMolMover
         counter += 1
         pose.pdb_info().name(job_output + '_' + str(counter))
         # -reset the MonteCarlo object (sets lowest_score to that of p)
@@ -283,9 +287,9 @@ def sample_refinement(pdb_filename,
         scores[counter] = scorefxn(pose)
 
     # 15. output the score evaluations
-    print 'Original Score\t:\t' , scores[0]
+    print( 'Original Score\t:\t' , scores[0] )
     for i in range(1, len(scores)):    # print out the job scores
-        print job_output + '_' + str(i) + '\t:\t', scores[i]
+        print( job_output + '_' + str(i) + '\t:\t', scores[i] )
 
     return scores    # for other protocols
 
@@ -312,7 +316,7 @@ interpretation of results. Score comparison and visual inspection are critical
 when testing out a new protocol. A refinement protocol should lower score
 without altering the protein conformation significantly (typically RMSD<4).
 
-The PyMOL_Mover speeds up investigation by directly loading structures into
+The PyMolMover speeds up investigation by directly loading structures into
 PyMOL. This allows you to easily view intermediate changes in a protocol. In
 the sample_refinement method, the original structure is exported to PyMOL and
 colored by its per-residue score evaluation. For each trajectory, a series of
@@ -433,7 +437,7 @@ but first want to ensure the PDB file is "Rosetta-friendly" by relaxing it.
     -the number of applications per trajectory, including backbone minimization,
         sidechain packing, and Metropolis assessment, this parameter directly
         affects the amount of sampling
-    -the PyMOL_Mover_ip option is left to its default (127.0.0.1)
+    -the PyMolMover option is left to its default (127.0.0.1)
     -please consult the literature for more details on how to implement a
         more useful refinement method
 
@@ -492,7 +496,7 @@ is kT).
 
 If you are interested in the changes in individual score terms, you can remove
 these values and write them as you please (see pose_scoring.py) or export them
-to PyMOL for structure coloring. The PyMOL_Mover.send_energy method accepts an
+to PyMOL for structure coloring. The PyMolMover.send_energy method accepts an
 optional argument specifying which score term to display.
 
 Please try alternate scoring functions or unique selection methods to better

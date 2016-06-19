@@ -60,6 +60,7 @@ namespace disulfides {
 * could form a bond, not just the best one. Maybe even include non-cysteines!
 */
 class CentroidDisulfideNeighborIterator : public ResidueNeighborIterator {
+	CentroidDisulfideNeighborIterator & operator = (CentroidDisulfideNeighborIterator const & );
 public:
 
 	CentroidDisulfideNeighborIterator(
@@ -112,6 +113,7 @@ public:
 
 /// @brief Just a const version of CentroidDisulfideNeighborIterator
 class CentroidDisulfideNeighborConstIterator : public ResidueNeighborConstIterator {
+	CentroidDisulfideNeighborConstIterator & operator = (CentroidDisulfideNeighborConstIterator const & );
 public:
 	CentroidDisulfideNeighborConstIterator(
 		CentroidDisulfideEnergyContainer const * owner,

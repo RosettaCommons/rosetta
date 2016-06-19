@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+from __future__ import print_function
+
 ################################################################################
 # A GENERAL EXPLANATION
 
@@ -86,6 +88,7 @@ The method sample_docking:
 import optparse    # for sorting options
 
 from rosetta import *
+from pyrosetta import *
 from rosetta.protocols.rigid import *
 
 
@@ -241,12 +244,12 @@ def sample_docking(pdb_filename, partners,
     jd.native_pose = temp_pose    # for RMSD comparison
 
     # 12. setup a PyMOL_Observer (optional)
-    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for
+    # the PyMOL_Observer object owns a PyMolMover and monitors pose objects for
     #    structural changes, when changes are detected the new structure is
     #    sent to PyMOL
     # fortunately, this allows investigation of full protocols since
     #    intermediate changes are displayed, it also eliminates the need to
-    #    manually apply the PyMOL_Mover during a custom protocol
+    #    manually apply the PyMolMover during a custom protocol
     # unfortunately, this can make the output difficult to interpret (since you
     #    aren't explicitly telling it when to export) and can significantly slow
     #    down protocols since many structures are output (PyMOL can also slow
@@ -293,7 +296,7 @@ for the protein conformation. PDB files produced from docking will contain
 both docking partners in their predicted conformation. When inspecting these
 PDB files (or the PyMOL_Observer output) be aware that PyMOL can introduce or
 predict bonds that do not exist, particularly for close atoms. This rarely
-occurs when using the PyMOL_Mover.keep_history feature (since PyRosetta will
+occurs when using the PyMolMover.keep_history feature (since PyRosetta will
 sample some conformation space that has clashes).
 
 The PyMOL_Observer will output a series of structures directly produced by the

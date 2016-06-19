@@ -15,6 +15,8 @@
 # https://cmake.org/files/v3.5/cmake-3.5.2.tar.gz
 # /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 
+from __future__ import print_function
+
 import os, sys, argparse, platform, subprocess, imp, shutil, distutils.dir_util
 
 from collections import OrderedDict
@@ -26,7 +28,9 @@ elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "unknown"
 PlatformBits = platform.architecture()[0][:2]
 
-_pybind11_version_ = 'master' #'06f56ee1e90861d6af1882202baf02e31646510a'
+_python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
+
+_pybind11_version_ = 'PyRosetta'
 
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
@@ -67,7 +71,11 @@ def execute(message, command_line, return_='status', until_successes=False, term
         p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, errors = p.communicate()
 
-        output = output.decode('utf-8') + errors.decode('utf-8')
+        output = output + errors
+
+        if sys.version_info[0] == 2: output = output.decode('utf-8', errors='replace').encode('utf-8', 'replace') # Python-2
+        else: output = output.decode('utf-8', errors='replace')  # Python-3
+
         exit_code = p.returncode
 
         if exit_code  or  not silent: print(output)
@@ -154,7 +162,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 def install_pybind11(prefix, clean=True):
     ''' Download and install PyBind11 library at given prefix. Install version specified by _pybind11_version_ sha1
     '''
-    git_checkout = '( git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
+    git_checkout = '( git fetch && git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
 
     if not os.path.isdir(prefix): os.makedirs(prefix)
     package_dir = prefix + '/pybind11'
@@ -175,7 +183,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
     p = os.path.join(rosetta_source_path, 'build/PyRosetta')
 
     #p = os.path.join(p, 'cross_compile' if Options.cross_compile else (Platform+ '/' + options.compiler) )
-    p =  os.path.join(p, Platform+ '/' + get_compiler_family() )
+    p =  os.path.join(p, Platform+ '/' + get_compiler_family() + '/pyhton-' + _python_version_)
 
     #p = os.path.join(p, 'monolith' if True else 'namespace' )
 
@@ -200,9 +208,7 @@ def copy_supplemental_files(rosetta_source_path):
 
     distutils.dir_util.copy_tree(source, prefix, update=False)
 
-    if Platform not in ['windows', 'cygwin'] and (not os.path.islink(prefix + '/database')): os.symlink('../../../../../../../database', prefix + '/database')  # creating link to Rosetta database dir
-
-
+    if Platform not in ['windows', 'cygwin'] and (not os.path.islink(prefix + '/database')): os.symlink('../../../../../../../../database', prefix + '/database')  # creating link to Rosetta database dir
 
 
 def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
@@ -323,6 +329,9 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
 
 def generate_bindings(rosetta_source_path):
     ''' Generate bindings using binder tools and return list of source files '''
+    copy_supplemental_files(rosetta_source_path)
+    execute('Updating version, options and residue-type-enum files...', 'cd {} && ./version.py && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(rosetta_source_path) )
+
     prefix = get_binding_build_root(rosetta_source_path, source=True) + '/'
 
     for d in ['src', 'external']:
@@ -337,7 +346,7 @@ def generate_bindings(rosetta_source_path):
         for path in 'ObjexxFCL utility numeric basic core protocols'.split():
             for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
                 for f in files:
-                    if f.endswith('.hh'):
+                    if f.endswith('.hh')  and  (not f.endswith('.fwd.hh')):
                         #if f == 'exit.hh':
                         #if dir_name.endswith('utility'):
                         if not is_dir_banned(dir_name):
@@ -352,11 +361,12 @@ def generate_bindings(rosetta_source_path):
 
     if Platform == 'macos': includes = '-isystem/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1' + includes
 
-    execute('Generating bindings...', 'cd {prefix} && {} --annotate-includes --config {config} --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) ) # --annotate-includes -stdlib=libc++ -x c++
+    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) ) # --annotate-includes -stdlib=libc++ -x c++
 
     sources = open(prefix+'rosetta.sources').read().split()
 
     generate_cmake_file(rosetta_source_path, sources)
+
 
 
 def  build_generated_bindings(rosetta_source_path):
@@ -369,9 +379,22 @@ def  build_generated_bindings(rosetta_source_path):
 
     # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
 
-    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} ../source'.format(config, prefix=prefix))
+    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version} ../source'.format(config, prefix=prefix, python_version=_python_version_))
 
     execute('Building...', 'cd {prefix} && ninja -j{jobs}'.format(prefix=prefix, jobs=Options.jobs))
+
+
+
+def create_package(rosetta_source_path, package_prefix):
+    print('Creating Python package at: {}...'.format(package_prefix))
+
+    if not os.path.isdir(package_prefix): os.makedirs(package_prefix)
+    distutils.dir_util.copy_tree(rosetta_source_path + '/../database', package_prefix + '/database', update=False)
+    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/package', package_prefix, update=False)
+
+    build_prefix = get_binding_build_root(rosetta_source_path, build=True)
+    shutil.copy(build_prefix + '/rosetta.so', package_prefix)
+    distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
 
 
 
@@ -381,22 +404,16 @@ def main(args):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-j', '--jobs', default=1, type=int, help="Number of processors to use on when building. (default: use all avaliable memory)")
-
-    #parser.add_argument("--debug", action="store_true", help="Build bindings in debug mode")
-
+    parser.add_argument('-s', '--skip-generation-phase', action="store_true", help="Assume that bindings code is already generaded and skipp the Binder call's")
+    parser.add_argument('-d', '--skip-building-phase', action="store_true", help="Assume that bindings code is already generaded and skipp the Binder call's")
     parser.add_argument("--type", default='Release', choices=['Release', 'Debug', 'MinSizeRel', 'RelWithDebInfo'], help="Specify build type")
-
     parser.add_argument('--compiler', default='gcc', help='Compiler to use, defualt is gcc on Linux and clang on Mac')
-
     parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
-
     parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
-
     parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
-
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
-
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
+    parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to not create package)')
 
     global Options
     Options = parser.parse_args()
@@ -413,13 +430,13 @@ def main(args):
 
     if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
 
-    copy_supplemental_files(rosetta_source_path)
+    if Options.skip_generation_phase: print('Option --skip-building-phase is supplied, skipping generation phase...')
+    else: generate_bindings(rosetta_source_path)
 
-    execute('Updating version, options and residue-type-enum files...', 'cd {} && ./version.py && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(rosetta_source_path) )
+    if Options.skip_building_phase: print('Option --skip-building-phase is supplied, skipping building phase...')
+    else: build_generated_bindings(rosetta_source_path)
 
-    generate_bindings(rosetta_source_path)
-
-    build_generated_bindings(rosetta_source_path)
+    if Options.create_package: create_package(rosetta_source_path, Options.create_package)
 
 
 if __name__ == "__main__":

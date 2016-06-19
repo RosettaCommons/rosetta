@@ -69,6 +69,10 @@ public:
 	PsiPredResult
 	run_psipred( core::pose::Pose const & pose, std::string const & blueprint_ss );
 
+	#ifdef CXX11  // in its current form PsiPredResultMap is not assignable but compiler tries to generate assigment operator anyway
+	PsiPredInterface & operator= ( const PsiPredInterface & ) = delete;
+	#endif
+
 	//private member functions
 private:
 	/// @brief converts a pose into a fasta string

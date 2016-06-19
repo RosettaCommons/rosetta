@@ -769,6 +769,7 @@ operator >( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 /// @brief swap( vectorL, vectorL )
 template< platform::SSize L, typename T, typename A >
+inline
 void
 swap( vectorL< L, T, A > & a, vectorL< L, T, A > & b )
 {
@@ -778,6 +779,7 @@ swap( vectorL< L, T, A > & a, vectorL< L, T, A > & b )
 
 /// @brief swap( vectorL, std::vector )
 template< platform::SSize L, typename T, typename A >
+inline
 void
 swap( vectorL< L, T, A > & a, std::vector< T, A > & b )
 {
@@ -787,6 +789,7 @@ swap( vectorL< L, T, A > & a, std::vector< T, A > & b )
 
 /// @brief swap( std::vector, vectorL )
 template< platform::SSize L, typename T, typename A >
+inline
 void
 swap( std::vector< T, A > & a, vectorL< L, T, A > & b )
 {
