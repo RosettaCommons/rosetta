@@ -179,19 +179,17 @@ Embedding::~Embedding(){}
 /// Methods ///
 ///////////////
 
-// show object
+// show method
 void Embedding::show() const {
 	show( std::cout );
 }
-void Embedding::show( std::ostream & out ) const {
+void Embedding::show( std::ostream & ) const {
 
-	out << "Span Embedding: " << std::endl;
+	TR << "Span Embedding: " << std::endl;
 	for ( Size i = 1; i <= embeddings_.size(); ++i ) {
-		out << "\t";
 		embeddings_[ i ]->show( TR );
 	}
-	out << "Total Embedding: " << std::endl;
-	out << "\t";
+	TR << "Total Embedding: " << std::endl;
 	total_embed_->show( TR );
 
 }// show

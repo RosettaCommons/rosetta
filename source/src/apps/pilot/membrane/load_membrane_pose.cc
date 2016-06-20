@@ -26,6 +26,7 @@
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
+#include <protocols/membrane/TransformIntoMembraneMover.hh> 
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
@@ -81,6 +82,15 @@ public:
 		// Initialize Membrane
 		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
 		init_memb->apply( pose );
+
+		// Make a copy of the pose
+		core::pose::PoseOP copypose( new Pose( pose ) ); 
+
+		// Transform this pose on its side
+		core::Vector center( 0, 0, 0 ); 
+		core::Vector normal( 0, 1, 0 ); 
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
+		transform->apply( pose ); 
 
 		// Show new pose membrane
 		pose.conformation().membrane_info()->show();
