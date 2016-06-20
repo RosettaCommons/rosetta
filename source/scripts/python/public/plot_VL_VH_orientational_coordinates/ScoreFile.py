@@ -103,7 +103,7 @@ class ScoreFile(object):
         plt.clf()
         fig = plt.gcf()
         ax = plt.gca()
-        fig.set_size_inches(10, 6)
+        fig.set_size_inches(4, 4)
         PDB_hist = plt.hist(self.PDB_angles[coordinate], bins=100, normed=True, histtype='stepfilled',linewidth=0.0, label='PDB data', color='0.5', alpha=0.5) # JJ
         histogram = plt.hist(all_scores, bins=100, normed=True, histtype='step', linewidth=1.0, label='all decoys', color='black') # JJ
 
@@ -115,15 +115,23 @@ class ScoreFile(object):
 
         yy, xx, _ = histogram
 
+        # JRJ hack to resort list by x-coord position
+        # get sorted indicies
+        s = [decoy.get_coordinate(coordinate) for decoy in self.top_x_angle_list]
+        si = sorted(range(len(s)), key=lambda k: s[k])
+
         # top scoring decoys
-        for decoy in self.top_x_angle_list:
+        #for decoy in self.top_x_angle_list:
+        for i in si:
+            decoy = self.top_x_angle_list[i]
             color = color_dict[decoy.template_no]
             x_val = decoy.get_coordinate(coordinate)
             label= decoy.get_coordinate(name)
             dist = np.abs(x - x_val)
             i = np.where(dist == dist.min())
-            plt.plot(x_val, y[i], color=color, marker = 'd', label='%s: %s' %(label, x_val))
-            plt.annotate(label, xy=(x_val, y[i]),xytext=(-4,70), textcoords='offset points', rotation='vertical', size = 'small', fontweight='medium')
+            #plt.plot(x_val, y[i], color=color, marker = 'd', label='%s: %s' %(label, x_val))
+            plt.plot(x_val, y[i], color=color, marker = 'd', label='%s'%label )
+            #plt.annotate(label, xy=(x_val, y[i]),xytext=(-4,70), textcoords='offset points', rotation='vertical', size = 'small', fontweight='medium')
 
         # templates
         if  len(tempfiles) != 0:
@@ -131,7 +139,8 @@ class ScoreFile(object):
                 color = color_dict[template['name'][-1]]
                 x_val = template[coordinate]
                 label = template['name']
-                plt.plot(x_val, y_half_max * 0.1, color=color, marker = 'o', label = '%s: %s' %(label, x_val))
+                #plt.plot(x_val, y_half_max * 0.1, color=color, marker = 'o', label = '%s: %s' %(label, x_val))
+                plt.plot(x_val, y_half_max * 0.1, color=color, marker = 'o', label = '%s'%label )
 
 
         # plot
@@ -153,12 +162,14 @@ class ScoreFile(object):
                         'VL_VH_distance':'Interdomain Distance',
                      }  # Nick's new coord names
         #plt.title('%s \n%s' %(coordinate, self.infiles[self.counter]), fontsize=15)
-        plt.title('%s of %s' %(coord_dict[coordinate], self.name.rstrip('_')), fontsize=15)
+        plt.title('%s of %s' %(coord_dict[coordinate], self.name.rstrip('_')), fontsize=9)
         # plt.title('%s \n/path/to/example/plot' %coordinate, fontsize=15)
-        plt.xlabel(coord_dict[coordinate] + ' ' + unit, fontsize=14)
-        plt.ylabel("relative frequency", fontsize = 14)
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=11,numpoints=1,handlelength=1,fancybox=True)
+        plt.xlabel(coord_dict[coordinate] + ' ' + unit, fontsize=8)
+        plt.ylabel("Relative Frequency", fontsize = 8, family='arial')
+        #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=11,numpoints=1,handlelength=1,fancybox=True)
+        plt.legend( loc='upper left', borderaxespad=0., fontsize=6,numpoints=1,handlelength=1,fancybox=True)
         plt.grid(color='0.4')
+        plt.tick_params(labelsize=8)
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -166,4 +177,4 @@ class ScoreFile(object):
         ax.yaxis.set_ticks_position('left')
         ax.xaxis.set_ticks_position('bottom')
         #print self.outpath
-        plt.savefig(self.outpath+'/%s%s.pdf' %(self.name, coordinate), format='pdf', bbox_inches='tight')
+        plt.savefig(self.outpath+'/%s%s.pdf' %(self.name, coord_dict[coordinate]), format='pdf', bbox_inches='tight', dpi=300)

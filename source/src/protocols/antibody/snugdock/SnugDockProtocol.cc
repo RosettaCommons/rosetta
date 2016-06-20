@@ -24,6 +24,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/snugdock/SnugDock.hh>
+#include <protocols/antibody/util.hh>
 
 // Project headers
 #include <protocols/docking/DockingProtocol.hh>
@@ -35,10 +36,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // constraints
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/FlatHarmonicFunc.hh>
-
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -109,9 +107,59 @@ void SnugDockProtocol::register_options() {
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SnugDockProtocol::apply( Pose & pose ) {
+void SnugDockProtocol::init() {
+	Mover::type( "SnugDockProtocol" );
+	
+	set_default();
+	init_from_options();
+	
+}
+	
+void SnugDockProtocol::init_for_equal_operator_and_copy_constructor( SnugDockProtocol & lhs, SnugDockProtocol const & rhs ) {
+	// copy all data members from rhs to lhs
+	lhs.antibody_info_ = rhs.antibody_info_;
+	
+	// Movers
+	lhs.low_res_refine_cdr_h2_ = rhs.low_res_refine_cdr_h2_;
+	lhs.low_res_refine_cdr_h3_ = rhs.low_res_refine_cdr_h3_;
+	lhs.docking_ = rhs.docking_;
+	
+	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
+}
 
-	using namespace core::scoring::constraints;
+void SnugDockProtocol::set_default() {
+	loop_refinement_method_ = "refine_kic";
+	h3_filter_ = false; // TO DO, REMOVE THIS FILTER COMPLETELY (IF KINK CST WORKS)
+	h3_filter_tolerance_ = 20;
+	auto_generate_kink_constraint_ = false;
+	high_res_kink_constraint_ = false;
+}
+
+void SnugDockProtocol::init_from_options() {
+	/// TODO: Allow the refinement method to be set via a mutator and from the options system
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	
+	if ( option[ OptionKeys::antibody::refine ].user() ) {
+		loop_refinement_method_  = option[ OptionKeys::antibody::centroid_refine ]() ;
+	}
+	/// Allow h3_filter to be turned on at cost of extra loop modeling
+	if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
+		h3_filter_  = option[ OptionKeys::antibody::h3_filter ]() ;
+	}
+	if ( option[ OptionKeys::antibody::h3_filter_tolerance ].user() ) {
+		h3_filter_tolerance_  = option[ OptionKeys::antibody::h3_filter_tolerance ]() ;
+	}
+	
+	if ( option[ OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
+		auto_generate_kink_constraint( option[ OptionKeys::antibody::auto_generate_kink_constraint ]() );
+	}
+	if ( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ].user() ) {
+		high_res_kink_constraint( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
+	}
+}
+	
+void SnugDockProtocol::apply( Pose & pose ) {
 
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 
@@ -124,43 +172,8 @@ void SnugDockProtocol::apply( Pose & pose ) {
 	pose.fold_tree( antibody_info_->get_FoldTree_LH_A( pose ) );
 
 	// set constraints, stolen from AntibodyModelerProtocol (code duplication is bad, but I'm in a rush... sorry!)
-	if ( has_auto_generate_kink_constraint() ) {
-		// Create constraints on-the-fly here.
-
-		// All of this stuff, and the work that is being done in finalize_setup() for that matter, only needs to happen
-		// once per input. I don't trust the 'fresh_instance' and related settings in the other antibody movers well
-		// enough to actually rely on that, so I'm going to do this every apply for now.
-
-		// Get relevant residue numbers
-		Size kink_begin = antibody_info_->kink_begin( pose );
-
-		// Constraints operate on AtomIDs:
-		Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
-		id::AtomID const atom_100x( CA, kink_begin );
-		id::AtomID const atom_101( CA, kink_begin + 1 );
-		id::AtomID const atom_102( CA, kink_begin + 2 );
-		id::AtomID const atom_103( CA, kink_begin + 3 );
-
-		// Yeah, yeah this is turrible. I'm trying to get stuff done over here, ok?
-		// Eventually this will read from a database file
-		// Generate functions
-		Real alpha_x0 = 0.678; // radians
-		Real alpha_sd = 0.41; // radians
-		Real alpha_tol = 0.205; // radians
-		scoring::func::FlatHarmonicFuncOP alpha_func( new scoring::func::FlatHarmonicFunc( alpha_x0, alpha_sd, alpha_tol ) );
-
-		Real tau_x0 = 1.761; // radians
-		Real tau_sd = 0.194; // radians
-		Real tau_tol = 0.0972; // radians
-		scoring::func::FlatHarmonicFuncOP tau_func( new scoring::func::FlatHarmonicFunc( tau_x0, tau_sd, tau_tol ) );
-
-		// Instantiate constraints
-		ConstraintOP tau_cst( new AngleConstraint( atom_100x, atom_101, atom_102, tau_func ) );
-		ConstraintOP alpha_cst( new DihedralConstraint( atom_100x, atom_101, atom_102, atom_103, alpha_func ) );
-
-		// Cache to pose
-		pose.add_constraint( tau_cst );
-		pose.add_constraint( alpha_cst );
+	if ( auto_generate_kink_constraint() ) {
+		antibody::kink_constrain_antibody_H3( pose, antibody_info_ );
 	}
 
 	TR << "Beginning application of " + docking()->get_name() + "." << std::endl;
@@ -181,7 +194,7 @@ void SnugDockProtocol::setup_objects( Pose const & pose ) {
 	SnugDockOP high_resolution_phase( new SnugDock );
 	high_resolution_phase->set_antibody_info( antibody_info_ );
 	// pass on kink constraint to high-res docking mover
-	if ( has_high_res_kink_constraint() ) { high_resolution_phase->set_high_res_kink_constraint( true ); }
+	if ( high_res_kink_constraint() ) { high_resolution_phase->high_res_kink_constraint( true ); }
 	docking()->set_docking_highres_mover( high_resolution_phase );
 
 }
@@ -204,7 +217,7 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 
 	// update low-res sfxn with kink constraint, unlike H3 modeling, constriants are not enable in low-res by default
 	// also weights are hard coded, so this should be refactored later
-	if ( has_auto_generate_kink_constraint() ) {
+	if ( auto_generate_kink_constraint() ) {
 		low_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
 		low_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
@@ -227,55 +240,6 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	low_res_refine_cdr_h3_->set_num_filter_tries( h3_filter_tolerance_ );
 }
 
-void SnugDockProtocol::init() {
-	type( "SnugDockProtocol" );
-
-	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
-		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::centroid_refine ]() ;
-	} else {
-		loop_refinement_method_ = "refine_kic";
-	}
-	/// Allow h3_filter to be turned on at cost of extra loop modeling
-	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
-		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
-	} else {
-		h3_filter_ = false;
-	}
-	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
-	} else {
-		h3_filter_tolerance_ = 20;
-	}
-
-	if ( option[ basic::options::OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
-		set_auto_constraint( option[ basic::options::OptionKeys::antibody::auto_generate_kink_constraint ]() );
-	} else {
-		set_auto_constraint( false ); // default
-	}
-	if ( option[ basic::options::OptionKeys::antibody::all_atom_mode_kink_constraint ].user() ) {
-		set_high_res_kink_constraint( option[ basic::options::OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
-	} else {
-		set_high_res_kink_constraint( false ); //default
-	}
-}
-
-void SnugDockProtocol::init_for_equal_operator_and_copy_constructor(
-	SnugDockProtocol & lhs,
-	SnugDockProtocol const & rhs
-) {
-	// copy all data members from rhs to lhs
-	lhs.antibody_info_ = rhs.antibody_info_;
-
-	// Movers
-	lhs.low_res_refine_cdr_h2_ = rhs.low_res_refine_cdr_h2_;
-	lhs.low_res_refine_cdr_h3_ = rhs.low_res_refine_cdr_h3_;
-	lhs.docking_ = rhs.docking_;
-
-	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
-}
 
 docking::DockingProtocolOP SnugDockProtocol::docking() const {
 	if ( ! docking_ ) {

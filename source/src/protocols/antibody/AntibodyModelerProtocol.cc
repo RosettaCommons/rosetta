@@ -411,41 +411,12 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 				cdr_constraint_->apply( pose );
 			} else {
 				// Create constraints on-the-fly here.
-
+				
 				// All of this stuff, and the work that is being done in finalize_setup() for that matter, only needs to happen
 				// once per input. I don't trust the 'fresh_instance' and related settings in the other antibody movers well
 				// enough to actually rely on that, so I'm going to do this every apply for now.
+				antibody::kink_constrain_antibody_H3( pose, ab_info_ );
 
-				// Get relevant residue numbers
-				Size kink_begin = ab_info_->kink_begin( pose );
-
-				// Constraints operate on AtomIDs:
-				Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
-				AtomID const atom_100x( CA, kink_begin );
-				AtomID const atom_101( CA, kink_begin + 1 );
-				AtomID const atom_102( CA, kink_begin + 2 );
-				AtomID const atom_103( CA, kink_begin + 3 );
-
-				// Yeah, yeah this is turrible. I'm trying to get stuff done over here, ok?
-				// Eventually this will read from a database file
-				// Generate functions
-				Real alpha_x0 = 0.678; // radians
-				Real alpha_sd = 0.41; // radians
-				Real alpha_tol = 0.205; // radians
-				func::FlatHarmonicFuncOP alpha_func( new func::FlatHarmonicFunc( alpha_x0, alpha_sd, alpha_tol ) );
-
-				Real tau_x0 = 1.761; // radians
-				Real tau_sd = 0.194; // radians
-				Real tau_tol = 0.0972; // radians
-				func::FlatHarmonicFuncOP tau_func( new func::FlatHarmonicFunc( tau_x0, tau_sd, tau_tol ) );
-
-				// Instantiate constraints
-				ConstraintOP tau_cst( new AngleConstraint( atom_100x, atom_101, atom_102, tau_func ) );
-				ConstraintOP alpha_cst( new DihedralConstraint( atom_100x, atom_101, atom_102, atom_103, alpha_func ) );
-
-				// Cache to pose
-				pose.add_constraint( tau_cst );
-				pose.add_constraint( alpha_cst );
 			}
 		}
 

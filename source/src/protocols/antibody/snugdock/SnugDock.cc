@@ -38,6 +38,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 
 // basic
@@ -125,13 +126,69 @@ void SnugDock::register_options() {
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void SnugDock::init() {
+	Mover::type( "SnugDock" );
+	
+	set_default();
+	init_from_options();
+	
+}
+
+void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, SnugDock const & rhs) {
+	// copy all data members from rhs to lhs
+	lhs.antibody_info_ = rhs.antibody_info_;
+	lhs.mc_ = rhs.mc_;
+	
+	// Movers
+	lhs.high_resolution_step_ = rhs.high_resolution_step_;
+	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
+	lhs.pre_minimization_ = rhs.pre_minimization_;
+	
+	// H3 filter options
+	lhs.h3_filter_ = rhs.h3_filter_;
+	lhs.debug_ = rhs.debug_;
+	lhs.h3_filter_tolerance_ = rhs.h3_filter_tolerance_;
+	
+	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
+}
+void SnugDock::set_default() {
+	
+	loop_refinement_method_ = "refine_kic";
+	h3_filter_ = false;
+	h3_filter_tolerance_= 20;
+	number_of_high_resolution_cycles_ = 50;
+	high_res_kink_constraint_ = false;
+	
+}
+
+void SnugDock::init_from_options() {
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	
+	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
+		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
+	}
+	/// Allow h3_filter to be turned on at expense of extra loop modeling
+	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
+		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
+	}
+	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
+		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
+	}
+	
+	if ( option[ run::test_cycles ].user() ) {
+		/// Ideally we would test a larger number of cycles because we are using a random mover in the apply,
+		/// but because each submove can be quite long, this would take far too long.
+		/// TODO: Create a scientific test for SnugDock that is run regularly.
+		number_of_high_resolution_cycles( 5 );
+	}
+}
+
 void SnugDock::apply( Pose & pose ) {
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 	show( TR );
 
 	if ( ! high_resolution_step_ ) setup_objects( pose );
-
-	/// Apply high-res auto-generated constraints to pose here.
 
 	/// minimize the CDRs before move to full-atom SnugDock cycle. Remove clashes which may dissociate L-H
 	pre_minimization_->apply(pose);
@@ -231,7 +288,7 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
 
 	// update high-res sfxn with kink constraint, passed on from SnugDockProtocol
-	if ( has_high_res_kink_constraint() ) {
+	if ( high_res_kink_constraint() ) {
 		high_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
 		high_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
@@ -262,65 +319,6 @@ void SnugDock::setup_objects( Pose const & pose ) {
 		high_resolution_step_->add_mover( minimize_all_cdr_loops, 0.1 );
 		high_resolution_step_->add_mover( refine_cdr_h2, 0.05 );
 		high_resolution_step_->add_mover( refine_cdr_h3, 0.05 );
-	}
-}
-
-void SnugDock::init() {
-	type( "SnugDock" );
-
-	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
-		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
-	} else {
-		loop_refinement_method_ = "refine_kic";
-	}
-	/// Allow h3_filter to be turned on at expense of extra loop modeling
-	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
-		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
-	} else {
-		h3_filter_ = false;
-	}
-	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
-	} else {
-		h3_filter_tolerance_ = 20;
-	}
-
-
-	number_of_high_resolution_cycles( 50 );
-
-	init_options();
-}
-
-void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, SnugDock const & rhs) {
-	// copy all data members from rhs to lhs
-	lhs.antibody_info_ = rhs.antibody_info_;
-	lhs.mc_ = rhs.mc_;
-
-	// Movers
-	lhs.high_resolution_step_ = rhs.high_resolution_step_;
-	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
-	lhs.pre_minimization_ = rhs.pre_minimization_;
-
-	// H3 filter options
-	lhs.h3_filter_ = rhs.h3_filter_;
-	lhs.debug_ = rhs.debug_;
-	lhs.h3_filter_tolerance_ = rhs.h3_filter_tolerance_;
-
-	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
-}
-
-void SnugDock::init_options() {
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-
-	if ( option[ run::test_cycles ].user() ) {
-		/// Ideally we would test a larger number of cycles because we are using a random mover in the apply,
-		/// but because each submove can be quite long, this would take far too long.
-		/// TODO: Create a scientific test for SnugDock that is run regularly.
-		number_of_high_resolution_cycles( 5 );
 	}
 }
 

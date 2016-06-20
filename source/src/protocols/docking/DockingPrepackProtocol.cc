@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -54,6 +55,8 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/file/file_sys_util.hh>
+
 
 
 using basic::T;
@@ -209,7 +212,7 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 {
 	finalize_setup(pose);
-	score_and_output("initial",pose);
+	//score_and_output("initial",pose);
 
 	//Move each partners away from the others
 	for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
@@ -233,11 +236,11 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 			translate_away->apply(pose);
 		}
 	}
-	score_and_output("away",pose);
+	//score_and_output("away",pose);
 
 	// packing the unbound structures
 	pack_operations_->apply( pose );
-	score_and_output("away_packed",pose);
+	//score_and_output("away_packed",pose);
 
 	//bringing the packed structures together
 	for ( DockJumps::const_iterator jump= movable_jumps().begin(); jump != movable_jumps().end(); ++jump ) {
@@ -268,7 +271,12 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	if ( dock_ppk_ ) {
 		pack_operations_->apply( pose );
 	}
-	score_and_output("prepack",pose);
+	//score_and_output("prepack",pose);
+	
+	// for the sake of naming consistency (JRJ)
+	// get prefix, append _prepack.pdb, output
+	std::string basename = utility::file::file_basename(pose.pdb_info()->name());
+	pose.dump_pdb( basename + ".prepack.pdb" );
 }
 
 std::string DockingPrepackProtocol::get_name() const {

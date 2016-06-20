@@ -48,6 +48,7 @@ infiles = []
 tempfiles = []
 listmode = 0
 
+
 # argument parsing
 def parse_args():
     """ Parse command line options. Default are as follows:
@@ -70,7 +71,7 @@ def parse_args():
     graft_group.add_argument('-graft_dir_list') # previously -l:temp
 
     outname_group = parser.add_mutually_exclusive_group()
-    outname_group.add_argument('-output_name', default='your antibody') # previously -s:names
+    outname_group.add_argument('-output_name', default='Antibody 1') # previously -s:names
     outname_group.add_argument('-output_name_list') # previously -l:names
 
     parser.add_argument('-angles_sc') # previously -angle

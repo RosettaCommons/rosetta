@@ -64,11 +64,11 @@ public: // boiler plate / virtuals
 	static void register_options();
 
 	// Accessors for auto kink-constraint options
-	void set_auto_constraint( bool const setting ) { auto_generate_kink_constraint_ = setting; }
-	void set_high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
-
-	bool has_auto_generate_kink_constraint() const { return auto_generate_kink_constraint_; }
-	bool has_high_res_kink_constraint() const { return high_res_kink_constraint_; }
+	bool auto_generate_kink_constraint() const { return auto_generate_kink_constraint_; }
+	void auto_generate_kink_constraint( bool const setting ) { auto_generate_kink_constraint_ = setting; }
+	
+	bool high_res_kink_constraint() const { return high_res_kink_constraint_; }
+	void high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
 
 
 public:
@@ -80,7 +80,8 @@ private: // methods
 	void setup_loop_refinement_movers();
 	void init();
 	void init_for_equal_operator_and_copy_constructor( SnugDockProtocol & lhs, SnugDockProtocol const & rhs);
-	void init_options();
+	void init_from_options();
+	void set_default();
 
 	docking::DockingProtocolOP docking() const;
 

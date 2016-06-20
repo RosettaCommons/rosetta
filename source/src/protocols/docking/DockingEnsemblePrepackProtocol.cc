@@ -24,6 +24,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -41,6 +42,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
+#include <utility/file/file_sys_util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -234,6 +236,11 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		ensemble2_->calculate_highres_ref_energy( i ); // also does the dump_pdb
 	}
 	ensemble2_->update_pdblist_file();
+	
+	// for the sake of naming consistency (JRJ)
+	// get prefix, append _prepack.pdb, output
+	std::string basename = utility::file::file_basename(pose.pdb_info()->name());
+	pose.dump_pdb( basename + ".prepack.pdb" );
 }
 
 std::string DockingEnsemblePrepackProtocol::get_name() const {

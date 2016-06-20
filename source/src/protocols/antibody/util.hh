@@ -153,7 +153,9 @@ CDR_H3_cter_filter(
 bool
 is_H3_rama_kinked(std::string const & rama);
 
-
+/// @brief Apply auto-generated kink constraint
+void
+kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info );
 
 
 } //namespace antibody

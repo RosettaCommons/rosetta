@@ -83,17 +83,18 @@ public:
 	void set_antibody_info( AntibodyInfoOP antibody_info );
 
 	// Accessors for auto kink-constraint options
-	void set_high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
-	bool has_high_res_kink_constraint() const { return high_res_kink_constraint_; }
+	bool high_res_kink_constraint() const { return high_res_kink_constraint_; }
+	void high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
 
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, SnugDock const & snugdock );
 
 private: // methods
 	void setup_objects( Pose const & pose );
+	void set_default();
 	void init();
 	void init_for_equal_operator_and_copy_constructor( SnugDock & lhs, SnugDock const & rhs);
-	void init_options();
+	void init_from_options();
 
 private: // data
 	AntibodyInfoOP antibody_info_;
