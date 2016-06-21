@@ -821,23 +821,23 @@ is_H3_rama_kinked(std::string const & rama){
 		return false;
 	}
 }
-	
+
 void
 kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info ) {
-	
+
 	using namespace core::scoring::constraints;
 
 	TR << " Automatically setting kink constraint! " << std::endl;
 	// Get relevant residue numbers
 	Size kink_begin = antibody_info->kink_begin( pose );
-	
+
 	// Constraints operate on AtomIDs:
 	Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
 	id::AtomID const atom_100x( CA, kink_begin );
 	id::AtomID const atom_101( CA, kink_begin + 1 );
 	id::AtomID const atom_102( CA, kink_begin + 2 );
 	id::AtomID const atom_103( CA, kink_begin + 3 );
-	
+
 	// Yeah, yeah this is turrible. I'm trying to get stuff done over here, ok?
 	// Eventually this will read from a database file
 	// Generate functions
@@ -845,21 +845,21 @@ kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibo
 	Real alpha_sd = 0.41; // radians
 	Real alpha_tol = 0.205; // radians
 	scoring::func::FlatHarmonicFuncOP alpha_func( new scoring::func::FlatHarmonicFunc( alpha_x0, alpha_sd, alpha_tol ) );
-	
+
 	Real tau_x0 = 1.761; // radians
 	Real tau_sd = 0.194; // radians
 	Real tau_tol = 0.0972; // radians
 	scoring::func::FlatHarmonicFuncOP tau_func( new scoring::func::FlatHarmonicFunc( tau_x0, tau_sd, tau_tol ) );
-	
+
 	// Instantiate constraints
 	ConstraintOP tau_cst( new AngleConstraint( atom_100x, atom_101, atom_102, tau_func ) );
 	ConstraintOP alpha_cst( new DihedralConstraint( atom_100x, atom_101, atom_102, atom_103, alpha_func ) );
-	
+
 	// Cache to pose
 	pose.add_constraint( tau_cst );
 	pose.add_constraint( alpha_cst );
 }
-	
+
 } // namespace antibody
 } // namespace protocols
 

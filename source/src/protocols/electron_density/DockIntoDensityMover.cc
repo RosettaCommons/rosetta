@@ -98,15 +98,15 @@ namespace electron_density {
 static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
 
 struct
-ScoredPoint {
+	ScoredPoint {
 	core::Real score;
 	numeric::xyzVector< core::Real > pos;
 };
 
 struct
-ScoredPointCmptr {
+	ScoredPointCmptr {
 	bool operator()(ScoredPoint a, ScoredPoint b) {
-            return a.score > b.score;
+		return a.score > b.score;
 	}
 };
 // non-superposed RMS
@@ -363,17 +363,17 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 
 	utility::vector1< numeric::xyzVector<core::Real> > points_cart;
 	core::Real scorecut, minDistNative=1e30;
-	for (core::Size i=1; i<=allpts.size() && points_to_search_.size() < topNtrans_; ++i) {
+	for ( core::Size i=1; i<=allpts.size() && points_to_search_.size() < topNtrans_; ++i ) {
 		numeric::xyzVector< core::Real > const & x_idx = allpts[i].pos;
 		numeric::xyzVector< core::Real > x_cart;
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
 
 		bool keep=true;
-		for (core::Size j=1; j<=points_cart.size() && keep; ++j) {
+		for ( core::Size j=1; j<=points_cart.size() && keep; ++j ) {
 			core::Real d2 = (x_cart-points_cart[j]).length_squared();
-			if (d2<=mindist_*mindist_) keep=false;
+			if ( d2<=mindist_*mindist_ ) keep=false;
 		}
-		if (!keep) continue;
+		if ( !keep ) continue;
 
 		if ( native_ ) {
 			core::Real distNative = (x_cart-native_com_).length_squared();
@@ -1015,7 +1015,7 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 			core::io::RemarkInfo remark;
 			std::ostringstream oss;
 
-			if (posecopy->pdb_info()) {
+			if ( posecopy->pdb_info() ) {
 				oss << "RANK = " << results_refine.size()+1;
 
 				remark.num = 1; remark.value = oss.str();

@@ -109,21 +109,21 @@ void SnugDockProtocol::register_options() {
 
 void SnugDockProtocol::init() {
 	Mover::type( "SnugDockProtocol" );
-	
+
 	set_default();
 	init_from_options();
-	
+
 }
-	
+
 void SnugDockProtocol::init_for_equal_operator_and_copy_constructor( SnugDockProtocol & lhs, SnugDockProtocol const & rhs ) {
 	// copy all data members from rhs to lhs
 	lhs.antibody_info_ = rhs.antibody_info_;
-	
+
 	// Movers
 	lhs.low_res_refine_cdr_h2_ = rhs.low_res_refine_cdr_h2_;
 	lhs.low_res_refine_cdr_h3_ = rhs.low_res_refine_cdr_h3_;
 	lhs.docking_ = rhs.docking_;
-	
+
 	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
 }
 
@@ -139,7 +139,7 @@ void SnugDockProtocol::init_from_options() {
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	if ( option[ OptionKeys::antibody::refine ].user() ) {
 		loop_refinement_method_  = option[ OptionKeys::antibody::centroid_refine ]() ;
 	}
@@ -150,7 +150,7 @@ void SnugDockProtocol::init_from_options() {
 	if ( option[ OptionKeys::antibody::h3_filter_tolerance ].user() ) {
 		h3_filter_tolerance_  = option[ OptionKeys::antibody::h3_filter_tolerance ]() ;
 	}
-	
+
 	if ( option[ OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
 		auto_generate_kink_constraint( option[ OptionKeys::antibody::auto_generate_kink_constraint ]() );
 	}
@@ -158,7 +158,7 @@ void SnugDockProtocol::init_from_options() {
 		high_res_kink_constraint( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
 	}
 }
-	
+
 void SnugDockProtocol::apply( Pose & pose ) {
 
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;

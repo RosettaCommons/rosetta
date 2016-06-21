@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-
+/// @file  apps/public/minimize.cc
+/// @brief Calls the minimizer to energy-relax a pose.
+/// @author No idea who wrote this originally.  Modified by Vikram K. Mulligan (vmullig@uw.edu) on 20 June 2016 as part of the 2016 Documentation XRW.
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -20,6 +20,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
@@ -122,8 +123,15 @@ Minimize::apply( Pose & pose ) {
 	core::Real min_tol =  option[ OptionKeys::run::min_tolerance ]();
 	core::optimization::MinimizerOptions options( min_type, min_tol, true, false );
 	core::kinematics::MoveMap final_mm;
-	final_mm.set_chi( true );
-	final_mm.set_bb( true );
+
+	if ( !option[ OptionKeys::in::file::movemap ].user() ) {
+		final_mm.set_chi( option[ OptionKeys::relax::chi_move ].user() ? option[ OptionKeys::relax::chi_move ]() : true  );
+		final_mm.set_bb( option[ OptionKeys::relax::bb_move ].user() ? option[ OptionKeys::relax::bb_move ]() : true  );
+		final_mm.set_jump( option[ OptionKeys::relax::jump_move ].user() ? option[ OptionKeys::relax::jump_move ]() : true );
+	} else {
+		TR << "Initializing movemap from file " << option[ OptionKeys::in::file::movemap ]() << std::endl;
+		final_mm.init_from_file(option[ OptionKeys::in::file::movemap ]() );
+	}
 
 	/*core::Real start_score =*/ (*score_function_)(pose);
 	core::Size repeats = 1;

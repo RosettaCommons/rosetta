@@ -64,11 +64,11 @@ CenHBEnergy::CenHBEnergy( ):
 	parent( methods::EnergyMethodCreatorOP( new CenHBEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_CenHBPotential( ) ),
 	soft_( false )
-{ 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( option[ corrections::score::hb_cen_soft ].user() ){
+	if ( option[ corrections::score::hb_cen_soft ].user() ) {
 		soft_ = option[ corrections::score::hb_cen_soft ]();
 	}
 }
@@ -122,17 +122,17 @@ CenHBEnergy::residue_pair_energy(
 	Vector bbH, bbO, bbC, bbN;
 	Real r, xd, xh;
 
-	if( soft_ ){
-		if( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
+	if ( soft_ ) {
+		if ( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
 				(rsd2.aa() != core::chemical::aa_gly && rsd2.aa() != core::chemical::aa_pro ) &&
-				seqsep > 7 ){
+				seqsep > 7 ) {
 			Vector a1 = rsd1.atom( rsd1.atom_index("CEN") ).xyz() - rsd1.atom( rsd1.atom_index("CA") ).xyz();
 			Vector a2 = rsd2.atom( rsd2.atom_index("CEN") ).xyz() - rsd2.atom( rsd2.atom_index("CA") ).xyz();
 			Vector b1 = rsd1.atom( rsd1.atom_index("C") ).xyz()   - rsd1.atom( rsd1.atom_index("N") ).xyz();
 			Vector b2 = rsd2.atom( rsd2.atom_index("C") ).xyz()   - rsd2.atom( rsd2.atom_index("N") ).xyz();
 			Vector dv  = rsd2.atom( rsd2.atom_index("CA") ).xyz()  - rsd1.atom( rsd1.atom_index("CA") ).xyz();
 			//printf( "%3d %3d %6.2f %6.2f %6.2f %6.2f %6.2f\n", int(rsd1.seqpos()), int(rsd2.seqpos()),
-			//				a1.length(), a2.length(), b1.length(), b2.length(), dv.length() );
+			//    a1.length(), a2.length(), b1.length(), b2.length(), dv.length() );
 			score = potential_.func_soft( a1, a2, b1, b2, dv );
 		}
 
@@ -197,9 +197,9 @@ CenHBEnergy::eval_residue_pair_derivatives(
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
 	Real weight = weights[ cen_hb ];
 
-	if( soft_ ){
-		eval_residue_pair_derivatives_soft( rsd1, rsd2, weights, 
-																				r1_atom_derivs, r2_atom_derivs );
+	if ( soft_ ) {
+		eval_residue_pair_derivatives_soft( rsd1, rsd2, weights,
+			r1_atom_derivs, r2_atom_derivs );
 		return;
 	}
 
@@ -335,10 +335,10 @@ CenHBEnergy::eval_residue_pair_derivatives_soft(
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
 	Real weight = weights[ cen_hb ];
 
-	if( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
+	if ( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
 			(rsd2.aa() != core::chemical::aa_gly && rsd2.aa() != core::chemical::aa_pro ) &&
-			seqsep > 7 ){
-		Size idxN2 = rsd1.atom_index("N"); 
+			seqsep > 7 ) {
+		Size idxN2 = rsd1.atom_index("N");
 		Size idxC1 = rsd1.atom_index("C");
 		Size idxA1 = rsd1.atom_index("CA");
 		Size idxB1 = rsd1.atom_index("CEN");
@@ -367,8 +367,8 @@ CenHBEnergy::eval_residue_pair_derivatives_soft(
 
 		potential_.dfunc_soft( a1, a2, b1, b2, dv, df_dABNC_1, df_dABNC_2 );
 
-		for( Size i = 1; i <= 4; ++i ) df_dABNC_1[i] *= weight;
-		for( Size i = 1; i <= 4; ++i ) df_dABNC_2[i] *= weight;
+		for ( Size i = 1; i <= 4; ++i ) df_dABNC_1[i] *= weight;
+		for ( Size i = 1; i <= 4; ++i ) df_dABNC_2[i] *= weight;
 
 		r1_atom_derivs[ idxA1 ].f2() += df_dABNC_1[1];
 		r1_atom_derivs[ idxB1 ].f2() += df_dABNC_1[2];

@@ -236,7 +236,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		ensemble2_->calculate_highres_ref_energy( i ); // also does the dump_pdb
 	}
 	ensemble2_->update_pdblist_file();
-	
+
 	// for the sake of naming consistency (JRJ)
 	// get prefix, append _prepack.pdb, output
 	std::string basename = utility::file::file_basename(pose.pdb_info()->name());

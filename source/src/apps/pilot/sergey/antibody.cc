@@ -141,18 +141,18 @@ int antibody_main()
 
 	string grafting_database = basic::options::option[basic::options::OptionKeys::antibody::grafting_database]();
 	TR << TR.Cyan << "Using antibody grafting_database at: " << TR.Bold << grafting_database << std::endl;
-	
+
 	// add code to unpack PDBs here
 	vector1<string> file_names;
 
 	// assemble full path to antibody_database
 	std::string full_ab_db_path = grafting_database + "/antibody_database/";
-	
+
 	// check if there are any files in the grafting database
 	file::list_dir( full_ab_db_path, file_names );
 
 	TR << TR.Magenta << "Unzipping files in antibody_databse (if any). This will only be done once." << TR.Reset << std::endl;
-	
+
 	// iterate over vector looking for bz2's and unzip
 	for (auto it = file_names.begin(); it != file_names.end() ; ++it) {
 		// check for bz2 and not already unzipped
@@ -162,7 +162,7 @@ int antibody_main()
 		}
 	}
 	TR << TR.Magenta << "Done unzipping." << TR.Reset << std::endl;
-	
+
 
 	if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  !basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
 		heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::heavy ]();
@@ -197,7 +197,7 @@ int antibody_main()
 
 	// strip directory from prefix, then make it recursively
 	string const prefix_path = prefix.substr( 0, prefix.find_last_of( "/\\" ) );
-	
+
 	if ( !file::is_directory( prefix_path ) ) {
 		file::create_directory_recursive( prefix_path );
 	}

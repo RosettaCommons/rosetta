@@ -66,7 +66,7 @@ public: // boiler plate / virtuals
 	// Accessors for auto kink-constraint options
 	bool auto_generate_kink_constraint() const { return auto_generate_kink_constraint_; }
 	void auto_generate_kink_constraint( bool const setting ) { auto_generate_kink_constraint_ = setting; }
-	
+
 	bool high_res_kink_constraint() const { return high_res_kink_constraint_; }
 	void high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
 

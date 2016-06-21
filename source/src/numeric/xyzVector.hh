@@ -443,23 +443,23 @@ public: // Methods
 	}
 
 	// #ifdef PYROSETTA
-	// 	/// @brief *this + xyzVector, mostly for PyRosetta
-	// 	inline
-	// 	xyzVector<T>
-	// 	operator +( xyzVector<T> const & rhs) const
-	// 	{
-	// 		xyzVector<T> r = *this + rhs;
-	// 		return r;
-	// 	}
+	//  /// @brief *this + xyzVector, mostly for PyRosetta
+	//  inline
+	//  xyzVector<T>
+	//  operator +( xyzVector<T> const & rhs) const
+	//  {
+	//   xyzVector<T> r = *this + rhs;
+	//   return r;
+	//  }
 
-	// 	/// @brief *this - xyzVector, mostly for PyRosetta
-	// 	inline
-	// 	xyzVector<T>
-	// 	operator -( xyzVector<T> const & rhs) const
-	// 	{
-	// 		xyzVector<T> r = *this - rhs;
-	// 		return r;
-	// 	}
+	//  /// @brief *this - xyzVector, mostly for PyRosetta
+	//  inline
+	//  xyzVector<T>
+	//  operator -( xyzVector<T> const & rhs) const
+	//  {
+	//   xyzVector<T> r = *this - rhs;
+	//   return r;
+	//  }
 	// #else
 	//#endif
 

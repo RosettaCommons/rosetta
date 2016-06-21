@@ -128,43 +128,43 @@ void SnugDock::register_options() {
 
 void SnugDock::init() {
 	Mover::type( "SnugDock" );
-	
+
 	set_default();
 	init_from_options();
-	
+
 }
 
 void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, SnugDock const & rhs) {
 	// copy all data members from rhs to lhs
 	lhs.antibody_info_ = rhs.antibody_info_;
 	lhs.mc_ = rhs.mc_;
-	
+
 	// Movers
 	lhs.high_resolution_step_ = rhs.high_resolution_step_;
 	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
 	lhs.pre_minimization_ = rhs.pre_minimization_;
-	
+
 	// H3 filter options
 	lhs.h3_filter_ = rhs.h3_filter_;
 	lhs.debug_ = rhs.debug_;
 	lhs.h3_filter_tolerance_ = rhs.h3_filter_tolerance_;
-	
+
 	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
 }
 void SnugDock::set_default() {
-	
+
 	loop_refinement_method_ = "refine_kic";
 	h3_filter_ = false;
 	h3_filter_tolerance_= 20;
 	number_of_high_resolution_cycles_ = 50;
 	high_res_kink_constraint_ = false;
-	
+
 }
 
 void SnugDock::init_from_options() {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
-	
+
 	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
 		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
 	}
@@ -175,7 +175,7 @@ void SnugDock::init_from_options() {
 	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
 		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
 	}
-	
+
 	if ( option[ run::test_cycles ].user() ) {
 		/// Ideally we would test a larger number of cycles because we are using a random mover in the apply,
 		/// but because each submove can be quite long, this would take far too long.

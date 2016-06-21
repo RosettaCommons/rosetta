@@ -96,9 +96,9 @@ private:
 	// Private filters maps for SELECTors
 	protocols::filters::Filters_map selector_filters_;
 
-	#ifdef CXX11  // in its current form MultiplePoseMover is not assignable due to presense of protocols::filters::Filters_map defined as std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
+#ifdef CXX11  // in its current form MultiplePoseMover is not assignable due to presense of protocols::filters::Filters_map defined as std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
 	MultiplePoseMover & operator= ( const MultiplePoseMover & ) = delete;
-	#endif
+#endif
 
 };
 

@@ -272,7 +272,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		pack_operations_->apply( pose );
 	}
 	//score_and_output("prepack",pose);
-	
+
 	// for the sake of naming consistency (JRJ)
 	// get prefix, append _prepack.pdb, output
 	std::string basename = utility::file::file_basename(pose.pdb_info()->name());

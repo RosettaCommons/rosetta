@@ -156,9 +156,9 @@ private:
 	bool grp_cpfxn_;
 	//std::string grp_cpfxn_mode_;
 
-	#ifdef CXX11  // in its current form GroupElec is not assignable due to presense of std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
+#ifdef CXX11  // in its current form GroupElec is not assignable due to presense of std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
 	GroupElec & operator= ( const GroupElec & ) = delete;
-	#endif
+#endif
 
 }; // class GroupElec
 

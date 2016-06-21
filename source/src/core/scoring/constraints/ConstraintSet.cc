@@ -929,7 +929,7 @@ ConstraintSet::show(
 	std::ostream& out
 ) const {
 	using namespace core::scoring::constraints;
-	
+
 	out << "ResiduePairConstraints: total: " << residue_pair_constraints_.size() << "   plotting active..." << std::endl;
 	for ( Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
 
@@ -949,19 +949,19 @@ ConstraintSet::show(
 			// print out the residue pair constraints for residue ii
 		}
 	} // for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii )
-	
+
 	out << "IntraResidueCosntraints: total: " << intra_residue_constraints_.size()  << " showing active..." << std::endl;
 	for ( ResidueConstraints::const_iterator it = intra_residue_constraints_.begin(),
-			 eit = intra_residue_constraints_.end(); it != eit; ++it) {
+			eit = intra_residue_constraints_.end(); it != eit; ++it ) {
 		out << "IntraResidueConstraints (" << it->first << ")" << std::endl;
 		it->second->show( out );
 		out << std::endl;
 	}
-	
+
 
 	out << "NonResiduePairCosntraints: total: " << non_residue_pair_constraints_.size() << " showing active..." << std::endl;
 	for ( Constraints::const_iterator it = non_residue_pair_constraints_.begin(),
-			 eit = non_residue_pair_constraints_.end(); it != eit; ++it ) {
+			eit = non_residue_pair_constraints_.end(); it != eit; ++it ) {
 		(*it)->show( out );
 		out << std::endl;
 	}

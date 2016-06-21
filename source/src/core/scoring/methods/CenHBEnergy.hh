@@ -115,12 +115,12 @@ public:
 
 	void
 	eval_residue_pair_derivatives_soft(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
-) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data

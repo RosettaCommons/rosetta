@@ -1022,13 +1022,13 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
 			EtableOptions options_local( options_in );
 			options_local.lj_switch_dis2sigma = 0.91;
-			if( option[corrections::beta_nov15 ]() || option[ corrections::beta_nov15_cart ]()){ 
+			if ( option[corrections::beta_nov15 ]() || option[ corrections::beta_nov15_cart ]() ) {
 				// hacky route for beta energy function
 				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-				options_local, "SOFTBETANOV15" ) );
+					options_local, "SOFTBETANOV15" ) );
 			} else { // default
 				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-				options_local, "SOFT" ) );
+					options_local, "SOFT" ) );
 			}
 		} else if ( table_id == FA_STANDARD_MULTIPOLE ) {
 			// multipole etable: change to lj_switch_dis2sigma to make harder repulsion.

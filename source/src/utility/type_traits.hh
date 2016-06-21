@@ -30,12 +30,12 @@ namespace utility {
 namespace has_insertion_operator_implementation {
 enum class False {};
 struct any_type {
-    template<typename T> any_type(T const&);
+	template<typename T> any_type(T const&);
 
 	// #ifdef CXX11
- 	// any_type() = delete;
- 	// any_type & operator= ( const any_type & ) = delete;
- 	// #endif
+	// any_type() = delete;
+	// any_type & operator= ( const any_type & ) = delete;
+	// #endif
 };
 False operator<<(std::ostream const&, any_type const&);
 }

@@ -1359,10 +1359,10 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 
 	//fd update jump names
 	typedef std::map< Size,std::string >::iterator it_type;
-	for(it_type j_it = jnum2dofname_.begin(); j_it != jnum2dofname_.end(); j_it++) {
+	for ( it_type j_it = jnum2dofname_.begin(); j_it != jnum2dofname_.end(); j_it++ ) {
 		int i_new = (int)j_it->first + (int)N*((int)njump_monomer-(int)old_njump_monomer);
 		std::string old_name = j_it->second;
-		if (i_new > 0) {
+		if ( i_new > 0 ) {
 			jnum2dofname_new[i_new] = old_name;
 			dofname2jnum_new[old_name] = i_new;
 		}

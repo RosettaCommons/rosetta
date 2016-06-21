@@ -217,9 +217,9 @@ private:
 
 	static std::map< const std::string, HBondDatabaseCOP > initialized_databases_;
 
-	#ifdef CXX11  // in its current form HBondDatabase is not assignable due to presense of std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
+#ifdef CXX11  // in its current form HBondDatabase is not assignable due to presense of std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
 	HBondDatabase & operator= ( const HBondDatabase & ) = delete;
-	#endif
+#endif
 
 };
 

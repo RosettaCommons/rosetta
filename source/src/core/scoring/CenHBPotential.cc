@@ -116,8 +116,8 @@ CenHBPotential::CenHBPotential() {
 }
 
 // implementation of soft version
-Real 
-CenHBPotential::func_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv ) const 
+Real
+CenHBPotential::func_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv ) const
 {
 	using numeric::constants::f::pi;
 
@@ -149,9 +149,9 @@ CenHBPotential::func_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv
 
 void
 CenHBPotential::dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector dv,
-														utility::vector1< Vector > &df_dABNC_1,
-														utility::vector1< Vector > &df_dABNC_2
-														) const 
+	utility::vector1< Vector > &df_dABNC_1,
+	utility::vector1< Vector > &df_dABNC_2
+) const
 {
 	using numeric::constants::f::pi;
 
@@ -185,15 +185,15 @@ CenHBPotential::dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector d
 	fa  = fade(       dota,    0.75,    0.75, false  ); // 1 at < 30', fade until 90'
 	fb  = fade(  dotb*dotb,    0.75,    0.50, false ); // 1 at > 150 or < -150', fade until 120/-120'
 	fdv1 = fade(dotdv1*dotdv1, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~120'
-	fdv2 = fade(dotdv2*dotdv2, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~	dfd_dd     = dfade( d, 6.0, 3.0, true ); // 1 at < 6.0, fade until 9.0 Ang
+	fdv2 = fade(dotdv2*dotdv2, dv0*dv0, dvs*dvs-dv0*dv0, true ); // 1 at 75~105', fade until 60~ dfd_dd     = dfade( d, 6.0, 3.0, true ); // 1 at < 6.0, fade until 9.0 Ang
 
 	f = -fd*fa*fb*fdv1*fdv2;
 
-	if( f > -1e-6 ) return;
+	if ( f > -1e-6 ) return;
 
 	dfd_dd     = dfade( d, 6.0, 3.0, true );
 	dfa_ddota  = dfade(       dota,    0.75,    0.75, false  );
-	dfb_ddotb  = dfade(  dotb*dotb,    0.75,    0.50, false ); 
+	dfb_ddotb  = dfade(  dotb*dotb,    0.75,    0.50, false );
 	dfdv1_ddotdv1 = dfade(dotdv1*dotdv1, dv0*dv0, dvs*dvs-dv0*dv0, true );
 	dfdv2_ddotdv2 = dfade(dotdv2*dotdv2, dv0*dv0, dvs*dvs-dv0*dv0, true );
 
@@ -226,13 +226,13 @@ CenHBPotential::dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector d
 	//Vector ddotdv2_dA2 = -ddotdv2_dA1;
 
 	// contribution from f(d): A1, A2
-	if( fd > 1e-6 ){
+	if ( fd > 1e-6 ) {
 		df_dABNC_1[1] += f/fd * dfd_dd*dd_dA1;
 		df_dABNC_2[1] += f/fd * dfd_dd*dd_dA2;
 	}
 
 	// contribution from f(dota): A1, A2, B1, B2
-	if( fa > 1e-6 ){
+	if ( fa > 1e-6 ) {
 		df_dABNC_1[1] += f/fa * dfa_ddota*ddota_dA1;
 		df_dABNC_2[1] += f/fa * dfa_ddota*ddota_dA2;
 		df_dABNC_1[2] -= f/fa * dfa_ddota*ddota_dA1;
@@ -240,7 +240,7 @@ CenHBPotential::dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector d
 	}
 
 	// contribution from f(dotb): N1, C1, N2, C2
-	if( fb > 1e-6 ){
+	if ( fb > 1e-6 ) {
 		df_dABNC_1[3] += f/fb * dfb_ddotb*ddotb_dN1;
 		df_dABNC_2[3] += f/fb * dfb_ddotb*ddotb_dN2;
 		df_dABNC_1[4] -= f/fb * dfb_ddotb*ddotb_dN1;
@@ -248,14 +248,14 @@ CenHBPotential::dfunc_soft( Vector a1, Vector a2, Vector b1, Vector b2, Vector d
 	}
 
 	// contribution from f(dv1): A1, B1, A2
-	if( fdv1 > 1e-6 ){
+	if ( fdv1 > 1e-6 ) {
 		df_dABNC_1[2] += f/fdv1 * dfdv1_ddotdv1*ddotdv1_dB1;
 		df_dABNC_2[1] += f/fdv1 * dfdv1_ddotdv1*ddotdv1_dA2;
 		df_dABNC_1[1] -= f/fdv1 * dfdv1_ddotdv1*(ddotdv1_dB1 + ddotdv1_dA2);
 	}
 
 	// contribution from f(dv2): A1, A2, N1, C1
-	if( fdv2 > 1e-6 ){
+	if ( fdv2 > 1e-6 ) {
 		df_dABNC_1[1] += f/fdv2 * dfdv2_ddotdv2*ddotdv2_dA1;
 		df_dABNC_2[1] -= f/fdv2 * dfdv2_ddotdv2*ddotdv2_dA1;
 		df_dABNC_1[3] += f/fdv2 * dfdv2_ddotdv2*ddotdv2_dN1;

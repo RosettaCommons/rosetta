@@ -52,7 +52,7 @@ namespace disulfides {
 * @todo Given the proper options, include all residues in the vicinity which
 * could form a bond, not just the best one. Maybe even include non-cysteines!
 */
-class DisulfideMatchingNeighborIterator : public ResidueNeighborIterator 
+class DisulfideMatchingNeighborIterator : public ResidueNeighborIterator
 {
 	DisulfideMatchingNeighborIterator & operator = (DisulfideMatchingNeighborIterator const & src );
 public:

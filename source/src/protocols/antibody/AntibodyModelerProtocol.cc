@@ -411,7 +411,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 				cdr_constraint_->apply( pose );
 			} else {
 				// Create constraints on-the-fly here.
-				
+
 				// All of this stuff, and the work that is being done in finalize_setup() for that matter, only needs to happen
 				// once per input. I don't trust the 'fresh_instance' and related settings in the other antibody movers well
 				// enough to actually rely on that, so I'm going to do this every apply for now.
