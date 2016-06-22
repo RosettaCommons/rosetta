@@ -19,6 +19,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
@@ -34,7 +35,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/annotated_sequence.hh>
 
-OPT_1GRP_KEY( File, out, pdb )
+OPT_1GRP_KEY( File, out, pdbfname )
 OPT_1GRP_KEY( File, in, phi_psi_omega )
 
 void register_options() {
@@ -43,7 +44,8 @@ void register_options() {
 	OPT(in::file::native);
 	OPT(in::file::fasta);
 	OPT(in::file::residue_type_set);
-	NEW_OPT( out::pdb, "provides a file name for the output PDB file","out_pose.pdb" );
+//	OPT(out::pdb);
+	NEW_OPT( out::pdbfname, "provides a file name for the output PDB file","out_pose.pdb" );
 	NEW_OPT( in::phi_psi_omega, "provides phi,psi,omega angles to create a poly-alanine pose","");
 }
 
@@ -58,9 +60,11 @@ int main(int argc, char * argv[]) {
 	devel::init(argc, argv);
 
 	core::pose::Pose extended_pose;
-	std::string out_file_name = (option[out::pdb]());
+	std::string out_file_name = (option[out::pdbfname]());
 
-        core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+//        rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+
+        core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 	                option[ in::file::residue_type_set ]()
 	);
 	string sequence;
@@ -68,8 +72,7 @@ int main(int argc, char * argv[]) {
 		sequence = core::sequence::read_fasta_file_return_str(
 				option[in::file::fasta]()[1]);
 
-		core::pose::make_pose_from_sequence(extended_pose, sequence,
-				*rsd_set);
+		core::pose::make_pose_from_sequence(extended_pose, sequence, rsd_set);
 
 		// make extended chain
 		for (Size pos = 1; pos <= extended_pose.total_residue(); pos++) {
