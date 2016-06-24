@@ -7,8 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file source/src/protocols/constraints_additional/BindingSiteConstraint.cc
+/// @author Frank DiMaio (?)
+/// @brief This constrains some set of three or more atoms to maintain the same geometry as the starting pose. Constrainted binding sites are read in using the ConstraintIO class (maybe only with the defunct section-based constraints?)  Binding-site constraints use the same weight as atom-pair constraints, and (should) work with any protocol where atom-pair constraints are respected. Constraints on sidechain atoms are automatically converted to constraints on centroids when performing centroid-level manipulation.
+
+///File format example:
+/*
+[ bindingsites ]
+   CG 37  CD 38 CA 39 OG 40  CD1 41
+   CA 69  CA 70 CA 71 CA 72  CA  73
+[ atompairs ]
+   CA  3 CA 49 HARMONIC 4.44 2.0
+   CA  5 CA 71 HARMONIC 4.68 2.0
+*/
 
 #ifndef INCLUDED_protocols_constraints_additional_BindingSiteConstraint_hh
 #define INCLUDED_protocols_constraints_additional_BindingSiteConstraint_hh

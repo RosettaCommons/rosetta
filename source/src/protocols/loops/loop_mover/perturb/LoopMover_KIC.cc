@@ -313,7 +313,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		core::conformation::torsion_bin_string torsion_bins;
 		try {
 			std::string user_torbin_string = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
-			core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
+			torsion_bins = core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			throw utility::excn::EXCN_Msg_Exception( "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );

@@ -64,7 +64,7 @@ main( int argc, char* argv[] )
 	TR << "initial loops " << loops << std::flush;
 	TR << "Read in files" << std::endl;
 
-	protocols::jd2::JobDistributor::get_instance()->go(new hackLAMMover(loops));
+	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP(new hackLAMMover(loops)));
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
