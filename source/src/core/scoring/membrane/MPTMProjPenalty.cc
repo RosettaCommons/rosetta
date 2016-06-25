@@ -52,6 +52,8 @@
 // C++ Headers
 #include <cstdlib>
 
+using namespace core::scoring::methods;
+
 namespace core {
 namespace scoring {
 namespace membrane {

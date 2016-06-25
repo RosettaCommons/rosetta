@@ -35,8 +35,8 @@
 
 namespace protocols {
 namespace simple_moves {
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core;
-using namespace std;
 using utility::vector1;
 
 typedef  core::Real  Probability;
@@ -54,7 +54,7 @@ public:
 	vector1<vector1<Real> >generate_profile_score_wo_background(vector1<vector1<Size> > res_per_pos, vector1<Real> cenList, core::pose::Pose const pose);
 	void save_MSAcst_file(vector1<vector1<Real> > profile_score,core::pose::Pose const pose);
 	void add_MSAcst_to_pose(vector1<vector1<Real> > profile_score,core::pose::Pose & pose);
-	Real get_cen_deviation(vector<Real> cenListFrag,vector1<Real> cenListModel);
+	Real get_cen_deviation(std::vector<Real> cenListFrag,vector1<Real> cenListModel);
 	vector1< Real> calc_cenlist(core::pose::Pose const pose);
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
@@ -62,7 +62,7 @@ public:
 	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	Real rmsThreshold_;
-	string aa_order_;
+	std::string aa_order_;
 	Size consider_topN_frags_;
 	Real burialWt_;
 	bool outputProfile_;
@@ -84,4 +84,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_StructProfileMover_hh
-

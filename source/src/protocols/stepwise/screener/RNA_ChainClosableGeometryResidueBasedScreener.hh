@@ -21,6 +21,7 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
 #include <core/conformation/Residue.hh>
 
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core;
 
 namespace protocols {

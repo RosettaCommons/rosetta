@@ -22,6 +22,7 @@
 #include <utility/vector1.fwd.hh>
 
 
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace protocols::stepwise::modeler::rna::rigid_body;
 using namespace core;
 

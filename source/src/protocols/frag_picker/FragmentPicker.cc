@@ -1947,7 +1947,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 
 				for ( Size i = 1; i <= out[1].first->get_length(); ++i ) {
 					VallResidueOP r   =  out[fi].first->get_residue(i);
-					string pdbid      = out[fi].first->get_pdb_id();
+					std::string pdbid = out[fi].first->get_pdb_id();
 					//char chainid      = out[fi].first->get_chain_id();
 					Size index        = r->resi();
 					char aa           = toupper(r->aa());
@@ -1975,8 +1975,8 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 
 					// Add fragment to frame
 					if ( !frame->add_fragment(current_fragment) ) {
-						cerr << "ERROR Bad fragment : "<<endl;
-						current_fragment->show(cout);
+						std::cerr << "ERROR Bad fragment : " << std::endl;
+						current_fragment->show(std::cout);
 						exit(1111);
 					}
 				}

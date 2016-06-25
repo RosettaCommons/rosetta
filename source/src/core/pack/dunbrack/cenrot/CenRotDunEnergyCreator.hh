@@ -26,9 +26,6 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-//using namespace scoring;
-//using namespace scoring::methods;
-
 class CenRotDunEnergyCreator : public scoring::methods::EnergyMethodCreator
 {
 public:

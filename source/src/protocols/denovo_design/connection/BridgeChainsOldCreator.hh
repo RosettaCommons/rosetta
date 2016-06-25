@@ -12,9 +12,10 @@
 /// @details
 /// @author Tom Linsky
 
+#if 0 // depricated
 
-#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChainsCreator_hh
-#define INCLUDED_protocols_denovo_design_connection_BridgeChainsCreator_hh
+#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChainsCreator_old_hh
+#define INCLUDED_protocols_denovo_design_connection_BridgeChainsCreator_old_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
@@ -35,5 +36,6 @@ public:
 }
 }
 
-
 #endif
+
+#endif // depricated

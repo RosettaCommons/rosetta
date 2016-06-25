@@ -34,7 +34,6 @@ namespace core
 namespace indexed_structure_store
 {
 using utility::vector1;
-using namespace std;
 
 class ABEGOHashedFragmentStore : public utility::SingletonBase< ABEGOHashedFragmentStore >
 {
@@ -48,10 +47,10 @@ public:
 	Real lookback(pose::Pose const pose, Size resid,std::string fragAbegoStr);
 	std::vector< numeric::xyzVector<numeric::Real> > lookback_xyz(pose::Pose const pose, Size resid);
 	std::vector< numeric::xyzVector<numeric::Real> > get_fragment_coordinates(Size match_abego,Size match_index);
-	vector<FragmentLookupResult> get_N_fragments(std::string abego_string,Size topNFrags);
-	vector<FragmentLookupResult> get_topN_fragments(std::string selectionType,Size topNFrags, pose::Pose const pose, Size resid,Real rms_threshold,std::string fragAbegoStr);
-	vector<FragmentLookupResult> get_fragments_below_rms(pose::Pose const pose, Size resid,Real rms_threshold);
-	vector<FragmentLookupResult> get_fragments_below_rms(pose::Pose const pose, Size resid,Real rms_threshold,std::string fragAbegoStr);
+	std::vector<FragmentLookupResult> get_N_fragments(std::string abego_string,Size topNFrags);
+	std::vector<FragmentLookupResult> get_topN_fragments(std::string selectionType,Size topNFrags, pose::Pose const pose, Size resid,Real rms_threshold,std::string fragAbegoStr);
+	std::vector<FragmentLookupResult> get_fragments_below_rms(pose::Pose const pose, Size resid,Real rms_threshold);
+	std::vector<FragmentLookupResult> get_fragments_below_rms(pose::Pose const pose, Size resid,Real rms_threshold,std::string fragAbegoStr);
 	core::indexed_structure_store::FragmentStoreOP get_fragment_store(std::string fragment_abego);
 	core::indexed_structure_store::FragmentStoreOP get_fragment_store(Size base5index);
 	core::indexed_structure_store::FragmentStoreOP get_fragment_store();
@@ -62,9 +61,9 @@ private:
 	std::map<Size, core::indexed_structure_store::FragmentStoreOP> ABEGOHashedFragmentStore_;
 	std::map<std::string, vector1<Size> > ss_stub_to_abego_;
 	void init_ss_stub_to_abego();
-	std::vector<bool>  generate_ss_subset_match(FragmentStoreOP fragStoreOP,string stub_ss);
+	std::vector<bool>  generate_ss_subset_match(FragmentStoreOP fragStoreOP, std::string stub_ss);
 	bool valid_ss_stub_abego_match(std::string ss_stub,std::string abego_string);
-	set<std::string> get_ss_stubs_per_fragmentStoreOP(Size base5ABEGOindex, core::indexed_structure_store::FragmentStoreOP fragment_storeOP);
+	std::set<std::string> get_ss_stubs_per_fragmentStoreOP(Size base5ABEGOindex, core::indexed_structure_store::FragmentStoreOP fragment_storeOP);
 	static ABEGOHashedFragmentStore * create_singleton_instance();
 };
 

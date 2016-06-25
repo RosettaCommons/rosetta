@@ -29,15 +29,15 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core::scoring;
-using namespace core::scoring::methods;
 
 namespace core {
 namespace scoring {
 namespace membrane {
 
 /// @brief Creator Class for Membrane Residue Pair Energy Method
-class MPPairEnergyCreator : public EnergyMethodCreator {
+class MPPairEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
 
 public:
 

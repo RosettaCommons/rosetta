@@ -18,15 +18,9 @@
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
 
-
-using namespace std;
-
 namespace protocols {
 namespace features {
 namespace strand_assembly {
-
-using namespace core;
-using namespace std;
 
 bool
 change_sheet_id_if_possible(
@@ -61,7 +55,7 @@ WriteToDB_AA_to_terminal_loops (
 	core::pose::Pose & dssp_pose,
 	Size sandwich_PK_id_counter,
 	Size sw_can_by_sh_id,
-	string tag,
+	std::string tag,
 	bool starting_loop,
 	Size residue_begin,
 	Size residue_end);
@@ -74,7 +68,7 @@ WriteToDB_ending_loop(
 	core::pose::Pose & dssp_pose,
 	Size sandwich_PK_id_counter,
 	Size sw_can_by_sh_id,
-	string tag,
+	std::string tag,
 	Size max_starting_loop_size_);
 
 Size
@@ -214,20 +208,20 @@ WriteToDB_rkde(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size rkde_PK_id_counter,
-	string tag,
+	std::string tag,
 	Size residue_number,
-	string residue_type);
+	std::string residue_type);
 
 Size
 WriteToDB_rkde_in_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size rkde_in_strands_PK_id_counter,
-	string tag,
+	std::string tag,
 	Size sw_can_by_sh_id,
 	Size residue_number,
-	string residue_type,
-	string heading_direction);
+	std::string residue_type,
+	std::string heading_direction);
 
 Size
 WriteToDB_sheet (
@@ -242,7 +236,7 @@ WriteToDB_sheet_antiparallel(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sheet_id,
-	string antiparallel);
+	std::string antiparallel);
 
 
 Size
@@ -251,19 +245,19 @@ WriteToDB_sheet_connectivity(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	Size sandwich_PK_id_counter,
-	string tag,
+	std::string tag,
 	Size sw_can_by_sh_id,
-	string loop_kind,
+	std::string loop_kind,
 	Size intra_sheet_con_id,
 	Size inter_sheet_con_id,
-	string LR,
-	string cano_LR,
-	string PA_by_preceding_E,
-	string PA_by_following_E,
-	string cano_PA,
-	string heading_direction,
-	string heading_parallel,
-	string cano_parallel_EE,
+	std::string LR,
+	std::string cano_LR,
+	std::string PA_by_preceding_E,
+	std::string PA_by_following_E,
+	std::string cano_PA,
+	std::string heading_direction,
+	std::string heading_parallel,
+	std::string cano_parallel_EE,
 	Size loop_size,
 	Size start_res,
 	Size end_res);
@@ -291,12 +285,12 @@ WriteToDB_starting_loop(
 	core::pose::Pose & dssp_pose,
 	Size sandwich_PK_id_counter,
 	Size sw_can_by_sh_id,
-	string tag,
+	std::string tag,
 	Size max_starting_loop_size_);
 
 Size
 Run_WriteToDB_sandwich(
-	string tag,
+	std::string tag,
 	core::pose::Pose & dssp_pose,
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
 	Size max_num_sw_per_pdb_,
@@ -313,12 +307,12 @@ WriteToDB_sandwich(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	Size sandwich_PK_id_counter,
-	string tag,
+	std::string tag,
 	Size sw_can_by_sh_id,
 	Size sheet_id,
-	string sheet_antiparellel,
+	std::string sheet_antiparellel,
 	Size sandwich_bs_id,
-	string strand_is_at_edge,
+	std::string strand_is_at_edge,
 	Size component_size,
 	Size residue_begin,
 	Size residue_end);
@@ -340,7 +334,7 @@ WriteToDB_sw_can_by_sh (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_PK_id_counter,
-	string tag,
+	std::string tag,
 	Size sw_can_by_sh_id_counter,
 	Size sheet_id,
 	Size num_strands_from_sheet);
@@ -365,10 +359,10 @@ WriteToDB_turn_AA(
 	Size i,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	string turn_type);
+	std::string turn_type);
 
 
-string
+std::string
 WriteToDB_turn_type(
 	core::pose::Pose const & pose,
 	Size sw_can_by_sh_id,
@@ -383,7 +377,7 @@ WriteToDB_whether_sw_is_not_connected_with_continuous_atoms(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
-	string sw_is_not_connected_with_continuous_atoms);
+	std::string sw_is_not_connected_with_continuous_atoms);
 
 
 } //namespace strand_assembly

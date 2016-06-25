@@ -339,22 +339,31 @@ def generate_bindings(rosetta_source_path):
         if os.path.islink(s): os.unlink(s)
         os.symlink(rosetta_source_path + '/' + d, s)
 
+
+
     # generate include file that contains all headers
+    all_includes = []
+
+    #for path in 'ObjexxFCL utility numeric basic core protocols'.split():
+    for path in 'ObjexxFCL utility numeric basic core protocols'.split():
+        for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
+            for f in sorted(files):
+                if f.endswith('.hh')  and  (not f.endswith('.fwd.hh')):
+                    #if f == 'exit.hh':
+                    #if dir_name.endswith('utility'):
+                    if not is_dir_banned(dir_name):
+                    #if 'utility/' in dir_name  and  'src/utility/pointer' not in dir_name:
+                        header = dir_name[len(rosetta_source_path+'/src/'):] + '/' + f
+                        if header not in _banned_headers_  and  not header.startswith('basic/options/keys/OptionKeys.cc.gen'):
+                            #print(header)
+                            all_includes.append(header)
+
+    all_includes.sort()
     include = prefix + 'all_rosetta_includes.hh'
     with open(include, 'w') as fh:
-        #for path in 'ObjexxFCL utility numeric basic core protocols'.split():
-        for path in 'ObjexxFCL utility numeric basic core protocols'.split():
-            for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
-                for f in files:
-                    if f.endswith('.hh')  and  (not f.endswith('.fwd.hh')):
-                        #if f == 'exit.hh':
-                        #if dir_name.endswith('utility'):
-                        if not is_dir_banned(dir_name):
-                        #if 'utility/' in dir_name  and  'src/utility/pointer' not in dir_name:
-                            header = dir_name[len(rosetta_source_path+'/src/'):] + '/' + f
-                            if header not in _banned_headers_  and  not header.startswith('basic/options/keys/OptionKeys.cc.gen'):
-                                #print(header)
-                                fh.write( '#include <{}>\n'.format(header) )
+        for i in all_includes: fh.write( '#include <{}>\n'.format(i) )
+
+
 
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )

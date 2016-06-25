@@ -27,7 +27,6 @@
 #include <Eigen/Dense>
 
 using Eigen::MatrixXd;
-using namespace std;
 
 namespace protocols {
 namespace forge {

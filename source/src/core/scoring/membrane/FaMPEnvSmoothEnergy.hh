@@ -44,16 +44,16 @@ namespace core {
 namespace scoring {
 namespace membrane {
 
+// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core::scoring;
-using namespace core::scoring::methods;
 
 /// @brief Fullatom Membrane Solvation Energy - Statistically Derived,
 /// and smoothed derivatives
-class FaMPEnvSmoothEnergy : public ContextDependentOneBodyEnergy  {
+class FaMPEnvSmoothEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 
 public:
 
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 public:
 
@@ -64,7 +64,7 @@ public:
 
 	/// @brief Create a clone of this energy method
 	virtual
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const;
 
 	// Scoring Methods ////////////////

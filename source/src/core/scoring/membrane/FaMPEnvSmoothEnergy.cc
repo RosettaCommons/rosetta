@@ -55,6 +55,9 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.FaMPEnvSmoothEnergy" );
 
+
+using namespace core::scoring::methods;
+
 namespace core {
 namespace scoring {
 namespace membrane {

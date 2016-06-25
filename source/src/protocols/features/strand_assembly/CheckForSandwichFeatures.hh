@@ -23,8 +23,8 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core;
-using namespace std;
 
 Real
 absolute_vec (numeric::xyzVector<Real> vector);
@@ -37,7 +37,7 @@ calculate_dihedral_w_4_resnums(
 	Size res1_sheet_j,
 	Size res2_sheet_j);
 
-vector<Real>
+std::vector<Real>
 cal_dis_angle_to_find_sheet( // calculate distance and angle to find sheet
 	core::pose::Pose const & pose,
 	Size res_i_0,
@@ -47,7 +47,7 @@ cal_dis_angle_to_find_sheet( // calculate distance and angle to find sheet
 	Size res_j_1,
 	Size res_j_2);
 
-pair<Real, Real>
+std::pair<Real, Real>
 cal_min_avg_dis_between_sheets_by_cen_res (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -56,7 +56,7 @@ cal_min_avg_dis_between_sheets_by_cen_res (
 	Size min_num_strands_in_sheet_);
 
 
-pair<float, float>
+std::pair<float, float>
 cal_min_avg_dis_between_two_sheets_by_cen_res (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -100,44 +100,44 @@ cal_shortest_dis_between_facing_aro_in_sw (
 	Size min_num_strands_in_sheet_);
 
 
-string
+std::string
 check_canonicalness_of_LR(
 	Size loop_size,
 	bool intra_sheet,
-	string LR);
+	std::string LR);
 
-string
+std::string
 check_canonicalness_of_PA(
 	Size loop_size,
 	bool intra_sheet,
-	string PA_by_preceding_E,
-	string PA_by_following_E,
+	std::string PA_by_preceding_E,
+	std::string PA_by_following_E,
 	Real check_canonicalness_cutoff_);
 
-string
+std::string
 check_canonicalness_of_parallel_EE(
 	Size loop_size,
 	bool intra_sheet,
-	string parallel_EE);
+	std::string parallel_EE);
 
-string
+std::string
 check_heading_direction ( // for example, positive,
 	core::pose::Pose & dssp_pose,
 	Size preceding_E,
 	Size following_E,
-	string check_heading_direction_by_);
+	std::string check_heading_direction_by_);
 
 bool
 check_helix_existence(
 	core::pose::Pose const & pose);
 
-string
+std::string
 check_LR (
 	core::pose::Pose & dssp_pose,
 	Size preceding_E,
 	Size following_E);
 
-pair<string, string>
+std::pair<std::string, std::string>
 check_PA(
 	core::pose::Pose & dssp_pose,
 	Size residue_begin,
@@ -182,7 +182,7 @@ check_whether_sw_by_sh_id_still_alive(
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id);
 
-string
+std::string
 check_whether_sw_is_not_connected_with_continuous_atoms(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -191,7 +191,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 
 bool
 check_whether_this_pdb_should_be_excluded (
-	string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
+	std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
 
 bool
 check_whether_this_sheet_is_too_short(
@@ -215,7 +215,7 @@ check_whether_strand_i_is_in_sheet(
 	utility::sql_database::sessionOP db_session,
 	Size segment_id);
 
-vector<Size>
+std::vector<Size>
 count_AA_w_direction(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -226,18 +226,18 @@ count_AA_w_direction(
 	Size residue_begin,
 	Size residue_end);
 
-vector<Size>
+std::vector<Size>
 count_AA_wo_direction(
 	core::pose::Pose const & pose,
 	Size residue_begin,
 	Size residue_end);
 
-string
+std::string
 determine_core_heading_surface_heading_by_distance(
 	core::pose::Pose const & pose_w_center_000,
 	Size residue_num);
 
-string
+std::string
 determine_heading_direction_by_vector
 (
 	StructureID struct_id,
@@ -262,7 +262,7 @@ find_sheet (
 	bool care_smaller_sheet
 );
 
-vector<Size>
+std::vector<Size>
 get_all_residues_in_this_sheet(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -276,7 +276,7 @@ get_all_strands_in_sheet_i(
 	Size sheet_id);
 
 
-vector<Size>
+std::vector<Size>
 get_aro_residues_in_this_sheet(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -303,21 +303,21 @@ get_avg_dis_strands(
 	SandwichFragment strand_i,
 	SandwichFragment strand_j);
 
-vector<Size>
+std::vector<Size>
 get_central_residues_in_other_sheet(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size sheet_id);
 
-vector<Size>
+std::vector<Size>
 //get_cen_residues_in_this_sheet
 get_central_residues_in_this_sheet(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sheet_id);
 
-pair<int, int>
+std::pair<int, int>
 get_central_residues_in_each_of_two_edge_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -340,7 +340,7 @@ get_closest_distance_between_strands(
 	SandwichFragment strand_j);
 
 
-pair<Size, Size>
+std::pair<Size, Size>
 get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -386,7 +386,7 @@ get_max_sheet_id(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session);
 
-pair<Size, Size>
+std::pair<Size, Size>
 get_next_starting_res_for_connecting_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -417,7 +417,7 @@ get_segment_id(
 	utility::sql_database::sessionOP db_session,
 	Size all_strands_index);
 
-string
+std::string
 get_sheet_antiparallel_info(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -441,14 +441,14 @@ get_start_end_res_num_in_the_longest_strand(
 	utility::sql_database::sessionOP db_session,
 	Size sheet_id);
 
-pair<Size, Size>
+std::pair<Size, Size>
 get_starting_res_for_connecting_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size former_res_end);
 
-string
+std::string
 get_tag(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session);
@@ -475,8 +475,8 @@ utility::vector1<Size>
 get_vector_of_strand_AA_distribution (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	string heading_direction, // like core_heading, surface_heading
-	string strand_location // like edge_strand, core_strand
+	std::string heading_direction, // like core_heading, surface_heading
+	std::string strand_location // like edge_strand, core_strand
 );
 
 Size
@@ -486,7 +486,7 @@ identify_sheet_id_by_residue_end(
 	Size residue_end);
 
 // See whether this strand is an edge strand without 'sheet_antiparallel' info
-string
+std::string
 is_this_strand_at_edge (
 	core::pose::Pose const & pose,
 	StructureID struct_id,
@@ -498,7 +498,7 @@ is_this_strand_at_edge (
 	Real max_CA_CA_dis_);
 
 
-string
+std::string
 is_this_strand_at_edge_by_looking_db(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -525,7 +525,7 @@ void process_decoy(
 	core::scoring::ScoreFunction const&
 );
 
-string
+std::string
 report_heading_directions_of_all_AA_in_a_strand (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -540,8 +540,8 @@ retrieve_residue_num_of_rkde(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
-	string dssp_code,
-	string heading_direction);
+	std::string dssp_code,
+	std::string heading_direction);
 
 float
 round_to_float(
@@ -555,7 +555,7 @@ Size
 round_to_Size(
 	Real x);
 
-string
+std::string
 see_edge_or_core_or_loop_or_short_edge(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -572,7 +572,7 @@ see_whether_sheets_can_be_combined(
 	Real max_CA_CA_dis_,
 	Real min_C_O_N_angle_);
 
-string
+std::string
 see_whether_sheet_is_antiparallel(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,

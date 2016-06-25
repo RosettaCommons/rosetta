@@ -54,6 +54,8 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MPNonHelix" );
 
+using namespace core::scoring::methods;
+
 namespace core {
 namespace scoring {
 namespace membrane {

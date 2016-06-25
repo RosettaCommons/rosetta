@@ -37,15 +37,15 @@
 // C++ Headers
 #include <cstdlib>
 
+// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core::scoring;
-using namespace core::scoring::methods;
 
 namespace core {
 namespace scoring {
 namespace membrane {
 
 /// @brief Membrane Environemnt CBeta Energy Term
-class MPCbetaEnergy : public ContextDependentOneBodyEnergy {
+class MPCbetaEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 
 public:
 	typedef ContextDependentOneBodyEnergy  parent;
@@ -57,7 +57,7 @@ public: // constructors
 
 	/// @brief Clone Energy Method
 	virtual
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const;
 
 public: // scoring methods

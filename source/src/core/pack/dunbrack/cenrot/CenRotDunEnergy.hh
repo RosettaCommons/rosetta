@@ -35,9 +35,6 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-//using namespace scoring;
-//using namespace scoring::methods;
-
 
 class CenRotDunEnergy : public scoring::methods::ContextIndependentOneBodyEnergy  {
 public:

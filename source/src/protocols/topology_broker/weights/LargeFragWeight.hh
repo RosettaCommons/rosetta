@@ -39,6 +39,7 @@ namespace protocols {
 namespace topology_broker {
 namespace weights {
 
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

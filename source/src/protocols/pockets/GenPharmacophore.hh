@@ -27,37 +27,35 @@
 #include <fstream>
 #include <cmath>
 
-using namespace std;
-
 namespace protocols {
 namespace pockets {
 class SmallMol {
 private:
-	string molName;
-	string pdbContent;
-	vector< vector<core::Real> > coordinates;
+	std::string molName;
+	std::string pdbContent;
+	std::vector< std::vector<core::Real> > coordinates;
 	core::Real rmsd;
-	vector<core::Real> cen;
+	std::vector<core::Real> cen;
 	int s; // size of the cluster
 	SmallMol *parent; // parent of the cluster
 	bool visited;
 
-	vector<string> tokenize_connected(vector<string> &fields);
+	std::vector<std::string> tokenize_connected(std::vector<std::string> &fields);
 
 public:
 	SmallMol() : molName("no_name"), pdbContent(""), cen(3), s(1), parent(this), visited(0) { }
 	SmallMol(const SmallMol &other);
 	~SmallMol();
-	void add_atom(string line);
+	void add_atom(std::string line);
 	void update_center();
-	void set_name(string name) { molName = name; }
-	string get_name() { return molName; }
+	void set_name(std::string name) { molName = name; }
+	std::string get_name() { return molName; }
 	static core::Real calRMSD(SmallMol &mol1, SmallMol &mol2);
 	int numberOfAtoms() const { return (int) coordinates.size(); }
-	vector< vector<core::Real> > const & get_coordinates() { return coordinates; }
+	std::vector< std::vector<core::Real> > const & get_coordinates() { return coordinates; }
 	void printCoordinates() const;
 	void printContent() const;
-	string getContent() const;
+	std::string getContent() const;
 	core::Real get_rmsd() { return rmsd; }
 	core::Real get_center(int c);
 	core::Real cal_distance(SmallMol *other);

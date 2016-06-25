@@ -23,13 +23,9 @@
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-using namespace std;
-
 namespace protocols {
 namespace forge {
 namespace remodel {
-
-
 
 class RemodelLigandHandler: public protocols::moves::Mover {
 

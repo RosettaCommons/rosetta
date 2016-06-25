@@ -48,6 +48,7 @@ const std::size_t Num_ShowHState = 2;
 enum ShowHState { SHOW_NO_H, SHOW_H };
 
 }
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace graphics_states_param;
 
 //lin define the graphics state

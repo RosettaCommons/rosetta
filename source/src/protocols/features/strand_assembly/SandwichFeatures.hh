@@ -47,6 +47,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core;
 
 class SandwichFeatures : public protocols::features::FeaturesReporter

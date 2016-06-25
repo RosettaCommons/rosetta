@@ -35,15 +35,15 @@
 // Utility Headers
 #include <utility/vector1.hh>
 
+// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core::scoring;
-using namespace core::scoring::methods;
 
 namespace core {
 namespace scoring {
 namespace membrane {
 
 /// @brief Membrane Environemtn Residue Pair Energy Term
-class MPPairEnergy : public ContextDependentTwoBodyEnergy {
+class MPPairEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy {
 
 public:
 	typedef ContextDependentTwoBodyEnergy parent;
@@ -55,7 +55,7 @@ public: // constructors
 
 	/// @brief Clone Method
 	virtual
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const;
 
 public: // scoring methods
@@ -138,4 +138,3 @@ private: // data
 } // core
 
 #endif // INCLUDED_core_scoring_membrane_MPPairEnergy_hh
-

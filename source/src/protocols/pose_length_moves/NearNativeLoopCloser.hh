@@ -43,8 +43,8 @@
 
 namespace protocols {
 namespace pose_length_moves {
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core;
-using namespace std;
 using utility::vector1;
 
 class PossibleLoop : public utility::pointer::ReferenceCount {
@@ -69,7 +69,7 @@ private:
 	void trimRegion(core::pose::PoseOP & poseOP, Size resStart, Size resStop);
 	void extendRegion(bool towardCTerm, Size resStart, Size numberAddRes,core::pose::PoseOP & poseOP);
 	void assign_phi_psi_omega(Size base5index, Size index,bool ideal_loop, core::pose::PoseOP & poseOP);
-	vector<Real> get_center_of_mass(Real* coordinates, int number_of_atoms);
+	std::vector<Real> get_center_of_mass(Real* coordinates, int number_of_atoms);
 	void output_fragment_debug(std::vector< numeric::xyzVector<numeric::Real> > coordinates, std::string filename);
 	void add_coordinate_csts_from_lookback(Size base5Abego_index, Size fragment_index, Size pose_residue, bool match_stub_alone, core::pose::PoseOP & poseOP);
 	void add_dihedral_csts_from_lookback(Size base5Abego_index,Size fragment_index,core::pose::PoseOP & poseOP);

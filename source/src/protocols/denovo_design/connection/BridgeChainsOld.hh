@@ -13,8 +13,10 @@
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChains_hh
-#define INCLUDED_protocols_denovo_design_connection_BridgeChains_hh
+#if 0 // depricated
+
+#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChains_old_hh
+#define INCLUDED_protocols_denovo_design_connection_BridgeChains_old_hh
 
 // Unit headers
 #include <protocols/denovo_design/connection/BridgeChains.fwd.hh>
@@ -97,3 +99,5 @@ private:   // other data
 } // protocols
 
 #endif
+
+#endif // depricated

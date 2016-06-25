@@ -11,8 +11,10 @@
 /// @brief  BridgeChains forward header
 /// @author Tom Linsky
 
-#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChains_fwd_hh
-#define INCLUDED_protocols_denovo_design_connection_BridgeChains_fwd_hh
+#if 0 // depricated
+
+#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChains_old_fwd_hh
+#define INCLUDED_protocols_denovo_design_connection_BridgeChains_old_fwd_hh
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -37,3 +39,5 @@ typedef  utility::pointer::weak_ptr< BridgeChains const >  BridgeChainsCAP;
 } // namespace protocols
 
 #endif
+
+#endif // depricated

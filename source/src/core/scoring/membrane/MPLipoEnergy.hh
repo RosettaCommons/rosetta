@@ -38,11 +38,11 @@ namespace core {
 namespace scoring {
 namespace membrane {
 
+// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core::scoring;
-using namespace core::scoring::methods;
 
 /// @brief Membrane Lipophilicity term
-class MPLipoEnergy : public WholeStructureEnergy  {
+class MPLipoEnergy : public core::scoring::methods::WholeStructureEnergy  {
 
 public:
 
@@ -57,7 +57,7 @@ public:
 
 	/// @brief Clone Method
 	virtual
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const;
 
 	/// Scoring Methods ////////////////////////

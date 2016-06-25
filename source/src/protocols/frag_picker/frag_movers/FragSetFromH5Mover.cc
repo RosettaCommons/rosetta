@@ -262,7 +262,7 @@ void FragSetFromH5Mover::apply(core::pose::Pose & pose){
 			ss_prediction = get_ss_prediction(chosenPose);
 		}
 		for ( Size ii=1; ii<=numbRes-fragLength+1; ++ii ) {
-			vector1<string> abegos_to_check;
+			vector1<std::string> abegos_to_check;
 			if ( use_pose_ && use_ssPred_ ) {
 				abegos_to_check = get_abego_strings_for_residue_from_ssPred(ss_prediction,ii,fragLength);
 			} else {

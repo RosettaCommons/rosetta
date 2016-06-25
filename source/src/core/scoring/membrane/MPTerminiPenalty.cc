@@ -48,6 +48,8 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MPTerminiPenalty" );
 
+using namespace core::scoring::methods;
+
 namespace core {
 namespace scoring {
 namespace membrane {

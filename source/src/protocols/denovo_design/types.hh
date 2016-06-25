@@ -32,6 +32,10 @@
 // C++ Headers
 #include <list>
 
+#ifdef PYROSETTA
+#include <core/kinematics/FoldTree.hh>
+#endif
+
 namespace protocols {
 namespace denovo_design {
 

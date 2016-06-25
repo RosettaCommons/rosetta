@@ -21,8 +21,6 @@
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 //#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 
-using namespace std;
-
 namespace protocols {
 namespace features {
 namespace strand_assembly {
@@ -31,7 +29,7 @@ utility::vector1<Size>
 get_vector_of_loop_AA_distribution(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	string loop_kind);
+	std::string loop_kind);
 
 core::Size
 prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files (
@@ -51,20 +49,20 @@ prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files (
 
 core::Size
 write_AA_distribution_with_direction_to_a_file(
-	string tag,
+	std::string tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session);
 
 
 core::Size
 write_AA_distribution_without_direction_to_a_file(
-	string tag,
+	std::string tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session);
 
 core::Size
 write_AA_kind_to_a_file(
-	string tag,
+	std::string tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id,
@@ -72,7 +70,7 @@ write_AA_kind_to_a_file(
 
 core::Size
 write_beta_sheet_capping_info_to_a_file(
-	string tag,
+	std::string tag,
 	core::pose::Pose const & pose,
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
 	int primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping_,
@@ -82,7 +80,7 @@ write_beta_sheet_capping_info_to_a_file(
 
 core::Size
 write_chain_B_resNum_to_a_file(
-	string tag,
+	std::string tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id // was 'vec_sw_can_by_sh_id[ii]'
@@ -90,7 +88,7 @@ write_chain_B_resNum_to_a_file(
 
 core::Size
 write_heading_direction_of_all_AA_in_a_strand_to_a_file(
-	string tag,
+	std::string tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
@@ -116,7 +114,7 @@ write_p_aa_pp_of_AAs_to_a_file(
 
 core::Size
 write_phi_psi_of_each_residue_to_a_file(
-	string tag,
+	std::string tag,
 	core::pose::Pose & dssp_pose,
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
 	bool write_phi_psi_of_E_,
@@ -136,7 +134,7 @@ write_rama_of_AAs_to_a_file(
 
 core::Size
 write_resfile_to_a_file(
-	string  tag,
+	std::string  tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP  db_session,
 	core::pose::Pose const & pose,
@@ -145,7 +143,7 @@ write_resfile_to_a_file(
 
 core::Size
 write_resfile_to_a_file_when_seq_rec_is_bad(
-	string tag,
+	std::string tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,

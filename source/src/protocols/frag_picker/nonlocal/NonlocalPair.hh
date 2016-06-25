@@ -43,6 +43,7 @@ namespace nonlocal {
 typedef std::pair<Size,Size> PosPair;
 typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> Candidate;
 
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core;
 using namespace protocols::frag_picker;
 

@@ -31,6 +31,7 @@
 namespace protocols {
 namespace denovo_design {
 namespace filters {
+// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace core::io::external;
 // main SSPredictionFilter class
 class SSPredictionFilter : public protocols::filters::Filter {

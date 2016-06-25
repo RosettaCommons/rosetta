@@ -49,6 +49,7 @@
 #include <cstdlib>
 
 using namespace ObjexxFCL;
+
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MembraneData" );
 
 namespace core {
