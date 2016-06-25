@@ -108,7 +108,7 @@ void Context::add(BinderOP &b)
 
 
 /// check if forward declaration for CXXRecordDecl needed
-bool Context::is_forward_needed(clang::CXXRecordDecl const *C)
+bool Context::is_forward_needed(CXXRecordDecl const *C)
 {
 	return !binded.count( class_qualified_name(C) )  and  !is_python_builtin(C);
 }
@@ -201,6 +201,46 @@ void Context::bind(Config const &config)
 	}
 }
 
+/// sort vector of binders by dependecy so python imports could work
+void Context::sort_binders()
+{
+	outs() << "Sorting Binders...\n";
+
+	bool repeat = true;
+	std::set<string> forward;
+
+	while(repeat) {
+		repeat = false;
+		binded = forward;
+		for(auto b=binders.begin(); b!=binders.end(); ++b) {
+			if( CXXRecordDecl const *C = dyn_cast<CXXRecordDecl const >( (*b)->named_decl() ) ) { // right not only querry dependency if we dealing with class
+				std::vector<CXXRecordDecl const *> const dependencies = (*b)->dependencies();
+				for(auto & c : dependencies ) {
+					if( is_forward_needed(c) ) {
+						//outs() << "Pushing forward binding for " << class_qualified_name(c) << "...\n";
+						auto e = find_if(b, binders.end(), [&c](BinderOP const &p) -> bool { return dyn_cast<CXXRecordDecl const >(p->named_decl()) == c; } );
+						if( e == binders.end() ) {
+							if(!repeat) throw std::runtime_error( "ERROR: Could not find binder for type: " + class_qualified_name(c) + "!");
+							// just declare forward declaration for now instead
+							// outs() << "Could not find binder for type: " + class_qualified_name(c) + "... will use forward declaration instead...\n";
+							// forward.insert( class_qualified_name(c) );
+							// add_to_binded(c);
+						}
+						else {
+							rotate(b, e, binders.end());
+							repeat = true;
+						}
+					}
+				}
+				if(repeat) break;
+				add_to_binded(C);
+			}
+		}
+	}
+	binded.clear();
+	outs() << "Sorting Binders... Done.\n";
+}
+
 
 /// Generate file name where binding for given generator should be stored
 string file_name_prefix_for_binder(BinderOP &b)
@@ -269,6 +309,8 @@ void Context::generate(Config const &config)
 	std::ofstream root_module_file_handle(file_name);
 	sources.push_back(file_name);
 
+	sort_binders();
+
 	outs() << "Writing code...\n";
 	for(uint i=0; i<binders.size(); ++i) {
 		if( /*binders[i]->is_binded()  and*/  binders[i]->code().size() ) {
@@ -292,19 +334,31 @@ void Context::generate(Config const &config)
 
 			for(; code.size()<config.maximum_file_length  and  i<binders.size()  and  namespace_==namespace_from_named_decl( binders[i]->named_decl() ); ++i) {
 				//outs() << "Binding: " << string(*binders[i]) << "\n";
-				if( ClassBinder * CB = dynamic_cast<ClassBinder*>( binders[i].get() ) ) {
-					std::vector<clang::CXXRecordDecl const *> const dependencies = CB->dependencies();
-					for(auto & c : dependencies ) {
-						if( is_forward_needed(c) ) {
-							code += bind_forward_declaration(c, *this);
-							add_to_binded(c);
-							outs() << "Adding forward binding for " << class_qualified_name(c) << "\n";
-						}
-					}
-					add_to_binded( dynamic_cast<CXXRecordDecl*>( CB->named_decl() ) );
+				// if( ClassBinder * CB = dynamic_cast<ClassBinder*>( binders[i].get() ) ) {
+				// 	std::vector<clang::CXXRecordDecl const *> const dependencies = CB->dependencies();
+				// 	for(auto & c : dependencies ) {
+				// 		if( is_forward_needed(c) ) {
+				// 			code += bind_forward_declaration(c, *this);
+				// 			add_to_binded(c);
+				// 			outs() << "Adding forward binding for " << class_qualified_name(c) << "\n";
+				// 		}
+				// 	}
+				// 	add_to_binded( dynamic_cast<CXXRecordDecl*>( CB->named_decl() ) );
+				// }
 
-					prefix_code += CB->prefix_code();
-				}
+				// if( CXXRecordDecl const *C = dyn_cast<CXXRecordDecl const >( binders[i]->named_decl() ) ) { // right not only querry dependency if we dealing with class
+				// 	std::vector<clang::CXXRecordDecl const *> const dependencies = binders[i]->dependencies();
+				// 	for(auto & c : dependencies ) {
+				// 		if( is_forward_needed(c) ) {
+				// 			code += bind_forward_declaration(c, *this);
+				// 			add_to_binded(c);
+				// 			outs() << "Adding forward binding for " << class_qualified_name(c) << "\n";
+				// 		}
+				// 	}
+				// 	add_to_binded(C);
+				// }
+
+				prefix_code += binders[i]->prefix_code();
 				code += binders[i]->code();
 				binders[i]->add_relevant_includes(includes);
 			}
@@ -316,7 +370,7 @@ void Context::generate(Config const &config)
 			else update_source_file(config.prefix, file_name, code);
 		}
 	}
-	outs() << "Writing code... Done!\n";
+	outs() << "Writing code... Done.\n";
 
 	string namespace_pairs;
 	std::set<string> namespaces = create_all_nested_namespaces();

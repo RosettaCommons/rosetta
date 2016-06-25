@@ -72,7 +72,7 @@ The method sample_folding:
 14. performs low-resolution folding:
         a. set necessary variables
             -reload the starting (centroid) pose
-            -change the pose's PDBInfo.name, for the PyMOL_Mover
+            -change the pose's PDBInfo.name, for the PyMolMover
             -reset the MonteCarlo object (for the TrialMover)
         b. perform sampling and assessment using the final RepeatMover
         c. convert the lowest scoring decoy to fullatom using the SequenceMover
@@ -196,12 +196,12 @@ def sample_folding(sequence,
     insert_short_frag = protocols.moves.RepeatMover(short_frag_mover, short_inserts)
 
     # 9. create a PyMOL_Observer for exporting structures to PyMOL (optional)
-    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for
+    # the PyMOL_Observer object owns a PyMolMover and monitors pose objects for
     #    structural changes, when changes are detected the new structure is
     #    sent to PyMOL
     # fortunately, this allows investigation of full protocols since
     #    intermediate changes are displayed, it also eliminates the need to
-    #    manually apply the PyMOL_Mover during a custom protocol
+    #    manually apply the PyMolMover during a custom protocol
     # unfortunately, this can make the output difficult to interpret (since you
     #    aren't explicitly telling it when to export) and can significantly slow
     #    down protocols since many structures are output (PyMOL can also slow
@@ -217,7 +217,7 @@ def sample_folding(sequence,
     scorefxn_low = create_score_function('score3')
     # for high-resolution, fullatom, poses necessary for scoring final output
     #    from the PyJobDistributor (see below)
-    scorefxn_high = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
+    scorefxn_high = get_fa_scorefxn() #  create_score_function('standard', 'score12')
 
     # 11. setup a RepeatMover on a TrialMover of a SequenceMover
     # -setup a TrialMover
@@ -356,12 +356,12 @@ this will produce compact centroid folds that have clashes easily removed during
 refinement. Minimization steps can be confounded by clashes but this approach
 yields better fold predictions.
 
-For each trajectory, the PyMOL_Mover will export numerous intermediate centroid
+For each trajectory, the PyMolMover will export numerous intermediate centroid
 conformations and the final fullatom fold. Depending on the machine used,
 the structures may be produced too quickly for PyMOL to display properly.
 If this occurs, some structures will NOT load into PyMOL and a message will
 print in the PyMOL upper window indicating "Buffer clean up". Please change
-where the PyMOL_Mover is applied to view different output or change the method
+where the PyMolMover is applied to view different output or change the method
 to include pauses (try the Python time module, specifically time.sleep). These
 alterations are tedious but provide an effective means for tuning the protocol
 parameters while maintaining biochemical feasibility (i.e. you can know if the

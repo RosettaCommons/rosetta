@@ -19,6 +19,7 @@
 #include <clang/AST/Decl.h>
 
 #include <string>
+#include <tuple>
 
 namespace binder {
 
@@ -34,7 +35,7 @@ std::pair<std::string, std::string> function_arguments_for_lambda(clang::Functio
 
 // Generate function argument list with types separate by comma and with only arguments names
 // name_arguments - if arguments should be named: a1, a2, ...
-std::pair<std::string, std::string> function_arguments_for_py_overload(clang::FunctionDecl const *record);
+std::tuple<std::string, std::string, std::string> function_arguments_for_py_overload(clang::FunctionDecl const *record);
 
 
 // generate string represetiong class name that could be used in python

@@ -15,7 +15,7 @@ starting_p = Pose()
 starting_p.assign(p)
 
 scorefxn_low = create_score_function('cen_std')
-scorefxn_high = create_score_function_ws_patch('standard', 'score12')
+scorefxn_high = create_score_function('standard', 'score12')
 
 loop_begin = 77
 loop_end = 85

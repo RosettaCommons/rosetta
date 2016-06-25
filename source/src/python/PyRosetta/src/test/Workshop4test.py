@@ -2,9 +2,10 @@
 # :noTabs=true:
 # List of commands used in PyRosetts Workshop #4
 
+from __future__ import print_function
 
 import sys
-if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (*** error: can't allocate region)
+#if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (*** error: can't allocate region)
 
 
 # A simple de Novo Folding Algorithm
@@ -12,6 +13,8 @@ if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to 
 import random, math
 
 from rosetta import *
+from pyrosetta import *
+from pyrosetta.teaching import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -46,8 +49,8 @@ p = pose_from_sequence("AAAAAAAAAA", "fa_standard")
 for res in range(1, p.total_residue() + 1):
     p.set_omega(res, 180)
 
-# use the PyMOL_Mover to echo this structure to PyMOL
-pmm = PyMOL_Mover()
+# use the PyMolMover to echo this structure to PyMOL
+pmm = PyMolMover()
 pmm.apply(p)
 
 # set score function to include Van der Wals and H-bonds only
@@ -67,7 +70,7 @@ for i in range(100):
     random_move(p)
 
     new_score = score(p)
-    print "Iteration:", i, "Score:", new_score, "Low Score:", low_score
+    print( "Iteration:", i, "Score:", new_score, "Low Score:", low_score )
     deltaE = new_score - last_score
 
     # accept if new energy score is improved
@@ -93,27 +96,27 @@ low_pose.dump_pdb("poly-A_low.pdb")
 # Low-Resolution (Centroid) Scoring
 ras = pose_from_file("../test/data/workshops/6Q21.clean.pdb")
 score2 = get_score_function()
-print score2(ras)
-print ras.residue(5)
+print( score2(ras) )
+print( ras.residue(5) )
 
 switch = SwitchResidueTypeSetMover("centroid")
 switch.apply(ras)
-print ras.residue(5)
+print( ras.residue(5) )
 
 score3 = create_score_function("score3")
-print score3(ras)
+print( score3(ras) )
 
 switch2 = SwitchResidueTypeSetMover("fa_standard")
 switch2.apply(ras)
-print ras.residue(5)
+print( ras.residue(5) )
 
 # Protein Fragments
-fragset = ConstantLengthFragSet(3)
+fragset = core.fragment.ConstantLengthFragSet(3)
 fragset.read_fragment_file("../test/data/workshops/aat000_03_05.200_v1_3")
 
 movemap = MoveMap()
 movemap.set_bb(True)
-mover_3mer = ClassicFragmentMover(fragset, movemap)
+mover_3mer = protocols.simple_moves.ClassicFragmentMover(fragset, movemap)
 
 pose = Pose()
 make_pose_from_sequence(pose, "RFPMMSTFKVLLCGAVLSRIDAG", "centroid")

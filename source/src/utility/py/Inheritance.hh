@@ -61,6 +61,43 @@ public:
 	virtual void foo_value_sp(ValueOP v)   {  std::cout << "Base::foo_value_sp( " << *v << " )" << std::endl; }
 };
 
+class OverloadTest
+{
+public:
+	Value value_;
+
+	void self_test_virtual_ref() {
+		std::cout << "Calling test(Value &v)..." << std::endl;
+		test_ref(value_);
+		std::cout << "Calling test(Value &v)... Done!" << std::endl;
+	}
+
+	void self_pure_test_virtual_ref() {
+		std::cout << "Calling pure_test(Value &v)..." << std::endl;
+		pure_test_ref(value_);
+		std::cout << "Calling pure_test(Value &v)... Done!" << std::endl;
+	}
+
+	void self_test_virtual_p() {
+		std::cout << "Calling test(Value *v)..." << std::endl;
+		test_p(&value_);
+		std::cout << "Calling test(Value *v)... Done!" << std::endl;
+	}
+
+	void self_pure_test_virtual_p() {
+		std::cout << "Calling pure_test(Value *v)..." << std::endl;
+		pure_test_p(&value_);
+		std::cout << "Calling pure_test(Value *v)... Done!" << std::endl;
+	}
+
+	virtual void test_p(Value *v) {}
+	virtual void pure_test_p(Value *v) = 0;
+
+	virtual void test_ref(Value &v) {}
+	virtual void pure_test_ref(Value &v) = 0;
+};
+
+
 typedef utility::pointer::shared_ptr< Base > BaseOP;
 typedef utility::pointer::shared_ptr< Base const > BaseCOP;
 

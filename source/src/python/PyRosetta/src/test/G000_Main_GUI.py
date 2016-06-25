@@ -10,11 +10,13 @@
 ## @brief  Test the frames of the Main GUI.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+from __future__ import print_function
+
 #Python Imports
 import os
 import sys
 
-if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (pointer being freed was not allocated)
+#if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (pointer being freed was not allocated)
 
 
 from Tkinter import *

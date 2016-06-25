@@ -81,7 +81,7 @@ def run_test(test):
 
     started = datetime.datetime.today()
 
-    command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 600'
+    command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 1024'
     command_line += ' && {0} {1} '.format(sys.executable, test)
 
     res, output = execute('\nExecuting %s...' % test, command_line, return_='tuple')
@@ -166,15 +166,14 @@ def main(args):
 
     with open(json_file, 'w') as f: json.dump(dict(state=state, results=results, log=''), f, sort_keys=True, indent=2)
 
-
     for t in sorted(results['tests']):
-        if results['tests'][t]['state'] == 'passed': print(t + '- passed')
+        if results['tests'][t]['state'] == 'passed': print(t, '- passed')
 
-    failed_tests = [ t for t in results['tests'] if results['tests'][t]['state'] != 'passed' ]
+    failed_tests = [ t for t in sorted(results['tests']) if results['tests'][t]['state'] != 'passed' ]
 
     if failed_tests:
         print('\nFollowing PyRosetta Tests FAILED:')
-        for t in failed_tests: print(t + '- FAILED')
+        for t in failed_tests: print(t, '- FAILED')
 
     if state == 'passed': print('\nAll PyRosetta Tests passed!\n')
     else: sys.exit(1)

@@ -1,8 +1,12 @@
 #! /usr/bin/python
 # List of commands used in PyRosetts Workshop #6
 
+from __future__ import print_function
+
 from rosetta import *
-from toolbox import *
+from pyrosetta import *
+from pyrosetta.toolbox import *
+from pyrosetta.teaching import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -21,7 +25,7 @@ task_pack.restrict_to_repacking()
 task_pack.temporarily_fix_everything()
 task_pack.temporarily_set_pack_residue(49, True)
 
-print task_pack
+print( task_pack )
 
 pack_mover = PackRotamersMover(scorefxn, task_pack)
 
@@ -38,8 +42,8 @@ YY8_resfile2 = tempfile.mkstemp()[1]
 generate_resfile_from_pdb("../test/data/workshops/1YY8.clean.pdb", YY8_resfile1)
 generate_resfile_from_pose(pose, YY8_resfile2)
 
-task_design = TaskFactory.create_packer_task(pose)
-parse_resfile(pose, task_design, YY8_resfile2)
+task_design = core.pack.task.TaskFactory.create_packer_task(pose)
+core.pack.task.parse_resfile(pose, task_design, YY8_resfile2)
 
 mutate_residue(pose, 49, 'E')
 

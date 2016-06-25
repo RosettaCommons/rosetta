@@ -59,6 +59,10 @@ void Config::read(string const &file_name)
 	string const _binder_        {"binder"};
 	string const _add_on_binder_ {"add_on_binder"};
 
+	string const _default_pointer_return_value_policy_          {"default_pointer_return_value_policy"};
+	string const _default_lvalue_reference_return_value_policy_	{"default_lvalue_reference_return_value_policy"};
+	string const _default_rvalue_reference_return_value_policy_ {"default_rvalue_reference_return_value_policy"};
+
 	std::ifstream f(file_name);
 	string line;
 
@@ -108,8 +112,11 @@ void Config::read(string const &file_name)
 							auto binder_function = split_in_two(name, "Invalid line for add_on_binder specification! Must be: name_of_type + <space or tab> + name_of_binder. Got: " + line);
 							add_on_binders_[binder_function.first] = binder_function.second;
 						}
-
-					} else throw std::runtime_error("Invalid token in config file! Each token must be ether: namespace, class or function! For example: '+function aaa::bb::my_function'. Token: '" + token + "' Line: '" + line + '\'');
+					}
+					else if( token == _default_pointer_return_value_policy_ )          default_pointer_return_value_policy_ = name_without_spaces;
+					else if( token == _default_lvalue_reference_return_value_policy_ ) default_lvalue_reference_return_value_policy_ = name_without_spaces;
+					else if( token == _default_rvalue_reference_return_value_policy_ ) default_rvalue_reference_return_value_policy_ = name_without_spaces;
+					else throw std::runtime_error("Invalid token in config file! Each token must be ether: namespace, class or function! For example: '+function aaa::bb::my_function'. Token: '" + token + "' Line: '" + line + '\'');
 				}
 			}
 			else throw std::runtime_error("Invalid token at the begining of line in config file! Each line should begin with ether '+' or '-' or '#'! Line: " + line);

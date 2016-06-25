@@ -98,6 +98,13 @@ public:
 	/// return true if object declared in system header
 	bool is_in_system_header();
 
+	// return vector of declarations that need to be binded before this one could
+	virtual std::vector<clang::CXXRecordDecl const *> dependencies() const { return std::vector<clang::CXXRecordDecl const *>(); }
+
+	/// return prefix portion of bindings code
+	virtual string prefix_code() const { return string(); }
+
+	/// return unique strting ID for this binder
 	explicit operator std::string() const { return id(); /*named_decl()->getQualifiedNameAsString();*/ }
 
 private:
@@ -158,6 +165,9 @@ private:
 
 	/// add given class to 'aleady binded' set
 	void add_to_binded(clang::CXXRecordDecl const *);
+
+	/// sort vector of binders by dependecy so python imports could work
+	void sort_binders();
 
 
 

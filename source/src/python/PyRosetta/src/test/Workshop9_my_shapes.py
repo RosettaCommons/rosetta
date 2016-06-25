@@ -1,6 +1,9 @@
 #! /usr/bin/python
 # List of commands used in PyRosetts Workshop #9
-import rosetta
+
+from __future__ import print_function
+
+import rosetta, pyrosetta
 import math
 #init()
 
@@ -73,13 +76,13 @@ class PhiNByXDegreesMover(rosetta.protocols.moves.Mover):
 
     def apply(self, pose):
         """Applies move to pose."""
-        print "Incrementing phi of residue", self.N, "by",
-        print self.X, "degrees...."
+        print( "Incrementing phi of residue", self.N, "by", end='')
+        print( self.X, "degrees...." )
         pose.set_phi(self.N, pose.phi(self.N) + self.X)
 
 from rosetta.core.scoring.methods import ContextIndependentOneBodyEnergy
 
-@rosetta.EnergyMethod()
+@pyrosetta.EnergyMethod()
 class LengthScoreMethod(ContextIndependentOneBodyEnergy):
     """A scoring method that favors longer peptides by
     assigning negative one Rosetta energy unit per
@@ -96,7 +99,7 @@ class LengthScoreMethod(ContextIndependentOneBodyEnergy):
 
 from rosetta.core.scoring.methods import ContextIndependentTwoBodyEnergy
 
-@rosetta.EnergyMethod()
+@pyrosetta.EnergyMethod()
 class CI2BScoreMethod(ContextIndependentTwoBodyEnergy):
     """A scoring method that depends on pairs of residues.
     """

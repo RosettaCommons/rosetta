@@ -122,7 +122,7 @@ def sample_dna_interface(pdb_filename, partners,
     #    supposed to specify which jumps are movable, to support multibody
     #    docking...but Rosetta doesn't currently)
     # the FoldTrees setup by this method are for TWO BODY docking ONLY!
-    setup_foldtree(pose, partners, Vector1( [dock_jump]))
+    protocols.docking.setup_foldtree(pose, partners, Vector1( [dock_jump]))
 
     # 3. create a copy of the pose for testing
     test_pose = Pose()
@@ -130,7 +130,7 @@ def sample_dna_interface(pdb_filename, partners,
 
     # 4. create ScoreFunctions for centroid and fullatom docking
     scorefxn = create_score_function('dna')
-    scorefxn.set_weight(fa_elec , 1)    # an "electrostatic" term
+    scorefxn.set_weight(core.scoring.fa_elec , 1)    # an "electrostatic" term
 
     #### global docking, a problem solved by the Rosetta DockingProtocol,
     ####    requires interface detection and refinement
@@ -157,7 +157,7 @@ def sample_dna_interface(pdb_filename, partners,
     #    database, the low-resolution docking stages are not useful for
     #    DNA docking
     # instead, create an instance of just the high-resolution docking stages
-    docking = DockMCMProtocol()
+    docking = protocols.docking.DockMCMProtocol()
     docking.set_scorefxn(scorefxn)
 
     # 6. setup the PyJobDistributor
@@ -443,7 +443,7 @@ cycles = 49    # if using this, make it an argument
 dockmover = RepeatMover( dock , cycles )
 
 # create a SequenceMover of these moves
-docking = SequenceMover()
+docking = protocols.moves.SequenceMover()
 docking.add_mover( packer )
 docking.add_mover( minmover )
 docking.add_mover( dockmover )

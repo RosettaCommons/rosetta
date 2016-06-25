@@ -10,7 +10,9 @@
 from __future__ import print_function
 
 from rosetta import *
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+from pyrosetta import *
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 
@@ -19,7 +21,7 @@ print('Packing and Design ----------------------------------------------')
 print('mover: PackRotamersMover')
 pose = core.import_pose.pose_from_file("../test/data/test_in.pdb")
 scorefxn = get_fa_scorefxn() #  create_score_function('standard')
-#task_pack = TaskFactory.create_packer_task(pose)
+#task_pack = core.pack.task.TaskFactory.create_packer_task(pose)
 task_pack = standard_packer_task(pose)
 task_pack.restrict_to_repacking()
 task_pack.nonconst_residue_task(5).prevent_repacking()
@@ -38,11 +40,11 @@ rotamer_trials.apply(pose)
 #TODO add meaningful info to print pack
 print(pack)
 
-task_design = TaskFactory.create_packer_task(pose)
+task_design = core.pack.task.TaskFactory.create_packer_task(pose)
 
 # mjo -> in refactoring the resfile reader I modified this to use parse_resfile
 #task_design.read_resfile("../test/data/test_in.resfile")
-parse_resfile(pose, task_design, "../test/data/test_in.resfile")# TODO this hard-crashes if file is not a resfile
+core.pack.task.parse_resfile(pose, task_design, "../test/data/test_in.resfile")# TODO this hard-crashes if file is not a resfile
 
 
 # BUG reported on jenkins machine: comments before 'start' line cause crash
@@ -52,9 +54,9 @@ pack.apply(pose)
 
 #TaskFactory options
 tf = standard_task_factory()
-tf.push_back(RestrictToRepacking())
+tf.push_back(core.pack.task.operation.RestrictToRepacking())
 
-pr = PreventRepacking()
+pr = core.pack.task.operation.PreventRepacking()
 pr.include_residue(5)
 
 tf.push_back(pr)

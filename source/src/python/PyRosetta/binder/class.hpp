@@ -98,10 +98,10 @@ public:
 	/// generate binding code for this object and all its dependencies
 	void bind(Context &) override;
 
-	std::vector<clang::CXXRecordDecl const *> const &dependencies() { return dependencies_; }
+	std::vector<clang::CXXRecordDecl const *> dependencies() const override { return dependencies_; }
 
-
-	string const & prefix_code() { return prefix_code_; }
+	/// return prefix portion of bindings code
+	string prefix_code() const override { return prefix_code_; }
 
 private:
 	clang::CXXRecordDecl *C;

@@ -46,7 +46,7 @@ The method pose_scoring:
 1.  scores the pose using the default fullatom (fa) ScoreFunction by:
         a.  using get_fa_scorefxn
         b.  using create_score_function
-        c.  using create_score_function_ws_patch
+        c.  using create_score_function and supply patch as second argument
         d.  using create_score_function and patching it after-wards
         e.  creating an empty ScoreFunction and manually setting the weights
 2.  outputs the ScoreFunction evaluations

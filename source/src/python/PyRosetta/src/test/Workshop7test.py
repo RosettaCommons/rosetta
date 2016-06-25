@@ -1,9 +1,14 @@
 #! /usr/bin/python
 # List of commands used in PyRosetts Workshop #7
 
+from __future__ import print_function
+
 import sys
 
 from rosetta import *
+from pyrosetta import *
+from pyrosetta.teaching import *
+
 import rosetta.protocols.rigid as rigid_moves
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
@@ -18,27 +23,27 @@ for _i in range(10):
 # Docking Moves in Rosetta
 pose = pose_from_file("../test/data/workshops/complex.start.pdb")
 
-print pose.fold_tree()
+print( pose.fold_tree() )
 
-setup_foldtree(pose, "A_B", Vector1([1]))
-print pose.fold_tree()
+protocols.docking.setup_foldtree(pose, "A_B", Vector1([1]))
+print( pose.fold_tree() )
 
 jump_num = 1
-print pose.jump(jump_num).get_rotation()
-print pose.jump(jump_num).get_translation()
+print( pose.jump(jump_num).get_rotation() )
+print( pose.jump(jump_num).get_translation() )
 
-print "_____ Check point 1"
+print( "_____ Check point 1" )
 pert_mover = rigid_moves.RigidBodyPerturbMover(jump_num, 8, 3)
 #pert_mover.apply(pose)
 
 randomize1 = rigid_moves.RigidBodyRandomizeMover(pose, jump_num, rigid_moves.partner_upstream)
 randomize2 = rigid_moves.RigidBodyRandomizeMover(pose, jump_num, rigid_moves.partner_downstream)
 
-print "_____ Check point 2"
+print( "_____ Check point 2" )
 #randomize1.apply(pose)
 #randomize2.apply(pose)
-slid = DockingSlideIntoContact(jump_num)
-slide = FaDockingSlideIntoContact(jump_num)
+slid = protocols.docking.DockingSlideIntoContact(jump_num)
+slide = protocols.docking.FaDockingSlideIntoContact(jump_num)
 slide.apply(pose)
 
 movemap = MoveMap()
@@ -47,15 +52,15 @@ movemap.set_jump(jump_num, True)
 scorefxn = create_score_function("talaris2013")
 scorefxn( pose )
 
-print "_____ Check point 3"
-print 'Making MinMover...'
-min_mover = MinMover()
+print( "_____ Check point 3" )
+print( 'Making MinMover...' )
+min_mover = protocols.simple_moves.MinMover()
 min_mover.movemap(movemap)
 min_mover.score_function(scorefxn)
 
 #min_mover.apply(pose)
 
-print 'Done Applying MinMover!'
+print( 'Done Applying MinMover!' )
 
 
 '''
@@ -63,7 +68,7 @@ print 'Done Applying MinMover!'
     except RuntimeError: pass
 
 else:
-    print 'Was not able to finish min_mover in 10 tries, failing...'
+    print( 'Was not able to finish min_mover in 10 tries, failing...' )
     sys.exit(1)
 '''
 
@@ -76,15 +81,15 @@ switch_low.apply(pose)
 pose_low = Pose()
 pose_low.assign(pose)
 
-setup_foldtree(pose_low, "A_B", Vector1([1]))
+protocols.docking.setup_foldtree(pose_low, "A_B", Vector1([1]))
 
 scorefxn_low = create_score_function("interchain_cen")
 
-dock_lowres = DockingLowRes(scorefxn_low, jump_num)
+dock_lowres = protocols.docking.DockingLowRes(scorefxn_low, jump_num)
 dock_lowres.apply(pose_low)
 
-print CA_rmsd(pose, pose_low)
-print calc_Lrmsd(pose, pose_low, Vector1([1]))
+print( CA_rmsd(pose, pose_low) )
+print( calc_Lrmsd(pose, pose_low, Vector1([1])) )
 
 # Job Distributor
 import tempfile
@@ -104,12 +109,12 @@ while (jd.job_complete == False):
     jd.output_decoy(pose_low)
 
 # High-Resolution Docking
-scorefxn_high = create_score_function_ws_patch("pre_talaris_2013_standard.wts", "docking")
-dock_hires = DockMCMProtocol()
+scorefxn_high = create_score_function("pre_talaris_2013_standard.wts", "docking")
+dock_hires = protocols.docking.DockMCMProtocol()
 dock_hires.set_scorefxn(scorefxn_high)
 dock_hires.set_partners("A_B")
 
-recover_sidechains = ReturnSidechainMover(pose_high)
+recover_sidechains = protocols.simple_moves.ReturnSidechainMover(pose_high)
 recover_sidechains.apply(pose)
 
-print "done"
+print( "done" )

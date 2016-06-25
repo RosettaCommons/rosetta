@@ -1,7 +1,12 @@
 #! /usr/bin/python
 # List of commands used in PyRosetts Workshop #2
 
+from __future__ import print_function
+
 from rosetta import *
+from pyrosetta import *
+from pyrosetta.teaching import *
+
 from rosetta.protocols.loops.loop_closure.ccd import *
 from rosetta.protocols.loops.loop_mover.refine import *
 from rosetta.protocols.loops.loop_mover.perturb import *
@@ -20,7 +25,7 @@ ft.add_edge(13, 26, 1)
 ft.add_edge(26, 20, -1)
 ft.add_edge(26, 116, -1)
 
-print ft
+print( ft )
 ft.check_fold_tree()
 
 pose.fold_tree(ft)
@@ -29,10 +34,10 @@ for res in (10, 13, 16, 23, 26, 30):
     pose.set_phi(res, 180)
     pose.dump_pdb("loop" + str(res) + ".pdb")
 
-pmm = PyMOL_Mover()
+pmm = PyMolMover()
 pmm.apply(pose)
-pmm.send_foldtree(pose)
-pmm.view_foldtree_diagram(pose, ft)
+# no longer supported: pmm.send_foldtree(pose)
+# no longer supported: pmm.view_foldtree_diagram(pose, ft)
 
 ft.clear()
 ft.simple_tree(116)
@@ -43,17 +48,17 @@ movemap = MoveMap()
 movemap.set_bb(True)
 movemap.set_chi(True)
 
-loop1 = Loop(15, 24, 19)
+loop1 = protocols.loops.Loop(15, 24, 19)
 add_single_cutpoint_variant(pose, loop1)
-ccd = CCDLoopClosureMover(loop1, movemap)
+ccd = protocols.loops.loop_closure.ccd.CCDLoopClosureMover(loop1, movemap)
 
 ccd.apply(pose)
 set_single_loop_fold_tree(pose, loop1)
 
 # Multiple Loops
-loop2 = Loop(78, 83, 80)
+loop2 = protocols.loops.Loop(78, 83, 80)
 
-loops = Loops()
+loops = protocols.loops.Loops()
 loops.add_loop(loop1)
 loops.add_loop(loop2)
 
@@ -75,20 +80,20 @@ loop_refine = LoopMover_Refine_CCD(loops)
 
 
 # KIC
-loops = Loops()
+loops = protocols.loops.Loops()
 loops.add_loop(loop1)
 
 set_single_loop_fold_tree(pose, loop1)
 
 sw_low = SwitchResidueTypeSetMover("centroid")
 sw_low.apply(pose)
-kic_perturb = LoopMover_Perturb_KIC(loops)
+kic_perturb = protocols.loops.loop_mover.perturb.LoopMover_Perturb_KIC(loops)
 # kic_perturb.apply(pose)  # won't show in Pymol for efficiency # takes too long
 
 
 sw_high = SwitchResidueTypeSetMover("fa_standard")
 sw_high.apply(pose)
-kic_refine = LoopMover_Refine_KIC(loops)
+kic_refine = protocols.loops.loop_mover.refine.LoopMover_Refine_KIC(loops)
 # kic_refine.apply(pose)  # won't show in Pymol for efficiency # takes too long
 
 # use the KinematicMover explicitly in centroid stage

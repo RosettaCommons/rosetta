@@ -32,6 +32,7 @@ using namespace clang;
 
 using std::string;
 using std::pair;
+using std::tuple;
 using std::vector;
 using std::unordered_map;
 
@@ -95,22 +96,23 @@ pair<string, string> function_arguments_for_lambda(clang::FunctionDecl const *re
 }
 
 
-// Generate function argument list with types separate by comma and with only arguments names
-// name_arguments - if arguments should be named: a1, a2, ...
-pair<string, string> function_arguments_for_py_overload(clang::FunctionDecl const *record)
+// Generate three version of function argument list: (with types separate by comma, only arguments names, only argument names with by-reference arguments converted to pointers by adding '&'
+// example: ("string const & a0, int *a1, float a2", "a0, a1, a2", "&a0, a1, a2")
+tuple<string, string, string> function_arguments_for_py_overload(clang::FunctionDecl const *record)
 {
-	string r, a;
+	string r, a, p;
 
 	for(uint i=0; i<record->getNumParams(); ++i) {
 		QualType qt = record->getParamDecl(i)->getOriginalType().getCanonicalType();
 		r += qt.getAsString() + ' ' + "a" + std::to_string(i);
 		a += "a" + std::to_string(i);
-		if( i+1 != record->getNumParams() ) { r += ", ";  a += ", "; }
+		p += string(qt->isLValueReferenceType() ? "&" : "" ) + "a" + std::to_string(i);
+		if( i+1 != record->getNumParams() ) { r += ", ";  a += ", ";  p += ", ";  }
 	}
 
 	fix_boolean_types(r);
 
-	return std::make_pair(r, a);
+	return std::make_tuple(r, a, p);
 }
 
 
@@ -270,7 +272,10 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 		}
 	}
 
-	string maybe_return_policy = F->getReturnType()->isLValueReferenceType() ? ", pybind11::return_value_policy::reference": "";
+	string maybe_return_policy = "";
+	if     ( F->getReturnType()->isPointerType() )         maybe_return_policy = ", " + Config::get().default_pointer_return_value_policy();
+	else if( F->getReturnType()->isLValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_lvalue_reference_return_value_policy();
+	else if( F->getReturnType()->isRValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_rvalue_reference_return_value_policy();
 
 	//string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
 	string r = R"(.def{}("{}", {}, "doc"{})"_format(maybe_static, function_name, function, maybe_return_policy);

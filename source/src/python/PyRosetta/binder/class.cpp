@@ -28,6 +28,7 @@ using namespace clang;
 
 using std::string;
 using std::pair;
+using std::tuple;
 using std::make_pair;
 using std::vector;
 using std::set;
@@ -120,7 +121,8 @@ bool is_field_assignable(FieldDecl const *f)
 	if( RecordType const* r = dyn_cast<RecordType>( f->getType() ) ) {
 		if( CXXRecordDecl *C = cast<CXXRecordDecl>(r->getDecl() ) ) { // checking if this type has deleted operator=
 			for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-				if( m->getAccess() == AS_public  and  m->isCopyAssignmentOperator()  and  !m->doesThisDeclarationHaveABody()  ) return false;
+				//if( m->getAccess() == AS_public  and  m->isCopyAssignmentOperator()  /*and  !m->doesThisDeclarationHaveABody()*/ and  m->isDeleted() ) return false;
+				if(  m->isCopyAssignmentOperator()  and  ( m->getAccess() != AS_public  or  m->isDeleted() ) ) return false;
 			}
 		}
 	}
@@ -449,8 +451,14 @@ bool is_callback_structure_constructible(CXXRecordDecl const *C)
 	return true;
 }
 
+const char * call_back_function_body_template = R"_(
+pybind11::gil_scoped_acquire gil;
+pybind11::function overload = pybind11::get_overload(this, "{}");
+if (overload) return overload.operator()<pybind11::return_value_policy::reference>({}).cast<{}>();
+)_";
+
 // generate call-back overloads for all public virtual functions in C including it bases
-string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const & base_type_alias, set<string> &binded, int &ret_id, std::vector<clang::CXXMethodDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
+string bind_member_functions_for_call_back(CXXRecordDecl const *C, /*string const & base_type_alias,*/ set<string> &binded, int &ret_id, std::vector<clang::CXXMethodDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
 {
 	string c;
 	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
@@ -459,9 +467,9 @@ string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const 
 			and  !isa<CXXConstructorDecl>(*m)  and   !isa<CXXDestructorDecl>(*m)  and  m->isVirtual() and  !is_const_overload(*m) ) {
 
 			string return_type = m->getReturnType().getCanonicalType().getAsString();  fix_boolean_types(return_type);
-			pair<string, string> args = function_arguments_for_py_overload(*m);
+			tuple<string, string, string> args = function_arguments_for_py_overload(*m);
 
-			string key = /*return_type + ' ' +*/ m->getNameAsString() + '(' + args.first + (m->isConst() ? ") const" : ")");
+			string key = /*return_type + ' ' +*/ m->getNameAsString() + '(' + std::get<0>(args) + (m->isConst() ? ") const" : ")");
 			//outs() << key << "\n";
 			if( !binded.count(key) ) {
 				binded.insert(key);
@@ -472,18 +480,25 @@ string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const 
 					return_type = std::move(return_type_alias);
 				}
 
-				c += "\t{} {}({}){} override {{ "_format(return_type, m->getNameAsString(), args.first, m->isConst() ? " const" : "");
+				c += "\t{} {}({}){} override {{ "_format(return_type, m->getNameAsString(), std::get<0>(args), m->isConst() ? " const" : "");
 
-				c += string(m->isPure() ? "PYBIND11_OVERLOAD_PURE_NAME" : "PYBIND11_OVERLOAD_NAME") + '(';
-				c += return_type + ", " + base_type_alias + ", \"" + python_function_name(*m) + "\", " + C->getNameAsString() + "::" + m->getNameAsString();
-				c += ( args.second.size() ? ", " + args.second : "");
-				c += "); }\n";
+				string python_name = python_function_name(*m);
+				c += indent( fmt::format(call_back_function_body_template, python_name, std::get<1>(args), return_type), "\t\t");
+				if( m->isPure() ) c+= "\t\tpybind11::pybind11_fail(\"Tried to call pure virtual function \\\"{}::{}\\\"\");\n"_format(C->getNameAsString(), python_name);
+				else c+= "\t\treturn {}::{}({});\n"_format(C->getNameAsString(), m->getNameAsString(), std::get<1>(args));
+				c += "\t}\n";
 
+				// c += string(m->isPure() ? "PYBIND11_OVERLOAD_PURE_NAME" : "PYBIND11_OVERLOAD_NAME") + '(';
+				// c += return_type + ", " + base_type_alias + ", \"" + python_function_name(*m) + "\", " + C->getNameAsString() + "::" + m->getNameAsString();
+				// c += ( args.second.size() ? ", " + args.second : "");
+				// c += "); }\n";
+
+				// Note: does not work when argument is std::shared_ptr passed by-reference...
 				// string python_name = python_function_name(*m);
-				// c += "PYBIND11_OVERLOAD_INT({}, \"{}\"{}); "_format(return_type, python_name, args.second.size() ? ", " + args.second : "");
-				// if( m->isPure() ) c+=  "pybind11::pybind11_fail(\"Tried to call pure virtual function \\\"{}::{}\\\"\");"_format(C->getNameAsString(), python_name);
-				// else c+=  "return {}::{}({});"_format(C->getNameAsString(), m->getNameAsString(), args.second);
-				// c += "}\n";
+				// c += "PYBIND11_OVERLOAD_INT({}, \"{}\"{}); "_format(return_type, python_name, std::get<2>(args).size() ? ", " + std::get<2>(args) : "");
+				// if( m->isPure() ) c+= "pybind11::pybind11_fail(\"Tried to call pure virtual function \\\"{}::{}\\\"\");"_format(C->getNameAsString(), python_name);
+				// else c+= "return {}::{}({});"_format(C->getNameAsString(), m->getNameAsString(), std::get<1>(args));
+				// c += " }\n";
 
 				prefix_includes.push_back(*m);
 				//add_relevant_includes(*m, prefix_includes, prefix_includes_stack, 0);
@@ -495,7 +510,7 @@ string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const 
 		if( b->getAccessSpecifier() != AS_private ) {
 			if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
 				if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
-					c += bind_member_functions_for_call_back(R, base_type_alias, binded, ret_id, prefix_includes);
+					c += bind_member_functions_for_call_back(R, /*base_type_alias,*/ binded, ret_id, prefix_includes);
 					//add_relevant_includes(R, prefix_includes, prefix_includes_stack, 0);
 				}
 			}
@@ -513,11 +528,11 @@ void ClassBinder::generate_prefix_code()
 	prefix_code_  = generate_comment_for_declaration(C);
 	prefix_code_ += "struct {0} : public {1} {{\n\tusing {1}::{2};\n\n"_format(callback_structure_name(C), class_qualified_name(C), C->getNameAsString());
 
-	string base_type_alias = "_binder_base_";
-	prefix_code_ += "\tusing {} = {};\n\n"_format(base_type_alias, class_qualified_name(C));
+	// string base_type_alias = "_binder_base_";
+	// prefix_code_ += "\tusing {} = {};\n\n"_format(base_type_alias, class_qualified_name(C));
 
 	set<string> binded;  int ret_id = 0;
-	prefix_code_ += bind_member_functions_for_call_back(C, base_type_alias, binded, ret_id, prefix_includes);
+	prefix_code_ += bind_member_functions_for_call_back(C, /*base_type_alias,*/ binded, ret_id, prefix_includes);
 	prefix_code_ += "};\n\n";
 }
 

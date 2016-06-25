@@ -20,7 +20,7 @@ dock_jump = 1
 print "set up scoring functions"
 scorefxn_low = create_score_function('interchain_cen')
 scorefxn_high = create_score_function('docking')
-scorefxn_high_min = create_score_function_ws_patch('docking','docking_min')
+scorefxn_high_min = create_score_function('docking','docking_min')
 
 print "setting up movers"
 
@@ -34,7 +34,7 @@ randomize1 = RigidBodyRandomizeMover(p, dock_jump, rigid.partner_upstream)
 randomize2 = RigidBodyRandomizeMover(p, dock_jump, rigid.partner_downstream)
 dock_pert = RigidBodyPerturbMover(dock_jump, 3, 8) #3A translation, 8 degrees rotation
 spin = RigidBodySpinMover( dock_jump )
-slide_into_contact = DockingSlideIntoContact( dock_jump )
+slide_into_contact = protocols.docking.DockingSlideIntoContact( dock_jump )
 
 #docking lowres movers
 docking_lowres = DockingLowRes( scorefxn_low, dock_jump )

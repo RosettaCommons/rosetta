@@ -137,7 +137,7 @@ def sample_ligand_interface(pdb_filename, partners,
     #    supposed to specify which jumps are movable, to support multibody
     #    docking...but Rosetta doesn't currently)
     # the FoldTrees setup by this method are for TWO BODY docking ONLY!
-    setup_foldtree(pose, partners, Vector1([dock_jump]))
+    protocols.docking.setup_foldtree(pose, partners, Vector1([dock_jump]))
 
     # 3. create a copy of the pose for testing
     test_pose = Pose()
@@ -172,7 +172,7 @@ def sample_ligand_interface(pdb_filename, partners,
     #    present or make your own (see "Obtaining Params Files" below), and
     #    without a centroid representation, the low-resolution docking stages
     #    are not useful for ligand docking
-    docking = DockMCMProtocol()
+    docking = protocols.docking.DockMCMProtocol()
     docking.set_scorefxn(scorefxn)
 
     # 6. setup the PyJobDistributor

@@ -7,19 +7,23 @@
 
 ## @author Sergey Lyskov
 
+from __future__ import print_function
+
 import sys
-if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error
+#if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error
 
 from rosetta import *
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+from pyrosetta import *
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 
-print 'testing ClassicRelax'
+print( 'testing ClassicRelax' )
 relax_p = Pose()
 core.import_pose.pose_from_file(relax_p, "../test/data/test_in.pdb")
 scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
-relax = ClassicRelax(scorefxn)
+relax = protocols.relax.ClassicRelax(scorefxn)
 relax.set_lj_ramp_cycles(3)
 relax.set_lj_ramp_inner_cycles(3)
 relax.set_stage2_cycles(10)

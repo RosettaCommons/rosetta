@@ -134,7 +134,7 @@ def movemap(pose, PDB_out = False):
     #pymover.keep_history = True    # enables viewing across states
 
     #### comment-out the line below, changing PDBInfo names tells the
-    ####    PyMOL_Mover to produce new objects
+    ####    PyMolMover to produce new objects
     test_pose.pdb_info().name('original')
     pymover.apply(test_pose)
     print( '\nPre minimization score:', scorefxn(test_pose) )

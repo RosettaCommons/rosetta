@@ -145,6 +145,10 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/sched.h>",        "<unistd.h>"),
 		make_pair("<bits/pthreadtypes.h>", "<pthread.h>"),
 		make_pair("<bits/gthr-default.h>", "<pthread.h>"),
+
+		make_pair("<bits/shared_ptr_base.h>", "<memory>"),
+		make_pair("<backward/auto_ptr.h>",    "<memory>"),
+		make_pair("<ext/concurrence.h>",      "<memory>"),
 	};
 
 	string name = decl->getQualifiedNameAsString();
@@ -283,7 +287,7 @@ bool is_python_builtin(NamedDecl const *C)
 	static std::vector<string> const known_builtin = {"std::basic_string", "std::allocator", "std::initializer_list",
 													  "std::__1::basic_string",
 
-													  "std::shared_ptr", "std::weak_ptr", "std::enable_shared_from_this",
+													  "std::shared_ptr", "std::enable_shared_from_this",  "std::__shared_ptr",  // "std::weak_ptr",  "std::__weak_ptr"
 													  //"std::__1::shared_ptr", "std::__1::weak_ptr", "std::__1::allocator",
 
 													  "std::pair", "std::tuple",

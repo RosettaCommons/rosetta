@@ -650,7 +650,7 @@ to investigate using PyRosetta.
             commands in 3. would change since docking.py wouldn't be here)
 3. Run the script from the commandline with appropriate arguments:
 
->python ala_scan.py --pdb_filename=3RT3.clean.pdb --partners=B_C --mutant_aa=A --interface_cutoff=8.0 --trials=20 --trial_output=3RT3_ddG --PyMOL_Mover_ip=off
+>python ala_scan.py --pdb_filename=3RT3.clean.pdb --partners=B_C --mutant_aa=A --interface_cutoff=8.0 --trials=20 --trial_output=3RT3_ddG --PyMolMover_ip=off
 
         -The partners option, "B_C" is PDB specific, if you change the chain
             IDs in 3RT3, make sure this matches

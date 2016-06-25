@@ -9,6 +9,7 @@
 from __future__ import print_function
 
 from rosetta import *
+from pyrosetta import *
 
 from rosetta.protocols.loops.loop_closure.kinematic_closure import *
 
@@ -27,7 +28,6 @@ import math
 
 MAX_KIC_BUILD_ATTEMPTS = 10000
 
-
 # Kale: to reduce test time even further try options: -loops:outer_cycles 1 -loops:max_inner_cycles 1
 init(extra_options='-constant_seed -run:test_cycles True')  # -loops:test_cycles is only needed for self-test, please make sure to remove it on production run
 # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
@@ -38,28 +38,28 @@ p = core.import_pose.pose_from_file( "../test/data/2cpl_min.pdb" )
 starting_p = Pose()
 starting_p.assign( p )
 
-scorefxn_low  = get_cen_scorefxn() #  create_score_function( 'cen_std' )
-scorefxn_high = get_fa_scorefxn()  #  create_score_function_ws_patch( 'standard', 'score12' )
+scorefxn_low  = protocols.loops.get_cen_scorefxn() #  create_score_function( 'cen_std' )
+scorefxn_high = protocols.loops.get_fa_scorefxn()  #  create_score_function_ws_patch( 'standard', 'score12' )
 
-pymol = rosetta.PyMOL_Mover() # If Pymol server is running, centroid stage will display
+pymol = PyMolMover() # If Pymol server is running, centroid stage will display
 
 loop_begin = 145
 loop_end = 155
 loop_cut = 150
-my_loop = Loop( loop_begin, loop_end, loop_cut )
-my_loops = Loops()
+my_loop = protocols.loops.Loop( loop_begin, loop_end, loop_cut )
+my_loops = protocols.loops.Loops()
 my_loops.add_loop( my_loop )
-print my_loop
+print(my_loop)
 
-set_single_loop_fold_tree( p, my_loop )
+protocols.loops.set_single_loop_fold_tree( p, my_loop )
 
 movemap = MoveMap()
 movemap.set_bb_true_range(loop_begin, loop_end )
 movemap.set_chi( True )
 
-print p.fold_tree()
+print( p.fold_tree() )
 
-print "setting up movers"
+print( "setting up movers" )
 # use the KinematicMover explicitly in centroid stage
 kic_mover = KinematicMover()
 
@@ -69,7 +69,7 @@ to_fullatom = protocols.simple_moves.SwitchResidueTypeSetMover( 'fa_standard' )
 recover_sidechains = protocols.simple_moves.ReturnSidechainMover( starting_p )
 
 #set up sidechain packer movers
-task_pack = TaskFactory.create_packer_task( starting_p )
+task_pack = core.pack.task.TaskFactory.create_packer_task( starting_p )
 task_pack.restrict_to_repacking()
 task_pack.or_include_current( True )
 pack = protocols.simple_moves.PackRotamersMover( scorefxn_high, task_pack )
@@ -90,29 +90,29 @@ linmin_mover = protocols.simple_moves.MinMover( mm, scorefxn_low, min_type, tol,
 starting_p_centroid = Pose()
 starting_p_centroid.assign( p )
 
-print "building random loop conformation with ideal bond lengths, bond angles,"
-print "and omega angles using KIC",
+print( "building random loop conformation with ideal bond lengths, bond angles," )
+print( "and omega angles using KIC", end='' )
 success = False
 kic_mover.set_idealize_loop_first( True )
 kic_mover.set_pivots( loop_begin, loop_cut, loop_end )
 pymol.apply( p )
 for i in range( MAX_KIC_BUILD_ATTEMPTS ):
-  print "\n  attempt %d..." %i,
+  print( "\n  attempt %d..." %i, end='' )
   kic_mover.apply( p )
   pymol.apply( p )
   if kic_mover.last_move_succeeded():
     success = True
     kic_mover.set_idealize_loop_first( False )
-    print "succeeded."
+    print( "succeeded." )
     break
 if not success:
-  print "Could not complete initial KIC loop building in %d attempts. Exiting" \
-      %MAX_KIC_BUILD_ATTEMPTS
+  print( "Could not complete initial KIC loop building in %d attempts. Exiting" \
+      %MAX_KIC_BUILD_ATTEMPTS )
   exit()
 scorefxn_low( p )
 linmin_mover.apply( p )
 
-print "centroid stage loop KIC remodeling"
+print( "centroid stage loop KIC remodeling" )
 outer_cycles = 1 # 10 # inner_cycles and outer_cycles should be much higher in production run!
 inner_cycles = 1 # 30
 init_temp = 2.0
@@ -129,7 +129,7 @@ for i in range( 1,outer_cycles+1 ):
     mc.set_temperature( kT )
     kic_start = randrange( loop_begin, loop_end - 1 )
     kic_end = randrange( kic_start+2, loop_end+1 )
-    middle_offset = ( kic_end - kic_start ) / 2
+    middle_offset = ( kic_end - kic_start ) // 2
     kic_middle = kic_start + middle_offset
     kic_mover.set_pivots( kic_start, kic_middle, kic_end )
     kic_mover.set_temperature( kT )
@@ -137,11 +137,11 @@ for i in range( 1,outer_cycles+1 ):
     linmin_mover.apply( p )
     mc.boltzmann( p )
     pymol.apply( p )
-    rms = loop_rmsd( p, starting_p, my_loops )
-    print "centroid stage loop rmsd to starting loop: %f" %rms
+    rms = protocols.loops.loop_rmsd( p, starting_p, my_loops )
+    print( "centroid stage loop rmsd to starting loop: %f" % rms )
 mc.recover_low( p )
 
-print "high-res KIC refinement"
+print( "high-res KIC refinement" )
 to_fullatom.apply( p )
 recover_sidechains.apply( p )
 pack.apply( p )
@@ -150,5 +150,5 @@ loop_refine = rosetta.protocols.loops.loop_mover.refine.LoopMover_Refine_KIC( my
 loop_refine.apply( p ) # won't show in Pymol for efficiency
 pymol.apply( p ) # just show refined model
 
-print "outputting decoy .test_kic.pdb"
+print( "outputting decoy .test_kic.pdb" )
 p.dump_pdb( ".test_kic.pdb" )

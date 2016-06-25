@@ -66,9 +66,10 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     else:
 
-        distr_file_list = os.listdir(pyrosetta_path)
+        distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-        gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
+        #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
+        gui_flag = ''
         if not res: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=platform['python'], jobs=jobs, gui_flag=gui_flag), return_='tuple')
 
         json_file = pyrosetta_path + '/build/.test.output/.test.results.json'

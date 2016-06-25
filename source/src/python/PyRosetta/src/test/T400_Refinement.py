@@ -9,13 +9,13 @@
 
 from __future__ import print_function
 
-
 import sys
-if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (mover: ClassicAbinitio ERROR)
+#if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (mover: ClassicAbinitio ERROR)
 
 from rosetta import *
+from pyrosetta import *
 
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 print('Refinement ----------------------------------------------')
@@ -36,11 +36,11 @@ print('outputting movemap')
 movemap.show(pose.total_residue())
 
 
-fragset3mer = ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
-fragset9mer = ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
+fragset3mer = core.fragment.ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
+fragset9mer = core.fragment.ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
 print('mover: ClassicFragmentMover, 3mer')
-movemap.set_bb(1)
-mover_3mer = ClassicFragmentMover(fragset3mer,movemap)
+movemap.set_bb(True)
+mover_3mer = protocols.simple_moves.ClassicFragmentMover(fragset3mer, movemap)
 mover_3mer.apply(pose_frag)
 
 
@@ -50,7 +50,7 @@ scorefxn(pose)
 
 
 print('mover: SmallMover')
-movemap.set_bb(1)
+movemap.set_bb(True)
 smallmover = protocols.simple_moves.SmallMover(movemap,kT,n_moves)
 smallmover = protocols.simple_moves.SmallMover()
 smallmover.angle_max('L',50)
@@ -61,8 +61,8 @@ print(smallmover)
 # TODO: mover base class printout with name, last output status, brief description(?)
 
 print('mover: ShearMover')
-shearmover = ShearMover(movemap,kT,n_moves)
-shearmover = ShearMover()
+shearmover = protocols.simple_moves.ShearMover(movemap, kT, n_moves)
+shearmover = protocols.simple_moves.ShearMover()
 shearmover.angle_max('E',50)
 shearmover.apply(pose_frag)
 print(shearmover)
@@ -101,11 +101,18 @@ mc.show_state()
 
 #print 'mover: ClassicAbinitio ERROR'
 #''' Disabled until Abinitio error is fixed '''
-ab = ClassicAbinitio(fragset3mer, fragset9mer, movemap)
-#ab.apply(pose) # Error!
+ab = protocols.abinitio.ClassicAbinitio(fragset3mer, fragset9mer, movemap)
+#ab.set_mc( MonteCarlo(pose, scorefxn, kT) )
+ab.init(pose)  # needed to be se or ClassicAbinitio will crash
+#ab.apply(pose)
+# ^^^ uncommenting lead to an error:
+#protocols.simple_moves.FragmentMover: BEGIN: 89 SIZE: 9 TOTAL_RES: 10
+#protocols.simple_moves.FragmentMover: Are the fragments compatible with the fasta or the input PDB used to extract the folding sequence ?
+#protocols.simple_moves.FragmentMover: It appears that the fragments go up to residue 97 while the pose only has 10 residues!
+
 
 print('mover: SequenceMover')
-seqmover = SequenceMover()
+seqmover = protocols.moves.SequenceMover()
 seqmover.add_mover(minmover)
 seqmover.apply(pose)
 

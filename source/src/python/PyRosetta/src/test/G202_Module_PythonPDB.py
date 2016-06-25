@@ -10,6 +10,8 @@
 ## @brief  PyRosetta Toolkit Test script
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+from __future__ import print_function
+
 #Python Imports
 import os
 import sys

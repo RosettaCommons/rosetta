@@ -29,9 +29,9 @@ starting_p = Pose()
 starting_p.assign( p )
 
 scorefxn_low = create_score_function( 'cen_std' )
-scorefxn_high = create_score_function_ws_patch( 'standard', 'score12' )
+scorefxn_high = create_score_function( 'standard', 'score12' )
 
-pymol = rosetta.PyMOL_Mover() # If Pymol server is running, centroid stage will display
+pymol = rosetta.PyMolMover() # If Pymol server is running, centroid stage will display
 
 loop_begin = 145
 loop_end = 155

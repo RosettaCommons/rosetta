@@ -10,7 +10,9 @@
 from __future__ import print_function
 
 from rosetta import *
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+from pyrosetta import *
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 
@@ -26,18 +28,18 @@ scorefxn = create_score_function('score3')
 scorefxn(pose)
 
 print('Creating standard score function and scoring, again')
-scorefxn = create_score_function_ws_patch('talaris2013', 'docking')
+scorefxn = create_score_function('talaris2013', 'docking')
 scorefxn(pose)
 print('Creating standard score from scratch')
 scorefxn = ScoreFunction()
 
 print('Adjusting weights and scoring')
-scorefxn.set_weight(fa_atr, 1)
-scorefxn.set_weight(fa_pair, 1)
-scorefxn.set_weight(fa_rep, 1)
+scorefxn.set_weight(core.scoring.fa_atr, 1)
+scorefxn.set_weight(core.scoring.fa_pair, 1)
+scorefxn.set_weight(core.scoring.fa_rep, 1)
 scorefxn(pose)
 
-print('weight for fa_atr set to: ', scorefxn.get_weight(fa_atr))
+print('weight for fa_atr set to: ', scorefxn.get_weight(core.scoring.fa_atr))
 print(scorefxn)
 print('Score break down for pose...')
 scorefxn.show(pose)
@@ -53,8 +55,8 @@ print( pose.energies().show(5) )
 weights = pose.energies().weights()
 print( pose.energies().residue_total_energies(5).weighted_string_of( weights ) )
 print( 'fa_atr of residue 5' )
-print( weights[fa_atr] * pose.energies().residue_total_energies(5)[fa_atr ] )
-print( "fa_atr for residue 5: ", pose.energies().residue_total_energies(5)[fa_atr] )
+print( weights[core.scoring.fa_atr] * pose.energies().residue_total_energies(5)[core.scoring.fa_atr ] )
+print( "fa_atr for residue 5: ", pose.energies().residue_total_energies(5)[core.scoring.fa_atr] )
 
 print('manually calculating 2body context-independent energies between residues 4 and 5')
 rsd1 = pose.residue(4);
@@ -63,16 +65,16 @@ rsd2 = pose.residue(5);
 emap =  core.scoring.EMapVector()  # TwoBodyEMapVector()
 scorefxn.eval_ci_2b( rsd1, rsd2, pose, emap );
 
-print( "fa_atr between 1 and 2: ", emap[fa_atr] )
-print( "fa_pair between 1 and 2: ", emap[fa_pair] )
-print( "fa_rep between 1 and 2: ", emap[fa_rep] )
+print( "fa_atr between 1 and 2: ", emap[core.scoring.fa_atr] )
+print( "fa_pair between 1 and 2: ", emap[core.scoring.fa_pair] )
+print( "fa_rep between 1 and 2: ", emap[core.scoring.fa_rep] )
 
 score_types = []
-for i in range(1, rosetta.core.scoring.end_of_score_type_enumeration+1):
+for i in range(1, int(rosetta.core.scoring.end_of_score_type_enumeration) + 1):
     ii = rosetta.core.scoring.ScoreType(i)
     if weights[ii] != 0: score_types.append(ii)
 
-for i in range(1, rosetta.core.scoring.end_of_score_type_enumeration+1):
+for i in range(1, int(rosetta.core.scoring.end_of_score_type_enumeration) + 1):
     print( rosetta.core.scoring.ScoreType(i), end='')   # This print only number, is this correct???  (no!)
 #print
 #TAB-COMPLETION gives this:

@@ -9,9 +9,12 @@
 ## @author Sergey Lyskov
 ## @brief  Demo for PyRosetta sub classing 2
 
+from __future__ import print_function
 
 # RosettaCon 2011 demo
+import pyrosetta
 from rosetta import *
+from pyrosetta import *
 from rosetta.core.scoring.methods import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
@@ -20,7 +23,7 @@ import os; os.chdir('.test.output')
 pose = pose_from_file("../test/data/test_in.pdb")
 
 
-@rosetta.EnergyMethod()
+@pyrosetta.EnergyMethod()
 class CI1B_Method(ContextIndependentOneBodyEnergy):
     def __init__(self):
         ContextIndependentOneBodyEnergy.__init__(self, self.creator() )
@@ -36,11 +39,12 @@ class CI1B_Method(ContextIndependentOneBodyEnergy):
 
 sf_new = ScoreFunction()
 sf_new.set_weight(CI1B_Method.scoreType, 1)
-print '---------------------------------------------'
-print 'CI1B_Method Score:', sf_new.score(pose)
+print( '---------------------------------------------' )
+print( 'CI1B_Method Score:', sf_new.score(pose) )
+assert sf_new.score(pose) == 232.0
 
 
-@rosetta.EnergyMethod()
+@pyrosetta.EnergyMethod()
 class CI2B_Method(ContextIndependentTwoBodyEnergy):
     def __init__(self):
         ContextIndependentTwoBodyEnergy.__init__(self, self.creator() )
@@ -57,11 +61,12 @@ class CI2B_Method(ContextIndependentTwoBodyEnergy):
 
 sf_new = ScoreFunction()
 sf_new.set_weight(CI2B_Method.scoreType, 1)
-print '---------------------------------------------'
-print 'CI2B_Method Score:', sf_new.score(pose)
+print( '---------------------------------------------' )
+print( 'CI2B_Method Score:', sf_new.score(pose) )
+assert sf_new.score(pose) == 525.0
 
 
-@rosetta.EnergyMethod()
+@pyrosetta.EnergyMethod()
 class CD2B_Method(ContextDependentTwoBodyEnergy):
     def __init__(self):
         ContextDependentTwoBodyEnergy.__init__(self, self.creator() )
@@ -78,8 +83,8 @@ class CD2B_Method(ContextDependentTwoBodyEnergy):
 
 sf_new = ScoreFunction()
 sf_new.set_weight(CD2B_Method.scoreType, 1)
-print '---------------------------------------------'
-print 'CD2B_Method Score:', sf_new.score(pose)
+print( '---------------------------------------------' )
+print( 'CD2B_Method Score:', sf_new.score(pose) )
+assert sf_new.score(pose) == 525.0
 
-
-print ; print
+print('\n\n')

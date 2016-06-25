@@ -121,13 +121,14 @@ void update_source_file(std::string const &prefix, std::string const &file_name,
 
 string namespace_from_named_decl(NamedDecl const *decl)
 {
-	string qn = decl->getQualifiedNameAsString();
+	string qn = standard_name( decl->getQualifiedNameAsString() );
 	string n  = decl->getNameAsString();
 	//name = decl->getQualifiedNameAsString();
 
 	int namespace_len = qn.size() - n.size();
 
-	string path = decl->getQualifiedNameAsString().substr(0, namespace_len > 1 ? namespace_len-2 : namespace_len );  // removing trailing '::'
+	//string path = decl->getQualifiedNameAsString().substr(0, namespace_len > 1 ? namespace_len-2 : namespace_len );  // removing trailing '::'
+	string path = qn.substr(0, namespace_len > 1 ? namespace_len-2 : namespace_len );  // removing trailing '::'
 
 	return path;
 }

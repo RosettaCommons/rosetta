@@ -55,7 +55,7 @@ The method sample_refinement:
 6.  sets up a ShearMover for small backbone torsion angle perturbations
 7.  sets up a MinMover for backbone torsion minimization
 8.  sets up a PackRotamersMover for sidechain packing
-9.  create a PyMOL_Mover for viewing intermediate output
+9.  create a PyMolMover for viewing intermediate output
 10. export the original structure, and scores, to PyMOL
 11. sets up a RepeatMover on a TrialMover of a SequenceMover
         -setup the TrialMover
@@ -64,7 +64,7 @@ The method sample_refinement:
                     >ShearMover
                     >MinMover
                     >PackRotamersMover
-                    >PyMOL_Mover
+                    >PyMolMover
             b.  create a MonteCarlo object for assessing moves
             c.  create the TrialMover (on the SequenceMover)
         -create the RepeatMover (on the TrialMover)
@@ -73,7 +73,7 @@ The method sample_refinement:
 14.  performs the refinement protocol, for each trajectory:
          a. set necessary variables for the new trajectory
              -reload the starting pose
-             -change the pose's PDBInfo.name, for the PyMOL_Mover
+             -change the pose's PDBInfo.name, for the PyMolMover
              -reset the MonteCarlo object
          b. perform the sampling and assessment using the RepeatMover
          c. output the (lowest scoring) decoy structure
@@ -137,7 +137,7 @@ def sample_refinement(pdb_filename,
 
     #### If you wish to use the ClassRelax protocol, uncomment the following
     ####    line and comment-out the protocol setup below
-    #refinement = ClassicRelax( scorefxn )
+    #refinement = protocols.relax.ClassicRelax( scorefxn )
 
     #### Setup custom high-resolution refinement protocol
     #### backbone refinement protocol

@@ -9,20 +9,23 @@
 ## @author Sergey Lyskov
 ## @brief  Demo for PyRosetta sub classing
 
+from __future__ import print_function
+
 import sys
 
-import rosetta
+import rosetta, pyrosetta
 import rosetta.core.scoring.methods
 
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
-pose = rosetta.pose_from_file("../test/data/test_in.pdb")
+pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+
+pose = pyrosetta.pose_from_file("../test/data/test_in.pdb")
 
 
 some_storage = []
 # rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy sub-classing -----------------------------------
-@rosetta.EnergyMethod(version=2)  # version is optional here
+@pyrosetta.EnergyMethod(version=2)  # version is optional here
 class MyCI1B_Method(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy):
     def __init__(self):
         rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy.__init__(self, self.creator() )
@@ -40,9 +43,10 @@ class MyCI1B_Method(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy
 
 sf_new = rosetta.core.scoring.ScoreFunction()
 sf_new.set_weight(MyCI1B_Method.scoreType, 1)
-print '---------------------------------------------'
-print 'MyCI1B_Method Score:', sf_new.score(pose)
+print( '---------------------------------------------' )
+print( 'MyCI1B_Method Score:', sf_new.score(pose) )
+assert sf_new.score(pose) == 232.0
 
 kT = 1.0
-mc = rosetta.MonteCarlo(pose, sf_new, kT)
-print mc
+mc = pyrosetta.MonteCarlo(pose, sf_new, kT)
+print( mc )

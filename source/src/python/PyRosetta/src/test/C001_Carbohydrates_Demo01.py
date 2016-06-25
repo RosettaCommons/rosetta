@@ -2,12 +2,15 @@
 # This file simply contains a list of commands copied from a carbohydrates
 # tutorial/demo that I am writing.  ~Labonte
 
+from __future__ import print_function
+
 from rosetta import *
+from pyrosetta import *
 
 init('-constant_seed -include_sugars')
 import os; os.chdir('.test.output')
 
-pm = PyMOL_Mover()
+pm = PyMolMover()
 
 
 # Linear Oligosaccharides & IUPAC Sequences
@@ -25,20 +28,20 @@ pm.apply(isomaltose)
 pm.apply(glucose)
 pm.apply(galactose)
 
-print maltotriose
-print isomaltose
-print lactose
+print( maltotriose )
+print( isomaltose )
+print( lactose )
 
-print maltotriose.chain_sequence(1)
-print isomaltose.chain_sequence(1)
-print lactose.chain_sequence(1)
+print( maltotriose.chain_sequence(1) )
+print( isomaltose.chain_sequence(1) )
+print( lactose.chain_sequence(1) )
 
-for res in lactose: print res.seqpos(), res.name()
-for res in maltotriose: print res.seqpos(), res.name()
+for res in lactose: print( res.seqpos(), res.name() )
+for res in maltotriose: print( res.seqpos(), res.name() )
 
-print glucose.residue(1)
-print galactose.residue(1)
-print mannose.residue(1)
+print( glucose.residue(1) )
+print( galactose.residue(1) )
+print( mannose.residue(1) )
 
 
 # Torsion Angles, PDB File HETNAM Records, & RingConformers
@@ -95,9 +98,9 @@ pm.apply(glucose)
 
 Glc1 = glucose.residue(1)
 
-for i in range(1, 6): print Glc1.nu(i)
+for i in range(1, 6): print( Glc1.nu(i) )
 
-print Glc1.ring_conformer(1)
+print( Glc1.ring_conformer(1) )
 
 ring_set = Glc1.type().ring_conformer_set(1)
 conformer = ring_set.get_ideal_conformer_by_name('1C4')
@@ -116,10 +119,10 @@ pm.apply(Lex)
 Lex = pose_from_file('../test/data/carbohydrates/Lex.pdb')
 pm.apply(Lex)
 
-print Lex
-for i in range(2): print Lex.chain_sequence(i + 1)
+print( Lex )
+for i in range(2): print( Lex.chain_sequence(i + 1) )
 
-for res in Lex: print res
+for res in Lex: print( res )
 
 Lex.phi(2)
 Lex.psi(2)
@@ -141,15 +144,15 @@ pm.apply(Lex)
 
 N_linked = pose_from_file('../test/data/carbohydrates/N-linked_14-mer_glycan.pdb')
 pm.apply(N_linked)
-pm.send_ss(N_linked)
-print N_linked
-for i in range(4): print N_linked.chain_sequence(i + 1)
+# pm.send_ss(N_linked)  DEPRECATED: the send_ss method is only implemented in Python PyMOL Mover, and needed to be ported to C++ version
+print( N_linked )
+for i in range(4): print( N_linked.chain_sequence(i + 1) )
 
 O_linked = pose_from_file('../test/data/carbohydrates/O_glycan.pdb')
 pm.apply(O_linked)
-pm.send_ss(O_linked)
-print O_linked
-for i in range(2): print O_linked.chain_sequence(i + 1)
+#pm.send_ss(O_linked) DEPRECATED: the send_ss method is only implemented in Python PyMOL Mover, and needed to be ported to C++ version
+print( O_linked )
+for i in range(2): print( O_linked.chain_sequence(i + 1) )
 
 N_linked.set_phi(N_linked.pdb_info().pdb2pose("B", 1), 180)
 pm.apply(N_linked)

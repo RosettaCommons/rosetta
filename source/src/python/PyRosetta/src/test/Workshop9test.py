@@ -1,7 +1,10 @@
 #! /usr/bin/python
 # List of commands used in PyRosetts Workshop #9
 
+from __future__ import print_function
+
 from rosetta import *
+from pyrosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -15,14 +18,14 @@ def hollow(shape_in):
 
 circle = MyCircle()
 square = MySquare()
-print circle
-print square
-print circle.color
-print square.color
+print( circle )
+print( square )
+print( circle.color )
+print( square.color )
 square.side_length = 2
-print square.area()
+print( square.area() )
 circle.radius, circle.color = 1.5, "pink"
-print circle.area()
+print( circle.area() )
 circle.draw(2)
 
 N_in_2 = 10
@@ -46,7 +49,7 @@ circle2.draw() # Draws a filled circle.
 
 pose = pose_from_sequence("ACDEFGHIKLMNPQRSTVWY")
 sf = ScoreFunction()
-print "Score of the pose:", sf(pose)
+print( "Score of the pose:", sf(pose) )
 len_score = LengthScoreMethod.scoreType
 sf.set_weight(len_score, 1.0)
-print "New score of the pose:", sf(pose)
+print( "New score of the pose:", sf(pose) )

@@ -10,22 +10,25 @@
 from __future__ import print_function
 
 from rosetta import *
+from pyrosetta import *
+
 from rosetta.protocols.rigid import *
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 print('Docking ----------------------------------------------------')
 
 dock_p = core.import_pose.pose_from_file("../test/data/test_dock.pdb")
 dock_jump = 1
-#DockingProtocol().setup_foldtree(dock_p)
+#protocols.docking.DockingProtocol().setup_foldtree(dock_p)
 
 to_centroid = protocols.simple_moves.SwitchResidueTypeSetMover('centroid')
 
 jmp_arr = utility.vector1_int()
 #jmp_arr = utility.vector1_ulong()
 jmp_arr.append(1)
-setup_foldtree(dock_p, '_', jmp_arr)
+protocols.docking.setup_foldtree(dock_p, '_', jmp_arr)
 
 starting_p = Pose()
 starting_p.assign(dock_p)
@@ -38,13 +41,13 @@ dock_pert.apply(dock_p)
 spin = RigidBodySpinMover( dock_jump )
 spin.apply(dock_p)
 
-slide_into_contact = DockingSlideIntoContact( dock_jump )
+slide_into_contact = protocols.docking.DockingSlideIntoContact( dock_jump )
 slide_into_contact.apply(dock_p)
 
-docking_lowres = DockingLowRes()
+docking_lowres = protocols.docking.DockingLowRes()
 docking_lowres.apply(dock_p)
 
-#DockingProtocol().recover_sidechains(dock_p, starting_p)
+#protocols.docking.DockingProtocol().recover_sidechains(dock_p, starting_p)
 recover_side_chain_mover = protocols.simple_moves.ReturnSidechainMover(starting_p)
 recover_side_chain_mover.apply(dock_p)
 

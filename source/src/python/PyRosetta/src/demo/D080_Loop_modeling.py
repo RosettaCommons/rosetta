@@ -84,7 +84,7 @@ The method sample_single_loop_modeling:
         recovering the original sidechain conformations of the fullatom pose
 13. creates a copy of the pose (centroid) for reference
 14. creates the geometric "temperature" decrement for simulated annealing
-15. creates a PyMOL_Mover for exporting structures to PyMOL
+15. creates a PyMolMover for exporting structures to PyMOL
 16. creates a (Py)JobDistributor for managing multiple trajectories
 17. performs the loop modeling protocol, for each trajectory:
         a.  reset necessary variables for the new trajectory
@@ -111,7 +111,7 @@ The method sample_single_loop_modeling:
         e.  perform high resolution loop optimization
         f.  output the decoy structure
                 -to a PDB file using the PyJobDistributor
-                -to PyMOL using the PyMOL_Mover
+                -to PyMOL using the PyMolMover
 
 """
 

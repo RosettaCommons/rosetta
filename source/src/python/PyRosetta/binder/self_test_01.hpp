@@ -84,13 +84,24 @@ struct Base
 	virtual ~Base() {}
 
 	virtual void clone() const = 0;
+
+	virtual int foo(int *, float&, char ) const = 0;
+	virtual int foo2(int *, float&, char ) const {};
 };
 
 
 struct Derived : public Base
 {
 	void clone() {}
+
+	void fq(std::vector<int>) {}
 };
+
+
+
+// std::shared_ptr<B> ptr_creator() { return std::make_shared<B>(); }
+// std::weak_ptr<B> weak_ptr_tester(std::shared_ptr<B> &p) { return p; }
+//std::weak_ptr<B> weak_ptr_tester(std::shared_ptr<B> &p) { return std::weak_ptr<B>(); }
 
 
 // class El {

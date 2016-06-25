@@ -7,22 +7,27 @@
 
 ## @author Sergey Lyskov
 
+from __future__ import print_function
+
 from rosetta import *
-rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+from pyrosetta import *
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
-
-print 'testing ligand modeling'
-params_list = Vector1(['../test/data/ligand.params'])
+print('testing ligand modeling')
+params_list = ['../test/data/ligand.params']
 res_set = generate_nonstandard_residue_set(params_list)
 ligand_p = core.import_pose.pose_from_file(res_set, "../test/data/ligand_test.pdb")
 
 scorefxn = create_score_function("ligand")
 scorefxn(ligand_p)
 
-print 'testing DNA modeling'
+print('testing DNA modeling')
 dna_p = Pose()
 core.import_pose.pose_from_file(dna_p, "../test/data/dna_test.pdb")
 
 scorefxn = create_score_function("dna")
 scorefxn(dna_p)
+
+print('Done!')

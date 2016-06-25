@@ -36,6 +36,7 @@ from rosetta.protocols.moves import PyMolMover, SequenceMover, RepeatMover, Tria
 from rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
 from rosetta.protocols.loops import get_fa_scorefxn
 
+get_score_function = rosetta.core.scoring.get_score_function
 create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
 
 rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
@@ -192,6 +193,8 @@ def _Pose_residue_iterator(obj):
     return __pose_iter()
 
 
+Pose.__iter__ = _Pose_residue_iterator
+
 # if config['core']:
 #     Pose.__iter__ = _Pose_residue_iterator
 #     '''
@@ -295,7 +298,7 @@ def generate_nonstandard_residue_set(params_list):
         Vector1()
         pose_from_file()
     """
-    res_set = ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")
+    res_set = rosetta.core.chemical.ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")
     # res_set.read_files(Vector1(params_list),
     #                    ChemicalManager.get_instance().atom_type_set("fa_standard"),
     #                    ChemicalManager.get_instance().element_set('default'),
@@ -372,7 +375,7 @@ def etable_atom_pair_energies(atom1, atom2, sfxn):
     """
     score_manager = rosetta.core.scoring.ScoringManager.get_instance()
     etable_ptr = score_manager.etable( sfxn.energy_method_options().etable_type() )
-    etable = etable_ptr.get()
+    etable = etable_ptr.lock()
     etable_energy = rosetta.core.scoring.etable.AnalyticEtableEnergy(etable,
                                                   sfxn.energy_method_options())
 
@@ -527,7 +530,7 @@ def defineEnergyMethodCreator(class_, scoreType):
             return e
 
         def score_types_for_method(self):
-            sts = rosetta.core.vector1_ScoreType()
+            sts = rosetta.utility.vector1_core_scoring_ScoreType()
             sts.append(self.scoreType)
             return sts
 
@@ -555,8 +558,8 @@ class EnergyMethod:
         if not self.scoreType:
             for s in _ScoreTypesRegistryByType_:
                 if not s.base or issubclass(original_class, s.base):
-                    self.scoreType = max(s.methods.keys() or [s.first - 1]) + 1
-                    if self.scoreType > s.last:
+                    self.scoreType = max(s.methods.keys() or [int(s.first) - 1]) + 1
+                    if self.scoreType > int(s.last):
                         err_msg = 'Cannot find free ScoreType to create %s! (looking in range [%s, %s])' % (self.scoreName, s.first, s.last)
                         raise Exception(err_msg)
                     s.methods[self.scoreType] = self.scoreName

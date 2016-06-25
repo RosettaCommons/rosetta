@@ -143,7 +143,7 @@ def sample_docking(pdb_filename, partners,
     #    supposed to specify which jumps are movable, to support multibody
     #    docking...but Rosetta doesn't currently)
     # the FoldTrees setup by this method are for TWO BODY docking ONLY!
-    setup_foldtree(pose, partners, Vector1([dock_jump]))
+    protocols.docking.setup_foldtree(pose, partners, Vector1([dock_jump]))
 
     # 3. create centroid <--> fullatom conversion Movers
     to_centroid = SwitchResidueTypeSetMover('centroid')
@@ -156,7 +156,7 @@ def sample_docking(pdb_filename, partners,
     #    a ReturnSidechainMover saves a pose's sidechains (in this case
     #    staring_pose) and when applied, inserts these conformations
     #    into the input pose
-    recover_sidechains = ReturnSidechainMover(pose)
+    recover_sidechains = protocols.simple_moves.ReturnSidechainMover(pose)
 
     # 4. convert to centroid
     to_centroid.apply(pose)
@@ -168,8 +168,9 @@ def sample_docking(pdb_filename, partners,
     # 6. create ScoreFunctions for centroid and fullatom docking
     scorefxn_low = create_score_function('interchain_cen')
     scorefxn_high = create_score_function('docking')
-    scorefxn_high_min = create_score_function_ws_patch('docking',
-        'docking_min')
+
+    # PyRosetta3: scorefxn_high_min = create_score_function_ws_patch('docking', 'docking_min')
+    scorefxn_high_min = create_score_function('docking', 'docking_min')
 
     # 7. create Movers for producing an initial perturbation of the structure
     # the DockingProtocol (see below) can do this but several Movers are
@@ -187,7 +188,7 @@ def sample_docking(pdb_filename, partners,
     spin = RigidBodySpinMover(dock_jump)
     # this Mover uses the axis defined by the inter-body jump (jump 1) to move
     #    the docking partners close together
-    slide_into_contact = DockingSlideIntoContact(dock_jump)
+    slide_into_contact = protocols.docking.DockingSlideIntoContact(dock_jump)
 
     # 8. setup the MinMover
     # the MoveMap can set jumps (by jump number) as degrees of freedom
@@ -196,12 +197,12 @@ def sample_docking(pdb_filename, partners,
     # the MinMover can minimize score based on a jump degree of freedom, this
     #    will find the distance between the docking partners which minimizes
     #    the score
-    minmover = MinMover()
+    minmover = protocols.simple_moves.MinMover()
     minmover.movemap(movemap)
     minmover.score_function(scorefxn_high_min)
 
     # 9. create a SequenceMover for the perturbation step
-    perturb = SequenceMover()
+    perturb = protocols.moves.SequenceMover()
     perturb.add_mover(randomize_upstream)
     perturb.add_mover(randomize_downstream)
     perturb.add_mover(dock_pert)
@@ -219,7 +220,7 @@ def sample_docking(pdb_filename, partners,
     # here, on instance is created with all default values and the movable jump
     #    is manually set to jump 1 (just to be certain), the centroid docking
     #    ScoreFunction is set and the fullatom docking ScoreFunction is set
-    dock_prot = DockingProtocol()    # contains many docking functions
+    dock_prot = protocols.docking.DockingProtocol()    # contains many docking functions
     dock_prot.set_movable_jumps(Vector1([1]))    # set the jump to jump 1
     dock_prot.set_lowres_scorefxn(scorefxn_low)
     dock_prot.set_highres_scorefxn(scorefxn_high_min)
@@ -381,7 +382,7 @@ to investigate using PyRosetta.
             commands in 3. would change since docking.py wouldn't be here)
 3. Run the script from the commandline with appropriate arguments:
 
->python docking.py --pdb_filename 3RT3.clean.pdb --partners B_C --jobs 400 --job_output 3RT3_docking_output --translation 3 --rotation 8 --PyMOL_Mover_ip off
+>python docking.py --pdb_filename 3RT3.clean.pdb --partners B_C --jobs 400 --job_output 3RT3_docking_output --translation 3 --rotation 8 --PyMolMover_ip off
 
         -The partners option, "B_C" is PDB specific, if you change the chain
             IDs in 3RT3, make sure this matches
