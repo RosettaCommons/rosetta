@@ -70,6 +70,11 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
+##Test FeaturesReporter
+ echo test_features_reporter
+ %(python)s %(template_dir)s/generate_templates.py --test --type features_reporter --class_name TestTemplateFeaturesReporter --brief "testing templates" --namespace protocols test_templates 2>&1 >> features_reporter_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 ##Test ResidueSelector
  echo test_residue_selector

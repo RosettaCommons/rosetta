@@ -188,7 +188,10 @@ class GenerateRosettaTemplates(object):
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverCreators.ihh\n"
 
-
+            elif self.options.type == "features_reporter":
+                print "\nFeature Reporter Creator should be registered in (protocols.7) \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterRegistrators.ihh and \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterCreators.ihh\n"
 
     ######## Replacement Functions#############
     def get_option(self, option_name, fail_on_none = True):
