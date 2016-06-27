@@ -33,9 +33,6 @@ namespace core {
 namespace scoring {
 namespace membrane {
 
-// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::scoring;
-
 /// @brief Creator Class for MPLipoEnergy
 class MPLipoEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {

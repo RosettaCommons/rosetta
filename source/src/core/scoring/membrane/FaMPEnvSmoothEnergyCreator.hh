@@ -37,25 +37,22 @@ namespace core {
 namespace scoring {
 namespace membrane {
 
-// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::scoring;
-
 /// @brief Membrane Termini Penalty Creator Class
-class FaMPEnvSmoothEnergyCreator : public methods::EnergyMethodCreator
+class FaMPEnvSmoothEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 
 	/// @brief Instantiate a new FaMPEnvSmoothEnergy
 	virtual
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
 	virtual
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const;
 
 };

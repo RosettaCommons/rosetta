@@ -44,14 +44,10 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+#include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-
-// this is stupid...we really shouldn't have to do things like this anymore...
-// Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-// Auto using namespaces end
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.FaMPEnvSmoothEnergy" );
 
@@ -72,9 +68,9 @@ DistanceSquared const end_sig2   = end_sig*end_sig;
 // Creator Methods //////////////////////////////////////////
 
 /// @brief Return a fresh instance of the energy method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FaMPEnvSmoothEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return methods::EnergyMethodOP( new FaMPEnvSmoothEnergy );
 }
@@ -90,7 +86,7 @@ FaMPEnvSmoothEnergyCreator::score_types_for_method() const {
 // Constructors /////////////////////////////////////////////
 
 FaMPEnvSmoothEnergy::FaMPEnvSmoothEnergy() :
-	parent( EnergyMethodCreatorOP( new FaMPEnvSmoothEnergyCreator ) )
+	parent( methods::EnergyMethodCreatorOP( new FaMPEnvSmoothEnergyCreator ) )
 {
 	Size const max_aa( 20 );
 	Size const env_log_table_cen10_bins( 40 );
@@ -118,10 +114,10 @@ FaMPEnvSmoothEnergy::FaMPEnvSmoothEnergy() :
 }
 
 /// @brief Create a clone of this energy method
-EnergyMethodOP
+methods::EnergyMethodOP
 FaMPEnvSmoothEnergy::clone() const
 {
-	return EnergyMethodOP( new FaMPEnvSmoothEnergy( *this ) );
+	return methods::EnergyMethodOP( new FaMPEnvSmoothEnergy( *this ) );
 }
 
 // Scoring Methods ////////////////////////////////////////////////

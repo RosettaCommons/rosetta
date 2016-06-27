@@ -28,9 +28,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 
-// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::scoring;
-
 namespace core {
 namespace scoring {
 namespace membrane {
@@ -42,14 +39,14 @@ public:
 
 	/// @brief Instantiate a new MPEnvEnergy
 	virtual
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const;
 
 	/// @brief Return MPEnv Score Type Claimed by this energy method
 	virtual
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const;
 };
 

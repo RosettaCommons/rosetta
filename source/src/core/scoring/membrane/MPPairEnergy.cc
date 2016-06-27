@@ -57,9 +57,6 @@
 // C++ Headers
 #include <cstdlib>
 
-using namespace core::scoring;
-using namespace core::scoring::methods;
-
 namespace core {
 namespace scoring {
 namespace membrane {
@@ -84,15 +81,15 @@ MPPairEnergyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPPairEnergy::MPPairEnergy() :
-	parent( EnergyMethodCreatorOP( new MPPairEnergyCreator ) ),
+	parent( methods::EnergyMethodCreatorOP( new MPPairEnergyCreator ) ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() ),
 	no_interpolate_mpair_( true ) // temp
 {}
 
 /// @brief Clone Method
-EnergyMethodOP
+methods::EnergyMethodOP
 MPPairEnergy::clone() const {
-	return EnergyMethodOP( new MPPairEnergy() );
+	return methods::EnergyMethodOP( new MPPairEnergy() );
 }
 
 /// Scoring Methods ///////////////////////

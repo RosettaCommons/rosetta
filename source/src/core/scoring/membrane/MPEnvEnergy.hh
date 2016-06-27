@@ -46,9 +46,6 @@
 // C++ Headers
 #include <cstdlib>
 
-// Rebecca, our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::scoring;
-
 namespace core {
 namespace scoring {
 namespace membrane {
@@ -117,10 +114,6 @@ private:
 
 	// MP Env and Cen Rotamer Statistics
 	MembraneData const & mpdata_;
-
-	// icnlude penalties
-	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// bool penalties_;
 
 	// Versioning
 	virtual

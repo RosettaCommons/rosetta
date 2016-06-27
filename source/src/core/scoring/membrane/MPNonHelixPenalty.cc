@@ -81,15 +81,15 @@ MPNonHelixPenaltyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPNonHelixPenalty::MPNonHelixPenalty() :
-	parent( EnergyMethodCreatorOP( new MPNonHelixPenaltyCreator ) ),
+	parent( methods::EnergyMethodCreatorOP( new MPNonHelixPenaltyCreator ) ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
 /// @brief Clone Method
-EnergyMethodOP
+methods::EnergyMethodOP
 MPNonHelixPenalty::clone() const
 {
-	return EnergyMethodOP( new MPNonHelixPenalty() );
+	return methods::EnergyMethodOP( new MPNonHelixPenalty() );
 }
 
 /// Scoring Methods /////////////////////////

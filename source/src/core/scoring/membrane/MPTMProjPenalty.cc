@@ -79,15 +79,15 @@ MPTMProjPenaltyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPTMProjPenalty::MPTMProjPenalty() :
-	parent( EnergyMethodCreatorOP( new MPTMProjPenaltyCreator ) ),
+	parent( methods::EnergyMethodCreatorOP( new MPTMProjPenaltyCreator ) ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
 /// @brief Clone Method
-EnergyMethodOP
+methods::EnergyMethodOP
 MPTMProjPenalty::clone() const
 {
-	return EnergyMethodOP( new MPTMProjPenalty() );
+	return methods::EnergyMethodOP( new MPTMProjPenalty() );
 }
 
 /// Scoring Methods /////////////////////////

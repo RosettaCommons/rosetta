@@ -48,7 +48,6 @@
 // C++ Headers
 #include <cstdlib>
 
-using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MembraneData" );
 
@@ -263,17 +262,17 @@ MembraneData::load_menv_info() {
 }
 
 /// @brief Membrane Base Potential Statistics
-FArray3D< Real > MembraneData::mem_env_log6() const { return mem_env_log6_; }
-FArray3D< Real > MembraneData::mem_env_log10() const { return mem_env_log10_; }
+ObjexxFCL::FArray3D< Real > MembraneData::mem_env_log6() const { return mem_env_log6_; }
+ObjexxFCL::FArray3D< Real > MembraneData::mem_env_log10() const { return mem_env_log10_; }
 
-FArray1D< Real > MembraneData::mem_cbeta_den6() const { return mem_cbeta_den6_; }
-FArray1D< Real > MembraneData::mem_cbeta_den12() const { return mem_cbeta_den12_; }
-FArray1D< Real > MembraneData::mem_cbeta_2TM_den6() const { return mem_cbeta_2TM_den6_; }
-FArray1D< Real > MembraneData::mem_cbeta_2TM_den12() const { return mem_cbeta_2TM_den12_; }
-FArray1D< Real > MembraneData::mem_cbeta_4TM_den6() const { return mem_cbeta_4TM_den6_; }
-FArray1D< Real > MembraneData::mem_cbeta_4TM_den12() const { return mem_cbeta_4TM_den12_; }
+ObjexxFCL::FArray1D< Real > MembraneData::mem_cbeta_den6() const { return mem_cbeta_den6_; }
+ObjexxFCL::FArray1D< Real > MembraneData::mem_cbeta_den12() const { return mem_cbeta_den12_; }
+ObjexxFCL::FArray1D< Real > MembraneData::mem_cbeta_2TM_den6() const { return mem_cbeta_2TM_den6_; }
+ObjexxFCL::FArray1D< Real > MembraneData::mem_cbeta_2TM_den12() const { return mem_cbeta_2TM_den12_; }
+ObjexxFCL::FArray1D< Real > MembraneData::mem_cbeta_4TM_den6() const { return mem_cbeta_4TM_den6_; }
+ObjexxFCL::FArray1D< Real > MembraneData::mem_cbeta_4TM_den12() const { return mem_cbeta_4TM_den12_; }
 
-FArray4D< Real > MembraneData::mem_pair_log() const { return mem_pair_log_; }
+ObjexxFCL::FArray4D< Real > MembraneData::mem_pair_log() const { return mem_pair_log_; }
 
 /// @brief Env Pair Potential Statistics
 Real MembraneData::cen_dist5_pad() const { return cen_dist5_pad_; }
