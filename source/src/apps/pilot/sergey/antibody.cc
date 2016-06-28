@@ -85,7 +85,7 @@ void register_options()
 	NEW_OPT( fasta, "Name of fasta file from which both antibody heavy and light chain should be read", "" );
 	//NEW_OPT( n, "Number of templates to generate", 10);
 	NEW_OPT( multi_template_regions, "Specify sequence regions for which multi-template is generated. Avalible regions are: h1, h2, h3, l1, l2, l3, frh, frl, orientation", "orientation");
-	NEW_OPT( no_relax, "do not relax grafted model", false);
+	NEW_OPT( no_relax, "Do not relax grafted model", false);
 }
 
 void relax_model(core::pose::PoseOP &pose)
@@ -151,7 +151,7 @@ int antibody_main()
 	// check if there are any files in the grafting database
 	file::list_dir( full_ab_db_path, file_names );
 
-	TR << TR.Magenta << "Unzipping files in antibody_databse (if any). This will only be done once." << TR.Reset << std::endl;
+	TR << TR.Magenta << "Unzipping files in antibody_database (if any). This will only be done once." << TR.Reset << std::endl;
 
 	// iterate over vector looking for bz2's and unzip
 	for (auto it = file_names.begin(); it != file_names.end() ; ++it) {
