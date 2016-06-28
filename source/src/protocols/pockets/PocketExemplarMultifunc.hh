@@ -25,8 +25,6 @@
 #include <protocols/pockets/PocketExemplarMultifunc.fwd.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 
 namespace protocols {
 namespace pockets {
@@ -67,7 +65,7 @@ public: // Methods
 private:
 
 	core::pose::Pose input_pose;
-	std::vector< conformation::ResidueCOP > residues;
+	std::vector< core::conformation::ResidueCOP > residues;
 	protocols::pockets::PocketGrid pg;
 	core::Real cRad;
 	core::Real repW;
