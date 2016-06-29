@@ -130,6 +130,7 @@ protected:
 		std::string const & complete_aa,
 		std::string const & complete_ss,
 		utility::vector1< std::string > const & complete_abego,
+		utility::vector1< core::Size > const & chain_endings,
 		core::Size const start,
 		core::Size const end ) const;
 

@@ -19,6 +19,7 @@
 
 // Package headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 
 // Core headers
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -105,9 +106,11 @@ FileConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	if ( !infile.good() ) {
 		throw utility::excn::EXCN_BadInput( "Could not open " + filename_ + " for reading." );
 	}
-	components::StructureDataOP sd = components::StructureData::create_from_pose( pose, "FileConstraintGenerator" );
-	debug_assert( sd );
-	std::stringstream cst_stream( clean_constraint_string( sd->substitute_variables( infile ) ) );
+	// TODO: use get_from_const_pose() once I've figured out how to make observer transfer over through pose copying
+	components::StructureDataOP sd_ptr = components::StructureDataFactory::get_instance()->create_from_pose( pose );
+	debug_assert( sd_ptr );
+	components::StructureData const & sd = *sd_ptr;
+	std::stringstream cst_stream( clean_constraint_string( sd.substitute_variables( infile ) ) );
 	infile.close();
 	TR.Debug << "Parsed " << filename_ << " : " << cst_stream.str() << std::endl;
 

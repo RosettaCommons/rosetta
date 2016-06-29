@@ -445,6 +445,7 @@ sources = {
 		"GlycanResidueSelectorTest",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",
+		"RandomResidueSelector",
 		"ResidueIndexSelector",
 		"ResidueNameSelector",
 		"ResiduePDBInfoHasLabelSelector",

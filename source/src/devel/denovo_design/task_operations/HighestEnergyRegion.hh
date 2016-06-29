@@ -163,8 +163,8 @@ public:
 	virtual std::string get_name() const { return "PackStat"; }
 
 	// AMW: doesn't have a Creator yet.
-	//static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	//static std::string keyname() { return "DesignByPackStatOperation"; }
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignByPackStatOperation"; }
 
 private:
 };
@@ -264,6 +264,7 @@ public:
 	virtual std::string get_name() const { return "CavityProximity"; }
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string keyname() { return "DesignByCavityProximityOperation"; }
 
 private:
 

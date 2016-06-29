@@ -563,7 +563,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 
 	// TL: This needs to be here because parse_my_tag uses the pose at parsetime
-	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() );
+	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() ); //Didn't we already set this in parse_my_tag?
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");

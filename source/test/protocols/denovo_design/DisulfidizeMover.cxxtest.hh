@@ -148,11 +148,8 @@ public:
 
 		// test util.cc: convert_to_poly_ala
 		core::pose::PoseOP posecopy = input_pose.clone();
-		std::set< core::Size > set1;
-		for ( core::Size i=1, endi=posecopy->total_residue(); i<=endi; ++i ) {
-			set1.insert( i );
-		}
-		construct_poly_ala_pose( *posecopy, true, set1, set1 );
+		core::select::residue_selector::ResidueSubset subset( posecopy->total_residue(), true );
+		construct_poly_ala_pose( *posecopy, true, subset, subset );
 		TS_ASSERT_EQUALS( posecopy->total_residue(), input_pose.total_residue() );
 
 		DisulfidizeMover disulf;

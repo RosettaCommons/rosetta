@@ -12,32 +12,28 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
+// Unit headers
 #include <--path--/--class--.hh>
 #include <--path--/--class--Creator.hh>
 
+// Core headers
 #include <core/pose/Pose.hh>
 
+// Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
-
 --namespace--
 
 --class--::--class--():
-	protocols::moves::Mover( "--class--" )
+	protocols::moves::Mover( --class--::class_name() )
 {
 
 }
 
 --class--::~--class--(){}
-
---class--::--class--( --class-- const & src ):
-	protocols::moves::Mover( src )
-{
-
-}
 
 void
 --class--::parse_my_tag(
@@ -51,58 +47,60 @@ void
 }
 
 protocols::moves::MoverOP
---class--::clone() const{
+--class--::clone() const
+{
 	return protocols::moves::MoverOP( new --class--( *this ) );
 }
 
-
-moves::MoverOP
+protocols::moves::MoverOP
 --class--::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new --class-- );
 }
 
 std::string
---class--::get_name() const {
+--class--::get_name() const
+{
 	return --class--::class_name();
 }
 
 std::string
---class--::class_name() {
+--class--::class_name()
+{
 	return "--class--";
 }
 
 void
---class--::show(std::ostream & output) const
+--class--::show( std::ostream & output ) const
 {
-	protocols::moves::Mover::show(output);
+	protocols::moves::Mover::show( output );
 }
 
-std::ostream &operator<< (std::ostream &os, --class-- const &mover)
+std::ostream &
+operator<<( std::ostream & os, --class-- const & mover )
 {
 	mover.show(os);
 	return os;
 }
 
-
 void
---class--::apply( core::pose::Pose& ){
-
+--class--::apply( core::pose::Pose & )
+{
 }
-
 
 /////////////// Creator ///////////////
 
 protocols::moves::MoverOP
---class--Creator::create_mover() const {
+--class--Creator::create_mover() const
+{
 	return protocols::moves::MoverOP( new --class-- );
 }
 
 std::string
---class--Creator::keyname() const {
+--class--Creator::keyname() const
+{
 	return --class--::class_name();
 }
 
 --end_namespace--
-
 

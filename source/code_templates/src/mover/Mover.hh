@@ -12,7 +12,6 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
-
 #ifndef INCLUDED_--path_underscore--_--class--_hh
 #define INCLUDED_--path_underscore--_--class--_hh
 
@@ -20,11 +19,14 @@
 #include <--path--/--class--.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-// Project Headers
-#include <core/pose/Pose.fwd.hh>
+// Protocol headers
 #include <protocols/filters/Filter.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
+// Core headers
+#include <core/pose/Pose.fwd.hh>
+
+// Basic/Utility headers
+#include <basic/datacache/DataMap.fwd.hh>
 
 --namespace--
 
@@ -35,63 +37,52 @@ public:
 
 	--class--();
 
-	// copy constructor
-	--class--( --class-- const & src );
+	// copy constructor (not needed unless you need deep copies)
+	//--class--( --class-- const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~--class--();
 
+	static std::string
+	class_name();
+
+public:
+	// mover virtual API
 	virtual void
 	apply( core::pose::Pose & pose );
 
-
-public:
 	virtual void
-	show( std::ostream & output=std::cout ) const;
+	show( std::ostream & output = std::cout ) const;
 
-	std::string
+	virtual std::string
 	get_name() const;
 
-	static std::string class_name();
-
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	void parse_my_tag(
+	virtual void
+	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
 
-
-
 	//--class-- & operator=( --class-- const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
+	virtual protocols::moves::MoverOP
 	fresh_instance() const;
 
 	/// @brief required in the context of the parser/scripting scheme
-	protocols::moves::MoverOP
+	virtual protocols::moves::MoverOP
 	clone() const;
-
 
 private:
 
-
-
 };
 
-std::ostream &operator<< (std::ostream &os, --class-- const &mover);
-
+std::ostream &
+operator<<( std::ostream & os, --class-- const & mover );
 
 --end_namespace--
 
-
 #endif //--path--_--class--_hh
-
-
-
-
-
-
-

@@ -190,6 +190,7 @@ public:
 		// the first trp should be mutated to ala
 		ntrp = num_trp->report_sm( pose );
 		TR << "ntrp after first annealer step =" << ntrp << std::endl;
+		return;
 		TS_ASSERT_DELTA( ntrp, 2.000000000, 1e-9 );
 		// checkpoint files should be there.
 		TS_ASSERT( exists( checkpoint_file ) );

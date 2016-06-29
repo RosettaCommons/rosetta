@@ -39,10 +39,14 @@ public:
 
 	/// @brief Constructor from ResidueSubset.
 	ResidueVector( ResidueSubset const & subset );
+	ResidueVector( utility::vector1< core::Size > const & vec );
 
 	/// @brief Destructor.
 	virtual ~ResidueVector();
 
+	void from_subset( ResidueSubset const & subset );
+
+private:
 };
 
 

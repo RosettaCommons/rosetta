@@ -1,23 +1,22 @@
-REMARK 994 <StructureData name=cat_sheet multi=1 length=37 pose_lengt#
-REMARK 994 h=47 >
-REMARK 994  <ResidueRange name=sheet1.s1 start=2 stop=8 safe=5 loop=0#
+REMARK 994 <StructureData name=cat_sheet length=37 pose_length=47 >
+REMARK 994  <ResidueRange name=sheet1.s1 start=2 stop=8 safe=4 loop=0#
 REMARK 994  nterm=0 cterm=1 mgroup=1 cutpoint=0 upper_segment=rot_com#
 REMARK 994 p.rot_comp2.catalytic.1 ss=LEEEEEEE abego=XBBBBBBB />
 REMARK 994  <ResidueRange name=rot_comp.rot_comp2.catalytic.1 start=9#
-REMARK 994  stop=13 safe=11 mgroup=1 loop=0 nterm=1 cterm=0 lower_seg#
-REMARK 994 ment=sheet1.s1 cutpoint=0 ss=LLLLLL abego=XXXXXX /> 
-REMARK 994  <ResidueRange name=sheet1.s2 start=16 stop=22 safe=19 mgr#
-REMARK 994 oup=1 loop=0 nterm=0 cterm=0 cutpoint=0 ss=LEEEEEEEL abego#
-REMARK 994 =XBBBBBBBX />
-REMARK 994  <ResidueRange name=sheet1.s3 start=25 stop=30 safe=28 mgr#
-REMARK 994 oup=1 loop=0 nterm=0 cterm=0 cutpoint=0 ss=LEEEEEEL abego=#
-REMARK 994 XBBBBBBX />                                    
-REMARK 994  <ResidueRange name=sheet1.s4 start=33 stop=37 safe=35 mgr#
-REMARK 994 oup=1 loop=0 nterm=0 cterm=0 cutpoint=0 ss=LEEEEEL abego=X#
-REMARK 994 BBBBBX /> 
+REMARK 994  stop=13 safe=0 mgroup=1 loop=0 nterm=1 cterm=0 lower_segm#
+REMARK 994 ent=sheet1.s1 cutpoint=0 ss=LLLLLL abego=XXXXXX /> 
+REMARK 994  <ResidueRange name=sheet1.s2 start=16 stop=22 safe=0 mgro#
+REMARK 994 up=1 loop=0 nterm=0 cterm=0 cutpoint=0 ss=LEEEEEEEL abego=#
+REMARK 994 XBBBBBBBX />
+REMARK 994  <ResidueRange name=sheet1.s3 start=25 stop=30 safe=0 mgro#
+REMARK 994 up=1 loop=0 nterm=0 cterm=0 cutpoint=0 ss=LEEEEEEL abego=X#
+REMARK 994 BBBBBBX />                                    
+REMARK 994  <ResidueRange name=sheet1.s4 start=33 stop=37 safe=0 mgro#
+REMARK 994 up=1 loop=0 nterm=0 cterm=0 cutpoint=0 ss=LEEEEEL abego=XB#
+REMARK 994 BBBBX /> 
 REMARK 994  <ResidueRange name=rot_comp.rot_comp2.catalytic.2 start=4#
-REMARK 994 0 stop=46 safe=43 mgroup=1 loop=0 cterm=0 nterm=0 ss=LLLLL#
-REMARK 994 LLLL abego=XXXXXXXXX cutpoint=0 />
+REMARK 994 0 stop=46 safe=0 mgroup=1 loop=0 cterm=0 nterm=0 ss=LLLLLL#
+REMARK 994 LLL abego=XXXXXXXXX cutpoint=0 />
 REMARK 994 <Int name=length value=37 />
 REMARK 994 <Int name=pose_length value=47 />
 REMARK 994 <Real name=random value=0.382382 />

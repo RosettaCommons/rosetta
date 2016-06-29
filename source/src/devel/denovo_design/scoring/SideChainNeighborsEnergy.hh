@@ -29,7 +29,6 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-
 class SideChainNeighborsEnergy : public ContextDependentOneBodyEnergy {
 public:
 	// default constructor

@@ -21,6 +21,7 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
+#include <protocols/denovo_design/types.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
 // Core headers
@@ -33,6 +34,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
+#include <map>
 #include <set>
 #include <stack>
 
@@ -41,19 +43,23 @@ namespace denovo_design {
 namespace components {
 
 // Fold graph types
-typedef std::set< core::Size > NodeSet;
-typedef std::set< std::string > NamedNodeSet;
-typedef utility::vector1< NodeSet > Solution;
-typedef utility::vector1< NamedNodeSet > NamedSolution;
-
 class FoldGraph : public utility::pointer::ReferenceCount {
 public:
-	FoldGraph( StructureData const & perm, core::pose::PoseCOP pose );
+	typedef std::stack< core::Size > NodeStack;
+	typedef std::set< core::Size > NodeSet;
+	typedef utility::vector1< NodeSet > Solution;
+	typedef utility::vector1< Solution > Solutions;
+	typedef std::map< core::Size, std::string > NodeToSegmentMap;
+	typedef std::map< std::string, core::Size > SegmentToNodeMap;
+	typedef std::map< core::Size, SegmentNameList > MovableGroupToSegmentNameListMap;
+
+public:
+	FoldGraph( StructureData const & perm );
 	virtual ~FoldGraph();
 
 	/// @brief gives a fold tree based on the segments in the given permutation
 	core::kinematics::FoldTree
-	fold_tree( StructureData const & perm, utility::vector1< std::string > const & start_segment ) const;
+	fold_tree( SegmentNames const & start_segment ) const;
 
 	/// @brief given a segment name, returns the associated graph node index
 	core::Size
@@ -63,90 +69,127 @@ public:
 	std::string const &
 	segment( core::Size const nodeidx ) const;
 
-	/// @brief adds an non-peptide edge to the foldgraph to indicate a non-covalent interaction
-	void add_edge( std::string const & seg1, std::string const & seg2 );
-
-	/// @brief adds a peptide edge to the foldgraph, indicating a direct covalent interaction
-	void add_peptide_edge( std::string const & seg1, std::string const & seg2 );
-
 	/// @brief generates a solution of movable segments to be used in remodel, based on the foldgraph
-	Solution compute_best_solution(
-		StructureData const & perm,
-		utility::vector1< std::string > const & staple_loops,
-		utility::vector1< std::string > const & cut_loops ) const;
-
-	/// @brief takes a solution based on nodeidx and uses names instead
-	NamedSolution named_solution( Solution const & solution ) const;
+	Solution
+	compute_best_solution( SegmentNames const & staple_loops ) const;
 
 	/// @brief generates a loops object to be used in remodel, based on the foldgraph
-	protocols::loops::LoopsOP create_loops(
-		StructureData const & perm,
-		utility::vector1< std::string > const & staple_loops,
-		utility::vector1< std::string > const & cut_loops ) const;
+	protocols::loops::LoopsOP
+	create_loops( SegmentNames const & staple_loops ) const;
 
-	protocols::loops::LoopsOP create_loops(
-		StructureData const & perm,
-		Solution const & solution,
-		utility::vector1< std::string > const & cut_loops ) const;
+	protocols::loops::LoopsOP
+	create_loops(	Solution const & solution ) const;
 
-	/// @brief returns true if there is a peptide edge between the two given segments
-	bool has_peptide_edge( std::string const & seg1, std::string const & seg2 ) const;
-
-	/// @brief returns true if there is a non-peptide edge between the two given segments
-	bool has_edge( std::string const & seg1, std::string const & seg2 ) const;
+	/// @brief const access to StructureData
+	StructureData const &
+	sd() const;
 
 private:
+	/// @brief adds an non-peptide edge to the foldgraph to indicate a non-covalent interaction
+	void
+	add_edge( std::string const & seg1, std::string const & seg2 );
+
+	/// @brief adds a peptide edge to the foldgraph, indicating a direct covalent interaction
+	void
+	add_peptide_edge( std::string const & seg1, std::string const & seg2 );
+
+	/// @brief returns true if there is a peptide edge between the two given segments
+	bool
+	has_peptide_edge( std::string const & seg1, std::string const & seg2 ) const;
+
+	/// @brief returns true if there is a non-peptide edge between the two given segments
+	bool
+	has_edge( std::string const & seg1, std::string const & seg2 ) const;
+
+	/// @brief populates segment to node number map using the StructureData object
+	void
+	build_seg2node();
+
+	/// @brief populates node number to segment map using a segment to node number map
+	void
+	build_node2seg( SegmentToNodeMap const & seg2node );
+
+	/// @brief propagaes the internal set of cutpoint-containing segments
+	void
+	find_cutpoints();
+
 	/// @brief recursive function to traverse graphs and build fold tree
 	/// @param[parent_direction] -1 if the previous edge is a peptide edge going backward, 1 if the previous edge is going forward, and 0 if the previous edge is a jump
 	/// @param[parent_resid] parent residue
-	void fold_tree_rec(
+	void
+	fold_tree_rec(
 		core::kinematics::FoldTree & ft,
 		NodeSet & visited,
-		std::stack< core::Size > & node_stack,
-		StructureData const & perm,
+		NodeStack & node_stack,
 		std::string const & segment_name,
 		core::Size const parent_resid,
 		int const parent_direction,
 		bool const polymer_only ) const;
 
 	/// @brief recursive inner function that traverses the foldgraph to create loops objects
-	void create_loops_dfs(
+	void
+	create_loops_dfs(
 		Solution & solutions,
 		NodeSet & visited,
-		core::Size const current_node,
-		NodeSet const & cut_loop_nodes,
-		StructureData const & perm ) const;
+		core::Size const current_node ) const;
 
 	/// @brief returns true if there is a peptide edge between the two given nodes
-	bool has_peptide_edge( core::Size const n1, core::Size const n2 ) const;
+	bool
+	has_peptide_edge( core::Size const n1, core::Size const n2 ) const;
 
 	/// @brief returns true if there is a non-peptide edge between the two given nodes
-	bool has_edge( core::Size const n1, core::Size const n2 ) const;
+	bool
+	has_edge( core::Size const n1, core::Size const n2 ) const;
 
 	/// @brief checks to see whether solutions found by DFS search can be combined.
-	void add_combined_solutions( utility::vector1< Solution > & solutions ) const;
+	void
+	add_combined_solutions( Solutions & solutions ) const;
 
-	void add_non_polymeric_connections(
-		utility::vector1< Solution > & solutions,
-		StructureData const & perm ) const;
+	void
+	add_non_polymeric_connections( Solutions & solutions ) const;
 
-	core::Size select_best_solution(
-		StructureData const & perm,
-		utility::vector1< Solution > const & solutions ) const;
+	Solution const &
+	select_best_solution( Solutions const & solutions ) const;
 
 	/// @brief sorts solutions such that the ones maximizing segments w/ same MG are fixed.
-	void sort_solutions(
-		utility::vector1< Solution > & solutions,
-		StructureData const & sd ) const;
+	void
+	sort_solutions( Solutions & solutions ) const;
 
 	/// @brief checks a solution to ensure that covalently bound segments are not found both inside and outside of loops
-	bool check_solution( StructureData const & perm, Solution const & solution ) const;
+	bool
+	check_solution( Solution const & solution ) const;
 
-	std::map< std::string, core::Size > seg2node_;
-	std::map< core::Size, std::string > node2seg_;
+	int
+	find_cutpoint_in_range( int const min_res, int const max_res ) const;
+
+private:
+	StructureDataCOP sd_;
+	SegmentToNodeMap seg2node_;
+	NodeToSegmentMap node2seg_;
+	NodeSet cutpoints_;
 	core::graph::Graph g_;
 	core::graph::Graph gpeptide_;
 };
+
+// helper types for outputting sets of nodes
+typedef std::set< std::string > NamedNodeSet;
+
+class NamedSolution : public utility::vector1< NamedNodeSet > {
+public:
+	NamedSolution( FoldGraph const & fg, FoldGraph::Solution const & solution );
+
+	friend std::ostream &
+	operator<<( std::ostream & os, NamedSolution const & solution );
+};
+
+class NamedSolutions : public utility::vector1< NamedSolution > {
+public:
+	NamedSolutions( FoldGraph const & fg, FoldGraph::Solutions const & solutions );
+
+	friend std::ostream &
+	operator<<( std::ostream & os, NamedSolutions const & solutions );
+};
+
 
 } // components
 } // denovo_design

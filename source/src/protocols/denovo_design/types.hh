@@ -31,6 +31,8 @@
 
 // C++ Headers
 #include <list>
+#include <set>
+#include <vector>
 
 #ifdef PYROSETTA
 #include <core/kinematics/FoldTree.hh>
@@ -41,23 +43,12 @@ namespace denovo_design {
 
 static char const PARENT_DELIMETER = '.';
 
-typedef std::pair< core::Size, core::Size > SizePair;
-typedef std::list< std::string > StringList;
-typedef utility::vector1< std::string > StringVec;
+typedef std::string SegmentName;
+typedef std::vector< SegmentName > SegmentNames;
+typedef std::list< SegmentName > SegmentNameList;
+typedef std::set< SegmentName > SegmentNameSet;
 
-struct CutAndJump {
-public:
-	CutAndJump() :
-		cutpoint( 0 ),
-		jump( 0 ) {}
-	CutAndJump( core::Size const cutval, int const jumpno ) :
-		cutpoint( cutval ),
-		jump( jumpno ) {}
-	core::Size cutpoint;
-	int jump;
-	core::kinematics::FoldTreeOP ft;
-};
-typedef utility::vector1< CutAndJump > JumpInfo;
+typedef std::pair< core::Size, core::Size > SizePair;
 
 } // denovo_design
 } // protocols

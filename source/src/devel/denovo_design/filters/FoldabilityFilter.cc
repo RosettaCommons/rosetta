@@ -17,6 +17,7 @@
 
 // Project Headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/components/Picker.hh>
 
 // Protocol Headers
@@ -260,8 +261,8 @@ FoldabilityFilter::compute_segment(
 	core::Size end = segments[ segment ].second;
 	runtime_assert( end >= start );
 
-	if ( StructureData::has_cached_string( *posecopy ) ) {
-		StructureDataOP perm = StructureData::create_from_pose( *posecopy, "foldability" );
+	if ( StructureDataFactory::get_instance()->has_cached_string( *posecopy ) ) {
+		StructureDataOP perm = StructureDataFactory::get_instance()->create_from_pose( *posecopy, "foldability" );
 		std::string const ss = perm->ss();
 		core::Size res = 1;
 		for ( std::string::const_iterator c=ss.begin(), endc=ss.end(); c!=endc; ++c, ++res ) {
@@ -292,9 +293,9 @@ FoldabilityFilter::compute_segment(
 
 	protocols::moves::MoverOP insert_fragments;
 	if ( use_sequence_ ) {
-		insert_fragments = create_fragment_insertion_mover( aa, ss, abego, start, end );
+		insert_fragments = create_fragment_insertion_mover( aa, ss, abego, posecopy->conformation().chain_endings(), start, end );
 	} else {
-		insert_fragments = create_fragment_insertion_mover( "", ss, abego, start, end );
+		insert_fragments = create_fragment_insertion_mover( "", ss, abego, posecopy->conformation().chain_endings(), start, end );
 	}
 
 	runtime_assert( insert_fragments );
@@ -447,6 +448,7 @@ FoldabilityFilter::create_fragment_insertion_mover(
 	std::string const & complete_aa,
 	std::string const & complete_ss,
 	utility::vector1< std::string > const & complete_abego,
+	utility::vector1< core::Size > const & chain_endings,
 	core::Size const start,
 	core::Size const end ) const
 {
@@ -456,8 +458,8 @@ FoldabilityFilter::create_fragment_insertion_mover(
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
 	loops->push_back( protocols::loops::Loop( start, end, start ) );
 
-	core::fragment::FragSetOP frag9 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, start, end, 9 );
-	core::fragment::FragSetOP frag3 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, start, end, 3 );
+	core::fragment::FragSetOP frag9 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, chain_endings, start, end, 9 );
+	core::fragment::FragSetOP frag3 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, chain_endings, start, end, 3 );
 
 	protocols::forge::remodel::RemodelLoopMoverOP remodel( new protocols::forge::remodel::RemodelLoopMover( loops ) );
 	assert( remodel );

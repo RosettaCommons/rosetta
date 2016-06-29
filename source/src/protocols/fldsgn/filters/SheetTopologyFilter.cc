@@ -18,6 +18,7 @@
 
 // Package Headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
@@ -213,9 +214,8 @@ SheetTopologyFilter::compute( Pose const & pose ) const
 
 	std::string sheet_topology = filtered_sheet_topology_;
 	if ( sheet_topology.empty() ) {
-		protocols::denovo_design::components::StructureDataOP sd =
-			protocols::denovo_design::components::StructureData::create_from_pose( pose, "sheetfilter" );
-		debug_assert( sd );
+		protocols::denovo_design::components::StructureDataCOP sd =
+			protocols::denovo_design::components::StructureDataFactory::get_instance()->create_from_pose( pose );
 		sheet_topology = protocols::denovo_design::get_strandpairings( *sd, !ignore_register_shift_ );
 		tr << "Topology " << sheet_topology << " will be filtered" << std::endl;
 	}

@@ -35,33 +35,41 @@
 namespace protocols {
 namespace denovo_design {
 
+using namespace components;
+
 // void checks a component in two poses to see if relative residue positions have moved
-core::Size new_res(
-		core::Size const resi,
-		protocols::denovo_design::components::StructureData const & orig,
-		protocols::denovo_design::components::StructureData const & newp );
+core::Size
+new_res(
+	core::Size const resi,
+	StructureData const & orig,
+	StructureData const & test );
 
 // checks for unwanted movement between the two given components
-void check_unwanted_movement(
-		std::string const & comp1,
-		std::string const & comp2,
-		protocols::denovo_design::components::StructureData const & orig,
-		protocols::denovo_design::components::StructureData const & newp );
+void
+check_unwanted_movement(
+	std::string const & comp1,
+	std::string const & comp2,
+	StructureData const & orig, core::pose::Pose const & orig_pose,
+	StructureData const & test, core::pose::Pose const & test_pose );
 
-void check_movable_group(
-		protocols::denovo_design::components::StructureData const & orig,
-		protocols::denovo_design::components::StructureData const & perm,
-		core::Size const group );
 
-void check_unwanted_movement(
-		protocols::denovo_design::components::StructureData const & orig,
-		protocols::denovo_design::components::StructureData const & perm );
+void
+check_movable_group(
+	StructureData const & orig, core::pose::Pose const & orig_pose,
+	StructureData const & test, core::pose::Pose const & test_pose,
+	core::Size const group );
 
-void check_sequential(
-		protocols::denovo_design::components::StructureData const & perm,
-		std::string const & c1,
-		std::string const & c2,
-		std::string const & c3 );
+void
+check_unwanted_movement(
+	StructureData const & orig, core::pose::Pose const & orig_pose,
+	StructureData const & test, core::pose::Pose const & test_pose );
+
+void
+check_sequential(
+	StructureData const & perm,
+	std::string const & c1,
+	std::string const & c2,
+	std::string const & c3 );
 
 }
 }

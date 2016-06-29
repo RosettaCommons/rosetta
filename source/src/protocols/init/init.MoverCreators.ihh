@@ -78,11 +78,14 @@
 #include <protocols/cryst/cryst_movers_creator.hh>
 #include <protocols/cryst/refinable_lattice_creator.hh>
 
-#include <protocols/denovo_design/connection/BridgeChainsCreator.hh>
-#include <protocols/denovo_design/connection/ConnectionCreators.hh>
-#include <protocols/denovo_design/connection/ExtendChainCreator.hh>
+#include <protocols/denovo_design/movers/AddSegmentDataMoverCreator.hh>
+#include <protocols/denovo_design/movers/AlignResiduesMoverCreator.hh>
+#include <protocols/denovo_design/movers/BridgeChainsMoverCreator.hh>
+#include <protocols/denovo_design/movers/BuildDeNovoBackboneMoverCreator.hh>
+#include <protocols/denovo_design/movers/ExtendChainMoverCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 #include <protocols/denovo_design/movers/FastDesignCreator.hh>
+#include <protocols/denovo_design/movers/SetResidueAliasMoverCreator.hh>
 
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
 

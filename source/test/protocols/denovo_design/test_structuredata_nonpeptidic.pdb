@@ -1,9 +1,9 @@
 REMARK 994 <StructureData name="" multi="1" length="4" pose_length="6#          
 REMARK 994 " >                                                                  
-REMARK 994 	<ResidueRange name="1" start="2" stop="4" safe="3" nterm=#          
+REMARK 994 	<ResidueRange name="1" start="2" stop="4" safe="0" nterm=#          
 REMARK 994 "0" cterm="0" loop="0" mgroup="1" cutpoint="0" ss="LLLLL" #          
 REMARK 994 abego="EAAAX" />                                                     
-REMARK 994 	<ResidueRange name="2" start="6" stop="6" safe="6" nterm=#          
+REMARK 994 	<ResidueRange name="2" start="6" stop="6" safe="0" nterm=#          
 REMARK 994 "1" cterm="1" loop="0" mgroup="1" cutpoint="0" ss="L" abeg#          
 REMARK 994 o="-" />                                                             
 REMARK 994 	<Alias name="bb.cys" segment="1" res="1" />                         

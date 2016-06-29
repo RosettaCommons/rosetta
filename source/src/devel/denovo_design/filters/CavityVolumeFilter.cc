@@ -21,16 +21,15 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
-#include <protocols/fldsgn/topology/HelixPairing.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
-#include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
 
 // Basic Headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
@@ -84,7 +83,8 @@ CavityVolumeFilterCreator::filter_name()
 ///  CavityVolumeFilter main code:
 ///  ---------------------------------------------------------------------------------
 CavityVolumeFilter::CavityVolumeFilter() :
-	Filter( "CavityVolumeFilter" )
+	Filter( "CavityVolumeFilter" ),
+	selector_()
 {
 }
 
@@ -109,12 +109,39 @@ CavityVolumeFilter::fresh_instance() const
 
 void
 CavityVolumeFilter::parse_my_tag(
-	utility::tag::TagCOP const,
-	basic::datacache::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
+	if ( tag->hasOption( "selector" ) ) {
+		std::string const & selectorname = tag->getOption< std::string >( "selector" );
+		try {
+			selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::stringstream error_msg;
+			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from CavityVolumeFilter::parse_my_tag.\n";
+			error_msg << e.msg();
+			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		}
+	}
+
+	// add selector from sub tags
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator itag = tag->getTags().begin();
+			itag != tag->getTags().end(); ++itag ) {
+		if ( selector_ ) {
+			std::stringstream error_msg;
+			error_msg << "Residue selector can either be specified via name or subtag, but not both in CavityVolumeFilter." << std::endl;
+			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		}
+		selector_ = core::select::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(
+			(*itag)->getName(),
+			(*itag),
+			datamap
+		);
+	}
+
 }
 
 std::string
@@ -144,11 +171,35 @@ CavityVolumeFilter::compute( core::pose::Pose const & pose ) const
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "CavityCalculator", calculator.clone() );
 	}
 
-	basic::MetricValue< core::Real > total_volume;
-	pose.metric( "CavityCalculator", "volume", total_volume );
-	TR << "CavityCalculator returned " << total_volume.value() << std::endl;
+	if ( ! selector_ ) {
+		basic::MetricValue< core::Real > total_volume;
+		pose.metric( "CavityCalculator", "volume", total_volume );
+		TR << "CavityCalculator returned " << total_volume.value() << std::endl;
+		return total_volume.value();
+	}
 
-	return total_volume.value();
+	assert( selector_ );
+	core::select::residue_selector::ResidueSubset const & subset = selector_->apply( pose );
+
+	basic::MetricValue< utility::vector1< core::scoring::packstat::CavityBallCluster > > clustermetric;
+	pose.metric( "CavityCalculator", "clusters", clustermetric );
+	utility::vector1< core::scoring::packstat::CavityBallCluster > const & clusters = clustermetric.value();
+	core::Real total_volume = 0;
+	for ( core::Size i=1, end=clusters.size(); i<=end; ++i ) {
+		TR << "Cluster " << i << ": volume=" << clusters[i].volume << ", surface_area=" << clusters[i].surface_area << ", surface_accessibility=" << clusters[i].surface_accessibility << ", center=" << clusters[i].center.x() << "," << clusters[i].center.y() << "," << clusters[i].center.z() << std::endl;
+		// only report his cluster if it is close to a selected residue
+		for ( core::Size r=1, endr=subset.size(); r <= endr; ++r ) {
+			if ( !subset[r] ) {
+				continue;
+			}
+			core::Real const dist = pose.residue(r).nbr_atom_xyz().distance( clusters[i].center );
+			//TODO: find way to get cluster radius and distance
+			if ( dist < 6.0 ) {
+				total_volume += clusters[i].volume;
+			}
+		}
+	}
+	return total_volume;
 }
 
 /// @brief Does the CavityVolume Filtering

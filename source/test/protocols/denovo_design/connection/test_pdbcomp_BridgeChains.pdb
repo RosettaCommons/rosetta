@@ -1,25 +1,25 @@
 REMARK 994 <StructureData name="cat_sheet" multi="1" length="37" pose#          
 REMARK 994 _length="47" >                                                       
-REMARK 994 	<ResidueRange name="sheet1.s1" start="2" stop="8" safe="5#          
+REMARK 994 	<ResidueRange name="sheet1.s1" start="2" stop="8" safe="0#          
 REMARK 994 " nterm="0" cterm="1" loop="0" mgroup="1" cutpoint="0" ss=#          
 REMARK 994 "LEEEEEEE" abego="XBBBBBBB" upper_segment="rot_comp.rot_co#          
 REMARK 994 mp2.catalytic.1" />                                                  
 REMARK 994 	<ResidueRange name="rot_comp.rot_comp2.catalytic.1" start#          
-REMARK 994 ="9" stop="13" safe="11" nterm="1" cterm="0" loop="0" mgro#          
-REMARK 994 up="1" cutpoint="0" ss="LLLLLL" abego="XXXXXX" lower_segme#          
-REMARK 994 nt="sheet1.s1" />                                                    
+REMARK 994 ="9" stop="13" safe="0" nterm="1" cterm="0" loop="0" mgrou#          
+REMARK 994 p="1" cutpoint="0" ss="LLLLLL" abego="XXXXXX" lower_segmen#          
+REMARK 994 t="sheet1.s1" />                                                    
 REMARK 994 	<ResidueRange name="sheet1.s2" start="16" stop="22" safe=#          
-REMARK 994 "19" nterm="0" cterm="0" loop="0" mgroup="1" cutpoint="0" #          
-REMARK 994 ss="LEEEEEEEL" abego="XBBBBBBBX" />                                  
+REMARK 994 "0" nterm="0" cterm="0" loop="0" mgroup="1" cutpoint="0" s#          
+REMARK 994 s="LEEEEEEEL" abego="XBBBBBBBX" />                                  
 REMARK 994 	<ResidueRange name="sheet1.s3" start="25" stop="30" safe=#          
-REMARK 994 "28" nterm="0" cterm="0" loop="0" mgroup="1" cutpoint="0" #          
-REMARK 994 ss="LEEEEEEL" abego="XBBBBBBX" />                                    
+REMARK 994 "0" nterm="0" cterm="0" loop="0" mgroup="1" cutpoint="0" s#          
+REMARK 994 s="LEEEEEEL" abego="XBBBBBBX" />                                    
 REMARK 994 	<ResidueRange name="sheet1.s4" start="33" stop="37" safe=#          
-REMARK 994 "35" nterm="0" cterm="0" loop="0" mgroup="1" cutpoint="0" #          
-REMARK 994 ss="LEEEEEL" abego="XBBBBBX" />                                      
+REMARK 994 "0" nterm="0" cterm="0" loop="0" mgroup="1" cutpoint="0" s#          
+REMARK 994 s="LEEEEEL" abego="XBBBBBX" />                                      
 REMARK 994 	<ResidueRange name="rot_comp.rot_comp2.catalytic.2" start#          
-REMARK 994 ="40" stop="46" safe="43" nterm="0" cterm="0" loop="0" mgr#          
-REMARK 994 oup="1" cutpoint="0" ss="LLLLLLLLL" abego="XXXXXXXXX" />             
+REMARK 994 ="40" stop="46" safe="0" nterm="0" cterm="0" loop="0" mgro#          
+REMARK 994 up="1" cutpoint="0" ss="LLLLLLLLL" abego="EBAAGABBO" />  	           
 REMARK 994 	<Int name="length" value="37" />                                    
 REMARK 994 	<Int name="pose_length" value="47" />                               
 REMARK 994 	<Real name="random" value="0.382382" />                             

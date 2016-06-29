@@ -10,19 +10,19 @@
 /// @file   src/protocols/denovo_design/Segment.fwd.hh
 /// @brief  Segment forward header
 /// @author Tom Linsky
-
-
 #ifndef INCLUDED_protocols_denovo_design_Segment_fwd_hh
 #define INCLUDED_protocols_denovo_design_Segment_fwd_hh
-
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace denovo_design {
 namespace components {
+
+typedef long int SegmentResid;
 
 // Forward
 class Segment;
@@ -33,6 +33,11 @@ typedef utility::pointer::shared_ptr< Segment const > SegmentCOP;
 
 typedef utility::pointer::weak_ptr< Segment > SegmentAP;
 typedef utility::pointer::weak_ptr< Segment const > SegmentCAP;
+
+typedef utility::vector1< SegmentOP > SegmentOPs;
+typedef utility::vector1< SegmentCOP > SegmentCOPs;
+
+class ResidueDihedrals;
 
 } // namespace components
 } // namespace denovo_design

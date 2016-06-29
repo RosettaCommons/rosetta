@@ -11,15 +11,16 @@
 /// @brief  StructureData forward header
 /// @author Tom Linsky
 
-
 #ifndef INCLUDED_protocols_denovo_design_components_StructureData_fwd_hh
 #define INCLUDED_protocols_denovo_design_components_StructureData_fwd_hh
 
+// Core headers
+#include <core/types.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
-
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace denovo_design {
@@ -28,6 +29,8 @@ namespace components {
 // Forward
 class StructureData;
 
+typedef core::Size MovableGroup;
+
 // Pointer Types
 typedef utility::pointer::shared_ptr< StructureData > StructureDataOP;
 typedef utility::pointer::shared_ptr< StructureData const > StructureDataCOP;
@@ -35,25 +38,8 @@ typedef utility::pointer::shared_ptr< StructureData const > StructureDataCOP;
 typedef utility::pointer::weak_ptr< StructureData > StructureDataAP;
 typedef utility::pointer::weak_ptr< StructureData const > StructureDataCAP;
 
-// Forward
-class SingleChainStructureData;
-
-// Pointer Types
-typedef utility::pointer::shared_ptr< SingleChainStructureData > SingleChainStructureDataOP;
-typedef utility::pointer::shared_ptr< SingleChainStructureData const > SingleChainStructureDataCOP;
-
-typedef utility::pointer::weak_ptr< SingleChainStructureData > SingleChainStructureDataAP;
-typedef utility::pointer::weak_ptr< SingleChainStructureData const > SingleChainStructureDataCAP;
-
-// Forward
-class MultiChainStructureData;
-
-// Pointer Types
-typedef utility::pointer::shared_ptr< MultiChainStructureData > MultiChainStructureDataOP;
-typedef utility::pointer::shared_ptr< MultiChainStructureData const > MultiChainStructureDataCOP;
-
-typedef utility::pointer::weak_ptr< MultiChainStructureData > MultiChainStructureDataAP;
-typedef utility::pointer::weak_ptr< MultiChainStructureData const > MultiChainStructureDataCAP;
+typedef utility::vector1< StructureDataOP > StructureDataOPs;
+typedef utility::vector1< StructureDataCOP > StructureDataCOPs;
 
 } // namespace components
 } // namespace denovo_design

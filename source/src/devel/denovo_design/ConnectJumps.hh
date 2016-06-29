@@ -20,7 +20,7 @@
 #include <devel/denovo_design/ConnectJumps.fwd.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/connection/BridgeChains.hh>
+#include <protocols/denovo_design/movers/BridgeChainsMover.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,7 +28,7 @@
 namespace devel {
 namespace denovo_design {
 
-class ConnectJumps : public protocols::denovo_design::connection::BridgeChains {
+class ConnectJumps : public protocols::denovo_design::movers::BridgeChainsMover {
 public:
 	/// @brief default constructor
 	ConnectJumps();

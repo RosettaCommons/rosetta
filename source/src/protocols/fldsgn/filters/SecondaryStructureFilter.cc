@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
@@ -242,9 +243,8 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 
 	std::string filter_ss = filtered_ss_;
 	if ( filtered_ss_.empty() ) {
-		protocols::denovo_design::components::StructureDataOP sd =
-			protocols::denovo_design::components::StructureData::create_from_pose( pose, "SSFilter" );
-		filter_ss = sd->ss();
+		filter_ss =
+			protocols::denovo_design::components::StructureDataFactory::get_instance()->create_from_pose( pose )->ss();
 	}
 
 	if ( pose.total_residue() != filter_ss.length() ) {

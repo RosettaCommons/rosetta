@@ -31,6 +31,7 @@ public:
 		LENGTH_EVENT_COLLECTOR = 1,
 		SPECIAL_SEGMENTS_OBSERVER,
 		ENZDES_OBSERVER,
+		STRUCTUREDATA_OBSERVER,
 		PYMOL_OBSERVER,
 		// *** IMPORTANT ***
 		// The 'num_cacheable_data_types' below must be the last enum, and must

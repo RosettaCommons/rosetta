@@ -25,7 +25,8 @@
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/connection/Connection.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
+//#include <protocols/denovo_design/connection/ConnectionArchitect.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
@@ -48,18 +49,20 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.SheetConstraintGeneratorTests.cxxtest" );
 
 namespace mytest {
+
+typedef utility::vector1< std::string > Motifs;
+
 protocols::denovo_design::components::StructureDataOP
-structuredata_from_motifs( protocols::denovo_design::connection::Connection::MotifList const & motifs )
+structuredata_from_motifs( Motifs const & motifs )
 {
 	using namespace protocols::denovo_design;
 	using namespace protocols::denovo_design::components;
-	using namespace protocols::denovo_design::connection;
 
-	StructureDataOP perm( new MultiChainStructureData( "test" ) );
+	StructureDataOP perm( new StructureData( "test" ) );
 	core::Size segment_num = 1;
-	Connection::MotifList::const_iterator prev = motifs.end();
-	Connection::MotifList::const_iterator next = ++motifs.begin();
-	for ( Connection::MotifList::const_iterator m=motifs.begin(); m!=motifs.end(); ++m, ++segment_num, ++next ) {
+	Motifs::const_iterator prev = motifs.end();
+	Motifs::const_iterator next = ++motifs.begin();
+	for ( Motifs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m, ++segment_num, ++next ) {
 		std::string const segment_name = boost::lexical_cast< std::string >( segment_num );
 
 		std::string lower = "";
@@ -71,11 +74,13 @@ structuredata_from_motifs( protocols::denovo_design::connection::Connection::Mot
 			upper = boost::lexical_cast< std::string >( segment_num + 1 );
 		}
 
-		Segment newsegment( m->len, m->len / 2  + 1, 0,
-			segment_num, false,
-			true, true,
-			lower, upper,
-			m->ss, abego_vector( m->abego ) );
+		Segment newsegment;
+		newsegment.parse_motif( *m );
+		newsegment.set_movable_group( segment_num );
+		newsegment.delete_lower_padding();
+		newsegment.delete_upper_padding();
+		newsegment.set_lower_segment( lower );
+		newsegment.set_upper_segment( upper );
 		perm->add_segment( segment_name, newsegment );
 		prev = m;
 	}
@@ -115,50 +120,48 @@ public:
 		using protocols::fldsgn::topology::StrandPairings;
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
-		using namespace protocols::denovo_design::connection;
-		Connection::MotifList const motifs = boost::assign::list_of
-			( Connection::Motif( 1, 'L', "X" ) )
-			( Connection::Motif( 5, 'E', "B" ) )
-			( Connection::Motif( 2, 'L', "G" ) )
-			( Connection::Motif( 4, 'E', "B" ) )
-			( Connection::Motif( 1, 'L', "X" ) );
+
+		mytest::Motifs const motifs = boost::assign::list_of
+			("1LX")("5EB")("2LG")("4EB")("1LX");
+
 		TR << motifs << std::endl;
 		StructureDataOP perm = mytest::structuredata_from_motifs( motifs );
 		TS_ASSERT( perm );
 		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
+		TR << "Created " << *perm << std::endl;
 
 		// add pairing info
 		reset( *perm );
 
 		// add bulge
-		utility::vector1< std::string > e1_abego = perm->segment( "2" ).abego();
+		utility::vector1< std::string > e1_abego = abego_vector( perm->segment( "2" ).abego() );
 		core::Size const abegoidx = 3;
 		e1_abego[ abegoidx ] = "A";
 		perm->set_abego( "2", e1_abego );
-		TS_ASSERT_EQUALS( perm->segment( "2" ).abego()[ abegoidx ], "A" );
+		TS_ASSERT_EQUALS( perm->segment( "2" ).abego()[ abegoidx - 1 ], 'A' );
 
 		// count bulges
 		TS_ASSERT_EQUALS( count_bulges( *perm, "2" ), 1 );
 		TS_ASSERT_EQUALS( count_bulges( *perm, "4" ), 0 );
 
 		core::pose::PoseOP dummy = protocols::denovo_design::construct_dummy_pose( "VAL", perm->pose_length() );
-		perm->save_into_pose( *dummy );
 
-		// attach to pose
-		perm = StructureData::create_from_pose( *dummy, "test" );
-		TS_ASSERT( perm );
-		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
-		TR << *perm << std::endl;
+		// cache into pose
+		StructureDataFactory::get_instance()->save_into_pose( *dummy, *perm );
+
+		StructureData const & dummy_sd = StructureDataFactory::get_instance()->get_from_pose( *dummy );
+		TS_ASSERT_THROWS_NOTHING( dummy_sd.check_consistency() );
+		TR << "SD " << dummy_sd << " abego " << dummy_sd.abego() << std::endl;
 
 		// create generator
 		protocols::fldsgn::SheetConstraintGenerator sheet_rcg;
 		std::pair< std::string, std::string > const ss_spair = sheet_rcg.get_secstruct_and_strandpairings( *dummy );
 		TS_ASSERT_EQUALS( ss_spair.first, "LEEEEELLEEEEL" );
 		TS_ASSERT_EQUALS( ss_spair.second, "1-2.A.0" );
-		TR << ss_spair.first << " " << ss_spair.second << std::endl;
+		TR << ss_spair.first << " " << ss_spair.second << " abego " << dummy_sd.abego() << std::endl;
 
 		protocols::fldsgn::topology::SS_Info2_OP ssinfo( new SS_Info2( *dummy, ss_spair.first ) );
-		StrandPairingSet spairset( ss_spair.second, ssinfo, perm->abego() );
+		StrandPairingSet spairset( ss_spair.second, ssinfo, abego_vector( dummy_sd.abego() ) );
 		StrandPairings spairs = spairset.strand_pairings();
 		TS_ASSERT_EQUALS( spairs.size(), 1 );
 		for ( StrandPairings::const_iterator sp=spairs.begin(); sp!=spairs.end(); ++sp ) {
@@ -214,7 +217,7 @@ public:
 		}
 
 		// parallel
-		StrandPairingSet spairset2( "1-2.P.0", ssinfo, perm->abego() );
+		StrandPairingSet spairset2( "1-2.P.0", ssinfo, abego_vector( dummy_sd.abego() ) );
 		StrandPairings spairs2 = spairset2.strand_pairings();
 		TS_ASSERT_EQUALS( spairs2.size(), 1 );
 		for ( StrandPairings::const_iterator sp=spairs2.begin(); sp!=spairs2.end(); ++sp ) {

@@ -21,6 +21,7 @@
 #include <protocols/denovo_design/components/Segment.hh>
 
 //Protocol Headers
+#include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
@@ -28,6 +29,9 @@
 #include <core/chemical/util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/LinearChainbreakEnergy.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -131,15 +135,19 @@ remove_missing_jump_atoms( core::pose::Pose const & pose, core::kinematics::Fold
 void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
-	std::set< core::Size > const & set1,
-	std::set< core::Size > const & set2,
+	core::select::residue_selector::ResidueSubset const & set1,
+	core::select::residue_selector::ResidueSubset const & set2,
 	bool const keep_chirality
 ) {
-	std::set< core::Size > setunion = set1;
-	for ( std::set< core::Size >::const_iterator r=set2.begin(), endr=set2.end(); r!=endr; ++r ) {
-		setunion.insert( *r );
+	runtime_assert_string_msg( set1.size() == set2.size(), "Error in protocols::denovo_design::util::construct_poly_ala_pose(): The two residue subsets given must be the same size, and they are not." );
+	std::set< core::Size > res_set;
+	for ( core::Size resid=1; resid<=set1.size(); ++resid ) {
+		if ( set1[ resid ] ) res_set.insert( resid );
 	}
-	construct_poly_ala_pose( pose, keep_disulf, setunion, keep_chirality );
+	for ( core::Size resid=1; resid<=set2.size(); ++resid ) {
+		if ( set2[ resid ] ) res_set.insert( resid );
+	}
+	construct_poly_ala_pose( pose, keep_disulf, res_set, keep_chirality );
 }
 
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
@@ -156,19 +164,20 @@ void construct_poly_ala_pose(
 	// remove jump atoms, which may cause problems in mutating residues
 	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
-	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
-		if ( pose.residue(i).is_protein() && ( res_set.find(i) != res_set.end() ) ) {
-			if ( !keep_chirality || !pose.residue(i).type().is_d_aa() ) positions.push_back(i);
-			else if ( keep_chirality && pose.residue(i).type().is_d_aa() ) d_positions.push_back(i);
-		}
-		if ( !keep_disulf && ( pose.residue(i).type().is_disulfide_bonded() ) ) {
-			core::Size const bonded_partner( core::conformation::get_disulf_partner( pose.conformation(), i ) );
-			core::conformation::break_disulfide( pose.conformation(), i, bonded_partner );
-			if ( pose.residue(i).type().is_l_aa() || !keep_chirality ) {
-				protocols::simple_moves::MutateResidue mut( i, "ALA" );
+	for ( std::set< core::Size >::const_iterator resid=res_set.begin(); resid!=res_set.end(); ++resid ) {
+		if ( !pose.residue( *resid ).is_protein() ) continue;
+
+		if ( !keep_chirality || !pose.residue( *resid ).type().is_d_aa() ) positions.push_back( *resid );
+		else if ( keep_chirality && pose.residue( *resid ).type().is_d_aa() ) d_positions.push_back( *resid );
+
+		if ( !keep_disulf && ( pose.residue( *resid ).type().is_disulfide_bonded() ) ) {
+			core::Size const bonded_partner( core::conformation::get_disulf_partner( pose.conformation(), *resid ) );
+			core::conformation::break_disulfide( pose.conformation(), *resid, bonded_partner );
+			if ( pose.residue( *resid ).type().is_l_aa() || !keep_chirality ) {
+				protocols::simple_moves::MutateResidue mut( *resid, "ALA" );
 				mut.apply( pose );
 			} else {
-				protocols::simple_moves::MutateResidue mut( i, "DALA" );
+				protocols::simple_moves::MutateResidue mut( *resid, "DALA" );
 				mut.apply( pose );
 			}
 			if ( pose.residue(bonded_partner).type().is_l_aa() || !keep_chirality ) {
@@ -273,7 +282,8 @@ abego_vector( std::string const & ab )
 }
 
 // gets a remark line, pasting multiple lines together if necessary
-std::string get_remark_line( core::io::Remarks::const_iterator & it_rem, core::io::Remarks::const_iterator const & end )
+std::string
+get_remark_line( core::io::Remarks::const_iterator & it_rem, core::io::Remarks::const_iterator const & end )
 {
 	std::string line = it_rem->value;
 	int num = it_rem->num;
@@ -507,26 +517,10 @@ extract_int( core::Real & num, core::Size const m, core::Size const n )
 	return val + m;
 }
 
-/// @brief copies rotamers from the pose "src" into the permutation "dest"
-/// no backbone changes are made
-/// if detect_disulf flag is on, disulfides will be re-detected
-void
-copy_rotamers( components::StructureData & dest, core::pose::Pose const & src )
-{
-	debug_assert( dest.pose_length() == src.total_residue() );
-
-	for ( core::Size r=1; r<=src.total_residue(); ++r ) {
-		dest.replace_residue( r, src.residue(r), true );
-	}
-	// re-detect disulfides
-	core::scoring::ScoreFunctionOP sfx = core::scoring::get_score_function();
-	dest.detect_disulfides( sfx );
-}
-
 std::pair< std::string, std::string >
 parse_strand_pair( std::string const & strand_pair_str )
 {
-	StringVec const strandvec = utility::string_split( strand_pair_str, ',' );
+	utility::vector1< std::string > const strandvec = utility::string_split( strand_pair_str, ',' );
 	if ( strandvec.size() != 2 ) {
 		std::stringstream err;
 		err << "The given strand pair (" << strand_pair_str << ") has more or less than 2 values. It must have exactly two.  Edge strands can be represented by blanks (e.g. \"\",sheet.s2 )." << std::endl;
@@ -539,7 +533,7 @@ core::Size
 count_bulges( components::StructureData const & perm, std::string const & segment )
 {
 	std::string const & secstruct = perm.segment( segment ).ss();
-	utility::vector1< std::string > const & abego = perm.segment( segment ).abego();
+	std::string const & abego = perm.segment( segment ).abego();
 	if ( secstruct.size() != abego.size() ) {
 		std::stringstream msg;
 		msg << "ERROR: secstruct " << secstruct << ", size of " << secstruct.size()
@@ -550,9 +544,10 @@ count_bulges( components::StructureData const & perm, std::string const & segmen
 
 	core::Size bulges = 0;
 	// iterate through vector and string simultaneously
-	utility::vector1< std::string >::const_iterator ab = abego.begin();
-	for ( std::string::const_iterator ss=secstruct.begin(); ss!=secstruct.end() && ab!=abego.end(); ++ss, ++ab ) {
-		if ( ( *ss == 'E' ) && ( *ab == "A" ) ) {
+	std::string::const_iterator ab = abego.begin();
+	std::string::const_iterator ss = secstruct.begin();
+	for ( ; ss!=secstruct.end() && ab!=abego.end(); ++ss, ++ab ) {
+		if ( ( *ss == 'E' ) && ( *ab == 'A' ) ) {
 			++bulges;
 		}
 	}
@@ -639,12 +634,12 @@ get_strandpairings(
 {
 	// initiate strand pairing check
 	std::map< std::string, core::Size > name_to_strandnum;
-	StringVec strandnames;
+	SegmentNames strandnames;
 	core::Size strandcount = 0;
-	for ( StringList::const_iterator s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
+	for ( SegmentNameList::const_iterator s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
 		// scan to see if this is a strand
 		bool strand = false;
-		for ( std::string::const_iterator ch = perm.segment( *s ).ss().begin(); ch != perm.segment( *s ).ss().end(); ++ch ) {
+		for ( std::string::const_iterator ch=perm.segment( *s ).ss().begin(); ch!=perm.segment( *s ).ss().end(); ++ch ) {
 			if ( *ch == 'E' ) {
 				strand = true;
 				break;
@@ -663,7 +658,7 @@ get_strandpairings(
 	// now build sheet topology string
 	std::stringstream sheet_str;
 	std::set< std::pair< std::string, std::string > > visited;
-	for ( StringVec::const_iterator s=strandnames.begin(); s!=strandnames.end(); ++s ) {
+	for ( SegmentNames::const_iterator s=strandnames.begin(); s!=strandnames.end(); ++s ) {
 		if ( !perm.has_data_str( *s, "paired_strands" ) ) {
 			continue;
 		}
@@ -730,6 +725,141 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	TR << "Added segment to pose of length " << to_add->total_residue() << std::endl;
 }
 
+/// @brief adds residues from template_pose to pose.  If new_chain == true, creates covalent bond
+void
+add_residues_to_pose(
+	core::pose::Pose & pose,
+	core::pose::Pose const & template_pose,
+	bool const new_chain )
+{
+	if ( !template_pose.total_residue() ) return;
+
+	if ( pose.empty() ) {
+		pose = template_pose;
+		return;
+	}
+
+	pose.conformation().buffer_signals();
+	if ( new_chain ) {
+		core::Size const anchor_res = 1;
+		pose.conformation().insert_conformation_by_jump(
+			template_pose.conformation(),
+			pose.total_residue() + 1,
+			pose.num_jump() + 2,
+			anchor_res,
+			pose.num_jump() + 1 );
+	} else { // new_chain == false
+		for ( core::Size resid=1; resid<=template_pose.total_residue(); ++resid ) {
+			pose.append_polymer_residue_after_seqpos( template_pose.residue( resid ), pose.total_residue(), false );
+		}
+	}
+	pose.conformation().unblock_signals();
+	TR.Debug << "Added pose segment of length " << template_pose.total_residue() << std::endl;
+}
+
+core::Size
+get_resid(
+	components::StructureData const & perm,
+	std::string const & resid_str )
+{
+	std::stringstream target_stream( resid_str );
+	core::Size const target_resid = boost::lexical_cast< core::Size >( perm.substitute_variables( target_stream ) );
+	if ( ( target_resid == 0 ) || ( target_resid > perm.pose_length() ) ) {
+		std::stringstream msg;
+		msg << "get_resid(): Invalid residue string (" << resid_str
+			<< ") was given. A bad target resid (" << target_resid
+			<< ") was produced." << std::endl;
+		msg << perm << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	debug_assert( target_resid );
+	debug_assert( target_resid <= perm.pose_length() );
+	return target_resid;
+}
+
+/// @brief evaluate linear chainbreak at a position
+/// @remarks If necessary, will evaluate using a copy of the Pose with a cut
+///  fold tree.  If cutpoint variants are present at chainbreak, will use
+///  existing variants and not modify them.  If cutpoint variants are not
+///  found will add them and then remove them once calculation is finished.
+///  Eventually this should be merged into protocols/forge/methods/linear_chainbreak.cc
+///  However, the changes I needed to make to that file break certain parts
+///  of remodel
+core::Real
+linear_chainbreak(
+	core::pose::Pose const & pose,
+	core::Size const pos
+)
+{
+	using core::kinematics::FoldTree;
+	using core::pose::Pose;
+	using core::scoring::EnergyMap;
+	using core::scoring::ScoreFunction;
+	using core::scoring::methods::LinearChainbreakEnergy;
+
+	if ( pose.fold_tree().num_cutpoint() == 0 ) {
+		return core::Real( 0.0 );
+	}
+	debug_assert( pos > 0 );
+	debug_assert( pos < pose.n_residue() );
+
+	Pose scratch = pose;
+
+	FoldTree ft;
+	ft.add_edge( 1, scratch.n_residue(), core::kinematics::Edge::PEPTIDE );
+	ft.new_jump( pos, pos + 1, pos );
+
+	protocols::forge::methods::add_cutpoint_variants( scratch, pos );
+
+	EnergyMap emap;
+	ScoreFunction const fx; // dummy, needed for function call
+	LinearChainbreakEnergy energy;
+	energy.finalize_total_energy( scratch, fx, emap );
+
+	return emap[ core::scoring::linear_chainbreak ];
+}
+
+core::kinematics::FoldTree
+slide_jump(
+	core::kinematics::FoldTree const & ft_orig,
+	core::Size const jump_idx,
+	core::Size const new_start,
+	core::Size const new_stop )
+{
+	core::kinematics::FoldTree ft;
+	TR << "Sliding jump " << jump_idx << " to " << new_start << " --> " << new_stop << " in " << ft_orig << std::endl;
+	debug_assert( jump_idx > 0 );
+	debug_assert( jump_idx <= ft_orig.num_jump() );
+	core::kinematics::Edge jedge = ft_orig.jump_edge( jump_idx );
+	core::kinematics::FoldTree::EdgeList::const_iterator begin_edge = ft_orig.begin();
+	debug_assert( begin_edge != ft_orig.end() );
+
+	if ( ft_orig.root() == jedge.start() ) {
+		for ( core::kinematics::FoldTree::EdgeList::const_iterator e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
+			if ( ( e->start() == ft_orig.root() ) && ( *e != jedge ) &&
+					( static_cast< core::Size >( e->stop() ) != new_start ) &&
+					( static_cast< core::Size >( e->stop() ) != new_stop ) ) {
+				begin_edge = e;
+				break;
+			}
+		}
+	}
+	TR << "Selected new begin edge: " << *begin_edge << std::endl;
+
+	ft.add_edge( *begin_edge );
+	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
+		if ( (e != begin_edge) && (*e != jedge) ) {
+			ft.add_edge( *e );
+		}
+	}
+	ft.add_edge( jedge );
+	TR.Debug << "Sliding jump " << jump_idx << " to " << new_start << " --> " << new_stop << " in " << ft << std::endl;
+	ft.slide_jump( jump_idx, new_start, new_stop );
+	debug_assert( ft.check_fold_tree() );
+	return ft;
+}
+
+
 } // protocols
 } // denovo_design
 
@@ -786,6 +916,18 @@ std::ostream &
 operator<<( std::ostream & os, std::list< std::string > const & list ) {
 	os << "[ ";
 	for ( std::list< std::string >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
+		os << *c << " ";
+	}
+	os << "]";
+	return os;
+}
+
+/// @brief outputs a vector of strings
+std::ostream &
+operator<<( std::ostream & os, utility::vector1< std::string > const & vec )
+{
+	os << "[ ";
+	for ( utility::vector1< std::string >::const_iterator c=vec.begin(); c!=vec.end(); ++c ) {
 		os << *c << " ";
 	}
 	os << "]";

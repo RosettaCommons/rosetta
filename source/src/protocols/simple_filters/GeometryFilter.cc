@@ -80,6 +80,7 @@ GeometryFilter::GeometryFilter() :
 	cst_cutoff_( 10000.0 ),
 	start_( 1 ),
 	end_( 100000 ),
+	count_bad_residues_( false ),
 	selector_()
 {}
 
@@ -94,14 +95,15 @@ GeometryFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMa
 	cst_cutoff_ = tag->getOption< core::Real >( "cst_cutoff", cst_cutoff_ );
 	start_ = tag->getOption< core::Size>( "start", start_ );
 	end_ = tag->getOption< core::Size >( "end", end_ );
+	count_bad_residues_ = tag->getOption< bool >( "count_bad_residues", count_bad_residues_ );
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 }
 
 bool
 GeometryFilter::apply( core::pose::Pose const & pose ) const {
-	core::Real const dist( compute( pose ) );
+	core::Size const bad_residues = compute( pose );
 	bool status = false;
-	if ( dist == 1 ) {
+	if ( bad_residues == 0 ) {
 		TR << "passing." << std::endl;
 		status = true;
 	} else TR << "failing." << std::endl;
@@ -115,13 +117,21 @@ GeometryFilter::report( std::ostream & /*out*/, core::pose::Pose const & pose ) 
 
 core::Real
 GeometryFilter::report_sm( core::pose::Pose const & pose ) const {
-	core::Real const dist( compute( pose ) );
-	return( dist );
+	core::Size const bad_residues = compute( pose );
+	if ( count_bad_residues_ ) {
+		return core::Real( bad_residues );
+	} else {
+		if ( bad_residues == 0 ) {
+			return core::Real( 1.0 );
+		} else {
+			return core::Real( 0.0 );
+		}
+	}
 }
 
 
 // take per-residue cart_bonded score for evaluating out-liers
-core::Real
+core::Size
 GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::scoring;
 	using namespace core::conformation::symmetry;
@@ -139,7 +149,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 
 	copy_pose.update_residue_neighbors();
 
-	bool pass = true;
+	core::Size bad_residues = 0;
 
 	// scoring is necessary for Interface to work reliably
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
@@ -165,6 +175,9 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 		//     they are zero and meaningless, but will cause this filter to fail
 		if ( copy_pose.chain( resnum ) != copy_pose.chain( resnum+1 ) ) continue;
 
+		// TL: skip if the current residue is not a protein residue, prevents filtering on bogus numbers
+		if ( !copy_pose.residue( resnum ).is_protein() ) continue;
+
 		core::Real const weight( (*scorefxn)[ core::scoring::ScoreType( cart_bonded ) ] );
 		core::Real const score( copy_pose.energies().residue_total_energies( resnum )[ core::scoring::ScoreType( cart_bonded ) ]);
 		core::Real weighted_score = weight * score ;
@@ -177,17 +190,17 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 
 		if ( (std::abs(omega) > 180-omega_cutoff_ && std::abs(omega) < omega_cutoff_ ) && copy_pose.residue( resnum+1 ).name3() == "PRO" )  {
 			TR << "omega " << resnum <<" "<< copy_pose.residue( resnum+1 ).name3() << " fail " << std::endl;
-			pass = false;
+			++bad_residues;
 		}
 
 		if ( std::abs(omega) < omega_cutoff_ && copy_pose.residue( resnum+1 ).name3() != "PRO" )  {
 			TR << "omega " << resnum <<" "<< copy_pose.residue( resnum+1 ).name3() << " fail " << std::endl;
-			pass = false;
+			++bad_residues;
 		}
 
 		if ( weighted_score >= cart_bonded_cutoff_ ) {
 			TR << "cart_bond " << resnum <<" "<< copy_pose.residue( resnum+1 ).name3() << " fail " << std::endl;
-			pass = false;
+			++bad_residues;
 		}
 	}
 
@@ -211,15 +224,11 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 		ScoreTypeFilter const constraint_filter( scorefxn , atom_pair_constraint, cst_cutoff_ );
 		bool CScore(constraint_filter.apply( copy_pose ));
 		if ( !CScore ) {
-			pass = false;
+			++bad_residues;
 		}
 	}
 
-	if ( pass ) {
-		return core::Real( 1.0 );
-	} else {
-		return core::Real( 0.0 );
-	}
+	return bad_residues;
 }
 
 

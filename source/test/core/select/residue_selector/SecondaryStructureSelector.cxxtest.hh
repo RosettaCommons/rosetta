@@ -148,7 +148,7 @@ public:
 	}
 
 	// make sure we fail if no selection string is provided
-	void nest_SecondaryStructureSelector_fail_no_ss() {
+	void test_SecondaryStructureSelector_fail_no_ss() {
 		std::stringstream ss;
 		ss << "<SecondaryStructure name=I_should_fail />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );
@@ -166,7 +166,7 @@ public:
 	}
 
 	// make sure we fail if no selection string is provided
-	void nest_SecondaryStructureSelector_fail_no_ss_C() {
+	void test_SecondaryStructureSelector_fail_no_ss_C() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSelectorOP rs( new SecondaryStructureSelector );
 		try {
@@ -179,7 +179,7 @@ public:
 	}
 
 	// make sure we fail if indexed residues are out of range
-	void nest_SecondaryStructureSelector_fail_bad_ss() {
+	void test_SecondaryStructureSelector_fail_bad_ss() {
 		std::string names = "DL";
 		/// borrow trp cage code from ResidueIndexSelector Unit test
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();

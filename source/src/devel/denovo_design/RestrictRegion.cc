@@ -390,7 +390,7 @@ RestrictRegion::initialize_resfile( std::string const & orig_resfile )
 	std::string resfile_string;
 	utility::io::izstream file( orig_resfile );
 	if ( !file ) {
-		resfile_string = "start\n";
+		resfile_string = "START\n";
 	} else {
 		utility::slurp( file, resfile_string );
 	}
@@ -413,7 +413,7 @@ RestrictRegion::write_resfile( core::pose::Pose const & pose,  core::pack::task:
 	if ( !outfile ) {
 		utility_exit_with_message( "Could not write to " + resfile_ );
 	}
-	outfile << "USE_INPUT_SC" << '\n' << "start" << '\n';
+	outfile << "NATRO" << std::endl << "USE_INPUT_SC" << std::endl << "START" << std::endl;
 	for ( core::Size i=1; i<=task->total_residue(); ++i ) {
 		if ( ! pose.residue( i ).is_protein() ) {
 			continue;

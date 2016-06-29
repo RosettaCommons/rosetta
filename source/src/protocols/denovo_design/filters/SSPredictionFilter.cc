@@ -16,9 +16,9 @@
 #include <protocols/denovo_design/filters/SSPredictionFilter.hh>
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
 
-// package headers
-
+// protocol headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 
 // project headers
 #include <core/io/external/PsiPredInterface.hh>
@@ -141,23 +141,21 @@ SSPredictionFilter::compute_mismatch_prob( utility::vector1< core::Real > const 
 
 // @brief Calculates the score. if probabilities are used, it compute the boltzmann sum, which will be a number between 0 and 1, where 0 is the best, and 1 is the worst.
 core::Real
-SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
+SSPredictionFilter::compute( core::pose::Pose const & pose ) const
+{
 	std::string wanted_ss;
 
 	// if a blueprint is specified, use it. If not, use Dssp or pose metadata.
 	if ( blueprint_ ) {
 		wanted_ss = blueprint_->secstruct();
-	} else if ( components::StructureData::has_cached_string( pose ) ) {
-		components::StructureDataOP sd = components::StructureData::create_from_pose( pose, "" );
-		debug_assert( sd );
-		wanted_ss = sd->ss();
+	} else if ( components::StructureDataFactory::get_instance()->observer_attached( pose ) ) {
+		wanted_ss = components::StructureDataFactory::get_instance()->get_from_const_pose( pose ).ss();
 	} else {
 		core::scoring::dssp::Dssp dssp( pose );
 		wanted_ss = dssp.get_dssp_secstruct();
 	}
 
 	// strip ligands from the ss string -- dssp now includes a character for ligand
-	runtime_assert( pose.total_residue() == wanted_ss.size() );
 	std::string pruned_ss( "" );
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {

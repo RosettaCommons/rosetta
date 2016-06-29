@@ -41,6 +41,8 @@
 #include <utility/tag/Tag.hh>
 
 // C++ headers
+#include <protocols/denovo_design/test_utils.hh>
+
 static THREAD_LOCAL basic::Tracer TR("devel.denovo_design.CoreResiduesPerElementFilter.cxxtest");
 
 // --------------- Test Class --------------- //
@@ -79,7 +81,7 @@ public:
 	void test_bad_struct() {
 		using namespace devel::denovo_design::filters;
 		core::pose::Pose input_pose;
-		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "devel/denovo_design/helix15.pdb" );
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/components/helix15.pdb" );
 
 		CoreResiduesPerElementFilter corefilt;
 		core::Real const badelements = corefilt.compute( input_pose );

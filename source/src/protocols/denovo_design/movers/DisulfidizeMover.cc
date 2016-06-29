@@ -585,7 +585,11 @@ DisulfidizeMover::find_possible_disulfides(
 
 	// work on a poly-ala copy of the input pose
 	core::pose::Pose pose_copy = pose;
-	construct_poly_ala_pose( pose_copy, keep_current_ds_, set1, set2 ); //Updated to work with D-residues.
+
+	// combine sets
+	std::set< core::Size > all_residues = set1;
+	all_residues.insert( set2.begin(), set2.end() );
+	construct_poly_ala_pose( pose_copy, keep_current_ds_, all_residues ); //Updated to work with D-residues.
 
 	core::scoring::ScoreFunctionOP sfxn_disulfide_only (
 		core::pose::symmetry::is_symmetric(pose) ?

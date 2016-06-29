@@ -22,9 +22,9 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-class PrimarySequenceNeighborhoodSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
+class PrimarySequenceNeighborhoodSelectorCreator : public ResidueSelectorCreator {
 public:
-	virtual core::select::residue_selector::ResidueSelectorOP create_residue_selector() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };

@@ -20,6 +20,8 @@ using core::select::residue_selector::ResidueSelectorRegistrator;
 static ResidueSelectorRegistrator< protocols::antibody::residue_selector::AntibodyRegionSelectorCreator > reg_AntibodyRegionSelectorCreator;
 static ResidueSelectorRegistrator< protocols::antibody::residue_selector::CDRResidueSelectorCreator > reg_CDRResidueSelectorCreator;
 
+static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::NamedSegmentSelectorCreator > reg_NamedSegmentSelectorCreator;
+
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 

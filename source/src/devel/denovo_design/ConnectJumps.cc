@@ -51,7 +51,7 @@ ConnectJumpsCreator::mover_name()
 
 /// @brief default constructor
 ConnectJumps::ConnectJumps() :
-	protocols::denovo_design::connection::BridgeChains()
+	protocols::denovo_design::movers::BridgeChainsMover()
 {
 }
 
@@ -78,7 +78,7 @@ void ConnectJumps::apply( core::pose::Pose & pose )
 	TR << "*****************************************************************************" << std::endl;
 	TR << "WARNING: ConnectJumps is deprecated. Please use BridgeChains instead." << std::endl;
 	TR << "*****************************************************************************" << std::endl;
-	protocols::denovo_design::connection::BridgeChains::apply( pose );
+	protocols::denovo_design::movers::BridgeChainsMover::apply( pose );
 }
 
 } // namespace denovo_design

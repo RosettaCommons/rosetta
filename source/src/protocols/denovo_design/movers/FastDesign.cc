@@ -193,6 +193,13 @@ FastDesign::apply( core::pose::Pose & pose )
 	core::pack::task::PackerTaskOP clear_task = get_task_factory()->create_task_and_apply_taskoperations( pose );
 	clear_task->show( TR );
 
+	// print movemap
+	if ( get_movemap() && TR.Debug.visible() ) {
+		TR.Debug << "Movemap: ";
+		get_movemap()->show( TR.Debug );
+		TR.Debug << std::endl;
+	}
+
 	// if requested, clear all residues marked as designable
 	if ( clear_designable_residues_ ) {
 		TR << "Clearing designable residues...";

@@ -120,10 +120,18 @@ GenericSimulatedAnnealer::scale_temperatures( core::Real const temp_factor )
 
 	// recalculate current_score and lowest_score, which may be different due to different temperatures if boltz_rank option is used
 	if ( boltz_rank() ) {
+		recompute_rank_scores();
 		last_accepted_score( calc_boltz_score( last_accepted_scores() ) );
 		lowest_score( calc_boltz_score( lowest_scores() ) );
 	}
+}
 
+void
+GenericSimulatedAnnealer::recompute_rank_scores()
+{
+	for ( utility::vector1< AcceptedScores >::iterator s=accepted_scores_.begin(); s!=accepted_scores_.end(); ++s ) {
+		s->set_rank_score( calc_boltz_score( *s ) );
+	}
 }
 
 utility::vector1< core::Real >
@@ -252,11 +260,9 @@ GenericSimulatedAnnealer::calculate_temps()
 {
 	// this uses the same temperature scheduler as the packer
 	TR << "accepted_scores_=";
-	for ( core::Size j=1; j<=accepted_scores_.size(); ++j ) {
-		for ( core::Size k=1; k<=accepted_scores_[j].size(); ++k ) TR << " " << accepted_scores_[j][k];
-		TR << std::endl;
+	for ( utility::vector1< AcceptedScores >::const_iterator s=accepted_scores_.begin(); s!=accepted_scores_.end(); ++s ) {
+		TR << " " << *s << std::endl;;
 	}
-	TR << std::endl;
 	core::Real temp_factor( -1.0 );
 	if ( temp_step_ >= history_ ) {
 		core::Size const start( accepted_scores_.size() );
@@ -310,6 +316,34 @@ GenericSimulatedAnnealer::create_tag( std::string const & suffix ) const
 	return cp;
 }
 
+AcceptedScores
+GenericSimulatedAnnealer::read_checkpoint_line( std::istream & is ) const
+{
+	core::Size iteration;
+	core::Real rank_score;
+	is >> iteration >> rank_score;
+
+	AcceptedScores filt_scores( iteration, rank_score );
+	for ( core::Size j=1; j<=filters().size(); ++j ) {
+		core::Real score = 0.0;
+		is >> score;
+		filt_scores.push_back( score );
+		TR << "score=" << score << " ";
+	}
+	TR << std::endl;
+	return filt_scores;
+}
+
+std::ostream &
+operator<<( std::ostream & os, AcceptedScores const & scores )
+{
+	os << scores.iteration() << " " << scores.rank_score() << " ";
+	for ( AcceptedScores::const_iterator s=scores.begin(); s!=scores.end(); ++s ) {
+		os << *s << " ";
+	}
+	return os;
+}
+
 void
 GenericSimulatedAnnealer::load_checkpoint_file( core::pose::Pose & pose )
 {
@@ -342,39 +376,16 @@ GenericSimulatedAnnealer::load_checkpoint_file( core::pose::Pose & pose )
 	core::Size num_accepts( 0 );
 	saved_file >> current_trial_ >> anneal_step_ >> temp_step_ >> num_accepts;
 	TR << "current trial=" << current_trial_ << "; anneal_step=" << anneal_step_ << "; temp_step=" << temp_step_ << "; num_accepts=" << num_accepts << std::endl;
+
 	// safety: clear accepted_scores_
 	accepted_scores_.clear();
 	for ( core::Size i=1; i<=num_accepts; ++i ) {
-		utility::vector1< core::Real > filt_scores;
-		for ( core::Size j=1; j<=filters().size(); ++j ) {
-			core::Real score( 0.0 );
-			saved_file >> score;
-			filt_scores.push_back( score );
-			TR << "score=" << score << " ";
-		}
-		TR << std::endl;
-		accepted_scores_.push_back( filt_scores );
+		accepted_scores_.push_back( read_checkpoint_line( saved_file ) );
 	}
 	// load best scores
-	utility::vector1< core::Real > best;
-	for ( core::Size i=1; i<= filters().size(); ++i ) {
-		core::Real score( 0.0 );
-		saved_file >> score;
-		best.push_back( score );
-		TR << "best score : " << score << " ";
-	}
-	TR << std::endl;
-	lowest_scores( best );
+	lowest_scores( read_checkpoint_line( saved_file ) );
 	// load last scores
-	utility::vector1< core::Real > last;
-	for ( core::Size i=1; i<= filters().size(); ++i ) {
-		core::Real score( 0.0 );
-		saved_file >> score;
-		last.push_back( score );
-		TR << "last score : " << score << " ";
-	}
-	TR << std::endl;
-	last_accepted_scores( last );
+	last_accepted_scores( read_checkpoint_line( saved_file ) );
 
 	// calculate temperature factor and scale temperature
 	core::Real const temp_factor( calc_temp_factor() );
@@ -421,22 +432,13 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 	// save total # of accepted scores
 	saved_file << " " << boost::lexical_cast< std::string >( accepted_scores_.size() ) << std::endl;
 	// save accepted score list
-	for ( core::Size i=1; i<=accepted_scores_.size(); ++i ) {
-		for ( core::Size j=1; j<=filters().size(); ++j ) {
-			saved_file << accepted_scores_[i][j] << " ";
-		}
-		saved_file << std::endl;
+	for ( utility::vector1< AcceptedScores >::const_iterator s=accepted_scores_.begin(); s!=accepted_scores_.end(); ++s ) {
+		saved_file << *s << std::endl;
 	}
 	// save best scores
-	for ( core::Size i=1; i<=lowest_scores().size(); ++i ) {
-		saved_file << boost::lexical_cast< std::string >( lowest_scores()[i] ) << " ";
-	}
-	saved_file << std::endl;
+	saved_file << AcceptedScores( current_trial_, calc_boltz_score( lowest_scores() ), lowest_scores() ) << std::endl;
 	// save last accepted scores
-	for ( core::Size i=1; i<=last_accepted_scores().size(); ++i ) {
-		saved_file << boost::lexical_cast< std::string >( last_accepted_scores()[i] ) << " ";
-	}
-	saved_file << std::endl;
+	saved_file << AcceptedScores( current_trial_, calc_boltz_score( last_accepted_scores() ), last_accepted_scores() ) << std::endl;
 
 	if ( saved_file.bad() ) {
 		utility_exit_with_message( "The GenericSimulatedAnnealerMover encountered an error writing to " + tmp_checkpoint );
@@ -523,7 +525,7 @@ GenericSimulatedAnnealer::reset( Pose & pose )
 	anneal_step_ = 0;
 	temp_step_ = 1;
 	current_trial_ = 0;
-	accepted_scores_.push_back( last_accepted_scores() );
+	accepted_scores_.push_back( AcceptedScores( current_trial_, calc_boltz_score( last_accepted_scores() ), last_accepted_scores() ) );
 	start_temperatures_ = temperatures();
 }
 
@@ -638,18 +640,19 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 
 
 /// @brief given a pose, score the result
-utility::vector1< core::Real >
+AcceptedScores
 GenericSimulatedAnnealer::score_pose( core::pose::Pose const & pose ) const
 {
-	utility::vector1< core::Real > provisional_scores;
-	for ( core::Size index( 1 ); index <= filters().size(); ++index ) {
-		TR.Debug <<"Filter #"<<index<<std::endl;
+	AcceptedScores provisional_scores( current_trial_ );
+	for ( core::Size index=1; index<=filters().size(); ++index ) {
+		TR.Debug << "Filter #" << index << std::endl;
 		protocols::filters::FilterCOP filter( filters()[ index ] );
 		Real const flip( sample_types()[ index ] == "high" ? -1 : 1 );
 		core::Real const filter_val( filter->report_sm( pose ) );
 		TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores()[index]<<"; last="<<last_accepted_scores()[index]<<" )"<<std::endl;
 		provisional_scores.push_back( flip * filter_val );
 	}
+	provisional_scores.set_rank_score( calc_boltz_score( provisional_scores ) );
 	return provisional_scores;
 }
 
@@ -667,7 +670,8 @@ GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose )
 
 /// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
 TrialResult
-GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose,
+GenericSimulatedAnnealer::boltzmann_result(
+	core::pose::Pose & pose,
 	utility::vector1< core::Real > const & random_nums )
 {
 	TR << "Randoms=";
@@ -682,7 +686,7 @@ GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose,
 		return REJECTED;
 	} else {
 		// save the results as accepted
-		accepted_scores_.push_back( last_accepted_scores() );
+		accepted_scores_.push_back( AcceptedScores( current_trial_, calc_boltz_score( last_accepted_scores() ), last_accepted_scores() ) );
 		// check to see if the stopping condition is satisfied.
 		bool const stop( ( mover_stopping_condition() && mover_stopping_condition()->obj )
 			|| ( stopping_condition() && stopping_condition()->apply( pose ) ) );

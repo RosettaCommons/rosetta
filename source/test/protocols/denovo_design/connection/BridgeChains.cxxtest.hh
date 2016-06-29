@@ -8,23 +8,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   test/protocols/denovo_design/BridgeChains.cxxtest.hh
-/// @brief  test suite for protocols::denovo_design::connection::BridgeChains
+/// @file   test/protocols/denovo_design/BridgeChainsMover.cxxtest.hh
+/// @brief  test suite for protocols::denovo_design::connection::BridgeChainsMover
 /// @author Tom Linsky (tlinsky@uw.edu)
-
 
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
 
 // Unit headers
-#include <protocols/denovo_design/connection/BridgeChains.hh>
-#include <protocols/denovo_design/connection/Connection.hh>
-#include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/components/Segment.hh>
-#include <protocols/denovo_design/util.hh>
+#include <protocols/denovo_design/movers/BridgeChainsMover.hh>
 
 // Protocol headers
+#include <protocols/denovo_design/architects/PoseArchitect.hh>
+#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/components/Segment.hh>
+#include <protocols/denovo_design/connection/ConnectionArchitect.hh>
+#include <protocols/denovo_design/util.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/moves/Mover.hh>
@@ -37,6 +38,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/sequence/ABEGOManager.hh>
@@ -51,11 +53,16 @@
 
 // Boost headers
 #include <boost/algorithm/string.hpp>
+#include <boost/assign.hpp>
 
 // unit test utility functions
 #include <protocols/denovo_design/test_utils.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.connection.BridgeChains.cxxtest" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.BridgeChainsMover.cxxtest" );
+
+using namespace protocols::denovo_design::architects;
+using namespace protocols::denovo_design::connection;
+using namespace protocols::denovo_design::movers;
 
 namespace denovo_design {
 namespace components {
@@ -124,7 +131,7 @@ core::Size new_resnum(
 }
 
 // --------------- Test Class --------------- //
-class BridgeChainsTests : public CxxTest::TestSuite {
+class BridgeChainsMoverTests : public CxxTest::TestSuite {
 public:
 
 	// Shared initialization goes here.
@@ -153,28 +160,79 @@ public:
 	}
 
 	// test connectchains - interaction with components
+	void test_twohelix()
+	{
+		using namespace protocols::denovo_design;
+		StructureDataFactory const & factory = *StructureDataFactory::get_instance();
+		core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
+		TS_ASSERT( scorefxn );
+
+		core::pose::Pose pose;
+		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/connection/twohelix_structuredata.pdb" );
+		core::pose::Pose const input_pose = pose;
+
+		std::string const id_tag = "BridgeChainsMoverUnit";
+		StructureData const orig = factory.get_from_pose( pose, id_tag );
+
+		TS_ASSERT( factory.observer_attached( pose ) );
+		TS_ASSERT_THROWS_NOTHING( orig.check_pose_consistency( pose ) );
+
+		std::string const conn_id = "helixconn";
+		std::string const s1_id = "BridgeChainsMoverUnit.H02";
+		std::string const s2_id = "BridgeChainsMoverUnit.H01";
+		BridgeChainsMover conn;
+		conn.set_id( "helixconn" );
+		conn.set_dry_run( true );
+		conn.set_scorefxn( *scorefxn );
+		conn.set_segment1_ids( s1_id );
+		conn.set_segment2_ids( s2_id );
+		conn.set_motifs( "2LX-1LA-1LG-1LB", "1:4" );
+		conn.set_overlap( 0 );
+		conn.apply( pose );
+
+		StructureData perm = factory.get_from_const_pose( pose );
+		TS_ASSERT_THROWS_NOTHING( perm.check_pose_consistency( pose ) );
+
+		// segment1-->helixconn->segment2
+		TS_ASSERT_EQUALS( input_pose.fold_tree().num_jump(), 1 );
+		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), 2 );
+		TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 0 );
+		TS_ASSERT_EQUALS( pose.conformation().num_chains(), 1 );
+
+		// check to make sure the right stuff is set
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).length(), 5 );
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).elem_length(), 5 );
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).cutpoint(), 0 );
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).ss(), "LLLLL" );
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).abego(), "XXAGB" );
+		TS_ASSERT_EQUALS( perm.segment( s1_id ).upper_segment(), conn_id );
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).lower_segment(), s1_id );
+		TS_ASSERT_EQUALS( perm.segment( conn_id ).upper_segment(), s2_id );
+		TS_ASSERT_EQUALS( perm.segment( s2_id ).lower_segment(), conn_id );
+
+		// check for unwanted movement
+		check_unwanted_movement( orig, input_pose, perm, pose );
+	}
+
+	// test connectchains - interaction with components
 	void test_conn_chains()
 	{
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
-		using namespace protocols::denovo_design::connection;
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
-		StructureDataOP perm = StructureData::create_from_pose( input_pose, "BridgeChainsUnit" );
-		TS_ASSERT( perm->pose() );
-		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
-		TS_ASSERT_EQUALS( perm->pose()->conformation().num_chains(), 5 );
-
-		// save original for testing
-		StructureDataOP orig = perm->clone();
+		core::pose::Pose const orig_pose = input_pose;
+		StructureData const orig = StructureDataFactory::get_instance()->get_from_pose( input_pose );
+		TS_ASSERT_THROWS_NOTHING( orig.check_pose_consistency( input_pose ) );
+		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), 5 );
 
 		// look for proper termini
 		core::Size c_count = 0, n_count = 0;
-		for ( core::Size i=1; i<=perm->pose()->total_residue(); ++i ) {
-			if ( perm->pose()->residue(i).is_lower_terminus() ) {
+		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
+			if ( input_pose.residue(i).is_lower_terminus() ) {
 				n_count += 1;
 			}
-			if ( perm->pose()->residue(i).is_upper_terminus() ) {
+			if ( input_pose.residue(i).is_upper_terminus() ) {
 				c_count += 1;
 			}
 		}
@@ -182,260 +240,89 @@ public:
 		TS_ASSERT_EQUALS( c_count, 5 );
 
 		// create connectchains for testing purposes
-		BridgeChains conn;
+		PoseArchitect pose_arch( "pose" );
+		StructureDataOP perm = pose_arch.apply( input_pose );
+		BridgeChainsMover conn;
 		conn.set_id( "test" );
-		conn.set_comp1_ids( "sheet1.s1,sheet1.s2,sheet1.s3,sheet1.s4" );
-		conn.set_comp2_ids( "rot_comp.rot_comp2.catalytic.2" );
+		conn.set_segment1_ids( "sheet1.s2" );
+		conn.set_segment2_ids( "rot_comp.rot_comp2.catalytic.2" );
 		conn.set_overlap( 1 );
-		conn.set_check_abego( false );
 
 		core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 		TS_ASSERT( scorefxn );
-		conn.set_scorefxn( scorefxn );
-		conn.set_lengths( "1" );
-		conn.set_cut_resis( "1" );
-		try {
-			// this should have failed since nothing is close enough
-			conn.setup_from_random( *(perm->clone()), 0.2501 );
-			TS_ASSERT( false );
-		} catch ( EXCN_Setup const & e ) {
-			TS_ASSERT( true );
-		}
+		conn.set_scorefxn( *scorefxn );
+		conn.set_motifs( "1LX", "1" );
+		core::Real random = 0.2501;
+		TS_ASSERT_THROWS( conn.architect().apply( *perm->clone(), random ), EXCN_ConnectionSetupFailed );
 
-// now set it up with a longer loop that will build
-		conn.set_lengths( "4" );
-		conn.set_cut_resis( "3" );
-		TR << "Setting up " << *perm << std::endl;
-		conn.setup_from_random( *perm, 0.2501 );
-		TS_ASSERT( conn.segments_fixed( *perm ) );
-		TS_ASSERT( perm->pose() );
-
-		// perform setup tasks (e.g. loop building)
-		conn.setup( *perm );
-		TS_ASSERT_EQUALS( conn.get_last_move_status(), protocols::moves::MS_SUCCESS );
-		TS_ASSERT_EQUALS( perm->find_jump( conn.lower_segment_id(*perm) ), 0 );
-		TS_ASSERT_EQUALS(
-			perm->pose()->fold_tree().downstream_jump_residue( perm->find_jump( conn.upper_segment_id(*perm) ) ),
-			perm->segment("rot_comp.rot_comp2.catalytic.2").safe() );
+		// now set it up with a longer loop that will build
+		conn.set_motifs( "4LX", "3" );
 
 		// do connecting
-		conn.apply_connection( *perm );
+		conn.apply( input_pose );
+
 		TS_ASSERT_EQUALS( conn.get_last_move_status(), protocols::moves::MS_SUCCESS );
 
-		// tell permutation we're connecting these termini
-		perm->connect_segments( "test", "test_1" );
-		perm->merge_segments( "test", "test_1", "test" );
+		StructureData sd_conn = StructureDataFactory::get_instance()->get_from_pose( input_pose );
+		sd_conn.check_pose_consistency( input_pose );
 
-		utility::vector1< std::string > roots;
-		roots.push_back( conn.lower_segment_id(*perm) );
-		roots.push_back( conn.upper_segment_id(*perm) );
-		perm->consolidate_movable_groups( roots );
-		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
-		for ( core::Size i=1; i<=perm->pose()->total_residue(); ++i ) {
-			TR << perm->pose()->residue(i).name() << i << std::endl;
+		for ( core::Size resid=1; resid<=input_pose.total_residue(); ++resid ) {
+			TR.Debug << "After bridging: " << input_pose.residue(resid).name() << resid << std::endl;
 		}
-		TS_ASSERT_EQUALS( perm->pose()->conformation().num_chains(), 4 );
-		TS_ASSERT_EQUALS( perm->pose()->num_jump(), 3 );
+		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), 4 );
+		TS_ASSERT_EQUALS( input_pose.fold_tree().num_jump(), 3 );
 
 		// look for proper termini
+		TR << sd_conn << std::endl;
+		std::set< core::Size > const expected_lower_termini =
+			boost::assign::list_of (1) (15) (35) (43);
+		std::set< core::Size > const expected_upper_termini =
+			boost::assign::list_of (14) (34) (42) (49);
+
 		c_count = 0;
 		n_count = 0;
-		for ( core::Size i=1; i<=perm->pose()->total_residue(); ++i ) {
-			if ( perm->pose()->residue(i).is_lower_terminus() ) {
+		for ( core::Size resid=1; resid<=input_pose.total_residue(); ++resid ) {
+			if ( input_pose.residue(resid).is_lower_terminus() ) {
 				n_count += 1;
+				TS_ASSERT_DIFFERS( expected_lower_termini.find( resid ), expected_lower_termini.end() );
+			} else {
+				TS_ASSERT_EQUALS( expected_lower_termini.find( resid ), expected_lower_termini.end() );
 			}
-			if ( perm->pose()->residue(i).is_upper_terminus() ) {
+			if ( input_pose.residue(resid).is_upper_terminus() ) {
 				c_count += 1;
-			}
-		}
-		TS_ASSERT_EQUALS( n_count, 4 );
-		TS_ASSERT_EQUALS( c_count, 4 );
-
-		core::pose::PoseOP new_pose = perm->pose()->clone();
-		TS_ASSERT_EQUALS( perm->pose()->num_jump(), 3 );
-
-		// look for proper termini
-		c_count = 0;
-		n_count = 0;
-		for ( core::Size i=1; i<=perm->pose()->total_residue(); ++i ) {
-			if ( perm->pose()->residue(i).is_lower_terminus() ) {
-				n_count += 1;
-			}
-			if ( perm->pose()->residue(i).is_upper_terminus() ) {
-				c_count += 1;
+				TS_ASSERT_DIFFERS( expected_upper_termini.find( resid ), expected_upper_termini.end() );
+			} else {
+				TS_ASSERT_EQUALS( expected_upper_termini.find( resid ), expected_upper_termini.end() );
 			}
 		}
 		TS_ASSERT_EQUALS( n_count, 4 );
 		TS_ASSERT_EQUALS( c_count, 4 );
 
 		// compare coordinates to make sure nothing changed that shouldn't have
-		core::Size const ss = orig->lower_anchor("sheet1.s2");
-		core::Size const se = orig->upper_anchor("sheet1.s2");
-		core::Size const ms = orig->lower_anchor("rot_comp.rot_comp2.catalytic.2");
-		core::Size const me = orig->upper_anchor("rot_comp.rot_comp2.catalytic.2");
-		core::Vector xyz1 = orig->pose()->residue(2).xyz("CA");
-		core::Vector xyz2 = new_pose->residue( denovo_design::components::new_resnum( 2, ss, se, ms, me, 4 ) ).xyz("CA");
-		for ( core::Size i=1; i<=orig->pose()->total_residue(); ++i ) {
+		core::Size const ss = orig.lower_anchor("sheet1.s2");
+		core::Size const se = orig.upper_anchor("sheet1.s2");
+		core::Size const ms = orig.lower_anchor("rot_comp.rot_comp2.catalytic.2");
+		core::Size const me = orig.upper_anchor("rot_comp.rot_comp2.catalytic.2");
+		core::Vector xyz1 = orig_pose.residue(2).xyz("CA");
+		core::Vector xyz2 = input_pose.residue( denovo_design::components::new_resnum( 2, ss, se, ms, me, 4 ) ).xyz("CA");
+		for ( core::Size i=1; i<=orig_pose.total_residue(); ++i ) {
 			core::Size const new_res( denovo_design::components::new_resnum( i, ss, se, ms, me, 4 ) );
 			TR.Debug << "i=" << i << " new=" << new_res << std::endl;
 			if ( ! new_res ) {
 				continue;
 			}
+
 			// orig residues 22 and 40 are on the edges of remodeled area and can have small positional changes due to overlap == 1
-			if ( ( i == 22 ) || ( i == 40 ) ) {
-				continue;
-			}
-			core::Vector const & orig_xyz = orig->pose()->residue(i).xyz("CA");
-			core::Vector const & newpt = perm->pose()->residue(new_res).xyz("CA");
+			if ( i == 22 ) continue;
+			if ( i == 40 ) continue;
+			core::Vector const & orig_xyz = orig_pose.residue(i).xyz("CA");
+			core::Vector const & newpt = input_pose.residue(new_res).xyz("CA");
 			TS_ASSERT_DELTA( orig_xyz.distance(xyz1), newpt.distance(xyz2), 1e-6 );
-			TS_ASSERT_DELTA( orig->pose()->phi(i), perm->pose()->phi(new_res), 1e-6 );
-			TS_ASSERT_DELTA( orig->pose()->psi(i), perm->pose()->psi(new_res), 1e-6 );
+			TS_ASSERT_DELTA( orig_pose.phi(i), input_pose.phi(new_res), 1e-6 );
+			TS_ASSERT_DELTA( orig_pose.psi(i), input_pose.psi(new_res), 1e-6 );
 		}
-		TS_ASSERT( perm->pose()->fold_tree().check_fold_tree() );
+		TS_ASSERT( input_pose.fold_tree().check_fold_tree() );
 	}
 
-	// test connectchains - interaction with components
-	void test_twohelix()
-	{
-		using namespace protocols::denovo_design;
-		using namespace protocols::denovo_design::connection;
-		core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
-		TS_ASSERT( scorefxn );
-
-		core::pose::Pose input_pose;
-		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/twohelix_structuredata.pdb" );
-
-		std::string const id_tag = "BridgeChainsUnit";
-		components::StructureDataOP perm = components::StructureData::create_from_pose( input_pose, id_tag );
-		TS_ASSERT( perm );
-		TS_ASSERT( perm->pose() );
-		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
-
-		// save original for comparison
-		components::StructureDataOP orig = perm->clone();
-
-		BridgeChains conn;
-		conn.set_id( "helixconn" );
-		conn.set_scorefxn( scorefxn );
-		conn.set_comp1_ids( "2" );
-		conn.set_comp2_ids( "1" );
-		conn.set_lengths( "5" );
-		conn.set_overlap( 2 );
-		conn.setup_permutation( *perm );
-
-		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
-
-		// segment1-->segment2, segment1-->helixconn, segment1-->helixconn_1
-		TS_ASSERT_EQUALS( perm->pose()->fold_tree().num_jump(), 3 );
-		conn.setup( *perm );
-
-		// check to make sure the right stuff is set
-		TS_ASSERT_EQUALS( conn.build_len(*perm), 5 );
-		TS_ASSERT_EQUALS( perm->find_jump("2"), 0 );
-		TS_ASSERT_EQUALS( perm->pose()->fold_tree().downstream_jump_residue( perm->find_jump("1") ),
-			perm->segment( "1" ).safe() );
-		TS_ASSERT_EQUALS( conn.build_abego(*perm), "XXXXX" );
-		TS_ASSERT_EQUALS( conn.build_ss(*perm), "LLLLL" );
-		TS_ASSERT_EQUALS( conn.build_len(*perm), 5 );
-		TS_ASSERT_EQUALS( conn.user_chain1(), 0 );
-		TS_ASSERT_EQUALS( conn.user_chain2(), 0 );
-		TS_ASSERT_EQUALS( conn.upper_segment_id(*perm), "1" );
-		TS_ASSERT_EQUALS( conn.lower_segment_id(*perm), "2" );
-
-		// DSSP the shit out of this pose
-		protocols::moves::DsspMover dssp;
-		perm->apply_mover( dssp );
-
-		// setup starting, ending residues
-		core::Size start1, end1, start2, end2;
-		int jump = 0;
-		bool const_fold_tree( false );
-		start1 = perm->segment(conn.lower_segment_id(*perm)).nterm_resi();
-		end1 = perm->segment(conn.lower_segment_id(*perm)).cterm_resi();
-		start2 = perm->segment(conn.upper_segment_id(*perm)).nterm_resi();
-		end2 = perm->segment(conn.upper_segment_id(*perm)).cterm_resi();
-		const_fold_tree = true;
-		jump = perm->find_jump(conn.upper_segment_id(*perm));
-
-		// delete unneeded terminal residues
-		perm->delete_trailing_residues(conn.loop_lower(*perm));
-		--start2;
-		--end2;
-		perm->delete_leading_residues(conn.loop_upper(*perm));
-		--start2;
-		--end2;
-
-		TR << *perm << std::endl;
-		TS_ASSERT_EQUALS( end1+1, perm->segment(conn.loop_lower(*perm)).nterm_resi() );
-		TS_ASSERT_EQUALS( start2-1, perm->segment(conn.loop_upper(*perm)).cterm_resi() );
-		TS_ASSERT_EQUALS( end1 + conn.build_len(*perm) + 1, start2 );
-
-		TS_ASSERT_EQUALS( start1, perm->segment(conn.lower_segment_id(*perm)).nterm_resi() );
-		TS_ASSERT_EQUALS( end1, perm->segment(conn.lower_segment_id(*perm)).cterm_resi() );
-		TS_ASSERT_EQUALS( start2, perm->segment(conn.upper_segment_id(*perm)).nterm_resi() );
-		TS_ASSERT_EQUALS( end2, perm->segment(conn.upper_segment_id(*perm)).cterm_resi() );
-		TS_ASSERT( const_fold_tree );
-		TS_ASSERT_EQUALS( jump, 1 );
-
-		int const len( end2 - start2 + 1 );
-		TS_ASSERT_EQUALS( len, 34 );
-
-		// find left and right boundaries
-		core::Size left( end1 - conn.lower_overlap() + 1 );
-		if ( conn.lower_overlap() > end1 ) {
-			left = 0;
-		}
-		core::Size right( start2 + conn.upper_overlap() - 1 );
-		if ( left < 1 ) {
-			left = 1;
-		} else if ( left > perm->pose()->total_residue() ) {
-			left = perm->pose()->total_residue();
-		}
-		if ( right < 1 ) {
-			right = 1;
-		} else if ( right > perm->pose()->total_residue() ) {
-			right = perm->pose()->total_residue();
-		}
-
-		TS_ASSERT_EQUALS( perm->pose()->total_residue(), 73 );
-		TS_ASSERT_EQUALS( left, 33 );
-		TS_ASSERT_EQUALS( right, 41 );
-		TS_ASSERT_EQUALS( perm->pose()->fold_tree().num_jump(), 1 );
-
-		// test motif/parsing
-		Connection::Motif motif = conn.parse_motif( "5:LX-3EB" );
-		TS_ASSERT_EQUALS( motif.len, 8 );
-		for ( core::Size i=1; i<=5; ++i ) {
-			TS_ASSERT_EQUALS( motif.ss[i-1], 'L' );
-			TS_ASSERT_EQUALS( motif.abego[i-1], 'X' );
-		}
-		for ( core::Size i=6; i<=8; ++i ) {
-			TS_ASSERT_EQUALS( motif.ss[i-1], 'E' );
-			TS_ASSERT_EQUALS( motif.abego[i-1], 'B' );
-		}
-
-		core::pose::Pose const & pose = *(perm->pose());
-		// test SS
-		std::string const ss = conn.ss_insert( pose, motif.ss, left, right, end1+1, start2-1 );
-		TS_ASSERT_EQUALS( ss, "HHLLLLLEEEHH" );
-
-		// test abegos
-		utility::vector1< std::string > const complete_abego = core::sequence::get_abego( pose, 1 );
-		utility::vector1< std::string > const abego = conn.abego_insert( complete_abego, motif.abego, left, right, end1+1, start2-1 );
-		TS_ASSERT_EQUALS( abego.size(), 12 );
-		TS_ASSERT_EQUALS( abego[1], "A" );
-		TS_ASSERT_EQUALS( abego[2], "A" );
-		TS_ASSERT_EQUALS( abego[3], "X" );
-		TS_ASSERT_EQUALS( abego[4], "X" );
-		TS_ASSERT_EQUALS( abego[5], "X" );
-		TS_ASSERT_EQUALS( abego[6], "X" );
-		TS_ASSERT_EQUALS( abego[7], "X" );
-		TS_ASSERT_EQUALS( abego[8], "B" );
-		TS_ASSERT_EQUALS( abego[9], "B" );
-		TS_ASSERT_EQUALS( abego[10], "B" );
-		TS_ASSERT_EQUALS( abego[11], "A" );
-		TS_ASSERT_EQUALS( abego[12], "A" );
-		check_unwanted_movement( *orig, *perm );
-	}
 
 };

@@ -30,6 +30,16 @@ ResidueVector::ResidueVector():
 ResidueVector::ResidueVector( ResidueSubset const & subset ):
 	utility::vector1< core::Size >()
 {
+	from_subset( subset );
+}
+
+ResidueVector::ResidueVector( utility::vector1< core::Size > const & vec ):
+	utility::vector1< core::Size >( vec )
+{}
+
+void
+ResidueVector::from_subset( ResidueSubset const & subset )
+{
 	this->clear();
 	for ( core::Size resid=1; resid<=subset.size(); ++resid ) {
 		if ( subset[resid] ) {

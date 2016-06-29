@@ -41,6 +41,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -460,9 +461,13 @@ GenericMonteCarloMover::reset( Pose & pose )
 	} else {
 		core::Real ranking_score( 0.0 );
 		for ( Size index = 1; index <= filters_.size(); ++index ) {
-			protocols::filters::FilterCOP filter( filters_[ index ] );
 			Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
-			Real const score( flip * filter->report_sm( pose ) );
+			Real score = flip * 99999999.99;
+			if ( pose.total_residue() > 0 ) {
+				protocols::filters::FilterCOP filter( filters_[ index ] );
+				score = flip * filter->report_sm( pose );
+			}
+
 			last_accepted_scores_.push_back( score );
 			lowest_scores_.push_back( score );
 			if ( index == rank_by_filter_ ) {
@@ -848,7 +853,13 @@ GenericMonteCarloMover::apply( Pose & pose )
 	}
 
 	PoseOP initial_pose( new Pose( pose ) );
-	reset( pose ); //(re)initialize MC statistics
+	//(re)initialize MC statistics
+	if ( preapply_ ) {
+		core::pose::Pose tmppose;
+		reset( tmppose );
+	} else {
+		reset( pose );
+	}
 	protocols::moves::MoverStatus ms( FAIL_RETRY );
 	core::Size accept( 0 ), reject( 0 );
 	using namespace protocols::rosetta_scripts;
@@ -899,12 +910,6 @@ GenericMonteCarloMover::apply( Pose & pose )
 			mover_pp->apply_probability( new_probabilities );
 			mover_accepts = utility::vector1< core::Size >( mover_accepts.size(), 1 );
 		}
-		bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
-			( stopping_condition() && stopping_condition()->apply( pose ) ) );
-		if ( stop ) {
-			TR<<"MC stopping condition met at trial "<<i<<std::endl;
-			break;
-		}
 		Pose store_pose( pose );
 		// Mover apply
 		mover_->apply( pose );
@@ -917,6 +922,16 @@ GenericMonteCarloMover::apply( Pose & pose )
 			TR.Error << "Mover failed. Exit from GenericMonteCarloMover." << std::endl;
 			break;
 		}
+
+		pose.energies().clear();
+		// check stopping condition
+		bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
+			( stopping_condition() && stopping_condition()->apply( pose ) ) );
+		if ( stop ) {
+			TR<<"MC stopping condition met at trial "<<i<<std::endl;
+			break;
+		}
+
 		// MonteCarlo
 		if ( preapply_ && i==1 ) { // Auto-accept first application in order to deal with movers that e.g. change the length of the pose.
 			reset( pose );
@@ -931,6 +946,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 				}
 			}
 		}
+
 		if ( !drift_ ) {
 			pose = (*initial_pose); // set back pose to initial one, of course this is not way of Monte Carlo
 		}
@@ -952,6 +968,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 			pose = *last_accepted_pose();
 		}
 	}
+	pose.energies().clear();
 
 }// apply
 

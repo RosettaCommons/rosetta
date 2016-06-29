@@ -28,7 +28,6 @@
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
-#include <devel/denovo_design/BuildSheetCreator.hh>
 #include <devel/denovo_design/ConnectJumpsCreator.hh>
 #include <devel/denovo_design/DumpStatsSSCreator.hh>
 #include <devel/denovo_design/RestrictRegionCreator.hh>
@@ -89,7 +88,6 @@
 namespace devel {
 
 // Mover creators
-static protocols::moves::MoverRegistrator< denovo_design::BuildSheetCreator > reg_BuildSheetCreator;
 static protocols::moves::MoverRegistrator< denovo_design::ConnectJumpsCreator > reg_ConnectJumpsCreator;
 static protocols::moves::MoverRegistrator< denovo_design::DumpStatsSSCreator > reg_DumpStatsSSCreator;
 static protocols::moves::MoverRegistrator< denovo_design::RestrictRegionCreator > reg_RestrictRegionCreator;

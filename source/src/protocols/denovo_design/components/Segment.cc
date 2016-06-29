@@ -15,17 +15,28 @@
 //Unit Headers
 #include <protocols/denovo_design/components/Segment.hh>
 
-//Project Headers
+//Protocol Headers
 #include <protocols/denovo_design/util.hh>
-
-//Protocols Headers
+#include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 
 //Core Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
 
 //C++ Headers
 
@@ -38,66 +49,166 @@ namespace denovo_design {
 namespace components {
 
 Segment::Segment() :
-	movable_group( 0 ),
-	is_loop( false ),
-	posestart_( 0 ),
-	start_( 0 ),
-	stop_( 0 ),
+	posestart_( 1 ),
+	movable_group_( 1 ),
 	saferes_( 0 ),
 	cutpoint_( 0 ),
 	ss_( "" ),
+	abego_( "" ),
 	nterm_included_( false ),
 	cterm_included_( false ),
 	lower_segment_( "" ),
-	upper_segment_( "" )
+	upper_segment_( "" ),
+	template_pose_(),
+	lower_dihedrals_(),
+	upper_dihedrals_(),
+	lower_residue_(),
+	upper_residue_()
 {
-	abego_.clear();
 }
 
 Segment::Segment(
-	core::Size const pose_length_val,
-	core::Size const local_saferes,
-	core::Size const local_cutpoint,
-	core::Size const movable_group_val,
-	bool const is_loop_val,
-	bool const start_inc,
-	bool const stop_inc,
-	std::string const & lower,
-	std::string const & upper,
 	std::string const & ss_val,
-	utility::vector1< std::string > const & abego_val ) :
-	movable_group( movable_group_val ),
-	is_loop( is_loop_val ),
+	std::string const & abego_val,
+	bool const start_inc,
+	bool const stop_inc ):
 	posestart_( 1 ),
-	start_( 0 ),
-	stop_( 0 ),
-	saferes_( local_saferes ),
-	cutpoint_( local_cutpoint ),
+	movable_group_( 1 ),
+	saferes_( 0 ),
+	cutpoint_( 0 ),
 	ss_( ss_val ),
 	abego_( abego_val ),
 	nterm_included_( start_inc ),
 	cterm_included_( stop_inc ),
-	lower_segment_( lower ),
-	upper_segment_( upper )
+	lower_segment_( "" ),
+	upper_segment_( "" ),
+	template_pose_(),
+	lower_dihedrals_(),
+	upper_dihedrals_(),
+	lower_residue_(),
+	upper_residue_()
 {
-	debug_assert( pose_length_val );
-	debug_assert( local_cutpoint <= pose_length_val );
-	if ( start_inc ) {
-		start_ = 1;
+	debug_assert( abego_.size() == ss_.size() );
+}
+
+SegmentOP
+Segment::clone() const
+{
+	return SegmentOP( new Segment( *this ) );
+}
+
+void
+Segment::clear()
+{
+	ss_ = "";
+	set_abego( "" );
+	template_pose_ = core::pose::PoseOP();
+}
+
+void
+Segment::set_pose_start( core::Size const pose_resid )
+{
+	posestart_ = pose_resid;
+}
+
+core::Size
+Segment::movable_group() const
+{
+	return movable_group_;
+}
+
+void
+Segment::set_movable_group( core::Size const mg )
+{
+	movable_group_ = mg;
+}
+
+core::Size
+Segment::lower_local() const
+{
+	if ( length() == 0 ) {
+		return 0;
 	} else {
-		debug_assert( pose_length_val > 1 );
-		start_ = 2;
+		return 1;
 	}
-	if ( stop_inc ) {
-		stop_ = pose_length_val;
+}
+
+core::Size
+Segment::upper_local() const
+{
+	return length();
+}
+
+core::Size
+Segment::start_local() const
+{
+	if ( length() == 0 ) return 0;
+
+	if ( nterm_included_ ) {
+		return 1;
 	} else {
-		debug_assert( pose_length_val > 1 );
-		stop_ = pose_length_val - 1;
+		if ( length() > 1 ) {
+			return 2;
+		} else {
+			return 0;
+		}
 	}
-	debug_assert( local_saferes >= start_ );
-	debug_assert( local_saferes <= stop_ );
-	debug_assert( ss_.size() == length() );
-	debug_assert( ss_.size() == abego_.size() );
+}
+
+core::Size
+Segment::stop_local() const
+{
+	if ( cterm_included_ ) {
+		return length();
+	} else {
+		if ( length() > 0 ) {
+			return length() - 1;
+		} else {
+			return 0;
+		}
+	}
+}
+
+core::Size
+Segment::lower_padding() const
+{
+	return start_local() - lower_local();
+}
+
+core::Size
+Segment::upper_padding() const
+{
+	return length() - stop_local();
+}
+
+core::Size
+Segment::length() const
+{
+	return ss_.size();
+}
+
+core::Size
+Segment::elem_length() const
+{
+	return stop_local() - start_local() + 1;
+}
+
+void
+Segment::set_lower_segment( std::string const & lower_seg )
+{
+	lower_segment_ = lower_seg;
+}
+
+void
+Segment::set_upper_segment( std::string const & upper_seg )
+{
+	upper_segment_ = upper_seg;
+}
+
+bool
+Segment::contains( core::Size const pose_resid ) const
+{
+	return ( ( lower() <= pose_resid ) && ( pose_resid <= upper() ) );
 }
 
 /// @brief construct from xml tag
@@ -111,11 +222,6 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 		TR << "start must be specified as an option to ResidueRange xml tag!!" << *tag << std::endl;
 		debug_assert( tag->hasOption( "start" ) );
 		throw utility::excn::EXCN_RosettaScriptsOption( "start must be specified as an option to ResidueRange xml tag!!" );
-	}
-	if ( !tag->hasOption( "stop" ) ) {
-		TR << "stop must be specified as an option to ResidueRange xml tag!!" << *tag << std::endl;
-		debug_assert( tag->hasOption( "stop" ) );
-		throw utility::excn::EXCN_RosettaScriptsOption( "stop must be specified as an option to ResidueRange xml tag!!" );
 	}
 	if ( !tag->hasOption( "ss" ) ) {
 		TR << "ss must be specified as an option to ResidueRange xml tag!!" << *tag << std::endl;
@@ -137,217 +243,393 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 		--posestart_;
 	}
 
-	if ( nterm_included_ ) {
-		start_ = 1;
-	} else {
-		start_ = 2;
-	}
-
-	stop_ = tag->getOption< core::Size >( "stop" );
-	debug_assert( stop_ >= posestart_ );
-	stop_ = stop_ - posestart_ + 1;
-
-	if ( tag->hasOption( "safe" ) ) {
-		saferes_ = tag->getOption< core::Size >( "safe" );
-		debug_assert( saferes_ >= posestart_ );
-		saferes_ = saferes_ - posestart_ + 1;
-	} else {
-		saferes_ = ( stop_ + start_ )/ 2;
-	}
-
-	if ( ( saferes_ > stop_ ) || ( saferes_ < start_ ) ) {
-		TR.Error << "Invalid safe residue in " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Invalid safe residue" );
-	}
-
-	movable_group = tag->getOption< core::Size >( "mgroup", movable_group );
-	is_loop = tag->getOption< bool >( "loop", is_loop );
-	cutpoint_ = tag->getOption< core::Size >( "cutpoint", cutpoint_ );
-	lower_segment_ = tag->getOption< std::string >( "lower_segment", "" );
-	upper_segment_ = tag->getOption< std::string >( "upper_segment", "" );
 	ss_ = tag->getOption< std::string >( "ss" );
-	if ( ss_.size() != length() ) {
-		TR.Error << "Invalid ss length " << ss_.size() << " vs segment length " << length() << " in " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Invalid ss length specified to ResidueSegment" );
+	set_abego( tag->getOption< std::string >( "abego" ) );
+	if ( abego_.size() != length() ) {
+		std::stringstream msg;
+		msg << "Segment::parse_tag(): Invalid abego length ("
+			<< abego_.size() << ") vs secondary structure length ("
+			<< length() << ") when parsing " << *tag << std::endl;
+		msg << "The abego length must match the secondary strcuture length." << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
 
-	std::string const abego_str = tag->getOption< std::string >( "abego" );
-	abego_.clear();
-	abego_ = abego_vector( abego_str );
-	if ( abego_.size() != length() ) {
-		TR.Error << "Invalid abego length " << abego_.size() << " vs segment length " << length() << " in " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Invalid abego length specified to ResidueSegment" );
+	set_safe( tag->getOption< core::Size >( "safe", saferes_ ) );
+	if ( saferes_ > elem_length() ) {
+		std::stringstream msg;
+		msg << "Segment::parse_tag(): Safe res (" << saferes_
+			<< ") is larger than the length of the element (" << elem_length()
+			<< ") encountered while parsing " << *tag << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
+
+	set_cutpoint( tag->getOption< core::Size >( "cutpoint", cutpoint_ ) );
+	if ( cutpoint_ > elem_length() ) {
+		std::stringstream msg;
+		msg << "Segment::parse_tag(): Cutpoint res (" << saferes_
+			<< ") is larger than the length of the element (" << elem_length()
+			<< ") encountered while parsing " << *tag << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+	}
+
+	set_lower_segment( tag->getOption< std::string >( "lower_segment", "" ) );
+	set_upper_segment( tag->getOption< std::string >( "upper_segment", "" ) );
+
+	movable_group_ = tag->getOption< core::Size >( "mgroup", movable_group_ );
+	movable_group_ = tag->getOption< core::Size >( "group", movable_group_ );
 }
 
-core::Size
-Segment::resid( core::Size const local_resnum ) const
+void
+Segment::parse_motif( std::string const & motif_str )
 {
-	debug_assert( local_resnum );
-	debug_assert( local_resnum <= stop_ );
-	return start() + local_resnum - 1;
+	clear();
+	extend( "L", "X" );
+	utility::vector1< std::string > const motifs = utility::string_split( motif_str, '-' );
+	for ( utility::vector1< std::string >::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
+		// here, we can accept "3LX" or "3:LX"
+		std::string motif_seg = "";
+		for ( std::string::const_iterator c=m->begin(); c!=m->end(); ++c ) {
+			if ( *c == ' ' ) continue;
+			if ( *c == '\t' ) continue;
+			if ( *c == '\n' ) continue;
+			if ( *c == ':' ) continue;
+			motif_seg += *c;
+		}
+
+		if ( motif_seg.empty() ) continue;
+
+		char const ss_type( motif_seg[motif_seg.size()-2] );
+		if ( (ss_type != 'H') && (ss_type != 'L') && (ss_type != 'E') ) {
+			TR.Error << "Segment::parse_motif(): Invalid SS type in motif " << motif_seg << std::endl;
+			utility_exit();
+		}
+
+		char const abego_type( motif_seg[ motif_seg.size() - 1 ] );
+		if ( abego_type > 'Z' || abego_type < 'A' ) {
+			TR.Error << "Segment::parse_motif(): Invalid abego type in motif " << motif_seg << std::endl;
+			utility_exit();
+		}
+
+		int const len( utility::string2int( motif_seg.substr( 0, motif_seg.size()-2 ) ) );
+
+		std::string const secstruct( len, ss_type );
+		std::string const abego( len, abego_type );
+		extend( secstruct, abego );
+	}
+	extend( "L", "X" );
+}
+
+/// @brief converts a pose resid to a segment resid
+///        Numbering starts at start_res
+///        start() --> N - posestart - start_local() + 1
+///        start() + 1 --> N - posestart - start_local() + 2
+SegmentResid
+Segment::pose_to_segment( core::Size const pose_resid ) const
+{
+	core::Size const local_resid = pose_to_local( pose_resid );
+	return local_to_segment( local_resid );
+}
+
+/// @brief converts a local resid to a pose resid
+///        1 --> start_res - 1 + 1
+///        2 --> start_res - 1 + 1
+///        N --> start_res - 1 + N
+core::Size
+Segment::segment_to_pose( SegmentResid const segment_resid ) const
+{
+	core::Size const local_resid = segment_to_local( segment_resid );
+	return local_to_pose( local_resid );
+}
+
+/// @brief converts an internal local resid to a segment resid
+SegmentResid
+Segment::local_to_segment( core::Size const local_resid ) const
+{
+	return local_resid - start_local() + 1;
+}
+
+/// @brief converts a pose resid to an internal local resid
+core::Size
+Segment::pose_to_local( core::Size const pose_resid ) const
+{
+	return pose_resid - posestart_ + 1;
+}
+
+/// @brief converts an internal local resid to a pose resid
+///        1 --> posestart - 1 + 1
+///        2 --> posestart - 1 + 2
+///        N --> posestart - 1 + N
+core::Size
+Segment::local_to_pose( core::Size const local_resid ) const
+{
+	debug_assert( posestart_ );
+	debug_assert( local_resid <= length() );
+	return posestart_ - 1 + local_resid;
+}
+
+/// @brief converts a segment resid into a local resid
+core::Size
+Segment::segment_to_local( SegmentResid const segment_resid ) const
+{
+	debug_assert( segment_resid );
+	if ( static_cast< core::Size >( std::abs( segment_resid ) ) > length() ) {
+		std::stringstream msg;
+		msg << "Segment::segment_to_local(): Given segment resid (" << segment_resid
+			<< ") is larger than the elem_length of the segment (" << elem_length()
+			<< "), segment=" << *this << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	if ( segment_resid < 0 ) {
+		return stop_local() + segment_resid + 1;
+	} else {
+		return start_local() + segment_resid - 1;
+	}
 }
 
 core::Size
 Segment::start() const
 {
-	return posestart_ + start_ - 1;
+	return local_to_pose( start_local() );
 }
 
 core::Size
 Segment::stop() const
 {
-	return posestart_ + stop_ - 1;
+	return local_to_pose( stop_local() );
 }
 
 core::Size
 Segment::safe() const
 {
-	return posestart_ + saferes_ - 1;
+	if ( saferes_ ) return local_to_pose( saferes_ );
+
+	core::Size const comp_safe = ( elem_length() + 1 )/ 2;
+	if ( comp_safe ) {
+		return segment_to_pose( comp_safe );
+	} else {
+		return 0; // should only happen in 0-elem-length segments
+	}
+}
+
+SegmentResid
+Segment::safe_segment() const
+{
+	if ( saferes_ == 0 ) return saferes_;
+
+	return local_to_segment( saferes_ );
 }
 
 core::Size
 Segment::cutpoint() const
 {
 	if ( cutpoint_ ) {
-		return posestart_ + cutpoint_ - 1;
+		return local_to_pose( cutpoint_ );
 	} else {
-		return 0;
+		return cutpoint_; // 0
+	}
+}
+
+SegmentResid
+Segment::cutpoint_segment() const
+{
+	if ( cutpoint_ == 0 ) return cutpoint_;
+
+	return local_to_segment( cutpoint_ );
+}
+
+/// @brief sets safe residue for this segment to be the ith residue in the segment
+///        safe = segment_start - 1 + cut_res
+void
+Segment::set_safe( SegmentResid const segment_resid )
+{
+	if ( static_cast< core::Size >( std::abs( segment_resid ) ) > elem_length() ) {
+		std::stringstream msg;
+		msg << "Segment::set_safe(): The given safe residue value (" << segment_resid
+			<< ") is larger than the length of the segment (" << elem_length()
+			<< ")!" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	if ( segment_resid == 0 ) {
+		saferes_ = 0;
+	} else {
+		saferes_ = segment_to_local( segment_resid );
+	}
+}
+
+/// @brief sets cutpoint for this segment to be the ith residue in the segment
+///        cut = segment_start - 1 + cut_res
+void
+Segment::set_cutpoint( SegmentResid const segment_resid )
+{
+	if ( static_cast< core::Size >( std::abs( segment_resid ) ) > elem_length() ) {
+		std::stringstream msg;
+		msg << "Segment::set_cutpoint(): The given cutpoint value (" << segment_resid
+			<< ") is larger than the length of the segment (" << elem_length()
+			<< ")!" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	if ( segment_resid == 0 ) {
+		cutpoint_ = 0;
+	} else {
+		cutpoint_ = segment_to_local( segment_resid );
 	}
 }
 
 /// @brief returns the n-terminal residue of this segment
 core::Size
-Segment::nterm_resi() const
+Segment::lower() const
 {
-	if ( nterm_included_ ) {
-		return start();
-	} else {
-		debug_assert( start() > 1 );
-		return start() - 1;
-	}
+	return local_to_pose( lower_local() );
+}
+
+/// @brief returns the n-terminal residue of this segment
+core::Size
+Segment::upper() const
+{
+	return local_to_pose( upper_local() );
 }
 
 core::Size
-Segment::cterm_resi() const
+Segment::n_residues_before_cutpoint() const
 {
-	if ( cterm_included_ ) {
-		return stop();
-	} else {
-		return stop() + 1;
-	}
+	return cutpoint_;
 }
 
-std::string
-Segment::serialize() const
+core::Size
+Segment::n_residues_after_cutpoint() const
 {
-	std::string ab = "";
-	for ( core::Size i=1; i<=abego_.size(); ++i ) {
-		ab += abego_[i][0];
-	}
-	return boost::lexical_cast< std::string >( start() ) + ":" +
-		boost::lexical_cast< std::string >( stop() ) + ":" +
-		boost::lexical_cast< std::string >( safe() ) + ":" +
-		boost::lexical_cast< std::string >( movable_group ) + ":" +
-		boost::lexical_cast< std::string >( is_loop ) + ":" +
-		boost::lexical_cast< std::string >( nterm_included_ ) + ":" +
-		boost::lexical_cast< std::string >( cterm_included_ ) + ":" +
-		lower_segment_ + ":" + upper_segment_ + ":" + ss_ + ":" + ab;
+	return length() - cutpoint_;
 }
 
 void
-Segment::set_nterm_included( bool const ntermval )
+Segment::add_lower_padding()
 {
-	if ( nterm_included_ && ( ntermval == false ) ) {
-		ss_ = 'L' + ss_;
-		utility::vector1< std::string > newabego;
-		newabego.push_back( "X" );
-		for ( int i=1, endi=abego_.size(); i<=endi; ++i ) {
-			newabego.push_back( abego_[i] );
-		}
-		debug_assert( newabego.size() == abego_.size() + 1 );
-		abego_ = newabego;
-		start_ += 1;
-		saferes_ += 1;
-		stop_ += 1;
-		if ( cutpoint_ ) {
-			cutpoint_ += 1;
-		}
-	}
-	nterm_included_ = ntermval;
+	debug_assert( !template_pose_ );
+	if ( !nterm_included_ ) return;
+	ss_ = 'L' + ss_;
+	set_abego( 'X' + abego_ );
+	if ( saferes_ ) saferes_ += 1;
+	if ( cutpoint_ ) cutpoint_ += 1;
+	nterm_included_ = false;
 }
 
 void
-Segment::set_cterm_included( bool const ctermval )
+Segment::add_upper_padding()
 {
-	if ( cterm_included_ && ( ctermval == false ) ) {
-		ss_ = ss_ + 'L';
-		abego_.push_back( "X" );
-	}
-	cterm_included_ = ctermval;
+	debug_assert( !template_pose_ );
+	if ( !cterm_included_ ) return;
+	ss_ = ss_ + 'L';
+	set_abego( abego_ + 'X' );
+	cterm_included_ = false;
 }
 
 void
-Segment::delete_leading_residues()
+Segment::delete_lower_padding()
 {
 	// nothing to do
 	if ( nterm_included_ ) {
 		return;
 	}
 
-	core::Size const pad = nterm_pad();
-	std::string const newss = ss_.substr(pad,std::string::npos);
-	ss_ = newss;
-	utility::vector1< std::string > newabego( abego_.size() - pad );
-	std::copy( abego_.begin() + pad, abego_.end(), newabego.begin() );
-	abego_ = newabego;
-	nterm_included_ = true;
-	start_ = 1;
-	debug_assert( stop_ > pad );
-	stop_ -= pad;
-	debug_assert( saferes_ > pad );
-	saferes_ -= pad;
+	core::Size const pad = lower_padding();
+	ss_ = ss_.substr( pad, std::string::npos );
+	set_abego( abego_.substr( pad, std::string::npos ) );
+	if ( saferes_ ) {
+		debug_assert( saferes_ > pad );
+		saferes_ -= pad;
+	}
 	if ( cutpoint_ ) {
 		debug_assert( cutpoint_ > pad );
 		cutpoint_ -= pad;
 	}
+
+	//if ( template_pose_ ) {
+	//	core::kinematics::FoldTree ft;
+	//	ft.add_edge( template_pose_->total_residue(), 1, -1 );
+	//	template_pose_->fold_tree( ft );
+	//	template_pose_->delete_polymer_residue( 1 );
+	//}
+	nterm_included_ = true;
 }
 
 void
-Segment::delete_trailing_residues()
+Segment::delete_upper_padding()
 {
 	// nothing to do
 	if ( cterm_included_ ) {
 		return;
 	}
 
-	core::Size const pad = cterm_pad();
-	debug_assert( length()-pad > 0 );
-	std::string const newss = ss_.substr(0,length()-pad);
-	ss_ = newss;
-	utility::vector1< std::string > newabego( abego_.size() - pad );
-	std::copy( abego_.begin(), abego_.end()-pad, newabego.begin() );
-	abego_ = newabego;
+	core::Size const stop_residue = stop_local();
+	debug_assert( stop_residue > 0 );
+	ss_ = ss_.substr( 0, stop_residue );
+	set_abego( abego_.substr( 0, stop_residue ) );
+
+	//if ( template_pose_ ) {
+	//	core::kinematics::FoldTree ft;
+	//	ft.add_edge( 1, template_pose_->total_residue(), -1 );
+	//	template_pose_->fold_tree( ft );
+	//	template_pose_->delete_polymer_residue( template_pose_->total_residue() );
+	//}
 	cterm_included_ = true;
 }
 
 /// @brief expands this residue set to include the dummy trailing residues
-void
-Segment::engulf_leading_residues()
+//void
+//Segment::engulf_lower_padding()
+//{
+//	nterm_included_ = true;
+//	// abego and ss stay the same
+//}
+//
+///// @brief expands this residue set to include the dummy trailing residues
+//void
+//Segment::engulf_upper_padding()
+//{
+//	cterm_included_ = true;
+//	// abego and ss stay the same
+//}
+
+core::Size
+Segment::template_resid( SegmentResid const segment_resid ) const
 {
-	start_ = 1;
-	nterm_included_ = true;
-	// abego and ss stay the same
+	core::Size template_resid;
+	if ( segment_resid < 0 ) {
+		template_resid = elem_length() + 1 + segment_resid;
+	} else {
+		template_resid = static_cast< core::Size >( segment_resid );
+	}
+	return template_resid;
 }
 
-/// @brief expands this residue set to include the dummy trailing residues
+/// @brief given a segment residue number, delete that residue. Resid for start_local() == 1
 void
-Segment::engulf_trailing_residues()
+Segment::delete_residue( SegmentResid const segment_resid )
 {
-	core::Size const pad = cterm_pad();
-	stop_ += pad;
-	cterm_included_ = true;
-	// abego and ss stay the same
+	core::Size const local_resid = segment_to_local( segment_resid );
+	if ( cutpoint_ && ( local_resid <= cutpoint_ ) ) {
+		--cutpoint_;
+	}
+	if ( saferes_ && ( local_resid <= saferes_ ) ) {
+		--saferes_;
+	}
+
+	// fix secondary structure
+	std::stringstream newss;
+	newss << ss_.substr( 0, local_resid - 1 ) << ss_.substr( local_resid, std::string::npos );
+	ss_ = newss.str();
+
+	// fix abego
+	std::stringstream newabego;
+	newabego << abego_.substr( 0, local_resid - 1 ) << abego_.substr( local_resid, std::string::npos );
+	set_abego( newabego.str() );
+
+	// delete residue in template pose
+	if ( template_pose_ ) {
+		core::Size const resid = template_resid( segment_resid );
+		protocols::grafting::simple_movers::DeleteRegionMover del( resid, resid );
+		del.apply( *template_pose_ );
+	}
 }
 
 /// @brief given a residue number range local to this 1=start, length=end, delete the residue
@@ -355,68 +637,260 @@ void
 Segment::delete_residues( core::Size const local_resnum_start, core::Size const local_resnum_stop )
 {
 	debug_assert( local_resnum_start >= 1 );
-	debug_assert( local_resnum_stop <= stop_ );
+	debug_assert( local_resnum_stop <= stop_local() );
 	debug_assert( local_resnum_start <= local_resnum_stop );
 
 	core::Size const len = local_resnum_stop - local_resnum_start + 1;
-	debug_assert( len < stop_ );
-	stop_ -= len;
-	debug_assert( stop_ >= start_ );
+	debug_assert( len < stop_local() );
 
 	if ( local_resnum_stop <= cutpoint_ ) {
 		cutpoint_ -= len;
-		debug_assert( cutpoint_ >= start_ );
+		debug_assert( cutpoint_ >= start_local() );
 	} else if ( local_resnum_start <= cutpoint_ ) {
 		cutpoint_ = local_resnum_start;
 	}
 	if ( local_resnum_stop <= saferes_ ) {
 		saferes_ -= len;
-		debug_assert( saferes_ >= start_ );
+		debug_assert( saferes_ >= start_local() );
 	} else if ( local_resnum_start <= saferes_ ) {
 		saferes_ = local_resnum_start;
 	}
 
 	// fix secondary structure
-	std::string newss = ss_.substr(0,local_resnum_start-1);
+	std::string newss = ss_.substr( 0, local_resnum_start-1 );
 	newss += ss_.substr( local_resnum_stop, std::string::npos );
 	ss_ = newss;
 
 	// fix abego
-	utility::vector1< std::string > newabego;
-	for ( core::Size i=1; i<local_resnum_start; ++i ) {
-		newabego.push_back( abego_[i] );
+	std::string newab = abego_.substr( 0, local_resnum_start-1 );
+	newab += abego_.substr( local_resnum_stop, std::string::npos );
+	set_abego( newab );
+}
+
+/// @brief returns template pose
+core::pose::PoseCOP
+Segment::template_pose() const
+{
+	return template_pose_;
+}
+
+/// @brief sets template pose
+void
+Segment::set_template_pose(
+	core::pose::Pose const & full_template_pose,
+	core::Size const start_resid,
+	core::Size const stop_resid )
+{
+	// this adds terminal variants that I may not want
+	core::pose::PoseOP subpose( new core::pose::Pose( full_template_pose, start_resid, stop_resid ) );
+
+	// if it does, remove them
+	if ( !full_template_pose.residue( start_resid ).is_lower_terminus() ) {
+		core::pose::remove_lower_terminus_type_from_pose_residue( *subpose, 1 );
+
+		// reset locations of terminal hydrogen
+		if ( subpose->residue(1).type().has( "H" ) ) {
+			core::id::AtomID const id( subpose->residue(1).type().atom_index( "H" ), 1 );
+			subpose->set_xyz( id, full_template_pose.residue( start_resid ).xyz( "H" ) );
+			TR << "Set position of H from " << start_resid << std::endl;
+		}
 	}
-	for ( core::Size i=local_resnum_stop+1, end=length()+len; i<=end; ++i ) {
-		newabego.push_back( abego_[i] );
+
+	if ( !full_template_pose.residue( stop_resid ).is_upper_terminus() ) {
+		core::pose::remove_upper_terminus_type_from_pose_residue( *subpose, subpose->total_residue() );
+		if ( subpose->residue( subpose->total_residue() ).has( "O" ) ) {
+			core::id::AtomID const id( subpose->residue(subpose->total_residue()).type().atom_index( "O" ), subpose->total_residue() );
+			subpose->set_xyz( id, full_template_pose.residue( stop_resid ).xyz( "O" ) );
+			TR << "Set position of O from " << stop_resid << std::endl;
+		}
 	}
-	abego_ = newabego;
+
+	template_pose_ = subpose;
+	if ( template_pose_->total_residue() != elem_length() ) {
+		std::stringstream msg;
+		msg << "Segment::set_template_pose(): Template pose's length (" << template_pose_->total_residue()
+			<< ") does not match the segment length (" << elem_length() << "). Quitting." << std::endl;
+		msg << " Segment definition: " << *this << std::endl;
+		msg << "start=" << start_resid << " stop=" << stop_resid << " template_len=" <<
+			full_template_pose.total_residue() << " subpose_len=" << subpose->total_residue() << std::endl;
+		std::string const template_dump = "template_pose.pdb";
+		std::string const subpose_dump = "template_subpose.pdb";
+		msg << "Full template pose dumped to " << template_dump << ", extracted subpose dumped to"
+			<< subpose_dump << std::endl;
+		full_template_pose.dump_pdb( template_dump );
+		subpose->dump_pdb( subpose_dump );
+		utility_exit_with_message( msg.str() );
+	}
+	if ( start_resid - 1 > 0 ) {
+		lower_dihedrals_ = ResidueDihedrals( full_template_pose, start_resid - 1 );
+		lower_residue_ = full_template_pose.residue( start_resid - 1 ).clone();
+	} else {
+		lower_dihedrals_ = ResidueDihedrals();
+	}
+	if ( stop_resid + 1 <= full_template_pose.total_residue() ) {
+		upper_dihedrals_ = ResidueDihedrals( full_template_pose, stop_resid );
+		upper_residue_ = full_template_pose.residue( stop_resid + 1 ).clone();
+	} else {
+		upper_dihedrals_ = ResidueDihedrals();
+	}
+}
+
+ResidueDihedrals const &
+Segment::lower_dihedrals() const
+{
+	return lower_dihedrals_;
+}
+
+ResidueDihedrals const &
+Segment::upper_dihedrals() const
+{
+	return upper_dihedrals_;
+}
+
+core::conformation::Residue const &
+Segment::lower_residue() const
+{
+	return *lower_residue_;
+}
+
+core::conformation::Residue const &
+Segment::upper_residue() const
+{
+	return *upper_residue_;
 }
 
 void
-Segment::set_abego( utility::vector1< std::string > const & abego )
+Segment::extend( std::string const & secstruct, std::string const & abego )
 {
-	debug_assert( abego.size() == length() );
-	abego_ = abego;
+	ss_ += secstruct;
+	abego_ += abego;
+}
+
+std::string const &
+Segment::ss() const
+{
+	return ss_;
+}
+
+void
+Segment::set_ss( SegmentResid const segment_resid, char const ss_type )
+{
+	ss_[ segment_to_local( segment_resid ) - 1 ] = ss_type;
+}
+
+std::string const &
+Segment::abego() const
+{
+	return abego_;
+}
+
+char
+Segment::abego( SegmentResid const segment_resid ) const
+{
+	return abego_[ segment_to_local( segment_resid ) - 1 ];
+}
+
+void
+Segment::set_abego( std::string const & abego_str )
+{
+	if ( abego_str.size() != length() ) {
+		std::stringstream msg;
+		msg << "Segment::set_abego(): Abego string's length (" << abego_str.size()
+			<< ") does not match the segment length (" << length() << "). Quitting." << std::endl;
+		msg << " Segment definition: " << *this << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	abego_ = abego_str;
+}
+
+void
+Segment::set_abego( utility::vector1< std::string > const & abego_vec )
+{
+	set_abego( abego_str( abego_vec ) );
+}
+
+/////////////// ResidueDihedrals Definitions ///////////////////
+
+ResidueDihedrals::ResidueDihedrals():
+	lower_phi_( 42.0 ),
+	psi_( 42.0 ),
+	omega_( 42.0 ),
+	phi_( 42.0 ),
+	upper_psi_( 42.0 ),
+	upper_omega_( 42.0 )
+{}
+
+ResidueDihedrals::ResidueDihedrals( core::pose::Pose const & input, core::Size const lower_resid ):
+	lower_phi_( input.phi( lower_resid ) ),
+	psi_( input.psi( lower_resid ) ),
+	omega_( input.omega( lower_resid ) ),
+	phi_( input.phi( lower_resid + 1 ) ),
+	upper_psi_( input.psi( lower_resid + 1 ) ),
+	upper_omega_( input.omega( lower_resid + 1 ) )
+{}
+
+core::Real
+ResidueDihedrals::phi() const
+{
+	return phi_;
+}
+
+core::Real
+ResidueDihedrals::psi() const
+{
+	return psi_;
+}
+
+core::Real
+ResidueDihedrals::omega() const
+{
+	return omega_;
+}
+
+core::Real
+ResidueDihedrals::lower_phi() const
+{
+	return lower_phi_;
+}
+
+core::Real
+ResidueDihedrals::upper_psi() const
+{
+	return upper_psi_;
+}
+
+core::Real
+ResidueDihedrals::upper_omega() const
+{
+	return upper_omega_;
+}
+
+void
+ResidueDihedrals::set_in_pose( core::pose::Pose & pose, core::Size const lower_resid ) const
+{
+	pose.set_psi( lower_resid, psi_ );
+	pose.set_omega( lower_resid, omega_ );
+	pose.set_phi( lower_resid + 1, phi_ );
+	pose.set_psi( lower_resid + 1, upper_psi_ );
+	TR.Debug << "Set psi for " << lower_resid << " from " << pose.psi( lower_resid ) << " to " << psi_ << std::endl;
+	TR.Debug << "Set omega for " << lower_resid << " from " << pose.omega( lower_resid ) << " to " << omega_ << std::endl;
+	TR.Debug << "Set phi for " << lower_resid + 1 << " from " << pose.phi( lower_resid + 1 ) << " to " << phi_ << std::endl;
+	TR.Debug << "Set psi for " << lower_resid + 1 << " from " << pose.psi( lower_resid + 1 ) << " to " << upper_psi_ << std::endl;
 }
 
 /// output residueinfo
 std::ostream &
 operator<<( std::ostream & os, Segment const & res )
 {
-	std::string ab_str = "";
-	for ( core::Size i=1, end=res.abego().size(); i<=end; ++i ) {
-		ab_str += res.abego()[i][0];
-	}
 	os << "start=\"" << res.start()
 		<< "\" stop=\"" << res.stop()
-		<< "\" safe=\"" << res.safe()
+		<< "\" safe=\"" << res.safe_segment()
 		<< "\" nterm=\"" << res.nterm_included_
 		<< "\" cterm=\"" << res.cterm_included_
-		<< "\" loop=\"" << res.is_loop
-		<< "\" mgroup=\"" << res.movable_group
-		<< "\" cutpoint=\"" << res.cutpoint()
+		<< "\" group=\"" << res.movable_group_
+		<< "\" cutpoint=\"" << res.cutpoint_segment()
 		<< "\" ss=\"" << res.ss()
-		<< "\" abego=\"" << ab_str;
+		<< "\" abego=\"" << res.abego();
 
 	if ( res.lower_segment() != "" ) {
 		os << "\" lower_segment=\"" << res.lower_segment();
@@ -439,3 +913,95 @@ operator<<( std::ostream & os, NamedSegment const & resis )
 } // namespace components
 } // namespace denovo_design
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Serialization method for ResidueDihedrals
+template< class Archive >
+void
+protocols::denovo_design::components::ResidueDihedrals::save( Archive & arc ) const
+{
+	//arc( cereal::base_class< utility::pointer::ReferenceCount >( this ) );
+	arc( CEREAL_NVP( lower_phi_ ) );
+	arc( CEREAL_NVP( psi_ ) );
+	arc( CEREAL_NVP( omega_ ) );
+	arc( CEREAL_NVP( phi_ ) );
+	arc( CEREAL_NVP( upper_psi_ ) );
+	arc( CEREAL_NVP( upper_omega_ ) );
+}
+
+/// @brief Deserialization method for ResidueDihedrals
+template< class Archive >
+void
+protocols::denovo_design::components::ResidueDihedrals::load( Archive & arc )
+{
+	//arc( cereal::base_class< utility::pointer::ReferenceCount >( this ) );
+	arc( lower_phi_ );
+	arc( psi_ );
+	arc( omega_ );
+	arc( phi_ );
+	arc( upper_psi_ );
+	arc( upper_omega_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::denovo_design::components::ResidueDihedrals );
+CEREAL_REGISTER_TYPE( protocols::denovo_design::components::ResidueDihedrals )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_denovo_design_components_ResidueDihedrals )
+
+/// @brief Serialization method for Segment
+template< class Archive >
+void
+protocols::denovo_design::components::Segment::save( Archive & arc ) const
+{
+	arc( CEREAL_NVP( posestart_ ) );
+	arc( CEREAL_NVP( movable_group_ ) );
+	arc( CEREAL_NVP( saferes_ ) );
+	arc( CEREAL_NVP( cutpoint_ ) );
+	arc( CEREAL_NVP( ss_ ) );
+	arc( CEREAL_NVP( abego_ ) );
+	arc( CEREAL_NVP( nterm_included_ ) );
+	arc( CEREAL_NVP( cterm_included_ ) );
+	arc( CEREAL_NVP( lower_segment_ ) );
+	arc( CEREAL_NVP( upper_segment_ ) );
+	arc( CEREAL_NVP( template_pose_ ) );
+	arc( CEREAL_NVP( lower_dihedrals_ ) );
+	arc( CEREAL_NVP( upper_dihedrals_ ) );
+	arc( CEREAL_NVP( lower_residue_ ) );
+	arc( CEREAL_NVP( upper_residue_ ) );
+}
+
+/// @brief Deserialization method for Segment
+template< class Archive >
+void
+protocols::denovo_design::components::Segment::load( Archive & arc )
+{
+	arc( posestart_ );
+	arc( movable_group_ );
+	arc( saferes_ );
+	arc( cutpoint_ );
+	arc( ss_ );
+	arc( abego_ );
+	arc( nterm_included_ );
+	arc( cterm_included_ );
+	arc( lower_segment_ );
+	arc( upper_segment_ );
+	arc( template_pose_ );
+	arc( lower_dihedrals_ );
+	arc( upper_dihedrals_ );
+	core::conformation::ResidueOP lower_res;
+	arc( lower_res );
+	lower_residue_ = lower_res;
+
+	core::conformation::ResidueOP upper_res;
+	arc( upper_res );
+	upper_residue_ = upper_res;
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::denovo_design::components::Segment );
+CEREAL_REGISTER_TYPE( protocols::denovo_design::components::Segment )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_denovo_design_components_Segment )
+
+#endif // SERIALIZATION
+

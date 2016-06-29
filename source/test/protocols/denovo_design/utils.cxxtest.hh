@@ -23,7 +23,7 @@
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/connection/Connection.hh>
+//include <protocols/denovo_design/connection/Connection.hh>
 
 // Core headers
 
@@ -40,18 +40,19 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.UtilTests.cxxtest" );
 
+typedef utility::vector1< std::string > Motifs;
+
 protocols::denovo_design::components::StructureDataOP
-structuredata_from_motifs( protocols::denovo_design::connection::Connection::MotifList const & motifs )
+structuredata_from_motifs( Motifs const & motifs )
 {
 	using namespace protocols::denovo_design;
 	using namespace protocols::denovo_design::components;
-	using namespace protocols::denovo_design::connection;
 
-	StructureDataOP perm( new MultiChainStructureData( "test" ) );
+	StructureDataOP perm( new StructureData( "test" ) );
 	core::Size segment_num = 1;
-	Connection::MotifList::const_iterator prev = motifs.end();
-	Connection::MotifList::const_iterator next = ++motifs.begin();
-	for ( Connection::MotifList::const_iterator m=motifs.begin(); m!=motifs.end(); ++m, ++segment_num, ++next ) {
+	Motifs::const_iterator prev = motifs.end();
+	Motifs::const_iterator next = ++motifs.begin();
+	for ( Motifs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m, ++segment_num, ++next ) {
 		std::string const segment_name = boost::lexical_cast< std::string >( segment_num );
 
 		std::string lower = "";
@@ -63,11 +64,13 @@ structuredata_from_motifs( protocols::denovo_design::connection::Connection::Mot
 			upper = boost::lexical_cast< std::string >( segment_num + 1 );
 		}
 
-		Segment newsegment( m->len, m->len / 2  + 1, 0,
-			segment_num, false,
-			true, true,
-			lower, upper,
-			m->ss, abego_vector( m->abego ) );
+		Segment newsegment;
+		newsegment.parse_motif( *m );
+		newsegment.set_movable_group( segment_num );
+		newsegment.delete_lower_padding();
+		newsegment.delete_upper_padding();
+		newsegment.set_lower_segment( lower );
+		newsegment.set_upper_segment( upper );
 		perm->add_segment( segment_name, newsegment );
 		prev = m;
 	}
@@ -103,13 +106,8 @@ public:
 	void test_bulge_strandpairing() {
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
-		using namespace protocols::denovo_design::connection;
-		Connection::MotifList const motifs = boost::assign::list_of
-			( Connection::Motif( 1, 'L', "X" ) )
-			( Connection::Motif( 5, 'E', "B" ) )
-			( Connection::Motif( 2, 'L', "G" ) )
-			( Connection::Motif( 4, 'E', "B" ) )
-			( Connection::Motif( 1, 'L', "X" ) );
+		Motifs const motifs = boost::assign::list_of
+			("1LX")("5EB")("2LG")("4EB")("1LX");
 		TR << motifs << std::endl;
 		StructureDataOP perm = structuredata_from_motifs( motifs );
 		TS_ASSERT( perm );
@@ -119,10 +117,10 @@ public:
 		reset( *perm );
 
 		// add bulge
-		utility::vector1< std::string > e1_abego = perm->segment( "2" ).abego();
+		utility::vector1< std::string > e1_abego = abego_vector( perm->segment( "2" ).abego() );
 		e1_abego[ 2 ] = "A";
 		perm->set_abego( "2", e1_abego );
-		TS_ASSERT_EQUALS( perm->segment( "2" ).abego()[ 2 ], "A" );
+		TS_ASSERT_EQUALS( perm->segment( "2" ).abego()[ 1 ], 'A' );
 		TR << *perm << std::endl;
 
 		// count bulges

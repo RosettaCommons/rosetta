@@ -31,6 +31,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
@@ -83,7 +84,8 @@ private:   // private functions
 private:   // options
 
 private:   // other data
-
+	/// @brief residue selector to choose residues near which to scan
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 

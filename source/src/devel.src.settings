@@ -51,7 +51,6 @@ sources = {
 		"minimalCstRelaxUtil",
 	],
 	"devel/denovo_design": [
-		"BuildSheet",
 		"ConnectJumps",
 		"DumpStatsSS",
 		"GenericSimulatedAnnealer",

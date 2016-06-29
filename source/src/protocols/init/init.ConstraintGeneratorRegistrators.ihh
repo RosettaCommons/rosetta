@@ -20,12 +20,13 @@ using protocols::constraint_generator::ConstraintGeneratorRegistrator;
 
 static ConstraintGeneratorRegistrator< constraint_generator::AtomPairConstraintGeneratorCreator > reg_AtomPairConstraintGeneratorCreator;
 static ConstraintGeneratorRegistrator< constraint_generator::CoordinateConstraintGeneratorCreator > reg_CoordinateConstraintGeneratorCreator;
+static ConstraintGeneratorRegistrator< constraint_generator::DistanceConstraintGeneratorCreator > reg_DistanceConstraintGeneratorCreator;
 static ConstraintGeneratorRegistrator< constraint_generator::HydrogenBondConstraintGeneratorCreator > reg_HydrogenBondConstraintGeneratorCreator;
 static ConstraintGeneratorRegistrator< constraint_generator::TerminiConstraintGeneratorCreator > reg_TerminiConstraintGeneratorCreator;
 
 static ConstraintGeneratorRegistrator< denovo_design::constraints::FileConstraintGeneratorCreator > reg_FileConstraintGeneratorCreator;
 
-static ConstraintGeneratorRegistrator< protocols::fldsgn::SheetConstraintGeneratorCreator > reg_SheetConstraintGeneratorCreator;
+static ConstraintGeneratorRegistrator< fldsgn::SheetConstraintGeneratorCreator > reg_SheetConstraintGeneratorCreator;
 
 } // namespace protocols
 

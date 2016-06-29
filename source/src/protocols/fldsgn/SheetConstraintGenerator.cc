@@ -20,6 +20,7 @@
 // Package headers
 #include <protocols/constraint_generator/util.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
@@ -330,18 +331,18 @@ SheetConstraintGenerator::get_secstruct_and_strandpairings( core::pose::Pose con
 	std::string spairs = spairs_;
 
 	// fill in gaps with structuredata information, if necessary
-	denovo_design::components::StructureDataOP sd;
+	denovo_design::components::StructureDataOP sd =
+		denovo_design::components::StructureDataFactory::get_instance()->create_from_pose( pose, id() );
+
 	if ( secstruct.empty() || spairs.empty() ) {
-		sd = denovo_design::components::StructureData::create_from_pose( pose, "sheetcst" );
-		debug_assert( sd );
-	}
-	if ( secstruct.empty() ) {
-		secstruct = sd->ss();
-		TR << "StructureData information is used for determinining secondary structure: " << secstruct << std::endl;
-	}
-	if ( spairs.empty() ) {
-		spairs = protocols::denovo_design::get_strandpairings( *sd, true );
-		TR << "StructureData information is used for determinining constraint residue pairs: " << spairs << std::endl;
+		if ( secstruct.empty() ) {
+			secstruct = sd->ss();
+			TR << "StructureData information is used for determinining secondary structure: " << secstruct << std::endl;
+		}
+		if ( spairs.empty() ) {
+			spairs = protocols::denovo_design::get_strandpairings( *sd, true );
+			TR << "StructureData information is used for determinining constraint residue pairs: " << spairs << std::endl;
+		}
 	}
 
 	// catch the case where ligands aren't present, e.g. when initialized from blueprint

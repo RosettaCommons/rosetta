@@ -14,6 +14,9 @@
 #ifndef INCLUDED_protocols_filters_CalculatorFilter_hh
 #define INCLUDED_protocols_filters_CalculatorFilter_hh
 
+// Unit Headers
+#include <protocols/filters/CalculatorFilter.fwd.hh>
+
 // Project Headers
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>

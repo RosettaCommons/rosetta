@@ -162,15 +162,20 @@ PrimarySequenceNeighborhoodSelector::set_upper_residues( core::Size const nres )
 	upper_residues_ = nres;
 }
 
-std::string PrimarySequenceNeighborhoodSelector::get_name() const {
+std::string
+PrimarySequenceNeighborhoodSelector::get_name() const
+{
 	return PrimarySequenceNeighborhoodSelector::class_name();
 }
 
-std::string PrimarySequenceNeighborhoodSelector::class_name() {
+std::string
+PrimarySequenceNeighborhoodSelector::class_name()
+{
 	return "PrimarySequenceNeighborhood";
 }
 
-void PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void
+PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attributes;
@@ -180,7 +185,6 @@ void PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLS
 		+ XMLSchemaAttribute( "selector", xs_string );
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
 }
-
 
 ResidueSelectorOP
 PrimarySequenceNeighborhoodSelectorCreator::create_residue_selector() const {

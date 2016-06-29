@@ -38,19 +38,19 @@ class GeometryFilter : public filters::Filter
 {
 public:
 	GeometryFilter();
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
-	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Size compute( core::pose::Pose const & pose ) const;
+	virtual filters::FilterOP clone() const {
 		return filters::FilterOP( new GeometryFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	virtual filters::FilterOP fresh_instance() const{
 		return filters::FilterOP( new GeometryFilter() );
 	}
 
 	virtual ~GeometryFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real omega_cutoff_;
 	core::Real cart_bonded_cutoff_;
@@ -58,6 +58,7 @@ private:
 	core::Real cst_cutoff_;
 	core::Size start_;
 	core::Size end_;
+	bool count_bad_residues_;
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 

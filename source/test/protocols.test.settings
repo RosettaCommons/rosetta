@@ -168,9 +168,23 @@ sources = {
 	"denovo_design" :[
 		"ConsensusLoopDesign",
 		"DisulfidizeMover",
-		"StructureData",
-		"Segment",
 		"utils",
+	],
+
+	"denovo_design/architects" :[
+		"BetaSheetArchitectTests",
+		"CompoundArchitectTests",
+		"DeNovoArchitectTests",
+		"DeNovoMotifArchitectTests",
+	],
+
+	"denovo_design/components" :[
+		"FoldGraphTests",
+		"ExtendedPoseBuilderTests",
+		"StructureDataTests",
+		"StructureDataFactoryTests",
+		"StructureDataObserverTests",
+		"SegmentTests",
 	],
 
 	"denovo_design/filters" :[
@@ -179,8 +193,13 @@ sources = {
 
 	"denovo_design/connection" :[
 		"BridgeChains",
-		"Connection",
-		"ExtendChain",
+		"ConnectionArchitectTests",
+	],
+
+	"denovo_design/movers" :[
+		"AlignResiduesMoverTests",
+		"BuildDeNovoBackboneMoverTests",
+		"ExtendChainMover",
 	],
 
 	"generalized_kinematic_closure" : [
@@ -580,6 +599,8 @@ testinputfiles = [
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_default.cst",
+	"constraint_generator/HydrogenBondConstraintGenerator_complicated.cst",
+	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
 	"cyclic_peptide/dVdPN_A.pdb",
 	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",
@@ -589,6 +610,10 @@ testinputfiles = [
 	"cyclic_peptide_predict/seq.txt",
 	"cyclic_peptide_predict/seq_gly.txt",
 	"denovo_design/disulf_test.pdb",
+	"denovo_design/QTS.params",
+	"denovo_design/QTS_connectC6.txt",
+	"denovo_design/QTS_conformers.pdb",
+	"denovo_design/CYS_connectSG.txt",
 	"denovo_design/test_pdbcomp.pdb",
 	"denovo_design/test_sd.xml",
 	"denovo_design/test_structuredata_nonpeptidic.pdb",
@@ -596,6 +621,10 @@ testinputfiles = [
 	"denovo_design/QTS_conformers.pdb",
 	"denovo_design/QTS_connectC6.txt",
 	"denovo_design/CYS_connectSG.txt",
+	"denovo_design/components/helix14.pdb",
+	"denovo_design/components/helix15.pdb",
+	"denovo_design/components/test_enz_remark_input.pdb",
+	"denovo_design/components/test_fixed_trimer.pdb",
 	"denovo_design/connection/twohelix_structuredata.pdb",
 	"denovo_design/connection/test_input_loopremoved.pdb",
 	"denovo_design/connection/test_pdbcomp_BridgeChains.pdb",

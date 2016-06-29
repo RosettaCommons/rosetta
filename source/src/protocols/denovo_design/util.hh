@@ -51,8 +51,8 @@ bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
 void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
-	std::set< core::Size > const & set1,
-	std::set< core::Size > const & set2,
+	core::select::residue_selector::ResidueSubset const & set1,
+	core::select::residue_selector::ResidueSubset const & set2,
 	bool const keep_chirality=false
 );
 
@@ -81,7 +81,8 @@ utility::vector1< std::string >
 abego_vector( std::string const & ab );
 
 // gets a remark line, pasting multiple lines together if necessary
-std::string get_remark_line( core::io::Remarks::const_iterator & it_rem, core::io::Remarks::const_iterator const & end );
+std::string
+get_remark_line( core::io::Remarks::const_iterator & it_rem, core::io::Remarks::const_iterator const & end );
 
 /// @brief adds a remark to a Remarks object, splitting it into multiple remarks if it is too long
 void add_remark( core::io::Remarks & remarks, core::Size const num, std::string const & str_val );
@@ -120,12 +121,6 @@ parse_length_string( std::string const & len_str );
 core::Size
 extract_int( core::Real & num, core::Size const m, core::Size const n );
 
-/// @brief copies rotamers from the pose "src" into the permutation "dest"
-/// no backbone changes are made
-/// if detect_disulf flag is on, disulfides will be re-detected
-void
-copy_rotamers( components::StructureData & dest, core::pose::Pose const & src );
-
 /// @brief counts the beta-bulges in the given segment. This simply counts all abego A's in the segment
 core::Size
 count_bulges( components::StructureData const & perm, std::string const & segment );
@@ -139,6 +134,38 @@ std::string get_strandpairings(
 /// @brief dumps a pose into another pose as a new chain
 void
 add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined );
+
+/// @brief adds residues from template_pose to pose.  If new_chain == true, creates covalent bond
+void
+add_residues_to_pose(
+	core::pose::Pose & pose,
+	core::pose::Pose const & template_pose,
+	bool const new_chain );
+
+core::Size
+get_resid(
+	components::StructureData const & sd,
+	std::string const & resid_str );
+
+/// @brief evaluate linear chainbreak at a position
+/// @remarks If necessary, will evaluate using a copy of the Pose with a cut
+///  fold tree.  If cutpoint variants are present at chainbreak, will use
+///  existing variants and not modify them.  If cutpoint variants are not
+///  found will add them and then remove them once calculation is finished.
+///  Eventually this should be merged into protocols/forge/methods/linear_chainbreak.cc
+///  However, the changes I needed to make to that file break certain parts
+///  of remodel
+core::Real
+linear_chainbreak(
+	core::pose::Pose const & pose,
+	core::Size const pos );
+
+core::kinematics::FoldTree
+slide_jump(
+	core::kinematics::FoldTree const & ft_orig,
+	core::Size const jump_idx,
+	core::Size const new_start,
+	core::Size const new_stop );
 
 } // denovo_design
 } // protocols
@@ -163,6 +190,9 @@ std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & li
 /// @brief outputs a list of strings
 std::ostream & operator<<( std::ostream & os, std::list< std::string > const & list );
 
+/// @brief outpust a vector of strings
+std::ostream & operator<<( std::ostream & os, utility::vector1< std::string > const & vec );
+
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map );
 
@@ -177,10 +207,6 @@ std::ostream & operator<<( std::ostream & os, std::map< std::pair< std::string, 
 
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Real > const & map );
-
-// dupicate, please use one defined in numeric/xyzVector.io.hh
-/// @brief outputs a vector
-// std::ostream & operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec );
 
 } // std
 #endif

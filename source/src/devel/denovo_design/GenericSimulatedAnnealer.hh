@@ -42,6 +42,32 @@ enum TrialResult {
 	FINISHED
 };
 
+class AcceptedScores : public utility::vector1< core::Real > {
+public:
+	AcceptedScores( core::Size const iteration ):
+		utility::vector1< core::Real >(),
+		iteration_( iteration ),
+		rank_score_( 0.0 )
+	{}
+	AcceptedScores( core::Size const iteration, core::Real const rank_score ):
+		utility::vector1< core::Real >(),
+		iteration_( iteration ),
+		rank_score_( rank_score )
+	{}
+	AcceptedScores( core::Size const iteration, core::Real const rank_score, utility::vector1< core::Real > const & scores ):
+		utility::vector1< core::Real >( scores ),
+		iteration_( iteration ),
+		rank_score_( rank_score )
+	{}
+	friend std::ostream & operator<<( std::ostream & os, AcceptedScores const & scores );
+	core::Size iteration() const { return iteration_; }
+	core::Real rank_score() const { return rank_score_; }
+	void set_rank_score( core::Real const rank_score ) { rank_score_ = rank_score; }
+private:
+	core::Size iteration_;
+	core::Real rank_score_;
+};
+
 class GenericSimulatedAnnealer : public protocols::simple_moves::GenericMonteCarloMover {
 public:
 	/// @brief default constructor
@@ -71,7 +97,7 @@ public:
 	virtual void reset( Pose & pose );
 
 	/// @brief given a pose, score the result
-	utility::vector1< core::Real >
+	AcceptedScores
 	score_pose( core::pose::Pose const & pose ) const;
 
 public: // accessor
@@ -82,7 +108,7 @@ public: // accessor
 	/// @brief tests to see if the checkpoint files exist and have been generated
 	bool checkpoint_exists() const;
 	/// @brief gets a list of scores for acceptance number i
-	utility::vector1< core::Real > const &  accepted_scores( core::Size const i ) const { return accepted_scores_[i]; }
+	AcceptedScores const & accepted_scores( core::Size const i ) const { return accepted_scores_[i]; }
 	/// @brief number of acceptances
 	core::Size num_accepted_scores() const { return accepted_scores_.size(); }
 	/// @brief if boltz_rank is used, this will calculate the ranking score from a list of filter scores
@@ -121,6 +147,12 @@ private: // private functions
 	/// @brief calculates multiplier for temperatures based on which anneal step we are no
 	core::Real calc_temp_factor() const;
 
+	AcceptedScores
+	read_checkpoint_line( std::istream & is ) const;
+
+	void
+	recompute_rank_scores();
+
 private:
 	/// @brief counter for how many accepts it takes to reach equilibrium at a given temperature
 	core::Size history_;
@@ -133,7 +165,7 @@ private:
 	/// @brief if true, the checkpoint files will not be cleaned up after the apply() terminates. Useful for debugging/gathering statistics
 	bool keep_checkpoint_file_;
 	/// @brief a history of accepted scores, used for adapting temperature
-	utility::vector1< utility::vector1< core::Real > > accepted_scores_;
+	utility::vector1< AcceptedScores > accepted_scores_;
 	/// @brief the initial temperatures, used for adapting temperature
 	utility::vector1< core::Real > start_temperatures_;
 	/// @brief counter that tells which annealing step we are on

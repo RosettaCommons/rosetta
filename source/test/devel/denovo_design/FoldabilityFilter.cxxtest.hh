@@ -20,8 +20,6 @@
 // Unit headers
 #include <devel/denovo_design/filters/FoldabilityFilter.hh>
 
-// Project headers
-
 // Protocol headers
 #include <protocols/matdes/SymDofMover.hh>
 #include <protocols/moves/DsspMover.hh>
@@ -168,5 +166,19 @@ public:
 		TS_ASSERT_EQUALS( posecopy->fold_tree().jump_edge(1).start(), start - 1 );
 		TS_ASSERT_EQUALS( posecopy->fold_tree().jump_edge(1).stop(), end + 1 );
 	}
+
+	/* void nest_using_abegodb() {
+		using namespace devel::denovo_design::components;
+		using namespace devel::denovo_design::filters;
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "devel/denovo_design/test_foldability.pdb" );
+
+		ProtectedFoldabilityFilter folder;
+		IdealAbegoGeneratorOP abegodb( new IdealAbegoGenerator( "/work/tlinsky/abegodb/abegodata" ) );
+		folder.set_abegodb( abegodb );
+		folder.add_segment( 57, 60 );
+		folder.apply( input_pose );
+	}
+	*/
 
 };

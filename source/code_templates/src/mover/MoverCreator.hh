@@ -17,22 +17,20 @@
 
 #include <protocols/moves/MoverCreator.hh>
 
-
 --namespace--
 
 class --class--Creator : public protocols::moves::MoverCreator {
 
 public:
 
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	virtual protocols::moves::MoverOP
+	create_mover() const;
 
+	virtual std::string
+	keyname() const;
 
 };
 
 --end_namespace--
 
 #endif //INCLUDED_--path--_--class--_fwd_hh
-
-
-
