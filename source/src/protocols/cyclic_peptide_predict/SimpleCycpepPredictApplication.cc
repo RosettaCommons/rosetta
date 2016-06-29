@@ -721,12 +721,17 @@ SimpleCycpepPredictApplication::run() const {
 
 		TR << "Closure successful." << std::endl;
 		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_default_cst, 1) );
+		//Mover to update terminal peptide bond O and H atoms:
+		protocols::cyclic_peptide::DeclareBondOP final_termini( new protocols::cyclic_peptide::DeclareBond );
+		set_up_termini_mover( final_termini, pose );
+
 		(*sfxn_default_cst)(*pose);
 		core::Real cur_energy( pose->energies().total_energy() );
 		for ( core::Size i=1, imax=fast_relax_rounds_; i<=imax; ++i ) {
 			core::pose::PoseOP pose_copy( pose->clone() );
 			TR << "Applying final FastRelax, round " << i << "." << std::endl;
 			frlx->apply( *pose_copy );
+			final_termini->apply( *pose_copy );
 			(*sfxn_default_cst)(*pose_copy);
 			if ( pose_copy->energies().total_energy() < cur_energy ) {
 				cur_energy = pose_copy->energies().total_energy();
@@ -1337,6 +1342,11 @@ SimpleCycpepPredictApplication::genkic_close(
 		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
 		pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", NULL );
 	}
+
+	//Update O and H atoms at the cyclization point:
+	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
+	set_up_termini_mover( update_OH, pose );
+	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_O_and_H_atoms", NULL );
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {

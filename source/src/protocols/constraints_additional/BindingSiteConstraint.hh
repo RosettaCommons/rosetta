@@ -14,11 +14,11 @@
 ///File format example:
 /*
 [ bindingsites ]
-   CG 37  CD 38 CA 39 OG 40  CD1 41
-   CA 69  CA 70 CA 71 CA 72  CA  73
+CG 37  CD 38 CA 39 OG 40  CD1 41
+CA 69  CA 70 CA 71 CA 72  CA  73
 [ atompairs ]
-   CA  3 CA 49 HARMONIC 4.44 2.0
-   CA  5 CA 71 HARMONIC 4.68 2.0
+CA  3 CA 49 HARMONIC 4.44 2.0
+CA  5 CA 71 HARMONIC 4.68 2.0
 */
 
 #ifndef INCLUDED_protocols_constraints_additional_BindingSiteConstraint_hh
