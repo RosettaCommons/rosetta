@@ -151,7 +151,7 @@ std::string AntibodyRegionSelector::get_name() const
 
 std::string AntibodyRegionSelector::class_name()
 {
-	return "AntibodyRegionSelector";
+	return "AntibodyRegion";
 }
 
 void AntibodyRegionSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

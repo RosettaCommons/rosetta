@@ -185,7 +185,7 @@ std::string CDRResidueSelector::get_name() const
 
 std::string CDRResidueSelector::class_name()
 {
-	return "CDRResidueSelector";
+	return "CDR";
 }
 
 void CDRResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

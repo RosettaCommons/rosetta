@@ -87,15 +87,47 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 ///  option in tag.
 ///          If that option isn't found, returns NULL ptr
 ///          If that option is found, calls get_residue_selector()
-core::select::residue_selector::ResidueSelectorCOP
+ResidueSelectorCOP
 parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const &option_name="residue_selector" );
 
 /// @brief returns a residue selector given a selector's name and datamap
 /// @details Looks for selector in the datamap
 ///          Returns a const ptr to the selector
 /// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
-core::select::residue_selector::ResidueSelectorCOP
+ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
+
+/// @brief returns a residue selector embeded in a tag.
+/// for example, the Chain selector in the example below:
+///
+/// Example:
+///<RESIDUE_SELECTORS>
+///    <Neighborhood name="chAB_neighbors">
+///        <Chain chains="A,B">
+///    </Neighborhood>
+///</RESIDUE_SELECTORS>
+///
+/// @thorws utility::excn::EXCN_Msg_Exception if selector is not embedded ( ! tag->size() > 1)
+///
+ResidueSelectorOP
+get_embedded_residue_selector( 	utility::tag::TagCOP tag, basic::datacache::DataMap & datamap );
+
+/// @brief returns residue selectors embeded in a tag.
+/// for example, the Chain selector in the example below:
+///
+/// Example:
+///<RESIDUE_SELECTORS>
+///    <Neighborhood name="chAB_neighbors">
+///        <Chain chains="A,B">
+///        <Glycan >
+///    </Neighborhood>
+///</RESIDUE_SELECTORS>
+///
+/// @thorws utility::excn::EXCN_Msg_Exception if no embedded selectors (tag->size() <= 1)
+///
+utility::vector1< ResidueSelectorOP >
+get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap );
+
 
 }
 }

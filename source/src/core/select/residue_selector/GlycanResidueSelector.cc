@@ -111,7 +111,7 @@ std::string GlycanResidueSelector::get_name() const
 
 std::string GlycanResidueSelector::class_name()
 {
-	return "GlycanResidueSelector";
+	return "Glycan";
 }
 
 void GlycanResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
