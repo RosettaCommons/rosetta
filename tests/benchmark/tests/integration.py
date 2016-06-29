@@ -11,8 +11,11 @@
 ## @file   integration.py
 ## @brief  Rosetta integrtion tests
 ## @author Sergey Lyskov
+## @author Rocco Moretti (Valgrind additions)
+## @author Jared Adolf-Bryfogle( Demos/Tutorials additions)
 
-import os, os.path, shutil, commands
+import os, os.path, shutil, re, commands, fnmatch
+from collections import defaultdict
 import json
 
 import imp
@@ -57,57 +60,12 @@ def do_compile(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None
 
     return res, output, build_command_line
 
-
-def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
-    ''' Run TestSuite.
-        Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
-    '''
-
-    TR = Tracer(verbose)
-    full_log = ''
-
-    TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
-
-    results = {}
-
-    TR('Compiling...')
-    res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug)
-
-    full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
-
-    if res:
-        results[_StateKey_] = _S_build_failed_
-        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
-        return results
-
-    else:
-        ref_files_location = rosetta_dir+'/tests/integration/ref/'
-        if os.path.isdir(ref_files_location): TR( 'Removing old ref dir {}...'.format(ref_files_location) );  shutil.rmtree(ref_files_location)
-        TR('Creating a dummy ref dir {}...'.format(ref_files_location));
-        os.mkdir(ref_files_location)
-
-        files_location = rosetta_dir+'/tests/integration/new/'
-        #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
-
-        compiler = platform['compiler']
-        extras   = ','.join(platform['extras'])
-        #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        timeout = 60*8 if mode == 'release' else 60*60  # setting timeout to 8min on release and one hour on debug
-
-        command_line = 'cd {}/tests/integration && ./integration.py --skip-comparison --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
-        TR( 'Running integration script: {}'.format(command_line) )
-
-        if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
-        else:  res, output = execute('Running integration script...', command_line, return_='tuple')
-
-        full_log += output
-
-        if res:
-            results[_StateKey_] = _S_script_failed_
-            results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
-            return results
-
-    ignore = []
+def copy_files(files_location, working_dir):
+    """
+    Copy files to working directory for comparison or checking failures.
+    :param files_location: str
+    :param working_dir: str
+    """
     for d in os.listdir(files_location):
         if os.path.isdir(files_location + '/' + d):
             #print 'linking: %s <-- %s' % (root + d, working_dir + d)
@@ -121,11 +79,137 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
             #     fl = working_dir + '/' + d + '/' + f
             #     if os.path.isfile(fl): ignore.append(d + '/' + f)  #os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
+def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results):
+    """
+    Run the typical integration tests for integration and demos
 
-    results[_StateKey_]  = _S_queued_for_comparison_
+    Returns results and full_log so far.
+
+    :param platform: dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
+    :param TR: Tracer
+    :param debug: bool
+    :param full_log: str
+    :param build_command_line: str
+    :param results: dict
+    :rtype: str, str, dict
+    """
+
+    if re.search("--demos", additional_flags) or re.search("--tutorials", additional_flags):
+        ref_files_location = os.path.realpath(rosetta_dir+'/../demos/ref')
+    else:
+        ref_files_location = rosetta_dir+'/tests/integration/ref/'
+
+    if os.path.isdir(ref_files_location): TR( 'Removing old ref dir {}...'.format(ref_files_location) );  shutil.rmtree(ref_files_location)
+    TR('Creating a dummy ref dir {}...'.format(ref_files_location))
+    os.mkdir(ref_files_location)
+
+    compiler = platform['compiler']
+    extras   = ','.join(platform['extras'])
+    #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
+    timeout = 60*8 if mode == 'release' else 60*60  # setting timeout to 8min on release and one hour on debug
+
+    if re.search("--demos", additional_flags) or re.search("--tutorials", additional_flags):
+        timeout = 60*30
+
+    #Special case valgrind as it takes a *long* time - be very generous with the timeout.
+    if re.search("--valgrind", additional_flags):
+        timeout = 24*60*60  # If we've spent a full day on it, and it's still running, we're probably hosed.
+
+    command_line = 'cd {}/tests/integration && ./integration.py --skip-comparison --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
+    TR( 'Running integration script: {}'.format(command_line) )
+
+    #JAB - Why is this not run in debug mode, isn't this half the point?
+    #if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
+    #else: res, output = execute('Running integration script...', command_line, return_='tuple')
+    res, output = execute('Running integration script...', command_line, return_='tuple')
+    full_log += output
+
+    if res:
+        results[_StateKey_] = _S_script_failed_
+        results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+
+    return command_line, output, results
+
+
+######################################################
+def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
+    ''' Run TestSuite.
+        Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
+    '''
+
+    TR = Tracer(verbose)
+    full_log = ''
+
+    TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
+
+    results = defaultdict()
+
+    TR('Compiling...')
+    res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug)
+
+    full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
+
+    if res:
+        results[_StateKey_] = _S_build_failed_
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
+        return results
+
+    #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
+    command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+
+    ignore = []
+    files_location = rosetta_dir+'/tests/integration/new/'
+    copy_files(files_location, working_dir)
+
+    results[_StateKey_]  = _S_queued_for_comparison_ #This queues the comparison for the test server, which will run compare function in this file.
     results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
     results[_IgnoreKey_] = ignore
     return results
+
+
+def run_demo_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags='', diff_causes_failure=False):
+    ''' Run TestSuite for the Demos and Tutorials
+        Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
+
+        IF  diff_causes_failure=True, this indicates to use the DIFF for failure.  Here, we check to make sure it all runs without error.
+        Integration tests proper should check the diffs.  If a demo or tutorial is not covered sufficiently in integration and unit tests, so be it.
+    '''
+
+    TR = Tracer(verbose)
+    full_log = ''
+
+    TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
+
+    results = defaultdict()
+
+    TR('Compiling...')
+    res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug)
+    full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
+
+    if res:
+        results[_StateKey_] = _S_build_failed_
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
+        return results
+
+    command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+
+    ignore = []
+
+    files_location = os.path.realpath(rosetta_dir+'/../demos/new')
+    copy_files(files_location, working_dir)
+
+    #Do a DIFF to indicate pass or f
+    if diff_causes_failure:
+        results[_StateKey_]  = _S_queued_for_comparison_
+        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+        results[_IgnoreKey_] = ignore
+        return results
+
+    else:
+        results =  gather_pass_fail_results(files_location)
+        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
+        return results
+
 
 def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
     ''' Run TestSuite under valgrind
@@ -149,28 +233,9 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
         results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
         return results
 
-    else:
-        files_location = rosetta_dir+'/tests/integration/valgrind/'
-        json_results_file = os.path.abspath( files_location +"/valgrind_results.yaml" )
-
-        # Valgrind takes a *long* time - be very generous with the timeout.
-        timeout = 24*60*60  # If we've spent a full day on it, and it's still running, we're probably hosed.
-
-        compiler = platform['compiler']
-        extras   = ','.join(platform['extras'])
-
-        command_line = 'cd {}/tests/integration && ./integration.py --valgrind --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} --yaml {results_file} {additional_flags} '.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, results_file=json_results_file, additional_flags=additional_flags)
-        TR( 'Running integration with valgrindscript: {}'.format(command_line) )
-
-        if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
-        else:  res, output = execute('Running integration script...', command_line, return_='tuple')
-
-        full_log += output
-
-        if res:
-            results[_StateKey_] = _S_script_failed_
-            results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
-            return results
+    files_location = rosetta_dir+'/tests/integration/valgrind/'
+    json_results_file = os.path.abspath( files_location +"/valgrind_results.yaml" )
+    command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
 
     ignore = []
     # Copy just the valgrind output to the archive directory - we don't need the other output
@@ -214,24 +279,37 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
     return results
 
 
+
 def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    if not test:                             return run_itegration_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'debug':                    return run_itegration_tests('debug',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'release_debug':            return run_itegration_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'release_debug_no_symbols': return run_itegration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'mpi':                      return run_itegration_tests('debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
-    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug) # 'release_debug' for line # information
-    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--trackorigins') # 'release_debug' for line # information
+    if not test:                             return run_integration_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'debug':                    return run_integration_tests('debug',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release_debug':            return run_integration_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'mpi':                      return run_integration_tests('debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
+    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind') # 'release_debug' for line # information
+    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--trackorigins --valgrind') # 'release_debug' for line # information
+    elif test == 'demos':                    return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
+    elif test == 'tutorials':                return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
     else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
 
     #if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     #else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
 
-# compare results of two tests run (new vs. previous)
-# take two dict and two paths
-# must return standard dict with results
+
 def compare(test, results, files_path, previous_results, previous_files_path):
+    """
+    Compare the results of two tests run (new vs. previous) for integration test
+    Take two dict and two paths
+    Must return standard dict with results
+
+    :param test: str
+    :param results: dict
+    :param files_path: str
+    :param previous_results: dict
+    :param previous_files_path: str
+    :rtype: dict
+    """
     #if test: raise BenchmarkError('Integration Test script does not support compare function for {} test!'.format(test))
 
     results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]))  # , config={}
@@ -263,3 +341,62 @@ def compare(test, results, files_path, previous_results, previous_files_path):
     state = _S_failed_ if results['summary']['failed'] else _S_passed_
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: results}
+
+def gather_pass_fail_results(files_path):
+
+    results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]))  # , config={}
+
+    for test in os.listdir(files_path):
+        if os.path.isdir(files_path + '/' + test):
+
+            if os.path.isfile(files_path+'/'+test+'/.test_did_not_run.log')  or  \
+               os.path.isfile(files_path+'/'+test+'/.test_got_timeout_kill.log'): state = _S_script_failed_;  has_failed_scripts=True
+            else: state = _S_passed_
+
+            # Get all log files recursively.
+            log_files = []
+            for root, dirnames, filenames in os.walk(os.path.join(files_path, test)):
+                for filename in fnmatch.filter(filenames, 'log*'):
+                    log_files.append(os.path.join(root, filename))
+
+            log_files.sort(key=sort_natural)
+            out_log = ""
+            for log in log_files:
+                FILE = open(log, 'r')
+                lines = FILE.readlines()
+                if lines:
+                    out_log += "\n\nLogFile "+os.path.basename(log)+"\n"
+                    out_log += "".join(lines)
+                FILE.close()
+
+
+
+            results['tests'][test] = {_StateKey_: state, _LogKey_: out_log if state != _S_passed_ else ''}
+
+            results['summary']['total'] += 1
+            if state == _S_script_failed_:
+                results['summary']['failed'] += 1
+                results['summary']['failed_tests'].append(test)
+
+
+
+
+    #if has_failed_scripts: state = _S_script_failed_
+    #else: state = _S_failed_ if results['summary']['failed'] else _S_passed_
+    state = _S_failed_ if results['summary']['failed'] else _S_passed_
+
+    return {_StateKey_: state, _LogKey_: '', _ResultsKey_: results}
+
+
+
+
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def sort_natural(text):
+    '''
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    (See Toothy's implementation in the comments)
+    '''
+    return [ atoi(c) for c in re.split('(\d+)', text) ]

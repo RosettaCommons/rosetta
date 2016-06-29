@@ -21,6 +21,7 @@ import argparse
 from tests import *  # Tests states and key names
 from hpc_drivers import *
 
+
 # Calculating value of Platform dict
 Platform = {}
 if sys.platform.startswith("linux"): Platform['os'] = 'linux'  # can be linux1, linux2, etc
@@ -40,7 +41,9 @@ def print_(x): print x
 def main(args):
     ''' Script to Run arbitrary Rosetta test
     '''
-    parser = argparse.ArgumentParser(usage="Generate pyrosetta distribution.")
+    parser = argparse.ArgumentParser(usage="Main testing script to run tests in the tests directory. "
+                                           "Use the --debug command to skip the build phase when testing locally. "
+                                           "Example Command: /benchmark.py -j2 integration.valgrind")
 
     parser.add_argument('-j', '--jobs',
       default=1, type=int,

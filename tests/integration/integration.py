@@ -5,15 +5,18 @@
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
+#
 # For help, run with -h.  Requires Python 2.4+, like the unit tests.
+# Author: Sergey Lyskov
+# Author: Jared Adof-Bryfogle (demo extension)
 
 import sys, thread, commands
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
-import os, shutil, threading, subprocess, signal, time, re, random, datetime
+import os, shutil, threading, subprocess, signal, time, re, random, datetime, copy
 import json
+import glob
 from os import path
 from optparse import OptionParser, IndentedHelpFormatter
 
@@ -26,7 +29,21 @@ class NT:  # named tuple
             if not i.startswith('__'): r += '%s --> %s, ' % (i, getattr(self, i))
         return r[:-2]+'|'
 
+
+
 Jobs = []  # Global list of NameTuples  (pid, tag, start_time, out_dir,...)
+platforms = ['linux', 'macos', 'windows']
+compilers = ['gcc', 'clang', 'icc']
+this_file_path = os.path.realpath(__file__)
+this_file_dir = os.path.dirname(this_file_path)
+
+#We assume a typical Rosetta install for testing purposes
+root_rosetta_dir = os.path.abspath(os.path.join(this_file_dir,"../../.."))
+root_main_dir =  os.path.realpath(os.path.join(root_rosetta_dir, "main"))
+root_demos_dir = os.path.realpath(os.path.join(root_rosetta_dir, "demos"))
+root_tools_dir = os.path.realpath(os.path.join(root_rosetta_dir, "tools"))
+
+pwd = os.getcwd()
 
 def write_runtimes(runtimes, dir):
     try:
@@ -72,7 +89,24 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
 ./integration.py ligand_dock_7cpa    # only run the "ligand_dock_7cpa" test
 
+./integration.py tests/ligand_dock_7cpa # only run the "ligand_dock_7cpa" test
+
 ./integration.py -d ~/database -j5 --mpi-tests # run the special MPI integration tests using a custom database location and 5 processors.
+
+
+
+
+
+EXAMPLES For Running Demos/Tutorials
+
+./integration.py --demos
+
+./integration.py --tutorials
+
+./integration.py --tutorials Tutorial_4_relax
+
+./integration.py --tutorials tutorials/Tutorial_4_relax
+
 
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]", formatter=ParagraphHelpFormatter())
@@ -162,7 +196,6 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     )
 
 
-
     parser.add_option("--dbms_database_name",
       default="rosetta_tests",
       help="For testing relational databases: the name of the database. " +
@@ -216,6 +249,20 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="Run only those tests defined in command.mpi files.  This option implies --extras=mpi.",
     )
 
+    parser.add_option("--demos",
+      help="Signifiy we are testing the [public] demos.",
+      default=False,
+      action="store_true"
+    )
+    parser.add_option("--tutorials",
+      help = "Signify we are testing the tutorials",
+      default = False,
+      action = "store_true",
+    )
+    parser.add_option("--demos_root_dir",
+      help = "If you are running the demos or tutorials test using a non-typical Rosetta directory structure, pass the dir here.",
+    )
+
     (options, remaining_args) = parser.parse_args(args=argv)
 
     # Strip off whitespace and blank remaining arguments
@@ -243,20 +290,75 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     if options.valgrind:
         parse_valgrind_options(options)
 
-    print 'Using Rosetta source dir at: ', options.mini_home
-    print 'Using Rosetta database dir at:', options.database
-    if options.valgrind:
-        print 'Using Valgrind at:', options.valgrind_path
-
     global Options;  Options = options
     Options.num_procs = Options.jobs
+
+    print 'Using Rosetta source dir at: ', Options.mini_home
+    print 'Using Rosetta database dir at:', Options.database
+    if Options.demos or Options.tutorials:
+        print '\nUsing Rosetta tools at: ', root_tools_dir
+        print 'Using Rosetta demos at: ', root_demos_dir
+    if options.valgrind:
+        print 'Using Valgrind at:', options.valgrind_path
 
     # Make sure the current directory is the script directory:
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
-    if not path.isdir("tests"):
-        print "You must run this script from rosetta/tests/integration/"
-        return 2
+    #if not path.isdir("tests") and not Options.demos:
+    #    print "You must run this script from rosetta/tests/integration/"
+    #    return 2
+
+
+    # Each test consists of a directory with a "command" file in it.
+
+    #Print the current SHA1 for demos, main, and tools.
+
+    print "\nCurrent Versions Tested:"
+    print "DEMOS: " + get_git_sha1(root_demos_dir)
+    print "MAIN:  " + get_git_sha1(this_file_dir)
+    print "TOOLS: " + get_git_sha1(root_tools_dir)
+    print "\n"
+
+    #All tests are in a subdirectory.  We set these up here.
+    test_subdir = "tests"
+    demo_subdir = "public"
+    tutorial_subdir = "tutorials"
+
+
+    tests = []
+
+    if Options.demos or Options.tutorials:
+        os.chdir(root_demos_dir)
+    else:
+        os.chdir(this_file_dir)
+
+    if len(args) > 0:
+        if Options.demos:
+            tests = get_tests(demo_subdir, args)
+        elif Options.tutorials:
+            tests = get_tests(tutorial_subdir, args)
+        else:
+            tests = get_tests(test_subdir, args)
+
+    elif Options.demos or Options.tutorials:
+        subdir = tutorial_subdir if Options.tutorials else demo_subdir
+        tests = [f for f in glob.glob(subdir+"/*") if os.path.isdir(f)]
+
+    else:
+        tests = [path.join(test_subdir,d) for d in os.listdir(test_subdir) if not d.startswith(".") and path.isdir(path.join(test_subdir, d)) ]
+
+
+    #Setup the Demos or Tutorials
+    if Options.demos or Options.tutorials:
+        for test_dir in copy.deepcopy(tests):
+            if os.path.isdir(test_dir):
+                print "Setting up: "+test_dir
+                if not setup_demo_command_file(test_dir):
+                    tests.remove(test_dir)
+
+    if len(tests) == 0:
+        sys.exit("No tests present.  Exiting.")
+
 
     # Where are we running the tests?
     if options.valgrind:
@@ -268,46 +370,43 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         if not path.isdir("ref"): rename_to_ref = True
         else: rename_to_ref = False
 
-    # Each test consists of a directory with a "command" file in it.
-    if len(args) > 0:
-        tests = args
-    else:
-        tests = [ d for d in os.listdir("tests") if not d.startswith(".") and path.isdir(path.join("tests", d)) ]
-
-    if not options.unordered:
-        tests = order_tests(tests)
-
     if not options.compareonly:
         if len(args)>0 and path.isdir(outdir): #we have individual tests... only remove single test directories
             for test in tests:
                 testdir=outdir+'/'+test
                 if path.isdir(testdir): shutil.rmtree(testdir)
         else:
-        # Remove everything in the current outdir, then re-create it empty
+            # Remove everything in the current outdir, then re-create it empty
             if path.isdir(outdir): shutil.rmtree(outdir)
             os.mkdir(outdir)
 
     runtimes={}
+
+    if not options.unordered:
+        tests = order_tests(tests)
+
+
     if not options.compareonly:
         queue = Queue()
         queue.TotalNumberOfTasks = len(tests)
 
         # Write substitution parameters to result directory
+        print "Outdir: "+outdir
         with open(path.join( outdir, "test_parameters.json"), "w") as parameters_file:
             json.dump(generateIntegrationTestGlobalSubstitutionParameters(), parameters_file, sort_keys=True, indent=2)
 
         for test in tests:
-            queue.put(test)
-            #shutil.copytree( path.join("tests", test), path.join(outdir, test) )
 
-            if ( ( not Options.mpi_tests )
-                 or
-                 ( Options.mpi_tests
-                   and
-                   os.path.isfile( path.join( "tests", test , "command.mpi") )
-                 )
-               ) :
-                copytree( path.join("tests", test), path.join(outdir, test), accept=lambda src, dst: path.basename(src) != '.svn' )
+            #shutil.copytree( path.join("tests", test), path.join(outdir, test) )
+            if Options.demos:
+                #print "Copying demo dir from "+test+" to "+ path.join(outdir, test)
+                local_copytree( test , path.join(outdir, os.path.basename(test)), accept=lambda src, dst: path.basename(src) != '.svn')
+                queue.put(os.path.basename(test))
+            elif ((not Options.mpi_tests) or Options.mpi_tests and os.path.isfile(path.join(test_subdir, test ,"command.mpi"))):
+                local_copytree( test , path.join(outdir, os.path.basename(test)), accept=lambda src, dst: path.basename(src) != '.svn')
+                queue.put(os.path.basename(test))
+            else:
+                continue
 
         if options.fork or options.jobs==1:
             simple_job_running( generateTestCommandline, queue, outdir, runtimes, options )
@@ -315,7 +414,6 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             parallel_job_running(  generateTestCommandline, queue, outdir, runtimes, options )
 
     # removing absolute paths to root Rosetta checkout from tests results and replacing it with 'ROSETTA'
-    rosetta_dir = os.path.abspath('../..')
     for test in tests:
         for dir_, _, files in os.walk( path.join(outdir, test) ):
             for f in files:
@@ -324,7 +422,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                 fname = dir_ + '/' + f
                 data = file(fname).read()
                 if rosetta_dir in data:
-                    with file(fname, 'w') as f: f.write( data.replace(rosetta_dir, 'ROSETTA_MAIN') )
+                    with file(fname, 'w') as f: f.write( data.replace(root_main_dir, 'ROSETTA_MAIN') )
 
     # Analyze results
     print
@@ -351,9 +449,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             full_log = []
             for test in tests:
                 if Options.mpi_tests:
-                    test_valid = os.path.isfile( path.join("tests", test, "command.mpi") )
+                    test_valid = os.path.isfile( path.join( test, "command.mpi") )
                 else:
-                    test_valid = os.path.isfile( path.join("tests", test, "command") )
+                    test_valid = os.path.isfile( path.join( test, "command") )
 
                 if test_valid:
                     if options.valgrind:
@@ -395,7 +493,21 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             #compare_times has hardcoded new/ref dependancies
             from compare_times import compare_times
             compare_times(verbose=False)
+
+    os.chdir(pwd)
     return 0
+
+
+def get_tests(subdir, args):
+    """
+    Get the list of tests in the subdirectory from the list of args.  Args can be full paths, relative, or just the name of the paths
+
+    :param subdir: str
+    :param args: str
+    :rtype:[str]
+    """
+    return [path.join(subdir, os.path.basename(a)) for a in args]
+
 
 # Parse the path to the database in the options object
 def parse_database( options, option_parser ):
@@ -433,6 +545,157 @@ def parse_valgrind_options(options):
         print "Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option."
         sys.exit(1)
 
+
+def setup_demo_command_file(demo_subdir):
+    """
+    Setup a command.sh file in the demo subdirectory if not already present.  This command.sh is written from the
+     demo .md file.  A parsable command should start with the '$' charactor.
+
+    Returns a boolean for if a command file is already present or a new one is written.
+
+    Author: Jared Adolf-Bryfogle and the XRW 2016 Team.
+
+    :param demo_dir: str
+    :rtype: bool
+    """
+
+    files = glob.glob(demo_subdir+'/*')
+    md_files = sorted([f for f in files if f.endswith(".md")])
+
+    if "command" in [os.path.basename(f) for f in files]: return True
+
+    commands = []
+    rosetta_binaries = []
+    total_commands = 0
+    for md_file in md_files:
+        INFILE = open(md_file, 'r')
+        if os.path.basename(md_file) == "README.md":
+            demo_name = os.path.dirname(md_file).split('/')[-1]
+        else:
+            demo_name = os.path.basename(md_file).replace(".md", "")
+
+        commands.append("# "+demo_name+"\n\n")
+        for line in INFILE:
+            #print line
+            line = line.strip()
+            line = line.replace("```", "") #Replace code line.
+            line = line.replace("<code>", "")
+            line = line.replace("</code>","")
+
+
+            #$ Charactor is the line for an actual command that will be tested.
+            if not line or not line.startswith("$>"): continue
+
+            line = line.replace("`", "")
+
+            #Replace rosetta binaries with that with which they are being run on.
+            #Repalce flags files with any short version present.
+            line, line_exe = format_demo_line(line, demo_subdir)
+            if len(line_exe) > 0:
+                total_commands+=1
+                line = line+ " -database %(database)s -run:constant_seed -nodelay 2>&1 " \
+                       + "| egrep -vf "+os.path.dirname(this_file_path)+"/ignore_list > log"+str(total_commands)
+
+            else:
+                total_commands+=1
+                if not re.search('cd', line):
+                    #Parenthesis allow proper IO direction around command (for example piping the symdef files into a file)
+                    # They are required.  Thanks to Rocco Moretti for figuring out how to accomplish this.
+
+                    line = "("+line+")"+ " 2>&1 | egrep -vf "+os.path.dirname(this_file_path)+"/ignore_list > log"+str(total_commands)
+
+
+            rosetta_binaries.extend(line_exe)
+            commands.append(line)
+
+        INFILE.close()
+
+    if total_commands == 0:
+        return False
+
+    test_cmd = '''test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so'''
+
+    OUTFILE = open(demo_subdir+"/command.new", "w")
+
+    #These cause spurious failures with multiple redirection and other places.
+    #OUTFILE.write("set -e\n")
+    #OUTFILE.write("set -o pipefail\n")
+
+    OUTFILE.write("# This is a test script of the demo, created by parsing testable commands given in the demo's README.md file.\n")
+    OUTFILE.write("# Commands that need to be tested should start with '$<'  to indicate that the line will be written to this file and tested.\n")
+    OUTFILE.write("# - Documentation XRW 2016 Team - \n\n")
+
+    OUTFILE.write("cd %(workdir)s\n\n")
+
+    for exe in sorted(set(rosetta_binaries)):
+        chars = "~!@#$%^&*()`+=[]{}\|;:',<.>?" #People do some wierd stuff.
+        for c in chars:
+            exe = exe.replace(c, "")
+
+        OUTFILE.write("[ -x %(bin)s/{exe}.%(binext)s ] || exit 1\n".format(exe=exe))
+
+    OUTFILE.write("\n")
+
+    for command in commands:
+        OUTFILE.write(command+"\n")
+        if not command.startswith("#"):
+            OUTFILE.write(test_cmd+"\n\n")
+
+    OUTFILE.write("\n")
+    OUTFILE.close()
+
+    return True
+    #print demo_subdir+" command written"
+
+
+def format_demo_line(command, demo_subdir):
+    """
+    Formats a demo line into that which can be run through the integration test framework.
+    Returns the new line and a list of Rosetta executables found.
+
+    :param command: str
+    :rtype: str, [str]
+    """
+    executables = []
+    short_flags = []
+
+    new_command = command.replace("$>", "")
+
+    #THese have to be in this order, or $ROSETTA3 will be replaced in $ROSETTA3_DB.
+    new_command = new_command.replace("$ROSETTA3_DB", "%(database)s")
+    new_command = new_command.replace("$ROSETTA3", "%(minidir)s")
+
+    new_command = new_command.replace("$ROSETTA_TOOLS", "%(rosetta_tools)s")
+    new_command = new_command.replace("$ROSETTA_DEMOS", "%(rosetta_demos)s")
+    new_command = new_command.replace("$ROSETTA_BINEXT","%(binext)s")
+    commandSP = new_command.split()
+
+    for word in commandSP:
+        if word.endswith(Options.mode):
+            wordSP = os.path.basename(word).split(".")
+            ext = wordSP[-1]
+            if match_patterns(ext, platforms) and match_patterns(ext, compilers):
+                executables.append(wordSP[0])
+
+                #People can give path/to/rosetta_scripts.linuxgccrelease in their tutorials and we need to match it.
+                new_command = new_command.replace(word, "%(bin)s/{exe}.%(binext)s".format(exe=wordSP[0]))
+
+
+            else: continue
+
+        if word.startswith("@"):
+            shorty = word[1:]+".short"
+
+            #print "Should be adding shorty "+os.path.join(demo_subdir,shorty)
+            if os.path.exists(os.path.join(demo_subdir,shorty)):
+                #print "Adding Shorty: "+os.path.join(demo_subdir, shorty)
+                short_flags.append('@'+shorty)
+
+    new_command = new_command+" "+" ".join(short_flags) #These are the settings to make the demos run short.
+
+    return new_command, executables
+
+
 #
 # Generate brief version of results, only ~20 first lines of difference will be shown.
 #
@@ -453,6 +716,15 @@ def makeBriefResults(results):
 # Wrap new line simbols inside given strings by using '\' character
 def wrapNewLine(s):
     r = ''
+
+def get_git_sha1(dir):
+    """
+    Get the SHA1 of the git directory.
+    :param dir:
+    :return:
+    """
+    cmd = "cd {dir}; git rev-parse HEAD; cd {workdir}".format(dir=dir, workdir=os.getcwd())
+    return subprocess.check_output(cmd, shell=True).strip()
 
 #
 # Order tests based on decreasing expected runtime. Unknown tests get run first.
@@ -608,17 +880,11 @@ def mWait(tag=None, all_=False, timeout=0):
         time.sleep(.2)
         if not Jobs: return
 
-
-def generateIntegrationTestGlobalSubstitutionParameters(host=None):
-    # Variables that may be referenced in the cmd string:
-    python = sys.executable
-    minidir = Options.mini_home
-    database = Options.database
-
-    bin = path.join(minidir, "bin")
-    pyapps = path.join(minidir, "scripts", "python")
-    template_dir = path.join(minidir, "code_templates")
-
+def get_binext():
+    """
+    Get the extension for the binaries, and a dictionary of the local variables.
+    :rtype: str
+    """
     if sys.platform.startswith("linux"):
         platform = "linux" # can be linux1, linux2, etc
     elif sys.platform == "darwin":
@@ -630,13 +896,27 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
 
     compiler = Options.compiler
     mode = Options.mode
-    if (Options.extras) :
+    if Options.extras:
         extras = Options.extras
-    elif (Options.mpi_tests) :
+    elif Options.mpi_tests:
         extras='mpi'
     else :
         extras='default'
+
     binext = extras+"."+platform+compiler+mode
+    return binext, dict(locals())
+
+def generateIntegrationTestGlobalSubstitutionParameters(host=None):
+    # Variables that may be referenced in the cmd string:
+    python = sys.executable
+    minidir = Options.mini_home
+    database = Options.database
+
+    bin = path.join(minidir, "bin")
+    pyapps = path.join(minidir, "scripts", "python")
+    template_dir = path.join(minidir, "code_templates")
+
+    binext, local_vars = get_binext()
     #print 'binext: %s, extras: %s, Options.extras: %s' % (binext, repr(extras), repr(Options.extras) )
 
     additional_flags = Options.additional_flags
@@ -644,10 +924,19 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     dbms_user = Options.dbms_user
     dbms_port = Options.dbms_port
 
-    return dict(locals())
+    #No idea why this won't work in the function below.
+    rosetta_demos = root_demos_dir
+    rosetta_tools = root_tools_dir
+
+    ##Merge locals
+    local_vars.update(dict(locals()))
+    del local_vars['local_vars']
+    return local_vars
 
 def generateIntegrationTestSubstitutionParameters(test, outdir, host=None):
-    """ Generate substitution parameters for integration command generation."""
+    """
+    Generate substitution parameters for integration command generation.
+    """
 
     params = generateIntegrationTestGlobalSubstitutionParameters(host)
     params["dbms_database_name"] = Options.dbms_database_name % { 'test': test }
@@ -657,21 +946,21 @@ def generateIntegrationTestSubstitutionParameters(test, outdir, host=None):
     return params
 
 def generateTestCommandline(test, outdir, options=None, host=None):
-    ''' Generate and write command.sh and return command line that will run given integration test
-    '''
-    # Read the command from the file "command"
+    """
+    Generate and write command.sh and return command line that will run given integration test
+    """
+
     params = generateIntegrationTestSubstitutionParameters(test, outdir, host)
     workdir = params["workdir"]
-
     if options.valgrind:
         # We need to adjust the "bin" variable to use valgrind instead
         preamble = options.valgrind_path
-        if( options.trackorigins ):
+        if options.trackorigins:
             preamble = preamble + " --track-origins=yes"
-        if( options.leakcheck ):
+        if options.leakcheck:
             preamble = preamble + " --leak-check=full"
         # The fragment tests need special consideration
-        if( test.startswith("fragment") ):
+        if test.startswith("fragment"):
             preamble = preamble + " --main-stacksize=12000000"
         params["bin"] = preamble + " " + params["bin"]
 
@@ -683,17 +972,43 @@ def generateTestCommandline(test, outdir, options=None, host=None):
     if host is not None:
       cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
     cmd += '\n'
-    if( options.mpi_tests ):
-        if( os.path.isfile( path.join(workdir,"command.mpi") ) ):
+    if options.mpi_tests :
+        if os.path.isfile( path.join(workdir,"command.mpi") ):
             cmd += file(path.join(workdir,"command.mpi")).read().strip()
         else:
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
-        if( os.path.isfile( path.join(workdir, "command" ) ) ):
-          cmd += file(path.join(workdir, "command")).read().strip()
+        if os.path.isfile( path.join(workdir, "command" ) ):
+            cmd += file(path.join(workdir, "command")).read().strip()
+        elif os.path.isfile( path.join(workdir, "command.new") ):
+            cmd += file(path.join(workdir, "command.new")).read().strip()
         else:
           return None, None #If the command file doesn't exist, we skip it.  It may only be an MPI integration test.
-    cmd = cmd % params # variable substitution using Python printf style
+
+
+    #Error in replacement.  We mark this test as failed and continue.
+    try:
+        cmd = cmd % params # variable substitution using Python printf style
+    except KeyError as e:
+        out =  "*** Error in command file replacement: %("+str(e).strip('\'')+")s"
+
+        print "\n*** Test {s} did not run!  Check your --mode flag and paths.".format(s=test)
+        print out+"\n"
+
+        LOG = open(path.join(workdir, ".test_did_not_run.log"), "w")
+        LOG.write(out)
+        LOG.close()
+    except Exception as e:
+        out =  "*** Error in command file replacement: "+str(e)
+
+        print "\n*** Test {s} did not run!  Check your --mode flag and paths.".format(s=test)
+        print out+"\n"
+
+        LOG = open(path.join(workdir, ".test_did_not_run.log"), "w")
+        LOG.write(out)
+        LOG.close()
+
+        return None, None
 
     if options.valgrind:
         # We need to remove the existance testing commands from the commandfile
@@ -703,18 +1018,27 @@ def generateTestCommandline(test, outdir, options=None, host=None):
         # We also don't need the standard output restrictions (as we're not doing comparisons
         cmd = re.sub( r'egrep -vf ../../ignore_list', 'cat', cmd )
 
-    if( options.mpi_tests ):
+    if options.mpi_tests:
         cmd_line_sh = path.join(workdir, "command.mpi.sh")
     else :
         cmd_line_sh = path.join(workdir, "command.sh")
-    f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
+
+    #Write the command.sh file
+    f = file(cmd_line_sh, 'w')
+    f.write(cmd)
+    f.close() # writing back so test can be easily re-run by user lately...
+
+
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
     #print cmd; print
 
     return cmd_line_sh, workdir
 
 def analyze_integration_test( test, outdir, results, full_log ):
-    """Look at the specific integration test, and check for errors"""
+    """
+    Look at the specific integration test, and check for errors
+    """
+
     dir_before = path.join("ref", test)
     dir_after = path.join(outdir, test)
     # diff returns 0 on no differences, 1 if there are differences
@@ -853,11 +1177,14 @@ def analyze_valgrind_test( test, outdir, results, full_log ):
         return 1
 
 def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
-    '''Using the function GenerateJob to generate the job commandlines, run the jobs in queue with the given options.
+    """
+    Using the function GenerateJob to generate the job commandlines, run the jobs in queue with the given options.
 
     GenerateJob signature:
-    cmd_line_sh, workdir = GenerateJob(test, outdir)
-    '''
+      cmd_line_sh, workdir = GenerateJob(test, outdir)
+
+    """
+
     def signal_handler(signal_, f):
         print 'Ctrl-C pressed... killing child jobs...'
         for nt in Jobs:
@@ -872,7 +1199,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
         cmd_line_sh, workdir = GenerateJob(test, outdir, options);
 
         if ( ( cmd_line_sh is None ) or (workdir is None) ) :
-            print "No command file found for %s.  Skipping." % test
+            print "No correct command.sh file found for %s.  Skipping." % test
             continue
 
         def run(nt, times):
@@ -1031,10 +1358,14 @@ class ParagraphHelpFormatter(IndentedHelpFormatter):
         paragraphs = [ IndentedHelpFormatter._format_text(self, p.strip()) for p in paragraphs ]
         return '\n'.join(paragraphs) # each already ends in a newline
 
-def copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: True):
+
+def local_copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: True):
     """Recursively copy a directory tree using copy2(), with filtering.
     Copied from shutil so I could filter out .svn entries.
     """
+
+
+
     names = os.listdir(src)
     os.makedirs(dst)
     errors = []
@@ -1043,11 +1374,12 @@ def copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: True):
         dstname = os.path.join(dst, name)
         if not accept(srcname, dstname): continue
         try:
+            #NOTE: JAB - symlinks that are hardcoded to random places will fail on shutil and not be able to be copied!
             if symlinks and os.path.islink(srcname):
                 linkto = os.readlink(srcname)
                 os.symlink(linkto, dstname)
             elif os.path.isdir(srcname):
-                copytree(srcname, dstname, symlinks, accept)
+                local_copytree(srcname, dstname, symlinks, accept)
             else:
                 shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?
@@ -1066,6 +1398,24 @@ def copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: True):
         errors.extend((src, dst, str(why)))
     if errors:
         raise shutil.Error, errors
+
+
+def match_patterns(search_string, patterns):
+    """
+    Uses RE to match multiple patterns.  Returns boolean of success
+
+    :param search_string: str
+    :param patterns: [str]
+    :rtype: boolean
+
+    """
+    match = False
+
+    for pattern in patterns:
+        if re.search(pattern, search_string):
+            match = True
+            break
+    return match
 
 ################################################################################
 # Python 2.4 lacks support for join() / task_done() in the Queue class,
