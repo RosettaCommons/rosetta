@@ -69,7 +69,7 @@ init(
 	fragProbs_assigned_ = false;
 	// get nres_, accounting for symmetry/vrt/ligands
 	nres_ = pose.total_residue();
-	fragbias_tr << "init(): pose.total_residue(): " << nres_ << std::endl;
+	fragbias_tr.Trace << "init(): pose.total_residue(): " << nres_ << std::endl;
 
 	// symmetry
 	symminfo_=NULL;
@@ -85,9 +85,9 @@ init(
 	while ( !pose.residue(nres_).is_protein() ) nres_--;
 
 	fragmentProbs_.resize(nres_, 0.0);
-	fragbias_tr << "init(): symmetrical_pose " << core::pose::symmetry::is_symmetric( pose )<< std::endl;
-	fragbias_tr << "init(): n residues " << nres_ << std::endl;
-	fragbias_tr << "init(): n_symm_subunit_ " << n_symm_subunit_ << std::endl;
+	fragbias_tr.Trace << "init(): symmetrical_pose " << core::pose::symmetry::is_symmetric( pose )<< std::endl;
+	fragbias_tr.Trace << "init(): n residues " << nres_ << std::endl;
+	fragbias_tr.Trace << "init(): n_symm_subunit_ " << n_symm_subunit_ << std::endl;
 }
 
 
@@ -99,7 +99,7 @@ compute_frag_bias(
 	pose::Pose &pose,
 	utility::vector1<core::fragment::FragSetOP> fragment_sets
 ){
-	fragbias_tr << "compute frag bias" << std::endl;
+	fragbias_tr.Trace << "compute frag bias" << std::endl;
 	runtime_assert( fragProbs_assigned_ );
 
 	// clean up the vector
@@ -128,7 +128,7 @@ compute_frag_bias(
 				if ( pose.fold_tree().is_cutpoint(i_pos) ) {
 					for ( int i_wdw = 0; i_wdw<=wdw_to_freeze_; ++i_wdw ) {
 						frame_weights[seqpos_start-i_wdw] = 0.0; // don't allow insertions at a frame where there are cut points downstream
-						fragbias_tr << "chainbreak at: " <<  i_pos << " seqpos_start: " << seqpos_start << " residue_to_freeze: " << seqpos_start-i_wdw << " wdw_to_freeze_: " << wdw_to_freeze_ << std::endl;
+						fragbias_tr.Trace << "chainbreak at: " <<  i_pos << " seqpos_start: " << seqpos_start << " residue_to_freeze: " << seqpos_start-i_wdw << " wdw_to_freeze_: " << wdw_to_freeze_ << std::endl;
 					}
 				}
 			} // assign
@@ -145,10 +145,10 @@ compute_frag_bias(
 			core::Size seqpos_end   = (*frame_it)->end();
 
 			for ( int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos ) { //
-				fragbias_tr << "Prob_dens( " << i_frame << " " << seqpos_start << " ) = " << frame_weights[seqpos_start] << std::endl;
+				fragbias_tr.Trace << "Prob_dens( " << i_frame << " " << seqpos_start << " ) = " << frame_weights[seqpos_start] << std::endl;
 			}
 
-			fragbias_tr << "i_frame: " << i_frame << " seqpos_start " << seqpos_start <<  " seqpos_end " << seqpos_end  <<  " frame_weights: " <<  frame_weights[seqpos_start] << std::endl;
+			fragbias_tr.Trace << "i_frame: " << i_frame << " seqpos_start " << seqpos_start <<  " seqpos_end " << seqpos_end  <<  " frame_weights: " <<  frame_weights[seqpos_start] << std::endl;
 
 		} // frame /////////////// for debug only ///////////////
 	} // each fragment set
@@ -179,7 +179,7 @@ cal_perrsd_score(
 	}
 
 	(*myscore)(pose);
-	myscore->show_line( fragbias_tr, pose ); fragbias_tr << std::endl;
+	//myscore->show_line( fragbias_tr, pose ); fragbias_tr << std::endl;
 
 	for ( int r=1; r<=(int)nres_; ++r ) {
 		int rsrc = r;
@@ -236,7 +236,7 @@ assign_prob_with_rsd_wdw(
 
 	for ( int i=start_rsn; i<=(int)end_rsn; ++i ) {
 		fragmentProbs_[i] = 1.0;
-		fragbias_tr << "rsn(rsn): " << rsn << " fragProb[" << i << "]: " << fragmentProbs_[i] << " rsd_window_size: " << rsd_wdw_size_ << std::endl;
+		fragbias_tr.Trace << "rsn(rsn): " << rsn << " fragProb[" << i << "]: " << fragmentProbs_[i] << " rsd_window_size: " << rsd_wdw_size_ << std::endl;
 	}
 
 }
@@ -250,7 +250,6 @@ automode(
 	pose::Pose &pose,
 	Real score_cut /*-0.5 is controlled through CartesianSampler*/
 ){
-	fragbias_tr << "you are using automode!" << std::endl;
 	fragmentProbs_.resize(nres_, 0.0);
 
 	// based on parameter scanning to predict regions to refine:
@@ -287,6 +286,45 @@ automode(
 	}
 }
 
+
+////////////////////////////////////////////////////
+//
+void
+FragmentBiasAssigner::
+automode_scores(
+	pose::Pose &pose,
+	utility::vector1<Real> &scores
+){
+	// based on parameter scanning to predict regions to refine:
+	// 0.45 0.05 0.15 0.35
+	// density:9, density_nbrzscore:1, rama:3, geometry:7
+	utility::vector1<core::Real> zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
+
+	// to catch some outliers
+	zscore_dens.resize(nres_,0.0);
+	zscore_nbrdens.resize(nres_,0.0);
+	zscore_rama.resize(nres_,0.0);
+	zscore_geometry.resize(nres_,0.0);
+	scores.resize(nres_,0.0);
+
+	density_nbr( pose ); // perrsd_dens_ and perrsd_densnbr_
+	rama( pose ); // perrsd_rama_
+	geometry( pose ); // perrsd_geometry_
+
+	cal_zscore( perrsd_dens_,     zscore_dens           );
+	cal_zscore( perrsd_nbrdens_,  zscore_nbrdens        );
+	cal_zscore( perrsd_rama_,     zscore_rama,     true );
+	cal_zscore( perrsd_geometry_, zscore_geometry, true );
+
+	//all_scores.resize(nres_, 0.0);
+	for ( int r=1; r<=(int)nres_; ++r ) {
+		scores[r] =  0.45*zscore_dens[r]
+			+ 0.05*zscore_nbrdens[r]
+			+ 0.15*zscore_rama[r]
+			+ 0.35*zscore_geometry[r];
+	}
+}
+
 // assign 1 or 0
 // add values into
 void
@@ -303,7 +341,7 @@ assign_fragprobs(
 				assign_prob_with_rsd_wdw(r);
 			}
 		}
-		fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << std::endl;
+		fragbias_tr.Trace << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << std::endl;
 	}
 }
 
@@ -340,7 +378,6 @@ void
 FragmentBiasAssigner::
 uniform(
 ){
-	fragbias_tr << "uniform method is selected" << std::endl;
 	fragProbs_assigned_=true;
 
 	for ( int r=1; r<=(int)nres_; ++r ) {
@@ -357,7 +394,6 @@ user(
 	std::set<core::Size> user_pos,
 	protocols::loops::LoopsOP loops
 ){
-	fragbias_tr << "user is chosen" << std::endl;
 	fragProbs_assigned_ = true;
 
 	// user defined segments to rebuild
@@ -379,7 +415,6 @@ density_nbr(
 ){
 	using namespace core::scoring;
 	// rescore pose
-	fragbias_tr << "density_nbr is chosen" << std::endl;
 	fragProbs_assigned_=true;
 
 	core::scoring::electron_density::ElectronDensity &edm = core::scoring::electron_density::getDensityMap();
@@ -400,9 +435,7 @@ density_nbr(
 		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
 	}
 
-	fragbias_tr << "scoring the pose" << std::endl;
 	(*myscore)(pose);
-	myscore->show_line( fragbias_tr, pose ); fragbias_tr << std::endl;
 
 	///////////////////////////////////////////////////////
 	// get density correlation score from pose.total_residue(), rather than nres_
@@ -420,7 +453,7 @@ density_nbr(
 		rscc_sum    += perrsd_dens_[asymm_num_r];
 		sq_rscc_sum += perrsd_dens_[asymm_num_r]*perrsd_dens_[asymm_num_r];
 
-		fragbias_tr << "res: " << asymm_num_r << " symmetric num: " << r << " dens_rscc: " << dens_rscc << std::endl;
+		fragbias_tr.Trace << "res: " << asymm_num_r << " symmetric num: " << r << " dens_rscc: " << dens_rscc << std::endl;
 	}
 	// get mean and stdev for density rscc
 	Real perrsd_dens_mean  = rscc_sum/nres_;
@@ -446,7 +479,7 @@ density_nbr(
 		Real sq_sum = i_dens_rscc*i_dens_rscc;
 		Size n_nbrs = 1;
 
-		fragbias_tr << "rsd: " << i << " " << rsd_i.name3() << " i_dens_rscc: " << i_dens_rscc << std::endl;
+		fragbias_tr.Trace << "rsd: " << i << " " << rsd_i.name3() << " i_dens_rscc: " << i_dens_rscc << std::endl;
 
 		// get density score per i
 		for ( graph::Graph::EdgeListConstIter
@@ -468,7 +501,7 @@ density_nbr(
 				sq_sum += j_dens_rscc*j_dens_rscc;
 				n_nbrs ++;
 
-				fragbias_tr << "computing energy graph: " << j
+				fragbias_tr.Trace << "computing energy graph: " << j
 					//<< " dist: " <<  caled_dist
 					<< " "                        << rsd_j.name3()
 					<< " dist: "                 << dist
@@ -484,7 +517,7 @@ density_nbr(
 			}
 		} // res j
 
-		fragbias_tr << " sum: " << sum
+		fragbias_tr.Trace << " sum: " << sum
 			<< " sq_sum: " << sq_sum
 			<< " n_nrbs: " << n_nbrs
 			<< std::endl;
@@ -499,7 +532,7 @@ density_nbr(
 		// z-score for rscc of residue i to rscc of all residues
 		Real i_perrsd_dens_zscore = (i_dens_rscc-perrsd_dens_mean)/perrsd_dens_stdev;
 
-		fragbias_tr << "rsd: "              << asymm_num_i
+		fragbias_tr.Trace << "rsd: "              << asymm_num_i
 			<< " rsn: "             << rsd_i.name3()
 			<< " symm_rsd: "        << i
 			<< " dens_rscc: "       << i_dens_rscc
@@ -532,7 +565,7 @@ density_nbr(
 			} // i_perrsd_zscore
 		} // i_nbr_zscore
 
-		fragbias_tr << "fragmentProbs_: " << asymm_num_i << " rsd: " << i << " prob: " << fragmentProbs_[asymm_num_i] << std::endl;
+		fragbias_tr.Trace << "fragmentProbs_: " << asymm_num_i << " rsd: " << i << " prob: " << fragmentProbs_[asymm_num_i] << std::endl;
 	} // for i in range(pose.total_residue())
 }
 
@@ -542,7 +575,6 @@ FragmentBiasAssigner::
 density(
 	pose::Pose &pose
 ){
-	fragbias_tr << "density is chose" << std::endl;
 	fragProbs_assigned_=true;
 
 	// find segments with worst agreement to the density
@@ -592,8 +624,7 @@ density(
 		} else {
 			fragmentProbs_[r] = 0.01;
 		}
-		//fragbias_tr.Debug << "residue " << r << ": " << " rscc=" << perrsd_dens_[r] << " weight=" <<fragmentProbs_[r] << std::endl;
-		fragbias_tr << "residue " << r << " rscc: " << perrsd_dens_[r] << " weight: " <<fragmentProbs_[r] << std::endl;
+		fragbias_tr.Trace << "residue " << r << " rscc: " << perrsd_dens_[r] << " weight: " <<fragmentProbs_[r] << std::endl;
 	}
 }
 
@@ -604,7 +635,6 @@ geometry(
 	pose::Pose &pose,
 	Real weight  /*1.0*/
 ){
-	fragbias_tr << "geometry is chose" << std::endl;
 	fragProbs_assigned_=true;
 	if ( score_threshold_ == 123456789 ) set_score_threshold( 0.6 );
 
@@ -628,7 +658,6 @@ rama(
 ){
 	fragProbs_assigned_=true;
 	if ( score_threshold_ == 123456789 ) set_score_threshold( 0.7 );
-	fragbias_tr << "rama is chosen, and the score_threshold is " << score_threshold_ << std::endl;
 
 	// clean the container
 	perrsd_rama_.resize(nres_, 0.0);
@@ -668,7 +697,7 @@ old_rama(
 		// i dont think this will work for symmetric systems where 1st subunit is not the scoring one
 		core::Real ramaScore = emap[ core::scoring::rama ];
 		fragmentProbs_[r] = exp( ramaScore / Rtemp );
-		fragbias_tr << "Prob_dens_rama( " << r << " ) = " << fragmentProbs_[r] << " ; rama=" << ramaScore << std::endl;
+		fragbias_tr.Trace << "Prob_dens_rama( " << r << " ) = " << fragmentProbs_[r] << " ; rama=" << ramaScore << std::endl;
 	}
 }
 
@@ -678,7 +707,6 @@ FragmentBiasAssigner::
 bfactors(
 	pose::Pose &pose
 ){
-	fragbias_tr << "bfactors gets chosen" << std::endl;
 	fragProbs_assigned_=true;
 
 	// find segments with highest bfactors
@@ -693,7 +721,7 @@ bfactors(
 		}
 		Bsum /= nbb;
 		fragmentProbs_[r] = exp( Bsum/Btemp );
-		//fragbias_tr << "Prob_dens_bfact( " << r << " ) = " << fragmentProbs_[r] << " ; B=" << Bsum << std::endl;
+		fragbias_tr.Trace << "Prob_dens_bfact( " << r << " ) = " << fragmentProbs_[r] << " ; B=" << Bsum << std::endl;
 	}
 }
 
@@ -703,7 +731,6 @@ FragmentBiasAssigner::
 chainbreak(
 	pose::Pose &pose
 ){
-	fragbias_tr << "chainbreak is chose" << std::endl;
 	fragProbs_assigned_=true;
 
 	for ( int r=1; r<(int)nres_; ++r ) {
@@ -729,13 +756,11 @@ FragmentBiasAssigner::
 fragbias_reporter(
 	pose::Pose &/*pose*/
 ){
-	fragbias_tr << "report per-residue fragment bias" << std::endl;
-
 	for ( int r=1; r<=(int)nres_; ++r ) {
 		//if (!pose.residue_type(r).is_protein()) continue;
 		//if (pose.fold_tree().is_cutpoint(r+1)) continue;
 
-		std::cerr << "rsn: " << r << " prob: " << fragmentProbs_[r] << std::endl;
+		fragbias_tr.Trace << "rsn: " << r << " prob: " << fragmentProbs_[r] << std::endl;
 	}
 }
 

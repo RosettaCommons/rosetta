@@ -28,6 +28,7 @@
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/util.hh>
+#include <protocols/hybridization/FragmentBiasAssigner.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 #include <basic/options/util.hh>
@@ -205,7 +206,7 @@ densityTools()
 	bool bin_squared =  option[ denstools::bin_squared ]();
 	utility::vector1< core::Real > resobins, mapI, maskedmapI, modelI, maskI;
 	utility::vector1< core::Size > resobin_counts;
-	utility::vector1< core::Real > perResCC;
+	utility::vector1< core::Real > perResCC, perResStrain;
 
 	utility::vector1< core::Real > mapmapFSC, maskedMapMapFSC;
 	utility::vector1< core::Real > modelmapFSC, maskedModelMapFSC;
@@ -370,6 +371,7 @@ densityTools()
 
 			core::Size nres = fullpose.total_residue();
 			perResCC.resize( nres, 0.0 );
+			perResStrain.resize( nres, 0.0 );
 
 			protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 			dockindens->apply( fullpose );
@@ -385,6 +387,8 @@ densityTools()
 			for ( core::uint r = 1; r <= nres; ++r ) {
 				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, NULL , false);
 			}
+			protocols::hybridization::FragmentBiasAssigner fa(fullpose);
+			fa.automode_scores( fullpose, perResStrain );
 		}
 
 		TR.Trace << "       : FSCs" << std::endl;
@@ -444,9 +448,9 @@ densityTools()
 			if ( fullpose.pdb_info() ) {
 				core::pose::PDBInfoOP pdbinfo = fullpose.pdb_info();
 				TR << "PERRESCC residue " << fullpose.residue(r).name3() << " " << pdbinfo->chain(r) << " " << pdbinfo->number(r) << pdbinfo->icode(r)
-					<< " " << perResCC[r] << std::endl;
+					<< " " << perResCC[r] << " " << perResStrain[r] << std::endl;
 			} else {
-				TR << "PERRESCC residue " << r << " " << perResCC[r] << std::endl;
+				TR << "PERRESCC residue " << r << " " << perResCC[r] << " " << perResStrain[r] << std::endl;
 			}
 		}
 	}

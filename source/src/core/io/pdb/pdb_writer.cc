@@ -540,7 +540,7 @@ dump_pdb_residue(
 	pose.append_residue_by_jump( *(rsd.clone()), 1 );
 
 	// create a PDBInfo object for this single-residue pose
-	//pose.pdb_info( create_pdb_info_for_single_residue_pose( pose, options ));
+	pose.pdb_info( create_pdb_info_for_single_residue_pose( pose, options ));
 
 	pose_to_sfr::PoseToStructFileRepConverter converter(*options);
 	converter.append_residue_to_sfr(pose, 1, atom_number, 0);

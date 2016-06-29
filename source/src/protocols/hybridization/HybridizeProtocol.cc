@@ -40,6 +40,8 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 
+#include <protocols/rigid/RB_geometry.hh>
+
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 // dynamic fragpick
@@ -137,6 +139,9 @@
 #include <numeric/random/WeightedSampler.hh>
 #include <ObjexxFCL/format.hh>
 #include <boost/foreach.hpp>
+
+#include <numeric/random/random.hh>
+#include <numeric/random/random.functions.hh>
 
 // evaluation
 #include <core/scoring/rms_util.hh>
@@ -663,7 +668,7 @@ void HybridizeProtocol::add_template(
 	std::string cst_fn,
 	std::string symm_file,
 	core::Real weight,
-	utility::vector1<core::Size> cst_reses)
+	utility::vector1<char> randchains)
 {
 	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
@@ -682,7 +687,7 @@ void HybridizeProtocol::add_template(
 		core::pose::PoseOP template_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_file( *template_pose, *residue_set, template_fn , core::import_pose::PDB_file);
 
-		add_template( template_pose, cst_fn, symm_file, weight, cst_reses, template_fn );
+		add_template( template_pose, cst_fn, symm_file, weight, randchains, template_fn );
 	}
 }
 
@@ -701,7 +706,7 @@ void HybridizeProtocol::add_null_template(
 	template_weights_.push_back(weight);
 	template_chunks_.push_back(protocols::loops::Loops());
 	template_contigs_.push_back(protocols::loops::Loops());
-	template_cst_reses_.push_back(utility::vector1<core::Size>(0));
+	randomize_chains_.push_back(utility::vector1<core::Size>(0));
 }
 
 void HybridizeProtocol::add_template(
@@ -709,7 +714,7 @@ void HybridizeProtocol::add_template(
 	std::string cst_fn,
 	std::string symm_file,
 	core::Real weight,
-	utility::vector1<core::Size> cst_reses,
+	utility::vector1<char> rand_chains,
 	std::string filename)
 {
 	// add secondary structure information to the template pose
@@ -733,7 +738,7 @@ void HybridizeProtocol::add_template(
 	template_weights_.push_back(weight);
 	template_chunks_.push_back(chunks);
 	template_contigs_.push_back(contigs);
-	template_cst_reses_.push_back(cst_reses);
+	randomize_chains_.push_back(rand_chains);
 
 	non_null_template_indices_.push_back( templates_.size() );
 }
@@ -978,6 +983,80 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// pick starting template
 		core::Size initial_template_index = pick_starting_template();
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
+
+		// (0) randomize chains
+		if (randomize_chains_[initial_template_index].size() > 0) {
+			runtime_assert ( templates_[initial_template_index]->pdb_info() );
+			numeric::xyzVector< core::Real > comFixed(0,0,0), comMoving(0,0,0);
+			core::Real nFixed=0, nMoving=0;
+
+			for (core::Size i=1; i<=templates_[initial_template_index]->total_residue(); ++i) {
+				char chain = templates_[initial_template_index]->pdb_info()->chain(i);
+				if (std::find(
+						randomize_chains_[initial_template_index].begin(),
+						randomize_chains_[initial_template_index].end(),
+						chain) != randomize_chains_[initial_template_index].end()
+				) {
+					comMoving += templates_[initial_template_index]->residue(i).xyz(2);
+					nMoving++;
+				} else {
+					comFixed += templates_[initial_template_index]->residue(i).xyz(2);
+					nFixed++;
+				}
+			}
+			comMoving /= nMoving;
+			comFixed /= nFixed;
+
+			// randomize orientation
+			numeric::xyzMatrix< core::Real > R = protocols::geometry::random_reorientation_matrix( 360, 360 );
+
+			// randomize offset
+			numeric::xyzVector< core::Real > T = numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() );
+
+			// perturb & slide into contact
+			bool done=false, compacting=false;
+			core::Real DIST = 100.0;
+			core::scoring::ScoreFunction sf_vdw;
+			core::Real vdw_score = -1.0, step_size = -2.0, min_step_size = 0.25;
+			sf_vdw.set_weight( core::scoring::vdw, 1.0 );
+			core::pose::Pose template_orig = *(templates_[initial_template_index]);
+			while (!done && DIST > 0) {
+        utility::vector1< id::AtomID > atm_ids;
+        utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
+
+				for (core::Size i=1; i<=templates_[initial_template_index]->total_residue(); ++i) {
+					core::conformation::Residue const & rsd_i = template_orig.residue(i);
+					char chain = templates_[initial_template_index]->pdb_info()->chain(i);
+					if (std::find(
+							randomize_chains_[initial_template_index].begin(),
+							randomize_chains_[initial_template_index].end(),
+							chain) != randomize_chains_[initial_template_index].end()
+					) {
+						for ( core::Size j = 1; j <= rsd_i.natoms(); ++j ) {
+							id::AtomID id( j,i );
+							atm_ids.push_back( id );
+							numeric::xyzVector< core::Real > new_ij = R*(rsd_i.xyz(j) - comMoving) + comFixed + DIST * T;
+							atm_xyzs.push_back( new_ij );
+						}
+					}
+				}
+				templates_[initial_template_index]->batch_set_xyz( atm_ids, atm_xyzs );
+				core::Real score_d = sf_vdw( *(templates_[initial_template_index]) );
+				if (vdw_score < 0) vdw_score = score_d;
+
+				if (!compacting && score_d > vdw_score + 2.0) {
+					compacting = true;
+					step_size = min_step_size;
+				} else if (compacting  && vdw_score <= score_d + 2.0) {
+					done = true;
+				}
+
+				TR << "D=" << DIST << " score=" << score_d << std::endl;
+
+				DIST += step_size;
+			}
+		}
+		//templates_[initial_template_index]->dump_pdb ("rand.pdb");
 
 		// (1) steal hetatms from template
 		utility::vector1< std::pair< core::Size,core::Size > > hetatms;
@@ -1743,9 +1822,18 @@ HybridizeProtocol::parse_my_tag(
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );  // should this be NONE?
 			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
+
+			// randomize some chains
+			std::string rand_chain_str = (*tag_it)->getOption<std::string>( "randomize", "" );
+			utility::vector1< std::string > rand_chain_strs = utility::string_split( rand_chain_str, ',');
+			utility::vector1< char > rand_chains;
+			for( core::Size j = 1; j<=rand_chain_strs.size(); ++j) {
+				rand_chains.push_back( rand_chain_strs[j][0] );
+			}
+
 			bool align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );
 
-			add_template(template_fn, cst_fn, symm_file, weight);
+			add_template(template_fn, cst_fn, symm_file, weight, rand_chains);
 
 			// validate here since we have the pose (add_template does not) ... could do this in apply as well (?)
 			validate_template( template_fn, fasta, templates_[templates_.size()], align_pdb_info );

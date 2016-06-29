@@ -81,6 +81,9 @@ public:
 	void automode( pose::Pose &pose,
 		Real score_cut );
 
+	void automode_scores( pose::Pose &pose,
+		utility::vector1<Real> &scores );
+
 	/////////////////////////////////////////////////////////////
 	void user( std::set<core::Size> user_pos,
 		protocols::loops::LoopsOP loops );

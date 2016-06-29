@@ -48,7 +48,7 @@ public:
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
+		utility::vector1<char> rand_chains = utility::vector1<core::Size>(0) );
 
 	void add_null_template(
 		core::pose::PoseOP template_pose,
@@ -61,7 +61,7 @@ public:
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0),
+		utility::vector1<char> rand_chains = utility::vector1<core::Size>(0),
 		std::string filename="default" );
 
 	void validate_template(
@@ -183,7 +183,7 @@ private:
 	utility::vector1 < core::Real > template_weights_;   // template weights
 	utility::vector1 < protocols::loops::Loops > template_chunks_;    // template secstruct definitions
 	utility::vector1 < protocols::loops::Loops > template_contigs_;   // template continuous pieces
-	utility::vector1 < utility::vector1<core::Size> > template_cst_reses_;   // per-template residues to coordinate constrain
+	utility::vector1 < utility::vector1<char> > randomize_chains_;  // per-template chain randomization
 
 	// strand pairings
 	std::string pairings_file_;
