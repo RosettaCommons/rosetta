@@ -30,9 +30,6 @@
 #include <protocols/antibody/CDRsMinPackMin.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace antibody {
 
@@ -136,7 +133,7 @@ private:
 	AntibodyInfoOP ab_info_;
 	Ab_TemplateInfoOP ab_t_info_ ;
 
-	pack::task::TaskFactoryOP tf_;
+	core::pack::task::TaskFactoryOP tf_;
 
 	protocols::moves::SequenceMoverOP graft_sequence_ ;
 	protocols::moves::SequenceMoverOP optimize_sequence_ ;

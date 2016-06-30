@@ -842,7 +842,7 @@ sources = {
 		#"complex_interface_optimize",
 	],
 	"pilot/sergey" : [
-		"antibody",
+		#"antibody",
 	],
 	"pilot/sevya" : [
 		#"msd",

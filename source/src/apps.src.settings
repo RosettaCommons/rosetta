@@ -73,6 +73,7 @@ sources = {
 		"score_jd2",
 	],
 	"public/antibody": [
+		"antibody",
 		"antibody_legacy",
 		"antibody_graft",
 		"antibody_H3",

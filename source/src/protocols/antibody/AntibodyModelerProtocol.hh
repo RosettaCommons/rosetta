@@ -30,8 +30,6 @@
 #include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -52,7 +50,7 @@ public:
 	/// @brief Instantiates non-primitive members based on the value of the primitive members
 	void sync_objects_with_flags();
 
-	virtual void apply( pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	virtual std::string get_name() const;
 
@@ -133,7 +131,7 @@ public:
 		idealize_h3_stems_before_modeling_ = setting;
 	}
 
-	void display_constraint_residues( pose::Pose & pose );
+	void display_constraint_residues( core::pose::Pose & pose );
 
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m );

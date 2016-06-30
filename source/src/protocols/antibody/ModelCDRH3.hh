@@ -33,9 +33,6 @@
 #include <protocols/loops/loop_mover/IndependentLoopMover.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace antibody {
 
@@ -58,7 +55,7 @@ public:
 	~ModelCDRH3();
 
 	void set_default();
-	virtual void apply( pose::Pose & pose_in );
+	virtual void apply( core::pose::Pose & pose_in );
 	virtual std::string get_name() const;
 
 	/// @brief enable benchmark mode
@@ -76,7 +73,7 @@ public:
 	void set_lowres_score_func(core::scoring::ScoreFunctionCOP lowres_scorefxn );
 
 	/// @brief set task factory
-	void set_task_factory(pack::task::TaskFactoryCOP tf);
+	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
 
 	void turn_off_H3_filter();
 
@@ -108,15 +105,15 @@ private:
 	bool do_cter_insert_;
 
 	// constraints
-	Real cen_cst_;
-	pose::Pose hfr_pose_;
+	core::Real cen_cst_;
+	core::pose::Pose hfr_pose_;
 
 
 	/// @brief Number of ADDITIONAL residues modeled from H3_CTERM
 	///        These residues range from H:n-2,n-1,n,n+1 of H3
-	Size c_ter_stem_;
+	core::Size c_ter_stem_;
 
-	Size max_cycle_;
+	core::Size max_cycle_;
 
 
 	// score functions
@@ -140,7 +137,7 @@ private:
 	antibody::AntibodyInfoOP ab_info_;
 
 	//packer task
-	pack::task::TaskFactoryOP tf_;
+	core::pack::task::TaskFactoryOP tf_;
 
 	void init();
 

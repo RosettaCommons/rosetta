@@ -29,8 +29,7 @@
 #include <protocols/docking/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
+
 namespace protocols {
 namespace antibody {
 
@@ -80,7 +79,7 @@ private:
 	bool user_defined_;
 	bool repulsive_ramp_;
 	AntibodyInfoOP ab_info_;
-	pack::task::TaskFactoryOP tf_;
+	core::pack::task::TaskFactoryOP tf_;
 
 
 	void init( );
@@ -93,7 +92,7 @@ private:
 	core::scoring::ScoreFunctionOP dock_scorefxn_;
 	core::scoring::ScoreFunctionOP pack_scorefxn_;
 
-	kinematics::MoveMapOP cdr_dock_map_;
+	core::kinematics::MoveMapOP cdr_dock_map_;
 
 	docking::DockJumps LH_dock_jump_;
 };

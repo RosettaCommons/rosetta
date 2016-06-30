@@ -29,8 +29,6 @@
 #include <protocols/antibody_legacy/LHSnugFitLegacy.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -72,9 +70,9 @@ private:
 	bool is_camelid_;
 	loops::LoopsOP all_loops_;
 	std::string min_type_;
-	Real rot_mag_;
-	Real trans_mag_;
-	Real temperature_;
+	core::Real rot_mag_;
+	core::Real trans_mag_;
+	core::Real temperature_;
 
 	void init(loops::LoopsOP loops_in, bool camelid);
 

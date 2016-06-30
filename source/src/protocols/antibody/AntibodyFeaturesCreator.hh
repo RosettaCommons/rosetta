@@ -24,17 +24,15 @@
 
 namespace protocols {
 namespace antibody {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::features;
 
 /// @brief creator for the HBondParameterFeatures class
-class AntibodyFeaturesCreator : public FeaturesReporterCreator
+class AntibodyFeaturesCreator : public features::FeaturesReporterCreator
 {
 public:
 	AntibodyFeaturesCreator();
 	virtual ~AntibodyFeaturesCreator();
 
-	virtual FeaturesReporterOP create_features_reporter() const;
+	virtual features::FeaturesReporterOP create_features_reporter() const;
 	virtual std::string type_name() const;
 };
 

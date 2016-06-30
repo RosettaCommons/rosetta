@@ -13,19 +13,21 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
-#ifndef INCLUDED_protocols_antibody_SnugDock_FWD_HH
-#define INCLUDED_protocols_antibody_SnugDock_FWD_HH
+#ifndef INCLUDED_protocols_antibody_snugdock_SnugDock_FWD_HH
+#define INCLUDED_protocols_antibody_snugdock_SnugDock_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody {
+namespace snugdock {
 
 class SnugDock;
 typedef utility::pointer::shared_ptr< SnugDock > SnugDockOP;
 typedef utility::pointer::shared_ptr< SnugDock const > SnugDockCOP;
 
+} // namespace snugdock
 } // namespace antibody
 } // namespace protocols
 
-#endif // INCLUDED_protocols_antibody_SnugDock_FWD_HH
+#endif // INCLUDED_protocols_antibody_snugdock_SnugDock_FWD_HH

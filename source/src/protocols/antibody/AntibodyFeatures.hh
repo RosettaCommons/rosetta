@@ -22,21 +22,18 @@
 
 namespace protocols {
 namespace antibody {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::features;
-using namespace core::scoring;
 
 /// @brief Collects data on an antibody including CDRs, interfaces of L_H, L_A, H_A, and LH_A (this can be set), and other metrics.
 /// @details Adds .... tables to the database.  See also protocols/antibody/clusters/CDRClusterFeatures
-class AntibodyFeatures : public InterfaceFeatures {
-
+class AntibodyFeatures : public features::InterfaceFeatures {
+	
 public:
-
+	
 	AntibodyFeatures();
 
 	AntibodyFeatures(AntibodyInfoOP ab_info);
 
-	AntibodyFeatures(AntibodyInfoOP ab_info, ScoreFunctionCOP scorefxn);
+	AntibodyFeatures(AntibodyInfoOP ab_info, core::scoring::ScoreFunctionCOP scorefxn);
 
 
 	/// @brief return string with class name
@@ -86,7 +83,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		StructureID struct_id,
+		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 
@@ -94,26 +91,26 @@ public:
 	void
 	report_ab_metrics_features(
 		core::pose::Pose const & pose,
-		StructureID struct_id,
+		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	report_ab_H3_kink_metrics_features(
 		core::pose::Pose const & pose,
-		StructureID struct_id,
+		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	report_cdr_metrics_features(
 		core::pose::Pose const & pose,
-		StructureID struct_id,
+		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		CDRNameEnum const & cdr);
 
 	void
 	report_cdr_residue_features(
 		core::pose::Pose const & pose,
-		StructureID struct_id,
+		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		CDRNameEnum const & cdr,
 		utility::vector1< bool > const & relevant_residues);
@@ -121,7 +118,7 @@ public:
 	void
 	report_cdr_residue_features_row(
 		core::pose::Pose const & pose,
-		StructureID struct_id,
+		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		CDRNameEnum const & cdr,
 		core::Size resnum,
@@ -145,7 +142,7 @@ private:
 	//These can be moved to metrics, but they require IAM data already.
 
 	core::Real
-	calculate_cdr_totals(CDRNameEnum const cdr, const core::pose::Pose & pose, const utility::vector1<Real> & data) const ;
+	calculate_cdr_totals(CDRNameEnum const cdr, const core::pose::Pose & pose, const utility::vector1<core::Real> & data) const ;
 
 
 	/// @brief Calculate polar dSASA using IAM results.

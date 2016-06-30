@@ -26,8 +26,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 
 /// @brief Specifically for AntibodyModeling protocol templates. Not for general use.
 class Ab_TemplateInfo  : public utility::pointer::ReferenceCount {
@@ -46,7 +44,7 @@ public:
 	void load_templates_from_pdbs(bool load_L1, bool load_L2, bool load_L3,
 		bool load_H1, bool load_H2, bool load_H3, bool camelid);
 
-	pose::Pose get_one_template_pose(std::string cdr_name);
+	core::pose::Pose get_one_template_pose(std::string cdr_name);
 	bool is_camelid()  {
 		return camelid_;
 	}
@@ -61,7 +59,7 @@ private:
 		load_H1_, load_H2_, load_H3_;
 
 	TemplatePoseMap templates_poses_;
-	pose::Pose L1_t_pose_, L2_t_pose_, L3_t_pose_,
+	core::pose::Pose L1_t_pose_, L2_t_pose_, L3_t_pose_,
 		H1_t_pose_, H2_t_pose_, H3_t_pose_;
 	//    pose::Pose Lfr_t_pose_, Hfr_t_pose_, LightHeavy_t_pose_;
 

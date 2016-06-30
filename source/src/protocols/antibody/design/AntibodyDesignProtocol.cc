@@ -228,7 +228,7 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose & pose){
 	core::Real start = scorefxn_->score(pose);
 
 	if ( run_snugdock_ ) {
-		SnugDockOP snug( new SnugDock() );
+		snugdock::SnugDockOP snug( new snugdock::SnugDock() );
 		AntibodyInfoOP updated_ab_info( new AntibodyInfo(pose, AHO_Scheme, North) ); //Should be a reset method in AbInfo..
 
 		snug->set_scorefxn(scorefxn_);

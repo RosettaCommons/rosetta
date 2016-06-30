@@ -30,8 +30,6 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -48,7 +46,7 @@ public:
 	~GraftedStemOptimizer();
 
 	virtual void
-	apply( pose::Pose & pose );
+	apply( core::pose::Pose & pose );
 
 	virtual std::string
 	get_name() const;
@@ -69,22 +67,22 @@ public:
 		deep_optimization_ = setting;
 	}
 
-	kinematics::FoldTreeOP
-	get_N_C_stems_foldtree(pose::Pose const & pose) const;
+	core::kinematics::FoldTreeOP
+	get_N_C_stems_foldtree(core::pose::Pose const & pose) const;
 
-	kinematics::FoldTreeOP
-	get_Nstem_foldtree(pose::Pose const & pose) const;
+	core::kinematics::FoldTreeOP
+	get_Nstem_foldtree(core::pose::Pose const & pose) const;
 
-	kinematics::FoldTreeOP
-	get_Cstem_foldtree(pose::Pose const & pose) const;
+	core::kinematics::FoldTreeOP
+	get_Cstem_foldtree(core::pose::Pose const & pose) const;
 
-	kinematics::MoveMapOP
-	get_stem_movemap(pose::Pose const & pose,
+	core::kinematics::MoveMapOP
+	get_stem_movemap(core::pose::Pose const & pose,
 		std::string const & type,
 		bool const & include_nb_sc = false) const;
 
-	pack::task::TaskFactoryOP
-	get_stem_taskfactory(pose::Pose & pose,
+	core::pack::task::TaskFactoryOP
+	get_stem_taskfactory(core::pose::Pose & pose,
 		std::string const & type,
 		bool const & include_nb_sc = false) const;
 
@@ -92,7 +90,7 @@ public:
 	/// @brief stem that was replaced by the extra reesidues at the end of the
 	///       loop terminus. Default is "2"
 	void
-	set_stem_size(Size const & setting);
+	set_stem_size(core::Size const & setting);
 
 	/// @brief copy ctor
 	GraftedStemOptimizer( GraftedStemOptimizer const & rhs );
@@ -106,7 +104,7 @@ private:
 	init();
 
 	void
-	setup_protocol(pose::Pose & pose);
+	setup_protocol(core::pose::Pose & pose);
 
 	void
 	initForEqualOperatorAndCopyConstructor(GraftedStemOptimizer & lhs, GraftedStemOptimizer const & rhs);

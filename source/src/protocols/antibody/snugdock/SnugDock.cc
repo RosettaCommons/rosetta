@@ -53,6 +53,7 @@ using namespace core;
 
 namespace protocols {
 namespace antibody {
+namespace snugdock {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
@@ -360,5 +361,6 @@ std::ostream & operator<<(std::ostream& out, SnugDock const & ) {
 	return out;
 }
 
+} // namespace snugdock
 } // namespace antibody
 } // namespace protocols

@@ -31,8 +31,6 @@
 #include <protocols/antibody/RefineOneCDRLoopCentroid.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -59,7 +57,7 @@ public:
 	~RefineOneCDRLoopCentroid();
 
 
-	virtual void apply( pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	virtual std::string get_name() const;
 
@@ -81,7 +79,7 @@ private:
 	void set_default();
 	void finalize_setup( core::pose::Pose const & pose );
 	void loop_centroid_relax(
-		pose::Pose & pose,
+		core::pose::Pose & pose,
 		Size const loop_begin,
 		Size const loop_end );
 

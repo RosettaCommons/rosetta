@@ -16,8 +16,8 @@
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
 
-#ifndef INCLUDED_protocols_antibody_SnugDock_HH
-#define INCLUDED_protocols_antibody_SnugDock_HH
+#ifndef INCLUDED_protocols_antibody_snugdock_SnugDock_HH
+#define INCLUDED_protocols_antibody_snugdock_SnugDock_HH
 
 // Unit headers
 #include <protocols/antibody/snugdock/SnugDock.fwd.hh>
@@ -38,10 +38,9 @@
 // C++ headers
 #include <iostream>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
+namespace snugdock {
 
 /// @brief MoveSet step of Snugdock as described in:
 ///
@@ -119,7 +118,8 @@ private:
 
 }; // class SnugDock
 
+} // namespace snugdock
 } // namespace antibody
 } // namespace protocols
 
-#endif // INCLUDED_protocols_antibody_SnugDock_HH
+#endif // INCLUDED_protocols_antibody_snugdock_SnugDock_HH

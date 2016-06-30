@@ -31,8 +31,6 @@
 #include <protocols/moves/RepeatMover.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -79,7 +77,7 @@ public:
 	virtual std::string get_name() const;
 
 
-	void set_task_factory(pack::task::TaskFactoryCOP tf);
+	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
 
 	core::Real set_rot_mag  (core::Real rot_mag)  {
 		return rot_mag_  =rot_mag;
@@ -98,7 +96,7 @@ private:
 	bool is_camelid_;
 	loops::Loops all_loops_;
 	core::Size nres_;
-	kinematics::MoveMapOP cdr_dock_map_;
+	core::kinematics::MoveMapOP cdr_dock_map_;
 	core::Size rep_ramp_cycles_;
 	std::string min_type_;
 	core::Real rot_mag_;
@@ -115,16 +113,16 @@ private:
 
 	void setup_objects();
 
-	void finalize_setup(pose::Pose & pose );
+	void finalize_setup(core::pose::Pose & pose );
 
-	void snugfit_MC_min(pose::Pose & pose, core::scoring::ScoreFunctionOP  temp_scorefxn);
+	void snugfit_MC_min(core::pose::Pose & pose, core::scoring::ScoreFunctionOP  temp_scorefxn);
 
 
-	void repulsive_ramp( pose::Pose & pose_in, loops::Loops loops_in );
+	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
 
 
 	//packer task
-	pack::task::TaskFactoryOP tf_;
+	core::pack::task::TaskFactoryOP tf_;
 
 };
 

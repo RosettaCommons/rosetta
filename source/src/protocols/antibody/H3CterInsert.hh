@@ -26,8 +26,6 @@
 #include <protocols/moves/Mover.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace antibody {
 
@@ -50,7 +48,7 @@ public:
 
 	void set_default();
 
-	virtual void apply(pose::Pose & pose );
+	virtual void apply(core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
 	// read CDR H3 C-terminal fragments (size: 4)

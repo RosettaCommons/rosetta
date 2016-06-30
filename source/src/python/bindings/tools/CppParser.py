@@ -1484,7 +1484,7 @@ _import_order_ = {
 
     'protocols': [ 'moves', 'constraint_generator', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
                   'simple_moves', 'ligand_docking', 'rigid', 'toolbox', 'forge', 'loop_modeling', 'loops', 'wum', 'rosetta_scripts',
-                  'simple_filters', 'relax', 'denovo_design'],
+                  'simple_filters', 'relax', 'denovo_design', 'docking'],
     'protocols/forge' : ['remodel'],
     'protocols/match' : ['upstream'],
     'protocols/stepwise' : ['screener', 'modeler'],

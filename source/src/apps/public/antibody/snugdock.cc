@@ -32,7 +32,7 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		using namespace protocols::antibody;
+		using namespace protocols::antibody::snugdock;
 		using namespace protocols::jd2;
 		using namespace basic::options;
 
