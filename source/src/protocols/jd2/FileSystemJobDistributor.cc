@@ -112,9 +112,15 @@ FileSystemJobDistributor::get_new_job_id()
 	next_job_to_try_assigning = std::max( next_job_to_try_assigning, get_min_nstruct_index_checkpoint_file() );
 	while ( next_job_to_try_assigning <= jobs.size() ) {
 		if ( jobs[ next_job_to_try_assigning ]->bad() ) {
+			if( TR.Debug.visible() ) {
+				TR.Debug << "Skipping job " << outputter->output_name( jobs[ next_job_to_try_assigning ] ) << " - Bad Job." << std::endl;
+			}
 			++next_job_to_try_assigning;
 		} else if ( outputter->job_has_completed( jobs[ next_job_to_try_assigning ] ) &&
 				!basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
+			if( TR.Debug.visible() ) {
+				TR.Debug << "Skipping job " << outputter->output_name( jobs[ next_job_to_try_assigning ] ) << " - Job marked as already completed." << std::endl;
+			}
 			++next_job_to_try_assigning;
 		} else if ( basic::options::option[ basic::options::OptionKeys::run::multiple_processes_writing_to_one_directory ].value() ) {
 			std::string const next_job_output_name( temporary_file_name( jobs[ next_job_to_try_assigning ] ) );

@@ -22,11 +22,14 @@
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 #include <boost/foreach.hpp>
 
 namespace protocols {
 namespace jd2 {
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.ScoreOnlyJobOutputter" );
 
 ScoreOnlyJobOutputter::ScoreOnlyJobOutputter(): FileJobOutputter()
 {
@@ -61,6 +64,9 @@ bool ScoreOnlyJobOutputter::job_has_completed(JobCOP job) {
 
 	// Is the job already marked as done?
 	if ( job->completed() ) {
+		if( TR.Debug.visible() ) {
+			TR.Debug << "Skipping job " << output_name(job) << " because it has been marked as already completed." << std::endl;
+		}
 		return true;
 	}
 
@@ -73,6 +79,10 @@ bool ScoreOnlyJobOutputter::job_has_completed(JobCOP job) {
 	bool const already_written(
 		find_if(score_file_tags_.begin(), score_file_tags_.end(), predicate) != score_file_tags_.end()
 	);
+
+	if( TR.Debug.visible() && already_written ) {
+		TR.Debug << "Skipping job " << output_name(job) << " because it has been already written to disk." << std::endl;
+	}
 
 	return already_written;
 }
