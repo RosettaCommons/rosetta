@@ -163,7 +163,7 @@ TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::Sc
 	err_msg << "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
 		<< "\tpose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
 		<< "\tetable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
-	utility_exit_with_message( err_msg.str());
+	utility_exit_with_message( err_msg.str() );
 }
 
 
@@ -275,7 +275,11 @@ AnalyticEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::Score
 
 	if ( pose.residue(1).type().atom_type_set_ptr() == etable().atom_set().lock() )  return;
 
-	utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+	std::stringstream err_msg;
+	err_msg << "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
+		<< "\tpose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
+		<< "\tetable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
+	utility_exit_with_message( err_msg.str() );
 
 	// For debugging if etable options are being updated
 	//std::cout << "Check!" << etable().get_lj_hbond_hdis() << " ";

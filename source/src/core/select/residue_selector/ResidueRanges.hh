@@ -35,6 +35,7 @@ namespace residue_selector {
 struct ResidueRange {
 	ResidueRange():
 		start( 0 ), stop( 0 ) {}
+
 	ResidueRange( core::Size const startval, core::Size const stopval ):
 		start( startval ), stop( stopval ) {}
 
@@ -44,16 +45,23 @@ struct ResidueRange {
 
 class ResidueRanges : public utility::vector1< ResidueRange > {
 public:
-	/// @brief Constructor.
-	///
+
+	/// @brief Constructs an empty vector of ResidueRanges
+	ResidueRanges();
+
+	/// @brief Constructs a set of contiguous ranges of residues from a residue subset
+	/// @param subset : residue subset from which contiguous ranges of residues will be derived
 	ResidueRanges( ResidueSubset const & subset );
 
 	/// @brief Destructor.
-	///
 	virtual ~ResidueRanges();
 
+	/// @brief Clears the ranges and uses the provided ResidueSubset to create new ranges
+	/// @param subset : residue subset from which contiguous ranges of residues will be derived
+	void
+	from_subset( ResidueSubset const & subset );
+
 private:
-	ResidueRanges();
 
 };
 

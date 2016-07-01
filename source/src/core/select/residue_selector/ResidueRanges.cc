@@ -23,8 +23,25 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-ResidueRanges::ResidueRanges( ResidueSubset const & subset )
-: utility::vector1< ResidueRange >()
+/// @brief Constructs an empty vector of ResidueRanges
+ResidueRanges::ResidueRanges():
+	utility::vector1< ResidueRange >()
+{}
+
+/// @brief Constructs a set of contiguous ranges of residues from a residue subset
+/// @param subset : residue subset from which contiguous ranges of residues will be derived
+ResidueRanges::ResidueRanges( ResidueSubset const & subset ):
+	utility::vector1< ResidueRange >()
+{
+	from_subset( subset );
+}
+
+ResidueRanges::~ResidueRanges() {}
+
+/// @brief Clears the ranges and uses the provided ResidueSubset to create new ranges
+/// @param subset : residue subset from which contiguous ranges of residues will be derived
+void
+ResidueRanges::from_subset( ResidueSubset const & subset )
 {
 	this->clear();
 	core::Size start_interval = 0;
@@ -40,14 +57,13 @@ ResidueRanges::ResidueRanges( ResidueSubset const & subset )
 			start_interval = 0;
 		} else {
 			// We should never be here!
+			debug_assert( false );
 		}
 	}
 	if ( start_interval != 0 ) {
 		push_back( ResidueRange( start_interval, subset.size() ) );
 	}
 }
-
-ResidueRanges::~ResidueRanges() {}
 
 } //namespace residue_selector
 } //namespace select
