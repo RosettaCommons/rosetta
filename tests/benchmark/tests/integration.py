@@ -126,7 +126,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
 
     if res:
         results[_StateKey_] = _S_script_failed_
-        results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+        results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output.decode('utf-8', errors="replace")  # ommiting compilation log and only including integration.py output
 
     return command_line, output, results
 
@@ -151,7 +151,7 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_
 
     if res:
         results[_StateKey_] = _S_build_failed_
-        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log.decode('utf-8', errors="replace")
         return results
 
     #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
@@ -162,7 +162,7 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_
     copy_files(files_location, working_dir)
 
     results[_StateKey_]  = _S_queued_for_comparison_ #This queues the comparison for the test server, which will run compare function in this file.
-    results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+    results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output.decode('utf-8', errors="replace")  # ommiting compilation log and only including integration.py output
     results[_IgnoreKey_] = ignore
     return results
 
@@ -188,7 +188,7 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=
 
     if res:
         results[_StateKey_] = _S_build_failed_
-        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log.decode('utf-8', errors="replace")
         return results
 
     command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
@@ -201,13 +201,13 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=
     #Do a DIFF to indicate pass or f
     if diff_causes_failure:
         results[_StateKey_]  = _S_queued_for_comparison_
-        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output.decode('utf-8', errors="replace")  # ommiting compilation log and only including integration.py output
         results[_IgnoreKey_] = ignore
         return results
 
     else:
         results =  gather_pass_fail_results(files_location)
-        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
+        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output.decode('utf-8', errors="replace")
         return results
 
 
@@ -230,7 +230,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
 
     if res:
         results[_StateKey_] = _S_build_failed_
-        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log.decode('utf-8', errors="replace")
         return results
 
     files_location = rosetta_dir+'/tests/integration/valgrind/'
@@ -271,9 +271,9 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
                 log += open(files_location+'/'+test+'/valgrind.out').read()
         else:
             state = _S_passed_
-        json_results['tests'][test] = {_StateKey_: state, _LogKey_: log }
+        json_results['tests'][test] = {_StateKey_: state, _LogKey_: log.decode('utf-8', errors="replace") }
 
-    results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+    results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output.decode('utf-8', errors="replace")  # ommiting compilation log and only including integration.py output
     results[_IgnoreKey_] = ignore
     results[_ResultsKey_] = json_results
     return results
@@ -286,8 +286,8 @@ def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbo
     elif test == 'release_debug':            return run_integration_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'mpi':                      return run_integration_tests('debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
-    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind') # 'release_debug' for line # information
-    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--trackorigins --valgrind') # 'release_debug' for line # information
+    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_debug' for line # information
+    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_debug' for line # information
     elif test == 'demos':                    return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
     elif test == 'tutorials':                return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
     else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
@@ -325,7 +325,7 @@ def compare(test, results, files_path, previous_results, previous_files_path):
 
                 if os.path.isfile(files_path+'/'+test+'/.test_did_not_run.log')  or  os.path.isfile(files_path+'/'+test+'/.test_got_timeout_kill.log'): state = _S_script_failed_;  has_failed_scripts=True
                 else: state = _S_failed_ if res else _S_passed_
-                results['tests'][test] = {_StateKey_: state, _LogKey_: diff if state != _S_passed_ else ''}
+                results['tests'][test] = {_StateKey_: state, _LogKey_: diff.decode('utf-8', errors="replace") if state != _S_passed_ else ''}
 
                 results['summary']['total'] += 1
                 if res: results['summary']['failed'] += 1; results['summary']['failed_tests'].append(test)
@@ -371,7 +371,7 @@ def gather_pass_fail_results(files_path):
 
 
 
-            results['tests'][test] = {_StateKey_: state, _LogKey_: out_log if state != _S_passed_ else ''}
+            results['tests'][test] = {_StateKey_: state, _LogKey_: out_log.decode('utf-8', errors="replace") if state != _S_passed_ else ''}
 
             results['summary']['total'] += 1
             if state == _S_script_failed_:

@@ -314,9 +314,14 @@ EXAMPLES For Running Demos/Tutorials
     #Print the current SHA1 for demos, main, and tools.
 
     print "\nCurrent Versions Tested:"
-    print "DEMOS: " + get_git_sha1(root_demos_dir)
-    print "MAIN:  " + get_git_sha1(this_file_dir)
+    print "MAIN:  " + get_git_sha1(Options.mini_home)
+    if get_git_sha1(Options.mini_home) != get_git_sha1(Options.database):
+        print "\n====== WARNING WARNING WARNING ========"
+        print "\t Rosetta database version doesn't match source version!"
+        print "\t DATABASE: " + get_git_sha1(Options.database)
+        print "====== WARNING WARNING WARNING ========\n"
     print "TOOLS: " + get_git_sha1(root_tools_dir)
+    print "DEMOS: " + get_git_sha1(root_demos_dir)
     print "\n"
 
     #All tests are in a subdirectory.  We set these up here.
@@ -373,7 +378,8 @@ EXAMPLES For Running Demos/Tutorials
     if not options.compareonly:
         if len(args)>0 and path.isdir(outdir): #we have individual tests... only remove single test directories
             for test in tests:
-                testdir=outdir+'/'+test
+                testbase = os.path.basename(test)
+                testdir=os.path.join(outdir,testbase)
                 if path.isdir(testdir): shutil.rmtree(testdir)
         else:
             # Remove everything in the current outdir, then re-create it empty
@@ -396,15 +402,15 @@ EXAMPLES For Running Demos/Tutorials
             json.dump(generateIntegrationTestGlobalSubstitutionParameters(), parameters_file, sort_keys=True, indent=2)
 
         for test in tests:
-
+            testbase = os.path.basename(test)
             #shutil.copytree( path.join("tests", test), path.join(outdir, test) )
             if Options.demos:
                 #print "Copying demo dir from "+test+" to "+ path.join(outdir, test)
-                local_copytree( test , path.join(outdir, os.path.basename(test)), accept=lambda src, dst: path.basename(src) != '.svn')
-                queue.put(os.path.basename(test))
+                local_copytree( test , path.join(outdir, testbase), accept=lambda src, dst: path.basename(src) != '.svn')
+                queue.put(testbase)
             elif ((not Options.mpi_tests) or Options.mpi_tests and os.path.isfile(path.join(test_subdir, test ,"command.mpi"))):
-                local_copytree( test , path.join(outdir, os.path.basename(test)), accept=lambda src, dst: path.basename(src) != '.svn')
-                queue.put(os.path.basename(test))
+                local_copytree( test , path.join(outdir, testbase), accept=lambda src, dst: path.basename(src) != '.svn')
+                queue.put(testbase)
             else:
                 continue
 
@@ -415,29 +421,48 @@ EXAMPLES For Running Demos/Tutorials
 
     # removing absolute paths to root Rosetta checkout from tests results and replacing it with 'ROSETTA'
     for test in tests:
-        for dir_, _, files in os.walk( path.join(outdir, test) ):
+        testbase = os.path.basename(test)
+        for dir_, _, files in os.walk( path.join(outdir, testbase) ):
             for f in files:
                 if f == 'command.sh': continue
                 if f == 'command.mpi.sh': continue
                 fname = dir_ + '/' + f
                 data = file(fname).read()
-                if rosetta_dir in data:
-                    with file(fname, 'w') as f: f.write( data.replace(root_main_dir, 'ROSETTA_MAIN') )
+                mod = False
+                if root_rosetta_dir in data:
+                    data = data.replace(root_rosetta_dir, 'ROSETTA')
+                    mod = True
+                # In case commandline specification is used - normalize to standard install directories.
+                params = generateIntegrationTestGlobalSubstitutionParameters()
+                if params['minidir'] in data:
+                    data = data.replace( params['minidir'], "ROSETTA/main/source")
+                    mod = True
+                if params['database'] in data:
+                    data = data.replace( params['database'], "ROSETTA/main/database")
+                    mod = True
+                if params['rosetta_tools'] in data:
+                    data = data.replace( params['rosetta_tools'], "ROSETTA/tools")
+                    mod = True
+                if params['rosetta_demos'] in data:
+                    data = data.replace( params['rosetta_demos'], "ROSETTA/demos")
+                    mod = True
+                if mod:
+                    with file(fname, 'w') as f: f.write( data )
 
     # Analyze results
     print
 
-    #if outdir == "ref":
+    refdir = os.path.join( os.path.dirname(outdir), 'ref' )
     if rename_to_ref:
-        os.renames(outdir, 'ref')
+        os.renames( outdir, refdir )
 
-        print "Just generated 'ref' results [renamed '%s' to 'ref'];  run again after making changes." % outdir
+        print "Just generated 'ref' results [renamed '%s' to '%s'];  run again after making changes." % (outdir, refdir)
         if options.daemon:
             print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
 
         if options.yaml:
             f = file(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
-        write_runtimes(runtimes, 'ref')
+        write_runtimes(runtimes, refdir)
 
     else:
         if options.skip_comparison:
@@ -454,10 +479,11 @@ EXAMPLES For Running Demos/Tutorials
                     test_valid = os.path.isfile( path.join( test, "command") )
 
                 if test_valid:
+                    testbase = os.path.basename(test)
                     if options.valgrind:
-                        errors += analyze_valgrind_test(test, outdir, results, full_log )
+                        errors += analyze_valgrind_test(testbase, outdir, results, full_log )
                     else:
-                        errors += analyze_integration_test(test, outdir, results, full_log)
+                        errors += analyze_integration_test(testbase, outdir, refdir, results, full_log)
             full_log = ''.join(full_log)
 
             if options.daemon:
@@ -723,6 +749,8 @@ def get_git_sha1(dir):
     :param dir:
     :return:
     """
+    if not os.path.exists(dir):
+        return "<<Directory '{dir}' not found.>>".format(dir=dir)
     cmd = "cd {dir}; git rev-parse HEAD; cd {workdir}".format(dir=dir, workdir=os.getcwd())
     return subprocess.check_output(cmd, shell=True).strip()
 
@@ -1034,12 +1062,12 @@ def generateTestCommandline(test, outdir, options=None, host=None):
 
     return cmd_line_sh, workdir
 
-def analyze_integration_test( test, outdir, results, full_log ):
+def analyze_integration_test( test, outdir, refdir, results, full_log ):
     """
     Look at the specific integration test, and check for errors
     """
 
-    dir_before = path.join("ref", test)
+    dir_before = path.join(refdir, test)
     dir_after = path.join(outdir, test)
     # diff returns 0 on no differences, 1 if there are differences
 
@@ -1363,8 +1391,6 @@ def local_copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: Tru
     """Recursively copy a directory tree using copy2(), with filtering.
     Copied from shutil so I could filter out .svn entries.
     """
-
-
 
     names = os.listdir(src)
     os.makedirs(dst)
