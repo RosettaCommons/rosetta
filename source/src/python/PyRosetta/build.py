@@ -394,16 +394,23 @@ def  build_generated_bindings(rosetta_source_path):
 
 
 
-def create_package(rosetta_source_path, package_prefix):
-    print('Creating Python package at: {}...'.format(package_prefix))
+def create_package(rosetta_source_path, path):
+    print('Creating Python package at: {}...'.format(path))
 
+    package_prefix = path + '/setup'
     if not os.path.isdir(package_prefix): os.makedirs(package_prefix)
+
+    shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/self-test.py', path)
+    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/demo', path + '/demo', update=False)
+    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/test', path + '/test', update=False)
+
     distutils.dir_util.copy_tree(rosetta_source_path + '/../database', package_prefix + '/database', update=False)
     distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/package', package_prefix, update=False)
 
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
     shutil.copy(build_prefix + '/rosetta.so', package_prefix)
     distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
+
 
 
 
@@ -422,7 +429,7 @@ def main(args):
     parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
-    parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to not create package)')
+    parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
 
     global Options
     Options = parser.parse_args()
