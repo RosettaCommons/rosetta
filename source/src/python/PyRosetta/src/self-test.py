@@ -81,7 +81,7 @@ def run_test(test):
 
     started = datetime.datetime.today()
 
-    command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 1024'
+    command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 1536'
     command_line += ' && {0} {1} '.format(sys.executable, test)
 
     res, output = execute('\nExecuting %s...' % test, command_line, return_='tuple')

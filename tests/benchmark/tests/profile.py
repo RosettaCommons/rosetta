@@ -25,7 +25,7 @@ _api_version_ = '1.0'  # api version
 _failure_threshold_min_execution_time_   = 128
 _failure_threshold_min_alloacted_memory_ = 256
 
-_failure_threshold_execution_time_pct_       = 64
+_failure_threshold_execution_time_pct_       = 96
 _failure_threshold_max_memory_allocated_pct_ = 4
 
 
