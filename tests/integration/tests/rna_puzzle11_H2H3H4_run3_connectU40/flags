@@ -1,0 +1,12 @@
+-fasta RNAPZ11_notag.fasta 
+-secstruct_file RNAPZ11.secstruct 
+-working_res 14-25 30-40 
+-s H2.pdb H4.pdb 
+-rna:farna:fixed_stems 
+-native example1.pdb 
+-chain_connection SET1 17 SET2 19-22 34-37  
+-out:file:silent run3_connectU40.out  
+-include_neighbor_base_stacks  
+-minimize_rna true
+-nstruct 1
+-cycles 50

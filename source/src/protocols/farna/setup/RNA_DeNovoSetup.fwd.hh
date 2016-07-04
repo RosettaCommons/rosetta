@@ -7,26 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/Pose.fwd.hh
-/// @brief  Pose forward declarations header
-/// @author Rhiju Das
+/// @file protocols/farna/setup/RNA_DeNovoSetup.fwd.hh
+/// @brief 
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
 
-#ifndef INCLUDED_protocols_rna_RNA_DeNovoPoseSetup_FWD_HH
-#define INCLUDED_protocols_rna_RNA_DeNovoPoseSetup_FWD_HH
+
+#ifndef INCLUDED_protocols_farna_setup_RNA_DeNovoSetup_FWD_HH
+#define INCLUDED_protocols_farna_setup_RNA_DeNovoSetup_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace farna {
 namespace setup {
-
-class RNA_DeNovoPoseSetup;
-
-typedef utility::pointer::shared_ptr< RNA_DeNovoPoseSetup > RNA_DeNovoPoseSetupOP;
-typedef utility::pointer::shared_ptr< RNA_DeNovoPoseSetup const > RNA_DeNovoPoseSetupCOP;
-
-} //setup
-} //farna
-} //protocols
+	
+	class RNA_DeNovoSetup;
+	typedef utility::pointer::shared_ptr< RNA_DeNovoSetup > RNA_DeNovoSetupOP;
+	typedef utility::pointer::shared_ptr< RNA_DeNovoSetup const > RNA_DeNovoSetupCOP;
+	
+} //setup 
+} //farna 
+} //protocols 
 
 #endif

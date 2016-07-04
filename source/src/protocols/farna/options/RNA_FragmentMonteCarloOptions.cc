@@ -78,6 +78,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
 	use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
 	superimpose_over_all_( false ),
+	fixed_stems_( false ),
 	all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
 	rna_params_file_( "" ),
 	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) )
@@ -148,6 +149,8 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
 
 	set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );
+
+	set_fixed_stems( option[ rna::farna::fixed_stems ]() );
 
 	std::string const in_path = option[ in::path::path ]()[1];
 	if ( option[ rna::farna::vall_torsions ].user() ) {

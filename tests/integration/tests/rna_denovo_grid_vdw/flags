@@ -1,6 +1,7 @@
 -nstruct 1 
 -cycles 1000 
--params_file ms2_vdw_test.params 
+#-params_file ms2_vdw_test.params 
+-secstruct '((.((....))))'
 -fasta ms2_vdw_test.fasta  
 -out:file:silent ms2_vdw_test.out 
 -include_neighbor_base_stacks  

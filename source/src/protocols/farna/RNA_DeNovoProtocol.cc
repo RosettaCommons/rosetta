@@ -23,7 +23,7 @@
 #include <protocols/farna/movers/RNA_Minimizer.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.hh>
 #include <protocols/farna/movers/RNA_Relaxer.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 
 // Package headers
@@ -112,10 +112,19 @@ namespace farna {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNA_DeNovoProtocol" );
 
-RNA_DeNovoProtocol::RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options ):
+RNA_DeNovoProtocol::RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options,
+																				RNA_DeNovoParametersCOP params):
 	Mover(),
-	options_( options )
+	options_( options ),
+	rna_params_( params )
 {
+	if ( rna_params_ == 0 ) {
+		if ( options_->rna_params_file().size() > 0 ) {
+			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
+		} else {
+			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters );
+		}
+	}
 	Mover::type("RNA_DeNovoProtocol");
 }
 
@@ -156,8 +165,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	initialize_lores_silent_file();
 	initialize_tag_is_done();
 
-	RNA_DeNovoParametersCOP rna_params( new RNA_DeNovoParameters( options_->rna_params_file() ) );
-	RNA_DeNovoPoseSetupOP rna_de_novo_pose_setup( new RNA_DeNovoPoseSetup( *rna_params )  );
+	RNA_DeNovoPoseInitializerOP rna_de_novo_pose_setup( new RNA_DeNovoPoseInitializer( *rna_params_ )  );
 	rna_de_novo_pose_setup->set_bps_moves( options_->bps_moves() );
 	rna_de_novo_pose_setup->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
 	bool refine_pose( refine_pose_list_.size() > 0 || options_->refine_pose() );
@@ -188,8 +196,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		}
 
 		RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
-			options_->input_res(), rna_params->allow_insert_res() ) );
-		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params ) );
+			options_->input_res(), rna_params_->allow_insert_res() ) );
+		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params_ ) );
 
 		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
 		rna_fragment_monte_carlo_->set_out_file_tag( out_file_tag );

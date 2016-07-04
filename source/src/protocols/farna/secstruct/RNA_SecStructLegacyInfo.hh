@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNA_SecStructInfo.hh
+/// @file   core/scoring/methods/RNA_SecStructLegacyInfo.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
 
-#ifndef INCLUDED_protocols_rna_RNA_SecStructInfo_hh
-#define INCLUDED_protocols_rna_RNA_SecStructInfo_hh
+#ifndef INCLUDED_protocols_rna_RNA_SecStructLegacyInfo_hh
+#define INCLUDED_protocols_rna_RNA_SecStructLegacyInfo_hh
 
 
 // Project headers
@@ -42,38 +42,38 @@ namespace secstruct {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA centroid information inside the pose.
 //// Rhiju move this to its own namespace!
-class RNA_SecStructInfo: public basic::datacache::CacheableData  {
+class RNA_SecStructLegacyInfo: public basic::datacache::CacheableData  {
 
 public:
 
-	RNA_SecStructInfo(){};
+	RNA_SecStructLegacyInfo(){};
 
-	RNA_SecStructInfo( std::string const & rna_secstruct_string ):
-		rna_secstruct_( rna_secstruct_string )
+	RNA_SecStructLegacyInfo( std::string const & rna_secstruct_legacy_string ):
+		rna_secstruct_legacy_( rna_secstruct_legacy_string )
 	{}
 
-	RNA_SecStructInfo( RNA_SecStructInfo const & src );
+	RNA_SecStructLegacyInfo( RNA_SecStructLegacyInfo const & src );
 
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return basic::datacache::CacheableDataOP( new RNA_SecStructInfo( *this ) );
+		return basic::datacache::CacheableDataOP( new RNA_SecStructLegacyInfo( *this ) );
 	}
 
 	Size
 	size() const {
-		return rna_secstruct_.size();
+		return rna_secstruct_legacy_.size();
 	}
 
 	void
-	set_secstruct( std::string const & secstruct ){ rna_secstruct_ = secstruct; }
+	set_secstruct( std::string const & secstruct ){ rna_secstruct_legacy_ = secstruct; }
 
 	std::string const &
-	get_secstruct() const { return rna_secstruct_; }
+	get_secstruct() const { return rna_secstruct_legacy_; }
 
 private:
 
-	std::string rna_secstruct_;
+	std::string rna_secstruct_legacy_;
 
 #ifdef    SERIALIZATION
 public:
@@ -84,20 +84,20 @@ public:
 };
 
 std::string const &
-get_rna_secstruct( core::pose::Pose & pose );
+get_rna_secstruct_legacy( core::pose::Pose & pose );
 
 void
-set_rna_secstruct( core::pose::Pose & pose, std::string const & rna_secstruct_string ); //By default, unknown, actually.
+set_rna_secstruct_legacy( core::pose::Pose & pose, std::string const & rna_secstruct_legacy_string ); //By default, unknown, actually.
 
 void
-clear_rna_secstruct_info( core::pose::Pose & pose );
+clear_rna_secstruct_legacy_info( core::pose::Pose & pose );
 
 } //secstruct
 } //farna
 } //protocols
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_farna_secstruct_RNA_SecStructInfo )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_farna_secstruct_legacy_RNA_SecStructLegacyInfo )
 #endif // SERIALIZATION
 
 

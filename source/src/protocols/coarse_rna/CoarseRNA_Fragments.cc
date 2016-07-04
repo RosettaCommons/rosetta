@@ -17,7 +17,7 @@
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/toolbox/AtomID_Mapper.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -92,7 +92,7 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 		Pose pose;
 		import_pose::pose_from_file( pose, *rsd_set, frag_source_file_ , core::import_pose::PDB_file);
 		protocols::farna::figure_out_secstruct( pose );
-		frag_source_secstruct_ = protocols::farna::secstruct::get_rna_secstruct( pose );
+		frag_source_secstruct_ = protocols::farna::secstruct::get_rna_secstruct_legacy( pose );
 		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );
 	} else {
 
@@ -272,7 +272,7 @@ CoarseRNA_Fragments::pick_random_fragment(
 	std::string const & RNA_sequence( pose.sequence() );
 	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
-	std::string const & RNA_secstruct( protocols::farna::secstruct::get_rna_secstruct( pose ) );
+	std::string const & RNA_secstruct( protocols::farna::secstruct::get_rna_secstruct_legacy( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
 	return pick_random_fragment( RNA_string, RNA_secstruct_string, type );

@@ -6,32 +6,28 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-/// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_rna_RNA_SecStructInfo_fwd_hh
-#define INCLUDED_protocols_rna_RNA_SecStructInfo_fwd_hh
+/// @file protocols/farna/secstruct/RNA_SecStruct.fwd.hh
+/// @brief 
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
 
 
-// Project headers
+#ifndef INCLUDED_protocols_farna_secstruct_RNA_SecStruct_FWD_HH
+#define INCLUDED_protocols_farna_secstruct_RNA_SecStruct_FWD_HH
 
-// Utility headers
-
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-
-// C++
 
 namespace protocols {
 namespace farna {
 namespace secstruct {
-
-class RNA_SecStructInfo;
-typedef utility::pointer::shared_ptr< RNA_SecStructInfo > RNA_SecStructInfoOP;
-
-} //secstruct
-} //farna
-} //protocols
-
+	
+	class RNA_SecStruct;
+	typedef utility::pointer::shared_ptr< RNA_SecStruct > RNA_SecStructOP;
+	typedef utility::pointer::shared_ptr< RNA_SecStruct const > RNA_SecStructCOP;
+	
+} //secstruct 
+} //farna 
+} //protocols 
 
 #endif

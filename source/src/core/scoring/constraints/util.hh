@@ -197,6 +197,11 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate );
 void print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out = std::cout );
 
 
+/// @brief map constraints to new atom numbers after, e.g. variants change. requires pose to have same number of residues.
+void
+map_constraints_from_original_pose( core::pose::Pose const & original_pose, core::pose::Pose & pose );
+
+
 } // namespace constraints
 } // namespace scoring
 } // namespace core

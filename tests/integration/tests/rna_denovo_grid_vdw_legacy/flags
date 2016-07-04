@@ -1,0 +1,14 @@
+-nstruct 1 
+-cycles 1000 
+-params_file ms2_vdw_test.params 
+-fasta ms2_vdw_test.fasta  
+-out:file:silent ms2_vdw_test.out 
+-include_neighbor_base_stacks  
+-minimize_rna false 
+-s RNA_helix.pdb 
+-input_res 1-5 10-12 
+-grid_vdw_weight 0.3 
+-VDW_rep_screen_info mini_1zdh.pdb 51-55 1-5 
+-VDW_rep_screen_include_sidechains true 
+-output_res_num  B:1-13 
+-ignore_zero_occupancy false 

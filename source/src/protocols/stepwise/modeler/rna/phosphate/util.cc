@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
@@ -157,7 +158,7 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 
 	}
 
-	map_constraints_from_original_pose( pose_input, pose );
+	core::scoring::constraints::map_constraints_from_original_pose( pose_input, pose );
 	pose_input = pose; // to prevent some problems with graphics thread
 }
 

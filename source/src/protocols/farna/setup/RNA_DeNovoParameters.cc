@@ -87,6 +87,12 @@ RNA_DeNovoParameters::RNA_DeNovoParameters( std::string const & filename ):
 	if ( filename_.size() > 0 ) read_parameters_from_file( filename_ );
 }
 
+//Constructor
+RNA_DeNovoParameters::RNA_DeNovoParameters():
+	secstruct_defined_( false )
+{
+}
+
 //Destructor
 RNA_DeNovoParameters::~RNA_DeNovoParameters()
 {}
@@ -176,7 +182,7 @@ RNA_DeNovoParameters::read_parameters_from_file( std::string const & filename ) 
 			read_chain_connection( line_stream );
 
 		} else if ( tag == "SECSTRUCT" ) {
-			line_stream >> rna_secstruct_;
+			line_stream >> rna_secstruct_legacy_;
 			secstruct_defined_ = true;
 
 		} else if  ( tag[0] == '#' ) {

@@ -55,6 +55,9 @@ file_basename( std::string const & filename );
 long
 file_size( std::string const & filename );
 
+/// @brief current working directory
+std::string
+cwd();
 
 /// @brief Create a blank file if it doesn't already exist
 bool

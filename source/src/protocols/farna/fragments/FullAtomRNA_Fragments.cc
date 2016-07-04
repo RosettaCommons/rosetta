@@ -16,7 +16,7 @@
 // Rosetta Headers
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
 #include <protocols/farna/util.hh> // for compare_RNA_char, compare_RNA_secstruct
 
 #include <core/conformation/Residue.hh>
@@ -300,7 +300,7 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
 	//Desired "secondary structure".
-	std::string const & RNA_secstruct( secstruct::get_rna_secstruct( pose ) );
+	std::string const & RNA_secstruct( secstruct::get_rna_secstruct_legacy( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
 	pick_random_fragment( torsion_set, RNA_string, RNA_secstruct_string, type );

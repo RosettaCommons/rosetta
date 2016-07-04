@@ -86,6 +86,9 @@ public:
 	void set_superimpose_over_all( bool const & setting ){ superimpose_over_all_ = setting; }
 	bool superimpose_over_all() const { return superimpose_over_all_; }
 
+	void set_fixed_stems( bool const & setting ){ fixed_stems_ = setting; }
+	bool fixed_stems() const { return fixed_stems_; }
+
 	void set_jump_change_frequency( core::Real const & setting ){ jump_change_frequency_ = setting; }
 	core::Real jump_change_frequency() const { return jump_change_frequency_; }
 
@@ -120,7 +123,6 @@ public:
 	void
 	set_filter_chain_closure_halfway( bool const setting ){ filter_chain_closure_halfway_ = setting; }
 	bool filter_chain_closure_halfway() const { return filter_chain_closure_halfway_; }
-
 
 	void set_chainbreak_weight( core::Real const & setting ){ chainbreak_weight_ = setting; }
 	core::Real chainbreak_weight() const { return chainbreak_weight_; }
@@ -254,6 +256,8 @@ private:
 	bool use_chem_shift_data_;
 
 	bool superimpose_over_all_;
+
+	bool fixed_stems_;
 
 	std::string all_rna_fragments_file_;
 	std::string rna_params_file_;

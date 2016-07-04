@@ -1,0 +1,12 @@
+-nstruct 1
+-params_file bps_rebuild.params
+-fasta bps_rebuild.fasta
+-out:file:silent bps_rebuild.out
+-include_neighbor_base_stacks
+-minimize_rna false
+-native bps_rebuild_srp_domainIV_native_1lnt_RNA.pdb
+-s srp_domainIV_HELIX1.pdb srp_domainIV_HELIX2.pdb
+-input_res  1-2 15-16 7-10
+-bps_moves
+-cycles 500
+-output_res_num  3-10 15-22

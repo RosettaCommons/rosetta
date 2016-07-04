@@ -43,7 +43,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/movers/RNA_Minimizer.hh>
 #include <protocols/farna/options/RNA_MinimizerOptions.hh>
 #include <protocols/farna/util.hh>
@@ -176,7 +176,7 @@ rna_fullatom_minimize_test()
 			pose.constraint_set( cst_set );
 		}
 
-		// RNA_DeNovoPoseSetup parameters;
+		// RNA_DeNovoPoseInitializer parameters;
 		// if ( option[params_file].user() ) {
 		//  parameters.initialize_for_de_novo_protocol(
 		//   pose, option[params_file],

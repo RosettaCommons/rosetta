@@ -14,6 +14,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
 
+#include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/options/option.hh>
@@ -704,6 +705,16 @@ print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out /* = st
 			}
 		}
 	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose & pose ) {
+	if ( pose.annotated_sequence() == original_pose.annotated_sequence() ) return;
+	runtime_assert( original_pose.total_residue() == pose.total_residue() );
+	id::SequenceMappingOP sequence_map( new id::SequenceMapping );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) sequence_map->push_back( n );
+	pose.constraint_set( original_pose.constraint_set()->remapped_clone( original_pose, pose, sequence_map ) );
 }
 
 } // namespace constraints

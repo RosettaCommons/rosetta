@@ -38,7 +38,6 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.tmpl.hh>
@@ -1228,7 +1227,7 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 	fix_up_residue_type_variants( pose_to_fix );
 	update_constraint_set_from_full_model_info( pose_to_fix ); //atom numbers may have shifted around with variant changes.
 	core::scoring::rna::clear_rna_scoring_info( pose_to_fix );
-	protocols::farna::secstruct::clear_rna_secstruct_info( pose_to_fix );
+	protocols::farna::secstruct::clear_rna_secstruct_legacy_info( pose_to_fix );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1969,16 +1968,6 @@ get_unique_connection_res( pose::Pose const & pose,
 	if ( moving_res1 > 0 ) return moving_res1;
 	if ( moving_res2 > 0 ) return moving_res2;
 	return pose.fold_tree().root();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose & pose ) {
-	if ( pose.annotated_sequence() == original_pose.annotated_sequence() ) return;
-	runtime_assert( original_pose.total_residue() == pose.total_residue() );
-	id::SequenceMappingOP sequence_map( new id::SequenceMapping );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) sequence_map->push_back( n );
-	pose.constraint_set( original_pose.constraint_set()->remapped_clone( original_pose, pose, sequence_map ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,15 @@
+-nstruct 1
+-params_file farfar.params
+-fasta farfar.fasta
+-out:file:silent farfar.out
+-include_neighbor_base_stacks
+-minimize_rna false
+-native farfar_loopE_354d_RNA.pdb
+-bps_moves
+-cycles 500
+-filter_lores_base_pairs_early
+-output_filters
+-output_lores_silent_file
+-chemical::enlarge_H_lj
+-score:rna_torsion_potential RNA11_based_new
+-output_res_num  1-22

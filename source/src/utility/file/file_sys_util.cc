@@ -63,6 +63,8 @@
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
+#else
+#include <unistd.h>
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -503,6 +505,14 @@ FileName combine_names(utility::vector1<std::string> file_name_strings){
 	return FileName(file_names);
 }
 
+/// @brief current working directory
+std::string
+cwd()
+{
+	char cwd[1024];
+	getcwd(cwd, sizeof(cwd));
+	return cwd;
+}
 
 } // namespace file
 } // namespace utility

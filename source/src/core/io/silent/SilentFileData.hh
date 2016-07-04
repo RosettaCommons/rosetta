@@ -229,6 +229,9 @@ public:
 	void
 	setup_extra_patches( utility::vector1< std::string > & all_patches ) const;
 
+	std::string
+	get_sequence(	std::string const & filename );
+
 	/// @brief quickly read a list of tags from a silent-input file. Only checks
 	/// lines beginning with SCORE: strings.
 	bool read_tags_fast(
@@ -388,7 +391,6 @@ private:
 	bool read_silent_struct_type_from_remark( std::string const& line, bool const header = false /*make true if this is one of the first 3 lines*/ );
 
 	bool read_full_model_parameters_from_remark( std::string const& line, bool const header = false );
-
 
 	bool check_if_rna_from_sequence_line( std::string const& sequence_line );
 

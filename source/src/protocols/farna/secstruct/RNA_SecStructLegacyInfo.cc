@@ -12,8 +12,8 @@
 /// @author Rhiju Das
 
 // Unit headers
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.fwd.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.fwd.hh>
 
 // Package headers
 
@@ -49,45 +49,45 @@ namespace farna {
 namespace secstruct {
 
 /// @details Copy constructors must copy all data, not just some...
-RNA_SecStructInfo::RNA_SecStructInfo( RNA_SecStructInfo const & src ) :
+RNA_SecStructLegacyInfo::RNA_SecStructLegacyInfo( RNA_SecStructLegacyInfo const & src ) :
 	CacheableData()
 {
-	rna_secstruct_ = src.rna_secstruct_;
+	rna_secstruct_legacy_ = src.rna_secstruct_legacy_;
 }
 
 /// @details Pose must already contain a core::pose::datacache::CacheableDataType::RNA_SCORING_INFO object or this method will fail.
 std::string const &
-get_rna_secstruct( core::pose::Pose & pose )
+get_rna_secstruct_legacy( core::pose::Pose & pose )
 {
 	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
 
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) {
-		set_rna_secstruct( pose, std::string( pose.total_residue(), 'X' ) );
+		set_rna_secstruct_legacy( pose, std::string( pose.total_residue(), 'X' ) );
 	}
 
-	return ( utility::pointer::static_pointer_cast< RNA_SecStructInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->get_secstruct();
+	return ( utility::pointer::static_pointer_cast< RNA_SecStructLegacyInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->get_secstruct();
 }
 
 /// @details Either returns a non-const reference to the rna_scoring object already stored
 /// in the pose, or creates a new rna scoring info object, places it in the pose, and returns
 /// a non-const reference to it.
 void
-set_rna_secstruct(  core::pose::Pose & pose, std::string const & rna_secstruct_string )
+set_rna_secstruct_legacy(  core::pose::Pose & pose, std::string const & rna_secstruct_legacy_string )
 {
 	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) {
-		( utility::pointer::static_pointer_cast< RNA_SecStructInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->set_secstruct( rna_secstruct_string );
+		( utility::pointer::static_pointer_cast< RNA_SecStructLegacyInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->set_secstruct( rna_secstruct_legacy_string );
 	}
 	// else
-	RNA_SecStructInfoOP rna_secstruct_info( new RNA_SecStructInfo( rna_secstruct_string ) );
-	pose.data().set( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO, rna_secstruct_info );
+	RNA_SecStructLegacyInfoOP rna_secstruct_legacy_info( new RNA_SecStructLegacyInfo( rna_secstruct_legacy_string ) );
+	pose.data().set( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO, rna_secstruct_legacy_info );
 }
 
 
 /// @details remove RNA scoring info object so that it will be re-initialized if necessary
 void
-clear_rna_secstruct_info( core::pose::Pose & pose )
+clear_rna_secstruct_legacy_info( core::pose::Pose & pose )
 {
 	pose.data().clear( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO );
 }
@@ -102,21 +102,21 @@ clear_rna_secstruct_info( core::pose::Pose & pose )
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::farna::secstruct::RNA_SecStructInfo::save( Archive & arc ) const {
+protocols::farna::secstruct::RNA_SecStructLegacyInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc( CEREAL_NVP( rna_secstruct_ ) ); // std::string
+	arc( CEREAL_NVP( rna_secstruct_legacy_ ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::farna::secstruct::RNA_SecStructInfo::load( Archive & arc ) {
+protocols::farna::secstruct::RNA_SecStructLegacyInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc( rna_secstruct_ ); // std::string
+	arc( rna_secstruct_legacy_ ); // std::string
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::farna::secstruct::RNA_SecStructInfo );
-CEREAL_REGISTER_TYPE( protocols::farna::secstruct::RNA_SecStructInfo )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::farna::secstruct::RNA_SecStructLegacyInfo );
+CEREAL_REGISTER_TYPE( protocols::farna::secstruct::RNA_SecStructLegacyInfo )
 
-CEREAL_REGISTER_DYNAMIC_INIT( protocols_farna_secstruct_RNA_SecStructInfo )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_farna_secstruct_legacy_RNA_SecStructLegacyInfo )
 #endif // SERIALIZATION

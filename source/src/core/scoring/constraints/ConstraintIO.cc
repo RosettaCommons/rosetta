@@ -105,6 +105,10 @@ ConstraintIO::read_cst_atom_pairs(
 			>> name2 >> tempres2
 			>> func_type;
 
+		// backwards compatibility with old RNA/DNA atom names:
+		name1 = utility::replace_in( name1, "*", "'" );
+		name2 = utility::replace_in( name2, "*", "'" );
+
 		parse_residue( pose, tempres1, res1 );
 		parse_residue( pose, tempres2, res2 );
 
@@ -126,7 +130,6 @@ ConstraintIO::read_cst_atom_pairs(
 				<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 			utility_exit_with_message ("Constraint data referred to atom which is not present in pose");
 		}
-
 
 		id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
@@ -216,6 +219,13 @@ ConstraintIO::read_cst_coordinates(
 			>> name2 >> res2
 			>> x >> y >> z
 			>> func_type;
+
+		// backwards compatibility with old RNA/DNA atom names:
+		name1 = utility::replace_in( name1, "*", "'" );
+		name2 = utility::replace_in( name2, "*", "'" );
+
+		res1 = parse_residue( pose, res1 );
+		res2 = parse_residue( pose, res2 );
 
 		tr.Debug  << "read: " << name1 << " " << name2 << " "
 			<< res1 << " " << res2 << " func: " << func_type
@@ -612,15 +622,28 @@ ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue
 {
 	std::stringstream data;
 	char chain;
-	Size resnum;
+	int resnum;
 
 	data.str( residue_string );
 
 	data >> resnum;
 
-	if ( !(data >> chain).fail() ) {
-		residue_num = pose.pdb_info()->pdb2pose( chain, resnum );
-	} else residue_num = resnum;
+	if ( (data >> chain).fail() ) chain = 'A';
+
+	residue_num = parse_residue( pose, resnum, chain );
+}
+
+
+Size
+ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char const chain /* = 'A' */ )
+{
+	// this option is a vector1< bool > for pretty arcane reasons -- rosetta does not provide a set default option for bool, but does so for vector< bool>.
+	using namespace basic::options;
+	bool force_pdb_info_mapping = option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ? option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false;
+	if ( chain != 'A' || force_pdb_info_mapping ) {
+		return pose.pdb_info()->pdb2pose( chain, resnum );
+	}
+	return Size( resnum );
 }
 
 } //constraints

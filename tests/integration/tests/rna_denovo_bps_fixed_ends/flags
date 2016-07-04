@@ -1,5 +1,5 @@
 -nstruct 1
--params_file bps_rebuild.params
+#-params_file bps_rebuild.params
 -fasta bps_rebuild.fasta
 -out:file:silent bps_rebuild.out
 -include_neighbor_base_stacks
@@ -10,3 +10,6 @@
 -bps_moves
 -cycles 500
 -output_res_num  3-10 15-22
+-secstruct_general "(((((((( ))))))))"
+#-obligate_pair 2 15    8 9    1 16     3 14    4 13     5 12     6 11   7 10
+#-cutpoint_open 8

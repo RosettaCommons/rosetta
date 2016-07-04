@@ -1,0 +1,19 @@
+-fasta RNAPZ6.fasta 
+-secstruct_file RNAPZ6_nopseudoknot.secstruct 
+-tag U75G76A77_on_thread2 
+-working_res 43-63 69-80 144-154 
+-s noA77_p7_rigidbody_on_thread1_SOLUTION.pdb 
+-input_res 43-63 69-75 78-80 144-146 148-154 
+-filter_lores_base_pairs_early 
+-filter_lores_base_pairs 
+-filter_chain_closure 
+-filter_chain_closure_halfway 
+-output_filters 
+-obligate_pair 63 69 75 78 80 144 146 148 
+-obligate_pair_explicit 49 77 S H X 
+-rna::corrected_geo 
+-cst_file G76_G147_and_G49_A77_atompair.cst  
+-include_neighbor_base_stacks  
+-minimize_rna true
+-cycles 200 
+-nstruct 1

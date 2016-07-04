@@ -54,8 +54,8 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/util.hh>
@@ -161,7 +161,7 @@ rna_assemble_test()
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Initialize an RNA with extended sequence + base pairs.
-	//  Perhaps use RNA_DeNovoPoseSetup class.
+	//  Perhaps use RNA_DeNovoPoseInitializer class.
 	//Prepare starting structure from scratch --> read from fasta.
 
 	std::string seq_in;
@@ -177,7 +177,7 @@ rna_assemble_test()
 
 	make_pose_from_sequence( pose,	seq_in,	*rsd_set );
 
-	RNA_DeNovoPoseSetupOP rna_structure_parameters( new RNA_DeNovoPoseSetup );
+	RNA_DeNovoPoseInitializerOP rna_structure_parameters( new RNA_DeNovoPoseInitializer );
 	std::string jump_library_file( io::database::full_name("chemical/modeler/1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 
@@ -355,13 +355,13 @@ rna_assemble_all_combinations_test()
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Initialize an RNA with extended sequence + base pairs.
-	//  Perhaps use RNA_DeNovoPoseSetup class.
+	//  Perhaps use RNA_DeNovoPoseInitializer class.
 	//Prepare starting structure from scratch --> read from fasta.
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
 	make_pose_from_sequence( pose,	fasta_sequence->sequence(),	*rsd_set );
 
-	RNA_DeNovoPoseSetupOP rna_structure_parameters( new RNA_DeNovoPoseSetup );
+	RNA_DeNovoPoseInitializerOP rna_structure_parameters( new RNA_DeNovoPoseInitializer );
 	std::string jump_library_file( io::database::full_name("chemical/modeler/1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 

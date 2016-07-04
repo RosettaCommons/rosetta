@@ -296,9 +296,6 @@ get_all_residues( core::pose::Pose const & pose );
 Size
 get_unique_connection_res( core::pose::Pose const & pose, utility::vector1< Size > const & moving_partition_res );
 
-void
-map_constraints_from_original_pose( core::pose::Pose const & original_pose, core::pose::Pose & pose );
-
 bool
 stepwise_addable_pose_residue( Size const n /*in pose numbering*/,
 	pose::Pose const & pose );

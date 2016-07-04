@@ -59,8 +59,8 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/util.hh>

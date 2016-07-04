@@ -103,6 +103,7 @@ public:
 
 	std::string const & full_sequence() const { return full_sequence_;}
 	std::map< Size, std::string > const & non_standard_residue_map() const { return non_standard_residue_map_; }
+	std::string full_annotated_sequence() const;
 
 	utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}
 	utility::vector1< char > const & conventional_chains() const { return conventional_chains_;}
@@ -148,6 +149,9 @@ public:
 
 	utility::vector1< Size >
 	conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const;
+
+	//utility::vector1< Size >
+	//	conventional_to_full( std::pair< std::vector< int >, std::vector< char > > const & resnum_and_chain ) const;
 
 	bool
 	has_conventional_residue( int const res_num ) const;

@@ -18,6 +18,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
+#include <core/scoring/constraints/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -44,7 +45,7 @@ BulgeApplyMover::apply( core::pose::Pose & pose ) {
 	Pose const pose_save = pose;
 	runtime_assert( !is_virtual_base( pose.residue( moving_res_ ) ) );
 	core::pose::rna::apply_virtual_rna_residue_variant_type( pose, moving_res_, true );
-	protocols::stepwise::modeler::map_constraints_from_original_pose( pose_save, pose );
+	core::scoring::constraints::map_constraints_from_original_pose( pose_save, pose );
 }
 
 

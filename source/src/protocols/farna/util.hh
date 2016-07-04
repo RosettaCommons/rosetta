@@ -27,7 +27,7 @@
 #include <utility/vector1.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh> //courtesy to other namespaces that want clear_rna_secstruct_info()
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh> //courtesy to other namespaces that want clear_rna_secstruct_legacy_info()
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 // Utility headers

@@ -25,8 +25,8 @@
 #include <protocols/farna/libraries/RNA_LibraryManager.hh>
 #include <protocols/farna/movers/RNA_Minimizer.hh>
 #include <protocols/farna/movers/RNA_Relaxer.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
 #include <protocols/farna/libraries/BasePairStepLibrary.hh>
 #include <protocols/farna/util.hh>

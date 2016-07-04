@@ -75,7 +75,7 @@
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh>
@@ -586,7 +586,7 @@ create_bp_jump_database_test( ){
 void
 general_initialize( 	pose::Pose & pose,
 											pose::PoseOP & native_pose,
-											protocols::farna::RNA_DeNovoPoseSetupOP & rna_structure_parameters_,
+											protocols::farna::RNA_DeNovoPoseInitializerOP & rna_structure_parameters_,
 											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
 											protocols::farna::RNA_ChunkLibraryOP & rna_chunk_library_,
 											protocols::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
@@ -627,7 +627,7 @@ general_initialize( 	pose::Pose & pose,
 	std::string const jump_library_file_( basic::database::full_name("sampling/rna/1jj2_coarse_jumps.dat" ) );
 	utility::vector1< std::string > chunk_silent_files_( option[ in::file::silent ]() );
 
-	rna_structure_parameters_ = new RNA_DeNovoPoseSetup;
+	rna_structure_parameters_ = new RNA_DeNovoPoseInitializer;
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
 	utility::vector1< Size > input_res_( option[ input_res ]() );
@@ -680,7 +680,7 @@ coarse_rb_test(){
 	// create extended coarse grained pose.
 	pose::Pose pose;
 	pose::PoseOP native_pose;
-	RNA_DeNovoPoseSetupOP rna_structure_parameters_;
+	RNA_DeNovoPoseInitializerOP rna_structure_parameters_;
 	CoarseRNA_LoopCloserOP rna_loop_closer_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
 	AtomLevelDomainMapOP atom_level_domain_map_;
@@ -1265,7 +1265,7 @@ modeler_map_test(){
 	// create extended coarse grained pose.
 	pose::Pose pose;
 	pose::PoseOP native_pose;
-	RNA_DeNovoPoseSetupOP rna_structure_parameters_;
+	RNA_DeNovoPoseInitializerOP rna_structure_parameters_;
 	CoarseRNA_LoopCloserOP rna_loop_closer_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
 	AtomLevelDomainMapOP atom_level_domain_map_;

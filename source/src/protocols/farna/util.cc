@@ -13,7 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/farna/util.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
@@ -251,7 +251,7 @@ figure_out_secstruct( pose::Pose & pose ){
 
 	TR << "SECSTRUCT: " << secstruct << std::endl;
 
-	set_rna_secstruct( pose, secstruct );
+	set_rna_secstruct_legacy( pose, secstruct );
 
 }
 

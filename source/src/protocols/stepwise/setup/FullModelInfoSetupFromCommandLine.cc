@@ -257,7 +257,10 @@ get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fas
 	Size ntot( 0 );
 	// explicit chain boundaries
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		ntot += fasta_sequences[n]->sequence().size();
+		std::string sequence = fasta_sequences[ n ]->sequence();
+		vector1< Size > const & spacer_pos = fasta_sequences[ n ]->spacer_positions();
+		for ( Size q = 1; q <= spacer_pos.size(); q++ )	cutpoints.push_back( ntot + spacer_pos[ q ] );
+		ntot += sequence.size();
 		if ( n != fasta_sequences.size() /*very end is not 'cutpoint'*/ ) cutpoints.push_back( ntot );
 	}
 	runtime_assert( ntot == conventional_chains.size() );
@@ -269,7 +272,7 @@ get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fas
 		} else { // break within chain.
 			if ( conventional_numbering[ k+1 ] > conventional_numbering[ k ] + 1  ) {
 				if ( !option[ full_model::allow_jump_in_numbering ]() ) {
-					TR << TR.Red << "There appears to be a break in numbering at " << conventional_numbering[k] << " so adding to cutpoint list. If that is wrong, use flag -allow_jump_in_numbering." << TR.Reset << std::endl;
+					TR << TR.Red << "There appears to be a break in numbering at " << conventional_numbering[ k ] << " so adding to cutpoint list. If that is wrong, use flag -allow_jump_in_numbering." << TR.Reset << std::endl;
 					cutpoints.push_back( k );
 				}
 			}
@@ -345,9 +348,10 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 				chains.push_back( ' ' ); // unknown chain
 			}
 		}
-		runtime_assert( fasta_sequences[n]->sequence().size() == resnum.size() );
-		for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_chains.push_back( chains[ q ] );
-		for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_numbering.push_back( resnum[q] );
+		std::string const sequence = fasta_sequences[n]->sequence();
+		runtime_assert( sequence.size() == resnum.size() );
+		for ( Size q = 1; q <= sequence.size(); q++ ) conventional_chains.push_back( chains[ q ] );
+		for ( Size q = 1; q <= sequence.size(); q++ ) conventional_numbering.push_back( resnum[q] );
 
 		found_info_in_previous_sequence  = found_info;
 	}
@@ -364,10 +368,12 @@ parse_out_non_standard_residues( vector1< core::sequence::SequenceOP > & fasta_s
 
 	Size offset( 0 );
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		std::string sequence = fasta_sequences[n]->sequence();
+		std::string sequence = fasta_sequences[ n ]->sequence();
 		std::map< Size, std::string > non_standard_residues_local = parse_out_non_standard_residues( sequence );
 
-		fasta_sequences_new.push_back( SequenceOP( new Sequence( sequence, fasta_sequences[n]->id()) ) );
+		SequenceOP new_sequence( new Sequence( sequence, fasta_sequences[n]->id()) );
+		new_sequence->spacer_positions( fasta_sequences[n]->spacer_positions() );
+		fasta_sequences_new.push_back( new_sequence );
 		for ( std::map< Size, std::string >::iterator it = non_standard_residues_local.begin(),
 				end = non_standard_residues_local.end(); it != end; ++it ) {
 			non_standard_residues[ it->first + offset ] = it->second;
@@ -417,7 +423,7 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 	// how many magnesiums are there? how many waters are there?
 	Size offset( 0 ), num_magnesiums( 0 ), num_waters( 0 );
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		std::string sequence = fasta_sequences[n]->sequence();
+		std::string const sequence = fasta_sequences[n]->sequence();
 		for ( Size i = 1; i <= sequence.size(); i++ ) {
 			if ( sequence[ i - 1 ] == 'Z' ) {
 				std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( offset+i );
@@ -450,6 +456,33 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
+FullModelParametersOP
+get_sequence_information( std::string const & fasta_file,
+													vector1< Size > & cutpoint_open_in_full_model )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
+
+	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
+	if ( option[ magnesium::hydrate ]() ) setup_water_bank_for_magnesiums( non_standard_residue_map, fasta_sequences );
+	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
+
+	FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
+	vector1< char > conventional_chains;
+	vector1< int  > conventional_numbering;
+	get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering );
+
+	full_model_parameters->set_conventional_numbering( conventional_numbering );
+	full_model_parameters->set_conventional_chains( conventional_chains );
+	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
+	cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
+																								conventional_chains, conventional_numbering );
+	return full_model_parameters;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
@@ -462,25 +495,15 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	}
 
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
-	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
-	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
-	if ( option[ magnesium::hydrate ]() ) setup_water_bank_for_magnesiums( non_standard_residue_map, fasta_sequences );
-	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
-
-	FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
-	vector1< char > conventional_chains;
-	vector1< int  > conventional_numbering;
-	get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering );
-	full_model_parameters->set_conventional_numbering( conventional_numbering );
-	full_model_parameters->set_conventional_chains( conventional_chains );
-	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
-	vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
-		conventional_chains, conventional_numbering );
+	vector1< Size > cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
+	FullModelParametersOP full_model_parameters = get_sequence_information( fasta_file, cutpoint_open_in_full_model );
+	std::string const & desired_sequence = full_model_parameters->full_sequence();
 
 	if ( option[ full_model::cutpoint_open ].user() ) {
 		cutpoint_open_in_full_model =
 			full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
 	}
+
 	vector1< Size > extra_minimize_res =
 		full_model_parameters->conventional_to_full( option[ full_model::extra_min_res ].resnum_and_chain() );
 	vector1< Size > sample_res         =

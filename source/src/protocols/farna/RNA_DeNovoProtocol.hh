@@ -19,7 +19,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/farna/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/options/RNA_DeNovoProtocolOptions.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -39,6 +39,7 @@
 
 // To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
 using namespace protocols::farna::options;
+using namespace protocols::farna::setup;
 
 namespace protocols {
 namespace farna {
@@ -49,7 +50,8 @@ public:
 
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options = 0 );
+	RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options = 0,
+											RNA_DeNovoParametersCOP params = 0);
 
 	~RNA_DeNovoProtocol();
 
@@ -117,6 +119,7 @@ private:
 private:
 
 	RNA_DeNovoProtocolOptionsCOP options_;
+	RNA_DeNovoParametersCOP rna_params_;
 	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_grid_;
 
 	std::string lores_silent_file_;

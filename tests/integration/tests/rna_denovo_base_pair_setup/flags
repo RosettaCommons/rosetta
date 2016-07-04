@@ -3,3 +3,5 @@
 -include_neighbor_base_stacks
 -cycles 200
 -output_res_num  1-2
+-cutpoint_open 1
+-minimize_rna false

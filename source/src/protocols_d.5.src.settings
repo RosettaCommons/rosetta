@@ -51,10 +51,12 @@ sources = {
 	"RNA_MinimizerOptions",
     ],
     "protocols/farna/secstruct": [
-	 "RNA_SecStructInfo",
+	 "RNA_SecStruct",
+	 "RNA_SecStructLegacyInfo",
     ],
     "protocols/farna/setup": [
-	"RNA_DeNovoPoseSetup",
+	"RNA_DeNovoSetup",
+	"RNA_DeNovoPoseInitializer",
 	"RNA_DeNovoParameters",
     ],
     "protocols/magnesium": [

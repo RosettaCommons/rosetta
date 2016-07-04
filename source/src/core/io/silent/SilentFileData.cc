@@ -200,6 +200,33 @@ SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patch
 }
 
 
+std::string
+SilentFileData::get_sequence(	std::string const & filename )
+{
+	utility::io::izstream data( filename.c_str() );
+	if ( !data.good() ) {
+		utility_exit_with_message(
+			"ERROR: Unable to open silent_input file: '" + filename + "'"
+		);
+	}
+
+	std::string sequence_line;
+	getline( data, sequence_line ); // sequence line
+
+	if ( sequence_line.substr(0,9) != "SEQUENCE:" ) {
+		tr.Error << "bad format in first line of silent file " << filename << " (function read_stream):"
+			<< std::endl;
+		tr.Error << sequence_line << std::endl;
+		return "";
+	}
+	std::string sequence = sequence_line.substr( 9 );
+
+	// might be better to continue reading into FULL_MODEL_PARAMETERS line, if it exists.
+	// That would have more detailed information on the modeled sequence -- rhiju
+
+	return ObjexxFCL::strip_whitespace( sequence );
+}
+
 bool SilentFileData::read_tags_fast(
 	std::string const & filename,
 	utility::vector1< std::string > & tags_in_file
@@ -678,6 +705,7 @@ SilentFileData::_read_file(
 	setup_include_patches( filename ); // to tell ResidueTypeSet what patches are in file.
 	return success;
 }
+
 
 bool
 SilentFileData::read_stream(

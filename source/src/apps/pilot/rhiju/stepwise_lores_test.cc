@@ -26,7 +26,7 @@
 #include <protocols/farna/RNA_FragmentMonteCarlo.hh>
 #include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/libraries/RNA_JumpLibrary.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/farna/libraries/BasePairStepLibrary.hh>

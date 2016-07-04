@@ -22,7 +22,7 @@
 #include <protocols/farna/movers/RNA_FragmentMover.fwd.hh>
 #include <protocols/farna/fragments/RNA_Fragments.fwd.hh>
 #include <protocols/farna/base_pairs/RNA_BasePairHandler.fwd.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.fwd.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/movers/RNA_JumpMover.fwd.hh>
 #include <protocols/farna/movers/RNA_LoopCloser.fwd.hh>
@@ -101,7 +101,7 @@ public:
 	RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
 
 	void
-	set_rna_de_novo_pose_setup( RNA_DeNovoPoseSetupCOP setting ) { rna_de_novo_pose_setup_ = setting; }
+	set_rna_de_novo_pose_setup( RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_setup_ = setting; }
 
 	void
 	set_user_input_chunk_library( RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
@@ -204,7 +204,7 @@ private:
 	RNA_BasePairHandlerCOP rna_base_pair_handler_;
 	RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
-	RNA_DeNovoPoseSetupCOP rna_de_novo_pose_setup_;
+	RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_setup_;
 	RNA_FragmentMoverOP rna_fragment_mover_;
 	RNA_JumpMoverOP rna_jump_mover_;
 	RNA_LoopCloserOP rna_loop_closer_;

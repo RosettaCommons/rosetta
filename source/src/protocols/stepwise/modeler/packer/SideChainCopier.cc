@@ -19,6 +19,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/copydofs/util.hh>
+#include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
@@ -93,7 +94,7 @@ SideChainCopier::apply( core::pose::Pose & viewer_pose ){
 
 	}
 
-	map_constraints_from_original_pose( viewer_pose, pose );
+	core::scoring::constraints::map_constraints_from_original_pose( viewer_pose, pose );
 	viewer_pose = pose;
 }
 

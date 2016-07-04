@@ -60,6 +60,15 @@ void
 cleanup( core::pose::Pose & pose );
 
 void
+get_extra_cutpoints_from_names( core::Size const nres,
+																utility::vector1< core::Size > & cutpoints,
+																std::map< core::Size, std::string > const & non_standard_residue_map );
+
+core::pose::full_model_info::FullModelParametersOP
+get_sequence_information( std::string const & fasta_file,
+													utility::vector1< core::Size > & cutpoint_open_in_full_model );
+
+void
 fill_full_model_info_from_command_line( core::pose::Pose & pose );
 
 void

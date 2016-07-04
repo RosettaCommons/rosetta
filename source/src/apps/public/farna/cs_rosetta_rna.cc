@@ -39,7 +39,7 @@
 //RNA stuff.
 #include <protocols/farna/movers/RNA_Minimizer.fwd.hh>
 #include <protocols/farna/movers/RNA_Minimizer.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.hh>
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
 #include <protocols/farna/movers/RNA_LoopCloser.hh>
@@ -300,7 +300,7 @@ cs_rosetta_rna_pdb(bool perform_minimize)
 	protocols::viewer::add_conformation_viewer( pose.conformation(),
 		"current", 600, 600 );
 	// Setup fold_tree, jump points, variants and chain breaks.
-	RNA_DeNovoPoseSetup rna_denovo_pose_setup( option[ params_file ]() );
+	RNA_DeNovoPoseInitializer rna_denovo_pose_setup( option[ params_file ]() );
 	rna_denovo_pose_setup.initialize_for_de_novo_protocol( pose );
 	rna_denovo_pose_setup.setup_fold_tree_and_jumps_and_variants( pose );
 

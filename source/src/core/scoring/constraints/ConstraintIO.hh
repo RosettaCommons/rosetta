@@ -46,13 +46,11 @@ public:
 	static ConstraintSetOP read_constraints(
 		std::string const & filename,
 		ConstraintSetOP cst_set,
-		pose::Pose const& pose
-	);
+		pose::Pose const& pose	);
 	static ConstraintSetOP read_constraints(
 		std::istream & data,
 		ConstraintSetOP cst_set,
-		pose::Pose const& pose
-	);
+		pose::Pose const& pose	);
 
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );
@@ -102,6 +100,9 @@ public:
 		std::string const & residue_string,
 		Size & residue_num
 	);
+
+	static Size
+	parse_residue( pose::Pose const& pose, int const resnum, char const chain = 'A' );
 
 	// gkt - tmp hack for BoundFunc, should be private
 protected:

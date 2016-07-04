@@ -21,6 +21,8 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <utility/file/file_sys_util.hh>
+
 
 static basic::Tracer TR( "protocols.farna.options.RNA_DeNovoProtocolOptions" );
 
@@ -38,7 +40,9 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	output_lores_silent_file_( false ),
 	output_filters_( false ),
 	binary_rna_output_( false ),
-	save_times_( false )
+	save_times_( false ),
+	use_legacy_setup_( false ),
+	cst_gap_( false )
 {}
 
 //Destructor
@@ -69,7 +73,18 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 	RNA_FragmentMonteCarloOptions::initialize_from_command_line();
 
 	nstruct_ = option[ out::nstruct ]();
-	silent_file_ = option[ out::file::silent ]();
+	if ( option[ out::file::silent ].user() ) {
+		silent_file_ = option[ out::file::silent ]();
+	} else {
+		std::string tag;
+		if ( option[ rna::farna::tag ].user() ) {
+			tag = option[ rna::farna::tag ]();
+		} else {
+			tag = utility::file_basename( utility::file::cwd() );
+			TR << TR.Green << "Setting silent file name based on directory: " << tag << ".out" << std::endl;
+		}
+		silent_file_ = tag  + ".out";
+	}
 
 	set_output_lores_silent_file( option[ rna::farna::output_lores_silent_file ] );
 	set_output_filters(  option[ rna::farna::output_filters ] );
@@ -88,6 +103,10 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 			vary_bond_geometry() ) set_binary_rna_output( true );
 
 	save_times_ = option[ OptionKeys::out::save_times ]();
+
+	use_legacy_setup_ = option[ rna::farna::use_legacy_setup ]();
+
+	cst_gap_ = option[ rna::farna::cst_gap ]();
 
 }
 

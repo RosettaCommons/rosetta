@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_farna_RNA_DeNovoParameters_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.fwd.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.fwd.hh>
 #include <core/pose/rna/BasePair.hh>
 
@@ -32,19 +32,29 @@ public:
 	//constructor
 	RNA_DeNovoParameters( std::string const & filename );
 
+	RNA_DeNovoParameters();
+
 	//destructor
 	~RNA_DeNovoParameters();
 
 public:
 
-	friend class RNA_DeNovoPoseSetup;
+	friend class RNA_DeNovoPoseInitializer;
 
-	utility::vector1 < utility::vector1 <core::Size > > const & obligate_pairing_sets() const {
-		return obligate_pairing_sets_;
-	}
 
+	void set_rna_pairing_list( core::pose::rna::RNA_BasePairList const & setting ) { rna_pairing_list_ = setting; }
 	core::pose::rna::RNA_BasePairList const & rna_pairing_list() const {
 		return rna_pairing_list_;
+	}
+
+	void set_stem_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > const & setting ) { stem_pairing_sets_ = setting; }
+	utility::vector1 < utility::vector1 <core::Size > > const & stem_pairing_sets() const {
+		return stem_pairing_sets_;
+	}
+
+	void set_obligate_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > const & setting ) { obligate_pairing_sets_ = setting; }
+	utility::vector1 < utility::vector1 <core::Size > > const & obligate_pairing_sets() const {
+		return obligate_pairing_sets_;
 	}
 
 	void set_cutpoints_open( utility::vector1 <core::Size > const & setting ){ cutpoints_open_ = setting; }
@@ -59,6 +69,7 @@ public:
 	void set_allow_insert_res( utility::vector1 <core::Size > const & setting ){ allow_insert_res_ = setting; }
 	utility::vector1 <core::Size > allow_insert_res() const { return allow_insert_res_; }
 
+	void set_chain_connections( 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const & setting ) { chain_connections_ = setting; }
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
 	chain_connections() const { return chain_connections_; }
 
@@ -100,7 +111,7 @@ private:
 	utility::vector1 <core::Size > virtual_anchor_attachment_points_;
 
 	utility::vector1 < core::Size > allow_insert_res_;
-	std::string rna_secstruct_;
+	std::string rna_secstruct_legacy_;
 	bool secstruct_defined_;
 
 };

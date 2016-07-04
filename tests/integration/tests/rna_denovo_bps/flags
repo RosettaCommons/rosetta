@@ -1,5 +1,5 @@
 -nstruct 1
--params_file farfar.params
+#-params_file farfar.params
 -fasta farfar.fasta
 -out:file:silent farfar.out
 -include_neighbor_base_stacks
@@ -13,3 +13,8 @@
 -chemical::enlarge_H_lj
 -score:rna_torsion_potential RNA11_based_new
 -output_res_num  1-22
+-secstruct         '((.......((,)).......))'
+-secstruct_general '(((((((((((,)))))))))))'
+-cutpoint_closed 2-9
+#-cutpoint_open 11
+#-obligate_pair 3 20   4 19   5 18   6 17   7 16   8 15   9 14

@@ -14,8 +14,8 @@
 
 
 // Unit Headers
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
 #include <protocols/farna/movers/RNA_JumpMover.hh>
 #include <protocols/farna/libraries/RNA_LibraryManager.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.hh>
@@ -76,7 +76,7 @@ namespace setup {
 //
 // For rna_denovo (FARNA/FARFAR) runs that start from scratch, this object handles basic pose setup.
 //
-// This used to be called RNA_DeNovoPoseSetup, which was an object that had accumulated too many
+// This used to be called RNA_DeNovoPoseInitializer, which was an object that had accumulated too many
 //  functionalities.
 //
 // In the near future, this format will be deprecated in favor of direct command-line input of sequence &
@@ -84,11 +84,11 @@ namespace setup {
 //  to be ported over here. -- rhiju, 2014
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.farna.setup.RNA_DeNovoPoseSetup" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.farna.setup.RNA_DeNovoPoseInitializer" );
 
 using namespace core;
 
-RNA_DeNovoPoseSetup::RNA_DeNovoPoseSetup( RNA_DeNovoParameters const & rna_params ):
+RNA_DeNovoPoseInitializer::RNA_DeNovoPoseInitializer( RNA_DeNovoParameters const & rna_params ):
 	rna_params_( rna_params ), // note that this object might be updated later...
 	assume_non_stem_is_loop( false ),
 	bps_moves_( false ),
@@ -96,11 +96,11 @@ RNA_DeNovoPoseSetup::RNA_DeNovoPoseSetup( RNA_DeNovoParameters const & rna_param
 {
 }
 
-RNA_DeNovoPoseSetup::~RNA_DeNovoPoseSetup() {}
+RNA_DeNovoPoseInitializer::~RNA_DeNovoPoseInitializer() {}
 
 //////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::initialize_for_de_novo_protocol(
+RNA_DeNovoPoseInitializer::initialize_for_de_novo_protocol(
 	core::pose::Pose & pose,
 	bool const ignore_secstruct /* = false */ )
 {
@@ -112,20 +112,20 @@ RNA_DeNovoPoseSetup::initialize_for_de_novo_protocol(
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::override_secstruct( core::pose::Pose & pose ){
-	rna_params_.rna_secstruct_ = std::string( pose.total_residue(), 'X' );
-	TR << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_ << std::endl;
-	set_rna_secstruct( pose, rna_params_.rna_secstruct_ );
+RNA_DeNovoPoseInitializer::override_secstruct( core::pose::Pose & pose ){
+	rna_params_.rna_secstruct_legacy_ = std::string( pose.total_residue(), 'X' );
+	TR << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_legacy_ << std::endl;
+	set_rna_secstruct_legacy( pose, rna_params_.rna_secstruct_legacy_ );
 }
 /////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::append_virtual_anchor( pose::Pose & pose )
+RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 {
 
 	if ( rna_params_.virtual_anchor_attachment_points_.size() == 0 ) return;
 
-	TR << "Current last residue is type: " << pose.residue( pose.total_residue() ).name3()  << std::endl;
-	TR << pose.annotated_sequence() << std::endl;
+	TR.Debug << "Current last residue is type: " << pose.residue( pose.total_residue() ).name3()  << std::endl;
+	TR.Debug << pose.annotated_sequence() << std::endl;
 	if ( pose.residue( pose.total_residue() ).name3() == "XXX" ) return; //already did virtual residue attachment.
 
 	// Fix up the pose.
@@ -161,16 +161,16 @@ RNA_DeNovoPoseSetup::append_virtual_anchor( pose::Pose & pose )
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::initialize_secstruct( core::pose::Pose & pose  )
+RNA_DeNovoPoseInitializer::initialize_secstruct( core::pose::Pose & pose  )
 {
-	std::string & rna_secstruct = rna_params_.rna_secstruct_;
+	std::string & rna_secstruct_legacy = rna_params_.rna_secstruct_legacy_;
 
 	if ( !rna_params_.secstruct_defined_ ) {
 
-		rna_secstruct = std::string( pose.total_residue(), 'X' );
+		rna_secstruct_legacy = std::string( pose.total_residue(), 'X' );
 
 		if ( rna_params_.rna_pairing_list_.size() > 0 && assume_non_stem_is_loop ) {
-			rna_secstruct = std::string( pose.total_residue(), 'L' );
+			rna_secstruct_legacy = std::string( pose.total_residue(), 'L' );
 		}
 
 		for ( Size n = 1; n <= rna_params_.rna_pairing_list_.size(); n++ ) {
@@ -180,20 +180,20 @@ RNA_DeNovoPoseSetup::initialize_secstruct( core::pose::Pose & pose  )
 					rna_pairing.orientation() == ANTIPARALLEL &&
 					core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
 					pose.residue( rna_pairing.res2() ).aa() ) )  {
-				rna_secstruct[ rna_pairing.res1() - 1 ] = 'H';
-				rna_secstruct[ rna_pairing.res2() - 1 ] = 'H';
+				rna_secstruct_legacy[ rna_pairing.res1() - 1 ] = 'H';
+				rna_secstruct_legacy[ rna_pairing.res2() - 1 ] = 'H';
 			}
 		}
 	}
 
-	TR << "Setting desired secondary structure to: " << rna_secstruct << std::endl;
+	TR << "Setting desired secondary structure to: " << rna_secstruct_legacy << std::endl;
 
-	set_rna_secstruct( pose, rna_secstruct );
+	set_rna_secstruct_legacy( pose, rna_secstruct_legacy );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMover const & jump_mover,  bool & success ) const
+RNA_DeNovoPoseInitializer::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMover const & jump_mover,  bool & success ) const
 {
 
 	Size const num_jump( pose.num_jump() );
@@ -217,7 +217,7 @@ RNA_DeNovoPoseSetup::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMover co
 // In principle, don't need to pass atom_level_domain_map into this function (its stored in rna_jump_mover),
 // but I want to make sure that user known that  atom_level_domain_map will get updated -- rhiju, 2015
 void
-RNA_DeNovoPoseSetup::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose,
+RNA_DeNovoPoseInitializer::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose,
 	RNA_JumpMover const & rna_jump_mover,
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
@@ -231,7 +231,7 @@ RNA_DeNovoPoseSetup::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose,
 // Only in use by cs_rosetta_rna.
 // Creates a temporary JumpLibrary and AtomLevelDomainMap to do the jump setup.
 void
-RNA_DeNovoPoseSetup::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose ) const
+RNA_DeNovoPoseInitializer::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose ) const
 {
 	using namespace protocols::toolbox;
 	AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
@@ -241,7 +241,7 @@ RNA_DeNovoPoseSetup::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose )
 
 ///////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_jump_mover ) const
+RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_jump_mover ) const
 {
 	using namespace core::pose::rna;
 
@@ -333,7 +333,7 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 	// If a cut needs to be randomly chosen, will generally try to
 	// place it in a loopy region.
 	FArray1D_float cut_bias( nres, 1.0 );
-	std::string const & rna_secstruct( get_rna_secstruct( pose ) );
+	std::string const & rna_secstruct_legacy( get_rna_secstruct_legacy( pose ) );
 	for ( Size i = 1; i < nres; i++ ) {
 		// no cuts outside RNA
 		if ( !pose.residue(i+1).is_RNA() ) {
@@ -341,7 +341,7 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 			continue;
 		}
 		// Reduced probability of cuts inside helices
-		if ( rna_secstruct[i] == 'H' && rna_secstruct[i+1] == 'H' ) {
+		if ( rna_secstruct_legacy[i] == 'H' && rna_secstruct_legacy[i+1] == 'H' ) {
 			cut_bias( i )   = 0.1;
 		}
 		// No cuts inside user_input domains.
@@ -375,7 +375,6 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 			jump_points(2, count) = rna_params_.rna_pairing_list_[which_pairing].res2();
 			//TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
-
 
 		// "Chain connections" provide less information about specific residues to pair --
 		//  but they're assumed to be obligatory.
@@ -415,7 +414,7 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 			}
 
 			if ( m > num_stem_pairing_sets ) {
-				utility_exit_with_message( "Problem with pairing search "+I(3,num_stem_pairing_sets)+" "+I(3,m) );
+				utility_exit_with_message( "Could not find a stem_pairing. Number of stem_pairing_sets: "+I(3,num_stem_pairing_sets) );
 			}
 
 			Size const pairing_index_in_set( static_cast<Size>( numeric::random::rg().uniform() * stem_pairing_sets[m].size() )  + 1 );
@@ -434,16 +433,16 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 		////////////////////////////////////////////////////////////////////////////////
 		// Do it, get the fold tree. and set up the pose.
 		////////////////////////////////////////////////////////////////////////////////
-		//f.tree_from_jumps_and_cuts( nres, num_pairings_to_force, jump_points, cuts, true /* verbose */);
-
-		//  TR << "Making attempt " << ntries << std::endl;
-		//  for (Size n = 1; n <= num_pairings_to_force; n++ ){
-		//   TR << "JUMPS " << jump_points(1, n) <<
-		//    " " <<  jump_points(2, n)  <<  std::endl;
-		//  }
-
 		std::vector< int > obligate_cut_points_reformat;
 		for ( Size q = 1; q <= obligate_cut_points.size(); q++ ) obligate_cut_points_reformat.push_back( obligate_cut_points[q] );
+
+		// TR << TR.Cyan << "Making attempt " << ntries << std::endl;
+		// TR << TR.Cyan << "obligate_cutpoints " << obligate_cut_points_reformat << std::endl;
+		// for (Size n = 1; n <= num_pairings_to_force; n++ ){
+		// 	TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
+		//     " " <<  jump_points(2, n)  <<  std::endl;
+		// }
+
 		success = f.random_tree_from_jump_points( nres, num_pairings_to_force, jump_points, obligate_cut_points_reformat, cut_bias, 1, true /*enable 1 or NRES jumps*/ );
 	}
 
@@ -495,7 +494,7 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 
 ///////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::setup_chainbreak_variants( pose::Pose & pose,
+RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
 
@@ -527,7 +526,7 @@ RNA_DeNovoPoseSetup::setup_chainbreak_variants( pose::Pose & pose,
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoPoseSetup::setup_virtual_phosphate_variants( pose::Pose & pose ) const {
+RNA_DeNovoPoseInitializer::setup_virtual_phosphate_variants( pose::Pose & pose ) const {
 
 	using namespace id;
 	using namespace chemical;

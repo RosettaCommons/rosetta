@@ -33,11 +33,13 @@
 
 #ifdef SERIALIZATION
 // Utility serialization headers
+#include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
 
 
@@ -91,6 +93,11 @@ void Sequence::gap_char( char new_gap_char ) {
 	gap_char_ = new_gap_char;
 }
 
+
+void Sequence::spacer_positions( utility::vector1< Size > const & new_spacer_positions ) {
+	spacer_positions_ = new_spacer_positions;
+}
+
 core::Size Sequence::start() const {
 	return start_;
 }
@@ -101,6 +108,10 @@ std::string Sequence::id() const {
 
 char Sequence::gap_char() const {
 	return gap_char_;
+}
+
+utility::vector1< Size > Sequence::spacer_positions() const {
+	return spacer_positions_;
 }
 
 Size Sequence::length() const {
@@ -247,6 +258,7 @@ core::sequence::Sequence::save( Archive & arc ) const {
 	arc( CEREAL_NVP( start_ ) ); // core::Size
 	arc( CEREAL_NVP( gap_char_ ) ); // char
 	arc( CEREAL_NVP( seq_ ) ); // std::string
+	arc( CEREAL_NVP( spacer_positions_ ) ); // utility::vector1<Size>
 }
 
 /// @brief Automatically generated deserialization method
@@ -257,6 +269,7 @@ core::sequence::Sequence::load( Archive & arc ) {
 	arc( start_ ); // core::Size
 	arc( gap_char_ ); // char
 	arc( seq_ ); // std::string
+	arc( spacer_positions_ ); // utility::vector1<Size>
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::sequence::Sequence );

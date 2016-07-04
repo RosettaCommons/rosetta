@@ -25,6 +25,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/io/izstream.hh>
+#include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
@@ -56,6 +57,9 @@ using utility::vector1;
 using std::string;
 
 static THREAD_LOCAL basic::Tracer tr( "core.sequence" );
+
+// any of these are OK as strand separators
+vector1< char > spacers = utility::tools::make_vector1( '+','*',' ',',' );
 
 void read_all_alignments(const std::string& format,
 	const utility::vector1<std::string>& files,
@@ -139,6 +143,21 @@ vector1< string > read_fasta_file_str( std::string const & filename ) {
 	return seq_strings;
 }
 
+SequenceOP
+get_sequence_object( std::string const & current_id,
+										 std::string const & current_sequence )
+{
+	std::string current_id_strip ( current_id );
+	ObjexxFCL::strip_whitespace( current_id_strip );
+
+	std::string current_sequence_strip( current_sequence );
+	vector1< Size > spacer_positions =	strip_spacers( current_sequence_strip );
+
+	SequenceOP sequence( new Sequence( current_sequence_strip, current_id_strip ) );
+	sequence->spacer_positions( spacer_positions );
+	return sequence;
+}
+
 vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 	vector1< SequenceOP > sequences;
 
@@ -153,9 +172,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 	while ( getline( input, line ) ) {
 		if ( line.substr(0,1) == ">" ) {
 			if ( current_sequence != "" ) {
-				ObjexxFCL::strip_whitespace( current_id );
-				ObjexxFCL::strip_whitespace( current_sequence );
-				sequences.push_back( SequenceOP( new Sequence( current_sequence, current_id ) ) );
+				sequences.push_back( get_sequence_object( current_id, current_sequence ) );
 				current_sequence = "";
 			}
 			current_id = line.substr(1,line.size());
@@ -164,9 +181,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 		current_sequence = current_sequence + ObjexxFCL::rstrip(line);
 	}
 	if ( current_sequence != "" ) {
-		ObjexxFCL::strip_whitespace( current_id );
-		ObjexxFCL::strip_whitespace( current_sequence );
-		sequences.push_back( SequenceOP( new Sequence( current_sequence, current_id ) ) );
+		sequences.push_back( get_sequence_object( current_id, current_sequence ) );
 	}
 
 	return sequences;
@@ -806,6 +821,23 @@ calpha_superimpose_with_mapping(
 		}
 	}
 	return core::scoring::superimpose_pose( mod_pose, ref_pose, atom_map );
+}
+
+////////////////////////////////////////////////////////
+utility::vector1< Size >
+strip_spacers( std::string & sequence )
+{
+	std::string new_sequence;
+	utility::vector1< Size > spacer_pos;
+	for ( Size n = 1; n <= sequence.size(); n++ ) {
+		if ( spacers.has_value( sequence[ n - 1 ] ) ) {
+			if ( new_sequence.size() > 0 ) spacer_pos.push_back( new_sequence.size() );
+			continue;
+		}
+		new_sequence += sequence[ n - 1 ];
+	}
+	sequence = new_sequence;
+	return spacer_pos;
 }
 
 } // sequence

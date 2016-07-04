@@ -101,6 +101,9 @@ public: // non-virtual functions
 	/// @brief sets gap_char to the given value.
 	void gap_char( char gap_char );
 
+	/// @brief sets spacer_positions to the given value.
+	void spacer_positions( utility::vector1< Size > const & spacer_positions );
+
 	/// @brief Returns the number of characters in this object, ignoring gaps.
 	core::Size ungapped_length() const;
 
@@ -112,6 +115,9 @@ public: // non-virtual functions
 
 	/// @brief Returns the character used to represent a gap for this object.
 	char gap_char() const;
+
+	/// @brief Returns the spacer positions (chain breaks, e.g., from spaces or commas in original sequence text)
+  utility::vector1< Size > spacer_positions() const;
 
 	/// @brief Returns the string representing this sequence without gaps.
 	std::string ungapped_sequence() const;
@@ -127,6 +133,7 @@ public: // non-virtual functions
 		id_       = rhs.id();
 		gap_char_ = rhs.gap_char();
 		seq_      = rhs.sequence();
+		spacer_positions_ = rhs.spacer_positions();
 
 		return *this;
 	}
@@ -146,7 +153,8 @@ public: // non-virtual functions
 		return (
 			id()       == s.id()    &&
 			start()    == s.start() &&
-			sequence() == s.sequence()
+			sequence() == s.sequence() &&
+			spacer_positions() == s.spacer_positions()
 		);
 	}
 
@@ -199,6 +207,7 @@ private:
 	std::string id_;
 	core::Size start_;
 	char gap_char_;
+	utility::vector1< Size > spacer_positions_;
 
 	std::string seq_;
 #ifdef    SERIALIZATION

@@ -37,6 +37,8 @@
 namespace core {
 namespace sequence {
 
+	extern utility::vector1< char > spacers;
+
 /// @brief Populates the non-null vector <alignments> with all of the sequence
 /// alignments found in <files>. Each alignment is required to have
 /// format <format>.
@@ -174,6 +176,9 @@ calpha_superimpose_with_mapping(
 	core::pose::Pose const & ref_pose,
 	core::id::SequenceMapping const & mapping // mod_pose -> ref_pose
 );
+
+utility::vector1< core::Size >
+strip_spacers( std::string & sequence );
 
 } // sequence
 } // core

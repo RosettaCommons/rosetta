@@ -1,0 +1,18 @@
+-fasta RNAPZ6.fasta 
+-secstruct_file RNAPZ6_nopseudoknot.secstruct 
+-tag U75G76A77_on_thread1 
+-working_res 43-63 69-77 147-154 
+-s start_thread1_P4P6_COMPLETE.pdb 
+-filter_lores_base_pairs_early 
+-filter_lores_base_pairs 
+-filter_chain_closure 
+-filter_chain_closure_halfway 
+-cycles 5000 
+-output_filters 
+-obligate_pair 61 149 74 151 
+-rna::corrected_geo 
+-obligate_pair_explicit 49 77 S H X  
+-include_neighbor_base_stacks  
+-minimize_rna true
+-nstruct 1
+-cycles 500

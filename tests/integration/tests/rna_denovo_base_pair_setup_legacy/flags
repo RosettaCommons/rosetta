@@ -1,0 +1,5 @@
+-nstruct 1
+-fasta rna_denovo_base_pair_setup.fasta
+-include_neighbor_base_stacks
+-cycles 200
+-output_res_num  1-2

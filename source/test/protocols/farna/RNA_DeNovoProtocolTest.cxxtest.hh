@@ -48,7 +48,7 @@ class RNA_DeNovoProtocolTest : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-save_times -rna:farna:cycles 1 -nstruct 1" );
+		core_init_with_additional_options( "-save_times -rna:farna:cycles 1 -nstruct 1 -out:file:silent default.out" );
 	}
 
 	void tearDown(){

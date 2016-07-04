@@ -143,7 +143,7 @@
 //RNA stuff.
 //#include <protocols/farna/fragments/RNA_FragmentsClasses.hh>
 //#include <protocols/farna/RNA_DeNovoProtocol.hh>
-//#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+//#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>

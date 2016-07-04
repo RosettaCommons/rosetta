@@ -9,8 +9,8 @@
 
 /// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_rna_RNA_DeNovoPoseSetup_HH
-#define INCLUDED_protocols_rna_RNA_DeNovoPoseSetup_HH
+#ifndef INCLUDED_protocols_rna_RNA_DeNovoPoseInitializer_HH
+#define INCLUDED_protocols_rna_RNA_DeNovoPoseInitializer_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -41,12 +41,12 @@ namespace setup {
 //////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Object used in RNA_FragmentMonteCarlo to handle setup of pose & fold-tree, and
 ///   jump changes.
-class RNA_DeNovoPoseSetup : public utility::pointer::ReferenceCount {
+class RNA_DeNovoPoseInitializer : public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	RNA_DeNovoPoseSetup( RNA_DeNovoParameters const & rna_params_file_info );
-	virtual ~RNA_DeNovoPoseSetup();
+	RNA_DeNovoPoseInitializer( RNA_DeNovoParameters const & rna_params_file_info );
+	virtual ~RNA_DeNovoPoseInitializer();
 
 	/// @brief "classic" setup, used in denovo protocol. Note: changes pose (virtualizes phosphate).
 	///    and requires later call of setup_fold_tree_and_jumps_and_variants

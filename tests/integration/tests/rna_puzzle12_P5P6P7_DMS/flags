@@ -1,0 +1,13 @@
+-fasta fasta 
+-secstruct_file secstruct 
+-fixed_stems 
+-working_res 41-50 63-70 83-90 
+-cycles 100
+-filter_lores_base_pairs_early 
+-autofilter 
+-filter_chain_closure_halfway 
+-working_native P5P6P7_sol.pdb 
+-data_file RNAPZ12_DMS.txt  
+-include_neighbor_base_stacks  
+-minimize_rna true
+-nstruct 1

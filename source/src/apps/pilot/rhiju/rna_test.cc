@@ -108,7 +108,7 @@
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
 #include <protocols/farna/movers/RNA_Minimizer.hh>
 #include <protocols/farna/movers/RNA_LoopCloser.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/farna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
