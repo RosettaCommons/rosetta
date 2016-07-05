@@ -38,6 +38,7 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/Sequence.hh>
@@ -108,9 +109,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::secstruct );
 		option.add_relevant( rna::farna::secstruct_file );
 		option.add_relevant( rna::farna::minimize_rna );
-		option.add_relevant( rna::farna::offset );
-		option.add_relevant( rna::farna::tag );
 		option.add_relevant( rna::farna::fixed_stems );
+		option.add_relevant( rna::farna::obligate_pair );
+		option.add_relevant( rna::farna::obligate_pair_explicit );
 		// option.add_relevant( rna::farna::relax_rna );
 		// option.add_relevant( rna::farna::simple_relax );
 		// option.add_relevant( rna::farna::ignore_secstruct );
@@ -145,6 +146,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::output_filters );
 		option.add_relevant( rna::farna::autofilter );
 		option.add_relevant( rna::farna::output_res_num );
+		option.add_relevant( rna::farna::offset );
+		option.add_relevant( rna::farna::tag );
 		option.add_relevant( rna::farna::refine_silent_file );
 		option.add_relevant( rna::farna::refine_native );
 		option.add_relevant( rna::farna::bps_moves );
@@ -152,6 +155,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::minimize::extra_minimize_res );
 		option.add_relevant( rna::farna::minimize::extra_minimize_chi_res );
 		option.add_relevant( rna::farna::minimize::minimize_bps );
+		option.add_relevant( full_model::cutpoint_closed );
+		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( rna::vary_geometry );
 		option.add_relevant( basic::options::OptionKeys::rna::data_file );
 

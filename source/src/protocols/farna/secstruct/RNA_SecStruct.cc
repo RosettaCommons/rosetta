@@ -105,10 +105,15 @@ namespace secstruct {
 		getline( data_stream, line );
 
 		std::istringstream line_stream( line );
-		line_stream >> secstruct;
+		while ( !line_stream.fail() ) {
+			std::string secstruct_string;
+			line_stream >> secstruct_string;
+			if ( secstruct.size() > 0 ) secstruct += " " ;
+			secstruct += secstruct_string;
+		}
 		data_stream.close();
 
-		set_secstruct( secstruct );
+		set_secstruct( secstruct ); // handles spaces, etc.
 	}
 
 	//////////////////////////////////////////////////////////

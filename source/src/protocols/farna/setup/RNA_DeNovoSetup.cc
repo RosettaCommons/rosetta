@@ -155,7 +155,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////
 	// Step 1
 	////////////////////
-	std::string sequence  = option[ OptionKeys::rna::farna::sequence ]();
+	vector1< std::string > sequence_strings  = option[ OptionKeys::rna::farna::sequence ]();
 	vector1< std::string > fasta_files = option[ in::file::fasta ]();
 	int const offset = option[ OptionKeys::rna::farna::offset ]();
 
@@ -167,7 +167,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	if ( fasta_files.size() > 0 ) {
 		// use fasta readin developed for stepwise application -- also reads in
 		// numbers & chains based on fasta header lines.
-		runtime_assert( sequence.size() == 0 );
+		runtime_assert( sequence_strings.size() == 0 );
 		runtime_assert( fasta_files.size() == 1 );
 		full_model_parameters = stepwise::setup::get_sequence_information( fasta_files[ 1 ], cutpoint_open_in_full_model );
 		if ( offset != 0 ) {
@@ -177,7 +177,9 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		}
 	} else {
 		// basic read-in of sequence from command line
-		runtime_assert( sequence.size() > 0 );
+		runtime_assert( sequence_strings.size() > 0 );
+		std::string sequence( sequence_strings[1] );
+		for ( Size n = 2; n <= sequence_strings.size(); n++ ) sequence += std::string( " " + sequence_strings[ n ] );
 		cutpoint_open_in_full_model = core::sequence::strip_spacers( sequence );
 		std::map< Size, std::string > non_standard_residue_map = stepwise::setup::parse_out_non_standard_residues( sequence );
 		vector1< int > res_numbers_in_pose;
@@ -186,7 +188,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters = FullModelParametersOP( new FullModelParameters( sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) );
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 	}
-	sequence = full_model_parameters->full_sequence();
+	std::string const sequence = full_model_parameters->full_sequence();
 
 	////////////////////
 	// Step 2

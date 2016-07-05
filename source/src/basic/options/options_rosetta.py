@@ -6592,7 +6592,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'cycles', 'Integer', desc= "Default number of Monte Carlo cycles",default='0' ), # now default is set based on the number of moving residues
 		   Option( 'temperature', 'Real', desc= "temperature",default='2.0' ),
 		   Option( 'minimize_rna', 'Boolean', desc= "Minimize RNA after fragment assembly",default='false' ),
-		   Option( 'sequence', 'String', desc= "RNA sequence to model (better to supply in -fasta)",default="" ),
+		   Option( 'sequence', 'StringVector', desc= "RNA sequence to model (better to supply in -fasta)",default="" ),
 		   Option( 'secstruct', 'String', desc= "RNA sec struct to model (better to supply in -secstruct_file)",default="" ),
 		   Option( 'secstruct_general', 'String', desc= "RNA sec struct to model with possible noncanonical pairs",default="" ),
 		   Option( 'secstruct_file', 'String', desc= "RNA sec struct to model in dot-parens notation",default="" ),
@@ -6634,7 +6634,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			 Option( 'input_silent_res', 'ResidueChainVector', desc= "Input residues for silent files",default=[]  ),
 			 Option( 'virtual_anchor', 'ResidueChainVector', desc= "In rigid body movements, which residues in each body are rotation centers",default=[]  ),
 			 Option( 'obligate_pair', 'ResidueChainVector', desc= "Residue pairs that must form a base pair (possibly non canonical)",default=[]  ),
-			 Option( 'obligate_pair_explicit', 'StringVector', desc= "Residue pairs that must form a base pair, with specification of base edges (W/H/S/X) and orientation (C/T/X)",default=[]  ),
+		   Option( 'obligate_pair_explicit', 'StringVector', desc= "Residue pairs that must form a base pair, with specification of base edges (W/H/S/X) and orientation (A/P/X or C/T/X)",default=[]  ),
 			 Option( 'chain_connection', 'StringVector', desc= "Give SET1 ... and SET2 ... to define segments forming at least one base pair",default=[]  ),
 			 Option( 'remove_pair', 'ResidueChainVector', desc= "Residue pairs to remove from secondary structure",default=[]  ),
 			 Option( 'remove_obligate_pair', 'ResidueChainVector', desc= "Residue pairs to remove from obligate pair list",default=[]  ),
