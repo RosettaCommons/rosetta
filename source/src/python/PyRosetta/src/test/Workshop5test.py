@@ -79,7 +79,7 @@ mc.show_state()
 
 # Trial Mover
 trial_mover = TrialMover(small_mover, mc)
-for i in range (10):
+for i in range (2): # was 10, swtching to 2 to decrese test running time in debug mode
     trial_mover.apply(test)
 
 print( trial_mover.num_accepts() )
@@ -95,7 +95,7 @@ print( seq_mover )
 
 trialmover = TrialMover(seq_mover, mc)
 print( trialmover )
-repeat_mover = RepeatMover(trialmover, 5)
+repeat_mover = RepeatMover(trialmover, 2) # was 5, swtching to 2 to decrese test running time in debug mode
 repeat_mover.apply(test)
 mc.show_state()
 print( repeat_mover )
