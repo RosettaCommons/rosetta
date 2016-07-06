@@ -510,8 +510,11 @@ std::string
 cwd()
 {
 	char cwd[1024];
-	getcwd(cwd, sizeof(cwd));
-	return cwd;
+	if( getcwd(cwd, sizeof(cwd)) != 0 ) { //necessary to USE return val of getcwd or you get a compiler warning-error for unused return val
+		return cwd;
+	}
+	utility_exit_with_message("cannot detect current working directory.");
+	return "";
 }
 
 } // namespace file
