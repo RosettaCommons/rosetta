@@ -433,7 +433,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			Size const new_pos2 = std::max( segment1_end, segment2_start );
 			obligate_pair.push_back( new_pos1 );
 			obligate_pair.push_back( new_pos2 );
-			TR << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
+			//			TR << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
 			n_jumps++;
 		}
 	}
