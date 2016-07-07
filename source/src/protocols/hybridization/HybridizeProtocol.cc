@@ -39,6 +39,7 @@
 
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -384,10 +385,13 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		// pick from vall based on template SS + target sequence
 		for ( core::Size j=1; j<=nres_tgt-fragbiglen+1; ++j ) {
 			core::fragment::FrameOP frame( new core::fragment::Frame( j, fragbiglen ) );
-			frame->add_fragment(
-				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
-				tgt_ss.substr( j-1, fragbiglen ), tgt_seq.substr( j-1, fragbiglen ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
-			frags->add( frame );
+
+			if ( j > residue_sample_abinitio_.size() || residue_sample_abinitio_[j] ) {
+				frame->add_fragment(
+					core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
+					tgt_ss.substr( j-1, fragbiglen ), tgt_seq.substr( j-1, fragbiglen ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
+				frags->add( frame );
+			}
 		}
 		fragments_big_.push_back( frags );
 	}
@@ -725,6 +729,7 @@ void HybridizeProtocol::add_template(
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
 
+	// if there are no SS elts in the pose, use contigs
 	if ( chunks.num_loop() == 0 ) chunks = contigs;
 
 	TR.Debug << "Chunks from template\n" << chunks << std::endl;
@@ -923,7 +928,6 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 	}
 }
 
-
 void HybridizeProtocol::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::moves;
@@ -983,6 +987,67 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// pick starting template
 		core::Size initial_template_index = pick_starting_template();
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
+
+		// ensure
+		//    1)that no CONTIGS cross multiple CHAINS
+		//    2)that every input CHAIN has a chunk in it
+		// if not, add the corresponding contig as a chunk
+		utility::vector1< int > cuts = pose.fold_tree().cutpoints();
+		protocols::loops::Loops const &contigs_old = template_contigs_[initial_template_index];
+		protocols::loops::Loops contigs_new;
+		for (core::Size j=1; j<=contigs_old.num_loop(); ++j) {
+			protocols::loops::Loop contig_j = contigs_old[j];
+
+			for (core::Size i=1; i<=cuts.size(); ++i) {
+				int nextcut = cuts[i];
+				if (nextcut > (int)nres_protein_tgt) break;
+
+				core::Size start = templates_[initial_template_index]->pdb_info()->number(contig_j.start());
+				core::Size stop  = templates_[initial_template_index]->pdb_info()->number(contig_j.stop());
+
+				if ((int)start <= nextcut && (int)stop > nextcut) {
+					contigs_new.push_back( protocols::loops::Loop(contig_j.start(), nextcut) );
+					TR << "Split contig ("<<contig_j.start()<<","<<contig_j.stop()<<") at " << nextcut << std::endl;
+					contig_j.set_start( nextcut+1 );
+				}
+			}
+			contigs_new.push_back( contig_j );
+		}
+		template_contigs_[initial_template_index] = contigs_new;
+
+		protocols::loops::Loops &chunks = template_chunks_[initial_template_index];
+		for (core::Size i=0; i<=cuts.size(); ++i) {
+			int prevcut = (i==0) ? 1 : cuts[i];
+			int nextcut = (i==cuts.size()) ? nres_protein_tgt : cuts[i+1];
+			if (nextcut > (int)nres_protein_tgt) break;
+			bool haschunk = false;
+			for (core::Size j=1; j<=chunks.num_loop() && !haschunk; ++j) {
+				protocols::loops::Loop const &chunk_j = chunks[j];
+				core::Size start = templates_[initial_template_index]->pdb_info()->number(chunk_j.start());
+				core::Size stop  = templates_[initial_template_index]->pdb_info()->number(chunk_j.stop());
+				if ((int)start > prevcut && (int)stop <= nextcut) haschunk=true;
+			}
+
+			if (! haschunk ) {
+				TR << "Segment ("<<prevcut<<","<<nextcut<<") has no chunks!  Adding contigs!" << std::endl;
+				bool hascontig=false;
+				for (core::Size j=1; j<=contigs_new.num_loop(); ++j) {
+					protocols::loops::Loop const &contig_j = contigs_new[j];
+					core::Size start = templates_[initial_template_index]->pdb_info()->number(contig_j.start());
+					core::Size stop  = templates_[initial_template_index]->pdb_info()->number(contig_j.stop());
+					if ((int)start > prevcut && (int)stop <= nextcut) {
+						hascontig = true;
+						chunks.push_back( contig_j );
+					}
+				}
+				if (!hascontig) {
+					//TR << contigs_new << std::endl;
+					//utility_exit_with_message("No contigs found for segment!");
+					TR << "Warning!  No contigs found for segment!" << std::endl;
+					TR << "If you are not using the 'randomize=X' option there is likely something wrong with your input and models will not be reasonable!" << std::endl;
+				}
+			}
+		}
 
 		// (0) randomize chains
 		if (randomize_chains_[initial_template_index].size() > 0) {
@@ -1056,7 +1121,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				DIST += step_size;
 			}
 		}
-		//templates_[initial_template_index]->dump_pdb ("rand.pdb");
 
 		// (1) steal hetatms from template
 		utility::vector1< std::pair< core::Size,core::Size > > hetatms;
@@ -1325,7 +1389,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if ( residue_sample_template_.size() > 0 && residue_sample_abinitio_.size() > 0 ) {
 			for ( int i=1; i<=(int)nres_tgt; ++i ) {
 				if ( !residue_sample_template_[i] && !residue_sample_abinitio_[i] ) {
-					TR << "locking residue " << i << std::endl;
+					TR.Trace << "locking residue " << i << std::endl;
 					mm->set_bb  ( i, false );
 					mm->set_chi ( i, false );
 				}
