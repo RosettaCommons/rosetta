@@ -43,7 +43,7 @@ public:
 
 	/// @brief Set the region of the pose where deletion will occur
 	void
-	region( core::Size const res_start, core::Size const res_end );
+	region( std::string const & res_start, std::string const & res_end );
 
 	/// @brief Sets the residue selector
 	void

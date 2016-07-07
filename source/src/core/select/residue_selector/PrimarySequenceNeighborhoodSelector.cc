@@ -75,22 +75,22 @@ PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) cons
 	core::select::residue_selector::ResidueSubset retval( pose.total_residue(), false );
 	TR << "Intervals: [";
 	for ( ResidueRanges::const_iterator range=ranges.begin(); range!=ranges.end(); ++range ) {
-		TR << " " << range->start << "->" << range->stop << ",";
-		core::Size start = range->start;
-		core::Size end = range->stop;
-		core::Size count = 0;
-		while ( ( count < lower_residues_ ) && !core::pose::is_lower_terminus( pose, start ) ) {
+		TR << " " << range->start() << "->" << range->stop() << ",";
+		Size start = range->start();
+		Size end = range->stop();
+		Size count = 0;
+		while ( ( count < lower_residues_ ) && !pose::is_lower_terminus( pose, start ) ) {
 			++count;
 			--start;
 		}
 		TR.Debug << count << " residues added to lower terminus" << std::endl;
 		count = 0;
-		while ( ( count < upper_residues_ ) && !core::pose::is_upper_terminus( pose, end ) ) {
+		while ( ( count < upper_residues_ ) && !pose::is_upper_terminus( pose, end ) ) {
 			++count;
 			++end;
 		}
 		TR.Debug << count << " residues added to upper terminus" << std::endl;
-		for ( core::Size r=start; r<=end; ++r ) {
+		for ( Size r=start; r<=end; ++r ) {
 			retval[r] = true;
 		}
 	}
@@ -104,11 +104,11 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 	basic::datacache::DataMap & data )
 {
 	if ( tag->hasOption( "lower" ) ) {
-		set_lower_residues( tag->getOption< core::Size >( "lower" ) );
+		set_lower_residues( tag->getOption< Size >( "lower" ) );
 	}
 
 	if ( tag->hasOption( "upper" ) ) {
-		set_upper_residues( tag->getOption< core::Size >( "upper" ) );
+		set_upper_residues( tag->getOption< Size >( "upper" ) );
 	}
 
 	if ( tag->hasOption( "selector" ) ) {

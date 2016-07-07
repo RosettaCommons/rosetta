@@ -56,44 +56,44 @@ public:
 
 		core::select::residue_selector::ResidueRanges ranges( subset );
 		TS_ASSERT_EQUALS( ranges.size(), 1 );
-		TS_ASSERT_EQUALS( ranges[1].start, 2 );
-		TS_ASSERT_EQUALS( ranges[1].stop, 10 );
+		TS_ASSERT_EQUALS( ranges[1].start(), 2 );
+		TS_ASSERT_EQUALS( ranges[1].stop(), 10 );
 
 		// now, also select the last residue
 		subset[ 20 ] = true;
 		ranges = core::select::residue_selector::ResidueRanges( subset );
 		TS_ASSERT_EQUALS( ranges.size(), 2 );
-		TS_ASSERT_EQUALS( ranges[1].start, 2 );
-		TS_ASSERT_EQUALS( ranges[1].stop, 10 );
-		TS_ASSERT_EQUALS( ranges[2].start, 20 );
-		TS_ASSERT_EQUALS( ranges[2].stop, 20 );
+		TS_ASSERT_EQUALS( ranges[1].start(), 2 );
+		TS_ASSERT_EQUALS( ranges[1].stop(), 10 );
+		TS_ASSERT_EQUALS( ranges[2].start(), 20 );
+		TS_ASSERT_EQUALS( ranges[2].stop(), 20 );
 
 		// shrink the original selection
 		subset[ 2 ] = false;
 		ranges = core::select::residue_selector::ResidueRanges( subset );
 		TS_ASSERT_EQUALS( ranges.size(), 2 );
-		TS_ASSERT_EQUALS( ranges[1].start, 3 );
-		TS_ASSERT_EQUALS( ranges[1].stop, 10 );
-		TS_ASSERT_EQUALS( ranges[2].start, 20 );
-		TS_ASSERT_EQUALS( ranges[2].stop, 20 );
+		TS_ASSERT_EQUALS( ranges[1].start(), 3 );
+		TS_ASSERT_EQUALS( ranges[1].stop(), 10 );
+		TS_ASSERT_EQUALS( ranges[2].start(), 20 );
+		TS_ASSERT_EQUALS( ranges[2].stop(), 20 );
 
 		subset[ 10 ] = false;
 		ranges = core::select::residue_selector::ResidueRanges( subset );
 		TS_ASSERT_EQUALS( ranges.size(), 2 );
-		TS_ASSERT_EQUALS( ranges[1].start, 3 );
-		TS_ASSERT_EQUALS( ranges[1].stop, 9 );
-		TS_ASSERT_EQUALS( ranges[2].start, 20 );
-		TS_ASSERT_EQUALS( ranges[2].stop, 20 );
+		TS_ASSERT_EQUALS( ranges[1].start(), 3 );
+		TS_ASSERT_EQUALS( ranges[1].stop(), 9 );
+		TS_ASSERT_EQUALS( ranges[2].start(), 20 );
+		TS_ASSERT_EQUALS( ranges[2].stop(), 20 );
 
 		subset[ 1 ] = true;
 		subset[ 2 ] = true;
 		subset[ 19 ] = true;
 		ranges = core::select::residue_selector::ResidueRanges( subset );
 		TS_ASSERT_EQUALS( ranges.size(), 2 );
-		TS_ASSERT_EQUALS( ranges[1].start, 1 );
-		TS_ASSERT_EQUALS( ranges[1].stop, 9 );
-		TS_ASSERT_EQUALS( ranges[2].start, 19 );
-		TS_ASSERT_EQUALS( ranges[2].stop, 20 );
+		TS_ASSERT_EQUALS( ranges[1].start(), 1 );
+		TS_ASSERT_EQUALS( ranges[1].stop(), 9 );
+		TS_ASSERT_EQUALS( ranges[2].start(), 19 );
+		TS_ASSERT_EQUALS( ranges[2].stop(), 20 );
 	}
 
 };

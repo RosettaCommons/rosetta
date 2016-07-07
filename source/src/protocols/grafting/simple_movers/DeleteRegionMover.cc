@@ -47,7 +47,10 @@ DeleteRegionMover::DeleteRegionMover( core::Size const res_start, core::Size con
 	nter_overhang_(0),
 	cter_overhang_(0)
 {
-	region( res_start, res_end );
+	std::stringstream start, end;
+	start << res_start;
+	end << res_end;
+	region( start.str(), end.str() );
 }
 
 DeleteRegionMover::~DeleteRegionMover(){}
@@ -58,7 +61,7 @@ DeleteRegionMover::get_name() const {
 }
 
 void
-DeleteRegionMover::region( core::Size const res_start, core::Size const res_end )
+DeleteRegionMover::region( std::string const & res_start, std::string const & res_end )
 {
 	std::stringstream residues;
 	residues << res_start << "-" << res_end;
@@ -106,8 +109,8 @@ DeleteRegionMover::parse_my_tag(
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 
 	if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
-		core::Size const start = tag->getOption< core::Size >( "start" );
-		core::Size const end = tag->getOption< core::Size >( "end" );
+		std::string const start = tag->getOption< std::string >( "start" );
+		std::string const end = tag->getOption< std::string >( "end" );
 		region( start, end );
 	}
 
@@ -123,20 +126,20 @@ DeleteRegionMover::parse_my_tag(
 void
 DeleteRegionMover::apply( core::pose::Pose& pose )
 {
+	using core::select::residue_selector::ResidueRanges;
+
 	if ( ! selector_ ) {
 		throw utility::excn::EXCN_BadInput( "Selector not set in DeleteRegionMover!" );
 	}
 
-	core::select::residue_selector::ResidueRanges const ranges( selector_->apply( pose ) );
+	ResidueRanges const ranges( selector_->apply( pose ) );
+	for ( ResidueRanges::const_reverse_iterator range=ranges.rbegin(); range!=ranges.rend(); ++range ) {
+		PyAssert( range->start() != 0, "Cannot delete region starting with 0 - make sure region is set for DeleteRegionMover" );
+		PyAssert( range->stop() != 0, "Cannot delete region ending with 0 - make sure region is set for DeleteRegionMover" );
+		PyAssert( range->stop() >= range->start(), "Cannot delete region where end > start" );
+		PyAssert( range->stop() <= pose.total_residue(), "Cannot delete region where end is > pose total_residues" );
 
-	for ( utility::vector1< core::select::residue_selector::ResidueRange >::const_iterator range=ranges.begin(); range!=ranges.end(); ++range ) {
-		//std::cout <<"Start: "<<start_ << " End: " << end_ << std::endl;
-		PyAssert( range->start != 0, "Cannot delete region starting with 0 - make sure region is set for DeleteRegionMover" );
-		PyAssert( range->stop != 0, "Cannot delete region ending with 0 - make sure region is set for DeleteRegionMover" );
-		PyAssert( range->stop > range->start, "Cannot delete region where end > start" );
-		PyAssert( range->stop <= pose.total_residue(), "Cannot delete region where end is > pose total_residues" );
-
-		protocols::grafting::delete_region( pose, range->start -  nter_overhang_, range->stop + cter_overhang_ );
+		protocols::grafting::delete_region( pose, range->start() - nter_overhang_, range->stop() + cter_overhang_ );
 	}
 
 }

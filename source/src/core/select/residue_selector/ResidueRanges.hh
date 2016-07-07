@@ -32,15 +32,33 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-struct ResidueRange {
+/// @brief Class for storing a range of resids
+class ResidueRange {
+public:
 	ResidueRange():
-		start( 0 ), stop( 0 ) {}
+		start_( 0 ), stop_( 0 ) {}
 
-	ResidueRange( core::Size const startval, core::Size const stopval ):
-		start( startval ), stop( stopval ) {}
+	ResidueRange( Size const startval, Size const stopval ):
+		start_( startval ), stop_( stopval ) {}
 
-	core::Size start;
-	core::Size stop;
+	/// @brief less than operator that can be used for sorting
+	/// @details If start < other.start, return true
+	///          If start > other.start, return false
+	///          if start == other.start, return (stop < other.stop)
+	bool
+	operator<( ResidueRange const & other ) const;
+
+	/// @brief Returns the starting residue of the range
+	Size
+	start() const;
+
+	/// @brief Returns the stopping residue of the range
+	Size
+	stop() const;
+
+private:
+	Size start_;
+	Size stop_;
 };
 
 class ResidueRanges : public utility::vector1< ResidueRange > {
@@ -51,6 +69,9 @@ public:
 
 	/// @brief Constructs a set of contiguous ranges of residues from a residue subset
 	/// @param subset : residue subset from which contiguous ranges of residues will be derived
+	/// @details ResidueRanges created via this constructor are guaranteed
+	///          to be ordered in ascending order by start resid and
+	///          contain no duplicates
 	ResidueRanges( ResidueSubset const & subset );
 
 	/// @brief Destructor.
@@ -58,6 +79,9 @@ public:
 
 	/// @brief Clears the ranges and uses the provided ResidueSubset to create new ranges
 	/// @param subset : residue subset from which contiguous ranges of residues will be derived
+	/// @details ResidueRanges created via this method are guaranteed
+	///          to be ordered in ascending order by start resid and
+	///          contain no duplicates
 	void
 	from_subset( ResidueSubset const & subset );
 

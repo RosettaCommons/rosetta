@@ -23,6 +23,31 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
+/// @brief Returns the starting residue of the range
+Size
+ResidueRange::start() const
+{
+	return start_;
+}
+
+/// @brief Returns the stopping residue of the range
+Size
+ResidueRange::stop() const
+{
+	return stop_;
+}
+
+/// @brief less than operator that can be used for sorting
+/// @details If start < other.start, return true
+///          If start > other.start, return false
+///          if start == other.start, return (stop < other.stop)
+bool
+ResidueRange::operator<( ResidueRange const & other ) const
+{
+	if ( start_ == other.start() ) return ( stop_ < other.stop() );
+	return ( start_ < other.start() );
+}
+
 /// @brief Constructs an empty vector of ResidueRanges
 ResidueRanges::ResidueRanges():
 	utility::vector1< ResidueRange >()
@@ -44,8 +69,8 @@ void
 ResidueRanges::from_subset( ResidueSubset const & subset )
 {
 	this->clear();
-	core::Size start_interval = 0;
-	for ( core::Size resid=1; resid<=subset.size(); ++resid ) {
+	Size start_interval = 0;
+	for ( Size resid=1; resid<=subset.size(); ++resid ) {
 		if ( ( start_interval == 0 ) && ( subset[ resid ] ) ) {
 			start_interval = resid;
 		} else if ( ( start_interval == 0 ) && ( ! subset[ resid ] ) ) {
@@ -63,6 +88,7 @@ ResidueRanges::from_subset( ResidueSubset const & subset )
 	if ( start_interval != 0 ) {
 		push_back( ResidueRange( start_interval, subset.size() ) );
 	}
+	std::sort( begin(), end() );
 }
 
 } //namespace residue_selector
