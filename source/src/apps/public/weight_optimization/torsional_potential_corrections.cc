@@ -1,8 +1,5 @@
 /// @file
 /// @brief
-
-#include <apps/pilot/frank/spacegroup.hh>
-
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
@@ -1206,4 +1203,3 @@ main( int argc, char * argv [] ) {
 	return 0;
 
 }
-

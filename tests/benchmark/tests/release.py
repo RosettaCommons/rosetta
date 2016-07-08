@@ -432,7 +432,8 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag = ''
-        if not res: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=platform['python'], jobs=jobs, gui_flag=gui_flag), return_='tuple')
+        if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
+        else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=platform['python'], jobs=jobs, gui_flag=gui_flag), return_='tuple')
 
         json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
         results = json.load( file(json_file) )
