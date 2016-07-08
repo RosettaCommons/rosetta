@@ -1006,12 +1006,24 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				core::Size stop  = templates_[initial_template_index]->pdb_info()->number(contig_j.stop());
 
 				if ((int)start <= nextcut && (int)stop > nextcut) {
-					contigs_new.push_back( protocols::loops::Loop(contig_j.start(), nextcut) );
-					TR << "Split contig ("<<contig_j.start()<<","<<contig_j.stop()<<") at " << nextcut << std::endl;
-					contig_j.set_start( nextcut+1 );
+					// find template res corresponding to cut
+					for (core::Size k=contig_j.start(); k<=contig_j.stop(); ++k) {
+						if (templates_[initial_template_index]->pdb_info()->number(k) == nextcut) {
+							// ensure contig >= 3 res
+							if (k > contig_j.start()+1) {
+								contigs_new.push_back( protocols::loops::Loop(contig_j.start(), k) );
+							}
+							TR << "Split contig ("<<contig_j.start()<<","<<contig_j.stop()<< ") at " << k << " [pdbnum: "<<start<<"/"<<stop<<"/" << nextcut << "]" << std::endl;
+							contig_j.set_start( k+1 );
+						}
+					}
+
 				}
 			}
-			contigs_new.push_back( contig_j );
+			// ensure contig >= 3 res
+			if (contig_j.stop() > contig_j.start()+1) {
+				contigs_new.push_back( contig_j );
+			}
 		}
 		template_contigs_[initial_template_index] = contigs_new;
 
@@ -1041,8 +1053,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					}
 				}
 				if (!hascontig) {
-					//TR << contigs_new << std::endl;
-					//utility_exit_with_message("No contigs found for segment!");
 					TR << "Warning!  No contigs found for segment!" << std::endl;
 					TR << "If you are not using the 'randomize=X' option there is likely something wrong with your input and models will not be reasonable!" << std::endl;
 				}
