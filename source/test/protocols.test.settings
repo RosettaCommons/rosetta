@@ -137,6 +137,7 @@ sources = {
 	],
 
 	"fldsgn/filters" : [
+		"HelixPairingFilterTests",
 		"SheetTopologyFilter",
 	],
 

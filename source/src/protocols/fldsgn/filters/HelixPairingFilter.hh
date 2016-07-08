@@ -37,7 +37,8 @@
 #include <utility/vector1.hh>
 
 
-//// C++ headers
+// C++ headers
+#include <set>
 
 namespace protocols {
 namespace fldsgn {
@@ -102,6 +103,18 @@ public:// mutator
 
 	void secstruct( String const & ss );
 
+	/// @brief sets distance cutoff
+	void dist( Real const dist_val );
+
+	/// @brief sets max helix bend
+	void bend_angle( Real const bend_angle_val );
+
+	/// @brief sets max cross angle
+	void cross_angle( Real const cross_angle_val );
+
+	/// @brief sets max alignment angle
+	void align_angle( Real const align_angle_val );
+
 
 public:// accessor
 
@@ -134,12 +147,36 @@ public:// virtual main operation
 	// In this case, the test is whether the give pose is the topology we want.
 	virtual bool apply( Pose const & pose ) const;
 
+private:
+	/// @brief returns secondary structure to be used for finding helices
+	/// @details If secstruct_ is set, returns that.
+	///          If use_dssp_ is true, returns secstruct from DSSP
+	///          Otherwise, returns the pose.secstruct()
+	std::string
+	secstruct( core::pose::Pose const & pose ) const;
+
+	/// @brief Returns the Helix pairing set to filter based on.
+	/// @details If hpairset_ is set, returns that.
+	///          Otherwise, look up the pairing set using the StructureData cached in the pose
+	topology::HelixPairingSet
+	compute_helix_pairing_set( core::pose::Pose const & pose ) const;
+
+	/// @brief Returns set of helix IDs that were not found in the pose.
+	///        Set is empty if all helices are present.
+	std::set< core::Size >
+	find_missing_helices(
+		topology::SS_Info2 const & ss_info,
+		topology::HelixPairings const & hpairs ) const;
 
 private:
 
-
 	/// @brief if value is empty, dssp will run for ss definition ( default is emptry )
-	mutable String secstruct_;
+	String secstruct_;
+
+	// TL: If this filter was used for two different poses sequentially, the DSSP secstruct from
+	//     pose1 would be reused for pose2, because secstruct_ was being set in apply() if empty.
+	//     Much better solution is to keep secstruct_ const.  Mutables should almost never be used.
+	//mutable String secstruct_;
 
 	/// @brief
 	Real dist_cutoff_;
@@ -162,6 +199,8 @@ private:
 	/// @brief output type, dist or angle
 	String output_type_;
 
+	/// @brief if true, and secstruct_ is empty, DSSP will be used to determine secondary structure of the pose
+	bool use_dssp_;
 
 };
 

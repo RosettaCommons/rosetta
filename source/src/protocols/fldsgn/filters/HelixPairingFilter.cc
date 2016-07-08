@@ -18,6 +18,11 @@
 
 // Package Headers
 #include <core/scoring/dssp/Dssp.hh>
+#include <protocols/denovo_design/components/Segment.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
+#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
@@ -39,8 +44,9 @@
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #endif
 
+// C++ headers
+#include <set>
 
-//// C++ headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.HelixPairingFilter" );
 
 namespace protocols {
@@ -54,7 +60,11 @@ HelixPairingFilter::HelixPairingFilter():
 	dist_cutoff_( 15.0 ),
 	bend_angle_( 20.0 ),
 	cross_angle_( 45.0 ),
-	align_angle_( 25.0 )
+	align_angle_( 25.0 ),
+	hpairset_(),
+	output_id_( 1 ),
+	output_type_( "dist" ),
+	use_dssp_( true )
 {}
 
 // @Brief constructor with arguments
@@ -65,7 +75,10 @@ HelixPairingFilter::HelixPairingFilter( HelixPairings const & hpairs ):
 	bend_angle_( 20.0 ),
 	cross_angle_( 45.0 ),
 	align_angle_( 25.0 ),
-	hpairset_( HelixPairingSetOP( new HelixPairingSet( hpairs ) ) )
+	hpairset_( HelixPairingSetOP( new HelixPairingSet( hpairs ) ) ),
+	output_id_( 1 ),
+	output_type_( "dist" ),
+	use_dssp_( true )
 {}
 
 // @brief constructor with arguments
@@ -75,22 +88,32 @@ HelixPairingFilter::HelixPairingFilter( String const & hpairs ):
 	dist_cutoff_( 15.0 ),
 	bend_angle_( 20.0 ),
 	cross_angle_( 45.0 ),
-	align_angle_( 25.0 )
-{
-	hpairset_ = HelixPairingSetOP( new HelixPairingSet( hpairs ) );
-}
+	align_angle_( 25.0 ),
+	hpairset_( new HelixPairingSet( hpairs ) ),
+	output_id_( 1 ),
+	output_type_( "dist" ),
+	use_dssp_( true )
+{}
 
 // @brief copy constructor
 HelixPairingFilter::HelixPairingFilter( HelixPairingFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
 	Super( rval ),
 	secstruct_( rval.secstruct_ ),
 	dist_cutoff_( rval.dist_cutoff_ ),
 	bend_angle_( rval.bend_angle_ ),
 	cross_angle_( rval.cross_angle_ ),
 	align_angle_( rval.align_angle_ ),
-	hpairset_( rval.hpairset_ )
-{}
+	hpairset_(),
+	output_id_( rval.output_id_ ),
+	output_type_( rval.output_type_ ),
+	use_dssp_( rval.use_dssp_ )
+{
+	// clone hpairset_ so there are no problems with sharing non-const data
+	if ( rval.hpairset_ ) {
+		hpairset_ = HelixPairingSetOP( new HelixPairingSet( *rval.hpairset_ ) );
+	}
+}
+
 
 // @brief set filtered sheet_topology by HelixPairings
 void HelixPairingFilter::helix_pairings( HelixPairings const & hpairs )
@@ -108,6 +131,30 @@ void HelixPairingFilter::helix_pairings( String const & hpairs )
 void HelixPairingFilter::secstruct( String const & ss )
 {
 	secstruct_ = ss;
+}
+
+/// @brief sets distance cutoff
+void HelixPairingFilter::dist( Real const dist_val )
+{
+	dist_cutoff_ = dist_val;
+}
+
+/// @brief sets max helix bend
+void HelixPairingFilter::bend_angle( Real const bend_angle_val )
+{
+	bend_angle_ = bend_angle_val;
+}
+
+/// @brief sets max cross angle
+void HelixPairingFilter::cross_angle( Real const cross_angle_val )
+{
+	cross_angle_ = cross_angle_val;
+}
+
+/// @brief sets max alignment angle
+void HelixPairingFilter::align_angle( Real const align_angle_val )
+{
+	align_angle_ = align_angle_val;
 }
 
 /// @brief
@@ -128,23 +175,28 @@ HelixPairingFilter::apply( Pose const & pose ) const
 	using protocols::fldsgn::topology::Helix;
 	using protocols::fldsgn::topology::Helices;
 
+	// get secondary structure information
+	std::string const pose_secstruct = secstruct( pose );
+	runtime_assert( pose_secstruct.length() == pose.total_residue() );
+	SS_Info2_OP ss_info( new SS_Info2( pose, pose_secstruct ) );
+	Helices const helices( ss_info->helices() );
 
-	HelixPairingSet hpairset( *hpairset_ );
-	HelixPairings helix_pairings = hpairset.helix_pairings();
-
-
-	runtime_assert( ! helix_pairings.empty() );
-
-	// set secondary structure
-	if ( secstruct_ == "" ) {
-		Dssp dssp( pose );
-		secstruct_ = dssp.get_dssp_secstruct();
+	// compute desired helix pairings
+	HelixPairingSet hpairset = compute_helix_pairing_set( pose );
+	HelixPairings const helix_pairings = hpairset.helix_pairings();
+	if ( helix_pairings.empty() ) {
+		TR << "No pairings found, returning true" << std::endl;
+		return true;
 	}
-	runtime_assert( secstruct_.length() == pose.total_residue() );
 
-	// set SS_Info
-	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct_ ) );
-	Helices const & helices( ss_info->helices() );
+	// find missing helices
+	std::set< core::Size > const missing_helices = find_missing_helices( *ss_info, helix_pairings );
+	if ( !missing_helices.empty() ) {
+		TR << "The helix pairing set contains helices " << missing_helices
+			<< ", but according to the secondary structure, there are only " << helices.size()
+			<< " helices in the pose. Returning false." << std::endl;
+		return false;
+	}
 
 	// calc geometry of helixpairing
 	hpairset.calc_geometry( ss_info );
@@ -154,20 +206,10 @@ HelixPairingFilter::apply( Pose const & pose ) const
 	for ( HelixPairings::const_iterator it=helix_pairings.begin(), ite=helix_pairings.end(); it != ite; ++it ) {
 		HelixPairing const & hpair( **it );
 
-		if ( helices.size() < hpair.h1() ) {
-			TR << "Helix " << hpair.h1() << " does not exist ! " << std::endl;
-			return false;
-		}
-
-		if ( helices.size() < hpair.h2() ) {
-			TR << "Helix " << hpair.h2() << " does not exist ! " << std::endl;
-			return false;
-		}
-
 		// bend check
 		if ( bend_angle_ >= 0.0 ) {
 			if ( helices[ hpair.h1() ]->bend() > bend_angle_ ) {
-				TR << "Helix " << hpair.h1() << "is bend, angle=" << helices[ hpair.h1() ]->bend() << std::endl;
+				TR << "Helix " << hpair.h1() << "is bent, angle=" << helices[ hpair.h1() ]->bend() << std::endl;
 				filter=false;
 			}
 			if ( helices[ hpair.h2() ]->bend() > bend_angle_ ) {
@@ -209,28 +251,32 @@ HelixPairingFilter::Real
 HelixPairingFilter::compute( Pose const & pose ) const
 {
 	using core::Vector;
-	using core::scoring::dssp::Dssp;
 	using protocols::fldsgn::topology::SS_Info2;
 	using protocols::fldsgn::topology::SS_Info2_OP;
 	using protocols::fldsgn::topology::Helix;
 	using protocols::fldsgn::topology::Helices;
 
-	HelixPairingSet hpairset( *hpairset_ );
-	HelixPairings helix_pairings = hpairset.helix_pairings();
+	// get secondary structure information
+	std::string const pose_secstruct = secstruct( pose );
+	runtime_assert( pose_secstruct.length() == pose.total_residue() );
+	SS_Info2_OP ss_info( new SS_Info2( pose, pose_secstruct ) );
 
-
-	runtime_assert( ! helix_pairings.empty() );
-
-	// set secondary structure
-	if ( secstruct_ == "" ) {
-		Dssp dssp( pose );
-		secstruct_ = dssp.get_dssp_secstruct();
+	// compute desired helix pairings
+	HelixPairingSet hpairset = compute_helix_pairing_set( pose );
+	HelixPairings const helix_pairings = hpairset.helix_pairings();
+	if ( helix_pairings.empty() ) {
+		TR << "No pairings found, returning true" << std::endl;
+		return 0.0;
 	}
-	runtime_assert( secstruct_.length() == pose.total_residue() );
 
-	// set SS_Info
-	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct_ ) );
-	// Helices const & helices( ss_info->helices() ); // Unused variable causes warning.
+	// find missing helices
+	std::set< core::Size > const missing_helices = find_missing_helices( *ss_info, helix_pairings );
+	if ( !missing_helices.empty() ) {
+		TR << "The helix pairing set contains helices " << missing_helices
+			<< ", but according to the secondary structure, there are only " << ss_info->helices().size()
+			<< " helices in the pose. Returning false." << std::endl;
+		return 0.0;
+	}
 
 	// calc geometry of helixpairing
 	hpairset.calc_geometry( ss_info );
@@ -248,7 +294,6 @@ HelixPairingFilter::compute( Pose const & pose ) const
 	}
 
 	return value;
-
 }
 
 /// @brief parse xml
@@ -282,26 +327,84 @@ HelixPairingFilter::parse_my_tag(
 		}
 	}
 
+	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
+	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
+	/*
 	if ( hpairset_->helix_pairings().empty() ) {
 		TR.Error << "Error!, Option of helix_pairings is empty." << std::endl;
 		runtime_assert( false );
 	}
+	*/
 
-	dist_cutoff_ = tag->getOption<Real>( "dist",  15 );
-	bend_angle_  = tag->getOption<Real>( "bend",  20 );
-	cross_angle_ = tag->getOption<Real>( "cross", 45 );
-	align_angle_ = tag->getOption<Real>( "align", 25 );
+	dist_cutoff_ = tag->getOption<Real>( "dist",  dist_cutoff_ );
+	bend_angle_  = tag->getOption<Real>( "bend",  bend_angle_ );
+	cross_angle_ = tag->getOption<Real>( "cross", cross_angle_ );
+	align_angle_ = tag->getOption<Real>( "align", align_angle_ );
 
-	output_id_ = tag->getOption<Size>( "output_id", 1 );
-	output_type_ = tag->getOption<String>( "output_type", "dist" );
+	output_id_ = tag->getOption<Size>( "output_id", output_id_ );
+	output_type_ = tag->getOption<String>( "output_type", output_type_ );
 
 	if ( output_type_ != "dist" && output_type_ != "cross" && output_type_ != "align" ) {
 		TR << "Invalid type for output_type, choose among dist or cross or align. " << std::endl;
 	} else {
-		TR << "HelixPairing " << *hpairset_->helix_pairing( output_id_ ) << ", "
-			<< output_type_ << " is used for output value. " << std::endl;
+		TR << output_type_ << " is used for output value. " << std::endl;
 	}
 
+}
+
+/// @brief returns secondary structure to be used for finding helices
+/// @details If secstruct_ is set, returns that.
+///          If use_dssp_ is true, returns secstruct from DSSP
+///          Otherwise, returns the pose.secstruct()
+std::string
+HelixPairingFilter::secstruct( core::pose::Pose const & pose ) const
+{
+	using core::scoring::dssp::Dssp;
+	if ( !secstruct_.empty() ) return secstruct_;
+
+	if ( use_dssp_ ) {
+		Dssp dssp( pose );
+		return dssp.get_dssp_secstruct();
+	}
+
+	return pose.secstruct();
+}
+
+/// @brief Returns the Helix pairing set to filter based on.
+/// @details If hpairset_ is set, returns that.
+///          Otherwise, look up the pairing set using the StructureData cached in the pose
+topology::HelixPairingSet
+HelixPairingFilter::compute_helix_pairing_set( core::pose::Pose const & pose ) const
+{
+	using namespace protocols::denovo_design::components;
+
+	if ( hpairset_ ) {
+		return *hpairset_;
+	} else {
+		StructureData const sd = *StructureDataFactory::get_instance()->create_from_pose( pose );
+		std::stringstream helix_str;
+		for ( SegmentPairingCOPs::const_iterator p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
+			if ( p != sd.pairings_begin() ) helix_str << ';';
+			helix_str << (*p)->pairing_string( sd );
+		}
+		TR << "Found helix pairings: " << helix_str.str() << std::endl;
+		return HelixPairingSet( helix_str.str() );
+	}
+}
+
+std::set< core::Size >
+HelixPairingFilter::find_missing_helices(
+	topology::SS_Info2 const & ss_info,
+	topology::HelixPairings const & hpairs ) const
+{
+	core::Size const n_helices = ss_info.helices().size();
+
+	std::set< core::Size > missing;
+	for ( topology::HelixPairings::const_iterator hp=hpairs.begin(); hp!=hpairs.end(); ++hp ) {
+		if ( n_helices < (*hp)->h1() ) missing.insert( (*hp)->h1() );
+		if ( n_helices < (*hp)->h2() ) missing.insert( (*hp)->h2() );
+	}
+	return missing;
 }
 
 protocols::filters::FilterOP
