@@ -855,6 +855,11 @@ get_asymm_unit_fold_tree( core::conformation::Conformation const &conf ) {
 	return f_new;
 }
 
+/// @brief    Converts an asymmetric foldtree (f) with virtual root into a
+///           symmetric foldtree compatible with symmetric conformation (conf)
+/// @param    conf - A symmetric conformation
+/// @param    f - An asymmetric foldtree. This foldtree MUST have a virtual root
+/// @details  This function does not require the symm data
 void
 symmetrize_fold_tree(
 	core::conformation::Conformation const &conf,

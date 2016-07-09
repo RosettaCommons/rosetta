@@ -21,13 +21,19 @@
 
 #include <test/core/init_util.hh>
 #include <core/types.hh>
-
+#include <protocols/simple_moves/VirtualRootMover.hh>
+#include <core/conformation/symmetry/SymmData.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
+
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR( "SymmetryUtilTests" );
 
 class SymmetryUtilTests : public CxxTest::TestSuite
 {
@@ -81,4 +87,29 @@ public: // tests
 		TS_ASSERT(is_symmetric(*scfxn));
 
 	}
+	
+	void test_symmetrize_fold_tree()
+	{
+		using core::kinematics::FoldTree;
+		using core::pose::Pose;
+
+		Pose pose;
+		core::import_pose::pose_from_file( pose, "core/scoring/symmetry/test_in.pdb", core::import_pose::PDB_file );
+		Pose start_pose = pose;
+		protocols::simple_moves::VirtualRootMover().apply( start_pose );
+
+		// add symmetry data input file
+		core::conformation::symmetry::SymmData symmdata1( pose.n_residue(), pose.num_jump() );
+		std::string const symm_def1 = "core/conformation/symmetry/symm_def1.dat";
+		symmdata1.read_symmetry_data_from_file(symm_def1);
+		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
+
+		// try to symmeterize fold tree
+		FoldTree symm_ft = start_pose.fold_tree();
+		TS_ASSERT( symm_ft.check_fold_tree() );
+		core::pose::symmetry::symmetrize_fold_tree( pose, symm_ft );
+		TS_ASSERT( symm_ft.check_fold_tree() );
+		TS_ASSERT_THROWS_NOTHING( pose.fold_tree( symm_ft ) );
+	}
+
 };

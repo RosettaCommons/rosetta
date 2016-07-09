@@ -909,8 +909,11 @@ rotate_anchor_to_x_axis( core::pose::Pose & pose ){
 	}
 }
 
-// a couple functions to transform between symmetric and asymmetric foldtrees
-// these do not require the symm data
+/// @brief    Converts an asymmetric foldtree (f) with virtual root into a
+///           symmetric foldtree compatible with symmetric pose (p)
+/// @param    p - A symmetric pose
+/// @param    f - An asymmetric foldtree. This foldtree MUST have a virtual root
+/// @details  This function does not require the symm data
 void
 symmetrize_fold_tree( core::pose::Pose const &p, kinematics::FoldTree &f ) {
 	core::conformation::symmetry::symmetrize_fold_tree( p.conformation(), f );
