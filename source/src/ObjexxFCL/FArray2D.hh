@@ -282,7 +282,7 @@ public: // Assignment
 	operator =( Super const & a )
 	{
 		if ( this != &a ) {
-			if ( ! equal_dimension( a ) ) dimension( a );
+			if ( ! Super::equal_dimension( a ) ) dimension( a );
 			Base::operator =( a );
 		}
 		return *this;

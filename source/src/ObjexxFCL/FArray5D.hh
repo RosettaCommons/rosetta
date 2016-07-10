@@ -857,7 +857,7 @@ public: // Modifier
 	FArray5D &
 	swap( FArray5D & v )
 	{
-		swap5DB( v );
+		Super::swap5DB( v );
 		I1_.swap_no_notify( v.I1_ );
 		I2_.swap_no_notify( v.I2_ );
 		I3_.swap_no_notify( v.I3_ );
@@ -894,13 +894,10 @@ public: // Friend
 
 
 	/// @brief Swap
+	template <typename U>
 	friend
-	inline
 	void
-	swap( FArray5D & a, FArray5D & b )
-	{
-		a.swap( b );
-	}
+	swap( FArray5D<U> & a, FArray5D<U> & b );
 
 
 public: // Generator
@@ -1219,6 +1216,12 @@ template< typename T >
 FArray5D< T >
 operator /( FArray5< T > const & a, T const & t );
 
+template <typename U>
+void
+swap( FArray5D<U> & a, FArray5D<U> & b )
+{
+	a.swap( b );
+}
 
 } // namespace ObjexxFCL
 

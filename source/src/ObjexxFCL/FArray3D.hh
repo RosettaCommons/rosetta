@@ -794,13 +794,10 @@ public: // Friend
 
 
 	/// @brief Swap
+	template <typename U>
 	friend
-	inline
 	void
-	swap( FArray3D & a, FArray3D & b )
-	{
-		a.swap( b );
-	}
+	swap( FArray3D<U> & a, FArray3D<U> & b );
 
 
 public: // Generator
@@ -1104,6 +1101,14 @@ operator *( T const & t, FArray3< T > const & a );
 template< typename T >
 FArray3D< T >
 operator /( FArray3< T > const & a, T const & t );
+
+
+template <typename U>
+void
+swap( FArray3D<U> & a, FArray3D<U> & b )
+{
+	a.swap( b );
+}
 
 
 } // namespace ObjexxFCL

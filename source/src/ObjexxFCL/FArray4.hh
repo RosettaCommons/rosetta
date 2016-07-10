@@ -581,7 +581,7 @@ protected: // Functions
 	void
 	swap4DB( FArray4 & v )
 	{
-		swapB( v );
+		Super::swapB( v );
 		std::swap( s1_, v.s1_ );
 		std::swap( s2_, v.s2_ );
 		std::swap( s3_, v.s3_ );

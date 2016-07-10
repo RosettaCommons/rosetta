@@ -268,6 +268,7 @@ string standard_name(string const &type)
 	static vector< std::pair<string, string> > const name_map = {
 		make_pair("std::__1::", "std::"), // Mac libc++ put all STD objects into std::__1::  // WARNING: order is important here: we want to first replace std::__1:: so later we can change basic_string into string
 		make_pair("std::basic_string<char>", "std::string"),
+		make_pair("class std::string", "std::string"), // for return/paremeters types
 	};
 
 	string r(type);

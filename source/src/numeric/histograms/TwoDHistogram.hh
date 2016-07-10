@@ -58,7 +58,7 @@ public:
 		if ( histogram_.find( paired_keys) != histogram_.end() ) {
 			++histogram_[ paired_keys];
 		} else {
-			histogram_.insert(std::make_pair<paired_keys, 1>);
+			histogram_.insert( std::make_pair(paired_keys, 1) );
 		}
 	}
 

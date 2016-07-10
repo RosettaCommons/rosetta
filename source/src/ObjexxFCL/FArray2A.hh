@@ -441,7 +441,7 @@ public: // Assignment
 	operator =( Super const & a )
 	{
 		if ( this != &a ) {
-			if ( ! equal_dimension( a ) ) dimension( a );
+			if ( ! this->equal_dimension( a ) ) dimension( a );
 			Base::operator =( a );
 		}
 		return *this;
@@ -454,7 +454,7 @@ public: // Assignment
 	FArray2A &
 	operator =( FArray2< U > const & a )
 	{
-		if ( ! equal_dimension( a ) ) dimension( a );
+		if ( ! this->equal_dimension( a ) ) dimension( a );
 		Base::operator =( a );
 		return *this;
 	}

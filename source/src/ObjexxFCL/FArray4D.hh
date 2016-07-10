@@ -288,7 +288,7 @@ public: // Assignment
 	operator =( Super const & a )
 	{
 		if ( this != &a ) {
-			if ( ! equal_dimension( a ) ) dimension( a );
+			if ( ! Super::equal_dimension( a ) ) dimension( a );
 			Base::operator =( a );
 		}
 		return *this;
@@ -301,7 +301,7 @@ public: // Assignment
 	FArray4D &
 	operator =( FArray4< U > const & a )
 	{
-		if ( ! equal_dimension( a ) ) dimension( a );
+		if ( ! Super::equal_dimension( a ) ) dimension( a );
 		Base::operator =( a );
 		return *this;
 	}
@@ -808,7 +808,7 @@ public: // Modifier
 	FArray4D &
 	swap( FArray4D & v )
 	{
-		swap4DB( v );
+		Super::swap4DB( v );
 		I1_.swap_no_notify( v.I1_ );
 		I2_.swap_no_notify( v.I2_ );
 		I3_.swap_no_notify( v.I3_ );
@@ -844,13 +844,10 @@ public: // Friend
 
 
 	/// @brief Swap
+	template <typename U>
 	friend
-	inline
 	void
-	swap( FArray4D & a, FArray4D & b )
-	{
-		a.swap( b );
-	}
+	swap( FArray4D<U> & a, FArray4D<U> & b );
 
 
 public: // Generator
@@ -1162,6 +1159,14 @@ operator *( T const & t, FArray4< T > const & a );
 template< typename T >
 FArray4D< T >
 operator /( FArray4< T > const & a, T const & t );
+
+
+template <typename U>
+void
+swap( FArray4D<U> & a, FArray4D<U> & b )
+{
+	a.swap( b );
+}
 
 
 } // namespace ObjexxFCL

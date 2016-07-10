@@ -46,58 +46,13 @@ enum E1 {E1A, E1B};
 
 namespace utility {
 
-template <class T>
-class T1 {};
-
-template <class T>
-class T2{};
-
-template class T2<int>;
-
-//T1<T2<int>> fttttttttttttttttt (T1<T2<int>>) { return T1<T2<int>>(); }
-
-struct B
+struct A
 {
-	int counter = 0;
-
-	B& inc() { ++counter; return *this; }
+	int value;
 };
 
 
-struct any_type {
- 	//any_type() = delete;
-    template<typename T> any_type(T const&);
-};
-
-
-template<typename T>
-struct BT {
-	BT(int) {}
-};
-
-class any_type2 : public BT<int> {
-};
-
-
-struct Base
-{
-	virtual ~Base() {}
-
-	virtual void clone() const = 0;
-
-	virtual int foo(int *, float&, char ) const = 0;
-	virtual int foo2(int *, float&, char ) const {};
-};
-
-
-struct Derived : public Base
-{
-	void clone() {}
-
-	void fq(std::vector<int>) {}
-};
-
-
+A const foo() { return A(); }
 
 // std::shared_ptr<B> ptr_creator() { return std::make_shared<B>(); }
 // std::weak_ptr<B> weak_ptr_tester(std::shared_ptr<B> &p) { return p; }

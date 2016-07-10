@@ -731,8 +731,12 @@ private:
 };
 
 
-}//end namespace numeric
+} // end namespace numeric
+
+
+#ifdef PYROSETTA
+#include <numeric/MathMatrix_operations.hh>
+#endif
 
 
 #endif
-

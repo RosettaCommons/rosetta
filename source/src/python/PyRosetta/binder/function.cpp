@@ -137,7 +137,7 @@ string template_specialization(FunctionDecl const *F)
 		}
 	}
 
-	return templ;
+	return standard_name(templ);
 }
 
 
@@ -166,7 +166,7 @@ string function_pointer_type(FunctionDecl const *F)
 
 	fix_boolean_types(r);
 
-	return r;
+	return standard_name(r);
 }
 
 
@@ -247,11 +247,10 @@ bool is_skipping_requested(FunctionDecl const *F, Config const &config)
 string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bindings_f, Context &context)
 {
 	string function_name = python_function_name(F);
-	string function_qualified_name { F->getQualifiedNameAsString() };
+	string function_qualified_name { standard_name(F->getQualifiedNameAsString()) };
 
 	CXXMethodDecl const * m = dyn_cast<CXXMethodDecl>(F);
 	string maybe_static = m and m->isStatic() ? "_static" : "";
-
 
 	string function;
 	if( args_to_bind == F->getNumParams() ) {
