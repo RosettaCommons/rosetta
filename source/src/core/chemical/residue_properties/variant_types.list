@@ -105,7 +105,8 @@ FIVE_PRIME_PHOSPHATE       # alternative terminal variant in real RNAs, keep thi
 
 THREE_PRIME_PACKABLE_PHOSPHATE  # experimental terminal variant -- deprecate in 2015 if not in use by then.
 FIVE_PRIME_PACKABLE_PHOSPHATE   # experimental terminal variant -- deprecate in 2015 if not in use by then.
-PROTONATED_H1_ADENOSINE # in use in RNA -- functionally important protonation state
+PROTONATED_N1_ADENOSINE # in use in RNA -- functionally important protonation state
+PROTONATED_N3_ADENOSINE # in use in RNA -- functionally important protonation state
 
 THREE_PRIME_FIVE_PRIME_METHYL_PHOSPHATE # capping for optimization
 

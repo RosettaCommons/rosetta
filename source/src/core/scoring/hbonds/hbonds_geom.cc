@@ -422,7 +422,9 @@ get_hb_don_chem_type(
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " N1 " &&  don_rsd.has_variant_type( chemical::PROTONATED_H1_ADENOSINE ) ) { //Parin Sripakdeevong May 03, 2011.
+			} else if ( aname == " N1 " &&  don_rsd.has_variant_type( chemical::PROTONATED_N1_ADENOSINE ) ) { //Parin Sripakdeevong May 03, 2011.
+				return hbdon_GENERIC_SC;
+			} else if ( aname == " N3 " &&  don_rsd.has_variant_type( chemical::PROTONATED_N3_ADENOSINE ) ) { //Parin Sripakdeevong May 03, 2011.
 				return hbdon_GENERIC_SC;
 			} break;
 		case na_rgu :
@@ -596,10 +598,11 @@ get_hb_acc_chem_type(
 			} break;
 		case na_rad :
 			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
-				if ( aname == " N1 " ) {
-					if ( acc_rsd.has_variant_type( chemical::PROTONATED_H1_ADENOSINE ) ) {
-						utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N1 \" and acc_rsd.has_variant_type(\"PROTONATED_H1_ADENOSINE\")!");
-					}
+				if ( aname == " N1 " && acc_rsd.has_variant_type( chemical::PROTONATED_N1_ADENOSINE ) ) {
+					utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N1 \" and acc_rsd.has_variant_type(\"PROTONATED_N1_ADENOSINE\")!");
+				}
+				if ( aname == " N3 " && acc_rsd.has_variant_type( chemical::PROTONATED_N3_ADENOSINE ) ) {
+					utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N3 \" and acc_rsd.has_variant_type(\"PROTONATED_N3_ADENOSINE\")!");
 				}
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.

@@ -1,0 +1,21 @@
+## This patch protonates the N3 atom of adenosine RNA nucleotide.
+## AMW: Based on N1 protonation patch, not yet optimized
+
+NAME Protonated_N3_Adenosine
+TYPES  PROTONATED_N3_ADENOSINE
+
+BEGIN_SELECTOR
+PROPERTY RNA
+AA RAD
+END_SELECTOR
+
+
+BEGIN_CASE ### general case ###
+SET_ATOM_TYPE N3 Ntrp
+SET_ATOMIC_CHARGE N3 -0.34
+
+ADD_ATOM  H3  Hpol H   0.26
+ADD_BOND N3   H3
+SET_ICOOR H3   179.953379   62.478350    0.999437   N3    C4    C2  
+
+END_CASE

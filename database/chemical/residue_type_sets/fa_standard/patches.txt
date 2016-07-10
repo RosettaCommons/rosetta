@@ -82,7 +82,8 @@ patches/nucleic/rna/BulgeRNA.txt
 patches/nucleic/rna/3prime_end_OH.txt
 patches/nucleic/rna/5prime_end_OH.txt
 patches/nucleic/rna/5prime_end_phosphate.txt
-patches/nucleic/rna/Protonated_H1_Adenosine.txt
+patches/nucleic/rna/Protonated_N1_Adenosine.txt
+patches/nucleic/rna/Protonated_N3_Adenosine.txt
 patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
 
 ## Added by David P. Nannemann 29 Nov 2012

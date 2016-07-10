@@ -113,32 +113,32 @@ apply_protonated_H1_adenosine_variant_type( core::pose::Pose & pose, core::Size 
 
 	bool verbose = true;
 
-	if ( verbose ) TR << "Applying PROTONATED_H1_ADENOSINE variant_type to seq_num " << seq_num << std::endl;
+	if ( verbose ) TR << "Applying PROTONATED_N1_ADENOSINE variant_type to seq_num " << seq_num << std::endl;
 
 	if ( apply_check ) {
 		//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
 		if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
-			utility_exit_with_message( "Cannot apply PROTONATED_H1_ADENOSINE variant_type to seq_num: " +
+			utility_exit_with_message( "Cannot apply PROTONATED_N1_ADENOSINE variant_type to seq_num: " +
 				ObjexxFCL::string_of( seq_num ) + ". This residue have a incompatible VIRTUAL_RNA_RESIDUE variant type."  );
 		}
 	}
 
-	if ( pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ) {
-		TR << "WARNING pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num = " << seq_num <<
+	if ( pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
+		TR << "WARNING pose already have PROTONATED_N1_ADENOSINE variant_type at seq_num = " << seq_num <<
 			", early RETURN!" << std::endl;
 		return;
-		//utility_exit_with_message("pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " + ObjexxFCL::string_of(seq_num));
+		//utility_exit_with_message("pose already have PROTONATED_N1_ADENOSINE variant_type at seq_num= " + ObjexxFCL::string_of(seq_num));
 	}
 
 	if ( pose.total_residue() < seq_num ) {
-		utility_exit_with_message(  "Cannot apply PROTONATED_H1_ADENOSINE variant_type to seq_num: " + ObjexxFCL::string_of( seq_num ) + ". pose.total_residue() < seq_num"  );
+		utility_exit_with_message(  "Cannot apply PROTONATED_N1_ADENOSINE variant_type to seq_num: " + ObjexxFCL::string_of( seq_num ) + ". pose.total_residue() < seq_num"  );
 	}
 
 	if ( pose.residue( seq_num ).aa() != core::chemical::na_rad ) {
-		utility_exit_with_message( "working_seq_num = " + ObjexxFCL::string_of( seq_num ) + " cannot have PROTONATED_H1_ADENOSINE variant type since it is not a adenosine!" );
+		utility_exit_with_message( "working_seq_num = " + ObjexxFCL::string_of( seq_num ) + " cannot have PROTONATED_N1_ADENOSINE variant type since it is not a adenosine!" );
 	}
 
-	pose::add_variant_type_to_pose_residue( pose, core::chemical::PROTONATED_H1_ADENOSINE, seq_num );
+	pose::add_variant_type_to_pose_residue( pose, core::chemical::PROTONATED_N1_ADENOSINE, seq_num );
 
 }
 

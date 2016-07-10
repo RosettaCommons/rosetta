@@ -867,16 +867,16 @@ apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size cons
 
 	runtime_assert( pose.total_residue() >= seq_num );
 	if ( pose.residue_type( seq_num ).has_variant_type( VIRTUAL_RNA_RESIDUE ) ) return;
-
+	// AMW TODO: no reason these should actually be incompatible!
 	//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
-	if ( pose.residue( seq_num ).has_variant_type( PROTONATED_H1_ADENOSINE ) ) {
-		TR << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num = " << seq_num <<
+	if ( pose.residue( seq_num ).has_variant_type( PROTONATED_N1_ADENOSINE ) ) {
+		TR << "Removing PROTONATED_N1_ADENOSINE variant_type from seq_num = " << seq_num <<
 			" before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" <<
 			std::endl;
-		pose::remove_variant_type_from_pose_residue( pose, PROTONATED_H1_ADENOSINE, seq_num );
+		pose::remove_variant_type_from_pose_residue( pose, PROTONATED_N1_ADENOSINE, seq_num );
 	}
 
-	//OK PROTONATED_H1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
+	//OK PROTONATED_N1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
 	//However these two variant type are not currently used in standard SWA run (May 04, 2011)
 	bool is_cutpoint_closed = false;
 	if ( pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
