@@ -165,11 +165,6 @@ void StructFileRepOptions::set_fold_tree_io( bool const fold_tree_io )
 void StructFileRepOptions::set_ignore_unrecognized_res( bool const ignore_unrecognized_res )
 {
 	ignore_unrecognized_res_ = ignore_unrecognized_res;
-	if ( ignore_unrecognized_res_ ) {
-		// Move this warning into file_data -- only show if HOH is actually ignored.
-		// TR << TR.Red << "For backwards compatibility, setting -ignore_unrecognized_res leads ALSO to -ignore_waters. You can set -ignore_waters false to get waters." << TR.Reset << std::endl;
-		ignore_waters_ = true;
-	}
 }
 
 void StructFileRepOptions::set_ignore_sugars( bool const setting )
@@ -341,13 +336,8 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_fold_tree_io( options[ inout::fold_tree_io ]() );
 
 	set_ignore_sugars( ! options[ in::include_sugars ]() );
-	// Following rigamarole is to maintain backwards compatibility with old Rosetta which did
-	//  not read in HOH. Most modes that did not want HOH used the flag "-ignore_unrecognized_res",
-	//  and this was understood to also ignore HOH (see description in options_rosetta.py!).
-	// Now allow user to -ignore_unrecognized_res but to also restore HOH through "-ignore_waters false".
-	set_ignore_waters( false );
-	set_ignore_unrecognized_res( options[ in::ignore_unrecognized_res ]()); // this can change ignore_waters
-	if ( options[ in::ignore_waters ].user() ) set_ignore_waters( options[ in::ignore_waters ]()); // overrides ignore_waters
+	set_ignore_unrecognized_res( options[ in::ignore_unrecognized_res ]());
+	set_ignore_waters( options[ in::ignore_waters ]() );
 
 	set_ignore_zero_occupancy( options[ run::ignore_zero_occupancy ]());
 	set_keep_input_protonation_state( options[ pH::keep_input_protonation_state ]());

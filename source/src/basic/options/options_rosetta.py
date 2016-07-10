@@ -130,8 +130,8 @@ Options = Option_Group( '',
 						"Note this implies -in:ignore_waters",
 				default='false' ),
 		Option( 'ignore_waters', 'Boolean',
-				desc="Do not abort if HOH water residues are found in PDB file;  instead, ignore them.",
-				default='false' ),
+				desc="Ignore HOH residues found in PDB file. Note: HOH residues, and waters in general, are incompatible with the default solvation model (LK).",
+				default='true' ),
 
 		# Inclusion options
 		Option( 'add_orbitals', 'Boolean',
