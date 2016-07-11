@@ -149,12 +149,6 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	if ( ! loop.is_extended() ) return true;
 
-	// Idealize all the backbone atoms.  This is especially important if the
-	// backbone atoms were missing in the first place and had to be rebuilt from
-	// scratch.  This command makes sure everything looks reasonable.
-
-	loops::idealize_loop(pose, loop);
-
 	// Setup the loop movers.
 
 	kic_mover_->set_loop(loop);
