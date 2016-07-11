@@ -449,8 +449,8 @@ public:
 	}
 
 	///@brief get frac<=>cartesian conversion matrices
-	numeric::xyzMatrix<core::Real> get_f2c() { return f2c; }
-	numeric::xyzMatrix<core::Real> get_c2f() { return c2f; }
+	numeric::xyzMatrix<core::Real> get_f2c() const { return f2c; }
+	numeric::xyzMatrix<core::Real> get_c2f() const { return c2f; }
 
 	///@brief resize the map via FFT resampling
 	void resize( core::Real approxGridSpacing );

@@ -106,6 +106,7 @@ sources = {
 	],
 	"protocols/electron_density": [
 		"BfactorFittingMover",
+		"DensitySymmInfo",
 		"DockIntoDensityMover",
 		"ScaleMapIntensities",
 		"ReportFSC",

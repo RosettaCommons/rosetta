@@ -111,14 +111,15 @@ struct
 };
 // non-superposed RMS
 core::Real
-get_rms(core::pose::PoseOP r1, core::pose::PoseOP r2) {
+get_rms(core::pose::PoseOP r1, core::pose::PoseOP r2, DensitySymmInfo const &d) {
 	runtime_assert( r1->total_residue() == r2->total_residue() );
 	core::Size nres = r1->total_residue();
 	core::Real rms=0.0;
 	core::Size N=0;
 	for ( int i=1; i<=(int)nres; ++i ) {
 		if ( !r1->residue(i).is_protein() ) continue;
-		rms += (r1->residue(i).xyz(2) - r2->residue(i).xyz(2)).length_squared();
+		//rms += (r1->residue(i).xyz(2) - r2->residue(i).xyz(2)).length_squared();
+		rms += d.min_symm_dist2( r1->residue(i).xyz(2), r2->residue(i).xyz(2) );
 		N++;
 	}
 
@@ -127,8 +128,8 @@ get_rms(core::pose::PoseOP r1, core::pose::PoseOP r2) {
 
 // non-superposed RMS
 core::Real
-get_rms(RefinementResult r1, RefinementResult r2) {
-	return get_rms(r1.pose_, r2.pose_);
+get_rms(RefinementResult r1, RefinementResult r2, DensitySymmInfo const &d) {
+	return get_rms(r1.pose_, r2.pose_, d);
 }
 
 core::Real get_rot_angle( numeric::xyzMatrix<core::Real> R ) {
@@ -146,7 +147,7 @@ DockIntoDensityMover::print_best_rms( core::pose::Pose const &pose, RBfitResultD
 		core::pose::PoseOP posecopy ( new core::pose::Pose(pose) );
 		apply_transform( *posecopy, sol_i );
 		core::pose::addVirtualResAsRoot( *posecopy );
-		core::Real rms_i = get_rms(native_, posecopy);
+		core::Real rms_i = get_rms(native_, posecopy, symminfo_);
 		if ( rms_i < bestrms ) {
 			bestrms = rms_i; bestrank=resultscopy.size()+1;
 		}
@@ -244,7 +245,14 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	pose_1dspec.resize(ngrid, 0.0);
 
 	core::Real massSum=0.0;
-	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+	Size resstart = 1;
+	Size resend = pose.total_residue();
+	if(point_radius_ != 0 ){
+		Size midres = (pose.total_residue()+1)/2;
+		resstart = midres;
+		resend = midres;
+	}
+	for ( core::Size i=resstart; i<=resend; ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -345,51 +353,64 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	}
 	numeric::fourier::ifft3(Frot, rot);
 
-	// sort points ... TO DO(?) replace coarse grid with greedy selection
-	utility::vector1<ScoredPoint> allpts;
+	// mask asu
+	if(symminfo_.enabled()){
+		symminfo_.mask_asu( rot , core::scoring::electron_density::getDensityMap(), 0);
+	}
+
+	// sort points
+	utility::vector1< std::pair< numeric::xyzVector< core::Real >, core::Real > > point_score_pairs;
 	for ( int z=1; z<=(int)densdata.u3(); z+=gridStep_ ) {
 		for ( int y=1; y<=(int)densdata.u2(); y+=gridStep_ ) {
 			for ( int x=1; x<=(int)densdata.u1(); x+=gridStep_ ) {
-				ScoredPoint i_xyz;
-				i_xyz.score = rot(x,y,z);
-				i_xyz.pos = numeric::xyzVector< core::Real >(x,y,z);
-				allpts.push_back( i_xyz );
+				numeric::xyzVector< core::Real > x_idx(x,y,z);
+				core::Real dens_value = -rot(x,y,z);
+				std::pair< numeric::xyzVector< core::Real >, core::Real > point_score_pair = std::make_pair(x_idx, dens_value);
+				point_score_pairs.push_back(point_score_pair);
 			}
 		}
 	}
-
-	// sort
-	std::sort( allpts.begin(), allpts.end(), ScoredPointCmptr() );
-
-	utility::vector1< numeric::xyzVector<core::Real> > points_cart;
-	core::Real scorecut, minDistNative=1e30;
-	for ( core::Size i=1; i<=allpts.size() && points_to_search_.size() < topNtrans_; ++i ) {
-		numeric::xyzVector< core::Real > const & x_idx = allpts[i].pos;
-		numeric::xyzVector< core::Real > x_cart;
+	core::Real minDistNative = 1e4;
+	std::sort(point_score_pairs.begin(), point_score_pairs.end(), PointScoreComparator());
+	for(Size i=1; i<=point_score_pairs.size(); i++){
+		bool hasneighbor = false;
+		numeric::xyzVector< core::Real > x_idx = point_score_pairs[i].first;
+		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-
-		bool keep=true;
-		for ( core::Size j=1; j<=points_cart.size() && keep; ++j ) {
-			core::Real d2 = (x_cart-points_cart[j]).length_squared();
-			if ( d2<=mindist_*mindist_ ) keep=false;
+		for(Size j=1; j<=points_to_search_.size(); j++){
+			numeric::xyzVector< core::Real > x_idx_stored = points_to_search_[j];
+			numeric::xyzVector< core::Real > x_cart_stored(x_idx_stored[0],x_idx_stored[1],x_idx_stored[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( x_idx_stored, x_cart_stored );
+			core::Real distance = (x_cart - x_cart_stored).length();
+			if( distance < point_radius_ ) hasneighbor = true;
 		}
-		if ( !keep ) continue;
-
-		if ( native_ ) {
-			core::Real distNative = (x_cart-native_com_).length_squared();
-			minDistNative = std::min( minDistNative, distNative );
+		if( !hasneighbor){
+				points_to_search_.push_back(point_score_pairs[i].first);
+				if ( native_ ) {
+					numeric::xyzVector< core::Real > x_cart;
+					core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+					core::Real distNative = symminfo_.min_symm_dist2(x_cart, native_com_);
+					minDistNative = std::min( minDistNative, distNative );
+				}
 		}
-
-		scorecut = allpts[i].score;
-		points_cart.push_back( x_cart );
-		points_to_search_.push_back( x_idx );
+		if(points_to_search_.size() >= topNtrans_) break;
 	}
-	TR << "score cut: " << scorecut << " " << points_to_search_.size() << " " << topNtrans_ << std::endl;
+
 
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
 		core::scoring::electron_density::ElectronDensity mapdmp = core::scoring::electron_density::getDensityMap();
 		mapdmp.set_data(rot);
 		mapdmp.writeMRC( "filter.mrc" );
+		//dump the points
+		std::ofstream outpoints;
+		outpoints.open("selectedpoints.txt", std::ofstream::app);
+		for( Size i=1; i<=points_to_search_.size(); i++){
+				numeric::xyzVector< core::Real > x_cart;
+				numeric::xyzVector< core::Real > x_idx = points_to_search_[i];
+				core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+				outpoints << "ATOM " << utility::to_string(i) << " " << x_cart[0] << " " << x_cart[1] << " " << x_cart[2] << std::endl;
+		}
+		outpoints.close();
 	}
 
 	if ( native_ ) TR << "Closest point to native: " << std::sqrt(minDistNative) << std::endl;
@@ -606,7 +627,7 @@ DockIntoDensityMover::density_grid_search (
 				core::pose::PoseOP posecopy ( new core::pose::Pose(pose) );
 				apply_transform( *posecopy, sol_i );
 				core::pose::addVirtualResAsRoot( *posecopy );
-				core::Real rms_i = get_rms(native_, posecopy);
+				core::Real rms_i = get_rms(native_, posecopy, symminfo_);
 				if ( rms_i < bestrms ) {
 					bestrms = rms_i; bestscore = sol_i.score_;
 				}
@@ -719,7 +740,7 @@ DockIntoDensityMover::do_refinement (
 
 		core::Real rms=0.0;
 		if ( native_ ) {
-			rms = get_rms( RefinementResult(0.0,posecopy), RefinementResult( 0.0, native_ ) );
+			rms = get_rms( RefinementResult(0.0,posecopy), RefinementResult( 0.0, native_ ), symminfo_ );
 		}
 
 		TR << "[" << ntotal-results_in.size() << "/" << ntotal << "] " << scoreb << " : " << scorei << " : " << scoref << "  rms=" << rms << std::endl;
@@ -801,7 +822,7 @@ DockIntoDensityMover::do_filter( RefinementResultDB & results ) {
 	for ( int i=results_sort.size(); i>=1; --i ) {
 		selector[i] = true;
 		for ( int j=i+1; j<=(int)results_sort.size() && selector[i]; ++j ) {
-			if ( selector[j] && get_rms(results_sort[i], results_sort[j])<cluster_radius_ ) {
+			if ( selector[j] && get_rms(results_sort[i], results_sort[j], symminfo_)<cluster_radius_ ) {
 				selector[i] = false;
 			}
 		}
@@ -839,7 +860,7 @@ DockIntoDensityMover::do_filter( utility::vector1< core::pose::PoseOP > const &p
 			results_sort[i].score_ = (*scorefxn_dens)(*posecopy);
 		}
 		for ( int j=1; j<=(int)selected.size() && selector[i]; ++j ) {
-			if ( get_rms(posecopy, selected[j]) <cluster_radius_ ) {
+			if ( get_rms(posecopy, selected[j], symminfo_) <cluster_radius_ ) {
 				selector[i] = false;
 			}
 		}
@@ -1001,7 +1022,7 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 		if ( silent_.size() > 0 ) {
 			core::Real rms=0.0;
 			if ( native_ ) {
-				rms = get_rms( sol_i, RefinementResult( 0.0, native_ ) );
+				rms = get_rms( sol_i, RefinementResult( 0.0, native_ ), symminfo_ );
 			}
 
 			std::string silent_fn = base_name+"_"+utility::to_string( results_refine.size()+1 );

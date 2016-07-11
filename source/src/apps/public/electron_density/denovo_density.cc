@@ -23,6 +23,7 @@
 
 // minimize pose into density
 #include <protocols/electron_density/util.hh>
+#include <protocols/electron_density/DensitySymmInfo.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/electron_density/DockIntoDensityMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -98,6 +99,7 @@ OPT_KEY( String, mode )
 OPT_KEY( String, ca_positions )
 OPT_KEY( String, startmodel )
 OPT_KEY( String, scorefile )
+OPT_KEY( String, symm_type )
 OPT_KEY( File, fragfile )
 OPT_KEY( Integer, num_frags )
 OPT_KEY( IntegerVector, pos )
@@ -116,6 +118,7 @@ OPT_KEY( Boolean, native_placements )
 OPT_KEY( Real, delR )
 OPT_KEY( Real, clust_radius )
 OPT_KEY( Real, scale_cycles )
+OPT_KEY( Real, point_radius )
 OPT_KEY( Integer, clust_oversample )
 OPT_KEY( Integer, n_matches )
 OPT_KEY( Real, frag_dens )
@@ -233,11 +236,24 @@ public:
 
 	void run( );
 
-	core::Real overlap_score( CAtrace &pose1, CAtrace &pose2, core::Size offset);
+	core::Real overlap_score(
+ 		CAtrace &pose1,
+		CAtrace &pose2,
+		core::Size offset,
+		protocols::electron_density::DensitySymmInfo const &symminfo);
 
-	core::Real clash_score( CAtrace &pose1, CAtrace &pose2, core::Size offset );
+	core::Real clash_score(
+ 		CAtrace &pose1,
+		CAtrace &pose2,
+		core::Size offset,
+		protocols::electron_density::DensitySymmInfo const &symminfo);
 
-	core::Real closability_score( CAtrace &pose1, CAtrace &pose2, core::Size offset );
+
+	core::Real closability_score(
+ 		CAtrace &pose1,
+		CAtrace &pose2,
+		core::Size offset,
+		protocols::electron_density::DensitySymmInfo const &symminfo);
 
 	virtual std::string get_name() const {
 		return "ScoreFragmentSet";
@@ -423,6 +439,10 @@ void DockFragmentsMover::run() {
 	// read fragments, preprocess
 	process_fragfile();
 
+	// setup symmetry
+	protocols::electron_density::DensitySymmInfo symminfo( basic::options::option[ symm_type ]() );
+	symminfo.detect_axes( core::scoring::electron_density::getDensityMap() );
+
 	// figure out: which fragments to use, what positions to steal
 	utility::vector1<bool> use_big( sequence.length() , true );
 	utility::vector1<bool> search_positions( sequence.length() , true );
@@ -505,37 +525,40 @@ void DockFragmentsMover::run() {
 	// set up docking
 	protocols::electron_density::DockIntoDensityMover dock;
 	dock.setDelR(option[ delR ]); // option?
-
-	// I think the reason there is a valgrind error stemming from this is that
-	// we aren't setting defaults for these options
-	// and the defaults from the DockIntoDensityMover ctor
-	// are being overwritten by the uninitialized values
-	// Therefore, I will be extra-careful here and set the default again
-	// if the option is unspecified.
 	dock.setB( option[ bw ]() );
 	dock.setTopN( option[ n_to_search ]() , option[ n_filtered ]() , option[ n_output ]() ); //y
 	dock.setGridStep(option[ movestep ]()); //y
 	dock.setMinBackbone(option[ min_bb ]()); //y
 	dock.setNCyc(option[ ncyc ]()); //y
 	dock.setClusterRadius(option[ clust_radius ]()); //y
+	dock.setPointRadius(option[ point_radius ]()); //y
 	dock.setFragDens(option[ frag_dens ]()); //y
-	if ( option[ norm_scores ].user() ) {
-		dock.setNormScores(option[ norm_scores ]());
-	} else {
-		dock.setNormScores( false ); // ctor default
-	}
+	dock.setNormScores(option[ norm_scores ]());
 	dock.setClusterOversamp(option[ clust_oversample ]()); //y
-	dock.setMaxRotPerTrans( 1 );
+
+	int maxRotPerTrans = (int)std::ceil( (core::Real)option[ n_filtered ]() / (core::Real)option[ n_to_search ]() );
+	dock.setMaxRotPerTrans( maxRotPerTrans );
+
 	if ( option[ out::file::silent ].user() ) {
 		std::string silent_fn = option[ out::file::silent ]();
 		dock.setOutputSilent( silent_fn );
 	}
+
+    if ( option[ point_radius ].user() != 0 ){
+	    dock.setCenterOnMiddleCA(true);
+    }
+
 	// read CA positions (if specified)
 	if ( option[ ca_positions ].user() ) {
 		utility::vector1< numeric::xyzVector<core::Real> > cas;
 		ReadCAsFromPDB( option[ ca_positions ](), cas );
 		dock.predefine_search(cas);
 		dock.setCenterOnMiddleCA(true);
+	}
+
+	// use symmetry (if specified)
+	if (symminfo.enabled()) {
+		dock.setSymminfo(symminfo);
 	}
 
 	// for each position
@@ -700,12 +723,15 @@ void ScoreFragmentSetMover::run() {
 	utility::vector1<utility::file::FileName> insilent = option[ in::file::silent ]();
 	utility::vector1< utility::vector1< CAtrace > > all_frags;
 
+	// setup symmetry
+	protocols::electron_density::DensitySymmInfo symminfo( basic::options::option[ symm_type ]() );
+	symminfo.detect_axes( core::scoring::electron_density::getDensityMap() );
+
 	core::io::silent::SilentFileData sfd;
 	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
 	}
 
-	//core::Size mer_size=0;
 	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 		std::string tag = iter->decoy_tag();
 		utility::vector1< std::string > fields = utility::string_split( tag, '_' );
@@ -782,14 +808,9 @@ void ScoreFragmentSetMover::run() {
 			core::Size offset = j_res-i_res;
 			for ( core::Size i_frag=1; i_frag<=nfrag_i; ++i_frag ) {
 				for ( core::Size j_frag=1; j_frag<=nfrag_j; ++j_frag ) {
-					core::Real clash_sc = clash_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset );
-					core::Real overlap_sc = overlap_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset );
-					core::Real closability_sc = closability_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset );
-
-					//core::Real scalefactor =
-					// (9.0 / all_frags[i_res][i_frag].cas_.size()) *
-					// (9.0 / all_frags[j_res][j_frag].cas_.size());
-					//TR << i_res << "." << i_frag << " to " << j_res << "." << j_frag << ": " << clash_sc << " , " << overlap_sc << " , " << closability_sc << std::endl;
+					core::Real clash_sc = clash_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset, symminfo );
+					core::Real overlap_sc = overlap_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset, symminfo );
+					core::Real closability_sc = closability_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset, symminfo );
 
 					if ( std::abs(clash_sc)+std::abs(overlap_sc)+std::abs(closability_sc) > 1e-4 ) {
 						core::Size idxi = all_frags[i_res][i_frag].idx_;
@@ -812,26 +833,33 @@ void ScoreFragmentSetMover::run() {
 }
 
 core::Real
-ScoreFragmentSetMover::overlap_score( CAtrace &pose1, CAtrace &pose2, core::Size offset) {
+ScoreFragmentSetMover::overlap_score(
+ 		CAtrace &pose1,
+		CAtrace &pose2,
+		core::Size offset,
+		protocols::electron_density::DensitySymmInfo const &symminfo)
+{
 	core::Size mersize = pose1.cas_.size();
 	core::Real overlap_ij = 0.0;
 
 	if ( offset<mersize ) {
 		for ( int i=(int)(offset+1); i<=(int)mersize; ++i ) {
 			int j = i-offset;
-			core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length();
+			//core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length();
+			core::Real dist = std::sqrt( symminfo.min_symm_dist2( pose1.cas_[i] , pose2.cas_[j] ) );
 
 			// for bad violations, give full penalty
 			if ( dist > 5.0 ) return 8.0; // should be (mer size)-1?
 
 			// check for clashes
 			//  if there are any clashes give a large penalty
-			for ( int i=1; i<=(int)mersize; ++i ) {
-				for ( int j=1; j<=(int)mersize; ++j ) {
-					int seqsep = offset-i+j;
+			for ( int ii=1; ii<=(int)mersize; ++ii ) {
+				for ( int jj=1; jj<=(int)mersize; ++jj ) {
+					int seqsep = offset-ii+jj;
 					if ( seqsep >= 5 || seqsep <= -5 ) {
-						core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length_squared();
-						if ( dist < clash_dist_*clash_dist_ ) {
+						//core::Real distC = (pose1.cas_[ii] - pose2.cas_[jj]).length_squared();
+						core::Real distC = symminfo.min_symm_dist2( pose1.cas_[ii] , pose2.cas_[jj] );
+						if ( distC < clash_dist_*clash_dist_ ) {
 							return 8.0; // should be nmer-1?
 						}
 					}
@@ -848,7 +876,12 @@ ScoreFragmentSetMover::overlap_score( CAtrace &pose1, CAtrace &pose2, core::Size
 }
 
 core::Real
-ScoreFragmentSetMover::clash_score( CAtrace &pose1, CAtrace &pose2, core::Size offset ) {
+ScoreFragmentSetMover::clash_score(
+		CAtrace &pose1,
+		CAtrace &pose2,
+		core::Size offset,
+		protocols::electron_density::DensitySymmInfo const &symminfo)
+{
 	core::Size mersize = pose1.cas_.size();
 	core::Real clash_ij = 0.0;
 	if ( offset >= mersize ) {
@@ -856,9 +889,10 @@ ScoreFragmentSetMover::clash_score( CAtrace &pose1, CAtrace &pose2, core::Size o
 		for ( int i=1; i<=(int)mersize; ++i ) {
 			for ( int j=1; j<=(int)mersize; ++j ) {
 				//if (i==(int)mersize && j==1 && offset==mersize) continue;
+				//core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length_squared();
 
-				core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length_squared();
-				if ( dist < clash_dist_*clash_dist_ ) clash_ij += 1.0;
+				core::Real dist2 = symminfo.min_symm_dist2( pose1.cas_[i] , pose2.cas_[j] );
+				if ( dist2 < clash_dist_*clash_dist_ ) clash_ij += 1.0;
 			}
 		}
 	}
@@ -866,7 +900,12 @@ ScoreFragmentSetMover::clash_score( CAtrace &pose1, CAtrace &pose2, core::Size o
 }
 
 core::Real
-ScoreFragmentSetMover::closability_score( CAtrace &pose1, CAtrace &pose2, core::Size offset ) {
+ScoreFragmentSetMover::closability_score(
+		CAtrace &pose1,
+		CAtrace &pose2,
+		core::Size offset,
+		protocols::electron_density::DensitySymmInfo const &symminfo)
+{
 	runtime_assert( gap_lengths_.size() == gap_weights_.size() );
 
 	core::Size mersize = pose1.cas_.size();
@@ -876,7 +915,8 @@ ScoreFragmentSetMover::closability_score( CAtrace &pose1, CAtrace &pose2, core::
 
 	core::Size gap_size = offset - mersize + 1;
 	if ( gap_size < gap_lengths_.size() ) {
-		core::Real dist = (pose1.cas_[mersize] - pose2.cas_[1]).length();
+		//core::Real dist = (pose1.cas_[mersize] - pose2.cas_[1]).length();
+		core::Real dist = std::sqrt( symminfo.min_symm_dist2( pose1.cas_[mersize] , pose2.cas_[1] ) );
 
 		if ( dist < gap_lengths_[gap_size] ) {
 			close_ij -= gap_weights_[gap_size];
@@ -1170,6 +1210,10 @@ SolutionRescoreMover::run() {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
+	// setup symmetry
+	protocols::electron_density::DensitySymmInfo symminfo( basic::options::option[ symm_type ]() );
+	symminfo.detect_axes( core::scoring::electron_density::getDensityMap() );
+
 	// read silent files
 	utility::vector1<utility::file::FileName> insilent = option[ in::file::silent ]();
 
@@ -1239,14 +1283,14 @@ SolutionRescoreMover::run() {
 				core::Real overlap_ij, clash_ij, close_ij;
 				if ( iter2->first > iter1->first ) {
 					core::Size offset = iter2->first-iter1->first;
-					overlap_ij = scoring.overlap_score(iter1->second, iter2->second, offset);
-					clash_ij = scoring.clash_score(iter1->second, iter2->second, offset);
-					close_ij = scoring.closability_score(iter1->second, iter2->second, offset);
+					overlap_ij = scoring.overlap_score(iter1->second, iter2->second, offset, symminfo);
+					clash_ij = scoring.clash_score(iter1->second, iter2->second, offset, symminfo);
+					close_ij = scoring.closability_score(iter1->second, iter2->second, offset, symminfo);
 				} else {
 					core::Size offset = iter1->first-iter2->first;
-					overlap_ij = scoring.overlap_score(iter2->second, iter1->second, offset);
-					clash_ij = scoring.clash_score(iter2->second, iter1->second, offset);
-					close_ij = scoring.closability_score(iter2->second, iter1->second, offset);
+					overlap_ij = scoring.overlap_score(iter2->second, iter1->second, offset, symminfo);
+					clash_ij = scoring.clash_score(iter2->second, iter1->second, offset, symminfo);
+					close_ij = scoring.closability_score(iter2->second, iter1->second, offset, symminfo);
 				}
 
 				overlap_i += 0.5*overlap_wt * overlap_ij;
@@ -1512,6 +1556,9 @@ int main(int argc, char* argv[]) {
 		NEW_OPT( mode , "What mode to run (place, score, assemble, or consensus)", "place" );
 		NEW_OPT( verbose , "Be verbose?", false );
 
+		// general options
+		NEW_OPT( symm_type, "Symmetry type of system", "C1" );
+
 		// search options
 		NEW_OPT( ca_positions, "CA positions to limit search", "" );
 		NEW_OPT( startmodel, "A starting model for matching", "" );
@@ -1533,6 +1580,7 @@ int main(int argc, char* argv[]) {
 		NEW_OPT( frag_dens, "Radius to use for docking fragments", 0.7 );
 		NEW_OPT( frag_len, "Trim fragments to this length (0=use input length)", utility::vector1<int>() );
 		NEW_OPT( native_placements , "Generate native placements only", false );
+		NEW_OPT( point_radius , "Filters the grid points to be searched to be at least this distance appart", 0 );
 
 		// scoring and assembly options
 		NEW_OPT( scorefile, "Scorefile name", "fragscores.sc" );

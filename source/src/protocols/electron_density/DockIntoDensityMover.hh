@@ -29,6 +29,7 @@
 
 #include <ObjexxFCL/FArray3D.hh>
 
+#include <protocols/electron_density/DensitySymmInfo.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -117,6 +118,14 @@ public:
 	}
 };
 
+class PointScoreComparator{
+public:
+		bool operator()(std::pair< numeric::xyzVector<core::Real>, core::Real > Pair1, std::pair< numeric::xyzVector<core::Real>, core::Real > Pair2){
+			return (Pair1.second < Pair2.second);
+		}
+
+};
+
 // database stores the top N results
 template <class T,class Tcomp> class ResultDB  {
 private:
@@ -165,7 +174,7 @@ class DockIntoDensityMover : public protocols::moves::Mover {
 public:
 	DockIntoDensityMover() :
 		topNtrans_(5000), topNfilter_(1000), topNfinal_(50), delR_(2),
-		dens_wt_(20.0), cluster_radius_(2.0),fragDens_(0.7), mindist_(3), B_(16), nRsteps_(0), gridStep_(2),
+		dens_wt_(20.0), cluster_radius_(2.0),point_radius_(0),fragDens_(0.7), mindist_(3), B_(16), nRsteps_(0), gridStep_(2),
 		center_on_middle_ca_(false), points_defined_(false), cluster_oversample_(2), max_rot_per_trans_(3),
 		do_refine_(true), min_backbone_(true), ncyc_(1), normscores_(false), passthrough_(false), native_com_(0,0,0) {}
 
@@ -185,12 +194,14 @@ public:
 	void setNCyc( core::Size ncyc ) { ncyc_=ncyc; }
 	void setOutputSilent( std::string silent_out ) { silent_ = silent_out; }
 	void setClusterRadius( core::Real cluster_radius ) { cluster_radius_ = cluster_radius; }
+	void setPointRadius( core::Real point_radius ) { point_radius_ = point_radius; }
 	void setTag( std::string tag ) { tag_=tag; } // output tag
 	void setFragDens( core::Real fragDens ) { fragDens_=fragDens; } // output tag
 	void setPassThrough( bool passthrough ) { passthrough_ = passthrough; }
 	void setNormScores(bool normscores) { normscores_ = normscores; }
 	void setClusterOversamp( core::Size cluster_oversample ) { cluster_oversample_=cluster_oversample; }
 	void setMaxRotPerTrans( core::Size max_rot_per_trans ) { max_rot_per_trans_=max_rot_per_trans; }
+	void setSymminfo( DensitySymmInfo const & symminfo ) { symminfo_=symminfo; }
 
 	// predefine search locations
 	void predefine_search( utility::vector1< numeric::xyzVector<core::Real> > &pts_in );
@@ -285,10 +296,13 @@ private:
 	core::Size topNfinal_;
 
 	// params of search
-	core::Real delR_, dens_wt_, cluster_radius_, fragDens_, mindist_;
+	core::Real delR_, dens_wt_, cluster_radius_, point_radius_, fragDens_, mindist_;
 	core::Size B_;
 	core::Size nRsteps_,gridStep_;
 	bool center_on_middle_ca_, points_defined_;
+
+	// symmetry
+	DensitySymmInfo symminfo_;
 
 	// cluster params
 	core::Size cluster_oversample_, max_rot_per_trans_;
