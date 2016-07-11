@@ -201,7 +201,7 @@ SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patch
 
 
 std::string
-SilentFileData::get_sequence(	std::string const & filename )
+SilentFileData::get_sequence( std::string const & filename )
 {
 	utility::io::izstream data( filename.c_str() );
 	if ( !data.good() ) {

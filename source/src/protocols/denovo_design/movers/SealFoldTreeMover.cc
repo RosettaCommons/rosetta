@@ -141,7 +141,7 @@ SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 		/*
 		// this will catch rogue upper cutpoint variants
 		if ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
-			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, resid );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, resid );
 		}
 		*/
 	}

@@ -140,8 +140,9 @@ add_terminus_variants( core::pose::Pose & pose, ExtendedPoseBuilder::Resids cons
 	core::pose::add_lower_terminus_type_to_pose_residue( pose, 1 );
 	for ( ExtendedPoseBuilder::Resids::const_iterator r=endings.begin(); r!=endings.end(); ++r ) {
 		core::pose::add_upper_terminus_type_to_pose_residue( pose, *r );
-		if ( *r + 1 <= pose.total_residue() )
+		if ( *r + 1 <= pose.total_residue() ) {
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, *r+1 );
+		}
 	}
 }
 
@@ -316,8 +317,8 @@ append_residues_from_template_segment(
 
 		/*core::pose::Pose nonconst_template_pose( template_pose );
 		for ( core::Size template_resid=1; template_resid<=nonconst_template_pose.total_residue(); ++template_resid ) {
-			core::pose::remove_lower_terminus_type_from_pose_residue( nonconst_template_pose, template_resid );
-			core::pose::remove_upper_terminus_type_from_pose_residue( nonconst_template_pose, template_resid );
+		core::pose::remove_lower_terminus_type_from_pose_residue( nonconst_template_pose, template_resid );
+		core::pose::remove_upper_terminus_type_from_pose_residue( nonconst_template_pose, template_resid );
 		}
 
 		// removing terminus types leaves bogus phi/omega for residue 1

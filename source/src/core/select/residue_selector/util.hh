@@ -110,7 +110,7 @@ get_residue_selector( std::string const & selector_name, basic::datacache::DataM
 /// @thorws utility::excn::EXCN_Msg_Exception if selector is not embedded ( ! tag->size() > 1)
 ///
 ResidueSelectorOP
-get_embedded_residue_selector( 	utility::tag::TagCOP tag, basic::datacache::DataMap & datamap );
+get_embedded_residue_selector(  utility::tag::TagCOP tag, basic::datacache::DataMap & datamap );
 
 /// @brief returns residue selectors embeded in a tag.
 /// for example, the Chain selector in the example below:

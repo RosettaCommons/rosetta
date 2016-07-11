@@ -449,6 +449,14 @@ public:
 	/// If true, then only loop DOFs are stored.  This loses the results of applying any preselection movers, though.
 	inline bool low_memory_mode() const { return low_memory_mode_; }
 
+	/// @brief Sets whether the mover sets its status to failure of no solution is found.
+	/// @details True means it does NOT fail if no solution is found.  False is the default (fail if no solution found).
+	inline void set_dont_fail_if_no_solution_found( bool const setting ) { dont_fail_if_no_solution_found_=setting; return; }
+
+	/// @brief Gets whether the mover sets its status to failure of no solution is found.
+	/// @details True means it does NOT fail if no solution is found.  False is the default (fail if no solution found).
+	inline bool dont_fail_if_no_solution_found() const { return dont_fail_if_no_solution_found_; }
+
 private:
 
 	/// @brief The list of residues (as inidices of the original pose) making up the loop to be closed.
@@ -570,6 +578,10 @@ private:
 	/// @details If false (the default) then a vector of result poses is stored.  This can use a lot of memory, though.
 	/// If true, then only loop DOFs are stored.  This loses the results of applying any preselection movers, though.
 	bool low_memory_mode_;
+
+	/// @brief By default, the mover sets its status to failure if no solution is found.  If dont_fail_if_no_solution_found_ is true (not
+	/// the default) then this doesn't happen.
+	bool dont_fail_if_no_solution_found_;
 
 	/// @brief Vector of loop bond angles from final solutions.
 	/// @details Only stored in low-memory mode.

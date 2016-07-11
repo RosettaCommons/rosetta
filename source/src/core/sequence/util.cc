@@ -145,13 +145,13 @@ vector1< string > read_fasta_file_str( std::string const & filename ) {
 
 SequenceOP
 get_sequence_object( std::string const & current_id,
-										 std::string const & current_sequence )
+	std::string const & current_sequence )
 {
 	std::string current_id_strip ( current_id );
 	ObjexxFCL::strip_whitespace( current_id_strip );
 
 	std::string current_sequence_strip( current_sequence );
-	vector1< Size > spacer_positions =	strip_spacers( current_sequence_strip );
+	vector1< Size > spacer_positions = strip_spacers( current_sequence_strip );
 
 	SequenceOP sequence( new Sequence( current_sequence_strip, current_id_strip ) );
 	sequence->spacer_positions( spacer_positions );

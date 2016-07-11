@@ -109,7 +109,10 @@ GeneralizedKIC::GeneralizedKIC():
 	ntries_before_giving_up_(0),
 	solutions_(),
 	attach_boinc_ghost_observer_(false),
-	low_memory_mode_(false)
+	low_memory_mode_(false),
+	dont_fail_if_no_solution_found_(false),
+	bondangle_solutions_(),
+	bondlength_solutions_()
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -142,7 +145,10 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	ntries_before_giving_up_(src.ntries_before_giving_up_),
 	solutions_(), //Copied below.
 	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_),
-	low_memory_mode_(src.low_memory_mode_)
+	low_memory_mode_(src.low_memory_mode_),
+	dont_fail_if_no_solution_found_(src.dont_fail_if_no_solution_found_),
+	bondangle_solutions_(src.bondangle_solutions_),
+	bondlength_solutions_(src.bondlength_solutions_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	//Clone elements in the perturber list
@@ -233,14 +239,16 @@ void GeneralizedKIC::apply ( core::pose::Pose & pose )
 		if ( TR.visible() ) { TR << "Closure successful." << std::endl; TR.flush(); }
 		if ( low_memory_mode() ) {
 			set_last_move_status( set_final_solution( pose, perturbedloop_pose, residue_map, tail_residue_map, selected_torsions, selected_bondangles, selected_bondlengths ) );
-			if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) { set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY ); }
+			if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) { set_last_move_status( protocols::moves::FAIL_RETRY ); }
 		} else {
 			set_final_solution( pose, solution_index ); //Set the pose to the solution.
 			set_last_move_status( protocols::moves::MS_SUCCESS );
 		}
 	} else {
 		if ( TR.visible() ) { TR << "Closure unsuccessful." << std::endl; TR.flush();}
-		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+		if ( !dont_fail_if_no_solution_found_ ) {
+			set_last_move_status( protocols::moves::FAIL_RETRY );
+		}
 	}
 
 	clear_stored_solutions(); //Wipe any solution poses that have been stored.
@@ -277,6 +285,8 @@ GeneralizedKIC::parse_my_tag(
 	if ( tag->hasOption("low_memory_mode") ) {
 		set_low_memory_mode( tag->getOption<bool>( "low_memory_mode" , false ) );
 	}
+
+	set_dont_fail_if_no_solution_found( tag->getOption<bool>( "dont_fail_if_no_solution_found", dont_fail_if_no_solution_found_ ) );
 
 	runtime_assert_string_msg( tag->hasOption("selector"), "RosettaScript parsing error: the <GeneralizedKIC> mover must have a selector specfied with the selector=<selector_name> statement." );
 	set_selector_type( tag->getOption<std::string>("selector", "") );

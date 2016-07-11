@@ -168,16 +168,16 @@ public:
 	}
 
 	/* void nest_using_abegodb() {
-		using namespace devel::denovo_design::components;
-		using namespace devel::denovo_design::filters;
-		core::pose::Pose input_pose;
-		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "devel/denovo_design/test_foldability.pdb" );
+	using namespace devel::denovo_design::components;
+	using namespace devel::denovo_design::filters;
+	core::pose::Pose input_pose;
+	core::io::pdb::build_pose_from_pdb_as_is( input_pose, "devel/denovo_design/test_foldability.pdb" );
 
-		ProtectedFoldabilityFilter folder;
-		IdealAbegoGeneratorOP abegodb( new IdealAbegoGenerator( "/work/tlinsky/abegodb/abegodata" ) );
-		folder.set_abegodb( abegodb );
-		folder.add_segment( 57, 60 );
-		folder.apply( input_pose );
+	ProtectedFoldabilityFilter folder;
+	IdealAbegoGeneratorOP abegodb( new IdealAbegoGenerator( "/work/tlinsky/abegodb/abegodata" ) );
+	folder.set_abegodb( abegodb );
+	folder.add_segment( 57, 60 );
+	folder.apply( input_pose );
 	}
 	*/
 

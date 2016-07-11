@@ -151,7 +151,7 @@ public:
 	conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const;
 
 	//utility::vector1< Size >
-	//	conventional_to_full( std::pair< std::vector< int >, std::vector< char > > const & resnum_and_chain ) const;
+	// conventional_to_full( std::pair< std::vector< int >, std::vector< char > > const & resnum_and_chain ) const;
 
 	bool
 	has_conventional_residue( int const res_num ) const;

@@ -113,7 +113,7 @@ namespace farna {
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNA_DeNovoProtocol" );
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options,
-																				RNA_DeNovoParametersCOP params):
+	RNA_DeNovoParametersCOP params):
 	Mover(),
 	options_( options ),
 	rna_params_( params )

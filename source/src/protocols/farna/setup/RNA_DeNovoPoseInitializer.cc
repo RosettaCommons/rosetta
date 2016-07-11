@@ -435,7 +435,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		// TR << TR.Cyan << "Making attempt " << ntries << std::endl;
 		// TR << TR.Cyan << "obligate_cutpoints " << obligate_cut_points_reformat << std::endl;
 		// for (Size n = 1; n <= num_pairings_to_force; n++ ){
-		// 	TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
+		//  TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
 		//     " " <<  jump_points(2, n)  <<  std::endl;
 		// }
 

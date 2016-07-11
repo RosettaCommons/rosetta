@@ -230,7 +230,7 @@ public:
 	setup_extra_patches( utility::vector1< std::string > & all_patches ) const;
 
 	std::string
-	get_sequence(	std::string const & filename );
+	get_sequence( std::string const & filename );
 
 	/// @brief quickly read a list of tags from a silent-input file. Only checks
 	/// lines beginning with SCORE: strings.

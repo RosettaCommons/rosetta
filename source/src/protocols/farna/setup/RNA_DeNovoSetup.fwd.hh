@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/setup/RNA_DeNovoSetup.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace farna {
 namespace setup {
-	
-	class RNA_DeNovoSetup;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoSetup > RNA_DeNovoSetupOP;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoSetup const > RNA_DeNovoSetupCOP;
-	
-} //setup 
-} //farna 
-} //protocols 
+
+class RNA_DeNovoSetup;
+typedef utility::pointer::shared_ptr< RNA_DeNovoSetup > RNA_DeNovoSetupOP;
+typedef utility::pointer::shared_ptr< RNA_DeNovoSetup const > RNA_DeNovoSetupCOP;
+
+} //setup
+} //farna
+} //protocols
 
 #endif

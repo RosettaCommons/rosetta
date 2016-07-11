@@ -26,9 +26,9 @@ namespace antibody {
 /// @brief Collects data on an antibody including CDRs, interfaces of L_H, L_A, H_A, and LH_A (this can be set), and other metrics.
 /// @details Adds .... tables to the database.  See also protocols/antibody/clusters/CDRClusterFeatures
 class AntibodyFeatures : public features::InterfaceFeatures {
-	
+
 public:
-	
+
 	AntibodyFeatures();
 
 	AntibodyFeatures(AntibodyInfoOP ab_info);

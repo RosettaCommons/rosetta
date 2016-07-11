@@ -37,7 +37,7 @@
 namespace core {
 namespace sequence {
 
-	extern utility::vector1< char > spacers;
+extern utility::vector1< char > spacers;
 
 /// @brief Populates the non-null vector <alignments> with all of the sequence
 /// alignments found in <files>. Each alignment is required to have

@@ -207,14 +207,14 @@ AlignResiduesMover::copy_residue(
 	TR.Debug << "Copied residue " << resid_has_info << " into " << resid_wants_info << std::endl;
 	/*
 	for ( core::Size conn_id=1; conn_id<=orig_rsd.n_current_residue_connections(); ++conn_id ) {
-		TR.Debug << "Connections=" << pose.residue(resid_wants_info).n_current_residue_connections()
-			<< " conn_id=" << conn_id << std::endl;
-		core::Size const partner_resid = orig_rsd.connected_residue_at_resconn( conn_id );
-		TR.Debug << "Updating partner=" << partner_resid << std::endl;
-		debug_assert( partner_resid );
-		core::conformation::Residue partner = pose.residue( partner_resid );
-		partner.update_connections_to_other_residue( pose.residue( resid_wants_info ) ); //Update the connections
-		pose.replace_residue( partner_resid, partner, false );
+	TR.Debug << "Connections=" << pose.residue(resid_wants_info).n_current_residue_connections()
+	<< " conn_id=" << conn_id << std::endl;
+	core::Size const partner_resid = orig_rsd.connected_residue_at_resconn( conn_id );
+	TR.Debug << "Updating partner=" << partner_resid << std::endl;
+	debug_assert( partner_resid );
+	core::conformation::Residue partner = pose.residue( partner_resid );
+	partner.update_connections_to_other_residue( pose.residue( resid_wants_info ) ); //Update the connections
+	pose.replace_residue( partner_resid, partner, false );
 	}
 	*/
 }

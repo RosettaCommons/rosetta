@@ -47,7 +47,7 @@ class SegmentPairing : public utility::pointer::ReferenceCount {
 public:
 	// constants
 	static std::string
-	TAG_NAME;
+		TAG_NAME;
 
 public:
 	SegmentPairing();

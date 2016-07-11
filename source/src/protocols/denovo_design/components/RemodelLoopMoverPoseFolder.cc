@@ -114,7 +114,7 @@ RemodelLoopMoverPoseFolder::create_remodel_loop_mover(
 	remodel->false_movemap( *create_false_movemap( pose, movable ) );
 
 	//if ( ( max_chainbreak_ > 0 ) && loops_to_close ) {
-	//		remodel->max_linear_chainbreak( max_chainbreak_*loops_to_close );
+	//  remodel->max_linear_chainbreak( max_chainbreak_*loops_to_close );
 	//}
 
 	// select fragments

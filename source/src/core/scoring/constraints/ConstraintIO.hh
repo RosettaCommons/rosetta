@@ -46,11 +46,11 @@ public:
 	static ConstraintSetOP read_constraints(
 		std::string const & filename,
 		ConstraintSetOP cst_set,
-		pose::Pose const& pose	);
+		pose::Pose const& pose );
 	static ConstraintSetOP read_constraints(
 		std::istream & data,
 		ConstraintSetOP cst_set,
-		pose::Pose const& pose	);
+		pose::Pose const& pose );
 
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );

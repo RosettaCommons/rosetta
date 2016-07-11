@@ -544,10 +544,10 @@ Segment::delete_lower_padding()
 	}
 
 	//if ( template_pose_ ) {
-	//	core::kinematics::FoldTree ft;
-	//	ft.add_edge( template_pose_->total_residue(), 1, -1 );
-	//	template_pose_->fold_tree( ft );
-	//	template_pose_->delete_polymer_residue( 1 );
+	// core::kinematics::FoldTree ft;
+	// ft.add_edge( template_pose_->total_residue(), 1, -1 );
+	// template_pose_->fold_tree( ft );
+	// template_pose_->delete_polymer_residue( 1 );
 	//}
 	nterm_included_ = true;
 }
@@ -566,10 +566,10 @@ Segment::delete_upper_padding()
 	set_abego( abego_.substr( 0, stop_residue ) );
 
 	//if ( template_pose_ ) {
-	//	core::kinematics::FoldTree ft;
-	//	ft.add_edge( 1, template_pose_->total_residue(), -1 );
-	//	template_pose_->fold_tree( ft );
-	//	template_pose_->delete_polymer_residue( template_pose_->total_residue() );
+	// core::kinematics::FoldTree ft;
+	// ft.add_edge( 1, template_pose_->total_residue(), -1 );
+	// template_pose_->fold_tree( ft );
+	// template_pose_->delete_polymer_residue( template_pose_->total_residue() );
 	//}
 	cterm_included_ = true;
 }
@@ -578,16 +578,16 @@ Segment::delete_upper_padding()
 //void
 //Segment::engulf_lower_padding()
 //{
-//	nterm_included_ = true;
-//	// abego and ss stay the same
+// nterm_included_ = true;
+// // abego and ss stay the same
 //}
 //
 ///// @brief expands this residue set to include the dummy trailing residues
 //void
 //Segment::engulf_upper_padding()
 //{
-//	cterm_included_ = true;
-//	// abego and ss stay the same
+// cterm_included_ = true;
+// // abego and ss stay the same
 //}
 
 core::Size

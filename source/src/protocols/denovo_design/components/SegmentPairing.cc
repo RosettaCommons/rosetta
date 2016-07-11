@@ -34,7 +34,7 @@ namespace denovo_design {
 namespace components {
 
 std::string
-SegmentPairing::TAG_NAME = "Pairing";
+	SegmentPairing::TAG_NAME = "Pairing";
 
 std::string
 SegmentPairing::type_to_str( PairingType const & type )

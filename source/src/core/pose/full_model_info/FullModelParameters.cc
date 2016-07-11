@@ -388,14 +388,14 @@ FullModelParameters::conventional_to_full( std::pair< utility::vector1< int >, u
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // utility::vector1< Size >
 // FullModelParameters::conventional_to_full( std::pair< std::vector< int >, std::vector< char > > const & resnum_and_chain ) const {
-// 	utility::vector1< Size > res_list_in_full_numbering;
-// 	std::vector< int  > const & resnum = resnum_and_chain.first;
-// 	std::vector< char > const & chain  = resnum_and_chain.second;
-// 	runtime_assert( resnum.size() == chain.size() );
-// 	for ( Size n = 0; n < resnum.size(); n++ ) {
-// 		res_list_in_full_numbering.push_back( conventional_to_full( resnum[n], chain[n] ) );
-// 	}
-// 	return res_list_in_full_numbering;
+//  utility::vector1< Size > res_list_in_full_numbering;
+//  std::vector< int  > const & resnum = resnum_and_chain.first;
+//  std::vector< char > const & chain  = resnum_and_chain.second;
+//  runtime_assert( resnum.size() == chain.size() );
+//  for ( Size n = 0; n < resnum.size(); n++ ) {
+//   res_list_in_full_numbering.push_back( conventional_to_full( resnum[n], chain[n] ) );
+//  }
+//  return res_list_in_full_numbering;
 // }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

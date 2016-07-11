@@ -254,20 +254,20 @@ public:
 		}
 
 		/*
-	TS_ASSERT_EQUALS( enzdes.size(), enzdes2.size() );
-	utility::vector1< std::string > fields1 = utility::string_split_simple( *(enzdes.begin()) );
-	utility::vector1< std::string > fields2 = utility::string_split_simple( *(enzdes2.begin()) );
-	TR << fields1 << fields2 << std::endl;
-	TS_ASSERT_EQUALS( fields1.size(), fields2.size() );
-	for ( core::Size i=1; i <= fields1.size(); ++i ) {
+		TS_ASSERT_EQUALS( enzdes.size(), enzdes2.size() );
+		utility::vector1< std::string > fields1 = utility::string_split_simple( *(enzdes.begin()) );
+		utility::vector1< std::string > fields2 = utility::string_split_simple( *(enzdes2.begin()) );
+		TR << fields1 << fields2 << std::endl;
+		TS_ASSERT_EQUALS( fields1.size(), fields2.size() );
+		for ( core::Size i=1; i <= fields1.size(); ++i ) {
 		if ( i == 3 ) { // chain 1
-			TS_ASSERT_EQUALS( fields2[i][0], perm.pose()->pdb_info()->chain( boost::lexical_cast< core::Size >(fields2[5]) ) );
+		TS_ASSERT_EQUALS( fields2[i][0], perm.pose()->pdb_info()->chain( boost::lexical_cast< core::Size >(fields2[5]) ) );
 		} else if ( i == 8 ) { // chain 2
-			TS_ASSERT_EQUALS( fields2[i][0], perm.pose()->pdb_info()->chain( boost::lexical_cast< core::Size >(fields2[10]) ) );
+		TS_ASSERT_EQUALS( fields2[i][0], perm.pose()->pdb_info()->chain( boost::lexical_cast< core::Size >(fields2[10]) ) );
 		} else {
-			TS_ASSERT_EQUALS( fields1[i], fields2[i] );
+		TS_ASSERT_EQUALS( fields1[i], fields2[i] );
 		}
-	}
-	*/
+		}
+		*/
 	}
 };

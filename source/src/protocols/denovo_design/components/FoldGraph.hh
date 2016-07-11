@@ -78,7 +78,7 @@ public:
 	create_loops( SegmentNames const & staple_loops ) const;
 
 	protocols::loops::LoopsOP
-	create_loops(	Solution const & solution ) const;
+	create_loops( Solution const & solution ) const;
 
 	/// @brief const access to StructureData
 	StructureData const &

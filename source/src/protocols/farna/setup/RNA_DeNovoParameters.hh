@@ -69,7 +69,7 @@ public:
 	void set_allow_insert_res( utility::vector1 <core::Size > const & setting ){ allow_insert_res_ = setting; }
 	utility::vector1 <core::Size > allow_insert_res() const { return allow_insert_res_; }
 
-	void set_chain_connections( 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const & setting ) { chain_connections_ = setting; }
+	void set_chain_connections(  utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const & setting ) { chain_connections_ = setting; }
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
 	chain_connections() const { return chain_connections_; }
 

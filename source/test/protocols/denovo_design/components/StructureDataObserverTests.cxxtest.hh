@@ -47,7 +47,7 @@ public:
 		factory = StructureDataFactory::get_instance();
 	}
 
-	void tearDown()	{}
+	void tearDown() {}
 
 	void test_attachment()
 	{

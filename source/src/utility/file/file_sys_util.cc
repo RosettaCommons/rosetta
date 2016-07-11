@@ -510,7 +510,7 @@ std::string
 cwd()
 {
 	char cwd[1024];
-	if( getcwd(cwd, sizeof(cwd)) != 0 ) { //necessary to USE return val of getcwd or you get a compiler warning-error for unused return val
+	if ( getcwd(cwd, sizeof(cwd)) != 0 ) { //necessary to USE return val of getcwd or you get a compiler warning-error for unused return val
 		return cwd;
 	}
 	utility_exit_with_message("cannot detect current working directory.");

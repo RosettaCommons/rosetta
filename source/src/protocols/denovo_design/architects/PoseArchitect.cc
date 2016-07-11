@@ -55,8 +55,8 @@ PoseArchitect::type() const
 
 void
 PoseArchitect::parse_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data )
 {
 	core::select::residue_selector::ResidueSelectorCOP selector_ =
 		protocols::rosetta_scripts::parse_residue_selector( tag, data );

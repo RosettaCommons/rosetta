@@ -51,7 +51,7 @@ public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options = 0,
-											RNA_DeNovoParametersCOP params = 0);
+		RNA_DeNovoParametersCOP params = 0);
 
 	~RNA_DeNovoProtocol();
 

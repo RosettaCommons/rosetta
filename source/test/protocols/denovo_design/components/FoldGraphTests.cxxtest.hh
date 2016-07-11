@@ -181,7 +181,7 @@ public:
 
 		TS_ASSERT_EQUALS( wanted_cuts.size(), ft.cutpoints().size() );
 		for ( utility::vector1< int >::const_iterator cut=ft.cutpoints().begin(); cut!=ft.cutpoints().end(); ++cut ) {
-			TS_ASSERT_DIFFERS( wanted_cuts.find( *cut ), wanted_cuts.end() );
+		TS_ASSERT_DIFFERS( wanted_cuts.find( *cut ), wanted_cuts.end() );
 		}
 		*/
 	}

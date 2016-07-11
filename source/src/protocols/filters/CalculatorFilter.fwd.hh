@@ -9,7 +9,7 @@
 
 /// @file   utility/CalculatorFilter.fwd.hh
 /// @brief  forward declaration for CalculatorFilter
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 
 #ifndef INCLUDED_protocols_filters_CalculatorFilter_fwd_hh

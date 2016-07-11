@@ -192,11 +192,11 @@ FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose
 
 		/*
 		if ( l->cut() == 0 ) {
-			// stupid hack because some remodel aspects don't work properly without a cutpoint set
-			while ( ( l->cut() == 0 ) || ( l->cut() == pose.total_residue() ) ) {
-				choose_cutpoint( *l, pose );
-			}
-			continue;
+		// stupid hack because some remodel aspects don't work properly without a cutpoint set
+		while ( ( l->cut() == 0 ) || ( l->cut() == pose.total_residue() ) ) {
+		choose_cutpoint( *l, pose );
+		}
+		continue;
 		}
 		*/
 

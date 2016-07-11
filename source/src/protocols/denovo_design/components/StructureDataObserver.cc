@@ -134,25 +134,25 @@ StructureDataObserver::on_residue_delete( core::conformation::signals::LengthEve
 }
 
 /*
-	/// @brief residue position where the event happened
-	Size position;
+/// @brief residue position where the event happened
+Size position;
 
-	/// @brief The length of the conformation after the length event
-	/// @details This is needed for things like regenerating mappings
-	/// after multiple applications of events which may invalidate the confromation.
-	Size conformation_size;
+/// @brief The length of the conformation after the length event
+/// @details This is needed for things like regenerating mappings
+/// after multiple applications of events which may invalidate the confromation.
+Size conformation_size;
 
-	/// @brief overall length change of the conformation
-	int length_change;
+/// @brief overall length change of the conformation
+int length_change;
 
-	/// @brief direct access to residue
-	/// @remarks Almost always want to use this to access the residue instead of
-	///  the conformation.  Calling Conformation::residue() can cause an internal
-	///  update/re-sync inside Pose, which may have consequences if you're depending
-	///  upon multiple residue operations to be setup (such as bond angle/length
-	///  changes) prior to an internal update.
-	Residue const * residue;
-	*/
+/// @brief direct access to residue
+/// @remarks Almost always want to use this to access the residue instead of
+///  the conformation.  Calling Conformation::residue() can cause an internal
+///  update/re-sync inside Pose, which may have consequences if you're depending
+///  upon multiple residue operations to be setup (such as bond angle/length
+///  changes) prior to an internal update.
+Residue const * residue;
+*/
 
 void
 StructureDataObserver::attach_impl( core::pose::Pose & pose )

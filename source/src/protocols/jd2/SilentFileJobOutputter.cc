@@ -295,7 +295,7 @@ bool SilentFileJobOutputter::job_has_completed( JobCOP job ) {
 
 	// did we complete the job later ?
 	if ( job->completed() ) {
-		if( tr.Debug.visible() ) {
+		if ( tr.Debug.visible() ) {
 			tr.Debug << "Skipping job " << output_name(job) << " because it has been marked as already completed." << std::endl;
 		}
 		return true;
@@ -328,7 +328,7 @@ bool SilentFileJobOutputter::job_has_completed( JobCOP job ) {
 		find_if( tags.begin(), tags.end(), predicate ) != tags.end()
 	);
 
-	if( tr.Debug.visible() && ( already_written || already_buffered ) ) {
+	if ( tr.Debug.visible() && ( already_written || already_buffered ) ) {
 		tr.Debug << "Skipping job " << output_name(job) << " because it has been " << (already_written ? "already written to disk." : "buffered for output.") << std::endl;
 	}
 	return ( already_written || already_buffered );

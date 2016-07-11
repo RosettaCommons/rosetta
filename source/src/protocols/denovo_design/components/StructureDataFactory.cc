@@ -50,10 +50,10 @@ namespace denovo_design {
 namespace components {
 
 int const
-StructureDataFactory::REMARK_NUM = 994;
+	StructureDataFactory::REMARK_NUM = 994;
 
 std::string const
-StructureDataFactory::DATA_NAME = "PERMUTATION";
+	StructureDataFactory::DATA_NAME = "PERMUTATION";
 
 StructureDataFactory *
 StructureDataFactory::create_singleton_instance()

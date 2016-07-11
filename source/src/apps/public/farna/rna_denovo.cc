@@ -68,7 +68,7 @@ rna_denovo_test()
 	Pose & pose = *( rna_de_novo_setup->pose() );
 
 	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( rna_de_novo_setup->options(),
-																														 rna_de_novo_setup->rna_params() );
+		rna_de_novo_setup->rna_params() );
 	rna_de_novo_protocol.set_native_pose( rna_de_novo_setup->native_pose() );
 	rna_de_novo_protocol.set_refine_pose_list( rna_de_novo_setup->refine_pose_list() );
 

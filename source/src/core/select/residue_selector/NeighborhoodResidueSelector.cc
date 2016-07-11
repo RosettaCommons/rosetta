@@ -175,17 +175,15 @@ NeighborhoodResidueSelector::parse_my_tag(
 
 	} else if ( tag->hasOption("resnums") ) {
 		set_focus ( tag->getOption< std::string >( "resnums" ) );
-	}
-	//Check for embedded ResidueSelector as focus.
-	else if (tag->size() > 1){
+	} else if ( tag->size() > 1 ) {
+		//Check for embedded ResidueSelector as focus.
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
 		}
 		ResidueSelectorCOP rs = get_embedded_residue_selector( tag, datamap );
 		set_focus_selector( rs );
-	}
-	else {
+	} else {
 		throw utility::excn::EXCN_Msg_Exception("You must provide either resnums or selector tag, or an embedded selector to give the focus residues.");
 	}
 

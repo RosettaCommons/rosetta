@@ -181,8 +181,8 @@ StructureData::parse_subtag( utility::tag::TagCOP tag )
 		debug_assert( tag->hasOption( "segment" ) );
 		debug_assert( tag->hasOption( "res" ) );
 		set_alias( tag->getOption< std::string >( "name" ),
-				tag->getOption< std::string >( "segment" ),
-				tag->getOption< core::Size >( "res" ) );
+			tag->getOption< std::string >( "segment" ),
+			tag->getOption< core::Size >( "res" ) );
 	} else if ( tag->getName() == "CovalentBond" ) {
 		debug_assert( tag->hasOption( "segment1" ) );
 		debug_assert( tag->hasOption( "segment2" ) );
@@ -191,13 +191,13 @@ StructureData::parse_subtag( utility::tag::TagCOP tag )
 		debug_assert( tag->hasOption( "atom1" ) );
 		debug_assert( tag->hasOption( "atom2" ) );
 		add_covalent_bond(
-				tag->getOption< std::string >( "segment1" ),
-				tag->getOption< core::Size >( "residue1" ),
-				tag->getOption< std::string >( "atom1" ),
-				tag->getOption< std::string >( "segment2" ),
-				tag->getOption< core::Size >( "residue2" ),
-				tag->getOption< std::string >( "atom2" )
-				);
+			tag->getOption< std::string >( "segment1" ),
+			tag->getOption< core::Size >( "residue1" ),
+			tag->getOption< std::string >( "atom1" ),
+			tag->getOption< std::string >( "segment2" ),
+			tag->getOption< core::Size >( "residue2" ),
+			tag->getOption< std::string >( "atom2" )
+		);
 	} else if ( tag->getName() == SegmentPairing::TAG_NAME ) {
 		SegmentPairingOP newpairing = create_segment_pairing( tag->getOption< std::string >( "type" ) );
 		newpairing->parse_my_tag( *tag );
@@ -2123,12 +2123,12 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 	}
 
 	if ( cur_cutpoint != cutpoints.end() ) {
-			std::stringstream msg;
-			msg << "StructureData::check_chains(): Pose has a cutpoint at position "
-				<< *cur_cutpoint << ", but no cutpoint was set in the StructureData.  Pose cutpoints: "
-				<< cutpoints << std::endl;
-			msg << *this << std::endl;
-			throw EXCN_PoseInconsistent( msg.str() );
+		std::stringstream msg;
+		msg << "StructureData::check_chains(): Pose has a cutpoint at position "
+			<< *cur_cutpoint << ", but no cutpoint was set in the StructureData.  Pose cutpoints: "
+			<< cutpoints << std::endl;
+		msg << *this << std::endl;
+		throw EXCN_PoseInconsistent( msg.str() );
 	}
 
 	if ( cur_beginning != chain_beginnings.end() ) {

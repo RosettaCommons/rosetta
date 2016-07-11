@@ -254,9 +254,9 @@ ConnectionArchitect::compute_connection_candidates(
 	MotifOPs candidates;
 	for ( SegmentPairs::const_iterator pair=seg_pairs.begin(); pair!=seg_pairs.end(); ++pair ) {
 		//if ( ! pair_allowed( pair->first, pair->second ) ) {
-		//		TR.Debug << "ConnectionArchitect: Connection to segments " << pair->first
-		//			<< ", " << pair->second << " DISALLOWED by user setting." << std::endl;
-		//		continue;
+		//  TR.Debug << "ConnectionArchitect: Connection to segments " << pair->first
+		//   << ", " << pair->second << " DISALLOWED by user setting." << std::endl;
+		//  continue;
 		//}
 
 		MotifOPs const motifs = motifs_for_pair( *pair, sd, length_set );
@@ -265,9 +265,9 @@ ConnectionArchitect::compute_connection_candidates(
 		debug_assert( !motifs.empty() );
 		for ( MotifOPs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
 			if ( connectable( sd, **m ) ) {
-					TR.Debug << "c1, c2, len : connectable " << pair->first << " <--> "
-						<< pair->second << ", " << **m << std::endl;
-					candidates.push_back( *m );
+				TR.Debug << "c1, c2, len : connectable " << pair->first << " <--> "
+					<< pair->second << ", " << **m << std::endl;
+				candidates.push_back( *m );
 			}
 		}
 	}
@@ -325,35 +325,35 @@ ConnectionArchitect::segment_pairs( components::StructureData const & sd ) const
 	return combine_segment_names( local_comp1_ids, local_comp2_ids );
 	/*
 	bool const repeat = ( sd.has_segment( alt_id ) ||
-		( sd.has_data_int( id(), "length" ) && ( sd.get_data_int( id(), "length" ) == 0 ) ) );
+	( sd.has_data_int( id(), "length" ) && ( sd.get_data_int( id(), "length" ) == 0 ) ) );
 
 	if ( repeat ) {
-		// if we are re-calling a connection, assume we want to rebuild it
-		// copy conection points and delete the old loop
-		local_comp1_ids.push_back( lower_segment_id( perm ) );
-		local_comp2_ids.push_back( upper_segment_id( perm ) );
-		for ( SegmentNameList::const_iterator l=segment_names().begin(); l!=segment_names().end(); ++l ) {
-			if ( perm.has_segment( *l ) ) {
-				perm.delete_segment( *l );
-			} else {
-				perm.disconnect_segments( lower_segment_id( perm ), upper_segment_id( perm ) );
-			}
-		}
+	// if we are re-calling a connection, assume we want to rebuild it
+	// copy conection points and delete the old loop
+	local_comp1_ids.push_back( lower_segment_id( perm ) );
+	local_comp2_ids.push_back( upper_segment_id( perm ) );
+	for ( SegmentNameList::const_iterator l=segment_names().begin(); l!=segment_names().end(); ++l ) {
+	if ( perm.has_segment( *l ) ) {
+	perm.delete_segment( *l );
 	} else {
-		if ( chain1_ ) {
-			utility::vector1< std::string > const available_uppers = find_available_upper_termini( perm );
-			debug_assert( chain1_ <= available_uppers.size() );
-			local_comp1_ids.push_back( available_uppers[ chain1_ ] );
-		} else {
-			local_comp1_ids = find_available_upper_termini( perm );
-		}
-		if ( chain2_ ) {
-			utility::vector1< std::string > const available_lowers = find_available_lower_termini( perm );
-			debug_assert( chain2_ <= available_lowers.size() );
-			local_comp2_ids.push_back( available_lowers[ chain2_ ] );
-		} else {
-			local_comp2_ids = find_available_lower_termini( perm );
-		}
+	perm.disconnect_segments( lower_segment_id( perm ), upper_segment_id( perm ) );
+	}
+	}
+	} else {
+	if ( chain1_ ) {
+	utility::vector1< std::string > const available_uppers = find_available_upper_termini( perm );
+	debug_assert( chain1_ <= available_uppers.size() );
+	local_comp1_ids.push_back( available_uppers[ chain1_ ] );
+	} else {
+	local_comp1_ids = find_available_upper_termini( perm );
+	}
+	if ( chain2_ ) {
+	utility::vector1< std::string > const available_lowers = find_available_lower_termini( perm );
+	debug_assert( chain2_ <= available_lowers.size() );
+	local_comp2_ids.push_back( available_lowers[ chain2_ ] );
+	} else {
+	local_comp2_ids = find_available_lower_termini( perm );
+	}
 	} */
 }
 
@@ -613,7 +613,7 @@ AreConnectablePredicate::check_movable_groups(
 	// no duplicate movable groups should be present
 	MovableGroupSet intersection;
 	std::set_intersection( mgs1.begin(), mgs1.end(), mgs2.begin(), mgs2.end(),
-			std::inserter( intersection, intersection.begin() ) );
+		std::inserter( intersection, intersection.begin() ) );
 
 	if ( ! motif.cutpoint() ) {
 		if ( !intersection.empty() ) {
@@ -685,7 +685,7 @@ AreConnectablePredicate::check_distance(
 	// if the distance is > the fully extended Ca-Ca distance of an nres residue insert, this connection is physically impossible
 	if ( dist > (max_dist_per_res*motif.elem_length() + bond_dist) ) {
 		TR.Debug << segment1 << " and " << segment2 << " with motif " << motif
-			<< "	not connectable due to nres="
+			<< "\tnot connectable due to nres="
 			<< motif.length() << " distance=" << dist << std::endl;
 		return false;
 	}

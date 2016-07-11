@@ -160,7 +160,7 @@ get_residue_selector( std::string const & selector_name, basic::datacache::DataM
 
 ResidueSelectorOP
 get_embedded_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ){
-	if (tag->size() > 1){
+	if ( tag->size() > 1 ) {
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
@@ -171,18 +171,17 @@ get_embedded_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataM
 			datamap
 		);
 		return rs;
-	}
-	else {
+	} else {
 		throw utility::excn::EXCN_Msg_Exception( "No selector embedded! " );
 	}
 }
 
 utility::vector1< ResidueSelectorOP >
 get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ){
-	if (tag->size() > 1){
+	if ( tag->size() > 1 ) {
 		utility::vector1< ResidueSelectorOP > selectors;
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
-		for (core::Size i = 0; i <= tags.size() -1; ++i ){
+		for ( core::Size i = 0; i <= tags.size() -1; ++i ) {
 			ResidueSelectorOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
 				tags[i]->getName(),
 				tags[i],
@@ -191,8 +190,7 @@ get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::Data
 			selectors.push_back( rs );
 		}
 		return selectors;
-	}
-	else {
+	} else {
 		throw utility::excn::EXCN_Msg_Exception( "No selector embedded! " );
 	}
 }

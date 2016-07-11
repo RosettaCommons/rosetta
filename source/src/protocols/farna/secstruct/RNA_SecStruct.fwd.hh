@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/secstruct/RNA_SecStruct.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace farna {
 namespace secstruct {
-	
-	class RNA_SecStruct;
-	typedef utility::pointer::shared_ptr< RNA_SecStruct > RNA_SecStructOP;
-	typedef utility::pointer::shared_ptr< RNA_SecStruct const > RNA_SecStructCOP;
-	
-} //secstruct 
-} //farna 
-} //protocols 
+
+class RNA_SecStruct;
+typedef utility::pointer::shared_ptr< RNA_SecStruct > RNA_SecStructOP;
+typedef utility::pointer::shared_ptr< RNA_SecStruct const > RNA_SecStructCOP;
+
+} //secstruct
+} //farna
+} //protocols
 
 #endif

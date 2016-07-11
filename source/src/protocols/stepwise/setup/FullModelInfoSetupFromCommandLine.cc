@@ -259,7 +259,7 @@ get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fas
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
 		std::string sequence = fasta_sequences[ n ]->sequence();
 		vector1< Size > const & spacer_pos = fasta_sequences[ n ]->spacer_positions();
-		for ( Size q = 1; q <= spacer_pos.size(); q++ )	cutpoints.push_back( ntot + spacer_pos[ q ] );
+		for ( Size q = 1; q <= spacer_pos.size(); q++ ) cutpoints.push_back( ntot + spacer_pos[ q ] );
 		ntot += sequence.size();
 		if ( n != fasta_sequences.size() /*very end is not 'cutpoint'*/ ) cutpoints.push_back( ntot );
 	}
@@ -458,7 +458,7 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 ///////////////////////////////////////////////////////////////////////////////////////
 FullModelParametersOP
 get_sequence_information( std::string const & fasta_file,
-													vector1< Size > & cutpoint_open_in_full_model )
+	vector1< Size > & cutpoint_open_in_full_model )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -477,7 +477,7 @@ get_sequence_information( std::string const & fasta_file,
 	full_model_parameters->set_conventional_chains( conventional_chains );
 	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 	cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
-																								conventional_chains, conventional_numbering );
+		conventional_chains, conventional_numbering );
 	return full_model_parameters;
 }
 

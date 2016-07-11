@@ -148,7 +148,7 @@ void protocols::jd2::PDBJobOutputter::dump_pose(
 /////////////////////////////////state of output functions/////////////////////////////////
 bool protocols::jd2::PDBJobOutputter::job_has_completed( JobCOP job ){
 	bool complete = utility::file::file_exists( path_ + extended_name(job) );
-	if( TR.Debug.visible() && complete ) {
+	if ( TR.Debug.visible() && complete ) {
 		TR.Debug << "Skipping job " << output_name(job) << " because the output file already exists on disk." << std::endl;
 	}
 	return complete;

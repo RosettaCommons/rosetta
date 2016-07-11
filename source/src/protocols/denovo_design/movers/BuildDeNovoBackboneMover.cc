@@ -304,9 +304,9 @@ BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::mov
 
 BuildDeNovoBackboneMover::MoverOPs
 BuildDeNovoBackboneMover::prefold_movers(
-		core::pose::Pose const & pose,
-		protocols::loops::Loops const & loops,
-		ConstraintGeneratorCOPs const & generators ) const
+	core::pose::Pose const & pose,
+	protocols::loops::Loops const & loops,
+	ConstraintGeneratorCOPs const & generators ) const
 {
 	MoverOPs movers;
 
@@ -366,11 +366,11 @@ BuildDeNovoBackboneMover::postfold_movers(
 	protocols::moves::MoverOP restore_sc_mover(
 		new simple_moves::ReturnSidechainMover( pose, 1, pose.total_residue() ) );
 	//protocols::moves::MoverOP sars(
-	//	new simple_moves::SaveAndRetrieveSidechains(
-	//	pose,
-	//	true, // allsc -- replace all sidechains, as opposed to only ALAs
-	//	false, // ensure_variant_matching
-	//	0 ) ); // jumpid -- no idea why this needs to be set
+	// new simple_moves::SaveAndRetrieveSidechains(
+	// pose,
+	// true, // allsc -- replace all sidechains, as opposed to only ALAs
+	// false, // ensure_variant_matching
+	// 0 ) ); // jumpid -- no idea why this needs to be set
 	movers.push_back( restore_sc_mover );
 
 	// 5. Seal fold tree
@@ -545,7 +545,7 @@ BuildDeNovoBackboneMover::ConstraintGeneratorOP
 BuildDeNovoBackboneMover::create_coordinate_constraint_generator( ResidueVector const & residues ) const
 {
 	protocols::constraint_generator::CoordinateConstraintGeneratorOP coord_csts(
-			new protocols::constraint_generator::CoordinateConstraintGenerator );
+		new protocols::constraint_generator::CoordinateConstraintGenerator );
 
 	coord_csts->set_id( "BuildDeNovoBackboneMover_" + boost::lexical_cast< std::string >( numeric::random::rg().uniform() ) );
 
@@ -556,7 +556,7 @@ BuildDeNovoBackboneMover::create_coordinate_constraint_generator( ResidueVector 
 	}
 
 	core::select::residue_selector::ResidueIndexSelectorOP selector(
-			new core::select::residue_selector::ResidueIndexSelector( index_ss.str() ) );
+		new core::select::residue_selector::ResidueIndexSelector( index_ss.str() ) );
 
 	coord_csts->set_ca_only( true );
 	coord_csts->set_residue_selector( selector );

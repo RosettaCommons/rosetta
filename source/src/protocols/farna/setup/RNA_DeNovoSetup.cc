@@ -433,7 +433,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			Size const new_pos2 = std::max( segment1_end, segment2_start );
 			obligate_pair.push_back( new_pos1 );
 			obligate_pair.push_back( new_pos2 );
-			//			TR << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
+			//   TR << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
 			n_jumps++;
 		}
 	}
@@ -508,7 +508,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	std::string const full_annotated_sequence = full_model_parameters->full_annotated_sequence();
 	make_pose_from_sequence( full_pose, full_annotated_sequence, *rsd_set_ );
 	set_output_res_and_chain( full_pose, std::make_pair( full_model_parameters->conventional_numbering(),
-																											 full_model_parameters->conventional_chains() ) );
+		full_model_parameters->conventional_chains() ) );
 	pdbslice( *pose_, full_pose, working_res );
 
 	////////////////////
@@ -941,7 +941,7 @@ RNA_DeNovoSetup::working_res_map( std::string const & seq_input,
 // Following not handling spacers correctly...
 secstruct::RNA_SecStruct
 RNA_DeNovoSetup::working_res_map( secstruct::RNA_SecStruct const & rna_secstruct,
-																	vector1< Size > const & working_res ) const
+	vector1< Size > const & working_res ) const
 {
 	std::string working_secstruct = working_res_map( rna_secstruct.secstruct(), working_res );
 	return secstruct::RNA_SecStruct( working_secstruct );
@@ -995,8 +995,8 @@ RNA_DeNovoSetup::already_listed_in_obligate_pair( vector1< Size > const & new_pa
 
 bool
 RNA_DeNovoSetup::already_listed_in_obligate_pair( vector1< Size > const & new_pair,
-																									vector1< Size > const & obligate_pair,
-																									vector1< Size > const & obligate_pair_explicit ) const
+	vector1< Size > const & obligate_pair,
+	vector1< Size > const & obligate_pair_explicit ) const
 {
 	vector1< Size > all_pair;
 	for ( Size n = 1; n <= obligate_pair.size(); n++ ) all_pair.push_back( obligate_pair[ n ] );
@@ -1018,9 +1018,9 @@ RNA_DeNovoSetup::update_working_obligate_pairs_with_stems(
 		for ( Size i = 1; i <= working_stem.size(); i++ ) {
 			std::pair< Size, Size > const & pair = working_stem[ i ];
 			if ( working_input_res.has_value( pair.first ) &&
-					 working_input_res.has_value( pair.second ) ) {
+					working_input_res.has_value( pair.second ) ) {
 				stem_in_input_res = true; break;
-				}
+			}
 		}
 		if ( stem_in_input_res ) continue;
 

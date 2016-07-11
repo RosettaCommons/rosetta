@@ -266,9 +266,9 @@ BetaSheetArchitect::store_strand_pairings( StructureData & sd ) const
 	if ( strands_.size() < 2 ) return;
 	for ( StrandArchitectOPs::const_iterator prev=strands_.begin(), c=++strands_.begin(); c!=strands_.end(); ++c, ++prev ) {
 		components::StrandPairing pairing(
-				(*prev)->id(), (*c)->id(),
-				(*prev)->retrieve_orientation( sd ), (*c)->retrieve_orientation( sd ),
-				(*c)->retrieve_register_shift( sd ) );
+			(*prev)->id(), (*c)->id(),
+			(*prev)->retrieve_orientation( sd ), (*c)->retrieve_orientation( sd ),
+			(*c)->retrieve_register_shift( sd ) );
 		sd.add_pairing( pairing );
 	}
 }

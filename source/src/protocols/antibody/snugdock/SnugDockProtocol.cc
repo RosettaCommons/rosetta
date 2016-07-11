@@ -268,7 +268,7 @@ std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockpr
 	}
 	return out;
 }
-	
+
 } // namespace snugdock
 } // namespace antibody
 } // namespace protocols

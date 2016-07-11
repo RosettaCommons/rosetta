@@ -117,7 +117,7 @@ public: // non-virtual functions
 	char gap_char() const;
 
 	/// @brief Returns the spacer positions (chain breaks, e.g., from spaces or commas in original sequence text)
-  utility::vector1< Size > spacer_positions() const;
+	utility::vector1< Size > spacer_positions() const;
 
 	/// @brief Returns the string representing this sequence without gaps.
 	std::string ungapped_sequence() const;

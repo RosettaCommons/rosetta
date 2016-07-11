@@ -78,7 +78,7 @@ public:
 		utility::vector1< std::string > abegos;
 		abegos.push_back("X");
 		for ( int i=1; i<=8; ++i ) {
-			abegos.push_back("A");
+		abegos.push_back("A");
 		}
 		abegos.push_back("X");
 
@@ -111,30 +111,30 @@ public:
 		TS_ASSERT_EQUALS( csts_str.find("%%"), std::string::npos );
 		utility::vector1< std::string > lines = utility::string_split( csts_str, '\n' );
 		for ( core::Size i=1; i<=lines.size(); ++i ) {
-			utility::vector1< std::string > fields = utility::string_split( lines[i] );
-			if ( i==1 ) {
-				TS_ASSERT_EQUALS( fields[1], "AtomPair" );
-				TS_ASSERT_EQUALS( fields[2], "O2" );
-				TS_ASSERT_EQUALS( fields[3], "2" ); // substitution 1
-				TS_ASSERT_EQUALS( fields[4], "N" );
-				TS_ASSERT_EQUALS( fields[5], "3" );
-				TS_ASSERT_EQUALS( fields[6], "HARMONIC" );
-				TS_ASSERT_EQUALS( fields[7], "2.8" );
-				TS_ASSERT_EQUALS( fields[8], "0.3" );
-			} else if ( i==2 ) {
-				TS_ASSERT_EQUALS( fields[1], "Angle" );
-				TS_ASSERT_EQUALS( fields[2], "O2" );
-				TS_ASSERT_EQUALS( fields[3], "4" ); // substitution 2
-				TS_ASSERT_EQUALS( fields[4], "N" );
-				TS_ASSERT_EQUALS( fields[5], "15" );
-				TS_ASSERT_EQUALS( fields[6], "H" );
-				TS_ASSERT_EQUALS( fields[7], "15" );
-				TS_ASSERT_EQUALS( fields[8], "HARMONIC" );
-				TS_ASSERT_EQUALS( fields[9], "0.0" );
-				TS_ASSERT_EQUALS( fields[10], "0.1" );
-			} else {
-				TS_ASSERT_EQUALS( lines[i].size(), 0 );
-			}
+		utility::vector1< std::string > fields = utility::string_split( lines[i] );
+		if ( i==1 ) {
+		TS_ASSERT_EQUALS( fields[1], "AtomPair" );
+		TS_ASSERT_EQUALS( fields[2], "O2" );
+		TS_ASSERT_EQUALS( fields[3], "2" ); // substitution 1
+		TS_ASSERT_EQUALS( fields[4], "N" );
+		TS_ASSERT_EQUALS( fields[5], "3" );
+		TS_ASSERT_EQUALS( fields[6], "HARMONIC" );
+		TS_ASSERT_EQUALS( fields[7], "2.8" );
+		TS_ASSERT_EQUALS( fields[8], "0.3" );
+		} else if ( i==2 ) {
+		TS_ASSERT_EQUALS( fields[1], "Angle" );
+		TS_ASSERT_EQUALS( fields[2], "O2" );
+		TS_ASSERT_EQUALS( fields[3], "4" ); // substitution 2
+		TS_ASSERT_EQUALS( fields[4], "N" );
+		TS_ASSERT_EQUALS( fields[5], "15" );
+		TS_ASSERT_EQUALS( fields[6], "H" );
+		TS_ASSERT_EQUALS( fields[7], "15" );
+		TS_ASSERT_EQUALS( fields[8], "HARMONIC" );
+		TS_ASSERT_EQUALS( fields[9], "0.0" );
+		TS_ASSERT_EQUALS( fields[10], "0.1" );
+		} else {
+		TS_ASSERT_EQUALS( lines[i].size(), 0 );
+		}
 		}
 		*/
 	}

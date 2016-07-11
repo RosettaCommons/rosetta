@@ -93,55 +93,55 @@ public:
 
 	/* TL: commented until if/when my SheetDB can be fully available in master void nest_with_db()
 	{
-		using protocols::denovo_design::components::SheetList;
+	using protocols::denovo_design::components::SheetList;
 
-		std::string const sheet_id = "sheet";
-		std::string const s1_id = "sheet.s1";
-		std::string const s2_id = "sheet.s2";
-		std::string const s3_id = "sheet.s3";
+	std::string const sheet_id = "sheet";
+	std::string const s1_id = "sheet.s1";
+	std::string const s2_id = "sheet.s2";
+	std::string const s3_id = "sheet.s3";
 
-		std::stringstream xml;
-		xml << "<BetaSheetArchitect name=" << sheet_id << " sheet_db=\"/work/tlinsky/sheet_db/clustered\" >" << std::endl;
-		xml << "<Strand name=s1 length=4 orientation=U register_shift=0 />" << std::endl;
-		xml << "<Strand name=s2 length=5 orientation=U register_shift=-1 />" << std::endl;
-		xml << "<Strand name=s3 length=4 orientation=U register_shift=0 />" << std::endl;
-		xml << "</BetaSheetArchitect>" << std::endl;
-		utility::tag::TagCOP tag = utility::tag::Tag::create( xml );
-		basic::datacache::DataMap data;
+	std::stringstream xml;
+	xml << "<BetaSheetArchitect name=" << sheet_id << " sheet_db=\"/work/tlinsky/sheet_db/clustered\" >" << std::endl;
+	xml << "<Strand name=s1 length=4 orientation=U register_shift=0 />" << std::endl;
+	xml << "<Strand name=s2 length=5 orientation=U register_shift=-1 />" << std::endl;
+	xml << "<Strand name=s3 length=4 orientation=U register_shift=0 />" << std::endl;
+	xml << "</BetaSheetArchitect>" << std::endl;
+	utility::tag::TagCOP tag = utility::tag::Tag::create( xml );
+	basic::datacache::DataMap data;
 
-		BetaSheetArchitect sheet( "" );
-		sheet.parse_my_tag( tag, data );
+	BetaSheetArchitect sheet( "" );
+	sheet.parse_my_tag( tag, data );
 
-		// pull this sheet from sheetDB
-		protocols::denovo_design::components::SheetDB db;
-		db.set_db_path( "/work/tlinsky/sheet_db/clustered" );
-		Lengths const test_lengths = boost::assign::list_of (4)(5)(4);
-		StrandOrientations const test_orientations = boost::assign::list_of (UP)(UP)(UP);
-		RegisterShifts const test_shifts = boost::assign::list_of (0)(-1)(0);
-		//devel::denovo_design::components::SheetList const & list = db.sheet_list( test_lengths, test_orientations, test_shifts );
+	// pull this sheet from sheetDB
+	protocols::denovo_design::components::SheetDB db;
+	db.set_db_path( "/work/tlinsky/sheet_db/clustered" );
+	Lengths const test_lengths = boost::assign::list_of (4)(5)(4);
+	StrandOrientations const test_orientations = boost::assign::list_of (UP)(UP)(UP);
+	RegisterShifts const test_shifts = boost::assign::list_of (0)(-1)(0);
+	//devel::denovo_design::components::SheetList const & list = db.sheet_list( test_lengths, test_orientations, test_shifts );
 
-		core::Real random = 0.25001;
-		StructureDataOP sd_ptr = sheet.design( core::pose::Pose(), random );
-		TS_ASSERT( sd_ptr );
-		StructureData const & sd = *sd_ptr;
+	core::Real random = 0.25001;
+	StructureDataOP sd_ptr = sheet.design( core::pose::Pose(), random );
+	TS_ASSERT( sd_ptr );
+	StructureData const & sd = *sd_ptr;
 
-		ExtendedPoseBuilder builder;
-		core::pose::PoseOP pose_ptr = builder.apply( sd );
-		TS_ASSERT( pose_ptr );
-		core::pose::Pose const & pose = *pose_ptr;
+	ExtendedPoseBuilder builder;
+	core::pose::PoseOP pose_ptr = builder.apply( sd );
+	TS_ASSERT( pose_ptr );
+	core::pose::Pose const & pose = *pose_ptr;
 
-		sd.check_pose_consistency( pose );
+	sd.check_pose_consistency( pose );
 
-		// Strands should all be in same MG
-		TS_ASSERT_EQUALS( sd.segment( s1_id ).movable_group(), sd.segment( s2_id ).movable_group() );
-		TS_ASSERT_EQUALS( sd.segment( s1_id ).movable_group(), sd.segment( s3_id ).movable_group() );
+	// Strands should all be in same MG
+	TS_ASSERT_EQUALS( sd.segment( s1_id ).movable_group(), sd.segment( s2_id ).movable_group() );
+	TS_ASSERT_EQUALS( sd.segment( s1_id ).movable_group(), sd.segment( s3_id ).movable_group() );
 
-		// SD should have sheet idx stored
-		TS_ASSERT( sd.has_data_int( sheet_id, "sheet_idx" ) );
-		// sheet 55 should be selected, 223 sheets * 0.25001 = 55.75 + 1  for 1-indexing = 56
-		TS_ASSERT_EQUALS( sd.get_data_int( sheet_id, "sheet_idx" ), 56 );
+	// SD should have sheet idx stored
+	TS_ASSERT( sd.has_data_int( sheet_id, "sheet_idx" ) );
+	// sheet 55 should be selected, 223 sheets * 0.25001 = 55.75 + 1  for 1-indexing = 56
+	TS_ASSERT_EQUALS( sd.get_data_int( sheet_id, "sheet_idx" ), 56 );
 
-		// compare coordinates
+	// compare coordinates
 	}
 	*/
 

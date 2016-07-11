@@ -331,8 +331,8 @@ HelixPairingFilter::parse_my_tag(
 	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
 	/*
 	if ( hpairset_->helix_pairings().empty() ) {
-		TR.Error << "Error!, Option of helix_pairings is empty." << std::endl;
-		runtime_assert( false );
+	TR.Error << "Error!, Option of helix_pairings is empty." << std::endl;
+	runtime_assert( false );
 	}
 	*/
 
