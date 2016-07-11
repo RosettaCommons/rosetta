@@ -83,7 +83,7 @@ private:
 	std::string create_fasta_file( std::string const & pname, std::string const & seq ) const;
 
 	/// @brief deletes files created by psipred and convert_to_fasta
-	void cleanup_after_psipred( std::string const & psipred_filename ) const;
+	void cleanup_after_psipred( std::string const & psipred_filename, std::string const & fasta_filename ) const;
 
 	/// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 	PsiPredResult

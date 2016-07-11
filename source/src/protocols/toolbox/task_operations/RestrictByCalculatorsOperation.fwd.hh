@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictByCalculatorsOperation.fwd.hh
 /// @brief  A class that applies arbitrary calculators (whose calculations return std::set< core::Size >) to restrict a PackerTask
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictByCalculatorsOperation_fwd_hh
 #define INCLUDED_protocols_toolbox_task_operations_RestrictByCalculatorsOperation_fwd_hh

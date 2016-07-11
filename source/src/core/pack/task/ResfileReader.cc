@@ -9,7 +9,7 @@
 
 /// @file   core/pack/task/ResfileReader.cc
 /// @brief  implementation of resfile reader and its command classes
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 /// @author Andrew Leaver-Fay
 
 // Unit Headers

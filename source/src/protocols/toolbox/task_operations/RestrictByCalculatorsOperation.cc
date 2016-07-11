@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictByCalculatorsOperation.cc
 /// @brief  A class that applies arbitrary calculators (whose calculations return std::set< core::Size >) to restrict a PackerTask
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>

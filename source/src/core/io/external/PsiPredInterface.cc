@@ -26,6 +26,8 @@
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
 
+#include <utility/file/file_sys_util.hh> //file_exists()
+
 // boost
 #include <boost/lexical_cast.hpp>
 
@@ -39,6 +41,28 @@ static THREAD_LOCAL basic::Tracer TR( "core.io.external.psipredinterface" );
 namespace core {
 namespace io {
 namespace external {
+
+/// @details Local-only utility function
+void runpsipred_name_mangle_check(
+	std::string & filename, //the mangled filename whose existence we check for / path we repair
+	std::string const & ref_filename, //reference fasta filename to remangle if necessary
+	std::string const & extension) //extension to add (to deduplicate this code between ss2 and horiz)
+{
+
+	//Do those file names exist?  If not, try "runpsipred" script name mangling.  If not that, throw an error.
+	using utility::file::file_exists;
+	if(! file_exists(filename)){
+		std::string const runpsipred_filename(ref_filename + ":r:t" + extension);
+		if(file_exists(runpsipred_filename)) {
+			TR.Debug << "runpsipred file name type detected; changing expected psipred file name to " << runpsipred_filename << std::endl;
+			filename = runpsipred_filename;
+		} else {
+			utility_exit_with_message("Neither " + filename + " nor " + runpsipred_filename + " existed; perhaps psipred didn't run?");
+		}
+	}
+	return;
+}
+
 
 /// @brief default constructor
 PsiPredInterface::PsiPredInterface( std::string const & cmd )
@@ -247,10 +271,9 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		core::Size time_val = time(NULL);
 		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
-		std::string const psipred_filename = filebase + ".ss2";
-		std::string const psipred_horiz_filename = filebase + ".horiz";
+		std::string psipred_filename = filebase + ".ss2";
+		std::string psipred_horiz_filename = filebase + ".horiz";
 
-		//TR << "Psipred filename: " << psipred_filename << std::endl;
 		// ensure we can get a shell
 		runtime_assert( cmd_ != "" );
 		// Call psipred on the fasta file
@@ -268,6 +291,12 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		if ( retval != 0 ) {
 			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
 		}
+
+		TR.Debug << "target psipred filename and psipred_horiz filename " << psipred_filename << " " << psipred_horiz_filename << std::endl;
+
+		//Do those file names exist?  If not, try "runpsipred" script name mangling.  If not that, throw an error.
+		runpsipred_name_mangle_check( psipred_filename, fasta_filename, ".ss2");
+		runpsipred_name_mangle_check( psipred_horiz_filename, fasta_filename, ".horiz");
 
 		// open and read psipred output into a stringstream buffer
 		utility::io::izstream t( psipred_filename );
@@ -290,7 +319,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		result.nres += chain_result.nres;
 
 		// clean up psipred files
-		cleanup_after_psipred( psipred_filename );
+		cleanup_after_psipred( psipred_filename, fasta_filename );
 
 		start_residue += seq.size();
 
@@ -305,12 +334,13 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 }
 
 void
-PsiPredInterface::cleanup_after_psipred( std::string const & psipred_filename ) const {
+PsiPredInterface::cleanup_after_psipred( std::string const & psipred_filename, std::string const & fasta_filename ) const {
 	// clean up the files created by psipred
 	// psipred also creates .ss and .horiz files
 	std::string ss_filename( psipred_filename.substr( 0, psipred_filename.find( ".ss2" ) ) + ".ss" );
 	std::string horiz_filename( psipred_filename.substr( 0, psipred_filename.find( ".ss2" ) ) + ".horiz" );
-	std::string fasta_filename( psipred_filename.substr( 0, psipred_filename.find( ".ss2" ) ) + ".fasta" );
+	//std::string fasta_filename( psipred_filename.substr( 0, psipred_filename.find( ".ss2" ) ) + ".fasta" );
+	//"runpsipred" mangles differently, so passing in through interface
 	utility::vector1< std::string > files_to_remove;
 	files_to_remove.push_back( fasta_filename );
 	files_to_remove.push_back( psipred_filename );

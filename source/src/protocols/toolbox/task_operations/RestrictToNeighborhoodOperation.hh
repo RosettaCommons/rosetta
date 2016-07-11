@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh
 /// @brief  TaskOperation class that finds a neighborhood and makes it mobile in the PackerTask
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToNeighborhoodOperation_hh
 #define INCLUDED_protocols_toolbox_task_operations_RestrictToNeighborhoodOperation_hh

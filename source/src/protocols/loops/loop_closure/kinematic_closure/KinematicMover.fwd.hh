@@ -9,7 +9,7 @@
 
 /// @file   protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh
 /// @brief  KinematicMover forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicMover_fwd_hh

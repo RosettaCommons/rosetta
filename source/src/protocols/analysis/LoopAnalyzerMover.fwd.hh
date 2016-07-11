@@ -9,7 +9,7 @@
 
 /// @file   protocols/analysis/LoopAnalyzerMover.fwd.hh
 /// @brief  fwd declaration for LoopAnalyzer: intense analysis of loop quality
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_protocols_analysis_LoopAnalyzerMover_fwd_HH

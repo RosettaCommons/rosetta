@@ -9,7 +9,7 @@
 
 /// @file   protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.fwd.hh
 /// @brief  KinematicWrapper forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 #ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_fwd_hh
 #define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_fwd_hh

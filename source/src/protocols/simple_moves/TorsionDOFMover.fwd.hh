@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_moves/TorsionDOFMover.fwd.hh
 /// @brief  TorsionDOFMover forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_TorsionDOFMover_fwd_hh
 #define INCLUDED_protocols_simple_moves_TorsionDOFMover_fwd_hh

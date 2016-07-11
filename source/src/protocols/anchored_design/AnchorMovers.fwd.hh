@@ -9,7 +9,7 @@
 
 /// @file   protocols/anchored_design/AnchorMovers.fwd.hh
 /// @brief  Anchor Movers forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_protocols_anchored_design_AnchorMovers_fwd_hh

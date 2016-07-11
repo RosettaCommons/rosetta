@@ -9,7 +9,7 @@
 
 /// @file   protocols/metal_interface/ZincHeterodimerMover.fwd.hh
 /// @brief  ZincHeterodimerMover protocol-mover forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_protocols_metal_interface_HeterodimerMover_fwd_hh

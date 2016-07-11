@@ -8,6 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 sources = {
+#DO NOT MODIFY THIS FILE - it is necessary as a dummy placeholder for releases.  It's safer to offer an empty pilot_apps.src.settings(.all) than modify SCons to not build pilot apps.
 }
 
 

@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictToInterfaceOperation.cc
 /// @brief  TaskOperation class that finds an interface and leaves it mobile in the PackerTask
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/ProteinCoreResFilter.hh>

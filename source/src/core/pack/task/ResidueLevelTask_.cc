@@ -12,7 +12,7 @@
 /// Almost all of rosetta needs to use packer tasks, but very little of rosetta needs
 /// to see how it behaves internally.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 //Unit Headers

@@ -10,7 +10,7 @@
 /// @file   core/pack/task/ResfileReader.cc
 /// @brief  implementation of resfile reader and its command classes
 /// @author Gordon Lemmon (glemmon@gmail.com), adapted from the ResfileReader code
-/// by Steven Lewis (smlewi@unc.edu) and Andrew Leaver-Fay
+/// by Steven Lewis (smlewi@gmail.com) and Andrew Leaver-Fay
 
 // Unit Headers
 #include <protocols/ligand_docking/HighResDocker.hh>

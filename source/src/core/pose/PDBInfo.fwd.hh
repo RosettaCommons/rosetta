@@ -9,7 +9,7 @@
 
 /// @file   core/pose/PDBInfo.fwd.hh
 /// @brief  fwd declaration of classes defined in pose/PDBInfo
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_core_pose_PDBInfo_fwd_hh

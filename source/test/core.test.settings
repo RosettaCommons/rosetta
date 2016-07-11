@@ -242,6 +242,7 @@ sources = {
 		"sasa",
 		"sc",
 		"ScoreFunction",
+		"ScoreFunctionFactory",
 		"ScoreTest",
 		"SplitUnfoldedTwoBodyPotential",
 		"SurfacePotential",

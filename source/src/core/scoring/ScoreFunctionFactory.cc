@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/core/conformation/ResidueFactory.hh
-/// @brief
+/// @file src/core/conformation/ScoreFunctionFactory.cc
+/// @brief Manages generation of ScoreFunction objects from weights and patch files, RosettaScripts tags, etc
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
@@ -105,6 +105,29 @@ ScoreFunctionFactory::create_score_function(
 			weights_tag = "score12prime";
 		}
 	}
+
+	//If requested tag is beta_nov15 or beta_july15, but the user did not pass the relevant options-system option, ERROR
+	//This is because this scorefunction family has overrides to parameters (LK solvation params, etc)
+	//Those are loaded from the command-line flag, not the weights file
+	//Using only the weights file will give you mismatched weights/params and much sadness.
+	bool const betanov15_active(options[corrections::beta_nov15].value()
+		|| options[corrections::beta_nov15_cart].value() );
+	bool const betajuly15_active(options[corrections::beta_july15].value()
+		|| options[corrections::beta_july15_cart].value() );
+	//bool const sf_maybe_beta(weights_tag.find("beta") != weights_tag.end()) Can't remember string slicing syntax; programming on airplane
+	if ( (weights_tag == (BETA_NOV15+".wts")) && !betanov15_active ) {
+		utility_exit_with_message(BETA_NOV15 + ".wts requested, but -corrections::beta_nov15 not set to true. This leads to a garbage scorefunction.  Exiting.");
+	} else if ( (weights_tag == (BETA_JULY15+".wts")) && !betajuly15_active ) {
+		utility_exit_with_message(BETA_JULY15 + ".wts requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
+	} /* else if (sf_maybe_beta && !beta_nov15_active && !beta_july15_active) {
+	TR.Warning	<< "**************************************************************************\n"
+	<< "*****************************************************\n"
+	<< "****************************************************\n"
+	<< weights_tag << " may be a 'beta' scorefunction, but ScoreFunctionFactory thinks the beta flags weren't set.  "
+	<< "Your scorefunction may be garbage!\n"
+	<< "**************************************************************************\n"
+	<< "*****************************************************\n"
+	<< "****************************************************" << std::endl; */ //commented until maybe_beta syntax right
 
 	load_weights_file( weights_tag, scorefxn );
 
@@ -260,6 +283,8 @@ std::string const DOCK_LOW_PATCH( "docking_cen" );
 
 std::string const SCORE4_SMOOTH_CART( "score4_smooth_cart" );
 
+std::string const BETA_NOV15( "beta_nov15" );
+std::string const BETA_JULY15( "beta_july15" );
 
 core::scoring::ScoreFunctionOP
 get_score_function( bool const is_fullatom /* default true */ )

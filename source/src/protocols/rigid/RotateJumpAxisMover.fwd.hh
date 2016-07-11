@@ -9,7 +9,7 @@
 
 /// @file   protocols/rigid/RotateJumpAxisMover.fwd.hh
 /// @brief  RotateJumpAxisMover forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 #ifndef INCLUDED_protocols_rigid_RotateJumpAxisMover_fwd_hh
 #define INCLUDED_protocols_rigid_RotateJumpAxisMover_fwd_hh

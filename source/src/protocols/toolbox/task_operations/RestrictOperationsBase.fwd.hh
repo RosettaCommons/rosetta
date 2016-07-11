@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictOperationsBase.fwd.hh
 /// @brief  Base class for PoseMetricCalculator-using TaskOperations
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictOperationsBase_fwd_hh
 #define INCLUDED_protocols_toolbox_task_operations_RestrictOperationsBase_fwd_hh

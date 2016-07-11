@@ -22,7 +22,6 @@
 #include <core/types.hh>
 
 // Package headers
-#include <basic/database/open.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -39,36 +38,9 @@ using namespace core;
 using namespace scoring;
 
 ///////////////////////////////////////////////////////////////////////////
-/// @name ScoreFunctionUtilityTest
-/// @brief: unified tests for associated score function utilities
+/// ScoreFunctionUtilityTest
+/// moved to ScoreFunctionFactory.cxxtest.hh
 ///////////////////////////////////////////////////////////////////////////
-class ScoreFunctionUtilityTest : public CxxTest::TestSuite {
-
-public:
-
-	void setUp() {
-		core_init();
-	}
-
-	void tearDown() {}
-
-	void test_find_weights_file() {
-		// Local weights
-		TS_ASSERT_EQUALS( find_weights_file("core/scoring/test",".wts"), "core/scoring/test.wts" );
-		TS_ASSERT_EQUALS( find_weights_file("core/scoring/test.wts",".wts"), "core/scoring/test.wts" );
-		// Local patch
-		TS_ASSERT_EQUALS( find_weights_file("core/scoring/test",".wts_patch"), "core/scoring/test.wts_patch" );
-		TS_ASSERT_EQUALS( find_weights_file("core/scoring/test.wts_patch",".wts_patch"), "core/scoring/test.wts_patch" );
-		// Database weights
-		TS_ASSERT_EQUALS( find_weights_file("pre_talaris_2013_standard",".wts"), basic::database::full_name( "scoring/weights/pre_talaris_2013_standard.wts" ) );
-		TS_ASSERT_EQUALS( find_weights_file("pre_talaris_2013_standard.wts",".wts"), basic::database::full_name( "scoring/weights/pre_talaris_2013_standard.wts" ) );
-		// Database patch
-		TS_ASSERT_EQUALS( find_weights_file("score12",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
-		TS_ASSERT_EQUALS( find_weights_file("score12.wts_patch",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
-	}
-
-
-};
 
 ///////////////////////////////////////////////////////////////////////////
 /// @name ScoreFunctionTest

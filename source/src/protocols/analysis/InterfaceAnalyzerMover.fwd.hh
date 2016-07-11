@@ -9,7 +9,7 @@
 
 /// @file   protocols/analysis/InterfaceAnalyzerMover.fwd.hh
 /// @brief  fwd declaration for InterfaceAnalyzer: intense analysis of interface quality
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_protocols_analysis_InterfaceAnalyzerMover_fwd_hh

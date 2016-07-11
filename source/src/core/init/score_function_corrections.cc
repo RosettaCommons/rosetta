@@ -10,7 +10,7 @@
 /// @file   core/init/score_function_corrections.cc
 /// @brief  Initialize Score Funciton Corrections
 /// @author Matthew O'Meara
-
+/// @author Frank and/or Hahnbeom did the beta 15 stuff
 
 // Unit headers
 #include <core/init/score_function_corrections.hh>

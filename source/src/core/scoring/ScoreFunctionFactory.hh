@@ -123,6 +123,8 @@ extern std::string const DOCK_LOW_PATCH;
 
 extern std::string const SCORE4_SMOOTH_CART;
 
+extern std::string const BETA_NOV15;
+extern std::string const BETA_JULY15;
 
 /// @brief A helper function which returns a scoring function held in an owning pointer according to the
 /// user's command line parameters -score:weights and -score:patch

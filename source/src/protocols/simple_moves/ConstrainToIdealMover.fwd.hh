@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_moves/ConstrainToIdealMover.fwd.hh
 /// @brief  ConstrainToIdealMover forward declarations header
-/// @author Steven Lewis (smlewi@unc.edu)
+/// @author Steven Lewis (smlewi@gmail.com)
 
 
 #ifndef INCLUDED_protocols_simple_moves_ConstrainToIdealMover_fwd_hh
