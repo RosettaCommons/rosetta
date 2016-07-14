@@ -371,7 +371,9 @@ def generate_bindings(rosetta_source_path):
 
     if Platform == 'macos': includes = '-isystem/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1' + includes
 
-    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines, prefix=prefix, config=os.path.abspath('./rosetta.config') ) ) # --annotate-includes -stdlib=libc++ -x c++
+    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix}{annotate} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines,
+                                                                                                                                                            prefix=prefix, config=os.path.abspath('./rosetta.config'),
+                                                                                                                                                            annotate=' --annotate-includes' if Options.annotate_includes else '') ) # -stdlib=libc++ -x c++
 
     sources = open(prefix+'rosetta.sources').read().split()
 
@@ -431,6 +433,7 @@ def main(args):
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
     parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
+    parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
 
     global Options
     Options = parser.parse_args()
