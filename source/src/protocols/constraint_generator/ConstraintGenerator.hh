@@ -77,16 +77,6 @@ public:
 	std::string const &
 	class_name() const;
 
-public:
-	void
-	clear_stored_constraints() const;
-
-	void
-	store_constraints( core::scoring::constraints::ConstraintCOPs const & csts ) const;
-
-	core::scoring::constraints::ConstraintCOPs const &
-	retrieve_constraints() const;
-
 private:
 	std::string class_name_;
 	std::string id_;

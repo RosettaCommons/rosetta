@@ -72,34 +72,5 @@ ConstraintGenerator::class_name() const
 	return class_name_;
 }
 
-void
-ConstraintGenerator::clear_stored_constraints() const
-{
-	if ( id_ == "" ) return;
-
-	if ( ConstraintsManager::get_instance()->constraints_exist( id_ ) ) {
-		ConstraintsManager::get_instance()->remove_constraints( id_ );
-	}
-}
-
-void
-ConstraintGenerator::store_constraints( core::scoring::constraints::ConstraintCOPs const & csts ) const
-{
-	if ( id_ == "" ) {
-		TR.Warning << "ID is not set for this " << this->class_name() << " object. Constraints will not be removable by XML." << std::endl;
-		return;
-	}
-	ConstraintsManager::get_instance()->store_constraints( id_, csts );
-
-	// store the csts
-	TR.Debug << "Stored constraints as " << id_ << std::endl;
-}
-
-core::scoring::constraints::ConstraintCOPs const &
-ConstraintGenerator::retrieve_constraints() const
-{
-	return ConstraintsManager::get_instance()->retrieve_constraints( id_ );
-}
-
 } //namespace constraint_generator
 } //namespace protocols

@@ -23,6 +23,11 @@
 namespace protocols {
 namespace constraint_generator {
 
+class ConstraintsMap;
+
+typedef utility::pointer::shared_ptr< ConstraintsMap > ConstraintsMapOP;
+typedef utility::pointer::shared_ptr< ConstraintsMap const > ConstraintsMapCOP;
+
 class ConstraintsManager;
 
 typedef utility::pointer::shared_ptr< ConstraintsManager > ConstraintsManagerOP;

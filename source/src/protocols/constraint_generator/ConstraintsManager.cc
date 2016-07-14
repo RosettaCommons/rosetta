@@ -13,17 +13,92 @@
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 #include <protocols/constraint_generator/ConstraintsManager.hh>
+
+// Core headers
+#include <core/pose/Pose.hh>
+
+// Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.ConstraintsManager" );
-
 
 namespace protocols {
 namespace constraint_generator {
 
-ConstraintsManager::ConstraintsManager():
-	utility::SingletonBase< ConstraintsManager >(),
+// static const data
+core::pose::datacache::CacheableDataType::Enum const
+ConstraintsManager::MY_TYPE = core::pose::datacache::CacheableDataType::CONSTRAINT_GENERATOR;
+
+ConstraintsMap::ConstraintsMap():
+	basic::datacache::CacheableData(),
 	cst_map_()
+{}
+
+ConstraintsMap::~ConstraintsMap()
+{}
+
+basic::datacache::CacheableDataOP
+ConstraintsMap::clone() const
+{
+	return basic::datacache::CacheableDataOP( new ConstraintsMap( *this ) );
+}
+
+/// @brief Insert csts into the ConstraintsMap under the name given.
+/// @param[in] name Map key name under which constraints will be stored
+/// @param[in] csts Constraints to store
+/// @returns ConstraintsMap::iterator to new map item.
+ConstraintsMap::iterator
+ConstraintsMap::insert( std::string const & name, ConstraintCOPs const & csts )
+{
+	std::pair< std::string, ConstraintCOPs > const pair( name, csts );
+	return cst_map_.insert( pair ).first;
+}
+
+void
+ConstraintsMap::erase( iterator const & erase_me )
+{
+	cst_map_.erase( erase_me );
+}
+
+ConstraintsMap::iterator
+ConstraintsMap::find( std::string const & name )
+{
+	return cst_map_.find( name );
+}
+
+ConstraintsMap::const_iterator
+ConstraintsMap::find( std::string const & name ) const
+{
+	return cst_map_.find( name );
+}
+
+ConstraintsMap::iterator
+ConstraintsMap::begin()
+{
+	return cst_map_.begin();
+}
+
+ConstraintsMap::const_iterator
+ConstraintsMap::begin() const
+{
+	return cst_map_.begin();
+}
+
+ConstraintsMap::iterator
+ConstraintsMap::end()
+{
+	return cst_map_.end();
+}
+
+ConstraintsMap::const_iterator
+ConstraintsMap::end() const
+{
+	return cst_map_.end();
+}
+
+ConstraintsManager::ConstraintsManager():
+	utility::SingletonBase< ConstraintsManager >()
 {
 }
 
@@ -35,49 +110,124 @@ ConstraintsManager::create_singleton_instance()
 	return new ConstraintsManager;
 }
 
+/// @brief Clears constraints stored under the given name
+/// @details  If constraints are not found under the given name, or there is no
+///           cached data, this will do nothing.
+/// @param[in,out] pose  Pose where constraints are cached
+/// @param[in]     name  Name under which constraints are cached
+void
+ConstraintsManager::remove_constraints( core::pose::Pose & pose, std::string const & name ) const
+{
+	// do nothing if no data is cached
+	if ( !pose.data().has( MY_TYPE ) ) return;
+
+	ConstraintsMap & map = retrieve_constraints_map( pose );
+	ConstraintsMap::iterator cst_it = map.find( name );
+
+	// do nothing if no constraints are found under this name
+	if ( cst_it == map.end() ) return;
+
+	map.erase( cst_it );
+}
+
+/// @brief adds an empty constraints map to the pose datacache
+void
+ConstraintsManager::store_empty_constraints_map( core::pose::Pose & pose ) const
+{
+	pose.data().set( MY_TYPE, ConstraintsMapOP( new ConstraintsMap ) );
+}
+
+/// @brief Given a nonconst pose, returns a nonconst reference to its constraints map
+ConstraintsMap &
+ConstraintsManager::retrieve_constraints_map( core::pose::Pose & pose ) const
+{
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !pose.data().has( MY_TYPE ) ) store_empty_constraints_map( pose );
+
+	debug_assert( pose.data().has( MY_TYPE ) );
+	basic::datacache::CacheableData & cached = pose.data().get( MY_TYPE );
+	debug_assert( dynamic_cast< ConstraintsMap * >( &cached ) == &cached );
+	return static_cast< ConstraintsMap & >( cached );
+}
+
+/// @brief Given a const pose, returns a const reference to its constraints map, throwing error if
+///        no constaints map is present
+ConstraintsMap const &
+ConstraintsManager::retrieve_constraints_map( core::pose::Pose const & pose ) const
+{
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !pose.data().has( MY_TYPE ) ) {
+		std::stringstream msg;
+		msg << "No cached constraint map was found in the pose!  Be sure to use ConstraintsManager "
+			<< "to store generated constraints in the pose before trying to access them." << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	debug_assert( pose.data().has( MY_TYPE ) );
+	basic::datacache::CacheableData const & cached = pose.data().get( MY_TYPE );
+	debug_assert( dynamic_cast< ConstraintsMap const * >( &cached ) == &cached );
+	return static_cast< ConstraintsMap const & >( cached );
+}
+
+/// @brief Stores the given constraints in the pose datacache, under the name given.
+/// @param[in,out] pose  Pose where constraints will be cached
+/// @param[in]     name  Name under which constraints will be stored
+/// @param[in]     csts  Constraints to cache
+void
+ConstraintsManager::store_constraints(
+	core::pose::Pose & pose,
+	std::string const & name,
+	ConstraintCOPs const & csts ) const
+{
+	ConstraintsMap & map = retrieve_constraints_map( pose );
+	ConstraintsMap::iterator cst_it = map.find( name );
+	if ( cst_it == map.end() ) {
+		cst_it = map.insert( name, csts );
+	} else {
+		TR.Debug << "Overwriting cached constraints for " << name << std::endl;
+		cst_it->second = csts;
+	}
+}
+
+/// @brief Retrieves constraints from the pose datacache with the given name.
+/// @param[in] pose  Pose where constraints are cached
+/// @param[in] name  Name under which constraints are stored
+/// @returns   Const reference to list of stored constraints
+ConstraintsManager::ConstraintCOPs const &
+ConstraintsManager::retrieve_constraints(
+	core::pose::Pose const & pose,
+	std::string const & name ) const
+{
+	ConstraintsMap const & map = retrieve_constraints_map( pose );
+	ConstraintsMap::const_iterator cst_it = map.find( name );
+	if ( cst_it == map.end() ) {
+		std::stringstream msg;
+		msg << "No constraints were found in the pose datacache under the name "
+			<< name << ": valid names are: ";
+		print_valid_names( msg, map );
+		utility_exit_with_message( msg.str() );
+	}
+	return cst_it->second;
+}
+
+/// @brief Checks to see whether constraints exist in datacache under the given name
+/// @param[in] pose  Pose where constraints are cached
+/// @param[in] name  Name under which constraints may be stored
 bool
-ConstraintsManager::constraints_exist( std::string const & name ) const
+ConstraintsManager::has_stored_constraints( core::pose::Pose const & pose, std::string const & name ) const
 {
-	return ( cst_map_.find( name ) != cst_map_.end() );
-}
-
-core::scoring::constraints::ConstraintCOPs const &
-ConstraintsManager::retrieve_constraints( std::string const & name ) const
-{
-	ConstraintsMap::const_iterator csts = cst_map_.find( name );
-	if ( csts == cst_map_.end() ) {
-		std::stringstream msg;
-		msg << "ConstraintsManager::retrieve_constraints(): Tried to access a stored constraint set that doesn't exist: '" << name << "'" << std::endl;
-		print_valid_names( msg );
-		utility_exit_with_message( msg.str() );
-	}
-	return csts->second;
+	if ( !pose.data().has( MY_TYPE ) ) return false;
+	ConstraintsMap const & map = retrieve_constraints_map( pose );
+	return ( map.find( name ) != map.end() );
 }
 
 void
-ConstraintsManager::remove_constraints( std::string const & name )
-{
-	ConstraintsMap::iterator csts = cst_map_.find( name );
-	if ( csts == cst_map_.end() ) {
-		std::stringstream msg;
-		msg << "ConstraintsManager:retrieve_constraints(): Tried to remove a stored constraint set that doesn't exist: '" << name << "'" << std::endl;
-		print_valid_names( msg );
-		utility_exit_with_message( msg.str() );
-	}
-	cst_map_.erase( csts );
-}
-
-void
-ConstraintsManager::store_constraints( std::string const & name, core::scoring::constraints::ConstraintCOPs const & csts )
-{
-	cst_map_[ name ] = csts;
-}
-
-void
-ConstraintsManager::print_valid_names( std::ostream & os ) const
+ConstraintsManager::print_valid_names( std::ostream & os, ConstraintsMap const & map ) const
 {
 	os << "Valid constraint set names are: ";
-	for ( ConstraintsMap::const_iterator c=cst_map_.begin(); c!=cst_map_.end(); ++c ) {
+	for ( ConstraintsMap::const_iterator c=map.begin(); c!=map.end(); ++c ) {
 		os << c->first << " ";
 	}
 	os << std::endl;

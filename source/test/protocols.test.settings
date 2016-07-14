@@ -68,6 +68,7 @@ sources = {
 
 	"constraint_generator": [
 		"AtomPairConstraintGenerator",
+		"ConstraintsManagerTests",
 		"CoordinateConstraintGenerator",
 		"ConstraintGeneratorFactory",
 		"HydrogenBondConstraintGenerator",

@@ -18,6 +18,7 @@
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
+#include <protocols/constraint_generator/ConstraintsManager.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -83,11 +84,16 @@ AddConstraints::get_name() const
 void
 AddConstraints::apply( core::pose::Pose & pose )
 {
+	using core::scoring::constraints::ConstraintCOPs;
+
 	for ( ConstraintGeneratorCOPs::const_iterator cg=generators_.begin(); cg!=generators_.end(); ++cg ) {
 		debug_assert( *cg );
-		core::scoring::constraints::ConstraintCOPs const csts = (*cg)->apply( pose );
-		(*cg)->clear_stored_constraints();
-		(*cg)->store_constraints( csts );
+
+		// Generate constraints
+		ConstraintCOPs const csts = (*cg)->apply( pose );
+
+		// Store them in pose datacache
+		ConstraintsManager::get_instance()->store_constraints( pose, (*cg)->id(), csts );
 
 		if ( csts.size() == 0 ) {
 			TR << "ConstraintGenerator named " << (*cg)->id() << " did not generate any constraints. Not adding anything." << std::endl;
