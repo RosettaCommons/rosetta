@@ -41,6 +41,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -276,6 +277,8 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	// for the sake of naming consistency (JRJ)
 	// get prefix, append _prepack.pdb, output
 	std::string basename = utility::file::file_basename(pose.pdb_info()->name());
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
+	to_fullatom.apply( pose ); // go high res
 	pose.dump_pdb( basename + ".prepack.pdb" );
 }
 
