@@ -37,6 +37,18 @@ ResidueRange::stop() const
 	return stop_;
 }
 
+void
+ResidueRange::set_start( Size const start_res )
+{
+	start_ = start_res;
+}
+
+void
+ResidueRange::set_stop( Size const stop_res )
+{
+	stop_ = stop_res;
+}
+
 /// @brief less than operator that can be used for sorting
 /// @details If start < other.start, return true
 ///          If start > other.start, return false

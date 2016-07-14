@@ -24,6 +24,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -98,6 +99,10 @@ public:// accessor
 	/// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
 	void set_blueprint( std::string const & blueprint_file );
 
+	/// @brief sets the residue selector used to choose which residues to scan.  Default is all protein residues
+	void
+	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
+
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
@@ -114,8 +119,27 @@ public:// virtual main operation
 	// In this case, the test is whether the give pose is the topology we want.
 	virtual bool apply( Pose const & pose ) const;
 	virtual core::Real report_sm( Pose const & pose ) const;
-	virtual core::Size compute( Pose const & pose ) const;
+
 private:
+	/// @brief Returns the desired secondary structure
+	/// @details  Rules for selecting this seconary structure:
+	///           1. If a user-specified filtered_ss_ is set, return that
+	///           2. If StructureData is cached in the pose, use the secondary structure of that
+	///           3. Use pose secondary structure, throwing and error if use_pose_secstruct is true
+	std::string
+	get_filtered_secstruct( core::pose::Pose const & pose ) const;
+
+	/// @brief Computes number of residues matching the desired secondary structure
+	/// @param[in]  pose   The pose to scan
+	/// @param[in]  subset The residue subset of the pose to include in counting. Must match
+	///                    the pose size.
+	/// @returns  Number of protein residues in the residue subset that match the desired
+	///           secondary structure
+	core::Size
+	compute( Pose const & pose, core::select::residue_selector::ResidueSubset const & subset ) const;
+
+private:
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 	String filtered_ss_;
 

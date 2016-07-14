@@ -69,13 +69,31 @@ public:
 	void set_selected_ss( std::string const & selected );
 	/// @brief if true, one-residue terminal "loops" will be included (default=false)
 	void set_include_terminal_loops( bool const inc_term );
-	/// @brief Use this secstruct instead of the one found in the pose or DSSP, if set (default = not set)
-	void set_pose_secstruct( std::string const & ss );
-	/// @brief If set, dssp will be used to determine secondary structure. Otherwise, the pose SS will
-	/// be used IF it's not poly-L or empty (default=true)
-	void set_always_use_dssp( bool const always_use_dssp );
+
+	/// @brief Override pose secondary structure. The secondary structure set by this
+	///        method will always be used if it is non-empty.
+	void
+	set_pose_secstruct( std::string const & ss );
+
+	/// @brief If set, dssp will be used to determine secondary structure. Has no effect if pose_secstruct_
+	///        is set
+	/// @details Determines secondary structure by the following rules:
+	///          1. If pose_secstruct_ is user-specified, use that
+	///          2. If use_dssp_ is true, run DSSP and use DSSP secstruct
+	///          3. If use_dssp_ is false, return pose.secstruct()
+	void
+	set_use_dssp( bool const use_dssp );
 
 private:
+	/// @brief gets the secondary structure to be used by the selector
+	/// @param[in] pose  Input pose
+	/// @details Determines secondary structure by the following rules:
+	///          1. If pose_secstruct_ is user-specified, use that
+	///          2. If use_dssp_ is true, run DSSP and use DSSP secstruct
+	///          3. If use_dssp_ is false, return pose.secstruct()
+	std::string
+	get_secstruct( core::pose::Pose const & pose ) const;
+
 	void add_overlap(
 		ResidueSubset & matching_ss,
 		pose::Pose const & pose,
@@ -87,7 +105,7 @@ private:
 	std::string pose_secstruct_;
 	core::Size overlap_;
 	bool include_terminal_loops_;
-	bool always_use_dssp_;
+	bool use_dssp_;
 	std::set< char > selected_ss_;
 #ifdef    SERIALIZATION
 public:
@@ -96,10 +114,6 @@ public:
 #endif // SERIALIZATION
 
 };
-
-typedef std::pair< Size, Size > Interval;
-typedef utility::vector1< Interval > IntervalVec;
-IntervalVec subset_to_intervals( ResidueSubset const & subset );
 
 } //namespace residue_selector
 } //namespace select

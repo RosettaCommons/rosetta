@@ -34,6 +34,7 @@
 // Core headers
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -51,15 +52,10 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-using namespace protocols::denovo_design;
-using namespace protocols::denovo_design::components;
-
-typedef std::pair< core::Size, core::Size > Interval;
-typedef utility::vector1< Interval > IntervalVec;
-
 class FoldabilityFilter : public protocols::filters::Filter {
+	typedef protocols::denovo_design::components::Picker Picker;
+	typedef protocols::denovo_design::components::PickerOP PickerOP;
 public:
-
 	/// @brief Initialize FoldabilityFilter
 	FoldabilityFilter();
 
@@ -89,8 +85,7 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	core::Real compute_segment(
 		core::pose::Pose const & pose,
-		IntervalVec const & segments,
-		core::Size const segment ) const;
+		core::select::residue_selector::ResidueRange const & segment ) const;
 
 	// mutators
 public:
@@ -154,7 +149,7 @@ private:   // options
 	/// @brief try this number of times to build the motif
 	core::Size tries_;
 	/// @brief residue segments to rebuild
-	IntervalVec segments_;
+	core::select::residue_selector::ResidueRanges segments_;
 	/// @brief "success" is achieved when distance is below this threshold
 	core::Real distance_threshold_;
 	/// @brief if true, abego values in the input pose will be ignored for the segment we are rebuilding

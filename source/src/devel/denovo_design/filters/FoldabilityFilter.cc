@@ -207,7 +207,7 @@ FoldabilityFilter::parse_my_tag(
 void
 FoldabilityFilter::add_segment( core::Size const startval, core::Size const endval )
 {
-	segments_.push_back( std::make_pair( startval, endval ) );
+	segments_.push_back( core::select::residue_selector::ResidueRange( startval, endval ) );
 }
 
 std::string
@@ -231,17 +231,18 @@ FoldabilityFilter::report_sm( core::pose::Pose const & pose ) const
 core::Real
 FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 {
-	IntervalVec segments;
+	using core::select::residue_selector::ResidueRanges;
+
+	ResidueRanges segments;
 	if ( selector_ ) {
-		core::select::residue_selector::ResidueSubset subset = selector_->apply( pose );
-		segments = core::select::residue_selector::subset_to_intervals( subset );
+		segments = ResidueRanges( selector_->apply( pose ) );
 	} else {
 		segments = segments_;
 	}
 
 	core::Real score = 0.0;
-	for ( core::Size i=1, endi=segments.size(); i<=endi; ++i ) {
-		score += compute_segment( pose, segments, i );
+	for ( ResidueRanges::const_iterator range=segments.begin(); range!=segments.end(); ++range ) {
+		score += compute_segment( pose, *range );
 	}
 	return score / core::Real( segments.size() );
 }
@@ -249,16 +250,16 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 core::Real
 FoldabilityFilter::compute_segment(
 	core::pose::Pose const & pose,
-	IntervalVec const & segments,
-	core::Size const segment ) const
+	core::select::residue_selector::ResidueRange const & segment ) const
 {
+	using protocols::denovo_design::components::StructureDataOP;
+	using protocols::denovo_design::components::StructureDataFactory;
+
 	// work on pose copy
 	core::pose::PoseOP posecopy = generate_pose( pose );
 
-	debug_assert( segment );
-	debug_assert( segment <= segments.size() );
-	core::Size start = segments[ segment ].first;
-	core::Size end = segments[ segment ].second;
+	core::Size start = segment.start();
+	core::Size end = segment.stop();
 	runtime_assert( end >= start );
 
 	if ( StructureDataFactory::get_instance()->has_cached_string( *posecopy ) ) {

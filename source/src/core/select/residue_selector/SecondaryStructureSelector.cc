@@ -16,6 +16,7 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
+#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
 
@@ -57,7 +58,7 @@ SecondaryStructureSelector::SecondaryStructureSelector() :
 	pose_secstruct_( "" ),
 	overlap_( 0 ),
 	include_terminal_loops_( false ),
-	always_use_dssp_( true ),
+	use_dssp_( true ),
 	selected_ss_()
 {
 	selected_ss_.clear();
@@ -72,7 +73,7 @@ SecondaryStructureSelector::SecondaryStructureSelector( std::string const & sele
 	pose_secstruct_( "" ),
 	overlap_( 0 ),
 	include_terminal_loops_( false ),
-	always_use_dssp_( true ),
+	use_dssp_( true ),
 	selected_ss_()
 {
 	if ( !check_ss( selected ) ) {
@@ -85,41 +86,31 @@ SecondaryStructureSelector::~SecondaryStructureSelector()
 {
 }
 
+/// @brief Override pose secondary structure. The secondary structure set by this
+///        method will always be used if it is non-empty.
 void
 SecondaryStructureSelector::set_pose_secstruct( std::string const & ss )
 {
 	pose_secstruct_ = ss;
 }
 
-IntervalVec
-subset_to_intervals( ResidueSubset const & subset )
+/// @brief gets the secondary structure to be used by the selector
+/// @param[in] pose  Input pose
+/// @details Determines secondary structure by the following rules:
+///          1. If pose_secstruct_ is user-specified, use that
+///          2. If use_dssp_ is true, run DSSP and use DSSP secstruct
+///          3. If use_dssp_ is false, return pose.secstruct()
+std::string
+SecondaryStructureSelector::get_secstruct( core::pose::Pose const & pose ) const
 {
-	IntervalVec intervals;
-	bool inrange = false;
-	Interval current = std::make_pair( Size( 0 ), Size( 0 ) );
-	for ( core::Size i=1, endi=subset.size(); i<=endi; ++i ) {
-		if ( !inrange && subset[ i ] ) {
-			current.first = i;
-			inrange = true;
-		}
-		if ( inrange && !subset[ i ] ) {
-			current.second = i - 1;
-			inrange = false;
-			intervals.push_back( current );
-			current = std::make_pair( Size( 0 ), Size( 0 ) );
-		}
-	}
-	return intervals;
-}
+	if ( !pose_secstruct_.empty() ) return pose_secstruct_;
 
-bool is_poly_l( std::string const & ss )
-{
-	for ( std::string::const_iterator c = ss.begin(), endc = ss.end(); c != endc; ++c ) {
-		if ( *c != 'L' ) {
-			return false;
-		}
+	if ( use_dssp_ ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		return dssp.get_dssp_secstruct();
 	}
-	return true;
+
+	return pose.secstruct();
 }
 
 ResidueSubset
@@ -133,18 +124,7 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 	}
 
 	// first check pose secstruct, otherwise use dssp
-	std::string ss = "";
-	if ( pose_secstruct_.empty() ) {
-		if ( (!always_use_dssp_) && check_ss( pose.secstruct() ) && !is_poly_l( pose.secstruct() ) ) {
-			ss = pose.secstruct();
-		} else {
-			core::scoring::dssp::Dssp dssp( pose );
-			ss = dssp.get_dssp_secstruct();
-		}
-	} else {
-		ss = pose_secstruct_;
-	}
-
+	std::string const ss = get_secstruct( pose );
 	if ( !check_ss( ss ) ) {
 		std::stringstream err;
 		err << "SecondaryStructureSelector: the secondary structure string " << ss << " is invalid." << std::endl;
@@ -169,20 +149,24 @@ void SecondaryStructureSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & )
 {
-	if ( tag->hasOption( "overlap" ) ) {
-		set_overlap( tag->getOption< core::Size >( "overlap" ) );
-	}
-	if ( tag->hasOption( "include_terminal_loops" ) ) {
-		set_include_terminal_loops( tag->getOption< bool >( "include_terminal_loops" ) );
-	}
+	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
+	set_include_terminal_loops( tag->getOption< bool >( "include_terminal_loops", include_terminal_loops_ ) );
+	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_ ) );
+	set_pose_secstruct( tag->getOption< std::string >( "pose_secstruct", pose_secstruct_ ) );
 
-	if ( tag->hasOption( "use_dssp" ) ) {
-		set_always_use_dssp( tag->getOption< bool >( "use_dssp" ) );
+	/*
+	if ( tag->hasOption( "blueprint" ) ) {
+		if ( tag->hasOption( "pose_secstruct" ) ) {
+			std::stringstream msg;
+			msg << "SecondaryStructureSelector::parse_my_tag(): You cannot specify a blueprint and a pose secondary structure to the same selector."
+				<< std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+		}
+		std::string const bp_name = tag->getOption< std::string >( "blueprint" );
+		protocols::jd2::parser::BluePrint bp( bp_name );
+		set_pose_secstruct( bp.secstruct() );
 	}
-
-	if ( tag->hasOption( "pose_secstruct" ) ) {
-		set_pose_secstruct( tag->getOption< std::string >( "pose_secstruct" ) );
-	}
+	*/
 
 	if ( !tag->hasOption( "ss" ) ) {
 		std::stringstream err;
@@ -249,46 +233,56 @@ SecondaryStructureSelector::add_overlap(
 	pose::Pose const & pose,
 	std::string const & ss ) const
 {
-	IntervalVec intervals = subset_to_intervals( matching_ss );
-	for ( IntervalVec::iterator i = intervals.begin(); i != intervals.end(); ++i ) {
+	ResidueRanges intervals( matching_ss );
+	for ( ResidueRanges::iterator range=intervals.begin(); range!=intervals.end(); ++range ) {
 		Size count = Size( 0 );
-		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, i->first ) ) {
-			i->first -= 1;
-			matching_ss[ i->first ] = true;
+		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range->start() ) ) {
+			range->set_start( range->start() - 1 );
+			matching_ss[ range->start() ] = true;
 			count += 1;
 		}
 		count = Size( 0 );
-		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, i->second ) ) {
-			i->second += 1;
-			matching_ss[ i->second ] = true;
+		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range->stop() ) ) {
+			range->set_stop( range->stop() + 1 );
+			matching_ss[ range->stop() ] = true;
 			count += 1;
 		}
-		TR.Debug << "Interval: " << i->first << " " << i->second << " " << ss[ i->first - 1 ] << std::endl;
+		TR.Debug << "Interval: " << range->start() << " " << range->stop() << " " << ss[ range->start() - 1 ] << std::endl;
 
 		// get rid of one-residue terminal "loops"
 		if ( include_terminal_loops_ ) {
 			continue;
 		}
 
-		if ( ( i->first == i->second ) && ( ss[ i->first - 1 ] == 'L' )
-				&& ( pose::pose_residue_is_terminal( pose, i->first ) ) ) {
-			matching_ss[ i->first ] = false;
+		if ( ( range->start() == range->stop() ) && ( ss[ range->start() - 1 ] == 'L' )
+				&& ( pose::pose_residue_is_terminal( pose, range->start() ) ) ) {
+			matching_ss[ range->start() ] = false;
 		}
-		if ( ( i->first + 1 == i->second ) && ( ss[ i->first - 1 ] == 'L' )
-				&& ( pose::pose_residue_is_terminal( pose, i->first ) ) ) {
-			matching_ss[ i->first ] = false;
+		if ( ( range->start() + 1 == range->stop() ) && ( ss[ range->start() - 1 ] == 'L' )
+				&& ( pose::pose_residue_is_terminal( pose, range->start() ) ) ) {
+			matching_ss[ range->start() ] = false;
 		}
-		if ( ( i->first + 1 == i->second ) && ( ss[ i->second - 1 ] == 'L' )
-				&& ( pose::pose_residue_is_terminal( pose, i->second ) ) ) {
-			matching_ss[ i->second ] = false;
+		if ( ( range->start() + 1 == range->stop() ) && ( ss[ range->stop() - 1 ] == 'L' )
+				&& ( pose::pose_residue_is_terminal( pose, range->stop() ) ) ) {
+			matching_ss[ range->stop() ] = false;
 		}
 	}
 }
 
+
+	void
+	set_pose_secstruct( std::string const & ss );
+
+/// @brief If set, dssp will be used to determine secondary structure. Has no effect if pose_secstruct_
+///        is set
+/// @details Determines secondary structure by the following rules:
+///          1. If pose_secstruct_ is user-specified, use that
+///          2. If use_dssp_ is true, run DSSP and use DSSP secstruct
+///          3. If use_dssp_ is false, return pose.secstruct()
 void
-SecondaryStructureSelector::set_always_use_dssp( bool const always_use_dssp )
+SecondaryStructureSelector::set_use_dssp( bool const use_dssp )
 {
-	always_use_dssp_ = always_use_dssp;
+	use_dssp_ = use_dssp;
 }
 
 void
@@ -343,7 +337,7 @@ core::select::residue_selector::SecondaryStructureSelector::save( Archive & arc 
 	arc( CEREAL_NVP( pose_secstruct_ ) ); // std::string
 	arc( CEREAL_NVP( overlap_ ) ); // core::Size
 	arc( CEREAL_NVP( include_terminal_loops_ ) ); // _Bool
-	arc( CEREAL_NVP( always_use_dssp_ ) ); // _Bool
+	arc( CEREAL_NVP( use_dssp_ ) ); // _Bool
 	arc( CEREAL_NVP( selected_ss_ ) ); // std::set<char>
 }
 
@@ -355,7 +349,7 @@ core::select::residue_selector::SecondaryStructureSelector::load( Archive & arc 
 	arc( pose_secstruct_ ); // std::string
 	arc( overlap_ ); // core::Size
 	arc( include_terminal_loops_ ); // _Bool
-	arc( always_use_dssp_ ); // _Bool
+	arc( use_dssp_ ); // _Bool
 	arc( selected_ss_ ); // std::set<char>
 }
 

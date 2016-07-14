@@ -52,9 +52,17 @@ public:
 	Size
 	start() const;
 
+	/// @brief Sets starting residue of the range
+	void
+	set_start( Size const start_res );
+
 	/// @brief Returns the stopping residue of the range
 	Size
 	stop() const;
+
+	/// @brief Sets stopping residue of the range
+	void
+	set_stop( Size const stop_res );
 
 private:
 	Size start_;

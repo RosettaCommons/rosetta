@@ -29,6 +29,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <core/types.hh>
 
@@ -54,6 +56,7 @@ namespace filters {
 // @brief default constructor
 SecondaryStructureFilter::SecondaryStructureFilter():
 	Filter( "SecondaryStructure" ),
+	selector_( new core::select::residue_selector::TrueResidueSelector ),
 	filtered_ss_( "" ),
 	use_abego_( false ),
 	use_pose_secstruct_( false ),
@@ -64,6 +67,7 @@ SecondaryStructureFilter::SecondaryStructureFilter():
 // @brief constructor with arguments
 SecondaryStructureFilter::SecondaryStructureFilter( String const & ss ):
 	Filter( "SecondaryStructure" ),
+	selector_( new core::select::residue_selector::TrueResidueSelector ),
 	filtered_ss_( ss ),
 	use_abego_( false ),
 	use_pose_secstruct_( false ),
@@ -104,7 +108,7 @@ bool SecondaryStructureFilter::apply( Pose const & pose ) const
 void
 SecondaryStructureFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )
@@ -150,6 +154,15 @@ SecondaryStructureFilter::parse_my_tag(
 	}
 
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
+
+	core::select::residue_selector::ResidueSelectorCOP const selector = core::select::residue_selector::parse_residue_selector( tag, data );
+	if ( selector ) set_residue_selector( *selector );
+}
+
+void
+SecondaryStructureFilter::set_residue_selector( core::select::residue_selector::ResidueSelector const & selector )
+{
+	selector_ = selector.clone();
 }
 
 /// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
@@ -231,8 +244,13 @@ SecondaryStructureFilter::set_blueprint( std::string const & blueprint_file )
 /// The filter score will report only secondary structures, but if you specify abego,
 /// the 'apply' function will return false if abegos don't match
 core::Size
-SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
-
+SecondaryStructureFilter::compute(
+	core::pose::Pose const & pose,
+	core::select::residue_selector::ResidueSubset const & subset ) const
+{
+	using protocols::denovo_design::components::StructureData;
+	using protocols::denovo_design::components::StructureDataFactory;
+	
 	core::sequence::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
 	String pose_ss = pose.secstruct();
@@ -242,9 +260,9 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 	}
 
 	std::string filter_ss = filtered_ss_;
+	// if no filtered ss is present, try to get it from attached StructureData
 	if ( filtered_ss_.empty() ) {
-		filter_ss =
-			protocols::denovo_design::components::StructureDataFactory::get_instance()->create_from_pose( pose )->ss();
+		filter_ss = StructureDataFactory::get_instance()->get_from_const_pose( pose ).ss();
 	}
 
 	if ( pose.total_residue() != filter_ss.length() ) {
@@ -257,6 +275,8 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if this residue is a ligand, ignore and move on
 		if ( ! pose.residue( i ).is_protein() ) continue;
+		if ( ! subset[ i ] ) continue;
+
 
 		char const sec = filter_ss[ i - 1 ];
 		if ( sec == 'D' ) {
@@ -307,15 +327,15 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 core::Real
 SecondaryStructureFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	// count protein residues
+	// count selected protein residues
 	core::Size protein_residues( pose.total_residue() );
+	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-		if ( ! pose.residue( i ).is_protein() ) {
-			--protein_residues;
-		}
+		if ( pose.residue( i ).is_protein() && subset[ i ] ) continue;
+		--protein_residues;
 	}
 
-	return core::Real( compute( pose ) ) / core::Real( protein_residues );
+	return core::Real( compute( pose, subset ) ) / core::Real( protein_residues );
 }
 
 protocols::filters::FilterOP
