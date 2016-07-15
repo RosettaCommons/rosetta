@@ -386,6 +386,11 @@ private:
 		utility::fixedsizearray1< Size, N > const & bb_bin_next
 	) const;
 
+	/// @brief When the first non-comment line is read from a rotamer file, check whether there's an extra column (signifying that this is a
+	/// Shapovalov file, which has an extra column in the middle.)
+	/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+	bool check_for_extra_column( utility::io::izstream & infile, bool const first_line_three_letter_code_already_read ) const;
+
 protected:
 
 	template< class P >

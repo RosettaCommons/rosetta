@@ -120,7 +120,7 @@ ScoreFunctionFactory::create_score_function(
 	} else if ( (weights_tag == (BETA_JULY15+".wts")) && !betajuly15_active ) {
 		utility_exit_with_message(BETA_JULY15 + ".wts requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
 	} /* else if (sf_maybe_beta && !beta_nov15_active && !beta_july15_active) {
-	TR.Warning	<< "**************************************************************************\n"
+	TR.Warning << "**************************************************************************\n"
 	<< "*****************************************************\n"
 	<< "****************************************************\n"
 	<< weights_tag << " may be a 'beta' scorefunction, but ScoreFunctionFactory thinks the beta flags weren't set.  "

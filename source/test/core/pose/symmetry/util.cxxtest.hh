@@ -87,7 +87,7 @@ public: // tests
 		TS_ASSERT(is_symmetric(*scfxn));
 
 	}
-	
+
 	void test_symmetrize_fold_tree()
 	{
 		using core::kinematics::FoldTree;

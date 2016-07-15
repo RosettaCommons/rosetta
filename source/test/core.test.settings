@@ -168,6 +168,8 @@ sources = {
 	],
 	"pack/dunbrack" : [
 		"DunbrackEnergy",
+		"NCAA_dunbrack",
+		"NCAA_dunbrack_betanov15",
 		"RotamerConstraintDun2002",
 		"ValidateDunbrackBinaries",
 	],

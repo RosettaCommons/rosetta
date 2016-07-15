@@ -247,7 +247,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	core::Real massSum=0.0;
 	Size resstart = 1;
 	Size resend = pose.total_residue();
-	if(point_radius_ != 0 ){
+	if ( point_radius_ != 0 ) {
 		Size midres = (pose.total_residue()+1)/2;
 		resstart = midres;
 		resend = midres;
@@ -354,7 +354,7 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	numeric::fourier::ifft3(Frot, rot);
 
 	// mask asu
-	if(symminfo_.enabled()){
+	if ( symminfo_.enabled() ) {
 		symminfo_.mask_asu( rot , core::scoring::electron_density::getDensityMap(), 0);
 	}
 
@@ -372,28 +372,28 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	}
 	core::Real minDistNative = 1e4;
 	std::sort(point_score_pairs.begin(), point_score_pairs.end(), PointScoreComparator());
-	for(Size i=1; i<=point_score_pairs.size(); i++){
+	for ( Size i=1; i<=point_score_pairs.size(); i++ ) {
 		bool hasneighbor = false;
 		numeric::xyzVector< core::Real > x_idx = point_score_pairs[i].first;
 		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-		for(Size j=1; j<=points_to_search_.size(); j++){
+		for ( Size j=1; j<=points_to_search_.size(); j++ ) {
 			numeric::xyzVector< core::Real > x_idx_stored = points_to_search_[j];
 			numeric::xyzVector< core::Real > x_cart_stored(x_idx_stored[0],x_idx_stored[1],x_idx_stored[2]);
 			core::scoring::electron_density::getDensityMap().idx2cart( x_idx_stored, x_cart_stored );
 			core::Real distance = (x_cart - x_cart_stored).length();
-			if( distance < point_radius_ ) hasneighbor = true;
+			if ( distance < point_radius_ ) hasneighbor = true;
 		}
-		if( !hasneighbor){
-				points_to_search_.push_back(point_score_pairs[i].first);
-				if ( native_ ) {
-					numeric::xyzVector< core::Real > x_cart;
-					core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-					core::Real distNative = symminfo_.min_symm_dist2(x_cart, native_com_);
-					minDistNative = std::min( minDistNative, distNative );
-				}
+		if ( !hasneighbor ) {
+			points_to_search_.push_back(point_score_pairs[i].first);
+			if ( native_ ) {
+				numeric::xyzVector< core::Real > x_cart;
+				core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+				core::Real distNative = symminfo_.min_symm_dist2(x_cart, native_com_);
+				minDistNative = std::min( minDistNative, distNative );
+			}
 		}
-		if(points_to_search_.size() >= topNtrans_) break;
+		if ( points_to_search_.size() >= topNtrans_ ) break;
 	}
 
 
@@ -404,11 +404,11 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 		//dump the points
 		std::ofstream outpoints;
 		outpoints.open("selectedpoints.txt", std::ofstream::app);
-		for( Size i=1; i<=points_to_search_.size(); i++){
-				numeric::xyzVector< core::Real > x_cart;
-				numeric::xyzVector< core::Real > x_idx = points_to_search_[i];
-				core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-				outpoints << "ATOM " << utility::to_string(i) << " " << x_cart[0] << " " << x_cart[1] << " " << x_cart[2] << std::endl;
+		for ( Size i=1; i<=points_to_search_.size(); i++ ) {
+			numeric::xyzVector< core::Real > x_cart;
+			numeric::xyzVector< core::Real > x_idx = points_to_search_[i];
+			core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+			outpoints << "ATOM " << utility::to_string(i) << " " << x_cart[0] << " " << x_cart[1] << " " << x_cart[2] << std::endl;
 		}
 		outpoints.close();
 	}

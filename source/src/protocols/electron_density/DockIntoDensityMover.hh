@@ -120,9 +120,9 @@ public:
 
 class PointScoreComparator{
 public:
-		bool operator()(std::pair< numeric::xyzVector<core::Real>, core::Real > Pair1, std::pair< numeric::xyzVector<core::Real>, core::Real > Pair2){
-			return (Pair1.second < Pair2.second);
-		}
+	bool operator()(std::pair< numeric::xyzVector<core::Real>, core::Real > Pair1, std::pair< numeric::xyzVector<core::Real>, core::Real > Pair2){
+		return (Pair1.second < Pair2.second);
+	}
 
 };
 

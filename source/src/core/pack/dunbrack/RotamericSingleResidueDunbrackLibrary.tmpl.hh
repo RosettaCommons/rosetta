@@ -84,6 +84,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 #include <utility/backtrace.hh>
 #include <utility/LexicographicalIterator.hh>
 #include <utility/Bound.hh>
@@ -1053,6 +1054,38 @@ RotamericSingleResidueDunbrackLibrary< T, N >::verify_bb_bins(
 	}
 }
 
+/// @brief When the first non-comment line is read from a rotamer file, check whether there's an extra column (signifying that this is a
+/// Shapovalov file, which has an extra column in the middle.)
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+template < Size T, Size N >
+bool
+RotamericSingleResidueDunbrackLibrary< T, N >::check_for_extra_column(
+	utility::io::izstream & infile,
+	bool const first_line_three_letter_code_already_read
+) const {
+	std::string line;
+	infile.getline( line );
+	//This is SUPER hacky, but need to rewind to the start of the line, and without using seekg or tellg (which aren't available for gzipped streams):
+	for ( core::Size linelength( line.length() + 1 ) ; linelength > 0; --linelength ) {
+		infile.stream().unget();
+	}
+	//Need to remove whitespace:
+	utility::trim( line, " \t" );
+	core::Size const shift( first_line_three_letter_code_already_read ? 1 : 0 );
+
+	std::istringstream curline(line);
+	std::string dummy; //Dummy string as recepticle for parsing line.
+	core::Size counter(0);
+	//Count how many whitespace-separated things there are in the line:
+	while ( !curline.eof() ) {
+		curline >> dummy;
+		++counter;
+	}
+	if ( counter == 15 + N - shift ) return false;
+	runtime_assert_string_msg( counter == 16 + N - shift, "Error in core::pack::dunbrack::RotamericSingleResidueDunbrackLibrary::check_for_extra_column(): A rotamer file must have either 15+N or 16+N columns." );
+	return true;
+}
+
 /// @details once a list of chi samples has been enumerated, this function
 /// instantiates Residue objectes and give them the correct geometry.
 template < Size T, Size N >
@@ -1830,15 +1863,29 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 	std::string three_letter_code;
 	Size count_read_rotamers(0);
 
+	bool is_shapovalov_file(false);
+	bool first_noncomment_line(true);
+
 	while ( infile ) { // if the file should suddenly end, we'd be in trouble.
 
+
 		/// 1. peek at the line; if it starts with #, skip to the next line.
+		/// Also, set up an istringstream for the line.
 		char first_char = infile.peek();
 		if ( first_char == '#' ) {
 			std::string line;
 			infile.getline( line );
 			continue;
 		}
+
+		/// 1b. Shapovalov files have an extra column in the MIDDLE, which is a pain in the neck.
+		/// First, we need to determine whether that applies here.
+		/// (Added by VKM, 11 July 2016).
+		if ( first_noncomment_line ) {
+			first_noncomment_line = false; //We only do this once per file, since it requires two parses of the same line.  We use the first line that isn't commented out.
+			is_shapovalov_file = check_for_extra_column(infile, first_line_three_letter_code_already_read);
+		}
+
 
 		/// 2. Read the line.  Format is:
 		/// a.   three-letter-code,
@@ -1877,8 +1924,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 		infile >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];
 		infile >> probability;
 		//MaximCode
-		if ( basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				&& basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
+		if ( is_shapovalov_file ) {
 			infile >> minusLogProbability;
 		}
 		infile >> chimean[ 1 ] >> chimean[ 2 ] >> chimean[ 3 ] >> chimean[ 4 ];

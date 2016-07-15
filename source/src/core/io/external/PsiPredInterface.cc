@@ -51,9 +51,9 @@ void runpsipred_name_mangle_check(
 
 	//Do those file names exist?  If not, try "runpsipred" script name mangling.  If not that, throw an error.
 	using utility::file::file_exists;
-	if(! file_exists(filename)){
+	if ( ! file_exists(filename) ) {
 		std::string const runpsipred_filename(ref_filename + ":r:t" + extension);
-		if(file_exists(runpsipred_filename)) {
+		if ( file_exists(runpsipred_filename) ) {
 			TR.Debug << "runpsipred file name type detected; changing expected psipred file name to " << runpsipred_filename << std::endl;
 			filename = runpsipred_filename;
 		} else {

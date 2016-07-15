@@ -237,20 +237,20 @@ public:
 	void run( );
 
 	core::Real overlap_score(
- 		CAtrace &pose1,
+		CAtrace &pose1,
 		CAtrace &pose2,
 		core::Size offset,
 		protocols::electron_density::DensitySymmInfo const &symminfo);
 
 	core::Real clash_score(
- 		CAtrace &pose1,
+		CAtrace &pose1,
 		CAtrace &pose2,
 		core::Size offset,
 		protocols::electron_density::DensitySymmInfo const &symminfo);
 
 
 	core::Real closability_score(
- 		CAtrace &pose1,
+		CAtrace &pose1,
 		CAtrace &pose2,
 		core::Size offset,
 		protocols::electron_density::DensitySymmInfo const &symminfo);
@@ -544,9 +544,9 @@ void DockFragmentsMover::run() {
 		dock.setOutputSilent( silent_fn );
 	}
 
-    if ( option[ point_radius ].user() != 0 ){
-	    dock.setCenterOnMiddleCA(true);
-    }
+	if ( option[ point_radius ].user() != 0 ) {
+		dock.setCenterOnMiddleCA(true);
+	}
 
 	// read CA positions (if specified)
 	if ( option[ ca_positions ].user() ) {
@@ -557,7 +557,7 @@ void DockFragmentsMover::run() {
 	}
 
 	// use symmetry (if specified)
-	if (symminfo.enabled()) {
+	if ( symminfo.enabled() ) {
 		dock.setSymminfo(symminfo);
 	}
 
@@ -834,10 +834,10 @@ void ScoreFragmentSetMover::run() {
 
 core::Real
 ScoreFragmentSetMover::overlap_score(
- 		CAtrace &pose1,
-		CAtrace &pose2,
-		core::Size offset,
-		protocols::electron_density::DensitySymmInfo const &symminfo)
+	CAtrace &pose1,
+	CAtrace &pose2,
+	core::Size offset,
+	protocols::electron_density::DensitySymmInfo const &symminfo)
 {
 	core::Size mersize = pose1.cas_.size();
 	core::Real overlap_ij = 0.0;
@@ -877,10 +877,10 @@ ScoreFragmentSetMover::overlap_score(
 
 core::Real
 ScoreFragmentSetMover::clash_score(
-		CAtrace &pose1,
-		CAtrace &pose2,
-		core::Size offset,
-		protocols::electron_density::DensitySymmInfo const &symminfo)
+	CAtrace &pose1,
+	CAtrace &pose2,
+	core::Size offset,
+	protocols::electron_density::DensitySymmInfo const &symminfo)
 {
 	core::Size mersize = pose1.cas_.size();
 	core::Real clash_ij = 0.0;
@@ -901,10 +901,10 @@ ScoreFragmentSetMover::clash_score(
 
 core::Real
 ScoreFragmentSetMover::closability_score(
-		CAtrace &pose1,
-		CAtrace &pose2,
-		core::Size offset,
-		protocols::electron_density::DensitySymmInfo const &symminfo)
+	CAtrace &pose1,
+	CAtrace &pose2,
+	core::Size offset,
+	protocols::electron_density::DensitySymmInfo const &symminfo)
 {
 	runtime_assert( gap_lengths_.size() == gap_weights_.size() );
 
