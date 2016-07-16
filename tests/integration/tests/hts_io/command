@@ -36,12 +36,12 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-if type -P sqlite3 &>/dev/null; then
-   sqlite3 screening_features.db3 < dump.sql | egrep -vf ../../ignore_list  > screening_features.db3.dump 
-else
-   echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
-fi
-rm -rf screening_features.db3
+#if type -P sqlite3 &>/dev/null; then
+#   sqlite3 screening_features.db3 < dump.sql | egrep -vf ../../ignore_list  > screening_features.db3.dump 
+#else
+#   echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
+#fi
+#rm -rf screening_features.db3
 
 #
 # After that, do whatever you want.
