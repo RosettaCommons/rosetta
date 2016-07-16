@@ -729,49 +729,100 @@ alignVectorSets(
 	xyzVector< T > B1,
 	xyzVector< T > A2,
 	xyzVector< T > B2 ) {
+
+	if ( (A1.is_zero() && B1.is_zero()) || (A2.is_zero() && B2.is_zero()) ) {
+		// Someone let two null vectors come in as a pair - just return the identity matrix
+		return xyzMatrix< T >::identity();
+	}
+
+	xyzVector< T > X1 = (A1+B1);
+	xyzVector< T > X2 = (A2+B2);
+
+	if ( X1.is_zero() || X2.is_zero() ) {
+		// One or both of A1/B1 and A2/B2 are equal and opposite. Use an arbitrarily chosen perpendicular vector instead.
+		if ( X1.is_zero() ) {
+			if ( A1[0] != 0 || A1[1] != 0 ) {
+				X1 = xyzVector< T >( A1[1], -A1[0], 0 );
+			} else { // A1 is on z-axis
+				X1 = xyzVector< T >( 1, 0, 0 );
+			}
+		}
+		if ( X2.is_zero() ) {
+			if ( A2[0] != 0 || A2[1] != 0 ) {
+				X2 = xyzVector< T >( A2[1], -A2[0], 0 );
+			} else { // A2 is on z-axis
+				X2 = xyzVector< T >( 1, 0, 0 );
+			}
+		}
+	}
+
 	// 1) find rotation to align canonic +z to each vector pair's +z (defined as the avg of the two vectors)
-	xyzVector< T > X1 = (A1+B1); X1.normalize();
-	xyzVector< T > X2 = (A2+B2); X2.normalize();
-
-	T cb1 = X1[2], sb1 = sqrt(1-(X1[2]*X1[2]));
-	T Rg1 = sqrt((X1[0]*X1[0])+(X1[1]*X1[1]));
-	T cg1 = X1[1]/Rg1, sg1 = X1[0]/Rg1;
-
-	T cb2 = X2[2], sb2 = sqrt(1-(X2[2]*X2[2]));
-	T Rg2 = sqrt((X2[0]*X2[0])+(X2[1]*X2[1]));
-	T cg2 = X2[1]/Rg2, sg2 = X2[0]/Rg2;
+	X1.normalize();
+	X2.normalize();
 
 	xyzMatrix< T > R1gb, R2gb, R1gb_i, R2gb_i;
-	R1gb.xx( cg1 ); R1gb.xy(cb1*sg1); R1gb.xz(sb1*sg1);
-	R1gb.yx(-sg1 ); R1gb.yy(cb1*cg1); R1gb.yz(sb1*cg1);
-	R1gb.zx( 0   ); R1gb.zy(-sb1)   ; R1gb.zz(cb1);
 
-	R2gb.xx( cg2 ); R2gb.xy(cb2*sg2); R2gb.xz(sb2*sg2);
-	R2gb.yx(-sg2 ); R2gb.yy(cb2*cg2); R2gb.yz(sb2*cg2);
-	R2gb.zx( 0   ); R2gb.zy(-sb2)   ; R2gb.zz(cb2);
+	T cb1 = X1[2], sb1 = sqrt(1-(X1[2]*X1[2]));
+	T cg1, sg1;
+	T Rg1 = sqrt((X1[0]*X1[0])+(X1[1]*X1[1]));
+	if ( Rg1 != 0 ) {
+		cg1 = X1[1]/Rg1; sg1 = X1[0]/Rg1;
+		R1gb.xx( cg1 ); R1gb.xy(cb1*sg1); R1gb.xz(sb1*sg1);
+		R1gb.yx(-sg1 ); R1gb.yy(cb1*cg1); R1gb.yz(sb1*cg1);
+		R1gb.zx( 0   ); R1gb.zy(-sb1)   ; R1gb.zz(cb1);
+	} else {
+		// X1 is already aligned to the z-axis
+		cg1 = 1; sg1 = 0;
+		R1gb = xyzMatrix< T >::identity();
+	}
 
-	R1gb_i = numeric::inverse( R1gb );
-	R2gb_i = numeric::inverse( R2gb );
+	T cb2 = X2[2], sb2 = sqrt(1-(X2[2]*X2[2]));
+	T cg2, sg2;
+	T Rg2 = sqrt((X2[0]*X2[0])+(X2[1]*X2[1]));
+	if ( Rg2 != 0 ) {
+		cg2 = X2[1]/Rg2; sg2 = X2[0]/Rg2;
+		R2gb.xx( cg2 ); R2gb.xy(cb2*sg2); R2gb.xz(sb2*sg2);
+		R2gb.yx(-sg2 ); R2gb.yy(cb2*cg2); R2gb.yz(sb2*cg2);
+		R2gb.zx( 0   ); R2gb.zy(-sb2)   ; R2gb.zz(cb2);
+	} else {
+		// X2 is already aligned to the z-axis
+		cg2 = 1; sg2 = 0;
+		R2gb = xyzMatrix< T >::identity();
+	}
+
+	R1gb_i = numeric::inverse( R1gb ); // Rotates X1 onto the z axis
+	R2gb_i = numeric::inverse( R2gb ); // Rotates X2 onto the z axis
 
 	// 2) now choose one of the two vectors (A1/A2) to define the xz plane
-	A1.normalize();
-	A2.normalize();
+	A1.normalize_or_zero();
+	A2.normalize_or_zero();
 	numeric::xyzVector< T > RgbA1 = R1gb_i*A1;
 	numeric::xyzVector< T > RgbA2 = R2gb_i*A2;
+	numeric::xyzMatrix< T > R1, R2, R1_i, R;
 
 	T Ra1 = sqrt((RgbA1[0]*RgbA1[0])+(RgbA1[1]*RgbA1[1]));
+	if ( Ra1 != 0 ) {
+		T ca1 = RgbA1[1]/Ra1, sa1 = RgbA1[0]/Ra1;
+
+		R1.xx( -sa1*cb1*sg1 + ca1*cg1 ); R1.xy(  ca1*cb1*sg1 + sa1*cg1 ); R1.xz(  sb1*sg1 );
+		R1.yx( -sa1*cb1*cg1 - ca1*sg1 ); R1.yy(  ca1*cb1*cg1 - sa1*sg1 ); R1.yz(  sb1*cg1 );
+		R1.zx(  sa1*sb1 );               R1.zy( -ca1*sb1 );               R1.zz(  cb1 );
+	} else {
+		// A1 is colinear with X1 (or zero) - the simple to-z rotation works
+		R1 = R1gb;
+	}
+
 	T Ra2 = sqrt((RgbA2[0]*RgbA2[0])+(RgbA2[1]*RgbA2[1]));
-	T ca1 = RgbA1[1]/Ra1, sa1 = RgbA1[0]/Ra1;
-	T ca2 = RgbA2[1]/Ra2, sa2 = RgbA2[0]/Ra2;
+	if ( Ra2 != 0 ) {
+		T ca2 = RgbA2[1]/Ra2, sa2 = RgbA2[0]/Ra2;
 
-	numeric::xyzMatrix< T > R1, R2, R1_i, R;
-	R1.xx( -sa1*cb1*sg1 + ca1*cg1 ); R1.xy(  ca1*cb1*sg1 + sa1*cg1 ); R1.xz(  sb1*sg1 );
-	R1.yx( -sa1*cb1*cg1 - ca1*sg1 ); R1.yy(  ca1*cb1*cg1 - sa1*sg1 ); R1.yz(  sb1*cg1 );
-	R1.zx(  sa1*sb1 );               R1.zy( -ca1*sb1 );               R1.zz(  cb1 );
-
-	R2.xx( -sa2*cb2*sg2 + ca2*cg2 ); R2.xy(  ca2*cb2*sg2 + sa2*cg2 ); R2.xz(  sb2*sg2 );
-	R2.yx( -sa2*cb2*cg2 - ca2*sg2 ); R2.yy(  ca2*cb2*cg2 - sa2*sg2 ); R2.yz(  sb2*cg2 );
-	R2.zx(  sa2*sb2 );               R2.zy( -ca2*sb2 );               R2.zz(  cb2 );
+		R2.xx( -sa2*cb2*sg2 + ca2*cg2 ); R2.xy(  ca2*cb2*sg2 + sa2*cg2 ); R2.xz(  sb2*sg2 );
+		R2.yx( -sa2*cb2*cg2 - ca2*sg2 ); R2.yy(  ca2*cb2*cg2 - sa2*sg2 ); R2.yz(  sb2*cg2 );
+		R2.zx(  sa2*sb2 );               R2.zy( -ca2*sb2 );               R2.zz(  cb2 );
+	} else {
+		// A2 is colinear with X2 (or zero) - the simple to-z rotation works
+		R2 = R2gb;
+	}
 
 	// 3) the rotation matrix first rotates 1 to canonical, then canonical to 2
 	R1_i = numeric::inverse( R1 );

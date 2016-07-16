@@ -308,6 +308,197 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(input_matrix,output_matrix);
 	}
 
+	void test_alignVectorSets() {
+
+		using namespace numeric;
+
+		// axis-aligned
+		xyzVector<numeric::Real> A1(0.5,0.5,0), B1(0.5,-0.5,0), A2(0,1,0), B2(-1,0,0);
+		xyzMatrix<numeric::Real> rot_matrix( alignVectorSets(A1,B1,A2,B2) );
+		xyzVector<numeric::Real> A3( rot_matrix * A1 ), B3( rot_matrix * B1 );
+
+		TS_ASSERT_DELTA( A3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  0.70710678118, delta_percent );
+		TS_ASSERT_DELTA( A3.z(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), -0.70710678118, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  0.0, delta_percent );
+
+		// Compound
+		A1.assign(1,0,0), B1.assign( 0,1,0 );
+		A2.assign(0,1,0), B2.assign( 0,0,1 );
+
+		rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2);
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(), 1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  1.0, delta_percent );
+
+		// different lengths
+		A1.assign(1,0,0), B1.assign( 0,1,0 );
+		A2.assign(0,2,0), B2.assign( 0,0,2 );
+
+		rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2);
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(), 1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  1.0, delta_percent );
+
+		// A1 is zero
+		A1.assign(0,0,0), B1.assign( 0.5,0.5,0.5 );
+		A2.assign(-1e-7,1e-7,-1e-7), B2.assign( -1,1,-1 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), -0.5, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.5, delta_percent );
+		TS_ASSERT_DELTA( B3.z(), -0.5, delta_percent );
+
+		// A2 is zero
+		A1.assign(1e-7,0,0), B1.assign( 0,1,0 );
+		A2.assign(0,0,0), B2.assign( 0,0,2 );
+
+		rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2);
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(), 1e-7, delta_percent );
+		TS_ASSERT_DELTA( A3.y(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), 0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  1.0, delta_percent );
+
+		// Coincident vectors
+		A1.assign(1,1,1), B1.assign( 0.5,0.5,0.5 );
+		A2.assign(-2,2,-2), B2.assign( -1,1,-1 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), -0.5, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.5, delta_percent );
+		TS_ASSERT_DELTA( B3.z(), -0.5, delta_percent );
+
+		// Opposite but unequal
+		A1.assign(1,1,1), B1.assign( -0.5,-0.5,-0.5 );
+		A2.assign(-2,2,-2), B2.assign( 1,-1,1 );
+
+		rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2);
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(),  0.5, delta_percent );
+		TS_ASSERT_DELTA( B3.y(), -0.5, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  0.5, delta_percent );
+
+		// Source equal and opposite
+		A1.assign(1,-1,1), B1.assign( -1,1,-1 );
+		A2.assign(2,0,2), B2.assign( -2,1e-5,-2 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(),  1.22474487139, delta_percent ); //sqrt(3/2)
+		TS_ASSERT_DELTA( A3.y(),  0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(),  1.22474487139, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), -1.22474487139, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(), -1.22474487139, delta_percent );
+
+		// target equal and opposite
+		A1.assign(1.41421356237,0,1e-5), B1.assign( -1.41421356237,1e-5,0 );
+		A2.assign(0,1,-1), B2.assign( 0,-1,1 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  1.0, delta_percent );
+
+		// Both Equal and opposite
+		A1.assign(1,-1,1), B1.assign( -1,1,-1 );
+		A2.assign(2,2,-2), B2.assign( -2,-2,2 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(), -1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  1.0, delta_percent );
+
+		// Almost but not quite opposite
+		A1.assign(1,-1,1+1e-5), B1.assign( -1,1,-1 );
+		A2.assign(2+1e-5,2,0), B2.assign( -2,-2+1e-5,0 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+/* Doesn't quite work.
+ * It doesn't crash, but the slight shifts mean that the normalized average vector are rather misaligned.
+ * I'm guessing a completely different approach would be needed in the calculations.
+		TS_ASSERT_DELTA( A3.x(),  1.22474487139, delta_percent ); //sqrt(3/2)
+		TS_ASSERT_DELTA( A3.y(),  1.22474487139, delta_percent );
+		TS_ASSERT_DELTA( A3.z(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(), -1.22474487139, delta_percent );
+		TS_ASSERT_DELTA( B3.y(), -1.22474487139, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  0.0, delta_percent );
+*/
+
+		// Two zeros, source
+		A1.assign(0,0,0), B1.assign( 0,0,0 );
+		A2.assign(1,2,3), B2.assign( 3,1,4 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  0.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  0.0, delta_percent );
+
+		// Two zeros, destination -- do nothing
+		A1.assign(1,2,3), B1.assign( 3,1,4 );
+		A2.assign(0,0,0), B2.assign( 0,0,0 );
+
+		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
+		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
+
+		TS_ASSERT_DELTA( A3.x(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( A3.y(),  2.0, delta_percent );
+		TS_ASSERT_DELTA( A3.z(),  3.0, delta_percent );
+		TS_ASSERT_DELTA( B3.x(),  3.0, delta_percent );
+		TS_ASSERT_DELTA( B3.y(),  1.0, delta_percent );
+		TS_ASSERT_DELTA( B3.z(),  4.0, delta_percent );
+
+	}
+
+
 };
 
 
