@@ -132,8 +132,10 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 			pose.constraint_set(cstset);
 		} else {
 			for ( int i = 1; i <= nres; i++ ) {
+			  if ( pose.residue(i).is_protein() ) {
 				Vector const CA_i( pose.residue(i).xyz(" CA "));
 				for ( int j = 1; j < i; j++ ) {
+				  if ( pose.residue(j).is_protein() ) {
 					Vector const CA_j(pose.residue(j).xyz(" CA "));
 					Real const CA_dist = (CA_i - CA_j).length();
 					if ( CA_dist < CA_cutoff ) {
@@ -141,6 +143,8 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 						ConstraintCOP cst( ConstraintOP( new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol))) ) );
 						pose.add_constraint(cst);
 					}
+				  }
+				}
 				}
 			}
 		}

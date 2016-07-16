@@ -433,7 +433,10 @@ ShakeStructureMover::setup_ca_constraints(
 	//static float const CA_cutoff(9.0);
 	int nres = core::pose::nres_protein( pose );  // only looks at protein residues, no virts
 	for ( int i = 1; i <= nres; i++ ) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt || !pose.residue(i).is_protein() ) continue; // actually adding the constraint that this needs to be a protein residue
+        
+        std::cout << "AS debug - setting constraints - position " << i << std::endl;  // AS debug - not sure if we even enter this code
+        
 		Vector const CA_i( pose.residue(i).xyz(" CA "));
 		for ( int j = 1; j <=nres; j++ ) {
 			if ( pose.residue(j).aa() == core::chemical::aa_vrt ) continue;

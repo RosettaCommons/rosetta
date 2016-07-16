@@ -179,18 +179,23 @@ ddGMover::find_nbrs(
 	utility::vector1<int> nbrs;
 	for ( core::Size i = 1; i <= mutation_position.size(); ++i ) {
 		numeric::xyzVector<double> i_pos;
-		if ( p.residue(mutation_position[i]).name1() == 'G' ) {
-			i_pos = p.residue(mutation_position[i]).xyz(" CA ");
-		} else {
-			i_pos = p.residue(mutation_position[i]).xyz(" CB ");
-		}
-		for ( core::Size j = 1; j <= p.total_residue(); j++ ) {
+        // assumption: all mutated residues are protein residues
+        if ( p.residue(mutation_position[i]).name1() == 'G' ) {
+            i_pos = p.residue(mutation_position[i]).xyz(" CA ");
+        } else {
+            i_pos = p.residue(mutation_position[i]).xyz(" CB ");
+        }
+        for ( core::Size j = 1; j <= p.total_residue(); j++ ) {
 			numeric::xyzVector<double> j_pos;
-			if ( p.residue(j).name1() == 'G' ) {
-				j_pos = p.residue(j).xyz(" CA ");
-			} else {
-				j_pos = p.residue(j).xyz(" CB ");
-			}
+            if ( p.residue(j).is_protein() ) {
+                if ( p.residue(j).name1() == 'G' ) {
+                    j_pos = p.residue(j).xyz(" CA ");
+                } else {
+                    j_pos = p.residue(j).xyz(" CB ");
+                }
+            } else { // assumption (not particularly failsafe): the residue has a C and we can access it
+                j_pos = p.residue(j).xyz(" C  "); // AS debug: make sure this doesn't crash horribly
+            }
 			if ( i_pos.distance(j_pos) <= radii ) {
 				nbrs.push_back(j);
 			}
@@ -1327,7 +1332,7 @@ ddGMover::neighborhood_of_mutations(
 	for ( core::Size  ii = 1; ii <= mutations.size(); ++ii ) {
 		Size iiresid = mutations[ ii ];
 		core::Vector ii_pos;
-		if ( pose.residue(iiresid).name1() == 'G' ) {
+		if ( pose.residue(iiresid).name1() == 'G' ) { // assumption: all mutated residues are protein and thus have CA/CB
 			ii_pos = pose.residue(iiresid).xyz(" CA ");
 		} else {
 			ii_pos = pose.residue(iiresid).xyz(" CB ");
@@ -1336,15 +1341,22 @@ ddGMover::neighborhood_of_mutations(
 			if ( neighbors[ jj ] ) continue;
 			core::Vector jj_pos;
 			/// Gee -- this will crash if we're dealing with something other than a protein
-			if ( pose.residue(jj).name1() == 'G' ) {
-				jj_pos = pose.residue(jj).xyz(" CA ");
-			} else {
-				jj_pos = pose.residue(jj).xyz(" CB ");
-			}
+            // AS: getting rid of that crash
+            if ( pose.residue(jj).is_protein() ) {
+                if ( pose.residue(jj).name1() == 'G' ) {
+                    jj_pos = pose.residue(jj).xyz(" CA ");
+                } else {
+                    jj_pos = pose.residue(jj).xyz(" CB ");
+                }
+                // AS debug: for now, just set the movemap for protein residue
+                // -- need to deal with the rest later!
+                // -- it might be the best to set the movemap for all non-protein residues to false anyway (or is that already the default we have here?)
+                
 			//if c-beta is within x angstrom, set movemap(i) true
-			if ( ii_pos.distance_squared(jj_pos) <= rad2 ) {
-				neighbors[ jj ] = true;
-			}
+                if ( ii_pos.distance_squared(jj_pos) <= rad2 ) {
+                    neighbors[ jj ] = true;
+                }
+            } // for all protein residues
 		}//for all jj
 	} // for all mutation positions
 
