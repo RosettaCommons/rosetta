@@ -14,6 +14,9 @@
 
 #include <protocols/constraint_generator/ConstraintsManager.hh>
 
+// Protocol headers
+#include <protocols/constraint_generator/ConstraintsMap.hh>
+
 // Core headers
 #include <core/pose/Pose.hh>
 
@@ -29,73 +32,6 @@ namespace constraint_generator {
 // static const data
 core::pose::datacache::CacheableDataType::Enum const
 ConstraintsManager::MY_TYPE = core::pose::datacache::CacheableDataType::CONSTRAINT_GENERATOR;
-
-ConstraintsMap::ConstraintsMap():
-	basic::datacache::CacheableData(),
-	cst_map_()
-{}
-
-ConstraintsMap::~ConstraintsMap()
-{}
-
-basic::datacache::CacheableDataOP
-ConstraintsMap::clone() const
-{
-	return basic::datacache::CacheableDataOP( new ConstraintsMap( *this ) );
-}
-
-/// @brief Insert csts into the ConstraintsMap under the name given.
-/// @param[in] name Map key name under which constraints will be stored
-/// @param[in] csts Constraints to store
-/// @returns ConstraintsMap::iterator to new map item.
-ConstraintsMap::iterator
-ConstraintsMap::insert( std::string const & name, ConstraintCOPs const & csts )
-{
-	std::pair< std::string, ConstraintCOPs > const pair( name, csts );
-	return cst_map_.insert( pair ).first;
-}
-
-void
-ConstraintsMap::erase( iterator const & erase_me )
-{
-	cst_map_.erase( erase_me );
-}
-
-ConstraintsMap::iterator
-ConstraintsMap::find( std::string const & name )
-{
-	return cst_map_.find( name );
-}
-
-ConstraintsMap::const_iterator
-ConstraintsMap::find( std::string const & name ) const
-{
-	return cst_map_.find( name );
-}
-
-ConstraintsMap::iterator
-ConstraintsMap::begin()
-{
-	return cst_map_.begin();
-}
-
-ConstraintsMap::const_iterator
-ConstraintsMap::begin() const
-{
-	return cst_map_.begin();
-}
-
-ConstraintsMap::iterator
-ConstraintsMap::end()
-{
-	return cst_map_.end();
-}
-
-ConstraintsMap::const_iterator
-ConstraintsMap::end() const
-{
-	return cst_map_.end();
-}
 
 ConstraintsManager::ConstraintsManager():
 	utility::SingletonBase< ConstraintsManager >()
@@ -206,7 +142,7 @@ ConstraintsManager::retrieve_constraints(
 		std::stringstream msg;
 		msg << "No constraints were found in the pose datacache under the name "
 			<< name << ": valid names are: ";
-		print_valid_names( msg, map );
+		msg << map.valid_names_string() << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 	return cst_it->second;
@@ -221,16 +157,6 @@ ConstraintsManager::has_stored_constraints( core::pose::Pose const & pose, std::
 	if ( !pose.data().has( MY_TYPE ) ) return false;
 	ConstraintsMap const & map = retrieve_constraints_map( pose );
 	return ( map.find( name ) != map.end() );
-}
-
-void
-ConstraintsManager::print_valid_names( std::ostream & os, ConstraintsMap const & map ) const
-{
-	os << "Valid constraint set names are: ";
-	for ( ConstraintsMap::const_iterator c=map.begin(); c!=map.end(); ++c ) {
-		os << c->first << " ";
-	}
-	os << std::endl;
 }
 
 } //protocols
