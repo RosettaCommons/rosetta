@@ -99,9 +99,13 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     else:
         ref_files_location = rosetta_dir+'/tests/integration/ref/'
 
-    if os.path.isdir(ref_files_location): TR( 'Removing old ref dir {}...'.format(ref_files_location) );  shutil.rmtree(ref_files_location)
-    TR('Creating a dummy ref dir {}...'.format(ref_files_location))
-    os.mkdir(ref_files_location)
+    # Make a dummy ref directory and skip comparison if we're not in valgrind mode.
+    if not re.search("--valgrind", additional_flags):
+        additional_flags = "--skip-comparison " + additional_flags
+
+        if os.path.isdir(ref_files_location): TR( 'Removing old ref dir {}...'.format(ref_files_location) );  shutil.rmtree(ref_files_location)
+        TR('Creating a dummy ref dir {}...'.format(ref_files_location))
+        os.mkdir(ref_files_location)
 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
@@ -115,13 +119,13 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     if re.search("--valgrind", additional_flags):
         timeout = 24*60*60  # If we've spent a full day on it, and it's still running, we're probably hosed.
 
-    command_line = 'cd {}/tests/integration && ./integration.py --skip-comparison --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
+    command_line = 'cd {}/tests/integration && ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
     TR( 'Running integration script: {}'.format(command_line) )
 
     #JAB - Why is this not run in debug mode, isn't this half the point?
-    #if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
-    #else: res, output = execute('Running integration script...', command_line, return_='tuple')
-    res, output = execute('Running integration script...', command_line, return_='tuple')
+    # RM - the "debug" variable is debug of the benchmark machinery. Debug mode is mode=="debug"
+    if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
+    else: res, output = execute('Running integration script...', command_line, return_='tuple')
     full_log += output
 
     if res:

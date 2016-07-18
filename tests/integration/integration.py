@@ -779,7 +779,15 @@ def order_tests(tests):
         finally:
             f.close()
     #Decorate, sort, undecorate (A side effect is we'll alphabetize any missing tests)
-    ordered = [ ( times.get(test, 9999), test ) for test in tests ]
+    ordered = []
+    for test in tests:
+        testbase = os.path.basename(test)
+        if test in times:
+            ordered.append( (times[test], test) )
+        elif testbase in times:
+            ordered.append( (times[testbase], test) )
+        else:
+            ordered.append( (9999, test) )
     ordered.sort(reverse=True)
     return [ test for (time, test) in ordered ]
 
