@@ -88,6 +88,13 @@ init(
 	fragbias_tr.Trace << "init(): symmetrical_pose " << core::pose::symmetry::is_symmetric( pose )<< std::endl;
 	fragbias_tr.Trace << "init(): n residues " << nres_ << std::endl;
 	fragbias_tr.Trace << "init(): n_symm_subunit_ " << n_symm_subunit_ << std::endl;
+
+	score_threshold_ = 9999;
+	cumulative_ = false;
+
+	wdw_to_freeze_ = 0;
+	rsd_wdw_size_ = 3;
+	cumulative_ = false;
 }
 
 
@@ -126,7 +133,7 @@ compute_frag_bias(
 			// don't allow insertions at cut points
 			for ( int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos ) {
 				if ( pose.fold_tree().is_cutpoint(i_pos) ) {
-					for ( int i_wdw = 0; i_wdw<=wdw_to_freeze_; ++i_wdw ) {
+					for ( int i_wdw = 0; i_wdw<wdw_to_freeze_; ++i_wdw ) {
 						frame_weights[seqpos_start-i_wdw] = 0.0; // don't allow insertions at a frame where there are cut points downstream
 						fragbias_tr.Trace << "chainbreak at: " <<  i_pos << " seqpos_start: " << seqpos_start << " residue_to_freeze: " << seqpos_start-i_wdw << " wdw_to_freeze_: " << wdw_to_freeze_ << std::endl;
 					}
@@ -636,7 +643,7 @@ geometry(
 	Real weight  /*1.0*/
 ){
 	fragProbs_assigned_=true;
-	if ( score_threshold_ == 123456789 ) set_score_threshold( 0.6 );
+	if ( score_threshold_ == 9999 ) set_score_threshold( 0.6 );
 
 	// clean the container
 	perrsd_geometry_.resize(nres_, 0.0);
@@ -657,7 +664,7 @@ rama(
 	Real weight /*=0.2*/
 ){
 	fragProbs_assigned_=true;
-	if ( score_threshold_ == 123456789 ) set_score_threshold( 0.7 );
+	if ( score_threshold_ == 9999 ) set_score_threshold( 0.7 );
 
 	// clean the container
 	perrsd_rama_.resize(nres_, 0.0);

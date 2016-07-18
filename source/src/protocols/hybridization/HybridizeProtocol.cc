@@ -710,7 +710,7 @@ void HybridizeProtocol::add_null_template(
 	template_weights_.push_back(weight);
 	template_chunks_.push_back(protocols::loops::Loops());
 	template_contigs_.push_back(protocols::loops::Loops());
-	randomize_chains_.push_back(utility::vector1<core::Size>(0));
+	randomize_chains_.push_back(utility::vector1<char>(0));
 }
 
 void HybridizeProtocol::add_template(
@@ -1065,6 +1065,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			numeric::xyzVector< core::Real > comFixed(0,0,0), comMoving(0,0,0);
 			core::Real nFixed=0, nMoving=0;
 
+TR << "Randomize >" << randomize_chains_[initial_template_index].size() << "<" << std::endl;
+for (core::Size q=1;q<=randomize_chains_[initial_template_index].size(); ++q) {
+	TR << "Randomize >" << randomize_chains_[initial_template_index][q] << "<" << std::endl;
+}
+
 			for ( core::Size i=1; i<=templates_[initial_template_index]->total_residue(); ++i ) {
 				char chain = templates_[initial_template_index]->pdb_info()->chain(i);
 				if ( std::find(
@@ -1079,6 +1084,12 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					nFixed++;
 				}
 			}
+
+			// sanity check
+			if (nMoving == 0) {
+				utility_exit_with_message("Randomize chain enabled but chain(s) not found!");
+			}
+
 			comMoving /= nMoving;
 			comFixed /= nFixed;
 
@@ -1898,11 +1909,15 @@ HybridizeProtocol::parse_my_tag(
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
 			// randomize some chains
-			std::string rand_chain_str = (*tag_it)->getOption<std::string>( "randomize", "" );
-			utility::vector1< std::string > rand_chain_strs = utility::string_split( rand_chain_str, ',');
 			utility::vector1< char > rand_chains;
-			for ( core::Size j = 1; j<=rand_chain_strs.size(); ++j ) {
-				rand_chains.push_back( rand_chain_strs[j][0] );
+			if ( (*tag_it)->hasOption( "randomize" ) ) {
+				std::string rand_chain_str = (*tag_it)->getOption<std::string>( "randomize", "" );
+				utility::vector1< std::string > rand_chain_strs = utility::string_split( rand_chain_str, ',');
+				for ( core::Size j = 1; j<=rand_chain_strs.size(); ++j ) {
+					if (rand_chain_strs[j].length() != 0) {
+						rand_chains.push_back( rand_chain_strs[j][0] );
+					}
+				}
 			}
 
 			bool align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );

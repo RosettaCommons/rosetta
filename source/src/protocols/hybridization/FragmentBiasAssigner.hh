@@ -110,7 +110,7 @@ public:
 
 	void set_rsd_wdw_to_assign_prob( int wdw=0 ){ rsd_wdw_size_=wdw; }
 	void set_wdw_to_freeze( int wdw=0 ){ wdw_to_freeze_=wdw; }
-	void set_score_threshold( Real threshold=123456789 ){ score_threshold_=threshold; }
+	void set_score_threshold( Real threshold ){ score_threshold_=threshold; }
 
 private:
 	// functions
