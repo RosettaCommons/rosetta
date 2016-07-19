@@ -123,7 +123,8 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	pymol_movie_(src.pymol_movie_),
 	ref_pose_name_(src.ref_pose_name_),
 	use_branches_( src.use_branches_),
-	parsed_positions_(src.parsed_positions_)
+	parsed_positions_(src.parsed_positions_),
+	pack_distance_(src.pack_distance_)
 
 {
 }
