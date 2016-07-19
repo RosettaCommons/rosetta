@@ -77,6 +77,7 @@ enum ScoreType {
 	fa_elec_bb_bb,
 	fa_elec_bb_sc,
 	fa_elec_sc_sc,
+	fa_intra_elec,
 	h2o_hbond,
 	dna_dr,
 	dna_bp,
