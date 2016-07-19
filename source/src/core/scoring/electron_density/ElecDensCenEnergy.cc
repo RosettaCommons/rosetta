@@ -280,7 +280,8 @@ ElecDensCenEnergy::eval_atom_derivative(
 		core::Size nres_per = symminfo->num_independent_residues();
 		bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
-		if ( pose.residue(resid).aa() == core::chemical::aa_vrt && remapSymm )  {
+		if ( pose.residue(resid).aa() == core::chemical::aa_vrt )  {
+			if ( !remapSymm ) return;
 
 			// derivative is only defined for the 'ORIG' atom in the virtual
 			if ( atmid != 2 ) return;

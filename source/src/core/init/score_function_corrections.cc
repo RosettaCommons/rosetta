@@ -22,6 +22,7 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
@@ -507,7 +508,11 @@ init_crystal_refinement_correction() {
 		if ( ! option[ optimization::scale_rb ].user() ) {
 			option[optimization::scale_rb].value( 1.0 );
 		}
+	}
 
+	// another nonspecific one
+	if ( option[edensity::score_symm_complex]() ) {
+		option[optimization::old_sym_min].value( true );
 	}
 }
 

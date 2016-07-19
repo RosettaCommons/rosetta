@@ -274,8 +274,8 @@ FastDensEnergy::eval_residue_pair_derivatives(
 	if ( rsd1.aa() != core::chemical::aa_vrt && rsd2.aa() != core::chemical::aa_vrt ) return;
 	if ( !pose_is_setup_for_density_scoring( pose ) ) return; // already warned in setup
 
-	conformation::Residue const & res = (rsd1.aa() == core::chemical::aa_vrt) ? rsd2 : rsd1;
-	utility::vector1< DerivVectorPair > &r_atom_derivs = (rsd1.aa() == core::chemical::aa_vrt) ? r2_atom_derivs : r1_atom_derivs;
+	conformation::Residue const & res = (rsd2.aa() == core::chemical::aa_vrt) ? rsd1 : rsd2;
+	utility::vector1< DerivVectorPair > &r_atom_derivs = (rsd2.aa() == core::chemical::aa_vrt) ? r1_atom_derivs : r2_atom_derivs;
 
 	// apply sc scaling here
 	core::Real weight = weights[ elec_dens_fast ];
@@ -296,6 +296,7 @@ FastDensEnergy::eval_residue_pair_derivatives(
 
 		// special logic for symm virtuals with score symm complex
 		if ( res.aa() == core::chemical::aa_vrt && scoreSymmComplex_ )  {
+
 			numeric::xyzVector< core::Real > dCCdx(0,0,0);
 
 			// if not a branch node, we're done
@@ -352,7 +353,7 @@ FastDensEnergy::eval_residue_pair_derivatives(
 
 							core::Real sc_scale_i = 1.0;
 							if ( pose.residue(source_res).aa() <= core::chemical::num_canonical_aas ) {
-								sc_scale_i = sc_scale_byres_[(int)res.aa()];
+								sc_scale_i = sc_scale_byres_[(int)pose.residue(source_res).aa()];
 							}
 
 							for ( int m=1, m_end=pose.residue(target_res).nheavyatoms(); m<=m_end; ++m ) {
@@ -394,6 +395,11 @@ FastDensEnergy::eval_residue_pair_derivatives(
 						int source_res = (k-1)*nres_per+l;
 						int target_res = (mapping_i[k]-1)*nres_per+l;
 
+						core::Real sc_scale_i = 1.0;
+						if ( pose.residue(source_res).aa() <= core::chemical::num_canonical_aas ) {
+							sc_scale_i = sc_scale_byres_[(int)pose.residue(source_res).aa()];
+						}
+
 						for ( int m=1, m_end=pose.residue(target_res).nheavyatoms(); m<=m_end; ++m ) {
 							numeric::xyzVector<core::Real> X_lm_src = pose.residue(source_res).atom(m).xyz();
 							numeric::xyzVector<core::Real> X_lm_tgt = pose.residue(target_res).atom(m).xyz();
@@ -401,18 +407,13 @@ FastDensEnergy::eval_residue_pair_derivatives(
 							core::scoring::electron_density::getDensityMap().dCCdx_fastRes
 								( m, source_res, X_lm_src, pose.residue(source_res), pose, dCCdx );
 
-							core::Real sc_scale_i = 1.0;
-							if ( pose.residue(source_res).aa() <= core::chemical::num_canonical_aas ) {
-								sc_scale_i = sc_scale_byres_[(int)res.aa()];
-							}
-
 							numeric::xyzVector< core::Real > dEdx = -1*R_i * dCCdx / ((core::Real)nsubunits);
 							numeric::xyzVector<core::Real> atom_x = X_lm_tgt;
 							numeric::xyzVector<core::Real> const f2( dEdx );
 							numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 							Vector const f1( atom_x.cross( atom_y ) );
 
-							// define for "ORIG" atom which is 2 (?)
+						// define for "ORIG" atom which is 2 (?)
 							if ( m <= (int)pose.residue(target_res).last_backbone_atom() ) {
 								r_atom_derivs[ 2 ].f1() += weight * f1;
 								r_atom_derivs[ 2 ].f2() += weight * f2;
@@ -426,6 +427,8 @@ FastDensEnergy::eval_residue_pair_derivatives(
 			}
 		} // if ( res.aa() == core::chemical::aa_vrt && scoreSymmComplex_)
 	} // if (is_symmetric)
+
+	if (res.aa() == core::chemical::aa_vrt) return;
 
 	// we are protein ... loop over all residues
 	for ( int i=1; i<=(int)res.nheavyatoms(); ++i ) {
