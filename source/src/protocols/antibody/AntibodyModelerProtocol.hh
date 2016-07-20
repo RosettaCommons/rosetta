@@ -146,7 +146,6 @@ private:
 	bool LH_repulsive_ramp_;
 	bool sc_min_;
 	bool rt_min_;
-	bool camelid_;
 	bool camelid_constraints_;
 	bool flank_residue_min_;
 	core::Real flank_residue_size_;

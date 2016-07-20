@@ -1,0 +1,848 @@
+pdb12e8_chothia.pdb	100C	F	-179.4	-113.9	  81.7	11	1.9	    KINK
+pdb12e8_chothia.pdb	101 	P	-175.7	 -78.2	 -22.4	11	1.9	    KINK
+pdb12e8_chothia.pdb	102 	Y	-178.3	-126.1	 128.6	11	1.9	    KINK
+pdb12e8_chothia.pdb	103 	W	-179.8	-133.7	 148.8	11	1.9	    KINK
+
+pdb25c8_chothia.pdb	100B	G	-178.8	 -83.2	-160.2	10	2.0	EXTENDED
+pdb25c8_chothia.pdb	101 	D	-179.0	 -81.4	 178.4	10	2.0	EXTENDED
+pdb25c8_chothia.pdb	102 	Y	-178.9	-128.3	 131.5	10	2.0	EXTENDED
+pdb25c8_chothia.pdb	103 	W	 178.7	-120.7	 145.2	10	2.0	EXTENDED
+
+pdb1a14_chothia.pdb	100E	F	 176.8	 -91.4	  92.2	13	2.5	    KINK
+pdb1a14_chothia.pdb	101 	D	-172.2	 -67.2	 -26.8	13	2.5	    KINK
+pdb1a14_chothia.pdb	102 	Y	-179.7	-138.0	 136.3	13	2.5	    KINK
+pdb1a14_chothia.pdb	103 	W	 178.9	-125.5	 172.9	13	2.5	    KINK
+
+pdb1a2y_chothia.pdb	100 	L	 176.4	 -89.9	  98.8	 8	1.5	    KINK
+pdb1a2y_chothia.pdb	101 	D	-170.8	 -85.4	 -25.9	 8	1.5	    KINK
+pdb1a2y_chothia.pdb	102 	Y	-177.4	-137.6	 135.9	 8	1.5	    KINK
+pdb1a2y_chothia.pdb	103 	W	-179.4	-126.6	 154.8	 8	1.5	    KINK
+
+pdb1rur_chothia.pdb	100B	G	 177.6	 -84.7	 100.2	10	1.5	    KINK
+pdb1rur_chothia.pdb	101 	D	-169.9	 -84.0	 -29.8	10	1.5	    KINK
+pdb1rur_chothia.pdb	102 	Y	 174.7	-124.1	 138.9	10	1.5	    KINK
+pdb1rur_chothia.pdb	103 	W	-174.8	-126.5	 141.2	10	1.5	    KINK
+
+pdb1a3r_chothia.pdb	100A	M	-176.2	-130.1	 146.5	 9	2.1	EXTENDED
+pdb1a3r_chothia.pdb	101 	D	 179.6	-108.2	 128.3	 9	2.1	EXTENDED
+pdb1a3r_chothia.pdb	102 	Y	-179.5	-115.4	 136.8	 9	2.1	EXTENDED
+pdb1a3r_chothia.pdb	103 	W	-178.7	-122.6	 152.0	 9	2.1	EXTENDED
+
+pdb1a4j_chothia.pdb	100B	F	 175.3	 -87.0	  89.7	10	2.1	    KINK
+pdb1a4j_chothia.pdb	101 	D	-173.1	 -67.0	 -61.5	10	2.1	    KINK
+pdb1a4j_chothia.pdb	102 	Y	-177.8	-115.5	 135.4	10	2.1	    KINK
+pdb1a4j_chothia.pdb	103 	W	 178.2	-117.9	 144.7	10	2.1	    KINK
+
+pdb1a6t_chothia.pdb	100 	F	 177.9	 -86.5	 103.1	 8	2.7	    KINK
+pdb1a6t_chothia.pdb	101 	D	-174.1	 -80.3	 -27.4	 8	2.7	    KINK
+pdb1a6t_chothia.pdb	102 	F	 178.7	-132.4	 136.6	 8	2.7	    KINK
+pdb1a6t_chothia.pdb	103 	W	-179.1	-126.5	 157.7	 8	2.7	    KINK
+
+pdb1a6u_chothia.pdb	100C	F	 169.4	 -84.3	  87.6	11	2.0	    KINK
+pdb1a6u_chothia.pdb	101 	D	-166.3	 -85.3	 -41.0	11	2.0	    KINK
+pdb1a6u_chothia.pdb	102 	Y	-177.5	-113.5	 136.9	11	2.0	    KINK
+pdb1a6u_chothia.pdb	103 	W	-177.0	-133.4	 145.9	11	2.0	    KINK
+
+pdb1ai1_chothia.pdb	100C	F	-179.8	 -77.3	 112.1	11	2.8	    KINK
+pdb1ai1_chothia.pdb	101 	D	-172.6	-102.3	 -15.6	11	2.8	    KINK
+pdb1ai1_chothia.pdb	102 	V	 179.8	-134.2	 130.2	11	2.8	    KINK
+pdb1ai1_chothia.pdb	103 	W	-178.5	-130.3	 151.7	11	2.8	    KINK
+
+pdb1clo_chothia.pdb	100B	F	 179.7	 -93.9	  99.3	10	2.1	    KINK
+pdb1clo_chothia.pdb	101 	D	-174.6	 -77.4	 -26.0	10	2.1	    KINK
+pdb1clo_chothia.pdb	102 	Y	-177.2	-138.3	 139.3	10	2.1	    KINK
+pdb1clo_chothia.pdb	103 	W	 179.9	-128.4	 155.7	10	2.1	    KINK
+
+pdb1ad9_chothia.pdb	100C	M	 176.8	 -87.1	  74.4	11	2.8	    KINK
+pdb1ad9_chothia.pdb	101 	D	-171.4	 -76.9	 -50.1	11	2.8	    KINK
+pdb1ad9_chothia.pdb	102 	Y	-174.4	 -91.4	 126.9	11	2.8	    KINK
+pdb1ad9_chothia.pdb	103 	W	 177.6	-123.8	 156.1	11	2.8	    KINK
+
+pdb1fgn_chothia.pdb	100 	F	 178.0	 -77.1	 101.1	 8	2.5	    KINK
+pdb1fgn_chothia.pdb	101 	D	-174.9	 -85.7	 -25.4	 8	2.5	    KINK
+pdb1fgn_chothia.pdb	102 	Y	-178.6	-134.3	 131.5	 8	2.5	    KINK
+pdb1fgn_chothia.pdb	103 	W	 176.5	-127.0	 155.8	 8	2.5	    KINK
+
+pdb1ap2_chothia.pdb	100D	L	 177.6	 -91.2	  73.9	12	2.4	    KINK
+pdb1ap2_chothia.pdb	101 	D	-173.3	 -90.6	 -13.6	12	2.4	    KINK
+pdb1ap2_chothia.pdb	102 	V	-179.7	-109.0	 111.1	12	2.4	    KINK
+pdb1ap2_chothia.pdb	103 	W	-178.3	-123.9	 147.5	12	2.4	    KINK
+
+pdb1aqk_chothia.pdb	100F	F	 178.3	 -98.9	 103.4	14	1.8	    KINK
+pdb1aqk_chothia.pdb	101 	D	-174.6	 -90.4	 -37.8	14	1.8	    KINK
+pdb1aqk_chothia.pdb	102 	I	-177.8	-110.4	 129.9	14	1.8	    KINK
+pdb1aqk_chothia.pdb	103 	W	 179.9	-134.2	 153.2	14	1.8	    KINK
+
+pdb1mqk_chothia.pdb	100A	M	-176.0	-124.6	  94.5	 9	1.3	    KINK
+pdb1mqk_chothia.pdb	101 	D	-166.4	 -83.9	 -25.5	 9	1.3	    KINK
+pdb1mqk_chothia.pdb	102 	Y	 177.8	-132.0	 141.5	 9	1.3	    KINK
+pdb1mqk_chothia.pdb	103 	W	-179.2	-126.3	 152.0	 9	1.3	    KINK
+
+pdb1d5i_chothia.pdb	100C	G	-180.0	 114.3	 170.4	11	2.0	EXTENDED
+pdb1d5i_chothia.pdb	101 	D	-176.7	-111.9	 166.4	11	2.0	EXTENDED
+pdb1d5i_chothia.pdb	102 	Y	 172.0	-125.6	 110.1	11	2.0	EXTENDED
+pdb1d5i_chothia.pdb	103 	W	-172.1	 -87.8	 142.7	11	2.0	EXTENDED
+
+pdb1axt_chothia.pdb	99  	F	-175.4	-152.2	 156.2	 7	2.1	EXTENDED
+pdb1axt_chothia.pdb	101 	S	 167.9	-163.3	 133.6	 7	2.1	EXTENDED
+pdb1axt_chothia.pdb	102 	Y	-174.6	-135.0	 145.4	 7	2.1	EXTENDED
+pdb1axt_chothia.pdb	103 	W	 175.9	-120.8	 153.2	 7	2.1	EXTENDED
+
+pdb1ay1_chothia.pdb	100B	F	 178.1	 -92.3	 119.1	10	2.2	    KINK
+pdb1ay1_chothia.pdb	101 	D	-175.9	-102.7	  -7.1	10	2.2	    KINK
+pdb1ay1_chothia.pdb	102 	V	 179.4	-138.9	 130.9	10	2.2	    KINK
+pdb1ay1_chothia.pdb	103 	W	-179.8	-131.7	 152.1	10	2.2	    KINK
+
+pdb1t3f_chothia.pdb	100 	F	-168.9	-120.6	  93.6	 8	2.0	    KINK
+pdb1t3f_chothia.pdb	101 	A	-179.8	 -79.6	 -42.1	 8	2.0	    KINK
+pdb1t3f_chothia.pdb	102 	D	-169.5	-110.0	 117.3	 8	2.0	    KINK
+pdb1t3f_chothia.pdb	103 	W	-177.1	-119.9	 146.6	 8	2.0	    KINK
+
+pdb1ce1_chothia.pdb	100B	F	 170.0	  68.1	  51.8	10	1.9	    KINK
+pdb1ce1_chothia.pdb	101 	D	-179.4	 -78.1	 -29.9	10	1.9	    KINK
+pdb1ce1_chothia.pdb	102 	Y	 173.9	-132.6	 145.4	10	1.9	    KINK
+pdb1ce1_chothia.pdb	103 	W	-174.7	-129.5	 150.7	10	1.9	    KINK
+
+pdb1bfv_chothia.pdb	100B	M	-179.4	 -62.1	 135.2	10	2.1	    KINK
+pdb1bfv_chothia.pdb	101 	D	 172.1	-107.5	 -63.5	10	2.1	    KINK
+pdb1bfv_chothia.pdb	102 	Y	-178.9	-104.7	 148.0	10	2.1	    KINK
+pdb1bfv_chothia.pdb	103 	W	-179.4	-130.6	 147.5	10	2.1	    KINK
+
+pdb1bj1_chothia.pdb	100F	F	 179.5	 -98.9	 119.9	14	2.4	    KINK
+pdb1bj1_chothia.pdb	101 	D	-171.6	-101.0	 -41.8	14	2.4	    KINK
+pdb1bj1_chothia.pdb	102 	V	 178.2	-119.2	 129.1	14	2.4	    KINK
+pdb1bj1_chothia.pdb	103 	W	-178.7	-123.2	 159.2	14	2.4	    KINK
+
+pdb1bln_chothia.pdb	100B	F	-179.3	-117.3	  82.1	10	2.8	    KINK
+pdb1bln_chothia.pdb	101 	A	 179.4	 -69.7	 -46.7	10	2.8	    KINK
+pdb1bln_chothia.pdb	102 	S	-179.6	-126.1	 135.2	10	2.8	    KINK
+pdb1bln_chothia.pdb	103 	W	 179.6	-105.3	 148.9	10	2.8	    KINK
+
+pdb1yqv_chothia.pdb	99  	F	 178.8	-160.1	 159.2	 7	1.7	EXTENDED
+pdb1yqv_chothia.pdb	101 	D	-177.6	-147.2	  35.0	 7	1.7	EXTENDED
+pdb1yqv_chothia.pdb	102 	G	-178.9	 -70.5	 150.8	 7	1.7	EXTENDED
+pdb1yqv_chothia.pdb	103 	W	 178.6	-115.3	 155.7	 7	1.7	EXTENDED
+
+pdb1bz7_chothia.pdb	100E	F	-171.2	-108.2	 106.5	13	2.5	    KINK
+pdb1bz7_chothia.pdb	101 	D	-172.6	 -87.1	 -21.9	13	2.5	    KINK
+pdb1bz7_chothia.pdb	102 	Y	-179.9	-139.3	 134.9	13	2.5	    KINK
+pdb1bz7_chothia.pdb	103 	W	-178.7	-126.2	 146.6	13	2.5	    KINK
+
+pdb1c12_chothia.pdb	100D	R	-179.9	-152.4	 146.4	12	2.6	EXTENDED
+pdb1c12_chothia.pdb	101 	S	 178.4	-110.5	 142.2	12	2.6	EXTENDED
+pdb1c12_chothia.pdb	102 	Y	-179.0	-107.2	 138.0	12	2.6	EXTENDED
+pdb1c12_chothia.pdb	103 	W	-179.7	-128.2	 160.5	12	2.6	EXTENDED
+
+pdb1c1e_chothia.pdb	100B	M	 177.0	 -91.5	 130.3	10	1.9	    KINK
+pdb1c1e_chothia.pdb	101 	D	-177.8	-100.2	 -59.1	10	1.9	    KINK
+pdb1c1e_chothia.pdb	102 	Y	-179.7	 -99.7	 128.1	10	1.9	    KINK
+pdb1c1e_chothia.pdb	103 	W	-176.5	-112.4	 152.4	10	1.9	    KINK
+
+pdb1c5d_chothia.pdb	100A	F	 177.1	  47.4	  44.6	 9	2.4	    KINK
+pdb1c5d_chothia.pdb	101 	D	 176.9	 -83.9	 -40.3	 9	2.4	    KINK
+pdb1c5d_chothia.pdb	102 	Y	 178.8	-110.4	 129.0	 9	2.4	    KINK
+pdb1c5d_chothia.pdb	103 	W	 179.7	-120.9	 169.9	 9	2.4	    KINK
+
+pdb1nbv_chothia.pdb	100B	F	 170.9	  70.3	  82.0	10	2.0	    KINK
+pdb1nbv_chothia.pdb	101 	A	-178.8	-107.2	 -42.7	10	2.0	    KINK
+pdb1nbv_chothia.pdb	102 	Y	 172.7	-122.8	 129.0	10	2.0	    KINK
+pdb1nbv_chothia.pdb	103 	W	 178.1	-109.0	 146.6	10	2.0	    KINK
+
+pdb1cf8_chothia.pdb	99  	S	-176.7	 -98.6	 135.7	 7	2.7	EXTENDED
+pdb1cf8_chothia.pdb	101 	D	 176.0	-158.6	 148.8	 7	2.7	EXTENDED
+pdb1cf8_chothia.pdb	102 	Y	 179.5	-137.8	 122.0	 7	2.7	EXTENDED
+pdb1cf8_chothia.pdb	103 	W	-179.2	-118.4	 154.0	 7	2.7	EXTENDED
+
+pdb2cgr_chothia.pdb	99  	M	 173.4	-103.2	  85.5	 7	2.2	    KINK
+pdb2cgr_chothia.pdb	101 	D	-171.2	 -88.4	 -24.3	 7	2.2	    KINK
+pdb2cgr_chothia.pdb	102 	Y	-179.7	-133.4	 126.4	 7	2.2	    KINK
+pdb2cgr_chothia.pdb	103 	W	-178.8	-117.8	 154.1	 7	2.2	    KINK
+
+pdb2ck0_chothia.pdb	100A	M	-179.2	 -71.7	  97.7	 9	2.2	    KINK
+pdb2ck0_chothia.pdb	101 	D	-174.7	 -58.7	 -74.6	 9	2.2	    KINK
+pdb2ck0_chothia.pdb	102 	Y	-173.6	-118.5	 143.3	 9	2.2	    KINK
+pdb2ck0_chothia.pdb	103 	W	 176.7	-115.6	 154.5	 9	2.2	    KINK
+
+pdb1n4x_chothia.pdb	100C	F	 177.1	 -81.4	 111.9	11	1.7	    KINK
+pdb1n4x_chothia.pdb	101 	T	-174.5	-101.5	 -55.4	11	1.7	    KINK
+pdb1n4x_chothia.pdb	102 	Y	-175.9	 -98.9	 129.4	11	1.7	    KINK
+pdb1n4x_chothia.pdb	103 	W	 179.9	-125.7	 147.6	11	1.7	    KINK
+
+pdb1cly_chothia.pdb	100B	F	-173.8	-115.6	  74.8	10	2.5	    KINK
+pdb1cly_chothia.pdb	101 	A	 177.8	 -79.9	 -29.0	10	2.5	    KINK
+pdb1cly_chothia.pdb	102 	Y	 179.3	-128.0	 123.0	10	2.5	    KINK
+pdb1cly_chothia.pdb	103 	W	 178.5	-111.5	 151.3	10	2.5	    KINK
+
+pdb1ct8_chothia.pdb	100A	F	 178.4	 -77.6	  74.7	 9	2.2	    KINK
+pdb1ct8_chothia.pdb	101 	A	-176.6	 -87.4	 -29.2	 9	2.2	    KINK
+pdb1ct8_chothia.pdb	102 	Y	-175.9	-110.2	 131.8	 9	2.2	    KINK
+pdb1ct8_chothia.pdb	103 	W	-179.8	-133.0	 153.7	 9	2.2	    KINK
+
+pdb1cz8_chothia.pdb	100F	F	-179.7	 -94.9	 118.0	14	2.4	    KINK
+pdb1cz8_chothia.pdb	101 	D	-174.4	-100.5	 -38.3	14	2.4	    KINK
+pdb1cz8_chothia.pdb	102 	V	 176.9	-122.1	 129.7	14	2.4	    KINK
+pdb1cz8_chothia.pdb	103 	W	-178.9	-121.8	 156.6	14	2.4	    KINK
+
+pdb1dbb_chothia.pdb	100B	F	 176.9	-126.1	 104.5	10	2.7	    KINK
+pdb1dbb_chothia.pdb	101 	D	-167.9	-105.9	 -10.8	10	2.7	    KINK
+pdb1dbb_chothia.pdb	102 	V	 177.6	-130.5	 118.3	10	2.7	    KINK
+pdb1dbb_chothia.pdb	103 	W	 177.2	-122.5	 156.7	10	2.7	    KINK
+
+pdb1dee_chothia.pdb	100D	N	 178.6	 -76.0	  99.5	12	2.7	    KINK
+pdb1dee_chothia.pdb	101 	D	-178.0	 -81.7	 -26.1	12	2.7	    KINK
+pdb1dee_chothia.pdb	102 	Y	 179.9	-132.2	 124.4	12	2.7	    KINK
+pdb1dee_chothia.pdb	103 	W	-179.7	-116.4	 154.7	12	2.7	    KINK
+
+pdb1dn0_chothia.pdb	100D	W	-168.3	-116.2	 122.3	12	2.3	    KINK
+pdb1dn0_chothia.pdb	101 	N	 172.7	-106.3	  -9.3	12	2.3	    KINK
+pdb1dn0_chothia.pdb	102 	Y	 178.9	-125.4	 128.7	12	2.3	    KINK
+pdb1dn0_chothia.pdb	103 	W	-173.8	-136.6	 156.4	12	2.3	    KINK
+
+pdb1dqd_chothia.pdb	100F	M	-177.9	-140.0	 176.5	14	2.1	EXTENDED
+pdb1dqd_chothia.pdb	101 	D	 177.0	-151.7	 170.6	14	2.1	EXTENDED
+pdb1dqd_chothia.pdb	102 	Y	-174.3	-135.3	 124.4	14	2.1	EXTENDED
+pdb1dqd_chothia.pdb	103 	W	-178.5	-125.2	 145.6	14	2.1	EXTENDED
+
+pdb1dql_chothia.pdb	100F	G	-179.2	  78.9	  29.9	14	2.6	    KINK
+pdb1dql_chothia.pdb	101 	D	-179.2	 -96.5	 -29.6	14	2.6	    KINK
+pdb1dql_chothia.pdb	102 	Y	-179.6	-118.3	 135.1	14	2.6	    KINK
+pdb1dql_chothia.pdb	103 	W	-179.6	-131.8	 161.4	14	2.6	    KINK
+
+pdb1e6o_chothia.pdb	100C	F	-178.0	 -83.5	  76.1	11	1.8	    KINK
+pdb1e6o_chothia.pdb	101 	D	-174.4	 -80.7	 -13.3	11	1.8	    KINK
+pdb1e6o_chothia.pdb	102 	Y	-179.2	-129.8	 137.5	11	1.8	    KINK
+pdb1e6o_chothia.pdb	103 	W	-179.2	-137.5	 151.0	11	1.8	    KINK
+
+pdb1egj_chothia.pdb	100B	F	-178.3	 -98.5	  91.9	10	2.8	    KINK
+pdb1egj_chothia.pdb	101 	A	-177.0	 -76.9	 -34.4	10	2.8	    KINK
+pdb1egj_chothia.pdb	102 	Y	-178.9	-132.4	 134.1	10	2.8	    KINK
+pdb1egj_chothia.pdb	103 	W	-178.9	-119.2	 154.2	10	2.8	    KINK
+
+pdb1ehl_chothia.pdb	100C	L	-179.3	 -77.1	  85.3	11	2.4	    KINK
+pdb1ehl_chothia.pdb	101 	D	-177.1	 -89.5	 -17.0	11	2.4	    KINK
+pdb1ehl_chothia.pdb	102 	Y	 179.0	-124.3	 136.5	11	2.4	    KINK
+pdb1ehl_chothia.pdb	103 	W	-177.5	-137.4	 158.3	11	2.4	    KINK
+
+pdb1ejo_chothia.pdb	100C	F	 177.3	 -97.4	  97.5	11	2.3	    KINK
+pdb1ejo_chothia.pdb	101 	A	-174.9	 -85.6	 -35.0	11	2.3	    KINK
+pdb1ejo_chothia.pdb	102 	S	-176.3	-130.1	 123.7	11	2.3	    KINK
+pdb1ejo_chothia.pdb	103 	W	 179.5	-119.7	 154.4	11	2.3	    KINK
+
+pdb1eo8_chothia.pdb	100A	F	-177.3	-104.3	  19.0	 9	2.8	EXTENDED
+pdb1eo8_chothia.pdb	101 	S	-178.9	 -65.2	 138.1	 9	2.8	EXTENDED
+pdb1eo8_chothia.pdb	102 	Y	 178.8	-141.0	 119.7	 9	2.8	EXTENDED
+pdb1eo8_chothia.pdb	103 	W	 179.6	-102.2	 147.0	 9	2.8	EXTENDED
+
+pdb1etz_chothia.pdb	100H	F	 172.0	-126.6	  82.8	16	2.6	    KINK
+pdb1etz_chothia.pdb	101 	D	-169.8	 -81.3	 -63.4	16	2.6	    KINK
+pdb1etz_chothia.pdb	102 	N	-176.0	 -87.6	 132.7	16	2.6	    KINK
+pdb1etz_chothia.pdb	103 	W	 177.5	-132.2	 147.6	16	2.6	    KINK
+
+pdb1ezv_chothia.pdb	100E	M	-178.6	 -84.9	 110.5	13	2.3	    KINK
+pdb1ezv_chothia.pdb	101 	D	-163.4	-110.6	 -23.6	13	2.3	    KINK
+pdb1ezv_chothia.pdb	102 	Y	 177.9	-125.6	 123.4	13	2.3	    KINK
+pdb1ezv_chothia.pdb	103 	W	-172.0	-114.4	 146.3	13	2.3	    KINK
+
+pdb1f4w_chothia.pdb	100 	L	 173.3	 -86.9	  82.0	 8	2.3	    KINK
+pdb1f4w_chothia.pdb	101 	D	-169.8	 -87.5	 -54.8	 8	2.3	    KINK
+pdb1f4w_chothia.pdb	102 	Y	-174.5	 -93.5	 137.1	 8	2.3	    KINK
+pdb1f4w_chothia.pdb	103 	W	 179.5	-135.7	 146.2	 8	2.3	    KINK
+
+pdb1f58_chothia.pdb	100I	M	 177.3	 -77.5	 106.0	17	2.0	    KINK
+pdb1f58_chothia.pdb	101 	D	-171.6	-108.5	 -13.5	17	2.0	    KINK
+pdb1f58_chothia.pdb	102 	C	-176.9	-132.2	 120.1	17	2.0	    KINK
+pdb1f58_chothia.pdb	103 	W	 179.4	-121.8	 155.2	17	2.0	    KINK
+
+pdb1f8t_chothia.pdb	100A	F	-176.8	 -72.1	 111.8	 9	2.2	EXTENDED
+pdb1f8t_chothia.pdb	101 	T	 178.8	-149.8	 125.8	 9	2.2	EXTENDED
+pdb1f8t_chothia.pdb	102 	Y	-179.7	-143.5	 136.0	 9	2.2	EXTENDED
+pdb1f8t_chothia.pdb	103 	W	 179.0	-120.8	 150.1	 9	2.2	EXTENDED
+
+pdb1fai_chothia.pdb	100G	F	-171.2	 -80.9	  86.9	15	2.7	    KINK
+pdb1fai_chothia.pdb	101 	D	-168.5	 -98.5	   9.3	15	2.7	    KINK
+pdb1fai_chothia.pdb	102 	S	-177.4	-162.2	 101.1	15	2.7	    KINK
+pdb1fai_chothia.pdb	103 	W	-176.1	 -98.5	 152.3	15	2.7	    KINK
+
+pdb1fgv_chothia.pdb	100C	F	 176.9	 -87.3	 116.8	11	1.9	    KINK
+pdb1fgv_chothia.pdb	101 	D	-175.2	-105.9	 -16.8	11	1.9	    KINK
+pdb1fgv_chothia.pdb	102 	V	 178.7	-135.3	 134.7	11	1.9	    KINK
+pdb1fgv_chothia.pdb	103 	W	 180.0	-122.6	 142.8	11	1.9	    KINK
+
+pdb1fl5_chothia.pdb	100 	M	 175.0	-121.5	  91.8	 8	2.1	    KINK
+pdb1fl5_chothia.pdb	101 	D	-168.7	 -91.1	 -22.7	 8	2.1	    KINK
+pdb1fl5_chothia.pdb	102 	Y	 177.9	-128.1	 126.6	 8	2.1	    KINK
+pdb1fl5_chothia.pdb	103 	W	-176.3	-121.5	 149.7	 8	2.1	    KINK
+
+pdb1fns_chothia.pdb	100F	L	 176.7	 -80.1	  85.3	14	2.0	    KINK
+pdb1fns_chothia.pdb	101 	D	-164.7	 -80.6	 -23.4	14	2.0	    KINK
+pdb1fns_chothia.pdb	102 	Y	-179.5	-141.9	 124.5	14	2.0	    KINK
+pdb1fns_chothia.pdb	103 	W	-176.1	-113.8	 145.2	14	2.0	    KINK
+
+pdb1for_chothia.pdb	100B	M	 177.8	 -71.7	  96.0	10	2.8	    KINK
+pdb1for_chothia.pdb	101 	D	-175.1	 -68.8	 -65.6	10	2.8	    KINK
+pdb1for_chothia.pdb	102 	Y	-176.8	-102.9	 140.9	10	2.8	    KINK
+pdb1for_chothia.pdb	103 	W	-179.9	-120.4	 162.7	10	2.8	    KINK
+
+pdb1frg_chothia.pdb	100C	F	 176.4	 -86.2	  99.5	11	2.8	    KINK
+pdb1frg_chothia.pdb	101 	A	 177.7	 -91.6	 -22.7	11	2.8	    KINK
+pdb1frg_chothia.pdb	102 	Y	-176.7	-119.3	 114.3	11	2.8	    KINK
+pdb1frg_chothia.pdb	103 	W	-178.7	-116.3	 160.9	11	2.8	    KINK
+
+pdb1fvc_chothia.pdb	100C	M	-178.7	 -84.1	  96.8	11	2.2	    KINK
+pdb1fvc_chothia.pdb	101 	D	-173.6	 -89.3	 -24.2	11	2.2	    KINK
+pdb1fvc_chothia.pdb	102 	Y	 176.2	-124.9	 136.2	11	2.2	    KINK
+pdb1fvc_chothia.pdb	103 	W	-175.1	-136.2	 150.7	11	2.2	    KINK
+
+pdb1fvd_chothia.pdb	100C	M	 172.7	 -86.1	  92.2	11	2.5	    KINK
+pdb1fvd_chothia.pdb	101 	D	-177.0	 -93.3	 -21.0	11	2.5	    KINK
+pdb1fvd_chothia.pdb	102 	V	 174.2	-116.8	 125.6	11	2.5	    KINK
+pdb1fvd_chothia.pdb	103 	W	 177.4	-129.3	 142.5	11	2.5	    KINK
+
+pdb1g9m_chothia.pdb	100K	L	-178.1	-122.9	 117.2	19	2.2	    KINK
+pdb1g9m_chothia.pdb	101 	K	-176.0	 -98.4	 -32.1	19	2.2	    KINK
+pdb1g9m_chothia.pdb	102 	H	-179.2	-112.2	 125.3	19	2.2	    KINK
+pdb1g9m_chothia.pdb	103 	W	 179.7	-122.2	 162.7	19	2.2	    KINK
+
+pdb1rzj_chothia.pdb	100K	L	-178.6	-122.6	 115.7	19	2.2	    KINK
+pdb1rzj_chothia.pdb	101 	K	-175.9	 -97.2	 -38.5	19	2.2	    KINK
+pdb1rzj_chothia.pdb	102 	H	-178.6	-106.7	 125.9	19	2.2	    KINK
+pdb1rzj_chothia.pdb	103 	W	-179.6	-122.7	 161.0	19	2.2	    KINK
+
+pdb1gig_chothia.pdb	100F	M	 174.4	 -97.3	 101.3	14	2.3	    KINK
+pdb1gig_chothia.pdb	101 	D	-167.7	 -85.5	 -36.5	14	2.3	    KINK
+pdb1gig_chothia.pdb	102 	Y	-178.0	-124.9	 128.2	14	2.3	    KINK
+pdb1gig_chothia.pdb	103 	W	-179.7	-111.5	 148.0	14	2.3	    KINK
+
+pdb1h0d_chothia.pdb	100D	M	 175.4	-106.5	 101.6	12	2.0	    KINK
+pdb1h0d_chothia.pdb	101 	D	-169.4	 -89.8	 -14.6	12	2.0	    KINK
+pdb1h0d_chothia.pdb	102 	Y	-179.3	-140.2	 133.0	12	2.0	    KINK
+pdb1h0d_chothia.pdb	103 	W	 177.3	-129.8	 140.8	12	2.0	    KINK
+
+pdb1h3p_chothia.pdb	99  	V	-178.9	-130.1	  31.0	 7	2.6	EXTENDED
+pdb1h3p_chothia.pdb	101 	A	 179.8	 -65.7	 107.7	 7	2.6	EXTENDED
+pdb1h3p_chothia.pdb	102 	Y	-179.0	-159.4	 145.9	 7	2.6	EXTENDED
+pdb1h3p_chothia.pdb	103 	W	 178.0	-124.6	 148.0	 7	2.6	EXTENDED
+
+pdb1r0a_chothia.pdb	100E	M	 176.8	 -85.4	  90.0	13	2.8	    KINK
+pdb1r0a_chothia.pdb	101 	D	-172.5	 -53.6	 -48.4	13	2.8	    KINK
+pdb1r0a_chothia.pdb	102 	H	-175.8	-133.5	 141.3	13	2.8	    KINK
+pdb1r0a_chothia.pdb	103 	W	-178.9	-115.9	 166.3	13	2.8	    KINK
+
+pdb1n0x_chothia.pdb	100J	M	 179.8	 -90.4	  81.9	18	1.8	    KINK
+pdb1n0x_chothia.pdb	101 	D	-176.2	 -63.2	 -49.2	18	1.8	    KINK
+pdb1n0x_chothia.pdb	102 	V	 179.8	-133.0	 128.3	18	1.8	    KINK
+pdb1n0x_chothia.pdb	103 	W	-177.2	-109.6	 151.8	18	1.8	    KINK
+
+pdb1i8k_chothia.pdb	100C	M	-166.3	 -85.7	 129.2	11	1.8	    KINK
+pdb1i8k_chothia.pdb	101 	D	 169.2	-101.1	 -56.1	11	1.8	    KINK
+pdb1i8k_chothia.pdb	102 	Y	-179.1	-104.3	 141.3	11	1.8	    KINK
+pdb1i8k_chothia.pdb	103 	W	-177.7	-126.7	 148.8	11	1.8	    KINK
+
+pdb1i8m_chothia.pdb	100C	M	 178.8	 -59.9	 144.0	11	2.1	    KINK
+pdb1i8m_chothia.pdb	101 	D	-173.8	-124.2	 -30.6	11	2.1	    KINK
+pdb1i8m_chothia.pdb	102 	Y	-176.3	-118.6	 104.9	11	2.1	    KINK
+pdb1i8m_chothia.pdb	103 	W	 177.4	 -95.7	 138.8	11	2.1	    KINK
+
+pdb1i9j_chothia.pdb	100B	L	 171.9	-110.3	  93.4	10	2.6	    KINK
+pdb1i9j_chothia.pdb	101 	A	-168.1	 -70.3	 -36.0	10	2.6	    KINK
+pdb1i9j_chothia.pdb	102 	Y	-172.7	-128.1	 134.4	10	2.6	    KINK
+pdb1i9j_chothia.pdb	103 	W	 177.6	-129.9	 155.7	10	2.6	    KINK
+
+pdb1ibg_chothia.pdb	100E	V	 168.3	 -93.3	  93.1	13	2.7	    KINK
+pdb1ibg_chothia.pdb	101 	D	-158.3	 -97.1	 -25.6	13	2.7	    KINK
+pdb1ibg_chothia.pdb	102 	Y	 179.4	-122.4	 142.4	13	2.7	    KINK
+pdb1ibg_chothia.pdb	103 	W	-178.1	-128.2	 148.2	13	2.7	    KINK
+
+pdb1igc_chothia.pdb	100C	M	 178.7	 -63.9	  77.9	11	2.6	    KINK
+pdb1igc_chothia.pdb	101 	D	-176.3	 -48.6	 -57.5	11	2.6	    KINK
+pdb1igc_chothia.pdb	102 	Y	-174.1	-122.9	 145.9	11	2.6	    KINK
+pdb1igc_chothia.pdb	103 	W	-178.6	-125.4	 150.0	11	2.6	    KINK
+
+pdb1igf_chothia.pdb	100B	F	-174.4	 -94.7	 145.7	10	2.8	    KINK
+pdb1igf_chothia.pdb	101 	D	 178.3	-130.1	   1.5	10	2.8	    KINK
+pdb1igf_chothia.pdb	102 	Y	 174.6	-150.1	 130.6	10	2.8	    KINK
+pdb1igf_chothia.pdb	103 	W	 176.2	-119.4	 145.9	10	2.8	    KINK
+
+pdb1igj_chothia.pdb	100B	M	-175.4	 -73.0	 104.8	10	2.5	    KINK
+pdb1igj_chothia.pdb	101 	D	-176.7	 -92.4	 -18.1	10	2.5	    KINK
+pdb1igj_chothia.pdb	102 	Y	 174.9	-119.4	 141.8	10	2.5	    KINK
+pdb1igj_chothia.pdb	103 	W	-178.2	-131.0	 129.3	10	2.5	    KINK
+
+pdb1igm_chothia.pdb	100D	F	 176.4	-106.6	 118.6	12	2.3	    KINK
+pdb1igm_chothia.pdb	101 	D	 179.8	 -69.0	 -45.4	12	2.3	    KINK
+pdb1igm_chothia.pdb	102 	S	-168.5	-142.6	 134.1	12	2.3	    KINK
+pdb1igm_chothia.pdb	103 	W	 179.6	-110.6	 154.8	12	2.3	    KINK
+
+pdb1igt_chothia.pdb	100A	M	-178.7	 -77.7	 109.2	 9	2.8	    KINK
+pdb1igt_chothia.pdb	101 	D	-179.4	 -83.1	 -23.6	 9	2.8	    KINK
+pdb1igt_chothia.pdb	102 	Y	-180.0	-138.6	 134.1	 9	2.8	    KINK
+pdb1igt_chothia.pdb	103 	W	 179.2	-125.0	 152.8	 9	2.8	    KINK
+
+pdb1il1_chothia.pdb	100D	L	 177.5	 -85.4	 126.7	12	2.2	EXTENDED
+pdb1il1_chothia.pdb	101 	D	-176.1	-126.7	 112.5	12	2.2	EXTENDED
+pdb1il1_chothia.pdb	102 	Y	 177.9	-122.2	 141.7	12	2.2	EXTENDED
+pdb1il1_chothia.pdb	103 	W	-178.7	-126.8	 148.7	12	2.2	EXTENDED
+
+pdb1iqd_chothia.pdb	100 	F	 177.8	 -99.8	  78.5	 8	2.0	    KINK
+pdb1iqd_chothia.pdb	101 	D	-174.7	 -81.1	 -39.4	 8	2.0	    KINK
+pdb1iqd_chothia.pdb	102 	I	 179.3	-112.7	 126.1	 8	2.0	    KINK
+pdb1iqd_chothia.pdb	103 	W	-176.6	-120.6	 153.0	 8	2.0	    KINK
+
+pdb1iqw_chothia.pdb	100D	F	-179.5	-100.6	 116.6	12	2.5	    KINK
+pdb1iqw_chothia.pdb	101 	D	-175.2	 -97.8	 -20.4	12	2.5	    KINK
+pdb1iqw_chothia.pdb	102 	V	 179.4	-130.9	 132.9	12	2.5	    KINK
+pdb1iqw_chothia.pdb	103 	W	-179.2	-120.0	 152.2	12	2.5	    KINK
+
+pdb1jfq_chothia.pdb	100D	F	 176.9	 -83.4	  90.3	12	1.9	    KINK
+pdb1jfq_chothia.pdb	101 	D	-168.0	 -83.7	 -27.5	12	1.9	    KINK
+pdb1jfq_chothia.pdb	102 	Y	 179.1	-130.5	 136.4	12	1.9	    KINK
+pdb1jfq_chothia.pdb	103 	W	-178.2	-125.6	 148.5	12	1.9	    KINK
+
+pdb1jgu_chothia.pdb	100B	F	 179.9	-120.8	 106.5	10	1.8	    KINK
+pdb1jgu_chothia.pdb	101 	D	-175.4	 -97.4	 -37.4	10	1.8	    KINK
+pdb1jgu_chothia.pdb	102 	V	-179.0	-102.3	 125.7	10	1.8	    KINK
+pdb1jgu_chothia.pdb	103 	W	-179.5	-131.7	 144.6	10	1.8	    KINK
+
+pdb1jhl_chothia.pdb	100A	M	-174.0	-110.3	 109.9	 9	2.4	    KINK
+pdb1jhl_chothia.pdb	101 	D	-170.4	 -90.5	 -25.1	 9	2.4	    KINK
+pdb1jhl_chothia.pdb	102 	Y	 170.4	-125.1	 153.6	 9	2.4	    KINK
+pdb1jhl_chothia.pdb	103 	W	-174.6	-137.8	 161.3	 9	2.4	    KINK
+
+pdb1jn6_chothia.pdb	100B	M	 177.7	  55.3	  43.0	10	2.7	    KINK
+pdb1jn6_chothia.pdb	101 	D	 177.6	 -89.8	 -48.0	10	2.7	    KINK
+pdb1jn6_chothia.pdb	102 	Y	 176.9	-109.3	 124.4	10	2.7	    KINK
+pdb1jn6_chothia.pdb	103 	W	-176.6	-116.6	 153.6	10	2.7	    KINK
+
+pdb1jps_chothia.pdb	100 	F	 175.4	 -81.2	 117.6	 8	1.9	    KINK
+pdb1jps_chothia.pdb	101 	D	-176.6	-104.2	 -12.9	 8	1.9	    KINK
+pdb1jps_chothia.pdb	102 	Y	 176.8	-143.7	 145.1	 8	1.9	    KINK
+pdb1jps_chothia.pdb	103 	W	 179.3	-140.0	 155.5	 8	1.9	    KINK
+
+pdb1jrh_chothia.pdb	100D	M	-176.8	 -88.4	  98.9	12	2.8	    KINK
+pdb1jrh_chothia.pdb	101 	D	-176.0	 -77.3	 -50.6	12	2.8	    KINK
+pdb1jrh_chothia.pdb	102 	Y	-178.3	-107.4	 129.5	12	2.8	    KINK
+pdb1jrh_chothia.pdb	103 	W	 179.5	-126.1	 155.7	12	2.8	    KINK
+
+pdb1r3j_chothia.pdb	100A	F	 179.1	 -98.5	  97.9	 9	1.9	    KINK
+pdb1r3j_chothia.pdb	101 	A	-175.5	 -65.1	 -40.0	 9	1.9	    KINK
+pdb1r3j_chothia.pdb	102 	V	-176.4	-137.4	 146.0	 9	1.9	    KINK
+pdb1r3j_chothia.pdb	103 	W	 179.3	-127.0	 156.0	 9	1.9	    KINK
+
+pdb1kb5_chothia.pdb	100B	F	-169.7	 -80.0	 105.7	10	2.5	    KINK
+pdb1kb5_chothia.pdb	101 	D	-178.4	 -69.0	 -57.9	10	2.5	    KINK
+pdb1kb5_chothia.pdb	102 	Y	-178.0	-130.0	 140.8	10	2.5	    KINK
+pdb1kb5_chothia.pdb	103 	W	-175.5	-117.7	 151.4	10	2.5	    KINK
+
+pdb1kcu_chothia.pdb	99  	F	-179.3	 -75.6	  91.3	 7	2.2	    KINK
+pdb1kcu_chothia.pdb	101 	D	-174.4	 -64.8	 -63.7	 7	2.2	    KINK
+pdb1kcu_chothia.pdb	102 	Y	-171.5	-105.1	 136.3	 7	2.2	    KINK
+pdb1kcu_chothia.pdb	103 	W	 178.1	-134.0	 156.1	 7	2.2	    KINK
+
+pdb1kcv_chothia.pdb	99  	F	-178.7	-118.6	  93.4	 7	1.8	    KINK
+pdb1kcv_chothia.pdb	101 	P	-178.4	 -81.3	 -23.0	 7	1.8	    KINK
+pdb1kcv_chothia.pdb	102 	Y	-177.5	-124.7	 126.0	 7	1.8	    KINK
+pdb1kcv_chothia.pdb	103 	W	 178.6	-129.4	 156.1	 7	1.8	    KINK
+
+pdb1kel_chothia.pdb	100 	M	 178.1	 -78.9	  75.1	 8	1.9	    KINK
+pdb1kel_chothia.pdb	101 	D	-175.9	 -82.2	 -22.8	 8	1.9	    KINK
+pdb1kel_chothia.pdb	102 	Y	 179.5	-126.9	 126.1	 8	1.9	    KINK
+pdb1kel_chothia.pdb	103 	W	 178.9	-121.8	 155.3	 8	1.9	    KINK
+
+pdb1kfa_chothia.pdb	100D	M	-177.3	 -87.0	 115.2	12	2.8	    KINK
+pdb1kfa_chothia.pdb	101 	D	-177.6	 -82.4	 -73.2	12	2.8	    KINK
+pdb1kfa_chothia.pdb	102 	Y	-177.9	-110.8	 154.4	12	2.8	    KINK
+pdb1kfa_chothia.pdb	103 	W	 176.7	-117.5	 154.6	12	2.8	    KINK
+
+pdb1kiq_chothia.pdb	100 	L	 177.4	 -85.4	 100.1	 8	1.9	    KINK
+pdb1kiq_chothia.pdb	101 	D	-171.4	 -90.3	 -19.0	 8	1.9	    KINK
+pdb1kiq_chothia.pdb	102 	Y	-177.1	-143.0	 132.8	 8	1.9	    KINK
+pdb1kiq_chothia.pdb	103 	W	-179.1	-124.3	 154.9	 8	1.9	    KINK
+
+pdb1kn2_chothia.pdb	100F	M	-177.1	 -46.9	 129.0	14	1.9	EXTENDED
+pdb1kn2_chothia.pdb	101 	D	 179.7	 -91.5	 135.9	14	1.9	EXTENDED
+pdb1kn2_chothia.pdb	102 	Y	 175.0	-121.0	 139.6	14	1.9	EXTENDED
+pdb1kn2_chothia.pdb	103 	W	-173.6	-127.6	 154.3	14	1.9	EXTENDED
+
+pdb1l7i_chothia.pdb	100B	F	-173.9	-108.9	 123.1	10	1.8	    KINK
+pdb1l7i_chothia.pdb	101 	D	-175.2	 -91.2	 -11.6	10	1.8	    KINK
+pdb1l7i_chothia.pdb	102 	Y	 179.8	-148.4	 134.9	10	1.8	    KINK
+pdb1l7i_chothia.pdb	103 	W	-179.6	-128.2	 148.8	10	1.8	    KINK
+
+pdb1lk3_chothia.pdb	100B	F	-165.3	-121.4	  94.0	10	1.9	    KINK
+pdb1lk3_chothia.pdb	101 	P	 175.6	 -83.2	 -25.4	10	1.9	    KINK
+pdb1lk3_chothia.pdb	102 	Y	-179.2	-123.7	 132.6	10	1.9	    KINK
+pdb1lk3_chothia.pdb	103 	W	-179.8	-125.1	 154.2	10	1.9	    KINK
+
+pdb1pz5_chothia.pdb	100A	M	 175.9	 -68.1	 102.7	 9	1.8	    KINK
+pdb1pz5_chothia.pdb	101 	D	-167.5	 -89.7	 -25.1	 9	1.8	    KINK
+pdb1pz5_chothia.pdb	102 	Y	-178.3	-128.4	 128.6	 9	1.8	    KINK
+pdb1pz5_chothia.pdb	103 	W	-179.0	-128.2	 157.1	 9	1.8	    KINK
+
+pdb1mcp_chothia.pdb	100C	F	 179.1	-101.5	 106.5	11	2.7	    KINK
+pdb1mcp_chothia.pdb	101 	D	-173.5	 -85.0	 -28.5	11	2.7	    KINK
+pdb1mcp_chothia.pdb	102 	V	-177.3	-137.1	 131.3	11	2.7	    KINK
+pdb1mcp_chothia.pdb	103 	W	 177.2	-118.8	 162.5	11	2.7	    KINK
+
+pdb2hrp_chothia.pdb	100H	M	 177.5	 -75.3	  85.7	16	2.2	    KINK
+pdb2hrp_chothia.pdb	101 	D	-172.7	 -84.4	 -18.8	16	2.2	    KINK
+pdb2hrp_chothia.pdb	102 	Y	 180.0	-135.5	 132.8	16	2.2	    KINK
+pdb2hrp_chothia.pdb	103 	W	 179.0	-127.5	 154.4	16	2.2	    KINK
+
+pdb1mh5_chothia.pdb	100B	V	-180.0	-110.5	  90.2	10	2.1	EXTENDED
+pdb1mh5_chothia.pdb	101 	V	 177.5	-139.5	 138.7	10	2.1	EXTENDED
+pdb1mh5_chothia.pdb	102 	Y	-177.6	-136.6	 133.8	10	2.1	EXTENDED
+pdb1mh5_chothia.pdb	103 	W	-177.7	-101.4	 139.8	10	2.1	EXTENDED
+
+pdb1nlb_chothia.pdb	100A	F	 177.6	 -93.7	 118.5	 9	1.6	    KINK
+pdb1nlb_chothia.pdb	101 	D	-176.4	 -96.2	 -14.1	 9	1.6	    KINK
+pdb1nlb_chothia.pdb	102 	V	 179.2	-147.6	 136.3	 9	1.6	    KINK
+pdb1nlb_chothia.pdb	103 	W	 179.7	-131.6	 155.0	 9	1.6	    KINK
+
+pdb1mhp_chothia.pdb	100B	F	-175.1	 -81.0	  84.4	10	2.8	    KINK
+pdb1mhp_chothia.pdb	101 	D	-179.3	 -52.5	 -55.9	10	2.8	    KINK
+pdb1mhp_chothia.pdb	102 	V	-174.9	-131.8	 156.6	10	2.8	    KINK
+pdb1mhp_chothia.pdb	103 	W	-178.8	-129.6	 154.5	10	2.8	    KINK
+
+pdb1mj8_chothia.pdb	100B	V	 178.3	-135.4	 126.3	10	1.8	EXTENDED
+pdb1mj8_chothia.pdb	101 	V	 177.4	-128.2	 125.3	10	1.8	EXTENDED
+pdb1mj8_chothia.pdb	102 	Y	 179.2	 -96.7	 137.4	10	1.8	EXTENDED
+pdb1mj8_chothia.pdb	103 	W	 179.2	-127.2	 145.1	10	1.8	EXTENDED
+
+pdb1mju_chothia.pdb	99  	F	-161.4	-105.3	 111.4	 7	1.2	EXTENDED
+pdb1mju_chothia.pdb	101 	P	 175.0	 -84.8	 152.4	 7	1.2	EXTENDED
+pdb1mju_chothia.pdb	102 	Y	 168.6	-125.7	 145.2	 7	1.2	EXTENDED
+pdb1mju_chothia.pdb	103 	W	-174.7	-118.7	 145.1	 7	1.2	EXTENDED
+
+pdb1mlb_chothia.pdb	99  	Y	-179.7	-102.4	 109.4	 7	2.1	    KINK
+pdb1mlb_chothia.pdb	101 	G	-177.4	-108.2	 -14.4	 7	2.1	    KINK
+pdb1mlb_chothia.pdb	102 	Y	 175.1	-125.3	 121.2	 7	2.1	    KINK
+pdb1mlb_chothia.pdb	103 	W	-175.3	-124.2	 143.4	 7	2.1	    KINK
+
+pdb1mnu_chothia.pdb	100D	M	-179.0	-102.3	 117.5	12	2.5	EXTENDED
+pdb1mnu_chothia.pdb	101 	D	 176.5	-160.9	  92.8	12	2.5	EXTENDED
+pdb1mnu_chothia.pdb	102 	Y	-177.9	-143.6	 140.2	12	2.5	EXTENDED
+pdb1mnu_chothia.pdb	103 	W	-178.6	-122.5	 153.9	12	2.5	EXTENDED
+
+pdb1mvu_chothia.pdb	100D	L	 176.3	 -77.5	  88.5	12	1.8	    KINK
+pdb1mvu_chothia.pdb	101 	D	-171.6	 -90.9	 -22.4	12	1.8	    KINK
+pdb1mvu_chothia.pdb	102 	V	-178.6	-119.1	 125.2	12	1.8	    KINK
+pdb1mvu_chothia.pdb	103 	W	-178.8	-130.3	 151.5	12	1.8	    KINK
+
+pdb1nc2_chothia.pdb	100C	F	 176.1	 -84.0	  72.3	11	2.1	    KINK
+pdb1nc2_chothia.pdb	101 	D	-175.2	 -72.3	 -53.3	11	2.1	    KINK
+pdb1nc2_chothia.pdb	102 	V	-172.3	-110.7	 126.3	11	2.1	    KINK
+pdb1nc2_chothia.pdb	103 	W	 179.7	-120.3	 161.3	11	2.1	    KINK
+
+pdb1nca_chothia.pdb	100C	S	 172.0	 -91.7	  93.9	11	2.5	    KINK
+pdb1nca_chothia.pdb	101 	D	 168.2	 -97.7	 135.7	11	2.5	    KINK
+pdb1nca_chothia.pdb	102 	Y	-177.0	  63.3	 102.5	11	2.5	    KINK
+pdb1nca_chothia.pdb	103 	W	 179.3	-103.1	 156.5	11	2.5	    KINK
+
+pdb1ncw_chothia.pdb	100B	A	 170.9	  68.8	  27.1	10	1.3	EXTENDED
+pdb1ncw_chothia.pdb	101 	G	-175.7	 -56.1	 123.5	10	1.3	EXTENDED
+pdb1ncw_chothia.pdb	102 	S	-175.8	-141.7	 119.9	10	1.3	EXTENDED
+pdb1ncw_chothia.pdb	103 	W	-173.1	-111.9	 152.5	10	1.3	EXTENDED
+
+pdb1nfd_chothia.pdb	100A	F	 176.6	  59.9	  44.0	 9	2.8	    KINK
+pdb1nfd_chothia.pdb	101 	D	-178.9	 -85.7	 -53.6	 9	2.8	    KINK
+pdb1nfd_chothia.pdb	102 	Y	-177.5	 -99.3	 131.3	 9	2.8	    KINK
+pdb1nfd_chothia.pdb	103 	W	 175.8	-124.7	 143.4	 9	2.8	    KINK
+
+pdb1nl0_chothia.pdb	100C	L	 175.3	 -99.7	  92.6	11	2.2	    KINK
+pdb1nl0_chothia.pdb	101 	D	-170.2	 -78.5	 -21.7	11	2.2	    KINK
+pdb1nl0_chothia.pdb	102 	Y	-177.5	-140.7	 132.3	11	2.2	    KINK
+pdb1nl0_chothia.pdb	103 	W	 174.6	-127.3	 161.4	11	2.2	    KINK
+
+pdb1oaq_chothia.pdb	100C	F	 159.1	 -72.3	 156.7	11	1.5	    KINK
+pdb1oaq_chothia.pdb	101 	D	 165.8	-129.8	 -73.5	11	1.5	    KINK
+pdb1oaq_chothia.pdb	102 	Y	-173.8	 -93.6	 130.5	11	1.5	    KINK
+pdb1oaq_chothia.pdb	103 	W	 174.7	-115.6	 151.9	11	1.5	    KINK
+
+pdb1op3_chothia.pdb	100F	F	 177.6	 -92.9	 102.4	14	1.8	    KINK
+pdb1op3_chothia.pdb	101 	D	-165.2	 -95.4	  -8.8	14	1.8	    KINK
+pdb1op3_chothia.pdb	102 	A	 179.0	-146.2	 137.3	14	1.8	    KINK
+pdb1op3_chothia.pdb	103 	W	-174.0	-135.6	 145.7	14	1.8	    KINK
+
+pdb1opg_chothia.pdb	100H	M	-179.2	-118.8	  97.3	16	2.0	    KINK
+pdb1opg_chothia.pdb	101 	D	-173.5	 -91.0	   0.7	16	2.0	    KINK
+pdb1opg_chothia.pdb	102 	H	 178.8	-148.7	 135.1	16	2.0	    KINK
+pdb1opg_chothia.pdb	103 	W	-179.7	-131.6	 148.4	16	2.0	    KINK
+
+pdb1ors_chothia.pdb	100A	M	-178.2	 -86.3	  89.9	 9	1.9	    KINK
+pdb1ors_chothia.pdb	101 	D	-173.6	 -83.1	 -31.3	 9	1.9	    KINK
+pdb1ors_chothia.pdb	102 	Y	-178.2	-127.0	 121.7	 9	1.9	    KINK
+pdb1ors_chothia.pdb	103 	W	 179.3	-119.8	 151.2	 9	1.9	    KINK
+
+pdb1osp_chothia.pdb	100D	F	-179.9	-101.0	 106.1	12	1.9	    KINK
+pdb1osp_chothia.pdb	101 	A	-173.2	 -84.2	 -38.6	12	1.9	    KINK
+pdb1osp_chothia.pdb	102 	F	-175.9	-115.5	 122.1	12	1.9	    KINK
+pdb1osp_chothia.pdb	103 	W	-177.2	-124.7	 156.1	12	1.9	    KINK
+
+pdb1ots_chothia.pdb	100D	F	 177.8	 -84.8	  94.4	12	2.5	    KINK
+pdb1ots_chothia.pdb	101 	D	-173.9	 -58.1	 -64.6	12	2.5	    KINK
+pdb1ots_chothia.pdb	102 	V	-178.3	-130.7	 133.9	12	2.5	    KINK
+pdb1ots_chothia.pdb	103 	W	 180.0	-112.0	 146.1	12	2.5	    KINK
+
+pdb1p2c_chothia.pdb	99  	Y	 178.0	-112.1	  91.9	 7	2.0	    KINK
+pdb1p2c_chothia.pdb	101 	V	 179.8	 -93.1	 -37.6	 7	2.0	    KINK
+pdb1p2c_chothia.pdb	102 	Y	 179.3	-107.5	 111.1	 7	2.0	    KINK
+pdb1p2c_chothia.pdb	103 	W	-177.0	-122.9	 150.8	 7	2.0	    KINK
+
+pdb1plg_chothia.pdb	100 	M	-177.2	-107.5	 154.1	 8	2.8	    KINK
+pdb1plg_chothia.pdb	101 	D	 176.7	-105.9	 -68.5	 8	2.8	    KINK
+pdb1plg_chothia.pdb	102 	Y	-173.4	 -99.2	 127.3	 8	2.8	    KINK
+pdb1plg_chothia.pdb	103 	W	-174.3	-106.4	 153.9	 8	2.8	    KINK
+
+pdb1q0x_chothia.pdb	100B	M	-180.0	-101.9	 113.4	10	1.6	    KINK
+pdb1q0x_chothia.pdb	101 	D	-176.6	 -87.2	 -60.4	10	1.6	    KINK
+pdb1q0x_chothia.pdb	102 	Y	-177.1	 -94.3	 134.1	10	1.6	    KINK
+pdb1q0x_chothia.pdb	103 	W	-179.1	-124.3	 149.3	10	1.6	    KINK
+
+pdb1q1j_chothia.pdb	100L	M	 175.6	 -68.3	 105.1	20	2.5	    KINK
+pdb1q1j_chothia.pdb	101 	D	-173.3	 -89.5	 -66.9	20	2.5	    KINK
+pdb1q1j_chothia.pdb	102 	V	-179.2	 -93.2	 136.3	20	2.5	    KINK
+pdb1q1j_chothia.pdb	103 	W	-179.8	-128.6	 139.1	20	2.5	    KINK
+
+pdb1q72_chothia.pdb	100B	F	 178.2	 -79.8	  81.4	10	1.7	    KINK
+pdb1q72_chothia.pdb	101 	A	-173.7	 -70.7	 -32.4	10	1.7	    KINK
+pdb1q72_chothia.pdb	102 	Y	-174.9	-123.1	 138.6	10	1.7	    KINK
+pdb1q72_chothia.pdb	103 	W	 179.6	-134.4	 151.4	10	1.7	    KINK
+
+pdb1q9r_chothia.pdb	100C	F	 170.8	 -97.9	 103.7	11	1.4	    KINK
+pdb1q9r_chothia.pdb	101 	S	-175.0	 -71.0	 -40.5	11	1.4	    KINK
+pdb1q9r_chothia.pdb	102 	Y	-175.4	-138.0	 151.8	11	1.4	    KINK
+pdb1q9r_chothia.pdb	103 	W	-179.5	-134.4	 151.4	11	1.4	    KINK
+
+pdb1q9o_chothia.pdb	100E	M	 177.7	 -92.4	  97.1	13	1.8	    KINK
+pdb1q9o_chothia.pdb	101 	D	-169.4	 -80.5	 -10.8	13	1.8	    KINK
+pdb1q9o_chothia.pdb	102 	Y	-178.4	-140.1	 135.6	13	1.8	    KINK
+pdb1q9o_chothia.pdb	103 	W	 179.0	-137.8	 144.9	13	1.8	    KINK
+
+pdb1wej_chothia.pdb	100 	F	 178.2	 -67.6	 111.6	 8	1.8	EXTENDED
+pdb1wej_chothia.pdb	101 	D	-176.6	-157.4	 106.5	 8	1.8	EXTENDED
+pdb1wej_chothia.pdb	102 	Y	-178.6	-129.1	 139.1	 8	1.8	EXTENDED
+pdb1wej_chothia.pdb	103 	W	-177.8	-117.0	 150.4	 8	1.8	EXTENDED
+
+pdb1qfu_chothia.pdb	100E	M	 178.6	 -91.2	 120.7	13	2.8	    KINK
+pdb1qfu_chothia.pdb	101 	D	-177.2	-101.7	 -40.2	13	2.8	    KINK
+pdb1qfu_chothia.pdb	102 	Y	 178.4	-109.3	 129.5	13	2.8	    KINK
+pdb1qfu_chothia.pdb	103 	W	 178.3	-113.6	 153.2	13	2.8	    KINK
+
+pdb1qkz_chothia.pdb	100B	M	-178.8	-132.6	 104.0	10	1.9	    KINK
+pdb1qkz_chothia.pdb	101 	D	-171.2	 -87.7	 -49.1	10	1.9	    KINK
+pdb1qkz_chothia.pdb	102 	Y	-176.9	-119.1	 136.9	10	1.9	    KINK
+pdb1qkz_chothia.pdb	103 	W	 178.6	-127.1	 159.8	10	1.9	    KINK
+
+pdb1rhh_chothia.pdb	100N	F	-177.5	-110.3	 110.9	22	1.9	    KINK
+pdb1rhh_chothia.pdb	101 	D	-176.0	 -86.2	 -14.6	22	1.9	    KINK
+pdb1rhh_chothia.pdb	102 	F	-179.9	-142.2	 130.8	22	1.9	    KINK
+pdb1rhh_chothia.pdb	103 	W	-179.0	-119.6	 143.9	22	1.9	    KINK
+
+pdb1rih_chothia.pdb	100H	M	-177.9	 -80.7	 123.3	16	2.5	    KINK
+pdb1rih_chothia.pdb	101 	D	-175.7	 -98.2	 -30.3	16	2.5	    KINK
+pdb1rih_chothia.pdb	102 	Y	 179.5	-128.1	 127.6	16	2.5	    KINK
+pdb1rih_chothia.pdb	103 	W	-178.5	-114.5	 156.3	16	2.5	    KINK
+
+pdb1rjl_chothia.pdb	100C	M	 177.7	 -80.6	 101.0	11	2.6	    KINK
+pdb1rjl_chothia.pdb	101 	D	-174.4	 -96.0	  -1.5	11	2.6	    KINK
+pdb1rjl_chothia.pdb	102 	N	 179.4	-139.9	 122.5	11	2.6	    KINK
+pdb1rjl_chothia.pdb	103 	W	-178.7	-123.5	 159.0	11	2.6	    KINK
+
+pdb1rz7_chothia.pdb	100B	F	 180.0	 -79.8	  86.6	10	2.0	    KINK
+pdb1rz7_chothia.pdb	101 	N	-176.2	 -71.5	 -46.1	10	2.0	    KINK
+pdb1rz7_chothia.pdb	102 	V	-177.4	-114.5	 134.3	10	2.0	    KINK
+pdb1rz7_chothia.pdb	103 	W	-179.5	-127.7	 149.3	10	2.0	    KINK
+
+pdb1rzf_chothia.pdb	100E	M	-178.3	-135.7	  87.3	13	1.7	    KINK
+pdb1rzf_chothia.pdb	101 	D	 179.1	 -92.5	 -27.4	13	1.7	    KINK
+pdb1rzf_chothia.pdb	102 	V	 177.4	-117.6	 119.6	13	1.7	    KINK
+pdb1rzf_chothia.pdb	103 	W	-178.5	-114.3	 144.5	13	1.7	    KINK
+
+pdb1rzg_chothia.pdb	100E	F	-174.3	-117.4	 105.9	13	2.0	    KINK
+pdb1rzg_chothia.pdb	101 	D	 177.5	 -80.0	 -42.3	13	2.0	    KINK
+pdb1rzg_chothia.pdb	102 	L	-179.3	-103.5	 133.0	13	2.0	    KINK
+pdb1rzg_chothia.pdb	103 	W	 178.4	-126.5	 142.1	13	2.0	    KINK
+
+pdb1s3k_chothia.pdb	100B	F	-175.8	-121.0	  71.9	10	1.9	    KINK
+pdb1s3k_chothia.pdb	101 	A	 178.0	 -80.6	 -28.8	10	1.9	    KINK
+pdb1s3k_chothia.pdb	102 	Y	 179.7	-128.1	 131.5	10	1.9	    KINK
+pdb1s3k_chothia.pdb	103 	W	-178.2	-125.7	 154.5	10	1.9	    KINK
+
+pdb1sbs_chothia.pdb	100D	M	-174.6	-103.5	 102.4	12	2.0	    KINK
+pdb1sbs_chothia.pdb	101 	D	-163.4	 -88.8	 -16.0	12	2.0	    KINK
+pdb1sbs_chothia.pdb	102 	Y	 178.4	-142.2	 135.3	12	2.0	    KINK
+pdb1sbs_chothia.pdb	103 	W	-177.9	-127.4	 146.8	12	2.0	    KINK
+
+pdb1sy6_chothia.pdb	100B	L	 176.5	 -91.7	  98.3	10	2.1	    KINK
+pdb1sy6_chothia.pdb	101 	D	-171.8	 -78.6	 -29.6	10	2.1	    KINK
+pdb1sy6_chothia.pdb	102 	Y	-177.7	-128.1	 133.3	10	2.1	    KINK
+pdb1sy6_chothia.pdb	103 	W	-178.4	-125.2	 148.8	10	2.1	    KINK
+
+pdb1t2q_chothia.pdb	100B	M	 177.0	 -74.0	 120.9	10	1.8	    KINK
+pdb1t2q_chothia.pdb	101 	D	-177.2	-110.0	 -30.6	10	1.8	    KINK
+pdb1t2q_chothia.pdb	102 	S	 177.3	-125.0	 118.7	10	1.8	    KINK
+pdb1t2q_chothia.pdb	103 	W	-178.2	-114.1	 149.9	10	1.8	    KINK
+
+pdb1t4k_chothia.pdb	100A	G	 179.0	 131.7	 -39.5	 9	2.5	EXTENDED
+pdb1t4k_chothia.pdb	101 	D	-177.6	 -40.4	 103.3	 9	2.5	EXTENDED
+pdb1t4k_chothia.pdb	102 	S	 178.0	-130.8	 122.2	 9	2.5	EXTENDED
+pdb1t4k_chothia.pdb	103 	W	-176.4	 -92.7	 158.2	 9	2.5	EXTENDED
+
+pdb1t66_chothia.pdb	99  	G	 179.9	 165.3	-169.8	 7	2.3	EXTENDED
+pdb1t66_chothia.pdb	101 	A	-178.3	-148.0	 161.7	 7	2.3	EXTENDED
+pdb1t66_chothia.pdb	102 	Y	-178.0	-124.7	 152.8	 7	2.3	EXTENDED
+pdb1t66_chothia.pdb	103 	W	-178.9	-120.6	 138.7	 7	2.3	EXTENDED
+
+pdb1tet_chothia.pdb	99  	F	 170.3	 -89.0	  90.1	 7	2.3	    KINK
+pdb1tet_chothia.pdb	101 	D	 177.4	 -88.1	 -24.7	 7	2.3	    KINK
+pdb1tet_chothia.pdb	102 	V	-178.5	-128.5	 130.5	 7	2.3	    KINK
+pdb1tet_chothia.pdb	103 	W	-175.0	-126.7	 151.5	 7	2.3	    KINK
+
+pdb1tjg_chothia.pdb	100N	M	 170.0	-105.9	 103.7	22	2.0	    KINK
+pdb1tjg_chothia.pdb	101 	D	-166.4	 -79.6	 -22.9	22	2.0	    KINK
+pdb1tjg_chothia.pdb	102 	V	-177.7	-137.5	 128.0	22	2.0	    KINK
+pdb1tjg_chothia.pdb	103 	W	 179.3	-120.1	 152.5	22	2.0	    KINK
+
+pdb1txv_chothia.pdb	100B	M	 179.5	-137.6	  72.0	10	2.8	    KINK
+pdb1txv_chothia.pdb	101 	D	-171.6	 -98.5	 -35.1	10	2.8	    KINK
+pdb1txv_chothia.pdb	102 	Y	-177.3	 -94.6	 124.4	10	2.8	    KINK
+pdb1txv_chothia.pdb	103 	W	-178.7	-129.5	 146.9	10	2.8	    KINK
+
+pdb1tzg_chothia.pdb	100J	F	-177.0	 -85.9	 103.3	18	2.2	    KINK
+pdb1tzg_chothia.pdb	101 	A	 179.4	 -91.7	 -27.5	18	2.2	    KINK
+pdb1tzg_chothia.pdb	102 	H	-177.8	-113.2	 122.3	18	2.2	    KINK
+pdb1tzg_chothia.pdb	103 	W	-178.5	-123.1	 149.0	18	2.2	    KINK
+
+pdb1tzh_chothia.pdb	100E	M	-165.0	 -77.5	 121.4	13	2.6	    KINK
+pdb1tzh_chothia.pdb	101 	D	-152.9	-111.7	 -37.7	13	2.6	    KINK
+pdb1tzh_chothia.pdb	102 	Y	 173.6	-125.0	 152.7	13	2.6	    KINK
+pdb1tzh_chothia.pdb	103 	W	-168.5	-138.7	 150.2	13	2.6	    KINK
+
+pdb1tzi_chothia.pdb	100C	M	-178.5	 -99.7	 107.7	11	2.8	    KINK
+pdb1tzi_chothia.pdb	101 	D	-163.3	-109.0	 -15.9	11	2.8	    KINK
+pdb1tzi_chothia.pdb	102 	Y	 171.6	-128.5	 126.8	11	2.8	    KINK
+pdb1tzi_chothia.pdb	103 	W	 175.9	-125.5	 151.7	11	2.8	    KINK
+
+pdb1uj3_chothia.pdb	100 	M	 173.7	 -82.6	  92.9	 8	2.1	    KINK
+pdb1uj3_chothia.pdb	101 	D	-170.7	 -74.3	 -24.8	 8	2.1	    KINK
+pdb1uj3_chothia.pdb	102 	Y	-178.5	-131.0	 140.9	 8	2.1	    KINK
+pdb1uj3_chothia.pdb	103 	W	 179.8	-136.2	 151.4	 8	2.1	    KINK
+
+pdb1uwe_chothia.pdb	100 	F	-172.8	  -5.0	 125.1	 8	2.7	EXTENDED
+pdb1uwe_chothia.pdb	101 	D	 161.2	-119.9	  78.9	 8	2.7	EXTENDED
+pdb1uwe_chothia.pdb	102 	Y	-169.1	-102.9	 134.7	 8	2.7	EXTENDED
+pdb1uwe_chothia.pdb	103 	W	-179.4	-109.3	 155.9	 8	2.7	EXTENDED
+
+pdb1uwx_chothia.pdb	100F	F	 178.4	-100.7	 110.6	14	2.2	    KINK
+pdb1uwx_chothia.pdb	101 	D	-168.6	 -96.7	 -52.2	14	2.2	    KINK
+pdb1uwx_chothia.pdb	102 	Y	 177.8	 -97.7	 134.0	14	2.2	    KINK
+pdb1uwx_chothia.pdb	103 	W	 179.5	-124.0	 149.5	14	2.2	    KINK
+
+pdb1uyw_chothia.pdb	100B	F	-176.2	 -91.2	 102.1	10	2.0	    KINK
+pdb1uyw_chothia.pdb	101 	D	-173.7	 -85.5	 -29.1	10	2.0	    KINK
+pdb1uyw_chothia.pdb	102 	V	 179.4	-127.7	 131.5	10	2.0	    KINK
+pdb1uyw_chothia.pdb	103 	W	-177.8	-122.3	 146.7	10	2.0	    KINK
+
+pdb1uz8_chothia.pdb	100 	F	 175.9	-102.0	  -0.1	 8	1.8	EXTENDED
+pdb1uz8_chothia.pdb	101 	D	 179.9	 -49.2	 130.0	 8	1.8	EXTENDED
+pdb1uz8_chothia.pdb	102 	Y	 177.1	-161.1	 133.3	 8	1.8	EXTENDED
+pdb1uz8_chothia.pdb	103 	W	-178.9	-113.1	 143.3	 8	1.8	EXTENDED
+
+pdb1vge_chothia.pdb	100D	F	-178.3	-120.4	 110.9	12	2.0	    KINK
+pdb1vge_chothia.pdb	101 	D	-171.9	 -85.0	 -30.7	12	2.0	    KINK
+pdb1vge_chothia.pdb	102 	Y	 175.8	-122.6	 130.8	12	2.0	    KINK
+pdb1vge_chothia.pdb	103 	W	 174.8	-116.0	 150.3	12	2.0	    KINK
+
+pdb1w72_chothia.pdb	100E	M	-171.9	 -98.1	 112.0	13	2.1	    KINK
+pdb1w72_chothia.pdb	101 	D	-170.5	 -95.3	 -14.8	13	2.1	    KINK
+pdb1w72_chothia.pdb	102 	I	 177.0	-135.2	 131.3	13	2.1	    KINK
+pdb1w72_chothia.pdb	103 	W	 178.9	-124.1	 141.8	13	2.1	    KINK
+
+pdb1wt5_chothia.pdb	100A	F	-175.2	-124.5	  88.2	 9	2.1	    KINK
+pdb1wt5_chothia.pdb	101 	D	 179.8	 -69.6	 -59.3	 9	2.1	    KINK
+pdb1wt5_chothia.pdb	102 	Y	-179.6	-120.2	 143.0	 9	2.1	    KINK
+pdb1wt5_chothia.pdb	103 	W	-179.1	-118.9	 152.4	 9	2.1	    KINK
+
+pdb1y0l_chothia.pdb	100F	L	 173.2	 -82.7	  90.0	14	2.5	    KINK
+pdb1y0l_chothia.pdb	101 	D	-170.0	 -69.5	 -61.7	14	2.5	    KINK
+pdb1y0l_chothia.pdb	102 	Y	-175.0	-108.7	 141.0	14	2.5	    KINK
+pdb1y0l_chothia.pdb	103 	W	-179.3	-129.8	 149.0	14	2.5	    KINK
+
+pdb1yee_chothia.pdb	100F	L	-178.3	 -48.2	 134.0	14	2.2	EXTENDED
+pdb1yee_chothia.pdb	101 	D	 178.6	 -89.5	 140.7	14	2.2	EXTENDED
+pdb1yee_chothia.pdb	102 	Y	 175.1	-126.3	 130.4	14	2.2	EXTENDED
+pdb1yee_chothia.pdb	103 	W	-175.1	-116.4	 151.6	14	2.2	EXTENDED
+
+pdb1yjd_chothia.pdb	100C	F	 179.6	-107.1	 107.6	11	2.7	    KINK
+pdb1yjd_chothia.pdb	101 	D	-174.5	 -93.9	 -13.9	11	2.7	    KINK
+pdb1yjd_chothia.pdb	102 	V	-179.2	-122.4	 115.2	11	2.7	    KINK
+pdb1yjd_chothia.pdb	103 	W	-180.0	-116.9	 151.0	11	2.7	    KINK
+
+pdb1yy8_chothia.pdb	100C	F	-172.2	 -76.9	  89.3	11	2.0	    KINK
+pdb1yy8_chothia.pdb	101 	A	 179.4	 -85.9	 -21.4	11	2.0	    KINK
+pdb1yy8_chothia.pdb	102 	Y	-178.8	-129.1	 129.0	11	2.0	    KINK
+pdb1yy8_chothia.pdb	103 	W	-178.4	-128.1	 154.6	11	2.0	    KINK
+
+pdb2a1w_chothia.pdb	100F	F	-175.7	  54.9	  85.0	14	2.7	    KINK
+pdb2a1w_chothia.pdb	101 	D	 176.9	-105.9	 -25.1	14	2.7	    KINK
+pdb2a1w_chothia.pdb	102 	V	 176.9	-122.7	 129.6	14	2.7	    KINK
+pdb2a1w_chothia.pdb	103 	W	-179.7	-122.8	 154.1	14	2.7	    KINK
+
+pdb2a77_chothia.pdb	100B	F	 167.1	  55.4	  45.1	10	1.8	    KINK
+pdb2a77_chothia.pdb	101 	D	 171.8	 -71.0	 -21.6	10	1.8	    KINK
+pdb2a77_chothia.pdb	102 	V	 178.7	-134.9	 129.0	10	1.8	    KINK
+pdb2a77_chothia.pdb	103 	W	 178.8	-126.2	 147.5	10	1.8	    KINK
+
+pdb2f5a_chothia.pdb	100N	M	 172.6	-106.8	  97.3	22	2.0	    KINK
+pdb2f5a_chothia.pdb	101 	D	-169.0	 -70.9	 -36.0	22	2.0	    KINK
+pdb2f5a_chothia.pdb	102 	V	-176.1	-124.2	 130.3	22	2.0	    KINK
+pdb2f5a_chothia.pdb	103 	W	-179.6	-124.5	 152.5	22	2.0	    KINK
+
+pdb2fb4_chothia.pdb	100I	P	-176.3	 -59.0	 128.6	17	1.9	    KINK
+pdb2fb4_chothia.pdb	101 	D	 179.2	-107.5	 -52.2	17	1.9	    KINK
+pdb2fb4_chothia.pdb	102 	Y	 171.4	-106.3	 146.9	17	1.9	    KINK
+pdb2fb4_chothia.pdb	103 	W	-178.6	-121.8	 160.3	17	1.9	    KINK
+
+pdb2fbj_chothia.pdb	100A	N	 175.6	 -86.7	  88.9	 9	1.9	    KINK
+pdb2fbj_chothia.pdb	101 	A	-174.1	 -72.0	 -36.0	 9	1.9	    KINK
+pdb2fbj_chothia.pdb	102 	Y	-178.0	-131.0	 137.1	 9	1.9	    KINK
+pdb2fbj_chothia.pdb	103 	W	-178.5	-127.4	 154.1	 9	1.9	    KINK
+
+pdb2h1p_chothia.pdb	100C	F	-175.8	 -93.0	 121.5	11	2.4	    KINK
+pdb2h1p_chothia.pdb	101 	D	-177.6	 -96.1	 -22.7	11	2.4	    KINK
+pdb2h1p_chothia.pdb	102 	Y	-176.2	-135.9	 120.3	11	2.4	    KINK
+pdb2h1p_chothia.pdb	103 	W	 174.6	-115.4	 159.3	11	2.4	    KINK
+
+pdb2jel_chothia.pdb	100A	F	-174.8	 -87.5	  82.8	 9	2.5	    KINK
+pdb2jel_chothia.pdb	101 	D	 176.6	 -78.8	 -34.4	 9	2.5	    KINK
+pdb2jel_chothia.pdb	102 	V	 177.4	-126.9	 126.0	 9	2.5	    KINK
+pdb2jel_chothia.pdb	103 	W	-178.7	-112.5	 156.7	 9	2.5	    KINK
+
+pdb43c9_chothia.pdb	100B	F	-177.5	 -74.9	 -46.5	10	2.2	EXTENDED
+pdb43c9_chothia.pdb	101 	S	-175.7	-130.5	 150.6	10	2.2	EXTENDED
+pdb43c9_chothia.pdb	102 	Y	 175.9	-130.1	 120.8	10	2.2	EXTENDED
+pdb43c9_chothia.pdb	103 	W	-177.4	 -97.1	 132.1	10	2.2	EXTENDED
+
+pdb4fab_chothia.pdb	99  	M	-166.3	 -94.2	-177.1	 7	2.7	EXTENDED
+pdb4fab_chothia.pdb	101 	D	 169.2	-177.9	 158.7	 7	2.7	EXTENDED
+pdb4fab_chothia.pdb	102 	Y	 173.6	-127.5	 153.9	 7	2.7	EXTENDED
+pdb4fab_chothia.pdb	103 	W	-176.3	-110.3	 158.5	 7	2.7	EXTENDED
+
+pdb2gsg_chothia.pdb	100A	F	 360.0	 360.0	  71.9	 9	0.0	    KINK
+pdb2gsg_chothia.pdb	101 	A	-179.6	 -77.4	 -27.3	 9	0.0	    KINK
+pdb2gsg_chothia.pdb	102 	Y	-179.9	-136.0	 132.7	 9	0.0	    KINK
+pdb2gsg_chothia.pdb	103 	W	-179.3	-116.2	 159.0	 9	0.0	    KINK
+
+pdb2h32_chothia.pdb	100B	M	-174.8	 154.9	  95.8	10	0.0	    KINK
+pdb2h32_chothia.pdb	101 	D	-172.8	 -88.5	 -22.6	10	0.0	    KINK
+pdb2h32_chothia.pdb	102 	V	 176.7	-123.0	 131.6	10	0.0	    KINK
+pdb2h32_chothia.pdb	103 	W	-172.2	-119.2	 132.5	10	0.0	    KINK
+
+
+pdb2v7n_chothia.pdb	100B	Y	-161.6	  -4.4	  85.2	10	0.0	    KINK
+pdb2v7n_chothia.pdb	101 	D	-177.1	 -94.3	  -9.5	10	0.0	    KINK
+pdb2v7n_chothia.pdb	102 	V	 178.8	-132.4	 132.0	10	0.0	    KINK
+pdb2v7n_chothia.pdb	103 	W	-176.9	-127.4	 141.0	10	0.0	    KINK
+
+
+

@@ -126,7 +126,6 @@ void AntibodyModelerProtocol::set_default() {
 	idealize_h3_stems_before_modeling_ = false;
 
 	benchmark_ = false;
-	camelid_   = false;
 	camelid_constraints_ = false;
 	use_csts_ = false;
 	constrain_vlvh_qq_ = false;
@@ -545,7 +544,7 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
 	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
 	//pose.dump_pdb("aligned_H.pdb");
-	if ( camelid_ == false ) {
+	if ( ab_info_->is_camelid() == false ) {
 		align_to_native( pose, native_pose, ab_info_, native_ab_info, "L" );
 		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
 		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
@@ -632,7 +631,6 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
 	out << line_marker << space( 74 ) << line_marker << std::endl;
 
 	// Display the state of the antibody modeler protocol that will be used
-	out << line_marker << "  camelid              : " << ab_m.camelid_                   << std::endl;
 	out << line_marker << std::endl;
 	out << line_marker << " ******  model_h3  :  "          << ab_m.model_h3_            << std::endl;
 	out << line_marker << "         h3_perturb_type     = '"<< ab_m.h3_perturb_type_<<"'"<< std::endl;
