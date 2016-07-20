@@ -284,7 +284,7 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 		bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
 		if ( pose.residue(resid).aa() == core::chemical::aa_vrt )  {
-			if (!remapSymm) return;
+			if ( !remapSymm ) return;
 
 			// derivative is only defined for the 'ORIG' atom in the virtual
 			if ( atmid != 2 ) return;

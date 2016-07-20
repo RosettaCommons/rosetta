@@ -31,7 +31,7 @@ namespace constraint_generator {
 
 // static const data
 core::pose::datacache::CacheableDataType::Enum const
-ConstraintsManager::MY_TYPE = core::pose::datacache::CacheableDataType::CONSTRAINT_GENERATOR;
+	ConstraintsManager::MY_TYPE = core::pose::datacache::CacheableDataType::CONSTRAINT_GENERATOR;
 
 ConstraintsManager::ConstraintsManager():
 	utility::SingletonBase< ConstraintsManager >()

@@ -250,7 +250,7 @@ SecondaryStructureFilter::compute(
 {
 	using protocols::denovo_design::components::StructureData;
 	using protocols::denovo_design::components::StructureDataFactory;
-	
+
 	core::sequence::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
 	String pose_ss = pose.secstruct();

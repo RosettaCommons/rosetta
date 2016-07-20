@@ -1065,10 +1065,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			numeric::xyzVector< core::Real > comFixed(0,0,0), comMoving(0,0,0);
 			core::Real nFixed=0, nMoving=0;
 
-TR << "Randomize >" << randomize_chains_[initial_template_index].size() << "<" << std::endl;
-for (core::Size q=1;q<=randomize_chains_[initial_template_index].size(); ++q) {
-	TR << "Randomize >" << randomize_chains_[initial_template_index][q] << "<" << std::endl;
-}
+			TR << "Randomize >" << randomize_chains_[initial_template_index].size() << "<" << std::endl;
+			for ( core::Size q=1; q<=randomize_chains_[initial_template_index].size(); ++q ) {
+				TR << "Randomize >" << randomize_chains_[initial_template_index][q] << "<" << std::endl;
+			}
 
 			for ( core::Size i=1; i<=templates_[initial_template_index]->total_residue(); ++i ) {
 				char chain = templates_[initial_template_index]->pdb_info()->chain(i);
@@ -1086,7 +1086,7 @@ for (core::Size q=1;q<=randomize_chains_[initial_template_index].size(); ++q) {
 			}
 
 			// sanity check
-			if (nMoving == 0) {
+			if ( nMoving == 0 ) {
 				utility_exit_with_message("Randomize chain enabled but chain(s) not found!");
 			}
 
@@ -1914,7 +1914,7 @@ HybridizeProtocol::parse_my_tag(
 				std::string rand_chain_str = (*tag_it)->getOption<std::string>( "randomize", "" );
 				utility::vector1< std::string > rand_chain_strs = utility::string_split( rand_chain_str, ',');
 				for ( core::Size j = 1; j<=rand_chain_strs.size(); ++j ) {
-					if (rand_chain_strs[j].length() != 0) {
+					if ( rand_chain_strs[j].length() != 0 ) {
 						rand_chains.push_back( rand_chain_strs[j][0] );
 					}
 				}

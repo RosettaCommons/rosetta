@@ -90,7 +90,7 @@ private:
 public:
 	// const data
 	static core::pose::datacache::CacheableDataType::Enum const
-	MY_TYPE;
+		MY_TYPE;
 
 };
 

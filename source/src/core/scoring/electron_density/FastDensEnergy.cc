@@ -413,7 +413,7 @@ FastDensEnergy::eval_residue_pair_derivatives(
 							numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 							Vector const f1( atom_x.cross( atom_y ) );
 
-						// define for "ORIG" atom which is 2 (?)
+							// define for "ORIG" atom which is 2 (?)
 							if ( m <= (int)pose.residue(target_res).last_backbone_atom() ) {
 								r_atom_derivs[ 2 ].f1() += weight * f1;
 								r_atom_derivs[ 2 ].f2() += weight * f2;
@@ -428,7 +428,7 @@ FastDensEnergy::eval_residue_pair_derivatives(
 		} // if ( res.aa() == core::chemical::aa_vrt && scoreSymmComplex_)
 	} // if (is_symmetric)
 
-	if (res.aa() == core::chemical::aa_vrt) return;
+	if ( res.aa() == core::chemical::aa_vrt ) return;
 
 	// we are protein ... loop over all residues
 	for ( int i=1; i<=(int)res.nheavyatoms(); ++i ) {

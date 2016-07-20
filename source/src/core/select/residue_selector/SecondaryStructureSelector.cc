@@ -156,15 +156,15 @@ void SecondaryStructureSelector::parse_my_tag(
 
 	/*
 	if ( tag->hasOption( "blueprint" ) ) {
-		if ( tag->hasOption( "pose_secstruct" ) ) {
-			std::stringstream msg;
-			msg << "SecondaryStructureSelector::parse_my_tag(): You cannot specify a blueprint and a pose secondary structure to the same selector."
-				<< std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
-		}
-		std::string const bp_name = tag->getOption< std::string >( "blueprint" );
-		protocols::jd2::parser::BluePrint bp( bp_name );
-		set_pose_secstruct( bp.secstruct() );
+	if ( tag->hasOption( "pose_secstruct" ) ) {
+	std::stringstream msg;
+	msg << "SecondaryStructureSelector::parse_my_tag(): You cannot specify a blueprint and a pose secondary structure to the same selector."
+	<< std::endl;
+	throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+	}
+	std::string const bp_name = tag->getOption< std::string >( "blueprint" );
+	protocols::jd2::parser::BluePrint bp( bp_name );
+	set_pose_secstruct( bp.secstruct() );
 	}
 	*/
 
@@ -270,8 +270,8 @@ SecondaryStructureSelector::add_overlap(
 }
 
 
-	void
-	set_pose_secstruct( std::string const & ss );
+void
+set_pose_secstruct( std::string const & ss );
 
 /// @brief If set, dssp will be used to determine secondary structure. Has no effect if pose_secstruct_
 ///        is set
