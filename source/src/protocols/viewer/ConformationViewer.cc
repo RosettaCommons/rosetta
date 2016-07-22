@@ -246,7 +246,7 @@ ConformationViewer::on_xyz_change(
 		anchor_id_ = root_atom->id();
 		core::conformation::ResidueCOP rsd_root = residues_[ anchor_id_.rsd() ];
 		if ( rsd_root->is_RNA() ) {
-			anchor_id_ = id::AtomID( rsd_root->atom_index( core::chemical::rna::default_jump_atom( *rsd_root ) ), anchor_id_.rsd() );
+			anchor_id_ = id::AtomID( rsd_root->atom_index( core::chemical::rna::default_jump_atom( rsd_root->type() ) ), anchor_id_.rsd() );
 		}
 	}
 

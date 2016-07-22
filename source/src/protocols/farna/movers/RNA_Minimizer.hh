@@ -29,8 +29,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::options;
 
 namespace protocols {
 namespace farna {
@@ -39,9 +37,10 @@ namespace movers {
 /// @brief The RNA de novo structure modeling protocol
 class RNA_Minimizer: public protocols::moves::Mover {
 public:
+	
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_Minimizer( RNA_MinimizerOptionsCOP options = 0 );
+	RNA_Minimizer( protocols::farna::options::RNA_MinimizerOptionsCOP options = 0 );
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
@@ -57,7 +56,7 @@ public:
 
 	void set_perform_minimizer_run( bool const setting ){ perform_minimizer_run_ = setting; }
 
-	void set_options( RNA_MinimizerOptionsCOP setting ){ options_ = setting; }
+	void set_options( protocols::farna::options::RNA_MinimizerOptionsCOP setting ){ options_ = setting; }
 
 	void set_include_default_linear_chainbreak( bool const setting){ include_default_linear_chainbreak_ = setting; }
 
@@ -94,7 +93,7 @@ private:
 
 private:
 
-	RNA_MinimizerOptionsCOP options_;
+	protocols::farna::options::RNA_MinimizerOptionsCOP options_;
 	core::Real const coord_sdev_;
 	core::Real const coord_cst_weight_;
 	bool perform_minimizer_run_;

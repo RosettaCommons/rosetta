@@ -120,7 +120,6 @@ StepWiseProteinModelerOptions::initialize_from_command_line(){
 
 	//  pack_weights_ = "stepwise/protein/pack_no_hb_env_dep.wts";
 	if ( option[ basic::options::OptionKeys::score::pack_weights ].user() ) pack_weights_ = option[ score::pack_weights ]();
-
 }
 
 } //options

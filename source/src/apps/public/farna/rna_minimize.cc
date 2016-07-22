@@ -136,6 +136,7 @@ rna_fullatom_minimize_test()
 		native_exists = true;
 	}
 
+	using namespace protocols::farna::options;
 	// minimizer setup
 	RNA_MinimizerOptionsOP options( new RNA_MinimizerOptions );
 	options->initialize_from_command_line();

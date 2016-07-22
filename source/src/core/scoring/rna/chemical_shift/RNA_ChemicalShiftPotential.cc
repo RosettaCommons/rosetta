@@ -1531,7 +1531,7 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 		if ( atom_has_exp_chemical_shift_data( rsd, atomno ) ) {
 			get_deriv_for_chemical_shift_data_atom( pose, rsd, atomno, f1, f2 );
 		}
-		if ( atomno == chemical::rna::chi1_torsion_atom_index( rsd ) ) { //first chi1_torsion_atom serves as 'proxy' for the ring_center!
+		if ( atomno == chemical::rna::chi1_torsion_atom_index( rsd.type() ) ) { //first chi1_torsion_atom serves as 'proxy' for the ring_center!
 			get_ring_current_deriv_for_src_base( pose, rsd, atomno, f1, f2 );
 			get_magnetic_anisotropy_deriv_for_src_base( pose, rsd, atomno, f1, f2 );
 		}

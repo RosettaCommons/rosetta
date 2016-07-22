@@ -191,7 +191,6 @@ output_data( core::io::silent::SilentFileData& silent_file_data, std::string con
 	}
 
 	silent_file_data.write_silent_struct( s, silent_file, write_score_only );
-
 }
 
 
@@ -254,9 +253,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 
 				conformation::Residue const & rsd( pose.residue( seq_num ) );
-
 				for ( Size at = 1; at <= rsd.natoms(); at++ ) {
-
 					if ( rsd.is_virtual( at ) ) continue;
 
 					centroid += rsd.xyz( at );
@@ -281,9 +278,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 				conformation::Residue const & rsd( pose.residue( seq_num ) );
 
 				for ( Size at = 1; at <= rsd.natoms(); at++ ) {
-
 					id::AtomID const id( at, seq_num );
-
 					pose.set_xyz( id, pose.xyz( id ) - centroid ); //This should minimize the error introduced by the rigid body rotation!
 					pose.set_xyz( id, rotation_matrix * pose.xyz( id ) );
 				}
@@ -348,7 +343,6 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 	BinarySilentStruct EMPTY_silent_struct;
 	return EMPTY_silent_struct;
 	//////////////////////////////////////////////////////////////////////
-
 }
 
 
@@ -362,21 +356,11 @@ get_binary_rna_silent_struct_safe_wrapper( pose::Pose const & const_pose, std::s
 	using namespace core::pose;
 
 	if ( write_score_only ) {
-
 		BinarySilentStruct s( const_pose, tag ); //If write score only, don't have to safe about pose to silent_struct conversion!
 		return s;
-
-	} else {
-
-		return ( get_binary_rna_silent_struct_safe( const_pose, tag, silent_file ) );
-
 	}
-
-	////////////This is just to prevent compiler WARNING MESSAGES/////////
-	BinarySilentStruct EMPTY_silent_struct;
-	return EMPTY_silent_struct;
-	//////////////////////////////////////////////////////////////////////
-
+	
+	return ( get_binary_rna_silent_struct_safe( const_pose, tag, silent_file ) );
 }
 
 } //rna

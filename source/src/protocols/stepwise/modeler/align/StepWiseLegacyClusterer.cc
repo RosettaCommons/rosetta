@@ -144,7 +144,6 @@ StepWiseLegacyClusterer::cluster()
 
 	TR.Debug << "Total time in StepWiseLegacyClusterer: " <<
 		static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
-
 }
 
 
@@ -204,8 +203,6 @@ StepWiseLegacyClusterer::do_some_clustering() {
 	}
 
 	TR.Debug << "After clustering, number of decoys: " << output_pose_list_.size() << std::endl;
-	return;
-
 }
 
 
@@ -243,7 +240,6 @@ StepWiseLegacyClusterer::cluster_with_auto_tune() {
 	}
 
 	TR.Debug << "Clustering radius after auto_tune: " << cluster_radius_ << std::endl;
-
 }
 
 
@@ -275,7 +271,6 @@ StepWiseLegacyClusterer::recluster_current_pose_list() {
 
 	TR.Debug <<  "After reclustering with rmsd " << cluster_radius_ << ", number of clusters reduced from " <<
 		old_rms_pose_list.size() << " to " << rms_pose_list_.size() << std::endl;
-
 }
 
 

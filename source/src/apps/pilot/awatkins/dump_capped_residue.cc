@@ -7,6 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @file   apps/pilot/awatkins/dump_capped_residue.cc
+/// @brief  Useful utility: given an amino/nucleic acid name, dump a polymerically capped version as PDB
+/// @author Andy Watkins (amw579@stanford.edu)
+
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -83,8 +87,6 @@
 #include <string>
 #include <sstream>
 
-//The original author used a lot of using declarations here.  This is a stylistic choice.
-// Namespaces
 using namespace core;
 using namespace conformation;
 using namespace core::chemical;
@@ -104,14 +106,10 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-//kdrew: this app adds hbs patches to the given pdb strucure
-
-// tracer - used to replace cout
 static basic::Tracer TR("DumpCapped");
 
 // application specific options
 namespace dumper {
-// pert options
 StringOptionKey const residue_name ( "dumper::residue_name" );
 }
 
@@ -138,8 +136,10 @@ main( int argc, char* argv[] )
 		}
 		ResidueType const & type = residue_set_cap->name_map( full_name );
 		Residue res( type, true );
-		for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
-			res.set_chi( ii, 180 );
+		if ( base_type.is_protein() ) {
+			for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
+				res.set_chi( ii, 180 );
+			}
 		}
 		pose->conformation().append_residue_by_jump( res, 1 );
 		pose->dump_pdb( name+".pdb" );

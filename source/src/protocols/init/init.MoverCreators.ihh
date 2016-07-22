@@ -115,6 +115,8 @@
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
+#include <protocols/farna/ErraserMinimizerMoverCreator.hh>
+
 #include <protocols/features/ReportToDBCreator.hh>
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
 

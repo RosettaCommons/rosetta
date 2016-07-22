@@ -1,0 +1,55 @@
+NAME N_formylated
+TYPES N_FORMYLATION LOWER_TERMINUS_VARIANT
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE N_FORMYLATION
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE METHYLATED_NTERM_VARIANT
+NOT VARIANT_TYPE CUTPOINT_UPPER
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+AA MET
+END_SELECTOR
+
+###########################################
+# Just going to support MET for now. Expansion to PRO could be done as in 
+# N_acetylated, and expansion to other primary amino acids is simple.
+# AMW TODO: optimize geometry
+
+BEGIN_CASE ### MET
+
+SET_IO_STRING FME M
+
+ADD_ATOM  CP  CNH2 CC   0.45  ## Copied from the amide C in Gln
+ADD_ATOM  HQ  Hapo H    0.10  ## This is the formyl proton
+ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
+
+ADD_BOND  N    CP
+ADD_BOND  CP   HQ
+ADD_BOND  CP   OCP
+
+SET_ICOOR  CP   -140.5988  54.9273 1.3497 N    CA   C
+#SET_ICOOR  HQ   179.44  61.13  0.98  CP   N    CA
+SET_ICOOR  OCP  5.1506 67.0335  1.193 CP   N    CA
+# Probably dist based on QM "real H radius" not Rosetta shrunken one
+# Improper torsion rather than optimized:
+# H-N-CP-HQ = -2.4322, CA-N-CP-HQ = -175.5108
+SET_ICOOR  HQ   179.44  54.9769  1.092 CP   N    OCP
+# Improper torsion rather than optimized:
+# HQ-CP-N-H = -2.4322, OCP-CP-N-H = 178.2292
+SET_ICOOR  H    -179.999985   62.5376 0.9988 N     CA  CP
+
+# Need to prevent these from repacking
+SET_BACKBONE_HEAVYATOM CP
+SET_BACKBONE_HEAVYATOM OCP
+
+SET_POLYMER_CONNECT LOWER NONE
+DELETE_PROPERTY CANONICAL_AA
+ADD_PROPERTY LOWER_TERMINUS
+
+END_CASE

@@ -149,56 +149,6 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	// output_movemap( mm, pose, TR );
 }
 
-/////////////////////////////////////////////////////////
-// Useful checks...
-// no longer appears in use -- deprecate in 2015
-// if still not in use then.
-/////////////////////////////////////////////////////////
-void
-check_move_map_against_working_parameters( core::pose::Pose const & pose ,
-	core::kinematics::MoveMapCOP minimize_move_map,
-	working_parameters::StepWiseWorkingParametersCOP working_parameters ){
-	using namespace core::id;
-
-	utility::vector1< Size > suites_that_must_be_minimized;
-	////////////////////////////////////////////////////////////////////////////////////
-	// make sure moving dof is actually being minimized.
-	Size const rebuild_suite = working_parameters->working_moving_suite(); // is this set up correctly?
-	if ( rebuild_suite > 0 && !working_parameters->floating_base() ) {
-		suites_that_must_be_minimized.push_back( rebuild_suite );
-	}
-	utility::vector1< Size > cutpoint_closed = figure_out_moving_cutpoints_closed( pose, working_parameters->working_moving_partition_res() );
-	for ( Size i = 1; i <= cutpoint_closed.size(); i++ ) suites_that_must_be_minimized.push_back( cutpoint_closed[i] );
-
-	// last, but not least, there might be some information in the domain map. Note
-	// that generally we could instead replace working_fixed_res with an inputted domain map.
-	// that is, get rid of working_fixed_res & minimize_res and instead have a local fixed_domain_map,
-	// which can instead be updated by set_working_fixed_res.
-	// how to tell Modeler to *not* minimize additional suites?
-	suites_that_must_be_minimized = merge_vectors( suites_that_must_be_minimized, get_domain_boundary_suites( pose ) );
-
-	TR.Debug << "SUITES_THAT_MUST_BE_MINIMIZED " << suites_that_must_be_minimized << std::endl;
-	for ( Size n = 1; n <= suites_that_must_be_minimized.size(); n++ ) {
-		Size const suite_num = suites_that_must_be_minimized[ n ];
-		if ( pose.residue_type( n ).is_RNA() ) {
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num,   id::BB, 5 ) ) ); // epsilon
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num,   id::BB, 6 ) ) ); // zeta
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num+1, id::BB, 1 ) ) ); // alpha
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num+1, id::BB, 2 ) ) ); // beta
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num+1, id::BB, 3 ) ) ); // gamma
-		} else if ( pose.residue_type( n ).is_protein() ) {
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num,   id::BB, 2 ) ) ); // epsilon
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num,   id::BB, 3 ) ) ); // zeta
-			runtime_assert( minimize_move_map->get( TorsionID( suite_num+1, id::BB, 1 ) ) ); // alpha
-		}
-	}
-
-	if ( working_parameters->floating_base() ) {
-		Size const rebuild_res = working_parameters->working_moving_res();
-		runtime_assert( minimize_move_map->get_jump( pose.fold_tree().get_jump_that_builds_residue( rebuild_res ) ) );
-	}
-}
-
 
 } //movemap
 } //modeler

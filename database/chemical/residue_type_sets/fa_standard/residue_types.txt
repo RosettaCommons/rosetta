@@ -43,7 +43,9 @@ residue_types/nucleic/rna_phenix/RAD_n.params
 residue_types/nucleic/rna_phenix/RCY_n.params
 residue_types/nucleic/rna_phenix/RGU_n.params
 residue_types/nucleic/rna_phenix/URA_n.params
-#residue_types/nucleic/rna_nonnatural/1AP.params
+# needed for 3cce
+residue_types/nucleic/rna_nonnatural/1AP.params
+residue_types/nucleic/rna_nonnatural/1MA.params
 residue_types/nucleic/rna_nonnatural/2MA.params
 residue_types/nucleic/rna_nonnatural/2MG.params
 residue_types/nucleic/rna_nonnatural/2MU.params
@@ -56,9 +58,41 @@ residue_types/nucleic/rna_nonnatural/7MG.params
 #residue_types/nucleic/rna_nonnatural/INO.params
 residue_types/nucleic/rna_nonnatural/M2G.params
 residue_types/nucleic/rna_nonnatural/MA6.params
+# 2'OMe
+residue_types/nucleic/rna_nonnatural/OMA.params
+residue_types/nucleic/rna_nonnatural/OMC.params
 residue_types/nucleic/rna_nonnatural/OMG.params
+residue_types/nucleic/rna_nonnatural/OMU.params
+# 2'F
+residue_types/nucleic/rna_nonnatural/FMA.params
+residue_types/nucleic/rna_nonnatural/FMC.params
+residue_types/nucleic/rna_nonnatural/FMG.params
+residue_types/nucleic/rna_nonnatural/FMU.params
+# OP1 => SP1
+residue_types/nucleic/rna_nonnatural/SRA.params
+residue_types/nucleic/rna_nonnatural/SRC.params
+residue_types/nucleic/rna_nonnatural/SRG.params
+residue_types/nucleic/rna_nonnatural/SRU.params
+# OP2 => SP2
+residue_types/nucleic/rna_nonnatural/SSA.params
+residue_types/nucleic/rna_nonnatural/SSC.params
+residue_types/nucleic/rna_nonnatural/SSG.params
+residue_types/nucleic/rna_nonnatural/SSU.params
+# 4'S
+residue_types/nucleic/rna_nonnatural/S4A.params
+residue_types/nucleic/rna_nonnatural/S4C.params
+residue_types/nucleic/rna_nonnatural/S4G.params
+residue_types/nucleic/rna_nonnatural/S4U.params
+
 residue_types/nucleic/rna_nonnatural/PSU.params
 residue_types/nucleic/rna_nonnatural/UR3.params
+residue_types/nucleic/rna_nonnatural/6MZ.params
+residue_types/nucleic/rna_nonnatural/1MG.params
+residue_types/nucleic/rna_nonnatural/4SU.params
+residue_types/nucleic/rna_nonnatural/3TD.params
+residue_types/nucleic/rna_nonnatural/H2U.params
+residue_types/nucleic/rna_nonnatural/MIA.params
+
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params

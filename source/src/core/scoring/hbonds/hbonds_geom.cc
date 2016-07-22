@@ -490,6 +490,8 @@ get_hb_acc_chem_type(
 	using namespace chemical;
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
 
+	// AMW TODO: these string comparisons are 3.6% of SWA runtime
+	
 	if ( acc_rsd.atom_is_backbone(aatm) ) {
 		if ( acc_rsd.is_protein() ) {
 			if ( acc_rsd.is_upper_terminus() ) {

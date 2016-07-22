@@ -91,7 +91,6 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 	if ( !coord_cst_in_scorefxn ) minimize_scorefxn_working->set_weight( coordinate_constraint, 0.0 );
 
 	(*minimize_scorefxn_working)( pose );
-
 }
 
 //////////////////////////////////////////

@@ -210,7 +210,7 @@ StepWiseProteinMinimizer::let_neighboring_chis_minimize(
 
 	for ( Size n = 1; n <= moving_residues_.size(); n++ ) {
 		Size const i = moving_residues_[ n ];
-		if ( pose.residue(i).is_protein() ) { // these should be activated, but make sure . VIRTUAL_SIDE_CHAIN issue!
+		if ( pose.residue_type(i).is_protein() ) { // these should be activated, but make sure . VIRTUAL_SIDE_CHAIN issue!
 			mm.set_chi( i, true );
 		}
 	}
@@ -225,11 +225,11 @@ StepWiseProteinMinimizer::let_neighboring_chis_minimize(
 				++iter ) {
 
 			Size j( (*iter)->get_other_ind( i ) );
-			if ( pose.residue(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
+			if ( pose.residue_type(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
-			if ( pose.residue(j).is_protein() ) {
+			if ( pose.residue_type(j).is_protein() ) {
 				mm.set_chi( j, true );
-			} else if ( pose.residue(j).is_RNA() ) {
+			} else if ( pose.residue_type(j).is_RNA() ) {
 				mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
 			}
 

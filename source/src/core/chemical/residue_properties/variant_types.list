@@ -103,6 +103,8 @@ FIVE_PRIME_END_OH          # alternative terminal variant in real RNAs, keep thi
 FIVE_PRIME_END_PHOSPHATE   # alternative terminal variant in real RNAs, keep this.
 FIVE_PRIME_PHOSPHATE       # alternative terminal variant in real RNAs, keep this.
 
+UPPER_CONNECTION_RNA
+
 THREE_PRIME_PACKABLE_PHOSPHATE  # experimental terminal variant -- deprecate in 2015 if not in use by then.
 FIVE_PRIME_PACKABLE_PHOSPHATE   # experimental terminal variant -- deprecate in 2015 if not in use by then.
 PROTONATED_N1_ADENOSINE # in use in RNA -- functionally important protonation state
@@ -114,6 +116,7 @@ BLOCK_STACK_ABOVE   # Puts a steric block above a base to disallow stacking; for
 BLOCK_STACK_BELOW   # Puts a steric block above a base to disallow stacking; for solving RNA motifs
 
 N_ACETYLATION      # for stepwise assembly (SWA) code; different geometry/atoms then ACETYLATED_NTERMINUS above
+N_FORMYLATION
 C_METHYLAMIDATION  # for stepwise assembly (SWA) code; distinct from METHYLATED_CTERMINUS above
 
 

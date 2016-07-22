@@ -66,6 +66,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_ignore_sugars( ! tag->getOption< bool >( "include_sugars", 0 ) );
 	set_ignore_waters( tag->getOption< bool >( "ignore_waters", 0 ) );
 	set_ignore_zero_occupancy( tag->getOption< bool >( "ignore_zero_occupancy", 1 ) );
+	set_guarantee_no_DNA( tag->getOption< bool >( "guarantee_no_DNA", 1 ) );
 	set_keep_input_protonation_state( tag->getOption< bool >( "keep_input_protonation_state", 0 ) );
 	set_preserve_header( tag->getOption< bool >( "preserve_header", 0 ) );
 	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", 0 ) );
@@ -114,6 +115,7 @@ bool StructFileRepOptions::ignore_unrecognized_res() const { return ignore_unrec
 bool StructFileRepOptions::ignore_sugars() const { return ignore_sugars_; }
 bool StructFileRepOptions::ignore_waters() const { return ignore_waters_; }
 bool StructFileRepOptions::ignore_zero_occupancy() const { return ignore_zero_occupancy_; }
+bool StructFileRepOptions::guarantee_no_DNA() const { return guarantee_no_DNA_; }
 bool StructFileRepOptions::keep_input_protonation_state() const { return keep_input_protonation_state_; }
 bool StructFileRepOptions::preserve_header() const { return preserve_header_; }
 bool StructFileRepOptions::preserve_crystinfo() const { return preserve_crystinfo_; }
@@ -175,6 +177,9 @@ void StructFileRepOptions::set_ignore_waters( bool const ignore_waters )
 
 void StructFileRepOptions::set_ignore_zero_occupancy( bool const ignore_zero_occupancy )
 { ignore_zero_occupancy_ = ignore_zero_occupancy; }
+
+void StructFileRepOptions::set_guarantee_no_DNA( bool const guarantee_no_DNA )
+{ guarantee_no_DNA_ = guarantee_no_DNA; }
 
 void StructFileRepOptions::set_keep_input_protonation_state( bool const keep_input_protonation_state )
 { keep_input_protonation_state_ = keep_input_protonation_state; }
@@ -271,6 +276,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::ignore_unrecognized_res
 		+ in::ignore_waters
 		+ run::ignore_zero_occupancy
+		+ in::guarantee_no_DNA 
 		+ pH::keep_input_protonation_state
 		+ run::preserve_header
 		+ in::preserve_crystinfo
@@ -340,6 +346,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_ignore_waters( options[ in::ignore_waters ]() );
 
 	set_ignore_zero_occupancy( options[ run::ignore_zero_occupancy ]());
+	set_guarantee_no_DNA( options[ in::guarantee_no_DNA].value());
 	set_keep_input_protonation_state( options[ pH::keep_input_protonation_state ]());
 	set_preserve_header( options[ run::preserve_header ].value());
 	set_preserve_crystinfo( options[ in::preserve_crystinfo ]() );

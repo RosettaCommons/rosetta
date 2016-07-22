@@ -415,10 +415,7 @@ void MolecularDynamics::createBondList( )
 		bondlist[i].length                << "  " <<
 		std::endl;
 		*/
-
 	}
-
-
 }
 
 
@@ -477,8 +474,6 @@ void MolecularDynamics::createAngleList( )
 			anglelist.push_back( newangle );
 		}
 	}
-
-
 }
 
 MD_HarmonicDihedral MolecularDynamics::createDihedral(
@@ -486,13 +481,12 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 	const core::conformation::Residue &rsd2,
 	const core::conformation::Residue &rsd3,
 	const core::conformation::Residue &rsd4,
-	std::string name1,
-	std::string name2,
-	std::string name3,
-	std::string name4
+	std::string const & name1,
+	std::string const & name2,
+	std::string const & name3,
+	std::string const & name4
 ){
 	using namespace core;
-
 
 	MD_HarmonicDihedral newdihed;
 	newdihed.atom_id_1 = id::AtomID( rsd1.atom_index( name1 ) ,rsd1.seqpos() );
@@ -538,52 +532,12 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 
 MD_HarmonicDihedral MolecularDynamics::createDihedral(
 	const core::conformation::Residue &rsd,
-	std::string name1,
-	std::string name2,
-	std::string name3,
-	std::string name4
+	std::string const & name1,
+	std::string const & name2,
+	std::string const & name3,
+	std::string const & name4
 ){
-	using namespace core;
-
-	MD_HarmonicDihedral newdihed;
-	newdihed.atom_id_1 = id::AtomID( rsd.atom_index( name1 ) ,rsd.seqpos() );
-	newdihed.atom_id_2 = id::AtomID( rsd.atom_index( name2 ) ,rsd.seqpos() );
-	newdihed.atom_id_3 = id::AtomID( rsd.atom_index( name3 ) ,rsd.seqpos() );
-	newdihed.atom_id_4 = id::AtomID( rsd.atom_index( name4 ) ,rsd.seqpos() );
-	newdihed.index1  = findCartomAtom(  newdihed.atom_id_1 );
-	newdihed.index2  = findCartomAtom(  newdihed.atom_id_2 );
-	newdihed.index3  = findCartomAtom(  newdihed.atom_id_3 );
-	newdihed.index4  = findCartomAtom(  newdihed.atom_id_4 );
-
-	if ( (newdihed.index1 < 0) ) std::cout << "Can't find" << name1 << std::endl;
-	if ( (newdihed.index2 < 0) ) std::cout << "Can't find" << name2 << std::endl;
-	if ( (newdihed.index3 < 0) ) std::cout << "Can't find" << name3 << std::endl;
-	if ( (newdihed.index4 < 0) ) std::cout << "Can't find" << name4 << std::endl;
-	if (
-			(newdihed.index1 < 0) ||
-			(newdihed.index2 < 0) ||
-			(newdihed.index3 < 0) ||
-			(newdihed.index4 < 0)
-			) {
-		std::cout
-			<< name1 << " "
-			<< name2 << " "
-			<< name3 << " "
-			<< name4 << " "
-			<< newdihed.atom_id_1.rsd() << " "
-			<< newdihed.atom_id_2.rsd()  << " "
-			<< newdihed.atom_id_3.rsd()  << " "
-			<< newdihed.atom_id_4.rsd()  << " "
-			<< newdihed.atom_id_1.atomno() << " "
-			<< newdihed.atom_id_2.atomno() << " "
-			<< newdihed.atom_id_3.atomno() << " "
-			<< newdihed.atom_id_4.atomno() << " "
-			<< std::endl;
-		exit(0);
-	}
-
-	newdihed.angle = 0;
-	return newdihed;
+	return createDihedral( rsd, rsd, rsd, rsd, name1, name2, name3, name4 );
 }
 
 /// Yes i know this is hard coded stuff. Read warning at the top of this file.
@@ -822,13 +776,8 @@ void MolecularDynamics::createDihedralList(  )
 			dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CZ", "CE1", "HE1"    ) );
 			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE1", "CD1", "HD1"   ) );
 			dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CD2", "CG", "CB"     ) );
-
-
 		}
-
-
 	}
-
 }
 
 
@@ -894,7 +843,6 @@ void MolecularDynamics::setDihedralDerivatives( ){
 		phi = -atan2(sin_phi, cos_phi);
 		dihedrallist[i].angle = phi;
 	}
-
 }
 
 
@@ -917,13 +865,10 @@ void MolecularDynamics::doBondDerivatives( float &totalepot )
 		cartom[ bondlist[i].index1].force += f2;
 		cartom[ bondlist[i].index2].force -= f2;
 	}
-
-
 }
 
 
-void MolecularDynamics::doAngleDerivatives( float &totalepot )
-{
+void MolecularDynamics::doAngleDerivatives( float &totalepot ) {
 	using namespace core;
 
 	float k = 600;
@@ -941,14 +886,10 @@ void MolecularDynamics::doAngleDerivatives( float &totalepot )
 		cartom[ anglelist[i].index1 ].force += f2;
 		cartom[ anglelist[i].index3 ].force -= f2;
 	}
-
 }
 
 
-void MolecularDynamics::doDihedralDerivatives(
-	float &totalepot
-)
-{
+void MolecularDynamics::doDihedralDerivatives( float & totalepot ) {
 	using namespace core;
 
 	//  float totene_b4 = totalepot;
@@ -956,14 +897,12 @@ void MolecularDynamics::doDihedralDerivatives(
 	float k = 200;
 	for ( Size i = 1; i <= dihedrallist.size(); i ++ ) {
 
-
 		// work out which atoms are involved !
 
 		int no1 = dihedrallist[i].index1;
 		int no2 = dihedrallist[i].index2;
 		int no3 = dihedrallist[i].index3;
 		int no4 = dihedrallist[i].index4;
-
 
 		//float  epot_dihedral_this=0;
 		float  phi, sin_phi, cos_phi;
@@ -1076,10 +1015,7 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 			cartom.push_back(atom);
 
 		}
-
 	}
-
-
 }
 
 
@@ -1121,16 +1057,13 @@ void MolecularDynamics::applyForces_BeeMan(
 ) {
 	using namespace core;
 
-	//int i;
 	double t;
-	//double t2;
 	double tinvmass;
 	core::Vector dr, dv;
 	core::Vector t2a;
 
 	t = 1E-15;
-	//t2 = sqr(t);  // set but never used ~Labonte
-
+	
 	float forcemul =  -( 1E10 / 6.0221418E23 * 4184.0);
 
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
@@ -1153,9 +1086,7 @@ void MolecularDynamics::applyForces_BeeMan(
 
 		// change in position
 		dr = t * (cartom[i].velocity + (4.0 * cartom[i].force - cartom[i].old_force )  * forcemul* tinvmass);
-
 		dr /= 1E-10;
-
 		dv = (5.0 * cartom[i].force - cartom[i].old_force )  * forcemul* tinvmass;
 
 		//update positions and speeds.
@@ -1166,8 +1097,6 @@ void MolecularDynamics::applyForces_BeeMan(
 		// save current force as next Step's old force
 		cartom[i].old_force = cartom[i].force;
 	}
-
-
 }
 
 
@@ -1175,10 +1104,8 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	double T,
 	float &kin,
 	float &temp
-)
-{
+) {
 	using namespace core;
-	//int i;
 	core::Vector dr, dv;
 	double t = 1E-15;
 	double tinvmass;
@@ -1205,12 +1132,6 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	double varr;
 	double crv;
 
-	//double kTdivm;
-	//double sigmav;
-	//double sigmar;
-	//double n1x, n2x;
-	//double n1y, n2y;
-	//double n1z, n2z;
 	core::Vector deltav;
 	core::Vector deltar;
 
@@ -1246,7 +1167,6 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 			1429487.0 * gt6 / 13212057600.0);
 	}
 
-	//if(Step > 0) {
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
@@ -1254,7 +1174,6 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 		dv = (1.0 - c0 / c1) * cartom[i].force * forcemul * tinvmass / gammat;
 		cartom[i].velocity += dv;
 	}
-	//}
 
 	// The velocities are now "real", i.e. finished and thus now is the time
 	// to calculate the kinetic energy and apply any barostat
@@ -1264,7 +1183,6 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	calcKineticEnergy( kin, temp);
 	kin *= 6.0221418E23 /  4184.0;
 
-	//if(Step < (Steps - 1)) {
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
@@ -1295,9 +1213,6 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 		cartom[i].velocity *= c0;
 		cartom[i].velocity += dv;
 	}
-	//}
-
-
 }
 
 
@@ -1305,15 +1220,13 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 	int Step,
 	float &current_energy,
 	float &m_OldEnergy
-)
-{
+) {
 	using namespace core;
 
 	core::Vector f;
 	static double m_StepMultiplier = 1.0;
 	float StepSize = 0.000001;
 	float forcemul = 1; // ( 1E10 / 6.0221418E23 * 4184.0);
-	//static bool backstep = false;
 
 	//std::cout << "-----> " << m_StepMultiplier << std::endl;
 	if ( Step != 0 ) {
@@ -1389,32 +1302,23 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 		//   std::cout << "DISP:  " << i << f.x() << "  " << f.y() << "  " << f.z() << std::endl;
 		cartom[i].position += f;
 	}
-
 }
 
 
 void MolecularDynamics::doMinimising(
 	core::scoring::ScoreFunction const & scorefxn
-)
-{
+) {
 	using namespace core;
 
 	const int Steps = 400;
 	int Step = 0;
 	float kin = 0;
-	//float temp = 0;
-	//float pot = 0;
 	int mcount = 1;
 
 	std::ofstream pdbfile;
 	std::string filename ( "min.pdb" );
 	pdbfile.open( filename.c_str() , std::ios::out );
 
-	//float cov_epot=0;
-	//float startTemp = 100;
-	//float TargetTemp=startTemp;
-
-	//float current_energy;
 	float m_OldEnergy(0.0);
 
 	for ( Step = 0; Step < Steps; Step ++ ) {
@@ -1447,8 +1351,6 @@ void MolecularDynamics::doMinimising(
 	}
 
 	pdbfile.close();
-
-
 }
 
 
@@ -1456,7 +1358,7 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 	int Steps,
 	float startTemp,
 	float endTemp
-){
+) {
 	using namespace core;
 	setInitialSpeeds(startTemp);
 
@@ -1478,7 +1380,6 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 		if ( ( Step % 20 ) == 0 ) {
 			std::cout << Step << "  " << pot << "  " << cov_epot << "  " << kin << "  " << pot+kin+cov_epot << "   " << temp << "(" << TargetTemp << ")" << std::endl;
 		}
-		//zeroForces( cartom );
 		getCartesianDerivatives( scorefxn );
 		pot = 0;
 		cov_epot = 0;
@@ -1489,7 +1390,6 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 		float ratio = (float)Step/(float)Steps;
 		TargetTemp = std::max(0.01,      ratio*endTemp + (1.0-ratio)*startTemp );
 		applyForces_LangevinIntegration( TargetTemp , kin, temp );
-		//applyForces_BeeMan( cartom, kin, temp );
 
 		setPosePositionsFromCartesian( );
 
@@ -1503,8 +1403,6 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 	}
 
 	pdbfile.close();
-
-
 }
 
 
@@ -1543,19 +1441,16 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	utility::vector1< CartesianAtom > cartom;
 	utility::vector1< Vector > numeriv;
 
-
 	std::cout << "Calculating derivatives \n";
 
 	createCartesianArray( );
 	getCartesianDerivatives( scorefxn );
-
 
 	//int cend = clock();
 	pose->energies().reset_nblist();
 	std::cout << "STARTSCORE: --------- " << std::endl;
 	start_score = scorefxn( *pose );
 	scorefxn.show(std::cout, *pose);
-
 
 	//std::cout << "setup_for_scoring" << std::endl;
 	Size const nres( pose->total_residue() );
@@ -1587,7 +1482,6 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 			deriv = (new_score - start_score)/dd;
 			deriv_vector.y(deriv);
 
-
 			pose->set_xyz( atom_id, safepos + dz );
 			pose->energies().clear();
 			new_score = scorefxn( *pose );
@@ -1597,7 +1491,6 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 
 			numeriv.push_back( deriv_vector );
 		}
-
 	}
 
 
@@ -1616,8 +1509,6 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 				<< numeriv[i].y() << "  "
 				<< numeriv[i].z() << "  "
 				<< std::endl;
-
-
 		} else {
 			std::cout << "DRVT: "
 				<< cartom[i].res   << "  "
@@ -1629,13 +1520,8 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 				<< numeriv[i].y() << "  "
 				<< numeriv[i].z() << "  "
 				<< std::endl;
-
-
 		}
-
 	}
-
-
 }
 
 

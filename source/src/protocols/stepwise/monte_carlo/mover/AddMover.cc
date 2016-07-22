@@ -109,7 +109,6 @@ AddMover::apply( core::pose::Pose &  )
 void
 AddMover::apply( core::pose::Pose & viewer_pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering )
 {
-
 	int offset = static_cast<int>(res_to_add_in_full_model_numbering) - static_cast<int>(res_to_build_off_in_full_model_numbering);
 	runtime_assert( offset != 0 );
 	AttachmentType attachment_type = (std::abs( offset ) == 1) ?
@@ -171,7 +170,6 @@ AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
 			sample_by_monte_carlo_internal( viewer_pose );
 		}
 	}
-
 }
 
 
@@ -304,14 +302,14 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ){
 		}
 
 		pose.insert_residue_by_jump( *new_rsd, res_to_add, takeoff_res,
-			default_jump_atom( pose.residue( takeoff_res ) ),
-			default_jump_atom( *new_rsd ) );
+			default_jump_atom( pose.residue_type( takeoff_res ) ),
+			default_jump_atom( new_rsd->type() ) );
 
 		kinematics::FoldTree f = pose.fold_tree();
 		Size const jump_nr = f.jump_nr( takeoff_res, res_to_add );
 		f.slide_jump( jump_nr, res_to_build_off, res_to_add );
-		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( res_to_build_off ) ),
-			default_jump_atom( pose.residue( res_to_add ) ) );
+		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue_type( res_to_build_off ) ),
+			default_jump_atom( pose.residue_type( res_to_add ) ) );
 		pose.fold_tree( f );
 
 		add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
@@ -375,14 +373,14 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 		//}
 
 		pose.insert_residue_by_jump( *new_rsd, res_to_add, takeoff_res,
-			default_jump_atom( pose.residue( takeoff_res ) ),
-			default_jump_atom( *new_rsd ) );
+			default_jump_atom( pose.residue_type( takeoff_res ) ),
+			default_jump_atom( new_rsd->type() ) );
 
 		kinematics::FoldTree f = pose.fold_tree();
 		Size const jump_nr = f.jump_nr( res_to_add, takeoff_res+1 );
 		f.slide_jump( jump_nr, res_to_add, res_to_build_off+1 );
-		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( res_to_add ) ),
-			default_jump_atom( pose.residue( res_to_build_off+1 ) ) );
+		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue_type( res_to_add ) ),
+			default_jump_atom( pose.residue_type( res_to_build_off+1 ) ) );
 		pose.fold_tree( f );
 
 		if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
@@ -455,10 +453,9 @@ AddMover::check_same_chain( pose::Pose const & pose ) {
 
 ///////////////////////////////////////////////////////////////
 void
-AddMover::setup_initial_torsions( pose::Pose & pose ){
+AddMover::setup_initial_torsions( pose::Pose & pose ) {
 
 	if ( suite_num_ > 0 && pose.residue_type( suite_num_ ).is_RNA() ) {
-
 		if ( start_added_residue_in_aform_ ) {
 			rna_torsion_mover_->apply_suite_torsion_Aform( pose, suite_num_ );
 			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num_ );
@@ -472,7 +469,6 @@ AddMover::setup_initial_torsions( pose::Pose & pose ){
 	} else if ( suite_num_ == 0 && swa_move_.is_jump() ) {
 		setup_initial_jump( pose );
 	}
-
 }
 
 // similar to get_remodel_res in ResampleMover but only looks inside full_model_info.
@@ -548,7 +544,6 @@ AddMover::setup_initial_jump( pose::Pose & pose ) {
 	// get jump number, and add the new jump into pose
 	Size const & jump_nr = ft.get_jump_that_builds_residue( res_to_add );
 	pose.set_jump( jump_nr, new_jump );
-
 }
 
 

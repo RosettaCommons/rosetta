@@ -146,7 +146,6 @@ StepWisePacker::figure_out_neighbors( core::pose::Pose & pose /*not const becaus
 	working_pack_res_was_inputted_ = false;
 	( *scorefxn_ )( pose ); // currently needs to occur before interface_res determination.
 	working_pack_res_ = figure_out_working_interface_res( pose, working_moving_res_list_ );
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -158,8 +157,9 @@ StepWisePacker::setup_pack_task( pose::Pose const & pose ) {
 
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
-		if ( working_pack_res_.has_value( i ) )  {
-
+		if ( !working_pack_res_.has_value( i ) )  {
+			pack_task_->nonconst_residue_task(i).prevent_repacking();
+		} else {
 			pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 			pack_task_->nonconst_residue_task(i).or_include_current( true );
 
@@ -173,12 +173,8 @@ StepWisePacker::setup_pack_task( pose::Pose const & pose ) {
 					pack_task_->nonconst_residue_task(i).or_include_virtual_side_chain( allow_virtual_o2prime_hydrogens_ );
 				}
 			}
-
-		} else {
-			pack_task_->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -188,7 +184,6 @@ StepWisePacker::reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const
 	SideChainCopier copier( src_pose, previous_working_pack_res_ /*set during previous pack*/,
 		pack_o2prime_hydrogens_ );
 	copier.apply( pose );
-
 }
 
 //////////////////////////////////////////////////////////////////////////

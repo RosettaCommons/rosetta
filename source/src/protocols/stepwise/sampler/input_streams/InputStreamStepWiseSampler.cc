@@ -97,7 +97,6 @@ InputStreamStepWiseSampler::apply( core::pose::Pose & pose, core::Size const id 
 		//   TR << "ALIGNING POSE! " << std::endl;
 		stepwise_pose_setup_->align_pose( pose );
 	}
-
 }
 
 } //input_streams

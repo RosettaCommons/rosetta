@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
@@ -56,7 +56,7 @@ char get_edge_from_num( Size const num ) {
 	if ( num == WATSON_CRICK ) return 'W';
 	if ( num == HOOGSTEEN )    return 'H';
 	if ( num == SUGAR )        return 'S';
-	if ( num == O2PRIME )       return '2';
+	if ( num == O2PRIME )      return '2';
 	if ( num == PHOSPHATE )    return 'P';
 	return 'X';
 }
@@ -160,28 +160,21 @@ get_full_LW_orientation_from_num( Size const num ){
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string const first_base_atom( conformation::Residue const & rsd ) {
+std::string const first_base_atom( chemical::ResidueType const & rsd ) {
 	// if (rsd.name1() == 'a' || rsd.name1() == 'g' )  return " N9 ";
 	// return " N1 ";
 	return rsd.atom_name( first_base_atom_index( rsd ) );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-bool is_purine( conformation::Residue const & rsd ) {
-	if ( rsd.name1() == 'a' || rsd.name1() == 'g' )  return true;
-	return false;
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
-Size first_base_atom_index( conformation::Residue const & rsd ) {
-	// HEY MAKE THIS MORE GENERAL? Maybe look at chi1?
+Size first_base_atom_index( chemical::ResidueType const & rsd ) {
 	chemical::AtomIndices const & atom_indices = rsd.chi_atoms( 1 /*chi # 1 must be nucleic acid "chi"*/ );
 	return atom_indices[ 3 ]; /* C2' ... C1' ... first base atom ...  chi1 torsion atom*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string const chi1_torsion_atom( conformation::Residue const & rsd ) {
+std::string const chi1_torsion_atom( chemical::ResidueType const & rsd ) {
 	// if (rsd.name1() == 'a' || rsd.name1() == 'g' )  return " N9 ";
 	// return " N1 ";
 	return rsd.atom_name( chi1_torsion_atom_index( rsd ) );
@@ -189,7 +182,7 @@ std::string const chi1_torsion_atom( conformation::Residue const & rsd ) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-Size chi1_torsion_atom_index( conformation::Residue const & rsd ) {
+Size chi1_torsion_atom_index( chemical::ResidueType const & rsd ) {
 	// HEY MAKE THIS MORE GENERAL? Maybe look at chi1?
 	chemical::AtomIndices const & atom_indices = rsd.chi_atoms( 1 /*chi # 1 must be nucleic acid "chi"*/ );
 	return atom_indices[ 4 ]; /* C2' ... C1' ... first base atom ... chi1 torsion atom*/
@@ -198,7 +191,7 @@ Size chi1_torsion_atom_index( conformation::Residue const & rsd ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // consider moving this to chemical/util.cc.
-std::string const default_jump_atom( conformation::Residue const & rsd ) {
+std::string const default_jump_atom( chemical::ResidueType const & rsd ) {
 	if ( rsd.is_RNA() ) {
 		if ( !rsd.is_coarse() ) {
 			return chi1_torsion_atom( rsd );
@@ -259,8 +252,8 @@ std::string get_WC_atom( core::chemical::AA const & res_type ){
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_watson_crick_base_pair_atoms(
-	conformation::Residue const & rsd_type1,
-	conformation::Residue const & rsd_type2,
+	chemical::ResidueType const & rsd_type1,
+	chemical::ResidueType const & rsd_type2,
 	std::string & atom1,
 	std::string & atom2 ) {
 
@@ -302,18 +295,16 @@ get_watson_crick_base_pair_atoms(
 
 	atom1 = "XXXX";
 	atom2 = "XXXX";
-	return;
 }
 
 /////////////////////////////////////////////////////////////////////
 void
 get_watson_crick_base_pair_atoms(
-	conformation::Residue const & rsd_type1,
-	conformation::Residue const & rsd_type2,
+	chemical::ResidueType const & rsd_type1,
+	chemical::ResidueType const & rsd_type2,
 	utility::vector1< std::string > & atom_ids1,
 	utility::vector1< std::string > & atom_ids2  )
 {
-
 	using namespace chemical;
 
 	atom_ids1.clear();
@@ -476,7 +467,6 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	numeric::xyzMatrix< core::Real > M = numeric::xyzMatrix< core::Real > ::cols( x, y, z );
 	return M;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

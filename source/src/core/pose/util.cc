@@ -277,9 +277,8 @@ pdbslice( core::pose::Pose & new_pose,
 			if ( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ) {
 
 				new_pose.append_residue_by_jump(  *residue_to_add, i-1,
-					chi1_torsion_atom( new_pose.residue(i-1) ),
-					chi1_torsion_atom( *residue_to_add ), true /*new chain*/ );
-
+					chi1_torsion_atom( new_pose.residue_type(i-1) ),
+					chi1_torsion_atom( residue_to_add->type() ), true /*new chain*/ );
 			} else {
 
 				new_pose.append_residue_by_jump(  *residue_to_add, i-1, "", "", true /*new chain*/ );

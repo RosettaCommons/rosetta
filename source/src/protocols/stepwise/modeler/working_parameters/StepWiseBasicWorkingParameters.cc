@@ -81,20 +81,21 @@ StepWiseBasicWorkingParameters::apply_full_to_sub_mapping( utility::vector1< Siz
 	utility::vector1< core::Size > working_res_vector;
 	for ( Size n = 1; n <= res_vector.size(); n++ ) {
 		if ( !is_working_res_[ res_vector[ n ] ] ) continue;
+
 		working_res_vector.push_back( full_to_sub_[ res_vector[ n ] ]);
 	}
 
 	return working_res_vector;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseBasicWorkingParameters::apply_full_to_sub_mapping( Size const res ) const {
-
 	std::map<Size,Size>::const_iterator iter = full_to_sub_.find( res );
 	if ( iter == full_to_sub_.end() ) return 0;
 	return iter->second;
-
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 void StepWiseBasicWorkingParameters::set_partition_definition( utility::vector1< Size > const & partition_definition_vector ){
 	partition_definition_.dimension( partition_definition_vector.size() );
@@ -107,16 +108,19 @@ core::pose::PoseCOP
 StepWiseBasicWorkingParameters::working_native_pose() const{
 	return working_native_pose_;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseBasicWorkingParameters::set_working_native_pose( core::pose::PoseOP & pose ){
 	working_native_pose_ = pose;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseBasicWorkingParameters::set_working_native_pose( core::pose::PoseCOP pose ){
 	working_native_pose_ = pose;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseBasicWorkingParameters::update_working_moving_suite(){
@@ -139,8 +143,8 @@ StepWiseBasicWorkingParameters::update_working_moving_suite(){
 
 	//check
 	if ( working_moving_suite_ != working_moving_suite_list_[1] ) utility_exit_with_message( "working_moving_suite_ != working_moving_suite_list_[1]" );
-
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 std::map< core::Size, core::Size >  //Parin Jan 18, 2009
 StepWiseBasicWorkingParameters::create_sub_to_full_map( std::map< core::Size, core::Size > const & full_to_sub ) const{
@@ -152,6 +156,7 @@ StepWiseBasicWorkingParameters::create_sub_to_full_map( std::map< core::Size, co
 	}
 	return sub_to_full;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 void StepWiseBasicWorkingParameters::update_working_sequence(){
 
@@ -160,10 +165,17 @@ void StepWiseBasicWorkingParameters::update_working_sequence(){
 
 	working_sequence_ = "";
 
-	for ( Size full_seq_num = 1; full_seq_num <= full_sequence_.size(); full_seq_num++ ) {
-		if ( is_working_res_[ full_seq_num ] ) {
-			working_sequence_ += full_sequence_[ full_seq_num - 1 ]; //i-1 because std::string elements starts at 0...
+	for ( Size full_seq_num = 1, string_index = 0; string_index < full_sequence_.size(); ++full_seq_num, ++string_index ) {
+		if ( !is_working_res_[ full_seq_num ] ) continue;
+		
+		if ( full_sequence_[ string_index ] == 'X' ) {
+			working_sequence_ += full_sequence_[ string_index++ ];
+			working_sequence_ += full_sequence_[ string_index++ ];
+			working_sequence_ += full_sequence_[ string_index++ ];
+			working_sequence_ += full_sequence_[ string_index++ ];
+			working_sequence_ += full_sequence_[ string_index++ ];
 		}
+		working_sequence_ += full_sequence_[ string_index ]; //i-1 because std::string elements starts at 0...
 	}
 }
 

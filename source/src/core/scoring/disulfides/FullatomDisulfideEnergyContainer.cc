@@ -610,7 +610,6 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 				pose.residue_type( ii ).has( pose.residue_type( ii ).get_disulfide_atom_name() ) &&
 				pose.residue_type( ii ).get_disulfide_atom_name() != "CEN" // full atom residue
 				) {
-			//amw std::cout << "We are identifying a disulfide for scoring purposes at " << ii << std::endl;
 			++count_disulfides;
 			Size const ii_connect_atom = pose.residue( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
 			Size other_res( 0 );

@@ -74,11 +74,9 @@ RNA_O2PrimeMover::apply( core::pose::Pose & pose )
 void
 RNA_O2PrimeMover::apply( core::pose::Pose & pose, std::string & move_type )
 {
-
 	using namespace core::pose::full_model_info;
 
 	Size o2prime_res( 0 );
-
 	utility::vector1< Size > moving_res_list = get_moving_res_from_full_model_info( pose );
 
 	if ( sample_all_o2prime_ ) {
@@ -102,7 +100,6 @@ RNA_O2PrimeMover::apply( core::pose::Pose & pose, std::string & move_type )
 			sample_near_o2prime_torsion( pose, o2prime_res, sample_range_large_);
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +169,6 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 					break;
 				}
 			}
-
 		}
 	}
 

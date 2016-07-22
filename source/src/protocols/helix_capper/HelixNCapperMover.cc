@@ -35,12 +35,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/PDBInfo.hh>
 
-//#include <protocols/relax/FastRelax.hh>
-//#include <protocols/relax/MiniRelax.hh>
-//#include <protocols/relax/ClassicRelax.hh>
-
-//#include <protocols/simple_moves/MinMover.hh>
-//#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 
 #include <utility/io/izstream.hh>
@@ -70,10 +64,6 @@ HelixNCapperMover::HelixNCapperMover(
 }
 
 HelixNCapperMover::~HelixNCapperMover(){}
-
-// void HelixNCapperMover::set_initial_pose( core::pose::Pose pose ){
-//  initial_pose = pose;
-// }
 
 void HelixNCapperMover::dump_pdb_to_file( core::pose::Pose & posey, std::string filename ){
 	posey.dump_pdb(filename);
@@ -251,7 +241,6 @@ void HelixNCapperMover::get_Ncap_scores() {
 		ncap_scores_.push_back( this_ncap_native_prob );
 
 		TR << "Helix Ncap at " << icap << " has prob score of " << this_ncap_native_prob << std::endl;
-
 	}
 }
 

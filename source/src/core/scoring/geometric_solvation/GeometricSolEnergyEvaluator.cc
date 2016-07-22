@@ -597,7 +597,8 @@ GeometricSolEnergyEvaluator::check_path_distance(
 	if ( rsd1.seqpos() == rsd2.seqpos() ) {
 		return ( rsd1.path_distance( atm1, atm2 ) >= intrares_path_distance_cutoff_ );
 	}
-
+	
+	//	AMW TODO: this is_bonded call is 0.2% of SWA runtime
 	if ( ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) && ( interres_path_distance_cutoff_ > 0 ) ) {
 		etable::count_pair::CountPairGeneric count_pair( rsd1, rsd2 ); // this is inefficient... happens with each atom pair in rsd1, rsd2.
 		path_distance_ = count_pair.path_distance( atm1, atm2 );
@@ -752,9 +753,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	bool const update_deriv /*= false*/,
 	HBondDerivs & deriv /* = DUMMY_DERIV2D */,
 	HBEvalTuple & hbe /* = HBEvalTuple() */
-) const
-{
-
+) const {
 	//Why do we need to send in the pose and the residue stuff?
 	// Well, the pose has info on backbone H-bonds.
 	// and, during design, the residue type doesn't actually
@@ -852,7 +851,6 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 			" path-distance " << path_distance_ <<
 			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
 			" with energy "<< F(8,3,energy)<<std::endl;
-
 	}
 }
 

@@ -25,6 +25,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -130,7 +131,7 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 
 	if ( working_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root( pose ); //Fang's electron density code.
 
-	// These should be called explicitly by the object (i.e., stepwise_rna_pose_setup->setup_full_model_info( pose ) )
+	// These should be called explicitly by the object (i.e., stepremovewise_rna_pose_setup->setup_full_model_info( pose ) )
 	setup_full_model_info( pose );
 	setup_vdw_cached_rep_screen_info( pose );
 
@@ -165,9 +166,9 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	native_pose_copy.fold_tree(  core::kinematics::FoldTree(  native_pose_copy.total_residue() ) );
 
 	PoseOP working_native_pose( new Pose );
-
+	
 	//First option is to pass in the full length native
-	if ( native_pose_copy.sequence() ==  working_parameters_->full_sequence() ) {
+	if ( native_pose_copy.sequence() == core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ) ) {
 		TR.Debug << "User passed in full length native pose" << std::endl;
 
 		( *working_native_pose ) = native_pose_copy;
@@ -178,19 +179,19 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 			}
 		}
 
-	} else if ( native_pose_copy.sequence() ==  working_sequence ) { //Could also pass in the working_native_pose directly
+	} else if ( native_pose_copy.sequence() == core::pose::rna::remove_bracketed( working_sequence ) ) { //Could also pass in the working_native_pose directly
 		TR.Debug << "User passed in working native pose" << std::endl;
 		( *working_native_pose ) = native_pose_copy;
 	} else {
 		TR.Debug <<  std::setw( 50 ) << "  native_pose_copy.sequence() = " << native_pose_copy.sequence()  << std::endl;
 		TR.Debug <<  std::setw( 50 ) << "  working_parameters_->full_sequence() = " << working_parameters_->full_sequence() << std::endl;
-		TR.Debug <<  std::setw( 50 ) << "  working_sequence = " << working_sequence << std::endl;
+		TR.Debug <<  std::setw( 50 ) << "  working_sequence = " << core::pose::rna::remove_bracketed( working_sequence ) << std::endl;
 		utility_exit_with_message( "The native pose passed in by the User does not match both the full_sequence and the working sequence of the inputted fasta_file" );
 	}
-
-	if ( working_native_pose->sequence() !=  working_sequence ) {
+	
+	if ( working_native_pose->sequence() != core::pose::rna::remove_bracketed( working_sequence ) ) {
 		TR.Debug <<  std::setw( 50 ) << "working_native_pose->sequence() = " << working_native_pose->sequence();
-		TR.Debug <<  std::setw( 50 ) << "working_sequence = " << working_sequence << std::endl;
+		TR.Debug <<  std::setw( 50 ) << "working_sequence = " << core::pose::rna::remove_bracketed( working_sequence ) << std::endl;
 		utility_exit_with_message( "working_native_pose->sequence() !=  working_sequence" );
 	}
 
@@ -299,10 +300,11 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 	// Check for sequence match.
 	utility::vector1< Size > const & input_res = working_parameters_->input_res_vectors()[i];
 	std::string const & full_sequence = working_parameters_->full_sequence();
+	std::string stripped_full_sequence = core::pose::rna::remove_bracketed( full_sequence );
 	runtime_assert ( import_pose.total_residue() == input_res.size() );
 	bool match( true );
 	for ( Size n = 1; n <= import_pose.total_residue(); n++ ) {
-		if (  import_pose.sequence()[ n - 1 ]  != full_sequence[ input_res[n] - 1 ] ) {
+		if (  import_pose.sequence()[ n - 1 ]  != stripped_full_sequence[ input_res[n] - 1 ] ) {
 			match = false; break;
 		}
 	}
@@ -357,7 +359,6 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 	runtime_assert( input_tags_.size() >= 1 );
 	runtime_assert( copy_DOF_ );
 
-	//std::string const working_sequence = working_parameters_->working_sequence();
 	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< pose::Pose > start_pose_list;
@@ -677,6 +678,7 @@ void
 StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) const
 {
 	using namespace core::conformation;
+	using namespace core::chemical;
 	using namespace core::id;
 	using namespace core::scoring::constraints;
 	using namespace core::chemical::rna;
@@ -713,25 +715,25 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 	for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
 
 		Size const k = working_terminal_res[ i ];
-		Residue const & rsd1( pose.residue( k ) );
+		ResidueType const & rsd1( pose.residue_type( k ) );
 		if ( rsd1.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			TR.Debug << "rsd1.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ), seq_num = " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 			continue;
 		}
 		for ( Size m = 1; m <= nres; m++ ) {
 
-			Residue const & rsd2( pose.residue( m ) );
+			ResidueType const & rsd2( pose.residue_type( m ) );
 			if ( rsd2.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				TR.Debug << "rsd2.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ), seq_num = " << m << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 				continue;
 			}
 
-			AtomID const atom_id1( first_base_atom_index( rsd1 ), rsd1.seqpos() );
-			AtomID const atom_id2( first_base_atom_index( rsd2 ), rsd2.seqpos() );
+			AtomID const atom_id1( first_base_atom_index( rsd1 ), k );
+			AtomID const atom_id2( first_base_atom_index( rsd2 ), m );
 
 			// the one exception -- close contacts WITHIN a partition
 			if ( ( ( is_moving_res( k )  && is_moving_res( m ) ) ||
-					( is_fixed_res(  k )  && is_fixed_res(  m ) ) ) &&
+					( is_fixed_res( k )  && is_fixed_res(  m ) ) ) &&
 					( pose.xyz( atom_id1 ) - pose.xyz( atom_id2 ) ).length() < DIST_CUTOFF ) {
 				//TR.Debug << "Not adding repulsive constraint between " << k << " and " << m << " already closeby in same partition" << std::endl;
 				continue;
@@ -739,12 +741,10 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 
 			// distance from O3' to P
 			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) ) ) );
-
 		}
 	}
 
 	pose.constraint_set( cst_set );
-
 }
 
 
@@ -950,13 +950,13 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 /////////////////////////////////////////////////////////////////////////////////////////////
 //Adding Virtual res as root
 void
-StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ){  //Fang's electron density code
+StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ) {  //Fang's electron density code
 
 	Size const nres = pose.total_residue();
-	Size const working_moving_res(  working_parameters_->working_moving_res() );
+	Size const working_moving_res( working_parameters_->working_moving_res() );
 	//if already rooted on virtual residue, return
 	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
-		TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
+		TR.Warning << "add_aa_virt_rsd_as_root() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
 		return;
 	}
 

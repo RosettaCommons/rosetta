@@ -173,7 +173,6 @@ StepWiseLegacyClustererSilentBased::cluster()
 
 	TR.Debug << "Total time in StepWiseLegacyClustererSilentBased: " <<
 		static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
-
 }
 
 
@@ -244,8 +243,6 @@ StepWiseLegacyClustererSilentBased::do_some_clustering() {
 	}
 
 	TR.Debug << "After clustering, number of decoys: " << pose_output_list_.size() << std::endl;
-	return;
-
 }
 
 
@@ -274,7 +271,6 @@ StepWiseLegacyClustererSilentBased::cluster_with_auto_tune() {
 
 		//can current cluster center list be shrunk, given the new cluster_radius cutoff?
 		recluster_current_pose_list();
-
 		do_some_clustering();
 
 		if ( hit_score_cutoff_ ) {
@@ -288,7 +284,6 @@ StepWiseLegacyClustererSilentBased::cluster_with_auto_tune() {
 	}
 
 	TR.Debug << "Clustering radius after auto_tune: " << cluster_radius_ << std::endl;
-
 }
 
 
@@ -318,12 +313,10 @@ StepWiseLegacyClustererSilentBased::recluster_current_pose_list() {
 		} else {
 			num_pose_in_cluster_[ found_close_cluster ] += old_num_pose_in_cluster[ i ];
 		}
-
 	}
 
 	TR.Debug <<  "After reclustering with rmsd " << cluster_radius_ << ", number of clusters reduced from " <<
 		old_pose_output_list.size() << " to " << pose_output_list_.size() << std::endl;
-
 }
 
 
@@ -340,7 +333,6 @@ StepWiseLegacyClustererSilentBased::check_for_closeness( core::pose::PoseOP cons
 	for ( Size n = pose_output_list_.size(); n >= 1; n-- ) {
 
 		Real rmsd( 0.0 );
-
 
 		if ( calc_rms_res_.size() == 0 || force_align_ ) {
 			rmsd = rms_at_corresponding_atoms( *(pose_output_list_[ n ]), *pose_op, corresponding_atom_id_map_ );

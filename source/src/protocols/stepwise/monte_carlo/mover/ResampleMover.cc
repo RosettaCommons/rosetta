@@ -229,10 +229,10 @@ filter_for_proximity( pose::Pose const & pose,
 	runtime_assert( partition_res.has_value( center_res ) );
 	static Distance const proximity_cutoff( 8.0 );
 	utility::vector1< Size > filtered_partition_res;
-	Vector const & center_xyz = pose.residue( center_res ).xyz( default_jump_atom( pose.residue( center_res ) ) );
+	Vector const & center_xyz = pose.residue( center_res ).xyz( default_jump_atom( pose.residue_type( center_res ) ) );
 	for ( Size n = 1; n <= partition_res.size(); n++ ) {
 		Size const new_res = partition_res[ n ];
-		Vector const & new_xyz =  pose.residue( new_res ).xyz( default_jump_atom( pose.residue( new_res ) ) );
+		Vector const & new_xyz =  pose.residue( new_res ).xyz( default_jump_atom( pose.residue_type( new_res ) ) );
 		if ( ( new_xyz - center_xyz ).length() < proximity_cutoff ) filtered_partition_res.push_back( new_res );
 	}
 	partition_res = filtered_partition_res;
@@ -281,8 +281,8 @@ ResampleMover::slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) cons
 	Size const new_remodel_res   = new_jump_pair.second;
 
 	f.slide_jump( jump_nr, new_reference_res, new_remodel_res );
-	f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( new_reference_res ) ),
-		default_jump_atom( pose.residue( new_remodel_res ) ) );
+	f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue_type( new_reference_res ) ),
+		default_jump_atom( pose.residue_type( new_remodel_res ) ) );
 
 	pose.fold_tree( f );
 	TR << "Slid jump from: " << remodel_res << " -- " << reference_res <<

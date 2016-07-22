@@ -126,7 +126,6 @@ StepWiseProteinCCD_Closer::init( core::pose::Pose & pose ) {
 bool
 StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 {
-
 	// Lazy initialization of ccd_loop_closure_mover_
 	if ( ccd_loop_closure_mover_.get() == NULL ) {
 		ccd_loop_closure_mover_ = loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loops::loop_closure::ccd::CCDLoopClosureMover() );
@@ -163,7 +162,6 @@ StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 	}
 
 	if ( !loop_closed ) return false;
-
 	grab_main_chain_torsion_set_list( pose );
 
 	return true;
@@ -180,11 +178,8 @@ StepWiseProteinCCD_Closer::CCD_loop_close_sample_omega_recursively( core::pose::
 	Size const omega_pos = loop_.start() + offset;
 
 	if ( omega_pos == loop_.stop() ) {
-
 		closed_loop_ = CCD_loop_close( pose );
-
 	} else {
-
 		pose.set_omega( omega_pos, 180.0 );
 		CCD_loop_close_sample_omega_recursively( pose, offset + 1 );
 
@@ -193,7 +188,6 @@ StepWiseProteinCCD_Closer::CCD_loop_close_sample_omega_recursively( core::pose::
 			TR.Debug << "trying CIS omega! " << omega_pos << std::endl;
 			CCD_loop_close_sample_omega_recursively( pose, offset + 1 );
 		}
-
 	}
 }
 

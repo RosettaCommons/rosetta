@@ -91,8 +91,8 @@ RNA_BasePairHandler::check_base_pairs( pose::Pose & pose,
 		}
 
 		// Check for non-RNA residues
-		if ( !pose.residue(i).is_RNA() ) continue;
-		if ( !pose.residue(j).is_RNA() ) continue;
+		if ( !pose.residue_type(i).is_RNA() ) continue;
+		if ( !pose.residue_type(j).is_RNA() ) continue;
 
 		// are these part of the pose that is actually being moved?
 		if  ( !atom_level_domain_map->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1'", i ), pose ) ) ) continue;
@@ -104,23 +104,17 @@ RNA_BasePairHandler::check_base_pairs( pose::Pose & pose,
 		}
 
 		if ( rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK && rna_pairing.orientation() == ANTIPARALLEL ) {
-
 			if ( is_cutpoint_open(pose, i) && is_cutpoint_open( pose, j-1) ) {
-
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, i, +1 /* sign */) ) return false;
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, j, -1 /* sign*/ ) ) return false;
-
 			} else if ( is_cutpoint_open( pose, i-1 ) && is_cutpoint_open( pose, j) ) {
-
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, i, -1 /* sign */) ) return false;
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, j, +1 /* sign*/ ) ) return false;
-
 			}
 		}
 	}
 
 	return true;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -147,8 +141,8 @@ RNA_BasePairHandler::setup_base_pair_constraints( core::pose::Pose & pose,
 			continue;
 		}
 
-		if ( !pose.residue(i).is_RNA() ) continue;
-		if ( !pose.residue(j).is_RNA() ) continue;
+		if ( !pose.residue_type(i).is_RNA() ) continue;
+		if ( !pose.residue_type(j).is_RNA() ) continue;
 
 		if ( !atom_level_domain_map->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", i ), pose ) ) &&
 				!atom_level_domain_map->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?
@@ -164,7 +158,6 @@ RNA_BasePairHandler::setup_base_pair_constraints( core::pose::Pose & pose,
 std::map< Size, Size >
 RNA_BasePairHandler::connections() const
 {
-
 	std::map< Size, Size > connections_local;
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
 		BasePair pairing = rna_pairing_list_[n];
@@ -178,12 +171,10 @@ RNA_BasePairHandler::connections() const
 void
 RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool const force_canonical ) const
 {
-
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
 		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
 		Size i( rna_pairing.res1() );
 		Size j( rna_pairing.res2() );
-
 
 		bool const pair_is_canonical = rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK &&
 			rna_pairing.orientation() == ANTIPARALLEL;
@@ -205,7 +196,6 @@ RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool 
 		partner[ i ] = j;
 		partner[ j ] = i;
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -223,25 +213,23 @@ RNA_BasePairHandler::get_base_pair_steps( bool const just_canonical ) const {
 
 	for ( std::map< Size, Size >::const_iterator iter = partner.begin(), end = partner.end(); iter != end; ++iter ) {
 		Size const i = iter->first;
-		if ( partner.find( i+1 ) != partner.end() &&
-				!cutpoints_open_.has_value( i ) ) {
-			Size const j = partner[ i+1 ];
-			// In following, q = 0  means flush base pair steps. Strands are (i, i+1)  and (j, j+1 )
-			// For q > 0, there are q unpaired residues ('bulges') in between j and j+q. Strands are (i, i+1) and ( j, j+1, ... j+q+1 ).
-			for ( int q = 0; q <= libraries::MAX_BULGE_LENGTH; q++ ) {
-				if ( j == partner[i] - q - 1 ) {
-					bool has_cutpoint( false );
-					for ( Size n = j; n < partner[ i ]; n++ ) {
-						if ( cutpoints_open_.has_value( n ) ) has_cutpoint = true;
-					}
-					if ( has_cutpoint ) continue;
-					if ( q == 0 && base_pair_steps.has_value( BasePairStep( j, j+1, i, i+1 )  ) ) { // don't put in the 'reverse' of the base pair step.
-						continue;
-					}
-					base_pair_steps.push_back( BasePairStep( i, i+1, j, j+q+1 ) );
-				}
+		if ( partner.find( i+1 ) == partner.end() || cutpoints_open_.has_value( i ) ) continue;
+		
+		Size const j = partner[ i+1 ];
+		// In following, q = 0  means flush base pair steps. Strands are (i, i+1)  and (j, j+1 )
+		// For q > 0, there are q unpaired residues ('bulges') in between j and j+q. Strands are (i, i+1) and ( j, j+1, ... j+q+1 ).
+		for ( int q = 0; q <= libraries::MAX_BULGE_LENGTH; q++ ) {
+			if ( j != partner[i] - q - 1 ) continue;
+			
+			bool has_cutpoint( false );
+			for ( Size n = j; n < partner[ i ]; n++ ) {
+				if ( cutpoints_open_.has_value( n ) ) has_cutpoint = true;
 			}
-
+			if ( has_cutpoint ) continue;
+			if ( q == 0 && base_pair_steps.has_value( BasePairStep( j, j+1, i, i+1 )  ) ) { // don't put in the 'reverse' of the base pair step.
+				continue;
+			}
+			base_pair_steps.push_back( BasePairStep( i, i+1, j, j+q+1 ) );
 		}
 	}
 

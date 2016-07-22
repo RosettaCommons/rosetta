@@ -15,3 +15,6 @@ hbond_bb_sc 1.45367
 hbond_sc 1.18477
 dslf_fa13 1.0
 unfolded -0.904283
+atom_pair_constraint 0.1
+angle_constraint 0.1
+dihedral_constraint 0.1

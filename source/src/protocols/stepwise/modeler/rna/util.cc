@@ -250,10 +250,9 @@ check_validity_and_get_working_res( Size const full_seq_num, working_parameters:
 
 	if ( working_seq_num < 1 ) utility_exit_with_message( "working_seq_num ( " + string_of( working_seq_num ) + " ) is lesser then 1" );
 
-	if ( working_seq_num > working_sequence.size() ) utility_exit_with_message( "working_seq_num ( " + string_of( working_seq_num ) + " ) is greater than working_sequence.size() ( " + string_of( working_sequence.size() ) + " )" );
+	if ( working_seq_num > core::pose::rna::remove_bracketed( working_sequence ).size() ) utility_exit_with_message( "working_seq_num ( " + string_of( working_seq_num ) + " ) is greater than working_sequence.size() ( " + string_of( core::pose::rna::remove_bracketed( working_sequence ).size() ) + " )" );
 
 	return working_seq_num;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -520,7 +519,6 @@ output_seq_num_list( std::string const & tag, utility::vector1< core::Size > con
 	}
 
 	outstream << std::endl;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -541,7 +539,6 @@ output_title_text( std::string const & title, std::ostream & outstream /* = std:
 	for ( Size i = 1; i <= dash_length/2; i++ ) outstream << "-";
 
 	outstream << std::endl;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -559,7 +556,6 @@ file_exists( std::string const & file_name ){
 	my_file.close();
 
 	return file_exist;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +579,6 @@ remove_file( std::string const & file_name ){
 		std::perror( error_message.c_str() );
 		utility_exit_with_message( error_message + ", retcode = " + string_of( retcode ) );
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -608,7 +603,6 @@ output_rotamer( utility::vector1 < Real > & rotamer ){
 	TR << std::setw( spacing ) << rotamer[12] << " ";
 	TR << std::setw( spacing ) << rotamer[13] << " ";
 	TR << std::endl;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -650,7 +644,6 @@ suite_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, Size const & mov
 	if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on June_11, 2010, took me a whole day to debug this since buggy only on Biox compiler!
 
 	return ( std::max( 0.01, rmsd ) );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -722,7 +715,6 @@ rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, work
 	std::map< core::Size, bool > const & is_prepend_map = working_parameters_->is_prepend_map();
 
 	return rmsd_over_residue_list( pose1, pose2, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, ignore_virtual_atom );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -737,11 +729,9 @@ print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pos
 	TR << "num_atoms: " << num_atoms << std::endl;
 
 	for ( Size n = 1; n <= num_atoms;  n++ ) {
-
 		TR << " atom num = " <<  n;
 		TR << "  atom_name of the pose1 " <<  pose1.residue( suite_num_1 ).atom_name( n );
 		TR << "  atom_name of the pose2 " <<  pose2.residue( suite_num_2 ).atom_name( n ) << std::endl;
-
 	}
 }
 
@@ -808,21 +798,23 @@ atom_square_deviation( conformation::Residue const & rsd_1, conformation::Residu
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //create on Sept 24, 2010...should really integrate these rmsd square deviation functions....cause now it is just copy and paste copy
 void
-base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_1, Size const & moving_res_2, Size& atom_count, Real& sum_sd, bool verbose, bool const ignore_virtual_atom ){
+base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_1, Size const & moving_res_2, Size& atom_count, Real& sum_sd, bool verbose, bool const /*ignore_virtual_atom*/ ){
 
-
-	chemical::AA const & res_aa =  pose1.residue( moving_res_1 ).aa();
-	chemical::AA const & res_aa2 =  pose2.residue( moving_res_2 ).aa();
+	chemical::AA const & res_aa =  pose1.residue_type( moving_res_1 ).aa();
+	chemical::AA const & res_aa2 =  pose2.residue_type( moving_res_2 ).aa();
 
 	if ( res_aa != res_aa2 ) utility_exit_with_message( "res_aa ( " + name_from_aa( res_aa ) + " ) != res_aa2 ( " + name_from_aa( res_aa2 ) + " ) " );
 
 	Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
 	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
-	Size const num_side_chain_atom = get_num_side_chain_atom_from_res_name( res_aa, verbose );
+	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - pose1.residue_type( moving_res_1 ).first_sidechain_atom() + 1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
 
 	if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
+	//TR << " MOVING_RES_1: " << pose1.residue(moving_res_1) << std::endl;
+	//TR << " MOVING_RES_2: " << pose2.residue(moving_res_2) << std::endl;
+	
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 	//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
 	for ( Size n = 1; n <= num_side_chain_atom; n++ ) { //This INCLUDE the O2prime oxygen
@@ -836,9 +828,13 @@ base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2,
 		if ( rsd_1.type().atom_name( atomno_1 ) == " O2'" ) continue; //Exclude the O2prime oxygen
 		if ( rsd_2.type().atom_name( atomno_2 ) == " O2'" ) continue; //Exclude the O2prime oxygen
 
-		if ( ignore_virtual_atom ) {
+		// AMW: temporarily making this default
+		// This is largely because virtuals have a tendency to change atom order
+		// That said, it's probably not a problem: when one set of atoms is 
+		// virtual, how is the comparison ever meaningful?
+		//if ( ignore_virtual_atom ) {
 			if ( rsd_1.is_virtual( atomno_1 )   || rsd_2.is_virtual( atomno_2 )  ) continue;
-		}
+		//}
 
 		if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) { //Change this to "AND" on Apr 5
 			//     TR << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
@@ -912,10 +908,11 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 	Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
 	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
-	Size const num_side_chain_atom = get_num_side_chain_atom_from_res_name( res_aa, verbose );
+	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1;
 
 	Size const num_heavy_backbone_atoms = 11; //RNA contain 11 heavy backbone atoms.
 
+	// AMW possible bug: why are we interested in penultimate residue in seq at all?
 	for ( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
 
 		Size const res_count = ( atomno <= 4 ) ? 2 : 1; //atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
@@ -929,6 +926,9 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 
 			conformation::Residue const & rsd_1 = pose1.residue( res_num_1 );
 			conformation::Residue const & rsd_2 = pose2.residue( res_num_2 );
+			
+			if ( rsd_1.is_virtual_residue() ) continue;
+			if ( rsd_2.is_virtual_residue() ) continue;
 
 			if ( ignore_virtual_atom && ( rsd_1.is_virtual( atomno )   || rsd_2.is_virtual( atomno ) ) ) continue;
 			if ( rsd_1.is_virtual( atomno )   && rsd_2.is_virtual( atomno )  ) continue;
@@ -940,13 +940,20 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 	//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-	for ( Size n = 1; n <= num_side_chain_atom; n++ ) { //INCLUDE the O2prime oxygen
+	for ( Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
 
 		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
 		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
-
+		
+		if ( atomno_2 > pose2.residue_type( moving_res_2 ).natoms() ) break;
+		
+		// skip hydrogen (must do manually)
+		
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
+		
+		if ( rsd_1.type().atom_type( atomno_1 ).element() == "H" ) continue;
+		if ( rsd_2.type().atom_type( atomno_1 ).element() == "H" ) continue;
 
 		if ( ignore_virtual_atom && ( rsd_1.is_virtual( atomno_1 ) || rsd_2.is_virtual( atomno_2 ) ) ) continue;
 		if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) continue;
@@ -967,15 +974,17 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 	Size const & moving_res_1, Size const & moving_res_2,
 	Size & atom_count, Real & sum_sd, bool verbose, bool const ignore_virtual_atom ){
 
-	chemical::AA const & res_aa  =  pose1.residue( moving_res_1 ).aa();
-	chemical::AA const & res_aa2 =  pose2.residue( moving_res_2 ).aa();
+	debug_assert( pose1.residue_type( moving_res_1 ).is_RNA() );
+	debug_assert( pose1.residue_type( moving_res_2 ).is_RNA() );
+	chemical::AA const & res_aa  =  pose1.residue_type( moving_res_1 ).aa();
+	chemical::AA const & res_aa2 =  pose2.residue_type( moving_res_2 ).aa();
 	runtime_assert( res_aa == res_aa2 );
 
 	Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
 	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
-	Size const num_side_chain_atom = get_num_side_chain_atom_from_res_name( res_aa, verbose );
-
+	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
+	
 	Size const num_heavy_backbone_atoms = 11; //RNA contains 11 heavy backbone atoms.
 
 	for ( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
@@ -984,6 +993,13 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 		Size const res_num_1 = ( prepend_res && atomno <= 4 ) ? moving_res_1 + 1: moving_res_1;
 		Size const res_num_2 = ( prepend_res && atomno <= 4 ) ? moving_res_2 + 1: moving_res_2;
 
+		// AMW: These newly selected residues may not have enough atoms because
+		// they may be the virtual res?
+		// That might be a bug -- that the virt is still here at all -- but change
+		// for now...
+		if ( pose1.residue_type( res_num_1 ).is_virtual_residue() ) continue;
+		if ( pose1.residue_type( res_num_2 ).is_virtual_residue() ) continue;
+		
 		conformation::Residue const & rsd_1 = pose1.residue( res_num_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( res_num_2 );
 
@@ -993,24 +1009,39 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 		atom_count++;
 		sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno, atomno, verbose );
 	}
+	
+	Size const atomno_1 = pose1.residue_type( moving_res_1 ).first_sidechain_atom();
+	Size const atomno_2 = pose2.residue_type( moving_res_2 ).first_sidechain_atom();
+	
+	conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
+	conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
+	
+	if ( ignore_virtual_atom && ( rsd_1.is_virtual( atomno_1 ) || rsd_2.is_virtual( atomno_2 ) ) ) return;
+	if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) return;
+	
+	atom_count++;
+	sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno_1, atomno_2, verbose );
+	
+	// AMW: returning here until I know why not to, since the sugar suite sure shouldn't
+	// include any sidechain atoms except O2'
+	// AMW: NOT returning here because screw it, I want no integration test changes
 
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculates num_heavy_atom by considering
 	//the virtual O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-	for ( Size n = 1; n <= num_side_chain_atom; n++ ) { //INCLUDE the O2prime oxygen
+	for ( Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
 
-		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
-		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
+    Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
+    Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;	
 
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
-
+		
 		if ( ignore_virtual_atom && ( rsd_1.is_virtual( atomno_1 ) || rsd_2.is_virtual( atomno_2 ) ) ) continue;
 		if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) continue;
 
 		atom_count++;
 		sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno_1, atomno_2, verbose );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1025,7 +1056,6 @@ freeze_sugar_torsions( core::kinematics::MoveMap & mm, Size const total_residue 
 		mm.set( TorsionID( i , id::CHI, 2 ), false ); //nu2_i
 		mm.set( TorsionID( i , id::CHI, 3 ), false ); //nu1_i
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1058,16 +1088,16 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 
-		if ( !pose.residue( seq_num ).is_RNA() ) {
+		if ( !pose.residue_type( seq_num ).is_RNA() ) {
 			if ( verbose ) TR << "res " << seq_num << " is not RNA " << std::endl;
 			is_O2prime_hydrogen_virtual_list.push_back( false ); //false since not virtual O2prime_hydrogen
 			continue;
 		}
 
-		core::conformation::Residue const & rsd = pose.residue( seq_num );
-		Size at = rsd.atom_index( "HO2'" );
+		core::chemical::ResidueType const & rsdtype = pose.residue_type( seq_num );
+		Size at = rsdtype.atom_index( "HO2'" );
 
-		if ( rsd.is_virtual( at )  ) {
+		if ( rsdtype.is_virtual( at )  ) {
 			if ( verbose ) TR << "res " << seq_num << " has a virtual o2prime hydrogen! " << std::endl;
 			is_O2prime_hydrogen_virtual_list.push_back( true );
 		} else {
@@ -1135,6 +1165,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 
 	//layer 2+, interaction between surrounding O2prime hydrogen themselves
 	Size layer_num = 2;
+	// AMW TODO: can't we just make this while ( add_new_O2prime_hydrogen )
 	while ( true ) {
 		bool add_new_O2prime_hydrogen = false;
 
@@ -1202,7 +1233,6 @@ o2prime_trials( pose::Pose & pose, core::scoring::ScoreFunctionCOP const & packe
 	}
 
 	o2prime_trials( pose, packer_scorefxn, O2prime_pack_seq_num, pack_virtual_o2prime_hydrogen );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1216,7 +1246,6 @@ o2prime_trials( pose::Pose& pose, core::scoring::ScoreFunctionCOP const & packer
 	pack::task::PackerTaskOP task = create_standard_o2prime_pack_task( pose, O2prime_pack_seq_num, pack_virtual_o2prime_hydrogen );
 
 	pack::rotamer_trials( pose, *packer_scorefxn, task );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1376,13 +1405,10 @@ is_residues_in_contact( core::Size const & res_ONE, core::pose::Pose const & pos
 			if ( num_atom_contacts_so_far > num_atom_contacts_cutoff ) { //consistency_check
 				utility_exit_with_message( "num_atom_contacts_so_far( " + string_of( num_atom_contacts_so_far ) + " ) > num_atom_contacts_cutoff( " + string_of( num_atom_contacts_cutoff ) + " )" );
 			}
-
-
 		}
 	}
 
 	return false;
-
 }
 
 //////////////This function was originally part of SWA_RNA_Sampler and used for the Richardson code. Move to Util, so that FloatingBaseSamplerUtil will have access to it////////////
@@ -1406,7 +1432,6 @@ set_CCD_torsions_to_zero( core::pose::Pose & pose, Size const five_prime_res ){
 	for ( Size n = 5; n <= 6; n++ ) { //epsilon and zeta of 5' res
 		pose.set_torsion( TorsionID( five_prime_res, id::BB,  n ), 0.0 );
 	}
-
 }
 
 
@@ -1418,12 +1443,9 @@ print_atom_info( pose::Pose const & pose, Size const seq_num, std::string const 
 	conformation::Residue const & rsd = pose.residue( seq_num ); //static_pose
 
 	for ( Size at = 1; at <= rsd.natoms(); at++ ) { //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
-
 		TR << "atom = " << at  << "|name = " << rsd.type().atom_name( at ) << "|type = " << rsd.atom_type( at ).name();
 		TR << "|element() = " << rsd.atom_type( at ).element() << "|" << std::endl;
-
 	}
-
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -1432,7 +1454,6 @@ print_individual_atom_info( core::conformation::Residue const & rsd, Size const 
 
 	TR << " atom = " << atomno  << "|name = " << rsd.type().atom_name( atomno ) << "|type = " << rsd.atom_type( atomno ).name();
 	TR << "|element() = " << rsd.atom_type( atomno ).element() << "|" << std::endl;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1479,7 +1500,6 @@ print_sugar_pucker_state( std::string const & tag, core::Size const pucker_state
 	}
 
 	outstream << tag << std::setw( 5 ) << std::left << pucker_state_string << " ";
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1522,13 +1542,12 @@ copy_all_o2prime_torsions( core::pose::Pose & mod_pose, core::pose::Pose const &
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-///According to Kyle B., DFPMIN should be start enough to determine what is the ideal step size. However, the exception is the first minimizing step which could lead to "blow up" error!
+///According to Kyle B., DFPMIN should be smart enough to determine what is the ideal step size. However, the exception is the first minimizing step which could lead to "blow up" error!
 ///To prevent can create new scorefxn with  scaling_factor=0.1 and minimize with this new score function Sept 20, 2011. Parin S.
 core::scoring::ScoreFunctionOP
 rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, Real const scaling_factor ){
 
 	using namespace core::scoring;
-
 	core::scoring::ScoreFunctionOP rescaled_scorefxn = starting_scorefxn->clone();
 
 	core::Size non_zero_weight = 0;
@@ -1536,7 +1555,6 @@ rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, Real
 	show_scorefxn_weight_lines( rescaled_scorefxn, "BEFORE REWEIGHT" );
 
 	for ( Size n = 1; n <= n_score_types; n++ ) {
-
 		core::Real const old_weight = rescaled_scorefxn->get_weight( ScoreType( n ) );
 
 		if ( old_weight != 0.0 ) {
@@ -1546,13 +1564,10 @@ rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, Real
 	}
 
 	TR.Debug << std::endl;
-
 	TR.Debug << "n_score_types = " << int( n_score_types ) << " non_zero_weight = " << non_zero_weight << " scaling_factor = " << scaling_factor << std::endl;
-
 	show_scorefxn_weight_lines( rescaled_scorefxn, "AFTER REWEIGHT" );
 
 	return rescaled_scorefxn;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1572,7 +1587,6 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 	pose::Pose empty_pose = *( new pose::Pose );
 
 	for ( Size n = 1; n <= n_score_types; n++ ) {
-
 		core::Real const weight = scorefxn->get_weight( ScoreType( n ) );
 
 		if ( weight != 0.0 ) {
@@ -1586,20 +1600,17 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 	}
 
 	TR.Debug << "----------------" << dash_string << "----------------" << std::endl;
-
 }
 
 
 ////////////////////////////////////////////////////////////////////
 void
 choose_random_if_unspecified_nucleotide( char & newrestype ) {
-
 	std::string const rna_chars = "acgu";
 	if ( newrestype == 'n' ) {
 		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
 		TR << "Choosing random nucleotide: " << newrestype << std::endl;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1627,7 +1638,6 @@ mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const muta
 		}
 	}
 	return false;
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1643,15 +1653,10 @@ create_tag( std::string const & prestring, Size const i ) {
 ////////////////////////////////////////////////////////////////////////
 std::string //silly function to convert to real to string
 create_torsion_value_string( core::Real const & torsion_value ) {
-
 	using namespace ObjexxFCL;
-
 	std::string torsion_string = "";
-
 	core::Real const principal_torsion = numeric::principal_angle_degrees( torsion_value );
-
 	Size const principal_torsion_SIZE = Size( std::abs( principal_torsion + 0.00001 ) ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
-
 
 	if ( principal_torsion > 0 ) {
 		torsion_string = "p" + lead_zero_string_of( principal_torsion_SIZE, 3 );
@@ -1733,7 +1738,6 @@ add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( O3_id, C5_id, distance_func ) ) ) );
 
 	pose.constraint_set( cst_set );
-
 }
 
 /////////////////////////////////////////////////////////////////////

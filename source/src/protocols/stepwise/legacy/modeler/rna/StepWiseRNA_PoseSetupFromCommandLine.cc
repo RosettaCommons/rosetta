@@ -179,18 +179,18 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 	Size const nres = pose.total_residue();
 	ConstraintSetOP cst_set( new ConstraintSet );
 	for ( Size i = 1; i <= nres; ++i ) {
-		Residue const & res = pose.residue( i );
+		ResidueType const & res = pose.residue_type( i );
 		if ( res.is_RNA() && ( res.aa() == na_rad || res.aa() == na_rgu ) ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			core::scoring::func::FuncOP chi_cst_func( new core::scoring::func::CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
 			AtomID const atom1 ( res.atom_index( "C2'" ), i );
 			AtomID const atom2 ( res.atom_index( "C1'" ), i );
-			AtomID const atom3 ( is_purine( res ) ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
-			AtomID const atom4 ( is_purine( res ) ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
+			AtomID const atom3 ( res.is_purine() ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
+			AtomID const atom4 ( res.is_purine() ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
 			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) ) ) );
 		}
 	}
-	pose.constraint_set ( cst_set );
+	pose.constraint_set( cst_set );
 }
 
 

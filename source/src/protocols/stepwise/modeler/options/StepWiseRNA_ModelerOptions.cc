@@ -160,7 +160,6 @@ StepWiseRNA_ModelerOptions::initialize_from_command_line(){
 	minimizer_rename_tag_ = option[ OptionKeys::stepwise::rna::minimizer_rename_tag ]();
 	tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
 	turn_off_rna_chem_map_during_optimize_ = option[ OptionKeys::stepwise::rna::turn_off_rna_chem_map_during_optimize ]();
-
 }
 
 

@@ -92,7 +92,6 @@ RNA_AddDeleteMonteCarlo::~RNA_AddDeleteMonteCarlo()
 void
 RNA_AddDeleteMonteCarlo::apply( core::pose::Pose & pose )
 {
-
 	using namespace protocols::moves;
 	using namespace core::pose::full_model_info;
 
@@ -104,9 +103,7 @@ RNA_AddDeleteMonteCarlo::apply( core::pose::Pose & pose )
 	for ( Size count = 1; count <= num_cycles_; count++ ) {
 
 		Real const random_number = numeric::random::rg().uniform();
-
 		move_type = "";
-
 		utility::vector1< Size > moving_res_list = get_moving_res_from_full_model_info( pose );
 
 		if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
@@ -129,23 +126,19 @@ RNA_AddDeleteMonteCarlo::apply( core::pose::Pose & pose )
 
 		/*accepted =*/ monte_carlo->boltzmann( pose, move_type );
 
-		//Real const current_score = (*scorefxn_)( pose );
-
 		if ( count % output_period_ == 0  || count == num_cycles_ ) {
 			std::cout << "On " << count << " of " << num_cycles_ << " trials." << std::endl;
 			output_silent_file( pose, count );
 		}
-
 	}
 
 	monte_carlo->show_counters();
 	monte_carlo->recover_low( pose );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_AddDeleteMonteCarlo::initialize_next_suite_atoms(){
+RNA_AddDeleteMonteCarlo::initialize_next_suite_atoms() {
 	// could initialize this once somewhere else.
 	next_suite_atoms_.clear();
 	next_suite_atoms_.push_back(" P  ");
@@ -206,29 +199,27 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 		}
 
 		// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
-		if ( i < pose.total_residue() && !is_working_res[ i+1 ] &&  !pose.fold_tree().is_cutpoint(i) ) {
-			Size const i_next      = i+1;
-			Size const i_next_full = res_list[ i+1 ];
-			runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
-
-			Residue const & rsd_next        = pose.residue( i_next );
-			Residue const & rsd_next_native = native_pose.residue( i_next_full );
-			runtime_assert( rsd_next.aa() == rsd_next_native.aa() );
-
-			//std::cout << "RMSD:  num_suite_atoms " << next_suite_atoms_.size() << std::endl;
-			for ( Size k = 1; k <= next_suite_atoms_.size(); k++ ) {
-				std::string atom_name = next_suite_atoms_[ k ];
-				//std::cout << "RMSD: " << i+1 << atom_name << std::endl;
-				runtime_assert( rsd_next.has( atom_name ) );
-				runtime_assert( rsd_next_native.has( atom_name ) );
-				Size const j = rsd_next.atom_index( atom_name );
-				Size const j_full = rsd_next_native.atom_index( atom_name );
-				dev += ( rsd_next_native.xyz( j_full ) - rsd_next.xyz( j ) ).length_squared();
-				natoms++;
-			}
-
+		if ( i >= pose.total_residue() || is_working_res[ i+1 ] || pose.fold_tree().is_cutpoint(i) ) continue;
+	
+		Size const i_next      = i+1;
+		Size const i_next_full = res_list[ i+1 ];
+		runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
+		
+		Residue const & rsd_next        = pose.residue( i_next );
+		Residue const & rsd_next_native = native_pose.residue( i_next_full );
+		runtime_assert( rsd_next.aa() == rsd_next_native.aa() );
+		
+		//std::cout << "RMSD:  num_suite_atoms " << next_suite_atoms_.size() << std::endl;
+		for ( Size k = 1; k <= next_suite_atoms_.size(); k++ ) {
+			std::string atom_name = next_suite_atoms_[ k ];
+			//std::cout << "RMSD: " << i+1 << atom_name << std::endl;
+			runtime_assert( rsd_next.has( atom_name ) );
+			runtime_assert( rsd_next_native.has( atom_name ) );
+			Size const j = rsd_next.atom_index( atom_name );
+			Size const j_full = rsd_next_native.atom_index( atom_name );
+			dev += ( rsd_next_native.xyz( j_full ) - rsd_next.xyz( j ) ).length_squared();
+			natoms++;
 		}
-
 	}
 	if ( natoms > 0 ) rmsd = std::sqrt( dev / static_cast<Real>( natoms ) );
 

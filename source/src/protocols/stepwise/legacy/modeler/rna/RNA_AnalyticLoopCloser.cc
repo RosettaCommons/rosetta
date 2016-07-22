@@ -500,28 +500,6 @@ RNA_AnalyticLoopCloser::fill_chainTORS (
 		atoms_xyz.push_back ( pose.xyz ( atom_ids_[ i ] ) );
 	}
 
-	// //replace first and last with coordinate systems?
-	// atoms_xyz[ 1 ] = Vector( 0.0, 0.0, 0.0 );
-	// atoms_xyz[ 2 ] = Vector( 0.0, 0.0, 1.0 );
-	// atoms_xyz[ 3 ] = Vector( 0.0, 1.0, 0.0 );
-	// atoms_xyz[ atom_ids_.size() - 2 ] = Vector( 1.0, 0.0, 0.0 );
-	// atoms_xyz[ atom_ids_.size() - 1 ] = Vector( 1.0, 0.0, 1.0 );
-	// atoms_xyz[ atom_ids_.size()     ] = Vector( 1.0, 1.0, 0.0 );
-	// Some of the pivot atoms may not be distinct -- nan.
-	// luckily there's a little hack we can do.
-	// where we nudge one atom the slightest bit.
-	// static Real const nudge( 0.000001 );
-	// for ( Size n = 1; n <= ( (atom_ids_.size()/3) - 3 ) ; n++ ){
-	//  Size const i = 3 + (n * 3); // Look at S at the end of one triplet that may overlap with starting S of next triplet
-	//  if ( atom_ids_[ i ] == atom_ids_[ i+1 ] ){
-	//   // This should be the S at the end of one triplet overlapping with
-	//   // the S beginning the next triplet.
-	//   Size const seqpos = atom_ids_[ i ].rsd();
-	//   atoms_xyz[ i+1 ]  = atoms_xyz[ i ] +
-	//    nudge * ( pose.xyz( NamedAtomID( " CEN", seqpos ) ) - atoms_xyz[i] ).normalize();
-	//  }
-	// }
-	// formatting.
 	atoms.clear();
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {

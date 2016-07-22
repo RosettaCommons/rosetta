@@ -92,7 +92,6 @@ StepWiseMasterMover::apply( pose::Pose & pose ) {
 		stepwise_move_selector_->select_random_move( pose ) ;
 
 	apply( pose, stepwise_move, false /* figure_out_all_possible_moves */ );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,8 +128,6 @@ StepWiseMasterMover::apply( pose::Pose & pose,
 
 	// bias the acceptance of add moves, default factor is 1.0
 	if ( stepwise_move.move_type() == ADD ) proposal_density_ratio_ *= options_->add_proposal_density_factor();
-
-	return;
 }
 
 
@@ -267,7 +264,6 @@ StepWiseMasterMover::initialize(){
 	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
 	if ( options_->new_move_selector() || options_->test_all_moves() ) stepwise_move_selector_->set_force_unique_moves( true );
 	stepwise_move_selector_->set_submotif_library( submotif_library_ );
-
 }
 
 
@@ -376,7 +372,6 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 				const_full_model_info( start_pose ).full_model_parameters()->non_standard_residue_map() ) ) continue;
 		runtime_assert( res_list.has_value( working_res[ n ] ) || bulge_res.has_value( working_res[ n ] ) );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

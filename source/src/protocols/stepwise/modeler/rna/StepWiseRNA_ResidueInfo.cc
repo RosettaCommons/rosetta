@@ -86,7 +86,6 @@ print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, cor
 	TR << "atom " << id2.atomno()  << " " <<  "name = " << rsd_2.type().atom_name( id2.atomno() ) << " type = " << rsd_2.atom_type( id2.atomno() ).name()  << " " << rsd_2.atom_type_index( id2.atomno() )    << " " << rsd_2.atomic_charge( id2.atomno() ) << std::endl;
 	TR << "atom " << id3.atomno()  << " " <<  "name = " << rsd_3.type().atom_name( id3.atomno() ) << " type = " << rsd_3.atom_type( id3.atomno() ).name()  << " " << rsd_3.atom_type_index( id3.atomno() )    << " " << rsd_3.atomic_charge( id3.atomno() ) << std::endl;
 	TR << "atom " << id4.atomno()  << " " <<  "name = " << rsd_4.type().atom_name( id4.atomno() ) << " type = " << rsd_4.atom_type( id4.atomno() ).name()  << " " << rsd_4.atom_type_index( id4.atomno() )    << " " << rsd_4.atomic_charge( id4.atomno() ) << std::endl;
-
 }
 
 
@@ -129,7 +128,7 @@ output_residue_struct( Residue_info const & residue ){
 	TR << A( 1, " " );
 }
 
-
+// AMW TODO: the following two functions will be useless for NCNTs.
 std::string
 get_one_letter_name( std::string const & three_letter_name ){
 	if ( three_letter_name == "RAD" ) return "A";
@@ -185,7 +184,6 @@ output_res_map( std::map< core::Size, core::Size > const & my_map, Size const ma
 
 	}
 	TR << std::endl;
-
 }
 
 
@@ -193,7 +191,6 @@ void
 output_copy_dofs( utility::vector1< Residue_info > copy_dofs ){
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
-
 
 	sort_copy_dofs( copy_dofs ); //maybe sure the list is sorted
 
@@ -211,7 +208,6 @@ output_copy_dofs( utility::vector1< Residue_info > copy_dofs ){
 	}
 
 	TR << std::endl;
-
 }
 
 utility::vector1< Residue_info >
@@ -304,7 +300,6 @@ set_difference( utility::vector1 < Residue_info > const & copy_dofs_1, utility::
 	}
 
 	return set_difference_copy_dofs;
-
 }
 
 utility::vector1 < Residue_info >
@@ -319,7 +314,6 @@ set_union( utility::vector1 < Residue_info > const & copy_dofs_1, utility::vecto
 	}
 
 	return union_copy_dofs;
-
 }
 
 bool

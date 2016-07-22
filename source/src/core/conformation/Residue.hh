@@ -1766,6 +1766,20 @@ public:
 	{
 		return rsd_type_.is_NA();
 	}
+	
+	/// @brief Returns true if this residue is a purine
+	bool
+	is_purine() const
+	{
+		return rsd_type_.is_purine();
+	}
+
+	/// @brief Returns true if this residue is a pyrimidine
+	bool
+	is_pyrimidine() const
+	{
+		return rsd_type_.is_pyrimidine();
+	}
 
 	/// @brief Returns true if this residue is a carbohydrate
 	bool

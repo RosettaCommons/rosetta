@@ -222,18 +222,18 @@ Attachment::Attachment( Attachment const & src ):
 void
 initialize_move_type_name(){
 	static bool init( false );
-	if ( !init ) {
-		move_type_name[ NO_MOVE ] = "NO_MOVE";
-		move_type_name[ ADD ]    = "ADD";
-		move_type_name[ DELETE ] = "DELETE";
-		move_type_name[ FROM_SCRATCH ] = "FROM_SCRATCH";
-		move_type_name[ RESAMPLE ] = "RESAMPLE";
-		move_type_name[ RESAMPLE_INTERNAL_LOCAL ] = "RESAMPLE_INTERNAL_LOCAL";
-		move_type_name[ ADD_SUBMOTIF ]    = "ADD_SUBMOTIF";
-		move_type_name[ ADD_LOOP_RES ]    = "ADD_LOOP_RES";
-		move_type_name[ DELETE_LOOP_RES ] = "DELETE_LOOP_RES";
-		init = true;
-	}
+	if ( init ) return;
+	
+	move_type_name[ NO_MOVE ] = "NO_MOVE";
+	move_type_name[ ADD ]    = "ADD";
+	move_type_name[ DELETE ] = "DELETE";
+	move_type_name[ FROM_SCRATCH ] = "FROM_SCRATCH";
+	move_type_name[ RESAMPLE ] = "RESAMPLE";
+	move_type_name[ RESAMPLE_INTERNAL_LOCAL ] = "RESAMPLE_INTERNAL_LOCAL";
+	move_type_name[ ADD_SUBMOTIF ]    = "ADD_SUBMOTIF";
+	move_type_name[ ADD_LOOP_RES ]    = "ADD_LOOP_RES";
+	move_type_name[ DELETE_LOOP_RES ] = "DELETE_LOOP_RES";
+	init = true;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 std::string
@@ -260,16 +260,17 @@ move_type_from_string( std::string const & name ){
 void
 initialize_attachment_type_name(){
 	static bool init( false );
-	if ( !init ) {
-		attachment_type_name[ NO_ATTACHMENT ] = "NO_ATTACHMENT";
-		attachment_type_name[ BOND_TO_PREVIOUS ] = "BOND_TO_PREVIOUS";
-		attachment_type_name[ BOND_TO_NEXT ] = "BOND_TO_NEXT";
-		attachment_type_name[ JUMP_TO_PREV_IN_CHAIN ] = "JUMP_TO_PREV_IN_CHAIN";
-		attachment_type_name[ JUMP_TO_NEXT_IN_CHAIN ] = "JUMP_TO_NEXT_IN_CHAIN";
-		attachment_type_name[ JUMP_DOCK ] = "JUMP_DOCK";
-		attachment_type_name[ SUBMOTIF ] = "SUBMOTIF";
-	}
+	if ( init ) return;
+
+	attachment_type_name[ NO_ATTACHMENT ] = "NO_ATTACHMENT";
+	attachment_type_name[ BOND_TO_PREVIOUS ] = "BOND_TO_PREVIOUS";
+	attachment_type_name[ BOND_TO_NEXT ] = "BOND_TO_NEXT";
+	attachment_type_name[ JUMP_TO_PREV_IN_CHAIN ] = "JUMP_TO_PREV_IN_CHAIN";
+	attachment_type_name[ JUMP_TO_NEXT_IN_CHAIN ] = "JUMP_TO_NEXT_IN_CHAIN";
+	attachment_type_name[ JUMP_DOCK ] = "JUMP_DOCK";
+	attachment_type_name[ SUBMOTIF ] = "SUBMOTIF";
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 std::string
 to_string( AttachmentType const & attachment_type ){
@@ -334,7 +335,6 @@ operator==( StepWiseMove const & a, StepWiseMove const & b ) {
 		( a.attachments_  == b.attachments_ ) &&
 		( a.move_type_    == b.move_type_ ) &&
 		( a.submotif_tag_ == b.submotif_tag_ ) );
-
 }
 
 

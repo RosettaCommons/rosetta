@@ -142,6 +142,8 @@ static MoverRegistrator< enzdes::PackRotamersMoverPartGreedyCreator > reg_PackRo
 static MoverRegistrator< enzdes::PredesignPerturbMoverCreator > reg_PredesignPerturbMoverCreator;
 static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzdesHeaderMoverCreator;
 
+static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
+
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
 static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryReportToDBCreator;
 

@@ -18,6 +18,7 @@
 #define INCLUDED_protocols_stepwise_StepWiseProteinPoseSetup_HH
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -271,7 +272,7 @@ private:
 	is_working_cutpoint_closed( Size const res, std::map< Size, Size > & full_to_sub ) const;
 
 	std::string
-	get_stepwise_jump_atom( core::conformation::Residue const & rsd );
+	get_stepwise_jump_atom( core::chemical::ResidueType const & rsd );
 
 	void
 	add_aa_virt_rsd_as_root( core::pose::Pose & pose);

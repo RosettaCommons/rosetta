@@ -1,7 +1,7 @@
 ## fullatom protein c-terminus patch to allow connection to C-term of protein
 
 NAME CtermConnect
-TYPES CTERM_CONNECT UPPER_TERMINUS_VARIANT
+TYPES CTERM_CONNECT UPPER_TERMINUS_VARIANT BRANCH_LOWER_TERMINUS_VARIANT
 
 ## general requirements for this patch
 

@@ -105,12 +105,11 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 	Size const which_jump = f.jump_nr( jump_start_, jump_end_ );
 	f.set_jump_atoms( which_jump,
 		jump_start_,
-		default_jump_atom( pose.residue( jump_start_ ) ),
+		default_jump_atom( pose.residue_type( jump_start_ ) ),
 		jump_end_,
-		default_jump_atom( pose.residue( jump_end_   ) ) );
+		default_jump_atom( pose.residue_type( jump_end_   ) ) );
 
 	pose.fold_tree( f );
-
 }
 
 

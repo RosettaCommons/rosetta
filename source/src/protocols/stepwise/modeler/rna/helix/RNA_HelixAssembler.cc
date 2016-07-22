@@ -116,10 +116,6 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	full_sequence_( "" )
 {
 	Mover::type("RNA_HelixAssembler");
-	// scorefxn_->set_weight( core::scoring::rna_torsion, 20.0 );
-	// why are we getting clashes?
-	// scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
-	// scorefxn_->set_weight( core::scoring::fa_intra_rep, 0.1 );
 	initialize_minimizer();
 }
 
@@ -169,7 +165,6 @@ void RNA_HelixAssembler::use_phenix_geo( bool const setting )
 void
 RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_sequence_in )
 {
-
 	// handle weird non-naturals, including g[IGU] for isoguanosine, etc.
 	full_sequence_ = full_sequence_in;
 	non_standard_residues_ = setup::parse_out_non_standard_residues( full_sequence_ );
@@ -186,7 +181,6 @@ RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_seq
 	build_dangling_ends( pose );
 
 	fill_chain_info( pose );
-
 }
 
 
@@ -245,7 +239,6 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose ){
 
 		put_constraints_on_base_step( pose, n );
 		//TR << "Finished adding constraints..." << std::endl;
-
 		minimize_base_step( pose, n, scorefxn_ );
 
 		if ( dump_ ) pose.dump_pdb( "helix_min" + string_of(n) + ".pdb" );
@@ -259,9 +252,7 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose ){
 	}
 
 	if ( finish_scorefxn_ ) ( *finish_scorefxn_)( pose );
-
 }
-
 
 //////////////////////////////////////////////////////
 pose::PoseOP
@@ -281,11 +272,12 @@ RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const
 	f.new_jump( 1, pose->n_residue(), len1 );
 	f.set_jump_atoms(
 		1,
-		chi1_torsion_atom( pose->residue( 1 ) ),
-		chi1_torsion_atom( pose->residue( pose->n_residue() ) )
+		chi1_torsion_atom( pose->residue_type( 1 ) ),
+		chi1_torsion_atom( pose->residue_type( pose->n_residue() ) )
 	);
 	pose->fold_tree( f );
 
+	// AMW: whoa buddy would this be a problem for NC basepairs?
 	// Get reference jump from database
 	std::string path( basic::database::full_name("sampling/rna/") );
 	std::string const & pose_seq( pose->sequence() );
@@ -306,8 +298,8 @@ RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const
 	f1.new_jump( 1, 2, 1 );
 	f1.set_jump_atoms(
 		1,
-		chi1_torsion_atom( ref_pose.residue( 1 ) ),
-		chi1_torsion_atom( ref_pose.residue( 2 ) )
+		chi1_torsion_atom( ref_pose.residue_type( 1 ) ),
+		chi1_torsion_atom( ref_pose.residue_type( 2 ) )
 	);
 	ref_pose.fold_tree( f1 );
 	Jump const & jump( ref_pose.jump( 1 ) );
@@ -395,8 +387,6 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n, core::s
 
 	scorefxn->set_weight( base_pair_constraint, cst_weight );
 	(*scorefxn)( pose );
-
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -410,7 +400,6 @@ RNA_HelixAssembler::put_constraints_on_base_step( pose::Pose & pose, Size const 
 	pose.constraint_set( new_cst_set ); //blank out cst set.
 
 	protocols::farna::setup_base_pair_constraints( pose, pairings );
-
 }
 
 //////////////////////////////////////////////////////
@@ -424,8 +413,8 @@ RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) {
 	FoldTree f( nres );
 	f.new_jump( nres/2-1, nres/2+2, nres/2);  // put jump across second-to-last base pair
 	f.set_jump_atoms( 1,
-		core::chemical::rna::chi1_torsion_atom( pose.residue(nres/2-1) ),
-		core::chemical::rna::chi1_torsion_atom( pose.residue(nres/2+2) ) );
+		core::chemical::rna::chi1_torsion_atom( pose.residue_type(nres/2-1) ),
+		core::chemical::rna::chi1_torsion_atom( pose.residue_type(nres/2+2) ) );
 	f.reorder( nres/2-1 ); // root cannot be deleted, I think, so place it at this second-to-last base pair.
 	pose.fold_tree( f );
 
@@ -735,14 +724,12 @@ RNA_HelixAssembler::minimize_append_res( pose::Pose & pose, Size const n ) const
 		mm.set_chi( n, true );
 
 		mm.set_bb( n-1, true ); //perhaps should whittle down to suite residues...
-
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn_minimize = scorefxn_;
 	if ( finish_scorefxn_ )  scorefxn_minimize = finish_scorefxn_;
 	minimizer_->run( pose, mm, *scorefxn_minimize, *minimizer_options_ );
 	(*scorefxn_minimize)( pose );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -765,14 +752,12 @@ RNA_HelixAssembler::minimize_prepend_res( pose::Pose & pose, Size const n ) cons
 		mm.set_chi( n, true );
 
 		mm.set_bb( n+1, true ); //perhaps should whittle down to suite residues...
-
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn_minimize = scorefxn_;
 	if ( finish_scorefxn_ )  scorefxn_minimize = finish_scorefxn_;
 	minimizer_->run( pose, mm, *scorefxn_minimize, *minimizer_options_ );
 	(*scorefxn_minimize)( pose );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

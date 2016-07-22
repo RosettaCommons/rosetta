@@ -57,12 +57,12 @@ public:
 
 	Real
 	get_rmsd_no_superimpose( pose::Pose const & pose,
-		bool const check_align  = true );
+		bool const check_align = true );
 
 	Real
 	get_rmsd_no_superimpose( pose::Pose const & pose,
 		pose::Pose const & pose_reference,
-		bool const check_align  = true );
+		bool const check_align = true );
 
 	void
 	create_coordinate_constraints( pose::Pose & pose,

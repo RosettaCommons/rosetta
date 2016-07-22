@@ -24,6 +24,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -389,19 +390,16 @@ figure_out_icoord_test( ){
 
 	//Hmm, do I understand how to address the atom tree degrees of freedom?
 	for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
-
 		pose = start_pose;
-
 		id::TorsionID my_ID( res_num /* res num*/, id::BB, j );
-
 		id::AtomID id1,id2,id3,id4;
 		bool fail = pose.conformation().get_torsion_angle_atom_ids( my_ID, id1, id2, id3, id4 );
 		if ( !fail ) {
 			std::cout << " BB: " << j << "  " <<
-				id1.rsd()  << ' ' << pose.residue( id1.rsd() ).atom_name( id1.atomno() ) << "   " <<
-				id2.rsd()  << ' ' << pose.residue( id2.rsd() ).atom_name( id2.atomno() ) << "   " <<
-				id3.rsd()  << ' ' << pose.residue( id3.rsd() ).atom_name( id3.atomno() ) << "   " <<
-				id4.rsd()  << ' ' << pose.residue( id4.rsd() ).atom_name( id4.atomno() ) << " : " <<
+				id1.rsd()  << ' ' << pose.residue_type( id1.rsd() ).atom_name( id1.atomno() ) << "   " <<
+				id2.rsd()  << ' ' << pose.residue_type( id2.rsd() ).atom_name( id2.atomno() ) << "   " <<
+				id3.rsd()  << ' ' << pose.residue_type( id3.rsd() ).atom_name( id3.atomno() ) << "   " <<
+				id4.rsd()  << ' ' << pose.residue_type( id4.rsd() ).atom_name( id4.atomno() ) << " : " <<
 				pose.torsion( my_ID ) <<
 				std::endl;
 
@@ -424,10 +422,10 @@ figure_out_icoord_test( ){
 		id::AtomID id1,id2,id3,id4;
 		pose.conformation().get_torsion_angle_atom_ids( my_ID, id1, id2, id3, id4 );
 		std::cout << "CHI: " << j << "  " <<
-			id1.rsd()  << ' ' << pose.residue( id1.rsd() ).atom_name( id1.atomno() ) << "   " <<
-			id2.rsd()  << ' ' << pose.residue( id2.rsd() ).atom_name( id2.atomno() ) << "   " <<
-			id3.rsd()  << ' ' << pose.residue( id3.rsd() ).atom_name( id3.atomno() ) << "   " <<
-			id4.rsd()  << ' ' << pose.residue( id4.rsd() ).atom_name( id4.atomno() ) <<  " : " <<
+			id1.rsd()  << ' ' << pose.residue_type( id1.rsd() ).atom_name( id1.atomno() ) << "   " <<
+			id2.rsd()  << ' ' << pose.residue_type( id2.rsd() ).atom_name( id2.atomno() ) << "   " <<
+			id3.rsd()  << ' ' << pose.residue_type( id3.rsd() ).atom_name( id3.atomno() ) << "   " <<
+			id4.rsd()  << ' ' << pose.residue_type( id4.rsd() ).atom_name( id4.atomno() ) <<  " : " <<
 			pose.torsion( my_ID ) <<
 			std::endl;
 
@@ -615,7 +613,7 @@ pack_o2prime( core::pose::Pose & pose, core::scoring::ScoreFunction const & scor
 	task->initialize_from_command_line();
 
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( !pose.residue(i).is_RNA() ) continue;
+		if ( !pose.residue_type(i).is_RNA() ) continue;
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		task->nonconst_residue_task(i).or_ex4( true );
 		task->nonconst_residue_task(i).or_include_current( true );
@@ -630,10 +628,10 @@ pack_o2prime( core::pose::Pose & pose, core::scoring::ScoreFunction const & scor
 void
 setup_rna_chainbreak_constraints(
 	pose::Pose & pose
-)
-{
+) {
 	using namespace scoring::constraints;
 	using namespace scoring::func;
+	using namespace chemical;
 	using namespace conformation;
 	using namespace id;
 	using numeric::conversions::radians;
@@ -653,8 +651,8 @@ setup_rna_chainbreak_constraints(
 	FuncOP const  P_angle_func( new HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
 
 	for ( Size i=1; i< pose.total_residue(); ++i ) {
-		Residue const & rsd1( pose.residue( i   ) );
-		Residue const & rsd2( pose.residue( i+1 ) );
+		ResidueType const & rsd1( pose.residue_type( i   ) );
+		ResidueType const & rsd2( pose.residue_type( i+1 ) );
 		if ( rsd1.is_NA() && !rsd1.is_upper_terminus() && rsd2.is_NA() && !rsd2.is_lower_terminus() ) {
 			//   tt << "adding dna chainbreak constraint between residues " << i << " and " << i+1 << std::endl;
 
@@ -1725,7 +1723,7 @@ is_regular_helix( pose::Pose const & pose,
 			//     pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti
 
 			std::string atom1, atom2;
-			get_watson_crick_base_pair_atoms( rsd_i, rsd_j, atom1, atom2 );
+			get_watson_crick_base_pair_atoms( rsd_i.type(), rsd_j.type(), atom1, atom2 );
 			if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() < 3.5 ) {
 				forms_canonical_base_pair = true;
 				canonical_partner = partner;
@@ -1735,7 +1733,6 @@ is_regular_helix( pose::Pose const & pose,
 			//   break;
 			//  }
 		}
-
 	}
 
 	if ( forms_canonical_base_pair ) { //&& !forms_non_canonical_base_pair) {
@@ -2200,8 +2197,8 @@ rna_chain_closure_test()
 	kinematics::FoldTree f( pose.total_residue() );
 	f.new_jump( cutpoint, cutpoint+1, cutpoint );
 	f.set_jump_atoms( 1,
-		core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint) ),
-		core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint+1) )   );
+		core::chemical::rna::chi1_torsion_atom( pose.residue_type( cutpoint) ),
+		core::chemical::rna::chi1_torsion_atom( pose.residue_type( cutpoint+1) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
@@ -2287,7 +2284,7 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCOP & rs
 	for ( Size n = 1; n <= num_jumps; n++ ) {
 		f.set_jump_atoms( n,
 			"ORIG",
-			core::chemical::rna::chi1_torsion_atom( pose.residue( n ) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type( n ) ) );
 
 	}
 
@@ -3350,8 +3347,6 @@ build_next_nucleotide_test()
 
 		//dump_pdb( pose, "nomin_"+tag+".pdb" );
 	}
-
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3555,15 +3550,15 @@ rotamerize_rna_test()
 	utility::vector1< std::string > atom_ids1, atom_ids2;
 	Size i( 1 );
 	Size j( pose.total_residue() );
-	get_watson_crick_base_pair_atoms( pose.residue(i), pose.residue(j), atom_ids1, atom_ids2 );
+	get_watson_crick_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2 );
 
 	for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 
-		Size const atom1 = pose.residue(i).type().atom_index( atom_ids1[p] ) ;
-		Size const atom2 = pose.residue(j).type().atom_index( atom_ids2[p] ) ;
+		Size const atom1 = pose.residue_type(i).atom_index( atom_ids1[p] ) ;
+		Size const atom2 = pose.residue_type(j).atom_index( atom_ids2[p] ) ;
 
-		std::cout << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue(i).name1() << I(3,i) << " <-->  " <<
-			pose.residue(j).name1() << I(3,j) << "   " <<
+		std::cout << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
+			pose.residue_type(j).name1() << I(3,j) << "   " <<
 			atom_ids1[p] << " <--> " <<
 			atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
 
@@ -3571,7 +3566,6 @@ rotamerize_rna_test()
 			id::AtomID(atom1,i),
 			id::AtomID(atom2,j),
 			distance_func ) ) ) );
-
 	}
 
 	//////////////////////////////////////////////////
@@ -3591,7 +3585,7 @@ rotamerize_rna_test()
 	task->initialize_from_command_line();
 
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( !pose.residue(i).is_RNA() ) continue;
+		if ( !pose.residue_type(i).is_RNA() ) continue;
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 	}
 	//  pack::pack_rotamers( pose, *packer_scorefxn, task);
@@ -3670,8 +3664,7 @@ output_sugar_geometry_parameters(
 	utility::vector1< utility::vector1< std::string> > & bond_angle_atoms,
 	// utility::vector1< utility::vector1< std::string> > & bond_torsions
 	utility::io::ozstream & out
-)
-{
+) {
 
 	using namespace core::conformation;
 	using namespace core::chemical::rna;
@@ -3680,14 +3673,13 @@ output_sugar_geometry_parameters(
 	for ( Size i = 1; i <= nres; i++ ) {
 		Residue const & rsd( pose.residue( i ) );
 
-
 		out << rsd.mainchain_torsion( 4 );
 
 		for ( Size n = 1; n <= bond_length_atoms.size(); n++ ) {
 			std::string a1 = bond_length_atoms[n][1];
 			std::string a2 = bond_length_atoms[n][2];
-			if ( a1 == "BASE" ) a1 = first_base_atom( rsd );
-			if ( a2 == "BASE" ) a2 = first_base_atom( rsd );
+			if ( a1 == "BASE" ) a1 = first_base_atom( rsd.type() );
+			if ( a2 == "BASE" ) a2 = first_base_atom( rsd.type() );
 			//std::cout << "LENGTH " << a1 << " " << a2 << " " << ( rsd.xyz( a1 ) - rsd.xyz( a2 ) ).length() << std::endl;
 			out << ' ' << ( rsd.xyz( a1 ) - rsd.xyz( a2 ) ).length();
 		}
@@ -3696,9 +3688,9 @@ output_sugar_geometry_parameters(
 			std::string a1 = bond_angle_atoms[n][1];
 			std::string a2 = bond_angle_atoms[n][2];
 			std::string a3 = bond_angle_atoms[n][3];
-			if ( a1 == "BASE" ) a1 = first_base_atom( rsd );
-			if ( a2 == "BASE" ) a2 = first_base_atom( rsd );
-			if ( a3 == "BASE" ) a3 = first_base_atom( rsd );
+			if ( a1 == "BASE" ) a1 = first_base_atom( rsd.type() );
+			if ( a2 == "BASE" ) a2 = first_base_atom( rsd.type() );
+			if ( a3 == "BASE" ) a3 = first_base_atom( rsd.type() );
 			//std::cout << "LENGTH " << a1 << " " << a2 << " " << ( rsd.xyz( a1 ) - rsd.xyz( a2 ) ).length() << std::endl;
 			out << ' ' << numeric::conversions::degrees( angle_radians( rsd.xyz( a1 ), rsd.xyz( a2 ), rsd.xyz( a3 ) ) );
 		}
@@ -3711,10 +3703,7 @@ output_sugar_geometry_parameters(
 		out << ' ' << theta;
 
 		out << std::endl;
-
 	}
-
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -3801,7 +3790,7 @@ output_sugar_internal_dof( pose::Pose & pose, utility::vector1< std::string > co
 		for ( Size n = 1; n <= sugar_atom_list.size(); n++ ) {
 
 			std::string atom_name(  sugar_atom_list[ n ] );
-			if ( atom_name == "BASE" ) atom_name = core::chemical::rna::first_base_atom( pose.residue(i) );
+			if ( atom_name == "BASE" ) atom_name = core::chemical::rna::first_base_atom( pose.residue_type(i) );
 
 			Size const j = rsd.atom_index( atom_name );
 
@@ -4109,15 +4098,14 @@ sugar_frag_RNA_test()
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-
 	pose::Pose pose;
 	make_pose_from_sequence( pose, "au", *rsd_set );
 	pose.dump_pdb( "start.pdb" );
 	kinematics::FoldTree f( pose.total_residue() );
 	f.new_jump(1,2,1);
 	f.set_jump_atoms( 1,
-		core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
-		core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
+		core::chemical::rna::chi1_torsion_atom( pose.residue_type( 1 ) ),
+		core::chemical::rna::chi1_torsion_atom( pose.residue_type( 2 ) )   );
 	pose.fold_tree( f );
 	std::cout << f << std::endl;
 
@@ -4135,8 +4123,6 @@ sugar_frag_RNA_test()
 		}
 		pose_temp.dump_pdb( "final_NOWORKS.pdb" );
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////
@@ -4155,7 +4141,7 @@ color_by_geom_sol_RNA_test()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
+	utility::vector1< std::string > pdb_files( option[ in::file::s ]() );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	geometric_solvation::GeometricSolEnergyEvaluator geometric_sol_energy_method( scorefxn->energy_method_options() );
@@ -4223,7 +4209,7 @@ color_by_lj_base_RNA_test()
 		(*scorefxn)( pose );
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-			for ( Size j = 1; j <= pose.residue( i ) .natoms(); j++ ) {
+			for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 				Real const score = 0.0; //rna_lj_base_energy.eval_atom_energy( AtomID( j, i ), pose );
 				std::cout << i <<  " " << j << " " <<  score << std::endl;
 				pdb_info->temperature( i, j, score );

@@ -98,7 +98,6 @@ RNA_TorsionMover::random_torsion_move( pose::Pose & pose,
 	runtime_assert( attachments.size() > 0 );
 
 	if ( attachments.size() == 1 ) {
-
 		Attachment const & attachment = attachments[ 1 ];
 
 		// an edge residue -- change both its nucleoside & suite -- can go crazy.
@@ -116,9 +115,7 @@ RNA_TorsionMover::random_torsion_move( pose::Pose & pose,
 			crankshaft_alpha_gamma( pose, suite_num, sample_range);
 			move_type += "-nuc-crank";
 		}
-
 	} else {
-
 		// internal.
 		runtime_assert( attachments.size() == 2 );
 
@@ -126,7 +123,6 @@ RNA_TorsionMover::random_torsion_move( pose::Pose & pose,
 		Real const random_number = numeric::random::rg().uniform();
 
 		if ( random_number < 0.6 ) {
-
 			Size suite_num( 0 );
 			if ( numeric::random::rg().uniform() < 0.5 ) {
 				suite_num= i-1;
@@ -149,9 +145,7 @@ RNA_TorsionMover::random_torsion_move( pose::Pose & pose,
 			//move_type += "-nuc" + string_of(nucleoside_num);
 			move_type += "-nuc";
 		}
-
 	}
-
 }
 
 
@@ -173,7 +167,6 @@ RNA_TorsionMover::sample_near_suite_torsion(utility::vector1< Real > & torsion_l
 	torsion_list[3] += numeric::random::rg().gaussian() * stddev;
 	torsion_list[4] += numeric::random::rg().gaussian() * stddev;
 	torsion_list[5] += numeric::random::rg().gaussian() * stddev;
-
 }
 
 
@@ -195,7 +188,6 @@ RNA_TorsionMover::sample_near_nucleoside_torsion(utility::vector1< Real > & tors
 	} else if ( torsion_list[2] <=  0 ) {
 		torsion_list[2] += 360;
 	}
-
 }
 
 //////////////////////////////////
@@ -238,7 +230,6 @@ RNA_TorsionMover::apply_suite_torsion( utility::vector1< Real > const & torsion_
 	pose.set_torsion( TorsionID( moving_suite+1, id::BB, 1 ), torsion_set[3] ); //alpha
 	pose.set_torsion( TorsionID( moving_suite+1, id::BB, 2 ), torsion_set[4] ); //beta
 	pose.set_torsion( TorsionID( moving_suite+1, id::BB, 3 ), torsion_set[5] ); //gamma
-
 }
 
 
@@ -253,7 +244,7 @@ RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
 
 	Size chi_rotamer = 1;
 	// could be syn if purine.
-	if ( chemical::rna::is_purine( pose.residue( moving_res ) ) && numeric::random::rg().uniform() < 0.5 ) chi_rotamer = 2;
+	if ( pose.residue_type( moving_res ).is_purine() && numeric::random::rg().uniform() < 0.5 ) chi_rotamer = 2;
 
 	if ( north_pucker ) {
 		torsion_set.push_back( rna_fitted_torsion_info_.delta_north() );
@@ -299,7 +290,6 @@ RNA_TorsionMover::apply_random_suite_torsion( pose::Pose & pose,
 	torsion_set.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_gamma()[gamma_rotamer].center );
 
 	apply_suite_torsion( torsion_set, pose, moving_suite );
-
 }
 
 
@@ -394,7 +384,6 @@ RNA_TorsionMover::crankshaft_alpha_gamma( pose::Pose & pose, Size const moving_s
 
 	pose.set_torsion( alpha_torsion_id, alpha );
 	pose.set_torsion( gamma_torsion_id, gamma );
-
 }
 
 

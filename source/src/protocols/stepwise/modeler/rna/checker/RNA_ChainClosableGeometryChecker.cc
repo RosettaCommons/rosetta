@@ -107,7 +107,6 @@ RNA_ChainClosableGeometryChecker::check_screen(  pose::Pose const & pose,
 	runtime_assert( reference_res >= five_prime_chain_break_res_ );
 	bool const is_prepend = ( reference_res > five_prime_chain_break_res_ );
 	return check_chain_closable_geometry( reference_res, pose, rsd_at_origin_list, moving_res_base_stub, is_prepend );
-
 }
 
 bool

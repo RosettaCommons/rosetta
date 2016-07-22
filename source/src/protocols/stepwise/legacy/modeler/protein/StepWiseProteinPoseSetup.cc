@@ -27,6 +27,7 @@
 //////////////////////////////////
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueType.hh>
 //////////////////////////////////////////////
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -252,7 +253,15 @@ StepWiseProteinPoseSetup::figure_out_working_sequence_and_mapping(){
 
 	// There are up to two input poses. Need to merge their input residues,
 	// and figure out chain boundaries.
-	Size const nres( desired_sequence_.size() );
+	// AMW: desired_sequence may contain TLCs ([XXX]) or possibly full residue names??
+	// So we can't just subtract--use a utility function to remove what's in []
+	
+	std::map< Size, std::string > special_res;
+	std::string clean_desired_sequence;
+	core::pose::rna::remove_and_store_bracketed( desired_sequence_, clean_desired_sequence, special_res );
+	
+	Size const nres( core::pose::rna::remove_bracketed( desired_sequence_ ).size() );
+
 	ObjexxFCL::FArray1D< Size > is_working_res( nres );
 	ObjexxFCL::FArray1D< Size > is_moving_res( nres );
 	is_working_res = 0;
@@ -318,20 +327,25 @@ StepWiseProteinPoseSetup::figure_out_working_sequence_and_mapping(){
 	full_to_sub.clear();
 	Size count( 0 );
 	utility::vector1< core::Size > working_res_list;
-	for ( Size i = 1; i <= desired_sequence_.size(); i++ ) {
+	for ( Size i = 1; i <= nres; i++ ) {
 		if ( is_working_res( i ) ) {
-			working_sequence += desired_sequence_[ i-1 ]; //i-1 because std::string elements starts at 0...
+			if ( clean_desired_sequence[ i-1 ] == 'X' ) {
+				working_sequence += "X[";
+				working_sequence += special_res[ i-1 ];
+				working_sequence += "]";
+			} else {
+				working_sequence += clean_desired_sequence[ i-1 ];
+			}
 			count++;
 			full_to_sub[ i ] = count;
 			working_res_list.push_back( i );
 		}
 	}
-
 	TR.Debug << "desired_sequence= " << desired_sequence_ << std::endl;
 	TR.Debug << "working_sequence= " << working_sequence << std::endl;
 
 	utility::vector1< core::Size > working_moving_res_list;
-	for ( Size i=1; i <= desired_sequence_.size(); i++ ) {
+	for ( Size i=1; i <= nres; ++i ) {
 		if ( is_working_res( i ) && is_moving_res( i ) ) {
 			working_moving_res_list.push_back(full_to_sub[ i ]);
 		}
@@ -339,14 +353,10 @@ StepWiseProteinPoseSetup::figure_out_working_sequence_and_mapping(){
 
 	working_parameters_->set_full_to_sub( full_to_sub );  //res_map
 	working_parameters_->set_sequence( desired_sequence_ ); //full_sequence
-	//  working_parameters_->set_working_sequence( working_sequence ); //partial_sequence, auto-determined based on full_to_sub
-	//  working_parameters_->set_working_res_list( working_res_list ); // auto-determined from full_to_sub
 	working_parameters_->set_working_moving_res_list(  working_moving_res_list );
 	working_parameters_->set_is_working_res( convert_to_vector1( is_working_res ) ); //A vector to indicate if res exist in the working pose and if it belong to input_pose 1 or input_pose 2 or working_res_list.
 	working_parameters_->set_is_moving_res( is_moving_res );
 	working_parameters_->set_chain_boundaries( chain_boundaries );
-	//working_parameters_->set_which_chain_has_moving_res( which_chain_has_moving_res );
-
 }
 
 
@@ -542,6 +552,7 @@ StepWiseProteinPoseSetup::make_full_pose( pose::Pose & pose ){
 void
 StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 
+	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
@@ -552,7 +563,7 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 
 	// Extend pose. (protein)
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		if ( !pose.residue( n ).is_protein() ) continue;
+		if ( !pose.residue_type( n ).is_protein() ) continue;
 		pose.set_phi( n, -150 );
 		pose.set_psi( n, 150);
 		pose.set_omega( n, 180 );
@@ -563,7 +574,6 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 	utility::vector1< Size > working_res_list;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) if ( is_working_res[ n ] ) working_res_list.push_back( n );
 	pdbslice( pose, working_res_list );
-
 
 	Size const nres( pose.total_residue() );
 	core::kinematics::FoldTree f( nres );
@@ -584,17 +594,14 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 		//   TR.Debug << " HELLO: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
 	}
 
-	//  if ( moving_res_list_.size() < 1 ) return;
-	//  Size const root_res = ( full_to_sub[ moving_res_list_[1] ] == 1 ) ? nres : 1;
-
 	f.tree_from_jumps_and_cuts( nres, num_cuts, jump_point, cuts ); //order of element in jump_point and cuts does not have to match. Jan 29, 2010 Parin S.
 
 	for ( Size i = 1; i <= num_cuts; i++ ) {
 		Size const k = f.upstream_jump_residue( i );
 		Size const m = f.downstream_jump_residue( i );
 
-		Residue const & rsd1( pose.residue( k ) );
-		Residue const & rsd2( pose.residue( m ) );
+		ResidueType const & rsd1( pose.residue_type( k ) );
+		ResidueType const & rsd2( pose.residue_type( m ) );
 
 		bool const KeepStubInResidue( true ); //rsd1.is_protein() & rsd2.is_protein() );
 		f.set_jump_atoms( i, get_stepwise_jump_atom( rsd1 ), get_stepwise_jump_atom( rsd2 ),  KeepStubInResidue );
@@ -649,7 +656,7 @@ StepWiseProteinPoseSetup::setup_disulfides( pose::Pose & pose ){
 
 ////////////////////////////////////////////////////////////////////////////////////
 std::string
-StepWiseProteinPoseSetup::get_stepwise_jump_atom( core::conformation::Residue const & rsd ){
+StepWiseProteinPoseSetup::get_stepwise_jump_atom( core::chemical::ResidueType const & rsd ){
 
 	//if (rsd.is_RNA() ) return rsd.atom_name( rsd.chi_atoms(1)[4] );
 	if ( rsd.is_RNA() ) return " C4'";
@@ -700,7 +707,7 @@ StepWiseProteinPoseSetup::initialize_phi_psi_offsets(  pose::Pose const & pose )
 	psi_offsets_.dimension( nres, 0.0 );
 
 	for ( Size n = 1; n <= nres; n++ ) {
-		if ( !pose.residue( n ).is_protein() ) continue;
+		if ( !pose.residue_type( n ).is_protein() ) continue;
 		// The "pretend" phi and psi are torsion angles based on:
 		//     C-CA-N-H (rather than C-CA-N-C)   for phi, and
 		//     CA-N-C-O (rather than CA-N-C-CA)  for psi.
@@ -722,7 +729,7 @@ StepWiseProteinPoseSetup::save_phi_psi_offsets(
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 
 	for ( Size n = 1; n <= input_res.size(); n++ ) {
-		if ( !start_pose.residue( slice_res[ n ] ).is_protein() ) continue;
+		if ( !start_pose.residue_type( slice_res[ n ] ).is_protein() ) continue;
 		phi_offsets_( full_to_sub[ input_res[ n ] ] )  = protocols::stepwise::legacy::modeler::protein::get_pretend_phi_explicit( start_pose, slice_res[ n ] ) ;
 		psi_offsets_( full_to_sub[ input_res[ n ] ] )  = protocols::stepwise::legacy::modeler::protein::get_pretend_psi_explicit( start_pose, slice_res[ n ] ) ;
 	}
@@ -735,7 +742,7 @@ StepWiseProteinPoseSetup::fix_phi_psi_offsets( pose::Pose & pose ) const{
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 
-		if ( !pose.residue( n ).is_protein() ) continue;
+		if ( !pose.residue_type( n ).is_protein() ) continue;
 		Real const phi_current = protocols::stepwise::legacy::modeler::protein::get_pretend_phi_explicit( pose, n );
 		Real const psi_current = protocols::stepwise::legacy::modeler::protein::get_pretend_psi_explicit( pose, n );
 
@@ -755,7 +762,7 @@ StepWiseProteinPoseSetup::copy_rna_chi( pose::Pose & pose,
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 
 	for ( Size n = 1; n <= input_res.size(); n++ ) {
-		if ( !import_pose.residue( slice_res[ n ] ).is_RNA() ) continue;
+		if ( !import_pose.residue_type( slice_res[ n ] ).is_RNA() ) continue;
 		pose.set_chi( 1, full_to_sub[ input_res[ n ] ],  import_pose.chi( 1, slice_res[n] ) );
 	}
 
@@ -848,8 +855,6 @@ StepWiseProteinPoseSetup::figure_out_partition_definition( pose::Pose const & po
 			break;
 		}
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -989,10 +994,8 @@ StepWiseProteinPoseSetup::reroot_fold_tree( pose::Pose & pose ){
 				TR.Debug << " root_res: " << root_res << "   partition: " << partition_definition( root_res ) << std::endl;
 				utility_exit_with_message( "Possible problem with prepend/append assignment!!" );
 			}
-
 		}
 	}
-
 }
 
 
@@ -1080,12 +1083,9 @@ StepWiseProteinPoseSetup::apply_cutpoint_variants( pose::Pose & pose ) const {
 					pose.set_torsion( torsion_id, mainchain_torsions[ j ] ); //This makes sure that the chain_break torsions have the correct value
 				} // j
 			} // i
-
 		}
 	}
-
 	//  pose.dump_pdb( "AFTER_CUTPOINTS.pdb" );
-
 }
 
 
@@ -1102,8 +1102,6 @@ StepWiseProteinPoseSetup::apply_bulge_variants( pose::Pose & pose ) const {
 		if ( !is_working_res[ bulge_res_[ n ] ] ) continue;
 		pose::add_variant_type_to_pose_residue( pose, core::chemical::BULGE, full_to_sub[ bulge_res_[ n ] ] );
 	}
-
-
 }
 
 
@@ -1115,13 +1113,12 @@ StepWiseProteinPoseSetup::apply_terminus_variants_at_protein_rna_boundaries( pos
 	using namespace core::pose;
 
 	for ( Size n = 1; n <= pose.total_residue()-1; n++ ) {
-		if ( (pose.residue( n ).is_RNA() && pose.residue( n+1).is_protein())  ||
-				(pose.residue( n ).is_protein() && pose.residue( n+1).is_RNA()) ) {
+		if ( (pose.residue_type( n ).is_RNA() && pose.residue_type( n+1).is_protein())  ||
+				(pose.residue_type( n ).is_protein() && pose.residue_type( n+1).is_RNA()) ) {
 			pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, n  );
 			pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, n+1 );
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1395,9 +1392,9 @@ StepWiseProteinPoseSetup::apply_virtual_phosphate_variants( pose::Pose & pose ) 
 
 		if ( is_working_cutpoint_closed( potential_five_prime_res-1, full_to_sub ) ) continue;
 
-		if ( !pose.residue( potential_five_prime_res ).is_RNA() ) continue;
+		if ( !pose.residue_type( potential_five_prime_res ).is_RNA() ) continue;
 
-		if ( pose.residue( potential_five_prime_res ).type().has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
+		if ( pose.residue_type( potential_five_prime_res ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
 			utility_exit_with_message( "Should not be trying to virtualize phosphate on close cutpoint residue!" );
 		}
 
@@ -1412,28 +1409,6 @@ StepWiseProteinPoseSetup::apply_peptide_plane_variants_OLD( pose::Pose & /*pose*
 
 	if ( !add_peptide_plane_variants_ ) return;
 
-	//   std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
-	//   utility::vector1< core::Size > working_moving_res_list = working_parameters_->working_moving_res_list();
-
-	//   for ( Size n = 1; n <= working_moving_res_list.size(); n++ ) {
-
-	//    Size const moving_res( working_moving_res_list[ n ] );
-
-	//    if (!pose.residue_type( moving_res ).is_protein() ) continue;
-
-	//    if ( ( moving_res == pose.total_residue() || pose.fold_tree().is_cutpoint( moving_res ) ) &&
-	//       ( moving_res != full_to_sub[ cutpoint_closed_ ] ) &&
-	//       !pose.residue_type( moving_res ).has_variant_type( "UPPER_TERMINUS" ) ) {
-	//     pose::add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", moving_res );
-	//    }
-
-	//    if ( ( moving_res == 1 || pose.fold_tree().is_cutpoint( moving_res-1 ) ) &&
-	//       ( moving_res != full_to_sub[ cutpoint_closed_ ] + 1) &&
-	//       !pose.residue_type( moving_res ).has_variant_type( "LOWER_TERMINUS" ) ) {
-	//     pose::add_variant_type_to_pose_residue( pose, "N_ACETYLATION", moving_res );
-	//    }
-
-	//   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1454,16 +1429,16 @@ StepWiseProteinPoseSetup::apply_peptide_plane_variants( pose::Pose & pose ) cons
 		Size const chain_start = chain_boundaries[ n ].first;
 		Size const potential_Nterm_res = full_to_sub[ chain_start ];
 		if ( !is_working_cutpoint_closed( potential_Nterm_res-1, full_to_sub ) &&
-				pose.residue( potential_Nterm_res ).is_protein() &&
-				!pose.residue( potential_Nterm_res ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
+				pose.residue_type( potential_Nterm_res ).is_protein() &&
+				!pose.residue_type( potential_Nterm_res ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
 			pose::add_variant_type_to_pose_residue( pose, core::chemical::N_ACETYLATION, potential_Nterm_res );
 		}
 
 		Size const chain_end = chain_boundaries[ n ].second;
 		Size const potential_Cterm_res = full_to_sub[ chain_end ];
 		if ( !is_working_cutpoint_closed( potential_Cterm_res, full_to_sub ) &&
-				pose.residue( potential_Cterm_res ).is_protein() &&
-				!pose.residue( potential_Cterm_res ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) {
+				pose.residue_type( potential_Cterm_res ).is_protein() &&
+				!pose.residue_type( potential_Cterm_res ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) {
 			pose::add_variant_type_to_pose_residue( pose, core::chemical::C_METHYLAMIDATION, potential_Cterm_res );
 		}
 
@@ -1499,6 +1474,7 @@ void
 StepWiseProteinPoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) const
 {
 	using namespace core::conformation;
+	using namespace core::chemical;
 	using namespace core::id;
 	using namespace core::scoring::constraints;
 	using namespace core::chemical::rna;
@@ -1536,11 +1512,11 @@ StepWiseProteinPoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) 
 
 		for ( Size m = 1; m <= nres; m++ ) {
 
-			Residue const & rsd1( pose.residue( k ) );
-			Residue const & rsd2( pose.residue( m ) );
+			ResidueType const & rsd1( pose.residue_type( k ) );
+			ResidueType const & rsd2( pose.residue_type( m ) );
 
-			AtomID const atom_id1( first_base_atom_index( rsd1 ), rsd1.seqpos() );
-			AtomID const atom_id2( first_base_atom_index( rsd2 ), rsd2.seqpos() );
+			AtomID const atom_id1( first_base_atom_index( rsd1 ), k );
+			AtomID const atom_id2( first_base_atom_index( rsd2 ), m );
 
 			// the one exception -- close contacts WITHIN a partition
 			if ( ( ( is_moving_res( k )  && is_moving_res( m ) ) ||
@@ -1552,10 +1528,8 @@ StepWiseProteinPoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) 
 
 			// distance from O3' to P
 			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) ) ) );
-
 		}
 	}
-
 	pose.constraint_set( cst_set );
 
 	/////////////////////////////////////////////////////////////
@@ -1564,8 +1538,6 @@ StepWiseProteinPoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) 
 	//  for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
 	//   pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE_HEAVY_ATOM, working_terminal_res[ i ] );
 	//  }
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1584,16 +1556,11 @@ StepWiseProteinPoseSetup::setup_secstruct( core::pose::Pose & pose ) const {
 			count++;
 			pose.set_secstruct( count, secstruct_[n-1] );
 		}
-
 	} else {
-
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 			pose.set_secstruct( n, 'L' );
 		}
-
 	}
-
-
 }
 
 
@@ -1636,7 +1603,7 @@ StepWiseProteinPoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose){  //
 
 	Size const nres = pose.total_residue();
 	//if already rooted on virtual residue , return
-	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
+	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
 		return;
 	}

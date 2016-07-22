@@ -1962,7 +1962,16 @@ settings = {
     # OSs #####################################################################
 
     "clang, linux" : {
-        "prepends" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    # This will become necessary at some point! and for some compilers
+                    # But if you include it now it won't build with clang 3.4 (testing server)
+                    #"Wno-undefined-var-template",
+                ],
+            },
+        },
+	"prepends" : {
             # This makes clang use libstdc++ 4.4.0 on CentOS.
             # (requires gcc44-c++ and libstdc++44-devel)
             #"library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],

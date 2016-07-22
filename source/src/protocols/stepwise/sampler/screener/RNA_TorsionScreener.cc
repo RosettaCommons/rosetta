@@ -43,28 +43,30 @@ bool RNA_TorsionScreener::screen(
 	core::pose::Pose const & pose,
 	core::Size const suite
 ) {
+	core::conformation::Residue const & suiteres = pose.residue( suite );
+	core::conformation::Residue const & suiteresp1 = pose.residue( suite+1 );
 	Real const epsilon = angle_conv(
-		pose.residue( suite ).mainchain_torsion( EPSILON ) );
+		suiteres.mainchain_torsion( EPSILON ) );
 	if ( epsilon > suitename_->epsilonmax ) return false;
 	if ( epsilon < suitename_->epsilonmin ) return false;
 
 	Real const zeta = angle_conv(
-		pose.residue( suite ).mainchain_torsion( ZETA ) );
+		suiteres.mainchain_torsion( ZETA ) );
 	if ( zeta > suitename_->zetamax ) return false;
 	if ( zeta < suitename_->zetamin ) return false;
 
 	Real const alpha = angle_conv(
-		pose.residue( suite + 1 ).mainchain_torsion( ZETA ) );
+		suiteresp1.mainchain_torsion( ZETA ) );
 	if ( alpha > suitename_->alphamax ) return false;
 	if ( alpha < suitename_->alphamin ) return false;
 
 	Real const beta = angle_conv(
-		pose.residue( suite + 1 ).mainchain_torsion( BETA ) );
+		suiteresp1.mainchain_torsion( BETA ) );
 	if ( beta > suitename_->betamax ) return false;
 	if ( beta < suitename_->betamin ) return false;
 
 	Real const gamma = angle_conv(
-		pose.residue( suite + 1 ).mainchain_torsion( GAMMA ) );
+		suiteresp1.mainchain_torsion( GAMMA ) );
 	if ( gamma >= suitename_->gammapmin && gamma <= suitename_->gammapmax ) {
 		return true;
 	}

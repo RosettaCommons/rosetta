@@ -18,6 +18,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
@@ -78,14 +79,13 @@ LW_BaseDoubletOrientation
 get_LW_orientation_from_char( char const o );
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string const first_base_atom( conformation::Residue const & rsd );
-bool is_purine( conformation::Residue const & rsd );
-Size first_base_atom_index( conformation::Residue const & rsd );
+std::string const first_base_atom( chemical::ResidueType const & rsd );
+Size first_base_atom_index( chemical::ResidueType const & rsd );
 
-std::string const chi1_torsion_atom( conformation::Residue const & rsd );
-Size chi1_torsion_atom_index( conformation::Residue const & rsd );
+std::string const chi1_torsion_atom( chemical::ResidueType const & rsd );
+Size chi1_torsion_atom_index( chemical::ResidueType const & rsd );
 
-std::string const default_jump_atom( conformation::Residue const & rsd );
+std::string const default_jump_atom( chemical::ResidueType const & rsd );
 
 bool
 possibly_canonical( chemical::AA const & aa1,  chemical::AA const & aa2 );
@@ -98,15 +98,15 @@ get_WC_atom( core::chemical::AA const & res_type );
 
 void
 get_watson_crick_base_pair_atoms(
-	conformation::Residue const & rsd_type1,
-	conformation::Residue const & rsd_type2,
+	chemical::ResidueType const & rsd_type1,
+	chemical::ResidueType const & rsd_type2,
 	std::string & atom1,
 	std::string & atom2 );
 
 void
 get_watson_crick_base_pair_atoms(
-	conformation::Residue const & rsd_type1,
-	conformation::Residue const & rsd_type2,
+	chemical::ResidueType const & rsd_type1,
+	chemical::ResidueType const & rsd_type2,
 	utility::vector1< std::string > & atom_ids1,
 	utility::vector1< std::string > & atom_ids2  );
 

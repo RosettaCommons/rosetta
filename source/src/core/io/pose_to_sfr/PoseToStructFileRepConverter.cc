@@ -112,7 +112,7 @@ PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, Str
 {
 	id::AtomID_Mask mask = id::AtomID_Mask( pose.total_residue() );
 	for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
-		for ( Size atom_index = 1; atom_index <= pose.residue( resnum ).natoms(); ++atom_index ) {
+		for ( Size atom_index = 1; atom_index <= pose.residue_type( resnum ).natoms(); ++atom_index ) {
 			id::AtomID atm = id::AtomID( atom_index, resnum );
 			mask.set( atm, true );
 		}
@@ -134,7 +134,7 @@ PoseToStructFileRepConverter::init_from_pose(
 	id::AtomID_Mask mask = id::AtomID_Mask( pose.total_residue() );
 	for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
 
-		for ( Size atom_index = 1; atom_index <= pose.residue( resnum ).natoms(); ++ atom_index ) {
+		for ( Size atom_index = 1; atom_index <= pose.residue_type( resnum ).natoms(); ++ atom_index ) {
 			id::AtomID atm = id::AtomID( atom_index, resnum );
 			if ( residue_indices.has_value( resnum ) ) {
 				mask.set( atm, true );
@@ -452,8 +452,8 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 	Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
 	Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
 
-	link.name1 = pose.residue( ii ).atom_name( pose.residue( ii ).residue_connect_atom_index( conn ) );
-	link.resName1 = pose.residue( ii ).name3();
+	link.name1 = pose.residue_type( ii ).atom_name( pose.residue_type( ii ).residue_connect_atom_index( conn ) );
+	link.resName1 = pose.residue_type( ii ).name3();
 	link.chainID1 = pose.pdb_info()->chain( ii );
 	link.resSeq1 = pose.pdb_info()->number( ii );
 	link.iCode1 = pose.pdb_info()->icode( ii );
@@ -462,8 +462,8 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 	ss << std::right << pose.pdb_info()->number( ii );
 	link.resID1 = ss.str() + link.iCode1 + link.chainID1;
 
-	link.name2 =  pose.residue( jj ).atom_name( pose.residue( jj ).residue_connect_atom_index( jj_conn ) );
-	link.resName2 = pose.residue( jj ).name3();
+	link.name2 =  pose.residue_type( jj ).atom_name( pose.residue_type( jj ).residue_connect_atom_index( jj_conn ) );
+	link.resName2 = pose.residue_type( jj ).name3();
 	link.chainID2 = pose.pdb_info()->chain( jj );
 	link.resSeq2 = pose.pdb_info()->number( jj );
 	link.iCode2 = pose.pdb_info()->icode( jj );
@@ -473,8 +473,8 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 	link.resID2 = ss2.str() + link.iCode2 + link.chainID2;
 
 	// Calculate bond distance.
-	uint start_atom_index = pose.residue( ii ).atom_index( link.name1 );
-	uint stop_atom_index = pose.residue( jj ).atom_index( link.name2 );
+	uint start_atom_index = pose.residue_type( ii ).atom_index( link.name1 );
+	uint stop_atom_index = pose.residue_type( jj ).atom_index( link.name2 );
 	link.length = pose.conformation().bond_length(
 		AtomID( start_atom_index, ii ),
 		AtomID( stop_atom_index, jj ) );
@@ -489,7 +489,7 @@ PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, 
 
 	Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
 
-	ssbond.resName1 = pose.residue( ii ).name3();
+	ssbond.resName1 = pose.residue_type( ii ).name3();
 	ssbond.chainID1 = pose.pdb_info()->chain( ii );
 	ssbond.resSeq1 = pose.pdb_info()->number( ii );
 	ssbond.iCode1 = pose.pdb_info()->icode( ii );
@@ -498,7 +498,7 @@ PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, 
 	ss << std::right << pose.pdb_info()->number( ii );
 	ssbond.resID1 = ss.str() + ssbond.iCode1 + ssbond.chainID1;
 
-	ssbond.resName2 = pose.residue( jj ).name3();
+	ssbond.resName2 = pose.residue_type( jj ).name3();
 	ssbond.chainID2 = pose.pdb_info()->chain( jj );
 	ssbond.resSeq2 = pose.pdb_info()->number( jj );
 	ssbond.iCode2 = pose.pdb_info()->icode( jj );
@@ -508,8 +508,8 @@ PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, 
 	ssbond.resID2 = ss2.str() + ssbond.iCode2 + ssbond.chainID2;
 
 	// Calculate bond distance.
-	uint start_atom_index = pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() );
-	uint stop_atom_index = pose.residue( jj ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() );
+	uint start_atom_index = pose.residue_type( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
+	uint stop_atom_index = pose.residue_type( jj ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
 	ssbond.length = pose.conformation().bond_length(
 		AtomID( start_atom_index, ii ),
 		AtomID( stop_atom_index, jj ) );
@@ -536,13 +536,13 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 	// temporary circumstances.
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-
-		if ( pose.residue( ii ).has_lower_connect() ) {
-			Size lower = pose.residue( ii ).lower_connect().index();
+		conformation::Residue const & ii_res = pose.residue( ii );
+		if ( ii_res.has_lower_connect() ) {
+			Size lower = ii_res.lower_connect().index();
 
 			// if bonded to not ii - 1 or bonded to not ii - 1's upper
-			if ( pose.residue( ii ).connected_residue_at_resconn( lower ) != ii - 1 ||
-					pose.residue( ii ).residue_connection_conn_id( lower ) != static_cast<Size>(pose.residue( ii - 1 ).upper_connect().index()) ) {
+			if ( ii_res.connected_residue_at_resconn( lower ) != ii - 1 ||
+					ii_res.residue_connection_conn_id( lower ) != static_cast<Size>(pose.residue( ii - 1 ).upper_connect().index()) ) {
 
 				vector1<LinkInformation> links;
 				LinkInformation link = get_link_record( pose, ii, lower );
@@ -555,20 +555,19 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 				links.push_back(link);
 
 				sfr_->link_map()[link.resID1] = links;
-
 			}
 		}
 
-		if ( pose.residue( ii ).has_upper_connect() ) {
-			Size upper = pose.residue( ii ).upper_connect().index();
+		if ( ii_res.has_upper_connect() ) {
+			Size upper = ii_res.upper_connect().index();
 
 			// if bonded to not ii + 1 or bonded to not ii + 1's lower
-			if ( pose.residue( ii ).connected_residue_at_resconn( upper ) != ii + 1 ||
-					pose.residue( ii ).residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) {
+			if ( ii_res.connected_residue_at_resconn( upper ) != ii + 1 ||
+					ii_res.residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) {
 
 				// Escape if it's bonded to residue 1's lower--we don't want to double-count cyclization here.
 				// If jj < ii, we already counted it
-				if ( pose.residue( ii ).connected_residue_at_resconn( upper ) < ii ) continue;
+				if ( ii_res.connected_residue_at_resconn( upper ) < ii ) continue;
 
 				LinkInformation link = get_link_record( pose, ii, upper );
 				vector1<LinkInformation> links;
@@ -581,28 +580,27 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 				links.push_back(link);
 
 				sfr_->link_map()[link.resID1] = links;
-
 			}
 		}
 
-		if ( pose.residue( ii ).n_non_polymeric_residue_connections() == 0 ) continue;
+		if ( ii_res.n_non_polymeric_residue_connections() == 0 ) continue;
 
-		for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_possible_residue_connections(); ++conn ) {
+		for ( Size conn = ii_res.n_polymeric_residue_connections()+1; conn <= ii_res.n_possible_residue_connections(); ++conn ) {
 
-			Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
-			Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
+			Size jj = ii_res.connected_residue_at_resconn( conn );
+			Size jj_conn = ii_res.residue_connection_conn_id( conn );
 
 			// Either LINK or SSBOND
 			// Note that it's not an SSBOND if you are a cysteine bonded
 			// to the UPPER of another cysteine!
 			// Are the two atoms both the get_disulfide_atom_name() of the
 			// connected residue types?
-			if ( ( pose.residue( ii ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( ii ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
-					( pose.residue( jj ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( jj ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
-					pose.residue( ii ).residue_connect_atom_index( conn ) ==
-					pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() ) &&
-					pose.residue( jj ).residue_connect_atom_index( jj_conn ) ==
-					pose.residue( ii ).atom_index( pose.residue( jj ).type().get_disulfide_atom_name() ) ) {
+			if ( ( pose.residue_type( ii ).has_property( chemical::DISULFIDE_BONDED ) || pose.residue_type( ii ).has_property( chemical::SIDECHAIN_THIOL ) ) &&
+					( pose.residue_type( jj ).has_property( chemical::DISULFIDE_BONDED ) || pose.residue_type( jj ).has_property( chemical::SIDECHAIN_THIOL ) ) &&
+					pose.residue_type( ii ).residue_connect_atom_index( conn ) ==
+					pose.residue_type( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() ) &&
+					pose.residue_type( jj ).residue_connect_atom_index( jj_conn ) ==
+					pose.residue_type( jj ).atom_index( pose.residue_type( jj ).get_disulfide_atom_name() ) ) {
 				// Disulfide.
 
 				// If jj < ii, we already counted it
@@ -824,28 +822,28 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	bool const write_virtuals( options_.output_virtual() );
 
 	//Return if this is virtual and we're not writing virtuals:
-	if ( ( pose.residue(res_index).is_virtual_residue() || pose.residue(res_index).atom_type(atom_index_in_rsd).is_virtual() ) && !write_virtuals ) return;
+	if ( ( pose.residue_type(res_index).is_virtual_residue() || pose.residue_type(res_index).atom_type(atom_index_in_rsd).is_virtual() ) && !write_virtuals ) return;
 
 	bool const writeall( options_.write_all_connect_info() );
-	bool const this_res_is_canonical_or_solvent( pose.residue(res_index).type().is_canonical() || pose.residue(res_index).type().is_solvent() );
+	bool const this_res_is_canonical_or_solvent( pose.residue_type(res_index).is_canonical() || pose.residue_type(res_index).is_solvent() );
 	core::Real const dist_cutoff_sq( options_.connect_info_cutoff()*options_.connect_info_cutoff() );
 	core::Size count(0);
 	core::id::AtomID const this_atom_id( atom_index_in_rsd, res_index ); //The AtomID of this atom.
 	utility::vector1<core::id::AtomID> const & bonded_ids(  pose.conformation().bonded_neighbor_all_res( this_atom_id, write_virtuals ) ); //List of AtomIDs of atoms bound to this atom.
 
 	for ( core::Size i=1; i<=res_index; ++i ) { //Loop through all residues
-		for ( core::Size j=1, jmax=pose.residue(i).natoms(); j<=jmax; ++j ) { //Loop through all atoms in this residue
+		for ( core::Size j=1, jmax=pose.residue_type(i).natoms(); j<=jmax; ++j ) { //Loop through all atoms in this residue
 			if ( i == res_index && j == atom_index_in_rsd ) {
 				break;
 			}
 
-			if ( !write_virtuals && pose.residue(i).atom_type(j).is_virtual() ) continue; //Skip writing virtuals if we should do so.
+			if ( !write_virtuals && pose.residue_type(i).atom_type(j).is_virtual() ) continue; //Skip writing virtuals if we should do so.
 			++count;
 			if ( !writeall ) {
 				if ( i == res_index ) { //If this is an intra-residue bond:
-					if ( pose.residue(i).type().is_canonical() || pose.residue(i).type().is_solvent() ) continue; //Skip canonical and solvent intra-res bonds.
+					if ( pose.residue_type(i).is_canonical() || pose.residue_type(i).is_solvent() ) continue; //Skip canonical and solvent intra-res bonds.
 				} else { //If this is an inter-residue bond:
-					if ( this_res_is_canonical_or_solvent && ( pose.residue(i).type().is_canonical() || pose.residue(i).type().is_solvent() ) ) continue; //Skip canonical or solvent inter-res bonds.
+					if ( this_res_is_canonical_or_solvent && ( pose.residue_type(i).is_canonical() || pose.residue_type(i).is_solvent() ) ) continue; //Skip canonical or solvent inter-res bonds.
 				}
 			}
 
@@ -933,10 +931,10 @@ PoseToStructFileRepConverter::grab_torsion_records(
 		}
 		for ( core::Size i=1; i<=pose.n_residue(); ++i ) {
 			if ( pdb_info ) {
-				out << "REMARK " << I( 4, i ) << " " << I( 4, pose.pdb_info()->number(i)) << " " << pose.pdb_info()->chain(i) << " " << pose.residue( i ).name1() << " " <<
+				out << "REMARK " << I( 4, i ) << " " << I( 4, pose.pdb_info()->number(i)) << " " << pose.pdb_info()->chain(i) << " " << pose.residue_type( i ).name1() << " " <<
 					dssp_reduced_secstruct(i) << " " << F( 9, 3, pose.phi(i)) << " " << F( 9, 3, pose.psi(i)) << " " << F( 9, 3, pose.omega(i)) << std::endl;
 			} else {
-				out << "REMARK " << I( 4, i ) << " " << I( 4, i) << " " << pose.chain(i) << " " << pose.residue( i ).name1() << " " <<
+				out << "REMARK " << I( 4, i ) << " " << I( 4, i) << " " << pose.chain(i) << " " << pose.residue_type( i ).name1() << " " <<
 					dssp_reduced_secstruct(i) << " " << F( 9, 3, pose.phi(i)) << " " << F( 9, 3, pose.psi(i)) << " " << F( 9, 3, pose.omega(i)) << std::endl;
 			}
 		}
@@ -1016,7 +1014,7 @@ PoseToStructFileRepConverter::get_residue_information(
 	using namespace core::pose;
 	using core::chemical::chr_chains;
 
-	res_info.resName( pose.residue(seqpos).name3() );
+	res_info.resName( pose.residue_type(seqpos).name3() );
 
 	// Use PDB-specific information?
 	if ( use_PDB ) {

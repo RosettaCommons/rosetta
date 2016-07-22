@@ -189,7 +189,7 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	id::AtomID const c1prime_id( c1prime_index, i );
 	id::AtomID const c2prime_id( c2prime_index, i );
 	id::AtomID const c4prime_id( c4prime_index, i );
-	id::AtomID const first_base_atom_id( first_base_atom_index( rsd ),  i );
+	id::AtomID const first_base_atom_id( first_base_atom_index( rsd.type() ),  i );
 
 	constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
 	if ( use_phenix_sugar_close_ ) {

@@ -140,8 +140,8 @@ RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
 	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
 	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 
-		if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
-		if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+		if ( !pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
+		if ( !pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 
 		if ( atom_level_domain_map_ != 0 ) {
 			Size const domain1( atom_level_domain_map_->get_domain( NamedAtomID( "OVL1", i ), pose ) );
@@ -233,8 +233,8 @@ RNA_LoopCloser::check_closure( core::pose::Pose const & pose, core::Size const i
 {
 	if ( ccd_tolerance <= 0.0 ) ccd_tolerance = absolute_ccd_tolerance_;
 
-	runtime_assert( pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  );
-	runtime_assert( pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
+	runtime_assert( pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  );
+	runtime_assert( pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
 
 	Real const current_dist_err =  get_dist_err( pose, i );
 	// TR << "CURRENT_DIST_ERR  " << current_dist_err << " " << ccd_tolerance << std::endl;
@@ -264,13 +264,13 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 {
 	using namespace core::id;
 
-	if ( !input_pose.residue( cutpoint ).is_RNA() ||
-			!input_pose.residue( cutpoint+1 ).is_RNA() ) {
+	if ( !input_pose.residue_type( cutpoint ).is_RNA() ||
+			!input_pose.residue_type( cutpoint+1 ).is_RNA() ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but residues are not RNA?");
 	}
 
-	if ( !input_pose.residue( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-			!input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+	if ( !input_pose.residue_type( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
+			!input_pose.residue_type( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but CUTPOINT_LOWER or CUTPOINT_UPPER variants not properly set up." );
 	}
 
@@ -315,18 +315,18 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 		// This is totally hard-wired and hacky -- should be easy to fix though.
 		f.new_jump( 1, 4, 1 );
 		f.set_jump_atoms( 1,
-			core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
-			core::chemical::rna::chi1_torsion_atom( pose.residue(4) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type(1) ),
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type(4) )   );
 		f.new_jump( 2, 3, 2 );
 		f.set_jump_atoms( 2,
-			core::chemical::rna::chi1_torsion_atom( pose.residue(2) ),
-			core::chemical::rna::chi1_torsion_atom( pose.residue(3) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type(2) ),
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type(3) )   );
 
 	} else {
 		f.new_jump( 1, 2, 1 );
 		f.set_jump_atoms( 1,
-			core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
-			core::chemical::rna::chi1_torsion_atom( pose.residue(2) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type(1) ),
+			core::chemical::rna::chi1_torsion_atom( pose.residue_type(2) )   );
 	}
 
 	pose.fold_tree( f );
@@ -527,8 +527,8 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 
 		if ( ! f.is_cutpoint( cutpos ) ) continue;
 
-		if ( !pose.residue( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-				!pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) {
+		if ( !pose.residue_type( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
+				!pose.residue_type( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) {
 
 			// go through pose constraints -- was there any constraint holding residue i's O3'  to i+1's P?
 			bool cst_found( false );
@@ -540,9 +540,9 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 
 				if ( cst->natoms() == 2 )  { // currently only defined for pairwise distance constraints.
 					Size const i = cst->atom( 1 ).rsd();
-					std::string const name1 = pose.residue( i ).atom_name( cst->atom( 1 ).atomno() );
+					std::string const name1 = pose.residue_type( i ).atom_name( cst->atom( 1 ).atomno() );
 					Size const j = cst->atom( 2 ).rsd();
-					std::string const name2 = pose.residue( j ).atom_name( cst->atom( 2 ).atomno() );
+					std::string const name2 = pose.residue_type( j ).atom_name( cst->atom( 2 ).atomno() );
 
 					if ( i == cutpos && j == cutpos+1 && name1 == " O3'" && name2 == " P  " ) {
 						cst_found = true; break;
@@ -550,13 +550,10 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 					if ( j == cutpos && i == cutpos+1 && name2 == " O3'" && name1 == " P  " ) {
 						cst_found = true; break;
 					}
-
 				}
-
 			}
 
 			if ( !cst_found ) continue;
-
 			extra_cutpoints.push_back( cutpos );
 		}
 	}
@@ -743,8 +740,8 @@ RNA_LoopCloser::local_minimize_at_chainbreaks(
 
 		if ( ! f.is_cutpoint( cutpos ) ) continue;
 
-		if ( !pose.residue( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-				!pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+		if ( !pose.residue_type( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
+				!pose.residue_type( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 
 		mm.set_bb( cutpos, true );
 		mm.set_bb( cutpos+1, true );

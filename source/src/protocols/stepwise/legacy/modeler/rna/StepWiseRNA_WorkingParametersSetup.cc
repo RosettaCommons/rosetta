@@ -24,6 +24,8 @@
 #include <protocols/farna/util.hh>
 //////////////////////////////////
 #include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.hh> // AMW added
+#include <core/chemical/ResidueTypeFinder.hh> // AMW added
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
@@ -34,6 +36,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
 
 #include <core/id/TorsionID.hh>
@@ -957,7 +960,7 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 	runtime_assert( cuts_.size() == jump_partners_.size() );
 
 	std::string const working_sequence = working_parameters_->working_sequence();
-	Size const nres( working_sequence.size() );
+	Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
 	Size const num_cuts( cuts_.size() );
 
 	ObjexxFCL::FArray2D < int > jump_point( 2, num_cuts, 0 );
@@ -976,13 +979,22 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 	fold_tree.tree_from_jumps_and_cuts( nres, num_cuts, jump_point, cuts, root_res ); //order of element in jump_point and cuts does not have to match. Jan 29, 2010 Parin S.
 	Size num_cutpoint = fold_tree.num_cutpoint();
 
+	core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	// Store bracketed stuff in map, based on STRING index not seqpos
+	// AMW TODO: merge with similar Rhiju function written for de novo setup
+	std::map< Size, std::string > special_res;
+	std::string working_sequence_clean;
+	core::pose::rna::remove_and_store_bracketed( working_sequence, working_sequence_clean, special_res );
+	
 	for ( Size i = 1; i <= num_cutpoint; i++ ) {
-		Size const k = fold_tree.upstream_jump_residue( i );
-		Size const m = fold_tree.downstream_jump_residue( i );
-
-		char upstream_res = working_sequence[k - 1];
-		char downstream_res = working_sequence[m - 1];
-
+		Size k = fold_tree.upstream_jump_residue( i );
+		Size m = fold_tree.downstream_jump_residue( i );
+		
+		char upstream_res = working_sequence_clean[k - 1];
+		char downstream_res = working_sequence_clean[m - 1];
+		//TR << "upstream: " << upstream_res << std::endl;
+		//TR << "downstream_res: " << downstream_res << std::endl;
+		
 		//Base atoms...
 		std::string upstream_jump_atom;
 		std::string downstream_jump_atom;
@@ -991,6 +1003,12 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 			upstream_jump_atom = " C2 ";
 		} else if ( upstream_res == 'a' || upstream_res == 'g' ) {
 			upstream_jump_atom = " C4 ";
+		} else if ( upstream_res == 'X' ) {
+			// Make rt based on what's in brackets
+			// The jump atom is the fourth atom of chi1
+			core::chemical::ResidueType const & rt( rts->name_map( special_res[k-1] ) );
+			upstream_jump_atom = rt.atom_name( rt.chi_atoms(1)[4] );
+			TR.Debug << "Upstream jump atom of X-residue is " << upstream_jump_atom << std::endl;
 		} else {
 			utility_exit_with_message( "Invalid upstream_res!!" );
 		}
@@ -999,6 +1017,10 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 			downstream_jump_atom = " C2 ";
 		} else if ( downstream_res == 'a' || downstream_res == 'g' ) {
 			downstream_jump_atom = " C4 ";
+		} else if ( downstream_res == 'X' ) {
+			core::chemical::ResidueType const & rt( rts->name_map( special_res[m-1] ) );
+			downstream_jump_atom = rt.atom_name( rt.chi_atoms(1)[4] );
+			TR.Debug << "Downstream jump atom of X-residue is " << downstream_jump_atom << std::endl;
 		} else {
 			utility_exit_with_message( "Invalid downstream_res!!" );
 		}
@@ -1228,7 +1250,7 @@ StepWiseWorkingParametersSetup::reroot_fold_tree( core::Size const fake_working_
 
 	ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
-	Size const nres = working_parameters_->working_sequence().size();
+	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
 
 	std::map< core::Size, core::Size > & sub_to_full( working_parameters_->sub_to_full() );
 

@@ -56,11 +56,8 @@ RotamerDumpMover::RotamerDumpMover(core::pack::task::TaskFactoryOP task_factory,
 
 void RotamerDumpMover::apply(core::pose::Pose & pose)
 {
-
 	core::pack::pack_scorefxn_pose_handshake(pose,*score_function_);
-
 	pose.update_residue_neighbors();
-
 
 	core::pack::task::PackerTaskCOP packer_task( task_factory_->create_task_and_apply_taskoperations(pose));
 	core::pack::rotamer_set::RotamerSetsOP rotamer_sets( new core::pack::rotamer_set::RotamerSets() );
@@ -71,7 +68,6 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 	rotamer_sets->set_task(packer_task);
 	rotamer_sets->build_rotamers(pose,*score_function_,packer_neighbor_graph);
-
 	rotamer_sets->prepare_sets_for_packing(pose,*score_function_);
 
 	RotamerTracer << "built " << rotamer_sets->nrotamers() << " rotamers at " <<rotamer_sets->nmoltenres() <<" positions" <<std::endl;
@@ -104,7 +100,6 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 	job->add_strings(job_data);
 	//RotamerTracer <<two_body_energy <<std::endl;
 	//RotamerTracer << one_body_energy <<std::endl;
-
 }
 
 /// @details appends a line to the job in the form one_body num_items (resno, resn, rotno, energy) for each 1 body energy in the IG
@@ -120,7 +115,6 @@ std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_g
 		core::Size residue_id = rotamer_sets->moltenres_2_resid(node_id);
 		std::string residue_id_string = utility::to_string<core::Size>(residue_id);
 
-
 		core::Size node_states = ig->get_num_states_for_node(node_id);
 		for ( core::Size state_id = 1; state_id <= node_states; ++state_id ) {
 			float one_body_energy = ig->get_one_body_energy_for_node_state(node_id,state_id);
@@ -128,7 +122,6 @@ std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_g
 
 			core::pack::rotamer_set::RotamerSetOP rotamer_set(rotamer_sets->rotamer_set_for_moltenresidue(node_id));
 			core::conformation::ResidueCOP current_residue(rotamer_set->rotamer(state_id));
-
 
 			std::string residue_name(current_residue->name3());
 			std::string state_id_string = utility::to_string<core::Size>(state_id);
@@ -160,11 +153,9 @@ std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_g
 		core::Size residue_1_id = rotamer_sets->moltenres_2_resid(node_1_id);
 		std::string residue_1_id_string = utility::to_string<core::Size>(residue_1_id);
 
-
 		for ( core::Size node_2_id = node_1_id+2; node_2_id <= ig_size; ++node_2_id ) {
 			core::Size residue_2_id = rotamer_sets->moltenres_2_resid(node_2_id);
 			std::string residue_2_id_string = utility::to_string<core::Size>(residue_2_id);
-
 
 			core::Size const num_states_1(ig->get_num_states_for_node(node_1_id));
 			core::Size const num_states_2(ig->get_num_states_for_node(node_2_id));
@@ -241,9 +232,7 @@ std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_gr
 	std::string data = "";
 	core::Size elements = 0;
 
-	//bool start_with_current(false);
 	ObjexxFCL::FArray1D_int current_rot_index(pose.total_residue(),0);
-	//bool calc_rot_freq(false);
 	ObjexxFCL::FArray1D<float> rot_freq(ig->get_num_total_states(),0.0);
 	ObjexxFCL::FArray1D_int bestrotamer_at_seqpos(pose.total_residue());
 	utility::vector0<int> rot_to_pack;

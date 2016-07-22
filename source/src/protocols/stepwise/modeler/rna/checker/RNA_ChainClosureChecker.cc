@@ -68,7 +68,6 @@ RNA_ChainClosureChecker::copy_CCD_torsions( pose::Pose & pose ) const {
 	Size const three_prime_res = five_prime_res_ + 1;
 	//Even through there is the chain_break, alpha of 3' and epl and gamma of 5' should be defined due to the existence of the upper and lower variant type atoms.
 	copy_CCD_torsions_general( pose, five_prime_res_, three_prime_res );
-
 }
 
 

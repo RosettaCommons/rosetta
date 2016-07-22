@@ -1088,7 +1088,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 	if ( !res_i.is_RNA() ) return;
 
 	//First an easy filter -- only need to put derivs on base's torsion.
-	if ( atom_num_i != core::chemical::rna::chi1_torsion_atom_index( res_i ) ) return;
+	if ( atom_num_i != core::chemical::rna::chi1_torsion_atom_index( res_i.type() ) ) return;
 
 	// Information saved from the last score.
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -1457,7 +1457,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 	//Either we're a backbone oxygen atom, or we're the RNA first base atom (N1 or N9).
 
 	// std::cout << rsd1.aa() << " CHI1 TORSION ATOM ==> "  << chi1_torsion_atom_index( rsd1 )  << " " << chi1_torsion_atom( rsd1 )  << std::endl;
-	if ( atom_num_i == core::chemical::rna::chi1_torsion_atom_index( rsd1 ) ) {
+	if ( atom_num_i == core::chemical::rna::chi1_torsion_atom_index( rsd1.type() ) ) {
 
 		Vector const & centroid_i( base_centroids[i] );
 		kinematics::Stub const & stub_i( base_stubs[i] );

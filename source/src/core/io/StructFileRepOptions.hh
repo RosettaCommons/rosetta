@@ -66,6 +66,7 @@ public:
 	bool ignore_sugars() const;
 	bool ignore_waters() const;
 	bool ignore_zero_occupancy() const;
+	bool guarantee_no_DNA() const;
 	bool keep_input_protonation_state() const;
 	bool preserve_header() const;
 	bool preserve_crystinfo() const;
@@ -104,6 +105,7 @@ public:
 	void set_ignore_sugars( bool const setting );
 	void set_ignore_waters( bool const ignore_waters );
 	void set_ignore_zero_occupancy( bool const ignore_zero_occupancy );
+	void set_guarantee_no_DNA( bool const guarantee_no_DNA );
 	void set_keep_input_protonation_state( bool const keep_input_protonation_state );
 	void set_preserve_header( bool const preserve_header );
 	void set_preserve_crystinfo( bool const preserve_crystinfo );
@@ -157,6 +159,7 @@ private:
 	bool ignore_sugars_;
 	bool ignore_waters_;
 	bool ignore_zero_occupancy_;
+	bool guarantee_no_DNA_;
 	bool keep_input_protonation_state_;
 	bool preserve_header_;
 	bool preserve_crystinfo_;

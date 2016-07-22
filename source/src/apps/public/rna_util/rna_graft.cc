@@ -290,8 +290,8 @@ close_loops( core::pose::Pose & pose,
 				FoldTree f = pose.fold_tree();
 				f.new_jump( n-1, n, n-1 );
 				f.set_jump_atoms( f.num_jump(),
-					core::chemical::rna::chi1_torsion_atom( pose.residue( n-1 ) ),
-					core::chemical::rna::chi1_torsion_atom( pose.residue( n   ) )   );
+					core::chemical::rna::chi1_torsion_atom( pose.residue_type( n-1 ) ),
+					core::chemical::rna::chi1_torsion_atom( pose.residue_type( n   ) )   );
 				pose.fold_tree( f );
 				correctly_add_cutpoint_variants( pose, n-1 );
 				cutpoints.push_back( n-1 );

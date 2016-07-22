@@ -198,7 +198,6 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 
 	block_stack_above_res_ = working_parameters_->working_block_stack_above_res();
 	block_stack_below_res_ = working_parameters_->working_block_stack_below_res();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,7 +353,6 @@ RNA_BaseCentroidChecker::is_strong_base_stack( core::kinematics::Stub const & mo
 	Real const base_axis_CUTOFF = 0.9000;
 	Real const base_planarity_CUTOFF = 0.9000;
 	return check_base_stack( moving_res_base, base_axis_CUTOFF, base_planarity_CUTOFF );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -390,7 +388,6 @@ RNA_BaseCentroidChecker::update_base_stub_list( core::pose::Pose const & pose ){
 		core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
 		base_stub_list_[ moving_res ] = base_stub;
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -432,7 +429,6 @@ RNA_BaseCentroidChecker::check_centroid_interaction( core::kinematics::Stub cons
 	base_stub_list_[ moving_residues_[ 1 ] ] = moving_res_base_stub;
 	found_centroid_interaction_ = check_centroid_interaction( count_data );
 	return found_centroid_interaction_;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,20 +455,14 @@ RNA_BaseCentroidChecker::check_centroid_interaction( StepWiseRNA_CountStruct & c
 		}
 
 		if ( base_pair || stack_base ) break; // found an interaction!
-
 	}
 
 	if ( base_pair ) count_data.base_pairing_count++;
 	if ( stack_base ) count_data.base_stack_count++;
 	if ( base_pair || stack_base ) count_data.pass_base_centroid_screen++;
-
-	//  if ( stack_base ) count_data_.base_stack_count++;
-	//  if ( base_pair ) count_data_.base_pairing_count++;
-
+	
 	if ( !base_pair && !stack_base ) return false;
-
 	return true;
-
 }
 
 
@@ -499,7 +489,6 @@ RNA_BaseCentroidChecker::check_base_stack( Size const & pos1, Size const & pos2,
 
 	if ( pos1 == pos2 ) return true;
 	return check_base_stack(  base_stub_list_[ pos1 ], base_stub_list_[ pos2 ], verbose );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,7 +521,6 @@ RNA_BaseCentroidChecker::check_that_terminal_res_are_unstacked( bool const verbo
 	if ( check_block_stack_res( block_stack_below_res_, core::chemical::rna::BELOW ) ) return false;
 
 	return true;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////

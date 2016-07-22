@@ -101,7 +101,7 @@ setup_sampler( pose::Pose const & pose,
 			runtime_assert( !is_syn || !is_anti );
 			if ( is_north ) pucker_state[i] = NORTH;
 			if ( is_south ) pucker_state[i] = SOUTH;
-			if (  is_purine( pose.residue( curr_rsd ) ) ) {
+			if ( pose.residue_type( curr_rsd ).is_purine() ) {
 				if ( is_syn ) base_state[i] = SYN;
 				if ( is_anti ) base_state[i] = ANTI;
 			} else { // pyrimidine

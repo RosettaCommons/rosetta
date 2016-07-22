@@ -363,7 +363,6 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 				pose_domain_map );
 		}
 	}
-
 }
 
 

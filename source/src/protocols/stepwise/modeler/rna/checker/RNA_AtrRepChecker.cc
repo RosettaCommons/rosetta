@@ -242,7 +242,6 @@ RNA_AtrRepChecker::check_screen( pose::Pose & current_pose_screen ){
 	} else {
 		return false;
 	}
-
 }
 
 ///////////////////////////////////////////

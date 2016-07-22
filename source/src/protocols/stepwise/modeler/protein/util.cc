@@ -62,15 +62,6 @@ namespace modeler {
 namespace protein {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-// void
-// setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
-//  core::pose::Pose const & pose_2,
-//  Size const base_res,
-//  core::id::AtomID_Map< core::id::AtomID > & atom_ID_map){
-//  setup_protein_backbone_atom_id_map( pose_1, pose_2, base_res, atom_ID_map );
-// }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
 void
 setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
 	core::pose::Pose const & pose_2,
@@ -108,7 +99,6 @@ setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
 	}
 
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -164,7 +154,6 @@ get_bridge_res( pose::Pose const & pose,
 		bridge_res = merge_vectors( bridge_res, core::pose::full_model_info::const_full_model_info( pose ).sub_to_full( working_bridge_res ) );
 	}
 	return bridge_res;
-
 }
 
 

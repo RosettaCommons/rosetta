@@ -1617,6 +1617,12 @@ public:
 	/// @brief is Nucleic Acid?
 	bool is_NA() const;
 
+	/// @brief is purine?
+	bool is_purine() const;
+
+	/// @brief is pyrimidine?
+	bool is_pyrimidine() const;
+
 	/// @brief Is this a solvent molecule (SOLVENT property)?
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool is_solvent() const;

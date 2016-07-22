@@ -213,7 +213,10 @@ void RNA_IdealCoord::apply(
 	case na_ura :
 		res_class = 7; break;
 	default :
-		utility_exit_with_message( "Invalid res.aa()!" );
+		// AMW: until we figure out what to do, just don't try to
+		// apply ideal coords to NCNTs.
+		return;
+		//utility_exit_with_message( "Invalid res.aa()!" );
 	}
 
 	if ( pucker == SOUTH ) ++res_class;

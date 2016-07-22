@@ -97,7 +97,6 @@ MultiPhosphateSampler::sample_phosphates(){
 		phosphate_mover.apply( *phosphate_sample_pose_ );
 		if ( phosphate_mover.instantiated_phosphate() ) instantiated_some_phosphate_ = true;
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////

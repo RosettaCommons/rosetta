@@ -127,7 +127,7 @@ SCS_Helper::parse_bfactor_data()
 
 		std::string cdrs[] = { "l1", "l2", "l3", "h1", "h2", "h3" }; // is it ok to just use a list like this?
 		for (auto cdr: cdrs) {
-			assert( fields.at(cdr) == "True" | fields.at(cdr) == "False");
+			assert( fields.at(cdr) == "True" || fields.at(cdr) == "False");
 			cdr_bfactors[cdr] = fields.at(cdr) == "True";
 		}
 
@@ -227,7 +227,7 @@ SCS_Helper::parse_outlier_data()
 		}
 
 		// check for true/false value in outlier field
-		assert( fields["outlier"] == "true" | fields["outlier"] == "false");
+		assert( fields["outlier"] == "true" || fields["outlier"] == "false");
 
 		// compare outlier field, store true if true, else false
 		outliers[fields["cdr"]] = fields["outlier"] == "true";

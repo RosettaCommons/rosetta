@@ -106,20 +106,20 @@ private: //functions
 	void createDihedralList( );
 	MD_HarmonicDihedral createDihedral(
 		const core::conformation::Residue &rsd,
-		std::string name1,
-		std::string name2,
-		std::string name3,
-		std::string name4
+		std::string const & name1,
+		std::string const & name2,
+		std::string const & name3,
+		std::string const & name4
 	);
 	MD_HarmonicDihedral createDihedral(
 		const core::conformation::Residue &rsd1,
 		const core::conformation::Residue &rsd2,
 		const core::conformation::Residue &rsd3,
 		const core::conformation::Residue &rsd4,
-		std::string name1,
-		std::string name2,
-		std::string name3,
-		std::string name4
+		std::string const & name1,
+		std::string const & name2,
+		std::string const & name3,
+		std::string const & name4
 	);
 
 	void setDihedralDerivatives( );

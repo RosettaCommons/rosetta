@@ -26,6 +26,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/util.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
@@ -110,13 +111,11 @@ StepWiseProteinKIC_LoopBridger::get_name() const {
 void
 StepWiseProteinKIC_LoopBridger::apply( core::pose::Pose & pose )
 {
-
 	clock_t const time_start( clock() );
 
 	Pose pose_save = pose;
 
 	setup_torsions( pose );
-
 	figure_out_loop( pose );
 	pose_count_ = 0;
 
@@ -132,7 +131,6 @@ StepWiseProteinKIC_LoopBridger::apply( core::pose::Pose & pose )
 		static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
 	pose = pose_save;
-
 }
 
 
@@ -149,14 +147,12 @@ StepWiseProteinKIC_LoopBridger::KIC_loop_close_with_perturbations( core::pose::P
 		return;
 	}
 
-
 	Size const pre_loop_res  = working_bridge_res_[1] - 1;
 	Size const post_loop_res = working_bridge_res_[3] + 1 ;
 	Real const psi_start = pose.psi( pre_loop_res  );
 	Real const phi_start = pose.phi( post_loop_res );
 
 	for ( int offset1 = -1 * num_perturb_steps_; offset1 <= num_perturb_steps_; offset1++ ) {
-
 		Real const psi_perturb = psi_start + Real( offset1 ) * perturb_torsion_;
 		pose.set_psi( pre_loop_res, psi_perturb );
 
@@ -173,8 +169,6 @@ StepWiseProteinKIC_LoopBridger::KIC_loop_close_with_perturbations( core::pose::P
 
 			// Do it!
 			KIC_loop_close( pose );
-
-
 		}
 	}
 }
@@ -218,7 +212,6 @@ StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose )
 	std::cout << "Found cutpoint residue: " << cutpoint_ << std::endl;
 
 	loop_ = Loop( middle_bridge_res-1 /*start*/, middle_bridge_res+1 /*end*/, cutpoint_ /*cutpoint?*/ );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,32 +219,20 @@ void
 StepWiseProteinKIC_LoopBridger::setup_torsions( pose::Pose const & pose ){
 
 	// Need to fill torsions for moving and bridge residues.
-
 	using namespace core::id;
 	which_torsions_.clear();
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-
 		if ( !is_fixed_res_[ n ] ) {
-
 			// loop residues.
 			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
-
 		} else if ( n < pose.total_residue() && !is_fixed_res_[ n+1 ] ) {
-
 			// psi,omega of 'takeoff' residues
-			//for ( Size k = 2; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
-
 		} else if ( n > 1 && !is_fixed_res_[ n-1 ] ) {
-
 			// phi of 'landing' residues
-			//for ( Size k = 1; k <= 1; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
-
 		}
-
 	}
-
 }
 
 
@@ -267,7 +248,6 @@ StepWiseProteinKIC_LoopBridger::grab_main_chain_torsion_set_list( pose::Pose con
 	std::cout << ' ' << std::endl;
 
 	main_chain_torsion_sets_for_moving_residues_.push_back( main_chain_torsion_set_for_moving_residues );
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -304,7 +284,6 @@ StepWiseProteinKIC_LoopBridger::output_chainTORS( utility::vector1< core::Real >
 		for ( Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << std::endl;
-
 	}
 }
 
@@ -341,7 +320,6 @@ StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
 	chainTORS(atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0);
 
 	if ( verbose_ ) output_chainTORS( dt_ang, db_ang, db_len );
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -459,9 +437,7 @@ StepWiseProteinKIC_LoopBridger::sample_omega_recursively(
 			// readout for checking.
 			fill_chainTORS_info( pose, atoms, dt_ang, db_ang, db_len, start_res_, end_res_ );
 		}
-
 	} else {
-
 		dt_ang[ 3 + 3*offset + 3 ] = OMEGA_MEAN_;
 		sample_omega_recursively( pose, offset + 1, atoms, dt_ang, db_ang, db_len, pivots, order );
 
@@ -480,12 +456,14 @@ void
 StepWiseProteinKIC_LoopBridger::initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence ){
 
 	is_fixed_res_.clear();
-	for ( Size n = 1; n <= working_sequence.size(); n++ ) is_fixed_res_.push_back( false );
+	Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
+	for ( Size n = 1; n <= nres; ++n ) {
+		is_fixed_res_.push_back( false );
+	}
 
 	for ( Size i = 1; i <= fixed_res.size(); i++ ) {
 		is_fixed_res_[ fixed_res[i] ] = true;
 	}
-
 }
 
 

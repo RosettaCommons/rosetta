@@ -217,8 +217,6 @@ public:
 		Size slice = 1;
 		// I want to maintain the same data ordering. Layer seems to be the first index and gets the most stuff multiplied to it
 		for ( Size i = n_xs_; i >= 1; --i ) {
-			//amw std::cout << "Am I struggling to access position[ "<<i<<" ]?" << std::endl;
-			//amw std::cout << "It equals " << position[ i ] << " so I am multiplying slice ( " << slice << " ) by " << (position[i]-1) << std::endl;
 			index += ( position[ i ]-1 ) * slice; // subtracting 1 bc position is 1-max not 0-max-1
 			slice *= n_dimensions_[ i ];
 		}

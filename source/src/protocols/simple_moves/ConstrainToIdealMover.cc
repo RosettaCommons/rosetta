@@ -398,6 +398,7 @@ ConstrainToIdealMover::check_if_really_connected(
 }
 
 //copied from src/protocols/rna/RNA_Minimizer.cc, SVN #44771
+// AMW TODO: adapt version from erraser_minimizer plus figure out how to incorporate the atom_level_domain_map bit...
 bool
 ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k ) const
 {
@@ -405,7 +406,7 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue con
 	if ( just_rna_backbone_ ) { //default
 		if ( !residue2.is_RNA() ) return false;
 		if ( k > residue2.first_sidechain_atom() &&
-				k != core::chemical::rna::first_base_atom_index( residue2 ) ) return false;
+				k != core::chemical::rna::first_base_atom_index( residue2.type() ) ) return false;
 	}
 
 	if ( just_polar_hydrogens_ ) {

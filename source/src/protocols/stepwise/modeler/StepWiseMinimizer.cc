@@ -156,7 +156,7 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 
 	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
 
-		if ( num_pose_minimize_ > 0 &&  n > num_pose_minimize_ ) break;
+		if ( num_pose_minimize_ > 0 && n > num_pose_minimize_ ) break;
 
 		pose = *pose_list_[ n ];
 		Real const score_original = pose.energies().total_energy();
@@ -195,8 +195,6 @@ StepWiseMinimizer::setup_minimizers() {
 	cartesian_minimizer_ = core::optimization::CartesianMinimizerOP( new CartesianMinimizer );
 
 	bool const use_nblist( true );
-	//std::string const min_type = "dfpmin_armijo_nonmonotone";
-	//Real const min_tolerance = 0.000025;
 	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type() /*default */, options_->min_tolerance() /* default */, use_nblist, false, false ) );
 	minimizer_options_->nblist_auto_update( true );
 }

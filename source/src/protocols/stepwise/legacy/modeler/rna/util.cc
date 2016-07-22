@@ -434,48 +434,6 @@ get_tag_from_pdb_filename( std::string const & pdb_filename ){
 	return tag;
 }
 
-//DUPLICATE OF CODE IN StepWiseWorkingParametersSetup.cc
-void
-move_jump_atom_to_base( core::kinematics::FoldTree & fold_tree, std::string const & working_sequence ){
-
-	Size const num_cutpoint = fold_tree.num_cutpoint();
-
-	for ( Size i = 1; i <= num_cutpoint; i++ ) {
-		Size const k = fold_tree.upstream_jump_residue( i );
-		Size const m = fold_tree.downstream_jump_residue( i );
-
-		char upstream_res = working_sequence[k - 1];
-		char downstream_res = working_sequence[m - 1];
-
-		//Base atoms...
-		//chi_atoms(1)[4] )=  C2 if URA or RCY
-		//chi_atoms(1)[4] )=  C4 if RGU or RAD
-		std::string upstream_jump_atom;
-		std::string downstream_jump_atom;
-
-		if ( upstream_res == 'u' || upstream_res == 'c' ) {
-			upstream_jump_atom = " C2 ";
-		} else if ( upstream_res == 'a' || upstream_res == 'g' ) {
-			upstream_jump_atom = " C4 ";
-		} else {
-			utility_exit_with_message( "Invalid upstream_res!!" );
-		}
-
-		if ( downstream_res == 'u' || downstream_res == 'c' ) {
-			downstream_jump_atom = " C2 ";
-		} else if ( downstream_res == 'a' || downstream_res == 'g' ) {
-			downstream_jump_atom = " C4 ";
-		} else {
-			utility_exit_with_message( "Invalid downstream_res!!" );
-		}
-
-		TR << "upstream_res = " << k << upstream_res << " upstream_jump_atom = " << upstream_jump_atom;
-		TR << " downstream_res = " << k << downstream_res << " downstream_jump_atom = " << downstream_jump_atom << std::endl;
-
-		fold_tree.set_jump_atoms( i, downstream_jump_atom, upstream_jump_atom );
-
-	}
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

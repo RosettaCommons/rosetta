@@ -182,8 +182,6 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker():
 	//Play it safe, use num_clash_atom_cutoff_(3):
 	// ....with num_clash_atom cutoff equals 1...actually got full_atom_rep_count:43540/43622  bin_rep: 55456/682546
 	// ....with num_clash_atom cutoff equals 3...actually got full_atom_rep_count:43622/43622  bin_rep: 73868/682546
-
-
 }
 
 //////////////////////Note////////////////////////////
@@ -454,20 +452,6 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 		}
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	////////////////////OK, now we delete the matching residues in working_pose//////////////////////////////////////////////////////
-	/*
-	for ( Size VDW_rep_seq = VDW_rep_screen_pose.total_residue(); VDW_rep_seq >= 1; VDW_rep_seq-- ){
-	if ( VDW_rep_delete_res_list.has_value( VDW_rep_seq ) ){
-	VDW_rep_screen_pose.conformation().delete_residue_slow( VDW_rep_seq );
-	}
-	}
-
-	if ( output_pdb_ ) VDW_rep_screen_pose.dump_pdb( "VDW_rep_screen_bin_AFTER_DELETE_MATCHING_VDW_rep_screen_pose.pdb" );
-
-	*/
-
 
 	if ( verbose_ ) {
 		TR << "Total time get_matching_res_in_VDW_rep_screen_pose: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << " SECONDS" << std::endl;

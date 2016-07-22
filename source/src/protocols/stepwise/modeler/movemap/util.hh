@@ -48,13 +48,6 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	utility::vector1< core::Size > const & working_minimize_res,
 	bool const move_takeoff_torsions = true );
 
-// no longer appears in use.
-void
-check_move_map_against_working_parameters( core::pose::Pose const & pose ,
-	core::kinematics::MoveMapCOP minimize_map,
-	working_parameters::StepWiseWorkingParametersCOP working_parameters );
-
-
 } //movemap
 } //modeler
 } //stepwise

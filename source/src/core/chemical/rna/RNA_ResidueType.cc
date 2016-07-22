@@ -81,16 +81,35 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	}
 	runtime_assert( is_virtual_.size() == residue_type->natoms() );
 
-	o2prime_index_ = residue_type->atom_index( " O2'" );
+	// There must be EITHER O2', a replacement like F2', or a virt.
+	if ( residue_type->has( " O2'" ) ) {
+		o2prime_index_ = residue_type->atom_index( " O2'" );
+	} else {
+		o2prime_index_ = residue_type->atom_index( " F2'" );
+	}
 	ho2prime_index_ = residue_type->atom_index( "HO2'" );
 
 	p_atom_index_  = residue_type->atom_index( " P  " );
-	op2_atom_index_ = residue_type->atom_index( " OP2" );
-	op1_atom_index_ = residue_type->atom_index( " OP1" );
+	
+	// Could be phosphorothioate
+	if ( residue_type->has( " OP2" ) ) {
+		op2_atom_index_ = residue_type->atom_index( " OP2" );
+	} else {
+		op2_atom_index_ = residue_type->atom_index( " SP2" );
+	}
+	if ( residue_type->has( " OP1" ) ) {
+		op1_atom_index_ = residue_type->atom_index( " OP1" );
+	} else {
+		op1_atom_index_ = residue_type->atom_index( " SP1" );
+	}
 	o5prime_index_  = residue_type->atom_index( " O5'" );
 	o3prime_index_  = residue_type->atom_index( " O3'" );
 
-	o4prime_index_ = residue_type->atom_index( " O4'" );
+	if ( residue_type->has( " O4'" ) ) {
+		o4prime_index_ = residue_type->atom_index( " O4'" );
+	} else {
+		o4prime_index_ = residue_type->atom_index( " S4'" );
+	}
 	c1prime_index_ = residue_type->atom_index( " C1'" );
 	c2prime_index_ = residue_type->atom_index( " C2'" );
 	c4prime_index_ = residue_type->atom_index( " C4'" );

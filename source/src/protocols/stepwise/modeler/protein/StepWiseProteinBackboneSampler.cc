@@ -33,6 +33,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -706,7 +707,10 @@ StepWiseProteinBackboneSampler::set_moving_residues( utility::vector1< Size > co
 void
 StepWiseProteinBackboneSampler::set_fixed_residues( utility::vector1< Size > const & fixed_res ){
 	is_fixed_res_input_.clear();
-	for ( Size n = 1; n <= working_parameters_->working_sequence().size(); n++ ) is_fixed_res_input_.push_back( false );
+	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
+	for ( Size n = 1; n <= nres; ++n ) {
+		is_fixed_res_input_.push_back( false );
+	}
 	for ( Size i = 1; i <= fixed_res.size(); i++ ) {
 		is_fixed_res_input_[ fixed_res[i] ] = true;
 	}
@@ -719,7 +723,6 @@ void
 StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const & template_pose, ResMap const & ghost_map ) const
 {
 	using namespace core::id;
-
 	template_pose.residue( 1 ); // force a refold.
 
 	for ( ResMap::const_iterator it=ghost_map.begin(), end = ghost_map.end(); it != end; ++it ) {
@@ -727,7 +730,6 @@ StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const
 		Size const & template_res( it->second );
 
 		for ( Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
-
 			if ( pose.residue_type( res ).atom_name( j ) !=
 					template_pose.residue_type( template_res ).atom_name( j ) ) {
 				TR << "PROBLEM! " << res << " " << pose.residue( res ).atom_name( j ) <<  "  !=  " <<
@@ -736,9 +738,7 @@ StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const
 			}
 
 			pose.set_xyz( AtomID( j, res ), template_pose.xyz( AtomID( j, template_res ) ) );
-
 		}
-
 	}
 
 	pose.residue( 1 ); // force a refold.
@@ -771,7 +771,6 @@ StepWiseProteinBackboneSampler::figure_out_fold_tree( ResMap const & ghost_map )
 	}
 
 	return f;
-
 }
 
 void
@@ -802,7 +801,6 @@ StepWiseProteinBackboneSampler::setup_centroid_screen(
 
 	set_centroid_scorefxn( centroid_scorefxn );
 	set_nstruct_centroid( nstruct_centroid );
-
 }
 
 
@@ -858,7 +856,6 @@ StepWiseProteinBackboneSampler::prepare_ghost_pose( core::pose::Pose const & pos
 
 	centroid_scorefxn_->show( TR, ghost_pose_blowup );
 	TR << " REFERENCE SCORES " << centroid_score_ref_ << " " << centroid_vdw_ref_ << std::endl;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -897,7 +894,6 @@ StepWiseProteinBackboneSampler::convert_to_centroid( core::pose::Pose & pose ) {
 	core::scoring::dssp::Dssp dssp_obj( pose );
 	dssp_obj.insert_ss_into_pose( pose );
 	//pose.dump_pdb( "CENTROID.pdb" );
-
 }
 
 
@@ -918,7 +914,6 @@ StepWiseProteinBackboneSampler::filter_and_save( core::pose::Pose & pose,
 
 	Real centroid_score( 0.0 );
 	if ( centroid_screen_ ) {
-
 		if ( ghost_loops_ ) {
 			//this may be a little inefficient, since all internal dofs needs to be recalculated. Its safe, though, I think.
 			copy_coords( *ghost_pose_, pose, ghost_map_ );
@@ -929,23 +924,19 @@ StepWiseProteinBackboneSampler::filter_and_save( core::pose::Pose & pose,
 			if ( apply_vdw_cut_ && centroid_vdw > centroid_vdw_ref_ ) return;
 
 		} else {
-
 			centroid_score = (*centroid_scorefxn_)( pose );
 			// Keep running tabs on best score seen so far.
 			if ( centroid_score < centroid_score_ref_ ) centroid_score_ref_ = centroid_score;
 		}
 
 		Real const centroid_score_diff = centroid_score - centroid_score_ref_;
-
 		if (  centroid_score_diff >  centroid_score_diff_cut_ )  return;
 
 		//TR << "COMPARING " << centroid_score << " " << centroid_score_ref_ << std::endl;
-
 	}
 
 	main_chain_torsion_sets_for_moving_residues_.push_back( main_chain_torsion_set_for_moving_residues_ );
 	centroid_scores_.push_back( centroid_score );
-
 }
 
 

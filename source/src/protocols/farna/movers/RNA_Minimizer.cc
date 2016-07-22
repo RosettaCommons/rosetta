@@ -82,7 +82,7 @@ namespace protocols {
 namespace farna {
 namespace movers {
 
-RNA_Minimizer::RNA_Minimizer( RNA_MinimizerOptionsCOP options /* = 0 */ ):
+RNA_Minimizer::RNA_Minimizer( options::RNA_MinimizerOptionsCOP options /* = 0 */ ):
 	Mover(),
 	options_( options ),
 	coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
@@ -115,7 +115,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 		if ( !scorefxn_->has_nonzero_weight( base_pair_constraint ) )  scorefxn_->set_weight( base_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
-	if ( options_ == 0 ) options_ = RNA_MinimizerOptionsOP( new RNA_MinimizerOptions );
+	if ( options_ == 0 ) options_ = options::RNA_MinimizerOptionsOP( new options::RNA_MinimizerOptions );
 	if ( options_->vary_bond_geometry() ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
 	if ( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ) scorefxn_->set_weight( linear_chainbreak, 5.0 );
 

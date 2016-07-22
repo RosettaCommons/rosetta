@@ -56,7 +56,7 @@ SideChainCopier::~SideChainCopier()
 
 //////////////////////////////////////////////////////////////////////////////////
 void
-SideChainCopier::apply( core::pose::Pose & viewer_pose ){
+SideChainCopier::apply( core::pose::Pose & viewer_pose ) {
 
 	Pose pose = viewer_pose; // to prevent crashes in graphics.
 
@@ -91,7 +91,6 @@ SideChainCopier::apply( core::pose::Pose & viewer_pose ){
 
 			pose.conformation().replace_residue( n, *rsd, false /*orient_backbone*/ );
 		}
-
 	}
 
 	core::scoring::constraints::map_constraints_from_original_pose( viewer_pose, pose );

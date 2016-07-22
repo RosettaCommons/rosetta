@@ -34,16 +34,13 @@ namespace mover {
 
 VaryLoopLengthMover::VaryLoopLengthMover():
 	protocols::moves::Mover( "VaryLoopLengthMover" )
-{
-}
+{}
 
 VaryLoopLengthMover::~VaryLoopLengthMover(){}
 
 VaryLoopLengthMover::VaryLoopLengthMover( VaryLoopLengthMover const & src ):
 	protocols::moves::Mover( src )
-{
-
-}
+{}
 
 ///////////////////////////////////////////////////////////////////////////
 std::string

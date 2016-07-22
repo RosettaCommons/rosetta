@@ -126,3 +126,4 @@ I	-0.424000	2.360000	-0.424000	2.360000 # radius/wdepth: taken from MM3 forcefie
 NXX	-0.200000	1.850000	-0.200000	1.850000  # peptoid nitrogen, trying much smaller radius
 X	 0.000000	0.000000	 0.000000	0.000000
 VIRT	 0.000000	0.000000	 0.000000	0.000000
+ZN2	 -0.250000	1.950000	 -0.250000	1.950000 #R Reddy, et al, J. Am. Chem. Soc., in press.

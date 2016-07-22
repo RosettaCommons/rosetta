@@ -723,8 +723,7 @@ VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewer_pose ){
 	distal_partition_res_.clear();
 	already_virtualized_res_list_.clear();
 
-
-	Size const nres = working_parameters_->working_sequence().size();
+	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
 	ObjexxFCL::FArray1D < bool > partition( nres, false );
 	Size const jump = pose.fold_tree().jump_nr( sugar_modeling_.moving_res, sugar_modeling_.reference_res );
 	runtime_assert( jump > 0 );

@@ -132,6 +132,10 @@ Options = Option_Group( '',
 		Option( 'ignore_waters', 'Boolean',
 				desc="Ignore HOH residues found in PDB file. Note: HOH residues, and waters in general, are incompatible with the default solvation model (LK).",
 				default='true' ),
+		
+		Option( 'guarantee_no_DNA', 'Boolean',
+				desc="Do not rename A/C/G to DA/DC/DG even if missing their 2' hydroxyl; expert knowledge says this structure has no DNA.",
+				default='false' ),
 
 		# Inclusion options
 		Option( 'add_orbitals', 'Boolean',
@@ -6655,6 +6659,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),
           Option( 'bps_database', 'Boolean', desc='Generate a database of base pair steps extracted from a big RNA file', default='false' ),
 				), # -rna:farna:database
+			Option_Group('erraser',
+				Option('constrain_P', 'Boolean', desc='constrain phosphate', default='false' ),
+				Option('fixed_res', 'IntegerVector', desc='optional: residues to be held fixed in minimizer', default=[] ),
+				Option('ready_set_only', 'Boolean', desc='load in and output directly for reformatting the pdb', default='false' ),
+				Option('skip_minimize', 'Boolean', desc='output the pdb without minimization', default='false' ),
+				Option('attempt_pyrimidine_flip', 'Boolean', desc='try to flip pyrimidine by 180 degrees and pick the better energy conformer', default='false' ),
+			), #-rna:farna:erraser
 
 		   Option_Group('minimize',
           Option( 'minimize_rounds', 'Integer', desc='The number of rounds of minimization.', default = '2' ),

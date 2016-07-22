@@ -81,7 +81,6 @@ StepWiseProteinCCD_MultiPoseCloser::apply( core::pose::Pose & pose )
 			TR.Debug << ccd_closer_->which_torsions() << ": " << ccd_closer_->main_chain_torsion_set() << std::endl;
 			main_chain_torsion_sets_.push_back( ccd_closer_->main_chain_torsion_set() );
 		}
-
 	}
 
 	Size const num_successes = main_chain_torsion_sets_.size();
@@ -94,7 +93,6 @@ StepWiseProteinCCD_MultiPoseCloser::apply( core::pose::Pose & pose )
 		static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
 	pose = pose_save;
-
 }
 
 utility::vector1< id::TorsionID > const &

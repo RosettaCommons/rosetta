@@ -160,8 +160,8 @@ bool
 is_cutpoint_closed( pose::Pose const & pose, Size const seq_num ){
 	runtime_assert( seq_num > 0 );
 	runtime_assert( seq_num <= pose.total_residue() );
-	if ( pose.residue( seq_num  ).has_variant_type( chemical::CUTPOINT_LOWER )  ) {
-		runtime_assert ( pose.residue( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
+	if ( pose.residue_type( seq_num  ).has_variant_type( chemical::CUTPOINT_LOWER )  ) {
+		runtime_assert ( pose.residue_type( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
 		return true;
 	}
 	return false;
@@ -703,8 +703,8 @@ merge_two_poses( pose::Pose & pose,
 	if ( !connect_residues_by_bond ) {
 		jump_partners1.push_back( lower_merge_res );
 		jump_partners2.push_back( upper_merge_res );
-		jump_atoms1.push_back( chemical::rna::default_jump_atom( pose1.residue( working_res1.index( lower_merge_res ) ) ) ); // rna specific?
-		jump_atoms2.push_back( chemical::rna::default_jump_atom( pose2.residue( working_res2.index( upper_merge_res ) ) ) ); // rna specific?
+		jump_atoms1.push_back( chemical::rna::default_jump_atom( pose1.residue_type( working_res1.index( lower_merge_res ) ) ) ); // rna specific?
+		jump_atoms2.push_back( chemical::rna::default_jump_atom( pose2.residue_type( working_res2.index( upper_merge_res ) ) ) ); // rna specific?
 	}
 	runtime_assert( jump_partners1.size() == jump_partners2.size() );
 
@@ -1109,7 +1109,7 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 void
 fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res ) {
 
-	if ( !pose.residue(res ).is_RNA() ) return;
+	if ( !pose.residue_type(res ).is_RNA() ) return;
 	remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, res );
 	remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res );
 
@@ -1469,7 +1469,7 @@ make_variants_match( pose::Pose & pose,
 	Size const n,
 	chemical::VariantType const variant_type )
 {
-	if ( reference_pose.residue( n ).has_variant_type( variant_type ) ) {
+	if ( reference_pose.residue_type( n ).has_variant_type( variant_type ) ) {
 		add_variant_type_to_pose_residue( pose, variant_type, n );
 	} else {
 		remove_variant_type_from_pose_residue( pose, variant_type, n );
@@ -1518,8 +1518,8 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 		if ( !pose.fold_tree().is_cutpoint( n ) ) continue;
 
 		// Skip virtual anchors
-		if ( pose.residue( n ).aa() == core::chemical::aa_vrt ) continue;
-		if ( pose.residue( n+1 ).aa() == core::chemical::aa_vrt ) continue;
+		if ( pose.residue_type( n ).aa() == core::chemical::aa_vrt ) continue;
+		if ( pose.residue_type( n+1 ).aa() == core::chemical::aa_vrt ) continue;
 
 		// must be in different partitions to qualify as 'moving'
 		if ( moving_partition_res.has_value( n ) == moving_partition_res.has_value( n+1 ) ) continue;

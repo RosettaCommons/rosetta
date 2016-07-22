@@ -84,7 +84,7 @@ setup_pose_input_stream(
 	utility::options::StringVectorOption const & option_s1,
 	utility::options::StringVectorOption const & option_silent1,
 	utility::options::StringVectorOption const & option_tags1
-){
+) {
 	using namespace import_pose::pose_stream;
 
 	PoseInputStreamOP input1;
@@ -107,7 +107,6 @@ setup_pose_input_stream(
 	}
 
 	return input1;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +166,6 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 			pdb_tags, silent_files_in,
 			option[ in::file::input_res ](), option[ input_res2 ]() );
 	}
-
 }
 
 
@@ -318,7 +316,6 @@ InputStreamWithResidueInfo::apply_current_pose_segment( pose::Pose & pose,
 		id::AtomID_Map< id::AtomID > atom_ID_map = align::create_alignment_id_map_legacy( pose, import_pose, res_map );
 		scoring::superimpose_pose( pose, import_pose, atom_ID_map );
 	}
-
 }
 
 
@@ -356,7 +353,6 @@ InputStreamWithResidueInfo::cleanup_pose( pose::Pose & import_pose ) const {
 			}
 		}
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +420,6 @@ initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithRes
 		InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP( new PDBPoseInputStream( pose_names ) ), input_res_vectors[ i ] ) );
 		input_streams_with_residue_info.push_back( input_stream );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////

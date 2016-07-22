@@ -99,6 +99,9 @@ D_AA #Chirality.  This is defined as the chirality of the first chiral mainchain
 ACHIRAL_BACKBONE
 TAUTOMER
 
+# NUCLEIC SPECIFIC PROPERTIES
+PURINE
+PYRIMIDINE
 
 # CARBOHYDRATE-SPECIFIC PROPERTIES
 ## Size

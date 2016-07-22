@@ -111,7 +111,7 @@ correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size 
 
 bool is_cutpoint_closed_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id );
 
-bool is_cutpoint_closed_atom( core::conformation::Residue const & rsd, id::AtomID const & id );
+bool is_cutpoint_closed_atom( core::chemical::ResidueType const & rsd, id::AtomID const & id );
 
 void output_boolean( std::string const & tag, bool boolean );
 
@@ -179,6 +179,15 @@ get_suite_torsion_info( core::pose::Pose const & pose, Size const i );
 void
 apply_suite_torsion_info( core::pose::Pose & pose,
 	utility::vector1< std::pair< id::TorsionID, Real > > const & suite_torsion_info );
+
+std::string
+remove_bracketed( std::string const & sequence );
+
+void
+remove_and_store_bracketed( 
+	std::string const & working_sequence, 
+	std::string & working_sequence_clean, 
+	std::map< Size, std::string > & special_res );
 
 } //ns rna
 } //ns pose

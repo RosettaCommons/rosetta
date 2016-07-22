@@ -19,6 +19,7 @@ sources = {
     "protocols/farna": [
 	"FARNA_Optimizer",
 	"RNA_DeNovoProtocol",
+	"ErraserMinimizerMover",
 	"RNA_FragmentMonteCarlo",
 	"util",
     ],

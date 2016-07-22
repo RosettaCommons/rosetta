@@ -107,7 +107,6 @@ StepWiseClusterer::apply( pose::Pose const & pose ) {
 	} else {
 		//   TR << TR.Red << "not including in pose list. Score:  " << total_energy_from_pose( pose ) << "  rmsd " << rmsd_ << "  cutoff: " << cluster_rmsd_ << "  list size " << pose_list_.size() << "  max_decoys " << max_decoys_ << TR.Reset << std::endl;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,6 +125,7 @@ StepWiseClusterer::cluster()
 
 	for ( core::Size n = 1; n <= starting_pose_list.size(); n++ ) {
 		pose::PoseOP pose = starting_pose_list[ n ];
+		runtime_assert( pose != NULL );
 		if ( check_screen_and_kick_out_displaced_model( *pose ) ) pose_list_.push_back( pose );
 		sort_pose_list();
 	}
@@ -181,7 +181,6 @@ StepWiseClusterer::kick_out_pose_at_idx( core::Size const n ){
 	for ( core::Size k = 1; k <= starting_pose_list.size(); k++ ) {
 		if ( k != n ) pose_list_.push_back( starting_pose_list[k] );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,7 +203,7 @@ StepWiseClusterer::check_for_closeness( pose::Pose const & pose1, pose::Pose con
 	if ( !set_rmsd ) {
 		// this is the super-robust way to calculate RMSD.
 		rmsd_ = get_rmsd( pose1, pose2, calc_rms_res_,
-			do_checks_ /*check align at superimpose res*/,
+			do_checks_, //false /*check align at superimpose res*/,
 			do_checks_ /*check switch*/ );
 	}
 
@@ -235,7 +234,6 @@ StepWiseClusterer::initialize_parameters( pose::Pose const & pose ) {
 	}
 
 	initialized_ = true;
-
 }
 
 } //align

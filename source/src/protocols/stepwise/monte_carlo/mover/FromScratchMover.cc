@@ -87,7 +87,6 @@ FromScratchMover::apply( core::pose::Pose & pose,
 	fix_up_jump_atoms_and_residue_type_variants( pose );
 
 	sample_by_swa( pose, 2 );
-
 }
 
 

@@ -34,7 +34,6 @@ get_file_name( std::string const & silent_file, std::string const & tag )
 	std::string silent_file_sample( silent_file );
 	silent_file_sample.replace( pos, 4, tag+".out" );
 	return silent_file_sample;
-
 }
 
 

@@ -118,7 +118,6 @@ enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
 		backbone_sampler.main_chain_torsion_set_lists_real(),
 		false /*choose_random*/ ) );
 	sampler = sampler::StepWiseSamplerSizedOP( new sampler::StepWiseSamplerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/) );
-
 }
 
 } //loop_close

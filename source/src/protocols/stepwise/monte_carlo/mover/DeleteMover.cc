@@ -125,8 +125,6 @@ DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & re
 		if ( keep_remainder_pose  ) minimize_after_delete( pose );
 		if ( keep_sliced_out_pose ) minimize_after_delete( *sliced_out_pose_op );
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,51 +150,48 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 	keep_sliced_out_pose = decide_to_keep_pose( *sliced_out_pose_op );
 
 	if ( keep_sliced_out_pose ) full_model_info.add_other_pose( sliced_out_pose_op );
+	if ( keep_remainder_pose ) return;
+	// remainder pose is a single nucleotide. no need to keep track of it anymore.
 
-	if ( !keep_remainder_pose ) { // remainder pose is a single nucleotide. no need to keep track of it anymore.
-
-		runtime_assert( full_model_info.res_list().size() > 0 );
-		Size const res_in_remainder_pose = full_model_info.res_list()[ 1 ];
-		bool pose_is_alone( false );
-		if ( keep_sliced_out_pose ) { // go to the sliced out pose.
-			Size const sliced_out_pose_idx = full_model_info.get_idx_for_other_pose( *sliced_out_pose_op );
-			switch_focus_to_other_pose( pose, sliced_out_pose_idx );
-		} else if ( full_model_info.other_pose_list().size() > 0 ) { // switch focus randomly.
-			switch_focus_among_poses_randomly( pose, 0, true /*force_switch*/ );
-		} else {
-			pose_is_alone = true;
-		}
-
-		if ( pose_is_alone ) {
-			TR << TR.Red << "EMPTY POSE! Keeping the pose with number of residues " << pose.total_residue() << TR.Reset << std::endl;
-
-			core::pose::PoseCOP old_pose_cop = pose.clone();
-			FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();
-			// Rosetta's Pose object craps out if it is blank.
-			// Still want to have blank poses represent fully random chain in stepwise monte carlo,
-			// and would be a good state to have, or at least transit through.
-			// Creating a single virtual residue, with res_list cleared, acts as a very
-			// special case, and rest of the SWA_MonteCarlo code checks for res_list.size().
-			core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type( 1 ).residue_type_set();
-			core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3( "VRT" ) );
-			core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
-			pose.clear();
-			pose.append_residue_by_bond( *new_res );
-
-			new_full_model_info->clear_res_list();
-			new_full_model_info->update_submotif_info_list();
-			new_full_model_info->clear_other_pose_list();
-			set_full_model_info( pose, new_full_model_info );
-			protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, *old_pose_cop );
-		} else {
-			FullModelInfo & new_full_model_info = nonconst_full_model_info( pose );
-			Size const remainder_pose_idx = new_full_model_info.get_idx_for_other_pose_with_residue( res_in_remainder_pose );
-			new_full_model_info.remove_other_pose_at_idx( remainder_pose_idx );
-			keep_remainder_pose = true; // will tell outside functions to clean up pose variants, etc.
-		}
-
+	runtime_assert( full_model_info.res_list().size() > 0 );
+	Size const res_in_remainder_pose = full_model_info.res_list()[ 1 ];
+	bool pose_is_alone( false );
+	if ( keep_sliced_out_pose ) { // go to the sliced out pose.
+		Size const sliced_out_pose_idx = full_model_info.get_idx_for_other_pose( *sliced_out_pose_op );
+		switch_focus_to_other_pose( pose, sliced_out_pose_idx );
+	} else if ( full_model_info.other_pose_list().size() > 0 ) { // switch focus randomly.
+		switch_focus_among_poses_randomly( pose, 0, true /*force_switch*/ );
+	} else {
+		pose_is_alone = true;
 	}
-
+	
+	if ( pose_is_alone ) {
+		TR << TR.Red << "EMPTY POSE! Keeping the pose with number of residues " << pose.total_residue() << TR.Reset << std::endl;
+		
+		core::pose::PoseCOP old_pose_cop = pose.clone();
+		FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();
+		// Rosetta's Pose object craps out if it is blank.
+		// Still want to have blank poses represent fully random chain in stepwise monte carlo,
+		// and would be a good state to have, or at least transit through.
+		// Creating a single virtual residue, with res_list cleared, acts as a very
+		// special case, and rest of the SWA_MonteCarlo code checks for res_list.size().
+		core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type( 1 ).residue_type_set();
+		core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3( "VRT" ) );
+		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
+		pose.clear();
+		pose.append_residue_by_bond( *new_res );
+		
+		new_full_model_info->clear_res_list();
+		new_full_model_info->update_submotif_info_list();
+		new_full_model_info->clear_other_pose_list();
+		set_full_model_info( pose, new_full_model_info );
+		protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, *old_pose_cop );
+	} else {
+		FullModelInfo & new_full_model_info = nonconst_full_model_info( pose );
+		Size const remainder_pose_idx = new_full_model_info.get_idx_for_other_pose_with_residue( res_in_remainder_pose );
+		new_full_model_info.remove_other_pose_at_idx( remainder_pose_idx );
+		keep_remainder_pose = true; // will tell outside functions to clean up pose variants, etc.
+	}
 }
 
 
@@ -220,7 +215,6 @@ DeleteMover::minimize_after_delete( pose::Pose & pose ) const{
 	stepwise_modeler_->set_working_prepack_res( full_to_sub( interface_res_, pose ) );
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	stepwise_modeler_->apply( pose );
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -242,7 +236,6 @@ DeleteMover::wipe_out_moving_residues( pose::Pose & pose ) {
 	}
 
 	minimize_after_delete_ = minimize_after_delete_save;
-
 }
 
 ///////////////////////////////////////////////////////////////////

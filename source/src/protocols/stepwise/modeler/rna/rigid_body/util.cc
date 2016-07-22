@@ -135,7 +135,7 @@ setup_pose_with_moving_residue_alternative_list(
 
 	//FANG: Why this does not allow syn pyrimidine by option? Does it matter?
 	ChiState chi_state =
-		( is_purine( pose.residue( moving_res ) ) ) ? ANY_CHI: ANTI;
+		( pose.residue_type( moving_res ).is_purine() ) ? ANY_CHI: ANTI;
 
 	PuckerState pucker_state = ANY_PUCKER;
 
@@ -276,7 +276,6 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	TR.Debug << std::setw( 50 ) << std::left << "Analysis " + DOF_one + "_" + DOF_two;
 	TR.Debug << " tot_count = " << std::setw( 15 ) << std::left << total_count << " tot_occ = " << std::setw( 15 ) << std::left << total_occupied_bin;
 	TR.Debug << " tot_count/tot_occ_bin = " << std::setw( 5 ) << std::left << ( double( total_count )/double( total_occupied_bin ) ) << std::endl;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,7 +311,6 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	analyze_base_bin_map( base_bin_map, "euler_z", "gamma", foldername );
 
 	TR.Debug << "centroid_bin_size = " << STANDARD_CENTROID_BIN_SIZE << "  euler_angle_bin_size = " <<  STANDARD_EULER_ANGLE_BIN_SIZE << "  euler_z_bin_size = " << STANDARD_EULER_Z_BIN_SIZE << std::endl;
-
 }
 
 

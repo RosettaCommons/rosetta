@@ -236,7 +236,6 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 	}
 
 	pose = best_pose;
-
 }
 
 ///////////////////////////////////////////

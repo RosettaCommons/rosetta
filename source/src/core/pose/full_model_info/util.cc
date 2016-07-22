@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <core/pose/full_model_info/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/types.hh>
@@ -389,6 +390,9 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	std::string const & sequence = full_model_info.full_sequence();
 
+	// Clean the sequence of all polluting annotations
+	std::string const clean_seq = core::pose::rna::remove_bracketed( sequence ); 
+
 	// very special case -- blank pose. could generalize to any pose with a virtual residue at end
 	if ( res_list.size() == 0 && pose.total_residue() == 1 && pose.residue_type( 1 ).name3() == "XXX" ) return true;
 
@@ -397,13 +401,13 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return false;
 	}
 
-	if ( sequence.size() != conventional_numbering.size() ) {
+	if ( clean_seq.size() != conventional_numbering.size() ) {
 		TR << "sequence.size() != conventional_numbering.size()" << std::endl;
 		return false;
 	}
 
 
-	if ( sequence.size() < pose.total_residue() ) {
+	if ( clean_seq.size() < pose.total_residue() ) {
 		TR << "sequence.size() << pose.total_residue()" << std::endl;
 		return false;
 	}
@@ -411,7 +415,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	for ( Size n = 1; n <= res_list.size(); n++ ) {
 
 		Size const & res_num = res_list[ n ];
-		char sequence_char = sequence[ res_num   - 1 ];
+		char sequence_char = clean_seq[ res_num   - 1 ];
 
 		if ( sequence_char == 'n' ) continue; // any nucleotide
 		if ( sequence_char != pose.residue_type( n ).name1() ) {
@@ -419,6 +423,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 			TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
 			TR << "POSE SEQUENCE " << pose.sequence() << std::endl;
 			TR << "FULL MODEL SEQUENCE " << sequence << std::endl;
+			TR << "CLEANED FM SEQUENCE " << clean_seq << std::endl;
 			return false;
 		}
 	}

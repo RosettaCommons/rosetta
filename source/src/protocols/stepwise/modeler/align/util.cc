@@ -53,7 +53,10 @@ get_rmsd( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
 		pose_aligner.set_root_partition_res( modeler::figure_out_root_partition_res( pose2, calc_rms_res ) );
 	}
 	pose_aligner.initialize( pose1 );
+	// HOW did it accept check_align_at_superimpose_res instead of a pose at first??
 	core::Real const rmsd = pose_aligner.get_rmsd_no_superimpose( pose1, check_align_at_superimpose_res );
+	//TR << "Immediately before problem call to get_rmsd_no_superimpose, check_align is " << check_align_at_superimpose_res << std::endl;
+	//core::Real const rmsd = pose_aligner.get_rmsd_no_superimpose( pose1, pose2, check_align_at_superimpose_res );
 
 	if ( check_switch ) {
 		core::Real const rmsd_switch = get_rmsd( pose2, pose1, calc_rms_res,

@@ -864,11 +864,19 @@ Conformation::append_residue_by_bond(
 
 	Size const seqpos( size() + 1 );
 	bool const polymer_connection( residue_connection_index == 0 );
-
 	if ( polymer_connection ) anchor_pos = seqpos - 1; // polymer connection is to the preceding residue
 	if ( polymer_connection ) anchor_residue_connection_index  = residue_( anchor_pos ).type().upper_connect_id();
 	if ( polymer_connection ) residue_connection_index = new_rsd.type().lower_connect_id();
-
+	/*bool upper_to_upper = false;
+	if ( polymer_connection ) {
+		// AMW: account for special upper-to-upper RNA-protein connection
+		upper_to_upper = residue_( anchor_pos ).is_RNA() && new_rsd.is_protein();
+		if ( upper_to_upper ) {
+			residue_connection_index = new_rsd.type().upper_connect_id();
+		} else {
+			residue_connection_index = new_rsd.type().lower_connect_id();
+		}
+	}*/
 	Residue const & anchor_rsd( residue_( anchor_pos ) ); // no call to residue(anchor_pos)
 
 	// debug
@@ -880,7 +888,9 @@ Conformation::append_residue_by_bond(
 			err << "Can't create a polymer bond after residue " << anchor_pos
 				<< " due to incompatible type: " << anchor_rsd.type().name();
 			utility_exit_with_message(err.str());
-		} else if ( !new_rsd.is_polymer() || !new_rsd.type().lower_connect_id() ) {
+		} else if ( !new_rsd.is_polymer() /* || 
+				( !new_rsd.type().lower_connect_id() && !upper_to_upper ) ||
+				( !new_rsd.type().upper_connect_id() && upper_to_upper )*/ ) {
 			std::stringstream err;
 			err << "Can't create a polymer bond to new residue " << seqpos
 				<< " due to incompatible type: " << new_rsd.type().name();
@@ -900,7 +910,7 @@ Conformation::append_residue_by_bond(
 
 		if ( polymer_connection ) {
 			// polymer connection
-			new_rsd_connection = new_rsd.lower_connect();
+			new_rsd_connection = /*upper_to_upper ? new_rsd.upper_connect() : */new_rsd.lower_connect();
 			anchor_rsd_connection = anchor_rsd.upper_connect();
 		} else {
 			// using a non-polymer residue-residue connection
@@ -923,7 +933,7 @@ Conformation::append_residue_by_bond(
 
 	if ( polymer_connection ) {
 		// connecting by a polymer bond
-		root_atomno  = new_rsd.lower_connect_atom();
+		root_atomno  = /*upper_to_upper ? new_rsd.upper_connect_atom() : */new_rsd.lower_connect_atom();
 		anchor_id.atomno() = anchor_rsd.upper_connect_atom();
 	} else {
 		// non-polymer connection

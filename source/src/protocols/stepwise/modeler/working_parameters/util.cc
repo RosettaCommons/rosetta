@@ -165,7 +165,6 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	working_parameters->set_fold_tree( pose.fold_tree() );
 
 	return working_parameters;
-
 }
 
 

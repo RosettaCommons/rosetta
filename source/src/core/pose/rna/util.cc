@@ -70,10 +70,10 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 
 	if ( new_seq == pose.sequence()[i-1] ) return false;
 
-	ResidueTypeSetCOP rsd_set = pose.residue( i ).residue_type_set();
+	ResidueTypeSetCOP rsd_set = pose.residue_type( i ).residue_type_set();
 
-	ResidueProperty base_property = ( pose.residue( i ).is_RNA() ) ? RNA : NO_PROPERTY;
-	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name1( new_seq ).variants( pose.residue(i).type().variant_types() ).base_property( base_property ).get_representative_type() );
+	ResidueProperty base_property = ( pose.residue_type( i ).is_RNA() ) ? RNA : NO_PROPERTY;
+	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name1( new_seq ).variants( pose.residue_type(i).variant_types() ).base_property( base_property ).get_representative_type() );
 
 	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
 
@@ -99,15 +99,15 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 
 	for ( Size i = 1; i < nres; ++i ) {
 		bool new_jump( false );
-		if ( (  pose.residue(i).is_RNA() != pose.residue(i+1).is_RNA() ) ||
-				(  pose.residue(i).is_protein() != pose.residue(i+1).is_protein() ) ||
+		if ( (  pose.residue_type(i).is_RNA() != pose.residue_type(i+1).is_RNA() ) ||
+				(  pose.residue_type(i).is_protein() != pose.residue_type(i+1).is_protein() ) ||
 				(  pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ||
-				(  pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && pose.residue(i+1).has_variant_type( CUTPOINT_UPPER ) ) ) {
+				(  pose.residue_type(i).has_variant_type( CUTPOINT_LOWER ) && pose.residue_type(i+1).has_variant_type( CUTPOINT_UPPER ) ) ) {
 			new_jump = true;
 		}
 
 		if ( !new_jump &&
-				pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() &&
+				pose.residue_type(i).is_RNA() && pose.residue_type(i+1).is_RNA() &&
 				pose::rna::is_rna_chainbreak( pose, i ) ) {
 			new_jump = true;
 		}
@@ -117,9 +117,9 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 			f.new_jump( i, i+1, i );
 			m++;
 
-			if ( pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() ) {
-				Residue const & current_rsd( pose.residue( i   ) ) ;
-				Residue const &    next_rsd( pose.residue( i+1 ) ) ;
+			if ( pose.residue_type(i).is_RNA() && pose.residue_type(i+1).is_RNA() ) {
+				ResidueType const & current_rsd( pose.residue_type( i   ) ) ;
+				ResidueType const &    next_rsd( pose.residue_type( i+1 ) ) ;
 				f.set_jump_atoms( m,
 					chemical::rna::chi1_torsion_atom( current_rsd ),
 					chemical::rna::chi1_torsion_atom( next_rsd )   );
@@ -138,9 +138,9 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
-				!pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-				!pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
-			if ( pose.residue(i).is_RNA() ) {
+				!pose.residue_type( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+				!pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+			if ( pose.residue_type(i).is_RNA() ) {
 				pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i );
 			}
 		}
@@ -274,7 +274,11 @@ prepare_scratch_residue(
 	}
 
 	//Yup, hard-wired...
-	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C4'" ), scratch_rsd->xyz( " C5'" ) );
+	// AMW: changing to grab this from the RNA_ResidueType
+	// reasoning: if we do any artful stuff making these indices refer to other named atoms, it should go through only one point
+	// (i.e. perhaps for a TNA there's an equivalent for one or more of these?)
+	// AMW TODO: shouldn't RNA_ResidueType have members for C3' and C5' as well?
+	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( scratch_rsd->type().RNA_type().c4prime_atom_index() ), scratch_rsd->xyz( " C5'" ) );
 
 	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		//Desired location
@@ -283,7 +287,7 @@ prepare_scratch_residue(
 		scratch_rsd->set_xyz( j, v2 );
 	}
 
-	Size const o2prime_index( scratch_rsd->atom_index( " O2'" ) );
+	Size const o2prime_index( scratch_rsd->type().RNA_type().o2prime_index() );
 	scratch_rsd->set_xyz( o2prime_index, scratch_rsd->build_atom_ideal( o2prime_index, pose.conformation() ) );
 
 }
@@ -365,49 +369,43 @@ initialize_atoms_for_which_we_need_new_dofs(
 	utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
 	Pose const & pose,  Size const i)
 {
-
 	using namespace id;
 	using namespace conformation;
-
+	using namespace chemical;
 
 	// Which way does atom_tree connectivity flow, i.e. is sugar drawn after base,
 	// or after backbone?
 	// This is admittedly very ugly, and very RNA specific.
 	// ... perhaps this will be figured out in the Cartesian Fragment class?
 	//
-	conformation::Residue const & rsd( pose.residue( i ) );
+	ResidueType const & rsd( pose.residue_type( i ) );
+	RNA_ResidueType const & rna_type( rsd.RNA_type() );
 
-	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ).get_self_ptr() );
-	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ).get_self_ptr() );
-	kinematics::tree::AtomCOP c2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ).get_self_ptr() );
+	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rna_type.c1prime_atom_index(), i ) ).get_self_ptr() );
+	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rna_type.o2prime_index(), i ) ).get_self_ptr() );
+	kinematics::tree::AtomCOP c2prime_atom ( pose.atom_tree().atom( AtomID( rna_type.c2prime_atom_index(), i ) ).get_self_ptr() );
 
 	if ( (c1prime_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.
 		//std::cout << "RESIDUE WITH JUMP CONNECTIVITY : " <<  i << std::endl;
 		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
 		atoms_for_which_we_need_new_dofs.push_back( " C3'" );
-		atoms_for_which_we_need_new_dofs.push_back( " O4'" );
+		atoms_for_which_we_need_new_dofs.push_back( rsd.atom_name( rna_type.o4prime_atom_index() ) );
 		atoms_for_which_we_need_new_dofs.push_back( " C4'" );
 		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
 		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
-
 	} else if ( (c2prime_atom->parent()->id()).atomno() ==  (o2prime_atom->id()).atomno() ) {
-
 		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
 		atoms_for_which_we_need_new_dofs.push_back( " C3'" );
-		atoms_for_which_we_need_new_dofs.push_back( " O4'" );
+		atoms_for_which_we_need_new_dofs.push_back( rsd.atom_name( rna_type.o4prime_atom_index() ) );
 		atoms_for_which_we_need_new_dofs.push_back( " C4'" );
 		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
 		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
-
 	} else {
-
 		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
 		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
-		atoms_for_which_we_need_new_dofs.push_back( " O4'" );
-
+		atoms_for_which_we_need_new_dofs.push_back( rsd.atom_name( rna_type.o4prime_atom_index() ) );
 	}
-
 }
 
 
@@ -420,9 +418,7 @@ apply_non_main_chain_sugar_coords(
 	Pose & pose,
 	Pose const & reference_pose,
 	Size const i
-)
-{
-
+) {
 	using namespace id;
 
 	/////////////////////////////////////////////
@@ -624,10 +620,10 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 ///////
 bool
 is_cutpoint_closed_by_atom_name(
-	conformation::Residue const & rsd_1,
-	conformation::Residue const & rsd_2,
-	conformation::Residue const & rsd_3,
-	conformation::Residue const & rsd_4,
+	chemical::ResidueType const & rsd_1,
+	chemical::ResidueType const & rsd_2,
+	chemical::ResidueType const & rsd_3,
+	chemical::ResidueType const & rsd_4,
 	id::AtomID const & id1,
 	id::AtomID const & id2,
 	id::AtomID const & id3,
@@ -657,10 +653,10 @@ is_torsion_valid(
 		return false;
 	}
 
-	conformation::Residue const & rsd_1 = pose.residue( id1.rsd() );
-	conformation::Residue const & rsd_2 = pose.residue( id2.rsd() );
-	conformation::Residue const & rsd_3 = pose.residue( id3.rsd() );
-	conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
+	chemical::ResidueType const & rsd_1 = pose.residue_type( id1.rsd() );
+	chemical::ResidueType const & rsd_2 = pose.residue_type( id2.rsd() );
+	chemical::ResidueType const & rsd_3 = pose.residue_type( id3.rsd() );
+	chemical::ResidueType const & rsd_4 = pose.residue_type( id4.rsd() );
 
 	if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
 			!rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
@@ -687,13 +683,13 @@ is_torsion_valid(
 	}
 
 
-	runtime_assert( rsd_1.seqpos() <= rsd_2.seqpos() );
-	runtime_assert( rsd_2.seqpos() <= rsd_3.seqpos() );
-	runtime_assert( rsd_3.seqpos() <= rsd_4.seqpos() );
-	runtime_assert( ( rsd_1.seqpos() == rsd_4.seqpos() )
-		|| ( rsd_1.seqpos() == ( rsd_4.seqpos() - 1 ) ) );
+	runtime_assert( id1.rsd() <= id2.rsd() );
+	runtime_assert( id2.rsd() <= id3.rsd() );
+	runtime_assert( id3.rsd() <= id4.rsd() );
+	runtime_assert( ( id1.rsd() == id4.rsd() )
+		|| ( id1.rsd() == ( id4.rsd() - 1 ) ) );
 
-	bool const inter_residue_torsion = ( rsd_1.seqpos() != rsd_4.seqpos() );
+	bool const inter_residue_torsion = ( id1.rsd() != id4.rsd() );
 
 	bool is_chain_break_torsion( false );
 
@@ -708,7 +704,7 @@ is_torsion_valid(
 		// leads to the EARLY RETURN FALSE statement at the beginning of
 		// this function.
 		bool const violate_max_O3_prime_to_P_bond_dist =
-			pose::rna::is_rna_chainbreak( pose, rsd_1.seqpos() );
+			pose::rna::is_rna_chainbreak( pose, id1.rsd() );
 
 		// Note that cutpoint_closed_torsions are NOT considered as
 		// chain_break_torsion since we want to score them EVEN when
@@ -758,30 +754,30 @@ print_torsion_info(
 		return;
 	}
 
-	conformation::Residue const & rsd_1 = pose.residue( id1.rsd() );
-	conformation::Residue const & rsd_2 = pose.residue( id2.rsd() );
-	conformation::Residue const & rsd_3 = pose.residue( id3.rsd() );
-	conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
+	chemical::ResidueType const & rsd_1 = pose.residue_type( id1.rsd() );
+	chemical::ResidueType const & rsd_2 = pose.residue_type( id2.rsd() );
+	chemical::ResidueType const & rsd_3 = pose.residue_type( id3.rsd() );
+	chemical::ResidueType const & rsd_4 = pose.residue_type( id4.rsd() );
 
 	TR << " Torsion containing one or more virtual atom( s )" << std::endl;
 	TR << "  torsion_id: " << torsion_id;
 	TR << "  atom_id: " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
-	TR << "  name: " << rsd_1.type().atom_name( id1.atomno() ) << " " <<
-		rsd_2.type().atom_name( id2.atomno() ) << " " <<
-		rsd_3.type().atom_name( id3.atomno() ) << " " <<
-		rsd_4.type().atom_name( id4.atomno() ) << std::endl;
+	TR << "  name: " << rsd_1.atom_name( id1.atomno() ) << " " <<
+		rsd_2.atom_name( id2.atomno() ) << " " <<
+		rsd_3.atom_name( id3.atomno() ) << " " <<
+		rsd_4.atom_name( id4.atomno() ) << std::endl;
 	TR << "  type: " << rsd_1.atom_type( id1.atomno() ).name() << " " <<
 		rsd_2.atom_type( id2.atomno() ).name() << " " <<
 		rsd_3.atom_type( id3.atomno() ).name() << " " <<
 		rsd_4.atom_type( id4.atomno() ).name() << std::endl;
-	TR << "\t\tatom_type_index: " << rsd_1.atom_type_index( id1.atomno() ) <<
-		" " << rsd_2.atom_type_index( id2.atomno() ) << " " <<
-		rsd_3.atom_type_index( id3.atomno() )  << " " <<
-		rsd_4.atom_type_index( id4.atomno() ) << std::endl;
-	TR << "\t\tatomic_charge: " << rsd_1.atomic_charge( id1.atomno() ) <<
-		" " << rsd_2.atomic_charge( id2.atomno() ) << " " <<
-		rsd_3.atomic_charge( id3.atomno() ) << " " <<
-		rsd_4.atomic_charge( id4.atomno() ) << std::endl;
+	TR << "\t\tatom_type_index: " << rsd_1.atom( id1.atomno() ).atom_type_index() <<
+		" " << rsd_2.atom( id2.atomno() ).atom_type_index() << " " <<
+		rsd_3.atom( id3.atomno() ).atom_type_index() << " " <<
+		rsd_4.atom( id4.atomno() ).atom_type_index() << std::endl;
+	TR << "\t\tatomic_charge: " << rsd_1.atom( id1.atomno() ).charge() <<
+		" " << rsd_2.atom( id2.atomno() ).charge() << " " <<
+		rsd_3.atom( id3.atomno() ).charge() << " " <<
+		rsd_4.atom( id4.atomno() ).charge() << std::endl;
 }
 
 void
@@ -798,10 +794,10 @@ output_boolean( std::string const & tag, bool boolean ) {
 
 bool
 is_cutpoint_closed_atom(
-	core::conformation::Residue const & rsd,
+	core::chemical::ResidueType const & rsd,
 	id::AtomID const & id
 ) {
-	std::string const & atom_name = rsd.type().atom_name( id.atomno() );
+	std::string const & atom_name = rsd.atom_name( id.atomno() );
 	if ( atom_name == "OVU1" || atom_name == "OVL1" || atom_name == "OVL2" ) {
 		return true;
 	} else {
@@ -840,8 +836,8 @@ is_cutpoint_closed_torsion(
 
 	if ( lower_seq_num == pose.total_residue() ) return false;
 
-	if ( pose.residue( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
-		if ( pose.residue( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
+	if ( pose.residue_type( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
+		if ( pose.residue_type( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
 			utility_exit_with_message( "seq_num " + string_of( lower_seq_num ) + " is a CUTPOINT_LOWER but seq_num " + string_of( upper_seq_num ) + " is not a cutpoint CUTPOINT_UPPER??" );
 		}
 		return true;
@@ -879,8 +875,8 @@ apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size cons
 	//OK PROTONATED_N1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
 	//However these two variant type are not currently used in standard SWA run (May 04, 2011)
 	bool is_cutpoint_closed = false;
-	if ( pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
-		runtime_assert( pose.residue( seq_num + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
+	if ( pose.residue_type( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
+		runtime_assert( pose.residue_type( seq_num + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 		is_cutpoint_closed = true;
 	}
 
@@ -929,14 +925,14 @@ has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
 
 	using namespace ObjexxFCL;
 
-	if ( ! pose.residue( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return false;
+	if ( ! pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return false;
 
 	if ( ( seq_num + 1 ) > pose.total_residue() ) { //Check in range
 		TR << "( seq_num + 1 ) = " << ( seq_num + 1 )  << std::endl;
 		utility_exit_with_message( "( seq_num + 1 ) > pose.total_residue()!" );
 	}
 
-	if ( ! pose.residue( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) {
+	if ( ! pose.residue_type( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) {
 		TR << "Problem seq_num = " << seq_num << std::endl;
 		utility_exit_with_message( "res ( " + string_of( seq_num ) +
 			" ) has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num + 1 ( " + string_of( seq_num + 1 ) +
@@ -1020,13 +1016,11 @@ get_op2_op1_sign( pose::Pose const & pose ) {
 
 	for ( Size i = 2; i <= pose.total_residue(); i++ ) {
 
-		conformation::Residue const & rsd( pose.residue(i)  );
+		conformation::Residue const & rsd( pose.residue( i )  );
 		if ( !rsd.is_RNA() ) continue;
 
 		sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
-
-		found_valid_sign=true;
-
+		found_valid_sign = true;
 		break;
 	}
 
@@ -1060,23 +1054,18 @@ get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
 void
 make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 {
-
 	using namespace ObjexxFCL;
+	pose::Pose mini_pose;
+	make_pose_from_sequence( mini_pose, "aa", pose.residue_type( 1 ).residue_type_set());
+	Real const sign2 = get_op2_op1_sign( mini_pose);
 
 	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
 
 		if ( !pose.residue( res_num ).is_RNA() ) continue;
-
-		pose::Pose mini_pose; //Could move this part outside of the for loop
-		make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set());
-		Real const sign2 = get_op2_op1_sign( mini_pose);
-
 		Real sign1 = get_op2_op1_sign( pose,  res_num);
 
 		if ( sign1 * sign2 < 0 ) {
-
 			//std::cout << " Flipping OP2 <--> OP1 " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
-
 			conformation::Residue const & rsd( pose.residue(res_num) );
 
 			if ( rsd.is_RNA()==false ) { //Consistency check!
@@ -1096,7 +1085,7 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 void
 add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( !pose.residue( i ).is_RNA() ) continue;
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
 	}
 }
@@ -1189,6 +1178,41 @@ string_to_int( std::string const & input_string ){
 	return int_of_string;
 }
 
+std::string
+remove_bracketed( std::string const & sequence ) {
+	std::string return_val = sequence;
+
+	std::string::size_type i = return_val.find( '[' );
+	while ( i != std::string::npos ) {
+
+		std::string::size_type j = return_val.find( ']' );
+		if ( j == std::string::npos ) utility_exit_with_message( "String with imbalanced brackets passed to remove_bracketed! (" + sequence + ")" );
+		
+		return_val.erase( i, j - i + 1 );
+
+		i = return_val.find( '[' );
+	}
+
+	return return_val;
+}
+
+void
+remove_and_store_bracketed( std::string const & working_sequence, std::string & working_sequence_clean, std::map< Size, std::string > & special_res ) {
+	working_sequence_clean = working_sequence;
+	
+	std::string::size_type i = working_sequence_clean.find( '[' );
+	while ( i != std::string::npos ) {
+
+		std::string::size_type j = working_sequence_clean.find( ']' );
+		if ( j == std::string::npos ) utility_exit_with_message( "String with imbalanced brackets passed to remove_bracketed! (" + working_sequence + ")" );
+		
+		std::string temp = working_sequence_clean.substr( i + 1, j - i - 1 );
+		special_res[ i - 1 ] = temp;
+		working_sequence_clean.erase( i, j - i + 1 );
+
+		i = working_sequence_clean.find( '[' );
+	}
+}
 
 } //ns rna
 } //ns pose

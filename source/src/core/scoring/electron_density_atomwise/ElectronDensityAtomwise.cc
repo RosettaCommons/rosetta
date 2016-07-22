@@ -885,12 +885,12 @@ ElectronDensityAtomwise::spline_coeffs ( ObjexxFCL::FArray3D< double > & data ,
 //////////////////////////////////////////////////////////////////
 //Compute Normalization factor given a pose
 void
-ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
+ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 	if ( is_score_precomputed ) return;
 
 	//rho_calc_array initialization
 	ObjexxFCL::FArray3D< double >  rho_calc_array;
-	rho_calc_array.dimension ( density.u1() , density.u2() , density.u3() );
+	rho_calc_array.dimension( density.u1() , density.u2() , density.u3() );
 
 	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) {
 		rho_calc_array[i] = 0.0;
@@ -899,34 +899,36 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 	//Generate gaussian function for the electron density of the atoms.
 	Real map_reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
 	Real atom_gaussian_sigma = 0.30 + 0.18 * map_reso;
-	generate_gaussian_1d ( atom_gaussian_sigma );
+	generate_gaussian_1d( atom_gaussian_sigma );
 	//Calculate the weight and the fractional coordinates of the atoms
 	Size n_res = pose.total_residue();
 	Size sum_weight = 0;
 
+	numeric::xyzVector< core::Real > grid_half( grid[0] * 0.5, grid[1] * 0.5, grid[2] * 0.5 );
+	
+	atom_weight_stored.reserve( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) { //rsd
-		conformation::Residue const &rsd ( pose.residue ( i ) );
+		conformation::Residue const &rsd( pose.residue( i ) );
 		Size n_heavyatom_rsd = rsd.nheavyatoms();
 		utility::vector1< Size > weight_rsd;
 
 		// skip virtual residues
 		if ( rsd.aa() == core::chemical::aa_vrt ) {
-			atom_weight_stored.push_back ( weight_rsd );
+			atom_weight_stored.push_back( weight_rsd );
 			continue;
 		}
 
+		weight_rsd.reserve( n_heavyatom_rsd );
 		for ( Size j = 1; j <= n_heavyatom_rsd; ++j ) { //atom
 			chemical::AtomTypeSet const & atom_type_set ( rsd.atom_type_set() );
 			//get the weight of each atom (element based)
-			std::string element = atom_type_set[rsd.atom_type_index ( j ) ].element();
-			Size weight = get_atom_weight ( element );
+			std::string const & element = atom_type_set[ rsd.atom_type_index( j ) ].element();
+			Size weight = get_atom_weight( element );
 			sum_weight += weight;
-			weight_rsd.push_back ( weight );
+			weight_rsd.push_back( weight );
 			//Compute the atom position in unit cell (index coord)
-			numeric::xyzVector< core::Real > coord_index = xyz2index_in_cell ( rsd.xyz( j ) );
+			numeric::xyzVector< core::Real > const & coord_index = xyz2index_in_cell( rsd.xyz( j ) );
 			numeric::xyzVector< core::Real > dist_index;
-			numeric::xyzVector< core::Real > grid_half ( grid[0] * 0.5,
-				grid[1] * 0.5, grid[1] * 0.5 );
 
 			//Compute rho_calc
 			for ( int x = 1; x <= density.u1(); ++x ) {
@@ -935,11 +937,10 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 
 				//fold to make it in the range [-0.5*grid, 0.5*grid]
 				if ( dist_index[0] > grid_half[0] ) dist_index[0] -= grid[0];
-				if ( dist_index[0] <= - grid_half[0] ) dist_index[0] += grid[0];
+				if ( dist_index[0] <= -grid_half[0] ) dist_index[0] += grid[0];
 
 				//skip if the dist is too large
-				numeric::xyzVector<Real> dist_x = i2c * numeric::xyzVector<Real> ( dist_index[0], 0.0, 0.0 );
-
+				numeric::xyzVector<Real> dist_x = i2c * numeric::xyzVector<Real>( dist_index[0], 0.0, 0.0 );
 				if ( dist_x.length() > gaussian_max_d ) continue;
 
 				for ( int y = 1; y <= density.u2(); ++y ) {
@@ -951,17 +952,15 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 					if ( dist_index[1] <= - grid_half[1] ) dist_index[1] += grid[1];
 
 					//skip if the dist is too large
-					numeric::xyzVector<Real> dist_xy = i2c * numeric::xyzVector<Real> ( dist_index[0], dist_index[1], 0.0 );
-
+					numeric::xyzVector<Real> dist_xy = i2c * numeric::xyzVector<Real>( dist_index[0], dist_index[1], 0.0 );
 					if ( dist_xy.length() > gaussian_max_d ) continue;
 
 					for ( int z = 1; z <= density.u3(); ++z ) {
-						//distance from the atom to point in the map (y)
+						//distance from the atom to point in the map (z)
 						dist_index[2] = coord_index[2] - ( z - 1 );
 
 						//fold to make it in the range [-0.5*grid, 0.5*grid]
 						if ( dist_index[2] > grid_half[2] ) dist_index[2] -= grid[2];
-
 						if ( dist_index[2] <= - grid_half[2] ) dist_index[2] += grid[2];
 
 						//skip if the dist is too large
@@ -970,13 +969,13 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 
 						if ( dist > gaussian_max_d ) continue;
 
-						rho_calc_array ( x, y, z ) += gaussian_1d ( dist ) * weight;
+						rho_calc_array( x, y, z ) += gaussian_1d( dist ) * weight;
 					}
 				}
 			}
 		}
 
-		atom_weight_stored.push_back ( weight_rsd );
+		atom_weight_stored.push_back( weight_rsd );
 	}
 
 	Real sum_rho_calc = 0.0;
@@ -1034,7 +1033,7 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 	//compute the gaussian density of an atom
 	Real sum_rho_calc = 0.0;
 	numeric::xyzVector< core::Real > dist_index;
-	numeric::xyzVector< core::Real > grid_half ( grid[0] * 0.5,
+	numeric::xyzVector< core::Real > grid_half( grid[0] * 0.5,
 		grid[1] * 0.5, grid[2] * 0.5 );
 
 	for ( int x = 1; x <= atom_dens.u1(); ++x ) {
@@ -1071,7 +1070,6 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 
 				//fold to make it in the range [-0.5*grid, 0.5*grid]
 				if ( dist_index[2] > grid_half[2] ) dist_index[2] -= grid[2];
-
 				if ( dist_index[2] <= - grid_half[2] ) dist_index[2] += grid[2];
 
 				numeric::xyzVector<Real> dist_xyz = i2c * dist_index;

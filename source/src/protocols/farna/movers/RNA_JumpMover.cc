@@ -19,6 +19,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
@@ -55,7 +56,7 @@ RNA_JumpMover::~RNA_JumpMover()
 bool
 RNA_JumpMover::random_jump_change( pose::Pose & pose ) const
 {
-
+	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
 
@@ -77,10 +78,10 @@ RNA_JumpMover::random_jump_change( pose::Pose & pose ) const
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( which_jump ) );
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( which_jump ) ); // Unused variable causes warning.
 
-		Residue const & rsd1 = pose.residue( jump_pos1 );
+		ResidueType const & rsd1 = pose.residue_type( jump_pos1 );
 		AtomID jump_atom_id1( rsd1.atom_index( default_jump_atom( rsd1 ) ), jump_pos1 );
 
-		Residue const & rsd2 = pose.residue( jump_pos2 ); // Unused variable causes warning.
+		ResidueType const & rsd2 = pose.residue_type( jump_pos2 ); // Unused variable causes warning.
 		AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 ); // Unused variable causes warning.
 
 		if ( moveable_jump( jump_atom_id1, jump_atom_id2, *atom_level_domain_map_ ) ) break;
@@ -111,7 +112,6 @@ RNA_JumpMover::add_new_RNA_jump(
 	Size const & which_jump,
 	bool & success ) const
 {
-
 	kinematics::FoldTree fold_tree( pose.fold_tree() ); //Make a copy.
 
 	Size const jump_pos1( fold_tree.upstream_jump_residue( which_jump ) );

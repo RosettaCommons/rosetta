@@ -167,40 +167,39 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 			for ( Size n = 1; n <= ideal_hydrogen_xyz_positions.size(); n++ ) {
 				Vector const ideal_hydrogen_xyz = ideal_hydrogen_xyz_positions[ n ];
 
+				if ( possible_hbond_acceptors_.size() == 0 ) continue;
+				
 				// might be better to create a 'pseudo' score function penalizing deviation from ideal.
-				if ( possible_hbond_acceptors_.size() > 0 ) {
-					check_hbond_score( ideal_hydrogen_xyz, donor_xyz, best_score, best_hydrogen_xyz );
-
-					Stub const ideal_hydrogen_stub( residue.xyz( j1 ) /*center*/, ideal_hydrogen_xyz, residue.xyz( j1 ), residue.xyz( j2 ) );
-
-					// generate 'rotamers' around ideal H location.
-					Vector const ideal_local_xyz = ideal_hydrogen_stub.global2local( ideal_hydrogen_xyz );
-					Distance const ideal_H_length = ideal_local_xyz.x();
-					int const ndist( 5 );
-					Distance const length_deviation( 0.05 );
-					Size const ntheta( 2 );
-					Real const theta_deviation( 10.0 ); // in degrees
-					Size const nphi( 6 ); // deviation will be 360.0 / nphi
-					for ( int d = -(ndist - 1)/2; d <= ( ndist - 1 )/2; d++ ) {
-						Real const bond_length = ideal_H_length + length_deviation * Real( d );
-
-						for ( Size q = 1; q <= ntheta; q++ ) { // theta (angle)
-							Real const theta = q * numeric::conversions::radians( theta_deviation );
-
-							for ( Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
-								Real const phi = f * numeric::conversions::radians( 360.0 / Real(nphi) );
-								Real const x = bond_length * cos( theta );
-								Real const y = bond_length * sin( theta )  * sin( phi );
-								Real const z = bond_length * sin( theta )  * cos( phi );
-								Vector const H_xyz = ideal_hydrogen_stub.local2global( Vector( x,y,z) );
-								//     TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( ideal_hydrogen_xyz - H_xyz ).length() << std::endl;
-
-								check_hbond_score( H_xyz, donor_xyz, best_score, best_hydrogen_xyz );
-							}
+				check_hbond_score( ideal_hydrogen_xyz, donor_xyz, best_score, best_hydrogen_xyz );
+				
+				Stub const ideal_hydrogen_stub( residue.xyz( j1 ) /*center*/, ideal_hydrogen_xyz, residue.xyz( j1 ), residue.xyz( j2 ) );
+				
+				// generate 'rotamers' around ideal H location.
+				Vector const ideal_local_xyz = ideal_hydrogen_stub.global2local( ideal_hydrogen_xyz );
+				Distance const ideal_H_length = ideal_local_xyz.x();
+				int const ndist( 5 );
+				Distance const length_deviation( 0.05 );
+				Size const ntheta( 2 );
+				Real const theta_deviation( 10.0 ); // in degrees
+				Size const nphi( 6 ); // deviation will be 360.0 / nphi
+				for ( int d = -(ndist - 1)/2; d <= ( ndist - 1 )/2; d++ ) {
+					Real const bond_length = ideal_H_length + length_deviation * Real( d );
+					
+					for ( Size q = 1; q <= ntheta; q++ ) { // theta (angle)
+						Real const theta = q * numeric::conversions::radians( theta_deviation );
+						
+						for ( Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
+							Real const phi = f * numeric::conversions::radians( 360.0 / Real(nphi) );
+							Real const x = bond_length * cos( theta );
+							Real const y = bond_length * sin( theta )  * sin( phi );
+							Real const z = bond_length * sin( theta )  * cos( phi );
+							Vector const H_xyz = ideal_hydrogen_stub.local2global( Vector( x,y,z) );
+							//     TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( ideal_hydrogen_xyz - H_xyz ).length() << std::endl;
+							
+							check_hbond_score( H_xyz, donor_xyz, best_score, best_hydrogen_xyz );
 						}
 					}
-
-				} // alternative H_xyz around ideal
+				}
 			} // ideal H_xyz
 
 			//    TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( best_hydrogen_xyz - current_hydrogen_xyz).length() << " NUM ACCEPTORS " << possible_hbond_acceptors_.size() << " " << best_score << std::endl;
@@ -218,7 +217,6 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 					remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
 				}
 			}
-
 		} // j
 	} // i
 
@@ -248,7 +246,6 @@ PolarHydrogenPacker::check_hbond_score( Vector const & H_xyz,
 		best_score = total_score;
 		best_hydrogen_xyz = H_xyz;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,19 +272,20 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 		if ( rsd.is_virtual_residue() ) continue;
 		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ) {
 			if ( pose.residue_type( i ).is_virtual( j ) ) continue;
-			if ( pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ) {
-				Distance dist = ( rsd.xyz( j ) - moving_xyz ).length();
-				if ( dist < contact_distance_cutoff_ ) {
-					vector1< Vector > acceptor_xyz_info;
-					acceptor_xyz_info.push_back( rsd.xyz( j ) );
-					acceptor_xyz_info.push_back( rsd.xyz( rsd.atom_base(j) ) );
-					acceptor_xyz_info.push_back( rsd.xyz( rsd.abase2( j ) ) );
-					possible_hbond_acceptors_.push_back( acceptor_xyz_info );
-					hb_eval_tuples_.push_back( HBEvalTuple( atomno,
-						pose.residue( moving_res ),
-						j, pose.residue( i) ) );
-				}
-			}
+			if ( !pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ) continue;
+			
+			Distance dist = ( rsd.xyz( j ) - moving_xyz ).length();
+			if ( dist >= contact_distance_cutoff_ ) continue;
+			
+			vector1< Vector > acceptor_xyz_info;
+			acceptor_xyz_info.push_back( rsd.xyz( j ) );
+			acceptor_xyz_info.push_back( rsd.xyz( rsd.atom_base(j) ) );
+			acceptor_xyz_info.push_back( rsd.xyz( rsd.abase2( j ) ) );
+			possible_hbond_acceptors_.push_back( acceptor_xyz_info );
+			hb_eval_tuples_.push_back( HBEvalTuple( atomno,
+				pose.residue( moving_res ),
+				j, pose.residue( i) ) );
+
 		}
 	}
 }

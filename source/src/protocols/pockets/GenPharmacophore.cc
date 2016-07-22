@@ -500,7 +500,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 					std::string str1 = curr_rsd.atom_name( jc );
 					str1.erase( remove( str1.begin(), str1.end(), ' ' ), str1.end() ); //remove any blank space
 
-					if ( core::chemical::rna::is_purine(curr_rsd) ) {
+					if ( curr_rsd.is_purine() ) {
 						if ( str1.compare("N2") != 0 ) {
 							if ( str1.compare("O6") != 0 ) {
 								if ( str1.compare("N6") != 0 ) {
@@ -517,7 +517,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 								}
 							}
 						}
-					} else if ( !core::chemical::rna::is_purine(curr_rsd) ) {
+					} else if ( !curr_rsd.is_purine() ) {
 						if ( str1.compare("O2") != 0 ) {
 							if ( str1.compare("O4") != 0 ) {
 								if ( str1.compare("N4") != 0 ) {

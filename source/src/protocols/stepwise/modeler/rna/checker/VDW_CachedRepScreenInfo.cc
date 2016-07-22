@@ -38,8 +38,6 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
-
-
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_CachedRepScreenInfo" );
 
 #ifdef    SERIALIZATION

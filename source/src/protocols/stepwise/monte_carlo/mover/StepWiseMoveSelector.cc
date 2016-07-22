@@ -164,7 +164,6 @@ StepWiseMoveSelector::output_moves() const {
 void
 StepWiseMoveSelector::fill_moves_for_pose( pose::Pose const & pose ) {
 
-
 	utility::vector1< StepWiseMove > resample_moves, intramolecular_add_and_delete_moves, docking_add_and_delete_moves;
 
 	// combining "add_and_delete" into one function was historical --
@@ -179,7 +178,6 @@ StepWiseMoveSelector::fill_moves_for_pose( pose::Pose const & pose ) {
 
 	get_resample_move_elements( pose, resample_moves, false /* save_moves */ );
 	save_moves( resample_moves, ( 1 - options_->add_delete_frequency() )  );
-
 }
 
 
@@ -237,7 +235,6 @@ StepWiseMoveSelector::fill_moves_for_other_poses( pose::Pose const & pose ) {
 	Size const move_idx_final = swa_moves_.size();
 	normalize_probabilities( move_idx_original + 1, move_idx_final,
 		original_weight * options_->switch_focus_frequency() );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,7 +274,6 @@ StepWiseMoveSelector::save_moves( utility::vector1< StepWiseMove > const & moves
 		swa_moves_.push_back( moves[ n ] );
 		proposal_probabilities_.push_back( total_weight * relative_weights[ n ]/ relative_weight_sum );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,7 +369,6 @@ StepWiseMoveSelector::get_add_or_delete_element( pose::Pose const & pose,
 	} else  {
 		swa_move = swa_moves[ 1 ];
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -443,7 +438,6 @@ StepWiseMoveSelector::get_intramolecular_add_and_delete_elements( pose::Pose con
 
 	if ( force_unique_moves_ ) filter_pose_order( swa_moves, pose );
 	if ( options_->filter_complex_cycles() ) filter_complex_cycles( swa_moves, pose );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -468,70 +462,65 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 
 	for ( Size i = 1; i <= nres; i++ ) {
 
-		if ( ( i == nres ) ||
-				( fold_tree.is_cutpoint( i ) && (res_list[ i ]+1 < res_list[ i+1 ]) ) ) { // could be a 3' chain terminus
-
-			Size const i_full = res_list[ i ] ;
-
-
-			if ( i_full < nres_full && !is_cutpoint_in_full_pose[ i_full ] ) { // good, there's still a gap!
-
-				// direct addition of single residue (or potentially, a block of residues starting with this residue)
-				if ( is_addable_res( i_full + 1, pose ) ) {
-					swa_moves.push_back( StepWiseMove( i_full + 1, Attachment( i_full, BOND_TO_PREVIOUS ), ADD ) );
-				}
-
-				// bulge skip...
-				if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
-						(i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
-						i_full < (nres_full - 1)  &&
-						!is_cutpoint_in_full_pose[ i_full + 1 ] ) {
-					// for now can only handle single residue additions via skip-bulge ("floating base")
-					Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full + 1 );
-					if ( other_pose_idx_intervening == 0 ) {
-						if ( is_addable_res( i_full + 2, pose ) ) {
-							swa_moves_skip_bulge.push_back( StepWiseMove( i_full + 2, Attachment( i_full, JUMP_TO_PREV_IN_CHAIN ), ADD ) );
-						}
-					}
+		if ( ( i != nres ) &&
+			( !fold_tree.is_cutpoint( i ) || (res_list[ i ]+1 >= res_list[ i+1 ]) ) ) continue;
+		
+		// could be a 3' chain terminus
+		Size const i_full = res_list[ i ] ;
+		if ( i_full >= nres_full && !is_cutpoint_in_full_pose[ i_full ] ) continue;
+		
+		// direct addition of single residue (or potentially, a block of residues starting with this residue)
+		if ( is_addable_res( i_full + 1, pose ) ) {
+			swa_moves.push_back( StepWiseMove( i_full + 1, Attachment( i_full, BOND_TO_PREVIOUS ), ADD ) );
+		}
+		
+		// bulge skip...
+		if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
+			(i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
+			i_full < (nres_full - 1)  &&
+			!is_cutpoint_in_full_pose[ i_full + 1 ] ) {
+			// for now can only handle single residue additions via skip-bulge ("floating base")
+			Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full + 1 );
+			if ( other_pose_idx_intervening == 0 ) {
+				if ( is_addable_res( i_full + 2, pose ) ) {
+					swa_moves_skip_bulge.push_back( StepWiseMove( i_full + 2, Attachment( i_full, JUMP_TO_PREV_IN_CHAIN ), ADD ) );
 				}
 			}
-
 		}
 	}
 
 	for ( Size i = 1; i <= nres; i++ ) {
 
-		if ( ( i == 1 ) ||
-				( fold_tree.is_cutpoint( i-1 ) && (res_list[ i ]-1 > res_list[ i-1 ]) ) ) { // could be a 5' chain terminus
+		if ( ( i != 1 ) &&
+			( !fold_tree.is_cutpoint( i-1 ) || (res_list[ i ]-1 <= res_list[ i-1 ]) ) ) continue;
+		// could be a 5' chain terminus
 
-			Size const i_full = res_list[ i ];
-			if ( i_full > 1 && !is_cutpoint_in_full_pose[ i_full - 1 ] ) { // good, there's still a gap!
-
-				// direct addition of single residue (or potentially, a block of residues starting with this residue)
-				if ( is_addable_res( i_full - 1, pose ) ) {
-					swa_moves.push_back( StepWiseMove( i_full - 1, Attachment( i_full, BOND_TO_NEXT), ADD ) );
-				}
-
-				// bulge skip...
-				if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
-						(i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
-						i_full > 2 &&
-						!is_cutpoint_in_full_pose[ i_full - 2 ] ) {
-					// for now can only handle single residue additions via skip-bulge ("floating base")
-					Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full - 1 );
-					if ( other_pose_idx_intervening == 0 ) {
-						if ( is_addable_res( i_full - 2, pose ) ) {
-							swa_moves_skip_bulge.push_back( StepWiseMove( i_full - 2, Attachment( i_full, JUMP_TO_NEXT_IN_CHAIN ), ADD ) );
-						}
-					}
+		Size const i_full = res_list[ i ];
+		if ( i_full <= 1 || is_cutpoint_in_full_pose[ i_full - 1 ] ) continue;
+		// good, there's still a gap!
+			
+		
+		// direct addition of single residue (or potentially, a block of residues starting with this residue)
+		if ( is_addable_res( i_full - 1, pose ) ) {
+			swa_moves.push_back( StepWiseMove( i_full - 1, Attachment( i_full, BOND_TO_NEXT), ADD ) );
+		}
+		
+		// bulge skip...
+		if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
+			(i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
+			i_full > 2 &&
+			!is_cutpoint_in_full_pose[ i_full - 2 ] ) {
+			// for now can only handle single residue additions via skip-bulge ("floating base")
+			Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full - 1 );
+			if ( other_pose_idx_intervening == 0 ) {
+				if ( is_addable_res( i_full - 2, pose ) ) {
+					swa_moves_skip_bulge.push_back( StepWiseMove( i_full - 2, Attachment( i_full, JUMP_TO_NEXT_IN_CHAIN ), ADD ) );
 				}
 			}
-
 		}
 	}
 
 	for ( Size n = 1; n <= swa_moves_skip_bulge.size(); n++ ) swa_moves.push_back( swa_moves_skip_bulge[ n ] );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -779,7 +768,6 @@ StepWiseMoveSelector::remove_from_consideration_first_multi_residue_move_element
 	runtime_assert( number_of_multi_residue_move_elements > 0 );
 
 	if ( remove_even_if_not_singlet || (number_of_multi_residue_move_elements == 1) ) {
-
 		utility::vector1< StepWiseMove > swa_moves_new;
 
 		for ( Size n = 1; n <= swa_moves.size(); n++ ) {
@@ -787,7 +775,6 @@ StepWiseMoveSelector::remove_from_consideration_first_multi_residue_move_element
 			swa_moves_new.push_back( swa_moves[ n ] );
 		}
 		swa_moves = swa_moves_new;
-
 	}
 }
 
@@ -893,7 +880,6 @@ StepWiseMoveSelector::figure_out_already_docked(
 	for ( Size k = 1; k <= other_pose_list.size(); k++ ) {
 		figure_out_already_docked( *other_pose_list[ k ], already_docked );
 	}
-	return;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1011,7 +997,6 @@ StepWiseMoveSelector::get_submotif_add_moves( pose::Pose const & pose,
 	if ( options_->filter_complex_cycles() ) filter_complex_cycles( submotif_add_moves, pose );
 
 	for ( Size n = 1; n <= submotif_add_moves.size(); n++ ) swa_moves.push_back( submotif_add_moves[ n ] );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1216,7 +1201,6 @@ StepWiseMoveSelector::get_vary_loop_length_moves( pose::Pose const & pose,
 			}
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1281,7 +1265,6 @@ StepWiseMoveSelector::get_terminal_move_elements( pose::Pose const & pose,
 
 		swa_moves.push_back( StepWiseMove( move_element, attachments, move_type ) );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1368,8 +1351,6 @@ StepWiseMoveSelector::get_attachments( pose::Pose const & pose, MoveElement cons
 			Size const jump_attachment_res = check_jump_to_next_residue_in_chain( pose, i, move_element, const_full_model_info( pose ) );
 			if ( jump_attachment_res > 0 ) attachments_to_next.push_back( Attachment( res_list[ jump_attachment_res ], JUMP_TO_NEXT_IN_CHAIN ) );
 		}
-
-
 	}
 
 	for ( Size k = 1; k <= attachments_to_previous.size(); k++ ) attachments.push_back( attachments_to_previous[ k ] );
@@ -1378,7 +1359,6 @@ StepWiseMoveSelector::get_attachments( pose::Pose const & pose, MoveElement cons
 	// have to relax this when we enable inter-chain jumps, or enable multiple intra-chain jumps.
 	//  runtime_assert( attachments.size() <= 4 );
 	return attachments;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1716,7 +1696,6 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::P
 	} else {
 		runtime_assert( move_type == NO_MOVE );
 	}
-
 
 	// Using this LoopGraph object to check cycles
 	// Its the same object actually used in the scorefunction to compute loop_close,

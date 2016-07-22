@@ -115,7 +115,6 @@ StepWiseSampleAndScreen::run()
 
 	if ( verbose_ ) output_counts();
 	if ( sampler_->random() ) output_info_on_random_trials();
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -150,7 +149,6 @@ Size
 StepWiseSampleAndScreen::num_screeners() const{
 	return screeners_.size();
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void
@@ -204,7 +202,6 @@ StepWiseSampleAndScreen::early_exit_check( Size const n ) {
 		}
 	}
 
-
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::sampler::rigid_body;
 	screener::StepWiseScreenerOP screener = screeners_[ n ];
@@ -222,13 +219,11 @@ StepWiseSampleAndScreen::early_exit_check( Size const n ) {
 		TR << " [legacy: " << anchor_sugar_screener_legacy << "]" << std::endl;
 	}
 
-
 	if ( early_exit ) {
 		std::cout << screener->name() <<  " NTRIES " << num_tries() << std::endl;
 		output_counts();
 		exit( 0 );
 	}
-
 }
 
 

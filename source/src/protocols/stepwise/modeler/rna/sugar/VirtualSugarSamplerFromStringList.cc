@@ -23,6 +23,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -151,7 +152,7 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 		TR.Debug << " full_sugar_res = " << full_sugar_res << " full_bulge_res = " << full_bulge_res << " full_ref_res = " << full_ref_res;
 		output_boolean( " is_prepend = ", is_prepend, TR.Debug );
 
-		runtime_assert ( pose.total_residue() == working_sequence.size() );
+		runtime_assert ( pose.total_residue() == core::pose::rna::remove_bracketed( working_sequence ).size() );
 
 		if ( check_is_working_res( full_sugar_res, working_parameters_ ) ) {
 

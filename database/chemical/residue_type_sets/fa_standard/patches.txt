@@ -16,10 +16,13 @@ patches/nucleic/dna/VirtualDNAPhosphate.txt
 ## RNA standard
 patches/nucleic/rna/LowerRNA.txt
 patches/nucleic/rna/UpperRNA.txt
+patches/nucleic/rna/UpperConnectionRNA.txt
 patches/nucleic/rna/rna_cutpoint_lower.txt
 patches/nucleic/rna/rna_cutpoint_upper.txt
 patches/nucleic/rna/Virtual_Phosphate.txt
 patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
+patches/nucleic/rna/2prime_connection.txt
+patches/nucleic/rna/LowerConnectRNA.txt
 
 ## Used to be selected from command line (not patched in by default to save memory); 
 ## but should be OK to instantiate with refactored ResidueTypeSet
@@ -29,6 +32,7 @@ patches/ShoveBB.txt                 # SHOVE_BB
 patches/VirtualBB.txt               # VIRTUAL_BB
 patches/VirtualProteinSideChain.txt # VIRTUAL_SIDE_CHAIN
 patches/N_acetylated.txt            # PEPTIDE_CAP
+patches/N_formylated.txt
 patches/C_methylamidated.txt        # PEPTIDE_CAP
 patches/NtermProteinMethylated.txt  # METHYLATED_NTERM_VARIANT
 

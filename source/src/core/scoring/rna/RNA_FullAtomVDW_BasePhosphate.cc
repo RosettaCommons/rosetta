@@ -139,14 +139,12 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 	Atom const & atom1( res1.atom( atomno1 ) );
 	Atom const & atom2( res2.atom( atomno2 ) );
 
-
 	// Heavy Atom in res1 to Hs in res2
 	for ( Size i = at2hbegin; i <= at2hend; ++i ) {
 		Atom const & H2( res2.atom( i ) );
 		weight = 1.0;
 		etable_evaluator_->pair_energy_H_v( atom1, H2, weight, emap );
 	}
-
 
 	// Hs in res1 to heavy Atom and Hs in res2
 	for ( Size i = at1hbegin; i <= at1hend; ++i ) {

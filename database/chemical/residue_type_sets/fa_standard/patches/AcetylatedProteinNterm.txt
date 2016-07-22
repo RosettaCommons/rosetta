@@ -20,6 +20,7 @@ NOT VARIANT_TYPE VIRTUAL_NTERM
 NOT VARIANT_TYPE REPLONLY
 NOT VARIANT_TYPE CTERM_CONNECT
 NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE N_FORMYLATION
 NOT VARIANT_TYPE C_METHYLAMIDATION
 NOT NAME3 TES # TES creator, feel free to create acetylation with atom names that work for TES.
 NOT NAME3 S56 # S56 creator, feel free to create acetylation with atom names that work for TES.

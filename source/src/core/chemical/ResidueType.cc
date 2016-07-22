@@ -2170,6 +2170,18 @@ ResidueType::is_NA() const
 {
 	return is_DNA() || is_RNA();
 }
+	
+bool
+ResidueType::is_purine() const
+{
+	return properties_->has_property( PURINE );
+}
+
+bool
+ResidueType::is_pyrimidine() const
+{
+	return properties_->has_property( PYRIMIDINE );
+}
 
 /// @brief Is this a solvent molecule (SOLVENT property)?
 /// @author Vikram K. Mulligan (vmullig@uw.edu).

@@ -166,7 +166,9 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 		std::string const original_name = rinfo.resName();
 
 		// first establish if this is DNA or RNA (or something else)
-		if ( core::io::NomenclatureManager::is_old_DNA( rinfo.resName() ) && missing_O2prime( rinfo.atoms() ) )  {
+		if ( !options_.guarantee_no_DNA() 
+				&& core::io::NomenclatureManager::is_old_DNA( rinfo.resName() ) 
+				&& missing_O2prime( rinfo.atoms() ) )  {
 			std::string new_name( original_name ); new_name.replace( 1, 1, "D" ); // A --> dA
 			rinfo.resName( new_name );
 			if ( ++nfix <= max_fix || show_all_fixup ) {
@@ -220,6 +222,10 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 	using namespace core::chemical;
 	typedef utility::vector1< LinkInformation > LinkInformationVect;
 	typedef std::map< std::string, utility::vector1< LinkInformation > > LinkMap;
+
+	// AMW: In CIF nomenclature, LINKs to be handled:
+	// This is actually a "close contact" but it's O3' of adenine to C of FME, UPPER-UPPER
+	// 1  1 "O3'" v A   76   ? ? C     v FME 77   ? ? 1.56
 
 	LinkMap pruned_links;
 	for ( LinkMap::const_iterator iter = sfr.link_map().begin(), iter_end = sfr.link_map().end();
@@ -367,11 +373,9 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		determine_residue_branching_info(
 			rinfos_[ ii ].resid(), name3, same_chain_prev, same_chain_next, branch_points_on_this_residue, is_branch_point, is_branch_lower_terminus );
 
-
-		bool const is_lower_terminus( ( ii == 1 || rinfos_.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
-			&& check_Ntermini_for_this_chain );
+		bool const is_lower_terminus( ( ( ii == 1 || rinfos_.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
+			&& check_Ntermini_for_this_chain ) );
 		bool const is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain );
-
 
 		// Determine if this residue is a D-AA residue, an L-AA residue, or neither.
 		StructFileRep::ResidueCoords const & xyz = rinfo.xyz();
@@ -520,7 +524,13 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 				*residue_types_[ ii ], chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr();
 			type_changed = true;
 		}
+		// AMW: new--don't add  an upper terminus type to protein residues following RNA
+		// if that RNA is itself not upper-terminal
 		if ( !residue_types_[ ii ]->is_upper_terminus() &&
+				!( residue_types_[ ii ]->is_protein() && residue_types_[ ii_prev ]->is_RNA()
+				  && !residue_types_[ ii_prev ]->is_upper_terminus() ) && 
+				!( residue_types_[ ii ]->is_RNA() && residue_types_[ ii_next ]->is_protein()
+				  && !residue_types_[ ii_next ]->is_upper_terminus() ) && 
 				( ii == ii_next ||
 				( residue_types_[ ii_next ] && (
 				!residue_types_[ ii_next ]->is_polymer() ||
@@ -579,6 +589,9 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 		ResidueType const & ii_rsd_type( *residue_types_[ ii ] );
 		TR.Trace << "ResidueType " << ii << ": " << ii_rsd_type.name() << std::endl;
+		//TR.Trace << "went by, in the file context, " << rinfos_[ ii ].resName()
+		//	<< " at " << rinfos_[ ii ].chainID() << rinfos_[ ii ].resSeq() << rinfos_[ ii ].iCode() << " " << rinfos_[ ii ].segmentID() << std::endl;
+
 		ResidueOP ii_rsd( ResidueFactory::create_residue( ii_rsd_type ) );
 		for ( StructFileRep::ResidueCoords::const_iterator iter = rinfos_[ ii ].xyz().begin(), iter_end = rinfos_[ ii ].xyz().end();
 				iter != iter_end; ++iter ) {
@@ -617,7 +630,9 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			TR.Trace << ii_rsd_type.name() << " " << ii << " is the start of a new pose." << std::endl;
 			pose.append_residue_by_bond( *ii_rsd );
 
-		} else if ( ( is_lower_terminus_[ ii ] && determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() )) ||
+		// If this is a lower terminus, AND it's not about to get UPPER-UPPER bonded from prev
+		} else if ( ( ( is_lower_terminus_[ ii ] && !( !pose.residue_type( old_nres ).is_upper_terminus() && pose.residue_type( old_nres ).is_RNA() && !ii_rsd_type.is_upper_terminus() ) )
+				&& determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() )) ||
 				! same_chain_prev_[ ii ] ||
 				/* is_branch_lower_terminus || */
 				pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) ||
@@ -1147,6 +1162,7 @@ PoseFromSFRBuilder::get_rsd_type(
 			properties.push_back( BRANCH_LOWER_TERMINUS );
 		} else {
 			disallow_properties.push_back( BRANCH_LOWER_TERMINUS );
+			disallow_variants.push_back( BRANCH_LOWER_TERMINUS_VARIANT );
 		}
 		if ( is_d_aa ) {
 			properties.push_back( D_AA );

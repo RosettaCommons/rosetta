@@ -244,17 +244,14 @@ StepWiseRNA_Clusterer::cluster()
 		do_some_clustering();
 	}
 
-
 	if ( tag_output_list_.size() != silent_struct_output_list_.size() ) utility_exit_with_message( "tag_output_list_.size() != silent_struct_output_list_.size()" );
 
 	if ( ( keep_pose_in_memory_ == true ) && ( keep_pose_in_memory_hydrid_ == false ) ) {
 		if ( pose_output_list_.size() != tag_output_list_.size() ) utility_exit_with_message( "pose_output_list_.size() != tag_output_list_.size()" );
 	}
 
-
 	TR << "Final cluster_pose_list size = " << silent_struct_output_list_.size() << std::endl;
 	TR << "Total clustering time : " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -266,7 +263,6 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 
 	clock_t const time_start( clock() );
 
-
 	pose::Pose first_pose;
 	pose::Pose first_pose_before_slicing;
 
@@ -275,26 +271,25 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 
 	input_->reset(); //reset the silentfile stream to the beginning..
 
-
 	//get the first pose in the silent_file_stream.
 	while ( input_->has_another_pose() ) {
-		num_silent_struct++;
+		++num_silent_struct;
 
 		core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
 
-		if ( found_valid_struct == false ) {
+		if ( !found_valid_struct ) {
 			PoseOP pose_op( new Pose );
 			core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 			silent_struct->fill_pose( *pose_op, *rsd_set );
-
+			
 			std::string const & tag( silent_struct->decoy_tag() );
-
+			
 			if ( protocols::stepwise::modeler::rna::check_for_messed_up_structure( (*pose_op), tag ) == true ) continue;
-
+			
 			first_pose_before_slicing = (*pose_op);
-
+			
 			if ( optimize_memory_usage_ ) ( *pose_op) = sliced_pose_job_params_.create_sliced_pose(*pose_op);
-
+			
 			//OK found a valid (non-messed) pose. Will use this pose as the "global" quick alignment pose_
 			first_pose = (*pose_op);
 			found_valid_struct = true;
@@ -348,7 +343,6 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 	TR << "max_memory_pose_num_ = " << max_memory_pose_num_ << std::endl;
 	TR << "time in function = " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 	TR << "--------------StepWiseRNA_Clusterer::initialize_max_memory_pose_num----------" << std::endl;
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -385,11 +379,9 @@ StepWiseRNA_Clusterer::initialize_VDW_rep_checker(){
 		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, (*pose_op), working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ) );
 
 		break;
-
 	}
 
 	input_->reset(); //reset the silentfile stream to the beginning..
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -401,7 +393,6 @@ StepWiseRNA_Clusterer::initialize_quick_alignment_pose(){
 	using namespace ObjexxFCL;
 
 	if ( !working_parameters_exist_ ) utility_exit_with_message( "quick_alignment_ = True but working_parameters_exist_ = False!" );
-
 
 	//OK first check that it valid to use the quick_alignment_pose mode... in this mode, all alignment must be fixed res..However, this check itself is not enough to gaurantee that quicj_alignemnt_mode will work. Another requirement is that all the residue in working_best_alignment must be fixed in space with respect to each other. I try to ensure that this is always the case by making sure that every residues in the working_best_alignment is in the root_partition. (See StepWiseWorkingParametersSetup.cc)
 
@@ -622,7 +613,6 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 	using namespace core::pose;
 	using namespace ObjexxFCL;
 
-
 	output_title_text( "StepWiseRNA_Clusterer::create_silent_file_and_tag_list()", TR );
 
 	input_->reset(); //reset the silentfile stream to the beginning..
@@ -633,7 +623,6 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 
 	utility::vector1 < core::Size > working_global_sample_res_list;
 	utility::vector1 < core::Size > working_filter_virtual_res_list;
-
 
 	if ( perform_VDW_rep_screen_ || perform_filters_ ) {
 
@@ -670,8 +659,8 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 
 			///Jan 12, 2012:Consistency check://///
 			if ( working_parameters_exist_ ) {
-				if ( (*pose_op).total_residue() != working_parameters_->working_sequence().size() ) {
-					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( working_parameters_->working_sequence().size() ) + " ) = working_parameters_working_sequence().size()" );
+				if ( (*pose_op).total_residue() != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
+					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size() less the number of [ times 5" );
 				}
 			}
 			////////////////////////////////////////
@@ -873,12 +862,12 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 		///Jan 12, 2012:Consistency check://///
 		if ( working_parameters_exist_ ) {
 			if ( working_parameters_ -> add_virt_res_as_root() ) {
-				if ( (*pose_op).total_residue() - 1 != working_parameters_->working_sequence().size() ) {
-					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( working_parameters_->working_sequence().size() ) + " ) = working_parameters_working_sequence().size()" );
+				if ( (*pose_op).total_residue() - 1 != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
+					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size()" );
 				}
 			} else {
-				if ( (*pose_op).total_residue() != working_parameters_->working_sequence().size() ) {
-					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( working_parameters_->working_sequence().size() ) + " ) = working_parameters_working_sequence().size()" );
+				if ( (*pose_op).total_residue() != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
+					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size()" );
 				}
 			}
 		}
@@ -890,10 +879,7 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 			first_pose_ = (*pose_op);
 			is_first_pose = false;
 		}
-
-
 		/////////////////////////////////////////////////////////
-
 
 		bool const OK = check_for_closeness( pose_op, tag );
 
@@ -904,9 +890,7 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 
 			if ( keep_pose_in_memory_ == true ) {
 				if ( ( keep_pose_in_memory_hydrid_ == false ) || ( pose_output_list_.size() < max_memory_pose_num_ )  ) {
-
 					pose_output_list_.push_back(  pose_op );
-
 				}
 			}
 
@@ -922,7 +906,6 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 			}
 
 			if ( silent_struct_output_list_.size() >= max_decoys_ ) break;
-
 		}
 
 		num_pose_clustered++;
@@ -933,8 +916,6 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 	}
 
 	TR << "After clustering, number of decoys: " << silent_struct_output_list_.size() << " from " << num_pose_clustered << " input poses " << std::endl;
-	return;
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -947,10 +928,8 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 	std::map< core::Size, bool > const & is_prepend_map,
 	core::Real const & cluster_radius ) const{
 
-
 	utility::vector1< Real > rmsd_list( calc_rms_res.size(), 9999.99 );
 	utility::vector1< bool > same_sugar_pucker_list( calc_rms_res.size(), false );
-
 
 	for ( Size i = 1; i <= calc_rms_res.size(); i++ ) {
 
@@ -975,13 +954,11 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 		bool const center_is_virtual_sugar =
 			cluster_center_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
 
-
 		if ( ignore_unmatched_virtual_res_ == false ) { //Sep 07. 2011
 
 			if ( current_is_virtual_res != center_is_virtual_res ) {
 				return false; //current_pose is not part of this cluster center
 			}
-
 		}
 
 		if ( current_is_virtual_res && center_is_virtual_res ) {
@@ -1016,18 +993,7 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 			if ( check_pucker && ( same_sugar_pucker_list[i] == false ) ) {
 				return false;
 			}
-
 		}
-
-
-		/*
-		if ( distinguish_pucker_ ){
-		if ( rmsd_list[i] > cluster_radius || ( same_sugar_pucker_list[i] == false ) ) return false; //current_pose is not part of this cluster center
-		} else{
-		if ( rmsd_list[i] > cluster_radius ) return false; //current_pose is not part of this cluster center
-		}
-		*/
-
 	}
 
 	if ( verbose_ ) {
@@ -1062,7 +1028,6 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 
 			TR << std::endl;
 		}
-
 	}
 
 	return true; //current_pose is not part of this cluster center
@@ -1092,11 +1057,9 @@ StepWiseRNA_Clusterer::get_poseOP( Size const n ){
 	silent_struct_output_list_[n]->fill_pose( *pose_op, *rsd_set );
 
 	if ( optimize_memory_usage_ ) ( *pose_op) = sliced_pose_job_params_.create_sliced_pose(*pose_op);
-
 	if ( quick_alignment_ ) align_to_quick_alignment_pose( (*pose_op), tag_output_list_[n] );
 
 	return pose_op;
-
 }
 
 
@@ -1124,7 +1087,6 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 	for ( Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) { //lowest score cluster center at the beginning of the list
 
 		Real cluster_center_score( 0.0 );
-
 		pose::Pose & cluster_center_pose = *( large_cluster_pose_list_[n] );
 
 		if ( quick_alignment_ == false ) align_poses( current_pose, tag, cluster_center_pose, "large_cluster_center", alignment_res, align_only_over_base_atoms_ );
@@ -1148,25 +1110,23 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 
 			if ( ( member.score + 0.001 ) > current_score ) break; //0.001 to account for round off errors.
 
-			if ( ( RMSD - member.RMSD ) > ( loop_cluster_radius_ + 0.02 ) ) { //satisfies triangle inequality
+			if ( ( RMSD - member.RMSD ) <= ( loop_cluster_radius_ + 0.02 ) ) continue;
+			//satisfies triangle inequality
 
-				if ( ( member.ID > all_pose_to_output_pose_ID_map_.size() ) || ( member.ID < 1 ) ) {
-					utility_exit_with_message( "member.ID ( " + string_of( member.ID )  + " ) > all_pose_to_output_pose_ID_map_.size() ( " +  string_of( all_pose_to_output_pose_ID_map_.size() ) + " ) " );
-				}
-
-				Size const output_pose_ID = all_pose_to_output_pose_ID_map_[member.ID];
-
-				if ( output_pose_ID == 0 ) continue; //member is not a output_pose..
-
-				if ( ( output_pose_ID > silent_struct_output_list_.size() ) || ( output_pose_ID < 1 ) ) {
-					utility_exit_with_message( "output_pose_ID ( " + string_of( output_pose_ID )  + " ) > silent_struct_output_list_.size() ( " +  string_of( silent_struct_output_list_.size() ) + " ) " );
-				}
-
-				if ( fail_triangle_inequality_list[output_pose_ID] == false ) num_fail_triangle_inequality++;
-
-				fail_triangle_inequality_list[output_pose_ID] = true;
-
+			if ( ( member.ID > all_pose_to_output_pose_ID_map_.size() ) || ( member.ID < 1 ) ) {
+				utility_exit_with_message( "member.ID ( " + string_of( member.ID )  + " ) > all_pose_to_output_pose_ID_map_.size() ( " +  string_of( all_pose_to_output_pose_ID_map_.size() ) + " ) " );
 			}
+			
+			Size const output_pose_ID = all_pose_to_output_pose_ID_map_[member.ID];
+			if ( output_pose_ID == 0 ) continue; //member is not a output_pose..
+			
+			if ( ( output_pose_ID > silent_struct_output_list_.size() ) || ( output_pose_ID < 1 ) ) {
+				utility_exit_with_message( "output_pose_ID ( " + string_of( output_pose_ID )  + " ) > silent_struct_output_list_.size() ( " +  string_of( silent_struct_output_list_.size() ) + " ) " );
+			}
+			
+			if ( fail_triangle_inequality_list[output_pose_ID] == false ) num_fail_triangle_inequality++;
+			
+			fail_triangle_inequality_list[output_pose_ID] = true;
 		}
 	}
 	//TR << "num_cluster_center_used= " << num_cluster_center_used;
@@ -1233,7 +1193,6 @@ StepWiseRNA_Clusterer::is_new_cluster_center_with_working_parameters( core::pose
 			TR << tag << " is a neighbor of " << cluster_center_tag << std::endl;
 			return false;
 		}
-
 	}
 
 	return true; //new cluster center!
@@ -1271,7 +1230,6 @@ StepWiseRNA_Clusterer::check_for_closeness( core::pose::PoseOP const & pose_op, 
 	} else {
 		return check_for_closeness_without_working_parameters( pose_op );
 	}
-
 }
 
 
@@ -1301,9 +1259,7 @@ StepWiseRNA_Clusterer::output_silent_file( std::string const & silent_file ){
 		}
 
 		silent_file_data.write_silent_struct( *s, silent_file, false /*write score only*/ );
-
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1761,7 +1717,7 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 
 	is_setup_ = true;
 
-	Size const nres = ( working_parameters->working_sequence() ).size();
+	Size const nres = core::pose::rna::remove_bracketed( working_parameters->working_sequence() ).size();
 	utility::vector1< core::Size > const & working_best_alignment( working_parameters->working_best_alignment() );
 	utility::vector1 < core::Size > const & calc_rms_res = working_parameters->calc_rms_res();
 	std::map< core::Size, bool > const & is_prepend_map = working_parameters->is_prepend_map();

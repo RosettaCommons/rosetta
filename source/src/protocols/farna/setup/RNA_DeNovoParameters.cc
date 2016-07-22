@@ -112,7 +112,6 @@ RNA_DeNovoParameters::read_parameters_from_file( std::string const & filename ) 
 	}
 
 	std::string line, tag;
-	// Size num_stems( 0 );
 
 	while ( getline( pairing_stream, line ) ) {
 
@@ -159,8 +158,6 @@ RNA_DeNovoParameters::read_parameters_from_file( std::string const & filename ) 
 					virtual_anchor_attachment_points_.push_back( a );
 				}
 			}
-
-
 		} else if ( tag == "CUTPOINT_CLOSED" ) {
 			while ( !line_stream.fail() ) {
 				line_stream >> a;
@@ -168,7 +165,6 @@ RNA_DeNovoParameters::read_parameters_from_file( std::string const & filename ) 
 					cutpoints_closed_.push_back( a );
 				}
 			}
-
 		} else if ( tag == "CUTPOINT_OPEN" ) {
 			while ( !line_stream.fail() ) {
 				line_stream >> a;
@@ -176,7 +172,6 @@ RNA_DeNovoParameters::read_parameters_from_file( std::string const & filename ) 
 					cutpoints_open_.push_back( a );
 				}
 			}
-
 		} else if ( tag == "CHAIN_CONNECTION" ) {
 
 			read_chain_connection( line_stream );
@@ -350,7 +345,6 @@ RNA_DeNovoParameters::read_chain_connection( std::istringstream & line_stream ) 
 	if ( chain_connections_.size() == 0 ) {
 		utility_exit_with_message(  "Did not specify SEGMENT1 or SEGMENT2 or SET1 or SET2 in CHAIN_CONNECTION line?" );
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

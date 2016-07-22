@@ -93,8 +93,8 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 	for ( Size n = 1; n <= f.num_jump(); n++ ) {
 		Size const i = f.upstream_jump_residue( n );
 		Size const j = f.downstream_jump_residue( n );
-		bool i_is_mg_or_hoh_res = ( pose.residue( i ).name3() == "HOH" || pose.residue( i ).name3() == " MG" );
-		bool j_is_mg_or_hoh_res = ( pose.residue( j ).name3() == "HOH" || pose.residue( j ).name3() == " MG" );
+		bool i_is_mg_or_hoh_res = ( pose.residue_type( i ).name3() == "HOH" || pose.residue_type( i ).name3() == " MG" );
+		bool j_is_mg_or_hoh_res = ( pose.residue_type( j ).name3() == "HOH" || pose.residue_type( j ).name3() == " MG" );
 		if ( i_is_mg_or_hoh_res && j_is_mg_or_hoh_res ) continue;
 		if ( i_is_mg_or_hoh_res && !j_is_mg_or_hoh_res ) {
 			std::pair< Size, std::string > const & connection( is_connected[ i ] );
@@ -102,9 +102,9 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 				jump_partners1.push_back( connection.first );
 				jump_partners2.push_back( j );
 				jump_atoms1.push_back( connection.second );
-				jump_atoms2.push_back( chemical::rna::default_jump_atom( pose.residue( j ) ) );
+				jump_atoms2.push_back( chemical::rna::default_jump_atom( pose.residue_type( j ) ) );
 			} else {
-				is_connected[ i ] = std::make_pair( j, chemical::rna::default_jump_atom( pose.residue( j ) )  );
+				is_connected[ i ] = std::make_pair( j, chemical::rna::default_jump_atom( pose.residue_type( j ) )  );
 			}
 			continue;
 		}
@@ -113,10 +113,10 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 			if ( connection.first > 0 ) {
 				jump_partners1.push_back( i );
 				jump_partners2.push_back( connection.first );
-				jump_atoms1.push_back( chemical::rna::default_jump_atom( pose.residue( i ) ) );
+				jump_atoms1.push_back( chemical::rna::default_jump_atom( pose.residue_type( i ) ) );
 				jump_atoms2.push_back( connection.second );
 			} else {
-				is_connected[ j ] = std::make_pair( i, chemical::rna::default_jump_atom( pose.residue( i ) ) );
+				is_connected[ j ] = std::make_pair( i, chemical::rna::default_jump_atom( pose.residue_type( i ) ) );
 			}
 			continue;
 		}
@@ -127,8 +127,8 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 	}
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( f.is_cutpoint( n ) && n < pose.total_residue() ) cuts.push_back( n );
-		if ( pose.residue( n ).name3() == "HOH" ) water_res.push_back( n );
-		if ( pose.residue( n ).name3() == " MG" ) mg_res.push_back( n );
+		if ( pose.residue_type( n ).name3() == "HOH" ) water_res.push_back( n );
+		if ( pose.residue_type( n ).name3() == " MG" ) mg_res.push_back( n );
 	}
 
 	// setup jumps for all mg(2+), and for all hoh near mg(2+)
@@ -140,7 +140,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 		AtomID mg_partner_id;
 		for ( Size k = 1; k <= mg_ligands.size(); k++ ) {
 			Size const j = mg_ligands[ k ].rsd();
-			if ( pose.residue( j ).name3() == "HOH" ) {
+			if ( pose.residue_type( j ).name3() == "HOH" ) {
 				if ( !assigned_jump_to_water[ j ] ) {
 					assigned_jump_to_water[ j ] = true;
 					jump_partners1.push_back( i );
@@ -158,7 +158,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 		jump_partners1.push_back( i );
 		jump_partners2.push_back( mg_partner_id.rsd() );
 		jump_atoms1.push_back( "MG  " );
-		jump_atoms2.push_back( pose.residue( mg_partner_id.rsd() ).atom_name( mg_partner_id.atomno() ) );
+		jump_atoms2.push_back( pose.residue_type( mg_partner_id.rsd() ).atom_name( mg_partner_id.atomno() ) );
 	}
 
 	// setup jumps for all remaining hoh -- make sure they do not stick to mg2+ or mg-bound hoh, so
@@ -171,7 +171,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 		jump_partners1.push_back( i );
 		jump_partners2.push_back( best_partner.rsd() );
 		jump_atoms1.push_back( "MG  " );
-		jump_atoms2.push_back( pose.residue( best_partner.rsd() ).atom_name( best_partner.atomno() ) );
+		jump_atoms2.push_back( pose.residue_type( best_partner.rsd() ).atom_name( best_partner.atomno() ) );
 	}
 
 	// choose fold tree and put into pose.

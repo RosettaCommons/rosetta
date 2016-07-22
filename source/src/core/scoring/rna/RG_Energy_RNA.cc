@@ -183,7 +183,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	// Or alternatively, if I set up a base centroid virtual atom with a fixed
 	// geometry relative to the base first sidechain atom -- apply it there.
 
-	if ( atom_num_i != first_base_atom_index( rsd ) ) return;
+	if ( atom_num_i != first_base_atom_index( rsd.type() ) ) return;
 
 	Vector const v( base_centroids[i] );
 	Vector f2 = ( v - center_of_mass_ )/ ( ( nres - 1 ) * rg_ );

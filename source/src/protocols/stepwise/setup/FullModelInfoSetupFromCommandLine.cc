@@ -894,8 +894,8 @@ get_tree( pose::Pose const & pose,
 
 	vector1< std::string > jump_atoms1, jump_atoms2;
 	for ( Size n = 1; n <= jump_partners1.size(); n++ ) {
-		jump_atoms1.push_back( chemical::rna::default_jump_atom( pose.residue( jump_partners1[n] ) ) );
-		jump_atoms2.push_back( chemical::rna::default_jump_atom( pose.residue( jump_partners2[n] ) ) );
+		jump_atoms1.push_back( chemical::rna::default_jump_atom( pose.residue_type( jump_partners1[n] ) ) );
+		jump_atoms2.push_back( chemical::rna::default_jump_atom( pose.residue_type( jump_partners2[n] ) ) );
 	}
 	return get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 }
@@ -1016,8 +1016,8 @@ put_in_cutpoint( pose::Pose & pose, Size const i ) {
 	Size const new_jump = f.new_jump( i, i+1, i );
 	if ( pose.residue_type( i ).is_RNA() && pose.residue_type( i+1 ).is_RNA() ) {
 		f.set_jump_atoms( new_jump,
-			chemical::rna::default_jump_atom( pose.residue( f.upstream_jump_residue( new_jump ) ) ),
-			chemical::rna::default_jump_atom( pose.residue( f.downstream_jump_residue( new_jump ) ) ) );
+			chemical::rna::default_jump_atom( pose.residue_type( f.upstream_jump_residue( new_jump ) ) ),
+			chemical::rna::default_jump_atom( pose.residue_type( f.downstream_jump_residue( new_jump ) ) ) );
 	}
 	pose.fold_tree( f );
 }
