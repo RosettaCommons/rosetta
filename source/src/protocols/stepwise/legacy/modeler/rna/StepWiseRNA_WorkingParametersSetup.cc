@@ -985,16 +985,16 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 	std::map< Size, std::string > special_res;
 	std::string working_sequence_clean;
 	core::pose::rna::remove_and_store_bracketed( working_sequence, working_sequence_clean, special_res );
-	
+
 	for ( Size i = 1; i <= num_cutpoint; i++ ) {
 		Size k = fold_tree.upstream_jump_residue( i );
 		Size m = fold_tree.downstream_jump_residue( i );
-		
+
 		char upstream_res = working_sequence_clean[k - 1];
 		char downstream_res = working_sequence_clean[m - 1];
 		//TR << "upstream: " << upstream_res << std::endl;
 		//TR << "downstream_res: " << downstream_res << std::endl;
-		
+
 		//Base atoms...
 		std::string upstream_jump_atom;
 		std::string downstream_jump_atom;

@@ -90,7 +90,7 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	ho2prime_index_ = residue_type->atom_index( "HO2'" );
 
 	p_atom_index_  = residue_type->atom_index( " P  " );
-	
+
 	// Could be phosphorothioate
 	if ( residue_type->has( " OP2" ) ) {
 		op2_atom_index_ = residue_type->atom_index( " OP2" );

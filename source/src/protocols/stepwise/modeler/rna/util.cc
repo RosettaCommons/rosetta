@@ -814,7 +814,7 @@ base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	//TR << " MOVING_RES_1: " << pose1.residue(moving_res_1) << std::endl;
 	//TR << " MOVING_RES_2: " << pose2.residue(moving_res_2) << std::endl;
-	
+
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 	//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
 	for ( Size n = 1; n <= num_side_chain_atom; n++ ) { //This INCLUDE the O2prime oxygen
@@ -830,10 +830,10 @@ base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2,
 
 		// AMW: temporarily making this default
 		// This is largely because virtuals have a tendency to change atom order
-		// That said, it's probably not a problem: when one set of atoms is 
+		// That said, it's probably not a problem: when one set of atoms is
 		// virtual, how is the comparison ever meaningful?
 		//if ( ignore_virtual_atom ) {
-			if ( rsd_1.is_virtual( atomno_1 )   || rsd_2.is_virtual( atomno_2 )  ) continue;
+		if ( rsd_1.is_virtual( atomno_1 )   || rsd_2.is_virtual( atomno_2 )  ) continue;
 		//}
 
 		if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) { //Change this to "AND" on Apr 5
@@ -926,7 +926,7 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 
 			conformation::Residue const & rsd_1 = pose1.residue( res_num_1 );
 			conformation::Residue const & rsd_2 = pose2.residue( res_num_2 );
-			
+
 			if ( rsd_1.is_virtual_residue() ) continue;
 			if ( rsd_2.is_virtual_residue() ) continue;
 
@@ -944,14 +944,14 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 
 		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
 		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
-		
+
 		if ( atomno_2 > pose2.residue_type( moving_res_2 ).natoms() ) break;
-		
+
 		// skip hydrogen (must do manually)
-		
+
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
-		
+
 		if ( rsd_1.type().atom_type( atomno_1 ).element() == "H" ) continue;
 		if ( rsd_2.type().atom_type( atomno_1 ).element() == "H" ) continue;
 
@@ -984,7 +984,7 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
 	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
-	
+
 	Size const num_heavy_backbone_atoms = 11; //RNA contains 11 heavy backbone atoms.
 
 	for ( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
@@ -999,7 +999,7 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 		// for now...
 		if ( pose1.residue_type( res_num_1 ).is_virtual_residue() ) continue;
 		if ( pose1.residue_type( res_num_2 ).is_virtual_residue() ) continue;
-		
+
 		conformation::Residue const & rsd_1 = pose1.residue( res_num_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( res_num_2 );
 
@@ -1009,19 +1009,19 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 		atom_count++;
 		sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno, atomno, verbose );
 	}
-	
+
 	Size const atomno_1 = pose1.residue_type( moving_res_1 ).first_sidechain_atom();
 	Size const atomno_2 = pose2.residue_type( moving_res_2 ).first_sidechain_atom();
-	
+
 	conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 	conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
-	
+
 	if ( ignore_virtual_atom && ( rsd_1.is_virtual( atomno_1 ) || rsd_2.is_virtual( atomno_2 ) ) ) return;
 	if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) return;
-	
+
 	atom_count++;
 	sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno_1, atomno_2, verbose );
-	
+
 	// AMW: returning here until I know why not to, since the sugar suite sure shouldn't
 	// include any sidechain atoms except O2'
 	// AMW: NOT returning here because screw it, I want no integration test changes
@@ -1030,12 +1030,12 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 	//the virtual O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
 	for ( Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
 
-    Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
-    Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;	
+		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
+		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
 
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
-		
+
 		if ( ignore_virtual_atom && ( rsd_1.is_virtual( atomno_1 ) || rsd_2.is_virtual( atomno_2 ) ) ) continue;
 		if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) continue;
 

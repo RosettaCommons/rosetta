@@ -23,6 +23,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <core/scoring/methods/util.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers

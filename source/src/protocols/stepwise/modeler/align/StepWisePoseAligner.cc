@@ -198,7 +198,7 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 
 	std::string const full_sequence_stripped = core::pose::rna::remove_bracketed( full_sequence );
-	
+
 	// local working copy, mutated in cases where nucleotides have been designed ('n')
 	if ( reference_pose_local_ == 0 ) reference_pose_local_ = reference_pose_.clone();
 
@@ -208,7 +208,7 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		char const pose_nt = pose.sequence()[ n-1 ];
 		if ( res_list_in_reference[n] == 0 ) continue;
-		
+
 		//TR << "Evaluating residue " << n << pose.residue_type(n).name1() << std::endl;
 		//TR << "Compare to " << n - 1 + offset << " due to offset " << offset << ": " << full_sequence[ n - 1 + offset ] << std::endl;
 
@@ -551,8 +551,8 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const & n, p
 	// fails the no heavy atom check, basically not a "backbone atom") or it is
 	// a methyl in a noncanonical (heavy, but not gonna stay too fixed ideally)
 	//if ( pose.residue_type( n ).is_RNA() &&
-	//		atom_name == pose.residue_type( n ).atom_name( pose.residue_type( n ).chi_atoms( 4 )[ 4 ] ) ) return false;
-	
+	//  atom_name == pose.residue_type( n ).atom_name( pose.residue_type( n ).chi_atoms( 4 )[ 4 ] ) ) return false;
+
 	return true;
 }
 

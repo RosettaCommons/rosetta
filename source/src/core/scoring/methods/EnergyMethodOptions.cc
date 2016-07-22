@@ -65,6 +65,7 @@ namespace methods {
 
 EnergyMethodOptions::EnergyMethodOptions():
 	aa_composition_setup_files_(),
+	aspartimide_penalty_value_(25.0),
 	// hard-wired default, but you can set this with etable_type( string )
 	atom_vdw_atom_type_set_name_(chemical::CENTROID), // can be set, see below
 	unfolded_energies_type_( UNFOLDED_SCORE12 ),
@@ -123,6 +124,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	utility::vector1 < std::string > emptyvector;
 
 	aa_composition_setup_files_ = (basic::options::option[ basic::options::OptionKeys::score::aa_composition_setup_file ].user() ? basic::options::option[ basic::options::OptionKeys::score::aa_composition_setup_file ]() : emptyvector);
+	aspartimide_penalty_value_ = basic::options::option[ basic::options::OptionKeys::score::aspartimide_penalty_value ]();
 	elec_max_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_max_dis ]();
 	elec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_min_dis ]();
 	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
@@ -181,6 +183,7 @@ EnergyMethodOptions &
 EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 	if ( this != &src ) {
 		aa_composition_setup_files_ = src.aa_composition_setup_files_;
+		aspartimide_penalty_value_ = src.aspartimide_penalty_value_;
 		atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;
 		unfolded_energies_type_ = src.unfolded_energies_type_;
 		split_unfolded_label_type_=src.split_unfolded_label_type_;
@@ -795,6 +798,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 
 	return (
 		( a.aa_composition_setup_files_ == b.aa_composition_setup_files_ ) &&
+		( a.aspartimide_penalty_value_ == b.aspartimide_penalty_value_ ) &&
 		( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
 		( a.unfolded_energies_type_ == b.unfolded_energies_type_ ) &&
 		( a.split_unfolded_label_type_ == b.split_unfolded_label_type_ ) &&
@@ -866,6 +870,9 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		}
 	}
 	out << std::endl;
+
+	out << "EnergyMethodOptions::show: aspartimide_penalty_value: " << aspartimide_penalty_value() << std::endl;
+
 	if ( etable_options_->etable_type.size() ) out << "EnergyMethodOptions::show: etable_type: " << etable_options_->etable_type <<'\n';
 	out << "analytic_etable_evaluation: " << etable_options_->analytic_etable_evaluation << '\n';
 	for ( MethodWeights::const_iterator it=method_weights_.begin(), ite = method_weights_.end(); it != ite; ++it ) {
@@ -1136,6 +1143,7 @@ template< class Archive >
 void
 core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( aa_composition_setup_files_ ) );
+	arc( CEREAL_NVP( aspartimide_penalty_value_ ) ); //core::Real
 	arc( CEREAL_NVP( atom_vdw_atom_type_set_name_ ) ); // std::string
 	arc( CEREAL_NVP( unfolded_energies_type_ ) ); // std::string
 	arc( CEREAL_NVP( split_unfolded_label_type_ ) ); // std::string
@@ -1195,6 +1203,7 @@ template< class Archive >
 void
 core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( aa_composition_setup_files_ );
+	arc( aspartimide_penalty_value_ ); // core::Real
 	arc( atom_vdw_atom_type_set_name_ ); // std::string
 	arc( unfolded_energies_type_ ); // std::string
 	arc( split_unfolded_label_type_ ); // std::string

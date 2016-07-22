@@ -19,8 +19,12 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
+#include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/pose/Pose.hh>
+#include <core/chemical/ResidueConnection.hh>
+#include <core/scoring/PolymerBondedEnergyContainer.hh>
 
 #include <utility/exit.hh>
 
@@ -88,6 +92,66 @@ bool atoms_interact(
 	);
 
 	return ( dist < interaction_cutoff );
+}
+
+/// @brief Given two residues that may or may not be connected, determine which of the two, if any,
+/// is the lower one and which is the upper.
+/// @details Inputs are rsd1 and rsd2; outputs are rsd1_is_lo and rsd2_is_lo.  Both will be false if
+/// the residues aren't conventionally connected (i.e. the C of one connected to the N of the other).
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+determine_lo_and_hi_residues(
+	core::pose::Pose const &pose,
+	core::Size const rsd1,
+	core::Size const rsd2,
+	bool &res1_is_lo,
+	bool &res2_is_lo
+) {
+	res1_is_lo = (
+		pose.residue(rsd1).has_upper_connect() &&
+		pose.residue(rsd1).residue_connection_partner( pose.residue(rsd1).upper_connect().index() ) == rsd2 &&
+		pose.residue(rsd2).has_lower_connect() &&
+		pose.residue(rsd2).residue_connection_partner( pose.residue(rsd2).lower_connect().index() ) == rsd1
+	);
+	res2_is_lo = (
+		pose.residue(rsd2).has_upper_connect() &&
+		pose.residue(rsd2).residue_connection_partner( pose.residue(rsd2).upper_connect().index() ) == rsd1 &&
+		pose.residue(rsd1).has_lower_connect() &&
+		pose.residue(rsd1).residue_connection_partner( pose.residue(rsd1).lower_connect().index() ) == rsd2
+	);
+}
+
+/// @brief Determines whether a long-range energies container exists in the pose energies object.  If not,
+/// creates a new one and appends the score type to it, if necessary.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+create_long_range_energy_container(
+	core::pose::Pose &pose,
+	core::scoring::ScoreType const scoretype,
+	core::scoring::methods::LongRangeEnergyType const lr_type
+) {
+	using namespace methods;
+
+	// create LR energy container
+	core::scoring::Energies & energies( pose.energies() );
+	bool create_new_lre_container( false );
+
+	if ( energies.long_range_container( lr_type ) == 0 ) {
+		create_new_lre_container = true;
+	} else {
+		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		if ( !dec || !dec->is_valid( pose ) ) {
+			create_new_lre_container = true;
+		}
+	}
+
+	if ( create_new_lre_container ) {
+		utility::vector1< ScoreType > s_types;
+		s_types.push_back( scoretype );
+		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
+		energies.set_long_range_container( lr_type, new_dec );
+	}
 }
 
 } // namespace methods

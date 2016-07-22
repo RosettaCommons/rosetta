@@ -460,7 +460,7 @@ RNA_BaseCentroidChecker::check_centroid_interaction( StepWiseRNA_CountStruct & c
 	if ( base_pair ) count_data.base_pairing_count++;
 	if ( stack_base ) count_data.base_stack_count++;
 	if ( base_pair || stack_base ) count_data.pass_base_centroid_screen++;
-	
+
 	if ( !base_pair && !stack_base ) return false;
 	return true;
 }

@@ -166,8 +166,8 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 		std::string const original_name = rinfo.resName();
 
 		// first establish if this is DNA or RNA (or something else)
-		if ( !options_.guarantee_no_DNA() 
-				&& core::io::NomenclatureManager::is_old_DNA( rinfo.resName() ) 
+		if ( !options_.guarantee_no_DNA()
+				&& core::io::NomenclatureManager::is_old_DNA( rinfo.resName() )
 				&& missing_O2prime( rinfo.atoms() ) )  {
 			std::string new_name( original_name ); new_name.replace( 1, 1, "D" ); // A --> dA
 			rinfo.resName( new_name );
@@ -528,9 +528,9 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 		// if that RNA is itself not upper-terminal
 		if ( !residue_types_[ ii ]->is_upper_terminus() &&
 				!( residue_types_[ ii ]->is_protein() && residue_types_[ ii_prev ]->is_RNA()
-				  && !residue_types_[ ii_prev ]->is_upper_terminus() ) && 
+				&& !residue_types_[ ii_prev ]->is_upper_terminus() ) &&
 				!( residue_types_[ ii ]->is_RNA() && residue_types_[ ii_next ]->is_protein()
-				  && !residue_types_[ ii_next ]->is_upper_terminus() ) && 
+				&& !residue_types_[ ii_next ]->is_upper_terminus() ) &&
 				( ii == ii_next ||
 				( residue_types_[ ii_next ] && (
 				!residue_types_[ ii_next ]->is_polymer() ||
@@ -590,7 +590,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		ResidueType const & ii_rsd_type( *residue_types_[ ii ] );
 		TR.Trace << "ResidueType " << ii << ": " << ii_rsd_type.name() << std::endl;
 		//TR.Trace << "went by, in the file context, " << rinfos_[ ii ].resName()
-		//	<< " at " << rinfos_[ ii ].chainID() << rinfos_[ ii ].resSeq() << rinfos_[ ii ].iCode() << " " << rinfos_[ ii ].segmentID() << std::endl;
+		// << " at " << rinfos_[ ii ].chainID() << rinfos_[ ii ].resSeq() << rinfos_[ ii ].iCode() << " " << rinfos_[ ii ].segmentID() << std::endl;
 
 		ResidueOP ii_rsd( ResidueFactory::create_residue( ii_rsd_type ) );
 		for ( StructFileRep::ResidueCoords::const_iterator iter = rinfos_[ ii ].xyz().begin(), iter_end = rinfos_[ ii ].xyz().end();
@@ -630,7 +630,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			TR.Trace << ii_rsd_type.name() << " " << ii << " is the start of a new pose." << std::endl;
 			pose.append_residue_by_bond( *ii_rsd );
 
-		// If this is a lower terminus, AND it's not about to get UPPER-UPPER bonded from prev
+			// If this is a lower terminus, AND it's not about to get UPPER-UPPER bonded from prev
 		} else if ( ( ( is_lower_terminus_[ ii ] && !( !pose.residue_type( old_nres ).is_upper_terminus() && pose.residue_type( old_nres ).is_RNA() && !ii_rsd_type.is_upper_terminus() ) )
 				&& determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() )) ||
 				! same_chain_prev_[ ii ] ||

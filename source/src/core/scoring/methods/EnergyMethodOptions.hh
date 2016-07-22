@@ -112,6 +112,12 @@ public:
 		return;
 	}
 
+	/// @brief Get the penalty for each aspartimide-forming two-residue sequence.
+	/// @details Used by the aspartimide_penalty score term.
+	inline core::Real const &
+	aspartimide_penalty_value() const {
+		return aspartimide_penalty_value_;
+	}
 
 	std::string const &
 	etable_type() const;
@@ -524,6 +530,7 @@ private:
 	// the assignment operator, the == comparison operator, and the show method in the .cc file!
 	/////////////////////////////////////////////////
 	utility::vector1 < std::string > aa_composition_setup_files_;
+	core::Real aspartimide_penalty_value_;
 	std::string atom_vdw_atom_type_set_name_;
 	std::string unfolded_energies_type_;
 	std::string split_unfolded_label_type_;

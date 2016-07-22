@@ -567,6 +567,7 @@ enum ScoreType {
 	ring_close, //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
 	aa_repeat, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
+	aspartimide_penalty, //A context-independent two-body score term for penalizing two-residue sequences likely to produce the aspartimide side-product during peptide synthesis.
 
 	// dna env/pair potential
 	dna_env,

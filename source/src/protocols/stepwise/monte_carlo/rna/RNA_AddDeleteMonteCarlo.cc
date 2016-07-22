@@ -200,15 +200,15 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 
 		// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
 		if ( i >= pose.total_residue() || is_working_res[ i+1 ] || pose.fold_tree().is_cutpoint(i) ) continue;
-	
+
 		Size const i_next      = i+1;
 		Size const i_next_full = res_list[ i+1 ];
 		runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
-		
+
 		Residue const & rsd_next        = pose.residue( i_next );
 		Residue const & rsd_next_native = native_pose.residue( i_next_full );
 		runtime_assert( rsd_next.aa() == rsd_next_native.aa() );
-		
+
 		//std::cout << "RMSD:  num_suite_atoms " << next_suite_atoms_.size() << std::endl;
 		for ( Size k = 1; k <= next_suite_atoms_.size(); k++ ) {
 			std::string atom_name = next_suite_atoms_[ k ];

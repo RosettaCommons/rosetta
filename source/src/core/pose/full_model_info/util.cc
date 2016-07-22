@@ -391,7 +391,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	std::string const & sequence = full_model_info.full_sequence();
 
 	// Clean the sequence of all polluting annotations
-	std::string const clean_seq = core::pose::rna::remove_bracketed( sequence ); 
+	std::string const clean_seq = core::pose::rna::remove_bracketed( sequence );
 
 	// very special case -- blank pose. could generalize to any pose with a virtual residue at end
 	if ( res_list.size() == 0 && pose.total_residue() == 1 && pose.residue_type( 1 ).name3() == "XXX" ) return true;

@@ -64,47 +64,47 @@ OPT_KEY( Integer, n_intermediate_dump )
 // Histogram class for accumulating samples
 class Histogram {
 
-public:
+	public:
 	Histogram( Real const min, Real const max, Real const spacing ):
-		min_( min ),
+	min_( min ),
 		max_( max ),
 		spacing_( spacing )
-	{
+		{
 		runtime_assert( max > min );
-		n_elem_ = static_cast<Size>( ( max - min ) / spacing ) + 1;
-		for ( Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
-	}
+	n_elem_ = static_cast<Size>( ( max - min ) / spacing ) + 1;
+	for ( Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
+}
 
-	void add( float const value, Size const n_items ) {
-		Size bin_index;
-		if ( value <= min_ ) {
-			bin_index = 1;
-		} else if ( value >= max_ ) {
-			bin_index = n_elem_;
-		} else {
-			bin_index = static_cast<Size>( ( value - min_ ) / spacing_ ) + 1;
-		}
-		hist_[bin_index] += n_items;
+void add( float const value, Size const n_items ) {
+	Size bin_index;
+	if ( value <= min_ ) {
+		bin_index = 1;
+	} else if ( value >= max_ ) {
+		bin_index = n_elem_;
+	} else {
+		bin_index = static_cast<Size>( ( value - min_ ) / spacing_ ) + 1;
 	}
-	
-	void clear() {
-		for ( Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
+	hist_[bin_index] += n_items;
+}
+
+void clear() {
+	for ( Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
+}
+
+utility::vector1<Real> get_scores() const {
+	utility::vector1<Real> scores;
+	for ( Size i = 1; i <= n_elem_; ++i ) {
+		scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
 	}
-	
-	utility::vector1<Real> get_scores() const {
-		utility::vector1<Real> scores;
-		for ( Size i = 1; i <= n_elem_; ++i ) {
-			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
-		}
-		return scores;
-	}
-	
-	utility::vector1<Size> get_hist() const { return hist_; }
-	
+	return scores;
+}
+
+utility::vector1<Size> get_hist() const { return hist_; }
+
 private:
-	Real const min_, max_, spacing_;
-	Size n_elem_;
-	utility::vector1<Size> hist_;
+Real const min_, max_, spacing_;
+Size n_elem_;
+utility::vector1<Size> hist_;
 };
 
 //////////////////////////////////////////////////////////////////////////////

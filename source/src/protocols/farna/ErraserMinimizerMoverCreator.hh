@@ -27,7 +27,7 @@ public:
 	static std::string mover_name();
 };
 
-} //namespace farna 
+} //namespace farna
 } //namespace protocols
 
 #endif //INCLUDED_protocols_farna_ErraserMinimizerMoverCreator_hh

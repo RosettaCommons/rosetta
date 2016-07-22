@@ -166,7 +166,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	native_pose_copy.fold_tree(  core::kinematics::FoldTree(  native_pose_copy.total_residue() ) );
 
 	PoseOP working_native_pose( new Pose );
-	
+
 	//First option is to pass in the full length native
 	if ( native_pose_copy.sequence() == core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ) ) {
 		TR.Debug << "User passed in full length native pose" << std::endl;
@@ -188,7 +188,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		TR.Debug <<  std::setw( 50 ) << "  working_sequence = " << core::pose::rna::remove_bracketed( working_sequence ) << std::endl;
 		utility_exit_with_message( "The native pose passed in by the User does not match both the full_sequence and the working sequence of the inputted fasta_file" );
 	}
-	
+
 	if ( working_native_pose->sequence() != core::pose::rna::remove_bracketed( working_sequence ) ) {
 		TR.Debug <<  std::setw( 50 ) << "working_native_pose->sequence() = " << working_native_pose->sequence();
 		TR.Debug <<  std::setw( 50 ) << "working_sequence = " << core::pose::rna::remove_bracketed( working_sequence ) << std::endl;

@@ -255,11 +255,11 @@ StepWiseProteinPoseSetup::figure_out_working_sequence_and_mapping(){
 	// and figure out chain boundaries.
 	// AMW: desired_sequence may contain TLCs ([XXX]) or possibly full residue names??
 	// So we can't just subtract--use a utility function to remove what's in []
-	
+
 	std::map< Size, std::string > special_res;
 	std::string clean_desired_sequence;
 	core::pose::rna::remove_and_store_bracketed( desired_sequence_, clean_desired_sequence, special_res );
-	
+
 	Size const nres( core::pose::rna::remove_bracketed( desired_sequence_ ).size() );
 
 	ObjexxFCL::FArray1D< Size > is_working_res( nres );

@@ -82,7 +82,7 @@ public: // re-used methods
 		// cleaning a clean sequence should be a noop
 		std::string seq2 = "acguacgu";
 		TS_ASSERT( seq2 == core::pose::rna::remove_bracketed( seq2 ) );
-		
+
 	}
-	
+
 }; // class PoseRNAUtilTests

@@ -168,12 +168,12 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 				Vector const ideal_hydrogen_xyz = ideal_hydrogen_xyz_positions[ n ];
 
 				if ( possible_hbond_acceptors_.size() == 0 ) continue;
-				
+
 				// might be better to create a 'pseudo' score function penalizing deviation from ideal.
 				check_hbond_score( ideal_hydrogen_xyz, donor_xyz, best_score, best_hydrogen_xyz );
-				
+
 				Stub const ideal_hydrogen_stub( residue.xyz( j1 ) /*center*/, ideal_hydrogen_xyz, residue.xyz( j1 ), residue.xyz( j2 ) );
-				
+
 				// generate 'rotamers' around ideal H location.
 				Vector const ideal_local_xyz = ideal_hydrogen_stub.global2local( ideal_hydrogen_xyz );
 				Distance const ideal_H_length = ideal_local_xyz.x();
@@ -184,10 +184,10 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 				Size const nphi( 6 ); // deviation will be 360.0 / nphi
 				for ( int d = -(ndist - 1)/2; d <= ( ndist - 1 )/2; d++ ) {
 					Real const bond_length = ideal_H_length + length_deviation * Real( d );
-					
+
 					for ( Size q = 1; q <= ntheta; q++ ) { // theta (angle)
 						Real const theta = q * numeric::conversions::radians( theta_deviation );
-						
+
 						for ( Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
 							Real const phi = f * numeric::conversions::radians( 360.0 / Real(nphi) );
 							Real const x = bond_length * cos( theta );
@@ -195,7 +195,7 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 							Real const z = bond_length * sin( theta )  * cos( phi );
 							Vector const H_xyz = ideal_hydrogen_stub.local2global( Vector( x,y,z) );
 							//     TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( ideal_hydrogen_xyz - H_xyz ).length() << std::endl;
-							
+
 							check_hbond_score( H_xyz, donor_xyz, best_score, best_hydrogen_xyz );
 						}
 					}
@@ -273,10 +273,10 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ) {
 			if ( pose.residue_type( i ).is_virtual( j ) ) continue;
 			if ( !pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ) continue;
-			
+
 			Distance dist = ( rsd.xyz( j ) - moving_xyz ).length();
 			if ( dist >= contact_distance_cutoff_ ) continue;
-			
+
 			vector1< Vector > acceptor_xyz_info;
 			acceptor_xyz_info.push_back( rsd.xyz( j ) );
 			acceptor_xyz_info.push_back( rsd.xyz( rsd.atom_base(j) ) );

@@ -359,7 +359,7 @@ get_binary_rna_silent_struct_safe_wrapper( pose::Pose const & const_pose, std::s
 		BinarySilentStruct s( const_pose, tag ); //If write score only, don't have to safe about pose to silent_struct conversion!
 		return s;
 	}
-	
+
 	return ( get_binary_rna_silent_struct_safe( const_pose, tag, silent_file ) );
 }
 

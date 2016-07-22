@@ -869,13 +869,13 @@ Conformation::append_residue_by_bond(
 	if ( polymer_connection ) residue_connection_index = new_rsd.type().lower_connect_id();
 	/*bool upper_to_upper = false;
 	if ( polymer_connection ) {
-		// AMW: account for special upper-to-upper RNA-protein connection
-		upper_to_upper = residue_( anchor_pos ).is_RNA() && new_rsd.is_protein();
-		if ( upper_to_upper ) {
-			residue_connection_index = new_rsd.type().upper_connect_id();
-		} else {
-			residue_connection_index = new_rsd.type().lower_connect_id();
-		}
+	// AMW: account for special upper-to-upper RNA-protein connection
+	upper_to_upper = residue_( anchor_pos ).is_RNA() && new_rsd.is_protein();
+	if ( upper_to_upper ) {
+	residue_connection_index = new_rsd.type().upper_connect_id();
+	} else {
+	residue_connection_index = new_rsd.type().lower_connect_id();
+	}
 	}*/
 	Residue const & anchor_rsd( residue_( anchor_pos ) ); // no call to residue(anchor_pos)
 
@@ -888,7 +888,7 @@ Conformation::append_residue_by_bond(
 			err << "Can't create a polymer bond after residue " << anchor_pos
 				<< " due to incompatible type: " << anchor_rsd.type().name();
 			utility_exit_with_message(err.str());
-		} else if ( !new_rsd.is_polymer() /* || 
+		} else if ( !new_rsd.is_polymer() /* ||
 				( !new_rsd.type().lower_connect_id() && !upper_to_upper ) ||
 				( !new_rsd.type().upper_connect_id() && upper_to_upper )*/ ) {
 			std::stringstream err;

@@ -404,6 +404,7 @@ sources = {
         ],
 	"scoring/methods" : [
 		"AARepeatEnergy",
+		"AspartimidePenaltyEnergy",
 		"CartesianBondedEnergy",
 		"CartesianBondedEnergyBBDep",
 		"ChainbreakEnergy",

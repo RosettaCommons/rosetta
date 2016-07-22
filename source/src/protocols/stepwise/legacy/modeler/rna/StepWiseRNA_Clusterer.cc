@@ -281,15 +281,15 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 			PoseOP pose_op( new Pose );
 			core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 			silent_struct->fill_pose( *pose_op, *rsd_set );
-			
+
 			std::string const & tag( silent_struct->decoy_tag() );
-			
+
 			if ( protocols::stepwise::modeler::rna::check_for_messed_up_structure( (*pose_op), tag ) == true ) continue;
-			
+
 			first_pose_before_slicing = (*pose_op);
-			
+
 			if ( optimize_memory_usage_ ) ( *pose_op) = sliced_pose_job_params_.create_sliced_pose(*pose_op);
-			
+
 			//OK found a valid (non-messed) pose. Will use this pose as the "global" quick alignment pose_
 			first_pose = (*pose_op);
 			found_valid_struct = true;
@@ -1116,16 +1116,16 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 			if ( ( member.ID > all_pose_to_output_pose_ID_map_.size() ) || ( member.ID < 1 ) ) {
 				utility_exit_with_message( "member.ID ( " + string_of( member.ID )  + " ) > all_pose_to_output_pose_ID_map_.size() ( " +  string_of( all_pose_to_output_pose_ID_map_.size() ) + " ) " );
 			}
-			
+
 			Size const output_pose_ID = all_pose_to_output_pose_ID_map_[member.ID];
 			if ( output_pose_ID == 0 ) continue; //member is not a output_pose..
-			
+
 			if ( ( output_pose_ID > silent_struct_output_list_.size() ) || ( output_pose_ID < 1 ) ) {
 				utility_exit_with_message( "output_pose_ID ( " + string_of( output_pose_ID )  + " ) > silent_struct_output_list_.size() ( " +  string_of( silent_struct_output_list_.size() ) + " ) " );
 			}
-			
+
 			if ( fail_triangle_inequality_list[output_pose_ID] == false ) num_fail_triangle_inequality++;
-			
+
 			fail_triangle_inequality_list[output_pose_ID] = true;
 		}
 	}

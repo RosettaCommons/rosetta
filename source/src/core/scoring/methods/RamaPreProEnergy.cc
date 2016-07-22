@@ -107,29 +107,7 @@ RamaPreProEnergy::setup_for_scoring(
 	pose::Pose & pose,
 	ScoreFunction const &
 ) const {
-	using namespace methods;
-
-	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
-	bool create_new_lre_container( false );
-
-	if ( energies.long_range_container( lr_type ) == 0 ) {
-		create_new_lre_container = true;
-	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
-		if ( !dec || !dec->is_valid( pose ) ) {
-			create_new_lre_container = true;
-		}
-	}
-
-	if ( create_new_lre_container ) {
-		utility::vector1< ScoreType > s_types;
-		s_types.push_back( rama_prepro );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
-		energies.set_long_range_container( lr_type, new_dec );
-	}
+	create_long_range_energy_container( pose, core::scoring::rama_prepro, long_range_type() );
 }
 
 bool
@@ -138,9 +116,8 @@ RamaPreProEnergy::defines_residue_pair_energy(
 	Size rsd1,
 	Size rsd2
 ) const {
-	bool const res1_is_lo( pose.residue(rsd1).has_upper_connect() && pose.residue(rsd1).residue_connection_partner( pose.residue(rsd1).upper_connect().index() ) == rsd2 );
-	bool const res2_is_lo( pose.residue(rsd2).has_upper_connect() && pose.residue(rsd2).residue_connection_partner( pose.residue(rsd2).upper_connect().index() ) == rsd1 );
-
+	bool res1_is_lo(false), res2_is_lo(false);
+	determine_lo_and_hi_residues( pose, rsd1, rsd2, res1_is_lo, res2_is_lo );
 	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::RamaPreProEnergy::defines_residue_pair_energy(): The RamaPrePro term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
 
 	return (res1_is_lo || res2_is_lo);
@@ -153,7 +130,7 @@ void
 RamaPreProEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & /*pose*/,
+	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {
@@ -162,15 +139,17 @@ RamaPreProEnergy::residue_pair_energy(
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 	if ( !rsd1.is_bonded(rsd2) ) return;
 
-	bool const res1_is_lo( rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
-	bool const res2_is_lo( rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	bool res1_is_lo(false), res2_is_lo(false);
+
+	determine_lo_and_hi_residues( pose, rsd1.seqpos(), rsd2.seqpos(), res1_is_lo, res2_is_lo );
+
 	if ( !(res1_is_lo || res2_is_lo) ) return;
 	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::RamaPreProEnergy::residue_pair_energy(): The RamaPrePro term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
 
 	conformation::Residue const &res_lo = (res1_is_lo) ? rsd1 : rsd2;
 	conformation::Residue const &res_hi = (res2_is_lo) ? rsd1 : rsd2;
 
-	if ( !rsd1.type().is_alpha_aa() ) return; //Only applies to alpha-amino acids.
+	if ( !res_lo.type().is_alpha_aa() ) return; //Only applies to alpha-amino acids.
 
 	if ( res_lo.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
 	if ( res_hi.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;

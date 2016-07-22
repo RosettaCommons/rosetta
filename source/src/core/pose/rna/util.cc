@@ -1187,7 +1187,7 @@ remove_bracketed( std::string const & sequence ) {
 
 		std::string::size_type j = return_val.find( ']' );
 		if ( j == std::string::npos ) utility_exit_with_message( "String with imbalanced brackets passed to remove_bracketed! (" + sequence + ")" );
-		
+
 		return_val.erase( i, j - i + 1 );
 
 		i = return_val.find( '[' );
@@ -1199,13 +1199,13 @@ remove_bracketed( std::string const & sequence ) {
 void
 remove_and_store_bracketed( std::string const & working_sequence, std::string & working_sequence_clean, std::map< Size, std::string > & special_res ) {
 	working_sequence_clean = working_sequence;
-	
+
 	std::string::size_type i = working_sequence_clean.find( '[' );
 	while ( i != std::string::npos ) {
 
 		std::string::size_type j = working_sequence_clean.find( ']' );
 		if ( j == std::string::npos ) utility_exit_with_message( "String with imbalanced brackets passed to remove_bracketed! (" + working_sequence + ")" );
-		
+
 		std::string temp = working_sequence_clean.substr( i + 1, j - i - 1 );
 		special_res[ i - 1 ] = temp;
 		working_sequence_clean.erase( i, j - i + 1 );

@@ -905,7 +905,7 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 	Size sum_weight = 0;
 
 	numeric::xyzVector< core::Real > grid_half( grid[0] * 0.5, grid[1] * 0.5, grid[2] * 0.5 );
-	
+
 	atom_weight_stored.reserve( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) { //rsd
 		conformation::Residue const &rsd( pose.residue( i ) );

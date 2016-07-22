@@ -276,7 +276,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::ignore_unrecognized_res
 		+ in::ignore_waters
 		+ run::ignore_zero_occupancy
-		+ in::guarantee_no_DNA 
+		+ in::guarantee_no_DNA
 		+ pH::keep_input_protonation_state
 		+ run::preserve_header
 		+ in::preserve_crystinfo

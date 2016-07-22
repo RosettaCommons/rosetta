@@ -164,10 +164,10 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 	} else {
 		pose_is_alone = true;
 	}
-	
+
 	if ( pose_is_alone ) {
 		TR << TR.Red << "EMPTY POSE! Keeping the pose with number of residues " << pose.total_residue() << TR.Reset << std::endl;
-		
+
 		core::pose::PoseCOP old_pose_cop = pose.clone();
 		FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();
 		// Rosetta's Pose object craps out if it is blank.
@@ -180,7 +180,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 		pose.clear();
 		pose.append_residue_by_bond( *new_res );
-		
+
 		new_full_model_info->clear_res_list();
 		new_full_model_info->update_submotif_info_list();
 		new_full_model_info->clear_other_pose_list();

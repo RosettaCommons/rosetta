@@ -184,9 +184,9 @@ std::string
 remove_bracketed( std::string const & sequence );
 
 void
-remove_and_store_bracketed( 
-	std::string const & working_sequence, 
-	std::string & working_sequence_clean, 
+remove_and_store_bracketed(
+	std::string const & working_sequence,
+	std::string & working_sequence_clean,
 	std::map< Size, std::string > & special_res );
 
 } //ns rna

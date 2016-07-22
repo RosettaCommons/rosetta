@@ -2170,7 +2170,7 @@ ResidueType::is_NA() const
 {
 	return is_DNA() || is_RNA();
 }
-	
+
 bool
 ResidueType::is_purine() const
 {

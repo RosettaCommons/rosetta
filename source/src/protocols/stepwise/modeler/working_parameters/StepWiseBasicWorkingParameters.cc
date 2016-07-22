@@ -167,7 +167,7 @@ void StepWiseBasicWorkingParameters::update_working_sequence(){
 
 	for ( Size full_seq_num = 1, string_index = 0; string_index < full_sequence_.size(); ++full_seq_num, ++string_index ) {
 		if ( !is_working_res_[ full_seq_num ] ) continue;
-		
+
 		if ( full_sequence_[ string_index ] == 'X' ) {
 			working_sequence_ += full_sequence_[ string_index++ ];
 			working_sequence_ += full_sequence_[ string_index++ ];

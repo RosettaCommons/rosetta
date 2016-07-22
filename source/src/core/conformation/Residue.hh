@@ -1766,7 +1766,7 @@ public:
 	{
 		return rsd_type_.is_NA();
 	}
-	
+
 	/// @brief Returns true if this residue is a purine
 	bool
 	is_purine() const

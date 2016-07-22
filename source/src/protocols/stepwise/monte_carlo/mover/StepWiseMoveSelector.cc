@@ -463,22 +463,22 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 	for ( Size i = 1; i <= nres; i++ ) {
 
 		if ( ( i != nres ) &&
-			( !fold_tree.is_cutpoint( i ) || (res_list[ i ]+1 >= res_list[ i+1 ]) ) ) continue;
-		
+				( !fold_tree.is_cutpoint( i ) || (res_list[ i ]+1 >= res_list[ i+1 ]) ) ) continue;
+
 		// could be a 3' chain terminus
 		Size const i_full = res_list[ i ] ;
 		if ( i_full >= nres_full && !is_cutpoint_in_full_pose[ i_full ] ) continue;
-		
+
 		// direct addition of single residue (or potentially, a block of residues starting with this residue)
 		if ( is_addable_res( i_full + 1, pose ) ) {
 			swa_moves.push_back( StepWiseMove( i_full + 1, Attachment( i_full, BOND_TO_PREVIOUS ), ADD ) );
 		}
-		
+
 		// bulge skip...
 		if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
-			(i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
-			i_full < (nres_full - 1)  &&
-			!is_cutpoint_in_full_pose[ i_full + 1 ] ) {
+				(i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
+				i_full < (nres_full - 1)  &&
+				!is_cutpoint_in_full_pose[ i_full + 1 ] ) {
 			// for now can only handle single residue additions via skip-bulge ("floating base")
 			Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full + 1 );
 			if ( other_pose_idx_intervening == 0 ) {
@@ -492,24 +492,24 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 	for ( Size i = 1; i <= nres; i++ ) {
 
 		if ( ( i != 1 ) &&
-			( !fold_tree.is_cutpoint( i-1 ) || (res_list[ i ]-1 <= res_list[ i-1 ]) ) ) continue;
+				( !fold_tree.is_cutpoint( i-1 ) || (res_list[ i ]-1 <= res_list[ i-1 ]) ) ) continue;
 		// could be a 5' chain terminus
 
 		Size const i_full = res_list[ i ];
 		if ( i_full <= 1 || is_cutpoint_in_full_pose[ i_full - 1 ] ) continue;
 		// good, there's still a gap!
-			
-		
+
+
 		// direct addition of single residue (or potentially, a block of residues starting with this residue)
 		if ( is_addable_res( i_full - 1, pose ) ) {
 			swa_moves.push_back( StepWiseMove( i_full - 1, Attachment( i_full, BOND_TO_NEXT), ADD ) );
 		}
-		
+
 		// bulge skip...
 		if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
-			(i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
-			i_full > 2 &&
-			!is_cutpoint_in_full_pose[ i_full - 2 ] ) {
+				(i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
+				i_full > 2 &&
+				!is_cutpoint_in_full_pose[ i_full - 2 ] ) {
 			// for now can only handle single residue additions via skip-bulge ("floating base")
 			Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full - 1 );
 			if ( other_pose_idx_intervening == 0 ) {

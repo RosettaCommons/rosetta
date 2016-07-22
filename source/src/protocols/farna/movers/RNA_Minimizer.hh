@@ -37,7 +37,7 @@ namespace movers {
 /// @brief The RNA de novo structure modeling protocol
 class RNA_Minimizer: public protocols::moves::Mover {
 public:
-	
+
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	RNA_Minimizer( protocols::farna::options::RNA_MinimizerOptionsCOP options = 0 );

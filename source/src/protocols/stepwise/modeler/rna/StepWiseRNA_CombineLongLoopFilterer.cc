@@ -125,24 +125,24 @@ StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( workin
 {
 
 	if ( combine_helical_silent_file_ ) return;
-	
+
 	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
-	
+
 	if ( input_res_vectors.size() != 2 ) utility_exit_with_message( "input_res_vectors.size() != 2" );
-	
+
 	full_to_input_res_map_ONE_ = create_full_to_input_res_map( input_res_vectors[1] ); //right now, only use this in figure_out_appended_and_prepended_res_list function
 	full_to_input_res_map_TWO_ = create_full_to_input_res_map( input_res_vectors[2] ); //right now, only use this in figure_out_appended_and_prepended_res_list function
-	
+
 	figure_out_appended_and_prepended_res_list();
 	figure_out_last_appended_and_last_prepended_res();
-	
+
 	//O3I_C5I_PLUS_ONE_MAX_DIST=3.968000
 	//max_centroid_to_atom_distance for atom:  C5' base RAD: 6.18959
 	//max_centroid_to_atom_distance for atom:  O3' base RAD: 6.65341
 	//For is for a A-nucleotides, more chi rotamers
 	//Suppose that moving_res is making base-stack contact to the last SWA-built residue from the another side:
 	// Then atom-atom distance must be lesser than minus_contact_dist_cutoff_(1)+atom vanderWaal radius -> for Carbon:  1.70
-	
+
 	//so 3.968000 + (6.18959 or 6.65341) + (1) + (3.4)=
 	moving_res_contact_dist_cutoff_ = 3.968000 + 6.65341 + 1 + 3.4;
 	TR << "moving_res_contact_dist_cutoff_ = " << moving_res_contact_dist_cutoff_ << std::endl;
@@ -306,7 +306,7 @@ StepWiseRNA_CombineLongLoopFilterer::align_all_pose( utility::vector1< PoseOP > 
 	if ( side_TWO_pose_data_list.size() == 0 ) utility_exit_with_message( "side_TWO_pose_data_list.size() == 0" );
 
 	core::pose::Pose const alignment_pose = ( *side_ONE_pose_data_list[1] );
-	
+
 	for ( Size n = 1; n <= side_ONE_pose_data_list.size(); n++ ) {
 
 		core::pose::Pose & side_ONE_pose = ( *side_ONE_pose_data_list[n] );

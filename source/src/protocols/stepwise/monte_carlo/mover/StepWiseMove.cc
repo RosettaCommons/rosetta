@@ -223,7 +223,7 @@ void
 initialize_move_type_name(){
 	static bool init( false );
 	if ( init ) return;
-	
+
 	move_type_name[ NO_MOVE ] = "NO_MOVE";
 	move_type_name[ ADD ]    = "ADD";
 	move_type_name[ DELETE ] = "DELETE";

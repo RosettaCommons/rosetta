@@ -47,6 +47,7 @@ enum LongRangeEnergyType {
 	cart_bonded_lr,
 	rama2b_lr,
 	ramaprepro_lr,
+	aspartimide_penalty_lr,
 	rna_suite_lr,
 	DFIRE,
 	sym_bonus_lr,

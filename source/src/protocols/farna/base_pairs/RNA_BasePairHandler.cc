@@ -214,13 +214,13 @@ RNA_BasePairHandler::get_base_pair_steps( bool const just_canonical ) const {
 	for ( std::map< Size, Size >::const_iterator iter = partner.begin(), end = partner.end(); iter != end; ++iter ) {
 		Size const i = iter->first;
 		if ( partner.find( i+1 ) == partner.end() || cutpoints_open_.has_value( i ) ) continue;
-		
+
 		Size const j = partner[ i+1 ];
 		// In following, q = 0  means flush base pair steps. Strands are (i, i+1)  and (j, j+1 )
 		// For q > 0, there are q unpaired residues ('bulges') in between j and j+q. Strands are (i, i+1) and ( j, j+1, ... j+q+1 ).
 		for ( int q = 0; q <= libraries::MAX_BULGE_LENGTH; q++ ) {
 			if ( j != partner[i] - q - 1 ) continue;
-			
+
 			bool has_cutpoint( false );
 			for ( Size n = j; n < partner[ i ]; n++ ) {
 				if ( cutpoints_open_.has_value( n ) ) has_cutpoint = true;

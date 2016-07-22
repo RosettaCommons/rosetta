@@ -597,8 +597,8 @@ GeometricSolEnergyEvaluator::check_path_distance(
 	if ( rsd1.seqpos() == rsd2.seqpos() ) {
 		return ( rsd1.path_distance( atm1, atm2 ) >= intrares_path_distance_cutoff_ );
 	}
-	
-	//	AMW TODO: this is_bonded call is 0.2% of SWA runtime
+
+	// AMW TODO: this is_bonded call is 0.2% of SWA runtime
 	if ( ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) && ( interres_path_distance_cutoff_ > 0 ) ) {
 		etable::count_pair::CountPairGeneric count_pair( rsd1, rsd2 ); // this is inefficient... happens with each atom pair in rsd1, rsd2.
 		path_distance_ = count_pair.path_distance( atm1, atm2 );

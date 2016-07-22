@@ -50,13 +50,13 @@
 //////////////////////////////////////////////////////////////////
 //
 // Rhiju-style comment of long-term objectives and work to do.
-// 
+//
 // 1. check_in_bonded_list and check_in_bond_angle_list aren't
 // ideal but it's not a real performance concern. But you could
 // easily imagine storing them sorted, thus permitting much better
 // searches. This is obviously not the ERRASER bottleneck, but
 // std::set provides much of this functionality, just needing a
-// sorting function to do the rest. (Also uniqueness is then 
+// sorting function to do the rest. (Also uniqueness is then
 // enforced.
 //
 //        -- AMW, 2016
@@ -71,12 +71,12 @@ using namespace protocols::farna;
 ///////////////////////////////////////////////////////////////
 void*
 my_main ( void* ) {
-	
+
 	ErraserMinimizerMoverOP emm( new ErraserMinimizerMover );
 	emm->initialize_from_options();
-	
+
 	protocols::jd2::JobDistributor::get_instance()->go( emm );
-	
+
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
@@ -87,7 +87,7 @@ main ( int argc, char * argv [] ) {
 	try {
 		utility::vector1< Size > blank_size_vector;
 		utility::vector1< std::string > blank_string_vector;
-		
+
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////

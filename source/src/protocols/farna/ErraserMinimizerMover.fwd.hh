@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/ErraserMinimizerMover.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace farna {
-	
-	class ErraserMinimizerMover;
-	typedef utility::pointer::shared_ptr< ErraserMinimizerMover > ErraserMinimizerMoverOP;
-	typedef utility::pointer::shared_ptr< ErraserMinimizerMover const > ErraserMinimizerMoverCOP;
-	
-} //farna 
-} //protocols 
+
+class ErraserMinimizerMover;
+typedef utility::pointer::shared_ptr< ErraserMinimizerMover > ErraserMinimizerMoverOP;
+typedef utility::pointer::shared_ptr< ErraserMinimizerMover const > ErraserMinimizerMoverCOP;
+
+} //farna
+} //protocols
 
 #endif

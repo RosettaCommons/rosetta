@@ -42,6 +42,7 @@
 
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
+#include <core/scoring/methods/AspartimidePenaltyEnergyCreator.hh>
 #include <core/scoring/methods/CenPairEnergyCreator.hh>
 #include <core/scoring/methods/ChainbreakEnergyCreator.hh>
 #include <core/scoring/methods/ContactOrderEnergyCreator.hh>
@@ -367,6 +368,7 @@ static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::AspartimidePenaltyEnergyCreator > AspartimidePenaltyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairMotifEnergyCreator > CenPairMotifEnergyCreator_registrator;
