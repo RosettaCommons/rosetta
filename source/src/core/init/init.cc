@@ -281,8 +281,10 @@
 #include <sys/resource.h> // for getrlimit/setrlimit
 #define PROCESS_STACK_SIZE 32 * 1024 * 1024 // 32 MB
 #else // For linux, for example, we still need a bigger stack for ribosomes.
+#ifndef WIN32
 #include <sys/resource.h> // for getrlimit/setrlimit
 #define PROCESS_STACK_SIZE 32 * 1024 * 1024 // 32 MB
+#endif
 #endif
 
 using basic::T;
