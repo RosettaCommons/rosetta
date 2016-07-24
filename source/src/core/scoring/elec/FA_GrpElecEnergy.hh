@@ -372,7 +372,7 @@ private:
 	bool exclude_protein_protein_;
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
-	Real intrares_scale_;
+	//Real intrares_scale_;
 	bool context_dependent_;
 	Real context_minstrength_;
 	Real ncb_maxburial_, ncb_minburial_;

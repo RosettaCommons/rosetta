@@ -190,6 +190,15 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & /*min_data*/,
+		pose::Pose const & pose,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const ;
+
 	/// @brief Evaluate the derivative vectors for a particular atom in a given
 	/// (asymmetric) pose when nblist_autoupdate is being used.  nblist_autoupdate
 	/// cannot be used with symmetric poses, in rtmin, or in minpack.
@@ -247,11 +256,11 @@ public:
 	virtual
 	void
 	eval_intrares_energy(
-		conformation::Residue const &,
-		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
-	) const {}
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const &sf,
+		EnergyMap & emap
+	) const;
 
 	virtual
 	void
@@ -278,17 +287,25 @@ public:
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const;
 
+	virtual
+	void 
+	evaluate_rotamer_intrares_energies(
+  	conformation::RotamerSetBase const & set,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		utility::vector1< core::PackerEnergy > & energies
+	) const;
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & weights ) const;
 
 	/// @brief Interface function for class NeighborList.
 	etable::count_pair::CountPairFunctionCOP
 	get_intrares_countpair(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &
+		ScoreFunction const &sf
 	) const;
 
 	/// @brief Interface function for class NeighborList.
@@ -335,6 +352,8 @@ public:
 	{
 		return ( coulomb().max_dis() + 2*core::chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH );
 	}
+
+	bool eval_intrares_ST_only() const { return eval_intrares_ST_only_;	}
 
 	inline
 	Energy heavyatom_heavyatom_energy(
@@ -485,12 +504,12 @@ private:
 	//fpd: envdep hbonds
 	bool use_env_dep_;
 	core::Real env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_;
+	bool eval_intrares_ST_only_; // hpark: intrares_elec for ST hydroxyl only
 
 	//fpd: countpair representative atoms
 	bool use_cp_rep_, flip_cp_rep_;
 	mutable std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > cp_rep_map_;
 	CPRepMapTypeCOP cp_rep_map_byname_;
-
 
 	//mutable Real elec_weight_; // used during trie-vs-trie algorithm
 	mutable Real wbb_bb_;

@@ -321,11 +321,11 @@ public:
 	void
 	geom_sol_intrares_path_distance_cutoff( core::Size const setting );
 
-	core::Real
-	intrares_elec_correction_scale() const;
+	bool
+	eval_intrares_elec_ST_only() const;
 
 	void
-	intrares_elec_correction_scale( core::Real setting );
+	eval_intrsres_elec_ST_only( bool setting );
 
 	bool
 	envsmooth_zero_negatives() const;
@@ -562,7 +562,7 @@ private:
 	bool put_intra_into_total_;
 	core::Size geom_sol_interres_path_distance_cutoff_;
 	core::Size geom_sol_intrares_path_distance_cutoff_;
-	core::Real intrares_elec_correction_scale_;
+	bool eval_intrares_elec_ST_only_;
 	bool envsmooth_zero_negatives_;
 	hbonds::HBondOptionsOP hbond_options_;
 	core::scoring::etable::EtableOptionsOP etable_options_;

@@ -516,7 +516,6 @@ init_crystal_refinement_correction() {
 	}
 }
 
-
 void
 init_beta_correction() {
 	// -beta activates most recent
@@ -525,6 +524,13 @@ init_beta_correction() {
 	}
 	if ( option[corrections::beta_cart]() ) {
 		option[ corrections::beta_nov15_cart ].value(true);
+	}
+	if ( option[corrections::beta_patch]() ) {
+		option[corrections::beta_nov15_patch].value( true );
+	}
+	if ( option[corrections::beta_nov15_patch]() ) {
+		debug_assert( option[corrections::beta_nov15]() );
+		option[ corrections::beta_nov15_patch ].value(true);
 	}
 
 	// if multiple flags specified use the most recent
@@ -1815,11 +1821,14 @@ init_beta_nov15_correction() {
 
 	// weights file
 	if ( ! option[ score::weights ].user() ) {
-		if ( option[corrections::beta_nov15_cart]() || option[optimization::nonideal]() ) {
+		if ( option[ corrections::beta_nov15_patch ]() ) {
+			option[ score::weights ].value( "beta_nov15_patch.wts" );
+		}	else if ( option[corrections::beta_nov15_cart]() || option[optimization::nonideal]() ) {
 			option[ score::weights ].value( "beta_nov15_cart.wts" );
 		} else {
 			option[ score::weights ].value( "beta_nov15.wts" );
 		}
+
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
 	}
@@ -1827,6 +1836,16 @@ init_beta_nov15_correction() {
 	// protocol option but it should be default ...
 	if ( !option[optimization::default_max_cycles]() ) {
 		option[ optimization::default_max_cycles ].value( 200 );
+	}
+
+	// apply patch (optional)
+	if ( option[ corrections::beta_nov15_patch ]() ) {
+		if( !option[ corrections::score::rama_prepro_steep ].user() ){
+			option[ corrections::score::rama_prepro_steep ].value( true );
+		}
+		if( !option[ score::eval_intrares_elec_ST_only ].user() ){
+			option[ score::eval_intrares_elec_ST_only ].value( true );
+		}
 	}
 }
 

@@ -121,7 +121,7 @@ FA_GrpElecEnergy::FA_GrpElecEnergy( methods::EnergyMethodOptions const & options
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-	intrares_scale_( options.intrares_elec_correction_scale() ),
+	//intrares_scale_( options.intrares_elec_correction_scale() ),
 	context_dependent_( options.grpelec_context_dependent() )
 {
 	//coulomb_.initialize();
@@ -138,7 +138,7 @@ FA_GrpElecEnergy::FA_GrpElecEnergy( FA_GrpElecEnergy const & src ):
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	intrares_scale_( src.intrares_scale_ ),
+	//intrares_scale_( src.intrares_scale_ ),
 	context_dependent_( src.context_dependent_ )
 {
 	//coulomb_.initialize();
@@ -378,7 +378,7 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
-	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
+	//bool intrares( rsd1.seqpos() == rsd2.seqpos() );
 	Real score( 0.0 );
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -394,16 +394,15 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 		w = burial_weight( nb1 ) + burial_weight( nb2 );
 	}
 
-	if ( intrares ) w *= intrares_scale_;
-
 	score = w*groupelec().eval_respair_group_coulomb( rsd1, rsd2 );
+
+	emap[ fa_grpelec ] += score;
 
 	/*
 	TR << rsd1.seqpos() << " " << rsd2.seqpos() << " "
 	<< burial_weight( nb1 ) << " " << burial_weight( nb2 ) << " " << score << std::endl;
 	*/
 
-	emap[ fa_grpelec ] += score;
 
 	//TR.Debug << "done residue_pair_energy_ext" << std::endl;
 }
@@ -441,7 +440,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
-	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
+	//bool intrares( rsd1.seqpos() == rsd2.seqpos() );
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
@@ -461,7 +460,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 	if ( context_dependent_ ) {
 		w = burial_weight( data->get_n( res1 ) ) + burial_weight( data->get_n( res2 ) );
 	}
-	if ( intrares ) w *= intrares_scale_;
+	//if ( intrares ) w *= intrares_scale_;
 
 	Real total_weight = elec_weight*w;
 
@@ -500,7 +499,7 @@ FA_GrpElecEnergy::eval_intrares_energy(
 	score = groupelec().eval_respair_group_coulomb( rsd, rsd );
 	Real w( 1.0 );
 	if ( context_dependent_ ) w = 2.0*burial_weight( nb );
-	w *= intrares_scale_;
+	//w *= intrares_scale_;
 	score *= w;
 
 	/*
@@ -542,7 +541,7 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 	Real Erespair( 0.0 );
 	Real w( 1.0 );
 	if ( context_dependent_ ) w = 2.0*burial_weight( data->get_n( res ) );
-	w *= intrares_scale_;
+	//w *= intrares_scale_;
 	Real total_weight = elec_weight*w;
 
 	// TODO

@@ -98,7 +98,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	put_intra_into_total_(false ),
 	geom_sol_interres_path_distance_cutoff_( 0 ), // rosetta++ default -- should be 4.
 	geom_sol_intrares_path_distance_cutoff_( 7 ), // originally implemented for RNA base/phosphate.
-	intrares_elec_correction_scale_( 0.0 ),
+	eval_intrares_elec_ST_only_( false ),
 	envsmooth_zero_negatives_( false ),
 	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions() )),
 	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions() )),
@@ -150,7 +150,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	put_intra_into_total( basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]() );
 	geom_sol_interres_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
 	geom_sol_intrares_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
-	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
+	eval_intrares_elec_ST_only_ = basic::options::option[basic::options::OptionKeys::score::eval_intrares_elec_ST_only]();
 	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
 	symmetric_gly_tables_ = basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 
@@ -217,7 +217,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		put_intra_into_total_ = src.put_intra_into_total_;
 		geom_sol_interres_path_distance_cutoff_ = src.geom_sol_interres_path_distance_cutoff_;
 		geom_sol_intrares_path_distance_cutoff_ = src.geom_sol_intrares_path_distance_cutoff_;
-		intrares_elec_correction_scale_ = src.intrares_elec_correction_scale_;
+		eval_intrares_elec_ST_only_ = src.eval_intrares_elec_ST_only_;
 		envsmooth_zero_negatives_ = src.envsmooth_zero_negatives_;
 		hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( *(src.hbond_options_) ) );
 		etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( *(src.etable_options_) ) );
@@ -554,14 +554,14 @@ EnergyMethodOptions::geom_sol_intrares_path_distance_cutoff( core::Size const se
 	geom_sol_intrares_path_distance_cutoff_ = setting;
 }
 
-core::Real
-EnergyMethodOptions::intrares_elec_correction_scale() const {
-	return intrares_elec_correction_scale_;
+bool
+EnergyMethodOptions::eval_intrares_elec_ST_only() const {
+	return eval_intrares_elec_ST_only_;
 }
 
 void
-EnergyMethodOptions::intrares_elec_correction_scale( core::Real const setting ) {
-	intrares_elec_correction_scale_ = setting;
+EnergyMethodOptions::eval_intrsres_elec_ST_only( bool setting ) {
+	eval_intrares_elec_ST_only_ = setting;
 }
 
 bool
@@ -832,12 +832,12 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
 		( a.geom_sol_interres_path_distance_cutoff_ == b.geom_sol_interres_path_distance_cutoff_ ) &&
 		( a.geom_sol_intrares_path_distance_cutoff_ == b.geom_sol_intrares_path_distance_cutoff_ ) &&
+		( a.eval_intrares_elec_ST_only_ == b.eval_intrares_elec_ST_only_ ) &&
 		( a.envsmooth_zero_negatives_ == b.envsmooth_zero_negatives_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
 		( * (a.etable_options_) == * (b.etable_options_) ) &&
 		( * (a.rna_options_) == * (b.rna_options_) ) &&
 		( * (a.free_dof_options_) == * (b.free_dof_options_) ) &&
-		( a.intrares_elec_correction_scale_ == b.intrares_elec_correction_scale_ ) &&
 		( a.cst_max_seq_sep_ == b.cst_max_seq_sep_ ) &&
 		( a.cartbonded_len_ == b.cartbonded_len_ ) &&
 		( a.cartbonded_ang_ == b.cartbonded_ang_ ) &&
@@ -924,6 +924,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		<< (geom_sol_interres_path_distance_cutoff_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: geom_sol_intrares_path_distance_cutoff: "
 		<< (geom_sol_intrares_path_distance_cutoff_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: eval_intrares_elec_ST_only: "
+			<< ( eval_intrares_elec_ST_only_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: envsmooth_zero_negatives: "
 		<< (envsmooth_zero_negatives_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
@@ -1077,8 +1079,8 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("geom_sol_intrares_path_distance_cutoff");
 	option_values.push_back(geom_sol_intrares_path_distance_cutoff_ ? "1" : "0");
 
-	option_keys.push_back("intrares_elec_correction_scale");
-	option_values.push_back(boost::lexical_cast<std::string>(intrares_elec_correction_scale_));
+	option_keys.push_back("eval_intrares_elec_ST_only");
+	option_values.push_back(eval_intrares_elec_ST_only_ ? "1" : "0");
 
 	option_keys.push_back("envsmooth_zero_negatives");
 	option_values.push_back(envsmooth_zero_negatives_ ? "1" : "0");
@@ -1177,7 +1179,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( put_intra_into_total_ ) ); // _Bool
 	arc( CEREAL_NVP( geom_sol_interres_path_distance_cutoff_ ) ); // core::Size
 	arc( CEREAL_NVP( geom_sol_intrares_path_distance_cutoff_ ) ); // core::Size
-	arc( CEREAL_NVP( intrares_elec_correction_scale_ ) ); // core::Real
+	arc( CEREAL_NVP( eval_intrares_elec_ST_only_ ) ); // _Bool
 	arc( CEREAL_NVP( envsmooth_zero_negatives_ ) ); // _Bool
 	arc( CEREAL_NVP( hbond_options_ ) ); // hbonds::HBondOptionsOP
 	arc( CEREAL_NVP( etable_options_ ) ); // core::scoring::etable::EtableOptionsOP
@@ -1237,7 +1239,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( put_intra_into_total_ ); // _Bool
 	arc( geom_sol_interres_path_distance_cutoff_ ); // core::Size
 	arc( geom_sol_intrares_path_distance_cutoff_ ); // core::Size
-	arc( intrares_elec_correction_scale_ ); // core::Real
+	arc( eval_intrares_elec_ST_only_ ); // _Bool
 	arc( envsmooth_zero_negatives_ ); // _Bool
 	arc( hbond_options_ ); // hbonds::HBondOptionsOP
 	arc( etable_options_ ); // core::scoring::etable::EtableOptionsOP

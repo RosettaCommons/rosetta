@@ -1329,7 +1329,7 @@ Options = Option_Group( '',
 		Option( 'elec_sigmoidal_die_S', 'Real', desc='S parameter for sigmoidal dielectric', default='0.36'),
 		Option( 'elec_representative_cp', 'Boolean', desc='Use representative atoms for countpair to avoid dipole splits', default='false'),
 		Option( 'elec_representative_cp_flip', 'Boolean', desc='Enable elec_representative_cp, but FLIP the order in the table', default='false'),
-		Option( 'intrares_elec_correction_scale', 'Real', desc='Intrares elec scaling factor for free DOF atoms', default='0.05'),
+		Option( 'eval_intrares_elec_ST_only', 'Boolean', desc='Intrares elec only for free DOF atoms in Ser/Thr', default='false'),
 		Option( 'smooth_fa_elec', 'Boolean', desc='Smooth the discontinuities in the elec energy function using a sigmoidal term', default='true' ),
 		Option( 'grpelec_fade_type', 'String', desc='use standard way (shift/switch function) of Coulomb function for fa_grpelec', default='false' ),
 		Option( 'grpelec_fade_param1', 'Real', desc='fading distance for shift/switch', default='1.0' ),
@@ -2092,6 +2092,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'beta_nov15_cart', 'Boolean', desc='Use the November 2015 beta score function for nonideal optimization', default='false'),
 		Option( 'beta_july15', 'Boolean', desc='Use the July 2015 beta  score function', default='false'),
 		Option( 'beta_july15_cart', 'Boolean', desc='Use the July 2015 beta score function for nonideal optimization', default='false'),
+		Option( 'beta_patch', 'Boolean', desc="Apply the extra patch to most-recent (curr Nov 15) beta_score_function.",default='false'),
+		Option( 'beta_nov15_patch', 'Boolean', desc="Apply the extra patch to (curr Nov 15) beta_score_function. Adding (conservative) patches to correct some pathologies found in beta_nov15."
+						" Could be merged to beta_nov15 in the future when it turns out to work generally better"
+						" -score:weights beta_nov15_patch"
+						" -rama_prepro_steep"
+						" -eval_intrares_elec_ST_only",
+						default='false'),
 		Option( 'newdna', 'Boolean', desc='Apply some dna-specific mods to chemical/scoring (for testing)',
 						default='false'),
 		Option( 'correct', 'Boolean',

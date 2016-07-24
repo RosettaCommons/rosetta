@@ -1,0 +1,42 @@
+# beta_nov15_patch
+#   beta energy function following parameter refitting (Frank DiMaio and Hahnbeom Park), November 2015
+#   weights when used with an umbrella flag "-beta_nov15_patch", containing
+#    -rama_prepro_steep
+#    -eval_intrares_elec_ST_only
+#   this weights file can be changed with updates on beta_nov15_patch 
+#
+#   Two sets of reference weight are provided.
+#      The first is for use in "minimization context" (e.g., RTmin, min_pack, or sidechain relax).
+#      The second, and default set, is for use in "packing context" (e.g. Rotamer trials or packing)
+#
+#METHOD_WEIGHTS ref   2.681  4.351 -2.416 -2.763  1.054  0.832 -0.393  2.790 -0.775  2.111  2.365 -1.908 -1.975 -1.613 -1.007 -0.610  0.802  2.689  2.607  0.568 #minimized
+METHOD_WEIGHTS ref   1.381  3.651 -2.316 -2.763  0.754  0.532 -0.493  2.490 -0.775  1.811  1.865 -1.508 -2.075 -1.513 -0.107 -0.310  0.802  2.589  1.707  0.268 #packer
+
+fa_atr 1
+fa_rep 0.55
+fa_sol 1.0
+fa_intra_sol_xover4 1.0
+lk_ball_wtd 1.0
+fa_intra_rep 0.005
+fa_elec 1.0
+fa_intra_elec 1.2
+pro_close 1.25
+hbond_sr_bb 1.0
+hbond_lr_bb 1.0
+hbond_bb_sc 1.0
+hbond_sc 1.0
+dslf_fa13 1.25
+rama_prepro 0.45
+omega 0.4
+p_aa_pp 0.6
+fa_dun 0.7
+yhh_planarity 0.625
+ref 1
+chainbreak 1.0
+coordinate_constraint 1.0
+atom_pair_constraint 1.0
+angle_constraint 1.0
+dihedral_constraint 1.0
+res_type_constraint 1.0
+INCLUDE_INTRA_RES_PROTEIN
+NO_HB_ENV_DEP
