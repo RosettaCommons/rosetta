@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/apps/pilot/krishna/pH_protocol.cc
+/// @file src/apps/public/pH_protocol.cc
 /// @Calculates the pKa value for a residue
 
 #include <core/scoring/ScoreFunction.hh>

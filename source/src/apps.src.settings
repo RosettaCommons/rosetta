@@ -59,6 +59,7 @@ sources = {
 		"SymDock",
 		"vip",
 		"struc_set_fragment_picker",
+		"pH_protocol",
 	],
 	"public/analysis": [
 		"batch_distances",

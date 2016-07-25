@@ -554,7 +554,6 @@ sources = {
 		#"khXtal_water_bunsat",
 	],
 	"pilot/krishna" : [
-		"pH_protocol",
 		#"pH_neighbor_pack",
 	],
 	"pilot/kuichan" : [
