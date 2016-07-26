@@ -1273,6 +1273,8 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	using namespace scoring;
 	using namespace viewer;
 	using namespace std;
+	using namespace core;
+	using namespace core::pose;
 
 	TR << "apply" << std::endl;
 

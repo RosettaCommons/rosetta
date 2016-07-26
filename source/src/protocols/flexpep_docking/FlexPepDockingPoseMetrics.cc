@@ -52,6 +52,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
+using namespace core;
 
 static THREAD_LOCAL basic::Tracer TR( "FlexPepDockingPoseMetrics" );
 

@@ -30,22 +30,20 @@
 namespace protocols {
 namespace flexpep_docking {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::pose;
-using namespace core;
-
 class FlexPepDockingPoseMetrics
 {
+
 public:
-	typedef bool (*t_predicate_func)(Pose const &, Pose const &, core::Size, core::Size);
+
+	typedef bool (*t_predicate_func)(core::pose::Pose const &, core::pose::Pose const &, core::Size, core::Size);
 
 
 	FlexPepDockingPoseMetrics(FlexPepDockingFlagsCOP flags)
 	: flags_(flags)
 	{} // TODO: move to .cc
 
-	core::Real calc_frac_native_contacts ( Pose const& native,
-		Pose const& final,
+	core::Real calc_frac_native_contacts ( core::pose::Pose const& native,
+		core::pose::Pose const& final,
 		core::Real threashold ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -67,8 +65,9 @@ public:
 	// @return
 	// fraction of atoms that are less than k Angstroms between poses
 	////////////////////////////////////////////////////////////////////////////
+	
 	core::Real calc_frac_atoms_kA_to_native(
-		Pose const& pose1, Pose const& pose2,
+		core::pose::Pose const& pose1, core::pose::Pose const& pose2,
 		ObjexxFCL::FArray1D_bool const & res_subset,
 		t_predicate_func predicate,
 		double k,
@@ -78,8 +77,8 @@ public:
 
 	// check all sequential Kmers in the peptide, and output the best RMS Kmer
 	core::Real best_Kmer_rms(
-		Pose const& pose1,
-		Pose const& pose2,
+	core::pose::Pose const& pose1,
+	core::pose::Pose const& pose2,
 		t_predicate_func predicate,
 		core::Size k
 	) const;
@@ -97,8 +96,8 @@ public:
 	// phi/psi torsion-RMSD between peptide backbones
 	////////////////////////////////////////////////////////////////////////////
 	core::Real calc_phipsi_RMSD(
-		Pose const& pose1,
-		Pose const& pose2,
+	core::pose::Pose const& pose1,
+	core::pose::Pose const& pose2,
 		ObjexxFCL::FArray1D_bool const & res_subset
 	) const;
 
@@ -106,7 +105,7 @@ public:
 	//calculaer different metrics for the interface of the given pose;
 	std::map < std::string, core::Real >
 	calc_interface_metrics
-	(core::pose::Pose & pose, Size rb_jump, core::scoring::ScoreFunctionOP scorefxn);
+	(core::pose::Pose & pose, core::Size rb_jump, core::scoring::ScoreFunctionOP scorefxn);
 
 	/////////////////////////////////////////
 	// Calculate peptide score with and w/o
@@ -114,7 +113,7 @@ public:
 	/////////////////////////////////////////
 	void
 	calc_pep_scores
-	( core::pose::Pose const & pose, Real& pepScore, Real& pepScore_noref ) const;
+	( core::pose::Pose const & pose, core::Real& pepScore, core::Real& pepScore_noref ) const;
 
 	// ======== Accessor Methods ========
 
