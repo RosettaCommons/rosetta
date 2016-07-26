@@ -207,7 +207,7 @@ CartesianSampler::init() {
 	rsd_wdw_to_refine_ = 0; //
 	wdw_to_freeze_ = 0;
 	freeze_endpoints_ = true;
-	score_threshold_ = 123456789;
+	score_threshold_ = 9999;
 
 	selection_bias_ = "none";
 	cumulate_prob_ = false;

@@ -84,7 +84,7 @@ init(
 	}
 	while ( !pose.residue(nres_).is_protein() ) nres_--;
 
-	fragmentProbs_.resize(nres_, 0.0);
+	fragmentProbs_.resize(nres_, 1e-6);
 	fragbias_tr.Trace << "init(): symmetrical_pose " << core::pose::symmetry::is_symmetric( pose )<< std::endl;
 	fragbias_tr.Trace << "init(): n residues " << nres_ << std::endl;
 	fragbias_tr.Trace << "init(): n_symm_subunit_ " << n_symm_subunit_ << std::endl;
@@ -106,7 +106,6 @@ compute_frag_bias(
 	pose::Pose &pose,
 	utility::vector1<core::fragment::FragSetOP> fragment_sets
 ){
-	fragbias_tr.Trace << "compute frag bias" << std::endl;
 	runtime_assert( fragProbs_assigned_ );
 
 	// clean up the vector
@@ -257,7 +256,7 @@ automode(
 	pose::Pose &pose,
 	Real score_cut /*-0.5 is controlled through CartesianSampler*/
 ){
-	fragmentProbs_.resize(nres_, 0.0);
+	fragmentProbs_.resize(nres_, 1e-6);
 
 	// based on parameter scanning to predict regions to refine:
 	// 0.45 0.05 0.15 0.35
@@ -348,7 +347,7 @@ assign_fragprobs(
 				assign_prob_with_rsd_wdw(r);
 			}
 		}
-		fragbias_tr.Trace << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << std::endl;
+		fragbias_tr.Trace << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << " " << threshold << std::endl;
 	}
 }
 
@@ -652,8 +651,7 @@ geometry(
 		perrsd_geometry_,
 		weight );
 
-	assign_fragprobs( perrsd_geometry_,
-		score_threshold_ );
+	assign_fragprobs( perrsd_geometry_,score_threshold_ );
 }
 
 
@@ -669,12 +667,11 @@ rama(
 	// clean the container
 	perrsd_rama_.resize(nres_, 0.0);
 	cal_perrsd_score( pose,
-		core::scoring::rama,
+		core::scoring::rama_prepro,
 		perrsd_rama_,
 		weight );
 
-	assign_fragprobs( perrsd_rama_,
-		score_threshold_ );
+	assign_fragprobs( perrsd_rama_, score_threshold_ );
 }
 
 
