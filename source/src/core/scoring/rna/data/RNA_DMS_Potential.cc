@@ -347,7 +347,7 @@ RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
 	runtime_assert( rna_reactivity.type() == DMS );
 	Size const & pos = rna_reactivity.position();
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	if ( full_model_info.full_sequence()[ pos - 1 ] != 'a' ) return 0.0;
+	if ( pos < 1 || pos >= full_model_info.full_sequence().size() || full_model_info.full_sequence()[ pos - 1 ] != 'a' ) return 0.0;
 	if ( !full_model_info.working_res().has_value( pos ) )   return 0.0;
 
 	// initialize feature values to what would be appropriate for a bulged A
