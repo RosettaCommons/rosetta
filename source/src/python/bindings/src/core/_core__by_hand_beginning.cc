@@ -249,21 +249,23 @@ struct array_scalar_converter
 
 //vector1 wrapper requires ostream '<<' operator
 
+/* TL: Duplicate of function defined in utility/stream_util.hh
 template< class T1, class T2 >
 std::ostream& operator<<(std::ostream& strm, const std::pair< T1, T2>& kvPair)
 {
   strm << "(" << kvPair.first << ", " << kvPair.second << ")";
   return strm;
 }
+*/
 
 template <class T1, class T2>
 std::string pair_repr(std::pair<T1, T2> const & v)
 {
-    std::ostringstream os;
+	std::ostringstream os;
 
-    os << v;
+	os << v;
 
-    return os.str();
+	return os.str();
 }
 
 template< class T1, class T2 >

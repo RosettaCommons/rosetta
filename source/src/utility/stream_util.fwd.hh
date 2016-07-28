@@ -23,6 +23,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 #include <utility>
 
 #ifdef CXX11
@@ -32,27 +33,6 @@
 
 namespace std { // inserting operator for ::std types in to std namespace
 
-/// @brief Output function for std::vector object.
-template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
-std::ostream & operator <<( std::ostream & os, std::vector<T> const & v);
-
-} // namespace std
-
-
-
-
-namespace utility {
-
-// forward declaration to allow output of composite types, like: vector1< std::pair >.
-template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
-std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v);
-
-
-/// @brief Output function for utility::vectorL object.
-template <platform::SSize L, class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
-std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v);
-
-
 /// @brief Output function for std::map object.
 template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m);
@@ -61,6 +41,25 @@ std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m);
 /// @brief Output function for std::list object.
 template <typename T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::list<T> const & l);
+
+/// @brief Output function for std::set object.
+template <typename T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+std::ostream & operator <<(std::ostream & os, std::set<T> const & s);
+
+// forward declaration to allow output of composite types, like: vector1< std::pair >.
+template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
+std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v);
+
+/// @brief Output function for std::vector object.
+template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+std::ostream & operator <<( std::ostream & os, std::vector<T> const & v);
+
+} // namespace std
+
+namespace utility {
+/// @brief Output function for utility::vectorL object.
+template <platform::SSize L, class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v);
 
 } // namespace utility
 
