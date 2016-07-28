@@ -813,6 +813,7 @@ sources = {
 		"ResidueSelectorFactory",
 		"ResidueVector",
 		"SecondaryStructureSelector",
+		"SymmetricalResidueSelector",
 		"TrueResidueSelector",
 		"util",
 	],

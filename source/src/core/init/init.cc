@@ -262,6 +262,7 @@
 // ResidueSelectors
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
+#include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
 #include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
@@ -686,7 +687,7 @@ static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueInde
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;
 static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_ResiduePDBInfoHasLabelSelectorCreator;
 static ResidueSelectorRegistrator< SecondaryStructureSelectorCreator > reg_SecondaryStructureSelectorCreator;
-
+static ResidueSelectorRegistrator< SymmetricalResidueSelectorCreator > reg_SymmetricalResidueSelectorCreator;
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;
