@@ -152,6 +152,13 @@ public:
 
 	TagOP clone() const;
 
+	/// @brief if true, options will be quoted when the tag is outputted
+	///        if false, options will be left as-is (default)
+	/// @param[in] quote_options_val Whether or not option values should be quoted.
+	///                              Default=false
+	void
+	set_quote_options( bool const quote_options_val );
+
 private:
 	std::string name_;
 	options_t mOptions_;
@@ -160,6 +167,10 @@ private:
 	std::map<std::string,tags_t> mvTags_;
 	static utility::vector0<TagCOP> const vEmpty_; // need to return this from getTags
 	TagCAP parentTag_;
+
+	/// @brief if true, options will be quoted when the tag is outputted
+	///        if false, options will be left as-is (default)
+	bool quote_options_;
 
 }; // class Tag
 

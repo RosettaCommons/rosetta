@@ -99,7 +99,8 @@ using namespace std;
 utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
 
 Tag::Tag() :
-	parentTag_(/* NULL */)
+	parentTag_(/* NULL */),
+        quote_options_( false )
 {}
 
 void Tag::clear() {
@@ -219,7 +220,10 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 
 	out << tabs << "<" << name_;
 	for ( options_t::const_iterator i = mOptions_.begin(), end_i = mOptions_.end(); i != end_i; ++i ) {
-		out << " " << i->first << "=" << i->second;
+		out << " " << i->first << "=";
+		if ( quote_options_ ) out << "\"";
+		out << i->second;
+		if ( quote_options_ ) out << "\"";
 	}
 
 	if ( vTags_.size() == 0 ) {
@@ -558,6 +562,15 @@ Tag::clone() const {
 
 } // Tag::clone
 
+/// @brief if true, options will be quoted when the tag is outputted
+///        if false, options will be left as-is (default)
+/// @param[in] quote_options_val Whether or not option values should be quoted.
+///                              Default=false
+void
+Tag::set_quote_options( bool const quote_options_val ) {
+	quote_options_ = quote_options_val;
+} // Tag::set_quote_options
+
 std::ostream& operator<<(std::ostream& out, Tag const& tag) {
 	tag.write(out);
 	return out;
@@ -567,6 +580,7 @@ std::ostream& operator<<(std::ostream& out, TagCOP const& tag_ptr) {
 	tag_ptr->write(out);
 	return out;
 }
+
 
 } // namespace tag
 } // namespace utility
