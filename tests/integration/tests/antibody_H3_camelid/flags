@@ -3,8 +3,9 @@
 -in:file:native ./inputs/H_renumbered.pdb
 -out:file:scorefile 3QOS_H.fasc
 -out:levels protocols.simple_moves.ConstraintSetMover:debug
--constraints:cst_file ./inputs/FR02.cst
--constraints:cst_fa_file ./inputs/FR02.cst_fa
+#-constraints:cst_file ./inputs/FR02.cst
+#-constraints:cst_fa_file ./inputs/FR02.cst_fa
+-cst_weight 0.0
 
 #how to run antibody mode -- these are the current best-practices
 -antibody::remodel              perturb_kic
@@ -15,7 +16,7 @@
 -antibody::bad_nter             false
 -antibody::h3_filter            false
 -antibody::h3_filter_tolerance  5
--antibody:constrain_cter
+#-antibody:constrain_cter
 -antibody:constrain_vlvh_qq
 -antibody::extend_h3_before_modeling false
 -antibody::idealize_h3_stems_before_modeling false

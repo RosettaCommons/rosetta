@@ -151,7 +151,8 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 
 
 void RefineBetaBarrel::apply( pose::Pose & pose ) {
-
+	
+	//JAB WHY THE F*CK ARE WE REFINING LH IN A REFINEBETABARREL PROTOCOL??????
 	finalize_setup(pose);
 
 	//JQX:
