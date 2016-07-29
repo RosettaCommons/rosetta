@@ -68,6 +68,7 @@ class GenerateRosettaTemplates(object):
             "--namespace--": lambda: self.get_namespace_lines(),
             "--namespace_dot--": lambda: self.get_namespace_char_concat("."),
             "--namespace_colon--": lambda: self.get_namespace_char_concat(":"),
+            "--namespace_2colon--": lambda: self.get_namespace_char_concat("::"),
             "--end_namespace--": lambda: self.get_end_namespace(),
             "--res_sel_creator--": lambda: self.get_res_sel_creator_path()
         }
@@ -182,6 +183,10 @@ class GenerateRosettaTemplates(object):
                             "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorRegistrators.ihh\n"
 
 
+            elif self.options.type == "singleton":
+                print "\n Singletons do not need to be registered.  " \
+                      "To get the current instance from anywhere, use:\n" \
+                      "  "+self.replacement["--namespace_2colon--"]()+"::"+self.replacement["--class--"]()+"::get_instance()->"
 
             elif self.options.type == "mover":
                 print "\nMover Creator should be registered in (protocols.7) \n" \
