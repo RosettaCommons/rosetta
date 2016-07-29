@@ -41,6 +41,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
@@ -109,6 +110,7 @@ SetupForSymmetryMover::SetupForSymmetryMover() :
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
 	cryst1_(false),
+	preserve_datacache_(false),
 	symmdef_()
 {}
 
@@ -116,6 +118,7 @@ SetupForSymmetryMover::SetupForSymmetryMover( core::conformation::symmetry::Symm
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
 	cryst1_(false),
+	preserve_datacache_(false),
 	symmdef_( symmdata )
 {}
 
@@ -123,6 +126,7 @@ SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) 
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
 	cryst1_(false),
+	preserve_datacache_(false),
 	symmdef_()
 {
 	process_symmdef_file(symmdef_file);
@@ -143,6 +147,33 @@ SetupForSymmetryMover::process_symmdef_file(std::string tag) {
 
 	symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 	symmdef_->read_symmetry_data_from_file(tag);
+}
+
+/// @brief Sets whether or not the input asymmetric pose's datacache should be copied into
+///        the new symmetric pose.
+/// @param[in] preserve_cache If true, input pose's datacache is copied into new symmetric pose
+///                           If false, input pose's datacache is cleared (default = false)
+void
+SetupForSymmetryMover::set_preserve_datacache( bool const preserve_cache )
+{
+	preserve_datacache_ = preserve_cache;
+}
+
+/// @brief   constructs a symmetric pose with a symmetric conformation and energies object.
+/// @details Calls core::pose::make_symmetric_pose().  If preserve_datacache is set, this
+///          also copies the datacache into the new symmetric pose.
+/// @param[in,out] pose Input asymmetric pose, output symmetric pose
+void
+SetupForSymmetryMover::make_symmetric_pose( core::pose::Pose & pose ) const
+{
+	using basic::datacache::BasicDataCache;
+
+	BasicDataCache cached;
+	if ( preserve_datacache_ ) cached = pose.data();
+
+	core::pose::symmetry::make_symmetric_pose( pose, *symmdef_ );
+
+	if ( preserve_datacache_ ) pose.data() = cached;
 }
 
 
@@ -174,7 +205,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 		}
 		make_lattice.apply(pose);
 	} else {
-		core::pose::symmetry::make_symmetric_pose( pose, *symmdef_ );
+		make_symmetric_pose( pose );
 	}
 
 	assert( core::pose::symmetry::is_symmetric( pose ) );
@@ -202,6 +233,7 @@ void SetupForSymmetryMover::parse_my_tag(
 	using namespace basic::options;
 	using namespace basic::resource_manager;
 
+	preserve_datacache_ = tag->getOption< bool >( "preserve_datacache", preserve_datacache_ );
 	if ( tag->hasOption("definition") && tag->hasOption("resource_description") ) {
 		throw utility::excn::EXCN_BadInput(
 			"SetupForSymmetry takes either a 'definition' OR "
@@ -231,7 +263,9 @@ SetupForSymmetryMover::get_name() const {
 ////////////////////
 
 ExtractAsymmetricUnitMover::ExtractAsymmetricUnitMover()
-: protocols::moves::Mover("ExtractAsymmetricUnitMover") { }
+: protocols::moves::Mover("ExtractAsymmetricUnitMover"),
+	keep_virtual_residues_( true ),
+	keep_unknown_aas_( false ) { }
 
 ExtractAsymmetricUnitMover::~ExtractAsymmetricUnitMover(){}
 
@@ -242,16 +276,38 @@ ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
 
 	core::pose::Pose pose_asu;
-	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
+	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu, keep_virtual_residues_, keep_unknown_aas_);
 	pose = pose_asu;
 }
 
 void ExtractAsymmetricUnitMover::parse_my_tag(
-	utility::tag::TagCOP const /*tag*/,
+	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & /*pose*/ ) { }
+	core::pose::Pose const & /*pose*/ )
+{
+	set_keep_virtual_residues( tag->getOption< bool >( "keep_virtual", keep_virtual_residues_ ) );
+	set_keep_unknown_aas( tag->getOption< bool >( "keep_unknown_aas", keep_unknown_aas_ ) );
+}
+
+void
+ExtractAsymmetricUnitMover::set_keep_virtual_residues( bool const keep_virt )
+{
+	keep_virtual_residues_ = keep_virt;
+}
+
+/// @brief If true, residues with aa() == aa_unk will be kept in the asymmetric unit. If false,
+///        residues of aa type aa_unk will be ignored in the conversion and left out of the
+///        asymmetric unit.
+/// @param[in] keep_unk Desired value for keep_unknown_aas (default=false)
+/// @details If there are NCAAs in the pose, this must be set to false, or the NCAAs will be
+///          ignored.  The keep_unknown_aas defaults to false for historical reasons.
+void
+ExtractAsymmetricUnitMover::set_keep_unknown_aas( bool const keep_unk )
+{
+	keep_unknown_aas_ = keep_unk;
+}
 
 std::string
 ExtractAsymmetricUnitMover::get_name() const {

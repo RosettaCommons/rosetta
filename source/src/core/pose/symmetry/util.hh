@@ -83,9 +83,19 @@ make_asymmetric_pose(
 );
 
 /// @brief extract the asu from a pose... unlike previous function symmetric clones are thrown out
+/// @param[in]  pose_in            Symmetric input pose containing the asymmetric subunit of interest
+/// @param[out] pose_out           Asymmetric subunit will be placed into this object
+/// @param[in]  with_virtual_atoms If true, virtual atoms related to symmetry will be kept with the asymmetric subunit.
+///                                If false, virtual atoms will be removed (default=true)
+/// @param[in]  with_unknown_aa    If false, amino acids with type aa_unk will be ignored.  If true, amino acids with
+///                                type aa_unk will be extracted (default=false)
 void
-extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms=true);
-
+extract_asymmetric_unit(
+	core::pose::Pose const & pose_in,
+	core::pose::Pose & pose_out,
+	bool const with_virtual_atoms = true,
+	bool const with_unknown_aa = false
+);
 
 core::pose::Pose
 get_asymmetric_pose_copy_from_symmetric_pose(

@@ -253,9 +253,20 @@ make_asymmetric_pose(
 	debug_assert( !is_symmetric( pose ) );
 }
 
-// @details make a new (asymmetric) pose that contains only the master subunit from the input pose
-//          maintain local foldtree
-void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms) {
+/// @brief extract the asu from a pose... unlike previous function symmetric clones are thrown out
+/// @param[in]  pose_in            Symmetric input pose containing the asymmetric subunit of interest
+/// @param[out] pose_out           Asymmetric subunit will be placed into this object
+/// @param[in]  with_virtual_atoms If true, virtual atoms related to symmetry will be kept with the asymmetric subunit.
+///                                If false, virtual atoms will be removed (default=true)
+/// @param[in]  with_unknown_aa    If false amino acids with type aa_unk will be ignored.  If true, amino acids with
+///                                type aa_unk will be extracted (default=false)
+void extract_asymmetric_unit(
+	core::pose::Pose const & pose_in,
+	core::pose::Pose & pose_out,
+	bool const with_virtual_atoms,
+	bool const with_unknown_aa
+)
+{
 	using core::conformation::Residue;
 	using core::chemical::aa_vrt;
 	using core::chemical::aa_h2o;
@@ -279,9 +290,16 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 
 		Residue residue( pose_in.residue( i ) );
 		if ( residue.type().is_lower_terminus() ||
-				residue.aa() == aa_unk || residue.aa() == aa_h2o || residue.aa() == aa_vrt || jump_to_next ) {
+			( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
+			residue.aa() == aa_h2o ||
+			residue.aa() == aa_vrt ||
+			jump_to_next
+		) {
 
-			if ( residue.aa() == aa_unk || residue.aa() == aa_vrt || residue.aa() == aa_h2o ) {
+			if ( ( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
+				residue.aa() == aa_vrt ||
+				residue.aa() == aa_h2o
+			) {
 				jump_to_next = true;
 			} else if ( jump_to_next ) {
 				jump_to_next = false;
