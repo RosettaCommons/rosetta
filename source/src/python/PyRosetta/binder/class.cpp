@@ -368,6 +368,8 @@ void ClassBinder::add_relevant_includes(IncludeSet &includes) const
 {
 	for(auto & m : prefix_includes ) binder::add_relevant_includes(m, includes, 0);
 	binder::add_relevant_includes(C, includes, 0);
+
+	includes.add_include("<sstream> // __str__");
 }
 
 string binding_public_data_members(CXXRecordDecl const *C)
@@ -458,7 +460,7 @@ if (overload) return overload.operator()<pybind11::return_value_policy::referenc
 )_";
 
 // generate call-back overloads for all public virtual functions in C including it bases
-string bind_member_functions_for_call_back(CXXRecordDecl const *C, /*string const & base_type_alias,*/ set<string> &binded, int &ret_id, std::vector<clang::CXXMethodDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
+string bind_member_functions_for_call_back(CXXRecordDecl const *C, /*string const & base_type_alias,*/ set<string> &binded, int &ret_id, std::vector<clang::FunctionDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
 {
 	string c;
 	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
@@ -535,7 +537,6 @@ void ClassBinder::generate_prefix_code()
 	prefix_code_ += bind_member_functions_for_call_back(C, /*base_type_alias,*/ binded, ret_id, prefix_includes);
 	prefix_code_ += "};\n\n";
 }
-
 
 string binding_public_member_functions(CXXRecordDecl const *C, bool callback_structure, bool callback_structure_constructible, Context &context)
 {
@@ -715,6 +716,25 @@ string bind_constructor(CXXConstructorDecl const *T, pair<string, string> const 
 	return code;
 }
 
+
+/// generate (if any) bindings for Python __str__ by using appropriate global operator<<
+std::string ClassBinder::bind_repr(Context &context)
+{
+	string c;
+
+	if( FunctionDecl const * F = context.global_insertion_operator(C) ) {
+		string qualified_name = class_qualified_name(C);
+		//outs() << "Found insertion operator for: " << class_qualified_name(C) << "\n";
+
+		c += "\n\tcl.def(\"__str__\", []({} const &o) -> std::string {{ std::ostringstream s; s << o; return s.str(); }} );\n"_format(qualified_name);
+
+		prefix_includes.push_back(F);
+	}
+
+	return c;
+}
+
+
 /// generate binding code for this object and all its dependencies
 void ClassBinder::bind(Context &context)
 {
@@ -755,7 +775,7 @@ void ClassBinder::bind(Context &context)
 
 	string maybe_trampoline = callback_structure_constructible ? ", " + binding_qualified_name : "";
 
-	c += '\t' + R"(pybind11::class_<{}{}{}> cl({}, "{}"{});)"_format(qualified_name, maybe_holder_type, maybe_trampoline, module_variable_name, python_class_name(C), maybe_base_classes(context)) + '\n';
+	c += '\t' + R"(pybind11::class_<{}{}{}> cl({}, "{}", "{}"{});)"_format(qualified_name, maybe_holder_type, maybe_trampoline, module_variable_name, python_class_name(C), generate_documentation_string_for_declaration(C),  maybe_base_classes(context)) + '\n';
 	c += "\tpybind11::handle cl_type = cl;\n\n";
 
 	//if(callback_structure_constructible) c += "\tcl.alias<{}>();\n"_format(qualified_name);
@@ -811,6 +831,8 @@ void ClassBinder::bind(Context &context)
 	c += binding_template_bases(C, callback_structure,  callback_structure_constructible, context);
 
 	//outs() << "typename_from_type_decl: " << typename_from_type_decl(C) << "\n";
+
+	c += bind_repr(context);
 
 	std::map<string, string> const &external_add_on_binders = Config::get().add_on_binders();
 	if( external_add_on_binders.count(qualified_name_without_template) ) c += "\n\t{}(cl);\n"_format(external_add_on_binders.at(qualified_name_without_template));

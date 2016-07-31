@@ -84,6 +84,8 @@ std::string mangle_type_name(std::string const &name, bool mark_template=true);
 // generate C++ comment line for given declartion along with file path and line number: // core::scoring::vdwaals::VDWAtom file:core/scoring/vdwaals/VDWTrie.hh line:43
 std::string generate_comment_for_declaration(clang::NamedDecl const *decl);
 
+// extract doc string (Doxygen comments) for given declaration and convert it to C++ source code string
+std::string generate_documentation_string_for_declaration(clang::Decl const*);
 
 
 } // namespace binder

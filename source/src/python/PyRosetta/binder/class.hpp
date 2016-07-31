@@ -107,7 +107,7 @@ private:
 	clang::CXXRecordDecl *C;
 
 	std::string prefix_code_;
-	std::vector<clang::CXXMethodDecl const *> prefix_includes;
+	std::vector<clang::FunctionDecl const *> prefix_includes;
 	//std::set<clang::NamedDecl const *> prefix_includes_stack;
 
 	//bool call_back_is_abstract = false; // true if call-back structure is still abstract entity
@@ -119,6 +119,10 @@ private:
 	std::string maybe_base_classes(Context &context);
 
 	void generate_prefix_code();
+
+
+	/// generate (if any) bindings for Python __str__ by using appropriate global operator<<
+	std::string bind_repr(Context &);
 
 
 	// set of members which user asked to exclude from bindings

@@ -143,6 +143,9 @@ public:
 		if( binder::is_bindable(F) ) {
 			binder::BinderOP b = std::make_shared<binder::FunctionBinder>(F);
 			context.add(b);
+		} else if( F->isOverloadedOperator()  and  F->getNameAsString() == "operator<<" ) {
+			//outs() << "Adding insertion operator: " << binder::function_pointer_type(F) << "\n";
+			context.add_insertion_operator(F);
 		}
 
 		// if( FullSourceLoc(F->getLocation(), ast_context->getSourceManager() ).isInSystemHeader() ) return true;
@@ -164,6 +167,8 @@ public:
 		if( binder::is_bindable(C) ) {
 			binder::BinderOP b = std::make_shared<binder::ClassBinder>(C);
 			context.add(b);
+
+			//binder::generate_documentation_string_for_declaration(C);
 		}
 
 		// if( FullSourceLoc(C->getLocation(), ast_context->getSourceManager() ).isInSystemHeader() ) return true;
@@ -200,13 +205,12 @@ public:
     //     return true;
 	// }
 
-	virtual bool VisitTypedefDecl(TypedefDecl *T) {
-		if( FullSourceLoc(T->getLocation(), ast_context->getSourceManager() ).isInSystemHeader() ) return true;
-
-		//errs() << "Visit TypedefDecl: " << T->getQualifiedNameAsString() << "  Type: " << T->getUnderlyingType()->getCanonicalTypeInternal()/*getCanonicalType()*/.getAsString() << "\n";
-		// record->dump();
-        return true;
-	}
+	// virtual bool VisitTypedefDecl(TypedefDecl *T) {
+	// 	if( FullSourceLoc(T->getLocation(), ast_context->getSourceManager() ).isInSystemHeader() ) return true;
+	// 	//errs() << "Visit TypedefDecl: " << T->getQualifiedNameAsString() << "  Type: " << T->getUnderlyingType()->getCanonicalTypeInternal()/*getCanonicalType()*/.getAsString() << "\n";
+	// 	// record->dump();
+    //     return true;
+	// }
 
 
 	// virtual bool VisitFieldDecl(FieldDecl *record) {

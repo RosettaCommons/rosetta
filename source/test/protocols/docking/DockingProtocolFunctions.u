@@ -1,4 +1,5 @@
 Testing docking low-res scoring function...
+
 ------------------------------------------------------------
  Scores                       Weight   Raw Score Wghtd.Score
 ------------------------------------------------------------
@@ -9,6 +10,7 @@ Testing docking low-res scoring function...
 ---------------------------------------------------
  Total weighted score:                      -35.103
 Testing docking high-res scoring function...
+
 ------------------------------------------------------------
  Scores                       Weight   Raw Score Wghtd.Score
 ------------------------------------------------------------
@@ -33,6 +35,7 @@ FOLD_TREE  EDGE 1 197 -1  EDGE 197 245 -1  EDGE 197 282 1  EDGE 282 246 -1  EDGE
 Testing DockingProtocol.setup_foldtree()for multichain...
 FOLD_TREE  EDGE 1 214 -1  EDGE 214 215 2  EDGE 215 384 -1  EDGE 384 432 -1  EDGE 384 488 1  EDGE 488 433 -1  EDGE 488 561 -1 
 Testing interface-dependant scoring for multichain docking...
+
 ------------------------------------------------------------
  Scores                       Weight   Raw Score Wghtd.Score
 ------------------------------------------------------------

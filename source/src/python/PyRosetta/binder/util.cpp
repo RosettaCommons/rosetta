@@ -19,6 +19,7 @@
 
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/ExprCXX.h>
+#include <clang/AST/Comment.h>
 
 //#include <experimental/filesystem>
 #include <cstdlib>
@@ -240,5 +241,66 @@ string generate_comment_for_declaration(clang::NamedDecl const *decl)
 	string const include = relevant_include(decl);
 	return "// " + standard_name( decl->getQualifiedNameAsString() ) + " file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(decl) + "\n";
 }
+
+
+
+
+// extract text from hierarchy of comments
+string get_text(comments::Comment const *C, SourceManager const & SM, SourceLocation previous)
+{
+	if( auto tc = dyn_cast<comments::TextComment>(C) ) return tc->getText();
+	else {
+		string r;
+
+		if( isa<comments::ParagraphComment>(C) ) r += '\n';
+
+		for(auto i = C->child_begin(); i!=C->child_end(); ++i) {
+			if( SM.getSpellingLineNumber(previous) != SM.getSpellingLineNumber( (*i)->getLocStart() ) ) {
+				previous = (*i)->getLocStart();
+				r += '\n';
+			}
+			r += get_text(*i, SM, previous);
+		}
+
+		return r;
+	}
+}
+
+// extract doc string (Doxygen comments) for given declaration and convert it to C++ source code string
+std::string generate_documentation_string_for_declaration(clang::Decl const* decl)
+{
+	string text;
+
+	ASTContext & ast_context( decl->getASTContext() );
+	if( auto comment = ast_context.getLocalCommentForDeclUncached(decl) ) {
+
+		SourceManager & sm( ast_context.getSourceManager() );
+
+		//comment->dumpColor();
+
+		text = get_text(comment, sm, SourceLocation());
+
+		uint i=0;
+		for(; i<text.size()  and  (text[i]==' ' or text[i]=='\n'); ++i) {}
+		if(i) text = text.substr(i);
+
+		//replace(text, "\n\n\n", "\n");
+		//replace(text, "\n\n",   "\n");
+
+		//replace(text, "\n\n\n\n", "\n\n");
+		//replace(text, "\n\n\n",   "\n\n");
+
+		replace(text, "\\", "\\\\");
+		replace(text, "\"", "\\\"");
+		replace(text, "\n", "\\n");
+
+		//outs() << text << "\n";
+	}
+
+	//if( auto comment = ast_context->getLocalCommentForDeclUncached(decl) ) comment->dumpColor();
+
+	return text;
+}
+
 
 } // namespace binder

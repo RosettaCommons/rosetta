@@ -136,7 +136,8 @@ protocols.simple_moves.ScoreMover: total_energy       p_aa_pp     -30.636
 protocols.simple_moves.ScoreMover: total_energy           ref     -30.360
 protocols.simple_moves.ScoreMover:  dslf_ca_dih dslf_cs_ang dslf_ss_dih dslf_ss_dst      fa_atr      fa_dun fa_intra_rep      fa_pair       fa_rep       fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb       omega     p_aa_pp pro_close      rama       ref total_score
 protocols.simple_moves.ScoreMover:        0.000       0.000       0.000       0.000    -484.056     464.560        2.126      -10.404      361.440      243.793      -7.204      -1.490      -2.149     -37.398       5.337      -9.804    17.220    25.441   -30.360     537.054
-protocols.simple_moves.ScoreMover: ------------------------------------------------------------
+protocols.simple_moves.ScoreMover: 
+------------------------------------------------------------
  Scores                       Weight   Raw Score Wghtd.Score
 ------------------------------------------------------------
  fa_atr                       0.800    -605.070    -484.056
@@ -160,5 +161,5 @@ protocols.simple_moves.ScoreMover: ---------------------------------------------
  ref                          1.000     -30.360     -30.360
 ---------------------------------------------------
  Total weighted score:                      537.054
-
+protocols.simple_moves.ScoreMover: 
 

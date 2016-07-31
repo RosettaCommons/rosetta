@@ -153,6 +153,11 @@ public:
 	/// check if given CXXRecordDecl is already binded and if not add forward declaration for it.
 	//void maybe_add_forward_declaration(clang::CXXRecordDecl const *);
 
+	void add_insertion_operator(clang::FunctionDecl const *f);
+
+	/// find gloval insertion operator for given type, return nullptr if not such operator find
+	clang::FunctionDecl const * global_insertion_operator(clang::CXXRecordDecl const *);
+
 private:
 
 	/// bind all objects residing in namespaces and it dependency
@@ -170,6 +175,8 @@ private:
 	void sort_binders();
 
 
+	/// map of function-ptr -> Decl* for global instertion operators so we can determent for which types can bind __repr__
+	std::map<std::string, clang::FunctionDecl const *> insertion_operators;
 
 	/// array of all binderes from translation unit
 	std::vector<BinderOP> binders;

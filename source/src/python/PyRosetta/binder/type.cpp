@@ -132,6 +132,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/shared_ptr.h>",   "<memory>"),
 		make_pair("<bits/stl_function.h>", "<functional>"),
 		make_pair("<bits/stl_tree.h>",     "<map>"),
+		make_pair("<bits/stl_map.h>",      "<map>"),
 		make_pair("<bits/streambuf.tcc>",  "<streambuf>"),
 		make_pair("<bits/stl_bvector.h>",  "<vector>"),
 		make_pair("<bits/algorithmfwd.h>", "<algorithm>"),
@@ -145,6 +146,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/sched.h>",        "<unistd.h>"),
 		make_pair("<bits/pthreadtypes.h>", "<pthread.h>"),
 		make_pair("<bits/gthr-default.h>", "<pthread.h>"),
+		make_pair("<bits/random.h>",       "<random>"),
 
 		make_pair("<bits/basic_string.h>",  "<string>"),
 		make_pair("<bits/basic_string.tcc>","<string>"),
@@ -278,8 +280,12 @@ string standard_name(string const &type)
 	static vector< std::pair<string, string> > const name_map = {
 		make_pair("std::__1::",     "std::"), // Mac libc++ put all STD objects into std::__1::  // WARNING: order is important here: we want to first replace std::__1:: so later we can change basic_string into string
 		make_pair("std::__cxx11::", "std::"), // GCC libstdc++ 5.0+ puts all STD objects into std::__cxx11::
-		make_pair("std::basic_string<char>", "std::string"),
-		make_pair("class std::string", "std::string"), // for return/paremeters types
+
+		make_pair("std::basic_string<char>",  "std::string"),
+		make_pair("std::basic_ostream<char>", "std::ostream"),
+
+		make_pair("class std::string",  "std::string"), // for return/paremeters types
+		make_pair("class std::ostream", "std::ostream"),
 	};
 
 	string r(type);

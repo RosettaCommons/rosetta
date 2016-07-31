@@ -43,15 +43,81 @@ namespace aa {
 enum E1 {E1A, E1B};
 
 
-
+/// comment 0
 namespace utility {
 
-struct A
+/// comment 1
+/// comment 2
+//  comment 2.5
+
+
+/// @brief A molecular system including residues, kinematics, and energies
+
+/** @details
+aaa\\The P"ose" <class> represents a molecular system (protein-dna-ligand...)
+as a container of Rosetta Residue objects together with
+a Conformation object that defines how internal coordinate changes
+propagate through the system and an Energies object that stores
+information from the last energy evaluation.
+
+
+The main responsibilities of the pose are:
+
+@li  Kinematic:
+(a) to update the xyz coordinates in response to changes to internal
+degrees of freedom, and
+(b) to update internal coordinates when the user modifes the xyz
+(Cartesian) coords,
+
+@li  Scoring:
+(a) to keep track of what parts of the structure have changed since
+the last score evaluation, and
+(b) to cache residue and residue-pair energies for efficient re-use
+
+@li As a container:
+The pose provides a single object for passing
+a molecular system and for copying of entire molecules
+or stretches of molecules from one Pose object into another.
+
+
+Output Methods:
+Common Methods:
+Pose.assign
+Pose.atom_tree
+Pose.conformation
+Pose.dump_pdb
+Pose.dump_cif
+Pose.dump_file
+Pose.energies
+Pose.fold_tree
+Pose.pdb_info
+Pose.residue
+Pose.sequence
+Pose.total_residue
+**/
+
+struct A /// comment 3
+/// comment 4
 {
+	/// comment 5
 	int value;
 };
 
+std::ostream & operator << ( std::ostream & os, A const & a)
+{
+	return ( os << "A("<< a.value << ')' );
+}
 
+
+
+/// @brief Copies <src> into the pose where it remains possible that two
+/// Poses may point to each other in non-const ways or share non-bitwise
+/// constant data between them (E.g. the AtomTree observer system).
+///
+/// example(s):
+///     test_pose.assign(pose)
+/// See also:
+///     Pose
 A const foo() { return A(); }
 
 // std::shared_ptr<B> ptr_creator() { return std::make_shared<B>(); }

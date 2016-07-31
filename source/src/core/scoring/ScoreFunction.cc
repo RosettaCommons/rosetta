@@ -548,7 +548,7 @@ ScoreFunction::show( std::ostream & out ) const
 	}
 	out << '\n';
 
-	out << "energy_method_options: " << *energy_method_options_ << '\n';
+	out << "energy_method_options: " << *energy_method_options_ << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -577,6 +577,7 @@ void
 ScoreFunction::show( std::ostream & out,  pose::Pose & pose ) const
 {
 	(*this)(pose); //make sure scores are set
+	out << '\n';
 	out << "------------------------------------------------------------\n";
 	out << " Scores                       Weight   Raw Score Wghtd.Score\n";
 	out << "------------------------------------------------------------\n";
@@ -591,12 +592,13 @@ ScoreFunction::show( std::ostream & out,  pose::Pose & pose ) const
 		}
 	}
 	out << "---------------------------------------------------\n";
-	out << " Total weighted score:                    " << F(9,3,sum_weighted) << '\n';
+	out << " Total weighted score:                    " << F(9,3,sum_weighted) << std::endl;
 }
 
 ///////////////////////// output as show( os, pose ) but without the pose //////////////////////////
 void
 ScoreFunction::show_pretty( std::ostream & out ) const {
+	out << '\n';
 	out << "---------------------------------------------\n";
 	out << " Scores                       Weight   \n";
 	out << "---------------------------------------------\n";
@@ -607,13 +609,14 @@ ScoreFunction::show_pretty( std::ostream & out ) const {
 				<< '\n';
 		}
 	}
-	out << "---------------------------------------------------\n";
+	out << "---------------------------------------------------" << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 show_detail( std::ostream & out, EnergyMap & energies,  EnergyMap weights )
 {
+	out << '\n';
 	out << "------------------------------------------------------------\n";
 	out << " Scores                       Weight   Raw Score Wghtd.Score\n";
 	out << "------------------------------------------------------------\n";
@@ -628,7 +631,7 @@ show_detail( std::ostream & out, EnergyMap & energies,  EnergyMap weights )
 		}
 	}
 	out << "---------------------------------------------------\n";
-	out << " Total weighted score:                    " << F(9,3,sum_weighted) << '\n';
+	out << " Total weighted score:                    " << F(9,3,sum_weighted) << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

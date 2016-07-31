@@ -17,6 +17,7 @@
 
 #include <type.hpp>
 #include <class.hpp>
+#include <function.hpp>
 #include <util.hpp>
 #include <fmt/format.h>
 
@@ -81,7 +82,6 @@ bool Binder::is_binded() const
 }
 
 
-
 llvm::raw_ostream & operator << (llvm::raw_ostream & os, Binder const &b)
 {
 	clang::NamedDecl *decl = b.named_decl();
@@ -106,6 +106,25 @@ void Context::add(BinderOP &b)
 	if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
 }
 
+
+
+void Context::add_insertion_operator(clang::FunctionDecl const *F)
+{
+	insertion_operators[ function_pointer_type(F) ] = F;
+}
+
+/// find gloval insertion operator for given type, return nullptr if not such operator find
+clang::FunctionDecl const * Context::global_insertion_operator(clang::CXXRecordDecl const *C)
+{
+	string op_pointer = "std::ostream & (*)(std::ostream &, const " + (C->isStruct() ? string("struct ") : string("class ") ) + class_qualified_name(C) + " &)";
+	//outs() << "Looking for operator: " << op_pointer << "\n";
+
+	auto it = insertion_operators.find(op_pointer);
+	if (it != insertion_operators.end()) return it->second;
+
+	//outs() << "Have not found... it\n";
+	return nullptr;
+}
 
 /// check if forward declaration for CXXRecordDecl needed
 bool Context::is_forward_needed(CXXRecordDecl const *C)
@@ -305,9 +324,9 @@ void Context::generate(Config const &config)
 
 	std::map<string, int> file_names;
 
-	string file_name = config.prefix + config.root_module + ".cpp";
-	std::ofstream root_module_file_handle(file_name);
-	sources.push_back(file_name);
+	string root_module_file_name = config.root_module + ".cpp";
+	sources.push_back(root_module_file_name);
+	std::ofstream root_module_file_handle(config.prefix + root_module_file_name);
 
 	sort_binders();
 

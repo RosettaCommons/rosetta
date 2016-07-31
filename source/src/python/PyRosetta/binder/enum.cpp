@@ -47,7 +47,7 @@ std::string bind_enum(std::string const & module, EnumDecl *E)
 	string name { E->getNameAsString() };
 	string qualified_name { E->getQualifiedNameAsString() };
 
-	string r = "\tpybind11::enum_<{}>({}, \"{}\")\n"_format(qualified_name, module, name);
+	string r = "\tpybind11::enum_<{}>({}, \"{}\", \"{}\")\n"_format(qualified_name, module, name, generate_documentation_string_for_declaration(E));
 
 	for(auto e = E->enumerator_begin(); e != E->enumerator_end(); ++e) {
 		//outs() << "EnumConstant: " << e->getQualifiedNameAsString() << "\n";

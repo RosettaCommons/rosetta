@@ -277,7 +277,7 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 	else if( F->getReturnType()->isRValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_rvalue_reference_return_value_policy();
 
 	//string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
-	string r = R"(.def{}("{}", {}, "doc"{})"_format(maybe_static, function_name, function, maybe_return_policy);
+	string r = R"(.def{}("{}", {}, "{}"{})"_format(maybe_static, function_name, function, generate_documentation_string_for_declaration(F), maybe_return_policy);
 
 	if(request_bindings_f) request_bindings(F->getReturnType().getCanonicalType(), context);
 
