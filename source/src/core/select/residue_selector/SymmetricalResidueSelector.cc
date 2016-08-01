@@ -110,8 +110,9 @@ SymmetricalResidueSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data )
 {
-	//make sure there is only 1 option input
-	runtime_assert_string_msg( tag->getTags().size() == 1, "You can only have one input tag for SymmetricalResidueSelector!" );
+	//make sure there is only 0/1 tag(s)
+	TR.Debug << "tag->getTags().size() == " << tag->getTags().size() << std::endl;	
+	runtime_assert_string_msg( tag->getTags().size() <= 1, "You cannot have more than 1 input tag for SymmetricalResidueSelector!" );
 	
 	//if there is a selector, then:
 	if ( tag->hasOption( "selector" ) ) {
@@ -128,8 +129,6 @@ SymmetricalResidueSelector::parse_my_tag(
 		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
 	}
-	/*
-	//Shouldn't need this since there can only be 1 option tag?
 	else if ( tag->getTags().size() ) {
 		for ( utility::vector0< utility::tag::TagCOP >::const_iterator t = tag->getTags().begin();
 				t != tag->getTags().end(); ++t ) {
@@ -142,8 +141,8 @@ SymmetricalResidueSelector::parse_my_tag(
 				set_selector( rs );
 			}
 		}
-	} */
-	//if there is not a selector tag option, then:
+	}
+	//if there is not a selector option, then:
 	else {
 		std::stringstream ss;
 		ss << "SymmetricalResidueSelector requires a selector to be set either through the \"selector\" option." << std::endl;

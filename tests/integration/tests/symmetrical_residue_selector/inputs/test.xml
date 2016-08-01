@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<RESIDUE_SELECTORS>
+		<Index name="index_rs" resnums="5-10" />
+		<SymmetricalResidue name="sym_residue" selector="index_rs" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="nopack" selector="sym_residue" >
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<SymDofMover name=gen_sym_config symm_file="inputs/C2_Z.sym" sym_dof_names="JS1" />
+	</MOVERS>
+	<FILTERS>
+		<DesignableResidues name="output" task_operations="nopack" designable=0 packable=1 />
+	</FILTERS>
+	<PROTOCOLS>
+		<Add mover_name="gen_sym_config" />
+		<Add filter_name="output" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
