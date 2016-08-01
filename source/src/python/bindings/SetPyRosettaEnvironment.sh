@@ -43,11 +43,10 @@ fi
 #fi
 
 cd $PYROSETTA
-
 if [ "Darwin" = $(uname -s) ]; then
     if [ -e rosetta.so ]; then  # check if we have monolith build
 	echo 'Monolith build detected: Adjusting libboost_python.dylib path in rosetta.so to use absolute path...'
-	install_name_tool -change libboost_python.dylib `pwd`/libboost_python.dylib rosetta.so
+	python toolbox/adjust_library_path.py --monolith
     else
 	echo 'Namespace build detected: Adjusting libboost_python.dylib path and libmini.so path in <namespace>.so libraries...'
 	python toolbox/adjust_library_path.py

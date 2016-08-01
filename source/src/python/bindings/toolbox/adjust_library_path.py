@@ -10,10 +10,12 @@
 # This code made available under dual license: RosettaCommons license and GPLv3
 
 ## @file   adjust_library_path.py
-## @brief  Adjust shared library pasth in namespace .so files and set path it absolute value (required in El Capitan)
+## @brief  Adjust shared library path in namespace .so files and set path it absolute value (required in El Capitan)
 ## @author Sergey Lyskov
+## @author Jared Adolf-Bryfogle - adjustments
 
-import os, sys, os.path, subprocess
+import os, sys, os.path, subprocess, re, time
+from argparse import ArgumentParser
 
 if sys.platform.startswith("linux"): Platform = "linux" # can be linux1, linux2, etc
 elif sys.platform == "darwin" : Platform = "macos"
@@ -21,6 +23,7 @@ elif sys.platform == "cygwin" : Platform = "cygwin"
 elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "_unknown_"
 
+root_dir = os.path.split(os.path.abspath(__file__))[0]+"/.."
 
 def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
     if verbose:
@@ -77,12 +80,65 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
     if return_ == 'output': return output
     else: return res
 
+def get_current_dylib_path(f, dir_name, dylib_name, verbose = False):
+    """
+    Get the current path in the so file of the dylib file.
+
+    :param dylib_name: Name of .dylib file we are linking to
+    :param f: Name of the .so file
+    :param dir_name: Dir of the .so file
+    :rtype: str
+    """
+    out = os.popen('otool -L ' + os.path.join(dir_name, f)).read()
+    outSP = out.split('\n')
+    for line in outSP:
+        if re.search(dylib_name, line):
+            if verbose:
+                print "Current path: "+ line.strip().split()[0]
+
+            return line.strip().split()[0]
+
+def change_monolith_library_paths(verbose = False):
+    "install_name_tool -change libboost_python.dylib `pwd`/libboost_python.dylib rosetta.so"
+    f = "rosetta.so"
+    dir_name = root_dir
+    for lib in ['libboost_python.dylib']:
+        if verbose:
+            print "Changing "+root_dir+"/rosetta.so"
+
+        execute('', 'install_name_tool -change {current_path} @loader_path/{lib} {}/{}'.format
+            (dir_name, f, current_path=get_current_dylib_path(f, dir_name, lib, verbose), lib=lib), verbose=verbose)
+
+def change_namespace_library_paths(verbose = False):
+    for dir_name, _, files in os.walk(root_dir+'/rosetta'):
+        #libmini = os.path.abspath('./rosetta/libmini.so')
+        for f in files:
+            if f.endswith('.so'):
+                for lib in ['libboost_python.dylib', 'rosetta/libmini.dylib']:
+
+                    if verbose:
+                        print "Changing "+dir_name+"/"+f
+
+                    execute('', 'install_name_tool -change {current_path} @loader_path/{lib} {}/{}'.format
+                        (dir_name, f, current_path=get_current_dylib_path(f, dir_name, lib, verbose), lib=lib), verbose=verbose)
 
 
-for dir_name, _, files in os.walk('./rosetta'):
-    #libmini = os.path.abspath('./rosetta/libmini.so')
-    for f in files:
-        if f.endswith('.so'):
-            #print f, os.remove(dir_name+'/'+f)
-            execute('', 'install_name_tool -change libboost_python.dylib `pwd`/libboost_python.dylib {}/{}'.format(dir_name, f), verbose=False)
-            execute('', 'install_name_tool -change rosetta/libmini.dylib `pwd`/rosetta/libmini.dylib {}/{}'.format(dir_name, f), verbose=False)
+if __name__ == "__main__":
+    parser = ArgumentParser()
+
+    parser.add_argument("-m", "--monolith",
+                        help = "Specify that this is the monolith build",
+                        default = False,
+                        action = "store_true")
+
+    parser.add_argument("-v", "--verbose",
+                        help = "Increase verbosity to help with debugging.",
+                        default = False,
+                        action = "store_true")
+
+    options = parser.parse_args()
+
+    if options.monolith:
+        change_monolith_library_paths(options.verbose)
+    else:
+        change_namespace_library_paths(options.verbose)
