@@ -392,16 +392,13 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 
-	std::set<core::Size> design_positions_set;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( ! design_positions[ i ] ) {
 			turn_off_design.include_residue( i );
-		} else {
-			design_positions_set.insert( i );
 		}
 	}
 
-	core::select::residue_selector::NeighborhoodResidueSelector neighbor_sel = core::select::residue_selector::NeighborhoodResidueSelector(design_positions_set, pack_shell_);
+	core::select::residue_selector::NeighborhoodResidueSelector neighbor_sel = core::select::residue_selector::NeighborhoodResidueSelector(design_positions, pack_shell_);
 	utility::vector1<bool> pack_positions = neighbor_sel.apply(pose);
 
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {

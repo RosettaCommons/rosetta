@@ -31,7 +31,6 @@
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 

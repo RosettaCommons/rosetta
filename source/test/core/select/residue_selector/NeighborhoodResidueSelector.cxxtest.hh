@@ -10,6 +10,8 @@
 /// @file core/select/residue_selector/NeighborhoodResidueSelector.cxxtest.hh
 /// @brief test suite for core::select::residue_selector::NeighborhoodResidueSelector
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -30,6 +32,7 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
@@ -72,9 +75,9 @@ public:
 
 		// check the result
 		// 1. generate fake focus
-		std::set< core::Size > testFocus;
+		utility::vector1< core::Size > testFocus(trpcage.total_residue(), false);
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ii += 2 ) {
-			testFocus.insert( ii );
+			testFocus[ ii ] = true;
 		}
 		// test
 		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );
@@ -93,10 +96,11 @@ public:
 
 		ResidueSubset subset = neighbor_rs->apply( trpcage );
 
-		std::set< core::Size > testFocus;
-		testFocus.insert(2);
-		testFocus.insert(3);
-		testFocus.insert(5);
+		utility::vector1< core::Size > testFocus(trpcage.total_residue(), false);
+		testFocus[2] = true;
+		testFocus[3] = true;
+		testFocus[5] = true;
+
 		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );
 
 	}
@@ -123,18 +127,18 @@ public:
 	// determines which source of focus residues is used
 	void test_NeighborhoodResidueSelector_use_last_provided_source_of_focus() {
 
-		std::set< core::Size > focus_set;
-		focus_set.insert(2);
-		focus_set.insert(3);
+		utility::vector1< core::Size > focus_set(trpcage.total_residue(), false);
+		focus_set[2] = true;
+		focus_set[3] = true;
 		NeighborhoodResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector(focus_set, 5.0) );
 		ResidueSelectorOP odd_rs( new OddResidueSelector );
 
 		ResidueSubset subset( trpcage.total_residue(), false );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 
-		std::set< core::Size > testFocus_odd;
+		utility::vector1< core::Size > testFocus_odd(trpcage.total_residue(), false);
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ii += 2 ) {
-			testFocus_odd.insert( ii );
+			testFocus_odd[ ii ] = true;
 		}
 
 		try {
@@ -158,35 +162,56 @@ public:
 	bool
 	check_calculation( core::pose::Pose const & pose,
 		ResidueSubset const & subset,
-		std::set< core::Size > const & focus,
-		core::Real distance) {
+		ResidueSubset const & focus,
+		core::Real distance) 
+	{
+
+		if (focus.size() != subset.size()){
+			return false;
+		}
+
+		//JAB - rewrite to simplify logic and change to ResidueSubset as focus.
+		/// We measure neighbors to the focus and this is the ctrl_subset.
+		///  We then compare this subset to our actual subset.
 
 		ResidueSubset ctrl_subset(subset.size(), false);
-
 		core::Real const dst_squared = distance * distance;
-		for ( core::Size ii = 1; ii < subset.size() ; ++ii ) {
-			if ( focus.find( ii ) != focus.end() ) {
-				ctrl_subset[ ii ] = true;
-				continue;
-			}
-			core::conformation::Residue const & r1( pose.residue( ii ) );
-			for ( std::set< core::Size >::const_iterator it = focus.begin();
-					it != focus.end(); ++it ) {
-				if ( *it == 0 || *it > pose.total_residue() ) {
-					return false;
-				}
 
-				core::conformation::Residue const & r2( pose.residue( *it ) );
+		for (core::Size i = 1; i <= focus.size(); ++i){
+			//If we have a focus residue, we will calculate its neighbors.
+			if ( !focus[i] ) continue;
+
+			ctrl_subset[i] = true;
+			core::conformation::Residue const & r1( pose.residue( i ) );
+				
+			//Go through all Subset residues
+			for (core::Size x = 1; x <= subset.size(); ++x){
+
+				//If this is already true, we don't need to recalculate.
+				if ( ctrl_subset[ x ] ) continue;
+
+				//Measure the distance, set the ctrl_subset.
+				core::conformation::Residue const & r2( pose.residue( x ) );
 				core::Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
 				if ( d_sq <= dst_squared ) {
-					ctrl_subset[ ii ] = true;
+					ctrl_subset[ x ] = true;
 				}
-			} // focus set
-			if ( ctrl_subset[ ii ] != subset[ ii ] ) {
-				TR << ctrl_subset[ ii ] << "!=" << subset[ ii ] << std::endl;
+				
+			}
+
+
+		}
+		TR<< "focus " << utility::to_string(focus) << std::endl;
+		TR<< "subset" << utility::to_string(subset) << std::endl;
+		TR<< "ctrl  " << utility::to_string(ctrl_subset) << std::endl;
+
+		//Compare subset to control subset. Return False if they do not match.
+		for (core::Size i = 1; i <= pose.total_residue(); ++i){
+			if (ctrl_subset[ i ]  != subset[ i ]){
+				TR << "Resnum "<< i <<" "<< ctrl_subset[ i ] << "!=" << subset[ i ] << std::endl;
 				return false;
 			}
-		} // subset
+		}
 
 		// no mismatches found
 		return true;

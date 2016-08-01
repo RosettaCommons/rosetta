@@ -29,6 +29,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility Headers
+#include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -39,12 +40,20 @@
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/set.hpp>
 #include <cereal/types/string.hpp>
+
+
+
 #endif // SERIALIZATION
+
+
+static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.NeighborhoodResidueSelector");
 
 namespace core {
 namespace select {
@@ -57,20 +66,6 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector():
 	set_defaults();
 }
 
-
-
-
-
-NeighborhoodResidueSelector::NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance, bool include_focus ):
-	ResidueSelector(),
-	focus_selector_(/* NULL */)
-{
-	set_defaults();
-	set_focus(focus);
-	set_distance(distance);
-	set_include_focus_in_subset( include_focus );
-}
-
 NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSubset const & focus, Real distance, bool include_focus ):
 	ResidueSelector(),
 	focus_selector_(/* NULL */)
@@ -81,9 +76,6 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSubset const & 
 	set_include_focus_in_subset( include_focus );
 
 }
-
-
-
 
 /// @brief Copy constructor
 ///
@@ -105,26 +97,16 @@ void
 NeighborhoodResidueSelector::set_defaults() {
 	distance_ = 10.0;
 	include_focus_in_subset_ = true;
-	focus_str_ = "";
-
-}
-
-
-void
-NeighborhoodResidueSelector::set_focus( std::set<Size> const &focus )
-{
 	clear_focus();
-	focus_ = focus;
+
 }
+
 
 void
 NeighborhoodResidueSelector::set_focus( utility::vector1< bool > const & focus)
 {
 	clear_focus();
-	for ( core::Size i = 1; i <= focus.size(); ++i ) {
-		if ( focus[ i ] ) focus_.insert( i );
-	}
-
+	focus_ = focus;
 }
 
 void
@@ -199,6 +181,7 @@ NeighborhoodResidueSelector::get_focus(
 	ResidueSubset & focus
 ) const
 {
+
 	debug_assert(pose.total_residue() == subset.size());
 	debug_assert(pose.total_residue() == focus.size());
 
@@ -207,15 +190,9 @@ NeighborhoodResidueSelector::get_focus(
 		focus = focus_selector_->apply( pose );
 		focus_set = true;
 	} else if ( focus_.size() > 0 ) {
-		for ( std::set< Size >::const_iterator it = focus_.begin();
-				it != focus_.end(); ++it ) {
-
-			focus[ *it ] = true;
+			focus = focus_;
 			focus_set = true;
-
-		}
-	} else {
-
+	} else if (focus_str_ != "" ){
 		std::set< Size > const res_vec( get_resnum_list( focus_str_, pose ) );
 		for ( std::set< Size >::const_iterator it = res_vec.begin();
 				it != res_vec.end(); ++it ) {
@@ -223,15 +200,19 @@ NeighborhoodResidueSelector::get_focus(
 			focus[ *it ] = true;
 			focus_set = true;
 		}
+	} 
+	
+	if ( ! focus_set ) {
+		throw utility::excn::EXCN_Msg_Exception("Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
 	}
+
+
 
 	if ( include_focus_in_subset_ ) {
 		subset = focus;
 
 	}
-	if ( ! focus_set ) {
-		throw utility::excn::EXCN_Msg_Exception("Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
-	}
+
 }
 
 ResidueSubset
@@ -248,6 +229,10 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 	debug_assert( focus_subset.size() > 0 );
 
 	utility::vector1< Size > focus_residues = get_residues_from_subset(focus_subset);
+	if (focus_residues.size() == pose.total_residue()){
+		return subset;
+	}
+	
 	if ( distance_ > 10.0 ) {
 		Real const dst_squared = distance_ * distance_;
 		// go through each residue of the pose and check if it's near anything in the focus set
@@ -322,7 +307,7 @@ template< class Archive >
 void
 core::select::residue_selector::NeighborhoodResidueSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	arc( CEREAL_NVP( focus_ ) ); // std::set<Size>
+	arc( CEREAL_NVP( focus_ ) ); // utility::vector1<bool>
 	arc( CEREAL_NVP( focus_str_ ) ); // std::string
 	arc( CEREAL_NVP( distance_ ) ); // Real
 	arc( CEREAL_NVP( include_focus_in_subset_ ) ); //bool

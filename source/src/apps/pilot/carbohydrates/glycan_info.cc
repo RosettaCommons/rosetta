@@ -172,7 +172,10 @@ public:  // Standard Rosetta methods
 
 	}
 
-
+	virtual bool
+	reinitialize_for_each_job() const {
+		return true;
+	}
 
 
 private:  // Private methods

@@ -31,7 +31,7 @@
 #include <core/conformation/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>

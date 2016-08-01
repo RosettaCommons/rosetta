@@ -61,16 +61,11 @@ public:
 	/// @details Copy this object and return an owning pointer to the new object.
 	virtual ResidueSelectorOP clone() const;
 
-	NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance, bool include_focus_in_subset = true );
 	NeighborhoodResidueSelector( utility::vector1< bool > const & focus, Real distance, bool include_focus_in_subset = true);
 
 	virtual ~NeighborhoodResidueSelector();
 
 public:
-
-	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
-	void
-	set_focus( std::set<Size> const &focus );
 
 	/// @brief Set the focus, which is the residues for which we will be getting neighbors of.
 	void
@@ -132,7 +127,7 @@ private:
 	// data in focus and focus_string will be stitched together.
 	// focus_str_ can only be parsed when pose is available (PDB mappings)
 	// think of either-or behavior also between set and string
-	std::set< Size > focus_;
+	utility::vector1< bool > focus_;
 	std::string focus_str_;
 	Real distance_;
 

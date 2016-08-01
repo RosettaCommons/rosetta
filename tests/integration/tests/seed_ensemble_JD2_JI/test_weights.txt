@@ -1,2 +1,2 @@
 ALL 100
-9_mer_linear_glycan_test.pdb .1
+9_mer_linear_glycan_test.pdb 30

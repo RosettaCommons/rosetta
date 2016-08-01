@@ -145,7 +145,10 @@ public:  // Standard Rosetta methods
 		return protocols::moves::MoverOP( new GlycanClashCheckMover );
 	}
 
-
+	virtual bool
+	reinitialize_for_each_job() const {
+		return true;
+	}
 
 
 	//////////////////////////////////// Actual Code ////////////////////////////////////////////////////
