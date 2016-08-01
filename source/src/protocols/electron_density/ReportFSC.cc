@@ -108,7 +108,8 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), FrhoO);
 
 	utility::vector1< core::Size > resobin_counts;
-	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, 1.0/res_low_, 1.0/res_high_, nresbins_, resobin_counts, bin_squared_);
+	utility::vector1< core::Real > resobins;
+	core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 1.0/res_low_, 1.0/res_high_, resobins, resobin_counts, bin_squared_);
 
 	core::scoring::electron_density::getDensityMap().getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, bin_squared_ );
 	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) {
