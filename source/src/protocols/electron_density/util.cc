@@ -244,11 +244,11 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 	core::Real dens_score_sum =
 		scorefxn_dens->get_weight( core::scoring::elec_dens_window ) +
 		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_ca ) +
-		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_allatom );
-	scorefxn_dens->get_weight( core::scoring::elec_dens_fast );
+		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_allatom ) +
+		scorefxn_dens->get_weight( core::scoring::elec_dens_fast );
 
 	if ( align != "no" && dens_score_sum==0 ) {
-		scorefxn_dens->set_weight( core::scoring::elec_dens_fast, 1.0 );
+		scorefxn_dens->set_weight( core::scoring::elec_dens_fast, 10.0 );
 	}
 
 	core::Real dens_score = 0.0;

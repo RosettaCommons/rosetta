@@ -98,18 +98,24 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	utility::vector1< core::Real > modelmap1FSC(nresbins_,1.0), modelmap2FSC(nresbins_,1.0);
 	utility::vector1< core::Real > modelmap1Error(nresbins_,1.0), modelmap2Error(nresbins_,1.0);
 	core::Real fsc1=0.0, fsc2=0.0;
+	core::Size bincountsum=0;
 
 	// train map
 	ObjexxFCL::FArray3D< double > rhoC, rhoMask;
 	ObjexxFCL::FArray3D< std::complex<double> > FrhoC, FrhoO;
 	core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask );
 	numeric::fourier::fft3(rhoC, FrhoC);
-
 	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), FrhoO);
 
+	utility::vector1< core::Size > resobin_counts;
+	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, 1.0/res_low_, 1.0/res_high_, nresbins_, resobin_counts, bin_squared_);
+
 	core::scoring::electron_density::getDensityMap().getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, bin_squared_ );
-	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) fsc1+=modelmap1FSC[i];
-	fsc1 /= modelmap1FSC.size();
+	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) {
+		fsc1 += resobin_counts[i] * modelmap1FSC[i];
+		bincountsum += resobin_counts[i];
+	}
+	fsc1 /= bincountsum;
 
 	numeric::xyzVector<core::Real> apix = core::scoring::electron_density::getDensityMap().get_voxel_spacing(  );
 	numeric::xyzVector<core::Real> origin = core::scoring::electron_density::getDensityMap().getOrigin(  );
@@ -121,8 +127,10 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 
 		numeric::fourier::fft3(testmap_->get_data(), FrhoO);
 		testmap_->getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, bin_squared_ );
-		for ( Size i=1; i<=modelmap2FSC.size(); ++i ) fsc2+=modelmap2FSC[i];
-		fsc2 /= modelmap2FSC.size();
+		for ( Size i=1; i<=modelmap2FSC.size(); ++i ) {
+			fsc2 += resobin_counts[i] * modelmap2FSC[i];
+		}
+		fsc2 /= bincountsum;
 	}
 
 	// tag

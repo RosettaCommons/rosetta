@@ -2961,7 +2961,7 @@ ElectronDensity::readMRCandResize(
 	}
 
 	// set map resolution
-	this->reso = reso;
+	this->reso = 2*max_del_grid;
 
 	// update/clear derived data
 	density_change_trigger();

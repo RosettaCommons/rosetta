@@ -360,6 +360,7 @@ densityTools()
 
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
 	Real modelMapFSCsum=0, maskedModelMapFSCsum=0, RSCC=0;
+	core::Size bincountsum=0;
 
 	TR.Trace << "Stage 4: model vs map" << std::endl;
 	if ( userpose ) {
@@ -400,11 +401,12 @@ densityTools()
 
 		// sum FSC over reso bins
 		for ( Size i=1; i<=resobins.size(); ++i ) {
-			modelMapFSCsum += modelmapFSC[i];
-			maskedModelMapFSCsum += maskedModelMapFSC[i];
+			modelMapFSCsum += resobin_counts[i] * modelmapFSC[i];
+			maskedModelMapFSCsum += resobin_counts[i] * maskedModelMapFSC[i];
+			bincountsum += resobin_counts[i];
 		}
-		modelMapFSCsum /= resobins.size();
-		maskedModelMapFSCsum /= resobins.size();
+		modelMapFSCsum /= bincountsum;
+		maskedModelMapFSCsum /= bincountsum;
 	}
 
 	// verbose
