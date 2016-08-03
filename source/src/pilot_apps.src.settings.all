@@ -482,6 +482,7 @@ sources = {
 		"mp_find_interface",
 #		"mp_find_interface_test",
 		"mpfolding",
+		"mp_lipid_acc",
 		"mpframework_test",
 		"mpframework_test1",
 		"mp_quick_relax",

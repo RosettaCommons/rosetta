@@ -2844,6 +2844,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'optimize2', 'Boolean', desc="Optimize position in membrane for partner 2 using membrane scorefunction.", default='false' ),
 		),
 
+		Option_Group( 'lipid_acc',
+			Option( 'radius_cutoff', 'Real', desc="Cutoff radius (from COM) to compute structure-based lipid accessibility, in Angstrom.", default='10' ),
+			Option( 'rel_sasa_cutoff', 'Real', desc="Relative SASA cutoff to compute structure-based lipid accessibility.", default='0.2' ),
+			Option( 'angle_cutoff', 'Real', desc="Cutoff for CA-CB-COM angle to identify lipid accessible residues, in degrees. <90 faces towards COM, >90 faces away from COM.", default='65' ),
+		),
+
 		# For transforming protein into the membrane
 		Option_Group( "transform",
 			Option( "optimize_embedding", 'Boolean', desc="Use the scorefunction to optimize the embedding after an initial coarse grained setting" ),
