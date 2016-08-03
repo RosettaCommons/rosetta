@@ -24,6 +24,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -34,6 +35,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/excn/EXCN_Base.hh>
 #include <utility/vector1.hh>
 
 
@@ -54,6 +56,8 @@ public:
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
+	typedef core::scoring::sc::ShapeComplementarityCalculator ShapeComplementarityCalculator;
+	typedef core::scoring::sc::RESULTS ShapeComplementarityCalculatorResults;
 
 public:// constructor/destructor
 	// @brief default constructor
@@ -62,9 +66,6 @@ public:// constructor/destructor
 	// @brief constructor with arguments
 	ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
 		Size const & jump_id, Size const & quick, Size const & verbose);
-
-	// @brief copy constructor
-	ShapeComplementarityFilter( ShapeComplementarityFilter const & rval );
 
 	virtual ~ShapeComplementarityFilter(){}
 
@@ -85,8 +86,8 @@ public:// mutator
 	void jump_id( Size const & jump_id );
 	void quick( Size const & quick );
 	void verbose( Size const & verbose );
-	void residues1( utility::vector1< core::Size > const & residues );
-	void residues2( utility::vector1< core::Size > const & residues );
+	void residues1( std::string const & res_string );
+	void residues2( std::string const & res_string );
 	void sym_dof_name( std::string const & sym_dof_name );
 	std::string sym_dof_name() const;
 	void write_int_area( bool write_int_area );
@@ -96,10 +97,10 @@ public:// mutator
 
 public:// parser
 	virtual void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap &,
-		filters::Filters_map const &,
-		Movers_map const &,
-		Pose const & );
+		basic::datacache::DataMap & data,
+		filters::Filters_map const & filters,
+		Movers_map const & movers,
+		Pose const & pose );
 
 public:// virtual main operation
 	// @brief returns true if the given pose passes the filter, false otherwise.
@@ -109,24 +110,84 @@ public:// virtual main operation
 	/// @brief
 	virtual Real report_sm( Pose const & pose ) const;
 
-	/// @brief calc shape complementarity
-	virtual Size compute( Pose const & pose ) const;
+public:
+	/// @brief calc shape complementarity, returns results of the ShapeComplementarityCalculator
+	/// @param[in] pose Pose to be analyzed
+	/// @exception EXCN_CalcInitFailed Thrown if calculator couldn't be initialized
+	/// @exception EXCN_ResultsInvalid Thrown if computed results are invalid
+	/// @returns ShapeComplementarityCalculator::RESULTS object
+	ShapeComplementarityCalculatorResults
+	compute( Pose const & pose ) const;
 
 private:
-	core::scoring::sc::ShapeComplementarityCalculator mutable scc_;
+	/// @brief Uses residue selectors to set up the ShapeComplementarityCalculator
+	/// @param[in]  pose Pose to be analyzed
+	/// @param[out] scc Initialized, empty ShapeComplementarityCalculator, to which pose residues are added
+	void
+	setup_from_selectors( Pose const & pose, ShapeComplementarityCalculator & scc ) const;
 
+	/// @brief Uses multi-component symmetric interfaces to set up the ShapeComplementarityCalculator
+	/// @param[in]  pose              Pose to be analyzed
+	/// @param[out] scc               Initialized, empty ShapeComplementarityCalculator, to which pose residues are added
+	/// @param[out] nsubs_scalefactor Writes number of subunits, to be used as scaling factor for sc calculations
+	void
+	setup_multi_component_symm(
+		Pose const & pose,
+		ShapeComplementarityCalculator & scc,
+		core::Real & nsubs_scalefactor ) const;
+
+	/// @brief Uses single-component symmetric interfaces to set up the ShapeComplementarityCalculator
+	/// @param[in]  pose              Pose to be analyzed
+	/// @param[out] scc               Initialized, empty ShapeComplementarityCalculator, to which pose residues are added
+	/// @param[out] nsubs_scalefactor Writes number of subunits, to be used as scaling factor for sc calculations
+	void
+	setup_single_component_symm(
+		Pose const & pose,
+		ShapeComplementarityCalculator & scc,
+		core::Real & nsubs_scalefactor ) const;
+
+	/// @brief prints results to given tracer in a human-readable format
+	/// @param[out] tr std::ostream object to write to
+	/// @param[in]  r  ShapeComplementarityCalculatorResults object containing results
+	void
+	print_sc_results(
+		std::ostream & tr,
+		ShapeComplementarityCalculatorResults const & r,
+		core::Real const nsubs_scalefactor ) const;
+
+	/// @brief writes area value to current jd2 job
+	/// @param[in] pose     Pose being analyzed
+	/// @param[in] area_val Area to be reported, before correcting for symmetry.  If area < 0,
+	///                     the uncorrected value will be reported. If the pose isn't symmetric,
+	///                     the uncorrected value will be reported.
+	void
+	write_area( Pose const & pose, core::Real const area_val ) const;
+
+private:
 	Real filtered_sc_;
 	Real filtered_area_;
 	Size jump_id_;
 	Size quick_;
 	Size verbose_;
-	utility::vector1<core::Size> residues1_;
-	utility::vector1<core::Size> residues2_;
+	core::select::residue_selector::ResidueSelectorCOP selector1_;
+	core::select::residue_selector::ResidueSelectorCOP selector2_;
 	bool write_int_area_;
 
 	// symmetry-specific
 	bool multicomp_;
 	std::string sym_dof_name_;
+};
+
+/// @brief Super-simple exception to be thrown when we can't initialize the SC calculator
+class EXCN_InitFailed : public utility::excn::EXCN_Base {
+public:
+	virtual void show( std::ostream & ) const {}
+};
+
+/// @brief Super-simple exception to be thrown when the SC calculator fails to compute
+class EXCN_CalcFailed : public utility::excn::EXCN_Base {
+public:
+	virtual void show( std::ostream & ) const {}
 };
 
 } // filters
