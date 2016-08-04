@@ -144,11 +144,10 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 	utility::vector1< numeric::xyzVector< core::Real> > sc_coms( nres, numeric::xyzVector< core::Real>(0,0,0) );
 	for ( int i=1; i<=(int)nres; ++i ) {
 		core::conformation::Residue const &rsd_i = pose.residue(i);
+		if ( rsd_i.aa() == aa_vrt ) continue; // skip virutal residues
 		core::Size nbb=0, nsc=0;
 		for ( int j=1; j<=(int)rsd_i.nheavyatoms(); ++j ) {
-			if ( rsd_i.aa() == aa_pro && j==(int)rsd_i.nheavyatoms() ) {   // PRO NV (is_virtual() call doesn't seem to work here)
-				continue;
-			}
+			if ( rsd_i.is_virtual(j) ) continue;  // skip virtual atoms
 			if ( j<=(int)rsd_i.last_backbone_atom()+1 ) { // +1 includes CB in bb calcs
 				bb_coms[i] += rsd_i.atom(j).xyz(); nbb++;
 			} else {
@@ -192,6 +191,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 		// bb->bb
 		for ( int j=i+1; j<=(int)nres; ++j ) {
 			core::chemical::AA aa_j = pose.residue(j).aa();
+			if ( aa_j == aa_vrt ) continue; // skip virtual residues
 
 			int ff_j = 1; // generic backbone is in idx 1
 			if ( aa_j == aa_gly ) {   // gly-specialized
@@ -212,7 +212,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 		// bb->sc
 		for ( int j=1; j<=(int)nres; ++j ) {
 			core::chemical::AA aa_j = pose.residue(j).aa();
-			if ( aa_j == aa_gly || aa_j == aa_ala ) continue;  // no SC scatterers for these
+			if ( aa_j == aa_gly || aa_j == aa_ala || aa_j == aa_vrt ) continue;  // no SC scatterers for these
 			int ff_j = aa2idx( aa_j );
 			if ( ff_j == 0 ) continue; // no scattering defined
 
@@ -225,7 +225,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 		}
 
 		// sc->sc
-		if ( aa_i == aa_gly || aa_i == aa_ala ) continue;
+		if ( aa_i == aa_gly || aa_i == aa_ala || aa_i == aa_vrt ) continue;
 		ff_i = aa2idx( aa_i );
 
 		for ( int k=1; k<=(int)NQ; ++k ) {
@@ -234,7 +234,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 
 		for ( int j=i+1; j<=(int)nres; ++j ) {
 			core::chemical::AA aa_j = pose.residue(j).aa();
-			if ( aa_j == aa_gly || aa_j == aa_ala ) continue;  // no SC scatterers for these
+			if ( aa_j == aa_gly || aa_j == aa_ala || aa_j == aa_vrt ) continue;  // no SC scatterers for these
 			int ff_j = aa2idx( aa_j );
 			if ( ff_j == 0 ) continue; // no scattering defined
 
@@ -308,11 +308,10 @@ void FastSAXSEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction con
 	utility::vector1< numeric::xyzVector< core::Real> > sc_coms( nres, numeric::xyzVector< core::Real>(0,0,0) );
 	for ( int i=1; i<=(int)nres; ++i ) {
 		core::conformation::Residue const &rsd_i = pose.residue(i);
+		if ( rsd_i.aa() == aa_vrt ) continue;
 		core::Size nbb=0, nsc=0;
 		for ( int j=1; j<=(int)rsd_i.nheavyatoms(); ++j ) {
-			if ( rsd_i.aa() == aa_pro &&  j==(int)rsd_i.nheavyatoms() ) {
-				continue;  // pro NV: check for 'atom_type().is_virtual()' doesn't work here?
-			}
+			if ( rsd_i.is_virtual(j) ) continue;
 			if ( j<=(int)rsd_i.last_backbone_atom()+1 ) { // +1 includes CB in bb calcs
 				bb_coms[i] += rsd_i.atom(j).xyz(); nbb++;
 			} else {
@@ -446,10 +445,7 @@ void FastSAXSEnergy::eval_atom_derivative(
 	// if (hydrogen) return
 	if ( rsd_i.aa() != core::chemical::aa_vrt && !rsd_i.atom_type(atmid).is_heavyatom() ) return;
 
-	// if PRO NV return
-	if ( rsd_i.aa() == core::chemical::aa_pro &&  atmid==(int)rsd_i.nheavyatoms() ) {
-		return;  // pro NV: check for 'atom_type().is_virtual()' doesn't work here?
-	}
+	if ( rsd_i.is_virtual(atmid) ) return;
 
 	// look up derivative for this atom's glob, divide by # of atoms in the glob
 	numeric::xyzVector< core::Real > dCCdx;
