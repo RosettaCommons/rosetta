@@ -384,7 +384,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			i = resnum[ q ];
 			c = conventional_chains[ resnum[ q ] ];
 			if ( j > 1 &&
-					( ( ( i - 1 ) != j ) || d != c ) ) {
+					 ( ( ( i - 1 ) != j ) || d != c || cutpoint_open_in_full_model.has_value( j )  ) ) {
 				chunks.push_back(curr_chunk);
 				curr_chunk.clear();
 			}

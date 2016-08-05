@@ -1,0 +1,19 @@
+-nstruct 1
+-cycles 1000 
+#-params_file ms2_vdw_test.params 
+-secstruct '((((..........(( ))...............))))'
+#           cgcagauaacuagugg cccaaugaacaauuggaugcg 
+-fasta tether_plus_four_flanks_plus_bps.fasta
+-out:file:silent tether.out
+#-include_neighbor_base_stacks  
+-minimize_rna false 
+-s bps.pdb 
+-input_res L:1-4 L:15-16 L:17-18 L:34-37
+#-cutpoint_closed L:11 L:29
+
+#-grid_vdw_weight 0.3 
+#-VDW_rep_screen_info vdw_screen_minimal.pdb 50-51 17-18
+#-VDW_rep_screen_include_sidechains true 
+
+-output_res_num  L:1-37
+-ignore_zero_occupancy false 
