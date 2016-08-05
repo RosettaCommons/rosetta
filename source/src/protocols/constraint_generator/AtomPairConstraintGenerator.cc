@@ -82,7 +82,7 @@ AtomPairConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	}
 
 	core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
-	if ( selector ) set_residue_selector( selector );
+	if ( selector ) set_residue_selector( *selector );
 
 	set_sd( tag->getOption< core::Real >( "sd", sd_ ) );
 	set_weight( tag->getOption< core::Real >( "weight", weight_ ) );
@@ -104,9 +104,9 @@ AtomPairConstraintGenerator::apply( core::pose::Pose const & pose ) const
 }
 
 void
-AtomPairConstraintGenerator::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+AtomPairConstraintGenerator::set_residue_selector( core::select::residue_selector::ResidueSelector const & selector )
 {
-	selector_ = selector;
+	selector_ = selector.clone();
 }
 
 void

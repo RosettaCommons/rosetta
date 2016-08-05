@@ -69,7 +69,7 @@ protected:
 
 public:
 	void
-	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
 
 	void
 	set_sd( core::Real const sd );

@@ -105,7 +105,7 @@ public:
 
 	void test_residue_selector()
 	{
-		core::select::residue_selector::ResidueSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector( "1-10,12-20" ) );
+		core::select::residue_selector::ResidueIndexSelector selector( "1-10,12-20" );
 
 		AtomPairConstraintGenerator pair_gen;
 		pair_gen.set_id( "ap_generator1" );
