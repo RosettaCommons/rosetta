@@ -355,7 +355,7 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
 
 		// change final line if beta_nov15_patch
-		if( option[ OptionKeys::corrections::beta_nov15_patch ]()){
+		if ( option[ OptionKeys::corrections::beta_nov15_patch ]() ) {
 			filelines.push_back( "2.481  4.051 -2.616 -2.963  1.254  0.832 -0.393  2.790 -0.775  2.111  2.365 -1.908 -1.975 -1.613 -1.007 -0.610  0.802  2.889  2.607  0.568" ); // using "minimized context"
 		} else {
 			filelines.push_back( "reference 1.32468 3.25479 -2.14574 -2.72453 1.21829 0.79816 -0.30065 2.30374 -0.71458 1.66147 1.65735 -1.34026 -1.64321 -1.45095 -0.09474 -0.28969 1.15175 2.64269 2.26099 0.58223" );

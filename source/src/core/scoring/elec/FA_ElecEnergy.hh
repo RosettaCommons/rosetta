@@ -288,9 +288,9 @@ public:
 	) const;
 
 	virtual
-	void 
+	void
 	evaluate_rotamer_intrares_energies(
-  	conformation::RotamerSetBase const & set,
+		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::vector1< core::PackerEnergy > & energies
@@ -353,7 +353,7 @@ public:
 		return ( coulomb().max_dis() + 2*core::chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH );
 	}
 
-	bool eval_intrares_ST_only() const { return eval_intrares_ST_only_;	}
+	bool eval_intrares_ST_only() const { return eval_intrares_ST_only_; }
 
 	inline
 	Energy heavyatom_heavyatom_energy(

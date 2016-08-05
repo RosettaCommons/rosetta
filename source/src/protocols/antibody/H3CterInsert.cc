@@ -193,17 +193,17 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 
 	//JAB Enabling camelid antibodies through a PR, but camelid fragment library DOES NOT EXIST.
 	// SO we are using the H3_CTERM instead!
-	
+
 	/*
 	if ( ab_info_->is_camelid() ) {
-		H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/camelid_H3_CTERM") ;
+	H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/camelid_H3_CTERM") ;
 	} else {
-		H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/H3_CTERM") ;
+	H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/H3_CTERM") ;
 	}
 	*/
-	
+
 	H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/H3_CTERM");
-	
+
 	// Read the file defined by command line option
 	utility::io::izstream H3_ter_library_stream( H3_ter_library_filename_ );
 

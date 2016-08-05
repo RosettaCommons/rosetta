@@ -65,7 +65,7 @@ public:
 	// @return
 	// fraction of atoms that are less than k Angstroms between poses
 	////////////////////////////////////////////////////////////////////////////
-	
+
 	core::Real calc_frac_atoms_kA_to_native(
 		core::pose::Pose const& pose1, core::pose::Pose const& pose2,
 		ObjexxFCL::FArray1D_bool const & res_subset,
@@ -77,8 +77,8 @@ public:
 
 	// check all sequential Kmers in the peptide, and output the best RMS Kmer
 	core::Real best_Kmer_rms(
-	core::pose::Pose const& pose1,
-	core::pose::Pose const& pose2,
+		core::pose::Pose const& pose1,
+		core::pose::Pose const& pose2,
 		t_predicate_func predicate,
 		core::Size k
 	) const;
@@ -96,8 +96,8 @@ public:
 	// phi/psi torsion-RMSD between peptide backbones
 	////////////////////////////////////////////////////////////////////////////
 	core::Real calc_phipsi_RMSD(
-	core::pose::Pose const& pose1,
-	core::pose::Pose const& pose2,
+		core::pose::Pose const& pose1,
+		core::pose::Pose const& pose2,
 		ObjexxFCL::FArray1D_bool const & res_subset
 	) const;
 

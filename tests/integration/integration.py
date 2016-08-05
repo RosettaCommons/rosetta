@@ -408,7 +408,8 @@ EXAMPLES For Running Demos/Tutorials
                 #print "Copying demo dir from "+test+" to "+ path.join(outdir, test)
                 local_copytree( test , path.join(outdir, testbase), accept=lambda src, dst: path.basename(src) != '.svn')
                 queue.put(testbase)
-            elif ((not Options.mpi_tests) or Options.mpi_tests and os.path.isfile(path.join(test_subdir, test ,"command.mpi"))):
+            elif ((not Options.mpi_tests) or (Options.mpi_tests and os.path.isfile(path.join( test ,"command.mpi")))):
+		#print "Copying " + test + " to " + outdir + "."
                 local_copytree( test , path.join(outdir, testbase), accept=lambda src, dst: path.basename(src) != '.svn')
                 queue.put(testbase)
             else:

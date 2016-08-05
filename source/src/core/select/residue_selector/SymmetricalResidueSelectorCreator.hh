@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/select/residue_selector/SymmetricalResidueSelectorCreator.hh
-/// @brief  Creator for symmetrical residue selector 
+/// @brief  Creator for symmetrical residue selector
 /// @author Yang Hsia (yhsia@uw.edu)
 
 #ifndef INCLUDED_core_select_residue_selector_SymmetricalResidueSelectorCreator_HH

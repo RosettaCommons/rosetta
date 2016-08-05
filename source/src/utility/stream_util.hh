@@ -135,9 +135,9 @@ std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
 // declare functions first to allow output of vector1< std types > and vice/versa
 namespace utility {
 
-	/// @brief Output function for utility::vector1 object.
-	template <platform::SSize L, class T>
-	std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v);
+/// @brief Output function for utility::vector1 object.
+template <platform::SSize L, class T>
+std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v);
 
 }
 

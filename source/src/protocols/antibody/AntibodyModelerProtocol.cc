@@ -464,8 +464,8 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// Step 2: SnugFit: relieve the clashes between L-H
 	//JAB - Why are we refining the LH chain in a class called RefineBetaBarrel?????
 	/// Seriously.  And we use pre-talaris 2013 to pack the sidechains in it.  Just FYI....
-	
-	if ( snugfit_ && ! ab_info_->is_camelid()) {
+
+	if ( snugfit_ && ! ab_info_->is_camelid() ) {
 		RefineBetaBarrelOP refine_beta_barrel( new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_) );
 		// it has default movemap, tf, and fold_tree
 		if ( !LH_repulsive_ramp_ ) {

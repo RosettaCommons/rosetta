@@ -925,7 +925,7 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: geom_sol_intrares_path_distance_cutoff: "
 		<< (geom_sol_intrares_path_distance_cutoff_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: eval_intrares_elec_ST_only: "
-			<< ( eval_intrares_elec_ST_only_ ? "true" : "false" ) << std::endl;
+		<< ( eval_intrares_elec_ST_only_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: envsmooth_zero_negatives: "
 		<< (envsmooth_zero_negatives_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;

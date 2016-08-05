@@ -1823,7 +1823,7 @@ init_beta_nov15_correction() {
 	if ( ! option[ score::weights ].user() ) {
 		if ( option[ corrections::beta_nov15_patch ]() ) {
 			option[ score::weights ].value( "beta_nov15_patch.wts" );
-		}	else if ( option[corrections::beta_nov15_cart]() || option[optimization::nonideal]() ) {
+		} else if ( option[corrections::beta_nov15_cart]() || option[optimization::nonideal]() ) {
 			option[ score::weights ].value( "beta_nov15_cart.wts" );
 		} else {
 			option[ score::weights ].value( "beta_nov15.wts" );
@@ -1840,10 +1840,10 @@ init_beta_nov15_correction() {
 
 	// apply patch (optional)
 	if ( option[ corrections::beta_nov15_patch ]() ) {
-		if( !option[ corrections::score::rama_prepro_steep ].user() ){
+		if ( !option[ corrections::score::rama_prepro_steep ].user() ) {
 			option[ corrections::score::rama_prepro_steep ].value( true );
 		}
-		if( !option[ score::eval_intrares_elec_ST_only ].user() ){
+		if ( !option[ score::eval_intrares_elec_ST_only ].user() ) {
 			option[ score::eval_intrares_elec_ST_only ].value( true );
 		}
 	}
