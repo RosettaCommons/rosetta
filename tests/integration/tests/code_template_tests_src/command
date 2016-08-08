@@ -64,6 +64,24 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
+##Test WholeStructureEnergyMethod
+ echo test_ws_energy_method
+ %(python)s %(template_dir)s/generate_templates.py --test --type ws_energy_method --class_name TestTemplateMover --brief "testing templates" --namespace protocols test_templates 2>&1 >> mover_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+##Test OneBodyEnergyMethod
+ echo test_1b_energy_method
+ %(python)s %(template_dir)s/generate_templates.py --test --type 1b_energy_method --class_name TestTemplateMover --brief "testing templates" --namespace protocols test_templates 2>&1 >> mover_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+##Test TwoBodyEnergyMethod
+ echo test_2b_energy_method
+ %(python)s %(template_dir)s/generate_templates.py --test --type 2b_energy_method --class_name TestTemplateMover --brief "testing templates" --namespace protocols test_templates 2>&1 >> mover_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 ##Test TaskOperation
  echo test_task_operation
  %(python)s %(template_dir)s/generate_templates.py --test --type task_operation --class_name TestTemplateTaskOperation --brief "testing templates" --namespace protocols test_templates 2>&1 >> task_op_log
