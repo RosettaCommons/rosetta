@@ -9,3 +9,6 @@
 
 -out:suffix _cyclize
 -extra_patch_fa ../../../../database/chemical/residue_type_sets/fa_standard/patches/branching/C-terminal_conjugation.txt
+
+#Temporarily added by VKM since this is one of the integration tests showing instability on the test server.  Delete the following later:
+-out:level 500

@@ -20,3 +20,6 @@
 -ddg:output_silent true 
 -ddg:opt_radius 12.0
 -score:fa_max_dis 9.0
+
+#Temporarily added by VKM since this is one of the integration tests showing instability on the test server.  Delete the following later:
+-out:level 500
