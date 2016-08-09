@@ -251,7 +251,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 		TS_ASSERT( scorefxn );
 		conn.set_scorefxn( *scorefxn );
-		conn.set_motifs( "1LX", "1" );
+		conn.set_motifs( "1LE", "1" );
 		core::Real random = 0.2501;
 		TS_ASSERT_THROWS( conn.architect().apply( *perm->clone(), random ), EXCN_ConnectionSetupFailed );
 

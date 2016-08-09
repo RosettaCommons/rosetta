@@ -23,6 +23,7 @@
 #include <protocols/denovo_design/components/RemodelLoopMoverPoseFolder.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
 #include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -41,6 +42,7 @@ namespace movers {
 BridgeChainsMover::BridgeChainsMover():
 	protocols::moves::Mover( BridgeChainsMover::class_name() ),
 	architect_( new connection::ConnectionArchitect( "BridgeChainsArchitect" ) ),
+	scorefxn_(),
 	overlap_( 1 ),
 	dry_run_( false )
 {
@@ -49,6 +51,7 @@ BridgeChainsMover::BridgeChainsMover():
 BridgeChainsMover::BridgeChainsMover( std::string const & class_name ):
 	protocols::moves::Mover( class_name ),
 	architect_( new connection::ConnectionArchitect( "BridgeChainsArchitect" ) ),
+	scorefxn_(),
 	overlap_( 1 ),
 	dry_run_( false )
 {
@@ -65,9 +68,13 @@ BridgeChainsMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	// Build architect from tag data
+	architect_->set_bridge( true );
 	architect_->parse_my_tag( tag, data );
 	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
 	set_dry_run( tag->getOption< core::Size >( "dry_run", dry_run_ ) );
+
+	core::scoring::ScoreFunctionCOP sfxn = protocols::rosetta_scripts::parse_score_function( tag, data );
+	if ( sfxn ) set_scorefxn( *sfxn );
 }
 
 protocols::moves::MoverOP
@@ -121,7 +128,9 @@ BridgeChainsMover::apply( core::pose::Pose & pose )
 		assemble.set_folder( components::RandomTorsionPoseFolder() );
 	} else {
 		components::RemodelLoopMoverPoseFolder folder;
-		folder.set_scorefxn( scorefxn() );
+		if ( scorefxn_ ) {
+			folder.set_scorefxn( scorefxn() );
+		}
 		assemble.set_folder( folder );
 	}
 	assemble.apply( pose );
@@ -210,6 +219,19 @@ std::string
 BridgeChainsMoverCreator::keyname() const
 {
 	return BridgeChainsMover::class_name();
+}
+
+/// this one is to keep compatibility with Kuhlman, Jacobs, and Linsky 2016 book chapter
+protocols::moves::MoverOP
+BridgeChainsCreator::create_mover() const
+{
+	return protocols::moves::MoverOP( new BridgeChainsMover );
+}
+
+std::string
+BridgeChainsCreator::keyname() const
+{
+	return "BridgeChains";
 }
 
 } //protocols

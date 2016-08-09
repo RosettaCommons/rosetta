@@ -129,6 +129,11 @@ public:
 	void
 	set_motifs( MotifCOPs const & motifs );
 
+	/// @brief sets whether to always try to bridge.  If true, a random cutpoint will be selected in the connection
+	///        if the chains to be connected have different movable groups
+	void
+	set_bridge( bool const bridge );
+
 private:
 	/// @brief Get list of segment pairs allowed to be connected
 	MotifOPs
@@ -170,6 +175,7 @@ private:
 	available_lower_termini( components::StructureData const & sd ) const;
 
 private:
+	bool bridge_;
 	components::IdealAbegoGeneratorCOP ideal_abego_;
 	MotifCOPs motifs_;
 	SegmentNames segment1_ids_;

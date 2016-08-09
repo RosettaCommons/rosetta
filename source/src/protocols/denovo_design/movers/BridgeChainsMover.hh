@@ -119,7 +119,7 @@ public:
 
 private:
 	connection::ConnectionArchitectOP architect_;
-	core::scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Size overlap_;
 	bool dry_run_;
 

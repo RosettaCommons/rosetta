@@ -33,6 +33,18 @@ public:
 
 };
 
+class BridgeChainsCreator : public protocols::moves::MoverCreator {
+
+public:
+
+	virtual protocols::moves::MoverOP
+	create_mover() const;
+
+	virtual std::string
+	keyname() const;
+
+};
+
 } //protocols
 } //denovo_design
 } //movers

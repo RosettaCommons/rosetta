@@ -44,6 +44,7 @@ namespace connection {
 
 ConnectionArchitect::ConnectionArchitect( std::string const & id_value ):
 	protocols::denovo_design::architects::StructureArchitect( id_value ),
+	bridge_( false ),
 	ideal_abego_(),
 	motifs_(),
 	segment1_ids_(),
@@ -187,14 +188,22 @@ ConnectionArchitect::set_user_chain2( core::Size const chain )
 	chain2_ = chain;
 }
 
+/// @brief sets whether to always try to bridge.  If true, a random cutpoint will be selected in the connection
+///        if the chains to be connected have different movable groups
+void
+ConnectionArchitect::set_bridge( bool const bridge )
+{
+	bridge_ = bridge;
+}
+
 /// @brief sets motifs using a motif string and a string of cutpoints
 void
 ConnectionArchitect::set_motifs( std::string const & motif_str, std::string const & cutpoints_str )
 {
 	MotifCOPs const str_motifs = parse_motif_string( motif_str );
-	Lengths const lengths = parse_length_string( cutpoints_str );
+	Lengths lengths = parse_length_string( cutpoints_str );
 
-	if ( lengths.empty() ) {
+	if ( !bridge_ && lengths.empty() ) {
 		motifs_ = str_motifs;
 		TR.Debug << "set_motifs(): Built " << str_motifs.size() << " motifs from "
 			<< motif_str << std::endl;
@@ -205,11 +214,19 @@ ConnectionArchitect::set_motifs( std::string const & motif_str, std::string cons
 	for ( MotifCOPs::const_iterator m_it=str_motifs.begin(); m_it!=str_motifs.end(); ++m_it ) {
 		debug_assert( *m_it );
 		MotifCOP m = *m_it;
-		for ( Lengths::const_iterator l=lengths.begin(); l!=lengths.end(); ++l ) {
-			if ( *l > m->elem_length() ) continue;
-			MotifOP newmotif( new Motif( *m ) );
-			newmotif->set_cutpoint( *l );
-			motifs.push_back( newmotif );
+		if ( bridge_ && lengths.empty() ) {
+			for ( core::Size cut=1; cut<=m->elem_length(); ++cut ) {
+				MotifOP newmotif( new Motif( *m ) );
+				newmotif->set_cutpoint( cut );
+				motifs.push_back( newmotif );
+			}
+		} else {
+			for ( Lengths::const_iterator l=lengths.begin(); l!=lengths.end(); ++l ) {
+				if ( *l > m->elem_length() ) continue;
+				MotifOP newmotif( new Motif( *m ) );
+				newmotif->set_cutpoint( *l );
+				motifs.push_back( newmotif );
+			}
 		}
 	}
 
@@ -253,6 +270,7 @@ ConnectionArchitect::compute_connection_candidates(
 
 	MotifOPs candidates;
 	for ( SegmentPairs::const_iterator pair=seg_pairs.begin(); pair!=seg_pairs.end(); ++pair ) {
+		TR.Debug << "Looking at pair " << *pair << std::endl;
 		//if ( ! pair_allowed( pair->first, pair->second ) ) {
 		//  TR.Debug << "ConnectionArchitect: Connection to segments " << pair->first
 		//   << ", " << pair->second << " DISALLOWED by user setting." << std::endl;
@@ -293,7 +311,7 @@ ConnectionArchitect::segment_pairs( components::StructureData const & sd ) const
 	SegmentNames const available_uppers = available_upper_termini( sd );
 	if ( chain1_ ) {
 		debug_assert( chain1_ <= available_uppers.size() );
-		local_comp1_ids.push_back( available_uppers[ chain1_ ] );
+		local_comp1_ids.push_back( *(available_uppers.begin() + (chain1_-1)) );
 	} else {
 		local_comp1_ids = available_uppers;
 	}
@@ -301,7 +319,7 @@ ConnectionArchitect::segment_pairs( components::StructureData const & sd ) const
 	SegmentNames const available_lowers = available_lower_termini( sd );
 	if ( chain2_ ) {
 		debug_assert( chain2_ <= available_lowers.size() );
-		local_comp2_ids.push_back( available_lowers[ chain2_ ] );
+		local_comp2_ids.push_back( *(available_lowers.begin() + (chain2_-1)) );
 	} else {
 		local_comp2_ids = available_lowers;
 	}
@@ -642,7 +660,10 @@ AreConnectablePredicate::check_distance(
 {
 	// max 3.8 angstroms per residue, plus ~1.5 angstroms for N-C bond
 	static core::Real const bond_dist = 1.5;
-	static core::Real const max_dist_per_res = 3.8;
+	// bordering residues are included in distance
+	// this subtracts a fixed dist to compensate for N-CA of first
+	// res and CA-C of second
+	static core::Real const subtract_dist = 3.5;
 
 	if ( !motif.cutpoint() ) return true;
 
@@ -661,11 +682,13 @@ AreConnectablePredicate::check_distance(
 		return true;
 	}
 
-	core::Real avg_dist = calc_approx_loop_length(
+	Motif motifcopy = motif;
+	motifcopy.delete_lower_padding();
+	motifcopy.delete_upper_padding();
+	core::Real const max_dist = calc_approx_loop_length(
 		sd.abego( sd.segment( segment1 ).stop() ) +
-		motif.abego() +
-		sd.abego( sd.segment( segment2 ).start() ) );
-	avg_dist /= static_cast< core::Real >( motif.length() );
+		motifcopy.abego() +
+		sd.abego( sd.segment( segment2 ).start() ) ) - subtract_dist;
 
 	// get residue and atom from segment 1
 	core::Size const res1 = template1->total_residue();
@@ -683,13 +706,16 @@ AreConnectablePredicate::check_distance(
 	core::Real const dist = xyz1.distance( xyz2 );
 
 	// if the distance is > the fully extended Ca-Ca distance of an nres residue insert, this connection is physically impossible
-	if ( dist > (max_dist_per_res*motif.elem_length() + bond_dist) ) {
+	if ( dist > (max_dist + bond_dist) ) {
 		TR.Debug << segment1 << " and " << segment2 << " with motif " << motif
 			<< "\tnot connectable due to nres="
-			<< motif.length() << " distance=" << dist << std::endl;
+			<< motif.length() << " distance=" << dist << " max distance=" << max_dist << std::endl;
 		return false;
+	} else {
+		TR.Debug << segment1 << " and " << segment2 << " with motif " << motif
+			<< "\tconnectable due to nres="
+			<< motif.length() << " distance=" << dist << " max distance=" << max_dist << std::endl;
 	}
-
 	return true;
 }
 

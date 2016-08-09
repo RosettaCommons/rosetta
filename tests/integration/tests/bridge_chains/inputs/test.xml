@@ -1,0 +1,52 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+		#########################################
+		#####
+		# The OperateOnResidueSubset operation, in
+		conjunction
+		# with the PreventRepacking ResidueLevelTaskOperation
+		(RLT)
+		# prevents design at positions outside the new loop
+		#########################################
+		#####
+		<OperateOnResidueSubset name="looponly" >
+			<Not>
+				<Index resnums="59-63" />
+			</Not>	
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+
+	##############################################
+	# The “fldsgn_cen” scorefunction is the recommended
+	# ScoreFunction for backbone design in which a placeholder
+	# amino-acid is used (in the case of this demo, that amino acid
+	# is valine)
+	##############################################
+	<SCOREFXNS>
+		<centroid_scorefunction weights="fldsgn_cen" />
+	</SCOREFXNS>
+
+	<MOVERS>
+		<BridgeChains name="connect" chain1="1" chain2="2" motif="2LX" overlap="3" scorefxn="centroid_scorefunction" />
+		<PackRotamersMover name="pack" task_operations="looponly" />
+		<MinMover name="minimize" bb="false" chi="true" />
+		<ParsedProtocol name="design_and_minimize" >
+			<Add mover="pack" />
+			<Add mover="minimize" />
+		</ParsedProtocol>
+
+		##############################################
+		# Note that Talaris 2013 is the default full-atom score function in
+		# Rosetta, and therefore does not need to be defined in the
+		# SCOREFXNS section above
+		##############################################
+		<GenericMonteCarlo name="design_mc" trials="20" mover_name="design_and_minimize" scorefxn_name="talaris2013" />
+	</MOVERS>
+
+	<PROTOCOLS>
+		<Add mover_name="connect"/>
+		<Add mover_name="design_mc"/>
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>
