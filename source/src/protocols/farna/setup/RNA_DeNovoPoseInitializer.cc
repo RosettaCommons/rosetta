@@ -258,8 +258,10 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		for ( Size n = 1; n <= rna_params_.stem_pairing_sets_.size(); n++ ) {
 			for ( Size m = 1; m <= rna_params_.stem_pairing_sets_[n].size(); m++ ) {
 				Size const idx = rna_params_.stem_pairing_sets_[n][m];
-				if ( rna_params_.check_in_pairing_sets( obligate_pairing_sets, rna_params_.rna_pairing_list_[ idx ] ) ) continue;
-				obligate_pairing_sets.push_back( utility::tools::make_vector1(idx ) );
+				BasePair const & base_pair = rna_params_.rna_pairing_list_[ idx ] ;
+				if ( rna_params_.check_in_pairing_sets( obligate_pairing_sets, base_pair ) ) continue;
+				if ( !base_pair_moving( base_pair, rna_jump_mover.atom_level_domain_map(), pose ) ) continue;
+				obligate_pairing_sets.push_back( utility::tools::make_vector1( idx ) );
 			}
 		}
 	} else {
@@ -287,16 +289,21 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	//  ahead of time.
 	//////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > base_pair_step_starts;
-	RNA_BasePairHandler const rna_base_pair_handler( rna_params_ ); // has get_base_pair_steps() function.
 	if ( bps_moves_ ) {
+		RNA_BasePairHandler const rna_base_pair_handler( rna_params_ ); // has get_base_pair_steps() function.
 		utility::vector1< BasePairStep > base_pair_steps = rna_base_pair_handler.get_base_pair_steps( false /* just canonical */ );
 
 		for ( Size n = 1; n <= base_pair_steps.size(); n++ ) {
 			BasePairStep const & base_pair_step = base_pair_steps[n];
-			runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i(),      base_pair_step.j_next() ) ) );
-			runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i_next(), base_pair_step.j()      ) ) );
-			runtime_assert ( base_pair_step.i_next() == base_pair_step.i()+1 );
 			if ( base_pair_step.j_next() != (base_pair_step.j() + 1) ) continue;
+
+			// some base pair steps are actually not moveable.
+			if ( !base_pair_step_moving( base_pair_step, rna_jump_mover.atom_level_domain_map(), pose ) ) continue;
+
+			// following assert (jumps between top & bottom base pair of base pair step) do not hold if one of the base pair is inside a fixed input PDB.
+			//			runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i(),      base_pair_step.j_next() ) ) );
+			//			runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i_next(), base_pair_step.j()      ) ) );
+			runtime_assert ( base_pair_step.i_next() == base_pair_step.i()+1 );
 
 			// used below in cutpoint setting...
 			base_pair_step_starts.push_back( base_pair_step.i() );
@@ -351,6 +358,10 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		}
 	}
 
+	// for ( Size i = 1; i < nres; i++ ) {
+	//  	TR  << TR.Blue << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
+	// }
+
 	//////////////////////////////////////////////////////////////////////
 	// Jump residues.
 	//////////////////////////////////////////////////////////////////////
@@ -369,7 +380,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			count++;
 			jump_points(1, count) = rna_params_.rna_pairing_list_[which_pairing].res1();
 			jump_points(2, count) = rna_params_.rna_pairing_list_[which_pairing].res2();
-			//TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			//			TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 
 		// "Chain connections" provide less information about specific residues to pair --
@@ -382,7 +393,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			count++;
 			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
 			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
-			//   TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			//			TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 		//  TR << std::endl;
 
@@ -416,8 +427,6 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			Size const pairing_index_in_set( static_cast<Size>( numeric::random::rg().uniform() * stem_pairing_sets[m].size() )  + 1 );
 			Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
 
-			//   std::cout  << "USING SET: " << m  << " ==> " << pairing_index_in_set << std::endl;
-
 			count++;
 			jump_points(1, count) = rna_params_.rna_pairing_list_[which_pairing].res1();
 			jump_points(2, count) = rna_params_.rna_pairing_list_[which_pairing].res2();
@@ -435,9 +444,9 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		// TR << TR.Cyan << "Making attempt " << ntries << std::endl;
 		// TR << TR.Cyan << "obligate_cutpoints " << obligate_cut_points_reformat << std::endl;
 		// for (Size n = 1; n <= num_pairings_to_force; n++ ){
-		//  TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
-		//     " " <<  jump_points(2, n)  <<  std::endl;
-		// }
+		// 	TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
+		//  		" " <<  jump_points(2, n)  <<  std::endl;
+		//  }
 
 		success = f.random_tree_from_jump_points( nres, num_pairings_to_force, jump_points, obligate_cut_points_reformat, cut_bias, 1, true /*enable 1 or NRES jumps*/ );
 	}

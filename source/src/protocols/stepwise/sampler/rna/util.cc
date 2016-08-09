@@ -27,7 +27,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_StepWiseSamplerSamplerUtil" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.rna.util" );
 
 using namespace core;
 using namespace protocols::stepwise::modeler::rna;
@@ -116,7 +116,6 @@ setup_sampler( pose::Pose const & pose,
 			base_state[i] = NO_CHI;
 		}
 	}
-
 
 	/////Set up the sampler/////
 	if ( kic_modeler ) {

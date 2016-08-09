@@ -213,7 +213,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 		pose = start_pose;
 
-		if ( !refine_pose_ && rna_de_novo_pose_setup_ != 0 ) rna_de_novo_pose_setup_->setup_fold_tree_and_jumps_and_variants( pose, *rna_jump_mover_, atom_level_domain_map_ );
+		if ( !refine_pose_ && rna_de_novo_pose_initializer_ != 0 ) rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *rna_jump_mover_, atom_level_domain_map_ );
 
 		if ( !options_->bps_moves() ) rna_base_pair_handler_->setup_base_pair_constraints( pose, atom_level_domain_map_, options_->suppress_bp_constraint() ); // needs to happen after setting cutpoint variants, etc.
 

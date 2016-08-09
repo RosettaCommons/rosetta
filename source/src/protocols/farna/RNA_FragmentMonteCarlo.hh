@@ -101,7 +101,7 @@ public:
 	RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
 
 	void
-	set_rna_de_novo_pose_setup( RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_setup_ = setting; }
+	set_rna_de_novo_pose_initializer( RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_initializer_ = setting; }
 
 	void
 	set_user_input_chunk_library( RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
@@ -204,7 +204,7 @@ private:
 	RNA_BasePairHandlerCOP rna_base_pair_handler_;
 	RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
-	RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_setup_;
+	RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_initializer_;
 	RNA_FragmentMoverOP rna_fragment_mover_;
 	RNA_JumpMoverOP rna_jump_mover_;
 	RNA_LoopCloserOP rna_loop_closer_;

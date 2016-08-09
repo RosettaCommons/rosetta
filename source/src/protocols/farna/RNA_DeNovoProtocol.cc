@@ -165,11 +165,11 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	initialize_lores_silent_file();
 	initialize_tag_is_done();
 
-	RNA_DeNovoPoseInitializerOP rna_de_novo_pose_setup( new RNA_DeNovoPoseInitializer( *rna_params_ )  );
-	rna_de_novo_pose_setup->set_bps_moves( options_->bps_moves() );
-	rna_de_novo_pose_setup->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
+	RNA_DeNovoPoseInitializerOP rna_de_novo_pose_initializer( new RNA_DeNovoPoseInitializer( *rna_params_ )  );
+	rna_de_novo_pose_initializer->set_bps_moves( options_->bps_moves() );
+	rna_de_novo_pose_initializer->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
 	bool refine_pose( refine_pose_list_.size() > 0 || options_->refine_pose() );
-	if ( !refine_pose ) rna_de_novo_pose_setup->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
+	if ( !refine_pose ) rna_de_novo_pose_initializer->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
 
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
@@ -196,7 +196,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		}
 
 		RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
-			options_->input_res(), rna_params_->allow_insert_res() ) );
+																																			 options_->input_res(), rna_params_->allow_insert_res() ) );
 		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params_ ) );
 
 		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
@@ -211,7 +211,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		if ( options_->filter_vdw() ) {
 			rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
 		}
-		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_setup( rna_de_novo_pose_setup ); // only used for resetting fold-tree & cutpoints on each try.
+		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
 
 		rna_fragment_monte_carlo_->apply( pose );

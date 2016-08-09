@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/rna/BasePair.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -28,6 +29,8 @@
 #include <utility/io/ozstream.fwd.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh> //courtesy to other namespaces that want clear_rna_secstruct_legacy_info()
+#include <protocols/farna/base_pairs/BasePairStep.fwd.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 // Utility headers
@@ -194,6 +197,16 @@ get_rna_hires_scorefxn();
 utility::vector1< core::Size >
 get_moving_res( core::pose::Pose const & pose,
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+
+bool
+base_pair_step_moving( base_pairs::BasePairStep const & base_pair_step,
+											 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+											 core::pose::Pose const & pose );
+
+bool
+base_pair_moving( core::pose::rna::BasePair const & base_pair,
+									protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+									core::pose::Pose const & pose );
 
 } //farna
 } //protocols

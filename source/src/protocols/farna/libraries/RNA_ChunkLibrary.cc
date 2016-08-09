@@ -467,6 +467,28 @@ RNA_ChunkLibrary::update_to_move_rosetta_library_chunks()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+bool
+check_base_pair_step_availability(
+																	BasePairStepLibrary const & base_pair_step_library,
+																	BasePairStepSequence const & base_pair_step_sequence )
+{
+
+	if ( base_pair_step_library.has_value( base_pair_step_sequence ) ) return true;
+
+	std::string tag( base_pair_step_sequence.tag() );
+	TR << TR.Red << base_pair_step_library.database_dir() << " does not have "  << base_pair_step_sequence.tag() << " for residue numbers " << tag;
+
+	if ( !base_pair_step_library.canonical() ||
+			 std::count( tag.begin(), tag.end(), 'n' ) > 0 ) {
+		TR << " so no base pair steps will be sampled there, just fragments." << std::endl;
+		return false;
+	}
+
+	utility_exit_with_message( "Problem with canonical base pair step library." );
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 RNA_ChunkLibrary::setup_base_pair_step_chunks(
 	pose::Pose const & pose,
@@ -483,33 +505,18 @@ RNA_ChunkLibrary::setup_base_pair_step_chunks(
 		BasePairStep const & base_pair_step = base_pair_steps[ m ];
 
 		BasePairStepSequence base_pair_step_sequence( pose.sequence(), base_pair_step );
-		if ( base_pair_step_library.canonical() ) {
-			runtime_assert( base_pair_step_library.has_value( base_pair_step_sequence ) );
-		} else {
-			if ( !base_pair_step_library.has_value( base_pair_step_sequence ) ) {
-				TR << base_pair_step_library.database_dir() << " does not have "  << base_pair_step_sequence.tag() << " for residue numbers " << base_pair_step << " so no base pair steps will be sampled there, just fragments." << std::endl;
-				continue;
-			}
-		}
+		if ( !check_base_pair_step_availability( base_pair_step_library, base_pair_step_sequence ) ) continue;
 
 		// happens if poses in the silent file in the database get filtered out.
 		if ( base_pair_step_library.mini_pose_list( base_pair_step_sequence ).size() == 0 ) return;
+
+		if ( !base_pair_step_moving( base_pair_step, atom_level_domain_map_, pose ) ) continue;
 
 		ResMap res_map;
 		res_map[ base_pair_step.i()      ] = 1;
 		res_map[ base_pair_step.i_next() ] = 2;
 		res_map[ base_pair_step.j()      ] = 3;
 		res_map[ base_pair_step.j_next() ] = 4;
-
-		// look that at least one base in this base pair step is moveable.
-		bool pair_moving( false );
-		for ( ResMap::const_iterator it = res_map.begin(); it != res_map.end(); it++ ) {
-			Size domain(  atom_level_domain_map_->get_domain( NamedAtomID( " C1'", it->first ), pose  ) );
-			if ( domain == 0 || domain == ROSETTA_LIBRARY_DOMAIN ) {
-				pair_moving = true; break;
-			}
-		}
-		if ( !pair_moving ) continue;
 
 		ChunkSetOP chunk_set( new ChunkSet( base_pair_step_library.mini_pose_list( base_pair_step_sequence ),
 			*base_pair_step_library.scratch_pose( base_pair_step_sequence ),

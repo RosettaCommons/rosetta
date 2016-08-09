@@ -181,6 +181,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::sample_res );
 		option.add_relevant( OptionKeys::full_model::motif_mode );
 		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
+		option.add_relevant( OptionKeys::full_model::rna::force_anti_chi_res_list );
+		option.add_relevant( OptionKeys::full_model::rna::force_south_sugar_list );
+		option.add_relevant( OptionKeys::full_model::rna::force_north_sugar_list );
 		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
 		option.add_relevant( OptionKeys::full_model::extra_min_res );
 		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
@@ -197,6 +200,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_local_moves );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::make_movie );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_bank_size );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_rmsd );
