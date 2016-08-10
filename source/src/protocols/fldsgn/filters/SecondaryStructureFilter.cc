@@ -18,8 +18,10 @@
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 
 // Project Headers
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/residue_selectors/PairedSheetResidueSelector.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
@@ -58,8 +60,10 @@ SecondaryStructureFilter::SecondaryStructureFilter():
 	Filter( "SecondaryStructure" ),
 	selector_( new core::select::residue_selector::TrueResidueSelector ),
 	filtered_ss_( "" ),
+	filtered_abego_(),
+	strand_pairings_( "" ),
 	use_abego_( false ),
-	use_pose_secstruct_( false ),
+	use_dssp_( false ),
 	threshold_( 1.0 )
 {}
 
@@ -69,8 +73,10 @@ SecondaryStructureFilter::SecondaryStructureFilter( String const & ss ):
 	Filter( "SecondaryStructure" ),
 	selector_( new core::select::residue_selector::TrueResidueSelector ),
 	filtered_ss_( ss ),
+	filtered_abego_(),
+	strand_pairings_( "" ),
 	use_abego_( false ),
-	use_pose_secstruct_( false ),
+	use_dssp_( false ),
 	threshold_( 1.0 )
 {}
 
@@ -90,9 +96,15 @@ void SecondaryStructureFilter::filtered_abego( String const & s )
 	use_abego_ = true;
 }
 
-void SecondaryStructureFilter::set_use_pose_secstruct( bool const use_ss )
+/// @brief Sets sheet topology string
+void SecondaryStructureFilter::set_strand_pairings( String const & s )
 {
-	use_pose_secstruct_ = use_ss;
+	strand_pairings_ = s;
+}
+
+void SecondaryStructureFilter::set_use_dssp( bool const use_ss )
+{
+	use_dssp_ = use_ss;
 }
 
 // @brief returns true if the given pose passes the filter, false otherwise.
@@ -149,9 +161,7 @@ SecondaryStructureFilter::parse_my_tag(
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
 	}
 
-	if ( tag->hasOption( "use_pose_secstruct" ) ) {
-		set_use_pose_secstruct( tag->getOption< bool >( "use_pose_secstruct" ) );
-	}
+	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_ ) );
 
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 
@@ -165,84 +175,76 @@ SecondaryStructureFilter::set_residue_selector( core::select::residue_selector::
 	selector_ = selector.clone();
 }
 
-/// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
+/// @brief Sets the filtered_ss, filtered_abego, and strand_pairings from the blueprint file given.
 void
 SecondaryStructureFilter::set_blueprint( std::string const & blueprint_file )
 {
 	using protocols::jd2::parser::BluePrint;
 	BluePrint blue( blueprint_file );
-	std::string ss = blue.secstruct();
+	filtered_ss_ = blue.secstruct();
 	filtered_abego_ = blue.abego();
-
-	// now we check the strand pairing definitions in the BluePrint -- if some of them are impossible, DSSP will never return 'E',
-	// so we will want these residues to be L/E (which is specified as 'h').
-	protocols::fldsgn::topology::SS_Info2_COP ss_info;
-	ss_info = protocols::fldsgn::topology::SS_Info2_COP( protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( blue.secstruct() ) ) );
-	protocols::fldsgn::topology::StrandPairingSet spairs( blue.strand_pairings(), ss_info );
-	protocols::fldsgn::topology::StrandPairings pairs( spairs.strand_pairings() );
-
-	// initialize map that says which residues are paired
-	typedef std::map< core::Size, utility::vector1< bool > > PairedResiduesMap;
-	PairedResiduesMap paired_residues;
-
-	for ( topology::StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
-		debug_assert( *pair );
-		PairedResiduesMap::iterator pr = paired_residues.find( (*pair)->s1() );
-		if ( pr == paired_residues.end() ) {
-			paired_residues.insert( std::make_pair( (*pair)->s1(), utility::vector1< bool >( (*pair)->size1(), false ) ) );
-		} else {
-			if ( pr->second.size() < (*pair)->size1() ) {
-				pr->second.assign( (*pair)->size1(), false );
-			}
-		}
-
-		pr = paired_residues.find( (*pair)->s2() );
-		if ( pr == paired_residues.end() ) {
-			paired_residues.insert( std::make_pair( (*pair)->s2(), utility::vector1< bool >( (*pair)->size2(), false ) ) );
-		} else {
-			if ( pr->second.size() < (*pair)->size2() ) {
-				pr->second.assign( (*pair)->size2(), false );
-			}
-		}
-	}
-
-	for ( PairedResiduesMap::const_iterator pres=paired_residues.begin(); pres!=paired_residues.end(); ++pres ) {
-		tr << " Strand is " << pres->first << " pairings " << pres->second << std::endl;
-	}
-
-	// determine paired residues
-	for ( topology::StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
-		for ( core::Size s1_resid=1; s1_resid<=(*pair)->size1(); ++s1_resid ) {
-			core::Size const s2_resid = s1_resid - (*pair)->rgstr_shift();
-			if ( s2_resid < 1 ) continue;
-			if ( s2_resid > (*pair)->size2() ) continue;
-			paired_residues[ (*pair)->s1() ][ s1_resid ] = true;
-			paired_residues[ (*pair)->s2() ][ s2_resid ] = true;
-		}
-	}
-
-	// parse the created map looking for unpaired residues
-	for ( PairedResiduesMap::const_iterator pres=paired_residues.begin(); pres!=paired_residues.end(); ++pres ) {
-		core::Size res = 1;
-		for ( utility::vector1< bool >::const_iterator r=pres->second.begin(); r!=pres->second.end(); ++r, ++res ) {
-			if ( ! *r ) {
-				tr << "unpaired " << pres->first << " : " << res << std::endl;
-				// pairs has begin and end only on paired residues...
-				core::Size const pose_res( ss_info->strand( pres->first )->begin() + res - 1 );
-				runtime_assert( pose_res <= ss.size() );
-				tr << "pose residue is " << pose_res << std::endl;
-				ss[pose_res-1] = 'h';
-			}
-		}
-	}
-
-	filtered_ss_ = ss;
+	strand_pairings_ = blue.strand_pairings();
 }
 
-/// returns the number of residues in the protein that have matching secondary structure
+/// @brief If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
+/// @param[in]     pose      Input pose to be tested.
+/// @param[in/out] secstruct Desired secondary structure. It will be modified in-place
+/// @details If strand_pairings_ is user-specified, the specific residue pairings will be computed based on it.
+///          If strand_pairings_ is empty, residue pairings will be taken from the cached StructureData in
+///          the pose, if present.
+///          If strand_pairings_ is empty and no cached StructureData was found, this will do nothing.
+///          Any unpaired residues found in the sheet topology with 'E' secondary structure will be changed
+///          to 'h' (to allow either loop or strand)
+void
+SecondaryStructureFilter::correct_for_incomplete_strand_pairings(
+	core::pose::Pose const & pose,
+	std::string & secstruct ) const
+{
+	using core::select::residue_selector::ResidueSubset;
+	using protocols::denovo_design::residue_selectors::PairedSheetResidueSelector;
+
+	PairedSheetResidueSelector selector;
+	selector.set_secstruct( secstruct );
+	if ( !strand_pairings_.empty() ) selector.set_sheet_topology( strand_pairings_ );
+
+	ResidueSubset const paired = selector.apply( pose );
+
+	if ( secstruct.size() != pose.total_residue() ) {
+		std::stringstream msg;
+		msg << "SecondaryStructureFilter: The secondary structure length ("
+			<< secstruct.size() << ") does not match the size of the pose ("
+			<< pose.total_residue() << ")" << " secstruct=" << secstruct << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	if ( secstruct.size() != paired.size() ) {
+		std::stringstream msg;
+		msg << "SecondaryStructureFilter: The secondary structure length ("
+			<< secstruct.size() << ") does not match the size of the computed residue subset ("
+			<< paired.size() << ")" << " secstruct=" << secstruct << " subset=" << paired << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	core::Size resid = 1;
+	std::string::iterator ss = secstruct.begin();
+	for ( ResidueSubset::const_iterator in_pair=paired.begin(); ( ss!=secstruct.end() ) && ( in_pair!=paired.end() ); ++ss, ++in_pair, ++resid ) {
+		if ( *ss != 'E' ) continue;
+		if ( *in_pair ) continue;
+		tr.Debug << "Found unpaired E residue: " << resid << std::endl;
+		*ss = 'h';
+	}
+}
+
+/// @brief returns the number of residues in the protein that have matching secondary structure
+/// @param[in] pose   Pose to be analyzed
+/// @param[in] subset Subset of the pose to be analyzed. Only residues that are true in the subset
+///                   will be included in the computation.
 /// WARNING: ignores abegos for now, since abegomanager only returns a bool
 /// The filter score will report only secondary structures, but if you specify abego,
 /// the 'apply' function will return false if abegos don't match
+/// @details If impossible strand pairings exist (i.e a two-strand pose where one strand has
+///          6 residues and the other has 5), either 'E' or 'L' will be allowed at the unpaired
+///          position
 core::Size
 SecondaryStructureFilter::compute(
 	core::pose::Pose const & pose,
@@ -254,16 +256,13 @@ SecondaryStructureFilter::compute(
 	core::sequence::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
 	String pose_ss = pose.secstruct();
-	if ( !use_pose_secstruct_ ) {
+	if ( use_dssp_ ) {
 		core::scoring::dssp::Dssp dssp( pose );
 		pose_ss = dssp.get_dssp_secstruct();
 	}
 
-	std::string filter_ss = filtered_ss_;
-	// if no filtered ss is present, try to get it from attached StructureData
-	if ( filtered_ss_.empty() ) {
-		filter_ss = StructureDataFactory::get_instance()->get_from_const_pose( pose ).ss();
-	}
+	std::string filter_ss = get_filtered_secstruct( pose );
+	if ( !strand_pairings_.empty() ) correct_for_incomplete_strand_pairings( pose, filter_ss );
 
 	if ( pose.total_residue() != filter_ss.length() ) {
 		utility_exit_with_message("Length of input ss is not same as total residue of pose.");
@@ -336,6 +335,41 @@ SecondaryStructureFilter::report_sm( core::pose::Pose const & pose ) const
 	}
 
 	return core::Real( compute( pose, subset ) ) / core::Real( protein_residues );
+}
+
+/// @brief Returns the desired secondary structure
+/// @details  Rules for selecting this seconary structure:
+///           1. If a user-specified filtered_ss_ is set, return that
+///           2. If StructureData is cached in the pose, use the secondary structure of that
+///           3. Use pose secondary structure, throwing and error if use_dssp is false
+std::string
+SecondaryStructureFilter::get_filtered_secstruct( core::pose::Pose const & pose ) const
+{
+	// 1. Use user-specified filtered_ss_ if non-empty
+	if ( !filtered_ss_.empty() ) return filtered_ss_;
+
+	// 2. Use StructureData if present
+	// TODO: uncomment this once I've updated the 'Tomponent' classes
+	//denovo_design::components::StructureDataFactory const & factory =
+	//	*denovo_design::components::StructureDataFactory::get_instance();
+	//if ( factory.has_cached_data( pose ) ) {
+	//	tr.Debug << "Getting filtered_ss from StructureData" << std::endl;
+	//	return factory.get_from_const_pose( pose ).ss();
+	//}
+
+	// 3. Use pose secstruct
+	tr.Debug << "Getting filtered_ss from pose" << std::endl;
+	if ( !use_dssp_ ) {
+		std::stringstream msg;
+		msg << "SecondaryStructureFilter::get_filtered_secstruct(): User has requested to use the "
+			<< "secondary structure in the pose instead of DSSP as the test secondary structure. "
+			<< "However, the filtered secondary structure is also being determined from the pose. "
+			<< "You should either set use_dssp to true, and put the desired secondary structure into the pose, "
+			<< "or specify a filtered secondary structure."
+			<< std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	return pose.secstruct();
 }
 
 protocols::filters::FilterOP

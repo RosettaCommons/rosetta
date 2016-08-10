@@ -77,7 +77,9 @@ public:
 
 		conn.set_id( "bridge" );
 		BuildDeNovoBackboneMover fass;
-		fass.set_score_filter( protocols::fldsgn::filters::SecondaryStructureFilter() );
+		protocols::fldsgn::filters::SecondaryStructureFilter ss_filt;
+		ss_filt.set_use_dssp( true );
+		fass.set_score_filter( ss_filt );
 		CompoundArchitect arch( sd_id );
 		arch.add_architect( PoseArchitect( "twohelix" ) );
 		arch.add_connection( conn );

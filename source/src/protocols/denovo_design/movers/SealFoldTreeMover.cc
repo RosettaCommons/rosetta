@@ -17,6 +17,7 @@
 #include <protocols/denovo_design/movers/SealFoldTreeMoverCreator.hh>
 
 // Protocol headers
+#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/loops/Loop.hh>
@@ -125,6 +126,7 @@ SealFoldTreeMover::apply( core::pose::Pose & pose )
 void
 SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 {
+	components::StructureData sd = components::StructureDataFactory::get_instance()->get_from_pose( pose );
 	// remove cutpoints
 	for ( Cutpoints::const_iterator cut=cutpoints_.begin(); cut!=cutpoints_.end(); ++cut ) {
 		core::Size const resid = *cut;
@@ -138,6 +140,12 @@ SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 			}
 		}
 
+		std::string const segment = sd.segment_name( resid );
+		if ( sd.segment( segment ).cutpoint() == resid ) {
+			components::Segment newseg = sd.segment( segment );
+			newseg.set_cutpoint( 0 );
+			sd.replace_segment( segment, newseg );
+		}
 		/*
 		// this will catch rogue upper cutpoint variants
 		if ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
@@ -145,6 +153,7 @@ SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 		}
 		*/
 	}
+	components::StructureDataFactory::get_instance()->save_into_pose( pose, sd );
 
 }
 

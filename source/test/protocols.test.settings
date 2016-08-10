@@ -139,6 +139,7 @@ sources = {
 
 	"fldsgn/filters" : [
 		"HelixPairingFilterTests",
+		"SecondaryStructureFilterTests",
 		"SheetTopologyFilter",
 	],
 
@@ -655,6 +656,7 @@ testinputfiles = [
 	"farna/srl_fixed_START1_1q9a_RNA.pdb",
 	"features/2J88.pdb",
 	"features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
+	"fldsgn/filters/ss_filter_test.pdb",
 	"fldsgn/filters/test_sheet.pdb",
 	"forge/remodel/bad_pair.blueprint",
 	"forge/remodel/test.blueprint",

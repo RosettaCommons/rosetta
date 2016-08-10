@@ -87,8 +87,11 @@ public:// mutator
 	// @brief set filtered abego
 	void filtered_abego( String const & s );
 
-	/// @brief Should we use the secstruct in the pose (true), or recompute via dssp (false)? default=false
-	void set_use_pose_secstruct( bool const use_ss );
+	/// @brief Should we use the secstruct in the pose (false), or compute via dssp (true)? default=false for historical reasons
+	void set_use_dssp( bool const use_ss );
+
+	/// @brief Sets sheet topology string
+	void set_strand_pairings( String const & s );
 
 public:// accessor
 
@@ -120,21 +123,44 @@ public:// virtual main operation
 	virtual bool apply( Pose const & pose ) const;
 	virtual core::Real report_sm( Pose const & pose ) const;
 
-private:
+protected:
+	// the functions below are protected so unit test can see them
+
 	/// @brief Returns the desired secondary structure
 	/// @details  Rules for selecting this seconary structure:
 	///           1. If a user-specified filtered_ss_ is set, return that
 	///           2. If StructureData is cached in the pose, use the secondary structure of that
-	///           3. Use pose secondary structure, throwing and error if use_pose_secstruct is true
+	///           3. Use pose secondary structure, throwing and error if use_dssp is false
 	std::string
 	get_filtered_secstruct( core::pose::Pose const & pose ) const;
 
-	/// @brief Computes number of residues matching the desired secondary structure
-	/// @param[in]  pose   The pose to scan
-	/// @param[in]  subset The residue subset of the pose to include in counting. Must match
-	///                    the pose size.
+	/// @brief If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues,
+	///        respectively, it sets the unpaired residues to 'h' so that they still match.
+	/// @param[in]     pose      Input pose to be tested.
+	/// @param[in/out] secstruct Desired secondary structure. It will be modified in-place
+	/// @details If strand_pairings_ is user-specified, the specific residue pairings will be computed based on it.
+	///          If strand_pairings_ is empty, residue pairings will be taken from the cached StructureData in
+	///          the pose, if present.
+	///          If strand_pairings_ is empty and no cached StructureData was found, this will do nothing.
+	///          Any unpaired residues found in the sheet topology with 'E' secondary structure will be changed
+	///          to 'h' (to allow either loop or strand)
+	void
+	correct_for_incomplete_strand_pairings(
+			core::pose::Pose const & pose,
+			std::string & secstruct ) const;
+
+	/// @brief returns the number of residues in the protein that have matching secondary structure
+	/// @param[in] pose   Pose to be analyzed
+	/// @param[in] subset Subset of the pose to be analyzed. Only residues that are true in the subset
+	///                   will be included in the computation.
 	/// @returns  Number of protein residues in the residue subset that match the desired
 	///           secondary structure
+	/// WARNING: ignores abegos for now, since abegomanager only returns a bool
+	/// The filter score will report only secondary structures, but if you specify abego,
+	/// the 'apply' function will return false if abegos don't match
+	/// @details If impossible strand pairings exist (i.e a two-strand pose where one strand has
+	///          6 residues and the other has 5), either 'E' or 'L' will be allowed at the unpaired
+	///          position
 	core::Size
 	compute( Pose const & pose, core::select::residue_selector::ResidueSubset const & subset ) const;
 
@@ -145,9 +171,11 @@ private:
 
 	utility::vector1< String > filtered_abego_;
 
+	String strand_pairings_;
+
 	bool use_abego_;
 
-	bool use_pose_secstruct_;
+	bool use_dssp_;
 
 	core::Real threshold_;
 };
