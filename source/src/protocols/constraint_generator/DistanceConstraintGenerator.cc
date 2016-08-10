@@ -19,6 +19,7 @@
 // Core headers
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/FuncFactory.hh>
@@ -29,6 +30,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+
+// Boost headers
+#include <boost/assign.hpp>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.DistanceConstraintGenerator" );
 
@@ -50,7 +54,10 @@ DistanceConstraintGeneratorCreator::keyname() const
 DistanceConstraintGenerator::DistanceConstraintGenerator():
 	protocols::constraint_generator::ConstraintGenerator( DistanceConstraintGenerator::class_name() ),
 	func_( new core::scoring::func::HarmonicFunc( 11.0, 1.0 ) ),
-	selector_( new core::select::residue_selector::TrueResidueSelector )
+	selector1_(),
+	selector2_(),
+	atom_name1_( "" ),
+	atom_name2_( "" )
 {
 }
 
@@ -72,7 +79,14 @@ DistanceConstraintGenerator::class_name()
 void
 DistanceConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	selector_ = core::select::residue_selector::parse_residue_selector( tag, data );
+	std::string const selector1_name = tag->getOption< std::string >( "residue_selector1", "" );
+	if ( !selector1_name.empty() ) selector1_ = core::select::residue_selector::get_residue_selector( selector1_name, data );
+
+	std::string const selector2_name = tag->getOption< std::string >( "residue_selector2", "" );
+	if ( !selector2_name.empty() ) selector2_ = core::select::residue_selector::get_residue_selector( selector2_name, data );
+
+	atom_name1_ = tag->getOption< std::string >( "atom_name1", atom_name1_ );
+	atom_name2_ = tag->getOption< std::string >( "atom_name2", atom_name2_ );
 
 	std::string const func_str = tag->getOption< std::string >( "function", "" );
 	if ( !func_str.empty() ) set_function( func_str );
@@ -86,23 +100,39 @@ DistanceConstraintGenerator::apply( core::pose::Pose const & pose ) const
 		msg << class_name() << "::apply() Func must be set!" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
-	if ( !selector_ ) {
+	if ( !selector1_ ) {
 		std::stringstream msg;
-		msg << class_name() << "::apply() Selector must be set!" << std::endl;
+		msg << class_name() << "::apply() Selector 1 must be set!" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
+	if ( !selector2_ ) {
+		std::stringstream msg;
+		msg << class_name() << "::apply() Selector 2 must be set!" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	using core::select::residue_selector::ResidueVector;
+	using core::scoring::constraints::ConstraintOP;
+
 	core::scoring::constraints::ConstraintCOPs csts;
+	ResidueVector const subset1 = selector1_->apply( pose );
+	ResidueVector const subset2 = selector2_->apply( pose );
 
-	core::select::residue_selector::ResidueVector const residues( selector_->apply( pose ) );
-
-	for ( core::select::residue_selector::ResidueVector::const_iterator r=residues.begin(); r!=residues.end(); ++r ) {
-		core::select::residue_selector::ResidueVector::const_iterator next = r;
-		for ( core::select::residue_selector::ResidueVector::const_iterator r2=++next; r2!=residues.end(); ++r2 ) {
+	for ( ResidueVector::const_iterator r=subset1.begin(); r!=subset1.end(); ++r ) {
+		for ( ResidueVector::const_iterator r2=subset2.begin(); r2!=subset2.end(); ++r2 ) {
+			// don't create dist cst to same residue
+			if ( *r == *r2 ) continue;
 			csts.push_back( create_constraint( pose, *r, *r2 ) );
 		}
 	}
 
-	return csts;
+	TR << "Created " << csts.size() << " constraints." << std::endl;
+
+	if ( csts.size() <= 1 ) return csts;
+
+	TR.Debug << "Rolling constraints into ambiguous constraint" << std::endl;
+	ConstraintOP amb_cst( new core::scoring::constraints::AmbiguousConstraint( csts ) );
+	return boost::assign::list_of (amb_cst);
 }
 
 core::scoring::constraints::ConstraintOP
@@ -111,8 +141,15 @@ DistanceConstraintGenerator::create_constraint(
 	core::Size const resid1,
 	core::Size const resid2 ) const
 {
-	core::id::AtomID const a1( pose.residue( resid1 ).nbr_atom(), resid1 );
-	core::id::AtomID const a2( pose.residue( resid2 ).nbr_atom(), resid2 );
+	core::id::AtomID a1( pose.residue( resid1 ).nbr_atom(), resid1 );
+	core::id::AtomID a2( pose.residue( resid2 ).nbr_atom(), resid2 );
+	if ( !atom_name1_.empty() ) {
+		a1.atomno() = pose.residue( resid1 ).type().atom_index( atom_name1_ );
+	}
+	if ( !atom_name2_.empty() ) {
+		a2.atomno() = pose.residue( resid2 ).type().atom_index( atom_name2_ );
+	}
+	TR.Debug << "Creating distance constraint between " << a1 << " and " << a2 << std::endl;
 	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( a1, a2, func_->clone() ) );
 }
 

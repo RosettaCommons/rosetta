@@ -60,6 +60,9 @@ public:
 	core::Real angle() const { return angle_; }
 	Dihedrals const & dihedrals() const { return dihedrals_; }
 
+	friend std::ostream &
+	operator<<( std::ostream & os, HydrogenBondingAtom const & atom );
+
 private:
 	HydrogenBondingAtom();
 
@@ -88,6 +91,12 @@ public:
 
 	HydrogenBondingAtoms &
 	create_residue( std::string const & rsd_name );
+
+	HydrogenBondingAtoms &
+	retrieve_residue( std::string const & rsd_name );
+
+	HydrogenBondingAtoms &
+	add_atoms_from_string( std::string const & description_str );
 
 private:
 	AtomNameMap atoms_;
@@ -164,6 +173,9 @@ public:
 	set_angle_sd( core::Real const sd );
 
 private:
+
+	void
+	add_atom_definitions( std::string const & definition_str );
 
 	core::scoring::constraints::ConstraintOP
 	create_residue_constraint(

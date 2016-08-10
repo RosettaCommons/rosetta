@@ -36,6 +36,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 
 // Numeric headers
@@ -111,6 +112,9 @@ HydrogenBondConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::dat
 
 	set_atoms1( tag->getOption< std::string >( "atoms1", "" ) );
 	set_atoms2( tag->getOption< std::string >( "atoms2", "" ) );
+
+	std::string const hbond_def = tag->getOption< std::string >( "atom_definitions", "" );
+	if ( !hbond_def.empty() ) add_atom_definitions( hbond_def );
 
 	std::string const & func_def = tag->getOption< std::string >( "atom_pair_func", "" );
 	if ( !func_def.empty() ) set_atom_pair_func( func_def );
@@ -224,6 +228,18 @@ HydrogenBondConstraintGenerator::set_angle_sd( core::Real const sd )
 	angle_sd_ = sd;
 }
 
+void
+HydrogenBondConstraintGenerator::add_atom_definitions( std::string const & atom_def )
+{
+	HydrogenBondInfo & info = *HydrogenBondInfo::get_instance();
+
+	utility::vector1< std::string > const definitions = utility::string_split( atom_def, ';' );
+	for ( utility::vector1< std::string >::const_iterator def=definitions.begin(); def!=definitions.end(); ++def ) {
+		TR.Debug << "Adding atom definition from string: " << *def << std::endl;
+		TR.Debug << "Added " << info.add_atoms_from_string( *def ) << std::endl;
+	}
+}
+
 utility::vector1< core::Size >
 existing_atoms( core::conformation::Residue const & rsd, utility::vector1< std::string > const & atoms )
 {
@@ -254,18 +270,16 @@ HydrogenBondConstraintGenerator::apply( core::pose::Pose const & pose ) const
 
 	for ( core::Size resid1=1; resid1<=pose.total_residue(); ++resid1 ) {
 		if ( !subset1[ resid1 ] ) continue;
-		if ( ! pose.residue( resid1 ).is_protein() ) continue;
 
 		for ( core::Size resid2=1; resid2<=pose.total_residue(); ++resid2 ) {
 			if ( !subset2[ resid2 ] ) continue;
-			if ( ! pose.residue( resid2 ).is_protein() ) continue;
 			if ( resid1 == resid2 ) continue;
 
 			core::scoring::constraints::ConstraintOP cst =
 				create_residue_constraint( pose.residue( resid1 ), pose.residue( resid2 ) );
 
 			if ( !cst ) {
-				TR.Debug << "NO valid atoms found to generator Hbond constraints between residues " << resid1
+				TR.Debug << "No valid atoms found to generator Hbond constraints between residues " << resid1
 					<< " and " << resid2 << " - skipping" <<  std::endl;
 				continue;
 			}
@@ -374,6 +388,8 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 	HydrogenBondingAtoms const & atoms2 ) const
 {
 	core::scoring::constraints::ConstraintOPs csts;
+	TR.Debug << "Going to create constraints for res1=" << rsd1.seqpos() << " atoms1=" << atoms1
+		<< " res2=" << rsd2.seqpos() << " atoms2=" << atoms2 << std::endl;
 	for ( HydrogenBondingAtoms::const_iterator a1=atoms1.begin(); a1!=atoms1.end(); ++a1 ) {
 		core::id::AtomID const atomid1( rsd1.type().atom_index( a1->hb_atom() ), rsd1.seqpos() );
 		core::id::AtomID const parent_atomid1( rsd1.type().atom_index( a1->atom2() ), rsd1.seqpos() );
@@ -512,6 +528,15 @@ HydrogenBondingAtom::HydrogenBondingAtom(
 	}
 }
 
+std::ostream &
+operator<<( std::ostream & os, HydrogenBondingAtom const & atom )
+{
+	os << atom.atom_ << ", " << atom.atom2_ << ", " << atom.atom3_ << ", "
+		<< atom.distance_ << ", " << atom.angle_ << ", " << atom.dihedrals_;
+	return os;
+}
+
+
 HydrogenBondInfo *
 HydrogenBondInfo::create_singleton_instance()
 {
@@ -531,12 +556,20 @@ HydrogenBondInfo::HydrogenBondInfo():
 	arg.push_back( HydrogenBondingAtom( "NH1", "CZ", "NE", 1.4, 120.0, zero_and_180 ) );
 	arg.push_back( HydrogenBondingAtom( "NH2", "CZ", "NE", 1.4, 120.0, zero_and_180 ) );
 
+	HydrogenBondingAtoms & asn = create_residue( "ASN" );
+	asn.push_back( HydrogenBondingAtom( "OD1", "CG", "ND2", 1.4, 120.0, zero_and_180 ) );
+	asn.push_back( HydrogenBondingAtom( "ND2", "CG", "OD1", 1.4, 120.0, zero_and_180 ) );
+
 	HydrogenBondingAtoms & asp = create_residue( "ASP" );
 	asp.push_back( HydrogenBondingAtom( "OD1", "CG", "OD2", 1.4, 120.0, zero_and_180 ) );
 	asp.push_back( HydrogenBondingAtom( "OD2", "CG", "OD1", 1.4, 120.0, zero_and_180 ) );
 
 	HydrogenBondingAtoms & cys = create_residue( "CYS" );
 	cys.push_back( HydrogenBondingAtom( "SG", "CB", "CA", 2.0, 109.5, none ) );
+
+	HydrogenBondingAtoms & gln = create_residue( "GLN" );
+	gln.push_back( HydrogenBondingAtom( "OE1", "CD", "OE2", 1.4, 120.0, zero_and_180 ) );
+	gln.push_back( HydrogenBondingAtom( "OE2", "CD", "OE1", 1.4, 120.0, zero_and_180 ) );
 
 	HydrogenBondingAtoms & glu = create_residue( "GLU" );
 	glu.push_back( HydrogenBondingAtom( "OE1", "CD", "OE2", 1.4, 120.0, zero_and_180 ) );
@@ -573,6 +606,52 @@ HydrogenBondInfo::create_residue( std::string const & rsd_name )
 {
 	atoms_[ rsd_name ] = HydrogenBondingAtoms();
 	return atoms_[ rsd_name ];
+}
+
+HydrogenBondingAtoms &
+HydrogenBondInfo::retrieve_residue( std::string const & rsd_name )
+{
+	AtomNameMap::iterator hb_atoms = atoms_.find( rsd_name );
+	if ( hb_atoms == atoms_.end() ) {
+		hb_atoms = atoms_.insert( std::make_pair( rsd_name, HydrogenBondingAtoms() ) ).first;
+	}
+	debug_assert( hb_atoms != atoms_.end() );
+	return hb_atoms->second;
+}
+
+HydrogenBondingAtoms &
+HydrogenBondInfo::add_atoms_from_string( std::string const & description_str )
+{
+	utility::vector1< std::string > const fields = utility::string_split( description_str, ',' );
+	if ( fields.size() < 6 ) {
+		std::stringstream msg;
+		msg << "HydrogenBondingAtoms::from_string(): Bad description string, not enough fields ("
+			<< fields.size() << " fields found, >=7 fields required)!" << std::endl;
+		msg << "Description string: " << description_str << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	utility::vector1< std::string >::const_iterator cur_field = fields.begin();
+	std::string const & res_name = *cur_field;
+	++cur_field;
+	std::string const & atom1 = *cur_field;
+	++cur_field;
+	std::string const & atom2 = *cur_field;
+	++cur_field;
+	std::string const & atom3 = *cur_field;
+	++cur_field;
+	core::Real const dist = boost::lexical_cast< core::Real >( *cur_field );
+	++cur_field;
+	core::Real const angle = boost::lexical_cast< core::Real >( *cur_field );
+	++cur_field;
+	HydrogenBondingAtom::Dihedrals dihedrals;
+	for ( ; cur_field!=fields.end(); ++cur_field ) {
+		dihedrals.push_back( boost::lexical_cast< core::Real >( *cur_field ) );
+	}
+
+	HydrogenBondingAtoms & hb_atoms = retrieve_residue( res_name );
+	hb_atoms.push_back( HydrogenBondingAtom( atom1, atom2, atom3, dist, angle, dihedrals ) );
+	return hb_atoms;
 }
 
 HydrogenBondingAtoms const &

@@ -64,8 +64,10 @@ private:
 
 private:
 	core::scoring::func::FuncCOP func_;
-	core::select::residue_selector::ResidueSelectorCOP selector_;
-
+	core::select::residue_selector::ResidueSelectorCOP selector1_;
+	core::select::residue_selector::ResidueSelectorCOP selector2_;
+	std::string atom_name1_;
+	std::string atom_name2_;
 };
 
 } //protocols
