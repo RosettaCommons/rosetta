@@ -35,14 +35,18 @@
 /// @brief --brief--
 class --class-- : public core::select::residue_selector::ResidueSelector {
 public:
+	typedef core::select::residue_selector::ResidueSelectorOP ResidueSelectorOP;
+	typedef core::select::residue_selector::ResidueSubset ResidueSubset;
+
+public:
 
 	/// @brief Constructor.
 	--class--();
 
-    /// @brief Copy Constructor.  Use if you have non-basic private variables (classes, OPs, etc.)
-	--class--(--class-- const & src);
-public:
+	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
+	//--class--(--class-- const & src);
 
+public:
 
 	/// @brief Destructor.
 	virtual
@@ -52,13 +56,13 @@ public:
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
 	/// to the copy.  All ResidueSelectors must implement this.
 	virtual
-	core::select::residue_selector::ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const;
 
 	/// @brief "Apply" function.
 	/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 	/// indicating whether each residue is selected ("true") or not ("false").
 	virtual
-	core::select::residue_selector::ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSubset apply( core::pose::Pose const & pose ) const;
 
 	/// @brief XML parse.
 	/// @details Parse RosettaScripts tags and set up this mover.

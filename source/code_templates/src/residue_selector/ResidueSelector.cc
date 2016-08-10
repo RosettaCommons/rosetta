@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/--class--.hh
-/// @brief  --brief-- 
+/// @brief  --brief--
 /// @author --name-- (--email--)
 
 // Unit headers
@@ -34,53 +34,36 @@
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
-
 --namespace--
-
-using namespace core::select::residue_selector;
 
 /// @brief Constructor.
 ///
 --class--::--class--():
-    ResidueSelector()
+	ResidueSelector()
 {
-
-
-
 }
 
 /// @brief Destructor.
 ///
 --class--::~--class--() {}
 
-
---class--::--class--( --class-- const & src ):
-	TaskOperation(src)
-
-{
-
-}
+/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
+//--class--::--class--(--class-- const & src):
+//	ResidueSelector( src )
+//{
+//}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
-core::select::residue_selector::ResidueSelectorOP
+--class--::ResidueSelectorOP
 --class--::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP(
-		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-			--class--OP( new --class--(*this) )
-		)
-	);
+	return ResidueSelectorOP( new --class--(*this) );
 }
 
-ResidueSelectorOP
+--class--::ResidueSelectorOP
 --class--Creator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP(
-		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-			--class--OP( new --class-- )
-		)
-	);
+	return --class--::ResidueSelectorOP( new --class-- );
 }
-
 
 std::string --class--::get_name() const
 {
@@ -101,16 +84,14 @@ std::string
 /// @details Parse RosettaScripts tags and set up this mover.
 void
 --class--::parse_my_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap)
+	utility::tag::TagCOP ,
+	basic::datacache::DataMap & )
 {
-
-
 }
 
-void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & )
 {
-    //Syntax Example:
+	//Syntax Example:
 	//using namespace utility::tag;
 	//AttributeList attributes;
 	//attributes
@@ -134,11 +115,13 @@ void
 /// @brief "Apply" function.
 /// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 /// indicating whether each residue is selected ("true") or not ("false").
-ResidueSubset
+--class--::ResidueSubset
 --class--::apply(
 	core::pose::Pose const & //pose
 ) const {
-
+	// TODO: remove the line below and use this function to create a residue subset
+	//       based on the input pose
+	return ResidueSubset();
 }
 
 

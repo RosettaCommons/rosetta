@@ -204,6 +204,10 @@ sources = {
 		"ExtendChainMover",
 	],
 
+	"denovo_design/residue_selectors" :[
+		"PairedSheetResidueSelectorTests",
+	],
+
 	"generalized_kinematic_closure" : [
 		"GeneralizedKIC",
 	],

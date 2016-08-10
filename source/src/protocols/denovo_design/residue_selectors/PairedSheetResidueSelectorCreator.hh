@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   --path--/--class--.hh
-/// @brief  Creator for --class--
-/// @author --name-- (--email--)
+/// @file   protocols/denovo_design/residue_selectors/PairedSheetResidueSelector.hh
+/// @brief  Creator for PairedSheetResidueSelector
+/// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_--path_underscore--_--class--Creator_HH
-#define INCLUDED_--path_underscore--_--class--Creator_HH
+#ifndef INCLUDED_protocols_denovo_design_residue_selectors_PairedSheetResidueSelectorCreator_HH
+#define INCLUDED_protocols_denovo_design_residue_selectors_PairedSheetResidueSelectorCreator_HH
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
@@ -20,9 +20,11 @@
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
---namespace--
+namespace protocols {
+namespace denovo_design {
+namespace residue_selectors {
 
-class --class--Creator : public core::select::residue_selector::ResidueSelectorCreator {
+class PairedSheetResidueSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
 	virtual core::select::residue_selector::ResidueSelectorOP create_residue_selector() const;
 
@@ -31,6 +33,8 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
---end_namespace--
+} //protocols
+} //denovo_design
+} //residue_selectors
 
-#endif //INCLUDED_--path--_--class--.hh
+#endif //INCLUDED_protocols/denovo_design/residue_selectors_PairedSheetResidueSelector.hh

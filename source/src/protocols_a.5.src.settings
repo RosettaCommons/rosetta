@@ -74,6 +74,7 @@ sources = {
 	],
 	"protocols/denovo_design/residue_selectors": [
 		"NamedSegmentSelector",
+		"PairedSheetResidueSelector",
 	],
 	"protocols/denovo_design/task_operations": [
 		"ConsensusLoopDesign",
