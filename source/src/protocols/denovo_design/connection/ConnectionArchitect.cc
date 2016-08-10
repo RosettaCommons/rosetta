@@ -551,9 +551,11 @@ calc_approx_loop_length( std::string const & abego )
 		("GE",2.91)
 		("GG",1.90);
 	core::Real max_dist = 0.0;
-	for ( core::Size i=1, endi=abego.size(); i<endi; ++i ) {
-		std::string const dyad = abego.substr(i-1,2);
-		std::map< std::string, core::Real >::const_iterator d = distmap.find(dyad);
+	std::string::const_iterator next = abego.begin() + 1;
+	for ( std::string::const_iterator a=abego.begin(); next!=abego.end(); ++a, ++next ) {
+		std::stringstream dyad;
+		dyad << *a << *next;
+		std::map< std::string, core::Real >::const_iterator d = distmap.find(dyad.str());
 		if ( d == distmap.end() ) {
 			max_dist += 3.8;
 		} else {
@@ -663,7 +665,7 @@ AreConnectablePredicate::check_distance(
 	// bordering residues are included in distance
 	// this subtracts a fixed dist to compensate for N-CA of first
 	// res and CA-C of second
-	static core::Real const subtract_dist = 3.5;
+	//static core::Real const subtract_dist = 3.5;
 
 	if ( !motif.cutpoint() ) return true;
 
@@ -685,10 +687,12 @@ AreConnectablePredicate::check_distance(
 	Motif motifcopy = motif;
 	motifcopy.delete_lower_padding();
 	motifcopy.delete_upper_padding();
-	core::Real const max_dist = calc_approx_loop_length(
-		sd.abego( sd.segment( segment1 ).stop() ) +
-		motifcopy.abego() +
-		sd.abego( sd.segment( segment2 ).start() ) ) - subtract_dist;
+	std::stringstream abegostr;
+	abegostr << sd.abego( sd.segment( segment1 ).stop() )
+		<< motifcopy.abego()
+		<< sd.abego( sd.segment( segment2 ).start() );
+	core::Real const max_dist = calc_approx_loop_length( abegostr.str() );
+	TR.Debug << "abego=" << abegostr.str() << std::endl;
 
 	// get residue and atom from segment 1
 	core::Size const res1 = template1->total_residue();
