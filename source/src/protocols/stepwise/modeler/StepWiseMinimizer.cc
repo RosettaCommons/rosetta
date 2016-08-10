@@ -230,7 +230,7 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 	core::scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 	kinematics::MoveMap mm_save = mm;
 	setup_vary_bond_geometry( pose, mm ); // careful -- must only do once, or constraints will keep getting added...
-
+	rna::add_syn_anti_chi_constraints( pose );
 	if ( options_->cart_min() ) {
 		cartesian_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
 	} else {
@@ -329,7 +329,8 @@ StepWiseMinimizer::setup_vary_bond_geometry( core::pose::Pose & pose, core::kine
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                         void
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMinimizer::output_empty_minimizer_silent_file() const {
 

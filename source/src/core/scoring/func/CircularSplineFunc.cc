@@ -30,6 +30,7 @@
 #include <numeric/interpolation/spline/Interpolator.hh>
 #include <numeric/interpolation/util.hh>
 #include <numeric/MathVector.hh>
+#include <numeric/conversions.hh>
 
 // C++ Headers
 #include <iostream>
@@ -47,15 +48,19 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.CircularSplineFu
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
+using namespace numeric::conversions;
 
 namespace core {
 namespace scoring {
 namespace func {
 
-CircularSplineFunc::CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in ) {
-	weight_ = weight_in;
-	train( energies_in );
-}
+	CircularSplineFunc::CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in,
+																					bool convert_to_degrees /* = false */ ):
+		weight_( weight_in ),
+		convert_to_degrees_( convert_to_degrees )
+	{
+		train( energies_in );
+	}
 
 bool CircularSplineFunc::operator == ( Func const & other ) const
 {
@@ -65,6 +70,7 @@ bool CircularSplineFunc::operator == ( Func const & other ) const
 	CircularSplineFunc const & other_downcast( static_cast< CircularSplineFunc const & > (other) );
 	if ( weight_ != other_downcast.weight_ ) return false;
 	if ( spline_ != other_downcast.spline_ ) return false;
+	if ( convert_to_degrees_ != other_downcast.convert_to_degrees_ ) return false;
 	return true;
 }
 
@@ -112,12 +118,12 @@ void CircularSplineFunc::read_data( std::istream &in) {
 }
 
 core::Real CircularSplineFunc::func( core::Real const x) const {
-	core::Real fX = spline_.F(x);
+	core::Real fX = convert_to_degrees_ ? spline_.F( degrees(x) ) : spline_.F(x);
 	return weight_*fX;
 }
 
 core::Real CircularSplineFunc::dfunc( core::Real const x) const {
-	core::Real dfX = spline_.dF(x);
+	core::Real dfX = convert_to_degrees_ ?  degrees( spline_.dF( degrees(x) ) ) : spline_.dF(x);
 	return weight_*dfX;
 }
 
@@ -143,6 +149,7 @@ void
 core::scoring::func::CircularSplineFunc::save( Archive & arc ) const {
 	arc( cereal::base_class< Func >( this ) );
 	arc( CEREAL_NVP( weight_ ) ); // core::Real
+	arc( CEREAL_NVP( convert_to_degrees_ ) ); // bool
 	arc( CEREAL_NVP( spline_ ) ); // numeric::interpolation::spline::CubicSpline
 }
 
@@ -152,6 +159,7 @@ void
 core::scoring::func::CircularSplineFunc::load( Archive & arc ) {
 	arc( cereal::base_class< Func >( this ) );
 	arc( weight_ ); // core::Real
+	arc( convert_to_degrees_ ); // bool
 	arc( spline_ ); // numeric::interpolation::spline::CubicSpline
 }
 

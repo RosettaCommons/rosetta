@@ -49,8 +49,9 @@ namespace func {
 class CircularSplineFunc : public Func {
 public:
 
-	CircularSplineFunc() : weight_(0.0) {}
-	CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in );
+	CircularSplineFunc() : weight_(0.0), convert_to_degrees_( false ) {}
+	CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in,
+											bool convert_to_degrees = false ); // true might be better? esp. if used in DihedralConstraint.
 
 	~CircularSplineFunc() {}
 
@@ -82,6 +83,7 @@ public:
 private:
 
 	core::Real weight_;
+	bool convert_to_degrees_;
 	numeric::interpolation::spline::CubicSpline spline_;
 
 #ifdef    SERIALIZATION
