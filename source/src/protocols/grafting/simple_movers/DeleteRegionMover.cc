@@ -20,6 +20,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <core/conformation/Conformation.hh>
+#include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
@@ -37,7 +39,8 @@ DeleteRegionMover::DeleteRegionMover():
 	protocols::moves::Mover("DeleteRegionMover"),
 	selector_(),
 	nter_overhang_(0),
-	cter_overhang_(0)
+	cter_overhang_(0),
+	rechain_( false )
 {
 }
 
@@ -45,7 +48,8 @@ DeleteRegionMover::DeleteRegionMover( core::Size const res_start, core::Size con
 	protocols::moves::Mover("DeleteRegionMover"),
 	selector_(),
 	nter_overhang_(0),
-	cter_overhang_(0)
+	cter_overhang_(0),
+	rechain_( false )
 {
 	std::stringstream start, end;
 	start << res_start;
@@ -107,6 +111,7 @@ DeleteRegionMover::parse_my_tag(
 	const Pose& )
 {
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
+	rechain_ = tag->getOption< bool >( "rechain", rechain_ );
 
 	if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
 		std::string const start = tag->getOption< std::string >( "start" );
@@ -139,9 +144,34 @@ DeleteRegionMover::apply( core::pose::Pose& pose )
 		PyAssert( range->stop() >= range->start(), "Cannot delete region where end > start" );
 		PyAssert( range->stop() <= pose.total_residue(), "Cannot delete region where end is > pose total_residues" );
 
-		protocols::grafting::delete_region( pose, range->start() - nter_overhang_, range->stop() + cter_overhang_ );
+		core::Size const del_start = nter_overhang_ >= range->start() ? 1 : range->start() - nter_overhang_;
+		core::Size const del_stop = range->stop() + cter_overhang_ > pose.total_residue() ? pose.total_residue() : range->stop() + cter_overhang_;
+
+		protocols::grafting::delete_region( pose, del_start, del_stop );
+
+		if ( rechain_ ) {
+			add_terminus_variants( pose, del_start );
+			pose.conformation().chains_from_termini();
+		}
 	}
 
+}
+
+/// @brief Adds terminal variants to residues resid and resid-1
+/// @param[in,out] pose  Pose to be modified
+/// @param[in]     resid Residue number for the residue that would have the lower terminus variant
+/// @details Residue resid-1 will have upper_terminus variant, and residue resid will have
+///          lower_terminus variant
+void
+DeleteRegionMover::add_terminus_variants( core::pose::Pose & pose, core::Size const resid ) const
+{
+	// add terminal variants
+	if ( ( resid > 0 ) && ( resid - 1 > 0 ) ) {
+		core::pose::add_upper_terminus_type_to_pose_residue( pose, resid - 1 );
+	}
+	if ( resid <= pose.total_residue() ) {
+		core::pose::add_lower_terminus_type_to_pose_residue( pose, resid );
+	}
 }
 
 }

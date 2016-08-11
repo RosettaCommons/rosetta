@@ -69,9 +69,19 @@ public:
 		Pose const & pose);
 
 private:
+	/// @brief Adds terminal variants to residues resid and resid-1
+	/// @param[in,out] pose  Pose to be modified
+	/// @param[in]     resid Residue number for the residue that would have the lower terminus variant
+	/// @details Residue resid-1 will have upper_terminus variant, and residue resid will have
+	///          lower_terminus variant
+	void
+	add_terminus_variants( core::pose::Pose & pose, core::Size const resid ) const;
+
+private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 	core::Size nter_overhang_;
 	core::Size cter_overhang_;
+	bool rechain_;
 };
 
 
