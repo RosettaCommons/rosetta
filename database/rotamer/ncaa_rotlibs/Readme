@@ -6,6 +6,10 @@ nvl.rotlib
 
 The remainder are not presently used in an integration test but include rotamer samples for every rotameric non-canonical alpha amino acid, beta amino acid, and peptoid residue available in Rosetta (i.e. for which there exists a params file in the database). These rotamer libraries are version-controlled but only certain people from each Rosetta lab are authorized to obtain them to save bandwidth.
 
-If you are in a Rosetta lab, ask around. Otherwise, email andy.watkins2@gmail.com.
+If you are in the Baker lab, your git-lfs gatekeeper is Vikram Mulligan (vmulligan82@gmail.com).
+
+If you are in a different Rosetta lab, then congratulations, you are the first person from that lab to express interest in NCAA rotamer libraries and have been duly appointed gatekeeper. Email andy.watkins2@gmail.com for your new responsibilities.
+
+Otherwise, email andy.watkins2@gmail.com.
 
 You will obtain a zipped folder that looks like ncaa_rotamer_libraries.tar.gz (or some such). Unzip it so that it forms a directory within this directory (i.e. a subdirectory of ncaa_rotlibs) named ncaa_rotamer_libraries. You're done!
