@@ -523,23 +523,8 @@ StrandPairingSet::StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const
 	initialize_by_dimer_pairs( ssinfo, dimer_pairs );
 }
 
-
-/// @brief copy constructor
-StrandPairingSet::StrandPairingSet( StrandPairingSet const & s ):
-	ReferenceCount(),
-	strand_pairings_( s.strand_pairings_ ),
-	spairset_name_( s.spairset_name_ ),
-	num_strands_( s.num_strands_ ),
-	finalized_( s.finalized_ ),
-	map_strand_pairings_( s.map_strand_pairings_ ),
-	neighbor_strands_( s.neighbor_strands_ ),
-	empty_( s.empty_ )
-{}
-
-
 /// @brief destructor
 StrandPairingSet::~StrandPairingSet(){}
-
 
 /// @brief clone this object
 StrandPairingSetOP

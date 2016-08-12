@@ -62,12 +62,14 @@ public: // typedefs
 	typedef core::pose::PoseOP PoseOP;
 	typedef core::scoring::ScoreFunction ScoreFunction;
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
+	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 
 	typedef protocols::moves::MoverOP MoverOP;
 	typedef protocols::jd2::parser::BluePrint BluePrint;
 	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
 
 	typedef core::conformation::symmetry::SymmetryInfoOP SymmetryInfoOP;
+	typedef core::conformation::symmetry::SymmetryInfoCOP SymmetryInfoCOP;
 
 	typedef protocols::fldsgn::potentials::sspot::NatbiasHelixPairPotential NatbiasHelixPairPotential;
 	typedef protocols::fldsgn::potentials::sspot::NatbiasHelixPairPotentialOP NatbiasHelixPairPotentialOP;
@@ -91,9 +93,6 @@ public: // construct/destruct
 
 	/// @brief value constructor
 	SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrintOP const blueprintOP, bool const ss_from_blueprint=true );
-
-	/// @brief copy constructor
-	SetSecStructEnergies( SetSecStructEnergies const & rval );
 
 	/// @brief default destructor
 	virtual ~SetSecStructEnergies();
@@ -121,22 +120,20 @@ public: // virtual constructors
 
 public: // mutators
 
+	/// @brief access ptr to the modified score function
+	ScoreFunctionOP
+	scorefunction_ptr() const;
 
-	/// @brief define secondary structrue by blueprint
-	inline void ss_from_blueprint( bool const flag ){ ss_from_blueprint_ = flag; }
+	/// @brief set the centroid level score function to be modified
+	/// @details this also clones the object of ptr isn't null and stores the clone in sfx_orig_
+	void set_scorefunction_ptr( ScoreFunctionOP sfx );
 
-	/// @brief set the centroid level score function
-	void scorefunction( ScoreFunction const & sfx );
-
-	/// @brief set the centroid level score function
-	void scorefunction( ScoreFunctionOP sfx );
-
-	/// @brief set blueprint file by filename
-	void set_blueprint( String const & filename );
-
-	/// @brief set blueprint file
-	void set_blueprint( BluePrintOP const blp );
-
+	/// @brief sets the secondary structure to be used for computation
+	/// @param[in] secstruct Secondary structure to be forced on the pose
+	/// @details If this is non-empty, it will be used as the pose secondary structure to
+	///          determine secondary structure elements in the pose
+	void
+	set_secstruct( String const & secstruct );
 
 public: // virtual main methods
 
@@ -163,20 +160,48 @@ public: //parser
 private: // helper functions
 
 
-	String symmetric_secstruct( SymmetryInfoOP const syminfo, String const & ss );
+	String symmetric_secstruct( SymmetryInfoCOP const syminfo, String const & ss ) const;
 
+	/// @brief chooses and return the secondary structure to be used in computation
+	/// @param[in] pose Input pose
+	/// @details  If secstruct_ is set, returns that.
+	///           If use_dssp_ is set, returns DSSP secstruct string
+	///           Otherwise, returns pose secondary structure
+	std::string
+	get_secstruct( Pose const & pose ) const;
+
+	std::string
+	get_helix_pairings( Pose const & pose ) const;
+
+	/// @brief initializes pairings and secondary structure from blueprint file
+	/// @param[in] bp                BluePrint object
+	/// @param[in] ss_from_blueprint If true, secstruct_ will be set from the blueprint.  If false,
+	///                              secstruct_ will be unchanged, and only the pairings will be set.
+	void
+	init_from_blueprint( BluePrint const & bp, bool const ss_from_blueprint );
 
 private: // data
-
 
 	/// @brief
 	bool loaded_;
 
-	/// @brief bluerprint file for setting build instruction
-	BluePrintOP blueprint_;
+	/// @brief Secondary structure to be used
+	std::string secstruct_;
 
-	/// @brief
-	bool ss_from_blueprint_;
+	/// @brief If true, and secstruct is not set, DSSP will be used to determine secondary structure
+	bool use_dssp_;
+
+	/// @brief HHPAIR definition to be used
+	std::string hh_pair_;
+
+	/// @brief strand pairing definition to be used
+	std::string ss_pair_;
+
+	/// @brief helix-strand-strand triplet definition to be used
+	std::string hss_triplet_;
+
+	/// @brief Original copy of the centroid scorefunction to use
+	ScoreFunctionCOP sfx_orig_;
 
 	/// @brief the centroid scorefunction to use, default "remodel_cen"
 	ScoreFunctionOP sfx_;
@@ -201,6 +226,19 @@ private: // data
 
 	/// @brief weight for strand and strand pairing potential
 	Real rsigma_weight_;
+
+	/// @brief if this option is set, a copy of the input pose will have symmetry added to it, and this
+	///        symmetry will be used to modify the secondary structure. The input pose will be
+	///        unchanged. I can't think of any reason why anyone would want this to be true if the input pose
+	///        is already symmetric.
+	/// @details TL: this is added as a hack to work around behavior by SetupForSymmetryMover. SetupForSymmetry
+	///          sets this command line flag to a bogus value in its parse_my_tag() function. Therefore,
+	///          the presence of the option at runtime does not indicate the user's intentions. As a workaround,
+	///          the option is queried set at parse time and this variable is used after than.
+	///          WARNING: You should declare your SetupForSymmetry movers AFTER this one, or you will probably
+	///          get crashes.
+	///          Default is the value of option[ symmetry::symmetry_definition ].active() at parse-time
+	bool add_symmetry_;
 
 	NatbiasHelixPairPotentialOP hpairpot_;
 

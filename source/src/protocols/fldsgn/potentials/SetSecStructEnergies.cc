@@ -50,12 +50,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.SetSecStructEnergies" );
 
 namespace protocols {
 namespace fldsgn {
 namespace potentials {
-
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.SetSecStructEnergies" );
 
 std::string
 SetSecStructEnergiesCreator::keyname() const
@@ -79,8 +78,12 @@ SetSecStructEnergiesCreator::mover_name()
 SetSecStructEnergies::SetSecStructEnergies() :
 	Super( "SetSecStructEnergies" ),
 	loaded_( false ),
-	blueprint_( /* NULL */ ),
-	ss_from_blueprint_( true ),
+	secstruct_( "" ),
+	use_dssp_( true ),
+	hh_pair_( "" ),
+	ss_pair_( "" ),
+	hss_triplet_( "" ),
+	sfx_orig_(),
 	sfx_( /* NULL */ ),
 	hh_weight_( 1.0 ),
 	hs_weight_( 1.0 ),
@@ -89,16 +92,21 @@ SetSecStructEnergies::SetSecStructEnergies() :
 	hs_pair_weight_( 0.0 ),
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
+	add_symmetry_( false ),
 	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
 	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
 {}
-
 
 /// @brief value constructor
 SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String const & filename, bool const ss_from_blueprint ) :
 	Super( "SetSecStructEnergies" ),
 	loaded_( false ),
-	ss_from_blueprint_( ss_from_blueprint ),
+	secstruct_( "" ),
+	use_dssp_( true ),
+	hh_pair_( "" ),
+	ss_pair_( "" ),
+	hss_triplet_( "" ),
+	sfx_orig_( sfx->clone() ),
 	sfx_( sfx ),
 	hh_weight_( 1.0 ),
 	hs_weight_( 1.0 ),
@@ -107,18 +115,24 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String co
 	hs_pair_weight_( 0.0 ),
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
+	add_symmetry_( false ),
 	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
 	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
 {
-	set_blueprint( filename );
+	protocols::jd2::parser::BluePrint bp( filename );
+	init_from_blueprint( bp, ss_from_blueprint );
 }
 
 /// @brief value constructor
 SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrintOP const blueprintOP, bool const ss_from_blueprint ) :
 	Super( "SetSecStructEnergies" ),
 	loaded_( false ),
-	blueprint_( blueprintOP ),
-	ss_from_blueprint_( ss_from_blueprint ),
+	secstruct_( "" ),
+	use_dssp_( true ),
+	hh_pair_( "" ),
+	ss_pair_( "" ),
+	hss_triplet_( "" ),
+	sfx_orig_( sfx->clone() ),
 	sfx_( sfx ),
 	hh_weight_( 1.0 ),
 	hs_weight_( 1.0 ),
@@ -127,27 +141,12 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrint
 	hs_pair_weight_( 0.0 ),
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
+	add_symmetry_( false ),
 	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
 	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
-{}
-
-/// @Brief copy constructor
-SetSecStructEnergies::SetSecStructEnergies( SetSecStructEnergies const & rval ) :
-	Super( rval ),
-	loaded_( rval.loaded_ ),
-	blueprint_( rval.blueprint_ ),
-	ss_from_blueprint_( rval.ss_from_blueprint_ ),
-	sfx_( rval.sfx_ ),
-	hh_weight_( rval.hh_weight_ ),
-	hs_weight_( rval.hs_weight_ ),
-	ss_weight_( rval.ss_weight_ ),
-	stwist_weight_( rval.stwist_weight_ ),
-	hs_pair_weight_( rval.hs_pair_weight_ ),
-	ss_pair_weight_( rval.ss_pair_weight_ ),
-	rsigma_weight_( rval.rsigma_weight_ ),
-	hpairpot_( rval.hpairpot_ ),
-	hspot_( rval.hspot_ )
-{}
+{
+	init_from_blueprint( *blueprintOP, ss_from_blueprint );
+}
 
 /// @brief default destructor
 SetSecStructEnergies::~SetSecStructEnergies() {}
@@ -166,37 +165,40 @@ SetSecStructEnergies::fresh_instance() const
 	return SetSecStructEnergies::MoverOP( new SetSecStructEnergies() );
 }
 
-/// @brief set the centroid level score function
-void
-SetSecStructEnergies::scorefunction( ScoreFunction const & sfx )
+/// @brief access ptr to the modified score function
+SetSecStructEnergies::ScoreFunctionOP
+SetSecStructEnergies::scorefunction_ptr() const
 {
-	sfx_ = sfx.clone();
+	return sfx_;
 }
 
 /// @brief set the centroid level score function
 void
-SetSecStructEnergies::scorefunction( ScoreFunctionOP sfx )
+SetSecStructEnergies::set_scorefunction_ptr( ScoreFunctionOP sfx )
 {
-	sfx_ = sfx->clone();
+	/// TL: we don't want to clone here. The given scorefunction is modified and we assume
+	///     they have access to the object
+	sfx_ = sfx;
+	if ( sfx ) {
+		sfx_orig_ = sfx->clone();
+	} else {
+		sfx_orig_ = ScoreFunctionOP();
+	}
 }
 
-/// @brief use blueprint
+/// @brief sets the secondary structure to be used for computation
+/// @param[in] secstruct Secondary structure to be forced on the pose
+/// @details If this is non-empty, it will be used as the pose secondary structure to
+///          determine secondary structure elements in the pose
 void
-SetSecStructEnergies::set_blueprint( String const & filename )
+SetSecStructEnergies::set_secstruct( String const & secstruct )
 {
-	blueprint_ = BluePrintOP( new BluePrint( filename ) );
-}
-
-/// @brief use blueprint
-void
-SetSecStructEnergies::set_blueprint( BluePrintOP const blp )
-{
-	blueprint_ = blp;
+	secstruct_ = secstruct;
 }
 
 /// @brief make symmetric secstruct
 SetSecStructEnergies::String
-SetSecStructEnergies::symmetric_secstruct( SymmetryInfoOP const syminfo, String const & ss )
+SetSecStructEnergies::symmetric_secstruct( SymmetryInfoCOP const syminfo, String const & ss ) const
 {
 	runtime_assert( ss.length() == syminfo->num_independent_residues() );
 
@@ -214,10 +216,6 @@ SetSecStructEnergies::symmetric_secstruct( SymmetryInfoOP const syminfo, String 
 /// @brief apply defined moves to given Pose
 void SetSecStructEnergies::apply( Pose & pose )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	using core::scoring::dssp::Dssp;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 
@@ -236,46 +234,35 @@ void SetSecStructEnergies::apply( Pose & pose )
 	using protocols::fldsgn::topology::HSSTripletSet;
 	using protocols::fldsgn::topology::HSSTripletSetOP;
 
-	using core::conformation::symmetry::SymmetricConformation;
-	using core::pose::symmetry::is_symmetric;
-	using protocols::simple_moves::symmetry::SetupForSymmetryMover;
-	using protocols::simple_moves::symmetry::SetupForSymmetryMoverOP;
+	// TL: Movers should be repeatedly callable for different poses.
+	//     In this case, I might be building a different structure, in which case
+	//     the potentials need to be re-created.
+	//if ( loaded_ ) return;
 
-	if ( loaded_ ) return;
-
-	runtime_assert( blueprint_ != 0 );
 	runtime_assert( sfx_ != 0 );
+	runtime_assert( sfx_orig_ );
 
-	// assign secondary structure
-	if ( !ss_from_blueprint_ ) {
-		Dssp dssp( pose );
-		dssp.insert_ss_into_pose( pose );
-	} else {
-		blueprint_->insert_ss_into_pose( pose );
-	}
+	// reset to original so this can be called repeatedly
+	sfx_->reset();
+	sfx_->assign( *sfx_orig_ );
 
-	Pose scratch( pose );
-	String ss("");
-	if ( option[ basic::options::OptionKeys::symmetry::symmetry_definition ].active() ) {
-
-		if ( !is_symmetric( scratch ) ) {
-			SetupForSymmetryMoverOP symm_setup_mover( new SetupForSymmetryMover );
-			symm_setup_mover->apply( scratch );
-		}
-
-		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation & > ( scratch.conformation()) );
-		SymmetryInfoOP syminfo( symm_conf.Symmetry_Info() );
-		ss = symmetric_secstruct( syminfo, blueprint_->secstruct() );
-
-	} else {
-		ss = blueprint_->secstruct();
+	std::string const ss = get_secstruct( pose );
+	if ( pose.total_residue() != ss.size() ) {
+		std::stringstream msg;
+		msg << "SetSecStructEnergies::apply() The secondary structure size ("
+			<< ss.size() << ") does not match the pose size (" << pose.total_residue()
+			<< ") SS=" << ss << std::endl;
+		utility_exit_with_message( msg.str() );
 	}
 
 	// set NatbiasSecondaryStructure energy
 	SS_Info2_OP ssinfo( new SS_Info2( ss ) );
-	StrandPairingSetOP spairset( new StrandPairingSet( blueprint_->strand_pairings(), ssinfo ) );
-	HelixPairingSetOP  hpairset( new HelixPairingSet ( blueprint_->helix_pairings() ) );
-	HSSTripletSetOP     hss3set( new HSSTripletSet   ( blueprint_->hss_triplets() ) );
+
+	StrandPairingSetOP spairset( new StrandPairingSet( ss_pair_, ssinfo ) );
+	spairset->finalize();
+
+	HelixPairingSetOP  hpairset( new HelixPairingSet ( hh_pair_ ) );
+	HSSTripletSetOP     hss3set( new HSSTripletSet   ( hss_triplet_ ) );
 
 	NatbiasSecondaryStructureEnergy sspot;
 	NatbiasStrandPairPotentialOP   spairpot( new NatbiasStrandPairPotential( spairset ) );
@@ -314,7 +301,7 @@ void SetSecStructEnergies::apply( Pose & pose )
 	}
 
 	// this mover have to be called only once
-	loaded_ = true;
+	//loaded_ = true;
 
 }
 
@@ -334,15 +321,18 @@ SetSecStructEnergies::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
-	if ( blueprint == "" ) {
-		TR << "No input of blueprint file ! " << std::endl;
-		runtime_assert( false );
+	std::string const blueprintfile( tag->getOption<std::string>( "blueprint", "" ) );
+	if ( !blueprintfile.empty() ) {
+		protocols::jd2::parser::BluePrint const bp( blueprintfile );
+		bool const ss_from_blueprint( tag->getOption<bool>( "ss_from_blueprint", true ) );
+		init_from_blueprint( bp, ss_from_blueprint );
 	}
-	set_blueprint( blueprint );
 
-	bool const ss_from_blueprint( tag->getOption<bool>( "ss_from_blueprint", true ) );
-	ss_from_blueprint_ = ss_from_blueprint;
+	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
+	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
+	hh_pair_ = tag->getOption< std::string >( "hh_pair", hh_pair_ );
+	ss_pair_ = tag->getOption< std::string >( "ss_pair", ss_pair_ );
+	hss_triplet_ = tag->getOption< std::string >( "hss_triplets", hss_triplet_ );
 
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
@@ -351,7 +341,13 @@ SetSecStructEnergies::parse_my_tag(
 		runtime_assert( false );
 	}
 
-	sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
+	add_symmetry_ = tag->getOption< bool >( "add_symmetry", add_symmetry_ );
+	if ( !tag->hasOption( "add_symmetry" ) ) {
+		add_symmetry_ =
+			basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].active();
+	}
+
+	set_scorefunction_ptr( data.get_ptr< ScoreFunction >( "scorefxns", sfxn ) );
 	TR << "score function, " << sfxn << ", is used. " << std::endl;
 
 
@@ -422,6 +418,61 @@ SetSecStructEnergies::parse_my_tag(
 	}
 
 }
+
+/// @brief chooses and return the secondary structure to be used in computation
+/// @param[in] pose Input pose
+/// @details  If secstruct_ is set, returns that.
+///           If use_dssp_ is set, returns DSSP secstruct string
+///           Otherwise, returns pose secondary structure
+std::string
+SetSecStructEnergies::get_secstruct( core::pose::Pose const & pose ) const
+{
+	using core::conformation::symmetry::SymmetricConformation;
+	using core::pose::symmetry::is_symmetric;
+	using protocols::simple_moves::symmetry::SetupForSymmetryMover;
+	using protocols::simple_moves::symmetry::SetupForSymmetryMoverOP;
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::string secstruct;
+	if ( !secstruct_.empty() ) {
+		secstruct = secstruct_;
+	} else if ( use_dssp_ ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		secstruct = dssp.get_dssp_secstruct();
+	} else {
+		secstruct = pose.secstruct();
+	}
+
+	if ( add_symmetry_ ) {
+		Pose scratch( pose );
+		if ( !is_symmetric( scratch ) ) {
+			SetupForSymmetryMoverOP symm_setup_mover( new SetupForSymmetryMover );
+			symm_setup_mover->apply( scratch );
+		}
+
+		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation & > ( scratch.conformation()) );
+		SymmetryInfoOP syminfo( symm_conf.Symmetry_Info() );
+		return symmetric_secstruct( syminfo, secstruct );
+	}
+
+	return secstruct;
+}
+
+/// @brief initializes pairings and secondary structure from blueprint file
+/// @param[in] bp                BluePrint object
+/// @param[in] ss_from_blueprint If true, secstruct_ will be set from the blueprint.  If false,
+///                              secstruct_ will be unchanged, and only the pairings will be set.
+void
+SetSecStructEnergies::init_from_blueprint( protocols::jd2::parser::BluePrint const & bp, bool const ss_from_blueprint )
+{
+	if ( ss_from_blueprint ) secstruct_ = bp.secstruct();
+	hh_pair_ = bp.helix_pairings();
+	ss_pair_ = bp.strand_pairings();
+	hss_triplet_ = bp.hss_triplets();
+}
+
 
 } // Namespace potentials
 } // namespace fldsgn

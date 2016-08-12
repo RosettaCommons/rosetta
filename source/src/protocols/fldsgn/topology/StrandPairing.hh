@@ -233,9 +233,6 @@ public:// construct/destruct
 	/// @brief value constructor
 	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo, utility::vector1< String > const & abego );
 
-	/// @brief copy constructor
-	StrandPairingSet( StrandPairingSet const & s );
-
 	/// @brief default destructor
 	virtual ~StrandPairingSet();
 

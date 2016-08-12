@@ -242,10 +242,22 @@ void SetupForSymmetryMover::parse_my_tag(
 
 	if ( tag->hasOption("definition") ) {
 		process_symmdef_file(tag->getOption<std::string>("definition"));
-		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+
+		// TL: Setting global option flags like this is dangerous!
+		//     Setting global option flags to invalid values is even more dangerous!
+		// I don't like it, but for compatibility I'm going to set it to the correct filename
+		//option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+		option[OptionKeys::symmetry::symmetry_definition].value( tag->getOption< std::string >( "definition" ) );
 	} else if ( tag->hasOption("resource_description") ) {
 		symmdef_ = get_resource< core::conformation::symmetry::SymmData >(
-			tag->getOption<std::string>("resource_description"));
+			tag->getOption<std::string>("resource_description") );
+
+		// TL: Setting global option flags like this is dangerous!
+		//     Setting global option flags to invalid values is even more dangerous!
+		// To illustrate, there is at least one mover that checks this flag and uses
+		// this 'dummy' value.  I think the following line should be removed altogether,
+		// but for now I will leave it and refrain from using the 'resource_description'
+		// XML option
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 	} else if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
 		process_symmdef_file(option[OptionKeys::symmetry::symmetry_definition]);

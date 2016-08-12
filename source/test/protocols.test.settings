@@ -143,6 +143,10 @@ sources = {
 		"SheetTopologyFilter",
 	],
 
+	"fldsgn/potentials" : [
+		"SetSecStructEnergiesMoverTests",
+	],
+
 	"frag_picker" : [
 		"FragmentCandidatesTests",
 		"TorsionBinIO",
