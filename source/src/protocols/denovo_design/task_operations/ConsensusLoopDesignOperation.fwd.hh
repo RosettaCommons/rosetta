@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/denovo_design/task_operations/ConsensusLoopDesign.fwd.hh
+/// @file protocols/denovo_design/task_operations/ConsensusLoopDesignOperation.fwd.hh
 /// @brief Restrict loop residue identities to those commonly found in nature
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesign_fwd_hh
-#define INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesign_fwd_hh
+#ifndef INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesignOperation_fwd_hh
+#define INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesignOperation_fwd_hh
 
 // utilty headers
 #include <utility/pointer/owning_ptr.hh>

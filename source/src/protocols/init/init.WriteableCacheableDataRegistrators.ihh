@@ -18,7 +18,10 @@ namespace protocols {
 
 using basic::datacache::WriteableCacheableDataRegistrator;
 
-static WriteableCacheableDataRegistrator< environment::AutoCutDataCreator > reg_AutoCutDataRegistrator;
 static WriteableCacheableDataRegistrator< abinitio::abscript::JumpSampleDataCreator > reg_JumpSampleDataRegistrator;
+
+//static WriteableCacheableDataRegistrator< denovo_design::components::StructureDataCreator> reg_StructureDataRegistrator;
+
+static WriteableCacheableDataRegistrator< environment::AutoCutDataCreator > reg_AutoCutDataRegistrator;
 
 } //namespace protocols

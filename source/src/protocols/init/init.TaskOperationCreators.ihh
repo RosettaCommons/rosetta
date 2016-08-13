@@ -40,7 +40,7 @@
 
 #include <protocols/matdes/BuildingBlockInterfaceOperationCreator.hh>
 
-#include <protocols/denovo_design/task_operations/ConsensusLoopDesignCreator.hh>
+#include <protocols/denovo_design/task_operations/ConsensusLoopDesignOperationCreator.hh>
 
 
 #include <protocols/sewing/sampling/ReadRepeatNativeRotamersFileCreator.hh>

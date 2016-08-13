@@ -15,6 +15,7 @@
 #include <basic/datacache/WriteableCacheableDataFactory.hh>
 
 //Creator #includes
-#include <protocols/environment/AutoCutDataCreator.hh>
 #include <protocols/abinitio/abscript/JumpSampleDataCreator.hh>
+#include <protocols/environment/AutoCutDataCreator.hh>
+//#include <protocols/denovo_design/components/StructureDataCreator.hh>
 

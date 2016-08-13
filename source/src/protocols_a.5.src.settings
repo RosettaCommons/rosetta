@@ -77,7 +77,7 @@ sources = {
 		"PairedSheetResidueSelector",
 	],
 	"protocols/denovo_design/task_operations": [
-		"ConsensusLoopDesign",
+		"ConsensusLoopDesignOperation",
 	],
 	"protocols/fldsgn": [
 		"BluePrintBDR",

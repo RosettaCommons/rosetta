@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/denovo_design/task_operations/ConsensusLoopDesignCreator.cc
+/// @file protocols/denovo_design/task_operations/ConsensusLoopDesignOperationCreator.cc
 /// @brief Design residues that make up the highest-energy regions in a protein
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesignCreator_hh
-#define INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesignCreator_hh
+#ifndef INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesignOperationCreator_hh
+#define INCLUDED_protocols_denovo_design_task_operations_ConsensusLoopDesignOperationCreator_hh
 
 // unit headers
 

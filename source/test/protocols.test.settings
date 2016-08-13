@@ -173,7 +173,6 @@ sources = {
 	],
 
 	"denovo_design" :[
-		"ConsensusLoopDesign",
 		"DisulfidizeMover",
 		"utils",
 	],
@@ -211,6 +210,10 @@ sources = {
 
 	"denovo_design/residue_selectors" :[
 		"PairedSheetResidueSelectorTests",
+	],
+
+	"denovo_design/task_operations" :[
+		"ConsensusLoopDesignOperationTests",
 	],
 
 	"generalized_kinematic_closure" : [
