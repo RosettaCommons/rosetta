@@ -163,6 +163,11 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	if ( ! kic_mover_->was_successful() ) return false;
 
+  // Idealize the N-H and C-O bond of the loop backbone. Note that this function
+  // keeps psi, phi and omega torsions unchanged.
+
+    loops::idealize_loop(pose, loop);
+
 	// Minimize the loop if it was successfully built.
 
 	minimizer_->apply(pose);

@@ -635,7 +635,8 @@ public: // Modifier
 	clear()
 	{
 		array_size_ = 0;
-		if ( owner_ ) delete[] array_; array_ = 0;
+		if ( owner_ ) delete[] array_;
+    array_ = 0;
 		size_ = 0;
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_ = false;

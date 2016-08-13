@@ -339,7 +339,8 @@ bool SequenceMapping::operator == ( SequenceMapping const & rhs ) const
 
 bool SequenceMapping::same_type_as_me( SequenceMapping const & other ) const
 {
-	return dynamic_cast< SequenceMapping const *  > (&other);
+	SequenceMapping const * casted_other = dynamic_cast< SequenceMapping const *  > (&other);
+	return casted_other;
 }
 
 std::string SequenceMapping::to_string() const {

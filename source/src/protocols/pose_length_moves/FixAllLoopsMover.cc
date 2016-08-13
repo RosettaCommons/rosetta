@@ -112,7 +112,7 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,lookback_resid);
 		TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 	}
-	for ( Size ii=pose_loops.num_loop(); (ii>=1 && (&pose)!=NULL); --ii ) {
+	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
 		if ( pose_loops[ii].start()>=firstResidue_ && pose_loops[ii].stop()<=lastResidue_ ) {
 			TR << "working on " << pose_loops[ii].start() << "-" <<  pose_loops[ii].stop() << std::endl;
 			Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,pose_loops[ii].start()-2);

@@ -4149,7 +4149,8 @@ bool PocketGrid::operator == ( PocketGrid const & other ) const
 
 bool PocketGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	return dynamic_cast< PocketGrid const * > (&other);
+	PocketGrid const * casted_other = dynamic_cast< PocketGrid const * > (&other);
+	return casted_other;
 }
 
 
@@ -4350,7 +4351,8 @@ void ElectrostaticpotentialGrid::initialize_typGrid(){
 
 bool TargetPocketGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	return dynamic_cast< TargetPocketGrid const * > (&other);
+	TargetPocketGrid const * casted_other = dynamic_cast< TargetPocketGrid const * > (&other);
+	return casted_other;
 }
 
 
@@ -5157,7 +5159,8 @@ bool ElectrostaticpotentialGrid::operator == ( PocketGrid const & other ) const 
 
 bool ElectrostaticpotentialGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	return dynamic_cast< ElectrostaticpotentialGrid const * > (&other);
+	ElectrostaticpotentialGrid const * casted_other = dynamic_cast< ElectrostaticpotentialGrid const * > (&other);
+	return casted_other;
 }
 
 
@@ -5745,7 +5748,8 @@ bool EggshellGrid::operator == ( PocketGrid const & other ) const {
 
 bool EggshellGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	return dynamic_cast< EggshellGrid const * > (&other);
+	EggshellGrid const * casted_other = dynamic_cast< EggshellGrid const * > (&other);
+	return casted_other;
 }
 
 
