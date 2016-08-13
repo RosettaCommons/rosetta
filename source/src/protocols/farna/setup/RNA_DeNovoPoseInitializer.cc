@@ -301,8 +301,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			if ( !base_pair_step_moving( base_pair_step, rna_jump_mover.atom_level_domain_map(), pose ) ) continue;
 
 			// following assert (jumps between top & bottom base pair of base pair step) do not hold if one of the base pair is inside a fixed input PDB.
-			//			runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i(),      base_pair_step.j_next() ) ) );
-			//			runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i_next(), base_pair_step.j()      ) ) );
+			//   runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i(),      base_pair_step.j_next() ) ) );
+			//   runtime_assert( rna_params_.check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i_next(), base_pair_step.j()      ) ) );
 			runtime_assert ( base_pair_step.i_next() == base_pair_step.i()+1 );
 
 			// used below in cutpoint setting...
@@ -359,7 +359,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	}
 
 	// for ( Size i = 1; i < nres; i++ ) {
-	//  	TR  << TR.Blue << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
+	//   TR  << TR.Blue << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
 	// }
 
 	//////////////////////////////////////////////////////////////////////
@@ -380,7 +380,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			count++;
 			jump_points(1, count) = rna_params_.rna_pairing_list_[which_pairing].res1();
 			jump_points(2, count) = rna_params_.rna_pairing_list_[which_pairing].res2();
-			//			TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			//   TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 
 		// "Chain connections" provide less information about specific residues to pair --
@@ -393,7 +393,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			count++;
 			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
 			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
-			//			TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			//   TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 		//  TR << std::endl;
 
@@ -444,8 +444,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		// TR << TR.Cyan << "Making attempt " << ntries << std::endl;
 		// TR << TR.Cyan << "obligate_cutpoints " << obligate_cut_points_reformat << std::endl;
 		// for (Size n = 1; n <= num_pairings_to_force; n++ ){
-		// 	TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
-		//  		" " <<  jump_points(2, n)  <<  std::endl;
+		//  TR << TR.Cyan << "JUMPS " << jump_points(1, n) <<
+		//    " " <<  jump_points(2, n)  <<  std::endl;
 		//  }
 
 		success = f.random_tree_from_jump_points( nres, num_pairings_to_force, jump_points, obligate_cut_points_reformat, cut_bias, 1, true /*enable 1 or NRES jumps*/ );

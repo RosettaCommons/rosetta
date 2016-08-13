@@ -54,13 +54,13 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	CircularSplineFunc::CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in,
-																					bool convert_to_degrees /* = false */ ):
-		weight_( weight_in ),
-		convert_to_degrees_( convert_to_degrees )
-	{
-		train( energies_in );
-	}
+CircularSplineFunc::CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in,
+	bool convert_to_degrees /* = false */ ):
+	weight_( weight_in ),
+	convert_to_degrees_( convert_to_degrees )
+{
+	train( energies_in );
+}
 
 bool CircularSplineFunc::operator == ( Func const & other ) const
 {

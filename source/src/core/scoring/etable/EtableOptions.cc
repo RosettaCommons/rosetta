@@ -51,6 +51,7 @@ EtableOptions::EtableOptions() :
 	Wradius( 1.0 ),
 	lj_switch_dis2sigma( 0.6 ),
 	no_lk_polar_desolvation( false ),
+	proline_N_is_lk_nonpolar( false),
 	lj_hbond_OH_donor_dis(3.0),
 	lj_hbond_hdis(1.95),
 	enlarge_h_lj_wdepth(false)
@@ -92,6 +93,7 @@ EtableOptions::operator=( EtableOptions const & src )
 		Wradius = src.Wradius;
 		lj_switch_dis2sigma = src.lj_switch_dis2sigma;
 		no_lk_polar_desolvation = src.no_lk_polar_desolvation;
+		proline_N_is_lk_nonpolar = src.proline_N_is_lk_nonpolar;
 		lj_hbond_OH_donor_dis = src.lj_hbond_OH_donor_dis;
 		lj_hbond_hdis = src.lj_hbond_hdis;
 		enlarge_h_lj_wdepth = src.enlarge_h_lj_wdepth;
@@ -123,6 +125,9 @@ operator < ( EtableOptions const & a, EtableOptions const & b )
 	if      ( a.no_lk_polar_desolvation < b.no_lk_polar_desolvation )  { return true;  }
 	else if ( a.no_lk_polar_desolvation != b.no_lk_polar_desolvation ) { return false; }
 
+	if      ( a.proline_N_is_lk_nonpolar < b.proline_N_is_lk_nonpolar )  { return true;  }
+	else if ( a.proline_N_is_lk_nonpolar != b.proline_N_is_lk_nonpolar ) { return false; }
+
 	if      ( a.lj_hbond_OH_donor_dis < b.lj_hbond_OH_donor_dis )  { return true;  }
 	else if ( a.lj_hbond_OH_donor_dis != b.lj_hbond_OH_donor_dis ) { return false; }
 
@@ -144,6 +149,7 @@ operator==( EtableOptions const & a, EtableOptions const & b )
 		( a.Wradius == b.Wradius ) &&
 		( a.lj_switch_dis2sigma == b.lj_switch_dis2sigma ) &&
 		( a.no_lk_polar_desolvation == b.no_lk_polar_desolvation ) &&
+		( a.proline_N_is_lk_nonpolar == b.proline_N_is_lk_nonpolar) &&
 		( a.lj_hbond_OH_donor_dis == b.lj_hbond_OH_donor_dis ) &&
 		( a.lj_hbond_hdis == b.lj_hbond_hdis ) &&
 		( a.enlarge_h_lj_wdepth == b.enlarge_h_lj_wdepth ));
@@ -166,6 +172,7 @@ EtableOptions::show( std::ostream & out ) const
 	out <<"EtableOptions::Wradius: " << Wradius << std::endl;
 	out <<"EtableOptions::lj_switch_dis2sigma: " << lj_switch_dis2sigma << std::endl;
 	out <<"EtableOptions::no_lk_polar_desolvation: " << no_lk_polar_desolvation << std::endl;
+	out <<"EtableOptions::proline_N_is_lk_nonpolar: " << proline_N_is_lk_nonpolar << std::endl;
 	out <<"EtableOptions::lj_hbond_OH_donor_dis: " << lj_hbond_OH_donor_dis << std::endl;
 	out <<"EtableOptions::lj_hbond_hdis: " << lj_hbond_hdis << std::endl;
 	out <<"EtableOptions::enlarge_h_lj_wdepth: " << enlarge_h_lj_wdepth << std::endl;
@@ -212,6 +219,7 @@ core::scoring::etable::EtableOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( Wradius ) ); // Real
 	arc( CEREAL_NVP( lj_switch_dis2sigma ) ); // Real
 	arc( CEREAL_NVP( no_lk_polar_desolvation ) ); // _Bool
+	arc( CEREAL_NVP( proline_N_is_lk_nonpolar ) ); // _Bool
 	arc( CEREAL_NVP( lj_hbond_OH_donor_dis ) ); // Real
 	arc( CEREAL_NVP( lj_hbond_hdis ) ); // Real
 	arc( CEREAL_NVP( enlarge_h_lj_wdepth ) ); // _Bool
@@ -228,6 +236,7 @@ core::scoring::etable::EtableOptions::load( Archive & arc ) {
 	arc( Wradius ); // Real
 	arc( lj_switch_dis2sigma ); // Real
 	arc( no_lk_polar_desolvation ); // _Bool
+	arc( proline_N_is_lk_nonpolar ); // _Bool
 	arc( lj_hbond_OH_donor_dis ); // Real
 	arc( lj_hbond_hdis ); // Real
 	arc( enlarge_h_lj_wdepth ); // _Bool

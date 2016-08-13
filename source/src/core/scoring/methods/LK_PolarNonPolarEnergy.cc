@@ -344,6 +344,9 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 ) const
 {
 	using namespace etable::count_pair;
+	using basic::options::option;
+	using basic::options::OptionKeys::score::lk_polar_without_proline_N;
+
 	CountPairFunctionOP cpfxn =
 		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
@@ -358,7 +361,10 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 		Vector const & heavy_atom_i( rsd1.xyz( i ) );
 
 		//Just compute cos(theta) for polars.
-		bool const is_polar = ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor());
+		bool const is_acceptor = rsd1.atom_type(i).is_acceptor();
+		bool const is_donor = option[lk_polar_without_proline_N] ? // bazzoli
+			rsd1.heavyatom_has_polar_hydrogens(i) : rsd1.atom_type(i).is_donor();
+		bool const is_polar = is_acceptor || is_donor;
 
 		if ( is_polar  && !compute_polar    ) continue;
 		if ( !is_polar && !compute_nonpolar ) continue;

@@ -12,7 +12,7 @@
 
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -140,7 +140,7 @@ private:
 	std::string tgt_atom_;
 
 	/// @brief stores H-bond info for the entire pose
-	core::scoring::hbonds::HBondSet hbond_set_;
+	core::scoring::hbonds::HBondSetCOP hbond_set_;
 
 	/// @brief stores the SHO energies of all polar atoms in the pose
 	std::map<AtomID, Real> sho_energies_;

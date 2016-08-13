@@ -806,7 +806,7 @@ hbond_compute_energy(
 	HBondOptions const & hbondoptions,
 	HBEvalTuple const & hbt,  // the tuple representing the evaluation information for this hbond
 	Real const AHdis, // acceptor proton distance
-	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K.
+	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K. // cos(180-theta) (bazzoli)
 	Real const xH,    // cos(180-phi), where phi is defined by Tanja K.
 	Real const chi,   // AB2-AB-A-H dihdral angle for sp2 hybridized acceptors
 	Real & energy,

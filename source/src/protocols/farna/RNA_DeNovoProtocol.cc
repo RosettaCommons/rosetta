@@ -196,7 +196,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		}
 
 		RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
-																																			 options_->input_res(), rna_params_->allow_insert_res() ) );
+			options_->input_res(), rna_params_->allow_insert_res() ) );
 		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params_ ) );
 
 		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );

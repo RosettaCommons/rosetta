@@ -23,6 +23,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -37,7 +38,7 @@ namespace features {
 
 class GeometricSolvationFeatures : public FeaturesReporter {
 public:
-	GeometricSolvationFeatures();
+	GeometricSolvationFeatures(core::scoring::methods::EnergyMethodOptions const& options);
 
 	GeometricSolvationFeatures(GeometricSolvationFeatures const & src);
 

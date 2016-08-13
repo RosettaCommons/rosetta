@@ -1925,8 +1925,8 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 add_chi_constraints( pose::Pose & pose,
-										 core::scoring::func::FuncOP chi_potential_restraint,
-										 utility::vector1< Size > const & rna_chi_res )
+	core::scoring::func::FuncOP chi_potential_restraint,
+	utility::vector1< Size > const & rna_chi_res )
 {
 	using namespace core::id;
 	using namespace core::scoring;

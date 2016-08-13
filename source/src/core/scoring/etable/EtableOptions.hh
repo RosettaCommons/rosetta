@@ -75,6 +75,7 @@ public:
 	Real Wradius;
 	Real lj_switch_dis2sigma;
 	bool no_lk_polar_desolvation;
+	bool proline_N_is_lk_nonpolar; // bazzoli: is the N atom of proline treated as non-polar for LK solvation?
 	Real lj_hbond_OH_donor_dis;
 	Real lj_hbond_hdis;
 	bool enlarge_h_lj_wdepth;

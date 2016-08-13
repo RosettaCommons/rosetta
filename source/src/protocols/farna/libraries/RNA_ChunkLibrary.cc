@@ -469,8 +469,8 @@ RNA_ChunkLibrary::update_to_move_rosetta_library_chunks()
 //////////////////////////////////////////////////////////////////////////////
 bool
 check_base_pair_step_availability(
-																	BasePairStepLibrary const & base_pair_step_library,
-																	BasePairStepSequence const & base_pair_step_sequence )
+	BasePairStepLibrary const & base_pair_step_library,
+	BasePairStepSequence const & base_pair_step_sequence )
 {
 
 	if ( base_pair_step_library.has_value( base_pair_step_sequence ) ) return true;
@@ -479,7 +479,7 @@ check_base_pair_step_availability(
 	TR << TR.Red << base_pair_step_library.database_dir() << " does not have "  << base_pair_step_sequence.tag() << " for residue numbers " << tag;
 
 	if ( !base_pair_step_library.canonical() ||
-			 std::count( tag.begin(), tag.end(), 'n' ) > 0 ) {
+			std::count( tag.begin(), tag.end(), 'n' ) > 0 ) {
 		TR << " so no base pair steps will be sampled there, just fragments." << std::endl;
 		return false;
 	}

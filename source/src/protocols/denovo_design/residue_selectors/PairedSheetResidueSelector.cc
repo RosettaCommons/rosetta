@@ -212,7 +212,7 @@ PairedSheetResidueSelector::get_sheet_topology( core::pose::Pose const & ) const
 	// TODO: when I push updated 'Tomponent' classes to master, remove these comments
 	//components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
 	//if ( factory.has_cached_data( pose ) ) {
-	//	return components::SegmentPairing::get_strand_pairings( factory.get_from_const_pose( pose ) );
+	// return components::SegmentPairing::get_strand_pairings( factory.get_from_const_pose( pose ) );
 	//}
 	std::stringstream msg;
 	msg << "PairedSheetResidueSelector(): Could not determine strand pairings!  "

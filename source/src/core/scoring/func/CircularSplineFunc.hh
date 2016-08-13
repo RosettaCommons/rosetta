@@ -51,7 +51,7 @@ public:
 
 	CircularSplineFunc() : weight_(0.0), convert_to_degrees_( false ) {}
 	CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in,
-											bool convert_to_degrees = false ); // true might be better? esp. if used in DihedralConstraint.
+		bool convert_to_degrees = false ); // true might be better? esp. if used in DihedralConstraint.
 
 	~CircularSplineFunc() {}
 

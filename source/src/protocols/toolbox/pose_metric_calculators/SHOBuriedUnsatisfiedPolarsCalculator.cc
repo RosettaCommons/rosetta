@@ -15,6 +15,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -61,7 +62,7 @@ static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.pose_metric_calculators.
 ///  amino acid type.
 ///
 /// @params[in] sho_cutoff maximum SHO energy value for a polar group to be
-///  considered as exposed (i.e., not buried).
+///  considered as exposed (i.e., not buried). It must be expressed in original SHO units.
 /// @params[in] tgt_amino target amino acid type
 /// @params[in] tgt_atom target atom name
 /// @params[in] sfxn score function used to (previously) score the pose
@@ -73,8 +74,8 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 	core::Real sho_cutoff, std::string tgt_amino, std::string tgt_atom,
 	core::scoring::ScoreFunctionCOP sfxn) :
 
-	sho_meth_(create_ExactSHOEnergy_from_cmdline()),
-	sho_cutoff_(sho_cutoff),
+	sho_meth_(create_ExactSHOEnergy_from_cmdline(sfxn->energy_method_options())),
+	sho_cutoff_( sho_cutoff ),
 	tgt_amino_(tgt_amino),
 	tgt_atom_(tgt_atom),
 	sfxn_(sfxn) {
@@ -86,7 +87,7 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 /// @brief constructs the calculator for a target residue set.
 ///
 /// @params[in] sho_cutoff maximum SHO energy value for a polar group to be
-///  considered as exposed (i.e., not buried).
+///  considered as exposed (i.e., not buried). It must be expressed in original SHO units.
 /// @params[in] tgt_res_idxs set of target residue indexes. An empty set means
 ///  "all residues".
 /// @params[in] sfxn score function used to (previously) score the pose
@@ -99,8 +100,8 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 	Real sho_cutoff, utility::vector1<Size> const& tgt_res_idxs,
 	core::scoring::ScoreFunctionCOP sfxn) :
 
-	sho_meth_(create_ExactSHOEnergy_from_cmdline()),
-	sho_cutoff_(sho_cutoff),
+	sho_meth_(create_ExactSHOEnergy_from_cmdline(sfxn->energy_method_options())),
+	sho_cutoff_( sho_cutoff ) ,
 	tgt_res_idxs_(tgt_res_idxs),
 	tgt_amino_("none"),
 	tgt_atom_("none"),
@@ -169,8 +170,6 @@ std::string SHOBuriedUnsatisfiedPolarsCalculator::print(std::string const& key) 
 void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 	core::pose::Pose const& ps) {
 
-	core::scoring::hbonds::fill_hbond_set(ps, false, hbond_set_);
-
 	// compute SHO energy for each polar atom
 	core::Size N = ps.total_residue();
 	for ( Size i=1; i<=N; ++i ) {
@@ -184,7 +183,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 
 			Size const h( *hnum );
 			sho_energies_[AtomID(h, i)] =
-				sho_meth_->compute_donor_atom_energy(rsd, i, h, ps);
+				sho_meth_->compute_sho_donor_atom_energy(rsd, i, h, ps);
 		}
 
 		// acceptors
@@ -194,7 +193,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 
 			Size const acc( *anum );
 			sho_energies_[AtomID(acc, i)] =
-				sho_meth_->compute_acceptor_atom_energy(rsd, i, acc, ps);
+				sho_meth_->compute_sho_acceptor_atom_energy(rsd, i, acc, ps);
 		}
 	}
 
@@ -381,7 +380,7 @@ bool SHOBuriedUnsatisfiedPolarsCalculator::is_buried(AtomID aid) {
 ///
 bool SHOBuriedUnsatisfiedPolarsCalculator::is_unsat(AtomID aid) const {
 
-	return hbond_set_.nhbonds(aid) == 0;
+	return hbond_set_->nhbonds(aid) == 0;
 }
 
 
@@ -409,7 +408,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_atom_subset(
 		Real shoe = sho_energies_.find(aid)->second;
 		std::cout << " " <<
 			"Esho:" << shoe << " " <<
-			"#hb:" << hbond_set_.nhbonds(aid);
+			"#hb:" << hbond_set_->nhbonds(aid);
 
 		// secondar,y energy info
 		std::cout << "  (";
@@ -417,7 +416,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_atom_subset(
 		Real hbe = hbond_energy(aid, ps);
 
 		Real wtote = sfxn_->get_weight(core::scoring::occ_sol_exact) *
-			core::scoring::geometric_solvation::LK_MATCHING_WEIGHT_EXACT *
+			// core::scoring::geometric_solvation::LK_MATCHING_WEIGHT_EXACT * temporary fix to allow suppression of LK_MATCHING_WEIGHT_EXACT in header file
 			shoe + hbe;
 
 		std::cout <<
@@ -440,7 +439,7 @@ Real SHOBuriedUnsatisfiedPolarsCalculator::hbond_energy(AtomID aid,
 
 	Real tot=0;
 	utility::vector1<core::scoring::hbonds::HBondCOP> hbonds =
-		hbond_set_.atom_hbonds(aid);
+		hbond_set_->atom_hbonds(aid);
 
 	core::Size N = hbonds.size();
 	for ( Size i=1; i<=N; ++i ) {
@@ -517,8 +516,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_atom_info(
 void SHOBuriedUnsatisfiedPolarsCalculator::print_all_info(
 	core::pose::Pose const& ps) const {
 
-
-	std::cout << "-----------------------------------" << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "target amino acid type: " << tgt_amino_ << std::endl;
 	std::cout << "target atom name: " << tgt_atom_ << std::endl;
 
@@ -539,7 +537,10 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_all_info(
 	std::cout << std::endl;
 
 	std::cout << "SHO cutoff: " << sho_cutoff_ << std::endl;
-	std::cout << "-----------------------------------" << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+
+	std::cout << std::endl;
+	std::cout << "NOTE: The energies output here are SHO energies even for H-bonded atoms" << std::endl;
 
 	std::cout << std::endl << "BURIED UNSATISFIED ATOMS:" << std::endl;
 	print_atom_subset(burunsat_atoms_, ps);
@@ -560,8 +561,14 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_all_info(
 ///
 /// @param[in] ps pose for which the data are to be computed
 ///
+/// @details the pose must already have been scored by the score function
+///  pointed to by sfxn_.
+///
 void SHOBuriedUnsatisfiedPolarsCalculator::recompute_and_print(
 	core::pose::Pose const& ps) {
+
+	sho_meth_->init_hbond_data(ps);
+	hbond_set_ = sho_meth_->hbond_set();
 
 	recompute(ps);
 
@@ -656,14 +663,14 @@ protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculato
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( search_typ_ ); // enum protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::SearchTyp
 	// arc( sho_meth_ ); // core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP
-	// instead, recreate the sho_meth_ from the command line
-	sho_meth_ = create_ExactSHOEnergy_from_cmdline();
 
 	arc( sho_cutoff_ ); // core::Real
 	arc( tgt_res_idxs_ ); // utility::vector1<Size>
 	arc( tgt_amino_ ); // std::string
 	arc( tgt_atom_ ); // std::string
-	arc( hbond_set_ ); // core::scoring::hbonds::HBondSet
+	std::shared_ptr< core::scoring::hbonds::HBondSet > local_hbs;
+	arc( local_hbs ); // core::scoring::hbonds::HBondSet
+	hbond_set_ = local_hbs;
 	arc( sho_energies_ ); // std::map<AtomID, Real>
 	arc( burunsat_atoms_ ); // utility::vector1<AtomID>
 	arc( num_burunsat_atoms_ ); // Size
@@ -672,6 +679,9 @@ protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculato
 	std::shared_ptr< core::scoring::ScoreFunction > local_sfxn;
 	arc( local_sfxn ); // core::scoring::ScoreFunctionCOP
 	sfxn_ = local_sfxn; // copy the non-const pointer(s) into the const pointer(s)
+
+	// instead, recreate the sho_meth_ from the command line
+	sho_meth_ = create_ExactSHOEnergy_from_cmdline(sfxn_->energy_method_options());
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator );

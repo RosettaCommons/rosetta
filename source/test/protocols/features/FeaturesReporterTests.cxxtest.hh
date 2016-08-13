@@ -22,6 +22,7 @@
 #include <protocols/features/AtomTypesFeatures.hh>
 #include <protocols/features/BetaTurnDetectionFeatures.hh>
 #include <protocols/features/ChargeChargeFeatures.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/features/GeometricSolvationFeatures.hh>
 #include <protocols/features/HBondFeatures.hh>
 #include <protocols/features/HBondParameterFeatures.hh>
@@ -120,7 +121,8 @@ public:
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new AtomTypesFeatures() ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new BetaTurnDetectionFeatures() ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new ChargeChargeFeatures() ));
-		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new GeometricSolvationFeatures() ));
+		core::scoring::methods::EnergyMethodOptions options;
+		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new GeometricSolvationFeatures(options) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new HBondFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new HBondParameterFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new JobDataFeatures() ));

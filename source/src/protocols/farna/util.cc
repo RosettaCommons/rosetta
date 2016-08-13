@@ -1545,15 +1545,15 @@ get_moving_res( core::pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
 base_pair_step_moving( base_pairs::BasePairStep const & base_pair_step,
-											 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-											 pose::Pose const & pose )
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	pose::Pose const & pose )
 {
 	// look that at least one base in this base pair step is moveable.
 	bool pair_moving( false );
 	utility::vector1< Size > bps_res = utility::tools::make_vector1( base_pair_step.i(),
-																																	 base_pair_step.i_next(),
-																																	 base_pair_step.j(),
-																																	 base_pair_step.j_next() );
+		base_pair_step.i_next(),
+		base_pair_step.j(),
+		base_pair_step.j_next() );
 	for ( Size i = 1; i <= 4; i++ ) {
 		Size domain(  atom_level_domain_map->get_domain( core::id::NamedAtomID( " C1'", bps_res[i] ), pose  ) );
 		// TR << "DOMAIN for " << bps_res[i] << " --> " << domain << std::endl;
@@ -1568,21 +1568,21 @@ base_pair_step_moving( base_pairs::BasePairStep const & base_pair_step,
 /////////////////////////////////////////////////////////////////////////////////
 bool
 base_pair_moving( core::pose::rna::BasePair const & base_pair,
-											 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-											 core::pose::Pose const & pose )
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose const & pose )
 {
 	// look that at least one base in this base pair step is moveable.
 	bool pair_moving( false );
 	utility::vector1< Size > bp_res = utility::tools::make_vector1( base_pair.res1(),
-																																	base_pair.res2() );
+		base_pair.res2() );
 	for ( Size i = 1; i <= bp_res.size(); i++ ) {
 		Size domain(  atom_level_domain_map->get_domain( core::id::NamedAtomID( " C1'", bp_res[i] ), pose  ) );
-		//		TR << "DOMAIN for " << bp_res[i] << " --> " << domain << std::endl;
+		//  TR << "DOMAIN for " << bp_res[i] << " --> " << domain << std::endl;
 		if ( domain == 0 || domain == libraries::ROSETTA_LIBRARY_DOMAIN ) {
 			pair_moving = true; //break;
 		}
 	}
-	//	TR << "MOVING? " << pair_moving << std::endl;
+	// TR << "MOVING? " << pair_moving << std::endl;
 	return pair_moving;
 }
 

@@ -386,7 +386,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			c = conventional_chains[ resnum[ q ] ];
 			domain_map[ i ] = n;
 			if ( j > 1 &&
-					 ( ( ( i - 1 ) != j ) || d != c || cutpoint_open_in_full_model.has_value( j )  ) ) {
+					( ( ( i - 1 ) != j ) || d != c || cutpoint_open_in_full_model.has_value( j )  ) ) {
 				chunks.push_back(curr_chunk);
 				curr_chunk.clear();
 			}
@@ -445,7 +445,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	for ( Size n = 1; n <= general_pairs.size(); n++ ) {
 		std::pair< Size, Size > const & p = general_pairs[ n ];
 		if ( !canonical_pairs.has_value( p ) &&
-				 ( domain_map[ p.first ] == 0 || domain_map[ p.second ] == 0 ) ) {
+				( domain_map[ p.first ] == 0 || domain_map[ p.second ] == 0 ) ) {
 			vector1< Size > const new_pair = make_vector1( p.first, p.second );
 			if ( !already_listed_in_obligate_pair( new_pair, obligate_pair, obligate_pair_explicit_full_model ) ) {
 				obligate_pair.push_back( p.first );

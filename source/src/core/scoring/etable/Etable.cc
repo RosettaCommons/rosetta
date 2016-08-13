@@ -114,6 +114,7 @@ Etable::Etable(
 	enlarge_h_lj_wdepth_      ( options.enlarge_h_lj_wdepth ),
 	lk_min_dis2sigma_          ( 0.89 ),
 	no_lk_polar_desolvation_  ( options.no_lk_polar_desolvation ),
+	proline_N_is_lk_nonpolar_ ( options.proline_N_is_lk_nonpolar ),
 	min_dis_                   ( 0.01 ),
 	min_dis2_                  ( min_dis_ * min_dis_ ),
 	add_long_range_damping_    ( true ),
@@ -198,7 +199,9 @@ Etable::initialize_from_input_atomset(
 		chemical::AtomTypeSetCOP atom_set( atom_set_ );
 		for ( int i=1; i<= n_atomtypes_; ++i ) {
 			if ( (*atom_set)[i].is_acceptor() || (*atom_set)[i].is_donor() ) {
-				lk_dgfree_[i] = 0.0;
+				if ( !proline_N_is_lk_nonpolar_ || (*atom_set)[i].atom_type_name() != "Npro" ) { // bazzoli
+					lk_dgfree_[i] = 0.0;
+				}
 			}
 		}
 	}

@@ -344,7 +344,10 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			energy_method_options_->elec_max_dis( real_value );
 		} else if ( tag == "FA_ELEC_NO_DIS_DEP_DIE" ) {
 			energy_method_options_->elec_no_dis_dep_die( true );
-		} else if ( tag == "NO_LK_POLAR_DESOLVATION" ) {
+		} else if ( ( tag == "NO_LK_POLAR_DESOLVATION" ) || ( tag == "NO_LK_POLAR_DESOLVATION_EXCEPT_PROLINE_N" ) ) {
+			if ( tag == "NO_LK_POLAR_DESOLVATION_EXCEPT_PROLINE_N" ) {
+				energy_method_options_->etable_options().proline_N_is_lk_nonpolar = true;
+			}
 			energy_method_options_->etable_options().no_lk_polar_desolvation = true;
 			reset_energy_methods(); // ensure that etable is recomputed.
 			score_function_info_current_ = false;

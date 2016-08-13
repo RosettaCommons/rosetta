@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/features/GeometricSolvationFeaturesCreator.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Package Headers
 
@@ -28,7 +29,9 @@ namespace features {
 GeometricSolvationFeaturesCreator::GeometricSolvationFeaturesCreator() {}
 GeometricSolvationFeaturesCreator::~GeometricSolvationFeaturesCreator() {}
 FeaturesReporterOP GeometricSolvationFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new GeometricSolvationFeatures );
+
+	core::scoring::methods::EnergyMethodOptions options;
+	return FeaturesReporterOP( new GeometricSolvationFeatures(options) );
 }
 
 std::string GeometricSolvationFeaturesCreator::type_name() const {

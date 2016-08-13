@@ -200,13 +200,13 @@ get_moving_res( core::pose::Pose const & pose,
 
 bool
 base_pair_step_moving( base_pairs::BasePairStep const & base_pair_step,
-											 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-											 core::pose::Pose const & pose );
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose const & pose );
 
 bool
 base_pair_moving( core::pose::rna::BasePair const & base_pair,
-									protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-									core::pose::Pose const & pose );
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose const & pose );
 
 } //farna
 } //protocols

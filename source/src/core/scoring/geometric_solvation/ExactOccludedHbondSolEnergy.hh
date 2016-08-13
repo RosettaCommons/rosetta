@@ -1,4 +1,3 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -16,32 +15,27 @@
 #define INCLUDED_core_scoring_geometric_solvation_ExactOccludedHbondSolEnergy_hh
 
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.fwd.hh>
-
-#include <core/types.hh>
-
-// Package headers
+#include <core/scoring/etable/Etable.fwd.hh>
+#include <core/scoring/etable/EtableEnergy.fwd.hh>
+#include <core/scoring/hbonds/types.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-
-// Project headers
-#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
-
-// C++ headers
-#include <map>
-
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-
-// Utility headers
+#include <core/types.hh>
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
+#include <map>
 
 namespace core {
 namespace scoring {
 namespace geometric_solvation {
-
 
 // singleton class
 class GridInfo : public utility::SingletonBase< GridInfo >
@@ -50,6 +44,7 @@ public:
 	friend class utility::SingletonBase< GridInfo >;
 
 public:
+
 	// accessors
 	core::Size xnum_points() const { return xnum_points_; };
 	core::Size ynum_points() const { return ynum_points_; };
@@ -62,40 +57,48 @@ public:
 	core::Real zorigin() const { return zorigin_; };
 
 private:
+
 	//private constructor
 	GridInfo();
+
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static GridInfo * create_singleton_instance();
 
 private:
+
 	// private member data
 	core::Size xnum_points_, ynum_points_, znum_points_;
 	core::Real xstep_, ystep_, zstep_;
 	core::Real xorigin_, yorigin_, zorigin_;
-
 };
 
 
 // singleton class
 class WaterWeightGridSet : public utility::SingletonBase< WaterWeightGridSet >
 {
+
 public:
+
+	typedef std::vector < std::vector < std::vector <core::Real> > > Grid;
+
 	friend class utility::SingletonBase< WaterWeightGridSet >;
 
-public:
-
-	std::vector < std::vector < std::vector <core::Real> > > const &
+	Grid const &
 	get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
 
 	core::Real
 	get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
 
+	/// @brief prints a given xz-plane of a water grid
+	void print_water_weight_grid_xz_plane(hbonds::HBEvalType const & hbond_eval_type, int const y) const;
+
 private:
+
 	//private constructor
 	WaterWeightGridSet();
 
-	core::Real fill_water_grid( std::vector < std::vector < std::vector <core::Real> > > & water_weights,
+	core::Real fill_water_grid( Grid & water_weights,
 		hbonds::HBEvalTuple const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
 
 	/// @brief private singleton creation function to be used with
@@ -105,26 +108,27 @@ private:
 private:
 
 	// private member data
-	std::map< hbonds::HBEvalType, std::vector < std::vector < std::vector <core::Real> > > > all_water_weights_;
+	std::map< hbonds::HBEvalType, Grid > all_water_weights_;
 	std::map< hbonds::HBEvalType, core::Real> sum_all_water_weights_;
 
 	hbonds::HBondOptionsOP   hbondoptions_;
 	hbonds::HBondDatabaseCOP hb_database_;
 };
 
-typedef std::map< hbonds::HBEvalType, std::vector < std::vector < std::vector <core::Real> > > >::const_iterator all_water_weights_iterator;
-typedef std::map< hbonds::HBEvalType, core::Real>::const_iterator sum_water_weights_iterator;
+typedef std::map< hbonds::HBEvalType, WaterWeightGridSet::Grid >::const_iterator all_water_weights_iterator;
+typedef std::map< hbonds::HBEvalType, core::Real >::const_iterator sum_water_weights_iterator;
 
 
 class ExactOccludedHbondSolEnergy : public methods::ContextDependentOneBodyEnergy  {
+
 public:
+
 	typedef methods::ContextDependentOneBodyEnergy  parent;
 
-public:
-
 	ExactOccludedHbondSolEnergy(
+		etable::Etable const & etable_in,
+		bool const analytic_etable_evaluation,
 		bool const exact_occ_skip_Hbonders = false,
-		bool const exact_occ_include_Hbond_contribution = false,
 		bool const exact_occ_pairwise = false,
 		bool const exact_occ_pairwise_by_res = false,
 		bool const exact_occ_split_between_res = false,
@@ -138,6 +142,8 @@ public:
 	~ExactOccludedHbondSolEnergy();
 
 	virtual methods::EnergyMethodOP clone() const;
+
+	void init_hbond_data( pose::Pose const& pose) const;
 
 	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
@@ -157,27 +163,37 @@ public:
 
 	virtual bool defines_intrares_energy( EnergyMap const & ) const { return false; }
 
-	virtual Distance atomic_interaction_cutoff() const;
+	/// @brief computes the desolvation energy (i.e., either SHO or median LK) of a donor atom
+	core::Real compute_donor_atom_energy(
+		conformation::Residue const & polar_rsd,
+		core::Size polar_resnum,
+		core::Size const polar_atom,
+		pose::Pose const & pose
+	) const;
 
-	core::Real
-	compute_grid_constant(
-		hbonds::HBEvalTuple const & hbond_eval_type
+	/// @brief computes the desolvation energy (i.e., either SHO or median LK) of an acceptor atom
+	core::Real compute_acceptor_atom_energy(
+		conformation::Residue const & polar_rsd,
+		core::Size polar_resnum,
+		core::Size const polar_atom,
+		pose::Pose const & pose
 	) const;
 
 	/// @brief computes the SHO energy of a donor atom
-	core::Real compute_donor_atom_energy(
+	core::Real compute_sho_donor_atom_energy(
 		conformation::Residue const & polar_rsd,
 		core::Size polar_resnum,
 		core::Size const polar_atom,
 		pose::Pose const & pose) const;
 
 	/// @brief computes the SHO energy of an acceptor atom
-	core::Real compute_acceptor_atom_energy(
+	core::Real compute_sho_acceptor_atom_energy(
 		conformation::Residue const & polar_rsd,
 		core::Size polar_resnum,
 		core::Size const polar_atom,
 		pose::Pose const & pose) const;
 
+	/// @brief computes the SHO energy of a polar group
 	core::Real compute_polar_group_sol_energy(
 		pose::Pose const & pose,
 		conformation::Residue const & polar_rsd,
@@ -188,6 +204,30 @@ public:
 		Size const single_occluding_atominx = 0
 	) const;
 
+	/// @brief returns the LK energy of a given atom due to all its neighboring residues
+	core::Real get_atom_lk_energy(
+		core::Size const atom_idx,
+		core::conformation::Residue const& res,
+		core::pose::Pose const& ps ) const;
+
+	hbonds::HBondSetCOP hbond_set() const {return hbond_set_;}
+
+	virtual
+	core::Size version() const;
+
+private:
+
+	void allocate_grid_of_occluded_sites();
+
+	/// @brief computes energy of fully buried polar group
+	core::Real compute_fully_buried_ene() const;
+
+	/// @brief computes the grid constant for a given polar group (i.e., the denominator in the solvation energy equation)
+	core::Real compute_grid_constant(
+		core::scoring::hbonds::HBEvalTuple const & hbond_eval_type,
+		core::Real fully_buried_ene ) const;
+
+	/// @brief computes the SHO energy of a polar group
 	core::Real compute_polar_group_sol_energy(
 		pose::Pose const & pose,
 		conformation::Residue const & polar_rsd,
@@ -201,13 +241,13 @@ public:
 		core::Size const single_occluding_atominx = 0
 	) const;
 
-
-private:
-
-	void allocate_grid_of_occluded_sites();
+	/// @brief returns the LK energy of a given atom due to a given residue
+	core::Real get_atom_lk_energy(
+		core::Size atom_idx,
+		conformation::Residue const& res,
+		conformation::Residue const& occ_res) const;
 
 	bool const exact_occ_skip_Hbonders_;
-	bool const exact_occ_include_Hbond_contribution_;
 	bool const exact_occ_pairwise_;
 	bool const exact_occ_pairwise_by_res_;
 	bool const exact_occ_split_between_res_;
@@ -215,26 +255,30 @@ private:
 	core::Real const occ_radius_scaling_;
 	hbonds::HBondOptionsOP   hbondoptions_;
 	hbonds::HBondDatabaseCOP hb_database_;
-	bool const verbose_;
 	chemical::AtomTypeSetCAP atom_type_set_ptr_;
-
 
 	// note: this would really be a local variable, it's just that we don't want to pay
 	// the price to reallocate memory every time. Making it member data keeps it persistent,
 	// but then we can't alter it in const member functions. For this reason, it's mutable...
-	mutable std::vector < std::vector < std::vector <bool> > > occluded_sites_;
+	mutable WaterWeightGridSet::Grid occluded_sites_;
 
-	virtual
-	core::Size version() const;
+	/// @brief stores H-bond info for the entire pose.
+	core::scoring::hbonds::HBondSetOP hbond_set_;
+
+	/// @brief computes LK energies for H-bonded atoms
+	etable::EtableEvaluatorOP etable_evaluator_;
+
+	/// @brief interatomic squared distance below which LK energies are computed
+	core::Real lk_safe_max_dis2_;
+
+	bool const verbose_;
 };
 
-extern core::Real const LK_MATCHING_WEIGHT_EXACT;
-
-ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline();
+/// @brief creates an ExactOccludedHbondSolEnergy object according to command-line options
+ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline(methods::EnergyMethodOptions const & options);
 
 } // geometric_solvation
 } // scoring
 } // core
 
 #endif
-

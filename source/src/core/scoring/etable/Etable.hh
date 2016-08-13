@@ -722,6 +722,7 @@ private:
 	bool const enlarge_h_lj_wdepth_;
 	Real const lk_min_dis2sigma_;
 	bool const no_lk_polar_desolvation_;
+	bool const proline_N_is_lk_nonpolar_;
 	Real const min_dis_;
 	Real const min_dis2_; // was double
 	bool const add_long_range_damping_;
