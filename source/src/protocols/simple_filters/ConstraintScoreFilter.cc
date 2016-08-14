@@ -21,6 +21,7 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -95,18 +96,23 @@ ConstraintScoreFilter::report_sm( core::pose::Pose const & pose ) const
 	posecopy.remove_constraints();
 	posecopy.energies().clear();
 
-	core::scoring::ScoreFunction sfx;
-	sfx.set_weight( core::scoring::atom_pair_constraint, 1.0 );
-	sfx.set_weight( core::scoring::angle_constraint, 1.0 );
-	sfx.set_weight( core::scoring::backbone_stub_constraint, 1.0 );
-	sfx.set_weight( core::scoring::dihedral_constraint, 1.0 );
-	sfx.set_weight( core::scoring::coordinate_constraint, 1.0 );
-	sfx.set_weight( core::scoring::res_type_constraint, 1.0 );
+	core::scoring::ScoreFunctionOP sfx_op( new core::scoring::ScoreFunction );
+	sfx_op->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+	sfx_op->set_weight( core::scoring::angle_constraint, 1.0 );
+	sfx_op->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
+	sfx_op->set_weight( core::scoring::dihedral_constraint, 1.0 );
+	sfx_op->set_weight( core::scoring::coordinate_constraint, 1.0 );
+	sfx_op->set_weight( core::scoring::res_type_constraint, 1.0 );
+
+	if ( core::pose::symmetry::is_symmetric( posecopy ) ) {
+		// Why does this take an OP instead of a non-const &???
+		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( posecopy, sfx_op );
+	}
 
 	protocols::constraint_generator::AddConstraints( cgs_ ).apply( posecopy );
-	sfx.show( TR, posecopy );
+	sfx_op->show( TR, posecopy );
 	TR.flush();
-	return sfx( posecopy );
+	return (*sfx_op)( posecopy );
 }
 
 void
