@@ -121,9 +121,11 @@ RamaPrePro::read_rpp_tables( ) {
 	bool const use_steep( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_steep ]() );
 	bool const nobidentate( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_nobidentate ]() );
 	if ( nobidentate ) suffix = ".rb";
-	if ( use_steep ) suffix += ".100_2_0_20";
+	//if ( use_steep ) suffix += ".100_2_0_20";
+	// new logic Aug 1 2016: just revert back to rama map by Maxim (for non-prepros) until we get better scheme...
+	if ( use_steep ) suffix += ".shapovalov.kappa25";
 	allmap = "scoring/score_functions/rama/fd/all.ramaProb" + suffix;
-	prepromap = "scoring/score_functions/rama/fd/prepro.ramaProb" + suffix;
+	prepromap = "scoring/score_functions/rama/fd/prepro.ramaProb";
 
 	///fpd hardcode for now
 	read_rama_map_file_shapovalov(allmap, data, symmetrize_gly);

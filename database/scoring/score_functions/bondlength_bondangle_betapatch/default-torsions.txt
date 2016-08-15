@@ -1,0 +1,114 @@
+## library of dihedrals
+## these are rotatable which are not being considered by statistical torsion potential
+## torsion term uses K(1-cos(nx-phi0))
+#
+#
+## rotable single sp3 hydrogen at Cys/Ser/Thr/Tyr 
+#AA A1  A2  A3  A4   phi0     K     n
+CYS CA  CB  SG  HG   0.0     -0.15 0 #this is offset to make minimum zero
+CYS CA  CB  SG  HG   0.0      0.24  1
+CYS CA  CB  SG  HG   0.0      0.15  2
+CYS CA  CB  SG  HG   0.0      0.27  3
+CYS 1HB CB  SG  HG   0.0      0.20  3
+CYS 2HB CB  SG  HG   0.0      0.20  3
+# below are taken care of by hlx_tors
+#SER CA  CB  OG  HG   0.0     -0.30  0 #this is offset to make minimum zero
+#SER CA  CB  OG  HG   0.0      1.30  1
+#SER CA  CB  OG  HG   0.0      0.30  2
+#SER CA  CB  OG  HG   0.0      0.42  3
+#THR CA  CB  OG1 HG1  0.0     -0.18  0 #this is offset to make minimum zero
+#THR CA  CB  OG1 HG1  0.0      1.33  1
+#THR CA  CB  OG1 HG1  0.0      0.18  2
+#THR CA  CB  OG1 HG1  0.0      0.32  3
+#THR CG2 CB  OG1 HG1  0.0     -0.18  0 #this is offset to make minimum zero
+#THR CG2 CB  OG1 HG1  0.0      1.33  1
+#THR CG2 CB  OG1 HG1  0.0      0.18  2 
+#THR CG2 CB  OG1 HG1  0.0      0.32  3 
+#TYR CE1 CZ  OH  HH   0.0      0.99  2
+#TYR CE2 CZ  OH  HH   0.0      0.99  2
+#
+## rotatable three sp3 hydrogens at tip of Ala/Ile/Leu/Lys/Met/Thr/Val sidechains
+ALA N   CA  CB  1HB   0.0      0.20  3 # N-CT1-CT3-HA
+ALA N   CA  CB  2HB   0.0      0.20  3  
+ALA N   CA  CB  3HB   0.0      0.20  3  
+ALA C   CA  CB  1HB   0.0      0.20  3  # C-CT1-CT3-HA
+ALA C   CA  CB  2HB   0.0      0.20  3  
+ALA C   CA  CB  3HB   0.0      0.20  3  
+ALA HA  CA  CB  1HB   0.0      0.20  3  # HT-CT1-CT3-HA
+ALA HA  CA  CB  2HB   0.0      0.20  3  
+ALA HA  CA  CB  3HB   0.0      0.20  3  
+ILE CA  CB  CG2 1HG2  0.0      0.20  3  # CT1-CT1-CT3-HA
+ILE CA  CB  CG2 2HG2  0.0      0.20  3 
+ILE CA  CB  CG2 3HG2  0.0      0.20  3 
+ILE CG1 CB  CG2 1HG2  0.0      0.20  3  # CT2-CT1-CT3-HA
+ILE CG1 CB  CG2 2HG2  0.0      0.20  3 
+ILE CG1 CB  CG2 3HG2  0.0      0.20  3 
+ILE HB  CB  CG2 1HG2  0.0      0.20  3  # HA-CT1-CT3-HA
+ILE HB  CB  CG2 2HG2  0.0      0.20  3 
+ILE HB  CB  CG2 3HG2  0.0      0.20  3 
+ILE CB  CG1 CD1 1HD1  0.0      0.20  3  # CT1-CT2-CT3-HA
+ILE CB  CG1 CD1 2HD1  0.0      0.20  3 
+ILE CB  CG1 CD1 3HD1  0.0      0.20  3 
+ILE 1HG1 CG1 CD1 1HD1 0.0      0.20  3 # HA-CT3-CT2-HA
+ILE 1HG1 CG1 CD1 2HD1 0.0      0.20  3
+ILE 1HG1 CG1 CD1 3HD1 0.0      0.20  3
+ILE 2HG1 CG1 CD1 1HD1 0.0      0.20  3
+ILE 2HG1 CG1 CD1 2HD1 0.0      0.20  3
+ILE 2HG1 CG1 CD1 3HD1 0.0      0.20  3
+LEU CB  CG CD1 1HD1   0.0      0.20  3 # CT2-CT1-CT3-HA
+LEU CB  CG CD1 2HD1   0.0      0.20  3
+LEU CB  CG CD1 3HD1   0.0      0.20  3
+LEU CD2 CG CD1 1HD1   0.0      0.20  3 # CT3-CT1-CT3-HA
+LEU CD2 CG CD1 2HD1   0.0      0.20  3 
+LEU CD2 CG CD1 3HD1   0.0      0.20  3
+LEU HG  CG CD1 1HD1   0.0      0.20  3 # HA-CT1-CT3-HA
+LEU HG  CG CD1 2HD1   0.0      0.20  3
+LEU HG  CG CD1 3HD1   0.0      0.20  3
+LEU CB  CG CD2 1HD2   0.0      0.20  3 # CT2-CT1-CT3-HA
+LEU CB  CG CD2 2HD2   0.0      0.20  3
+LEU CB  CG CD2 3HD2   0.0      0.20  3
+LEU CD1 CG CD2 1HD2   0.0      0.20  3 # CT3-CT1-CT3-HA
+LEU CD1 CG CD2 2HD2   0.0      0.20  3
+LEU CD1 CG CD2 3HD2   0.0      0.20  3
+LEU HG  CG CD2 1HD2   0.0      0.20  3 # HA-CT1-CT3-HA  
+LEU HG  CG CD2 2HD2   0.0      0.20  3
+LEU HG  CG CD2 3HD2   0.0      0.20  3
+LYS CD  CE NZ  1HZ    0.0      0.10  3   # CT2-CT2-N-H
+LYS CD  CE NZ  2HZ    0.0      0.10  3  
+LYS CD  CE NZ  3HZ    0.0      0.10  3   
+LYS 1HE CE NZ  1HZ    0.0      0.10  3   # HA-CT2-N-H   
+LYS 1HE CE NZ  2HZ    0.0      0.10  3   
+LYS 1HE CE NZ  3HZ    0.0      0.10  3  
+LYS 2HE CE NZ  1HZ    0.0      0.10  3   # HA-CT2-N-H   
+LYS 2HE CE NZ  2HZ    0.0      0.10  3   
+LYS 2HE CE NZ  3HZ    0.0      0.10  3
+MET CG  SD CE  1EH    0.0      0.28  3 # CT2-S-CT3-H
+MET CG  SD CE  2HE    0.0      0.28  3
+MET CG  SD CE  3HE    0.0      0.28  3
+THR CA  CB CG2 1HG2   0.0      0.20  3 # CT1-CT1-CT3-HA
+THR CA  CB CG2 2HG2   0.0      0.20  3
+THR CA  CB CG2 3HG2   0.0      0.20  3
+THR OG1 CB CG2 1HG2   0.0      0.20  3 # OH-CT1-CT3-HA
+THR OG1 CB CG2 2HG2   0.0      0.20  3
+THR OG1 CB CG2 3HG2   0.0      0.20  3
+THR HB  CB CG2 1HG2   0.0      0.20  3 # HA-CT1-CT3-HA
+THR HB  CB CG2 2HG2   0.0      0.20  3
+THR HB  CB CG2 3HG2   0.0      0.20  3 
+VAL CA  CB CG1 1HG1   0.0      0.20  3 # CT1-CT1-CT3-HA 
+VAL CA  CB CG1 2HG1   0.0      0.20  3
+VAL CA  CB CG1 3HG1   0.0      0.20  3 
+VAL CG2 CB CG1 1HG1   0.0      0.20  3 # CT3-CT1-CT3-HA   
+VAL CG2 CB CG1 2HG1   0.0      0.20  3
+VAL CG2 CB CG1 3HG1   0.0      0.20  3
+VAL HB  CB CG1 1HG1   0.0      0.20  3 # HA-CT1-CT3-HA  
+VAL HB  CB CG1 2HG1   0.0      0.20  3
+VAL HB  CB CG1 3HG1   0.0      0.20  3
+VAL CA  CB CG2 1HG2   0.0      0.20  3 # CT1-CT1-CT3-HA 
+VAL CA  CB CG2 2HG2   0.0      0.20  3				   
+VAL CA  CB CG2 3HG2   0.0      0.20  3				    
+VAL CG1 CB CG2 1HG2   0.0      0.20  3 # CT3-CT1-CT3-HA  
+VAL CG1 CB CG2 2HG2   0.0      0.20  3				    
+VAL CG1 CB CG2 3HG2   0.0      0.20  3				   
+VAL HB  CB CG2 1HG2   0.0      0.20  3 # HA-CT1-CT3-HA    
+VAL HB  CB CG2 2HG2   0.0      0.20  3
+VAL HB  CB CG2 3HG2   0.0      0.20  3

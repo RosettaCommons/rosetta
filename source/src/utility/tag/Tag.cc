@@ -100,7 +100,7 @@ utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
 
 Tag::Tag() :
 	parentTag_(/* NULL */),
-	quote_options_( false )
+        quote_options_( false )
 {}
 
 void Tag::clear() {

@@ -290,16 +290,16 @@ void extract_asymmetric_unit(
 
 		Residue residue( pose_in.residue( i ) );
 		if ( residue.type().is_lower_terminus() ||
-				( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
-				residue.aa() == aa_h2o ||
-				residue.aa() == aa_vrt ||
-				jump_to_next
-				) {
+			( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
+			residue.aa() == aa_h2o ||
+			residue.aa() == aa_vrt ||
+			jump_to_next
+		) {
 
 			if ( ( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
-					residue.aa() == aa_vrt ||
-					residue.aa() == aa_h2o
-					) {
+				residue.aa() == aa_vrt ||
+				residue.aa() == aa_h2o
+			) {
 				jump_to_next = true;
 			} else if ( jump_to_next ) {
 				jump_to_next = false;

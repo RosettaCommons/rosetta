@@ -62,7 +62,7 @@ public:
 	reinitialize_for_new_input() const {
 		return true;
 	}
-
+	
 	/// @brief Parse my tag for RosettaScripts.  Main RS interface is in AntibodyDesignMover.
 	/// This is just a small implementation, controlled mainly through cmd-line flags.
 	virtual void

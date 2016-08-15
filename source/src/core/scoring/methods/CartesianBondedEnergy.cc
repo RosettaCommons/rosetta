@@ -173,6 +173,7 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 	sts.push_back( cart_bonded_angle );
 	sts.push_back( cart_bonded_length );
 	sts.push_back( cart_bonded_torsion );
+	sts.push_back( cart_bonded_improper );
 	return sts;
 }
 
@@ -222,9 +223,9 @@ void ResidueCartBondedParameters::add_torsion_parameter( Size4 atom_inds, CartBo
 	torsion_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_improper_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_improper_parameter( Size4 atom_inds, CartBondedParametersCOP params )
 {
-	improper_torsion_params_.push_back( std::make_pair( atom_inds, params ));
+	improper_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
 void ResidueCartBondedParameters::add_bbdep_length_parameter(  Size2 atom_inds, CartBondedParametersCOP params )
@@ -254,33 +255,33 @@ void ResidueCartBondedParameters::bb_O_index( Size index )  { bb_O_index_  = ind
 void ResidueCartBondedParameters::bb_H_index( Size index )  { bb_H_index_  = index; }
 void ResidueCartBondedParameters::pro_CD_index( Size index )  { pro_CD_index_  = index; }
 
-void ResidueCartBondedParameters::ca_cprev_n_h_interres_torsion_params(
+void ResidueCartBondedParameters::ca_cprev_n_h_interres_improper_params(
 	CartBondedParametersCOP params
 )
 {
-	ca_cprev_n_h_interres_torsion_params_ = params;
+	ca_cprev_n_h_interres_improper_params_ = params;
 }
 
-void ResidueCartBondedParameters::oprev_cprev_n_h_interres_torsion_params(
+void ResidueCartBondedParameters::oprev_cprev_n_h_interres_improper_params(
 	CartBondedParametersCOP params
 )
 {
-	oprev_cprev_n_h_interres_torsion_params_ = params;
+	oprev_cprev_n_h_interres_improper_params_ = params;
 }
 
 
-void ResidueCartBondedParameters::ca_nnext_c_o_interres_torsion_params(
+void ResidueCartBondedParameters::ca_nnext_c_o_interres_improper_params(
 	CartBondedParametersCOP params
 )
 {
-	ca_nnext_c_o_interres_torsion_params_ = params;
+	ca_nnext_c_o_interres_improper_params_ = params;
 }
 
-void ResidueCartBondedParameters::pro_cd_cprev_n_ca_interres_torsion_params(
+void ResidueCartBondedParameters::pro_cd_cprev_n_ca_interres_improper_params(
 	CartBondedParametersCOP params
 )
 {
-	pro_cd_cprev_n_ca_interres_torsion_params_ = params;
+	pro_cd_cprev_n_ca_interres_improper_params_ = params;
 }
 
 void ResidueCartBondedParameters::cprev_n_bond_length_params(
@@ -359,6 +360,7 @@ IdealParametersDatabase::init(
 	read_length_database( libpath+"/default-lengths.txt" );
 	read_angle_database( libpath+"/default-angles.txt" );
 	read_torsion_database( libpath+"/default-torsions.txt" );
+	read_improper_database( libpath+"/default-improper.txt" ); // used to be called "torsion" until July 2016
 
 	if ( !bbdep_bond_params_ ) return;
 
@@ -425,7 +427,42 @@ IdealParametersDatabase::read_angle_database(std::string infile) {
 }
 
 void
-IdealParametersDatabase::read_torsion_database(std::string infile) {
+IdealParametersDatabase::read_torsion_database(std::string /*infile*/) {
+	/*
+	std::string line;
+	std::string name3, atom1, atom2, atom3, atom4;
+	Real mu_d, K_d;
+	Size period;
+
+	utility::io::izstream instream;
+	atm_name_quad tuple;
+	basic::database::open( instream, infile);
+	while ( instream ) {
+		getline( instream, line );
+		if ( line[0] == '#' ) continue;
+
+		std::istringstream linestream(line);
+
+		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+		CartBondedParametersCOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
+
+		std::string const rsdname( name3 );
+		std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
+
+		if( it == torsions_indep_.end() ){
+			//torsions_indep_[ rsdname ] = utility::vector1< std::pair< atm_name_quad, CartBondedParametersOP > >();
+			torsionparam_vector a; 
+			torsions_indep_.insert( std::pair< std::string const, torsionparam_vector >( rsdname, a )  );
+		}
+		torsions_indep_.at( rsdname ).push_back( std::make_pair( tuple, params_i ) );
+	}
+	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
+	*/
+}
+
+void
+IdealParametersDatabase::read_improper_database(std::string infile) {
 	std::string line;
 	std::string name3, atom1, atom2, atom3, atom4;
 	Real mu_d, K_d;
@@ -443,16 +480,16 @@ IdealParametersDatabase::read_torsion_database(std::string infile) {
 		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
 		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
 		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
-		torsions_indep_.insert( std::make_pair( tuple, params_i) );
+		impropers_indep_.insert( std::make_pair( tuple, params_i) );
 	}
-	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
+	TR << "Read " << impropers_indep_.size() << " bb-independent improper tors." << std::endl;
 
-	//hpark  extra torsions from the command line
+	//hpark  extra impropers from the command line
 	if ( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ].user() ) {
 		std::string extra_file( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ]().c_str() );
 		atm_name_quad tuple;
 		std::string line;
-		Size const size_before = torsions_indep_.size();
+		Size const size_before = impropers_indep_.size();
 
 		utility::io::izstream instream( extra_file );
 		if ( !instream.good() ) utility_exit_with_message( "Unable to open file: " + extra_file + '\n' );
@@ -463,13 +500,12 @@ IdealParametersDatabase::read_torsion_database(std::string infile) {
 			l >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
 			tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
 			CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
-			torsions_indep_.insert( std::make_pair( tuple, params_i) );
+			impropers_indep_.insert( std::make_pair( tuple, params_i) );
 		}
-		TR << "Read " << torsions_indep_.size() - size_before << " extra torsions.";
+		TR << "Read " << impropers_indep_.size() - size_before << " extra improper tors.";
 		TR << extra_file << std::endl;
 	}
 }
-
 
 // Read bb independent tables
 // smooth using bbdep data corresponding to residue 'resbase'
@@ -785,6 +821,7 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 /// Torsion Database
 // lookup ideal intra-res torsion
 // torsion DB is unique is that it never tries to build from ideal
+/*
 CartBondedParametersCOP
 IdealParametersDatabase::lookup_torsion(
 	core::chemical::ResidueType const & restype,
@@ -817,7 +854,40 @@ IdealParametersDatabase::lookup_torsion(
 	// if we don't find this torsion in the table, it's unconstrained
 	return NULL;
 }
+*/
 
+CartBondedParametersCOP
+IdealParametersDatabase::lookup_improper(
+	core::chemical::ResidueType const & restype,
+	std::string const & atm1_name,
+	std::string const & atm2_name,
+	std::string const & atm3_name,
+	std::string const & atm4_name
+)
+{
+	using namespace core::chemical;
+
+	// use 'annotated sequence' to id this restype
+	std::string restag = get_restag( restype );
+
+	// there is no bb-dep torsion database
+	// lookup in bb-indep table
+	// this can probably be made way faster
+	atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
+	boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it = impropers_indep_.find( tuple1 );
+	if ( b_it != impropers_indep_.end() ) {
+		return b_it->second;
+	}
+
+	atm_name_quad tuple2( "*", atm1_name,atm2_name,atm3_name,atm4_name );
+	b_it = impropers_indep_.find( tuple2 );
+	if ( b_it != impropers_indep_.end() ) {
+		return b_it->second;
+	}
+
+	// if we don't find this improper torsion in the table, it's unconstrained
+	return NULL;
+}
 
 /// Angle Database
 ///   build from ideal if not found
@@ -1198,11 +1268,11 @@ IdealParametersDatabase::create_parameters_for_restype(
 {
 	ResidueCartBondedParametersOP restype_params( new ResidueCartBondedParameters );
 
-	std::string rsdname = get_restag(rsd_type);  //fpd don't use seperate logic here
+	std::string const rsdname = get_restag(rsd_type);  //fpd don't use seperate logic here
 
 	// Iter over parameters - this would be fast enough as far as parameter size is small enough
 	for ( boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it =
-			torsions_indep_.begin(); b_it != torsions_indep_.end(); ++b_it ) {
+			impropers_indep_.begin(); b_it != impropers_indep_.end(); ++b_it ) {
 
 		atm_name_quad const &tuple( b_it->first );
 
@@ -1220,8 +1290,33 @@ IdealParametersDatabase::create_parameters_for_restype(
 		ids[3] = rsd_type.atom_index( tuple.get<3>() );
 		ids[4] = rsd_type.atom_index( tuple.get<4>() );
 
-		restype_params->add_torsion_parameter( ids, tor_params );
+		restype_params->add_improper_parameter( ids, tor_params );
 	}
+
+	// use full iteration instead of map for torsion as multiple params can match to single atm_name_quad
+	/*
+	std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
+
+	if( it != torsions_indep_.end() ){
+		torsionparam_vector rsd_torsion_params = torsions_indep_.at( rsdname );
+
+		for( Size i = 1; i <= rsd_torsion_params.size(); ++i ){
+			atm_name_quad tuple = rsd_torsion_params[i].first;
+			CartBondedParametersCOP tor_params = rsd_torsion_params[i].second;
+
+			// Also skip if any atom does not exist
+			if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
+					 !rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
+
+			ResidueCartBondedParameters::Size4 ids;
+			ids[1] = rsd_type.atom_index( tuple.get<1>() );
+			ids[2] = rsd_type.atom_index( tuple.get<2>() );
+			ids[3] = rsd_type.atom_index( tuple.get<3>() );
+			ids[4] = rsd_type.atom_index( tuple.get<4>() );
+			restype_params->add_torsion_parameter( ids, tor_params );
+		}
+	}
+	*/
 
 	// for each angle in the residue
 	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
@@ -1413,26 +1508,26 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 	/// oprev_cprev_n_h improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "O", "C", "N", "H" );
-		restype_params->oprev_cprev_n_h_interres_torsion_params( tor_params );
+		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "O", "C", "N", "H" );
+		restype_params->oprev_cprev_n_h_interres_improper_params( tor_params );
 	}
 
 	/// ca_cprev_n_h improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->bb_H_index() != 0 && restype_params->bb_CA_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CA", "C", "N", "H" );
-		restype_params->ca_cprev_n_h_interres_torsion_params( tor_params );
+		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CA", "C", "N", "H" );
+		restype_params->ca_cprev_n_h_interres_improper_params( tor_params );
 	}
 
 	// ca_nnext_c_o improper torsion
 	if ( restype_params->bb_C_index() != 0 && restype_params->bb_O_index() != 0 && restype_params->bb_CA_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CA", "N", "C", "O" );
-		restype_params->ca_nnext_c_o_interres_torsion_params( tor_params );
+		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CA", "N", "C", "O" );
+		restype_params->ca_nnext_c_o_interres_improper_params( tor_params );
 	}
 
 	// ca_nnext_c_o improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->pro_CD_index() != 0 && restype_params->bb_CA_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CD", "C", "N", "CA" );
-		restype_params->pro_cd_cprev_n_ca_interres_torsion_params( tor_params );
+		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CD", "C", "N", "CA" );
+		restype_params->pro_cd_cprev_n_ca_interres_improper_params( tor_params );
 	}
 
 	// caprev_n bond length
@@ -1523,6 +1618,7 @@ CartesianBondedEnergy::setup_for_scoring(
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
+		s_types.push_back( cart_bonded_improper );
 		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
@@ -1715,7 +1811,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
 	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
 
-	eval_improper_torsion_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
+	eval_interresidue_improper_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_angle_derivs_two_from_rsd1(
 		rsd1, rsd2, res1params, res2params, phi1, psi1,
@@ -1973,17 +2069,19 @@ CartesianBondedEnergy::eval_singleres_energy(
 
 	debug_assert ( rsd.aa() != core::chemical::aa_vrt );
 
-	eval_singleres_improper_torsion_energies( rsd, resparams, pose, emap );
-	eval_singleres_torsion_energies( rsd, resparams, phi, psi, pose, emap );
+	eval_singleres_torsion_energies( rsd, resparams, pose, emap );
+	eval_singleres_improper_energies( rsd, resparams, phi, psi, pose, emap );
 	eval_singleres_angle_energies(   rsd, resparams, phi, psi, pose, emap );
 	eval_singleres_length_energies(  rsd, resparams, phi, psi, pose, emap );
 
 }
 
 void
-CartesianBondedEnergy::eval_singleres_improper_torsion_energies(
+CartesianBondedEnergy::eval_singleres_improper_energies(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const
@@ -1994,35 +2092,35 @@ CartesianBondedEnergy::eval_singleres_improper_torsion_energies(
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
-		resparams.improper_torsion_parameters() );
+		resparams.improper_parameters() );
 
 	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
-		CartBondedParameters const & tor_params( *itps[ ii ].second );
-		Real Kphi = tor_params.K(0,0);
-		Real phi0 = d_multiplier * tor_params.mu(0,0);
-		Real phi_step=2 * pi / tor_params.period();
+		CartBondedParameters const & imp_params( *itps[ ii ].second );
+		Real Kphi = imp_params.K(phi,psi);
+		Real phi0 = d_multiplier * imp_params.mu(phi,psi);
+		Real phi_step=2 * pi / imp_params.period();
 		Real angle = numeric::dihedral_radians(
 			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
 		Real del_phi = basic::subtract_radian_angles( angle, phi0 );
 		del_phi = basic::periodic_range( del_phi, phi_step );
 
-		core::Real const energy_torsion = eval_score( del_phi, Kphi, 0 );
+		core::Real const energy_improper = eval_score( del_phi, Kphi, 0 );
 
 		// Send a message to the user about a bad angle, if necessary.
 		// Make sure not to send output to a tracer in the middle of
 		// scoring unless that tracer is visible, since that can be very expensive
-		if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+		if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
 				pose.pdb_info()->number(rsd.seqpos()) << " improper torsion: " <<
 				rsd.name() << " : " <<
 				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
 				rsd.atom_name( atids[3] ) << " , " << rsd.atom_name( atids[4] ) << "   (" <<
-				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_torsion << std::endl;
+				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_improper << std::endl;
 		}
 
-		emap[ cart_bonded_torsion ] += energy_torsion;
-		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+		emap[ cart_bonded_improper ] += energy_improper;
+		emap[ cart_bonded ] += energy_improper; // potential double counting*/
 	}
 }
 
@@ -2031,8 +2129,6 @@ void
 CartesianBondedEnergy::eval_singleres_torsion_energies(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
-	Real const phi,
-	Real const psi,
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const
@@ -2048,20 +2144,17 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
 		CartBondedParameters const & tor_params( *tps[ ii ].second );
 
-		Real Kphi = tor_params.K(phi,psi);
-		Real phi0 = d_multiplier * tor_params.mu(phi,psi);
-		Real phi_step = 2 * pi / tor_params.period();
+		Real Kphi = tor_params.K(0,0);
+		Real phi0 = d_multiplier * tor_params.mu(0,0);
 		Real angle = numeric::dihedral_radians(
 			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
-		Real del_phi = basic::subtract_radian_angles(angle, phi0);
-		if ( phi_step > 0 ) del_phi = basic::periodic_range( del_phi, phi_step );
 
-		core::Real const energy_torsion = eval_score( del_phi, Kphi, 0 );
+		core::Real const energy_torsion = Kphi*(cos(tor_params.period()*angle - phi0) + 1.0);
 
 		// Send a message to the user about a bad angle, if necessary.
 		// Make sure not to send output to a tracer in the middle of
 		// scoring unless that tracer is visible, since that can be very expensive
-		if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+		if ( TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
 				pose.pdb_info()->number(rsd.seqpos()) << " intrares torsion: " <<
 				rsd.name() << " : " <<
@@ -2174,7 +2267,7 @@ CartesianBondedEnergy::eval_residue_pair_energies(
 	EnergyMap & emap
 ) const
 {
-	eval_improper_torsions( rsd1, rsd2, rsd1params, rsd2params, pose, emap );
+	eval_interresidue_improper_energy( rsd1, rsd2, rsd1params, rsd2params, pose, emap );
 	eval_interresidue_angle_energies_two_from_rsd1( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, pose, emap );
 	eval_interresidue_angle_energies_two_from_rsd2( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
 	eval_interresidue_bond_energy( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
@@ -2528,7 +2621,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 }
 
 void
-CartesianBondedEnergy::eval_improper_torsions(
+CartesianBondedEnergy::eval_interresidue_improper_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	ResidueCartBondedParameters const & rsd1params,
@@ -2548,7 +2641,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 
 	// backbone CA-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -2562,22 +2655,22 @@ CartesianBondedEnergy::eval_improper_torsions(
 			Real del_phi = basic::subtract_radian_angles(angle, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 
-			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+			Real energy_improper = eval_score( del_phi, Kphi, 0 );
 
 			// Send a message to the user about a bad angle, if necessary.
 			// Make sure not to send output to a tracer in the middle of
 			// scoring unless that tracer is visible, since that can be very expensive
-			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
 					rsd1.name() << " : " <<
 					rsd2.atom_name( rsd2params.bb_CA_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() )  << " , " << rsd2.atom_name( rsd2params.bb_H_index() ) << "   (" <<
-					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_torsion;
-			emap[ cart_bonded_torsion ] += energy_torsion;
+			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_improper ] += energy_improper;
 		}
 
 	}
@@ -2585,7 +2678,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 	// backbone Oprev-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0
 			&& rsd1params.bb_O_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -2599,22 +2692,22 @@ CartesianBondedEnergy::eval_improper_torsions(
 			Real del_phi = basic::subtract_radian_angles(angle, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 
-			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+			Real energy_improper = eval_score( del_phi, Kphi, 0 );
 
 			// Send a message to the user about a bad angle, if necessary.
 			// Make sure not to send output to a tracer in the middle of
 			// scoring unless that tracer is visible, since that can be very expensive
-			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
 					rsd1.name() << " : " <<
 					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() )  << " , " << rsd2.atom_name( rsd2params.bb_H_index() ) << "   (" <<
-					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_torsion;
-			emap[ cart_bonded_torsion ] += energy_torsion;
+			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_improper ] += energy_improper;
 		}
 
 	}
@@ -2622,7 +2715,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 
 	// backbone CA-Nnext-C-O
 	{
-		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -2636,28 +2729,28 @@ CartesianBondedEnergy::eval_improper_torsions(
 			Real del_phi = basic::subtract_radian_angles(angle, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 
-			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+			Real energy_improper = eval_score( del_phi, Kphi, 0 );
 
 			// Send a message to the user about a bad angle, if necessary.
 			// Make sure not to send output to a tracer in the middle of
 			// scoring unless that tracer is visible, since that can be very expensive
-			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
 					rsd1.name() << " : " <<
 					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() ) << " , " << rsd1.atom_name( rsd1params.bb_CA_index() ) << "   (" <<
-					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_torsion;
-			emap[ cart_bonded_torsion ] += energy_torsion;
+			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_improper ] += energy_improper;
 		}
 	}
 
 	// proline N planarity
 	if ( rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr ) { //D- or L-proline
-		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_improper_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -2671,22 +2764,22 @@ CartesianBondedEnergy::eval_improper_torsions(
 			Real del_phi = basic::subtract_radian_angles(angle, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 
-			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+			Real energy_improper = eval_score( del_phi, Kphi, 0 );
 
 			// Send a message to the user about a bad angle, if necessary.
 			// Make sure not to send output to a tracer in the middle of
 			// scoring unless that tracer is visible, since that can be very expensive
-			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
 					rsd1.name() << " : " <<
 					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() ) << " , " << rsd1.atom_name( rsd1params.bb_CA_index() ) << "   (" <<
-					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_torsion;
-			emap[ cart_bonded_torsion ] += energy_torsion;
+			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_improper ] += energy_improper;
 		}
 	}
 }
@@ -2707,73 +2800,11 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 	chemical::ResidueType const & rsd_type = rsd.type();
 	if ( rsd_type.aa() == core::chemical::aa_vrt ) return;
 
-	eval_singleres_improper_torsions_derivatives( rsd, resparams, weights, r_atom_derivs );
-	eval_singleres_torsion_derivatives( rsd, resparams, phi, psi, weights, r_atom_derivs );
+	eval_singleres_torsion_derivatives( rsd, resparams, weights, r_atom_derivs );
+	eval_singleres_improper_derivatives( rsd, resparams, phi, psi, weights, r_atom_derivs );
 	eval_singleres_angle_derivatives(   rsd, resparams, phi, psi, weights, r_atom_derivs );
 	eval_singleres_length_derivatives(  rsd, resparams, phi, psi, weights, r_atom_derivs );
 
-}
-
-/// @brief helper function to handle intrares bond torsions
-void
-CartesianBondedEnergy::eval_singleres_torsion_derivatives(
-	conformation::Residue const & rsd,
-	ResidueCartBondedParameters const & resparams,
-	Real const phi, //Need to be inverted for D-amino acids
-	Real const psi, //Need to be inverted for D-amino acids
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
-) const
-{
-	using namespace core::chemical;
-	using numeric::constants::d::pi;
-
-	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
-
-	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
-
-	Real const weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
-
-	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
-		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
-		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
-		CartBondedParameters const & tor_params( *tps[ ii ].second );
-
-		Real Kphi = tor_params.K(phi,psi);
-		Real phi0 = d_multiplier * tor_params.mu(phi,psi);
-		Real phi_step = 2 * pi / tor_params.period();
-
-		Vector f1(0.0), f2(0.0);
-		Real angle(0.0), dE_dphi;
-
-		numeric::deriv::dihedral_p1_cosine_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), angle, f1, f2 );
-		Real del_phi = basic::subtract_radian_angles(angle, phi0);
-		if ( phi_step>0 ) del_phi = basic::periodic_range( del_phi, phi_step );
-		if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-			dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
-		} else {
-			dE_dphi = weight * Kphi * del_phi;
-		}
-		r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
-		r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
-
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p2_cosine_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), angle, f1, f2 );
-		r_atom_derivs[ rt2 ].f1() += dE_dphi * f1;
-		r_atom_derivs[ rt2 ].f2() += dE_dphi * f2;
-
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p2_cosine_deriv( rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), angle, f1, f2 );
-
-		r_atom_derivs[ rt3 ].f1() += dE_dphi * f1;
-		r_atom_derivs[ rt3 ].f2() += dE_dphi * f2;
-
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p1_cosine_deriv( rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), angle, f1, f2 );
-		r_atom_derivs[ rt4 ].f1() += dE_dphi * f1;
-		r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
-
-	}
 }
 
 /// @brief helper function to handle intrares bond angles
@@ -2865,9 +2896,71 @@ CartesianBondedEnergy::eval_singleres_length_derivatives(
 	}
 }
 
+/// @brief helper function to handle intrares bond torsions
+void
+CartesianBondedEnergy::eval_singleres_improper_derivatives(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r_atom_derivs
+) const
+{
+	using namespace core::chemical;
+	using numeric::constants::d::pi;
+
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+
+	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.improper_parameters() );
+
+	Real const weight = weights[ cart_bonded_improper ] + weights[ cart_bonded ];
+
+	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
+		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
+		CartBondedParameters const & imp_params( *tps[ ii ].second );
+
+		Real Kphi = imp_params.K(phi,psi);
+		Real phi0 = d_multiplier * imp_params.mu(phi,psi);
+		Real phi_step = 2 * pi / imp_params.period();
+
+		Vector f1(0.0), f2(0.0);
+		Real angle(0.0), dE_dphi;
+
+		numeric::deriv::dihedral_p1_cosine_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), angle, f1, f2 );
+		Real del_phi = basic::subtract_radian_angles(angle, phi0);
+		if ( phi_step>0 ) del_phi = basic::periodic_range( del_phi, phi_step );
+		if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
+			dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
+		} else {
+			dE_dphi = weight * Kphi * del_phi;
+		}
+		r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), angle, f1, f2 );
+		r_atom_derivs[ rt2 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt2 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv( rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), angle, f1, f2 );
+
+		r_atom_derivs[ rt3 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt3 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p1_cosine_deriv( rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), angle, f1, f2 );
+		r_atom_derivs[ rt4 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
+
+	}
+}
+
 // deriv impropers
 void
-CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
+CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
 	EnergyMap const & weights,
@@ -2879,7 +2972,7 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
-		resparams.improper_torsion_parameters() );
+		resparams.torsion_parameters() );
 	Real const weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
@@ -2888,21 +2981,15 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 		CartBondedParameters const & tor_params( *itps[ ii ].second );
 		Real Kphi = tor_params.K(0,0);
 		Real phi0 = d_multiplier * tor_params.mu(0,0);
-		Real phi_step=2 * pi / tor_params.period();
-
 
 		Vector f1(0.0), f2(0.0);
-		Real phi=0, dE_dphi;
+		Real phi =	numeric::dihedral_radians(
+		rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
+
+		core::Real const dE_dphi = -Kphi*weight*tor_params.period()*sin(tor_params.period()*phi - phi0);
 
 		numeric::deriv::dihedral_p1_cosine_deriv(
 			rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
-		Real del_phi = basic::subtract_radian_angles(phi, phi0);
-		del_phi = basic::periodic_range( del_phi, phi_step );
-		if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-			dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
-		} else {
-			dE_dphi = weight * Kphi * del_phi;
-		}
 		r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
 		r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
 
@@ -3269,7 +3356,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 // deriv impropers
 void
-CartesianBondedEnergy::eval_improper_torsion_derivatives(
+CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
 	ResidueCartBondedParameters const & rsd1params,
@@ -3289,11 +3376,11 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 
 	// backbone C-N-CA-H
 	if ( !res1.is_protein() || !res2.is_protein() ) return;
-	Real weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
+	Real weight = weights[ cart_bonded_improper ] + weights[ cart_bonded ];
 
 	// backbone Oprev-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3342,7 +3429,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 
 	// backbone CA-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3390,7 +3477,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 
 	// backbone CA-Nnext-C-O
 	{
-		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
 		if ( !tor_params->is_null() ) {  // however, if it is in the db but with 0 weight, that is OK
 			core::Size const atm1 = rsd1params.bb_CA_index();
 			core::Size const atm2 = rsd2params.bb_N_index();
@@ -3409,9 +3496,9 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 			if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 0.5 : -0.5);
+				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 0.5 : -0.5);
 			} else {
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
+				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded ]) * Kphi * del_phi;
 			}
 			r1_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm1 ].f2() += dE_dphi * f2;
@@ -3438,7 +3525,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 
 	// proline N planarity
 	if ( res2.aa() == core::chemical::aa_pro || res2.aa() == core::chemical::aa_dpr /*D- or L-proline*/ ) {
-		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
+		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_improper_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			core::Size const atm1 = rsd2params.pro_CD_index();
 			core::Size const atm2 = rsd1params.bb_C_index();

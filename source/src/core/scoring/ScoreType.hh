@@ -355,6 +355,7 @@ enum ScoreType {
 	p_aa_pp,
 	p_aa_ss,
 	yhh_planarity,
+	hxl_tors,
 	h2o_intra,
 	ref,
 	ref_nc,
@@ -486,6 +487,7 @@ enum ScoreType {
 	cart_bonded_angle,  // cartesian bonded potential
 	cart_bonded_length,  // cartesian bonded potential
 	cart_bonded_torsion,  // cartesian bonded potential
+	cart_bonded_improper, // cartesian bonded improper torsion
 
 	//Neighbor Vector solvation approximation
 	neigh_vect,

@@ -572,6 +572,7 @@ sources = {
 		"MultipoleElecEnergy",
 		"GoapEnergy",
 		"HybridVDW_Energy",
+		"HydroxylTorsionEnergy",
 		"IntermolEnergy",
 		"LinearChainbreakEnergy",
 		"LinearChainbreakEnergyCreator",

@@ -125,12 +125,12 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
 	clone() const;
-
+	
 	virtual bool
 	reinitialize_for_each_job() const {
 		return true;
 	}
-
+	
 private:
 
 	void

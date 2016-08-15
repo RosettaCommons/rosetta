@@ -69,6 +69,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+typedef utility::vector1< std::pair< atm_name_quad, CartBondedParametersCOP > > torsionparam_vector;
 
 class ResidueCartBondedParameters : public utility::pointer::ReferenceCount {
 public:
@@ -86,7 +87,7 @@ public:
 	void add_length_parameter(  Size2 atom_inds, CartBondedParametersCOP );
 	void add_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP );
 	void add_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP );
-	void add_improper_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP );
+	void add_improper_parameter( Size4 atom_inds, CartBondedParametersCOP );
 	void add_bbdep_length_parameter(  Size2 atom_inds, CartBondedParametersCOP );
 	void add_bbdep_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP );
 	void add_lower_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP );
@@ -99,10 +100,10 @@ public:
 	void bb_H_index( Size index );
 	void pro_CD_index( Size index );
 
-	void ca_cprev_n_h_interres_torsion_params( CartBondedParametersCOP );
-	void oprev_cprev_n_h_interres_torsion_params( CartBondedParametersCOP );
-	void ca_nnext_c_o_interres_torsion_params( CartBondedParametersCOP );
-	void pro_cd_cprev_n_ca_interres_torsion_params( CartBondedParametersCOP );
+	void ca_cprev_n_h_interres_improper_params( CartBondedParametersCOP );
+	void oprev_cprev_n_h_interres_improper_params( CartBondedParametersCOP );
+	void ca_nnext_c_o_interres_improper_params( CartBondedParametersCOP );
+	void pro_cd_cprev_n_ca_interres_improper_params( CartBondedParametersCOP );
 	void cprev_n_bond_length_params( CartBondedParametersCOP );
 
 	utility::vector1< length_parameter > const &
@@ -124,8 +125,8 @@ public:
 	/// into their own section so that debugging information can be given for
 	/// these torsions in particular.
 	utility::vector1< torsion_parameter > const &
-	improper_torsion_parameters() const {
-		return improper_torsion_params_;
+	improper_parameters() const {
+		return improper_params_;
 	}
 
 	/// @brief just the list of length parameters that are dependent on phi and psi; used for calculating dE/dphi and dE/dpsi
@@ -158,23 +159,23 @@ public:
 	Size pro_CD_index( )  const { return pro_CD_index_;  }
 
 	CartBondedParametersCOP
-	ca_cprev_n_h_interres_torsion_params() const {
-		return ca_cprev_n_h_interres_torsion_params_;
+	ca_cprev_n_h_interres_improper_params() const {
+		return ca_cprev_n_h_interres_improper_params_;
 	}
 
 	CartBondedParametersCOP
-	oprev_cprev_n_h_interres_torsion_params() const {
-		return oprev_cprev_n_h_interres_torsion_params_;
+	oprev_cprev_n_h_interres_improper_params() const {
+		return oprev_cprev_n_h_interres_improper_params_;
 	}
 
 	CartBondedParametersCOP
-	ca_nnext_c_o_interres_torsion_params() const {
-		return ca_nnext_c_o_interres_torsion_params_;
+	ca_nnext_c_o_interres_improper_params() const {
+		return ca_nnext_c_o_interres_improper_params_;
 	}
 
 	CartBondedParametersCOP
-	pro_cd_cprev_n_ca_interres_torsion_params() const {
-		return pro_cd_cprev_n_ca_interres_torsion_params_;
+	pro_cd_cprev_n_ca_interres_improper_params() const {
+		return pro_cd_cprev_n_ca_interres_improper_params_;
 	}
 
 	CartBondedParametersCOP
@@ -187,7 +188,7 @@ private:
 	utility::vector1< length_parameter  > length_params_;
 	utility::vector1< angle_parameter   > angle_params_;
 	utility::vector1< torsion_parameter > torsion_params_;
-	utility::vector1< torsion_parameter > improper_torsion_params_;
+	utility::vector1< torsion_parameter > improper_params_;
 	utility::vector1< length_parameter  > bbdep_length_params_;
 	utility::vector1< angle_parameter   > bbdep_angle_params_;
 
@@ -209,10 +210,10 @@ private:
 	Size bb_H_index_;
 	Size pro_CD_index_;
 
-	CartBondedParametersCOP ca_cprev_n_h_interres_torsion_params_;
-	CartBondedParametersCOP oprev_cprev_n_h_interres_torsion_params_;
-	CartBondedParametersCOP ca_nnext_c_o_interres_torsion_params_;
-	CartBondedParametersCOP pro_cd_cprev_n_ca_interres_torsion_params_;
+	CartBondedParametersCOP ca_cprev_n_h_interres_improper_params_;
+	CartBondedParametersCOP oprev_cprev_n_h_interres_improper_params_;
+	CartBondedParametersCOP ca_nnext_c_o_interres_improper_params_;
+	CartBondedParametersCOP pro_cd_cprev_n_ca_interres_improper_params_;
 	CartBondedParametersCOP cprev_n_bond_length_params_;
 
 };
@@ -226,8 +227,19 @@ public:
 
 	void init(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
+	/*
 	CartBondedParametersCOP
 	lookup_torsion(
+		core::chemical::ResidueType const & rsd_type,
+		std::string const & atm1_name,
+		std::string const & atm2_name,
+		std::string const & atm3_name,
+		std::string const & atm4_name
+	);
+	*/
+
+	CartBondedParametersCOP
+	lookup_improper(
 		core::chemical::ResidueType const & rsd_type,
 		std::string const & atm1_name,
 		std::string const & atm2_name,
@@ -309,7 +321,8 @@ private:
 	// read bb indep tables
 	void read_length_database(std::string infile);
 	void read_angle_database(std::string infile);
-	void read_torsion_database(std::string infile);
+	void read_torsion_database(std::string /*infile*/);
+	void read_improper_database(std::string infile);
 
 	// another helper function: read backbone dependent db files
 	void
@@ -331,9 +344,11 @@ private:
 	Real k_length_, k_angle_, k_torsion_, k_torsion_proton_, k_torsion_improper_;
 
 	// backbone-independent parameters (keyed on atom names)
-	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > torsions_indep_;
+	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > impropers_indep_;
 	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP > bondlengths_indep_;
+	// use std::map instead for torsions since single atm_name_quad can match multiple params
+	//std::map< std::string const, torsionparam_vector > torsions_indep_;
 
 	// backbone-dependent parameter sets
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP >
@@ -499,9 +514,9 @@ private:
 		EnergyMap & emap
 	) const;
 
-	/// @brief helper function to handle intrares improper torsions
+	/// @brief helper function to handle intrares torsions
 	void
-	eval_singleres_improper_torsion_energies(
+	eval_singleres_torsion_energies(
 		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & resparams,
 		pose::Pose const & pose,
@@ -509,9 +524,9 @@ private:
 	) const;
 
 
-	/// @brief helper function to handle intrares bond torsions
+	/// @brief helper function to handle intrares bond improper torsions
 	void
-	eval_singleres_torsion_energies(
+	eval_singleres_improper_energies(
 		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & resparams,
 		Real const phi,
@@ -598,7 +613,7 @@ private:
 
 
 	void
-	eval_improper_torsions(
+	eval_interresidue_improper_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		ResidueCartBondedParameters const & rsd1params,
@@ -624,9 +639,9 @@ private:
 		utility::vector1< DerivVectorPair > & r_atom_derivs
 	) const;
 
-	/// @brief evaluate intra-residue (proper) torsion derivatives
+	/// @brief evaluate intra-residue improper torsion derivatives
 	void
-	eval_singleres_torsion_derivatives(
+	eval_singleres_improper_derivatives(
 		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & resparams,
 		Real const phi,
@@ -658,9 +673,9 @@ private:
 	) const;
 
 
-	/// @brief evaluate intra-residue improper torsion derivatives
+	/// @brief evaluate intra-residue torsion derivatives
 	void
-	eval_singleres_improper_torsions_derivatives(
+	eval_singleres_torsion_derivatives(
 		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & resparams,
 		EnergyMap const & weights,
@@ -715,7 +730,7 @@ private:
 
 	/// @brief evaluate inter-residue improper torsion derivatives
 	void
-	eval_improper_torsion_derivatives(
+	eval_interresidue_improper_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		ResidueCartBondedParameters const & res1params,

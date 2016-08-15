@@ -169,6 +169,7 @@
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
 #include <core/scoring/methods/GaussianOverlapEnergyCreator.hh>
 #include <core/scoring/methods/YHHPlanarityEnergyCreator.hh>
+#include <core/scoring/methods/HydroxylTorsionEnergyCreator.hh>
 #include <core/pack/interaction_graph/SurfaceEnergyCreator.hh>
 #include <core/pack/interaction_graph/HPatchEnergyCreator.hh>
 #include <core/scoring/magnesium/MgEnergyCreator.hh>
@@ -509,6 +510,7 @@ static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergy_
 static EnergyMethodRegistrator< scoring::methods::SuckerEnergyCreator > SuckerEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GaussianOverlapEnergyCreator > GaussianOverlapEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::YHHPlanarityEnergyCreator > YYHPlanarityEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::HydroxylTorsionEnergyCreator > HydroxylTorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::interaction_graph::SurfaceEnergyCreator > SurfaceEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::interaction_graph::HPatchEnergyCreator > HPatchEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SymmetricLigandEnergyCreator > SymmetricLigandEnergyCreator_registrator;

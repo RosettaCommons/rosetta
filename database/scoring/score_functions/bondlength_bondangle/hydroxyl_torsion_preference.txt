@@ -1,0 +1,25 @@
+## library of torsions used for default hxl_tors term
+## brought from CHARMM22
+##
+# AA atm1 atm2 atm3 atm4   k     n   delta
+SER   HG   OG   CB   CA   1.30  1.0  0.000000
+SER   HG   OG   CB   CA   0.30  2.0  0.000000
+SER   HG   OG   CB   CA   0.42  3.0  0.000000
+THR  HG1  OG1   CB   CA   1.33  1.0  0.000000
+THR  HG1  OG1   CB   CA   0.18  2.0  0.000000
+THR  HG1  OG1   CB   CA   0.32  3.0  0.000000
+THR  HG1  OG1   CB  CG2   1.33  1.0  0.000000
+THR  HG1  OG1   CB  CG2   0.18  2.0  0.000000
+THR  HG1  OG1   CB  CG2   0.32  3.0  0.000000
+TYR  CE2   CZ   OH   HH   0.50  2.0  0.000000 #reproduces yhh_planarity
+# D-amino acids
+#DSE   HG   OG   CB   CA   1.30  1.0  0.000000
+#DSE   HG   OG   CB   CA   0.30  2.0  0.000000
+#DSE   HG   OG   CB   CA   0.42  3.0  0.000000
+#DTH  HG1  OG1   CB   CA   1.33  1.0  0.000000
+#DTH  HG1  OG1   CB   CA   0.18  2.0  0.000000
+#DTH  HG1  OG1   CB   CA   0.32  3.0  0.000000
+#DTH  HG1  OG1   CB  CG2   1.33  1.0  0.000000
+#DTH  HG1  OG1   CB  CG2   0.18  2.0  0.000000
+#DTH  HG1  OG1   CB  CG2   0.32  3.0  0.000000
+#DTY  CE2   CZ   OH   HH   0.50  2.0  0.000000 #reproduces yhh_planarity

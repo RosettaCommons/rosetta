@@ -163,10 +163,10 @@ public:
 	check_calculation( core::pose::Pose const & pose,
 		ResidueSubset const & subset,
 		ResidueSubset const & focus,
-		core::Real distance)
+		core::Real distance) 
 	{
 
-		if ( focus.size() != subset.size() ) {
+		if (focus.size() != subset.size()){
 			return false;
 		}
 
@@ -177,15 +177,15 @@ public:
 		ResidueSubset ctrl_subset(subset.size(), false);
 		core::Real const dst_squared = distance * distance;
 
-		for ( core::Size i = 1; i <= focus.size(); ++i ) {
+		for (core::Size i = 1; i <= focus.size(); ++i){
 			//If we have a focus residue, we will calculate its neighbors.
 			if ( !focus[i] ) continue;
 
 			ctrl_subset[i] = true;
 			core::conformation::Residue const & r1( pose.residue( i ) );
-
+				
 			//Go through all Subset residues
-			for ( core::Size x = 1; x <= subset.size(); ++x ) {
+			for (core::Size x = 1; x <= subset.size(); ++x){
 
 				//If this is already true, we don't need to recalculate.
 				if ( ctrl_subset[ x ] ) continue;
@@ -196,7 +196,7 @@ public:
 				if ( d_sq <= dst_squared ) {
 					ctrl_subset[ x ] = true;
 				}
-
+				
 			}
 
 
@@ -206,8 +206,8 @@ public:
 		TR<< "ctrl  " << utility::to_string(ctrl_subset) << std::endl;
 
 		//Compare subset to control subset. Return False if they do not match.
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-			if ( ctrl_subset[ i ]  != subset[ i ] ) {
+		for (core::Size i = 1; i <= pose.total_residue(); ++i){
+			if (ctrl_subset[ i ]  != subset[ i ]){
 				TR << "Resnum "<< i <<" "<< ctrl_subset[ i ] << "!=" << subset[ i ] << std::endl;
 				return false;
 			}
