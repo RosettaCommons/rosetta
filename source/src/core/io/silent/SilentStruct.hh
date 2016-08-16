@@ -244,7 +244,14 @@ public:
 	void add_comment( std::string name, std::string value );
 	bool has_comment( std::string const & name ) const;
 	std::string get_comment( std::string const & name ) const;
-	void comment_from_line( std::string const & line );
+	void comment_from_line( std::string const & line  );
+
+	/// @brief Creates and adds a comment from an input REMARK line
+	/// @param[in] line                        Input comment line, of the format "REMARK key value [value]*"
+	/// @param[in] include_silentfile_comments If true, 'REMARK XXX SILENTFILE' lines will be added to comments.
+	//                                         If false, these lines will be skipped
+	void comment_from_line( std::string const & line, bool const include_silentfile_comments );
+
 	void erase_comment( std::string const & name );
 	void clear_comments();
 

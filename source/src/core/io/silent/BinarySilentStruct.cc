@@ -340,11 +340,8 @@ bool BinarySilentStruct::init_from_lines(
 		std::istringstream line_stream( *iter );
 
 		if ( iter->substr(0,6) == "REMARK" ) {
-			std::string tag;
-			std::string comment;
-			std::string value;
-			line_stream >> tag >> comment >> value;
-			add_comment( comment, value );
+			/// keeping REMARK BINARY SILENTFILE is set to true here to keep with previous behavior
+			comment_from_line( *iter, true );
 			continue;  // skip comments
 		}
 		if ( iter->substr(0,7) == "SCORE: " || iter->substr(0,7) == "OTHER: " ) {

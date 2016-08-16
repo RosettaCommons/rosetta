@@ -540,24 +540,47 @@ void SilentStruct::add_comment( std::string name, std::string value ) {
 }
 
 void SilentStruct::comment_from_line( std::string const & line ) {
+	comment_from_line( line, false );
+}
+
+/// @brief Creates and adds a comment from an input REMARK line
+/// @param[in] line                        Input comment line, of the format "REMARK key value [value]*"
+/// @param[in] include_silentfile_comments If true, 'REMARK XXX SILENTFILE' lines will be added to comments.
+//                                         If false, these lines will be skipped
+void SilentStruct::comment_from_line( std::string const & line, bool const include_silentfile_comments ) {
 	std::istringstream line_stream( line );
-	std::string dummy, key, val, remark_tag;
+	std::string key, val, remark_tag;
 	line_stream >> remark_tag;
 	line_stream >> key;
-	line_stream >> val;
 	if ( line_stream.fail() ) {
+		tr.Error << "[ERROR] reading comment key from line: " << line << std::endl;
+		return;
+	}
+
+	// TL: REMARK BINARY_SILENTFILE is apparently used in addition
+	//     to REMARK XXX SILENTFILE lines. If these have the same meaning,
+	//     they should probably be merged. These lines occur in the swa_protein_cluster
+	//     integration test
+	bool has_silent_type = ( key == "BINARY_SILENTFILE" );
+
+	line_stream >> val;
+	if ( !has_silent_type && line_stream.fail() ) {
 		tr.Error << "[ERROR] reading comment from line: " << line << std::endl;
 		return;
 	}
-	if ( val == "SILENTFILE" ) {
-		tr.Debug << "ignoring silent struct type specifier when reading comments: " << line << std::endl;
+
+	has_silent_type = ( has_silent_type || ( val == "SILENTFILE" ) );
+	if ( !include_silentfile_comments && has_silent_type ) {
+			tr.Debug << "ignoring silent struct type specifier when reading comments: " << line << std::endl;
 		return;
 	}
-	line_stream >> dummy;
-	while ( line_stream.good() ) {
-		val += " ";
-		val += dummy;
-		line_stream >> dummy;
+
+	// read to end of buffer
+	std::istreambuf_iterator< char > eos;
+	std::string dummy = std::string( std::istreambuf_iterator< char >( line_stream ), eos );
+	utility::trim( dummy, " " );
+	if ( !dummy.empty() ) {
+		val += " " + dummy;
 	}
 
 	add_comment( key, val );
