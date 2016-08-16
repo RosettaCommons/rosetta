@@ -65,43 +65,43 @@ SymmetricalResidueSelector::~SymmetricalResidueSelector() {}
 ResidueSubset
 SymmetricalResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-  using namespace core::pose::symmetry;
+	using namespace core::pose::symmetry;
 	using namespace core::conformation::symmetry;
-	
+
 	//make sure a selector is set as input
 	runtime_assert( selector_ );
-	
+
 	//DO THINGS HERE
 	ResidueSubset subset_non= selector_->apply( pose );
 	ResidueSubset subset_sym= selector_->apply( pose );
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
 	for ( Size i = 1; i <= subset_non.size(); i++ ) {
-			if ( subset_non[i] == 1 ) {
-					TR.Debug << "Residue: " << i << " Selected: " << subset_non[i] << std::endl;
-					utility::vector1< core::Size > clones=sym_info->bb_clones( i );
-					TR.Debug << "bb_clones: ";
-					for ( Size j = 1; j <= clones.size(); j++ ) {
-							subset_sym[ clones[j] ] = true;
-							TR.Debug << clones[j] << " ";
-					}
-					TR.Debug << std::endl;
-			} else {
-					TR.Debug << "Residue: " << i << " Selected: " << subset_non[i] << std::endl;
-			}
-	}
-	
-	//prints all symmetrized residues (output for debugging only)
-	if ( TR.Debug.visible() ) {
-			TR.Debug << "Symmetrized residues: ";
-			for ( Size k = 1; k <= subset_sym.size(); k++ ) {
-					if ( subset_sym[k] == 1 ) {
-							TR.Debug << k << ",";
-					}
+		if ( subset_non[i] == 1 ) {
+			TR.Debug << "Residue: " << i << " Selected: " << subset_non[i] << std::endl;
+			utility::vector1< core::Size > clones=sym_info->bb_clones( i );
+			TR.Debug << "bb_clones: ";
+			for ( Size j = 1; j <= clones.size(); j++ ) {
+				subset_sym[ clones[j] ] = true;
+				TR.Debug << clones[j] << " ";
 			}
 			TR.Debug << std::endl;
+		} else {
+			TR.Debug << "Residue: " << i << " Selected: " << subset_non[i] << std::endl;
+		}
 	}
-	
+
+	//prints all symmetrized residues (output for debugging only)
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Symmetrized residues: ";
+		for ( Size k = 1; k <= subset_sym.size(); k++ ) {
+			if ( subset_sym[k] == 1 ) {
+				TR.Debug << k << ",";
+			}
+		}
+		TR.Debug << std::endl;
+	}
+
 	return subset_sym;
 }
 
@@ -112,7 +112,7 @@ SymmetricalResidueSelector::parse_my_tag(
 {
 	//make sure there is only 1 option input
 	runtime_assert_string_msg( tag->getTags().size() == 1, "You can only have one input tag for SymmetricalResidueSelector!" );
-	
+
 	//if there is a selector, then:
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
@@ -127,24 +127,23 @@ SymmetricalResidueSelector::parse_my_tag(
 		}
 		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
-	}
-	/*
-	//Shouldn't need this since there can only be 1 option tag?
-	else if ( tag->getTags().size() ) {
+	} else {
+		/*
+		//Shouldn't need this since there can only be 1 option tag?
+		else if ( tag->getTags().size() ) {
 		for ( utility::vector0< utility::tag::TagCOP >::const_iterator t = tag->getTags().begin();
-				t != tag->getTags().end(); ++t ) {
-			ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-				(*t)->getName(),
-				(*t),
-				data );
-			if ( rs ) {
-				debug_assert( !selector_ );
-				set_selector( rs );
-			}
+		t != tag->getTags().end(); ++t ) {
+		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
+		(*t)->getName(),
+		(*t),
+		data );
+		if ( rs ) {
+		debug_assert( !selector_ );
+		set_selector( rs );
 		}
-	} */
-	//if there is not a selector tag option, then:
-	else {
+		}
+		} */
+		//if there is not a selector tag option, then:
 		std::stringstream ss;
 		ss << "SymmetricalResidueSelector requires a selector to be set either through the \"selector\" option." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );

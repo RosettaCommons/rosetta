@@ -438,24 +438,24 @@ IdealParametersDatabase::read_torsion_database(std::string /*infile*/) {
 	atm_name_quad tuple;
 	basic::database::open( instream, infile);
 	while ( instream ) {
-		getline( instream, line );
-		if ( line[0] == '#' ) continue;
+	getline( instream, line );
+	if ( line[0] == '#' ) continue;
 
-		std::istringstream linestream(line);
+	std::istringstream linestream(line);
 
-		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
-		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
-		CartBondedParametersCOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
+	linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+	tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+	CartBondedParametersCOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
 
-		std::string const rsdname( name3 );
-		std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
+	std::string const rsdname( name3 );
+	std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
 
-		if( it == torsions_indep_.end() ){
-			//torsions_indep_[ rsdname ] = utility::vector1< std::pair< atm_name_quad, CartBondedParametersOP > >();
-			torsionparam_vector a; 
-			torsions_indep_.insert( std::pair< std::string const, torsionparam_vector >( rsdname, a )  );
-		}
-		torsions_indep_.at( rsdname ).push_back( std::make_pair( tuple, params_i ) );
+	if( it == torsions_indep_.end() ){
+	//torsions_indep_[ rsdname ] = utility::vector1< std::pair< atm_name_quad, CartBondedParametersOP > >();
+	torsionparam_vector a;
+	torsions_indep_.insert( std::pair< std::string const, torsionparam_vector >( rsdname, a )  );
+	}
+	torsions_indep_.at( rsdname ).push_back( std::make_pair( tuple, params_i ) );
 	}
 	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
 	*/
@@ -824,35 +824,35 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 /*
 CartBondedParametersCOP
 IdealParametersDatabase::lookup_torsion(
-	core::chemical::ResidueType const & restype,
-	std::string const & atm1_name,
-	std::string const & atm2_name,
-	std::string const & atm3_name,
-	std::string const & atm4_name
+core::chemical::ResidueType const & restype,
+std::string const & atm1_name,
+std::string const & atm2_name,
+std::string const & atm3_name,
+std::string const & atm4_name
 )
 {
-	using namespace core::chemical;
+using namespace core::chemical;
 
-	// use 'annotated sequence' to id this restype
-	std::string restag = get_restag( restype );
+// use 'annotated sequence' to id this restype
+std::string restag = get_restag( restype );
 
-	// there is no bb-dep torsion database
-	// lookup in bb-indep table
-	// this can probably be made way faster
-	atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
-	boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it = torsions_indep_.find( tuple1 );
-	if ( b_it != torsions_indep_.end() ) {
-		return b_it->second;
-	}
+// there is no bb-dep torsion database
+// lookup in bb-indep table
+// this can probably be made way faster
+atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
+boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it = torsions_indep_.find( tuple1 );
+if ( b_it != torsions_indep_.end() ) {
+return b_it->second;
+}
 
-	atm_name_quad tuple2( "*", atm1_name,atm2_name,atm3_name,atm4_name );
-	b_it = torsions_indep_.find( tuple2 );
-	if ( b_it != torsions_indep_.end() ) {
-		return b_it->second;
-	}
+atm_name_quad tuple2( "*", atm1_name,atm2_name,atm3_name,atm4_name );
+b_it = torsions_indep_.find( tuple2 );
+if ( b_it != torsions_indep_.end() ) {
+return b_it->second;
+}
 
-	// if we don't find this torsion in the table, it's unconstrained
-	return NULL;
+// if we don't find this torsion in the table, it's unconstrained
+return NULL;
 }
 */
 
@@ -1298,23 +1298,23 @@ IdealParametersDatabase::create_parameters_for_restype(
 	std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
 
 	if( it != torsions_indep_.end() ){
-		torsionparam_vector rsd_torsion_params = torsions_indep_.at( rsdname );
+	torsionparam_vector rsd_torsion_params = torsions_indep_.at( rsdname );
 
-		for( Size i = 1; i <= rsd_torsion_params.size(); ++i ){
-			atm_name_quad tuple = rsd_torsion_params[i].first;
-			CartBondedParametersCOP tor_params = rsd_torsion_params[i].second;
+	for( Size i = 1; i <= rsd_torsion_params.size(); ++i ){
+	atm_name_quad tuple = rsd_torsion_params[i].first;
+	CartBondedParametersCOP tor_params = rsd_torsion_params[i].second;
 
-			// Also skip if any atom does not exist
-			if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
-					 !rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
+	// Also skip if any atom does not exist
+	if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
+	!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
 
-			ResidueCartBondedParameters::Size4 ids;
-			ids[1] = rsd_type.atom_index( tuple.get<1>() );
-			ids[2] = rsd_type.atom_index( tuple.get<2>() );
-			ids[3] = rsd_type.atom_index( tuple.get<3>() );
-			ids[4] = rsd_type.atom_index( tuple.get<4>() );
-			restype_params->add_torsion_parameter( ids, tor_params );
-		}
+	ResidueCartBondedParameters::Size4 ids;
+	ids[1] = rsd_type.atom_index( tuple.get<1>() );
+	ids[2] = rsd_type.atom_index( tuple.get<2>() );
+	ids[3] = rsd_type.atom_index( tuple.get<3>() );
+	ids[4] = rsd_type.atom_index( tuple.get<4>() );
+	restype_params->add_torsion_parameter( ids, tor_params );
+	}
 	}
 	*/
 
@@ -2983,8 +2983,8 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		Real phi0 = d_multiplier * tor_params.mu(0,0);
 
 		Vector f1(0.0), f2(0.0);
-		Real phi =	numeric::dihedral_radians(
-		rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
+		Real phi = numeric::dihedral_radians(
+			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
 
 		core::Real const dE_dphi = -Kphi*weight*tor_params.period()*sin(tor_params.period()*phi - phi0);
 

@@ -460,14 +460,14 @@ void read_H3_cter_fragment(
 	utility::vector1< FragData > H3_base_library_kink;
 
 	std::string H3_ter_library_filename;
-	
-	
+
+
 	// file is read in from where other contraints are supposed to exist
-	
+
 	//JAB Enabling camelid antibodies through a PR, but camelid fragment library DOES NOT EXIST.
 	// SO we are using the H3_CTERM instead!
-	
-	
+
+
 	/*
 	if ( is_camelid ) {
 	H3_ter_library_filename = "camelid_H3_CTERM";
@@ -475,9 +475,9 @@ void read_H3_cter_fragment(
 	H3_ter_library_filename = "H3_CTERM";
 	}
 	*/
-	
+
 	H3_ter_library_filename = "H3_CTERM";
-	
+
 	// Read the file defined by command line option
 	utility::io::izstream H3_ter_library_stream( H3_ter_library_filename );
 

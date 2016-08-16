@@ -80,7 +80,7 @@ HydroxylTorsionEnergy::clone() const
 }
 
 // copied over from cart_bonded
-std::string 
+std::string
 HydroxylTorsionEnergy::get_restag( core::chemical::ResidueType const & restype ) const
 {
 	using namespace core::chemical;
@@ -101,8 +101,8 @@ HydroxylTorsionEnergy::get_restag( core::chemical::ResidueType const & restype )
 
 void
 HydroxylTorsionEnergy::read_database(
- std::string filename
- )
+	std::string filename
+)
 {
 	utility::io::izstream instream;
 	basic::database::open( instream, filename );
@@ -113,7 +113,7 @@ HydroxylTorsionEnergy::read_database(
 	Real k, n, delta;
 
 	chemical::ResidueTypeSetCOP rsd_set
-    = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		= chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	TR.Debug << "Reading database from " << filename << std::endl;
 
@@ -122,20 +122,20 @@ HydroxylTorsionEnergy::read_database(
 		std::istringstream linestream(fileline);
 
 		linestream >> restag;
-		if( !rsd_set->has_name3( restag ) ) continue;
+		if ( !rsd_set->has_name3( restag ) ) continue;
 
 		linestream >> atm1 >> atm2 >> atm3 >> atm4
-							 >> k >> n >> delta;
+			>> k >> n >> delta;
 
 		//std::string const res3( restag );
 		/*
-		std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator 
-			it 	= torsion_params_.find( res3 );
+		std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator
+		it  = torsion_params_.find( res3 );
 		if( it == torsion_params_.end() ){
-			//torsion_params_[res3] = utility::vector1< TorsionParams >();
-			//torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
-			torsions_params_.push_back( )
-			TR.Debug << "add " << restag << std::endl;
+		//torsion_params_[res3] = utility::vector1< TorsionParams >();
+		//torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
+		torsions_params_.push_back( )
+		TR.Debug << "add " << restag << std::endl;
 		}
 		*/
 
@@ -162,8 +162,8 @@ HydroxylTorsionEnergy::residue_energy(
 	std::string const restag( get_restag( rsd.type() ) );
 
 	/*
-	std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator it 
-		= torsion_params_.find( restag );
+	std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator it
+	= torsion_params_.find( restag );
 
 	if( it == torsion_params_.end() ) return;
 
@@ -171,12 +171,12 @@ HydroxylTorsionEnergy::residue_energy(
 	*/
 	Size const natm( rsd.natoms() );
 
-	for( Size ip = 1; ip <= torsion_params_.size(); ++ip ){
+	for ( Size ip = 1; ip <= torsion_params_.size(); ++ip ) {
 		if ( torsion_params_[ip].first != restag ) continue;
 		TorsionParams const &p = torsion_params_[ip].second;
 
 		debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-								  (p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+			(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
 
 		Real tors = numeric::dihedral_radians(
 			rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
@@ -187,9 +187,9 @@ HydroxylTorsionEnergy::residue_energy(
 
 		/*
 		printf( "Atms/k/n/delta/tors/score: %2d %2d %2d %2d %5.2f %4.1f %6.4f %6.4f %8.3f\n",
-						int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]), 
-						p.k, p.n, p.delta, tors, score
-						);
+		int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
+		p.k, p.n, p.delta, tors, score
+		);
 		*/
 
 	}
@@ -210,7 +210,7 @@ HydroxylTorsionEnergy::eval_residue_derivatives(
 	std::string const restag = get_restag( rsd.type() );
 	/*
 	std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator
-		it 	= torsion_params_.find( restag );
+	it  = torsion_params_.find( restag );
 
 	if(  it == torsion_params_.end() ) return;
 	utility::vector1< TorsionParams > params = torsion_params_.at( restag );//it->second;
@@ -218,15 +218,15 @@ HydroxylTorsionEnergy::eval_residue_derivatives(
 
 	Size const natm( rsd.natoms() );
 
-	for( Size ip = 1; ip <= torsion_params_.size(); ++ip ){
+	for ( Size ip = 1; ip <= torsion_params_.size(); ++ip ) {
 		if ( torsion_params_[ip].first != restag ) continue;
 		TorsionParams const &p = torsion_params_[ip].second;
 
 		debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-								  (p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+			(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
 
 		Real tors = numeric::dihedral_radians(
-	 	rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+			rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
 		Real dE_dtors = -p.k * p.n *( std::sin( p.n*tors - p.delta ) );
 
 		Vector const &xyz1( rsd.xyz( p.atm[1] ) );

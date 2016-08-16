@@ -351,10 +351,10 @@ SecondaryStructureFilter::get_filtered_secstruct( core::pose::Pose const & pose 
 	// 2. Use StructureData if present
 	// TODO: uncomment this once I've updated the 'Tomponent' classes
 	//denovo_design::components::StructureDataFactory const & factory =
-	//	*denovo_design::components::StructureDataFactory::get_instance();
+	// *denovo_design::components::StructureDataFactory::get_instance();
 	//if ( factory.has_cached_data( pose ) ) {
-	//	tr.Debug << "Getting filtered_ss from StructureData" << std::endl;
-	//	return factory.get_from_const_pose( pose ).ss();
+	// tr.Debug << "Getting filtered_ss from StructureData" << std::endl;
+	// return factory.get_from_const_pose( pose ).ss();
 	//}
 
 	// 3. Use pose secstruct

@@ -65,19 +65,19 @@ public:
 	virtual
 	void
 	residue_energy(
-	conformation::Residue const & rsd,
-	pose::Pose const &,
-	EnergyMap & emap
-											) const;
+		conformation::Residue const & rsd,
+		pose::Pose const &,
+		EnergyMap & emap
+	) const;
 
 	void
 	eval_residue_derivatives(
-	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /*res_data_cache*/,
-	pose::Pose const & /*pose*/,
-	EnergyMap const & /*weights*/,
-	utility::vector1< DerivVectorPair > & atom_derivs
-														) const;
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & /*res_data_cache*/,
+		pose::Pose const & /*pose*/,
+		EnergyMap const & /*weights*/,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
 	/// context graphs are required

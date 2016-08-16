@@ -146,8 +146,8 @@ protected:
 	///          to 'h' (to allow either loop or strand)
 	void
 	correct_for_incomplete_strand_pairings(
-			core::pose::Pose const & pose,
-			std::string & secstruct ) const;
+		core::pose::Pose const & pose,
+		std::string & secstruct ) const;
 
 	/// @brief returns the number of residues in the protein that have matching secondary structure
 	/// @param[in] pose   Pose to be analyzed

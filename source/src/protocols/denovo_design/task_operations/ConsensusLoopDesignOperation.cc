@@ -253,8 +253,9 @@ ConsensusLoopDesignOperation::compute_aas_after_disallowing(
 {
 	AAs remaining_aas = "";
 	for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task.allowed_residue_types_begin(); t!=task.allowed_residue_types_end(); ++t ) {
-		if ( std::find( aas.begin(), aas.end(), (*t)->name1() ) == aas.end() )
+		if ( std::find( aas.begin(), aas.end(), (*t)->name1() ) == aas.end() ) {
 			remaining_aas += (*t)->name1();
+		}
 	}
 	return remaining_aas;
 }
@@ -562,8 +563,9 @@ ConsensusLoopDatabase::has_frequency(
 	core::Size const loop_resid,
 	char const aa ) const
 {
-	if ( !has_frequencies( surrounding, loop_abego, loop_resid ) )
+	if ( !has_frequencies( surrounding, loop_abego, loop_resid ) ) {
 		return false;
+	}
 
 	return frequencies( surrounding, loop_abego, loop_resid ).has_frequency( aa );
 }

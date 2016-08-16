@@ -190,9 +190,9 @@ NeighborhoodResidueSelector::get_focus(
 		focus = focus_selector_->apply( pose );
 		focus_set = true;
 	} else if ( focus_.size() > 0 ) {
-			focus = focus_;
-			focus_set = true;
-	} else if (focus_str_ != "" ){
+		focus = focus_;
+		focus_set = true;
+	} else if ( focus_str_ != "" ) {
 		std::set< Size > const res_vec( get_resnum_list( focus_str_, pose ) );
 		for ( std::set< Size >::const_iterator it = res_vec.begin();
 				it != res_vec.end(); ++it ) {
@@ -200,8 +200,8 @@ NeighborhoodResidueSelector::get_focus(
 			focus[ *it ] = true;
 			focus_set = true;
 		}
-	} 
-	
+	}
+
 	if ( ! focus_set ) {
 		throw utility::excn::EXCN_Msg_Exception("Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
 	}
@@ -228,10 +228,10 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 	debug_assert( focus_subset.size() > 0 );
 
 	utility::vector1< Size > focus_residues = get_residues_from_subset(focus_subset);
-	if (focus_residues.size() == pose.total_residue()){
+	if ( focus_residues.size() == pose.total_residue() ) {
 		return subset;
 	}
-	
+
 	if ( distance_ > 10.0 ) {
 		Real const dst_squared = distance_ * distance_;
 		// go through each residue of the pose and check if it's near anything in the focus set

@@ -215,7 +215,7 @@ public:
 	set_secstruct( std::string const & secstruct );
 
 	/// @brief Sets residue selector. If set, only selected residues will
-	///	       be operated upon. (default = select by secondary structure type L)
+	///        be operated upon. (default = select by secondary structure type L)
 	/// @param[in] selector_val  Residue selector to be used.  Cloned by this function and
 	///                          set as selector_
 	void

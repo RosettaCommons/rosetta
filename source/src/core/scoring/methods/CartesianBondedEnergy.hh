@@ -230,11 +230,11 @@ public:
 	/*
 	CartBondedParametersCOP
 	lookup_torsion(
-		core::chemical::ResidueType const & rsd_type,
-		std::string const & atm1_name,
-		std::string const & atm2_name,
-		std::string const & atm3_name,
-		std::string const & atm4_name
+	core::chemical::ResidueType const & rsd_type,
+	std::string const & atm1_name,
+	std::string const & atm2_name,
+	std::string const & atm3_name,
+	std::string const & atm4_name
 	);
 	*/
 
