@@ -1,4 +1,5 @@
-#!/usr/bin/python2.6
+#!/usr/bin/env python
+
 # Script to extract scores from score table and constraint scores appended to end of PDB
 # Emily Koo
 
@@ -22,7 +23,7 @@ def parse(pdbs):
                 energy += float(newline.split()[2])
                 save.write(decoy + "\t" + str(energy) + "\n")
                 break
-            
+
     save.close()
 
 state = argv[1]

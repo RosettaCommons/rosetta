@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
 ##############################################
 #Module loadPDB.py
 #created 10/13/03, Mike Daily
@@ -53,7 +54,7 @@ class PDBatom:
         elif recordType == 'HETA':
             self.groupType='het'
 
-        
+
         #temperature factor
         try:
             self.Bfac = float(string.strip(PDBline[60:65]))
@@ -136,7 +137,7 @@ class PDBres:
                 if atom.atomtype == 'CA':
                     self.Bfac = atom.Bfac
         self.Natoms = len(self.atomlist)
-                
+
     #I have made getitem equivalent to getattr so that I can easily reference
     #atoms using the [] overloading convention, e.g. res['N'] if I want to
     #loop over a list of atomtypes without using getattr(res, atomtype)
@@ -151,7 +152,7 @@ class PDBres:
         tmp_copy.coordlist = self.coordlist[:]
         tmp_copy.atomlist = self.atomlist[:]
         return tmp_copy
-    
+
     def __getitem__(self, name):
         return getattr(self, name)
 
@@ -160,14 +161,14 @@ class PDBres:
 
     global bbAtomList
     bbAtomList = ['N', 'CA', 'C', 'O']
-    
+
     def getScAtoms(self):
         scAtomList = []
         for atomtype in self.atomlist:
             if not (atomtype in bbAtomList):
                 scAtomList.append(atomtype)
         self.scatomlist = scAtomList
-        
+
     def addCentroid(self):
         #adds centroid and max radius (often needed for calc. with centroid)
         self.centroid = coordlib.vavg(self.coordlist)
@@ -184,7 +185,7 @@ class PDBres:
             self.med_radius = cen_radii[middle]
         else:
             self.med_radius = (cen_radii[middle-1] + cen_radii[middle]) / 2.0
-        
+
     def fetchAtoms(self, desiredAtomList):
         """
         input:  list of desired atom names from this residue
@@ -248,7 +249,7 @@ class ProteinChain:
         self.polypep = []
         self.ligands = []
         self.chain = self.pdbstart[0].chain
-        
+
         for res in self.pdbstart:
             if res.groupType in ['std', 'dna']:
                 self.polypep.append(res)
@@ -337,7 +338,7 @@ class chainType:
         self.chainList = chainList
         self.chainLabel = ''
 
-    def setChainLabel(self):   
+    def setChainLabel(self):
         for chainID in self.chainList:
             self.chainLabel += chainID
 
@@ -369,12 +370,12 @@ class Protein:
                 new_chain = ProteinChain()
                 new_chain.parse(pdb)
                 self.DNAchains.append(new_chain)
-        
+
         #self.pdbstart = pdbstart
         self.chainList = [self.pdbstart[0].chain]
         self.chains = []
         self.unassigned_ligands = []
-        
+
         Nres = len(self.pdbstart)
         last_chain = self.pdbstart[0].chain
         current_chain_resList = [self.pdbstart[0]]
@@ -387,7 +388,7 @@ class Protein:
             if last_chain != '0' and current_chain == '0':
                 self.unassigned_ligands.append(current_res)
                 continue
-            
+
             if current_chain == last_chain:
                 current_chain_resList.append(current_res)
             else:
@@ -445,7 +446,7 @@ class Protein:
                 aligned_sequences = alignPDB()
                 aligned_sequences.
         """
-        
+
     def getChain(self, chainID):
         #print self.chainList
         for i in range(self.Nchains):
@@ -644,7 +645,7 @@ def loadProt(pdbfile):
     global output_clean_pdb
     pdb=open(pdbfile, 'r').readlines()
     pdbid = string.split(pdbfile, '.')[0]
-    
+
     pdbatomlist = loadAtoms(pdb)
     resAtomList = parseAtomList(pdbatomlist)
     loadedPDB = convert_to_loadedPDB(resAtomList)
@@ -776,7 +777,7 @@ def center_at_origin(pdb):
     center= numarray.array(calcCAcentroid(pdb))
     print "$$$$$$$$$$$$$$$$$$$$$$$$calcCAcentroid", calcCAcentroid(pdb)
     print "$$$$$$$$$$$$$$$$$$$$$$$$center", center
-    
+
     for res in pdb:
         newRes = res.copy()
         #print newRes.printid
@@ -1036,7 +1037,7 @@ def axisangle_to_rot(axis, angle):
     a clockwise rotation is a positive value of 'angle'
     from Martin Baker
     http://www.euclideanspace.com/maths/geometry/rotations/conversions/
-    angleToMatrix/index.htm    
+    angleToMatrix/index.htm
     """
     c,s = cos(angle), sin(angle)
     t = 1-c

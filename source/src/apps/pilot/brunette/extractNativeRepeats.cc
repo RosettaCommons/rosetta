@@ -1,11 +1,11 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet;
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.AlignmentCluster
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   apps/pilot/brunette/evalRepeats
 ///
@@ -89,9 +89,9 @@ void get_change_in_distance(const core::pose::Pose& pose,vector1<Real> & running
     //distance seems to work better if it's proportional to the protein size
     numeric::xyzVector< core::Real >  first_res_pt = pose.xyz(core::id::NamedAtomID("CA", 1));
     numeric::xyzVector< core::Real >  last_res_pt = pose.xyz(core::id::NamedAtomID("CA", pose.total_residue()));
-    Real max_dist_from_center_of_mass_along_axis = 80; 
+    Real max_dist_from_center_of_mass_along_axis = 80;
     if(pose.total_residue()<150)
-        max_dist_from_center_of_mass_along_axis = 30; //seems to get better results having the point set closer in. Still miss several cases.   
+        max_dist_from_center_of_mass_along_axis = 30; //seems to get better results having the point set closer in. Still miss several cases.
     numeric::xyzVector< core::Real > center_of_mass =  get_center_of_mass(pose);
     numeric::xyzVector< core::Real > random_pt;
     vector1<Real> running_total_distance;
@@ -149,7 +149,7 @@ vector1<Size> get_inflection_points(vector1<Real> change_in_distance,vector1<Rea
     vector1<Size> filtered_inflection_points;
     int NEAREST_INFLECTION_POINT = 7; //eliminate points which are too close
     //step 1 find inflection points
-    inflection_points.push_back(1);//first and last residues are automatically 
+    inflection_points.push_back(1);//first and last residues are automatically
     for(Size ii=2; ii<=change_in_distance.size()-1; ++ii){
         if((change_in_distance[ii-1]>=0 && change_in_distance[ii]<=0)||(change_in_distance[ii-1]<=0 && change_in_distance[ii]>=0))
             inflection_points.push_back(ii);
@@ -268,7 +268,7 @@ void matrix3f_to_xyzMatrix(Eigen::Matrix3f const & Re, numeric::xyzMatrix< core:
     R.yx(Re(1,0));R.yy(Re(1,1));R.yz(Re(1,2));
     R.zx(Re(2,0));R.zy(Re(2,1));R.zz(Re(2,2));
 }
-    
+
 void identity_matrix( numeric::xyzMatrix< core::Real> & R ){
         R.xx(1);R.xy(0);R.xz(0);
         R.yx(0);R.yy(1);R.yz(0);
@@ -341,9 +341,9 @@ void calculate_helical_parameters( core::pose::Pose const & pose, Size startRep1
 		double omega = acos(acos_fix_tmp);
     Matrix3f I = Matrix3f::Identity();
     Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
-        
-    
-		Vector3f hN(0,0,0);//initializiation for the testing server  
+
+
+		Vector3f hN(0,0,0);//initializiation for the testing server
 		Real scalar = 0;
     Real max_scalar = -10000000;
     for (Size i = 0; i<=2; i++){
@@ -353,15 +353,15 @@ void calculate_helical_parameters( core::pose::Pose const & pose, Size startRep1
             hN = N.col(i)/N.col(i).norm();
         }
     }
-        
+
     double sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
     TR.Debug <<"sin_omega "<<sin_omega<<endl;
     if( sin_omega < 0) hN = -1 * hN;
-        
+
     Vector3f t = c_B - H*c_A;
     double L = t.dot(hN) ;
     double rise=abs(L);
-        
+
     Matrix3f Ncross;
     Ncross << 0,-1*hN(2),hN(1), hN(2),0,-1*hN(0), -1*hN(1),hN(0),0 ;
     Matrix3f R0t= (1-cos(omega))*I - sin(omega)*Ncross;
@@ -369,8 +369,8 @@ void calculate_helical_parameters( core::pose::Pose const & pose, Size startRep1
     TR.Debug << "R0" << std::endl << R0 << std::endl;
     Vector3f pA= (c_A-R0)-(hN*(hN.dot(c_A-R0)));
     Vector3f pB= (c_B-R0)-(hN*(hN.dot(c_B-R0)));
-        
-        
+
+
     double direction = L * hN.dot(pA.cross(pB));
     if(direction > 0)
         handedness = "R";
@@ -443,7 +443,7 @@ void calculate_helical_parameters_helper(core::pose::Pose const & pose, Size sta
     calculate_helical_parameters(repeat1,1,res_per_repeat,res_per_repeat+1,repeat1.total_residue(),handedness,rise_out,radius_out, omega_out);
 }
 
-Real calculate_sheet_pct(core::pose::Pose& pose,vector1<Size> repeat_positions){ 
+Real calculate_sheet_pct(core::pose::Pose& pose,vector1<Size> repeat_positions){
     Size total_sheet = 0;
     Size total_residue = 0;
     for(Size ii=repeat_positions[0]; ii < repeat_positions[repeat_positions.size()-1]; ++ii){
@@ -543,7 +543,7 @@ vector1 <vector1 <Size> >  gather_repeats(core::pose::Pose& pose, vector1<Size> 
                 std::cout << "tm_taken" << tm_variance << std::endl;
                 all_repeats.push_back(repeat_positions);
             }
-            current_starting_inflection_pt += 1; //may want to jump to put more complicated logic in now to skip intermediate repeats 
+            current_starting_inflection_pt += 1; //may want to jump to put more complicated logic in now to skip intermediate repeats
           }
     }
     return(all_repeats);
@@ -563,7 +563,7 @@ void gather_info_all_repeats(core::pose::Pose& pose,vector1 <vector1 <Size> > al
             if(std::find(repeatStarts.begin(), repeatStarts.end(), all_repeats[ii][kk])==repeatStarts.end()){
                 repeatStarts.push_back(all_repeats[ii][kk]);
                 selected_repeats.push_back(all_repeats[ii]);
-                calculate_helical_parameters_helper(pose,all_repeats[ii][kk], all_repeats[ii][kk+1]-1, all_repeats[ii][kk+1], all_repeats[ii][kk+2]-1, handedness, rise, radius, omega,tm); 
+                calculate_helical_parameters_helper(pose,all_repeats[ii][kk], all_repeats[ii][kk+1]-1, all_repeats[ii][kk+1], all_repeats[ii][kk+2]-1, handedness, rise, radius, omega,tm);
                 handednesses_v.push_back(handedness);
                 radius_v.push_back(radius);
                 std::cout << "radius" << radius << ",start:" << all_repeats[ii][kk] << std::endl;
@@ -571,7 +571,7 @@ void gather_info_all_repeats(core::pose::Pose& pose,vector1 <vector1 <Size> > al
                 omega_v.push_back(omega);
                 tm_v.push_back(tm);
                 rmsd_v.push_back(tmp_rmsd);
-            }   
+            }
         }
     }
 }
@@ -584,7 +584,7 @@ void gather_info_canonical_repeats(core::pose::Pose& pose,vector1 <vector1 <Size
     Real omega;
     Real tm;
     Real rise_total = 0;
-    Real radius_total = 0; 
+    Real radius_total = 0;
     Real omega_total = 0;
     Real tm_total;
     Real rmsd_total;
@@ -632,10 +632,10 @@ void gather_info_canonical_repeats(core::pose::Pose& pose,vector1 <vector1 <Size
     rmsd_v.push_back(rmsd_total/(Real)angle_ct);
 }
 
-void output_all_repeats(vector1 <vector1 <Size> > all_repeats, std::string id,  vector1<std::string> & handedness, vector1<Real> & radii, vector1<Real> & rises, vector1<Real> & omegas, vector1<Real> rmsd, vector1<Real> tm, std::ostream& output){ 
+void output_all_repeats(vector1 <vector1 <Size> > all_repeats, std::string id,  vector1<std::string> & handedness, vector1<Real> & radii, vector1<Real> & rises, vector1<Real> & omegas, vector1<Real> rmsd, vector1<Real> tm, std::ostream& output){
     for(Size ii=1; ii<= all_repeats.size(); ++ii){
         output << id << " ";
-        for(Size kk=1; kk<=all_repeats[ii].size(); ++kk){  
+        for(Size kk=1; kk<=all_repeats[ii].size(); ++kk){
             output << all_repeats[ii][kk] << ",";
         }
         output << rmsd[ii] <<",";

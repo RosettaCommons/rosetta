@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-##
-## (c) Copyright Rosetta Commons Member Institutions.
-## (c) This file is part of the Rosetta software suite and is made available under license.
-## (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-## (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-## (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   pymol_silent.py
 ## @brief  Utility file for silent file loading from, e.g. Pymol
@@ -419,7 +419,7 @@ def silent_load(filename, *tags, **kwds): # tags = empty loads all the strucutre
 def silent_tags(filename):
     """silent_tags filename
 
-    Show all the availible tags associated with the given Rosetta binary-format silent file.""" 
+    Show all the availible tags associated with the given Rosetta binary-format silent file."""
     tags = []
     with open(filename) as f:
         for line in f:

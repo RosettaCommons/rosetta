@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   src/apps/public/scenarios/chemically_conjugated_docking/UBQ_Gp_LYX-Cterm.cc
 /// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a native lysine to ubiquitin linkage via LYX

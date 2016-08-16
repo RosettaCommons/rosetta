@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
 from loadPDB import *
 import coordlib
 import string
@@ -18,7 +19,7 @@ class atom_contact:
         #swap the identities of atom1 and atom2
         tmp_atom = self.atom1
         self.atom1 = self.atom2
-        self.atom2 = tmp_atom        
+        self.atom2 = tmp_atom
 
 class resContact:
     def __init__(self, partnerA_res, partnerB_res, atomContactList):
@@ -121,7 +122,7 @@ class shellAtom:
         self.atomname = atomname
         self.count = 1
         self.atomid = str(self.index) + self.atomname
-        
+
 def addMax_radius(loadedPDBres):
     #calculate maximum radius
     if loadedPDBres.max_radius != None:
@@ -131,7 +132,7 @@ def addMax_radius(loadedPDBres):
         atomdist_sq = coordlib.dist_sq(atom, loadedPDBres.centroid)
         max_radius_sq = max(atomdist_sq, max_radius_sq)
     setattr(loadedPDBres, 'max_radius', math.sqrt(max_radius_sq))
-    
+
 def makeContactPDB(loadedPDB):
     """
     Add certain attributes to loadedPDB to make it a contactPDB:
@@ -158,7 +159,7 @@ def makeContactPDB(loadedPDB):
         setattr(res, 'contactList', [])
         #NresContacts (res-res pairs) is relevant to all modes
         setattr(res, 'NresContacts', 0)
-    
+
 def parse_and_pair(contactPDB, parserule):
     """
     This is the major function that allows one find-contacts script to
@@ -188,8 +189,8 @@ def parse_and_pair(contactPDB, parserule):
     'all-ligand' - all protein vs. all ligands
     action:  extracts the units separated by '-' and passes them through
     pair_close_interface, and returns the result.
-        
-    
+
+
     Input:  contactPDB (see class contactProtein)
     Output:  [partnerA, partnerB] where partnerA and partnerB are subsets of
     the contactPDB such that partnerA-partnerB contacts are calculated but not
@@ -238,7 +239,7 @@ def parse_and_pair(contactPDB, parserule):
 def pair_close_internal(contactPDBsubset):
     """
     Input:  subset of contact PDB
-    
+
     Output:  all pairs of residue pairs i, j where a contact is possible
     according to the reference (max radius to centroid) distances for
     each group plus 5.0A
@@ -252,7 +253,7 @@ def pair_close_internal(contactPDBsubset):
                 if not(contactPDBsubset[i].chain in refChain or
                        contactPDBsubset[j].chain in refChain):
                     continue
-            
+
             #max_radius from centroid
             #filter = max_radius1 + max_radius2 + 5.0A
             #if the centroids are farther apart than this, there can't be any
@@ -278,12 +279,12 @@ def pair_close_internal(contactPDBsubset):
                 close_pair_list.append([contactPDBsubset[i],
                                         contactPDBsubset[j]])
     return close_pair_list
-    
+
 def pair_close_interface(partnerA, partnerB):
     """
     Input:  partner A and partner B of a contactPDB
     In internal case, just [partnerA] is given to save memory
-    
+
     Output:  all pairs of residues between partner A and
     partner B for which a contact is possible according to the reference
     distances for each group
@@ -321,7 +322,7 @@ def filterContacts(close_residue_list):
     with at least one atom-atom contact of < 4.0A+
     (the filter can be set to another distance in class contactProtein)
     """
-     
+
     resContactList = []
     for close_pair in close_residue_list:
         makesContact = 0
@@ -357,12 +358,12 @@ def filterContacts(close_residue_list):
                 #        if A_atom[:1] == 'C' or A_atom[:1] == 'N':
                 #            if B_atom[:1] == 'C' or B_atom[:1] == 'N':
                 #                print str(idA)+A_atom+str(idB)+B_atom
-                 
+
         if atomContactList != []:
             #see resContactList class above
             resContactList.append(resContact(partnerA_res, partnerB_res,
                                              atomContactList))
-           
+
     return resContactList
 
 def makeContactProfile(contactMap, loadedPDB):
@@ -451,7 +452,7 @@ def makeShellProfile(contactProfile):
 
 smartfilter = 1
 contactAtoms = 'all'
-contactFilter = 8.0 #kepler 
+contactFilter = 8.0 #kepler
 #contactFilter = 4.0 # Mike
 contactType = 'full'
 getAtoms = 'centroid'
@@ -555,7 +556,7 @@ class contactProtein:
 
     def initializePDB(self, PDBfile):
         self.contactPDB = loadProt(PDBfile)
-        
+
     def find_contacts(self, parserule):
         #mode currently allows full atom, CA-CA, and sidechain centroid-
         #centroid
@@ -563,7 +564,7 @@ class contactProtein:
         #respect to mode
         if self.contactPDB == None:
             print 'You are trying to calculate contacts without a loadedPDB'
-            print 'Call initializePDB(PDBfile) to load the PDB from a PDB' 
+            print 'Call initializePDB(PDBfile) to load the PDB from a PDB'
             print 'file or load the PDB externally and add it to the \
             contactProtein'
             sys.exit(1)

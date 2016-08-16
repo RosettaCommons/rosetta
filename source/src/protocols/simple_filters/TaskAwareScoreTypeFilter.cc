@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/filters/TaskAwareScoreTypeFilter.cc
 /// @brief Formerly devel/matdes/AverageInterfaceEnergyFilter. Calculates/filters based on a particular score type over the set of packable residues specified by the user-provided task operations. Can be calculate in either the bound or unbound state (a jump or sym_dof_names must be provided to create the unbound pose). Can operate in 1 of 3 modes: 1) if mode=total then compute function returns the total score over all packable residues and the apply function returns true if the total score is less than or equal to the user-specified threshold (false otherwise), 2) if mode=average then the compute function returns the average score over all packable residues and the apply function returns true if the average score is less than or equal to the user-specified threshold (false otherwise), and 3) if mode=individual then the compute function returns the number of individual residues that do not pass the user-specified score type threshold and the apply function returns true if all residues passed the user-specified threshold (false otherwise).

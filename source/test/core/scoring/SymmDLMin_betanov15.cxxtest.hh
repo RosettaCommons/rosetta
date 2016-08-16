@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /// @file test/core/scoring/SymmDLMin.cxxtest.hh
 /// @brief Unit tests for minimiziation of mirror-image poses with the --symmetric_gly_tables option.
 /// @detials Mirror image poses (with D- and L-amino acids swapped) should minimize identically with this option.

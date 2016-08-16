@@ -2,7 +2,7 @@
 (c) This file is part of the Rosetta software suite and is made available under license.
 (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+(c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 This is the test for jd2 (the old newJD, the second job distributor for mini).  The integration test is not intended for any computation, it tests that the newJD correctly determines what outputs to make and puts them in the right place.  The actual PDB files themselves and their atom placements don't much matter, what matters is which files get made.  FILELIST in this directory describes the list.  Also look for proper "extra scores" at the bottom of the PDBs with greek letters and gibberish numbers (to test the extra scores output functions.)  
 

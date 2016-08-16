@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-# :noTabs=true:
-
-
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   load_ligand.py
 ## @brief
@@ -115,7 +113,7 @@ def generate_nonstandard_residue_set( params_list ):
         res_set.read_files( params_list , atoms , elements , mm_atoms , orbitals )
     except:
         # then this PyRosetta is v2.0 beta or earlier, as this is being written,
-        #    we support v2.0 beta, notice the subtle difference below 
+        #    we support v2.0 beta, notice the subtle difference below
         res_set.read_files( params_list , atoms , mm_atoms , orbitals )
     return res_set
 

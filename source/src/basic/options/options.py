@@ -1,11 +1,10 @@
-#!/usr/bin/python
-# :noTabs=true:
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   basic/options/options.py
 ## @brief  Program options generation script that is run to generate the options
@@ -60,7 +59,7 @@ def main(args):
         # to speed up compilation times. totally untested!
         if james_debug:
 
-            header1 = '// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-\n' + '// vi: set ts=2 noet:\n' + '//\n' + '// (c) Copyright Rosetta Commons Member Institutions.\n' + '// (c) This file is part of the Rosetta software suite and is made available under license.\n' + '// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.\n' + '// (c) For more information, see http://www.rosettacommons.org. Questions about this can be\n' + '// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.\n\n'
+            header1 = '// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-\n' + '// vi: set ts=2 noet:\n' + '//\n' + '// (c) Copyright Rosetta Commons Member Institutions.\n' + '// (c) This file is part of the Rosetta software suite and is made available under license.\n' + '// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.\n' + '// (c) For more information, see http://www.rosettacommons.org. Questions about this can be\n' + '// (c) addressed to University of Washington CoMotion, email: license@uw.edu.\n\n'
             header3 = '\n/// @brief  basic::options::OptionKeys collection\n' + '/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)\n' + '/// @author James M. Thompson (tex@u.washington.edu)\n' + '\n'
             header5 = '\n// Unit headers\n#include <basic/options/keys/OptionKeys.hh>\n\n' + 'namespace basic {\n' + 'namespace options {\n' + 'namespace OptionKeys {\n' + '\n'
             footer = '\n} // namespace OptionKeys\n' + '} // namespace options\n' + '} // namespace basic\n\n#endif\n'

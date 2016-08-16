@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_modules/ligand_ncaa_ptm_manager/ligand_ncaa_ptm_manager.py
 ## @brief  Window for exploring + enabling Ligands/NCAA/PTMs.
@@ -42,12 +42,12 @@ class ligand_ncaa_ptm_manager:
         self.pose = pose
         self.input_class = input_class
         self.score_class = score_class
-        
+
         #Ignore this.  It is for Komodo autocomplete
         if 0:
             #self.input_class = GUIInput() Cannot check import - some cyclical dependancy issue.
             self.score_class = ScoreFxnControl()
-            
+
         self.param_paths = []; #[array path string]
         self.fa_std_dir = rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard'
         self.patch_directory = self.fa_std_dir+ '/patches'
@@ -55,48 +55,48 @@ class ligand_ncaa_ptm_manager:
 
         self.params_directory = self.fa_std_dir+'/residue_types'
         self.params_on = self.fa_std_dir+"/residue_types.txt"
-        
-        
-        
+
+
+
         self.patch_type_map = dict(); #[string "type_selection"]:[array Patch_name string]
         self.patch_name_map = dict(); #[string "name_selection]:[instance PatchProperties]
-        
+
         self.param_main_map = dict(); #[string "main_selection"]:[array type_selection string]
         self.param_type_map = dict(); #[string "type_selection"]:[array param_name string]
         self.param_name_map = dict(); #[string "name_selection]:[instance ParamProperties]
-        
+
         self.three_letter_to_prop_map = dict(); #[string three_letter_code]:[PropertyClass instance]
         self.variant_map = dict(); #[string variant]:[array param_name string]
 
         self.__read_patches__()
         self.__read_params__()
-        
-        
+
+
         self.selections = ["patch", "ligand", "polymer"]
-        
+
         #ListBox Selections
         self.current_main_selection = StringVar()
         self.current_type_selection = StringVar()
         self.current_name_selection = StringVar()
-        
+
         #Variables set when name is selected
         self.current_variant = StringVar()
         self.current_three_letter = StringVar()
         self.current_default = StringVar()
         self.current_name = StringVar()
-        
+
         ###Callbacks###
         self.current_main_selection.trace_variable('w', self.__main_selection_callback__)
-        
+
         #self.type_selection.trace_variable('w', self.__type_selection_callback__)
         #self.name_selection.trace_variable('w', self.__name_selection_callback__)
 
         self.please_delete = []; #Array of paths that are deleted when the module is closed
-    
+
     def __exit__(self):
         for path in self.please_delete:
             os.remove(path)
-            
+
     def setTk(self, main):
         """
         Set TK objects
@@ -123,7 +123,7 @@ class ligand_ncaa_ptm_manager:
         self.label_variant = Label(self.main, text="Variant", font=tkFont.Font(weight='bold'))
         self.label_three_letter=Label(self.main, text="Code Read", font=tkFont.Font(weight='bold'))
         self.label_default = Label(self.main, text="On by Default", font=tkFont.Font(weight='bold'))
-        
+
         self.show_variant = Label(self.main, textvariable = self.current_variant, justify=CENTER)
         self.show_three_letter = Label(self.main, textvariable = self.current_three_letter, justify=CENTER)
         self.show_default = Label(self.main, textvariable = self.current_default, justify=CENTER)
@@ -131,47 +131,47 @@ class ligand_ncaa_ptm_manager:
         self.add_param_to_session_button = Button(self.main, text="Enable", command = lambda: self.enable())
         self.mutate_button = Button(self.main, text="Mutate", command = lambda: self.mutate())
         self.reload_pdb_button = Button(self.main, text = "Reload PDB", command = lambda:self.input_class.choose_load_pose())
-        
-        
+
+
         self.e_function_label = Label(self.main, text = "Energy Function Optimization", font=tkFont.Font(weight='bold', size=13))
         self.electrostatics_label = Label(self.main, text = "Electrostatic")
         self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> coulombic", command = lambda: self.set_fa_elec(True))
         self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- coulombic", command = lambda: self.set_fa_elec(False))
-        
+
         self.scorefunction_label = Label(self.main, text = "Score Function")
         self.switch_to_orbitals_button = Button(self.main, text = "Orbital Based: orbitals", command = lambda: self.set_orbitals())
         self.switch_to_mm_std_button = Button(self.main, text = "Molecular Mechanics Based: mm_std", command = lambda: self.set_mm_std())
-        
+
         self.current_main_selection.set(self.selections[0])
-        
+
         #Photo.  This is for Jason Labonte, for his help in understanding how Rosetta works with NCAA/Patches
         DesignPhoto =PhotoImage(file = os.path.dirname(os.path.abspath(__file__))+"/media/glcnac_clean.gif")
         self.Photo = Label(master=self.main, image=DesignPhoto)
         self.Photo.image = DesignPhoto
-        
+
     def shoTk(self, r, c):
         """
         Show TK objects
         """
-        
+
         self.main_selection.grid(row=r, column=c+1, columnspan=2); #Cannot decide to columnspan or not!
         self.type_listbox.grid(row=r+1, column=c+1, padx=15, rowspan=6); self.name_listbox.grid(row=r+1, column=c+2, rowspan=6)
         self.add_param_to_session_button.grid(row=r+2, column=c+3)
         self.mutate_button.grid(row=r+3, column=c+3)
         self.reload_pdb_button.grid(row=r+4, column=c+3);
-        
+
         self.Photo.grid(row=10, column=c+3, rowspan=9, sticky=W+E, padx=10)
         self.show_name.grid(row=r+8, column=c+1, columnspan=2)
         self.label_variant.grid(row=r+9, column=c+1); self.label_three_letter.grid(row=r+9, column=c+2)
-        
+
         self.show_variant.grid(row=r+10, column=c+1); self.show_three_letter.grid(row=r+10, column=c+2)
-        
+
         self.label_default.grid(row=r+11, column=c+1, columnspan=2)
         self.show_default.grid(row=r+12, column=c+1, columnspan=2)
-        
-        
-        
-        
+
+
+
+
         self.e_function_label.grid(row=r+13, column=c+1, columnspan=2, sticky=W+E, pady=7)
         self.electrostatics_label.grid(row=r+14, column=c+1, columnspan=2)
         self.switch_pair_to_elec_button.grid(row=r+15, column=c+1, columnspan=2)
@@ -180,8 +180,8 @@ class ligand_ncaa_ptm_manager:
         self.scorefunction_label.grid(row=r+17, column=c+1, columnspan=2, pady=5)
         self.switch_to_orbitals_button.grid(row=r+18, column=c+1, columnspan=2)
         self.switch_to_mm_std_button.grid(row=r+19, column=c+1, columnspan=2)
-        
-        
+
+
 ### 'Public' Getter and Setters ###
 
     def get_prop(self):
@@ -189,51 +189,51 @@ class ligand_ncaa_ptm_manager:
         Gets current property objects
         """
         return self.prop
-    
+
     def set_prop(self, prop):
         """
         Sets prop.  Use this before mutating.
         """
         self.prop = prop
-      
+
     def get_prop_from_three_letter_code(self, code):
         return self.three_letter_to_prop_map[code]
-        
+
     def get_param_main_map(self):return self.param_main_map
-    
+
     def get_param_type_map(self):return self.param_type_map
-    
+
     def get_param_name_map(self):return self.param_name_map
-    
+
     def get_patch_type_map(self):return self.patch_type_map
-    
+
     def get_patch_name_map(self):return self.patch_name_map
-    
-    
+
+
     def get_patch_property_class(self, name):
         """
         Returns a patch property class from name.
         """
         return self.patch_name_map[name]
-    
+
     def get_patch_property(self, name, type):
         """
         Returns a string of the patch property.  IO string, variant, etc.  See below for options.
         """
         return self.patch_name_map[name].get_property(type)
-    
+
     def get_param_property_class(self, name):
         """
         Returns a param property class from name.
         """
         return self.param_name_map[name]
-        
+
     def get_param_property(self, name, type):
         """
         Returns a string of the param property.  IO_String, etc.  See below for options.
         """
         return self.param_name_map[name].get_property(type)
-        
+
     ### Main Functions ###
     def mutate(self, resnum=False):
         if self.current_main_selection.get()=="patch":
@@ -243,7 +243,7 @@ class ligand_ncaa_ptm_manager:
                 residue = tkSimpleDialog.askstring(title = "residue", prompt="Enter the residue you wish to mutate (resNum chain)")
                 if not residue: return
                 resnum = self.pose.pdb_info().pdb2pose(residue.split()[1].upper(), int(residue.split()[0]))
-                
+
             add_variant_type_to_pose_residue(self.pose, variant, resnum)
 
             task = TaskFactory.create_packer_task(self.pose)
@@ -256,19 +256,19 @@ class ligand_ncaa_ptm_manager:
             print self.score_class.score(self.pose)
 
             print "Variant type added + Packed"
-            
+
         else:
             #Since It seems I cannot pass a ResidueTypeSet to packer task.  If you know how to do this, please let me know or add the code here.  Thanks.
             if not self.prop.rosetta_read_state:
                 print "Cannot mutate.  Please enable ncaa through removing # in the database and reload GUI.  See documentation for instructions."
                 print "Make sure to have the appropriate NCAA rotamer library downloaded or created and copied to database/rotamer/ncaa_rotlibs/"
                 return
-            
+
             mutant = self.current_three_letter.get()
             print "Mutating to "+mutant
             residue = tkSimpleDialog.askstring(title = "residue", prompt="Enter the residue you wish to mutate (resNum:chain)")
             if not residue:return
-            
+
             #Check to make sure that particular residue can be mutated to the desired mutation.
             resnum = self.pose.pdb_info().pdb2pose(residue.split(":")[1], int(residue.split(":")[0]))
             residue_object = self.pose.residue(resnum)
@@ -280,7 +280,7 @@ class ligand_ncaa_ptm_manager:
             ResDic = dict()
             ResDic[residue]=["NC:"+mutant,]
             output_tools.save_resfile_w_designdic(self.pose, ResDic, global_variables.current_directory+"/temp_resfile.txt")
-        
+
             task = TaskFactory.create_packer_task(self.pose)
             parse_resfile(self.pose, task, global_variables.current_directory+"/temp_resfile.txt")
             design_mover = PackRotamersMover(self.score_class.score, task)
@@ -288,14 +288,14 @@ class ligand_ncaa_ptm_manager:
             os.remove(global_variables.current_directory+"/temp_resfile.txt")
             print self.score_class.score(self.pose)
             print "Position mutated + Packed"
-    
+
     def set_mm_std(self):
         """
         Sets the mm_std scorefunction.
         """
         self.score_class.set_scorefunction('mm_std')
         print "Please cite:  P. Douglas Renfrew, Eun Jung Choi, Brian Kuhlman, 'Using Noncanonical Amino Acids in Computational Protein-Peptide Interface Design' (2011) PLoS One."
-    
+
     def set_orbitals(self):
         """
         Sets the orbitals scorefunction.
@@ -303,25 +303,25 @@ class ligand_ncaa_ptm_manager:
         self.score_class.set_scorefunction('orbitals_talaris2013')
         print "Orbitals Scorefunction created by Steven Combs - Meiler Lab, Vanderbilt University"
         print "No paper to cite as of yet."
-        
+
     def set_prop(self, prop):
         """
         Sets the current propertyclass, whether it be param or patch
         """
         self.prop = prop
-    
+
     def get_prop(self):
         """
         Gets the current propertyclass, whether it be param or patch
         """
         return self.prop
-    
+
     def enable(self):
         """
         The original reason the window was created.
         To use outside of gui window, just use set_prop before running.
         """
-        
+
         #self.prop is set from name callback.  Now we get the path.  Add it.
         #We regenerate the nonstondard_residueset every time the user adds another.
         #Since something about the residuetypeset is global in rosetta, we check that the residue has not already been loaded.
@@ -330,20 +330,20 @@ class ligand_ncaa_ptm_manager:
         self.input_class.nonstandard_ResidueTypeSet, self.input_class.loaded_paths = input_tools.get_residuetypeset_from_path_array(self.input_class.param_paths, self.input_class.loaded_paths)
         if not self.input_class.nonstandard_ResidueTypeSet.has_name(self.prop.found_name.get()):
             print "Residue type not loaded! "
-        
-        
-        #Just to make sure it was loaded properly.  
+
+
+        #Just to make sure it was loaded properly.
         check = dict()
         for path in self.input_class.param_paths:
             check[path]=0
-        
+
         for path in check:
             #print path
             if not self.input_class.nonstandard_ResidueTypeSet.has_name(self.prop.found_name.get()):
-                
+
                 print "Residue type not loaded! "+self.prop.found_name.get()
-                
-                
+
+
     def set_fa_elec(self, bool):
         if bool:
             fa_pair_weight = self.score_class.score.get_weight(fa_pair)
@@ -362,7 +362,7 @@ class ligand_ncaa_ptm_manager:
             self.score_class.score.set_weight(fa_pair, weight)
             print "Setting fa_pair at same weight as previous fa_elec weight"
         print "E function changed."
-    
+
     def open_param_or_patch(self):
         """
         Opens a text editor from system for the param or patch.
@@ -376,7 +376,7 @@ class ligand_ncaa_ptm_manager:
         if re.search(".txt", os.path.basename(self.prop.path)):
             os.system(open_command+self.prop.path+" &")
         else:
-            
+
             base = os.path.basename(self.prop.path).split(".")[0]
             new_base = base+".txt"
             os.system("cp "+self.prop.path.strip("\n")+" "+os.path.dirname(self.prop.path)+"/"+new_base)
@@ -384,14 +384,14 @@ class ligand_ncaa_ptm_manager:
             #print "open "+os.path.dirname(self.prop.path)+"/"+new_base+" &"
             #os.system("rm "+os.path.dirname(self.prop.path)+"/"+new_base)
             self.please_delete.append(os.path.dirname(self.prop.path)+"/"+new_base)
-            
+
     ###Callbacks###
-    
+
     def __main_selection_callback__(self, name, index, mode):
         """
         Callback for when you select a main (patch, ligand, polymer)
         """
-        
+
         varValue = self.current_main_selection.get()
         #Exception handling for using the module without windows (Full Control)
         try:
@@ -399,14 +399,14 @@ class ligand_ncaa_ptm_manager:
             self.mutate_button.config(state=DISABLED)
             if varValue=="patch":
                 self.add_param_to_session_button.config(state=DISABLED)
-                
+
                 self.type_listbox.delete(0, END)
                 for key in sorted(self.patch_type_map):
                     self.type_listbox.insert(END, key)
             else:
                 try:
                     #self.add_param_to_session_button.config(state=NORMAL)
-                    
+
                     self.type_listbox.delete(0, END)
                     for key in sorted(self.param_main_map[varValue]):
                         self.type_listbox.insert(END, key)
@@ -415,7 +415,7 @@ class ligand_ncaa_ptm_manager:
                     return
         except AttributeError:
             pass
-    
+
     def __type_selection_callback__(self):
         """
         Callback for selecting a type in the type_listbox
@@ -429,7 +429,7 @@ class ligand_ncaa_ptm_manager:
             self.name_listbox.delete(0, END)
             for value in self.param_type_map[self.current_type_selection.get()]:
                 self.name_listbox.insert(END, value)
-                
+
     def __name_selection_callback__(self):
         """
         Callback for selecting a name in the name_listbox
@@ -440,33 +440,33 @@ class ligand_ncaa_ptm_manager:
             self.prop = self.patch_name_map[self.current_name.get()]
         else:
             self.prop = self.param_name_map[self.current_name.get()]
-            
+
         if not self.prop.rosetta_read_state:
             self.add_param_to_session_button.config(state=NORMAL)
         else:
             self.add_param_to_session_button.config(state=DISABLED)
-            
+
         if self.current_main_selection.get()=="patch":
             self.current_variant.set(self.prop.molecule_type.get())
         else:
             self.current_variant.set(self.prop.variant.get())
         self.current_three_letter.set(self.prop.three_letter_name.get())
         self.current_default.set(str(self.prop.rosetta_read_state))
-        
+
     ###Setup###
-    
+
     def __read_patches__(self):
         """
         Read patches from directory
         """
-        
+
         files = glob.glob(self.patch_directory+"/*.txt")
         for path in files:
             p = PatchProperties(path, self.patches_on)
             self.__populate_type_map__(self.patch_type_map, p)
             self.__populate_name_map__(self.patch_name_map, p)
             #self.populate_variant_map(self.variant_map, p)
-            
+
         #Grab for carbohydrates.  Maybe all of them will be organized soon...
         self.patch_types = os.walk(self.patch_directory).next()[1]
         for type in self.patch_types:
@@ -478,7 +478,7 @@ class ligand_ncaa_ptm_manager:
                 self.__populate_type_map__(self.patch_type_map, p)
                 self.__populate_name_map__(self.patch_name_map, p)
                 self.__populate_three_letter_map__(self.three_letter_to_prop_map, p)
-                
+
     def __read_params__(self):
         """
         Read params from directory
@@ -642,9 +642,9 @@ class ParamsProperties(Properties):
         }
         self.read_properties()
         self.check_if_on_by_default()
-                
 
-            
+
+
 if __name__ == '__main__':
     """
     For Testing UI.
@@ -656,4 +656,4 @@ if __name__ == '__main__':
     manager.shoTk(0, 0)
     main.mainloop()
 
-    
+

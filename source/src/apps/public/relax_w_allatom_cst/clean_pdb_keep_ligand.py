@@ -1,4 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
 ## Written and improved over the years by Phil, Rhiju, Olli and Mike
 ## Lucas Nivon, Nov 2010, modifying to keep HETATMS which are not non-canonical ligands
 ## Usage: python clean_pdb_keep_ligand.py 1dqb -ignorechain
@@ -33,7 +40,7 @@ def check_and_print_pdb( count, residue_buffer, residue_letter ):
   global fastaseq
   global pdbfile
   global CA_MODEL
-  global NO_OCCUPANCY 
+  global NO_OCCUPANCY
 
   ## Check that CA, N and C are present!def check_and_print_pdb( outid, residue_buffer )
   hasCA = False
@@ -45,15 +52,15 @@ def check_and_print_pdb( count, residue_buffer, residue_letter ):
     atomname = line[12:16]
     #Only add bb atoms if they have occupancy!
     occupancy=float(line[55:60])
-    
-    if occupancy > 0.0 : 
+
+    if occupancy > 0.0 :
       NO_OCCUPANCY = False
     if atomname == " CA " and occupancy > 0.0: hasCA = True
     if atomname == " N  " and occupancy > 0.0:  hasN = True
     if atomname == " C  " and occupancy > 0.0:  hasC = True
-    if (line[0:6] == 'HETATM' and keep_ligand): 
+    if (line[0:6] == 'HETATM' and keep_ligand):
       IsGoodLigand = True
-      
+
   ## if all three backbone atoms are present withoccupancy proceed to print the residue
   if hasN or hasC : CA_MODEL = False
   if ((hasCA and hasN and hasC) or (IsGoodLigand)) :
@@ -237,7 +244,7 @@ if shit_stat_misdns : flag_misdns = "DNS"
 
 nres = len(fastaseq)
 flag_successful = "OK"
-if nres <= 0: 
+if nres <= 0:
   flag_successful = "BAD"
   if CA_MODEL: flag_successful = flag_successful + " (CA only model )"
   if NO_OCCUPANCY: flag_successful = flag_successful + " (No occupancy )"
@@ -258,7 +265,7 @@ if nres > 0:
     outid.write(pdbfile)
     outid.write("TER\n")
     outid.close()
-  
+
   fastaid = stderr
   fastaid.write('>'+pdbname[0:4]+chainid+'\n');
   fastaid.write( fastaseq )

@@ -1,11 +1,10 @@
-
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_main/IO/GUIOutput.py
 ## @brief  Class responsible for managing output variables of the GUI.
@@ -37,24 +36,24 @@ class GUIOutput:
         self.overwrite = IntVar(); self.overwrite.set(False); #Overwrite PDBs?
         self.terminal_output = IntVar(); #Tracer to redirect stdout or not.  Tracer code is in PyRosetta Toolkit.py 0 is textbox, 1 is stdout.
 
-        
-        
+
+
         #### Tracers ####
         self.auto_write.trace_variable('w', self.auto_set_decoys)
         self.decoys.trace_variable('w', self.auto_set_write)
-        
+
     def auto_set_decoys(self, name, index, mode):
         """
         Changes decoy number according to auto_write variable
         """
-        
+
         varValue = self.auto_write.get()
         if varValue and not self.decoys.get():
             self.decoys.set(1)
         elif not varValue:
             self.decoys.set(0)
         return
-    
+
     def auto_set_write(self, name, index, mode):
         """
         Changes auto_write according to decoy_number
@@ -68,12 +67,12 @@ class GUIOutput:
             self.auto_write.set(1)
         elif not varValue:
             self.auto_write.set(0)
-            
-    
-    
+
+
+
 ######### Functions that cannot be put in output_tools, as they set a variable within this class. ################
     def set_temperature(self):
         self.kT = tkSimpleDialog.askfloat(title="kT", prompt="Set Temperature", initialvalue=self.kT)
-        
-        
-        
+
+
+

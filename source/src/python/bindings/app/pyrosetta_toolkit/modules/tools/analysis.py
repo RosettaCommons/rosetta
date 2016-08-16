@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/tools/analysis.py
 ## @brief  Functions for analysis in the toolkit
@@ -57,16 +57,16 @@ def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
         rms = bb_rmsd(native, p)
         print "Backbone:"
         print "%.3f RMSD"%rms
-        
+
     #if start !=0 and end!=0:
     #    start = p.pdb_info().pdb2pose(chain, int(start)); end = p.pdb_info().pdb2pose(chain, int(end))
     #    cut = start+((end-start)/2); loo=Loop(start,end, cut)
     #    loops = Loops()
     #    loops.add_loop(loo)
-        
+
     #    lrms = loop_rmsd(p, native, loops, False)
     #    print "Loop RMSD:" + str(lrms)
-    
+
     if all_atom:bb_only = False
     else: bb_only=True
     loop_rmsd_map = dict(); #[loop_string]:[lrms] and ['total']:[total average loop rms]
@@ -75,10 +75,10 @@ def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
         for loop_string in loops_as_strings:
             rosetta_loop = loop_tools.return_rosetta_Loop(p, loop_string)
             single_loops = Loops()
-            
+
             single_loops.add_loop(rosetta_loop)
             all_rosetta_loops.add_loop(rosetta_loop)
-            
+
             lrms = loop_rmsd(p, native, single_loops, ca_only, bb_only)
             print "Region "+loop_string
             print "%.3f RMSD"%lrms
@@ -87,7 +87,7 @@ def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
         loop_rmsd_map["total"]=lrms
         print "Regions Average: "
         print "%.3f RMSD"%lrms
-        
+
     return rms, loop_rmsd_map
 
 def readFASC(fileName):
@@ -103,7 +103,7 @@ def readFASC(fileName):
                 fascData[lineSplit[1]][lineSplit[x-1]]=lineSplit[x]
                 x = x+2
     return fascData
-        
+
 #### Analyze Movers ####
 
 def analyze_packing(p):
@@ -124,14 +124,14 @@ def analyze_interface(p, scorefxn, toolkit = None):
         if (chains):
             chains = chains.split()
         else:return
-        
+
     pack_together = tkMessageBox.askyesno(message="rePack before separation")
     pack_separated = tkMessageBox.askyesno(message="rePack after separation (Recommended)")
 
     if (p.conformation().num_chains()==2):
         interface_mover = InterfaceAnalyzerMover(1, True, scorefxn, False, pack_together, pack_separated, False)
         interface_mover.apply(p)
-    
+
     else:
         chain_ids = []
         #Get ChainIDs
@@ -140,20 +140,20 @@ def analyze_interface(p, scorefxn, toolkit = None):
                 if (p.pdb_info().chain( i ) == chain):
                     chain_ids.append( p.chain(i))
                     break
-        
+
         #Pass in the set.
         print "Fixedchains: "+repr(chains)
         interface_mover = InterfaceAnalyzerMover(rosetta.Set(chain_ids), True, scorefxn, False, pack_together, pack_separated, False )
         interface_mover.use_tracer(True)
         interface_mover.apply(p)
         print "Interface Analyzer complete."
-        
+
 def analyze_loops(p, loops_as_strings):
     """
     Uses AnalyzeLoopMover to print loop information.
     To accurately use this, add cutpoint variants using the FullControl Window.
     """
-    
+
     if not loops_as_strings: return
     loops_object = loop_tools.InitializeLoops(p, loops_as_strings)
     loop_mover = LoopAnalyzerMover(loops_object, True)
@@ -177,7 +177,7 @@ def analyze_vip(p, scorefxn):
     else:
         return
     cycles = tkSimpleDialog.askinteger(title = "Cycles", prompt="Please enter max cycles", initialvalue=rosetta.basic.options.get_integer_option('cp:ncycles'))
-    
+
     # Rewritten in python From VIP.cc so the same behavior is met.  Just an interface through PyRosetta to the application code.
     not_finished=True
     improved = False
@@ -191,7 +191,7 @@ def analyze_vip(p, scorefxn):
             improved = True
         else:
             improved = False
-            
+
         if(improved):
             for j in range(1, p.total_residue()+1):
                 if( out.residue(j).name() != p.residue(j).name() ):
@@ -199,17 +199,17 @@ def analyze_vip(p, scorefxn):
                     pdb_chain = out.pdb_info().chain(j)
                     print "Accepting mutation at position "+repr(pdb_position)+" chain "+pdb_chain +" from " +p.residue(j).name() +" to " +out.residue(j).name()
             old_energy = scorefxn(out)
-        
+
 #### Rotamers ####
     """
     Used in full control window to get energy and probability of the rotamer.
     """
-    
+
 def return_energy(p, res, chain=0, type = fa_dun):
     """
     Returns the energy of the rotamer/scoretype by talaris2013.
     """
-    
+
     if chain !=0:
         res = p.pdb_info().pdb2pose(chain, int(res))
     score = create_score_function("talaris2013")
@@ -217,15 +217,15 @@ def return_energy(p, res, chain=0, type = fa_dun):
     score.eval_ci_1b(p.residue(res), p, emap)
     e = emap[type]
     return e
-    
+
 def return_probability(p, res, chain=0):
     """
     Returns probability of rotamer based on -ln(p)=E -> p = e^-E
     """
-    
+
     e = return_energy(p, res, chain)
     p = math.exp(-e)
     return p
-    
 
-                
+
+

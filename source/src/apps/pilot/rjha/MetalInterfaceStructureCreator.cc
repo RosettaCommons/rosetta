@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/pilot/rjha/MetalInterfaceStructureCreator.cc
 /// @brief This is the application for a metal interface design project.  In its initial conception, the idea was to design an interface between ankyrin and ubc12.  First, RosettaMatch is used to design a histidine/cystine zinc binding site on ankyrin (3 residues).  The fourth residue to coordinate a tetrahedral zinc then comes from ubc12 (present natively).  This metal binding gets the interface going; the protocol searches rigid-body space to try to find a shape-complementary interaction and then designs the interface.

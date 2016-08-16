@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-# :noTabs=true:
-
-
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   extract_coords_pose.py
 ## @brief
@@ -24,7 +22,7 @@ def extract_coordinates_from_pose_3x1( pose , selection = [] ,
         for all residues in selection (defaults to all residues)
         with atom names in  <atom_names> and not in  <not_atom_names>
     note: returns a list with three elements, the x, y, and z
-    
+
     example(s):
         xyz = extract_coordinates_from_pose(pose)
     See Also:
@@ -65,7 +63,7 @@ def extract_coordinates_from_pose_1x3( pose , selection = [] ,
         for all residues in selection (defaults to all residues)
         with atom names in  <atom_names> and not in  <not_atom_names>
     note: returns a list with three elements, the x, y, and z
-    
+
     example(s):
         xyz = extract_coordinates_from_pose(pose)
     See Also:

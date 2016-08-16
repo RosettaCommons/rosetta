@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/floppy_tail/FloppyTail_publication.hh
 /// @brief FloppyTail extra functions from original publication - this calculates some statistics used for the first published use of the code (Kleiger G, Saha A, Lewis S, Kuhlman B, Deshaies RJ. Rapid E2-E3 assembly and disassembly enable processive ubiquitylation of cullin-RING ubiquitin ligase substrates. Cell. 2009 Nov 25;139(5):957-68. PubMed PMID: 19945379.)

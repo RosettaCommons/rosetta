@@ -1,12 +1,11 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
-// :noTabs=false:tabSize=4:indentSize=4:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   apps/pilot/fragments_to_ss
 /// @brief  outputs the fragments as if they were a psipred secondary structure prediction. This will be used to calibrate
@@ -32,7 +31,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option_macros.hh>
 
-#include <utility/io/ozstream.hh> 
+#include <utility/io/ozstream.hh>
 
 
 using namespace core;
@@ -93,7 +92,7 @@ vector1<vector1 <Real> > gather_ss_pct(){
 						first_pose=false;
 				}
 				protocols::jumping::assign_ss_dssp( *poseOP );
-				for (Size ii=1; ii <= poseOP->total_residue(); ++ii) {	
+				for (Size ii=1; ii <= poseOP->total_residue(); ++ii) {
 						if(poseOP->secstruct(ii) == 'H')
 								counts[ii][1]+=1;
 						if(poseOP->secstruct(ii) == 'L')

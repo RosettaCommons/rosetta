@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import string
 from sys import argv,stderr
@@ -23,7 +23,7 @@ if len(argv) != 5:
 in_file = argv[1]
 
 if not os.path.isfile( in_file ):
-	print "Cannot find inputfile for make_sub_silent_file_percentile.py: ", in_file 
+	print "Cannot find inputfile for make_sub_silent_file_percentile.py: ", in_file
 	sys.exit(1)
 
 
@@ -67,9 +67,9 @@ else:
     scores.reverse()
 threshold = multiplier * scores[choose]
 stderr.write('threshold: %f\n'%threshold)
-    
 
-    
+
+
 data = open(in_file,'r')
 out = open(out_file,'w')
 
@@ -87,25 +87,25 @@ while line:
     if not counter%1000:stderr.write('%d of %d\n'%(counter,N))
 
     if nwrites >= choose: break
-    
+
     l = string.split(line)
     if len(line)<15 or l[-1] == 'description':
         line = data.readline()
         continue
     write = 0
-   
+
     try:
-      the_score = float(l[index])  
+      the_score = float(l[index])
     except:
       the_score = 100000000.0
-     
+
     if multiplier > 0:
       if multiplier * the_score >= threshold:
         write = 1
     else:
       if multiplier * the_score >= threshold:
         write = 1
- 
+
 
     if write:
         out.write(line)

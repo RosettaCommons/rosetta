@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_main/menu.py
 ## @brief  Handles main menu component of the GUI
@@ -71,7 +71,7 @@ class Menus():
 	self.toolkit = toolkit; #Need to figure out how to tell Python what this 'toolkit' is so IDEs can make sense out of it!
 	self.main_menu=Menu(self.main)
 	self.score_analyzer = ScoreAnalysis(); #Needs to exist as instance due to holding data from load data.  Eventually these functions can go into it's own window.
-	
+
 
     def setTk(self):
 	"""
@@ -126,7 +126,7 @@ class Menus():
 
     #### File Menu ####
         self.file_menu=Menu(self.main_menu, tearoff=0)
-        
+
         self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.select_pose_then_launch_fixpdb())
         self.file_menu.add_command(label="Fetch PDB", command = lambda: self.toolkit.input_class.fetch_pdb())
         self.file_menu.add_separator()
@@ -136,17 +136,17 @@ class Menus():
         self.file_menu.add_cascade(label="Export", menu=self.export_menu)
         self.file_menu.add_separator()
         self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
-        
+
         ## Note:  There is no disable for menu items.  Which is why we either show the item or not, instead of disabling it.
         if flag_file_builder_import:
             self.file_menu.add_command(label= "Rosetta Flag File Builder", command = lambda: self.show_RosettaProtocolBuilder())
-        
+
         self.main_menu.add_cascade(label="File", menu=self.file_menu)
     def _set_options_menu(self):
         self.options_menu = Menu(self.main_menu, tearoff=0)
-        
+
         self.rounds_options_menu=Menu(self.main_menu, tearoff=0)
-        
+
         #Could be it's own window in the future.
         self.rounds_options_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt= "Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
         self.rounds_options_menu.add_checkbutton(label = "Use Boltzmann criterion each round", variable=self.toolkit.output_class.use_boltzmann)
@@ -159,42 +159,42 @@ class Menus():
 
 	self.options_menu.add_checkbutton(label="Set output to terminal", variable = self.toolkit.output_class.terminal_output)
 
-	
+
 	self.main_menu.add_cascade(label="Options", menu=self.options_menu)
-	
+
     def _set_visualization_menu(self):
 	self.vis_menu = Menu(self.main_menu, tearoff=0)
 	self.vis_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
 	#self.vis_menu.add_command(label = "Show current regions")
 	self.vis_menu.add_command(label = "Show current region", command = lambda: self.toolkit.input_frame.color_region_from_entry())
 	self.vis_menu.add_command(label = "Show current residue", command = lambda: self.toolkit.input_frame.color_residue())
-	
+
 	self.vis_observer_menu = Menu(self.main_menu, tearoff=0)
-	self.vis_observer_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) 
+	self.vis_observer_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send)
 	self.vis_observer_menu.add_separator()
 	self.vis_observer_menu.add_checkbutton(label="Send as new states", variable=self.toolkit.pymol_class.keep_history)
 	self.vis_observer_menu.add_checkbutton(label="Send energies", variable=self.toolkit.pymol_class.send_energies)
-	
-	
-	
+
+
+
 	self.vis_menu.add_separator()
 
 	self.vis_menu.add_checkbutton(label = "Color current region on addition", variable=self.toolkit.pymol_class.auto_send_region_colors)
 	self.vis_menu.add_checkbutton(label = "Color current residue on selection", variable = self.toolkit.pymol_class.auto_send_residue_colors)
-	
+
 	self.vis_menu.add_separator()
 	self.vis_menu.add_cascade(label = "PyMol Observer", menu=self.vis_observer_menu)
 	self.vis_menu.add_command(label="Advanced PyMOL Visualization", command=lambda: self.toolkit.pymol_class.makeWindow(0, 0, Toplevel(self.main), self.toolkit.score_class))
-	
+
 	self.main_menu.add_cascade(label="Visualization", menu=self.vis_menu)
-	
+
     def _set_advanced_menu(self):
 	"""
 	Sets the advanced control menu
 	"""
 
 	self.advanced_menu=Menu(self.main_menu, tearoff=0)
-	
+
 	###Analysis###
 	self.analysis_menu = Menu(self.main_menu, tearoff=0)
 
@@ -205,7 +205,7 @@ class Menus():
 	self.analysis_menu.add_separator()
 	self.analysis_menu.add_command(label = "Insert Data into B-Factor", command=lambda:InsertBFactor(self.toolkit.input_class).show_window(self.main))
 	self.advanced_menu.add_cascade(label = "Analysis", menu = self.analysis_menu)
-	
+
 	###Design###
 	self.design_menu=Menu(self.main_menu, tearoff=0)
 	self.design_menu.add_command(label="Setup Resfile for PDB", command=lambda: self.show_ResfileDesignWindow())
@@ -216,7 +216,7 @@ class Menus():
 	self.advanced_menu.add_command(label ="Add Constraints", command = lambda: self.toolkit.input_class.constraint_file_paths.append(\
 				    input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score)))
 	#self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
-	
+
 	###NonStandard###
 	self.non_standard_menu = Menu(self.main_menu, tearoff=0)
 	self.non_standard_menu.add_command(label = "Ligand/NCAA/PTM Manager", command = lambda: self.show_ligand_ncaa_ptm_manager())
@@ -225,11 +225,11 @@ class Menus():
 	self.non_standard_menu.add_command(label = "Convert molfile to param files", command = lambda: output_tools.output_molfile_to_params())
 	self.non_standard_menu.add_separator()
 	self.non_standard_menu.add_command(label = "Documentation", command = lambda: webbrowser.open("http://www.pyrosetta.org/obtaining-and-preparing-ligand-pdb-files"))
-	
+
 	self.advanced_menu.add_cascade(label ="Enable NCAA/PTM/Ligands", menu=self.non_standard_menu)
 	self.advanced_menu.add_separator()
-	
-	
+
+
 	self.advanced_menu.add_command(label="Per Residue Control and Analysis", command=lambda: self.show_fullcontrol_window())
 	#self.advanced_menu.add_command(label="Extract PDB from SQLite3 DB", command = lambda: output_tools.extract_pdb_from_sqlite3db())
 	#self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
@@ -240,13 +240,13 @@ class Menus():
 	"""
 	Menu for running protocols through PyRosetta.
 	"""
-	
+
 	self.protocols_menu = Menu(self.main_menu, tearoff=0)
 
 	#self.protocols_menu.add_command(label = "Enable MPI Mode", foreground = 'red')
 
 	self.protocols_menu.add_separator()
-	
+
 	#Setup Protocol Classes. Should this go to Main File? They are very light weight classes.
 	self.design_class = DesignProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	self.docking_class = DockingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
@@ -254,21 +254,21 @@ class Menus():
 	self.high_res_loop_modeling_class = HighResLoopModelingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	self.floppy_tail_class = FloppyTailProtocol(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	self.minimize_class = MinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
-	
+
 	#Design
-	
+
 	self.design_protocols = Menu(self.main_menu, tearoff=0)
 	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.setupPackDesign(self.main))
 	self.design_protocols.add_command(label = "Grafting", command = lambda:self.show_graftmover_window())
 	#self.design_protocols.add_command(label = "Remodel", foreground='red')
-	
+
 	#Docking
-	
+
 	self.docking_protocols = Menu(self.main_menu, tearoff=0)
 	self.docking_protocols.add_command(label = "Low Resolution", command = lambda: self.docking_class.low_res_dock())
 	self.docking_protocols.add_command(label = "High Resolution", command = lambda: self.docking_class.high_res_dock())
 	#self.docking_protocols.add_command(label = "Ligand", foreground='red')
-	
+
 	#Loop Modeling
 
 	self.loop_modeling_protocols=Menu(self.main_menu, tearoff=0)
@@ -280,7 +280,7 @@ class Menus():
 	self.loop_modeling_protocols_high.add_command(label = "KIC", command = lambda: self.high_res_loop_modeling_class.default_KIC())
 	self.loop_modeling_protocols.add_cascade(label = "Low Resolution", menu = self.loop_modeling_protocols_low)
 	self.loop_modeling_protocols.add_cascade(label = "High Resolution", menu = self.loop_modeling_protocols_high)
-	
+
 	#Minimization.  Just so it's here too.
 	self.minimization_protocols = Menu(self.main_menu, tearoff=0)
 	self.minimization_protocols.add_command(label = "RePack Region Rotamers", command = lambda:self.minimize_class.optimize_rotamers())
@@ -297,11 +297,11 @@ class Menus():
 	self.minimization_protocols.add_command(label = "ClassicRelax Backbone+Sidechains", command = lambda:self.minimize_class.relax(0))
 	self.minimization_protocols.add_command(label = "ClassicRelax Backbone only", command = lambda:self.minimize_class.relax(0, False, True))
 	self.minimization_protocols.add_command(label = "ClassicRelax Sidechains only", command = lambda:self.minimize_class.relax(0, False, False, True))
-	
+
 	#General Modeling (Homology/Abinitio)
 	self.general_protocols = Menu(self.main_menu, tearoff=0)
 	self.servers = Menu(self.main_menu, tearoff = 0); #Because why not?
-	
+
 	#Servers.  Because there are tons of work in these, and I can't add everything.
 	self.servers.add_command(label = "ROSIE Servers", command = lambda: webbrowser.open("http://rosie.rosettacommons.org/"))
 	self.servers.add_separator()
@@ -311,9 +311,9 @@ class Menus():
 	self.servers.add_command(label = "DNA Interface Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/dnainterfacescansubmit.jsp"))
 	self.servers.add_command(label = "Scaffold Select", command = lambda: webbrowser.open("http://rosettadesign.med.unc.edu/scaffold/"))
 	self.rna_protocols = Menu(self.main_menu, tearoff=0)
-	
+
 	self.dna_protocols = Menu(self.main_menu, tearoff=0)
-	
+
 	self.general_protocols.add_cascade(label = "Web Servers", menu = self.servers)
 	self.general_protocols.add_separator()
 	#self.general_protocols.add_cascade(label = "RNA", menu = self.rna_protocols)
@@ -323,13 +323,13 @@ class Menus():
 	#self.general_protocols.add_command(label = "Homology Modeling", foreground='red')
 	self.protocols_menu.add_cascade(label = "General", menu = self.general_protocols)
 	self.protocols_menu.add_separator()
-	
+
 	self.protocols_menu.add_cascade(label = "Loop Modeling", menu = self.loop_modeling_protocols)
 	self.protocols_menu.add_cascade(label = "Docking", menu = self.docking_protocols)
 	self.protocols_menu.add_cascade(label = "Design", menu = self.design_protocols)
 	#self.protocols_menu.add_separator()
 	self.protocols_menu.add_cascade(label = "Minimization", menu=self.minimization_protocols)
-	
+
 	self.main_menu.add_cascade(label = "Protocols", menu=self.protocols_menu)
 
     def _set_pdblist_menu(self):
@@ -353,13 +353,13 @@ class Menus():
 	self.score_menu.add_separator()
 	self.score_menu.add_command(label = "Energy vs RMSD", command=lambda:self.score_analyzer.get_score_vs_rmsd(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
 	self.score_menu.add_separator()
-	
+
 	#self.plot_menu = Menu(self.main_menu, tearoff=0)
 	#self.plot_menu.add_command(label = "Plot Score KDE", command = lambda:self.score_analyzer.plot_score_kde(), foreground='red')
 	#self.plot_menu.add_command(label = "Plot Score vs RMSD", command = lambda: self.score_analyzer.plot_score_vs_rmsd(), foreground='red')
 	#self.plot_menu.add_command(label = "Plot Score vs RMSD KDE", command = lambda: self.score_analyzer.plot_score_vs_rmsd_KDE(), foreground='red')
 	#self.score_menu.add_cascade(label = "R Plots", menu = self.plot_menu)
-	
+
 	self.pdblist_tools_menu.add_cascade(label = "Score Analysis", menu=self.score_menu)
 
 	self.sequence_menu = Menu(self.main_menu, tearoff=0)
@@ -369,7 +369,7 @@ class Menus():
 	self.sequence_menu.add_command(label = "Use FASTA for design statistics", command = lambda: self.run_design_breakdown())
 	self.pdblist_tools_menu.add_cascade(label = "Sequence Analysis", menu=self.sequence_menu)
 	self.pdblist_tools_menu.add_separator()
-	
+
 	#self.pdblist_tools_menu.add_command(label = "Cluster PDBList using Calibur", foreground='red')
 	#self.pdblist_tools_menu.add_command(label = "Convert PDBList to SQLite3 DB", command = lambda: output_tools.convert_PDBLIST_to_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
 	#self.pdblist_tools_menu.add_command(label = "Extract PDBList from SQLite3 DB", command = lambda: output_tools.extract_pdbs_from_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
@@ -425,48 +425,48 @@ class Menus():
     def get_path(self, string):
         path = tkFileDialog.askopenfilename(title=string,initialdir = global_variables.current_directory)
         return path
-    
+
     def run_design_breakdown(self):
-	
+
     #Super huge bug in Tkinter, which is not allowing multiple dialog boxes to be called in succession. ~jadolfbr
     #Jan 2013 MacBookPro~2010 OS 10.6, Python 2.6.
-	
+
         if self.toolkit.pose.total_residue()==0:
             print "Please load a pose for reference."
             return
-	
+
         fasta_path = self.get_path("FASTA Path")
         if not fasta_path:return
         global_variables.current_directory = os.path.dirname(fasta_path)
         outpath = os.path.dirname(fasta_path)+"/RESULTS"
-	
 
-	    
+
+
         #else:
             #answer = tkMessageBox.askokcancel(title = "Current", message = "Using current pose as reference.  Continue?")
             #if not answer: return
         reference_path=self.toolkit.input_class.pdb_path.get()
         if not reference_path:return
         #native = tkMessageBox.askyesno(title="Native", message="Use pose as Native?")
-		    
+
         breakdown = DesignBreakdown(fasta_path, reference_path,  outpath)
         breakdown.run_outputs()
-	
+
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
     def show_fullcontrol_window(self):
         self.fullcontrol_class = FullControlWindow(self.toolkit.score_class, self.toolkit.pose, self.toolkit.input_class, self.toolkit.output_class);
         self.fullcontrol_class.show_window(self.main, 0, 0)
-	
+
     def show_graftmover_window(self):
         grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
         top_level_tk = Toplevel(self.main)
         grafter.setTk(top_level_tk)
         grafter.shoTk(0,0)
-	
+
     def show_fxpdb_window(self):
         cleaner = FixPDBWindow(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
         cleaner.runfixPDBWindow(self.main, 0, 0)
-	
+
     def show_ligand_ncaa_ptm_manager(self):
         top_level_tk = Toplevel(self.main)
         ptm = ligand_ncaa_ptm_manager(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
@@ -481,7 +481,7 @@ class Menus():
         top_level_tk = Toplevel(self.main)
         self.toolkit.input_class.options_manager.setTk(top_level_tk)
         self.toolkit.input_class.options_manager.shoTk()
-	
+
     def show_ResfileDesignWindow(self):
         """
         Main Design window for creating a ResFile

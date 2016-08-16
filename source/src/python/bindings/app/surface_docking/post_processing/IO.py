@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from string import strip
 
@@ -7,6 +7,6 @@ def load(file):
     loaded_file = []
     for line in file:
         loaded_file.append(strip(line))
-        
+
     return loaded_file
 

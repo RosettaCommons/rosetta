@@ -1,10 +1,10 @@
-# :noTabs=true:
+#!/usr/bin/env python
 #
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 #
 ## @file   utility/tools/make_templates.py
 ## @brief  Program that generate make_vector.hh and make_map.hh files
@@ -19,7 +19,7 @@ Header = """// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitesp
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 //
 /// @file   utility/tools/make_vector.hh
 /// @brief  Common function to build vector, vector0, vector1, map.

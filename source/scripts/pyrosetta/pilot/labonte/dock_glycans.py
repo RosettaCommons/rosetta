@@ -1,20 +1,17 @@
-#!/usr/bin/env python2.7
-# :noTabs=true:
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
-# (c) This file is part of the Rosetta software suite and is made available
-# (c) under license.
-# (c) The Rosetta software is developed by the contributing members of the
-# (c) Rosetta Commons.
-# (c) For more information, see http://www.rosettacommons.org.
-# (c) Questions about this can be addressed to University of Washington UW
-# (c) TechTransfer, email: license@u.washington.edu.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 """Brief:   This PyRosetta script performs a bound-bound dock between an
          oligosaccharide and a carbohydrate-binding protein.
 
 Note: The ligand must be the final chain (or chains, if it has branches).
 
-Example: ./dock_glycans.py MBP.pdb G4.pdb --local --overwrite --prepack 
+Example: ./dock_glycans.py MBP.pdb G4.pdb --local --overwrite --prepack
         --ref MBP-G4_ref.pdb --output_folder output/docking/ --mute --n_decoys 100
 
 Example: ./dock_glycans.py MBP_pre-packed.pdb G4_pre-packed.pdb --output_folder output/docking/local/MBP/ --local --ref MBP-G4_ref.pdb --n_decoys 250
@@ -64,7 +61,7 @@ class TimeOutError(Exception):
     loop.
 
     Arguments are the name of the failing function and the time in seconds.
-    
+
     """
     def __str__(self):
         return 'Force-exiting function after ' + str(self.args[0]) + "."

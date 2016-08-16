@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-# :noTabs=true:
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file: compute_ddG.py
 ##
 ## @brief: 	 Compute ddGs of mutation
-## @details: Use the Rosetta membrane framework to compute the ddG of unfolding of 
+## @details: Use the Rosetta membrane framework to compute the ddG of unfolding of
 ## a membrane protein in Rosetta (uses packer, mutate.py from Evan Baugh)
 ##
 ## @author: Rebecca F. Alford (rfalford12@gmail.com)
@@ -37,7 +37,7 @@ from rosetta.core.chemical import VariantType
 
 ## @brief Main - Add Membrane to Pose, Compute ddG
 def main( args ):
-	
+
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
 
@@ -49,11 +49,11 @@ def main( args ):
     parser.add_option('--in_span', '-s',
        action="store",
        help="Input spanfile.", )
-				  
+
     parser.add_option('--out', '-o',
        action="store", default='ddG.out',
        help="Output filename with pose residue numbering. Default: 'ddG.out'", )
-									
+
     parser.add_option('--res', '-r',
        action="store",
        help="Pose residue number to mutate.", )
@@ -62,19 +62,19 @@ def main( args ):
        action="store",
        help="One-letter code of residue identity of the mutant. Example: A181F would be 'F'", )
 
-    parser.add_option('--repack_radius', '-a', 
-        action="store", default=0, 
+    parser.add_option('--repack_radius', '-a',
+        action="store", default=0,
         help="Repack the residues within this radius",)
 
-    parser.add_option('--output_breakdown', '-b', 
-        action="store", default="scores.sc", 
+    parser.add_option('--output_breakdown', '-b',
+        action="store", default="scores.sc",
         help="Output mutant and native score breakdown by weighted energy term into a scorefile", )
 
-    parser.add_option('--include_pH', '-t', 
+    parser.add_option('--include_pH', '-t',
         action="store", default=0,
         help="Include pH energy terms: pH_energy and fa_elec. Default false.", )
 
-    parser.add_option('--pH_value', '-q', 
+    parser.add_option('--pH_value', '-q',
         action="store", default=7,
         help="Predict ddG and specified pH value. Default 7. Will not work if include pH is not passed", )
 
@@ -90,26 +90,26 @@ def main( args ):
     # Initialize Rosetta options from user options. Enable pH mode if applicable
     rosetta_options = ""
     standard_options = "-membrane_new:setup:spanfiles " + Options.in_span +  " -run:constant_seed -in:ignore_unrecognized_res"
-    if ( Options.include_pH ): 
+    if ( Options.include_pH ):
         print Options.pH_value
-        if ( float( Options.pH_value ) < 0 or float(Options.pH_value) > 14 ): 
+        if ( float( Options.pH_value ) < 0 or float(Options.pH_value) > 14 ):
             sys.exit( "Specified pH value must be between 0-14: Exiting..." )
-        else: 
+        else:
             pH_options = " -pH_mode -value_pH " + str(Options.pH_value)
             rosetta_options = standard_options + pH_options
-    else: 
+    else:
         rosetta_options = standard_options
 
     # Initialize Rosetta based on user inputs
     rosetta.init( extra_options=rosetta_options )
-	
+
     # Load Pose, & turn on the membrane
     pose = pose_from_file( Options.in_pdb )
 
     # Add Membrane to Pose
     add_memb = rosetta.protocols.membrane.AddMembraneMover()
     add_memb.apply( pose )
-    
+
     # Setup in a topology based membrane
     init_mem_pos = rosetta.protocols.membrane.MembranePositionFromTopologyMover()
     init_mem_pos.apply( pose )
@@ -123,12 +123,12 @@ def main( args ):
         # and fa_elec
         sfxn = create_score_function( "mpframework_pHmode_fa_2014")
 
-    else: 
+    else:
 
         # Create a smoothed membrane full atom energy function (pH 7 calculations)
         sfxn = create_score_function( "mpframework_smooth_fa_2014")
 
-    # Repack the native rotamer and residues within the repack radius 
+    # Repack the native rotamer and residues within the repack radius
     native_res = pose.residue( int( Options.res ) ).name1()
     repacked_native = mutate_residue( pose, int( Options.res), native_res, Options.repack_radius, sfxn )
 
@@ -153,7 +153,7 @@ def main( args ):
 ###############################################################################
 
 ## @brief Compute ddG of mutation in a protein at specified residue and AA position
-def compute_ddG( pose, sfxn, resnum, aa, repack_radius, sc_file ): 
+def compute_ddG( pose, sfxn, resnum, aa, repack_radius, sc_file ):
 
     # Score Native Pose
     native_score = sfxn( pose )
@@ -164,7 +164,7 @@ def compute_ddG( pose, sfxn, resnum, aa, repack_radius, sc_file ):
     # Score Mutated Pose
     mutant_score = sfxn( mutated_pose )
 
-    # If specified the user, print the breakdown of ddG values into a file  
+    # If specified the user, print the breakdown of ddG values into a file
     print_ddG_breakdown( pose, mutated_pose, sfxn, resnum, aa, sc_file )
 
 	# return scores
@@ -173,7 +173,7 @@ def compute_ddG( pose, sfxn, resnum, aa, repack_radius, sc_file ):
 ###############################################################################
 
 # @brief Replace the residue at <resid> in <pose> with <new_res> and allows
-# repacking within a given <pack_radius> 
+# repacking within a given <pack_radius>
 def mutate_residue( pose, mutant_position, mutant_aa, pack_radius, pack_scorefxn ):
 
     if pose.is_fullatom() == False:
@@ -215,8 +215,8 @@ def mutate_residue( pose, mutant_position, mutant_aa, pack_radius, pack_scorefxn
     # prevent residues from packing by setting the per-residue "options" of
     #    the PackerTask
     center = pose.residue( mutant_position ).nbr_atom_xyz()
-    for i in range( 1, pose.total_residue() + 1 ): 
-        dist = center.distance_squared( test_pose.residue( i ).nbr_atom_xyz() );  
+    for i in range( 1, pose.total_residue() + 1 ):
+        dist = center.distance_squared( test_pose.residue( i ).nbr_atom_xyz() );
         # only pack the mutating residue and any within the pack_radius
         if i != mutant_position and dist > pow( float( pack_radius ), 2 ) :
             task.nonconst_residue_task( i ).prevent_repacking()
@@ -231,7 +231,7 @@ def mutate_residue( pose, mutant_position, mutant_aa, pack_radius, pack_scorefxn
 #@brief Print ddG breakdown from the pose
 # Extract weighted energies from the native and mutated pose. Calculate the ddG
 # of each and print the component-wise ddG vlaues
-def print_ddG_breakdown( native_pose, mutated_pose, sfxn, resnum, aa, fn ): 
+def print_ddG_breakdown( native_pose, mutated_pose, sfxn, resnum, aa, fn ):
 
     # Extract scores
     tmp_native = native_pose.energies().total_energies().weighted_string_of( sfxn.weights() )
@@ -243,13 +243,13 @@ def print_ddG_breakdown( native_pose, mutated_pose, sfxn, resnum, aa, fn ):
 
     # Pull out only the scores from these arrays
     native_scores = []
-    for i in range( len(array_native) ): 
-        if ( i % 2 != 0 ): 
+    for i in range( len(array_native) ):
+        if ( i % 2 != 0 ):
             native_scores.append( float( array_native[i] ) )
 
     mutant_scores = []
-    for i in range( len(array_mutant) ): 
-        if ( i % 2 != 0 ): 
+    for i in range( len(array_mutant) ):
+        if ( i % 2 != 0 ):
             mutant_scores.append( float( array_mutant[i] ) )
 
     # Make a label for the mutation
@@ -259,11 +259,11 @@ def print_ddG_breakdown( native_pose, mutated_pose, sfxn, resnum, aa, fn ):
     # Calculate ddG of individual components
     ddGs = []
     ddGs.append( mut_label )
-    for i in range( len( mutant_scores ) ): 
+    for i in range( len( mutant_scores ) ):
         ddG_component = mutant_scores[i] - native_scores[i]
         ddGs.append( round( ddG_component, 3 ) )
 
-    ddGs_str = convert_array_to_str( ddGs ) 
+    ddGs_str = convert_array_to_str( ddGs )
     with file( fn, 'a' ) as f:
         f.write( ddGs_str + "\n" )
     f.close()
@@ -271,14 +271,14 @@ def print_ddG_breakdown( native_pose, mutated_pose, sfxn, resnum, aa, fn ):
 ###############################################################################
 #@brief Get header for ddG breakdown output
 # Save the score labels, to be printed at the top of the output breakdown file
-def print_score_labels_to_file( native_pose, sfxn, fn ): 
+def print_score_labels_to_file( native_pose, sfxn, fn ):
 
     tmp_native = native_pose.energies().total_energies().weighted_string_of( sfxn.weights() )
     array_native = filter( None, tmp_native.split(' ') )
     labels = []
     labels.append( 'mutation ' ) # Append field for mutation label
-    for i in range( len(array_native) ): 
-        if ( i % 2 == 0 ): 
+    for i in range( len(array_native) ):
+        if ( i % 2 == 0 ):
             labels.append( array_native[i].translate(None, ':') )
 
     labels_str = convert_array_to_str( labels )
@@ -290,13 +290,13 @@ def print_score_labels_to_file( native_pose, sfxn, fn ):
 ###############################################################################
 #@brief Convert an array to a space deliminted string
 # Save the score labels, to be printed at the top of the output breakdown file
-def convert_array_to_str( array ): 
+def convert_array_to_str( array ):
 
     linestr = ""
-    for elem in array: 
-        if ( linestr == "" ): 
+    for elem in array:
+        if ( linestr == "" ):
             linestr = linestr + str( elem )
-        else: 
+        else:
             linestr = linestr + " " + str( elem )
 
     return linestr

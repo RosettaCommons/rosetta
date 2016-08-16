@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/tools/loops.py
 ## @brief  general loop functions for the toolkit - Most of these will be replaced by functions with the Region and Regions classes.
@@ -26,13 +26,13 @@ def return_residue_array( p, loop_string):
     Works with individual residues, loops, termini, and chains.
     Use this to interact with movemap, packer, etc and loops_as_strings from GUI.
     """
-    
+
     residue_array = []
     loop_stringSP = loop_string.split(":")
     if not rosetta.core.pose.has_chain(loop_stringSP[2], p):
         print "Chain not found in PDB"
         return
-    
+
     if (loop_stringSP[0] == "" and loop_stringSP[1]==""):
         #print "Getting Sequence for Chain:"
         for i in range(1, (p.total_residue())):
@@ -67,10 +67,10 @@ def InitializeLoop( start, end, p, chain):
     This Initializes the loop, uses the Pose numbering, returns a loop with a cutpoint in the middle
     Sort of pointless, I know.  Really don't know why it's still here.
     """
-    
+
     #Initializes loop, and makes a cut in middle#
     #start = p.pdb_info().pdb2pose(chain, start); end = p.pdb_info().pdb2pose(chain,end)
-    
+
     loo=Loop(start,end)
     loo.auto_choose_cutpoint(p)
     return loo
@@ -93,14 +93,14 @@ def loopChiMovemap( p, movemap, loops_as_strings):
     """
     Opens Chi for LisLoop.  Works with Chains, Loops, Termini, Individuals.
     """
-    
+
     for loop_string in loops_as_strings:
         residue_array = return_residue_array(p, loop_string)
         for residue in residue_array:
             movemap.set_chi(i, True)
     print repr(movemap)
     return movemap
-    
+
 def loopBBMovemap( p, movemap, loops_as_strings):
     """
     Opens BB up for LisLoops.  Works with Chains, Termini, Loops, and Individual Residues
@@ -111,7 +111,7 @@ def loopBBMovemap( p, movemap, loops_as_strings):
             movemap.set_bb(i, True)
     print repr(movemap)
     return movemap
-    
+
 def loopChiPacker( p, pack, loops_as_strings):
     """
     Returns a Packer_task open with the chi specified.  Takes in a Packer Task.  Works with chains, loops, termini, individuals.
@@ -124,7 +124,7 @@ def loopChiPacker( p, pack, loops_as_strings):
     return pack
 
 
-        
+
 def setLoopBreak( p, start, end, chain, cut):
     start = p.pdb_info().pdb2pose(chain, int(start)); end = p.pdb_info().pdb2pose(chain,int(end))
     loo=Loop(start,end, int(cut))
@@ -140,12 +140,12 @@ def loopArea( p, loops_as_strings, rosetta_num=True):
     Used for creating a sequence file for scwrl.
     Flagged for Refactoring
     """
-    
+
     newList = []
     for loop_string in loops_as_strings:
         residue_array = return_residue_array(p, loop_string)
         newList.append(residue_array)
-  
+
     if rosetta_num:
         return newList
     else:
@@ -179,7 +179,7 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
         LoopFull = x.split(":")
         if LoopFull[0]=="" and LoopFull[1] =="":
             print "Modeling chain "+LoopFull[2]
-            
+
             chain = LoopFull[2]
             start = p.pdb_info().pdb2pose(chain, 1)
         elif LoopFull[0]=="":
@@ -218,7 +218,7 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
         return(ft, loops_object)
     else:
         return(ft, movemap, loops_object)
-        
+
 #### Random Loop Tools ####
 
 def linearizeLoops( p, loops_as_strings):
@@ -245,15 +245,15 @@ def delLoop( p, start, end, chain):
     Deletes the Loop from the pdb.
     Soon will output the original residue numbering.
     """
-    
+
     start = int(start); end = int(end); print start; print end;
     start = p.pdb_info().pdb2pose(chain, start); end = p.pdb_info().pdb2pose(chain,end)
     length=end-start
     print length
     dump_pdb(p, "temp_del.pdb")
     pstart = Pose(); pstart.assign(p)
-    
-    
+
+
     for i in range(1, length+2):
         p.delete_polymer_residue(start)
     return p

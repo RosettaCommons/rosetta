@@ -1,5 +1,6 @@
-#!/usr/bin/python2.6
-# Main protocol for PyRosettaSurface 
+#!/usr/bin/env python
+
+# Main protocol for PyRosettaSurface
 # Emily Koo
 
 """
@@ -32,7 +33,7 @@ parser = argparse.ArgumentParser(description='Surface Docking Script',fromfile_p
 
 parser.add_argument('-s', '--start', action="store", dest="s", metavar='INPUT_FILE', required=True, help='PDB file INPUT_FILE containing protein and surface')
 parser.add_argument('--database', action="store",  dest="database", metavar='DATABASE_FILE', required=True, help='Rosetta database path in PyRosetta')
-parser.add_argument('--f3', '--frag3', action="store", dest="f3", metavar='FRAG3_FILE', required=False, default='', help='Use 3-mer fragment file FRAG3_FILE') 
+parser.add_argument('--f3', '--frag3', action="store", dest="f3", metavar='FRAG3_FILE', required=False, default='', help='Use 3-mer fragment file FRAG3_FILE')
 parser.add_argument('--f9', '--frag9', action="store", dest="f9", metavar='FRAG9_FILE', required=False, default='', help='Use 9-mer fragment file FRAG9_FILE')
 parser.add_argument('-c', '--constraints', action='store_true', required=False, default=False, help='Use ssNMR constraints')
 parser.add_argument('-d', '--disulf', action="store", dest="d", metavar='DISULF', required=False, default='', help='Use disulfide constraints file DISULF')
@@ -72,7 +73,7 @@ def input_checker(input, constraints, frag3, frag9, disulf_file):
     if not exists(input):
         print "Input file does not exist."
         sys.exit()
-        
+
     if constraints:
         cst = 'ls *.cst > csts'
         os.system(cst)
@@ -91,25 +92,25 @@ def input_checker(input, constraints, frag3, frag9, disulf_file):
         if not exists(frag3) or not exists(frag9):
             print "One or more fragment files do not exist."
             sys.exit()
-            
+
     if disulf_file != "":
         if not exists(disulf_file):
             print "Disulfide file does not exist."
             sys.exit()
-        
+
 def run(state):
 # Repeat full-atom relax outer-cycle times while
 # ramping fa_rep up and ramping max_angle down
 
     fa_relax.state = state
-    
+
     if fa_relax.outer_cycles > 1:
         rep = 0.02
         rep_inc = (0.44-rep)/(fa_relax.outer_cycles-1)
     else:
         rep = 0.44
         rep_inc = 0
-    
+
     for outer_cycle in range(1, fa_relax.outer_cycles + 1):
 
         fa_relax.outer_cycle = outer_cycle
@@ -118,7 +119,7 @@ def run(state):
         rep += rep_inc
 
         fa_relax.apply(pose)
-        
+
 def append_data(name, pose, scorefxn, PDB, state):
 # Append additional data to the end of each PDB file
 
@@ -127,13 +128,13 @@ def append_data(name, pose, scorefxn, PDB, state):
 
     apply_constraints(pose, load_constraints(PDB)[state])
     append_constraints(name, pose, load_constraints(PDB)[state], scorefxn)
-    
+
 #======================= USER SETTINGS =======================================
 
 sol_cycles = randint(1,5)
 sol_outer_cycles = 5
 sol_inner_cycles = 5
-ads_cycles = 5 - sol_cycles 
+ads_cycles = 5 - sol_cycles
 ads_outer_cycles = 5
 ads_inner_cycles = 5
 
@@ -155,14 +156,14 @@ score_high.set_weight(fa_elec, elec)
 score_high.set_weight(fa_pair, 0.0) # fa_pair duplicates what fa_elec scores
 score_high.set_weight(atom_pair_constraint, 1.0)
 score_high.set_weight(dihedral_constraint, 1.0)
-        
+
 score_pack = create_score_function("score12")
 score_pack.set_weight(fa_elec, elec)
 score_pack.set_weight(fa_rep, 0.44)
 score_pack.set_weight(fa_pair, 0.0) # fa_pair duplicates what fa_elec scores
 score_pack.set_weight(atom_pair_constraint, 1.0)
 score_pack.set_weight(dihedral_constraint, 1.0)
-    
+
 std_scorefxn = create_score_function("score12")
 std_scorefxn.set_weight(fa_elec, elec)
 std_scorefxn.set_weight(fa_rep, 0.44)
@@ -172,7 +173,7 @@ std_scorefxn.set_weight(dihedral_constraint, 1.0)
 
 switch_low = SwitchResidueTypeSetMover('centroid')
 switch_high = SwitchResidueTypeSetMover('fa_standard')
-        
+
 #=========================Job Distributor===============================
 # Default procedure with fragment files:
 # 1) Ab initio (Solution state)
@@ -199,14 +200,14 @@ while (jd.job_complete == False):
     y = jd.current_name
 
     time_start = datetime.datetime.now()
-    
+
     pose = Pose()
 
     if frag3 != '' and frag9 != '':
         combined_pose = Pose()
         combined_pose.assign(start_pose)
         pose.assign(start_pose.split_by_chain()[2])
-     
+
         switch_low.apply(pose)
         # Disulfide file with just protein atoms
         apply_disulf(pose, load_disulf(disulf_file))
@@ -216,19 +217,19 @@ while (jd.job_complete == False):
         abinitio = Abinitio(PDB, frag3, frag9)
         abinitio.apply(pose)
         print "-------------- End ab initio protocol--------------"
-        
+
         # 2) Centroid relaxation
         print "--------Starting centroid relax protocol-----------"
         cen_relax = CentroidRelax()
         cen_relax.apply(pose)
         print "---------End centroid relax protocol--------------"
-        
+
         switch_high.apply(pose)
 
         # Combine protein pose with surface
         combined_pose.copy_segment(pose.total_residue(), pose, combined_pose.num_jump() + 1, 1)
         pose.assign(combined_pose)
-    
+
     else:
         pose.assign(start_pose)
         switch_high.apply(pose)
@@ -238,35 +239,35 @@ while (jd.job_complete == False):
 
     print ">> Starting full atom relaxation..."
     # Initial settings
-    fa_relax = FullAtomRelax(score_high, score_pack, std_scorefxn, nosmallshear_ref) 
-    fa_relax.set_params(pose)   
+    fa_relax = FullAtomRelax(score_high, score_pack, std_scorefxn, nosmallshear_ref)
+    fa_relax.set_params(pose)
     fa_relax.loadSurf(input)
     fa_relax.constraints = constraints
 
     # Full repack before starting
-    fa_relax.fullRepack(pose) 
-    
+    fa_relax.fullRepack(pose)
+
     print "-------------- Starting solution state refinement --------------"
     # Solution state settings
-    fa_relax.name = x    
+    fa_relax.name = x
 
     if constraints:
-        fa_relax.loadConstraints(PDB)    
-        fa_relax.applyConstraints(pose, "sol")   
+        fa_relax.loadConstraints(PDB)
+        fa_relax.applyConstraints(pose, "sol")
 
     fa_relax.ref_cycles = sol_cycles
     fa_relax.outer_cycles = sol_outer_cycles
     fa_relax.inner_cycles = sol_inner_cycles
-    
+
     # 3) Solution state refinement
     for cycle in range(1, sol_cycles + 1):
         fa_relax.curr_cycle = cycle
         print "Solution state cycle ", cycle
         run("sol")
- 
-    # Full repack at the end        
-    fa_relax.fullRepack(pose) 
-    
+
+    # Full repack at the end
+    fa_relax.fullRepack(pose)
+
     # Get solution state pose from FullAtomRelax protocol
     sol_pose = Pose()
     sol_pose.assign(pose)
@@ -274,41 +275,41 @@ while (jd.job_complete == False):
 
     # Slide protein into contact with surface
     fa_relax._slideProt(pose)
-            
+
     print "-------------- Starting adsorbed state refinement --------------"
     # Adsorbed state settings
     fa_relax.name = y
 
     if constraints:
-        fa_relax.applyConstraints(pose, "ads")  
-        
+        fa_relax.applyConstraints(pose, "ads")
+
     fa_relax.ref_cycles = ads_cycles
-    fa_relax.outer_cycles = ads_outer_cycles 
+    fa_relax.outer_cycles = ads_outer_cycles
     fa_relax.inner_cycles = ads_inner_cycles
-    
+
     # 4) Adsorbed state refinement
     for cycle in range(1, ads_cycles + 1):
         fa_relax.curr_cycle = cycle
         print "Adsorbed cycle ", cycle
         run("ads")
-    
-    # Full repack at the end        
-    fa_relax.fullRepack(pose) 
-    
+
+    # Full repack at the end
+    fa_relax.fullRepack(pose)
+
     # 2 extra refinement cycles at rep = 0.44 for unbiased prediction
     if fa_relax.constraints == 'False':
         fa_relax.score_high.set_weight(fa_rep, 0.44)
         fa_relax.set_max_angle(6)
-        
+
         # Starting at 1 would lead to random orientation
         for outer_cycle in range(2, 4):
             fa_relax.outer_cycle = outer_cycle
             fa_relax.apply(pose)
-       
-        fa_relax.fullRepack(pose) 
+
+        fa_relax.fullRepack(pose)
 
     print "-------------- End of adsorbed state refinement --------------"
-    
+
     # Re-save it so it's not overwritten by next job
     curr_sol = str(x)
     curr_ads = str(y)
@@ -317,9 +318,9 @@ while (jd.job_complete == False):
     jd1.output_decoy(sol_pose)
     jd.output_decoy(pose)
 
-    append_surf_sol = "grep SURFA " + input + " >> " + curr_sol 
+    append_surf_sol = "grep SURFA " + input + " >> " + curr_sol
     append_surf_ads = "grep SURFA " + input + " >> " + curr_ads
-    
+
     os.system(append_surf_sol)
     os.system(append_surf_ads)
 

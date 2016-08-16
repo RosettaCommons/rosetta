@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
 # Edited by Emily Koo to create difference plot if native PDB is included in dir
 
 from numpy import zeros, arange
@@ -12,8 +13,8 @@ def ContactMap(Con, native, num_pdb):
 
     X = 0
     Y = 1
-    
-        
+
+
     total_res = len(ResidueList(load('PDBsInDir')[0])) + 1
     Resolution=[total_res, total_res]
     Histogram = zeros(Resolution)
@@ -23,14 +24,14 @@ def ContactMap(Con, native, num_pdb):
     for Line in open(Con):
         Contact = [int(Line.split()[2]), int(Line.split()[5])]
         Points.append(Contact)
-    
+
     start_res = (Points[0])[0] - 1
 
     for Line in Points:
         Res1 = int(Line[X]) - start_res
         Res2 = int(Line[Y]) - start_res
         Histogram[Res1,Res2] += 1
-    
+
     if exists(native):
         for Line in open(native, 'r'):
             Contact = [int(Line.split()[2]), int(Line.split()[5])]
@@ -40,9 +41,9 @@ def ContactMap(Con, native, num_pdb):
             Res1 = int(Line[X]) - start_res
             Res2 = int(Line[Y]) - start_res
             Histogram[Res1,Res2] -= num_pdb
-    
+
     Index = [arange(1,total_res,1),arange(1,total_res,1)]
-    
+
     FileOut = 'ContactMap.dat'
     o = open(FileOut, 'w')
     for x in enumerate(Index[X]):
@@ -54,17 +55,17 @@ def ContactMap(Con, native, num_pdb):
     y2=1
     x2=y1=total_res+0.5
     Conversion=(total_res-1)+(total_res-1)/50 + 1.0
-    
+
     GNUPlotFile = 'ContactMap.gnuplot'
     O = open(GNUPlotFile, 'w')
     O.write('%0s \n' %('set view map'))
-    O.write('%0s \n' %('set terminal png size 800, 800 nocrop truecolor enhanced font "VeraBd, 15"')) 
+    O.write('%0s \n' %('set terminal png size 800, 800 nocrop truecolor enhanced font "VeraBd, 15"'))
     O.write('%0s \n' %('set output "ContactMap.png"'))
     O.write('%0s \n' %('set size 1,1.1'))
     O.write('%0s %1.1f %0s \n' %('set xrange [0.5:',y1-1.0,']'))
     O.write('%0s %1.1f %0s \n' %('set yrange [0.5:',y1-1.0,']'))
     O.write('%0s \n' %('unset key'))
-    
+
     if exists(native):
         O.write('%0s \n' %('set palette defined (0 "#FF0000", 1 "#FFFFFF", 2 "#0000FF")'))
         #O.write('%0s \n' %('set palette defined (0 "#FF0000", 1 "#0000FF")'))
@@ -101,12 +102,12 @@ def ContactMap(Con, native, num_pdb):
     O.write('%0s \n' %('set xlabel "Residue" font "VeraBd, 20"'))
     O.write('%0s \n' %('set ylabel "Residue" font "VeraBd, 20"'))
     O.write('%0s \n' %('set bmargin 0'))
-    #O.write('%0s \n' %('set title "Osteocalcin/HAp [100] (Solution)" font "VeraBd, 20"')) 
+    #O.write('%0s \n' %('set title "Osteocalcin/HAp [100] (Solution)" font "VeraBd, 20"'))
     O.write('%0s \n' %('splot "ContactMap.dat" u 1:2:3 w image'))
 
 Con = argv[1]
 native = argv[2]
-num_pdb = 0 
+num_pdb = 0
 for files in open('PDBsInDir', 'r'):
     if files.startswith('Ads'):
         num_pdb += 1

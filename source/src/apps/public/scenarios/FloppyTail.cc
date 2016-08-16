@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/public/scenarios/FloppyTail.cc
 /// @brief This app was initially intended for modeling the binding of a long unstructured C-terminal tail to some other part of a protein.  It now works for N-terminal, C-terminal, and internal flexible regions.  It works best as a method for sampling space to see what is possible, preferably in conjunction with extensive experimental constraints.  It is not meant to produce ab-initio style models of folded complexes.

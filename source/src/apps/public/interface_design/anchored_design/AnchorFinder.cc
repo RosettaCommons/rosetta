@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/public/interface_design/anchored_design/AnchorFinder.cc
 /// @brief This code is intended to sift through the entire Protein Data Bank and find PDBs that fit certain criteria; in this case having loops with large numbers of cross-interface neighbors

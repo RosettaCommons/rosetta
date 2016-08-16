@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/tools/protocols.py
 ## @brief  basic protocol functions
@@ -20,7 +20,7 @@ import os
 import re
 
 
-    
+
 def toCen(p):
     print "Switching to Centroid"
     to_cen = SwitchResidueTypeSetMover('centroid')
@@ -39,7 +39,7 @@ def toFA(start, p):
     to_FA.apply(p)
     recover_sidechains.apply(p)
     #pack.apply(p)
-    
+
     return p
 
 
@@ -47,7 +47,7 @@ def bbMover(p, res, chain, phi, psi, omega, score):
     """
     Moves individual Phi and Psi angles
     """
-    
+
     res = p.pdb_info().pdb2pose(chain, res)
     p.set_phi(res, phi)
     print score(p)
@@ -57,8 +57,8 @@ def bbMover(p, res, chain, phi, psi, omega, score):
     print score(p)
 
     return p
-    
 
-            
-    
-    
+
+
+
+

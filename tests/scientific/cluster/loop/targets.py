@@ -4,7 +4,7 @@
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 
 targets = ['154l', '1dts', '1hfc', '1pbe', '1rro', '1thg', '1xif', '2exo', '2sns', '3hsc',

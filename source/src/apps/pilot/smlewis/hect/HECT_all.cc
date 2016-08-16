@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/pilot/smlewis/HECT/HECT_all.cc
 /// @brief This app is intended for modeling the binding of a E2/E3/UBQ complex.  This is the "second app" in the series - see also HECT_ubq.  This application will take a starting structure prepared by HECT_all and remodel the complex.  The remodeling includes: backbone remodeling of the E3 linker region, the UBQ tail, the chemical linkage, and sidechain repacking at the variable interfaces.  This code constrains the UBQ/E3 interface based on mutational data in (Kamadurai HB, Souphron J, Scott DC, Duda DM, Miller DJ, Stringer D, Piper RC, Schulman BA.  Insights into ubiquitin transfer cascades from a structure of a UbcH5B approximately ubiquitin-HECT(NEDD4L) complex.  Mol Cell. 2009 Dec 25;36(6):1095-102) and the UBQtail/E3 catalytic C to attempt to generate catalytic-like conformations.

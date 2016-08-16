@@ -1,12 +1,11 @@
-# :noTabs=true:
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
-# (c) This file is part of the Rosetta software suite and is made available
-# (c) under license.
-# (c) The Rosetta software is developed by the contributing members of the
-# (c) Rosetta Commons.
-# (c) For more information, see http://www.rosettacommons.org.
-# (c) Questions about this can be addressed to University of Washington UW
-# (c) TechTransfer, email: license@u.washington.edu.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
 """Brief:   This PyRosetta script mutates every residue to each of the 20
       canonical amino acids and calculates the change in Rosetta score.
 

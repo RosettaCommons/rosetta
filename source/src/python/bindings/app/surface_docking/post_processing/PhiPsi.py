@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from string import strip, split
 from sys import argv, exit
@@ -17,7 +17,7 @@ class ATOMinfo:
         """
         Going column by column through pdb
         """
-        
+
         #Atomic group i.e., atom or hetatm
         protein_or_surface = PDB[:6]
         if protein_or_surface == 'ATOM  ':
@@ -25,7 +25,7 @@ class ATOMinfo:
         elif protein_or_surface == 'HETATM':
             self.atomic_group = 'surface'
 
-                      
+
         #Atomic coordinates
         self.X = float(PDB[30:38])
         self.Y = float(PDB[38:46])
@@ -41,7 +41,7 @@ def load(file):
     loaded_file = []
     for line in file:
         loaded_file.append(strip(line))
-        
+
     return loaded_file
 
 def partner(pdb):
@@ -54,9 +54,9 @@ def partner(pdb):
                 protein.append(atom)
             if ATOM.atomic_group == 'surface':
                 surface.append(atom)
-                    
+
     return [protein, surface]
-                
+
 def coordinates(pdb):
     protein = []
     surface = []
@@ -69,7 +69,7 @@ def coordinates(pdb):
             if ATOM.atomic_group == 'surface':
                 coordinates = ATOM.X, ATOM.Y, ATOM.Z
                 surface.append(coordinates)
-                
+
     return [protein, surface]
 
 def backbone(pdb):
@@ -78,7 +78,7 @@ def backbone(pdb):
     for atom in pdb:
         if atom[13:15] in bbAtoms:
             backbone.append(atom)
-	   
+
     return backbone
 
 def CA(pdb):
@@ -105,8 +105,8 @@ def hbond_record(pdb):
              #print "donor ", split(line)[1:4]
              acceptor.append(split(line)[5:8])
              #print "acceptor ",split(line)[5:8]
-		
-	"""	
+
+	"""
         if not end or line[:5] == 'begin':
 	   #print split(line)[0]
             if line[:4] == 'end ':
@@ -122,14 +122,14 @@ def hbond_record(pdb):
 			   #print "donor ", split(line)[1:4]
 	                    acceptor.append(split(line)[5:8])
 			   #print "acceptor ",split(line)[5:8]
-          """ 
+          """
 
     for residue in range(len(donor)):
         type = acceptor[residue][2], donor[residue][2]
         Type.append(type)
         pair = int(acceptor[residue][0]), int(donor[residue][0])
         Pair.append(pair)
-        
+
     return Pair, Type
 
 #======================================================================
@@ -142,7 +142,7 @@ def vector(pointA, pointB):
     vector[0] = pointB[0] - pointA[0]
     vector[1] = pointB[1] - pointA[1]
     vector[2] = pointB[2] - pointA[2]
-    
+
     return vector
 
 def length(vector):
@@ -165,14 +165,14 @@ def cross_product(vector1, vector2):
     cross_product[0] = vector1[1]*vector2[2] - vector1[2]*vector2[1]
     cross_product[1] = vector1[2]*vector2[0] - vector1[0]*vector2[2]
     cross_product[2] = vector1[0]*vector2[1] - vector1[1]*vector2[0]
-    
+
     return cross_product
 
-def angle(vector1, vector2):    
+def angle(vector1, vector2):
     unit_vector1 = unit_vector(vector1, length(vector1))
     unit_vector2 = unit_vector(vector2, length(vector2))
     angle = acos(dot_product(unit_vector1, unit_vector2))*180/pi
-    
+
     return angle
 
 def scalar_triple_product(vector1, vector2, vector3):
@@ -248,7 +248,7 @@ def SecondaryStructure(pdb):
         HBondDist = abs(donorRes - acceptorRes)
         if acceptorType == 'O' and donorType == 'N' and HBondDist == AllowedHBondDist_Helix:
             HelixBin.append(HBond[hbond][0])
-    HelicalSegmentBin = [] 
+    HelicalSegmentBin = []
     for Residue in range(len(Protein)):
         if int(Protein[Residue][24:26]) in HelixBin and int(Protein[Residue][24:26]) - 1 in HelixBin:
             for HelixResidue in range(int(Protein[Residue][24:26]), int(Protein[Residue][24:26]) + 4):
@@ -258,10 +258,10 @@ def SecondaryStructure(pdb):
             Helix.append(1)
         else:
             Helix.append(0)
-          
-            
-   
-      #HelixVar=25.0   
+
+
+
+      #HelixVar=25.0
     #for residue in range(len(Protein)):
     #    if residue != len(Protein) - 1:
     #        if int(Psi[residue] + Phi[residue + 1]) in range(-130, -80):
@@ -288,18 +288,18 @@ def SecondaryStructure(pdb):
                 #HBondMatrix[donor, Residue] += 1
 
     #ndex = [arange(0,len(Protein),1),arange(0,len(Protein),1)]
-    
+
     #for x in enumerate(Index[0]):
     #    for y in enumerate(Index[1]):
     #        if HBondMatrix[x[1], y[1]] != 0:
     #           #print x[1],' ', y[1], ' ', HBondMatrix[x[1],y[1]]
-   
+
     for Residue in Protein:
         if int(Residue[24:26]) in LoopBin:
             Loop.append(1)
         else:
             Loop.append(0)
-   
+
     #while residue in range(len(Protein)):
     #    ResIsHBonded=0
     #    TmpBin = []
@@ -311,24 +311,24 @@ def SecondaryStructure(pdb):
     #                TmpBin.append(HBondSpace)
     #                ResIsHBonded=1
 
-         
+
             #if hbond == len(HBond) -1:
      #   if ResIsHBonded:
      #       HBondSpace = max(TmpBin)
      #       for loop_residue in range(HBondSpace + 1):
      #           residue += 1
      #           Loop.append(1)
-                
+
      #   else:
      #       residue += 1
      #       Loop.append(0)
 
     #print len(Loop)
     '''======= Determine Loop, Helical, or Extended segments'''
-    
-    residue=0    
+
+    residue=0
     while residue in range(len(Protein)):
-   
+
         '''========== First Helical =============='''
 
         if Helix[residue]:
@@ -336,7 +336,7 @@ def SecondaryStructure(pdb):
             #residue += 1
       #  helical_segment=0
       #  if Helix[residue]:
-      #      if residue!= 0 and SecStruct[residue - 1] == 'Helix': 
+      #      if residue!= 0 and SecStruct[residue - 1] == 'Helix':
       #          SecStruct.append('Helix')
       #          helical_segment=1
       #          residue += 1
@@ -369,8 +369,8 @@ def SecondaryStructure(pdb):
                 SecStruct.append('Extended')
                 #residue += 1
         residue += 1
-    return SecStruct        
-  
+    return SecStruct
+
 #=========== Make The Output =====================
 
 def MAIN(pdb):
@@ -388,4 +388,4 @@ def MAIN(pdb):
 
 pdb = argv[1]
 MAIN(pdb)
-    
+

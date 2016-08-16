@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/pilot/smlewis/HECT/HECT.hh
 /// @brief This mover is a base mover for my pair of HECT apps.  It contains shared methods, mostly for setting up the odd chemical linkage.  See the other HECT files.

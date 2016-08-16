@@ -1,9 +1,11 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available
-// (c) under license. The Rosetta software is developed by the contributing
-// (c) members of the Rosetta Commons. For more information, see
-// (c) http://www.rosettacommons.org. Questions about this can be addressed to
-// (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/antibody_design/antibody_designer.cc
 /// @brief Just a quickly written app for basic antibody grafting/modeling for now.
@@ -94,84 +96,84 @@ model_cdrs(core::pose::Pose & pose, AntibodyInfoCOP ab_info){
 
 	utility::vector1<std::string> pdb_files(6, "");
 	utility::vector1<std::string> sequences(6, "");
-	
+
 	pdb_files[ l1 ] = option [ ab::L1_pose ]();
 	pdb_files[ l2 ] = option [ ab::L2_pose ]();
 	pdb_files[ l3 ] = option [ ab::L3_pose ]();
 	pdb_files[ h1 ] = option [ ab::H1_pose ]();
 	pdb_files[ h2 ] = option [ ab::H2_pose ]();
 	pdb_files[ h3 ] = option [ ab::H3_pose ]();
-	
+
 	sequences[ l1 ] = option [ ab::L1_seq ]();
 	sequences[ l2 ] = option [ ab::L2_seq ]();
 	sequences[ l3 ] = option [ ab::L3_seq ]();
 	sequences[ h1 ] = option [ ab::H1_seq ]();
 	sequences[ h2 ] = option [ ab::H2_seq ]();
 	sequences[ h3 ] = option [ ab::H3_seq ]();
-	
+
 	for (core::Size i = 1; i <= 6; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-	
+
 		//Graft CDR?
 		if (pdbfiles[ i ] != "" ){
-			
+
 			core::pose::PoseOP cdr_pose = pose_from_file(pdbfiles[ i ], core::import_pose::PDB_file);
 			keep_cdr(*cdr_pose, *ab_info, cdr)
 			graft_in_cdr(pose, *ab_info, cdr, cdr_pose);
 		}
-		
+
 		//Copy a new sequence?
 		if (sequences[ i ] != "" ){
 			copy_in_seq(pose, *ab_info, cdr, sequences[ i ]);
-		
+
 		}
-		
-		
+
+
 	}
-	
+
 	design::AntibodyDesignMoverGenerator generator = design::AntibodyDesignMoverGenerator(ab_info);
 	generator.set_cdr_range(h1, l3, true);
 	generator.set_include_neighbor_sc(true);
 	generator.set_min_sc(true);
 	generator.neighbor_detection_dis(6.0);
 	generator.stem_size(2);
-	
-	
-	//Repack all CDRs, neighbors, and stem. 
+
+
+	//Repack all CDRs, neighbors, and stem.
 	generator.generate_repack_cdrs(pose);
 	generator.apply(pose);
-	
-	
+
+
 	//Add dihedral constraints so we don't screw up the CDRs too much.  Have a bit more give sense they could be wrong for the sequence.
 	//Add 10 degrees to phi/psi sd.
 	for (core::Size i = 1; i <= 6; ++i ){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		add_harmonic_dihedral_cst_general(ab_info, pose, cdr, 30, 40);
 	}
-	
-	
-	
+
+
+
 	//Optionally Run Relax on CDRs with dihedral csts
 	if (option [ ab::relax_cdrs ] ){
 		//Output other pose for before relax - CMD line can control dualspace and nonideal here.
 		generator.generate_relax(pose);
 		generator.apply(pose);
-		
+
 	}
-	
+
 	//Optionally Relax the whole antibody - Should respect cmd-line settings
 	//if (option [ ab::relax_ab ] ) {
-		
+
 	//}
-	
+
 	//Optionally Run SnugDock
 	//if (option [ ab::snugdock] ) {
 		//output other pose for snugdock
 	//}
-	
-	
-	
-	
+
+
+
+
 }
 
 
@@ -199,7 +201,7 @@ copy_in_seq(core::pose::Pose & pose, AntibodyInfo & ab_info, CDRNameEnum cdr, st
 
 
 	} //antibody
-} //protocols 
+} //protocols
 
 
 
@@ -238,10 +240,10 @@ int main(int argc, char* argv[])
 
 		OPT(DE_pose);
 		OPT(DE_seq);
-		
+
 		NEW_OPT(relax_cdrs, "Relax CDRs and 2 residues into framework with dihedral constraints", true);
 		NEW_OPT(snugdock, "Run SnugDock after relax", false);
-		
+
 		devel::init(argc, argv);
 
 		utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();

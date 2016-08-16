@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_modules/full_control/FullControl.py
 ## @brief  Full Control window
@@ -72,7 +72,7 @@ class FullControlWindow():
 
         self.variant = StringVar()
         self.variant_map = dict(); # [string variant]:[string names]
-        
+
 
         #Ignore this.  It is for Komodo autocomplete
         if 0:
@@ -247,7 +247,7 @@ class FullControlWindow():
         self.resnum.set(self.main_resnum.get())
         self.chain.set(self.main_chain.get())
         self.shoInfo(self.main_resnum.get(), self.main_chain.get())
-    
+
     def resnum_callback(self, name, index, mode):
         """
         This is to update GUI upon a new resnum selected from main window.

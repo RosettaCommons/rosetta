@@ -2,6 +2,6 @@
 (c) This file is part of the Rosetta software suite and is made available under license.
 (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+(c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 This is the test for a pilot app FloppyTail.  The application was more-or-less a one-shot (but we're planning on publishing it so it needs to be maintained).  The starting structure has a long tail straight out into space; the app is designed to model that tail's interaction with the rest of the complex.  The result should have the straight tail flexibly remodeled (it won't have enough cycles in test mode to do anything useful).  A sample log is included here.

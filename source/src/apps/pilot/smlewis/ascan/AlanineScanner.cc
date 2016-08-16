@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/pilot/smlewis/AlanineScanner.cc
 /// @brief Alanine scanning hack.  Ron Jacak has a much better one.  This is really only intended for use with alanine scanning results from the AnchoredDesign app.

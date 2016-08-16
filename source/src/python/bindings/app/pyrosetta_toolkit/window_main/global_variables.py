@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/window_main/global_variables.py
 ## @brief  Global variables for PyRosetta Toolkit
@@ -15,7 +15,7 @@
 
 
 #This gets set to the toolkit directory by pyrosetta_toolkit.py.
-current_directory="" 
+current_directory=""
 
 
 #NOTE:  To use these global variables import the file into your module.  Use 'from window_main import global_variables' as the main toolkit directory is added to PythonPath at launch of the GUI

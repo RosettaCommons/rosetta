@@ -1,4 +1,5 @@
-#!/usr/bin/python2.6
+#!/usr/bin/env python
+
 # Script to help make ambiguous constraint files
 # See https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/file_constraints.html for guideline
 # Emily Koo
@@ -18,7 +19,7 @@ def get_func_def(func_type):
         sd = raw_input("Enter standard deviation: ")
         rswitch = raw_input("Enter rswitch: ")
         tag = raw_input("Enter tag: ")
-        return (lb, ub, sd, rswitch, tag)    
+        return (lb, ub, sd, rswitch, tag)
     elif func_type_l == "harmonic" or func_type_l == "circular harmonic":
         x = raw_input("Enter x0: ")
         sd = raw_input("Enter standard deviation: ")
@@ -47,11 +48,11 @@ def main():
     atom2_num = get_atom2_num(pdb_file, atom2_name.upper())
     func_type = raw_input("Enter function type: ")
     func_def = get_func_def(func_type)
-    
+
     output_file = raw_input("Enter desired name of output file without ext: ")
-    
+
     cst_file = open(output_file + ".cst", 'a')
-    
+
     for n in range(1, atom2_num + 1):
         cst_file.write("AmbiguousConstraint " + constr_type + " " + atom1_name.upper() + " " + atom1_res + " " + atom2_name.upper() + " " + str(n) + " " + func_type.upper() + " ")
         for m in func_def:

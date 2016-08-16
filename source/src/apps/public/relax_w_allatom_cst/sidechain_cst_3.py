@@ -1,9 +1,15 @@
 #!/usr/bin/env python
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 """Make non-backbone heavy atom coordinate constraints from an
 input PDB file. """
 
- 
+
 import os, sys
 
 class Residue:
@@ -36,7 +42,7 @@ def find_CA(residues):
             if atom.name_.strip() == 'CA':
                 return ' '.join((atom.name_, str(res.pose_)))
     return None
-    
+
 def main(filename, width, stdev):
     if filename.endswith('.pdb'):
         tag = filename[:-4]
@@ -77,7 +83,7 @@ def main(filename, width, stdev):
         for i, r in enumerate(chains[c]):
             r.pose_num(num)
             num += 1
-            
+
     ref = None
     f = open(tag+'_sc.cst','w')
     try:
@@ -90,7 +96,7 @@ def main(filename, width, stdev):
                 x = atom.x_
                 y = atom.y_
                 z = atom.z_
-                
+
                 if sname == 'CA':
                     ref = ' '.join((name, str(res.pose_)))
                 if sname in ['C','CA','N','O','OXT']:
@@ -100,7 +106,7 @@ def main(filename, width, stdev):
                     ref = find_CA(residues)
                     if ref is None:
                         raise ValueError("Pose must have CA *somwehere*!")
-                
+
                 if resn == 'ASN' and sname in ['OD1','ND2']: # Accomodate -flipHNQ
                     f.write("AmbiguousConstraint\n")
                     f.write(' '.join(["CoordinateConstraint",'OD1',pose,ref,x,y,z,
@@ -134,8 +140,8 @@ def main(filename, width, stdev):
                                   "BOUNDED","0",width,stdev,"0.5","tag"])+'\n')
     finally:
         f.close()
-        
-            
+
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:

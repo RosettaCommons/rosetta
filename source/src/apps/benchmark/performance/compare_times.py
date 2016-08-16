@@ -1,4 +1,10 @@
-#!/bin/env python
+#!/usr/bin/env python
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 def load_files():
 	import json
@@ -17,7 +23,7 @@ def load_files():
 
 
 def compare_times():
-	new, ref = load_files()	
+	new, ref = load_files()
 	runtimes_compare = open('runtime_diffs.txt', 'w')
 	format_string = '%7.1f %7.1f %7.1f %6.2f %s\n'
 	runtimes_compare.write('%7s %7s %7s %6s %s\n' % ("NEW", "REF", "DIFF", "D/R", "TEST"))
@@ -41,10 +47,10 @@ def compare_times():
 	ref_sum = sum(ref_values)
 	new_avg = new_sum/float(len(new_values))
 	ref_avg = ref_sum/float(len(ref_values))
-	
+
 	runtimes_compare.write( format_string % (new_sum, ref_sum, new_sum - ref_sum, (new_sum-ref_sum)/ref_sum, 'TOTAL' ))
 	runtimes_compare.write( format_string % (new_avg, ref_avg, new_avg - ref_avg, (new_avg-ref_avg)/ref_avg, 'MEAN' ))
-	
+
 def main():
 	compare_times()
 

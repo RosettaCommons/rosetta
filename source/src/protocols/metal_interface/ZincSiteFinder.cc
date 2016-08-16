@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   protocols/metal_interface/bder/ZincSiteFinder.cc
 /// @brief  Searches pose for a zinc residue, then fills a vector of MetalSiteResidue objects with info including sequence position of coordinating sidechains, ligand atom xyz, ligand atom name, and atom ids to provide a convenient way for protocols to add metalsite constraints (ligand refers to protein sidechains)

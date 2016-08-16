@@ -1,11 +1,11 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet;
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.AlignmentCluster
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   apps/pilot/brunette/repeat_dock
 ///
@@ -161,8 +161,8 @@ void get_helices(core::pose::Pose& pose, protocols::loops::LoopsOP helicesOP){
 Real calculate_helical_tail_variance(core::pose::Pose pose, core::pose::Pose native_pose,Dock testDock){
 	using namespace core::scoring;
 	using namespace core::id;
-    //std::cout << "pose_range" << testDock.h1_pos_start << "," << testDock.h1_pos_end  << "," <<  testDock.h2_pos_start << "," << testDock.h2_pos_end  << std::endl; 
-    //std::cout << "native_pose_range" << testDock.h1_nat_start << "," << testDock.h1_nat_end  << "," <<  testDock.h2_nat_start << "," << testDock.h2_nat_end  << std::endl; 
+    //std::cout << "pose_range" << testDock.h1_pos_start << "," << testDock.h1_pos_end  << "," <<  testDock.h2_pos_start << "," << testDock.h2_pos_end  << std::endl;
+    //std::cout << "native_pose_range" << testDock.h1_nat_start << "," << testDock.h1_nat_end  << "," <<  testDock.h2_nat_start << "," << testDock.h2_nat_end  << std::endl;
     int h1_pos_incr;
     int h2_pos_incr;
     int h1_nat_incr;
@@ -291,7 +291,7 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
     core::pose::Pose mod_pose;
     core::kinematics::FoldTree f_mod(pose_positions.size());
     core::pose::create_subpose(pose,pose_positions,f_mod,mod_pose);
-    //chop out chain A. 
+    //chop out chain A.
     Size chain_id =  get_chain_id_from_chain("A",native_pose);
     core::pose::PoseOP chainA_ = native_pose.split_by_chain(chain_id);
     core::pose::PoseOP chainA_clone_ = chainA_->clone();
@@ -415,7 +415,7 @@ vector1<Dock> get_all_2helix_docks(core::pose::Pose & pose, core::pose::Pose & n
     }
     pose_helix_selection.clear();
     //-------------------------------------------------------------------------
-    //option B back of repeat 
+    //option B back of repeat
     pose_helix_selection.push_back((*pose_helices)[(*pose_helices).size()-1].start());
     pose_helix_selection.push_back((*pose_helices)[(*pose_helices).size()-1].stop());
     pose_helix_selection.push_back((*pose_helices)[(*pose_helices).size()].start());
@@ -435,7 +435,7 @@ vector1<Dock> get_all_2helix_docks(core::pose::Pose & pose, core::pose::Pose & n
 }
 
 
-    
+
 vector1<Dock> get_all_1helix_docks(core::pose::Pose & pose, core::pose::Pose & native_pose){
     using protocols::loops::Loops;
     Size range = 3;
@@ -534,7 +534,7 @@ core::pose::Pose superimpose_A_to_all(Dock & dock,core::pose::Pose native_pose){
     core::id::AtomID_Map< core::id::AtomID > atom_map;
     core::pose::initialize_atomid_map( atom_map, chainA, BOGUS_ATOM_ID );
    	for (Size ii=1; ii<=dock.nat_final_poseCoords_end-dock.nat_final_poseCoords_start; ++ii){
-        Size native_pos =dock.nat_final_natCoords_start-1+ii;  
+        Size native_pos =dock.nat_final_natCoords_start-1+ii;
         Size chainA_pos =dock.nat_final_poseCoords_start-1+ii;
         core::id::AtomID const id1(chainA.residue(chainA_pos).atom_index("CA"), chainA_pos );
         core::id::AtomID const id2(native_pose.residue(native_pos).atom_index("CA"),native_pos);
@@ -568,7 +568,7 @@ void calculate_motif_scores(Dock & dock,core::scoring::motif::MotifHashManager *
     get_second_2_helices(dock,dock.unclosed_pose,start_res,end_res);
     Real fullPoseScore = compute_motif_score(dock.unclosed_pose_full,start_res,end_res,mman_);
     Real partialPoseScore = compute_motif_score(dock.unclosed_pose,start_res,end_res,mman_);
-    dock.chainA_motif_score = partialPoseScore/((Real) end_res-start_res); 
+    dock.chainA_motif_score = partialPoseScore/((Real) end_res-start_res);
     dock.overall_motif_score =fullPoseScore/((Real) end_res-start_res);
 }
 
@@ -609,7 +609,7 @@ int main( int argc, char * argv [] ) {
         vector1<Dock> docks = get_all_2helix_docks(current_pose,native_pose);
         vector1<Dock> tmp_docks = get_all_1helix_docks(current_pose,native_pose);
         docks.insert(docks.end(),tmp_docks.begin(),tmp_docks.end());
-        core::io::silent::SilentFileData sfd;  
+        core::io::silent::SilentFileData sfd;
         for(Size ii=1; ii<=docks.size(); ++ii){
             docks[ii].rmsd =calculate_helical_tail_variance(current_pose,native_pose,docks[ii]);
             if(((docks[ii].single_helix && (docks[ii].rmsd < RMSD_1_HELIX_THRESH)))||(!docks[ii].single_helix && (docks[ii].rmsd < RMSD_2_HELIX_THRESH))){
@@ -624,7 +624,7 @@ int main( int argc, char * argv [] ) {
                         //docks[ii].closed_pose = minimize_to_close(docks[ii].unclosed_pose);
                         docks[ii].closed_pose = docks[ii].unclosed_pose;
                         docks[ii].final_pose = superimpose_A_to_all(docks[ii],native_pose);
-                        //A. ChainAll score3 
+                        //A. ChainAll score3
                         //B. Motif_score
                         //C. Single or double helix
                         //D. Rmsd

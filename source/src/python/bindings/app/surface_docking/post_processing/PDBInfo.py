@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
 # Edited by Emily Koo to retain protein info and speed up processing
 # Make sure to reset lists for each new PDB
 
@@ -16,15 +17,15 @@ class PDB:
         """
         Going column by column through pdb
         """
-        
+
         #Atomic group i.e., atom or hetatm
         protein_or_surface = PDB[:6]
         if protein_or_surface == 'ATOM  ':
             self.atomic_group = 'protein'
         elif protein_or_surface == 'HETATM':
             self.atomic_group = 'surface'
-          
-        self.AtmNum = int(PDB[6:11]) 
+
+        self.AtmNum = int(PDB[6:11])
         self.AtmTyp = str(PDB[11:16]).strip()
         self.Elem   = str(PDB[13:14])
         self.ResTyp = str(PDB[16:20]).strip()
@@ -45,7 +46,7 @@ prot_coor = []
 surf_coor = []
 
 def resetlists():
- 
+
     ATOMS[:] = []
     protein[:] = []
     surface[:] = []
@@ -69,7 +70,7 @@ def partner(pdb):
                 protein.append(ATOM)
             if ATOM.atomic_group == 'surface':
                 surface.append(ATOM)
-                    
+
     return [protein, surface]
 
 def coordinates(pdb):
@@ -82,7 +83,7 @@ def coordinates(pdb):
             if ATOM.atomic_group == 'surface':
                 coordinates = ATOM.X, ATOM.Y, ATOM.Z
                 surf_coor.append(coordinates)
-                
+
     return [prot_coor, surf_coor]
 
 def backbone(pdb):
@@ -106,7 +107,7 @@ def GetResidueAtoms(Decoy, ResidueNumber):
 
 def ResidueList(Decoy):
     ResidueList = []
-    
+
     protein = partner(load(Decoy))[0]
     for ATOM in protein:
         if ATOM.ResNum not in ResidueList:
@@ -125,7 +126,7 @@ def GetAtomTypeInfo(Atoms,AtomType):
 
 def AminoAcidTable(ThreeLetterCode):
     OneLetterCode=''
-    
+
     if ThreeLetterCode == 'ALA': OneLetterCode = 'A'
     if ThreeLetterCode == 'CYS': OneLetterCode = 'C'
     if ThreeLetterCode == 'ASP': OneLetterCode = 'D'

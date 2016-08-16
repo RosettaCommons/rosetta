@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/tools/input.py
 ## @brief  general input functions for the toolkit
@@ -33,7 +33,7 @@ def tk_get_directory():
     """
 
     dir_name = tkFileDialog.askdirectory(initialdir=global_variables.current_directory, title='Pick a directory')
-    
+
     if not dir_name:
         return None
     print dir_name
@@ -56,7 +56,7 @@ def fixFilename(file):
     """
     Rosetta cannot use spaces in the filename...
     """
-    
+
     x=file.split()
     if len(x) > 1:
         newFile = x[0]
@@ -72,7 +72,7 @@ def get_pdb_list_from_dir(dir):
     Returns a list of PDB files within a directory.
     check_button_ck if it returns the full path..
     """
-    
+
     directorylist =os.listdir(dir)
     directorylist = list(directorylist) #May already be a list, but I forget.
     for Files in directorylist:
@@ -81,7 +81,7 @@ def get_pdb_list_from_dir(dir):
         else:
             directorylist.remove(Files)
     return directorylist
-    
+
 def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0, constraint_types = False, constraint_file=False):
     """
     Adds constraint from file to pose and score.  Sets all constraint_types to 1.0.
@@ -92,7 +92,7 @@ def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0,
         return ""
     if not constraint_types:
         constraint_types = [atom_pair_constraint, angle_constraint, dihedral_constraint, coordinate_constraint, constant_constraint]
-    
+
     if not constraint_file:
         constraint_file = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title = "Open Constraint File")
     if not constraint_file:return
@@ -101,7 +101,7 @@ def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0,
     setup = ConstraintSetMover()
     setup.constraint_file(constraint_file)
     setup.apply(pose)
-    
+
     for constraint in constraint_types:
         if score.get_weight(constraint)==0:
             score.set_weight(constraint, default_weight)
@@ -111,7 +111,7 @@ def get_residuetypeset_from_path_array(param_path_array, loaded_path_array):
     """
     Returns ResidueTypeSet from an array of paths.
     """
-    
+
     #So that there are no duplicates.
     params = dict()
     for p in param_path_array:

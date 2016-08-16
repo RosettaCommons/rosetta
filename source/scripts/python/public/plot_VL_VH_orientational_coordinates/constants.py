@@ -1,8 +1,10 @@
-## (c) Copyright Rosetta Commons Member Institutions.
-## (c) This file is part of the Rosetta software suite and is made available under license.
-## (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-## (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-## (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+#!/usr/bin/env python
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 # Author: Rahel Frick (frick.rahel@gmail.com)
 # Author: Jeliazko Jeliazkov (jeliazkov@jhu.edu)
@@ -17,7 +19,7 @@ lhoc_mus = { "dist": 14.6, # angstroms
                 "Lopen": 99.4, # degrees
                 "pack": -52.3, # degrees
                 }
-                
+
 lhoc_sigmas = { "dist": 0.34, # angstroms
                 "Hopen": 2.63, # degrees
                 "Lopen": 1.92, # degrees

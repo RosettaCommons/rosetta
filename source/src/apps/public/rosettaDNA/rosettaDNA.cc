@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/apps/public/rosettaDNA/rosettaDNA.cc
 /// @brief Runs DockDesignParser via the JobDistributor v. 2, provides access to protein-DNA interface modeling code in protocols/dna, and uses a custom PDBJobOutputter to add protein-DNA specific information to output pdb files.

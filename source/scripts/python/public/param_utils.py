@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 '''
-Various functions for manipulating params files.  
+Various functions for manipulating params files.
 
 Author: Sam DeLuca
 '''
@@ -35,7 +36,7 @@ def get_name_from_params(path,database):
             return None
     else:
         return None
-        
+
 def get_disallowed_ligands(database):
     '''Return a set of 3 letter names which are already assigned to ligands in the database'''
     residue_type_set_path = database+"chemical/residue_type_sets/"
@@ -51,13 +52,13 @@ def get_disallowed_ligands(database):
                 if name != None:
                     disallowed_ligands.add(name)
     return disallowed_ligands
-    
+
 def rename_param_file(param_path,new_name,new_conformer_path):
     '''Rename a param file residue and update the conformer file path'''
     param_file = open(param_path,'r')
     param_lines = [x.rstrip() for x in param_file]
     param_file.close()
-    
+
     for index,line in enumerate(param_lines):
         fields = line.split()
         if fields[0] == "NAME":
@@ -68,12 +69,12 @@ def rename_param_file(param_path,new_name,new_conformer_path):
             continue
         if fields[0] == "PDB_ROTAMERS":
             param_lines[index] = "PDB_ROTAMERS "+new_conformer_path
-    
+
     param_file = open(param_path,'w')
     for line in param_lines:
         param_file.write(line+"\n")
-        
-        
+
+
 def rename_pdb_file(pdb_path,new_name):
     '''Renames all the HETATM resnames in the specified pdb to new_name'''
     pdb_file = open(pdb_path,'r')
@@ -85,7 +86,7 @@ def rename_pdb_file(pdb_path,new_name):
             continue
         if line[0:6] == "HETATM":
             pdb_lines[index] = line[:17]+new_name+line[20:]
-    
+
     pdb_file = open(pdb_path,'w')
     for line in pdb_lines:
         pdb_file.write(line+"\n")

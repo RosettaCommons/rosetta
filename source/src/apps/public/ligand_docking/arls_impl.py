@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 import sys, os, re
 from optparse import OptionParser, IndentedHelpFormatter
@@ -932,7 +933,7 @@ def main(argv):
             write_rpkmin_script, options, progs, docking_cases)
         write_if_not_exists("3_tarball_pre.sh", options,
             write_tarball_pre_script, options, progs, docking_cases)
-        
+
         if options.cluster == "CONDOR":
             write_if_not_exists("4_dock_condor.sh", options,
                 write_dock_condor_script, options, progs, docking_cases)
@@ -941,7 +942,7 @@ def main(argv):
                 write_dock_bash_script, options, progs, docking_cases)
         else:
             raise ValueError("Shouldn't get here: invalid cluster type %s"%options.cluster)
-        
+
         write_if_not_exists("5_concat.sh", options,
             write_concat_script, options, progs, docking_cases)
         write_if_not_exists("6_analyze_results.sh", options,

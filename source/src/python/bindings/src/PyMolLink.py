@@ -1,13 +1,10 @@
 # :noTabs=true:
-"""
-(c) Copyright Rosetta Commons Member Institutions.
-(c) This file is part of the Rosetta software suite and is made available
-(c) under license.
-(c) The Rosetta software is developed by the contributing members of the
-(c) Rosetta Commons.
-(c) For more information, see http://www.rosettacommons.org.
-(c) Questions about this can be addressed to University of Washington UW
-(c) TechTransfer, email: license@u.washington.edu.
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org.
+# (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
 Brief:   The PyMOLMover class and associated methods.
 Remarks: Use in conjunction with PyMOLPyRosettaServer.py.
@@ -421,7 +418,7 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
                                                         info.chain(i)).rjust(6)
             else:
                 pdb = (str(i) + ' A').rjust(6)
-            
+
             #proper formatting so 0 doesn't cast to 0.0 and is less than size
             if data[i-1] == 0 and size > 2:
                 dat = '{0:.{1}f}'.format(data[i-1],size-2)

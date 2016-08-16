@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file apps/pilot/smlewis/HECT/HECT_ubq.cc
 /// @brief This app is intended for modeling the binding of a E2/E3/UBQ complex.  This is the "first app" in the series; it takes the starting structure and makes a few mutations and modifications.  The starting structures (PDBs 3JVZ and 3JW0) have the catalytic cysteines mutated out for stability; this protocol re-mutates to cysteine and then relaxes the ubiquitin tail/chemical linkage to account for the new bond parameters.  It uses constraints to maintain the position of the UBQ relative to E3.

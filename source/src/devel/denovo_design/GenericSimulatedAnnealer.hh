@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /// @file src/devel/simple_moves/GenericSimulatedAnnealer.hh
 /// @brief perform a given mover and sample structures by MonteCarlo with simulated annealing of acceptance temperatures
 /// @details The "score" evaluation of pose during MC after applying mover is done by

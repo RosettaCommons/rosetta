@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
 import sys
 import string
 import calccontacts
@@ -48,7 +49,7 @@ for arg in arglist:
         continue
     if arg == 'file':
         dest = 'file'
-        
+
 contactObject = calccontacts.contactProtein(mode)
 contactObject.initializePDB(pdb)
 contactObject.find_contacts(parserule)

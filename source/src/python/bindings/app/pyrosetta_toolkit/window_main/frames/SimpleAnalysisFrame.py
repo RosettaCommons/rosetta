@@ -1,13 +1,13 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_main/frames/simple_analysis.py
-## @brief  Handles simple analysis component of the GUI 
+## @brief  Handles simple analysis component of the GUI
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #Rosetta Imports
@@ -47,7 +47,7 @@ class SimpleAnalysisFrame(TkFrame):
             "Total Hydrogen Bonds":lambda: self.print_hbonds(),
 
         }
-        
+
         self.rmsdOPT = StringVar()
         self.rmsdOPT.set("RMSD Analysis")
         self.rmsdOPTIONS = {
@@ -59,26 +59,26 @@ class SimpleAnalysisFrame(TkFrame):
             "Native RMSD: BB heavy":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, False),
             "Native RMSD: all atom":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, False, True),
         }
-        
+
     #### Set Tracers ####
         self.basicOPT.trace_variable('w', self.basic_option_tracer)
         self.rmsdOPT.trace_variable('w', self.rmsd_option_tracer)
-        
+
         self.create_GUI_objects()
         self.grid_GUI_objects()
-        
+
         #Ignore this.  It is for Komodo autocomplete.
         #if 0:
             #self.main = Tk()
             #self.toolkit = main_window()
-            
+
     def create_GUI_objects(self):
         #self.label_widget=Label(self, text="Basic Analysis", font=("Arial"))
         self.option_menu_basic = OptionMenu(self, self.basicOPT, *(sorted(self.basicOPTIONS)))
         self.option_menu_rmsd = OptionMenu(self, self.rmsdOPT, *(sorted(self.rmsdOPTIONS)))
         self.kickBasic = Button(self, text = "Go", command = lambda: self.kickOptions(self.basicOPT.get()))
         #self.button_Chi = Button(self, text="Chi"); self.button_Chi2 = Button(self, text="Write to file")
-    
+
     def grid_GUI_objects(self):
         """
         Columnspan: 2
@@ -87,23 +87,23 @@ class SimpleAnalysisFrame(TkFrame):
         r=0; c=0;
         #self.label_widget.grid(row=r, column=c, columnspan=2,)
         self.option_menu_basic.grid(row=r+1, column=c, sticky=W+E); self.option_menu_rmsd.grid(row = r+1, column=c+1, sticky=W+E)
-        
-        
+
+
     #### TRACERS ####
     def basic_option_tracer(self, name, index, mode):
         varValue = self.basicOPT.get()
         func = self.basicOPTIONS[self.basicOPT.get()]
         func()
         return
-    
+
     def rmsd_option_tracer(self, name, index, mode):
         varValue = self.rmsdOPT.get()
         func = self.rmsdOPTIONS[self.rmsdOPT.get()]
         func()
         return
-    
+
     #### FUNCTIONS ####
-    
+
     def rmsd_load_pose(self, infilename = False):
         self.rmsdP = Pose()
         if not infilename:
@@ -113,7 +113,7 @@ class SimpleAnalysisFrame(TkFrame):
         pose_from_file(self.rmsdP, infilename)
         print "Pose to compare loaded..."
         return
-      
+
     def score_loops(self):
         for l in self.toolkit.input_class.loops_as_strings:
             print "\n"+l
@@ -123,10 +123,10 @@ class SimpleAnalysisFrame(TkFrame):
             end = self.toolkit.pose.pdb_info().pose2pdb(residue_array[-1]).split()[0]
             e = self.toolkit.input_class.regional_score_class.ret_loop_energy(chain, int(start), int(end))
             print "Total Region energy: %.3f REU"%e
-            
+
             n_e = self.toolkit.input_class.regional_score_class.ret_loop_neighbor_energy(chain, int(start), int(end))
             print "Total Neighbor (ci_2b) Interaction energy: %.3f REU"%n_e
-    
+
     def print_full_energy(self):
         if self.toolkit.pose.total_residue()==0:return
         """
@@ -138,7 +138,7 @@ class SimpleAnalysisFrame(TkFrame):
         self.toolkit.score_class.score.show(self.toolkit.pose)
         print "Printed to Terminal"
         #self.toolkit.score_class.score.show(self.toolkit.TR, self.toolkit.pose); No Go.  sys.stdout also does not work.
-    
+
     def show_energies(self):
         """
         Currently, string inputted into textbox is uneven.  Not using till this is fixed.
@@ -146,19 +146,19 @@ class SimpleAnalysisFrame(TkFrame):
         if self.toolkit.pose.total_residue()==0:return
         out = self.toolkit.input_class.regional_score_class.ret_energy_string()
         print out
-        
+
     def print_energy(self):
         if self.toolkit.pose.total_residue()==0:return
-        
+
         score = self.toolkit.score_class.score(self.toolkit.pose)
         print "%.3f REU"%score
-    
+
     def print_pose(self):
         print self.toolkit.pose
-    
+
     def print_option_info(self):
         self.toolkit.input_class.options_manager.print_current_options()
-        
+
     def print_hbonds(self):
         if self.toolkit.pose.total_residue()==0:return
         n = self.toolkit.input_class.regional_score_class.ret_n_hbonds()

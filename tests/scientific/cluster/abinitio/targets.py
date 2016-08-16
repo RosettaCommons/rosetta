@@ -3,7 +3,7 @@
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 targets = ['1a19A', '1a32_', '1acf_', '1ail_', '1aiu_', '1b3aA', '1bgf_', '1bk2_', '1bkrA', '1bm8_',
            '1bq9A', '1c8cA', '1c9oA', '1cc8A', '1cei_', '1cg5B', '1ctf_', '1dhn_', '1elwA', '1enh_',

@@ -2,11 +2,10 @@
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available
-// (c) under license. The Rosetta software is developed by the contributing
-// (c) members of the Rosetta Commons. For more information, see
-// (c) http://www.rosettacommons.org. Questions about this can be addressed to
-// (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file /AddFrameworkProfilesOperation.hh
 /// @brief
@@ -28,7 +27,7 @@
 namespace protocols {
 namespace antibody {
 namespace task_operations {
-			
+
 
 /// @brief Add Framework Profiles as the task operation for a framework chain.
 /// See protocols/toolbox/task_operations/ResidueProbTaskOperation for more.
@@ -39,19 +38,19 @@ public:
 	AddFrameworkProfilesOperation();
 	AddFrameworkProfilesOperation(AntibodyInfoCOP ab_info);
 	AddFrameworkProfilesOperation(AntibodyInfoCOP ab_info, bool use_conservative_set);
-	
+
 	virtual ~AddFrameworkProfilesOperation();
-	
+
 	AddFrameworkProfilesOperation(AddFrameworkProfilesOperation const & src);
 
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
-	
+
 	/// @brief Use the set of conservative mutations instead of profiles.
 	void
 	set_use_conservative_set( bool use_conservatives);
-	
+
 private:
 	AntibodyInfoCOP ab_info_;
 	//std::string species_;
@@ -63,11 +62,11 @@ private:
 	bool add_to_current_;
 	bool use_native_type_;
 	bool use_conservative_set_;
-	
+
 	///Needed for default and RS constructor.
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
-	
+
 };
 
 } //task_operations

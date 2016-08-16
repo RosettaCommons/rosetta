@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python
+#
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/tools/general_tools.py
 ## @brief  general functions for the toolkit
@@ -38,7 +38,7 @@ def renameandsave(inFolder, outFolder, outName, contains):
     """
     Renames all files in a particular directory recursively from 1 - N. Useful due to some apps not being JD2 compatible!
     """
-    
+
     filenum = 1
     if contains=="all":
         contains = ""
@@ -52,8 +52,8 @@ def renameandsave(inFolder, outFolder, outName, contains):
                 p = os.path.join(root, f)
                 AllFiles.append(p)
 
-                
-                                  
+
+
     for f in AllFiles:
         os.system("cp "+f+" "+outFolder)
         print f
@@ -68,7 +68,7 @@ def renameandsave(inFolder, outFolder, outName, contains):
     print "Files Copied.."
     return
 
-    
+
 def getDist(p, res1, res2, atom1, atom2):
     """
     Gets distance between atom one and two of two residues.
@@ -81,7 +81,7 @@ def getDistGen( xyz1, xyz2):
     """
     Gets distance bt two coord vectors(list)
     """
-    
+
     #xyz1 is a list with (x, y, z)
     d = math.sqrt(pow(xyz1[0]-xyz2[0], 2)+pow(xyz1[1]-xyz2[1], 2)+pow(xyz1[2]-xyz2[2], 2))
     return d
@@ -90,7 +90,7 @@ def getOS():
     """
     Get OS of the particular platform the toolkit is being run on.
     """
-    
+
     plat = sys.platform
     if re.search("darwin", plat):
         return "Mac"
@@ -101,15 +101,15 @@ def getOS():
     else:
         print "Platform Not Found"
         return "error"
-    
+
 def loop_string_to_region(loop_string):
     """
     Loop string (start:end:chain) conversion to newer Region class.
     """
-         
+
     start = loop_string.split(":")[0]; end = loop_string.split(":")[1]; chain = loop_string.split(":")[2]
     #Chain
-         
+
     if (start == "" and end==""):
         region = Region(chain.upper(), None, None)
     #Nter
@@ -119,9 +119,9 @@ def loop_string_to_region(loop_string):
     elif end=="":
         region = Region(chain.upper(), int(start), None)
     #Loop
-    else: 
+    else:
         region = Region(chain.upper(), int(start), int(end))
-    
+
     return region
 
 def loops_as_strings_to_regions(loops_as_strings):
@@ -131,6 +131,6 @@ def loops_as_strings_to_regions(loops_as_strings):
     reg = Regions()
     for loop_string in loops_as_strings:
         reg.add_region(loop_string_to_region(loop_string))
-    
+
     return reg
-    
+
