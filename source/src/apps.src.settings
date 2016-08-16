@@ -187,6 +187,7 @@ sources = {
 	"public/membrane" : [
 		"mp_dock",
 		"mp_dock_setup",
+		"mp_lipid_acc",
 		"mp_mutate_relax",
 		"mp_range_relax",
 		"mp_transform",
