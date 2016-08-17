@@ -182,9 +182,6 @@ private: // helper functions
 
 private: // data
 
-	/// @brief
-	bool loaded_;
-
 	/// @brief Secondary structure to be used
 	std::string secstruct_;
 

@@ -77,7 +77,6 @@ SetSecStructEnergiesCreator::mover_name()
 /// @brief default constructor
 SetSecStructEnergies::SetSecStructEnergies() :
 	Super( "SetSecStructEnergies" ),
-	loaded_( false ),
 	secstruct_( "" ),
 	use_dssp_( true ),
 	hh_pair_( "" ),
@@ -100,7 +99,6 @@ SetSecStructEnergies::SetSecStructEnergies() :
 /// @brief value constructor
 SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String const & filename, bool const ss_from_blueprint ) :
 	Super( "SetSecStructEnergies" ),
-	loaded_( false ),
 	secstruct_( "" ),
 	use_dssp_( true ),
 	hh_pair_( "" ),
@@ -126,7 +124,6 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String co
 /// @brief value constructor
 SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrintOP const blueprintOP, bool const ss_from_blueprint ) :
 	Super( "SetSecStructEnergies" ),
-	loaded_( false ),
 	secstruct_( "" ),
 	use_dssp_( true ),
 	hh_pair_( "" ),
@@ -247,13 +244,6 @@ void SetSecStructEnergies::apply( Pose & pose )
 	sfx_->assign( *sfx_orig_ );
 
 	std::string const ss = get_secstruct( pose );
-	if ( pose.total_residue() != ss.size() ) {
-		std::stringstream msg;
-		msg << "SetSecStructEnergies::apply() The secondary structure size ("
-			<< ss.size() << ") does not match the pose size (" << pose.total_residue()
-			<< ") SS=" << ss << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
 
 	// set NatbiasSecondaryStructure energy
 	SS_Info2_OP ssinfo( new SS_Info2( ss ) );
