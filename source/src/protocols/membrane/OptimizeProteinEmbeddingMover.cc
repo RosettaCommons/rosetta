@@ -118,7 +118,6 @@ OptimizeProteinEmbeddingMoverCreator::mover_name() {
 	return "OptimizeProteinEmbeddingMover";
 }
 
-
 /////////////////////
 /// Mover Methods ///
 /////////////////////

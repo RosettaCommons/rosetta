@@ -20,9 +20,13 @@
 
 #include <protocols/moves/Mover.hh>
 
+#include <protocols/membrane/HelixFromSequence.hh>
+
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/OptimizeProteinEmbeddingMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
+#include <protocols/relax/membrane/MPRangeRelaxMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
@@ -39,6 +43,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -87,7 +92,10 @@ bool read_membrane() {
 
 	if ( option[OptionKeys::mp::setup::transform_into_membrane].user() ) {
 		membrane = option[OptionKeys::mp::setup::transform_into_membrane]();
-		TR << "Pose is a membrane protein and will be transformed into the membrane" <<  std::endl;
+		
+		if ( membrane == true ) {
+			TR << "Pose is a membrane protein and will be transformed into the membrane" <<  std::endl;
+		}
 	}
 
 	return membrane;
@@ -103,7 +111,10 @@ bool optimize_embedding() {
 
 	if ( option[OptionKeys::mp::transform::optimize_embedding].user() ) {
 		optimize = option[OptionKeys::mp::transform::optimize_embedding]();
-		TR << "Protein embedding in the membrane will be optimized" <<  std::endl;
+		
+		if ( optimize == true ) {
+			TR << "Protein embedding in the membrane will be optimized" <<  std::endl;
+		}
 	}
 
 	return optimize;
@@ -112,15 +123,38 @@ bool optimize_embedding() {
 
 ////////////////////////////////////////////////////////////////////////////
 
+// skip relax?
+bool skipping_relax() {
+	
+	bool skip_relax( false );
+	
+	if ( option[OptionKeys::relax::range::skip_relax].user() ) {
+		skip_relax = option[OptionKeys::relax::range::skip_relax]();
+		
+		if ( skip_relax == true ) {
+			TR << "Skipping refinement step..." << std::endl;
+		}
+	}
+	
+	return skip_relax;
+	
+} // skip relax?
+
+////////////////////////////////////////////////////////////////////////////
+
 // create an ideal helix from the fasta and dump it
 void helix_from_sequence() {
+
+	using namespace protocols::relax::membrane;
+	using namespace protocols::simple_moves;
 
 	// read fasta file
 	std::string seq = read_fasta();
 
-	// is it a membrane protein?
+	// get input options
 	bool mem = read_membrane();
 	bool opt = optimize_embedding();
+	bool skip_relax = skipping_relax();
 
 	// initialize pose
 	core::pose::Pose pose;
@@ -155,10 +189,18 @@ void helix_from_sequence() {
 			AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
 			addmem->apply( pose );
 
+			topo->show();
+
 			// transform into membrane and optimize embedding
 			// runs TransformIntoMembrane underneath
 			OptimizeProteinEmbeddingMoverOP opt( new OptimizeProteinEmbeddingMover() );
 			opt->apply( pose );
+			
+			// run MPRangeRelax with default values (nres and 0.1 angle max)
+			if ( ! skip_relax ){
+				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
+				relax->apply( pose );
+			}
 
 		} else {
 
@@ -169,8 +211,18 @@ void helix_from_sequence() {
 			// transform into membrane
 			TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 			transform->apply( pose );
+			
+			// run MPRangeRelax with default values (nres and 0.1 angle max)
+			if ( ! skip_relax ){
+				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
+				relax->apply( pose );
+			}
 		}
 	}
+
+	// score pose for scorefile
+	ScoreMoverOP score( new ScoreMover( "mpframework_smooth_fa_2012.wts" ) );
+	score->apply( pose );
 
 	// dump PDB
 	pose.dump_pdb("helix_from_sequence.pdb");
@@ -186,15 +238,21 @@ main( int argc, char * argv [] )
 {
 	try {
 
+		using namespace protocols::jd2;
+		using namespace protocols::membrane;
+
 		// initialize option system, RNG, and all factory-registrators
 		devel::init(argc, argv);
 
+		HelixFromSequenceOP helix( new HelixFromSequence() );
+		JobDistributor::get_instance()->go( helix );
+
 		// call my function
-		helix_from_sequence();
+//		helix_from_sequence();
 
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+	catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

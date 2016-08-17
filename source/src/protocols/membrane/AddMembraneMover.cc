@@ -40,6 +40,7 @@
 #include <protocols/membrane/util.hh>
 
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -89,8 +90,12 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
+#include <core/pose/util.hh>
+#include <utility/string_util.hh>
+
 // C++ Headers
 #include <cstdlib>
+#include <map>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
 
@@ -411,6 +416,8 @@ AddMembraneMover::get_name() const {
 void
 AddMembraneMover::apply( Pose & pose ) {
 
+	using namespace utility;
+	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::pack::task;
 	using namespace core::conformation::membrane;
@@ -425,8 +432,14 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Step 2: Initialize the spanning topology
 	if ( topology_->nres_topo() == 0 ) {
 		if ( spanfile_ != "from_structure" ) {
-			topology_->fill_from_spanfile( spanfile_, pose.total_residue() );
-		} else {
+	
+			// now supports PDB numbering also
+			std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
+			
+			// fill topology from spanfile with pdb2pose map
+			topology_->fill_from_spanfile( spanfile_, pdb2pose_map, pose.total_residue() );
+		}
+		else {
 			// get pose info to create topology from structure
 			std::pair< utility::vector1< core::Real >, utility::vector1< core::Size > > pose_info( get_chain_and_z( pose ) );
 			utility::vector1< core::Real > z_coord = pose_info.first;
@@ -553,7 +566,7 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 
 	// Case 1: If user points directly to a membrane residue, use that residue
 	if ( membrane_pos != 0 &&
-			membrane_pos < pose.total_residue() &&
+			membrane_pos <= pose.total_residue() &&
 			pose.conformation().residue( membrane_pos ).has_property( "MEMBRANE" ) ) {
 		user_defined_ = true;
 
@@ -571,8 +584,8 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 				membrane_pos = found_mem_rsds[1];
 				user_defined_ = false;
 
-				// Case 2b: Multiple membrane residues found AND the user specified found residue
-				// matches a residue in the 'found' list
+			// Case 2b: Multiple membrane residues found AND the user specified found residue
+			// matches a residue in the 'found' list
 			} else {
 				core::SSize current_rsd = static_cast< core::SSize >( membrane_rsd_ );
 				for ( core::Size i = 1; i <= found_mem_rsds.size(); i++ ) {
@@ -584,24 +597,24 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 				}
 			}
 
-			// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
+		// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
 		} else if ( (membrane_rsd_ == 0) && (found_mem_rsds[1] != -1) ) {
 			TR << "No flag given: Adding membrane residue from PDB at residue number " << found_mem_rsds[1] << std::endl;
 			membrane_pos = found_mem_rsds[1];
 			user_defined_ = true;
 
-			// Case 4: If membrane found and agrees with user specified value, accept
+		// Case 4: If membrane found and agrees with user specified value, accept
 		} else if ( static_cast< core::SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) {
 			TR << "User specified residue matches found membrane residue. Accepting." << std::endl;
 			membrane_pos = found_mem_rsds[1];
 			user_defined_ = true;
 
-			// Case 5: If no membrane residue found, add a new one to the pose
+		// Case 5: If no membrane residue found, add a new one to the pose
 		} else if ( found_mem_rsds[1] == -1 ) {
 			TR << "Adding a new membrane residue to the pose" << std::endl;
 			membrane_pos = add_membrane_virtual( pose );
 
-			// Case 6: Doesn't exist ;)
+		// Case 6: Doesn't exist ;)
 		} else {
 			TR << "Congratulations - you have reached an edge case for adding the memrbane residue that we haven't thought of yet!" << std::endl;
 			TR << "Contact the developers - exiting for now..." << std::endl;

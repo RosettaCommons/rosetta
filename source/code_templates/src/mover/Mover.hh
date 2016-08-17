@@ -34,27 +34,42 @@ class --class-- : public protocols::moves::Mover {
 
 public:
 
+	/////////////////////
+	/// Constructors  ///
+	/////////////////////
+
+	/// @brief Default constructor
 	--class--();
 
-	// copy constructor (not needed unless you need deep copies)
-	//--class--( --class-- const & src );
+	/// @brief Copy constructor (not needed unless you need deep copies)
+//	--class--( --class-- const & src );
 
-	// destructor (important for properly forward-declaring smart-pointer members)
+	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~--class--();
 
-	static std::string
-	class_name();
+	/////////////////////
+	/// Mover Methods ///
+	/////////////////////
 
 public:
-	// mover virtual API
+	/// @brief Apply the mover
 	virtual void
 	apply( core::pose::Pose & pose );
+
+	/// @brief Show the contents of the Mover
+	static std::string
+	class_name();
 
 	virtual void
 	show( std::ostream & output = std::cout ) const;
 
+	/// @brief Get the name of the Mover
 	virtual std::string
 	get_name() const;
+
+	///////////////////////////////
+	/// Rosetta Scripts Support ///
+	///////////////////////////////
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	virtual void
@@ -75,7 +90,9 @@ public:
 	virtual protocols::moves::MoverOP
 	clone() const;
 
-private:
+private: // methods
+
+private: // data
 
 };
 

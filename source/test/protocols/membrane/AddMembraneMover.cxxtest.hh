@@ -32,6 +32,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/types.hh>
+#include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -106,7 +107,8 @@ public: // test functions
 		// (2) Setup pose with custom anchor point & topology object
 		TR <<  "Setting up membrane with custom anchor point and topology object"  << std::endl;
 		SpanningTopologyOP custom_topo( new SpanningTopology() );
-		custom_topo->fill_from_spanfile( spanfile );
+		std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( *anchored_pose_ );
+		custom_topo->fill_from_spanfile( spanfile, pdb2pose_map );
 		AddMembraneMoverOP add_memb2( new AddMembraneMover( custom_topo, 50 ) );
 		add_memb2->apply( *anchored_pose_ );
 

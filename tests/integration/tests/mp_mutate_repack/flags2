@@ -1,6 +1,6 @@
 -in:file:s inputs/1AFO_AB.pdb
 -in:file:native inputs/1AFO_AB.pdb
 -mp:setup:spanfiles inputs/1AFO_AB.span
--mp:mutate_relax:mutant_file inputs/mutations_1AFO.mut
+-mp:mutate_relax:mutant_file inputs/mutations_1AFO_error.mut
 -mp:mutate_relax:nmodels 1
 -mp:mutate_relax:repack_radius 5

@@ -695,7 +695,8 @@ public: // test functions
 		AddMembraneMoverOP addmem9( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
 		addmem9->apply(pose);
 
-		SpanningTopology topo = SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span" );
+		std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
+		SpanningTopology topo = SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span", pdb2pose_map );
 		SpanningTopology topo_up, topo_down;
 
 		// call function
@@ -719,7 +720,8 @@ public: // test functions
 		AddMembraneMoverOP addmem10( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
 		addmem10->apply(pose);
 
-		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span" ) );
+		std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
+		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span", pdb2pose_map ) );
 		SpanningTopologyOP topo_up( new SpanningTopology() );
 		SpanningTopologyOP topo_down( new SpanningTopology() );
 
@@ -741,7 +743,8 @@ public: // test functions
 		// read in pose and create topology object
 		Pose pose;
 		core::import_pose::pose_from_file( pose, "protocols/membrane/1C17_tr.pdb" , core::import_pose::PDB_file);
-		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/1C17_tr.span" ) );
+		std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
+		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/1C17_tr.span", pdb2pose_map ) );
 
 		// call function
 		utility::vector1< SpanningTopologyOP > topos( split_topology_by_chain_noshift( pose, topo ) );

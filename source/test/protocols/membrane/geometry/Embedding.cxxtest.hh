@@ -33,6 +33,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/conformation/membrane/Exceptions.hh>
+#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
@@ -125,7 +126,8 @@ public: // test functions
 		core::import_pose::pose_from_file( pose, "protocols/membrane/geometry/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
 		// create topology object
-		SpanningTopologyOP topology( new SpanningTopology("protocols/membrane/geometry/1AFO_AB.span") );
+		std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
+		SpanningTopologyOP topology( new SpanningTopology("protocols/membrane/geometry/1AFO_AB.span", pdb2pose_map ) );
 
 		// create object using constructor
 		EmbeddingOP embed( new Embedding( *topology, pose ) );

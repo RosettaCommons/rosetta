@@ -76,7 +76,9 @@ MembraneInfo::MembraneInfo() :
 	thickness_( 0 ),
 	steepness_( 0 ),
 	membrane_rsd_num_( 0 ),
-	membrane_jump_( 0 )
+	membrane_jump_( 0 ),
+	lipid_acc_data_( 0 ),
+	spanning_topology_( 0 )
 {}
 
 /// @brief Create MembraneInfo from initialized data

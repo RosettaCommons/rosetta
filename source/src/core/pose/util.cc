@@ -2894,6 +2894,37 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	return atom_ID_map;
 }
 
+/// @brief Create std::map from PDBPoseMap in pose (JKLeman)
+std::map< std::string, core::Size > get_pdb2pose_numbering_as_stdmap ( core::pose::Pose const & pose ) {
+	
+	using namespace utility;
+	
+	// initialize empty map
+	std::map< std::string, core::Size > pdb2pose_map;
+	
+	// go through protein, get chain, resn, insertion code
+	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
+		
+		// get chain, PDB resnumber, and insertion code for that residue
+		std::string chain = to_string( pose.pdb_info()->chain( i ) );
+		std::string resn = to_string( pose.pdb_info()->number( i ) );
+		std::string icode = to_string( pose.pdb_info()->icode( i ) );
+		
+		// replace empty insertion code with dot (spanfile has dots)
+		if ( icode == " " ) {
+			icode = ".";
+		}
+		
+		// concatenate them into string
+		std::string pdb_num = chain + resn + icode;
+		
+		// add it to local map
+		pdb2pose_map[ pdb_num ] = i;
+
+	}
+	return pdb2pose_map;
+}
+
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose ) {

@@ -26,14 +26,58 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 
+	/////////////////////
+	/// Constructors  ///
+	/////////////////////
+
+/// @brief Default constructor
 --class--::--class--():
 	protocols::moves::Mover( --class--::class_name() )
 {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Copy constructor
+--class--::--class--( --class-- const & src ):
+	protocols::moves::Mover( src )
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 --class--::~--class--(){}
 
+////////////////////////////////////////////////////////////////////////////////
+	/// Mover Methods ///
+	/////////////////////
+
+/// @brief Apply the mover
+void
+--class--::apply( core::pose::Pose& ){
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Show the contents of the Mover
+void
+--class--::show(std::ostream & output) const
+{
+	protocols::moves::Mover::show(output);
+}
+
+/// @brief Get the name of the Mover
+std::string
+--class--::get_name() const {
+	return "--class--";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+	/// Rosetta Scripts Support ///
+	///////////////////////////////
+
+/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
 --class--::parse_my_tag(
 	utility::tag::TagCOP ,
@@ -45,6 +89,15 @@ void
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// @brief required in the context of the parser/scripting scheme
+moves::MoverOP
+--class--::fresh_instance() const
+{
+	return protocols::moves::MoverOP( new --class-- );
+}
+
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 --class--::clone() const
 {
@@ -82,6 +135,9 @@ operator<<( std::ostream & os, --class-- const & mover )
 	return os;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+	/// Creator ///
+	///////////////
 void
 --class--::apply( core::pose::Pose & )
 {
@@ -100,6 +156,10 @@ std::string
 {
 	return --class--::class_name();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+	/// private methods ///
+	///////////////////////
 
 --end_namespace--
 

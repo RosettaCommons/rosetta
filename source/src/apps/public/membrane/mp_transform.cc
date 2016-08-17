@@ -28,6 +28,8 @@
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
 
+#include <protocols/simple_moves/ScoreMover.hh>
+
 // Package Headers
 #include <apps/benchmark/performance/init_util.hh>
 #include <core/types.hh>
@@ -70,6 +72,7 @@ main( int argc, char * argv [] ) {
 		using namespace protocols::moves;
 		using namespace protocols::membrane::visualize;
 		using namespace protocols::membrane::geometry;
+		using namespace protocols::simple_moves;
 
 		devel::init(argc, argv);
 
@@ -91,7 +94,9 @@ main( int argc, char * argv [] ) {
 			AddMembraneMoverOP addmem( new AddMembraneMover() );
 			OptimizeProteinEmbeddingMoverOP opt( new OptimizeProteinEmbeddingMover() );
 			VisualizeEmbeddingMoverOP vis( new VisualizeEmbeddingMover() );
+			ScoreMoverOP score( new ScoreMover( "mpframework_smooth_fa_2012.wts" ) );
 			SequenceMoverOP seq( new SequenceMover( addmem, opt, vis ) );
+			seq->add_mover( score );
 
 			// call SequenceMover in JD2
 			JobDistributor::get_instance()->go( seq );
@@ -102,7 +107,9 @@ main( int argc, char * argv [] ) {
 			AddMembraneMoverOP addmem( new AddMembraneMover() );
 			TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 			VisualizeEmbeddingMoverOP vis( new VisualizeEmbeddingMover() );
+			ScoreMoverOP score( new ScoreMover( "mpframework_smooth_fa_2012.wts" ) );
 			SequenceMoverOP seq( new SequenceMover( addmem, transform, vis ) );
+			seq->add_mover( score );
 
 			// call SequenceMover in JD2
 			JobDistributor::get_instance()->go( seq );

@@ -41,6 +41,7 @@
 
 // C++ Headers
 #include <string>
+#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -64,6 +65,7 @@ public: // constructors
 	/// @details Use transmembrane spans provided to consturct a spanning topology object
 	SpanningTopology(
 		std::string spanfile,
+		std::map< std::string, core::Size > pdb2pose_map,
 		core::Size total_residues = 0
 	);
 
@@ -114,7 +116,7 @@ public: // methods
 	SpanOP span( core::Size span_number ) const;
 
 	// fill from spanfile - can be used after creating empty object
-	void fill_from_spanfile( std::string spanfile, core::Size total_residues = 0 );
+	void fill_from_spanfile( std::string spanfile, std::map< std::string, core::Size > pdb2pose_map, core::Size total_residues = 0 );
 
 	// fill from structure - can be used after creating empty object
 	void fill_from_structure( utility::vector1< core::Real > res_z_coord,
@@ -154,7 +156,7 @@ public: // methods
 private: // methods
 
 	/// @brief Create spanning topology object from spanfile
-	SpanningTopology create_from_spanfile( std::string spanfile, core::Size nres);
+	SpanningTopology create_from_spanfile( std::string spanfile, std::map< std::string, core::Size > pdb2pose_map, core::Size nres);
 
 	/// @brief Create Transmembrane SPan OBject from structure
 	SpanningTopology create_from_structure( utility::vector1< core::Real > res_z_coord, utility::vector1< core::Size > chainID, utility::vector1< char > secstruct, core::Real thickness = 15 );
@@ -166,6 +168,9 @@ private: // data
 
 	// nres from the spanfile; keep track for checks
 	core::Size nres_topo_;
+	
+	// structure-based?
+	bool structure_based_;
 
 #ifdef    SERIALIZATION
 public:

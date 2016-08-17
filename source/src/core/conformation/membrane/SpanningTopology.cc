@@ -41,9 +41,11 @@
 #include <utility/io/ozstream.hh>
 
 #include <numeric/numeric.functions.hh>
+#include <utility/string_util.hh>
 
 // C++ Headers
 #include <string>
+#include <map>
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );
 
@@ -70,20 +72,23 @@ namespace membrane {
 /// @details Construct an Empty Spanning Topology Object
 SpanningTopology::SpanningTopology() :
 	utility::pointer::ReferenceCount(),
-	topology_()
-{
-	nres_topo_ = 0;
-}
+	topology_(),
+	nres_topo_( 0 ),
+	structure_based_( false )
+{}
 
 /// @brief Custom Constructor - Transmembrane Spans from Spanfile
 /// @details Use transmembrane spans provided to consturct a spanning topology object
 SpanningTopology::SpanningTopology(
 	std::string spanfile,
+	std::map< std::string, core::Size > pdb2pose_map,
 	core::Size total_residues
 ) : utility::pointer::ReferenceCount(),
-	topology_()
+	topology_(),
+	nres_topo_( 0 ),
+	structure_based_( false )
 {
-	create_from_spanfile( spanfile, total_residues );
+	create_from_spanfile( spanfile, pdb2pose_map, total_residues );
 
 } // topology from spanfile
 
@@ -95,7 +100,9 @@ SpanningTopology::SpanningTopology(
 	utility::vector1< char > secstruct,
 	core::Real thickness
 ) : utility::pointer::ReferenceCount(),
-	topology_()
+	topology_(),
+	nres_topo_( 0 ),
+	structure_based_( true )
 {
 	create_from_structure( res_z_coord, chainID, secstruct, thickness);
 
@@ -105,7 +112,9 @@ SpanningTopology::SpanningTopology(
 /// @details Create a deep copy of this object copying over all private fields
 SpanningTopology::SpanningTopology( SpanningTopology const & src ) :
 	utility::pointer::ReferenceCount( src ),
-	topology_( src.topology_ )
+	topology_( src.topology_ ),
+	nres_topo_( src.nres_topo_ ),
+	structure_based_( src.structure_based_ )
 {}
 
 /// @brief Assignment Operator
@@ -120,7 +129,8 @@ SpanningTopology::operator=( SpanningTopology const & src ) {
 
 	// Deep Copy of the data
 	this->topology_ = src.topology_;
-
+	this->nres_topo_ = src.nres_topo_;
+	this->structure_based_ = src.structure_based_;
 
 	return *this;
 }
@@ -134,10 +144,10 @@ SpanningTopology::~SpanningTopology(){}
 
 /// @brief fill from spanfile
 /// @details fill object from spanfile, can be used after creating empty object
-void SpanningTopology::fill_from_spanfile( std::string spanfile, core::Size total_residues ){
+void SpanningTopology::fill_from_spanfile( std::string spanfile, std::map< std::string, core::Size > pdb2pose_map, core::Size total_residues ){
 
 	TR << "Filling membrane spanning topology from spanfile " << spanfile << std::endl;
-	create_from_spanfile( spanfile, total_residues );
+	create_from_spanfile( spanfile, pdb2pose_map, total_residues );
 
 }// fill from spanfile
 
@@ -226,7 +236,10 @@ void SpanningTopology::add_span( Span const & span, core::Size offset ){
 	SpanOP new_span ( new Span( span ) );
 	new_span->shift( offset );
 	topology_.push_back( new_span );
-	nres_topo_ += span.end() - span.start() + 1;
+
+	if ( ! structure_based_ ) {
+		nres_topo_ += span.end() - span.start() + 1;
+	}
 }// add span
 
 //////////////////////////////////////////////////////////////////////////////
@@ -235,7 +248,10 @@ void SpanningTopology::add_span( Span const & span, core::Size offset ){
 void SpanningTopology::add_span( core::Size start, core::Size end, core::Size offset ){
 	SpanOP span( new Span( start+offset, end+offset ) );
 	topology_.push_back( span );
-	nres_topo_ += end - start + 1;
+
+	if ( ! structure_based_ ) {
+		nres_topo_ += end - start + 1;
+	}
 }// add span
 
 //////////////////////////////////////////////////////////////////////////////
@@ -346,8 +362,10 @@ Size SpanningTopology::nres_topo() const {
 
 /// @brief Create spanning topology object from spanfile
 SpanningTopology
-SpanningTopology::create_from_spanfile( std::string spanfile, core::Size nres ){
+SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::string, core::Size > pdb2pose_map, core::Size nres ){
 
+	using namespace utility;
+	
 	// Setup vars for reading spanfile using izstream
 	std::string line;
 	utility::io::izstream stream ( spanfile );
@@ -397,13 +415,75 @@ SpanningTopology::create_from_spanfile( std::string spanfile, core::Size nres ){
 	getline( stream, line );
 	getline( stream, line );
 
+	// numbering scheme
+	bool pdb_numbering;
+	if ( pdb2pose_map.empty() ) {
+		pdb_numbering = false;
+	}
+	else {
+		pdb_numbering = true;
+	}
+	
 	// For each line of the file, get spanning region info
 	for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 
 		getline( stream, line );
 		std::istringstream l( line );
-		core::Size start, end;
-		l >> start >> end;
+		
+		// tag that is read in
+		std::string start_tag, end_tag;
+		l >> start_tag >> end_tag;
+		
+		// initialize residue numbers in pose numbering that will be used to
+		// create a Span object
+		core::Size start( 0 );
+		core::Size end( 0 );
+
+		// first TM span tag decides whether it is PDB numbering or pose numbering
+		// if first character is numeric, then pose numbering
+		if ( i == 1 ) {
+			if ( isdigit( start_tag[ 0 ] ) ) {
+				TR << "Pose is in pose numbering scheme." << std::endl;
+				pdb_numbering = false;
+			}
+			else {
+				TR << "Pose is in PDB numbering scheme." << std::endl;
+			}
+		}
+	
+		// NEW: supports PDB numbering format with chains and insertion codes
+		// format: A1. for chain A (single character), residue number 1, no insertion code
+		// check for chain
+		if ( pdb_numbering ) {
+			
+			// check for chain
+			if ( ! isalpha( start_tag[ 0 ] )
+				|| ! isalpha( end_tag[ 0 ] ) ) {
+			utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your chain is incorrect." );
+			}
+
+			// check for insertion code
+			if ( isdigit( start_tag[ -1 ] )
+				|| isdigit( end_tag[ -1 ] ) ) {
+			utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your insertion code is incorrect." );
+			}
+			
+			// get pose numbering from map
+			start = pdb2pose_map[ start_tag ];
+			end = pdb2pose_map[ end_tag ];
+
+		}
+		// also supports old format in pose numbering
+		// format: 1 for residue number 1, no insertion code, chain is whatever
+		// it is for that residue
+		// if we assume PDB format, pose numbering is also handled correctly because
+		// the PDB is already renumbered
+		else {
+			
+			start = from_string( start_tag, core::Size( 0 ) );
+			end = from_string( end_tag, core::Size( 0 ) );
+
+		}
 
 		// add to chain topology
 		SpanOP span( new Span( start, end ) );
@@ -586,6 +666,7 @@ void
 core::conformation::membrane::SpanningTopology::save( Archive & arc ) const {
 	arc( CEREAL_NVP( topology_ ) ); // utility::vector1<SpanOP>
 	arc( CEREAL_NVP( nres_topo_ ) ); // Size
+	arc( CEREAL_NVP( structure_based_ ) ); // bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -594,6 +675,7 @@ void
 core::conformation::membrane::SpanningTopology::load( Archive & arc ) {
 	arc( topology_ ); // utility::vector1<SpanOP>
 	arc( nres_topo_ ); // Size
+	arc( structure_based_ ); //
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::SpanningTopology );

@@ -475,7 +475,6 @@ sources = {
 		#"mp_parameters", # /* Checking parameters */
 		#"input_from_cmd", # /* read input files */
 		"add_membrane",
-		"helix_from_sequence",
 		"interface_statistics",
 		"mpdocking",
 		"mpdocking_setup",

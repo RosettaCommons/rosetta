@@ -1,0 +1,2 @@
+-in:file:s inputs/1AFO_tr.pdb
+-mp:setup:spanfiles inputs/1AFO_tr.span

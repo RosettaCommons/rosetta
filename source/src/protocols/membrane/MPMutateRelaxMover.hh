@@ -111,7 +111,7 @@ private: // methods
 	////////////////////////////////////////////////////////////////////////////////
 	/*
 	THIS IS HOW THE INPUT FORMAT OF THE FILE LOOKS LIKE:
-	= each line belongs to a single construct, i.e. a single run
+	= each line belongs to a single construct, i.e. a single sequence
 	= a single entry (format A163F) is a single mutation, multiple mutations per construct are possible
 	= example input:
 
@@ -127,11 +127,11 @@ private: // methods
 	*/
 	////////////////////////////////////////////////////////////////////////////////
 	/// @brief Read mutant file
-	void read_mutant_file();
+	void read_mutant_file( core::pose::Pose & pose );
 
 	/// @brief Add mutants to private data: A163F into vectors
 	/// @details This is an entire line of the mutant input file
-	void add_mutant_to_vectors( std::string mutations );
+	void add_mutant_to_vectors( std::string mutations, core::pose::Pose & pose );
 
 	/// @brief Check mutant file for errors
 	/// @details If Rosetta doesn't start crying, you're good to go
@@ -168,7 +168,7 @@ private: // data
 
 	/// @brief Number of iterations the mover runs on the inside, i.e. number of
 	///   output models (Mover doesn't run in JD2!)
-	core::Size iter_;
+	core::Size nstruct_;
 
 	/// @brief Protein name for dumping PDBs
 	std::string protein_;

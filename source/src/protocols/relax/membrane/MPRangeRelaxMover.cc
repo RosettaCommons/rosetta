@@ -171,9 +171,11 @@ void MPRangeRelaxMover::apply( Pose & pose ) {
 
 	TR << "Relaxing a membrane protein with RangeRelax..." << std::endl;
 
-	// add membrane to pose
-	AddMembraneMoverOP addmem( new AddMembraneMover() );
-	addmem->apply( pose );
+	// add membrane to pose, if not already there
+	if ( ! pose.conformation().is_membrane() ) {
+		AddMembraneMoverOP addmem( new AddMembraneMover() );
+		addmem->apply( pose );
+	}
 
 	// starting foldtree
 	FoldTree orig_ft = pose.fold_tree();
@@ -204,7 +206,7 @@ void MPRangeRelaxMover::apply( Pose & pose ) {
 	RangeRelaxMoverOP relax( new RangeRelaxMover( pose_tm_com ) );
 	relax->add_membrane_again( false );
 	relax->set_scorefunction( sfxn_ );
-	relax->optimize_membrane( optmem_ );
+//	relax->optimize_membrane( optmem_ );
 	if ( native_ != 0 ) {
 		relax->set_native( native_ );
 	} else {
@@ -244,7 +246,7 @@ void MPRangeRelaxMover::set_defaults() {
 	set_tm_helical_ = false;
 
 	// optimize membrane?
-	optmem_ = true;
+	optmem_ = false;
 
 }// set_defaults
 

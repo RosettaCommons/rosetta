@@ -54,6 +54,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility/CSI_Sequence.fwd.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -199,7 +200,7 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	TR << "Starting foldtree: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 
-	TR << "Optimizing membrane position using scorefunction " << sfxn_->get_name() << std::endl;
+	TR << "Optimizing membrane position using scorefunction " << utility::CSI_Green << sfxn_->get_name() << utility::CSI_Reset << std::endl;
 
 	// initial score of the pose
 	// final score from center search

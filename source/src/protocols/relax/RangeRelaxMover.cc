@@ -80,6 +80,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility/CSI_Sequence.fwd.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -236,7 +237,7 @@ void RangeRelaxMover::apply( Pose & pose ) {
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 
-	TR << "Running RangeRelax protocol..." << std::endl;
+	TR << "Running RangeRelax protocol with SCOREFUNCTION " << utility::CSI_Green << sfxn_->get_name() << utility::CSI_Reset << std::endl;
 
 	FoldTree orig_ft = finalize_setup( pose );
 
@@ -679,14 +680,14 @@ core::kinematics::FoldTree RangeRelaxMover::finalize_setup( Pose & pose ) {
 		constrain_to_reference( pose, *native_ );
 	}
 
+	// fill native if still empty
+	if ( native_ == 0 ) {
+		TR << "WARNING: Setting native to input structure because either no native given or you chose the option -relax:constrain_relax_to_start_coords!" << std::endl;
+		native_ = pose.clone();
+	}
+
 	// create constraints to starting model
 	if ( cst_to_start_ == true ) {
-
-		if ( native_ == 0 ) {
-			TR << "WARNING: Setting native to input structure because you chose the option -relax:constrain_relax_to_start_coords!" << std::endl;
-			native_ = pose.clone();
-		}
-
 		constrain_to_reference( pose, pose );
 	}
 

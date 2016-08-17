@@ -185,6 +185,7 @@ sources = {
 		"mg_modeler", # Rhiju Das, 2015.
 	],
 	"public/membrane" : [
+		"helix_from_sequence",
 		"mp_dock",
 		"mp_dock_setup",
 		"mp_lipid_acc",

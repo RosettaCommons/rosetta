@@ -328,6 +328,7 @@ sources = {
 		"AddMembraneMover",
 		"AddMPLigandMover",
 		"FlipMover",
+		"HelixFromSequence",
 		"MembranePositionFromTopologyMover",
 		"MPMutateRelaxMover",
 		"MPQuickRelaxMover",

@@ -81,6 +81,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <core/pose/util.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -262,8 +263,13 @@ MPFoldingMover::apply( Pose & pose ) {
 	pose.pdb_info( pdbinfo );
 	pose.pdb_info()->show( std::cout );
 
+	// THAT FUNCTION LIVES IN ADDMEMBRANEMOVER
+	// MOVE IT INTO CORE/POSE/MEMBRANE/UTIL TO GET RID OF CODE DUPLICATION
+	// now supports PDB numbering also
+	std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
+	
 	// create topology from spanfile
-	SpanningTopologyOP topo( new SpanningTopology( spanfile_name() ) );
+	SpanningTopologyOP topo( new SpanningTopology( spanfile_name(), pdb2pose_map ) );
 
 	pose.dump_pdb("1_ideal_helices.pdb");
 	TR << "1" << std::endl;

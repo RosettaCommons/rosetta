@@ -100,12 +100,12 @@ Real read_thickness() {
 	Real thickness;
 	if ( option[OptionKeys::mp::thickness].user() ) {
 		thickness = option[OptionKeys::mp::thickness]();
-		TR << "Taking user-defined thickness: " << thickness << std::endl;
+		TR << "Taking user-defined thickness: " << thickness*2 << std::endl;
 	} else {
 		thickness = 15;
-		TR << "Taking default thickness: " << thickness << std::endl;
+		TR << "Taking default thickness: " << thickness*2 << std::endl;
 	}
-	TR.Debug << "got thickness: " << thickness << std::endl;
+	TR.Debug << "got thickness: " << thickness*2 << std::endl;
 
 	return thickness;
 

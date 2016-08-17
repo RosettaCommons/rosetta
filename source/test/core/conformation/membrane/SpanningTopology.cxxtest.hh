@@ -187,7 +187,8 @@ public: // test functions
 		TR << "Test constructor from spanfile" << std::endl;
 
 		// create object
-		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
+		std::map< std::string, core::Size > pdb2pose_map;
+		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", pdb2pose_map, 80 ) );
 
 		// check topology
 		TS_ASSERT_EQUALS( topo_from_spanfile->nspans(), 2 );
@@ -205,7 +206,8 @@ public: // test functions
 		TR << "Test whether residue is in the membrane" << std::endl;
 
 		// create object
-		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
+		std::map< std::string, core::Size > pdb2pose_map;
+		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", pdb2pose_map, 80 ) );
 
 		// check specific residues for membrane location
 		TS_ASSERT_EQUALS( topo_from_spanfile->in_span( 8), 0 );
@@ -232,6 +234,7 @@ public: // test functions
 		using namespace core::pose;
 		using namespace core::import_pose;
 
+		std::map< std::string, core::Size > pdb2pose_map;
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/1AFO_AB.pdb" ) );
 
 		// Load in pose from pdb
@@ -279,18 +282,19 @@ public: // test functions
 		using namespace core::conformation::membrane;
 
 		// test if span too short
-		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-short.span", 80 ) );
+		std::map< std::string, core::Size > pdb2pose_map;
+		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-short.span", pdb2pose_map, 80 ) );
 		TS_ASSERT_EQUALS( topo1.is_valid(), true );
 		TR << "...topo1 done." << std::endl;
 
 		// test if span too long
-		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-long.span", 80 ) );
+		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-long.span", pdb2pose_map, 80 ) );
 		TS_ASSERT_EQUALS( topo2.is_valid(), true );
 		TR << "...topo2 done." << std::endl;
 
 		// test whether span start > end
 		try {
-			SpanningTopology topo3( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_order.span", 80 ) );
+			SpanningTopology topo3( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_order.span", pdb2pose_map, 80 ) );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::string expected_error_message = "SpanningTopology invalid: check your span file!";
 			TS_ASSERT( expected_error_message == e.msg() );
@@ -299,7 +303,7 @@ public: // test functions
 
 		// test increasing order of spans in topology
 		try {
-			SpanningTopology topo4( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_spanorder.span", 80 ) );
+			SpanningTopology topo4( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_spanorder.span", pdb2pose_map, 80 ) );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::string expected_error_message = "SpanningTopology invalid: check your span file!";
 			TS_ASSERT( expected_error_message == e.msg() );
@@ -314,9 +318,11 @@ public: // test functions
 		TR << "Testing concatenate topology" << std::endl;
 		using namespace core::conformation::membrane;
 
+		std::map< std::string, core::Size > pdb2pose_map;
+		
 		// create topology objects
-		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/pmp22_withSS_PPM_opt.span" ) );
-		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/caln_tm_finalB.span" ) );
+		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/pmp22_withSS_PPM_opt.span", pdb2pose_map ) );
+		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/caln_tm_finalB.span", pdb2pose_map ) );
 
 		// concatenate them
 		topo1.concatenate_topology( topo2 );

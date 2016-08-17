@@ -2884,7 +2884,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 			Option( 'mutation', 'String', desc='Single mutation: Format: One-letter code / residue number / one-letter code. Example: A163F'),
 			Option( 'mutant_file', 'String', desc='Input file containing mutations'),
-			Option( 'iter', 'Integer', desc='Number of iterations to run. Typically 100.' ),
+			Option( 'nmodels', 'Integer', desc='Number of models to produce per construct. Typically between 50 and 1,000.' ),
 			Option( 'repack_mutation_only', 'Boolean', desc='Boolean - Only repack the mutated residue(s), no relax.' ),
 			Option( 'repack_radius', 'Real', desc='Float - Repack within a radius of X Angstrom of the mutated residue(s).' ),
 			Option( 'relax', 'Boolean', desc='Boolean - Do a full relax run with both backbone minimization and repacking.' ),
@@ -6361,6 +6361,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'cycles',          'Integer',  desc="Maximum number of cycles for repacking and minimization. Default 3", default='3'),
 			Option( 'min_cycles',      'Integer',  desc="Maximum number of cycles within the Minimizer. Default 2000", default='2000'),
 			Option( 'idealize',        'Boolean',  desc="Idealize decoy after run. Default: true", default='true'),
+			Option( 'skip_relax',      'Boolean',  desc="Skip relax step. Default: false", default='false'),
 		),
 
 		## Options for Sequence Relax

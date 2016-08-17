@@ -2,8 +2,7 @@
 -in:file:native inputs/1AFO_AB.pdb
 -mp:setup:spanfiles inputs/1AFO_AB.span
 -mp:mutate_relax:mutation E11C
--mp:mutate_relax:iter 1
--nstruct 1
+-mp:mutate_relax:nmodels 1
 -mp:mutate_relax:relax true
 -relax:range:angle_max 0.1
 -relax:range:nmoves nres
