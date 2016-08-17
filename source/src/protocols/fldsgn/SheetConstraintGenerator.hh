@@ -79,6 +79,13 @@ public:
 	///        means strands 2 and 3 are paired in a parallel orientation with register shift of 1
 	void set_strand_pairs( std::string const & spairs );
 
+	/// @brief If true, and no secstruct is specified, DSSP will be used to determine the pose
+	///        secondary structure.  If false (and no secstruct is specified), the pose
+	///        secondary structure will be directly used.
+	/// @param[in] use_dssp Desired value
+	void
+	set_use_dssp( bool const use_dssp );
+
 	/// @brief if set, a square-well, "flat bottom" function will be used for the constraints.
 	///        Otherwise, harmonic constraints will be used.
 	void set_flat_bottom_constraints( bool const flat_csts );
@@ -119,12 +126,39 @@ public:
 	void initialize_from_blueprint( std::string const & blueprint_file );
 	void initialize_from_blueprint( protocols::jd2::parser::BluePrintCOP bp );
 
-	std::pair< std::string, std::string >
-	get_secstruct_and_strandpairings( core::pose::Pose const & pose ) const;
-
 	/// @brief computes and returns a vector of residues that are paired in the sheet
 	ResiduePairs
 	compute_residue_pairs( topology::StrandPairings const & spairs ) const;
+
+protected:
+	// these functions are protected because I wanted a basic unit test for them
+
+	/// @brief returns secondary structure to be used in this constraint generator
+	/// @param[in]  pose  Input pose
+	/// @returns Secondary stucture of the pose according to the following rules:
+	///          1. secstruct_ if it is non-empty
+	///          2. DSSP secondary structure of the input pose if use_dssp_ is true
+	///          3. Pose secondary structure if use_dssp_ is false
+	std::string
+	get_secstruct( core::pose::Pose const & pose ) const;
+
+	/// @brief returns abego to be used in this constraint generator
+	/// @param[in]  pose  Input pose
+	/// @returns ABEGO string of the pose according to the following rules:
+	///          1. StructureData abego if use_dssp_ is false AND StructureData is present
+	///          2. Computed abego of the input pose otherwise
+	utility::vector1< std::string >
+	get_abego( core::pose::Pose const & pose ) const;
+
+	/// @brief return strand pairing string to be used in this constraint generator
+	/// @param[in] pose  Input pose
+	/// @returns Strand pairing string for desired strand pairings, according to the
+	///          following rules:
+	///          1. spairs_ if it is non-empty
+	///          2. Gets pairing string from StructureData if it is present
+	///          3. Throw error
+	std::string
+	get_strandpairings( core::pose::Pose const & pose ) const;
 
 private:
 	// func generation
@@ -177,8 +211,7 @@ private:
 	bool constrain_bb_dihedral_;
 	bool constrain_bb_angle_;
 	bool flat_bottom_constraints_;
-
-	BluePrintOP blueprint_;
+	bool use_dssp_;
 	std::string secstruct_;
 	std::string spairs_;
 	std::string sheet_name_;

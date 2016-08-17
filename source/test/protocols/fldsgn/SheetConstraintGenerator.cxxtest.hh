@@ -15,6 +15,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
+#include <test/util/pose_funcs.hh>
 
 // Unit headers
 #include <protocols/fldsgn/SheetConstraintGenerator.hh>
@@ -22,15 +23,18 @@
 // Devel headers
 
 // Protocol headers
+#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-//#include <protocols/denovo_design/connection/ConnectionArchitect.hh>
+#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 
 // Core headers
+#include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Utility headers
@@ -85,6 +89,16 @@ structuredata_from_motifs( Motifs const & motifs )
 	}
 	return perm;
 }
+
+class SheetConstraintGeneratorTest : public protocols::fldsgn::SheetConstraintGenerator {
+public:
+	std::string
+	get_secstruct_( core::pose::Pose const & pose ) const { return get_secstruct(pose); }
+
+	std::string
+	get_strandpairings_( core::pose::Pose const & pose ) const { return get_strandpairings(pose); }
+};
+
 } // namespace mytest
 
 // --------------- Test Class --------------- //
@@ -105,18 +119,83 @@ public:
 	}
 
 
-	void reset( protocols::denovo_design::components::StructureData & perm )
-	{
-		perm.set_data_str( "2", "paired_strands", ",4" );
-		perm.set_data_str( "4", "paired_strands", "2," );
-		perm.set_data_int( "2", "orientation", 1 );
-		perm.set_data_int( "4", "orientation", 0 );
+	// TODO: Uncomment when denovo classes are updated
+	//void reset( protocols::denovo_design::components::StructureData & perm )
+	//{
+	//	using protocols::denovo_design::architects::UP;
+	//	using protocols::denovo_design::architects::DOWN;
+	//	using protocols::denovo_design::components::StrandPairing;
+	//	using protocols::denovo_design::components::StrandPairingOP;
+	//	perm.clear_pairings();
+	//	perm.add_pairing( StrandPairing( "2", "4", UP, DOWN, 0 ) );
+	//	perm.set_data_str( "2", "paired_strands", ",4" );
+	//	perm.set_data_str( "4", "paired_strands", "2," );
+	//	perm.set_data_int( "2", "orientation", 1 );
+	//	perm.set_data_int( "4", "orientation", 0 );
+	//}
+
+	void test_user_secstruct() {
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+			pose.set_secstruct( resid, 'E' );
+		}
+
+		mytest::SheetConstraintGeneratorTest sheet_rcg;
+		sheet_rcg.set_use_dssp( false );
+
+		TS_ASSERT_EQUALS( sheet_rcg.get_secstruct_(pose), "EEEEEEEEEEEEEEEEEEEE" );
+
+		sheet_rcg.set_use_dssp( true );
+		TS_ASSERT_EQUALS( sheet_rcg.get_secstruct_(pose), "LHHHHHHLLLHHHHLLLLLL" );
+
+		std::string const test_secstruct = "LEEEEEEEELLEEEEEEEEL";
+		sheet_rcg.set_secstruct( test_secstruct );
+		TS_ASSERT_EQUALS( sheet_rcg.get_secstruct_(pose), test_secstruct );
+
+		sheet_rcg.set_use_dssp( false );
+		TS_ASSERT_EQUALS( sheet_rcg.get_secstruct_(pose), test_secstruct );
+	}
+
+	void test_spair_strings() {
+		using protocols::denovo_design::components::StrandPairing;
+		using protocols::denovo_design::components::StructureData;
+		using protocols::denovo_design::components::StructureDataOP;
+		using protocols::denovo_design::components::StructureDataFactory;
+		using protocols::denovo_design::architects::UP;
+		using protocols::denovo_design::architects::DOWN;
+
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+
+		mytest::Motifs const motifs = boost::assign::list_of
+			("1LX")("8EB")("2LG")("8EB")("1LX");
+
+		StructureDataOP perm = mytest::structuredata_from_motifs( motifs );
+		TS_ASSERT( perm );
+		StructureData & sd = *perm;
+		StructureDataFactory::get_instance()->save_into_pose( pose, sd );
+
+		mytest::SheetConstraintGeneratorTest sheet_rcg;
+		sheet_rcg.set_secstruct( "LEEEEEEEELLEEEEEEEEL" );
+		std::string const spair_str = "1-2.A.0";
+		sheet_rcg.set_strand_pairs( spair_str );
+		TS_ASSERT_EQUALS( sheet_rcg.get_strandpairings_(pose), spair_str );
+
+		sheet_rcg.set_strand_pairs( "" );
+		TS_ASSERT_EQUALS( sheet_rcg.get_strandpairings_(pose), "" );
+
+		//TODO: Uncommend when denovo classes are updated
+		// add pairings
+		//sd.add_pairing( StrandPairing( "2", "4", UP, DOWN, 0 ) );
+		//StructureDataFactory::get_instance()->save_into_pose( pose, sd );
+		//TS_ASSERT_EQUALS( sheet_rcg.get_strandpairings_(pose), spair_str );
 	}
 
 	void test_bulge_strandpairing() {
 		using protocols::fldsgn::topology::SS_Info2;
 		using protocols::fldsgn::topology::StrandPairingSet;
 		using protocols::fldsgn::topology::StrandPairings;
+		//TODO: uncomment when denovo classes are updated
+		//using protocols::denovo_design::movers::SetPoseSecstructFromStructureDataMover;
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 
@@ -130,7 +209,8 @@ public:
 		TR << "Created " << *perm << std::endl;
 
 		// add pairing info
-		reset( *perm );
+		//TODO: uncomment when denovo classes are updated
+		//reset( *perm );
 
 		// add bulge
 		utility::vector1< std::string > e1_abego = abego_vector( perm->segment( "2" ).abego() );
@@ -150,17 +230,32 @@ public:
 
 		StructureData const & dummy_sd = StructureDataFactory::get_instance()->get_from_pose( *dummy );
 		TS_ASSERT_THROWS_NOTHING( dummy_sd.check_consistency() );
+		//TODO: uncomment when denovo classes are updated
+		//SetPoseSecstructFromStructureDataMover().apply( *dummy );
+		//TODO: remove this when denovo classes are updated
+		core::Size resid = 1;
+		for ( std::string::const_iterator ss=dummy_sd.ss().begin(); ss!=dummy_sd.ss().end(); ++ss, ++resid ) {
+			dummy->set_secstruct( resid, *ss );
+		}
 		TR << "SD " << dummy_sd << " abego " << dummy_sd.abego() << std::endl;
 
 		// create generator
-		protocols::fldsgn::SheetConstraintGenerator sheet_rcg;
-		std::pair< std::string, std::string > const ss_spair = sheet_rcg.get_secstruct_and_strandpairings( *dummy );
-		TS_ASSERT_EQUALS( ss_spair.first, "LEEEEELLEEEEL" );
-		TS_ASSERT_EQUALS( ss_spair.second, "1-2.A.0" );
-		TR << ss_spair.first << " " << ss_spair.second << " abego " << dummy_sd.abego() << std::endl;
+		mytest::SheetConstraintGeneratorTest sheet_rcg;
+		sheet_rcg.set_strand_pairs( "1-2.A.0" );
+		std::string const secstruct = sheet_rcg.get_secstruct_( *dummy );
+		TS_ASSERT_EQUALS( secstruct, "LEEEEELLEEEEL" );
 
-		protocols::fldsgn::topology::SS_Info2_OP ssinfo( new SS_Info2( *dummy, ss_spair.first ) );
-		StrandPairingSet spairset( ss_spair.second, ssinfo, abego_vector( dummy_sd.abego() ) );
+		std::string spair_str = sheet_rcg.get_strandpairings_( *dummy );
+		TS_ASSERT_EQUALS( spair_str, "1-2.A.0" );
+
+		// TODO: uncommend when denovo classes are updated
+		//sheet_rcg.set_strand_pairings( "" );
+		//spair_str = sheet_rcg.get_strandpairings_( *dummy );
+		//TS_ASSERT_EQUALS( spair_str, "1-2.A.0" );
+		TR << secstruct << " " << spair_str << " abego " << dummy_sd.abego() << std::endl;
+
+		protocols::fldsgn::topology::SS_Info2_OP ssinfo( new SS_Info2( *dummy, secstruct ) );
+		StrandPairingSet spairset( spair_str, ssinfo, abego_vector( dummy_sd.abego() ) );
 		StrandPairings spairs = spairset.strand_pairings();
 		TS_ASSERT_EQUALS( spairs.size(), 1 );
 		for ( StrandPairings::const_iterator sp=spairs.begin(); sp!=spairs.end(); ++sp ) {

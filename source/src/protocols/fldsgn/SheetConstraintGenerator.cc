@@ -19,6 +19,7 @@
 
 // Package headers
 #include <protocols/constraint_generator/util.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
@@ -36,10 +37,12 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 
 // Utility headers
@@ -91,6 +94,7 @@ SheetConstraintGenerator::SheetConstraintGenerator():
 	constrain_bb_dihedral_( true ),
 	constrain_bb_angle_( true ),
 	flat_bottom_constraints_( true ),
+	use_dssp_( false ),
 	secstruct_( "" ),
 	spairs_( "" )
 {}
@@ -120,17 +124,18 @@ SheetConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	FuncOP bb_shift_dihedral_func2 = create_bb_dihedral_func( numeric::constants::f::pi );
 	FuncOP bb_angle_func = create_bb_angle_func( numeric::constants::f::pi / 2 );
 
-	std::pair< std::string, std::string > ss_spair = get_secstruct_and_strandpairings( pose );
-	std::string const & secstruct = ss_spair.first;
-	std::string const & spair_str = ss_spair.second;
+	std::string const secstruct = get_secstruct( pose );
+	utility::vector1< std::string > const abego = get_abego( pose );
+	std::string const spair_str = get_strandpairings( pose );
 
 	TR << "Found SS = " << secstruct << std::endl;
 	TR << "Found strand pairings " << spair_str << std::endl;
 	TR << "Constrains between CA-CA atoms in sheet are applied for the following residues. " << std::endl;
 	TR << "dist=" << dist_ << ", weight_=" << weight_ << ", cacb_dihedral=" << cacb_dihedral_tolerance_ << ", bb_dihedral=" << bb_dihedral_tolerance_ << ", angle=" << angle_tolerance_ << std::endl;
 
+	// abego is required here to determine bulges
 	protocols::fldsgn::topology::SS_Info2_OP ssinfo( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
-	protocols::fldsgn::topology::StrandPairingSet spairset( spair_str, ssinfo );
+	protocols::fldsgn::topology::StrandPairingSet spairset( spair_str, ssinfo, abego );
 	ResiduePairs const respairs = compute_residue_pairs( spairset.strand_pairings() );
 	for ( ResiduePairs::const_iterator pair=respairs.begin(); pair!=respairs.end(); ++pair ) {
 		core::Size const iaa = pair->first;
@@ -253,6 +258,16 @@ SheetConstraintGenerator::set_strand_pairs( std::string const & spairs )
 	spairs_ = spairs;
 }
 
+/// @brief If true, and no secstruct is specified, DSSP will be used to determine the pose
+///        secondary structure.  If false (and no secstruct is specified), the pose
+///        secondary structure will be directly used.
+/// @param[in] use_dssp Desired value
+void
+SheetConstraintGenerator::set_use_dssp( bool const use_dssp )
+{
+	use_dssp_ = use_dssp;
+}
+
 /// @brief set weight
 void
 SheetConstraintGenerator::set_weight( Real const coef )
@@ -324,57 +339,73 @@ SheetConstraintGenerator::set_constrain_bb_angle( bool const constrain_angle )
 	constrain_bb_angle_ = constrain_angle;
 }
 
-std::pair< std::string, std::string >
-SheetConstraintGenerator::get_secstruct_and_strandpairings( core::pose::Pose const & pose ) const
+/// @brief returns secondary structure to be used in this constraint generator
+/// @param[in]  pose  Input pose
+/// @returns Secondary stucture of the pose according to the following rules:
+///          1. secstruct_ if it is non-empty
+///          2. DSSP secondary structure of the input pose if use_dssp_ is true
+///          3. Pose secondary structure if use_dssp_ is false
+std::string
+SheetConstraintGenerator::get_secstruct( core::pose::Pose const & pose ) const
 {
-	std::string secstruct = secstruct_;
-	std::string spairs = spairs_;
+	if ( !secstruct_.empty() ) return secstruct_;
 
-	// fill in gaps with structuredata information, if necessary
-	denovo_design::components::StructureDataOP sd =
-		denovo_design::components::StructureDataFactory::get_instance()->create_from_pose( pose, id() );
-
-	if ( secstruct.empty() || spairs.empty() ) {
-		if ( secstruct.empty() ) {
-			secstruct = sd->ss();
-			TR << "StructureData information is used for determinining secondary structure: " << secstruct << std::endl;
-		}
-		if ( spairs.empty() ) {
-			spairs = protocols::denovo_design::get_strandpairings( *sd, true );
-			TR << "StructureData information is used for determinining constraint residue pairs: " << spairs << std::endl;
-		}
+	if ( use_dssp_ ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		return dssp.get_dssp_secstruct();
 	}
 
-	// catch the case where ligands aren't present, e.g. when initialized from blueprint
-	if ( secstruct.size() != pose.total_residue() ) {
-		std::string ss_with_ligands = "";
-		for ( core::Size res=1; res<=pose.total_residue(); ++res ) {
-			if ( pose.residue( res ).is_protein() ) {
-				ss_with_ligands += secstruct[ res - 1 ];
-			} else {
-				ss_with_ligands += 'L';
-			}
-		}
-		if ( ss_with_ligands.size() == pose.total_residue() ) {
-			secstruct = ss_with_ligands;
-		} else {
-			std::stringstream msg;
-			msg << "SheetConstraintGenerator: given secondary structure " << secstruct
-				<< "(length " << secstruct.size() << ") does not match pose size ("
-				<< pose.total_residue() << ")" << std::endl;
-			throw utility::excn::EXCN_BadInput( msg.str() );
-		}
-	}
-	debug_assert( secstruct.size() == pose.total_residue() );
-	if ( secstruct.empty() ) {
-		throw utility::excn::EXCN_Msg_Exception( "SheetConstraintGenerator: secstruct is empty!" );
-	}
-	if ( spairs.empty() ) {
-		throw utility::excn::EXCN_Msg_Exception( "SheetConstraintGenerator: strand pairs list is empty!" );
-	}
-	debug_assert( !secstruct.empty() );
-	debug_assert( !spairs.empty() );
-	return std::make_pair( secstruct, spairs );
+	return pose.secstruct();
+}
+
+/// @brief returns abego to be used in this constraint generator
+/// @param[in]  pose  Input pose
+/// @returns ABEGO string of the pose according to the following rules:
+///          1. StructureData abego if use_dssp_ is false AND StructureData is present
+///          2. Computed abego of the input pose otherwise
+utility::vector1< std::string >
+SheetConstraintGenerator::get_abego( core::pose::Pose const & pose ) const
+{
+	//TODO: uncomment when denovo classes are updated in another PR
+	//using denovo_design::components::StructureDataFactory;
+	//bool const has_structuredata = StructureDataFactory::get_instance()->has_cached_data( pose );
+	//if ( ! use_dssp_ && has_structuredata ) {
+	//	std::string const abego_str = StructureDataFactory::get_instance()->get_from_const_pose( pose ).abego();
+	//	return protocols::denovo_design::abego_vector( abego_str );
+	//}
+
+	return core::sequence::get_abego( pose );
+}
+
+
+/// @brief return strand pairing string to be used in this constraint generator
+/// @param[in] pose  Input pose
+/// @returns Strand pairing string for desired strand pairings, according to the
+///          following rules:
+///          1. spairs_ if it is non-empty
+///          2. Gets pairing string from StructureData if it is present
+///          3. Throw error
+std::string
+SheetConstraintGenerator::get_strandpairings( core::pose::Pose const & ) const
+{
+	using protocols::denovo_design::components::SegmentPairing;
+	using protocols::denovo_design::components::StructureData;
+	using protocols::denovo_design::components::StructureDataFactory;
+
+	if ( !spairs_.empty() ) return spairs_;
+
+	//TODO: Uncomment this when denovo classes are updated
+	return "";
+	//StructureDataFactory const & sd_manager = *StructureDataFactory::get_instance();
+	//if ( sd_manager.has_cached_data( pose ) ) {
+	//	return SegmentPairing::get_strand_pairings( sd_manager.get_from_const_pose( pose ) );
+	//}
+	//std::stringstream msg;
+	//msg << class_name() << "::get_strandpairings(): You must either specify strand pairings, or "
+	//	<< "store a StructureData object in the pose which contains the desired strand pairings."
+	//	<< std::endl;
+	//utility_exit_with_message( msg.str() );
+	//return "";
 }
 
 ResiduePairs
