@@ -6,6 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+"""
 @file    PyMOLPyRosettaServer.py
 
 @brief   Establishes a link between PyMOL and PyRosetta

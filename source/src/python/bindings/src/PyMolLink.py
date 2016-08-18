@@ -6,6 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+"""
 Brief:   The PyMOLMover class and associated methods.
 Remarks: Use in conjunction with PyMOLPyRosettaServer.py.
 Authors: Sergey Lyskov & Evan Baugh
