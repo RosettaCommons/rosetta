@@ -738,6 +738,7 @@ testinputfiles = [
 	"moves/smallmoves_out.pdb",
 	"moves/test_in.pdb",
 	"moves/test_in_short.pdb",
+	"membrane/1A11_native.pdb",
 	"membrane/1C3W_TR_A.pdb",
 	"membrane/1C3W_A.span",
 	"membrane/1C3W_w_mem.span",

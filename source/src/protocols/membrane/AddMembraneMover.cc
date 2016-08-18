@@ -431,15 +431,17 @@ AddMembraneMover::apply( Pose & pose ) {
 
 	// Step 2: Initialize the spanning topology
 	if ( topology_->nres_topo() == 0 ) {
-		if ( spanfile_ != "from_structure" ) {
-	
+		if ( spanfile_ == "single_TM_mode" ) {
+		  TR << "Single TM Mode: Defining a single TM helix from the length of the input pose" << std::endl;
+		  // Define teh span as teh whole helix, excluding the membrane residue                                                                            
+		  SpanCOP single_TM_span = SpanCOP( new Span(  1, pose.total_residue()-1 ) );
+		  topology_->add_span( *single_TM_span );
+		} else if ( spanfile_ != "from_structure" ) {
 			// now supports PDB numbering also
 			std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
-			
 			// fill topology from spanfile with pdb2pose map
 			topology_->fill_from_spanfile( spanfile_, pdb2pose_map, pose.total_residue() );
-		}
-		else {
+		} else {
 			// get pose info to create topology from structure
 			std::pair< utility::vector1< core::Real >, utility::vector1< core::Size > > pose_info( get_chain_and_z( pose ) );
 			utility::vector1< core::Real > z_coord = pose_info.first;
