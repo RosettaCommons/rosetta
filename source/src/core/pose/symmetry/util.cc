@@ -135,6 +135,7 @@ scorefxn_is_symmetric( pose::Pose const & pose )
 /// Unlike the version of make_symmetric_pose from symmdata, this does not expand the
 ///    pose; it assumes the symmetric fold tree and residues are already present
 /// For example, this is used to reconstruct a symm pose from a silent file
+/// All data in the pose datacache will be cleared
 void
 make_symmetric_pose(
 	pose::Pose & pose,
@@ -338,6 +339,12 @@ void extract_asymmetric_unit(
 
 	core::pose::symmetry::extract_asymmetric_unit_pdb_info( pose_in, pdb_info_src, pdb_info );
 	pose_out.pdb_info( pdb_info );
+
+	// reconstruct secondary structure
+	debug_assert( pose_out.total_residue() <= pose_in.total_residue() );
+	for ( core::Size resid=1; resid<=pose_out.total_residue(); ++resid ) {
+		pose_out.set_secstruct( resid, pose_in.secstruct( resid ) );
+	}
 
 	runtime_assert( !core::pose::symmetry::is_symmetric( pose_out ) );
 }
