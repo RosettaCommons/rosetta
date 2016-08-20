@@ -1191,6 +1191,9 @@ def write_ligand_pdb(f, molfile_tmpl, molfile_xyz, resname, ctr=None, chain_id='
         curr_ctr = r3.centroid([a for a in molfile_xyz.atoms if not a.is_H])
         ctr = r3.sub(ctr, curr_ctr)
     else: ctr = r3.Triple(0,0,0)
+    chain_id = chain_id.strip()
+    if len(chain_id) != 1:
+        chain_id = chain_id[1]
     atom_num = 0
     frag_ids = list(set([a.fragment_id for a in molfile_tmpl.atoms]))
     frag_ids.sort()
@@ -1249,7 +1252,7 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
                     conformer_file = "%s%s_conformers.pdb" % (options.pdb,suffix)
                     file_to_write = open(conformer_file,'a')
                 try:
-                    write_ligand_pdb(file_to_write, m, molfile, options.name, options.center)
+                    write_ligand_pdb(file_to_write, m, molfile, options.name, options.center, options.chain)
                 except ValueError as e:
                     sys.exit(e)
         else:
@@ -1262,7 +1265,7 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
                 else:
                     # m is used for names, molfile is used for XYZ
                     try:
-                        write_ligand_pdb(pdb_file, m, molfile, options.name, options.center)
+                        write_ligand_pdb(pdb_file, m, molfile, options.name, options.center, options.chain)
                     except ValueError as e:
                         if options.skip_bad_conformers:
                             print "Skipping Bad Conformers:",e
@@ -1394,6 +1397,11 @@ and for visualizing exactly what was done to the ligand.
         default=False,
         action="store_true",
         help="write files for Rosetta centroid mode too"
+    )
+    parser.add_option("--chain",
+        default='X',
+        type="string",
+        help="The chain letter to use for the output PDB ligand."
     )
     parser.add_option("--center",
         default=None, # same as --name, see below
