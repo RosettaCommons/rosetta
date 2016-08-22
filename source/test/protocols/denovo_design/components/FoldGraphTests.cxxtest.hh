@@ -79,9 +79,7 @@ public:
 		xml << "<ResidueRange name=h2 start=16 group=2 nterm=1 cterm=0 ss=HHHHHHHHL abego=AAAAAAAAX lower_segment=l1 />" << std::endl;
 		xml << "<ResidueRange name=fixed start=25 nterm=0 cterm=0 group=1 ss=LEEEEELLEEEEEL abego=XBBBBBGGBBBBBX />" << std::endl;
 		xml << "</StructureData>" << std::endl;
-		StructureDataOP sd_ptr = StructureDataFactory::get_instance()->create_from_xml( xml );
-		TS_ASSERT( sd_ptr );
-		StructureData & sd = *sd_ptr;
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
 
 		FoldGraph fg( sd );
 
@@ -133,9 +131,7 @@ public:
 		xml << "<ResidueRange name=h2 start=16 group=2 nterm=1 cterm=0 ss=HHHHHHHHL abego=AAAAAAAAX lower_segment=l1 />" << std::endl;
 		xml << "<ResidueRange name=fixed start=25 nterm=0 cterm=0 group=1 ss=LEEEEELLEEEEEL abego=XBBBBBGGBBBBBX />" << std::endl;
 		xml << "</StructureData>" << std::endl;
-		StructureDataOP sd_ptr = StructureDataFactory::get_instance()->create_from_xml( xml );
-		TS_ASSERT( sd_ptr );
-		StructureData & sd = *sd_ptr;
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
 		FoldGraph fg( sd );
 
 		// root fold tree at h2
@@ -160,9 +156,7 @@ public:
 		xml << "<ResidueRange name=h2 start=16 group=2 nterm=1 cterm=0 ss=HHHHHHHHL abego=AAAAAAAAX lower_segment=l1 />" << std::endl;
 		xml << "<ResidueRange name=fixed start=25 nterm=0 cterm=0 group=1 ss=LEEEEELLEEEEEL abego=XBBBBBGGBBBBBX />" << std::endl;
 		xml << "</StructureData>" << std::endl;
-		StructureDataOP sd_ptr = StructureDataFactory::get_instance()->create_from_xml( xml );
-		TS_ASSERT( sd_ptr );
-		StructureData & sd = *sd_ptr;
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
 		FoldGraph fg( sd );
 
 		// root fold tree at h2

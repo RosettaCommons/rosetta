@@ -32,6 +32,7 @@ namespace architects {
 
 HelixArchitect::HelixArchitect( std::string const & id_value ):
 	DeNovoArchitect( id_value ),
+	motifs_(),
 	lengths_()
 {
 }
@@ -57,26 +58,18 @@ HelixArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	set_lengths( tag->getOption< std::string >( "length" ) );
 }
 
-StructureDataOP
+DeNovoArchitect::StructureDataOP
 HelixArchitect::design( core::pose::Pose const &, core::Real & random ) const
 {
-	if ( lengths_.empty() ) {
+	if ( motifs_.empty() ) {
 		utility_exit_with_message( type() + "Architect requires one or more motifs or lengths to be specified" );
 	}
-	core::Size const length_idx = extract_int( random, 1, lengths_.size() );
+	core::Size const motif_idx = extract_int( random, 1, motifs_.size() );
 
-	std::stringstream ss;
-	ss << 'L' << std::string( lengths_[ length_idx ], 'H' ) << 'L';
-	std::stringstream abego;
-	abego << 'X' << std::string( lengths_[ length_idx ], 'A' ) << 'X';
-
-	components::Segment motif;
-	motif.extend( ss.str(), abego.str() );
-
-	TR << "Created new segment: " << motif << std::endl;
-
-	StructureDataOP sd( new StructureData( id() ) );
-	sd->add_segment( id(), motif );
+	components::Segment const & chosen_motif = *motifs_[ motif_idx ];
+	TR << "Designing segment: " << chosen_motif << std::endl;
+	StructureDataOP sd( new components::StructureData( id() ) );
+	sd->add_segment( chosen_motif );
 
 	return sd;
 }
@@ -91,6 +84,30 @@ void
 HelixArchitect::set_lengths( Lengths const & lengths )
 {
 	lengths_ = lengths;
+	// add motifs
+	motifs_.clear();
+	for ( Lengths::const_iterator l=lengths.begin(); l!=lengths.end(); ++l ) {
+		std::stringstream ss;
+		ss << 'L' << std::string( *l, 'H' ) << 'L';
+		std::stringstream abego;
+		abego << 'X' << std::string( *l, 'A' ) << 'X';
+
+		components::SegmentOP motif( new components::Segment( id() ) );
+		motif->extend( ss.str(), abego.str() );
+		motifs_.push_back( motif );
+	}
+}
+
+components::SegmentCOPs::const_iterator
+HelixArchitect::motifs_begin() const
+{
+	return motifs_.begin();
+}
+
+components::SegmentCOPs::const_iterator
+HelixArchitect::motifs_end() const
+{
+	return motifs_.end();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

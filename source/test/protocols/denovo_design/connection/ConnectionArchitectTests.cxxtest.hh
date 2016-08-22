@@ -57,11 +57,11 @@ public:
 		// length 16 helix
 
 		// setup initial structure data with "UnitTest" name
-		StructureData sd = StructureDataFactory::get_instance()->get_from_pose( input_pose, "UnitTest" );
+		StructureData sd = StructureDataFactory::get_instance()->get_from_pose( input_pose );
 
 		std::string const conn_id = "bridge";
-		std::string const seg1 = "UnitTest.H01";
-		std::string const seg2 = "UnitTest.H02";
+		std::string const seg1 = "H01";
+		std::string const seg2 = "H02";
 
 		ConnectionArchitect conn( conn_id );
 		conn.set_segment1_ids( seg1 );
@@ -101,9 +101,9 @@ public:
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_bundle_disconnected.pdb" );
 
 		// set movable groups so they are different
-		StructureData orig_sd = StructureDataFactory::get_instance()->get_from_pose( input_pose, "UnitTest" );
-		std::string const seg1 = "UnitTest.H01";
-		std::string const seg2 = "UnitTest.H02";
+		StructureData orig_sd = StructureDataFactory::get_instance()->get_from_pose( input_pose );
+		std::string const seg1 = "H01";
+		std::string const seg2 = "H02";
 		TS_ASSERT( orig_sd.has_segment( seg2 ) );
 		orig_sd.set_movable_group( seg2, 2 );
 		StructureDataFactory::get_instance()->save_into_pose( input_pose, orig_sd );

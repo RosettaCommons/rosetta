@@ -17,5 +17,5 @@
 //Creator #includes
 #include <protocols/abinitio/abscript/JumpSampleDataCreator.hh>
 #include <protocols/environment/AutoCutDataCreator.hh>
-//#include <protocols/denovo_design/components/StructureDataCreator.hh>
+#include <protocols/denovo_design/components/StructureDataCreator.hh>
 

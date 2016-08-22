@@ -19,6 +19,9 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
+// Core headers
+#include <core/select/residue_selector/ResidueVector.hh>
+
 // Basic headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -40,14 +43,16 @@ SegmentPairing::type_to_str( PairingType const & type )
 {
 	if ( type == HELIX ) return HelixPairing::class_name();
 	if ( type == STRAND ) return StrandPairing::class_name();
+	if ( type == HELIX_SHEET ) return HelixSheetPairing::class_name();
 	return "UNKNOWN";
 }
 
 SegmentPairingOP
-create_segment_pairing( std::string const & type_name )
+SegmentPairing::create( std::string const & type_name )
 {
 	if ( type_name == StrandPairing::class_name() ) return StrandPairingOP( new StrandPairing );
 	if ( type_name == HelixPairing::class_name() ) return HelixPairingOP( new HelixPairing );
+	if ( type_name == HelixSheetPairing::class_name() ) return HelixSheetPairingOP( new HelixSheetPairing );
 	std::stringstream msg;
 	msg << "Unknown pairing type: " << type_name << std::endl;
 	utility_exit_with_message( msg.str() );
@@ -97,6 +102,7 @@ std::ostream &
 operator<<( std::ostream & os, SegmentPairing const & pairing )
 {
 	utility::tag::Tag tag;
+	tag.set_quote_options( true );
 	tag.setName( SegmentPairing::TAG_NAME );
 
 	std::string const & type_str = SegmentPairing::type_to_str( pairing.type() );
@@ -112,6 +118,142 @@ operator<<( std::ostream & os, SegmentPairing const & pairing )
 	pairing.to_xml( tag );
 	os << tag;
 	return os;
+}
+
+core::select::residue_selector::ResidueVector
+get_strand_residues(
+	architects::StrandOrientation const & orient,
+	core::Size const start,
+	core::Size const stop,
+	core::select::residue_selector::ResidueVector const & bulges )
+{
+	TR.Debug << "Bulges are at " << bulges << std::endl;
+	std::set< core::Size > const bulge_set( bulges.begin(), bulges.end() );
+
+	core::select::residue_selector::ResidueVector resids;
+	if ( orient == architects::UP ) {
+		for ( core::Size resid=start; resid<=stop; ++resid ) {
+			if ( bulge_set.find( resid ) != bulge_set.end() ) continue;
+			resids.push_back( resid );
+		}
+	} else if ( orient == architects::DOWN ) {
+		for ( core::Size resid=stop; resid>=start; --resid ) {
+			if ( bulge_set.find( resid ) != bulge_set.end() ) continue;
+			resids.push_back( resid );
+		}
+	} else {
+		std::stringstream msg;
+		msg << "mark_paired_residues(): Invalid orientation found for strand ["
+			<< start << "," << stop << "] : "  << orient << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	return resids;
+}
+
+core::select::residue_selector::ResidueVector
+get_bulges( core::Size const start, core::Size const stop, std::string const & abego )
+{
+	core::select::residue_selector::ResidueVector bulges;
+	for ( core::Size resid=start; resid<=stop; ++resid ) {
+		if ( abego[resid-1] == 'A' )  bulges.push_back( resid );
+	}
+	return bulges;
+}
+
+void
+add_paired_residues(
+	StructureData const & sd,
+	StrandPairing const & p,
+	protocols::fldsgn::topology::SS_Info2 const & ss_info,
+	ResiduePairs & pairs )
+{
+	using core::select::residue_selector::ResidueVector;
+
+	protocols::fldsgn::topology::Strands const & strands = ss_info.strands();
+
+	debug_assert( p.segments().size() == 2 );
+	std::string const seg1_name = *p.segments().begin();
+	std::string const seg2_name = *p.segments().rbegin();
+	std::string const abego = sd.abego();
+
+	core::Size const strand1 = ss_info.strand_id( sd.segment( seg1_name ).safe() );
+	core::Size const strand2 = ss_info.strand_id( sd.segment( seg2_name ).safe() );
+
+	architects::StrandOrientation const o1 = p.orient1();
+	architects::StrandOrientation const o2 = p.orient2();
+	architects::RegisterShift const shift = p.shift();
+
+	ResidueVector const bulges1 = get_bulges( strands[strand1]->begin(), strands[strand1]->end(), abego );
+	ResidueVector const bulges2 = get_bulges( strands[strand2]->begin(), strands[strand2]->end(), abego );
+	ResidueVector const s1_resids = get_strand_residues( o1, strands[strand1]->begin(), strands[strand1]->end(), bulges1 );
+	ResidueVector const s2_resids = get_strand_residues( o2, strands[strand2]->begin(), strands[strand2]->end(), bulges2 );
+
+	for ( core::Size s1_idx=1; s1_idx<=s1_resids.size(); ++s1_idx ) {
+		core::Size const s2_idx = s1_idx - shift;
+		if ( s2_idx < 1 ) continue;
+		if ( s2_idx > s2_resids.size() ) continue;
+		// we have a pair
+		core::Size const res1 = s1_resids[ s1_idx ];
+		core::Size const res2 = s2_resids[ s2_idx ];
+		TR.Debug << "Paired: " << res1 << " <--> " << res2 << std::endl;
+		pairs.push_back( ResiduePair( res1, res2 ) );
+	}
+}
+
+ResiduePairs
+SegmentPairing::get_strand_residue_pairs( StructureData const & sd )
+{
+	protocols::fldsgn::topology::SS_Info2 const ss_info( sd.ss() );
+
+	ResiduePairs pairs;
+	SegmentPairingCOPs pairings = get_pairings( sd, STRAND );
+	for ( SegmentPairingCOPs::const_iterator p=pairings.begin(); p!=pairings.end(); ++p ) {
+		StrandPairingCOP strand_pair = utility::pointer::static_pointer_cast< StrandPairing const >( *p );
+		add_paired_residues( sd, *strand_pair, ss_info, pairs );
+	}
+	return pairs;
+}
+
+SegmentPairingCOPs
+SegmentPairing::get_pairings( StructureData const & sd, PairingType const & type )
+{
+	SegmentPairingCOPs my_type;
+	for ( SegmentPairingCOPs::const_iterator p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
+		if ( (*p)->type() != type ) continue;
+		my_type.push_back( *p );
+	}
+	return my_type;
+}
+
+std::string
+SegmentPairing::get_pairing_str( StructureData const & sd, PairingType const & type )
+{
+	std::stringstream pair_str;
+	SegmentPairingCOPs const my_type = get_pairings( sd, type );
+	for ( SegmentPairingCOPs::const_iterator p=my_type.begin(); p!=my_type.end(); ++p ) {
+		if ( !pair_str.str().empty() ) pair_str << ';';
+		pair_str << (*p)->pairing_string( sd );
+	}
+	return pair_str.str();
+}
+
+std::string
+SegmentPairing::get_strand_pairings( StructureData const & sd )
+{
+	return get_pairing_str( sd, STRAND );
+}
+
+std::string
+SegmentPairing::get_helix_pairings( StructureData const & sd )
+{
+	return get_pairing_str( sd, HELIX );
+}
+
+std::string
+SegmentPairing::get_hss_triplets( StructureData const & sd )
+{
+	return get_pairing_str( sd, HELIX_SHEET );
 }
 
 HelixPairing::HelixPairing():
@@ -222,9 +364,171 @@ StrandPairing::parallel() const
 }
 
 std::string
-StrandPairing::pairing_string( StructureData const & ) const
+StrandPairing::pairing_string( StructureData const & sd ) const
 {
-	return "IMPLEMENT_ME";
+	using protocols::fldsgn::topology::SS_Info2;
+	std::stringstream pair_str;
+
+	// collect strand numbers
+	SS_Info2 const ss_info( sd.ss() );
+	core::Size const res_in_s1 = sd.segment( *segments().begin() ).safe();
+	core::Size const s1 = ss_info.strand_id( res_in_s1 );
+	core::Size const res_in_s2 = sd.segment( *( segments().begin() + 1 ) ).safe();
+	core::Size const s2 = ss_info.strand_id( res_in_s2 );
+
+	debug_assert( s1 != s2 );
+	if ( s1 < s2 ) pair_str << s1 << '-' << s2;
+	else pair_str << s2 << '-' << s1;
+
+	pair_str << '.';
+	if ( parallel() ) pair_str << 'P';
+	else pair_str << 'A';
+
+	pair_str << '.';
+
+	// find the pairing in n-->c order
+	if ( s1 < s2 ) pair_str << nobu_register_shift( sd, *ss_info.strand( s1 ), *ss_info.strand( s2 ), shift_, orient1_ );
+	else pair_str << nobu_register_shift( sd, *ss_info.strand( s2 ), *ss_info.strand( s1 ), -shift_, orient2_ );
+
+	return pair_str.str();
+}
+
+architects::StrandOrientation
+StrandPairing::orient1() const
+{
+	return orient1_;
+}
+
+architects::StrandOrientation
+StrandPairing::orient2() const
+{
+	return orient2_;
+}
+
+architects::RegisterShift
+StrandPairing::shift() const
+{
+	return shift_;
+}
+
+core::Size
+count_bulges(
+	protocols::fldsgn::topology::Strand const & strand,
+	std::string const & abego )
+{
+	core::Size bulge_count = 0;
+	for ( core::Size resid=strand.begin(); resid<=strand.end(); ++resid ) {
+		if ( abego[ resid - 1 ] != 'B' ) ++bulge_count;
+	}
+	return bulge_count;
+}
+
+architects::RegisterShift
+StrandPairing::nobu_register_shift(
+	StructureData const & sd,
+	protocols::fldsgn::topology::Strand const & s1,
+	protocols::fldsgn::topology::Strand const & s2,
+	architects::RegisterShift const nc_order_shift,
+	architects::StrandOrientation const & nc_order_orient ) const
+{
+	core::Size const bulges1 = count_bulges( s1, sd.abego() );
+	core::Size const bulges2 = count_bulges( s2, sd.abego() );
+
+	architects::RegisterShift preliminary_shift;
+	// E1 = E2 + X + Y, X = shift_
+	if ( nc_order_orient == architects::UP ) {
+		// X is all that matters
+		preliminary_shift = nc_order_shift;
+	} else if ( nc_order_orient == architects::DOWN ) {
+		// Y is all that matters
+		architects::RegisterShift const len1 = s1.length() - bulges1;
+		architects::RegisterShift const len2 = s2.length() - bulges2;
+		architects::RegisterShift const flipped_shift = len1 - ( len2 + nc_order_shift );
+		preliminary_shift = flipped_shift;
+	}	 else {
+		std::stringstream msg;
+		msg << "StrandPairings:: invalid orientation: " << nc_order_orient << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	return preliminary_shift;
+}
+
+HelixSheetPairing::HelixSheetPairing():
+	SegmentPairing()
+{}
+
+HelixSheetPairing::HelixSheetPairing(
+	SegmentName const & helix,
+	SegmentName const & s1,
+	SegmentName const & s2 ):
+	SegmentPairing( boost::assign::list_of(helix)(s1)(s2).convert_to_container< SegmentNames >() )
+{}
+
+SegmentPairingOP
+HelixSheetPairing::clone() const
+{
+	return SegmentPairingOP( new HelixSheetPairing( *this ) );
+}
+
+void
+HelixSheetPairing::parse_tag( utility::tag::Tag const & )
+{
+}
+
+void
+HelixSheetPairing::to_xml( utility::tag::Tag & ) const
+{
+}
+
+std::string
+HelixSheetPairing::pairing_string( StructureData const & sd ) const
+{
+	using protocols::fldsgn::topology::SS_Info2;
+
+	// FORMAT: H,S1-S2
+	// H  : helix number
+	// S1 : strand 1 number
+	// S2 : strand 2 number
+
+	SS_Info2 const ss_info( sd.ss() );
+
+	// get helix id number
+	SegmentNames::const_iterator segment_id = segments().begin();
+	if ( segment_id == segments().end() ) {
+		std::stringstream msg;
+		msg << class_name() << ": no helix name was specified! Segments="
+			<< segments() << std::endl << "SD = " << sd << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	core::Size const res_in_helix = sd.segment( *segment_id ).safe();
+	core::Size const helix = ss_info.helix_id( res_in_helix );
+
+	// now get strand1 id number
+	++segment_id;
+	if ( segment_id == segments().end() ) {
+		std::stringstream msg;
+		msg << class_name() << ": no strand 1 name was specified! Segments="
+			<< segments() << std::endl << "SD = " << sd << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	core::Size const res_in_s1 = sd.segment( *segment_id ).safe();
+	core::Size const s1 = ss_info.strand_id( res_in_s1 );
+
+	// get strand2 id number
+	++segment_id;
+	if ( segment_id == segments().end() ) {
+		std::stringstream msg;
+		msg << class_name() << ": no strand 2 name was specified! Segments="
+			<< segments() << std::endl << "SD = " << sd << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	core::Size const res_in_s2 = sd.segment( *segment_id ).safe();
+	core::Size const s2 = ss_info.strand_id( res_in_s2 );
+
+	std::stringstream pair_str;
+	pair_str << helix << ',' << s1 << '-' << s2;
+	return pair_str.str();
 }
 
 } //protocols

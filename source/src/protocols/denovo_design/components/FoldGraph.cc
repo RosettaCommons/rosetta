@@ -48,7 +48,7 @@ namespace components {
 
 FoldGraph::FoldGraph( StructureData const & perm ):
 	utility::pointer::ReferenceCount(),
-	sd_( perm.clone() )
+	sd_( StructureDataOP( new StructureData( perm ) ) )
 {
 	TR.Debug << "Constructing foldgraph for " << sd().id() << " : " << sd()  << std::endl;
 	g_.drop_all_edges();
@@ -495,11 +495,11 @@ insert_mg(
 bool
 FoldGraph::check_solution( Solution const & solution ) const
 {
-	std::set< std::string > loop_segments;
+	SegmentNameSet loop_segments;
 	for ( Solution::const_iterator s=solution.begin(); s!=solution.end(); ++s ) {
 		for ( NodeSet::const_iterator lseg=s->begin(); lseg!=s->end(); ++lseg ) {
-			std::string const & segmentname = segment( *lseg );
-			std::pair< std::set< std::string >::iterator, bool > const ins_result = loop_segments.insert( segmentname );
+			SegmentName const & segmentname = segment( *lseg );
+			std::pair< SegmentNameSet::iterator, bool > const ins_result = loop_segments.insert( segmentname );
 			if ( !ins_result.second ) {
 				TR << "Segment " << segmentname << " is present in more than one loop... this should not be possible. Skipping." << std::endl;
 				return false;
@@ -512,7 +512,7 @@ FoldGraph::check_solution( Solution const & solution ) const
 
 	// ensure that the same MG isn't present both inside and outside of loops
 	for ( SegmentNameList::const_iterator c=sd().segments_begin(); c!=sd().segments_end(); ++c ) {
-		core::Size const mg = sd().segment(*c).movable_group();
+		MovableGroup const mg = sd().segment(*c).movable_group();
 		if ( loop_segments.find(*c) == loop_segments.end() ) {
 			insert_mg( fixed_mgs, mg, *c );
 		}
@@ -542,8 +542,8 @@ FoldGraph::check_solution( Solution const & solution ) const
 	NodeSet seen;
 	for ( Solution::const_iterator nodeset=solution.begin(); nodeset!=solution.end(); ++nodeset ) {
 		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			std::string const & segname = segment( *n );
-			core::Size const mg = sd().segment(segname).movable_group();
+			SegmentName const & segname = segment( *n );
+			MovableGroup const mg = sd().segment(segname).movable_group();
 			if ( seen.find( mg ) != seen.end() ) {
 				TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " is present in two different loops. Skipping." << std::endl;
 				return false;
@@ -556,23 +556,37 @@ FoldGraph::check_solution( Solution const & solution ) const
 	}
 
 	for ( Solution::const_iterator nodeset=solution.begin(); nodeset!=solution.end(); ++nodeset ) {
-		SegmentNameSet segments_in_set;
+		SegmentNames segments_in_set;
 		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			std::string const & segname = segment( *n );
-			segments_in_set.insert( segname );
-			core::Size const mg = sd().segment(segname).movable_group();
+			segments_in_set.push_back( segment( *n ) );
+		}
+
+		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
+			SegmentName const & segname = segment( *n );
+			MovableGroup const mg = sd().segment(segname).movable_group();
 			// check to see if this mg has already been "used" i.e. referred to
-			if ( fixed_mgs.find(mg) != fixed_mgs.end() ) {
-				// check to see if the violating segments are connected by a bond -- this makes it OK
-				std::string const & seg1 = segment( *n );
-				for ( SegmentNameSet::const_iterator s2=segments_in_set.begin(); s2!=segments_in_set.end(); ++s2 ) {
-					if ( sd().segment( *s2 ).movable_group() != mg ) continue;
-					if ( seg1 == *s2 ) continue;
-					if ( ! sd().non_polymer_bond_exists( seg1, *s2 ) ) {
-						TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " has been used twice in the same loop. Skipping." << std::endl;
-						return false;
-					}
-				}
+			if ( fixed_mgs.find(mg) == fixed_mgs.end() ) {
+				insert_mg( fixed_mgs, mg, segname );
+				continue;
+			}
+
+			// after here, we have a possible movable group violation
+			// check to see if the violating segments are connected by a bond -- this makes it OK
+			SegmentNameList const connected_segment_list = sd().connected_segments( segname, false );
+			SegmentNameSet const connected( connected_segment_list.begin(), connected_segment_list.end() );
+
+			for ( SegmentNames::const_iterator s2=segments_in_set.begin(); s2!=segments_in_set.end(); ++s2 ) {
+				// different MG - skip
+				if ( sd().segment( *s2 ).movable_group() != mg ) continue;
+				// same segment - skip
+				if ( segname == *s2 ) continue;
+				// connected to current segment - skip
+				if ( connected.find( *s2 ) != connected.end() ) continue;
+				// connected to current segment via non-polymer bond - skip
+				if ( sd().non_polymer_bond_exists( segname, *s2 ) ) continue;
+
+				TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " has been used twice in the same loop. Skipping." << std::endl;
+				return false;
 			}
 			insert_mg( fixed_mgs, mg, segname );
 		}

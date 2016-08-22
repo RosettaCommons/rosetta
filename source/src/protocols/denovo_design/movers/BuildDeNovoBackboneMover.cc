@@ -17,22 +17,30 @@
 
 // Protocol headers
 #include <protocols/constraint_generator/AddConstraints.hh>
-#include <protocols/constraint_generator/CoordinateConstraintGenerator.hh>
+#include <protocols/constraint_generator/AtomPairConstraintGenerator.hh>
 #include <protocols/constraint_generator/RemoveConstraints.hh>
 #include <protocols/denovo_design/architects/CompoundArchitect.hh>
 #include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
+#include <protocols/denovo_design/architects/StrandArchitect.hh>
+#include <protocols/denovo_design/components/DivideAndConqueror.hh>
 #include <protocols/denovo_design/components/ExtendedPoseBuilder.hh>
 #include <protocols/denovo_design/components/FoldGraph.hh>
 #include <protocols/denovo_design/components/RemodelLoopMoverPoseFolder.hh>
+#include <protocols/denovo_design/components/RandomTorsionPoseFolder.hh>
+#include <protocols/denovo_design/components/NullPoseFolder.hh>
 #include <protocols/denovo_design/components/Segment.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/components/StructureDataPerturber.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
 #include <protocols/denovo_design/movers/FoldTreeFromFoldGraphMover.hh>
 #include <protocols/denovo_design/movers/SealFoldTreeMover.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/filters/CalculatorFilter.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilter.hh>
+#include <protocols/fldsgn/topology/SS_Info2.hh>
+#include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
@@ -42,6 +50,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 // Basic/Utility headers
@@ -52,9 +64,9 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-// TEMPORARY
-#include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/datacache/ObserverCache.hh>
+// C++ headers
+#include <ctime>
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.BuildDeNovoBackboneMover" );
 
 namespace protocols {
@@ -66,10 +78,18 @@ BuildDeNovoBackboneMover::BuildDeNovoBackboneMover():
 	architect_(),
 	builder_( new components::ExtendedPoseBuilder ),
 	folder_( new components::RemodelLoopMoverPoseFolder ),
+	perturber_( new components::NullPerturber ),
+	prefold_movers_(),
+	postfold_movers_(),
+	filters_(),
 	score_filter_(),
 	id_(),
 	dry_run_( false ),
-	connection_overlap_( 1 )
+	dump_pdbs_( true ),
+	build_overlap_( 1 ),
+	iterations_per_phase_( 0 ),
+	start_segments_(),
+	stop_segments_()
 {
 }
 
@@ -80,16 +100,29 @@ void
 BuildDeNovoBackboneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & ,
+	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	set_id( tag->getOption< std::string >( "name" ) );
 
+	build_overlap_ = tag->getOption< core::Size >( "build_overlap", build_overlap_ );
+
+	std::string const segments_csv = tag->getOption< std::string >( "start_segments", "" );
+	if ( tag->hasOption( "start_segments" ) ) set_start_segments( segments_csv );
+
+	std::string const stop_segments_csv = tag->getOption< std::string >( "stop_segments", "" );
+	if ( tag->hasOption( "stop_segments" ) ) set_stop_segments( stop_segments_csv );
+
+	iterations_per_phase_ = tag->getOption< core::Size >( "iterations_per_phase", iterations_per_phase_ );
+	dump_pdbs_ = tag->getOption< bool >( "dump_pdbs", dump_pdbs_ );
+
 	core::Size idx = 1;
 	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		if ( (*subtag)->getName() == "PreFoldMovers" ) parse_prefold_movers( *subtag, movers );
 		else if ( (*subtag)->getName() == "PostFoldMovers" ) parse_postfold_movers( *subtag, movers );
+		else if ( (*subtag)->getName() == "Filters" ) parse_filters( *subtag, filters );
+		else if ( (*subtag)->getName() == "Perturbers" ) parse_perturbers( *subtag, data );
 		else if ( idx == 1 ) {
 			parse_architect( *subtag, data );
 			++idx;
@@ -105,7 +138,6 @@ BuildDeNovoBackboneMover::parse_my_tag(
 		}
 	}
 	TR << "Finished parsing tag: " << prefold_movers_.size() << " prefold movers found." << std::endl;
-
 }
 
 protocols::moves::MoverOP
@@ -163,56 +195,138 @@ BuildDeNovoBackboneMover::apply( core::pose::Pose & pose )
 			<< get_name() << " requires an architect to build and modify poses." << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
+
+	// create StructureData "blueprint"
 	components::StructureDataOP sd = architect_->apply( pose );
-
-	core::pose::PoseOP built = builder_->apply( *sd );
-	sd->check_pose_consistency( *built );
-	pose = *built;
-	//pose.dump_pdb( "prefold_initial.pdb" );
-
-	components::StructureDataFactory::get_instance()->save_into_pose( pose, *sd );
-
-	try {
-		fold( pose );
-		set_last_move_status( protocols::moves::MS_SUCCESS );
-	} catch ( components::EXCN_Fold const & e ) {
-		TR << "Folding failed: ";
-		e.show( TR );
-		TR << std::endl;
-		static std::string const fold_fail_pdb = "fold_failed.pdb";
-		TR << "PDB dumped to " << fold_fail_pdb << std::endl;
-		pose.dump_pdb( fold_fail_pdb );
-		set_last_move_status( protocols::moves::FAIL_RETRY );
-	} catch ( EXCN_NothingToFold const & e ) {
-		e.show( TR );
-		TR.flush();
-		TR.Warning << "WARNING: not folding anything!" << std::endl;
-		set_last_move_status( protocols::moves::MS_SUCCESS );
+	if ( !sd ) {
+		std::stringstream msg;
+		msg << "BuildDeNovoBackboneMover::architect " << architect_->id()
+			<< " failed to generate anything." << std::endl;
+		utility_exit_with_message( msg.str() );
 	}
+
+	// Break up into managable pieces
+	components::DivideAndConqueror divider;
+	divider.set_start_segments( start_segments_ );
+	divider.set_stop_segments( stop_segments_ );
+
+	components::BuildPhases const build_phases = divider.divide_and_conquer( *sd );
+
+	TR << "Trying to build the following structure:" << std::endl;
+	TR << *sd << std::endl;
+
+	core::pose::PoseOP pose_ptr = build_in_phases( *sd, build_phases, SegmentNameSet(), 1 );
+	if ( pose_ptr ) pose = *pose_ptr;
+	else set_last_move_status( protocols::moves::FAIL_RETRY );
 }
 
-/// @brief handles acceptance/reject
-void
-BuildDeNovoBackboneMover::check_and_accept(
-	core::pose::Pose const & orig,
-	core::pose::Pose & pose,
-	FoldScore & bestscore ) const
+/// @brief given an build phase number, returns a pdb filename for checkpointing
+///        Example filename: iter_01_20160718133800.pdb
+/// @param[in] phase_num  Build phase number
+std::string
+pdb_filename( core::Size const phase_num )
 {
-	if ( !score_filter_ ) {
-		TR << "Accepting because no score filter is set" << std::endl;
-		return;
+	std::stringstream filename;
+	filename << time( NULL ) << "_iter_" << std::setw( 2 )
+		<< std::setfill('0') << phase_num << ".pdb";
+	return filename.str();
+}
+
+/// @brief builds/folds pose in phases using recursive algorithm
+/// @throws EXCN_Fold if we couldn't fold the pose
+core::pose::PoseOP
+BuildDeNovoBackboneMover::build_in_phases(
+	components::StructureData const & full_sd,
+	components::BuildPhases const & phases,
+	SegmentNameSet const & finished,
+	core::Size const phase_num ) const
+{
+	core::Size const max_iter = iterations_per_phase_ == 0 ? 50 : iterations_per_phase_;
+
+	SegmentNames const & phase = *phases.begin();
+	TR << "Building phase " << phase_num << " " << phase << std::endl;
+
+	// compute segments to slice out of StructureData
+	SegmentNameSet all_phase_segments( finished.begin(), finished.end() );
+	all_phase_segments.insert( phase.begin(), phase.end() );
+
+	components::StructureData working_sd = full_sd;
+	components::StructureDataPerturberOP phase_perturber = perturber_->clone();
+
+	// compute segments not in this phase
+	SegmentNameSet const in_this_phase( phase.begin(), phase.end() );
+	SegmentNameSet const in_sd( full_sd.segments_begin(), full_sd.segments_end() );
+	SegmentNames const ignore_vec = set_difference< SegmentNames, SegmentName >( in_sd.begin(), in_sd.end(), in_this_phase.begin(), in_this_phase.end() );
+	SegmentNameSet const ignore_set( ignore_vec.begin(), ignore_vec.end() );
+
+	phase_perturber->set_ignore_segments( ignore_set );
+	TR << "Set ignored segments to " << ignore_set << std::endl;
+
+	for ( core::Size iter=1; iter<=max_iter; ++iter ) {
+		TR << "Attempting to fold phase " << phase_num << " " << phase << " "
+			<< " iteration " << iter << " / " << max_iter << std::endl;
+
+		// perturb
+		phase_perturber->apply( working_sd );
+
+		// slice
+		TR << "Slicing " << all_phase_segments << " out of StructureData" << std::endl;
+		components::StructureData const phase_sd = working_sd.slice( all_phase_segments, true );
+		TR << "Done slicing. New SD=" << phase_sd << std::endl;
+
+		// build pose
+		core::pose::PoseOP built = builder_->apply( phase_sd );
+		try {
+			fold_attempt( *built );
+
+			/// dump pdb
+			if ( dump_pdbs_ ) built->dump_pdb( pdb_filename( phase_num ) );
+
+			/// add template information based on the folded segments, so that the next phase can use it
+			/// this will never be reached if check_pose() throws an exception
+			components::StructureData new_full_sd = working_sd;
+			components::StructureData const & built_sd = components::StructureDataFactory::get_instance()->get_from_const_pose( *built );
+			for ( SegmentNameList::const_iterator s=built_sd.segments_begin(); s!=built_sd.segments_end(); ++s ) {
+				new_full_sd.set_template_pose( *s, *built, built_sd.segment( *s ).start(), built_sd.segment( *s ).stop() );
+			}
+
+			if ( ++phases.begin() == phases.end() ) {
+				return built;
+			} else {
+				return build_in_phases(
+					new_full_sd,
+					components::BuildPhases( ++phases.begin(), phases.end() ),
+					SegmentNameSet( all_phase_segments.begin(), all_phase_segments.end() ),
+					phase_num + 1 );
+			}
+		} catch ( components::EXCN_Fold const & e ) {
+			e.show( TR );
+			TR << std::endl << "Failing phase " << phase_num << " " << phase << std::endl;
+		} catch ( EXCN_NothingToFold const & e ) {
+			e.show( TR );
+			TR.flush();
+			TR.Warning << "WARNING: not folding anything!" << std::endl;
+		} catch ( EXCN_FilterFailed const & e ) {
+			e.show( TR );
+			TR.flush();
+		}
 	}
 
-	FoldScore const myscore = folding_score( pose );
-	if ( bestscore < myscore ) {
-		// reject
-		TR << "New pose (" << myscore << ") is worse than the old one ("
-			<< bestscore << ") in score... reverting." << std::endl;
-		pose = orig;
-	} else {
-		// accept
-		TR << "Accepting pose with score " << myscore << ", previous best " << bestscore << std::endl;
-		bestscore = myscore;
+	// if we reach here without returning something, folding failed.
+	std::stringstream msg;
+	msg << class_name() << "build_in_phases():  Failed to fold anything passing filters after "
+		<< max_iter << " attempts." << std::endl;
+	throw components::EXCN_Fold( msg.str() );
+	return core::pose::PoseOP();
+}
+
+/// @brief checks the pose for whether it folded correctly, according to user's filters
+void
+BuildDeNovoBackboneMover::check_pose( core::pose::Pose const & pose ) const
+{
+	core::Size filter_num = 1;
+	for ( FilterCOPs::const_iterator f=filters_.begin(); f!=filters_.end(); ++f, ++filter_num ) {
+		if ( !(*f)->apply( pose ) ) throw EXCN_FilterFailed( (*f)->get_type(), filter_num );
 	}
 }
 
@@ -238,14 +352,14 @@ BuildDeNovoBackboneMover::find_roots(
 
 	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
 		core::Size const startres =
-			loop_start_without_overlap( pose, l->start(), connection_overlap_ );
+			loop_start_without_overlap( pose, l->start(), build_overlap_ );
 		std::string const & start_comp = sd.segment_name( startres );
 		std::string const & prevcomp = sd.segment( start_comp ).lower_segment();
 		if ( prevcomp != "" ) {
 			roots.push_back( prevcomp );
 		}
 		core::Size const stopres =
-			loop_stop_without_overlap( pose, l->stop(), connection_overlap_ );
+			loop_stop_without_overlap( pose, l->stop(), build_overlap_ );
 		std::string const & stop_comp = sd.segment_name( stopres );
 		std::string const & nextcomp = sd.segment(stop_comp).upper_segment();
 		if ( nextcomp != "" ) {
@@ -257,6 +371,20 @@ BuildDeNovoBackboneMover::find_roots(
 		roots.push_back( *sd.segments_begin() );
 	}
 	return roots;
+}
+
+void
+BuildDeNovoBackboneMover::parse_perturbers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+{
+	if ( tag->getTags().size() > 1 ) {
+		std::stringstream msg;
+		msg << get_name() << ": Only one perturber can be used at a time. You have specified "
+			<< tag->getTags().size() << " : " << *tag << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+	}
+	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+		perturber_ = components::StructureDataPerturber::create( **subtag, data );
+	}
 }
 
 void
@@ -301,6 +429,29 @@ BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::mov
 	return movers;
 }
 
+void
+BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, protocols::filters::Filters_map const & filter_map )
+{
+	filters_.clear();
+	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+		if ( (*subtag)->getName() != "Add" ) {
+			std::stringstream msg;
+			msg << type() << ": Invalid xml tag name (" << (*subtag)->getName() << ") found in tag " << *tag << std::endl;
+			msg << "Valid tags are: \"Add\"." << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		}
+		std::string const filter_name = (*subtag)->getOption< std::string >( "filter" );
+		protocols::filters::Filters_map::const_iterator find_filter = filter_map.find( filter_name );
+		if ( find_filter == filter_map.end() ) {
+			std::stringstream msg;
+			msg << type() << "::parse_filters(): ERROR !! filter not found in map: \n" << **subtag << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		}
+		filters_.push_back( find_filter->second->clone() );
+		TR.Debug << "found filter " << filter_name << std::endl;
+	}
+}
+
 BuildDeNovoBackboneMover::MoverOPs
 BuildDeNovoBackboneMover::prefold_movers(
 	core::pose::Pose const & pose,
@@ -313,12 +464,16 @@ BuildDeNovoBackboneMover::prefold_movers(
 	protocols::moves::MoverOP switch_cen( new protocols::simple_moves::SwitchResidueTypeSetMover( "centroid" ) );
 	movers.push_back( switch_cen );
 
-	// 2. Run user-provided movers
+	// 2. Set secondary structure in pose
+	SetPoseSecstructFromStructureDataMover set_ss;
+	movers.push_back( set_ss.clone() );
+
+	// 3. Run user-provided movers
 	for ( MoverOPs::const_iterator m=prefold_movers_.begin(); m!=prefold_movers_.end(); ++m ) {
 		movers.push_back( *m );
 	}
 
-	// 3. Add coordinate constraints for overlapping regions
+	// 4. Add coordinate constraints for overlapping regions
 	if ( !generators.empty() ) {
 		protocols::moves::MoverOP add_csts( new protocols::constraint_generator::AddConstraints( generators ) );
 		if ( add_csts ) movers.push_back( add_csts );
@@ -350,6 +505,10 @@ BuildDeNovoBackboneMover::postfold_movers(
 		if ( rm_csts ) movers.push_back( rm_csts );
 	}
 
+	// 2. Seal fold tree
+	protocols::moves::MoverOP seal_ft( new SealFoldTreeMover( sd, loops ) );
+	movers.push_back( seal_ft );
+
 	// 2. Run user-provided movers
 	for ( MoverOPs::const_iterator m=postfold_movers_.begin(); m!=postfold_movers_.end(); ++m ) {
 		movers.push_back( *m );
@@ -360,8 +519,6 @@ BuildDeNovoBackboneMover::postfold_movers(
 	movers.push_back( switch_fa );
 
 	// 4. Replace sidechains
-	// TL: SaveAndRetriveSidechains copies the pose, which gets rid of the observer
-	// TODO: fix this in Pose, this is horrible behavior!
 	protocols::moves::MoverOP restore_sc_mover(
 		new simple_moves::ReturnSidechainMover( pose, 1, pose.total_residue() ) );
 	//protocols::moves::MoverOP sars(
@@ -372,9 +529,9 @@ BuildDeNovoBackboneMover::postfold_movers(
 	// 0 ) ); // jumpid -- no idea why this needs to be set
 	movers.push_back( restore_sc_mover );
 
-	// 5. Seal fold tree
-	protocols::moves::MoverOP set_ft( new SealFoldTreeMover( sd, loops ) );
-	movers.push_back( set_ft );
+	// 5. Re-seal fold tree for full-atom mode
+	//    This is necessary if there are sidechain-sidechain covalent bonds
+	movers.push_back( seal_ft );
 
 	return movers;
 }
@@ -422,14 +579,26 @@ BuildDeNovoBackboneMover::create_loops(
 	}
 
 	// add requested connection overlap
-	overlap_residues = add_overlap_to_loops( *loops, connection_overlap_, pose );
+	overlap_residues = add_overlap_to_loops( *loops, build_overlap_, pose );
 	return *loops;
 }
 
-void
-BuildDeNovoBackboneMover::fold( core::pose::Pose & pose ) const
+core::scoring::ScoreFunctionOP
+get_score_function( core::pose::Pose const & pose )
 {
-	TR << "Attempting to fold structure" << std::endl;
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, scorefxn );
+	return scorefxn;
+}
+
+void
+BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
+{
+	// Get StructureData object from pose
+	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
+	if ( !factory.has_cached_data( pose ) ) {
+		utility_exit_with_message( "No StructureData at start of fold attempt" );
+	}
 
 	// make Loops object to pass to PoseFolder
 	ResidueVector overlap_residues;
@@ -447,43 +616,55 @@ BuildDeNovoBackboneMover::fold( core::pose::Pose & pose ) const
 	// Create pre-fold and post-fold movers
 	ConstraintGeneratorCOPs const generators = create_constraint_generators( overlap_residues );
 
-	// Get StructureData object from pose
-	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
 	components::StructureData const sd = factory.get_from_pose( pose );
 
 	// apply user-provided movers
 	MoverOPs const prefold = prefold_movers( pose, loops, generators );
-	TR << "Before postfold pose is_attached: " << pose.observer_cache().is_attached( core::pose::datacache::CacheableObserverType::STRUCTUREDATA_OBSERVER ) << std::endl;
 	MoverOPs const postfold = postfold_movers( pose, loops, generators );
 
-	// TL: RestoreSidechainsMover copies the pose, which nukes my observer. Re-add it here
-	// TODO: fix this in pose
-	factory.save_into_pose( pose, sd );
-
+	// apply user-provided movers
+	if ( !factory.has_cached_data( pose ) ) {
+		utility_exit_with_message( "No data before applying premovers" );
+	}
 	apply_movers( prefold, pose );
 
-	// initial scoring
-	core::pose::Pose const orig( pose );
-
-	// TL: Just created a copy of pose, so need to readd the observer
-	// TODO: fix in pose
-	factory.save_into_pose( pose, sd );
-
-	TR << "After copying pose is_attached: " << pose.observer_cache().is_attached( core::pose::datacache::CacheableObserverType::STRUCTUREDATA_OBSERVER ) << std::endl;
-	FoldScore bestscore = folding_score( pose );
-
-	// Store copy of SD with cutpoints removed
-	components::StructureData newsd = factory.get_from_pose( pose );
-	remove_cutpoints( newsd, loops );
-
-	// fold entire structure first
-	TR << id() << ": Folding entire chain" << std::endl;
+	// fold structure
+	// folders need to keep sd and pose in sync
 	folder_->apply( pose, movable, loops );
-	factory.save_into_pose( pose, newsd );
-	check_and_accept( orig, pose, bestscore );
+
+	try {
+		factory.get_from_pose( pose ).check_pose_consistency( pose );
+	} catch ( components::EXCN_PoseInconsistent const & e ) {
+		std::stringstream msg;
+		msg << "BuildDeNovoBackboneMover::fold_attempt(): After pose folder, StructureData no longer agrees with pose."
+			<< " PoseFolders need to ensure that StructureData and pose are synced.  Error =" << std::endl;
+		e.show( msg );
+		utility_exit_with_message( msg.str() );
+	}
 
 	// apply user-provided movers
 	apply_movers( postfold, pose );
+
+	// modify structuredata so this portion of the structure can be checked independently
+	components::StructureData const saved_sd = factory.get_from_pose( pose );
+	//components::StructureData check_sd = saved_sd;
+	//modify_for_check( check_sd );
+	//TR.Debug << "SD for check = " << check_sd << std::endl;
+	//factory.save_into_pose( pose, check_sd );
+
+	// save modified secstruct into pose for checking
+	//SetPoseSecstructFromStructureDataMover().apply( pose );
+
+	// set Energies object -- sets hbonds info in the Energies object in the pose
+	pose.energies().clear();
+	(*get_score_function(pose))( pose );
+
+	// check pose against user-provided filters
+	check_pose( pose );
+
+	// save new sd into pose
+	//TR.Debug << "Saving into pose: " << saved_sd << std::endl;
+	//components::StructureDataFactory::get_instance()->save_into_pose( pose, saved_sd );
 }
 
 void
@@ -537,16 +718,23 @@ BuildDeNovoBackboneMover::create_constraint_generators( ResidueVector const & re
 	if ( residues.empty() ) {
 		return BuildDeNovoBackboneMover::ConstraintGeneratorCOPs();
 	}
-	return boost::assign::list_of (create_coordinate_constraint_generator( residues ));
+	return boost::assign::list_of (create_overlap_constraint_generator( residues ));
 }
 
+/// @brief builds a constraint generator for residues that overlap between phases
+/// @param[in] residues Vector of resids corresponding to the overlap residues
 BuildDeNovoBackboneMover::ConstraintGeneratorOP
-BuildDeNovoBackboneMover::create_coordinate_constraint_generator( ResidueVector const & residues ) const
+BuildDeNovoBackboneMover::create_overlap_constraint_generator( ResidueVector const & residues ) const
 {
-	protocols::constraint_generator::CoordinateConstraintGeneratorOP coord_csts(
-		new protocols::constraint_generator::CoordinateConstraintGenerator );
+	using core::select::residue_selector::ResidueIndexSelector;
 
-	coord_csts->set_id( "BuildDeNovoBackboneMover_" + boost::lexical_cast< std::string >( numeric::random::rg().uniform() ) );
+	protocols::constraint_generator::AtomPairConstraintGeneratorOP dist_csts(
+		new protocols::constraint_generator::AtomPairConstraintGenerator );
+
+	dist_csts->set_id( "BuildDeNovoBackboneMover_constrain_overlap_residues" );
+	dist_csts->set_ca_only( false );
+	dist_csts->set_min_seq_sep( 0 );
+	dist_csts->set_sd( 1.0 );
 
 	std::stringstream index_ss;
 	for ( ResidueVector::const_iterator r=residues.begin(); r!=residues.end(); ++r ) {
@@ -554,13 +742,10 @@ BuildDeNovoBackboneMover::create_coordinate_constraint_generator( ResidueVector 
 		index_ss << *r;
 	}
 
-	core::select::residue_selector::ResidueIndexSelectorOP selector(
-		new core::select::residue_selector::ResidueIndexSelector( index_ss.str() ) );
-
-	coord_csts->set_ca_only( true );
-	coord_csts->set_residue_selector( selector );
-
-	return coord_csts;
+	TR << "Creating index selector from " << index_ss.str() << std::endl;
+	ResidueIndexSelector const selector( index_ss.str() );
+	dist_csts->set_residue_selector( selector );
+	return dist_csts;
 }
 
 BuildDeNovoBackboneMover::FoldScore
@@ -589,7 +774,20 @@ BuildDeNovoBackboneMover::parse_architect( utility::tag::TagCOP tag, basic::data
 void
 BuildDeNovoBackboneMover::parse_folder( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	components::RemodelLoopMoverPoseFolderOP folder( new components::RemodelLoopMoverPoseFolder );
+	components::PoseFolderOP folder;
+	if ( tag->getName() == components::RemodelLoopMoverPoseFolder::class_name() ) {
+		folder = components::PoseFolderOP( new components::RemodelLoopMoverPoseFolder );
+	} else if ( tag->getName() == components::RandomTorsionPoseFolder::class_name() ) {
+		folder = components::PoseFolderOP( new components::RandomTorsionPoseFolder );
+	} else if ( tag->getName() == components::NullPoseFolder::class_name() ) {
+		folder = components::PoseFolderOP( new components::NullPoseFolder );
+	} else {
+		std::stringstream msg;
+		msg << "BuildDeNovoBackboneMover::parse_folder(): Unknown folder type: "
+			<< tag->getName() << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
 	folder->parse_my_tag( tag, data );
 	folder_ = folder;
 }
@@ -607,10 +805,43 @@ BuildDeNovoBackboneMover::set_folder( components::PoseFolder const & folder )
 }
 
 void
-BuildDeNovoBackboneMover::set_connection_overlap( core::Size const overlap_val )
+BuildDeNovoBackboneMover::set_build_overlap( core::Size const overlap_val )
 {
-	connection_overlap_ = overlap_val;
+	build_overlap_ = overlap_val;
 }
+
+/// @brief sets names of segments to be included in the starting build phase
+/// @param[in] segments_csv Comma-separated string containing segment names
+void
+BuildDeNovoBackboneMover::set_start_segments( std::string const & segments_csv )
+{
+	set_start_segments( csv_to_container< SegmentNameSet >( segments_csv ) );
+}
+
+/// @brief sets names of segments to be included in the starting build phase
+/// @param[in] segments Set of segment names
+void
+BuildDeNovoBackboneMover::set_start_segments( SegmentNameSet const & segments )
+{
+	start_segments_ = segments;
+}
+
+/// @brief sets names of segments to be included in the final build phase
+/// @param[in] segments_csv Comma-separated string containing segment names
+void
+BuildDeNovoBackboneMover::set_stop_segments( std::string const & segments_csv )
+{
+	set_stop_segments( csv_to_container< SegmentNameSet >( segments_csv ) );
+}
+
+/// @brief sets names of segments to be included in the final build phase
+/// @param[in] segments Set of segment names
+void
+BuildDeNovoBackboneMover::set_stop_segments( SegmentNameSet const & segments )
+{
+	stop_segments_ = segments;
+}
+
 
 /////////////// Creator ///////////////
 
@@ -624,6 +855,47 @@ std::string
 BuildDeNovoBackboneMoverCreator::keyname() const
 {
 	return BuildDeNovoBackboneMover::class_name();
+}
+
+////////////// Helper movers /////////////////
+std::string
+SetPoseSecstructFromStructureDataMover::get_name() const
+{
+	return class_name();
+}
+
+protocols::moves::MoverOP
+SetPoseSecstructFromStructureDataMover::clone() const
+{
+	return protocols::moves::MoverOP( new SetPoseSecstructFromStructureDataMover(*this) );
+}
+
+void
+SetPoseSecstructFromStructureDataMover::apply( core::pose::Pose & pose )
+{
+	components::StructureData const & sd = components::StructureDataFactory::get_instance()->get_from_const_pose( pose );
+	std::string target_ss = "";
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		target_ss = symmetric_secstruct( pose, sd.ss() );
+	} else {
+		target_ss = sd.ss();
+	}
+
+	if ( target_ss.size() != pose.total_residue() ) {
+		std::stringstream msg;
+		msg << class_name() << "::apply(): StructureData ss size ("
+			<< target_ss.size() << ") does not match pose size ("
+			<< pose.total_residue() << ") " << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	core::Size resid = 1;
+	for ( std::string::const_iterator sschar=target_ss.begin(); sschar!=target_ss.end(); ++sschar, ++resid ) {
+		pose.set_secstruct( resid, *sschar );
+	}
+	TR << "Set Pose secstruct to " << target_ss << std::endl;
+
 }
 
 ////////////// Helper functions /////////////////
@@ -660,6 +932,139 @@ add_overlap_to_loops(
 	}
 	return residues;
 }
+
+architects::RegisterShift
+compute_nobu_register_shift(
+	components::StructureData const & sd,
+	components::SegmentPair const & pair,
+	architects::StrandOrientation const & o1,
+	architects::StrandOrientation const & o2,
+	architects::RegisterShift const & shift )
+{
+	bool const order_reversed = ( sd.segment( pair.first ).safe() > sd.segment( pair.second ).safe() );
+	architects::StrandOrientation const ref_orientation = order_reversed ? o2 : o1;
+
+	if ( ref_orientation == architects::UP ) {
+		if ( order_reversed ) {
+			return -shift;
+		} else {
+			return shift;
+		}
+	} else if ( ref_orientation == architects::DOWN ) {
+		architects::RegisterShift const inverted_shift =
+			sd.segment( pair.first ).elem_length() - ( sd.segment( pair.second ).elem_length() + shift );
+		if ( order_reversed ) {
+			return -inverted_shift;
+		} else {
+			return inverted_shift;
+		}
+	} else {
+		std::stringstream msg;
+		msg << "compute_nobu_register_shift(): Invalid orientation for strand named " << pair.first << " : " << o1 << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	return 0;
+}
+
+protocols::fldsgn::topology::StrandPairingSet
+compute_strand_pairings( components::StructureData const & sd, components::SegmentPairSet const & pairs )
+{
+	using protocols::fldsgn::topology::StrandPairing;
+	using protocols::fldsgn::topology::StrandPairingOP;
+	using protocols::fldsgn::topology::StrandPairingSet;
+	using protocols::fldsgn::topology::SS_Info2;
+
+	SS_Info2 const ss_info( sd.ss() );
+	StrandPairingSet pairset;
+
+	for ( components::SegmentPairSet::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
+		if ( !sd.has_segment( pair->first ) ) continue;
+		if ( !sd.has_segment( pair->second ) ) continue;
+		components::Segment const & seg1 = sd.segment( pair->first );
+		components::Segment const & seg2 = sd.segment( pair->second );
+		architects::StrandOrientation const o1 =
+			architects::StrandArchitect::int_to_orientation( sd.get_data_int( pair->first, architects::StrandArchitect::orientation_keyname() ) );
+		architects::StrandOrientation const o2 =
+			architects::StrandArchitect::int_to_orientation( sd.get_data_int( pair->second, architects::StrandArchitect::orientation_keyname() ) );
+		architects::RegisterShift const tomp_shift = sd.get_data_int( pair->second, architects::StrandArchitect::register_shift_keyname() );
+
+		core::Size const length = seg1.elem_length() <= seg2.elem_length() ? seg1.elem_length() : seg2.elem_length();
+		architects::RegisterShift const shift = compute_nobu_register_shift( sd, *pair, o1, o2, tomp_shift );
+		char const orient = ( o1 == o2 ) ? 'P' : 'A';
+		StrandPairingOP sp( new StrandPairing(
+			ss_info.strand_id( seg1.safe() ),  // Strand 1
+			ss_info.strand_id( seg2.safe() ),  // Strand 2
+			seg1.start(),		                   // Strand 1 start res
+			seg2.start(),		                   // Strand 2 start res
+			length,					                   // pairing length
+			shift,					                   // register shift
+			orient ) );			                   // orientation
+		TR << "Created strand pairing for *pair " << *sp << std::endl;
+		pairset.push_back( sp );
+	}
+	pairset.finalize();
+	return pairset;
+}
+
+architects::RegisterShift
+retrieve_shift( components::StructureData const & sd, SegmentName const & segment_name )
+{
+	return sd.get_data_int( segment_name, architects::StrandArchitect::register_shift_keyname() );
+}
+
+architects::StrandOrientation
+retrieve_orientation( components::StructureData const & sd, SegmentName const & segment_name )
+{
+	return architects::StrandArchitect::int_to_orientation(
+			sd.get_data_int( segment_name, architects::StrandArchitect::orientation_keyname() ) );
+}
+
+/*
+/// @brief returns sorted vector of bulge residues
+core::select::residue_selector::ResidueVector
+get_bulges( components::StructureData const & sd )
+{
+	core::select::residue_selector::ResidueVector bulges;
+	std::string::const_iterator ss = sd.ss().begin();
+	std::string::const_iterator ab = sd.abego().begin();
+	for ( core::Size resid=1; resid<=sd.pose_length(); ++resid, ++ss, ++ab ) {
+		if ( ( *ss == 'E' ) && ( *ab == 'A' ) ) bulges.push_back( resid );
+	}
+	return bulges;
+}
+
+void
+modify_for_check( components::StructureData & sd )
+{
+	using core::select::residue_selector::ResidueVector;
+	using core::select::residue_selector::ResidueSubset;
+	using protocols::fldsgn::topology::StrandPairingSet;
+	using components::ResiduePairs;
+
+	ResidueSubset paired( sd.pose_length(), false );
+
+	ResiduePairs const pairs = components::SegmentPairing::get_strand_residue_pairs( sd );
+	for ( ResiduePairs::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
+		paired[p->first] = true;
+		paired[p->second] = true;
+	}
+
+	ResidueVector const bulges = get_bulges( sd );
+	TR.Debug << "Bulges = " << bulges << std::endl;
+	for ( ResidueVector::const_iterator r=bulges.begin(); r!=bulges.end(); ++r ) {
+		paired[*r] = true;
+	}
+	TR.Debug << "Pair set = " << paired << std::endl;
+
+	core::Size resid = 1;
+	for ( ResidueSubset::const_iterator p=paired.begin(); p!=paired.end(); ++p, ++resid ) {
+		if ( !*p && ( sd.ss()[ resid - 1 ] == 'E' ) ) {
+			TR << "Setting ss for residue " << resid << " to L" << std::endl;
+			sd.set_ss( resid, 'L' );
+		}
+	}
+}
+*/
 
 } //protocols
 } //denovo_design

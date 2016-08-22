@@ -50,6 +50,12 @@ protected:
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 private:
+	/// @brief If set, this secondary structure will be used to override what is in the input pose
+	std::string secstruct_;
+
+	/// @brief if true, a one-residue "pad" will be added to the beginning and end of each chain
+	///        if false, the pad will not be added
+	bool add_padding_;
 
 };
 

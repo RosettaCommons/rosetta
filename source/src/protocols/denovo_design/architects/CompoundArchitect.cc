@@ -18,8 +18,10 @@
 // Protocol headers
 #include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 #include <protocols/denovo_design/architects/PoseArchitect.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
+#include <protocols/denovo_design/connection/util.hh>
 
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
@@ -59,11 +61,12 @@ CompoundArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMa
 	for ( utility::tag::Tag::tags_t::const_iterator t=tag->getTags().begin(); t!=tag->getTags().end(); ++t ) {
 		if ( (*t)->getName() == "Architects" ) parse_architect_tags( *t, data );
 		else if ( (*t)->getName() == "Connections" ) parse_connection_tags( *t, data );
+		else if ( (*t)->getName() == "Pairing" ) parse_pairing_tags( **t );
 		else {
 			std::stringstream msg;
 			msg << type() << "::parse_tag(): The provided subtag name (" << (*t)->getName()
 				<< ") is not valid. Valid subtag names for " << type() << " are: "
-				<< "Architects, Connections." << std::endl;
+				<< "Architects, Connections, Pairing." << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 		}
 	}
@@ -81,7 +84,6 @@ void
 CompoundArchitect::parse_architect_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	DeNovoArchitectOP new_architect = DeNovoArchitectFactory::get_instance()->create_from_tag( tag, data );
-	add_parent_name( *new_architect );
 	architects_.push_back( new_architect );
 }
 
@@ -106,7 +108,24 @@ CompoundArchitect::parse_connection_tag( utility::tag::TagCOP tag, basic::dataca
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
 	architect->parse_my_tag( tag, data );
-	add_connection( *architect );
+	if ( ! architect->id().empty() ) connection::store_connection_architect( architect, data );
+	connections_.push_back( architect );
+}
+
+void
+CompoundArchitect::parse_pairing_tags( utility::tag::Tag const & tag )
+{
+	for ( utility::tag::Tag::tags_t::const_iterator t=tag.getTags().begin(); t!=tag.getTags().end(); ++t ) {
+		parse_pairing_tag( **t );
+	}
+}
+
+void
+CompoundArchitect::parse_pairing_tag( utility::tag::Tag const & tag )
+{
+	components::SegmentPairingOP pair = components::SegmentPairing::create( tag.getName() );
+	pair->parse_my_tag( tag );
+	pairings_.push_back( pair );
 }
 
 CompoundArchitect::StructureDataOP
@@ -115,11 +134,29 @@ CompoundArchitect::design( core::pose::Pose const & pose, core::Real & random ) 
 	StructureDataOP sd( new StructureData( id() ) );
 	for ( DeNovoArchitectCOPs::const_iterator a=architects_.begin(); a!=architects_.end(); ++a ) {
 		StructureDataOP sub_sd = (*a)->design( pose, random );
+		if ( !sub_sd ) {
+			std::stringstream msg;
+			msg << class_name() << "::design(): Architect " << (*a)->id()
+				<< " did not produce a StructureData object. Current SD ="
+				<< *sd << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
+		if ( sub_sd->segments_begin() == sub_sd->segments_end() ) {
+			std::stringstream msg;
+			msg << class_name() << "::design(): Architect " << (*a)->id()
+				<< " produced a StructureData object without segments. Current SD ="
+				<< *sd << " Architect-produced SD = " << *sub_sd << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
 		sd->merge( *sub_sd );
 	}
 
 	for ( connection::ConnectionArchitectCOPs::const_iterator c=connections_.begin(); c!=connections_.end(); ++c ) {
 		(*c)->apply( *sd, random );
+	}
+
+	for ( components::SegmentPairingCOPs::const_iterator p=pairings_.begin(); p!=pairings_.end(); ++p ) {
+		sd->add_pairing( **p );
 	}
 	return sd;
 }
@@ -127,25 +164,13 @@ CompoundArchitect::design( core::pose::Pose const & pose, core::Real & random ) 
 void
 CompoundArchitect::add_architect( DeNovoArchitect const & architect )
 {
-	DeNovoArchitectOP arch_copy = architect.clone();
-	add_parent_name( *arch_copy );
-	architects_.push_back( arch_copy );
+	architects_.push_back( architect.clone() );
 }
 
 void
 CompoundArchitect::add_connection( connection::ConnectionArchitect const & connection )
 {
-	connection::ConnectionArchitectOP conn_copy = connection.clone();
-	add_parent_name( *conn_copy );
-	connections_.push_back( conn_copy );
-}
-
-void
-CompoundArchitect::add_parent_name( StructureArchitect & architect ) const
-{
-	if ( !id().empty() ) {
-		architect.set_id( id() + PARENT_DELIMETER + architect.id() );
-	}
+	connections_.push_back( connection.clone() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

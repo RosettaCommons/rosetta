@@ -84,6 +84,9 @@ private:
 	void
 	remove_cutpoints( core::pose::Pose & pose ) const;
 
+	void
+	remove_cutpoints( components::StructureData & sd ) const;
+
 private:
 	Cutpoints cutpoints_;
 	components::FoldGraphCOP fg_;

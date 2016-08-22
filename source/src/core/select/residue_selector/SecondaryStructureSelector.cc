@@ -103,13 +103,18 @@ SecondaryStructureSelector::set_pose_secstruct( std::string const & ss )
 std::string
 SecondaryStructureSelector::get_secstruct( core::pose::Pose const & pose ) const
 {
-	if ( !pose_secstruct_.empty() ) return pose_secstruct_;
+	if ( !pose_secstruct_.empty() ) {
+		TR << "Using given pose secondary structure: " << pose_secstruct_ << std::endl;
+		return pose_secstruct_;
+	}
 
 	if ( use_dssp_ ) {
 		core::scoring::dssp::Dssp dssp( pose );
+		TR << "Using dssp for secondary structure: " << dssp.get_dssp_secstruct() << std::endl;
 		return dssp.get_dssp_secstruct();
 	}
 
+	TR << "Using secondary structure in pose: " << pose.secstruct() << std::endl;
 	return pose.secstruct();
 }
 
@@ -131,7 +136,6 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 		throw utility::excn::EXCN_BadInput( err.str() );
 	}
 
-	TR << "Using secondary structure " << ss << std::endl;
 	ResidueSubset matching_ss( pose.total_residue(), false );
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		if ( selected_ss_.find( ss[ i - 1 ] ) != selected_ss_.end() ) {

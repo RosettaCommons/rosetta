@@ -45,6 +45,7 @@ public:
 	typedef protocols::denovo_design::components::StructureDataOP StructureDataOP;
 	typedef utility::vector1< components::StructureDataCOP > StructureDataCOPs;
 	typedef utility::vector1< StrandArchitectOP > StrandArchitectOPs;
+	typedef std::map< std::string, core::Size > StrandExtensionsMap;
 
 public:
 	BetaSheetArchitect( std::string const & id_value );
@@ -77,6 +78,12 @@ public:
 	RegisterShifts
 	retrieve_register_shifts( components::StructureData const & perm ) const;
 
+	void
+	set_strand_extensions( std::string const & extensions_str );
+
+	void
+	add_strand_extension( std::string const & strand_name, core::Size const length );
+
 private:
 	void
 	setup_strand_pairings();
@@ -107,6 +114,9 @@ private:
 	void
 	check_permutation( StructureData const & perm ) const;
 
+	core::Size
+	extension_length( std::string const & strand ) const;
+
 private:
 	void
 	needs_update();
@@ -120,6 +130,7 @@ private:
 private:
 	StructureDataCOPs permutations_;
 	StrandArchitectOPs strands_;
+	StrandExtensionsMap extensions_;
 	components::SheetDBOP sheetdb_;
 	bool use_sheetdb_;
 	bool updated_;

@@ -174,7 +174,6 @@ sources = {
 
 	"denovo_design" :[
 		"DisulfidizeMover",
-		"utils",
 	],
 
 	"denovo_design/architects" :[
@@ -185,8 +184,10 @@ sources = {
 	],
 
 	"denovo_design/components" :[
+		"DivideAndConquerorTests",
 		"FoldGraphTests",
 		"ExtendedPoseBuilderTests",
+		"SegmentPairingTests",
 		"StructureDataTests",
 		"StructureDataFactoryTests",
 		"StructureDataObserverTests",
@@ -635,10 +636,13 @@ testinputfiles = [
 	"denovo_design/QTS_conformers.pdb",
 	"denovo_design/QTS_connectC6.txt",
 	"denovo_design/CYS_connectSG.txt",
+	"denovo_design/components/C3_Z.sym",
 	"denovo_design/components/helix14.pdb",
 	"denovo_design/components/helix15.pdb",
 	"denovo_design/components/test_enz_remark_input.pdb",
 	"denovo_design/components/test_fixed_trimer.pdb",
+	"denovo_design/components/test_propeller.pdb.gz",
+	"denovo_design/components/DivideAndConquerorTests_NTF2.xml",
 	"denovo_design/connection/twohelix_structuredata.pdb",
 	"denovo_design/connection/test_input_loopremoved.pdb",
 	"denovo_design/connection/test_pdbcomp_BridgeChains.pdb",

@@ -62,8 +62,8 @@ ExtendedPoseBuilder::apply( StructureData const & sd ) const
 
 	// rebuild fold tree
 	if ( !template_segments.empty() ) {
-		StructureDataFactory::get_instance()->clear_from_pose( *newpose );
-		StructureData cur_sd = *StructureDataFactory::get_instance()->create_from_pose( *newpose );
+		SegmentNameSet const template_set( template_segments.begin(), template_segments.end() );
+		StructureData cur_sd = sd.slice( template_set, false );
 		FoldGraph fg( cur_sd );
 		newpose->fold_tree( fg.fold_tree( boost::assign::list_of (*cur_sd.segments_begin()) ) );
 	}
@@ -122,18 +122,6 @@ ExtendedPoseBuilder::create_template_pose( StructureData const & sd, SegmentName
 }
 
 void
-add_cutpoints( core::pose::Pose & pose, StructureData const & sd )
-{
-	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
-		core::Size const cut = sd.segment( *s ).cutpoint();
-		if ( cut ) {
-			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, cut );
-			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cut+1 );
-		}
-	}
-}
-
-void
 add_terminus_variants( core::pose::Pose & pose, ExtendedPoseBuilder::Resids const & endings )
 {
 	core::pose::add_lower_terminus_type_to_pose_residue( pose, 1 );
@@ -159,6 +147,7 @@ ExtendedPoseBuilder::extend_pose(
 	core::Size cur_resid = 1;
 	core::Size extend_size = 0;
 	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+		TR.Debug << "At segment " << *s << sd.segment(*s) << " cur_resid = " << cur_resid << std::endl;
 		// if this is a template segment, prepend residues and skip ahead
 		if ( ( next_template != template_segments.end() ) &&
 				( *next_template == *s ) ) {
@@ -170,6 +159,7 @@ ExtendedPoseBuilder::extend_pose(
 				core::pose::remove_upper_terminus_type_from_pose_residue( pose, cur_resid - 1 );
 				core::pose::remove_lower_terminus_type_from_pose_residue( pose, cur_resid );
 			}
+			cur_resid += extend_size;
 			cur_resid += sd.segment( *s ).length();
 			extend_size = 0;
 			prev_template = next_template;
@@ -194,6 +184,7 @@ ExtendedPoseBuilder::extend_pose(
 				append_new_residues( pose, extend_size, cur_resid - 1, cur_resid - 2, "VAL", ResidueDihedrals() );
 			}
 			cur_resid += sd.segment( *s ).n_residues_before_cutpoint();
+			TR.Debug << "Cur_resid is now " << cur_resid << std::endl;
 			extend_size = sd.segment( *s ).n_residues_after_cutpoint();
 			continue;
 		}
@@ -256,6 +247,8 @@ append_new_chain_from_template_segment(
 	Segment const & segment )
 {
 	debug_assert( segment.template_pose() );
+	core::conformation::ResidueOP dflt_rsd = rsd_op( pose, "VAL" );
+
 	core::Size const chain_start = pose.total_residue() + 1;
 
 	TR.Debug << "Appending " << segment.template_pose()->total_residue() << " template residues as new chain" << std::endl;
@@ -267,19 +260,23 @@ append_new_chain_from_template_segment(
 
 	// add padding residues
 	for ( core::Size resid=1; resid<=segment.lower_padding(); ++resid ) {
-		//modify_ft_for_residue_insertion( pose, pose.total_residue() );
 		TR.Debug << "Prepending residue before " << chain_start << std::endl;
-		pose.prepend_polymer_residue_before_seqpos( segment.lower_residue(), chain_start, false );
+		if ( segment.has_lower_residue() ) {
+			pose.prepend_polymer_residue_before_seqpos( segment.lower_residue(), chain_start, false );
+		} else {
+			pose.prepend_polymer_residue_before_seqpos( *dflt_rsd, chain_start, true );
+		}
 		segment.lower_dihedrals().set_in_pose( pose, chain_start );
-		//prepend_new_residues( pose, 1, chain_start, pose.total_residue(), segment.lower_residue().name3(), segment.lower_dihedrals() );
 	}
 
 	for ( core::Size resid=1; resid<=segment.upper_padding(); ++resid ) {
-		//modify_ft_for_residue_insertion( pose, chain_start );
 		TR.Debug << "Appending residue after " << pose.total_residue() << std::endl;
-		pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose.total_residue(), false );
+		if ( segment.has_upper_residue() ) {
+			pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose.total_residue(), false );
+		} else {
+			pose.append_polymer_residue_after_seqpos( *dflt_rsd, pose.total_residue(), true );
+		}
 		segment.upper_dihedrals().set_in_pose( pose, pose.total_residue() - 1 );
-		//append_new_residues( pose, 1, pose.total_residue(), 1, segment.upper_residue().name3(), segment.upper_dihedrals() );
 	}
 
 	core::pose::add_lower_terminus_type_to_pose_residue( pose, chain_start );
@@ -299,6 +296,7 @@ append_residues_from_template_segment(
 	debug_assert( segment.template_pose() );
 	TR.Debug << "Appending " << segment.template_pose()->total_residue() << " template residues into current chain" << std::endl;;
 	core::Size const insert_pos = pose.total_residue();
+	core::conformation::ResidueOP dflt_rsd = rsd_op( pose, "VAL" );
 
 	if ( pose.total_residue() == 0 ) {
 		pose = *segment.template_pose();
@@ -309,24 +307,11 @@ append_residues_from_template_segment(
 				<< segment << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
+
 		bool const terminus = pose.residue( insert_pos ).is_upper_terminus();
 		if ( terminus ) {
 			core::pose::remove_upper_terminus_type_from_pose_residue( pose, insert_pos );
 		}
-
-		/*core::pose::Pose nonconst_template_pose( template_pose );
-		for ( core::Size template_resid=1; template_resid<=nonconst_template_pose.total_residue(); ++template_resid ) {
-		core::pose::remove_lower_terminus_type_from_pose_residue( nonconst_template_pose, template_resid );
-		core::pose::remove_upper_terminus_type_from_pose_residue( nonconst_template_pose, template_resid );
-		}
-
-		// removing terminus types leaves bogus phi/omega for residue 1
-		// these angles are critical for correct placement of HN
-		nonconst_template_pose.set_phi( 1, template_lower_phi );
-		nonconst_template_pose.set_omega( 1, template_lower_omega );
-		*/
-
-		//modify_ft_for_residue_insertion( pose, insert_pos );
 
 		core::Size pose_resid = insert_pos;
 		for ( core::Size template_resid=1; template_resid<=segment.template_pose()->total_residue(); ++template_resid ) {
@@ -335,7 +320,14 @@ append_residues_from_template_segment(
 		}
 
 		for ( core::Size resid=1; resid<=segment.upper_padding(); ++resid ) {
-			pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose_resid, false );
+			TR.Debug << "Appending padding residue after position " << pose_resid << std::endl;
+			pose.dump_pdb( "pad_before.pdb" );
+			if ( segment.has_upper_residue() ) {
+				pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose_resid, false );
+			} else {
+				pose.append_polymer_residue_after_seqpos( *dflt_rsd, pose_resid, true );
+			}
+			pose.dump_pdb( "pad_after.pdb" );
 			++pose_resid;
 		}
 
@@ -388,8 +380,6 @@ prepend_new_residues(
 	TR.Debug << "Prepending " << num_residues << " at insert position " << insert_pos << std::endl;
 	if ( num_residues < 1 ) return;
 
-	//modify_ft_for_residue_insertion( pose, anchor );
-
 	core::conformation::ResidueOP rsd = rsd_op( pose, type );
 
 	// account for case of empty pose
@@ -408,6 +398,7 @@ prepend_new_residues(
 	}
 
 	for ( core::Size res=1; res<=num_residues; ++res ) {
+		TR.Debug << "inserting new residue at position " << insert_pos << std::endl;
 		pose.prepend_polymer_residue_before_seqpos( *rsd, insert_pos, true );
 	}
 
@@ -426,6 +417,7 @@ prepend_new_residues(
 	}
 	TR.Debug << "setting psi for " << stop - 1 << " to " << lower_dihedrals.psi() << " phi for " << lower_dihedrals.phi() << std::endl;
 	lower_dihedrals.set_in_pose( pose, stop - 1 );
+	pose.dump_pdb( "after_prepend.pdb" );
 }
 
 void
@@ -433,10 +425,11 @@ append_new_residues(
 	core::pose::Pose & pose,
 	core::Size num_residues,
 	core::Size insert_pos,
-	core::Size const anchor,
+	core::Size const,
 	std::string const & type,
 	ResidueDihedrals const & upper_dihedrals )
 {
+	pose.dump_pdb( "pre_append.pdb" );
 	TR.Debug << "Appending " << num_residues << " at insert position " << insert_pos << std::endl;
 	if ( num_residues < 1 ) return;
 
@@ -456,12 +449,9 @@ append_new_residues(
 		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, insert_pos );
 	}
 
-	if ( ( pose.total_residue() > 1 ) && ( anchor > 0 ) ) {
-		//modify_ft_for_residue_insertion( pose, anchor );
-	}
-
 	core::Size const orig_pos = insert_pos;
 	for ( core::Size res=1; res<=num_residues; ++res ) {
+		TR.Debug << "inserting new residue at position " << insert_pos << std::endl;
 		pose.append_polymer_residue_after_seqpos( *rsd, insert_pos, true );
 		++insert_pos;
 	}
@@ -481,6 +471,7 @@ append_new_residues(
 	}
 	TR.Debug << "setting psi/phi dihedrals for " << orig_pos << "/" << orig_pos+1 << " to " << upper_dihedrals.psi() << " " << upper_dihedrals.phi() << std::endl;
 	upper_dihedrals.set_in_pose( pose, orig_pos );
+	pose.dump_pdb( "after_append.pdb" );
 }
 
 } //protocols

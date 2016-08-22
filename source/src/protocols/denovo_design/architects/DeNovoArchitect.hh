@@ -50,6 +50,8 @@ namespace architects {
 ///          MUST be sure to set the motif list.
 class DeNovoArchitect : public StructureArchitect {
 public:
+	typedef components::StructureDataOP StructureDataOP;
+public:
 	DeNovoArchitect( std::string const & id );
 
 	virtual
@@ -69,6 +71,11 @@ public:
 protected:
 	virtual void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) = 0;
+
+public:
+	// constants
+	static std::string const
+	DATA_MAP_NAME;
 
 public:
 	components::StructureDataOP
@@ -111,14 +118,6 @@ public:
 
 	MotifCOPs::const_iterator
 	motifs_end() const;
-
-	/*u
-	void
-	set_lengths( std::string const & length_str );
-
-	void
-	set_lengths( Lengths const & lengths );
-	*/
 
 	void
 	set_motifs( std::string const & motif_str );

@@ -55,9 +55,9 @@ public:
 	design( core::pose::Pose const &, core::Real & ) const
 	{
 		StructureDataOP sd( new StructureData( "DummyTest" ) );
-		Segment seg;
+		Segment seg( "DummySegment" );
 		seg.extend( "LHHHL", "XBBBX" );
-		sd->add_segment( "DummySegment", seg );
+		sd->add_segment( seg );
 		sd->set_data_int( "DummyTest", "Lebron_James_Number", number_ );
 		return sd;
 	}

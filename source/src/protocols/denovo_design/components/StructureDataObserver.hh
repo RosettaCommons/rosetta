@@ -51,7 +51,7 @@ public: // construct/destruct
 	// a StructureData object!!
 	StructureDataObserver();
 
-	StructureDataObserver( StructureData const & sd );
+	StructureDataObserver( StructureDataOP sd );
 
 	/// @brief default destructor
 	/// @remarks detaches during destruction
@@ -89,15 +89,6 @@ protected: // virtual observer interface
 
 	void
 	on_length_change( core::conformation::signals::LengthEvent const & event );
-
-public:
-	/// @brief const access to StructureData
-	StructureData const &
-	sd() const;
-
-	/// @brief const ptr access to StructureData
-	StructureDataCOP
-	sd_ptr() const;
 
 private:
 	void

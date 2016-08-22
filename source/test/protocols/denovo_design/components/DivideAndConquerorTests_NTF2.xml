@@ -1,0 +1,31 @@
+<StructureData name="StructureDataFactory::infer_from_pose()" length="121" pose_length="123" >
+	<ResidueRange name="H01" start="2" stop="17" safe="0" nterm="0" cterm="1" group="1" cutpoint="0" ss="LHHHHHHHHHHHHHHHH" abego="EAAAAAAAAAAAAAAAA" upper_segment="L01" />
+	<ResidueRange name="L01" start="18" stop="19" safe="0" nterm="1" cterm="1" group="5" cutpoint="0" ss="LL" abego="GB" lower_segment="H01" upper_segment="H02" />
+	<ResidueRange name="H02" start="20" stop="26" safe="0" nterm="1" cterm="1" group="2" cutpoint="0" ss="HHHHHHH" abego="AAAAAAA" lower_segment="L01" upper_segment="E01" />
+	<ResidueRange name="E01" start="27" stop="35" safe="0" nterm="1" cterm="1" group="13" cutpoint="0" ss="EEEEEEEEE" abego="BBAABBBBB" lower_segment="H02" upper_segment="L02" />
+	<ResidueRange name="L02" start="36" stop="37" safe="0" nterm="1" cterm="1" group="6" cutpoint="0" ss="LL" abego="GG" lower_segment="E01" upper_segment="E02" />
+	<ResidueRange name="E02" start="38" stop="41" safe="0" nterm="1" cterm="1" group="13" cutpoint="0" ss="EEEE" abego="BBBB" lower_segment="L02" upper_segment="L03" />
+	<ResidueRange name="L03" start="42" stop="42" safe="0" nterm="1" cterm="1" group="7" cutpoint="0" ss="L" abego="E" lower_segment="E02" upper_segment="H03" />
+	<ResidueRange name="H03" start="43" stop="53" safe="0" nterm="1" cterm="1" group="3" cutpoint="0" ss="HHHHHHHHHHH" abego="AAAAAAAAAAA" lower_segment="L03" upper_segment="L04" />
+	<ResidueRange name="L04" start="54" stop="55" safe="0" nterm="1" cterm="1" group="8" cutpoint="0" ss="LL" abego="GB" lower_segment="H03" upper_segment="E03" />
+	<ResidueRange name="E03" start="56" stop="67" safe="0" nterm="1" cterm="1" group="13" cutpoint="0" ss="EEEEEEEEEEEE" abego="BBBBBBABBBBB" lower_segment="L04" upper_segment="L05" />
+	<ResidueRange name="L05" start="68" stop="69" safe="0" nterm="1" cterm="1" group="9" cutpoint="0" ss="LL" abego="EA" lower_segment="E03" upper_segment="E04" />
+	<ResidueRange name="E04" start="70" stop="81" safe="0" nterm="1" cterm="1" group="13" cutpoint="0" ss="EEEEEEEEEEEE" abego="BBBBBBBBBBBB" lower_segment="L05" upper_segment="L06" />
+	<ResidueRange name="L06" start="82" stop="83" safe="0" nterm="1" cterm="1" group="10" cutpoint="0" ss="LL" abego="EA" lower_segment="E04" upper_segment="E05" />
+	<ResidueRange name="E05" start="84" stop="97" safe="0" nterm="1" cterm="1" group="13" cutpoint="0" ss="EEEEEEEEEEEEEE" abego="BBBBBBBBBBBBBB" lower_segment="L06" upper_segment="L07" />
+	<ResidueRange name="L07" start="98" stop="99" safe="0" nterm="1" cterm="1" group="11" cutpoint="0" ss="LL" abego="EA" lower_segment="E05" upper_segment="E06" />
+	<ResidueRange name="E06" start="100" stop="110" safe="0" nterm="1" cterm="1" group="13" cutpoint="0" ss="EEEEEEEEEEE" abego="BBBBABBBBBB" lower_segment="L07" upper_segment="L08" />
+	<ResidueRange name="L08" start="111" stop="111" safe="0" nterm="1" cterm="1" group="12" cutpoint="0" ss="L" abego="G" lower_segment="E06" upper_segment="H04" />
+	<ResidueRange name="H04" start="112" stop="122" safe="0" nterm="1" cterm="0" group="4" cutpoint="0" ss="HHHHHHHHHHHL" abego="AAAAAAAAAAAX" lower_segment="L08" />
+	<!-- Strand pairings -->
+	<Pairing type="StrandPairing" segments="E03,E04" orient1="1" orient2="0" shift="-1" />
+	<Pairing type="StrandPairing" segments="E04,E05" orient1="0" orient2="1" shift="0" />
+	<Pairing type="StrandPairing" segments="E05,E06" orient1="1" orient2="0" shift="4" />
+	<Pairing type="StrandPairing" segments="E06,E01" orient1="0" orient2="0" shift="2" />
+	<Pairing type="StrandPairing" segments="E01,E02" orient1="0" orient2="1" shift="0" />
+	<!-- Helix pairings -->
+	<Pairing type="HelixPairing" segments="H01,H02" parallel="0" />
+	<Pairing type="HelixPairing" segments="H02,H03" parallel="0" />
+</StructureData>
+
+

@@ -106,11 +106,16 @@ FileConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	if ( !infile.good() ) {
 		throw utility::excn::EXCN_BadInput( "Could not open " + filename_ + " for reading." );
 	}
-	// TODO: use get_from_const_pose() once I've figured out how to make observer transfer over through pose copying
-	components::StructureDataOP sd_ptr = components::StructureDataFactory::get_instance()->create_from_pose( pose );
-	debug_assert( sd_ptr );
-	components::StructureData const & sd = *sd_ptr;
-	std::stringstream cst_stream( clean_constraint_string( sd.substitute_variables( infile ) ) );
+
+	// Get stream of cst definitions
+	std::stringstream cst_stream;
+	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
+	if ( factory.has_cached_data( pose ) ) {
+		components::StructureData const & sd = factory.get_from_const_pose( pose );
+		cst_stream << clean_constraint_string( sd.substitute_variables( infile ) );
+	} else {
+		cst_stream << infile.rdbuf();
+	}
 	infile.close();
 	TR.Debug << "Parsed " << filename_ << " : " << cst_stream.str() << std::endl;
 

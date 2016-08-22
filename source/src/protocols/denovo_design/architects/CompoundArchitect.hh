@@ -20,6 +20,7 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
+#include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.fwd.hh>
 
 // Core headers
@@ -83,11 +84,18 @@ private:
 	parse_connection_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	void
+	parse_pairing_tags( utility::tag::Tag const & tag );
+
+	void
+	parse_pairing_tag( utility::tag::Tag const & tag );
+
+	void
 	add_parent_name( StructureArchitect & architect ) const;
 
 private:
 	DeNovoArchitectCOPs architects_;
 	connection::ConnectionArchitectCOPs connections_;
+	components::SegmentPairingCOPs pairings_;
 
 };
 

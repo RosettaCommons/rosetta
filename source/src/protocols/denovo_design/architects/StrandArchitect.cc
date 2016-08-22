@@ -18,6 +18,7 @@
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/util.hh>
 
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
@@ -39,7 +40,6 @@ StrandArchitect::StrandArchitect( std::string const & id_value ):
 	lengths_(),
 	orientations_( 1, UP ),
 	register_shifts_( 1, 0 ),
-	paired_strands_( "", "" ),
 	bulges_( 1, 0 ),
 	updated_( false )
 {
@@ -79,16 +79,18 @@ StrandArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap 
 }
 
 StrandArchitect::StructureDataOP
-StrandArchitect::design( core::pose::Pose const &, core::Real & ) const
+StrandArchitect::design( core::pose::Pose const &, core::Real & random ) const
 {
-	return StructureDataOP();
-}
+	check_updated();
+	if ( motifs_.size() == 0 ) {
+		std::stringstream msg;
+		msg << class_name() << "::design(): List of possible strand permutations is empty!"
+			<< std::endl;
+		utility_exit_with_message( msg.str() );
+	}
 
-void
-StrandArchitect::set_paired_strands( PairedStrandNames const & strands )
-{
-	paired_strands_ = strands;
-	needs_update();
+	core::Size const idx = extract_int( random, 1, motifs_.size() );
+	return StructureDataOP( new StructureData( *motifs_[ idx ] ) );
 }
 
 components::StructureDataCOPs
@@ -109,11 +111,10 @@ StrandArchitect::compute_permutations() const
 					if ( *b != 0 ) {
 						abego_str[ *b ] = 'A';
 					}
-					sd->add_segment( id(), components::Segment( secstruct.str(), abego_str, false, false ) );
+					sd->add_segment( components::Segment( id(), secstruct.str(), abego_str, false, false ) );
 					store_register_shift( *sd, *s );
 					store_bulge( *sd, *b );
 					store_orientation( *sd, *o );
-					store_paired_strands( *sd, paired_strands_ );
 					motifs.push_back( sd );
 				}
 			}
@@ -126,7 +127,6 @@ StrandArchitect::compute_permutations() const
 		msg << "Orientations: " << orientations_ << std::endl;
 		msg << "Shifts: " << register_shifts_ << std::endl;
 		msg << "Bulges: " << bulges_ << std::endl;
-		msg << "Paired Strands: " << paired_strands_ << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 	return motifs;
@@ -139,25 +139,28 @@ StrandArchitect::enumerate_permutations()
 	updated_ = true;
 }
 
-components::StructureDataCOPs::const_iterator
-StrandArchitect::motifs_begin() const
+/// @brief If architect is updated, simply exit without error.  If not, exit with an error message
+void
+StrandArchitect::check_updated() const
 {
 	if ( !updated_ ) {
 		std::stringstream msg;
 		msg << "StrandArchitect: Motif list needs updating, but it is being accessed. You probably need to call enumerate_permutations()" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
+}
+
+components::StructureDataCOPs::const_iterator
+StrandArchitect::motifs_begin() const
+{
+	check_updated();
 	return motifs_.begin();
 }
 
 components::StructureDataCOPs::const_iterator
 StrandArchitect::motifs_end() const
 {
-	if ( !updated_ ) {
-		std::stringstream msg;
-		msg << "StrandArchitect: Motif list needs updating, but it is being accessed. You probably need to call enumerate_permutations()" << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
+	check_updated();
 	return motifs_.end();
 }
 
@@ -191,6 +194,12 @@ StrandBulge
 StrandArchitect::retrieve_bulge( StructureData const & sd ) const
 {
 	return static_cast< StrandBulge >( sd.get_data_int( id(), bulge_keyname() ) );
+}
+
+StrandBulge
+StrandArchitect::retrieve_bulge( StructureData const & sd, std::string const & segment_id )
+{
+	return static_cast< StrandBulge >( sd.get_data_int( segment_id, bulge_keyname() ) );
 }
 
 void
@@ -228,40 +237,6 @@ std::string const
 StrandArchitect::bulge_keyname()
 {
 	return "bulge";
-}
-
-std::string const
-StrandArchitect::paired_strands_keyname()
-{
-	return "paired_strands";
-}
-
-PairedStrandNames
-StrandArchitect::retrieve_paired_strands( StructureData const & sd ) const
-{
-	std::string const & pair_str = sd.get_data_str( id(), paired_strands_keyname() );
-	return str_to_paired_strands( pair_str );
-}
-
-PairedStrandNames
-StrandArchitect::str_to_paired_strands( std::string const & pair_str )
-{
-	utility::vector1< std::string > const paired_strands = utility::string_split( pair_str, ',' );
-	if ( paired_strands.size() != 2 ) {
-		std::stringstream msg;
-		msg << "StrandArchitect: paired strands list must contain exactly two comma-separated segment names."
-			<< pair_str << " is the paired_strands string found." << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
-	return PairedStrandNames( paired_strands[1], paired_strands[2] );
-}
-
-void
-StrandArchitect::store_paired_strands( StructureData & sd, PairedStrandNames const & strands ) const
-{
-	std::stringstream pair_str;
-	pair_str << strands;
-	sd.set_data_str( id(), paired_strands_keyname(), pair_str.str() );
 }
 
 /// @brief set register shift
@@ -381,26 +356,6 @@ DeNovoArchitectOP
 StrandArchitectCreator::create_architect( std::string const & architect_id ) const
 {
 	return DeNovoArchitectOP( new StrandArchitect( architect_id ) );
-}
-
-std::ostream &
-operator<<( std::ostream & os, PairedStrandNames const & paired_strands )
-{
-	os << paired_strands.segment1 << ',' << paired_strands.segment2;
-	return os;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/// PairedStrandNames
-///////////////////////////////////////////////////////////////////////////////
-bool
-PairedStrandNames::operator<( PairedStrandNames const & other ) const
-{
-	if ( segment1 < other.segment1 ) return true;
-	if ( segment1 == other.segment1 ) {
-		return ( segment2 < other.segment2 );
-	}
-	return false;
 }
 
 } //protocols

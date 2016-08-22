@@ -19,7 +19,7 @@
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/Segment.fwd.hh>
+#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
 #include <protocols/denovo_design/components/StructureDataObserver.fwd.hh>
 #include <protocols/denovo_design/types.hh>
@@ -36,8 +36,8 @@
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
+#include <basic/datacache/WriteableCacheableData.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #ifdef    SERIALIZATION
@@ -112,10 +112,12 @@ typedef utility::vector1< MovableGroup > MovableGroups;
 typedef utility::vector1< SegmentPairingCOP > SegmentPairingCOPs;
 
 // StructureData objects -- contains functionality for building components
-class StructureData : public utility::pointer::ReferenceCount {
+class StructureData : public basic::datacache::WriteableCacheableData {
 private:
+	typedef basic::datacache::CacheableDataOP CacheableDataOP;
 	typedef std::string SegmentName;
 	typedef std::set< SegmentName > SegmentNameSet;
+
 	// object construction
 public:
 	StructureData();
@@ -124,12 +126,21 @@ public:
 
 	virtual ~StructureData();
 
-	virtual StructureDataOP
-	fresh_instance() const;
+	static std::string
+	class_name();
 
-	virtual StructureDataOP
+public:
+	// WriteableCacheableData virtuals
+	virtual CacheableDataOP
 	clone() const;
 
+	virtual void
+	write( std::ostream & os ) const;
+
+	virtual std::string
+	datatype() const;
+
+public:
 	/// @brief Retrieves data from an XML tag
 	void
 	parse_tag( utility::tag::TagCOP tag );
@@ -223,24 +234,24 @@ public:
 
 	/// @brief replace segment named seg_name with the given new segment
 	void
-	replace_segment( std::string const & seg_name, Segment const & segment );
+	replace_segment( SegmentName const & seg_name, Segment const & segment );
 
 	/// @brief adds a residues segment to the end of the list
 	void
-	add_segment( std::string const & id_val, Segment const & resis );
+	add_segment( Segment const & resis );
 
 	/// @brief adds a residues segment -- will be ordered before the given segment
 	void
-	add_segment( std::string const & id_val, Segment const & resis, std::string const & insert_before_segment );
+	add_segment( Segment const & resis, std::string const & insert_before_segment );
 
 	/// @brief adds a residues segment -- will be inserted just before at given iterator
 	void
-	add_segment( std::string const & id_val, Segment const & resis, SegmentNameList::iterator insert_pos );
+	add_segment( Segment const & resis, SegmentNameList::iterator insert_pos );
 
 	/// @brief Returns a StructureData containing only the given segments
 	///        The resulting StructureData will contain all data from the current
 	StructureData
-	slice( SegmentNames const & segments ) const;
+	slice( SegmentNameSet const & segments, bool const force_padding ) const;
 
 	/// @brief merge all data and segments from "other" into this StructureData
 	void merge( StructureData const & other );
@@ -615,6 +626,9 @@ public:
 		core::Size const res2, std::string const & atom2 );
 
 	void
+	clear_pairings();
+
+	void
 	add_pairing( SegmentPairing const & pairing );
 
 	SegmentPairingCOPs::const_iterator
@@ -721,10 +735,6 @@ public:
 private:
 	EXCN_PoseInconsistent();
 };
-
-/// dump contents of residues map
-std::ostream & operator<<( std::ostream & os, SegmentMap const & resmap );
-std::ostream & operator<<( std::ostream & os, Alias const & alias );
 
 } // components
 } // denovo_design

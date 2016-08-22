@@ -366,13 +366,12 @@ SheetConstraintGenerator::get_secstruct( core::pose::Pose const & pose ) const
 utility::vector1< std::string >
 SheetConstraintGenerator::get_abego( core::pose::Pose const & pose ) const
 {
-	//TODO: uncomment when denovo classes are updated in another PR
-	//using denovo_design::components::StructureDataFactory;
-	//bool const has_structuredata = StructureDataFactory::get_instance()->has_cached_data( pose );
-	//if ( ! use_dssp_ && has_structuredata ) {
-	//	std::string const abego_str = StructureDataFactory::get_instance()->get_from_const_pose( pose ).abego();
-	//	return protocols::denovo_design::abego_vector( abego_str );
-	//}
+	using denovo_design::components::StructureDataFactory;
+	bool const has_structuredata = StructureDataFactory::get_instance()->has_cached_data( pose );
+	if ( ! use_dssp_ && has_structuredata ) {
+		std::string const abego_str = StructureDataFactory::get_instance()->get_from_const_pose( pose ).abego();
+		return protocols::denovo_design::abego_vector( abego_str );
+	}
 
 	return core::sequence::get_abego( pose );
 }
@@ -386,7 +385,7 @@ SheetConstraintGenerator::get_abego( core::pose::Pose const & pose ) const
 ///          2. Gets pairing string from StructureData if it is present
 ///          3. Throw error
 std::string
-SheetConstraintGenerator::get_strandpairings( core::pose::Pose const & ) const
+SheetConstraintGenerator::get_strandpairings( core::pose::Pose const & pose ) const
 {
 	using protocols::denovo_design::components::SegmentPairing;
 	using protocols::denovo_design::components::StructureData;
@@ -394,18 +393,16 @@ SheetConstraintGenerator::get_strandpairings( core::pose::Pose const & ) const
 
 	if ( !spairs_.empty() ) return spairs_;
 
-	//TODO: Uncomment this when denovo classes are updated
+	StructureDataFactory const & sd_manager = *StructureDataFactory::get_instance();
+	if ( sd_manager.has_cached_data( pose ) ) {
+		return SegmentPairing::get_strand_pairings( sd_manager.get_from_const_pose( pose ) );
+	}
+	std::stringstream msg;
+	msg << class_name() << "::get_strandpairings(): You must either specify strand pairings, or "
+		<< "store a StructureData object in the pose which contains the desired strand pairings."
+		<< std::endl;
+	utility_exit_with_message( msg.str() );
 	return "";
-	//StructureDataFactory const & sd_manager = *StructureDataFactory::get_instance();
-	//if ( sd_manager.has_cached_data( pose ) ) {
-	//	return SegmentPairing::get_strand_pairings( sd_manager.get_from_const_pose( pose ) );
-	//}
-	//std::stringstream msg;
-	//msg << class_name() << "::get_strandpairings(): You must either specify strand pairings, or "
-	//	<< "store a StructureData object in the pose which contains the desired strand pairings."
-	//	<< std::endl;
-	//utility_exit_with_message( msg.str() );
-	//return "";
 }
 
 ResiduePairs

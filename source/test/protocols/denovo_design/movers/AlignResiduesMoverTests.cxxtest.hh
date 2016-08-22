@@ -152,23 +152,23 @@ public:
 
 		StructureData sd( "prot" );
 
-		Segment cat1( "L", "X", true, true );
+		Segment cat1( "prot.cat.1", "L", "X", true, true );
 		cat1.set_template_pose( input_pose, 3, 3 );
-		Segment cat2( "L", "X", true, true );
+		Segment cat2( "prot.cat.2", "L", "X", true, true );
 		cat2.set_template_pose( input_pose, 7, 7 );
 
-		Segment h1( "LHHHHHHHHHHHHHHL", "XAAAAAAAAAAAAAAX", false, false );
+		Segment h1( "prot.h1", "LHHHHHHHHHHHHHHL", "XAAAAAAAAAAAAAAX", false, false );
 		h1.set_template_pose( ph1, 2, 15 );
 		h1.set_movable_group( 2 );
 
-		Segment h2( "LHHHHHHHHHHHHHHHL", "XAAAAAAAAAAAAAAAX", false, false );
+		Segment h2( "prot.h2", "LHHHHHHHHHHHHHHHL", "XAAAAAAAAAAAAAAAX", false, false );
 		h2.set_movable_group( 3 );
 		h2.set_template_pose( ph2, 2, 16 );
 
-		sd.add_segment( "prot.cat.1", cat1 );
-		sd.add_segment( "prot.cat.2", cat2 );
-		sd.add_segment( "prot.h1", h1 );
-		sd.add_segment( "prot.h2", h2 );
+		sd.add_segment( cat1 );
+		sd.add_segment( cat2 );
+		sd.add_segment( h1 );
+		sd.add_segment( h2 );
 
 		ExtendedPoseBuilder builder;
 		core::pose::PoseOP pose_ptr = builder.apply( sd );

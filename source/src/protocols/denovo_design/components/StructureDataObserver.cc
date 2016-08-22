@@ -58,9 +58,9 @@ StructureDataObserver::StructureDataObserver():
 }
 
 /// @brief default constructor
-StructureDataObserver::StructureDataObserver( StructureData const & sd ) :
+StructureDataObserver::StructureDataObserver( StructureDataOP sd_op ):
 	core::pose::datacache::CacheableObserver(),
-	sd_( sd.clone() ),
+	sd_( sd_op ),
 	length_event_link_()
 {
 }
@@ -174,6 +174,7 @@ StructureDataObserver::detach_impl()
 	length_event_link_.invalidate();
 }
 
+/*
 StructureData const &
 StructureDataObserver::sd() const
 {
@@ -186,6 +187,7 @@ StructureDataObserver::sd_ptr() const
 {
 	return sd_;
 }
+*/
 
 } // namespace components
 } // namespace denovo_design

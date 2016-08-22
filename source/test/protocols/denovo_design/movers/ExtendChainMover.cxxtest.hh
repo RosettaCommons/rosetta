@@ -149,11 +149,11 @@ public:
 
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
 		core::pose::Pose const input_pose = pose;
-		StructureData const orig = factory.get_from_pose( pose, "extend" );
+		StructureData const orig = factory.get_from_pose( pose );
 		TS_ASSERT_THROWS_NOTHING( orig.check_pose_consistency( input_pose ) );
 
 		extend.apply( pose );
-		TS_ASSERT( factory.observer_attached( pose ) );
+		TS_ASSERT( factory.has_cached_data( pose ) );
 		StructureData const sd = factory.get_from_pose( pose );
 
 		TS_ASSERT( sd.has_segment( ext_id ) );
@@ -195,12 +195,11 @@ public:
 		core::pose::Pose const input_pose = pose;
 
 		StructureDataFactory const & factory = *StructureDataFactory::get_instance();
-		std::string const sd_name = "UnitTest";
-		StructureData const orig = *factory.create_from_pose( input_pose, sd_name );
+		StructureData const orig = factory.create_from_pose( input_pose );
 		TS_ASSERT_THROWS_NOTHING( orig.check_pose_consistency( input_pose ) );
 
 		extend.apply( pose );
-		TS_ASSERT( factory.observer_attached( pose ) );
+		TS_ASSERT( factory.has_cached_data( pose ) );
 		StructureData const sd = factory.get_from_pose( pose );
 		TS_ASSERT_THROWS_NOTHING( sd.check_pose_consistency( pose ) );
 

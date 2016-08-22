@@ -34,6 +34,7 @@
 
 // Basic/Numeric/Utility Headers
 #include <basic/datacache/DataMap.fwd.hh>
+#include <utility/string_util.hh>
 
 // C++ Headers
 #include <set>
@@ -42,6 +43,8 @@
 
 namespace protocols {
 namespace denovo_design {
+
+typedef std::map< std::string, core::Size > StrandNameToNumberMap;
 
 /// @brief Tells whether the two given poses are identical based on # resides and dihedrals
 bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
@@ -125,12 +128,6 @@ extract_int( core::Real & num, core::Size const m, core::Size const n );
 core::Size
 count_bulges( components::StructureData const & perm, std::string const & segment );
 
-/// @brief gets all strand pairings from a perm
-/// @details if use_register_shift=0, the returned register shift is 99
-std::string get_strandpairings(
-	components::StructureData const & perm,
-	bool const use_register_shift );
-
 /// @brief dumps a pose into another pose as a new chain
 void
 add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined );
@@ -167,46 +164,60 @@ slide_jump(
 	core::Size const new_start,
 	core::Size const new_stop );
 
+void
+add_cutpoints( core::pose::Pose & pose, components::StructureData const & sd );
+
+/// @brief Given a symmetric pose, and a fold tree for the asymmetric unit, constructs and
+///        returns a symmetric fold tree while preserving the topology of the aysmmetric
+///        unit's fold tree
+core::kinematics::FoldTree
+symmetric_fold_tree( core::pose::Pose const & pose, core::kinematics::FoldTree const & asymm_ft );
+
+/// @brief Given a symmetric pose and a secstruct for the asymmetric unit, constructs and
+///        returns a secondary structure string compatible with the symmetric pose based on
+///        the secondary structure of the asymmetric unit
+std::string
+symmetric_secstruct( core::pose::Pose const & pose, std::string const & asymm_secstruct );
+
+/// @brief Given a symmetric pose and a ResidueSubset for the asymmetric unit, constructs
+///        and returns a residue subset compatible with the symmetric pose based on the
+///        given asymmetric unit residue subset
+core::select::residue_selector::ResidueSubset
+symmetric_residue_subset( core::pose::Pose const & pose, core::select::residue_selector::ResidueSubset const & subset );
+
+/// @brief Computes secondary structure string from the given motifs
+/// @param[in]  motif_str  Motif string to be parsed (e.g. "5EB-2LG-5EB")
+/// @param[out] secstruct  Secondary structure string to be cleared and filled
+/// @param[out] abego      ABEGO string to be cleared and filled
+void
+parse_motif_string( std::string const & motif_str, std::string & secstruct, std::string & abego );
+
+/// @brief Returns vector of elements found in v1 but not in v2
+template< typename Container, typename T >
+Container
+set_difference(
+	typename std::set< T >::const_iterator begin1,
+	typename std::set< T >::const_iterator const & end1,
+	typename std::set< T >::const_iterator begin2,
+	typename std::set< T >::const_iterator const & end2
+)
+{
+	Container result;
+	std::set_difference( begin1, end1, begin2, end2, std::inserter( result, result.begin() ) );
+	return result;
+}
+
+/// @brief Given a comma-seperated string, convert to container
+template< typename Container >
+Container
+csv_to_container( std::string const & csv, char const delim=',' )
+{
+	utility::vector1< std::string > const fields = utility::string_split( csv, delim );
+	return Container( fields.begin(), fields.end() );
+}
+
 } // denovo_design
 } // protocols
 
-//////////////////////////////////////////////////////////////////////////
-/// Output operators for std template classes                          ///
-//////////////////////////////////////////////////////////////////////////
-namespace std {
+#endif // INCLUDED_protocols_denovo_design_util_hh
 
-/// @brief outputs a set
-std::ostream & operator<<( std::ostream & os, std::set< int > const & set );
-
-/// @brief outputs a set
-std::ostream & operator<<( std::ostream & os, std::set< core::Size > const & set );
-
-/// @brief outputs a set
-std::ostream & operator<<( std::ostream & os, std::set< std::string > const & set );
-
-/// @brief outputs a list of sizes
-std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & list );
-
-/// @brief outputs a list of strings
-std::ostream & operator<<( std::ostream & os, std::list< std::string > const & list );
-
-/// @brief outpust a vector of strings
-std::ostream & operator<<( std::ostream & os, utility::vector1< std::string > const & vec );
-
-/// @brief outputs a map
-std::ostream & operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map );
-
-/// @brief outputs a map
-std::ostream & operator<<( std::ostream & os, std::map< char, core::Size > const & map );
-
-/// @brief outputs a map
-std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Size > const & map );
-
-/// @brief outputs a map
-std::ostream & operator<<( std::ostream & os, std::map< std::pair< std::string, std::string >, core::Size > const & map );
-
-/// @brief outputs a map
-std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Real > const & map );
-
-} // std
-#endif

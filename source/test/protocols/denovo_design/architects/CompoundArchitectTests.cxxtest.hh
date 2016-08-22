@@ -58,8 +58,8 @@ public:
 	void test_simple_compound_architect()
 	{
 		std::string const arch_id = "arch";
-		std::string const helix_id = "arch.helix";
-		HelixArchitect helix_arch( "helix" );
+		std::string const helix_id = "helix";
+		HelixArchitect helix_arch( helix_id );
 		helix_arch.set_lengths( "10" );
 
 		CompoundArchitect arch( arch_id );
@@ -80,17 +80,16 @@ public:
 
 	void test_compound_architect_with_connection()
 	{
-		HelixArchitect h1( "h1" );
+		std::string const h1_id = "arch.h1";
+		HelixArchitect h1( h1_id );
 		h1.set_lengths( "10" );
 
-		HelixArchitect h2( "h2" );
+		std::string const h2_id = "arch.h2";
+		HelixArchitect h2( h2_id );
 		h2.set_lengths( "12" );
 
 		std::string const staple_id = "arch.staple";
-		std::string const h1_id = "arch.h1";
-		std::string const h2_id = "arch.h2";
-
-		ConnectionArchitect conn( "staple" );
+		ConnectionArchitect conn( staple_id );
 		conn.set_segment1_ids( h2_id );
 		conn.set_segment2_ids( h1_id );
 		conn.set_motifs( "4LX", "" );
@@ -126,24 +125,24 @@ public:
 		CompoundArchitect comp_arch( "compound" );
 		PoseArchitect pose_arch( "pose" );
 
-		HelixArchitect h1( "h1" );
+		std::string const h1_id = "h1";
+		HelixArchitect h1( h1_id );
 		h1.set_lengths( "10" );
 
-		HelixArchitect h2( "h2" );
+		std::string const h2_id = "h2";
+		HelixArchitect h2( h2_id );
 		h2.set_lengths( "10" );
 
-		std::string const lig1_id = "compound.pose.L01";
-		std::string const h1_id = "compound.h1";
-		std::string const h2_id = "compound.h2";
-		std::string const conn1_id = "compound.staple1";
-		std::string const conn2_id = "compound.staple2";
+		std::string const lig1_id = "pose.L01";
 
-		ConnectionArchitect conn( "staple1" );
+		std::string const conn1_id = "staple1";
+		ConnectionArchitect conn( conn1_id );
 		conn.set_motifs( "1LX", "" );
 		conn.set_segment1_ids( h1_id );
 		conn.set_segment2_ids( lig1_id );
 
-		ConnectionArchitect conn2( "staple2" );
+		std::string const conn2_id = "staple2";
+		ConnectionArchitect conn2( conn2_id );
 		conn2.set_motifs( "1LX", "" );
 		conn2.set_segment1_ids( lig1_id );
 		conn2.set_segment2_ids( h2_id );
@@ -171,8 +170,8 @@ public:
 		TS_ASSERT_EQUALS( sd.segment( conn2_id ).upper_segment(), h2_id );
 		TS_ASSERT_EQUALS( sd.segment( h2_id ).lower_segment(), conn2_id );
 		TS_ASSERT_EQUALS( sd.segment( h2_id ).upper_segment(), "" );
-		TS_ASSERT_EQUALS( sd.segment( lig1_id ).movable_group(), sd.segment( "compound.pose.L02" ).movable_group() );
-		TS_ASSERT_EQUALS( sd.segment( lig1_id ).movable_group(), sd.segment( "compound.pose.L03" ).movable_group() );
+		TS_ASSERT_EQUALS( sd.segment( lig1_id ).movable_group(), sd.segment( "pose.L02" ).movable_group() );
+		TS_ASSERT_EQUALS( sd.segment( lig1_id ).movable_group(), sd.segment( "pose.L03" ).movable_group() );
 	}
 };
 

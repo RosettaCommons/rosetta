@@ -19,12 +19,14 @@
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -110,7 +112,10 @@ operator<<( std::ostream & os, SealFoldTreeMover const & mover )
 void
 SealFoldTreeMover::apply( core::pose::Pose & pose )
 {
+	components::StructureData sd = components::StructureDataFactory::get_instance()->get_from_pose( pose );
 	remove_cutpoints( pose );
+	remove_cutpoints( sd );
+	components::StructureDataFactory::get_instance()->save_into_pose( pose, sd );
 
 	if ( roots_.empty() ) {
 		TR.Warning << "No new root segments found in roots_... not doing anything" << std::endl;
@@ -118,8 +123,26 @@ SealFoldTreeMover::apply( core::pose::Pose & pose )
 	}
 
 	// create new fold tree
-	pose.fold_tree( fg_->fold_tree( roots_ ) );
+	core::kinematics::FoldTree const ft = fg_->fold_tree( roots_ );
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::kinematics::FoldTree const symm_ft = symmetric_fold_tree( pose, ft );
+		pose.fold_tree( symm_ft );
+	} else {
+		pose.fold_tree( ft );
+	}
 	TR << "Set fold tree to " << pose.fold_tree() << std::endl;
+}
+
+void
+SealFoldTreeMover::remove_cutpoints( components::StructureData & sd ) const
+{
+	for ( Cutpoints::const_iterator cut=cutpoints_.begin(); cut!=cutpoints_.end(); ++cut ) {
+		core::Size const resid = *cut;
+		SegmentName const seg_name = sd.segment_name( resid );
+		if ( sd.segment( seg_name ).cutpoint() == resid ) sd.set_cutpoint( seg_name, 0 );
+		TR << "Removed cutpoint at " << resid << " (segment " << seg_name << ") from StructureData." << std::endl;
+	}
 }
 
 void

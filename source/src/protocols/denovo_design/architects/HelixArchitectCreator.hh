@@ -28,8 +28,6 @@ namespace protocols {
 namespace denovo_design {
 namespace architects {
 
-using protocols::denovo_design::architects::DeNovoArchitectOP;
-
 class HelixArchitectCreator : public DeNovoArchitectCreator {
 public:
 	/// @brief Instantiate a particular DeNovoArchitect

@@ -26,6 +26,7 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -45,20 +46,20 @@ namespace protocols {
 namespace denovo_design {
 namespace residue_selectors {
 
-using namespace core::select::residue_selector;
-
 /// @brief Constructor.
 ///
 NamedSegmentSelector::NamedSegmentSelector():
 	ResidueSelector(),
 	segment_( "" ),
-	residues_( "" )
+	residues_( "" ),
+	error_on_missing_segment_( true )
 {}
 
-NamedSegmentSelector::NamedSegmentSelector( std::string const & segment_name, std::string const & residues_str ):
+NamedSegmentSelector::NamedSegmentSelector( SegmentName const & segment_name, std::string const & residues_str ):
 	ResidueSelector(),
 	segment_( segment_name ),
-	residues_( residues_str )
+	residues_( residues_str ),
+	error_on_missing_segment_( true )
 {}
 
 /// @brief Destructor.
@@ -67,7 +68,7 @@ NamedSegmentSelector::~NamedSegmentSelector() {}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
-ResidueSelectorOP
+NamedSegmentSelector::ResidueSelectorOP
 NamedSegmentSelector::clone() const
 {
 	return ResidueSelectorOP( new NamedSegmentSelector( *this ) );
@@ -76,47 +77,95 @@ NamedSegmentSelector::clone() const
 /// @brief "Apply" function.
 /// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 /// indicating whether each residue is selected ("true") or not ("false").
-ResidueSubset
+NamedSegmentSelector::ResidueSubset
 NamedSegmentSelector::apply( core::pose::Pose const & pose ) const
 {
 	// get StructureData object from pose
 	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
-	components::StructureData const sd = *factory.create_from_pose( pose );
+
+	components::StructureData sd;
+	if ( factory.has_cached_data( pose ) ) {
+		sd = factory.get_from_const_pose( pose );
+	} else {
+		TR << "[WARNING]: NamedSegmentSelector::apply()  No StructureData was found in the pose datacache. "
+			<< class_name() << " is creating a new StructureData object based on the pose, which will be discarded"
+			<< " after computation because the pose is const..." << std::endl;
+		sd = factory.create_from_pose( pose );
+	}
 
 	SignedResidSet const resids = resid_set();
 
 	// subset to work on
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset;
+	if ( !resids.empty() ) subset = compute_residue_subset_from_resids( sd, resids );
+	else subset = compute_residue_subset( sd );
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		subset = symmetric_residue_subset( pose, subset );
+	}
+
+	core::Size resid = 1;
+	for ( ResidueSubset::const_iterator s=subset.begin(); s!=subset.end(); ++s, ++resid ) {
+		if ( *s ) TR.Debug << "Selected ";
+		else TR.Debug << "Ignored ";
+		TR.Debug << "residue " << pose.residue( resid ).name() << " "
+			<< resid << " " << pose.chain( resid ) << std::endl;
+	}
+	return subset;
+}
+
+/// @brief computes a residue subset based on StructureData
+///        If pose is symmetric, this will only be for the asymmetric unit
+NamedSegmentSelector::ResidueSubset
+NamedSegmentSelector::compute_residue_subset_from_resids(
+	components::StructureData const & sd,
+	SignedResidSet const & resids ) const
+{
+	debug_assert( ! resids.empty() );
+
+	ResidueSubset subset( sd.pose_length(), false );
 
 	// if residues are specified, the segment name provided must be an actual segment
 	// rather than an alias or segment group
-	if ( !resids.empty() ) {
-		if ( !sd.has_segment( segment_ ) ) {
-			std::stringstream msg;
-			msg << class_name() << "::apply(): Specific residues are provided (" << residues_
-				<< "), but the name provided (" << segment_
-				<< ") does not match any named segments found in the pose ("
-				<< SegmentNameList( sd.segments_begin(), sd.segments_end() )
-				<< ").  Alias or segment groups cannot be specified with residues" << std::endl;
-			msg << "SD=" << sd << std::endl;
+	if ( !sd.has_segment( segment_ ) ) {
+		std::stringstream msg;
+		msg << class_name() << "::apply(): Specific residues are provided (" << residues_
+			<< "), but the name provided (" << segment_
+			<< ") does not match any named segments found in the pose ("
+			<< SegmentNameList( sd.segments_begin(), sd.segments_end() )
+			<< ").  Alias or segment groups cannot be specified with residues" << std::endl;
+		msg << "SD=" << sd << std::endl;
+		if ( error_on_missing_segment_ ) {
 			utility_exit_with_message( msg.str() );
+		} else {
+			TR << msg.str();
+			return subset;
 		}
-		components::Segment const & res = sd.segment( segment_ );
-		for ( SignedResidSet::const_iterator r=resids.begin(); r!=resids.end(); ++r ) {
-			core::Size const pose_resid = res.segment_to_pose( *r );
-			TR.Debug << "Pose resid = " << pose_resid << " Segment resid = " << *r << std::endl;
-			subset[ pose_resid ] = true;
-		}
-		return subset;
 	}
 
+	components::Segment const & res = sd.segment( segment_ );
+	for ( SignedResidSet::const_iterator r=resids.begin(); r!=resids.end(); ++r ) {
+		core::Size const pose_resid = res.segment_to_pose( *r );
+		subset[ pose_resid ] = true;
+	}
+
+	return subset;
+}
+
+/// @brief computes a residue subset based on StructureData
+///        If pose is symmetric, this will only be for the asymmetric unit
+NamedSegmentSelector::ResidueSubset
+NamedSegmentSelector::compute_residue_subset( components::StructureData const & sd ) const
+{
+	ResidueSubset subset( sd.pose_length(), false );
+
 	// compute intervals and use the to modify the subset
-	Intervals const intervals = compute_residue_intervals( sd );
-	for ( Intervals::const_iterator n=intervals.begin(); n!=intervals.end(); ++n ) {
-		core::Size start = n->first;
-		core::Size stop = n->second;
-		debug_assert( start <= pose.total_residue() );
-		debug_assert( stop <= pose.total_residue() );
+	ResidueRanges const intervals = compute_residue_intervals( sd );
+	for ( ResidueRanges::const_iterator n=intervals.begin(); n!=intervals.end(); ++n ) {
+		core::Size start = n->start();
+		core::Size stop = n->stop();
+		debug_assert( start <= sd.pose_length() );
+		debug_assert( stop <= sd.pose_length() );
 		debug_assert( start >= 1 );
 		debug_assert( stop >= 1 );
 		if ( start > stop ) {
@@ -127,27 +176,26 @@ NamedSegmentSelector::apply( core::pose::Pose const & pose ) const
 		debug_assert( start <= stop );
 		for ( core::Size resid=start; resid<=stop; ++resid ) {
 			subset[ resid ] = true;
-			TR.Debug << " Selected res " << pose.residue(resid).name() << " " << resid << " : " << subset[resid] << std::endl;
 		}
 	}
-
 	return subset;
 }
 
-NamedSegmentSelector::Intervals
+NamedSegmentSelector::ResidueRanges
 NamedSegmentSelector::compute_residue_intervals( components::StructureData const & sd ) const
 {
-	Intervals intervals;
+	using core::select::residue_selector::ResidueRange;
 
+	ResidueRanges intervals;
 	if ( sd.has_segment( segment_ ) ) {
 		// Case 1: single segment specified
 		components::Segment const & res = sd.segment( segment_ );
-		intervals.push_back( std::make_pair( res.lower(), res.upper() ) );
+		intervals.push_back( ResidueRange( res.lower(), res.upper() ) );
 	} else if ( sd.has_alias( segment_ ) ) {
 		// Case 2: alias specified
 		TR.Debug << segment_ << " is an alias." << std::endl;
 		core::Size const start = sd.alias( segment_ );
-		intervals.push_back( std::make_pair( start, start ) );
+		intervals.push_back( ResidueRange( start, start ) );
 	} else if ( sd.has_segment_group( segment_ ) ) {
 		// Case 3: segment group specified
 		SegmentNames const segments = sd.segment_group( segment_ );
@@ -155,13 +203,14 @@ NamedSegmentSelector::compute_residue_intervals( components::StructureData const
 		for ( SegmentNames::const_iterator c=segments.begin(); c!=segments.end(); ++c ) {
 			TR.Debug << "Adding interval for segment " << *c << std::endl;
 			components::Segment const & seg = sd.segment( *c );
-			intervals.push_back( std::make_pair( seg.lower(), seg.upper() ) );
+			intervals.push_back( ResidueRange( seg.lower(), seg.upper() ) );
 		}
 	} else {
 		std::stringstream error_msg;
 		error_msg << class_name() << ": The segment name (" << segment_ << ") given was not found." << std::endl;
 		error_msg << "SD = " << sd << std::endl;
-		utility_exit_with_message( error_msg.str() );
+		if ( error_on_missing_segment_ ) utility_exit_with_message( error_msg.str() );
+		else TR << error_msg.str() << std::endl;
 	}
 	return intervals;
 }
@@ -210,6 +259,8 @@ NamedSegmentSelector::parse_my_tag(
 		error_message << "TomponentSelector::parse_my_tag Missing required option 'segment' in the input Tag" << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
+
+	error_on_missing_segment_ = tag->getOption< bool >( "error_on_missing_segment", error_on_missing_segment_ );
 }
 
 std::string
@@ -228,6 +279,7 @@ void
 NamedSegmentSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+	using namespace core::select::residue_selector;
 	AttributeList attributes;
 	attributes
 		+ XMLSchemaAttribute( "segment", xs_string )
@@ -247,10 +299,10 @@ NamedSegmentSelector::set_residues( std::string const & residues_str )
 	residues_ = residues_str;
 }
 
-ResidueSelectorOP
+NamedSegmentSelector::ResidueSelectorOP
 NamedSegmentSelectorCreator::create_residue_selector() const
 {
-	return ResidueSelectorOP( new NamedSegmentSelector );
+	return NamedSegmentSelector::ResidueSelectorOP( new NamedSegmentSelector );
 }
 
 std::string

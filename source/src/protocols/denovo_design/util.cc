@@ -17,10 +17,13 @@
 #include <protocols/denovo_design/util.hh>
 
 //Project Headers
+#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/Segment.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 
 //Protocol Headers
+#include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
@@ -29,6 +32,8 @@
 #include <core/chemical/util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>
@@ -554,145 +559,6 @@ count_bulges( components::StructureData const & perm, std::string const & segmen
 	return bulges;
 }
 
-std::string
-strand_pair_str(
-	components::StructureData const & perm,
-	std::string const & strand1,
-	std::string const & strand2,
-	std::map< std::string, core::Size > const & name_to_strandnum,
-	bool use_register_shift )
-{
-	if ( strand1.empty() || strand2.empty() ) {
-		return "";
-	}
-
-	std::stringstream out;
-	bool in_order = true;
-	core::Size const snum1 = name_to_strandnum.find( strand1 )->second;
-	core::Size const snum2 = name_to_strandnum.find( strand2 )->second;
-	if ( snum1 < snum2 ) {
-		out << snum1 << '-' << snum2;
-	} else if ( snum1 > snum2 ) {
-		out << snum2 << '-' << snum1;
-		in_order = false;
-	} else if ( snum1 == snum2 ) {
-		std::stringstream ss;
-		ss << "Two strands have the same number " << snum1 << " -- check your input! name_to_strandnum=" << name_to_strandnum << " strandnames=" << strand1 << "," << strand2 << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
-	}
-
-	int orientation = 1;
-	if ( perm.has_data_int( strand2, "orientation" ) ) orientation = perm.get_data_int( strand2, "orientation" );
-
-	int prevorientation = 1;
-	if ( perm.has_data_int( strand1, "orientation" ) ) prevorientation = perm.get_data_int( strand1, "orientation" );
-
-	core::Size const bulges1 = count_bulges( perm, strand1 );
-	core::Size const bulges2 = count_bulges( perm, strand2 );
-
-	bool parallel = true;
-	out << '.';
-	if ( orientation == prevorientation ) {
-		out << 'P';
-	} else {
-		parallel = false;
-		out << 'A';
-	}
-	out << '.';
-
-	int shift = 0;
-	if ( perm.has_data_int( strand2, "shift" ) ) shift = perm.get_data_int( strand2, "shift" );
-
-	if ( use_register_shift ) {
-		// determine "Nobu-style" register shift
-		if ( parallel && in_order ) {
-			// i + 1's shift is the register shift
-			out << shift;
-		} else if ( parallel && ! in_order ) {
-			// i + 1's shift is simply made negative
-			out << -shift;
-		} else if ( ! parallel && in_order ) {
-			// I'm pretty sure we just use i+1's shift here
-			out << shift;
-		} else {
-			// most complicated
-			int const len1 = static_cast< int >( perm.segment( strand2 ).length() ) - bulges2;
-			int const len2 = static_cast< int >( perm.segment( strand1 ).length() ) - bulges1;
-			out << len2 - len1 - shift;
-			TR.Debug << "len1=" << len1 << " bulges1=" << bulges1 << " len2=" << len2 << " bulges2=" << bulges2 << " shift=" << shift << " value=" << len2 - len1 - shift << std::endl;
-		}
-	} else {
-		out << 99;
-	}
-	return out.str();
-}
-
-std::string
-get_strandpairings(
-	components::StructureData const & perm,
-	bool const use_register_shift )
-{
-	// initiate strand pairing check
-	std::map< std::string, core::Size > name_to_strandnum;
-	SegmentNames strandnames;
-	core::Size strandcount = 0;
-	for ( SegmentNameList::const_iterator s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
-		// scan to see if this is a strand
-		bool strand = false;
-		for ( std::string::const_iterator ch=perm.segment( *s ).ss().begin(); ch!=perm.segment( *s ).ss().end(); ++ch ) {
-			if ( *ch == 'E' ) {
-				strand = true;
-				break;
-			}
-		}
-		if ( !strand ) {
-			continue;
-		}
-
-		++strandcount;
-		name_to_strandnum[ *s ] = strandcount;
-		strandnames.push_back( *s );
-	}
-	TR.Debug << "name_to_strandnum=" << name_to_strandnum << " name_to_compidx=" << strandnames << std::endl;
-
-	// now build sheet topology string
-	std::stringstream sheet_str;
-	std::set< std::pair< std::string, std::string > > visited;
-	for ( SegmentNames::const_iterator s=strandnames.begin(); s!=strandnames.end(); ++s ) {
-		if ( !perm.has_data_str( *s, "paired_strands" ) ) {
-			continue;
-		}
-		std::pair< std::string, std::string > const spair =
-			parse_strand_pair( perm.get_data_str( *s, "paired_strands" ) );
-		TR.Debug << "Found strand pair " << spair.first << " : " << spair.second << std::endl;
-
-		if ( visited.find( std::make_pair( spair.first, *s ) ) == visited.end() ) {
-			visited.insert( std::make_pair( spair.first, *s ) );
-			visited.insert( std::make_pair( *s, spair.first ) );
-			std::string const pair_str = strand_pair_str( perm, spair.first, *s, name_to_strandnum, use_register_shift );
-			if ( !pair_str.empty() ) {
-				if ( sheet_str.str().size() ) {
-					sheet_str << ';';
-				}
-				sheet_str << pair_str;
-			}
-		}
-
-		if ( visited.find( std::make_pair( *s, spair.second ) ) == visited.end() ) {
-			visited.insert( std::make_pair( spair.second, *s ) );
-			visited.insert( std::make_pair( *s, spair.second ) );
-			std::string const pair_str = strand_pair_str( perm, *s, spair.second, name_to_strandnum, use_register_shift );
-			if ( !pair_str.empty() ) {
-				if ( sheet_str.str().size() ) {
-					sheet_str << ';';
-				}
-				sheet_str << strand_pair_str( perm, *s, spair.second, name_to_strandnum, use_register_shift );
-			}
-		}
-	}
-	return sheet_str.str();
-}
-
 /// @brief dumps a pose into another pose as a new chain
 void
 add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
@@ -859,174 +725,243 @@ slide_jump(
 	return ft;
 }
 
+void
+add_cutpoints( core::pose::Pose & pose, components::StructureData const & sd )
+{
+	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+		core::Size const cut = sd.segment( *s ).cutpoint();
+		if ( cut ) {
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, cut );
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cut+1 );
+		}
+	}
+}
+
+/// @brief Given a symmetric pose and a secstruct for the asymmetric unit, constructs and
+///        returns a secondary structure string compatible with the symmetric pose based on
+///        the secondary structure of the asymmetric unit
+std::string
+symmetric_secstruct( core::pose::Pose const & pose, std::string const & asymm_secstruct )
+{
+	using core::conformation::Conformation;
+	using core::conformation::symmetry::SymmetricConformation;
+	using core::conformation::symmetry::SymmetryInfo;
+	using core::kinematics::FoldTree;
+
+	Conformation const & conf( pose.conformation() );
+	SymmetricConformation const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
+	SymmetryInfo const & symm_info( *symm_conf.Symmetry_Info() );
+	core::Size const nres_subunit( symm_info.num_independent_residues() );
+	core::Size const nsubunits( symm_info.subunits() );
+	core::Size const num_nonvrt( symm_info.num_total_residues_without_pseudo() );
+
+	if ( nres_subunit != asymm_secstruct.size() ) {
+		std::stringstream msg;
+		msg << "protocols::denovo_design::symmetric_secstruct(): The secondary structure for the asymmetric unit ("
+			<< asymm_secstruct << ") has length (" << asymm_secstruct.size()
+			<< ") that differs from the length of each symmetric subunit (" << nres_subunit << ")" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	std::stringstream symm_secstruct;
+	// add asymm unit secstruct for each subunit
+	for ( core::Size subunit=1; subunit<=nsubunits; ++subunit ) {
+		symm_secstruct << asymm_secstruct;
+	}
+
+	// add secstruct for virtuals from the pose
+	for ( core::Size resid=num_nonvrt+1; resid<=pose.total_residue(); ++resid ) {
+		symm_secstruct << pose.secstruct( resid );
+	}
+
+	if ( symm_secstruct.str().size() != pose.total_residue() ) {
+		std::stringstream msg;
+		msg << "protocols::denovo_design::symmetric_secstruct(): The generated secondary structure for the symmetric pose ("
+			<< symm_secstruct.str() << ") has length (" << symm_secstruct.str().size()
+			<< ") that differs from the length of the symmetric pose (" << pose.total_residue() << ")" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	return symm_secstruct.str();
+}
+
+
+/// @brief Given a symmetric pose, and a fold tree for the asymmetric unit, constructs and
+///        returns a symmetric fold tree while preserving the topology of the aysmmetric
+///        unit's fold tree
+core::kinematics::FoldTree
+symmetric_fold_tree( core::pose::Pose const & pose, core::kinematics::FoldTree const & asymm_ft )
+{
+	using core::conformation::Conformation;
+	using core::conformation::symmetry::SymmetricConformation;
+	using core::conformation::symmetry::SymmetryInfo;
+	using core::kinematics::FoldTree;
+
+	Conformation const & conf( pose.conformation() );
+	SymmetricConformation const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
+	SymmetryInfo const & symm_info( *symm_conf.Symmetry_Info() );
+	core::Size const nres_subunit( symm_info.num_independent_residues() );
+	core::Size const nsubunits( symm_info.subunits() );
+	core::Size const num_nonvrt( symm_info.num_total_residues_without_pseudo() );
+	core::Size const root = pose.fold_tree().root();
+
+	if ( num_nonvrt + 1 != root ) {
+		std::stringstream msg;
+		msg << "FoldTreeFromFoldGraphMover::symmetric_fold_tree(): The residue after num_nonvrt ("
+			<< num_nonvrt + 1 << ") should be the root, but the root is " << root << std::endl;
+		msg << "Pose fold tree: " << pose.fold_tree() << std::endl;
+		msg << "Asymm fold tree: " << asymm_ft << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	if ( nsubunits != ( pose.total_residue() - num_nonvrt ) ) {
+		std::stringstream msg;
+		msg << "FoldTreeFromFoldGraphMover::symmetric_fold_tree(): number of subunits ("
+			<< nsubunits << ") does not match the number of virtuals ("
+			<< pose.total_residue() - num_nonvrt << ")!" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	// Build symmetric fold tree
+	FoldTree symm_ft;
+
+	// Count jumps and resids as we add them
+	utility::vector1< int > added_jumps;
+	int cur_jump = asymm_ft.num_jump() + 1;
+	TR.Debug << "Cur_jump=" << cur_jump << std::endl;
+	core::Size cur_pose_resid = 1;
+
+	// add root so there is a vertex in there
+	symm_ft.add_edge( cur_pose_resid, cur_pose_resid, core::kinematics::Edge::PEPTIDE );
+
+	// add subunit jumps from virtuals
+	for ( core::Size resid=num_nonvrt+1; resid<=pose.total_residue(); ++resid ) {
+		debug_assert( cur_pose_resid <= num_nonvrt );
+		TR.Debug << "inserting asymm fold tree, resid=" << cur_pose_resid
+			<< " jump=" << cur_jump << " cur_ft=" << symm_ft << std::endl;
+		symm_ft.insert_fold_tree_by_jump( asymm_ft, cur_pose_resid, cur_jump, cur_pose_resid );
+		if ( resid != root ) added_jumps.push_back( cur_jump );
+		++cur_jump;
+		cur_pose_resid += nres_subunit;
+	}
+
+	// at this point, the next residue should be the root
+	if ( cur_pose_resid != root ) {
+		std::stringstream msg;
+		msg << "FoldTreeFromFoldGraphMover::symmetric_fold_tree(): root of new symmetric fold tree ("
+			<< cur_pose_resid << ") does not match root of pose fold tree (" << root << std::endl;
+		msg << "Pose fold tree: " << pose.fold_tree() << std::endl;
+		msg << "Asymm fold tree: " << asymm_ft << std::endl;
+		msg << "Symm fold tree: " << symm_ft << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	utility::vector1< int >::const_iterator jump = added_jumps.begin();
+	// add root jumps from virtuals
+	for ( core::Size resid=root; resid<=pose.total_residue(); ++resid ) {
+		debug_assert( pose.residue( resid ).aa() == core::chemical::aa_vrt );
+		if ( resid == root ) continue;
+		if ( jump == added_jumps.end() ) {
+			std::stringstream msg;
+			msg << "FoldTreeFromFoldGraphMover::symmetric_fold_tree(): list of jumps added ("
+				<< added_jumps << ") does not match virtual residues, which range from "
+				<< num_nonvrt + 1 << " to " << pose.total_residue() << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
+		symm_ft.jump_edge( *jump ).start() = resid;
+		symm_ft.add_edge( root, resid, cur_jump );
+		++jump;
+		++cur_jump;
+	}
+
+	symm_ft.delete_extra_vertices();
+
+	TR << "Orig FT " << asymm_ft << std::endl;
+	TR << "Created symmetric FT " << symm_ft << std::endl;
+	return symm_ft;
+}
+
+/// @brief Given a symmetric pose and a ResidueSubset for the asymmetric unit, constructs
+///        and returns a residue subset compatible with the symmetric pose based on the
+///        given asymmetric unit residue subset
+core::select::residue_selector::ResidueSubset
+symmetric_residue_subset( core::pose::Pose const & pose, core::select::residue_selector::ResidueSubset const & asymm_subset )
+{
+	using core::conformation::Conformation;
+	using core::conformation::symmetry::SymmetricConformation;
+	using core::conformation::symmetry::SymmetryInfo;
+	using core::kinematics::FoldTree;
+
+	Conformation const & conf( pose.conformation() );
+	SymmetricConformation const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
+	SymmetryInfo const & symm_info( *symm_conf.Symmetry_Info() );
+	core::Size const nres_subunit( symm_info.num_independent_residues() );
+	core::Size const nsubunits( symm_info.subunits() );
+	//core::Size const num_nonvrt( symm_info.num_total_residues_without_pseudo() );
+
+	if ( nres_subunit != asymm_subset.size() ) {
+		std::stringstream msg;
+		msg << "protocols::denovo_design::symmetric_residue_subset(): The residue subset given for the asymmetric unit has length ("
+			<< asymm_subset.size() << ") that differs from the length of each symmetric subunit ("
+			<< nres_subunit << ")" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	core::select::residue_selector::ResidueSubset subset( pose.total_residue(), false );
+	core::Size cur_resid = 1;
+	for ( core::Size subunit=1; subunit<=nsubunits; ++subunit ) {
+		for ( core::Size sub_resid=1; sub_resid<=nres_subunit; ++sub_resid, ++cur_resid ) {
+			subset[ cur_resid ] = asymm_subset[ sub_resid ];
+		}
+	}
+	return subset;
+}
+
+/// @brief Computes secondary structure string from the given motifs
+/// @param[in]  motif_str  Motif string to be parsed (e.g. "5EB-2LG-5EB")
+/// @param[out] secstruct  Secondary structure string to be cleared and filled
+/// @param[out] abego      ABEGO string to be cleared and filled
+void
+parse_motif_string( std::string const & motif_str, std::string & secstruct, std::string & abego )
+{
+	secstruct.clear();
+	abego.clear();
+
+	utility::vector1< std::string > const motifs = utility::string_split( motif_str, '-' );
+	for ( utility::vector1< std::string >::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
+		// here, we can accept "3LX" or "3:LX"
+		std::string motif_seg = "";
+		for ( std::string::const_iterator c=m->begin(); c!=m->end(); ++c ) {
+			if ( *c == ' ' ) continue;
+			if ( *c == '\t' ) continue;
+			if ( *c == '\n' ) continue;
+			if ( *c == ':' ) continue;
+			motif_seg += *c;
+		}
+
+		if ( motif_seg.empty() ) continue;
+
+		char const ss_type( motif_seg[motif_seg.size()-2] );
+		if ( (ss_type != 'H') && (ss_type != 'L') && (ss_type != 'E') ) {
+			TR.Error << "Segment::parse_motif(): Invalid SS type in motif " << motif_seg << std::endl;
+			utility_exit();
+		}
+
+		char const abego_type( motif_seg[ motif_seg.size() - 1 ] );
+		if ( abego_type > 'Z' || abego_type < 'A' ) {
+			TR.Error << "Segment::parse_motif(): Invalid abego type in motif " << motif_seg << std::endl;
+			utility_exit();
+		}
+
+		int const len( utility::string2int( motif_seg.substr( 0, motif_seg.size()-2 ) ) );
+
+		std::string const secstruct_m( len, ss_type );
+		std::string const abego_m( len, abego_type );
+		secstruct += secstruct_m;
+		abego += abego_m;
+	}
+}
+
 
 } // protocols
 } // denovo_design
-
-//////////////////////////////////////////////////////////////////////////
-/// Output operators for std classes                                   ///
-//////////////////////////////////////////////////////////////////////////
-
-namespace std {
-
-/// @brief outputs a matrix
-std::ostream &
-operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
-	os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
-	os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
-	os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
-	return os;
-}
-
-/// @brief outputs a set
-std::ostream &
-operator<<( std::ostream & os, std::set< int > const & set ) {
-	os << "[ ";
-	for ( std::set< int >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-		os << *it << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a set
-std::ostream &
-operator<<( std::ostream & os, std::set< core::Size > const & set ) {
-	os << "[ ";
-	for ( std::set< core::Size >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-		os << *it << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a list of sizes
-std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & list )
-{
-	os << "[ ";
-	for ( std::list< core::Size >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
-		os << *c << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a list of strings
-std::ostream &
-operator<<( std::ostream & os, std::list< std::string > const & list ) {
-	os << "[ ";
-	for ( std::list< std::string >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
-		os << *c << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a vector of strings
-std::ostream &
-operator<<( std::ostream & os, utility::vector1< std::string > const & vec )
-{
-	os << "[ ";
-	for ( utility::vector1< std::string >::const_iterator c=vec.begin(); c!=vec.end(); ++c ) {
-		os << *c << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a set
-std::ostream &
-operator<<( std::ostream & os, std::set< std::string > const & set ) {
-	os << "[ ";
-	for ( std::set< std::string >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-		os << *it << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a map
-std::ostream &
-operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map ) {
-	os << "{";
-	std::map< core::Size, core::Size >::const_iterator it;
-	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() ) {
-			os << ", ";
-		}
-		os << " " << it->first << ":" << it->second;
-	}
-	os << " }";
-	return os;
-}
-
-/// @brief outputs a map
-std::ostream &
-operator<<( std::ostream & os, std::map< std::string, core::Size > const & map ) {
-	os << "{";
-	std::map< std::string, core::Size >::const_iterator it;
-	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() ) {
-			os << ", ";
-		}
-		os << " " << it->first << ":" << it->second;
-	}
-	os << " }";
-	return os;
-}
-
-/// @brief outputs a map
-std::ostream &
-operator<<( std::ostream & os, std::map< std::pair< std::string, std::string >, core::Size > const & map ) {
-	os << "{";
-	std::map< std::pair< std::string, std::string >, core::Size >::const_iterator it;
-	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() ) {
-			os << ", ";
-		}
-		os << " " << it->first.first << "__" << it->first.second << ":" << it->second;
-	}
-	os << " }";
-	return os;
-}
-
-/// @brief outputs a map
-std::ostream &
-operator<<( std::ostream & os, std::map< std::string, core::Real > const & map ) {
-	os << "{";
-	std::map< std::string, core::Real >::const_iterator it;
-	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() ) {
-			os << ", ";
-		}
-		os << " " << it->first << ":" << it->second;
-	}
-	os << " }";
-	return os;
-}
-
-// dupicate, please use one defined in numeric/xyzVector.io.hh
-/// @brief outputs a vector
-// std::ostream &
-// operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec )
-// {
-//  os << "{ " << vec.x() << ", " << vec.y() << ", " << vec.z() << " }";
-//  return os;
-// }
-
-/// @brief outputs a map
-std::ostream & operator<<( std::ostream & os, std::map< char, core::Size > const & map )
-{
-	os << "{";
-	std::map< char, core::Size >::const_iterator it;
-	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() ) {
-			os << ", ";
-		}
-		os << " " << it->first << ":" << it->second;
-	}
-	os << "}";
-	return os;
-}
-
-} // std

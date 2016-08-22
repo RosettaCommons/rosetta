@@ -19,6 +19,7 @@
 #include <protocols/denovo_design/components/PoseFolder.hh>
 
 // Protocol headers
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 // Core headers
@@ -75,10 +76,18 @@ public:
 	void
 	set_scorefxn( core::scoring::ScoreFunction const & sfxn );
 
+public:
+	static core::scoring::ScoreFunctionOP
+	default_score_function();
+
 private:
+	void
+	remove_cutpoints( StructureData & sd, protocols::loops::Loops const & loops ) const;
+
 	protocols::moves::MoverOP
 	create_remodel_loop_mover(
 		core::pose::Pose const & pose,
+		StructureData const & sd,
 		core::select::residue_selector::ResidueSubset const & movable,
 		protocols::loops::Loops const & loops ) const;
 
@@ -88,7 +97,7 @@ private:
 		core::select::residue_selector::ResidueSubset const & movable ) const;
 
 	core::scoring::ScoreFunctionOP
-	create_scorefxn() const;
+	create_scorefxn( core::pose::Pose const & pose ) const;
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

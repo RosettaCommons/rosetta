@@ -163,6 +163,9 @@ AlignResiduesMover::apply( core::pose::Pose & pose )
 	}
 
 	// delete template residues
+	components::StructureDataFactory const & factory =
+		*components::StructureDataFactory::get_instance();
+	factory.attach_observer( pose );
 	delete_residues( pose, template_resids );
 }
 
@@ -236,8 +239,6 @@ AlignResiduesMover::delete_residues(
 
 	protocols::grafting::simple_movers::DeleteRegionMover delete_mover;
 	delete_mover.set_residue_selector( index_sel );
-
-	debug_assert( components::StructureDataFactory::get_instance()->observer_attached( pose ) );
 	delete_mover.apply( pose );
 }
 

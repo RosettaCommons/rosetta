@@ -33,6 +33,7 @@
 
 #ifdef    SERIALIZATION
 // Cereal headers
+#include <cereal/access.fwd.hpp>
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
@@ -93,15 +94,17 @@ public:
 /// @brief manages information about segments of residues
 class Segment : public utility::pointer::ReferenceCount {
 public:
-	Segment();
+	Segment( std::string const & id_val );
 
 	Segment(
+		std::string const & id_val,
 		std::string const & ss_val,
 		std::string const & abego_val,
 		bool const start_inc,
 		bool const stop_inc );
 
-	virtual ~Segment() {}
+	virtual ~Segment()
+	{}
 
 	virtual SegmentOP
 	clone() const;
@@ -159,10 +162,15 @@ public:
 	SegmentResid
 	pose_to_segment( core::Size const pose_resid ) const;
 
-
 	//////////////////////////////////////////
 	// properties
 	//////////////////////////////////////////
+	std::string const &
+	id() const;
+
+	void
+	set_id( std::string const & id_val );
+
 	std::string const &
 	ss() const;
 
@@ -186,6 +194,10 @@ public:
 
 	core::Size
 	elem_length() const;
+
+	/// @brief returns whether or not this segment contains a template pose
+	bool
+	has_template_pose() const;
 
 	/// @brief returns template pose
 	core::pose::PoseCOP
@@ -265,6 +277,12 @@ public:
 
 	ResidueDihedrals const &
 	upper_dihedrals() const;
+
+	bool
+	has_lower_residue() const;
+
+	bool
+	has_upper_residue() const;
 
 	core::conformation::Residue const &
 	lower_residue() const;
@@ -351,6 +369,7 @@ private:
 	template_resid( SegmentResid const segment_resid ) const;
 
 private:
+	std::string id_;
 	core::Size posestart_;
 	core::Size movable_group_;
 	core::Size saferes_;
@@ -369,6 +388,11 @@ private:
 
 #ifdef    SERIALIZATION
 public:
+	// for serialization only
+	Segment();
+	friend class cereal::access;
+
+public:
 	template< class Archive >
 	void
 	save( Archive & arc ) const;
@@ -378,15 +402,6 @@ public:
 	load( Archive & arc );
 #endif // SERIALIZATION
 
-};
-
-class NamedSegment : public std::pair< std::string, Segment > {
-public:
-	NamedSegment( std::string const & name, Segment const & res ):
-		std::pair< std::string, Segment >( name, res ) {}
-	NamedSegment( std::pair< std::string, Segment > const & resp ):
-		std::pair< std::string, Segment >( resp ) {}
-	friend std::ostream & operator<<( std::ostream & os, NamedSegment const & resis );
 };
 
 } // components

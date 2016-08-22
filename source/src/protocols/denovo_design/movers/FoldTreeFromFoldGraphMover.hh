@@ -102,12 +102,11 @@ private:
 	/// @brief sets terminal variants for broken-chain folding using remodel
 	///        this method also sets the last_jump_info_
 	void
-	prepare_termini_for_remodel( core::pose::Pose & pose );
+	prepare_termini_for_remodel( core::pose::Pose & pose, components::StructureData const & sd ) const;
 
 private:
 	SegmentNames roots_;
 	protocols::loops::Loops loops_;
-	JumpInfo last_jump_info_;
 };
 
 std::ostream &

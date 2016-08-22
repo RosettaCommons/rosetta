@@ -33,7 +33,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableStringMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
@@ -49,10 +49,7 @@ namespace denovo_design {
 namespace components {
 
 int const
-	StructureDataFactory::REMARK_NUM = 994;
-
-std::string const
-	StructureDataFactory::DATA_NAME = "PERMUTATION";
+StructureDataFactory::REMARK_NUM = 994;
 
 StructureDataFactory *
 StructureDataFactory::create_singleton_instance()
@@ -73,9 +70,7 @@ StructureDataFactory::save_into_pose( core::pose::Pose & pose, StructureData con
 {
 	sd.check_pose_consistency( pose );
 
-	std::stringstream ss;
-	ss << sd;
-	set_cached_string( pose, ss.str() );
+	set_cached_data( pose, sd );
 
 	// wipe out pdb info except for remarks
 	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
@@ -85,19 +80,19 @@ StructureDataFactory::save_into_pose( core::pose::Pose & pose, StructureData con
 	pose.pdb_info()->remarks( sd.retrieve_remarks(pose) );
 
 	//save_into_pose_with_id( pdb_info, "" );
+	std::stringstream ss;
+	ss << sd;
+
 	std::string line;
 	while ( std::getline( ss, line ) ) {
 		add_perm_remark( pose.pdb_info()->remarks(), line );
 	}
-
-	// eventually, I would like to make the cached observer the only place data is stored
-	attach_observer( pose, sd );
 }
 
 void
 StructureDataFactory::clear_from_pose( core::pose::Pose & pose ) const
 {
-	clear_cached_string( pose );
+	clear_cached_data( pose );
 	pose.pdb_info()->remarks( core::io::Remarks() );
 	detach_observer( pose );
 }
@@ -107,15 +102,7 @@ StructureDataFactory::clear_from_pose( core::pose::Pose & pose ) const
 StructureData const &
 StructureDataFactory::get_from_const_pose( core::pose::Pose const & pose ) const
 {
-	StructureDataObserverCOP sd_obs = retrieve_observer( pose );
-	if ( !sd_obs ) {
-		std::stringstream msg;
-		msg << "StructureDataFactory::get_from_const_pose(): No StructureData object was found in the pose!"
-			<< " Be sure the StructureData observer is attached to the pose before trying to access it, or"
-			<< " call get_from_pose() with a non-const pose instead." << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
-	return sd_obs->sd();
+	return retrieve_cached_data( pose );
 }
 
 /// @brief retrieves a StructureData object from the pose observable cache
@@ -123,201 +110,134 @@ StructureDataFactory::get_from_const_pose( core::pose::Pose const & pose ) const
 StructureData const &
 StructureDataFactory::get_from_pose( core::pose::Pose & pose ) const
 {
-	return get_from_pose( pose, "" );
-}
-
-/// @brief retrieves a StructureData object from observable cache
-///        creates one if necessary, and sets it in the pose
-StructureData const &
-StructureDataFactory::get_from_pose(
-	core::pose::Pose & pose,
-	std::string const & newid ) const
-{
-	if ( !observer_attached( pose ) ) {
-		StructureDataOP new_sd = create_new_from_pose( pose, newid );
-		save_into_pose( pose, *new_sd );
+	if ( !has_cached_data( pose ) ) {
+		save_into_pose( pose, create_from_pose( pose ) );
 	}
-
-	StructureDataObserverCOP sd_obs = retrieve_observer( pose );
-	if ( !sd_obs ) {
-		std::stringstream msg;
-		msg << "StructureData::get_from_pose(): Error obtaining cached StructureData observer" << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
-
-	return sd_obs->sd();
+	return get_from_const_pose( pose );
 }
 
 /// @brief retrieves a StructureData object from the pose observable cache
 ///        Creates a StructureData using the pose (but doesn't attach it) if
 ///        the cached StructureData could not be retrieved properly
-StructureDataOP
+StructureData
 StructureDataFactory::create_from_pose( core::pose::Pose const & pose ) const
 {
 	return create_from_pose( pose, "" );
 }
 
-/// @brief retrieves a StructureData object from the pose observable cache
-///        Creates a StructureData using the pose (but doesn't attach it) if
-///        the cached StructureData could not be retrieved properly
-StructureDataOP
-StructureDataFactory::create_from_pose(
-	core::pose::Pose const & pose,
-	std::string const & newid ) const
+/// @brief retrieves a StructureData object from the pose data cache
+///        Creates a StructureData using the pose (but doesn't store it) if
+///        the cached StructureData is not present. Adds id_val as a prefix
+///        for all new segments
+/// @param[in]  pose    The input pose
+/// @param[in]  prefix  A prefix to be added to the segments in the pose. For example, if
+///                     prefix is empty, the first helix would be named 'H01', but if prefix
+///                     is set to 'pose1', the first helix will be named 'pose.H01'
+StructureData
+StructureDataFactory::create_from_pose( core::pose::Pose const & pose, SegmentName const & prefix ) const
 {
-	if ( ! observer_attached( pose ) ) {
-		return create_new_from_pose( pose, newid );
+	// 1. If StructureData is cached, copy and return it
+	if ( has_cached_data( pose ) ) {
+		return retrieve_cached_data( pose );
 	}
 
-	StructureDataObserverCOP sd_obs = retrieve_observer( pose );
-	if ( !sd_obs ) {
-		std::stringstream msg;
-		msg << "StructureData::get_from_pose(): Error obtaining cached StructureData observer" << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
-
-	return sd_obs->sd_ptr()->clone();
-}
-
-void
-add_virtual_residues( StructureData & sd, core::pose::Pose const & pose )
-{
-	core::Size virt_count = 1;
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
-		if ( pose.residue( resid ).aa() != core::chemical::aa_vrt ) continue;
-		Segment virt_seg( "L", "-", true, true );
-
-		std::stringstream segname;
-		segname << "VIRT" << std::setw(5) << std::setfill('0') << virt_count;
-		++virt_count;
-
-		if ( resid <= sd.pose_length() ) sd.add_segment( segname.str(), virt_seg, sd.segment_name( resid ) );
-		else sd.add_segment( segname.str(), virt_seg );
-	}
-}
-
-/// @brief sets data from a given pose's pdb remark records. Only looks at remarks which are subcomponents of the given id
-/// if the pdb remarks are not found, the permutation information is inferred from the information that can be gleaned from the pose
-StructureDataOP
-StructureDataFactory::create_new_from_pose( core::pose::Pose const & pose, std::string const & id ) const
-{
-	StructureDataOP newperm;
+	// 2. Try to construct StructureData from pose and remarks
+	StructureData newperm;
 	core::io::Remarks remarks;
-	if ( has_cached_string(pose) ) {
-		std::stringstream ss;
-		ss << retrieve_cached_string( pose );
-		TR.Debug << "Found StructureData information in datacache. Creating from that." << std::endl;
-		newperm = create_from_xml( ss );
-		if ( !newperm ) {
-			std::stringstream err;
-			err << "StructureDataFactory::create_new_from_pose():" << id
-				<< ": could not create StructureData from XML." << std::endl;
-			err << "XML: " << ss.str() << " chains: " << pose.conformation().chain_endings()
-				<< " pose length: " << pose.total_residue() << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
-		}
-	} else {
-		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-		if ( !pdb_info )  {
-			TR << "No StructureData information was found in the pose -- Trying to infer info" << std::endl;
-			newperm = infer_from_pose( pose, id );
-		} else {
+	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+
+	bool found_in_remarks = false;
+	if ( pdb_info ) {
+		TR << "No StructureData information was found in the pose -- Trying to infer info from remarks" << std::endl;
+		try {
 			newperm = create_from_remarks( pdb_info->remarks() );
-			if ( !newperm ) {
-				newperm = infer_from_pose( pose, id );
-			}
+			found_in_remarks = true;
+		} catch ( EXCN_RemarksNotPresent const & e ) {
+			e.show( TR );
+			TR.flush();
 		}
 	}
-	if ( !newperm ) {
-		return NULL;
+
+	if ( !found_in_remarks ) {
+		newperm = infer_from_pose( pose, prefix );
 	}
 
-	if ( pose.pdb_info() ) {
+	if ( pdb_info ) {
 		TR.Debug << "Saving remarks into StructureData" << std::endl;
-		newperm->save_remarks( pose.pdb_info()->remarks() );
+		newperm.save_remarks( pdb_info->remarks() );
 	}
 
-	// there may be virtual residues in this case
-	if ( newperm->pose_length() != pose.total_residue() )  {
-		add_virtual_residues( *newperm, pose );
-	}
-
-	newperm->check_pose_consistency( pose );
+	newperm.check_pose_consistency( pose );
 	return newperm;
 }
 
-class SegmentCounts {
-public:
-	enum SegmentType {
-		HELIX = 1,
-		STRAND = 2,
-		LOOP = 3,
-		LIGAND = 4,
-		NUM_SEGMENT_TYPES = 5
-	};
+SegmentCounts::SegmentCounts():
+	counts_( NUM_SEGMENT_TYPES, 1 ),
+	ligand_subset_()
+{}
 
-	SegmentCounts( core::pose::Pose const & pose ):
-		counts_( NUM_SEGMENT_TYPES, 1 ),
-		ligand_subset_( pose.total_residue(), false )
-	{
-		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
-			if ( pose.residue( resid ).is_ligand() ) {
-				ligand_subset_[ resid ] = true;
-			}
+SegmentCounts::SegmentCounts( core::pose::Pose const & pose ):
+	counts_( NUM_SEGMENT_TYPES, 1 ),
+	ligand_subset_( pose.total_residue(), false )
+{
+	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+		if ( pose.residue( resid ).is_ligand() ) {
+			ligand_subset_[ resid ] = true;
 		}
 	}
+}
 
-	std::string
-	new_segment_name( char const ss_type, core::Size const seqpos )
-	{
-		SegmentType const t = type( ss_type, seqpos );
-		std::stringstream name;
-		name << ss_type;
-		if ( t == LIGAND ) name << "IG";
-		name << std::setw(2) << std::setfill('0') << counts_[ t ];
-		++counts_[ t ];
-		return name.str();
+std::string
+SegmentCounts::new_segment_name( char const ss_type, core::Size const seqpos )
+{
+	SegmentType const t = type( ss_type, seqpos );
+	std::stringstream name;
+	name << ss_type;
+	if ( t == LIGAND ) name << "IG";
+	name << std::setw(2) << std::setfill('0') << counts_[ t ];
+	++counts_[ t ];
+	return name.str();
+}
+
+SegmentCounts::SegmentType
+SegmentCounts::type( char const ss_type, core::Size const seqpos ) const
+{
+	if ( ss_type == 'H' ) return HELIX;
+	if ( ss_type == 'E' ) return STRAND;
+	if ( ss_type == 'L' ) {
+		if ( !ligand_subset_.empty() && ligand_subset_[ seqpos ] ) return LIGAND;
+		else return LOOP;
 	}
-
-private:
-	SegmentType
-	type( char const ss_type, core::Size const seqpos ) const
-	{
-		if ( ss_type == 'H' ) return HELIX;
-		if ( ss_type == 'E' ) return STRAND;
-		if ( ss_type == 'L' ) {
-			if ( ligand_subset_[ seqpos ] ) return LIGAND;
-			else return LOOP;
-		}
-		std::stringstream msg;
-		msg << "SegmentCounts: unrecognized ss type: " << ss_type << std::endl;
-		utility_exit_with_message( msg.str() );
-		return NUM_SEGMENT_TYPES;
-	};
-
-private:
-	utility::vector1< core::Size > counts_;
-	core::select::residue_selector::ResidueSubset ligand_subset_;
-};
+	std::stringstream msg;
+	msg << "SegmentCounts: unrecognized ss type: " << ss_type << std::endl;
+	utility_exit_with_message( msg.str() );
+	return NUM_SEGMENT_TYPES;
+}
 
 std::string
 add_segment(
-	std::string const & id_val,
 	StructureData & sd,
-	Segment const & seg,
+	Segment & seg,
 	char const ss_type,
 	SegmentCounts & counts )
 {
 	std::stringstream name;
-	if ( !id_val.empty() ) {
-		name << id_val << PARENT_DELIMETER;
+	if ( !seg.id().empty() ) {
+		name << seg.id() << PARENT_DELIMETER;
 	}
 	name << counts.new_segment_name( ss_type, sd.pose_length() + 1 );
-	TR << "Creating new segment " << NamedSegment( name.str(), seg ) << std::endl;
-	sd.add_segment( name.str(), seg );
+	seg.set_id( name.str() );
+	TR << "Creating new segment " << seg << std::endl;
+	sd.add_segment( seg );
 	return name.str();
 }
 
+/// @brief Adds segments to the given SD
+/// @param[in]     id_val      Parent ID of the segments.  Can be empty
+/// @param[in,out] sd          StructureData to be modified
+/// @param[in]     chain_ss    Secondary structure of the full chain
+/// @param[in]     chain_abego Abego for the full chain
+/// @param[in,out] counts      Secondary structure element counters for naming segments
 void
 add_segments_for_chain(
 	std::string const & id_val,
@@ -338,8 +258,8 @@ add_segments_for_chain(
 		if ( chain_ss.size() < 2 ) {
 			cterm_included = true;
 		}
-		Segment newseg( chain_ss, chain_abego, nterm_included, cterm_included );
-		add_segment( id_val, sd, newseg, 'L', counts );
+		Segment newseg( id_val, chain_ss, chain_abego, nterm_included, cterm_included );
+		add_segment( sd, newseg, 'L', counts );
 		return;
 	}
 	// collect segment ss and abegos
@@ -377,10 +297,10 @@ add_segments_for_chain(
 		++next;
 		bool const cterm_included = ( next != ss_segments.end() );
 
-		Segment newseg( *ss, *ab, nterm_included, cterm_included );
+		Segment newseg( id_val, *ss, *ab, nterm_included, cterm_included );
 
 		char const ss_type =  ( ss == ss_segments.begin() ) ? *(++(ss->begin())) : *ss->begin();
-		std::string const name_str = add_segment( id_val, sd, newseg, ss_type, counts );
+		std::string const name_str = add_segment( sd, newseg, ss_type, counts );
 		if ( !prev_name.empty() ) {
 			sd.mark_connected( prev_name, name_str );
 		}
@@ -388,13 +308,58 @@ add_segments_for_chain(
 	}
 }
 
+/// @brief creates a StructureData from a motif string
+/// @param[in] motifs String of secstruct/abego motifs (e.g. "1LX-5EB-2LG-5EB-1LA-1LB-1LG-10HA-1LX" )
+/// @returns StructureData containing one segment per motif with the specified
+///          secondary structure and abego. Each motif is connected to
+///          the previous and next motifs.  Segments are named by their
+///          secondary structure (e.g. L01, E01, L02, E02, L03, H01, L04 )
+StructureData
+StructureDataFactory::create_from_motifs( std::string const & motif_str ) const
+{
+	return create_from_motifs( motif_str, "" );
+}
+
+
+/// @brief creates a StructureData from a motif string, optionally prefixing a string to the
+///        name of each segment
+/// @param[in] motifs String of secstruct/abego motifs (e.g. "1LX-5EB-2LG-5EB-1LA-1LB-1LG-10HA-1LX" )
+/// @param[in] prefix Name to be prepended before the segment names. If empty,
+///                   names will be as [ L01, E01, L02, ... ].  If set to "myprefix", names
+///										will be as [ myprefix.L01, myprefix.E01, ... ]
+/// @returns StructureData containing one segment per motif with the specified
+///          secondary structure and abego. Each motif is connected to
+///          the previous and next motifs.  Segments are named by their
+///          secondary structure (e.g. L01, E01, L02, E02, L03, H01, L04 )
+StructureData
+StructureDataFactory::create_from_motifs( std::string const & motif_str, SegmentName const & prefix ) const
+{
+	StructureData sd( "StructureDataFactory::create_from_motifs()" );
+
+	// determine SS for chain
+	std::string chain_ss = "";
+	std::string chain_abego = "";
+	parse_motif_string( motif_str, chain_ss, chain_abego );
+
+	// store SS counts
+	SegmentCounts counts;
+
+	// add segments to SD
+	add_segments_for_chain( prefix, sd, chain_ss, chain_abego, counts );
+
+	return sd;
+}
+
 /// @brief sets data from a given pose's information, not taking into account PDB remarks
-StructureDataOP
-StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, std::string const & id_val ) const
+/// @param[in]  pose    The input pose
+/// @param[in]  prefix  A prefix to be added to the segments in the pose. For example, if
+///                     prefix is empty, the first helix would be named 'H01', but if prefix
+///                     is set to 'pose1', the first helix will be named 'pose.H01'
+StructureData
+StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentName const & prefix ) const
 {
 	// the object we will add to
-	StructureDataOP sd( new StructureData( id_val ) );
-	debug_assert( sd );
+	StructureData sd( "StructureDataFactory::infer_from_pose()" );
 
 	if ( !pose.total_residue() ) {
 		return sd;
@@ -415,8 +380,9 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, std::strin
 	utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
 	chain_endings.push_back( pose.total_residue() );
 	core::Size chain_start = 1;
+	core::Size cur_chain = 1;
 	SegmentCounts counts( pose );
-	for ( utility::vector1< core::Size >::const_iterator r=chain_endings.begin(); r!=chain_endings.end(); ++r ) {
+	for ( utility::vector1< core::Size >::const_iterator r=chain_endings.begin(); r!=chain_endings.end(); ++r, ++cur_chain ) {
 		core::Size const chain_end = *r;
 
 		// collect information about the residues from [ chain_start, chain_end ]
@@ -434,8 +400,7 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, std::strin
 			chain_abego[ chain_length-1 ] = 'X';
 		}
 
-		// create/add segments for chain
-		add_segments_for_chain( id_val, *sd, chain_ss, chain_abego, counts );
+		add_segments_for_chain( prefix, sd, chain_ss, chain_abego, counts );
 		chain_start = *r + 1;
 	}
 
@@ -458,25 +423,37 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, std::strin
 				TR << "Found non-polymeric connection between residues " << res << ":" << atom1 << " and " << other_res << ":" << atom2 << std::endl;
 				debug_assert( other_res );
 				debug_assert( !atom2.empty() );
-				sd->add_covalent_bond( res, atom1, other_res, atom2 );
+				sd.add_covalent_bond( res, atom1, other_res, atom2 );
 			}
 		}
 	}
 	return sd;
 }
 
+StructureData
+StructureDataFactory::create_from_cacheable_data( std::istream & raw_stream ) const
+{
+	std::istreambuf_iterator< char > eos;
+	std::string xml_string( std::istreambuf_iterator< char >( raw_stream ), eos );
+
+	TR.Debug << "Raw XML: " << xml_string << std::endl;
+	clean_from_storage( xml_string );
+	TR.Debug << "Clean XML: " << xml_string << std::endl;
+	std::stringstream clean_xml( xml_string );
+	return create_from_xml( clean_xml );
+}
+
 /// @brief creates a StructureData from an xml stringstream
-StructureDataOP
+StructureData
 StructureDataFactory::create_from_xml( std::istream & xmltag ) const
 {
-	StructureDataOP newperm = StructureDataOP( NULL );
 	utility::tag::TagCOP tag = utility::tag::Tag::create( xmltag );
-	newperm = StructureDataOP( new StructureData( "StructureDataFactory::create_from_xml()" ) );
-	newperm->parse_tag( tag ); // ID is set via XML
+	StructureData newperm( "StructureDataFactory::create_from_xml()" );
+	newperm.parse_tag( tag ); // ID is set via XML
 	return newperm;
 }
 
-StructureDataOP
+StructureData
 StructureDataFactory::create_from_remarks( core::io::Remarks const & rem ) const
 {
 	TR.Debug << "Parsing " << rem.size() << " remarks!" << std::endl;
@@ -491,8 +468,7 @@ StructureDataFactory::create_from_remarks( core::io::Remarks const & rem ) const
 	}
 
 	if ( lines.empty() ) {
-		TR.Debug << "No StructureData remark lines found." << std::endl;
-		return StructureDataOP();
+		throw EXCN_RemarksNotPresent( "No StructureData remark lines found" );
 	}
 
 	// piece together full xml tag
@@ -525,9 +501,11 @@ StructureDataFactory::retrieve_observer( core::pose::Pose const & pose ) const
 
 /// @brief attaches cacheable observer.  Overwrites whatever was there before
 void
-StructureDataFactory::attach_observer( core::pose::Pose & pose, StructureData const & sd ) const
+StructureDataFactory::attach_observer( core::pose::Pose & pose ) const
 {
-	StructureDataObserverOP new_sd_obs( new StructureDataObserver( sd ) );
+	StructureDataOP sd_ptr( retrieve_cached_data_ptr( pose ) );
+
+	StructureDataObserverOP new_sd_obs( new StructureDataObserver( sd_ptr ) );
 	pose.observer_cache().set( core::pose::datacache::CacheableObserverType::STRUCTUREDATA_OBSERVER, new_sd_obs );
 	TR.Debug << "Set StructureDataObserver" << std::endl;
 }
@@ -538,84 +516,152 @@ StructureDataFactory::detach_observer( core::pose::Pose & pose ) const
 	pose.observer_cache().clear( core::pose::datacache::CacheableObserverType::STRUCTUREDATA_OBSERVER );
 }
 
-/// @brief stores a string in the pose's datacache
+basic::datacache::WriteableCacheableMap const &
+get_writeable_cacheable_map( core::pose::Pose const & pose )
+{
+	using basic::datacache::WriteableCacheableMap;
+	using core::pose::datacache::CacheableDataType;
+
+	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
+	basic::datacache::CacheableData const & cachable = pose.data().get( CacheableDataType::WRITEABLE_DATA );
+	debug_assert( dynamic_cast< WriteableCacheableMap const * >(&cachable) == &cachable );
+	WriteableCacheableMap const & writeable = static_cast< WriteableCacheableMap const & >( cachable );
+	return writeable;
+}
+
+basic::datacache::WriteableCacheableMap &
+get_writeable_cacheable_map( core::pose::Pose & pose )
+{
+	using basic::datacache::WriteableCacheableMap;
+	using core::pose::datacache::CacheableDataType;
+
+	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
+	basic::datacache::CacheableData & cachable = pose.data().get( CacheableDataType::WRITEABLE_DATA );
+	debug_assert( dynamic_cast< WriteableCacheableMap * >(&cachable) == &cachable );
+	WriteableCacheableMap & writeable = static_cast< WriteableCacheableMap & >( cachable );
+	return writeable;
+}
+
+/// @brief checks whether a pose contains a structuredata in its datacache
 bool
-StructureDataFactory::has_cached_string( core::pose::Pose const & pose ) const
+StructureDataFactory::has_cached_data( core::pose::Pose const & pose ) const
 {
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
-		return false;
+	using basic::datacache::WriteableCacheableMap;
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) return false;
+
+	WriteableCacheableMap const & wmap = get_writeable_cacheable_map( pose );
+	return ( wmap.map().find( StructureData::class_name() ) != wmap.map().end() );
+}
+
+StructureDataOP
+StructureDataFactory::retrieve_cached_data_ptr( core::pose::Pose & pose ) const
+{
+	using basic::datacache::WriteableCacheableMap;
+	using basic::datacache::WriteableCacheableDataOP;
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !has_cached_data( pose ) ) {
+		StructureData sd = create_from_pose( pose );
+		save_into_pose( pose, sd );
 	}
-	basic::datacache::CacheableData const & cachable = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
-	basic::datacache::CacheableStringMap const & stringcache =
-		static_cast< basic::datacache::CacheableStringMap const & >( cachable );
-	std::map< std::string, std::string > const & smap = stringcache.map();
-	return ( smap.find( DATA_NAME ) != smap.end() );
-}
 
-/// @brief stores a string in the pose's datacache
-std::string
-StructureDataFactory::retrieve_cached_string( core::pose::Pose const & pose ) const
-{
-	return retrieve_cached_string( pose, DATA_NAME );
-}
-
-std::string
-StructureDataFactory::retrieve_cached_string( core::pose::Pose const & pose, std::string const & data_name ) const
-{
-	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
-	basic::datacache::CacheableData const & cachable = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
-	basic::datacache::CacheableStringMap const & stringcache =
-		static_cast< basic::datacache::CacheableStringMap const & >( cachable );
-	std::map< std::string, std::string > const & smap = stringcache.map();
-	std::map< std::string, std::string >::const_iterator dat = smap.find( data_name );
-	debug_assert( dat != smap.end() );
-	std::string st = dat->second;
-	clean_from_storage(st);
-	return st;
-}
-
-/// @brief stores a string in the pose's datacache
-void
-StructureDataFactory::set_cached_string( core::pose::Pose & pose, std::string const & ssorig ) const
-{
-	set_cached_string( pose, ssorig, DATA_NAME );
-}
-
-void
-StructureDataFactory::clear_cached_string( core::pose::Pose & pose ) const
-{
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) return;
-
-	basic::datacache::CacheableData & cached = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap * >(&cached) == &cached );
-	basic::datacache::CacheableStringMap & smap =
-		static_cast< basic::datacache::CacheableStringMap & >( cached );
-	smap.map().erase( DATA_NAME );
-}
-
-void
-StructureDataFactory::set_cached_string(
-	core::pose::Pose & pose,
-	std::string const & ssorig,
-	std::string const & data_name ) const
-{
-	// swap out newlines and tabs
-	std::string ss = ssorig;
-	clean_for_storage( ss );
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
-		pose.data().set( core::pose::datacache::CacheableDataType::STRING_MAP,
-			basic::datacache::CacheableDataOP( new basic::datacache::CacheableStringMap() ) );
+	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) {
+		std::stringstream msg;
+		msg << "StructureDataFactory::retrieve_cached_data_ptr(): No WriteableCacheableData was found in the pose!"
+			<< " Be sure the StructureData is attached to the pose before trying to access it, or"
+			<< " call get_from_pose() with a non-const pose instead." << std::endl;
+		utility_exit_with_message( msg.str() );
 	}
-	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
-	basic::datacache::CacheableData & cached = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap * >(&cached) == &cached );
-	basic::datacache::CacheableStringMap & smap =
-		static_cast< basic::datacache::CacheableStringMap & >( cached );
-	smap.map()[data_name] = ss;
+
+	WriteableCacheableMap const & wmap = get_writeable_cacheable_map( pose );
+	WriteableCacheableDataMap::const_iterator dat = wmap.find( StructureData::class_name() );
+	if ( dat == wmap.end() ) {
+		std::stringstream msg;
+		msg << "StructureDataFactory::retrieve_cached_data_ptr(): No StructureData object was found in the pose!"
+			<< " Be sure the StructureData is attached to the pose before trying to access it, or"
+			<< " call get_from_pose() with a non-const pose instead." << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	debug_assert( dat != wmap.end() );
+
+	// a set of writeablecacheabledata pointers is stored in the map
+	// we will enforce a set size of 1
+	WriteableCacheableDataOP wdata = *dat->second.begin();
+	debug_assert( utility::pointer::dynamic_pointer_cast< StructureData >( wdata ) == wdata );
+	return utility::pointer::static_pointer_cast< StructureData >( wdata );
 }
 
+StructureData const &
+StructureDataFactory::retrieve_cached_data( core::pose::Pose const & pose ) const
+{
+	using basic::datacache::WriteableCacheableMap;
+	using basic::datacache::WriteableCacheableData;
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) {
+		std::stringstream msg;
+		msg << "StructureDataFactory::retrieve_cached_data(): No WriteableCacheableData was found in the pose!"
+			<< " Be sure the StructureData is attached to the pose before trying to access it, or"
+			<< " call get_from_pose() with a non-const pose instead." << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	WriteableCacheableMap const & wmap = get_writeable_cacheable_map( pose );
+	WriteableCacheableDataMap::const_iterator dat = wmap.find( StructureData::class_name() );
+	if ( dat == wmap.end() ) {
+		std::stringstream msg;
+		msg << "StructureDataFactory::retrieve_cached_data(): No StructureData object was found in the pose!"
+			<< " Be sure the StructureData is attached to the pose before trying to access it, or"
+			<< " call get_from_pose() with a non-const pose instead." << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	debug_assert( dat != wmap.end() );
+
+	// a set of writeablecacheabledata pointers is stored in the map
+	// we will enforce a set size of 1
+	WriteableCacheableData const & wdata = **dat->second.begin();
+	debug_assert( dynamic_cast< StructureData const * >( &wdata ) == &wdata );
+	return static_cast< StructureData const & >( wdata );
+}
+
+void
+StructureDataFactory::clear_cached_data( core::pose::Pose & pose ) const
+{
+	using basic::datacache::WriteableCacheableMap;
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) return;
+
+	basic::datacache::CacheableData & cached = pose.data().get( CacheableDataType::WRITEABLE_DATA );
+	debug_assert( dynamic_cast< WriteableCacheableMap * >( &cached ) == &cached );
+	WriteableCacheableMap & wmap = static_cast< WriteableCacheableMap & >( cached );
+	wmap.map().erase( StructureData::class_name() );
+}
+
+void
+StructureDataFactory::set_cached_data( core::pose::Pose & pose, StructureData const & sd ) const
+{
+	using basic::datacache::WriteableCacheableDataOP;
+	using basic::datacache::WriteableCacheableMap;
+	using basic::datacache::WriteableCacheableMapOP;
+	using core::pose::datacache::CacheableDataType;
+
+	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) {
+		pose.data().set( CacheableDataType::WRITEABLE_DATA, WriteableCacheableMapOP( new WriteableCacheableMap ) );
+	}
+
+	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
+	basic::datacache::CacheableData & cached = pose.data().get( CacheableDataType::WRITEABLE_DATA );
+	debug_assert( dynamic_cast< WriteableCacheableMap * >( &cached ) == &cached );
+	WriteableCacheableMap & wmap = static_cast< WriteableCacheableMap & >( cached );
+
+	// Create data set if necessary
+	wmap[ StructureData::class_name() ].clear();
+	wmap.insert( WriteableCacheableDataOP( new StructureData( sd ) ) );
+}
 
 /// @brief adds a remark to remarks object
 void

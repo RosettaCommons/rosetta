@@ -20,7 +20,7 @@ using basic::datacache::WriteableCacheableDataRegistrator;
 
 static WriteableCacheableDataRegistrator< abinitio::abscript::JumpSampleDataCreator > reg_JumpSampleDataRegistrator;
 
-//static WriteableCacheableDataRegistrator< denovo_design::components::StructureDataCreator> reg_StructureDataRegistrator;
+static WriteableCacheableDataRegistrator< denovo_design::components::StructureDataCreator> reg_StructureDataRegistrator;
 
 static WriteableCacheableDataRegistrator< environment::AutoCutDataCreator > reg_AutoCutDataRegistrator;
 

@@ -28,14 +28,18 @@
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/connection/ConnectionArchitect.hh>
 
 // Core Headers
 #include <core/conformation/Conformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -62,22 +66,27 @@ void
 check_residue_dihedrals( core::pose::Pose const & pose, core::pose::Pose const & orig, core::Real const tol );
 
 class ExtendedPoseBuilderTests : public CxxTest::TestSuite {
+	typedef protocols::denovo_design::connection::ConnectionArchitect ConnectionArchitect;
+	typedef protocols::denovo_design::components::StructureDataFactory StructureDataFactory;
+
 public:
 	void setUp()
 	{
 		protocols_init();
+		basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value( true );
 	}
 
 	void tearDown(){
 
 	}
 
-	void test_add_chain_from_segment() {
+	void test_add_chain_from_segment()
+	{
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/twohelix_structuredata.pdb" );
 		input_pose = core::pose::Pose( input_pose, 1, 35 );
 
-		StructureData sd = *StructureDataFactory::get_instance()->create_from_pose( input_pose );
+		StructureData sd = StructureDataFactory::get_instance()->create_from_pose( input_pose );
 		sd.set_template_pose( "H01", input_pose, 2, 34 );
 
 		core::pose::Pose pose;
@@ -90,11 +99,11 @@ public:
 
 	void test_build_pose_simple() {
 		StructureData sd( "test_build_pose" );
-		sd.add_segment( "h1", Segment( "LHHHHHHHHHH", "XAAAAAAAAAA", false, true ) );
-		Segment l1_seg( "LLLL", "BAGB", true, true );
+		sd.add_segment( Segment( "h1", "LHHHHHHHHHH", "XAAAAAAAAAA", false, true ) );
+		Segment l1_seg( "l1", "LLLL", "BAGB", true, true );
 		l1_seg.set_movable_group( 2 );
-		sd.add_segment( "l1", l1_seg );
-		sd.add_segment( "h2", Segment( "HHHHHHHHHL", "AAAAAAAAAO", true, false ) );
+		sd.add_segment( l1_seg );
+		sd.add_segment( Segment( "h2", "HHHHHHHHHL", "AAAAAAAAAO", true, false ) );
 		sd.connect_segments( "h1", "l1" );
 		sd.connect_segments( "l1", "h2" );
 
@@ -102,7 +111,7 @@ public:
 		core::pose::PoseOP pose = builder.apply( sd );
 		TS_ASSERT( pose );
 		sd.check_pose_consistency( *pose );
-		TS_ASSERT( StructureDataFactory::get_instance()->observer_attached( *pose ) );
+		TS_ASSERT( StructureDataFactory::get_instance()->has_cached_data( *pose ) );
 
 		// one chain
 		TS_ASSERT_EQUALS( pose->conformation().num_chains(), 1 );
@@ -118,11 +127,11 @@ public:
 
 		// let's extend c-terminally
 		StructureData sd( "test_build_pose" );
-		sd.add_segment( "h1", Segment( "LHHHHHHHHHHHHHHH", "XAAAAAAAAAAAAAAA", false, true ) );
-		Segment l1_seg( "LLLL", "BAGB", true, true );
+		sd.add_segment( Segment( "h1", "LHHHHHHHHHHHHHHH", "XAAAAAAAAAAAAAAA", false, true ) );
+		Segment l1_seg( "l1", "LLLL", "BAGB", true, true );
 		l1_seg.set_movable_group( 2 );
-		sd.add_segment( "l1", l1_seg );
-		sd.add_segment( "h2", Segment( "HHHHHHHHHL", "AAAAAAAAAO", true, false ) );
+		sd.add_segment( l1_seg );
+		sd.add_segment( Segment( "h2", "HHHHHHHHHL", "AAAAAAAAAO", true, false ) );
 		sd.connect_segments( "h1", "l1" );
 		sd.connect_segments( "l1", "h2" );
 		sd.set_template_pose( "h1", helix15, sd.segment( "h1" ).start(), sd.segment( "h1" ).stop() );
@@ -133,7 +142,7 @@ public:
 
 		core::pose::Pose const & pose = *poseptr;
 		sd.check_pose_consistency( pose );
-		TS_ASSERT( StructureDataFactory::get_instance()->observer_attached( pose ) );
+		TS_ASSERT( StructureDataFactory::get_instance()->has_cached_data( pose ) );
 
 		// one chain
 		TS_ASSERT_EQUALS( pose.conformation().num_chains(), 1 );
@@ -156,11 +165,11 @@ public:
 
 		// let's extend c-terminally
 		StructureData sd( "test_build_pose" );
-		sd.add_segment( "h2", Segment( "LHHHHHHHHH", "XAAAAAAAAA", false, true ) );
-		Segment l1_seg( "LLLL", "BAGB", true, true );
+		sd.add_segment( Segment( "h2", "LHHHHHHHHH", "XAAAAAAAAA", false, true ) );
+		Segment l1_seg( "l1", "LLLL", "BAGB", true, true );
 		l1_seg.set_movable_group( 2 );
-		sd.add_segment( "l1", l1_seg );
-		sd.add_segment( "h1", Segment( "HHHHHHHHHHHHHHHL", "AAAAAAAAAAAAAAAX", true, false ) );
+		sd.add_segment( l1_seg );
+		sd.add_segment( Segment( "h1", "HHHHHHHHHHHHHHHL", "AAAAAAAAAAAAAAAX", true, false ) );
 		sd.connect_segments( "h2", "l1" );
 		sd.connect_segments( "l1", "h1" );
 		sd.set_template_pose( "h1", helix15, 2, 16 );
@@ -171,7 +180,7 @@ public:
 
 		core::pose::Pose const & pose = *poseptr;
 		sd.check_pose_consistency( pose );
-		TS_ASSERT( StructureDataFactory::get_instance()->observer_attached( pose ) );
+		TS_ASSERT( StructureDataFactory::get_instance()->has_cached_data( pose ) );
 
 		// one chain
 		TS_ASSERT_EQUALS( pose.conformation().num_chains(), 1 );
@@ -197,11 +206,11 @@ public:
 
 		// let's extend c-terminally
 		StructureData sd( "test_build_pose" );
-		sd.add_segment( "h1", Segment( "HHHHHHHHHHHHHHHL", "AAAAAAAAAAAAAAAX", false, true ) );
-		Segment l1_seg( "LLLL", "BAGB", true, true );
+		sd.add_segment( Segment( "h1", "HHHHHHHHHHHHHHHL", "AAAAAAAAAAAAAAAX", false, true ) );
+		Segment l1_seg( "l1", "LLLL", "BAGB", true, true );
 		l1_seg.set_movable_group( 2 );
-		sd.add_segment( "l1", l1_seg );
-		sd.add_segment( "h2", Segment( "HHHHHHHHHHHHHHL",  "AAAAAAAAAAAAAAX", true, false ) );
+		sd.add_segment( l1_seg );
+		sd.add_segment( Segment( "h2", "HHHHHHHHHHHHHHL",  "AAAAAAAAAAAAAAX", true, false ) );
 		sd.connect_segments( "h1", "l1" );
 		sd.connect_segments( "l1", "h2" );
 		sd.set_template_pose( "h1", helix15, 2, 16 );
@@ -213,7 +222,7 @@ public:
 
 		core::pose::Pose const & pose = *poseptr;
 		sd.check_pose_consistency( pose );
-		TS_ASSERT( StructureDataFactory::get_instance()->observer_attached( pose ) );
+		TS_ASSERT( StructureDataFactory::get_instance()->has_cached_data( pose ) );
 
 		// this one is two chains
 		TS_ASSERT_EQUALS( pose.conformation().num_chains(), 1 );
@@ -247,11 +256,11 @@ public:
 
 		// let's extend c-terminally
 		StructureData sd( "test_build_pose" );
-		sd.add_segment( "h1", Segment( "HHHHHHHHHHHHHHHL", "AAAAAAAAAAAAAAAX", false, true ) );
-		Segment l1_seg( "LLLL", "BAGB", true, true );
+		sd.add_segment( Segment( "h1", "HHHHHHHHHHHHHHHL", "AAAAAAAAAAAAAAAX", false, true ) );
+		Segment l1_seg( "l1", "LLLL", "BAGB", true, true );
 		l1_seg.set_movable_group( 2 );
-		sd.add_segment( "l1", l1_seg );
-		sd.add_segment( "h2", Segment( "HHHHHHHHHHHHHHL",  "AAAAAAAAAAAAAAX", true, false ) );
+		sd.add_segment( l1_seg );
+		sd.add_segment( Segment( "h2", "HHHHHHHHHHHHHHL",  "AAAAAAAAAAAAAAX", true, false ) );
 		sd.connect_segments( "h1", "l1" );
 		sd.connect_segments( "l1", "h2" );
 		sd.set_template_pose( "h1", helix15, 2, 16 );
@@ -264,7 +273,7 @@ public:
 
 		core::pose::Pose const & pose = *poseptr;
 		sd.check_pose_consistency( pose );
-		TS_ASSERT( StructureDataFactory::get_instance()->observer_attached( pose ) );
+		TS_ASSERT( StructureDataFactory::get_instance()->has_cached_data( pose ) );
 
 		// this one is two chains
 		TS_ASSERT_EQUALS( pose.conformation().num_chains(), 1 );
@@ -300,7 +309,7 @@ public:
 		TS_ASSERT( sd );
 		core::pose::PoseOP newpose = builder.apply( *sd );
 		TS_ASSERT( newpose );
-		TS_ASSERT( StructureDataFactory::get_instance()->observer_attached( *newpose ) );
+		TS_ASSERT( StructureDataFactory::get_instance()->has_cached_data( *newpose ) );
 
 		check_residue_dihedrals( *newpose, input_pose, 1e-4 );
 		// poses should be equal
@@ -336,7 +345,6 @@ public:
 
 	void test_build_complicated() {
 		using protocols::denovo_design::SegmentNameList;
-
 		StructureDataFactory const & factory = *StructureDataFactory::get_instance();
 
 		core::pose::Pose input_pose;
@@ -352,21 +360,20 @@ public:
 		xml << "<ResidueRange name=E4 start=33 safe=0 nterm=0 cterm=0 group=1 cutpoint=0 ss=LLEEEEL abego=EBBBBBX />";
 		xml << "<ResidueRange name=cat2 start=40 safe=0 nterm=0 cterm=0 group=2 cutpoint=0 ss=LLLLLLLLL abego=EBAAGABBX />";
 		xml << "</StructureData>";
-		StructureDataOP sd = factory.create_from_xml( xml );
-		TS_ASSERT( sd );
-		sd->check_pose_consistency( input_pose );
+		StructureData sd = factory.create_from_xml( xml );
+		sd.check_pose_consistency( input_pose );
 
-		for ( SegmentNameList::const_iterator s=sd->segments_begin(); s!=sd->segments_end(); ++s ) {
-			core::Size const start_resid = sd->segment( *s ).start();
-			core::Size const stop_resid = sd->segment( *s ).stop();
-			sd->set_template_pose( *s, input_pose, start_resid, stop_resid );
-			for ( core::Size r=1; r<=sd->segment( *s ).template_pose()->total_residue(); ++r ) {
-				TR.Debug << *s << " " << r << " " << sd->segment( *s ).template_pose()->residue( r ).name() << " " << input_pose.residue( start_resid + r - 1 ).name() << std::endl;
+		for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+			core::Size const start_resid = sd.segment( *s ).start();
+			core::Size const stop_resid = sd.segment( *s ).stop();
+			sd.set_template_pose( *s, input_pose, start_resid, stop_resid );
+			for ( core::Size r=1; r<=sd.segment( *s ).template_pose()->total_residue(); ++r ) {
+				TR.Debug << *s << " " << r << " " << sd.segment( *s ).template_pose()->residue( r ).name() << " " << input_pose.residue( start_resid + r - 1 ).name() << std::endl;
 			}
 		}
 
 		ExtendedPoseBuilder builder;
-		core::pose::PoseOP newpose = builder.apply( *sd );
+		core::pose::PoseOP newpose = builder.apply( sd );
 		TS_ASSERT( newpose );
 
 		TR.Debug << "Resid Orig New" << std::endl;
@@ -384,6 +391,7 @@ public:
 	void test_bridgechains_add_template_segment_functions() {
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
+		StructureDataFactory::get_instance()->clear_from_pose( input_pose );
 
 		PoseArchitect architect( "" );
 		StructureData sd = *architect.apply( input_pose );
@@ -416,6 +424,7 @@ public:
 	void test_bridgechains_case() {
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
+		StructureDataFactory::get_instance()->clear_from_pose( input_pose );
 
 		PoseArchitect architect( "pose" );
 		StructureData sd = *architect.apply( input_pose );
@@ -424,15 +433,15 @@ public:
 		StructureData const orig = sd;
 		TR << "Orig=" << sd << std::endl;
 
-		Segment bridge_seg( "LLLLLL", "XXXXXX", false, false );
-		bridge_seg.set_movable_group( 2 );
-		bridge_seg.set_cutpoint( 2 );
-
 		std::string const conn_id = "bridge";
 		std::string const s1 = "pose.L03";
 		std::string const s2 = "pose.L06";
 
-		sd.add_segment( conn_id, bridge_seg );
+		Segment bridge_seg( conn_id, "LLLLLL", "XXXXXX", false, false );
+		bridge_seg.set_movable_group( 2 );
+		bridge_seg.set_cutpoint( 2 );
+
+		sd.add_segment( bridge_seg );
 		sd.move_segment( s1, conn_id );
 		sd.move_segment( conn_id, s2 );
 		sd.delete_trailing_residues( s1 );
@@ -473,7 +482,7 @@ public:
 			<< "<ResidueRange name=\"L02\" start=\"5\" stop=\"5\" safe=\"0\" nterm=\"0\" cterm=\"0\" group=\"1\" cutpoint=\"0\" ss=\"LLL\" abego=\"GAX\" />" << std::endl
 			<< "<ResidueRange name=\"L03\" start=\"8\" stop=\"8\" safe=\"0\" nterm=\"0\" cterm=\"0\" group=\"1\" cutpoint=\"0\" ss=\"LLL\" abego=\"GAX\" />" << std::endl
 			<< "</StructureData>" << std::endl;
-		StructureData const orig = *StructureDataFactory::get_instance()->create_from_xml( orig_xml );
+		StructureData const orig = StructureDataFactory::get_instance()->create_from_xml( orig_xml );
 		orig.check_pose_consistency( input_pose );
 
 		std::stringstream xml;
@@ -492,8 +501,8 @@ public:
 		xml << "</StructureData>";
 
 		// Create SD and add template segments
-		StructureData sd = *StructureDataFactory::get_instance()->create_from_xml( xml );
-		StructureData pose_sd = *StructureDataFactory::get_instance()->create_from_pose( input_pose );
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
+		StructureData pose_sd = StructureDataFactory::get_instance()->create_from_pose( input_pose );
 		for ( SegmentNameList::const_iterator s=pose_sd.segments_begin(); s!=pose_sd.segments_end(); ++s ) {
 			sd.set_template_pose( *s, input_pose, pose_sd.segment( *s ).start(), pose_sd.segment( *s ).stop() );
 		}
@@ -504,7 +513,47 @@ public:
 		core::pose::Pose const & pose = *pose_ptr;
 		check_unwanted_movement( orig, input_pose, sd, pose );
 	}
+
+	void test_propeller_case()
+	{
+		StructureDataFactory const & factory = *StructureDataFactory::get_instance();
+
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/components/test_propeller.pdb.gz" );
+		StructureData const orig = factory.get_from_pose( input_pose );
+		TR << "Orig SD = " << orig << std::endl;
+
+		PoseArchitect pose_arch( "pose" );
+		StructureData sd = *pose_arch.apply( input_pose );
+
+		std::string const l1_id = "subunit_loop1";
+		ConnectionArchitect conn1( l1_id );
+		conn1.set_segment1_ids( "S1.H1" );
+		conn1.set_segment2_ids( "S2.start_res.L01" );
+		conn1.set_motifs( "4LX", "2" );
+		conn1.apply( sd );
+
+		ExtendedPoseBuilder builder;
+		core::pose::PoseOP pose_ptr = builder.apply( sd );
+		TS_ASSERT( pose_ptr );
+		core::pose::Pose const & pose = *pose_ptr;
+
+		check_unwanted_movement( orig, input_pose, sd, pose );
+
+		std::string const l2_id = "subunit_loop2";
+		ConnectionArchitect conn2( l2_id );
+		conn2.set_segment1_ids( "S2.H1" );
+		conn2.set_segment2_ids( "S3.start_res.L01" );
+		conn2.set_motifs( "4LX", "2" );
+		conn2.apply( sd );
+
+		pose_ptr = builder.apply( sd );
+		TS_ASSERT( pose_ptr );
+		core::pose::Pose const & pose2 = *pose_ptr;
+		check_unwanted_movement( orig, input_pose, sd, pose2 );
+	}
 };
+
 
 void
 check_residue_dihedrals( core::pose::Pose const & pose, core::pose::Pose const & orig, core::Real const tol )

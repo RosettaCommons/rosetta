@@ -41,6 +41,9 @@ namespace protocols {
 namespace denovo_design {
 namespace connection {
 
+std::string const
+ConnectionArchitect::DATA_MAP_NAME = "ConnectionArchitects";
+
 ConnectionArchitect::ConnectionArchitect( std::string const & id_value ):
 	protocols::denovo_design::architects::StructureArchitect( id_value ),
 	bridge_( false ),
@@ -83,6 +86,12 @@ ConnectionArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::Data
 	std::string const motif_str = tag->getOption< std::string >( "motif", "" );
 	std::string const cutpoint_str = tag->getOption< std::string >( "cutpoint", "" );
 	if ( !motif_str.empty() ) set_motifs( motif_str, cutpoint_str );
+
+	bool const use_ideal_abego = tag->getOption< bool >( "ideal_abego", false );
+	if ( use_ideal_abego ) {
+		bool const extend_ss = tag->getOption< bool >( "extend_ss", true );
+		set_ideal_abego( use_ideal_abego, extend_ss );
+	}
 }
 
 void
@@ -95,8 +104,7 @@ ConnectionArchitect::apply( components::StructureData & sd ) const
 void
 ConnectionArchitect::apply( components::StructureData & sd, core::Real & random ) const
 {
-	AreConnectablePredicate connectable( false );
-	MotifOPs const connection_candidates = compute_connection_candidates( sd, connectable );
+	MotifOPs const connection_candidates = compute_connection_candidates( sd );
 	if ( connection_candidates.empty() ) {
 		std::stringstream ss;
 		ss << id() << ": No valid free connection points could be found. User-specified segment1 ids: " << segment1_ids_
@@ -115,6 +123,13 @@ ConnectionArchitect::apply( components::StructureData & sd, core::Real & random 
 		ss << sd << std::endl;
 		throw EXCN_ConnectionSetupFailed( ss.str() );
 	}
+}
+
+MotifOPs
+ConnectionArchitect::compute_connection_candidates( components::StructureData const & sd ) const
+{
+	AreConnectablePredicate connectable( false );
+	return compute_connection_candidates( sd, connectable );
 }
 
 /// @brief returns list of allowed segment 1 ids
@@ -187,6 +202,19 @@ ConnectionArchitect::set_user_chain2( core::Size const chain )
 	chain2_ = chain;
 }
 
+/// @brief sets whether to use "ideal abego" loops according to Koga papers
+void
+ConnectionArchitect::set_ideal_abego( bool const ideal_abego, bool const extend_ss )
+{
+	if ( ideal_abego ) {
+		components::IdealAbegoGeneratorOP gen( new components::IdealAbegoGenerator( id() ) );
+		gen->set_extend_ss( extend_ss );
+		ideal_abego_ = gen;
+	} else {
+		ideal_abego_ = components::IdealAbegoGeneratorOP();
+	}
+}
+
 /// @brief sets whether to always try to bridge.  If true, a random cutpoint will be selected in the connection
 ///        if the chains to be connected have different movable groups
 void
@@ -200,9 +228,9 @@ void
 ConnectionArchitect::set_motifs( std::string const & motif_str, std::string const & cutpoints_str )
 {
 	MotifCOPs const str_motifs = parse_motif_string( motif_str );
-	Lengths lengths = parse_length_string( cutpoints_str );
+	Lengths cutpoints = parse_length_string( cutpoints_str );
 
-	if ( !bridge_ && lengths.empty() ) {
+	if ( !bridge_ && cutpoints.empty() ) {
 		motifs_ = str_motifs;
 		TR.Debug << "set_motifs(): Built " << str_motifs.size() << " motifs from "
 			<< motif_str << std::endl;
@@ -213,24 +241,26 @@ ConnectionArchitect::set_motifs( std::string const & motif_str, std::string cons
 	for ( MotifCOPs::const_iterator m_it=str_motifs.begin(); m_it!=str_motifs.end(); ++m_it ) {
 		debug_assert( *m_it );
 		MotifCOP m = *m_it;
-		if ( bridge_ && lengths.empty() ) {
+		if ( bridge_ && cutpoints.empty() ) {
 			for ( core::Size cut=1; cut<=m->elem_length(); ++cut ) {
 				MotifOP newmotif( new Motif( *m ) );
 				newmotif->set_cutpoint( cut );
+				TR.Debug << "Creating motif " << *newmotif << std::endl;
 				motifs.push_back( newmotif );
 			}
 		} else {
-			for ( Lengths::const_iterator l=lengths.begin(); l!=lengths.end(); ++l ) {
+			for ( Lengths::const_iterator l=cutpoints.begin(); l!=cutpoints.end(); ++l ) {
 				if ( *l > m->elem_length() ) continue;
 				MotifOP newmotif( new Motif( *m ) );
 				newmotif->set_cutpoint( *l );
+				TR.Debug << "Creating motif " << *newmotif << std::endl;
 				motifs.push_back( newmotif );
 			}
 		}
 	}
 
 	TR.Debug << "set_motifs(): Built " << motifs.size() << " motifs from "
-		<< motif_str << " and " << cutpoints_str << std::endl;
+		<< motif_str << " and " << cutpoints_str << "with bridge=" << bridge_ << std::endl;
 
 	motifs_ = motifs;
 }
@@ -248,7 +278,7 @@ ConnectionArchitect::parse_motif_string( std::string const & motif_str ) const
 	MotifCOPs motifs;
 	utility::vector1< std::string > const motif_strs = utility::string_split( motif_str, ',' );
 	for ( utility::vector1< std::string >::const_iterator mstr=motif_strs.begin(); mstr!=motif_strs.end(); ++mstr ) {
-		MotifOP newmotif( new Motif() );
+		MotifOP newmotif( new Motif( id() ) );
 		newmotif->parse_motif( *mstr );
 		motifs.push_back( newmotif );
 	}
@@ -266,6 +296,7 @@ ConnectionArchitect::compute_connection_candidates(
 
 	// set of valid lengths for use when trying to compute idealized abegos
 	LengthSet const length_set = lengths();
+	LengthSet const cutpoint_set = cutpoints();
 
 	MotifOPs candidates;
 	for ( SegmentPairs::const_iterator pair=seg_pairs.begin(); pair!=seg_pairs.end(); ++pair ) {
@@ -276,7 +307,7 @@ ConnectionArchitect::compute_connection_candidates(
 		//  continue;
 		//}
 
-		MotifOPs const motifs = motifs_for_pair( *pair, sd, length_set );
+		MotifOPs const motifs = motifs_for_pair( *pair, sd, length_set, cutpoint_set );
 
 		// if nothing is specified, try using an empty motif
 		debug_assert( !motifs.empty() );
@@ -447,17 +478,30 @@ ConnectionArchitect::lengths() const
 	return length_set;
 }
 
+/// @brief returns a set of valid loop index cutpoints
+ConnectionArchitect::LengthSet
+ConnectionArchitect::cutpoints() const
+{
+	LengthSet cutpoint_set;
+	for ( MotifCOPs::const_iterator m=motifs_.begin(); m!=motifs_.end(); ++m ) {
+		debug_assert( *m );
+		if ( (*m)->cutpoint() ) cutpoint_set.insert( (*m)->cutpoint() );
+	}
+	return cutpoint_set;
+}
+
 MotifOPs
 ConnectionArchitect::motifs_for_pair(
 	SegmentPair const & pair,
 	components::StructureData const & sd,
-	LengthSet const & length_set ) const
+	LengthSet const & length_set,
+	LengthSet const & cutpoint_set ) const
 {
 	MotifOPs all_motifs;
 	if ( ideal_abego_ ) {
 		core::Size const res1 = sd.segment( pair.first ).stop();
 		core::Size const res2 = sd.segment( pair.second ).start();
-		all_motifs = ideal_abego_->generate( sd.abego( res1 ), sd.abego( res2 ), length_set );
+		all_motifs = ideal_abego_->generate( sd.abego( res1 ), sd.abego( res2 ), length_set, cutpoint_set );
 	} else {
 		for ( MotifCOPs::const_iterator m=motifs_.begin(); m!=motifs_.end(); ++m ) {
 			all_motifs.push_back( (*m)->clone() );
@@ -466,7 +510,7 @@ ConnectionArchitect::motifs_for_pair(
 
 	// if list is empty, generate a 0-length motif
 	if ( all_motifs.empty() ) {
-		all_motifs.push_back( MotifOP( new Motif() ) );
+		all_motifs.push_back( MotifOP( new Motif( id() ) ) );
 	}
 
 	// attach lower and upper terminal segments
@@ -491,8 +535,9 @@ ConnectionArchitect::connect( components::StructureData & sd, Motif & motif ) co
 	sd.set_data_str( id(), "segment2", upper );
 
 	// special case when motif length == 0
-	if ( motif.length() == 0 ) {
+	if ( motif.elem_length() == 0 ) {
 		sd.move_segment( lower, upper );
+		TR << "Deleting trailing/leading residues for " << lower << "," << upper << "!" << std::endl;
 		sd.delete_trailing_residues( lower );
 		sd.delete_leading_residues( upper );
 		sd.connect_segments( lower, upper );
@@ -501,7 +546,7 @@ ConnectionArchitect::connect( components::StructureData & sd, Motif & motif ) co
 
 	motif.set_lower_segment( "" );
 	motif.set_upper_segment( "" );
-	sd.add_segment( id(), motif );
+	sd.add_segment( motif );
 
 	sd.move_segment( lower, id() );
 	sd.delete_trailing_residues( lower );
@@ -574,6 +619,7 @@ AreConnectablePredicate::operator()(
 	components::StructureData const & sd,
 	Motif const & motif ) const
 {
+	TR.Debug << "Checking " << motif << std::endl;
 	std::string const & segment1 = motif.lower_segment();
 	std::string const & segment2 = motif.upper_segment();
 	debug_assert( !segment1.empty() );
@@ -603,7 +649,7 @@ AreConnectablePredicate::operator()(
 
 	// if there is a cutpoint, the two segments should be in the same group
 	// if not, the two segments should be in different movable groups
-	if ( ! check_movable_groups( sd, motif ) ) {
+	if ( !check_movable_groups( sd, motif ) ) {
 		return false;
 	}
 
@@ -637,9 +683,9 @@ AreConnectablePredicate::check_movable_groups(
 	if ( ! motif.cutpoint() ) {
 		if ( !intersection.empty() ) {
 			TR.Debug << motif.lower_segment() << " and " << motif.upper_segment()
-				<< " are not connectable because there is not cutpoint, and both are connected to "
+				<< " are not connectable because there is no cutpoint, and both are connected to "
 				<< "segments in the same movable group. Movable groups connected to both segments: "
-				<< intersection << std::endl;
+				<< intersection << " Motif=" << motif << std::endl;
 			return false;
 		}
 		return true;

@@ -170,22 +170,21 @@ public:
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/connection/twohelix_structuredata.pdb" );
 		core::pose::Pose const input_pose = pose;
 
-		std::string const id_tag = "BridgeChainsMoverUnit";
-		StructureData const orig = factory.get_from_pose( pose, id_tag );
+		StructureData const orig = factory.get_from_pose( pose );
 
-		TS_ASSERT( factory.observer_attached( pose ) );
+		TS_ASSERT( factory.has_cached_data( pose ) );
 		TS_ASSERT_THROWS_NOTHING( orig.check_pose_consistency( pose ) );
 
 		std::string const conn_id = "helixconn";
-		std::string const s1_id = "BridgeChainsMoverUnit.H02";
-		std::string const s2_id = "BridgeChainsMoverUnit.H01";
+		std::string const s1_id = "H02";
+		std::string const s2_id = "H01";
 		BridgeChainsMover conn;
 		conn.set_id( "helixconn" );
 		conn.set_dry_run( true );
 		conn.set_scorefxn( *scorefxn );
 		conn.set_segment1_ids( s1_id );
 		conn.set_segment2_ids( s2_id );
-		conn.set_motifs( "2LX-1LA-1LG-1LB", "1:4" );
+		conn.set_motifs( "2LX-1LA-1LG-1LB", "2" );
 		conn.set_overlap( 0 );
 		conn.apply( pose );
 
@@ -252,7 +251,8 @@ public:
 		conn.set_scorefxn( *scorefxn );
 		conn.set_motifs( "1LE", "1" );
 		core::Real random = 0.2501;
-		TS_ASSERT_THROWS( conn.architect().apply( *perm->clone(), random ), EXCN_ConnectionSetupFailed );
+		StructureData sdcopy = *perm;
+		TS_ASSERT_THROWS( conn.architect().apply( sdcopy, random ), EXCN_ConnectionSetupFailed );
 
 		// now set it up with a longer loop that will build
 		conn.set_motifs( "4LX", "3" );

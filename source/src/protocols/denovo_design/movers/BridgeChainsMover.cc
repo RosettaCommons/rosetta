@@ -122,7 +122,7 @@ BridgeChainsMover::apply( core::pose::Pose & pose )
 
 	BuildDeNovoBackboneMover assemble;
 	assemble.set_architect( arch );
-	assemble.set_connection_overlap( overlap() );
+	assemble.set_build_overlap( overlap() );
 	if ( dry_run() ) {
 		assemble.set_folder( components::RandomTorsionPoseFolder() );
 	} else {

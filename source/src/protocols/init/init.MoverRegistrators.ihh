@@ -97,6 +97,7 @@ static MoverRegistrator< denovo_design::movers::BuildDeNovoBackboneMoverCreator 
 static MoverRegistrator< denovo_design::movers::ExtendChainMoverCreator > reg_ExtendChainMoverCreator;
 static MoverRegistrator< denovo_design::movers::FastDesignCreator > reg_FastDesignCreator;
 static MoverRegistrator< denovo_design::movers::SetResidueAliasMoverCreator > reg_SetResidueAliasMoverCreator;
+static MoverRegistrator< denovo_design::movers::MakeAsymmetricStructureDataMoverCreator > reg_MakeAsymmetricStructureDataMoverCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 

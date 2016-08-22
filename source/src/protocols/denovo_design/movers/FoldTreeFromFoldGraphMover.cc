@@ -29,6 +29,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -112,16 +113,28 @@ FoldTreeFromFoldGraphMover::apply( core::pose::Pose & pose )
 		utility_exit_with_message( "FoldTreeFromFoldGraphMover:: roots must contain at least one segment!\n" );
 	}
 
-	components::StructureDataOP sd =
-		components::StructureDataFactory::get_instance()->create_from_pose( pose );
+	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
+	if ( !factory.has_cached_data( pose ) ) {
+		std::stringstream msg;
+		msg << class_name() << "::apply(): No StructureData object was found in the pose datacache! "
+			<< "You must attach one to use this mover." << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	components::StructureData const & sd = factory.get_from_const_pose( pose );
 
-	components::FoldGraph fg( *sd );
+	components::FoldGraph fg( sd );
 	core::kinematics::FoldTree const ft = fg.fold_tree( roots_ );
 
 	debug_assert( ft.check_fold_tree() );
-	pose.fold_tree( ft );
 
-	prepare_termini_for_remodel( pose );
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::kinematics::FoldTree const symm_ft = symmetric_fold_tree( pose, ft );
+		pose.fold_tree( symm_ft );
+	} else {
+		pose.fold_tree( ft );
+	}
+
+	prepare_termini_for_remodel( pose, sd );
 
 	TR << "Set fold tree to " << pose.fold_tree() << std::endl;
 }
@@ -169,15 +182,10 @@ new_jump_and_cutpoint( core::pose::Pose & pose, core::Size const saferes1, core:
 
 /// @brief sets terminal variants for broken-chain folding using remodel
 void
-FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose )
+FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose, components::StructureData const & sd ) const
 {
-	last_jump_info_ = JumpInfo();
-
-	components::StructureData const & sd =
-		components::StructureDataFactory::get_instance()->get_from_pose( pose );
-
 	// this will be a vector of the centers of the area between loops, used for constructing fold tree
-	for ( protocols::loops::Loops::iterator l=loops_.v_begin(); l!=loops_.v_end(); ++l ) {
+	for ( protocols::loops::Loops::const_iterator l=loops_.begin(); l!=loops_.end(); ++l ) {
 		TR << "Loop: " << *l << std::endl;
 		debug_assert( l->is_terminal(pose) || ( l->cut() >= 1 ) );
 		debug_assert( l->is_terminal(pose) || ( l->cut() <= pose.total_residue() ) );
@@ -188,16 +196,6 @@ FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose
 		if ( l->is_terminal( pose ) ) {
 			continue;
 		}
-
-		/*
-		if ( l->cut() == 0 ) {
-		// stupid hack because some remodel aspects don't work properly without a cutpoint set
-		while ( ( l->cut() == 0 ) || ( l->cut() == pose.total_residue() ) ) {
-		choose_cutpoint( *l, pose );
-		}
-		continue;
-		}
-		*/
 
 		// find the closest two safe residues to the loop and add a jump between them.
 		core::Size saferes1 = 0;
@@ -223,9 +221,7 @@ FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose
 				saferes2_dist = saferes2 - l->stop();
 			}
 		}
-
-		// insert jump/cut
-		last_jump_info_.push_back( CutAndJump( l->cut(), new_jump_and_cutpoint( pose, saferes1, saferes2, l->cut() ) ) );
+		new_jump_and_cutpoint( pose, saferes1, saferes2, l->cut() );
 	}
 }
 

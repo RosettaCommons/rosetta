@@ -76,10 +76,54 @@ Picker::set_nfrags( core::Size const nfrags )
 	n_frags_ = nfrags;
 }
 
-/// @brief pick fragments of a given length, padding when necessary -- DOES NOT CACHE
-/// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
+/// @brief Simply picks fragments for the given position, caching as needed
+/// @param[in] chain_aa The complete amino acid string, typically from a Pose;
+///                     can be empty.  If empty, sequence bias is not used to pick fragments.
+/// @param[in] chain_ss The complete secondary structure string, typically from a Pose.
+/// @param[in] chain_abego The complete abego string, typically from a setter, set_abego
+/// @param[in] resid The starting residue to pick fragments from; Pose
+///  numbering (i.e. 1-based indexing).
+/// @param[in] frag_length The desired length of the fragments
+/// @param[in] n_frags The number of fragments to pick per position.
+core::fragment::FrameOP
+Picker::pick_fragments_for_resid(
+		std::string const & chain_aa,
+		std::string const & chain_ss,
+		utility::vector1< std::string > const & chain_abego,
+		core::Size const resid,
+		core::Size const frag_length )
+{
+	// Get fragment key
+	std::string const key = ss_key( chain_aa, chain_ss, chain_abego, resid, frag_length );
+	TR.Debug << "Fragment SS Key=" << key << std::endl;
+
+	FragmentMap::iterator cached = fragcache_.find( key );
+	if ( cached == fragcache_.end() ) {
+		core::fragment::FrameList framelist = vlb_.pick_fragments_public(
+				chain_ss,                                          // secondary structure of entire pose
+				chain_aa,                                          // amino acid sequence
+				chain_abego,                                       // abegos for entire pose
+				protocols::forge::build::Interval( resid, resid ), // start/end of region for picking
+				frag_length,                                       // fragment length
+				n_frags_ );                                        // # fragments per position
+		core::fragment::FrameOP frame = *framelist.begin();
+		cached = fragcache_.insert( std::make_pair( key, frame ) ).first;
+		return frame->clone_with_frags();
+	}
+
+	debug_assert( cached != fragcache_.end() );
+	debug_assert( cached->second );
+	core::fragment::FrameOP frame = cached->second->clone_with_frags();
+	debug_assert( frame );
+	frame->shift_to( resid );
+	TR.Debug << "Retrieved " << key << " from cache" << std::endl;
+	return frame;
+}
+
+/// @brief pick fragments of a given length, padding when necessary -- CACHES fragments for all positions
 /// @param[in] complete_aa The complete amino acid string, typically from a Pose;
 ///            can be empty.  If empty, sequence bias is not used to pick fragments.
+/// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
 /// @param[in] complete_abego The complete abego string, typically from a setter, set_abego
 /// @param[in] interval The interval [left, right] to pick fragments from; Pose
 ///  numbering (i.e. 1-based indexing).
@@ -104,55 +148,20 @@ Picker::get_framelist(
 
 	core::Size const closest_chain_ending = get_closest_chain_ending( chain_endings, complete_ss.size(), end_res );
 
-	// cut ss and abego
-	TR << "Closest chain ending is " << closest_chain_ending << std::endl;
+	// cut ss and abego to stay in current chain
+	TR.Debug << "Closest chain ending is " << closest_chain_ending << std::endl;
 	std::string const chain_ss = complete_ss.substr( 0, closest_chain_ending );
 	utility::vector1< std::string > const chain_abego = truncate_abego( complete_abego, closest_chain_ending );
 	std::string const chain_aa = complete_aa.substr( 0, closest_chain_ending );
 
-	// find ss key
-	std::string const key = ss_key( complete_aa, complete_ss, complete_abego, start_res, end_res, frag_length );
-	TR.Debug << "Fragment SS Key=" << key << std::endl;
-
-	// look for fragments in cache
-	std::map< std::string, core::fragment::FrameList >::iterator it = fragcache_.find(key);
-	if ( it == fragcache_.end() ) {
-		// not found
-		core::fragment::FrameList framelist = vlb_.pick_fragments_public(
-			chain_ss,                                                  // secondary structure of entire pose
-			chain_aa,                                                  // amino acid sequence
-			chain_abego,                                               // abegos for entire pose
-			protocols::forge::build::Interval( start_res, end_res ),   // start/end of region for picking
-			frag_length,                                               // fragment length
-			n_frags_ );                                                // # fragments per position
-		fragcache_[key] = framelist;
-		TR << "Saved " << key << " in cache" << std::endl;
-		assert( framelist.size() );
-		return framelist;
-	} else {
-		// fragments exist
-		core::Size res = start_res;
-		core::Size prevframe = 0;
-		core::fragment::FrameList newlist;
-		for ( core::fragment::FrameList::const_iterator f = it->second.begin(); f != it->second.end(); ++f ) {
-			debug_assert( *f );
-			if ( prevframe && ( prevframe + 1 != (*f)->start() ) ) {
-				std::stringstream msg;
-				msg << "Picker: frames are not in order. Prev=" << prevframe << " Cur=" << (*f)->start() << std::endl;
-				throw utility::excn::EXCN_Msg_Exception( msg.str() );
-			}
-			core::fragment::FrameOP frame = (*f)->clone_with_frags();
-			debug_assert( frame );
-			frame->shift_to(res);
-			newlist.push_back( frame );
-			TR.Debug << "Added frame with nr_frags=" << frame->nr_frags() << std::endl;
-			++res;
-			prevframe = (*f)->start();
-		}
-		TR << "Retreiving " << key << " from cache" << std::endl;
-		assert( newlist.size() );
-		return newlist;
+	core::fragment::FrameList framelist;
+	for ( core::Size resid=start_res; resid<=end_res; ++resid ) {
+		framelist.push_back( pick_fragments_for_resid( chain_aa, chain_ss, chain_abego, resid, frag_length ) );
 	}
+
+	TR << "Obtained fragments at " << framelist.size() << " positions from " << start_res
+		<< " to " << end_res << "." << std::endl;
+	return framelist;
 }
 
 utility::vector1< std::string >
@@ -296,27 +305,34 @@ Picker::ss_key(
 	std::string const & aa,
 	std::string const & ss,
 	utility::vector1< std::string > const & abego,
-	core::Size const start,
-	core::Size const end,
+	core::Size const resid,
 	core::Size const fragsize ) const
 {
-	assert( start <= end );
-	assert( start >= 1 );
-	assert( start <= ss.size() );
-	assert( end <= ss.size() );
-	assert( (!abego.size()) || ( start <= abego.size() ) );
-	assert( (!abego.size()) || ( end <= abego.size() ) );
-	core::Size const key_len = end - start + fragsize;
-	std::string key = boost::lexical_cast< std::string >( fragsize ) + ss.substr(start-1, key_len);
-	for ( core::Size i=start, c=1; i<=abego.size() && c<=key_len; ++i ) {
-		assert( abego[i].size() == 1 );
-		key += abego[i];
-		++c;
+	debug_assert( resid >= 1 );
+	debug_assert( resid <= ss.size() );
+	debug_assert( (!abego.size()) || ( resid <= abego.size() ) );
+
+	core::Size const stop = resid + fragsize;
+	TR.Debug << "Generating key from resid " << resid << " ss=" << ss << std::endl;
+
+	std::stringstream key;
+	key << fragsize;
+	for ( core::Size n=resid; n<stop; ++n ) {
+		if ( n >= ss.size() ) key << 'D';
+		else key << ss[ n - 1 ];
 	}
-	if ( aa.size() ) {
-		key += aa.substr(start-1, key_len);
+	for ( core::Size n=resid; n<stop; ++n ) {
+		if ( n > abego.size() ) key << 'X';
+		else key << abego[n];
 	}
-	return key;
+	if ( !aa.empty() ) {
+		for ( core::Size n=resid; n<stop; ++n ) {
+			if ( n > aa.size() ) key << 'Z';
+			else key << aa[ n - 1 ];
+		}
+	}
+
+	return key.str();
 }
 
 } // components

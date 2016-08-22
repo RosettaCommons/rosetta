@@ -14,6 +14,7 @@
 
 //Unit Headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureDataCreator.hh>
 
 //Project Headers
 #include <protocols/denovo_design/components/FoldGraph.hh>
@@ -39,6 +40,7 @@
 #include <core/pose/datacache/CacheableObserver.fwd.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/sequence/ABEGOManager.hh>
 
@@ -110,16 +112,32 @@ StructureData::StructureData( std::string const & id_val ) :
 StructureData::~StructureData()
 {}
 
-StructureDataOP
-StructureData::clone() const
+std::string
+StructureData::class_name()
 {
-	return StructureDataOP( new StructureData( *this ) );
+	return "StructureData";
 }
 
-StructureDataOP
-StructureData::fresh_instance() const
+StructureData::CacheableDataOP
+StructureData::clone() const
 {
-	return StructureDataOP( new StructureData( id() ) );
+	return CacheableDataOP( new StructureData( *this ) );
+}
+
+std::string
+StructureData::datatype() const
+{
+	return class_name();
+}
+
+void
+StructureData::write( std::ostream & os ) const
+{
+	std::stringstream xml;
+	xml << *this;
+	std::string xml_string = xml.str();
+	clean_for_storage( xml_string );
+	os << class_name() << " " << xml_string;
 }
 
 void
@@ -159,9 +177,9 @@ StructureData::parse_subtag( utility::tag::TagCOP tag )
 {
 	if ( tag->getName() == "ResidueRange" ) {
 		debug_assert( tag->hasOption( "name" ) );
-		Segment newresis;
+		Segment newresis( tag->getOption< std::string >( "name" ) );
 		newresis.parse_tag( tag );
-		add_segment( tag->getOption< std::string >( "name" ), newresis );
+		add_segment( newresis );
 	} else if ( tag->getName() == "Int" ) {
 		debug_assert( tag->hasOption( "name" ) );
 		debug_assert( tag->hasOption( "value" ) );
@@ -199,7 +217,7 @@ StructureData::parse_subtag( utility::tag::TagCOP tag )
 			tag->getOption< std::string >( "atom2" )
 		);
 	} else if ( tag->getName() == SegmentPairing::TAG_NAME ) {
-		SegmentPairingOP newpairing = create_segment_pairing( tag->getOption< std::string >( "type" ) );
+		SegmentPairingOP newpairing = SegmentPairing::create( tag->getOption< std::string >( "type" ) );
 		newpairing->parse_my_tag( *tag );
 		add_pairing( *newpairing );
 	} else {
@@ -663,10 +681,10 @@ void
 StructureData::delete_jump_and_intervening_cutpoint( std::string const & segment1, std::string const & segment2 )
 {
 	if ( segment(segment1).cutpoint() ) {
-		segments_[segment1].set_cutpoint( 0 );
+		segment_nonconst( segment1 ).set_cutpoint( 0 );
 	} else {
 		if ( segment(segment2).cutpoint() ) {
-			segments_[segment2].set_cutpoint( 0 );
+			segment_nonconst( segment2 ).set_cutpoint( 0 );
 		}
 	}
 	changed();
@@ -967,37 +985,37 @@ StructureData::replace_segment( std::string const & seg_name, Segment const & se
 
 /// @brief adds a residues segment to the end of the list
 void
-StructureData::add_segment( std::string const & id_val, Segment const & resis )
+StructureData::add_segment( Segment const & resis )
 {
-	TR.Debug << "Adding " << NamedSegment( id_val, resis ) << " to end of list" << std::endl;
-	add_segment( id_val, resis, segment_order_.end() );
+	TR.Debug << "Adding " << resis << " to end of list" << std::endl;
+	add_segment( resis, segment_order_.end() );
 }
 
 /// @brief adds a residues segment -- final will be inserted before segment named "insert_segment"
 /// if "after_seg" is empty, or not found in the list of segments, the new segment will be inserted at the end
 void
-StructureData::add_segment( std::string const & id_val, Segment const & resis, std::string const & insert_before_segment )
+StructureData::add_segment( Segment const & resis, std::string const & insert_before_segment )
 {
-	add_segment( id_val, resis, find_segment_name( insert_before_segment ) );
+	add_segment( resis, find_segment_name( insert_before_segment ) );
 }
 
 /// @brief adds a residues segment -- final will be inserted before the iterator given as insert_pose
 void
 StructureData::add_segment(
-	std::string const & id_val,
 	Segment const & resis,
 	SegmentNameList::iterator insert_pos )
 {
-	NamedSegment toadd( id_val, resis );
 	if ( insert_pos != segment_order_.end() ) {
-		TR.Debug << "Adding " << toadd << " to after " << *insert_pos << std::endl;
+		TR.Debug << "Adding " << resis << " to after " << *insert_pos << std::endl;
 	} else {
-		TR.Debug << "Adding " << toadd << " to end of list" << std::endl;
+		TR.Debug << "Adding " << resis << " to end of list" << std::endl;
 	}
 	debug_assert( segment_order_.size() == segments_.size() );
+
+	std::string const & id_val = resis.id();
 	SegmentMap::iterator s = segments_.find( id_val );
 	if ( s == segments_.end() ) {
-		if ( !segments_.insert( toadd ).second ) {
+		if ( !segments_.insert( std::make_pair( id_val, resis ) ).second ) {
 			throw utility::excn::EXCN_Msg_Exception( "failed to insert segment " + id_val );
 		}
 		segment_order_.insert( insert_pos, id_val );
@@ -1139,7 +1157,9 @@ StructureData::add_prefix_to_segments( std::string const & prefix, char const de
 		} else {
 			newname = prepend_str + r->first;
 		}
-		newmap[newname] = r->second;
+		Segment newseg = r->second;
+		newseg.set_id( newname );
+		newmap.insert( std::make_pair( newname, newseg ) );
 		if ( r->first != newname ) {
 			SegmentNameList::iterator c = find_segment_name( r->first );
 			debug_assert( c != segment_order_.end() );
@@ -1163,8 +1183,9 @@ StructureData::rename_segment( std::string const & old_name, std::string const &
 	// find and rename the original segment
 	SegmentMap::iterator r = find_segment( old_name );
 	Segment resis = r->second;
+	resis.set_id( new_name );
 	segments_.erase( r );
-	segments_[ new_name ] = resis;
+	segments_.insert( std::make_pair( new_name, resis ) );
 
 	SegmentNameList::iterator c = find_segment_name( old_name );
 	*c = new_name;
@@ -1221,24 +1242,28 @@ StructureData::choose_new_movable_group() const
 /// @brief Returns a StructureData containing only the given segments
 ///        The resulting StructureData will contain all relevant data from the current
 StructureData
-StructureData::slice( SegmentNames const & segments ) const
+StructureData::slice( SegmentNameSet const & segmentset, bool const force_padding ) const
 {
 	StructureData sd( id() );
-	SegmentNameSet const segmentset( segments.begin(), segments.end() );
 
 	// Add desired segments
 	for ( SegmentNameList::const_iterator s=segments_begin(); s!=segments_end(); ++s ) {
 		if ( segmentset.find( *s ) == segmentset.end() ) continue;
 		Segment newseg = segment( *s );
+
 		if ( segmentset.find( newseg.lower_segment() ) == segmentset.end() ) {
-			newseg.set_lower_segment( "" );
-			if ( !newseg.template_pose() ) newseg.add_lower_padding();
+			if ( !newseg.lower_segment().empty() ) {
+				newseg.set_lower_segment( "" );
+				if ( force_padding || !newseg.template_pose() ) newseg.add_lower_padding();
+			}
 		}
 		if ( segmentset.find( newseg.upper_segment() ) == segmentset.end() ) {
-			newseg.set_upper_segment( "" );
-			if ( !newseg.template_pose() ) newseg.add_upper_padding();
+			if ( !newseg.upper_segment().empty() ) {
+				newseg.set_upper_segment( "" );
+				if ( force_padding || !newseg.template_pose() ) newseg.add_upper_padding();
+			}
 		}
-		sd.add_segment( *s, newseg );
+		sd.add_segment( newseg );
 	}
 
 	sd.copy_data( *this );
@@ -1249,6 +1274,12 @@ StructureData::slice( SegmentNames const & segments ) const
 void
 StructureData::merge( StructureData const & other )
 {
+	if ( other.segments_begin() == other.segments_end() ) {
+		std::stringstream msg;
+		msg << "Not merging because the StructureData to be merged does not contain any segments!"
+			<< " SD=" << *this << " Other SD=" << other << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
 	merge( other, SegmentNames( other.segments_begin(), other.segments_end() ) );
 }
 
@@ -1275,8 +1306,8 @@ StructureData::merge( StructureData const & other, SegmentNames const & segments
 		}
 		newseg.set_movable_group( group );
 
-		add_segment( *s, newseg, segment_order_.end() );
-		TR.Debug << "Added " << NamedSegment( *s, newseg ) << std::endl;
+		add_segment( newseg, segment_order_.end() );
+		TR.Debug << "Added " << newseg << std::endl;
 	}
 
 	copy_data( other );
@@ -1287,6 +1318,15 @@ StructureData::merge_before( StructureData const & other, std::string const & po
 {
 	core::Size movable_group_template_pose = 0;
 	for ( SegmentNames::const_iterator c=segments.begin(); c!=segments.end(); ++c ) {
+		if ( has_segment( *c ) ) {
+			std::stringstream msg;
+			msg << "StructureData::merge_before(): StructureData contains a segment named "
+				<< *c << ", but one of the segments being merged has the same name. "
+				<< "Segment names must be unique." << std::endl
+				<< "Current SD = " << *this << std::endl
+				<< "Other SD = " << other << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
 		Segment newseg = other.segment( *c );
 
 		// if there is no template pose, no pose exists to provide orientation.
@@ -1302,8 +1342,8 @@ StructureData::merge_before( StructureData const & other, std::string const & po
 		}
 		newseg.set_movable_group( group );
 
-		add_segment( *c, newseg, find_segment_name( position ) );
-		TR.Debug << "Added " << NamedSegment( *c, newseg ) << std::endl;
+		add_segment( newseg, find_segment_name( position ) );
+		TR.Debug << "Added " << newseg << std::endl;
 	}
 
 	copy_data( other );
@@ -1333,6 +1373,12 @@ MovableGroups const &
 StructureData::movable_groups() const
 {
 	return movable_groups_;
+}
+
+void
+StructureData::clear_pairings()
+{
+	pairings_.clear();
 }
 
 void
@@ -1508,11 +1554,11 @@ StructureData::merge_segments(
 	// handle merging of residues segments
 	std::string const low_seg = segment( segment1 ).lower_segment();
 	std::string const upp_seg = segment( segment2 ).upper_segment();
-	Segment resis( newss, new_abego, c1.nterm_included(), c2.cterm_included() );
+	Segment resis( new_name, newss, new_abego, c1.nterm_included(), c2.cterm_included() );
 	resis.set_movable_group( new_group );
 
-	TR << "Removing old segments " << NamedSegment( *segments_.find( segment1 ) ) << " and " << NamedSegment( *segments_.find( segment2 ) )
-		<< " and adding new merged segment " << NamedSegment( new_name, resis ) << std::endl;
+	TR << "Removing old segments " << *segments_.find( segment1 ) << " and " << *segments_.find( segment2 )
+		<< " and adding new merged segment " << resis << std::endl;
 	SegmentNameList::const_iterator after_me = find_segment_name( segment2 );
 	if ( after_me != segment_order_.end() ) ++after_me;
 	std::string const after_str = *after_me;
@@ -1522,7 +1568,7 @@ StructureData::merge_segments(
 	if ( movable_groups().size() < num_groups ) {
 		resis.set_movable_group( movable_groups().size() + 1 );
 	}
-	add_segment( new_name, resis, find_segment_name( after_str ) );
+	add_segment( resis, find_segment_name( after_str ) );
 	if ( !low_seg.empty() ) {
 		connect_segments( low_seg, new_name );
 	}
@@ -1538,17 +1584,25 @@ StructureData::check_pose( core::pose::Pose const & pose ) const
 {
 	TR.Debug << "Checking pose properties..." << std::endl;
 	if ( ! pose.total_residue() ) return;
-	if ( pose.total_residue() != pose_length() ) {
+
+	// subtract only those virtual residues added to the end of the pose
+	core::Size total_residue = pose.total_residue();
+	for ( core::Size resid=pose.total_residue(); resid>=1; --resid ) {
+		if ( pose.residue( resid ).aa() == core::chemical::aa_vrt ) --total_residue;
+		else break;
+	}
+
+	if ( total_residue != pose_length() ) {
 		std::stringstream msg;
 		msg << id() << ": pose length does not match StructureData.  Pose length = "
-			<< pose.total_residue() << " SD length = " << pose_length() << std::endl;
+			<< total_residue << " SD length = " << pose_length() << std::endl;
 		msg << *this << std::endl;
 		throw EXCN_PoseInconsistent( msg.str() );
 	}
-	if ( pose.total_residue() != ss().size()  ) {
+	if ( total_residue != ss().size()  ) {
 		std::stringstream msg;
 		msg << id() << ": pose length does not match StructureData secstruct length. Pose length = "
-			<< pose.total_residue() << " SS length = " << ss().size() << " SD: " << *this << std::endl;
+			<< total_residue << " SS length = " << ss().size() << " SD: " << *this << std::endl;
 		throw EXCN_PoseInconsistent( msg.str() );
 	}
 }
@@ -1957,11 +2011,26 @@ StructureData::check_consistency() const
 void
 StructureData::check_pose_consistency( core::pose::Pose const & pose ) const
 {
+	using core::pose::symmetry::extract_asymmetric_unit;
+
 	check_residues();
 	check_movable_groups();
-	check_pose( pose );
-	check_chains( pose );
-	check_improper_termini( pose );
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		TR.Debug << "Extracting asymm unit " << std::endl;
+		core::pose::Pose posecopy( pose );
+		posecopy.remove_constraints();
+
+		core::pose::Pose asymm_pose;
+		extract_asymmetric_unit( posecopy, asymm_pose, false );
+		check_pose( asymm_pose );
+		check_chains( asymm_pose );
+		check_improper_termini( asymm_pose );
+	} else {
+		check_pose( pose );
+		check_chains( pose );
+		check_improper_termini( pose );
+	}
 }
 
 void
@@ -1972,7 +2041,7 @@ StructureData::check_residues() const
 	utility::vector1< bool > accounted_for( pose_length(), false );
 	for ( SegmentMap::const_iterator r=segments_.begin(); r!=segments_.end(); ++r ) {
 		if ( r->second.upper() > pose_length() ) {
-			msg << NamedSegment( r->first, r->second ) << " has a upper terminal residue ("
+			msg << r->second << " has a upper terminal residue ("
 				<< r->second.upper() << ") that is large than the pose length." << std::endl;
 			throw EXCN_PoseInconsistent( msg.str() );
 		}
@@ -1981,21 +2050,21 @@ StructureData::check_residues() const
 			if ( !accounted_for[i] ) {
 				accounted_for[i] = true;
 			} else {
-				msg << NamedSegment( r->first, r->second ) << " overlaps with something else at position " << i << std::endl << *this << std::endl;
+				msg << r->second << " overlaps with something else at position " << i << std::endl << *this << std::endl;
 				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
 		if ( r->second.lower_segment() != "" ) {
 			SegmentMap::const_iterator r2 = segments_.find( r->second.lower_segment() );
 			if ( r2 == segments_.end() ) {
-				msg << "Lower segment of " << NamedSegment( r->first, r->second ) << " does not exist. SD=" << *this << std::endl;
+				msg << "Lower segment of " << r->second << " does not exist. SD=" << *this << std::endl;
 				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
 		if ( r->second.upper_segment() != "" ) {
 			SegmentMap::const_iterator r2 = segments_.find( r->second.upper_segment() );
 			if ( r2 == segments_.end() ) {
-				msg << "Upper segment of " << NamedSegment( r->first, r->second ) << " does not exist. SD=" << *this << std::endl;
+				msg << "Upper segment of " << r->second << " does not exist. SD=" << *this << std::endl;
 				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
@@ -2017,7 +2086,7 @@ StructureData::check_improper_termini( core::pose::Pose const & pose ) const
 		for ( core::Size i=r->second.lower()+1; i<r->second.upper(); ++i ) {
 			if ( pose.residue(i).is_terminus() ) {
 				std::stringstream msg;
-				msg << " Residue " << i << " has a terminal variant but is inside segment " << NamedSegment( r->first, r->second ) << "." << std::endl;
+				msg << " Residue " << i << " has a terminal variant but is inside segment " << r->second << "." << std::endl;
 				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
@@ -2055,6 +2124,17 @@ compute_chain_beginnings( core::pose::Pose const & pose )
 }
 
 void
+advance_past_virtual_residues(
+	core::pose::Pose const & pose,
+	utility::vector1< core::Size >::const_iterator & cur_resid,
+	utility::vector1< core::Size >::const_iterator const & end_resids )
+{
+	for ( ; cur_resid != end_resids; ++cur_resid ) {
+		if ( pose.residue( *cur_resid ).aa() != core::chemical::aa_vrt ) break;
+	}
+}
+
+void
 StructureData::check_chains( core::pose::Pose const & pose ) const
 {
 	TR.Debug << "Checking chains..." << std::endl;
@@ -2067,6 +2147,11 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 	if ( pose.total_residue() ) {
 		chain_endings.push_back( pose.total_residue() );
 	}
+
+	TR.Trace << "Beginnings: " << chain_beginnings << std::endl;
+	TR.Trace << "Endings: " << chain_endings << std::endl;
+	TR.Trace << "Cutpoints: " << cutpoints << std::endl;
+
 	debug_assert( chain_beginnings.size() == chain_endings.size() );
 
 	utility::vector1< core::Size >::const_iterator cur_beginning = chain_beginnings.begin();
@@ -2080,8 +2165,8 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 			++cur_cutpoint;
 		} else if ( segment( *s ).cutpoint() ) {
 			std::stringstream msg;
-			msg << "StructureData::check_chains(): Pose has a cutpoint at position "
-				<< segment( *s ).cutpoint() << ", but no cutpoint was found in the StructureData. Pose cutpoints: "
+			msg << "StructureData::check_chains(): StructureData has a cutpoint at position "
+				<< segment( *s ).cutpoint() << ", but no cutpoint was found in the Pose. Pose cutpoints: "
 				<< cutpoints << std::endl;
 			msg << *this << std::endl;
 			throw EXCN_PoseInconsistent( msg.str() );
@@ -2096,8 +2181,8 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 				}
 			} else {
 				std::stringstream msg;
-				msg << "StructureData::check_chains(): Pose has a chain beginning at position "
-					<< segment( *s ).lower() << ", but that residue is not a chain beginning in the StructureData. Pose chain beginnings: "
+				msg << "StructureData::check_chains(): StructureData has no chain beginning at position "
+					<< segment( *s ).lower() << ", but that residue is a chain beginning in the pose. Pose chain beginnings: "
 					<< chain_beginnings << std::endl;
 				msg << *this << std::endl;
 				throw EXCN_PoseInconsistent( msg.str() );
@@ -2113,14 +2198,18 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 				}
 			} else {
 				std::stringstream msg;
-				msg << "StructureData::check_chains(): Pose has a chain ending at position "
-					<< segment( *s ).upper() << ", but that residue is not a chain ending in the StructureData. Pose chain endings: "
-					<< chain_endings << std::endl;
+				msg << "StructureData::check_chains(): StructureData has no chain ending at position "
+					<< segment( *s ).upper() << ", but that residue is a chain ending in the pose. Pose chain endings: "
+					<< chain_endings << " current ending: " << *cur_ending << std::endl;
 				msg << *this << std::endl;
 				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
 	}
+
+	advance_past_virtual_residues( pose, cur_cutpoint, cutpoints.end() );
+	advance_past_virtual_residues( pose, cur_beginning, chain_beginnings.end() );
+	advance_past_virtual_residues( pose, cur_ending, chain_endings.end() );
 
 	if ( cur_cutpoint != cutpoints.end() ) {
 		std::stringstream msg;
@@ -2257,7 +2346,7 @@ operator<<( std::ostream & os, StructureData const & perm )
 
 	// residues
 	for ( SegmentNameList::const_iterator c=perm.segment_order_.begin(); c!=perm.segment_order_.end(); ++c ) {
-		os << "\t" << NamedSegment( *c, perm.segment( *c ) ) << std::endl;
+		os << "\t" << perm.segment( *c ) << std::endl;
 	}
 	// int data
 	std::map< std::string, int >::const_iterator dat;
@@ -2276,7 +2365,8 @@ operator<<( std::ostream & os, StructureData const & perm )
 	}
 	// aliases
 	for ( AliasMap::const_iterator a_it=perm.aliases_.begin(); a_it!=perm.aliases_.end(); ++a_it ) {
-		os << "\t<Alias name=\"" << a_it->first << "\" " << a_it->second << " />" << std::endl;
+		os << "\t<Alias name=\"" << a_it->first << "\" segment=\"" << a_it->second.first
+			<< "\" res=\"" << a_it->second.second << "\" />" << std::endl;
 	}
 	// covalent bonds
 	for ( BondInfos::const_iterator b=perm.covalent_bonds_begin(); b!=perm.covalent_bonds_end(); ++b ) {
@@ -2290,21 +2380,39 @@ operator<<( std::ostream & os, StructureData const & perm )
 	return os;
 }
 
+/*
 /// dump contents of residues map
 std::ostream &
 operator<<( std::ostream & os, SegmentMap const & resmap )
 {
 	for ( SegmentMap::const_iterator r=resmap.begin(); r!=resmap.end(); ++r ) {
-		os << NamedSegment( *r );
+		os << r->second;
 	}
 	return os;
 }
+*/
 
 std::ostream &
 operator<<( std::ostream & os, Alias const & alias )
 {
 	os << "segment=\"" << alias.first << "\" res=\"" << alias.second << "\"";
 	return os;
+}
+
+//////////////////////////////////////////////////////////////
+///  StructureDataCreator
+//////////////////////////////////////////////////////////////
+basic::datacache::WriteableCacheableDataOP
+StructureDataCreator::create_data( std::istream & in ) const
+{
+	StructureDataFactory const & factory = *StructureDataFactory::get_instance();
+	return basic::datacache::WriteableCacheableDataOP( new StructureData( factory.create_from_cacheable_data( in ) ) );
+}
+
+std::string
+StructureDataCreator::keyname() const
+{
+	return StructureData::class_name();
 }
 
 } // namespace components

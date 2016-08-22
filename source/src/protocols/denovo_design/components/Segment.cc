@@ -48,7 +48,30 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
+#ifdef    SERIALIZATION
 Segment::Segment() :
+	id_( "" ),
+	posestart_( 1 ),
+	movable_group_( 1 ),
+	saferes_( 0 ),
+	cutpoint_( 0 ),
+	ss_( "" ),
+	abego_( "" ),
+	nterm_included_( false ),
+	cterm_included_( false ),
+	lower_segment_( "" ),
+	upper_segment_( "" ),
+	template_pose_(),
+	lower_dihedrals_(),
+	upper_dihedrals_(),
+	lower_residue_(),
+	upper_residue_()
+{
+}
+#endif // SERIALIZATION
+
+Segment::Segment( std::string const & id_val ) :
+	id_( id_val ),
 	posestart_( 1 ),
 	movable_group_( 1 ),
 	saferes_( 0 ),
@@ -68,10 +91,12 @@ Segment::Segment() :
 }
 
 Segment::Segment(
+	std::string const & id_val,
 	std::string const & ss_val,
 	std::string const & abego_val,
 	bool const start_inc,
 	bool const stop_inc ):
+	id_( id_val ),
 	posestart_( 1 ),
 	movable_group_( 1 ),
 	saferes_( 0 ),
@@ -95,6 +120,18 @@ SegmentOP
 Segment::clone() const
 {
 	return SegmentOP( new Segment( *this ) );
+}
+
+std::string const &
+Segment::id() const
+{
+	return id_;
+}
+
+void
+Segment::set_id( std::string const & id_val )
+{
+	id_ = id_val;
 }
 
 void
@@ -190,6 +227,7 @@ Segment::length() const
 core::Size
 Segment::elem_length() const
 {
+	if ( stop_local() == 0 ) return 0;
 	return stop_local() - start_local() + 1;
 }
 
@@ -284,38 +322,12 @@ Segment::parse_motif( std::string const & motif_str )
 {
 	clear();
 	extend( "L", "X" );
-	utility::vector1< std::string > const motifs = utility::string_split( motif_str, '-' );
-	for ( utility::vector1< std::string >::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
-		// here, we can accept "3LX" or "3:LX"
-		std::string motif_seg = "";
-		for ( std::string::const_iterator c=m->begin(); c!=m->end(); ++c ) {
-			if ( *c == ' ' ) continue;
-			if ( *c == '\t' ) continue;
-			if ( *c == '\n' ) continue;
-			if ( *c == ':' ) continue;
-			motif_seg += *c;
-		}
 
-		if ( motif_seg.empty() ) continue;
+	std::string secstruct = "";
+	std::string abego = "";
+	parse_motif_string( motif_str, secstruct, abego );
+	extend( secstruct, abego );
 
-		char const ss_type( motif_seg[motif_seg.size()-2] );
-		if ( (ss_type != 'H') && (ss_type != 'L') && (ss_type != 'E') ) {
-			TR.Error << "Segment::parse_motif(): Invalid SS type in motif " << motif_seg << std::endl;
-			utility_exit();
-		}
-
-		char const abego_type( motif_seg[ motif_seg.size() - 1 ] );
-		if ( abego_type > 'Z' || abego_type < 'A' ) {
-			TR.Error << "Segment::parse_motif(): Invalid abego type in motif " << motif_seg << std::endl;
-			utility_exit();
-		}
-
-		int const len( utility::string2int( motif_seg.substr( 0, motif_seg.size()-2 ) ) );
-
-		std::string const secstruct( len, ss_type );
-		std::string const abego( len, abego_type );
-		extend( secstruct, abego );
-	}
 	extend( "L", "X" );
 }
 
@@ -504,7 +516,7 @@ Segment::n_residues_after_cutpoint() const
 void
 Segment::add_lower_padding()
 {
-	debug_assert( !template_pose_ );
+	//debug_assert( !template_pose_ );
 	if ( !nterm_included_ ) return;
 	ss_ = 'L' + ss_;
 	set_abego( 'X' + abego_ );
@@ -516,7 +528,7 @@ Segment::add_lower_padding()
 void
 Segment::add_upper_padding()
 {
-	debug_assert( !template_pose_ );
+	//debug_assert( !template_pose_ );
 	if ( !cterm_included_ ) return;
 	ss_ = ss_ + 'L';
 	set_abego( abego_ + 'X' );
@@ -667,6 +679,17 @@ Segment::delete_residues( core::Size const local_resnum_start, core::Size const 
 	set_abego( newab );
 }
 
+/// @brief Returns whether or not this segment has a template pose
+bool
+Segment::has_template_pose() const
+{
+	if ( template_pose_ ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 /// @brief returns template pose
 core::pose::PoseCOP
 Segment::template_pose() const
@@ -721,13 +744,15 @@ Segment::set_template_pose(
 		subpose->dump_pdb( subpose_dump );
 		utility_exit_with_message( msg.str() );
 	}
-	if ( start_resid - 1 > 0 ) {
+	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code. It should be eventually removed
+	if ( ( start_resid - 1 > 0 ) && ( full_template_pose.residue( start_resid - 1 ).is_protein() ) ) {
 		lower_dihedrals_ = ResidueDihedrals( full_template_pose, start_resid - 1 );
 		lower_residue_ = full_template_pose.residue( start_resid - 1 ).clone();
 	} else {
 		lower_dihedrals_ = ResidueDihedrals();
 	}
-	if ( stop_resid + 1 <= full_template_pose.total_residue() ) {
+	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code.  It should be eventually removed
+	if ( ( stop_resid + 1 <= full_template_pose.total_residue() ) && ( full_template_pose.residue( stop_resid + 1 ).is_protein() ) ) {
 		upper_dihedrals_ = ResidueDihedrals( full_template_pose, stop_resid );
 		upper_residue_ = full_template_pose.residue( stop_resid + 1 ).clone();
 	} else {
@@ -747,10 +772,24 @@ Segment::upper_dihedrals() const
 	return upper_dihedrals_;
 }
 
+bool
+Segment::has_lower_residue() const
+{
+	if ( lower_residue_ ) return true;
+	else return false;
+}
+
 core::conformation::Residue const &
 Segment::lower_residue() const
 {
 	return *lower_residue_;
+}
+
+bool
+Segment::has_upper_residue() const
+{
+	if ( upper_residue_ ) return true;
+	else return false;
 }
 
 core::conformation::Residue const &
@@ -865,24 +904,37 @@ ResidueDihedrals::upper_omega() const
 	return upper_omega_;
 }
 
+bool
+residue_is_compatible( core::conformation::Residue const & rsd )
+{
+	if ( rsd.is_ligand() ) return false;
+	if ( rsd.is_carbohydrate() ) return false;
+	return true;
+}
+
 void
 ResidueDihedrals::set_in_pose( core::pose::Pose & pose, core::Size const lower_resid ) const
 {
-	pose.set_psi( lower_resid, psi_ );
-	pose.set_omega( lower_resid, omega_ );
-	pose.set_phi( lower_resid + 1, phi_ );
-	pose.set_psi( lower_resid + 1, upper_psi_ );
-	TR.Debug << "Set psi for " << lower_resid << " from " << pose.psi( lower_resid ) << " to " << psi_ << std::endl;
-	TR.Debug << "Set omega for " << lower_resid << " from " << pose.omega( lower_resid ) << " to " << omega_ << std::endl;
-	TR.Debug << "Set phi for " << lower_resid + 1 << " from " << pose.phi( lower_resid + 1 ) << " to " << phi_ << std::endl;
-	TR.Debug << "Set psi for " << lower_resid + 1 << " from " << pose.psi( lower_resid + 1 ) << " to " << upper_psi_ << std::endl;
+	if ( residue_is_compatible( pose.residue( lower_resid ) ) ) {
+		pose.set_psi( lower_resid, psi_ );
+		pose.set_omega( lower_resid, omega_ );
+		TR.Debug << "Set psi for " << lower_resid << " from " << pose.psi( lower_resid ) << " to " << psi_ << std::endl;
+		TR.Debug << "Set omega for " << lower_resid << " from " << pose.omega( lower_resid ) << " to " << omega_ << std::endl;
+	}
+	if ( residue_is_compatible( pose.residue( lower_resid + 1 ) ) ) {
+		pose.set_phi( lower_resid + 1, phi_ );
+		pose.set_psi( lower_resid + 1, upper_psi_ );
+		TR.Debug << "Set phi for " << lower_resid + 1 << " from " << pose.phi( lower_resid + 1 ) << " to " << phi_ << std::endl;
+		TR.Debug << "Set psi for " << lower_resid + 1 << " from " << pose.psi( lower_resid + 1 ) << " to " << upper_psi_ << std::endl;
+	}
 }
 
 /// output residueinfo
 std::ostream &
 operator<<( std::ostream & os, Segment const & res )
 {
-	os << "start=\"" << res.start()
+	os << "<ResidueRange name=\"" << res.id()
+		<< "\" start=\"" << res.start()
 		<< "\" stop=\"" << res.stop()
 		<< "\" safe=\"" << res.safe_segment()
 		<< "\" nterm=\"" << res.nterm_included_
@@ -899,14 +951,7 @@ operator<<( std::ostream & os, Segment const & res )
 		os << "\" upper_segment=\"" << res.upper_segment();
 	}
 
-	os << "\"";
-	return os;
-}
-
-std::ostream &
-operator<<( std::ostream & os, NamedSegment const & resis )
-{
-	os << "<ResidueRange name=\"" << resis.first << "\" " << resis.second << " />";
+	os << "\" />";
 	return os;
 }
 
@@ -954,6 +999,7 @@ template< class Archive >
 void
 protocols::denovo_design::components::Segment::save( Archive & arc ) const
 {
+	arc( CEREAL_NVP( id_ ) );
 	arc( CEREAL_NVP( posestart_ ) );
 	arc( CEREAL_NVP( movable_group_ ) );
 	arc( CEREAL_NVP( saferes_ ) );
@@ -976,6 +1022,7 @@ template< class Archive >
 void
 protocols::denovo_design::components::Segment::load( Archive & arc )
 {
+	arc( id_ );
 	arc( posestart_ );
 	arc( movable_group_ );
 	arc( saferes_ );

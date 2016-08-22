@@ -54,6 +54,11 @@ public:
 	typedef architects::Lengths Lengths;
 
 public:
+	//constants
+	static std::string const
+	DATA_MAP_NAME;
+
+public:
 	ConnectionArchitect( std::string const & id_value );
 
 	virtual ~ConnectionArchitect();
@@ -79,6 +84,10 @@ public:
 	/// @brief applies with a specific random number
 	void
 	apply( components::StructureData & sd, core::Real & random ) const;
+
+	/// @brief computes a list of possible motifs
+	MotifOPs
+	compute_connection_candidates( components::StructureData const & sd ) const;
 
 	/// @brief returns list of allowed segment 1 ids
 	SegmentNames const &
@@ -128,6 +137,10 @@ public:
 	void
 	set_motifs( MotifCOPs const & motifs );
 
+	/// @brief sets whether to use "ideal abego" loops according to Koga papers
+	void
+	set_ideal_abego( bool const use_ideal_abego, bool const extend_ss );
+
 	/// @brief sets whether to always try to bridge.  If true, a random cutpoint will be selected in the connection
 	///        if the chains to be connected have different movable groups
 	void
@@ -158,11 +171,16 @@ private:
 	LengthSet
 	lengths() const;
 
+	/// @brief returns a set of valid loop index cutpoints
+	LengthSet
+	cutpoints() const;
+
 	MotifOPs
 	motifs_for_pair(
 		SegmentPair const & pair,
 		components::StructureData const & sd,
-		LengthSet const & length_set ) const;
+		LengthSet const & length_set,
+		LengthSet const & cutpoint_set	) const;
 
 	MotifCOPs
 	parse_motif_string( std::string const & motifs ) const;

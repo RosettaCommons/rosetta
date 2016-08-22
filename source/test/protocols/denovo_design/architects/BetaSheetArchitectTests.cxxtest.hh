@@ -57,9 +57,9 @@ public:
 	void test_simple()
 	{
 		std::string const sheet_id = "sheet";
-		std::string const s1_id = "sheet.s1";
-		std::string const s2_id = "sheet.s2";
-		std::string const s3_id = "sheet.s3";
+		std::string const s1_id = "s1";
+		std::string const s2_id = "s2";
+		std::string const s3_id = "s3";
 
 		std::stringstream xml;
 		xml << "<BetaSheetArchitect name=" << sheet_id << ">" << std::endl;

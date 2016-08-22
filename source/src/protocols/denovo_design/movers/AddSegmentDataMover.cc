@@ -93,7 +93,7 @@ AddSegmentDataMover::get_name() const
 std::string
 AddSegmentDataMover::class_name()
 {
-	return "AddSegmentData";
+	return "AddSegmentDataMover";
 }
 
 void
@@ -137,8 +137,8 @@ AddSegmentDataMover::create_segment( components::StructureData & perm ) const
 
 	bool const nterm_inc = secstruct_.size() < 2;
 	bool const cterm_inc = secstruct_.size() < 3;
-	components::Segment const seg( secstruct_, abego_, nterm_inc, cterm_inc );
-	perm.add_segment( segment_name_, seg );
+	components::Segment const seg( segment_name_, secstruct_, abego_, nterm_inc, cterm_inc );
+	perm.add_segment( seg );
 }
 
 /////////////// Creator ///////////////

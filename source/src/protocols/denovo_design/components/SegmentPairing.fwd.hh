@@ -14,6 +14,9 @@
 #ifndef INCLUDED_protocols_denovo_design_components_SegmentPairing_fwd_hh
 #define INCLUDED_protocols_denovo_design_components_SegmentPairing_fwd_hh
 
+// Core headers
+#include <core/types.hh>
+
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
@@ -23,21 +26,32 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
-class SegmentPairing;
+typedef std::pair< core::Size, core::Size > ResiduePair;
+typedef utility::vector1< ResiduePair > ResiduePairs;
 
+class SegmentPairing;
 typedef utility::pointer::shared_ptr< SegmentPairing > SegmentPairingOP;
 typedef utility::pointer::shared_ptr< SegmentPairing const > SegmentPairingCOP;
-
 typedef utility::vector1< SegmentPairingOP > SegmentPairingOPs;
 typedef utility::vector1< SegmentPairingCOP > SegmentPairingCOPs;
 
 class HelixPairing;
 typedef utility::pointer::shared_ptr< HelixPairing > HelixPairingOP;
 typedef utility::pointer::shared_ptr< HelixPairing const > HelixPairingCOP;
+typedef utility::vector1< HelixPairingOP > HelixPairingOPs;
+typedef utility::vector1< HelixPairingCOP > HelixPairingCOPs;
 
 class StrandPairing;
 typedef utility::pointer::shared_ptr< StrandPairing > StrandPairingOP;
 typedef utility::pointer::shared_ptr< StrandPairing const > StrandPairingCOP;
+typedef utility::vector1< StrandPairingOP > StrandPairingOPs;
+typedef utility::vector1< StrandPairingCOP > StrandPairingCOPs;
+
+class HelixSheetPairing;
+typedef utility::pointer::shared_ptr< HelixSheetPairing > HelixSheetPairingOP;
+typedef utility::pointer::shared_ptr< HelixSheetPairing const > HelixSheetPairingCOP;
+typedef utility::vector1< HelixSheetPairingOP > HelixSheetPairingOPs;
+typedef utility::vector1< HelixSheetPairingCOP > HelixSheetPairingCOPs;
 
 
 } //protocols

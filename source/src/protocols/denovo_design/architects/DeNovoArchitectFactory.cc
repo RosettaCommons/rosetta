@@ -16,6 +16,7 @@
 
 // Architect creators
 #include <protocols/denovo_design/architects/BetaSheetArchitectCreator.hh>
+#include <protocols/denovo_design/architects/BlueprintArchitectCreator.hh>
 #include <protocols/denovo_design/architects/CompoundArchitectCreator.hh>
 #include <protocols/denovo_design/architects/HelixArchitectCreator.hh>
 #include <protocols/denovo_design/architects/PoseArchitectCreator.hh>
@@ -23,6 +24,7 @@
 
 // Protocol headers
 #include <protocols/denovo_design/architects/DeNovoArchitect.hh>
+#include <protocols/denovo_design/architects/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -40,6 +42,7 @@ DeNovoArchitectFactory::DeNovoArchitectFactory():
 {
 	// eventually, use registrators, but for now we can just put the creators here
 	add_creator( DeNovoArchitectCreatorOP( new BetaSheetArchitectCreator ) );
+	add_creator( DeNovoArchitectCreatorOP( new BlueprintArchitectCreator ) );
 	add_creator( DeNovoArchitectCreatorOP( new CompoundArchitectCreator ) );
 	add_creator( DeNovoArchitectCreatorOP( new HelixArchitectCreator ) );
 	add_creator( DeNovoArchitectCreatorOP( new PoseArchitectCreator ) );
@@ -87,6 +90,7 @@ DeNovoArchitectFactory::create_from_tag(
 	std::string const architect_id = tag->getOption< std::string >( "name", "" );
 	DeNovoArchitectOP new_arch = create_instance( keyname, architect_id );
 	new_arch->parse_my_tag( tag, data );
+	if ( !new_arch->id().empty() ) architects::store_denovo_architect( new_arch, data );
 	return new_arch;
 }
 

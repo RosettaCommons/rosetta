@@ -41,6 +41,7 @@ BetaSheetArchitect::BetaSheetArchitect( std::string const & id_value ):
 	DeNovoArchitect( id_value ),
 	permutations_(),
 	strands_(),
+	extensions_(),
 	sheetdb_( new components::SheetDB ),
 	use_sheetdb_( false ),
 	updated_( false )
@@ -71,6 +72,8 @@ BetaSheetArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 		sheetdb_->set_db_path( sheet_db_str );
 		use_sheetdb_ = true;
 	}
+	std::string const extensions_str = tag->getOption< std::string >( "strand_extensions", "" );
+	if ( tag->hasOption( "strand_extensions" ) ) set_strand_extensions( extensions_str );
 
 	strands_.clear();
 	// parse strands, ensure that only strands are present
@@ -85,7 +88,6 @@ BetaSheetArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 			utility_exit_with_message( "In sheet " + id() + ", " + (*subtag)->getName() + " is not a strand." );
 		}
 	}
-	setup_strand_pairings();
 
 	if ( !updated_ ) enumerate_permutations();
 }
@@ -107,34 +109,39 @@ BetaSheetArchitect::design( core::pose::Pose const &, core::Real & random ) cons
 	}
 	core::Size const idx = extract_int( random, 1, permutations_.size() );
 	TR << "Selected permutation " << idx << " of " << permutations_.size() << std::endl;
-	return permutations_[ idx ]->clone();
+	return StructureDataOP( new StructureData( *permutations_[ idx ] ) );
 }
 
 void
-BetaSheetArchitect::setup_strand_pairings()
+BetaSheetArchitect::set_strand_extensions( std::string const & extensions_str )
 {
-	for ( core::Size s_idx=1; s_idx<=strands_.size(); ++s_idx ) {
-		std::string pstrand1 = "";
-		if ( s_idx > 1 ) {
-			pstrand1 = strands_[ s_idx - 1 ]->id();
+	typedef utility::vector1< std::string > Strings;
+	Strings const extensions = csv_to_container< Strings >( extensions_str, ';' );
+	for ( Strings::const_iterator s=extensions.begin(); s!=extensions.end(); ++s ) {
+		Strings const name_length = csv_to_container< Strings >( *s, ',' );
+		if ( name_length.size() != 2 ) {
+			std::stringstream msg;
+			msg << "BetaSheetArchitect::set_strand_extensions(): malformed extensions string ("
+				<< extensions_str << ") -- the extension " << *s << " has " << name_length.size()
+				<< " fields, but two are required (name and length)" << std::endl;
+			utility_exit_with_message( msg.str() );
 		}
-		std::string pstrand2 = "";
-		if ( s_idx < strands_.size() ) {
-			pstrand2 = strands_[ s_idx + 1 ]->id();
-		}
-		strands_[ s_idx ]->set_paired_strands( PairedStrandNames( pstrand1, pstrand2 ) );
+		core::Size const len = boost::lexical_cast< core::Size >( *name_length.rbegin() );
+		add_strand_extension( *name_length.begin(), len );
 	}
-	needs_update();
+}
+
+void
+BetaSheetArchitect::add_strand_extension( std::string const & strand_name, core::Size const length )
+{
+	extensions_[ strand_name ] = length;
 }
 
 void
 BetaSheetArchitect::add_strand( StrandArchitect const & strand )
 {
-	StrandArchitectOP new_s( new StrandArchitect( strand ) );
-	if ( !id().empty() ) {
-		new_s->set_id( id() + PARENT_DELIMETER + new_s->id() );
-	}
-	strands_.push_back( new_s );
+	StrandArchitectOP new_strand( new StrandArchitect( strand ) );
+	strands_.push_back( new_strand );
 	needs_update();
 }
 
@@ -205,8 +212,9 @@ void
 BetaSheetArchitect::modify_and_add_permutation( components::StructureData const & perm )
 {
 	if ( !use_sheetdb_ ) {
-		StructureDataOP toadd = perm.clone();
+		StructureDataOP toadd( new StructureData( perm ) );
 		store_sheet_idx( *toadd, 0 );
+		store_strand_pairings( *toadd );
 		permutations_.push_back( toadd );
 	} else {
 		components::SheetList const & list = sheetdb_->sheet_list(
@@ -224,7 +232,7 @@ BetaSheetArchitect::modify_and_add_permutation( components::StructureData const 
 			}
 
 			// add template pose for all strands
-			StructureDataOP toadd = perm.clone();
+			StructureDataOP toadd( new StructureData( perm ) );
 			core::Size cur_res = 1;
 			for ( StrandArchitectOPs::const_iterator strand=strands_.begin(); strand!=strands_.end(); ++strand ) {
 				core::Size const start = cur_res + 1;
@@ -234,6 +242,7 @@ BetaSheetArchitect::modify_and_add_permutation( components::StructureData const 
 				cur_res += toadd->segment( (*strand)->id() ).length();
 			}
 			store_sheet_idx( *toadd, sheet_idx );
+			store_strand_pairings( *toadd );
 			permutations_.push_back( toadd );
 		}
 	}
@@ -266,7 +275,8 @@ BetaSheetArchitect::store_strand_pairings( StructureData & sd ) const
 	for ( StrandArchitectOPs::const_iterator prev=strands_.begin(), c=++strands_.begin(); c!=strands_.end(); ++c, ++prev ) {
 		components::StrandPairing pairing(
 			(*prev)->id(), (*c)->id(),
-			(*prev)->retrieve_orientation( sd ), (*c)->retrieve_orientation( sd ),
+			(*prev)->retrieve_orientation( sd ),
+			(*c)->retrieve_orientation( sd ),
 			(*c)->retrieve_register_shift( sd ) );
 		sd.add_pairing( pairing );
 	}
@@ -311,6 +321,15 @@ BetaSheetArchitect::retrieve_orientations( StructureData const & perm ) const
 	return orients;
 }
 
+/// @brief looks up and returns extension length for a strand
+core::Size
+BetaSheetArchitect::extension_length( std::string const & strand ) const
+{
+	StrandExtensionsMap::const_iterator e = extensions_.find( strand );
+	if ( e == extensions_.end() ) return 0;
+	else return e->second;
+}
+
 /// @brief checks whether the given permutation forms a valid sheet
 void
 BetaSheetArchitect::check_permutation( components::StructureData const & perm ) const
@@ -323,7 +342,8 @@ BetaSheetArchitect::check_permutation( components::StructureData const & perm ) 
 			<< (*c)->retrieve_orientation( perm ) << " "
 			<< (*c)->retrieve_register_shift( perm ) << " "
 			<< (*c)->retrieve_bulge( perm ) << std::endl;
-		paired_res.push_back( utility::vector1< bool >( perm.segment( (*c)->id() ).elem_length(), false ) );
+		core::Size const strand_length = perm.segment( (*c)->id() ).elem_length() + extension_length( (*c)->id() );
+		paired_res.push_back( utility::vector1< bool >( strand_length, false ) );
 	}
 
 	utility::vector1< core::Size > bulges;
@@ -346,10 +366,12 @@ BetaSheetArchitect::check_permutation( components::StructureData const & perm ) 
 		int const shift = strands_[ strand ]->retrieve_register_shift( perm );
 		core::Size const bulge1 = bulges[ strand  - 1 ];
 		core::Size const bulge2 = bulges[ strand ];
+		core::Size const length1 = perm.segment( c1_name ).elem_length() + extension_length( c1_name );
+		core::Size const length2 = perm.segment( c2_name ).elem_length() + extension_length( c2_name );
 		int res2_offset = 0;
-		for ( core::Size res = 1; res<=perm.segment( c1_name ).elem_length(); ++res ) {
+		for ( core::Size res = 1; res<=length1; ++res ) {
 			core::Size const res2 = res - shift + res2_offset;
-			if ( ( res2 == 0 ) || ( res2 > perm.segment( c2_name ).elem_length() ) ) {
+			if ( ( res2 == 0 ) || ( res2 > length2 ) ) {
 				continue;
 			}
 

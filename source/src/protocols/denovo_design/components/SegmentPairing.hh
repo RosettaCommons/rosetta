@@ -22,6 +22,7 @@
 #include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/types.hh>
+#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -33,16 +34,16 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
-enum PairingType {
-	HELIX = 1,
-	STRAND = 2,
-	UNKNOWN = 3
-};
-
-SegmentPairingOP
-create_segment_pairing( std::string const & type_name );
-
 class SegmentPairing : public utility::pointer::ReferenceCount {
+public:
+	// types
+	enum PairingType {
+		HELIX = 1,
+		STRAND = 2,
+		HELIX_SHEET = 3,
+		UNKNOWN
+	};
+
 public:
 	// constants
 	static std::string
@@ -88,10 +89,39 @@ public:
 	void
 	set_segments( SegmentNames const & segments );
 
+public:
+	// Static Functions
+
+	static SegmentPairingOP
+	create( std::string const & type_name );
+
+	/// @brief Gets string for all strand pairings from a StructureData
+	static std::string
+	get_strand_pairings( StructureData const & sd );
+
+	/// @brief Gets string for all helix pairings from a StructureData
+	static std::string
+	get_helix_pairings( StructureData const & sd );
+
+	/// @brief Gets string for all helix-strand-strand triplets in a StructureData
+	static std::string
+	get_hss_triplets( StructureData const & sd );
+
+	/// @brief Gets pairs of residues involved in strand pairing
+	static ResiduePairs
+	get_strand_residue_pairs( StructureData const & sd );
+
 private:
 	// static functions
+
 	static std::string
 	type_to_str( PairingType const & type );
+
+	static SegmentPairingCOPs
+	get_pairings( StructureData const & sd, PairingType const & type );
+
+	static std::string
+	get_pairing_str( StructureData const & sd, PairingType const & type );
 
 private:
 	SegmentNames segments_;
@@ -133,6 +163,8 @@ private:
 
 class StrandPairing : public SegmentPairing {
 public:
+	typedef utility::vector1< core::Size > StrandExtensions;
+public:
 	StrandPairing();
 
 	StrandPairing(
@@ -161,7 +193,6 @@ protected:
 	virtual void
 	to_xml( utility::tag::Tag & tag ) const;
 
-
 public:
 	virtual std::string
 	pairing_string( StructureData const & sd ) const;
@@ -169,15 +200,64 @@ public:
 	bool
 	parallel() const;
 
-	//architects::RegisterShift
-	//nobu_register_shift() const;
+	architects::StrandOrientation
+	orient1() const;
+
+	architects::StrandOrientation
+	orient2() const;
+
+	architects::RegisterShift
+	shift() const;
+
+private:
+	architects::RegisterShift
+	nobu_register_shift(
+		StructureData const & sd,
+		protocols::fldsgn::topology::Strand const & s1,
+		protocols::fldsgn::topology::Strand const & s2,
+		architects::RegisterShift const nc_order_shift,
+		architects::StrandOrientation const & nc_order_orient ) const;
 
 private:
 	architects::StrandOrientation orient1_;
 	architects::StrandOrientation orient2_;
 	architects::RegisterShift shift_;
+};
+
+class HelixSheetPairing : public SegmentPairing {
+public:
+	HelixSheetPairing();
+
+	HelixSheetPairing(
+			SegmentName const & helix,
+			SegmentName const & s1,
+			SegmentName const & s2 );
+
+	virtual
+	~HelixSheetPairing() {};
+
+	virtual SegmentPairingOP
+	clone() const;
+
+	static std::string
+	class_name() { return "HelixSheetPairing"; }
+
+	virtual PairingType
+	type() const { return HELIX_SHEET; }
+
+protected:
+	virtual void
+	parse_tag( utility::tag::Tag const & tag );
+
+	virtual void
+	to_xml( utility::tag::Tag & tag ) const;
+
+public:
+	virtual std::string
+	pairing_string( StructureData const & sd ) const;
 
 };
+
 
 } //protocols
 } //denovo_design

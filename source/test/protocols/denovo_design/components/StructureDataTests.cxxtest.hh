@@ -38,6 +38,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 
 // Boost headers
@@ -46,9 +47,10 @@
 // C++ headers
 static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.StructureData.cxxtest");
 
-
 // --------------- Test Class --------------- //
 class StructureDataTests : public CxxTest::TestSuite {
+	typedef protocols::denovo_design::SegmentNameSet SegmentNameSet;
+	typedef protocols::denovo_design::SegmentNameList SegmentNameList;
 	typedef protocols::denovo_design::components::StructureData StructureData;
 	typedef protocols::denovo_design::components::StructureDataOP StructureDataOP;
 	typedef protocols::denovo_design::components::StructureDataFactory StructureDataFactory;
@@ -67,32 +69,31 @@ public:
 	void tearDown() {
 	}
 
-
 	void test_delete_segment()
 	{
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 		std::ifstream in_xml( "protocols/denovo_design/test_sd.xml" );
 
-		StructureDataOP perm = StructureDataFactory::get_instance()->create_from_xml( in_xml );
-		StructureData const orig = *perm;
+		StructureData perm = StructureDataFactory::get_instance()->create_from_xml( in_xml );
+		StructureData const orig = perm;
 
-		for ( SegmentNameList::const_iterator c=perm->segments_begin(); c!=perm->segments_end(); ++c ) {
-			TS_ASSERT( perm->segment( *c ).stop() >= perm->segment( *c ).start() );
-			TS_ASSERT( perm->segment( *c ).safe() >= perm->segment( *c ).start() );
+		for ( SegmentNameList::const_iterator c=perm.segments_begin(); c!=perm.segments_end(); ++c ) {
+			TS_ASSERT( perm.segment( *c ).stop() >= perm.segment( *c ).start() );
+			TS_ASSERT( perm.segment( *c ).safe() >= perm.segment( *c ).start() );
 		}
 
 		TR << "ORIG: " << orig << std::endl;
 		// delete bb.h1_sheet -- it shouldn't mess up any residues
-		perm->delete_segment( "bb.h1_sheet" );
-		TR << "DELE: " << *perm << std::endl;
-		for ( SegmentNameList::const_iterator c=perm->segments_begin(); c!=perm->segments_end(); ++c ) {
+		perm.delete_segment( "bb.h1_sheet" );
+		TR << "DELE: " << perm << std::endl;
+		for ( SegmentNameList::const_iterator c=perm.segments_begin(); c!=perm.segments_end(); ++c ) {
 			TR.Debug << "Looking at segment " << *c << std::endl;
 			TS_ASSERT( orig.has_segment( *c ) );
-			TS_ASSERT( perm->segment( *c ).stop() >= perm->segment( *c ).start() );
-			TS_ASSERT( perm->segment( *c ).safe() >= perm->segment( *c ).start() );
-			TS_ASSERT_EQUALS( perm->segment( *c ).elem_length(), orig.segment( *c ).elem_length() );
-			TS_ASSERT_EQUALS( perm->segment( *c ).safe() - perm->segment( *c ).start(),
+			TS_ASSERT( perm.segment( *c ).stop() >= perm.segment( *c ).start() );
+			TS_ASSERT( perm.segment( *c ).safe() >= perm.segment( *c ).start() );
+			TS_ASSERT_EQUALS( perm.segment( *c ).elem_length(), orig.segment( *c ).elem_length() );
+			TS_ASSERT_EQUALS( perm.segment( *c ).safe() - perm.segment( *c ).start(),
 				orig.segment( *c ).safe() - orig.segment( *c ).start() );
 		}
 	}
@@ -121,9 +122,7 @@ public:
 		xml << "<ResidueRange name=h2 start=16 group=2 nterm=1 cterm=0 ss=HHHHHHHHL abego=AAAAAAAAX lower_segment=l1 />" << std::endl;
 		xml << "<ResidueRange name=fixed start=25 nterm=0 cterm=0 group=1 ss=LEEEEELLEEEEEL abego=XBBBBBGGBBBBBX />" << std::endl;
 		xml << "</StructureData>" << std::endl;
-		StructureDataOP sd_ptr = StructureDataFactory::get_instance()->create_from_xml( xml );
-		TS_ASSERT( sd_ptr );
-		StructureData & sd = *sd_ptr;
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
 		StructureData const orig = sd;
 		std::stringstream orig_ss;
 		orig_ss << orig;
@@ -231,18 +230,17 @@ public:
 		sd_xml << "<ResidueRange name=\"2\" start=\"93\" nterm=\"1\" cterm=\"1\" group=\"1\" ss=\"L\" abego=\"X\" />" << std::endl;
 		sd_xml << "</StructureData>" << std::endl;
 
-		StructureDataOP sd = StructureDataFactory::get_instance()->create_from_xml( sd_xml );
-		TS_ASSERT( sd );
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( sd_xml );
 
 		// to start, there should be no remarks
-		TS_ASSERT( sd->retrieve_remarks( input_pose ).empty() );
+		TS_ASSERT( sd.retrieve_remarks( input_pose ).empty() );
 
 		// Save remarks into a structure data
-		sd->save_remarks( origremarks );
-		TR << *sd << std::endl;
+		sd.save_remarks( origremarks );
+		TR << sd << std::endl;
 
 		// We should then be able to retrieve identical remarks
-		core::io::Remarks const newremarks = sd->retrieve_remarks( input_pose );
+		core::io::Remarks const newremarks = sd.retrieve_remarks( input_pose );
 
 		TS_ASSERT_EQUALS( origremarks.size(), newremarks.size() );
 		for ( core::io::Remarks::const_iterator orig=origremarks.begin(), n=newremarks.begin();
@@ -251,22 +249,21 @@ public:
 			TS_ASSERT_EQUALS( n->num, orig->num );
 			TS_ASSERT_EQUALS( n->value, orig->value );
 		}
+	}
 
-		/*
-		TS_ASSERT_EQUALS( enzdes.size(), enzdes2.size() );
-		utility::vector1< std::string > fields1 = utility::string_split_simple( *(enzdes.begin()) );
-		utility::vector1< std::string > fields2 = utility::string_split_simple( *(enzdes2.begin()) );
-		TR << fields1 << fields2 << std::endl;
-		TS_ASSERT_EQUALS( fields1.size(), fields2.size() );
-		for ( core::Size i=1; i <= fields1.size(); ++i ) {
-		if ( i == 3 ) { // chain 1
-		TS_ASSERT_EQUALS( fields2[i][0], perm.pose()->pdb_info()->chain( boost::lexical_cast< core::Size >(fields2[5]) ) );
-		} else if ( i == 8 ) { // chain 2
-		TS_ASSERT_EQUALS( fields2[i][0], perm.pose()->pdb_info()->chain( boost::lexical_cast< core::Size >(fields2[10]) ) );
-		} else {
-		TS_ASSERT_EQUALS( fields1[i], fields2[i] );
+	void test_slice() {
+		utility::io::izstream xml( "protocols/denovo_design/test_sd.xml" );
+		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
+
+		SegmentNameSet const slice_segments = boost::assign::list_of("bb.sheet.s1")("bb.sheet_h1")("bb.h1")("bb.h1_sheet")("bb.sheet.s2");
+		StructureData const sliced = sd.slice( slice_segments, false );
+
+		for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+			if ( slice_segments.find( *s ) == slice_segments.end() ) {
+				TS_ASSERT( !sliced.has_segment( *s ) );
+			} else {
+				TS_ASSERT( sliced.has_segment( *s ) );
+			}
 		}
-		}
-		*/
 	}
 };

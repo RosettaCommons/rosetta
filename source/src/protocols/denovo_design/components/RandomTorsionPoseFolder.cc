@@ -59,6 +59,34 @@ RandomTorsionPoseFolder::parse_tag( utility::tag::TagCOP , basic::datacache::Dat
 {
 }
 
+/// @brief checks to ensure a residue is in the ResidueSubset
+///        exits with error if not
+void
+check_residue(
+	core::select::residue_selector::ResidueSubset const & subset,
+	core::Size const resid )
+{
+	if ( ( resid < 1 ) || ( resid > subset.size() ) ) {
+		std::stringstream msg;
+		msg << RandomTorsionPoseFolder::class_name() << "::apply(): A residue in a given loop (" << resid
+			<< ") does not exist in the movable residue subset (" << subset.size() << " residues)" << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+}
+
+/// @brief checks to ensure loops are contained within the ResidueSubset
+///        exits with error if not
+void
+check_residue_subset(
+	core::select::residue_selector::ResidueSubset const & subset,
+	protocols::loops::Loops const & loops )
+{
+	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
+		check_residue( subset, l->start() );
+		check_residue( subset, l->stop() );
+	}
+}
+
 /// @brief performs folding
 /// @param pose    - The pose to be folded, with all residues added.  The pose should be prepared with
 ///                  any necessary cutpoints added before giving to the PoseFolder. Torsions in the pose
@@ -76,12 +104,7 @@ RandomTorsionPoseFolder::apply(
 	core::select::residue_selector::ResidueSubset const & movable,
 	protocols::loops::Loops const & loops ) const
 {
-	if ( movable.size() != pose.total_residue() ) {
-		std::stringstream msg;
-		msg << type() << "::apply(): Size of pose (" << pose.total_residue()
-			<< ") does not match size of movable residue subset(" << movable.size() << ")" << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
+	check_residue_subset( movable, loops );
 
 	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
 		for ( core::Size resid=l->start(); resid<=l->stop(); ++resid ) {
@@ -92,12 +115,14 @@ RandomTorsionPoseFolder::apply(
 		}
 	}
 
-	// remodel removes cutpoints, so this should too
+	// remodel doesn't remove cutpoints, so this shouldn't either
+	/*
 	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
 		if ( !l->cut() ) continue;
 		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, l->cut() );
 		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, l->cut() + 1 );
 	}
+	*/
 }
 
 } //protocols

@@ -167,7 +167,7 @@ ExtendChainMover::apply( core::pose::Pose & pose )
 	BuildDeNovoBackboneMover assemble;
 	assemble.set_architect( arch );
 
-	assemble.set_connection_overlap( 1 );
+	assemble.set_build_overlap( 1 );
 	if ( dry_run_ ) {
 		assemble.set_folder( components::RandomTorsionPoseFolder() );
 	} else {

@@ -19,7 +19,7 @@
 // Package Headers
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/util.hh>
+#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/util.hh>
@@ -180,6 +180,31 @@ compute_max_strand( std::string const & sheet_topology )
 	return max_strand;
 }
 
+/// @brief helper function for replacing register shift of a pair with 99
+std::string
+remove_register_shift_single_pair( std::string const & pair_str )
+{
+	std::stringstream newstr;
+	utility::vector1< std::string > const fields = utility::string_split( pair_str, '.' );
+	debug_assert( fields.size() == 3 );
+	newstr << fields[1] << '.' << fields[2] << '.' << 99;
+	return newstr.str();
+}
+
+
+///@brief helper function for replacing register shift of all pairs with 99
+std::string
+remove_register_shifts( std::string const & pair_str )
+{
+	std::stringstream newstr;
+	utility::vector1< std::string > const pairs = utility::string_split( pair_str, ';' );
+	for ( utility::vector1< std::string >::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
+		if ( !newstr.str().empty() ) newstr << ';';
+		newstr << remove_register_shift_single_pair( *p );
+	}
+	return newstr.str();
+}
+
 /// @brief returns the fraction of pairings that pass the filter
 core::Real
 SheetTopologyFilter::compute( Pose const & pose ) const
@@ -214,9 +239,12 @@ SheetTopologyFilter::compute( Pose const & pose ) const
 
 	std::string sheet_topology = filtered_sheet_topology_;
 	if ( sheet_topology.empty() ) {
-		protocols::denovo_design::components::StructureDataCOP sd =
+		protocols::denovo_design::components::StructureData const sd =
 			protocols::denovo_design::components::StructureDataFactory::get_instance()->create_from_pose( pose );
-		sheet_topology = protocols::denovo_design::get_strandpairings( *sd, !ignore_register_shift_ );
+		sheet_topology = protocols::denovo_design::components::SegmentPairing::get_strand_pairings( sd );
+		if ( ignore_register_shift_ ) {
+			sheet_topology = remove_register_shifts( sheet_topology );
+		}
 		tr << "Topology " << sheet_topology << " will be filtered" << std::endl;
 	}
 

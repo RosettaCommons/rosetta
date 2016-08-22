@@ -31,6 +31,9 @@ namespace protocols {
 namespace denovo_design {
 namespace architects {
 
+std::string const
+DeNovoArchitect::DATA_MAP_NAME = "DeNovoArchitects";
+
 DeNovoArchitect::DeNovoArchitect( std::string const & id ):
 	StructureArchitect( id )
 {}
@@ -79,7 +82,7 @@ DeNovoMotifArchitect::design( core::pose::Pose const &, core::Real & random ) co
 	TR << id() << ": Selected motif " << selected
 		<< "( " << idx << " of " << motifs_.size() << " )" << std::endl;
 	components::StructureDataOP sd( new components::StructureData( id() ) );
-	sd->add_segment( id(), selected );
+	sd->add_segment( selected );
 	return sd;
 }
 
@@ -109,7 +112,7 @@ DeNovoMotifArchitect::set_motifs( std::string const & motifs_str )
 	MotifCOPs motif_vec;
 	utility::vector1< std::string > const motif_strs = utility::string_split( motifs_str, ',' );
 	for ( utility::vector1< std::string >::const_iterator ms=motif_strs.begin(); ms!=motif_strs.end(); ++ms ) {
-		MotifOP newmotif( new Motif() );
+		MotifOP newmotif( new Motif( id() ) );
 		newmotif->parse_motif( *ms );
 		motif_vec.push_back( newmotif );
 	}

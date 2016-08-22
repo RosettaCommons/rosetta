@@ -16,6 +16,7 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/Picker.hh>
+#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
@@ -27,6 +28,7 @@
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -83,7 +85,8 @@ RemodelLoopMoverPoseFolder::apply(
 	core::select::residue_selector::ResidueSubset const & movable,
 	protocols::loops::Loops const & loops ) const
 {
-	protocols::moves::MoverOP loop_mover = create_remodel_loop_mover( pose, movable, loops );
+	components::StructureData sd = StructureDataFactory::get_instance()->get_from_pose( pose );
+	protocols::moves::MoverOP loop_mover = create_remodel_loop_mover( pose, sd, movable, loops );
 	if ( !loop_mover ) {
 		throw EXCN_Fold( type() + "::apply(): mover to remodel loops could not be constructed. Fail." );
 	}
@@ -96,11 +99,29 @@ RemodelLoopMoverPoseFolder::apply(
 	if ( loop_mover->get_last_move_status() != protocols::moves::MS_SUCCESS ) {
 		throw EXCN_Fold( type() + "::apply(): RemodelLoopMover failed" );
 	}
+
+	// save modified SD
+	remove_cutpoints( sd, loops );
+	StructureDataFactory::get_instance()->save_into_pose( pose, sd );
+}
+
+void
+RemodelLoopMoverPoseFolder::remove_cutpoints( StructureData & sd, protocols::loops::Loops const & loops ) const
+{
+	using protocols::loops::Loops;
+	for ( Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
+		if ( l->cut() == 0 ) continue;
+		SegmentName const seg_name = sd.segment_name( l->cut() );
+		sd.set_cutpoint( seg_name, 0 );
+		TR.Debug << "Removed cutpoint in StructureData from residue " << l->cut()
+			<< " segment " << seg_name << std::endl;
+	}
 }
 
 protocols::moves::MoverOP
 RemodelLoopMoverPoseFolder::create_remodel_loop_mover(
 	core::pose::Pose const & pose,
+	StructureData const & sd,
 	core::select::residue_selector::ResidueSubset const & movable,
 	protocols::loops::Loops const & loops ) const
 {
@@ -117,7 +138,6 @@ RemodelLoopMoverPoseFolder::create_remodel_loop_mover(
 	//}
 
 	// select fragments
-	components::StructureData const & sd = StructureDataFactory::get_instance()->get_from_const_pose( pose );
 	components::Picker & picker = *components::Picker::get_instance();
 	core::fragment::ConstantLengthFragSetCOP frag9 =
 		picker.pick_and_cache_fragments( sd.ss(), sd.abego(), loops, pose.conformation().chain_endings(), 9 );
@@ -126,7 +146,7 @@ RemodelLoopMoverPoseFolder::create_remodel_loop_mover(
 	remodel->add_fragments( frag9 );
 	remodel->add_fragments( frag3 );
 
-	core::scoring::ScoreFunctionOP sfx = create_scorefxn();
+	core::scoring::ScoreFunctionOP sfx = create_scorefxn( pose );
 	remodel->scorefunction( *sfx );
 
 	return remodel;
@@ -138,9 +158,13 @@ RemodelLoopMoverPoseFolder::create_false_movemap(
 	core::select::residue_selector::ResidueSubset const & movable ) const
 {
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=movable.size(); ++resid ) {
 		mm->set_bb( resid, movable[resid] );
 		mm->set_chi( resid, movable[resid] );
+	}
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 	}
 
 	TR.Debug << "Created false movemap: " << std::endl;
@@ -150,12 +174,11 @@ RemodelLoopMoverPoseFolder::create_false_movemap(
 }
 
 core::scoring::ScoreFunctionOP
-RemodelLoopMoverPoseFolder::create_scorefxn() const
+RemodelLoopMoverPoseFolder::default_score_function()
 {
-	if ( scorefxn_ ) {
-		return scorefxn_->clone();
-	}
-	core::scoring::ScoreFunctionOP sfx = core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen.wts" );
+	using core::scoring::ScoreFunctionOP;
+
+	ScoreFunctionOP sfx = core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen.wts" );
 	sfx->set_weight( core::scoring::vdw, 3.0 );
 	sfx->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	sfx->set_weight( core::scoring::coordinate_constraint, 1.0 );
@@ -164,6 +187,22 @@ RemodelLoopMoverPoseFolder::create_scorefxn() const
 	sfx->set_weight( core::scoring::hbond_sr_bb, 1.0 );
 	sfx->set_weight( core::scoring::hbond_lr_bb, 2.0 );
 	sfx->set_weight( core::scoring::rg, 0.1 );
+	return sfx;
+}
+
+core::scoring::ScoreFunctionOP
+RemodelLoopMoverPoseFolder::create_scorefxn( core::pose::Pose const & pose ) const
+{
+	core::scoring::ScoreFunctionOP sfx;
+
+	if ( scorefxn_ ) {
+		sfx = scorefxn_->clone();
+	} else {
+		sfx = default_score_function();
+	}
+
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, sfx );
+
 	return sfx;
 }
 

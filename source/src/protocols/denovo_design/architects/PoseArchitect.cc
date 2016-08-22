@@ -26,6 +26,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.PoseArchitect" );
 
@@ -34,7 +35,9 @@ namespace denovo_design {
 namespace architects {
 
 PoseArchitect::PoseArchitect( std::string const & id_value ):
-	DeNovoArchitect( id_value )
+	DeNovoArchitect( id_value ),
+	secstruct_( "" ),
+	add_padding_( true )
 {}
 
 PoseArchitect::~PoseArchitect()
@@ -59,18 +62,38 @@ PoseArchitect::parse_tag(
 {
 	core::select::residue_selector::ResidueSelectorCOP selector_ =
 		protocols::rosetta_scripts::parse_residue_selector( tag, data );
+	add_padding_ = tag->getOption< bool >( "add_padding", add_padding_ );
+	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
 }
 
 components::StructureDataOP
 PoseArchitect::design( core::pose::Pose const & pose, core::Real & ) const
 {
-	components::StructureDataOP sd = components::StructureDataFactory::get_instance()->create_from_pose( pose, id() );
+	components::StructureDataOP const sd( new components::StructureData( components::StructureDataFactory::get_instance()->create_from_pose( pose, id() ) ) );
+	if ( !secstruct_.empty() ) {
+		if ( sd->pose_length() != secstruct_.size() ) {
+			std::stringstream msg;
+			msg << "PoseArchitect::design(): Length of user-provided secstruct (" << secstruct_.size()
+				<< ") does not match input pose length (" << pose.total_residue() << ")" << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
+		core::Size resid = 1;
+		for ( std::string::const_iterator ss=secstruct_.begin(); ss!=secstruct_.end(); ++ss, ++resid ) {
+			sd->set_ss( resid, *ss );
+		}
+	}
 
 	// add template segments
 	for ( SegmentNameList::const_iterator s=sd->segments_begin(); s!=sd->segments_end(); ++s ) {
 		core::Size const start = sd->segment( *s ).start();
 		core::Size const stop = sd->segment( *s ).stop();
 		sd->set_template_pose( *s, pose, start, stop );
+		if ( !add_padding_ ) {
+			components::Segment seg = sd->segment( *s );
+			seg.delete_lower_padding();
+			seg.delete_upper_padding();
+			sd->replace_segment( *s, seg );
+		}
 	}
 
 	return sd;

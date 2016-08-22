@@ -54,8 +54,9 @@ public:
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 		Segment s(
+			"s", // id
 			"LEEELLEEEL", // ss
-			"XBBBGGBBBX",
+			"XBBBGGBBBX", // abego
 			false, //lower terminus included
 			false ); //upper terminus included
 		s.set_safe( 5 );
@@ -97,6 +98,7 @@ public:
 		TS_ASSERT_EQUALS( t2.elem_length(), s.elem_length() );
 		TS_ASSERT_EQUALS( "L" + t2.ss(), s.ss() );
 		TS_ASSERT_EQUALS( "X" + t2.abego(), s.abego() );
+		TS_ASSERT_EQUALS( t2.id(), s.id() );
 		TS_ASSERT( !t2.contains( 29 ) );
 
 		// test delete cterm padding
@@ -174,7 +176,7 @@ public:
 	void test_cutpoint_residues() {
 		using namespace protocols::denovo_design::components;
 
-		Segment s1( "LL", "XX", true, true );
+		Segment s1( "s1", "LL", "XX", true, true );
 		TS_ASSERT_EQUALS( s1.cutpoint(), 0 );
 		TS_ASSERT_EQUALS( s1.n_residues_before_cutpoint(), 0 );
 		TS_ASSERT_EQUALS( s1.n_residues_after_cutpoint(), 2 );
@@ -189,7 +191,7 @@ public:
 		TS_ASSERT_EQUALS( s1.n_residues_before_cutpoint(), 2 );
 		TS_ASSERT_EQUALS( s1.n_residues_after_cutpoint(), 0 );
 
-		Segment s2( "L", "X", true, true );
+		Segment s2( "s2", "L", "X", true, true );
 		TS_ASSERT_EQUALS( s2.cutpoint(), 0 );
 		TS_ASSERT_EQUALS( s2.n_residues_before_cutpoint(), 0 );
 		TS_ASSERT_EQUALS( s2.n_residues_after_cutpoint(), 1 );
@@ -202,7 +204,7 @@ public:
 		// should be invalid
 		TS_ASSERT_THROWS_ANYTHING( s2.set_cutpoint( 2 ) );
 
-		Segment s3( "", "", true, true );
+		Segment s3( "s3", "", "", true, true );
 		TS_ASSERT_EQUALS( s3.cutpoint(), 0 );
 		TS_ASSERT_EQUALS( s3.n_residues_before_cutpoint(), 0 );
 		TS_ASSERT_EQUALS( s3.n_residues_after_cutpoint(), 0 );
@@ -212,8 +214,9 @@ public:
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 
-		Segment s1( "LHHHHHHHHL", "XAAAAAAAAO", false, false );
+		Segment s1( "s1", "LHHHHHHHHL", "XAAAAAAAAO", false, false );
 		TR << s1.start_local() << " " << s1.lower_padding() <<  " " << s1.lower() << " " << s1.start() << std::endl;
+		TS_ASSERT_EQUALS( s1.id(), "s1" );
 		TS_ASSERT_EQUALS( s1.movable_group(), 1 );
 		TS_ASSERT_EQUALS( s1.start_local(), 2 );
 		TS_ASSERT_EQUALS( s1.stop_local(), 9 );
@@ -229,6 +232,7 @@ public:
 		// now let's say it starts at residue 20
 		Segment s2( s1 );
 		s2.set_pose_start( 20 );
+		TS_ASSERT_EQUALS( s2.id(), s1.id() );
 		TS_ASSERT_EQUALS( s2.movable_group(), 1 );
 		TS_ASSERT_EQUALS( s2.start_local(), s1.start_local() );
 		TS_ASSERT_EQUALS( s2.stop_local(), s1.stop_local() );
@@ -242,7 +246,8 @@ public:
 		TS_ASSERT_EQUALS( s2.segment_to_pose( 8 ), s2.stop() );
 
 		// test n-terminus included
-		Segment s3( "LHHHHHHHHL", "XAAAAAAAAO", true, false );
+		Segment s3( "s3", "LHHHHHHHHL", "XAAAAAAAAO", true, false );
+		TS_ASSERT_EQUALS( s3.id(), "s3" );
 		TS_ASSERT_EQUALS( s3.start_local(), 1 );
 		TS_ASSERT_EQUALS( s3.stop_local(), 9 );
 		TS_ASSERT_EQUALS( s3.start(), 1 );
@@ -257,6 +262,7 @@ public:
 
 		Segment s4( s3 );
 		s4.set_pose_start( 20 );
+		TS_ASSERT_EQUALS( s4.id(), s3.id() );
 		TS_ASSERT_EQUALS( s4.start_local(), s4.start_local() );
 		TS_ASSERT_EQUALS( s4.stop_local(), s4.stop_local() );
 		TS_ASSERT_EQUALS( s4.lower(), s4.start() );
@@ -275,7 +281,7 @@ public:
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 
-		Segment s1;
+		Segment s1( "s1" );
 		s1.parse_motif( "10HA-1LB-1LG-1LA" );
 		TS_ASSERT_EQUALS( s1.ss(), "LHHHHHHHHHHLLLL" );
 		TS_ASSERT_EQUALS( s1.abego(), "XAAAAAAAAAABGAX" );
@@ -283,12 +289,12 @@ public:
 		TS_ASSERT_EQUALS( s1.elem_length(), 13 );
 		TR << "SS=" << s1.ss() << " Abego=" << s1.abego() << std::endl;
 
-		Segment s2;
+		Segment s2( "s2" );
 		s2.parse_motif( "10:HA-2LB-3:LG-2HA" );
 		TS_ASSERT_EQUALS( s2.ss(), "LHHHHHHHHHHLLLLLHHL" );
 		TS_ASSERT_EQUALS( s2.abego(), "XAAAAAAAAAABBGGGAAX" );
 
-		Segment s3;
+		Segment s3( "s3" );
 		s3.parse_motif( " \n" );
 		TS_ASSERT_EQUALS( s3.ss(), "LL" );
 		TS_ASSERT_EQUALS( s3.abego(), "XX" );

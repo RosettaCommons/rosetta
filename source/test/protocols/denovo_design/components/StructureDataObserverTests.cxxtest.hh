@@ -54,13 +54,13 @@ public:
 		core::pose::Pose pose;
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/components/helix15.pdb" );
 
-		std::string const sd_id = "UnitTest";
-		StructureData const orig_sd = *factory->create_from_pose( pose, sd_id );
+		StructureData const orig_sd = factory->create_from_pose( pose );
 
 		TS_ASSERT( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::STRUCTUREDATA_OBSERVER ) );
 		TS_ASSERT( !factory->observer_attached( pose ) );
 
-		factory->attach_observer( pose, orig_sd );
+		factory->save_into_pose( pose, orig_sd );
+		factory->attach_observer( pose );
 
 		// should be attached in a slot
 		TS_ASSERT( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::STRUCTUREDATA_OBSERVER ) );
@@ -82,9 +82,9 @@ public:
 		core::pose::Pose pose;
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/components/helix15.pdb" );
 
-		std::string const sd_id = "UnitTest";
-		StructureData const orig_sd = *factory->create_from_pose( pose, sd_id );
-		factory->attach_observer( pose, orig_sd );
+		StructureData const orig_sd = factory->create_from_pose( pose );
+		factory->save_into_pose( pose, orig_sd );
+		factory->attach_observer( pose );
 		TS_ASSERT( factory->observer_attached( pose ) );
 
 		// delete residues 1 and 2

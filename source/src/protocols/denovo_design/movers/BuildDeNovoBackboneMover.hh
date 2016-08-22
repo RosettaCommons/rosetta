@@ -21,7 +21,9 @@
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 #include <protocols/denovo_design/architects/DeNovoArchitect.fwd.hh>
+#include <protocols/denovo_design/components/DivideAndConqueror.fwd.hh>
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
+#include <protocols/denovo_design/components/StructureDataPerturber.fwd.hh>
 #include <protocols/denovo_design/components/ExtendedPoseBuilder.fwd.hh>
 #include <protocols/denovo_design/components/PoseFolder.fwd.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.fwd.hh>
@@ -50,6 +52,7 @@ public:
 	typedef core::Real FoldScore;
 	typedef utility::vector1< connection::ConnectionArchitectCOP > ConnectionArchitectCOPs;
 	typedef utility::vector1< protocols::moves::MoverOP > MoverOPs;
+	typedef utility::vector1< protocols::filters::FilterCOP > FilterCOPs;
 	typedef core::select::residue_selector::ResidueVector ResidueVector;
 	typedef protocols::constraint_generator::ConstraintGeneratorOP ConstraintGeneratorOP;
 	typedef protocols::constraint_generator::ConstraintGeneratorCOP ConstraintGeneratorCOP;
@@ -100,11 +103,43 @@ public:
 	void
 	set_folder( components::PoseFolder const & folder );
 
+	/// @brief sets names of segments to be included in the starting build phase
+	/// @param[in] segments_csv Comma-separated string containing segment names
+	void
+	set_start_segments( std::string const & segments_csv );
+
+	/// @brief sets names of segments to be included in the starting build phase
+	/// @param[in] segments Set of segment names
+	void
+	set_start_segments( SegmentNameSet const & segments );
+
+	/// @brief sets names of segments to be included in the final build phase
+	/// @param[in] segments_csv Comma-separated string containing segment names
+	void
+	set_stop_segments( std::string const & segments_csv );
+
+	/// @brief sets names of segments to be included in the final build phase
+	/// @param[in] segments Set of segment names
+	void
+	set_stop_segments( SegmentNameSet const & segments );
+
+	void
+	set_build_overlap( core::Size const overlap_val );
+
 	void
 	set_score_filter( protocols::filters::Filter const & filter );
 
 	void
-	set_connection_overlap( core::Size const overlap_val );
+	clear_prefold_movers();
+
+	void
+	add_prefold_mover( protocols::moves::Mover const & mover );
+
+	void
+	clear_postfold_movers();
+
+	void
+	add_postfold_mover( protocols::moves::Mover const & mover );
 
 private:
 	FoldScore
@@ -112,6 +147,14 @@ private:
 
 	void
 	fold( core::pose::Pose & pose ) const;
+
+	/// @brief    runs user-provided filters on the pose
+	/// @details  Filters are called for each build phase, and for every folding
+	///           attempt, in order. If a filter fails, an exception is
+	///           thrown and no later filters are run.
+	/// @throws   EXCN_FilterFailed if any filter fails
+	void
+	check_pose( core::pose::Pose const & pose ) const;
 
 	void
 	check_and_accept(
@@ -147,18 +190,6 @@ private:
 		ConstraintGeneratorCOPs const & generators ) const;
 
 	void
-	clear_prefold_movers();
-
-	void
-	add_prefold_mover( protocols::moves::Mover const & mover );
-
-	void
-	clear_postfold_movers();
-
-	void
-	add_postfold_mover( protocols::moves::Mover const & mover );
-
-	void
 	apply_movers( MoverOPs const & movers, core::pose::Pose & pose ) const;
 
 	SegmentNames
@@ -168,7 +199,7 @@ private:
 	create_constraint_generators( ResidueVector const & residues ) const;
 
 	ConstraintGeneratorOP
-	create_coordinate_constraint_generator( ResidueVector const & residues ) const;
+	create_overlap_constraint_generator( ResidueVector const & residues ) const;
 
 	void
 	remove_cutpoints( components::StructureData & sd, protocols::loops::Loops const & loops ) const;
@@ -185,6 +216,12 @@ private:
 	parse_folder( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	void
+	parse_perturbers( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
+	void
+	parse_filters( utility::tag::TagCOP tag, protocols::filters::Filters_map const & filter_map );
+
+	void
 	parse_prefold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers );
 
 	void
@@ -193,20 +230,73 @@ private:
 	MoverOPs
 	parse_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers ) const;
 
+	/// @brief builds/folds pose in phases using recursive algorithm
+	/// @throws EXCN_Fold if we couldn't fold the pose
+	core::pose::PoseOP
+	build_in_phases(
+		components::StructureData const & full_sd,
+		components::BuildPhases const & phases,
+		SegmentNameSet const & finished,
+		core::Size const phase_num ) const;
+
+	void
+	fold_attempt( core::pose::Pose & pose ) const;
+
 private:
 	// objects
 	architects::DeNovoArchitectCOP architect_;
 	components::ExtendedPoseBuilderCOP builder_;
 	components::PoseFolderCOP folder_;
+	components::StructureDataPerturberCOP perturber_;
 	MoverOPs prefold_movers_;
 	MoverOPs postfold_movers_;
+	FilterCOPs filters_;
 	protocols::filters::FilterCOP score_filter_;
 
 private:
 	// options
 	std::string id_;
 	bool dry_run_;
-	core::Size connection_overlap_;
+	bool dump_pdbs_;
+	core::Size build_overlap_;
+	core::Size iterations_per_phase_;
+	SegmentNameSet start_segments_;
+	SegmentNameSet stop_segments_;
+};
+
+// helper mover
+class SetPoseSecstructFromStructureDataMover : public protocols::moves::Mover {
+public:
+	static std::string const
+	class_name() { return "SetPoseSecstructFromStructureDataMover"; }
+
+	virtual protocols::moves::MoverOP
+	clone() const;
+
+	virtual void
+	apply( core::pose::Pose & pose );
+
+	virtual std::string
+	get_name() const;
+};
+
+class EXCN_FilterFailed : public utility::excn::EXCN_Base {
+public:
+	EXCN_FilterFailed( std::string const & filter, core::Size const filter_num ):
+		utility::excn::EXCN_Base(), filter_( filter ), filter_num_( filter_num ) {};
+
+	virtual void
+	show( std::ostream & ) const {}
+
+	std::string const &
+	filter_name() const { return filter_; }
+
+	core::Size
+	filter_num() const { return filter_num_; }
+
+private:
+	std::string filter_;
+	core::Size filter_num_;
 };
 
 class EXCN_NothingToFold : public utility::excn::EXCN_Base {
@@ -228,6 +318,9 @@ add_overlap_to_loops(
 	protocols::loops::Loops & loops,
 	core::Size const overlap,
 	core::pose::Pose const & pose );
+
+//void
+//modify_for_check( components::StructureData & sd );
 
 } //protocols
 } //denovo_design

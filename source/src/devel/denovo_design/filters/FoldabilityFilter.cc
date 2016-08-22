@@ -15,71 +15,39 @@
 #include <devel/denovo_design/filters/FoldabilityFilter.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
 
-// Project Headers
-#include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/components/Picker.hh>
-
 // Protocol Headers
-#include <protocols/fldsgn/topology/HelixPairing.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
-#include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/forge/build/BuildManager.hh>
-#include <protocols/forge/build/Interval.hh>
-#include <protocols/forge/build/GrowLeft.hh>
-#include <protocols/forge/build/GrowRight.hh>
-#include <protocols/forge/components/VarLengthBuild.hh>
+#include <protocols/denovo_design/components/Picker.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/moves/DsspMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/select/residue_selector/SecondaryStructureSelector.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/SecondaryStructureSelector.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 // ObjexxFCL Headers
 
 // C++ Headers
 
-
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
 #endif
-
-#if defined(WIN32) || defined(__CYGWIN__)
-#include <ctime>
-#endif
-
-#ifdef BOINC_GRAPHICS
-#include <protocols/boinc/boinc.hh>
-#endif
-
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.filters.FoldabilityFilter" );
 
@@ -262,20 +230,6 @@ FoldabilityFilter::compute_segment(
 	core::Size end = segment.stop();
 	runtime_assert( end >= start );
 
-	if ( StructureDataFactory::get_instance()->has_cached_string( *posecopy ) ) {
-		StructureDataOP perm = StructureDataFactory::get_instance()->create_from_pose( *posecopy, "foldability" );
-		std::string const ss = perm->ss();
-		core::Size res = 1;
-		for ( std::string::const_iterator c=ss.begin(), endc=ss.end(); c!=endc; ++c, ++res ) {
-			posecopy->set_secstruct( res, *c );
-		}
-		TR << "Pose SS set from permutation info: " << posecopy->secstruct() << std::endl;
-	} else {
-		protocols::moves::DsspMover dssp;
-		dssp.apply( *posecopy );
-		TR << "pose dssp is : " << posecopy->secstruct() << std::endl;
-	}
-
 	std::string ss( "" );
 	std::string aa( "" );
 	utility::vector1< std::string > abego;
@@ -381,6 +335,9 @@ FoldabilityFilter::get_aa_ss_abego(
 		// there is a chance that the motif is a different length -- we need to update end
 		end = insert_length + start;
 	}
+
+	TR << "Pose sequence is " << aa << std::endl;
+	TR << "Pose secondary structure is " << ss << std::endl;
 
 	// create full abego vector
 	utility::vector1< std::string > abego_all( core::sequence::get_abego( pose, 2 ) );

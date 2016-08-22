@@ -26,12 +26,14 @@
 // Package headers
 
 // Core headers
+#include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameList.hh>
 
 // Basic/Numeric/Utility Headers
 #include <utility/SingletonBase.hh>
 
 // C++ Headers
+#include <map>
 
 namespace protocols {
 namespace denovo_design {
@@ -62,6 +64,9 @@ public:
 
 /// @brief class used for picking/caching fragments
 class Picker : public utility::SingletonBase< Picker > {
+public:
+	typedef std::map< std::string, core::fragment::FrameCOP > FragmentMap;
+
 public:
 	Picker();
 	virtual ~Picker();
@@ -123,11 +128,27 @@ protected:
 		std::string const & aa,
 		std::string const & ss,
 		utility::vector1< std::string > const & complete_abego,
-		core::Size const start,
-		core::Size const end,
+		core::Size const resid,
 		core::Size const fragsize ) const;
 
-	/// @brief pick fragments of a given length, padding when necessary -- DOES NOT CACHE
+	/// @brief Simply picks fragments for the given position, caching as needed
+	/// @param[in] chain_ss The complete secondary structure string, typically from a Pose.
+	/// @param[in] chain_aa The complete amino acid string, typically from a Pose;
+	///                     can be empty.  If empty, sequence bias is not used to pick fragments.
+	/// @param[in] chain_abego The complete abego string, typically from a setter, set_abego
+	/// @param[in] resid The starting residue to pick fragments from; Pose
+	///  numbering (i.e. 1-based indexing).
+	/// @param[in] frag_length The desired length of the fragments
+	/// @param[in] n_frags The number of fragments to pick per position.
+	core::fragment::FrameOP
+	pick_fragments_for_resid(
+		std::string const & chain_aa,
+		std::string const & chain_ss,
+		utility::vector1< std::string > const & chain_abego,
+		core::Size const resid,
+		core::Size const frag_length );
+
+	/// @brief pick fragments of a given length, padding when necessary -- CACHES fragments for all positions
 	/// @param[in] complete_aa The complete amino acid string, typically from a Pose;
 	///            can be empty.  If empty, sequence bias is not used to pick fragments.
 	/// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
@@ -148,7 +169,7 @@ protected:
 
 private:
 	VLBProtected vlb_;
-	std::map< std::string, core::fragment::FrameList > fragcache_;
+	FragmentMap fragcache_;
 
 private:
 	/// @brief number of fragments to pick for each position (default = 200)

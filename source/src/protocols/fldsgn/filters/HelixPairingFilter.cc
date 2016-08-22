@@ -381,7 +381,7 @@ HelixPairingFilter::compute_helix_pairing_set( core::pose::Pose const & pose ) c
 	if ( hpairset_ ) {
 		return *hpairset_;
 	} else {
-		StructureData const sd = *StructureDataFactory::get_instance()->create_from_pose( pose );
+		StructureData const sd = StructureDataFactory::get_instance()->create_from_pose( pose );
 		std::stringstream helix_str;
 		for ( SegmentPairingCOPs::const_iterator p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
 			if ( p != sd.pairings_begin() ) helix_str << ';';

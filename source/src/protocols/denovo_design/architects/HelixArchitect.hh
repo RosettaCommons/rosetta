@@ -32,12 +32,6 @@ namespace protocols {
 namespace denovo_design {
 namespace architects {
 
-using protocols::denovo_design::architects::DeNovoArchitect;
-using protocols::denovo_design::architects::DeNovoArchitectOP;
-using protocols::denovo_design::architects::DeNovoArchitectCOP;
-using protocols::denovo_design::components::StructureData;
-using protocols::denovo_design::components::StructureDataOP;
-
 ///@brief Architect for helices
 class HelixArchitect : public DeNovoArchitect {
 public:
@@ -68,7 +62,14 @@ public:
 	void
 	set_lengths( Lengths const & lengths );
 
+	components::SegmentCOPs::const_iterator
+	motifs_begin() const;
+
+	components::SegmentCOPs::const_iterator
+	motifs_end() const;
+
 private:
+	components::SegmentCOPs motifs_;
 	Lengths lengths_;
 
 };

@@ -22,6 +22,7 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 // Core Headers
 #include <core/io/silent/SilentStruct.hh>
@@ -66,8 +67,8 @@ public:
 
 		core::pose::Pose const input_pose( pdbpose );
 
-		StructureDataCOP const_read_perm = factory.create_from_pose( input_pose, "UnitTest" );
-		StructureData read_perm = factory.get_from_pose( pdbpose, "UnitTest" );
+		StructureData const const_read_perm = factory.create_from_pose( input_pose );
+		StructureData read_perm = factory.get_from_pose( pdbpose );
 
 		TS_ASSERT_THROWS_NOTHING( read_perm.check_pose_consistency( pdbpose ) );
 		TS_ASSERT( input_pose.pdb_info() );
@@ -98,7 +99,7 @@ public:
 		TS_ASSERT_EQUALS( read_perm.id(), new_id );
 
 		factory.save_into_pose( pdbpose, read_perm );
-		StructureData const & saved = factory.get_from_pose( pdbpose, "UnitTest" );
+		StructureData const & saved = factory.get_from_pose( pdbpose );
 		TS_ASSERT_EQUALS( saved.id(), read_perm.id() );
 
 		// test stored version vs original
@@ -117,7 +118,7 @@ public:
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/test_pdbcomp.pdb" );
 
 		std::string const new_id = "StructureData_SilentFile_IO";
-		StructureData read_perm = factory.get_from_pose( input_pose, new_id );
+		StructureData read_perm = factory.get_from_pose( input_pose );
 		read_perm.set_id( new_id );
 
 		// now write data to the pose and test
@@ -141,12 +142,13 @@ public:
 		SilentStructOPs read_structures = sftest.structure_list();
 		TR << "Read " << read_structures.size() << " structures" << std::endl;
 		for ( SilentStructOPs::const_iterator s=read_structures.begin(); s!=read_structures.end(); ++s ) {
+			(*s)->print_comments( TR ); TR.flush();
 			core::pose::Pose pose_from_silent;
 			(*s)->set_residue_numbers( utility::vector1< core::Size >() );
 			(*s)->fill_pose( pose_from_silent );
-			StructureData const & newperm = factory.get_from_pose( pose_from_silent, "UnitTest" );
+			StructureData const & newperm = factory.get_from_pose( pose_from_silent );
 			TS_ASSERT( pose_from_silent.pdb_info() );
-			TS_ASSERT( factory.observer_attached( pose_from_silent ) );
+			TS_ASSERT( factory.has_cached_data( pose_from_silent ) );
 			TS_ASSERT_EQUALS( newperm.id(), new_id );
 
 			// test vs original
@@ -166,15 +168,42 @@ public:
 		utility::tag::TagCOP tag1 = utility::tag::Tag::create( tag_xml );
 
 		utility::io::izstream input_xml( "protocols/denovo_design/test_sd.xml" );
-		StructureDataOP sd = factory.create_from_xml( input_xml );
-		TS_ASSERT( sd );
+		StructureData sd = factory.create_from_xml( input_xml );
 		TS_ASSERT_EQUALS( tag1->getName(), "StructureData" );
-		TS_ASSERT_EQUALS( tag1->getOption< core::Size >( "length" ), sd->length() );
-		TS_ASSERT_EQUALS( tag1->getOption< core::Size >( "pose_length" ), sd->pose_length() );
+		TS_ASSERT_EQUALS( tag1->getOption< core::Size >( "length" ), sd.length() );
+		TS_ASSERT_EQUALS( tag1->getOption< core::Size >( "pose_length" ), sd.pose_length() );
 
 		// replace 'UnitTest' name with cat_sheet (the original name) so that the strings can be directly compared
 		test::UTracer UT( "protocols/denovo_design/test_sd.xml" );
-		UT << *sd;
+		UT << sd;
+	}
+
+	void test_symmetry()
+	{
+		using protocols::simple_moves::symmetry::SetupForSymmetryMover;
+		StructureDataFactory const & factory = *( StructureDataFactory::get_instance() );
+
+		core::pose::Pose pdbpose;
+		core::io::pdb::build_pose_from_pdb_as_is( pdbpose, "protocols/denovo_design/test_pdbcomp.pdb" );
+
+		core::pose::Pose const input_pose( pdbpose );
+
+		// asymmetric unit
+		StructureData const input_sd = factory.create_from_pose( input_pose );
+		TS_ASSERT_THROWS_NOTHING( input_sd.check_pose_consistency( input_pose ) );
+
+		// make symmetric
+		SetupForSymmetryMover setup_sym( "protocols/denovo_design/components/C3_Z.sym" );
+		setup_sym.apply( pdbpose );
+
+		// input sd should go into the symmetric pose just fine
+		TR << "Saving into new symm pose" << std::endl;
+		factory.save_into_pose( pdbpose, input_sd );
+
+		std::stringstream sd1, sd2;
+		sd1 << input_sd;
+		sd2 << factory.get_from_pose( pdbpose );
+		TS_ASSERT_EQUALS( sd1.str(), sd2.str() );
 	}
 
 };

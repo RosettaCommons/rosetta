@@ -35,24 +35,6 @@ namespace protocols {
 namespace denovo_design {
 namespace architects {
 
-struct PairedStrandNames {
-public:
-	PairedStrandNames( std::string const & seg1, std::string const & seg2 ):
-		segment1( seg1 ), segment2( seg2 ) {}
-
-	std::string segment1;
-	std::string segment2;
-
-	bool
-	operator<( PairedStrandNames const & other ) const;
-
-	friend std::ostream &
-	operator<<( std::ostream & os, PairedStrandNames const & paired_strands );
-
-private:
-	PairedStrandNames() {}
-};
-
 /// @brief Individual strands are oriented pointing either "UP" or "DOWN"
 ///        If two adjacent strands have the same orientation, they are parallel
 ///        If two adjacent strands have different orientation, they are antiparallel
@@ -100,9 +82,6 @@ protected:
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 public:
-	void
-	set_paired_strands( PairedStrandNames const & strands );
-
 	components::StructureDataCOPs::const_iterator
 	motifs_begin() const;
 
@@ -137,10 +116,6 @@ public:
 	enumerate_permutations();
 
 public:
-	// Data field names
-	static std::string const
-	paired_strands_keyname();
-
 	static std::string const
 	register_shift_keyname();
 
@@ -153,8 +128,8 @@ public:
 	static StrandOrientation
 	int_to_orientation( int const integer );
 
-	static PairedStrandNames
-	str_to_paired_strands( std::string const & paired_strand_str );
+	static StrandBulge
+	retrieve_bulge( StructureData const & sd, std::string const & segment_id );
 
 public:
 	/// interaction with StructureData
@@ -166,12 +141,6 @@ public:
 
 	StrandBulge
 	retrieve_bulge( StructureData const & sd ) const;
-
-	PairedStrandNames
-	retrieve_paired_strands( StructureData const & sd ) const;
-
-	void
-	store_paired_strands( StructureData & sd, PairedStrandNames const & strands ) const;
 
 private:
 	void
@@ -187,6 +156,10 @@ private:
 	void
 	needs_update();
 
+	/// @brief If architect is updated, simply exit without error.  If not, exit with an error message
+	void
+	check_updated() const;
+
 	components::StructureDataCOPs
 	compute_permutations() const;
 
@@ -195,7 +168,6 @@ private:
 	Lengths lengths_;
 	StrandOrientations orientations_;
 	RegisterShifts register_shifts_;
-	PairedStrandNames paired_strands_;
 	StrandBulges bulges_;
 	bool updated_;
 

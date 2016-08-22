@@ -206,14 +206,13 @@ PairedSheetResidueSelector::get_secstruct( core::pose::Pose const & pose ) const
 ///          If a sheet topology cannot be found by the above methods, an error is
 ///          thrown
 std::string
-PairedSheetResidueSelector::get_sheet_topology( core::pose::Pose const & ) const
+PairedSheetResidueSelector::get_sheet_topology( core::pose::Pose const & pose ) const
 {
 	if ( !sheet_topology_.empty() ) return sheet_topology_;
-	// TODO: when I push updated 'Tomponent' classes to master, remove these comments
-	//components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
-	//if ( factory.has_cached_data( pose ) ) {
-	// return components::SegmentPairing::get_strand_pairings( factory.get_from_const_pose( pose ) );
-	//}
+	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
+	if ( factory.has_cached_data( pose ) ) {
+		return components::SegmentPairing::get_strand_pairings( factory.get_from_const_pose( pose ) );
+	}
 	std::stringstream msg;
 	msg << "PairedSheetResidueSelector(): Could not determine strand pairings!  "
 		<< "You must specify them using the \"sheet_topology\" option or attach a StructureData object to the pose"
