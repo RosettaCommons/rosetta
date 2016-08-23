@@ -89,6 +89,13 @@ LinkageConformerMover::set_defaults(){
 	sample_protein_linkage_ = true;
 	use_conformer_population_stats_ = true;
 	movemap_residues_.clear();
+	
+	SugarBBSamplerOP phi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
+	phi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( phi_sampler ) );
+
+	SugarBBSamplerOP psi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
+	psi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( psi_sampler ) );
+	
 
 }
 
@@ -112,8 +119,8 @@ LinkageConformerMover::LinkageConformerMover( LinkageConformerMover const & src 
 void
 LinkageConformerMover::set_movemap( core::kinematics::MoveMapCOP movemap ){
 	using namespace core::kinematics;
-	movemap_residues_ = get_residues_from_movemap_with_id( core::id::BB, *movemap );
 	movemap_ = movemap->clone();
+	
 }
 
 void
@@ -216,30 +223,37 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	using namespace core::chemical;
 
 	reset_status();
-
+	movemap_residues_.clear();
+	
 	if ( ! movemap_ ) {
-		TR << "No Movemap Set.  Attempting to use all residues.  This is probably not what you want!" << std::endl;
+		TR << "No Movemap Set.  Attempting to use all carbohydrate residues." << std::endl;
 		movemap_ = core::kinematics::MoveMapOP( new MoveMap);
 		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-			movemap_residues_.push_back( i );
-			movemap_->set_bb( i, true);
+			if (pose.residue_type(i).is_carbohydrate()){
+				movemap_->set_bb( i, true);
+			}
+			else {
+				movemap_->set_bb( i, false);
+			}
 		}
 	}
-
-	if ( ! phi_sampler_mover_ ) {
-		SugarBBSamplerOP phi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
-		phi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( phi_sampler, movemap_ ) );
+	
+	phi_sampler_mover_->set_movemap(movemap_);
+	psi_sampler_mover_->set_movemap(movemap_);
+	
+	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+		if ( pose.residue_type( i ).is_carbohydrate() && movemap_->get_bb(i) ){
+			movemap_residues_.push_back( i );
+		}
 	}
-
-	if ( ! psi_sampler_mover_ ) {
-		SugarBBSamplerOP psi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
-		psi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( psi_sampler, movemap_ ) );
-	}
-
+	
 	conformer_found_ = false;
-
+	
+	
 	core::Size index = numeric::random::rg().random_range( 1, movemap_residues_.size() );
 	core::Size upper_resnum = movemap_residues_[ index ];
+	
+
 
 	core::chemical::ResidueType const & res2 = pose.residue_type( upper_resnum );
 	if ( ! res2.is_carbohydrate() ) {

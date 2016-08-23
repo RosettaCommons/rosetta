@@ -154,6 +154,14 @@ public:
 	protocols::moves::MoverOP
 	clone() const;
 
+	virtual bool reinitialize_for_each_job() const {
+		return true;
+	}
+	
+	virtual bool reinitialize_for_new_input() const {
+		return true;
+	}
+	
 private:
 	//std::pair< core::Size, core::Size > linkage_pair_; Can't check if this exists.
 
@@ -169,7 +177,7 @@ private:
 
 	simple_moves::BBDihedralSamplerMoverOP phi_sampler_mover_;
 	simple_moves::BBDihedralSamplerMoverOP psi_sampler_mover_;
-
+	
 	core::kinematics::MoveMapOP movemap_;
 };
 
