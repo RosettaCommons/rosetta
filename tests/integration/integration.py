@@ -34,6 +34,7 @@ class NT:  # named tuple
 Jobs = []  # Global list of NameTuples  (pid, tag, start_time, out_dir,...)
 platforms = ['linux', 'macos', 'windows']
 compilers = ['gcc', 'clang', 'icc']
+modes     = ['release', 'debug', 'release_debug']
 this_file_path = os.path.realpath(__file__)
 this_file_dir = os.path.dirname(this_file_path)
 
@@ -698,10 +699,10 @@ def format_demo_line(command, demo_subdir):
     commandSP = new_command.split()
 
     for word in commandSP:
-        if word.endswith(Options.mode):
+        if '.' in word:
             wordSP = os.path.basename(word).split(".")
             ext = wordSP[-1]
-            if match_patterns(ext, platforms) and match_patterns(ext, compilers):
+            if match_patterns(ext, platforms) and match_patterns(ext, compilers) and match_patterns(ext, modes):
                 executables.append(wordSP[0])
 
                 #People can give path/to/rosetta_scripts.linuxgccrelease in their tutorials and we need to match it.
