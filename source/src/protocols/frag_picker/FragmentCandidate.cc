@@ -179,7 +179,7 @@ void FragmentCandidate::print_fragment_index(std::ostream& out, bool vall_index_
 		out << "0 " << fragmentLength_ << std::endl;
 		for ( Size i = 1; i <= fragmentLength_; ++i ) {
 			VallResidueOP r = get_residue(i);
-			out << utility::trim(F(9, 3, r->phi())) << " " << F(9, 3, r->psi()) << " " << F(9, 3, r->omega()) << std::endl;
+			out << r->aa() << " " << r->ss() << " " << utility::trim(F(9, 3, r->phi())) << " " << F(9, 3, r->psi()) << " " << F(9, 3, r->omega()) << std::endl;
 		}
 	}
 }

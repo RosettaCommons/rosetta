@@ -132,7 +132,7 @@ Options = Option_Group( '',
 		Option( 'ignore_waters', 'Boolean',
 				desc="Ignore HOH residues found in PDB file. Note: HOH residues, and waters in general, are incompatible with the default solvation model (LK).",
 				default='true' ),
-		
+
 		Option( 'guarantee_no_DNA', 'Boolean',
 				desc="Do not rename A/C/G to DA/DC/DG even if missing their 2' hydroxyl; expert knowledge says this structure has no DNA.",
 				default='false' ),
@@ -4202,6 +4202,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='400'),
 			Option( 'stage2_temperature',             'Real',       desc='Monte Carlo temperature in the stage2', default='2.0'),
 			Option( 'stage1_4_cenrot_score',          'String',     desc='Switch to cenrot model in stage1_4', default='score_cenrot_cm_stage1_4.wts'),
+			Option( 'include_loop_ss_chunks',          'Boolean',   desc='include loop secondary structure chunks from templates', default='false' ),
 
 		), # -cm:hybridize
 	), # -cm

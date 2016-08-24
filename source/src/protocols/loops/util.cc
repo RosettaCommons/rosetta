@@ -666,6 +666,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	core::Size gap_size,
 	core::Size minimum_length_of_chunk_helix,
 	core::Size minimum_length_of_chunk_strand,
+	core::Size minimum_length_of_chunk_loop,
 	core::Real CA_CA_distance_cutoff) {
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
@@ -685,7 +686,9 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 		if ( ss == 'E' ) {
 			secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_strand);
 		}
-
+		if ( ss == 'L' ) {
+			secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_loop);
+		}
 		Loops::LoopList::const_iterator eit, it;
 		for (  it = secondary_structure_chunks_this_ss.begin(), eit = secondary_structure_chunks_this_ss.end();
 				it != eit; ++it ) {

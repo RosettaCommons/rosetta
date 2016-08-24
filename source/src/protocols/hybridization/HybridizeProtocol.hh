@@ -153,6 +153,7 @@ private:
 	bool min_after_stage1_; // tors min after stage1
 	core::Real fragprob_stage2_;
 	core::Real randfragprob_stage2_;
+	bool include_loop_ss_chunks_;
 
 	// use cenrot mode
 	bool cenrot_;

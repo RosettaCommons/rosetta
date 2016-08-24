@@ -155,7 +155,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 					Size residueindex = vall_last_residue_key+valllinecnt; // See VallProvider for residue index
 					torsions t;
 					istringstream vin( vallline );
-					vin >> t.phi >> t.psi >> t.omega;
+					vin >> t.aa >> t.ss >> t.phi >> t.psi >> t.omega;
 					vall_torsions[residueindex] = t;
 				}
 			}
@@ -180,22 +180,24 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 					Real phi;
 					Real psi;
 					Real omega;
-					fin >> phi >> psi >> omega;
-					BBTorsionSRFDOP res( new BBTorsionSRFD(3, 'L', 'G') );
+					char aa;
+					char ss;
+					fin >> aa >> ss >> phi >> psi >> omega;
+					BBTorsionSRFDOP res( new BBTorsionSRFD(3, ss, aa) );
 					res->set_torsion(1, phi);
 					res->set_torsion(2, psi);
 					res->set_torsion(3, omega);
+					res->set_secstruct(ss);
 					current_fragment->add_residue(res);
 				}
 			} else { // read torsions from torsion only vall
 				Size last_residue_key = vall_residue_key + fraglen - 1;
 				for ( Size i = vall_residue_key; i <= last_residue_key; i++ ) {
-					// set ss 'L' and aa 'G' just as placeholders to prevent run time error in
-					// GunnCost moves (fragment_as_pose method)
-					BBTorsionSRFDOP res( new BBTorsionSRFD(3, 'L', 'G') );
+					BBTorsionSRFDOP res( new BBTorsionSRFD(3, vall_torsions[i].ss, vall_torsions[i].aa) );
 					res->set_torsion(1, vall_torsions[i].phi);
 					res->set_torsion(2, vall_torsions[i].psi);
 					res->set_torsion(3, vall_torsions[i].omega);
+					res->set_secstruct(vall_torsions[i].ss);
 					current_fragment->add_residue(res);
 				}
 			}

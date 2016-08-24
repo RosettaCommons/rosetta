@@ -124,11 +124,11 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 		core::scoring::dssp::Dssp dssp_obj( pose_asu );
 		dssp_obj.insert_ss_into_pose( pose_asu );
-		SSEs = protocols::loops::extract_secondary_structure_chunks( pose_asu, "HE", 3, 6, 3, 4);
+		SSEs = protocols::loops::extract_secondary_structure_chunks( pose_asu, "HE", 3, 6, 3, 3, 4);
 	} else {
 		core::scoring::dssp::Dssp dssp_obj( pose );
 		dssp_obj.insert_ss_into_pose( pose );
-		SSEs = protocols::loops::extract_secondary_structure_chunks( pose, "HE", 3, 6, 3, 4);
+		SSEs = protocols::loops::extract_secondary_structure_chunks( pose, "HE", 3, 6, 3, 3, 4);
 	}
 	SSEs.sequential_order();
 

@@ -45,6 +45,8 @@ struct torsions {
 	Real phi;
 	Real psi;
 	Real omega;
+	char ss;
+	char aa;
 };
 
 /* classic 9mer Frags would be in one of those */

@@ -243,6 +243,8 @@ HybridizeProtocol::init() {
 	skip_long_min_ = true;   //fpd  this is no longer necessary and seems to hurt model accuracy
 	keep_pose_constraint_ = false;   //fpd PLEASE INITIALIZE NEW VARIABLES
 
+	include_loop_ss_chunks_ = option[cm::hybridize::include_loop_ss_chunks]();
+
 	cenrot_ = option[corrections::score::cenrot]();
 
 	csts_from_frags_ = false;  // generate dihedral constraints from fragments
@@ -727,7 +729,12 @@ void HybridizeProtocol::add_template(
 
 	// find ss chunks in template
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
-	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
+	protocols::loops::Loops chunks;
+	if (include_loop_ss_chunks_) {
+		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HEL", 3, 6, 3, 3, 4);
+	} else {
+		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 3, 4);
+	}
 
 	// if there are no SS elts in the pose, use contigs
 	if ( chunks.num_loop() == 0 ) chunks = contigs;
@@ -758,8 +765,13 @@ void HybridizeProtocol::update_last_template()
 
 	// find ss chunks in template
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
-	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
 
+	protocols::loops::Loops chunks;
+	if (include_loop_ss_chunks_) {
+		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HEL", 3, 6, 3, 3, 4);
+	} else {
+		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 3, 4);
+	}
 	if ( chunks.num_loop() == 0 ) chunks = contigs;
 
 	template_chunks_[templates_.size()] = chunks;
