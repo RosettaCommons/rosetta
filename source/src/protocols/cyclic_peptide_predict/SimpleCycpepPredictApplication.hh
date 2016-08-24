@@ -128,6 +128,14 @@ public:
 	/// bin params file directly from disk.
 	void set_abba_bins_binfile_contents( std::string const &contents_in );
 
+	/// @brief Set the frequency with which we sample cis proline.
+	/// @details Implicitly sets sample_cis_pro_ to "true".
+	void set_sample_cis_pro_frequency( core::Real const &freq_in );
+
+	/// @brief Set cis proline sampling OFF.
+	///
+	void disable_cis_pro_sampling();
+
 	/// @brief Actually run the application.
 	/// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
 	void run() const;
@@ -373,6 +381,14 @@ private:
 	///
 	inline bool use_rama_filter() const { return use_rama_filter_; }
 
+	/// @brief Are we sampling cis-prolines?
+	/// @details Defaults to false.
+	inline bool sample_cis_pro() const { return sample_cis_pro_; }
+
+	/// @brief Frequency for sampling cis prolines.
+	///
+	inline core::Real const & sample_cis_pro_frequency() const { return sample_cis_pro_frequency_; }
+
 private:
 	/// ------------- Data -------------------------------
 	/// -------- When you add new data to this class, ----
@@ -535,6 +551,15 @@ private:
 	/// @brief The energy above which we no longer count a hydrogen bond to an acceptor for the filter.
 	/// @details Default -0.1.
 	core::Real oversaturated_hbond_cutoff_energy_;
+
+	/// @brief At residues that are more likely to have cis omega values, sample cis some fraction of the time.
+	/// @details Currently applies only to L-proline and D-proline.  Could be extended to beta-3-proline and to
+	/// N-methylated amino acids, once those are added.  Read from database.
+	bool sample_cis_pro_;
+
+	/// @brief At residues that are more likely to have cis omega values, sample cis this fraction of the time.
+	/// @details Read from database.
+	core::Real sample_cis_pro_frequency_;
 
 	/// @brief Should we design the peptide after sampling the conformation, or just relax it?
 	/// @details Default "false" (relax only; no design).

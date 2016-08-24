@@ -319,7 +319,7 @@ public: // test functions
 		using namespace core::conformation::membrane;
 
 		std::map< std::string, core::Size > pdb2pose_map;
-		
+
 		// create topology objects
 		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/pmp22_withSS_PPM_opt.span", pdb2pose_map ) );
 		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/caln_tm_finalB.span", pdb2pose_map ) );

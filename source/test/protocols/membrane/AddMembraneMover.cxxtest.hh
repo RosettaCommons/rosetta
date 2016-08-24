@@ -87,8 +87,8 @@ public: // test functions
 		pose_from_file( *multi_mem_pose_, "protocols/membrane/1AFO_AB_multi.pdb" , core::import_pose::PDB_file);
 
 		// Load in a pose that contains a single TM span
-		single_tm_pose_ = core::pose::PoseOP( new Pose() ); 
-		pose_from_file( *single_tm_pose_, "protocols/membrane/1A11_native.pdb", core::import_pose::PDB_file ); 
+		single_tm_pose_ = core::pose::PoseOP( new Pose() );
+		pose_from_file( *single_tm_pose_, "protocols/membrane/1A11_native.pdb", core::import_pose::PDB_file );
 
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
@@ -134,9 +134,9 @@ public: // test functions
 		add_memb5->apply( *specially_positioned_pose2_ );
 
 		// (6) Ask add membrane mover to do a special setup for single tm-span poses
-		TR << "Setting up a single TM-span pose" << std::endl; 
-		AddMembraneMoverOP add_memb6( new AddMembraneMover( "single_TM_mode" ) ); 
-		add_memb6->apply( *single_tm_pose_ ); 
+		TR << "Setting up a single TM-span pose" << std::endl;
+		AddMembraneMoverOP add_memb6( new AddMembraneMover( "single_TM_mode" ) );
+		add_memb6->apply( *single_tm_pose_ );
 	}
 
 	/// @brief Tear Down Test
@@ -185,11 +185,11 @@ public: // test functions
 	/// @brief Check correct setup of a single TM spanning pose
 	void test_single_tm_span_pose() {
 
-		TR << "Check that the spanning topology is setup correctly for a single TM span pose" << std::endl; 
+		TR << "Check that the spanning topology is setup correctly for a single TM span pose" << std::endl;
 
-		TS_ASSERT( single_tm_pose_->conformation().membrane_info()->spanning_topology()->nspans() == 1 ); 
-		TS_ASSERT( single_tm_pose_->conformation().membrane_info()->spanning_topology()->span( 1 )->start() == 1 ); 
-		TS_ASSERT( single_tm_pose_->conformation().membrane_info()->spanning_topology()->span( 1 )->end() == 25 ); 
+		TS_ASSERT( single_tm_pose_->conformation().membrane_info()->spanning_topology()->nspans() == 1 );
+		TS_ASSERT( single_tm_pose_->conformation().membrane_info()->spanning_topology()->span( 1 )->start() == 1 );
+		TS_ASSERT( single_tm_pose_->conformation().membrane_info()->spanning_topology()->span( 1 )->end() == 25 );
 
 	}
 
@@ -365,6 +365,6 @@ private:
 	core::pose::PoseOP specially_positioned_pose1_;
 	core::pose::PoseOP specially_positioned_pose2_;
 	core::pose::PoseOP multi_mem_pose_;
-	core::pose::PoseOP single_tm_pose_; 
+	core::pose::PoseOP single_tm_pose_;
 
 }; // AddMembraneMover unit test

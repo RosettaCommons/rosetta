@@ -212,6 +212,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	user_set_dihedral_perturbation_(0.0),
 	filter_oversaturated_hbond_acceptors_(true),
 	oversaturated_hbond_cutoff_energy_(-0.1),
+	sample_cis_pro_(false),
+	sample_cis_pro_frequency_(0.0),
 	design_peptide_(false),
 	design_filename_(""),
 	prevent_design_file_read_( !allow_file_read ),
@@ -282,6 +284,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	user_set_dihedral_perturbation_(src.user_set_dihedral_perturbation_),
 	filter_oversaturated_hbond_acceptors_(src.filter_oversaturated_hbond_acceptors_),
 	oversaturated_hbond_cutoff_energy_(src.oversaturated_hbond_cutoff_energy_),
+	sample_cis_pro_(src.sample_cis_pro_),
+	sample_cis_pro_frequency_(src.sample_cis_pro_frequency_),
 	design_peptide_(src.design_peptide_),
 	design_filename_(src.design_filename_),
 	prevent_design_file_read_(src.prevent_design_file_read_),
@@ -425,6 +429,11 @@ SimpleCycpepPredictApplication::initialize_from_options(
 
 	filter_oversaturated_hbond_acceptors_ = option[basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors]();
 	oversaturated_hbond_cutoff_energy_ = option[basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff]();
+
+	//Options related to sampling cis prolines:
+	if ( option[basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency].user() ) { //Turn on cis proline sampling iff the user specifies it.
+		set_sample_cis_pro_frequency( option[basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency]() );
+	}
 
 	//Options related to design:
 	design_peptide_ = option[basic::options::OptionKeys::cyclic_peptide::design_peptide]();
@@ -593,6 +602,25 @@ SimpleCycpepPredictApplication::set_abba_bins_binfile_contents(
 	std::string const &contents_in
 ) {
 	abba_bins_ = contents_in;
+}
+
+/// @brief Set the frequency with which we sample cis proline.
+/// @details Implicitly sets sample_cis_pro_ to "true".
+void
+SimpleCycpepPredictApplication::set_sample_cis_pro_frequency(
+	core::Real const &freq_in
+) {
+	runtime_assert_string_msg( 0.0 <= freq_in && freq_in <= 1.0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_sample_cis_pro_frequency(): The frequency must be between 0 and 1." );
+	sample_cis_pro_frequency_ = freq_in;
+	sample_cis_pro_ = true;
+}
+
+/// @brief Set cis proline sampling OFF.
+///
+void
+SimpleCycpepPredictApplication::disable_cis_pro_sampling() {
+	sample_cis_pro_ = false;
+	sample_cis_pro_frequency_ = 0.0;
 }
 
 
@@ -1441,6 +1469,18 @@ SimpleCycpepPredictApplication::genkic_close(
 		} else {
 			//TODO Randomize mainchain torsions here for beta- and gamma-amino acids.
 			utility_exit_with_message( "Handling of beta- and gamma-amino acids in setup of the genKIC perturber in the simple_cycpep_predict app has not yet been written.  TODO." );
+		}
+	}
+	//Additional perturber: sampling cis proline.  Must be after the other perturbers.
+	if ( sample_cis_pro() ) {
+		for ( core::Size i=1; i<=nres; ++i ) {
+			if ( i==1 && nres==anchor_res ) continue; //Can't perturb the anchor residue.
+			if ( i-1==anchor_res ) continue; //Can't perturb the anchor residue.
+			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr ) {
+				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::sample_cis_peptide_bond );
+				genkic->add_value_to_perturber_value_list( sample_cis_pro_frequency() );
+				genkic->add_residue_to_perturber_residue_list( i==1 ? nres : i-1 ); //The residue PRECEDING the proline is perturbed
+			}
 		}
 	}
 

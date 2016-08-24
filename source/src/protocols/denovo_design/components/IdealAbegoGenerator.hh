@@ -114,28 +114,28 @@ private:
 private:
 	// private constants
 	static Abegos const
-	ab_no_extension;
+		ab_no_extension;
 
 	static Abegos const
-	ba_no_extension;
+		ba_no_extension;
 
 	static Abegos const
-	bb_no_extension;
+		bb_no_extension;
 
 	static Abegos const
-	aa_no_extension;
+		aa_no_extension;
 
 	static Abegos const
-	ab;
+		ab;
 
 	static Abegos const
-	ba;
+		ba;
 
 	static Abegos const
-	bb;
+		bb;
 
 	static Abegos const
-	alpha_alpha;
+		alpha_alpha;
 
 	// hide default constructor
 private:

@@ -119,7 +119,7 @@ public:
 		StructureData const & sd,
 		SegmentPairSet const & pairs,
 		SegmentNameSet const & start_seg,
-		SegmentNameSet const & stop_seg	);
+		SegmentNameSet const & stop_seg );
 
 	bool
 	operator()( StructureSlices const & slices ) const;

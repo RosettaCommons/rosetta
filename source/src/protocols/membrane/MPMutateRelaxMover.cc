@@ -232,13 +232,13 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 				repack->restrict_to_repacking();
 				core::pack::pack_rotamers( working_pose, *sfxn_, repack );
 
-			// if relaxing
+				// if relaxing
 			} else if ( relax_ == true ) {
 
 				// do range relax
 				TR << "Running MPRangeRelax..." << std::endl;
 				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
-//				relax->optimize_membrane( false );
+				//    relax->optimize_membrane( false );
 				relax->apply( working_pose );
 			}
 
@@ -271,7 +271,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
-	
+
 }// apply
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -302,7 +302,7 @@ void MPMutateRelaxMover::init_from_cmd() {
 	using namespace basic::options;
 
 	// making sure models won't be overwritten
-	if ( option[ OptionKeys::out::nstruct ]() > 1 ){
+	if ( option[ OptionKeys::out::nstruct ]() > 1 ) {
 		utility_exit_with_message( "Set '-out:nstruct 1'! Otherwise models will be overwritten!" );
 	}
 
@@ -441,15 +441,15 @@ void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
 void MPMutateRelaxMover::finalize_setup( Pose & pose ){
 
 	using namespace basic::options;
-	
+
 	// get mutation
 	if ( option[ OptionKeys::mp::mutate_relax::mutation ].user() ) {
-		
+
 		// input format A163F
 		std::string mutation = option[ OptionKeys::mp::mutate_relax::mutation ]();
-		
+
 		TR << "Looking at mutation " << mutation << std::endl;
-		
+
 		// add string to private data
 		add_mutant_to_vectors( mutation, pose );
 	}
@@ -528,7 +528,7 @@ void MPMutateRelaxMover::read_mutant_file( core::pose::Pose & pose ) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Add mutants to private data: list of A163F into vectors
-	void MPMutateRelaxMover::add_mutant_to_vectors( std::string mutations, core::pose::Pose & pose ) {
+void MPMutateRelaxMover::add_mutant_to_vectors( std::string mutations, core::pose::Pose & pose ) {
 
 	using namespace utility;
 	TR << "adding mutants to vectors" << std::endl;
@@ -544,7 +544,7 @@ void MPMutateRelaxMover::read_mutant_file( core::pose::Pose & pose ) {
 
 	// PDB numbering?
 	bool pdb_numbering( false );
-		
+
 	// split string by whitespace, write output into vector
 	utility::vector1< std::string > all_mutants = split_whitespace( mutations );
 
@@ -562,8 +562,7 @@ void MPMutateRelaxMover::read_mutant_file( core::pose::Pose & pose ) {
 			if ( wt_id_mut.find( "_" ) != std::string::npos ) {
 				TR << "Mutations are in PDB numbering scheme." << std::endl;
 				pdb_numbering = true;
-			}
-			else {
+			} else {
 				TR << "Mutations are in pose numbering scheme." << std::endl;
 			}
 		}
@@ -571,54 +570,51 @@ void MPMutateRelaxMover::read_mutant_file( core::pose::Pose & pose ) {
 		// check input file format
 		if ( ! pdb_numbering && wt_id_mut.find( "_" ) != std::string::npos ) {
 			utility_exit_with_message( "Mutations should either be in PDB numbering (A_E15L) where A is the chain, or in pose numbering (E15L) where the residues are renumbered without gaps, starting from 1. Quitting." );
-		}
-		else if ( pdb_numbering && wt_id_mut.find( "_" ) == std::string::npos ) {
+		} else if ( pdb_numbering && wt_id_mut.find( "_" ) == std::string::npos ) {
 			utility_exit_with_message( "Mutations should either be in PDB numbering (A_E15L) where A is the chain, or in pose numbering (E15L) where the residues are renumbered without gaps, starting from 1. Quitting." );
 		}
-		
+
 		// pose numbering
 		if ( pdb_numbering == false ) {
 
 			// get wt and mutant from vector: split string by character
 			wt = wt_id_mut[ 0 ];
 			mut = wt_id_mut[ wt_id_mut.size()-1 ];
-			
+
 			// get residue number: get each digit
 			utility::vector1< std::string > tmp;
 			for ( core::Size i = 1; i <= wt_id_mut.size()-2; ++i ) {
 				tmp.push_back( to_string( wt_id_mut[ i ] ) );
 			}
-			
+
 			// join digits together to the residue number
 			seqid = string2Size( join( tmp, "" ) );
-		}
-		
-		// PDB numbering
-		else {
-			
+		} else {
+			// PDB numbering
+
 			// get chain
 			char chain = wt_id_mut[ 0 ];
 
 			// remove the chain and the underscore from the string
 			wt_id_mut.erase( 0, 2 );
-			
+
 			// get wt and mutant from vector: split string by character
 			wt = wt_id_mut[ 0 ];
 			mut = wt_id_mut[ wt_id_mut.size()-1 ];
-			
+
 			// get residue number: get each digit
 			utility::vector1< std::string > tmp;
 			for ( core::Size i = 1; i <= wt_id_mut.size()-2; ++i ) {
 				tmp.push_back( to_string( wt_id_mut[ i ] ) );
 			}
-			
+
 			// join digits together to the residue number
 			int seqid_pdb = string2int( join( tmp, "" ) );
-			
+
 			// get pose resnumber from pdb numbering
 			seqid = pose.pdb_info()->pdb2pose( chain, seqid_pdb );
 		}
-		
+
 		TR << "wt " << wt << ", seqid " << seqid << ", mut " << mut << std::endl;
 
 		// put all of the wt / seqid / mut info into the line vectors

@@ -36,4 +36,4 @@ store_denovo_architect( DeNovoArchitectOP architect, basic::datacache::DataMap &
 } //architects
 
 
-#endif	//protocols/denovo_design/architects_util_hh
+#endif //protocols/denovo_design/architects_util_hh

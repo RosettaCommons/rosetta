@@ -92,7 +92,7 @@ bool read_membrane() {
 
 	if ( option[OptionKeys::mp::setup::transform_into_membrane].user() ) {
 		membrane = option[OptionKeys::mp::setup::transform_into_membrane]();
-		
+
 		if ( membrane == true ) {
 			TR << "Pose is a membrane protein and will be transformed into the membrane" <<  std::endl;
 		}
@@ -111,7 +111,7 @@ bool optimize_embedding() {
 
 	if ( option[OptionKeys::mp::transform::optimize_embedding].user() ) {
 		optimize = option[OptionKeys::mp::transform::optimize_embedding]();
-		
+
 		if ( optimize == true ) {
 			TR << "Protein embedding in the membrane will be optimized" <<  std::endl;
 		}
@@ -125,19 +125,19 @@ bool optimize_embedding() {
 
 // skip relax?
 bool skipping_relax() {
-	
+
 	bool skip_relax( false );
-	
+
 	if ( option[OptionKeys::relax::range::skip_relax].user() ) {
 		skip_relax = option[OptionKeys::relax::range::skip_relax]();
-		
+
 		if ( skip_relax == true ) {
 			TR << "Skipping refinement step..." << std::endl;
 		}
 	}
-	
+
 	return skip_relax;
-	
+
 } // skip relax?
 
 ////////////////////////////////////////////////////////////////////////////
@@ -195,9 +195,9 @@ void helix_from_sequence() {
 			// runs TransformIntoMembrane underneath
 			OptimizeProteinEmbeddingMoverOP opt( new OptimizeProteinEmbeddingMover() );
 			opt->apply( pose );
-			
+
 			// run MPRangeRelax with default values (nres and 0.1 angle max)
-			if ( ! skip_relax ){
+			if ( ! skip_relax ) {
 				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
 				relax->apply( pose );
 			}
@@ -211,9 +211,9 @@ void helix_from_sequence() {
 			// transform into membrane
 			TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 			transform->apply( pose );
-			
+
 			// run MPRangeRelax with default values (nres and 0.1 angle max)
-			if ( ! skip_relax ){
+			if ( ! skip_relax ) {
 				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
 				relax->apply( pose );
 			}
@@ -248,11 +248,11 @@ main( int argc, char * argv [] )
 		JobDistributor::get_instance()->go( helix );
 
 		// call my function
-//		helix_from_sequence();
+		//  helix_from_sequence();
 
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 }

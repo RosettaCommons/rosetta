@@ -36,5 +36,5 @@ store_connection_architect( ConnectionArchitectOP architect, basic::datacache::D
 } //connection
 
 
-#endif	//protocols/denovo_design/connection_util_hh
+#endif //protocols/denovo_design/connection_util_hh
 

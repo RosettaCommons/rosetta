@@ -445,7 +445,7 @@ StrandPairing::nobu_register_shift(
 		architects::RegisterShift const len2 = s2.length() - bulges2;
 		architects::RegisterShift const flipped_shift = len1 - ( len2 + nc_order_shift );
 		preliminary_shift = flipped_shift;
-	}	 else {
+	}  else {
 		std::stringstream msg;
 		msg << "StrandPairings:: invalid orientation: " << nc_order_orient << std::endl;
 		utility_exit_with_message( msg.str() );

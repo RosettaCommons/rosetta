@@ -178,14 +178,14 @@ StructureDataObserver::detach_impl()
 StructureData const &
 StructureDataObserver::sd() const
 {
-	debug_assert( sd_ );
-	return *sd_;
+debug_assert( sd_ );
+return *sd_;
 }
 
 StructureDataCOP
 StructureDataObserver::sd_ptr() const
 {
-	return sd_;
+return sd_;
 }
 */
 

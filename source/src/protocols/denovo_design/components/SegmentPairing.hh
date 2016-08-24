@@ -229,9 +229,9 @@ public:
 	HelixSheetPairing();
 
 	HelixSheetPairing(
-			SegmentName const & helix,
-			SegmentName const & s1,
-			SegmentName const & s2 );
+		SegmentName const & helix,
+		SegmentName const & s1,
+		SegmentName const & s2 );
 
 	virtual
 	~HelixSheetPairing() {};

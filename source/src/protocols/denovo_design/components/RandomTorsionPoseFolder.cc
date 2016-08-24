@@ -118,9 +118,9 @@ RandomTorsionPoseFolder::apply(
 	// remodel doesn't remove cutpoints, so this shouldn't either
 	/*
 	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		if ( !l->cut() ) continue;
-		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, l->cut() );
-		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, l->cut() + 1 );
+	if ( !l->cut() ) continue;
+	core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, l->cut() );
+	core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, l->cut() + 1 );
 	}
 	*/
 }

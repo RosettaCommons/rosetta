@@ -115,7 +115,7 @@ public:
 	/// @param[in] motifs String of secstruct/abego motifs (e.g. "1LX-5EB-2LG-5EB-1LA-1LB-1LG-10HA-1LX" )
 	/// @param[in] prefix Name to be prepended before the segment names. If empty,
 	///                   names will be as [ L01, E01, L02, ... ].  If set to "myprefix", names
-	///										will be as [ myprefix.L01, myprefix.E01, ... ]
+	///          will be as [ myprefix.L01, myprefix.E01, ... ]
 	/// @returns StructureData containing one segment per motif with the specified
 	///          secondary structure and abego. Each motif is connected to
 	///          the previous and next motifs.  Segments are named by their

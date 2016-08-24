@@ -62,7 +62,7 @@ public:
 	/// @brief Get the name of the Mover
 	std::string
 	get_name() const;
-	
+
 	///////////////////////////////
 	/// Rosetta Scripts Support ///
 	///////////////////////////////
@@ -86,30 +86,30 @@ public:
 	clone() const;
 
 private: // methods
-	
+
 	/// @brief register options
 	void register_options();
-	
+
 	/// @brief set defaults
 	void set_defaults();
 
 	/// @brief init from commandline
 	void init_from_cmd();
-	
+
 private: // data
 
 	/// @brief Fasta sequence
 	std::string seq_;
-	
+
 	/// @brief is it a membrane protein?
 	bool mem_;
-	
+
 	/// @brief optimize membrane embedding via the scorefunction?
 	bool opt_mem_;
-	
+
 	/// @brief skip relax run after building the helix?
 	bool skip_rlx_;
-	
+
 };
 
 std::ostream &operator<< (std::ostream &os, HelixFromSequence const &mover);

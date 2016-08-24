@@ -42,7 +42,7 @@ namespace denovo_design {
 namespace connection {
 
 std::string const
-ConnectionArchitect::DATA_MAP_NAME = "ConnectionArchitects";
+	ConnectionArchitect::DATA_MAP_NAME = "ConnectionArchitects";
 
 ConnectionArchitect::ConnectionArchitect( std::string const & id_value ):
 	protocols::denovo_design::architects::StructureArchitect( id_value ),

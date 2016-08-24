@@ -2385,10 +2385,10 @@ operator<<( std::ostream & os, StructureData const & perm )
 std::ostream &
 operator<<( std::ostream & os, SegmentMap const & resmap )
 {
-	for ( SegmentMap::const_iterator r=resmap.begin(); r!=resmap.end(); ++r ) {
-		os << r->second;
-	}
-	return os;
+for ( SegmentMap::const_iterator r=resmap.begin(); r!=resmap.end(); ++r ) {
+os << r->second;
+}
+return os;
 }
 */
 

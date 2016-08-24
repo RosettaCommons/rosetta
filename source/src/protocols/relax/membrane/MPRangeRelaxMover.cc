@@ -206,7 +206,7 @@ void MPRangeRelaxMover::apply( Pose & pose ) {
 	RangeRelaxMoverOP relax( new RangeRelaxMover( pose_tm_com ) );
 	relax->add_membrane_again( false );
 	relax->set_scorefunction( sfxn_ );
-//	relax->optimize_membrane( optmem_ );
+	// relax->optimize_membrane( optmem_ );
 	if ( native_ != 0 ) {
 		relax->set_native( native_ );
 	} else {

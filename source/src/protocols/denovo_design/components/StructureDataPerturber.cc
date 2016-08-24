@@ -98,9 +98,9 @@ StructureDataPerturber::create( utility::tag::Tag const & tag, basic::datacache:
 		std::stringstream msg;
 		msg << "StructureDataPerturber::create(): Invalid perturber name " << tag.getName() << std::endl
 			<< "Valid names are: "
-				<< ConnectionPerturber::class_name() << ", "
-				<< HelixPerturber::class_name() << ", "
-				<< CompoundPerturber::class_name() << std::endl;
+			<< ConnectionPerturber::class_name() << ", "
+			<< HelixPerturber::class_name() << ", "
+			<< CompoundPerturber::class_name() << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 	return perturber;
@@ -154,7 +154,7 @@ NullPerturber::NullPerturber():
 	StructureDataPerturber()
 {}
 
-	/// @brief Destructor
+/// @brief Destructor
 NullPerturber::~NullPerturber()
 {}
 

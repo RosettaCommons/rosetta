@@ -432,10 +432,10 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Step 2: Initialize the spanning topology
 	if ( topology_->nres_topo() == 0 ) {
 		if ( spanfile_ == "single_TM_mode" ) {
-		  TR << "Single TM Mode: Defining a single TM helix from the length of the input pose" << std::endl;
-		  // Define teh span as teh whole helix, excluding the membrane residue                                                                            
-		  SpanCOP single_TM_span = SpanCOP( new Span(  1, pose.total_residue()-1 ) );
-		  topology_->add_span( *single_TM_span );
+			TR << "Single TM Mode: Defining a single TM helix from the length of the input pose" << std::endl;
+			// Define teh span as teh whole helix, excluding the membrane residue
+			SpanCOP single_TM_span = SpanCOP( new Span(  1, pose.total_residue()-1 ) );
+			topology_->add_span( *single_TM_span );
 		} else if ( spanfile_ != "from_structure" ) {
 			// now supports PDB numbering also
 			std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
@@ -586,8 +586,8 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 				membrane_pos = found_mem_rsds[1];
 				user_defined_ = false;
 
-			// Case 2b: Multiple membrane residues found AND the user specified found residue
-			// matches a residue in the 'found' list
+				// Case 2b: Multiple membrane residues found AND the user specified found residue
+				// matches a residue in the 'found' list
 			} else {
 				core::SSize current_rsd = static_cast< core::SSize >( membrane_rsd_ );
 				for ( core::Size i = 1; i <= found_mem_rsds.size(); i++ ) {
@@ -599,24 +599,24 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 				}
 			}
 
-		// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
+			// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
 		} else if ( (membrane_rsd_ == 0) && (found_mem_rsds[1] != -1) ) {
 			TR << "No flag given: Adding membrane residue from PDB at residue number " << found_mem_rsds[1] << std::endl;
 			membrane_pos = found_mem_rsds[1];
 			user_defined_ = true;
 
-		// Case 4: If membrane found and agrees with user specified value, accept
+			// Case 4: If membrane found and agrees with user specified value, accept
 		} else if ( static_cast< core::SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) {
 			TR << "User specified residue matches found membrane residue. Accepting." << std::endl;
 			membrane_pos = found_mem_rsds[1];
 			user_defined_ = true;
 
-		// Case 5: If no membrane residue found, add a new one to the pose
+			// Case 5: If no membrane residue found, add a new one to the pose
 		} else if ( found_mem_rsds[1] == -1 ) {
 			TR << "Adding a new membrane residue to the pose" << std::endl;
 			membrane_pos = add_membrane_virtual( pose );
 
-		// Case 6: Doesn't exist ;)
+			// Case 6: Doesn't exist ;)
 		} else {
 			TR << "Congratulations - you have reached an edge case for adding the memrbane residue that we haven't thought of yet!" << std::endl;
 			TR << "Contact the developers - exiting for now..." << std::endl;

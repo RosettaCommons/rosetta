@@ -33,84 +33,84 @@ namespace components {
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::ab_no_extension =
-	boost::assign::list_of
-	("GB") ("GBA") ("BAA") ("GBB") ("GBAB") ("BAAB");
+boost::assign::list_of
+("GB") ("GBA") ("BAA") ("GBB") ("GBAB") ("BAAB");
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::ba_no_extension =
-	boost::assign::list_of
-	("AB") ("GBB") ("BAB");
+boost::assign::list_of
+("AB") ("GBB") ("BAB");
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::bb_no_extension =
-	boost::assign::list_of
-	("GG") ("EA") ("AA") ("AAG");
+boost::assign::list_of
+("GG") ("EA") ("AA") ("AAG");
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::aa_no_extension =
-	boost::assign::list_of
-	("B") ("G")
-	("BB") ("BG") ("GB") ("GG")
-	("BBB") ("BBG") ("BGB") ("BGG") ("BAB") ("BAG")
-	("GBB") ("GBG") ("GGB") ("GGG") ("GAB") ("GAG")
-	("BBBB") ("BBBG") ("BBGB") ("BBGG") ("BBAB") ("BBAG")
-	("BGBB") ("BGBG") ("BGGB") ("BGGG") ("BGAB") ("BGAG")
-	("BABB") ("BABG") ("BAGB") ("BAGG") ("BAAB") ("BAAG")
-	("GBBB") ("GBBG") ("GBGB") ("GBGG") ("GBAB") ("GBAG")
-	("GGBB") ("GGBG") ("GGGB") ("GGGG") ("GGAB") ("GGAG")
-	("GABB") ("GABG") ("GAGB") ("GAGG") ("GAAB") ("GAAG");
+boost::assign::list_of
+("B") ("G")
+("BB") ("BG") ("GB") ("GG")
+("BBB") ("BBG") ("BGB") ("BGG") ("BAB") ("BAG")
+("GBB") ("GBG") ("GGB") ("GGG") ("GAB") ("GAG")
+("BBBB") ("BBBG") ("BBGB") ("BBGG") ("BBAB") ("BBAG")
+("BGBB") ("BGBG") ("BGGB") ("BGGG") ("BGAB") ("BGAG")
+("BABB") ("BABG") ("BAGB") ("BAGG") ("BAAB") ("BAAG")
+("GBBB") ("GBBG") ("GBGB") ("GBGG") ("GBAB") ("GBAG")
+("GGBB") ("GGBG") ("GGGB") ("GGGG") ("GGAB") ("GGAG")
+("GABB") ("GABG") ("GAGB") ("GAGG") ("GAAB") ("GAAG");
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::ab =
-	boost::assign::list_of
-	(   "GB" )(   "GBA" )(   "BAA" ) // Basic loops
-	(   "GBB")(   "GBAB")(   "BAAB") // Extend strand by one residue
-	(  "AGB" )(  "AGBA" )(  "ABAA" ) // Extend helix by one residue
-	(  "AGBB")(  "AGBAB")(  "ABAAB")
-	( "AAGB" )( "AAGBA" )( "AABAA" ) // Extend helix by two residues
-	( "AAGBB")( "AAGBAB")( "AABAAB")
-	("AAAGB" )("AAAGBA" )("AAABAA" ) // Extend helix by three residues
-	("AAAGBB")("AAAGBAB")("AAABAAB");
+boost::assign::list_of
+(   "GB" )(   "GBA" )(   "BAA" ) // Basic loops
+(   "GBB")(   "GBAB")(   "BAAB") // Extend strand by one residue
+(  "AGB" )(  "AGBA" )(  "ABAA" ) // Extend helix by one residue
+(  "AGBB")(  "AGBAB")(  "ABAAB")
+( "AAGB" )( "AAGBA" )( "AABAA" ) // Extend helix by two residues
+( "AAGBB")( "AAGBAB")( "AABAAB")
+("AAAGB" )("AAAGBA" )("AAABAA" ) // Extend helix by three residues
+("AAAGBB")("AAAGBAB")("AAABAAB");
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::ba =
-	boost::assign::list_of
-	("AB"   )("GBB"   )("BAB"   )("BGBB"   )  // Basic loops plus extend strand by one residue
-	("ABA"  )("GBBA"  )("BABA"  )("BGBBA"  )  // Extend helix by one residue
-	("ABAA" )("GBBAA" )("BABAA" )("BGBBAA" )  // Extend helix by two residues
-	("ABAAA")("BGGAAA")("BABAAA")("BGBBAAA");
+boost::assign::list_of
+("AB"   )("GBB"   )("BAB"   )("BGBB"   )  // Basic loops plus extend strand by one residue
+("ABA"  )("GBBA"  )("BABA"  )("BGBBA"  )  // Extend helix by one residue
+("ABAA" )("GBBAA" )("BABAA" )("BGBBAA" )  // Extend helix by two residues
+("ABAAA")("BGGAAA")("BABAAA")("BGBBAAA");
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::bb =
-	boost::assign::list_of
-	( "GG" )( "EA" )( "AA" )( "AAG" )   // Basic loops
-	("BGG" )("BEA" )("BAA" )("BAAG" )   // Extend first strand by one
-	( "GGB")( "EAB")( "AAB")( "AAGB")   // Extend second strand by one
-	("BGGB")("BEAB")("BAAB")("BAAGB"); // Extend both strands by one
+boost::assign::list_of
+( "GG" )( "EA" )( "AA" )( "AAG" )   // Basic loops
+("BGG" )("BEA" )("BAA" )("BAAG" )   // Extend first strand by one
+( "GGB")( "EAB")( "AAB")( "AAGB")   // Extend second strand by one
+("BGGB")("BEAB")("BAAB")("BAAGB"); // Extend both strands by one
 
 IdealAbegoGenerator::Abegos const
 IdealAbegoGenerator::alpha_alpha =
-	boost::assign::list_of
-	(   "B")("AB")("AAB")("AAAB")("BA")("ABA")("AABA")("AAABA")("BAA")("ABAA")   // one-residue B and extensions
-	( "AABAA")("AAABAA")("BAAA")("ABAAA")("AABAAA")("AAABAAA")
-	(   "G")("AG")("AAG")("AAAG")("GA")("AGA")("AAGA")("AAAGA")("GAA")("AGAA")   // one-residue G and extensions
-	( "AAGAA")("AAAGAA")("GAAA")("AGAAA")("AAGAAA")("AAAGAAA")
-	(   "BB"   )(   "BG"   )(   "GB"   )(   "BAB"   )(   "BAG"   )(   "GAB"   )  //loops not containing E or start/ending with A
-	(   "BBA"  )(   "BGA"  )(   "GBA"  )(   "BABA"  )(   "BAGA"  )(   "GABA"  )  // Extend h2 by one residue
-	(   "BBAA" )(   "BGAA" )(   "GBAA" )(   "BABAA" )(   "BAGAA" )(   "GABAA" )  // Extend h2 by two residues
-	(   "BBAAA")(   "BGAAA")(   "GBAAA")(   "BABAAA")(   "BAGAAA")(   "GABAAA")  // Extend h2 by three residues
-	(  "ABB"   )(  "ABG"   )(  "AGB"   )(  "ABAB"   )(  "ABAG"   )(  "AGAB"   )  // Extend h1 by one residue
-	(  "ABBA"  )(  "ABGA"  )(  "AGBA"  )(  "ABABA"  )(  "ABAGA"  )(  "AGABA"  )  //
-	(  "ABBAA" )(  "ABGAA" )(  "AGBAA" )(  "ABABAA" )(  "ABAGAA" )(  "AGABAA" )  //
-	(  "ABBAAA")(  "ABGAAA")(  "AGBAAA")(  "ABABAAA")(  "ABAGAAA")(  "AGABAAA")  //
-	( "AABB"   )( "AABG"   )( "AAGB"   )( "AABAB"   )( "AABAG"   )( "AAGAB"   )  // Extend h1 by two residue
-	( "AABBA"  )( "AABGA"  )( "AAGBA"  )( "AABABA"  )( "AABAGA"  )( "AAGABA"  )  //
-	( "AABBAA" )( "AABGAA" )( "AAGBAA" )( "AABABAA" )( "AABAGAA" )( "AAGABAA" )  //
-	( "AABBAAA")( "AABGAAA")( "AAGBAAA")( "AABABAAA")( "AABAGAAA")( "AAGABAAA")  //
-	("AAABB"   )("AAABG"   )("AAAGB"   )("AAABAB"   )("AAABAG"   )("AAAGAB"   )  // Extend h1 by three residue
-	("AAABBA"  )("AAABGA"  )("AAAGBA"  )("AAABABA"  )("AAABAGA"  )("AAAGABA"  )  //
-	("AAABBAA" )("AAABGAA" )("AAAGBAA" )("AAABABAA" )("AAABAGAA" )("AAAGABAA" )  //
-	("AAABBAAA")("AAABGAAA")("AAAGBAAA")("AAABABAAA")("AAABAGAAA")("AAAGABAAA");
+boost::assign::list_of
+(   "B")("AB")("AAB")("AAAB")("BA")("ABA")("AABA")("AAABA")("BAA")("ABAA")   // one-residue B and extensions
+( "AABAA")("AAABAA")("BAAA")("ABAAA")("AABAAA")("AAABAAA")
+(   "G")("AG")("AAG")("AAAG")("GA")("AGA")("AAGA")("AAAGA")("GAA")("AGAA")   // one-residue G and extensions
+( "AAGAA")("AAAGAA")("GAAA")("AGAAA")("AAGAAA")("AAAGAAA")
+(   "BB"   )(   "BG"   )(   "GB"   )(   "BAB"   )(   "BAG"   )(   "GAB"   )  //loops not containing E or start/ending with A
+(   "BBA"  )(   "BGA"  )(   "GBA"  )(   "BABA"  )(   "BAGA"  )(   "GABA"  )  // Extend h2 by one residue
+(   "BBAA" )(   "BGAA" )(   "GBAA" )(   "BABAA" )(   "BAGAA" )(   "GABAA" )  // Extend h2 by two residues
+(   "BBAAA")(   "BGAAA")(   "GBAAA")(   "BABAAA")(   "BAGAAA")(   "GABAAA")  // Extend h2 by three residues
+(  "ABB"   )(  "ABG"   )(  "AGB"   )(  "ABAB"   )(  "ABAG"   )(  "AGAB"   )  // Extend h1 by one residue
+(  "ABBA"  )(  "ABGA"  )(  "AGBA"  )(  "ABABA"  )(  "ABAGA"  )(  "AGABA"  )  //
+(  "ABBAA" )(  "ABGAA" )(  "AGBAA" )(  "ABABAA" )(  "ABAGAA" )(  "AGABAA" )  //
+(  "ABBAAA")(  "ABGAAA")(  "AGBAAA")(  "ABABAAA")(  "ABAGAAA")(  "AGABAAA")  //
+( "AABB"   )( "AABG"   )( "AAGB"   )( "AABAB"   )( "AABAG"   )( "AAGAB"   )  // Extend h1 by two residue
+( "AABBA"  )( "AABGA"  )( "AAGBA"  )( "AABABA"  )( "AABAGA"  )( "AAGABA"  )  //
+( "AABBAA" )( "AABGAA" )( "AAGBAA" )( "AABABAA" )( "AABAGAA" )( "AAGABAA" )  //
+( "AABBAAA")( "AABGAAA")( "AAGBAAA")( "AABABAAA")( "AABAGAAA")( "AAGABAAA")  //
+("AAABB"   )("AAABG"   )("AAAGB"   )("AAABAB"   )("AAABAG"   )("AAAGAB"   )  // Extend h1 by three residue
+("AAABBA"  )("AAABGA"  )("AAAGBA"  )("AAABABA"  )("AAABAGA"  )("AAAGABA"  )  //
+("AAABBAA" )("AAABGAA" )("AAAGBAA" )("AAABABAA" )("AAABAGAA" )("AAAGABAA" )  //
+("AAABBAAA")("AAABGAAA")("AAAGBAAA")("AAABABAAA")("AAABAGAAA")("AAAGABAAA");
 
 IdealAbegoGenerator::IdealAbegoGenerator( std::string const & segment_name_val ):
 	utility::pointer::ReferenceCount(),

@@ -286,7 +286,7 @@ SolutionPredicate::SolutionPredicate(
 	StructureData const & sd,
 	SegmentPairSet const & pairs,
 	SegmentNameSet const & start_seg,
-	SegmentNameSet const & stop_seg	):
+	SegmentNameSet const & stop_seg ):
 	pairs_( pairs ),
 	start_segments_( start_seg ),
 	stop_segments_( stop_seg ),

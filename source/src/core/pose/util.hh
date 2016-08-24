@@ -724,7 +724,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map, core:
 
 /// @brief Create std::map from PDBPoseMap
 std::map< std::string, core::Size > get_pdb2pose_numbering_as_stdmap ( core::pose::Pose const & pose );
-	
+
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose );

@@ -87,11 +87,11 @@ Picker::set_nfrags( core::Size const nfrags )
 /// @param[in] n_frags The number of fragments to pick per position.
 core::fragment::FrameOP
 Picker::pick_fragments_for_resid(
-		std::string const & chain_aa,
-		std::string const & chain_ss,
-		utility::vector1< std::string > const & chain_abego,
-		core::Size const resid,
-		core::Size const frag_length )
+	std::string const & chain_aa,
+	std::string const & chain_ss,
+	utility::vector1< std::string > const & chain_abego,
+	core::Size const resid,
+	core::Size const frag_length )
 {
 	// Get fragment key
 	std::string const key = ss_key( chain_aa, chain_ss, chain_abego, resid, frag_length );
@@ -100,12 +100,12 @@ Picker::pick_fragments_for_resid(
 	FragmentMap::iterator cached = fragcache_.find( key );
 	if ( cached == fragcache_.end() ) {
 		core::fragment::FrameList framelist = vlb_.pick_fragments_public(
-				chain_ss,                                          // secondary structure of entire pose
-				chain_aa,                                          // amino acid sequence
-				chain_abego,                                       // abegos for entire pose
-				protocols::forge::build::Interval( resid, resid ), // start/end of region for picking
-				frag_length,                                       // fragment length
-				n_frags_ );                                        // # fragments per position
+			chain_ss,                                          // secondary structure of entire pose
+			chain_aa,                                          // amino acid sequence
+			chain_abego,                                       // abegos for entire pose
+			protocols::forge::build::Interval( resid, resid ), // start/end of region for picking
+			frag_length,                                       // fragment length
+			n_frags_ );                                        // # fragments per position
 		core::fragment::FrameOP frame = *framelist.begin();
 		cached = fragcache_.insert( std::make_pair( key, frame ) ).first;
 		return frame->clone_with_frags();

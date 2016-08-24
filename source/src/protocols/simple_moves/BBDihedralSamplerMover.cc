@@ -165,10 +165,10 @@ BBDihedralSamplerMover::setup_all_bb_residues( core::pose::Pose const & pose) {
 	}
 
 	MoveMapOP mm = MoveMapOP( new MoveMap );
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		mm->set_bb(i, true);
 	}
-	
+
 	movemap_ = mm;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		bb_residues_.push_back( i );

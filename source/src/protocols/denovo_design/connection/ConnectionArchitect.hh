@@ -56,7 +56,7 @@ public:
 public:
 	//constants
 	static std::string const
-	DATA_MAP_NAME;
+		DATA_MAP_NAME;
 
 public:
 	ConnectionArchitect( std::string const & id_value );
@@ -180,7 +180,7 @@ private:
 		SegmentPair const & pair,
 		components::StructureData const & sd,
 		LengthSet const & length_set,
-		LengthSet const & cutpoint_set	) const;
+		LengthSet const & cutpoint_set ) const;
 
 	MotifCOPs
 	parse_motif_string( std::string const & motifs ) const;

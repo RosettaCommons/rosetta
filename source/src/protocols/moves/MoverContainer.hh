@@ -142,7 +142,7 @@ public:
 
 	/// @brief
 	bool use_mover_status(){ return use_mover_status_; }
-	
+
 	/// @brief Applies a series of movers sequentially on a Pose
 	///
 	/// example(s):

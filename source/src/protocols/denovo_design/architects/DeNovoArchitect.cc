@@ -32,7 +32,7 @@ namespace denovo_design {
 namespace architects {
 
 std::string const
-DeNovoArchitect::DATA_MAP_NAME = "DeNovoArchitects";
+	DeNovoArchitect::DATA_MAP_NAME = "DeNovoArchitects";
 
 DeNovoArchitect::DeNovoArchitect( std::string const & id ):
 	StructureArchitect( id )

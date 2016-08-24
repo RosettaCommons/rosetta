@@ -75,7 +75,7 @@ protected:
 public:
 	// constants
 	static std::string const
-	DATA_MAP_NAME;
+		DATA_MAP_NAME;
 
 public:
 	components::StructureDataOP

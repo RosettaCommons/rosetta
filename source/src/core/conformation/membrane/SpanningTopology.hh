@@ -168,7 +168,7 @@ private: // data
 
 	// nres from the spanfile; keep track for checks
 	core::Size nres_topo_;
-	
+
 	// structure-based?
 	bool structure_based_;
 

@@ -365,7 +365,7 @@ SpanningTopology
 SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::string, core::Size > pdb2pose_map, core::Size nres ){
 
 	using namespace utility;
-	
+
 	// Setup vars for reading spanfile using izstream
 	std::string line;
 	utility::io::izstream stream ( spanfile );
@@ -419,21 +419,20 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 	bool pdb_numbering;
 	if ( pdb2pose_map.empty() ) {
 		pdb_numbering = false;
-	}
-	else {
+	} else {
 		pdb_numbering = true;
 	}
-	
+
 	// For each line of the file, get spanning region info
 	for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 
 		getline( stream, line );
 		std::istringstream l( line );
-		
+
 		// tag that is read in
 		std::string start_tag, end_tag;
 		l >> start_tag >> end_tag;
-		
+
 		// initialize residue numbers in pose numbering that will be used to
 		// create a Span object
 		core::Size start( 0 );
@@ -445,41 +444,39 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 			if ( isdigit( start_tag[ 0 ] ) ) {
 				TR << "Pose is in pose numbering scheme." << std::endl;
 				pdb_numbering = false;
-			}
-			else {
+			} else {
 				TR << "Pose is in PDB numbering scheme." << std::endl;
 			}
 		}
-	
+
 		// NEW: supports PDB numbering format with chains and insertion codes
 		// format: A1. for chain A (single character), residue number 1, no insertion code
 		// check for chain
 		if ( pdb_numbering ) {
-			
+
 			// check for chain
 			if ( ! isalpha( start_tag[ 0 ] )
-				|| ! isalpha( end_tag[ 0 ] ) ) {
-			utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your chain is incorrect." );
+					|| ! isalpha( end_tag[ 0 ] ) ) {
+				utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your chain is incorrect." );
 			}
 
 			// check for insertion code
 			if ( isdigit( start_tag[ -1 ] )
-				|| isdigit( end_tag[ -1 ] ) ) {
-			utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your insertion code is incorrect." );
+					|| isdigit( end_tag[ -1 ] ) ) {
+				utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your insertion code is incorrect." );
 			}
-			
+
 			// get pose numbering from map
 			start = pdb2pose_map[ start_tag ];
 			end = pdb2pose_map[ end_tag ];
 
-		}
-		// also supports old format in pose numbering
-		// format: 1 for residue number 1, no insertion code, chain is whatever
-		// it is for that residue
-		// if we assume PDB format, pose numbering is also handled correctly because
-		// the PDB is already renumbered
-		else {
-			
+		} else {
+			// also supports old format in pose numbering
+			// format: 1 for residue number 1, no insertion code, chain is whatever
+			// it is for that residue
+			// if we assume PDB format, pose numbering is also handled correctly because
+			// the PDB is already renumbered
+
 			start = from_string( start_tag, core::Size( 0 ) );
 			end = from_string( end_tag, core::Size( 0 ) );
 

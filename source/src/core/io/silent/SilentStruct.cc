@@ -571,7 +571,7 @@ void SilentStruct::comment_from_line( std::string const & line, bool const inclu
 
 	has_silent_type = ( has_silent_type || ( val == "SILENTFILE" ) );
 	if ( !include_silentfile_comments && has_silent_type ) {
-			tr.Debug << "ignoring silent struct type specifier when reading comments: " << line << std::endl;
+		tr.Debug << "ignoring silent struct type specifier when reading comments: " << line << std::endl;
 		return;
 	}
 

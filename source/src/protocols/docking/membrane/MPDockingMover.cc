@@ -148,16 +148,16 @@ MPDockingMover::parse_my_tag(
 	core::pose::Pose const &
 ) {
 
-	using namespace core::scoring; 
-	using namespace std; 
+	using namespace core::scoring;
+	using namespace std;
 
 	// Set weights for the low & high resolution score functions from the command line
 	if ( tag->hasOption( "cen_sfxn_weights" ) ) {
-		lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( tag->getOption< string >( "cen_sfxn_weights" ) ); 
+		lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( tag->getOption< string >( "cen_sfxn_weights" ) );
 	}
 
 	if ( tag->hasOption( "fa_sfxn_weights" ) ) {
-		highres_scorefxn_ = ScoreFunctionFactory::create_score_function( tag->getOption< string >( "fa_sfxn_weights" ) ); 
+		highres_scorefxn_ = ScoreFunctionFactory::create_score_function( tag->getOption< string >( "fa_sfxn_weights" ) );
 	}
 
 	// Read in membrane center & normal

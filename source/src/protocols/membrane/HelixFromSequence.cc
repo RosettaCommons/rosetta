@@ -54,9 +54,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.HelixFromSequence" );
 namespace protocols {
 namespace membrane {
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 HelixFromSequence::HelixFromSequence():
@@ -82,8 +82,8 @@ HelixFromSequence::HelixFromSequence( HelixFromSequence const & src ):
 HelixFromSequence::~HelixFromSequence(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 /// @brief Apply the mover
 void
@@ -94,79 +94,77 @@ HelixFromSequence::apply( core::pose::Pose & pose ){
 	using namespace protocols::relax;
 	using namespace protocols::relax::membrane;
 	using namespace protocols::simple_moves;
-	
+
 	// create ideal helix pose from the sequence:
 	// 1. create pose from sequence
 	make_pose_from_sequence( pose, seq_, core::chemical::FA_STANDARD );
 	TR << "pose:total_residue: " << pose.total_residue() << std::endl;
-	
+
 	// 2. need to set the PDBInfo object in the pose, because
 	// make_pose_from_sequence doesn't take care of that!
 	PDBInfoOP pdbinfo( new PDBInfo( pose ) );
 	pose.pdb_info( pdbinfo );
-	
+
 	// 3. create ideal helices from SSEs
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		pose.set_phi(   i, -62 );
 		pose.set_psi(   i, -41 );
 		pose.set_omega( i, 180 );
 	}
-	
+
 	// if a membrane protein: transform helix into membrane:
 	if ( mem_ == true ) {
-		
+
 		// create topology object from first to last residue
 		SpanningTopologyOP topo( new SpanningTopology() );
 		topo->add_span( 1, pose.total_residue() );
-		
+
 		// in case of optimizing the membrane embedding
 		if ( opt_mem_ == true ) {
-			
+
 			// run AddMembraneMover with topology
 			AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
 			addmem->apply( pose );
-			
+
 			topo->show();
-			
+
 			// transform into membrane and optimize embedding
 			// runs TransformIntoMembrane underneath
 			OptimizeProteinEmbeddingMoverOP opt( new OptimizeProteinEmbeddingMover() );
 			opt->apply( pose );
-			
+
 			// run MPRangeRelax with default values (nres and 0.1 angle max)
-			if ( ! skip_rlx_ ){
+			if ( ! skip_rlx_ ) {
 				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
 				relax->apply( pose );
 			}
-			
-		// membrane protein but not optimizing embedding
+
+			// membrane protein but not optimizing embedding
 		} else {
-			
+
 			// run AddMembraneMover with topology
 			AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
 			addmem->apply( pose );
-			
+
 			// transform into membrane
 			TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 			transform->apply( pose );
-			
+
 			// run MPRangeRelax with default values (nres and 0.1 angle max)
-			if ( ! skip_rlx_ ){
+			if ( ! skip_rlx_ ) {
 				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
 				relax->apply( pose );
 			}
 		}
-	}
-	
-	// if soluble protein
-	else {
+	} else {
+		// if soluble protein
 		// run RangeRelax with default values (nres and 0.1 angle max)
-		if ( ! skip_rlx_ ){
+		if ( ! skip_rlx_ ) {
 			RangeRelaxMoverOP relax( new RangeRelaxMover() );
 			relax->apply( pose );
 		}
 	}
-	
+
 	// score pose for scorefile
 	if ( mem_ ) {
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
@@ -176,7 +174,7 @@ HelixFromSequence::apply( core::pose::Pose & pose ){
 		ScoreMoverOP score( new ScoreMover() );
 		score->apply( pose );
 	}
-	
+
 } // apply
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,8 +192,8 @@ HelixFromSequence::get_name() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Scripts Support ///
-	///////////////////////////////
+/// Rosetta Scripts Support ///
+///////////////////////////////
 
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
@@ -225,7 +223,7 @@ HelixFromSequence::clone() const{
 
 /*
 HelixFromSequence & HelixFromSequenceoperator=( HelixFromSequence const & src){
-	return HelixFromSequence( src );
+return HelixFromSequence( src );
 }
 */
 
@@ -236,8 +234,8 @@ std::ostream &operator<< (std::ostream &os, HelixFromSequence const &mover)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Creator ///
-	///////////////
+/// Creator ///
+///////////////
 
 protocols::moves::MoverOP
 HelixFromSequenceCreator::create_mover() const {
@@ -255,14 +253,14 @@ HelixFromSequenceCreator::mover_name(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// private methods ///
-	///////////////////////
+/// private methods ///
+///////////////////////
 
 /// @brief register options
 void HelixFromSequence::register_options(){
 
 	using namespace basic::options;
-	
+
 	option.add_relevant( OptionKeys::in::file::fasta );
 	option.add_relevant( OptionKeys::mp::setup::transform_into_membrane );
 	option.add_relevant( OptionKeys::mp::transform::optimize_embedding );
@@ -277,13 +275,13 @@ void HelixFromSequence::set_defaults() {
 
 	// fasta sequence
 	seq_ = "";
-	
+
 	// membrane protein?
 	mem_ = false;
 
 	// optimize membrane position?
 	opt_mem_ = false;
-	
+
 	// skip relax?
 	skip_rlx_ = false;
 
@@ -298,17 +296,17 @@ void HelixFromSequence::init_from_cmd() {
 
 	// read sequence from fasta
 	if ( option[OptionKeys::in::file::fasta].user() ) {
-		
+
 		seq_ = core::sequence::read_fasta_file( option[ OptionKeys::in::file::fasta ]()[1] )[1]->sequence();
 		TR << "Read in fasta file" << option[OptionKeys::in::file::fasta]()[1] << std::endl;
 	} else {
 		utility_exit_with_message("Please provide fasta file!");
 	}
-	
+
 	// transform into membrane?
 	if ( option[OptionKeys::mp::setup::transform_into_membrane].user() ) {
 		mem_ = option[OptionKeys::mp::setup::transform_into_membrane]();
-		
+
 		if ( mem_ == true ) {
 			TR << "Pose is a membrane protein and will be transformed into the membrane" <<  std::endl;
 		}
@@ -317,7 +315,7 @@ void HelixFromSequence::init_from_cmd() {
 	// optimize membrane embedding?
 	if ( option[OptionKeys::mp::transform::optimize_embedding].user() ) {
 		opt_mem_ = option[OptionKeys::mp::transform::optimize_embedding]();
-		
+
 		if ( opt_mem_ == true ) {
 			TR << "Protein embedding in the membrane will be optimized" <<  std::endl;
 		}
@@ -326,14 +324,14 @@ void HelixFromSequence::init_from_cmd() {
 	// skip relax step after creating the helix?
 	if ( option[OptionKeys::relax::range::skip_relax].user() ) {
 		skip_rlx_ = option[OptionKeys::relax::range::skip_relax]();
-		
+
 		if ( skip_rlx_ == true ) {
 			TR << "Skipping refinement step..." << std::endl;
 		}
 	}
 
 } // init from cmd
-	
+
 
 
 

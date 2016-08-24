@@ -1121,15 +1121,15 @@ AntibodyDesignMover::setup_random_start_pose(core::pose::Pose& pose, vector1<CDR
 		adapt_graft_ = original_adaptation;
 		pose = temp_pose;
 	}
-	
+
 	//JAB - removed 8/18/16.  I still have yet to use this pose for any benchmarking.
 	/*
 	protocols::jd2::JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
 	std::string prefix = "initial_benchmark_perturbation";
 	protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(job, pose, prefix);
 	*/
-	
-	
+
+
 	print_tracer_info_ = true;
 }
 

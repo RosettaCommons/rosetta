@@ -642,7 +642,7 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 		utility_exit_with_message( msg.str() );
 	}
 
-	// apply user-provided movers
+// apply user-provided movers
 	apply_movers( postfold, pose );
 
 	// modify structuredata so this portion of the structure can be checked independently
@@ -994,11 +994,11 @@ compute_strand_pairings( components::StructureData const & sd, components::Segme
 		StrandPairingOP sp( new StrandPairing(
 			ss_info.strand_id( seg1.safe() ),  // Strand 1
 			ss_info.strand_id( seg2.safe() ),  // Strand 2
-			seg1.start(),		                   // Strand 1 start res
-			seg2.start(),		                   // Strand 2 start res
-			length,					                   // pairing length
-			shift,					                   // register shift
-			orient ) );			                   // orientation
+			seg1.start(),                     // Strand 1 start res
+			seg2.start(),                     // Strand 2 start res
+			length,                        // pairing length
+			shift,                        // register shift
+			orient ) );                      // orientation
 		TR << "Created strand pairing for *pair " << *sp << std::endl;
 		pairset.push_back( sp );
 	}
@@ -1016,7 +1016,7 @@ architects::StrandOrientation
 retrieve_orientation( components::StructureData const & sd, SegmentName const & segment_name )
 {
 	return architects::StrandArchitect::int_to_orientation(
-			sd.get_data_int( segment_name, architects::StrandArchitect::orientation_keyname() ) );
+		sd.get_data_int( segment_name, architects::StrandArchitect::orientation_keyname() ) );
 }
 
 /*
@@ -1024,45 +1024,45 @@ retrieve_orientation( components::StructureData const & sd, SegmentName const & 
 core::select::residue_selector::ResidueVector
 get_bulges( components::StructureData const & sd )
 {
-	core::select::residue_selector::ResidueVector bulges;
-	std::string::const_iterator ss = sd.ss().begin();
-	std::string::const_iterator ab = sd.abego().begin();
-	for ( core::Size resid=1; resid<=sd.pose_length(); ++resid, ++ss, ++ab ) {
-		if ( ( *ss == 'E' ) && ( *ab == 'A' ) ) bulges.push_back( resid );
-	}
-	return bulges;
+core::select::residue_selector::ResidueVector bulges;
+std::string::const_iterator ss = sd.ss().begin();
+std::string::const_iterator ab = sd.abego().begin();
+for ( core::Size resid=1; resid<=sd.pose_length(); ++resid, ++ss, ++ab ) {
+if ( ( *ss == 'E' ) && ( *ab == 'A' ) ) bulges.push_back( resid );
+}
+return bulges;
 }
 
 void
 modify_for_check( components::StructureData & sd )
 {
-	using core::select::residue_selector::ResidueVector;
-	using core::select::residue_selector::ResidueSubset;
-	using protocols::fldsgn::topology::StrandPairingSet;
-	using components::ResiduePairs;
+using core::select::residue_selector::ResidueVector;
+using core::select::residue_selector::ResidueSubset;
+using protocols::fldsgn::topology::StrandPairingSet;
+using components::ResiduePairs;
 
-	ResidueSubset paired( sd.pose_length(), false );
+ResidueSubset paired( sd.pose_length(), false );
 
-	ResiduePairs const pairs = components::SegmentPairing::get_strand_residue_pairs( sd );
-	for ( ResiduePairs::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
-		paired[p->first] = true;
-		paired[p->second] = true;
-	}
+ResiduePairs const pairs = components::SegmentPairing::get_strand_residue_pairs( sd );
+for ( ResiduePairs::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
+paired[p->first] = true;
+paired[p->second] = true;
+}
 
-	ResidueVector const bulges = get_bulges( sd );
-	TR.Debug << "Bulges = " << bulges << std::endl;
-	for ( ResidueVector::const_iterator r=bulges.begin(); r!=bulges.end(); ++r ) {
-		paired[*r] = true;
-	}
-	TR.Debug << "Pair set = " << paired << std::endl;
+ResidueVector const bulges = get_bulges( sd );
+TR.Debug << "Bulges = " << bulges << std::endl;
+for ( ResidueVector::const_iterator r=bulges.begin(); r!=bulges.end(); ++r ) {
+paired[*r] = true;
+}
+TR.Debug << "Pair set = " << paired << std::endl;
 
-	core::Size resid = 1;
-	for ( ResidueSubset::const_iterator p=paired.begin(); p!=paired.end(); ++p, ++resid ) {
-		if ( !*p && ( sd.ss()[ resid - 1 ] == 'E' ) ) {
-			TR << "Setting ss for residue " << resid << " to L" << std::endl;
-			sd.set_ss( resid, 'L' );
-		}
-	}
+core::Size resid = 1;
+for ( ResidueSubset::const_iterator p=paired.begin(); p!=paired.end(); ++p, ++resid ) {
+if ( !*p && ( sd.ss()[ resid - 1 ] == 'E' ) ) {
+TR << "Setting ss for residue " << resid << " to L" << std::endl;
+sd.set_ss( resid, 'L' );
+}
+}
 }
 */
 
