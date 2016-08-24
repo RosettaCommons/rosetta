@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/RotamerSet/RotamerSets.cc
 /// @brief  RotamerSets class implementation
@@ -191,12 +191,29 @@ RotamerSets::build_rotamers(
 	if ( task_->rotamer_links_exist() ) {
 		//check all the linked positions
 
+
+		//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
+
+		for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
+			Size resid = moltenres_2_resid(ii);
+			if(task_->rotamer_links()->get_template(resid) != resid){
+				RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
+				RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
+				rotset->set_resid( resid );
+				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
+					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
+					copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
+					rotset->add_rotamer(*cloneRes);
+
+				}
+				set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
+			}
+		}
+		//end addition template residue code
 		utility::vector1<bool> visited(asym_length,false);
 
 		int expected_rot_count = 0;
-
 		for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
-
 			utility::vector1<int> copies = task_->rotamer_links()->get_equiv(moltenres_2_resid_[ii]);
 
 			if ( visited[ moltenres_2_resid_[ii] ] ) {
@@ -213,7 +230,6 @@ RotamerSets::build_rotamers(
 			if ( copies.size() == 0 ) {
 				smallest_res = moltenres_2_resid_[ii];
 			}
-
 			for ( uint jj = 1; jj <= copies.size(); ++jj ) {
 				visited[ copies[jj] ] = true;
 				int buffer;
@@ -295,11 +311,29 @@ RotamerSets::build_rotamers(
 				smallset->set_resid(copies[jj]);
 				set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ]] = smallset;
 				//std::cout << "replacing rotset at " << copies[jj] << " with smallest set from " << smallest_res << std::endl;
+
 			}
 		}
-		std::cout << "expected rotamer count is " << expected_rot_count << std::endl;
 	}
 	update_offset_data();
+}
+
+void RotamerSets::copy_residue_conenctions_and_variants(pose::Pose const & pose, conformation::ResidueOP cloneRes, Size seqpos, Size asym_length){
+	using namespace core::chemical;
+	//initial setup & remove all variants
+	cloneRes->clear_residue_connections();
+	cloneRes->copy_residue_connections( pose.residue(seqpos));
+	core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
+	core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
+	//standard cases
+	if(seqpos==1)
+		core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
+	if( seqpos == asym_length)
+		core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
+	//other cases
+	if(pose.residue(seqpos).has_variant_type(CUTPOINT_UPPER))
+		core::pose::add_variant_type_to_residue( *cloneRes, chemical::CUTPOINT_UPPER, pose);
+	cloneRes->place( pose.residue(seqpos), pose.conformation());
 }
 
 void

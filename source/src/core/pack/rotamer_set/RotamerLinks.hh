@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/rotamer_set/RotamerSet.fwd.hh
 /// @brief  Residue set class forward declarations
@@ -41,6 +41,7 @@ public:
 	resize( Size const res)
 	{
 		links_.resize(res);
+		template_residues_.resize(res);
 	}
 
 	utility::vector1< Size >
@@ -65,6 +66,17 @@ public:
 		links_[rs1] = list;
 	}
 
+	void
+	set_template(Size const rs1,Size const rs2)
+	{
+		template_residues_[rs1] = rs2;
+	}
+
+	Size
+	get_template(Size rs) const{
+		return(template_residues_[rs]);
+	}
+
 	bool
 	has (Size index) const
 	{
@@ -80,6 +92,7 @@ public:
 private:
 
 	utility::vector1< utility::vector1< int > > links_;
+	utility::vector1< int > template_residues_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

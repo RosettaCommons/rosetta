@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/annealer/FixbbLinkingRotamerSimAnnealer.cc
 /// @brief  Packer's standard simulated annealing class implementation
@@ -123,7 +123,7 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 	rotamer_links_ = RotamerLinksOP( new rotamer_set::RotamerLinks() );
 	rotamer_links_->resize( rotamer_sets()->nmoltenres() );
 
-	//std::cout << "nmoltenres " << rotamer_sets()->nmoltenres()<< std::endl;
+	TR.Debug << "nmoltenres " << rotamer_sets()->nmoltenres()<< std::endl;
 
 	for ( Size moltenres_id=1; moltenres_id<= rotamer_sets()->nmoltenres(); ++moltenres_id ) {
 		uint const resid( rotamer_sets()->moltenres_2_resid( moltenres_id ) );
@@ -131,14 +131,16 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 		//iterate over the associated set to check the positions, if molten
 
 		if ( ! rotamer_links->has(resid) ) {
-			std::cout << "singular unlinked position" << std::endl;
+			TR.Debug << "singular unlinked position" << std::endl;
 		} else {
 			utility::vector1<int> copies = rotamer_links->get_equiv(resid);
+			TR.Debug << "copies" << copies.size() << std::endl;
 			for ( Size i = 1; i <= copies.size(); ++i ) {
 				if ( rotamer_sets()->resid_2_moltenres( copies[i] ) ) {
+					TR.Debug << "setting equivalent" << moltenres_id << "==" << rotamer_sets()->resid_2_moltenres(copies[i]) << std::endl;
 					rotamer_links_->set_equiv(moltenres_id, rotamer_sets()->resid_2_moltenres(copies[i]));
 				} else {
-					std::cout << "a position in the link isn't to be changed" << std::endl;
+					TR.Debug << "a position in the link isn't to be changed" << std::endl;
 				}
 			}
 		}
@@ -154,7 +156,6 @@ FixbbLinkingRotamerSimAnnealer::~FixbbLinkingRotamerSimAnnealer()
 void FixbbLinkingRotamerSimAnnealer::run()
 {
 	using namespace core::conformation;
-
 	core::Size const nmoltenres = ig_->get_num_nodes();
 
 	FArray1D_int state_on_node( nmoltenres, 0 ); // parallel representation of interaction graph's state
@@ -172,15 +173,17 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 	ig_->prepare_for_simulated_annealing();
 	ig_->blanket_assign_state_0();
-
 	//--------------------------------------------------------------------
 	if ( num_rots_to_pack() == 0 ) return;
 
 	// Detect the quasisymmetrical case by checking to see that there are
 	// residues with only 1 link to themselves as well as residues with multiple
 	// links.
+	//
+	// Repeat proteins are also qua
 	bool flag1 = false; bool flag2 = false;
 	for ( core::Size i = 1; i <= nmoltenres; ++i ) {
+
 		utility::vector1<Size> these_links = rotamer_links_->get_equiv(i);
 		if ( flag1 && flag2 ) break;
 		if ( these_links.size() == 1 && these_links[1] == i ) {
@@ -196,16 +199,17 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	if ( flag1 && flag2 ) {
 		for ( core::Size res=1; res<=nmoltenres; ++res ) {
 			totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+
 		}
 	} else {
 
 		//experimental
 		utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
-		// get the first element of the last repeat.  it should be segment length
+		for(Size ii=1; ii<=segmentTest.size(); ++ii)
+		// get the first element of the last repeat.  it should be segment length why? :: Bad logic.
 		//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
 		//Size repeat_number = segmentTest.back()/segmentTest[1];
 		//std::cout<< "number of repeats" << repeat_number << std::endl;
-
 		for ( core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++ ) {
 			totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
 		}
@@ -293,14 +297,14 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			bool found_rotamer = false;
 			Size num_linked_res =0;
+
 			for ( utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) {
 				num_linked_res++;
-				if ( (*itr != 0) && (*itr != moltenres_id ) ) {
+				if ( (*itr != 0) && (*itr != moltenres_id )) {
 
 					//try multiple substitutions
-					if ( TR.Trace.visible() ) {
+					if ( TR.Trace.visible()) {
 						TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
-						TR.Trace << "Picked rotamer incompatible, trying multiple substitution" << std::endl;
 					}
 
 					other_prevrotamer_state = state_on_node(*itr);
@@ -313,6 +317,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					int tries = other_nrotamers;
 					found_rotamer = false;
 					while ( tries ) {
+
 						// pick a rotamer at the other position
 						int other_rotamer_state = tries;
 
@@ -332,7 +337,6 @@ void FixbbLinkingRotamerSimAnnealer::run()
 								//if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
 								//std::cout << "found the same rotamer for " << moltenres_id << " and " <<  *itr << "of types " << new_rotamer->aa() << " and " << other_rotamer->aa() << std::endl;
 								found_rotamer = true;
-
 								// record the state
 								resid_states[*itr] = other_rotamer_state;
 
@@ -355,14 +359,14 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					found_rotamer = true;
 					other_prevrotamer_state = state_on_node(*itr);
 				}
-			} // for linked residues
 
+			} // for linked residues
 			if ( !found_rotamer ) { // any of the linked position without the same rotamer should be passed
 				//invalidate all the linked positions
 				//std::cout << "invalidate " ;
 				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
 					rot_valid[ rotamer_sets()->moltenres_rotid_2_rotid( (*it).first, (*it).second ) ] = false;
-					// std::cout << (*it).first << "(" << (*it).second << ")"  ;
+					//std::cout << (*it).first << "(" << (*it).second << ")"  ;
 				}
 				//std::cout << std::endl;
 				continue;

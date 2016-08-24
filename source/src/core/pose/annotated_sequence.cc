@@ -5,7 +5,7 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pose/annotated_sequence.cc
 /// @brief  utility functions for making poses from sequences
@@ -606,7 +606,7 @@ void make_pose_from_sequence(
 		// AMW: you may want to append a polymer UNK, like a ncaa, by a bond!
 		if ( rsd_type.is_lower_terminus(  ) ||
 				rsd_type.has_variant_type( chemical::N_ACETYLATION ) ||
-				new_rsd->aa() == chemical::aa_unk ||
+				(new_rsd->aa() == chemical::aa_unk && !rsd_type.is_polymer()) ||
 				new_rsd->aa() == chemical::aa_vrt ||
 				new_rsd->aa() == chemical::aa_h2o ||
 				jump_to_next ) {
@@ -633,6 +633,7 @@ void make_pose_from_sequence(
 				}
 			}
 			// each time this happens, a new chain should be started
+
 			pose.append_residue_by_jump( *new_rsd, 1, "", "", true );
 		} else {
 			pose.append_residue_by_bond( *new_rsd, true );
