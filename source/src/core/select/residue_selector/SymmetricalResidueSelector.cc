@@ -111,7 +111,7 @@ SymmetricalResidueSelector::parse_my_tag(
 	basic::datacache::DataMap & data )
 {
 	//make sure there is only 1 option input
-	runtime_assert_string_msg( tag->getTags().size() == 1, "You can only have one input tag for SymmetricalResidueSelector!" );
+	runtime_assert_string_msg( tag->getTags().size() <= 1, "You can have one or less input tag for SymmetricalResidueSelector!" );
 
 	//if there is a selector, then:
 	if ( tag->hasOption( "selector" ) ) {
