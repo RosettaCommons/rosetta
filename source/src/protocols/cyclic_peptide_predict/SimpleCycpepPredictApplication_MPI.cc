@@ -101,7 +101,9 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI() :
 	comp_file_contents_D_alpha_(""),
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	abba_bins_(""),
+	lambda_(0.5),
+	kbt_(1.0)
 	//TODO -- Initialize vars here.
 {
 	scorefxn_ = core::scoring::get_score_function(); //Reads from file.
@@ -119,7 +121,9 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	std::string const &sort_type,
 	bool const select_highest,
 	core::Real const &output_fraction,
-	std::string const &output_filename
+	std::string const &output_filename,
+	core::Real const &lambda,
+	core::Real const &kbt
 ) :
 	MPI_rank_( MPI_rank ),
 	MPI_n_procs_( MPI_n_procs ),
@@ -146,7 +150,9 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	comp_file_contents_D_alpha_(""),
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	abba_bins_(""),
+	lambda_(lambda),
+	kbt_(kbt)
 {
 	if(sfxn_in) scorefxn_ = sfxn_in->clone();
 	set_sort_type( sort_type );
@@ -192,7 +198,9 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
 	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
 	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
-	abba_bins_(src.abba_bins_)
+	abba_bins_(src.abba_bins_),
+	lambda_(src.lambda_),
+	kbt_(src.kbt_)
 	//TODO -- copy variables here.
 {
 	set_procs_per_hierarchy_level( src.procs_per_hierarchy_level_ );
@@ -1152,6 +1160,9 @@ SimpleCycpepPredictApplication_MPI::emperor_write_summaries_to_tracer(
 	if( !TR_summary.visible() ) return; //Do nothing if the tracer is off.
 	TR_summary << "Summary for " << summary_list.size() << " job(s) returning results:\n";
 	TR_summary << "MPI_slave_node\tJobindex_on_node\tRMSD\tEnergy\tHbonds\tNode_path_to_emperor\n";
+
+	core::Real numerator(0), denominator(0); //For calculating PNear.
+
 	for( core::Size i=1, imax=summary_list.size(); i<=imax; ++i ) {
 		TR_summary << summary_list[i]->originating_node_MPI_rank() << "\t" << summary_list[i]->jobindex_on_originating_node() << "\t" << summary_list[i]->rmsd() << "\t" << summary_list[i]->pose_energy() << "\t" << summary_list[i]->hbonds() << "\t";
 		for(core::Size j=1, jmax=summary_list[i]->MPI_ranks_handling_message().size(); j<=jmax; ++j) {
@@ -1159,7 +1170,22 @@ SimpleCycpepPredictApplication_MPI::emperor_write_summaries_to_tracer(
 			if( j<jmax ) TR_summary << ",";
 		}
 		TR_summary << "\n";
+
+		//Calculations for PNear:
+		core::Real const Pcurrent( std::exp( -1.0*summary_list[i]->pose_energy()/kbt() ) );
+		denominator += Pcurrent;
+		numerator += std::exp( -1.0 * std::pow(-summary_list[i]->rmsd() / lambda() , 2.0 ) ) * Pcurrent;
+
 	}
+
+	if(summary_list.size() > 0 && denominator > 1e-12) {
+		core::Real const PNear( numerator/denominator );
+		TR_summary << "PNear:\t" << PNear << "\n";
+		TR_summary << "-kB*T*ln(PNear):\t" << -1.0*kbt()*std::log( PNear ) << "\n";
+		TR_summary << "lambda:\t" << lambda() << "\n";
+		TR_summary << "kB*T:\t" << kbt() << "\n";
+	}
+
 	TR_summary << std::endl;
 	TR_summary.flush();
 }

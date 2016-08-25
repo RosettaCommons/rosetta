@@ -205,13 +205,14 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 		//experimental
 		utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
-		for(Size ii=1; ii<=segmentTest.size(); ++ii)
-		// get the first element of the last repeat.  it should be segment length why? :: Bad logic.
-		//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
-		//Size repeat_number = segmentTest.back()/segmentTest[1];
-		//std::cout<< "number of repeats" << repeat_number << std::endl;
-		for ( core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++ ) {
-			totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
+		for ( Size ii=1; ii<=segmentTest.size(); ++ii ) {
+			// get the first element of the last repeat.  it should be segment length why? :: Bad logic.
+			//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
+			//Size repeat_number = segmentTest.back()/segmentTest[1];
+			//std::cout<< "number of repeats" << repeat_number << std::endl;
+			for ( core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++ ) {
+				totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
+			}
 		}
 		//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
 	} // end quasisymmetric if-else
@@ -300,10 +301,10 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			for ( utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) {
 				num_linked_res++;
-				if ( (*itr != 0) && (*itr != moltenres_id )) {
+				if ( (*itr != 0) && (*itr != moltenres_id ) ) {
 
 					//try multiple substitutions
-					if ( TR.Trace.visible()) {
+					if ( TR.Trace.visible() ) {
 						TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
 					}
 

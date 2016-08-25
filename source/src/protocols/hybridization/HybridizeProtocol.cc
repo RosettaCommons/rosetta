@@ -730,7 +730,7 @@ void HybridizeProtocol::add_template(
 	// find ss chunks in template
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks;
-	if (include_loop_ss_chunks_) {
+	if ( include_loop_ss_chunks_ ) {
 		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HEL", 3, 6, 3, 3, 4);
 	} else {
 		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 3, 4);
@@ -767,7 +767,7 @@ void HybridizeProtocol::update_last_template()
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 
 	protocols::loops::Loops chunks;
-	if (include_loop_ss_chunks_) {
+	if ( include_loop_ss_chunks_ ) {
 		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HEL", 3, 6, 3, 3, 4);
 	} else {
 		chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 3, 4);

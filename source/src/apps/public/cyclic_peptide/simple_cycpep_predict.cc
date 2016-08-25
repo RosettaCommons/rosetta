@@ -97,7 +97,9 @@ set_MPI_vars(
 	std::string &sort_by,
 	bool &select_highest,
 	core::Real &output_fraction,
-	std::string &output_filename
+	std::string &output_filename,
+	core::Real &lambda,
+	core::Real &kbt
 );
 #endif
 
@@ -129,7 +131,9 @@ set_MPI_vars(
 	std::string &sort_by,
 	bool &select_highest,
 	core::Real &output_fraction,
-	std::string &output_filename
+	std::string &output_filename,
+	core::Real &lambda,
+	core::Real &kbt
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -195,6 +199,13 @@ set_MPI_vars(
 	}
 	output_filename = option[out::file::silent]();
 
+	lambda = option[cyclic_peptide::MPI_pnear_lambda]();
+	kbt = option[cyclic_peptide::MPI_pnear_kbt]();
+	if( MPI_rank == 0 ) {
+		runtime_assert_string_msg( lambda > 0, errormsg + "The -cyclic_peptide:MPI_pnear_lambda option must be greater than zero." );
+		runtime_assert_string_msg( kbt > 0, errormsg + "The -cyclic_peptide:MPI_pnear_kbt option must be greater than zero." );
+	}
+
 	wait_for_proc_zero();
 }
 #endif
@@ -222,7 +233,9 @@ main( int argc, char * argv [] )
 		bool select_highest(false);
 		core::Real output_fraction(1.0);
 		std::string output_filename("");
-		set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename ); //Get the values of these vars (only used in MPI mode).
+		core::Real lambda( 0.5 );
+		core::Real kbt( 1.0 );
+		set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt ); //Get the values of these vars (only used in MPI mode).
 #endif
 
 		if ( TR.visible() ) {
@@ -249,7 +262,7 @@ main( int argc, char * argv [] )
 		}
 
 #ifdef USEMPI
-		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename );
+		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt );
 #else
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication this_app;
 #endif

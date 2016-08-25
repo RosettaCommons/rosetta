@@ -87,7 +87,9 @@ public:
 		std::string const &sort_type,
 		bool const select_highest,
 		core::Real const &output_fraction,
-		std::string const &output_filename
+		std::string const &output_filename,
+		core::Real const &lambda,
+		core::Real const &kbt
 	);
 
 	/// @brief Explicit virtual destructor.
@@ -123,6 +125,14 @@ public:
 
 private:
 	/// ------------- Methods ----------------------------
+
+	/// @brief The bredth of the Gaussian used to determine whether something is
+	/// native or not, for calculating PNear (the funnel quality metric).
+	inline core::Real const & lambda() const { return lambda_; }
+
+	/// @brief The Boltzmann temperature used for calculating PNear (the
+	/// funnel quality metric).
+	inline core::Real const & kbt() const { return kbt_; }
 	
 	/// @brief Check the current time and determine whether it's past the timeout time.
 	///
@@ -432,6 +442,14 @@ private:
 	/// @brief Storage for a bin definition file.
 	/// @details Cached to prevent repeated read from disk.
 	std::string abba_bins_;
+
+	/// @brief Lambda, the bredth of the Gaussian used for calculating funnel quality (PNear).
+	/// @details Read from options system; default 0.5.
+	core::Real lambda_;
+
+	/// @brief The Boltzmann temperature, kB*T, used for calculating funnel quality (PNear).
+	/// @details Read from options system; default 1.0.
+	core::Real kbt_;
 	
 };
 

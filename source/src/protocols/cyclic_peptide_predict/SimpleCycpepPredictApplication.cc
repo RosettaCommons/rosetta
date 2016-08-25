@@ -152,6 +152,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::do_not_count_adjacent_res_hbonds     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -159,6 +160,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_choose_highest                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_output_fraction                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time                  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_lambda );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_kbt );
 #endif
 	return;
 }

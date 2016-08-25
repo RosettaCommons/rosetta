@@ -196,7 +196,7 @@ RotamerSets::build_rotamers(
 
 		for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 			Size resid = moltenres_2_resid(ii);
-			if(task_->rotamer_links()->get_template(resid) != resid){
+			if ( task_->rotamer_links()->get_template(resid) != resid ) {
 				RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
 				RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
 				rotset->set_resid( resid );
@@ -326,13 +326,16 @@ void RotamerSets::copy_residue_conenctions_and_variants(pose::Pose const & pose,
 	core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 	core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 	//standard cases
-	if(seqpos==1)
+	if ( seqpos==1 ) {
 		core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
-	if( seqpos == asym_length)
+	}
+	if ( seqpos == asym_length ) {
 		core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
+	}
 	//other cases
-	if(pose.residue(seqpos).has_variant_type(CUTPOINT_UPPER))
+	if ( pose.residue(seqpos).has_variant_type(CUTPOINT_UPPER) ) {
 		core::pose::add_variant_type_to_residue( *cloneRes, chemical::CUTPOINT_UPPER, pose);
+	}
 	cloneRes->place( pose.residue(seqpos), pose.conformation());
 }
 
