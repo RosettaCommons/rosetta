@@ -85,7 +85,7 @@ BuildDeNovoBackboneMover::BuildDeNovoBackboneMover():
 	score_filter_(),
 	id_(),
 	dry_run_( false ),
-	dump_pdbs_( true ),
+	dump_pdbs_( false ),
 	build_overlap_( 1 ),
 	iterations_per_phase_( 0 ),
 	start_segments_(),
