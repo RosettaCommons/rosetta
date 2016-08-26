@@ -1006,7 +1006,8 @@ glycosylate_pose(
 		glycosylate_pose( pose, sequence_position, "OG", iupac_sequence, idealize_linkages );
 	} else if ( glycosylation_site == "THR" ) {
 		glycosylate_pose( pose, sequence_position, "OG1", iupac_sequence, idealize_linkages );
-		// TODO: Add Trp, after creating an appropriate patch file.
+	} else if ( glycosylation_site == "TRP" ) {
+		glycosylate_pose( pose, sequence_position, "CD1", iupac_sequence, idealize_linkages );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
 			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "

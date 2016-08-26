@@ -24,7 +24,7 @@ patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
 patches/nucleic/rna/2prime_connection.txt
 patches/nucleic/rna/LowerConnectRNA.txt
 
-## Used to be selected from command line (not patched in by default to save memory); 
+## Used to be selected from command line (not patched in by default to save memory);
 ## but should be OK to instantiate with refactored ResidueTypeSet
 # Protein
 patches/RepulsiveOnly_fa.txt        # replonly
@@ -72,7 +72,7 @@ patches/NtermConnect.txt
 
 ##fpd
 ## AMW: these two CANNOT be commented in because otherwise N and C termini
-## will never be filled in. Really, they do not belong in this file at all 
+## will never be filled in. Really, they do not belong in this file at all
 ## as a result. They are patched in ONLY with special flags.
 #patches/CtermTruncation.txt
 #patches/NtermTruncation.txt
@@ -144,6 +144,7 @@ patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
 ### branching
 patches/carbohydrates/N-linked_glycosylation.txt
+patches/carbohydrates/C-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/3-branch.txt
